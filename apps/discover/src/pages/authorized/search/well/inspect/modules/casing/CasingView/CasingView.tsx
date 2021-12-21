@@ -41,7 +41,9 @@ import EventsColumn from './EventsColumn';
 import { CasingViewType } from './interfaces';
 
 const MIN_SCALE_HEIGHT = 16;
-const EMPTY_STATE_TEXT = 'This wellbore has no casing data';
+const EMPTY_STATE_TEXT = 'This wellbore has no casing and NPT events data';
+const EMPTY_SCHEMA_TEXT = 'This wellbore has no schema data';
+const LOADING_TEXT = 'Loading';
 
 /**
  * This component is used to generate casings diagram
@@ -51,7 +53,7 @@ const CasingView: FC<CasingViewType> = ({
   wellName,
   wellboreName,
   unit,
-  events,
+  events = [],
   isEventsLoading,
 }: CasingViewType) => {
   const scaleRef = useRef<HTMLElement | null>(null);
@@ -70,11 +72,14 @@ const CasingView: FC<CasingViewType> = ({
   );
 
   const minDepth = 0;
-  const maxDepth = max(
-    casingsList.map((row) => Number(row.endDepth))
-  ) as number;
+  let maxDepth = max(casingsList.map((row) => Number(row.endDepth))) as number;
+  if (isEmpty(casings) && !isEmpty(events)) {
+    maxDepth = max(
+      events.map((row) => Number(row.measuredDepth?.value))
+    ) as number;
+  }
 
-  const validEvents = (events || []).filter(
+  const validEvents = events.filter(
     (event) =>
       event.measuredDepth &&
       event.measuredDepth.value >= minDepth &&
@@ -91,7 +96,7 @@ const CasingView: FC<CasingViewType> = ({
     return () => {
       window.removeEventListener('resize', setScaleBlocksCount);
     };
-  }, []);
+  }, [maxDepth]);
 
   useEffect(() => {
     setScaleBlocksCount();
@@ -123,9 +128,14 @@ const CasingView: FC<CasingViewType> = ({
           </Button>
         </Header>
         <BodyWrapper>
-          {isEmpty(casings) ? (
+          {isEmpty(casings) &&
+          (isEventsLoading || (!isEventsLoading && isEmpty(events))) ? (
             <EmptyCasingsStateWrapper>
-              <EmptyState emptySubtitle={EMPTY_STATE_TEXT} />
+              <EmptyState
+                isLoading={isEventsLoading}
+                loadingSubtitle={isEventsLoading ? LOADING_TEXT : ''}
+                emptySubtitle={EMPTY_STATE_TEXT}
+              />
             </EmptyCasingsStateWrapper>
           ) : (
             <>
@@ -136,9 +146,13 @@ const CasingView: FC<CasingViewType> = ({
                 </BodyColumnHeaderWrapper>
                 <BodyColumnBody>
                   <CasingScale ref={scaleRef}>
-                    {scaleBlocks.map((row) => (
-                      <ScaleLine key={row} />
-                    ))}
+                    {isEmpty(casings) ? (
+                      <EmptyCasingsStateWrapper>
+                        <EmptyState emptySubtitle={EMPTY_SCHEMA_TEXT} />
+                      </EmptyCasingsStateWrapper>
+                    ) : (
+                      scaleBlocks.map((row) => <ScaleLine key={row} />)
+                    )}
                   </CasingScale>
                   {normalizedCasings.map((normalizedCasing, index) => (
                     <Fragment key={normalizedCasing.id}>

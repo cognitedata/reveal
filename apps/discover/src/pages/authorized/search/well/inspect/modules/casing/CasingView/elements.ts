@@ -244,6 +244,7 @@ export const EmptyStateWrapper = styled(Flex)`
 export const EmptyCasingsStateWrapper = styled(Flex)`
   white-space: break-spaces;
   max-width: 200px;
+  height: 100%;
   & ${SubTitleText} {
     font-weight: 500;
     font-size: 12px;
@@ -253,5 +254,6 @@ export const EmptyCasingsStateWrapper = styled(Flex)`
     text-align: center;
     letter-spacing: -0.004em;
     padding-top: 0;
+    justify-content: center;
   }
 `;

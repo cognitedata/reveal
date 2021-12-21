@@ -13,9 +13,7 @@ export const useGetCasingTableColumns = () => {
       width: '30px',
       Cell: () => <>&nbsp;</>,
     },
-    ...wellsTableColumns.map((row) =>
-      row.accessor === 'wellName' ? { ...row, accessor: 'wellboreName' } : row
-    ),
+    ...wellsTableColumns,
   ];
   return {
     wellsTableColumns,

@@ -147,12 +147,14 @@ export const getScaleBlocks = (
   const count = Math.floor((height - SCALE_PADDING) / SCALE_BLOCK_HEIGHT);
   const distance = maxDepth - minDepth;
   const pixelDepth = distance / (height - SCALE_PADDING - SCALE_BOTTOM_PADDING);
-  return [...Array(count).keys()].map((row) =>
-    Number(
-      (
-        minDepth +
-        ((row + 1) * SCALE_BLOCK_HEIGHT - SCALE_PADDING) * pixelDepth
-      ).toFixed(2)
+  return [...Array(count).keys()]
+    .map((row) =>
+      Number(
+        (
+          minDepth +
+          ((row + 1) * SCALE_BLOCK_HEIGHT - SCALE_PADDING) * pixelDepth
+        ).toFixed(2)
+      )
     )
-  );
+    .filter((row) => !Number.isNaN(row));
 };
