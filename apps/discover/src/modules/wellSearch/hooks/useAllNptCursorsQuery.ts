@@ -12,8 +12,8 @@ export const useAllNptCursorsQuery = ({ wellboreIds }: AllCursorsProps) => {
   return useArrayCache<Npt>({
     key: WELL_QUERY_KEY.NPT_EVENTS_CACHE,
     items: wellboreIds,
-    fetchAction: (items: Set<string>) =>
-      nptFetchAll({ wellboreIds: items }).then((response) =>
+    fetchAction: (items: Set<string>, options) =>
+      nptFetchAll({ wellboreIds: items, options }).then((response) =>
         groupByWellbore(response)
       ),
   });

@@ -7,7 +7,7 @@ import { Title } from '@cognite/cogs.js';
 import { sizes, FlexRow, Flex } from 'styles/layout';
 
 const SubTitle = styled(Flex)`
-  padding: 0 ${sizes.small};
+  padding: 0 ${sizes.extraSmall};
 `;
 const WidgetHeader = styled(FlexRow)`
   align-items: baseline;
@@ -23,7 +23,7 @@ const WidgetWrapper = styled.div`
   border: 2px solid var(--cogs-graphics-info);
   background: var(--cogs-white);
   height: 134px;
-  width: 300px;
+  width: 272px;
   padding: ${sizes.normal};
   margin: ${sizes.small};
 `;
@@ -36,7 +36,7 @@ export const Widget: React.FC<Props> = ({ title, subtitle, children }) => {
   return (
     <WidgetWrapper>
       <WidgetHeader>
-        <Title level={3}>{title}</Title>
+        <Title level={4}>{title}</Title>
         <SubTitle>{subtitle}</SubTitle>
       </WidgetHeader>
       <WidgetContent>{children}</WidgetContent>

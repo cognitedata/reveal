@@ -12,8 +12,8 @@ export const useAllTrajectoriesQuery = ({ wellboreIds }: AllCursorsProps) => {
   return useArrayCache<Trajectory>({
     key: WELL_QUERY_KEY.TRAJECTORIES_CACHE,
     items: wellboreIds,
-    fetchAction: (items: Set<string>) =>
-      fetchAllTrajectories({ wellboreIds: items }).then((response) =>
+    fetchAction: (items: Set<string>, options) =>
+      fetchAllTrajectories({ wellboreIds: items, options }).then((response) =>
         groupByWellbore(response)
       ),
   });

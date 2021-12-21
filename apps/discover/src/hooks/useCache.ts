@@ -3,6 +3,8 @@ import { useQuery, useQueryClient } from 'react-query';
 
 import pick from 'lodash/pick';
 
+import { FetchOptions } from '_helpers/fetchAllCursors';
+
 /*
  * Fetch only the new items, get all the rest from cache
  *
@@ -19,7 +21,10 @@ import pick from 'lodash/pick';
 export type CacheProps<T> = {
   key: string | string[];
   items: Set<string>;
-  fetchAction: (items: Set<string>) => Promise<Record<string, T[]>>;
+  fetchAction: (
+    items: Set<string>,
+    options?: FetchOptions
+  ) => Promise<Record<string, T[]>>;
 };
 export const useCache = <T>({ key, items, fetchAction }: CacheProps<T>) => {
   const queryClient = useQueryClient();
@@ -41,12 +46,12 @@ export const useCache = <T>({ key, items, fetchAction }: CacheProps<T>) => {
 
   return useQuery(
     key,
-    () => {
+    ({ signal }) => {
       if (newItemsToFetch.size === 0) {
         return previousCache;
       }
 
-      return fetchAction(newItemsToFetch).then((groupedEvents) => {
+      return fetchAction(newItemsToFetch, { signal }).then((groupedEvents) => {
         const updatedCache = previousCache;
 
         // merge the new data into the existing cache

@@ -37,8 +37,8 @@ export const useAllWellSearchResultQuery = (): UseQueryResult<Well[]> => {
 
   return useQuery(
     [WELL_QUERY_KEY.SEARCH, 'allWells'],
-    () => {
-      return getAllByFilters(wellFilter);
+    ({ signal }) => {
+      return getAllByFilters(wellFilter, { signal });
     },
     {
       enabled: !wellConfig?.disabled,

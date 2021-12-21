@@ -12,8 +12,8 @@ export const useAllCasingsQuery = ({ wellboreIds }: AllCursorsProps) => {
   return useArrayCache<CasingSchematic>({
     key: WELL_QUERY_KEY.CASINGS_CACHE,
     items: wellboreIds,
-    fetchAction: (items: Set<string>) =>
-      casingsFetchAll({ wellboreIds: items }).then((response) =>
+    fetchAction: (items: Set<string>, options) =>
+      casingsFetchAll({ wellboreIds: items, options }).then((response) =>
         groupByWellbore(response)
       ),
   });

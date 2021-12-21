@@ -7,10 +7,8 @@ import {
   Nds,
   NdsItems,
   TrajectoryInterpolationItems,
-  Wellbore,
 } from '@cognite/sdk-wells-v3';
 
-import { fetchAllCursors } from '_helpers/fetchAllCursors';
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { showErrorMessage } from 'components/toast';
 import { MetricLogger } from 'hooks/useTimeLog';
@@ -60,20 +58,6 @@ export const fetchNdsEvents = async (
     filter: { wellboreIds: wellboreIds.map(toIdentifier) },
     limit: EVENT_PER_PAGE,
     cursor,
-  });
-};
-
-export const fetchAllNdsEvents = async ({
-  wellboreIds,
-}: {
-  wellboreIds: Set<Wellbore['matchingId']>;
-}) => {
-  return fetchAllCursors<Nds>({
-    action: getWellSDKClient().nds.list,
-    actionProps: {
-      filter: { wellboreIds: Array.from(wellboreIds).map(toIdentifier) },
-      limit: EVENT_PER_PAGE,
-    },
   });
 };
 

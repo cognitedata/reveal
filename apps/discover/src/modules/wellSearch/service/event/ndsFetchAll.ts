@@ -1,22 +1,24 @@
-import { Wellbore, CasingSchematic } from '@cognite/sdk-wells-v3';
+import { Wellbore, Nds } from '@cognite/sdk-wells-v3';
 
 import { fetchAllCursors, FetchOptions } from '_helpers/fetchAllCursors';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 
-export const casingsFetchAll = async ({
+import { EVENT_PER_PAGE } from './common';
+
+export const fetchAllNdsEvents = async ({
   wellboreIds,
   options,
 }: {
   wellboreIds: Set<Wellbore['matchingId']>;
   options?: FetchOptions;
 }) => {
-  return fetchAllCursors<CasingSchematic>({
+  return fetchAllCursors<Nds>({
     signal: options?.signal,
-    action: getWellSDKClient().casings.list,
+    action: getWellSDKClient().nds.list,
     actionProps: {
       filter: { wellboreIds: Array.from(wellboreIds).map(toIdentifier) },
-      //   limit: LIMIT,
+      limit: EVENT_PER_PAGE,
     },
   });
 };

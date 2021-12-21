@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 
+import { FetchOptions } from '_helpers/fetchAllCursors';
 import {
   getAllWellItemsByFilter,
   getWellById,
@@ -14,8 +15,11 @@ export function getByFilters(wellFilter: CommonWellFilter) {
   );
 }
 
-export function getAllByFilters(wellFilter: CommonWellFilter) {
-  return getAllWellItemsByFilter(wellFilter);
+export function getAllByFilters(
+  wellFilter: CommonWellFilter,
+  options?: FetchOptions
+) {
+  return getAllWellItemsByFilter(wellFilter, options);
 }
 
 export function getWellByWellId(wellId: number) {
