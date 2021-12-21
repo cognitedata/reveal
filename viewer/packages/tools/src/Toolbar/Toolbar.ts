@@ -29,6 +29,7 @@ export class Toolbar {
     left: 'reveal-viewer-toolbar-container--left',
     right: 'reveal-viewer-toolbar-container--right',
     icon: 'reveal-viewer-toolbar-icon',
+    iconImg: 'reveal-viewer-toolbar-icon-img',
     iconClicked: 'reveal-viewer-toolbar-icon-clicked'
   };
 
@@ -85,6 +86,7 @@ export class Toolbar {
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
     const iconImage = new Image();
+    iconImage.className = Toolbar.classnames.iconImg;
     iconImage.src = backgroundImage;
 
     element.appendChild(iconImage);

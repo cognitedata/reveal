@@ -33,11 +33,10 @@
 }
 
 .reveal-viewer-toolbar-icon {
+  position: relative;
   height: 50px;
   line-height: 50px;
   width: 50px;
-  font-size: 2em;
-  font-weight: bold;
   border-radius: 50%;
   background-color: #000000;
   color: white;
@@ -46,6 +45,17 @@
   border: 1px solid rgb(255, 255, 255);
   border-color: rgb(255, 255, 255);
   margin: 2px;
+}
+
+.reveal-viewer-toolbar-icon-img {
+  position:absolute;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  opacity: 0.5;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .reveal-viewer-toolbar-icon:hover {
