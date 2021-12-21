@@ -32,11 +32,9 @@ export class WorkspaceService {
 
   addDocument(
     documents: WorkspaceDocument[],
-    documentId: string,
-    documentName: string,
-    documentExId?: string
+    { documentId, documentName, documentExId, x, y }: WorkspaceDocument
   ): WorkspaceDocument[] {
-    return [...documents, { documentId, documentName, documentExId }];
+    return [...documents, { documentId, documentName, documentExId, x, y }];
   }
 
   removeDocument(

@@ -27,10 +27,19 @@ describe('ProjectExecutionService Test', () => {
 
   it('shall add document', async () => {
     const service = createService();
-    expect(service.addDocument([], '123', 'test')).toEqual([
+    expect(
+      service.addDocument([], {
+        documentId: '123',
+        documentName: 'test',
+        x: 0,
+        y: 0,
+      })
+    ).toEqual([
       {
         documentId: '123',
         documentName: 'test',
+        x: 0,
+        y: 0,
       },
     ]);
   });
@@ -41,6 +50,8 @@ describe('ProjectExecutionService Test', () => {
       {
         documentId: '123',
         documentName: 'test',
+        x: 0,
+        y: 0,
       },
     ];
     expect(service.removeDocument(docs, '123')).toEqual([]);

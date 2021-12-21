@@ -17,7 +17,7 @@ export interface WorkspaceDocsPanelProps {
     fileName: string
   ) => void;
   onWorkspaceTitleUpdated: (newTitle: string) => void;
-  onDeleteDocument: (doc: WorkspaceDocument) => void;
+  onDeleteDocument: (docId: string) => void;
   onAssetClick: (fileId: string, asset: Asset) => void;
 }
 
@@ -100,7 +100,7 @@ export const WorkspaceDocsPanel = ({
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    onDeleteDocument(doc);
+                    onDeleteDocument(doc.documentId);
                   }}
                 />
               </ListItem>

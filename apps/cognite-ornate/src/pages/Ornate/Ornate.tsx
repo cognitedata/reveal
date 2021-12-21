@@ -54,6 +54,7 @@ import { useMetrics } from '@cognite/metrics';
 import ContextMenu from 'components/ContextMenu';
 import { defaultShapeSettings, OrnateContext } from 'context';
 import { Node, NodeConfig } from 'konva/lib/Node';
+import isNumber from 'lodash/isNumber';
 
 import {
   Loader,
@@ -161,11 +162,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         );
 
         if (doc) {
-          onDeleteDocument({
-            documentId: doc?.metadata!.fileId,
-            documentName: doc?.metadata!.fileName,
-            documentExId: doc?.metadata!.fileExternalId,
-          });
+          onDeleteDocument(doc?.metadata!.fileId);
         }
       }
     },
@@ -337,12 +334,13 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       const documents = [] as WorkspaceDocument[];
       await Promise.all(
         contents.documents.map(async (doc) => {
+          const { x, y } = doc;
           const { fileId, fileName, fileExternalId } = doc.metadata;
           const workspaceDoc = await loadFile(
             { id: +fileId, externalId: fileExternalId },
             fileName,
             {
-              initialPosition: { x: doc.x, y: doc.y },
+              initialPosition: { x, y },
               zoomAfterLoad: false,
             }
           );
@@ -351,6 +349,8 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
             documentId: fileId,
             documentName: fileName,
             documentExId: fileExternalId,
+            x,
+            y,
           });
 
           const parsedDrawings: Drawing[] = doc.drawings.map((drawing) => {
@@ -470,8 +470,47 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         doc.metadata?.fileExternalId === String(fileReference.externalId) ||
         doc.metadata?.fileId === String(fileReference.id)
     );
+    const rightX = isNumber(options?.initialPosition?.x)
+      ? initialPosition.x
+      : 50 + // add some space to the next document
+        // get document highest x coordinate + document width
+        workspaceDocuments.reduce<number>((maxX, workspaceDoc) => {
+          if (workspaceDoc.x < maxX) {
+            return maxX;
+          }
+          // find overlapped document in viewer
+          const overlappedDocInViewer = ornateViewer.current!.documents.find(
+            (viewerDoc) =>
+              viewerDoc.metadata?.fileExternalId ===
+                workspaceDoc.documentExId ||
+              viewerDoc.metadata?.fileId === workspaceDoc.documentId
+          );
+          const docWidth = overlappedDocInViewer?.kImage.width() || 0;
+          const docHeight = overlappedDocInViewer?.kImage.height() || 0;
+          // Most PIDs has width 2500 and height 1760, so we calculate the position based on this size
+          const newDocHeight = 1760;
+          const newDocY = initialPosition.y;
+
+          // check Y position
+          if (
+            workspaceDoc.y < newDocY &&
+            workspaceDoc.y + docHeight <= newDocY
+          ) {
+            // new doc will not overlap the workspace doc. Keep rightX position
+            return maxX;
+          }
+          if (
+            workspaceDoc.y > newDocY &&
+            newDocY + newDocHeight <= workspaceDoc.y
+          ) {
+            // new doc will not overlap the workspace doc. Keep rightX position
+            return maxX;
+          }
+          // new doc will overlap the workspace doc. shifting rightX
+          return Math.trunc(workspaceDoc.x + docWidth);
+        }, 0);
+
     if (existingDoc) {
-      console.log('document already exists!');
       ornateViewer.current!.zoomToDocument(existingDoc);
       return {};
     }
@@ -499,7 +538,11 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         fileName,
         fileExternalId: file.externalId || '',
       },
-      { initialPosition, zoomAfterLoad, groupId: String(file.externalId) }
+      {
+        initialPosition: { ...initialPosition, x: rightX },
+        zoomAfterLoad,
+        groupId: String(file.externalId),
+      }
     );
 
     const idEvents = await client.events
@@ -565,12 +608,13 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       [file.id]: instances,
     }));
     setWorkspaceDocuments(
-      workspaceService.addDocument(
-        workspaceDocuments,
-        String(file.id),
-        fileName,
-        file.externalId
-      )
+      workspaceService.addDocument(workspaceDocuments, {
+        documentId: String(file.id),
+        documentName: fileName,
+        documentExId: file.externalId,
+        x: rightX,
+        y: initialPosition.y,
+      })
     );
 
     setShowLoader(false);
@@ -646,18 +690,15 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   );
 
   const onDeleteDocument = useCallback(
-    (workspaceDoc: WorkspaceDocument) => {
+    (workspaceDocId: string) => {
       metrics.track('onDeleteDocument');
       const docToRemove = ornateViewer.current!.documents.find(
-        (doc) => doc.metadata && doc.metadata.fileId === workspaceDoc.documentId
+        (doc) => doc.metadata && doc.metadata.fileId === workspaceDocId
       );
       if (docToRemove) {
         ornateViewer.current!.removeDocument(docToRemove);
         setWorkspaceDocuments(
-          workspaceService.removeDocument(
-            workspaceDocuments,
-            workspaceDoc.documentId
-          )
+          workspaceService.removeDocument(workspaceDocuments, workspaceDocId)
         );
       }
     },
