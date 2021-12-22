@@ -17,11 +17,16 @@ describe(CdfModelDataProvider.name, () => {
     baseUrl
   });
 
-  mockClientAuthentication(client);
+  let authenticationSpy: jest.MockInstance<Promise<boolean>, []> = mockClientAuthentication(client);
 
   client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
 
   const clientExt = new CdfModelDataProvider(client);
+
+  beforeEach(() => {
+    authenticationSpy.mockRestore();
+    authenticationSpy = mockClientAuthentication(client);
+  });
 
   test('getBinaryFile() with binary data returns valid ArrayBuffer', async () => {
     // Arrange
@@ -38,5 +43,23 @@ describe(CdfModelDataProvider.name, () => {
     }
     const view = new Uint8Array(result);
     expect(view.toString()).toEqual(expected.toString());
+  });
+
+  test('getBinaryFile() does not authenticate on 200', async () => {
+    // Make first API call fail, second succeed
+    nock(/.*/).get(/.*/).reply(200, '');
+
+    await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
+    expect(authenticationSpy).not.toHaveBeenCalled();
+  });
+
+  test('getBinaryFile() re-authenticates on 401', async () => {
+    // Make first API call fail, second succeed
+    nock(/.*/).get(/.*/).reply(401, '');
+    nock(/.*/).get(/.*/).reply(200, '');
+
+    expect(authenticationSpy).not.toHaveBeenCalled();
+    await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
+    expect(authenticationSpy).toHaveBeenCalledTimes(1);
   });
 });
