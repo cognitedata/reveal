@@ -1,1 +1,1 @@
-export { default } from './ModelLibrary';
+export * from './NewModel/NewModel';

@@ -1,9 +1,11 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { partialUpdate } from 'store/utils';
-import { fetchCalculationFile, updateCalculationFile } from 'store/file/thunks';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-import { NotificationState, NotificationType } from './types';
+import { partialUpdate } from 'store/utils';
+
 import { initialState } from './constants';
+import type { NotificationState } from './types';
+import { NotificationType } from './types';
 
 export const notificationSlice = createSlice({
   name: 'notification',
@@ -14,7 +16,7 @@ export const notificationSlice = createSlice({
       partialUpdate(state, {
         title: undefined,
         message: undefined,
-        type: NotificationType.default,
+        type: NotificationType.Default,
       }),
     setNotification: (
       state,
@@ -23,24 +25,8 @@ export const notificationSlice = createSlice({
       partialUpdate(state, {
         title: action.payload?.title,
         message: action.payload?.message,
-        type: action.payload?.type || NotificationType.default,
+        type: action.payload?.type ?? NotificationType.Default,
       }),
-  },
-  extraReducers: (builder) => {
-    builder.addCase(updateCalculationFile.rejected, (state, action) =>
-      partialUpdate(state, {
-        title: action.error.name,
-        message: action.error.message,
-        type: NotificationType.error,
-      })
-    );
-    builder.addCase(fetchCalculationFile.rejected, (state, action) =>
-      partialUpdate(state, {
-        title: action.error.name,
-        message: action.error.message,
-        type: NotificationType.error,
-      })
-    );
   },
 });
 

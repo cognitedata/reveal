@@ -1,5 +1,6 @@
-/* eslint-disable no-underscore-dangle */
-import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
+/* eslint-disable @typescript-eslint/naming-convention */
+import type { SidecarConfig } from '@cognite/sidecar';
+import { getDefaultSidecar } from '@cognite/sidecar';
 
 // # -------------------------------------
 // #
@@ -21,9 +22,9 @@ const LOCAL_SERVICE = Boolean(process.env.REACT_APP_LOCAL_SERVICE) || false;
 
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
-    bluefield: '245a8a64-4142-4226-86fa-63d590de14c9',
+    'bluefield': '245a8a64-4142-4226-86fa-63d590de14c9',
     'azure-dev': '5a262178-942b-4c8f-ac15-f96642b73b56',
-    ew1: 'd584f014-5fa9-4b0b-953d-cc4837d093f3',
+    'ew1': 'd584f014-5fa9-4b0b-953d-cc4837d093f3',
     'westeurope-1': '83e4fd8b-321f-4e35-89f9-80dde739a713',
   };
 
@@ -34,11 +35,15 @@ const getAadApplicationId = (cluster: string) => {
   };
 };
 
+type WindowType = typeof window & {
+  __cogniteSidecar?: Partial<SidecarConfig> & Record<string, unknown>;
+};
+
 // we are overwriting the window.__cogniteSidecar object because the tenant-selector
 // reads from this variable, so when you test on localhost, it (TSA) will not access via this file
 // but via the window.__cogniteSidecar global
 // now that this var is updated, all should work as expected.
-(window as any).__cogniteSidecar = {
+(window as WindowType).__cogniteSidecar = {
   ...getAadApplicationId(CLUSTER),
   ...getDefaultSidecar({
     prod: PROD,
@@ -61,7 +66,7 @@ const getAadApplicationId = (cluster: string) => {
     app_id: 'ou1uyk2p',
     hide_default_launcher: true,
   },
-  ...((window as any).__cogniteSidecar || {}),
+  ...(window as WindowType).__cogniteSidecar,
 };
 
-export default (window as any).__cogniteSidecar as SidecarConfig;
+export default (window as WindowType).__cogniteSidecar as SidecarConfig;

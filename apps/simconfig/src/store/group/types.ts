@@ -1,9 +1,10 @@
-import {
+import type {
   Acl,
-  Group,
   SingleCogniteCapability as Capability,
+  Group,
 } from '@cognite/sdk';
-import { RequestStatus } from 'store/types';
+
+import type { RequestStatus } from 'store/constants';
 
 export interface GroupState {
   requestStatus: RequestStatus;
@@ -12,7 +13,7 @@ export interface GroupState {
 }
 
 // Type wrangling helpers
-type AllKeys<T> = T extends any ? keyof T : never;
+type AllKeys<T> = T extends unknown ? keyof T : never;
 
 type TrimRight<
   StringType,
@@ -22,8 +23,9 @@ type TrimRight<
 type PickKey<
   CapabilityType,
   CapabilityKey extends AllKeys<Capability>,
-  K extends keyof Acl<any, any>
-> = CapabilityType extends { [K in CapabilityKey]?: any }
+  K extends keyof Acl<unknown, unknown>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+> = CapabilityType extends Partial<Record<CapabilityKey, any>>
   ? CapabilityType[CapabilityKey][K]
   : never;
 

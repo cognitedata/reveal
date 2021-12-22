@@ -1,26 +1,32 @@
-import { useContext, useRef, ChangeEvent } from 'react';
-import { useHistory } from 'react-router-dom';
+import type { ChangeEvent } from 'react';
+import { useContext, useRef } from 'react';
+
+import { Field, Form, Formik } from 'formik';
+
 import { Button, Input, Select } from '@cognite/cogs.js';
+import type {
+  CreateMetadata,
+  FileInfo,
+  UpdateMetadata,
+} from '@cognite/simconfig-api-sdk/rtk';
+import {
+  getTypedFormData,
+  useCreateModelFileMutation,
+  useUpdateModelFileVersionMutation,
+} from '@cognite/simconfig-api-sdk/rtk';
+
+import { HiddenInputFile } from 'components/forms/controls/elements';
 import { FileInput } from 'components/forms/controls/FileInput';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { Field, Form, Formik, FormikProps } from 'formik';
-import { ApiContext } from 'providers/ApiProvider';
-import { HiddenInputFile } from 'components/forms/controls/elements';
-import { selectSimulators } from 'store/simulator/selectors';
 import { useAppSelector } from 'store/hooks';
+import { selectSimulators } from 'store/simulator/selectors';
+import { isAuthenticated } from 'utils/authUtils';
 import {
   getFileExtensionFromFileName,
   getSelectEntriesFromMap,
   isValidExtension,
 } from 'utils/formUtils';
-import {
-  CreateMetadataModel,
-  FileInfoModel,
-  UpdateMetadataModel,
-} from '@cognite/simconfig-api-sdk';
 
-import { InputRow } from './elements';
-import { ModelFormState } from './types';
 import {
   BoundaryCondition,
   DEFAULT_MODEL_SOURCE,
@@ -28,6 +34,10 @@ import {
   FileExtensionToSimulator,
   UnitSystem,
 } from './constants';
+import { InputRow } from './elements';
+import type { ModelFormState } from './types';
+
+import type { FormikProps } from 'formik';
 
 const getInitialModelFormState = (): ModelFormState => ({
   boundaryConditions: getSelectEntriesFromMap(BoundaryCondition),
@@ -55,14 +65,14 @@ const acceptedFileTypes = Object.keys(FileExtensionToSimulator);
 
 interface ComponentProps {
   initialModelFormState?: ModelFormState;
+  onUpload?: () => void;
 }
 
 export function ModelForm({
   initialModelFormState,
+  onUpload,
 }: React.PropsWithoutRef<ComponentProps>) {
-  const history = useHistory();
   const inputFile = useRef<HTMLInputElement>(null);
-  const { api } = useContext(ApiContext);
   const { authState } = useContext(CdfClientContext);
   const simulators = useAppSelector(selectSimulators);
 
@@ -80,6 +90,9 @@ export function ModelForm({
     }
   };
 
+  const [createModel] = useCreateModelFileMutation();
+  const [updateModelVersion] = useUpdateModelFileVersionMutation();
+
   const onSubmit = async ({
     file,
     fileInfo: formFileInfo,
@@ -89,7 +102,7 @@ export function ModelForm({
     if (!file) {
       throw new Error('Model file is missing');
     }
-    if (!authState?.project || !authState?.authenticated || !authState?.email) {
+    if (!isAuthenticated(authState)) {
       throw new Error('User is not authenticated');
     }
     // simulator name is chosen based on the extension of the filename
@@ -100,7 +113,7 @@ export function ModelForm({
     }
 
     // User e-mail is always set to the currently logged in user, incuding for new versions
-    const metadata: CreateMetadataModel | UpdateMetadataModel = {
+    const metadata: CreateMetadata | UpdateMetadata = {
       ...formMetadata,
       userEmail: authState.email,
       simulator,
@@ -116,36 +129,46 @@ export function ModelForm({
         throw new Error(`Missing required property: 'unitSystem'`);
       }
 
-      const fileInfo: FileInfoModel = {
+      const fileInfo: FileInfo = {
         ...formFileInfo,
         // Override linked values from metadata
         name: metadata.modelName,
         source: simulator,
       };
 
-      await api.modelLibrary.createModel(authState.project, {
-        boundaryConditions,
-        file,
-        fileInfo,
-        metadata,
+      // TODO(SIM-209): Show success toast
+      await createModel({
+        project: authState.project,
+        createModelFileRequestModel: getTypedFormData({
+          boundaryConditions,
+          file,
+          fileInfo,
+          metadata,
+        }),
       });
     } else {
       const { modelName, simulator, description, fileName, userEmail } =
         metadata;
 
-      await api.modelLibrary.updateModelVersion(authState.project, {
-        file,
-        metadata: {
-          modelName,
-          simulator,
-          description,
-          fileName,
-          userEmail,
-        },
+      // TODO(SIM-209): Show success toast
+      await updateModelVersion({
+        project: authState.project,
+        updateModelFileVersionRequestModel: getTypedFormData({
+          file,
+          metadata: {
+            modelName,
+            simulator,
+            description,
+            fileName,
+            userEmail,
+          },
+        }),
       });
     }
 
-    history.push(`/model-library/${modelFormState.fileInfo.name}`);
+    if (onUpload) {
+      onUpload();
+    }
   };
 
   const validateFilename = (value: string) => {
@@ -179,31 +202,31 @@ export function ModelForm({
             {file ? (
               <Field
                 as={Input}
-                title="File name"
-                name="metadata.fileName"
-                maxLength={512}
-                icon="Document"
-                validate={validateFilename}
-                fullWidth
                 error={
-                  errors?.metadata?.fileName
+                  errors.metadata?.fileName
                     ? errors.metadata.fileName
                     : undefined
                 }
-                isValid={isValidFile(metadata.fileName)}
                 helpText={
                   isValidFile(metadata.fileName)
                     ? `Simulator: ${metadata.simulator}`
                     : undefined
                 }
-                disabled
+                icon="Document"
+                isValid={isValidFile(metadata.fileName)}
+                maxLength={512}
+                name="metadata.fileName"
                 postfix={<Button onClick={onButtonClick}>File</Button>}
+                title="File name"
+                validate={validateFilename}
+                disabled
+                fullWidth
               />
             ) : (
               <Field
                 as={FileInput}
-                validate={validateFilename}
                 extensions={acceptedFileTypes}
+                validate={validateFilename}
                 onFileSelected={(file?: File) => {
                   setFieldValue('file', file);
                   setFieldValue('metadata.fileName', file?.name);
@@ -212,10 +235,10 @@ export function ModelForm({
               />
             )}
             <HiddenInputFile
-              id="file-upload"
-              type="file"
               accept={acceptedFileTypes.join(',')}
+              id="file-upload"
               ref={inputFile}
+              type="file"
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 const file = event.currentTarget.files?.[0];
                 setFieldValue('file', file);
@@ -226,22 +249,22 @@ export function ModelForm({
           <InputRow>
             <Field
               as={Input}
-              title="Model name"
-              name="metadata.modelName"
-              pattern="^[A-Za-z0-9_ -]*$"
+              disabled={!isNewModel}
               helpText="Only alphanumeric characters, spaces ( ), underscores (_) and dashes (-) are allowed."
               maxLength={256}
+              name="metadata.modelName"
+              pattern="^[A-Za-z0-9_ -]*$"
+              title="Model name"
               fullWidth
-              disabled={!isNewModel}
               required
             />
           </InputRow>
           <InputRow>
             <Field
               as={Input}
-              title="Description"
-              name="metadata.description"
               maxLength={512}
+              name="metadata.description"
+              title="Description"
               fullWidth
             />
           </InputRow>
@@ -249,9 +272,9 @@ export function ModelForm({
           {!isNewModel ? (
             <InputRow>
               <Input
+                title="Unit system"
                 value={UnitSystem[metadata.unitSystem]}
                 disabled
-                title="Unit system"
                 fullWidth
               />
             </InputRow>
@@ -260,30 +283,30 @@ export function ModelForm({
               <InputRow>
                 <Field
                   as={Select}
-                  title="Boundary conditions"
                   name="boundaryConditions"
+                  options={getSelectEntriesFromMap(BoundaryCondition)}
+                  title="Boundary conditions"
+                  isMulti
+                  required
                   onChange={(values: { label: string; value: string }[]) => {
                     setFieldValue('boundaryConditions', values);
                   }}
-                  options={getSelectEntriesFromMap(BoundaryCondition)}
-                  isMulti
-                  required
                 />
               </InputRow>
               <InputRow>
                 <Field
                   as={Select}
-                  title="Unit system"
                   name="metadata.unitSystem"
                   options={getSelectEntriesFromMap(UnitSystem)}
+                  title="Unit system"
                   value={{
                     value: metadata.unitSystem,
                     label: UnitSystem[metadata.unitSystem],
                   }}
-                  onChange={({ value }: { value: string }) =>
-                    setFieldValue('metadata.unitSystem', value)
-                  }
                   closeMenuOnSelect
+                  onChange={({ value }: { value: string }) => {
+                    setFieldValue('metadata.unitSystem', value);
+                  }}
                 />
               </InputRow>
             </>
@@ -291,11 +314,11 @@ export function ModelForm({
 
           <div>
             <Button
-              type="primary"
+              disabled={isSubmitting}
               htmlType="submit"
               icon="Add"
-              disabled={isSubmitting}
               loading={isSubmitting}
+              type="primary"
             >
               {isNewModel ? 'Create new model' : 'Upload new version'}
             </Button>

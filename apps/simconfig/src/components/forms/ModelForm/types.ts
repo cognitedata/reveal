@@ -1,13 +1,10 @@
-import { OptionType } from '@cognite/cogs.js';
-import {
-  BoundaryConditionProperty,
-  CreateModelRequestModel,
-} from '@cognite/simconfig-api-sdk';
+import type { OptionType } from '@cognite/cogs.js';
+import type * as SimconfigApi from '@cognite/simconfig-api-sdk/rtk';
 
 export interface ModelFormState
-  extends Omit<CreateModelRequestModel, 'boundaryConditions' | 'file'> {
+  extends Omit<SimconfigApi.CreateModelFile, 'boundaryConditions' | 'file'> {
   file?: File;
-  boundaryConditions: (OptionType<BoundaryConditionProperty> & {
-    value: BoundaryConditionProperty;
+  boundaryConditions: (OptionType<SimconfigApi.BoundaryCondition> & {
+    value: SimconfigApi.BoundaryCondition;
   })[];
 }

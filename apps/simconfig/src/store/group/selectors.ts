@@ -1,7 +1,8 @@
-import { StoreState } from 'store/types';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { Capabilities } from './types';
+import type { StoreState } from 'store/types';
+
+import type { Capabilities } from './types';
 
 export const selectGroups = (state: StoreState) => state.group.groups;
 
@@ -31,7 +32,8 @@ export const selectCapabilities = createSelector(selectGroups, (groups) =>
 
               // Note: Duplicate actions are not filtered
               return {
-                [key]: [...(capabilities[key] || []), ...actions],
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                [key]: [...(capabilities[key] ?? []), ...actions],
               };
             },
             {}
@@ -52,7 +54,7 @@ export const selectUploadDatasetIds = createSelector(selectGroups, (groups) =>
         'filesAcl' in capability ? capability.filesAcl : undefined
       )
     )
-    .filter((capability) => capability && capability?.actions.includes('WRITE'))
+    .filter((capability) => capability?.actions.includes('WRITE'))
     .flatMap((capability) =>
       capability && 'datasetScope' in capability.scope
         ? capability.scope.datasetScope.ids.map((it) => +it) // CDF returns strings (which should be numbers according to spec)

@@ -1,16 +1,24 @@
-import { Body, Title } from '@cognite/cogs.js';
-import { ModelForm } from 'components/forms/ModelForm';
-import { Container, Header } from 'pages/elements';
+import { useNavigate } from 'react-location';
 
-export default function NewModel() {
+import styled from 'styled-components/macro';
+
+import { ModelForm } from 'components/forms/ModelForm';
+
+export function NewModel() {
+  const navigate = useNavigate();
+
   return (
-    <Container>
-      <Header>
-        <Title>Configure new model</Title>
-      </Header>
-      <Body>
-        <ModelForm />
-      </Body>
-    </Container>
+    <NewModelContainer>
+      <h2>Configure new model</h2>
+      <ModelForm
+        onUpload={() => {
+          navigate({ to: '/model-library' });
+        }}
+      />
+    </NewModelContainer>
   );
 }
+
+const NewModelContainer = styled.div`
+  margin: 24px;
+`;

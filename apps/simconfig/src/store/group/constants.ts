@@ -1,9 +1,9 @@
-import { RequestStatus } from 'store/types';
+import { RequestStatus } from 'store/constants';
 
-import { GroupState } from './types';
+import type { GroupState } from './types';
 
 export const initialState: GroupState = {
-  requestStatus: RequestStatus.IDLE,
+  requestStatus: RequestStatus.Idle,
   initialized: false,
   groups: [],
 };

@@ -1,9 +1,11 @@
 import moment from 'moment';
-import { RootState } from 'store';
-import { StoreState } from 'store/types';
+
+import type { StoreState } from 'store/types';
 
 import { HEARTBEAT_TIMEOUT_SECONDS } from './constants';
-import { Simulator } from './types';
+import type { Simulator } from './types';
+
+import type { RootState } from 'store';
 
 export const selectIsSimulatorAvailable = (item: Simulator) =>
   moment(item.heartbeat).isAfter(
@@ -13,12 +15,10 @@ export const selectIsSimulatorAvailable = (item: Simulator) =>
 export const selectIsSimulatorInitialized = (state: StoreState) =>
   state.simulator.initialized;
 
-export const selectSimulators = (state: StoreState) => {
-  const simulators = [...state.simulator.simulators];
-  return (
-    simulators.sort((a, b) => (a.heartbeat < b.heartbeat ? 1 : -1)) ?? null
+export const selectSimulators = (state: StoreState) =>
+  [...state.simulator.simulators].sort((a, b) =>
+    a.heartbeat < b.heartbeat ? 1 : -1
   );
-};
 
 export const selectAvailableSimulators = (state: RootState) =>
-  state.simulator.simulators.filter(selectIsSimulatorAvailable).length ?? 0;
+  state.simulator.simulators.filter(selectIsSimulatorAvailable).length;

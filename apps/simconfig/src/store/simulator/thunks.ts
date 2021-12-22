@@ -1,8 +1,9 @@
-import { CogniteClient } from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { Simulator } from './types';
-import { SimulatorBackend } from './constants';
+import type { CogniteClient } from '@cognite/sdk';
+import type { Simulator as SimulatorBackend } from '@cognite/simconfig-api-sdk/rtk';
+
+import type { Simulator } from './types';
 
 const fetchSimulatorInformation = async (
   client: CogniteClient,
@@ -26,25 +27,28 @@ export const fetchSimulators = createAsyncThunk(
     });
 
     const resolveSimulators: Promise<Simulator>[] = sequences.items.map(
-      (simulator) =>
+      async (simulator) =>
         new Promise((resolve) => {
-          if (simulator?.externalId) {
-            fetchSimulatorInformation(client, simulator.externalId).then(
-              (rows) => {
-                resolve({
-                  dataSetName: rows[0],
-                  dataSetWriteProtected: rows[1],
+          if (simulator.externalId) {
+            fetchSimulatorInformation(client, simulator.externalId)
+              .then((rows) => {
+                const result: Simulator = {
+                  dataSetName: rows[0]?.toString() ?? '',
+                  dataSetWriteProtected: !!rows[1],
                   simulator: (simulator.metadata?.simulator ??
-                    SimulatorBackend.UNKNOWN) as SimulatorBackend,
+                    'UNKNOWN') as SimulatorBackend,
                   name: (
                     simulator.metadata?.connector ?? '(unknown)'
                   ).toString(),
-                  heartbeat: parseInt((rows[2] || 0).toString(), 10),
+                  heartbeat: parseInt((rows[2] ?? 0).toString(), 10),
                   dataSet: Number(rows[3]),
                   connectorVersion: String(rows[4]).replace('SimConnect-', ''),
-                } as Simulator);
-              }
-            );
+                };
+                resolve(result);
+              })
+              .catch(() => {
+                // Ignore
+              });
           }
         })
     );

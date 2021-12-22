@@ -1,7 +1,8 @@
-import { NotificationState, NotificationType } from './types';
+import type { NotificationState } from './types';
+import { NotificationType } from './types';
 
 export const initialState: NotificationState = {
-  type: NotificationType.success,
+  type: NotificationType.Success,
   title: undefined,
   message: undefined,
 };

@@ -1,130 +1,133 @@
-import { Button, CollapsablePanel, Tag, Title } from '@cognite/cogs.js';
-import { CollapsableContainer, Container, Header } from 'pages/elements';
-import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
-import { useContext, useEffect } from 'react';
-import { CdfClientContext } from 'providers/CdfClientProvider';
-import { BoundaryConditionContent } from 'pages/ModelLibrary/BoundaryConditionContent';
-import ModelTable from 'components/tables/ModelTable/ModelTable';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { fetchFiles } from 'store/file/thunks';
-import { setSelectedFile } from 'store/file';
-import { selectFiles, selectSelectedFile } from 'store/file/selectors';
-import { DEFAULT_MODEL_SOURCE } from 'components/forms/ModelForm/constants';
+import { Link, useMatch, useNavigate } from 'react-location';
+import { useSelector } from 'react-redux';
 
-import { DATA_TYPE_FILE } from './constants';
-import TitleArea from './TitleArea';
-import { SidebarContainer } from './elements';
+import { Field, Form, Formik } from 'formik';
+import styled from 'styled-components/macro';
 
-type Params = {
-  modelName?: string;
-};
+import { Button, Input, Select } from '@cognite/cogs.js';
 
-export default function ModelLibrary() {
-  const { url, params } = useRouteMatch<Params>();
-  const selectedFileVersion = useAppSelector(selectSelectedFile);
-  const { modelName } = params;
-  const dispatch = useAppDispatch();
-  const files = useAppSelector(selectFiles);
-  const history = useHistory();
-  const location = useLocation();
-  const { cdfClient } = useContext(CdfClientContext);
-  const getFilter = () => {
-    if (modelName) {
-      return {
-        source: DEFAULT_MODEL_SOURCE,
-        name: modelName,
-      };
-    }
-    return {
-      source: DEFAULT_MODEL_SOURCE,
-      metadata: {
-        nextVersion: '',
-        dataType: DATA_TYPE_FILE,
-      },
-    };
-  };
+import { ModelDetails, ModelList } from 'components/models';
+import { selectProject } from 'store/simconfigApiProperties/selectors';
 
-  // XXX needs to be refactored
-  const getLatestFileInfo = () =>
-    files.find((file) => !file.metadata?.nextVersion);
+import type { AppLocationGenerics } from 'routes';
 
-  async function loadData() {
-    const filter = getFilter();
-    dispatch(fetchFiles({ client: cdfClient, filter }));
+export function ModelLibrary() {
+  const project = useSelector(selectProject);
+  const {
+    params: {
+      modelName,
+      simulator = 'UNKNOWN',
+      selectedTab = 'model-versions',
+    },
+    data: { modelFiles },
+  } = useMatch<AppLocationGenerics>();
+  const navigate = useNavigate();
 
-    dispatch(setSelectedFile(undefined));
+  if (!modelName && modelFiles?.modelFileList) {
+    const firstFile = modelFiles.modelFileList[0];
+    navigate({
+      to: `/model-library/models/${encodeURIComponent(
+        firstFile.source
+      )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
+      replace: true,
+    });
   }
 
-  useEffect(() => {
-    loadData();
-  }, [modelName]);
-
-  useEffect(() => {
-    dispatch(setSelectedFile(undefined));
-  }, [location]);
-
-  const onClick = async () => {
-    if (!modelName) {
-      history.push(`${url}/new`);
-      return;
-    }
-
-    history.push(`${url}/new-version`);
-  };
-
-  const onClosePanel = () => {
-    dispatch(setSelectedFile(undefined));
-  };
-
   return (
-    <CollapsableContainer>
-      <CollapsablePanel
-        sidePanelRightWidth={420}
-        sidePanelRight={
-          <SidebarContainer>
-            <Title level={3} className="header">
-              <span className="name">
-                {selectedFileVersion?.name}
-                <Tag className="version">
-                  version {selectedFileVersion?.metadata?.version}
-                </Tag>
-              </span>
-              <Button
-                icon="Close"
-                type="ghost"
-                onClick={onClosePanel}
-                aria-label="close"
+    <ModelLibraryContainer>
+      <ModelLibrarySidebar>
+        <div className="header">
+          <Formik
+            initialValues={{}}
+            onSubmit={() => {
+              // eslint-disable-next-line no-console
+              console.log('Submit search');
+            }}
+          >
+            <Form>
+              <Field
+                as={Input}
+                icon="Search"
+                maxLength={64}
+                name="modelName"
+                placeholder="Filter by model name"
+                size="small"
+                title=""
+                fullWidth
               />
-            </Title>
-
-            <BoundaryConditionContent data={selectedFileVersion} />
-
-            <dl>
-              <dt>Description</dt>
-              <dd>{selectedFileVersion?.metadata?.description}</dd>
-
-              <dt>Uploaded by user</dt>
-              <dd>{selectedFileVersion?.metadata?.userEmail}</dd>
-            </dl>
-          </SidebarContainer>
-        }
-        sidePanelRightVisible={Boolean(selectedFileVersion)}
-      >
-        <Container>
-          <Header>
-            <TitleArea
-              modelName={modelName || 'Model library'}
-              showIndicators={!modelName}
-              latestFile={getLatestFileInfo()}
-              showBack={!modelName}
-            />
-            <Button onClick={onClick} type="primary" icon="Add">
-              {!modelName ? 'New model' : 'New version'}
-            </Button>
-          </Header>
-          <ModelTable data={files} modelName={modelName} />
-        </Container>
-      </CollapsablePanel>
-    </CollapsableContainer>
+              <Field
+                as={Select}
+                icon="Configure"
+                name="attributes"
+                title="Filter by"
+                fullWidth
+              />
+              <Field as={Select} name="sortBy" title="Sort by" disableTyping />
+            </Form>
+          </Formik>
+        </div>
+        <div className="model-list">
+          <div className="new-model">
+            <Link to="/model-library/new-model">
+              <Button icon="Add" type="primary" block>
+                New model
+              </Button>
+            </Link>
+          </div>
+          <ModelList modelFiles={modelFiles?.modelFileList ?? []} />
+        </div>
+      </ModelLibrarySidebar>
+      <ModelLibraryContent>
+        <ModelDetails
+          modelName={modelName}
+          project={project}
+          selectedTab={selectedTab}
+          simulator={simulator}
+        />
+      </ModelLibraryContent>
+    </ModelLibraryContainer>
   );
 }
+
+const ModelLibraryContainer = styled.div`
+  display: flex;
+  flex: 1 1 0;
+  overflow: auto;
+`;
+
+const ModelLibrarySidebar = styled.aside`
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 0 1 auto;
+  max-width: 400px;
+  min-width: 250px;
+  .header {
+    background: var(--cogs-greyscale-grey1);
+    padding: 0 24px;
+    box-shadow: 0 0 2px var(--cogs-greyscale-grey5);
+    form {
+      font-size: var(--cogs-detail-font-size);
+      .cogs-icon {
+        width: 12px !important;
+      }
+      & > div {
+        margin: 12px 0;
+      }
+    }
+  }
+  .new-model {
+    margin-bottom: 12px;
+  }
+  .model-list {
+    padding: 24px;
+    padding-top: 12px;
+    overflow: auto;
+  }
+`;
+
+const ModelLibraryContent = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column nowrap;
+  overflow: auto;
+`;

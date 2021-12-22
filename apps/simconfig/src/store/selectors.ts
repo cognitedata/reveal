@@ -1,4 +1,4 @@
-import { StoreState } from 'store/types';
+import type { StoreState } from 'store/types';
 
 export const selectIsAppInitialized = (state: StoreState) =>
-  state.group.initialized && state.dataset.initialized;
+  state.group.initialized;

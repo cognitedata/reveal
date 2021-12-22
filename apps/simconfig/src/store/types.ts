@@ -1,29 +1,24 @@
-import { AuthContext } from '@cognite/react-container';
+import type { AuthContext } from '@cognite/react-container';
+import type {
+  SimconfigApiBaseStoreState,
+  SimconfigApiPropertiesState,
+} from '@cognite/simconfig-api-sdk/rtk';
 
-import { DatasetState } from './dataset/types';
-import { GroupState } from './group/types';
-import { SimulatorState } from './simulator/types';
-import { FileState } from './file/types';
-import { BoundaryConditionState } from './boundaryCondition/types';
-import { EventState } from './event/types';
-import { NotificationState } from './notification/types';
-import { SamplingConfigurationState } from './samplingConfiguration/types';
+import type { GroupState } from './group/types';
+import type { NotificationState } from './notification/types';
+import type { SimulatorState } from './simulator/types';
 
 export enum RequestStatus {
-  IDLE,
-  LOADING,
-  SUCCESS,
-  ERROR,
+  Idle,
+  Loading,
+  Success,
+  Error,
 }
 
-export type StoreState = {
+export type StoreState = SimconfigApiBaseStoreState & {
   auth?: AuthContext;
-  dataset: DatasetState;
   group: GroupState;
   simulator: SimulatorState;
-  file: FileState;
-  boundaryCondition: BoundaryConditionState;
-  event: EventState;
   notification: NotificationState;
-  samplingConfiguration: SamplingConfigurationState;
+  simconfigApiProperties: SimconfigApiPropertiesState;
 };

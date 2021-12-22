@@ -1,4 +1,5 @@
-import { useRef, useEffect, MutableRefObject } from 'react';
+import type { MutableRefObject } from 'react';
+import { useEffect, useRef } from 'react';
 
 type PollingCallback = (callback: () => void) => void;
 
@@ -14,13 +15,13 @@ export const usePolling = (
   }, [callback]);
 
   useEffect(() => {
-    let cancelled = false;
+    let isCancelled = false;
 
     const pollingFn = () => {
       if (ref.current == null) {
         return;
       }
-      ref.current(() => cancelled);
+      ref.current(() => isCancelled);
     };
 
     const intervalId = setInterval(pollingFn, delay);
@@ -29,7 +30,7 @@ export const usePolling = (
     }
 
     return () => {
-      cancelled = true;
+      isCancelled = true;
       clearInterval(intervalId);
     };
   }, [delay, immediate]);

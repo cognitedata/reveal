@@ -4,6 +4,6 @@
     "baseUrl": "src",
     "module": "esnext"
   },
-  "include": ["src"],
+  "include": ["src", ".eslintrc.js", ".eslintrc.production.js"],
   "exclude": ["node_modules", "build"]
 }

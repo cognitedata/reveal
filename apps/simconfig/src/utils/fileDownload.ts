@@ -4,7 +4,7 @@ export const forceDownloadDialog = async (
 ) => {
   let hasError = false;
   await fetch(fileSrc)
-    .then((response) => {
+    .then(async (response) => {
       if (!response.ok) {
         throw response;
       }

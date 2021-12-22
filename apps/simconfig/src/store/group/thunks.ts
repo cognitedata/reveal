@@ -1,5 +1,6 @@
-import { CogniteClient } from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+
+import type { CogniteClient } from '@cognite/sdk';
 
 export const fetchGroups = createAsyncThunk(
   'group/fetchGroups',

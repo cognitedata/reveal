@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 export const DropTextWrapper = styled.div`
   padding: 12px;
@@ -6,7 +6,8 @@ export const DropTextWrapper = styled.div`
 `;
 
 export const DropWrapper = styled.div`
-  border: 1px solid var(--cogs-border-default);
+  border: 2px dashed var(--cogs-border-default);
+  border-radius: var(--cogs-border-radius--default);
   background: var(--cogs-bg-accent);
   padding: 24px;
   text-align: center;

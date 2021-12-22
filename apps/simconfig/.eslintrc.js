@@ -1,15 +1,28 @@
 module.exports = {
   extends: './.eslintrc.production.js',
-  ignorePatterns: ['.eslintrc.js', '.eslintrc.production.js'],
   // We can relax some settings here for nicer development experience; warnings will crash in CI
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      rules: {
+        'prettier/prettier': 'off',
+        // Optionally disable certain slow rules when developing:
+        // '@typescript-eslint/no-unsafe-assignment': 'off',
+        // '@typescript-eslint/naming-convention': 'off',
+      },
+    },
+  ],
   rules: {
-    'prettier/prettier': ['warn'],
-    '@typescript-eslint/no-unused-vars': ['warn'],
-    '@cognite/no-unissued-todos': ['warn'],
-    // Errors that appeared following eslint upgrade
-    'react/no-unstable-nested-components': ['off'],
-    'jsx-a11y/label-has-associated-control': ['off'],
-    'react-hooks/rules-of-hooks': ['off'],
-    'react/jsx-no-constructed-context-values': ['off'],
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@cognite/no-unissued-todos': 'warn',
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
+
+    // Stricter rules to indicate best practices during development
+    '@typescript-eslint/no-explicit-any': [
+      'warn',
+      {
+        fixToUnknown: true,
+      },
+    ],
   },
 };

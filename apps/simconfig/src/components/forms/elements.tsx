@@ -1,5 +1,6 @@
+import styled from 'styled-components/macro';
+
 import { Button, Input, Select, Switch, Title } from '@cognite/cogs.js';
-import styled from 'styled-components';
 
 export const InputRow = styled.div`
   margin: 12px 0;
@@ -25,11 +26,11 @@ export const DoubleInputRow = styled.div`
 `;
 
 export const InputFullWidth = styled(Input)`
-  width: ${(props) => props.width || '300px'};
+  width: ${(props) => props.width ?? '300px'};
 `;
 
 export const InputFullWidthForDouble = styled(Input)`
-  width: ${(props) => props.width || '300px'};
+  width: ${(props) => props.width ?? '300px'};
   margin-top: -4px;
 `;
 

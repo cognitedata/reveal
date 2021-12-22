@@ -1,73 +1,91 @@
-import GlobalStyles from 'global-styles';
-import { Switch, Redirect, Route } from 'react-router-dom';
-import { Logout } from '@cognite/react-container';
-import ModelLibrary from 'pages/ModelLibrary';
-import { MenuBar, PAGES } from 'pages/Menubar';
-import NotFoundPage from 'pages/Error404';
-import NewModel from 'pages/ModelLibrary/NewModel';
-import { useDispatch, useSelector } from 'react-redux';
 import { useContext, useEffect } from 'react';
+import { Outlet, ReactLocation, Router } from 'react-location';
+import { useSelector } from 'react-redux';
+
+import GlobalStyles from 'global-styles';
+import { routes } from 'routes';
+import styled from 'styled-components/macro';
+
+import { Loader } from '@cognite/cogs.js';
+
+import { MenuBar } from 'components/Menubar';
+import { useTitle } from 'hooks/useTitle';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { fetchGroups } from 'store/group/thunks';
-import { Loader } from '@cognite/cogs.js';
-import { fetchDatasets } from 'store/dataset/thunks';
+import { useAppDispatch } from 'store/hooks';
 import { selectIsAppInitialized } from 'store/selectors';
-import NewVersion from 'pages/ModelLibrary/NewVersion';
-import CalculationsLibrary from 'pages/Calculations';
-import CalculationConfiguration from 'pages/Calculations/Configuration';
-import RunHistory from 'pages/Calculations/RunHistory/RunHistory';
+import { simconfigApiPropertiesSlice } from 'store/simconfigApiProperties';
+import sidecar from 'utils/sidecar';
+
+import { enhanceSimconfigApiEndpoints } from './enhanceSimconfigApiEndpoints';
 
 export default function App() {
-  const dispatch = useDispatch();
-  const { cdfClient } = useContext(CdfClientContext);
+  const dispatch = useAppDispatch();
+  const { cdfClient, authState } = useContext(CdfClientContext);
   const isAppInitialized = useSelector(selectIsAppInitialized);
+  const project = authState?.project ?? '';
+
+  enhanceSimconfigApiEndpoints();
 
   useEffect(() => {
-    dispatch(fetchGroups(cdfClient));
-    dispatch(fetchDatasets(cdfClient));
-  }, []);
+    // TODO(SIM-209) Move to location loader
+    void dispatch(fetchGroups(cdfClient));
+
+    dispatch(
+      simconfigApiPropertiesSlice.actions.setBaseUrl(
+        sidecar.simconfigApiBaseUrl
+      )
+    );
+    dispatch(
+      simconfigApiPropertiesSlice.actions.setAuthToken(authState?.token)
+    );
+    dispatch(simconfigApiPropertiesSlice.actions.setProject(project));
+  }, [authState, cdfClient, dispatch, project]);
 
   if (!isAppInitialized) {
     return <Loader />;
   }
 
+  const location = new ReactLocation();
+
   return (
     <>
       <GlobalStyles />
-      <MenuBar />
-      <Switch>
-        <Route exact path={PAGES.MODEL_LIBRARY} component={ModelLibrary} />
-        <Route
-          exact
-          path={PAGES.CALCULATION_LIBRARY_CONFIG}
-          component={CalculationConfiguration}
-        />
-        <Route
-          exact
-          path={PAGES.CALCULATION_LIBRARY_RUN_HISTORY}
-          component={RunHistory}
-        />
-        <Route
-          exact
-          path={PAGES.CALCULATION_LIBRARY}
-          component={CalculationsLibrary}
-        />
-        <Route path={PAGES.MODEL_LIBRARY_NEW} component={NewModel} />
-        <Route
-          exact
-          path={PAGES.MODEL_LIBRARY_VERSION}
-          component={ModelLibrary}
-        />
-        <Route
-          exact
-          path={PAGES.MODEL_LIBRARY_VERSION_NEW}
-          component={NewVersion}
-        />
-        <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-        <Redirect from="" to={PAGES.MODEL_LIBRARY} />
-        <Redirect from="/" to={PAGES.MODEL_LIBRARY} />
-        <Route render={() => <NotFoundPage />} />
-      </Switch>
+      <Router
+        basepath={`/${project}`}
+        defaultPendingElement={<Loader />}
+        defaultPendingMs={50}
+        location={location}
+        routes={routes(dispatch, project)}
+      >
+        <RoutedAppContainer>
+          <MenuBar />
+          <Content>
+            <Outlet />
+          </Content>
+        </RoutedAppContainer>
+      </Router>
     </>
   );
 }
+
+function RoutedApp({
+  children,
+  ...props
+}: React.PropsWithChildren<React.HTMLAttributes<unknown>>) {
+  useTitle();
+  return <div {...props}>{children}</div>;
+}
+
+const RoutedAppContainer = styled(RoutedApp)`
+  display: flex;
+  height: 100vh;
+  flex-flow: column nowrap;
+`;
+
+const Content = styled.div`
+  flex: 1 0 0;
+  overflow: auto;
+  display: flex;
+  flex-flow: column nowrap;
+`;

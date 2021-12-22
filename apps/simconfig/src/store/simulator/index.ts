@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { RequestStatus } from 'store/types';
+
+import { RequestStatus } from 'store/constants';
 
 import { partialUpdate } from '../utils';
 
-import { fetchSimulators } from './thunks';
 import { initialState } from './constants';
+import { fetchSimulators } from './thunks';
 
 export const simulatorSlice = createSlice({
   name: 'simulator',
@@ -15,19 +16,19 @@ export const simulatorSlice = createSlice({
     builder
       .addCase(fetchSimulators.pending, (state) =>
         partialUpdate(state, {
-          requestStatus: RequestStatus.LOADING,
+          requestStatus: RequestStatus.Loading,
         })
       )
       .addCase(fetchSimulators.fulfilled, (state, action) =>
         partialUpdate(state, {
-          requestStatus: RequestStatus.SUCCESS,
+          requestStatus: RequestStatus.Success,
           initialized: true,
           simulators: action.payload,
         })
       )
       .addCase(fetchSimulators.rejected, (state) =>
         partialUpdate(state, {
-          requestStatus: RequestStatus.ERROR,
+          requestStatus: RequestStatus.Error,
         })
       );
   },

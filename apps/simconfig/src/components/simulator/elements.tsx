@@ -1,8 +1,10 @@
-import styled from 'styled-components';
 import moment from 'moment';
-import { Tag, Tooltip, Colors } from '@cognite/cogs.js';
-import { Simulator } from 'store/simulator/types';
+import styled from 'styled-components/macro';
+
+import { Colors, Tag, Tooltip } from '@cognite/cogs.js';
+
 import { selectIsSimulatorAvailable } from 'store/simulator/selectors';
+import type { Simulator } from 'store/simulator/types';
 
 const SimulatorItemContainer = styled.div`
   display: flex;

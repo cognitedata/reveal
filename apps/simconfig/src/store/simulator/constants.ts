@@ -1,14 +1,9 @@
-import { RequestStatus } from 'store/types';
+import { RequestStatus } from 'store/constants';
 
-import { SimulatorState } from './types';
-
-export enum SimulatorBackend {
-  UNKNOWN = 'Unknown',
-  PROSPER = 'PROSPER',
-}
+import type { SimulatorState } from './types';
 
 export const initialState: SimulatorState = {
-  requestStatus: RequestStatus.IDLE,
+  requestStatus: RequestStatus.Idle,
   initialized: false,
   simulators: [],
 };

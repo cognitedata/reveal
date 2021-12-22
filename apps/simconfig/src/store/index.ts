@@ -1,25 +1,26 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import { simulatorReducer } from './simulator';
+import { api as simconfigApi } from '@cognite/simconfig-api-sdk/rtk';
+
 import { groupReducer } from './group';
-import { datasetReducer } from './dataset';
-import { fileReducer } from './file';
-import { boundaryConditionReducer } from './boundaryCondition';
-import { eventReducer } from './event';
 import { notificationReducer } from './notification';
-import { samplingConfigurationReducer } from './samplingConfiguration';
+import { simconfigApiPropertiesReducer } from './simconfigApiProperties';
+import { simulatorReducer } from './simulator';
 
 export const store = configureStore({
   reducer: {
-    dataset: datasetReducer,
     group: groupReducer,
     simulator: simulatorReducer,
-    file: fileReducer,
-    boundaryCondition: boundaryConditionReducer,
-    event: eventReducer,
     notification: notificationReducer,
-    samplingConfiguration: samplingConfigurationReducer,
+    simconfigApiProperties: simconfigApiPropertiesReducer,
+
+    // RTK Query reducers
+    simconfigApi: simconfigApi.reducer,
   },
+  middleware: (getDefaultMiddleware) => [
+    ...getDefaultMiddleware(),
+    simconfigApi.middleware,
+  ],
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

@@ -5,7 +5,7 @@ export interface NotificationState {
 }
 
 export enum NotificationType {
-  'success' = 'success',
-  'error' = 'error',
-  'default' = 'default',
+  Success = 'success',
+  Error = 'error',
+  Default = 'default',
 }

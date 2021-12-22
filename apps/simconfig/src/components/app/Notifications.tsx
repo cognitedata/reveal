@@ -1,25 +1,28 @@
 import { useEffect } from 'react';
-import { toast, ToastContainer } from '@cognite/cogs.js';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { NotificationType } from 'store/notification/types';
-import { StoreState } from 'store/types';
-import { clearNotification } from 'store/notification';
 
-import Toast, { ToastProps } from './Toast';
+import { ToastContainer, toast } from '@cognite/cogs.js';
+
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { clearNotification } from 'store/notification';
+import { NotificationType } from 'store/notification/types';
+import type { StoreState } from 'store/types';
+
 import { AUTOCLOSE_PERIOD } from './constants';
+import type { ToastProps } from './Toast';
+import Toast from './Toast';
 
 const toastType = (type: NotificationType) => {
   const typeMap = {
-    success: toast.success,
-    error: toast.error,
-    default: toast.open,
+    success: toast.success.bind(toast),
+    error: toast.error.bind(toast),
+    default: toast.open.bind(toast),
   };
   return typeMap[type];
 };
 
-const Notifications = () => {
+function Notifications() {
   const {
-    type = NotificationType.default,
+    type = NotificationType.Default,
     title,
     message = '',
   } = useAppSelector((state: StoreState) => state.notification);
@@ -39,15 +42,15 @@ const Notifications = () => {
     };
     toastType(type)(
       <Toast
-        title={toastContent.title}
-        message={toastContent.message}
         key={new Date().getTime()}
+        message={toastContent.message}
+        title={toastContent.title}
       />,
       toastProps
     );
     dispatch(clearNotification());
   }, [type, title, message, dispatch]);
   return <ToastContainer style={{ marginTop: '40px' }} />;
-};
+}
 
 export default Notifications;

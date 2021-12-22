@@ -1,10 +1,14 @@
 import ReactDOM from 'react-dom';
+
 import * as Sentry from '@sentry/browser';
+
 import { Metrics } from '@cognite/metrics';
-import '@cognite/cogs.js/dist/cogs.css';
-import config from 'utils/config';
+
 import AppRoot from 'components/app/AppRoot';
+import config from 'utils/config';
 import { logMetadata } from 'utils/logMetadata';
+
+import '@cognite/cogs.js/dist/cogs.css';
 
 import * as serviceWorker from './serviceWorker';
 

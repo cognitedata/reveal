@@ -1,11 +1,8 @@
-import { RequestStatus } from 'store/types';
+import type { Simulator as SimulatorBackend } from '@cognite/simconfig-api-sdk/rtk';
 
-export enum SimulatorBackend {
-  UNKNOWN = 'Unknown',
-  PROSPER = 'PROSPER',
-}
+import type { RequestStatus } from 'store/types';
 
-export type Simulator = {
+export interface Simulator {
   dataSetName: string;
   dataSetWriteProtected: boolean;
   simulator: SimulatorBackend;
@@ -13,7 +10,8 @@ export type Simulator = {
   heartbeat: number;
   dataSet: number;
   connectorVersion: string;
-};
+}
+
 export interface SimulatorState {
   requestStatus: RequestStatus;
   initialized: boolean;

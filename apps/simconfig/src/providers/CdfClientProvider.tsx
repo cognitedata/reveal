@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+
+import type { AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
-import { AuthenticatedUser } from '@cognite/auth-utils';
 
 interface ContextProps {
   cdfClient: CogniteClient;
@@ -26,8 +27,12 @@ export function CdfClientProvider({
   children,
   authState,
 }: CdfClientProviderProps) {
+  const props = useMemo(
+    () => ({ cdfClient: client, authState }),
+    [client, authState]
+  );
   return (
-    <CdfClientContext.Provider value={{ cdfClient: client, authState }}>
+    <CdfClientContext.Provider value={props}>
       {children}
     </CdfClientContext.Provider>
   );
