@@ -7,6 +7,8 @@ import { CdfModelDataProvider } from './CdfModelDataProvider';
 
 import { CogniteClient } from '@cognite/sdk';
 
+import { mockClientAuthentication } from '../../../test-utilities/src/cogniteClientAuth';
+
 describe(CdfModelDataProvider.name, () => {
   const appId = 'reveal-CdfModelDataClient-test';
   const baseUrl = 'http://localhost';
@@ -14,7 +16,11 @@ describe(CdfModelDataProvider.name, () => {
     appId,
     baseUrl
   });
+
+  mockClientAuthentication(client);
+
   client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
+
   const clientExt = new CdfModelDataProvider(client);
 
   test('getBinaryFile() with binary data returns valid ArrayBuffer', async () => {
