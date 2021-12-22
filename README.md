@@ -91,5 +91,8 @@ Project build as a library will be created in **dist/node-visualizer** folder.
 
 ### Publishing your changes
 
-Make sure your changes are merged on master. Checkout master and run `yarn publish`.
-When prompted, type the new version number you want to publish on.
+Make sure your changes are merged on master and you are checked out in the master branch.
+
+1. run `yarn build` to build the package
+2. run `yarn publish` to publish the package to NPM (when prompted, type the new version number you want to publish on)
+3. finally, create a new PR that updates the **version** number in `package.json` to reflect the version number you published to NPM.
