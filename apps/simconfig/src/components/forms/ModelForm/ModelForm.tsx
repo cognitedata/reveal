@@ -3,7 +3,7 @@ import { useContext, useRef } from 'react';
 
 import { Field, Form, Formik } from 'formik';
 
-import { Button, Input, Select } from '@cognite/cogs.js';
+import { Button, Input, Select, toast } from '@cognite/cogs.js';
 import type {
   CreateMetadata,
   FileInfo,
@@ -26,6 +26,7 @@ import {
   getSelectEntriesFromMap,
   isValidExtension,
 } from 'utils/formUtils';
+import { isSuccessResponse } from 'utils/responseUtils';
 
 import {
   BoundaryCondition,
@@ -136,8 +137,7 @@ export function ModelForm({
         source: simulator,
       };
 
-      // TODO(SIM-209): Show success toast
-      await createModel({
+      const response = await createModel({
         project: authState.project,
         createModelFileRequestModel: getTypedFormData({
           boundaryConditions,
@@ -146,12 +146,14 @@ export function ModelForm({
           metadata,
         }),
       });
+      if (isSuccessResponse(response)) {
+        toast.success(response.data.message);
+      }
     } else {
       const { modelName, simulator, description, fileName, userEmail } =
         metadata;
 
-      // TODO(SIM-209): Show success toast
-      await updateModelVersion({
+      const response = await updateModelVersion({
         project: authState.project,
         updateModelFileVersionRequestModel: getTypedFormData({
           file,
@@ -164,6 +166,9 @@ export function ModelForm({
           },
         }),
       });
+      if (isSuccessResponse(response)) {
+        toast.success(response.data.message);
+      }
     }
 
     if (onUpload) {

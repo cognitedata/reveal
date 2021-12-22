@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { api as simconfigApi } from '@cognite/simconfig-api-sdk/rtk';
 
 import { groupReducer } from './group';
-import { notificationReducer } from './notification';
+import { errorNotificationMiddleware } from './middleware/errorNotificationMiddleware';
 import { simconfigApiPropertiesReducer } from './simconfigApiProperties';
 import { simulatorReducer } from './simulator';
 
@@ -11,7 +11,6 @@ export const store = configureStore({
   reducer: {
     group: groupReducer,
     simulator: simulatorReducer,
-    notification: notificationReducer,
     simconfigApiProperties: simconfigApiPropertiesReducer,
 
     // RTK Query reducers
@@ -20,6 +19,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware(),
     simconfigApi.middleware,
+    errorNotificationMiddleware,
   ],
 });
 

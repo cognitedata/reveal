@@ -9,8 +9,6 @@ import App from 'components/app/App';
 import { CdfClientProvider } from 'providers/CdfClientProvider';
 import sidecar from 'utils/sidecar';
 
-import Notifications from './Notifications';
-
 export default function AppRoot() {
   return (
     <Container sidecar={sidecar}>
@@ -20,7 +18,6 @@ export default function AppRoot() {
             <CdfClientProvider authState={authState} client={client}>
               <ReduxProvider store={store}>
                 <App />
-                <Notifications />
               </ReduxProvider>
             </CdfClientProvider>
           ) : null

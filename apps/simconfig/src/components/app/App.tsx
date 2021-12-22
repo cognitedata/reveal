@@ -6,7 +6,7 @@ import GlobalStyles from 'global-styles';
 import { routes } from 'routes';
 import styled from 'styled-components/macro';
 
-import { Loader } from '@cognite/cogs.js';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
 
 import { MenuBar } from 'components/Menubar';
 import { useTitle } from 'hooks/useTitle';
@@ -61,6 +61,7 @@ export default function App() {
         <RoutedAppContainer>
           <MenuBar />
           <Content>
+            <ToastContainer />
             <Outlet />
           </Content>
         </RoutedAppContainer>
