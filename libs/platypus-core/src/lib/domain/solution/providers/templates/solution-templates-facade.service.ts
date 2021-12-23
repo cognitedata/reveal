@@ -8,7 +8,9 @@ import {
   DeleteSolutionDTO,
   FetchSolutionDTO,
   FetchVersionDTO,
+  GraphQLQueryResponse,
   ListVersionsDTO,
+  RunQueryDTO,
 } from '../../dto';
 import { Solution, SolutionSchema } from '../../types';
 import { TemplateSchemaDataMapper } from './template-schema-data-mapper';
@@ -88,5 +90,13 @@ export class SolutionTemplatesFacadeService
       .then((res) =>
         this.templateSchemaDataMapper.deserialize(dto.solutionId, res)
       );
+  }
+
+  runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
+    return this.templatesApiService.runQuery({
+      graphQlParams: dto.graphQlParams,
+      solutionId: dto.solutionId,
+      schemaVersion: dto.schemaVersion,
+    });
   }
 }

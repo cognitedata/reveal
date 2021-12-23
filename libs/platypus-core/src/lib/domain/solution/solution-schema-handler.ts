@@ -5,7 +5,13 @@ import {
 } from '@platypus-core/boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
 import { ISolutionSchemaApiService } from './boundaries';
-import { CreateSchemaDTO, FetchSolutionDTO, ListVersionsDTO } from './dto';
+import {
+  CreateSchemaDTO,
+  FetchSolutionDTO,
+  GraphQLQueryResponse,
+  ListVersionsDTO,
+  RunQueryDTO,
+} from './dto';
 import { SolutionSchema } from './types';
 
 export class SolutionSchemaHandler {
@@ -70,6 +76,22 @@ export class SolutionSchemaHandler {
       .updateSchema(dto)
       .then((version) => Result.ok(version))
       .catch((err) => Result.fail(err));
+  }
+
+  /**
+   * Run query against a schema
+   * @param dto
+   */
+  runQuery(dto: RunQueryDTO): Promise<Result<GraphQLQueryResponse>> {
+    const validationResult = this.validate(dto, ['solutionId']);
+
+    if (!validationResult.valid) {
+      return Promise.reject(Result.fail(validationResult.errors));
+    }
+
+    return this.solutionSchemaService
+      .runQuery(dto)
+      .then((response) => Result.ok(response));
   }
 
   private validate(dto: DTO, fields: string[]): ValidatorResult {

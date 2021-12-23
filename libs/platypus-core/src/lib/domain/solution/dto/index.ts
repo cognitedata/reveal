@@ -30,3 +30,19 @@ export interface CreateSchemaDTO {
   schema: string;
   version?: string;
 }
+
+export interface GraphQlQueryParams {
+  query: string;
+  operationName: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  variables?: any;
+}
+export interface RunQueryDTO {
+  graphQlParams: GraphQlQueryParams;
+  /** SolutionId (template group external id) */
+  solutionId: string;
+  schemaVersion: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type GraphQLQueryResponse = { data?: any; errors?: Array<any> };

@@ -36,7 +36,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
     listSchemaVersions: jest.fn().mockImplementation(() => {
       return Promise.resolve([templateSchemaMock]);
     }),
-    createSchema: jest.fn().mockImplementation(() => {
+    publishSchema: jest.fn().mockImplementation(() => {
       return Promise.resolve(templateSchemaMock);
     }),
   } as any;
@@ -94,6 +94,6 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
       version: '1',
       schema: templateSchemaMock.schema,
     });
-    expect(templatesApiServiceMock.createSchema).toBeCalled();
+    expect(templatesApiServiceMock.publishSchema).toBeCalled();
   });
 });

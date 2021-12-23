@@ -3,7 +3,9 @@ import {
   CreateSolutionDTO,
   DeleteSolutionDTO,
   FetchSolutionDTO,
+  GraphQLQueryResponse,
   ListVersionsDTO,
+  RunQueryDTO,
 } from '../dto';
 import { SolutionSchema, Solution } from '../types';
 
@@ -37,4 +39,10 @@ export interface ISolutionSchemaApiService {
    * @param dto
    */
   updateSchema(dto: CreateSchemaDTO): Promise<SolutionSchema>;
+
+  /**
+   * Run GraphQL Query.
+   * @param dto
+   */
+  runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse>;
 }

@@ -14,7 +14,9 @@ import {
   DeleteSolutionDTO,
   FetchSolutionDTO,
   FetchVersionDTO,
+  GraphQLQueryResponse,
   ListVersionsDTO,
+  RunQueryDTO,
 } from '../../dto';
 
 export class TemplatesApiService {
@@ -126,6 +128,15 @@ export class TemplatesApiService {
     return this.cdfClient.templates
       .group(dto.solutionId)
       .versions.upsert(requestDto)
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
+  }
+
+  runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
+    return this.cdfClient.templates
+      .group(dto.solutionId)
+      .version(parseInt(dto.schemaVersion))
+      .runQuery(dto.graphQlParams) // return type GraphQlResponse
+      .then((value) => value.data)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 }

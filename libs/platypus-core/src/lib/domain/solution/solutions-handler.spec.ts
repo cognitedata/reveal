@@ -10,6 +10,7 @@ describe('SolutionsHandlerTest', () => {
     deleteTemplateGroup: jest
       .fn()
       .mockImplementation(() => Promise.resolve([])),
+    fetchTemplateGroup: jest.fn(),
   } as ISolutionsApiService;
 
   const createInstance = () => {

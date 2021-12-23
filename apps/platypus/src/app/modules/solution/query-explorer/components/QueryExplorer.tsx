@@ -1,39 +1,34 @@
 import { useState, useEffect, useRef } from 'react';
-import GraphiQL, { Fetcher } from 'graphiql';
+import GraphiQL, { FetcherParams } from 'graphiql';
 import 'graphiql/graphiql.min.css';
 import GraphiQLExplorer from 'graphiql-explorer';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import {
   GraphQLSchema,
-  IntrospectionQuery,
   buildClientSchema,
   getIntrospectionQuery,
+  IntrospectionQuery,
 } from 'graphql';
 import { QueryExplorerContainer } from './elements';
+import { Notification } from '@platypus-app/components/Notification/Notification';
+import { useGraphQlQueryFetcher } from '../hooks/useGraphQlQueryFetcher';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 type QueryExplorerType = {
-  apiUrl: string;
+  solutionId: string;
+  schemaVersion: string;
   defaultQuery?: string;
 };
 
-async function fetchGraphQlSchema(fetcher: Fetcher) {
-  const result = await fetcher({
-    query: getIntrospectionQuery(),
-    operationName: 'IntrospectionQuery',
-  });
-
-  const schema = buildClientSchema(
-    (result as { data: IntrospectionQuery }).data
-  );
-  return schema;
-}
-
-export const QueryExplorer = ({ apiUrl, defaultQuery }: QueryExplorerType) => {
+export const QueryExplorer = ({
+  solutionId,
+  schemaVersion,
+  defaultQuery,
+}: QueryExplorerType) => {
   const graphiql = useRef<GraphiQL>(null);
   const [gqlSchema, setGqlSchema] = useState<GraphQLSchema>();
   const [isExplorerOpen, setIsExplorerOpen] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [explorerQuery, setExplorerQuery] = useState(defaultQuery);
   const { t } = useTranslation('SolutionQueryExplorer');
 
@@ -42,39 +37,58 @@ export const QueryExplorer = ({ apiUrl, defaultQuery }: QueryExplorerType) => {
   const handleEditQuery = (query: string | undefined) =>
     setExplorerQuery(query);
 
-  const fetcher = createGraphiQLFetcher({
-    url: apiUrl,
-  });
+  const graphqlFetcher = useGraphQlQueryFetcher();
 
   useEffect(() => {
-    fetchGraphQlSchema(fetcher)
-      .then((result: GraphQLSchema) => {
-        setGqlSchema(result);
+    if (isReady || !solutionId || !schemaVersion) {
+      return;
+    }
+
+    graphqlFetcher(
+      {
+        query: getIntrospectionQuery(),
+        operationName: 'IntrospectionQuery',
+      },
+      solutionId,
+      schemaVersion
+    )
+      .then((result: any) => {
+        setIsReady(true);
+        setGqlSchema(buildClientSchema(result as IntrospectionQuery));
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((error: any) => {
+        setIsReady(true);
         Notification({
           type: 'error',
           message: error.message,
         });
       });
-  }, [apiUrl]);
+  }, [isReady, schemaVersion, solutionId, graphqlFetcher, setIsReady]);
+
+  if (!isReady) {
+    return <Spinner />;
+  }
 
   return (
     <QueryExplorerContainer>
-      <GraphiQLExplorer
-        title={t('query_explorer_title', 'Query Explorer')}
-        schema={gqlSchema}
-        query={explorerQuery}
-        onEdit={handleEditQuery}
-        explorerIsOpen={isExplorerOpen}
-        onToggleExplorer={handleToggleExplorer}
-      />
+      {
+        <GraphiQLExplorer
+          title={t('query_explorer_title', 'Query Explorer')}
+          schema={gqlSchema}
+          query={explorerQuery}
+          onEdit={handleEditQuery}
+          explorerIsOpen={isExplorerOpen}
+          onToggleExplorer={handleToggleExplorer}
+        />
+      }
       <GraphiQL
         ref={graphiql}
-        fetcher={fetcher}
+        fetcher={(graphQlParams: FetcherParams) =>
+          graphqlFetcher(graphQlParams, solutionId, schemaVersion)
+        }
         onEditQuery={handleEditQuery}
         query={explorerQuery}
+        schema={gqlSchema}
       >
         <GraphiQL.Toolbar>
           <GraphiQL.Button
