@@ -1,8 +1,10 @@
+import { Body } from '@cognite/cogs.js';
 import { Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
-export const StyledSchemaVersion = styled.div`
+export const StyledSchemaVersion = styled(Body)`
   margin-left: 10px;
+  font-weight: 600;
 `;
 
 export const StyledPage = styled.div`

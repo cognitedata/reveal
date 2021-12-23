@@ -30,6 +30,12 @@ const solutionStateSlice = createSlice({
         state.selectedSchema = undefined;
       }
     },
+    setSchema: (state, action: PayloadAction<SolutionSchema>) => {
+      state.selectedSchema = action.payload;
+    },
+    insertSchema: (state, action: PayloadAction<SolutionSchema>) => {
+      state.schemas = [action.payload, ...state.schemas];
+    },
   },
   extraReducers: (builder) => {
     // Fetching solution

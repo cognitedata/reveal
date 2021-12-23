@@ -95,6 +95,7 @@ export class TemplatesApiService {
       .then((response) => response.items)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
+
   publishSchema(dto: CreateSchemaDTO): Promise<TemplateGroupVersion> {
     return this.createOrUpdate(dto, ConflictMode.Update);
   }

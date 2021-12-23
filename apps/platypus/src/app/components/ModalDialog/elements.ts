@@ -8,17 +8,15 @@ export const StyledModal = styled(Modal)`
 
   .title {
     display: flex;
-    border-bottom: solid 1px var(--cogs-greyscale-grey3);
-    padding-bottom: 15px;
-    margin-bottom: 20px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
   }
 
   .buttons {
     display: flex;
     justify-content: right;
-    border-top: solid 1px var(--cogs-greyscale-grey3);
     padding-top: 15px;
-    margin-top: 20px;
+    margin-top: 15px;
   }
 
   .cogs-modal-close {

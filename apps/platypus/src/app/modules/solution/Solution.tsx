@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense, useState } from 'react';
 import { Route, Switch, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -46,12 +46,12 @@ const SettingsPage = lazy(() =>
 export const Solution = () => {
   const { t } = useTranslation('Solution');
   const dispatch = useDispatch();
+  const [successLoaded, setSuccessLoaded] = useState(false);
 
   const { solutionId, version } = useParams<{
     solutionId: string;
     version: string;
   }>();
-
   const { solutionStatus, schemasStatus, schemas, selectedSchema } =
     useSelector<SolutionState>((state) => state.solution);
 
@@ -66,22 +66,27 @@ export const Solution = () => {
   }, [fetchVersions, solutionId]);
 
   useEffect(() => {
-    if (schemasStatus === ActionStatus.SUCCESS) {
+    if (successLoaded) {
       dispatch(
         solutionStateSlice.actions.selectVersion({
           version,
         })
       );
     }
-  }, [dispatch, version, schemasStatus, schemas]);
+  }, [dispatch, version, successLoaded]);
 
-  if (
-    solutionStatus === ActionStatus.SUCCESS &&
-    schemasStatus === ActionStatus.SUCCESS &&
-    (selectedSchema || !schemas.length)
-  ) {
+  useEffect(() => {
+    if (
+      solutionStatus === ActionStatus.SUCCESS &&
+      schemasStatus === ActionStatus.SUCCESS
+    ) {
+      setSuccessLoaded(true);
+    }
+  }, [dispatch, schemasStatus, solutionStatus]);
+
+  if (successLoaded && (selectedSchema || !schemas.length)) {
     return (
-      <StyledPageWrapper>
+      <StyledPageWrapper data-testid="solution_page_wrapper">
         <Switch>
           <Route
             exact
@@ -124,10 +129,12 @@ export const Solution = () => {
 
   if (solutionStatus === ActionStatus.FAIL) {
     return (
-      <BasicPlaceholder
-        type="Documents"
-        title={t('solution_not_found', 'Solution is not found')}
-      />
+      <div data-testid="solution_not_found">
+        <BasicPlaceholder
+          type="Documents"
+          title={t('solution_not_found', 'Solution is not found')}
+        />
+      </div>
     );
   }
 
@@ -136,10 +143,12 @@ export const Solution = () => {
     (!selectedSchema && schemas.length)
   ) {
     return (
-      <BasicPlaceholder
-        type="Documents"
-        title={t('schema_not_found', 'Schema is not found')}
-      />
+      <div data-testid="schema_not_found">
+        <BasicPlaceholder
+          type="Documents"
+          title={t('schema_not_found', 'Schema is not found')}
+        />
+      </div>
     );
   }
 

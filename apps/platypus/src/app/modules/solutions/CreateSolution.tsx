@@ -1,8 +1,7 @@
 import { Body, Detail, Icon, Input, Textarea } from '@cognite/cogs.js';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { Notification } from '@platypus-app/components/Notification/Notification';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { AuthState } from '@platypus-app/redux/reducers/global/globalReducer';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -23,10 +22,6 @@ export const CreateSolution = ({
   const history = useHistory();
   const { t } = useTranslation('solutions');
 
-  const {
-    authenticatedUser: { user: authenticatedUser },
-  } = useSelector<AuthState>((state) => state.global);
-
   const solutionsHandler = services().solutionsHandler;
 
   const onCreateSolution = () => {
@@ -35,7 +30,6 @@ export const CreateSolution = ({
       .create({
         name: solutionName.trim(),
         description: solutionDescription,
-        owner: authenticatedUser,
       })
       .then((result) => {
         if (result.isFailure) {
@@ -55,7 +49,9 @@ export const CreateSolution = ({
               'Solution successfully created'
             ),
           });
-          history.push(`solutions/${result.getValue().id}`);
+          history.push(
+            `solutions/${result.getValue().id}/${DEFAULT_VERSION_PATH}`
+          );
         }
         setCreating(false);
       });

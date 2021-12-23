@@ -5,6 +5,6 @@ export const StyledTopBar = styled(TopBar)`
   .cogs-topbar--left,
   .cogs-topbar--right {
     align-items: center;
-    padding: 0 15px;
+    padding: 0 10px;
   }
 `;

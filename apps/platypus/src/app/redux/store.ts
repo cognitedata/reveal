@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import solutionsSlice from '@platypus-app/modules/solutions/redux/store';
 import { KeyValueStore } from '@platypus-app/types';
 import {

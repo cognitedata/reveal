@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeepPartial } from '@reduxjs/toolkit';
 import { RootState } from '@platypus-app/redux/store';
 import mockDecorator from './mockDecorator';

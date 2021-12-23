@@ -1,169 +1,223 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Prompt, useHistory } from 'react-router-dom';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { Button, SegmentedControl } from '@cognite/cogs.js';
-import { Placeholder } from '@platypus-app/components/Placeholder/Placeholder';
+import { Button } from '@cognite/cogs.js';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
+import { Notification } from '@platypus-app/components/Notification/Notification';
+import services from '@platypus-app/di';
 
-import { SchemaVersionSelect } from '../../components/SchemaVersionSelect/SchemaVersionSelect';
-import { GraphqlCodeEditor } from '../components/GraphqlCodeEditor/GraphqlCodeEditor';
-import { SCHEMA_VERSION_LABEL } from '@platypus-app/utils/config';
-import { StyledSchemaVersion } from './elements';
-
-enum Mode {
-  View,
-  Edit,
-}
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+import { ErrorType } from '@platypus-core/boundaries/types/platypus-error';
+import { useSolution } from '../../hooks/useSolution';
+import { SchemaEditorMode } from '../types';
+import { BreakingChangesModal } from '../components/BreakingChangesModal';
+import { SchemaVisualization } from '../components/SchemaVisualization';
+import { CodeEditor } from '../components/CodeEditor';
+import { DataModelHeader } from '../components/DataModelHeader';
 
 export const DataModelPage = () => {
   const history = useHistory();
-  const [mode, setMode] = useState<Mode>(Mode.View);
-  const [projectSchema, setProjectSchema] = useState('');
-  const [currentView, setCurrentView] = useState('code');
+
   const { t } = useTranslation('SolutionDataModel');
   const { solution, schemas, selectedSchema } = useSelector<SolutionState>(
     (state) => state.solution
   );
 
+  const [mode, setMode] = useState<SchemaEditorMode>(
+    schemas.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
+  );
+  const [projectSchema, setProjectSchema] = useState('');
+  const [currentView, setCurrentView] = useState('code');
+  const [saving, setSaving] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [breakingChanges, setBreakingChanges] = useState('');
+
+  const { insertSchema, updateSchema } = useSolution();
+
   useEffect(() => {
     if (selectedSchema && selectedSchema!.schema) {
       setProjectSchema(selectedSchema!.schema);
+      setIsDirty(false);
     }
   }, [selectedSchema]);
 
-  const renderVersion = () => {
-    if (schemas.length) {
-      if (mode === Mode.View) {
-        return (
-          <SchemaVersionSelect
-            selectedVersion={selectedSchema?.version}
-            versions={schemas.map((s) => s.version)}
-            onChange={(seletedValue) => {
-              history.replace(
-                `/solutions/${solution?.id}/${seletedValue}/data`
-              );
-            }}
-          />
-        );
+  const onSaveOrPublish = async () => {
+    try {
+      const publishNewVersion = breakingChanges || !schemas.length;
+      let result;
+      if (publishNewVersion) {
+        setUpdating(true);
+        result = await services().solutionSchemaHandler.publish({
+          solutionId: solution!.id,
+          schema: projectSchema,
+        });
+        setBreakingChanges('');
       } else {
-        return (
-          <StyledSchemaVersion>
-            {SCHEMA_VERSION_LABEL(selectedSchema?.version)}
-          </StyledSchemaVersion>
-        );
+        setSaving(true);
+        result = await services().solutionSchemaHandler.update({
+          solutionId: solution!.id,
+          schema: projectSchema,
+          version: selectedSchema?.version,
+        });
       }
+
+      if ((result.error?.type as ErrorType) === 'BREAKING_CHANGE') {
+        setBreakingChanges(result.error.message);
+      } else if (result.error?.type as ErrorType) {
+        Notification({
+          type: 'error',
+          message: result.error.message,
+        });
+      }
+
+      if (result.isSuccess) {
+        setIsDirty(false);
+
+        updateSchema(result.getValue());
+
+        if (publishNewVersion) {
+          insertSchema(result.getValue());
+          history.replace(
+            `/solutions/${solution?.id}/${DEFAULT_VERSION_PATH}/data`
+          );
+        }
+        Notification({
+          type: 'success',
+          message: t('schema_saved', 'Schema was succesfully saved.'),
+        });
+        // Must be located here for fetching versions correctly and updating schema version selector.
+        //
+        setMode(SchemaEditorMode.View);
+      }
+    } catch (error) {
+      Notification({
+        type: 'error',
+        message: t(
+          'schema_save_error',
+          `Saving of the schema failed. ${error}`
+        ),
+      });
     }
-    return null;
+    // Must be located here to work correctly with Promt.
+    setUpdating(false);
+    setSaving(false);
   };
 
   const renderTools = () => {
-    if (mode === Mode.Edit) {
+    if (mode === SchemaEditorMode.Edit) {
       return (
         <>
           <Button
-            type="ghost"
+            type="secondary"
             onClick={() => {
-              setProjectSchema(selectedSchema!.schema);
-              setMode(Mode.View);
+              setProjectSchema(
+                selectedSchema && selectedSchema.schema
+                  ? selectedSchema!.schema
+                  : ''
+              );
+              setMode(SchemaEditorMode.View);
+              setIsDirty(false);
             }}
             style={{ marginRight: '10px' }}
           >
-            Cancel
+            {t('discard_changes', 'Discard changes')}
           </Button>
-          <Button type="primary" onClick={() => setMode(Mode.Edit)}>
-            Save
+
+          <Button
+            type="primary"
+            onClick={() => onSaveOrPublish()}
+            loading={saving}
+            disabled={
+              !isDirty ||
+              !projectSchema ||
+              (selectedSchema && selectedSchema?.schema === projectSchema)
+            }
+          >
+            {t('publish', 'Publish')}
           </Button>
         </>
       );
     }
-    if (selectedSchema && selectedSchema?.version === schemas[0].version) {
-      return (
-        <Button type="primary" onClick={() => setMode(Mode.Edit)}>
-          Edit
-        </Button>
-      );
-    }
-    return null;
-  };
 
-  const renderHeader = () => {
     return (
-      <PageToolbar
-        title={t('data_model_title', 'Data model')}
-        behindTitle={renderVersion()}
+      <Button
+        type="primary"
+        onClick={() => setMode(SchemaEditorMode.Edit)}
+        className="editButton"
       >
-        <PageToolbar.Tools>{renderTools()}</PageToolbar.Tools>
-      </PageToolbar>
+        {t('edit_data_model', 'Edit data model')}
+      </Button>
     );
   };
 
-  const codeEditor = (
+  return (
     <>
-      <PageToolbar title={t('editor_title', 'Editor')} titleLevel={6}>
-        <SegmentedControl
-          currentKey={currentView}
-          onButtonClicked={(key) => setCurrentView(key)}
+      <PageContentLayout>
+        <PageContentLayout.Header>
+          <DataModelHeader
+            solutionId={solution!.id}
+            editorMode={mode}
+            schemas={schemas}
+            selectedSchema={selectedSchema!}
+          >
+            {renderTools()}
+          </DataModelHeader>
+        </PageContentLayout.Header>
+        <PageContentLayout.Body
+          style={{ flexDirection: 'row', overflow: 'hidden' }}
         >
-          <SegmentedControl.Button
-            key="code"
-            icon="Code"
-            aria-label="Code view"
+          <SplitPanelLayout
+            sidebar={
+              <CodeEditor
+                currentView={currentView}
+                editorMode={mode}
+                graphQlSchema={projectSchema}
+                onCurrentViewChanged={(view) => setCurrentView(view)}
+                onSchemaChanged={(schemaString) => {
+                  setProjectSchema(schemaString);
+                  if (
+                    schemaString &&
+                    ((selectedSchema &&
+                      selectedSchema.schema !== schemaString) ||
+                      !selectedSchema)
+                  ) {
+                    setIsDirty(true);
+                  } else if (
+                    selectedSchema &&
+                    selectedSchema.schema === schemaString
+                  ) {
+                    setIsDirty(false);
+                  }
+                }}
+              />
+            }
+            sidebarWidth={'40%'}
+            sidebarMinWidth={400}
+            content={<SchemaVisualization />}
           />
-          <SegmentedControl.Button key="ui" icon="Table" aria-label="UI view" />
-        </SegmentedControl>
-      </PageToolbar>
-      {currentView === 'code' ? (
-        <GraphqlCodeEditor
-          code={projectSchema}
-          onChange={(schemaString) => {
-            setProjectSchema(schemaString);
-          }}
-          disabled={mode === Mode.View}
-        />
-      ) : (
-        <Placeholder
-          componentName={t('ui_editor_title', 'UI editor')}
-          componentDescription={t(
-            'ui_editor_description',
-            'It will help you build a data model even faster'
-          )}
-          showGraphic={false}
+        </PageContentLayout.Body>
+      </PageContentLayout>
+
+      {breakingChanges && (
+        <BreakingChangesModal
+          breakingChanges={breakingChanges}
+          onCancel={() => setBreakingChanges('')}
+          onUpdate={onSaveOrPublish}
+          isUpdating={updating}
         />
       )}
-    </>
-  );
-
-  const schemaVisualization = (
-    <>
-      <PageToolbar title={t('preview_title', 'Preview')} titleLevel={6} />
-      <Placeholder
-        componentName={t('visualizer', 'Data model visualizer')}
-        componentDescription={t(
-          'visualizer_description',
-          'It will provide you a better view on the data model built'
+      <Prompt
+        when={mode === SchemaEditorMode.Edit && isDirty}
+        message={t(
+          'unsaved_changes',
+          'You have unsaved changes, are you sure you want to leave?'
         )}
-        showGraphic={false}
       />
     </>
-  );
-  return (
-    <PageContentLayout>
-      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
-      <PageContentLayout.Body
-        style={{ flexDirection: 'row', overflow: 'hidden' }}
-      >
-        <SplitPanelLayout
-          sidebar={codeEditor}
-          sidebarWidth={'40%'}
-          sidebarMinWidth={400}
-          content={schemaVisualization}
-        />
-      </PageContentLayout.Body>
-    </PageContentLayout>
   );
 };

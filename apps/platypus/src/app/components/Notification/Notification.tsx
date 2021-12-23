@@ -7,7 +7,7 @@ export const Notification = ({
   type: 'info' | 'success' | 'error' | 'warning';
   message: string;
 }) => {
-  const autoClose = 7000;
+  const autoClose = 5000;
 
   if (type === 'info') {
     toast.info(message, {
