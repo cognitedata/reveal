@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 
 import MapboxDraw from '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw';
 import { FeatureCollection, Feature } from '@turf/helpers';
+import isUndefined from 'lodash/isUndefined';
 import noop from 'lodash/noop';
 import mapboxgl from 'maplibre-gl';
 
 import { GeoJson } from '@cognite/seismic-sdk-js';
 
+import { useDeepEffect } from 'hooks/useDeep';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from 'modules/map/constants';
 import { useMapConfig } from 'modules/map/hooks/useMapConfig';
 import { SelectableLayer, MapDataSource, DrawMode } from 'modules/map/types';
@@ -128,19 +130,19 @@ export const Map: React.FC<Props> = ({
     [map]
   );
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (features && draw) {
       draw.set(features);
     }
   }, [features, draw]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (map && focusedFeature) {
       zoomToFeature(focusedFeature);
     }
   }, [focusedFeature, zoomToFeature, map]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (!mapRef.current) return noop;
 
     const initializeMap = async (initProps: any) => {
@@ -157,7 +159,9 @@ export const Map: React.FC<Props> = ({
           mapSettings?.maxBounds as mapboxgl.MapboxOptions['maxBounds'],
       });
 
-      const miniMap = new Minimap();
+      const miniMap = !mapSettings?.minimap?.disabled
+        ? new Minimap()
+        : undefined;
 
       const drawMap = new MapboxDraw({
         userProperties: true,
@@ -206,6 +210,7 @@ export const Map: React.FC<Props> = ({
 
       mapInstance.on('resize', () => {
         const mapWidth = mapInstance.getCanvasContainer().offsetWidth;
+        if (isUndefined(miniMap)) return;
         const miniMapExists = !!miniMap._parentMap; // eslint-disable-line no-underscore-dangle
 
         if (!miniMapExists && mapWidth > 400) {
@@ -232,7 +237,7 @@ export const Map: React.FC<Props> = ({
   }, [map, mapRef, mapSettings]);
 
   // Add zoom if it exists. (note: cannot do zoom:0 with this)
-  useEffect(() => {
+  useDeepEffect(() => {
     if (map && flyTo) {
       let safe = true;
 
@@ -256,7 +261,7 @@ export const Map: React.FC<Props> = ({
     }
   }, [map, flyTo]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (map === null || draw === null) return noop;
     if (selectedFeature && drawMode === 'simple_select') return noop;
     if (drawMode === 'direct_select') {
@@ -297,7 +302,7 @@ export const Map: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (map) {
       sources.forEach((source) => {
         addSource(map, source.id, source.data, source.clusterProps);
@@ -354,10 +359,9 @@ export const Map: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (map && sources.length > 0) {
       layers.forEach((layer, index) => {
-        // console.log('Working on layer:', layer.id);
         const addLayerBeforeThisLayer = choosePreviousSelectedLayer(
           layers,
           index
@@ -378,7 +382,7 @@ export const Map: React.FC<Props> = ({
     }
   }, [map, layers, sources]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (!map) return noop;
     events.forEach((event: MapEvent) => {
       if (event.layers) {
@@ -403,7 +407,7 @@ export const Map: React.FC<Props> = ({
     };
   }, [map, events]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     // This is needed to resize the map when the parent container changes size (e.g expanded mode)
     if (map) {
       map.resize();

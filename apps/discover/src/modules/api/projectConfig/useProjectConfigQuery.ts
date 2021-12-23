@@ -5,6 +5,8 @@ import {
   UseQueryResult,
 } from 'react-query';
 
+import isUndefined from 'lodash/isUndefined';
+import merge from 'lodash/merge';
 import noop from 'lodash/noop';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
@@ -30,6 +32,17 @@ export function useProjectConfigUpdateMutate({
 
   return useMutation(
     (newProjectConfig: ProjectConfig) => {
+      const oldConfig: ProjectConfig | undefined = queryClient.getQueryData([
+        ...PROJECT_CONFIG_QUERY_KEY.CONFIG,
+      ]);
+
+      if (!isUndefined(oldConfig)) {
+        queryClient.setQueryData(
+          [...PROJECT_CONFIG_QUERY_KEY.CONFIG],
+          merge(oldConfig, newProjectConfig)
+        );
+      }
+
       return discoverAPI.projectConfig.update(
         newProjectConfig,
         headers,
