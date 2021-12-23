@@ -9,7 +9,6 @@ import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { Measurement, WellboreAssetIdMap } from 'modules/wellSearch/types';
 import { getWellboreAssetIdReverseMap } from 'modules/wellSearch/utils/common';
-import { SequenceFetcher } from 'tenants/types';
 
 import { getChunkNumberList } from './common';
 
@@ -37,32 +36,36 @@ export async function getMeasurementsByWellboreIds(
     'fit',
     'lot',
   ];
-
-  idChunkList.forEach((wellIdChunk: number[]) => {
-    dataTypes.forEach((dataType) => {
-      const moduleConfig = config?.[dataType] as {
-        enabled: boolean;
-        fetch?: SequenceFetcher;
-      };
-      if (moduleConfig.enabled && moduleConfig.fetch) {
-        const fetcher = moduleConfig.fetch;
-        promises.push(
-          fetcher(getCogniteSDKClient(), {
-            assetIds: wellIdChunk.map((id) => wellboreAssetIdMap[id]),
-          }).then((response) =>
-            response.map((item) => ({
-              ...item,
-              assetId: wellboreAssetIdReverseMap[item.assetId as number],
-              metadata: {
-                ...item.metadata,
-                dataType: dataType as string,
-              },
-            }))
-          )
-        );
-      }
+  const moduleConfig = config?.measurements;
+  if (moduleConfig?.enabled) {
+    idChunkList.forEach((wellIdChunk: number[]) => {
+      dataTypes.forEach((dataType) => {
+        const dataTypeFilter = moduleConfig.metadata[dataType];
+        if (dataTypeFilter) {
+          promises.push(
+            getCogniteSDKClient()
+              .sequences.search({
+                ...dataTypeFilter,
+                filter: {
+                  ...dataTypeFilter.filter,
+                  assetIds: wellIdChunk.map((id) => wellboreAssetIdMap[id]),
+                },
+              })
+              .then((response) =>
+                response.map((item) => ({
+                  ...item,
+                  assetId: wellboreAssetIdReverseMap[item.assetId as number],
+                  metadata: {
+                    ...item.metadata,
+                    dataType,
+                  },
+                }))
+              )
+          );
+        }
+      });
     });
-  });
+  }
 
   const results = ([] as Measurement[]).concat(
     ...(await Promise.all(promises))
