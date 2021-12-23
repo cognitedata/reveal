@@ -14,12 +14,10 @@ export const DocumentResultTableSubRow = ({ row }: Props) => {
   return (
     <MetadataContainer data-testid="document-metadata">
       {row.original.doc.filepath && (
-        <MarginBottomNormalContainer>
-          <FilePath
-            paths={getPathsFromDoc(row.original)}
-            documentId={row.original.doc.id}
-          />
-        </MarginBottomNormalContainer>
+        <FilePath
+          paths={getPathsFromDoc(row.original)}
+          documentId={row.original.doc.id}
+        />
       )}
 
       {row.original.doc.truncatedContent && (

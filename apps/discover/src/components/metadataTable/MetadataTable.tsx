@@ -7,7 +7,7 @@ import {
 import { formatItem, FormatItemProps } from './formatItem';
 
 type MetaDataItemProps = {
-  label: string;
+  label?: string;
 } & FormatItemProps;
 export const MetadataItem: React.FC<MetaDataItemProps> = ({
   label,
@@ -19,7 +19,7 @@ export const MetadataItem: React.FC<MetaDataItemProps> = ({
       key={`metadata-label-${label}`}
       data-testid={`metadata-label-${label}`}
     >
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
       <Value>{formatItem({ value, type })}</Value>
     </MetadataContainer>
   );
@@ -30,9 +30,14 @@ export interface Props {
   style?: Record<string, unknown>;
   columns?: number;
 }
-const MetadataTable: React.FC<Props> = ({ metadata, style, columns }) => {
+const MetadataTable: React.FC<Props> = ({
+  metadata,
+  style,
+  columns,
+  ...props
+}) => {
   return (
-    <MetadataTableContainer style={style} columns={columns}>
+    <MetadataTableContainer style={style} columns={columns} {...props}>
       {metadata.map((item) => (
         <MetadataItem
           key={item.label}

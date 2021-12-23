@@ -1,18 +1,15 @@
-import React, { useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { convertPath } from '_helpers/path';
-import { Tooltip } from 'components/tooltip';
+import { MetadataItem } from 'components/metadataTable';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
-import { FlexColumn, FlexGrow, FlexRow } from 'styles/layout';
+import { FlexColumn, FlexRow } from 'styles/layout';
 
 import {
   FilePathContainer,
   PathContainer,
-  CopyIcon,
   PathText,
   ReportIssueText,
   PathHeader,
@@ -27,8 +24,6 @@ export const FilePath: React.FC<FilePathProps> = ({ paths, documentId }) => {
   const dispatch = useDispatch();
   const metrics = useGlobalMetrics('feedback');
   const { t } = useTranslation('Documents');
-  const title = t('Copy to clipboard');
-  const [tooltipTitle, setTooltipTitle] = useState(title);
 
   if (!paths || paths.length < 1) {
     return null;
@@ -37,18 +32,6 @@ export const FilePath: React.FC<FilePathProps> = ({ paths, documentId }) => {
   const onOpenFeedback = () => {
     dispatch(setObjectFeedbackModalDocumentId(documentId));
     metrics.track('click-report-invalid-document-path-button');
-  };
-
-  const handleCopyToClipboard = (_text: string, result: boolean) => {
-    metrics.track('click-copy-document-title-button');
-
-    if (result) {
-      setTooltipTitle(t('Copied'));
-      setTimeout(() => setTooltipTitle(title), 1000);
-    } else {
-      setTooltipTitle(t('Unable to copy path to clipboard'));
-      setTimeout(() => setTooltipTitle(title), 4000);
-    }
   };
 
   const renderReportIssueButton = () => (
@@ -79,32 +62,10 @@ export const FilePath: React.FC<FilePathProps> = ({ paths, documentId }) => {
     <FilePathContainer>
       <FlexColumn>
         <PathHeader>{t('Original path')}</PathHeader>
-        {paths.map((path, index) => (
-          <PathContainer
-            key={path + index || Math.random()}
-            showCursor={false}
-            data-testid="document-parent-path"
-          >
-            <FlexRow>
-              <PathText>
-                {path ? (
-                  <>{path}</>
-                ) : (
-                  <>Invalid path. {renderReportIssueButton()}</>
-                )}
-              </PathText>
-              <FlexGrow />
-
-              <Tooltip title={tooltipTitle} placement="bottom" enabled={!!path}>
-                <CopyToClipboard
-                  text={convertPath(path)}
-                  onCopy={handleCopyToClipboard}
-                >
-                  <CopyIcon type="Copy" />
-                </CopyToClipboard>
-              </Tooltip>
-            </FlexRow>
-          </PathContainer>
+        {paths.map((path) => (
+          <span key={`${path}`} data-testid="document-parent-path">
+            <MetadataItem value={path} type="path" />
+          </span>
         ))}
       </FlexColumn>
     </FilePathContainer>

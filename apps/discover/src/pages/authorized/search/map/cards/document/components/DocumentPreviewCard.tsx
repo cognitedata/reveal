@@ -96,9 +96,7 @@ export const DocumentPreviewCard: React.FC<{
       icon="Document"
     >
       <DocumentInfoWrapper>
-        <MarginBottomNormalContainer>
-          <FilePath documentId={doc.doc.id} paths={getPathsFromDoc(doc)} />
-        </MarginBottomNormalContainer>
+        <FilePath documentId={doc.doc.id} paths={getPathsFromDoc(doc)} />
 
         <MarginBottomNormalContainer>
           <Highlight doc={doc} />
