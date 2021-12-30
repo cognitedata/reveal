@@ -12,9 +12,14 @@ interface Props {
   map?: mapboxgl.Map;
 }
 export const DocumentCard: React.FC<Props> = ({ map }) => {
-  const { selectedDocument } = useMap();
+  const { drawMode, selectedDocument } = useMap();
 
-  if (map && selectedDocument && selectedDocument.point) {
+  if (
+    drawMode !== 'draw_polygon' &&
+    map &&
+    selectedDocument &&
+    selectedDocument.point
+  ) {
     return (
       <MapPopup point={selectedDocument.point} map={map}>
         <DocumentPreviewCard documentId={selectedDocument.id} />

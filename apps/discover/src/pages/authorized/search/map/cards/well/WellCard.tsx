@@ -11,9 +11,14 @@ interface Props {
 }
 
 export const WellCard: React.FC<Props> = ({ map }) => {
-  const { selectedWell } = useMap(); // map provider
+  const { drawMode, selectedWell } = useMap(); // map provider
 
-  if (map && selectedWell && selectedWell.point) {
+  if (
+    drawMode !== 'draw_polygon' &&
+    map &&
+    selectedWell &&
+    selectedWell.point
+  ) {
     return (
       <MapPopup point={selectedWell.point} map={map}>
         <WellPreviewCard wellId={selectedWell.id} />

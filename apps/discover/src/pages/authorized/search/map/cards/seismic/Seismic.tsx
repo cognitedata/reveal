@@ -2,6 +2,7 @@ import React from 'react';
 
 import mapboxgl from 'maplibre-gl';
 
+import { useMap } from 'modules/map/selectors';
 import { useSelectedSurvey } from 'modules/seismicSearch/hooks/useSelectedSurvey';
 import { useSelectedFiles } from 'modules/seismicSearch/selectors';
 
@@ -15,8 +16,9 @@ interface Props {
 export const SeismicCard: React.FC<Props> = ({ map }) => {
   const { data: selectedSurveyData } = useSelectedSurvey();
   const selectedFiles = useSelectedFiles();
+  const { drawMode } = useMap();
 
-  if (map && selectedSurveyData) {
+  if (drawMode !== 'draw_polygon' && map && selectedSurveyData) {
     if ('error' in selectedSurveyData || !selectedSurveyData.files) {
       return null;
     }
