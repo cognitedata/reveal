@@ -9,13 +9,13 @@
 uniform vec2 resolution;
 uniform vec2 inverseResolution;
 
-varying vec2 v_uv;
-varying vec2 v_fragCoord;
-varying vec2 v_rgbNW;
-varying vec2 v_rgbNE;
-varying vec2 v_rgbSW;
-varying vec2 v_rgbSE;
-varying vec2 v_rgbM;
+out vec2 v_uv;
+out vec2 v_fragCoord;
+out vec2 v_rgbNW;
+out vec2 v_rgbNE;
+out vec2 v_rgbSW;
+out vec2 v_rgbSE;
+out vec2 v_rgbM;
 
 void main() {
   v_fragCoord = uv * resolution;

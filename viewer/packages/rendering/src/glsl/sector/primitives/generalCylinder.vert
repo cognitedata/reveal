@@ -3,39 +3,39 @@
 
 uniform mat4 inverseModelMatrix;
 
-attribute float a_treeIndex;
-attribute vec3 a_centerA;
-attribute vec3 a_centerB;
-attribute float a_radius;
-attribute vec3 a_color;
+in float a_treeIndex;
+in vec3 a_centerA;
+in vec3 a_centerB;
+in float a_radius;
+in vec3 a_color;
 // slicing plane attributes
-attribute vec4 a_planeA;
-attribute vec4 a_planeB;
+in vec4 a_planeA;
+in vec4 a_planeB;
 // segment attributes
-attribute vec3 a_localXAxis;
-attribute float a_angle;
-attribute float a_arcAngle;
+in vec3 a_localXAxis;
+in float a_angle;
+in float a_arcAngle;
 
-varying float v_treeIndex;
+out float v_treeIndex;
 // We pack the radii into w-components
-varying vec4 v_centerB;
+out vec4 v_centerB;
 
 // U, V, axis represent the 3x3 cone basis.
 // They are vec4 to pack extra data into the w-component
-// since Safari on iOS only supports 8 varying vec4 registers.
-varying vec4 v_U;
-varying vec4 v_W;
+// since Safari on iOS only supports 8 out vec4 registers.
+out vec4 v_U;
+out vec4 v_W;
 
-varying vec4 v_planeA;
-varying vec4 v_planeB;
+out vec4 v_planeA;
+out vec4 v_planeB;
 
-varying float v_surfacePointY;
+out float v_surfacePointY;
 
-varying float v_angle;
-varying float v_arcAngle;
+out float v_angle;
+out float v_arcAngle;
 
-varying vec3 v_color;
-varying vec3 v_normal;
+out vec3 v_color;
+out vec3 v_normal;
 
 uniform vec2 treeIndexTextureSize;
 

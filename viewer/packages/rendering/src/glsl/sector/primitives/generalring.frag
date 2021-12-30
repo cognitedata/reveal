@@ -8,14 +8,14 @@
 #pragma glslify: import('../../math/constants.glsl')
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
-varying float v_oneMinusThicknessSqr;
-varying vec2 v_xy;
-varying float v_angle;
-varying float v_arcAngle;
+in float v_oneMinusThicknessSqr;
+in vec2 v_xy;
+in float v_angle;
+in float v_arcAngle;
 
-varying float v_treeIndex;
-varying vec3 v_color;
-varying vec3 v_normal;
+in float v_treeIndex;
+in vec3 v_color;
+in vec3 v_normal;
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
@@ -25,7 +25,7 @@ uniform vec2 treeIndexTextureSize;
 
 uniform int renderMode;
 
-varying vec3 vViewPosition;
+in vec3 vViewPosition;
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);

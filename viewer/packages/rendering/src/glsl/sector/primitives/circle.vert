@@ -3,21 +3,21 @@
 
 uniform mat4 inverseModelMatrix;
 
-attribute vec4 a_instanceMatrix_column_0;
-attribute vec4 a_instanceMatrix_column_1;
-attribute vec4 a_instanceMatrix_column_2;
-attribute vec4 a_instanceMatrix_column_3;
+in vec4 a_instanceMatrix_column_0;
+in vec4 a_instanceMatrix_column_1;
+in vec4 a_instanceMatrix_column_2;
+in vec4 a_instanceMatrix_column_3;
 
-attribute float a_treeIndex;
-attribute vec3 a_color;
-attribute vec3 a_normal;
+in float a_treeIndex;
+in vec3 a_color;
+in vec3 a_normal;
 
-varying vec2 v_xy;
-varying vec3 v_color;
-varying vec3 v_normal;
-varying float v_treeIndex;
+out vec2 v_xy;
+out vec3 v_color;
+out vec3 v_normal;
+out float v_treeIndex;
 
-varying vec3 vViewPosition;
+out vec3 vViewPosition;
 
 uniform vec2 treeIndexTextureSize;
 

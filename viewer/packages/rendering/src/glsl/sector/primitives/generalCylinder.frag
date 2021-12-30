@@ -27,22 +27,22 @@ uniform float dataTextureWidth;
 uniform float dataTextureHeight;
 uniform mat4 projectionMatrix;
 
-varying vec4 v_centerB;
+in vec4 v_centerB;
 
-varying vec4 v_W;
-varying vec4 v_U;
+in vec4 v_W;
+in vec4 v_U;
 
-varying float v_angle;
-varying float v_arcAngle;
+in float v_angle;
+in float v_arcAngle;
 
-varying float v_surfacePointY;
+in float v_surfacePointY;
 
-varying vec4 v_planeA;
-varying vec4 v_planeB;
+in vec4 v_planeA;
+in vec4 v_planeB;
 
-varying float v_treeIndex;
-varying vec3 v_color;
-varying vec3 v_normal;
+in float v_treeIndex;
+in vec3 v_color;
+in vec3 v_normal;
 
 uniform int renderMode;
 

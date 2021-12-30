@@ -1,17 +1,17 @@
 #pragma glslify: constructMatrix = require('../base/constructMatrix.glsl')
 #pragma glslify: determineMatrixOverride = require('../base/determineMatrixOverride.glsl')
 
-attribute vec4 a_instanceMatrix_column_0;
-attribute vec4 a_instanceMatrix_column_1;
-attribute vec4 a_instanceMatrix_column_2;
-attribute vec4 a_instanceMatrix_column_3;
+in vec4 a_instanceMatrix_column_0;
+in vec4 a_instanceMatrix_column_1;
+in vec4 a_instanceMatrix_column_2;
+in vec4 a_instanceMatrix_column_3;
 
-attribute float a_treeIndex;
-attribute vec3 a_color;
+in float a_treeIndex;
+in vec3 a_color;
 
-varying float v_treeIndex;
-varying vec3 v_color;
-varying vec3 v_viewPosition;
+out float v_treeIndex;
+out vec3 v_color;
+out vec3 v_viewPosition;
 
 uniform vec2 treeIndexTextureSize;
 

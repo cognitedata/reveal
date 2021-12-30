@@ -234,7 +234,8 @@ export class EffectRenderManager {
       defines: {
         EDGES:
           this._renderOptions.edgeDetectionParameters?.enabled ?? defaultRenderOptions.edgeDetectionParameters.enabled
-      }
+      },
+      glslVersion: THREE.GLSL3
     });
 
     const ssaoParameters = this.ssaoParameters(this._renderOptions);
@@ -259,7 +260,8 @@ export class EffectRenderManager {
         MAX_KERNEL_SIZE: numberOfSamples
       },
       vertexShader: ssaoShaders.vertex,
-      fragmentShader: ssaoShaders.fragment
+      fragmentShader: ssaoShaders.fragment,
+      glslVersion: THREE.GLSL3
     });
 
     this._ssaoBlurCombineMaterial = new THREE.ShaderMaterial({
@@ -269,7 +271,8 @@ export class EffectRenderManager {
         resolution: { value: new THREE.Vector2() }
       },
       vertexShader: ssaoBlurCombineShaders.vertex,
-      fragmentShader: ssaoBlurCombineShaders.fragment
+      fragmentShader: ssaoBlurCombineShaders.fragment,
+      glslVersion: THREE.GLSL3
     });
 
     const diffuseTexture = this.supportsSsao(ssaoParameters)
@@ -285,7 +288,8 @@ export class EffectRenderManager {
       },
       vertexShader: fxaaShaders.vertex,
       fragmentShader: fxaaShaders.fragment,
-      extensions: { fragDepth: true }
+      extensions: { fragDepth: true },
+      glslVersion: THREE.GLSL3
     });
 
     this.setupCompositionScene();

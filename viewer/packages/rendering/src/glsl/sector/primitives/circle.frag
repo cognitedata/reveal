@@ -6,10 +6,10 @@
 #pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
-varying float v_treeIndex;
-varying vec2 v_xy;
-varying vec3 v_color;
-varying vec3 v_normal;
+in float v_treeIndex;
+in vec2 v_xy;
+in vec3 v_color;
+in vec3 v_normal;
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
@@ -19,7 +19,7 @@ uniform vec2 treeIndexTextureSize;
 
 uniform int renderMode;
 
-varying vec3 vViewPosition;
+in vec3 vViewPosition;
 
 void main() {
     float dist = dot(v_xy, v_xy);
