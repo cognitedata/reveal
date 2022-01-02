@@ -66,7 +66,7 @@ export const TargetOrigin: FC<Props> = ({
               : []
           }
           options={availableProjects.map((item) => ({
-            label: `${item.external_id} (${item.instance})`,
+            label: `${item.instance} - ${item.external_id}`,
             value: item.id.toString(),
           }))}
           onChange={(event: any) => {
