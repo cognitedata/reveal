@@ -69,9 +69,9 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
 
     const cadModelOutputs = outputs.filter(
       output =>
+        // V8
         output.format === File3dFormat.RevealCadModel ||
-        // TODO 2021-12-14 larsmoa: Remove after 3.0 release
-        // This is in place to support "pre-release" GLTF models that had a different output name
+        // V9
         output.format === File3dFormat.GltfCadModel
     );
 
@@ -83,7 +83,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const v8output = cadModelOutputs.find(x => x.version === 8);
     if (v8output === undefined && v9output === undefined) {
       throw new Error(
-        `Model does not contain any supported cad model output ${File3dFormat.RevealCadModel} for versions in [8,9], ` +
+        `Model does not contain any supported CAD model output for versions in [8,9], ` +
           `only got ${cadModelOutputs.map(x => x.version).join(',')}`
       );
     }
