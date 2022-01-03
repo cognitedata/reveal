@@ -28,6 +28,7 @@ export interface DiagramSymbol {
 export interface DiagramSymbolInstance {
   symbolName: string;
   pathIds: string[];
+  scale?: number;
   labels?: DiagramLabel[];
 }
 

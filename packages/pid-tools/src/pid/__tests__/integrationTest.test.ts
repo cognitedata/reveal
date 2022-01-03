@@ -57,7 +57,7 @@ const checkIfAllSymbolInstancesIsAMatch = (
     ).toBe(matcher.segmentList.length);
 
     const matchResult = matcher.matches(pidPaths);
-    expect(matchResult).toBe(MatchResult.Match);
+    expect(matchResult.match).toBe(MatchResult.Match);
   });
 };
 

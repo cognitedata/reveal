@@ -54,7 +54,9 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
         <div>
           {getInstancesByName(symbolInstances, symbolName).map((instance) => (
             <p key={instance.pathIds.join('')}>
-              {instance.symbolName}&nbsp;-&nbsp;
+              {instance.symbolName}
+              {' - '}
+              {instance.scale ? `scale: ${instance.scale.toFixed(3)} - ` : ''}
               {instance.pathIds.join(' ')}
             </p>
           ))}

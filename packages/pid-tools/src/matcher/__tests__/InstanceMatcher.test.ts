@@ -126,7 +126,7 @@ describe('matches', () => {
 
     const matcher = InstanceMatcher.fromPathCommand(square1);
     const potentialMatch = [PidPath.fromPathCommand(square2)];
-    expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
+    expect(matcher.matches(potentialMatch).match).toEqual(MatchResult.Match);
   });
 
   test('circle and square not match', () => {
@@ -136,7 +136,7 @@ describe('matches', () => {
 
     const matcher = InstanceMatcher.fromPathCommand(squareSymbol);
     const potentialMatch = [PidPath.fromPathCommand(circleSymbol)];
-    expect(matcher.matches(potentialMatch)).toEqual(MatchResult.NotMatch);
+    expect(matcher.matches(potentialMatch).match).toEqual(MatchResult.NotMatch);
   });
 
   test('closed valve match', () => {
@@ -154,7 +154,7 @@ describe('matches', () => {
     //           5 -> 0
     const matcher = InstanceMatcher.fromPathCommand(closedValve1);
     const potentialMatch = [PidPath.fromPathCommand(closedValve2)];
-    expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
+    expect(matcher.matches(potentialMatch).match).toEqual(MatchResult.Match);
   });
 
   test('file link match', () => {
@@ -173,7 +173,7 @@ describe('matches', () => {
 
     const matcher = InstanceMatcher.fromPathCommand(fileLink);
     const potentialMatch = [PidPath.fromPathCommand(fileLink2)];
-    expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
+    expect(matcher.matches(potentialMatch).match).toEqual(MatchResult.Match);
   });
 
   test('file link different orientations not match', () => {
@@ -192,7 +192,7 @@ describe('matches', () => {
 
     const matcher = InstanceMatcher.fromPathCommand(fileLinkUp);
     const potentialMatch = [PidPath.fromPathCommand(fileLinkDown)];
-    expect(matcher.matches(potentialMatch)).toEqual(MatchResult.NotMatch);
+    expect(matcher.matches(potentialMatch).match).toEqual(MatchResult.NotMatch);
   });
 
   test('closed valve sub match', () => {
@@ -205,6 +205,6 @@ describe('matches', () => {
 
     const matcher = InstanceMatcher.fromPathCommand(closedValve);
     const potentialMatch = [PidPath.fromPathCommand(closedValveSubMatch)];
-    expect(matcher.matches(potentialMatch)).toEqual(MatchResult.SubMatch);
+    expect(matcher.matches(potentialMatch).match).toEqual(MatchResult.SubMatch);
   });
 });

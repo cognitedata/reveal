@@ -6,13 +6,13 @@ import {
   SvgRepresentation,
 } from '../types';
 
-import { InstanceMatcher, MatchResult } from './InstanceMatcher';
+import { InstanceMatch, InstanceMatcher, MatchResult } from './InstanceMatcher';
 
 export const findAllInstancesOfSymbol = (
   pidPaths: PidPath[],
   symbol: DiagramSymbol
 ): DiagramSymbolInstance[] => {
-  const allMatches: string[][] = [];
+  const symbolInstances: DiagramSymbolInstance[] = [];
 
   for (
     let svgRepIndex = 0;
@@ -24,26 +24,28 @@ export const findAllInstancesOfSymbol = (
       symbol.svgRepresentations[svgRepIndex]
     );
 
-    // Should we filter out matches with duplicate path id here?
-    matches.forEach((match) => allMatches.push(match));
+    symbolInstances.push(
+      ...matches.map((match) => ({
+        symbolName: symbol.symbolName,
+        pathIds: match.pathIds,
+        scale: match.scale,
+      }))
+    );
   }
-
-  const symbolInstances = allMatches.map((match) => {
-    return {
-      symbolName: symbol.symbolName,
-      pathIds: match,
-      labels: [],
-    } as DiagramSymbolInstance;
-  });
 
   return symbolInstances;
 };
 
+interface SvgRepresentationMatch {
+  pathIds: string[];
+  scale?: number;
+}
+
 const findAllInstancesOfSvgRepresentation = (
   pidPaths: PidPath[],
   svgRepresentation: SvgRepresentation
-): string[][] => {
-  const matches: PidPath[][] = [];
+): SvgRepresentationMatch[] => {
+  const matches: SvgRepresentationMatch[] = [];
 
   const joinedSymbolSvgCommands = svgRepresentation.svgPaths
     .map((svgPath) => svgPath.svgCommands)
@@ -54,10 +56,10 @@ const findAllInstancesOfSvgRepresentation = (
   const potPidPaths: PidPath[] = [];
   for (let i = 0; i < pidPaths.length; i++) {
     const matchResult = matcher.matches([pidPaths[i]]);
-    if (matchResult === MatchResult.SubMatch) {
+    if (matchResult.match === MatchResult.SubMatch) {
       potPidPaths.push(pidPaths[i]);
-    } else if (matchResult === MatchResult.Match) {
-      matches.push([pidPaths[i]]);
+    } else if (matchResult.match === MatchResult.Match) {
+      matches.push({ pathIds: [pidPaths[i].pathId], scale: matchResult.scale });
     }
   }
 
@@ -74,23 +76,24 @@ const findAllInstancesOfSvgRepresentation = (
       matchedPotPidPaths
     );
 
-    if (matchResult.result === MatchResult.Match) {
+    if (matchResult.result.match === MatchResult.Match) {
       potMatchIndexes.forEach((v) => {
         matchedPotPidPaths[v] = true;
       });
-      matches.push(
-        potPidPaths.filter((_, index) =>
-          matchResult.matchIndexes?.includes(index)
-        )
-      );
+      matches.push({
+        pathIds: potPidPaths
+          .filter((_, index) => matchResult.matchIndexes?.includes(index))
+          .map((pidPath) => pidPath.pathId),
+        scale: matchResult.result.scale,
+      });
     }
   }
 
-  return matches.map((match) => match.map((svgPath) => svgPath.pathId));
+  return matches;
 };
 
 interface MatchSearchResult {
-  result: MatchResult;
+  result: InstanceMatch;
   matchIndexes?: number[];
 }
 
@@ -118,15 +121,15 @@ const matchSearch = (
     }
 
     const matchResult = matcher.matches([...potMatch, potPidPaths[i]]);
-    if (matchResult === MatchResult.NotMatch) continue;
+    if (matchResult.match === MatchResult.NotMatch) continue;
 
-    if (matchResult === MatchResult.Match) {
+    if (matchResult.match === MatchResult.Match) {
       return {
-        result: MatchResult.Match,
+        result: matchResult,
         matchIndexes: [...potMatchIndexes, i],
       };
     }
-    if (matchResult === MatchResult.SubMatch) {
+    if (matchResult.match === MatchResult.SubMatch) {
       // Check if it is a match with or without the new potential PidPath
       const matchResultWithNewPotPidPath = matchSearch(
         matcher,
@@ -136,11 +139,11 @@ const matchSearch = (
         matchedPotPidPaths,
         withoutDepth
       );
-      if (matchResultWithNewPotPidPath.result === MatchResult.Match) {
+      if (matchResultWithNewPotPidPath.result.match === MatchResult.Match) {
         return matchResultWithNewPotPidPath;
       }
 
-      if (withoutDepth >= 1) return { result: MatchResult.NotMatch };
+      if (withoutDepth >= 1) return { result: { match: MatchResult.NotMatch } };
 
       const matchResultWithoutNewPotPidPath = matchSearch(
         matcher,
@@ -150,12 +153,12 @@ const matchSearch = (
         matchedPotPidPaths,
         withoutDepth + 1
       );
-      if (matchResultWithoutNewPotPidPath.result === MatchResult.Match) {
+      if (matchResultWithoutNewPotPidPath.result.match === MatchResult.Match) {
         return matchResultWithoutNewPotPidPath;
       }
 
-      return { result: MatchResult.NotMatch };
+      return { result: { match: MatchResult.NotMatch } };
     }
   }
-  return { result: MatchResult.NotMatch };
+  return { result: { match: MatchResult.NotMatch } };
 };

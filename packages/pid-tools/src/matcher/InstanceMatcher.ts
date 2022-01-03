@@ -1,14 +1,22 @@
 /* eslint-disable no-continue */
+import { approxeq } from '../geometry';
 import { PidPath } from '../pid/PidPath';
 import { PathSegment } from '../geometry/PathSegment';
 
 import { svgCommandToSegments } from './svgPathParser';
+
+const scaleThresholdLow = 0.5;
+const scaleThresholdHigh = 1.5;
 
 export enum MatchResult {
   Match,
   SubMatch,
   NotMatch,
 }
+
+const mod = (n: number, m: number): number => {
+  return ((n % m) + m) % m;
+};
 
 const getMaxLengthIndex = (pathSegments: PathSegment[]): number => {
   let maxLength = 0;
@@ -39,6 +47,33 @@ const getMaxMidPointDistance = (pathSegments: PathSegment[]) => {
   return midPointDistances[midPointDistances.length - 1];
 };
 
+const getScaleIfSimilar = (
+  pathSegment1: PathSegment,
+  pathSegment2: PathSegment
+): number | undefined => {
+  if (pathSegment1.pathType !== pathSegment2.pathType) return undefined;
+
+  if (!approxeq(mod(pathSegment1.angle, 180), mod(pathSegment2.angle, 180), 10))
+    return undefined;
+
+  return pathSegment1.length / pathSegment2.length;
+};
+
+const scaleIsWithinThreshold = (
+  scaleIfSimilar: number | undefined
+): boolean => {
+  return (
+    scaleIfSimilar !== undefined &&
+    scaleIfSimilar > scaleThresholdLow &&
+    scaleIfSimilar < scaleThresholdHigh
+  );
+};
+
+export interface InstanceMatch {
+  match: MatchResult;
+  scale?: number;
+}
+
 export class InstanceMatcher {
   segmentList: PathSegment[];
   maxMidPointDistance: number;
@@ -51,20 +86,24 @@ export class InstanceMatcher {
     return new InstanceMatcher(svgCommandToSegments(pathCommand));
   }
 
-  matches(other: PidPath[]): MatchResult {
+  matches(other: PidPath[]): InstanceMatch {
     const otherPathSegments: PathSegment[] = [];
     other.forEach((svgPath) => {
       otherPathSegments.push(...svgPath.segmentList);
     });
 
     if (this.segmentList.length < otherPathSegments.length) {
-      return MatchResult.NotMatch;
+      return { match: MatchResult.NotMatch };
     }
 
     const potMatchIndex = getMaxLengthIndex(otherPathSegments);
     const potMatchReference = otherPathSegments[potMatchIndex];
     for (let i = 0; i < this.segmentList.length; i++) {
-      if (!potMatchReference.isSimilar(this.segmentList[i])) continue;
+      const scaleIfSimilar = getScaleIfSimilar(
+        potMatchReference,
+        this.segmentList[i]
+      );
+      if (!scaleIsWithinThreshold(scaleIfSimilar)) continue;
 
       const matchResult = getMatchResultWithReferences(
         this.segmentList,
@@ -74,10 +113,10 @@ export class InstanceMatcher {
       );
 
       if (matchResult !== MatchResult.NotMatch) {
-        return matchResult;
+        return { match: matchResult, scale: scaleIfSimilar };
       }
     }
-    return MatchResult.NotMatch;
+    return { match: MatchResult.NotMatch };
   }
 }
 
