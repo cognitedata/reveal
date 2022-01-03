@@ -183,8 +183,6 @@ function isLegacyModelFormat(model: CadModelMetadata): boolean {
 }
 
 function isGltfModelFormat(model: CadModelMetadata): boolean {
-  return (
-    (model.format === File3dFormat.RevealCadModel && model.formatVersion >= 9) ||
-    model.format === File3dFormat.GltfCadModel
-  );
+  // Add new versions here as support is added to Reveal
+  return model.format === File3dFormat.GltfCadModel && model.formatVersion === 9;
 }
