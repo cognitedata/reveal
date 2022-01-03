@@ -72,10 +72,6 @@ export const FileDetails = ({
     }
   };
 
-  const onReviewClick = () => {
-    onReview();
-  };
-
   const onAnnotationDeleteClick = (annotationId: number) => {
     dispatch(
       DeleteAnnotationsAndHandleLinkedAssetsOfFile({
@@ -121,7 +117,7 @@ export const FileDetails = ({
               {fileDetails?.id && (
                 <FileDetailsAnnotationsPreview
                   fileInfo={fileDetails}
-                  onReviewClick={onReviewClick}
+                  onReviewClick={onReview}
                   onAnnotationDeleteClick={onAnnotationDeleteClick}
                 />
               )}

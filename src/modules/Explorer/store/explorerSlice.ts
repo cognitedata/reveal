@@ -172,7 +172,6 @@ const explorerSlice = createGenericTabularDataSlice({
       state.uploadedFileIds.push(action.payload);
     },
     resetExplorerTemporaryState(state) {
-      state.focusedFileId = null;
       state.uploadedFileIds = [];
       state.showFileUploadModal = false;
       state.loadingAnnotations = false;
@@ -211,6 +210,16 @@ const explorerSlice = createGenericTabularDataSlice({
         state.loadingAnnotations = false;
       }
     );
+
+    // should remove focused id when deleting a file - need to keep it when returning from review page
+    builder.addCase(DeleteFilesById.fulfilled, (state: State, { payload }) => {
+      const isDeletedFocusedFile = !!payload.find(
+        (fileId) => fileId === state.focusedFileId
+      );
+      if (isDeletedFocusedFile) {
+        state.focusedFileId = null;
+      }
+    });
 
     builder.addMatcher(
       isAnyOf(DeleteFilesById.fulfilled, clearExplorerFileState),
