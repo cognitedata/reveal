@@ -104,6 +104,15 @@ export const NumericRangeFilter: React.FC<Props> = ({
     }
   };
 
+  const handleEnterPress = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    trigger: () => void
+  ) => {
+    if (event.key === 'Enter') {
+      trigger();
+    }
+  };
+
   return (
     <RangeFilterWrapper>
       {config?.title && <RangeFilterTitle>{config.title}</RangeFilterTitle>}
@@ -122,6 +131,9 @@ export const NumericRangeFilter: React.FC<Props> = ({
           value={toNumber(fastMinMax[0])}
           onChange={handleMinChange}
           onBlur={handleMinBlur}
+          onKeyDown={(event) => {
+            handleEnterPress(event, handleMinBlur);
+          }}
           type="number"
           min={min}
           max={max}
@@ -136,6 +148,9 @@ export const NumericRangeFilter: React.FC<Props> = ({
           value={toNumber(fastMinMax[1])}
           onBlur={handleMaxBlur}
           onChange={handleMaxChange}
+          onKeyDown={(event) => {
+            handleEnterPress(event, handleMaxBlur);
+          }}
           type="number"
           min={min}
           max={max}
