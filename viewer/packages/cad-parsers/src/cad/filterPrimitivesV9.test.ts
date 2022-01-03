@@ -366,24 +366,6 @@ describe(filterGeometryOutsideClipBox.name, () => {
   });
 
   test('Two different primitive types in same buffer: one of each accepted', () => {
-    const mat0 = new THREE.Matrix4()
-      .makeTranslation(10, -10, 0)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
-    const mat1 = new THREE.Matrix4()
-      .makeTranslation(-10, 5, 10)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
-
-    const circles: Circle[] = [
-      {
-        instanceMatrix: mat0.toArray(),
-        normal: [0, 1, 0]
-      },
-      {
-        instanceMatrix: mat1.toArray(),
-        normal: [0, 1, 0]
-      }
-    ];
-
     const ellipsoids: Ellipsoid[] = [
       {
         horizontalRadius: 1,
@@ -399,8 +381,31 @@ describe(filterGeometryOutsideClipBox.name, () => {
       }
     ];
 
-    const primitives = [circles, ellipsoids];
-    const primitiveTypes = [PrimitiveName.Circle, PrimitiveName.Ellipsoid];
+    const cylinders: GeneralCylinder[] = [
+      {
+        angle: 0,
+        arcAngle: Math.PI,
+        centerA: [10, -10, -0.5],
+        centerB: [10, -10, 0.5],
+        localXAxis: [1, 0, 0],
+        planeA: [0, 1, 0, 1],
+        planeB: [0, -1, 0, 1],
+        radius: 0.5
+      },
+      {
+        angle: 0,
+        arcAngle: Math.PI,
+        centerA: [-10, 5, -0.5],
+        centerB: [-10, 5, 0.5],
+        localXAxis: [1, 0, 0],
+        planeA: [0, 1, 0, 1],
+        planeB: [0, -1, 0, 1],
+        radius: 0.5
+      }
+    ];
+
+    const primitives = [ellipsoids, cylinders];
+    const primitiveTypes = [PrimitiveName.Ellipsoid, PrimitiveName.GeneralCylinder];
     const collectionTypes = primitiveTypes.map(getCollectionType);
 
     const geometries = createPrimitiveInterleavedGeometriesSharingBuffer(primitiveTypes, primitives);
