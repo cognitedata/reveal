@@ -49,7 +49,6 @@ describe(CdfModelDataProvider.name, () => {
   });
 
   test('getBinaryFile() does not authenticate on 200', async () => {
-    // Make first API call fail, second succeed
     nock(/.*/).get(/.*/).reply(200, '');
 
     await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
