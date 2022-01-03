@@ -24,8 +24,11 @@ describe(CdfModelDataProvider.name, () => {
   const clientExt = new CdfModelDataProvider(client);
 
   beforeEach(() => {
-    authenticationSpy.mockRestore();
     authenticationSpy = mockClientAuthentication(client);
+  });
+
+  afterEach(() => {
+    authenticationSpy.mockRestore();
   });
 
   test('getBinaryFile() with binary data returns valid ArrayBuffer', async () => {
