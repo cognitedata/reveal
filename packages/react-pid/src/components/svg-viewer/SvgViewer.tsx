@@ -345,6 +345,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         labelSelection,
         symbolInstances,
         lines,
+        connections,
         graphPaths,
         graphSelection,
         active

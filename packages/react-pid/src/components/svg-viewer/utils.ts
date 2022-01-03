@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   DiagramInstanceId,
   DiagramLineInstance,
@@ -12,6 +13,8 @@ import {
   Point,
   getPointsCloserToEachOther,
   getPointTowardOtherPoint,
+  connectionExists,
+  getDiagramInstanceByPathId,
 } from '@cognite/pid-tools';
 
 import { ToolType } from '../../types';
@@ -90,7 +93,24 @@ export const isInGraphSelection = (
   return isPathIdInInstance(node.id, graphSelection);
 };
 
-/* eslint-disable no-param-reassign */
+const colorNode = (
+  node: SVGElement,
+  color: string,
+  opacity: number | undefined = undefined
+) => {
+  node.style.stroke = color;
+  if (node.style.fill !== 'none') {
+    node.style.fill = color;
+  }
+  if (opacity !== undefined) {
+    if (node.style.fill !== 'none') {
+      node.style.opacity = opacity.toString();
+    } else {
+      node.style.strokeOpacity = opacity.toString();
+    }
+  }
+};
+
 export const applyStyleToNode = (
   node: SVGElement,
   selection: SVGElement[],
@@ -98,36 +118,108 @@ export const applyStyleToNode = (
   labelSelection: DiagramInstanceId | null,
   symbolInstances: DiagramSymbolInstance[],
   lines: DiagramLineInstance[],
+  connections: DiagramConnection[],
   graphPaths: DiagramInstanceId[][],
   graphSelection: DiagramInstanceId | null,
   active: ToolType
 ) => {
   if (isDiagramLine(node, lines) || isLabelInInstances(node, lines)) {
-    node.style.stroke = COLORS.diagramLine;
+    colorNode(node, COLORS.diagramLine.color, COLORS.diagramLine.opacity);
   }
   if (
     isSymbolInstance(node, symbolInstances) ||
     isLabelInInstances(node, symbolInstances)
   ) {
-    node.style.stroke = COLORS.symbol;
+    colorNode(node, COLORS.symbol.color, COLORS.symbol.opacity);
   }
   if (isInConnectionSelection(node, connectionSelection)) {
-    node.style.stroke = COLORS.connectionSelection;
+    colorNode(node, COLORS.connectionSelection);
   }
   if (isInLabelSelection(node, labelSelection)) {
-    node.style.stroke = COLORS.labelSelection;
+    colorNode(node, COLORS.labelSelection);
   }
   if (isInAddSymbolSelection(node, selection)) {
-    node.style.stroke = COLORS.symbolSelection;
-  }
-  if (active === 'connectLabels' && node instanceof SVGTSpanElement) {
-    node.style.cursor = 'pointer';
+    colorNode(
+      node,
+      COLORS.symbolSelection.color,
+      COLORS.symbolSelection.opacity
+    );
   }
   if (isInGraphSelection(node, graphSelection)) {
-    node.style.stroke = COLORS.connectionSelection;
+    colorNode(node, COLORS.connectionSelection);
+  }
+
+  applyPointerCursorStyleToNode({
+    node,
+    active,
+    connectionSelection,
+    labelSelection,
+    symbolInstances,
+    lines,
+    connections,
+  });
+};
+
+interface CursorStyleOptions {
+  node: SVGElement;
+  active: ToolType;
+  connectionSelection: DiagramInstanceId | null;
+  labelSelection: DiagramInstanceId | null;
+  symbolInstances: DiagramSymbolInstance[];
+  lines: DiagramLineInstance[];
+  connections: DiagramConnection[];
+}
+
+const applyPointerCursorStyleToNode = ({
+  node,
+  active,
+  connectionSelection,
+  labelSelection,
+  symbolInstances,
+  lines,
+  connections,
+}: CursorStyleOptions) => {
+  if (active === 'addSymbol') {
+    if (node instanceof SVGPathElement) {
+      node.style.cursor = 'pointer';
+    }
+  } else if (active === 'addLine') {
+    if (
+      node instanceof SVGPathElement &&
+      !isSymbolInstance(node, symbolInstances)
+    ) {
+      node.style.cursor = 'pointer';
+    }
+  } else if (active === 'connectInstances') {
+    if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines)) {
+      // Make sure the connection does not already exist
+      if (connectionSelection !== null) {
+        const symbolInstance = getDiagramInstanceByPathId(
+          [...symbolInstances, ...lines],
+          node.id
+        )!;
+        const instanceId = getDiagramInstanceId(symbolInstance);
+        const newConnection = {
+          start: connectionSelection,
+          end: instanceId,
+          direction: 'unknown',
+        } as DiagramConnection;
+        if (!connectionExists(connections, newConnection)) {
+          node.style.cursor = 'pointer';
+        }
+      } else {
+        node.style.cursor = 'pointer';
+      }
+    }
+  } else if (active === 'connectLabels') {
+    if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines)) {
+      node.style.cursor = 'pointer';
+    }
+    if (labelSelection !== null && node instanceof SVGTSpanElement) {
+      node.style.cursor = 'pointer';
+    }
   }
 };
-/* eslint-enable no-param-reassign */
 
 export const addOrRemoveLabelToInstance = (
   node: SVGElement,

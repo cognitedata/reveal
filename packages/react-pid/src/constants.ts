@@ -1,9 +1,18 @@
 export const COLORS = {
-  symbol: 'red',
+  symbol: {
+    color: 'Crimson',
+    opacity: 0.9,
+  },
+  diagramLine: {
+    color: 'DodgerBlue',
+    opacity: 0.9,
+  },
   graphPath: 'green',
-  diagramLine: 'blue',
-  symbolSelection: 'orange',
-  connectionSelection: 'lawngreen',
+  symbolSelection: {
+    color: 'DarkOrange',
+    opacity: 0.75,
+  },
+  connectionSelection: 'LightGreen',
   labelSelection: 'coral',
   connection: {
     color: 'DarkRed',
