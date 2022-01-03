@@ -43,7 +43,7 @@ module.exports = {
       'block',
       [
         {
-          pattern: `(Copyright ${new Date().getFullYear()}|istanbul ignore)`,
+          pattern: `(Copyright 20\\d{2}|istanbul ignore)`,
           template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `
         }
       ]
