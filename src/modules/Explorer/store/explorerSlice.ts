@@ -213,11 +213,12 @@ const explorerSlice = createGenericTabularDataSlice({
 
     // should remove focused id when deleting a file - need to keep it when returning from review page
     builder.addCase(DeleteFilesById.fulfilled, (state: State, { payload }) => {
-      payload.forEach((fileId) => {
-        if (state.focusedFileId === fileId) {
-          state.focusedFileId = null;
-        }
-      });
+      const isDeletedFocusedFile = !!payload.find(
+        (fileId) => fileId === state.focusedFileId
+      );
+      if (isDeletedFocusedFile) {
+        state.focusedFileId = null;
+      }
     });
 
     builder.addMatcher(
