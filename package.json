@@ -16,7 +16,7 @@
     "@cognite/cdf-utilities": "^0.7.3",
     "@cognite/cogs.js": "^5.2.1",
     "@cognite/metrics": "^0.1.7",
-    "@cognite/sdk": "^5.5.0",
+    "@cognite/sdk": "^6.3.1",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^5.2.0",
     "@rescripts/cli": "^0.0.14",
