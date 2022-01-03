@@ -102,7 +102,7 @@ export class CogniteOrnate {
   drawingLayer: Konva.Layer = new Konva.Layer({
     name: 'drawingLayer',
   });
-  history: OrnateHistory = new OrnateHistory([]);
+  history: OrnateHistory = new OrnateHistory([], []);
   isDrawing = false;
   currentTool: Tool = new DefaultTool(this);
   connectedLineGroup: ConnectedLine[] = [];

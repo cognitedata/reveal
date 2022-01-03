@@ -15,9 +15,14 @@ type ExtendedHistoryItem = {
  */
 export class OrnateHistory {
   private undoHistory: ExtendedHistoryItem[];
+  private redoHistory: ExtendedHistoryItem[];
 
-  constructor(undoHistory: ExtendedHistoryItem[]) {
+  constructor(
+    undoHistory: ExtendedHistoryItem[],
+    redoHistory: ExtendedHistoryItem[]
+  ) {
     this.undoHistory = undoHistory;
+    this.redoHistory = redoHistory;
   }
 
   /**
@@ -52,10 +57,10 @@ export class OrnateHistory {
     const shapeWithAction = {
       action: 'update',
       update: {
-        [updatedKey]: selectedShape.attrs[updatedKey],
         id: selectedShape.attrs?.id,
         attachedToGroup: selectedShape.attrs?.attachedToGroup,
         inGroup: selectedShape.attrs?.inGroup,
+        [updatedKey]: selectedShape.attrs[updatedKey],
       },
     } as ExtendedHistoryItem;
     this.undoHistory.push(shapeWithAction);
@@ -75,6 +80,9 @@ export class OrnateHistory {
     if (attrs.type === 'line') {
       return new Konva.Line(attrs);
     }
+    if (attrs.type === 'text') {
+      return new Konva.Text(attrs);
+    }
     return undefined;
   };
 
@@ -91,6 +99,11 @@ export class OrnateHistory {
       group || ornateInstance.drawingLayer;
     if (latestChange && latestChange.action === 'create') {
       this.undoHistory.pop();
+      const newChange = {
+        action: 'delete',
+        update: latestChange.update,
+      } as ExtendedHistoryItem;
+      this.redoHistory.push(newChange);
       const selectedNode = layer.findOne(`#${latestChange.update.id}`);
       if (selectedNode) {
         selectedNode.destroy();
@@ -99,13 +112,81 @@ export class OrnateHistory {
     if (latestChange && latestChange.action === 'update') {
       this.undoHistory.pop();
       const selectedNode = layer.findOne(`#${latestChange.update.id}`);
+      const updateKeys = Object.keys(latestChange.update);
+      const attributeKey = updateKeys[updateKeys.length - 1];
+      const newChange = {
+        action: 'update',
+        update: {
+          ...latestChange.update,
+          [attributeKey]: selectedNode.attrs[attributeKey],
+        },
+      };
+      this.redoHistory.push(newChange);
       if (selectedNode) {
-        const changedKey = Object.keys(latestChange.update)[0] as UpdateKeyType;
-        selectedNode.setAttr(changedKey, latestChange.update[changedKey]);
+        selectedNode.setAttr(attributeKey, latestChange.update[attributeKey]);
       }
     }
     if (latestChange && latestChange.action === 'delete') {
       this.undoHistory.pop();
+      const newChange = {
+        action: 'create',
+        update: latestChange.update,
+      } as ExtendedHistoryItem;
+      this.redoHistory.push(newChange);
+      const newShape = this.createShape(latestChange.update);
+      if (newShape) {
+        layer.add(newShape);
+      }
+    }
+  };
+
+  /**
+   * Function which is responsible for redoing the changes user made.
+   */
+  redoChanges = (ornateInstance: CogniteOrnate) => {
+    if (this.redoHistory?.length === 0) return;
+    const latestChange = this.redoHistory[this.redoHistory.length - 1];
+    const groupName =
+      latestChange.update?.attachedToGroup || latestChange.update?.inGroup;
+    const group = ornateInstance.stage.findOne(`#${groupName}`) as Konva.Group;
+    const layer: Konva.Layer | Konva.Group =
+      group || ornateInstance.drawingLayer;
+    if (latestChange && latestChange.action === 'create') {
+      this.redoHistory.pop();
+      const newChange = {
+        action: 'delete',
+        update: latestChange.update,
+      } as ExtendedHistoryItem;
+      this.undoHistory.push(newChange);
+      const selectedNode = layer.findOne(`#${latestChange.update.id}`);
+      if (selectedNode) {
+        selectedNode.destroy();
+      }
+    }
+    if (latestChange && latestChange.action === 'update') {
+      this.redoHistory.pop();
+      const selectedNode = layer.findOne(`#${latestChange.update.id}`);
+      const updateKeys = Object.keys(latestChange.update);
+      const attributeKey = updateKeys[updateKeys.length - 1];
+      const newChange = {
+        action: 'update',
+        update: {
+          ...latestChange.update,
+          [attributeKey]: selectedNode.attrs[attributeKey],
+        },
+      };
+      this.undoHistory.push(newChange);
+      if (selectedNode) {
+        selectedNode.setAttr(attributeKey, latestChange.update[attributeKey]);
+      }
+    }
+    if (latestChange && latestChange.action === 'delete') {
+      this.redoHistory.pop();
+      const newChange = {
+        action: 'create',
+        update: latestChange.update,
+      } as ExtendedHistoryItem;
+      this.undoHistory.push(newChange);
       const newShape = this.createShape(latestChange.update);
       if (newShape) {
         layer.add(newShape);

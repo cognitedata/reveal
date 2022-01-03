@@ -79,6 +79,7 @@ DEPENDENCIES = [
     "@npm//@cognite/comment-service-types",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
+    "@npm//@types/color",
     "@npm//konva",
     "@npm//lodash",
     "@npm//react",
@@ -105,7 +106,6 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/sinon",
     "@npm//@types/styled-components",
     "@npm//@types/uuid",
-    "@npm//@types/color",
 ]
 
 # Dev dependencies from package.json

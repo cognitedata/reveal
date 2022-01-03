@@ -239,6 +239,14 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         e.preventDefault(); // needed so the undo does not trigger the Chrome undo shortcut
         ornateViewer.current?.history.undoChanges(ornateViewer.current);
       }
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.shiftKey &&
+        (e.key || '').toLowerCase() === 'z'
+      ) {
+        e.preventDefault(); // needed so the redo does not trigger the Chrome redo shortcut
+        ornateViewer.current?.history.redoChanges(ornateViewer.current);
+      }
     };
 
     const stageContainer = ornateViewer.current
