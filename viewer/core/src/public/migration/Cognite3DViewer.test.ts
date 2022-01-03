@@ -11,12 +11,13 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 
 import nock from 'nock';
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
-import { createGlContext } from '../../../../test-utilities';
+import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 
 describe('Cognite3DViewer', () => {
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+  mockClientAuthentication(sdk);
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
 
   const renderer = new THREE.WebGLRenderer({ context });
