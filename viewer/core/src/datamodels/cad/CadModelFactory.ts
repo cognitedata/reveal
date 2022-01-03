@@ -54,12 +54,8 @@ export class CadModelFactory {
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
     if (format === File3dFormat.RevealCadModel && formatVersion === 8) {
       return this._v8SectorRepository;
-    } else if (format === File3dFormat.RevealCadModel && formatVersion === 9) {
+    } else if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
       return this._gltfSectorRepository;
-    } else if (format === File3dFormat.GltfCadModel) {
-      return this._gltfSectorRepository;
-    } else if (format !== File3dFormat.RevealCadModel) {
-      throw new Error(`Model format [${format}] is not a valid CAD model format`);
     } else {
       throw new Error(
         `Model format [${format} v${formatVersion}] is not supported (only version 8 and 9 is supported)`
