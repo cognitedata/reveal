@@ -129,7 +129,7 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
     setSelectedIds((prevState) => {
       return {
         ...prevState,
-        [row.id]: value,
+        [row.original.id]: value,
       };
     });
   };
