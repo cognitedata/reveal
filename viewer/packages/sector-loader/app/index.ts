@@ -105,7 +105,7 @@ async function loadSectors(
   client: CogniteClient
 ) {
   const output = outputs.find(
-    output => output.format === File3dFormat.RevealCadModel && output.version === formatVersion
+    output => output.format === File3dFormat.GltfCadModel && output.version === formatVersion
   );
   const sceneJson = await modelDataClient.getJsonFile(
     `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,

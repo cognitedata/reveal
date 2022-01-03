@@ -66,29 +66,27 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
 
   private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
     const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
+    // Supported output formats in order of preference (first format is most preferred)
+    const preferredOutputs = [
+      { format: File3dFormat.GltfCadModel, version: 9 },
+      { format: File3dFormat.RevealCadModel, version: 8 }
+    ];
 
-    const cadModelOutputs = outputs.filter(
-      output =>
-        output.format === File3dFormat.RevealCadModel ||
-        // TODO 2021-12-14 larsmoa: Remove after 3.0 release
-        // This is in place to support "pre-release" GLTF models that had a different output name
-        output.format === File3dFormat.GltfCadModel
-    );
+    const supportedModelOutputs = outputs.filter(modelOutput => {
+      return preferredOutputs.some(supportedOutput => {
+        return supportedOutput.format === modelOutput.format && supportedOutput.version === modelOutput.version;
+      });
+    });
 
-    if (cadModelOutputs.length === 0) {
-      throw new Error(`Model does not contain any supported cad model output ${File3dFormat.RevealCadModel}`);
-    }
-
-    const v9output = cadModelOutputs.find(x => x.version === 9);
-    const v8output = cadModelOutputs.find(x => x.version === 8);
-    if (v8output === undefined && v9output === undefined) {
+    if (supportedModelOutputs.length === 0) {
+      const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(',');
+      const supportedOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(',');
       throw new Error(
-        `Model does not contain any supported cad model output ${File3dFormat.RevealCadModel} for versions in [8,9], ` +
-          `only got ${cadModelOutputs.map(x => x.version).join(',')}`
+        `Model does not contain any supported CAD model outputs, got ${cadModelOutputsString}, but only supports ${supportedOutputsString}`
       );
     }
 
-    return (v9output ?? v8output)!;
+    return supportedModelOutputs[0];
   }
 }
 
