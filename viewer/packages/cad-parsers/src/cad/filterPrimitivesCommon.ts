@@ -16,7 +16,11 @@ export function filterPrimitivesOutsideClipBox(
   ) => void
 ): Uint8Array {
   const elementCount = attributesByteValues.length / elementSize;
-  const attributeFloatValues = new Float32Array(attributesByteValues.buffer);
+  const attributeFloatValues = new Float32Array(
+    attributesByteValues.buffer,
+    attributesByteValues.byteOffset,
+    attributesByteValues.byteLength / Float32Array.BYTES_PER_ELEMENT
+  );
 
   const instanceBbox = new THREE.Box3();
 
