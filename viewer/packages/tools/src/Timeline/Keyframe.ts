@@ -46,7 +46,8 @@ export class Keyframe {
   }
 
   /**
-   * Add node & style to the collection
+   * Add node & style to the collection. If the collection has been added, the style is updated to the
+   * appearance provided.
    * @param nodeCollection Node set to apply the Styles
    * @param nodeAppearance Style to assign to the node collection
    */
@@ -55,12 +56,10 @@ export class Keyframe {
 
     const index = this._nodeCollectionAndAppearance.findIndex(x => x.nodes === nodeCollection);
     if (index !== -1) {
-      throw new Error(
-        'Node collection as already been assigned, use updateStyledNodeCollection() to update the appearance'
-      );
+      this._nodeCollectionAndAppearance[index].nodeAppearance = nodeAppearance;
+    } else {
+      this._nodeCollectionAndAppearance.push({ nodes: nodeCollection, nodeAppearance });
     }
-
-    this._nodeCollectionAndAppearance.push({ nodes: nodeCollection, nodeAppearance });
   }
 
   /**

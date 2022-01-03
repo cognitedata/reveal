@@ -161,29 +161,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index !== -1) {
-      throw new Error(
-        'Node collection as already been assigned, use updateStyledNodeCollection() to update the appearance'
-      );
+      this._styledNodeCollections[index].appearance = appearance;
+    } else {
+      this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance });
     }
-
-    this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance });
     this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
-  }
-
-  /**
-   * Updates styled node collections with a new appearance.
-   * @param nodeCollection    A node collection previously assigned using {@link assignStyledNodeCollection}.
-   * @param newAppearance     New appearance for the nodes in the collection.
-   * @throws Error if node collection hasn't previously been assigned using {@link assignStyledNodeCollection}.
-   */
-  updateStyledNodeCollection(nodeCollection: NodeCollectionBase, newAppearance: NodeAppearance): void {
-    const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
-    if (index === -1) {
-      throw new Error('The node collection provide has not been assigned previously');
-    }
-
-    this._styledNodeCollections[index].appearance = newAppearance;
-    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, newAppearance);
   }
 
   /**
