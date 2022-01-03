@@ -46,7 +46,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
         const response = await fetch(input, options);
 
         // Authentication error
-        if (response.status == 401) {
+        if (response.status === 401) {
           this.authenticationPromise = this.client.authenticate();
           continue;
         }
