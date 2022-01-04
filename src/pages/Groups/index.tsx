@@ -21,6 +21,7 @@ import { useRouteMatch } from 'react-router';
 import { ColumnType } from 'antd/lib/table';
 
 import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
 import { stringContains } from './utils';
@@ -29,7 +30,7 @@ const { Text } = Typography;
 
 export default function Groups() {
   const sdk = useSDK();
-  const legacyFlow = sdk.getOAuthFlowType() === 'CDF_OAUTH';
+  const legacyFlow = getFlow().flow === 'CDF_OAUTH';
   const client = useQueryClient();
 
   const [showNewGroupDrawer, setShowNew] = useState(false);
