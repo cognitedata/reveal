@@ -1,7 +1,7 @@
 import { Menu } from '@cognite/cogs.js';
 import uniqueId from 'lodash/uniqueId';
 import isObject from 'lodash/isObject';
-import { ConfigurationResponse, ProjectResponse } from 'types/ApiInterface';
+import { ConfigurationResponse } from 'types/ApiInterface';
 
 import { FilterListFiltersSource } from './types';
 
@@ -36,10 +36,8 @@ export const FilterListItems = (
         }}
       >
         {isObject(source)
-          ? // eslint-disable-next-line camelcase
-            (source as ConfigurationResponse).name ||
-            (source as ProjectResponse).external_id ||
-            source.id
+          ? (source as ConfigurationResponse).name ||
+            (source as ConfigurationResponse).id
           : source}
       </Menu.Item>
     ))}

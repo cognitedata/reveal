@@ -3,9 +3,7 @@ import { Button, Dropdown, Loader, Tooltip } from '@cognite/cogs.js';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
 import { useConfigurationsQuery } from 'services/endpoints/configurations/query';
-import { useDatatypesQuery } from 'services/endpoints/datatypes/query';
 import { useSourcesQuery } from 'services/endpoints/sources/query';
-import { useProjectsQuery } from 'services/endpoints/projects/query';
 import config from 'configs/datatransfer.config';
 import {
   addColumnName,
@@ -14,7 +12,6 @@ import {
   useDataTransfersDispatch,
   useDataTransfersState,
   updateFilters,
-  reportClear,
   initialState,
 } from 'contexts/DataTransfersContext';
 
@@ -36,38 +33,13 @@ const TableActions: React.FC = () => {
   const dispatch = useDataTransfersDispatch();
   const {
     data,
-    filters: {
-      selectedConfiguration,
-      selectedSource,
-      selectedTarget,
-      selectedSourceProject,
-      selectedTargetProject,
-      selectedDateRange,
-      selectedDatatype,
-    },
+    filters: { selectedConfiguration },
   } = useDataTransfersState();
 
   const { data: configurations, ...queryConfigurations } =
     useConfigurationsQuery();
 
-  const { data: datatypes } = useDatatypesQuery({
-    id: selectedSourceProject?.id || null,
-    enabled: !!(selectedSourceProject && selectedSourceProject.id),
-  });
-
   const { data: sources } = useSourcesQuery();
-
-  const { data: sourceProjects } = useProjectsQuery({
-    source: selectedSource,
-    instance: null,
-    enabled: !!selectedSource,
-  });
-
-  const { data: targetProjects } = useProjectsQuery({
-    source: selectedTarget,
-    instance: null,
-    enabled: !!selectedTarget,
-  });
 
   const { data: datatransfers, ...queryDataTransfers } =
     usePrepareDataTransfersQuery();
@@ -101,22 +73,7 @@ const TableActions: React.FC = () => {
         })
       );
     }
-  }, [
-    selectedConfiguration,
-    selectedDatatype,
-    queryDataTransfers.dataUpdatedAt,
-  ]);
-
-  function resetFilters() {
-    dispatch(reportClear());
-    dispatch(
-      updateFilters({
-        selectedTarget: null,
-        selectedSourceProject: null,
-        selectedTargetProject: null,
-      })
-    );
-  }
+  }, [selectedConfiguration, queryDataTransfers.dataUpdatedAt]);
 
   function handleColumnSelection(name: string, nextState: boolean) {
     if (name === undefined) return;
@@ -138,44 +95,6 @@ const TableActions: React.FC = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    dispatch(reportClear());
-    dispatch(
-      updateFilters({
-        selectedTarget: null,
-        selectedSourceProject: null,
-        selectedTargetProject: null,
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSource]);
-
-  useEffect(() => {
-    dispatch(reportClear());
-    dispatch(
-      updateFilters({
-        selectedTarget: null,
-        selectedTargetProject: null,
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSourceProject]);
-
-  useEffect(() => {
-    dispatch(reportClear());
-    dispatch(
-      updateFilters({
-        selectedTargetProject: null,
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTarget]);
-
-  useEffect(() => {
-    dispatch(reportClear());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTarget, selectedTargetProject, selectedDateRange]);
 
   useEffect(() => {
     if (configurationNameFromUrl) {
@@ -201,26 +120,6 @@ const TableActions: React.FC = () => {
     <TableActionsContainer>
       {sources.length > 0 && (
         <Filters
-          source={{
-            sources,
-            selected: selectedSource,
-            onSelectSource: (nextSelected) =>
-              dispatch(updateFilters({ selectedSource: nextSelected })),
-            projects: sourceProjects,
-            selectedProject: selectedSourceProject,
-            onSelectProject: (nextSelected) =>
-              dispatch(updateFilters({ selectedSourceProject: nextSelected })),
-          }}
-          target={{
-            targets: sources,
-            selected: selectedTarget,
-            onSelectTarget: (nextSelected) =>
-              dispatch(updateFilters({ selectedTarget: nextSelected })),
-            projects: targetProjects,
-            selectedProject: selectedTargetProject,
-            onSelectProject: (nextSelected) =>
-              dispatch(updateFilters({ selectedTargetProject: nextSelected })),
-          }}
           configuration={{
             configurations,
             selected: selectedConfiguration,
@@ -232,16 +131,9 @@ const TableActions: React.FC = () => {
               );
             },
           }}
-          datatype={{
-            types: datatypes,
-            selected: selectedDatatype,
-            onSelectType: (nextSelected) =>
-              dispatch(updateFilters({ selectedDatatype: nextSelected })),
-          }}
-          onReset={resetFilters}
         />
       )}
-      {(selectedConfiguration || selectedSourceProject) && (
+      {selectedConfiguration && (
         <ColumnsSelector>
           <Tooltip content="Show/hide table columns">
             <Dropdown

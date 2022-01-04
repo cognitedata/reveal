@@ -1,9 +1,4 @@
-import {
-  ConfigurationResponse,
-  DatatypesResponse,
-  ProjectResponse,
-} from 'types/ApiInterface';
-import { Range } from '@cognite/cogs.js';
+import { ConfigurationResponse } from 'types/ApiInterface';
 import {
   DataTransfersTableData,
   MappedColumnNames,
@@ -38,13 +33,7 @@ interface Data {
 }
 
 export interface DataTypesFilters {
-  selectedSource: string | null;
-  selectedTarget: string | null;
   selectedConfiguration: ConfigurationResponse | null;
-  selectedSourceProject: ProjectResponse | null;
-  selectedTargetProject: ProjectResponse | null;
-  selectedDateRange: Range; // Keep, as might be useful to store the state of the date here.
-  selectedDatatype: DatatypesResponse | null;
 }
 
 export interface DataTransfersState {

@@ -23,13 +23,7 @@ export const initialState: DataTransfersState = {
     selectedColumnNames: [],
   },
   filters: {
-    selectedSource: null,
-    selectedTarget: null,
     selectedConfiguration: null,
-    selectedSourceProject: null,
-    selectedTargetProject: null,
-    selectedDateRange: {},
-    selectedDatatype: null,
   },
   error: undefined,
 };

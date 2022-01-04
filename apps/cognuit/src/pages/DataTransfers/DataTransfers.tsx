@@ -22,13 +22,7 @@ const DataTransfers: React.FC = () => {
   const {
     status,
     data,
-    filters: {
-      selectedConfiguration,
-      selectedSource,
-      selectedTarget,
-      selectedSourceProject,
-      selectedTargetProject,
-    },
+    filters: { selectedConfiguration },
   } = useDataTransfersState();
 
   const [filteredData, setFilteredData] = useState<DataTransfersTableData[]>(
@@ -42,21 +36,7 @@ const DataTransfers: React.FC = () => {
     if (filteredData.length > 0) return null;
 
     let message = 'Select configuration';
-    if (selectedSource) {
-      if (selectedSourceProject) {
-        if (selectedTarget) {
-          if (selectedTargetProject) {
-            message = 'No data';
-          } else {
-            message = 'Select target project';
-          }
-        } else {
-          message = 'Select target';
-        }
-      } else {
-        message = 'Select source project';
-      }
-    }
+
     if (selectedConfiguration && data.data.length < 1) {
       message = 'No data';
     }
