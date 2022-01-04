@@ -190,7 +190,7 @@ const NumberOrMissingTd = ({
   return Number.isFinite(value) ? (
     <>
       {value}
-      {children}
+      <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
     </>
   ) : (
     <StyledJustifyCenter>
@@ -266,4 +266,8 @@ const StyledInfoFilledIcon = styled(Icon).attrs({
   type: 'InfoFilled',
 })`
   color: ${Colors['text-hint'].hex()};
+`;
+
+const StyledChildrenWrapper = styled.div`
+  margin-left: 8px;
 `;
