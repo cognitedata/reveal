@@ -60,7 +60,7 @@ export const CreateSolutionModalContent = styled.div`
     display: flex;
     align-items: center;
     margin: 4px 0 24px;
-    .cogs-icon-WarningStroke {
+    .cogs-icon-Warning {
       width: 12px !important;
       margin-right: 6px;
       color: var(--cogs-text-danger);

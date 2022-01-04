@@ -78,7 +78,7 @@ const StyledSideBarMenu = styled.div`
   height: 100%;
   flex-direction: column;
   justify-content: space-between;
-  width: 6rem;
+  width: 57px; // fit to the navbar's 56px + 1px of border
   padding: 0 1rem;
   border-right: solid 1px var(--cogs-greyscale-grey3);
 `;

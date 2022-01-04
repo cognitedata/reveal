@@ -28,7 +28,11 @@ export const CodeEditor = (props: CodeEditorProps) => {
             icon="Code"
             aria-label="Code view"
           />
-          <SegmentedControl.Button key="ui" icon="Table" aria-label="UI view" />
+          <SegmentedControl.Button
+            key="ui"
+            icon="DataTable"
+            aria-label="UI view"
+          />
         </SegmentedControl>
       </PageToolbar>
       {props.currentView === 'code' ? (

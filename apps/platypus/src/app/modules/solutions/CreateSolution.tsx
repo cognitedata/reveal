@@ -97,7 +97,7 @@ export const CreateSolution = ({
           error={inputError}
         />
         <div className="input-detail">
-          {inputError && <Icon type="WarningStroke" />}
+          {inputError && <Icon type="Warning" />}
           <Detail>
             {t(
               'detail_solution_name_unique',

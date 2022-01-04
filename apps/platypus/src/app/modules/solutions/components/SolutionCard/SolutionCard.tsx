@@ -64,11 +64,7 @@ export const SolutionCard = ({
         }
       >
         <div className="menuContainer">
-          <Icon
-            type="MoreOverflowEllipsisHorizontal"
-            size={18}
-            className="menu"
-          />
+          <Icon type="EllipsisHorizontal" size={18} className="menu" />
         </div>
       </Dropdown>
     );

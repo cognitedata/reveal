@@ -59,7 +59,7 @@ export const DataLayout = () => {
       tooltip: t('data_model_title', 'Data model'),
     },
     {
-      icon: <Icon type="Datasource" />,
+      icon: <Icon type="DataSource" />,
       page: 'data',
       slug: 'data-management/preview',
       tooltip: t('data_management_title', 'Data management'),

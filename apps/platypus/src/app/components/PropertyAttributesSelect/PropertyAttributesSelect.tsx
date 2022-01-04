@@ -18,16 +18,16 @@ export const PropertyAttributesSelect = ({
   const isIndexed = doesFieldHaveDirective(field, 'index');
   const PropertyAttributesSelectDropdown = (
     <Menu style={{ width: 180 }}>
-      <Menu.Item appendIcon={isRequired ? 'Check' : undefined}>
+      <Menu.Item appendIcon={isRequired ? 'Checkmark' : undefined}>
         <Icon type="ExclamationMark" /> Required{' '}
       </Menu.Item>
-      <Menu.Item appendIcon={isSearch ? 'Check' : undefined}>
+      <Menu.Item appendIcon={isSearch ? 'Checkmark' : undefined}>
         <Icon type="Search" /> Searchable
       </Menu.Item>
-      <Menu.Item appendIcon={isUnique ? 'Check' : undefined}>
+      <Menu.Item appendIcon={isUnique ? 'Checkmark' : undefined}>
         <Icon type="Sun" /> Unique
       </Menu.Item>
-      <Menu.Item appendIcon={isIndexed ? 'Check' : undefined}>
+      <Menu.Item appendIcon={isIndexed ? 'Checkmark' : undefined}>
         <Icon type="DataTable" /> Indexed
       </Menu.Item>
     </Menu>
@@ -36,7 +36,7 @@ export const PropertyAttributesSelect = ({
     <Dropdown content={PropertyAttributesSelectDropdown}>
       <Container alignItems="center" gap={8}>
         <PropertyAttributesDisplay field={field} />
-        <Icon type="Down" />
+        <Icon type="ChevronDown" />
       </Container>
     </Dropdown>
   );

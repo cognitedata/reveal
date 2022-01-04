@@ -10,6 +10,6 @@ export const Spinner = ({
   size?: number;
 }) => (
   <StyledLoaderContainer className="spinner" style={style}>
-    <Icon type="Loading" size={size} />
+    <Icon type="Loader" size={size} />
   </StyledLoaderContainer>
 );

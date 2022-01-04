@@ -239,7 +239,7 @@ export const SchemaVisualizer = ({
           },
           {
             key: 'ExpandMax',
-            component: <Icon type="ExpandMax" />,
+            component: <Icon type="FullScreen" />,
             onClick: () => fitHandler(),
           },
         ]}

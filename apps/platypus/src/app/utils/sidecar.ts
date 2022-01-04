@@ -56,6 +56,9 @@ const getAadApplicationId = (cluster: string) => {
   disableSentry: true,
   disableIntercom: false,
   disableReactQuery: false,
+  reactQueryDevtools: {
+    disabled: true,
+  },
   ...((window as any).__cogniteSidecar || {}),
 };
 

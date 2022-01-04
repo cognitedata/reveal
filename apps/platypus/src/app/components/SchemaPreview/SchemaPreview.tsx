@@ -27,7 +27,7 @@ export const SchemaPreview = ({
 
   const expandIcon = ({ isActive }: CollapsePanelProps) => (
     <StyledExpandIcon>
-      <Icon type={isActive ? 'ChevronUpMicro' : 'ChevronDownMicro'} />
+      <Icon type={isActive ? 'ChevronUpSmall' : 'ChevronDownSmall'} />
     </StyledExpandIcon>
   );
 

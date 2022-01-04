@@ -21,12 +21,12 @@ export const isDisplayedNodesOverlapping = (
 ) => {
   const nodes = origNodes.slice();
   while (nodes.length !== 0) {
-    const item = nodes.pop()!;
+    const item = nodes.pop();
     const hasOverlap = nodes.some((node) => {
       const nodeX = (node.x || 0) * scale;
       const nodeY = (node.y || 0) * scale;
-      const itemX = (item.x || 0) * scale;
-      const itemY = (item.y || 0) * scale;
+      const itemX = (item?.x || 0) * scale;
+      const itemY = (item?.y || 0) * scale;
 
       const nodeWidth = NODE_WIDTH;
       const nodeHeight =
@@ -36,7 +36,7 @@ export const isDisplayedNodesOverlapping = (
       const itemWidth = NODE_WIDTH;
       const itemHeight =
         NODE_HEADER_HEIGHT +
-        (item.fields?.length || 0) * NODE_PROPERTY_ITEM_HEIGHT;
+        (item?.fields?.length || 0) * NODE_PROPERTY_ITEM_HEIGHT;
 
       return (
         // node max X > item min X

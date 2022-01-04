@@ -1516,14 +1516,15 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-2.0.0.tgz#362162222816372b9c40ce13d38630f807cc135a"
-  integrity sha512-MfgYUYU6XJPzpnLw536+JTJjFBhu4Uh50oMYBXeqqVRxMb5WvLjQktql+KBpDU9GEljIWQ5ZewcFvdF7DFD+yw==
+"@cognite/auth-utils@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-2.1.0.tgz#81a5d759630f09d73cc796e7bbe497354f8ad0d5"
+  integrity sha512-CiWA8sFdfyNwuLgIzTzAoQLGEfD6lFaqPPHmCGBjyMYdVZJDOBZAZSt2kRaPy/Jm3tUuiYJrp+6JN4slUGOmoQ==
   dependencies:
     "@cognite/metrics" "1.2.1"
     "@cognite/sdk" "5.4.0"
     "@cognite/storage" "0.1.2"
+    axios "0.21.4"
     jwt-decode "3.1.2"
     lodash "4.17.21"
 
@@ -1581,13 +1582,14 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^3.42.3":
-  version "3.42.3"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.3.tgz#8239551d0ae815e103b903be66ea156dba672d20"
-  integrity sha512-lKaBcsXNXrsnoCw8YMHnE7uuanluTcViqNgF2HCYIAqcTWQrt4RlXzg1DTlIaPnqDnDRNgxxS9YARxmNThfwHg==
+"@cognite/cogs.js@^5.3.2":
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.3.2.tgz#493a9368e662c5cbaa3bd93a398fb9e6b4a28e49"
+  integrity sha512-x9RLSmIusfhFdNJZZKSsZ/l0WdqNbQe77uU5FLnqx4ob2bicphYbspxjuJYzasnz6d8OfqCjvcxFWranVt8TzA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
+    axios "^0.21.2"
     classnames "^2.3.1"
     color "^3.1.2"
     dayjs "^1.9.7"
@@ -1603,6 +1605,7 @@
     react-select "^3.1.0"
     react-table "^7.6.0"
     react-toastify "^6.0.9"
+    resize-observer-polyfill "^1.5.1"
     stylelint "^13.13.1"
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
@@ -1648,24 +1651,26 @@
   dependencies:
     mixpanel-browser "2.41.0"
 
-"@cognite/react-container@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-2.1.1.tgz#1f2069bf5c459ce68dbb652438cade5696598bbf"
-  integrity sha512-a3l0r/Zp9o+Z9tay8GHd3tb2PkdLnx0rmjCt7gP9kCTTEnfF8Zu+4UVUwRhenlv1lmDRykZtfhXGlwDj30B8QQ==
+"@cognite/react-container@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-3.0.1.tgz#269d7e9b7830fb8c54000d6708b9d8f9c0d79aec"
+  integrity sha512-UsS6xrDXG0vqAYxerQRgBCbg4UA+p2aXpytKHWc8mxGHLquTFEtoBKtYxFksDlexZgceCUoGBTVwySPjexXqUg==
   dependencies:
-    "@cognite/auth-utils" "2.0.0"
+    "@cognite/auth-utils" "2.1.0"
     "@cognite/intercom-helper" "0.2.0"
     "@cognite/react-errors" "1.0.1"
     "@cognite/react-i18n" "0.5.0"
     "@cognite/react-loop-detector" "0.2.0"
-    "@cognite/react-sentry" "0.2.1"
-    "@cognite/react-tenant-selector" "2.0.2"
-    "@cognite/sidecar" "0.1.0"
+    "@cognite/react-sentry" "0.2.3"
+    "@cognite/react-tenant-selector" "2.0.3"
+    "@cognite/sidecar" "0.2.0"
     "@cognite/storage" "0.1.2"
     "@cognite/testing" "0.1.1-rc.0"
+    "@types/history" "4.7.9"
     axios "0.21.4"
     jwt-decode "3.1.2"
-    react-query "3.24.3"
+    react-i18next "11.12.0"
+    react-query "3.34.4"
 
 "@cognite/react-errors@1.0.1":
   version "1.0.1"
@@ -1702,10 +1707,10 @@
     lodash "4.17.21"
     react "17.0.2"
 
-"@cognite/react-sentry@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-sentry/-/react-sentry-0.2.1.tgz#f4bfac3104663eb6362e1d3294720e099a26752a"
-  integrity sha512-5IUx6QYSPkN/5SI7ogAsqnwYDqb0RNPWmv7btobLC/CnWUJOsdPYzwi6S+S5BQMqeCsCQ40r9+OTWUENk19SXw==
+"@cognite/react-sentry@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@cognite/react-sentry/-/react-sentry-0.2.3.tgz#f9d9058ed99612bfcf1067beca7c8032d5bccfa6"
+  integrity sha512-7UyzWbf4493hh8i1m4nDsOL7IDYaPKzbJLwIr34tjy8ITTFaTMeOGTXu7nDVqmkBTN9ebiIR1zuuBnfrWkwHEg==
   dependencies:
     "@cognite/metrics" "1.2.1"
     "@cognite/react-errors" "1.0.1"
@@ -1713,23 +1718,24 @@
     "@sentry/react" "6.13.3"
     "@sentry/rrweb" "0.3.1"
     "@sentry/tracing" "6.13.3"
+    "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/react-tenant-selector@2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-2.0.2.tgz#70ea575c8cc529d7bd8c9b72c57da42dfbce25fb"
-  integrity sha512-zvXCVHPeIUJHhjGatbPRoEQRRw9Mm/dqEpmeMfZdx7Wrte+erVXV2vjAo4eGAwurOXQsVpveIoVXv1nhU9nK0Q==
+"@cognite/react-tenant-selector@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-2.0.3.tgz#ad64fda28286786f225738dd3ce120a041f49b35"
+  integrity sha512-RKvCwYywqCqhaW8UcVVzH6VAo2afpPfxJ6mwD3aVRYe7WPNPvxFMq8Np6IUZTL01MqMflV7MCMGww8kOx5imQQ==
   dependencies:
-    "@cognite/auth-utils" "2.0.0"
+    "@cognite/auth-utils" "2.1.0"
     "@cognite/intercom-helper" "0.2.0"
     "@cognite/metrics" "1.2.1"
     "@cognite/react-i18n" "0.5.0"
-    "@cognite/sidecar" "0.1.0"
+    "@cognite/sidecar" "0.2.0"
     "@cognite/storage" "0.1.2"
     axios "0.21.4"
     lodash "4.17.21"
     react-helmet "6.1.0"
-    react-query "3.24.3"
+    react-query "3.34.4"
     styled-components "5.3.0"
 
 "@cognite/sdk-core@^3.2.5":
@@ -1772,14 +1778,7 @@
     "@cognite/sdk-core" "^3.2.5"
     lodash "^4.17.11"
 
-"@cognite/sidecar@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sidecar/-/sidecar-0.1.0.tgz#561bebef29164445e8e358317d49c46541c7faae"
-  integrity sha512-pCdGsYdgG8AETfUFx8G+iz7cp23dViD6UoWqvA0Bz1O25VXpi+v6KWwzkBamfB04NZyOGMhppuJjf2l0vpXObw==
-  dependencies:
-    "@cognite/intercom-helper" "0.2.0"
-
-"@cognite/sidecar@^0.2.0":
+"@cognite/sidecar@0.2.0", "@cognite/sidecar@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/sidecar/-/sidecar-0.2.0.tgz#54391eaa4f4cadf8b0e780c27ebebcea348439e2"
   integrity sha512-BmnMvg5yJFSkm7EOKbmx5g9l+HY4BP5tOe+zPE1WZZNuGj5psWODEr/ixGXkTBw/uuRl/gI7rc/E2bQjS10nWw==
@@ -4947,7 +4946,7 @@
   dependencies:
     "@types/unist" "*"
 
-"@types/history@*":
+"@types/history@*", "@types/history@4.7.9":
   version "4.7.9"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.9.tgz#1cfb6d60ef3822c589f18e70f8b12f9a28ce8724"
   integrity sha512-MUc6zSmU3tEVnkQ78q0peeEjKWPUADMlC/t++2bI8WnAG2tvYRPIgHG8lWkXwqc8MsUF6Z2MOf+Mh5sazOmhiQ==
@@ -6390,7 +6389,7 @@ axios@0.21.2:
   dependencies:
     follow-redirects "^1.14.0"
 
-axios@0.21.4, axios@^0.21.4:
+axios@0.21.4, axios@^0.21.2, axios@^0.21.4:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
@@ -17887,10 +17886,10 @@ react-popper@^2.2.4:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"
 
-react-query@3.24.3:
-  version "3.24.3"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.24.3.tgz#58c538fb55386fa947bda88acbe616e02cb5b2bb"
-  integrity sha512-JipKpn7XoDVvRWwXWXKSJU5SbNJKqspx9IRBntaQt1EQOBXe9314Z/8cV9YXXbZIhzrHAetT3X7tRClZaYk98g==
+react-query@3.34.4:
+  version "3.34.4"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.34.4.tgz#da926717683fd9e9e310d46ab6f60f76a80ffaae"
+  integrity sha512-1Pa7pNJF9I+UdQ1RvqmBO9tWvBNfzNeJM3vYApcE2SL4Hbwy6q4U7ce4u+SWQnLMFit3z8WWp9OXpcDqEQ/E1A==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"

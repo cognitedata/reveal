@@ -9,6 +9,7 @@ import {
 } from '@cognite/cogs.js';
 import { StyledButton, StyledTopBar, StyledTopBarRight } from './elements';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { NavigationLink } from '@cognite/cogs.js/dist/Components/TopBar/Modules/Navigation';
 
 export const NavigationSolution = () => {
   const { t } = useTranslation('Solution');
@@ -43,7 +44,7 @@ export const NavigationSolution = () => {
 
   const history = useHistory();
 
-  const projectManagementLinks = tabs.map((tab) => ({
+  const projectManagementLinks: NavigationLink[] = tabs.map((tab) => ({
     name: t(tab.title, tab.title),
     isActive: tabKey === tab.slug || (tab.slug === 'overview' && !tabKey),
     onClick: () => {
@@ -84,7 +85,7 @@ export const NavigationSolution = () => {
           subtitle={
             <Dropdown>
               <Button
-                icon="ChevronDownCompact"
+                icon="ChevronDownSmall"
                 iconPlacement="right"
                 unstyled
                 style={{ alignItems: 'center' }}
