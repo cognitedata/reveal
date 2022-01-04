@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { DetermineSectorsInput, SectorCost } from './types';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { CadModelBudget } from '../../CadModelBudget';
 import { PropType } from '../../utilities/reflection';
 
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
@@ -128,8 +128,6 @@ describe('ByVisibilityGpuSectorCuller', () => {
     // Place camera far away to avoid sectors being loaded because camera is near them
     camera.position.set(1000, 1000, 1000);
     const input = createDetermineSectorInput(camera, model, {
-      geometryDownloadSizeBytes: 20,
-      maximumNumberOfDrawCalls: Infinity,
       highDetailProximityThreshold: 10,
       maximumRenderCost: Infinity
     });
@@ -172,8 +170,6 @@ describe('ByVisibilityGpuSectorCuller', () => {
     // Place camera far away to avoid sectors being loaded because camera is near them
     camera.position.set(1000, 1000, 1000);
     const input = createDetermineSectorInput(camera, model, {
-      geometryDownloadSizeBytes: Infinity,
-      maximumNumberOfDrawCalls: 10,
       highDetailProximityThreshold: -1,
       maximumRenderCost: Infinity
     });
@@ -197,7 +193,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
 function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
   models: CadModelMetadata | CadModelMetadata[],
-  budget?: CadModelSectorBudget
+  budget?: CadModelBudget
 ): DetermineSectorsInput {
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
@@ -206,9 +202,7 @@ function createDetermineSectorInput(
     loadingHints: {},
     cameraInMotion: false,
     budget: budget || {
-      geometryDownloadSizeBytes: 20,
       highDetailProximityThreshold: 10,
-      maximumNumberOfDrawCalls: Infinity,
       maximumRenderCost: Infinity
     },
     prioritizedAreas: []
