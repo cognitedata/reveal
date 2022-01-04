@@ -47,7 +47,7 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
       return [output];
     }
 
-    throw new Error(`Only point cloud or cad models (version 8 and 9) are supported)`);
+    throw new Error(`Only point cloud or CAD models (version 8 and 9) are supported)`);
 
     async function getCadOutput(modelUri: string): Promise<BlobOutputMetadata | undefined> {
       let version: number;
@@ -59,11 +59,16 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
       }
       switch (version) {
         case 8:
-        case 9:
           return Promise.resolve({
             blobId: -1,
             format: File3dFormat.RevealCadModel,
-            version: version
+            version: 8
+          });
+        case 9:
+          return Promise.resolve({
+            blobId: -1,
+            format: File3dFormat.GltfCadModel,
+            version: 9
           });
         default:
           return undefined;
