@@ -28,3 +28,5 @@ export const toUnixLocalString = (value: number) => {
 export const formatDate = (value: number, formatString = 'yyyy-MM-dd H:mm') => {
   return format(toUnixDate(msValue(value)), formatString);
 };
+
+export const TEN_MINUTES = 600000;

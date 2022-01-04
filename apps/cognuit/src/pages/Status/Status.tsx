@@ -1,130 +1,47 @@
-import { useEffect, useState } from 'react';
-import { Row, Col, Menu, Dropdown, Button } from '@cognite/cogs.js';
-import Card from 'components/Atoms/Card';
-import Label from 'components/Atoms/Label';
+import { Flex } from '@cognite/cogs.js';
+import { PageHeader, PageSubHeader } from 'components/Atoms/PageHeader';
+import { statusConfig } from 'configs/status.config';
+import styled from 'styled-components';
 
-import { StatusContainer, CardContent, HeadingContainer } from './elements';
-import StatusCardHeader from './components/StatusCardHeader';
-import Heartbeats from './components/Heartbeats';
-import {
-  DATE_RANGE_VALUES,
-  DateRangeValueType,
-  getTimestampParamForDateRange,
-} from './utils';
-import ErrorDistribution from './components/ErrorDistribution';
-import TranslationStatistics from './components/TranslationStatistics';
+import { StatusCard } from './components/StatusCard/StatusCard';
+import { StatusHistoryTable } from './components/StatusHistoryTable/StatusHistoryTable';
+
+const Content = styled.div`
+  width: 1040px;
+`;
+
+const StatusContainer = styled.div`
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
 
 const Status = () => {
-  const [dateRangeOpen, setDateRangeOpen] = useState<boolean>(false);
-  const [selectedDateRange, setSelectedDateRange] =
-    useState<DateRangeValueType>(DATE_RANGE_VALUES.lastMonth);
-  const [afterTimestamp, setAfterTimestamp] = useState<number>(
-    getTimestampParamForDateRange(DATE_RANGE_VALUES.lastMonth)
-  );
-
-  function handleDateRangeChange(value: DateRangeValueType) {
-    setSelectedDateRange(value);
-  }
-
-  useEffect(() => {
-    const timestamp = getTimestampParamForDateRange(selectedDateRange);
-    setAfterTimestamp(timestamp);
-  }, [selectedDateRange]);
-
-  const MenuContent = (
-    <Menu>
-      {Object.keys(DATE_RANGE_VALUES).map((item: string) => (
-        <Menu.Item
-          key={item}
-          onClick={() => {
-            handleDateRangeChange(DATE_RANGE_VALUES[item]);
-            setDateRangeOpen(false);
-          }}
-        >
-          {DATE_RANGE_VALUES[item]}
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
-
   return (
-    <StatusContainer>
-      <Row gutter={24}>
-        <Col span={24}>
-          <HeadingContainer>
-            <h1>Status - {selectedDateRange}</h1>
-            <Dropdown
-              content={MenuContent}
-              visible={dateRangeOpen}
-              onClickOutside={() => setDateRangeOpen(false)}
-            >
-              <>
-                <Label>Date range</Label>
-                <Button
-                  icon="Select"
-                  iconPlacement="right"
-                  type="tertiary"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setDateRangeOpen(!dateRangeOpen);
-                  }}
-                >
-                  {selectedDateRange}
-                </Button>
-              </>
-            </Dropdown>
-          </HeadingContainer>
-        </Col>
-      </Row>
-      <Row gutter={24}>
-        <Col span={17}>
-          <Row>
-            <Col span={24}>
-              <Card>
-                <StatusCardHeader title="Heartbeat for connectors" />
-                <CardContent>
-                  <Heartbeats
-                    dateRange={selectedDateRange}
-                    afterTimestamp={afterTimestamp}
-                  />
-                </CardContent>
-              </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <Card>
-                <StatusCardHeader title="Translation statistics" />
-                <CardContent>
-                  <TranslationStatistics dateRange={selectedDateRange} />
-                  <div style={{ fontStyle: 'italic', marginTop: 20 }}>
-                    NOTE: Above translation statistics data are only mock data
-                    for demo purposes, not real translation data
-                  </div>
-                </CardContent>
-              </Card>
-            </Col>
-          </Row>
-        </Col>
-        <Col span={7}>
-          <Row>
-            <Col span={24}>
-              <Card>
-                <StatusCardHeader title="Error distribution" />
-                <CardContent>
-                  <ErrorDistribution afterTimestamp={afterTimestamp} />
-                  <div style={{ fontStyle: 'italic' }}>
-                    NOTE: Above error data are only mock data for demo purposes,
-                    not real error data
-                  </div>
-                </CardContent>
-              </Card>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </StatusContainer>
+    <Flex justifyContent="center">
+      <Content>
+        <PageHeader
+          title="System status"
+          subtitle="Cognuit system connectors"
+        />
+        <StatusContainer>
+          {statusConfig.connectors.map((connector) => (
+            <StatusCard
+              key={`${connector.source}+${connector.instance}`}
+              source={connector.source}
+              instance={connector.instance}
+            />
+          ))}
+        </StatusContainer>
+
+        <PageSubHeader
+          title="Status history"
+          subtitle="Events are displayed only for the past week"
+        />
+        <StatusHistoryTable />
+      </Content>
+    </Flex>
   );
 };
 

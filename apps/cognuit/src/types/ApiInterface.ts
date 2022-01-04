@@ -17,6 +17,21 @@ export type ConnectorInstance = {
 };
 export type HeartbeatsResponse = number[];
 
+type timestamp = number;
+export type HeartbeatsReportResponse = {
+  // Default 7 weeks with aggregates, take x latest items for 24h status
+  aggregates: {
+    [ts: timestamp]: boolean;
+  };
+  connector: {
+    source: string;
+    instance: string;
+  };
+  latest_heartbeat: timestamp;
+  online: boolean;
+  outages: [timestamp, timestamp][];
+};
+
 // Projects
 export type BusinessTagsResponse = string[];
 export type ProjectResponse = {

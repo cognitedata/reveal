@@ -18,6 +18,7 @@ export const STATUS_KEYS = {};
 // Sources
 export const SOURCES_KEY = {
   default: 'sources',
+  instances: 'instances',
   errorDistribution: 'error-distribution',
   heartbeats: 'heartbeats',
   translationStatistics: 'translation-statistics',

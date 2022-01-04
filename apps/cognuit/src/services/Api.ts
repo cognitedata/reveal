@@ -13,6 +13,7 @@ import {
   DataTransferResponse,
   DataStatusResponse,
   ConnectorInstance,
+  HeartbeatsReportResponse,
 } from 'types/ApiInterface';
 import { ErrorDistributionResponse } from 'types/MockApiInterface';
 
@@ -140,6 +141,14 @@ class Api {
     ): Promise<HeartbeatsResponse> => {
       const queryParameters = { source, instance, after };
       return this.get(`${this.baseURL}/heartbeats`, queryParameters);
+    },
+    getHeartbeatsReport: async (
+      source: string,
+      instance: string
+    ): Promise<HeartbeatsReportResponse> => {
+      const queryParameters = { source, instance };
+
+      return this.get(`${this.baseURL}/heartbeats/report`, queryParameters);
     },
   };
 
