@@ -4,7 +4,8 @@
 
 import { Cognite3DModel } from './Cognite3DModel';
 
-import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+
 import { MetricsLogger } from '@reveal/metrics';
 import { createCadModel } from '../../../../test-utilities';
 
@@ -37,22 +38,13 @@ describe(Cognite3DModel.name, () => {
     expect(model.styledNodeCollections).toBeEmpty();
   });
 
-  test('assignStyledNodeCollection same collection twice throws', () => {
+  test('assignStyledNodeCollection updates style if called twice with same collection', () => {
+    const originalAppearance: NodeAppearance = { renderGhosted: true };
+    const updatedAppearance: NodeAppearance = { renderInFront: true, renderGhosted: false };
     const collection = new TreeIndexNodeCollection();
-    model.assignStyledNodeCollection(collection, { renderGhosted: true });
-    expect(() => model.assignStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
-  });
-
-  test('updateStyledNodeCollection throw is collection has not been added', () => {
-    const collection = new TreeIndexNodeCollection();
-
-    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
-
-    model.assignStyledNodeCollection(collection, { renderGhosted: true });
-    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).not.toThrowError();
-
-    model.unassignStyledNodeCollection(collection);
-    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
+    model.assignStyledNodeCollection(collection, originalAppearance);
+    model.assignStyledNodeCollection(collection, updatedAppearance);
+    expect(model.styledNodeCollections).toEqual([{ nodeCollection: collection, appearance: updatedAppearance }]);
   });
 
   test('removeAllStyledNodeCollections removes all styled node collections', () => {
