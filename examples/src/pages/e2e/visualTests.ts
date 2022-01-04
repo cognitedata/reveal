@@ -65,5 +65,9 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'outlines',
     category: 'cad'
+  },
+  {
+    testKey: 'multisampling',
+    category: 'cad'
   }
 ];
