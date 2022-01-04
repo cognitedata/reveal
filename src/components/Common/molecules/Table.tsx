@@ -24,7 +24,7 @@ export const Table = styled((props: CustomTableProps) => {
 
   const onPaginationChange = (newPage: number, newPageSize?: number) => {
     setPage(newPage);
-    if (newPageSize) {
+    if (newPageSize && newPageSize !== pageSize) {
       setPageSize(newPageSize);
       setPage(DEFAULT_PAGE);
     }
