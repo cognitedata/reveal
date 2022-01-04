@@ -42,7 +42,6 @@ const Panel = styled(DefaultPanel)`
     overflow: hidden !important;
   }
   & > .rc-collapse-content-active {
-    overflow: visible;
     border-top: 1px solid var(--cogs-color-strokes-default);
     background: transparent;
     padding: 0 16px !important;
@@ -56,6 +55,8 @@ const Panel = styled(DefaultPanel)`
   margin: 10px 0;
   background-color: var(--cogs-greyscale-grey1);
   border-radius: 6px;
+  min-width: 290px;
+  width: fit-content;
 `;
 
 const Container = styled(FlexColumn)`
