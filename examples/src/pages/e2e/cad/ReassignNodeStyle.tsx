@@ -52,7 +52,7 @@ function ReassignNodeStyle() {
     model.assignStyledNodeCollection(firstIndicesNodeCollection, DefaultNodeAppearance.Ghosted);
     model.assignStyledNodeCollection(invertedNodeCollection, DefaultNodeAppearance.Default);
 
-    model.updateStyledNodeCollection(alternatingNodeCollection, DefaultNodeAppearance.Outlined);
+    model.assignStyledNodeCollection(alternatingNodeCollection, DefaultNodeAppearance.Outlined);
   }
 
   return (
