@@ -123,7 +123,7 @@ export class NodeStylingUI {
     });
     const outlineValues = Object.keys(NodeOutlineColor).filter(k => typeof NodeOutlineColor[k as any] !== "number").map(x => NodeOutlineColor[x])
     ui.add(state, 'outlineColor', outlineValues).name('Outline').onChange(() => {
-      appearance.outlineColor = NodeOutlineColor[state.outlineColor];
+      appearance.outlineColor = NodeOutlineColor[state.outlineColor] as NodeOutlineColor;
     });
     ui.add(appearance, 'prioritizedForLoadingHint', 0, 10).name('Loading priority');
 
