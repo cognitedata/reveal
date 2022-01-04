@@ -11,7 +11,7 @@ import {
 } from 'graphql';
 import { QueryExplorerContainer } from './elements';
 import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useGraphQlQueryFetcher } from '../hooks/useGraphQlQueryFetcher';
+import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 type QueryExplorerType = {
@@ -37,21 +37,20 @@ export const QueryExplorer = ({
   const handleEditQuery = (query: string | undefined) =>
     setExplorerQuery(query);
 
-  const graphqlFetcher = useGraphQlQueryFetcher();
-
   useEffect(() => {
     if (isReady || !solutionId || !schemaVersion) {
       return;
     }
 
-    graphqlFetcher(
-      {
-        query: getIntrospectionQuery(),
-        operationName: 'IntrospectionQuery',
-      },
-      solutionId,
-      schemaVersion
-    )
+    graphQlQueryFetcher
+      .fetcher(
+        {
+          query: getIntrospectionQuery(),
+          operationName: 'IntrospectionQuery',
+        },
+        solutionId,
+        schemaVersion
+      )
       .then((result: any) => {
         setIsReady(true);
         setGqlSchema(buildClientSchema(result as IntrospectionQuery));
@@ -63,7 +62,7 @@ export const QueryExplorer = ({
           message: error.message,
         });
       });
-  }, [isReady, schemaVersion, solutionId, graphqlFetcher, setIsReady]);
+  }, [isReady, schemaVersion, solutionId, setIsReady]);
 
   if (!isReady) {
     return <Spinner />;
@@ -84,7 +83,7 @@ export const QueryExplorer = ({
       <GraphiQL
         ref={graphiql}
         fetcher={(graphQlParams: FetcherParams) =>
-          graphqlFetcher(graphQlParams, solutionId, schemaVersion)
+          graphQlQueryFetcher.fetcher(graphQlParams, solutionId, schemaVersion)
         }
         onEditQuery={handleEditQuery}
         query={explorerQuery}
