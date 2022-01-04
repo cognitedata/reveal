@@ -1,3 +1,4 @@
+import { Count } from 'hooks/profiling-service';
 import handleError from './handleError';
 import { styleScope } from './styleScope';
 
@@ -104,4 +105,30 @@ export const sleep = (ms: number) => {
 
 export const trimFileExtension = (fullName: string): string => {
   return fullName.split('.').slice(0, -1).join('.');
+};
+
+export const reduceHistogramBins = (
+  histogram: Count[],
+  numberOfBins: number
+): Count[] => {
+  if (histogram.length < numberOfBins) {
+    return histogram;
+  }
+
+  const reducedBins: Count[] = [];
+  const chunkSize = histogram.length / numberOfBins;
+  if (Math.floor(chunkSize) !== chunkSize) {
+    return histogram;
+  }
+
+  for (let i = 0; i < numberOfBins; i += 1) {
+    const chunk = histogram.slice(i * chunkSize, (i + 1) * chunkSize);
+    const reducedBin = {
+      value: histogram[i * chunkSize].value,
+      count: chunk.reduce((acc, cur) => acc + cur.count, 0),
+    };
+    reducedBins.push(reducedBin);
+  }
+
+  return reducedBins;
 };
