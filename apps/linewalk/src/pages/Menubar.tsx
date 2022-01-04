@@ -3,14 +3,15 @@ import { useHistory } from 'react-router-dom';
 import { TopBar } from '@cognite/cogs.js';
 
 export const PagePath = {
-  HOME: '/home',
   LINE_REVIEWS: '/lineReviews',
   LINE_REVIEW: '/lineReview/:id',
+  SCARLET: '/scarlet',
+  SCARLET_EQUIPMENT: '/scarlet/:unitName/:equipmentName',
 };
 
 export const MenuBar = () => {
   const history = useHistory();
-  const [active, setActive] = React.useState<string>(PagePath.HOME);
+  const [active, setActive] = React.useState<string>(PagePath.LINE_REVIEWS);
 
   const handleNavigate = (page: string) => () => {
     console.log(page);
@@ -35,6 +36,11 @@ export const MenuBar = () => {
             name: 'Line reviews',
             isActive: active === PagePath.LINE_REVIEWS,
             onClick: handleNavigate(PagePath.LINE_REVIEWS),
+          },
+          {
+            name: 'Scarlet',
+            isActive: active === PagePath.SCARLET,
+            onClick: handleNavigate(PagePath.SCARLET),
           },
         ]}
       />
