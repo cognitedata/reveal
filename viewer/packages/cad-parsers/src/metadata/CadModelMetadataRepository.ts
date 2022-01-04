@@ -80,9 +80,9 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
 
     if (supportedModelOutputs.length === 0) {
       const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(',');
-      const supportedOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(',');
+      const supportedOutputsString = preferredOutputs.map(output => `${output.format} v${output.version}`).join(',');
       throw new Error(
-        `Model does not contain any supported CAD model outputs, got ${cadModelOutputsString}, but only supports ${supportedOutputsString}`
+        `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
       );
     }
 
