@@ -182,7 +182,7 @@ const defaultConfig: TenantConfig = {
           filter: {
             metadata: {
               type: 'Depthlogs',
-              datasetname: 'BP-ppfg',
+              datasetname: 'ds-BP-ppfg',
             },
             ...filters,
           },

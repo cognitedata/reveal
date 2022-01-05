@@ -226,7 +226,7 @@ export const defaultWellsConfig: TenantConfig = {
           filter: {
             metadata: {
               type: 'Depthlogs',
-              datasetname: 'BP-ppfg',
+              datasetname: 'ds-BP-ppfg',
             },
             ...filters,
           },
