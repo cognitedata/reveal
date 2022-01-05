@@ -20,16 +20,16 @@ import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
 import { FlexRow } from 'styles/layout';
 
-import { FAVORITE_LIST_CONTAINER } from '../../../constants';
-import { VertSeperator, DangerDiv, HoverMenuItem } from '../../../elements';
-import { ModalType, RowType } from '../types';
-
 import {
-  HOVER_MENU_ITEM_DUPLICATE,
-  HOVER_MENU_ITEM_DELETE,
-  HOVER_MENU_ITEM_EDIT,
-  HOVER_MENU_ITEM_SHARE,
-} from './constants';
+  FAVORITE_LIST_CONTAINER,
+  DELETE_FAVORITE_CARD_BUTTON,
+  DUPLICATE_FAVORITE_CARD_BUTTON,
+  DUPLICATE_SET_MODAL_BUTTON_TEXT,
+  EDIT_FAVORITE_CARD_BUTTON,
+  SHARE_FAVORITE_CARD_BUTTON,
+} from '../../../constants';
+import { VertSeperator, HoverMenuItem, DangerButton } from '../../../elements';
+import { ModalType, RowType } from '../types';
 
 export interface Props {
   sets: FavoriteSummary[];
@@ -146,35 +146,35 @@ const ListView: React.FC<Props> = ({
               <Menu.Item
                 disabled={!_isOwner}
                 onClick={() => {
-                  handleOpenModal('Create', original);
+                  handleOpenModal(DUPLICATE_SET_MODAL_BUTTON_TEXT, original);
                 }}
               >
-                <HoverMenuItem>{HOVER_MENU_ITEM_DUPLICATE}</HoverMenuItem>
+                <HoverMenuItem>{DUPLICATE_FAVORITE_CARD_BUTTON}</HoverMenuItem>
               </Menu.Item>
               <Menu.Item
                 disabled={!_isOwner}
                 onClick={() => {
-                  handleOpenModal('Edit', original);
+                  handleOpenModal(EDIT_FAVORITE_CARD_BUTTON, original);
                 }}
               >
-                <HoverMenuItem>{HOVER_MENU_ITEM_EDIT}</HoverMenuItem>
+                <HoverMenuItem>{EDIT_FAVORITE_CARD_BUTTON}</HoverMenuItem>
               </Menu.Item>
               <Menu.Item
                 disabled={!_isOwner}
                 onClick={() => {
-                  handleOpenModal('Share', original);
+                  handleOpenModal(SHARE_FAVORITE_CARD_BUTTON, original);
                 }}
               >
-                <HoverMenuItem>{HOVER_MENU_ITEM_SHARE}</HoverMenuItem>
+                <HoverMenuItem>{SHARE_FAVORITE_CARD_BUTTON}</HoverMenuItem>
               </Menu.Item>
               <Menu.Divider data-testid="menu-divider" />
-              <Menu.Item
-                onClick={() => {
-                  handleOpenModal('Delete', original);
-                }}
+              <DangerButton
+                onClick={() =>
+                  handleOpenModal(DELETE_FAVORITE_CARD_BUTTON, original)
+                }
               >
-                <DangerDiv>{HOVER_MENU_ITEM_DELETE}</DangerDiv>
-              </Menu.Item>
+                {DELETE_FAVORITE_CARD_BUTTON}
+              </DangerButton>
             </Menu>
           }
         >

@@ -31,7 +31,7 @@ import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
 import { FlexRow } from 'styles/layout';
 
-import { VertSeperator, DangerDiv, HoverMenuItem } from '../../elements';
+import { VertSeperator, DangerButton, HoverMenuItem } from '../../elements';
 
 import { Actions } from './Actions';
 import {
@@ -181,13 +181,11 @@ export const SavedSearches: React.FC<{
                 </HoverMenuItem>
               </Menu.Item>
               <Menu.Divider data-testid="menu-divider" />
-              <Menu.Item
-                onClick={() => {
-                  handleOpenModal('Delete', row.original);
-                }}
+              <DangerButton
+                onClick={() => handleOpenModal('Delete', row.original)}
               >
-                <DangerDiv>{SAVED_SEARCH_TABLE_MENU_REMOVE_OPTION}</DangerDiv>
-              </Menu.Item>
+                {SAVED_SEARCH_TABLE_MENU_REMOVE_OPTION}
+              </DangerButton>
             </Menu>
           }
         >

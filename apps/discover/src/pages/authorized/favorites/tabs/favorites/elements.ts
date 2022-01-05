@@ -149,13 +149,6 @@ export const Grid = styled.div`
   justify-items: center;
 `;
 
-export const DangerButton = styled(Menu.Item)`
-  color: var(--cogs-text-danger);
-  &:hover {
-    background-color: var(--cogs-red-8); // this color not in color tokens
-  }
-`;
-
 export const ActionPadding = styled(FlexRow)`
   margin-right: ${sizes.small};
 `;

@@ -19,8 +19,9 @@ import {
   EDIT_FAVORITE_CARD_BUTTON,
   SHARE_FAVORITE_CARD_BUTTON,
 } from '../../constants';
+import { DangerButton } from '../../elements';
 
-import { ActionPadding, DangerButton, DropDownMenu } from './elements';
+import { ActionPadding, DropDownMenu } from './elements';
 import { ModalType } from './types';
 
 interface Props {

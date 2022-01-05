@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 
+import { Menu } from '@cognite/cogs.js';
+
 import { FlexColumn, sizes } from 'styles/layout';
 
 export const PageContainer = styled(FlexColumn)`
@@ -42,6 +44,9 @@ export const HoverMenuItem = styled.div`
   }
 `;
 
-export const DangerDiv = styled(HoverMenuItem)`
-  color: var(--cogs-red-2);
+export const DangerButton = styled(Menu.Item)`
+  color: var(--cogs-text-danger);
+  &:hover {
+    background-color: var(--cogs-red-8); // this color not in color tokens
+  }
 `;

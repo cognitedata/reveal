@@ -26,7 +26,7 @@ export const WarningModal: React.FC<Props> = ({
   );
 
   return (
-    <Modal {...rest} footer={footer}>
+    <Modal {...rest} onCancel={onCancel} footer={footer}>
       {children}
     </Modal>
   );
