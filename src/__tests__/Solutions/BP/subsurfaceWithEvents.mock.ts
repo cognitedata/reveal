@@ -4694,3 +4694,145 @@ export const bpNptEvents = [
     createdTime: '2020-05-12T22:05:33.519Z',
   },
 ]
+
+export const noDataWells = [
+    {
+        "matchingId": "3e04d1aa-edb5-4d4e-ba32-78c2d25e1bbb",
+        "name": "DISCOVER EMPTY WELLBORE",
+        "wellMatchingId": "2dc53454-9803-4b06-aeba-0b732b278251",
+        "sources": [
+            {
+                "assetExternalId": "wells/callisto/well-empty/wellbores/wb-empty",
+                "sourceName": "callisto"
+            }
+        ],
+        "description": "Test wellbore without any inspect data. This wellbore will be used in Discover e2e tests.",
+        "parentWellboreMatchingId": null,
+        "datum": {
+            "value": 25,
+            "unit": "meter",
+            "reference": "KB"
+        },
+        "id": "3e04d1aa-edb5-4d4e-ba32-78c2d25e1bbb",
+        "wellId": "2dc53454-9803-4b06-aeba-0b732b278251",
+        "sourceWellbores": [
+            {
+                "id": 0,
+                "externalId": "wells/callisto/well-empty/wellbores/wb-empty",
+                "source": "callisto"
+            }
+        ],
+        "metadata": {
+            "color": "#4255BB",
+            "elevation_value_unit": "",
+            "elevation_value": "",
+            "elevation_type": "KB",
+            "bh_x_coordinate": 22.649482,
+            "bh_y_coordinate": -92.603144
+        },
+        "parentId": "2dc53454-9803-4b06-aeba-0b732b278251"
+    }
+]
+
+export const noDataWellbores = [
+    {
+        "matchingId": "2dc53454-9803-4b06-aeba-0b732b278251",
+        "name": "DISCOVER EMPTY WELL",
+        "wellhead": {
+            "id": 0,
+            "x": 22.649482,
+            "y": -92.603144,
+            "crs": "EPSG:4326"
+        },
+        "waterDepth": {
+            "value": 2000,
+            "unit": "meter"
+        },
+        "sources": [
+            "callisto"
+        ],
+        "description": "Test well without any wellbores. This well will be used in Discover e2e tests.",
+        "country": "Mexico",
+        "quadrant": null,
+        "region": "Discover",
+        "block": null,
+        "field": "Gulf of Mexico",
+        "operator": "Pretty Polly ASA",
+        "spudDate": "2021-11-15T00:00:00.000Z",
+        "wellType": "Production",
+        "license": null,
+        "wellbores": [
+            {
+                "matchingId": "3e04d1aa-edb5-4d4e-ba32-78c2d25e1bbb",
+                "name": "DISCOVER EMPTY WELLBORE",
+                "wellMatchingId": "2dc53454-9803-4b06-aeba-0b732b278251",
+                "sources": [
+                    {
+                        "assetExternalId": "wells/callisto/well-empty/wellbores/wb-empty",
+                        "sourceName": "callisto"
+                    }
+                ],
+                "description": "Test wellbore without any inspect data. This wellbore will be used in Discover e2e tests.",
+                "parentWellboreMatchingId": null,
+                "datum": {
+                    "value": 25,
+                    "unit": "meter",
+                    "reference": "KB"
+                },
+                "id": "3e04d1aa-edb5-4d4e-ba32-78c2d25e1bbb",
+                "wellId": "2dc53454-9803-4b06-aeba-0b732b278251",
+                "sourceWellbores": [
+                    {
+                        "id": 0,
+                        "externalId": "wells/callisto/well-empty/wellbores/wb-empty",
+                        "source": "callisto"
+                    }
+                ],
+                "metadata": {
+                    "color": "#4255BB"
+                }
+            }
+        ],
+        "id": "2dc53454-9803-4b06-aeba-0b732b278251",
+        "_wellbores": [
+            {
+                "matchingId": "3e04d1aa-edb5-4d4e-ba32-78c2d25e1bbb",
+                "name": "DISCOVER EMPTY WELLBORE",
+                "wellMatchingId": "2dc53454-9803-4b06-aeba-0b732b278251",
+                "sources": [
+                    {
+                        "assetExternalId": "wells/callisto/well-empty/wellbores/wb-empty",
+                        "sourceName": "callisto"
+                    }
+                ],
+                "description": "Test wellbore without any inspect data. This wellbore will be used in Discover e2e tests.",
+                "parentWellboreMatchingId": null,
+                "datum": {
+                    "value": 25,
+                    "unit": "meter",
+                    "reference": "KB"
+                },
+                "id": "3e04d1aa-edb5-4d4e-ba32-78c2d25e1bbb",
+                "wellId": "2dc53454-9803-4b06-aeba-0b732b278251",
+                "sourceWellbores": [
+                    {
+                        "id": 0,
+                        "externalId": "wells/callisto/well-empty/wellbores/wb-empty",
+                        "source": "callisto"
+                    }
+                ]
+            }
+        ],
+        "geometry": {
+            "type": "Point",
+            "coordinates": [
+                22.649482,
+                -92.603144
+            ]
+        },
+        "metadata": {
+            "x_coordinate": 22.649482,
+            "y_coordinate": -92.603144
+        }
+    }
+]

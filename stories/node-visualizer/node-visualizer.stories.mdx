@@ -8,6 +8,8 @@ import {
   AuthWrapperHorizons,
   NodeVisualiserWithWells,
   NodeVisualiserWithWellsAndEvents,
+  NodeVisualiserWithWellsAndEventsInMeter,
+  NodeVisualiserWellboresWithNoData,
 } from './node-visualizer.helper';
 import { Explorer, Toolbar } from './components';
 
@@ -171,4 +173,16 @@ provide any own function to handle this logic. Main requirement is to implement 
 
 <Story name="Bp Map wellbores metadata">
   <NodeVisualiserWithWellsAndEvents />
+</Story>
+
+## Bp Node Visualizer events in meter
+
+<Story name="Bp Map wellbores metadata meter">
+  <NodeVisualiserWithWellsAndEventsInMeter />
+</Story>
+
+## Node Visualizer wellbore with no data
+
+<Story name="Wellbores with no data">
+  <NodeVisualiserWellboresWithNoData />
 </Story>

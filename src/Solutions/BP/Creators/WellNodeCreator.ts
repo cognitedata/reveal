@@ -20,7 +20,15 @@ export class WellNodeCreator {
       console.warn("Well cannot have empty or invalid coordinates!", wellData.description);
       return null;
     }
-    const xy = utm.fromLatLon(y, x);
+    let xy;
+    try {
+      xy = utm.fromLatLon(y, x);
+    }catch(e){
+      if(e instanceof RangeError){
+        console.warn('Well coordinates are invalid', x, y);
+      }
+      return null;
+    }
     const wellNode = new WellNode();
 
     if (!Util.isEmpty(wellData.description))

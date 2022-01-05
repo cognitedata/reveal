@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Input, Button, Row } from '@cognite/cogs.js';
-import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
+import React, { useState } from 'react'
+import { Input, Button, Row } from '@cognite/cogs.js'
+import { CogniteSeismicClient } from '@cognite/seismic-sdk-js'
 import {
   SyntheticSubSurfaceModule,
   SubSurfaceModule,
@@ -13,18 +13,18 @@ import {
   mapMetadataKeys,
   MetadataKeyMapping,
   WellboreMetadata,
-} from '@cognite/node-visualizer';
-import { Provider } from 'react-redux';
-import styled from 'styled-components';
-import { CogniteGeospatialClient } from '@cognite/geospatial-sdk-js';
+} from '@cognite/node-visualizer'
+import { Provider } from 'react-redux'
+import styled from 'styled-components'
+import { CogniteGeospatialClient } from '@cognite/geospatial-sdk-js'
 
-import { store } from './node-visualizer.store';
+import { store } from './node-visualizer.store'
 import {
   well,
   mappedWellbore,
   trajectory,
   trajectoryData,
-} from '../../src/__tests__/Solutions/BP/subsurface.mock';
+} from '../../src/__tests__/Solutions/BP/subsurface.mock'
 import {
   bpWells,
   bpWellBores,
@@ -34,16 +34,18 @@ import {
   bpLogs,
   bpLogsFrmTops,
   bpNdsEvents,
-  bpNptEvents
+  bpNptEvents,
+  noDataWells,
+  noDataWellbores,
 } from '../../src/__tests__/Solutions/BP/subsurfaceWithEvents.mock'
 
 const StyledRow = styled(Row)`
   margin-bottom: 5px;
-`;
+`
 
 interface AuthWrapperProps {
-  explorer?: React.ComponentType<ExplorerPropType>;
-  toolbar?: React.ComponentType<VisualizerToolbarProps>;
+  explorer?: React.ComponentType<ExplorerPropType>
+  toolbar?: React.ComponentType<VisualizerToolbarProps>
 }
 
 const defaultFormValue = {
@@ -52,7 +54,7 @@ const defaultFormValue = {
   apiUrl: process.env.API_URL || 'https://api.cognitedata.com',
   project: process.env.PROJECT || '',
   externalId: 'synthetic_horizon',
-};
+}
 
 const defaultFormFields: FormField[] = [
   {
@@ -70,39 +72,39 @@ const defaultFormFields: FormField[] = [
     type: 'text',
     placeholder: 'Api URL',
   },
-];
+]
 
 interface AuthFormValue {
-  [key: string]: string;
+  [key: string]: string
 }
 
 interface FormField {
-  name: string;
-  placeholder?: string;
-  type?: 'text' | 'password' | 'email';
+  name: string
+  placeholder?: string
+  type?: 'text' | 'password' | 'email'
 }
 
 interface AuthFormProps {
-  fields: FormField[];
-  onFormSubmit?: (data: AuthFormValue) => void;
+  fields: FormField[]
+  onFormSubmit?: (data: AuthFormValue) => void
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ onFormSubmit, fields }) => {
   const [formValue, setFormValue] = useState<AuthFormValue>({
     ...defaultFormValue,
-  });
+  })
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
 
-    setFormValue({ ...formValue, [name]: value });
-  };
+    setFormValue({ ...formValue, [name]: value })
+  }
   const onSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (onFormSubmit) {
-      onFormSubmit({ ...formValue });
+      onFormSubmit({ ...formValue })
     }
-  };
+  }
 
   return (
     <form name="basic" onSubmit={onSubmit}>
@@ -125,20 +127,20 @@ const AuthForm: React.FC<AuthFormProps> = ({ onFormSubmit, fields }) => {
         </Button>
       </StyledRow>
     </form>
-  );
-};
+  )
+}
 
 export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
-  const [apiKey, setApiKey] = useState('');
-  const [apiUrl, setApiUrl] = useState(process.env.API_URL || '');
-  const [fileId, setFileId] = useState(process.env.FILE_ID || '');
+  const [apiKey, setApiKey] = useState('')
+  const [apiUrl, setApiUrl] = useState(process.env.API_URL || '')
+  const [fileId, setFileId] = useState(process.env.FILE_ID || '')
 
   const onFormSubmit = (values) => {
-    const { apiKey: key, apiUrl: url, fileId: id } = values;
-    setApiKey(key);
-    setApiUrl(url);
-    setFileId(id);
-  };
+    const { apiKey: key, apiUrl: url, fileId: id } = values
+    setApiKey(key)
+    setApiUrl(url)
+    setFileId(id)
+  }
 
   return (
     <>
@@ -153,13 +155,13 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
         <AuthForm onFormSubmit={onFormSubmit} fields={defaultFormFields} />
       )}
     </>
-  );
-};
+  )
+}
 
 interface NodeVisualizerWrapperProps extends AuthWrapperProps {
-  apiKey: string;
-  apiUrl: string;
-  fileId: string;
+  apiKey: string
+  apiUrl: string
+  fileId: string
 }
 
 export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
@@ -168,12 +170,12 @@ export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
   fileId,
   ...nodeVisualizerProps
 }) => {
-  const modules = Modules.instance;
+  const modules = Modules.instance
 
-  modules.clearModules();
-  modules.add(new ThreeModule());
+  modules.clearModules()
+  modules.add(new ThreeModule())
 
-  const syntheticModule = new SyntheticSubSurfaceModule();
+  const syntheticModule = new SyntheticSubSurfaceModule()
 
   if (apiKey && fileId) {
     syntheticModule.addSeismicCube(
@@ -182,14 +184,14 @@ export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
         api_key: apiKey || '',
         debug: true,
       }),
-      fileId || ''
-    );
+      fileId || '',
+    )
   }
 
-  modules.add(syntheticModule);
-  modules.install();
+  modules.add(syntheticModule)
+  modules.install()
 
-  const root = modules.createRoot();
+  const root = modules.createRoot()
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -197,14 +199,14 @@ export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
         <NodeVisualizer root={root} {...nodeVisualizerProps} />
       </Provider>
     </div>
-  );
-};
+  )
+}
 
 interface HorizonNodeVisualizerProps extends AuthWrapperProps {
-  apiKey: string;
-  apiUrl: string;
-  project: string;
-  externalId: string;
+  apiKey: string
+  apiUrl: string
+  project: string
+  externalId: string
 }
 
 export const HorizonNodeVisualizer: React.FC<HorizonNodeVisualizerProps> = ({
@@ -213,23 +215,23 @@ export const HorizonNodeVisualizer: React.FC<HorizonNodeVisualizerProps> = ({
   project,
   externalId = 'synthetic_horizon',
 }) => {
-  const modules = Modules.instance;
+  const modules = Modules.instance
 
-  modules.clearModules();
-  modules.add(new ThreeModule());
+  modules.clearModules()
+  modules.add(new ThreeModule())
 
-  const subSurfaceModule = new SubSurfaceModule();
+  const subSurfaceModule = new SubSurfaceModule()
   const client = CogniteGeospatialClient({
     project: process.env.PROJECT || project || '',
     api_key: process.env.API_KEY || apiKey || '',
     api_url: process.env.API_URL || apiUrl || '',
-  });
-  subSurfaceModule.addHorizonData(client, [externalId]);
-  modules.add(subSurfaceModule);
+  })
+  subSurfaceModule.addHorizonData(client, [externalId])
+  modules.add(subSurfaceModule)
 
-  modules.install();
+  modules.install()
 
-  const root = modules.createRoot();
+  const root = modules.createRoot()
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -237,8 +239,8 @@ export const HorizonNodeVisualizer: React.FC<HorizonNodeVisualizerProps> = ({
         <NodeVisualizer root={root} />
       </Provider>
     </div>
-  );
-};
+  )
+}
 
 const horizonsFormFields: FormField[] = [
   {
@@ -261,21 +263,21 @@ const horizonsFormFields: FormField[] = [
     type: 'text',
     placeholder: 'externalId to be shown for',
   },
-];
+]
 
 export const AuthWrapperHorizons: React.FC<AuthWrapperProps> = (props) => {
-  const [apiKey, setApiKey] = useState(process.env.API_KEY || '');
-  const [apiUrl, setApiUrl] = useState(process.env.API_URL || '');
-  const [project, setProject] = useState(process.env.project || '');
-  const [externalId, setExternalId] = useState('synthetic_horizon');
+  const [apiKey, setApiKey] = useState(process.env.API_KEY || '')
+  const [apiUrl, setApiUrl] = useState(process.env.API_URL || '')
+  const [project, setProject] = useState(process.env.project || '')
+  const [externalId, setExternalId] = useState('synthetic_horizon')
 
   const onFormSubmit = (values) => {
-    const { apiKey: key, apiUrl: url, project: prj, externalId: eid } = values;
-    setApiKey(key);
-    setApiUrl(url);
-    setProject(prj);
-    setExternalId(eid);
-  };
+    const { apiKey: key, apiUrl: url, project: prj, externalId: eid } = values
+    setApiKey(key)
+    setApiUrl(url)
+    setProject(prj)
+    setExternalId(eid)
+  }
 
   return (
     <>
@@ -291,30 +293,30 @@ export const AuthWrapperHorizons: React.FC<AuthWrapperProps> = (props) => {
         <AuthForm onFormSubmit={onFormSubmit} fields={horizonsFormFields} />
       )}
     </>
-  );
-};
+  )
+}
 
 export const NodeVisualizerComponent: React.FC<NodeVisualizerProps> = (
-  props
-) => <NodeVisualizer {...props} />;
+  props,
+) => <NodeVisualizer {...props} />
 
-export const NodeVisualizerExplorer: React.FC<ExplorerPropType> = (_) => <></>;
+export const NodeVisualizerExplorer: React.FC<ExplorerPropType> = (_) => <></>
 
 export const NodeVisualizerToolbar: React.FC<VisualizerToolbarProps> = (_) => (
   <></>
-);
+)
 
 export const NodeVisualiserWithWells = () => {
   const mapping: MetadataKeyMapping<WellboreMetadata> = {
     elevation_type: 'e_type',
     elevation_value: 'e_value',
     elevation_value_unit: 'e_value_unit',
-  };
-  const modules = Modules.instance;
-  modules.clearModules();
-  modules.add(new ThreeModule());
+  }
+  const modules = Modules.instance
+  modules.clearModules()
+  modules.add(new ThreeModule())
 
-  const subSurfaceModule = new SubSurfaceModule();
+  const subSurfaceModule = new SubSurfaceModule()
 
   subSurfaceModule.addWellData(
     {
@@ -327,13 +329,13 @@ export const NodeVisualiserWithWells = () => {
       wellbore: {
         datasource: (wellboreData) => mapMetadataKeys(mapping, wellboreData),
       },
-    }
-  );
-  modules.add(subSurfaceModule);
+    },
+  )
+  modules.add(subSurfaceModule)
 
-  modules.install();
+  modules.install()
 
-  const root = modules.createRoot();
+  const root = modules.createRoot()
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -341,8 +343,8 @@ export const NodeVisualiserWithWells = () => {
         <NodeVisualizer root={root} />
       </Provider>
     </div>
-  );
-};
+  )
+}
 
 export const NodeVisualiserWithWellsAndEvents = () => {
   Modules.instance.clearModules()
@@ -362,6 +364,118 @@ export const NodeVisualiserWithWellsAndEvents = () => {
     nptEvents: bpNptEvents,
     logs: bpLogs,
     logsFrmTops: bpLogsFrmTops,
+  })
+
+  modules.add(subsurfaceModule)
+
+  modules.install()
+
+  const root = modules.createRoot()
+
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <Provider store={store}>
+        <NodeVisualizer root={root} />
+      </Provider>
+    </div>
+  )
+}
+
+export const NodeVisualiserWithWellsAndEventsInMeter = () => {
+  Modules.instance.clearModules()
+
+  const modules = Modules.instance
+  modules.add(new ThreeModule())
+
+  const subsurfaceModule = new SubSurfaceModule()
+
+  const nptEventInMeter = bpNptEvents.map((event) => {
+    return {
+      ...event,
+      metadata: {
+        ...event.metadata,
+        npt_md: event['npt_md'] / 0.0022046,
+        npt_md_unit: 'meter',
+      },
+    }
+  })
+
+  subsurfaceModule.addWellData({
+    wells: bpWells,
+    wellBores: bpWellBores,
+    trajectories: bpTrajectories,
+    trajectoryData: bpTrajectoryData,
+    casings: bpCasings,
+    ndsEvents: bpNdsEvents,
+    nptEvents: [
+      {
+        externalId: 'St7Pd',
+        dataSetId: 7788182229523559,
+        startTime: 1540350000000,
+        endTime: 1540366200000,
+        subtype: 'SFAL',
+        description: 'OVER TORQUED CONNECTIONS.',
+        metadata: {
+          description: 'OVER TORQUED CONNECTIONS.',
+          npt_level: '1.0',
+          type: 'NPT',
+          npt_code: 'SFAL',
+          npt_detail_code: 'DSTH',
+          total_npt_duration_hrs: '4.5',
+          npt_md: '10845.02169',
+          parentExternalId: 'USA0000620200',
+          wellboreName: 'OCS-G 09981 /GC825-6 (SP5) ST00BP00',
+          created_date: '2018-10-25T01:11:05',
+          updated_date: '2018-10-25T01:17:48',
+          failure_location: '',
+          root_cause: '',
+          npt_description:
+            'UNABLE TO BREAK CONNECTIONS ON WORKSTRINGS RENTAL 6 5/8" 27# V150 XT-57 DRILL PIPE DUE TO OVER TORQUING. CONNECTIONS HAD TO BE HEATED USING ROSEBUD TORCH.',
+        },
+        assetIds: [3449261002359307],
+        source: 'EDM-NPT',
+        id: 8581525009611500,
+        lastUpdatedTime: '2020-08-19T16:45:35.464Z',
+        createdTime: '2020-05-12T22:05:33.519Z',
+      },
+    ],
+    logs: bpLogs,
+    logsFrmTops: bpLogsFrmTops,
+  })
+
+  modules.add(subsurfaceModule)
+
+  modules.install()
+
+  const root = modules.createRoot()
+
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <Provider store={store}>
+        <NodeVisualizer root={root} />
+      </Provider>
+    </div>
+  )
+}
+
+export const NodeVisualiserWellboresWithNoData = () => {
+  Modules.instance.clearModules()
+
+  const modules = Modules.instance
+  modules.add(new ThreeModule())
+
+  const subsurfaceModule = new SubSurfaceModule()
+
+  subsurfaceModule.addWellData({
+    wells: noDataWells,
+    wellBores: noDataWellbores,
+    trajectories: [],
+    trajectoryData: [],
+    casings: [],
+    ndsEvents: [],
+    nptEvents: [],
+    logs: {},
+    logsFrmTops: {},
   })
 
   modules.add(subsurfaceModule)
