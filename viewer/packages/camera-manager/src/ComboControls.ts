@@ -382,7 +382,7 @@ export class ComboControls extends EventDispatcher {
     return false;
   };
 
-  private readonly onContextMenu = (event: MouseEvent) => {
+  private onContextMenu(event: MouseEvent): void{
     if (!this.enabled) {
       return;
     }
