@@ -10,6 +10,7 @@ import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
 import { AnnotationFilter } from './Filters/AnnotationFilter';
 import { VisionFileFilterProps } from './Filters/types';
 import { TimeFilter } from './Filters/TimeFilter';
+import { MediaTypeFilter } from './Filters/MediaTypeFilter';
 
 export type FilterPanelConfigItem = {
   key: string;
@@ -75,6 +76,18 @@ export const getFilterPanelItems = (
   },
   {
     key: '4',
+    headerText: 'Media type',
+    disableClear: !filter.mediaType,
+    clear: () => {
+      setFilter({
+        ...filter,
+        mediaType: undefined,
+      });
+    },
+    filterItem: <MediaTypeFilter filter={filter} setFilter={setFilter} />,
+  },
+  {
+    key: '5',
     headerText: 'Data set',
     disableClear: !filter.dataSetIds,
     clear: () => {
@@ -86,7 +99,7 @@ export const getFilterPanelItems = (
     filterItem: <DataSetSelectFilter filter={filter} setFilter={setFilter} />,
   },
   {
-    key: '5',
+    key: '6',
     headerText: 'Directory Prefix',
     disableClear: !(filter as any).directoryPrefix,
     clear: () => {
@@ -109,7 +122,7 @@ export const getFilterPanelItems = (
     ),
   },
   {
-    key: '6',
+    key: '7',
     headerText: 'Additional filters',
     disableClear:
       !filter.externalIdPrefix && !filter.labels && !filter.metadata,
