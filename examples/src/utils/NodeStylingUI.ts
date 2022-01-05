@@ -100,7 +100,7 @@ export class NodeStylingUI {
     };
     function resetState() {
       state.color = `#${new THREE.Color(appearance.color[0] / 255, appearance.color[1] / 255, appearance.color[2] / 255).getHexString()}`;
-      state.outlineColor = NodeOutlineColor[appearance.outlineColor];
+      state.outlineColor = NodeOutlineColor[appearance.outlineColor] as NodeOutlineColor;
       state.preset = '';
     }
     resetState();
