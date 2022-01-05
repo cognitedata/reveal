@@ -6,8 +6,19 @@ import { CogniteClient } from '@cognite/sdk';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 interface DefaultNodeAppearanceByKeys {
-   [key: string]: NodeAppearance
+  [key: string]: NodeAppearance
 };
+
+// Names of keys in NodeOutlineColor where index corresponds to enum value
+const nodeOutlineColorValues = [
+  'NoOutline',
+  'White',
+  'Black',
+  'Cyan',
+  'Blue',
+  'Green',
+  'Red',
+  'Orange'];
 
 export class NodeStylingUI {
   private readonly _client: CogniteClient;
@@ -84,46 +95,44 @@ export class NodeStylingUI {
 
   private createDefaultStylingUi(ui: dat.GUI) {
     const createAppearanceCb = this.createNodeAppearanceUi(ui, DefaultNodeAppearance.Ghosted);
-    const actions = { apply: () => {
-      const appearance = createAppearanceCb();
-      this._model.setDefaultNodeAppearance(appearance);
-    }};
+    const actions = {
+      apply: () => {
+        const appearance = createAppearanceCb();
+        this._model.setDefaultNodeAppearance(appearance);
+      }
+    };
     ui.add(actions, 'apply').name('Apply');
   }
 
   private createNodeAppearanceUi(ui: dat.GUI, defaultAppearance: NodeAppearance = {}): () => NodeAppearance {
     const appearance = { ...DefaultNodeAppearance.Default, ...defaultAppearance } as Mutable<Required<NodeAppearance>>;
-    const state = { 
+    const state = {
       color: '',
-      outlineColor: NodeOutlineColor.NoOutline,
+      outlineColor: nodeOutlineColorToString(NodeOutlineColor.NoOutline),
       preset: ''
     };
-    function resetState() {
-      state.color = `#${new THREE.Color(appearance.color[0] / 255, appearance.color[1] / 255, appearance.color[2] / 255).getHexString()}`;
-      state.outlineColor = NodeOutlineColor[appearance.outlineColor] as NodeOutlineColor;
+    function updateState() {
+      state.color = colorToHexString(appearance.color);
+      state.outlineColor = nodeOutlineColorToString(appearance.outlineColor);
       state.preset = '';
     }
-    resetState();
+    updateState();
 
     const presets = ['Default', 'Hidden', 'Ghosted', 'Highlighted'];
     ui.add(state, 'preset', presets).name('Apply preset').onFinishChange(() => {
-      const defaultNodeAppearances = DefaultNodeAppearance as DefaultNodeAppearanceByKeys;
-      Object.assign(appearance, DefaultNodeAppearance.Default);
-      Object.assign(appearance, defaultNodeAppearances[state.preset]);
-      resetState();
+      applyPresetToAppearance(appearance, state.preset);
+      updateState();
       ui.updateDisplay();
     });
 
     ui.add(appearance, 'visible').name('Visible');
     ui.add(appearance, 'renderGhosted').name('Ghosted');
     ui.add(appearance, 'renderInFront').name('In front');
-    ui.addColor(state, 'color').name('Node color').onChange(() => {
-      const threeColor = new THREE.Color(state.color);
-      appearance.color = [Math.floor(threeColor.r * 255), Math.floor(threeColor.g * 255), Math.floor(threeColor.b * 255)];
+    ui.addColor(state, 'color').name('Node color').onFinishChange(color => {
+      appearance.color = hexStringToColor(color);
     });
-    const outlineValues = Object.keys(NodeOutlineColor).filter(k => typeof NodeOutlineColor[k as any] !== "number").map(x => NodeOutlineColor[x])
-    ui.add(state, 'outlineColor', outlineValues).name('Outline').onChange(() => {
-      appearance.outlineColor = NodeOutlineColor[state.outlineColor] as NodeOutlineColor;
+    ui.add(state, 'outlineColor', nodeOutlineColorValues).name('Outline').onFinishChange(() => {
+      appearance.outlineColor = stringToNodeOutlineColor(state.outlineColor);
     });
     ui.add(appearance, 'prioritizedForLoadingHint', 0, 10).name('Loading priority');
 
@@ -132,4 +141,30 @@ export class NodeStylingUI {
       return clone;
     }
   }
+}
+
+function applyPresetToAppearance(appearance: NodeAppearance, preset: string) {
+  const defaultNodeAppearances = DefaultNodeAppearance as DefaultNodeAppearanceByKeys;
+  Object.assign(appearance, DefaultNodeAppearance.Default);
+  Object.assign(appearance, defaultNodeAppearances[preset]);
+}
+
+function stringToNodeOutlineColor(enumName: string): NodeOutlineColor {
+  return nodeOutlineColorValues.indexOf(enumName) as NodeOutlineColor;
+}
+
+function nodeOutlineColorToString(color: NodeOutlineColor): string {
+  return nodeOutlineColorValues[color as number];
+}
+
+function colorToHexString(color: [number, number, number]): string {
+  return `#${new THREE.Color(color[0] / 255, color[1] / 255, color[2] / 255).getHexString()}`;
+}
+
+function hexStringToColor(hexColor: string): [number, number, number] {
+  const threeColor = new THREE.Color(hexColor);
+  return [
+    Math.floor(threeColor.r * 255),
+    Math.floor(threeColor.g * 255),
+    Math.floor(threeColor.b * 255)];
 }
