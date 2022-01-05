@@ -362,16 +362,16 @@ export class ComboControls extends EventDispatcher {
     }
   };
 
-  private onFocusChanged(event: MouseEvent | TouchEvent | FocusEvent): void {
+  private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     this._isFocused =
       event.type !== 'blur' &&
       (this.isDescendant(this._domElement.parentElement!, event.target as HTMLElement) ||
         document.activeElement === this._domElement);
 
     this._keyboard.disabled = !this._isFocused;
-  };
+  }
 
-  private isDescendant(parent: HTMLElement, child: HTMLElement): boolean {
+  private readonly isDescendant = (parent: HTMLElement, child: HTMLElement) => {
     let node = child.parentNode;
     while (node !== null) {
       if (node === parent) {
@@ -380,14 +380,14 @@ export class ComboControls extends EventDispatcher {
       node = node.parentNode;
     }
     return false;
-  };
+  }
 
-  private onContextMenu(event: MouseEvent): void{
+  private readonly onContextMenu = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
     }
     event.preventDefault();
-  };
+  }
 
   private readonly rotate = (deltaX: number, deltaY: number) => {
     if (deltaX === 0 && deltaY === 0) {
