@@ -61,7 +61,12 @@ export class GeometryBatchingManager {
       }
 
       const { defragBuffer, mesh } = geometry;
-      const { updateRange } = defragBuffer.remove(batchId);
+
+      const updateRange = defragBuffer.getRangeForBatchId(batchId);
+
+      this.removeTreeIndicesFromMeshUserData(mesh, updateRange);
+
+      defragBuffer.remove(batchId);
 
       this.updateInstanceAttributes(mesh, updateRange);
 
@@ -69,6 +74,12 @@ export class GeometryBatchingManager {
     });
 
     this._sectorMap.delete(sectorId);
+  }
+
+  private *getFloatsFromAttribute(attribute: THREE.InterleavedBufferAttribute): Iterable<number> {
+    for (let i = 0; i < attribute.count; i++) {
+      yield attribute.getX(i);
+    }
   }
 
   private processGeometries(
@@ -79,6 +90,7 @@ export class GeometryBatchingManager {
   ) {
     const instanceAttributes = this.getAttributes(sectorBufferGeometry, THREE.InterleavedBufferAttribute);
     const interleavedBufferView = this.getInstanceAttributesSharedView(instanceAttributes);
+    const treeIndexInterleavedAttribute = this.getTreeIndexAttribute(instanceAttributes);
 
     assert(instanceId !== undefined);
 
@@ -88,11 +100,17 @@ export class GeometryBatchingManager {
     const interleavedArrayBuffer = interleavedBufferView.buffer;
 
     const { defragBuffer, mesh } = instanceMeshGeometry;
+
     const length = interleavedBufferView.byteLength;
     const offset = interleavedBufferView.byteOffset;
 
     const interleavedAttributesView = new Uint8Array(interleavedArrayBuffer, offset, length);
     const { batchId, bufferIsReallocated, updateRange } = defragBuffer.add(interleavedAttributesView);
+
+    for (const treeIndex of this.getFloatsFromAttribute(treeIndexInterleavedAttribute)) {
+      mesh.userData.treeIndices.add(treeIndex);
+    }
+
     const sectorBatches = this._sectorMap.get(sectorId) ?? this.createSectorBatch(sectorId);
 
     assert(instanceAttributes.length > 0);
@@ -201,6 +219,42 @@ export class GeometryBatchingManager {
     return interleavedBufferView;
   }
 
+  private getTreeIndexAttribute(
+    instanceAttributes: { name: string; attribute: THREE.InterleavedBufferAttribute }[]
+  ): THREE.InterleavedBufferAttribute {
+    let treeIndexAttribute: THREE.InterleavedBufferAttribute | undefined = undefined;
+    for (let i = 0; i < instanceAttributes.length; i++) {
+      if (instanceAttributes[i].name == 'a_treeIndex') {
+        treeIndexAttribute = instanceAttributes[i].attribute;
+      }
+    }
+
+    assert(treeIndexAttribute !== undefined);
+
+    return treeIndexAttribute;
+  }
+
+  private removeTreeIndicesFromMeshUserData(
+    mesh: THREE.Mesh,
+    updateRange: { byteOffset: number; byteCount: number }
+  ): void {
+    const { byteOffset, byteCount } = updateRange;
+
+    const interleavedAttributes = this.getAttributes(mesh.geometry, THREE.InterleavedBufferAttribute);
+
+    const treeIndexAttribute = this.getTreeIndexAttribute(interleavedAttributes);
+    const typedArray = treeIndexAttribute.data.array as TypedArray;
+    const instanceByteSize = treeIndexAttribute.data.stride * typedArray.BYTES_PER_ELEMENT;
+
+    const firstWholeInstanceIndex = Math.ceil(byteOffset / instanceByteSize);
+    const firstInvalidInstanceIndex = Math.floor((byteOffset + byteCount) / instanceByteSize);
+
+    for (let i = firstWholeInstanceIndex; i < firstInvalidInstanceIndex; i++) {
+      const treeIndex = treeIndexAttribute.getX(i);
+      mesh.userData.treeIndices.delete(treeIndex);
+    }
+  }
+
   private createDefragmentedBufferGeometry(
     bufferGeometry: THREE.BufferGeometry,
     defragmentedAttributeBuffer: DynamicDefragmentedBuffer<Uint8Array>
@@ -255,6 +309,8 @@ export class GeometryBatchingManager {
       (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
       (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
     };
+
+    mesh.userData.treeIndices = new Set<number>();
 
     mesh.updateMatrixWorld(true);
 
