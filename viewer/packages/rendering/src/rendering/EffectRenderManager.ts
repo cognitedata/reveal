@@ -918,7 +918,7 @@ function createRenderTarget(
   options?: THREE.WebGLRenderTargetOptions
 ): THREE.WebGLRenderTarget {
   if (isWebGL2 && multiSampleCountHint > 1) {
-    const rt = new THREE.WebGLMultisampleRenderTarget(0, 0, options);
+    const rt = new THREE.WebGLMultisampleRenderTarget(0, 0, { ...options, ignoreDepth: false } as any);
     rt.samples = multiSampleCountHint;
     return rt;
   }
