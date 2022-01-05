@@ -1192,11 +1192,6 @@
   dependencies:
     commander "^2.15.1"
 
-"@cognite/potree-core@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.0.tgz#7b288a12358b2ef2b2ae51195a4ecace396822be"
-  integrity sha512-/XhfPYlPIK7LxT0czUIGMWLcUjGfVmf3Nzcf+6FaG+sExr6S8Yqayeid9FdYgi7y+LFmvYSJrZyXgF5LL8ZMrg==
-
 "@cognite/potree-core@^1.1.6":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.2.0.tgz#29d42606e2dd4b4ef0ad82c97c0a23ca94f0ff65"
@@ -1262,6 +1257,13 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.2.0.tgz#0606ddccddd40e7809ef52e78c36d96e7af9b11c"
   integrity sha512-l3B+PCZjOFTdbc9aC8YqF76DktJaNeqvOhF7Xpno2Y4rST69SpWQjl/g1RE4fgOAoAltoQ8k5UIAv7E/iGNQkQ==
+  dependencies:
+    comlink "4.3.1"
+
+"@cognite/reveal-parser-worker@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.3.0.tgz#9910121ba90cad684a91b3b04e6df0528ea671f5"
+  integrity sha512-39wuqtdogmZfTmnQhigNpgU/nfYG3POpUFKFO/FMKJKJ+pAsCCZfu4IPEXCDAevJS6/K+mEViPSLL6+Gagi1HQ==
   dependencies:
     comlink "4.3.1"
 
