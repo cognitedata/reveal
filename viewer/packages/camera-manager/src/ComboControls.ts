@@ -367,7 +367,6 @@ export class ComboControls extends EventDispatcher {
       event.type !== 'blur' &&
       (this.isDescendant(this._domElement.parentElement!, event.target as HTMLElement) ||
         document.activeElement === this._domElement);
-    event.type !== 'blur' && (event.target === this._domElement || document.activeElement === this._domElement);
 
     this._keyboard.disabled = !this._isFocused;
   };
