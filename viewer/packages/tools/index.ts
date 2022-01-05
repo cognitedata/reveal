@@ -36,7 +36,6 @@ export {
   HereMapImageFormat
 } from './src/Geomap/MapConfig';
 export { ToolbarTool } from './src/Toolbar/ToolbarTool';
-export { DefaultToolbar } from './src/Toolbar/DefaultToolbar';
 export { ToolbarPosition } from './src/Toolbar/Toolbar';
 export { TimelineTool } from './src/Timeline/TimelineTool';
 export { Keyframe } from './src/Timeline/Keyframe';

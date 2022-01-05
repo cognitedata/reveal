@@ -2,17 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/core';
+import { assertNever } from '@reveal/utilities';
 import css from './Toolbar.css';
 
 /**
  * Toolbar position within the canvas
  */
-export enum ToolbarPosition {
-  Top = 'Top',
-  Bottom = 'Bottom',
-  Left = 'Left',
-  Right = 'Right'
-}
+export type ToolbarPosition = 'top' | 'right' | 'bottom' | 'left';
 
 /**
  * Toolbar class which creates a container to hold all icons within the toolbar
@@ -33,8 +29,6 @@ export class Toolbar {
     iconClicked: 'reveal-viewer-toolbar-icon-clicked'
   };
 
-  private _activeContainerPosition = Toolbar.classnames.bottom;
-
   constructor(viewer: Cognite3DViewer) {
     this._canvasElement = viewer.domElement.querySelector('canvas');
     const canvasElementParent = this._canvasElement?.parentElement;
@@ -50,7 +44,7 @@ export class Toolbar {
    * Load the the styles from the CSS and appends them to the toolbar
    * @returns Return if styles already loaded
    */
-  private static loadStyles() {
+  private static ensureStylesLoaded() {
     if (document.getElementById(Toolbar.stylesId)) {
       return;
     }
@@ -67,7 +61,7 @@ export class Toolbar {
    */
   private createToolBar(controlDiv: HTMLElement) {
     this._toolbarContainer.id = 'toolbarContainer';
-    Toolbar.loadStyles();
+    Toolbar.ensureStylesLoaded();
     this._toolbarContainer.className = Toolbar.classnames.container;
     this._toolbarContainer.classList.add(Toolbar.classnames.bottom);
 
@@ -77,17 +71,17 @@ export class Toolbar {
   /**
    * Create & adds a button icons into the toolbar container
    * @param toolTip Tooltip message to added for the icon
-   * @param backgroundImage Icon image to be displayed
+   * @param backgroundImageUri Icon image to be displayed
    * @param isToggle Is the icon button used as toggle
    * @param onClick Click event action for the icon
    */
-  public addToolbarItem(toolTip: string, backgroundImage: string, isToggle: boolean, onClick: () => void): void {
+  public addToolbarItem(toolTip: string, backgroundImageUri: string, isToggle: boolean, onClick: () => void): void {
     const element = document.createElement('button');
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
     const iconImage = new Image();
     iconImage.className = Toolbar.classnames.iconImg;
-    iconImage.src = backgroundImage;
+    iconImage.src = backgroundImageUri;
 
     element.appendChild(iconImage);
 
@@ -110,28 +104,27 @@ export class Toolbar {
    * @param position ToolbarPosition value such as Top, Bottom, Left, Right within the canvas
    */
   public setPosition(position: ToolbarPosition): void {
+    this._toolbarContainer.classList.remove(
+      Toolbar.classnames.top,
+      Toolbar.classnames.left,
+      Toolbar.classnames.right,
+      Toolbar.classnames.bottom
+    );
     switch (position) {
-      case 'Top':
-        this._toolbarContainer.classList.remove(this._activeContainerPosition);
-        this._activeContainerPosition = Toolbar.classnames.top;
+      case 'top':
         this._toolbarContainer.classList.add(Toolbar.classnames.top);
         break;
-      case 'Left':
-        this._toolbarContainer.classList.remove(this._activeContainerPosition);
-        this._activeContainerPosition = Toolbar.classnames.left;
+      case 'left':
         this._toolbarContainer.classList.add(Toolbar.classnames.left);
         break;
-      case 'Right':
-        this._toolbarContainer.classList.remove(this._activeContainerPosition);
-        this._activeContainerPosition = Toolbar.classnames.right;
+      case 'right':
         this._toolbarContainer.classList.add(Toolbar.classnames.right);
         break;
-      case 'Bottom':
-      default:
-        this._toolbarContainer.classList.remove(this._activeContainerPosition);
-        this._activeContainerPosition = Toolbar.classnames.bottom;
+      case 'bottom':
         this._toolbarContainer.classList.add(Toolbar.classnames.bottom);
         break;
+      default:
+        assertNever(position, `Invalid position: ${position}`);
     }
   }
 }

@@ -15,7 +15,7 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarPosition, DefaultToolbar } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
 import iconSet42 from './icons/Cognite_Icon_Set-42.png';
@@ -183,9 +183,14 @@ export function Toolbar() {
 
       const model = cadModels[0] || pointCloudModels[0];
 
-      const defaultToolbar = new DefaultToolbar(viewer, model);
+      const toolbar = new ToolbarTool(viewer, model);
 
-      const toolbar = defaultToolbar.getToolbar();
+      toolbar.addAxisToolToggle();
+      toolbar.addTakeScreenshotTool();
+      toolbar.addCameraTargetOnClickToggle();
+      toolbar.addZoomPastToCursorToggle();
+      toolbar.addFitCameraToModel();
+
       toolbar.addToolbarItem('Explode View', iconSet42, true, callbackMsg);
       toolbar.addToolbarItem('Maps', iconSet54, false, callbackMsg);
       toolbar.addToolbarItem('Settings', iconSet63, true, callbackMsg);
@@ -195,17 +200,17 @@ export function Toolbar() {
       renderGui.add(guiState, 'toolbarPosition', toolbarPosition).name('toolbarPosition').onFinishChange(value => {
         switch(value) {
           case 'Top':
-            toolbar.setPosition(ToolbarPosition.Top);
+            toolbar.setPosition('top');
             break;
           case 'Left':
-            toolbar.setPosition(ToolbarPosition.Left);
+            toolbar.setPosition('left');
             break;
           case 'Right':
-            toolbar.setPosition(ToolbarPosition.Right);
+            toolbar.setPosition('right');
             break;
           case 'Bottom':
           default:
-            toolbar.setPosition(ToolbarPosition.Bottom);
+            toolbar.setPosition('bottom');
             break;
         }
       });

@@ -6,58 +6,42 @@ describe: Toolbar container with Default Toolbar and add custom toolbar items to
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
-Reveal provides feature for using default toolbar and custom toolbar elements. Default toolbar has features from Reveal, which are readily available for the users to enable or disable.
+Reveal provides feature for using toolbar to add custom elements. Default elements for toolbar are readily available for the users to enable or disable Reveal features.
 Custom toolbar helps the user to add button to the toolbar container or to the default toolbar container.
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-## Default Toolbar
-Default toolbar provides below features which can be used to activate or deactivate.
-- Take Screenshot
-- Enable/Disable Axis Tool
-- Enable/Disable Camera Target on Click
-- Toggle Camera Zoom-past/Zoom-to Cursor
-- Fit Camera to Model
+## Default Toolbar elements
+Default toolbar elements are listed below which can be used to activate or deactivate features in Reveal.
+- Take Screenshot - `addAxisToolToggle()`.
+- Enable/Disable Axis Tool - `addTakeScreenshotTool()`.
+- Enable/Disable Camera Target on Click - `addCameraTargetOnClickToggle()`.
+- Toggle Camera Zoom-past/Zoom-to Cursor - `addZoomPastToCursorToggle()`.
+- Fit Camera to Model - `addFitCameraToModel()`.
 
-To create and use default toolbar, we use `DefaultToolbar` object.
+To create and use default elements in toolbar.
 
 ```js runnable
-// import { DefaultToolbar } from '@cognite/reveal/tools';
+// import { ToolbarTool } from '@cognite/reveal/tools';
 
-const defaultToolbar = new DefaultToolbar(viewer, model);
+const toolbar = new ToolbarTool(viewer, model);
+toolbar.addAxisToolToggle();
+toolbar.addTakeScreenshotTool();
+toolbar.addCameraTargetOnClickToggle();
+toolbar.addZoomPastToCursorToggle();
+toolbar.addFitCameraToModel();
 ```
 
-## Custom Toolbar
-Each custom toolbar element in Reveal provides flexibilty for the user to add tooltip, icon image and a callback function to trigger when the icon button is clicked.
-We add a new element to the toolbar with `addToolbarItem(toolTip: string, backgroundImage: string, isToggle: boolean, onClick: () => void)`
+## Add elements
+Each toolbar element in Reveal provides flexibilty for the user to add tooltip, icon image and a callback function to trigger when the icon button is clicked.
+We add a new element to the toolbar with `addToolbarItem(toolTip: string, backgroundImageUri: string, isToggle: boolean, onClick: () => void)`
 - `toolTip` - Tooltip for the Icon button
-- `backgroundImage` - Background image to be placed onto icon button. The image needs to be in string with `base64` format.
+- `backgroundImageUri` - Background image to be placed onto icon button. The image needs to be in string with `base64` format.
 - `isToggle` - Is the icon button used as toggle
 - `onClick` - Click event callback function which can be used to perform custom functionlity of the user
 
-We have two options for custom toolbar.
-### Adding elements to default toolbar.
-We can add elements to default toolbar by retriving existing ToolbarTool object by using `defaultToolbar.getToolbar()`.
-
-```jsx
-// import { ToolbarTool, DefaultToolbar } from '@cognite/reveal/tools';
-
-// import iconSet42 from './img/Cognite_Icon_Set-42.png';
-// import iconSet54 from './img/Cognite_Icon_Set-54.png';
-// import iconSet63 from './img/Cognite_Icon_Set-63.png';
-
-const callbackMsg = () => (
-    alert("result called")
-);
-
-const toolbar = defaultToolbar.getToolbar();
-toolbar.addToolbarItem('Explode View', iconSet42, true, callbackMsg);
-toolbar.addToolbarItem('Maps', iconSet54, false, callbackMsg);
-toolbar.addToolbarItem('Settings', iconSet63, true, callbackMsg);
-```
-
 ### Creating new elements for the toolbar
-By creating ToolbarTool object, user can add elements to the new (empty/no element) toolbar.
+By creating ToolbarTool object, user can add elements to the new toolbar.
 
 ```jsx
 // import { ToolbarTool } from '@cognite/reveal/tools';
@@ -78,16 +62,14 @@ toolbar.addToolbarItem('Settings', iconSet63, true, callbackMsg);
 ```
 
 ## Toolbar Position
-We can set the position of the toolbar to either of the below position within the Reveal window using `setPositionsetPosition(position: ToolbarPosition)`.
-- `ToolbarPosition.Top`
-- `ToolbarPosition.Bottom`
-- `ToolbarPosition.Left`
-- `ToolbarPosition.Right`
+We can set the position of the toolbar to either of the below position within the Reveal window using `setPosition(position: ToolbarPosition)`.
+- `top`
+- `bottom`
+- `left`
+- `right`
 
 ```jsx
-// import { ToolbarPosition } from '@cognite/reveal/tools';
-
-toolbar.setPosition(ToolbarPosition.Top);
+toolbar.setPosition('top');
 ```
 :::note
 Default position of toolbar is at the Bottom of the window.
