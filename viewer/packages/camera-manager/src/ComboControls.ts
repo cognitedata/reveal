@@ -373,7 +373,7 @@ export class ComboControls extends EventDispatcher {
 
   private readonly isDescendant = (parent: HTMLElement, child: HTMLElement) => {
     let node = child.parentNode;
-    while (node) {
+    while (node !== null) {
       if (node === parent) {
         return true;
       }
