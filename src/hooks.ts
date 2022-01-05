@@ -1,8 +1,8 @@
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useSDK } from '@cognite/sdk-provider';
-import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { CogniteClient, Group } from '@cognite/sdk';
-import equal from 'deep-equal';
 import { useMutation, UseMutationOptions, useQuery } from 'react-query';
+import { usePermissions as _usePermissions } from '@cognite/sdk-react-query-hooks';
 import { sleep } from './utils/utils';
 
 export const useGroups = (all = false) => {
@@ -32,22 +32,8 @@ export const useAuthConfiguration = () => {
 };
 
 export const usePermissions = (key: string, type?: string, scope?: any) => {
-  const permissionScope = scope || { all: {} };
-
-  const capabilities = useCapabilities();
-  const acls = capabilities.data?.filter(
-    c => c.acl === key && equal(c.scope, permissionScope)
-  );
-  return {
-    ...capabilities,
-    data:
-      acls &&
-      (type
-        ? acls.some(({ actions }) =>
-            actions.find(a => a.toLowerCase() === type.toLowerCase())
-          )
-        : true),
-  };
+  const { flow } = getFlow();
+  return _usePermissions(flow, key, type, scope);
 };
 
 const getUpdater =

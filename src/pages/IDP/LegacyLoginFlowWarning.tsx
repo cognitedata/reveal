@@ -8,6 +8,7 @@ import { Alert as AntdAlert, Modal, notification } from 'antd';
 import styled from 'styled-components';
 import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
 import { hasAnyValidGroupForOIDC } from 'pages/Groups/utils';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 const NUMBER_OF_SECONDS_TO_ALLOW_DISABLING = 5;
 
@@ -63,7 +64,7 @@ const StyledHelpIcon = styled(Icon)`
 const LegacyLoginFlowWarning = () => {
   const sdk = useSDK();
   const client = useQueryClient();
-  const flow = sdk.getOAuthFlowType();
+  const { flow } = getFlow();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
   const isLoggedInUsingLegacyLoginFlow = flow === 'CDF_OAUTH';
   const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =

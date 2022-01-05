@@ -21,7 +21,7 @@ export const projectName = () =>
   new URL(window.location.href).pathname.split('/')[1];
 
 export const getCdfEnvFromUrl = () =>
-  queryString.parse(window.location.search).env;
+  queryString.parse(window.location.search).env as string;
 
 export const stringCompare = (a = '', b = '') => {
   const al = a.replace(/\s+/g, '');
