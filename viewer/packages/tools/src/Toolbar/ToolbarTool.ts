@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Cognite3DModel, CogniteModelBase, Cognite3DViewer } from '@reveal/core';
+import { CogniteModelBase, Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Toolbar, ToolbarPosition } from './Toolbar';
 import { AxisViewTool } from '../AxisView/AxisViewTool';
