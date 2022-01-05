@@ -134,6 +134,7 @@ export class NodeStylingUI {
     ui.add(state, 'outlineColor', nodeOutlineColorValues).name('Outline').onFinishChange(() => {
       appearance.outlineColor = stringToNodeOutlineColor(state.outlineColor);
     });
+    ui.add(appearance, 'prioritizedForLoadingHint', 0, 10).name('Loading priority');
 
     return () => {
       const clone: NodeAppearance = { ...appearance };
