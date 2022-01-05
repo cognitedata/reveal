@@ -35,7 +35,7 @@ export function ModalFilePicker({
   clearButton,
 }: ModalFilePickerProps) {
   const acceptTypes = VALID_MIME_TYPES.map(
-    (mimeType) => mimeType.extention
+    (mimeType) => mimeType.extension
   ).join(', ');
   const maxTotalSizeInGB = UPLODER_CONST.MAX_TOTAL_SIZE_IN_BYTES / 1024 ** 3;
   const maxFileCount = UPLODER_CONST.MAX_FILE_COUNT;

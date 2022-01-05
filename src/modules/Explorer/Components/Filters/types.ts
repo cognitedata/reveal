@@ -1,6 +1,11 @@
 import { FileFilterProps, DateRange } from '@cognite/cdf-sdk-singleton';
 import { DateActions, DateOptions } from './DateFilter';
 
+export enum MediaTypeOption {
+  image = 'Image',
+  video = 'Video',
+}
+
 export type VisionFilterItemProps = {
   filter: VisionFileFilterProps;
   setFilter: (newFilter: VisionFileFilterProps) => void;
@@ -13,6 +18,7 @@ export type VisionFileFilterProps = FileFilterProps & {
   annotation?: AnnotationFilterType;
   dateFilter?: DateFilterType;
   timeRange?: DateRange;
+  mediaType?: MediaTypeOption;
 };
 
 export type AnnotationFilterType = {
