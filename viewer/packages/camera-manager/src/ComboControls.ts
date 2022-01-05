@@ -362,7 +362,7 @@ export class ComboControls extends EventDispatcher {
     }
   };
 
-  private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
+  private onFocusChanged(event: MouseEvent | TouchEvent | FocusEvent): void {
     this._isFocused =
       event.type !== 'blur' &&
       (this.isDescendant(this._domElement.parentElement!, event.target as HTMLElement) ||
