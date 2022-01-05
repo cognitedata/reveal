@@ -18,6 +18,7 @@ import { ColumnProfile, useColumnType } from 'hooks/profiling-service';
 
 import { Graph } from './Distribution';
 import ProfileDetailsRow from './ProfileDetailsRow';
+import { reduceHistogramBins } from 'utils/utils';
 
 type ProfileRowDataType = 'Empty' | 'Distinct' | 'Min' | 'Max' | 'Mean';
 
@@ -48,8 +49,10 @@ export default function ProfileRow({ allCount, profile }: Props) {
     min,
     max,
     mean,
-    histogram,
+    histogram: rawHistogram,
   } = profile;
+
+  const histogram = reduceHistogramBins(rawHistogram || [], 16);
 
   const { database, table } = useActiveTableContext();
   const { getColumnType, isFetched } = useColumnType(database, table);
@@ -111,12 +114,12 @@ export default function ProfileRow({ allCount, profile }: Props) {
             </Label>
           </NumberOrMissingTd>
         </TableCell>
-        <TableCell style={{ padding: '4px 0 0' }}>
+        <TableCell style={{ padding: '4px 4px 0' }}>
           {histogram && (
             <Graph
               distribution={histogram}
               height={40}
-              maximumBarWidth={6}
+              maximumBarWidth={5}
               width={150}
               fill="rgba(140, 140, 140, 1)"
             />
@@ -187,7 +190,7 @@ const NumberOrMissingTd = ({
   return Number.isFinite(value) ? (
     <>
       {value}
-      {children}
+      <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
     </>
   ) : (
     <StyledJustifyCenter>
@@ -263,4 +266,8 @@ const StyledInfoFilledIcon = styled(Icon).attrs({
   type: 'InfoFilled',
 })`
   color: ${Colors['text-hint'].hex()};
+`;
+
+const StyledChildrenWrapper = styled.div`
+  margin-left: 8px;
 `;
