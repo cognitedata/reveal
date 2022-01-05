@@ -369,7 +369,7 @@ export class ComboControls extends EventDispatcher {
         document.activeElement === this._domElement);
 
     this._keyboard.disabled = !this._isFocused;
-  }
+  };
 
   private readonly isDescendant = (parent: HTMLElement, child: HTMLElement) => {
     let node = child.parentNode;
@@ -380,14 +380,14 @@ export class ComboControls extends EventDispatcher {
       node = node.parentNode;
     }
     return false;
-  }
+  };
 
   private readonly onContextMenu = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
     }
     event.preventDefault();
-  }
+  };
 
   private readonly rotate = (deltaX: number, deltaY: number) => {
     if (deltaX === 0 && deltaY === 0) {
