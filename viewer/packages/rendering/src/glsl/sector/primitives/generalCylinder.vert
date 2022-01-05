@@ -48,7 +48,6 @@ out float v_angle;
 out float v_arcAngle;
 
 out vec3 v_color;
-
 out vec3 v_normal;
 
 uniform vec2 treeIndexTextureSize;
