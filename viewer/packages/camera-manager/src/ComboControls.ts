@@ -371,7 +371,7 @@ export class ComboControls extends EventDispatcher {
     this._keyboard.disabled = !this._isFocused;
   };
 
-  private readonly isDescendant = (parent: HTMLElement, child: HTMLElement) => {
+  private isDescendant(parent: HTMLElement, child: HTMLElement): boolean {
     let node = child.parentNode;
     while (node !== null) {
       if (node === parent) {
