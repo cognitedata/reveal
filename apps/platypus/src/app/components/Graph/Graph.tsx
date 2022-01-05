@@ -11,7 +11,6 @@ import * as d3 from 'd3';
 import { SimulationLinkDatum, SimulationNodeDatum } from 'd3';
 
 import styled from 'styled-components/macro';
-import { ZIndex } from '../../utils/zIndex';
 import { getELKNodes } from './layout/elkLayout';
 import { Spinner } from '../Spinner/Spinner';
 
@@ -149,7 +148,6 @@ export const Graph = <T,>({
   useEffect(() => {
     (async () => {
       if (isLoading && d3Nodes) {
-        console.log('rerunning');
         const nodesForRendering = await getELKNodes(
           d3Nodes.nodes() as (Element & { __data__: Node })[],
           propsLinks
@@ -213,14 +211,8 @@ export const Graph = <T,>({
     if (!mainWrapperRef.current || !containerRef.current || !svgRef.current) {
       return;
     }
-    const width = mainWrapperRef.current.clientWidth;
-    const height = mainWrapperRef.current.clientHeight;
-
     // Initializing chart
-    const initialChart = d3
-      .select(svgRef.current)
-      .attr('width', width)
-      .attr('height', height);
+    const initialChart = d3.select(svgRef.current);
 
     const initialSimulation = d3
       .forceSimulation()
@@ -239,16 +231,30 @@ export const Graph = <T,>({
   const ticked = useCallback(
     // global transform values
     ({ x, y, k }: { x: number; y: number; k: number } = transform) => {
+      // determine the amount to scale the node versus wrapper
+      // behavior: if zoomed out more than original, scale wrapper
+      // other wise, scale the distance between nodes
+      const nodeScale = Math.max(k, 1);
+      const wrapperScale = Math.min(k, 1);
+
       if (d3Links && d3Nodes) {
         // fns to get the transformed locations of source/targets
         const getSourceX = (d: SimulationLinkDatum<Node & T>) =>
-          x + k * (d.source as Node).x! + getOffset(d).source.x;
+          x / wrapperScale +
+          nodeScale * (d.source as Node).x! +
+          getOffset(d).source.x;
         const getSourceY = (d: SimulationLinkDatum<Node & T>) =>
-          y + k * (d.source as Node).y! + getOffset(d).source.y;
+          y / wrapperScale +
+          nodeScale * (d.source as Node).y! +
+          getOffset(d).source.y;
         const getTargetX = (d: SimulationLinkDatum<Node & T>) =>
-          x + k * (d.target as Node).x! + getOffset(d).target.x;
+          x / wrapperScale +
+          nodeScale * (d.target as Node).x! +
+          getOffset(d).target.x;
         const getTargetY = (d: SimulationLinkDatum<Node & T>) =>
-          y + k * (d.target as Node).y! + getOffset(d).target.y;
+          y / wrapperScale +
+          nodeScale * (d.target as Node).y! +
+          getOffset(d).target.y;
 
         // transform the links (if its curve vs line)
         d3Links.attr('d', (d: SimulationLinkDatum<Node & T>) => {
@@ -281,16 +287,23 @@ export const Graph = <T,>({
           }
           return curve.join(' ');
         });
-
         // transform the nodes
         d3Nodes.attr('style', (d: any) => {
-          const nodeX = x + k * d.x;
-          const nodeY = y + k * d.y;
+          const nodeX = x / wrapperScale + nodeScale * d.x;
+          const nodeY = y / wrapperScale + nodeScale * d.y;
           return `left: ${nodeX}px; top: ${nodeY}px`;
         });
+        if (containerRef.current) {
+          const width = containerRef.current.clientWidth;
+          const height = containerRef.current.clientHeight;
+          // scale relative to the center to zoom around the x, y
+          const preTransform = `translate(-${width / 2}px,-${height / 2}px)`;
+          const postTransform = `translate(${width / 2}px,${height / 2}px)`;
+          containerRef.current!.style.transform = `${preTransform} scale(${wrapperScale}) ${postTransform}`;
+        }
       }
     },
-    [d3Nodes, d3Links, transform, useCurve, getOffset]
+    [d3Nodes, d3Links, transform, useCurve, getOffset, containerRef]
   );
 
   const onZoom = (transformation: { k: number; x: number; y: number }) => {
@@ -462,27 +475,16 @@ export const Graph = <T,>({
   }));
 
   return (
-    <>
-      <div
-        style={{
-          position: 'absolute',
-          top: 5,
-          left: 410,
-          zIndex: ZIndex.Toolbar,
-        }}
-      >
-        {children}
-      </div>
+    <Wrapper ref={mainWrapperRef}>
       {isLoading && <Spinner style={{ position: 'absolute' }} />}
-      <Wrapper ref={mainWrapperRef}>
-        <div className="node-container" ref={containerRef}>
-          <svg className="chart" ref={svgRef}>
-            <g className="links">{linksChildren}</g>
-          </svg>
-          {nodeChildren}
-        </div>
-      </Wrapper>
-    </>
+      {children}
+      <div className="node-container" ref={containerRef}>
+        <svg className="chart" ref={svgRef}>
+          <g className="links">{linksChildren}</g>
+        </svg>
+        {nodeChildren}
+      </div>
+    </Wrapper>
   );
 };
 
@@ -490,12 +492,14 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
-  overflow: hidden;
-  border: 1px solid #333333;
 
-  canvas,
+  svg,
   .node-container {
     cursor: grab;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: visible;
   }
   .node {
     position: absolute;

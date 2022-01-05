@@ -202,60 +202,69 @@ export const SchemaVisualizer = ({
     (highlightMainID ? 1 : 0);
 
   const renderTopBar = () => (
-    <StyledTopBar>
-      <TopBar.Item className="cogs-topbar--item__search">
-        <Icon type="Search" />
-        <Input
-          placeholder="Search"
-          value={searchFilterValue}
-          onChange={(e) => setSearchFilterValue(e.target.value)}
+    <div
+      style={{
+        position: 'absolute',
+        top: 5,
+        left: 410,
+        zIndex: ZIndex.Toolbar,
+      }}
+    >
+      <StyledTopBar>
+        <TopBar.Item className="cogs-topbar--item__search">
+          <Icon type="Search" />
+          <Input
+            placeholder="Search"
+            value={searchFilterValue}
+            onChange={(e) => setSearchFilterValue(e.target.value)}
+          />
+        </TopBar.Item>
+        <StyledTopBarItemWithMenu>
+          <Dropdown
+            content={dropdownContent}
+            visible={menuVisible}
+            onClickOutside={() => {
+              setMenuVisible(false);
+            }}
+          >
+            <Button type="ghost" onClick={() => setMenuVisible(!menuVisible)}>
+              <StyledFilterIcon type="Filter" />
+              <Badge text={`${countFilters}`} />
+            </Button>
+          </Dropdown>
+        </StyledTopBarItemWithMenu>
+        <TopBar.Actions
+          actions={[
+            {
+              key: 'zoomIn',
+              component: <Icon type="ZoomIn" />,
+              onClick: () => zoomInHandler(),
+            },
+            {
+              key: 'ZoomOut',
+              component: <Icon type="ZoomOut" />,
+              onClick: () => zoomOutHandler(),
+            },
+            {
+              key: 'ExpandMax',
+              component: <Icon type="FullScreen" />,
+              onClick: () => fitHandler(),
+            },
+          ]}
         />
-      </TopBar.Item>
-      <StyledTopBarItemWithMenu>
-        <Dropdown
-          content={dropdownContent}
-          visible={menuVisible}
-          onClickOutside={() => {
-            setMenuVisible(false);
-          }}
-        >
-          <Button type="ghost" onClick={() => setMenuVisible(!menuVisible)}>
-            <StyledFilterIcon type="Filter" />
-            <Badge text={`${countFilters}`} />
-          </Button>
-        </Dropdown>
-      </StyledTopBarItemWithMenu>
-      <TopBar.Actions
-        actions={[
-          {
-            key: 'zoomIn',
-            component: <Icon type="ZoomIn" />,
-            onClick: () => zoomInHandler(),
-          },
-          {
-            key: 'ZoomOut',
-            component: <Icon type="ZoomOut" />,
-            onClick: () => zoomOutHandler(),
-          },
-          {
-            key: 'ExpandMax',
-            component: <Icon type="FullScreen" />,
-            onClick: () => fitHandler(),
-          },
-        ]}
-      />
-      <TopBar.Actions
-        actions={[
-          {
-            key: 'Expand',
-            component: (
-              <Icon type={isVisualizerExpanded ? 'Collapse' : 'Expand'} />
-            ),
-            onClick: () => setIsVisualizerExpanded(!isVisualizerExpanded),
-          },
-        ]}
-      />
-    </StyledTopBar>
+        <TopBar.Actions
+          actions={[
+            {
+              key: 'Expand',
+              component: (
+                <Icon type={isVisualizerExpanded ? 'Collapse' : 'Expand'} />
+              ),
+              onClick: () => setIsVisualizerExpanded(!isVisualizerExpanded),
+            },
+          ]}
+        />
+      </StyledTopBar>
+    </div>
   );
 
   const renderConnectorsForNode = (
@@ -375,6 +384,7 @@ export const SchemaVisualizer = ({
 
   const renderGraph = () => (
     <>
+      {renderTopBar()}
       <Graph<SchemaDefinitionNode>
         graphRef={graphRef}
         nodes={nodes}
@@ -468,9 +478,8 @@ export const SchemaVisualizer = ({
           );
         }}
       >
-        {renderTopBar()}
+        {debouncedPopover}
       </Graph>
-      {debouncedPopover}
     </>
   );
 
@@ -516,6 +525,7 @@ const StyledModal = styled(Modal)`
   top: -20px;
   width: 95% !important;
   height: 90%;
+  overflow: hidden;
 
   .cogs-modal-content {
     padding: 0;
