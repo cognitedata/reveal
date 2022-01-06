@@ -7,6 +7,7 @@ import { PDFDocument } from 'pdf-lib';
 
 import { OrnateHistory, UpdateKeyType } from './containers/History';
 import { OrnateTransformer } from './containers/Transformer';
+import CircleMarker from './shapes/CircleMarker';
 import Squiggle from './shapes/Squiggle';
 import {
   OrnateAnnotation,
@@ -44,6 +45,10 @@ export type CogniteOrnateOptions = {
 const getShapeByDrawing = (drawing: Drawing) => {
   if (drawing.type === 'line') {
     return new Konva.Line({ ...drawing.attrs, id: drawing.id });
+  }
+
+  if (drawing.type === 'circleMarker') {
+    return new CircleMarker({ ...drawing.attrs, id: drawing.id });
   }
 
   if (drawing.type === 'squiggle') {

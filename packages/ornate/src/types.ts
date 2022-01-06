@@ -33,7 +33,16 @@ export type OrnateAnnotationInstance = {
 
 export type Drawing = {
   id?: string;
-  type: 'rect' | 'line' | 'text' | 'circle' | 'comment' | 'stamp' | 'squiggle';
+  type:
+    | 'rect'
+    | 'line'
+    | 'text'
+    | 'circle'
+    | 'comment'
+    | 'stamp'
+    | 'squiggle'
+    | 'path'
+    | 'circleMarker';
   attrs: any;
   groupId?: string;
   onClick?: (event: KonvaEventObject<MouseEvent>) => void;
