@@ -551,7 +551,7 @@ export class EffectRenderManager {
       const objectStack: THREE.Object3D[] = [rootSectorNodeData[0]];
       while (objectStack.length > 0) {
         const element = objectStack.pop()!;
-        const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
+        const objectTreeIndices = element.userData.treeIndices as Map<number, number> | undefined;
 
         if (objectTreeIndices) {
           if (hasInFrontElements && infrontSet.hasIntersectionWith(objectTreeIndices)) {

@@ -8,7 +8,7 @@ import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
-import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
+import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
 import { filterGeometryOutsideClipBox } from '../../cad-parsers/src/cad/filterPrimitivesV9';
 
 import assert from 'assert';
@@ -110,14 +110,14 @@ export class GltfSectorRepository implements SectorRepository {
     };
   }
 
-  private createTreeIndexSet(geometry: THREE.BufferGeometry): Set<number> {
+  private createTreeIndexSet(geometry: THREE.BufferGeometry): Map<number, number> {
     const treeIndexAttribute = geometry.attributes['treeIndex'];
     assert(treeIndexAttribute !== undefined);
 
-    const treeIndexSet = new Set<number>();
+    const treeIndexSet = new Map<number, number>();
 
     for (let i = 0; i < treeIndexAttribute.count; i++) {
-      treeIndexSet.add(treeIndexAttribute.getX(i));
+      incrementOrInsertIndex(treeIndexSet, treeIndexAttribute.getX(i));
     }
 
     return treeIndexSet;

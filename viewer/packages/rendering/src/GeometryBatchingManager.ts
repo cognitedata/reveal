@@ -5,7 +5,14 @@ import * as THREE from 'three';
 
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import assert from 'assert';
-import { assertNever, DynamicDefragmentedBuffer, TypedArray, TypedArrayConstructor } from '@reveal/utilities';
+import {
+  assertNever,
+  DynamicDefragmentedBuffer,
+  TypedArray,
+  TypedArrayConstructor,
+  incrementOrInsertIndex,
+  decrementOrDeleteIndex
+} from '@reveal/utilities';
 import { Materials } from './rendering/materials';
 
 type BatchedBuffer = {
@@ -108,7 +115,7 @@ export class GeometryBatchingManager {
     const { batchId, bufferIsReallocated, updateRange } = defragBuffer.add(interleavedAttributesView);
 
     for (const treeIndex of this.getFloatsFromAttribute(treeIndexInterleavedAttribute)) {
-      mesh.userData.treeIndices.add(treeIndex);
+      incrementOrInsertIndex(mesh.userData.treeIndices, treeIndex);
     }
 
     const sectorBatches = this._sectorMap.get(sectorId) ?? this.createSectorBatch(sectorId);
@@ -251,7 +258,9 @@ export class GeometryBatchingManager {
 
     for (let i = firstWholeInstanceIndex; i < firstInvalidInstanceIndex; i++) {
       const treeIndex = treeIndexAttribute.getX(i);
-      mesh.userData.treeIndices.delete(treeIndex);
+
+      assert((mesh.userData.treeIndices as Map<number, number>).has(treeIndex));
+      decrementOrDeleteIndex(mesh.userData.treeIndices, treeIndex);
     }
   }
 
@@ -310,7 +319,7 @@ export class GeometryBatchingManager {
       (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
     };
 
-    mesh.userData.treeIndices = new Set<number>();
+    mesh.userData.treeIndices = new Map<number, number>();
 
     mesh.updateMatrixWorld(true);
 
