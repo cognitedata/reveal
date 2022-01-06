@@ -11,6 +11,8 @@ import { SectorRepository } from '..';
 import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
 import { filterGeometryOutsideClipBox } from '../../cad-parsers/src/cad/filterPrimitivesV9';
 
+import assert from 'assert';
+
 export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorParser: GltfSectorParser;
   private readonly _sectorFileProvider: BinaryFileProvider;
@@ -108,10 +110,25 @@ export class GltfSectorRepository implements SectorRepository {
     };
   }
 
+  private createTreeIndexSet(geometry: THREE.BufferGeometry): Set<number> {
+    const treeIndexAttribute = geometry.attributes['treeIndex'];
+    assert(treeIndexAttribute !== undefined);
+
+    const treeIndexSet = new Set<number>();
+
+    for (let i = 0; i < treeIndexAttribute.count; i++) {
+      treeIndexSet.add(treeIndexAttribute.getX(i));
+    }
+
+    return treeIndexSet;
+  }
+
   private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.ShaderMaterial) {
     const mesh = new THREE.Mesh(geometry, material);
     group.add(mesh);
     mesh.frustumCulled = false;
+
+    mesh.userData.treeIndices = this.createTreeIndexSet(geometry);
 
     if (material.uniforms.inverseModelMatrix === undefined) return;
 
