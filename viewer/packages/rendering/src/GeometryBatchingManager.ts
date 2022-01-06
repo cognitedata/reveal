@@ -223,16 +223,11 @@ export class GeometryBatchingManager {
   private getTreeIndexAttribute(
     instanceAttributes: { name: string; attribute: THREE.InterleavedBufferAttribute }[]
   ): THREE.InterleavedBufferAttribute {
-    let treeIndexAttribute: THREE.InterleavedBufferAttribute | undefined = undefined;
-    for (let i = 0; i < instanceAttributes.length; i++) {
-      if (instanceAttributes[i].name == 'a_treeIndex') {
-        treeIndexAttribute = instanceAttributes[i].attribute;
-      }
-    }
+    let treeIndexAttribute = instanceAttributes.filter(att => att.name === 'a_treeIndex');
 
-    assert(treeIndexAttribute !== undefined);
+    assert(treeIndexAttribute.length > 0);
 
-    return treeIndexAttribute;
+    return treeIndexAttribute[0].attribute;
   }
 
   private removeTreeIndicesFromMeshUserData(
