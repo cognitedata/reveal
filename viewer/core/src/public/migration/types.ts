@@ -160,7 +160,10 @@ export interface Cognite3DViewerOptions {
 
   /**
    * Allows for controlling if geometry streaming should be halted when
-   * the camera is moving.
+   * the camera is moving. Note that this option should left to false on
+   * low-end devices as more loading can cause frame drops.
+   *
+   * Default value is set to false.
    */
   continuousModelStreaming?: boolean;
 
