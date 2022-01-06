@@ -1,7 +1,9 @@
 import React, { useContext, useMemo } from 'react';
 
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Loader } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import NoAccessPage from 'components/NoAccessPage/NoAccessPage';
@@ -9,7 +11,6 @@ import SidePanel from 'components/SidePanel/SidePanel';
 import TableContent from 'containers/TableContent';
 import TableTabList from 'components/TableTabList';
 import { RawExplorerContext, ActiveTableProvider } from 'contexts';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import {
   DATABASE_LIST_WIDTH,
   SIDE_PANEL_TRANSITION_DURATION,
@@ -19,10 +20,11 @@ import { useDatabases } from 'hooks/sdk-queries';
 import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
 
 const RawExplorer = (): JSX.Element => {
+  const flow = getFlow();
   const { data: hasReadAccess, isFetched: isReadAccessFetched } =
-    useUserCapabilities('rawAcl', 'READ');
+    usePermissions(flow, 'rawAcl', 'READ');
   const { data: hasListAccess, isFetched: isListAccessFetched } =
-    useUserCapabilities('rawAcl', 'LIST');
+    usePermissions(flow, 'rawAcl', 'LIST');
 
   const { data, isLoading: isFetchingDatabases } = useDatabases({
     enabled: hasListAccess,

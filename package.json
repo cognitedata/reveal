@@ -9,16 +9,15 @@
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test --passWithNoTests",
     "lint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
-    "eslint:changed": "eslint --config .eslintrc.production.js",
-    "storybook": "start-storybook -p 6006"
+    "eslint:changed": "eslint --config .eslintrc.production.js"
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^0.7.3",
+    "@cognite/cdf-utilities": "^0.10.1",
     "@cognite/cogs.js": "^5.2.1",
     "@cognite/metrics": "^0.1.7",
     "@cognite/sdk": "^6.3.1",
     "@cognite/sdk-provider": "^1.0.0",
-    "@cognite/sdk-react-query-hooks": "^5.2.0",
+    "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@rescripts/cli": "^0.0.14",
     "@rescripts/utilities": "^0.0.8",
     "@sentry/browser": "^5.29.2",
@@ -56,8 +55,6 @@
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@rescripts/rescript-use-babel-config": "^0.0.10",
-    "@storybook/preset-create-react-app": "^3.1.5",
-    "@storybook/react": "^6.1.14",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^10.4.9",
     "@types/jest": "^26.0.23",

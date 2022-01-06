@@ -4,7 +4,7 @@ import { Select as AntdSelect, SelectProps } from 'antd';
 import styled from 'styled-components';
 
 const Select = (props: SelectProps<any>): JSX.Element => {
-  return <StyledSelect {...props} />;
+  return <StyledSelect {...(props as any)} />;
 };
 
 const StyledSelect = styled(AntdSelect)`

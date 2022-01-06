@@ -57,7 +57,7 @@ export const escapeCSVValue = (value: string) => {
     try {
       return String(value).replace(/"/g, '""');
     } catch (err) {
-      handleError({ ...err, sendToSentry: false });
+      handleError({ ...(err as any), sendToSentry: false });
     }
   }
   return value;

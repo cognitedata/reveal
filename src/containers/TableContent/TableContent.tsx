@@ -24,7 +24,6 @@ const TableContent = () => {
         onChange={(view) => update([database, table, view])}
         activeKey={view || 'spreadsheet'}
         tabPosition="top"
-        animated={{ tabPane: true }}
         renderTabBar={(props, TabBarComponent) => (
           <TopBar justifyContent="space-between" alignItems="center">
             <TableHeader title={database} subtitle={table} />
