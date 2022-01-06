@@ -83,12 +83,6 @@ export class GeometryBatchingManager {
     this._sectorMap.delete(sectorId);
   }
 
-  private *getFloatsFromAttribute(attribute: THREE.InterleavedBufferAttribute): Iterable<number> {
-    for (let i = 0; i < attribute.count; i++) {
-      yield attribute.getX(i);
-    }
-  }
-
   private processGeometries(
     sectorBufferGeometry: THREE.BufferGeometry,
     instanceId: string | undefined,
@@ -114,8 +108,8 @@ export class GeometryBatchingManager {
     const interleavedAttributesView = new Uint8Array(interleavedArrayBuffer, offset, length);
     const { batchId, bufferIsReallocated, updateRange } = defragBuffer.add(interleavedAttributesView);
 
-    for (const treeIndex of this.getFloatsFromAttribute(treeIndexInterleavedAttribute)) {
-      incrementOrInsertIndex(mesh.userData.treeIndices, treeIndex);
+    for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
+      incrementOrInsertIndex(mesh.userData.treeIndices, treeIndexInterleavedAttribute.getX(i));
     }
 
     const sectorBatches = this._sectorMap.get(sectorId) ?? this.createSectorBatch(sectorId);
