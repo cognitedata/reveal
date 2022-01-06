@@ -70,7 +70,8 @@ export function Migration() {
         onLoading: progress,
         logMetrics: false,
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
-        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
+        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any,
+        continuousModelStreaming: true
       };
       if (project && environmentParam) {
         await authenticateSDKWithEnvironment(client, project, environmentParam);
