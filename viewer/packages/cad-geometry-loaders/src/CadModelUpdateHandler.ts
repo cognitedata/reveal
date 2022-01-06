@@ -38,7 +38,7 @@ export class CadModelUpdateHandler {
 
   private readonly _updateObservable: Observable<ConsumedSector>;
 
-  constructor(sectorCuller: SectorCuller) {
+  constructor(sectorCuller: SectorCuller, continuousModelStreaming = false) {
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
     this._budget = defaultCadModelSectorBudget;
@@ -91,7 +91,8 @@ export class CadModelUpdateHandler {
       sectorCuller,
       this._modelStateHandler,
       collectStatisticsCallback,
-      reportProgressCallback
+      reportProgressCallback,
+      continuousModelStreaming
     );
 
     async function* loadSectors(input: DetermineSectorsPayload) {
