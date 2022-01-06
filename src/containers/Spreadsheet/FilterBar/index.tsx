@@ -12,12 +12,14 @@ import { Actions } from './Actions';
 import RowCount from './RowCount';
 
 type Props = {
+  className?: string;
   isEmpty?: boolean;
   areTypesFetched?: boolean;
   hasActions?: boolean;
 };
 
 export const FilterBar = ({
+  className,
   isEmpty,
   areTypesFetched,
   hasActions,
@@ -35,7 +37,11 @@ export const FilterBar = ({
     setColumnNameFilter(e.target.value);
 
   return (
-    <Bar justifyContent="space-between" alignItems="center">
+    <Bar
+      className={className}
+      justifyContent="space-between"
+      alignItems="center"
+    >
       <FilterBar.List justifyContent="center" alignItems="center">
         <Input
           placeholder="Search column name"
