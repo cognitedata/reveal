@@ -159,6 +159,12 @@ export interface Cognite3DViewerOptions {
   customDataSource?: DataSource;
 
   /**
+   * Allows for controlling if geometry streaming should be halted when
+   * the camera is moving.
+   */
+  continuousModelStreaming?: boolean;
+
+  /**
    * Utility used to determine what parts of the model will be visible on screen and loaded.
    * This is only meant for unit testing.
    * @internal

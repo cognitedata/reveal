@@ -27,6 +27,6 @@ export function createCadManager(
     internal && internal.sectorCuller
       ? internal.sectorCuller
       : createV8SectorCuller(renderer, occludingGeometryProvider);
-  const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller);
+  const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, options.continuousModelStreaming);
   return new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
 }
