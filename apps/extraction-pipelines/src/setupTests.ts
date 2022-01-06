@@ -19,6 +19,7 @@ jest.mock('@cognite/cdf-sdk-singleton', () => {
       listDatabases: jest.fn(),
       listTables: jest.fn(),
     },
+    getFlow: () => ({ flow: 'flow' }),
   };
 });
 jest.mock('@cognite/sdk-provider', () => {
