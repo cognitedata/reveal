@@ -497,7 +497,7 @@ export class Cognite3DViewer {
 
     this.isDisposed = true;
 
-    if (this.latestRequestId !== undefined) {
+    if (this.latestRequestId !== -1) {
       cancelAnimationFrame(this.latestRequestId);
     }
 
@@ -1572,34 +1572,38 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this.latestRequestId = requestAnimationFrame(this._boundAnimate);
 
-    const { display, visibility } = window.getComputedStyle(this.canvas);
-    const isVisible = visibility === 'visible' && display !== 'none';
+    this.latestRequestId = -1;
+    try {
+      const { display, visibility } = window.getComputedStyle(this.canvas);
+      const isVisible = visibility === 'visible' && display !== 'none';
 
-    if (isVisible) {
-      const { renderController } = this;
-      TWEEN.update(time);
-      const didResize = this.resizeIfNecessary();
-      if (didResize) {
-        this.requestRedraw();
+      if (isVisible) {
+        const { renderController } = this;
+        TWEEN.update(time);
+        const didResize = this.resizeIfNecessary();
+        if (didResize) {
+          this.requestRedraw();
+        }
+        this.controls.update(this.clock.getDelta());
+        renderController.update();
+        this.revealManager.update(this.camera);
+
+        if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
+          const frameNumber = this.renderer.info.render.frame;
+          const start = Date.now();
+          this.updateCameraNearAndFar(this.camera);
+          this.revealManager.render(this.camera);
+          renderController.clearNeedsRedraw();
+          this.revealManager.resetRedraw();
+          this._clippingNeedsUpdate = false;
+          const renderTime = Date.now() - start;
+
+          this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
+        }
       }
-      this.controls.update(this.clock.getDelta());
-      renderController.update();
-      this.revealManager.update(this.camera);
-
-      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
-        const frameNumber = this.renderer.info.render.frame;
-        const start = Date.now();
-        this.updateCameraNearAndFar(this.camera);
-        this.revealManager.render(this.camera);
-        renderController.clearNeedsRedraw();
-        this.revealManager.resetRedraw();
-        this._clippingNeedsUpdate = false;
-        const renderTime = Date.now() - start;
-
-        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
-      }
+    } finally {
+      this.latestRequestId = requestAnimationFrame(this._boundAnimate);
     }
   }
 
