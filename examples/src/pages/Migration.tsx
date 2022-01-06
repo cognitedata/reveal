@@ -19,12 +19,16 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool, ToolbarTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
+
+import explodeIcon from './icons/Cognite_Icon_Set-42.png';
+import geoMapicon from './icons/Cognite_Icon_Set-54.png';
+import clippingIcon from './icons/Cognite_Icon_Set-63.png';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -192,7 +196,8 @@ export function Migration() {
           mouseWheelAction: 'zoomToCursor',
           changeCameraTargetOnClick: true
         },
-        debugRenderStageTimings: false
+        debugRenderStageTimings: false,
+        toolbarPosition: 'Bottom'
       };
       const guiActions = {
         addModel: () =>
@@ -480,8 +485,6 @@ export function Migration() {
           }
         });
 
-      new AxisViewTool(viewer);
-
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -514,6 +517,43 @@ export function Migration() {
           }
         }
       });
+
+      //Toobar
+      const callbackMsg = () : void => {
+        alert("result called");
+      }
+
+      const toolbar = new ToolbarTool(viewer);
+
+      toolbar.addAxisToolToggle();
+      toolbar.addTakeScreenshotTool();
+      toolbar.addCameraTargetOnClickToggle();
+      toolbar.addZoomPastToCursorToggle();
+      toolbar.addFitCameraToModel();
+
+      toolbar.addToolbarItem('Explode View', explodeIcon, true, callbackMsg);
+      toolbar.addToolbarItem('Maps', geoMapicon, false, callbackMsg);
+      toolbar.addToolbarItem('Clipping', clippingIcon, true, callbackMsg);
+
+      const toolbarGui = gui.addFolder('Toolbar Options');
+      const toolbarPosition = ['Top', 'Bottom', 'Left', 'Right'];
+      toolbarGui.add(guiState, 'toolbarPosition', toolbarPosition).name('toolbarPosition').onFinishChange(value => {
+        switch(value) {
+          case 'Top':
+            toolbar.setPosition('top');
+            break;
+          case 'Left':
+            toolbar.setPosition('left');
+            break;
+          case 'Right':
+            toolbar.setPosition('right');
+            break;
+          case 'Bottom':
+          default:
+            toolbar.setPosition('bottom');
+            break;
+        }
+      });
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
@@ -536,6 +576,7 @@ export function Migration() {
         }
       });
       viewer.addObject3D(boxes);
+
     }
 
     main();

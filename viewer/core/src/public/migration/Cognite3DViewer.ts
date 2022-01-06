@@ -947,6 +947,38 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Move camera to a place where all the 3D model is visible.
+   * It uses the bounding box of the 3D model and calls {@link Cognite3DViewer.fitCameraToBoundingBox}.
+   * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
+   * @example
+   * ```js
+   * // Fit camera to model
+   * viewer.fitCameraToAllModels();
+   * ```
+   * ```js
+   * // Fit camera to model over 500 milliseconds
+   * viewer.fitCameraToAllModels(500);
+   * ```
+   * ```js
+   * // Fit camera to model instantly
+   * viewer.fitCameraToAllModels(0);
+   * ```
+   */
+  fitCameraToAllModels(duration?: number): void {
+    const allModelBounds = new THREE.Box3();
+
+    this._models.forEach(model => {
+      const bounds = model.getModelBoundingBox(new THREE.Box3(), true);
+      if (!bounds.isEmpty()) {
+        allModelBounds.expandByPoint(bounds.min);
+        allModelBounds.expandByPoint(bounds.max);
+      }
+    });
+
+    this._cameraManager.fitCameraToBoundingBox(allModelBounds, duration);
+  }
+
+  /**
    * Move camera to a place where the content of a bounding box is visible to the camera.
    * @param box The bounding box in world space.
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.

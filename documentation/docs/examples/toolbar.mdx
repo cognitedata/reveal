@@ -13,13 +13,13 @@ Custom toolbar helps the user to add button to the toolbar container or to the d
 
 ## Default Toolbar elements
 Default toolbar elements are listed below which can be used to activate or deactivate features in Reveal.
-- Take Screenshot - `addAxisToolToggle()`.
-- Enable/Disable Axis Tool - `addTakeScreenshotTool()`.
+- Take Screenshot - `addTakeScreenshotTool()`.
+- Enable/Disable Axis Tool - `addAxisToolToggle()`.
 - Enable/Disable Camera Target on Click - `addCameraTargetOnClickToggle()`.
 - Toggle Camera Zoom-past/Zoom-to Cursor - `addZoomPastToCursorToggle()`.
 - Fit Camera to Model - `addFitCameraToModel()`.
 
-To create and use default elements in toolbar.
+These can be added to the toolbar on construction:
 
 ```js runnable
 // import { ToolbarTool } from '@cognite/reveal/tools';
@@ -46,9 +46,9 @@ By creating ToolbarTool object, user can add elements to the new toolbar.
 ```jsx
 // import { ToolbarTool } from '@cognite/reveal/tools';
 
-// import iconSet42 from './img/Cognite_Icon_Set-42.png';
-// import iconSet54 from './img/Cognite_Icon_Set-54.png';
-// import iconSet63 from './img/Cognite_Icon_Set-63.png';
+// import explodeIcon from './img/Cognite_Icon_Set-42.png';
+// import geoMapicon from './img/Cognite_Icon_Set-54.png';
+// import clippingIcon from './img/Cognite_Icon_Set-63.png';
 
 const toolbar = new ToolbarTool(viewer);
 
@@ -56,9 +56,9 @@ const callbackMsg = () => (
     alert("result called")
 );
 
-toolbar.addToolbarItem('Explode View', iconSet42, true, callbackMsg);
-toolbar.addToolbarItem('Maps', iconSet54, false, callbackMsg);
-toolbar.addToolbarItem('Settings', iconSet63, true, callbackMsg);
+toolbar.addToolbarItem('Explode View', explodeIcon, true, callbackMsg);
+toolbar.addToolbarItem('Maps', geoMapicon, false, callbackMsg);
+toolbar.addToolbarItem('Clipping', clippingIcon, true, callbackMsg);
 ```
 
 ## Toolbar Position

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { Cognite3DViewer, CogniteModelBase } from '@reveal/core';
+import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
 import { ToolbarTool } from './ToolbarTool';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
@@ -9,7 +9,6 @@ import * as THREE from 'three';
 
 describe('ToolbarTool', () => {
   let viewer: Cognite3DViewer;
-  let models: CogniteModelBase[];
   let tool: ToolbarTool;
 
   let canvasContainer: HTMLDivElement;
@@ -30,8 +29,7 @@ describe('ToolbarTool', () => {
     canvasContainer.style.height = '480px';
 
     viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
-    models = viewer.models.slice();
-    tool = new ToolbarTool(viewer, models[0]);
+    tool = new ToolbarTool(viewer);
   });
 
   afterEach(() => {
