@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import Home from 'pages/Home';
 import {
   AuthWrapper,
+  getEnv,
+  getProject,
   SubAppWrapper,
-  UserContext,
 } from '@cognite/cdf-utilities';
 import GlobalStyles from 'styles/GlobalStyles';
 import { Loader } from '@cognite/cogs.js';
@@ -17,17 +18,16 @@ import { createBrowserHistory } from 'history';
 import { FlagProvider } from '@cognite/react-feature-flags';
 // eslint-disable-next-line
 import { SDKProvider } from '@cognite/sdk-provider';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { getCdfEnvFromUrl, projectName } from 'utils/config';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import isObject from 'lodash/isObject';
 import theme from './styles/theme';
 import AppScopeStyles from './styles/AppScopeStyles';
 import rootStyles from './styles/index.css';
 
 const App = () => {
-  const project = projectName();
+  const project = getProject();
+  const env = getEnv();
   const { origin } = window.location;
-  const cdfEnv = getCdfEnvFromUrl();
   const history = createBrowserHistory();
 
   useEffect(() => {
@@ -68,35 +68,29 @@ const App = () => {
         <AppScopeStyles>
           <SubAppWrapper padding={false}>
             <AuthWrapper
-              showLoader
-              includeGroups
               loadingScreen={<Loader />}
-              subAppName="cdf-integrations-ui"
+              login={() => loginAndAuthIfNeeded(project, env)}
             >
-              <UserContext.Consumer>
-                {(user) => (
-                  <FlagProvider
-                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                    appName="cdf-console"
-                    projectName={user.project}
+              <FlagProvider
+                apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                appName="cdf-console"
+                projectName={project}
+              >
+                <ThemeProvider theme={theme}>
+                  <AppEnvProvider
+                    cdfEnv={env}
+                    project={project}
+                    origin={origin}
                   >
-                    <ThemeProvider theme={theme}>
-                      <AppEnvProvider
-                        cdfEnv={cdfEnv}
-                        project={project}
-                        origin={origin}
-                      >
-                        <Router history={history}>
-                          <Switch>
-                            <Route path="/:tenant" component={Home} />
-                          </Switch>
-                        </Router>
-                      </AppEnvProvider>
-                    </ThemeProvider>
-                    <GlobalStyles theme={theme} />
-                  </FlagProvider>
-                )}
-              </UserContext.Consumer>
+                    <Router history={history}>
+                      <Switch>
+                        <Route path="/:tenant" component={Home} />
+                      </Switch>
+                    </Router>
+                  </AppEnvProvider>
+                </ThemeProvider>
+                <GlobalStyles theme={theme} />
+              </FlagProvider>
             </AuthWrapper>
           </SubAppWrapper>
         </AppScopeStyles>
