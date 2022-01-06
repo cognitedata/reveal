@@ -101,7 +101,7 @@ export const getSegments = (
   return segments;
 };
 
-export const svgCommandToSegments = (
+export const svgCommandsToSegments = (
   d: string,
   pathId: string | null = null
 ): PathSegment[] => {
@@ -109,7 +109,7 @@ export const svgCommandToSegments = (
   return getSegments(commands, pathId);
 };
 
-export const segmentsToSVGCommand = (
+export const segmentsToSvgCommands = (
   pathSegments: PathSegment[],
   toFixed: null | number = null
 ) => {

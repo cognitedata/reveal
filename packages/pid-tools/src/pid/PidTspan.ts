@@ -1,5 +1,5 @@
 import { SVG_ID } from '../constants';
-import { BoundingBox } from '../types';
+import { BoundingBox, DiagramLabelOutputFormat } from '../types';
 import { translatePointWithDOM } from '../matcher/svgPathParser';
 
 export class PidTspan {
@@ -40,5 +40,13 @@ export class PidTspan {
       height,
     };
     return new PidTspan(tSpan.id, tSpan.innerHTML, boundingBox);
+  }
+
+  toDiagramLabelOutputFormat(): DiagramLabelOutputFormat {
+    return {
+      id: this.id,
+      text: this.text,
+      boundingBox: this.boundingBox,
+    };
   }
 }

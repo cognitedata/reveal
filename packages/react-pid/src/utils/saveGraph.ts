@@ -2,6 +2,7 @@ import {
   DiagramInstanceOutputFormat,
   DiagramSymbolInstance,
   PidDocument,
+  getDiagramInstanceId,
 } from '@cognite/pid-tools';
 
 export const getDiagramInstanceOutputFormat = (
@@ -9,11 +10,21 @@ export const getDiagramInstanceOutputFormat = (
   diagramInstances: DiagramSymbolInstance[]
 ): DiagramInstanceOutputFormat[] => {
   return diagramInstances.map((diagramInstance) => {
+    const labels = diagramInstance.labelIds.map((labelId) =>
+      pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
+    );
+
     return {
-      pathIds: diagramInstance.pathIds,
+      id: getDiagramInstanceId(diagramInstance),
       symbolName: diagramInstance.symbolName,
-      boundingBox: pidDocument.getBoundingBoxToPaths(diagramInstance.pathIds),
-      labels: diagramInstance.labels,
+      pathIds: diagramInstance.pathIds,
+      svgRepresentation: pidDocument.createSvgRepresentation(
+        diagramInstance.pathIds,
+        true,
+        4
+      ),
+      labelIds: diagramInstance.labelIds,
+      labels,
     };
   });
 };

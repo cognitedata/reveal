@@ -5,7 +5,6 @@ import {
   DiagramSymbolInstance,
   getDiagramInstanceId,
   isPathIdInInstance,
-  DiagramLabel,
   PidDocument,
   DiagramConnection,
   getInstanceByDiagramInstanceId,
@@ -61,9 +60,7 @@ export const isLabelInInstance = (
   instance: DiagramSymbolInstance,
   id: DiagramInstanceId
 ): boolean => {
-  return !!instance.labels?.some(
-    (labelInInstance) => labelInInstance.id === id
-  );
+  return instance.labelIds.includes(id);
 };
 
 export const isLabelInInstances = (
@@ -79,11 +76,7 @@ const getInstanceLabelIndex = (
   instance: DiagramSymbolInstance,
   id: string
 ): number => {
-  if (instance.labels === undefined) return -1;
-
-  return instance.labels.findIndex(
-    (labelOnInstance) => labelOnInstance.id === id
-  );
+  return instance.labelIds.findIndex((labelId) => labelId === id);
 };
 
 export const isInGraphSelection = (
@@ -223,26 +216,21 @@ const applyPointerCursorStyleToNode = ({
 
 export const addOrRemoveLabelToInstance = (
   node: SVGElement,
-  pidLabel: DiagramLabel,
+  labelId: string,
   instance: DiagramSymbolInstance | DiagramLineInstance,
   instances: DiagramSymbolInstance[] | DiagramLineInstance[],
   setter: (arg: DiagramSymbolInstance[] | DiagramLineInstance[]) => void
 ) => {
-  const newInstance = instance;
-  if (newInstance.labels === undefined) {
-    newInstance.labels = [];
-  }
-
-  const labelIndex = getInstanceLabelIndex(newInstance, node.id);
+  const labelIndex = getInstanceLabelIndex(instance, node.id);
   if (labelIndex === -1) {
-    newInstance.labels.push(pidLabel);
+    instance.labelIds.push(labelId);
   } else {
-    newInstance.labels.splice(labelIndex, 1);
+    instance.labelIds.splice(labelIndex, 1);
   }
   setter(
     instances.map((oldInstance) => {
-      if (oldInstance.pathIds === newInstance.pathIds) {
-        return newInstance;
+      if (oldInstance.pathIds === instance.pathIds) {
+        return instance;
       }
       return oldInstance;
     })

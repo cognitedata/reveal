@@ -29,6 +29,7 @@ export const findAllInstancesOfSymbol = (
         symbolName: symbol.symbolName,
         pathIds: match.pathIds,
         scale: match.scale,
+        labelIds: [],
       }))
     );
   }

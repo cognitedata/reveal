@@ -3,13 +3,13 @@ import {
   getMatchResultWithReferences,
   InstanceMatcher,
 } from '../InstanceMatcher';
-import { svgCommandToSegments } from '../svgPathParser';
+import { svgCommandsToSegments } from '../svgPathParser';
 import { PidPath } from '../../pid';
 
 describe('isSimilarWithReferences', () => {
   test('simple L shaped paths (same scale)', () => {
-    const path1 = svgCommandToSegments('M 0,0 l 0,10 l 10,0');
-    const path2 = svgCommandToSegments('M 100,100 l 0,10 l 10,0');
+    const path1 = svgCommandsToSegments('M 0,0 l 0,10 l 10,0');
+    const path2 = svgCommandsToSegments('M 100,100 l 0,10 l 10,0');
 
     expect(getMatchResultWithReferences(path1, 0, path2, 0)).toEqual(
       MatchResult.Match
@@ -20,8 +20,8 @@ describe('isSimilarWithReferences', () => {
   });
 
   test('simple L shaped paths (different scale)', () => {
-    const path1 = svgCommandToSegments('M 0,0 l 0,10 l 10,0');
-    const path2 = svgCommandToSegments('M 100,100 l 0,20 l 20,0');
+    const path1 = svgCommandsToSegments('M 0,0 l 0,10 l 10,0');
+    const path2 = svgCommandsToSegments('M 100,100 l 0,20 l 20,0');
 
     expect(getMatchResultWithReferences(path1, 0, path2, 0)).toEqual(
       MatchResult.Match
@@ -32,8 +32,8 @@ describe('isSimilarWithReferences', () => {
   });
 
   test('simple L shaped paths (different scale & error margin)', () => {
-    const path1 = svgCommandToSegments('M 0,0 l 0,10 l 10,0');
-    const path2SmallError = svgCommandToSegments('M 100,100 l 0,22 l 20,0');
+    const path1 = svgCommandsToSegments('M 0,0 l 0,10 l 10,0');
+    const path2SmallError = svgCommandsToSegments('M 100,100 l 0,22 l 20,0');
 
     expect(getMatchResultWithReferences(path1, 0, path2SmallError, 0)).toEqual(
       MatchResult.Match
@@ -42,7 +42,7 @@ describe('isSimilarWithReferences', () => {
       MatchResult.Match
     );
 
-    const path2BigError = svgCommandToSegments('M 100,100 l 0,26 l 20,0');
+    const path2BigError = svgCommandsToSegments('M 100,100 l 0,26 l 20,0');
 
     expect(getMatchResultWithReferences(path1, 0, path2BigError, 0)).toEqual(
       MatchResult.NotMatch
@@ -53,8 +53,8 @@ describe('isSimilarWithReferences', () => {
   });
 
   test('simple paths sub match (same scale)', () => {
-    const path1 = svgCommandToSegments('M 0,0 l 0,10 l 10,0 l 0,10');
-    const path2 = svgCommandToSegments('M 100,100 l 0,10 l 10,0');
+    const path1 = svgCommandsToSegments('M 0,0 l 0,10 l 10,0 l 0,10');
+    const path2 = svgCommandsToSegments('M 100,100 l 0,10 l 10,0');
 
     expect(getMatchResultWithReferences(path1, 0, path2, 0)).toEqual(
       MatchResult.SubMatch
@@ -71,8 +71,8 @@ describe('isSimilarWithReferences', () => {
     const closedValve1 = 'M 0,0 l -31,16 l 31,15 z';
     const closedValve2 = 'M 0,0 l -31,-16 l 31,-16 z';
 
-    const path1 = svgCommandToSegments(closedValve1);
-    const path2 = svgCommandToSegments(closedValve2);
+    const path1 = svgCommandsToSegments(closedValve1);
+    const path2 = svgCommandsToSegments(closedValve2);
 
     // path1 index -> path2 index
     //           0 -> 1
@@ -100,8 +100,8 @@ describe('isSimilarWithReferences', () => {
       'M 300,250 l -31,16 l 31,15 Z m -62,31 l 31,-15 l -31,-16 Z';
     const closedValve2 =
       'M 450,250 l 31,-15 l -31,-16 Z m 62,-31 l -31,16 l 31,16 Z';
-    const path1 = svgCommandToSegments(closedValve1);
-    const path2 = svgCommandToSegments(closedValve2);
+    const path1 = svgCommandsToSegments(closedValve1);
+    const path2 = svgCommandsToSegments(closedValve2);
 
     // path1 index -> path2 index
     //           0 -> 3

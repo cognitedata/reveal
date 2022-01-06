@@ -17,6 +17,10 @@ export abstract class PathSegment {
   abstract get midPoint(): Point;
   abstract get length(): number;
   abstract get boundingBox(): BoundingBox;
+  abstract translateAndScale(
+    translatePoint: Point,
+    scale: number | Point
+  ): PathSegment;
 
   getTranslationAndScaleDistance(
     thisOrigin: Point,
@@ -129,6 +133,13 @@ export class LineSegment extends PathSegment {
   get boundingBox() {
     return getBoundingBox(this.start, this.stop);
   }
+
+  translateAndScale(translatePoint: Point, scale: number | Point): LineSegment {
+    return new LineSegment(
+      this.start.translateAndScale(translatePoint, scale),
+      this.stop.translateAndScale(translatePoint, scale)
+    );
+  }
 }
 
 export class CurveSegment extends PathSegment {
@@ -183,5 +194,17 @@ export class CurveSegment extends PathSegment {
   // It´s seen only as a strait line.
   get boundingBox() {
     return getBoundingBox(this.start, this.stop);
+  }
+
+  translateAndScale(
+    translatePoint: Point,
+    scale: number | Point
+  ): CurveSegment {
+    return new CurveSegment(
+      this.controlPoint1.translateAndScale(translatePoint, scale),
+      this.controlPoint2.translateAndScale(translatePoint, scale),
+      this.start.translateAndScale(translatePoint, scale),
+      this.stop.translateAndScale(translatePoint, scale)
+    );
   }
 }

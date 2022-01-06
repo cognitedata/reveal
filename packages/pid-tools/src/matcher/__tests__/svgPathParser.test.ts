@@ -1,9 +1,9 @@
-import { segmentsToSVGCommand, svgCommandToSegments } from '../svgPathParser';
+import { segmentsToSvgCommands, svgCommandsToSegments } from '../svgPathParser';
 import { LineSegment } from '../../geometry';
 
 describe('svg-commands', () => {
   test('M + V', () => {
-    const segments = svgCommandToSegments('M 100,100 V 200');
+    const segments = svgCommandsToSegments('M 100,100 V 200');
     expect(segments.length).toEqual(1);
     expect(segments[0] instanceof LineSegment).toBe(true);
     expect(segments[0].start.x).toBe(100);
@@ -13,7 +13,7 @@ describe('svg-commands', () => {
   });
 
   test('M + H', () => {
-    const segments = svgCommandToSegments('M 100,100 H 200');
+    const segments = svgCommandsToSegments('M 100,100 H 200');
     expect(segments.length).toEqual(1);
     expect(segments[0] instanceof LineSegment).toBe(true);
     expect(segments[0].start.x).toBe(100);
@@ -23,7 +23,7 @@ describe('svg-commands', () => {
   });
 
   test('M + L', () => {
-    const segments = svgCommandToSegments('M 100,100 L 200,300');
+    const segments = svgCommandsToSegments('M 100,100 L 200,300');
     expect(segments.length).toEqual(1);
     expect(segments[0] instanceof LineSegment).toBe(true);
     expect(segments[0].start.x).toBe(100);
@@ -33,7 +33,7 @@ describe('svg-commands', () => {
   });
 
   test('M + Z', () => {
-    const segments = svgCommandToSegments('M 100,100 V 200 H 200 Z');
+    const segments = svgCommandsToSegments('M 100,100 V 200 H 200 Z');
 
     expect(segments.length).toEqual(3);
     expect(segments[0].start.x).toBe(100);
@@ -53,7 +53,7 @@ describe('svg-commands', () => {
   });
 
   test('Double M + Z', () => {
-    const segments = svgCommandToSegments(
+    const segments = svgCommandsToSegments(
       'M 10,20 L 30,40 Z M 50,60 L 70,80 Z'
     );
 
@@ -82,7 +82,7 @@ describe('svg-commands', () => {
   });
 
   test('M + C', () => {
-    const segments = svgCommandToSegments(
+    const segments = svgCommandsToSegments(
       'M 10,20 C 20.1,30.2 40.3,50.4 60.5,70.6'
     );
 
@@ -96,9 +96,9 @@ describe('svg-commands', () => {
 
 describe('svgPathCommand -> pathSegmetList -> svgPathCommand', () => {
   test('M + V', () => {
-    const segments = svgCommandToSegments('M 100,100 V 200');
+    const segments = svgCommandsToSegments('M 100,100 V 200');
 
-    const newSegments = svgCommandToSegments(segmentsToSVGCommand(segments));
+    const newSegments = svgCommandsToSegments(segmentsToSvgCommands(segments));
     expect(segments.length).toEqual(newSegments.length);
 
     for (let i = 0; i < segments.length; i++) {
@@ -107,10 +107,10 @@ describe('svgPathCommand -> pathSegmetList -> svgPathCommand', () => {
   });
 
   test('M + C', () => {
-    const segments = svgCommandToSegments(
+    const segments = svgCommandsToSegments(
       'M 10,20 C 20.1,30.2 40.3,50.4 60.5,70.6'
     );
-    const newSegments = svgCommandToSegments(segmentsToSVGCommand(segments));
+    const newSegments = svgCommandsToSegments(segmentsToSvgCommands(segments));
     expect(segments.length).toEqual(newSegments.length);
 
     for (let i = 0; i < segments.length; i++) {
@@ -119,10 +119,10 @@ describe('svgPathCommand -> pathSegmetList -> svgPathCommand', () => {
   });
 
   test('Double M + Z', () => {
-    const segments = svgCommandToSegments(
+    const segments = svgCommandsToSegments(
       'M 10,20 L 30,40 Z M 50,60 L 70,80 Z'
     );
-    const newSegments = svgCommandToSegments(segmentsToSVGCommand(segments));
+    const newSegments = svgCommandsToSegments(segmentsToSvgCommands(segments));
     expect(segments.length).toEqual(newSegments.length);
 
     for (let i = 0; i < segments.length; i++) {

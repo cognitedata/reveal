@@ -42,9 +42,18 @@ export class Point {
     return new Point((this.x + other.x) / 2, (this.y + other.y) / 2);
   }
 
-  translateAndScale(translatePoint: Point, scale: number) {
-    const newX = scale * (this.x - translatePoint.x);
-    const newY = scale * (this.y - translatePoint.y);
+  translateAndScale(translatePoint: Point, scale: number | Point) {
+    let scaleX;
+    let scaleY;
+    if (scale instanceof Point) {
+      scaleX = scale.x;
+      scaleY = scale.y;
+    } else {
+      scaleX = scale;
+      scaleY = scale;
+    }
+    const newX = scaleX * (this.x - translatePoint.x);
+    const newY = scaleY * (this.y - translatePoint.y);
     return new Point(newX, newY);
   }
 }

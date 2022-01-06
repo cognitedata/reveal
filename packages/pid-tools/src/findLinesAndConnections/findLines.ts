@@ -52,7 +52,11 @@ export const detectLines = (
       newLines.push(
         ...deduplicatedVisitedLines.map(
           (newLine) =>
-            ({ pathIds: [newLine], symbolName: 'Line' } as DiagramLineInstance)
+            ({
+              pathIds: [newLine],
+              symbolName: 'Line',
+              labelIds: [],
+            } as DiagramLineInstance)
         )
       );
     }

@@ -12,7 +12,7 @@ import {
   getNoneOverlappingSymbolInstances,
 } from '@cognite/pid-tools';
 
-import { loadSymbolsFromJson, saveInstancesAsJson } from './utils/jsonUtils';
+import { loadSymbolsFromJson, saveGraphAsJson } from './utils/jsonUtils';
 import { ToolType, ExistingSymbolPromptData } from './types';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
@@ -76,18 +76,9 @@ export const ReactPid: React.FC = () => {
     );
   };
 
-  const saveGraphAsJson = () => {
-    if (pidDocument === undefined) {
-      return;
-    }
-
-    saveInstancesAsJson(
-      pidDocument,
-      symbols,
-      lines,
-      symbolInstances,
-      connections
-    );
+  const saveGraphAsJsonWrapper = () => {
+    if (pidDocument === undefined) return;
+    saveGraphAsJson(pidDocument, symbols, lines, symbolInstances, connections);
   };
 
   const findLinesAndConnections = () => {
@@ -153,7 +144,10 @@ export const ReactPid: React.FC = () => {
     }
 
     const pathIds = selection.map((svgElement) => svgElement.id);
-    const newSvgRepresentation = pidDocument.createSvgRepresentation(pathIds);
+    const newSvgRepresentation = pidDocument.createSvgRepresentation(
+      pathIds,
+      false
+    );
     const newSymbol = setOrUpdateSymbol(symbolName, newSvgRepresentation);
 
     setSelection([]);
@@ -193,7 +187,7 @@ export const ReactPid: React.FC = () => {
           deleteConnection={deleteConnection}
           fileUrl={fileUrl}
           findLinesAndConnections={findLinesAndConnections}
-          saveGraphAsJson={saveGraphAsJson}
+          saveGraphAsJson={saveGraphAsJsonWrapper}
         />
         <Viewport>
           {fileUrl === '' ? (

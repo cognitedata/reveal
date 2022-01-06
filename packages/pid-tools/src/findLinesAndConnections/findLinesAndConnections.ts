@@ -40,6 +40,7 @@ export const getPotentialLines = (
       ({
         symbolName: 'Line',
         pathIds: [pidPath.pathId],
+        labelIds: [],
       } as DiagramLineInstance)
   );
   return potentialLines;

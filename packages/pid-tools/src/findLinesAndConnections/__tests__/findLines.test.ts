@@ -8,14 +8,22 @@ import { detectLines } from '../findLines';
 export const createLines = (pathIds: string[]) => {
   return pathIds.map(
     (pathId) =>
-      ({ symbolName: 'Line', pathIds: [pathId] } as DiagramLineInstance)
+      ({
+        symbolName: 'Line',
+        pathIds: [pathId],
+        labelIds: [],
+      } as DiagramLineInstance)
   );
 };
 
 export const createSymbols = (pathIds: string[]) => {
   return pathIds.map(
     (pathId) =>
-      ({ symbolName: 'symbolname', pathIds: [pathId] } as DiagramSymbolInstance)
+      ({
+        symbolName: 'symbolname',
+        pathIds: [pathId],
+        labelIds: [],
+      } as DiagramSymbolInstance)
   );
 };
 

@@ -1,6 +1,6 @@
 import {
-  segmentsToSVGCommand,
-  svgCommandToSegments,
+  segmentsToSvgCommands,
+  svgCommandsToSegments,
 } from '../matcher/svgPathParser';
 import {
   PathSegment,
@@ -26,8 +26,18 @@ export class PidPath {
       this.midPoint = calculateMidPointFromPathSegments(this.segmentList);
     }
   }
+
   serializeToPathCommands(toFixed: null | number = null): string {
-    return segmentsToSVGCommand(this.segmentList, toFixed);
+    return segmentsToSvgCommands(this.segmentList, toFixed);
+  }
+
+  translateAndScale(translatePoint: Point, scale: number | Point): PidPath {
+    return new PidPath(
+      this.segmentList.map((pathSegment) =>
+        pathSegment.translateAndScale(translatePoint, scale)
+      ),
+      this.pathId
+    );
   }
 
   static fromSVGElement(svgElement: SVGPathElement) {
@@ -38,6 +48,6 @@ export class PidPath {
   }
 
   static fromPathCommand(pathCommand: string, pathId = '') {
-    return new PidPath(svgCommandToSegments(pathCommand, pathId), pathId);
+    return new PidPath(svgCommandsToSegments(pathCommand, pathId), pathId);
   }
 }

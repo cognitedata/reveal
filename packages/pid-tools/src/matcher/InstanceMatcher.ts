@@ -3,7 +3,7 @@ import { approxeq } from '../geometry';
 import { PidPath } from '../pid/PidPath';
 import { PathSegment } from '../geometry/PathSegment';
 
-import { svgCommandToSegments } from './svgPathParser';
+import { svgCommandsToSegments } from './svgPathParser';
 
 const scaleThresholdLow = 0.5;
 const scaleThresholdHigh = 1.5;
@@ -83,7 +83,7 @@ export class InstanceMatcher {
   }
 
   static fromPathCommand(pathCommand: string) {
-    return new InstanceMatcher(svgCommandToSegments(pathCommand));
+    return new InstanceMatcher(svgCommandsToSegments(pathCommand));
   }
 
   matches(other: PidPath[]): InstanceMatch {

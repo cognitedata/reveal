@@ -207,7 +207,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           {
             symbolName: 'Line',
             pathIds: [node.id],
-            labels: [],
+            labelIds: [],
           } as DiagramLineInstance,
         ]);
       }
@@ -259,10 +259,6 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (!labelSelection) {
           return;
         }
-        const pidLabel = pidDocument?.getPidTspanById(node.id);
-        if (!pidLabel) {
-          return;
-        }
         const symbolInstance = getInstanceByDiagramInstanceId(
           [...symbolInstances, ...lines],
           labelSelection
@@ -273,7 +269,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (symbolInstance.symbolName === 'Line') {
           addOrRemoveLabelToInstance(
             node,
-            pidLabel,
+            node.id,
             symbolInstance,
             lines,
             (arg) => {
@@ -283,7 +279,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         } else {
           addOrRemoveLabelToInstance(
             node,
-            pidLabel,
+            node.id,
             symbolInstance,
             symbolInstances,
             setSymbolInstances
@@ -326,11 +322,6 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
     svg.id = SVG_ID;
     svg.style.width = '100%';
     svg.style.height = '100%';
-    const bBox = svg.getBBox();
-    svg.setAttribute(
-      'viewBox',
-      `${bBox.x} ${bBox.y} ${bBox.width} ${bBox.height}`
-    );
 
     const allSVGElements: SVGElement[] = [];
     applyToLeafSVGElements(svg, (node) => {

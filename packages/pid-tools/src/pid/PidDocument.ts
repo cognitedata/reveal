@@ -6,15 +6,14 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   BoundingBox,
-  SvgPath,
   SvgRepresentation,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
-import { svgCommandToSegments } from '../matcher/svgPathParser';
+import { svgCommandsToSegments } from '../matcher/svgPathParser';
 import { findAllInstancesOfSymbol } from '../matcher';
 import { PathSegment, Point } from '../geometry';
 
-import { calculatePidPathsBoundingBox } from './utils';
+import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
 import { PidPath } from './PidPath';
 
@@ -46,7 +45,10 @@ export class PidDocument {
     return null;
   }
 
-  toSvgString(): string {
+  toSvgString(
+    symbolInstances: DiagramSymbolInstance[] | undefined = undefined,
+    lines: DiagramLineInstance[] | undefined = undefined
+  ): string {
     const svgString: string[] = [];
     svgString.push(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n`);
 
@@ -64,6 +66,30 @@ export class PidDocument {
     id="${pidPath.pathId}" />`);
     });
 
+    // Optionally render bounding boxes on symbol instances
+    if (symbolInstances !== undefined) {
+      symbolInstances.forEach((symbolInstance) => {
+        const bBox = this.getBoundingBoxToPaths(symbolInstance.pathIds);
+        const width = Math.max(bBox.width, 2);
+        const height = Math.max(bBox.height, 2);
+        svgString.push(
+          `  <rect x="${bBox.x}" y="${bBox.y}" width="${width}" height="${height}" style="fill:red;opacity:0.5" class="${symbolInstance.symbolName}"/>`
+        );
+      });
+    }
+
+    // Optionally render bounding boxes on lines
+    if (lines !== undefined) {
+      lines.forEach((line) => {
+        const bBox = this.getBoundingBoxToPaths(line.pathIds);
+        const width = Math.max(bBox.width, 2);
+        const height = Math.max(bBox.height, 2);
+        svgString.push(
+          `  <rect x="${bBox.x}" y="${bBox.y}" width="${width}" height="${height}" style="fill:blue;opacity:0.5" class="${line.symbolName}"/>`
+        );
+      });
+    }
+
     svgString.push('</svg>');
     return svgString.join('\n');
   }
@@ -77,7 +103,7 @@ export class PidDocument {
         const segmentList = elementNode.properties?.d as string;
         pidPaths.push(
           new PidPath(
-            svgCommandToSegments(segmentList),
+            svgCommandsToSegments(segmentList),
             elementNode.properties?.id as string
           )
         );
@@ -139,20 +165,12 @@ export class PidDocument {
     return allPathSegments;
   }
 
-  createSvgRepresentation(pathIds: string[]): SvgRepresentation {
-    const boundingBox = this.getBoundingBoxToPaths(pathIds);
-
+  createSvgRepresentation(
+    pathIds: string[],
+    normalized: boolean,
+    toFixed: number | null = null
+  ): SvgRepresentation {
     const pidPaths = pathIds.map((pathId) => this.getPidPathById(pathId)!);
-    const svgPaths: SvgPath[] = pidPaths.map(
-      (pidPath) =>
-        ({
-          svgCommands: pidPath.serializeToPathCommands(),
-        } as SvgPath)
-    );
-
-    return {
-      boundingBox,
-      svgPaths,
-    };
+    return createSvgRepresentation(pidPaths, normalized, toFixed);
   }
 }

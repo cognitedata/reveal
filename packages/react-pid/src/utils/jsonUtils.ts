@@ -6,6 +6,9 @@ import {
   DiagramConnection,
   PidDocument,
   getNoneOverlappingSymbolInstances,
+  SVG_ID,
+  BoundingBox,
+  DiagramInstanceOutputFormat,
 } from '@cognite/pid-tools';
 
 import { getDiagramInstanceOutputFormat } from './saveGraph';
@@ -17,33 +20,69 @@ export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
   const fileToSave = new Blob([JSON.stringify(jsonData, undefined, 2)], {
     type: 'application/json',
   });
-  saveAs(fileToSave, 'DiagramSymbols.json');
+  saveAs(fileToSave, 'Legend.json');
 };
 
-export const saveInstancesAsJson = (
+interface Graph {
+  viewBox: BoundingBox;
+  symbols: DiagramSymbol[];
+  symbolInstances: DiagramInstanceOutputFormat[];
+  lines: DiagramInstanceOutputFormat[];
+  connections: DiagramConnection[];
+}
+
+const getGraphFormat = (
+  pidDocument: PidDocument,
+  symbols: DiagramSymbol[],
+  lines: DiagramLineInstance[],
+  symbolInstances: DiagramSymbolInstance[],
+  connections: DiagramConnection[]
+): Graph => {
+  const linesOutputFormat = getDiagramInstanceOutputFormat(pidDocument, lines);
+  const symbolInstancesOutputFormat = getDiagramInstanceOutputFormat(
+    pidDocument,
+    symbolInstances
+  );
+
+  const svgViewBox = (
+    document.getElementById(SVG_ID) as unknown as SVGSVGElement
+  ).viewBox;
+
+  const viewBox = {
+    x: svgViewBox.baseVal.x,
+    y: svgViewBox.baseVal.y,
+    width: svgViewBox.baseVal.width,
+    height: svgViewBox.baseVal.height,
+  };
+
+  return {
+    viewBox,
+    symbols,
+    lines: linesOutputFormat,
+    symbolInstances: symbolInstancesOutputFormat,
+    connections,
+  };
+};
+
+export const saveGraphAsJson = (
   pidDocument: PidDocument,
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[]
 ) => {
-  const linesWithBBox = getDiagramInstanceOutputFormat(pidDocument, lines);
-  const symbolInstancesWithBBox = getDiagramInstanceOutputFormat(
+  const graphJson = getGraphFormat(
     pidDocument,
-    symbolInstances
+    symbols,
+    lines,
+    symbolInstances,
+    connections
   );
 
-  const jsonData = {
-    symbols,
-    lines: linesWithBBox,
-    symbolInstances: symbolInstancesWithBBox,
-    connections,
-  };
-
-  const fileToSave = new Blob([JSON.stringify(jsonData, undefined, 2)], {
+  const fileToSave = new Blob([JSON.stringify(graphJson, undefined, 2)], {
     type: 'application/json',
   });
-  saveAs(fileToSave, 'DiagramSymbolInstances.json');
+  saveAs(fileToSave, 'Graph.json');
 };
 
 export const isValidSymbolFileSchema = (jsonData: any) => {
@@ -132,13 +171,32 @@ export const loadSymbolsFromJson = (
     }
   }
   if ('lines' in jsonData) {
-    const newLines = jsonData.lines as DiagramLineInstance[];
+    const newLinesOutputFormat =
+      jsonData.lines as DiagramInstanceOutputFormat[];
+
+    const newLines = newLinesOutputFormat.map((diagramInstanceOutputFormat) => {
+      return {
+        symbolName: diagramInstanceOutputFormat.symbolName,
+        pathIds: diagramInstanceOutputFormat.pathIds,
+        labelIds: diagramInstanceOutputFormat.labels.map((label) => label.id),
+      } as DiagramLineInstance;
+    });
     setLines([...lines, ...newLines]);
   }
   if ('symbolInstances' in jsonData) {
-    const newSymboleInstance =
-      jsonData.symbolInstances as DiagramSymbolInstance[];
-    setSymbolInstances([...symbolInstances, ...newSymboleInstance]);
+    const newDiagramInstancesOutputFormat =
+      jsonData.symbolInstances as DiagramInstanceOutputFormat[];
+
+    const newSymbolInstances = newDiagramInstancesOutputFormat.map(
+      (diagramInstanceOutputFormat) => {
+        return {
+          symbolName: diagramInstanceOutputFormat.symbolName,
+          pathIds: diagramInstanceOutputFormat.pathIds,
+          labelIds: diagramInstanceOutputFormat.labels.map((label) => label.id),
+        } as DiagramSymbolInstance;
+      }
+    );
+    setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
   }
 
   if ('connections' in jsonData) {
