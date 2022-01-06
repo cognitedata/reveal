@@ -495,10 +495,10 @@ export function generateLayout({
       ticktext: tickvals
         ? tickvals.map((value) => roundToSignificantDigits(value, 3))
         : undefined,
-      side: 'right',
+      side: 'left',
       overlaying: index !== 0 ? 'y' : undefined,
       anchor: 'free',
-      position: yAxisValues.width * index,
+      position: yAxisValues.width * index + 0.019,
       range: rangeY,
       showgrid: isGridlinesShown,
     };
@@ -518,8 +518,8 @@ export function generateLayout({
           yanchor: 'bottom',
           text: unit,
           showarrow: false,
-          xshift: -3,
-          yshift: 5,
+          xshift: 15,
+          yshift: 7,
         });
       }
 
@@ -533,9 +533,9 @@ export function generateLayout({
             type: 'line',
             xref: 'paper',
             yref: 'paper',
-            x0: yAxisValues.width * index,
+            x0: yAxisValues.width * index + 0.015,
             y0: 1,
-            x1: yAxisValues.width * index + 0.005,
+            x1: yAxisValues.width * index + 0.019,
             y1: 1,
             line: {
               color,
@@ -547,9 +547,9 @@ export function generateLayout({
             type: 'line',
             xref: 'paper',
             yref: 'paper',
-            x0: yAxisValues.width * index,
+            x0: yAxisValues.width * index + 0.015,
             y0: 0,
-            x1: yAxisValues.width * index + 0.005,
+            x1: yAxisValues.width * index + 0.019,
             y1: 0,
             line: {
               color,
