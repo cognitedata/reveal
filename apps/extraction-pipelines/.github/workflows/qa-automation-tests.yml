@@ -17,7 +17,7 @@ jobs:
       with:
         repository: cognitedata/qa-cdf-extpipe-testframework
         token: ${{ secrets.TESTREPO_TOKEN }}
-        ref: udara-test
+        ref: dev
 
     - name: Run tests
       uses: DevExpress/testcafe-action@latest
