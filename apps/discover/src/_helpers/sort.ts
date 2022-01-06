@@ -21,14 +21,23 @@ export const caseInsensitiveSort = (
   secondValue: string | number,
   reverse = false
 ) => {
-  const format = (input: number | string) => trim(upperCase(input.toString()));
   const order = reverse ? -1 : 1;
 
   if (isNaN(Number(firstValue))) {
-    return format(firstValue) > format(secondValue) ? order : -order;
+    return convertToUpperCase(firstValue) > convertToUpperCase(secondValue)
+      ? order
+      : -order;
   }
 
   return Number(firstValue) > Number(secondValue) ? order : -order;
+};
+
+const convertToUpperCase = (input: number | string | undefined): string => {
+  if (!input) {
+    return '';
+  }
+
+  return trim(upperCase(input.toString()));
 };
 
 export const sortObjectsAscending = <T>(list: T[], path: string) =>
