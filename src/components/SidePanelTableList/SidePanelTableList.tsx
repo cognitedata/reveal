@@ -36,7 +36,11 @@ const SidePanelTableList = (): JSX.Element => {
     { enabled: !!selectedSidePanelDatabase }
   );
 
-  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 

@@ -71,7 +71,11 @@ const SidePanelTableListItem = ({
   const [[, activeTableName] = [], setTable] = useActiveTable();
   const isSelected = activeTableName === tableName;
 
-  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   const handleDatabaseListItemClick = (): void => {
     setTable([databaseName, tableName]);

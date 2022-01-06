@@ -33,7 +33,11 @@ const SidePanelDatabaseListContent = ({
   openCreateModal,
   searchQuery,
 }: SidePanelDatabaseListContentProps): JSX.Element => {
-  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   const filteredDatabaseList = useMemo(() => {
     return (

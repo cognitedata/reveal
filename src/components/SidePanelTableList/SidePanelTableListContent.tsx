@@ -37,7 +37,11 @@ const SidePanelTableListContent = ({
 }: SidePanelTableListContentProps): JSX.Element => {
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
 
-  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   const filteredTableList = useMemo(() => {
     return (
