@@ -36,12 +36,14 @@ export class SectorLoader {
   private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
   private readonly _gltfSectorCuller: SectorCuller;
+  private readonly _continuousModelStreaming: boolean;
 
   constructor(
     sectorCuller: SectorCuller,
     modelStateHandler: ModelStateHandler,
     collectStatisticsCallback: (spent: SectorLoadingSpent) => void,
-    progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void
+    progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void,
+    continuousModelStreaming: boolean
   ) {
     // TODO: add runtime initialization of culler and inject
     // the proper sector culler (create factory)
@@ -51,10 +53,11 @@ export class SectorLoader {
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
     this._progressCallback = progressCallback;
+    this._continuousModelStreaming = continuousModelStreaming;
   }
 
   async *loadSectors(input: DetermineSectorsPayload): AsyncIterable<ConsumedSector> {
-    if (input.cameraInMotion) {
+    if (!this._continuousModelStreaming && input.cameraInMotion) {
       return [];
     }
 

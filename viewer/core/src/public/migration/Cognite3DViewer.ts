@@ -1370,7 +1370,10 @@ function createCanvasWrapper(): HTMLElement {
 }
 
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
-  const revealOptions: RevealOptions = { internal: {} };
+  const revealOptions: RevealOptions = {
+    continuousModelStreaming: viewerOptions.continuousModelStreaming,
+    internal: {}
+  };
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
