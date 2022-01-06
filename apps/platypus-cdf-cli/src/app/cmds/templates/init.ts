@@ -1,30 +1,26 @@
-import { existsSync, lstatSync } from 'fs';
+import { existsSync, promises } from 'fs';
 import { join } from 'path';
 import { cwd } from 'process';
 import { Arguments, Argv, CommandModule } from 'yargs';
-import { makeFolderAndCreateConfig } from '../../common/config';
+import { ConfigSchema } from '../../common/config';
 import { askUserForInput } from '../../common/prompt';
+import { CONSTANTS } from '../../constants';
 import { BaseArgs } from '../../types';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import { getProjectConfig } from '../../utils/config';
 
+const { writeFile } = promises;
+
 export type TemplateInitCommandArgs = BaseArgs & {
-  ['name']?: string;
   ['template-group-id']?: string;
   ['template-version']?: string;
-  ['schema-file']?: string;
 };
 
-export class TemplateInitCommand implements CommandModule {
+class TemplateInitCommand implements CommandModule {
   public readonly command = 'init [name]';
   public readonly describe = 'Init a PLatypus Solution';
   builder(argv: Argv<TemplateInitCommandArgs>) {
     return argv
-      .positional('name', {
-        description: 'Name of the solution',
-        type: 'string',
-      })
-      .check(({ name }) => (name ? isValidSolutionName(name) : true))
       .option('template-group-id', {
         type: 'string',
         description: 'In which template group this solution belongs to',
@@ -33,32 +29,21 @@ export class TemplateInitCommand implements CommandModule {
         type: 'string',
         description: 'Version for the template group this will be locked to',
       })
-      .option('schema-file', {
-        type: 'string',
-        description: 'Schema file location',
-      })
-      .check(({ 'schema-file': file }) =>
-        file ? checkIfFileExists(file) : true
+      .check(({ 'template-version': version }) =>
+        // eslint-disable-next-line lodash/prefer-lodash-typecheck
+        version ? typeof version === 'number' : true
       );
   }
   async handler(_args: Arguments<TemplateInitCommandArgs>) {
+    if (existsSync(join(cwd(), CONSTANTS.PROJECT_CONFIG_FILE_NAME))) {
+      return _args.logger.error(
+        `Config file (${CONSTANTS.PROJECT_CONFIG_FILE_NAME}) already exists in this directory, exiting...`
+      );
+    }
+
     const client = getCogniteSDKClient();
     const templates = await client.templates.groups.list();
     const resp = await askUserForInput<TemplateInitCommandArgs>(_args, [
-      {
-        name: 'name',
-        message: 'Enter the name for the solution',
-        type: 'input',
-        required: true,
-        validate: isValidSolutionName,
-      },
-      {
-        name: 'schema-file',
-        message: 'Enter the file path for the schema file',
-        type: 'input',
-        required: true,
-        validate: checkIfFileExists,
-      },
       {
         name: 'template-group-id',
         message: 'Please select template id from this list',
@@ -80,33 +65,40 @@ export class TemplateInitCommand implements CommandModule {
           message: 'Select the version for the template group',
           required: true,
           type: 'autocomplete',
-          choices: versions,
+          choices: versions.map((v) => v.toString()),
         },
       ]);
 
       args = { ...args, ...version };
     }
 
-    const { name, logger } = args;
+    const { logger } = args;
 
     try {
       const projectConfig = getProjectConfig();
       if (!projectConfig) {
         return _args.logger.error('Failed to load global config');
       }
+
       const { cluster, project } = projectConfig;
-      await makeFolderAndCreateConfig(join(cwd(), name), {
+      const config: ConfigSchema = {
         version: 1,
-        name,
+        name: args['template-group-id'],
         config: {
           cluster,
           project,
           templateId: args['template-group-id'],
-          templateVersion: args['template-version'] || '1',
-          schemaFile: args['schema-file'],
+          templateVersion: parseInt(args['template-version'] || '0'),
         },
-      });
-      logger.info(`Solution "${name}" is successfully initialized!`);
+      };
+      await writeFile(
+        join(cwd(), CONSTANTS.PROJECT_CONFIG_FILE_NAME),
+        JSON.stringify(config, undefined, 2)
+      );
+
+      logger.info(
+        `Solution "${args['template-group-id']}" is successfully initialized!`
+      );
     } catch (error) {
       logger.error(`Failed to initialized solution please try again! ${error}`);
     }
@@ -120,9 +112,4 @@ const isValidSolutionName = (name: string) => {
   return true;
 };
 
-const checkIfFileExists = (path: string) => {
-  if (existsSync(path) && lstatSync(path).isFile()) {
-    return true;
-  }
-  return `File path "${path}" provided doesn't exists or can't be accessed, make sure if the file exists and proper permission provided to it`;
-};
+export default new TemplateInitCommand();

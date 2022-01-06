@@ -136,7 +136,7 @@ export class TemplatesApiService {
       .group(dto.solutionId)
       .version(parseInt(dto.schemaVersion))
       .runQuery(dto.graphQlParams) // return type GraphQlResponse
-      .then((value) => value.data)
+      .then((value) => value)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 }

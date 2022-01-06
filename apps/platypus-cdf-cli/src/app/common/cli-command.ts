@@ -83,7 +83,7 @@ export abstract class CLICommand implements CommandModule {
     }
   }
 
-  abstract execute(args: any): Promise<void>;
+  abstract execute(args: Arguments<unknown>): Promise<void>;
 
   handleError(
     commandName: string,

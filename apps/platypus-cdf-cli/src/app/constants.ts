@@ -28,3 +28,10 @@ export const CONSTANTS = {
   PROJECT_CONFIG_FILE_NAME: 'cdfrc.json',
   MANUAL_WEBSITE: 'https://github.com/cognitedata/platypus',
 };
+
+export const SupportedGraphQLGeneratorPlugins = [
+  'typescript',
+  'typescript-operations',
+  'typescript-resolvers',
+  'typescript-react-apollo',
+];

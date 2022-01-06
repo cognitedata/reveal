@@ -1,42 +1,34 @@
-import { mkdirSync, promises } from 'fs';
-const { writeFile, readFile } = promises;
+import { promises } from 'fs';
+const { readFile } = promises;
 
 import { join } from 'path';
 import { Arguments, CommandModule } from 'yargs';
 import { CONSTANTS } from '../constants';
 import { BaseArgs } from '../types';
+import { CLICommand } from './cli-command';
 
 export type ConfigSchema = {
   version: number;
   name: string;
   config: {
     templateId: string;
-    templateVersion: string;
-    schemaFile: string;
+    templateVersion: number;
     project: string;
     cluster: string;
     [key: string]: unknown;
   };
 };
 
-export const makeFolderAndCreateConfig = async (
-  dir: string,
-  config: ConfigSchema
-) => {
-  mkdirSync(dir);
-  await writeFile(
-    join(dir, CONSTANTS.PROJECT_CONFIG_FILE_NAME),
-    JSON.stringify(config, undefined, 2)
-  );
-};
-
 export function injectRCFile() {
   return function (
-    target: CommandModule,
+    target: CommandModule | CLICommand,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
-    if (propertyKey === target.handler.name) {
+    if (
+      propertyKey === target.handler.name ||
+      propertyKey === (target as CLICommand).execute.name
+    ) {
       const original = descriptor.value;
       descriptor.value = async function (...args) {
         const arg = args[0] as Arguments<BaseArgs>;

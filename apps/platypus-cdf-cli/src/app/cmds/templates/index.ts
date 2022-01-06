@@ -3,7 +3,8 @@ import listCmd from './list';
 import createCmd from './create';
 import deleteCmd from './delete';
 import * as schemaCmds from './schema';
-import { TemplateInitCommand } from './init';
+import generate from './generate';
+import init from './init';
 
 export const command = 'templates <command>';
 export const desc = 'Manage templates';
@@ -14,7 +15,8 @@ export const builder = (yargs: Argv) =>
     .command(createCmd)
     .command(deleteCmd)
     .command(schemaCmds)
-    .command(new TemplateInitCommand());
+    .command(init)
+    .command(generate);
 
 export const handler = () => {
   return;
