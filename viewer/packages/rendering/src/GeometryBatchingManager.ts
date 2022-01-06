@@ -242,8 +242,11 @@ export class GeometryBatchingManager {
     const typedArray = treeIndexAttribute.data.array as TypedArray;
     const instanceByteSize = treeIndexAttribute.data.stride * typedArray.BYTES_PER_ELEMENT;
 
-    const firstWholeInstanceIndex = Math.ceil(byteOffset / instanceByteSize);
-    const firstInvalidInstanceIndex = Math.floor((byteOffset + byteCount) / instanceByteSize);
+    assert(byteOffset % instanceByteSize === 0);
+    assert(byteCount % instanceByteSize === 0);
+
+    const firstWholeInstanceIndex = byteOffset / instanceByteSize;
+    const firstInvalidInstanceIndex = (byteOffset + byteCount) / instanceByteSize;
 
     for (let i = firstWholeInstanceIndex; i < firstInvalidInstanceIndex; i++) {
       const treeIndex = treeIndexAttribute.getX(i);
