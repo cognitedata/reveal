@@ -72,7 +72,7 @@ describe('SectorLoader', () => {
       loadingHints: {}
     };
     stateHandler.addModel(model.modelIdentifier);
-    loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback);
+    loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback, false);
   });
 
   test('loadSectors with no models, completes with no sectors', async () => {

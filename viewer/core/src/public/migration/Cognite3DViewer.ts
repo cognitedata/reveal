@@ -1836,7 +1836,10 @@ function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): T
 }
 
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
-  const revealOptions: RevealOptions = { internal: {} };
+  const revealOptions: RevealOptions = {
+    continuousModelStreaming: viewerOptions.continuousModelStreaming,
+    internal: {}
+  };
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
