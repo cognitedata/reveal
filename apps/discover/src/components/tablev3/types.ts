@@ -4,9 +4,11 @@ import { Cell, Row, TableOptions } from 'react-table';
 import { SortBy } from '../../pages/types';
 
 import { RowProps } from './index';
+import { TableResults } from './resultTypes';
 
 type IndeterminateIds = TableResults;
 type SelectedIds = TableResults;
+export type { TableResults } from './resultTypes';
 export type HandleRowClick = (rowInformation: any) => void;
 export type HandleRowMouseEnter = (rowInformation: any) => void;
 export type HandleRowMouseLeave = (rowInformation: any) => void;
@@ -86,10 +88,6 @@ export interface ColumnType<T extends Object> {
   ) => number | string;
   disableSorting?: boolean;
 }
-
-export type TableResults = {
-  [key: string]: boolean;
-};
 
 export interface RowOptions {
   selectedStyle?: string;

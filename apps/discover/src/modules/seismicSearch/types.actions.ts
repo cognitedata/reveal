@@ -1,6 +1,6 @@
 import { TS_FIX_ME } from 'core';
 
-import { TableResults } from 'components/tablev2/types';
+import { TableResults } from 'components/tablev3/resultTypes';
 
 import {
   AddSurveySelection,

@@ -2,7 +2,7 @@ import { TS_FIX_ME } from 'core';
 
 import { Geometry } from '@cognite/seismic-sdk-js';
 
-import { TableResults } from 'components/tablev2/types';
+import { TableResults } from 'components/tablev3/resultTypes';
 import { QueryFacet } from 'modules/documentSearch/types';
 import { APIGeo } from 'modules/map/types';
 

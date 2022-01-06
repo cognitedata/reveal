@@ -16,7 +16,7 @@ import {
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { PossibleDateRangeDate } from '../../_helpers/date';
-import { TableResults } from '../../components/tablev2/types';
+import { TableResults } from '../../components/tablev3/resultTypes';
 import { DocumentType } from '../documentSearch/types';
 
 export const TOGGLE_SELECTED_WELLS = 'WELL_TOGGLE_SELECTED_WELLS';
