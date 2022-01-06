@@ -14,6 +14,7 @@ import { SectorGeometry } from '@reveal/cad-parsers';
 export type RevealOptions = {
   logMetrics?: boolean;
   renderOptions?: RenderOptions;
+  continuousModelStreaming?: boolean;
   internal?: {
     parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
     sectorCuller?: SectorCuller;
