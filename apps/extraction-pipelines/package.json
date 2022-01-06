@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-integrations-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "cross-env BROWSER=none WDS_SOCKET_PORT=3015 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3015 rescripts start",
