@@ -115,7 +115,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
       this.axisTool.dispose();
       this.axisTool = undefined;
     }
-  };
+  }
 
   /**
    * Save the screenshot of the canvas been rendered
@@ -134,7 +134,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   private changeCameraTargetOnClick(): void {
     this.cameraControlOption.onClickTargetChange = !this.cameraControlOption.onClickTargetChange;
     this._viewer.setCameraControlsOptions(this.cameraControlOption);
-  };
+  }
 
   /**
    * Toggle camera for "Zoom Past Cursor" and "Zoom To Cursor"
@@ -146,12 +146,12 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
       this.cameraControlOption.mouseWheelAction = 'zoomPastCursor';
     }
     this._viewer.setCameraControlsOptions(this.cameraControlOption);
-  };
+  }
 
   /**
    * Fit Camera to Model
    */
   private fitCameraToAllModels(): void {
     this._viewer.fitCameraToAllModels();
-  };
+  }
 }
