@@ -223,7 +223,7 @@ export class GeometryBatchingManager {
   private getTreeIndexAttribute(
     instanceAttributes: { name: string; attribute: THREE.InterleavedBufferAttribute }[]
   ): THREE.InterleavedBufferAttribute {
-    let treeIndexAttribute = instanceAttributes.filter(att => att.name === 'a_treeIndex');
+    const treeIndexAttribute = instanceAttributes.filter(att => att.name === 'a_treeIndex');
 
     assert(treeIndexAttribute.length > 0);
 
