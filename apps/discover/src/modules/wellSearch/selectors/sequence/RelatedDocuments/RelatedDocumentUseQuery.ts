@@ -26,12 +26,11 @@ import {
   SearchQueryFull,
   CategoryResponse,
 } from 'modules/documentSearch/types';
-
 import {
-  useSelectedOrHoveredWellboreIds,
-  useSelectedOrHoveredWellbores,
-  useWellboreAssetIdMap,
-} from '../../asset/wellbore';
+  useWellInspectSelectedWellboreIds,
+  useWellInspectSelectedWellbores,
+} from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
 import { useRelatedDocumentFilterQuery } from './useRelatedDocumentFilterQuery';
 import { getDocumentConfig, getMergedFacets } from './utils';
@@ -51,9 +50,9 @@ const RELATED_DOCUMENTS_AGGREGATES = {
 
 const useWellboresRelatedDocumentsCategories =
   (): UseQueryResult<DocumentResultFacets> => {
-    const selectedOrHoveredWellbores = useSelectedOrHoveredWellbores();
-    const wellboreAssetIdMap = useWellboreAssetIdMap();
-    const wellboreAssetIds = selectedOrHoveredWellbores.map(
+    const selectedWellbores = useWellInspectSelectedWellbores();
+    const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
+    const wellboreAssetIds = selectedWellbores.map(
       (row) => wellboreAssetIdMap[row.id]
     );
     return useQuery<DocumentResultFacets>(
@@ -89,8 +88,8 @@ export const useQuerySavedRelatedDocuments = (
     LOG_WELLS_RELATED_DOCUMENTS
   );
   const filterQuery = useRelatedDocumentFilterQuery();
-  const wellboreIds = useSelectedOrHoveredWellboreIds();
-  const wellboreAssetIdMap = useWellboreAssetIdMap();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const { filters } = getDocumentConfig(
     wellboreIds.map((id) => wellboreAssetIdMap[id])
   );

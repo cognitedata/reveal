@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 
 import { Dropdown } from '@cognite/cogs.js';
 
@@ -11,21 +10,19 @@ import { NO_ITEMS_ADDED_TEXT } from 'components/add-to-favorite-set-menu/constan
 import { ViewButton, FavoriteButton, CloseButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
 import { showErrorMessage } from 'components/toast';
-import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
+import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import {
   useSelectedWellIds,
   useSelectedWellboreIds,
   useExternalLinkFromSelectedWells,
-  useWellboresFetching,
 } from 'modules/wellSearch/selectors';
-import { InspectWellboreContext } from 'modules/wellSearch/types';
 
 import {
   ADD_SELECTED_WELLS_TEXT,
   CLEAR_SELECTION_TEXT,
-  FETCHING_SELECTED_WELBORE_MESSAGE,
   OPEN_BROWSER_MESSAGE,
   OPEN_FIELD_PRODUCTION_MESSAGE,
   VIEW_SELECTED_WELL_TEXT,
@@ -33,23 +30,17 @@ import {
 
 export const WellsBulkActions: React.FC = () => {
   const { t } = useTranslation('Search');
-  const history = useHistory();
   const dispatch = useDispatch();
   const metrics = useGlobalMetrics('wells');
 
+  const wells = useWellQueryResultWells();
   const selectedWellIds = useSelectedWellIds();
   const selectedWellboreIds = useSelectedWellboreIds();
   const externalLinks = useExternalLinkFromSelectedWells();
-  const wellboresFetching = useWellboresFetching();
+  const navigateToWellInspect = useNavigateToWellInspect();
 
-  const selectedWellsCount = useMemo(
-    () => selectedWellIds.length,
-    [selectedWellIds]
-  );
-  const selectedWellboresCount = useMemo(
-    () => selectedWellboreIds.length,
-    [selectedWellboreIds]
-  );
+  const selectedWellsCount = selectedWellIds.length;
+  const selectedWellboresCount = selectedWellboreIds.length;
 
   const handleClickFavoriteButton = () => {
     if (!selectedWellsCount) {
@@ -58,28 +49,24 @@ export const WellsBulkActions: React.FC = () => {
   };
 
   const handleDeselectAll = () => {
-    dispatch(wellSearchActions.toggleSelectedWells(false));
+    dispatch(wellSearchActions.toggleSelectedWells(wells, false));
   };
 
   const handleClickView = () => {
     metrics.track('click-inspect-checked-wellbores');
-    dispatch(
-      wellSearchActions.setWellboreInspectContext(
-        InspectWellboreContext.CHECKED_WELLBORES
-      )
-    );
-    history.push(navigation.SEARCH_WELLS_INSPECT);
+    navigateToWellInspect({
+      wellIds: selectedWellIds,
+      wellboreIds: selectedWellboreIds,
+    });
   };
 
   const title = `${selectedWellsCount} ${
     selectedWellsCount > 1 ? 'wells' : 'well'
   } selected`;
 
-  const subtitle = wellboresFetching
-    ? FETCHING_SELECTED_WELBORE_MESSAGE
-    : `With ${selectedWellboresCount} ${
-        selectedWellboresCount > 1 ? 'wellbores' : 'wellbore'
-      } inside`;
+  const subtitle = `With ${selectedWellboresCount} ${
+    selectedWellboresCount > 1 ? 'wellbores' : 'wellbore'
+  } inside`;
 
   return (
     <TableBulkActions

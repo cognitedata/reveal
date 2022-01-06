@@ -1,9 +1,13 @@
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
+import isUndefined from 'lodash/isUndefined';
+import keyBy from 'lodash/keyBy';
 
 import { Well as SDKWell } from '@cognite/sdk-wells-v2';
 
-import { Well, Wellbore } from '../types';
+import { TableResults } from 'components/tablev3';
+
+import { Well, Wellbore, WellId, WellMap } from '../types';
 import { normalizeCoords } from '../utils';
 
 export const normalizeWell = (well: SDKWell): Well => {
@@ -35,4 +39,34 @@ export const getFilteredWellbores = (
   return (
     wellbores?.filter((wellbore) => isEqual(wellbore.id, wellboreId)) || []
   );
+};
+
+export const getIndeterminateWells = (
+  wells: Well[],
+  selectedWellboreIds: TableResults
+) => {
+  return wells.reduce<TableResults>((intermediateWells, well) => {
+    if (!well.wellbores) return intermediateWells;
+
+    const selectedWellboresCount = well.wellbores.filter(
+      (wellbore) => selectedWellboreIds[wellbore.id]
+    ).length;
+    if (
+      selectedWellboresCount > 0 &&
+      selectedWellboresCount !== well.wellbores.length
+    ) {
+      return { ...intermediateWells, [well.id]: true };
+    }
+    return intermediateWells;
+  }, {});
+};
+
+export const getWellsOfWellIds = (wells: Well[], wellIds: WellId[]) => {
+  const wellsById = keyBy<WellMap>(wells, 'id');
+
+  return wellIds.reduce<Well[]>((wells, wellId) => {
+    const well = wellsById[wellId];
+    if (isUndefined(well)) return wells;
+    return [...wells, well];
+  }, []);
 };

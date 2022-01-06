@@ -68,8 +68,9 @@ const WELLS = 'wells';
 export const WELL_QUERY_KEY = {
   SEARCH: [WELLS, 'search'],
   WELLBORES: [WELLS, 'wellbores'],
-  BY_ID: [WELLS, 'wellsById'],
+  FAVORITE: [WELLS, 'favoriteWells'],
   FILTER_OPTIONS: [WELLS, 'filterOptions'],
+  WELLS_CACHE: [WELLS, 'wellsCache'],
   CASINGS: [WELLS, 'casings'],
   CASINGS_CACHE: [WELLS, 'casings', 'cache'],
   TRAJECTORIES: [WELLS, 'trajectories'],

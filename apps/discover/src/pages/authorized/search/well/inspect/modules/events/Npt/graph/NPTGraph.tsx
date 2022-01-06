@@ -7,7 +7,8 @@ import {
   SelectedBarData,
   StackedBarChart,
 } from 'components/charts/modules/StackedBarChart';
-import { useSecondarySelectedOrHoveredWellboreNames } from 'modules/wellSearch/selectors';
+import { useDeepMemo } from 'hooks/useDeep';
+import { useWellInspectSelectedWellboreNames } from 'modules/wellInspect/hooks/useWellInspect';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
@@ -26,8 +27,7 @@ interface Props {
 
 export const NPTGraph: React.FC<Props> = React.memo(
   ({ events, onSelectBar }) => {
-    const selectedSecondaryWellboreNames =
-      useSecondarySelectedOrHoveredWellboreNames();
+    const wellboreNames = useWellInspectSelectedWellboreNames();
 
     const [lastUpdatedTime, setLastUpdatedTime] = useState<number>();
     const [chartSubtitle, setChartSubtitle] = useState<string>(
@@ -71,7 +71,7 @@ export const NPTGraph: React.FC<Props> = React.memo(
       []
     );
 
-    return useMemo(
+    return useDeepMemo(
       () => (
         <StackedBarChart<NPTEvent>
           id="npt-events-graph"
@@ -81,7 +81,7 @@ export const NPTGraph: React.FC<Props> = React.memo(
             accessor: accessors.WELLBORE_NAME,
             reverseScaleDomain: true,
           }}
-          yScaleDomain={selectedSecondaryWellboreNames}
+          yScaleDomain={wellboreNames}
           groupDataInsideBarsBy={accessors.NPT_CODE}
           title={GRAPH_TITLE}
           subtitle={chartSubtitle}
@@ -90,7 +90,7 @@ export const NPTGraph: React.FC<Props> = React.memo(
           onSelectBar={handleOnSelectBar}
         />
       ),
-      [JSON.stringify(selectedSecondaryWellboreNames), chartSubtitle]
+      [wellboreNames, chartSubtitle]
     );
   }
 );

@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
@@ -8,7 +6,7 @@ import { followCursor } from 'tippy.js';
 import { Icon } from '@cognite/cogs.js';
 
 import { DataObject } from 'components/charts/types';
-import { useCompare } from 'hooks/useCompare';
+import { useDeepMemo } from 'hooks/useDeep';
 import { sizes } from 'styles/layout';
 
 import {
@@ -127,7 +125,7 @@ export const Bars = <T extends DataObject<T>>({
     return null;
   };
 
-  return useMemo(
+  return useDeepMemo(
     () => (
       <g>
         {yScaleDomain.map((key, index) => {
@@ -177,6 +175,6 @@ export const Bars = <T extends DataObject<T>>({
         })}
       </g>
     ),
-    useCompare([groupedData, yScaleDomain, xScale])
+    [groupedData, yScaleDomain, xScale]
   );
 };

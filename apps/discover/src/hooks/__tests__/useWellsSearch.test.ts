@@ -34,6 +34,6 @@ describe('useWellsSearch hook', () => {
     const doWellsSearch = await getHookResult();
 
     doWellsSearch({ filters: { wells: getMockWellFilter() } });
-    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).toHaveBeenCalledTimes(1);
   });
 });

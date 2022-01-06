@@ -4,86 +4,36 @@ import { cleanup } from '@testing-library/react';
 import { act, renderHook } from '@testing-library/react-hooks';
 import noop from 'lodash/noop';
 
-import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
+import {
+  getMockWell,
+  mockedWellboreResultFixture,
+  mockedWellStateWithSelectedWells,
+} from '__test-utils/fixtures/well';
 
+import { useWellQueryResultWells } from '../hooks/useWellQueryResultSelectors';
 import {
   useWells,
-  useWellbores,
-  useSelectedWellbores,
   useSelectedWellboreIds,
   useWellboreData,
-  useSelectedWells,
   useExternalLinkFromSelectedWells,
   useIndeterminateWells,
-  useSelectedOrHoveredWells,
-  useActiveWellsWellboresCount,
 } from '../selectors';
-import { InspectWellboreContext } from '../types';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
   useDispatch: jest.fn(),
 }));
 
-const mockExternalLink = jest.fn();
+jest.mock('../hooks/useWellQueryResultSelectors', () => ({
+  useWellQueryResultWells: jest.fn(),
+}));
 
-const wellState = {
-  wellSearch: {
-    wells: [
-      {
-        id: 252284653,
-        name: 'Well 1',
-        wellbores: [
-          {
-            id: 229987867,
-            name: 'Wellbore 1',
-          },
-          {
-            id: 229987868,
-            name: 'Wellbore 3',
-          },
-        ],
-        metadata: {
-          productionDataLink: true,
-          wellDataLink: true,
-        },
-      },
-      {
-        id: 234784653,
-        name: 'Well 2',
-        wellbores: [
-          {
-            id: 129377867,
-            name: 'Wellbore 2',
-          },
-          {
-            id: 129377868,
-            name: 'Wellbore 2',
-          },
-        ],
-        metadata: {
-          productionDataLink: true,
-        },
-      },
-    ],
-    selectedWellIds: { 252284653: true },
-    selectedWellboreIds: { 229987867: true },
-    hoveredWellId: 234784653,
-    hoveredWellboreIds: { 129377868: true },
-    inspectWellboreContext: InspectWellboreContext.CHECKED_WELLBORES,
-    wellboreData: {
-      229987867: { logType: [] },
-    },
-    filters: {
-      '1': ['Test Value'],
-    },
-  },
-};
+const mockExternalLink = jest.fn();
 
 describe('Well Selectors', () => {
   beforeEach(() => {
     (useSelector as jest.Mock).mockImplementation((callback) => {
-      return callback(wellState);
+      return callback(mockedWellStateWithSelectedWells);
     });
   });
 
@@ -93,66 +43,29 @@ describe('Well Selectors', () => {
   });
 
   it(`should return well search state`, () => {
-    expect(useWells()).toEqual(wellState.wellSearch);
-  });
-
-  it(`should return wellbores for the given well`, async () => {
-    const { result } = renderHook(() => useWellbores([252284653]), {});
-    act(() => noop());
-
-    expect(result.current).toEqual({
-      isLoading: false,
-      wellbores: wellState.wellSearch.wells[0].wellbores,
-    });
-  });
-
-  it(`should return selected wellbores`, () => {
-    const { result } = renderHook(() => useSelectedWellbores(), {});
-
-    const wellbores = result.current;
-
-    expect(wellbores).toEqual([wellState.wellSearch.wells[0].wellbores[0]]);
+    expect(useWells()).toEqual(mockedWellStateWithSelectedWells.wellSearch);
   });
 
   it(`should return selected wellbores ids as a list`, () => {
-    const { result } = renderHook(() => useSelectedWellboreIds(), {});
+    const { result } = renderHook(() => useSelectedWellboreIds());
     const wellboreIds = result.current;
-    expect(wellboreIds).toEqual([
-      wellState.wellSearch.wells[0].wellbores.map((wellbore) => wellbore.id)[0],
-    ]);
+    expect(wellboreIds).toEqual(['759155409324993']);
   });
 
   it(`should return wellbore data`, () => {
-    const { result } = renderHook(() => useWellboreData(), {});
-    expect(result.current).toEqual(wellState.wellSearch.wellboreData);
-  });
-
-  it(`should return selected wells and wellbores`, async () => {
-    const { result } = renderHook(() => useSelectedWells(), {});
-    const selectedWell = wellState.wellSearch.wells[0];
-    const expected = [
-      {
-        ...selectedWell,
-        wellbores: [selectedWell.wellbores[0]],
-      },
-    ];
-    expect(result.current).toEqual(expected);
+    const { result } = renderHook(() => useWellboreData());
+    expect(result.current).toEqual(
+      mockedWellStateWithSelectedWells.wellSearch.wellboreData
+    );
   });
 
   it(`should return indeterminate wells (Wells that some of its wellbores are selected)`, async () => {
-    const { result } = renderHook(() => useIndeterminateWells(), {});
-    expect(result.current).toEqual({
-      [wellState.wellSearch.wells[0].id]: true,
-    });
-  });
-
-  it(`should return selected or hovered wells for checked context`, async () => {
-    const { result, waitForNextUpdate } = renderHook(
-      () => useSelectedOrHoveredWells(),
-      { wrapper: QueryClientWrapper }
-    );
-    await act(() => waitForNextUpdate());
-    expect(result.current[0].id).toEqual(252284653);
+    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
+      getMockWell(),
+      getMockWell({ wellbores: mockedWellboreResultFixture }),
+    ]);
+    const { result } = renderHook(() => useIndeterminateWells());
+    expect(result.current).toEqual({ 1234: true });
   });
 
   // eslint-disable-next-line jest/no-disabled-tests
@@ -181,9 +94,9 @@ describe('Well Selectors', () => {
   it.skip('should return correct links based on selected wells metadata and tenantConfig', () => {
     (useSelector as jest.Mock).mockImplementation((callback) => {
       return callback({
-        ...wellState,
+        ...mockedWellStateWithSelectedWells,
         wellSearch: {
-          ...wellState.wellSearch,
+          ...mockedWellStateWithSelectedWells.wellSearch,
           selectedWellIds: { 252284653: true, 234784653: true },
         },
       });
@@ -200,36 +113,5 @@ describe('Well Selectors', () => {
       'This is some link Well 1,Well 2',
       'This is another link Well 1',
     ]);
-  });
-
-  describe('Well Selectors inspect context hovered', () => {
-    beforeEach(() => {
-      (useSelector as jest.Mock).mockImplementation((callback) => {
-        return callback({
-          wellSearch: {
-            ...wellState.wellSearch,
-            inspectWellboreContext: InspectWellboreContext.HOVERED_WELLBORES,
-          },
-        });
-      });
-    });
-
-    it(`should return selected or hovered wells for hovered context`, async () => {
-      const { result, waitForNextUpdate } = renderHook(
-        () => useSelectedOrHoveredWells(),
-        { wrapper: QueryClientWrapper }
-      );
-      await act(() => waitForNextUpdate());
-      expect(result.current[0].id).toEqual(234784653);
-    });
-
-    it(`should return selected or hovered wells and wellbores count`, async () => {
-      const { result, waitForNextUpdate } = renderHook(
-        () => useActiveWellsWellboresCount(),
-        { wrapper: QueryClientWrapper }
-      );
-      await act(() => waitForNextUpdate());
-      expect(result.current).toEqual({ wells: 1, wellbores: 1 });
-    });
   });
 });

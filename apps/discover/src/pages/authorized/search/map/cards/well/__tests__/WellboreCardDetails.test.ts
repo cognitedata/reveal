@@ -1,6 +1,5 @@
 import { Store } from 'redux';
 
-import { getDefaultWell } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { initialState as wellState } from 'modules/wellSearch/reducer';
@@ -26,14 +25,7 @@ describe('Wellbore card details', () => {
   };
 
   it(`should not render wellbores`, async () => {
-    const defaultWell = getDefaultWell(true);
-    await defaultTestInit(
-      {
-        ...wellState,
-        wells: [defaultWell],
-      },
-      { wellId: 4323 }
-    );
+    await defaultTestInit(wellState, { wellId: 4323 });
 
     // const title = await screen.findByAltText('Wellbores');
     // expect(title).not.toBeInTheDocument();

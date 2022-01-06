@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { batch, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
@@ -13,24 +11,17 @@ import { Dropdown, Menu } from '@cognite/cogs.js';
 import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
-import navigation from 'constants/navigation';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
-import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useWellboresByIdsAndWellId } from 'modules/wellSearch/selectors';
+import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
+import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
 import {
   getWellboresByWellboreIds,
   getWellboresByWellIds,
 } from 'modules/wellSearch/service';
-import {
-  Wellbore,
-  Well,
-  WellboreId,
-  WellId,
-  InspectWellboreContext,
-} from 'modules/wellSearch/types';
+import { Wellbore, Well, WellboreId, WellId } from 'modules/wellSearch/types';
 import {
   WellboreColumns,
   WellboreSubtableOptions,
@@ -71,12 +62,11 @@ const WellboreResult: React.FC<Props> = ({
 }) => {
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
   const [wellbores, setWellbores] = useState<Wellbore[]>(
-    useWellboresByIdsAndWellId(well.id, wellboreIds)
+    useWellboresOfWellById(well.id, wellboreIds)
   );
 
   const { t } = useTranslation('WellData');
-  const dispatch = useDispatch();
-  const history = useHistory();
+  const navigateToWellInspect = useNavigateToWellInspect();
   const [columns] = useState(WellboreColumns);
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);
   const handleCloseDeleteModal = () => setIsDeleteWellModalOpen(false);
@@ -163,20 +153,8 @@ const WellboreResult: React.FC<Props> = ({
   };
 
   const handleViewClick = (row: RowProps<Wellbore>): void => {
-    const wellboreId = (row.original as Wellbore).id;
-
-    batch(() => {
-      dispatch(wellSearchActions.setSelectedFavoriteId(favoriteId));
-      dispatch(wellSearchActions.setFavoriteHoveredOrCheckedWells([well.id]));
-      dispatch(
-        wellSearchActions.setWellboreInspectContext(
-          InspectWellboreContext.FAVORITE_HOVERED_WELLBORE
-        )
-      );
-      dispatch(wellSearchActions.setHoveredWellbores(well.id, wellboreId));
-    });
-
-    history.push(navigation.SEARCH_WELLS_INSPECT);
+    const wellboreId = row.original.id;
+    navigateToWellInspect({ wellIds: [well.id], wellboreIds: [wellboreId] });
   };
 
   const renderRowHoverComponent: React.FC<{
@@ -232,6 +210,8 @@ const WellboreResult: React.FC<Props> = ({
         renderRowHoverComponent={renderRowHoverComponent}
         handleRowSelect={handleRowSelect}
         selectedIds={selectedWellboreIds}
+        hideHeaders
+        indent
       />
 
       <DeleteWellFromSetModal

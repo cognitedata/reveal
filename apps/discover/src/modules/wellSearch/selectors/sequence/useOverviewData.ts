@@ -4,8 +4,8 @@ import flatten from 'lodash/flatten';
 
 import { changeUnits } from '_helpers/units/utils';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
-import { useSecondarySelectedOrHoveredWells } from 'modules/wellSearch/selectors';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { OverviewModel } from 'pages/authorized/search/well/inspect/modules/overview/types';
 
@@ -28,7 +28,7 @@ const getUnitChangeAccessors = (unit: string) => [
 ];
 
 export const useOverviewData = () => {
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wells = useWellInspectSelectedWells();
   const userPreferredUnit = useUserPreferencesMeasurement();
   const { trajectories, isLoading } = useTrajectoriesQuery();
   const [accessorsToFixedDecimal] = useState(['waterDepth.value', 'tvd', 'md']);

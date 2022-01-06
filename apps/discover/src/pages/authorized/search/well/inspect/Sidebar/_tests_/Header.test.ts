@@ -3,8 +3,7 @@ import { Store } from 'redux';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useActiveWellsWellboresCount } from 'modules/wellSearch/selectors';
-import { useSecondarySelectedWellsAndWellboresCount } from 'modules/wellSearch/selectors/asset/well';
+import { useWellInspectSelectionStats } from 'modules/wellInspect/selectors';
 
 import { Header } from '../Header';
 
@@ -12,8 +11,9 @@ jest.mock('modules/wellSearch/selectors', () => ({
   useActiveWellsWellboresCount: jest.fn(),
 }));
 
-jest.mock('modules/wellSearch/selectors/asset/well', () => ({
-  useSecondarySelectedWellsAndWellboresCount: jest.fn(),
+jest.mock('modules/wellInspect/selectors', () => ({
+  useWellInspectSelectionStats: jest.fn(),
+  useWellInspectGoBackNavigationPath: jest.fn(),
 }));
 
 describe('Well Inspect Sidebar Header', () => {
@@ -25,16 +25,13 @@ describe('Well Inspect Sidebar Header', () => {
   };
 
   it(`should display single counts`, async () => {
-    (useActiveWellsWellboresCount as jest.Mock).mockImplementation(() => ({
-      wells: 1,
-      wellbores: 1,
+    (useWellInspectSelectionStats as jest.Mock).mockImplementation(() => ({
+      wellsCount: 1,
+      wellboresCount: 1,
+      selectedWellsCount: 1,
+      selectedWellboresCount: 1,
     }));
-    (
-      useSecondarySelectedWellsAndWellboresCount as jest.Mock
-    ).mockImplementation(() => ({
-      secondaryWells: 1,
-      secondaryWellbores: 1,
-    }));
+
     await defaultTestInit();
     const wellCountText = await screen.findByText('1 / 1 well selected');
     expect(wellCountText).toBeInTheDocument();
@@ -46,16 +43,13 @@ describe('Well Inspect Sidebar Header', () => {
   });
 
   it(`should display multiple counts`, async () => {
-    (useActiveWellsWellboresCount as jest.Mock).mockImplementation(() => ({
-      wells: 2,
-      wellbores: 2,
+    (useWellInspectSelectionStats as jest.Mock).mockImplementation(() => ({
+      wellsCount: 2,
+      wellboresCount: 2,
+      selectedWellsCount: 1,
+      selectedWellboresCount: 1,
     }));
-    (
-      useSecondarySelectedWellsAndWellboresCount as jest.Mock
-    ).mockImplementation(() => ({
-      secondaryWells: 1,
-      secondaryWellbores: 1,
-    }));
+
     await defaultTestInit();
     const wellCountText = await screen.findByText('1 / 2 wells selected');
     expect(wellCountText).toBeInTheDocument();

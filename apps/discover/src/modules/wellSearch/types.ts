@@ -19,23 +19,10 @@ import { PossibleDateRangeDate } from '../../_helpers/date';
 import { TableResults } from '../../components/tablev2/types';
 import { DocumentType } from '../documentSearch/types';
 
-export const SET_WELLS_DATA = 'WELL_SET_WELLS_DATA';
-export const SET_SELECTED_WELL_ID = 'WELL_SET_SELECTED_WELL_ID';
-export const SET_SELECTED_WELLBORE_IDS = 'WELL_SET_SELECTED_WELLBORE_IDS';
-export const SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID =
-  'SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID';
-export const SET_SEARCH_PHRASE = 'WELL_SET_SEARCH_PHRASE';
-export const SET_HAS_SEARCHED = 'WELL_SET_HAS_SEARCHED';
-export const SET_WELLBORES = 'WELL_SET_WELLBORES';
-export const SET_SEQUENCES = 'WELL_SET_SEQUENCES';
-export const SET_IS_SEARCHING = 'WELL_SET_IS_SEARCHING';
-export const RESET_QUERY = 'WELL_RESET_QUERY';
-export const TOGGLE_EXPANDED_WELL_ID = 'WELL_TOGGLE_EXPANDED_WELL_ID';
 export const TOGGLE_SELECTED_WELLS = 'WELL_TOGGLE_SELECTED_WELLS';
-export const SET_SELECTED_SECONDARY_WELL_IDS =
-  'SET_SELECTED_SECONDARY_WELL_IDS';
-export const SET_SELECTED_SECONDARY_WELLBORE_IDS =
-  'SET_SELECTED_SECONDARY_WELLBORE_IDS';
+export const TOGGLE_SELECTED_WELLBORE_OF_WELL =
+  'WELL_TOGGLE_SELECTED_WELLBORE_OF_WELL';
+export const TOGGLE_EXPANDED_WELL_ID = 'WELL_TOGGLE_EXPANDED_WELL_ID';
 
 export const SET_LOG_TYPE = 'WELL_SET_LOG_TYPE';
 export const SET_LOGS_ROW_DATA = 'WELL_SET_LOGS_ROW_DATA';
@@ -44,29 +31,9 @@ export const SET_WELLBORE_DIGITAL_ROCK_SAMPLES =
   'WELL_SET_WELLBORE_DIGITAL_ROCK_SAMPLES';
 export const SET_GRAIN_ANALYSIS_DATA = 'WELL_SET_GRAIN_ANALYSIS_DATA';
 
-export const SET_ALL_WELLBORES_FETCHING = 'WELL_SET_ALL_WELLBORES_FETCHING';
-export const SET_WELLBORES_FETCHED_WELL_IDS =
-  'WELL_SET_WELLBORES_FETCHED_WELL_IDS';
-
 export const WELL_ADD_SELECTED_COLUMN = 'WELL_ADD_SELECTED_COLUMN';
 export const WELL_REMOVE_SELECTED_COLUMN = 'WELL_REMOVE_SELECTED_COLUMN';
 export const WELL_SET_SELECTED_COLUMN = 'WELL_SET_SELECTED_COLUMN';
-
-/**
- * Which wellbore and it's well head is currenlty move hovered
- */
-export const SET_HOVERED_WELLBORE_IDS = 'SET_HOVERED_WELLBORE_IDS';
-export const SET_INSECT_WELLBORES_CONTEXT = 'SET_INSECT_WELLBORES_CONTEXT';
-
-// which well is selected for the well card
-
-export const SET_WELL_CARD_SELECTED_WELL_ID = 'SET_WELL_CARD_SELECTED_WELL_ID';
-export const SET_WELL_CARD_SELECTED_WELLBORE_ID =
-  'SET_WELL_CARD_SELECTED_WELLBORE_ID';
-
-export const SET_FAVORITE_HOVERED_OR_CHECKED_WELLS =
-  'SET_FAVORITE_HOVERED_OR_CHECKED_WELLS';
-export const SET_FAVORITE_ID = 'SET_FAVORITE_ID';
 
 // well state:
 
@@ -76,36 +43,12 @@ export type AssetTypes = 'digitalRocks';
 export type GrainAnalysisTypes = 'gpart';
 export type DictionaryType<T> = Dictionary<T>;
 
-export enum InspectWellboreContext {
-  NOT_SPECIFIED,
-  CHECKED_WELLBORES,
-  HOVERED_WELLBORES,
-  WELL_CARD_WELLBORES,
-  FAVORITE_HOVERED_WELL,
-  FAVORITE_CHECKED_WELLS,
-  FAVORITE_HOVERED_WELLBORE,
-}
-
 export interface WellState {
-  wells: Well[];
-  currentQuery: WellQuery;
   selectedWellIds: TableResults;
+  selectedWellboreIds: TableResults;
   expandedWellIds: TableResults;
-  hoveredWellId?: number;
-  selectedFavoriteId?: string;
-  isSearching: boolean;
-  allWellboresFetching: boolean;
-  wellboresFetchedWellIds: Well['id'][];
   wellboreData: WellboreData;
   selectedColumns: string[];
-  selectedWellboreIds: TableResults;
-  hoveredWellboreIds: TableResults;
-  wellCardSelectedWellId?: number;
-  wellCardSelectedWellBoreId: TableResults;
-  wellFavoriteHoveredOrCheckedWells: number[];
-  inspectWellboreContext: InspectWellboreContext;
-  selectedSecondaryWellIds: TableResults;
-  selectedSecondaryWellboreIds: TableResults;
 }
 
 // other types:
@@ -138,69 +81,6 @@ export interface WellboreDigitalRockSamples {
   digitalRockSamples: Asset[];
 }
 
-export interface SetIsSearching {
-  type: typeof SET_IS_SEARCHING;
-  isSearching: WellState['isSearching'];
-}
-
-export interface SetAllWellboresFetching {
-  type: typeof SET_ALL_WELLBORES_FETCHING;
-  allWellboresFetching: WellState['allWellboresFetching'];
-}
-
-export interface SetWellboresFetched {
-  type: typeof SET_WELLBORES_FETCHED_WELL_IDS;
-  wellIds: number[];
-}
-
-interface ResetQuery {
-  type: typeof RESET_QUERY;
-}
-
-interface SetWellsData {
-  type: typeof SET_WELLS_DATA;
-  wells: Well[];
-}
-
-interface SetWellbores {
-  type: typeof SET_WELLBORES;
-  data: { [wellId: number]: Wellbore[] };
-}
-
-interface SetSequences {
-  type: typeof SET_SEQUENCES;
-  wellId: number;
-  wellboreId: number;
-  sequences: WellSequence[];
-}
-
-interface SetSelectedWellId {
-  type: typeof SET_SELECTED_WELL_ID;
-  id: number;
-  value: boolean;
-}
-
-interface SetSearchPhrase {
-  type: typeof SET_SEARCH_PHRASE;
-  phrase: string;
-}
-
-interface SetHasSearched {
-  type: typeof SET_HAS_SEARCHED;
-  hasSearched: boolean;
-}
-
-interface SetSelectedWellboreIds {
-  type: typeof SET_SELECTED_WELLBORE_IDS;
-  ids: TableResults;
-}
-
-interface SetSelectedWellboreIdsWithWellId {
-  type: typeof SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID;
-  ids: TableResults;
-  wellId: number;
-}
-
 interface ToggleExpandedWellId {
   type: typeof TOGGLE_EXPANDED_WELL_ID;
   id: number;
@@ -208,7 +88,15 @@ interface ToggleExpandedWellId {
 
 interface ToggleSelectedWells {
   type: typeof TOGGLE_SELECTED_WELLS;
-  value: boolean;
+  wells: Well[];
+  isSelected: boolean;
+}
+
+interface ToggleSelectedWellboreOfWell {
+  type: typeof TOGGLE_SELECTED_WELLBORE_OF_WELL;
+  well: Well;
+  wellboreId: WellboreId;
+  isSelected: boolean;
 }
 
 interface SetLogType {
@@ -265,85 +153,21 @@ interface SetSelectedColumn {
   columns: string[];
 }
 
-interface SetHoveredWellbores {
-  type: typeof SET_HOVERED_WELLBORE_IDS;
-  wellId: number;
-  wellboreId?: number;
-}
-
-interface SetWellCardSelectedWellId {
-  type: typeof SET_WELL_CARD_SELECTED_WELL_ID;
-  wellId: number;
-}
-
-interface SetFavoriteHoveredOrCheckedWell {
-  type: typeof SET_FAVORITE_HOVERED_OR_CHECKED_WELLS;
-  wellIds: number[];
-}
-
-interface SetFavoriteId {
-  type: typeof SET_FAVORITE_ID;
-  favoriteId: string;
-}
-
-interface SetWellCardSelectedWellBoreId {
-  type: typeof SET_WELL_CARD_SELECTED_WELLBORE_ID;
-  wellboreIds: number[];
-}
-
-interface SetInspectWellboreContext {
-  type: typeof SET_INSECT_WELLBORES_CONTEXT;
-  context: InspectWellboreContext;
-}
-
-interface SetSelectedSecondaryWellboreIds {
-  type: typeof SET_SELECTED_SECONDARY_WELLBORE_IDS;
-  ids: TableResults;
-}
-
-interface SetSelectedSecondaryWellIds {
-  type: typeof SET_SELECTED_SECONDARY_WELL_IDS;
-  ids: TableResults;
-  reset: boolean;
-}
-
 export type WellSearchAction =
-  | SetIsSearching
-  | ResetQuery
-  | SetWellsData
-  | SetWellbores
-  | SetSequences
-  | SetSelectedWellId
-  | SetSearchPhrase
-  | SetHasSearched
-  | SetSelectedWellboreIds
   | ToggleExpandedWellId
   | ToggleSelectedWells
+  | ToggleSelectedWellboreOfWell
   | SetLogType
   | SetLogsData
   | SetWellboreAssets
   | SetWellboreDigitalRockSamples
   | SetGrainAnalysisData
-  | SetAllWellboresFetching
-  | SetWellboresFetched
   | AddSelectedColumn
   | RemoveSelectedColumn
-  | SetSelectedColumn
-  | SetSelectedWellboreIdsWithWellId
-  | SetHoveredWellbores
-  | SetInspectWellboreContext
-  | SetWellCardSelectedWellId
-  | SetWellCardSelectedWellBoreId
-  | SetFavoriteHoveredOrCheckedWell
-  | SetFavoriteId
-  | SetSelectedSecondaryWellIds
-  | SetSelectedSecondaryWellboreIds;
-interface WellQuery {
-  phrase: string;
-  hasSearched: boolean;
-}
+  | SetSelectedColumn;
 
-export interface Well extends Omit<SDKWell, 'wellbores'> {
+export interface Well extends Omit<SDKWell, 'id' | 'wellbores'> {
+  id: WellId;
   geometry?: Point;
   wellbores?: Wellbore[];
   description?: string;
@@ -398,13 +222,6 @@ export interface WellFilterMap {
 
 export interface WellMap {
   [key: number]: Well;
-}
-export interface WellBoreListMap {
-  [key: number]: Wellbore[];
-}
-
-export interface WellFilterOptionMap {
-  [key: number]: (WellFilterOption | WellFilterOptionValue)[];
 }
 
 export interface SequenceData {
@@ -513,8 +330,8 @@ export class SequenceRow extends Array<SequenceItem> {
   }
 }
 
-export type WellboreTrajectoryDataMap = {
-  [key: string]: TrajectoryData[];
+export type WellboreIdMap = {
+  [key: number]: number;
 };
 
 export type WellboreAssetIdMap = {

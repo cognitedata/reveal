@@ -6,8 +6,8 @@ import { getMockedStore } from '__test-utils/store.utils';
 
 import { Content } from '../Content';
 
-jest.mock('modules/wellSearch/selectors', () => ({
-  useSelectedOrHoveredWells: () => [
+jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
+  useWellInspectWells: () => [
     {
       id: '0',
       name: 'WellA',
@@ -20,14 +20,6 @@ jest.mock('modules/wellSearch/selectors', () => ({
       ],
     },
   ],
-  useActiveWellsWellboresIds: () => ({
-    wellIds: [0],
-    wellboreIds: [1],
-  }),
-  useSelectedSecondaryWellAndWellboreIds: () => ({
-    selectedSecondaryWellIds: { 0: true },
-    selectedSecondaryWellboreIds: { 1: true },
-  }),
 }));
 
 describe('Well Inspect Sidebar Content', () => {

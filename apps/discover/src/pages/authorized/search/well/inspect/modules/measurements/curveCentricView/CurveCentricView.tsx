@@ -5,9 +5,9 @@ import groupBy from 'lodash/groupBy';
 
 import { WhiteLoader } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
 import {
   MeasurementChartData,
   MeasurementType,
@@ -42,7 +42,7 @@ export const CurveCentricView: React.FC<Props> = ({
 
   const { data: config } = useWellConfig();
 
-  const selectedOrHoveredWellbores = useSecondarySelectedOrHoveredWellbores();
+  const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
   const userPreferredUnit = useUserPreferencesMeasurement();
 
@@ -52,7 +52,7 @@ export const CurveCentricView: React.FC<Props> = ({
 
   const updateChartData = () => {
     if (data) {
-      const wellboreChartData = selectedOrHoveredWellbores.map((wellbore) => {
+      const wellboreChartData = selectedInspectWellbores.map((wellbore) => {
         const chartData = formatChartData(
           data[wellbore.id],
           geomechanicsCurves,
@@ -82,7 +82,7 @@ export const CurveCentricView: React.FC<Props> = ({
   }, [
     JSON.stringify(data),
     isLoading,
-    selectedOrHoveredWellbores,
+    selectedInspectWellbores,
     pressureUnit,
     geomechanicsCurves,
     ppfgCurves,

@@ -30,7 +30,6 @@ import { useSearchState } from 'modules/search/selectors';
 import { setCategoryPage } from 'modules/sidebar/actions';
 import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { Modules, CategoryTypes } from 'modules/sidebar/types';
-import { initializeWellInspect } from 'modules/wellInspect/actions';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 
 import {
@@ -176,7 +175,6 @@ export const Search: React.FC = () => {
     batch(() => {
       dispatch(documentSearchActions.initialize());
       dispatch(wellSearchActions.initialize());
-      dispatch(initializeWellInspect());
     });
   }, []);
 

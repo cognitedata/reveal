@@ -2,8 +2,7 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { LOADING_TEXT } from 'components/emptyState/constants';
-import { initialState } from 'modules/wellSearch/reducer';
-import { useFavoriteWellResults, useWells } from 'modules/wellSearch/selectors';
+import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 import {
   FAVORITE_SET_NO_WELLS,
   REMOVE_FROM_SET_TEXT,
@@ -12,13 +11,15 @@ import {
 import { FavoriteWellsTable, Props } from '../FavoriteWellTable';
 
 jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
   useDispatch: () => jest.fn(),
 }));
 
-jest.mock('modules/wellSearch/selectors/asset/well.ts', () => ({
-  useFavoriteWellResults: jest.fn(),
-  useWells: jest.fn(),
+jest.mock('modules/wellSearch/hooks/useWellsFavoritesQuery', () => ({
+  useFavoriteWellResultQuery: jest.fn(),
+}));
+
+jest.mock('modules/wellSearch/hooks/useWellsQuerySelectors', () => ({
+  useWellsByIds: jest.fn(),
 }));
 
 describe('Favorite Wellbore table', () => {
@@ -28,7 +29,7 @@ describe('Favorite Wellbore table', () => {
   afterEach(async () => jest.clearAllMocks());
 
   it('should render table correctly', async () => {
-    (useFavoriteWellResults as jest.Mock).mockImplementation(() => ({
+    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
       data: [
         {
           matchingId: '308f0eb7-f40c-4df6-bc6e-303b8c9f97f0',
@@ -41,9 +42,7 @@ describe('Favorite Wellbore table', () => {
       ],
       isLoading: false,
     }));
-    (useWells as jest.Mock).mockImplementation(() => ({
-      ...initialState,
-    }));
+
     await defaultTestInit({
       wells: {},
       removeWell: jest.fn(),
@@ -57,12 +56,9 @@ describe('Favorite Wellbore table', () => {
   });
 
   it('should render the no well message', async () => {
-    (useFavoriteWellResults as jest.Mock).mockImplementation(() => ({
+    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
       data: [],
       isLoading: false,
-    }));
-    (useWells as jest.Mock).mockImplementation(() => ({
-      ...initialState,
     }));
 
     await defaultTestInit({
@@ -75,13 +71,11 @@ describe('Favorite Wellbore table', () => {
   });
 
   it('should render loading message when `isLoading` is true and no data', async () => {
-    (useFavoriteWellResults as jest.Mock).mockImplementation(() => ({
+    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
       data: [{}],
       isLoading: true,
     }));
-    (useWells as jest.Mock).mockImplementation(() => ({
-      ...initialState,
-    }));
+
     await defaultTestInit({
       wells: {},
       removeWell: jest.fn(),
@@ -91,7 +85,7 @@ describe('Favorite Wellbore table', () => {
   });
 
   it('should render remove button when hover the more option button', async () => {
-    (useFavoriteWellResults as jest.Mock).mockImplementation(() => ({
+    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
       data: [
         {
           matchingId: '308f0eb7-f40c-4df6-bc6e-303b8c9f97f0',
@@ -104,9 +98,7 @@ describe('Favorite Wellbore table', () => {
       ],
       isLoading: false,
     }));
-    (useWells as jest.Mock).mockImplementation(() => ({
-      ...initialState,
-    }));
+
     await defaultTestInit({
       wells: {},
       removeWell: jest.fn(),

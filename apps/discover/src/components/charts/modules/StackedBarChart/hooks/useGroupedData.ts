@@ -1,9 +1,7 @@
-import { useMemo } from 'react';
-
 import groupBy from 'lodash/groupBy';
 
 import { Accessors, GroupedData } from 'components/charts/types';
-import { useCompare } from 'hooks/useCompare';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { StackedBarChartOptions } from '../types';
 import { sumObjectsByKey } from '../utils';
@@ -29,7 +27,7 @@ export const useGroupedData = <T>({
     options,
   });
 
-  return useMemo(() => {
+  return useDeepMemo(() => {
     const groupedDataWithoutSummedValues = groupBy(processedData, yAccessor);
 
     if (!groupDataInsideBarsBy) return groupedDataWithoutSummedValues;
@@ -46,5 +44,5 @@ export const useGroupedData = <T>({
       }),
       {} as GroupedData<T>
     );
-  }, useCompare([processedData]));
+  }, [processedData]);
 };

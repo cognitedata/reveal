@@ -22,7 +22,7 @@ import {
 } from 'modules/documentPreview/utils';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
 import { FavoriteDocumentData } from 'modules/favorite/types';
-import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
+import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 import {
   DOWNLOAD_MESSAGE,
   DOWNLOADING,
@@ -62,10 +62,8 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
   const [currentFetchPage, setCurrentFetchPage] = useState(0);
 
   const { isLoading: isWellsLoading, isIdle: isWellsIdle } =
-    useFavoriteWellResults(
-      content?.wells
-        ? Object.keys(content?.wells).map((key) => Number(key))
-        : []
+    useFavoriteWellResultQuery(
+      content?.wells ? Object.keys(content.wells) : []
     );
 
   const [documentId, setDocumentId] = useState<string | undefined>(undefined);

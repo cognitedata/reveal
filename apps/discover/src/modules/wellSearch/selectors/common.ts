@@ -2,15 +2,14 @@ import { useMemo } from 'react';
 
 import { Sequence } from '@cognite/sdk';
 
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
+
 import { SequenceData } from '../types';
 
-import {
-  useSelectedOrHoveredWellboreIds,
-  useWellboreData,
-} from './asset/wellbore';
+import { useWellboreData } from './asset/wellbore';
 
 export const usePristineIds = () => {
-  const wbIds = useSelectedOrHoveredWellboreIds();
+  const wbIds = useWellInspectSelectedWellboreIds();
   const wellboreData = useWellboreData();
   return useMemo(() => {
     const logPristineIds: number[] = [];

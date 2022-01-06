@@ -3,8 +3,8 @@ import { useQuery } from 'react-query';
 import { Sequence } from '@cognite/sdk';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
+import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
-import { useWellboreAssetIdMap } from '../selectors';
 import {
   getSequencesByAssetIds as service,
   getSequenceRowData as rowService,
@@ -15,7 +15,7 @@ import { useWellConfig } from './useWellConfig';
 
 export const useLogsPPFGQuery = (wellboreId: number | undefined) => {
   const { data: config } = useWellConfig();
-  const wellboreAssetIdMap = useWellboreAssetIdMap();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const filter = config?.ppfg?.metadata?.filter;
   return useQuery(
     [WELL_QUERY_KEY.LOGS_PPFGS, wellboreId],

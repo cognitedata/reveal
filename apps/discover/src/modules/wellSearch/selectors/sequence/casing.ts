@@ -9,16 +9,15 @@ import { LOG_CASING, LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
 import { FEET } from 'constants/units';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { convertObject } from 'modules/wellSearch/utils';
 import { CasingData } from 'pages/authorized/search/well/inspect/modules/casing/interfaces';
 
-import { useSecondarySelectedOrHoveredWells } from '../asset/well';
-
 import { casingAccessorsToFixedDecimal } from './constants';
 
 export const useSelectedWellboresCasingsData = () => {
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wells = useWellInspectSelectedWells();
   const [startPreparationTimer, stopPreparationTimer] = useMetricLogger(
     LOG_CASING,
     TimeLogStages.Preperation,

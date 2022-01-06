@@ -20,8 +20,8 @@ import { initialState as mapState } from 'modules/map/reducer';
 import { initialState as searchState } from 'modules/search/reducer';
 import { initialState as seismicState } from 'modules/seismicSearch/reducer';
 import { initialState as userState } from 'modules/user/reducer';
-import { initialState as wellState } from 'modules/wellSearch/reducer';
-import { SIDEBAR_SIZE } from 'pages/authorized/search/well/inspect/Sidebar/constants';
+import { initialState as wellInspectState } from 'modules/wellInspect/reducer';
+import { initialState as wellSearchState } from 'modules/wellSearch/reducer';
 
 import { testTenant } from './testdata.utils';
 
@@ -55,14 +55,12 @@ export const getInitialStore: () => PartialStoreState = () => {
     map: { ...mapState },
     documentSearch: { ...documentSearchState },
     search: { ...searchState },
-    wellSearch: { ...wellState },
+    wellSearch: { ...wellSearchState },
     user: { ...userState, user: { id: '1' } },
     sidebar: getMockSidebarState(),
     resultPanel: {
       sortBy: {},
     },
-    wellInspect: {
-      inspectSidebarWidth: SIDEBAR_SIZE.min,
-    },
+    wellInspect: { ...wellInspectState },
   };
 };

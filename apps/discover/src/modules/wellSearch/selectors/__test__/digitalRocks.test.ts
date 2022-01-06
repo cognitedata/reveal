@@ -2,16 +2,44 @@ import { renderHook } from '@testing-library/react-hooks';
 import { AppStore } from 'core';
 
 import { getMockDigitalRockAsset } from '__test-utils/fixtures/digitalRocks';
-import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
+import {
+  mockedWellsFixture,
+  mockedWellsFixtureWellbores,
+  mockedWellsFixtureWellIds,
+  mockedWellStateWithSelectedWells,
+} from '__test-utils/fixtures/well';
 import { testWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
+import {
+  useWellInspectSelectedWellboreIds,
+  useWellInspectSelectedWellbores,
+  useWellInspectSelectedWells,
+} from 'modules/wellInspect/hooks/useWellInspect';
 
 import {
   useDigitalRocksSamples,
   useSelectedWellBoresDigitalRocks,
 } from '../asset/digitalRocks';
 
+jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
+  useWellInspectSelectedWells: jest.fn(),
+  useWellInspectSelectedWellbores: jest.fn(),
+  useWellInspectSelectedWellboreIds: jest.fn(),
+}));
+
 describe('useSelectedWellBoresDigitalRocks', () => {
+  beforeEach(() => {
+    (useWellInspectSelectedWells as jest.Mock).mockImplementation(
+      () => mockedWellsFixture
+    );
+    (useWellInspectSelectedWellbores as jest.Mock).mockImplementation(
+      () => mockedWellsFixtureWellbores
+    );
+    (useWellInspectSelectedWellboreIds as jest.Mock).mockImplementation(
+      () => mockedWellsFixtureWellIds
+    );
+  });
+
   const renderHookWithStore = async (store: AppStore) => {
     const { result, waitForNextUpdate } = renderHook(
       () => useSelectedWellBoresDigitalRocks(),

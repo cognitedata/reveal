@@ -1,8 +1,9 @@
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
-import { batch, connect, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useMemo } from 'react';
+import { batch, useDispatch } from 'react-redux';
 
 import compact from 'lodash/compact';
+import head from 'lodash/head';
+import map from 'lodash/map';
 import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 
@@ -13,16 +14,17 @@ import { changeUnits } from '_helpers/units/utils';
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
-import { Options, Table, RowProps } from 'components/tablev3';
-import navigation from 'constants/navigation';
+import { Table, RowProps } from 'components/tablev3';
+import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
+import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useFavoriteWellIds } from 'modules/wellSearch/hooks/useFavoriteWellIds';
+import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
-import { getGroupedWellboresByWellIds } from 'modules/wellSearch/service/asset/wellbore';
-import { Well, InspectWellboreContext } from 'modules/wellSearch/types';
+import { Well } from 'modules/wellSearch/types';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
@@ -37,37 +39,19 @@ import { WellsContainer } from './elements';
 import { WellboreResultTable } from './WellBoreResultTable';
 import { WellsBulkActions } from './WellsBulkActions';
 
-const WellResult: React.FC<DispatchProps> = (props) => {
-  const { selectedWellIds, expandedWellIds, selectedColumns, wells } =
-    useWells();
+export const WellResultTable: React.FC = () => {
+  const wells = useWellQueryResultWells();
+
+  const { selectedWellIds, expandedWellIds, selectedColumns } = useWells();
+
   const indeterminateWellIds = useIndeterminateWells();
   const favoriteWellIds = useFavoriteWellIds();
-  const history = useHistory();
   const metrics = useGlobalMetrics('wells');
-  const {
-    dispatchSetSelectedWell,
-    dispatchToggleExpandedWell,
-    dispatchToggleSelectedWells,
-    dispatchGetAllWellbores,
-    dispatchSetHoveredWellbores,
-    dispatchSetWellbores,
-    dispatchSetInspectContext,
-    dispatchSetWellboresFetched,
-  } = props;
-
   const userPreferredUnit = useUserPreferencesMeasurement();
-
   const dispatch = useDispatch();
-  const [options] = useState<Options>(WellResultTableOptions);
+  const navigateToWellInspect = useNavigateToWellInspect();
 
-  useEffect(() => {
-    const wellboresFetchedWellIds = wells
-      .filter((well) => well.wellbores)
-      .map((well) => well.id);
-    dispatchSetWellboresFetched(wellboresFetchedWellIds);
-  }, [wells]);
-
-  const columns = React.useMemo(
+  const columns = useDeepMemo(
     () =>
       sortBy(
         compact(
@@ -80,8 +64,6 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     [selectedColumns, userPreferredUnit]
   );
 
-  const [accessorsToFixedDecimal] = useState(['waterDepth.value']);
-
   const unitChangeAcceessors = useMemo(
     () => [
       {
@@ -93,12 +75,12 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     [userPreferredUnit]
   );
 
-  const data = useMemo(
+  const data = useDeepMemo(
     () =>
       wells.map((well) => {
         const item = convertToFixedDecimal(
           changeUnits(well, unitChangeAcceessors),
-          accessorsToFixedDecimal
+          ['waterDepth.value']
         );
 
         // format the date according to the default format
@@ -110,9 +92,14 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     [wells, unitChangeAcceessors]
   );
 
+  useDeepEffect(() => {
+    const firstWell = head(wells);
+    if (firstWell) dispatch(wellSearchActions.toggleExpandedWell(firstWell));
+  }, [wells]);
+
   const handleDoubleClick = useCallback(
-    (row: RowProps & { isSelected: boolean }) => {
-      const well = row.original as Well;
+    (row: RowProps<Well> & { isSelected: boolean }) => {
+      const well = row.original;
       if (well.geometry) {
         dispatch(zoomToCoords(well.geometry));
       }
@@ -121,28 +108,34 @@ const WellResult: React.FC<DispatchProps> = (props) => {
   );
 
   const handleRowClick = useCallback(
-    (row: RowProps & { isSelected: boolean }) => {
-      const well = row.original as Well;
+    (row: RowProps<Well> & { isSelected: boolean }) => {
+      const well = row.original;
       const point = well.geometry;
       batch(() => {
+        dispatch(wellSearchActions.toggleExpandedWell(well));
         dispatch(moveToCoords(point));
-        dispatchToggleExpandedWell(well);
       });
     },
     []
   );
 
-  /**
-   * Select or deselect all wells
-   */
-  const handleRowsSelect = (value: boolean) => {
-    batch(() => {
-      dispatchToggleSelectedWells(value);
-      if (value) {
-        dispatchGetAllWellbores();
-      }
-    });
-  };
+  const handleRowSelect = useCallback(
+    (row: RowProps<Well>, isSelected: boolean) => {
+      const well = row.original;
+      batch(() => {
+        dispatch(wellSearchActions.toggleSelectedWells([well], isSelected));
+        dispatch(wellSearchActions.toggleExpandedWell(well));
+      });
+    },
+    []
+  );
+
+  const handleRowsSelect = useDeepCallback(
+    (isSelected: boolean) => {
+      dispatch(wellSearchActions.toggleSelectedWells(wells, isSelected));
+    },
+    [wells]
+  );
 
   const renderRowSubComponent = useCallback(({ row }) => {
     return <WellboreResultTable well={row.original as Well} />;
@@ -169,39 +162,22 @@ const WellResult: React.FC<DispatchProps> = (props) => {
   /**
    * When 'View' button on well head row is clicked
    */
-  const onInspectWellheadClick = (row: RowProps) => {
-    const currentWell = row.original as Well;
+  const handleViewClick = (well: Well) => {
     metrics.track('click-inspect-wellhead');
-    const isWellContainWellbores = wells.some(
-      (well) => well.id === currentWell.id && well.wellbores
-    );
-    // If well head contain wellbores navigate to inspect if not fetch wellbores first and navigate to inspect
-    if (!isWellContainWellbores) {
-      getGroupedWellboresByWellIds([currentWell.id]).then((groupedData) => {
-        batch(() => {
-          dispatchSetWellbores(groupedData);
-          dispatchSetHoveredWellbores(currentWell.id);
-          dispatchSetInspectContext(InspectWellboreContext.HOVERED_WELLBORES);
-        });
-        history.push(navigation.SEARCH_WELLS_INSPECT);
-      });
-    } else {
-      batch(() => {
-        dispatchSetHoveredWellbores(currentWell.id);
-        dispatchSetInspectContext(InspectWellboreContext.HOVERED_WELLBORES);
-      });
-      history.push(navigation.SEARCH_WELLS_INSPECT);
-    }
+    navigateToWellInspect({
+      wellIds: [well.id],
+      wellboreIds: map(well.wellbores, 'id'),
+    });
   };
 
   const renderRowHoverComponent: React.FC<{
-    row: RowProps;
+    row: RowProps<Well>;
   }> = ({ row }) => {
     return (
       <FlexRow>
         <ViewButton
           data-testid="button-view-document"
-          onClick={() => onInspectWellheadClick(row)}
+          onClick={() => handleViewClick(row.original)}
           hideIcon
         />
         <Dropdown
@@ -211,7 +187,7 @@ const WellResult: React.FC<DispatchProps> = (props) => {
               <Menu.Submenu
                 content={
                   <AddToFavoriteSetMenu
-                    wellIds={[(row.original as Well).id]}
+                    wellIds={[row.original.id]}
                     setFavored={noop}
                   />
                 }
@@ -240,9 +216,9 @@ const WellResult: React.FC<DispatchProps> = (props) => {
         columns={columns}
         handleRowClick={handleRowClick}
         handleDoubleClick={handleDoubleClick}
-        handleRowSelect={dispatchSetSelectedWell}
+        handleRowSelect={handleRowSelect}
         handleRowsSelect={handleRowsSelect}
-        options={options}
+        options={WellResultTableOptions}
         renderRowSubComponent={renderRowSubComponent}
         selectedIds={selectedWellIds}
         expandedIds={expandedWellIds}
@@ -254,29 +230,3 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     </WellsContainer>
   );
 };
-
-function dispatchToProps(dispatch: any) {
-  return {
-    dispatchToggleExpandedWell: (well: Well) =>
-      dispatch(wellSearchActions.toggleExpandedWell(well)),
-    dispatchSetSelectedWell: (row: RowProps<Well>, nextState: boolean) => {
-      dispatch(wellSearchActions.setSelectedWell(row.original, nextState));
-    },
-    dispatchToggleSelectedWells: (value: boolean) =>
-      dispatch(wellSearchActions.toggleSelectedWells(value)),
-    dispatchGetAllWellbores: () =>
-      dispatch(wellSearchActions.getAllWellbores()),
-    dispatchSetHoveredWellbores: (wellId: number) =>
-      dispatch(wellSearchActions.setHoveredWellbores(wellId)),
-    dispatchSetWellbores: (groupedData: any) =>
-      dispatch(wellSearchActions.setWellbores(groupedData)),
-    dispatchSetInspectContext: (context: InspectWellboreContext) =>
-      dispatch(wellSearchActions.setWellboreInspectContext(context)),
-    dispatchSetWellboresFetched: (wellIds: number[]) =>
-      dispatch(wellSearchActions.setWellboresFetched(wellIds)),
-  };
-}
-type DispatchProps = ReturnType<typeof dispatchToProps>;
-export const WellResultTable = React.memo(
-  connect(null, dispatchToProps)(WellResult)
-);

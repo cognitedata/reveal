@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { batch, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
 
 import isEmpty from 'lodash/isEmpty';
@@ -16,16 +15,14 @@ import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/tablev3';
-import navigation from 'constants/navigation';
+import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useFavoriteWellIds } from 'modules/wellSearch/hooks/useFavoriteWellIds';
-import { useWells, useWellbores } from 'modules/wellSearch/selectors';
-import {
-  Wellbore,
-  Well,
-  InspectWellboreContext,
-} from 'modules/wellSearch/types';
+import { useWellQueryResultWellbores } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
+import { useWells } from 'modules/wellSearch/selectors';
+import { Wellbore, Well } from 'modules/wellSearch/types';
 import {
   WellboreColumns,
   WellboreSubtableOptions,
@@ -36,7 +33,6 @@ import { FlexRow } from 'styles/layout';
 import { NO_WELLBORES_FOUND } from '../constants';
 
 import { OverlayCellPadding } from './elements';
-import { LoadingWellbores } from './LoadingWellbores';
 
 interface Props {
   well: Well;
@@ -49,115 +45,51 @@ export const Message = styled.div`
   padding: 0 12px;
 `;
 
-const WellboreResult: React.FC<Props> = ({ well }) => {
-  const { isLoading, wellbores } = useWellbores([well.id]);
+export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
+  const wellbores = useWellQueryResultWellbores([well.id]);
 
-  const { selectedWellboreIds, selectedWellIds } = useWells();
+  const { selectedWellboreIds } = useWells();
   const favoriteWellIds = useFavoriteWellIds();
+  const navigateToWellInspect = useNavigateToWellInspect();
 
   const dispatch = useDispatch();
   const { t } = useTranslation('WellData');
-  const history = useHistory();
   const metrics = useGlobalMetrics('wells');
 
-  const [columns] = useState(WellboreColumns);
-
-  const getSortedWellbores = (wellboreList: Wellbore[] | undefined) =>
-    wellboreList ? sortBy(wellboreList, 'name') : [];
-
-  const data = React.useMemo(() => getSortedWellbores(wellbores), [wellbores]);
+  const data = useDeepMemo(
+    () => (wellbores ? sortBy(wellbores, 'name') : []),
+    [wellbores]
+  );
 
   const handleRowSelect = useCallback(
-    (row: RowProps<Wellbore>, value: boolean) => {
+    (row: RowProps<Wellbore>, isSelected: boolean) => {
       dispatch(
-        wellSearchActions.setSelectedWellboresWithWell(
-          { [row.original.id]: value },
-          well.id
-        )
+        wellSearchActions.toggleSelectedWellboreOfWell({
+          well,
+          wellboreId: row.original.id,
+          isSelected,
+        })
       );
     },
     []
   );
 
-  const handleRowsSelect = useCallback(
-    (value: boolean) => {
-      batch(() => {
-        dispatch(
-          wellSearchActions.setSelectedWellboresWithWell(
-            getWellboreIds(value),
-            well.id
-          )
-        );
-        // Select well selected on wellbore selection
-        dispatch(wellSearchActions.setSelectedWell(well, value));
-      });
-    },
-    [wellbores]
-  );
-
-  const getWellboreIds = (isSelected: boolean) => {
-    const ids: { [key: string]: boolean } = {};
-    if (wellbores) {
-      wellbores.forEach((wellbore) => {
-        ids[wellbore.id] = isSelected;
-      });
-    }
-    return ids;
-  };
-
-  useEffect(() => {
-    if (
-      !isLoading &&
-      wellbores.length &&
-      !checkAnyWellboreSelected &&
-      selectedWellIds[well.id]
-    ) {
-      handleRowsSelect(true);
-    }
-  }, [isLoading, wellbores]);
-
-  // This checks any wellbore is currently selected or previously selected.
-  const checkAnyWellboreSelected = useMemo(
-    () => data.some((wb) => !isUndefined(selectedWellboreIds[wb.id])),
-    [data, selectedWellboreIds]
-  );
-
-  if (isLoading) {
-    return <LoadingWellbores />;
-  }
-
-  if (data.length === 0) {
-    return <Message>{t(NO_WELLBORES_FOUND)}</Message>;
-  }
-
   /**
    * When 'View' button on well bore row is clicked
    */
-  const handleViewClick = (row: Row) => {
-    const wellboreId = (row.original as Wellbore).id;
+  const handleViewClick = (wellbore: Wellbore) => {
     metrics.track('click-inspect-wellbore');
-    batch(() => {
-      /**
-       * wellbore is already fetched when row is extracted so we have directly navigate to inspect view
-       */
-      dispatch(
-        wellSearchActions.setWellboreInspectContext(
-          InspectWellboreContext.HOVERED_WELLBORES
-        )
-      );
-      dispatch(wellSearchActions.setHoveredWellbores(well.id, wellboreId));
-    });
-    history.push(navigation.SEARCH_WELLS_INSPECT);
+    navigateToWellInspect({ wellIds: [well.id], wellboreIds: [wellbore.id] });
   };
 
-  const renderHoverRowSubComponent = ({ row }: { row: Row }) => {
+  const renderHoverRowSubComponent = ({ row }: { row: Row<Wellbore> }) => {
     return (
       <FlexRow>
         <OverlayCellPadding>
           <FlexRow>
             <ViewButton
               data-testid="button-view-wellbore"
-              onClick={() => handleViewClick(row)}
+              onClick={() => handleViewClick(row.original)}
               hideIcon
             />
             <Dropdown
@@ -203,14 +135,18 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
 
     return <FavoriteStarIcon />;
   };
+
+  if (data.length === 0) {
+    return <Message>{t(NO_WELLBORES_FOUND)}</Message>;
+  }
+
   return (
     <Table<Wellbore>
       id="wellbore-result-table"
       indent
       data={data}
-      columns={columns}
+      columns={WellboreColumns}
       handleRowSelect={handleRowSelect}
-      handleRowsSelect={handleRowsSelect}
       options={WellboreSubtableOptions}
       selectedIds={selectedWellboreIds}
       renderRowOverlayComponent={renderRowOverlayComponent}
@@ -218,6 +154,4 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
       hideHeaders
     />
   );
-};
-
-export const WellboreResultTable = React.memo(WellboreResult);
+});

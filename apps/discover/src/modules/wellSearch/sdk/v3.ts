@@ -4,6 +4,8 @@ import {
   WellItems,
 } from '@cognite/sdk-wells-v3';
 
+import { WellId } from '../types';
+
 import { toIdentifier, toIdentifierItems } from './utils';
 
 let client: CogniteWellsClient;
@@ -26,7 +28,7 @@ export const getWellSDKClient = () => {
   return client;
 };
 
-export const getWellByMatchingId = async (id: number) => {
+export const getWellByMatchingId = async (id: WellId) => {
   return (
     client.wells.retrieveMultiple(
       toIdentifierItems([toIdentifier(id)])

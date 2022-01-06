@@ -1,13 +1,14 @@
 import { screen, cleanup, fireEvent } from '@testing-library/react';
 
-import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
+import {
+  getMockWell,
+  mockedWellStateWithSelectedWells,
+} from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { clearSelectedWell } from 'modules/map/actions';
-import {
-  getWellByWellId,
-  getWellboresByWellIds,
-} from 'modules/wellSearch/service';
+import { useWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { getWellboresByWellIds } from 'modules/wellSearch/service';
 
 import { WellPreviewCard } from '../WellPreviewCard';
 
@@ -22,11 +23,15 @@ jest.mock('modules/wellSearch/service', () => ({
   ),
 }));
 
+jest.mock('modules/wellSearch/hooks/useWellsQuerySelectors', () => ({
+  useWellboresOfWellById: jest.fn(),
+  useWellById: jest.fn(),
+}));
+
 const store = getMockedStore(mockedWellStateWithSelectedWells);
 
 describe('Well Preview Card', () => {
   afterAll(() => {
-    (getWellByWellId as jest.Mock).mockClear();
     (getWellboresByWellIds as jest.Mock).mockClear();
   });
 
@@ -37,7 +42,9 @@ describe('Well Preview Card', () => {
   };
 
   it('should render Well Preview Card with well when wellId is provided', async () => {
-    const selectedWell = mockedWellStateWithSelectedWells.wellSearch.wells[0];
+    const selectedWell = getMockWell();
+
+    (useWellById as jest.Mock).mockImplementation(() => selectedWell);
 
     getWellPreviewCard({
       wellId: selectedWell.id,

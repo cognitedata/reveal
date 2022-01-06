@@ -1,10 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { batch, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
+import map from 'lodash/map';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
@@ -12,22 +11,12 @@ import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import { Options, Table, RowProps } from 'components/tablev3';
-import navigation from 'constants/navigation';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
-import { wellSearchActions } from 'modules/wellSearch/actions';
-import {
-  useMutateFavoriteWellPatchWellbores,
-  useMutateFavoriteWellUpdate,
-} from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
-import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
-import {
-  InspectWellboreContext,
-  Well,
-  WellboreId,
-  WellId,
-} from 'modules/wellSearch/types';
+import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
+import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
+import { Well, WellboreId, WellId } from 'modules/wellSearch/types';
 import { wellColumns, WellResultTableOptions } from 'pages/authorized/constant';
 import {
   FAVORITE_SET_NO_WELLS,
@@ -52,12 +41,9 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   favoriteId,
 }) => {
   const { t } = useTranslation('Favorites');
-  const history = useHistory();
-  const dispatch = useDispatch();
   const [wellIds, setWellIds] = useState<WellId[]>([]);
-  const { data, isLoading } = useFavoriteWellResults(wellIds);
-  const { mutate } = useMutateFavoriteWellPatchWellbores();
-  const { mutate: mutateWells } = useMutateFavoriteWellUpdate();
+  const { data, isLoading } = useFavoriteWellResultQuery(wellIds);
+  const navigateToWellInspect = useNavigateToWellInspect();
 
   const [tableOptions] = useState<Options>(WellResultTableOptions);
   const [expandedIds, setExpandedIds] = useState<SelectedMap>({});
@@ -69,9 +55,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const [selectedWellboreIdsWithWellId, setSelectedWellboreIdsWithWellId] =
     useState<FavoriteContentWells>({});
 
-  useDeepEffect(() => {
-    setWellIds(wells ? Object.keys(wells) : []);
-  }, [wells]);
+  useDeepEffect(() => setWellIds(wells ? Object.keys(wells) : []), [wells]);
 
   useDeepEffect(() => {
     setWellsData(data || []);
@@ -81,10 +65,6 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     () => Object.values(wellColumns || []),
     [wellColumns]
   );
-
-  useDeepEffect(() => {
-    mutateWells(wellIds);
-  }, [wellIds]);
 
   const handleRowClick = useCallback(
     (row: RowProps<Well> & { isSelected: boolean }) => {
@@ -214,54 +194,11 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   };
 
   const handleHoverViewBtnClick = async (row: RowProps<Well>) => {
-    const currentWell: Well = row.original;
-    const isWellboresLoadedForWell = wellsData.some(
-      (well) => well.id === currentWell.id && well.wellbores
-    );
-
-    await updateFavoriteStateInStore(currentWell.id, isWellboresLoadedForWell);
-  };
-
-  const updateFavoriteStateInStore = async (
-    wellId: number,
-    isWellboresLoadedForWell: boolean
-  ) => {
-    handleUpdatingFavoriteWellState(
-      [wellId],
-      InspectWellboreContext.FAVORITE_HOVERED_WELL
-    );
-
-    if (!isWellboresLoadedForWell) {
-      await loadWellboresAndUpdateQueryCache(wellId);
-      return;
-    }
-    navigateToInspectPanel();
-  };
-
-  const handleUpdatingFavoriteWellState = (
-    wellIds: number[],
-    inspectWellboreContext: InspectWellboreContext
-  ) => {
-    batch(() => {
-      dispatch(wellSearchActions.setFavoriteHoveredOrCheckedWells(wellIds));
-      dispatch(
-        wellSearchActions.setWellboreInspectContext(inspectWellboreContext)
-      );
-      dispatch(wellSearchActions.setSelectedFavoriteId(favoriteId));
+    const well = row.original;
+    navigateToWellInspect({
+      wellIds: [well.id],
+      wellboreIds: map(well.wellbores, 'id'),
     });
-  };
-
-  const loadWellboresAndUpdateQueryCache = async (wellId: number) => {
-    await mutate({
-      updatingWellIds: [wellId],
-      successCallback: () => {
-        navigateToInspectPanel();
-      },
-    });
-  };
-
-  const navigateToInspectPanel = () => {
-    history.push(navigation.SEARCH_WELLS_INSPECT);
   };
 
   const getEmptyStateTitle = () => {
@@ -333,7 +270,6 @@ export const FavoriteWellsTable: React.FC<Props> = ({
         deselectAll={() => handleRowsSelect(false)}
         favoriteId={favoriteId}
         favoriteWells={wells}
-        handleUpdatingFavoriteWellState={handleUpdatingFavoriteWellState}
       />
 
       <DeleteWellFromSetModal

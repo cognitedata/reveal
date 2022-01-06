@@ -4,12 +4,12 @@ import { useQuery, useQueryClient } from 'react-query';
 import { LOG_CASING, LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
-
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
 import {
-  useActiveWellboresSourceExternalIdMap,
-  useSelectedOrHoveredWellboreIds,
-  useWellboreAssetIdMap,
-} from '../selectors';
+  useWellInspectWellboreAssetIdMap,
+  useWellInspectWellboreExternalIdMap,
+} from 'modules/wellInspect/hooks/useWellInspectIdMap';
+
 import { getCasingByWellboreIds as service } from '../service';
 import { WellboreSequencesMap } from '../types';
 import { trimCachedData } from '../utils/common';
@@ -19,10 +19,10 @@ import { useWellConfig } from './useWellConfig';
 
 export const useSelectedWellboresCasingsQuery = () => {
   const enabledWellSDKV3 = useEnabledWellSdkV3();
-  const wellboreIds = useSelectedOrHoveredWellboreIds();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
   const { data: config } = useWellConfig();
-  const wellboreAssetIdMap = useWellboreAssetIdMap();
-  const wellboresSourceExternalIdMap = useActiveWellboresSourceExternalIdMap();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
+  const wellboresSourceExternalIdMap = useWellInspectWellboreExternalIdMap();
   const cache = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
   const metricLogger = useMetricLogger(

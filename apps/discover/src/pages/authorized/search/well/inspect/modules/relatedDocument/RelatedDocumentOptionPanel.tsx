@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 
 import { AvailableColumn } from 'modules/documentSearch/types';
 import { getAvailableColumns } from 'modules/documentSearch/utils/columns';
-import { setSelectedRelatedDocumentColumns } from 'modules/wellInspect/actions';
+import { wellInspectActions } from 'modules/wellInspect/actions';
 import { useWellInspect } from 'modules/wellInspect/selectors';
 // import { toBooleanMap } from 'modules/wellSearch/utils';
 import OptionsPanel from 'pages/authorized/search/document/header/options/OptionsPanel';
@@ -16,7 +16,7 @@ export const RelatedDocumentOptionPanel: React.FC = () => {
 
   const handleColumnSelection = (column: AvailableColumn) => {
     dispatch(
-      setSelectedRelatedDocumentColumns({
+      wellInspectActions.setSelectedRelatedDocumentColumns({
         [column.field]: !column.selected,
       })
     );

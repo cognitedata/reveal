@@ -16,16 +16,6 @@ jest.mock('components/toast', () => ({
   showErrorMessage: jest.fn(),
 }));
 
-// jest.mock('modules/wellSearch/selectors', () => {
-//   const actual = jest.requireActual('modules/wellSearch/selectors');
-//   return {
-//     ...actual,
-//     useCasingsForTable: jest.fn(),
-//     // useSecondarySelectedOrHoveredWells: jest.fn(),
-//     // useNptEventsForCasings: jest.fn(),
-//   };
-// });
-
 const defaultStore = {
   filterData: {
     casing: {

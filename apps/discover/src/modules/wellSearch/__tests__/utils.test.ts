@@ -6,7 +6,6 @@ import { Sequence } from '@cognite/sdk';
 import {
   getMockWell,
   mockedWellboreResultFixture,
-  mockedWellResultFixture,
   mockWellboreOptions,
 } from '__test-utils/fixtures/well';
 import {
@@ -23,7 +22,6 @@ import {
 import { TrajectoryColumnR, Well } from '../types';
 import {
   convertObject,
-  getPrestineWellIds,
   mapWellboresToThreeD,
   toBooleanMap,
   getRangeLimitInUnit,
@@ -88,22 +86,6 @@ describe('convertObject builder', () => {
     expect(Number(get(initialObject, 'metadata.field1')).toFixed(0)).toEqual(
       field1.toString()
     );
-  });
-
-  it('should return prestine well ids', () => {
-    const selectedIds = getPrestineWellIds(
-      { '1234': true },
-      mockedWellResultFixture
-    );
-
-    expect(selectedIds[0]).toEqual('1234');
-
-    const deSelectedIds = getPrestineWellIds(
-      { '1234': false },
-      mockedWellResultFixture
-    );
-
-    expect(deSelectedIds.length).toEqual(0);
   });
 
   it('should change the value to closest integer', () => {

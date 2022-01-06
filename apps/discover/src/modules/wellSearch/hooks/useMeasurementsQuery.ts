@@ -7,11 +7,9 @@ import {
 } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
-import {
-  useSelectedOrHoveredWellboreIds,
-  useWellboreAssetIdMap,
-} from '../selectors';
 import { getMeasurementsByWellboreIds as service } from '../service';
 import { WellboreMeasurementsMap } from '../types';
 import { trimCachedData } from '../utils/common';
@@ -19,9 +17,9 @@ import { trimCachedData } from '../utils/common';
 import { useWellConfig } from './useWellConfig';
 
 export const useMeasurementsQuery = () => {
-  const wellboreIds = useSelectedOrHoveredWellboreIds();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
   const { data: config } = useWellConfig();
-  const wellboreAssetIdMap = useWellboreAssetIdMap();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const cache = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
   const metricLogger = useMetricLogger(

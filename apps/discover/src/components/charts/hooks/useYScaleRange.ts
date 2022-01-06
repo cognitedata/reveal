@@ -1,10 +1,8 @@
-import { useMemo } from 'react';
-
 import compact from 'lodash/compact';
 import get from 'lodash/get';
 import uniq from 'lodash/uniq';
 
-import { useCompare } from 'hooks/useCompare';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { ScaleRange } from '../types';
 import { getRangeScaleFactor } from '../utils';
@@ -20,7 +18,7 @@ export const useYScaleRange = <T>({
 }): ScaleRange => {
   const [scaleFactorMin, scaleFactorMax] = getRangeScaleFactor(scaleFactor);
 
-  return useMemo(() => {
+  return useDeepMemo(() => {
     const yAxisValues = uniq(
       compact(data.map((dataElement) => get(dataElement, yAccessor)))
     );
@@ -29,5 +27,5 @@ export const useYScaleRange = <T>({
     const max = Math.ceil(Math.max(...yAxisValues) * scaleFactorMax);
 
     return [min, max];
-  }, useCompare([data]));
+  }, [data]);
 };

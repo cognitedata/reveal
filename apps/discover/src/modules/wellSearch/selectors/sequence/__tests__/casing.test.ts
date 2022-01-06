@@ -2,11 +2,15 @@ import { renderHook } from '@testing-library/react-hooks';
 import { AppStore } from 'core';
 
 import { getMockCasings } from '__test-utils/fixtures/casing';
-import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
+import {
+  mockedWellsFixture,
+  mockedWellStateWithSelectedWells,
+} from '__test-utils/fixtures/well';
 import { testWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { METER, FEET } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 
 import { useCasingsForTable, useSelectedWellboresCasingsData } from '../casing';
@@ -19,7 +23,17 @@ jest.mock('hooks/useUserPreferences', () => ({
   useUserPreferencesMeasurement: jest.fn(),
 }));
 
+jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
+  useWellInspectSelectedWells: jest.fn(),
+}));
+
 describe('casing selectors (useSelectedWellboresCasingsData)', () => {
+  beforeEach(() => {
+    (useWellInspectSelectedWells as jest.Mock).mockImplementation(
+      () => mockedWellsFixture
+    );
+  });
+
   const renderHookWithStore = async (store: AppStore) => {
     const { result, waitForNextUpdate } = renderHook(
       () => useSelectedWellboresCasingsData(),
@@ -78,6 +92,12 @@ describe('casing selectors (useSelectedWellboresCasingsData)', () => {
 });
 
 describe('casing selectors (useCasingsForTable)', () => {
+  beforeEach(() => {
+    (useWellInspectSelectedWells as jest.Mock).mockImplementation(
+      () => mockedWellsFixture
+    );
+  });
+
   const renderHookWithStore = async (store: AppStore) => {
     const { result, waitForNextUpdate } = renderHook(
       () => useCasingsForTable(),

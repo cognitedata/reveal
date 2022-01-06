@@ -1,8 +1,8 @@
-import { RefObject, useCallback, useEffect, useMemo, useState } from 'react';
+import { RefObject, useState } from 'react';
 
 import { Accessors, Dimensions, Margins } from 'components/charts/types';
-import { useCompare } from 'hooks/useCompare';
 import { useDebounce } from 'hooks/useDebounce';
+import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { getStylePropertyValue } from '../utils';
 
@@ -44,7 +44,7 @@ export const useZoomableChart = <T>({
     yScaleDomainCustom
   );
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (!chartRef) return;
 
     const height = spacings.y * yScaleDomain.length;
@@ -60,12 +60,12 @@ export const useZoomableChart = <T>({
     setInitialChartDimensions(dimensions);
     setChartDimensions(dimensions);
     setZoomFactor(1);
-  }, useCompare([yScaleDomain, xScaleMaxValue]));
+  }, [yScaleDomain, xScaleMaxValue]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     setDisableZoomIn(chartDimensions.width >= spacings.x * xScaleMaxValue);
     setDisableZoomOut(chartDimensions.width === initialChartDimensions.width);
-  }, useCompare([chartDimensions]));
+  }, [chartDimensions]);
 
   const zoomIn = useDebounce(() => {
     setChartDimensions((currentDimensions) => ({
@@ -83,12 +83,12 @@ export const useZoomableChart = <T>({
     setZoomFactor((currentFactor) => currentFactor - 1);
   }, 50);
 
-  const resetZoom = useCallback(() => {
+  const resetZoom = useDeepCallback(() => {
     setChartDimensions(initialChartDimensions);
     setZoomFactor(1);
-  }, useCompare([initialChartDimensions]));
+  }, [initialChartDimensions]);
 
-  return useMemo(
+  return useDeepMemo(
     () => ({
       chartDimensions,
       zoomIn,
@@ -98,6 +98,6 @@ export const useZoomableChart = <T>({
       disableZoomOut,
       zoomFactor,
     }),
-    useCompare([chartDimensions])
+    [chartDimensions]
   );
 };

@@ -1,47 +1,47 @@
 import { createAction } from '@reduxjs/toolkit';
-import { ThunkResult } from 'core';
-
-import { storage } from '@cognite/react-container';
 
 import {
-  SET_INSPECT_SIDEBAR_WIDTH,
   SET_SELECTED_RELATED_DOCUMENT_COLUMNS,
   BooleanSelection,
   SET_COLORED_WELLBORES,
+  SET_PREREQUISITE_DATA,
+  TOGGLE_SELECTED_WELL,
+  TOGGLE_SELECTED_WELLBORE_OF_WELL,
+  SET_GO_BACK_NAVIGATION_PATH,
+  SetPrerequisiteData,
+  ToggleSelectedWell,
+  ToggleSelectedWellboreOfWell,
 } from './types';
-import { getInitialSelectedRelatedDocumentsColumns } from './utils';
 
 export const WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS =
   'WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS';
 
-export const setInspectSidebarWidth = createAction<number>(
-  SET_INSPECT_SIDEBAR_WIDTH
+const setPrerequisiteData = createAction<SetPrerequisiteData['payload']>(
+  SET_PREREQUISITE_DATA
 );
 
-export const setColoredWellbores = createAction<boolean>(SET_COLORED_WELLBORES);
+const toggleSelectedWell =
+  createAction<ToggleSelectedWell['payload']>(TOGGLE_SELECTED_WELL);
 
-export const setSelectedRelatedDocumentColumnsAction =
-  createAction<BooleanSelection>(SET_SELECTED_RELATED_DOCUMENT_COLUMNS);
+const toggleSelectedWellboreOfWell = createAction<
+  ToggleSelectedWellboreOfWell['payload']
+>(TOGGLE_SELECTED_WELLBORE_OF_WELL);
 
-export const initializeWellInspect = (): ThunkResult<void> => {
-  return (dispatch) => {
-    dispatch(
-      setSelectedRelatedDocumentColumns(
-        getInitialSelectedRelatedDocumentsColumns()
-      )
-    );
-  };
-};
+const setGoBackNavigationPath = createAction<string>(
+  SET_GO_BACK_NAVIGATION_PATH
+);
 
-export const setSelectedRelatedDocumentColumns = (
-  payload: BooleanSelection
-): ThunkResult<void> => {
-  return (dispatch, getState) => {
-    dispatch({ type: SET_SELECTED_RELATED_DOCUMENT_COLUMNS, payload });
-    const state = getState().wellInspect;
-    storage.setItem(
-      WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS,
-      state.selectedRelatedDocumentsColumns
-    );
-  };
+const setColoredWellbores = createAction<boolean>(SET_COLORED_WELLBORES);
+
+const setSelectedRelatedDocumentColumns = createAction<BooleanSelection>(
+  SET_SELECTED_RELATED_DOCUMENT_COLUMNS
+);
+
+export const wellInspectActions = {
+  setPrerequisiteData,
+  setGoBackNavigationPath,
+  toggleSelectedWell,
+  toggleSelectedWellboreOfWell,
+  setColoredWellbores,
+  setSelectedRelatedDocumentColumns,
 };

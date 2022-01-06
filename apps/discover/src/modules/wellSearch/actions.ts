@@ -1,45 +1,22 @@
-import flatMap from 'lodash/flatMap';
 import groupBy from 'lodash/groupBy';
-import merge from 'lodash/merge';
 
 import { storage } from '@cognite/react-container';
-import { CogniteError, Sequence, Asset } from '@cognite/sdk';
-import { Polygon } from '@cognite/sdk-wells-v2';
+import { Sequence, Asset } from '@cognite/sdk';
 
-import { log } from '_helpers/log';
-import { showWarningMessage } from 'components/toast';
 import { ThunkResult } from 'core/types';
 import { Column } from 'modules/documentSearch/types';
-import { WELL_SEARCH_ACCESS_ERROR } from 'modules/wellSearch/constants';
-import { CommonWellFilter } from 'modules/wellSearch/types';
-import { filterConfigsById } from 'modules/wellSearch/utils/sidebarFilters';
+import {
+  TOGGLE_SELECTED_WELLBORE_OF_WELL,
+  WellboreId,
+} from 'modules/wellSearch/types';
 
+import { wellSearchService, SequenceFilter } from './service';
 import {
-  wellSearchService,
-  getByFilters,
-  SequenceFilter,
-  getGroupedWellboresByWellIds,
-} from './service';
-import {
-  SET_IS_SEARCHING,
-  RESET_QUERY,
-  SET_WELLS_DATA,
-  SET_WELLBORES,
-  SET_SELECTED_WELL_ID,
-  SET_SEARCH_PHRASE,
   SET_LOG_TYPE,
   SET_LOGS_ROW_DATA,
-  SET_HAS_SEARCHED,
-  SET_SELECTED_WELLBORE_IDS,
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
   Well,
-  Wellbore,
-  WellFilterMap,
-  WellState,
-  WellName,
-  WellSearchAction,
-  SET_HOVERED_WELLBORE_IDS,
   LogTypes,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
@@ -47,178 +24,14 @@ import {
   WellboreDigitalRockSamples,
   GrainAnalysisTypes,
   SET_GRAIN_ANALYSIS_DATA,
-  SET_ALL_WELLBORES_FETCHING,
-  SET_WELLBORES_FETCHED_WELL_IDS,
   WELL_ADD_SELECTED_COLUMN,
   WELL_SET_SELECTED_COLUMN,
   WELL_REMOVE_SELECTED_COLUMN,
-  SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID,
-  InspectWellboreContext,
-  SET_INSECT_WELLBORES_CONTEXT,
   WellboreAssetIdMap,
-  SET_WELL_CARD_SELECTED_WELL_ID,
-  SET_WELL_CARD_SELECTED_WELLBORE_ID,
-  SET_FAVORITE_HOVERED_OR_CHECKED_WELLS,
-  SET_FAVORITE_ID,
-  SET_SELECTED_SECONDARY_WELL_IDS,
-  SET_SELECTED_SECONDARY_WELLBORE_IDS,
 } from './types';
-import { getPrestineWellIds } from './utils';
 import { getWellboreAssetIdReverseMap } from './utils/common';
 
-function resetQuery(): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: RESET_QUERY,
-    });
-  };
-}
-
-const startSearch: WellSearchAction = {
-  type: SET_IS_SEARCHING,
-  isSearching: true,
-};
-const endSearch: WellSearchAction = {
-  type: SET_IS_SEARCHING,
-  isSearching: false,
-};
-const startAllWellboresFetching: WellSearchAction = {
-  type: SET_ALL_WELLBORES_FETCHING,
-  allWellboresFetching: true,
-};
-
-const endAllWellboresFetching: WellSearchAction = {
-  type: SET_ALL_WELLBORES_FETCHING,
-  allWellboresFetching: false,
-};
-
 export const WELL_SELECTED_COLUMNS = 'WELL_SELECTED_COLUMNS';
-
-export function search(filters: WellFilterMap): ThunkResult<void> {
-  return (dispatch, getState) => {
-    dispatch({
-      type: SET_HAS_SEARCHED,
-      hasSearched: true,
-    });
-    dispatch(startSearch);
-    const state = getState();
-    const wellFilters: CommonWellFilter = Object.keys(filters).reduce(
-      (prev, current) => {
-        const id = Number(current);
-        const { filterParameters } = filterConfigsById[id];
-        return filterParameters && filters[id].length
-          ? merge(prev, {
-              ...filterParameters(filters[id] as string[]),
-              npt: {
-                ...prev.npt,
-                ...filterParameters(filters[id] as string[]).npt,
-              },
-              nds: {
-                ...prev.nds,
-                ...filterParameters(filters[id] as string[]).nds,
-              },
-            })
-          : prev;
-      },
-      {} as CommonWellFilter
-    );
-
-    // Apply Geo Filter
-    const { geoFilter } = state.map;
-    if (geoFilter && geoFilter.length) {
-      wellFilters.polygon = {
-        geoJsonGeometry: geoFilter[0].geometry as unknown as Polygon,
-        crs: 'epsg:4326',
-      };
-    }
-
-    // Apply Query Filter
-    if (state.sidebar.searchPhrase) {
-      wellFilters.stringMatching = state.sidebar.searchPhrase;
-    }
-
-    getByFilters(wellFilters)
-      .then(async (wellResults) => {
-        dispatch({
-          type: SET_HAS_SEARCHED,
-          hasSearched: true,
-        });
-        dispatch({
-          type: SET_WELLS_DATA,
-          wells: wellResults,
-        });
-        dispatch(endSearch);
-      })
-      .catch((error: CogniteError) => {
-        log('error', [error && error.message], 3);
-        if (error.status === 403) {
-          showWarningMessage(WELL_SEARCH_ACCESS_ERROR);
-        }
-        dispatch(endSearch);
-      });
-  };
-}
-
-function selectWellById(id: number) {
-  return {
-    type: SET_SELECTED_WELL_ID,
-    id,
-    value: true,
-  };
-}
-
-function setSearchPhrase(phrase: string): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({ type: SET_SEARCH_PHRASE, phrase });
-  };
-}
-
-function getWellbores(wellIds: number[]): ThunkResult<void> {
-  return (dispatch) => {
-    return getGroupedWellboresByWellIds(wellIds).then((groupedData) => {
-      dispatch({
-        type: SET_WELLBORES,
-        data: groupedData,
-      });
-      if (wellIds.length > 1) {
-        dispatch(setAllWellboresSelected());
-      }
-      dispatch(setWellboresFetched(wellIds));
-      dispatch(endAllWellboresFetching);
-    });
-  };
-}
-
-function getAllWellbores(): ThunkResult<void> {
-  return (dispatch, getState) => {
-    const state = getState();
-    // get well id from selected state
-    const prestineWellIds = getPrestineWellIds(
-      state.wellSearch.selectedWellIds,
-      state.wellSearch.wells
-    );
-
-    if (prestineWellIds.length) {
-      dispatch(startAllWellboresFetching);
-      dispatch(getWellbores(prestineWellIds));
-    } else {
-      dispatch(setAllWellboresSelected());
-    }
-  };
-}
-
-function setAllWellboresSelected(): ThunkResult<void> {
-  return (dispatch, getState) => {
-    const state = getState();
-    const selectedWellbores = (
-      flatMap(
-        state.wellSearch.wells.filter((well) => well.wellbores),
-        'wellbores'
-      ) as Wellbore[]
-    ).reduce((prev, current) => ({ ...prev, [current.id]: true }), {});
-    dispatch(setSelectedWellbores(selectedWellbores));
-  };
-}
 
 function getGrainAnalysisData(
   digitalRockSample: Asset,
@@ -258,40 +71,6 @@ function getGrainAnalysisData(
   };
 }
 
-function setSelectedWell(well: WellName, value: boolean): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_SELECTED_WELL_ID,
-      id: well.id,
-      value,
-    });
-  };
-}
-
-function setSelectedWellbores(
-  ids: WellState['selectedWellIds']
-): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_SELECTED_WELLBORE_IDS,
-      ids,
-    });
-  };
-}
-
-function setSelectedWellboresWithWell(
-  ids: WellState['selectedWellIds'],
-  wellId: number
-): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID,
-      ids,
-      wellId,
-    });
-  };
-}
-
 function toggleExpandedWell(well: Well): ThunkResult<void> {
   return (dispatch) => {
     dispatch({
@@ -301,11 +80,34 @@ function toggleExpandedWell(well: Well): ThunkResult<void> {
   };
 }
 
-function toggleSelectedWells(value: boolean): ThunkResult<void> {
+function toggleSelectedWells(
+  wells: Well[],
+  isSelected: boolean
+): ThunkResult<void> {
   return (dispatch) => {
     dispatch({
       type: TOGGLE_SELECTED_WELLS,
-      value,
+      wells,
+      isSelected,
+    });
+  };
+}
+
+function toggleSelectedWellboreOfWell({
+  well,
+  wellboreId,
+  isSelected,
+}: {
+  well: Well;
+  wellboreId: WellboreId;
+  isSelected: boolean;
+}): ThunkResult<void> {
+  return (dispatch) => {
+    dispatch({
+      type: TOGGLE_SELECTED_WELLBORE_OF_WELL,
+      well,
+      wellboreId,
+      isSelected,
     });
   };
 }
@@ -508,143 +310,17 @@ function initialize(): ThunkResult<void> {
   };
 }
 
-function setHoveredWellbores(
-  wellId: number,
-  wellboreId?: number
-): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_HOVERED_WELLBORE_IDS,
-      wellId,
-      wellboreId,
-    });
-  };
-}
-
-function setWellCardSelectedWellId(wellId: number): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_WELL_CARD_SELECTED_WELL_ID,
-      wellId,
-    });
-  };
-}
-
-function setFavoriteHoveredOrCheckedWells(
-  wellIds: number[]
-): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_FAVORITE_HOVERED_OR_CHECKED_WELLS,
-      wellIds,
-    });
-  };
-}
-
-function setSelectedFavoriteId(favoriteId: string): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_FAVORITE_ID,
-      favoriteId,
-    });
-  };
-}
-
-function setWellCardSelectedWellBoreId(
-  wellboreIds: number[]
-): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_WELL_CARD_SELECTED_WELLBORE_ID,
-      wellboreIds,
-    });
-  };
-}
-
-function setWellbores(groupedDate: {
-  [wellId: number]: Wellbore[];
-}): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_WELLBORES,
-      data: groupedDate,
-    });
-  };
-}
-
-function setWellboreInspectContext(
-  context: InspectWellboreContext
-): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_INSECT_WELLBORES_CONTEXT,
-      context,
-    });
-  };
-}
-
-function setWellboresFetched(wellIds: number[]): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SET_WELLBORES_FETCHED_WELL_IDS,
-      wellIds,
-    });
-  };
-}
-
-const setSelectedSecondaryWellIds = (
-  ids: WellState['selectedSecondaryWellIds'],
-  reset: boolean
-): ThunkResult<void> => {
-  return (dispatch) => {
-    dispatch({
-      type: SET_SELECTED_SECONDARY_WELL_IDS,
-      ids,
-      reset,
-    });
-  };
-};
-
-const setSelectedSecondaryWellboreIds = (
-  ids: WellState['selectedSecondaryWellboreIds']
-): ThunkResult<void> => {
-  return (dispatch) => {
-    dispatch({
-      type: SET_SELECTED_SECONDARY_WELLBORE_IDS,
-      ids,
-    });
-  };
-};
-
 export const wellSearchActions = {
-  setSelectedWell,
-  selectWellById,
-  search,
-  setSearchPhrase,
-  getWellbores,
-  getWellboreAssets,
-  setSelectedWellbores,
-  resetQuery,
-  toggleExpandedWell,
   toggleSelectedWells,
+  toggleSelectedWellboreOfWell,
+  getWellboreAssets,
+  toggleExpandedWell,
   getLogType,
   getLogData,
   getDigitalRockSamples,
   getGrainAnalysisData,
-  getAllWellbores,
   addSelectedColumn,
   removeSelectedColumn,
   setSelectedColumns,
   initialize,
-  setSelectedWellboresWithWell,
-  setHoveredWellbores,
-  setWellbores,
-  setWellboreInspectContext,
-  setWellCardSelectedWellId,
-  setWellCardSelectedWellBoreId,
-  setWellboresFetched,
-  setFavoriteHoveredOrCheckedWells,
-  setSelectedFavoriteId,
-  setSelectedSecondaryWellIds,
-  setSelectedSecondaryWellboreIds,
 };

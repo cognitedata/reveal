@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { scaleBand, scaleLinear } from 'd3-scale';
 
 import {
@@ -8,7 +6,7 @@ import {
   Margins,
   ScaleRange,
 } from 'components/charts/types';
-import { useCompare } from 'hooks/useCompare';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { useYScaleDomain } from './useYScaleDomain';
 
@@ -57,18 +55,18 @@ export const useChartScales = <T>({
       .range([chartDimensions.height - margins.bottom, margins.top]);
   };
 
-  const xScale = useMemo(() => {
+  const xScale = useDeepMemo(() => {
     return scaleLinear()
       .domain(reverseXScaleDomain ? xScaleRange.slice().reverse() : xScaleRange)
       .range([margins.left, chartDimensions.width - margins.right]);
-  }, useCompare([data, xScaleRange, chartDimensions]));
+  }, [data, xScaleRange, chartDimensions]);
 
-  const yScale = useMemo(() => {
+  const yScale = useDeepMemo(() => {
     return yScaleRange ? getYScaleLinear() : getYScaleBand();
-  }, useCompare([data, yScaleDomain, chartDimensions]));
+  }, [data, yScaleDomain, chartDimensions]);
 
-  return useMemo(
+  return useDeepMemo(
     () => ({ xScale, yScale, xScaleDomain: xScaleRange, yScaleDomain }),
-    useCompare([xScale, yScale])
+    [xScale, yScale]
   );
 };

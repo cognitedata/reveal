@@ -9,8 +9,8 @@ import { WhiteLoader } from 'components/loading';
 import { Table, ColumnType, RowProps } from 'components/tablev3';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataTrajectory } from 'modules/filterData/selectors';
+import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
-import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
 import { Wellbore } from 'modules/wellSearch/types';
 
 import { WellboreSelectionWrapper } from '../../elements';
@@ -26,7 +26,7 @@ const tableOptions = {
 };
 
 export const Trajectory: React.FC = () => {
-  const wellbores = useSecondarySelectedOrHoveredWellbores();
+  const wellbores = useWellInspectSelectedWellbores();
 
   const dispatch = useDispatch();
 

@@ -10,10 +10,10 @@ import { log } from '_helpers/log';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
-  useSecondarySelectedOrHoveredWellbores,
-  useSecondarySelectedOrHoveredWells,
-  useSelectedSecondaryWellAndWellboreIds,
-} from 'modules/wellSearch//selectors';
+  useWellInspectSelectedWellbores,
+  useWellInspectSelectedWells,
+} from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import {
@@ -25,7 +25,7 @@ import {
 import { useGetConvertFunctionForEvents } from './helper';
 
 export const useNdsEventsForTable = () => {
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wells = useWellInspectSelectedWells();
   const userPreferredUnit = useUserPreferencesMeasurement();
   const { data, isLoading } = useNdsEventsQuery();
   const getConvertFunctionsForEvents =
@@ -49,7 +49,7 @@ export const useNdsEventsForTable = () => {
 };
 
 export const useNptEvents = () => {
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wells = useWellInspectSelectedWells();
   const userPreferredUnit = useUserPreferencesMeasurement();
   const { data, isLoading } = useNptEventsQuery();
 
@@ -75,10 +75,9 @@ export const useNptEventsForCasings = () => {
 
 export const useSelectedSecondaryWellboresWithoutNptData = () => {
   const { events, isLoading } = useNptEvents();
-  const selectedSecondaryWellbores = useSecondarySelectedOrHoveredWellbores();
-  const { selectedSecondaryWellboreIds } =
-    useSelectedSecondaryWellAndWellboreIds();
-  const allWellboreIds = Object.keys(selectedSecondaryWellboreIds);
+  const selectedInspectWellbores = useWellInspectSelectedWellbores();
+  const { selectedWellboreIds } = useWellInspectSelection();
+  const allWellboreIds = Object.keys(selectedWellboreIds);
 
   return useMemo(() => {
     if (isLoading) return [];
@@ -91,14 +90,14 @@ export const useSelectedSecondaryWellboresWithoutNptData = () => {
       wellboreIdsWithNptData
     );
 
-    return selectedSecondaryWellbores.filter((wellbore) =>
+    return selectedInspectWellbores.filter((wellbore) =>
       wellboreIdsWithoutNptData.includes(String(wellbore.id))
     );
   }, [isLoading, events]);
 };
 
 export const useNptEventsFor3D = () => {
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wells = useWellInspectSelectedWells();
   const { data, isLoading } = useNptEventsQuery();
   return useMemo(() => {
     if (isLoading || !data) {
@@ -107,14 +106,6 @@ export const useNptEventsFor3D = () => {
     const events = convertTo3DNPTEvents(data, wells);
     return { isLoading: false, events };
   }, [data]);
-};
-
-export const useSecondarySelectedOrHoveredWellboreNames = () => {
-  const wellbores = useSecondarySelectedOrHoveredWellbores();
-  return useMemo(
-    () => wellbores.map((wellbore) => wellbore.description || ''),
-    [wellbores]
-  );
 };
 
 export const useSelectedSecondaryWellboreNamesWithoutNptData = () => {

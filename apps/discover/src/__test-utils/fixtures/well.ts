@@ -1,7 +1,6 @@
-import { Well } from '@cognite/sdk-wells-v2';
+import map from 'lodash/map';
 
 import {
-  InspectWellboreContext,
   SequenceRow,
   Well as OldWellType,
   FilterConfig,
@@ -9,6 +8,7 @@ import {
   FilterCategoricalData,
   Wellbore,
   Measurement,
+  Well,
 } from 'modules/wellSearch/types';
 import { toWellSequence } from 'modules/wellSearch/utils';
 
@@ -31,8 +31,18 @@ export const getMockWell = (extras?: Partial<Well>): Well => {
       unit: 'ft',
     },
     spudDate: new Date(1622190752316),
-    wellbores: () => Promise.resolve([]),
     sourceAssets: () => Promise.resolve([]),
+    ...extras,
+  };
+};
+
+export const getMockWellbore = (extras?: Partial<Wellbore>): Wellbore => {
+  return {
+    id: '1234',
+    name: 'test-wellbore',
+    description: 'test-wellbore-description',
+    sourceWellbores: [],
+    ...mockWellboreOptions,
     ...extras,
   };
 };
@@ -52,13 +62,16 @@ export const getMockWellOld = (extras?: Partial<OldWellType>): OldWellType => {
 };
 
 export const mockedWellResultFixture: OldWellType[] = [
-  getMockWellOld(),
-  {
+  getMockWell({
+    name: '16/1',
+    description: 'A007',
+    id: 1234,
+  }),
+  getMockWell({
     name: '16/2',
     description: 'A008',
     id: 1235,
-    sourceAssets: () => Promise.resolve([]),
-  },
+  }),
 ];
 
 export const mockWellboreOptions = {
@@ -95,6 +108,22 @@ export const mockedWellboreResultFixture: Wellbore[] = [
   },
 ];
 
+export const mockedWellsFixture = mockedWellResultFixture.map((well) => ({
+  ...well,
+  wellbores: mockedWellboreResultFixture.filter(
+    (wellbore) => wellbore.wellId === well.id
+  ),
+}));
+
+export const mockedWellsFixtureWellIds = map(mockedWellsFixture, 'id');
+export const mockedWellsFixtureWellbores = mockedWellsFixture.flatMap(
+  (well) => well.wellbores
+);
+export const mockedWellsFixtureWellboreIds = map(
+  mockedWellsFixtureWellbores,
+  'id'
+);
+
 export const mockedWellStateFixture = {
   wellSearch: {
     wells: mockedWellResultFixture.map((well) => ({
@@ -109,9 +138,6 @@ export const mockedWellStateFixture = {
 export const mockedWellStateWithSelectedWells = {
   wellSearch: {
     ...mockedWellStateFixture.wellSearch,
-    currentQuery: {
-      hasSearched: true,
-    },
     selectedWellIds: {
       1234: true,
     },
@@ -225,15 +251,11 @@ export const mockedWellStateWithSelectedWells = {
         ],
       },
     },
-    inspectWellboreContext: InspectWellboreContext.CHECKED_WELLBORES,
-    selectedSecondaryWellIds: {
-      1234: true,
-    },
-    selectedSecondaryWellboreIds: {
-      759155409324993: true,
-    },
   },
   wellInspect: {
+    selectedWellIds: {},
+    selectedWellboreIds: {},
+    coloredWellbores: false,
     selectedRelatedDocumentsColumns: {
       fileName: true,
       author: true,

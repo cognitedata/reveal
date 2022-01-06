@@ -1,51 +1,30 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
 
 import { useTranslation } from '@cognite/react-i18n';
 
 import { PathHeader } from 'components/document-info-panel/elements';
-import navigation from 'constants/navigation';
-import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useWellBoreResult } from 'modules/wellSearch/selectors';
-import { InspectWellboreContext } from 'modules/wellSearch/types';
+import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
+import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
 import { FlexColumn } from 'styles/layout';
-
-import { useMutateWellBorePatch } from '../../../../../../modules/wellSearch/hooks/useQueryWellCard';
 
 import { WellboreButton, WellboreRow, WellboreTitle } from './elements';
 
 export const WellboreCardDetails: React.FC<{ wellId: number }> = ({
   wellId,
 }) => {
-  const wellbore = useWellBoreResult(wellId);
-  const dispatch = useDispatch();
-  const history = useHistory();
+  const wellbore = useWellboresOfWellById(wellId);
   const { t } = useTranslation('Well');
-
-  const { mutate } = useMutateWellBorePatch([wellId]);
+  const navigateToWellInspect = useNavigateToWellInspect();
 
   useEffect(() => {
-    if (wellId) {
-      mutate();
-    } else {
+    if (!wellId) {
       // Trigger a resize for the map to change width after transition has finished
       window.dispatchEvent(new Event('resize'));
     }
   }, [wellId]);
 
   const handleClickView = (wellboreId: number) => {
-    // setWellCardSelectedWellId
-    if (wellId) {
-      dispatch(wellSearchActions.setWellCardSelectedWellId(wellId));
-      dispatch(wellSearchActions.setWellCardSelectedWellBoreId([wellboreId]));
-      dispatch(
-        wellSearchActions.setWellboreInspectContext(
-          InspectWellboreContext.WELL_CARD_WELLBORES
-        )
-      );
-      history.push(navigation.SEARCH_WELLS_INSPECT);
-    }
+    navigateToWellInspect({ wellIds: [wellId], wellboreIds: [wellboreId] });
   };
 
   return (

@@ -13,6 +13,7 @@ import {
   ExternalWellsFeature,
   useDataFeatures,
 } from 'modules/map/hooks/useDataFeatures';
+import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import {
   DOCUMENT_LAYER_ID,
   WELL_HEADS_LAYER_ID,
@@ -22,15 +23,20 @@ jest.mock('modules/documentSearch/hooks/useDocumentResultHits', () => ({
   useDocumentResultHits: jest.fn(),
 }));
 
+jest.mock('modules/wellSearch/hooks/useWellQueryResultSelectors', () => ({
+  useWellQueryResultWells: jest.fn(),
+}));
+
 const selectedLayers = [WELL_HEADS_LAYER_ID, DOCUMENT_LAYER_ID];
 
 describe('useDataFeatures', () => {
-  beforeEach(() =>
+  beforeEach(() => {
     (useDocumentResultHits as jest.Mock).mockImplementation(() => [
       getMockDocument({ id: '1', geolocation: getMockGeometry() }),
       getMockDocument({ id: '2' }),
-    ])
-  );
+    ]);
+    (useWellQueryResultWells as jest.Mock).mockImplementation(() => []);
+  });
 
   it('should return empty array for empty state', async () => {
     (useDocumentResultHits as jest.Mock).mockImplementation(() => []);
@@ -48,10 +54,12 @@ describe('useDataFeatures', () => {
       getMockDocument({ id: '1' }),
       getMockDocument({ id: '2' }),
     ]);
+    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
+      getMockWellOld({ id: 1 }),
+    ]);
 
     const store = getMockedStore({
       wellSearch: {
-        wells: [getMockWellOld({ id: 1 })],
         selectedWellIds: {
           1: true,
         },
@@ -70,9 +78,12 @@ describe('useDataFeatures', () => {
   });
 
   it('should return correct data for documents and wells that have geolocation', async () => {
+    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
+      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
+    ]);
+
     const store = getMockedStore({
       wellSearch: {
-        wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
           1: true,
         },
@@ -91,6 +102,10 @@ describe('useDataFeatures', () => {
   });
 
   it('should return correct data from state and remote wells', async () => {
+    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
+      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
+    ]);
+
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -107,7 +122,6 @@ describe('useDataFeatures', () => {
 
     const store = getMockedStore({
       wellSearch: {
-        wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
           1: true,
         },
@@ -127,6 +141,10 @@ describe('useDataFeatures', () => {
   });
 
   it('should return empty array when no layers are selected based on data from state and remote wells', async () => {
+    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
+      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
+    ]);
+
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -143,7 +161,6 @@ describe('useDataFeatures', () => {
 
     const store = getMockedStore({
       wellSearch: {
-        wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
           1: true,
         },
@@ -163,6 +180,10 @@ describe('useDataFeatures', () => {
   });
 
   it('should set isBlurred and isSelected properties correctly', async () => {
+    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
+      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
+    ]);
+
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -182,7 +203,6 @@ describe('useDataFeatures', () => {
         selectedDocumentIds: ['1', '2'],
       },
       wellSearch: {
-        wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
           1: false,
         },
@@ -211,6 +231,10 @@ describe('useDataFeatures', () => {
   });
 
   it('should remove external wells that have same id as wells from results', () => {
+    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
+      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
+    ]);
+
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -227,7 +251,6 @@ describe('useDataFeatures', () => {
 
     const store = getMockedStore({
       wellSearch: {
-        wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
           1: true,
         },

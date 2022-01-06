@@ -25,7 +25,10 @@ import {
 import { DrawMode } from 'modules/map/types';
 import { Modules } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useWellIds } from 'modules/wellSearch/selectors';
+import {
+  useWellQueryResultWellIds,
+  useWellQueryResultWellsById,
+} from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 
 import { useProjectConfigByKey } from '../../../../../hooks/useProjectConfig';
 import { useSavedSearch } from '../../../../../modules/api/savedSearches/hooks';
@@ -146,8 +149,8 @@ const onMouseLeave = (e: MapMouseEvent) => {
 
 export const useMapEvents = () => {
   const metrics = useGlobalMetrics('wells');
-  // const { layers: mapLayers, layersReady } = useLayers();
-  const wellIds = useWellIds();
+  const wellsById = useWellQueryResultWellsById();
+  const wellIds = useWellQueryResultWellIds();
   const dispatch = useDispatch();
   const { data: documentConfig } = useProjectConfigByKey(Modules.DOCUMENTS);
   const patchSavedSearch = useSavedSearch();
@@ -218,8 +221,10 @@ export const useMapEvents = () => {
       if (iconType === WELL_MARKER) {
         const wellId = view[0]?.properties?.id;
 
-        if (wellId && wellIds.includes(Number(wellId))) {
-          dispatch(wellSearchActions.selectWellById(wellId));
+        if (wellId && wellIds.includes(wellId)) {
+          dispatch(
+            wellSearchActions.toggleSelectedWells([wellsById[wellId]], true)
+          );
         }
         metrics.track('click-open-well-preview-button');
         const coordinates = getAbsoluteCoordinates(

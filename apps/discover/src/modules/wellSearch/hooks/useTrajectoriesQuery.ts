@@ -11,13 +11,15 @@ import {
 } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
-
 import {
-  useSelectedOrHoveredWellboreIds,
-  useWellboreAssetIdMap,
-  useSecondarySelectedOrHoveredWells,
-  useActiveWellboresSourceExternalIdMap,
-} from '../selectors';
+  useWellInspectSelectedWellboreIds,
+  useWellInspectSelectedWells,
+} from 'modules/wellInspect/hooks/useWellInspect';
+import {
+  useWellInspectWellboreAssetIdMap,
+  useWellInspectWellboreExternalIdMap,
+} from 'modules/wellInspect/hooks/useWellInspectIdMap';
+
 import { getTrajectoriesByWellboreIds as service } from '../service';
 import { TrajectoryData, TrajectoryRows } from '../types';
 import { trimCachedData } from '../utils/common';
@@ -29,11 +31,11 @@ import { useWellConfig } from './useWellConfig';
 // NOTE: ignoreEmptyRows seems to always be true everywhere, perhaps we should remove this option
 export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
   const enabledWellSDKV3 = useEnabledWellSdkV3();
-  const wellboreIds = useSelectedOrHoveredWellboreIds();
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+  const wells = useWellInspectSelectedWells();
   const { data: config } = useWellConfig();
-  const wellboreAssetIdMap = useWellboreAssetIdMap();
-  const wellboresSourceExternalIdMap = useActiveWellboresSourceExternalIdMap();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
+  const wellboresSourceExternalIdMap = useWellInspectWellboreExternalIdMap();
   const queryClient = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
   const query = (config?.trajectory?.queries || [])[0];

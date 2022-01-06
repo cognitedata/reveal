@@ -6,6 +6,7 @@ import { Asset, Sequence } from '@cognite/sdk';
 import {
   getDefaultWell,
   getDefaultWellbore,
+  getMockWell,
   // WELL_TRAJ_COLUMNS,
 } from '__test-utils/fixtures/well';
 import { getMockedStore, getInitialStore } from '__test-utils/store.utils';
@@ -13,25 +14,15 @@ import { AppStore } from '__test-utils/types';
 
 import { wellSearchActions } from '../actions';
 import {
-  RESET_QUERY,
-  SET_SELECTED_WELL_ID,
-  SET_SELECTED_WELLBORE_IDS,
-  SET_SEARCH_PHRASE,
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
   SET_LOG_TYPE,
   SET_LOGS_ROW_DATA,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
-  SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID,
-  SET_HOVERED_WELLBORE_IDS,
-  SET_INSECT_WELLBORES_CONTEXT,
-  InspectWellboreContext,
-  SET_SELECTED_SECONDARY_WELL_IDS,
-  SET_SELECTED_SECONDARY_WELLBORE_IDS,
+  Well,
+  TOGGLE_SELECTED_WELLBORE_OF_WELL,
 } from '../types';
-
-// import { wellSearchService } from '../service';
 
 const getDefaultTestValues = () => {
   const well = getDefaultWell();
@@ -39,10 +30,7 @@ const getDefaultTestValues = () => {
 
   const initialStore: PartialStoreState = getInitialStore();
   const store: AppStore = getMockedStore({
-    wellSearch: {
-      ...initialStore.wellSearch,
-      // wells: [well],
-    },
+    wellSearch: { ...initialStore.wellSearch },
   });
 
   return { store, well, wellbore };
@@ -57,79 +45,10 @@ describe('Well search Actions', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  describe('resetQuery', () => {
-    it(`should reset query`, async () => {
-      const { store } = getDefaultTestValues();
-      await store.dispatch(wellSearchActions.resetQuery() as any);
-      expect(store.getActions()).toContainEqual({ type: RESET_QUERY });
-    });
-  });
-
-  describe('setSearchPhrase', () => {
-    it(`should set the search phrase`, async () => {
-      const phrase = '16/1';
-      const { store } = getDefaultTestValues();
-      await store.dispatch(wellSearchActions.setSearchPhrase(phrase) as any);
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_SEARCH_PHRASE,
-          phrase,
-        },
-      ]);
-    });
-  });
-
-  describe('setSelectedWell', () => {
-    it(`should set selected well`, async () => {
-      const { store, well } = getDefaultTestValues();
-      await store.dispatch(
-        wellSearchActions.setSelectedWell(well, true) as any
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_SELECTED_WELL_ID,
-          id: well.id,
-          value: true,
-        },
-      ]);
-    });
-  });
-
-  describe('setSelectedWellbores', () => {
-    it(`should set selected wellbore`, async () => {
-      const { store, wellbore } = getDefaultTestValues();
-      const ids = { [wellbore.id]: true };
-      await store.dispatch(wellSearchActions.setSelectedWellbores(ids) as any);
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_SELECTED_WELLBORE_IDS,
-          ids,
-        },
-      ]);
-    });
-  });
-
-  describe('setSelectedWellboresWithWell', () => {
-    it(`should set selected wellbore with parent well`, async () => {
-      const { store, wellbore, well } = getDefaultTestValues();
-      const ids = { [wellbore.id]: true };
-      await store.dispatch(
-        wellSearchActions.setSelectedWellboresWithWell(ids, well.id) as any
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID,
-          ids,
-          wellId: well.id,
-        },
-      ]);
-    });
-  });
-
   describe('toggleExpandedWell', () => {
     it(`should toggle expanded well status`, async () => {
       const { store, well } = getDefaultTestValues();
-      await store.dispatch(wellSearchActions.toggleExpandedWell(well) as any);
+      await store.dispatch(wellSearchActions.toggleExpandedWell(well));
       expect(store.getActions()).toEqual([
         {
           type: TOGGLE_EXPANDED_WELL_ID,
@@ -142,11 +61,38 @@ describe('Well search Actions', () => {
   describe('toggleSelectedWells', () => {
     it(`should toggle selected wells status`, async () => {
       const { store } = getDefaultTestValues();
-      await store.dispatch(wellSearchActions.toggleSelectedWells(true) as any);
+      const well = getMockWell() as unknown as Well;
+      const isSelected = true;
+      store.dispatch(wellSearchActions.toggleSelectedWells([well], isSelected));
       expect(store.getActions()).toEqual([
         {
           type: TOGGLE_SELECTED_WELLS,
-          value: true,
+          wells: [well],
+          isSelected,
+        },
+      ]);
+    });
+  });
+
+  describe('toggleSelectedWellboreOfWell', () => {
+    it(`should toggle selected wellbore of well status`, async () => {
+      const { store } = getDefaultTestValues();
+      const well = getMockWell() as unknown as Well;
+      const wellboreId = 'well/test_wellbore_id';
+      const isSelected = true;
+      store.dispatch(
+        wellSearchActions.toggleSelectedWellboreOfWell({
+          well,
+          wellboreId,
+          isSelected,
+        })
+      );
+      expect(store.getActions()).toEqual([
+        {
+          type: TOGGLE_SELECTED_WELLBORE_OF_WELL,
+          well,
+          wellboreId,
+          isSelected,
         },
       ]);
     });
@@ -238,88 +184,6 @@ describe('Well search Actions', () => {
               digitalRockSamples: [],
             },
           ],
-        },
-      ]);
-    });
-  });
-
-  describe('setHoveredWellbores without wellbore', () => {
-    it(`should set all wellbores of hovered well to state`, async () => {
-      const { store, well } = getDefaultTestValues();
-      await store.dispatch(
-        wellSearchActions.setHoveredWellbores(well.id) as any
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_HOVERED_WELLBORE_IDS,
-          wellId: well.id,
-          wellboreId: undefined,
-        },
-      ]);
-    });
-  });
-
-  describe('setHoveredWellbores with wellbore', () => {
-    it(`should set passed wellbore of hovered well to state`, async () => {
-      const { store, well } = getDefaultTestValues();
-      await store.dispatch(
-        wellSearchActions.setHoveredWellbores(well.id, 1234) as any
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_HOVERED_WELLBORE_IDS,
-          wellId: well.id,
-          wellboreId: 1234,
-        },
-      ]);
-    });
-  });
-
-  describe('setWellboreInspectContext', () => {
-    it(`should set inspect context to state`, async () => {
-      const { store } = getDefaultTestValues();
-      await store.dispatch(
-        wellSearchActions.setWellboreInspectContext(
-          InspectWellboreContext.CHECKED_WELLBORES
-        ) as any
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_INSECT_WELLBORES_CONTEXT,
-          context: InspectWellboreContext.CHECKED_WELLBORES,
-        },
-      ]);
-    });
-  });
-
-  describe('setSelectedSecondaryWellIds', () => {
-    it(`should set secondary selected well ids`, async () => {
-      const { store, well } = getDefaultTestValues();
-      const ids = { [well.id]: true };
-      await store.dispatch(
-        wellSearchActions.setSelectedSecondaryWellIds(ids, true)
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_SELECTED_SECONDARY_WELL_IDS,
-          ids,
-          reset: true,
-        },
-      ]);
-    });
-  });
-
-  describe('setSelectedSecondaryWellboreIds', () => {
-    it(`should set secondary selected wellbore ids`, async () => {
-      const { store, wellbore } = getDefaultTestValues();
-      const ids = { [wellbore.id]: true };
-      await store.dispatch(
-        wellSearchActions.setSelectedSecondaryWellboreIds(ids)
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_SELECTED_SECONDARY_WELLBORE_IDS,
-          ids,
         },
       ]);
     });

@@ -1,24 +1,23 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
 
+import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
-import sum from 'lodash/sum';
+import pickBy from 'lodash/pickBy';
 
 import { Button } from '@cognite/cogs.js';
 
 import { CloseButton, ViewButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
-import navigation from 'constants/navigation';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
-import { useMutateFavoriteWellPatchWellbores } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
-import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
-import { InspectWellboreContext, Well, WellId } from 'modules/wellSearch/types';
+import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
+import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { WellId } from 'modules/wellSearch/types';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
 import {
@@ -32,10 +31,6 @@ export interface Props {
   deselectAll: () => void;
   favoriteId: string;
   favoriteWells: FavoriteContentWells | undefined;
-  handleUpdatingFavoriteWellState: (
-    wellIds: WellId[],
-    inspectWellboreContext: InspectWellboreContext
-  ) => void;
   selectedWellboresList: FavoriteContentWells;
 }
 export const FavoriteWellsBulkActions: React.FC<Props> = ({
@@ -44,74 +39,35 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   deselectAll,
   favoriteId,
   favoriteWells = {},
-  handleUpdatingFavoriteWellState,
   selectedWellboresList,
 }) => {
   const { t } = useTranslation('Search');
+  const navigateToWellInspect = useNavigateToWellInspect();
   const { mutateAsync: mutateFavoriteContent } = useFavoriteUpdateContent();
-  const { data: wells } = useFavoriteWellResults(allWellIds);
-  const { mutate } = useMutateFavoriteWellPatchWellbores();
-  const history = useHistory();
+  const wells = useWellsByIds(allWellIds);
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
 
-  const selectedWellIds: WellId[] = useMemo(() => {
-    return Object.keys(selectedWellIdsList).filter(
-      (key: WellId) => selectedWellIdsList[key]
-    );
-  }, [selectedWellIdsList]);
-
-  const selectedWellIdsCount = useMemo(
-    () => selectedWellIds.length,
-    [selectedWellIds]
+  const selectedWellIds: WellId[] = useDeepMemo(
+    () => Object.keys(pickBy(selectedWellIdsList)),
+    [selectedWellIdsList]
   );
 
-  const selectedWellboreIdsCount = useDeepMemo(
-    () =>
-      sum(
-        Object.values(selectedWellboresList).flatMap((item) => [item.length])
-      ),
-    [selectedWellboresList]
+  const selectedWellboreIds: WellId[] = useDeepMemo(
+    () => flatten(Object.values(selectedWellboresList)),
+    [selectedWellIdsList]
   );
+
+  const selectedWellIdsCount = selectedWellIds.length;
+  const selectedWellboreIdsCount = selectedWellboreIds.length;
 
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);
   const handleCloseDeleteModal = () => setIsDeleteWellModalOpen(false);
 
   const handleClickView = () => {
-    const prestineWellIds = getPrestineWellIds();
-
-    loadWellboresAndUpdateQueryCache(prestineWellIds);
-  };
-
-  const getPrestineWellIds = () => {
-    return selectedWellIds.reduce((acc: number[], wellId: WellId) => {
-      const well = wells?.find((item) => item.id === wellId);
-      if (!well) return acc;
-
-      if (!isWellContainsWellbores(well)) {
-        return [...acc, wellId];
-      }
-      return acc;
-    }, []);
-  };
-
-  const isWellContainsWellbores = (well?: Well) =>
-    well?.wellbores && well.wellbores.length;
-
-  const loadWellboresAndUpdateQueryCache = async (wellIds: WellId[]) => {
-    await mutate({
-      updatingWellIds: wellIds,
-      successCallback: () => {
-        handleUpdatingFavoriteWellState(
-          selectedWellIds,
-          InspectWellboreContext.FAVORITE_CHECKED_WELLS
-        );
-        navigateToInspectPanel();
-      },
+    navigateToWellInspect({
+      wellIds: selectedWellIds,
+      wellboreIds: selectedWellboreIds,
     });
-  };
-
-  const navigateToInspectPanel = () => {
-    history.push(navigation.SEARCH_WELLS_INSPECT);
   };
 
   const bulkActionTitle = `${selectedWellIdsCount} ${

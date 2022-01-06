@@ -1,10 +1,5 @@
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
-import get from 'lodash/get';
-import groupBy from 'lodash/groupBy';
-import map from 'lodash/map';
-import set from 'lodash/set';
-
 import { Metrics } from '@cognite/metrics';
 
 import { LOG_WELL_SEARCH, LOG_WELL_SEARCH_NAMESPACE } from 'constants/logging';
@@ -15,7 +10,7 @@ import { TimeLogStages } from 'hooks/useTimeLog';
 import {
   getAllByFilters,
   getByFilters,
-  getGroupedWellboresByWellIds,
+  getWellsWithWellbores,
 } from '../service';
 import { Well } from '../types';
 import { handleWellSearchError } from '../utils/wellSearch';
@@ -59,21 +54,9 @@ export const useWellSearchResultQuery = (): UseQueryResult<Well[]> => {
       });
 
       return getByFilters(wellFilter)
-        .then(async (wells) => {
+        .then((wells) => {
           if (enabledWellSdkV3) return wells;
-
-          const wellIds = map(wells, 'id');
-          const groupedWells = groupBy(wells, 'id');
-          const groupedWellbores = await getGroupedWellboresByWellIds(wellIds);
-
-          Object.keys(groupedWells).forEach((wellId) => {
-            set(groupedWells, wellId, {
-              ...get(groupedWells, wellId)[0],
-              wellbores: get(groupedWellbores, wellId, []),
-            });
-          });
-
-          return Object.values(groupedWells);
+          return getWellsWithWellbores(wells);
         })
         .catch(handleWellSearchError)
         .finally(() => timer.stop());

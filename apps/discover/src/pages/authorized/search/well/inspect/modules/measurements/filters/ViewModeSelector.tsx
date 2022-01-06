@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { SegmentedControl } from '@cognite/cogs.js';
 
-import { setColoredWellbores } from 'modules/wellInspect/actions';
+import { wellInspectActions } from 'modules/wellInspect/actions';
 
 import { VIEW_MODES } from '../constants';
 
@@ -19,13 +19,15 @@ export const ViewModeSelector: React.FC<Props> = ({
   const dispatch = useDispatch();
   const onClick = (key: string) => {
     onChange(key);
-    dispatch(setColoredWellbores(activeViewMode === 'Wells'));
+    dispatch(
+      wellInspectActions.setColoredWellbores(activeViewMode === 'Wells')
+    );
   };
 
   useEffect(() => {
     return () => {
       // Reset wellbore colors on measuments tab unmount
-      dispatch(setColoredWellbores(false));
+      dispatch(wellInspectActions.setColoredWellbores(false));
     };
   }, []);
 

@@ -8,21 +8,22 @@ import {
   LOG_WELLS_TRAJECTORY_NAMESPACE,
 } from 'constants/logging';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
+import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { SequenceData } from 'modules/wellSearch/types';
 import { LogTypeData } from 'pages/authorized/search/well/inspect/modules/logType/interfaces';
 
-import { useSecondarySelectedOrHoveredWells } from '../asset/well';
-import { useWellboreAssetIdMap, useWellboreData } from '../asset/wellbore';
+import { useWellboreData } from '../asset/wellbore';
 import { usePristineIds } from '../common';
 import { updateData } from '../helper';
 
 export const useSelectedWellBoresLogs = () => {
   const { logPristineIds } = usePristineIds();
   const { data: config } = useWellConfig();
-  const wells = useSecondarySelectedOrHoveredWells();
-  const wellboreAssetIdMap = useWellboreAssetIdMap();
+  const wells = useWellInspectSelectedWells();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const dispatch = useDispatch();
   const wellboreData = useWellboreData();
   const [startNetworkTimer, stopNetworkTimer] = useMetricLogger(
@@ -75,7 +76,7 @@ export const useSelectedWellBoresLogs = () => {
 
 export const useLogTypes = () => {
   const { logPristineIds } = usePristineIds();
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wells = useWellInspectSelectedWells();
   const wellboreData = useWellboreData();
   return useMemo(() => {
     const tempData: LogTypeData[] = [];

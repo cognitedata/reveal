@@ -1,11 +1,9 @@
-import { useMemo } from 'react';
-
 import compact from 'lodash/compact';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isUndefined from 'lodash/isUndefined';
 
-import { useCompare } from 'hooks/useCompare';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { Accessors, ScaleRange } from '../types';
 import { getRangeScaleFactor, getSumOfValuesOfObjectsByKey } from '../utils';
@@ -42,7 +40,7 @@ export const useXScaleRange = <T>({
     return xAxisValues;
   };
 
-  return useMemo(() => {
+  return useDeepMemo(() => {
     const xAxisValues = useGroupedValues
       ? getGroupedValues()
       : getUngroupedValues();
@@ -51,5 +49,5 @@ export const useXScaleRange = <T>({
     const max = Math.ceil(Math.max(...xAxisValues) * scaleFactorMax);
 
     return [min, max];
-  }, useCompare([data]));
+  }, [data]);
 };

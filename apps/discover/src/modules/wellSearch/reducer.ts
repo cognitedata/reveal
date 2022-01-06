@@ -1,68 +1,33 @@
-import flatMap from 'lodash/flatMap';
 import get from 'lodash/get';
+import set from 'lodash/set';
+import unset from 'lodash/unset';
 
 import {
-  SET_IS_SEARCHING,
-  RESET_QUERY,
-  SET_WELLS_DATA,
-  SET_WELLBORES,
-  SET_SEQUENCES,
-  SET_SELECTED_WELL_ID,
-  SET_SEARCH_PHRASE,
-  SET_HAS_SEARCHED,
-  SET_SELECTED_WELLBORE_IDS,
   SET_LOG_TYPE,
   SET_LOGS_ROW_DATA,
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
   WellState,
   WellSearchAction,
-  Wellbore,
   SequenceData,
   SET_WELLBORE_ASSETS,
   AssetData,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   SET_GRAIN_ANALYSIS_DATA,
   DigitalRockSampleData,
-  SET_ALL_WELLBORES_FETCHING,
-  SET_WELLBORES_FETCHED_WELL_IDS,
   WELL_ADD_SELECTED_COLUMN,
   WELL_REMOVE_SELECTED_COLUMN,
   WELL_SET_SELECTED_COLUMN,
-  SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID,
-  SET_HOVERED_WELLBORE_IDS,
-  SET_INSECT_WELLBORES_CONTEXT,
-  InspectWellboreContext,
-  SET_WELL_CARD_SELECTED_WELL_ID,
-  SET_WELL_CARD_SELECTED_WELLBORE_ID,
-  SET_FAVORITE_HOVERED_OR_CHECKED_WELLS,
-  SET_FAVORITE_ID,
-  SET_SELECTED_SECONDARY_WELL_IDS,
-  SET_SELECTED_SECONDARY_WELLBORE_IDS,
+  TOGGLE_SELECTED_WELLBORE_OF_WELL,
 } from './types';
 // reducer should be pure, should refactor this logic into the service.
 
 export const initialState: WellState = {
-  wells: [],
   selectedWellIds: {},
   selectedWellboreIds: {},
   expandedWellIds: {},
-  currentQuery: {
-    phrase: '',
-    hasSearched: false,
-  },
   selectedColumns: ['wellname', 'source', 'operator', 'spudDate', 'waterDepth'],
-  isSearching: false,
-  allWellboresFetching: false,
-  wellboresFetchedWellIds: [],
   wellboreData: {},
-  hoveredWellboreIds: {},
-  wellCardSelectedWellId: undefined,
-  wellCardSelectedWellBoreId: {},
-  wellFavoriteHoveredOrCheckedWells: [],
-  inspectWellboreContext: InspectWellboreContext.NOT_SPECIFIED,
-  selectedSecondaryWellIds: {},
-  selectedSecondaryWellboreIds: {},
 };
 
 export function wellReducer(
@@ -90,205 +55,6 @@ export function wellReducer(
     case WELL_SET_SELECTED_COLUMN:
       return { ...state, selectedColumns: [...action.columns] };
 
-    case SET_IS_SEARCHING: {
-      return {
-        ...state,
-        isSearching: action.isSearching,
-      };
-    }
-
-    case RESET_QUERY: {
-      return {
-        ...state,
-        currentQuery: { ...initialState.currentQuery },
-        wells: [],
-        selectedWellIds: {},
-        expandedWellIds: {},
-        selectedWellboreIds: {},
-      };
-    }
-
-    case SET_WELLS_DATA: {
-      return {
-        ...state,
-        wells: [...action.wells],
-        selectedWellIds: {},
-        expandedWellIds:
-          action.wells.length > 0 ? { [action.wells[0].id]: true } : {},
-        selectedWellboreIds: {},
-      };
-    }
-    case SET_WELLBORES: {
-      return {
-        ...state,
-        wells: state.wells.map((well) =>
-          action.data[well.id]
-            ? {
-                ...well,
-                wellbores: action.data[well.id].map((wb: Wellbore) => ({
-                  ...wb,
-                  wellId: well.id,
-                  metadata: {
-                    ...wb.metadata,
-                    wellExternalId: well.externalId ? well.externalId : '-',
-                    wellDescription: well.description ? well.description : '-',
-                    wellName: well.name,
-                  },
-                })),
-              }
-            : well
-        ),
-      };
-    }
-
-    case SET_SEQUENCES: {
-      return {
-        ...state,
-        wells: [
-          ...state.wells.map((innerWell) => {
-            if (innerWell.id === action.wellId) {
-              return {
-                ...innerWell,
-                wellbores: [
-                  ...(innerWell.wellbores?.map((wellbore: Wellbore) => {
-                    if (wellbore.id === action.wellboreId) {
-                      return {
-                        ...wellbore,
-                        sequences: action.sequences,
-                      };
-                    }
-                    return wellbore;
-                  }) || []),
-                ],
-              };
-            }
-            return innerWell;
-          }),
-        ],
-      };
-    }
-
-    case SET_SELECTED_WELL_ID: {
-      const wellbores = flatMap(
-        state.wells.filter((well) => well.id === action.id && well.wellbores),
-        'wellbores'
-      ) as Wellbore[];
-
-      const selectedWellboreIds = { ...state.selectedWellboreIds };
-      if (action.value) {
-        wellbores.forEach((wellbore) => {
-          selectedWellboreIds[wellbore.id] = true;
-        });
-      } else {
-        wellbores.forEach((wellbore) => {
-          selectedWellboreIds[wellbore.id] = false;
-        });
-      }
-
-      return {
-        ...state,
-        selectedWellIds: {
-          ...state.selectedWellIds,
-          ...{
-            [action.id]: action.value,
-          },
-        },
-        expandedWellIds: {
-          ...state.expandedWellIds,
-          ...{
-            [action.id]: action.value,
-          },
-        },
-        selectedWellboreIds,
-      };
-    }
-
-    case SET_SELECTED_WELLBORE_IDS: {
-      return {
-        ...state,
-        selectedWellboreIds: { ...state.selectedWellboreIds, ...action.ids },
-      };
-    }
-
-    case SET_SELECTED_SECONDARY_WELL_IDS: {
-      if (action.reset) {
-        return {
-          ...state,
-          selectedSecondaryWellIds: action.ids,
-          selectedSecondaryWellboreIds: {},
-        };
-      }
-
-      return {
-        ...state,
-        selectedSecondaryWellIds: {
-          ...state.selectedSecondaryWellIds,
-          ...action.ids,
-        },
-      };
-    }
-
-    case SET_SELECTED_SECONDARY_WELLBORE_IDS: {
-      return {
-        ...state,
-        selectedSecondaryWellboreIds: {
-          ...state.selectedSecondaryWellboreIds,
-          ...action.ids,
-        },
-      };
-    }
-
-    case SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID: {
-      const selectedWellboreIds = {
-        ...state.selectedWellboreIds,
-        ...action.ids,
-      };
-
-      const selectedWellIds = {
-        ...state.selectedWellIds,
-      };
-
-      const wellbores = flatMap(
-        state.wells.filter(
-          (well) => well.id === action.wellId && well.wellbores
-        ),
-        'wellbores'
-      ) as Wellbore[];
-
-      const isSomeWellboresSelected = wellbores.some(
-        (wellbore) => selectedWellboreIds[wellbore.id] === true
-      );
-
-      if (isSomeWellboresSelected) {
-        selectedWellIds[action.wellId] = true;
-      } else {
-        selectedWellIds[action.wellId] = false;
-      }
-
-      return {
-        ...state,
-        selectedWellboreIds,
-        selectedWellIds,
-      };
-    }
-
-    case SET_SEARCH_PHRASE: {
-      return {
-        ...state,
-        currentQuery: { ...state.currentQuery, phrase: action.phrase },
-      };
-    }
-
-    case SET_HAS_SEARCHED: {
-      return {
-        ...state,
-        currentQuery: {
-          ...state.currentQuery,
-          hasSearched: action.hasSearched,
-        },
-      };
-    }
-
     case TOGGLE_EXPANDED_WELL_ID: {
       return {
         ...state,
@@ -302,17 +68,44 @@ export function wellReducer(
     }
 
     case TOGGLE_SELECTED_WELLS: {
-      const selectedWellIds: typeof state.selectedWellIds = {};
-      if (action.value) {
-        state.wells.forEach((wellData) => {
-          selectedWellIds[wellData.id] = true;
-        });
+      const { selectedWellIds, selectedWellboreIds } = state;
+
+      action.wells.forEach((wellData) => {
+        if (action.isSelected) {
+          set(selectedWellIds, wellData.id, true);
+          wellData.wellbores?.forEach((wellbore) => {
+            set(selectedWellboreIds, wellbore.id, true);
+          });
+        } else {
+          unset(selectedWellIds, wellData.id);
+          wellData.wellbores?.forEach((wellbore) => {
+            unset(selectedWellboreIds, wellbore.id);
+          });
+        }
+      });
+
+      return { ...state, selectedWellIds, selectedWellboreIds };
+    }
+
+    case TOGGLE_SELECTED_WELLBORE_OF_WELL: {
+      const { selectedWellIds, selectedWellboreIds } = state;
+
+      if (action.isSelected) {
+        set(selectedWellboreIds, action.wellboreId, true);
+        set(selectedWellIds, action.well.id, true);
+      } else {
+        unset(selectedWellboreIds, action.wellboreId);
+
+        const isSomeWellboresSelected = action.well.wellbores?.some(
+          (wellbore) => selectedWellboreIds[wellbore.id]
+        );
+
+        if (!isSomeWellboresSelected) {
+          unset(selectedWellIds, action.well.id);
+        }
       }
-      return {
-        ...state,
-        selectedWellIds,
-        selectedWellboreIds: action.value ? state.selectedWellboreIds : {},
-      };
+
+      return { ...state, selectedWellIds, selectedWellboreIds };
     }
 
     case SET_LOG_TYPE: {
@@ -484,90 +277,6 @@ export function wellReducer(
               : undefined,
           },
         },
-      };
-    }
-
-    case SET_ALL_WELLBORES_FETCHING: {
-      return {
-        ...state,
-        allWellboresFetching: action.allWellboresFetching,
-      };
-    }
-
-    case SET_WELLBORES_FETCHED_WELL_IDS: {
-      return {
-        ...state,
-        wellboresFetchedWellIds: [
-          ...state.wellboresFetchedWellIds,
-          ...action.wellIds,
-        ],
-      };
-    }
-
-    case SET_HOVERED_WELLBORE_IDS: {
-      const hoveredWellboreIds: typeof state.hoveredWellboreIds = {};
-
-      if (action.wellboreId) {
-        hoveredWellboreIds[action.wellboreId] = true;
-      } else {
-        (
-          flatMap(
-            state.wells.filter(
-              (well) => well.id === action.wellId && well.wellbores
-            ),
-            'wellbores'
-          ) as Wellbore[]
-        ).forEach((wellbore) => {
-          hoveredWellboreIds[wellbore?.id] = true;
-        });
-      }
-
-      return {
-        ...state,
-        hoveredWellboreIds,
-        hoveredWellId: action.wellId,
-      };
-    }
-    case SET_WELL_CARD_SELECTED_WELL_ID: {
-      // only one well id selected at a time for well card
-      return {
-        ...state,
-        wellCardSelectedWellId: action.wellId,
-      };
-    }
-
-    case SET_WELL_CARD_SELECTED_WELLBORE_ID: {
-      const wellCardSelectedWellBoreId: typeof state.wellCardSelectedWellBoreId =
-        {};
-
-      action.wellboreIds.forEach((item) => {
-        wellCardSelectedWellBoreId[item] = true;
-      });
-
-      return {
-        ...state,
-        wellCardSelectedWellBoreId,
-      };
-    }
-
-    case SET_INSECT_WELLBORES_CONTEXT: {
-      return {
-        ...state,
-        inspectWellboreContext: action.context,
-      };
-    }
-
-    case SET_FAVORITE_HOVERED_OR_CHECKED_WELLS: {
-      return {
-        ...state,
-        wellFavoriteHoveredOrCheckedWells: [...action.wellIds],
-      };
-    }
-
-    case SET_FAVORITE_ID: {
-      return {
-        ...state,
-        selectedFavoriteId: action.favoriteId,
       };
     }
 

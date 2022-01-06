@@ -5,10 +5,10 @@ import uniqBy from 'lodash/uniqBy';
 
 import { WhiteLoader } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { BooleanSelection } from 'modules/wellInspect/types';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
 import {
   MeasurementChartData,
   Wellbore,
@@ -46,7 +46,7 @@ export const WellCentricView: React.FC<Props> = ({
 
   const { data: config } = useWellConfig();
 
-  const selectedOrHoveredWellbores = useSecondarySelectedOrHoveredWellbores();
+  const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
   const userPreferredUnit = useUserPreferencesMeasurement();
 
@@ -75,7 +75,7 @@ export const WellCentricView: React.FC<Props> = ({
 
   const updateChartData = () => {
     if (data) {
-      const filteredChartData = selectedOrHoveredWellbores
+      const filteredChartData = selectedInspectWellbores
         .map((wellbore) => ({
           wellbore,
           chartData: formatChartData(
@@ -107,7 +107,7 @@ export const WellCentricView: React.FC<Props> = ({
   }, [
     JSON.stringify(data),
     isLoading,
-    selectedOrHoveredWellbores,
+    selectedInspectWellbores,
     pressureUnit,
     geomechanicsCurves,
     ppfgCurves,
@@ -137,7 +137,7 @@ export const WellCentricView: React.FC<Props> = ({
 
   const selectedWellbores = useMemo(
     () =>
-      selectedOrHoveredWellbores.filter(
+      selectedInspectWellbores.filter(
         (wellbore) => selectedWellboresMap[wellbore.id]
       ),
     [selectedWellboresMap]

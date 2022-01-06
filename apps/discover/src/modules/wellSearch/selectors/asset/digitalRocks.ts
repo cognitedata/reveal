@@ -16,6 +16,8 @@ import {
 } from 'constants/logging';
 import { TimeLogStages, useMetricLogger } from 'hooks/useTimeLog';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
@@ -27,8 +29,7 @@ import {
 } from 'modules/wellSearch/utils/digitalRocks';
 
 import { getCogniteSDKClient } from '../../../../_helpers/getCogniteSDKClient';
-import { useSecondarySelectedOrHoveredWells } from '../asset/well';
-import { useWellboreAssetIdMap, useWellboreData } from '../asset/wellbore';
+import { useWellboreData } from '../asset/wellbore';
 import { usePristineIds } from '../common';
 
 const getDigitalRockUnitChangeAccessors = (
@@ -78,8 +79,8 @@ export const useSelectedWellBoresDigitalRocks = () => {
   const dispatch = useDispatch();
   const { data: config } = useWellConfig();
   const { digitalRocksPristineIds } = usePristineIds();
-  const wellboreAssetIdMap = useWellboreAssetIdMap();
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
+  const wells = useWellInspectSelectedWells();
   const wellboreData = useWellboreData();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [startNetworkTimer, stopNetworkTimer] = useMetricLogger(

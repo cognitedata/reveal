@@ -11,8 +11,8 @@ import { shortDateTime } from '_helpers/date';
 import EmptyState from 'components/emptyState';
 import { Table } from 'components/tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
-import { useSelectedWellbores } from 'modules/wellSearch/selectors';
 import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/asset/digitalRocks';
 import { Wellbore } from 'modules/wellSearch/types';
 
@@ -86,7 +86,7 @@ export const DigitalRocks: React.FC = () => {
     digitalRocks.map((row) => row.parentId)
   ) as number[];
 
-  const wellboresWithDigitalRocks = useSelectedWellbores(
+  const wellboresWithDigitalRocks = useWellInspectSelectedWellbores(
     wellboreIdsWithDigitalRocks
   );
 

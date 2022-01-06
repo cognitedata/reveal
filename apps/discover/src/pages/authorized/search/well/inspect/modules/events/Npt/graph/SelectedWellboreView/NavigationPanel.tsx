@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
 
 import { BackButton, BaseButton } from 'components/buttons';
-import {
-  useSecondarySelectedOrHoveredWellboreNames,
-  useSelectedSecondaryWellboreNamesWithoutNptData,
-} from 'modules/wellSearch/selectors';
+import { useWellInspectSelectedWellboreNames } from 'modules/wellInspect/hooks/useWellInspect';
+import { useSelectedSecondaryWellboreNamesWithoutNptData } from 'modules/wellSearch/selectors';
 
 import { SelectedWellboreNavigatable } from '../types';
 
@@ -35,7 +33,7 @@ export const NavigationPanel: React.FC<Props> = React.memo(
     onCloseSelectedWellboreView,
     disableNavigation,
   }) => {
-    const wellbores = useSecondarySelectedOrHoveredWellboreNames();
+    const wellbores = useWellInspectSelectedWellboreNames();
     const wellboresWithoutNptData =
       useSelectedSecondaryWellboreNamesWithoutNptData();
 

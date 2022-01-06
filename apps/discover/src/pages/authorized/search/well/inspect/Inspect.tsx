@@ -1,17 +1,20 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
-import { Button, Icon, Menu, Tabs, Dropdown } from '@cognite/cogs.js';
+import isEmpty from 'lodash/isEmpty';
+
+import { Button, Icon, Menu, Tabs, Dropdown, Loader } from '@cognite/cogs.js';
 
 import navigation from 'constants/navigation';
+import { useDeepEffect } from 'hooks/useDeep';
 import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
-import { setInspectSidebarWidth } from 'modules/wellInspect/actions';
-import { useInspectSidebarWidth } from 'modules/wellInspect/selectors';
+import {
+  useWellInspectSelectedWellboreIds,
+  useWellInspectWells,
+} from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { useActiveWellsWellboresCount } from 'modules/wellSearch/selectors';
-import { useSelectedOrHoveredWellboreIds } from 'modules/wellSearch/selectors/asset/wellbore';
 
 import { TAB_ITEMS } from './constants';
 import {
@@ -37,28 +40,26 @@ export const WellInspect: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();
-  const dispatch = useDispatch();
 
   const { data: config } = useWellConfig();
-  const { wells } = useActiveWellsWellboresCount();
-  const inspectSidebarWidth = useInspectSidebarWidth();
-  const selectedOrHoveredWellboreIds = useSelectedOrHoveredWellboreIds();
+  const wells = useWellInspectWells();
+  const { selectedWellIds } = useWellInspectSelection();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
 
   const [isOpen, setIsOpen] = useState(true);
+  const [inspectSidebarWidth, setInspectSidebarWidth] = useState(
+    SIDEBAR_SIZE.min
+  );
   const scrollRef = useHorizontalScroll();
   const [show3dWarningModal, setShow3dWarningModal] = useState(false);
 
-  const handleBackToSearch = () => history.push(navigation.SEARCH_WELLS);
-
-  React.useEffect(() => {
+  useDeepEffect(() => {
     /**
      * This will redirect the app to well search screen if there are no selected wellbores.
      * This Usable when user directly access the inspection screen
      */
-    if (wells === 0) {
-      handleBackToSearch();
-    }
-  }, [wells]);
+    if (isEmpty(selectedWellIds)) history.push(navigation.SEARCH_WELLS);
+  }, [selectedWellIds]);
 
   const items = useMemo(
     () => TAB_ITEMS.filter((item) => config?.[item.key]?.enabled),
@@ -71,8 +72,8 @@ export const WellInspect: React.FC = () => {
   );
 
   const hasTooManyWellboresSelected = useMemo(
-    () => selectedOrHoveredWellboreIds.length > WARNING_MODAL_LIMIT,
-    [selectedOrHoveredWellboreIds]
+    () => wellboreIds.length > WARNING_MODAL_LIMIT,
+    [wellboreIds]
   );
 
   const standalone = selectedItem?.standalone || false;
@@ -151,10 +152,9 @@ export const WellInspect: React.FC = () => {
     isOpen ? inspectSidebarWidth : SIDEBAR_SIZE.closed
   }px)`;
 
-  const handleOnResizeInspectSidebar = useCallback(
-    (width: number) => dispatch(setInspectSidebarWidth(width)),
-    []
-  );
+  if (isEmpty(wells)) {
+    return <Loader darkMode={false} />;
+  }
 
   return (
     <>
@@ -164,7 +164,7 @@ export const WellInspect: React.FC = () => {
           isOpen={isOpen}
           width={inspectSidebarWidth}
           onToggle={handleSidebarToggle}
-          onResize={handleOnResizeInspectSidebar}
+          onResize={setInspectSidebarWidth}
         />
 
         <InspectContent

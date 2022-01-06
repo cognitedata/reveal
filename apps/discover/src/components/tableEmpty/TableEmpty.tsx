@@ -14,7 +14,7 @@ import {
 } from 'modules/map/actions';
 import { useGetTypeFromGeometry } from 'modules/map/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
-import { useWells } from 'modules/wellSearch/selectors';
+import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 import { WellFilterOptionValue } from 'modules/wellSearch/types';
 
 import {
@@ -40,7 +40,7 @@ export const TableEmpty: React.FC<TableEmptyProps> = ({
   clearQuery,
 }) => {
   const { t } = useTranslation();
-  const { isSearching } = useWells();
+  const { isLoading } = useWellSearchResultQuery();
   const dispatch = useDispatch();
   const query = useSearchPhrase();
   const selectedFeature = useGetTypeFromGeometry();
@@ -64,7 +64,7 @@ export const TableEmpty: React.FC<TableEmptyProps> = ({
     if (clearPolygon) clearPolygon();
   };
 
-  if (isSearching) {
+  if (isLoading) {
     return <EmptyState isLoading />;
   }
 

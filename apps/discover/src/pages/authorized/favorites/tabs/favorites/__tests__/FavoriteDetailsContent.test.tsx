@@ -9,11 +9,7 @@ import { defaultTestUser } from '__test-utils/testdata.utils';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import navigation from 'constants/navigation';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
-import {
-  useMutateFavoriteWellPatchWellbores,
-  useMutateFavoriteWellUpdate,
-} from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
-import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
+import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 import {
   FAVORITE_SET_NO_DOCUMENTS,
   FAVORITE_SET_NO_WELLS,
@@ -36,8 +32,8 @@ jest.mock('modules/wellSearch/hooks/useWellsFavoritesQuery.ts', () => ({
   useMutateFavoriteWellUpdate: jest.fn(),
 }));
 
-jest.mock('modules/wellSearch/selectors/asset/well.ts', () => ({
-  useFavoriteWellResults: jest.fn(),
+jest.mock('modules/wellSearch/hooks/useWellsFavoritesQuery', () => ({
+  useFavoriteWellResultQuery: jest.fn(),
 }));
 
 const mockFavoriteUpdate = jest.fn();
@@ -71,16 +67,6 @@ describe('Favorite Details Content', () => {
       'Test page',
       navigation.FAVORITE_TAB_DOCUMENTS(mockFavorite.id)
     );
-
-    (useMutateFavoriteWellPatchWellbores as jest.Mock).mockImplementation(
-      () => ({
-        mutate: jest.fn(),
-      })
-    );
-
-    (useMutateFavoriteWellUpdate as jest.Mock).mockImplementation(() => ({
-      mutate: jest.fn(),
-    }));
   });
 
   it('should render loading state', async () => {
@@ -92,7 +78,7 @@ describe('Favorite Details Content', () => {
       fetchNextPage: jest.fn(),
     });
 
-    (useFavoriteWellResults as jest.Mock).mockReturnValue({
+    (useFavoriteWellResultQuery as jest.Mock).mockReturnValue({
       data: [],
       isLoading: true,
       isIdle: false,
@@ -120,7 +106,7 @@ describe('Favorite Details Content', () => {
       fetchNextPage: jest.fn(),
     });
 
-    (useFavoriteWellResults as jest.Mock).mockReturnValue({
+    (useFavoriteWellResultQuery as jest.Mock).mockReturnValue({
       data: [],
       isLoading: false,
       isIdle: false,
@@ -148,7 +134,7 @@ describe('Favorite Details Content', () => {
       fetchNextPage: jest.fn(),
     });
 
-    (useFavoriteWellResults as jest.Mock).mockReturnValue({
+    (useFavoriteWellResultQuery as jest.Mock).mockReturnValue({
       data: [mockWell],
       isLoading: false,
       isIdle: false,
@@ -193,7 +179,7 @@ describe('Favorite Details Content', () => {
       fetchNextPage: mockFetch,
     });
 
-    (useFavoriteWellResults as jest.Mock).mockReturnValue({
+    (useFavoriteWellResultQuery as jest.Mock).mockReturnValue({
       data: [mockWell],
       isLoading: true,
       isIdle: false,

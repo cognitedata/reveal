@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
-import { useCompare } from 'hooks/useCompare';
+import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { AxisPlacement, XAxisPlacement } from '../common/Axis';
 import { LegendCheckboxState, LegendProps } from '../common/Legend';
@@ -34,14 +34,14 @@ export const useChartCommonEssentials = <T>({
   options: BaseChartOptions<T> & any;
   onUpdate?: () => void;
 }) => {
-  const data = useMemo(
-    () => filterUndefinedValues<T>(dataOriginal, yAxis.accessor),
-    useCompare([dataOriginal])
-  );
-
-  const [filteredData, setFilteredData] = useState<T[]>(data);
+  const [filteredData, setFilteredData] = useState<T[]>([]);
   const [legendCheckboxState, setLegendCheckboxState] =
     useState<LegendCheckboxState>({});
+
+  const data = useDeepMemo(
+    () => filterUndefinedValues<T>(dataOriginal, yAxis.accessor),
+    [dataOriginal]
+  );
 
   const margins = { ...DEFAULT_MARGINS, ...options?.margins };
 
@@ -70,12 +70,12 @@ export const useChartCommonEssentials = <T>({
       ? spacings.y
       : undefined;
 
-  const initialCheckboxState: LegendCheckboxState = useMemo(() => {
+  const initialCheckboxState: LegendCheckboxState = useDeepMemo(() => {
     if (isEmpty(data) || isUndefined(colorConfig)) return {};
     return getLegendInitialCheckboxState<T>(data, colorConfig.accessor);
-  }, useCompare([data]));
+  }, [data]);
 
-  const onChangeLegendCheckbox = useCallback(
+  const onChangeLegendCheckbox = useDeepCallback(
     (option: string, checked: boolean) => {
       if (isUndefined(colorConfig)) return;
 
@@ -95,19 +95,19 @@ export const useChartCommonEssentials = <T>({
 
       if (onUpdate) onUpdate();
     },
-    useCompare([data, legendCheckboxState])
+    [data, legendCheckboxState]
   );
 
-  const handleResetToDefault = useCallback(() => {
+  const handleResetToDefault = useDeepCallback(() => {
     setFilteredData(data);
     setLegendCheckboxState(initialCheckboxState);
     if (onUpdate) onUpdate();
-  }, useCompare([data]));
+  }, [data]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     setFilteredData(data);
     setLegendCheckboxState(initialCheckboxState);
-  }, useCompare([data]));
+  }, [data]);
 
   const legendProps: LegendProps = {
     legendCheckboxState,
@@ -117,7 +117,7 @@ export const useChartCommonEssentials = <T>({
     legendOptions: options?.legendOptions,
   };
 
-  return useMemo(
+  return useDeepMemo(
     () => ({
       data,
       filteredData,
@@ -132,6 +132,6 @@ export const useChartCommonEssentials = <T>({
       spacings,
       handleResetToDefault,
     }),
-    useCompare([data, filteredData, legendCheckboxState])
+    [data, filteredData, legendCheckboxState]
   );
 };

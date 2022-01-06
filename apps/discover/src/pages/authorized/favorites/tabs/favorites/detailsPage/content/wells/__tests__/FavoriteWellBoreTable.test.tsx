@@ -1,24 +1,18 @@
 import { fireEvent, screen } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
-import { useWellboresByIdsAndWellId } from 'modules/wellSearch/selectors';
+import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { LOADING_TEXT } from 'pages/authorized/search/well/content/constants';
 
 import { FavoriteWellboreTable, Props } from '../FavoriteWellBoreTable';
 
 jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
   useDispatch: jest.fn(),
 }));
 
-jest.mock('modules/wellSearch/selectors/asset/well.ts', () => ({
-  useWellBoreResult: jest.fn(),
-  useWells: jest.fn(),
-}));
-
-jest.mock('modules/wellSearch/selectors', () => ({
-  useWellboresByIdsAndWellId: jest.fn(),
+jest.mock('modules/wellSearch/hooks/useWellsQuerySelectors', () => ({
+  useWellboresOfWellById: jest.fn(),
 }));
 
 describe('Favorite Wellbore table', () => {
@@ -28,7 +22,7 @@ describe('Favorite Wellbore table', () => {
   afterEach(async () => jest.clearAllMocks());
 
   it('should render the loader', async () => {
-    (useWellboresByIdsAndWellId as jest.Mock).mockImplementation(() => []);
+    (useWellboresOfWellById as jest.Mock).mockImplementation(() => []);
 
     await defaultTestInit({
       well: {
@@ -50,7 +44,7 @@ describe('Favorite Wellbore table', () => {
   });
 
   it('should render table correctly', async () => {
-    (useWellboresByIdsAndWellId as jest.Mock).mockImplementation(() => [
+    (useWellboresOfWellById as jest.Mock).mockImplementation(() => [
       {
         id: 'test-id',
         description: 'test wellbore',
@@ -78,7 +72,7 @@ describe('Favorite Wellbore table', () => {
   });
 
   it('should render wellbore `Remove from set` button', async () => {
-    (useWellboresByIdsAndWellId as jest.Mock).mockImplementation(() => [
+    (useWellboresOfWellById as jest.Mock).mockImplementation(() => [
       {
         id: 'test-id-1',
         description: 'test wellbore',

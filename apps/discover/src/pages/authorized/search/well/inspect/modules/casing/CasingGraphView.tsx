@@ -5,10 +5,10 @@ import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/emptyState';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import {
   useCasingsForTable,
   useNptEventsForCasings,
-  useSecondarySelectedOrHoveredWells,
 } from 'modules/wellSearch/selectors';
 
 import CasingView from './CasingView/CasingView';
@@ -24,7 +24,7 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef }: Props) => {
 
   const { casings, isLoading } = useCasingsForTable();
 
-  const wells = useSecondarySelectedOrHoveredWells();
+  const wells = useWellInspectSelectedWells();
   const { isLoading: isEventsLoading, events } = useNptEventsForCasings();
 
   const formattedCasings = useMemo(

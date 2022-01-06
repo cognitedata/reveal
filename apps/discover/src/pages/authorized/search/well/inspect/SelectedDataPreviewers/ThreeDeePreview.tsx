@@ -12,16 +12,14 @@ import {
   useCreateMetricAndStartTimeLogger,
   TimeLogStages,
 } from 'hooks/useTimeLog';
+import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import {
-  useNptEventsFor3D,
-  useSecondarySelectedOrHoveredWells,
-  useWellboreAssetIdMap,
-} from 'modules/wellSearch/selectors';
+import { useNptEventsFor3D } from 'modules/wellSearch/selectors';
 import { Well } from 'modules/wellSearch/types';
 import {
   mapWellboresToThreeD,
@@ -49,8 +47,8 @@ const ThreeDeePreview: React.FC<Props> = ({
 
   const dispatch = useDispatch();
   const { data: config } = useWellConfig();
-  const wellboreAssetIdMap = useWellboreAssetIdMap();
-  const selectedOrHoveredWells = useSecondarySelectedOrHoveredWells();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
+  const wells = useWellInspectSelectedWells();
 
   const { data: casingData, isLoading: casingLoading } =
     useSelectedWellboresCasingsQuery();
@@ -68,10 +66,7 @@ const ThreeDeePreview: React.FC<Props> = ({
   const logsFrmTops: any = {};
   const ndsEvents: CogniteEvent[] = [];
 
-  const selectedWells: Well[] = useMemo(
-    () => mapWellsToThreeD(selectedOrHoveredWells),
-    [selectedOrHoveredWells]
-  );
+  const selectedWells: Well[] = useMemo(() => mapWellsToThreeD(wells), [wells]);
 
   const selectedWellbores = useMemo(
     () => mapWellboresToThreeD(selectedWells),
@@ -228,7 +223,7 @@ const ThreeDeePreview: React.FC<Props> = ({
  *
  */
 const mapStateToProps = (state: StoreState) => ({
-  selectedWellboreIds: state.wellSearch.selectedSecondaryWellboreIds,
+  selectedWellboreIds: state.wellInspect.selectedWellboreIds,
   wellboreData: state.wellSearch.wellboreData,
 });
 

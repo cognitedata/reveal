@@ -1,9 +1,10 @@
 import { screen, waitFor } from '@testing-library/react';
 import { Store } from 'redux';
 
-import { getDefaultWell } from '__test-utils/fixtures/well';
+import { getMockWell } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
+import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 import { initialState as wellState } from 'modules/wellSearch/reducer';
 import { WellState } from 'modules/wellSearch/types';
 
@@ -13,13 +14,16 @@ import Content from '../Content';
 
 jest.mock('@cognite/node-visualizer', () => ({}));
 
+jest.mock('modules/wellSearch/hooks/useWellSearchResultQuery', () => ({
+  useWellSearchResultQuery: jest.fn(),
+}));
+
 describe('Well content', () => {
   const page = (viewStore: Store, viewProps?: any) =>
     testRenderer(Content, viewStore, viewProps);
 
   const defaultTestInit = async (extra: WellState = wellState) => {
     const store = getMockedStore({ wellSearch: { ...extra } });
-
     return { ...page(store), store };
   };
 
@@ -35,16 +39,13 @@ describe('Well content', () => {
   //   expect(empty).toBeTruthy();
   // });
 
-  it(`should render Results content page when result length greater than zero and hasSearched equals true`, async () => {
-    const defaultWell = getDefaultWell();
-    await defaultTestInit({
-      ...wellState,
-      currentQuery: {
-        phrase: 'test',
-        hasSearched: true,
-      },
-      wells: [defaultWell],
-    });
+  it(`should render Results content page when result length greater than zero and isLoading equals false`, async () => {
+    (useWellSearchResultQuery as jest.Mock).mockImplementation(() => ({
+      data: [getMockWell()],
+      isLoading: false,
+    }));
+
+    await defaultTestInit();
 
     const empty = await waitFor(() => screen.findByTestId('well-result-table'));
 

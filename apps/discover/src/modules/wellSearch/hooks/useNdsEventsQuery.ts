@@ -4,11 +4,9 @@ import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 import { LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectWellboreExternalIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
-import {
-  useActiveWellboresSourceExternalIdMap,
-  useSelectedOrHoveredWellboreIds,
-} from '../selectors';
 import {
   getNdsEventsByWellboreIds as service,
   fetchNdsEvents,
@@ -67,8 +65,8 @@ export const useNdsQuery = ({
 
 export const useNdsEventsQuery = () => {
   const enabledWellSDKV3 = useEnabledWellSdkV3();
-  const wellboreIds = useSelectedOrHoveredWellboreIds();
-  const wellboresSourceExternalIdMap = useActiveWellboresSourceExternalIdMap();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+  const wellboresSourceExternalIdMap = useWellInspectWellboreExternalIdMap();
   const queryClient = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
   const { data, isLoading } = useNdsQuery({

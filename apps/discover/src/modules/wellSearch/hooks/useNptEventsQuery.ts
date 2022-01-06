@@ -4,14 +4,14 @@ import { useQuery, useQueryClient } from 'react-query';
 import { LOG_EVENTS_NPT, LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
+import { useWellInspectWellboreIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
-import { useActiveWellboresMatchingIdMap } from '../selectors';
 import { getNptEventsByWellboreIds as service } from '../service';
 import { WellboreNPTEventsMap } from '../types';
 import { trimCachedData } from '../utils/common';
 
 export const useNptEventsQuery = () => {
-  const wellboresMatchingIdMap = useActiveWellboresMatchingIdMap();
+  const wellboresMatchingIdMap = useWellInspectWellboreIdMap();
   const queryClient = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
   const metricLogger = useMetricLogger(

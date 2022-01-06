@@ -1,4 +1,7 @@
 import get from 'lodash/get';
+import keyBy from 'lodash/keyBy';
+import map from 'lodash/map';
+import set from 'lodash/set';
 
 import { FetchOptions } from '_helpers/fetchAllCursors';
 import {
@@ -6,8 +9,10 @@ import {
   getWellById,
   getWellItemsByFilter,
 } from 'modules/wellSearch/sdk';
-import { CommonWellFilter } from 'modules/wellSearch/types';
+import { CommonWellFilter, Well, WellId } from 'modules/wellSearch/types';
 import { normalizeWells } from 'modules/wellSearch/utils/wells';
+
+import { getGroupedWellboresByWellIds } from './wellbore';
 
 export function getByFilters(wellFilter: CommonWellFilter) {
   return getWellItemsByFilter(wellFilter).then((response) =>
@@ -22,12 +27,21 @@ export function getAllByFilters(
   return getAllWellItemsByFilter(wellFilter, options);
 }
 
-export function getWellByWellId(wellId: number) {
-  return getWellById(wellId);
+export function getWellsByWellIds(wellIds: WellId[]) {
+  return Promise.all(wellIds.map(getWellById)).then(normalizeWells);
 }
 
-export function getWellByWellIds(wellIds: number[]) {
-  return Promise.all(wellIds.map((wellId) => getWellByWellId(wellId))).then(
-    normalizeWells
-  );
+export async function getWellsWithWellbores(wells: Well[]) {
+  const wellIds = map(wells, 'id');
+  const wellsDictionary = keyBy(wells, 'id');
+  const groupedWellbores = await getGroupedWellboresByWellIds(wellIds);
+
+  Object.keys(wellsDictionary).forEach((wellId) => {
+    set(wellsDictionary, wellId, {
+      ...get(wellsDictionary, wellId),
+      wellbores: get(groupedWellbores, wellId, []),
+    });
+  });
+
+  return Object.values(wellsDictionary);
 }

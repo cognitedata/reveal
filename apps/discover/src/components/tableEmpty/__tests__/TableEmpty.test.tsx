@@ -7,12 +7,12 @@ import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
 import * as mapActions from 'modules/map/actions';
 import { useGetTypeFromGeometry } from 'modules/map/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
-import { useWells } from 'modules/wellSearch/selectors';
+import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 
 import { TableEmpty, TableEmptyProps } from '../TableEmpty';
 
-jest.mock('modules/wellSearch/selectors', () => ({
-  useWells: jest.fn(),
+jest.mock('modules/wellSearch/hooks/useWellSearchResultQuery', () => ({
+  useWellSearchResultQuery: jest.fn(),
 }));
 
 jest.mock('modules/sidebar/selectors', () => ({
@@ -38,14 +38,16 @@ const defaultProps = {
 
 describe('TableEmpty', () => {
   beforeEach(() => {
-    (useWells as jest.Mock).mockImplementation(() => ({ isSearching: false }));
     (useSearchPhrase as jest.Mock).mockImplementation(constant(''));
     (useGetTypeFromGeometry as jest.Mock).mockImplementation(constant(null));
+    (useWellSearchResultQuery as jest.Mock).mockImplementation(() => ({
+      isLoading: false,
+    }));
   });
   afterEach(() => {
-    (useWells as jest.Mock).mockClear();
     (useSearchPhrase as jest.Mock).mockClear();
     (useGetTypeFromGeometry as jest.Mock).mockClear();
+    (useWellSearchResultQuery as jest.Mock).mockClear();
   });
 
   const store = getMockedStore();

@@ -1,19 +1,20 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
-import { initialState } from 'modules/wellSearch/reducer';
-import { useFavoriteWellResults, useWells } from 'modules/wellSearch/selectors';
+import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 
 import { FavoriteWellsBulkActions, Props } from '../FavoriteWellsBulkActions';
 
 jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
   useDispatch: () => jest.fn(),
 }));
 
-jest.mock('modules/wellSearch/selectors/asset/well.ts', () => ({
-  useFavoriteWellResults: jest.fn(),
-  useWells: jest.fn(),
+jest.mock('modules/wellSearch/hooks/useWellsFavoritesQuery', () => ({
+  useFavoriteWellResultQuery: jest.fn(),
+}));
+
+jest.mock('modules/wellSearch/hooks/useWellsQuerySelectors', () => ({
+  useWellsByIds: jest.fn(),
 }));
 
 jest.mock('modules/api/favorites/useFavoritesQuery', () => ({
@@ -23,26 +24,26 @@ jest.mock('modules/api/favorites/useFavoritesQuery', () => ({
 }));
 
 describe('Favorite Bulk action bar', () => {
-  const defaultTestInit = (viewProps?: Props) =>
-    testRendererModal(FavoriteWellsBulkActions, undefined, viewProps);
+  beforeEach(() => {
+    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
+      data: [],
+    }));
+  });
 
   afterEach(async () => jest.clearAllMocks());
 
-  it('should render the number of wells and wellbores selected', async () => {
-    (useFavoriteWellResults as jest.Mock).mockImplementation(() => ({
-      data: [],
-    }));
-    (useWells as jest.Mock).mockImplementation(() => ({
-      ...initialState,
-    }));
+  const defaultTestInit = (viewProps?: Props) =>
+    testRendererModal(FavoriteWellsBulkActions, undefined, viewProps);
 
+  const deselectAll = jest.fn();
+
+  it('should render the number of wells and wellbores selected', async () => {
     await defaultTestInit({
       allWellIds: [1, 2],
       selectedWellIdsList: { 1: true },
       deselectAll: jest.fn(),
       favoriteId: '1',
       favoriteWells: {},
-      handleUpdatingFavoriteWellState: jest.fn(),
       selectedWellboresList: { '1': ['test 1', 'test 2'] },
     });
 
@@ -51,22 +52,12 @@ describe('Favorite Bulk action bar', () => {
   });
 
   it('should deselect all on close', async () => {
-    (useFavoriteWellResults as jest.Mock).mockImplementation(() => ({
-      data: [],
-    }));
-    (useWells as jest.Mock).mockImplementation(() => ({
-      ...initialState,
-    }));
-
-    const deselectAll = jest.fn();
-
     await defaultTestInit({
       allWellIds: [1, 2],
       selectedWellIdsList: { 1: true },
       deselectAll,
       favoriteId: '1',
       favoriteWells: {},
-      handleUpdatingFavoriteWellState: jest.fn(),
       selectedWellboresList: { '1': ['test 1', 'test 2'] },
     });
 
@@ -79,22 +70,12 @@ describe('Favorite Bulk action bar', () => {
   });
 
   it('should remove item from favorite set', async () => {
-    (useFavoriteWellResults as jest.Mock).mockImplementation(() => ({
-      data: [],
-    }));
-    (useWells as jest.Mock).mockImplementation(() => ({
-      ...initialState,
-    }));
-
-    const deselectAll = jest.fn();
-
     await defaultTestInit({
       allWellIds: [1, 2],
       selectedWellIdsList: { 1: true },
       deselectAll,
       favoriteId: '1',
       favoriteWells: { '1': ['test 1'] },
-      handleUpdatingFavoriteWellState: jest.fn(),
       selectedWellboresList: { '1': ['test 1', 'test 2'] },
     });
 
@@ -102,30 +83,5 @@ describe('Favorite Bulk action bar', () => {
     fireEvent.click(screen.getByText('Remove'));
 
     expect(deselectAll).toBeCalledTimes(1);
-  });
-
-  it('should call related functions when click `View` button', async () => {
-    (useFavoriteWellResults as jest.Mock).mockImplementation(() => ({
-      data: [{ id: '1' }],
-    }));
-    (useWells as jest.Mock).mockImplementation(() => ({
-      ...initialState,
-    }));
-
-    const handleUpdatingFavoriteWellState = jest.fn();
-
-    await defaultTestInit({
-      allWellIds: [1, 2],
-      selectedWellIdsList: { 1: true },
-      deselectAll: jest.fn(),
-      favoriteId: '1',
-      favoriteWells: { '1': ['test 1'] },
-      handleUpdatingFavoriteWellState,
-      selectedWellboresList: { '1': ['test 1', 'test 2'] },
-    });
-    fireEvent.click(screen.getByText('View'));
-    await waitFor(() =>
-      expect(handleUpdatingFavoriteWellState).toBeCalledTimes(1)
-    );
   });
 });

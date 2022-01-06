@@ -18,4 +18,5 @@ export const OPEN_BROWSER_MESSAGE = 'Open data in new browser tabs';
 export const VIEW_SELECTED_WELL_TEXT = 'View the selected wells';
 export const ADD_SELECTED_WELLS_TEXT = 'Add the selected wells to favorites';
 export const CLEAR_SELECTION_TEXT = 'Clear selection';
+export const FAVORITE_WELL_LOADING_ERROR_TEXT = 'Error loading wells';
 export const FAVORITE_WELLBORE_LOADING_ERROR_TEXT = 'Error loading wellbores';

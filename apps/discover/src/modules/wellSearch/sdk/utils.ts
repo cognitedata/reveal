@@ -236,10 +236,7 @@ export const toIdentifier = (id: number | string): Identifier => {
 };
 
 export const toIdentifierItems = (items: Identifier[]) => {
-  return {
-    items,
-    ignoreUnknownIds: true,
-  };
+  return { items };
 };
 
 export const extractWellboresFromWells = (response: WellItems) => {

@@ -1,20 +1,17 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Checkbox } from '@cognite/cogs.js';
 
 import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';
-import Skeleton from 'components/skeleton';
-import useSelector from 'hooks/useSelector';
-import { useColoredWellbores } from 'modules/wellInspect/selectors';
-import { wellSearchActions } from 'modules/wellSearch/actions';
+import { wellInspectActions } from 'modules/wellInspect/actions';
+import { useWellInspectWells } from 'modules/wellInspect/hooks/useWellInspect';
 import {
-  useActiveWellsWellboresIds,
-  useSelectedOrHoveredWells,
-  useSelectedSecondaryWellAndWellboreIds,
-} from 'modules/wellSearch/selectors';
+  useColoredWellbores,
+  useWellInspectIndeterminateWells,
+  useWellInspectSelection,
+} from 'modules/wellInspect/selectors';
 import { Well } from 'modules/wellSearch/types';
-import { toBooleanMap } from 'modules/wellSearch/utils';
 
 import { DEFAULT_WELLBORE_COLOR } from './constants';
 import {
@@ -29,84 +26,29 @@ import {
 } from './elements';
 
 export const Content = () => {
-  const [indeterminateIds, setIndeterminateIds] = useState<{
-    [key: number]: boolean;
-  }>({});
-
-  const wells = useSelectedOrHoveredWells();
+  const wells = useWellInspectWells();
   const isColoredWellbores = useColoredWellbores();
-  const { wellIds, wellboreIds } = useActiveWellsWellboresIds();
-  const { selectedSecondaryWellIds, selectedSecondaryWellboreIds } =
-    useSelectedSecondaryWellAndWellboreIds();
+  const { selectedWellIds, selectedWellboreIds } = useWellInspectSelection();
+  const indeterminateWells = useWellInspectIndeterminateWells();
 
   const dispatch = useDispatch();
 
-  const { allWellboresFetching } = useSelector((state) => state.wellSearch);
+  const handleClickWell = useCallback((well: Well, isSelected: boolean) => {
+    dispatch(wellInspectActions.toggleSelectedWell({ well, isSelected }));
+  }, []);
 
-  const onWellClick = (well: Well) => {
-    setIndeterminateIds((ids) => ({
-      ...ids,
-      [well.id]: false,
-    }));
-    setSelectedWellIds(
-      {
-        [well.id]: !selectedSecondaryWellIds[well.id],
-      },
-      false
-    );
-    if (well.wellbores) {
-      setSelectedWellboreIds(
-        toBooleanMap(
-          well.wellbores.map((row) => row.id),
-          !selectedSecondaryWellIds[well.id]
-        )
+  const handleClickWellbore = useCallback(
+    (well: Well, wellboreId: number, isSelected: boolean) => {
+      dispatch(
+        wellInspectActions.toggleSelectedWellboreOfWell({
+          well,
+          wellboreId,
+          isSelected,
+        })
       );
-    }
-  };
-
-  const onWellboreClick = (wellboreId: number, well: Well) => {
-    const newState = !selectedSecondaryWellboreIds[wellboreId];
-    const wellWellboreIds = (well.wellbores || []).map((row) => row.id);
-    const selectedIds = wellWellboreIds.filter(
-      (row) =>
-        (row === wellboreId && newState) ||
-        (row !== wellboreId && selectedSecondaryWellboreIds[row])
-    );
-    setSelectedWellIds(
-      {
-        [well.id]: selectedIds.length > 0,
-      },
-      false
-    );
-    setIndeterminateIds((ids) => ({
-      ...ids,
-      [well.id]:
-        selectedIds.length > 0 && selectedIds.length !== wellWellboreIds.length,
-    }));
-    setSelectedWellboreIds({
-      [wellboreId]: newState,
-    });
-  };
-
-  const setSelectedWellIds = useCallback((ids, reset) => {
-    dispatch(wellSearchActions.setSelectedSecondaryWellIds(ids, reset));
-  }, []);
-
-  const setSelectedWellboreIds = useCallback((ids) => {
-    dispatch(wellSearchActions.setSelectedSecondaryWellboreIds(ids));
-  }, []);
-
-  // Set all wells selected by default
-  useEffect(() => {
-    setSelectedWellIds(toBooleanMap(wellIds), true);
-  }, [wellIds]);
-
-  // Set all wellbores selected by default
-  useEffect(() => {
-    if (!allWellboresFetching) {
-      setSelectedWellboreIds(toBooleanMap(wellboreIds));
-    }
-  }, [wellboreIds, allWellboresFetching]);
+    },
+    []
+  );
 
   return (
     <SidebarContent>
@@ -114,10 +56,10 @@ export const Content = () => {
         <SidebarContentBlock key={well.id}>
           <BlockHeader>
             <Checkbox
-              checked={selectedSecondaryWellIds[well.id]}
-              onChange={() => onWellClick(well)}
+              checked={selectedWellIds[well.id]}
+              onChange={(isSelected) => handleClickWell(well, isSelected)}
               name={`sidebar-wellbore-${well.id}`}
-              indeterminate={indeterminateIds[well.id]}
+              indeterminate={indeterminateWells[well.id]}
               color={DEFAULT_WELLBORE_COLOR}
             >
               <div>
@@ -128,37 +70,33 @@ export const Content = () => {
           </BlockHeader>
 
           <BlockContent>
-            {allWellboresFetching ? (
-              <Skeleton.List />
-            ) : (
-              well.wellbores.map((wellbore) => (
-                <BlockContentItem
-                  key={wellbore.id}
-                  overlay={
-                    isColoredWellbores && wellbore.metadata?.color.endsWith('_')
+            {well.wellbores.map((wellbore) => (
+              <BlockContentItem
+                key={wellbore.id}
+                overlay={
+                  isColoredWellbores && wellbore.metadata?.color.endsWith('_')
+                }
+              >
+                <Checkbox
+                  color={
+                    isColoredWellbores
+                      ? wellbore.metadata?.color.replace('_', '')
+                      : DEFAULT_WELLBORE_COLOR
                   }
+                  checked={selectedWellboreIds[wellbore.id]}
+                  onChange={(isSelected) =>
+                    handleClickWellbore(well, wellbore.id, isSelected)
+                  }
+                  name={`sidebar-wellbore-${wellbore.id}`}
                 >
-                  <Checkbox
-                    color={
-                      isColoredWellbores
-                        ? wellbore.metadata?.color.replace('_', '')
-                        : DEFAULT_WELLBORE_COLOR
-                    }
-                    checked={selectedSecondaryWellboreIds[wellbore.id]}
-                    onChange={() => {
-                      onWellboreClick(wellbore.id, well);
-                    }}
-                    name={`sidebar-wellbore-${wellbore.id}`}
-                  >
-                    <CheckboxContent>
-                      {getMiddleEllipsisWrapper(
-                        `${wellbore.description} ${wellbore.name}`
-                      )}
-                    </CheckboxContent>
-                  </Checkbox>
-                </BlockContentItem>
-              ))
-            )}
+                  <CheckboxContent>
+                    {getMiddleEllipsisWrapper(
+                      `${wellbore.description} ${wellbore.name}`
+                    )}
+                  </CheckboxContent>
+                </Checkbox>
+              </BlockContentItem>
+            ))}
           </BlockContent>
         </SidebarContentBlock>
       ))}

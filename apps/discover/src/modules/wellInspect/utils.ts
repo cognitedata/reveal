@@ -6,6 +6,19 @@ import { columns } from 'pages/authorized/search/well/inspect/modules/relatedDoc
 import { WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS } from './actions';
 import { BooleanSelection } from './types';
 
+export const getBooleanSelection = (
+  array: (string | number)[],
+  value: boolean
+): BooleanSelection => {
+  return array.reduce<BooleanSelection>(
+    (booleanSelection, key) => ({
+      ...booleanSelection,
+      [key]: value,
+    }),
+    {}
+  );
+};
+
 export const getInitialSelectedRelatedDocumentsColumns =
   (): BooleanSelection => {
     return (
