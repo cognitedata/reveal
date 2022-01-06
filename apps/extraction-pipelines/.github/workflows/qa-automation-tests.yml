@@ -17,7 +17,6 @@ jobs:
       with:
         repository: cognitedata/qa-cdf-extpipe-testframework
         token: ${{ secrets.TESTREPO_TOKEN }}
-        ref: dev
     
     - name: Sleep for 7 minutes
       run: Start-Sleep -s 420
