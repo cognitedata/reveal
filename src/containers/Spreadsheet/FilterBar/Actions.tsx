@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
+
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Flex } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
+
 import AccessButton from 'components/AccessButton';
 import Dropdown from 'components/Dropdown/Dropdown';
 import UploadCSV from 'components/UploadCSV';
-import { Menu } from './Menu';
-import { useQueryClient } from 'react-query';
-import { rowKey } from 'hooks/sdk-queries';
 import { useActiveTableContext } from 'contexts';
+import { rowKey } from 'hooks/sdk-queries';
+
+import { Menu } from './Menu';
 
 export const Actions = (): JSX.Element => {
   const queryClient = useQueryClient();
-  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
   const { database, table } = useActiveTableContext();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 

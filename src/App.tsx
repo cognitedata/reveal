@@ -1,8 +1,13 @@
 import React from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 import { StyleSheetManager } from 'styled-components';
 
-import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
+import {
+  AuthWrapper,
+  getEnv,
+  getProject,
+  SubAppWrapper,
+} from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider'; // eslint-disable-line
 import { createBrowserHistory } from 'history';
@@ -15,6 +20,7 @@ import { AntStyles } from 'styles/AntStyles';
 import { setupMixpanel } from 'utils/config';
 import sdk from 'utils/sdkSingleton';
 import RawExplorer from 'containers/RawExplorer';
+import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 
 setupMixpanel();
 
@@ -29,6 +35,9 @@ const App = () => {
     },
   });
 
+  const project = getProject();
+  const env = getEnv();
+
   return (
     // If styles are broken please check: .rescripts#PrefixWrap(
     <StyleSheetManager
@@ -41,8 +50,7 @@ const App = () => {
               <SubAppWrapper padding={false}>
                 <AuthWrapper
                   loadingScreen={<Loader />}
-                  showLoader
-                  subAppName="raw-explorer"
+                  login={() => loginAndAuthIfNeeded(project, env)}
                 >
                   <Router history={history}>
                     <RawExplorerProvider>

@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Body, Button, Colors, Tooltip } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import SidePanelLevelWrapper from 'components/SidePanel/SidePanelLevelWrapper';
@@ -11,7 +13,6 @@ import SidePanelTableListContent from './SidePanelTableListContent';
 import SidePanelTableListHomeItem from './SidePanelTableListHomeItem';
 import CreateTableModal from 'components/CreateTableModal/CreateTableModal';
 import { useTables } from 'hooks/sdk-queries';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { useActiveTable } from 'hooks/table-tabs';
 
 const accessWarningContent = (
@@ -35,7 +36,7 @@ const SidePanelTableList = (): JSX.Element => {
     { enabled: !!selectedSidePanelDatabase }
   );
 
-  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 

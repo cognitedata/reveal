@@ -1,12 +1,13 @@
 import React, { useContext, useState } from 'react';
 
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Body, Button, Colors, Icon, Menu, Tooltip } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import { RawExplorerContext } from 'contexts';
 import DeleteDatabaseModal from 'components/DeleteDatabaseModal/DeleteDatabaseModal';
 import Dropdown from 'components/Dropdown/Dropdown';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 
 type SidePanelTableListHomeItemProps = {
   isEmpty?: boolean;
@@ -49,7 +50,7 @@ const SidePanelTableListHomeItem = ({
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
 
   return (
     <StyledPanelTableListHomeItemWrapper>
