@@ -14,7 +14,11 @@ import { useActiveTableContext } from 'contexts';
 const COLUMNS_IGNORED = ['column-index', 'lastUpdatedTime'];
 
 export const Menu = (): JSX.Element => {
-  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
   const { rows, isFetched } = useTableData();
   const { database, table } = useActiveTableContext();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

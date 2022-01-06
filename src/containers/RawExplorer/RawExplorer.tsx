@@ -20,7 +20,7 @@ import { useDatabases } from 'hooks/sdk-queries';
 import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
 
 const RawExplorer = (): JSX.Element => {
-  const flow = getFlow();
+  const { flow } = getFlow();
   const { data: hasReadAccess, isFetched: isReadAccessFetched } =
     usePermissions(flow, 'rawAcl', 'READ');
   const { data: hasListAccess, isFetched: isListAccessFetched } =

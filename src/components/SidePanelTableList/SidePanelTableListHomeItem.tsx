@@ -50,7 +50,11 @@ const SidePanelTableListHomeItem = ({
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   return (
     <StyledPanelTableListHomeItemWrapper>

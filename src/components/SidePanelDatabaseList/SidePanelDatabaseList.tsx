@@ -27,7 +27,11 @@ const SidePanelDatabaseList = (): JSX.Element => {
 
   const { data, fetchNextPage, isLoading, hasNextPage } = useDatabases();
 
-  const { data: hasWriteAccess } = usePermissions(getFlow(), 'rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 
