@@ -7,7 +7,7 @@ import { ToolbarTool } from './ToolbarTool';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 import * as THREE from 'three';
 
-describe('ToolbarTool', () => {
+describe(ToolbarTool.name, () => {
   let viewer: Cognite3DViewer;
   let tool: ToolbarTool;
 
