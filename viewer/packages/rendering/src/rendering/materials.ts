@@ -117,8 +117,7 @@ export function createMaterials(
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
     // TODO we can avoid drawing DoubleSide if we flip the ring in Rust and adjust the angle and
     // arc_angle accordingly
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: THREE.DoubleSide
   });
 
   const coneMaterial = new THREE.ShaderMaterial({
@@ -197,8 +196,7 @@ export function createMaterials(
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: THREE.DoubleSide
   });
 
   const trapeziumMaterial = new THREE.ShaderMaterial({
