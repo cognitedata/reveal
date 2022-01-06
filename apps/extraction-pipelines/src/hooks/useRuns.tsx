@@ -7,7 +7,7 @@ import { Range } from '@cognite/cogs.js';
 import { RunStatusAPI } from 'model/Status';
 import { mapStatusRow } from 'utils/runsUtils';
 import { useCallback } from 'react';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useRuns = (
   externalId?: string,

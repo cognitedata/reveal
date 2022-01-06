@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { SDKError } from 'model/SDKErrors';
 import { getRawDBsAndTables } from 'utils/RawDataBaseAPI';
 import { RawDB, RawDBTable } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 
 export type DatabaseWithTablesItem = {
   database: RawDB;

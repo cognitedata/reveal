@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import { QueryClient } from 'react-query';
 import { act } from '@testing-library/react-hooks';
 import Extpipes from 'pages/Extpipes/Extpipes';

@@ -6,7 +6,7 @@ import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render'
 import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { DetailFieldNames } from 'model/Extpipe';
 

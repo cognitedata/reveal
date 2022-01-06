@@ -1,6 +1,6 @@
 import { QueryClient } from 'react-query';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import {
   createUpdateSpec,
   mapUpdateToPartialExtpipe,

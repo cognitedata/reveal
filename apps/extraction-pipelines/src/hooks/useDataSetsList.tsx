@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import { DataSet } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import { SDKError } from 'model/SDKErrors';
 import { getDataSetsList } from 'utils/DataSetAPI';
 

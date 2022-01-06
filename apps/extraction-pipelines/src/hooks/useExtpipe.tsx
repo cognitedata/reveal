@@ -3,7 +3,7 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { getExtpipeById } from 'utils/ExtpipesAPI';
 import { Extpipe } from 'model/Extpipe';
 import { SDKError } from 'model/SDKErrors';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useExtpipeById = (extpipeId?: number) => {
   const sdk = useSDK();

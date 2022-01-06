@@ -1,6 +1,6 @@
 import { QueryClient } from 'react-query';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import { getMockResponse, mockError } from 'utils/mockResponse';
 import {

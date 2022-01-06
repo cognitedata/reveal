@@ -1,5 +1,4 @@
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
-// eslint-disable-next-line @cognite/no-sdk-submodule-imports
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 

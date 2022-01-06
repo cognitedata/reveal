@@ -8,7 +8,7 @@ import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { DetailFieldNames } from 'model/Extpipe';
 import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
 import { trackUsage } from 'utils/Metrics';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import { render } from 'utils/test';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';

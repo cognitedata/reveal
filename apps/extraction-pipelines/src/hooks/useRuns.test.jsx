@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import { QueryClient } from 'react-query';
 import { DEFAULT_RUN_LIMIT } from 'utils/RunsAPI';
 import { createRunsFilter, useFilteredRuns, useRuns } from 'hooks/useRuns';

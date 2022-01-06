@@ -13,7 +13,7 @@ import {
   RunScheduleConnection,
 } from 'components/extpipe/RunScheduleConnection';
 import { parseCron } from 'utils/cronUtils';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import moment from 'moment';
 import { renderError } from 'components/extpipe/ExtpipeRunHistory';
 

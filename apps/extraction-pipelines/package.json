@@ -62,7 +62,7 @@
     "@cognite/babel-plugin-styled-components": "^1.10.7",
     "@cognite/cdf-ui-cli": "^1.0.0",
     "@cognite/eslint-config": "^1.6.1",
-    "@cognite/eslint-plugin": "^1.3.8",
+    "@cognite/eslint-plugin": "^1.4.0",
     "@hookform/devtools": "^3.1.0",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@rescripts/cli": "^0.0.15",

@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { DataSetError, SDKError } from 'model/SDKErrors';
 import { DataSetModel } from 'model/DataSetModel';
 import { getDataSets } from 'utils/DataSetAPI';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useDataSets = (dataSetIds: IdEither[]) => {
   const sdk = useSDK();

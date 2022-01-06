@@ -3,7 +3,7 @@ import { Extpipe, ExtpipeFieldName, ExtpipeFieldValue } from 'model/Extpipe';
 import { ErrorVariations } from 'model/SDKErrors';
 import { ExtpipeUpdateSpec, saveUpdate } from 'utils/ExtpipesAPI';
 import { FieldValues } from 'react-hook-form';
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 
 export type UpdateSpec = {
   id: number;
