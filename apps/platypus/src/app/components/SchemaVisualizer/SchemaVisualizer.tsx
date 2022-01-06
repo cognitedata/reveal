@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import styled, { css, CSSProperties } from 'styled-components/macro';
+import styled, { CSSProperties } from 'styled-components/macro';
 import {
   Badge,
-  Body,
   Button,
   Checkbox,
   Colors,
@@ -11,38 +10,26 @@ import {
   Input,
   Menu,
   Modal,
-  Title,
   TopBar,
 } from '@cognite/cogs.js';
-import {
-  FieldDefinitionNode,
-  InterfaceTypeDefinitionNode,
-  ObjectTypeDefinitionNode,
-  parse,
-  UnionTypeDefinitionNode,
-} from 'graphql';
+import { parse } from 'graphql';
 import { useDebounce } from '../../hooks/useDebounce';
 import { Node, Link, Graph, GraphFns, getLinkId } from '../Graph/Graph';
-import {
-  doesFieldHaveDirective,
-  doesNodeHaveDirective,
-  getConnectorHeight,
-  getLinkText,
-  getNodeWidth,
-  getOffset,
-  NODE_WIDTH,
-} from './utils';
+import { getLinkText, getNodeWidth, getOffset, NODE_WIDTH } from './utils';
 
 import {
-  getFieldType,
   getInterfaceTypes,
   getLinkedNodes,
   getObjectTypes,
   getUnionTypes,
-  renderFieldType,
   SchemaDefinitionNode,
 } from '../../utils/graphql-utils';
 import { ZIndex } from '../../utils/zIndex';
+import { SmallNode } from './nodes/SmallNode';
+import { FullNode } from './nodes/FullNode';
+import { InterfaceNode } from './nodes/InterfaceNode';
+import { UnionNode } from './nodes/UnionNode';
+import { connectorsGenerator } from './connectors';
 
 export const SchemaVisualizer = ({
   graphQLSchemaString,
@@ -58,7 +45,6 @@ export const SchemaVisualizer = ({
   const [showHeaderOnly, setShowHeaderOnly] = useState<boolean>(false);
   const [highlightMainID, setHighlightMainID] = useState(false);
   const [showRequiredIcon, setShowRequiredIcon] = useState(false);
-  const [showSearchIcon, setShowSearchIcon] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [searchFilterValue, setSearchFilterValue] = useState('');
   const [isVisualizerExpanded, setIsVisualizerExpanded] = useState(false);
@@ -167,18 +153,6 @@ export const SchemaVisualizer = ({
           Required
         </Checkbox>
       </Menu.Item>
-      <Menu.Item>
-        <Checkbox
-          name="search"
-          value={showSearchIcon}
-          onChange={(nextState: boolean) => {
-            setShowSearchIcon(nextState);
-            rerenderHandler();
-          }}
-        >
-          Search
-        </Checkbox>
-      </Menu.Item>
       <Menu.Divider />
       <Menu.Item>
         <Checkbox
@@ -196,7 +170,6 @@ export const SchemaVisualizer = ({
   );
 
   const countFilters =
-    (showSearchIcon ? 1 : 0) +
     (showRequiredIcon ? 1 : 0) +
     (showHeaderOnly ? 1 : 0) +
     (highlightMainID ? 1 : 0);
@@ -267,120 +240,10 @@ export const SchemaVisualizer = ({
     </div>
   );
 
-  const renderConnectorsForNode = (
-    item: d3.SimulationNodeDatum & {
-      id: string;
-      title: string;
-    } & SchemaDefinitionNode,
-    displayedNodes?: (d3.SimulationNodeDatum & {
-      id: string;
-      title: string;
-    } & SchemaDefinitionNode)[]
-  ) => {
-    const nodeWidth = getNodeWidth(item, showRequiredIcon, showSearchIcon);
-    const indicators: React.ReactNode[] = [];
-
-    const linkedSchemaIds = new Set<string>();
-
-    // get all of the links for this schema
-    links.forEach((link) => {
-      if (link.target === item.id) {
-        linkedSchemaIds.add(link.source);
-      } else if (link.source === item.id) {
-        linkedSchemaIds.add(link.target);
-      }
-    });
-
-    if (item.kind === 'ObjectTypeDefinition') {
-      // for Object types, go through each property that has a link outwards and draw an indicator
-      item.fields?.forEach((field: FieldDefinitionNode, index) => {
-        const linkedSchema = nodes.find(({ name }) =>
-          getFieldType(field.type).includes(name.value)
-        );
-        if (linkedSchema) {
-          linkedSchemaIds.delete(linkedSchema.id);
-          const linkedSchemaNode = displayedNodes
-            ? displayedNodes.find((el) => el.id === linkedSchema.id)
-            : undefined;
-          indicators.push(
-            <ConnectorIndicator
-              key={field.name.value}
-              top={getConnectorHeight(showHeaderOnly ? -1 : index)}
-              left={(linkedSchemaNode?.x || 0) > (item.x || 1) ? nodeWidth : 0}
-            />
-          );
-        }
-      });
-    }
-
-    // all leftover linkages are referenced indirectly
-    Array.from(linkedSchemaIds).forEach((id) => {
-      const linkedSchemaNode = displayedNodes
-        ? displayedNodes.find((el) => el.id === id)
-        : undefined;
-      indicators.push(
-        <ConnectorIndicator
-          key={id}
-          top={getConnectorHeight(-1)}
-          left={(linkedSchemaNode?.x || 0) > (item.x || 1) ? nodeWidth : 0}
-        />
-      );
-    });
-
-    return indicators;
-  };
-
-  const renderInterfaceNode = (item: InterfaceTypeDefinitionNode) => (
-    <Header>
-      <Title level={5}>{item.name.value}</Title>
-      <Body level={2}>[interface]</Body>
-    </Header>
+  const renderConnectorsForNode = useMemo(
+    () => connectorsGenerator(nodes, links, showHeaderOnly, showRequiredIcon),
+    [nodes, links, showHeaderOnly, showRequiredIcon]
   );
-
-  const renderUnionNode = (item: UnionTypeDefinitionNode) => (
-    <Header>
-      <Title level={5}>{item.name.value}</Title>
-      <Body level={2}>[union]</Body>
-    </Header>
-  );
-
-  const renderSmallNode = (item: ObjectTypeDefinitionNode) => (
-    <Header>
-      <Title level={5}>{item.name.value}</Title>
-      <Body level={2}>[type]</Body>
-    </Header>
-  );
-
-  const renderFullNode = (item: ObjectTypeDefinitionNode) => {
-    const hasRequiredFilter =
-      showRequiredIcon && doesNodeHaveDirective(item, 'required');
-    const hasSearchFilter =
-      showSearchIcon && doesNodeHaveDirective(item, 'search');
-    return (
-      <>
-        <Header>
-          <Title level={5}>{item.name.value}</Title>
-          <Body level={2}>[type]</Body>
-        </Header>
-        {item.fields?.map((el) => (
-          <PropertyItem key={el.name.value}>
-            <Body level={2} className="property-name">
-              {highlightMainID && doesFieldHaveDirective(el, 'id') ? (
-                <StyledMainID>{el.name.value}</StyledMainID>
-              ) : (
-                el.name.value
-              )}
-            </Body>
-            <div className="property-type">
-              <Body level={2}>{renderFieldType(el.type)}</Body>
-              {hasRequiredFilter && renderIconIfRequired(el)}
-              {hasSearchFilter && renderIconIfSearch(el)}
-            </div>
-          </PropertyItem>
-        ))}
-      </>
-    );
-  };
 
   const renderGraph = () => (
     <>
@@ -392,7 +255,7 @@ export const SchemaVisualizer = ({
         initialZoom={10}
         useCurve
         getOffset={(...params) =>
-          getOffset(...params)(showHeaderOnly, showRequiredIcon, showSearchIcon)
+          getOffset(...params)(showHeaderOnly, showRequiredIcon)
         }
         onLinkEvent={(type, data, event) => {
           // trigger popover
@@ -440,25 +303,29 @@ export const SchemaVisualizer = ({
           if (highlightedIds.includes(item.id)) {
             style.borderColor = Colors['greyscale-grey7'].hex();
           }
-          const nodeWidth = getNodeWidth(
-            item,
-            showRequiredIcon,
-            showSearchIcon
-          );
+          const nodeWidth = getNodeWidth(item, showRequiredIcon);
           let content = <p>Loading&hellip;</p>;
           switch (item.kind) {
             case 'ObjectTypeDefinition': {
-              content = (showHeaderOnly ? renderSmallNode : renderFullNode)(
-                item
-              );
+              if (showHeaderOnly) {
+                content = <SmallNode key={item.name.value} item={item} />;
+              } else {
+                content = (
+                  <FullNode
+                    key={item.name.value}
+                    item={item}
+                    showRequiredIcon={showRequiredIcon}
+                  />
+                );
+              }
               break;
             }
             case 'InterfaceTypeDefinition': {
-              content = renderInterfaceNode(item);
+              content = <InterfaceNode key={item.name.value} item={item} />;
               break;
             }
             case 'UnionTypeDefinition': {
-              content = renderUnionNode(item);
+              content = <UnionNode key={item.name.value} item={item} />;
               break;
             }
           }
@@ -505,20 +372,6 @@ export const SchemaVisualizer = ({
       )}
     </div>
   );
-};
-
-const renderIconIfRequired = (item: FieldDefinitionNode) => {
-  if (doesFieldHaveDirective(item, 'required')) {
-    return <StyledRequired>R</StyledRequired>;
-  }
-  return <div style={{ width: 16 }} />;
-};
-
-const renderIconIfSearch = (item: FieldDefinitionNode) => {
-  if (doesFieldHaveDirective(item, 'search')) {
-    return <StyledSearchIcon type="Search" />;
-  }
-  return <div style={{ width: 16 }} />;
 };
 
 const StyledModal = styled(Modal)`
@@ -569,70 +422,6 @@ const NodeWrapper = styled.div<ITypeItem>`
     color: var(--cogs-greyscale-grey9);
   }
 `;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  *:not(:first-child) {
-    margin-left: 4px;
-  }
-`;
-
-const PropertyItem = styled.div`
-  display: flex;
-  margin-top: 8px;
-  .property-name {
-    color: var(--cogs-greyscale-grey9);
-    flex: 1;
-  }
-  .property-type {
-    text-align: end;
-    display: flex;
-    align-items: center;
-    * {
-      margin-left: 6px;
-    }
-  }
-`;
-
-const StyledMainID = styled.span`
-  display: inline-block;
-  padding: 0 0.1rem;
-  color: var(--cogs-white);
-  border-radius: 1px;
-  background-color: var(--cogs-greyscale-grey7);
-`;
-
-const StyledRequired = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  font-weight: 600;
-  color: var(--cogs-white);
-  border-radius: 1px;
-  background-color: var(--cogs-purple-4);
-`;
-
-const StyledSearchIcon = styled(Icon)`
-  height: 16px;
-  width: 16px !important;
-  color: var(--cogs-greyscale-grey7);
-`;
-
-const ConnectorIndicator = styled.div<{ top: number; left: number }>(
-  (props) => css`
-    position: absolute;
-    top: ${props.top}px;
-    left: ${props.left}px;
-    border-radius: 50%;
-    height: 10px;
-    width: 10px;
-    background: var(--cogs-purple-3);
-    transform: translate(-50%, -50%);
-  `
-);
 
 const Popover = styled.div`
   position: absolute;

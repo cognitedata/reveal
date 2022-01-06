@@ -1,5 +1,5 @@
-import { SimulationLinkDatum, SimulationNodeDatum } from 'd3';
-import { FieldDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
+import { SimulationLinkDatum } from 'd3';
+import { FieldDefinitionNode } from 'graphql';
 import { GetOffsetFunction, Node } from '../Graph/Graph';
 import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
 
@@ -12,78 +12,22 @@ type GetOffsetFnParams = Parameters<
   GetOffsetFunction<Node & SchemaDefinitionNode>
 >;
 
-export const isDisplayedNodesOverlapping = (
-  origNodes: (SimulationNodeDatum & {
-    id: string;
-    title: string;
-  } & ObjectTypeDefinitionNode)[],
-  scale: number
-) => {
-  const nodes = origNodes.slice();
-  while (nodes.length !== 0) {
-    const item = nodes.pop();
-    const hasOverlap = nodes.some((node) => {
-      const nodeX = (node.x || 0) * scale;
-      const nodeY = (node.y || 0) * scale;
-      const itemX = (item?.x || 0) * scale;
-      const itemY = (item?.y || 0) * scale;
-
-      const nodeWidth = NODE_WIDTH;
-      const nodeHeight =
-        NODE_HEADER_HEIGHT +
-        (node.fields?.length || 0) * NODE_PROPERTY_ITEM_HEIGHT;
-
-      const itemWidth = NODE_WIDTH;
-      const itemHeight =
-        NODE_HEADER_HEIGHT +
-        (item?.fields?.length || 0) * NODE_PROPERTY_ITEM_HEIGHT;
-
-      return (
-        // node max X > item min X
-        nodeX + nodeWidth > itemX &&
-        // node min X < item max X
-        nodeX < itemX + itemWidth &&
-        // node max Y > item min Y
-        nodeY + nodeHeight > itemY &&
-        // node min Y < item max Y
-        nodeY < itemY + itemHeight
-      );
-    });
-    if (hasOverlap) {
-      return true;
-    }
-  }
-  return false;
-};
-
 export const getConnectorHeight = (index: number) =>
   (index > -1 ? (index + 1) * NODE_PROPERTY_ITEM_HEIGHT : 0) +
   NODE_HEADER_HEIGHT / 2;
 
 export const getOffset =
   (d: GetOffsetFnParams[0]) =>
-  (
-    showHeaderOnly = false,
-    showRequiredIcon = false,
-    showSearchIcon = false
-  ) => {
+  (showHeaderOnly = false, showRequiredIcon = false) => {
     const sourceNode = d.source as SchemaDefinitionNode & Node;
     const targetNode = d.target as SchemaDefinitionNode & Node;
 
     const sourceNodeName = sourceNode.name.value;
     const targetNodeName = targetNode.name.value;
 
-    const sourceNodeWidth = getNodeWidth(
-      sourceNode,
-      showRequiredIcon,
-      showSearchIcon
-    );
+    const sourceNodeWidth = getNodeWidth(sourceNode, showRequiredIcon);
 
-    const targetNodeWidth = getNodeWidth(
-      targetNode,
-      showRequiredIcon,
-      showSearchIcon
-    );
+    const targetNodeWidth = getNodeWidth(targetNode, showRequiredIcon);
 
     const sourcePropertyIndex =
       sourceNode.kind === 'ObjectTypeDefinition'
@@ -149,18 +93,12 @@ export const getLinkText = (
 
 export const getNodeWidth = (
   node: SchemaDefinitionNode & Node,
-  requiredFilter: boolean,
-  searchFilter: boolean
+  requiredFilter: boolean
 ) => {
   const hasRequiredFilter =
     requiredFilter && doesNodeHaveDirective(node, 'required');
-  const hasSearchFilter = searchFilter && doesNodeHaveDirective(node, 'search');
 
-  return (
-    NODE_WIDTH +
-    (hasRequiredFilter ? NODE_ICON_WIDTH : 0) +
-    (hasSearchFilter ? NODE_ICON_WIDTH : 0)
-  );
+  return NODE_WIDTH + (hasRequiredFilter ? NODE_ICON_WIDTH : 0);
 };
 
 export const doesNodeHaveDirective = (
