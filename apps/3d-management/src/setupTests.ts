@@ -17,6 +17,18 @@ export interface Global {
   innerWidth: number;
 }
 
+jest.mock('@cognite/sdk-provider', () => {
+  return {
+    useSDK: jest.fn(),
+  };
+});
+
+jest.mock('@cognite/sdk-react-query-hooks', () => {
+  return {
+    usePermissions: () => ({ data: true, isFetched: true }),
+  };
+});
+
 configure({ adapter: new Adapter() });
 
 // Create document.currentScript required by potree-core

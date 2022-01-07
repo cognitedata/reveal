@@ -10,4 +10,6 @@ const client = new CogniteClient({
   baseUrl: 'https://example.com',
 });
 
+export const getFlow = () => ({ flow: 'flow' });
+
 export default client;

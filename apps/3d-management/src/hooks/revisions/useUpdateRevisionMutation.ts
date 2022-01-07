@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Revision3D, UpdateRevision3D } from '@cognite/sdk';
-import { useMutation, useQueryCache } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { fireErrorNotification, QUERY_KEY } from 'src/utils';
 
 type UpdateArgs = {
@@ -34,15 +34,15 @@ const updateRevision = async (payload: UpdateArgs): Promise<Revision3D> => {
 };
 
 export function useUpdateRevisionMutation() {
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   return useMutation<Revision3D, HttpError, UpdateArgs, Revision3D[]>(
     updateRevision,
     {
       onMutate: ({ modelId, revisionId, ...updates }: UpdateArgs) => {
         const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
-        const snapshot = queryCache.getQueryData<Revision3D[]>(queryKey);
+        const snapshot = queryClient.getQueryData<Revision3D[]>(queryKey);
 
-        queryCache.setQueryData<Revision3D[]>(queryKey, (old) => {
+        queryClient.setQueryData<Revision3D[]>(queryKey, (old) => {
           return (old || []).map((revision) => {
             return revision.id === revisionId
               ? { ...revision, ...updates }
@@ -54,7 +54,7 @@ export function useUpdateRevisionMutation() {
       },
       onError: (error, { modelId }, snapshotValue) => {
         const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
-        queryCache.setQueryData(queryKey, snapshotValue);
+        queryClient.setQueryData(queryKey, snapshotValue);
         fireErrorNotification({
           error,
           message: 'Error: Could not update a revision',

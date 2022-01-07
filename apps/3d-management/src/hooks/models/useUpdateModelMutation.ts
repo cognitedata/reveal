@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Model3D } from '@cognite/sdk';
-import { useMutation, useQueryCache } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { fireErrorNotification, QUERY_KEY } from 'src/utils';
 
 type UpdateArgs = { id: number; name: string };
@@ -16,12 +16,12 @@ const updateModel = async ({ id, name }: UpdateArgs): Promise<Model3D> => {
 };
 
 export function useUpdateModelMutation() {
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   return useMutation<Model3D, HttpError, UpdateArgs, Model3D[]>(updateModel, {
     onMutate: ({ id, name }: UpdateArgs) => {
-      const snapshot = queryCache.getQueryData<Model3D[]>(QUERY_KEY.MODELS);
+      const snapshot = queryClient.getQueryData<Model3D[]>(QUERY_KEY.MODELS);
 
-      queryCache.setQueryData<Model3D[]>(QUERY_KEY.MODELS, (old) => {
+      queryClient.setQueryData<Model3D[]>(QUERY_KEY.MODELS, (old) => {
         return (old || []).map((model) => {
           return model.id === id ? { ...model, name } : model;
         });
@@ -30,7 +30,7 @@ export function useUpdateModelMutation() {
       return snapshot || [];
     },
     onError: (error, _, snapshotValue) => {
-      queryCache.setQueryData(QUERY_KEY.MODELS, snapshotValue);
+      queryClient.setQueryData(QUERY_KEY.MODELS, snapshotValue);
       fireErrorNotification({
         error,
         message: 'Error: Could not rename a model',

@@ -57,7 +57,7 @@ export default function ThreeDViewerSidebar(props: Props) {
     (window as any).viewer = props.viewer;
   }, [props.model, props.viewer]);
 
-  const [updateRevisionMutation] = useUpdateRevisionMutation();
+  const { mutate: updateRevisionMutation } = useUpdateRevisionMutation();
 
   const treeViewFeatureFlagIsEnabled =
     useFlag('3DM_tree-view') || !isProduction();

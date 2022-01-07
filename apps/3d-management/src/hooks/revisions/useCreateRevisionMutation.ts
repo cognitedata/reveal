@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { CreateRevision3D, HttpError, Revision3D } from '@cognite/sdk';
-import { useMutation, useQueryCache } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { fireErrorNotification, QUERY_KEY } from 'src/utils';
 
 type CreateRevisionArgs = { modelId: number } & CreateRevision3D;
@@ -14,13 +14,13 @@ const createRevision = async ({
 };
 
 export function useCreateRevisionMutation() {
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   return useMutation<Revision3D, HttpError, CreateRevisionArgs>(
     createRevision,
     {
       onSuccess: (newRevision: Revision3D, { modelId }: CreateRevisionArgs) => {
         const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
-        queryCache.setQueryData<Revision3D[]>(queryKey, (old) => {
+        queryClient.setQueryData<Revision3D[]>(queryKey, (old) => {
           return [newRevision].concat(old || []);
         });
       },

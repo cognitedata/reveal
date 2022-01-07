@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { CreateModel3D, HttpError, Model3D } from '@cognite/sdk';
-import { useMutation, useQueryCache } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { fireErrorNotification, QUERY_KEY } from 'src/utils';
 
 const addModel = async ({ name }: CreateModel3D): Promise<Model3D> => {
@@ -9,10 +9,10 @@ const addModel = async ({ name }: CreateModel3D): Promise<Model3D> => {
 };
 
 export function useCreateModelMutation() {
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   return useMutation<Model3D, HttpError, CreateModel3D, Model3D[]>(addModel, {
     onSuccess: () => {
-      queryCache.invalidateQueries(QUERY_KEY.MODELS, { exact: true });
+      queryClient.invalidateQueries(QUERY_KEY.MODELS, { exact: true });
     },
     onError: (error) => {
       fireErrorNotification({

@@ -17,16 +17,16 @@ const fetchLogs = ({ modelId, revisionId }: RevisionIds) => async (): Promise<
 };
 
 export function useRevisionLogs(args: RevisionIds) {
-  return useQuery<RevisionLog3D[], HttpError>({
-    queryKey: [QUERY_KEY.REVISIONS, args],
-    queryFn: fetchLogs(args),
-    config: {
+  return useQuery<RevisionLog3D[], HttpError>(
+    [QUERY_KEY.REVISIONS, args],
+    fetchLogs(args),
+    {
       onError: (error) => {
         fireErrorNotification({
           error,
           message: 'Could not fetch revision logs',
         });
       },
-    },
-  });
+    }
+  );
 }
