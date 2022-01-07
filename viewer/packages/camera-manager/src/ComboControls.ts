@@ -651,21 +651,6 @@ export class ComboControls extends EventDispatcher {
     return { targetOffset, radius };
   };
   
-  private calculateDeltaTargetOffsetLength(cameraPosition: THREE.Vector3, scrollTarget: THREE.Vector3, target: THREE.Vector3, deltaDistance: number): number {
-    // Here we use the law of sines to determine how far we want to move the target.
-    // Direction is always determined by scrollTarget-target vector
-    const targetToScrollTargetVec = this._reusableVector3.subVectors(scrollTarget, target).normalize();
-    const cameraToTargetVec = new Vector3().subVectors(target, cameraPosition);
-    const cameraToScrollTargetVec = new Vector3().subVectors(scrollTarget, cameraPosition);
-
-    const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
-    const targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.negate());
-    
-    const deltaTargetOffset = deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
-
-    return deltaTargetOffset;
-  }
-
   // Function almost equal to mapLinear except it is behaving the same as clamp outside of specifed range
   private readonly clampedMap = (value: number, xStart: number, xEnd: number, yStart: number, yEnd: number) => {
     if (value < xStart) value = yStart;
@@ -697,8 +682,17 @@ export class ComboControls extends EventDispatcher {
 
     if (isDollyOut) this.setScrollTarget(_target);
 
-  
-    let deltaTargetOffsetDistance = this.calculateDeltaTargetOffsetLength(_camera.position, _scrollTarget, _target, deltaDistance);
+    // Here we use the law of sines to determine how far we want to move the target.
+    // Direction is always determined by scrollTarget-target vector
+    const targetToScrollTargetVec = _reusableVector3.subVectors(_scrollTarget, _target);
+    const cameraToTargetVec = new Vector3().subVectors(_target, _camera.position);
+    const cameraToScrollTargetVec = new Vector3().subVectors(_scrollTarget, _camera.position);
+
+    const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
+    const targetScrollTargetCameraAngle = targetToScrollTargetVec.clone().negate().angleTo(cameraToScrollTargetVec.clone().negate());
+
+    let deltaTargetOffsetDistance =
+      deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
 
     const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
 
@@ -716,23 +710,24 @@ export class ComboControls extends EventDispatcher {
 
     let radius = distToTarget + deltaDistance;
     
-    console.log(radius, minDistance, deltaDistance, distToTarget, _target);
+    //console.log(radius, minDistance, deltaDistance, distToTarget, _target);
+    //console.log(_camera.position);
     // behaviour for scrolling with mouse wheel
     if (radius < minDistance) {
       this._temporarilyDisableDamping = true;
-      //radius = radius < 0 ? minDistance : radius;
+
       // stops camera from moving forward only if target became close to scroll target
       if ((_scrollTarget.distanceTo(_target) < minDistance) || (radius <= 0)) {
-        deltaTargetOffsetDistance = this.calculateDeltaTargetOffsetLength(_camera.position, _scrollTarget, _target,(minDistance - distToTarget) );
-        radius = minDistance;
+        deltaTargetOffsetDistance = 0;
+        
+        radius = distToTarget;
         //console.log(targetToScrollTargetVec.clone().multiplyScalar(deltaTargetOffsetDistance));
       }
     }
 
-    const targetToScrollTargetVec = this._reusableVector3.subVectors(_scrollTarget, _target).normalize().negate();
-
     // if we scroll out, we don't change the target
-    const targetOffset = targetToScrollTargetVec.multiplyScalar(!isDollyOut ? deltaTargetOffsetDistance : 0);
+    const targetOffset = targetToScrollTargetVec.negate().normalize()
+      .multiplyScalar(!isDollyOut ? deltaTargetOffsetDistance : 0);
 
     return { targetOffset, radius };
   };
@@ -792,7 +787,7 @@ export class ComboControls extends EventDispatcher {
     _reusableCamera.position.setFromSpherical(_sphericalEnd).add(_targetEnd);
     _reusableCamera.lookAt(_targetEnd);
 
-    const cameraDirection = _reusableVector3.setFromSpherical(_sphericalEnd);
+    const cameraDirection = _reusableVector3.clone().setFromSpherical(_sphericalEnd);
 
     if (moveOnlyTarget) {
       // move only target together with the camera, radius is constant (for 'w' and 's' keys movement)
