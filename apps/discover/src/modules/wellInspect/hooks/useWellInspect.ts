@@ -5,23 +5,19 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
 import { Wellbore, WellboreId } from 'modules/wellSearch/types';
 
-import { WELLBORE_COLORS } from '../constants';
 import {
   useWellInspectSelection,
   useWellInspectWellboreIds,
   useWellInspectWellIds,
 } from '../selectors';
 
+import { useMapToColoredWellbore } from './useMapToColoredWellbore';
+
 export const useWellInspectWells = () => {
   const inspectWellIds = useWellInspectWellIds();
   const inspectWellboreIds = useWellInspectWellboreIds();
   const wells = useWellsByIds(inspectWellIds);
-
-  let wellboreIndex = -1;
-  const colors = [
-    ...WELLBORE_COLORS,
-    ...WELLBORE_COLORS.map((color) => `${color}_`),
-  ];
+  const toColoredWellbore = useMapToColoredWellbore();
 
   return useDeepMemo(() => {
     if (!wells) return [];
@@ -30,18 +26,11 @@ export const useWellInspectWells = () => {
       ...well,
       wellbores:
         well.wellbores
-          ?.filter((wellbore) => inspectWellboreIds.includes(wellbore.id))
-          .map((wellbore) => {
-            wellboreIndex += 1;
-            const colorIndex = wellboreIndex % colors.length;
-            return {
-              ...wellbore,
-              metadata: {
-                ...wellbore.metadata,
-                color: colors[colorIndex],
-              },
-            } as Wellbore;
-          }) || [],
+          ?.filter((wellbore) =>
+            // @sdk-wells-v3 [String]
+            inspectWellboreIds.includes(String(wellbore.id))
+          )
+          .map(toColoredWellbore) || [],
     }));
   }, [wells, inspectWellIds, inspectWellboreIds]);
 };
