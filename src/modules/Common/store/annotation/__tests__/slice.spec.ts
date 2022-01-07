@@ -34,16 +34,17 @@ describe('Test annotation reducer', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(initialState);
   });
 
-  describe('Test RetrieveAnnotations.pending action', () => {
-    test('should clear entire state when clear cache is true', () => {
+  describe('Test RetrieveAnnotations.fulfilled action', () => {
+    test('should clear entire state when clear cache is true and response is empty', () => {
       const action = {
-        type: RetrieveAnnotations.pending.type,
+        type: RetrieveAnnotations.fulfilled.type,
         meta: {
           arg: {
             fileIds: [],
             clearCache: true,
           },
         },
+        payload: [],
       };
 
       const previousState = {
@@ -70,15 +71,16 @@ describe('Test annotation reducer', () => {
       });
     });
 
-    test('should clear only specified fileIds when clear cache is false', () => {
+    test('should clear only specified fileIds when clear cache is false and response is empty', () => {
       const action = {
-        type: RetrieveAnnotations.pending.type,
+        type: RetrieveAnnotations.fulfilled.type,
         meta: {
           arg: {
             fileIds: [10],
             clearCache: false,
           },
         },
+        payload: [],
       };
 
       const previousState = {
@@ -106,7 +108,7 @@ describe('Test annotation reducer', () => {
       });
     });
 
-    test('should keep state unchanged if nonexisting fileIds are provided', () => {
+    test('should keep state unchanged if nonexistent fileIds are provided', () => {
       const action = {
         type: RetrieveAnnotations.pending.type,
         meta: {
@@ -115,6 +117,7 @@ describe('Test annotation reducer', () => {
             clearCache: false,
           },
         },
+        payload: [],
       };
 
       const previousState = {
@@ -132,12 +135,15 @@ describe('Test annotation reducer', () => {
 
       expect(reducer(previousState, action)).toEqual(previousState);
     });
-  });
-
-  describe('Test RetrieveAnnotations.fulfilled action', () => {
     test('should populate state', () => {
       const action = {
         type: RetrieveAnnotations.fulfilled.type,
+        meta: {
+          arg: {
+            fileIds: [10, 20, 30],
+            clearCache: false,
+          },
+        },
         payload: [
           getDummyAnnotation(1, undefined, 10), // existing annotation and file
           getDummyAnnotation(2, undefined, 10), // new annotation for existing file with annotation
@@ -181,7 +187,7 @@ describe('Test annotation reducer', () => {
   });
 
   describe('Test DeleteAnnotations.fulfilled action', () => {
-    test('should not change state for nonexisitng annotation id', () => {
+    test('should not change state for nonexistent annotation id', () => {
       const action = {
         type: DeleteAnnotations.fulfilled.type,
         payload: [3], // annotation ids to delete
