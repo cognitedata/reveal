@@ -7,7 +7,6 @@ import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { batch } from 'react-redux';
 
 export const AnnotationStatusChange = createAsyncThunk<
   void,
@@ -30,7 +29,7 @@ export const AnnotationStatusChange = createAsyncThunk<
     const asset = assets && assets.length ? assets[0] : null; // get the first (and only) asset
 
     if (!asset) {
-      dispatch(UpdateAnnotations([updatedAnnotation])); // update annotation right away
+      // preempt if asset is empty
       return;
     }
 
@@ -38,21 +37,18 @@ export const AnnotationStatusChange = createAsyncThunk<
       updatedAnnotation.status === AnnotationStatus.Verified &&
       !fileIsLinkedToAsset(file, asset) // annotation is verified and file is not linked to asset
     ) {
-      batch(() => {
-        dispatch(
-          UpdateFiles([
-            {
-              id: Number(file.id),
-              update: {
-                assetIds: {
-                  add: [asset.id],
-                },
+      dispatch(
+        UpdateFiles([
+          {
+            id: Number(file.id),
+            update: {
+              assetIds: {
+                add: [asset.id],
               },
             },
-          ])
-        );
-        dispatch(UpdateAnnotations([updatedAnnotation]));
-      });
+          },
+        ])
+      );
     } else if (
       unSavedAnnotation.status === AnnotationStatus.Rejected &&
       fileIsLinkedToAsset(file, asset) // annotation is rejected and file linked to asset
@@ -79,9 +75,6 @@ export const AnnotationStatusChange = createAsyncThunk<
         },
         'Remove asset link'
       );
-      dispatch(UpdateAnnotations([updatedAnnotation]));
-    } else {
-      dispatch(UpdateAnnotations([updatedAnnotation]));
     }
   };
 
@@ -95,10 +88,9 @@ export const AnnotationStatusChange = createAsyncThunk<
     status: payload.status,
   };
 
-  if (!(unSavedAnnotation.modelType === VisionAPIType.TagDetection)) {
-    // if not tag annotation update annotation right away
-    dispatch(UpdateAnnotations([unSavedAnnotation]));
-  } else {
+  dispatch(UpdateAnnotations([unSavedAnnotation]));
+
+  if (unSavedAnnotation.modelType === VisionAPIType.TagDetection) {
     await updateTagAnnotationAndFileAssetLinks(file, unSavedAnnotation); // update tag annotations and asset links in file
   }
 });

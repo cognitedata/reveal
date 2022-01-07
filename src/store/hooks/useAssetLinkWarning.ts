@@ -2,7 +2,7 @@ import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { AnnotationTableItem } from 'src/modules/Review/types';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
@@ -24,6 +24,8 @@ const useAssetLinkWarning = (
   );
   const [asset, setAsset] = useState<VisionAsset | null>(null);
   const dispatch: AppDispatch = useDispatch();
+  const approvedAnnotationNotLinkedToFileTimer = useRef<any>(null);
+  const rejectedAnnotationLinkedToFileTimer = useRef<any>(null);
 
   useEffect(() => {
     const fetchAndSetAsset = async (ann: AnnotationTableItem) => {
@@ -50,12 +52,27 @@ const useAssetLinkWarning = (
   }, [annotation.linkedResourceId, annotation.linkedResourceExternalId]);
 
   useEffect(() => {
+    // clear timers and cancel pending errors, since not doing it can make app to show error erroneously
+    if (approvedAnnotationNotLinkedToFileTimer.current) {
+      clearTimeout(approvedAnnotationNotLinkedToFileTimer.current);
+      approvedAnnotationNotLinkedToFileTimer.current = null;
+    }
+    if (rejectedAnnotationLinkedToFileTimer.current) {
+      clearTimeout(rejectedAnnotationLinkedToFileTimer.current);
+      rejectedAnnotationLinkedToFileTimer.current = null;
+    }
+
     if (asset) {
       if (
         annotation.status === AnnotationStatus.Verified &&
         !file.assetIds?.includes(asset.id)
       ) {
-        setAssetWarnType(AssetWarnTypes.ApprovedAnnotationAssetNotLinkedToFile);
+        approvedAnnotationNotLinkedToFileTimer.current = setTimeout(() => {
+          // timers delay showing error so other processes can be completed before showing error (file update)
+          setAssetWarnType(
+            AssetWarnTypes.ApprovedAnnotationAssetNotLinkedToFile
+          );
+        }, 1500);
       } else if (
         annotation.status === AnnotationStatus.Rejected &&
         file.assetIds?.includes(asset.id) &&
@@ -67,7 +84,10 @@ const useAssetLinkWarning = (
           ) // select other annotations except this one
           .every((tagAnnotation) => !isLinkedToAsset(tagAnnotation, asset)) // every other tag annotation is not approved and linked to the same asset
       ) {
-        setAssetWarnType(AssetWarnTypes.RejectedAnnotationAssetLinkedToFile);
+        rejectedAnnotationLinkedToFileTimer.current = setTimeout(() => {
+          // timers delay showing error so other processes can be completed before showing error (file update)
+          setAssetWarnType(AssetWarnTypes.RejectedAnnotationAssetLinkedToFile);
+        }, 2000);
       } else {
         setAssetWarnType(AssetWarnTypes.NoWarning);
       }
