@@ -1,4 +1,4 @@
-import { FileFilterProps, DateRange } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps, DateRange } from '@cognite/sdk';
 import { DateActions, DateOptions } from './DateFilter';
 
 export enum MediaTypeOption {

@@ -1,5 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import { FileGeoLocation } from '@cognite/cdf-sdk-singleton';
+import { FileGeoLocation } from '@cognite/sdk';
 import { SelectFilter } from 'src/modules/Common/types';
 
 type FileState = {

@@ -7,7 +7,7 @@ import { RootState } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
 import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import {
   fileInfoEdit,

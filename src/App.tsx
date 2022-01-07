@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
-import { AuthWrapper, SubAppWrapper, getProject } from '@cognite/cdf-utilities';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import {
+  AuthWrapper,
+  SubAppWrapper,
+  getProject,
+  getEnv,
+} from '@cognite/cdf-utilities';
 import { Routes } from 'src/Routes';
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
@@ -10,7 +16,7 @@ import theme from 'src/styles/theme';
 import { Loader } from '@cognite/cogs.js';
 import { ThemeProvider } from 'styled-components';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from 'src/store';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
@@ -32,30 +38,33 @@ const App = () => {
     };
   }, []);
 
+  const queryClient = new QueryClient();
+
   const project = getProject();
+  const env = getEnv();
   return (
     <AntStyles>
       <AuthWrapper
-        subAppName={subAppName}
-        showLoader
-        includeGroups
         loadingScreen={<Loader />}
+        login={() => loginAndAuthIfNeeded(project, env)}
       >
         <ThemeProvider theme={theme}>
-          <SDKProvider sdk={sdkv3}>
+          <SDKProvider sdk={sdk}>
             <FlagProvider // https://cog.link/cdf-frontend-wiki
               apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
               appName={subAppName}
               projectName={project}
               remoteAddress={window.location.hostname}
             >
-              <ReduxProvider store={store}>
-                <SubAppWrapper padding={false}>
-                  <Router history={history}>
-                    <Routes />
-                  </Router>
-                </SubAppWrapper>
-              </ReduxProvider>
+              <QueryClientProvider client={queryClient}>
+                <ReduxProvider store={store}>
+                  <SubAppWrapper title="Cognite Vision">
+                    <Router history={history}>
+                      <Routes />
+                    </Router>
+                  </SubAppWrapper>
+                </ReduxProvider>
+              </QueryClientProvider>
             </FlagProvider>
           </SDKProvider>
         </ThemeProvider>

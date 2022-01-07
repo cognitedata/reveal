@@ -4,7 +4,7 @@ import {
   ProposedCogniteAnnotation,
   ViewerEditCallbacks,
 } from '@cognite/react-picture-annotation';
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
@@ -85,9 +85,10 @@ export const CogniteFileViewerWrapper: React.FC<FilePreviewProps> = ({
     setSelectedAnnotation(annotation);
   };
 
+  // TODO(CDFUX-1190): fix type problem when sdk singleton starts consuming sdk v6
   return (
     <CogniteFileViewer
-      sdk={sdk}
+      sdk={sdk as any}
       file={fileInfo}
       disableAutoFetch
       hideDownload

@@ -9,7 +9,7 @@ import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
 import isEqual from 'lodash-es/isEqual';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { RootState } from 'src/store/rootReducer';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { createFileInfo } from 'src/store/util/StateUtils';

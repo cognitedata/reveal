@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps } from '@cognite/sdk';
 import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
 import { TableDataItem } from 'src/modules/Common/types';
 import { ExplorationSearchBar } from 'src/modules/Explorer/Containers/ExplorationSearchBar';
