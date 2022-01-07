@@ -17,7 +17,7 @@ import { LoadingState } from './utilities/types';
 import { emissionLastMillis } from './utilities/rxOperations';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
-import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
+import { CadModelBudget, defaultCadModelBudget } from './CadModelBudget';
 import { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
 
@@ -26,14 +26,14 @@ const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsR
 export class CadModelUpdateHandler {
   private readonly _sectorCuller: SectorCuller;
   private readonly _modelStateHandler: ModelStateHandler;
-  private _budget: CadModelSectorBudget;
+  private _budget: CadModelBudget;
   private _lastSpent: SectorLoadingSpent;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
-  private readonly _budgetSubject: Subject<CadModelSectorBudget> = new Subject();
+  private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
   private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
   private readonly _updateObservable: Observable<ConsumedSector>;
@@ -41,7 +41,7 @@ export class CadModelUpdateHandler {
   constructor(sectorCuller: SectorCuller, continuousModelStreaming = false) {
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
-    this._budget = defaultCadModelSectorBudget;
+    this._budget = defaultCadModelBudget;
     this._lastSpent = {
       downloadSize: 0,
       drawCalls: 0,
@@ -124,10 +124,10 @@ export class CadModelUpdateHandler {
     this._clippingPlaneSubject.next(value);
   }
 
-  get budget(): CadModelSectorBudget {
+  get budget(): CadModelBudget {
     return this._budget;
   }
-  set budget(b: CadModelSectorBudget) {
+  set budget(b: CadModelBudget) {
     this._budget = b;
     this._budgetSubject.next(b);
   }
@@ -182,7 +182,7 @@ export class CadModelUpdateHandler {
 
 type SettingsInput = {
   loadingHints: CadLoadingHints;
-  budget: CadModelSectorBudget;
+  budget: CadModelBudget;
 };
 type CameraInput = {
   camera: THREE.PerspectiveCamera;
@@ -192,7 +192,7 @@ type ClippingInput = {
   clippingPlanes: THREE.Plane[] | never[];
 };
 
-function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelSectorBudget]): SettingsInput {
+function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelBudget]): SettingsInput {
   return { loadingHints, budget };
 }
 function makeCameraInput([camera, cameraInMotion]: [THREE.PerspectiveCamera, boolean]): CameraInput {

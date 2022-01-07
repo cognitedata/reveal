@@ -3,7 +3,7 @@
  */
 import { TakenV8SectorTree } from './TakenV8SectorTree';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate, SectorCost, addSectorCost } from '../types';
-import { CadModelSectorBudget } from '../../../CadModelSectorBudget';
+import { CadModelBudget } from '../../../CadModelBudget';
 import { TakenSectorMapBase } from './TakenSectorMapBase';
 
 import { CadModelMetadata, V8SectorMetadata } from '@reveal/cad-parsers';
@@ -66,13 +66,9 @@ export class TakenV8SectorMap extends TakenSectorMapBase {
     sectorTree!.markSectorDetailed(sectorId, priority);
   }
 
-  isWithinBudget(budget: CadModelSectorBudget): boolean {
+  isWithinBudget(budget: CadModelBudget): boolean {
     const currentCost = this.totalCost;
-    return (
-      currentCost.downloadSize < budget.geometryDownloadSizeBytes &&
-      currentCost.drawCalls < budget.maximumNumberOfDrawCalls &&
-      currentCost.renderCost < budget.maximumRenderCost
-    );
+    return currentCost.renderCost < budget.maximumRenderCost;
   }
 
   collectWantedSectors(): PrioritizedWantedSector[] {
