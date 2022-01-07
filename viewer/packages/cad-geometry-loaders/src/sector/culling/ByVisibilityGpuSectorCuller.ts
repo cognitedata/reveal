@@ -8,7 +8,7 @@ import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCove
 import { SectorCuller } from './SectorCuller';
 import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorCost, SectorLoadingSpent } from './types';
 import { TakenV8SectorMap } from './takensectors';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { CadModelBudget } from '../../CadModelBudget';
 
 import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 
@@ -94,7 +94,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
     clippingPlanes: THREE.Plane[] | null,
-    budget: CadModelSectorBudget
+    budget: CadModelBudget
   ): TakenV8SectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
@@ -122,10 +122,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.log(`Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`);
     this.log(
       `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${
-        takenSectors.totalCost.downloadSize / 1024 / 1024
-      }/${budget.geometryDownloadSizeBytes / 1024 / 1024}, drawCalls: ${takenSectors.totalCost.drawCalls}/${
-        budget.maximumNumberOfDrawCalls
-      }, priority: ${debugAccumulatedPriority})`
+        takenSectors.totalCost.renderCost
+      }/${budget.maximumRenderCost}, priority: ${debugAccumulatedPriority})`
     );
 
     return takenSectors;
@@ -134,7 +132,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private addHighDetailsForNearSectors(
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
-    budget: CadModelSectorBudget,
+    budget: CadModelBudget,
     takenSectors: TakenV8SectorMap,
     clippingPlanes: THREE.Plane[] | null
   ) {

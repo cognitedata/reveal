@@ -4,12 +4,12 @@
 
 // Note! In testUtilities we need to use relative imports
 import { CadModelMetadata } from '../../packages/cad-parsers';
-import { CadModelSectorBudget, DetermineSectorsInput } from '../../packages/cad-geometry-loaders';
+import { DetermineSectorsInput, CadModelBudget } from '../../packages/cad-geometry-loaders';
 
 export function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
   models: CadModelMetadata | CadModelMetadata[],
-  budget?: CadModelSectorBudget
+  budget?: CadModelBudget
 ): DetermineSectorsInput {
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
@@ -18,9 +18,7 @@ export function createDetermineSectorInput(
     loadingHints: {},
     cameraInMotion: false,
     budget: budget || {
-      geometryDownloadSizeBytes: 20,
       highDetailProximityThreshold: 10,
-      maximumNumberOfDrawCalls: Infinity,
       maximumRenderCost: Infinity
     },
     prioritizedAreas: []

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export { CadModelSectorBudget } from './src/CadModelSectorBudget';
+export { CadModelBudget } from './src/CadModelBudget';
 
 export { CadLoadingHints } from './src/CadLoadingHints';
 

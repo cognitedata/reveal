@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { DetermineSectorsInput, SectorCost } from './types';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { CadModelBudget } from '../../CadModelBudget';
 import { PropType } from '../../utilities/reflection';
 
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
@@ -101,9 +101,9 @@ describe('ByVisibilityGpuSectorCuller', () => {
       switch (lod) {
         case LevelOfDetail.Detailed:
           return [
-            { downloadSize: 10, drawCalls: 0, renderCost: 0 },
-            { downloadSize: 10, drawCalls: 0, renderCost: 0 },
-            { downloadSize: 100, drawCalls: 0, renderCost: 0 }
+            { downloadSize: 10, drawCalls: 0, renderCost: 5 },
+            { downloadSize: 10, drawCalls: 0, renderCost: 5 },
+            { downloadSize: 100, drawCalls: 0, renderCost: 5 }
           ][sector.id];
         case LevelOfDetail.Simple:
           return { downloadSize: 1, drawCalls: 0, renderCost: 0 };
@@ -128,10 +128,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     // Place camera far away to avoid sectors being loaded because camera is near them
     camera.position.set(1000, 1000, 1000);
     const input = createDetermineSectorInput(camera, model, {
-      geometryDownloadSizeBytes: 20,
-      maximumNumberOfDrawCalls: Infinity,
       highDetailProximityThreshold: 10,
-      maximumRenderCost: Infinity
+      maximumRenderCost: 8
     });
 
     // Act
@@ -143,14 +141,14 @@ describe('ByVisibilityGpuSectorCuller', () => {
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Simple).map(x => x.metadata.id)).toEqual([2]);
   });
 
-  test('determineSectors limits sectors by draw calls', () => {
+  test('determineSectors limits sectors by render cost', () => {
     // Arrange
     const determineSectorCost = (_sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
       switch (lod) {
         case LevelOfDetail.Detailed:
-          return { downloadSize: 0, drawCalls: 5, renderCost: 0 };
+          return { downloadSize: 0, drawCalls: 0, renderCost: 5 };
         case LevelOfDetail.Simple:
-          return { downloadSize: 0, drawCalls: 1, renderCost: 0 };
+          return { downloadSize: 0, drawCalls: 0, renderCost: 1 };
         default:
           return { downloadSize: 0, drawCalls: 0, renderCost: 0 };
       }
@@ -172,10 +170,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     // Place camera far away to avoid sectors being loaded because camera is near them
     camera.position.set(1000, 1000, 1000);
     const input = createDetermineSectorInput(camera, model, {
-      geometryDownloadSizeBytes: Infinity,
-      maximumNumberOfDrawCalls: 10,
       highDetailProximityThreshold: -1,
-      maximumRenderCost: Infinity
+      maximumRenderCost: 10
     });
 
     // Act
@@ -197,7 +193,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
 function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
   models: CadModelMetadata | CadModelMetadata[],
-  budget?: CadModelSectorBudget
+  budget?: CadModelBudget
 ): DetermineSectorsInput {
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
@@ -206,9 +202,7 @@ function createDetermineSectorInput(
     loadingHints: {},
     cameraInMotion: false,
     budget: budget || {
-      geometryDownloadSizeBytes: 20,
       highDetailProximityThreshold: 10,
-      maximumNumberOfDrawCalls: Infinity,
       maximumRenderCost: Infinity
     },
     prioritizedAreas: []
