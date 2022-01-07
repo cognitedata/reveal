@@ -22,7 +22,7 @@ import {
   filterPrimitivesOutsideClipBoxByVertices
 } from '@reveal/cad-parsers';
 
-import { BoundingBoxLOD, disposeAttributeArrayOnUpload } from '@reveal/utilities';
+import { BoundingBoxLOD, disposeAttributeArrayOnUpload, incrementOrInsertIndex } from '@reveal/utilities';
 
 import { Materials } from './materials';
 
@@ -165,10 +165,13 @@ function setAttributes(
     const treeIndexAttribute = attributes.get('treeIndex')!;
     const treeIndexAttributeOffset = treeIndexAttribute.offset;
 
-    const treeIndices = new Set();
+    const treeIndices = new Map<number, number>();
 
     for (let i = 0; i < geometry.instanceCount; i++) {
-      treeIndices.add(collectionView.getFloat32(i * attributesByteSize + treeIndexAttributeOffset, true));
+      incrementOrInsertIndex(
+        treeIndices,
+        collectionView.getFloat32(i * attributesByteSize + treeIndexAttributeOffset, true)
+      );
     }
     mesh.userData.treeIndices = treeIndices;
   }

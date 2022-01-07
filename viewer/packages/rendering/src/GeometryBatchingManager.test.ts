@@ -49,6 +49,19 @@ describe(GeometryBatchingManager.name, () => {
     expect(geometryGroup.children.length).toBe(2);
   });
 
+  test('batchGeometries() adds relevant tree indices to mesh', () => {
+    const treeIndices = [2, 4, 8];
+    const geometries1 = [
+      createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices, 0)
+    ];
+
+    manager.batchGeometries(geometries1, 1);
+
+    for (const i of treeIndices) {
+      expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(i);
+    }
+  });
+
   test('removeSectorBatches() removes meshes', () => {
     const geometries1 = [createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)];
     const geometries2 = [createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 20, 0)];
@@ -60,20 +73,84 @@ describe(GeometryBatchingManager.name, () => {
     expect((geometryGroup.children[0] as THREE.InstancedMesh).count).toBe(20);
   });
 
+  test('removeSectorBatches() removes only relevant treeIndices', () => {
+    const treeIndices1 = [10, 20, 30];
+    const treeIndices2 = [40, 50, 60];
+
+    const geometries1 = [
+      createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices1, 0)
+    ];
+    const geometries2 = [
+      createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices2, 0)
+    ];
+
+    manager.batchGeometries(geometries1, 1);
+    manager.batchGeometries(geometries2, 2);
+
+    manager.removeSectorBatches(1);
+
+    for (const i of treeIndices2) {
+      expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(i);
+    }
+
+    for (const i of treeIndices1) {
+      expect(geometryGroup.children[0].userData.treeIndices.keys()).not.toContain(i);
+    }
+  });
+
+  test('removeSectorBatches() preserves indices added more than once', () => {
+    const treeIndices1 = [10, 20];
+    const treeIndices2 = [20, 30];
+
+    const geometries1 = [
+      createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices1, 0)
+    ];
+    const geometries2 = [
+      createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices2, 0)
+    ];
+
+    manager.batchGeometries(geometries1, 1);
+    manager.batchGeometries(geometries2, 2);
+
+    manager.removeSectorBatches(1);
+
+    for (const i of treeIndices2) {
+      expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(i);
+    }
+  });
+
   test('removeSectorBatches() ignores invalid sectorId', () => {
     expect(() => manager.removeSectorBatches(2)).not.toThrow();
   });
 });
 
 function createParsedGeometry(type: RevealGeometryCollectionType, elementCount: number, instanceId: number) {
-  const buffer = new THREE.InterleavedBuffer(new Float32Array(2 * elementCount), 2);
+  return createParsedGeometryWithTreeIndices(type, Array<number>(elementCount), instanceId);
+}
+
+function createParsedGeometryWithTreeIndices(
+  type: RevealGeometryCollectionType,
+  treeIndices: number[],
+  instanceId: number
+): ParsedGeometry {
+  const buffer = new THREE.InterleavedBuffer(new Float32Array(3 * treeIndices.length), 3);
   const geometryBuffer = new THREE.BufferGeometry();
   geometryBuffer.setAttribute('attribute1', new THREE.InterleavedBufferAttribute(buffer, 1, 0));
   geometryBuffer.setAttribute('attribute2', new THREE.InterleavedBufferAttribute(buffer, 1, 1));
+
+  const treeIndexAttribute = new THREE.InterleavedBufferAttribute(buffer, 1, 2);
+
+  for (let i = 0; i < treeIndices.length; i++) {
+    treeIndexAttribute.setX(i, treeIndices[i]);
+  }
+
+  geometryBuffer.setAttribute('a_treeIndex', treeIndexAttribute);
+
   const result: ParsedGeometry = {
     type,
     geometryBuffer,
     instanceId: `${instanceId}`
   };
+
   return result;
 }
