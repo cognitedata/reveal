@@ -5,7 +5,14 @@ import * as THREE from 'three';
 
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import assert from 'assert';
-import { assertNever, DynamicDefragmentedBuffer, TypedArray, TypedArrayConstructor } from '@reveal/utilities';
+import {
+  assertNever,
+  DynamicDefragmentedBuffer,
+  TypedArray,
+  TypedArrayConstructor,
+  incrementOrInsertIndex,
+  decrementOrDeleteIndex
+} from '@reveal/utilities';
 import { Materials } from './rendering/materials';
 
 type BatchedBuffer = {
@@ -61,7 +68,12 @@ export class GeometryBatchingManager {
       }
 
       const { defragBuffer, mesh } = geometry;
-      const { updateRange } = defragBuffer.remove(batchId);
+
+      const updateRange = defragBuffer.getRangeForBatchId(batchId);
+
+      this.removeTreeIndicesFromMeshUserData(mesh, updateRange);
+
+      defragBuffer.remove(batchId);
 
       this.updateInstanceAttributes(mesh, updateRange);
 
@@ -79,6 +91,7 @@ export class GeometryBatchingManager {
   ) {
     const instanceAttributes = this.getAttributes(sectorBufferGeometry, THREE.InterleavedBufferAttribute);
     const interleavedBufferView = this.getInstanceAttributesSharedView(instanceAttributes);
+    const treeIndexInterleavedAttribute = this.getTreeIndexAttribute(instanceAttributes);
 
     assert(instanceId !== undefined);
 
@@ -88,11 +101,17 @@ export class GeometryBatchingManager {
     const interleavedArrayBuffer = interleavedBufferView.buffer;
 
     const { defragBuffer, mesh } = instanceMeshGeometry;
+
     const length = interleavedBufferView.byteLength;
     const offset = interleavedBufferView.byteOffset;
 
     const interleavedAttributesView = new Uint8Array(interleavedArrayBuffer, offset, length);
     const { batchId, bufferIsReallocated, updateRange } = defragBuffer.add(interleavedAttributesView);
+
+    for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
+      incrementOrInsertIndex(mesh.userData.treeIndices, treeIndexInterleavedAttribute.getX(i));
+    }
+
     const sectorBatches = this._sectorMap.get(sectorId) ?? this.createSectorBatch(sectorId);
 
     assert(instanceAttributes.length > 0);
@@ -201,6 +220,42 @@ export class GeometryBatchingManager {
     return interleavedBufferView;
   }
 
+  private getTreeIndexAttribute(
+    instanceAttributes: { name: string; attribute: THREE.InterleavedBufferAttribute }[]
+  ): THREE.InterleavedBufferAttribute {
+    const treeIndexAttribute = instanceAttributes.filter(att => att.name === 'a_treeIndex');
+
+    assert(treeIndexAttribute.length > 0);
+
+    return treeIndexAttribute[0].attribute;
+  }
+
+  private removeTreeIndicesFromMeshUserData(
+    mesh: THREE.Mesh,
+    updateRange: { byteOffset: number; byteCount: number }
+  ): void {
+    const { byteOffset, byteCount } = updateRange;
+
+    const interleavedAttributes = this.getAttributes(mesh.geometry, THREE.InterleavedBufferAttribute);
+
+    const treeIndexAttribute = this.getTreeIndexAttribute(interleavedAttributes);
+    const typedArray = treeIndexAttribute.data.array as TypedArray;
+    const instanceByteSize = treeIndexAttribute.data.stride * typedArray.BYTES_PER_ELEMENT;
+
+    assert(byteOffset % instanceByteSize === 0);
+    assert(byteCount % instanceByteSize === 0);
+
+    const firstWholeInstanceIndex = byteOffset / instanceByteSize;
+    const firstInvalidInstanceIndex = (byteOffset + byteCount) / instanceByteSize;
+
+    for (let i = firstWholeInstanceIndex; i < firstInvalidInstanceIndex; i++) {
+      const treeIndex = treeIndexAttribute.getX(i);
+
+      assert((mesh.userData.treeIndices as Map<number, number>).has(treeIndex));
+      decrementOrDeleteIndex(mesh.userData.treeIndices, treeIndex);
+    }
+  }
+
   private createDefragmentedBufferGeometry(
     bufferGeometry: THREE.BufferGeometry,
     defragmentedAttributeBuffer: DynamicDefragmentedBuffer<Uint8Array>
@@ -255,6 +310,8 @@ export class GeometryBatchingManager {
       (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
       (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
     };
+
+    mesh.userData.treeIndices = new Map<number, number>();
 
     mesh.updateMatrixWorld(true);
 

@@ -114,6 +114,16 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     return { updateRange: { byteOffset, byteCount } };
   }
 
+  public getRangeForBatchId(batchId: number): { byteOffset: number; byteCount: number } {
+    const batch = this._batchMap.get(batchId);
+
+    if (!batch) {
+      throw new Error('batch does not exist in buffer');
+    }
+
+    return { byteOffset: batch.from, byteCount: batch.count };
+  }
+
   private createBatch(array: T) {
     const batch: Batch = {
       from: this._numFilled,
