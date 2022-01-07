@@ -32,3 +32,5 @@ export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 
 export { revealEnv } from './src/revealEnv';
+
+export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';

@@ -8,8 +8,10 @@ import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
-import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
+import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
 import { filterGeometryOutsideClipBox } from '../../cad-parsers/src/cad/filterPrimitivesV9';
+
+import assert from 'assert';
 
 export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -108,10 +110,25 @@ export class GltfSectorRepository implements SectorRepository {
     };
   }
 
+  private createTreeIndexSet(geometry: THREE.BufferGeometry): Map<number, number> {
+    const treeIndexAttribute = geometry.attributes['treeIndex'];
+    assert(treeIndexAttribute !== undefined);
+
+    const treeIndexSet = new Map<number, number>();
+
+    for (let i = 0; i < treeIndexAttribute.count; i++) {
+      incrementOrInsertIndex(treeIndexSet, treeIndexAttribute.getX(i));
+    }
+
+    return treeIndexSet;
+  }
+
   private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.ShaderMaterial) {
     const mesh = new THREE.Mesh(geometry, material);
     group.add(mesh);
     mesh.frustumCulled = false;
+
+    mesh.userData.treeIndices = this.createTreeIndexSet(geometry);
 
     if (material.uniforms.inverseModelMatrix === undefined) return;
 
