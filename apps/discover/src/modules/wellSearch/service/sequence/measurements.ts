@@ -37,8 +37,12 @@ export async function getMeasurementsByWellboreIds(
     'lot',
   ];
   const moduleConfig = config?.measurements;
-  if (moduleConfig?.enabled) {
+
+  if (moduleConfig?.enabled && moduleConfig?.metadata) {
     idChunkList.forEach((wellIdChunk: number[]) => {
+      const baseFilters = {
+        assetIds: wellIdChunk.map((id) => wellboreAssetIdMap[id]),
+      };
       dataTypes.forEach((dataType) => {
         const dataTypeFilter = moduleConfig.metadata[dataType];
         if (dataTypeFilter) {
@@ -48,7 +52,7 @@ export async function getMeasurementsByWellboreIds(
                 ...dataTypeFilter,
                 filter: {
                   ...dataTypeFilter.filter,
-                  assetIds: wellIdChunk.map((id) => wellboreAssetIdMap[id]),
+                  ...baseFilters,
                 },
               })
               .then((response) =>

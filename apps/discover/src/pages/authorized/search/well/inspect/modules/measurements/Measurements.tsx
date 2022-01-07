@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { areAllSetValuesEmpty } from '_helpers/areAllSetValuesEmpty';
+import EmptyState from 'components/emptyState';
 import { WhiteLoader } from 'components/loading';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { FlexGrow } from 'styles/layout';
@@ -29,10 +31,14 @@ export const Measurements: React.FC = () => {
     DEFAULT_MEASUREMENTS_REFERENCE
   );
 
-  const { isLoading } = useMeasurementsQuery();
+  const { isLoading, data } = useMeasurementsQuery();
 
   if (isLoading) {
     return <WhiteLoader />;
+  }
+
+  if (data && areAllSetValuesEmpty(data)) {
+    return <EmptyState />;
   }
 
   return (
