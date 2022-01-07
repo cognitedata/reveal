@@ -255,6 +255,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     for (const element of overlays) {
       this.remove(element);
     }
+    this.forceUpdate();
   }
 
   /**

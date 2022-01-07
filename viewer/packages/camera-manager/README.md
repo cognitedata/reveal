@@ -56,7 +56,7 @@ controls.addEventListener('cameraChange', (event) => {
 controls.enabled = true; // enable / disable all interactions
 controls.enableDamping = true; // enable / disable smooth transitions
 controls.dampingFactor = 0.2; // smooth transition factor (<= 1). Move (targetState - currentState) * dampingFactor for each `controls.update` call
-controls.dynamicTarget = false; // possible to zoom past the target (will move the target if you are closer than minDistance to the target)
+controls.dynamicTarget = false; // possible to zoom past the target (will move the target if you are closer than minZoomDistance to the target)
 controls.dollyFactor = 0.98; // zoom factor (when zooming one step the distance to the target will be distance = oldDistance * dollyFactor)
 
 controls.minDistance = 1; // parameter determining speed of camera movement when zooming

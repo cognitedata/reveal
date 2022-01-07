@@ -6,6 +6,8 @@ export { generateSectorTree, createSectorMetadata, SectorTree } from './src/crea
 
 export { createCadModelMetadata } from './src/createCadModelMetadata';
 
+export { mockClientAuthentication } from './src/cogniteClientAuth';
+
 export { createGlContext } from './src/createGlContext';
 export { sleep } from './src/wait';
 export { asyncIteratorToArray } from './src/asyncIteratorToArray';
