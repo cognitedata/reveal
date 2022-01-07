@@ -1,5 +1,7 @@
 import { Geometry } from '@cognite/seismic-sdk-js';
 
+import { SavedSearchContent } from 'modules/api/savedSearches/types';
+
 import { DocumentsFacets } from '../../documentSearch/types';
 import { SAVED_SEARCHES_CURRENT_KEY } from '../savedSearches/constants';
 
@@ -26,12 +28,12 @@ export const documentValuesPayload = (
   query: any,
   payload: DocumentsFacets,
   geometry: Geometry
-) => ({
+): SavedSearchContent => ({
   filters: {
     documents: {
       facets: payload,
     },
   },
   query,
-  geometry,
+  geoJson: [{ geometry }],
 });

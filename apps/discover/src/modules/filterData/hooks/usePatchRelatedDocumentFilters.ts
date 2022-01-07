@@ -11,7 +11,7 @@ export const usePatchRelatedDocumentFilters = () => {
   const { data } = useQuerySavedSearchRelatedDocuments();
   return (
     facets: Partial<DocumentsFacets>,
-    query: string = get(data, 'query')
+    query: string = get(data, 'query', '')
   ) => {
     const patchedFacets = {
       ...get(data, 'filters.documents.facets'),
