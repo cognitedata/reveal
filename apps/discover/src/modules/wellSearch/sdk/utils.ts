@@ -251,7 +251,7 @@ export const mapV3ToV2Wellbore = (wellbore: WellboreV3): WellboreV2 => {
     id: wellbore.matchingId as any,
     wellId: wellbore.wellMatchingId as any,
     sourceWellbores: wellbore.sources.map((source) => ({
-      id: 0,
+      id: wellbore.matchingId as any,
       externalId: source.assetExternalId,
       source: source.sourceName,
     })),
