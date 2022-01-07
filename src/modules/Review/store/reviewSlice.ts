@@ -6,7 +6,6 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { VisionAPIType } from 'src/api/types';
-import { selectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 import {
   clearFileState,
   deselectAllSelectionsReviewPage,
@@ -20,6 +19,7 @@ import {
   KeypointVertex,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
+import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 
 export interface VisibleAnnotation extends VisionAnnotation {
   show: boolean;
@@ -175,9 +175,11 @@ export const selectAllReviewFiles = createSelector(
   }
 );
 
+const fileAnnotationsSelector = makeSelectFileAnnotations();
+
 export const selectVisibleAnnotationsForFile = createSelector(
   (state: RootState, fileId: number) =>
-    selectFileAnnotations(state.annotationReducer, fileId),
+    fileAnnotationsSelector(state.annotationReducer, fileId),
   (state: RootState) => state.reviewSlice.selectedAnnotationIds,
   (state: RootState) => state.reviewSlice.hiddenAnnotationIds,
   (state: RootState) => state.annotationLabelReducer.keypointMap.selectedIds,
@@ -217,8 +219,7 @@ export const selectVisibleAnnotationsForFile = createSelector(
 );
 
 export const selectTagAnnotationsForFile = createSelector(
-  (state: RootState, fileId: number) =>
-    selectVisibleAnnotationsForFile(state, fileId),
+  selectVisibleAnnotationsForFile,
   (allVisibleAnnotations) => {
     return allVisibleAnnotations.filter(
       (annotation) => annotation.modelType === VisionAPIType.TagDetection
@@ -227,8 +228,7 @@ export const selectTagAnnotationsForFile = createSelector(
 );
 
 export const selectOtherAnnotationsForFile = createSelector(
-  (state: RootState, fileId: number) =>
-    selectVisibleAnnotationsForFile(state, fileId),
+  selectVisibleAnnotationsForFile,
   (allVisibleAnnotations) => {
     return allVisibleAnnotations.filter(
       (ann) => ann.modelType !== VisionAPIType.TagDetection
@@ -237,8 +237,7 @@ export const selectOtherAnnotationsForFile = createSelector(
 );
 
 export const selectVisibleNonRejectedAnnotationsForFile = createSelector(
-  (state: RootState, fileId: number) =>
-    selectVisibleAnnotationsForFile(state, fileId),
+  selectVisibleAnnotationsForFile,
   (allVisibleAnnotations) => {
     return allVisibleAnnotations.filter(
       (ann) =>
