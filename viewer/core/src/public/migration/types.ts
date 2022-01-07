@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { SectorCuller } from '@reveal/cad-geometry-loaders';
+import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 
@@ -315,34 +315,7 @@ export type SceneRenderedDelegate = (event: {
 export * from './NotSupportedInMigrationWrapperError';
 export { CogniteModelBase } from './CogniteModelBase';
 
-/**
- * Represents a measurement of how much geometry can be loaded.
- */
-export type CadModelBudget = {
-  // TODO 2020-11-04 larsmoa: Merge this type with CadModelSectorBudget.
-
-  /**
-   * Sectors within this distance from the camera will always be loaded in high details.
-   */
-  readonly highDetailProximityThreshold: number;
-
-  /**
-   * Number of bytes of the geometry that must be downloaded.
-   */
-  readonly geometryDownloadSizeBytes: number;
-
-  /**
-   * Estimated maximum number of WebGL draw calls to download geometry for. Draw calls
-   * are very important for the framerate.
-   */
-  readonly maximumNumberOfDrawCalls: number;
-
-  /**
-   * Maximum render cost. This number can be thought of as triangle count, although the number
-   * doesn't match this directly.
-   */
-  readonly maximumRenderCost: number;
-};
+export { CadModelBudget };
 
 /**
  * Represents a budget of how many point from point clouds can be
