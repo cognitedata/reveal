@@ -60,9 +60,7 @@ describe('SectorLoader', () => {
     input = {
       camera: new THREE.PerspectiveCamera(),
       budget: {
-        geometryDownloadSizeBytes: 0,
         highDetailProximityThreshold: 0,
-        maximumNumberOfDrawCalls: 0,
         maximumRenderCost: 0
       },
       cameraInMotion: false,

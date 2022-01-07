@@ -9842,10 +9842,8 @@ Represents a measurement of how much geometry can be loaded.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `geometryDownloadSizeBytes` | `number` | Number of bytes of the geometry that must be downloaded. |
-| `highDetailProximityThreshold` | `number` | Sectors within this distance from the camera will always be loaded in high details. |
-| `maximumNumberOfDrawCalls` | `number` | Estimated maximum number of WebGL draw calls to download geometry for. Draw calls are very important for the framerate. |
 | `maximumRenderCost` | `number` | Maximum render cost. This number can be thought of as triangle count, although the number doesn't match this directly. |
+| `highDetailProximityThreshold` | `number` | For 3D models processed before Q1 2022, sectors within this distance from the camera will always be loaded in high details (deprecated). |
 
 ##### Defined in
 

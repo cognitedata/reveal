@@ -56,9 +56,7 @@ async function init() {
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
 
   cadManager.budget = {
-    geometryDownloadSizeBytes: Infinity,
     highDetailProximityThreshold: cadManager.budget.highDetailProximityThreshold,
-    maximumNumberOfDrawCalls: Infinity,
     maximumRenderCost: cadManager.budget.maximumRenderCost
   };
 
