@@ -22,58 +22,59 @@ const useAssetLinkWarning = (
   const [assetWarnType, setAssetWarnType] = useState<AssetWarnTypes>(
     AssetWarnTypes.NoWarning
   );
+  const [asset, setAsset] = useState<VisionAsset | null>(null);
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
-    async function calculateWarningType() {
-      if (
-        file &&
-        (annotation.linkedResourceId || annotation.linkedResourceExternalId)
-      ) {
-        const assetPayload = [];
-        if (annotation.linkedResourceId) {
-          assetPayload.push({ id: annotation.linkedResourceId });
-        } else if (annotation.linkedResourceExternalId) {
-          assetPayload.push({
-            externalId: annotation.linkedResourceExternalId,
-          });
-        }
-        const assetResponse = await dispatch(fetchAssets(assetPayload));
-        const assets = unwrapResult(assetResponse);
-
-        if (assets && assets.length) {
-          const asset = assets[0];
-          if (
-            annotation.status === AnnotationStatus.Verified &&
-            !file.assetIds?.includes(asset.id)
-          ) {
-            setAssetWarnType(
-              AssetWarnTypes.ApprovedAnnotationAssetNotLinkedToFile
-            );
-            return;
-          }
-          if (
-            annotation.status === AnnotationStatus.Rejected &&
-            file.assetIds?.includes(asset.id) &&
-            allAnnotations
-              .filter(
-                (ann) =>
-                  ann.id !== annotation.id &&
-                  ann.status === AnnotationStatus.Verified
-              ) // select other annotations except this one
-              .every((tagAnnotation) => !isLinkedToAsset(tagAnnotation, asset)) // every other tag annotation is not approved and linked to the same asset
-          ) {
-            setAssetWarnType(
-              AssetWarnTypes.RejectedAnnotationAssetLinkedToFile
-            );
-            return;
-          }
-        }
+    const fetchAndSetAsset = async (ann: AnnotationTableItem) => {
+      const assetPayload = [];
+      if (ann.linkedResourceId) {
+        assetPayload.push({ id: ann.linkedResourceId });
+      } else if (ann.linkedResourceExternalId) {
+        assetPayload.push({
+          externalId: ann.linkedResourceExternalId,
+        });
       }
+      const assetResponse = await dispatch(fetchAssets(assetPayload));
+      const assets = unwrapResult(assetResponse);
+      if (assets && assets.length) {
+        setAsset(assets[0]);
+      }
+    };
+
+    if (annotation.linkedResourceId || annotation.linkedResourceExternalId) {
+      fetchAndSetAsset(annotation);
+    } else {
+      setAsset(null);
+    }
+  }, [annotation.linkedResourceId, annotation.linkedResourceExternalId]);
+
+  useEffect(() => {
+    if (asset) {
+      if (
+        annotation.status === AnnotationStatus.Verified &&
+        !file.assetIds?.includes(asset.id)
+      ) {
+        setAssetWarnType(AssetWarnTypes.ApprovedAnnotationAssetNotLinkedToFile);
+      } else if (
+        annotation.status === AnnotationStatus.Rejected &&
+        file.assetIds?.includes(asset.id) &&
+        allAnnotations
+          .filter(
+            (ann) =>
+              ann.id !== annotation.id &&
+              ann.status === AnnotationStatus.Verified
+          ) // select other annotations except this one
+          .every((tagAnnotation) => !isLinkedToAsset(tagAnnotation, asset)) // every other tag annotation is not approved and linked to the same asset
+      ) {
+        setAssetWarnType(AssetWarnTypes.RejectedAnnotationAssetLinkedToFile);
+      } else {
+        setAssetWarnType(AssetWarnTypes.NoWarning);
+      }
+    } else {
       setAssetWarnType(AssetWarnTypes.NoWarning);
     }
-    calculateWarningType();
-  }, [annotation, file]);
+  }, [annotation, file, asset]);
 
   return assetWarnType;
 };
