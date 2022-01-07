@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 export async function asyncIteratorToArray<T>(it: AsyncIterable<T>): Promise<T[]> {
   const values: T[] = [];

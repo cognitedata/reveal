@@ -1,4 +1,4 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 export type SupportedModelTypes = 'pointcloud' | 'cad';

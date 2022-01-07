@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 
 import { parseCadMetadataV8 } from './parsers/CadMetadataParserV8';

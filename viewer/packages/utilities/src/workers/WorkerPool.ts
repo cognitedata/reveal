@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 import { wrap } from 'comlink';
 import { RevealParserWorker } from '@cognite/reveal-parser-worker';

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 /**
  * A cache that keeps values that is most frequently used (MFU) rather than a more common

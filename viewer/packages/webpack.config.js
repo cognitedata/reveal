@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');

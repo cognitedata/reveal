@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 import { IndexSet } from '@reveal/utilities';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';

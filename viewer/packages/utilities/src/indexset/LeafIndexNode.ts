@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS../NumericRange
+ * Copyright 2022 Cognite AS
  */
 import { IntermediateIndexNode } from './IntermediateIndexNode';
 import { IndexNode } from './IndexSet';

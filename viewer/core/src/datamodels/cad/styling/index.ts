@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 export { InvertedNodeCollection } from './InvertedNodeCollection';
 export { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';

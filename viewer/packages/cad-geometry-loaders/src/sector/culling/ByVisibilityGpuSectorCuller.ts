@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 
 // Note! We introduce ThreeJS as a dependency here, but it's not exposed.

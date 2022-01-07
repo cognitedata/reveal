@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 export { CdfModelDataProvider } from './src/CdfModelDataProvider';
 export { CdfModelIdentifier } from './src/CdfModelIdentifier';

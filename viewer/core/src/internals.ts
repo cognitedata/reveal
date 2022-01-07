@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 
 export { CdfModelIdentifier, LocalModelIdentifier, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';

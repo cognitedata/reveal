@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 export function* groupMeshesByNumber(id: Float64Array): Generator<{ id: number; meshIndices: number[] }> {
   const groupedByFileId = new Array<{ fileId: number; index: number }>(id.length);
