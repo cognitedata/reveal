@@ -16,27 +16,27 @@ export const AnnotationStatusChange = createAsyncThunk<
 >('AnnotationStatusChange', async (payload, { getState, dispatch }) => {
   const updateTagAnnotationAndFileAssetLinks = async (
     file: VisionFile,
-    unsavedAnnotation: VisionAnnotation
+    updatedAnnotation: VisionAnnotation
   ) => {
     // eslint-disable-next-line no-nested-ternary
-    const assetsToFetch = unsavedAnnotation.linkedResourceId
-      ? { id: unsavedAnnotation.linkedResourceId }
-      : unsavedAnnotation.linkedResourceExternalId
-      ? { externalId: unsavedAnnotation.linkedResourceExternalId }
-      : { externalId: unsavedAnnotation.text };
+    const assetsToFetch = updatedAnnotation.linkedResourceId
+      ? { id: updatedAnnotation.linkedResourceId }
+      : updatedAnnotation.linkedResourceExternalId
+      ? { externalId: updatedAnnotation.linkedResourceExternalId }
+      : { externalId: updatedAnnotation.text };
 
     const assetResponse = await dispatch(fetchAssets([assetsToFetch]));
     const assets = unwrapResult(assetResponse);
     const asset = assets && assets.length ? assets[0] : null; // get the first (and only) asset
 
     if (!asset) {
-      dispatch(UpdateAnnotations([unsavedAnnotation])); // update annotation right away
+      dispatch(UpdateAnnotations([updatedAnnotation])); // update annotation right away
       return;
     }
 
     if (
-      unsavedAnnotation.status === AnnotationStatus.Verified &&
-      !fileIsLinkedToAsset(file, asset) // file is verified and not linked to asset
+      updatedAnnotation.status === AnnotationStatus.Verified &&
+      !fileIsLinkedToAsset(file, asset) // annotation is verified and file is not linked to asset
     ) {
       batch(() => {
         dispatch(
@@ -51,11 +51,11 @@ export const AnnotationStatusChange = createAsyncThunk<
             },
           ])
         );
-        dispatch(UpdateAnnotations([unsavedAnnotation]));
+        dispatch(UpdateAnnotations([updatedAnnotation]));
       });
     } else if (
       unSavedAnnotation.status === AnnotationStatus.Rejected &&
-      fileIsLinkedToAsset(file, asset) // file is rejected and linked to asset
+      fileIsLinkedToAsset(file, asset) // annotation is rejected and file linked to asset
     ) {
       const removeAssetIds = async (fileId: number, assetId: number) => {
         await dispatch(
@@ -79,9 +79,9 @@ export const AnnotationStatusChange = createAsyncThunk<
         },
         'Remove asset link'
       );
-      dispatch(UpdateAnnotations([unsavedAnnotation]));
+      dispatch(UpdateAnnotations([updatedAnnotation]));
     } else {
-      dispatch(UpdateAnnotations([unsavedAnnotation]));
+      dispatch(UpdateAnnotations([updatedAnnotation]));
     }
   };
 
