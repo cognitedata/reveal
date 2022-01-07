@@ -19,7 +19,15 @@ export const visualTests: VisualTest[] = [
     category: 'cad'
   },
   {
+    testKey: 'customObjectWithHighlightAndGhostedV8',
+    category: 'cad'
+  },
+  {
     testKey: 'default',
+    category: 'cad'
+  },
+  {
+    testKey: 'default-v8',
     category: 'cad'
   },
   {
@@ -28,6 +36,10 @@ export const visualTests: VisualTest[] = [
   },
   {
     testKey: 'default-cognite3dviewer',
+    category: 'cad'
+  },
+  {
+    testKey: 'default-cognite3dviewer-v8',
     category: 'cad'
   },
   {
