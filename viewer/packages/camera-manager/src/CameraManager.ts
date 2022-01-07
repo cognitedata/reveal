@@ -35,7 +35,8 @@ export class CameraManager {
   private static readonly DefaultAnimationDuration = 300;
   private static readonly DefaultMinAnimationDuration = 300;
   private static readonly DefaultMaxAnimationDuration = 1250;
-  private static readonly DefaultMinDistance = 0.5;
+  private static readonly DefaultMinDistance = 0.8;
+  private static readonly DefaultMinZoomDistance = 0.4;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
     changeCameraTargetOnClick: false
@@ -78,6 +79,7 @@ export class CameraManager {
     
     this.setCameraControlsOptions(this._cameraControlsOptions);
     this._controls = new ComboControls(camera, domElement);
+    this._controls.minZoomDistance = CameraManager.DefaultMinZoomDistance;
 
 
     this._controls.addEventListener('cameraChange', event => {

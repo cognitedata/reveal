@@ -47,6 +47,7 @@ export class ComboControls extends EventDispatcher {
   public dampingFactor: number = 0.25;
   public dynamicTarget: boolean = true;
   public minDistance: number = 0.1;
+  public minZoomDistance: number = 0.1;
   public dollyFactor: number = 0.99;
   public minPolarAngle: number = 0; // radians
   public maxPolarAngle: number = Math.PI; // radians
@@ -613,7 +614,7 @@ export class ComboControls extends EventDispatcher {
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const { dynamicTarget, minDistance, _raycaster, _targetEnd, _reusableCamera } = this;
+    const { dynamicTarget, minZoomDistance, _raycaster, _targetEnd, _reusableCamera } = this;
 
     const distFromCameraToScreenCenter = Math.tan(
       MathUtils.degToRad(90 - (this._camera as PerspectiveCamera).fov * 0.5)
@@ -624,20 +625,21 @@ export class ComboControls extends EventDispatcher {
 
     const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
     const distToTarget = cameraDirection.length();
+    const isDollyOut = deltaDistance > 0 ? true : false;
 
     _raycaster.setFromCamera({ x, y }, _reusableCamera);
 
     let radius = distToTarget + deltaDistance;
     
-    if (radius < minDistance) {
-      radius = minDistance;
+    if (radius < minZoomDistance && !isDollyOut) {
+      radius = distToTarget;
       if (dynamicTarget) {
         // push targetEnd forward
         _reusableCamera.getWorldDirection(cameraDirection);
         _targetEnd.add(cameraDirection.normalize().multiplyScalar(Math.abs(deltaDistance)));
       } else {
         // stops camera from moving forward
-        deltaDistance = distToTarget - radius;
+        deltaDistance = 0;
       }
     }
 
@@ -665,7 +667,7 @@ export class ComboControls extends EventDispatcher {
     cameraDirection: THREE.Vector3
   ) => {
     const {
-      minDistance,
+      minZoomDistance,
       _reusableVector3,
       _target,
       _scrollTarget,
@@ -689,7 +691,7 @@ export class ComboControls extends EventDispatcher {
     const cameraToScrollTargetVec = new Vector3().subVectors(_scrollTarget, _camera.position);
 
     const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
-    const targetScrollTargetCameraAngle = targetToScrollTargetVec.clone().negate().angleTo(cameraToScrollTargetVec.clone().negate());
+    const targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.clone().negate());
 
     let deltaTargetOffsetDistance =
       deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
@@ -710,18 +712,14 @@ export class ComboControls extends EventDispatcher {
 
     let radius = distToTarget + deltaDistance;
     
-    //console.log(radius, minDistance, deltaDistance, distToTarget, _target);
-    //console.log(_camera.position);
     // behaviour for scrolling with mouse wheel
-    if (radius < minDistance) {
+    if (radius < minZoomDistance) {
       this._temporarilyDisableDamping = true;
 
       // stops camera from moving forward only if target became close to scroll target
-      if ((_scrollTarget.distanceTo(_target) < minDistance) || (radius <= 0)) {
+      if ((_scrollTarget.distanceTo(_target) < minZoomDistance) || (radius <= 0)) {
         deltaTargetOffsetDistance = 0;
-        
         radius = distToTarget;
-        //console.log(targetToScrollTargetVec.clone().multiplyScalar(deltaTargetOffsetDistance));
       }
     }
 
