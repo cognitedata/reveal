@@ -26,6 +26,7 @@ import {
   CREATE_NEW_SET,
   NOTIFICATION_MESSAGE,
 } from './constants';
+import { FavoriteMenuItemWrapper } from './element';
 import { FavoriteMenuItems } from './FavoriteMenuItems';
 import { useHandleSelectFavourite } from './useFavorite';
 
@@ -94,11 +95,13 @@ export const FavoriteBase: React.FC<Props> = ({
           </RightAlignedSmall>
         </InlineFlex>
       )}
-      <FavoriteMenuItems
-        favoriteSets={favorites || []}
-        itemExistsInSets={itemExistsInSets}
-        handleSelectFavorite={(item) => handleSelectFavorite(item.id)}
-      />
+      <FavoriteMenuItemWrapper>
+        <FavoriteMenuItems
+          favoriteSets={favorites || []}
+          itemExistsInSets={itemExistsInSets}
+          handleSelectFavorite={(item) => handleSelectFavorite(item.id)}
+        />
+      </FavoriteMenuItemWrapper>
       {favorites && favorites.length > 0 && (
         <Menu.Divider data-testid="menu-divider" />
       )}
