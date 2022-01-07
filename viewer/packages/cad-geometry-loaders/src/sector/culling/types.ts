@@ -7,7 +7,7 @@ import { PrioritizedArea } from '@reveal/cad-styling';
 import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 
 import { CadLoadingHints } from '../../CadLoadingHints';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { CadModelBudget } from '../../CadModelBudget';
 import { CadNode } from '@reveal/rendering';
 
 export interface DetermineSectorsInput {
@@ -16,7 +16,7 @@ export interface DetermineSectorsInput {
   cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
-  budget: CadModelSectorBudget;
+  budget: CadModelBudget;
   prioritizedAreas: PrioritizedArea[];
 }
 
@@ -26,7 +26,7 @@ export type DetermineSectorsPayload = {
   models: CadNode[];
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
-  budget: CadModelSectorBudget;
+  budget: CadModelBudget;
   prioritizedAreas: PrioritizedArea[];
 };
 

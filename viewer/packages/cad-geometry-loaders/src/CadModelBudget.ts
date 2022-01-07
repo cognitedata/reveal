@@ -7,21 +7,12 @@ import { isMobileOrTablet } from '@reveal/utilities';
 /**
  * Represents a measurement of how much geometry can be loaded.
  */
-export type CadModelSectorBudget = {
+export type CadModelBudget = {
   /**
    * Sectors within this distance from the camera will always be loaded in high details.
+   * @deprecated This is only used for 3D models processed prior to the Reveal 3.0 release (Q1 2022).
    */
   readonly highDetailProximityThreshold: number;
-
-  /**
-   * Number of bytes of the geometry that must be downloaded.
-   */
-  readonly geometryDownloadSizeBytes: number;
-
-  /**
-   * Maximum number of estimated draw calls of geometry to load.
-   */
-  readonly maximumNumberOfDrawCalls: number;
 
   /**
    * Maximum render cost. This number can be thought of as triangle count, although the number
@@ -30,18 +21,14 @@ export type CadModelSectorBudget = {
   readonly maximumRenderCost: number;
 };
 
-export const defaultCadModelSectorBudget: CadModelSectorBudget = isMobileOrTablet()
+export const defaultCadModelBudget: CadModelBudget = isMobileOrTablet()
   ? // Mobile/tablet
     {
       highDetailProximityThreshold: 5,
-      geometryDownloadSizeBytes: 20 * 1024 * 1024,
-      maximumNumberOfDrawCalls: 700,
-      maximumRenderCost: 10_000_000
+      maximumRenderCost: 7_000_000
     }
   : // Desktop
     {
       highDetailProximityThreshold: 10,
-      geometryDownloadSizeBytes: 35 * 1024 * 1024,
-      maximumNumberOfDrawCalls: 2000,
-      maximumRenderCost: 20_000_000
+      maximumRenderCost: 15_000_000
     };

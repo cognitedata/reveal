@@ -7,7 +7,6 @@ import * as THREE from 'three';
 import { ByScreenSizeSectorCuller } from './ByScreenSizeSectorCuller';
 
 import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
-import { CadModelSectorBudget } from '@reveal/cad-geometry-loaders';
 
 import {
   createCadModelMetadata,
@@ -15,11 +14,12 @@ import {
   createV8SectorMetadata,
   createV9SectorMetadata
 } from '../../../../../test-utilities';
+import { CadModelBudget } from '../../CadModelBudget';
 
-describe('ByScreenSizeSectorCuller', () => {
+describe(ByScreenSizeSectorCuller.name, () => {
   let camera: THREE.PerspectiveCamera;
   let model: CadModelMetadata;
-  let budget: CadModelSectorBudget;
+  let budget: CadModelBudget;
   let allSectorsRenderCost: number;
 
   let culler: ByScreenSizeSectorCuller;
@@ -49,8 +49,6 @@ describe('ByScreenSizeSectorCuller', () => {
     culler = new ByScreenSizeSectorCuller();
 
     budget = {
-      geometryDownloadSizeBytes: Infinity,
-      maximumNumberOfDrawCalls: Infinity,
       maximumRenderCost: 0,
       highDetailProximityThreshold: 0
     };
