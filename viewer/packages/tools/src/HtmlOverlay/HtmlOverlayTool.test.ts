@@ -214,6 +214,37 @@ describe(HtmlOverlayTool.name, () => {
     expect(div1.style.visibility).toEqual('hidden');
     expect(div2.style.visibility).toEqual('hidden');
   });
+
+  test('clear() removes composite elements', () => {
+    // Arrange
+    const compositeElement = document.createElement('div');
+    const createClusterElementCallback: HtmlOverlayCreateClusterDelegate = jest.fn().mockReturnValue(compositeElement);
+    const options: HtmlOverlayToolOptions = {
+      clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
+    };
+    const helper = new HtmlOverlayTool(viewer, options);
+
+    const div1 = document.createElement('div');
+    fakeGetBoundingClientRect(div1, 0, 0, 64, 18);
+    div1.style.position = 'absolute';
+    const div2 = document.createElement('div');
+    div2.style.position = 'absolute';
+    fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
+
+    // Act
+    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.forceUpdate();
+    expect(div1.parentElement).not.toBeNull();
+    expect(div2.parentElement).not.toBeNull();
+    expect(compositeElement.parentElement).not.toBeNull();
+    helper.clear();
+
+    // Assert
+    expect(div1.parentElement).toBeNull();
+    expect(div2.parentElement).toBeNull();
+    expect(compositeElement.parentElement).toBeNull();
+  });
 });
 
 function fakeGetBoundingClientRect(element: HTMLElement, x: number, y: number, width: number, height: number) {
