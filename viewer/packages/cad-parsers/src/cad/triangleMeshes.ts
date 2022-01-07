@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { disposeAttributeArrayOnUpload } from '@reveal/utilities';
+import { disposeAttributeArrayOnUpload, incrementOrInsertIndex } from '@reveal/utilities';
 import { TriangleMesh } from '@reveal/cad-parsers';
 
 export function createTriangleMeshes(
@@ -37,7 +37,11 @@ export function createTriangleMeshes(
     const obj = new THREE.Mesh(geometry, material);
     obj.name = `Triangle mesh ${mesh.fileId}`;
 
-    obj.userData.treeIndices = new Set(mesh.treeIndices);
+    obj.userData.treeIndices = new Map<number, number>();
+
+    for (const i of mesh.treeIndices) {
+      incrementOrInsertIndex(obj.userData.treeIndices, i);
+    }
 
     result.push(obj);
   }
