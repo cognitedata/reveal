@@ -1,3 +1,7 @@
+## 2.2.0 Jan 7 2022
+
+- Published new version to force external apps to update SDK to v5.6.2
+
 ## 2.1.0 Nov 18 2021
 
 - Refactor `loginAndAuthIfNeeded` to use `getFakeIdPInfoFromStorage` and clear auth state properly for `FAKE_IDP`
