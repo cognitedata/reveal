@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { addSectorCost, DetermineSectorCostDelegate, PrioritizedWantedSector, SectorCost } from '../types';
-import { CadModelSectorBudget } from '../../../CadModelSectorBudget';
+import { CadModelBudget } from '../../../CadModelBudget';
 import { TakenSectorMapBase } from './TakenSectorMapBase';
 
 import { CadModelMetadata, V9SectorMetadata, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
@@ -59,12 +59,8 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
     }
   }
 
-  isWithinBudget(budget: CadModelSectorBudget): boolean {
-    return (
-      this._totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
-      this._totalCost.drawCalls < budget.maximumNumberOfDrawCalls &&
-      this._totalCost.renderCost < budget.maximumRenderCost
-    );
+  isWithinBudget(budget: CadModelBudget): boolean {
+    return this._totalCost.renderCost < budget.maximumRenderCost;
   }
 
   collectWantedSectors(): PrioritizedWantedSector[] {
