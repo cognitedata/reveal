@@ -1,0 +1,16 @@
+name: Release & Deploy Platypus CLI
+on:
+  push:
+    branches:
+      - master
+jobs:
+  copy-to-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: GuillaumeFalourd/copy-push-files@v1
+        with:
+          target_branch: docs
+          source_files: ./apps/platypus-cdf-cli/README.md
+          remote_repository: https://github.com/cognitedata/platypus
+          access_token: ${{ secrets.ACCESS_TOKEN }}
