@@ -6,7 +6,7 @@ import render, {
 } from 'utils/test/render';
 import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider';
 import { ExtpipeHeading } from 'components/extpipe/ExtpipeHeading';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
@@ -36,9 +36,13 @@ describe('ExtpipeHeading', () => {
       id: mock.id,
       dataSetId: mock.dataSetId,
     };
-    sdkv3.post.mockResolvedValue({ data: { items: [mockExtpipe] } });
-    sdkv3.get.mockResolvedValueOnce({ data: mockExtpipe });
-    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
+    useSDK.mockReturnValue({
+      post: jest.fn().mockResolvedValue({ data: { items: [mockExtpipe] } }),
+      get: jest.fn().mockResolvedValueOnce({ data: mockExtpipe }),
+      datasets: {
+        retrieve: jest.fn().mockResolvedValue([mockDataSet]),
+      },
+    });
     render(<ExtpipeHeading />, {
       wrapper: wrapper.wrapper,
     });

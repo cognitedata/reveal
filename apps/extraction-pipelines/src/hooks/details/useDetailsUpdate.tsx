@@ -3,6 +3,7 @@ import { Extpipe, ExtpipeFieldName, ExtpipeFieldValue } from 'model/Extpipe';
 import { ErrorVariations } from 'model/SDKErrors';
 import { ExtpipeUpdateSpec, saveUpdate } from 'utils/ExtpipesAPI';
 import { FieldValues } from 'react-hook-form';
+import { useSDK } from '@cognite/sdk-provider';
 
 export type UpdateSpec = {
   id: number;
@@ -17,10 +18,11 @@ export type DetailsUpdateContext = {
   id: number;
 };
 export const useDetailsUpdate = () => {
+  const sdk = useSDK();
   const queryClient = useQueryClient();
   return useMutation<Extpipe, ErrorVariations, DetailsUpdateContext>(
     ({ project, items }) => {
-      return saveUpdate(project, items);
+      return saveUpdate(sdk, project, items);
     },
     {
       onMutate: (vars) => {

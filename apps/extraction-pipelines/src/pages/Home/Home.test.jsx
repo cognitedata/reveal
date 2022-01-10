@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'utils/test';
 import { screen, waitFor } from '@testing-library/react';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
@@ -31,9 +31,9 @@ describe('<Home />', () => {
   });
 
   test('Renders Home page', async () => {
-    sdkv3.get.mockResolvedValueOnce({ data: { items: getMockResponse() } });
-    sdkv3.get.mockResolvedValueOnce({ data: getMockResponse()[0] });
-    sdkv3.datasets.retrieve.mockResolvedValue([]);
+    sdk.get.mockResolvedValueOnce({ data: { items: getMockResponse() } });
+    sdk.get.mockResolvedValueOnce({ data: getMockResponse()[0] });
+    sdk.datasets.retrieve.mockResolvedValue([]);
     const history = createMemoryHistory();
     const route = `/${PROJECT_ITERA_INT_GREEN}/${EXTRACTION_PIPELINES_PATH}`;
     history.push(route);

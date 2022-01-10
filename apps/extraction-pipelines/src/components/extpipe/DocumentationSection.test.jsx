@@ -4,7 +4,7 @@ import render, {
 } from 'utils/test/render';
 import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import {
@@ -28,9 +28,22 @@ describe('DocumentationSection', () => {
     );
   });
   test('Interacts with documentation', async () => {
-    sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
-    sdkv3.get.mockResolvedValueOnce({ data: mock });
-    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
+    const newDocumentation = 'new documentation';
+    useSDK.mockReturnValue({
+      post: () => Promise.resolve({ data: { items: [mock] } }),
+      get: jest
+        .fn()
+        .mockResolvedValueOnce({ data: mock })
+        .mockResolvedValueOnce({
+          data: {
+            ...mock,
+            documentation: newDocumentation,
+          },
+        }),
+      datasets: {
+        retrieve: () => Promise.resolve([mockDataSet]),
+      },
+    });
     render(<DocumentationSection canEdit />, {
       wrapper: wrapper.wrapper,
     });
@@ -45,16 +58,9 @@ describe('DocumentationSection', () => {
     await waitFor(() => {
       screen.getByTestId('documentation-textarea');
     });
-    const newDocumentation = 'new documentation';
 
     fireEvent.change(screen.getByTestId('documentation-textarea'), {
       target: { value: newDocumentation },
-    });
-    sdkv3.get.mockResolvedValueOnce({
-      data: {
-        ...mock,
-        documentation: newDocumentation,
-      },
     });
     fireEvent.click(screen.getByTestId(`${TEST_ID_BTN_SAVE}documentation`));
     await waitFor(() => {
@@ -70,9 +76,13 @@ describe('DocumentationSection', () => {
       id: mock.id,
       dataSetId: mock.dataSetId,
     };
-    sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
-    sdkv3.get.mockResolvedValueOnce({ data: noDescriptionMock });
-    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
+    useSDK.mockReturnValue({
+      post: jest.fn().mockResolvedValueOnce({ data: { items: [mock] } }),
+      get: jest.fn().mockResolvedValueOnce({ data: noDescriptionMock }),
+      datasets: {
+        retrieve: jest.fn().mockResolvedValue([mockDataSet]),
+      },
+    });
     render(<DocumentationSection canEdit />, {
       wrapper: wrapper.wrapper,
     });

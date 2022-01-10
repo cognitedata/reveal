@@ -1,5 +1,5 @@
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
+import { CogniteClient } from '@cognite/sdk';
 import { StringifyOptions } from 'query-string';
 
 export const EXTRACTION_PIPELINES_PATH: Readonly<string> = 'extpipes';
@@ -18,22 +18,24 @@ const createExtPipePath = (
   return createLink(`/${EXTRACTION_PIPELINES_PATH}${path}`, queries, opts);
 };
 const get = async <D extends object>(
+  sdk: CogniteClient,
   route: string,
   project: string,
   params = ''
 ) => {
-  return sdkv3.get<D>(`${getBaseUrl(project)}${route}${params}`, {
+  return sdk.get<D>(`${getBaseUrl(project)}${route}${params}`, {
     withCredentials: true,
   });
 };
 
 const post = async <Response extends object, D>(
+  sdk: CogniteClient,
   route: string,
   project: string,
   data: D,
   params = ''
 ) => {
-  return sdkv3.post<Response>(`${getBaseUrl(project)}${route}${params}`, {
+  return sdk.post<Response>(`${getBaseUrl(project)}${route}${params}`, {
     data,
     withCredentials: true,
   });

@@ -1,4 +1,4 @@
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { PROJECT_ITERA_INT_GREEN } from './baseURL';
 import { createParams, DEFAULT_RUN_LIMIT, getRuns } from './RunsAPI';
 
@@ -25,14 +25,15 @@ describe('RunsAPI', () => {
   describe('getRuns', () => {
     test('Calls sdk get and returns response data', async () => {
       const response = { data: { items: [], nextCursor: '' } };
-      sdkv3.get.mockResolvedValue(response);
+      sdk.get.mockResolvedValue(response);
       const res = await getRuns(
+        sdk,
         PROJECT_ITERA_INT_GREEN,
         'my_external_id',
         'thisisthenext',
         10
       );
-      expect(sdkv3.get).toHaveBeenCalledTimes(1);
+      expect(sdk.get).toHaveBeenCalledTimes(1);
       expect(res).toEqual(response.data);
     });
   });

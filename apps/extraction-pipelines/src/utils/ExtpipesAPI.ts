@@ -1,15 +1,18 @@
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { CogniteClient } from '@cognite/sdk';
 import { Extpipe, ExtpipeFieldValue, RegisterExtpipeInfo } from 'model/Extpipe';
 import { ExtpipeAPIResponse } from 'model/ExtpipeAPIResponse';
 import { get, getBaseUrl } from 'utils/baseURL';
 import { getDataSets } from 'utils/DataSetAPI';
 import { mapDataSetToExtpipe, mapUniqueDataSetIds } from 'utils/dataSetUtils';
 
-export const getExtpipes = async (project: string): Promise<Extpipe[]> => {
-  const response = await get<ExtpipeAPIResponse>('/', project);
+export const getExtpipes = async (
+  sdk: CogniteClient,
+  project: string
+): Promise<Extpipe[]> => {
+  const response = await get<ExtpipeAPIResponse>(sdk, '/', project);
   const dataSetIds = mapUniqueDataSetIds(response.data.items);
   try {
-    const dataSetRes = await getDataSets(dataSetIds);
+    const dataSetRes = await getDataSets(sdk, dataSetIds);
     return mapDataSetToExtpipe(response.data.items, dataSetRes);
   } catch (e) {
     return response.data.items;
@@ -17,13 +20,16 @@ export const getExtpipes = async (project: string): Promise<Extpipe[]> => {
 };
 
 export const getExtpipeById = async (
+  sdk: CogniteClient,
   extpipeId: number,
   project: string
 ): Promise<Extpipe> => {
-  const response = await get<Extpipe>(`/${extpipeId}`, project);
+  const response = await get<Extpipe>(sdk, `/${extpipeId}`, project);
   if (response.data.dataSetId) {
     try {
-      const dataSetRes = await getDataSets([{ id: response.data.dataSetId }]);
+      const dataSetRes = await getDataSets(sdk, [
+        { id: response.data.dataSetId },
+      ]);
       return {
         ...response.data,
         ...(dataSetRes[0] && { dataSet: dataSetRes[0] }),
@@ -47,10 +53,11 @@ export interface ExtpipeUpdateSpec {
 }
 
 export const saveUpdate = async (
+  sdk: CogniteClient,
   project: string,
   items: ExtpipeUpdateSpec[]
 ) => {
-  const response = await sdkv3.post<ExtpipeAPIResponse>(
+  const response = await sdk.post<ExtpipeAPIResponse>(
     `${getBaseUrl(project)}/update`,
     {
       data: {
@@ -63,10 +70,11 @@ export const saveUpdate = async (
 };
 
 export const registerExtpipe = async (
+  sdk: CogniteClient,
   project: string,
   extpipe: Partial<RegisterExtpipeInfo>
 ) => {
-  const response = await sdkv3.post<ExtpipeAPIResponse>(
+  const response = await sdk.post<ExtpipeAPIResponse>(
     `${getBaseUrl(project)}`,
     {
       data: {
@@ -78,8 +86,11 @@ export const registerExtpipe = async (
   return response.data.items[0];
 };
 
-export const deleteExtractionPipeline = (extPipeId: number) => {
-  return sdkv3.post(`${getBaseUrl(sdkv3.project)}/delete`, {
+export const deleteExtractionPipeline = (
+  sdk: CogniteClient,
+  extPipeId: number
+) => {
+  return sdk.post(`${getBaseUrl(sdk.project)}/delete`, {
     withCredentials: true,
     responseType: 'text', // <- to avoid trying to parse response as json resulting in errors
     data: {

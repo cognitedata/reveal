@@ -1,6 +1,6 @@
 import { QueryClient } from 'react-query';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   createUpdateSpec,
   mapUpdateToPartialExtpipe,
@@ -36,7 +36,9 @@ describe('useDetailsUpdate', () => {
 
   test('Returns extpipes on success', async () => {
     const extpipesResponse = getMockResponse()[1];
-    sdkv3.post.mockResolvedValue({ data: { items: [extpipesResponse] } });
+    useSDK.mockReturnValue({
+      post: () => Promise.resolve({ data: { items: [extpipesResponse] } }),
+    });
 
     const { result } = renderHook(() => useDetailsUpdate(), {
       wrapper,
@@ -58,7 +60,9 @@ describe('useDetailsUpdate', () => {
   });
 
   test('Returns error on fail', async () => {
-    sdkv3.post.mockRejectedValue(mockError);
+    useSDK.mockReturnValue({
+      post: () => Promise.reject(mockError),
+    });
 
     const { result } = renderHook(() => useDetailsUpdate(), {
       wrapper,

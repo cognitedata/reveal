@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
 import { mapDataSetToExtpipe } from 'utils/dataSetUtils';
 import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
@@ -17,8 +17,8 @@ describe('<ExtpipesTable/>', () => {
     dataSet: mockDataSetResponse()[0],
   };
   beforeEach(() => {
-    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
-    sdkv3.datasets.retrieve.mockResolvedValue(mockDataSetResponse());
+    sdk.get.mockResolvedValue({ data: { items: getMockResponse() } });
+    sdk.datasets.retrieve.mockResolvedValue(mockDataSetResponse());
     const extpipes = mapDataSetToExtpipe(
       getMockResponse(),
       mockDataSetResponse()

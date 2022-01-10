@@ -1,6 +1,6 @@
 import { QueryClient } from 'react-query';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import { getMockResponse, mockError } from 'utils/mockResponse';
 import {
@@ -36,7 +36,9 @@ describe('usePostExtpipe', () => {
 
   test('Returns extpipes on success', async () => {
     const extpipesResponse = getMockResponse()[1];
-    sdkv3.post.mockResolvedValue({ data: { items: [extpipesResponse] } });
+    useSDK.mockReturnValue({
+      post: () => Promise.resolve({ data: { items: [extpipesResponse] } }),
+    });
 
     const { result } = renderHook(() => usePostExtpipe(), {
       wrapper,
@@ -51,7 +53,9 @@ describe('usePostExtpipe', () => {
   });
 
   test('Returns error on fail', async () => {
-    sdkv3.post.mockRejectedValue(mockError);
+    useSDK.mockReturnValue({
+      post: () => Promise.reject(mockError),
+    });
 
     const { result } = renderHook(() => usePostExtpipe(), {
       wrapper,

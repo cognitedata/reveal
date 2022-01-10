@@ -24,7 +24,7 @@ import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { databaseListMock, mockDataSetResponse } from 'utils/mockResponse';
 import { CREATE_EXTPIPE_PAGE_PATH } from 'routing/CreateRouteConfig';
 // eslint-disable-next-line
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
@@ -131,7 +131,7 @@ describe('CreateExtpipe', () => {
     const { container } = renderRegisterContext(<CreateExtpipe />, {
       ...props,
     });
-    sdkv3.datasets.list.mockResolvedValue(mockDataSetResponse());
+    sdk.datasets.list.mockResolvedValue(mockDataSetResponse());
 
     const nameInput = screen.getByLabelText(EXT_PIPE_NAME_HEADING);
 
