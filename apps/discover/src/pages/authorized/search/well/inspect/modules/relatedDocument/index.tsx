@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { WhiteLoader } from 'components/loading/WhiteLoader';
+import { Loading } from 'components/loading';
 
 const RelatedDocumentLazy = React.lazy(() => import('./RelatedDocument'));
 
 const RelatedDocument = () => (
-  <React.Suspense fallback={<WhiteLoader />}>
+  <React.Suspense fallback={<Loading loadingTitle="Loading" />}>
     <RelatedDocumentLazy />
   </React.Suspense>
 );

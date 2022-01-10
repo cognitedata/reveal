@@ -3,12 +3,14 @@ import { Row } from 'react-table';
 
 import get from 'lodash/get';
 import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
 import uniq from 'lodash/uniq';
 import { shortDateTime } from 'utils/date';
 
 import { Asset } from '@cognite/sdk';
 
 import EmptyState from 'components/emptyState';
+import { Loading } from 'components/loading/Loading';
 import { Table } from 'components/tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
@@ -146,7 +148,11 @@ export const DigitalRocks: React.FC = () => {
   );
 
   if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
+    return <Loading />;
+  }
+
+  if (isEmpty(digitalRocks)) {
+    return <EmptyState />;
   }
 
   return (

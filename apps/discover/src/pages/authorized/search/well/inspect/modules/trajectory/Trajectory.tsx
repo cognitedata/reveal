@@ -5,7 +5,7 @@ import has from 'lodash/has';
 
 import { Sequence } from '@cognite/sdk';
 
-import { WhiteLoader } from 'components/loading';
+import { Loading } from 'components/loading/Loading';
 import { Table, ColumnType, RowProps } from 'components/tablev3';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataTrajectory } from 'modules/filterData/selectors';
@@ -139,7 +139,7 @@ export const Trajectory: React.FC = () => {
   const showTrajectoryTable = false;
 
   if (isLoading) {
-    return <WhiteLoader />;
+    return <Loading />;
   }
   return (
     <>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
 
 import EmptyState from 'components/emptyState';
-import { WhiteLoader } from 'components/loading';
+import { Loading } from 'components/loading';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { FlexGrow } from 'styles/layout';
 
@@ -35,7 +35,7 @@ export const Measurements: React.FC = () => {
   const { isLoading, data } = useMeasurementsQuery();
 
   if (isLoading) {
-    return <WhiteLoader />;
+    return <Loading />;
   }
 
   if (data && areAllSetValuesEmpty(data)) {

@@ -110,32 +110,36 @@ export function wellReducer(
       const updatedWellboreData = { ...state.wellboreData };
       Object.keys(action.data.logs).forEach((wellboreId) => {
         const wbId = Number(wellboreId);
-        if (updatedWellboreData[wbId]) {
-          updatedWellboreData[wbId].logType = action.data.logs[wbId].map(
-            (sequence) => ({
-              sequence,
-            })
-          );
-        } else {
-          updatedWellboreData[wbId] = {
-            logType: action.data.logs[wbId].map((sequence) => ({ sequence })),
-          };
+        if (action.data.logs[wbId]) {
+          if (updatedWellboreData[wbId]) {
+            updatedWellboreData[wbId].logType = action.data.logs[wbId].map(
+              (sequence) => ({
+                sequence,
+              })
+            );
+          } else {
+            updatedWellboreData[wbId] = {
+              logType: action.data.logs[wbId].map((sequence) => ({ sequence })),
+            };
+          }
         }
       });
       Object.keys(action.data.logsFrmTops).forEach((wellboreId) => {
         const wbId = Number(wellboreId);
-        if (updatedWellboreData[wbId]) {
-          updatedWellboreData[wbId].logsFrmTops = action.data.logsFrmTops[
-            wbId
-          ].map((sequence) => ({
-            sequence,
-          }));
-        } else {
-          updatedWellboreData[wbId] = {
-            logsFrmTops: action.data.logsFrmTops[wbId].map((sequence) => ({
+        if (action.data.logsFrmTops[wbId]) {
+          if (updatedWellboreData[wbId]) {
+            updatedWellboreData[wbId].logsFrmTops = action.data.logsFrmTops[
+              wbId
+            ].map((sequence) => ({
               sequence,
-            })),
-          };
+            }));
+          } else {
+            updatedWellboreData[wbId] = {
+              logsFrmTops: action.data.logsFrmTops[wbId].map((sequence) => ({
+                sequence,
+              })),
+            };
+          }
         }
       });
       return {
@@ -187,18 +191,20 @@ export function wellReducer(
       const updatedWellboreData = { ...state.wellboreData };
       Object.keys(action.data).forEach((wellboreId) => {
         const wbId = Number(wellboreId);
-        if (updatedWellboreData[wbId]) {
-          updatedWellboreData[wbId][action.assetType] = action.data[wbId].map(
-            (asset) => ({
-              asset,
-            })
-          );
-        } else {
-          updatedWellboreData[wbId] = {
-            [action.assetType]: action.data[wbId].map((asset) => ({
-              asset,
-            })),
-          };
+        if (action.data[wbId]) {
+          if (updatedWellboreData[wbId]) {
+            updatedWellboreData[wbId][action.assetType] = action.data[wbId].map(
+              (asset) => ({
+                asset,
+              })
+            );
+          } else {
+            updatedWellboreData[wbId] = {
+              [action.assetType]: action.data[wbId].map((asset) => ({
+                asset,
+              })),
+            };
+          }
         }
       });
       return {
@@ -211,6 +217,7 @@ export function wellReducer(
       const updatedWellboreData = { ...state.wellboreData };
       action.data.forEach((row) => {
         const wbId = Number(row.wellboreId);
+
         if (updatedWellboreData[wbId].digitalRocks) {
           const digitalRocks = updatedWellboreData[wbId]
             .digitalRocks as AssetData[];

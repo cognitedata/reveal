@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { Sequence } from '@cognite/sdk';
 
-import { WhiteLoader } from 'components/loading';
+import { Loading } from 'components/loading/Loading';
 import { Modal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
@@ -88,7 +88,7 @@ export const LogType: React.FC = () => {
   );
 
   if (logsLoading) {
-    return <WhiteLoader />;
+    return <Loading />;
   }
 
   const handleRowSelect = (

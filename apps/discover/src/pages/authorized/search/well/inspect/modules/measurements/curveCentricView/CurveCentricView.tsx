@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 
-import { WhiteLoader } from 'components/loading';
+import { Loading } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
@@ -164,7 +164,7 @@ export const CurveCentricView: React.FC<Props> = ({
 
   return (
     <>
-      {chartRendering && <WhiteLoader />}
+      {chartRendering && <Loading />}
       <CurveCentricViewWrapper visible={!chartRendering}>
         {wellCards}
       </CurveCentricViewWrapper>

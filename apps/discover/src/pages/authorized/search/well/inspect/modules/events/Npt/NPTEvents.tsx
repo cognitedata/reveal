@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import { WhiteLoader, WhiteLoaderOverlay } from 'components/loading';
+import { Loading, WhiteLoaderOverlay } from 'components/loading';
 import { NoUnmountShowHide } from 'components/no-unmount-show-hide';
 import { useNptEvents } from 'modules/wellSearch/selectors';
 
@@ -40,7 +40,7 @@ export const NPTEvents: React.FC = () => {
   );
 
   if (isLoading) {
-    return <WhiteLoader />;
+    return <Loading />;
   }
 
   return (

@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import uniqBy from 'lodash/uniqBy';
 
-import { WhiteLoader } from 'components/loading';
+import { Loading } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { BooleanSelection } from 'modules/wellInspect/types';
@@ -150,7 +150,7 @@ export const WellCentricView: React.FC<Props> = ({
 
   return (
     <>
-      {chartRendering && <WhiteLoader />}
+      {chartRendering && <Loading />}
       <WellCentricViewWrapper visible={!chartRendering}>
         {wellCards}
       </WellCentricViewWrapper>

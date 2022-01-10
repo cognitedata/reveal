@@ -13,7 +13,7 @@ import { DATE_NOT_AVAILABLE } from 'utils/date';
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
 import { ExpandButton } from 'components/buttons';
-import { WhiteLoader } from 'components/loading';
+import { Loading } from 'components/loading';
 import ManageColumnsPanel from 'components/manage-columns-panel';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { PETREL_LOG_TYPE, TRACK_CONFIG } from 'modules/wellSearch/constants';
@@ -145,9 +145,9 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
       return <LogsMessageWrapper>Logs Not Found</LogsMessageWrapper>;
     const { logTypeId, webId } = selectedLogType;
 
-    if (ndsLoading || !ndsData || ppfgLoading) return <WhiteLoader />;
+    if (ndsLoading || !ndsData || ppfgLoading) return <Loading />;
     if (!logIdMapping[logTypeId] || !logIdMapping[logTypeId].rows)
-      return <WhiteLoader />;
+      return <Loading />;
 
     if (logFrmsTopsIdMapping[webId] && logFrmsTopsIdMapping[webId].rows) {
       const uniqMarkes = (

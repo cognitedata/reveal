@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WhiteLoader } from 'components/loading';
+import { Loading } from 'components/loading/Loading';
 import { Table } from 'components/tablev3';
 import { useOverviewData } from 'modules/wellSearch/selectors/sequence/useOverviewData';
 
@@ -33,7 +33,7 @@ export const Overview: React.FC = () => {
   const { isLoading, overviewData } = useOverviewData();
 
   if (isLoading) {
-    return <WhiteLoader />;
+    return <Loading />;
   }
 
   return <OverviewComponent overviewData={overviewData} />;

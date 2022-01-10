@@ -3,7 +3,7 @@ import { ResizableBox } from 'react-resizable';
 
 import { CogniteEvent } from '@cognite/sdk';
 
-import { WhiteLoader } from 'components/loading';
+import { Loading } from 'components/loading';
 import { Table } from 'components/tablev3';
 import {
   LOG_EVENTS_NDS,
@@ -45,7 +45,7 @@ export const EventsNds: React.FC = () => {
   const columns = useGetNdsTableColumns();
 
   useStopTimeLogger(renderTimer);
-  if (isLoading) return <WhiteLoader />;
+  if (isLoading) return <Loading />;
 
   return (
     <>
