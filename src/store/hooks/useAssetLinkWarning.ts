@@ -2,7 +2,7 @@ import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { AnnotationTableItem } from 'src/modules/Review/types';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
@@ -22,58 +22,79 @@ const useAssetLinkWarning = (
   const [assetWarnType, setAssetWarnType] = useState<AssetWarnTypes>(
     AssetWarnTypes.NoWarning
   );
+  const [asset, setAsset] = useState<VisionAsset | null>(null);
   const dispatch: AppDispatch = useDispatch();
+  const approvedAnnotationNotLinkedToFileTimer = useRef<any>(null);
+  const rejectedAnnotationLinkedToFileTimer = useRef<any>(null);
 
   useEffect(() => {
-    async function calculateWarningType() {
-      if (
-        file &&
-        (annotation.linkedResourceId || annotation.linkedResourceExternalId)
-      ) {
-        const assetPayload = [];
-        if (annotation.linkedResourceId) {
-          assetPayload.push({ id: annotation.linkedResourceId });
-        } else if (annotation.linkedResourceExternalId) {
-          assetPayload.push({
-            externalId: annotation.linkedResourceExternalId,
-          });
-        }
-        const assetResponse = await dispatch(fetchAssets(assetPayload));
-        const assets = unwrapResult(assetResponse);
-
-        if (assets && assets.length) {
-          const asset = assets[0];
-          if (
-            annotation.status === AnnotationStatus.Verified &&
-            !file.assetIds?.includes(asset.id)
-          ) {
-            setAssetWarnType(
-              AssetWarnTypes.ApprovedAnnotationAssetNotLinkedToFile
-            );
-            return;
-          }
-          if (
-            annotation.status === AnnotationStatus.Rejected &&
-            file.assetIds?.includes(asset.id) &&
-            allAnnotations
-              .filter(
-                (ann) =>
-                  ann.id !== annotation.id &&
-                  ann.status === AnnotationStatus.Verified
-              ) // select other annotations except this one
-              .every((tagAnnotation) => !isLinkedToAsset(tagAnnotation, asset)) // every other tag annotation is not approved and linked to the same asset
-          ) {
-            setAssetWarnType(
-              AssetWarnTypes.RejectedAnnotationAssetLinkedToFile
-            );
-            return;
-          }
-        }
+    const fetchAndSetAsset = async (ann: AnnotationTableItem) => {
+      const assetPayload = [];
+      if (ann.linkedResourceId) {
+        assetPayload.push({ id: ann.linkedResourceId });
+      } else if (ann.linkedResourceExternalId) {
+        assetPayload.push({
+          externalId: ann.linkedResourceExternalId,
+        });
       }
+      const assetResponse = await dispatch(fetchAssets(assetPayload));
+      const assets = unwrapResult(assetResponse);
+      if (assets && assets.length) {
+        setAsset(assets[0]);
+      }
+    };
+
+    if (annotation.linkedResourceId || annotation.linkedResourceExternalId) {
+      fetchAndSetAsset(annotation);
+    } else {
+      setAsset(null);
+    }
+  }, [annotation.linkedResourceId, annotation.linkedResourceExternalId]);
+
+  useEffect(() => {
+    // clear timers and cancel pending errors, since not doing it can make app to show error erroneously
+    if (approvedAnnotationNotLinkedToFileTimer.current) {
+      clearTimeout(approvedAnnotationNotLinkedToFileTimer.current);
+      approvedAnnotationNotLinkedToFileTimer.current = null;
+    }
+    if (rejectedAnnotationLinkedToFileTimer.current) {
+      clearTimeout(rejectedAnnotationLinkedToFileTimer.current);
+      rejectedAnnotationLinkedToFileTimer.current = null;
+    }
+
+    if (asset) {
+      if (
+        annotation.status === AnnotationStatus.Verified &&
+        !file.assetIds?.includes(asset.id)
+      ) {
+        approvedAnnotationNotLinkedToFileTimer.current = setTimeout(() => {
+          // timers delay showing error so other processes can be completed before showing error (file update)
+          setAssetWarnType(
+            AssetWarnTypes.ApprovedAnnotationAssetNotLinkedToFile
+          );
+        }, 1500);
+      } else if (
+        annotation.status === AnnotationStatus.Rejected &&
+        file.assetIds?.includes(asset.id) &&
+        allAnnotations
+          .filter(
+            (ann) =>
+              ann.id !== annotation.id &&
+              ann.status === AnnotationStatus.Verified
+          ) // select other annotations except this one
+          .every((tagAnnotation) => !isLinkedToAsset(tagAnnotation, asset)) // every other tag annotation is not approved and linked to the same asset
+      ) {
+        rejectedAnnotationLinkedToFileTimer.current = setTimeout(() => {
+          // timers delay showing error so other processes can be completed before showing error (file update)
+          setAssetWarnType(AssetWarnTypes.RejectedAnnotationAssetLinkedToFile);
+        }, 2000);
+      } else {
+        setAssetWarnType(AssetWarnTypes.NoWarning);
+      }
+    } else {
       setAssetWarnType(AssetWarnTypes.NoWarning);
     }
-    calculateWarningType();
-  }, [annotation, file]);
+  }, [annotation, file, asset]);
 
   return assetWarnType;
 };
