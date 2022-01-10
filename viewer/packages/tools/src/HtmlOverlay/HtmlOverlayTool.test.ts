@@ -13,8 +13,7 @@ import {
 
 import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
-
-import { createGlContext } from '../../../../test-utilities';
+import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
@@ -24,6 +23,7 @@ describe(HtmlOverlayTool.name, () => {
 
   beforeEach(() => {
     const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+    mockClientAuthentication(sdk);
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const canvas = document.createElement('canvas');
     fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);

@@ -108,7 +108,10 @@ export const { coneGeometry, coneGeometryBoundingBox } = (() => {
   };
 })();
 
-export const { torusLodGeometries /* , torusGeometryBoundingBox */ } = (() => {
+export const {
+  torusLodGeometries
+  // torusGeometryBoundingBox // Disabled due to error in bounding box computation
+} = (() => {
   const lods = [
     { tubularSegments: 9, radialSegments: 18 },
     { tubularSegments: 5, radialSegments: 12 },
