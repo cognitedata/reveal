@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
 import pick from 'lodash/pick';
-
-import { FetchOptions } from '_helpers/fetchAllCursors';
+import { FetchOptions } from 'utils/fetchAllCursors';
 
 /*
  * Fetch only the new items, get all the rest from cache

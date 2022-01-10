@@ -1,9 +1,10 @@
 // import React from 'react';
 
+import layers from 'utils/zindex';
+
 import { isLocalhost } from '@cognite/react-container';
 import { ErrorWatcher } from '@cognite/react-errors';
 
-import layers from '_helpers/zindex';
 // import { showInfiniteToast } from 'components/toast';
 // import { SIDECAR } from 'constants/app';
 

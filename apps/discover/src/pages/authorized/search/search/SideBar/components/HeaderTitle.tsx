@@ -2,10 +2,10 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Icon } from '@cognite/cogs.js';
 
-import layers from '_helpers/zindex';
 import { BackButton } from 'components/buttons';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { toggleFilterBar, setCategoryPage } from 'modules/sidebar/actions';

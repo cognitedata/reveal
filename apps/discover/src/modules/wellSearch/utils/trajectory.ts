@@ -1,6 +1,7 @@
 import convert from 'convert-units';
 import get from 'lodash/get';
 import head from 'lodash/head';
+import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
 import {
   ProjectConfigWells,
@@ -8,7 +9,6 @@ import {
 } from '@cognite/discover-api-types';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 
-import { UNITS_TO_STANDARD } from '_helpers/units/constants';
 import { FEET } from 'constants/units';
 
 import { SequenceRow, TrajectoryRow, TrajectoryRows, Well } from '../types';

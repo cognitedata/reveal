@@ -1,4 +1,4 @@
-import { getElementById, isEnterPressed } from '_helpers/general.helper';
+import { getElementById, isEnterPressed } from 'utils/general.helper';
 
 describe('General helpers', () => {
   it('check invalid event', () => {

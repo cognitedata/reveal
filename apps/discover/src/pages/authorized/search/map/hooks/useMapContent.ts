@@ -3,16 +3,16 @@ import { useDispatch } from 'react-redux';
 
 import { FeatureCollection } from '@turf/helpers';
 import isUndefined from 'lodash/isUndefined';
+import {
+  CancellablePromise,
+  convertToCancellablePromise,
+} from 'utils/cancellablePromise';
+import { fetchTenantFile } from 'utils/fetchTenantFile';
+import { log } from 'utils/log';
 
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
 
-import {
-  CancellablePromise,
-  convertToCancellablePromise,
-} from '_helpers/cancellablePromise';
-import { fetchTenantFile } from '_helpers/fetchTenantFile';
-import { log } from '_helpers/log';
 import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
 import { setSources, patchSource, setAssets } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';

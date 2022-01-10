@@ -23,7 +23,7 @@ import { Modules } from 'modules/sidebar/types';
 import { SequenceFilter } from 'modules/wellSearch/service';
 import { LogTypes, TrackType } from 'modules/wellSearch/types';
 
-import { FetchHeaders } from '../_helpers/fetch';
+import { FetchHeaders } from '../utils/fetch';
 
 export type MapLayer = (AnyLayer | CustomLayerInterface) & {
   weight?: number;

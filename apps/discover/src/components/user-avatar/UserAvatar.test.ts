@@ -1,8 +1,8 @@
 import { Store } from 'redux';
+import { getElementById } from 'utils/general.helper';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { getElementById } from '_helpers/general.helper';
 import { UserAvatar } from 'components/user-avatar/UserAvatar';
 
 describe('UserAvatar', () => {

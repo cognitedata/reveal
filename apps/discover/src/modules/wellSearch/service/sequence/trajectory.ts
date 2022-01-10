@@ -7,6 +7,7 @@ import invert from 'lodash/invert';
 import max from 'lodash/max';
 import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
@@ -16,7 +17,6 @@ import {
   TrajectoryItems,
 } from '@cognite/sdk-wells-v3';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';

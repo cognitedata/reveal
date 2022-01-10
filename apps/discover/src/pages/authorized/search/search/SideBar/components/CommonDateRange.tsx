@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { DateRange, Range } from '@cognite/cogs.js';
+import { currentDate, SHORT_DATE_FORMAT } from 'utils/date';
 
-import { currentDate, SHORT_DATE_FORMAT } from '_helpers/date';
+import { DateRange, Range } from '@cognite/cogs.js';
 
 import {
   DATE_RANGE_FILTER_FROM_PLACEHOLDER,

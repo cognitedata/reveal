@@ -1,8 +1,9 @@
 import { useQuery, QueryClient } from 'react-query';
 
+import { FetchHeaders } from 'utils/fetch';
+
 import { getTenantInfo } from '@cognite/react-container';
 
-import { FetchHeaders } from '_helpers/fetch';
 import { SURVEYS_QUERY_KEY } from 'constants/react-query';
 import { SeismicError } from 'modules/api/seismic';
 import { discoverAPI, useJsonHeaders } from 'modules/api/service';

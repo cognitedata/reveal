@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
-import layers from '_helpers/zindex';
 import { InlineFlex } from 'styles/layout';
 
 export const SelectorRow = styled(InlineFlex)`

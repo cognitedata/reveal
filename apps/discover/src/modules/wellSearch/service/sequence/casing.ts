@@ -7,11 +7,11 @@ import min from 'lodash/min';
 import noop from 'lodash/noop';
 import uniq from 'lodash/uniq';
 import uniqueId from 'lodash/uniqueId';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import { CasingAssembly, CasingItems } from '@cognite/sdk-wells-v3';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';

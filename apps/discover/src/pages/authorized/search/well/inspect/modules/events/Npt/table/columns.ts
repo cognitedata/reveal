@@ -1,6 +1,6 @@
 import get from 'lodash/get';
+import { shortDate } from 'utils/date';
 
-import { shortDate } from '_helpers/date';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';

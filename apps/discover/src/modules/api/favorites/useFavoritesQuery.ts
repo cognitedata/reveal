@@ -5,10 +5,11 @@ import {
   UseQueryResult,
 } from 'react-query';
 
+import { caseInsensitiveSort } from 'utils/sort';
+
 import { FavoritePostSchema } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
-import { caseInsensitiveSort } from '_helpers/sort';
 import { FAVORITE_KEY } from 'constants/react-query';
 import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import {

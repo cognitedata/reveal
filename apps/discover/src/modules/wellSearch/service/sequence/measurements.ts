@@ -1,11 +1,11 @@
 import groupBy from 'lodash/groupBy';
 import noop from 'lodash/noop';
 import set from 'lodash/set';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
 import { Sequence } from '@cognite/sdk';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { Measurement, WellboreAssetIdMap } from 'modules/wellSearch/types';
 import { getWellboreAssetIdReverseMap } from 'modules/wellSearch/utils/common';

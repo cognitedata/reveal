@@ -4,10 +4,10 @@ import { batch, useDispatch } from 'react-redux';
 import compact from 'lodash/compact';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
+import { getDateOrDefaultText } from 'utils/date';
 
 import { Icon, AllIconTypes } from '@cognite/cogs.js';
 
-import { getDateOrDefaultText } from '_helpers/date';
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';

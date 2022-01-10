@@ -1,9 +1,9 @@
 import isUndefined from 'lodash/isUndefined';
+import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
 
 import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { Cluster, NPTFilter } from '@cognite/sdk-wells-v2';
 
-import { fetchAllCursors, FetchOptions } from '_helpers/fetchAllCursors';
 import { CommonWellFilter } from 'modules/wellSearch/types';
 
 import {

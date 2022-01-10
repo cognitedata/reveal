@@ -1,6 +1,6 @@
 import get from 'lodash/get';
+import { getEmptyGeometry } from 'utils/geometry';
 
-import { getEmptyGeometry } from '_helpers/geometry';
 import { documentValuesPayload } from 'modules/api/documents/structure';
 import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useQuery';
 import { DocumentsFacets } from 'modules/documentSearch/types';

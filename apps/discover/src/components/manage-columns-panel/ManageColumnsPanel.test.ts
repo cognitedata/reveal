@@ -1,9 +1,9 @@
 import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
 import { Store } from 'redux';
+import { store } from 'utils/store';
 
 import { testRenderer } from '__test-utils/renderer';
-import { store } from '_helpers/store';
 
 import ManageColumnsPanel from './ManageColumnsPanel';
 

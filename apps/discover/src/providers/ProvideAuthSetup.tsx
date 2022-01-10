@@ -1,9 +1,10 @@
 import * as React from 'react';
 
+import { setClient, setEmail, setReAuth } from 'utils/getCogniteSDKClient';
+
 import { getTenantInfo, AuthContext } from '@cognite/react-container';
 import { Cluster } from '@cognite/sdk-wells-v2';
 
-import { setClient, setEmail, setReAuth } from '_helpers/getCogniteSDKClient';
 import { SIDECAR } from 'constants/app';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { authenticateDocumentSDK } from 'modules/documentSearch/sdk';

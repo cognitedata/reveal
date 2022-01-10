@@ -2,8 +2,8 @@ import find from 'lodash/find';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
+import { isValidDate, shortDate } from 'utils/date';
 
-import { isValidDate, shortDate } from '_helpers/date';
 import {
   FilterTypes,
   WellFilterMap,

@@ -4,6 +4,7 @@ import isFunction from 'lodash/isFunction';
 import startCase from 'lodash/startCase';
 import without from 'lodash/without';
 import styled from 'styled-components/macro';
+import { fetchGet } from 'utils/fetch';
 
 import { Collapse, Icon } from '@cognite/cogs.js';
 import { log } from '@cognite/react-container';
@@ -17,7 +18,6 @@ import {
   AclScopeTimeSeriesAssetRootIds,
 } from '@cognite/sdk';
 
-import { fetchGet } from '_helpers/fetch';
 import { SIDECAR } from 'constants/app';
 import { useJsonHeaders } from 'modules/api/service';
 

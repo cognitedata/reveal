@@ -14,8 +14,8 @@ import { TS_FIX_ME } from 'core';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
+import { alphanumeric } from 'utils/sort';
 
-import { alphanumeric } from '_helpers/sort';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { SortBy } from 'pages/types';
 import { MarginRightSmallContainer } from 'styles/layout';

@@ -1,6 +1,6 @@
 import get from 'lodash/get';
+import { caseInsensitiveSort } from 'utils/sort';
 
-import { caseInsensitiveSort } from '_helpers/sort';
 import { LegendCheckboxState } from 'components/charts/common/Legend';
 import { DataObject } from 'components/charts/types';
 import { NPTEvent } from 'modules/wellSearch/types';

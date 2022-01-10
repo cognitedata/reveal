@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Menu } from '@cognite/cogs.js';
 
-import layers from '_helpers/zindex';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 import { getFilterSizeStateInPX } from './search/SideBar/constants';

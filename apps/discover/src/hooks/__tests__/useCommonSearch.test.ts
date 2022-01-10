@@ -2,10 +2,10 @@ import { QueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import { renderHook } from '@testing-library/react-hooks';
+import { FetchHeaders } from 'utils/fetch';
 
 import { Geometry } from '@cognite/seismic-sdk-js';
 
-import { FetchHeaders } from '_helpers/fetch';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { convertGeometryToGeoJson } from 'modules/api/savedSearches/normalizeSavedSearch';
 import { setGeo } from 'modules/map/actions';

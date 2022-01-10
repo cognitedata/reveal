@@ -1,7 +1,7 @@
 import isUndefined from 'lodash/isUndefined';
 import pickBy from 'lodash/pickBy';
+import { caseInsensitiveSort } from 'utils/sort';
 
-import { caseInsensitiveSort } from '_helpers/sort';
 import { DataObject } from 'components/charts/types';
 
 import { LegendCheckboxState } from './types';

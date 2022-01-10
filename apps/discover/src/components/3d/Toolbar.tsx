@@ -1,6 +1,7 @@
 import React from 'react';
 
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Icon, Flex, Tooltip, Button, Dropdown, Menu } from '@cognite/cogs.js';
 import {
@@ -9,8 +10,6 @@ import {
   ToolbarButtonClickHandler,
   ToolbarSelectChangeHandler,
 } from '@cognite/node-visualizer';
-
-import layers from '_helpers/zindex';
 
 const Container = styled(Flex)`
   background-color: #fff;

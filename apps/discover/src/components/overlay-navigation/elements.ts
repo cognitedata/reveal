@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro';
-
-import layers from '_helpers/zindex';
+import layers from 'utils/zindex';
 
 import { OverlayNavigationProps } from './OverlayNavigation';
 

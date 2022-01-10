@@ -5,7 +5,7 @@ import {
   caseInsensitiveSort,
   sortObjectsAscending,
   sortObjectsDecending,
-} from '_helpers/sort';
+} from 'utils/sort';
 
 const tableRowProps = {
   allCells: [],

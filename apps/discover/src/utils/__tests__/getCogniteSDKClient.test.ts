@@ -3,7 +3,7 @@ import {
   getEmail,
   setEmail,
   setReAuth,
-} from '_helpers/getCogniteSDKClient';
+} from 'utils/getCogniteSDKClient';
 
 describe('getCogniteSDKClient', () => {
   it('get email', () => {

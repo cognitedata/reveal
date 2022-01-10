@@ -1,7 +1,7 @@
 import capitalize from 'lodash/capitalize';
 import isUndefined from 'lodash/isUndefined';
+import { formatBigNumbersWithSuffix } from 'utils/number';
 
-import { formatBigNumbersWithSuffix } from '_helpers/number';
 import { GreyBadge } from 'components/badge';
 
 import { MultiSelectFacetText, MultiSelectItemContainer } from './elements';

@@ -1,4 +1,5 @@
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
+
 import { getDocumentSDKClient } from 'modules/documentSearch/sdk';
 
 import { bufferDataToImageUrl } from './utils';

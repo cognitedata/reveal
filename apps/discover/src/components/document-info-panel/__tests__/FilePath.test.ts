@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
+import { getPathsFromDoc } from 'utils/getPathsFromDocument';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { getPathsFromDoc } from '_helpers/getPathsFromDocument';
 
 import { FilePath } from '../FilePath';
 

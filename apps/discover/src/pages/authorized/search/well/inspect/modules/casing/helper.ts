@@ -1,8 +1,8 @@
 import isEmpty from 'lodash/isEmpty';
+import { UnitConverterItem } from 'utils/units/interfaces';
 
 import { Sequence } from '@cognite/sdk';
 
-import { UnitConverterItem } from '_helpers/units/interfaces';
 import { FEET } from 'constants/units';
 import { convertObject } from 'modules/wellSearch/utils';
 

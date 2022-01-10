@@ -4,10 +4,10 @@ import { Row } from 'react-table';
 import get from 'lodash/get';
 import head from 'lodash/head';
 import uniq from 'lodash/uniq';
+import { shortDateTime } from 'utils/date';
 
 import { Asset } from '@cognite/sdk';
 
-import { shortDateTime } from '_helpers/date';
 import EmptyState from 'components/emptyState';
 import { Table } from 'components/tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';

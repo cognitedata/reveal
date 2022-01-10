@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
+import { shortDate } from 'utils/date';
+import { sortDates } from 'utils/sortDates';
 
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
-import { shortDate } from '_helpers/date';
-import { sortDates } from '_helpers/sortDates';
 import { OKModal } from 'components/modal';
 import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';

@@ -1,7 +1,8 @@
+import { now } from 'utils/date';
+
 import { GeoJson } from '@cognite/seismic-sdk-js';
 
 import { getMockedStore } from '__test-utils/store.utils';
-import { now } from '_helpers/date';
 import { REMOVE_ARBITRARYLINE } from 'modules/map/types.actions';
 import {
   ADD_SURVEY_SELECTION,

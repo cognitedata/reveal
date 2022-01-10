@@ -6,10 +6,10 @@ import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 import includes from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
+import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
 import { CogniteEvent } from '@cognite/sdk';
 
-import { UNITS_TO_STANDARD } from '_helpers/units/constants';
 import { FEET } from 'constants/units';
 import { FilterDataState } from 'modules/filterData/types';
 import {

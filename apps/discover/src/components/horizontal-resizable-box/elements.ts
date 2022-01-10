@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro';
-
-import layers from '_helpers/zindex';
+import layers from 'utils/zindex';
 
 export const ResizeHandle = styled.div`
   position: absolute;

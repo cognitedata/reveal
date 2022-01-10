@@ -1,14 +1,13 @@
 import { useMutation } from 'react-query';
 
 import noop from 'lodash/noop';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import {
   FeatureTypesCreateItem,
   FeaturesCreateItem,
   CogniteExternalId,
 } from '@cognite/sdk';
-
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 
 import { geospatialV1 } from './geospatialV1';
 

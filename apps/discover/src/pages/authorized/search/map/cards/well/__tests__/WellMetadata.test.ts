@@ -1,8 +1,8 @@
 import { cleanup, within, screen } from '@testing-library/react';
+import { shortDate } from 'utils/date';
 
 import { getMockWell } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
-import { shortDate } from '_helpers/date';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 
 import { WellMetadata } from '../WellMetadata';

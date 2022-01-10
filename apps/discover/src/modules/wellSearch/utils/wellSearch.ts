@@ -1,6 +1,7 @@
+import { log } from 'utils/log';
+
 import { CogniteError } from '@cognite/sdk-core';
 
-import { log } from '_helpers/log';
 import { showWarningMessage } from 'components/toast';
 
 import { WELL_SEARCH_ACCESS_ERROR } from '../constants';

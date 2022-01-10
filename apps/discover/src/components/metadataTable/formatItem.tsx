@@ -3,11 +3,11 @@ import compact from 'lodash/compact';
 import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
+import { shortDate } from 'utils/date';
+import { getHumanReadableFileSize } from 'utils/number';
 
 import { Flex, Label, Tooltip } from '@cognite/cogs.js';
 
-import { shortDate } from '_helpers/date';
-import { getHumanReadableFileSize } from '_helpers/number';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 
 import { EMPTY_COMMENT_PLACEHOLDER, EMPTY_PATH_PLACEHOLDER } from './constants';

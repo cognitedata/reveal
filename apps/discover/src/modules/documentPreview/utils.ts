@@ -1,9 +1,9 @@
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
+import { isSafeUrl } from 'utils/isSafeUrl';
 
 import { InternalId, ExternalId, IdEither, FileLink } from '@cognite/sdk';
 
-import { isSafeUrl } from '_helpers/isSafeUrl';
 import { DocumentType } from 'modules/documentSearch/types';
 
 import { FavoriteDocumentData } from '../favorite/types';

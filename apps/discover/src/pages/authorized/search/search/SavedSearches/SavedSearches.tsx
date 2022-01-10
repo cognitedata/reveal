@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { isEnterPressed } from 'utils/general.helper';
+import { log } from 'utils/log';
+
 import { Dropdown, Input, Menu, Tooltip, Icon } from '@cognite/cogs.js';
 import { getTenantInfo } from '@cognite/react-container';
 
-import { isEnterPressed } from '_helpers/general.helper';
-import { log } from '_helpers/log';
 import Divider from 'components/divider';
 import OverwriteSearchModal from 'components/modals/overwrite-search-modal';
 import Skeleton from 'components/skeleton';

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { shortDate } from 'utils/date';
+import { log } from 'utils/log';
+import { sortDates } from 'utils/sortDates';
+
 import { Menu, Dropdown } from '@cognite/cogs.js';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import { getTenantInfo } from '@cognite/react-container';
 
-import { shortDate } from '_helpers/date';
-import { log } from '_helpers/log';
-import { sortDates } from '_helpers/sortDates';
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import InlineLink from 'components/inlineLink';

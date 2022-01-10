@@ -1,7 +1,7 @@
 import { SavedSearchContent } from 'modules/api/savedSearches/types';
 
-import { fetchGet, FetchHeaders } from '../../../_helpers/fetch';
 import { SIDECAR } from '../../../constants/app';
+import { fetchGet, FetchHeaders } from '../../../utils/fetch';
 
 const getSearchHistoryEndpoint = (project: string) =>
   `${SIDECAR.discoverApiBaseUrl}/${project}/searchHistory`;

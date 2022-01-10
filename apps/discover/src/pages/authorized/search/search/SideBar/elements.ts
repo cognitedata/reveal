@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Overline } from '@cognite/cogs.js';
 
-import layers from '_helpers/zindex';
 import { Flex, FlexColumn, sizes, FlexAlignItems, Center } from 'styles/layout';
 
 import { getFilterSizeStateInPX, MS_TRANSITION_TIME } from './constants';

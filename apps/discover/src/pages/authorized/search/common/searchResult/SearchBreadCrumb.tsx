@@ -2,11 +2,11 @@ import React, { Fragment } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components/macro';
+import { withThousandSeparator } from 'utils/number';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
-import { withThousandSeparator } from '_helpers/number';
 import { GreyBadge } from 'components/badge';
 import { FlexGrow, FlexRow } from 'styles/layout';
 

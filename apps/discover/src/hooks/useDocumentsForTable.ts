@@ -1,4 +1,5 @@
-import { documentDateToDate } from '_helpers/dateConversion';
+import { documentDateToDate } from 'utils/dateConversion';
+
 import { useQueryDocumentLabels } from 'modules/api/documents/useDocumentQuery';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 

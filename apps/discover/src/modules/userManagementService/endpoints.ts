@@ -1,10 +1,11 @@
+import { fetchGet, FetchHeaders, fetchPatch, fetchPost } from 'utils/fetch';
+
 import {
   UMSUser,
   UMSUserProfile,
   UMSUserProfilePreferences,
 } from '@cognite/user-management-service-types';
 
-import { fetchGet, FetchHeaders, fetchPatch, fetchPost } from '_helpers/fetch';
 import { SIDECAR } from 'constants/app';
 
 const getUserManagementEndpoint = (action: string) =>

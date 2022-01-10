@@ -1,8 +1,8 @@
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isNumber from 'lodash/isNumber';
+import { sortObjectsAscending, sortObjectsDecending } from 'utils/sort';
 
-import { sortObjectsAscending, sortObjectsDecending } from '_helpers/sort';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { SortBy } from 'pages/types';
 

@@ -15,7 +15,7 @@ import {
   SequenceData,
 } from 'modules/wellSearch/types';
 
-import { getCogniteSDKClient } from '../../../../_helpers/getCogniteSDKClient';
+import { getCogniteSDKClient } from '../../../../utils/getCogniteSDKClient';
 
 const getDigitalRocksGrainPartitioningFetchFunction = (
   metadata: Record<string, unknown> | undefined

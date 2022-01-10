@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro';
-
-import layers from '_helpers/zindex';
+import layers from 'utils/zindex';
 
 export const SelectorWrapper = styled.div`
   z-index: ${layers.DROPDOWN_SELECT};

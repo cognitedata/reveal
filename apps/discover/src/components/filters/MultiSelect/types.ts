@@ -1,6 +1,6 @@
-import { SelectProps } from '@cognite/cogs.js';
+import { PossibleDateRangeDate } from 'utils/date';
 
-import { PossibleDateRangeDate } from '_helpers/date';
+import { SelectProps } from '@cognite/cogs.js';
 
 export interface MultiSelectProps
   extends Omit<SelectProps<MultiSelectOptionType>, 'value' | 'options'> {

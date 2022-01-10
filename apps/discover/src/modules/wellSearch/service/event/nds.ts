@@ -1,6 +1,7 @@
 import groupBy from 'lodash/groupBy';
 import invert from 'lodash/invert';
 import set from 'lodash/set';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { CogniteEvent } from '@cognite/sdk';
 import {
@@ -9,7 +10,6 @@ import {
   TrajectoryInterpolationItems,
 } from '@cognite/sdk-wells-v3';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { showErrorMessage } from 'components/toast';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';

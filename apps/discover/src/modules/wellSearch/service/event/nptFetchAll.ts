@@ -1,6 +1,7 @@
+import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
+
 import { Wellbore, Npt } from '@cognite/sdk-wells-v3';
 
-import { fetchAllCursors, FetchOptions } from '_helpers/fetchAllCursors';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 

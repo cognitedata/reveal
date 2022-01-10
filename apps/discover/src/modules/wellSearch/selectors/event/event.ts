@@ -3,10 +3,10 @@ import { useMemo } from 'react';
 import difference from 'lodash/difference';
 import groupBy from 'lodash/groupBy';
 import uniq from 'lodash/uniq';
+import { log } from 'utils/log';
 
 import { CogniteEvent } from '@cognite/sdk';
 
-import { log } from '_helpers/log';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {

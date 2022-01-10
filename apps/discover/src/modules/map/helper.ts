@@ -14,10 +14,10 @@ import {
 } from '@turf/helpers';
 import nearestPoint from '@turf/nearest-point';
 import isNil from 'lodash/isNil';
+import { isOfType } from 'utils/type';
 
 import { Geometry, Point, GeoJsonGeometryTypes } from '@cognite/seismic-sdk-js';
 
-import { isOfType } from '_helpers/type';
 import { SeismicFile } from 'modules/seismicSearch/types';
 
 const isPolygon = (feature: Feature) => feature.geometry.type === 'Polygon';

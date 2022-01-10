@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { getPathsFromDoc } from 'utils/getPathsFromDocument';
+
 import { reportException } from '@cognite/react-errors';
 import { useTranslation } from '@cognite/react-i18n';
 
-import { getPathsFromDoc } from '_helpers/getPathsFromDocument';
 import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
 import { FilePath } from 'components/document-info-panel/FilePath';
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';

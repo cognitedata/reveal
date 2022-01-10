@@ -2,8 +2,8 @@ import { QueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import isUndefined from 'lodash/isUndefined';
+import { FetchHeaders } from 'utils/fetch';
 
-import { FetchHeaders } from '_helpers/fetch';
 import { convertGeometryToGeoJson } from 'modules/api/savedSearches/normalizeSavedSearch';
 import { SavedSearchContent } from 'modules/api/savedSearches/types';
 import { setGeo } from 'modules/map/actions';

@@ -1,6 +1,7 @@
+import { fetchGet, FetchHeaders } from 'utils/fetch';
+
 import { getTenantInfo } from '@cognite/react-container';
 
-import { fetchGet, FetchHeaders } from '_helpers/fetch';
 import { SIDECAR } from 'constants/app';
 
 import { StatsApiResult } from './types';

@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
+import { shortDate } from 'utils/date';
 
 import { Button } from '@cognite/cogs.js';
 
-import { shortDate } from '_helpers/date';
 import { Typography } from 'components/typography';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
 import { GeneralFeedbackItem } from 'modules/feedback/types';

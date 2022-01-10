@@ -5,10 +5,10 @@ import constant from 'lodash/constant';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
+import { UnitConverterItem } from 'utils/units/interfaces';
 
 import { Asset } from '@cognite/sdk';
 
-import { UnitConverterItem } from '_helpers/units/interfaces';
 import {
   LOG_WELL_DIGITAL_ROCKS,
   LOG_WELL_DIGITAL_ROCKS_NAMESPACE,
@@ -28,7 +28,7 @@ import {
   normalizeSamples,
 } from 'modules/wellSearch/utils/digitalRocks';
 
-import { getCogniteSDKClient } from '../../../../_helpers/getCogniteSDKClient';
+import { getCogniteSDKClient } from '../../../../utils/getCogniteSDKClient';
 import { useWellboreData } from '../asset/wellbore';
 import { usePristineIds } from '../common';
 

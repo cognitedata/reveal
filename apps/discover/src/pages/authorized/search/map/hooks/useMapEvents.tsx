@@ -10,8 +10,8 @@ import {
   MapMouseEvent,
   Popup,
 } from 'maplibre-gl';
+import { log } from 'utils/log';
 
-import { log } from '_helpers/log';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
   clearSelectedDocument,

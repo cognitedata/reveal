@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import noop from 'lodash/noop';
-
 // import { SeismicFile } from 'modules/seismicSearch/types';
-import { log } from '_helpers/log';
+import { log } from 'utils/log';
+
 import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
 import { showErrorMessage } from 'components/toast';
 import { SeismicGetData, SeismicFile } from 'modules/api/types';

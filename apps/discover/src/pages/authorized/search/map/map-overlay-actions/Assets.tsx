@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { openInNewTab } from 'utils/openInNewTab';
+
 import { Body, Button, Menu } from '@cognite/cogs.js';
 
-import { openInNewTab } from '_helpers/openInNewTab';
 import { useExternalLinksConfig } from 'hooks/useExternalLinksConfig';
 import { Asset } from 'modules/map/types';
 import { WELL_FIELDS_WITH_PRODUCTION_DATA } from 'modules/wellSearch/constants';

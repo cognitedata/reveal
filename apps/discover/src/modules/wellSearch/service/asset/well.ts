@@ -2,8 +2,8 @@ import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
 import map from 'lodash/map';
 import set from 'lodash/set';
+import { FetchOptions } from 'utils/fetchAllCursors';
 
-import { FetchOptions } from '_helpers/fetchAllCursors';
 import {
   getAllWellItemsByFilter,
   getWellById,

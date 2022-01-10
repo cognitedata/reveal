@@ -1,4 +1,4 @@
-import { convertToCancellablePromise } from '_helpers/cancellablePromise';
+import { convertToCancellablePromise } from 'utils/cancellablePromise';
 
 describe('Cancellable Promise', () => {
   test('Should resolve response', async () => {

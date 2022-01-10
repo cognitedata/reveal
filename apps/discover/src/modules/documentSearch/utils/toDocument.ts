@@ -1,6 +1,6 @@
 import { DocumentsSearchWrapper } from '@cognite/sdk-playground';
 
-import { getDocumentFormatFromDate } from '../../../_helpers/date';
+import { getDocumentFormatFromDate } from '../../../utils/date';
 import { LAST_CREATED_KEY_VALUE, LAST_UPDATED_KEY_VALUE } from '../constants';
 import { DocumentType, SearchHighlight } from '../types';
 

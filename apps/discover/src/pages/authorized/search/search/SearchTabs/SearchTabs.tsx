@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import styled from 'styled-components/macro';
+import { formatBigNumbersWithSuffix } from 'utils/number';
 
 import { Badge } from '@cognite/cogs.js';
 
-import { formatBigNumbersWithSuffix } from '_helpers/number';
 import { BetaSymbol } from 'pages/authorized/elements';
 import { sizes } from 'styles/layout';
 

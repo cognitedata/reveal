@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import {
   convertToCancellablePromise,
   CancellablePromise,
-} from '_helpers/cancellablePromise';
+} from 'utils/cancellablePromise';
 
 /* eslint-disable no-promise-executor-return */
 const delay = (n: number) => new Promise((resolve) => setTimeout(resolve, n));

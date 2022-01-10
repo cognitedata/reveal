@@ -1,9 +1,8 @@
 import * as React from 'react';
 
 import styled, { css } from 'styled-components/macro';
-
-import scrollHandler from '_helpers/scrollHandler';
-import layers from '_helpers/zindex';
+import scrollHandler from 'utils/scrollHandler';
+import layers from 'utils/zindex';
 
 const Container = styled.div`
   position: sticky;

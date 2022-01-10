@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 export const useDocumentAssetNames = (assetIds: number[]) =>
   useQuery(['document_asset_names', assetIds], () => {

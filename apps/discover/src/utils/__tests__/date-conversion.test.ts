@@ -1,5 +1,6 @@
+import { documentDateToDate } from 'utils/dateConversion';
+
 import { getMockDocument } from '__test-utils/fixtures/document';
-import { documentDateToDate } from '_helpers/dateConversion';
 
 describe('convert Document Date to JS Date', () => {
   it('return document date to short date', () => {

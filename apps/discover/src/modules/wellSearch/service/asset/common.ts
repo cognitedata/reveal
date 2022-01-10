@@ -1,7 +1,7 @@
-import { Asset } from '@cognite/sdk';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
+import { log } from 'utils/log';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
-import { log } from '_helpers/log';
+import { Asset } from '@cognite/sdk';
 
 import { getChunkNumberList } from '../sequence/common';
 

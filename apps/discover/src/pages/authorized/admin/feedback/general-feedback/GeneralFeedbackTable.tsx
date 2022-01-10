@@ -3,11 +3,11 @@ import React, { useCallback, useState } from 'react';
 import compact from 'lodash/compact';
 import isString from 'lodash/isString';
 import sortBy from 'lodash/sortBy';
+import { shortDate } from 'utils/date';
+import { sortDates } from 'utils/sortDates';
 
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
-import { shortDate } from '_helpers/date';
-import { sortDates } from '_helpers/sortDates';
 import EmptyState from 'components/emptyState';
 import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';

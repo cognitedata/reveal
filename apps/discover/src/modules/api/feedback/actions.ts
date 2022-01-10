@@ -1,5 +1,6 @@
-import { getEmail } from '_helpers/getCogniteSDKClient';
-import { log } from '_helpers/log';
+import { getEmail } from 'utils/getCogniteSDKClient';
+import { log } from 'utils/log';
+
 import { showErrorMessage } from 'components/toast';
 import { FEEDBACK_ERROR_MESSAGE } from 'constants/feedback';
 import { APP_EMAIL } from 'constants/general';

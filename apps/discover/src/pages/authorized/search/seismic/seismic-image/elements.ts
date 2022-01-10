@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
-import layers from '_helpers/zindex';
 import { FlexColumn, sizes } from 'styles/layout';
 
 export const SeismicHeaderWrapper = styled(FlexColumn)`

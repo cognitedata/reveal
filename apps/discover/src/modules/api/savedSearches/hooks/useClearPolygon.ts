@@ -1,8 +1,8 @@
 import isArray from 'lodash/isArray';
+import { isOfType } from 'utils/type';
 
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
-import { isOfType } from '_helpers/type';
 import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
 
 import { convertGeometryToGeoJson } from '../normalizeSavedSearch';

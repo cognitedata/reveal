@@ -16,6 +16,7 @@ import {
   ImageSearch,
 } from 'images/icons';
 import styled from 'styled-components/macro';
+import { shortDateTime } from 'utils/date';
 
 import {
   Button,
@@ -25,7 +26,6 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { shortDateTime } from '_helpers/date';
 import { SliceCollection } from 'modules/seismicSearch/types';
 
 const ButtonWrapper = styled.div`

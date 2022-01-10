@@ -1,10 +1,10 @@
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
+import { FetchHeaders } from 'utils/fetch';
 
 import { reportException } from '@cognite/react-errors';
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
-import { FetchHeaders } from '_helpers/fetch';
 import { discoverAPI } from 'modules/api/service';
 
 import { SAVED_SEARCHES_CURRENT_KEY } from './constants';

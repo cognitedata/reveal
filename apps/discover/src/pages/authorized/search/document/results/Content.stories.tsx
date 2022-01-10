@@ -4,7 +4,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
-import { store } from '_helpers/store';
+import { store } from 'utils/store';
 
 import Content from './Content';
 

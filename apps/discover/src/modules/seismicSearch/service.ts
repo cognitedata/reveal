@@ -1,3 +1,5 @@
+import { log } from 'utils/log';
+
 import { isProduction } from '@cognite/react-container';
 import {
   CogniteSeismicClient,
@@ -8,7 +10,6 @@ import {
 } from '@cognite/seismic-sdk-js';
 import { GetTextHeaderResponse } from '@cognite/seismic-sdk-js/dist/cognite/seismic/protos/query_service_messages_pb';
 
-import { log } from '_helpers/log';
 import { SIDECAR } from 'constants/app';
 
 import { LineProps } from './types';

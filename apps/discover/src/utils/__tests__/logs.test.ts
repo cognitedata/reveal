@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { waitFor } from '@testing-library/react';
-
-import { log } from '_helpers/log';
+import { log } from 'utils/log';
 
 describe('Logs', () => {
   it('console log', async () => {

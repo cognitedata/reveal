@@ -1,8 +1,8 @@
-import { doReAuth } from '_helpers/getCogniteSDKClient';
+import { doReAuth } from 'utils/getCogniteSDKClient';
 
 import { handleResponse, getJsonOrText } from '../fetch';
 
-jest.mock('_helpers/getCogniteSDKClient', () => ({
+jest.mock('utils/getCogniteSDKClient', () => ({
   doReAuth: jest.fn(),
 }));
 

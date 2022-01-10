@@ -1,11 +1,7 @@
+import { fetchGet, FetchHeaders, fetchPatch, fetchDelete } from 'utils/fetch';
+
 import { ProjectConfig } from '@cognite/discover-api-types';
 
-import {
-  fetchGet,
-  FetchHeaders,
-  fetchPatch,
-  fetchDelete,
-} from '_helpers/fetch';
 import { SIDECAR } from 'constants/app';
 
 const getProjectConfigEndpoint = (project: string) =>

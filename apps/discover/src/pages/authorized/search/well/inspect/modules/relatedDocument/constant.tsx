@@ -1,7 +1,8 @@
+import { DOCUMENT_DATE_FORMAT, getDateOrDefaultText } from 'utils/date';
+import { sortDates } from 'utils/sortDates';
+
 import { AllIconTypes, Icon } from '@cognite/cogs.js';
 
-import { DOCUMENT_DATE_FORMAT, getDateOrDefaultText } from '_helpers/date';
-import { sortDates } from '_helpers/sortDates';
 import { DocumentTypeDataModel } from 'modules/documentSearch/types';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 

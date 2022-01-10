@@ -1,6 +1,6 @@
 import get from 'lodash/get';
+import { getTimeDuration } from 'utils/date';
 
-import { getTimeDuration } from '_helpers/date';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { NPTEvent } from 'modules/wellSearch/types';
 

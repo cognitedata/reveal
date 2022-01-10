@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
-import { changeUnits } from '_helpers/units/utils';
+import { changeUnits } from 'utils/units/utils';
+
 import MetadataTable from 'components/metadataTable';
 import { FEET } from 'constants/units';
 import { Well } from 'modules/wellSearch/types';

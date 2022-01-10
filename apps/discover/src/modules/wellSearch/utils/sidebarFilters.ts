@@ -1,5 +1,6 @@
 import head from 'lodash/head';
 import last from 'lodash/last';
+import { endOf, startOf } from 'utils/date';
 
 import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discover-api-types';
 import {
@@ -8,7 +9,6 @@ import {
   WellFilter,
 } from '@cognite/sdk-wells-v2';
 
-import { endOf, startOf } from '_helpers/date';
 import { FEET, UserPrefferedUnit } from 'constants/units';
 import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
 

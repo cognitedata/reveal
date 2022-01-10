@@ -1,9 +1,8 @@
 import flatten from 'lodash/flatten';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
+import { log } from 'utils/log';
 
 import { Sequence } from '@cognite/sdk';
-
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
-import { log } from '_helpers/log';
 
 export interface SequenceFilter {
   exclude?: string;

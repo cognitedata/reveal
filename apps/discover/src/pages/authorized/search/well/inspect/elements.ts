@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Menu } from '@cognite/cogs.js';
 
-import layers from '_helpers/zindex';
 import { Flex, FlexRow, sizes, FlexColumn } from 'styles/layout';
 
 import { TOP_BAR_HEIGHT } from './constants';

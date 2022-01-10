@@ -1,7 +1,8 @@
+import { log } from 'utils/log';
+
 import { CogniteEvent, ExternalEvent, Sequence } from '@cognite/sdk';
 import { NPT } from '@cognite/sdk-wells-v2';
 
-import { log } from '_helpers/log';
 import { FEET, LBM_OVER_BBL, METER, PPG, PSI, SG } from 'constants/units';
 
 import { TrajectoryData, Wellbore, WellboreAssetIdMap } from '../types';

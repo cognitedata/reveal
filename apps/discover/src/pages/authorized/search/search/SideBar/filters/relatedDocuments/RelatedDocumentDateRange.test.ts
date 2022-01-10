@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
+import { shortDate } from 'utils/date';
 
 import { testRenderer } from '__test-utils/renderer';
-import { shortDate } from '_helpers/date';
 
 import { RelatedDocumentDateRange } from './RelatedDocumentDateRange';
 

@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 
 import get from 'lodash/get';
-
 import {
   CHART_AXIS_LABEL_DATE_FORMAT,
   formatDate,
   getTimeDuration,
   longDate,
-} from '_helpers/date';
+} from 'utils/date';
+
 import { ScatterPlot } from 'components/charts';
 import { AxisPlacement } from 'components/charts/common/Axis';
 import { ScatterPlotOptions } from 'components/charts/modules/ScatterPlot/types';

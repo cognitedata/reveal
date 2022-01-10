@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { Button, Range } from '@cognite/cogs.js';
+import { isValidDate } from 'utils/date';
 
-import { isValidDate } from '_helpers/date';
+import { Button, Range } from '@cognite/cogs.js';
 
 import { CommonDateRange } from '../../components/CommonDateRange';
 

@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from 'react-query';
 
+import { log } from 'utils/log';
+
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
 
-import { log } from '_helpers/log';
 import { SAVED_SEARCHES_QUERY_KEY } from 'constants/react-query';
 import { useJsonHeaders } from 'modules/api/service';
 

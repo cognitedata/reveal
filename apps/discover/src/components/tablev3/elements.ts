@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Body, Button } from '@cognite/cogs.js';
 
-import layers from '_helpers/zindex';
 import { LoadMoreButton as DefaultLoadMoreButton } from 'components/buttons';
 import { sizes } from 'styles/layout';
 

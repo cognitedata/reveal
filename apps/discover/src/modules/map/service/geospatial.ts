@@ -1,11 +1,11 @@
 import head from 'lodash/head';
 import isArray from 'lodash/isArray';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { API_PLAYGROUND_DOMAIN } from 'constants/app';
 import { NPDLayerItemResponse } from 'modules/map/types';
 
-import { FetchHeaders } from '../../../_helpers/fetch';
+import { FetchHeaders } from '../../../utils/fetch';
 import { discoverAPI } from '../../api/service';
 import { getGeospatialSDKClient } from '../sdk';
 

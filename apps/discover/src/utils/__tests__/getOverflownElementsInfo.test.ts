@@ -1,4 +1,4 @@
-import { getOverflownElementsInfo } from '_helpers/getOverflownElementsInfo';
+import { getOverflownElementsInfo } from 'utils/getOverflownElementsInfo';
 
 describe('getOverflownElementsInfo', () => {
   test('should return overflown elements info', () => {

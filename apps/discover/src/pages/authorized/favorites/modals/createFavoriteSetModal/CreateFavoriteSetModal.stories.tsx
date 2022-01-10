@@ -3,9 +3,10 @@
 
 import { Provider } from 'react-redux';
 
+import { store } from 'utils/store';
+
 import { Button } from '@cognite/cogs.js';
 
-import { store } from '_helpers/store';
 import { showCreateFavoriteModal } from 'modules/favorite/reducer';
 
 import CreateFavoriteSetModal from './index';

@@ -1,11 +1,11 @@
 import head from 'lodash/head';
 import intersection from 'lodash/intersection';
 import sortBy from 'lodash/sortBy';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
+import { log } from 'utils/log';
 
 import { Sequence } from '@cognite/sdk';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
-import { log } from '_helpers/log';
 import { TRACK_CONFIG } from 'modules/wellSearch/constants';
 import { SequenceRow } from 'modules/wellSearch/types';
 

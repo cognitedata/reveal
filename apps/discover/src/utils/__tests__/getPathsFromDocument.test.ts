@@ -1,5 +1,6 @@
+import { getPathsFromDoc } from 'utils/getPathsFromDocument';
+
 import { getMockDocument } from '__test-utils/fixtures/document';
-import { getPathsFromDoc } from '_helpers/getPathsFromDocument';
 
 describe('getPathsFromDoc', () => {
   test('should return document paths correctly', () => {

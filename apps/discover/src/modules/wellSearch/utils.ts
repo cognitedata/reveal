@@ -2,23 +2,23 @@ import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import proj4 from 'proj4';
-
-import { Asset, Sequence } from '@cognite/sdk';
-import { SpudDateLimits, WaterDepthLimits } from '@cognite/sdk-wells-v2';
-
 import {
   endOf,
   getDateByMatchingRegex,
   isValidDate,
   startOf,
-} from '_helpers/date';
-import { log } from '_helpers/log';
-import { UnitConverterItem } from '_helpers/units/interfaces';
+} from 'utils/date';
+import { log } from 'utils/log';
+import { UnitConverterItem } from 'utils/units/interfaces';
 import {
   changeUnit,
   changeUnits as changeSomeUnits,
   changeUnitTo,
-} from '_helpers/units/utils';
+} from 'utils/units/utils';
+
+import { Asset, Sequence } from '@cognite/sdk';
+import { SpudDateLimits, WaterDepthLimits } from '@cognite/sdk-wells-v2';
+
 import { FEET, UserPrefferedUnit } from 'constants/units';
 import { proj4Defs } from 'modules/map/proj4Defs';
 import { convertToClosestInteger } from 'pages/authorized/search/well/inspect/modules/events/common';

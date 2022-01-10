@@ -2,8 +2,8 @@ import { QueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import { renderHook } from '@testing-library/react-hooks';
+import { FetchHeaders } from 'utils/fetch';
 
-import { FetchHeaders } from '_helpers/fetch';
 import { prefetchSurveys } from 'modules/seismicSearch/hooks';
 
 import { useSeismicSearch } from '../useSeismicSearch';

@@ -6,11 +6,11 @@ import head from 'lodash/head';
 import map from 'lodash/map';
 import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
+import { getDateOrDefaultText } from 'utils/date';
+import { changeUnits } from 'utils/units/utils';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
-import { getDateOrDefaultText } from '_helpers/date';
-import { changeUnits } from '_helpers/units/utils';
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';

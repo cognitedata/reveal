@@ -5,14 +5,14 @@ import {
   SavedSearchRemoveShareSchemaPOST,
 } from '@cognite/discover-api-types';
 
+import { SIDECAR } from '../../../constants/app';
 import {
   fetchDelete,
   fetchGet,
   FetchHeaders,
   fetchPut,
   fetchPost,
-} from '../../../_helpers/fetch';
-import { SIDECAR } from '../../../constants/app';
+} from '../../../utils/fetch';
 import { BaseAPIResult, GenericApiError } from '../types';
 
 import { SAVED_SEARCHES_CURRENT_KEY } from './constants';

@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import get from 'lodash/get';
+import { now, fromNow } from 'utils/date';
 
-import { now, fromNow } from '_helpers/date';
 import {
   SelectedBarData,
   StackedBarChart,

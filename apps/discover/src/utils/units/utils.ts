@@ -2,8 +2,7 @@ import convert from 'convert-units';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
-
-import { log } from '_helpers/log';
+import { log } from 'utils/log';
 
 import { UNITS_TO_STANDARD } from './constants';
 import { UnitConverterItem } from './interfaces';

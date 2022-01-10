@@ -1,6 +1,7 @@
+import { UnitConverterItem } from 'utils/units/interfaces';
+
 import { CogniteEvent } from '@cognite/sdk';
 
-import { UnitConverterItem } from '_helpers/units/interfaces';
 import { EventsType } from 'modules/wellSearch/types';
 import { convertObject } from 'modules/wellSearch/utils';
 

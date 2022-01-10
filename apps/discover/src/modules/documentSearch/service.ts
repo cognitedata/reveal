@@ -1,10 +1,10 @@
 import isArray from 'lodash/isArray';
 import mergeWith from 'lodash/mergeWith';
+import { getCogniteSDKClient, doReAuth } from 'utils/getCogniteSDKClient';
 
 import { reportException } from '@cognite/react-errors';
 import { DocumentsFilter, DocumentsSearch } from '@cognite/sdk-playground';
 
-import { getCogniteSDKClient, doReAuth } from '_helpers/getCogniteSDKClient';
 import { showErrorMessage } from 'components/toast';
 import { aggregates } from 'modules/documentSearch/constants';
 import {

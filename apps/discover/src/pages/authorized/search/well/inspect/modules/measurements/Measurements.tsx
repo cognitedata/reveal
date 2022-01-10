@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import { areAllSetValuesEmpty } from '_helpers/areAllSetValuesEmpty';
+import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
+
 import EmptyState from 'components/emptyState';
 import { WhiteLoader } from 'components/loading';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';

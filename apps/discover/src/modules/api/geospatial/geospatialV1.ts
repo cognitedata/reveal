@@ -1,4 +1,4 @@
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import {
   adaptGeoJSONToGeospatial,

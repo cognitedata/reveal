@@ -3,8 +3,8 @@ import {
   GeospatialPostResponse,
 } from '@cognite/discover-api-types';
 
-import { FetchHeaders, fetchPost } from '../../../_helpers/fetch';
 import { SIDECAR } from '../../../constants/app';
+import { FetchHeaders, fetchPost } from '../../../utils/fetch';
 
 const getGeospatialEndpoint = (project: string) =>
   `${SIDECAR.discoverApiBaseUrl}/${project}/geospatial`;

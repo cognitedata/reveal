@@ -1,4 +1,5 @@
-import { fetchPost, FetchHeaders, fetchGet, fetchPatch } from '_helpers/fetch';
+import { fetchPost, FetchHeaders, fetchGet, fetchPatch } from 'utils/fetch';
+
 import { SIDECAR } from 'constants/app';
 import { AuthModes, User } from 'modules/user/types';
 

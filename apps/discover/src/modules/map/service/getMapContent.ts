@@ -1,9 +1,9 @@
 import { FeatureCollection, Geometry } from '@turf/helpers';
 import head from 'lodash/head';
 import isFunction from 'lodash/isFunction';
+import { fetchGet } from 'utils/fetch';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
-import { fetchGet } from '_helpers/fetch';
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { API_PLAYGROUND_DOMAIN } from 'constants/app';
 import { NPDLayerItemResponse } from 'modules/map/types';
 

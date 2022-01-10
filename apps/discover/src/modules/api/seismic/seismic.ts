@@ -1,5 +1,6 @@
-import { fetchGet, FetchHeaders } from '_helpers/fetch';
-import { log } from '_helpers/log';
+import { fetchGet, FetchHeaders } from 'utils/fetch';
+import { log } from 'utils/log';
+
 import { SIDECAR } from 'constants/app';
 import { SeismicSurveyContainer } from 'modules/seismicSearch/types';
 import { normalizeSurvey } from 'modules/seismicSearch/utils';

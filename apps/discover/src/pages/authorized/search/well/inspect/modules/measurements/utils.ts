@@ -3,11 +3,11 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import { PlotData } from 'plotly.js';
+import { changeUnitTo } from 'utils/units/utils';
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
 import { Metadata } from '@cognite/sdk';
 
-import { changeUnitTo } from '_helpers/units/utils';
 import { MEASUREMENT_CURVE_CONFIG } from 'modules/wellSearch/constants';
 import {
   Measurement,

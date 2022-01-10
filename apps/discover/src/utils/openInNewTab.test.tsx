@@ -1,9 +1,9 @@
 import { screen, fireEvent } from '@testing-library/react';
+import { openInNewTab } from 'utils/openInNewTab';
 
 import { Button } from '@cognite/cogs.js';
 
 import { testRenderer } from '__test-utils/renderer';
-import { openInNewTab } from '_helpers/openInNewTab';
 
 const childTestString = 'Some child';
 

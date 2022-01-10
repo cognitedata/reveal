@@ -3,8 +3,8 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 import get from 'lodash/get';
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
-import layers from '_helpers/zindex';
 import { Slices } from 'modules/seismicSearch/types';
 
 import { ColourButtonContainer } from './ColourButtonContainer';

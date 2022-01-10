@@ -2,8 +2,8 @@ import head from 'lodash/head';
 import isArray from 'lodash/isArray';
 import isObject from 'lodash/isObject';
 import tail from 'lodash/tail';
+import { getDateOrDefaultText } from 'utils/date';
 
-import { getDateOrDefaultText } from '_helpers/date';
 import { Labels, DocumentFacet } from 'modules/documentSearch/types';
 import {
   getDocumentCategoryTitle,

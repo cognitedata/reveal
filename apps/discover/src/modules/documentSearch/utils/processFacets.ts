@@ -1,6 +1,5 @@
 import compact from 'lodash/compact';
-
-import { getYear } from '_helpers/date';
+import { getYear } from 'utils/date';
 
 import {
   FILE_TYPE_KEY,

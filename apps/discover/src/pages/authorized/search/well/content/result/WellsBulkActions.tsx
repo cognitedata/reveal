@@ -2,9 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import { openInNewTab } from 'utils/openInNewTab';
+
 import { Dropdown } from '@cognite/cogs.js';
 
-import { openInNewTab } from '_helpers/openInNewTab';
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { NO_ITEMS_ADDED_TEXT } from 'components/add-to-favorite-set-menu/constants';
 import { ViewButton, FavoriteButton, CloseButton } from 'components/buttons';

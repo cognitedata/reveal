@@ -1,4 +1,5 @@
-import { fetchGet, FetchHeaders } from '_helpers/fetch';
+import { fetchGet, FetchHeaders } from 'utils/fetch';
+
 import { SIDECAR } from 'constants/app';
 
 import {

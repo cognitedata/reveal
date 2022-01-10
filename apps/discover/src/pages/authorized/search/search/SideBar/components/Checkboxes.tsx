@@ -1,11 +1,10 @@
 import React from 'react';
 
 import isUndefined from 'lodash/isUndefined';
+import { formatBigNumbersWithSuffix } from 'utils/number';
 import { v1 } from 'uuid';
 
 import { Checkbox } from '@cognite/cogs.js';
-
-import { formatBigNumbersWithSuffix } from '_helpers/number';
 
 import {
   CheckboxContainer,

@@ -2,8 +2,7 @@ import * as Constants from '@mapbox/mapbox-gl-draw/src/constants';
 import doubleClickZoom from '@mapbox/mapbox-gl-draw/src/lib/double_click_zoom';
 import DrawPolygon from '@mapbox/mapbox-gl-draw/src/modes/draw_polygon';
 import simplify from '@turf/simplify';
-
-import { log } from '_helpers/log';
+import { log } from 'utils/log';
 
 import dragPan from './lib/drag_pan';
 

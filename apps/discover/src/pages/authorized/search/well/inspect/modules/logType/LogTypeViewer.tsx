@@ -8,10 +8,10 @@ import isEqual from 'lodash/isEqual';
 import sortBy from 'lodash/sortBy';
 import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
+import { DATE_NOT_AVAILABLE } from 'utils/date';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
-import { DATE_NOT_AVAILABLE } from '_helpers/date';
 import { ExpandButton } from 'components/buttons';
 import { WhiteLoader } from 'components/loading';
 import ManageColumnsPanel from 'components/manage-columns-panel';

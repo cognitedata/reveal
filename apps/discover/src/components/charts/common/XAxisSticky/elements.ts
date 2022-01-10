@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
-import layers from '_helpers/zindex';
 import { CHART_BACKGROUND_COLOR } from 'components/charts/constants';
 
 export const ChartStickyElement = styled.svg`

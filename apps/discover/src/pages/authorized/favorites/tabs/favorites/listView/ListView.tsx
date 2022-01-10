@@ -2,11 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
+import { shortDate } from 'utils/date';
+import { sortDates } from 'utils/sortDates';
+
 import { Menu, Dropdown } from '@cognite/cogs.js';
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
-import { shortDate } from '_helpers/date';
-import { sortDates } from '_helpers/sortDates';
 import { MoreOptionsButton, CommentButton } from 'components/buttons';
 import { AvatarWrapper, IconWrapper } from 'components/card/element';
 import { Table, TableResults } from 'components/tablev3';

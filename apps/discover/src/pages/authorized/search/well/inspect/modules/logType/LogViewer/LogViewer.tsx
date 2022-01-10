@@ -4,10 +4,10 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import sortBy from 'lodash/sortBy';
+import { changeUnitTo } from 'utils/units/utils';
 
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 
-import { changeUnitTo } from '_helpers/units/utils';
 import { FEET, PPG } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { TRACK_CONFIG } from 'modules/wellSearch/constants';

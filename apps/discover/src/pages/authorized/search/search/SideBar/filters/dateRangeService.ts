@@ -1,6 +1,7 @@
+import { toDate } from 'utils/date';
+
 import { Range } from '@cognite/cogs.js';
 
-import { toDate } from '_helpers/date';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 
 import { DateTabType } from '../types';

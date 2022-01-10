@@ -1,4 +1,5 @@
-import { getPathsFromDoc } from '_helpers/getPathsFromDocument';
+import { getPathsFromDoc } from 'utils/getPathsFromDocument';
+
 import { FilePath } from 'components/document-info-panel/FilePath';
 import { DocumentRowType } from 'modules/documentSearch/types';
 import { MetadataContainer } from 'pages/authorized/search/elements';

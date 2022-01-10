@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Menu } from '@cognite/cogs.js';
 
-import layers from '_helpers/zindex';
 import { Paper } from 'components/paper';
 import { Flex, FlexAlignItems, sizes } from 'styles/layout';
 

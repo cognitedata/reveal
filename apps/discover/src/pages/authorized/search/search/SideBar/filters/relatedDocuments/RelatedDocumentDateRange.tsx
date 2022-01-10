@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
+import { dateToEpoch, ifRangeIsSameTimeModifyToDayRange } from 'utils/date';
 
 import { Dropdown, Menu, Range } from '@cognite/cogs.js';
 
-import { dateToEpoch, ifRangeIsSameTimeModifyToDayRange } from '_helpers/date';
 import { BaseButton } from 'components/buttons';
 import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useQuery';
 import { DocumentsFacets } from 'modules/documentSearch/types';

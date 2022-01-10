@@ -1,6 +1,7 @@
+import { log } from 'utils/log';
+
 import { createWellsClient, Cluster } from '@cognite/sdk-wells-v2';
 
-import { log } from '_helpers/log';
 import { SIDECAR } from 'constants/app';
 
 const { applicationId } = SIDECAR;

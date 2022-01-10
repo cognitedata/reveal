@@ -1,7 +1,8 @@
+import { now } from 'utils/date';
+import { log } from 'utils/log';
+
 import { LineString, GeoJson } from '@cognite/seismic-sdk-js';
 
-import { now } from '_helpers/date';
-import { log } from '_helpers/log';
 import { showErrorMessage } from 'components/toast';
 import { ThunkResult, TS_FIX_ME } from 'core/types';
 import { setGeo } from 'modules/map/actions';

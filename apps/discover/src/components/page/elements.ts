@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/macro';
+import layers from 'utils/zindex';
 
-import layers from '_helpers/zindex';
 import { FlexColumn } from 'styles/layout';
 
 export const PageWrapper = styled(FlexColumn)`

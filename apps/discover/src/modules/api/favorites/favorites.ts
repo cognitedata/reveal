@@ -4,14 +4,14 @@ import {
   FavoriteSummary,
 } from '@cognite/discover-api-types';
 
+import { SIDECAR } from '../../../constants/app';
 import {
   fetchDelete,
   fetchGet,
   FetchHeaders,
   fetchPatch,
   fetchPost,
-} from '../../../_helpers/fetch';
-import { SIDECAR } from '../../../constants/app';
+} from '../../../utils/fetch';
 import {
   UpdateFavoriteContentData,
   UpdateFavoriteData,

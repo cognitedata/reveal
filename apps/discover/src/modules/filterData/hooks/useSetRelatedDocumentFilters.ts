@@ -1,4 +1,5 @@
-import { getEmptyGeometry } from '_helpers/geometry';
+import { getEmptyGeometry } from 'utils/geometry';
+
 import { documentValuesPayload } from 'modules/api/documents/structure';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { useMutateRelatedDocumentPatch } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/RelatedDocumentUseQuery';

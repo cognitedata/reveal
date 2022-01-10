@@ -1,12 +1,13 @@
-import { FavoritePostSchema } from '@cognite/discover-api-types';
-
 import {
   fetchDelete,
   fetchGet,
   FetchHeaders,
   fetchPatch,
   fetchPost,
-} from '_helpers/fetch';
+} from 'utils/fetch';
+
+import { FavoritePostSchema } from '@cognite/discover-api-types';
+
 import {
   UpdateFavoriteContentData,
   UpdateFavoriteData,
@@ -14,7 +15,7 @@ import {
 
 import { favorites } from '../favorites';
 
-jest.mock('_helpers/fetch', () => ({
+jest.mock('utils/fetch', () => ({
   fetchDelete: jest.fn(),
   fetchGet: jest.fn(),
   fetchPatch: jest.fn(),

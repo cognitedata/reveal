@@ -1,4 +1,5 @@
-import { shortDate } from '_helpers/date';
+import { shortDate } from 'utils/date';
+
 import { APP_NAME } from 'constants/general';
 import {
   DocumentFeedbackItem,

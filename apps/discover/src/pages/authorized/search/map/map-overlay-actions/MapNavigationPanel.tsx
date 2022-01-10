@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
-import layers from '_helpers/zindex';
 import { PlusButton, MinusButton } from 'components/buttons';
 import { sizes } from 'styles/layout';
 

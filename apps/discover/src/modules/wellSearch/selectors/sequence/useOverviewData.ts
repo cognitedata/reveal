@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import flatten from 'lodash/flatten';
+import { changeUnits } from 'utils/units/utils';
 
-import { changeUnits } from '_helpers/units/utils';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';

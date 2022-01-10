@@ -2,7 +2,7 @@ import get from 'lodash/get';
 
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
-import { isOfType } from '../../../_helpers/type';
+import { isOfType } from '../../../utils/type';
 
 import { SavedSearchContent, SavedSearchQuery } from './types';
 

@@ -1,10 +1,9 @@
 import { useRef } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
+import { log } from 'utils/log';
 
 import { ITimer, Metrics, useMetrics } from '@cognite/metrics';
-
-import { log } from '_helpers/log';
 
 /**
  * This hooks are use to log timing events so data can be visualized later for analysis.

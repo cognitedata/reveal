@@ -1,6 +1,7 @@
+import { shortDate } from 'utils/date';
+
 import { Sequence } from '@cognite/sdk';
 
-import { shortDate } from '_helpers/date';
 import { LogTypeData } from 'pages/authorized/search/well/inspect/modules/logType/interfaces';
 
 import { Well, Wellbore } from '../types';

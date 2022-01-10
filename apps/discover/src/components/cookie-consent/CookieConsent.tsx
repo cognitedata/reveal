@@ -2,10 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Button } from '@cognite/cogs.js';
 
-import layers from '_helpers/zindex';
 import { APP_NAME } from 'constants/general';
 import { sizes } from 'styles/layout';
 

@@ -2,10 +2,9 @@ import React, { useMemo } from 'react';
 
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
+import { caseInsensitiveSort } from 'utils/sort';
 
 import { Select, OptionType } from '@cognite/cogs.js';
-
-import { caseInsensitiveSort } from '_helpers/sort';
 
 import {
   MultiSelectContainer,

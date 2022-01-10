@@ -2,6 +2,7 @@
 import '@testing-library/jest-dom/extend-expect';
 import '@testing-library/jest-dom';
 import isUndefined from 'lodash/isUndefined';
+import { setClient } from 'utils/getCogniteSDKClient';
 
 import * as mocks from '@cognite/metrics/dist/mocks';
 
@@ -10,7 +11,6 @@ import { MockedDocumentSDKClient } from '__mocks/MockedDocumentSDKClient';
 import { MockedSDKWells } from '__mocks/MockedSDKWells';
 import { configureCacheMock } from '__test-utils/mockCache';
 import { configureLocalStorageMock } from '__test-utils/mockLocalstorage';
-import { setClient } from '_helpers/getCogniteSDKClient';
 
 jest.mock('@cognite/metrics', () => mocks);
 jest.setTimeout(3000);
@@ -120,7 +120,7 @@ jest.mock('modules/documentSearch/sdk', () => {
   return { ...rest, getDocumentSDKClient };
 });
 
-jest.mock('_helpers/log', () => {
+jest.mock('utils/log', () => {
   return { log: () => false };
 });
 

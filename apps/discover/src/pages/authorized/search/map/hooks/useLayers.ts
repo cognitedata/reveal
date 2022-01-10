@@ -5,10 +5,10 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import keyBy from 'lodash/keyBy';
+import { fetchTenantFile } from 'utils/fetchTenantFile';
 
 import { getTenantInfo } from '@cognite/react-container';
 
-import { fetchTenantFile } from '_helpers/fetchTenantFile';
 import { LAYERS_QUERY_KEY } from 'constants/react-query';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useCategoryLayers } from 'modules/map/hooks/useCategoryLayers';
