@@ -5,19 +5,15 @@ import set from 'lodash/set';
 import { log } from 'utils/log';
 
 import { UNITS_TO_STANDARD } from './constants';
-import { UnitConverterItem } from './interfaces';
 
-export const changeUnits = <Item>(
-  item: Item,
-  unitAccessors: UnitConverterItem[]
-): Item => {
-  let convertedObj = cloneDeep(item);
-  unitAccessors.forEach((accessorObj: UnitConverterItem) => {
-    convertedObj = changeUnit(convertedObj, accessorObj);
-  });
-  return convertedObj;
-};
-
+export interface UnitConverterItem {
+  accessor: string;
+  from?: string;
+  fromAccessor?: string;
+  id?: string;
+  errorHandler?: (err: string) => void;
+  to: string;
+}
 export const changeUnit = <Item>(
   item: Item,
   unitAccessorsObj: UnitConverterItem
@@ -53,21 +49,4 @@ export const changeUnit = <Item>(
     }
   }
   return convertedObj;
-};
-
-export const changeUnitTo = (
-  value: number,
-  fromUnit: string,
-  toUnit: string
-) => {
-  const standardFromUnit = get(UNITS_TO_STANDARD, fromUnit || '');
-  let convertedValue;
-  try {
-    convertedValue = convert(Number(value))
-      .from(standardFromUnit || fromUnit)
-      .to(toUnit as any);
-  } catch (e) {
-    log(String(e));
-  }
-  return convertedValue;
 };

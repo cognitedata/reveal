@@ -3,7 +3,7 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import { PlotData } from 'plotly.js';
-import { changeUnitTo } from 'utils/units/utils';
+import { convertPressure, changeUnitTo } from 'utils/units';
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
 import { Metadata } from '@cognite/sdk';
@@ -15,7 +15,6 @@ import {
   MeasurementType,
   Wellbore,
 } from 'modules/wellSearch/types';
-import { convertPressure } from 'modules/wellSearch/utils/common';
 
 type ColumnsMetadata = {
   [key: string]: Metadata;

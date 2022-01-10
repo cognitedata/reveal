@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import round from 'lodash/round';
+import { convertPressure } from 'utils/units';
 
 import { Sequence } from '@cognite/sdk';
 
@@ -26,7 +27,6 @@ import {
   toBooleanMap,
   getRangeLimitInUnit,
 } from '../utils';
-import { convertPressure } from '../utils/common';
 import { getExistColumns } from '../utils/trajectory';
 
 const cmToftFactor = 30.48;

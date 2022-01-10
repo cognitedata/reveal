@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
-import { UnitConverterItem } from 'utils/units/interfaces';
+import { UnitConverterItem } from 'utils/units';
 
 import { Sequence } from '@cognite/sdk';
 

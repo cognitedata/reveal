@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import capitalize from 'lodash/capitalize';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
-import { UnitConverterItem } from 'utils/units/interfaces';
+import { UnitConverterItem } from 'utils/units';
 
 import { LOG_CASING, LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
 import { FEET } from 'constants/units';

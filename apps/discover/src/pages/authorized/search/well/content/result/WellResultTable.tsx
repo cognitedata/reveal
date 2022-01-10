@@ -7,7 +7,7 @@ import map from 'lodash/map';
 import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 import { getDateOrDefaultText } from 'utils/date';
-import { changeUnits } from 'utils/units/utils';
+import { changeUnits } from 'utils/units';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 

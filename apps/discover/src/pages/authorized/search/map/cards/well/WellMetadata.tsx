@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { changeUnits } from 'utils/units/utils';
+import { changeUnits } from 'utils/units';
 
 import MetadataTable from 'components/metadataTable';
 import { FEET } from 'constants/units';

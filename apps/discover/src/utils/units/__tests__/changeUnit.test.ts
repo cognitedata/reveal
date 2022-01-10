@@ -2,11 +2,10 @@ import get from 'lodash/get';
 
 import { CENTIMETER, FEET, METER, MILLIMETER } from 'constants/units';
 
-import { UnitConverterItem } from './interfaces';
-import { changeUnit, changeUnits } from './utils';
+import { changeUnit } from '../changeUnit';
+import { UnitConverterItem } from '../interfaces';
 
 const cmToftFactor = 30.48;
-const mmToCmFactor = 10;
 const ftTomFactor = 3.281;
 const field1 = 1000;
 const field2 = 1500;
@@ -30,12 +29,6 @@ const accessorObj1 = {
   to: CENTIMETER,
 };
 
-const accessorObj2 = {
-  accessor: 'metadata.field2',
-  fromAccessor: 'metadata.field2_unit',
-  to: CENTIMETER,
-};
-
 const ftToMeterAccessorObj = {
   accessor: 'metadata.field1',
   fromAccessor: 'metadata.field1_unit',
@@ -55,10 +48,6 @@ const invalidAccessorObj: UnitConverterItem = {
 
 describe('change units', () => {
   const covertedObjForOneAccessor = changeUnit(initialObject, accessorObj1);
-  const covertedObjForAccessors = changeUnits(initialObject, [
-    accessorObj1,
-    accessorObj2,
-  ]);
 
   it('should change the unit for given accessor.', () => {
     expect(
@@ -70,16 +59,6 @@ describe('change units', () => {
     expect(Number(get(initialObject, 'metadata.field1')).toFixed(0)).toEqual(
       field1.toString()
     );
-  });
-
-  it('should change the units for given accessors.', () => {
-    expect(
-      Number(get(covertedObjForAccessors, 'metadata.field1')).toFixed(0)
-    ).toEqual((field1 * cmToftFactor).toString());
-
-    expect(
-      Number(get(covertedObjForAccessors, 'metadata.field2')).toFixed(0)
-    ).toEqual((field2 / mmToCmFactor).toFixed(0).toString());
   });
 
   it('should not mutate the original object after change units.', () => {

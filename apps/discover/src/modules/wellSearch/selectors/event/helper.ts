@@ -1,4 +1,4 @@
-import { UnitConverterItem } from 'utils/units/interfaces';
+import { UnitConverterItem } from 'utils/units';
 
 import { CogniteEvent } from '@cognite/sdk';
 

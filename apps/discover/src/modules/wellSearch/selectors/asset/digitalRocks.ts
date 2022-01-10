@@ -5,7 +5,7 @@ import constant from 'lodash/constant';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
-import { UnitConverterItem } from 'utils/units/interfaces';
+import { UnitConverterItem } from 'utils/units';
 
 import { Asset } from '@cognite/sdk';
 

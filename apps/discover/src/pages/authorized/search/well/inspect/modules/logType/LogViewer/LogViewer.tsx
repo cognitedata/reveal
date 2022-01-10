@@ -4,7 +4,7 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import sortBy from 'lodash/sortBy';
-import { changeUnitTo } from 'utils/units/utils';
+import { convertToPpg, changeUnitTo } from 'utils/units';
 
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 
@@ -16,7 +16,6 @@ import { ndsAccessorsToFixedDecimal } from 'modules/wellSearch/selectors/event/c
 import { getNdsUnitChangeAccessors } from 'modules/wellSearch/selectors/event/helper';
 import { SequenceRow, SequenceData } from 'modules/wellSearch/types';
 import { convertObject } from 'modules/wellSearch/utils';
-import { convertToPpg } from 'modules/wellSearch/utils/common';
 import { TrackConfig } from 'tenants/types';
 
 import { DomainMap } from './DomainConfig/DomainConfig';

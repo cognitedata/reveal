@@ -9,12 +9,12 @@ import {
   startOf,
 } from 'utils/date';
 import { log } from 'utils/log';
-import { UnitConverterItem } from 'utils/units/interfaces';
 import {
   changeUnit,
   changeUnits as changeSomeUnits,
   changeUnitTo,
-} from 'utils/units/utils';
+  UnitConverterItem,
+} from 'utils/units';
 
 import { Asset, Sequence } from '@cognite/sdk';
 import { SpudDateLimits, WaterDepthLimits } from '@cognite/sdk-wells-v2';
