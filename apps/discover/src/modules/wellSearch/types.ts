@@ -84,6 +84,7 @@ export interface WellboreDigitalRockSamples {
 interface ToggleExpandedWellId {
   type: typeof TOGGLE_EXPANDED_WELL_ID;
   id: number;
+  reset?: boolean;
 }
 
 interface ToggleSelectedWells {

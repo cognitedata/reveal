@@ -46,13 +46,26 @@ describe('Well search Actions', () => {
   beforeEach(() => jest.clearAllMocks());
 
   describe('toggleExpandedWell', () => {
-    it(`should toggle expanded well status`, async () => {
+    it(`should toggle expanded well status and reset flag false as default`, async () => {
       const { store, well } = getDefaultTestValues();
       await store.dispatch(wellSearchActions.toggleExpandedWell(well));
       expect(store.getActions()).toEqual([
         {
           type: TOGGLE_EXPANDED_WELL_ID,
           id: well.id,
+          reset: false,
+        },
+      ]);
+    });
+
+    it(`should toggle expanded well status and reset flag true`, async () => {
+      const { store, well } = getDefaultTestValues();
+      await store.dispatch(wellSearchActions.toggleExpandedWell(well, true));
+      expect(store.getActions()).toEqual([
+        {
+          type: TOGGLE_EXPANDED_WELL_ID,
+          id: well.id,
+          reset: true,
         },
       ]);
     });

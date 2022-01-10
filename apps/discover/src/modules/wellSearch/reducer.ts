@@ -59,10 +59,8 @@ export function wellReducer(
       return {
         ...state,
         expandedWellIds: {
-          ...state.expandedWellIds,
-          ...{
-            [action.id]: !state.expandedWellIds[action.id],
-          },
+          ...(action.reset ? {} : state.expandedWellIds),
+          [action.id]: !state.expandedWellIds[action.id],
         },
       };
     }

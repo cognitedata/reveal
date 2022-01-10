@@ -71,11 +71,12 @@ function getGrainAnalysisData(
   };
 }
 
-function toggleExpandedWell(well: Well): ThunkResult<void> {
+function toggleExpandedWell(well: Well, reset = false): ThunkResult<void> {
   return (dispatch) => {
     dispatch({
       type: TOGGLE_EXPANDED_WELL_ID,
       id: well.id,
+      reset,
     });
   };
 }

@@ -94,7 +94,9 @@ export const WellResultTable: React.FC = () => {
 
   useDeepEffect(() => {
     const firstWell = head(wells);
-    if (firstWell) dispatch(wellSearchActions.toggleExpandedWell(firstWell));
+    if (firstWell) {
+      dispatch(wellSearchActions.toggleExpandedWell(firstWell, true));
+    }
   }, [wells]);
 
   const handleDoubleClick = useCallback(

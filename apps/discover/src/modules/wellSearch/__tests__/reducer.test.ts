@@ -15,12 +15,43 @@ import {
 } from '../types';
 
 describe('Well Reducer', () => {
-  it(`should toggle expanded well id`, () => {
-    const state = wellReducer(undefined, {
-      type: TOGGLE_EXPANDED_WELL_ID,
-      id: 1234,
+  it(`should toggle expanded well id and should not reset expandedWellIds`, () => {
+    const state = wellReducer(
+      {
+        ...initialState,
+        expandedWellIds: {
+          1234: true,
+          1235: true,
+        },
+      },
+      {
+        type: TOGGLE_EXPANDED_WELL_ID,
+        id: 1235,
+        reset: false,
+      }
+    );
+    expect(state.expandedWellIds).toEqual({
+      1234: true,
+      1235: false,
     });
-    expect(state.expandedWellIds).toEqual({ 1234: true });
+  });
+
+  it(`should toggle expanded well id and reset expandedWellIds`, () => {
+    const state = wellReducer(
+      {
+        ...initialState,
+        expandedWellIds: {
+          1234: true,
+          1235: false,
+        },
+      },
+      {
+        type: TOGGLE_EXPANDED_WELL_ID,
+        id: 1235,
+        reset: true,
+      }
+    );
+    expect(state.expandedWellIds).toEqual({ 1235: true });
   });
 
   it(`should toggle selected wells, when no filtered wells available all results should selected`, () => {
