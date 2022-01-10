@@ -8,7 +8,7 @@ import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
-import ComboControls from '@reveal/camera-manager';
+import { RevealCameraControls } from '@reveal/camera-manager';
 import { NodeAppearance } from '@reveal/cad-styling';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -29,7 +29,7 @@ export type ModelState = {
 };
 
 export class ViewStateHelper {
-  private readonly _cameraControls: ComboControls;
+  private readonly _cameraControls: RevealCameraControls;
   private readonly _viewer: Cognite3DViewer;
   private readonly _cdfClient: CogniteClient;
 
@@ -73,18 +73,7 @@ export class ViewStateHelper {
   }
 
   public async setState(viewerState: ViewerState): Promise<void> {
-    const cameraPosition = new THREE.Vector3(
-      viewerState.camera.position.x,
-      viewerState.camera.position.y,
-      viewerState.camera.position.z
-    );
-
-    const cameraTarget = new THREE.Vector3(
-      viewerState.camera.target.x,
-      viewerState.camera.target.y,
-      viewerState.camera.target.z
-    );
-    this._cameraControls.setState(cameraPosition, cameraTarget);
+    this._cameraControls.setState(viewerState.camera.position, viewerState.camera.target);
 
     const cadModels = this._viewer.models
       .filter(model => model instanceof Cognite3DModel)

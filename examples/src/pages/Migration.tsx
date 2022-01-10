@@ -92,7 +92,7 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const controlsOptions: CameraControlsOptions = {
-        onClickTargetChange: true,
+        changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
       }
 
@@ -192,7 +192,7 @@ export function Migration() {
         renderMode: 'Color',
         controls: {
           mouseWheelAction: 'zoomToCursor',
-          onClickTargetChange: true
+          changeCameraTargetOnClick: true
         },
         debugRenderStageTimings: false
       };
@@ -481,6 +481,7 @@ export function Migration() {
             }
           }
         });
+
       new AxisViewTool(viewer);
 
       viewer.on('click', async event => {
@@ -495,6 +496,7 @@ export function Migration() {
                 const { treeIndex, point} = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
                 const overlayHtml = createOverlay(`Node ${treeIndex}`);
+
                 overlayTool.add(overlayHtml, point);
   
                 // highlight the object
@@ -568,11 +570,9 @@ function createOverlay(text: string): HTMLElement {
   overlayHtml.style.cssText = `
     position: absolute; 
     translate(-50%, -50%);
-
     background: white; 
     border-radius: 5px; 
     border-color: black; 
-
     pointer-events: none; 
     touch-action: none;`;
 
