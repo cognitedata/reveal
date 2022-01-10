@@ -184,8 +184,12 @@ export function calculateSeriesData(
 }
 
 export function calculateMaxRange(series: SeriesData[]): number[] {
-  const lowerRanges = series.map((s) => s.range?.[0]).filter(Boolean);
-  const upperRanges = series.map((s) => s.range?.[1]).filter(Boolean);
+  const lowerRanges = series
+    .map((s) => s.range?.[0])
+    .filter((val) => typeof val === 'number');
+  const upperRanges = series
+    .map((s) => s.range?.[1])
+    .filter((val) => typeof val === 'number');
 
   return [
     Math.min(...(lowerRanges as number[])),

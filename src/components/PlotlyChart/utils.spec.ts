@@ -1,4 +1,5 @@
 import { addMinutes } from 'date-fns';
+import { calculateMaxRange } from '.';
 import {
   getYaxisUpdatesFromEventData,
   getXaxisUpdateFromEventData,
@@ -131,6 +132,38 @@ describe('getYaxisUpdatesFromEventData', () => {
     ]);
   });
 
+  it('handles valid input (4)', () => {
+    const eventdata = {
+      'yaxis.range[0]': 0,
+    };
+
+    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+
+    expect(axisUpdates).toEqual([
+      {
+        id: 'VAL_RESERVOIR_PT_well01',
+        type: 'timeseries',
+        range: [0, 1491.8053766553744],
+      },
+    ]);
+  });
+
+  it('handles valid input (5)', () => {
+    const eventdata = {
+      'yaxis.range[1]': 0,
+    };
+
+    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+
+    expect(axisUpdates).toEqual([
+      {
+        id: 'VAL_RESERVOIR_PT_well01',
+        type: 'timeseries',
+        range: [1459.8294756630028, 0],
+      },
+    ]);
+  });
+
   it('handles empty input', () => {
     const eventdata = {};
 
@@ -173,5 +206,133 @@ describe('getXaxisUpdate', () => {
     const axisUpdates = getXaxisUpdateFromEventData(eventdata);
 
     expect(axisUpdates).toEqual([]);
+  });
+});
+
+describe('calculateMaxRange', () => {
+  it('should work for valid input', () => {
+    const series = [
+      {
+        enabled: true,
+        range: [0, 0.0032101851758732937],
+        unit: '°C',
+        series: [
+          {
+            type: 'timeseries',
+            originalUnit: '',
+            tsId: 4582687667743262,
+            displayMode: 'lines',
+            description: '-',
+            unit: 'c',
+            color: '#005d5d',
+            lineWeight: 1,
+            preferredUnit: 'c',
+            name: 'VAL_21_PI_1017_04:Z.X.Value',
+            createdAt: 1639571652630,
+            range: [0, 0.0032101851758732937],
+            lineStyle: 'solid',
+            enabled: true,
+            id: '455e160b-233a-43e2-9fb7-6179cae2830e',
+            tsExternalId: 'VAL_21_PI_1017_04:Z.X.Value',
+            width: 1,
+            outdatedData: false,
+            datapoints: [
+              {
+                timestamp: '2021-11-23T01:53:00.000Z',
+                count: 6,
+                sum: 0.016170318076615554,
+                average: 0.0024455253893306754,
+                min: 0.0024242157248303385,
+                max: 0.0029570103896282155,
+              },
+            ],
+            dash: 'solid',
+            mode: 'lines',
+          },
+        ],
+      },
+      {
+        enabled: true,
+        range: [0, 0.0032101851758732937],
+        unit: '°C',
+        series: [
+          {
+            preferredUnit: 'c',
+            color: '#9f1853',
+            id: 'a66b0f37-e235-4f9a-b6a6-dea285fdc058',
+            unit: 'c',
+            displayMode: 'lines',
+            enabled: true,
+            tsId: 8070156109692675,
+            name: 'VAL_21_PI_1032_04:Z.X.Value',
+            originalUnit: '',
+            type: 'timeseries',
+            tsExternalId: 'VAL_21_PI_1032_04:Z.X.Value',
+            lineWeight: 1,
+            description: '-',
+            createdAt: 1639571653988,
+            range: [0, 0.0032101851758732937],
+            lineStyle: 'solid',
+            width: 1,
+            outdatedData: false,
+            datapoints: [
+              {
+                timestamp: '2021-11-23T01:53:00.000Z',
+                count: 6,
+                sum: 0.016346799645127898,
+                average: 0.0029324450621639347,
+                min: 0.002453353290949048,
+                max: 0.0029866909628944935,
+              },
+            ],
+            dash: 'solid',
+            mode: 'lines',
+          },
+        ],
+      },
+      {
+        enabled: true,
+        range: [0, 0.0032101851758732937],
+        unit: '°C',
+        series: [
+          {
+            enabled: true,
+            tsExternalId: 'VAL_21_PI_1069_04:Z.X.Value',
+            lineStyle: 'solid',
+            tsId: 8167271477847540,
+            color: '#fa4d56',
+            preferredUnit: 'c',
+            lineWeight: 1,
+            name: 'VAL_21_PI_1069_04:Z.X.Value',
+            type: 'timeseries',
+            unit: 'c',
+            originalUnit: '',
+            displayMode: 'lines',
+            description: '-',
+            createdAt: 1639571654886,
+            id: '3f3db2ed-d795-4976-b6d1-effd415b5336',
+            range: [0, 0.0032101851758732937],
+            width: 1,
+            outdatedData: false,
+            datapoints: [
+              {
+                timestamp: '2021-11-23T01:53:00.000Z',
+                count: 6,
+                sum: 0.016718545636842694,
+                average: 0.002706336103206125,
+                min: 0.0026845359448666333,
+                max: 0.0029769111467828012,
+              },
+            ],
+            dash: 'solid',
+            mode: 'lines',
+          },
+        ],
+      },
+    ] as SeriesData[];
+
+    const calculatedMaxRange = calculateMaxRange(series);
+
+    expect(calculatedMaxRange).toEqual([0, 0.0032101851758732937]);
   });
 });

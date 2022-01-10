@@ -7,6 +7,7 @@ import {
   removeTimeseries,
   removeWorkflow,
   updateChartDateRange,
+  updateSourceAxisForChart,
   updateTimeseries,
   updateWorkflow,
 } from './updates';
@@ -257,6 +258,154 @@ describe('charts util', () => {
         public: true,
         dateFrom: '2021-12-13T16:00:00.000Z',
         dateTo: '2021-12-13T19:00:00.000Z',
+      });
+    });
+  });
+
+  describe('updateSourceAxisForChart', () => {
+    it('should update y axis correctly (1)', () => {
+      const existingChart: Chart = {
+        id,
+        version: 1,
+        name: 'test chart',
+        user: 'user_1@example.org',
+        updatedAt: 1615976865123,
+        createdAt: 1615976863997,
+        public: true,
+        dateFrom: '2021-12-13T12:00:00.000Z',
+        dateTo: '2021-12-13T15:00:00.000Z',
+        timeSeriesCollection: [
+          {
+            id: 'ts-1',
+            name: 'ts-1',
+            tsId: 1,
+            color: 'red',
+            enabled: true,
+            createdAt: 1000,
+          },
+          {
+            id: 'ts-2',
+            name: 'ts-2',
+            tsId: 2,
+            color: 'red',
+            enabled: true,
+            createdAt: 1000,
+          },
+        ],
+      };
+
+      const updatedChart = updateSourceAxisForChart(existingChart, {
+        x: ['2021-12-24T12:00:00.000Z', '2021-12-24T14:00:00.000Z'],
+        y: [
+          { type: 'timeseries', id: 'ts-1', range: [0, 1] },
+          { type: 'timeseries', id: 'ts-2', range: [2, 4] },
+        ],
+      });
+
+      expect(updatedChart).toEqual({
+        id,
+        version: 1,
+        name: 'test chart',
+        user: 'user_1@example.org',
+        updatedAt: 1615976865123,
+        createdAt: 1615976863997,
+        public: true,
+        dateFrom: '2021-12-24T12:00:00.000Z',
+        dateTo: '2021-12-24T14:00:00.000Z',
+        timeSeriesCollection: [
+          {
+            id: 'ts-1',
+            name: 'ts-1',
+            tsId: 1,
+            color: 'red',
+            enabled: true,
+            createdAt: 1000,
+            range: [0, 1],
+          },
+          {
+            id: 'ts-2',
+            name: 'ts-2',
+            tsId: 2,
+            color: 'red',
+            enabled: true,
+            createdAt: 1000,
+            range: [2, 4],
+          },
+        ],
+      });
+    });
+
+    it('should update y axis correctly (2)', () => {
+      const existingChart: Chart = {
+        id,
+        version: 1,
+        name: 'test chart',
+        user: 'user_1@example.org',
+        updatedAt: 1615976865123,
+        createdAt: 1615976863997,
+        public: true,
+        dateFrom: '2021-12-13T12:00:00.000Z',
+        dateTo: '2021-12-13T15:00:00.000Z',
+        timeSeriesCollection: [
+          {
+            id: 'ts-1',
+            name: 'ts-1',
+            tsId: 1,
+            color: 'red',
+            enabled: true,
+            createdAt: 1000,
+            range: [0, 0],
+          },
+          {
+            id: 'ts-2',
+            name: 'ts-2',
+            tsId: 2,
+            color: 'red',
+            enabled: true,
+            createdAt: 1000,
+            range: [0, 0],
+          },
+        ],
+      };
+
+      const updatedChart = updateSourceAxisForChart(existingChart, {
+        x: ['2021-12-24T12:00:00.000Z', '2021-12-24T14:00:00.000Z'],
+        y: [
+          { type: 'timeseries', id: 'ts-1', range: [0, 1] },
+          { type: 'timeseries', id: 'ts-2', range: [2, 4] },
+        ],
+      });
+
+      expect(updatedChart).toEqual({
+        id,
+        version: 1,
+        name: 'test chart',
+        user: 'user_1@example.org',
+        updatedAt: 1615976865123,
+        createdAt: 1615976863997,
+        public: true,
+        dateFrom: '2021-12-24T12:00:00.000Z',
+        dateTo: '2021-12-24T14:00:00.000Z',
+        timeSeriesCollection: [
+          {
+            id: 'ts-1',
+            name: 'ts-1',
+            tsId: 1,
+            color: 'red',
+            enabled: true,
+            createdAt: 1000,
+            range: [0, 1],
+          },
+          {
+            id: 'ts-2',
+            name: 'ts-2',
+            tsId: 2,
+            color: 'red',
+            enabled: true,
+            createdAt: 1000,
+            range: [2, 4],
+          },
+        ],
       });
     });
   });
