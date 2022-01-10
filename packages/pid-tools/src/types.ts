@@ -15,19 +15,21 @@ export interface SvgRepresentation {
 }
 
 export interface DiagramSymbol {
-  symbolName: string;
+  id: string; // uuid
+  symbolType: string;
+  description: string;
   svgRepresentations: SvgRepresentation[];
 }
 
 export interface DiagramSymbolInstance {
-  symbolName: string;
   pathIds: string[];
-  scale?: number;
+  symbolId: string;
   labelIds: string[];
+  scale?: number;
 }
 
 export interface DiagramLineInstance extends DiagramSymbolInstance {
-  symbolName: 'Line';
+  symbolId: 'Line';
 }
 
 export type DiagramInstanceId = string;

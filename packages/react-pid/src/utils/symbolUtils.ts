@@ -17,7 +17,7 @@ export const deleteSymbolFromState = (
   symbols: DiagramSymbol[]
 ) => {
   const instancesToRemove = symbolInstances
-    .filter((instance) => instance.symbolName === diagramSymbol.symbolName)
+    .filter((instance) => instance.symbolId === diagramSymbol.id)
     .map((instance) => instance.pathIds.join('-'));
 
   const connectionsToKeep = connections.filter((connection) => {
@@ -29,12 +29,12 @@ export const deleteSymbolFromState = (
   setConnections(connectionsToKeep);
 
   const symbolInstancesToKeep = symbolInstances.filter(
-    (instance) => instance.symbolName !== diagramSymbol.symbolName
+    (instance) => instance.symbolId !== diagramSymbol.id
   );
   setSymbolInstances(symbolInstancesToKeep);
 
   const symbolsToKeep = symbols.filter(
-    (symbol) => symbol.symbolName !== diagramSymbol.symbolName
+    (symbol) => symbol.id !== diagramSymbol.id
   );
   setSymbols(symbolsToKeep);
 };
@@ -73,9 +73,13 @@ export const deleteConnectionFromState = (
   );
 };
 
-export const getSymbolByName = (
+export const getSymbolByTypeAndDescription = (
   symbols: DiagramSymbol[],
-  symbolName: string
+  symbolType: string,
+  description: string
 ): DiagramSymbol | undefined => {
-  return symbols.find((symbol) => symbol.symbolName === symbolName);
+  return symbols.find(
+    (symbol) =>
+      symbol.symbolType === symbolType && symbol.description === description
+  );
 };

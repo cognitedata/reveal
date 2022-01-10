@@ -11,24 +11,29 @@ import {
   DiagramInstanceId,
   getNoneOverlappingSymbolInstances,
 } from '@cognite/pid-tools';
+import { v4 as uuid } from 'uuid';
 
 import { loadSymbolsFromJson, saveGraphAsJson } from './utils/jsonUtils';
-import { ToolType, ExistingSymbolPromptData } from './types';
+import { ToolType } from './types';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
 import { SvgViewer } from './components/svg-viewer/SvgViewer';
 import { Viewport } from './components/viewport/Viewport';
-import { SaveSymbolModals } from './components/save-symbol-modals/SaveSymbolModals';
 import {
   deleteConnectionFromState,
   deleteSymbolFromState,
-  getSymbolByName,
+  getSymbolByTypeAndDescription,
 } from './utils/symbolUtils';
 
 let pidDocument: PidDocument | undefined;
 const setPidDocument = (pidDoc: PidDocument) => {
   pidDocument = pidDoc;
 };
+
+export interface SaveSymbolData {
+  symbolType: string;
+  description: string;
+}
 
 export const ReactPid: React.FC = () => {
   const [fileUrl, setFileUrl] = useState<string>('');
@@ -40,8 +45,6 @@ export const ReactPid: React.FC = () => {
   const [symbolInstances, setSymbolInstances] = useState<
     DiagramSymbolInstance[]
   >([]);
-  const [existingSymbolPromptData, setExistingSymbolPromptData] =
-    useState<ExistingSymbolPromptData | null>(null);
 
   const [labelSelection, setLabelSelection] =
     useState<DiagramInstanceId | null>(null);
@@ -90,19 +93,24 @@ export const ReactPid: React.FC = () => {
     setLines([...lines, ...lineInstances]);
     setConnections(newConnections);
   };
-  const shouldShowPrompt = (symbolName: string) => {
-    const symbolExist = getSymbolByName(symbols, symbolName) !== undefined;
-    return symbolExist && existingSymbolPromptData?.resolution !== 'add';
-  };
 
   const setOrUpdateSymbol = (
-    symbolName: string,
+    symbolData: SaveSymbolData,
     svgRepresentation: SvgRepresentation
   ) => {
-    let diagramSymbol = getSymbolByName(symbols, symbolName);
+    const { symbolType, description } = symbolData;
+
+    let diagramSymbol = getSymbolByTypeAndDescription(
+      symbols,
+      symbolType,
+      description
+    );
+
     if (diagramSymbol === undefined) {
       diagramSymbol = {
-        symbolName,
+        id: `${symbolType}-${uuid()}`,
+        symbolType,
+        description,
         svgRepresentations: [svgRepresentation],
       } as DiagramSymbol;
 
@@ -129,17 +137,8 @@ export const ReactPid: React.FC = () => {
     deleteConnectionFromState(diagramConnection, connections, setConnections);
   };
 
-  const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
+  const saveSymbol = (symbolData: SaveSymbolData, selection: SVGElement[]) => {
     if (pidDocument === undefined) {
-      return;
-    }
-
-    const showPrompt = shouldShowPrompt(symbolName);
-    if (showPrompt) {
-      setExistingSymbolPromptData({
-        symbolName,
-        svgElements: selection,
-      });
       return;
     }
 
@@ -148,7 +147,7 @@ export const ReactPid: React.FC = () => {
       pathIds,
       false
     );
-    const newSymbol = setOrUpdateSymbol(symbolName, newSvgRepresentation);
+    const newSymbol = setOrUpdateSymbol(symbolData, newSvgRepresentation);
 
     setSelection([]);
 
@@ -159,7 +158,6 @@ export const ReactPid: React.FC = () => {
       newSymbolInstances
     );
     setSymbolInstances(prunedInstances);
-    setExistingSymbolPromptData(null);
   };
 
   const handleFileChange = ({ target }: any) => {
@@ -224,27 +222,6 @@ export const ReactPid: React.FC = () => {
           )}
         </Viewport>
       </ReactPidLayout>
-      {existingSymbolPromptData && (
-        <SaveSymbolModals
-          symbolName={existingSymbolPromptData.symbolName}
-          onSymbolNameChange={(symbolName) =>
-            setExistingSymbolPromptData({
-              ...existingSymbolPromptData,
-              symbolName,
-            })
-          }
-          resolution={existingSymbolPromptData.resolution}
-          onResolutionChange={(resolution) =>
-            setExistingSymbolPromptData({
-              ...existingSymbolPromptData,
-              resolution,
-            })
-          }
-          svgElements={existingSymbolPromptData.svgElements}
-          onCancel={() => setExistingSymbolPromptData(null)}
-          saveSymbol={saveSymbol}
-        />
-      )}
     </ReactPidWrapper>
   );
 };

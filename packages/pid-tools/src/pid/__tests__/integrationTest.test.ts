@@ -38,7 +38,7 @@ const checkIfAllSymbolInstancesIsAMatch = (
 ) => {
   symbolInstances.forEach((symbolInstance: DiagramSymbolInstance) => {
     const correspondingSymbol = symbols.find(
-      (symbol) => symbol.symbolName === symbolInstance.symbolName
+      (symbol) => symbol.id === symbolInstance.symbolId
     ) as DiagramSymbol;
 
     const matcher = InstanceMatcher.fromPathCommand(
@@ -78,10 +78,10 @@ const checkFindAllInstancesOfSymbol = (
 
   symbols.forEach((symbol) => {
     const foundSymbolInstances = allFoundSymbolInstances.filter(
-      (symbolInstance) => symbolInstance.symbolName === symbol.symbolName
+      (symbolInstance) => symbolInstance.symbolId === symbol.id
     );
     const expectedSymbolInstances = symbolInstances.filter(
-      (symbolInstance) => symbolInstance.symbolName === symbol.symbolName
+      (symbolInstance) => symbolInstance.symbolId === symbol.id
     );
 
     expect(foundSymbolInstances.length).toBe(expectedSymbolInstances.length);

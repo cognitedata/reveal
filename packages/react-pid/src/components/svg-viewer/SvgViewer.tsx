@@ -205,7 +205,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         setLines([
           ...lines,
           {
-            symbolName: 'Line',
+            symbolId: 'Line',
             pathIds: [node.id],
             labelIds: [],
           } as DiagramLineInstance,
@@ -266,7 +266,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (!symbolInstance) {
           return;
         }
-        if (symbolInstance.symbolName === 'Line') {
+        if (symbolInstance.symbolId === 'Line') {
           addOrRemoveLabelToInstance(
             node,
             node.id,

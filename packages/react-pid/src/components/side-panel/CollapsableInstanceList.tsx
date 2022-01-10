@@ -8,7 +8,7 @@ import {
 import styled from 'styled-components';
 import { Collapse, Icon } from '@cognite/cogs.js';
 
-import { getInstancesByName, getInstanceCount } from './utils';
+import { getInstancesBySymbol, getInstanceCount } from './utils';
 import { CollapsableSymbolHeader } from './CollapsableSymbolHeader';
 
 const ScrollWrapper = styled.div`
@@ -48,16 +48,18 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
   }) => {
     const renderSymbolInstances = (
       symbolInstances: DiagramSymbolInstance[],
-      symbolName: string
+      symbol: DiagramSymbol
     ) => {
       return (
         <div>
-          {getInstancesByName(symbolInstances, symbolName).map((instance) => (
+          {getInstancesBySymbol(symbolInstances, symbol).map((instance) => (
             <p key={instance.pathIds.join('')}>
-              {instance.symbolName}
-              {' - '}
-              {instance.scale ? `scale: ${instance.scale.toFixed(3)} - ` : ''}
-              {instance.pathIds.join(' ')}
+              {`{scale: ${
+                instance.scale === undefined
+                  ? undefined
+                  : instance.scale.toFixed(3)
+              },
+pathIds: [${instance.pathIds.join(', ')}]}`}
             </p>
           ))}
         </div>
@@ -73,17 +75,14 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
           <Collapse.Panel
             header={CollapsableSymbolHeader({
               symbol,
-              symbolInstanceCount: getInstanceCount(
-                symbolInstances,
-                symbol.symbolName
-              ),
+              symbolInstanceCount: getInstanceCount(symbolInstances, symbol),
               deleteSymbol,
             })}
             key={symbol.svgRepresentations[0].svgPaths
               .map((svgPath) => svgPath.svgCommands)
               .join()}
           >
-            {renderSymbolInstances(symbolInstances, symbol.symbolName)}
+            {renderSymbolInstances(symbolInstances, symbol)}
           </Collapse.Panel>
         );
       });
@@ -96,8 +95,7 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
           <Collapse.Panel header={`Flowlines (${lineInstances?.length || 0})`}>
             {lineInstances?.map((line) => (
               <p key={line.pathIds.join('')}>
-                {line.symbolName}&nbsp;-&nbsp;
-                {line.pathIds.join(' . ')}
+                {`{pathIds: [${line.pathIds.join(', ')}]}`}
               </p>
             ))}
           </Collapse.Panel>

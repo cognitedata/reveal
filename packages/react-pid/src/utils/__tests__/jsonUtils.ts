@@ -18,17 +18,17 @@ describe('isValidSymbolFileSchema', () => {
     const jsonData = {
       lines: [
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path8272'],
         },
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path11336'],
         },
       ],
       symbolInstances: [
         {
-          symbolName: 'brick',
+          symbolId: 'brick',
           pathIds: ['path7868', 'path7870', 'path7872', 'path7874'],
         },
       ],
@@ -63,17 +63,17 @@ describe('isValidSymbolFileSchema', () => {
     const jsonData = {
       lines: [
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path8272'],
         },
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path11336'],
         },
       ],
       symbolInstances: [
         {
-          symbolName: 'brick',
+          symbolId: 'brick',
           pathIds: ['path7868', 'path7870', 'path7872', 'path7874'],
         },
       ],
@@ -108,17 +108,17 @@ describe('isValidSymbolFileSchema', () => {
     const jsonData = {
       lines: [
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path8272'],
         },
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path11336'],
         },
       ],
       symbolInstances: [
         {
-          symbolName: 'brick',
+          symbolId: 'brick',
           pathIds: ['path7868', 'path7870', 'path7872', 'path7874'],
         },
       ],
@@ -140,7 +140,7 @@ describe('isValidSymbolFileSchema', () => {
       lines: [],
       symbolInstances: [
         {
-          symbolName: 'brick',
+          symbolId: 'brick',
           pathIds: ['path7868', 'path7870', 'path7872', 'path7874'],
         },
       ],
@@ -171,17 +171,17 @@ describe('isValidSymbolFileSchema', () => {
     const jsonData = {
       lines: [
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path8272'],
         },
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path11336'],
         },
       ],
       symbolInstances: [
         {
-          symbolName: 'brick',
+          symbolId: 'brick',
           pathIds: ['path7868', 'path7870', 'path7872', 'path7874'],
         },
       ],
@@ -196,17 +196,17 @@ describe('isValidSymbolFileSchema', () => {
     const jsonData = {
       lines: [
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path8272'],
         },
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path11336'],
         },
       ],
       symbolInstances: [
         {
-          symbolName: 'brick',
+          symbolId: 'brick',
           pathIds: ['path7868', 'path7870', 'path7872', 'path7874'],
         },
       ],
@@ -227,17 +227,17 @@ describe('isValidSymbolFileSchema', () => {
     const jsonData = {
       lines: [
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path8272'],
         },
         {
-          symbolName: 'Line',
+          symbolId: 'Line',
           pathIds: ['path11336'],
         },
       ],
       symbolInstances: [
         {
-          symbolName: 'brick',
+          symbolId: 'brick',
           pathIds: ['path7868', 'path7870', 'path7872', 'path7874'],
         },
       ],

@@ -295,10 +295,7 @@ export const visualizeConnections = (
 
     let startPoint: Point | undefined;
     let endPoint: Point | undefined;
-    if (
-      startInstance.symbolName !== 'Line' &&
-      endInstance.symbolName !== 'Line'
-    ) {
+    if (startInstance.symbolId !== 'Line' && endInstance.symbolId === 'Line') {
       // Both is symbol
       startPoint = pidDocument.getMidPointToPaths(startInstance.pathIds);
       endPoint = pidDocument.getMidPointToPaths(endInstance.pathIds);
@@ -309,8 +306,8 @@ export const visualizeConnections = (
         offset
       );
     } else if (
-      startInstance.symbolName === 'Line' &&
-      endInstance.symbolName === 'Line'
+      startInstance.symbolId === 'Line' &&
+      endInstance.symbolId === 'Line'
     ) {
       // Both is line
 
@@ -367,7 +364,7 @@ export const visualizeConnections = (
     } else {
       // One symbol and one line
       const [symbol, line] =
-        startInstance.symbolName !== 'Line'
+        startInstance.symbolId !== 'Line'
           ? [startInstance, endInstance]
           : [endInstance, startInstance];
 

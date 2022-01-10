@@ -24,14 +24,14 @@ export const findAllInstancesOfSymbol = (
       symbol.svgRepresentations[svgRepIndex]
     );
 
-    symbolInstances.push(
-      ...matches.map((match) => ({
-        symbolName: symbol.symbolName,
+    matches.forEach((match) => {
+      symbolInstances.push({
+        symbolId: symbol.id,
         pathIds: match.pathIds,
         scale: match.scale,
         labelIds: [],
-      }))
-    );
+      });
+    });
   }
 
   return symbolInstances;

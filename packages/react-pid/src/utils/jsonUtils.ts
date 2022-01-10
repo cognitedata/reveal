@@ -176,9 +176,9 @@ export const loadSymbolsFromJson = (
 
     const newLines = newLinesOutputFormat.map((diagramInstanceOutputFormat) => {
       return {
-        symbolName: diagramInstanceOutputFormat.symbolName,
+        symbolId: diagramInstanceOutputFormat.symbolId,
         pathIds: diagramInstanceOutputFormat.pathIds,
-        labelIds: diagramInstanceOutputFormat.labels.map((label) => label.id),
+        labelIds: diagramInstanceOutputFormat.labelIds,
       } as DiagramLineInstance;
     });
     setLines([...lines, ...newLines]);
@@ -190,9 +190,9 @@ export const loadSymbolsFromJson = (
     const newSymbolInstances = newDiagramInstancesOutputFormat.map(
       (diagramInstanceOutputFormat) => {
         return {
-          symbolName: diagramInstanceOutputFormat.symbolName,
+          symbolId: diagramInstanceOutputFormat.symbolId,
           pathIds: diagramInstanceOutputFormat.pathIds,
-          labelIds: diagramInstanceOutputFormat.labels.map((label) => label.id),
+          labelIds: diagramInstanceOutputFormat.labelIds,
         } as DiagramSymbolInstance;
       }
     );

@@ -38,7 +38,7 @@ export const getPotentialLines = (
   const potentialLines: DiagramLineInstance[] = matches.map(
     (pidPath) =>
       ({
-        symbolName: 'Line',
+        symbolId: 'Line',
         pathIds: [pidPath.pathId],
         labelIds: [],
       } as DiagramLineInstance)

@@ -23,7 +23,7 @@ export const CollapsableSymbolHeader: React.FC<CollapsableSymbolHeaderProps> =
 
     return (
       <CollapseHeader>
-        <span>{`${symbol.symbolName} (${symbolInstanceCount})`}</span>
+        <span>{`${symbol.symbolType} - ${symbol.description} (${symbolInstanceCount})`}</span>
         <svg
           viewBox={`${boundingBox.x - viewboxPadding} ${
             boundingBox.y - viewboxPadding

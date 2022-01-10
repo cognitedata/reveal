@@ -27,7 +27,7 @@ export class PidGroup {
     const pidPaths = diagramInstance.pathIds.map(
       (pathId) => pidDocument.getPidPathById(pathId)!
     );
-    return new PidGroup(pidPaths, diagramInstance.symbolName === 'Line');
+    return new PidGroup(pidPaths, diagramInstance.symbolId === 'Line');
   }
 
   getPathSegments(): PathSegment[] {

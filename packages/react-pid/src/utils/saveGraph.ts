@@ -16,7 +16,7 @@ export const getDiagramInstanceOutputFormat = (
 
     return {
       id: getDiagramInstanceId(diagramInstance),
-      symbolName: diagramInstance.symbolName,
+      symbolId: diagramInstance.symbolId,
       pathIds: diagramInstance.pathIds,
       svgRepresentation: pidDocument.createSvgRepresentation(
         diagramInstance.pathIds,

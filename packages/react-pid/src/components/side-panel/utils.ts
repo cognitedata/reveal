@@ -1,19 +1,17 @@
-import { DiagramSymbolInstance } from '@cognite/pid-tools';
+import { DiagramSymbolInstance, DiagramSymbol } from '@cognite/pid-tools';
 
 export const getInstanceCount = (
   symbolInstances: DiagramSymbolInstance[],
-  symbolName: string
+  symbol: DiagramSymbol
 ) => {
-  return symbolInstances.filter(
-    (instance) => instance.symbolName === symbolName
-  ).length;
+  return getInstancesBySymbol(symbolInstances, symbol).length;
 };
 
-export const getInstancesByName = (
+export const getInstancesBySymbol = (
   symbolInstances: DiagramSymbolInstance[],
-  symbolName: string
+  symbol: DiagramSymbol
 ) => {
   return symbolInstances.filter((instance) => {
-    return instance.symbolName === symbolName;
+    return instance.symbolId === symbol.id;
   });
 };

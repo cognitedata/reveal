@@ -51,21 +51,24 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//react",
-    "@npm//react-svg",
     "@npm//file-saver",
-    "@npm//styled-components",
     "@npm//graphology",
     "@npm//graphology-simple-path",
+    "@npm//lodash",
+    "@npm//react",
+    "@npm//react-svg",
+    "@npm//styled-components",
+    "@npm//uuid",
     "//packages/pid-tools",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
-    "@npm//@types/react",
     "@npm//@types/file-saver",
-    "@npm//@types/styled-components",
     "@npm//@types/lodash",
+    "@npm//@types/react",
+    "@npm//@types/styled-components",
+    "@npm//@types/uuid",
 ]
 
 # Dev dependencies from package.json
@@ -73,13 +76,17 @@ DEV_DEPENDENCIES = [
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
     "@npm//typescript",
-    "@npm//graphology-types",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
+    "ReactPid": "dist/ReactPid",
     "components": "dist/components",
+    "constants": "dist/constants",
+    "elements": "dist/elements",
     "index": "dist/index",
+    "types": "dist/types",
+    "utils": "dist/utils",
 }
 
 ### end of auto-generated helpers ###

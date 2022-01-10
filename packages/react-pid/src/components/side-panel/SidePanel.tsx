@@ -8,6 +8,7 @@ import {
 } from '@cognite/pid-tools';
 
 import { ToolType } from '../../types';
+import { SaveSymbolData } from '../../ReactPid';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
 import { FileController } from './FileController';
@@ -39,7 +40,7 @@ interface SidePanelProps {
   selection: SVGElement[];
   setActive: (arg0: ToolType) => void;
   loadSymbolsAsJson: (args0: string) => void;
-  saveSymbol: (symbolName: string, selection: SVGElement[]) => void;
+  saveSymbol: (options: SaveSymbolData, selection: SVGElement[]) => void;
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
   connections: DiagramConnection[];

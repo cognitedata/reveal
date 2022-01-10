@@ -9,7 +9,7 @@ export const createLines = (pathIds: string[]) => {
   return pathIds.map(
     (pathId) =>
       ({
-        symbolName: 'Line',
+        symbolId: 'Line',
         pathIds: [pathId],
         labelIds: [],
       } as DiagramLineInstance)
@@ -20,7 +20,7 @@ export const createSymbols = (pathIds: string[]) => {
   return pathIds.map(
     (pathId) =>
       ({
-        symbolName: 'symbolname',
+        symbolId: 'symbolId',
         pathIds: [pathId],
         labelIds: [],
       } as DiagramSymbolInstance)
