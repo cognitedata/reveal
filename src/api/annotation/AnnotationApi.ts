@@ -1,8 +1,5 @@
-import {
-  HttpResponse,
-  ItemsResponse,
-  v3Client as sdk,
-} from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { HttpResponse, ItemsResponse } from '@cognite/sdk';
 import { Annotation } from 'src/api/types';
 import {
   AnnotationCreateRequest,

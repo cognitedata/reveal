@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DateRange, FileInfo, Range } from '@cognite/cdf-sdk-singleton';
+import { DateRange, FileInfo, Range } from '@cognite/sdk';
 import { DateActions } from 'src/modules/Explorer/Components/Filters/DateFilter';
 import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
 

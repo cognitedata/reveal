@@ -1,6 +1,6 @@
 // it's not strictly necessary to have that mapping, but it's just handy to have an overview in one place
 import { AnnotationJobQueued, VisionAPIType } from 'src/api/types';
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 
 export function getDetectionModelEndpoint(modelType: VisionAPIType) {
   const mapping: Record<VisionAPIType, string> = {

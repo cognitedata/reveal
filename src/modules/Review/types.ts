@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { OptionType } from '@cognite/cogs.js';
 import { ReactElement, ReactText } from 'react';
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';

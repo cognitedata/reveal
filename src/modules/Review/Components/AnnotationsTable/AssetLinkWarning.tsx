@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';

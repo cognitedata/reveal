@@ -1,4 +1,4 @@
-import { Label, Metadata } from '@cognite/cdf-sdk-singleton';
+import { Label, Metadata } from '@cognite/sdk';
 import { CDFStatusModes } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
 
 export type BulkEditUnsavedState = {

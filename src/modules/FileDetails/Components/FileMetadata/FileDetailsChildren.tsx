@@ -7,7 +7,7 @@ import {
   LabelFilter,
   ByAssetFilter,
 } from '@cognite/data-exploration';
-import { Label } from '@cognite/cdf-sdk-singleton';
+import { Label } from '@cognite/sdk';
 import useIsFieldSavePending from 'src/store/hooks/useIsFieldSavePending';
 import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 

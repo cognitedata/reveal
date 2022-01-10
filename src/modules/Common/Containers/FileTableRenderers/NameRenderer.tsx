@@ -12,7 +12,7 @@ import VideoIcon from 'src/assets/VideoIcon.svg';
 import VideoWithExifIcon from 'src/assets/VideoWithExifIcon.svg';
 import ImageWithAnnotationsIcon from 'src/assets/ImageWithAnnotationsIcon.svg';
 import ImageWithAnnotationsAndExifIcon from 'src/assets/ImageWithAnnotationsAndExifIcon.svg';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 
 export const FileNameText = styled.div`
   text-overflow: ellipsis;

@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { Vertex } from 'src/api/types';
 import { AnnotationPreview } from 'src/modules/Common/types';
 import { Keypoint } from 'src/modules/Review/types';

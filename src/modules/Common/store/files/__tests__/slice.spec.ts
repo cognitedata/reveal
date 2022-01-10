@@ -5,7 +5,7 @@ import reducer, {
   setFileSelectState,
 } from 'src/modules/Common/store/files/slice';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { createFileState } from 'src/store/util/StateUtils';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 

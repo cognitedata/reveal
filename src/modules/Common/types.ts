@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { ColumnShape } from 'react-base-table';
 import { Annotation, JobStatus, VisionAPIType } from 'src/api/types';
 
