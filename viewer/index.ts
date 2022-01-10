@@ -10,4 +10,6 @@
 
 export * from './core/src/index';
 
+export { CameraControlsOptions } from './packages/camera-manager';
+
 export { NodeAppearance, DefaultNodeAppearance, AreaCollection, ClusteredAreaCollection } from './packages/cad-styling';

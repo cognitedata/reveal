@@ -47,7 +47,7 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import ComboControls from '@reveal/camera-manager';
+import { CameraManager, ComboControls } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
@@ -113,8 +113,6 @@ export class Cognite3DViewer {
   private readonly _renderer: THREE.WebGLRenderer;
 
   private readonly _boundAnimate = this.animate.bind(this);
-  private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
-  private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
 
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
@@ -389,7 +387,7 @@ export class Cognite3DViewer {
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
 
-    this.controls.addEventListener('cameraChange', event => {
+    this._cameraManager.on('cameraChange', (event: any) => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
     });

@@ -92,6 +92,7 @@ type HtmlOverlayElement = {
 };
 
 /**
+ 
  * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
  * 3D position and updates its position/visibility as user moves the camera. This is
  * useful to create HTML overlays to highlight information about key positions in the 3D model.
@@ -255,6 +256,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     for (const element of overlays) {
       this.remove(element);
     }
+    this.forceUpdate();
   }
 
   /**

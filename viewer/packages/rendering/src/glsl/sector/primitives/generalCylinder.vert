@@ -14,7 +14,6 @@ in vec3 position;
 in vec3 normal;
 
 in float a_treeIndex;
-
 in vec3 a_centerA;
 in vec3 a_centerB;
 

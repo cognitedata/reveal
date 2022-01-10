@@ -14,6 +14,8 @@ export { createCadModelMetadata } from './src/createCadModelMetadata';
 export { createCadModel } from './src/createCadModel';
 export { createDetermineSectorInput } from './src/createDetermineSectorInput';
 
+export { mockClientAuthentication } from './src/cogniteClientAuth';
+
 export { createGlContext } from './src/createGlContext';
 export { sleep } from './src/wait';
 export { asyncIteratorToArray } from './src/asyncIteratorToArray';
