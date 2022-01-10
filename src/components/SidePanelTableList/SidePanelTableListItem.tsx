@@ -1,12 +1,13 @@
 import React, { MouseEvent, useState } from 'react';
 
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Body, Button, Colors, Icon, Menu, Tooltip } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 import Dropdown from 'components/Dropdown/Dropdown';
 import { useActiveTable } from 'hooks/table-tabs';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 
 type SidePanelTableListItemProps = {
   databaseName: string;
@@ -70,7 +71,11 @@ const SidePanelTableListItem = ({
   const [[, activeTableName] = [], setTable] = useActiveTable();
   const isSelected = activeTableName === tableName;
 
-  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   const handleDatabaseListItemClick = (): void => {
     setTable([databaseName, tableName]);

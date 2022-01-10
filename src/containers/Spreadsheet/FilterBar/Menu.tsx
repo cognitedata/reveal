@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { CSVLink } from 'react-csv';
+
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Colors, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { CSVLink } from 'react-csv';
 import styled from 'styled-components';
 
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { useTableData } from 'hooks/table-data';
 import { escapeCSVValue } from 'utils/utils';
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
@@ -12,7 +14,11 @@ import { useActiveTableContext } from 'contexts';
 const COLUMNS_IGNORED = ['column-index', 'lastUpdatedTime'];
 
 export const Menu = (): JSX.Element => {
-  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
   const { rows, isFetched } = useTableData();
   const { database, table } = useActiveTableContext();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

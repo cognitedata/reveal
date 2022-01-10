@@ -116,7 +116,7 @@ export const Profiling = (): JSX.Element => {
         </Card>
       </CardsFlex>
       <Flex style={{ width: '100%' }}>
-        <FilterBar areTypesFetched={areTypesFetched} />
+        <StyledFilterBar areTypesFetched={areTypesFetched} />
       </Flex>
       <Flex style={{ width: '100%', height: '100%' }}>
         <AutoResizer>
@@ -150,7 +150,7 @@ export const Profiling = (): JSX.Element => {
 
 const Card = styled.div`
   padding: 16px;
-  margin: 10px 10px 20px 0;
+  margin-right: 24px;
   border: 1px solid ${Colors['greyscale-grey3'].hex()};
   border-radius: 8px;
   min-width: 277px;
@@ -180,12 +180,12 @@ const Card = styled.div`
 `;
 
 const RootFlex = styled(Flex)`
-  padding: 36px 24px 24px;
+  padding: 24px;
   height: 100%;
 `;
 
 const CardsFlex = styled(Flex)`
-  padding: 24px 0;
+  padding: 20px 0 32px;
 `;
 const Table = styled.table`
   position: relative;
@@ -202,4 +202,9 @@ const StyledCount = styled.div<{ $isRunning?: boolean }>`
   font-size: 24px;
   line-height: 32px;
   margin-bottom: 0;
+`;
+
+const StyledFilterBar = styled(FilterBar)`
+  height: unset;
+  padding: 0 0 24px;
 `;

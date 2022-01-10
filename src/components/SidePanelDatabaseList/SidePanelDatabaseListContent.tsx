@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Title, Tooltip } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk/';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import {
   StyledEmptyListDetail,
@@ -10,7 +12,6 @@ import {
   StyledNoItemsDetail,
   StyledNoItemsWrapper,
 } from 'components/SidePanel/SidePanelLevelWrapper';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { stringCompare } from 'utils/utils';
 
 import SidePanelDatabaseListItem from './SidePanelDatabaseListItem';
@@ -32,7 +33,11 @@ const SidePanelDatabaseListContent = ({
   openCreateModal,
   searchQuery,
 }: SidePanelDatabaseListContentProps): JSX.Element => {
-  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   const filteredDatabaseList = useMemo(() => {
     return (

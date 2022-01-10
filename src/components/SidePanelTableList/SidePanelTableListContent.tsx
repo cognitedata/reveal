@@ -1,7 +1,9 @@
 import React, { useContext, useMemo } from 'react';
 
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Title, Tooltip } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import {
   StyledEmptyListDetail,
@@ -12,7 +14,6 @@ import {
 } from 'components/SidePanel/SidePanelLevelWrapper';
 
 import { RawExplorerContext } from 'contexts';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { stringCompare } from 'utils/utils';
 
 import SidePanelTableListItem from './SidePanelTableListItem';
@@ -36,7 +37,11 @@ const SidePanelTableListContent = ({
 }: SidePanelTableListContentProps): JSX.Element => {
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
 
-  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { data: hasWriteAccess } = usePermissions(
+    getFlow().flow,
+    'rawAcl',
+    'WRITE'
+  );
 
   const filteredTableList = useMemo(() => {
     return (
