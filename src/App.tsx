@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
-import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthWrapper,
+  getEnv,
+  getProject,
+  SubAppWrapper,
+} from '@cognite/cdf-utilities';
 import GlobalStyles from 'styles/GlobalStyles';
 import { setupMixpanel } from 'utils/config';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
@@ -8,7 +14,6 @@ import { Loader } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { MainRouter } from 'pages/router';
-import sdk from './sdk-singleton';
 
 setupMixpanel();
 
@@ -21,7 +26,8 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  const project = window.location.pathname.split('/')[1];
+  const project = getProject();
+  const env = getEnv();
 
   if (!project) {
     throw new Error('CDF Project is missing');
@@ -41,10 +47,8 @@ const App = () => {
       <GlobalStyles>
         <SubAppWrapper padding={false}>
           <AuthWrapper
-            showLoader
-            includeGroups
+            login={() => loginAndAuthIfNeeded(project, env)}
             loadingScreen={<Loader darkMode={false} />}
-            subAppName="document-search-ui"
           >
             <SDKProvider sdk={sdk}>
               <MainRouter />

@@ -1,4 +1,5 @@
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 type Permission = {
   label: string;
@@ -6,20 +7,22 @@ type Permission = {
 };
 
 export const useUserPermissions = () => {
+  const { flow } = getFlow();
   const { data: filesWritePermission, isLoading: filesWriteLoading } =
-    usePermissions('filesAcl', 'WRITE');
+    usePermissions(flow, 'filesAcl', 'WRITE');
   const { data: filesReadPermission, isLoading: filesReadLoading } =
-    usePermissions('filesAcl', 'READ');
+    usePermissions(flow, 'filesAcl', 'READ');
   const { data: labelsWriteAcl, isLoading: labelsWriteLoading } =
-    usePermissions('labelsAcl', 'WRITE');
+    usePermissions(flow, 'labelsAcl', 'WRITE');
   const { data: labelsReadAcl, isLoading: labelsReadLoading } = usePermissions(
+    flow,
     'labelsAcl',
     'READ'
   );
   const { data: documentPipelinesWrite, isLoading: pipelinesWriteLoading } =
-    usePermissions('documentPipelinesAcl', 'WRITE');
+    usePermissions(flow, 'documentPipelinesAcl', 'WRITE');
   const { data: documentPipelinesRead, isLoading: pipelinesReadLoading } =
-    usePermissions('documentPipelinesAcl', 'READ');
+    usePermissions(flow, 'documentPipelinesAcl', 'READ');
 
   const isLoading =
     filesWriteLoading &&

@@ -1,6 +1,4 @@
-import React, { useEffect } from 'react';
-import { useUserContext } from '@cognite/cdf-utilities';
-import { handleUserIdentification } from 'utils/config';
+import React from 'react';
 import { Page } from 'components/page/Page';
 import { PageContent, PageHeader } from 'components/page';
 import { homeConfig } from 'configs/global.config';
@@ -19,7 +17,6 @@ import { ActiveModelContainer } from './components/container/ActiveModelContaine
 import { ClassifierActions } from './components/table/curateClassifierColumns';
 
 const HomePage = () => {
-  const user = useUserContext();
   const { toClassifier } = useNavigation();
 
   const { data: activeClassifier, isLoading } = useActiveClassifier();
@@ -57,10 +54,6 @@ const HomePage = () => {
       })
       .catch(() => null);
   };
-
-  useEffect(() => {
-    handleUserIdentification(user.username);
-  }, [user]);
 
   if (isLoading) {
     return <Loader darkMode />;

@@ -1,5 +1,6 @@
 import queryString from 'query-string';
 import { Metrics } from '@cognite/metrics';
+import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 
 export const projectName = () =>
   new URL(window.location.href).pathname.split('/')[1];
@@ -39,11 +40,13 @@ export const setupMixpanel = () => {
   }
 };
 
-export const handleUserIdentification = (email: string) => {
-  Metrics.identify(email || 'not-identified-yet');
-  Metrics.people({
-    email,
-    name: email,
+export const handleUserIdentification = () => {
+  getUserInformation().then(({ mail }) => {
+    Metrics.identify(mail || 'not-identified-yet');
+    Metrics.people({
+      email: mail,
+      name: mail,
+    });
   });
 };
 

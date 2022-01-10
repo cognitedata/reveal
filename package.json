@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-document-search-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "contributors": [
     {
@@ -21,13 +21,13 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^0.7.3",
+    "@cognite/cdf-utilities": "^0.10.1",
     "@cognite/cogs.js": "5.2.1",
     "@cognite/metrics": "^0.1.7",
-    "@cognite/sdk": "^5.4.0",
+    "@cognite/sdk": "^6.3.1",
     "@cognite/sdk-playground": "^4.2.1",
     "@cognite/sdk-provider": "^1.0.0",
-    "@cognite/sdk-react-query-hooks": "^6.0.1",
+    "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@cognite/z-index": "^0.2.1",
     "@google-cloud/storage": "^5.7.2",
     "@rescripts/cli": "^0.0.14",

@@ -35,20 +35,6 @@
   resolved "https://registry.yarnpkg.com/@ant-design/icons/-/icons-2.1.1.tgz#7b9c08dffd4f5d41db667d9dbe5e0107d0bd9a4a"
   integrity sha512-jCH+k2Vjlno4YWl6g535nHR09PwCEmTBKAG6VqF+rhkrSPRLfgpU2maagwbZPLjaHuU5Jd1DFQ2KJpQuI6uG8w==
 
-"@azure/msal-browser@^2.11.0":
-  version "2.17.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.17.0.tgz#beb7d91e6123534b42c0d2ce85eda42a136a8555"
-  integrity sha512-NDK0NfsiRkjUU4V4jTt++aUPVg3JnRF4zV3B6WEOXDMH3OCbSJyqdO1WhdUWgMNQZz6Dk9bO/c6Bf4vUEgg+WA==
-  dependencies:
-    "@azure/msal-common" "^5.0.0"
-
-"@azure/msal-common@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-5.0.0.tgz#4e927b9bdc3715e0b043ece01360c73739ef52c1"
-  integrity sha512-b3QXfW0BlGZs3mQ59rkVGcArzeMGd1RjHxyRez5bCB1F/F3jRmn2nY9jGamrILPBFz7weGpJiouW1VmDmAuk7Q==
-  dependencies:
-    debug "^4.1.1"
-
 "@babel/code-frame@7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
@@ -1564,17 +1550,47 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cdf-utilities@^0.7.3":
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.7.3.tgz#47e03976d2d93a5f487576fb51bfd8475f097344"
-  integrity sha512-jfc3lJi6KeMj5U2v4k+UBTPgGy+ubbHGn2agr0aUdvntMaVwzMyhX+dW3jZwoVC0b9VqXXaSflYm/GXIxGfmgw==
+"@cognite/cdf-utilities@^0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.10.1.tgz#c73e7fb48e7d4c3d9ead288d7a019760e1a3b884"
+  integrity sha512-Hy97SFaTfXQ1dYJH5KQbmPfXHHbsef+6r+GgD7CZDJzXWzP2e0LxEsrKd/4Rece9JNu3GLyU20qcTfjr/iaFuA==
   dependencies:
-    query-string "^6.13.4"
+    "@cognite/cogs.js" "^3.38.4"
+    query-string "^7.0.1"
+    styled-components "^5.3.3"
 
 "@cognite/cogs.js@5.2.1":
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.2.1.tgz#43c71dd723ab049edcd2b762ba67295c7419ff38"
   integrity sha512-K2xnp6gDFriId57/cdwJATeKGDOjjLHqjPECJ644NkmFDsHP+T1PbgmbLc+xYSBO3843NTXiNYUu0LjGebffFA==
+  dependencies:
+    "@tippyjs/react" "4.2.3"
+    "@types/react-date-range" "^1.1.2"
+    axios "^0.21.2"
+    classnames "^2.3.1"
+    color "^3.1.2"
+    dayjs "^1.9.7"
+    eslint-config-stylelint "^13.1.1"
+    focus-visible "^5.1.0"
+    match-sorter "^6.3.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    resize-observer-polyfill "^1.5.1"
+    stylelint "^13.13.1"
+    tippy.js "6.2.0"
+    ts-dedent "^2.2.0"
+
+"@cognite/cogs.js@^3.38.4":
+  version "3.44.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
+  integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -1626,23 +1642,21 @@
     mixpanel-browser "^2.35.0"
     react "^16.13.1"
 
-"@cognite/sdk-core@^3.2.5":
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-3.2.5.tgz#76b7b1632ed84fb2740ba69959bcebbce91251c7"
-  integrity sha512-Jx77CQnKcLMLLuMLCYavLfpNgqrctUaoAaHyv3AP4IZfjGuJX9kTyAfkLCFmiMld9eXfCGNNgyBaDf6AUnsLxA==
-  dependencies:
-    "@azure/msal-browser" "^2.11.0"
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    oidc-client "^1.11.5"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
 "@cognite/sdk-core@^4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.0.2.tgz#0021cca2ef320d887bf03498a41b25fe92f2a421"
   integrity sha512-VA5gagHqMhAMZKNvbUawXopvcvHE0R9RSAXCJOxIDxBgNkEBq/6z8RFIdh3aJ/gfIv2xfLfNy/fYohuFB7WE1Q==
+  dependencies:
+    cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
+
+"@cognite/sdk-core@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.0.3.tgz#662db3e2dc5507276e2fc76859f0391c13269c9d"
+  integrity sha512-RBzNwCKfkIUGtzhQ8n+6cNmuYY3f031vfRId2X9iQpS6VBl3Qnasc/9wqZhtN6qVMtFBsn4nDLXL6YUNNII3lw==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1665,21 +1679,13 @@
   dependencies:
     react "^16.14.0"
 
-"@cognite/sdk-react-query-hooks@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-6.0.1.tgz#5d09b2c116b7ce4b94e7d2575d9f5a60448d8488"
-  integrity sha512-fYg9yjH/q5lOUuux6RlT826M6EcHnMmYK5K/1j8/OTiVSHivb5Qm8l8my6K82W84njlC1ywqzbBPqdfZrmPayA==
+"@cognite/sdk-react-query-hooks@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-6.0.2.tgz#3e67d595ada940b1464e49e5f51cb9c4a1798e3a"
+  integrity sha512-LAJRrYgPGoyAZko24L7p+uUpovn2x++zkFrbvjT1iNTCptDlLosSbm4OP0d42OaHQaX1mYltSNIwVVUtEzHYoA==
   dependencies:
     "@types/deep-equal" "^1.0.1"
     deep-equal "^2.0.5"
-
-"@cognite/sdk@^5.4.0":
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-5.4.0.tgz#e1ebd43fff2118aa393e0a266b88441198f3421d"
-  integrity sha512-EgfpQzxJKv83wn5hWxQr04cqI9hp33Z1oeedhZiqJRJzsracHa+jeRtR3nOTHyfYfAt2BKu3yw1A9hFnZ3Q2tA==
-  dependencies:
-    "@cognite/sdk-core" "^3.2.5"
-    lodash "^4.17.11"
 
 "@cognite/sdk@^6.1.3":
   version "6.1.3"
@@ -1687,6 +1693,14 @@
   integrity sha512-Wn+KAafEto12VV+bHh8PdtQGbgrmjqMBaZgMSoI5LvyklKa1iB9JnWNKYj1jgXFZN5pM9QZtg1iKr2mdTswv0Q==
   dependencies:
     "@cognite/sdk-core" "^4.0.2"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^6.3.1":
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-6.3.1.tgz#b4020b81057da765f6b9bfbbd96a926afe82ac32"
+  integrity sha512-pQ7Gtp0OpkX7qZtze1Fv/XxnNagWgWyXO9Tl83NmiJjGRP0RD49djQUdqwFOE2pEFAYoYKuGfVAXpyRsOf8nuw==
+  dependencies:
+    "@cognite/sdk-core" "^4.0.3"
     lodash "^4.17.11"
 
 "@cognite/z-index@^0.2.1":
@@ -3865,7 +3879,7 @@ acorn@^6.0.1, acorn@^6.0.4, acorn@^6.2.1:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.4.2.tgz#35866fd710528e92de10cf06016498e47e39e1e6"
   integrity sha512-XtGIhXwF8YM8bJhGxG5kXgjkEuNGLTkoYqVE+KMR+aspr4KGYmKYg7yUe3KghyQ9yheNwLnjmzh/7+gfDBmHCQ==
 
-acorn@^7.1.1, acorn@^7.4.1:
+acorn@^7.1.1:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
@@ -5384,7 +5398,7 @@ balanced-match@^2.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-2.0.0.tgz#dc70f920d78db8b858535795867bf48f820633d9"
   integrity sha512-1ugUSr8BHXRnK23KfuYS+gVMC3LB8QGH9W1iGtDPsNWoQbgtXSExkBu2aDR4epiGWZOjZsj6lDl/N/AqqTC3UA==
 
-base64-js@^1.0.2, base64-js@^1.3.0, base64-js@^1.3.1, base64-js@^1.5.1:
+base64-js@^1.0.2, base64-js@^1.3.0, base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
@@ -6573,11 +6587,6 @@ core-js@^3.0.4, core-js@^3.5.0, core-js@^3.6.5, core-js@^3.8.2:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.15.2.tgz#740660d2ff55ef34ce664d7e2455119c5bdd3d61"
   integrity sha512-tKs41J7NJVuaya8DxIOCnl8QuPHx5/ZVbFo1oKgVl1qHFBBrDctzQGtuLjPpRdNTWmKPH6oEvgN/MUID+l485Q==
 
-core-js@^3.8.3:
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.18.0.tgz#9af3f4a6df9ba3428a3fb1b171f1503b3f40cc49"
-  integrity sha512-WJeQqq6jOYgVgg4NrXKL0KLQhi0CT4ZOCvFL+3CQ5o7I6J8HkT5wd53EadMfqTDp1so/MT1J+w2ujhWcCJtN7w==
-
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
@@ -6759,11 +6768,6 @@ crypto-browserify@^3.11.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
     randomfill "^1.0.3"
-
-crypto-js@^4.0.0:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
-  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
 
 crypto-random-string@^2.0.0:
   version "2.0.0"
@@ -13053,17 +13057,6 @@ obuf@^1.0.0, obuf@^1.1.2:
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
 
-oidc-client@^1.11.5:
-  version "1.11.5"
-  resolved "https://registry.yarnpkg.com/oidc-client/-/oidc-client-1.11.5.tgz#020aa193d68a3e1f87a24fcbf50073b738de92bb"
-  integrity sha512-LcKrKC8Av0m/KD/4EFmo9Sg8fSQ+WFJWBrmtWd+tZkNn3WT/sQG3REmPANE9tzzhbjW6VkTNy4xhAXCfPApAOg==
-  dependencies:
-    acorn "^7.4.1"
-    base64-js "^1.5.1"
-    core-js "^3.8.3"
-    crypto-js "^4.0.0"
-    serialize-javascript "^4.0.0"
-
 omit.js@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/omit.js/-/omit.js-1.0.2.tgz#91a14f0eba84066dfa015bf30e474c47f30bc858"
@@ -14739,10 +14732,20 @@ query-string@^5.1.1:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^6.13.4, query-string@^6.13.6:
+query-string@^6.13.6:
   version "6.14.1"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.14.1.tgz#7ac2dca46da7f309449ba0f86b1fd28255b0c86a"
   integrity sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==
+  dependencies:
+    decode-uri-component "^0.2.0"
+    filter-obj "^1.1.0"
+    split-on-first "^1.0.0"
+    strict-uri-encode "^2.0.0"
+
+query-string@^7.0.1:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-7.1.0.tgz#96b88f27b39794f97b8c8ccd060bc900495078ef"
+  integrity sha512-wnJ8covk+S9isYR5JIXPt93kFUmI2fQ4R/8130fuq+qwLiGVTurg7Klodgfw4NSz/oe7xnyi09y3lSrogUeM3g==
   dependencies:
     decode-uri-component "^0.2.0"
     filter-obj "^1.1.0"
@@ -17536,6 +17539,22 @@ styled-components@^5.2.1:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-5.3.0.tgz#e47c3d3e9ddfff539f118a3dd0fd4f8f4fb25727"
   integrity sha512-bPJKwZCHjJPf/hwTJl6TbkSZg/3evha+XPEizrZUGb535jLImwDUdjTNxXqjjaASt2M4qO4AVfoHJNe3XB/tpQ==
+  dependencies:
+    "@babel/helper-module-imports" "^7.0.0"
+    "@babel/traverse" "^7.4.5"
+    "@emotion/is-prop-valid" "^0.8.8"
+    "@emotion/stylis" "^0.8.4"
+    "@emotion/unitless" "^0.7.4"
+    babel-plugin-styled-components ">= 1.12.0"
+    css-to-react-native "^3.0.0"
+    hoist-non-react-statics "^3.0.0"
+    shallowequal "^1.1.0"
+    supports-color "^5.5.0"
+
+styled-components@^5.3.3:
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-5.3.3.tgz#312a3d9a549f4708f0fb0edc829eb34bde032743"
+  integrity sha512-++4iHwBM7ZN+x6DtPPWkCI4vdtwumQ+inA/DdAsqYd4SVgUKJie5vXyzotA00ttcFdQkCng7zc6grwlfIfw+lw==
   dependencies:
     "@babel/helper-module-imports" "^7.0.0"
     "@babel/traverse" "^7.4.5"
