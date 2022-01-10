@@ -1,3 +1,38 @@
+import { Drawing } from '@cognite/ornate';
+
+import DocumentId from './DocumentId';
+
+type SchematicAnnotation = {
+  id: string;
+  svgRepresentation: {
+    boundingBox: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+    svgPaths: { svgCommands: string }[];
+  };
+
+  symbolName?: unknown;
+  pathIds: unknown;
+  labelIds: unknown;
+  labels: unknown;
+};
+
+export type SchematicRepresentation = {
+  viewBox: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  symbols: unknown;
+  lines: SchematicAnnotation[];
+  symbolInstances: SchematicAnnotation[];
+  connections: unknown;
+};
+
 export type LineReviewAnnotationStatus = 'UNCHECKED' | 'CHECKED';
 export type DateTime = number;
 export type Assignee = {
@@ -41,10 +76,18 @@ export enum DocumentType {
   ISO = 'ISO',
 }
 
+export type Link = {
+  'p&id': string;
+  iso: string;
+};
+
 export type Document = {
-  id: string; // Required?
+  id: DocumentId; // Required?
   fileExternalId: string;
   annotations: DocumentAnnotation[];
+  _annotations: SchematicRepresentation;
+  _opacities: Drawing[];
+  _linking: Link[];
   type: 'PID' | 'ISO';
 };
 

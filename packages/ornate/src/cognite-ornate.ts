@@ -43,6 +43,13 @@ export type CogniteOrnateOptions = {
 };
 
 const getShapeByDrawing = (drawing: Drawing) => {
+  if (drawing.type === 'path') {
+    return new Konva.Path({
+      ...drawing.attrs,
+      id: drawing.id,
+    });
+  }
+
   if (drawing.type === 'line') {
     return new Konva.Line({ ...drawing.attrs, id: drawing.id });
   }

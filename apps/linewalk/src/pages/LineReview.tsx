@@ -1,16 +1,26 @@
 import { Button, Modal, TextInput } from '@cognite/cogs.js';
+import { CogniteOrnate } from '@cognite/ornate';
+import LineReviewHeader from 'components/LineReviewHeader';
+import LineReviewViewer from 'components/LineReviewViewer';
 import { NullView } from 'components/NullView/NullView';
 import useLineReviews from 'modules/lineReviews/hooks';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import LineReviewViewer from 'components/LineReviewViewer';
-import LineReviewHeader from 'components/LineReviewHeader';
+import { useHistory, useParams } from 'react-router';
+
+import { updateLineReviews } from '../modules/lineReviews/api';
+import { LineReviewStatus } from '../modules/lineReviews/types';
+
+import { PagePath } from './Menubar';
 // import { useAuthContext } from '@cognite/react-container';
 
 const LineReview = () => {
   const { id } = useParams<{ id: string }>();
+  const history = useHistory();
   const [isReportBackModalOpen, setIsReportBackModalOpen] = useState(false);
   const { isLoading, lineReviews, populateLineReviews } = useLineReviews();
+  const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
+    undefined
+  );
 
   // const { client } = useAuthContext();
 
@@ -20,12 +30,6 @@ const LineReview = () => {
   }, []);
 
   const lineReview = lineReviews.find((lineReview) => lineReview.id === id);
-  console.log({
-    id,
-    lineReview,
-    lineReviews,
-  });
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -40,6 +44,17 @@ const LineReview = () => {
 
   const onReportBackPress = () => setIsReportBackModalOpen(true);
 
+  const onReportBackSavePress = () => {
+    setIsReportBackModalOpen(false);
+    updateLineReviews([
+      {
+        ...lineReview,
+        status: LineReviewStatus.REVIEWED,
+      },
+    ]);
+    history.push(PagePath.LINE_REVIEWS);
+  };
+
   return (
     <div
       style={{
@@ -52,28 +67,62 @@ const LineReview = () => {
         onCancel={() => {
           setIsReportBackModalOpen(false);
         }}
+        footer={null}
       >
         <h2>Report back</h2>
         <p>
           You are about to send this report for further checking. The following
           discrepancies will be included in the report:
         </p>
-        <div>Branch line connection to 41_N757 not found in ISO</div>
+        <div>
+          <b>Branch line connection to 41_N757 not found in ISO</b>
+        </div>
 
-        <div>MF: RBD_G0040_MF_004</div>
-        <div>ISO: G0040-L029-1</div>
+        <div>
+          MF:{' '}
+          <a //eslint-disable-line
+            onClick={() => {
+              return undefined;
+            }}
+          >
+            RBD_G0040_MF_004
+          </a>
+        </div>
+        <div>
+          ISO:{' '}
+          <a //eslint-disable-line
+            onClick={() => {
+              return undefined;
+            }}
+          >
+            G0040-L029-1
+          </a>
+        </div>
 
-        <TextInput placeholder="Comments..." />
-
-        <Button type="ghost" icon="Pdf" />
-        <Button type="ghost">Cancel</Button>
-        <Button type="primary">Save</Button>
+        <br />
+        <TextInput placeholder="Comments..." style={{ width: '100%' }} />
+        <br />
+        <br />
+        <footer>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div>
+              <Button type="ghost" icon="Document" />
+            </div>
+            <div>
+              <Button type="secondary">Cancel</Button>&nbsp;&nbsp;
+              <Button type="primary" onClick={onReportBackSavePress}>
+                Save
+              </Button>
+            </div>
+          </div>
+        </footer>
       </Modal>
       <LineReviewHeader
         lineReview={lineReview}
+        ornateRef={ornateRef}
         onReportBackPress={onReportBackPress}
       />
-      <LineReviewViewer lineReview={lineReview} />
+      <LineReviewViewer lineReview={lineReview} onOrnateRef={setOrnateRef} />
     </div>
   );
 };

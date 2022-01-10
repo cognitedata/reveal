@@ -1,56 +1,62 @@
 import { Button } from '@cognite/cogs.js';
+import { CogniteOrnate } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
 import React, { useEffect, useState } from 'react';
 import layers from 'utils/z';
 
 import { getDocumentUrl } from '../../modules/lineReviews/api';
-import { DocumentId } from '../../modules/lineReviews/mocks';
 import { WorkspaceTool } from '../WorkSpaceTools/WorkSpaceTools';
-import { DocumentType } from '../../modules/lineReviews/types';
+import { Document } from '../../modules/lineReviews/types';
 
 import ReactOrnate from './ReactOrnate';
 
+export const ISO_MODAL_ORNATE_WIDTH_PX = 600;
+export const ISO_MODAL_ORNATE_HEIGHT_PX = 380;
+
 type IsoModalProps = {
+  document: Document | undefined;
   visible?: boolean;
   onHidePress: () => void;
+  onOrnateRef: (ref: CogniteOrnate | undefined) => void;
 };
 
-const IsoModal: React.FC<IsoModalProps> = ({ visible, onHidePress }) => {
+const IsoModal: React.FC<IsoModalProps> = ({
+  document,
+  visible,
+  onOrnateRef,
+  onHidePress,
+}) => {
   const { client } = useAuthContext();
   const [documents, setDocuments] = useState<any[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const result = await Promise.all(
-        [
-          {
-            id: DocumentId.ISO_DOCUMENT_1,
-            fileExternalId: '0040_ISO_74',
-            annotations: [],
-            type: DocumentType.ISO,
-          },
-        ].map(async (document) => ({
-          id: document.id,
-          url: await getDocumentUrl(client, document),
-          pageNumber: 1,
-          annotations: document.annotations,
-          row: 1,
-        }))
-      );
+    if (document) {
+      (async () => {
+        const result = await Promise.all(
+          [document].map(async (document) => ({
+            id: document.id,
+            url: await getDocumentUrl(client, document),
+            pageNumber: 1,
+            annotations: document.annotations,
+            row: 1,
+          }))
+        );
 
-      setDocuments(result);
-      setIsInitialized(true);
-    })();
-  }, []);
+        setDocuments(result);
+        setIsInitialized(true);
+      })();
+    }
+  }, [document]);
 
-  if (visible === false || !isInitialized) {
+  if (!isInitialized) {
     return null;
   }
 
   return (
     <div
       style={{
+        visibility: visible ? undefined : 'hidden',
         position: 'fixed',
         right: '5%',
         top: '5%',
@@ -66,12 +72,14 @@ const IsoModal: React.FC<IsoModalProps> = ({ visible, onHidePress }) => {
       <h2>Isometric Drawing G0040_L029-1</h2>
       <div
         style={{
-          height: '380px',
+          height: `${ISO_MODAL_ORNATE_HEIGHT_PX}px`,
+          width: `${ISO_MODAL_ORNATE_WIDTH_PX}px`,
           border: '1px solid rgba(0, 0, 0, 0.15)',
           borderRadius: '4px',
         }}
       >
         <ReactOrnate
+          onOrnateRef={onOrnateRef}
           documents={documents}
           tools={[
             WorkspaceTool.SELECT,

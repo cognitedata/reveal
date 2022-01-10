@@ -15,6 +15,7 @@ import {
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { AnnotationIcon, DrawingIcon } from 'components/CustomIcons';
 
+import usePrevious from '../../hooks/usePrevious';
 import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
 import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
@@ -34,15 +35,12 @@ export enum WorkspaceTool {
 }
 
 type WorkSpaceToolsProps = {
-  activeTool: ToolType;
-  onToolChange: (nextTool: ToolType) => void;
   enabledTools?: WorkspaceTool[];
   ornateRef?: CogniteOrnate;
+  areKeyboardShortcutsEnabled: boolean;
 };
 
 const WorkSpaceTools = ({
-  activeTool,
-  onToolChange,
   enabledTools = [
     WorkspaceTool.LAYERS,
     WorkspaceTool.SELECT,
@@ -54,7 +52,10 @@ const WorkSpaceTools = ({
     WorkspaceTool.COMMENT,
   ],
   ornateRef,
+  areKeyboardShortcutsEnabled,
 }: WorkSpaceToolsProps) => {
+  const [activeTool, setActiveTool] = useState<ToolType>('default');
+  const previousTool = usePrevious(activeTool);
   const [layerStatus, setLayerStatus] = useState<Record<Layer, boolean>>({
     ANNOTATIONS: true,
     DRAWINGS: true,
@@ -77,6 +78,16 @@ const WorkSpaceTools = ({
       onToolChange('default');
     }
   }, [ornateRef]);
+
+  useEffect(() => {
+    ornateRef?.handleToolChange(activeTool);
+  }, [ornateRef, activeTool]);
+
+  const onToolChange = (tool: ToolType) => {
+    if (tool !== activeTool) {
+      setActiveTool(tool);
+    }
+  };
 
   const onSetLayerVisibility = (layer: Layer, visible: boolean) => {
     const shapes: Konva.Node[] = [];
@@ -254,12 +265,28 @@ const WorkSpaceTools = ({
       >
         <Icon type="Lineage" />
       </Button>
-      <KeyboardShortcut keys="s" onKeyDown={() => onToolChange('default')} />
-      <KeyboardShortcut keys="m" onKeyDown={() => onToolChange('move')} />
-      <KeyboardShortcut keys="r" onKeyDown={() => onToolChange('rect')} />
-      <KeyboardShortcut keys="c" onKeyDown={() => onToolChange('circle')} />
-      <KeyboardShortcut keys="l" onKeyDown={() => onToolChange('line')} />
-      <KeyboardShortcut keys="t" onKeyDown={() => onToolChange('text')} />
+      {areKeyboardShortcutsEnabled && (
+        <>
+          <KeyboardShortcut
+            keys="s"
+            onKeyDown={() => onToolChange('default')}
+          />
+          <KeyboardShortcut keys="m" onKeyDown={() => onToolChange('move')} />
+          <KeyboardShortcut keys="r" onKeyDown={() => onToolChange('rect')} />
+          <KeyboardShortcut keys="c" onKeyDown={() => onToolChange('circle')} />
+          <KeyboardShortcut keys="l" onKeyDown={() => onToolChange('line')} />
+          <KeyboardShortcut keys="t" onKeyDown={() => onToolChange('text')} />
+          <KeyboardShortcut
+            keys="space"
+            onKeyDown={() => onToolChange('move')}
+            onKeyRelease={() => {
+              if (previousTool) {
+                onToolChange(previousTool);
+              }
+            }}
+          />
+        </>
+      )}
     </WorkSpaceToolsWrapper>
   );
 };

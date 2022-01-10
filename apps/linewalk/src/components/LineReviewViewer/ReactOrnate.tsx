@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  CogniteOrnate,
-  ToolType,
-  OrnateTransformer,
-  Drawing,
-} from '@cognite/ornate';
+import { CogniteOrnate, OrnateTransformer, Drawing } from '@cognite/ornate';
 import WorkSpaceTools from 'components/WorkSpaceTools';
 import { v4 as uuid } from 'uuid';
 import isEqual from 'lodash/isEqual';
 import { DocumentConnection } from 'modules/lineReviews/types';
 import { useDrawConnections } from 'hooks/useDrawConnections';
 
+import useElementDescendantFocus from '../../utils/useElementDescendantFocus';
 import { WorkspaceTool } from '../WorkSpaceTools/WorkSpaceTools';
 
 export type ReactOrnateProps = {
@@ -36,8 +32,8 @@ export type ReactOrnateProps = {
   tools?: WorkspaceTool[];
 };
 
-const SLIDE_WIDTH = 2500;
-const SHAMEFUL_SLIDE_HEIGHT = 1625;
+export const SLIDE_WIDTH = 2500;
+export const SHAMEFUL_SLIDE_HEIGHT = 1617;
 const SLIDE_COLUMN_GAP = 150;
 const SLIDE_ROW_GAP = 300;
 
@@ -48,13 +44,15 @@ const ReactOrnate = ({
   tools,
   onOrnateRef,
 }: ReactOrnateProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const componentContainerId = useRef(
     `react-ornate-instance-${uuid()}`
   ).current;
   const ornateViewer = useRef<CogniteOrnate>();
-  const [activeTool, setActiveTool] = useState<ToolType>('default');
   const [isInitialized, setIsInitialized] = useState(false);
   const [committedDrawings, setCommittedDrawings] = useState<Drawing[]>([]);
+
+  const { isFocused } = useElementDescendantFocus(containerRef);
 
   useDrawConnections({
     ornateViewer: ornateViewer.current,
@@ -72,11 +70,6 @@ const ReactOrnate = ({
     ornateViewer.current = new CogniteOrnate({
       container: `#${componentContainerId}`,
     });
-    document.addEventListener('ornate_toolChange', ((
-      e: CustomEvent<ToolType>
-    ) => {
-      setActiveTool(e.detail);
-    }) as EventListener);
 
     // NEXT:
     // - Figure this out
@@ -143,7 +136,7 @@ const ReactOrnate = ({
                     height: m.max[1] - m.min[1],
                     x: m.min[0],
                     y: m.min[1],
-                    stroke: 'red',
+                    stroke: 'transparent',
                     strokeWidth: 2,
                     fill: 'rgba(0, 0, 0, 0)',
                     cornerRadius: 8,
@@ -175,21 +168,6 @@ const ReactOrnate = ({
     }
   }, [isInitialized]);
 
-  const onToolChange = (tool: ToolType) => {
-    ornateViewer.current?.handleToolChange(tool);
-    setActiveTool(tool);
-  };
-
-  useEffect(() => {
-    const handleInterval = setInterval(() => {
-      console.log(ornateViewer.current?.exportToJSON());
-    }, 5000);
-
-    return () => {
-      clearInterval(handleInterval);
-    };
-  }, []);
-
   useEffect(() => {
     const ornateRef = ornateViewer.current!;
 
@@ -211,6 +189,7 @@ const ReactOrnate = ({
 
   return (
     <div
+      ref={containerRef}
       style={{
         flexGrow: 1,
         position: 'relative',
@@ -222,9 +201,8 @@ const ReactOrnate = ({
 
       <WorkSpaceTools
         enabledTools={tools}
-        onToolChange={onToolChange}
         ornateRef={ornateViewer.current}
-        activeTool={activeTool}
+        areKeyboardShortcutsEnabled={isFocused}
       />
     </div>
   );

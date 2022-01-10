@@ -1,249 +1,179 @@
-import { Button, Modal, TextInput, Icon } from '@cognite/cogs.js';
-import { Drawing } from '@cognite/ornate';
+/* eslint-disable no-underscore-dangle */
+import { Button } from '@cognite/cogs.js';
+import { CogniteOrnate, Drawing } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
+import { KonvaEventObject } from 'konva/lib/Node';
+import {
+  Document,
+  DocumentConnection,
+  DocumentType,
+  LineReview,
+  Link,
+} from 'modules/lineReviews/types';
 import { useEffect, useState } from 'react';
 import layers from 'utils/z';
-import {
-  LineReview,
-  DocumentType,
-  DocumentConnection,
-} from 'modules/lineReviews/types';
+import head from 'lodash/head';
+import sortBy from 'lodash/sortBy';
 
 import { getDocumentUrl } from '../../modules/lineReviews/api';
-import { DocumentId } from '../../modules/lineReviews/mocks';
+import { DocumentId } from '../../modules/lineReviews/DocumentId';
+import delayMs from '../../utils/delayMs';
+import isNotUndefined from '../../utils/isNotUndefined';
+import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
-import IsoModal from './IsoModal';
-import ReactOrnate, { ReactOrnateProps } from './ReactOrnate';
+import DiscrepancyModal from './DiscrepancyModal';
+import IsoModal, {
+  ISO_MODAL_ORNATE_HEIGHT_PX,
+  ISO_MODAL_ORNATE_WIDTH_PX,
+} from './IsoModal';
+import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
+import ReactOrnate, {
+  ReactOrnateProps,
+  SHAMEFUL_SLIDE_HEIGHT,
+  SLIDE_WIDTH,
+} from './ReactOrnate';
 
 type LineReviewViewerProps = {
   lineReview: LineReview;
+  onOrnateRef: (ref: CogniteOrnate | undefined) => void;
 };
 
-const getDocumentOpacities = (): Drawing[] => {
-  const PID_1: Drawing[] = [
-    {
-      id: '77c58677-7dd5-47d7-9a36-4141b5386a38',
-      groupId: DocumentId.PID_DOCUMENT_1,
-      type: 'rect',
-      attrs: {
-        id: '77c58677-7dd5-47d7-9a36-4141b5386a38',
-        x: 65.94872358203493,
-        y: 256.876083112572,
-        width: 2355.1116288604744,
-        height: 575.4218866355695,
-        fill: 'rgba(255,255,255,0.8)',
-        strokeWidth: 0,
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_1,
-      },
+const getAnnotationsByDocument = (document: Document) => [
+  ...document._annotations.lines,
+  ...document._annotations.symbolInstances,
+];
+
+const getInteractableOverlays = (
+  document: Document,
+  onPathClick: (event: KonvaEventObject<MouseEvent>, pathId: string) => void
+): Drawing[] => {
+  return getAnnotationsByDocument(document).map((d) => ({
+    groupId: document.id,
+    id: d.id,
+    type: 'path',
+    onClick: (event) => onPathClick(event, d.id),
+    attrs: {
+      ...mapPathToNewCoordinateSystem(
+        document._annotations.viewBox,
+        d.svgRepresentation.boundingBox,
+        { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
+      ),
+      id: d.id,
+      strokeScaleEnabled: false,
+      strokeWidth: 6,
+      hitStrokeWidth: 20,
+      stroke: 'transparent',
+      draggable: false,
+      unselectable: true,
+      data: d.svgRepresentation.svgPaths
+        .map(({ svgCommands }) => svgCommands)
+        .join(' '),
     },
-    {
-      id: '7322031a-e61f-4c74-82c0-dec22bcf9476',
-      groupId: DocumentId.PID_DOCUMENT_1,
-      type: 'rect',
+  }));
+};
+
+const getAnnotationOverlay = (
+  document: Document,
+  annotationIds: string[],
+  prefix: string,
+  stroke = 'orange'
+): Drawing[] => {
+  return getAnnotationsByDocument(document)
+    .filter(({ id }) => annotationIds.includes(id))
+    .map((d) => ({
+      groupId: document.id,
+      id: `${prefix}-${d.id}`,
+      type: 'path',
       attrs: {
-        id: '7322031a-e61f-4c74-82c0-dec22bcf9476',
-        x: 58.157711577298016,
-        y: 836.7499766079911,
-        width: 486.38174943857615,
-        height: 623.2809603789535,
-        fill: 'rgba(255,255,255,0.8)',
-        strokeWidth: 0,
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_1,
-      },
-    },
-    {
-      id: '793e891a-13b4-483c-bd5d-4dafc37d0293',
-      groupId: DocumentId.PID_DOCUMENT_1,
-      type: 'rect',
-      attrs: {
-        id: '793e891a-13b4-483c-bd5d-4dafc37d0293',
-        x: 546.7394418451793,
-        y: 1459.8301461020578,
-        width: 1486.970291189789,
-        height: -287.15444246030347,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_1,
+        id: `${prefix}-${d.id}`,
+        ...mapPathToNewCoordinateSystem(
+          document._annotations.viewBox,
+          d.svgRepresentation.boundingBox,
+          { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
+        ),
+        strokeScaleEnabled: false,
+        strokeWidth: 6,
+        dash: [6, 6],
         draggable: false,
-        rotation: 0,
-        scaleX: 0.9947954798765213,
-        scaleY: 0.9598418230253337,
+        unselectable: true,
+        data: d.svgRepresentation.svgPaths
+          .map(({ svgCommands }) => svgCommands)
+          .join(' '),
+        stroke,
       },
-    },
-    {
-      id: '9e9ebe21-bfdb-4dce-b32a-c797d7a9a91d',
-      groupId: DocumentId.PID_DOCUMENT_1,
-      type: 'rect',
-      attrs: {
-        id: '9e9ebe21-bfdb-4dce-b32a-c797d7a9a91d',
-        x: 974.1581229913671,
-        y: 835.6369748930288,
-        width: 1460,
-        height: 288.26744417526584,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_1,
-        scaleX: 1,
-        scaleY: 1,
-      },
-    },
-    {
-      id: '9e9ebe21-bfdb-4dce-b32a-c797d7a9a91d',
-      groupId: DocumentId.PID_DOCUMENT_1,
-      type: 'rect',
-      attrs: {
-        id: '9e9ebe21-bfdb-4dce-b32a-c797d7a9a91d',
-        x: 774.1581229913671,
-        y: 20,
-        width: 960,
-        height: 288.26744417526584,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_1,
-        scaleX: 1,
-        scaleY: 1,
-      },
-    },
-  ];
+    }));
+};
 
-  const PID_2: Drawing[] = [
-    {
-      id: 'a1eb6734-a002-455f-bb9b-e86ec39aac3e',
-      type: 'rect',
-      groupId: DocumentId.PID_DOCUMENT_2,
+const RADIUS = 10;
+const getDiscrepancyCircleMarkersForDocument = (
+  document: Document,
+  discrepancies: Discrepancy[]
+): Drawing[] =>
+  discrepancies
+    .map((discrepancy) =>
+      head(
+        sortBy(
+          getAnnotationsByDocument(document)
+            .filter(({ id }) => discrepancy.ids.includes(id))
+            .map(
+              (d) =>
+                mapPathToNewCoordinateSystem(
+                  document._annotations.viewBox,
+                  d.svgRepresentation.boundingBox,
+                  { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
+                ),
+              ({ y }: { y: number }) => y
+            )
+        )
+      )
+    )
+    .filter(isNotUndefined)
+    .map(({ x, y }: { x: number; y: number }, index) => ({
+      groupId: document.id,
+      id: `circle-marker-${index}`,
+      type: 'circleMarker',
       attrs: {
-        id: 'a1eb6734-a002-455f-bb9b-e86ec39aac3e',
-        x: 81.6312165263962,
-        y: 32.20543228768186,
-        width: 905.467482785004,
-        height: 449.86228003060444,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_2,
+        id: `circle-marker-${index}`,
+        draggable: false,
+        unselectable: true,
+        pinnedTo: {
+          x,
+          y,
+        },
+        number: index + 1,
+        radius: RADIUS,
+        color: '#CF1A17',
       },
-    },
-    {
-      id: '879c33b8-4678-4d93-a265-eea3454d7b00',
-      type: 'rect',
-      groupId: DocumentId.PID_DOCUMENT_2,
-      attrs: {
-        id: '879c33b8-4678-4d93-a265-eea3454d7b00',
-        x: 1013.8990053557764,
-        y: 258.0937260902832,
-        width: 1416.5876052027543,
-        height: 1183.0420811017598,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_2,
-      },
-    },
-    {
-      id: '84213992-cfa7-4167-b99f-baf49ce6d8b4',
-      type: 'rect',
-      groupId: DocumentId.PID_DOCUMENT_2,
-      attrs: {
-        id: '84213992-cfa7-4167-b99f-baf49ce6d8b4',
-        x: 1299.1308339709258,
-        y: 30.29112471308354,
-        width: 1135.1843917368014,
-        height: 227.80260137719966,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_2,
-      },
-    },
-    {
-      id: '27fc39a3-856d-47fa-8932-757269c2835d',
-      type: 'rect',
-      groupId: DocumentId.PID_DOCUMENT_2,
-      attrs: {
-        id: '27fc39a3-856d-47fa-8932-757269c2835d',
-        x: 64.72338192751567,
-        y: 962.4768248894226,
-        width: 406.0770139564311,
-        height: 137.85640326196187,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_2,
-      },
-    },
-  ];
+    }));
 
-  const PID_3: Drawing[] = [
-    {
-      id: 'fca00b33-0566-4295-8827-ae2900c3cb88',
-      type: 'rect',
-      groupId: DocumentId.PID_DOCUMENT_3,
-      attrs: {
-        id: 'fca00b33-0566-4295-8827-ae2900c3cb88',
-        x: 735.2645735417245,
-        y: 19.95858954405386,
-        width: 594.8803488586827,
-        height: 632.3413280059549,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_3,
-      },
-    },
-    {
-      id: '4952fe77-eec2-4017-b918-5fea4f5d2765',
-      type: 'rect',
-      groupId: DocumentId.PID_DOCUMENT_3,
-      attrs: {
-        id: '4952fe77-eec2-4017-b918-5fea4f5d2765',
-        x: 1592.3717764313133,
-        y: 799.1469558073159,
-        width: -262.226854030906,
-        height: -445.03643226959383,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_3,
-      },
-    },
-    {
-      id: 'd5df38d2-0f50-43cd-94da-f1bf12bcb462',
-      type: 'rect',
-      groupId: DocumentId.PID_DOCUMENT_3,
-      attrs: {
-        id: 'd5df38d2-0f50-43cd-94da-f1bf12bcb462',
-        x: 2428.5008309984287,
-        y: 1125.8066939715295,
-        width: -923.0385261887868,
-        height: -368.61603480915846,
-        fill: 'rgba(255,255,255,0.8)',
-        userGenerated: true,
-        type: 'rect',
-        name: 'drawing',
-        inGroup: DocumentId.PID_DOCUMENT_3,
-      },
-    },
-  ];
+const findBoundingBoxByPathId = (document: Document, pathId: string) => {
+  const datum = document._annotations.symbolInstances.find(
+    ({ id }) => id === pathId
+  );
 
-  return [...PID_1, ...PID_2, ...PID_3];
+  if (!datum) {
+    return undefined;
+  }
+
+  return mapPathToNewCoordinateSystem(
+    document._annotations.viewBox,
+    datum.svgRepresentation.boundingBox,
+    { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
+  );
+};
+
+const getIsoAnnotationIdByPidAnnotationId = (
+  linking: Link[],
+  pidPathId: string
+): string | undefined => {
+  const match = linking.find((link) => link['p&id'] === pidPathId);
+
+  if (!match) {
+    console.log('Did not find element in ISO corresponding to PID');
+    return undefined;
+  }
+
+  return match.iso;
 };
 
 const connections: DocumentConnection[] = [
@@ -251,67 +181,52 @@ const connections: DocumentConnection[] = [
   ['CONNECT_ANNOTATION_3', 'CONNECT_ANNOTATION_4'],
 ];
 
-const LineReviewViewer: React.FC<LineReviewViewerProps> = ({ lineReview }) => {
+const flashDrawing = async (
+  ornateRef: CogniteOrnate,
+  drawing: Drawing,
+  times = 3,
+  delay = 200
+) => {
+  for (let i = 0; i < times; i++) {
+    ornateRef.addDrawings(drawing);
+    // eslint-disable-next-line no-await-in-loop
+    await delayMs(delay);
+    if (drawing.id) {
+      ornateRef.removeShapeById(drawing.id);
+    }
+    // eslint-disable-next-line no-await-in-loop
+    await delayMs(delay);
+  }
+};
+
+export type Discrepancy = {
+  id: string;
+  ids: string[];
+  comment: string;
+  createdAt: Date;
+};
+
+const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
+  lineReview,
+  onOrnateRef,
+}) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [documents, setDocuments] = useState<
     ReactOrnateProps['documents'] | undefined
   >(undefined);
   const [isDiscrepancyModalOpen, setIsDiscrepancyModalOpen] = useState(false);
   const [isIsoModalOpen, setIsIsoModalOpen] = useState(false);
+  const [selectedAnnotationIds, setSelectedAnnotationIds] = useState<string[]>(
+    []
+  );
+  const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
+    undefined
+  );
+  const [discrepancies, setDiscrepancies] = useState<Discrepancy[]>([]);
+  const [pendingDiscrepancy, setPendingDiscrepancy] =
+    useState<Discrepancy | null>(null);
+  const [isAltPressed, setIsAltPressed] = useState(false);
   const { client } = useAuthContext();
-
-  const updateDrawings = () => {
-    setDrawings([
-      {
-        id: 'DISCREPANCY',
-        type: 'line',
-        groupId: DocumentId.PID_DOCUMENT_1,
-        attrs: {
-          points: [
-            820.7412073300046, 986.1067820019232, 820.7412073300046,
-            1140.2631877622773, 2093.1432866218165, 1141.486651300058,
-            2091.919823084036, 1243.0341249358469,
-          ],
-          stroke: '#CF1A17',
-          dash: [6, 6],
-          strokeWidth: 6,
-          userGenerated: true,
-          name: 'drawing',
-          type: 'line',
-          unselectable: true,
-        },
-        onClick: () => {
-          setIsDiscrepancyModalOpen(true);
-        },
-      },
-      ...getDocumentOpacities(),
-    ]);
-  };
-
-  const [drawings, setDrawings] = useState<Drawing[]>([
-    {
-      id: 'DISCREPANCY',
-      type: 'line',
-      groupId: DocumentId.PID_DOCUMENT_1,
-      attrs: {
-        points: [
-          820.7412073300046, 986.1067820019232, 820.7412073300046,
-          1140.2631877622773, 2093.1432866218165, 1141.486651300058,
-          2091.919823084036, 1243.0341249358469,
-        ],
-        stroke: 'rgba(0,0,0,0.01)',
-        strokeWidth: 30,
-        userGenerated: true,
-        name: 'drawing',
-        type: 'line',
-        unselectable: true,
-      },
-      onClick: () => {
-        setIsDiscrepancyModalOpen(true);
-      },
-    },
-    ...getDocumentOpacities(),
-  ]);
 
   useEffect(() => {
     (async () => {
@@ -339,6 +254,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({ lineReview }) => {
             })),
         ])
       );
+
       setIsInitialized(true);
     })();
   }, []);
@@ -347,46 +263,225 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({ lineReview }) => {
     return null;
   }
 
-  // --TODO: Be able to modify drawings from here and they will be adopted by ReactOrnate
+  const toggleAnnotationSelection = (annotationId: string) =>
+    setSelectedAnnotationIds((annotationIds: string[]) => {
+      if (annotationIds.includes(annotationId)) {
+        return annotationIds.filter((id) => id !== annotationId);
+      }
+
+      // The annotations are sorted because we join their ids to be the id
+      // of the discrepancy
+      return [...annotationIds, annotationId].sort();
+    });
+
+  const centerOnIsoAnnotationByPidAnnotationId = (
+    documents: Document[],
+    pidAnnotationId: string
+  ) => {
+    if (!isIsoModalOpen) {
+      setIsIsoModalOpen(true);
+    }
+
+    if (!isoOrnateRef) {
+      console.log('isoOrnateRef was not defined, exiting early');
+      return;
+    }
+
+    const linking = documents
+      .filter(({ type }) => type === DocumentType.PID)
+      .flatMap(({ _linking }) => _linking);
+
+    const isoPathId = getIsoAnnotationIdByPidAnnotationId(
+      linking,
+      pidAnnotationId
+    );
+    if (!isoPathId) {
+      console.log('Could not find isoPathId for annotationId', pidAnnotationId);
+      return;
+    }
+
+    // TODOO: Handle multiple ISOs
+    const isoDocument = documents.find(({ type }) => type === DocumentType.ISO);
+
+    if (!isoDocument) {
+      console.error('No ISO document available');
+      return;
+    }
+
+    const isoBoundingBox = findBoundingBoxByPathId(isoDocument, isoPathId);
+    if (!isoBoundingBox) {
+      console.log('Could not find isoBoundingBox for isoPathId', isoPathId);
+      return;
+    }
+
+    isoOrnateRef.zoomToLocation(
+      {
+        x: ISO_MODAL_ORNATE_WIDTH_PX / 2 - isoBoundingBox.x,
+        y: ISO_MODAL_ORNATE_HEIGHT_PX / 2 - isoBoundingBox.y,
+      },
+      1
+    );
+
+    const drawings: Drawing[] = isoDocument._annotations.symbolInstances
+      .filter(({ id }) => id === isoPathId)
+      .map((d) => ({
+        id: `flash-${d.id}`,
+        type: 'path',
+        attrs: {
+          id: `flash-${d.id}`,
+          ...mapPathToNewCoordinateSystem(
+            // TODOO: Handle multiple ISOs
+            isoDocument._annotations.viewBox,
+            d.svgRepresentation.boundingBox,
+            { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
+          ),
+          strokeScaleEnabled: false,
+          strokeWidth: 4,
+          dash: [1, 1],
+          draggable: false,
+          unselectable: true,
+          lineJoin: 'bevel',
+          data: d.svgRepresentation.svgPaths
+            .map(({ svgCommands }) => svgCommands)
+            .join(' '),
+          stroke: 'blue',
+        },
+      }));
+
+    if (drawings.length <= 0) {
+      return;
+    }
+
+    if (isoOrnateRef) {
+      flashDrawing(isoOrnateRef, drawings[0]);
+    }
+  };
+
+  const onAnnotationClick = (
+    { evt }: KonvaEventObject<MouseEvent>,
+    annotationId: string
+  ): void => {
+    console.log('Clicked');
+    if (evt.shiftKey) {
+      toggleAnnotationSelection(annotationId);
+      return;
+    }
+
+    if (evt.altKey) {
+      centerOnIsoAnnotationByPidAnnotationId(
+        lineReview.documents,
+        annotationId
+      );
+      return;
+    }
+
+    const foundDiscrepancy = discrepancies.find((discrepancy) =>
+      discrepancy.ids.includes(annotationId)
+    );
+    if (foundDiscrepancy) {
+      setPendingDiscrepancy(foundDiscrepancy);
+      setIsDiscrepancyModalOpen(true);
+      return;
+    }
+
+    if (selectedAnnotationIds.length > 0) {
+      setPendingDiscrepancy({
+        id: selectedAnnotationIds.join('-'),
+        ids: selectedAnnotationIds,
+        comment: '',
+        createdAt: new Date(),
+      });
+      setIsDiscrepancyModalOpen(true);
+    }
+  };
+
+  const onDeletePendingDiscrepancy = () => {
+    setSelectedAnnotationIds([]);
+    setIsDiscrepancyModalOpen(false);
+    if (!pendingDiscrepancy) {
+      return;
+    }
+    setDiscrepancies((discrepancies) =>
+      discrepancies.filter(({ id }) => id !== pendingDiscrepancy.id)
+    );
+  };
+
+  const onSaveDiscrepancy = (discrepancy: Discrepancy) => {
+    setDiscrepancies([
+      ...discrepancies.filter((d) => d.id !== discrepancy.id),
+      discrepancy,
+    ]);
+    setSelectedAnnotationIds([]);
+    setIsDiscrepancyModalOpen(false);
+  };
+
+  const getDrawingsByDocumentId = (
+    documents: Document[],
+    documentId: DocumentId
+  ) => {
+    const document = documents.find((document) => document.id === documentId);
+
+    if (document === undefined) {
+      console.warn("Document didn't exist");
+      return [];
+    }
+
+    return [
+      ...document._opacities,
+      ...getAnnotationOverlay(
+        document,
+        selectedAnnotationIds,
+        'current-selection'
+      ),
+      ...discrepancies.flatMap((discrepancy) =>
+        getAnnotationOverlay(
+          document,
+          discrepancy.ids,
+          discrepancy.id,
+          '#CF1A17'
+        )
+      ),
+      ...getDiscrepancyCircleMarkersForDocument(document, discrepancies),
+      ...(isAltPressed && document._linking
+        ? getAnnotationOverlay(
+            document,
+            document._linking.map((link) => link['p&id']),
+            'navigatable',
+            'blue'
+          )
+        : []),
+      ...getInteractableOverlays(document, onAnnotationClick),
+    ];
+  };
+
+  const drawings = [
+    ...[
+      ...lineReview.documents.filter(({ type }) => type === DocumentType.PID),
+    ].flatMap((document) =>
+      getDrawingsByDocumentId(lineReview.documents, document.id)
+    ),
+  ];
+
   return (
     <>
-      <Modal
-        visible={isDiscrepancyModalOpen}
-        onCancel={() => {
-          setIsDiscrepancyModalOpen(false);
-        }}
-        footer={null}
-      >
-        <h2>
-          <Icon type="ExclamationMark" />
-          Potential discrepancy
-        </h2>
-        <p>Branch line connection to 41_N757 not found in ISO.</p>
-        <TextInput placeholder="Add comment..." style={{ width: '100%' }} />
-        <div
-          style={{
-            marginTop: 16,
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'flex-end',
+      {isDiscrepancyModalOpen && pendingDiscrepancy && (
+        <DiscrepancyModal
+          initialDiscrepancy={pendingDiscrepancy}
+          isOpen={isDiscrepancyModalOpen}
+          onClosePress={() => {
+            setIsDiscrepancyModalOpen(false);
           }}
-        >
-          <Button style={{ marginRight: 8 }}>...</Button>
-          <Button style={{ marginRight: 8 }}>Locate manually</Button>
-          <Button
-            type="primary"
-            style={{ marginRight: 8 }}
-            onClick={() => {
-              setIsDiscrepancyModalOpen(false);
-              updateDrawings();
-            }}
-          >
-            Validate
-          </Button>
-        </div>
-      </Modal>
+          onDeletePress={onDeletePendingDiscrepancy}
+          onSave={onSaveDiscrepancy}
+        />
+      )}
+
       <IsoModal
+        document={lineReview.documents.find(
+          ({ type }) => type === DocumentType.ISO
+        )}
         visible={isIsoModalOpen}
+        onOrnateRef={setIsoOrnateRef}
         onHidePress={() => setIsIsoModalOpen(false)}
       />
       <div
@@ -410,10 +505,16 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({ lineReview }) => {
             </Button>
           </div>
         )}
+        <KeyboardShortcut
+          keys="alt"
+          onKeyDown={() => setIsAltPressed(true)}
+          onKeyRelease={() => setIsAltPressed(false)}
+        />
         <ReactOrnate
           documents={documents}
           drawings={drawings}
           connections={connections}
+          onOrnateRef={onOrnateRef}
         />
       </div>
     </>
