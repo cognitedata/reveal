@@ -21,6 +21,7 @@
         "${env:PLATYPUS_CLI_CLIENT_SECRET}"
       ],
       "envFile": "${workspaceFolder}/.env",
+      "preLaunchTask": "build:cli",
       "console": "integratedTerminal"
     }
   ]

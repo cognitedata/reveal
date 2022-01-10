@@ -17,6 +17,7 @@ import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
 export type TemplateGenerateCommandArgs = BaseArgs & {
   ['plugins']?: string[];
   ['output-file']?: string;
+  ['operations-file']?: string;
 };
 
 const commandArgs = [
@@ -30,6 +31,13 @@ const commandArgs = [
     options: {
       choices: SupportedGraphQLGeneratorPlugins,
     },
+  },
+  {
+    name: 'operations-file',
+    description: 'Path to the operations.graphql file',
+    required: false,
+    type: CommandArgumentType.STRING,
+    prompt: 'Enter the path to the operations.graphql file',
   },
   {
     name: 'output-file',
@@ -66,6 +74,7 @@ class TemplateGenerateCommand extends CLICommand {
       }
       await generate({
         schema: printSchema(buildClientSchema(response.data)),
+        documents: args['operations-file'],
         generates: {
           [(cwd(), args['output-file'])]: { plugins },
         },

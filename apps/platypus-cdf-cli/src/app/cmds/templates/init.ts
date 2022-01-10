@@ -105,11 +105,4 @@ class TemplateInitCommand implements CommandModule {
   }
 }
 
-const isValidSolutionName = (name: string) => {
-  if (existsSync(join(cwd(), name))) {
-    return `There already exist a file/folder with name "${name}", make sure you are using a unique name`;
-  }
-  return true;
-};
-
 export default new TemplateInitCommand();
