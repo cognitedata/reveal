@@ -24,24 +24,23 @@ export const StyledSplitPane = styled(SplitPane)`
   .Resizer.horizontal {
     position: relative;
     width: 100%;
-    height: 4px;
-    border-bottom: 1px solid var(--cogs-greyscale-grey3);
+    height: 14px;
+    border-top: 1px solid var(--cogs-greyscale-grey4);
     opacity: 1;
-    margin-bottom: 13px;
+    margin-top: 10px;
     cursor: row-resize;
 
     &::before {
       content: url(${handle});
       position: absolute;
       z-index: ${Layers.MAXIMUM};
-      top: -7px;
-      width: 36px;
-      height: 24px;
-      left: calc(50% - 10px);
-      background: white;
-      border: 1px solid var(--cogs-greyscale-grey3);
-      border-radius: 5px;
-      padding: 3px 9px;
+      top: -2px;
+      width: 24px;
+      height: 14px;
+      left: calc(50% - 12px);
+    }
+    &:hover {
+      background: var(--cogs-greyscale-grey1);
     }
   }
   .Resizer.disabled {

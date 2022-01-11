@@ -1,21 +1,29 @@
 import { Menu } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
 import { availableColors } from 'utils/colors';
 import { trackUsage } from 'services/metrics';
 
-type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
+import {
+  DropdownWrapper,
+  MenuWrapper,
+  PreviewContainer,
+  ColorPreview,
+  WeightLine,
+  TypeLine,
+} from './elements';
 
-export const AppearanceDropdown = ({
-  update,
-}: {
-  update: (diff: any) => void;
-}) => {
+export type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
+
+export type AppearanceDropdownProps = {
+  onUpdate: (diff: any) => void;
+};
+
+export const AppearanceDropdown = ({ onUpdate }: AppearanceDropdownProps) => {
   return (
-    <Menu>
+    <Menu style={{ maxWidth: 330 }}>
       <DropdownWrapper>
         <ColorDropdown
           onColorSelected={(newColor) => {
-            update({
+            onUpdate({
               color: newColor,
             });
             trackUsage('ChartView.ChangeAppearance', { type: 'color' });
@@ -23,7 +31,7 @@ export const AppearanceDropdown = ({
         />
         <WeightDropdown
           onWeightSelected={(newWeight) => {
-            update({
+            onUpdate({
               lineWeight: newWeight,
             });
             trackUsage('ChartView.ChangeAppearance', { type: 'line-weight' });
@@ -31,7 +39,7 @@ export const AppearanceDropdown = ({
         />
         <TypeDropdown
           onStyleSelected={(newStyle) => {
-            update({
+            onUpdate({
               displayMode: newStyle === 'none' ? 'markers' : 'lines',
               lineStyle: newStyle,
             });
@@ -115,47 +123,3 @@ const TypePreview = ({ type }: { type: string }) => (
     <TypeLine type={type} />
   </PreviewContainer>
 );
-
-const DropdownWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 250px;
-  overflow: hidden;
-`;
-
-const MenuWrapper = styled.div`
-  max-height: 250px;
-  overflow-y: auto;
-  padding: 0 10px;
-  border-left: 1px solid var(--cogs-border-default);
-
-  &:first-child {
-    padding: 0;
-    border-left: none;
-  }
-`;
-
-const PreviewContainer = styled.div`
-  width: 16px;
-  height: 16px;
-  margin-right: 10px;
-`;
-
-const ColorPreview = styled(PreviewContainer)`
-  background-color: ${(props) => props.color};
-  border-radius: 2px;
-`;
-
-const WeightLine = styled.div`
-  width: 10px;
-  height: 10px;
-  border-bottom: ${(props: { weight: number }) => props.weight}px solid black;
-  position: absolute;
-`;
-
-const TypeLine = styled.div`
-  width: 20px;
-  height: 10px;
-  border-bottom: 3px ${(props: { type: string }) => props.type} black;
-  position: absolute;
-`;

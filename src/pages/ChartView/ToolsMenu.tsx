@@ -2,14 +2,14 @@ import { Menu } from '@cognite/cogs.js';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 
 type Props = {
-  update: (diff: any) => void;
+  onUpdate: (diff: any) => void;
 };
-export default function ToolsMenu({ update }: Props) {
+export default function ToolsMenu({ onUpdate }: Props) {
   return (
     <Menu.Submenu
       content={
         <Menu>
-          <Menu.Submenu content={<AppearanceDropdown update={update} />}>
+          <Menu.Submenu content={<AppearanceDropdown onUpdate={onUpdate} />}>
             <span>Appearance</span>
           </Menu.Submenu>
           <Menu.Submenu

@@ -11,9 +11,11 @@ interface EditableTextProps {
   editing?: boolean;
   hideButtons?: boolean;
   hideEdit?: boolean;
+  isError?: boolean;
 }
 
 const EditableText = ({
+  isError = false,
   value,
   onChange,
   onCancel,
@@ -84,7 +86,13 @@ const EditableText = ({
   }
   return (
     <Wrapper>
-      <div>{value}</div>
+      <div
+        style={{
+          color: isError ? 'var(--cogs-red)' : 'var(--cogs-text-color)',
+        }}
+      >
+        {value}
+      </div>
       {!hideEdit && (
         <div className="edit-button" style={{ marginLeft: 4 }}>
           <ClickBoundary>

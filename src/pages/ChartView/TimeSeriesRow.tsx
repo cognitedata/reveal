@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Chart, ChartTimeSeries } from 'models/chart/types';
 import { Button, Dropdown, Tooltip, Popconfirm } from '@cognite/cogs.js';
 import { removeTimeseries, updateTimeseries } from 'models/chart/updates';
@@ -29,13 +29,15 @@ import {
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { timeseriesAtom } from 'models/timeseries/atom';
+import { StyleButton } from 'components/StyleButton/StyleButton';
 import {
   SourceItem,
-  SourceCircle,
   SourceName,
   SourceRow,
   SourceDescription,
   SourceTag,
+  SourceStatus,
+  StyledStatusIcon,
 } from './elements';
 
 type Props = {
@@ -70,10 +72,10 @@ export default function TimeSeriesRow({
     description,
     name,
     unit,
+    color,
     preferredUnit,
     originalUnit,
     enabled,
-    color,
     tsExternalId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
@@ -87,22 +89,25 @@ export default function TimeSeriesRow({
     equalityFn: (l, r) => isEqual(l, r),
   });
 
-  const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
-    mutate((oldChart) => ({
-      ...oldChart!,
-      timeSeriesCollection: oldChart!.timeSeriesCollection?.map((t) =>
-        t.id === _tsId
-          ? {
-              ...t,
-              ...diff,
-            }
-          : t
-      ),
-    }));
+  const update = useCallback(
+    (_tsId: string, diff: Partial<ChartTimeSeries>) =>
+      mutate((oldChart) => ({
+        ...oldChart!,
+        timeSeriesCollection: oldChart!.timeSeriesCollection?.map((t) =>
+          t.id === _tsId
+            ? {
+                ...t,
+                ...diff,
+              }
+            : t
+        ),
+      })),
+    [mutate]
+  );
 
   const remove = () => mutate((oldChart) => removeTimeseries(oldChart!, id));
 
-  const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
+  const handleUpdateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate((oldChart) => updateTimeseries(oldChart!, id, diff));
 
   const updateUnit = async (unitOption: any) => {
@@ -259,27 +264,51 @@ export default function TimeSeriesRow({
   const summary = useRecoilValue(timeseriesSummaryById(tsExternalId));
   const convertUnit = getUnitConverter(unit, preferredUnit);
 
+  const handleStatusIconClick = useCallback(
+    (event) => {
+      event.stopPropagation();
+      update(id, {
+        enabled: !enabled,
+      });
+    },
+    [enabled, id, update]
+  );
+
   return (
     <SourceRow
+      aria-hidden={!enabled}
+      aria-selected={isSelected}
       key={id}
       onClick={() => !disabled && onRowClick(id)}
-      className={isSelected ? 'active' : undefined}
       ref={draggable ? provided?.innerRef : null}
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
     >
+      {isWorkspaceMode && (
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
+          <Dropdown
+            disabled={!enabled}
+            content={<AppearanceDropdown onUpdate={handleUpdateAppearance} />}
+          >
+            <StyleButton
+              styleType="ResourceTimeseries"
+              styleColor={color}
+              label="Timeseries"
+            />
+          </Dropdown>
+        </td>
+      )}
       <td>
         <SourceItem isDisabled={disabled} key={id}>
-          <SourceCircle
-            onClick={(event) => {
-              event.stopPropagation();
-              update(id, {
-                enabled: !enabled,
-              });
-            }}
-            color={color}
-            fade={!enabled}
-          />
+          <SourceStatus onClick={handleStatusIconClick}>
+            <StyledStatusIcon
+              type={enabled ? 'EyeShow' : 'EyeHide'}
+              title="Toggle visibility"
+            />
+          </SourceStatus>
           <SourceName title={name}>
             {!isFileViewerMode && (
               <EditableText
@@ -300,7 +329,12 @@ export default function TimeSeriesRow({
       </td>
       {(isWorkspaceMode || isFileViewerMode) && (
         <>
-          <td>
+          <td className="bordered">
+            <SourceItem>
+              <SourceTag>{linkedAsset?.name}</SourceTag>
+            </SourceItem>
+          </td>
+          <td className="bordered">
             <SourceItem>
               <SourceDescription>
                 <Tooltip content={description}>
@@ -309,20 +343,22 @@ export default function TimeSeriesRow({
               </SourceDescription>
             </SourceItem>
           </td>
-          <td>
-            <SourceItem>
-              <SourceTag>{linkedAsset?.name}</SourceTag>
-            </SourceItem>
-          </td>
         </>
       )}
       {isWorkspaceMode && (
         <>
-          <td>{formatValueForDisplay(convertUnit(summary?.min))}</td>
-          <td>{formatValueForDisplay(convertUnit(summary?.max))}</td>
-          <td>{formatValueForDisplay(convertUnit(summary?.mean))}</td>
-          <td style={{ textAlign: 'right', paddingRight: 8 }}>
+          <td className="bordered">
+            {formatValueForDisplay(convertUnit(summary?.min))}
+          </td>
+          <td className="bordered">
+            {formatValueForDisplay(convertUnit(summary?.max))}
+          </td>
+          <td className="bordered">
+            {formatValueForDisplay(convertUnit(summary?.mean))}
+          </td>
+          <td className="col-unit">
             <UnitDropdown
+              disabled={!enabled}
               unit={unit}
               originalUnit={originalUnit}
               preferredUnit={preferredUnit}
@@ -336,7 +372,7 @@ export default function TimeSeriesRow({
       {(isWorkspaceMode || isFileViewerMode) && (
         <td
           style={{ textAlign: 'center', paddingLeft: 0 }}
-          className="downloadChartHide"
+          className="downloadChartHide col-action"
         >
           <PnidButton
             timeseriesExternalId={tsExternalId}
@@ -345,25 +381,10 @@ export default function TimeSeriesRow({
           />
         </td>
       )}
-      {isWorkspaceMode && (
-        <td
-          style={{ textAlign: 'center', paddingLeft: 0 }}
-          className="downloadChartHide"
-        >
-          <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
-            <Button
-              type="ghost"
-              icon="ResourceTimeseries"
-              style={{ height: 28 }}
-              aria-label="timeseries"
-            />
-          </Dropdown>
-        </td>
-      )}
       {(isWorkspaceMode || isFileViewerMode) && (
         <td
           style={{ textAlign: 'center', paddingLeft: 0 }}
-          className="downloadChartHide"
+          className="downloadChartHide col-action"
         >
           <Popconfirm
             onConfirm={remove}
@@ -385,7 +406,7 @@ export default function TimeSeriesRow({
         <>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide"
+            className="downloadChartHide col-action"
           >
             <Button
               type="ghost"
@@ -402,7 +423,7 @@ export default function TimeSeriesRow({
           </td>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide"
+            className="downloadChartHide col-action"
           >
             {!isFileViewerMode && (
               // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>

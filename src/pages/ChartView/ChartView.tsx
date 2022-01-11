@@ -21,6 +21,7 @@ import Search from 'components/Search';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  Chart,
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
@@ -35,9 +36,11 @@ import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { addWorkflow } from 'models/chart/updates';
+import { addWorkflow, updateAllRowsVisibility } from 'models/chart/updates';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
+
 import { Elements } from 'react-flow-renderer';
 import {
   NodeDataDehydratedVariants,
@@ -52,8 +55,6 @@ import {
   ChartWrapper,
   ContentWrapper,
   Header,
-  SourceItem,
-  SourceName,
   SourceTable,
   SourceTableWrapper,
   TopPaneWrapper,
@@ -72,6 +73,7 @@ const CHART_SETTINGS_KEYS = {
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [showAllChartRows, setShowAllChartRows] = useState(true);
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: login } = useUserInfo();
@@ -132,7 +134,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
-  const isWorkspaceMode = workspaceMode === 'workspace';
 
   const showYAxis = get(chart, 'settings.showYAxis', true);
   const showMinMax = get(chart, 'settings.showMinMax', false);
@@ -175,6 +176,17 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       setShowSearch(true);
     }
   }, [query, showSearch]);
+
+  /**
+   * Show Hide All Rows from Table Header icon click
+   */
+  useEffect(() => {
+    setChart((oldChart?: Chart): Chart | undefined => {
+      if (!oldChart) return undefined;
+
+      return updateAllRowsVisibility(oldChart, showAllChartRows);
+    });
+  }, [showAllChartRows, setChart]);
 
   const openNodeEditor = () => {
     setWorkspaceMode('editor');
@@ -290,6 +302,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
+  const handleShowHideButtonClick = () =>
+    setShowAllChartRows((prevState) => !prevState);
+
   const handleSettingsToggle = async (key: string, value: boolean) => {
     setChart((oldChart) => ({
       ...oldChart!,
@@ -321,99 +336,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   ];
   const selectedSourceItem = sources.find((s) => s.id === selectedSourceId);
 
-  const sourceTableHeaderRow = (
-    <tr>
-      <th>
-        <SourceItem>
-          <SourceName>
-            <Icon
-              type="EyeShow"
-              style={{
-                marginLeft: 7,
-                marginRight: 20,
-                verticalAlign: 'middle',
-              }}
-            />
-            Name
-          </SourceName>
-        </SourceItem>
-      </th>
-      {isWorkspaceMode && (
-        <>
-          <th style={{ width: 250 }}>
-            <SourceItem>
-              <SourceName>Description</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 210 }}>
-            <SourceItem>
-              <SourceName>Tag</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 60 }}>
-            <SourceItem>
-              <SourceName>Min</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 60 }}>
-            <SourceItem>
-              <SourceName>Max</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 60 }}>
-            <SourceItem>
-              <SourceName>Mean</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 180, paddingRight: 8 }}>
-            <SourceItem style={{ justifyContent: 'flex-end' }}>
-              <SourceName>Unit</SourceName>
-            </SourceItem>
-          </th>
-          <th
-            style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHide"
-          >
-            <SourceItem style={{ justifyContent: 'center' }}>
-              <SourceName>P&amp;IDs</SourceName>
-            </SourceItem>
-          </th>
-          <th
-            style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHide"
-          >
-            <SourceItem style={{ justifyContent: 'center' }}>
-              <SourceName>Style</SourceName>
-            </SourceItem>
-          </th>
-          <th
-            style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHide"
-          >
-            <SourceItem style={{ justifyContent: 'center' }}>
-              <SourceName>Remove</SourceName>
-            </SourceItem>
-          </th>
-          <th
-            style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHide"
-          >
-            <SourceItem style={{ justifyContent: 'center' }}>
-              <SourceName>Details</SourceName>
-            </SourceItem>
-          </th>
-          <th
-            style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHide"
-          >
-            <SourceItem style={{ justifyContent: 'center' }}>
-              <SourceName>More</SourceName>
-            </SourceItem>
-          </th>
-        </>
-      )}
-    </tr>
-  );
   const reorder = (
     sourceCollection: SourceCollectionData[],
     startIndex: number,
@@ -586,7 +508,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                     <div style={{ display: 'flex', height: '100%' }}>
                       <SourceTableWrapper>
                         <SourceTable ref={provided.innerRef}>
-                          <thead>{sourceTableHeaderRow}</thead>
+                          <SourceTableHeader
+                            mode={workspaceMode}
+                            onShowHideButtonClick={handleShowHideButtonClick}
+                            showHideIconState={showAllChartRows}
+                          />
                           <tbody>
                             <SourceRows
                               draggable

@@ -8,12 +8,7 @@ import { useAsset } from 'hooks/cdf-assets';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
-import {
-  SourceTableWrapper,
-  SourceTable,
-  SourceItem,
-  SourceName,
-} from 'pages/ChartView/elements';
+import { SourceTableWrapper, SourceTable } from 'pages/ChartView/elements';
 import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
@@ -21,6 +16,9 @@ import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
+import { Chart } from 'models/chart/types';
+import { updateAllRowsVisibility } from 'models/chart/updates';
 
 export const FileView = () => {
   const [chart, setChart] = useRecoilState(chartAtom);
@@ -31,7 +29,8 @@ export const FileView = () => {
   }>();
 
   const [selectedFile, setSelectedFile] = useState<File>();
-  const [showLinkedAssets, setShowLinkedAssets] = useState<boolean>(false);
+  const [showLinkedAssets, setShowLinkedAssets] = useState(false);
+  const [showAllChartRows, setShowAllChartRows] = useState(true);
   const move = useNavigate();
 
   const { data: asset, isFetched: isAssetFetched } = useAsset(Number(assetId));
@@ -45,10 +44,23 @@ export const FileView = () => {
         selectedFile?.assetIds?.length > 0,
     }
   );
+  const handleShowHideButtonClick = () => {
+    setShowAllChartRows((prevState) => !prevState);
+  };
 
   useEffect(() => {
     trackUsage('PageView.FileView');
   }, []);
+
+  /**
+   * Show Hide All Rows from Table Header icon click
+   */
+  useEffect(() => {
+    setChart((oldChart?: Chart): Chart | undefined => {
+      if (!oldChart) return undefined;
+      return updateAllRowsVisibility(oldChart, showAllChartRows);
+    });
+  }, [showAllChartRows, setChart]);
 
   if (!isAssetFetched) {
     return <Icon type="Loading" />;
@@ -61,46 +73,6 @@ export const FileView = () => {
   if (!chart) {
     return <>Chart not found!</>;
   }
-
-  const sourceTableHeaderRow = (
-    <tr>
-      <th style={{ width: 350 }}>
-        <SourceItem>
-          <SourceName>
-            <Icon
-              type="EyeShow"
-              style={{
-                marginLeft: 7,
-                marginRight: 20,
-                verticalAlign: 'middle',
-              }}
-            />
-            Name
-          </SourceName>
-        </SourceItem>
-      </th>
-      <th>
-        <SourceItem>
-          <SourceName>Description</SourceName>
-        </SourceItem>
-      </th>
-      <th style={{ width: 210 }}>
-        <SourceItem>
-          <SourceName>Tag</SourceName>
-        </SourceItem>
-      </th>
-      <th style={{ width: 50, paddingLeft: 0 }}>
-        <SourceItem style={{ justifyContent: 'center' }}>
-          <SourceName>P&amp;IDs</SourceName>
-        </SourceItem>
-      </th>
-      <th style={{ width: 50, paddingLeft: 0 }}>
-        <SourceItem style={{ justifyContent: 'center' }}>
-          <SourceName>Remove</SourceName>
-        </SourceItem>
-      </th>
-    </tr>
-  );
 
   return (
     <FileViewContainer>
@@ -145,7 +117,11 @@ export const FileView = () => {
           <div style={{ width: '100%' }}>
             <SourceTableWrapper>
               <SourceTable>
-                <thead>{sourceTableHeaderRow}</thead>
+                <SourceTableHeader
+                  mode="file"
+                  onShowHideButtonClick={handleShowHideButtonClick}
+                  showHideIconState={showAllChartRows}
+                />
                 <tbody>
                   <TimeSeriesRows
                     chart={chart}

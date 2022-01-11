@@ -2,15 +2,7 @@ import {
   CalculationStatusStatusEnum,
   Calculation,
 } from '@cognite/calculation-backend';
-import {
-  Button,
-  Dropdown,
-  Icon,
-  Menu,
-  Popconfirm,
-  Tooltip,
-} from '@cognite/cogs.js';
-
+import { Button, Dropdown, Menu, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { workflowsAtom } from 'models/workflows/atom';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import CalculationCallStatus from 'components/CalculationCallStatus';
@@ -36,32 +28,20 @@ import { removeWorkflow, updateWorkflow } from 'models/chart/updates';
 import { getHash } from 'utils/hash';
 import { calculateGranularity } from 'utils/timeseries';
 import { convertValue } from 'utils/units';
+import { getIconTypeFromStatus } from 'components/StatusIcon/StatusIcon';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
 import { validateSteps } from 'components/NodeEditor/V2/calculations';
+import { StyleButton } from 'components/StyleButton/StyleButton';
 import {
   SourceDescription,
   SourceItem,
   SourceName,
   SourceRow,
-  SourceSquare,
+  SourceStatus,
+  StyledStatusIcon,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
-
-const renderStatusIcon = (status?: CalculationStatusStatusEnum) => {
-  switch (status) {
-    case CalculationStatusStatusEnum.Pending:
-    case CalculationStatusStatusEnum.Running:
-      return <Icon type="Loading" />;
-    case CalculationStatusStatusEnum.Success:
-      return <Icon type="Checkmark" />;
-    case CalculationStatusStatusEnum.Failed:
-    case CalculationStatusStatusEnum.Error:
-      return <Icon type="ExclamationMark" title="Failed" />;
-    default:
-      return null;
-  }
-};
 
 type Props = {
   chart: Chart;
@@ -98,9 +78,12 @@ export default function WorkflowRow({
 
   const [, , operations] = useAvailableOps();
 
-  const update = (wfId: string, diff: Partial<ChartWorkflow>) => {
-    mutate((oldChart) => updateWorkflow(oldChart!, wfId, diff));
-  };
+  const update = useCallback(
+    (wfId: string, diff: Partial<ChartWorkflow>) => {
+      mutate((oldChart) => updateWorkflow(oldChart!, wfId, diff));
+    },
+    [mutate]
+  );
 
   const steps = useMemo(
     () =>
@@ -339,50 +322,88 @@ export default function WorkflowRow({
     });
   };
 
-  const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
+  const handleUpdateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate((oldChart) => updateWorkflow(oldChart!, id, diff));
+
+  const handleStatusIconClick = useCallback(
+    (event) => {
+      event.stopPropagation();
+      update(id, {
+        enabled: !enabled,
+      });
+    },
+    [enabled, id, update]
+  );
 
   return (
     <SourceRow
       onClick={() => onRowClick(id)}
-      className={isSelected ? 'active' : undefined}
+      aria-hidden={!enabled}
+      aria-selected={isSelected}
       onDoubleClick={openNodeEditor}
       ref={draggable ? provided?.innerRef : null}
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
     >
+      {isWorkspaceMode && (
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
+          <Dropdown
+            disabled={!enabled}
+            content={<AppearanceDropdown onUpdate={handleUpdateAppearance} />}
+          >
+            <StyleButton
+              styleType="Function"
+              styleColor={color}
+              label="Workflow Function"
+            />
+          </Dropdown>
+        </td>
+      )}
       <td>
         <SourceItem key={id}>
-          <SourceSquare
-            onClick={(event) => {
-              event.stopPropagation();
-              update(id, {
-                enabled: !enabled,
-              });
-            }}
-            color={color}
-            fade={!enabled}
-          />
-          {call && (
-            <div
-              style={{
-                marginRight: 10,
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
+          <SourceStatus
+            onClick={handleStatusIconClick}
+            onDoubleClick={(event) => event.stopPropagation()}
+          >
+            {!call && (
+              <StyledStatusIcon
+                type={enabled ? 'EyeShow' : 'EyeHide'}
+                title="Toggle visibility"
+              />
+            )}
+            {call && (
               <CalculationCallStatus
                 id={call.callId}
-                renderLoading={() =>
-                  renderStatusIcon(CalculationStatusStatusEnum.Running)
-                }
-                renderStatus={({ status }) => renderStatusIcon(status)}
+                renderLoading={() => (
+                  <StyledStatusIcon
+                    type={getIconTypeFromStatus(
+                      CalculationStatusStatusEnum.Running
+                    )}
+                    title="Toggle visibility"
+                  />
+                )}
+                renderStatus={({ status }) => (
+                  <StyledStatusIcon
+                    type={getIconTypeFromStatus(status)}
+                    title="Toggle visibility"
+                  />
+                )}
               />
-            </div>
+            )}
+          </SourceStatus>
+          {currentCallStatus.isError && (
+            <SourceName>
+              <span style={{ color: 'var(--cogs-red)', marginRight: 5 }}>
+                [Error]
+              </span>
+            </SourceName>
           )}
           <SourceName>
             <EditableText
+              isError={currentCallStatus.isError}
               value={name || 'noname'}
               onChange={(value) => {
                 update(id, { name: value });
@@ -397,7 +418,8 @@ export default function WorkflowRow({
       </td>
       {isWorkspaceMode && (
         <>
-          <td>
+          <td className="bordered" />
+          <td className="bordered">
             <SourceName>
               <SourceDescription>
                 <Tooltip content={name || 'noname'}>
@@ -406,9 +428,12 @@ export default function WorkflowRow({
               </SourceDescription>
             </SourceName>
           </td>
-          <td colSpan={4} />
-          <td style={{ textAlign: 'right', paddingRight: 8 }}>
+          <td className="bordered" />
+          <td className="bordered" />
+          <td className="bordered" />
+          <td className="col-unit">
             <UnitDropdown
+              disabled={!enabled}
               unit={unit}
               preferredUnit={preferredUnit}
               onOverrideUnitClick={updateUnit}
@@ -416,25 +441,10 @@ export default function WorkflowRow({
               onResetUnitClick={resetUnit}
             />
           </td>
-          <td className="downloadChartHide" />
+          <td className="downloadChartHide col-action" title="P&amp;IDS" />
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide"
-          >
-            <Dropdown
-              content={<AppearanceDropdown update={updateAppearance} />}
-            >
-              <Button
-                type="ghost"
-                icon="ResourceTimeseries"
-                style={{ height: 28 }}
-                aria-label="timeseries"
-              />
-            </Dropdown>
-          </td>
-          <td
-            style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide"
+            className="downloadChartHide col-action"
           >
             <Popconfirm
               onConfirm={remove}
@@ -455,7 +465,7 @@ export default function WorkflowRow({
           </td>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide"
+            className="downloadChartHide col-action"
           >
             <Button
               type="ghost"
@@ -472,7 +482,7 @@ export default function WorkflowRow({
           </td>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide"
+            className="downloadChartHide col-action"
           >
             <Dropdown
               content={

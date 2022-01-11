@@ -4,6 +4,7 @@ import { Menu, Button, Dropdown } from '@cognite/cogs.js';
 import { units, UnitTypes } from 'utils/units';
 
 type UnitDropdownProps = {
+  disabled?: boolean;
   unit?: string;
   originalUnit?: string;
   preferredUnit?: string;
@@ -13,6 +14,7 @@ type UnitDropdownProps = {
 };
 
 export const UnitDropdown = ({
+  disabled,
   unit,
   originalUnit,
   preferredUnit,
@@ -110,6 +112,7 @@ export const UnitDropdown = ({
 
   return (
     <Dropdown
+      disabled={disabled}
       content={
         <Menu>
           <MenuContainer>
@@ -136,8 +139,10 @@ export const UnitDropdown = ({
       }
     >
       <Button
+        disabled={disabled}
         icon="ChevronDownCompact"
         type="ghost"
+        variant="outline"
         iconPlacement="right"
         style={{ height: 28 }}
       >

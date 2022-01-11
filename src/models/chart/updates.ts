@@ -238,6 +238,29 @@ export const updateChartSettings = (
   };
 };
 
+/**
+ * function updateAllRowsVisibility
+ * @param chart Charts object
+ * @param showAllChartRows Boolean value to maintain charts rows visibility
+ * @returns Updated charts object with all rows of both collection [Timeseries/Workflow] enable status to be uniform.
+ */
+export const updateAllRowsVisibility = (
+  chart: Chart,
+  showAllChartRows: boolean
+) => {
+  return {
+    ...chart,
+    timeSeriesCollection: chart.timeSeriesCollection?.map((ts) => ({
+      ...ts,
+      enabled: showAllChartRows,
+    })),
+    workflowCollection: chart.workflowCollection?.map((ts) => ({
+      ...ts,
+      enabled: showAllChartRows,
+    })),
+  };
+};
+
 export const updateChartDateRange = (
   chart: Chart,
   dateFrom: Date | string | undefined,
