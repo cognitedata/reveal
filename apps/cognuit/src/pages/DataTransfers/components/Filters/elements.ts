@@ -7,7 +7,6 @@ export const FiltersWrapper = styled.div`
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-end;
-  width: 100%;
   flex-wrap: wrap;
 `;
 
@@ -21,7 +20,6 @@ export const DropdownButton = styled(Button)`
 export const StartContainer = styled.div`
   display: flex;
   align-items: flex-end;
-  margin-bottom: 1rem;
 `;
 
 export const FieldWrapper = styled.div`

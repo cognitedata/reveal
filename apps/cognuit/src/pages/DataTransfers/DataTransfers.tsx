@@ -87,6 +87,7 @@ const DataTransfers: React.FC = () => {
   return (
     <>
       <TableActions />
+
       <Table<DataTransfersTableData>
         rowKey={(data) => `datatypes-${data.id}`}
         dataSource={filteredData}

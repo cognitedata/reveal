@@ -3,21 +3,12 @@ import { Button } from '@cognite/cogs.js';
 
 export const TableActionsContainer = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 2rem;
 
   .cogs-menu-item {
     text-transform: capitalize;
-  }
-`;
-
-export const ColumnsSelector = styled.div`
-  margin-left: auto;
-  align-self: flex-end;
-  margin-bottom: 1rem;
-
-  > div {
-    margin-top: 2rem;
   }
 `;
 

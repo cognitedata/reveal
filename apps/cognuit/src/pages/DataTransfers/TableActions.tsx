@@ -1,5 +1,13 @@
 import React, { useEffect } from 'react';
-import { Button, Dropdown, Loader, Tooltip } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Dropdown,
+  Flex,
+  Label,
+  Loader,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
 import { useConfigurationsQuery } from 'services/endpoints/configurations/query';
@@ -14,10 +22,11 @@ import {
   updateFilters,
   initialState,
 } from 'contexts/DataTransfersContext';
+import { useConfigurationProject } from 'hooks/useConfigurationProject';
 
 import { DataTransfersTableData } from './types';
 import { Filters } from './components/Filters';
-import { TableActionsContainer, ColumnsSelector } from './elements';
+import { TableActionsContainer } from './elements';
 import { SelectColumnsMenu } from './components/Table/SelectColumnsMenu';
 import { usePrepareDataTransfersQuery } from './hooks/usePrepareDataTransfersQuery';
 import { getSelectedColumnsPersistently } from './utils/Table/managePersistentColumns';
@@ -29,6 +38,8 @@ const TableActions: React.FC = () => {
 
   const query = useQuery();
   const configurationNameFromUrl = query.get('configuration');
+
+  const configProject = useConfigurationProject();
 
   const dispatch = useDataTransfersDispatch();
   const {
@@ -112,6 +123,26 @@ const TableActions: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configurationNameFromUrl, queryConfigurations.isFetched]);
 
+  const renderConfigurationProjectInformation = () => {
+    if (!configProject) return null;
+
+    return (
+      <Flex direction="row" gap={8} alignItems="center" justifyContent="center">
+        <Body level={2}>Source:</Body>
+        <Label size="large">
+          {configProject.source.external_id} (instance:{' '}
+          {configProject.source.instance})
+        </Label>
+
+        <Body level={2}>Target:</Body>
+        <Label>
+          {configProject.target.external_id} (instance:{' '}
+          {configProject.target.instance})
+        </Label>
+      </Flex>
+    );
+  };
+
   if (queryDataTransfers.isLoading) {
     return <Loader />;
   }
@@ -133,8 +164,11 @@ const TableActions: React.FC = () => {
           }}
         />
       )}
-      {selectedConfiguration && (
-        <ColumnsSelector>
+
+      <Flex alignItems="center" gap={16}>
+        {renderConfigurationProjectInformation()}
+
+        {selectedConfiguration && (
           <Tooltip content="Show/hide table columns">
             <Dropdown
               content={
@@ -149,12 +183,12 @@ const TableActions: React.FC = () => {
                 size="default"
                 style={{ width: 42, height: 42 }}
                 aria-label="Show/hide table columns"
-                icon="Settings"
+                icon="Columns"
               />
             </Dropdown>
           </Tooltip>
-        </ColumnsSelector>
-      )}
+        )}
+      </Flex>
     </TableActionsContainer>
   );
 };
