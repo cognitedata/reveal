@@ -22,7 +22,8 @@ export default function App() {
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
             <DateRangeProvider>
-              <DataExplorationProvider sdk={sdk}>
+              {/* TODO(CDFUX-1214): fix type problem when @cognite/data-exploration is updated */}
+              <DataExplorationProvider sdk={sdk as any}>
                 <Switch>
                   <Redirect
                     from="/:url*(/+)"

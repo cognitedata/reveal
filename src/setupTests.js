@@ -18,3 +18,8 @@ jest.mock('app/utils/Metrics');
 jest.mock('@cognite/cdf-utilities', () => ({
   createLink: jest.fn(),
 }));
+jest.mock('@cognite/sdk-provider', () => {
+  return {
+    useSDK: jest.fn(),
+  };
+});

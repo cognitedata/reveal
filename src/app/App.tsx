@@ -6,9 +6,13 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import GlobalStyle from 'app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import { CogniteClient } from '@cognite/sdk';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  SubAppWrapper,
+  AuthWrapper,
+  getProject,
+  getEnv,
+} from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 import RootApp from 'app/containers/App';
@@ -20,11 +24,12 @@ import theme from './styles/theme';
 import rootStyles from './styles/index.css';
 
 export default () => {
-  const tenant = window.location.pathname.split('/')[1];
+  const env = getEnv();
+  const project = getProject();
   const history = createBrowserHistory();
 
-  if (!tenant) {
-    throw new Error('tenant missing');
+  if (!project) {
+    throw new Error('project missing');
   }
 
   const queryClient = new QueryClient({
@@ -50,21 +55,19 @@ export default () => {
   }, []);
 
   return (
-    <SDKProvider sdk={(sdkv3 as unknown) as CogniteClient}>
+    <SDKProvider sdk={sdk}>
       <QueryClientProvider client={queryClient}>
         <AntStyles>
           <SubAppWrapper padding={false}>
             <AuthWrapper
-              showLoader
-              includeGroups
               loadingScreen={<Loader darkMode={false} />}
-              subAppName="data-exploration"
+              login={() => loginAndAuthIfNeeded(project, env)}
             >
               <ThemeProvider theme={theme}>
                 <FlagProvider
                   apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
                   appName="data-exploration"
-                  projectName={tenant}
+                  projectName={project}
                   remoteAddress={window.location.hostname}
                   disableMetrics
                   refreshInterval={86400}

@@ -21,6 +21,7 @@ import { ContextualizationButton } from 'app/components/TitleRowActions/Contextu
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useRouteMatch, useLocation, useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -46,8 +47,9 @@ export const FilePreview = ({
   const isActive = resourcesState.some(
     el => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
-  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
-  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+  const { flow } = getFlow();
+  const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
   const match = useRouteMatch();
@@ -91,9 +93,10 @@ export const FilePreview = ({
     return <>File {fileId} not found!</>;
   }
 
+  // TODO(CDFUX-1214): fix type problem when @cognite/data-exploration is updated
   return (
     <>
-      <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
+      <CogniteFileViewer.Provider sdk={sdk as any} disableAutoFetch>
         <ResourceTitleRow
           item={{ id: fileId!, type: 'file' }}
           beforeDefaultActions={
