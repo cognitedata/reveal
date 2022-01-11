@@ -34,4 +34,5 @@ export const SupportedGraphQLGeneratorPlugins = [
   'typescript-operations',
   'typescript-resolvers',
   'typescript-react-apollo',
+  'typescript-apollo-angular',
 ];
