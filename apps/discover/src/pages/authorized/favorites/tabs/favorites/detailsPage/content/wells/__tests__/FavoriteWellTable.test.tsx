@@ -18,7 +18,7 @@ jest.mock('modules/wellSearch/hooks/useWellsFavoritesQuery', () => ({
   useFavoriteWellResultQuery: jest.fn(),
 }));
 
-jest.mock('modules/wellSearch/hooks/useWellsQuerySelectors', () => ({
+jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
   useWellsByIds: jest.fn(),
 }));
 

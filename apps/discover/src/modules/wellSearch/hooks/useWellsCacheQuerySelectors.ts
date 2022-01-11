@@ -6,10 +6,10 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { WellboreId, WellId } from '../types';
 import { getWellsOfWellIds } from '../utils/wells';
 
-import { useWellsQuery } from './useWellsQuery';
+import { useWellsCacheQuery } from './useWellsCacheQuery';
 
 export const useWellsByIds = (wellIds?: WellId) => {
-  const { data: fetchedWells } = useWellsQuery(wellIds);
+  const { data: fetchedWells } = useWellsCacheQuery(wellIds);
 
   return useDeepMemo(() => {
     // If required wells are empty, return an empty array.

@@ -16,7 +16,7 @@ import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuer
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
-import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { WellId } from 'modules/wellSearch/types';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';

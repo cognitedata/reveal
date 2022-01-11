@@ -5,7 +5,7 @@ import { renderHookWithStore } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { WELLBORE_COLORS } from 'modules/wellInspect/constants';
 import { WellInspectState } from 'modules/wellInspect/types';
-import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { WellboreId } from 'modules/wellSearch/types';
 
 import {
@@ -14,7 +14,7 @@ import {
   useWellInspectWells,
 } from '../useWellInspect';
 
-jest.mock('modules/wellSearch/hooks/useWellsQuerySelectors', () => ({
+jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
   useWellsByIds: jest.fn(),
 }));
 

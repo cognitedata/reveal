@@ -2,7 +2,7 @@ import flatMap from 'lodash/flatMap';
 import map from 'lodash/map';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { Wellbore, WellboreId } from 'modules/wellSearch/types';
 
 import {

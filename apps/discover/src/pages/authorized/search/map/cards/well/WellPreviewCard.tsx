@@ -6,7 +6,7 @@ import { LoaderContainer } from 'components/card/preview-card/elements';
 import { WhiteLoaderInline } from 'components/loading';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { clearSelectedWell } from 'modules/map/actions';
-import { useWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { useWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { MarginBottomNormalContainer } from 'styles/layout';
 
 import { wellImage } from '../../icons/well';

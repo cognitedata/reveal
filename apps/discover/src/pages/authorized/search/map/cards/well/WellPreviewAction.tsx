@@ -8,7 +8,7 @@ import { useTranslation } from '@cognite/react-i18n';
 import { FeedbackButton } from 'components/buttons';
 import GeneralFeedback from 'components/modals/general-feedback/GeneralFeedback';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
-import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { Well } from 'modules/wellSearch/types';
 import { FlexAlignItems, FlexGrow } from 'styles/layout';
 

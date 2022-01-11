@@ -3,7 +3,7 @@ import { useQuery, UseQueryResult } from 'react-query';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { Well, WellId } from 'modules/wellSearch/types';
 
-import { useWellsByIds } from './useWellsQuerySelectors';
+import { useWellsByIds } from './useWellsCacheQuerySelectors';
 
 export const useFavoriteWellResultQuery = (
   wellIds: WellId[]

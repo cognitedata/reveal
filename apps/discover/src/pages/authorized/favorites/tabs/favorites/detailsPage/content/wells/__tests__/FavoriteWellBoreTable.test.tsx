@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
-import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { LOADING_TEXT } from 'pages/authorized/search/well/content/constants';
 
@@ -11,7 +11,7 @@ jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
 }));
 
-jest.mock('modules/wellSearch/hooks/useWellsQuerySelectors', () => ({
+jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
   useWellboresOfWellById: jest.fn(),
 }));
 

@@ -7,7 +7,7 @@ import {
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { clearSelectedWell } from 'modules/map/actions';
-import { useWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { useWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { getWellboresByWellIds } from 'modules/wellSearch/service';
 
 import { WellPreviewCard } from '../WellPreviewCard';
@@ -23,7 +23,7 @@ jest.mock('modules/wellSearch/service', () => ({
   ),
 }));
 
-jest.mock('modules/wellSearch/hooks/useWellsQuerySelectors', () => ({
+jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
   useWellboresOfWellById: jest.fn(),
   useWellById: jest.fn(),
 }));

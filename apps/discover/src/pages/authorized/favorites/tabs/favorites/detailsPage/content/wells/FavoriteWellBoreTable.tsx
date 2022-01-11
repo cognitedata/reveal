@@ -16,7 +16,7 @@ import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuer
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
-import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsQuerySelectors';
+import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import {
   getWellboresByWellboreIds,
   getWellboresByWellIds,

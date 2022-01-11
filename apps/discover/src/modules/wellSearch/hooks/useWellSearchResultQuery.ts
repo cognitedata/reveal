@@ -15,6 +15,7 @@ import {
 import { Well } from '../types';
 import { handleWellSearchError } from '../utils/wellSearch';
 
+import { useAddToWellsCache } from './useAddToWellsCache';
 import { useCommonWellFilter } from './useCommonWellFilter';
 import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
@@ -45,6 +46,7 @@ export const useWellSearchResultQuery = (): UseQueryResult<Well[]> => {
   const wellFilter = useCommonWellFilter();
   const { data: wellConfig } = useWellConfig();
   const enabledWellSdkV3 = useEnabledWellSdkV3();
+  const addToWellsCache = useAddToWellsCache();
 
   return useQuery(
     [WELL_QUERY_KEY.SEARCH, wellFilter],
@@ -57,6 +59,10 @@ export const useWellSearchResultQuery = (): UseQueryResult<Well[]> => {
         .then((wells) => {
           if (enabledWellSdkV3) return wells;
           return getWellsWithWellbores(wells);
+        })
+        .then((wells) => {
+          addToWellsCache(wells);
+          return wells;
         })
         .catch(handleWellSearchError)
         .finally(() => timer.stop());
