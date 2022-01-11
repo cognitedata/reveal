@@ -9,6 +9,7 @@ import { Vector2 } from 'three';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
+type InputHandlerEvents = 'click' | 'hover';
 export class InputHandler {
   private readonly domElement: HTMLElement;
   private static readonly maxMoveDistance = 8;
@@ -57,6 +58,10 @@ export class InputHandler {
       default:
         assertNever(event);
     }
+  }
+
+  dispose() {
+    this.disposeOfAllEventListeners();
   }
 
   private setupEventListeners() {
@@ -142,4 +147,11 @@ export class InputHandler {
   private readonly onHoverCallback = debounce((e: MouseEvent) => {
     this._events.hover.fire(clickOrTouchEventOffset(e, this.domElement));
   }, 100);
+
+  private disposeOfAllEventListeners() {
+    const inputHandlerEvents = ['click', 'hover'];
+    for (const event of inputHandlerEvents) {
+      this._events[event as InputHandlerEvents].unsubscribeAll();
+    }
+  }
 }

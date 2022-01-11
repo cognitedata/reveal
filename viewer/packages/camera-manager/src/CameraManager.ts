@@ -15,6 +15,7 @@ import {
 import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
 import range from 'lodash/range';
 
+type CameraManagerEvents = 'cameraChange';
 export class CameraManager {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeData>()
@@ -357,6 +358,8 @@ export class CameraManager {
     this.isDisposed = true;
     this._controls.dispose();
     this.teardownControls();
+    this.disposeOfAllEventListeners();
+    this._inputHandler.dispose();
   }
 
   private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
@@ -560,6 +563,13 @@ export class CameraManager {
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
 
     return { x, y };
+  }
+
+   private disposeOfAllEventListeners() {
+    const cameraManagerEvents = ['cameraChange'];
+    for (const event of cameraManagerEvents) {
+      this._events[event as CameraManagerEvents].unsubscribeAll();
+    }
   }
 
   private calculateDefaultDuration(distanceToCamera: number): number {
