@@ -22,7 +22,7 @@ import { AdminSettings } from './AdminSettings';
 import {
   SEARCH_LINK_TEXT_KEY,
   FAVORITES_LINK_TEXT_KEY,
-  DASHBOARD_LINK_TEXT_KEY,
+  // DASHBOARD_LINK_TEXT_KEY,
 } from './constants';
 import { Feedback } from './Feedback';
 import { TenantLogo } from './TenantLogo';
@@ -149,15 +149,15 @@ export const Topbar: React.FC = () => {
                 PATHNAMES.FAVORITES
               ),
             },
-            {
-              key: PATHNAMES.DASHBOARD,
-              name: t(DASHBOARD_LINK_TEXT_KEY) as string,
-              isActive: active === PATHNAMES.DASHBOARD,
-              onClick: handleNavigate(
-                navigation.DASHBOARD,
-                PATHNAMES.DASHBOARD
-              ),
-            },
+            // {
+            //   key: PATHNAMES.DASHBOARD,
+            //   name: t(DASHBOARD_LINK_TEXT_KEY) as string,
+            //   isActive: active === PATHNAMES.DASHBOARD,
+            //   onClick: handleNavigate(
+            //     navigation.DASHBOARD,
+            //     PATHNAMES.DASHBOARD
+            //   ),
+            // },
           ])}
         />
       </TopBar.Left>
