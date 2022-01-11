@@ -45,7 +45,7 @@ const TableResultActions = <FeedbackObject extends FeedbackItem>(
 
       {assignFeedback && (
         <BaseButton
-          icon="Person"
+          icon="User"
           size="small"
           tooltip="Assign to me"
           aria-label="Assign to me"
