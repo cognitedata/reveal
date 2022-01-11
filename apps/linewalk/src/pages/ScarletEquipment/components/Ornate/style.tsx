@@ -14,4 +14,8 @@ export const LoaderContainer = styled.div`
   height: 100%;
   background: rgba(255, 255, 255, 0.6);
   pointer-events: none;
+
+  > div {
+    position: absolute;
+  }
 `;

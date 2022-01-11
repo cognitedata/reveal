@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { OrnatePDFDocument } from '@cognite/ornate';
-import { ScarletDocument } from 'modules/scarlet/types';
+
+import { ScarletDocument } from '../../types';
 
 const TEXT_PADDING = 40;
 const TEXT_SIZE = 60;
@@ -48,12 +49,14 @@ export const addDocumentTitle = ({
 export const addPageNumber = ({
   ornateDocument,
   pageNumber,
+  totalPages,
 }: {
   ornateDocument: OrnatePDFDocument;
-  pageNumber?: number;
+  pageNumber: number;
+  totalPages: number;
 }) => {
   const text = new Konva.Text({
-    text: `Page ${pageNumber}`,
+    text: `Page ${pageNumber} of ${totalPages}`,
     fill: '#595959',
     fontSize: TEXT_SIZE,
     padding: TEXT_PADDING,

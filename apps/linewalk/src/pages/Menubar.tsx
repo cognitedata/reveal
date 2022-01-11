@@ -38,7 +38,7 @@ export const MenuBar = () => {
             onClick: handleNavigate(PagePath.LINE_REVIEWS),
           },
           {
-            name: 'Scarlet',
+            name: 'Document Schema Scanner',
             isActive: active === PagePath.SCARLET,
             onClick: handleNavigate(PagePath.SCARLET),
           },

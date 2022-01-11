@@ -3,11 +3,12 @@ import { useEffect, useRef, useState } from 'react';
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import * as PDFJS from 'pdfjs-dist';
-import { ScarletDocument } from 'modules/scarlet/types';
 import { Loader } from '@cognite/cogs.js';
 
-import * as Styled from './style';
+import { ScarletDocument } from '../../types';
+
 import { addDocumentTitle, addPageNumber } from './utils';
+import * as Styled from './style';
 
 PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
 
@@ -60,10 +61,10 @@ export const Ornate = ({ documents }: OrnateProps) => {
             try {
               const pdf = await PDFJS.getDocument(document.downloadUrl!)
                 .promise;
-              const nPages = pdf?.numPages || 0;
+              const totalPages = pdf?.numPages || 0;
               let yDocumentPosition = VIEW_OFFSET_Y;
 
-              for (let pageNumber = 1; pageNumber <= nPages; pageNumber++) {
+              for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
                 const page = await pdf!.getPage(pageNumber);
                 const pageWidth = page.view[2] - page.view[0];
                 const pageHeight = page.view[3] - page.view[1];
@@ -97,10 +98,11 @@ export const Ornate = ({ documents }: OrnateProps) => {
                   ornateDocument,
                 });
 
-                if (nPages > 1) {
+                if (totalPages > 1) {
                   addPageNumber({
                     ornateDocument,
                     pageNumber,
+                    totalPages,
                   });
                 }
 
