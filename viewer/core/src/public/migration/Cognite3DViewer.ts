@@ -256,7 +256,7 @@ export class Cognite3DViewer {
       );
     }
     this.renderController = new RenderController(this.camera);
-    
+
     this._mouseHandler = new InputHandler(this.domElement);
     this.startPointerEventListeners();
 

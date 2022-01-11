@@ -565,7 +565,7 @@ export class CameraManager {
     return { x, y };
   }
 
-   private disposeOfAllEventListeners() {
+  private disposeOfAllEventListeners() {
     const cameraManagerEvents = ['cameraChange'];
     for (const event of cameraManagerEvents) {
       this._events[event as CameraManagerEvents].unsubscribeAll();

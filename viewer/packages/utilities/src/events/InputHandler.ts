@@ -60,7 +60,7 @@ export class InputHandler {
     }
   }
 
-  dispose() {
+  dispose(): void {
     this.disposeOfAllEventListeners();
   }
 
