@@ -51,6 +51,7 @@ export const connectorsGenerator =
             : undefined;
           indicators.push(
             <ConnectorIndicator
+              className="z-2"
               key={field.name.value}
               top={getConnectorHeight(showHeaderOnly ? -1 : index)}
               left={(linkedSchemaNode?.x || 0) > (item.x || 1) ? nodeWidth : 0}
@@ -67,6 +68,7 @@ export const connectorsGenerator =
         : undefined;
       indicators.push(
         <ConnectorIndicator
+          className="z-2"
           key={id}
           top={getConnectorHeight(-1)}
           left={(linkedSchemaNode?.x || 0) > (item.x || 1) ? nodeWidth : 0}

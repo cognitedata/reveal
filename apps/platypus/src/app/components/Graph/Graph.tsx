@@ -477,13 +477,13 @@ export const Graph = <T,>({
   return (
     <Wrapper ref={mainWrapperRef}>
       {isLoading && <Spinner style={{ position: 'absolute' }} />}
-      {children}
       <div className="node-container" ref={containerRef}>
         <svg className="chart" ref={svgRef}>
           <g className="links">{linksChildren}</g>
         </svg>
         {nodeChildren}
       </div>
+      {children}
     </Wrapper>
   );
 };

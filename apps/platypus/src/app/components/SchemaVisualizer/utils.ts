@@ -1,5 +1,5 @@
 import { SimulationLinkDatum } from 'd3';
-import { FieldDefinitionNode } from 'graphql';
+import { FieldDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
 import { GetOffsetFunction, Node } from '../Graph/Graph';
 import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
 
@@ -116,3 +116,9 @@ export const doesFieldHaveDirective = (
   directiveName: string
 ) =>
   field.directives?.find((directive) => directive.name.value === directiveName);
+
+export const isTypeATemplate = (item: ObjectTypeDefinitionNode) => {
+  return item.directives?.some(
+    (el) => el.name.value.toLowerCase() === 'template'
+  );
+};

@@ -20,5 +20,15 @@ const Template: Story<Parameters<typeof SchemaVisualizer>[0]> = (args) => (
 export const Default = Template.bind({});
 
 Default.args = {
-  graphQLSchemaString: mockComplexGraphqlModel,
+  graphQLSchemaString: mockComplexGraphqlModel.concat(`
+  type Well @template {
+    labels: [String!]
+    deferments(
+      startTime: Long
+      endTime: Long
+      activeFrom: Long
+      activeTo: Long
+    ): [Deferment!]!
+    advisors: [String!]!
+  }`),
 };

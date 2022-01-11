@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { CSSProperties } from 'styled-components/macro';
 import {
   Badge,
+  Body,
   Button,
   Checkbox,
   Colors,
@@ -38,7 +39,6 @@ export const SchemaVisualizer = ({
 }) => {
   const [nodes, setNodes] = useState<(Node & SchemaDefinitionNode)[]>([]);
   const [links, setLinks] = useState<Link[]>([]);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [highlightedIds, setHighlightedIds] = useState<string[]>([]);
 
   // if set, then should render small node instead of full node.
@@ -98,16 +98,6 @@ export const SchemaVisualizer = ({
       rerenderHandler();
     }
   }, [schemaTypes, searchFilterValue]);
-
-  const onClick = (id: string) => {
-    const newSet = new Set(selected);
-    if (selected.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
-    setSelected(newSet);
-  };
 
   const zoomInHandler = () => {
     graphRef?.current?.zoomIn();
@@ -258,9 +248,9 @@ export const SchemaVisualizer = ({
           getOffset(...params)(showHeaderOnly, showRequiredIcon)
         }
         onLinkEvent={(type, data, event) => {
-          // trigger popover
           switch (type) {
             case 'mouseover': {
+              // Highlight link and its source and target on hover
               setHighlightedIds([
                 getLinkId(data),
                 (data.source as SchemaDefinitionNode).name.value,
@@ -268,13 +258,21 @@ export const SchemaVisualizer = ({
               ]);
               setPopover(
                 <Popover
+                  className="tippy-box cogs-tooltip"
                   style={{
                     top: event.offsetY + 16,
                     left: event.offsetX,
                     transform: 'translate(-50%,0)',
                   }}
                 >
-                  {getLinkText(data)}
+                  <div className="tippy-content">
+                    <Body
+                      level={2}
+                      style={{ color: `var(--cogs-text-inverted)` }}
+                    >
+                      {getLinkText(data)}
+                    </Body>
+                  </div>
                 </Popover>
               );
               break;
@@ -292,13 +290,11 @@ export const SchemaVisualizer = ({
             stroke: Colors['greyscale-grey5'].hex(),
           };
           if (highlightedIds.includes(id)) {
-            style.strokeWidth = 2;
-            style.stroke = Colors['greyscale-grey7'].hex();
+            style.stroke = Colors['border-inverted'].hex();
           }
           return <path className="line" key={id} id={id} style={style} />;
         }}
         renderNode={(item, _, displayedNodes) => {
-          const isActive = selected.has(item.id);
           const style: CSSProperties = {};
           if (highlightedIds.includes(item.id)) {
             style.borderColor = Colors['greyscale-grey7'].hex();
@@ -331,13 +327,25 @@ export const SchemaVisualizer = ({
           }
           return (
             <NodeWrapper
-              isActive={isActive}
+              isActive={false}
               width={nodeWidth}
               id={item.id}
               key={item.id}
               title={item.title}
-              onClick={() => onClick(item.id)}
               style={style}
+              onMouseEnter={() => {
+                // Highlight links when hovering a node
+                setHighlightedIds(
+                  links
+                    .filter(
+                      (el) => el.source === item.id || el.target === item.id
+                    )
+                    .map(getLinkId)
+                );
+              }}
+              onMouseLeave={() => {
+                setHighlightedIds([]);
+              }}
             >
               {renderConnectorsForNode(item, displayedNodes)}
               {content}
@@ -366,7 +374,14 @@ export const SchemaVisualizer = ({
           {renderGraph()}
         </StyledModal>
       ) : (
-        <div style={{ height: '100%', width: '100%', position: 'relative' }}>
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            position: 'relative',
+            background: `--var(--cogs-bg-canvas)`,
+          }}
+        >
           {renderGraph()}
         </div>
       )}
@@ -409,7 +424,7 @@ const NodeWrapper = styled.div<ITypeItem>`
   width: ${(props: ITypeItem) =>
     props.width ? `${props.width}px` : `${NODE_WIDTH}px`};
   background-color: ${(props: ITypeItem) =>
-    props.isActive ? 'var(--cogs-midblue-8)' : 'var(--cogs-white)'};
+    props.isActive ? 'var(--cogs-bg-selected)' : 'var(--cogs-white)'};
   border: 1px solid;
   border-color: ${(props: ITypeItem) =>
     props.isActive ? 'var(--cogs-midblue-4)' : 'var(--cogs-greyscale-grey5)'};
@@ -421,12 +436,14 @@ const NodeWrapper = styled.div<ITypeItem>`
   .cogs-title-5 {
     color: var(--cogs-greyscale-grey9);
   }
+
+  &&:hover {
+    border-color: var(--cogs-border-inverted);
+  }
 `;
 
 const Popover = styled.div`
   position: absolute;
-  background: var(--cogs-midblue-7);
-  padding: 2px 4px;
 `;
 
 const StyledTopBar = styled(TopBar)`
