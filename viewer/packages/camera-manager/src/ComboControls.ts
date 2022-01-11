@@ -704,7 +704,7 @@ export class ComboControls extends EventDispatcher {
     const cameraToScrollTargetVec = new Vector3().subVectors(_scrollTarget, _camera.position);
 
     const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
-    const targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.clone().negate());
+    const targetScrollTargetCameraAngle = targetToScrollTargetVec.clone().negate().angleTo(cameraToScrollTargetVec.clone().negate());
 
     let deltaTargetOffsetDistance =
       deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
