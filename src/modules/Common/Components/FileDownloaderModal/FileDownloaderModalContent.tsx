@@ -44,9 +44,12 @@ export const FileDownloaderModalContent = ({
   );
   const [hideDropDown, setHideDropDown] = useState<boolean>(true);
   const [downloadedMessage, setDownloadedMessage] = useState<string>('0%');
-  const annotationsForFiles = useMemo(makeSelectAnnotationsForFileIds, []);
+  const selectAnnotationsForFileIds = useMemo(
+    makeSelectAnnotationsForFileIds,
+    []
+  );
   const annotations = useSelector(({ annotationReducer }: RootState) =>
-    annotationsForFiles(annotationReducer, fileIds)
+    selectAnnotationsForFileIds(annotationReducer, fileIds)
   );
 
   const annotationStatusMap = () => {

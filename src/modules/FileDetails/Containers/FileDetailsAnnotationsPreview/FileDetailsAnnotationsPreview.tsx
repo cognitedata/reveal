@@ -22,25 +22,26 @@ export const FileDetailsAnnotationsPreview = ({
   onReviewClick: (id: number) => void;
   onAnnotationDeleteClick: (annotationId: number) => void;
 }) => {
-  const fileAnnotationsByTypeSelector1 = useMemo(
+  // need to create two instances of selector from selector factory since we are using them with different parameters
+  const selectFileAnnotationsByOcrObjectTypes = useMemo(
     makeSelectFileAnnotationsByType,
     []
   );
-  const fileAnnotationsByTypeSelector2 = useMemo(
+  const selectFileAnnotationsByTagDetectionType = useMemo(
     makeSelectFileAnnotationsByType,
     []
   );
 
   const textAndObjectAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
-      fileAnnotationsByTypeSelector1(annotationReducer, fileInfo.id, [
+      selectFileAnnotationsByOcrObjectTypes(annotationReducer, fileInfo.id, [
         VisionAPIType.OCR,
         VisionAPIType.ObjectDetection,
       ])
   );
 
   const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
-    fileAnnotationsByTypeSelector2(annotationReducer, fileInfo.id, [
+    selectFileAnnotationsByTagDetectionType(annotationReducer, fileInfo.id, [
       VisionAPIType.TagDetection,
     ])
   );

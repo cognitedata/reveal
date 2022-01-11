@@ -42,10 +42,10 @@ export const ExifIcon = styled.div`
 export function NameRenderer({
   rowData: { name, id, mimeType, geoLocation },
 }: CellRenderer) {
-  const fileAnnotationsSelector = useMemo(makeSelectFileAnnotations, []);
+  const selectFileAnnotations = useMemo(makeSelectFileAnnotations, []);
   const hasAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
-      !!fileAnnotationsSelector(annotationReducer, id).length
+      !!selectFileAnnotations(annotationReducer, id).length
   );
 
   const renderIcon = () => {

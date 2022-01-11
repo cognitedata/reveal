@@ -29,10 +29,10 @@ describe('Test annotation selectors', () => {
   };
 
   describe('Test makeSelectFileAnnotations', () => {
-    const selector = makeSelectFileAnnotations();
+    const selectFileAnnotations = makeSelectFileAnnotations();
 
     test('should return empty list when file not part of state', () => {
-      expect(selector(initialState, 1)).toEqual([]);
+      expect(selectFileAnnotations(initialState, 1)).toEqual([]);
     });
 
     test('should return empty list if file has no annotations', () => {
@@ -44,7 +44,9 @@ describe('Test annotation selectors', () => {
           },
         },
       };
-      expect(selector(previousState, 10).map((item) => item.id)).toEqual([]);
+      expect(
+        selectFileAnnotations(previousState, 10).map((item) => item.id)
+      ).toEqual([]);
     });
 
     test('should return annotation for specified file', () => {
@@ -61,7 +63,9 @@ describe('Test annotation selectors', () => {
           },
         },
       };
-      expect(selector(previousState, 10)).toEqual([getDummyAnnotation(1)]);
+      expect(selectFileAnnotations(previousState, 10)).toEqual([
+        getDummyAnnotation(1),
+      ]);
     });
   });
 
@@ -88,7 +92,7 @@ describe('Test annotation selectors', () => {
   });
 
   describe('Test makeSelectAnnotationsForFileIds', () => {
-    const selector = makeSelectAnnotationsForFileIds();
+    const selectAnnotationsForFileIds = makeSelectAnnotationsForFileIds();
     test('should return all annotations for all files', () => {
       const previousState = {
         files: {
@@ -104,7 +108,7 @@ describe('Test annotation selectors', () => {
           },
         },
       };
-      expect(selector(previousState, [10, 20, 30])).toEqual({
+      expect(selectAnnotationsForFileIds(previousState, [10, 20, 30])).toEqual({
         '10': [getDummyAnnotation(1)],
         '20': [getDummyAnnotation(2)],
         '30': [], // prefer to not raise exception in selectors
@@ -113,7 +117,7 @@ describe('Test annotation selectors', () => {
   });
 
   describe('Test makeSelectFileAnnotationsByType', () => {
-    const selector = makeSelectFileAnnotationsByType();
+    const selectFileAnnotationsByType = makeSelectFileAnnotationsByType();
 
     test('should select annotations with specified type', () => {
       const previousState = {
@@ -130,7 +134,7 @@ describe('Test annotation selectors', () => {
         },
       };
       // select annotations for file id 10 with model type 1
-      expect(selector(previousState, 10, [1])).toEqual([
+      expect(selectFileAnnotationsByType(previousState, 10, [1])).toEqual([
         getDummyAnnotation(1, 1),
       ]);
     });
@@ -176,9 +180,9 @@ describe('Test annotation selectors', () => {
 
     describe('Test makeSelectAnnotationCounts', () => {
       test('should return annotation counts for each file', () => {
-        const selector = makeSelectAnnotationCounts();
+        const selectAnnotationCountsForFile = makeSelectAnnotationCounts();
 
-        expect(selector(previousState, 10)).toEqual({
+        expect(selectAnnotationCountsForFile(previousState, 10)).toEqual({
           objects: 1,
           assets: 1,
           text: 1,
@@ -190,9 +194,9 @@ describe('Test annotation selectors', () => {
 
     describe('Test makeSelectTotalAnnotationCounts', () => {
       test('should return annotation counts for all annotations of all files', () => {
-        const selector = makeSelectTotalAnnotationCounts();
+        const selectTotalAnnotationCounts = makeSelectTotalAnnotationCounts();
 
-        expect(selector(previousState)).toEqual({
+        expect(selectTotalAnnotationCounts(previousState)).toEqual({
           objects: 2,
           assets: 1,
           text: 1,
