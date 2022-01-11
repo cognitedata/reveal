@@ -98,6 +98,7 @@ export interface FeedbackItem {
   createdTime: string;
 }
 
+// internal discover type, not the external API type
 export interface GeneralFeedbackItem extends FeedbackItem {
   screenshotB64: string;
   state: {
@@ -105,9 +106,7 @@ export interface GeneralFeedbackItem extends FeedbackItem {
   };
 }
 
-// When creating a feedback we don't want to add an id in the front-end
-export type NewGeneralFeedbackItem = Omit<GeneralFeedbackItem, 'id'>;
-
+// internal discover type, not the external API type
 export interface DocumentFeedbackItem extends FeedbackItem {
   assignee?: BasicUserInfo;
   documentId: DocumentType['id'];
@@ -121,12 +120,6 @@ export interface DocumentFeedbackItem extends FeedbackItem {
   originalType?: string;
   suggestedType?: string;
 }
-
-// When creating a feedback we don't want to add an id in the front-end
-export type NewDocumentFeedbackItem = Omit<
-  DocumentFeedbackItem,
-  'id' | 'createdTime' | 'lastUpdatedTime'
->;
 
 export interface FeedbackSetItem {
   type: typeof SET_ITEM;

@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { StoreState } from 'core';
 
+import { ObjectFeedback } from '@cognite/discover-api-types';
+
 import { Modal } from 'components/modal';
 import { UNCLASSIFIED_DOCUMENT_TYPE } from 'components/modals/constants';
 import { UndoToast } from 'components/toast';
@@ -17,7 +19,7 @@ import {
 } from 'modules/api/feedback';
 import { clearObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import { useRemoveSensitiveDocument } from 'modules/feedback/hooks/useRemoveSensitiveDocument';
-import { FeedbackState, NewDocumentFeedbackItem } from 'modules/feedback/types';
+import { FeedbackState } from 'modules/feedback/types';
 
 import { EntityFeedbackContent } from './EntityFeedbackContent';
 import { Field } from './types';
@@ -111,7 +113,7 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
     const isDocumentFeedback =
       freeText || isIncorrectGeo || isOther || isSensitiveData;
 
-    const feedback: NewDocumentFeedbackItem = {
+    const feedback: ObjectFeedback = {
       comment: freeText,
       isIncorrectGeo,
       isOther,

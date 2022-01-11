@@ -1,14 +1,12 @@
 import { getEmail } from 'utils/getCogniteSDKClient';
 import { log } from 'utils/log';
 
+import { GeneralFeedback, ObjectFeedback } from '@cognite/discover-api-types';
+
 import { showErrorMessage } from 'components/toast';
 import { FEEDBACK_ERROR_MESSAGE } from 'constants/feedback';
 import { APP_EMAIL } from 'constants/general';
 import { STATUS } from 'modules/feedback/constants';
-import {
-  DocumentFeedbackItem,
-  NewDocumentFeedbackItem,
-} from 'modules/feedback/types';
 import { User } from 'modules/user/types';
 
 import { MutateCreateFeedback, MutateUpdateFeedback } from './types';
@@ -47,38 +45,26 @@ export function recoverGeneralFeedback(
 }
 
 // --------------- OBJECT FEEDBACK ---------------- //
-export function sendObjectDocumentTypeFeedback(
-  feedback: DocumentFeedbackItem,
-  userId: string,
-  mutate: MutateCreateFeedback
-) {
-  const docTypeFeedback = {
-    ...feedback,
-    user: userId,
-  };
 
-  mutate(docTypeFeedback).catch((error) => {
-    log(error);
-    showErrorMessage(
-      `Document function encountered an error. Please contact ${APP_EMAIL}`
-    );
-  });
-}
 export function sendObjectFeedback(
-  feedback: NewDocumentFeedbackItem,
+  feedback: ObjectFeedback,
   mutate: MutateCreateFeedback
 ) {
-  const object: NewDocumentFeedbackItem = {
+  const newDocumentFeedbackItem: ObjectFeedback = {
     ...feedback,
     status: 0,
     deleted: false,
   };
 
-  if (!object.query) {
-    delete object.query;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore this is a check for a old unmigrated value
+  if (!newDocumentFeedbackItem.query) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore this is a check for a old unmigrated value
+    delete newDocumentFeedbackItem.query;
   }
 
-  mutate(object).catch((error: any) => {
+  mutate({ payload: newDocumentFeedbackItem }).catch((error: any) => {
     log(error);
     showErrorMessage(
       `Feedback function encountered an error. Please contact ${APP_EMAIL}`
@@ -188,7 +174,7 @@ export function sendGeneralFeedback(
 ) {
   const email = getEmail();
 
-  const feedback = {
+  const feedback: GeneralFeedback = {
     user: email,
     comment: comment || '',
     screenshotB64: image,
@@ -196,7 +182,7 @@ export function sendGeneralFeedback(
     deleted: false,
   };
 
-  return mutate(feedback).catch(() => {
+  return mutate({ payload: feedback }).catch(() => {
     showErrorMessage(FEEDBACK_ERROR_MESSAGE);
   });
 }

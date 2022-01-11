@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Cell } from 'react-table';
 
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
@@ -39,6 +40,39 @@ import {
 } from './DocumentFeedbackDetails';
 import { DocumentFeedbackLabels } from './DocumentFeedbackLabels';
 
+type UpdateFeedbackAssignee = (
+  feedback: DocumentFeedbackItem,
+  user?: User
+) => void;
+type HandleUpdateFeedbackStatus = (
+  feedback: DocumentFeedbackItem,
+  status: number
+) => void;
+
+const getRowStatusColumn =
+  (handleUpdateFeedbackStatus: HandleUpdateFeedbackStatus) =>
+  (cell: Cell<DocumentFeedbackItem>) =>
+    (
+      <StatusColumn
+        status={cell.row.original.status}
+        handleChangeFeedbackStatus={(status: number) =>
+          cell.row.original &&
+          handleUpdateFeedbackStatus(cell.row.original, status)
+        }
+      />
+    );
+
+const getRowAssigneeColumn =
+  (updateFeedbackAssignee: UpdateFeedbackAssignee, user?: User) =>
+  (cell: Cell<DocumentFeedbackItem>) =>
+    (
+      <AssigneeColumn
+        assignee={cell.row.original.assignee}
+        assignFeedback={() => updateFeedbackAssignee(cell.row.original, user)}
+        unassignFeedback={() => updateFeedbackAssignee(cell.row.original)}
+      />
+    );
+
 interface Props {
   documentFeedbackItems: DocumentFeedbackItem[];
   setCommentTarget: SetCommentTarget;
@@ -72,6 +106,23 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       return null;
     }
     return item.isSensitiveByAdmin;
+  };
+
+  const handleUpdateFeedbackStatus: HandleUpdateFeedbackStatus = (
+    feedback,
+    status
+  ) =>
+    updateFeedbackStatus(feedback.id, status, addDocumentFeedback).catch(
+      (error) => {
+        showErrorMessage(error.message);
+      }
+    );
+
+  const updateFeedbackAssignee: UpdateFeedbackAssignee = (feedback, user) => {
+    updateDocumentFeedback({
+      id: feedback.id,
+      payload: { assignedTo: user?.id || '' },
+    });
   };
 
   /**
@@ -108,16 +159,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       accessor: 'statusCol', // don't rename this to status. it cause to render a <div> inside <p> validation error
       width: '140px',
       order: 2,
-      // eslint-disable-next-line react/no-unstable-nested-components
-      Cell: (cell) => (
-        <StatusColumn
-          status={cell.row.original.status}
-          handleChangeFeedbackStatus={(status: number) =>
-            cell.row.original.id &&
-            handleUpdateFeedbackStatus(cell.row.original.id, status)
-          }
-        />
-      ),
+      Cell: getRowStatusColumn(handleUpdateFeedbackStatus),
       sortType: (row1, row2) =>
         (row1.original.status || 0) - (row2.original.status || 0),
     },
@@ -178,14 +220,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       accessor: 'assignedToCol', // Don't rename this to assignedTo. It cause to render a "<div> inside <p> validation error".
       width: '200px',
       order: 5,
-      // eslint-disable-next-line react/no-unstable-nested-components
-      Cell: ({ row }) => (
-        <AssigneeColumn
-          assignee={row.original.assignee}
-          assignFeedback={() => updateFeedbackAssignee(row.original.id, user)}
-          unassignFeedback={() => updateFeedbackAssignee(row.original.id)}
-        />
-      ),
+      Cell: getRowAssigneeColumn(updateFeedbackAssignee, user),
       sortType: (row1, row2) =>
         getFullNameOrDefaultText(row1.original.assignee).localeCompare(
           getFullNameOrDefaultText(row2.original.assignee)
@@ -227,13 +262,6 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     'actions',
   ];
 
-  const updateFeedbackAssignee = (id: string, user?: User) => {
-    updateDocumentFeedback({
-      id,
-      payload: { assignedTo: user?.id || '' },
-    });
-  };
-
   React.useEffect(() => {
     setHighlightedIds(commentTarget ? { [commentTarget.id]: true } : {});
   }, [commentTarget]);
@@ -257,13 +285,6 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       pageSize: 50,
     },
   });
-
-  const handleUpdateFeedbackStatus = (feedbackId: string, status: number) =>
-    updateFeedbackStatus(feedbackId, status, addDocumentFeedback).catch(
-      (error) => {
-        showErrorMessage(error.message);
-      }
-    );
 
   const recoverFeedback = (feedback: DocumentFeedbackItem) => {
     recoverObjectFeedback(feedback.id, updateDocumentFeedback);

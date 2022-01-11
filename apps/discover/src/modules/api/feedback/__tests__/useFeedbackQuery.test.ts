@@ -8,6 +8,8 @@ import { feedback } from '../service';
 import {
   useFeedbackCreateMutate,
   useFeedbackUpdateMutate,
+} from '../useFeedbackMutate';
+import {
   useFeedbackGetAllQuery,
   useFeedbackGetOneQuery,
 } from '../useFeedbackQuery';

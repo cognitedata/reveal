@@ -1,17 +1,9 @@
-import {
-  getMockedDocumentFeedbackItem,
-  getMockedNewDocumentFeedbackItem,
-} from '__test-utils/fixtures/feedback';
+import { getMockedNewDocumentFeedbackItem } from '__test-utils/fixtures/feedback';
 import { getUser } from '__test-utils/fixtures/user';
-import {
-  DocumentFeedbackItem,
-  NewDocumentFeedbackItem,
-} from 'modules/feedback/types';
 
 import {
   updateFeedbackStatus,
   recoverGeneralFeedback,
-  sendObjectDocumentTypeFeedback,
   sendObjectFeedback,
   deleteObjectFeedback,
   recoverObjectFeedback,
@@ -46,15 +38,8 @@ describe('feedback actions', () => {
     expect(mutate).toBeCalledTimes(1);
   });
 
-  it('should call `sendObjectDocumentTypeFeedback` as expected', async () => {
-    const feedback: DocumentFeedbackItem = getMockedDocumentFeedbackItem();
-    sendObjectDocumentTypeFeedback(feedback, id, mutate);
-    expect(mutate).toBeCalledTimes(1);
-  });
-
   it('should call `sendObjectFeedback` as expected', async () => {
-    const feedback: NewDocumentFeedbackItem =
-      getMockedNewDocumentFeedbackItem();
+    const feedback = getMockedNewDocumentFeedbackItem();
     sendObjectFeedback(feedback, mutate);
     expect(mutate).toBeCalledTimes(1);
   });
@@ -127,15 +112,8 @@ describe('feedback api error handling', () => {
     expect(mutate).toBeCalledTimes(1);
   });
 
-  it('should handle error on call `sendObjectDocumentTypeFeedback` as expected', async () => {
-    const feedback: DocumentFeedbackItem = getMockedDocumentFeedbackItem();
-    sendObjectDocumentTypeFeedback(feedback, id, mutate);
-    expect(mutate).toBeCalledTimes(1);
-  });
-
   it('should handle error on call `sendObjectFeedback` as expected', async () => {
-    const feedback: NewDocumentFeedbackItem =
-      getMockedNewDocumentFeedbackItem();
+    const feedback = getMockedNewDocumentFeedbackItem();
     sendObjectFeedback(feedback, mutate);
     expect(mutate).toBeCalledTimes(1);
   });

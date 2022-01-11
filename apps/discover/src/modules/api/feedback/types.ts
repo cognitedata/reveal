@@ -1,20 +1,27 @@
 import { UseMutateAsyncFunction } from 'react-query';
 
+import {
+  FeedbackPatchBodyGeneral,
+  FeedbackPatchBodyObject,
+  FeedbackPostBody,
+} from '@cognite/discover-api-types';
+
+export type FeedbackPatchBody =
+  | FeedbackPatchBodyGeneral
+  | FeedbackPatchBodyObject;
+
 export type FeedbackType = 'general' | 'object' | 'sensitive';
 
 export type MutateCreateFeedback = UseMutateAsyncFunction<
   unknown,
   unknown,
-  Record<string, unknown>,
+  FeedbackPostBody,
   unknown
 >;
 
 export type MutateUpdateFeedback = UseMutateAsyncFunction<
   unknown,
   unknown,
-  {
-    id: string;
-    payload: Record<string, unknown>;
-  },
+  FeedbackPatchBody,
   unknown
 >;

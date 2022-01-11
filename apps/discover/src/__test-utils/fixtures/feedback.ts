@@ -1,11 +1,11 @@
 import {
-  DocumentFeedbackItem,
-  NewDocumentFeedbackItem,
-} from 'modules/feedback/types';
+  ObjectFeedback,
+  ObjectFeedbackResponse,
+} from '@cognite/discover-api-types';
 
 export const getMockedDocumentFeedbackItem = (
-  extras?: Partial<DocumentFeedbackItem>
-): DocumentFeedbackItem => ({
+  extras?: Partial<ObjectFeedbackResponse>
+): ObjectFeedbackResponse => ({
   id: '12345',
   comment: 'comment',
   lastUpdatedTime: '2021-07-26T17:30:00.133Z',
@@ -18,8 +18,8 @@ export const getMockedDocumentFeedbackItem = (
 });
 
 export const getMockedNewDocumentFeedbackItem = (
-  extras?: NewDocumentFeedbackItem
-): NewDocumentFeedbackItem => ({
+  extras?: ObjectFeedback
+): ObjectFeedback => ({
   comment: 'comment',
   documentId: '12345',
   isIncorrectGeo: false,

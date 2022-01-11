@@ -1,43 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 
 import { FEEDBACK_QUERY_KEY } from 'constants/react-query';
 
 import { discoverAPI, useJsonHeaders } from '../service';
 
 import { FeedbackType } from './types';
-
-export function useFeedbackCreateMutate(endpoint: FeedbackType = 'general') {
-  const queryClient = useQueryClient();
-  const headers = useJsonHeaders({}, true);
-
-  return useMutation(
-    (payload: Record<string, unknown>) =>
-      discoverAPI.feedback.create(endpoint, payload, headers),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(FEEDBACK_QUERY_KEY.ALL(endpoint));
-      },
-    }
-  );
-}
-
-export function useFeedbackUpdateMutate(endpoint: FeedbackType = 'general') {
-  const queryClient = useQueryClient();
-  const headers = useJsonHeaders({}, true);
-  return useMutation(
-    (data: { id: string; payload: Record<string, unknown> }) =>
-      discoverAPI.feedback.update(endpoint, data, headers),
-    {
-      onSuccess: () => {
-        // need to load the objects again after updating sensitive data
-        const feedbackEndpoint = endpoint === 'sensitive' ? 'object' : endpoint;
-
-        const queriesToInvalidate = ['feedback', feedbackEndpoint, 'getAll'];
-        queryClient.invalidateQueries(queriesToInvalidate);
-      },
-    }
-  );
-}
 
 export function useFeedbackGetAllQuery<T>(endpoint: FeedbackType = 'general') {
   const headers = useJsonHeaders({}, true);

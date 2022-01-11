@@ -1,10 +1,11 @@
 import { fetchGet, FetchHeaders, fetchPatch, fetchPost } from 'utils/fetch';
 
+import { FeedbackPostBody } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { SIDECAR } from 'constants/app';
 
-import { FeedbackType } from './types';
+import { FeedbackType, FeedbackPatchBody } from './types';
 
 export const feedback = {
   get: async <T>(feedbackType: FeedbackType, headers: FetchHeaders) => {
@@ -33,22 +34,20 @@ export const feedback = {
   },
   create: async (
     feedbackType: FeedbackType,
-    payload: Record<string, unknown>,
+    payload: FeedbackPostBody,
     headers: FetchHeaders
   ) => {
     const [tenant] = getTenantInfo();
 
     return fetchPost(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/feedback/${feedbackType}`,
-      {
-        payload,
-      },
+      payload,
       { headers }
     );
   },
   update: async (
     feedbackType: FeedbackType,
-    data: { id: string; payload: Record<string, unknown> },
+    data: FeedbackPatchBody,
     headers: FetchHeaders
   ) => {
     const [tenant] = getTenantInfo();
