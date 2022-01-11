@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 export { MetricsLogger } from './src/MetricsLogger';
 

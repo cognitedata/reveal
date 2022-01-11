@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
 import { SectorMetadata, CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';

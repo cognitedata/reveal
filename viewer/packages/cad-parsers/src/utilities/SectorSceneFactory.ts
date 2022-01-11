@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 import { SectorSceneImpl } from './SectorScene';
 import { SectorMetadata } from '../metadata/types';

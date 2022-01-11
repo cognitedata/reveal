@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 // TODO 2021-11-08 larsmoa: Enable explicit-module-boundary-types for ComboControls
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
@@ -643,7 +643,7 @@ export class ComboControls extends EventDispatcher {
     _raycaster.setFromCamera({ x, y }, _reusableCamera);
 
     let radius = distToTarget + deltaDistance;
-
+    
     if (radius < minZoomDistance && !isDollyOut) {
       radius = distToTarget;
       if (dynamicTarget) {
@@ -665,7 +665,7 @@ export class ComboControls extends EventDispatcher {
 
     return { targetOffset, radius };
   };
-
+  
   // Function almost equal to mapLinear except it is behaving the same as clamp outside of specifed range
   private readonly clampedMap = (value: number, xStart: number, xEnd: number, yStart: number, yEnd: number) => {
     if (value < xStart) value = yStart;
@@ -704,10 +704,7 @@ export class ComboControls extends EventDispatcher {
     const cameraToScrollTargetVec = new Vector3().subVectors(_scrollTarget, _camera.position);
 
     const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
-    const targetScrollTargetCameraAngle = targetToScrollTargetVec
-      .clone()
-      .negate()
-      .angleTo(cameraToScrollTargetVec.clone().negate());
+    const targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.clone().negate());
 
     let deltaTargetOffsetDistance =
       deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
@@ -727,22 +724,20 @@ export class ComboControls extends EventDispatcher {
     deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
 
     let radius = distToTarget + deltaDistance;
-
+    
     // behaviour for scrolling with mouse wheel
     if (radius < minZoomDistance) {
       this._temporarilyDisableDamping = true;
 
       // stops camera from moving forward only if target became close to scroll target
-      if (_scrollTarget.distanceTo(_target) < minZoomDistance || radius <= 0) {
+      if ((_scrollTarget.distanceTo(_target) < minZoomDistance) || (radius <= 0)) {
         deltaTargetOffsetDistance = 0;
         radius = distToTarget;
       }
     }
 
     // if we scroll out, we don't change the target
-    const targetOffset = targetToScrollTargetVec
-      .negate()
-      .normalize()
+    const targetOffset = targetToScrollTargetVec.negate().normalize()
       .multiplyScalar(!isDollyOut ? deltaTargetOffsetDistance : 0);
 
     return { targetOffset, radius };

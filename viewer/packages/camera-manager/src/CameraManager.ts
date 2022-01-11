@@ -79,10 +79,11 @@ export class CameraManager {
     this._domElement = domElement;
     this._inputHandler = new InputHandler(domElement);
     this._modelRaycastCallback = raycastFunction;
-
+    
     this.setCameraControlsOptions(this._cameraControlsOptions);
     this._controls = new ComboControls(camera, domElement);
     this._controls.minZoomDistance = CameraManager.DefaultMinZoomDistance;
+
 
     this._controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -485,8 +486,8 @@ export class CameraManager {
       this._onClick = undefined;
     }
     if (this._onWheel !== undefined && removeOnWheel) {
-      this._domElement.removeEventListener('wheel', this._onWheel);
-      this._onWheel = undefined;
+       this._domElement.removeEventListener('wheel', this._onWheel);
+       this._onWheel = undefined;
     }
   }
 
@@ -528,9 +529,9 @@ export class CameraManager {
 
     const onWheel = async (e: any) => {
       const timeDelta = wheelClock.getDelta();
-
+      
       if (timeDelta > 0.08) scrollStarted = false;
-
+      
       const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
       const isZoomToCursor = this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor';
 
@@ -538,7 +539,7 @@ export class CameraManager {
         scrollStarted = true;
         const newTarget = await this.calculateNewTarget(e);
         this._controls.setScrollTarget(newTarget);
-      }
+      } 
     };
 
     if (this._controls) this.handleMouseWheelActionChange(this._cameraControlsOptions);

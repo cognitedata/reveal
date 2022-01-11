@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 import { Cognite3DModel } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
