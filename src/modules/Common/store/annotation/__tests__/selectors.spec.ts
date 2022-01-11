@@ -154,41 +154,6 @@ describe('Test annotation selectors', () => {
     });
   });
 
-  describe('Test makeSelectAnnotationCounts', () => {
-    test('should return annotation counts for each file', () => {
-      const previousState = {
-        ...initialState,
-        files: {
-          byId: {
-            '10': [1, 2, 3, 4],
-            '20': [3, 4],
-          },
-        },
-        annotations: {
-          byId: {
-            '1': getDummyAnnotation(1, VisionAPIType.OCR),
-            '2': getDummyAnnotation(2, VisionAPIType.TagDetection),
-            '3': getDummyAnnotation(3, VisionAPIType.ObjectDetection),
-            '4': getDummyAnnotation(4, VisionAPIType.ObjectDetection, 'person'),
-          },
-        },
-      };
-
-      const selector = makeSelectAnnotationCounts();
-
-      // eslint-disable-next-line no-debugger
-      debugger;
-
-      expect(selector(previousState, 10)).toEqual({
-        objects: 1,
-        assets: 1,
-        text: 1,
-        gdpr: 1,
-        mostFrequentObject: ['pump', 1],
-      });
-    });
-  });
-
   describe('Test annotation count selectors', () => {
     const previousState = {
       ...initialState,
