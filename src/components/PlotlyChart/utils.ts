@@ -201,7 +201,7 @@ export function formatPlotlyData(
   seriesData: SeriesData[],
   hideMinMax: boolean
 ): Plotly.Data[] {
-  const groupedAggregateTraces = seriesData.map(({ series }, index) =>
+  const groupedAggregateTraces = seriesData.map(({ series, unit }, index) =>
     series.map(
       ({ name, color, mode, width, dash, datapoints, outdatedData }) => {
         /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
@@ -244,6 +244,8 @@ export function formatPlotlyData(
             : (datapoint as DoubleDatapoint).value
         );
 
+        const unitLabel = unit ? ` ${unit}` : '';
+
         const average = {
           type: 'scatter',
           mode: mode || 'lines',
@@ -260,8 +262,7 @@ export function formatPlotlyData(
               'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
           ),
           y: avgYValues,
-          hovertemplate:
-            '%{y} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>',
+          hovertemplate: `%{y}${unitLabel} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>`,
           hoverlabel: {
             bgcolor: '#ffffff',
             bordercolor: color,
