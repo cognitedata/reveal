@@ -23,6 +23,7 @@ import { useResetRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
+import { useTranslation } from '@cognite/react-i18n';
 
 type ActiveTabOption = 'mine' | 'public';
 type SortOption = 'name' | 'owner' | 'updatedAt';
@@ -43,12 +44,6 @@ const updatedAtSorter = (a: Chart, b: Chart) => {
   return b.updatedAt - a.updatedAt;
 };
 
-const sortOptions: SelectSortOption[] = [
-  { value: 'name', label: 'Name' },
-  { value: 'owner', label: 'Owner' },
-  { value: 'updatedAt', label: 'Updated' },
-];
-
 const ChartList = () => {
   const move = useNavigate();
   const { data: login } = useUserInfo();
@@ -57,6 +52,7 @@ const ChartList = () => {
   const resetChart = useResetRecoilState(chartAtom);
   const [_isLoadingOperations, operationsError, _operations] =
     useAvailableOps();
+  const { t } = useTranslation('global');
 
   useEffect(() => {
     resetChart();
@@ -78,6 +74,12 @@ const ChartList = () => {
   const [activeTab, setActiveTab] = useState<ActiveTabOption>('mine');
   const [sortOption, setSortOption] = useState<SortOption>('updatedAt');
   const [viewOption, setViewOption] = useState<ViewOption>('list');
+
+  const sortOptions: SelectSortOption[] = [
+    { value: 'name', label: t('chartList.sortOptionName', 'Name') },
+    { value: 'owner', label: t('chartList.sortOptionOwner', 'Owner') },
+    { value: 'updatedAt', label: t('chartList.sortOptionUpdated', 'Updated') },
+  ];
 
   useEffect(() => {
     trackUsage('PageView.ChartList');
@@ -169,8 +171,8 @@ const ChartList = () => {
   if (operationsError instanceof Error) {
     toast.error(
       <ErrorToast
-        title="Failed to load Operations"
-        text="Please reload the page"
+        title={t('chartList.operationErrorTitle', 'Failed to load Operations')}
+        text={t('chartList.operationErrorDesc', 'Please reload the page')}
       />,
       {
         autoClose: false,
@@ -183,13 +185,13 @@ const ChartList = () => {
     <div id="chart-list" style={{ padding: 16, width: '100%' }}>
       <div style={{ margin: 20 }}>
         <Button type="primary" icon="PlusCompact" onClick={handleNewChart}>
-          New chart
+          {t('chartList.newChartBtn', 'New chart')}
         </Button>
       </div>
       <div style={{ margin: 20 }}>
         <Input
           size="large"
-          placeholder="Filter charts"
+          placeholder={t('chartList.filterPlaceholder', 'Filter charts')}
           icon="Search"
           fullWidth
           value={filterText}
@@ -203,14 +205,24 @@ const ChartList = () => {
           activeKey={activeTab}
           onChange={(activeKey) => setActiveTab(activeKey as ActiveTabOption)}
         >
-          <Tabs.TabPane key="mine" tab={<span>My charts</span>} />
-          <Tabs.TabPane key="public" tab={<span>Public charts</span>} />
+          <Tabs.TabPane
+            key="mine"
+            tab={<span>{t('chartList.myChartsTabTitle', 'My charts')}</span>}
+          />
+          <Tabs.TabPane
+            key="public"
+            tab={
+              <span>
+                {t('chartList.publicChartsTabTitle', 'Public charts')}
+              </span>
+            }
+          />
         </Tabs>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 200 }}>
             {/* @ts-ignore next line */}
             <Select
-              title="Sort by:"
+              title={`${t('chartList.sortByTitle', 'Sort by')}:`}
               icon="ArrowDown"
               /*
                 Hack below: Cogs.js has a bug where passing the value makes it
@@ -220,7 +232,7 @@ const ChartList = () => {
                 latest version of Cogs yet.
               */
               // value={sortOption}
-              placeholder="Updated"
+              placeholder={t('chartList.sortDropdownPlaceholder', 'Updated')}
               onChange={(option: SelectSortOption) =>
                 setSortOption(option.value)
               }

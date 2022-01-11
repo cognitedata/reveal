@@ -2,30 +2,38 @@ import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useNavigate } from 'hooks/navigation';
+import { useProject } from 'hooks/config';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
+import { useTranslation } from '@cognite/react-i18n';
 import { ChartActions } from 'components/TopBar';
 import EditableText from 'components/EditableText';
 import { useChat } from 'hooks/intercom';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import { Link } from 'react-router-dom';
 
 const TopBarWrapper = () => {
   const { data: user } = useUserInfo();
   const move = useNavigate();
   const chat = useChat();
   const [chart, setChart] = useRecoilState(chartAtom);
+  const project = useProject();
+  const { t } = useTranslation('global');
 
   return (
     <TopBarWrap>
       <TopBar>
         <TopBar.Left>
-          <TopBar.Logo title="Cognite Charts" onLogoClick={() => move('')} />
+          <TopBar.Logo
+            title={t('topBar.logo', 'Cognite Charts')}
+            onLogoClick={() => move('')}
+          />
           {!chart && <TopBar.Navigation links={[]} />}
           {!!chart && (
             <>
               <AllCharts className="downloadChartHide" onClick={() => move('')}>
-                ← All charts
+                ← {t('topBar.allCharts', 'All charts')}
               </AllCharts>
               <TopBar.Item>
                 <Title level={4} style={{ marginLeft: 17 }}>
@@ -63,7 +71,7 @@ const TopBarWrapper = () => {
             actions={[
               {
                 key: 'chat',
-                name: 'Feedback',
+                name: t('topBar.feedback'),
                 component: (
                   <span className="downloadChartHide">
                     <Icon type="SpeechBubble" />
@@ -73,7 +81,7 @@ const TopBarWrapper = () => {
               },
               {
                 key: 'help',
-                name: 'Help',
+                name: t('topBar.help'),
                 component: (
                   <span className="downloadChartHide">
                     <Icon type="Help" />
@@ -84,7 +92,7 @@ const TopBarWrapper = () => {
                     <Menu.Item
                       onClick={() => window.open(sidecar.privacyPolicyUrl)}
                     >
-                      Privacy policy
+                      {t('topBar.privacyPolicy', 'Privacy policy')}
                     </Menu.Item>
                     <Menu.Footer>
                       v. {process.env.REACT_APP_VERSION_NAME || 'local'}
@@ -98,6 +106,22 @@ const TopBarWrapper = () => {
                   <Avatar
                     text={user?.displayName || user?.email || 'Unknown'}
                   />
+                ),
+                menu: (
+                  <Menu style={{ minWidth: '140px' }}>
+                    <Menu.Header>
+                      {t('topBar.userDropdownHeader', 'ACCOUNT')}
+                    </Menu.Header>
+                    <Menu.Item>
+                      <Link
+                        to={`/${project}/user`}
+                        style={{ color: 'var(--cogs-text-color)' }}
+                      >
+                        {t('topBar.dropdpwnProfile', 'Profile')}
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item>{t('topBar.logout', 'Logout')}</Menu.Item>
+                  </Menu>
                 ),
               },
             ]}

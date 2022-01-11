@@ -13,6 +13,7 @@ import {
 import { Loader, toast } from '@cognite/cogs.js';
 import ChartList from 'pages/ChartList';
 import ChartView from 'pages/ChartView';
+import UserProfile from 'pages/UserProfile/UserProfile';
 import TenantSelectorView from 'pages/TenantSelector';
 import { FileView } from 'pages/FileView';
 import TopBar from 'components/TopBar';
@@ -169,6 +170,7 @@ const AppRoutes = () => {
   return (
     <Switch>
       <RouteWithTopbar path={`${path}/`} exact component={ChartList} />
+      <RouteWithTopbar path={`${path}/user`} exact component={UserProfile} />
       <RouteWithTopbar path={`${path}/:chartId`} exact component={ChartView} />
       <RouteWithTopbar
         path={`${path}/:chartId/files/:assetId`}

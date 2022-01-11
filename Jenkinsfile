@@ -28,7 +28,7 @@ static final String SENTRY_DSN = 'https://b35f7e3635d34e44bd24a354dfc4f13a@o1240
 // See https://cog.link/i18n for more information.
 //
 // Note: You'll probably want to set this in scripts/start.sh too
-static final String LOCIZE_PROJECT_ID = ''
+static final String LOCIZE_PROJECT_ID = '1610fa5f-c8df-4aa8-9049-c08d8055d8ac'
 
 // Specify your Mixpanel project token. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.

@@ -4,6 +4,7 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { CogniteClient } from '@cognite/sdk';
 import { ToastContainer } from '@cognite/cogs.js';
+import { I18nContainer } from '@cognite/react-i18n';
 import { RecoilRoot } from 'recoil';
 import { createBrowserHistory } from 'history';
 import * as Sentry from '@sentry/react';
@@ -56,17 +57,19 @@ const sdk = new CogniteClient({
 export default function RootApp() {
   return (
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <SDKProvider sdk={sdk}>
-            <Router history={history}>
-              <ToastContainer />
-              <Routes />
-            </Router>
-            <ReactQueryDevtools />
-          </SDKProvider>
-        </QueryClientProvider>
-      </RecoilRoot>
+      <I18nContainer>
+        <RecoilRoot>
+          <QueryClientProvider client={queryClient}>
+            <SDKProvider sdk={sdk}>
+              <Router history={history}>
+                <ToastContainer />
+                <Routes />
+              </Router>
+              <ReactQueryDevtools />
+            </SDKProvider>
+          </QueryClientProvider>
+        </RecoilRoot>
+      </I18nContainer>
     </Sentry.ErrorBoundary>
   );
 }
