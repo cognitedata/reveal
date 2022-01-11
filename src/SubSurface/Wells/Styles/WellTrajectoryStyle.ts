@@ -41,7 +41,7 @@ export class WellTrajectoryStyle extends BaseRenderStyle {
 
   public bandFontSize = new NumberProperty({ name: "Band Font Size", value: 30, options: BaseRenderStyle.fontSizeOptions, toolTip: "The font of the md values drawn in the bands" });
 
-  public bandWidth = new NumberProperty({ name: "Band Width", value: 50, options: [20, 25, 30, 50, 75, 100, 200] } );
+  public bandWidth = new NumberProperty({ name: "Band Width", value: 200, options: [20, 25, 30, 50, 75, 100, 200, 250, 300] } );
 
   //= =================================================
   // CONSTRUCTOR
