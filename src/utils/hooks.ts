@@ -8,7 +8,7 @@ import {
   Log,
   Schedule,
 } from 'types';
-import sdk from '@cognite/cdf-sdk-singleton';
+import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import {
   allFunctionsKey,
   allSchedulesKey,
@@ -106,4 +106,8 @@ export const useRefreshApp = () => {
   return () => {
     cache.invalidateQueries();
   };
+};
+
+export const useUserInformation = () => {
+  return useQuery('user-info', getUserInformation);
 };
