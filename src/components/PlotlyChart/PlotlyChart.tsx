@@ -24,7 +24,6 @@ import {
   useAllowedToUpdateChart,
 } from '.';
 import {
-  AdjustButton,
   ChartingContainer,
   LoadingContainer,
   LoadingIcon,
@@ -69,6 +68,27 @@ const PlotlyChartComponent = ({
   const pointsPerSeries = isPreview ? 100 : CHART_POINTS_PER_SERIES;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
+
+  /**
+   * Handle toggling of scroll behavior for y axis based on mouse position
+   */
+  const handleToggleYAxisLocked = useCallback(
+    (isLocked: boolean) => {
+      if (isLocked !== yAxisLocked) {
+        setYAxisLocked(isLocked);
+      }
+    },
+    [yAxisLocked]
+  );
+
+  const handleMouseMoveOnChart = useCallback(
+    (e) => {
+      const classes = Array.from((e.target as HTMLElement)?.classList);
+      const isMainArea = classes.includes('nsewdrag');
+      handleToggleYAxisLocked(isMainArea);
+    },
+    [handleToggleYAxisLocked]
+  );
 
   /**
    * Optimization hook to avoid rendering chart when user is navigating
@@ -212,7 +232,6 @@ const PlotlyChartComponent = ({
   );
 
   const showYAxis = !isInSearch && !isPreview && isYAxisShown;
-  const showAdjustButton = showYAxis && seriesData.length > 0;
 
   const layout = useMemo(() => {
     return generateLayout({
@@ -290,27 +309,13 @@ const PlotlyChartComponent = ({
 
   return (
     <ChartingContainer ref={containerRef}>
-      {showAdjustButton && (
-        <>
-          {isLoadingChartData && <LoadingIcon />}
-          <AdjustButton
-            type="tertiary"
-            icon="YAxis"
-            onClick={onAdjustButtonClick}
-            left={yAxisValues.width * 100 * seriesData.length}
-            className="adjust-button"
-            style={{ background: 'white' }}
-          >
-            {yAxisLocked ? 'Adjust Y axis' : 'Finish'}
-          </AdjustButton>
-        </>
-      )}
+      {isLoadingChartData && <LoadingIcon />}
       {isFetchingPreview ? (
         <LoadingContainer>
           <Icon type="LoadingSpinner" />
         </LoadingContainer>
       ) : (
-        <PlotWrapper>
+        <PlotWrapper onMouseMove={handleMouseMoveOnChart}>
           <MemoizedPlot
             data={activeState.data as Plotly.Data[]}
             layout={activeState.layout as unknown as Plotly.Layout}
