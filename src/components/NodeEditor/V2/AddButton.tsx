@@ -65,15 +65,24 @@ export const AddMenu = ({
   onFunctionSelected = () => {},
 }: AddMenuProps) => {
   const hasOutputNode = elements.some((el) => el.type === NodeTypes.OUTPUT);
+  const [isSourceMenuOpen, setIsSourceMenuOpen] = useState(false);
 
   return (
     <AddDropdownMenu>
       <Menu.Submenu
+        visible={isSourceMenuOpen}
+        onClickOutside={() => setIsSourceMenuOpen(false)}
         content={
           <SourceListDropdown sources={sources} addSourceNode={addSourceNode} />
         }
       >
-        <span>Source</span>
+        <SourceItemTextWrapper
+          role="button"
+          onClick={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
+          onKeyDown={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
+        >
+          Source
+        </SourceItemTextWrapper>
       </Menu.Submenu>
       {!!operations.length && (
         <ToolboxFunctionDropdown
@@ -142,6 +151,12 @@ const AddDropdownContainer = styled.div`
   top: 5px;
   left: 5px;
   z-index: ${Layers.MINIMUM};
+`;
+
+const SourceItemTextWrapper = styled.div`
+  height: 100%;
+  width: 100%;
+  text-align: left;
 `;
 
 const AddDropdownMenu = styled(Menu)`
