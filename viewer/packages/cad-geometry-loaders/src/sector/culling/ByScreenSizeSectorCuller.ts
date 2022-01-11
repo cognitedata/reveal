@@ -13,6 +13,7 @@ import { TakenV9SectorMap } from './takensectors';
 import Log from '@reveal/logger';
 import { CadModelMetadata, V9SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
+import { PrioritizedArea } from '@reveal/cad-styling';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -52,7 +53,12 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     initializeTakenSectorsAndWeightFunctions(modelsAndCandidateSectors, takenSectors, weightFunctions);
 
     // Determine priorities of each candidate sector
-    const prioritizedSectors = sortSectorsByPriority(modelsAndCandidateSectors, weightFunctions, transformedBounds);
+    const prioritizedSectors = sortSectorsByPriority(
+      modelsAndCandidateSectors,
+      weightFunctions,
+      transformedBounds,
+      input.prioritizedAreas
+    );
     const takenSectorCount = takeSectorsWithinBudget(takenSectors, input, prioritizedSectors);
     Log.debug('Scheduled', takenSectorCount, 'of', prioritizedSectors.length, 'candidates');
 
@@ -88,7 +94,8 @@ function takeSectorsWithinBudget(
 function sortSectorsByPriority(
   modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
   weightFunctions: WeightFunctionsHelper,
-  transformedBounds: THREE.Box3
+  transformedBounds: THREE.Box3,
+  prioritizedAreas: PrioritizedArea[]
 ): { model: CadModelMetadata; sectorId: number; priority: number }[] {
   const candidateSectors = new Array<{
     model: CadModelMetadata;
@@ -99,7 +106,7 @@ function sortSectorsByPriority(
     sectors.forEach(sectorMetadata => {
       const sector = sectorMetadata;
       weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
-      const priority = determineSectorPriority(weightFunctions, sector, transformedBounds);
+      const priority = determineSectorPriority(weightFunctions, sector, transformedBounds, prioritizedAreas);
       candidateSectors.push({
         model,
         sectorId: sector.id,
@@ -189,13 +196,15 @@ function determineCandidateSectors(
 function determineSectorPriority(
   weightFunctions: WeightFunctionsHelper,
   sector: V9SectorMetadata,
-  transformedBounds: THREE.Box3
+  transformedBounds: THREE.Box3,
+  prioritizedAreas: PrioritizedArea[]
 ) {
   const levelWeightImportance = 2.0;
   const distanceToImportance = 1.0;
   const screenAreaImportance = 0.3;
   const frustumDepthImportance = 0.2;
   const nodeScreenSizeImportance = 1.0;
+  const prioritizedAreasImportance = 1.0;
 
   const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
   const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
@@ -205,12 +214,14 @@ function determineSectorPriority(
     sector.maxDiagonalLength !== undefined
       ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
       : 1.0;
+  const prioritizedAreaWeight = weightFunctions.computePrioritizedAreaWeight(transformedBounds, prioritizedAreas);
 
   const priority =
     levelWeightImportance * levelWeight +
     distanceToImportance * distanceToCameraWeight +
     screenAreaImportance * screenAreaWeight +
     frustumDepthImportance * frustumDepthWeight +
-    nodeScreenSizeImportance * nodeScreenSizeWeight;
+    nodeScreenSizeImportance * nodeScreenSizeWeight +
+    prioritizedAreasImportance * prioritizedAreaWeight;
   return priority;
 }
