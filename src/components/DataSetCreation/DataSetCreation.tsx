@@ -19,7 +19,7 @@ import documentationIcon from 'assets/documentationIcon.svg';
 import dataConsumerIcon from 'assets/DataConsumer.svg';
 import { getContainer, isNotNilOrWhitespace } from 'utils/utils';
 import { useFlag } from '@cognite/react-feature-flags';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInformation } from 'hooks/useUserInformation';
 import GetDataInPage from '../GetDataInPage';
 import TransformPage from '../TransformPage';
 import DocumentationPage from '../DocumentationPage';
@@ -44,7 +44,7 @@ interface DataSetCreationProps {
 }
 
 const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
-  const { data: userData } = useUserInfo();
+  const { data: userData } = useUserInformation();
 
   const [selectedSection, setSelectedSection] = useState<string>('');
   const [dataSetName, setDataSetName] = useState<string>('');

@@ -10,7 +10,7 @@ import {
   assetsCounter,
   sequenceCounter,
 } from 'utils/utils';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInformation } from 'hooks/useUserInformation';
 import EventsTable from '../EventsTable';
 import AssetsTable from '../AssetsTable';
 import TimeseriesTable from '../TimeseriesTable';
@@ -31,7 +31,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
     visible: false,
   });
 
-  const { data } = useUserInfo();
+  const { data } = useUserInformation();
   const email = data?.email;
 
   const [assetCount, setAssetCount] = useState<number>(0);
