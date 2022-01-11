@@ -1,13 +1,34 @@
 import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient as CogniteClientV7 } from '@cognite/sdk-v7';
 
 import { log } from './log';
 
 let globalClient: CogniteClient;
+let globalClientV7: CogniteClientV7;
 export const setClient = (client: CogniteClient) => {
   globalClient = client;
 };
+
 export const getCogniteSDKClient = () => {
   return globalClient;
+};
+
+export const setClientV7 = (client: CogniteClientV7) => {
+  globalClientV7 = client;
+};
+
+export const getCogniteSDKClientV7 = (): CogniteClientV7 => {
+  return globalClientV7;
+};
+
+export const createCogniteSDKClientV7 = ({
+  appId,
+  baseUrl,
+}: {
+  appId: string;
+  baseUrl: string;
+}) => {
+  return new CogniteClientV7({ appId, baseUrl });
 };
 
 let globalEmail: string;

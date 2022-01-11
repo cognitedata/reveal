@@ -14,7 +14,10 @@ import {
   useProjectConfigMetadataGetQuery,
 } from 'modules/api/projectConfig/useProjectConfigQuery';
 
-import { customConfigComponent } from '../configComponents';
+import {
+  customConfigComponent,
+  customDeleteComponent,
+} from '../configComponents';
 
 import { ProjectConfigForm } from './ProjectConfigForm';
 
@@ -62,6 +65,18 @@ export const ProjectConfig = () => {
     setHasChanges(true);
   }, []);
 
+  const handleDelete = useCallback(
+    async (key: string, value: unknown) => {
+      const changes = Map({}).setIn(key.split('.'), value).toJS();
+      try {
+        await updateConfig(changes);
+      } catch (e) {
+        showErrorMessage('Could not delete entity.');
+      }
+    },
+    [updateConfig]
+  );
+
   if (isLoading || isMetadataLoading) {
     return (
       <EmptyState isLoading loadingTitle={t('Loading project configuration')} />
@@ -80,9 +95,11 @@ export const ProjectConfig = () => {
       config={config}
       onChange={handleChange}
       onUpdate={handleUpdate}
+      onDelete={handleDelete}
       onReset={handleReset}
       hasChanges={hasChanges}
       renderCustomComponent={customConfigComponent}
+      renderDeleteComponent={customDeleteComponent}
     />
   );
 };

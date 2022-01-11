@@ -1,10 +1,10 @@
 import findLast from 'lodash/findLast';
 import isFunction from 'lodash/isFunction';
-import isUndefined from 'lodash/isUndefined';
+
+import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 
 import { SelectableLayer, MapDataSource } from 'modules/map/types';
-import { Layer, Layers } from 'tenants/types';
-
+import { Layer, Layers, LegacyLayer } from 'tenants/types';
 /*
  * When adding layers we need to do it in the right order
  * This function helps us find the previous showing one
@@ -25,11 +25,12 @@ export const getLayerById = (allLayers: MapDataSource[], id: string) =>
 
 const isLayerEmpty = (layer: Layer) => {
   // layers from project config will have disabled set
-  if (isUndefined(layer.disabled)) {
-    return !layer.remote && !layer.local && !layer.remoteService;
-  }
-
-  return layer.disabled;
+  return (
+    !(layer as LegacyLayer).remote &&
+    !(layer as LegacyLayer).local &&
+    !(layer as LegacyLayer).remoteService &&
+    (layer as ProjectConfigMapLayers).disabled
+  );
 };
 
 export const getLayersByKey = (
@@ -43,7 +44,7 @@ export const getLayersByKey = (
         ? value(allLayers[id][key]) // check the layers value in a custom function
         : allLayers[id][key] === value // or just check its value directly
     ) {
-      const layer = allLayers[id] as Layer;
+      const layer = allLayers[id];
 
       // stop adding layers that dont have data
       // note: we should move this check somewhere else when we fix up this function
@@ -55,11 +56,11 @@ export const getLayersByKey = (
 
       result.push({
         id,
-        name: layer.name,
+        name: layer.name || '',
         weight: layer.weight,
-        selected: layer.defaultOn,
+        selected: layer.defaultOn || false,
 
-        layers: layer.mapLayers || [],
+        layers: (layer.mapLayers as LegacyLayer['mapLayers']) || [],
       });
     }
 

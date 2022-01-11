@@ -1,12 +1,11 @@
-import { Feature, FeatureCollection, Geometry } from 'geojson';
+import { Feature, FeatureCollection } from 'geojson';
 import forEach from 'lodash/forEach';
 import reduce from 'lodash/reduce';
 
 import {
-  Attributes,
-  CogniteExternalId,
-  FeaturesCreateItem,
-} from '@cognite/sdk';
+  GeospatialCreateFeatureType,
+  GeospatialFeature,
+} from '@cognite/sdk-v7';
 
 import {
   MAX_STRING_LENGTH_MULTIPLIER,
@@ -14,20 +13,16 @@ import {
   DISCOVER_FEATURE_TYPE_PREFIX,
 } from './constants';
 
-export type CustomGeoJSON = FeatureCollection<
-  Geometry,
-  Record<string, unknown>
-> & {
-  name: string;
-};
-
-export const adaptGeoJSONToGeospatial = (featureCollection: CustomGeoJSON) => {
-  const { features, name } = featureCollection;
+export const adaptGeoJSONToGeospatial = (
+  featureCollection: FeatureCollection,
+  id: string
+) => {
+  const { features } = featureCollection;
   return reduce<
     Feature,
     {
-      featureType: { externalId: CogniteExternalId; attributes: Attributes };
-      featureItems: FeaturesCreateItem[];
+      featureType: GeospatialCreateFeatureType;
+      featureItems: GeospatialFeature[];
     }
   >(
     features,
@@ -35,42 +30,44 @@ export const adaptGeoJSONToGeospatial = (featureCollection: CustomGeoJSON) => {
       const { properties, geometry } = feature;
 
       acc.featureItems.push({
-        externalId: `${DISCOVER_FEATURE_PREFIX}${name}_${index}`,
-        // eslint-disable-next-line
-        // @ts-ignore type to be fixed in new version of sdk
+        externalId: `${DISCOVER_FEATURE_PREFIX}${id}_${index}`,
         geometry,
         ...properties,
       });
 
-      const existingAttributes = acc.featureType.attributes;
-      const newAttributes = {
-        ...existingAttributes,
+      const existingProperties = acc.featureType.properties;
+      const newProperties = {
+        ...existingProperties,
       };
 
       forEach(properties, (value, key) => {
-        const existingFeatureTypeProperty = existingAttributes[key];
+        const existingFeatureTypeProperty = existingProperties[key];
         if (value) {
           const valueType = typeof value;
           switch (valueType) {
             case 'string':
-              newAttributes[key] = {
+              newProperties[key] = {
                 type: 'STRING',
                 size:
+                  existingFeatureTypeProperty?.type === 'STRING' &&
                   existingFeatureTypeProperty?.size &&
                   existingFeatureTypeProperty.size >
                     value.length * MAX_STRING_LENGTH_MULTIPLIER
                     ? existingFeatureTypeProperty.size
                     : value.length * MAX_STRING_LENGTH_MULTIPLIER,
+                optional: true,
               };
               break;
             case 'number':
-              newAttributes[key] = {
+              newProperties[key] = {
                 type: 'DOUBLE',
+                optional: true,
               };
               break;
             case 'boolean':
-              newAttributes[key] = {
+              newProperties[key] = {
                 type: 'BOOLEAN',
+                optional: true,
               };
               break;
             default:
@@ -79,13 +76,13 @@ export const adaptGeoJSONToGeospatial = (featureCollection: CustomGeoJSON) => {
       });
       return {
         ...acc,
-        featureType: { ...acc.featureType, attributes: newAttributes },
+        featureType: { ...acc.featureType, properties: newProperties },
       };
     },
     {
       featureType: {
-        externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${name}`,
-        attributes: {
+        externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${id}`,
+        properties: {
           geometry: { type: 'GEOMETRY', srid: 4326 },
         },
       },

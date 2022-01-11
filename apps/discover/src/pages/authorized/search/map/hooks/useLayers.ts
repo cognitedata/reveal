@@ -5,8 +5,10 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import keyBy from 'lodash/keyBy';
+import reduce from 'lodash/reduce';
 import { fetchTenantFile } from 'utils/fetchTenantFile';
 
+import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { LAYERS_QUERY_KEY } from 'constants/react-query';
@@ -14,18 +16,38 @@ import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useCategoryLayers } from 'modules/map/hooks/useCategoryLayers';
 import { SelectableLayer, MapDataSource } from 'modules/map/types';
 import { WELL_HEADS_LAYER_ID } from 'pages/authorized/search/map/constants';
-import { Layers } from 'tenants/types';
+import { LegacyLayer, Layers } from 'tenants/types';
 
 import { getLayersByKey, getLayerById } from '../utils';
 
 const isSelectable = (value: unknown) => isString(value);
 
+const getCombinedLayers = (
+  projectConfigLayers = {},
+  fetchedLegacyLayers = {}
+) => {
+  return reduce<Record<string, LegacyLayer>, Layers>(
+    fetchedLegacyLayers,
+    (combinedLayers, layer, id) => {
+      if (
+        combinedLayers[id] &&
+        !(combinedLayers[id] as ProjectConfigMapLayers).disabled
+      ) {
+        return combinedLayers;
+      }
+      return { ...combinedLayers, [id]: layer };
+    },
+    {
+      ...projectConfigLayers,
+    }
+  );
+};
+
 export const useLayers = () => {
   const [tenant] = getTenantInfo();
   const { data: mapConfig } = useProjectConfigByKey('map');
 
-  // TODO(PP-678) temp name, to be changed to id once done in backend.
-  const adaptedProjectConfigLayers = keyBy(mapConfig?.layers, 'name');
+  const adaptedProjectConfigLayers = keyBy(mapConfig?.layers, 'id');
 
   const categoryLayers = useCategoryLayers();
 
@@ -37,10 +59,10 @@ export const useLayers = () => {
   const { data, isFetched: layersReady } = useQuery(LAYERS_QUERY_KEY.ALL, () =>
     fetchTenantFile(tenant, 'layers')
       .then((fetchedLayers) => {
-        const combinedLayers = {
-          ...adaptedProjectConfigLayers,
-          ...fetchedLayers,
-        };
+        const combinedLayers = getCombinedLayers(
+          adaptedProjectConfigLayers,
+          fetchedLayers
+        );
         if (!isEmpty(combinedLayers)) {
           const alwaysOnLayers = getLayersByKey(combinedLayers, 'alwaysOn');
           return {

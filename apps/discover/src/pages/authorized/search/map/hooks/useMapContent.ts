@@ -10,17 +10,18 @@ import {
 import { fetchTenantFile } from 'utils/fetchTenantFile';
 import { log } from 'utils/log';
 
+import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
 
 import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
+import { useJsonHeaders } from 'modules/api/service';
 import { setSources, patchSource, setAssets } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
 import { mapService } from 'modules/map/service';
 import { MapDataSource } from 'modules/map/types';
-import { RemoteServiceResponse } from 'tenants/types';
+import { RemoteServiceResponse, LegacyLayer } from 'tenants/types';
 
-import { useJsonHeaders } from '../../../../../modules/api/service';
 import { getAssetFilter, getAssetData } from '../utils';
 
 import { useLayers } from './useLayers';
@@ -35,7 +36,7 @@ export const useMapContent = () => {
   const startLazyLoad = (lazyIds: [string, string][]) => {
     lazyIds.forEach(async (lazyId) => {
       const [id, cursor] = lazyId;
-      const service = layers[id].remoteService;
+      const service = (layers[id] as LegacyLayer).remoteService;
       let nextCursor: string | undefined = cursor;
       while (nextCursor && service) {
         // eslint-disable-next-line no-await-in-loop
@@ -59,8 +60,9 @@ export const useMapContent = () => {
 
     if (layersReady && !sources) {
       Object.keys(layers).forEach((id) => {
-        const { remote, remoteService, local, asset, disabled, name } =
-          layers[id];
+        const { remote, remoteService, local, asset } = layers[
+          id
+        ] as LegacyLayer;
 
         const pushResponse = (content: FeatureCollection) => {
           tempSources.push({ id, data: content });
@@ -95,11 +97,11 @@ export const useMapContent = () => {
             )
           );
         }
-        if (!isUndefined(disabled)) {
+        if (!isUndefined((layers[id] as ProjectConfigMapLayers).disabled)) {
           promises.push(
-            geospatialV1.getGeoJSON(name).then((geoJSON) => {
-              // eslint-disable-next-line
-              // @ts-ignore geometry property will match after v7 sdk
+            geospatialV1.getGeoJSON(id).then((geoJSON) => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore need to update FeatureCollection to be used from geojson
               pushResponse(geoJSON);
             })
           );

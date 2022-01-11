@@ -13,7 +13,7 @@ export const LayersCreate: React.FC = () => {
       <Textarea
         style={{ width: '400px', height: '200px' }}
         value={text}
-        placeholder="Enter layer geoJSON"
+        placeholder="Enter layer GeoJSON"
         onChange={(e) => {
           setText(e.target.value);
         }}

@@ -1,15 +1,12 @@
 import { useMutation } from 'react-query';
 
-import noop from 'lodash/noop';
-import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
+import { getCogniteSDKClientV7 } from 'utils/getCogniteSDKClient';
 
 import {
-  FeatureTypesCreateItem,
-  FeaturesCreateItem,
+  GeospatialCreateFeatureType,
+  GeospatialFeature,
   CogniteExternalId,
-} from '@cognite/sdk';
-
-import { geospatialV1 } from './geospatialV1';
+} from '@cognite/sdk-v7';
 
 export const useFeatureCreateQuery = () => {
   return useMutation(
@@ -18,9 +15,9 @@ export const useFeatureCreateQuery = () => {
       features,
     }: {
       featureTypeExternalId: CogniteExternalId;
-      features: FeaturesCreateItem[];
+      features: GeospatialFeature[];
     }) => {
-      return getCogniteSDKClient().spatial.features.create(
+      return getCogniteSDKClientV7().geospatial.feature.create(
         featureTypeExternalId,
         features
       );
@@ -29,17 +26,7 @@ export const useFeatureCreateQuery = () => {
 };
 
 export const useFeatureTypeCreateQuery = () => {
-  return useMutation((featureTypes: FeatureTypesCreateItem[]) => {
-    return getCogniteSDKClient().spatial.featureTypes.create(featureTypes);
+  return useMutation((featureTypes: GeospatialCreateFeatureType[]) => {
+    return getCogniteSDKClientV7().geospatial.featureType.create(featureTypes);
   });
-};
-
-export const useLayerCreateQuery = ({
-  onSuccess = noop,
-  onError = noop,
-}: {
-  onSuccess?: () => void;
-  onError?: (error: unknown) => void;
-}) => {
-  return useMutation(geospatialV1.createLayer, { onSuccess, onError });
 };

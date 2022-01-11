@@ -1,22 +1,23 @@
-import get from 'lodash/get';
 import reduce from 'lodash/reduce';
-
-import { ProjectConfig } from '@cognite/discover-api-types';
 
 import { Metadata, MetadataValue } from '../types';
 
+import { getLabelFromIdentifier } from './getLabelFromIdentifier';
+
 export const getMetadataFromValue = (
-  value: ProjectConfig[keyof ProjectConfig],
+  value: unknown,
   currentMetadata: MetadataValue
 ): Metadata => {
-  return reduce<ProjectConfig[keyof ProjectConfig], Metadata>(
+  return reduce<unknown, Metadata>(
     value as [],
     (acc, datum, index) => {
       const accumulator = { ...acc };
       accumulator[index] = {
-        label:
-          get(datum, currentMetadata?.dataLabelIdentifier || '') ??
-          `${currentMetadata.label} ${index + 1}`,
+        label: getLabelFromIdentifier(
+          datum,
+          currentMetadata?.dataLabelIdentifier,
+          `${currentMetadata.label} ${index + 1}`
+        ),
         children: currentMetadata.children,
       };
       return accumulator;

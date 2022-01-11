@@ -1,33 +1,23 @@
-import { FeatureCollection, Feature } from 'geojson';
-import dropRight from 'lodash/dropRight';
-import get from 'lodash/get';
-import head from 'lodash/head';
+import { Geometry, FeatureCollection } from 'geojson';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
 
-import { Features } from '@cognite/sdk';
+import { GeospatialFeatureResponse } from '@cognite/sdk-v7';
 
-import { DISCOVER_FEATURE_PREFIX } from './constants';
-
-export const adaptGeospatialToGeoJSON = (features: Features[]) => {
-  const externalId = get(head(features), 'externalId', '');
-  const externalIdWithoutPrefix = externalId.replace(
-    DISCOVER_FEATURE_PREFIX,
-    ''
-  );
-  const name = dropRight(externalIdWithoutPrefix.split('_'), 1).join('_');
+export const adaptGeospatialToGeoJSON = (
+  features: GeospatialFeatureResponse[]
+): FeatureCollection => {
   return {
-    type: 'FeatureCollection' as FeatureCollection['type'],
-    name,
+    type: 'FeatureCollection',
     features: map(features, (feature) => {
       return {
-        type: 'Feature' as Feature['type'],
-        geometry: feature.geometry,
+        type: 'Feature',
+        geometry: feature.geometry as Geometry,
         properties: omit(feature, [
           'geometry',
           'externalId',
           'createdTime',
-          'updatedTime',
+          'lastUpdatedTime',
         ]),
       };
     }),

@@ -1,174 +1,20 @@
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import filter from 'lodash/filter';
 import get from 'lodash/get';
 import isNaN from 'lodash/isNaN';
 import last from 'lodash/last';
-import map from 'lodash/map';
 
-import { Button, Title, Flex } from '@cognite/cogs.js';
-import { ProjectConfig } from '@cognite/discover-api-types';
+import { Button, Title } from '@cognite/cogs.js';
 
-import { ConfigFormFields } from '../fields';
-import {
-  MetadataValue,
-  HandleConfigChange,
-  HandleConfigUpdate,
-  CustomComponent,
-} from '../types';
+import { ConfigForm } from '../components/ConfigForm';
+import { RightPanelProps } from '../types';
 
 import {
   ProjectConfigFooter,
   RightPanelContainer,
   FormContainer,
-  ItemWrapper,
 } from './elements';
-
-interface Props {
-  metadataValue?: MetadataValue;
-  onChange: HandleConfigChange;
-  onUpdate: HandleConfigUpdate;
-  onReset: () => void;
-  hasChanges: boolean;
-  valuePath: string;
-  metadataPath: string;
-  value?: ProjectConfig[keyof ProjectConfig];
-  renderCustomComponent: CustomComponent;
-}
-
-type ConfigFormProps = Omit<Props, 'hasChanges' | 'onUpdate' | 'onReset'> & {
-  hasDataAsChildren?: boolean;
-};
-
-const CreateNewComponent: React.FC<
-  Omit<Props, 'onUpdate' | 'onReset' | 'hasChanges'> & {
-    opened: boolean;
-    setOpened: Dispatch<SetStateAction<boolean>>;
-  }
-> = ({
-  opened,
-  renderCustomComponent,
-  setOpened,
-  value,
-  valuePath,
-  metadataPath,
-  onChange,
-  metadataValue,
-}) =>
-  opened
-    ? renderCustomComponent({
-        onClose: () => setOpened(false),
-        onOk: (datum: unknown) => {
-          if (value) {
-            onChange(valuePath, [...(value as []), datum]);
-          } else {
-            onChange(valuePath, [datum]);
-          }
-        },
-        type: metadataPath,
-        metadataValue,
-      })
-    : null;
-
-const ConfigComponent: React.FC<{
-  metadataValue?: Props['metadataValue'];
-  value?: Props['value'];
-  valuePath: Props['valuePath'];
-  metadataPath: Props['metadataPath'];
-  onChange: Props['onChange'];
-  renderCustomComponent: Props['renderCustomComponent'];
-}> = ({
-  metadataValue,
-  value,
-  onChange,
-  valuePath,
-  metadataPath,
-  renderCustomComponent,
-}) => {
-  const [createNewOpened, setCreateNewOpened] = React.useState(false);
-
-  const handleChange = useCallback(
-    (datum) => {
-      onChange(
-        valuePath,
-        filter(value as [], (_valueItem) => _valueItem !== datum)
-      );
-    },
-    [onChange, valuePath, value]
-  );
-
-  return (
-    <Flex direction="column" gap={16} alignItems="flex-start">
-      <Button
-        type="secondary"
-        icon="Add"
-        iconPlacement="right"
-        onClick={() => setCreateNewOpened(true)}
-      >
-        Create New {metadataValue?.label}
-      </Button>
-      <CreateNewComponent
-        opened={createNewOpened}
-        setOpened={setCreateNewOpened}
-        value={value}
-        valuePath={valuePath}
-        onChange={onChange}
-        renderCustomComponent={renderCustomComponent}
-        metadataValue={metadataValue}
-        metadataPath={metadataPath}
-      />
-      {map(value as [], (datum, index) => {
-        const label =
-          get(datum, metadataValue?.dataLabelIdentifier || '') ??
-          `${metadataValue?.label} ${index + 1}`;
-        return (
-          <Flex gap={8} alignItems="center" key={label}>
-            <ItemWrapper level="4">{label}</ItemWrapper>
-            <Button
-              icon="Delete"
-              aria-label="Delete item"
-              onClick={() => handleChange(datum)}
-              type="ghost"
-            />
-          </Flex>
-        );
-      })}
-    </Flex>
-  );
-};
-
-const ConfigForm: React.FC<ConfigFormProps> = ({
-  metadataPath,
-  metadataValue,
-  value,
-  valuePath,
-  onChange,
-  hasDataAsChildren,
-  renderCustomComponent,
-}) => {
-  return (
-    <>
-      {hasDataAsChildren ? (
-        <ConfigComponent
-          renderCustomComponent={renderCustomComponent}
-          metadataValue={metadataValue}
-          value={value}
-          onChange={onChange}
-          valuePath={valuePath}
-          metadataPath={metadataPath}
-        />
-      ) : (
-        <ConfigFormFields
-          metadataValue={metadataValue}
-          value={value}
-          valuePath={valuePath}
-          onChange={onChange}
-        />
-      )}
-    </>
-  );
-};
 
 export const RightPanel = ({
   metadataPath,
@@ -177,10 +23,12 @@ export const RightPanel = ({
   value,
   onReset,
   onChange,
+  onDelete,
   onUpdate,
   hasChanges,
   renderCustomComponent,
-}: Props) => {
+  renderDeleteComponent,
+}: RightPanelProps) => {
   const { t } = useTranslation();
 
   const hasDataAsChildren =
@@ -199,8 +47,11 @@ export const RightPanel = ({
           value={value}
           valuePath={valuePath}
           onChange={onChange}
+          onDelete={onDelete}
           hasDataAsChildren={hasDataAsChildren}
           renderCustomComponent={renderCustomComponent}
+          renderDeleteComponent={renderDeleteComponent}
+          hasChanges={hasChanges}
         />
       </FormContainer>
       <ProjectConfigFooter gap={4} data-testid="project-config-footer">

@@ -56,10 +56,7 @@
     }
   },
   "eslintConfig": {
-    "extends": "react-app",
-    "rules": {
-      "react-hooks/rules-of-hooks": "off"
-    }
+    "extends": "react-app"
   },
   "browserslist": {
     "production": [

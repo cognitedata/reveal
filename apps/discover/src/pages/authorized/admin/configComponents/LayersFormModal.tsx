@@ -14,8 +14,11 @@ import { CustomForm } from './elements';
 
 const validate = (values: Record<string, unknown>) => {
   const errors: Record<string, string> = {};
+  if (!values.id) {
+    errors.id = 'Please enter a valid Id';
+  }
   if (!values.name) {
-    errors.name = 'Please enter a valid name';
+    errors.name = 'Please enter a valid Name';
   }
   if (!values.layerSource) {
     errors.layerSource = 'Please select a source file';
@@ -32,7 +35,7 @@ export const LayersFormModal: CustomComponent = ({
 
   const onSubmit = (values: any) => {
     return geospatialV1
-      .createLayer(values.layerSource)
+      .createLayer(values.layerSource, values.id)
       .then(() => {
         onOk(omit(values, 'layerSource'));
         onClose();
@@ -45,8 +48,8 @@ export const LayersFormModal: CustomComponent = ({
   };
 
   const { values, errors, setFieldValue, submitForm, isSubmitting } =
-    useFormik<{ layerSource?: object }>({
-      initialValues: {},
+    useFormik<{ layerSource?: object; disabled: boolean }>({
+      initialValues: { disabled: false },
       validate,
       onSubmit,
       validateOnChange: false,

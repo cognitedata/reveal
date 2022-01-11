@@ -1,6 +1,12 @@
 import * as React from 'react';
 
-import { setClient, setEmail, setReAuth } from 'utils/getCogniteSDKClient';
+import {
+  setClient,
+  setEmail,
+  setReAuth,
+  setClientV7,
+  createCogniteSDKClientV7,
+} from 'utils/getCogniteSDKClient';
 
 import { getTenantInfo, AuthContext } from '@cognite/react-container';
 import { Cluster } from '@cognite/sdk-wells-v2';
@@ -24,11 +30,29 @@ export const ProvideAuthSetup: React.FC<{
   const { data: projectConfig } = useProjectConfig();
 
   const isAzure = projectConfig?.azureConfig?.enabled;
+  const sdkV7 = React.useRef(
+    createCogniteSDKClientV7({
+      appId: SIDECAR.applicationId,
+      baseUrl: SIDECAR.cdfApiBaseUrl,
+    })
+  );
 
   const doLoginActions = (token: string) => {
     if (authState.client) {
       setClient(authState.client);
+      setClientV7(sdkV7.current);
     }
+
+    sdkV7.current.loginWithOAuth({
+      type: 'CDF_OAUTH',
+      options: {
+        project,
+        onAuthenticate: (login) => {
+          login.skip();
+        },
+        accessToken: token,
+      },
+    });
 
     authenticateGeospatialSDK(project, token);
 

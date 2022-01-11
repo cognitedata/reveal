@@ -27,6 +27,7 @@
     "@cognite/sdk": "5.6.2",
     "@cognite/sdk-playground": "2.6.2",
     "@cognite/sdk-v2": "npm:@cognite/sdk@^2.33.0",
+    "@cognite/sdk-v7": "npm:@cognite/sdk@^7.0.0",
     "@cognite/sdk-wells-v2": "npm:@cognite/sdk-wells@2.0.13",
     "@cognite/sdk-wells-v3": "npm:@cognite/sdk-wells@3.1.11-beta.29",
     "@cognite/seismic-sdk-js": "0.2.1",
@@ -307,5 +308,8 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "resolutions": {
+    "@cognite/sdk-v7/@cognite/sdk-core": "^3.4.1"
   }
 }

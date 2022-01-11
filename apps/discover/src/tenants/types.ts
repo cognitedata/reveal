@@ -9,6 +9,7 @@ import type {
   CustomLayerInterface,
 } from 'maplibre-gl';
 
+import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 import { AzureTelemetryOptions } from '@cognite/react-azure-telemetry';
 import {
   Asset,
@@ -32,7 +33,7 @@ export type MapLayer = (AnyLayer | CustomLayerInterface) & {
 
 export type RemoteServiceResponse = FeatureCollection & { nextCursor?: string };
 
-export interface Layer {
+export type LegacyLayer = {
   name: string;
   remote?: string;
   remoteService?: (
@@ -42,7 +43,6 @@ export interface Layer {
   local?: string;
   color: string;
   defaultOn: boolean;
-  disabled?: boolean; // being added to new config layer
 
   // which layer to show this before
   // used for layer display ordering
@@ -56,7 +56,9 @@ export interface Layer {
     filter?: [string, string | string[]];
     displayField: string;
   };
-}
+};
+
+export type Layer = LegacyLayer | ProjectConfigMapLayers;
 
 export type Layers = Record<string, Layer>;
 

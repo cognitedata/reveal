@@ -1,34 +1,52 @@
-import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
+import { FeatureCollection } from 'geojson';
+import { getCogniteSDKClientV7 } from 'utils/getCogniteSDKClient';
+import { log } from 'utils/log';
 
-import {
-  adaptGeoJSONToGeospatial,
-  CustomGeoJSON,
-} from './adaptGeoJSONToGeospatial';
+import { adaptGeoJSONToGeospatial } from './adaptGeoJSONToGeospatial';
 import { adaptGeospatialToGeoJSON } from './adaptGeospatialToGeoJSON';
 import { DISCOVER_FEATURE_TYPE_PREFIX } from './constants';
 
 export const geospatialV1 = {
-  createLayer: (featureCollection: CustomGeoJSON) => {
-    const { featureType, featureItems } =
-      adaptGeoJSONToGeospatial(featureCollection);
+  createLayer: (featureCollection: FeatureCollection, layerId: string) => {
+    const { featureType, featureItems } = adaptGeoJSONToGeospatial(
+      featureCollection,
+      layerId
+    );
 
-    return getCogniteSDKClient()
-      .spatial.featureTypes.create([featureType])
+    return getCogniteSDKClientV7()
+      .geospatial.featureType.create([featureType])
+      .catch((error) => {
+        log(error?.message);
+        throw new Error(
+          'Could not create layer because creating feature type in geospatial failed.'
+        );
+      })
       .then(([featureTypeResponse]) =>
-        getCogniteSDKClient().spatial.features.create(
-          featureTypeResponse.externalId,
-          featureItems
-        )
+        getCogniteSDKClientV7()
+          .geospatial.feature.create(
+            featureTypeResponse.externalId,
+            featureItems
+          )
+          .catch((error) => {
+            geospatialV1.deleteFeatureType(layerId);
+            log(error?.message);
+            throw new Error(
+              'Could not create layer because creating features in geospatial failed.'
+            );
+          })
       );
   },
-  getGeoJSON: (name: string) => {
-    return getCogniteSDKClient()
-      .spatial.features.search(
-        `${DISCOVER_FEATURE_TYPE_PREFIX}${name}`,
-        // eslint-disable-next-line
-        // @ts-ignore fixed type in v7 of sdk
-        { output: { geometryFormat: 'GEOJSON' } }
-      )
+  getGeoJSON: (id: string) => {
+    return getCogniteSDKClientV7()
+      .geospatial.feature.search(`${DISCOVER_FEATURE_TYPE_PREFIX}${id}`, {
+        output: { geometryFormat: 'GEOJSON' },
+      })
       .then((features) => adaptGeospatialToGeoJSON(features));
+  },
+  deleteFeatureType: (id: string, params = { recursive: true }) => {
+    return getCogniteSDKClientV7().geospatial.featureType.delete(
+      [{ externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${id}` }],
+      params
+    );
   },
 };

@@ -2461,7 +2461,7 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/sdk-core@^3.2.0", "@cognite/sdk-core@^3.4.1":
+"@cognite/sdk-core@^3.2.0", "@cognite/sdk-core@^3.4.1", "@cognite/sdk-core@^4.1.0":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-3.4.1.tgz#1a7552f1babe441bd26f48993584bbbc7b98a8d1"
   integrity sha512-E5/Xm5+yClLUzrK6RiVZ5E9YsGbG4pAmDSel7MuoCJB9L8q0lcQN65ESBFsmrRJrqKzu7ak7fh/xVzkGfrO9Iw==
@@ -2504,6 +2504,14 @@
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
+
+"@cognite/sdk-v7@npm:@cognite/sdk@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.0.0.tgz#d2f2f5110075011447a813a30edbf8de0a39f823"
+  integrity sha512-PgYwdO0V5uhxREGMl1a/Lb4TgRvSjRv+N0rkvlcC1RPGMzgi2DsgLPTcxQHY9IJ+rwSSrXQYPKrh0OdQwpTGSw==
+  dependencies:
+    "@cognite/sdk-core" "^4.1.0"
+    lodash "^4.17.11"
 
 "@cognite/sdk-wells-v2@npm:@cognite/sdk-wells@2.0.13":
   version "2.0.13"

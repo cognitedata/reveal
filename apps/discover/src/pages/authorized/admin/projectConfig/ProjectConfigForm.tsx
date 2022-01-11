@@ -10,9 +10,11 @@ import { useSelectedPath } from './hooks/useSelectedPath';
 import { RightPanel, LeftPanel } from './layout';
 import {
   HandleConfigChange,
+  HandleConfigDelete,
   HandleConfigUpdate,
   Metadata,
   CustomComponent,
+  CustomDeleteComponent,
 } from './types';
 import { adaptSelectedPathToMetadataPath } from './utils/adaptSelectedPathToMetadataPath';
 import { getArrayChangeDetail } from './utils/getArrayChangeDetail';
@@ -21,20 +23,24 @@ export interface Props {
   config: ProjectConfig;
   onChange: HandleConfigChange;
   onUpdate: HandleConfigUpdate;
+  onDelete: HandleConfigDelete;
   onReset: () => void;
   hasChanges: boolean;
   metadata: Metadata;
   renderCustomComponent: CustomComponent;
+  renderDeleteComponent: CustomDeleteComponent;
 }
 
 export const ProjectConfigForm: React.FC<Props> = ({
   onChange,
   onUpdate,
+  onDelete,
   onReset,
   hasChanges,
   config,
   metadata,
   renderCustomComponent,
+  renderDeleteComponent,
 }) => {
   const { selectedPath, setSelectedPath } = useSelectedPath(metadata);
 
@@ -85,6 +91,8 @@ export const ProjectConfigForm: React.FC<Props> = ({
         valuePath={valuePath}
         metadataPath={metadataPath}
         renderCustomComponent={renderCustomComponent}
+        renderDeleteComponent={renderDeleteComponent}
+        onDelete={onDelete}
       />
     </FullContainer>
   );

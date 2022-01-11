@@ -35,7 +35,7 @@ export const FileReaderComp = ({
       name="Upload JSON"
       title="Upload JSON"
       error={error}
-      accept="application/JSON"
+      accept=".json,.JSON,.geojson,.GEOJSON"
       onChange={onChange}
     />
   );
