@@ -2,14 +2,17 @@ import React, { ReactNode } from 'react';
 
 import { Icons, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 type AccessCheckProps = {
   children: ReactNode;
 };
 
 const AccessCheck = ({ children }: AccessCheckProps): JSX.Element => {
-  const { data: hasReadAccess, isFetched } = useUserCapabilities(
+  const { flow } = getFlow();
+  const { data: hasReadAccess, isFetched } = usePermissions(
+    flow,
     'datasetsAcl',
     'READ'
   );
