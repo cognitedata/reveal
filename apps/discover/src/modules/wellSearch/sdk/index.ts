@@ -104,6 +104,10 @@ export const getWellFilterFetchers = () => {
       getWellSDKClientV3()
         .measurements.list({})
         .then(getMeasurementsFromDepthMeasurementItems),
+    regions: () =>
+      getWellSDKClientV3()
+        .summaries.regions()
+        .then(mapSummaryCountsToStringArray),
     mdLimits,
     tvdLimits,
     kbLimits,
