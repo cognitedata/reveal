@@ -14,6 +14,7 @@ import {
   CalculationResultDatapoints,
   Operation,
   CalculationStatusStatusEnum,
+  StatisticsStatusStatusEnum,
 } from '@cognite/calculation-backend';
 
 import { BACKEND_SERVICE_URL_KEY, CLUSTER_KEY } from 'utils/constants';
@@ -135,6 +136,27 @@ export async function fetchStatisticsStatus(
   const api = new StatisticsApi(config);
   const { data } = await api.getStatisticsStatus(sdk.project, id);
   return data;
+}
+
+export async function waitForStatisticsToFinish(
+  sdk: CogniteClient,
+  id: string
+) {
+  let statisticsStatus = await fetchStatisticsStatus(sdk, id);
+
+  while (
+    [
+      StatisticsStatusStatusEnum.Pending,
+      StatisticsStatusStatusEnum.Running,
+    ].includes(statisticsStatus.status)
+  ) {
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(1000);
+    // eslint-disable-next-line no-await-in-loop
+    statisticsStatus = await fetchStatisticsStatus(sdk, id);
+  }
+
+  return statisticsStatus;
 }
 
 export async function fetchStatisticsResult(

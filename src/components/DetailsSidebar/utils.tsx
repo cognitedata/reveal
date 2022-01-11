@@ -9,11 +9,14 @@ import { useQuery } from 'react-query';
 import { units } from 'utils/units';
 import {
   fetchStatisticsResult,
-  fetchStatisticsStatus,
   waitForCalculationToFinish,
+  waitForStatisticsToFinish,
 } from 'services/calculation-backend';
 import { useCreateStatistics } from 'hooks/calculation-backend';
-import { CreateStatisticsParams } from '@cognite/calculation-backend';
+import {
+  CreateStatisticsParams,
+  StatisticsStatusStatusEnum,
+} from '@cognite/calculation-backend';
 import { getHash } from 'utils/hash';
 import { useCluster, useProject } from 'hooks/config';
 import { usePrevious } from 'react-use';
@@ -48,18 +51,20 @@ export const useStatistics = (
     debouncedDatesAsString
   );
 
+  const { data: callStatus, error: callStatusError } = useQuery({
+    queryKey: ['statistics', 'status', statisticsCall?.callId],
+    queryFn: async () => {
+      return waitForStatisticsToFinish(sdk, String(statisticsCall?.callId));
+    },
+    enabled: !!statisticsCall?.callId,
+  });
+
   const { data: statisticsData } = useQuery({
     queryKey: ['statistics', 'result', statisticsCall?.callId],
     queryFn: () => fetchStatisticsResult(sdk, statisticsCall?.callId || ''),
-    retry: 1,
+    retry: true,
     retryDelay: 1000,
-    enabled: !!statisticsCall,
-  });
-
-  const { data: callStatus, error: callStatusError } = useQuery({
-    queryKey: ['statistics', 'status', statisticsCall?.callId],
-    queryFn: () => fetchStatisticsStatus(sdk, String(statisticsCall?.callId)),
-    enabled: !!statisticsCall?.callId,
+    enabled: callStatus?.status === StatisticsStatusStatusEnum.Success,
   });
 
   const { results: statistics } = statisticsData || {};
@@ -70,7 +75,10 @@ export const useStatistics = (
     (diff: Partial<ChartTimeSeries | ChartWorkflow>) => {
       if (!sourceItem) return;
       setChart((oldChart) => {
-        if (!oldChart) return undefined;
+        if (!oldChart) {
+          return undefined;
+        }
+
         return {
           ...oldChart,
           timeSeriesCollection: oldChart?.timeSeriesCollection?.map((ts) =>
@@ -100,11 +108,17 @@ export const useStatistics = (
     debouncedPrevDatesAsString !== debouncedDatesAsString;
 
   useEffect(() => {
-    if (!sourceItem) return;
+    if (!sourceItem) {
+      return;
+    }
 
     if (!sourceChanged && !datesChanged) {
-      if (statistics) return;
-      if (statisticsCall && !callStatusError) return;
+      if (statistics) {
+        return;
+      }
+      if (statisticsCall && !callStatusError) {
+        return;
+      }
     }
 
     let identifier;
@@ -119,7 +133,9 @@ export const useStatistics = (
       }
     }
 
-    if (!identifier) return;
+    if (!identifier) {
+      return;
+    }
 
     const statisticsParameters: CreateStatisticsParams = {
       start_time: new Date(dateFrom).getTime(),
@@ -132,7 +148,9 @@ export const useStatistics = (
 
     const hashOfParams = getHash(statisticsParameters);
 
-    if (hashOfParams === statisticsCall?.hash) return;
+    if (hashOfParams === statisticsCall?.hash && !callStatusError) {
+      return;
+    }
 
     async function createStatistics() {
       if (
