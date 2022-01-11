@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
-import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectFileAnnotationsByType } from 'src/modules/Common/store/annotation/selectors';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { AnnotationsListPreview } from 'src/modules/FileDetails/Containers/FileDetailsAnnotationsPreview/AnnotationsListPreview';
 import styled from 'styled-components';
@@ -22,8 +22,14 @@ export const FileDetailsAnnotationsPreview = ({
   onReviewClick: (id: number) => void;
   onAnnotationDeleteClick: (annotationId: number) => void;
 }) => {
-  const fileAnnotationsByTypeSelector1 = useMemo(makeSelectFileAnnotations, []);
-  const fileAnnotationsByTypeSelector2 = useMemo(makeSelectFileAnnotations, []);
+  const fileAnnotationsByTypeSelector1 = useMemo(
+    makeSelectFileAnnotationsByType,
+    []
+  );
+  const fileAnnotationsByTypeSelector2 = useMemo(
+    makeSelectFileAnnotationsByType,
+    []
+  );
 
   const textAndObjectAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
