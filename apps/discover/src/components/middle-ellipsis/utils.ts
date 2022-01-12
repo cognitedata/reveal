@@ -44,10 +44,10 @@ export const getLeftAndRightTextLength = (
   textContent: string,
   containersWidth: ContainersWidth
 ) => {
-  const { parentWidth } = containersWidth;
+  const { parentWidth, targetWidth } = containersWidth;
 
   const originalTextCount = textContent.length;
-  const avgLetterSize = parentWidth / originalTextCount;
+  const avgLetterSize = targetWidth / originalTextCount;
 
   const canFitLetterCount = parentWidth / avgLetterSize;
 

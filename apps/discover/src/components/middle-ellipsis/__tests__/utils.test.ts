@@ -13,7 +13,7 @@ describe('Middle ellipsis utils', () => {
       parentWidth: 150,
       targetWidth: 200,
     });
-    expect(leftEnd).toEqual(13);
-    expect(rightStart).toEqual(19);
+    expect(leftEnd).toEqual(9);
+    expect(rightStart).toEqual(23);
   });
 });

@@ -16,7 +16,7 @@ describe('Middle ellipsis wrapper', () => {
   it('check for middle ellipsis', async () => {
     render(getMiddleEllipsisWrapper(textContent, false));
     expect(
-      screen.getByText('this is a ver', {
+      screen.getByText('this is a ', {
         exact: false,
       })
     ).toBeInTheDocument();
