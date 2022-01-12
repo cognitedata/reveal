@@ -15,6 +15,10 @@ window.__cogniteSidecar = {
         given_name: 'Normal',
         family_name: 'User',
       },
+      otherIdTokenFields: {
+        given_name: 'Normal',
+        family_name: 'User',
+      },
       project: 'discover-e2e-azure-dev',
       roles: [],
       tokenId: 'discover-e2e',
@@ -29,6 +33,10 @@ window.__cogniteSidecar = {
         given_name: 'Admin',
         family_name: 'User',
       },
+      otherIdTokenFields: {
+        given_name: 'Admin',
+        family_name: 'User',
+      },
       project: 'discover-e2e-azure-dev',
       roles: ['administer'],
       tokenId: 'discover-e2e',
@@ -40,6 +48,10 @@ window.__cogniteSidecar = {
       groups: ['defaultGroup', 'readGroup', 'writeGroup'],
       name: 'Bluefield User',
       otherAccessTokenFields: {
+        given_name: 'Normal',
+        family_name: 'User',
+      },
+      otherIdTokenFields: {
         given_name: 'Normal',
         family_name: 'User',
       },
@@ -59,6 +71,10 @@ window.__cogniteSidecar = {
         given_name: 'Admin',
         family_name: 'User',
       },
+      otherIdTokenFields: {
+        given_name: 'Admin',
+        family_name: 'User',
+      },
       project: 'discover-e2e-bluefield',
       roles: ['administer'],
       tokenId: 'discover-e2e',
@@ -73,6 +89,10 @@ window.__cogniteSidecar = {
         given_name: 'Normal',
         family_name: 'Dev',
       },
+      otherIdTokenFields: {
+        given_name: 'Normal',
+        family_name: 'Dev',
+      },
       project: 'discover-dev-bluefield',
       roles: [],
       tokenId: 'discover-dev',
@@ -84,6 +104,10 @@ window.__cogniteSidecar = {
       groups: ['writeGroup'],
       name: 'Bluefield Dev Admin',
       otherAccessTokenFields: {
+        given_name: 'Admin',
+        family_name: 'Dev',
+      },
+      otherIdTokenFields: {
         given_name: 'Admin',
         family_name: 'Dev',
       },

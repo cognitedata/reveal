@@ -5,6 +5,7 @@ import {
   UseQueryResult,
 } from 'react-query';
 
+import cloneDeep from 'lodash/cloneDeep';
 import { caseInsensitiveSort } from 'utils/sort';
 
 import { FavoritePostSchema } from '@cognite/discover-api-types';
@@ -213,7 +214,9 @@ export function useFavoritesSortedByName() {
   return {
     ...result,
     data: result.data
-      ? [...result.data].sort((a, b) => caseInsensitiveSort(a.name, b.name))
+      ? cloneDeep(result.data).sort((a, b) =>
+          caseInsensitiveSort(a.name, b.name)
+        )
       : result.data,
   };
 }

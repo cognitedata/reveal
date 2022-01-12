@@ -1,47 +1,134 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { batch, useDispatch } from 'react-redux';
 
-import head from 'lodash/head';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+import mergeWith from 'lodash/mergeWith';
 
-import { WellboreId, WellId } from 'modules/wellSearch/types';
+import { Icon, Menu } from '@cognite/cogs.js';
+import { FavoriteContent } from '@cognite/discover-api-types';
 
-import { AddMultipleItems } from './AddMultipleItems';
-import { AddSingleItem } from './AddSingleItem';
+import { useDeepCallback } from '../../hooks/useDeep';
+import { useFavoritesSortedByName } from '../../modules/api/favorites/useFavoritesQuery';
+import {
+  setItemsToAddOnFavoriteCreation,
+  showCreateFavoriteModal,
+} from '../../modules/favorite/reducer';
+import {
+  FavoriteContentWells,
+  FavoriteSummary,
+} from '../../modules/favorite/types';
+import { showSuccessMessage } from '../toast';
+
+import { CREATE_NEW_SET, NOTIFICATION_MESSAGE } from './constants';
+import { FavoriteMenuItemWrapper } from './element';
+import { FavoriteMenuItem } from './FavoriteMenuItem';
+import { isSetFavoredInDocuments, isSetFavoredInWells } from './helpers';
+import { useHandleSelectFavourite } from './useFavorite';
 
 export interface Props {
   documentIds?: number[];
-  wellIds?: WellId[];
-  wellboreIds?: WellboreId[];
-  setFavored?: React.Dispatch<React.SetStateAction<boolean>>;
-  parentCallBack?: () => void;
+  wells?: FavoriteContentWells;
 }
-
 export const AddToFavoriteSetMenu: React.FC<Props> = ({
   documentIds = [],
-  wellIds = [],
-  wellboreIds = [],
-  parentCallBack,
+  wells,
 }) => {
-  if (documentIds.length === 1 || wellIds.length === 1) {
-    return (
-      <AddSingleItem
-        /*
-        documentIds cannot go with lodash head -
-        head returns a number or undefined, undefined cannot assignable to a number
-        */
-        documentId={documentIds[0]}
-        wellId={head(wellIds)}
-        wellboreId={head(wellboreIds)}
-        callBackModal={parentCallBack}
-      />
+  const { data: favorites } = useFavoritesSortedByName();
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const { handleFavoriteUpdate } = useHandleSelectFavourite();
+
+  const wellsRef = useRef<FavoriteContentWells | undefined>(undefined);
+  const documentsRef = useRef<number[] | undefined>(undefined);
+
+  const handleOpenCreateFavorite = () => {
+    batch(() => {
+      if (!isEmpty(documentIds) || !isEmpty(wells)) {
+        dispatch(
+          setItemsToAddOnFavoriteCreation({
+            documentIds,
+            wells,
+          })
+        );
+      }
+      dispatch(showCreateFavoriteModal());
+    });
+  };
+
+  useEffect(() => {
+    wellsRef.current = wells;
+  }, [wells]);
+
+  useEffect(() => {
+    documentsRef.current = documentIds;
+  }, [documentIds]);
+
+  const isDocumentFavored = useDeepCallback(
+    (favorite: FavoriteSummary) => {
+      return isSetFavoredInDocuments(documentIds, favorite.content.documentIds);
+    },
+    [documentIds]
+  );
+
+  const isWellFavored = useDeepCallback(
+    (favorite: FavoriteSummary) => {
+      return isSetFavoredInWells(wells, favorite.content.wells);
+    },
+    [wells]
+  );
+
+  const handleSelectFavorite = (
+    favoriteId: string,
+    favoriteContent: FavoriteContent
+  ) => {
+    const wellsFinal = wellsRef.current
+      ? mergeWith(
+          { ...favoriteContent.wells },
+          { ...wellsRef.current },
+          (objValue, srcValue) => {
+            if (isArray(objValue)) {
+              return [...new Set(objValue.concat(srcValue))];
+            }
+
+            return undefined;
+          }
+        )
+      : undefined;
+
+    handleFavoriteUpdate(
+      favoriteId,
+      documentsRef.current,
+      wellsFinal,
+      () => showSuccessMessage(t(NOTIFICATION_MESSAGE)),
+      () => showSuccessMessage(t(NOTIFICATION_MESSAGE))
     );
-  }
+  };
 
   return (
-    <AddMultipleItems
-      documentIds={documentIds}
-      wellIds={wellIds}
-      wellboreIds={wellboreIds}
-      callBackModal={parentCallBack}
-    />
+    <Menu data-testid="add-to-favorites-panel">
+      <FavoriteMenuItemWrapper>
+        {(favorites || []).map((item) => {
+          return (
+            <FavoriteMenuItem
+              key={item.id}
+              favoriteName={item.name}
+              isFavored={isDocumentFavored(item) || isWellFavored(item)}
+              favoriteContent={item.content}
+              onItemClicked={(favoriteContent) => {
+                handleSelectFavorite(item.id, favoriteContent);
+              }}
+            />
+          );
+        })}
+      </FavoriteMenuItemWrapper>
+
+      {!isEmpty(favorites) && <Menu.Divider data-testid="menu-divider" />}
+      <Menu.Item onClick={handleOpenCreateFavorite}>
+        <Icon type="Add" />
+        {t(CREATE_NEW_SET)}
+      </Menu.Item>
+    </Menu>
   );
 };

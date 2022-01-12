@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
@@ -14,6 +14,8 @@ import {
   CREATE_SET_MODAL_TITLE_PLACEHOLDER,
 } from 'pages/authorized/favorites/constants';
 import { FlexColumn } from 'styles/layout';
+
+import { isEnterPressed } from '../../../../../utils/general.helper';
 
 const CreateSetModal = styled(Modal)`
   background: var(--cogs-white);
@@ -72,6 +74,14 @@ const BaseFavoriteCreationModal: React.FC<Props> = ({
     );
   }, [name, description]);
 
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (isEnterPressed(event)) {
+      if (!okDisabled && handleOnConfirm) {
+        handleOnConfirm();
+      }
+    }
+  };
+
   return (
     <CreateSetModal
       visible={isOpen}
@@ -92,6 +102,7 @@ const BaseFavoriteCreationModal: React.FC<Props> = ({
             value={name}
             onChange={handleTextChanged}
             data-testid="create-favourite-name"
+            onKeyPress={handleKeyPress}
           />
           <Input
             id="create-favourite-description"
@@ -102,6 +113,7 @@ const BaseFavoriteCreationModal: React.FC<Props> = ({
             value={description}
             onChange={handleTextChanged}
             data-testid="create-favourite-description"
+            onKeyPress={handleKeyPress}
           />
         </FlexColumn>
       </ContentWrapper>

@@ -7,10 +7,8 @@ export const useFavourite = () => {
 export const useIsCreateFavoriteModalOpenSelector = () => {
   return useSelector((state) => state.favorites.isCreateModalVisible);
 };
-export const useItemsToAddAfterFavoriteCreationSelector = () => {
-  return useSelector(
-    (state) => state.favorites.itemsToAddAfterFavoriteCreation
-  );
+export const useItemsToAddOnFavoriteCreationSelector = () => {
+  return useSelector((state) => state.favorites.itemsToAddOnFavoriteCreation);
 };
 
 export const useViewMode = () => {

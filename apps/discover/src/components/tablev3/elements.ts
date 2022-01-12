@@ -52,7 +52,7 @@ export const TableWrap = styled.div`
     display: contents;
   }
 
-  // Make sure we don't end up with double borders beneith sub-tables
+  // Make sure we don't end up with double borders beneath sub-tables
   &
     div[role='table']
     > div[role='row']:last-of-type

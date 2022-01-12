@@ -695,6 +695,7 @@ tsc(
 cypress_web_test(
     # The name of your test target
     name = "cypress_test",
+    timeout = "eternal",
     srcs = [
         # Load ts_library tests as a target to srcs
         ":cypress_files",

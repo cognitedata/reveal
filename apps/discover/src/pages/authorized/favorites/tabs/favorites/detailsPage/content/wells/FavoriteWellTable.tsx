@@ -251,7 +251,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   return (
     <FavoriteWellWrapper>
       <Table<Well>
-        id="well-result-table"
+        id="favorite-wells-table"
         data={wellsData}
         columns={columns}
         renderRowSubComponent={renderRowSubComponent}

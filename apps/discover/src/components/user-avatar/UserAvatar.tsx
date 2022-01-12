@@ -19,6 +19,7 @@ export const UserAvatar: React.FC<Props> = ({
       text={getAvatarString(firstName, lastName, email)}
       size={size}
       id="user-avatar"
+      data-testid="user-avatar"
       aria-label="Open user profile"
     />
   );

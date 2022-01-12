@@ -7,18 +7,13 @@ import { reportException } from '@cognite/react-errors';
 import { NOTIFICATION_MESSAGE } from 'components/add-to-favorite-set-menu/constants';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import {
-  useFavoritesCreateMutate,
-  useFavoriteUpdateContent,
-} from 'modules/api/favorites/useFavoritesQuery';
-import {
-  hideCreateFavoriteModal,
-  setItemsToAddAfterFavoriteIsCreated,
-} from 'modules/favorite/reducer';
+import { useFavoritesCreateMutate } from 'modules/api/favorites/useFavoritesQuery';
+import { hideCreateFavoriteModal } from 'modules/favorite/reducer';
 
+import { setItemsToAddOnFavoriteCreation } from '../../../../../modules/favorite/reducer';
 import {
   useIsCreateFavoriteModalOpenSelector,
-  useItemsToAddAfterFavoriteCreationSelector,
+  useItemsToAddOnFavoriteCreationSelector,
 } from '../../../../../modules/favorite/selectors';
 import { CREATE_SET_MODAL_BUTTON_TEXT } from '../../constants';
 import BaseFavoriteCreationModal from '../baseFavoriteCreationModal/BaseFavoriteCreationModal';
@@ -29,14 +24,12 @@ const CreateFavoriteSetModal: React.FC = () => {
   const metrics = useGlobalMetrics('favorites');
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { mutateAsync: mutateUpdateFavoriteContent } =
-    useFavoriteUpdateContent();
 
   const { mutateAsync: mutateCreateFavourite } = useFavoritesCreateMutate();
 
   const isCreateModalOpen = useIsCreateFavoriteModalOpenSelector();
   const itemsToAddAfterFavoriteCreation =
-    useItemsToAddAfterFavoriteCreationSelector();
+    useItemsToAddOnFavoriteCreationSelector();
 
   useEffect(() => {
     if (!isCreateModalOpen) {
@@ -64,23 +57,20 @@ const CreateFavoriteSetModal: React.FC = () => {
   };
 
   const createFavorite = () => {
+    const content = {
+      documentIds: itemsToAddAfterFavoriteCreation?.documentIds,
+      wells: itemsToAddAfterFavoriteCreation?.wells,
+    };
+
     mutateCreateFavourite({
       name: name.trim(),
       description: description?.trim() || undefined,
+      content,
     })
-      .then((res: any) => {
+      .then(() => {
         showSuccessMessage('Favorite set created');
         if (itemsToAddAfterFavoriteCreation) {
-          mutateUpdateFavoriteContent({
-            id: res,
-            updateData: {
-              addDocumentIds: itemsToAddAfterFavoriteCreation?.documentIds,
-              wells: itemsToAddAfterFavoriteCreation?.wells,
-            },
-          }).then(() => {
-            showSuccessMessage(t(NOTIFICATION_MESSAGE));
-            dispatch(setItemsToAddAfterFavoriteIsCreated(undefined));
-          });
+          showSuccessMessage(t(NOTIFICATION_MESSAGE));
         }
       })
       .catch((error) => {
@@ -97,7 +87,7 @@ const CreateFavoriteSetModal: React.FC = () => {
 
     clearState();
     dispatch(hideCreateFavoriteModal());
-    dispatch(setItemsToAddAfterFavoriteIsCreated(undefined));
+    dispatch(setItemsToAddOnFavoriteCreation(undefined));
   };
 
   return (

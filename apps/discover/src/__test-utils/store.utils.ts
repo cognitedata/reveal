@@ -13,7 +13,7 @@ import thunk, { ThunkMiddleware, ThunkDispatch } from 'redux-thunk';
 import { getMockSidebarState } from '__test-utils/fixtures/sidebar';
 import { PartialStoreState, StoreState, StoreAction } from 'core/types';
 import { initialState as documentSearchState } from 'modules/documentSearch/reducer';
-import { initialState as favouriteState } from 'modules/favorite/reducer';
+import { initialState as favoriteState } from 'modules/favorite/reducer';
 import { initialState as feedbackState } from 'modules/feedback/reducer';
 import { initialState as filterDataState } from 'modules/filterData/reducer';
 import { initialState as mapState } from 'modules/map/reducer';
@@ -48,7 +48,7 @@ export const getInitialStore: () => PartialStoreState = () => {
     environment: {
       tenant: testTenant,
     },
-    favourite: { ...favouriteState },
+    favorites: { ...favoriteState },
     filterData: { ...filterDataState },
     feedback: { ...feedbackState },
     seismicSearch: { ...seismicState },

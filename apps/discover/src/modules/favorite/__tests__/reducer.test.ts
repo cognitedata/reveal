@@ -1,6 +1,6 @@
 import favoriteReducer, {
   hideCreateFavoriteModal,
-  setItemsToAddAfterFavoriteIsCreated,
+  setItemsToAddOnFavoriteCreation,
   showCreateFavoriteModal,
 } from '../reducer';
 
@@ -29,12 +29,12 @@ describe('favourite reducer', () => {
     const { initialState } = getInitialState();
     const state = favoriteReducer(
       initialState,
-      setItemsToAddAfterFavoriteIsCreated({
+      setItemsToAddOnFavoriteCreation({
         documentIds: [1],
         wells: { 1: [] },
       })
     );
-    expect(state.itemsToAddAfterFavoriteCreation).toEqual({
+    expect(state.itemsToAddOnFavoriteCreation).toEqual({
       documentIds: [1],
       wells: { 1: [] },
     });
@@ -44,8 +44,8 @@ describe('favourite reducer', () => {
     const initialState = { ...getInitialState(), lastCreatedSetId: '1234' };
     const state = favoriteReducer(
       initialState,
-      setItemsToAddAfterFavoriteIsCreated(undefined)
+      setItemsToAddOnFavoriteCreation(undefined)
     );
-    expect(state.itemsToAddAfterFavoriteCreation).toBeUndefined();
+    expect(state.itemsToAddOnFavoriteCreation).toBeUndefined();
   });
 });

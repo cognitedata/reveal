@@ -17,10 +17,10 @@ export enum ViewModeType {
   Row = 'Row',
 }
 
-export interface FavouriteState {
+export interface FavoriteState {
   isCreateModalVisible: boolean;
   viewMode: ViewModeType;
-  itemsToAddAfterFavoriteCreation?: {
+  itemsToAddOnFavoriteCreation?: {
     documentIds?: number[];
     wells: FavoriteContentWells | undefined;
     seismicIds?: number[];

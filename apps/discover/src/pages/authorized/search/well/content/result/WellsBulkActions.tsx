@@ -21,6 +21,7 @@ import {
   useExternalLinkFromSelectedWells,
 } from 'modules/wellSearch/selectors';
 
+import { useSelectedWellsForFavorites } from '../../../../../../modules/wellSearch/selectors';
 import {
   ADD_SELECTED_WELLS_TEXT,
   CLEAR_SELECTION_TEXT,
@@ -37,6 +38,7 @@ export const WellsBulkActions: React.FC = () => {
   const wells = useWellQueryResultWells();
   const selectedWellIds = useSelectedWellIds();
   const selectedWellboreIds = useSelectedWellboreIds();
+  const selectedWells = useSelectedWellsForFavorites();
   const externalLinks = useExternalLinkFromSelectedWells();
   const navigateToWellInspect = useNavigateToWellInspect();
 
@@ -100,12 +102,7 @@ export const WellsBulkActions: React.FC = () => {
 
       <Dropdown
         placement="top"
-        content={
-          <AddToFavoriteSetMenu
-            wellIds={selectedWellIds}
-            wellboreIds={selectedWellboreIds}
-          />
-        }
+        content={<AddToFavoriteSetMenu wells={selectedWells} />}
       >
         <FavoriteButton
           tooltip={t(ADD_SELECTED_WELLS_TEXT)}

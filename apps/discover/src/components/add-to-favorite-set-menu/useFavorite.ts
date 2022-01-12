@@ -37,7 +37,7 @@ export const useHandleSelectFavourite = () => {
 
   const handleFavoriteUpdate = (
     setId: string,
-    documentIds: number[],
+    documentIds: number[] | undefined,
     wells: FavoriteContentWells | undefined,
     documentSuccess: () => void,
     wellSuccess: () => void

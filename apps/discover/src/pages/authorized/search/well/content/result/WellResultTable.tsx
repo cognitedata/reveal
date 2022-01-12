@@ -4,7 +4,6 @@ import { batch, useDispatch } from 'react-redux';
 import compact from 'lodash/compact';
 import head from 'lodash/head';
 import map from 'lodash/map';
-import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 import { getDateOrDefaultText } from 'utils/date';
 import { changeUnits } from 'utils/units';
@@ -189,8 +188,9 @@ export const WellResultTable: React.FC = () => {
               <Menu.Submenu
                 content={
                   <AddToFavoriteSetMenu
-                    wellIds={[row.original.id]}
-                    setFavored={noop}
+                    wells={{
+                      [row.original.id]: [],
+                    }}
                   />
                 }
               >

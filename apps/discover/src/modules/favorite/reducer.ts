@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { FavouriteState, ViewModeType } from 'modules/favorite/types';
+import { FavoriteState, ViewModeType } from 'modules/favorite/types';
 
-export const initialState: FavouriteState = {
+export const initialState: FavoriteState = {
   isCreateModalVisible: false,
   viewMode: ViewModeType.Card,
 };
@@ -20,11 +20,11 @@ const favoritesSlice = createSlice({
     setFavoritesViewMode(state, action: PayloadAction<ViewModeType>) {
       state.viewMode = action.payload;
     },
-    setItemsToAddAfterFavoriteIsCreated(
+    setItemsToAddOnFavoriteCreation(
       state,
-      action: PayloadAction<FavouriteState['itemsToAddAfterFavoriteCreation']>
+      action: PayloadAction<FavoriteState['itemsToAddOnFavoriteCreation']>
     ) {
-      state.itemsToAddAfterFavoriteCreation = action.payload;
+      state.itemsToAddOnFavoriteCreation = action.payload;
     },
   },
 });
@@ -33,6 +33,7 @@ export const {
   showCreateFavoriteModal,
   hideCreateFavoriteModal,
   setFavoritesViewMode,
-  setItemsToAddAfterFavoriteIsCreated,
+  setItemsToAddOnFavoriteCreation,
 } = favoritesSlice.actions;
+
 export default favoritesSlice.reducer;

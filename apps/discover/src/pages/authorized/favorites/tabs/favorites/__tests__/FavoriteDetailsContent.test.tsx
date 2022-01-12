@@ -150,7 +150,7 @@ describe('Favorite Details Content', () => {
     const wellTab = screen.getByRole('tab', { name: /Wells/ });
     wellTab.click();
 
-    await screen.findByTestId('well-result-table');
+    await screen.findByTestId('favorite-wells-table');
     expect(screen.getByText(mockWell.name)).toBeInTheDocument();
 
     // check if delete modal dialog and action are called

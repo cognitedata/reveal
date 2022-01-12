@@ -10,5 +10,6 @@
     "BASE_URL": "https://localhost:3000"
   },
   "animationDistanceThreshold": 3,
-  "numTestsKeptInMemory": 0
+  "numTestsKeptInMemory": 0,
+  "chromeWebSecurity": false
 }

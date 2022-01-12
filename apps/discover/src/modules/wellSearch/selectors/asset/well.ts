@@ -13,6 +13,7 @@ import {
   useWellQueryResultWells,
 } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 
+import { FavoriteContentWells } from '../../../favorite/types';
 import { useEnabledWellSdkV3 } from '../../hooks/useEnabledWellSdkV3';
 
 import {
@@ -22,6 +23,28 @@ import {
 
 export const useWells = () => {
   return useSelector((state) => state.wellSearch);
+};
+
+export const useSelectedWellsForFavorites = () => {
+  const wells = useWellQueryResultWells();
+
+  return useSelector((state) => {
+    return wells
+      .filter((well) => state.wellSearch.selectedWellIds[well.id])
+      .reduce((favoriteWells, well) => {
+        return {
+          ...favoriteWells,
+          [well.id]: well.wellbores
+            ? well.wellbores
+                .filter(
+                  (wellbore) =>
+                    state.wellSearch.selectedWellboreIds[wellbore.id]
+                )
+                .map((wellbore) => wellbore.id)
+            : [],
+        };
+      }, {} as FavoriteContentWells);
+  });
 };
 
 // @sdk-wells-v3

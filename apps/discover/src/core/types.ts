@@ -8,7 +8,7 @@ import { ThunkDispatch as ReduxThunkDispatch, ThunkAction } from 'redux-thunk';
 
 import { DocumentState } from 'modules/documentSearch/types';
 import { DocumentAction } from 'modules/documentSearch/types.actions';
-import { FavouriteState } from 'modules/favorite/types';
+import { FavoriteState } from 'modules/favorite/types';
 import { FeedbackState, FeedbackAction } from 'modules/feedback/types';
 import { FilterDataAction, FilterDataState } from 'modules/filterData/types';
 import { MapState } from 'modules/map/types';
@@ -44,7 +44,7 @@ export type StoreState = {
     tenant: string;
     appName: string;
   };
-  favorites: FavouriteState;
+  favorites: FavoriteState;
   feedback: FeedbackState;
   filterData: FilterDataState;
   map: MapState;

@@ -33,6 +33,8 @@ module.exports = (on, config) => {
 
   on('file:preprocessor', webpackPreprocessor(options));
 
+  console.log('Running tests with userID: ', uniqueId);
+
   return {
     ...config,
     config: {

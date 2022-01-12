@@ -139,43 +139,49 @@ export class Minimap {
 
     this._convertBoundsToPoints(bounds);
 
-    miniMap.addSource('trackingRect', {
-      type: 'geojson',
-      data: {
-        type: 'Feature',
-        properties: {
-          name: 'trackingRect',
+    if (!miniMap.getSource('trackingRect')) {
+      miniMap.addSource('trackingRect', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {
+            name: 'trackingRect',
+          },
+          geometry: {
+            type: 'Polygon',
+            coordinates: this._trackingRectCoordinates,
+          },
         },
-        geometry: {
-          type: 'Polygon',
-          coordinates: this._trackingRectCoordinates,
+      });
+    }
+
+    if (!miniMap.getLayer('trackingRectOutline')) {
+      miniMap.addLayer({
+        id: 'trackingRectOutline',
+        type: 'line',
+        source: 'trackingRect',
+        layout: {},
+        paint: {
+          'line-color': opts.lineColor,
+          'line-width': opts.lineWidth,
+          'line-opacity': opts.lineOpacity,
         },
-      },
-    });
+      });
+    }
 
-    miniMap.addLayer({
-      id: 'trackingRectOutline',
-      type: 'line',
-      source: 'trackingRect',
-      layout: {},
-      paint: {
-        'line-color': opts.lineColor,
-        'line-width': opts.lineWidth,
-        'line-opacity': opts.lineOpacity,
-      },
-    });
-
-    // needed for dragging
-    miniMap.addLayer({
-      id: 'trackingRectFill',
-      type: 'fill',
-      source: 'trackingRect',
-      layout: {},
-      paint: {
-        'fill-color': opts.fillColor,
-        'fill-opacity': opts.fillOpacity,
-      },
-    });
+    if (!miniMap.getLayer('trackingRectFill')) {
+      // needed for dragging
+      miniMap.addLayer({
+        id: 'trackingRectFill',
+        type: 'fill',
+        source: 'trackingRect',
+        layout: {},
+        paint: {
+          'fill-color': opts.fillColor,
+          'fill-opacity': opts.fillOpacity,
+        },
+      });
+    }
 
     this._trackingRect = this._miniMap.getSource('trackingRect');
 

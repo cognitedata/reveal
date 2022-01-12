@@ -1,31 +1,26 @@
-import { useState } from 'react';
-
 import { Button, Dropdown } from '@cognite/cogs.js';
 
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { Well } from 'modules/wellSearch/types';
 
-import { FAVORITE_OFF_ICON, FAVORITE_ON_ICON } from '../../constants';
+import { FAVORITE_OFF_ICON } from '../../constants';
 
 interface props {
   well: Well | null;
 }
-export const WellCardAddToFavorites: React.FC<props> = (prop) => {
-  const { well } = prop;
-  const [isFavored, setFavored] = useState<boolean>(false);
+export const WellCardAddToFavorites: React.FC<props> = ({ well }) => {
+  // This was not working, don't know if it needs to be enabled
+  // const [isFavored, setFavored] = useState<boolean>(false);
+
+  if (!well) {
+    return null;
+  }
 
   return (
-    <Dropdown
-      content={
-        <AddToFavoriteSetMenu
-          wellIds={[Number(well?.id)]}
-          setFavored={setFavored}
-        />
-      }
-    >
+    <Dropdown content={<AddToFavoriteSetMenu wells={{ [well.id]: [] }} />}>
       <Button
         type="ghost"
-        icon={isFavored ? FAVORITE_ON_ICON : FAVORITE_OFF_ICON}
+        icon={FAVORITE_OFF_ICON}
         iconPlacement="right"
         aria-label="Open favorites dropdown"
       />

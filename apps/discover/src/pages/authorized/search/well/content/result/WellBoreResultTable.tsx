@@ -5,7 +5,6 @@ import { Row } from 'react-table';
 
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 import styled from 'styled-components/macro';
 
@@ -99,9 +98,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
                   <Menu.Submenu
                     content={
                       <AddToFavoriteSetMenu
-                        wellboreIds={[(row.original as Wellbore).id]}
-                        wellIds={[well.id]}
-                        setFavored={noop}
+                        wells={{ [well.id]: [row.original.id] }}
                       />
                     }
                   >
