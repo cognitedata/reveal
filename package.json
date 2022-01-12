@@ -46,6 +46,7 @@
     "dayjs": "^1.10.7",
     "dotenv": "^10.0.0",
     "firebase": "^8.10.0",
+    "joi": "^17.5.0",
     "lodash": "^4.17.21",
     "plotly.js-basic-dist": "^2.5.1",
     "query-string": "^7.0.1",

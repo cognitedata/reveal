@@ -1,5 +1,6 @@
 import { Input } from '@cognite/cogs.js';
-import { memo, useState } from 'react';
+import Joi from 'joi';
+import { memo, useEffect, useState, useCallback } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
 import { NodeTypes } from '../types';
@@ -21,12 +22,44 @@ export type ConstantNodeCallbacks = {
 export type ConstantNodeData = ConstantNodeDataDehydrated &
   ConstantNodeCallbacks & {};
 
+const numberValidator = Joi.number();
+
 const ConstantNode = memo(
   ({ id, data, selected }: NodeProps<ConstantNodeData>) => {
     const { value, readOnly, onConstantChange, onDuplicateNode, onRemoveNode } =
       data;
-
     const [isInputVisible, setIsInputVisible] = useState<boolean>(false);
+    const [localValue, setLocalValue] = useState(String(value));
+    const { error } = numberValidator.validate(parseFloat(localValue));
+    const isValid = !error;
+
+    useEffect(() => {
+      setLocalValue(String(value));
+    }, [value]);
+
+    const handleUpdateValue = useCallback(() => {
+      if (isValid) {
+        onConstantChange(id, parseFloat(localValue));
+      }
+    }, [isValid, id, onConstantChange, localValue]);
+
+    const handleKeyPress = useCallback(
+      (event) => {
+        if (event.key === 'Enter') {
+          handleUpdateValue();
+          setIsInputVisible(false);
+        }
+      },
+      [handleUpdateValue]
+    );
+
+    const handleChange = useCallback((event) => {
+      setLocalValue(event.target.value);
+    }, []);
+
+    const handleInputDoubleClick = useCallback((event) => {
+      event.stopPropagation();
+    }, []);
 
     return (
       <NodeWithActionBar
@@ -55,11 +88,13 @@ const ConstantNode = memo(
           {!isInputVisible && <Value>{value}</Value>}
           {isInputVisible && (
             <Input
-              value={value}
               type="number"
-              onChange={(event) => {
-                onConstantChange(id, Number(event.target.value));
-              }}
+              value={localValue}
+              isValid={isValid}
+              onDoubleClick={handleInputDoubleClick}
+              onKeyPress={handleKeyPress}
+              onChange={handleChange}
+              onBlur={handleUpdateValue}
             />
           )}
         </NodeWrapper>
