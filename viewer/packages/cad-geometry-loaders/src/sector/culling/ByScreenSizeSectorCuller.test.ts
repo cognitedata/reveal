@@ -86,4 +86,21 @@ describe(ByScreenSizeSectorCuller.name, () => {
       return clipPlane.intersectsBox(bounds);
     });
   });
+
+  test('determineSectors prioritizes sectors intersecting prioritized areas', () => {
+    budget = { ...budget, maximumRenderCost: allSectorsRenderCost / 2.0 };
+    const input = createDetermineSectorInput(camera, model, budget);
+    const prioritizedAreaBounds = new THREE.Box3().setFromArray([0.5, 0.5, 0.5, 1.0, 1.0, 1.0]);
+    const expectedTopPrioritySectors = model.scene.getSectorsIntersectingBox(prioritizedAreaBounds);
+    input.prioritizedAreas = [{ area: prioritizedAreaBounds, extraPriority: 10 }];
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+    const topPrioritySectors = scheduledSectors.slice(0, expectedTopPrioritySectors.length);
+
+    expect(topPrioritySectors).toSatisfyAll((x: WantedSector) => {
+      const bounds = x.metadata.bounds;
+      return prioritizedAreaBounds.intersectsBox(bounds);
+    });
+  });
 });
