@@ -94,7 +94,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
 
   private async fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
     const nodeList = await this._client.revisions3D.retrieve3DNodes(
-      this._model.id,
+      this._model.modelId,
       this._model.revisionId,
       assetMappings.map(mapping => {
         return { id: mapping.nodeId };
