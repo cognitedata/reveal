@@ -3,28 +3,12 @@ import {
   getFieldType,
   renderFieldType,
 } from '@platypus-app/utils/graphql-utils';
-import {
-  FieldDefinitionNode,
-  ObjectTypeDefinitionNode,
-  InputValueDefinitionNode,
-} from 'graphql';
+import { InputValueDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
 import styled from 'styled-components';
-import {
-  doesFieldHaveDirective,
-  doesNodeHaveDirective,
-  isTypeATemplate,
-} from '../utils';
+import { isTypeATemplate } from '../utils';
 import { Header } from './Common';
 
-export const FullNode = ({
-  item,
-  showRequiredIcon,
-}: {
-  item: ObjectTypeDefinitionNode;
-  showRequiredIcon: boolean;
-}) => {
-  const hasRequiredFilter =
-    showRequiredIcon && doesNodeHaveDirective(item, 'required');
+export const FullNode = ({ item }: { item: ObjectTypeDefinitionNode }) => {
   return (
     <>
       <Header>
@@ -54,19 +38,11 @@ export const FullNode = ({
               </Tooltip>
             )}
             <Body level={2}>{renderFieldType(el.type)}</Body>
-            {hasRequiredFilter && renderIconIfRequired(el)}
           </div>
         </PropertyItem>
       ))}
     </>
   );
-};
-
-const renderIconIfRequired = (item: FieldDefinitionNode) => {
-  if (doesFieldHaveDirective(item, 'required')) {
-    return <StyledRequired>R</StyledRequired>;
-  }
-  return <div style={{ width: 16 }} />;
 };
 
 const renderTooltip = (args: readonly InputValueDefinitionNode[]) => {
@@ -80,18 +56,6 @@ const renderTooltip = (args: readonly InputValueDefinitionNode[]) => {
     </>
   );
 };
-
-const StyledRequired = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  font-weight: 600;
-  color: var(--cogs-white);
-  border-radius: 1px;
-  background-color: var(--cogs-purple-4);
-`;
 
 const StyledMainID = styled.span`
   display: inline-block;

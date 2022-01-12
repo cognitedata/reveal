@@ -1,7 +1,12 @@
 import styled from 'styled-components/macro';
 import { useLocation, useHistory } from 'react-router-dom';
-import { TopBar, Menu, Avatar } from '@cognite/cogs.js';
-import { NavigationLink } from '@cognite/cogs.js/dist/Components/TopBar/Modules/Navigation';
+import {
+  TopBar,
+  Menu,
+  Avatar,
+  TopBarNavigationLink,
+  Icon,
+} from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 export const NavigationMain = () => {
@@ -27,7 +32,7 @@ export const NavigationMain = () => {
     },
   ];
 
-  const projectManagementLinks: NavigationLink[] = tabs.map((tab) => ({
+  const projectManagementLinks: TopBarNavigationLink[] = tabs.map((tab) => ({
     name: tab.title,
     isActive:
       pathname.startsWith(`/${tab.slug}`) ||
@@ -52,7 +57,7 @@ export const NavigationMain = () => {
           actions={[
             {
               key: 'action1',
-              icon: 'Settings',
+              component: <Icon type="Settings" />,
               menu: (
                 <Menu>
                   <Menu.Item>Settings 1</Menu.Item>
@@ -63,7 +68,7 @@ export const NavigationMain = () => {
             },
             {
               key: 'action2',
-              icon: 'Help',
+              component: <Icon type="Help" />,
               menu: (
                 <Menu>
                   <Menu.Item>Help 1</Menu.Item>

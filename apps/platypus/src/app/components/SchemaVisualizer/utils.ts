@@ -18,16 +18,16 @@ export const getConnectorHeight = (index: number) =>
 
 export const getOffset =
   (d: GetOffsetFnParams[0]) =>
-  (showHeaderOnly = false, showRequiredIcon = false) => {
+  (showHeaderOnly = false) => {
     const sourceNode = d.source as SchemaDefinitionNode & Node;
     const targetNode = d.target as SchemaDefinitionNode & Node;
 
     const sourceNodeName = sourceNode.name.value;
     const targetNodeName = targetNode.name.value;
 
-    const sourceNodeWidth = getNodeWidth(sourceNode, showRequiredIcon);
+    const sourceNodeWidth = getNodeWidth(sourceNode);
 
-    const targetNodeWidth = getNodeWidth(targetNode, showRequiredIcon);
+    const targetNodeWidth = getNodeWidth(targetNode);
 
     const sourcePropertyIndex =
       sourceNode.kind === 'ObjectTypeDefinition'
@@ -91,14 +91,8 @@ export const getLinkText = (
   return `${sourceItemString} -> ${targetItemString}`;
 };
 
-export const getNodeWidth = (
-  node: SchemaDefinitionNode & Node,
-  requiredFilter: boolean
-) => {
-  const hasRequiredFilter =
-    requiredFilter && doesNodeHaveDirective(node, 'required');
-
-  return NODE_WIDTH + (hasRequiredFilter ? NODE_ICON_WIDTH : 0);
+export const getNodeWidth = (_node: SchemaDefinitionNode & Node) => {
+  return NODE_WIDTH;
 };
 
 export const doesNodeHaveDirective = (

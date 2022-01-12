@@ -11,8 +11,7 @@ export const connectorsGenerator =
   (
     nodes: (Node & SchemaDefinitionNode)[],
     links: Link[],
-    showHeaderOnly: boolean,
-    showRequiredIcon: boolean
+    showHeaderOnly: boolean
   ) =>
   (
     item: d3.SimulationNodeDatum & {
@@ -24,7 +23,7 @@ export const connectorsGenerator =
       title: string;
     } & SchemaDefinitionNode)[]
   ) => {
-    const nodeWidth = getNodeWidth(item, showRequiredIcon);
+    const nodeWidth = getNodeWidth(item);
     const indicators: React.ReactNode[] = [];
 
     const linkedSchemaIds = new Set<string>();

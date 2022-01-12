@@ -104,7 +104,8 @@ export const Graph = <T,>({
   onLinkEvent,
   children,
   graphRef: ref,
-}: GraphProps<T>) => {
+  ...htmlProps
+}: GraphProps<T> & React.HTMLAttributes<HTMLDivElement>) => {
   // where the lines are drawn
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -475,7 +476,7 @@ export const Graph = <T,>({
   }));
 
   return (
-    <Wrapper ref={mainWrapperRef}>
+    <Wrapper ref={mainWrapperRef} {...htmlProps}>
       {isLoading && <Spinner style={{ position: 'absolute' }} />}
       <div className="node-container" ref={containerRef}>
         <svg className="chart" ref={svgRef}>

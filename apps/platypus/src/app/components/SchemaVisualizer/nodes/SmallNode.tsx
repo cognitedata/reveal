@@ -5,17 +5,11 @@ import { Header } from './Common';
 
 export const SmallNode = ({ item }: { item: ObjectTypeDefinitionNode }) => (
   <Header>
-    <Title level={5}>{item.name.value}</Title>
-    <Header>
-      <Title level={5} style={{ flex: 1 }}>
-        {item.name.value}
-      </Title>
-      <Label
-        variant={isTypeATemplate(item) ? 'normal' : 'unknown'}
-        size="small"
-      >
-        {isTypeATemplate(item) ? 'Template' : 'Type'}
-      </Label>
-    </Header>
+    <Title level={5} style={{ flex: 1 }}>
+      {item.name.value}
+    </Title>
+    <Label variant={isTypeATemplate(item) ? 'normal' : 'unknown'} size="small">
+      {isTypeATemplate(item) ? 'Template' : 'Type'}
+    </Label>
   </Header>
 );

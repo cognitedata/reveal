@@ -1,18 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { CSSProperties } from 'styled-components/macro';
-import {
-  Badge,
-  Body,
-  Button,
-  Checkbox,
-  Colors,
-  Dropdown,
-  Icon,
-  Input,
-  Menu,
-  Modal,
-  TopBar,
-} from '@cognite/cogs.js';
+import { Body, Button, Colors, Flex, Modal } from '@cognite/cogs.js';
 import { parse } from 'graphql';
 import { useDebounce } from '../../hooks/useDebounce';
 import { Node, Link, Graph, GraphFns, getLinkId } from '../Graph/Graph';
@@ -31,6 +19,7 @@ import { FullNode } from './nodes/FullNode';
 import { InterfaceNode } from './nodes/InterfaceNode';
 import { UnionNode } from './nodes/UnionNode';
 import { connectorsGenerator } from './connectors';
+import { VisualizerToolbar } from './VisualizerToolbar';
 
 export const SchemaVisualizer = ({
   graphQLSchemaString,
@@ -43,9 +32,6 @@ export const SchemaVisualizer = ({
 
   // if set, then should render small node instead of full node.
   const [showHeaderOnly, setShowHeaderOnly] = useState<boolean>(false);
-  const [highlightMainID, setHighlightMainID] = useState(false);
-  const [showRequiredIcon, setShowRequiredIcon] = useState(false);
-  const [menuVisible, setMenuVisible] = useState(false);
   const [searchFilterValue, setSearchFilterValue] = useState('');
   const [isVisualizerExpanded, setIsVisualizerExpanded] = useState(false);
 
@@ -99,154 +85,58 @@ export const SchemaVisualizer = ({
     }
   }, [schemaTypes, searchFilterValue]);
 
-  const zoomInHandler = () => {
-    graphRef?.current?.zoomIn();
-  };
-
-  const zoomOutHandler = () => {
-    graphRef.current?.zoomOut();
-  };
-
-  const fitHandler = () => {
-    graphRef.current?.fitContent();
-  };
-
   // because of async function, we need to debounce by 100 by default
   const rerenderHandler = (debounce = 100) => {
     setTimeout(() => graphRef.current?.forceRerender(), debounce);
   };
 
-  const dropdownContent = (
-    <Menu>
-      <Menu.Header>display:</Menu.Header>
-      <Menu.Item>
-        <Checkbox
-          name="mainID"
-          value={highlightMainID}
-          onChange={(nextState: boolean) => {
-            setHighlightMainID(nextState);
-            rerenderHandler();
-          }}
-        >
-          MainID
-        </Checkbox>
-      </Menu.Item>
-      <Menu.Item>
-        <Checkbox
-          name="required"
-          value={showRequiredIcon}
-          onChange={(nextState: boolean) => {
-            setShowRequiredIcon(nextState);
-            rerenderHandler();
-          }}
-        >
-          Required
-        </Checkbox>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item>
-        <Checkbox
-          name="headersOnly"
-          value={showHeaderOnly}
-          onChange={(nextState: boolean) => {
-            setShowHeaderOnly(nextState);
-            rerenderHandler();
-          }}
-        >
-          Headers Only
-        </Checkbox>
-      </Menu.Item>
-    </Menu>
-  );
-
-  const countFilters =
-    (showRequiredIcon ? 1 : 0) +
-    (showHeaderOnly ? 1 : 0) +
-    (highlightMainID ? 1 : 0);
-
-  const renderTopBar = () => (
-    <div
-      style={{
-        position: 'absolute',
-        top: 5,
-        left: 410,
-        zIndex: ZIndex.Toolbar,
-      }}
-    >
-      <StyledTopBar>
-        <TopBar.Item className="cogs-topbar--item__search">
-          <Icon type="Search" />
-          <Input
-            placeholder="Search"
-            value={searchFilterValue}
-            onChange={(e) => setSearchFilterValue(e.target.value)}
-          />
-        </TopBar.Item>
-        <StyledTopBarItemWithMenu>
-          <Dropdown
-            content={dropdownContent}
-            visible={menuVisible}
-            onClickOutside={() => {
-              setMenuVisible(false);
-            }}
-          >
-            <Button type="ghost" onClick={() => setMenuVisible(!menuVisible)}>
-              <StyledFilterIcon type="Filter" />
-              <Badge text={`${countFilters}`} />
-            </Button>
-          </Dropdown>
-        </StyledTopBarItemWithMenu>
-        <TopBar.Actions
-          actions={[
-            {
-              key: 'zoomIn',
-              component: <Icon type="ZoomIn" />,
-              onClick: () => zoomInHandler(),
-            },
-            {
-              key: 'ZoomOut',
-              component: <Icon type="ZoomOut" />,
-              onClick: () => zoomOutHandler(),
-            },
-            {
-              key: 'ExpandMax',
-              component: <Icon type="FullScreen" />,
-              onClick: () => fitHandler(),
-            },
-          ]}
-        />
-        <TopBar.Actions
-          actions={[
-            {
-              key: 'Expand',
-              component: (
-                <Icon type={isVisualizerExpanded ? 'Collapse' : 'Expand'} />
-              ),
-              onClick: () => setIsVisualizerExpanded(!isVisualizerExpanded),
-            },
-          ]}
-        />
-      </StyledTopBar>
-    </div>
-  );
-
   const renderConnectorsForNode = useMemo(
-    () => connectorsGenerator(nodes, links, showHeaderOnly, showRequiredIcon),
-    [nodes, links, showHeaderOnly, showRequiredIcon]
+    () => connectorsGenerator(nodes, links, showHeaderOnly),
+    [nodes, links, showHeaderOnly]
   );
 
   const renderGraph = () => (
-    <>
-      {renderTopBar()}
+    <Wrapper direction="column">
+      <Flex
+        alignItems="center"
+        gap={16}
+        direction="row"
+        className="toolbar"
+        style={{ marginRight: isVisualizerExpanded ? '8px' : 'auto' }}
+      >
+        <VisualizerToolbar
+          searchFilterValue={searchFilterValue}
+          setSearchFilterValue={setSearchFilterValue}
+          isCollapsed={showHeaderOnly}
+          setIsCollapsed={setShowHeaderOnly}
+          isVisualizerExpanded={isVisualizerExpanded}
+          setIsVisualizerExpanded={setIsVisualizerExpanded}
+          zoomInHandler={() => {
+            graphRef?.current?.zoomIn();
+          }}
+          zoomOutHandler={() => {
+            graphRef.current?.zoomOut();
+          }}
+          fitHandler={() => {
+            graphRef.current?.fitContent();
+          }}
+        />
+        {isVisualizerExpanded && (
+          <Button
+            variant="ghost"
+            icon="CloseLarge"
+            onClick={() => setIsVisualizerExpanded(false)}
+          />
+        )}
+      </Flex>
       <Graph<SchemaDefinitionNode>
         graphRef={graphRef}
         nodes={nodes}
         links={links}
         initialZoom={10}
+        style={{ flex: 1 }}
         useCurve
-        getOffset={(...params) =>
-          getOffset(...params)(showHeaderOnly, showRequiredIcon)
-        }
+        getOffset={(...params) => getOffset(...params)(showHeaderOnly)}
         onLinkEvent={(type, data, event) => {
           switch (type) {
             case 'mouseover': {
@@ -299,20 +189,14 @@ export const SchemaVisualizer = ({
           if (highlightedIds.includes(item.id)) {
             style.borderColor = Colors['greyscale-grey7'].hex();
           }
-          const nodeWidth = getNodeWidth(item, showRequiredIcon);
+          const nodeWidth = getNodeWidth(item);
           let content = <p>Loading&hellip;</p>;
           switch (item.kind) {
             case 'ObjectTypeDefinition': {
               if (showHeaderOnly) {
                 content = <SmallNode key={item.name.value} item={item} />;
               } else {
-                content = (
-                  <FullNode
-                    key={item.name.value}
-                    item={item}
-                    showRequiredIcon={showRequiredIcon}
-                  />
-                );
+                content = <FullNode key={item.name.value} item={item} />;
               }
               break;
             }
@@ -355,7 +239,7 @@ export const SchemaVisualizer = ({
       >
         {debouncedPopover}
       </Graph>
-    </>
+    </Wrapper>
   );
 
   return (
@@ -365,6 +249,7 @@ export const SchemaVisualizer = ({
           appElement={
             document.getElementById('visualizer-wrapper') || undefined
           }
+          closable={false}
           visible={isVisualizerExpanded}
           footer={null}
           onCancel={() => {
@@ -374,20 +259,28 @@ export const SchemaVisualizer = ({
           {renderGraph()}
         </StyledModal>
       ) : (
-        <div
-          style={{
-            height: '100%',
-            width: '100%',
-            position: 'relative',
-            background: `--var(--cogs-bg-canvas)`,
-          }}
-        >
-          {renderGraph()}
-        </div>
+        renderGraph()
       )}
     </div>
   );
 };
+
+const Wrapper = styled(Flex)`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: radial-gradient(
+    var(--cogs-border-default) 1px,
+    transparent 1px
+  );
+  background-color: var(--cogs-bg-canvas);
+  background-size: 24px 24px;
+
+  .toolbar {
+    margin: 16px auto;
+    z-index: ${ZIndex.Toolbar};
+  }
+`;
 
 const StyledModal = styled(Modal)`
   top: -20px;
@@ -405,13 +298,7 @@ const StyledModal = styled(Modal)`
   }
 
   .cogs-modal-close {
-    z-index: ${ZIndex.ModalContent};
-    margin: 22px 14px 0px 8px;
-    border: 1px solid var(--cogs-greyscale-grey8);
-    border-radius: 50%;
-    height: 28px;
-    padding: 5px;
-    color: var(--cogs-greyscale-grey8);
+    display: none;
   }
 `;
 interface ITypeItem {
@@ -444,34 +331,4 @@ const NodeWrapper = styled.div<ITypeItem>`
 
 const Popover = styled.div`
   position: absolute;
-`;
-
-const StyledTopBar = styled(TopBar)`
-  background-color: #fff;
-  border-top: 1px solid var(--cogs-border-default);
-  border-right: 1px solid var(--cogs-border-default);
-`;
-
-const StyledFilterIcon = styled(Icon)`
-  cursor: pointer;
-  margin-right: 6px;
-`;
-
-const StyledTopBarItemWithMenu = styled(TopBar.Item)`
-  & > span:first-child {
-    width: 80px;
-    height: 100%;
-
-    > .cogs-btn {
-      width: 100%;
-      height: 100%;
-      padding: 0;
-      border-radius: 0;
-      color: var(--cogs-greyscale-grey8);
-    }
-  }
-
-  & > div:nth-child(2) {
-    transform: translate3d(228px, 56px, 0px) !important;
-  }
 `;
