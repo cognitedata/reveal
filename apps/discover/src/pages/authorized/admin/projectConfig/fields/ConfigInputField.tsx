@@ -110,6 +110,7 @@ export const ConfigInputField: React.FC<{
           handleChange={handleSwitchChange}
           value={Boolean(value)}
           label={field.label}
+          helpText={field.helpText}
         />
       );
     case 'object':

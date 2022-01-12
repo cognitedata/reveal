@@ -1,18 +1,22 @@
 import * as React from 'react';
 
-import { Switch } from '@cognite/cogs.js';
+import { Switch, Body } from '@cognite/cogs.js';
+
+import { Subtitle } from 'components/typography/Subtitle';
 
 export interface Props {
   name: string;
   handleChange: (value: boolean) => void;
   value: boolean;
   label: string;
+  helpText?: string;
 }
 export const SwitchBoolean: React.FC<Props> = ({
   name,
   handleChange,
   value,
   label,
+  helpText,
 }) => {
   let helpfullLabel = label;
   let helpfullValue = value;
@@ -31,8 +35,13 @@ export const SwitchBoolean: React.FC<Props> = ({
   }
 
   return (
-    <Switch name={name} value={helpfullValue} onChange={helpfullOnChange}>
-      {helpfullLabel}
-    </Switch>
+    <div>
+      <Switch name={name} value={helpfullValue} onChange={helpfullOnChange}>
+        <Body level={3} strong>
+          {helpfullLabel}
+        </Body>
+      </Switch>
+      {helpText && <Subtitle text={helpText} />}
+    </div>
   );
 };
