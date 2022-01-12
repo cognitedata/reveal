@@ -1,6 +1,7 @@
 precision highp float;
 
 #define texture2D texture
+#define gl_FragDepthEXT gl_FragDepth
 
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
