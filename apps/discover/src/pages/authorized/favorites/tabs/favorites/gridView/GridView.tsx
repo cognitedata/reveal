@@ -16,7 +16,6 @@ interface Props {
   handleNavigateFavoriteSet: (item: FavoriteSummary) => void;
   isOwner: (userId: string) => boolean;
   setCommentTarget: SetCommentTarget;
-  viewMode: string;
 }
 
 export const GridView: React.FC<Props> = ({
@@ -25,7 +24,6 @@ export const GridView: React.FC<Props> = ({
   sets,
   setCommentTarget,
   isOwner,
-  viewMode,
 }) => {
   return (
     <Container>
@@ -39,7 +37,6 @@ export const GridView: React.FC<Props> = ({
               onClick={handleNavigateFavoriteSet}
               handleOpenModal={handleOpenModal}
               setCommentTarget={setCommentTarget}
-              viewMode={viewMode}
             />
           );
         })}

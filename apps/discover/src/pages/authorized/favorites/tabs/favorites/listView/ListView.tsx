@@ -5,10 +5,9 @@ import { Row } from 'react-table';
 import { shortDate } from 'utils/date';
 import { sortDates } from 'utils/sortDates';
 
-import { Menu, Dropdown } from '@cognite/cogs.js';
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
-import { MoreOptionsButton, CommentButton } from 'components/buttons';
+import { CommentButton } from 'components/buttons';
 import { AvatarWrapper, IconWrapper } from 'components/card/element';
 import { Table, TableResults } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
@@ -19,17 +18,9 @@ import {
 } from 'modules/favorite/utils';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
-import { FlexRow } from 'styles/layout';
 
-import {
-  FAVORITE_LIST_CONTAINER,
-  DELETE_FAVORITE_CARD_BUTTON,
-  DUPLICATE_FAVORITE_CARD_BUTTON,
-  DUPLICATE_SET_MODAL_BUTTON_TEXT,
-  EDIT_FAVORITE_CARD_BUTTON,
-  SHARE_FAVORITE_CARD_BUTTON,
-} from '../../../constants';
-import { VertSeperator, HoverMenuItem, DangerButton } from '../../../elements';
+import { FAVORITE_LIST_CONTAINER } from '../../../constants';
+import Actions from '../Actions';
 import { ModalType, RowType } from '../types';
 
 export interface Props {
@@ -139,59 +130,24 @@ const ListView: React.FC<Props> = ({
   const renderRowHoverComponent = ({ row: { original } }: RowType) => {
     const _isOwner = isOwner(original.owner.id);
     return (
-      <FlexRow>
-        <Dropdown
-          openOnHover
-          content={
-            <Menu>
-              <Menu.Item
-                disabled={!_isOwner}
-                onClick={() => {
-                  handleOpenModal(DUPLICATE_SET_MODAL_BUTTON_TEXT, original);
-                }}
-              >
-                <HoverMenuItem>{DUPLICATE_FAVORITE_CARD_BUTTON}</HoverMenuItem>
-              </Menu.Item>
-              <Menu.Item
-                disabled={!_isOwner}
-                onClick={() => {
-                  handleOpenModal(EDIT_FAVORITE_CARD_BUTTON, original);
-                }}
-              >
-                <HoverMenuItem>{EDIT_FAVORITE_CARD_BUTTON}</HoverMenuItem>
-              </Menu.Item>
-              <Menu.Item
-                disabled={!_isOwner}
-                onClick={() => {
-                  handleOpenModal(SHARE_FAVORITE_CARD_BUTTON, original);
-                }}
-              >
-                <HoverMenuItem>{SHARE_FAVORITE_CARD_BUTTON}</HoverMenuItem>
-              </Menu.Item>
-              <Menu.Divider data-testid="menu-divider" />
-              <DangerButton
-                onClick={() =>
-                  handleOpenModal(DELETE_FAVORITE_CARD_BUTTON, original)
-                }
-              >
-                {DELETE_FAVORITE_CARD_BUTTON}
-              </DangerButton>
-            </Menu>
-          }
-        >
-          <MoreOptionsButton data-testid="menu-button" />
-        </Dropdown>
-        <VertSeperator />
+      <>
+        <Actions
+          set={original}
+          handleOpenModal={handleOpenModal}
+          showEditButton={_isOwner}
+          showDeleteButton={_isOwner}
+          showShareButton={_isOwner}
+        />
         <CommentButton
-          onClick={() => {
-            setHighlightedIds({ [original.id]: true });
+          size="default"
+          onClick={() =>
             setCommentTarget({
               id: original.id,
               targetType: COMMENT_NAMESPACE.favorite,
-            });
-          }}
+            })
+          }
         />
-      </FlexRow>
+      </>
     );
   };
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '@cognite/cogs.js';
 import { SetCommentTarget } from '@cognite/react-comments';
 
+import { CommentButton } from 'components/buttons';
 import MetadataTable from 'components/metadataTable';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -35,7 +36,6 @@ export interface Props {
   handleOpenModal: (modal: ModalType, set: FavoriteSummary) => void;
   isFavoriteSetOwner: boolean;
   setCommentTarget: SetCommentTarget;
-  viewMode: string;
 }
 
 export const FavouriteCard: React.FC<Props> = ({
@@ -44,7 +44,6 @@ export const FavouriteCard: React.FC<Props> = ({
   setCommentTarget,
   handleOpenModal,
   isFavoriteSetOwner,
-  viewMode,
 }) => {
   const metrics = useGlobalMetrics('favorites');
   const { t } = useTranslation('Favorites');
@@ -79,20 +78,24 @@ export const FavouriteCard: React.FC<Props> = ({
       title={favorite?.name}
       settings={
         favorite && (
-          <Actions
-            set={favorite}
-            handleComment={() =>
-              setCommentTarget({
-                id: favorite.id,
-                targetType: COMMENT_NAMESPACE.favorite,
-              })
-            }
-            handleOpenModal={handleOpenModal}
-            showEditButton={isFavoriteSetOwner}
-            showDeleteButton={isFavoriteSetOwner}
-            showShareButton={isFavoriteSetOwner}
-            viewMode={viewMode}
-          />
+          <>
+            <CommentButton
+              size="default"
+              onClick={() =>
+                setCommentTarget({
+                  id: favorite.id,
+                  targetType: COMMENT_NAMESPACE.favorite,
+                })
+              }
+            />
+            <Actions
+              set={favorite}
+              handleOpenModal={handleOpenModal}
+              showEditButton={isFavoriteSetOwner}
+              showDeleteButton={isFavoriteSetOwner}
+              showShareButton={isFavoriteSetOwner}
+            />
+          </>
         )
       }
     >
