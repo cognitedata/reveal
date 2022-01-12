@@ -27,7 +27,7 @@ jobs:
           token: ${{ secrets.TESTREPO_TOKEN }}
 
       - name: wait for 10 minutes
-        run: Start-Sleep -s 420
+        run: Start-Sleep -s 600
         shell: powershell
 
       - name: Run tests
