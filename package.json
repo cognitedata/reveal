@@ -1,14 +1,14 @@
 {
   "name": "functions-ui",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "dependencies": {
     "@babel/runtime": "^7.11.2",
-    "@cognite/cdf-utilities": "^0.7.3",
+    "@cognite/cdf-utilities": "^0.10.1",
     "@cognite/cogs.js": "^1.21.3",
     "@cognite/gcs-browser-upload": "^1.0.5",
     "@cognite/griff-react": "~0.4.2",
-    "@cognite/sdk": "^3.3.6",
+    "@cognite/sdk": "^6.3.1",
     "@cognite/sdk-provider": "^1.0.0",
     "antd": "^3.26.18",
     "cron-validator": "^1.1.1",
@@ -79,7 +79,6 @@
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@cognite/babel-plugin-styled-components": "^1.10.7",
-    "@cognite/cdf-sdk-singleton": "^0.8.2",
     "@cognite/cdf-ui-cli": "^1.0.0",
     "@cognite/eslint-config": "1.6.1",
     "@cognite/eslint-plugin": "^2.0.1",

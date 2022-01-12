@@ -9,7 +9,6 @@ const lifecycles = singleSpaReact({
   React,
   ReactDOM,
   rootComponent: App,
-  domElementGetter: () => document.getElementById('functions-ui')!,
 });
 
 export const { bootstrap, mount, unmount } = lifecycles;

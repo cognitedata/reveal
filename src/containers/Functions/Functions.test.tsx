@@ -7,7 +7,7 @@ import { mount } from 'enzyme';
 
 import { sleep } from 'helpers';
 import TestWrapper from 'utils/TestWrapper';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import Functions from './Functions';
 
 jest.mock('@cognite/cdf-utilities', () => ({

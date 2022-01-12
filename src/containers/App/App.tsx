@@ -4,9 +4,9 @@ import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import * as mixpanelConfig from 'mixpanel-browser';
 import { useHistory } from 'react-router-dom';
-import { getAuthState } from 'sdk-singleton';
 import { Loader } from 'components/Common';
 import ErrorBoundary from 'components/ErrorBoundary';
+import { useUserInformation } from 'utils/hooks';
 
 type RouteDef = {
   exact?: boolean;
@@ -28,7 +28,8 @@ export default function App() {
   const [initialCdfEnv] = useState(
     queryString.parse(window.location.search).env as string
   );
-  const { username } = getAuthState();
+  const { data: userInfo } = useUserInformation();
+  const username = userInfo?.username || userInfo?.email;
 
   const cdfEnv = queryString.parse(window.location.search).env as string;
 

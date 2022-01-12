@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router';
 import { mount } from 'enzyme';
 
 import TestWrapper from 'utils/TestWrapper';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { sleep } from 'helpers';
 import { setConsole } from 'react-query';
 import FunctionLogsModal from './FunctionLogsModal';

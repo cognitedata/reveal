@@ -7,9 +7,13 @@ import { ThemeProvider } from 'styled-components';
 import { SDKProvider } from '@cognite/sdk-provider';
 import GlobalStyle from 'styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import sdk from 'sdk-singleton';
-import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
-// import Routes from './routes';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  SubAppWrapper,
+  AuthWrapper,
+  getEnv,
+  getProject,
+} from '@cognite/cdf-utilities';
 import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
 import { Loader } from 'components/Common';
@@ -17,6 +21,8 @@ import theme from './styles/theme';
 import rootStyles from './styles/index.css';
 
 export default () => {
+  const env = getEnv();
+  const project = getProject();
   const history = createBrowserHistory();
 
   const queryCache = new QueryCache({
@@ -42,9 +48,8 @@ export default () => {
       <AntStyles>
         <SubAppWrapper>
           <AuthWrapper
-            subAppName="functions-ui"
-            showLoader
             loadingScreen={<Loader />}
+            login={() => loginAndAuthIfNeeded(project, env)}
           >
             <SDKProvider sdk={sdk}>
               <ThemeProvider theme={theme}>
