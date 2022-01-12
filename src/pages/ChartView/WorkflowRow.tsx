@@ -72,7 +72,17 @@ export default function WorkflowRow({
   const { mutate: createCalculation, isLoading: isCallLoading } =
     useCreateCalculation();
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
-  const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
+  const {
+    id,
+    enabled,
+    color = '',
+    lineStyle = 'solid',
+    lineWeight = 1,
+    name,
+    calls,
+    unit,
+    preferredUnit,
+  } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
 
@@ -352,7 +362,14 @@ export default function WorkflowRow({
         >
           <Dropdown
             disabled={!enabled}
-            content={<AppearanceDropdown onUpdate={handleUpdateAppearance} />}
+            content={
+              <AppearanceDropdown
+                selectedColor={color}
+                selectedLineStyle={lineStyle}
+                selectedLineWeight={lineWeight}
+                onUpdate={handleUpdateAppearance}
+              />
+            }
           >
             <StyleButton
               styleType="Function"

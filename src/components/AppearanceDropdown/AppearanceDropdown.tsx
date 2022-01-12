@@ -14,14 +14,23 @@ import {
 export type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
 
 export type AppearanceDropdownProps = {
+  selectedColor: string;
+  selectedLineStyle: string;
+  selectedLineWeight: number;
   onUpdate: (diff: any) => void;
 };
 
-export const AppearanceDropdown = ({ onUpdate }: AppearanceDropdownProps) => {
+export const AppearanceDropdown = ({
+  selectedColor,
+  selectedLineStyle,
+  selectedLineWeight,
+  onUpdate,
+}: AppearanceDropdownProps) => {
   return (
     <Menu style={{ maxWidth: 330 }}>
       <DropdownWrapper>
         <ColorDropdown
+          selectedColor={selectedColor}
           onColorSelected={(newColor) => {
             onUpdate({
               color: newColor,
@@ -30,6 +39,7 @@ export const AppearanceDropdown = ({ onUpdate }: AppearanceDropdownProps) => {
           }}
         />
         <WeightDropdown
+          selectedWeight={selectedLineWeight}
           onWeightSelected={(newWeight) => {
             onUpdate({
               lineWeight: newWeight,
@@ -38,6 +48,7 @@ export const AppearanceDropdown = ({ onUpdate }: AppearanceDropdownProps) => {
           }}
         />
         <TypeDropdown
+          selectedType={selectedLineStyle}
           onStyleSelected={(newStyle) => {
             onUpdate({
               displayMode: newStyle === 'none' ? 'markers' : 'lines',
@@ -52,15 +63,28 @@ export const AppearanceDropdown = ({ onUpdate }: AppearanceDropdownProps) => {
 };
 
 export const ColorDropdown = ({
+  selectedColor,
   onColorSelected,
 }: {
+  selectedColor: string;
   onColorSelected: (color: string) => void;
 }) => {
   return (
     <MenuWrapper>
       <Menu.Header>Color</Menu.Header>
       {availableColors.map((color) => (
-        <Menu.Item key={color} onClick={() => onColorSelected(color)}>
+        <Menu.Item
+          key={color}
+          onClick={() => onColorSelected(color)}
+          style={
+            selectedColor === color
+              ? {
+                  color: 'var(--cogs-midblue-3)',
+                  backgroundColor: 'var(--cogs-midblue-6)',
+                }
+              : {}
+          }
+        >
           <ColorPreview color={color} />
           {color}
         </Menu.Item>
@@ -70,8 +94,10 @@ export const ColorDropdown = ({
 };
 
 export const WeightDropdown = ({
+  selectedWeight,
   onWeightSelected,
 }: {
+  selectedWeight: number;
   onWeightSelected: (weight: number) => void;
 }) => {
   const weightOptions = [1, 2, 3, 4, 5];
@@ -83,6 +109,14 @@ export const WeightDropdown = ({
         <Menu.Item
           key={weight.toString()}
           onClick={() => onWeightSelected(weight)}
+          style={
+            selectedWeight === weight
+              ? {
+                  color: 'var(--cogs-midblue-3)',
+                  backgroundColor: 'var(--cogs-midblue-6)',
+                }
+              : {}
+          }
         >
           <WeightPreview weight={weight} />
           {weight}px
@@ -93,8 +127,10 @@ export const WeightDropdown = ({
 };
 
 export const TypeDropdown = ({
+  selectedType,
   onStyleSelected,
 }: {
+  selectedType: string;
   onStyleSelected: (style: LineStyle) => void;
 }) => {
   const styleOptions: LineStyle[] = ['solid', 'dashed', 'dotted', 'none'];
@@ -103,7 +139,18 @@ export const TypeDropdown = ({
     <MenuWrapper>
       <Menu.Header>Type</Menu.Header>
       {styleOptions.map((style) => (
-        <Menu.Item key={style} onClick={() => onStyleSelected(style)}>
+        <Menu.Item
+          key={style}
+          onClick={() => onStyleSelected(style)}
+          style={
+            selectedType === style
+              ? {
+                  color: 'var(--cogs-midblue-3)',
+                  backgroundColor: 'var(--cogs-midblue-6)',
+                }
+              : {}
+          }
+        >
           <TypePreview type={style} />
           {style}
         </Menu.Item>

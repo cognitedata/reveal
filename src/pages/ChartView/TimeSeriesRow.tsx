@@ -72,7 +72,9 @@ export default function TimeSeriesRow({
     description,
     name,
     unit,
-    color,
+    color = '',
+    lineStyle = 'solid',
+    lineWeight = 1,
     preferredUnit,
     originalUnit,
     enabled,
@@ -291,7 +293,14 @@ export default function TimeSeriesRow({
         >
           <Dropdown
             disabled={!enabled}
-            content={<AppearanceDropdown onUpdate={handleUpdateAppearance} />}
+            content={
+              <AppearanceDropdown
+                selectedColor={color}
+                selectedLineStyle={lineStyle}
+                selectedLineWeight={lineWeight}
+                onUpdate={handleUpdateAppearance}
+              />
+            }
           >
             <StyleButton
               styleType="ResourceTimeseries"
