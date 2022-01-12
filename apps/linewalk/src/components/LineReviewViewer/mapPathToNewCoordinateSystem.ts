@@ -18,6 +18,15 @@ const mapPathToNewCoordinateSystem = (
     x: (sourceBoundingBox.width / sourceViewBox.width) * targetCanvas.width,
     y: (sourceBoundingBox.height / sourceViewBox.height) * targetCanvas.height,
   },
+  width: 1,
+  height: 1,
+
+  // width: (sourceBoundingBox.width / sourceViewBox.width) * targetCanvas.width,
+  // height: (sourceBoundingBox.height / sourceViewBox.height) * targetCanvas.height,
+  // scale: {
+  //   x: 1,
+  //   y: 1,
+  // },
 });
 
 export default mapPathToNewCoordinateSystem;

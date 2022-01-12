@@ -268,6 +268,8 @@ export class CogniteOrnate {
       initialPosition?: { x: number; y: number };
       zoomAfterLoad?: boolean;
       groupId?: string;
+      width?: number;
+      height?: number;
     }
   ): Promise<OrnatePDFDocument> => {
     const {
@@ -281,7 +283,7 @@ export class CogniteOrnate {
         id: groupId,
       });
       this.baseLayer.add(group);
-      const image = new Image();
+      const image = new Image(options?.width, options?.height);
       image.onload = () => {
         const scale =
           image.width < sceneBaseWidth ? 1 : sceneBaseWidth / image.width;

@@ -34,46 +34,72 @@ const getLineToDocumentSide = (
   columnGap: number,
   rowGap: number
 ): Path => {
-  const a = annotation.getClientRect({
+  const annotationRect = annotation.getClientRect({
     relativeTo: ornateViewer.stage as any,
+    skipStroke: true,
   });
-  const d = document.group.getClientRect({
+  const documentRect = document.group.getClientRect({
     relativeTo: ornateViewer.stage as any,
+    skipStroke: true,
   });
 
   const distance = {
-    top: a.y - d.y,
-    left: a.x - d.x,
-    right: d.x + d.width - (a.x + a.width),
-    bottom: d.y + d.height - (a.y + a.height),
+    top: annotationRect.y - documentRect.y,
+    left: annotationRect.x - documentRect.x,
+    right:
+      documentRect.x +
+      documentRect.width -
+      (annotationRect.x + annotationRect.width),
+    bottom:
+      documentRect.y +
+      documentRect.height -
+      (annotationRect.y + annotationRect.height),
   };
 
   const minDistance = Math.min(...Object.values(distance));
 
   // -1 here is because document client rect is 1px wide that is outside of a document
-  const halfColumnGap = columnGap / 2 - 1;
-  const halfRowGap = rowGap / 2 - 1;
+  const halfColumnGap = columnGap / 2;
+  const halfRowGap = rowGap / 2;
 
   switch (minDistance) {
     case distance.top:
       return [
-        [a.x + a.width / 2, a.y],
-        [a.x + a.width / 2, d.y - halfRowGap],
+        [annotationRect.x + annotationRect.width / 2, annotationRect.y],
+        [
+          annotationRect.x + annotationRect.width / 2,
+          documentRect.y - halfRowGap,
+        ],
       ];
     case distance.left:
       return [
-        [a.x, a.y + a.height / 2],
-        [d.x - halfColumnGap, a.y + a.height / 2],
+        [annotationRect.x, annotationRect.y + annotationRect.height / 2],
+        [
+          documentRect.x - halfColumnGap,
+          annotationRect.y + annotationRect.height / 2,
+        ],
       ];
     case distance.right:
       return [
-        [a.x + a.width, a.y + a.height / 2],
-        [d.x + d.width + halfColumnGap, a.y + a.height / 2],
+        [
+          annotationRect.x + annotationRect.width,
+          annotationRect.y + annotationRect.height / 2,
+        ],
+        [
+          documentRect.x + documentRect.width + halfColumnGap,
+          annotationRect.y + annotationRect.height / 2,
+        ],
       ];
     case distance.bottom:
       return [
-        [a.x + a.width / 2, a.y + a.height],
-        [a.x + a.width / 2, d.y + d.height + halfRowGap],
+        [
+          annotationRect.x + annotationRect.width / 2,
+          annotationRect.y + annotationRect.height,
+        ],
+        [
+          annotationRect.x + annotationRect.width / 2,
+          documentRect.y + documentRect.height + halfRowGap,
+        ],
       ];
   }
 
@@ -129,6 +155,8 @@ type FindShortestPathProps = {
   ornateViewer: CogniteOrnate;
   columnGap: number;
   rowGap: number;
+  startDocument: OrnatePDFDocument;
+  endDocument: OrnatePDFDocument;
 };
 
 const findShortestMiddlePath = ({
@@ -137,15 +165,17 @@ const findShortestMiddlePath = ({
   ornateViewer,
   columnGap,
   rowGap,
+  startDocument,
+  endDocument,
 }: FindShortestPathProps): Path => {
-  // -1 here is because document client rect is 1px wide that is outside of a document
-  const halfColumnGap = columnGap / 2 - 1;
-  const halfRowGap = rowGap / 2 - 1;
+  const halfColumnGap = columnGap / 2;
+  const halfRowGap = rowGap / 2;
 
-  const edgePoints = ornateViewer.documents
+  const edgePoints = [startDocument, endDocument]
     .map((document) => {
       const d = document.group.getClientRect({
         relativeTo: ornateViewer.stage as any,
+        skipStroke: true,
       });
 
       return [
@@ -256,6 +286,8 @@ export const getConnectionPath = ({
     ornateViewer,
     columnGap,
     rowGap,
+    startDocument,
+    endDocument,
   });
 
   // remove first and last points as they are already in start and end paths
@@ -274,19 +306,28 @@ export const drawConnectionLine = ({
   path: points,
   ornateViewer,
 }: DrawConnectionLineProps) => {
-  const connectionLine = new Konva.Line({
-    tension: 0,
-    points: points.flat(),
-    stroke: 'rgba(0,0,0,1)',
-    dash: [6, 6],
-    strokeWidth: 6,
-    userGenerated: true,
-    name: 'drawing',
-    type: 'line',
-    unselectable: true,
-  });
-  ornateViewer.baseLayer.add(connectionLine);
-  return connectionLine;
+  const group = new Konva.Group();
+
+  for (let i = 1; i < points.length; i++) {
+    const lineSegment = new Konva.Arrow({
+      tension: 0,
+      points: [...points[i - 1], ...points[i]],
+      stroke: 'rgba(0,0,0,1)',
+      pointerLength: 20,
+      pointerWidth: 20,
+      dash: [6, 6],
+      strokeWidth: 3,
+      userGenerated: true,
+      fill: 'black',
+      name: 'drawing',
+      type: 'line',
+      unselectable: true,
+    });
+
+    group.add(lineSegment);
+  }
+
+  return ornateViewer.baseLayer.add(group);
 };
 
 type GetPathsWithoutOverlapsPerAxeProps = {

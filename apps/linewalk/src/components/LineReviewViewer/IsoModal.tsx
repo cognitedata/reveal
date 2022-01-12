@@ -14,36 +14,37 @@ export const ISO_MODAL_ORNATE_WIDTH_PX = 600;
 export const ISO_MODAL_ORNATE_HEIGHT_PX = 380;
 
 type IsoModalProps = {
-  document: Document | undefined;
+  documents: Document[] | undefined;
   visible?: boolean;
   onHidePress: () => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
 };
 
 const IsoModal: React.FC<IsoModalProps> = ({
-  document,
+  documents,
   visible,
   onOrnateRef,
   onHidePress,
 }) => {
   const { client } = useAuthContext();
-  const [documents, setDocuments] = useState<any[]>([]);
+  const [fetchedDocuments, setFetchedDocuments] = useState<any[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (document) {
+    if (documents) {
       (async () => {
         const result = await Promise.all(
-          [document].map(async (document) => ({
+          documents.map(async (document, index) => ({
             id: document.id,
             url: await getDocumentUrl(client, document),
             pageNumber: 1,
             annotations: document.annotations,
             row: 1,
+            column: index + 1,
           }))
         );
 
-        setDocuments(result);
+        setFetchedDocuments(result);
         setIsInitialized(true);
       })();
     }
@@ -69,7 +70,10 @@ const IsoModal: React.FC<IsoModalProps> = ({
         padding: '25px 20px',
       }}
     >
-      <h2>Isometric Drawing G0040_L029-1</h2>
+      <h2>
+        Isometric Drawing{' '}
+        {documents?.map(({ fileExternalId }) => fileExternalId).join(', ')}
+      </h2>
       <div
         style={{
           height: `${ISO_MODAL_ORNATE_HEIGHT_PX}px`,
@@ -80,7 +84,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
       >
         <ReactOrnate
           onOrnateRef={onOrnateRef}
-          documents={documents}
+          documents={fetchedDocuments}
           tools={[
             WorkspaceTool.SELECT,
             WorkspaceTool.MOVE,

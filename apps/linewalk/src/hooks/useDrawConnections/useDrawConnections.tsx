@@ -28,32 +28,40 @@ export const useDrawConnections = ({
     .map((document) => document.group.id())
     .join('');
 
-  const [committedLines, setCommittedLines] = useState<Konva.Line[]>([]);
+  const [committedLines, setCommittedLines] = useState<Konva.Group[]>([]);
+  const [hasRun, setHasRun] = useState(false);
 
   useEffect(() => {
     if (documentsUpdateHash && ornateViewer) {
-      committedLines?.forEach((line) => line.remove());
-
-      let paths: Path[] = [];
-      connections?.forEach((annotationIds) => {
-        try {
-          const path = getConnectionPath({
-            annotationIds,
-            ornateViewer,
-            columnGap,
-            rowGap,
-          });
-          paths.push(path);
-        } catch (e) {
-          // report in a better via Sentry
-          console.error(e);
+      setTimeout(() => {
+        if (hasRun) {
+          return;
         }
-      });
-      paths = getPathsWithoutOverlaps({ paths, columnGap, rowGap });
-      const lines = paths.map((path) =>
-        drawConnectionLine({ path, ornateViewer })
-      );
-      setCommittedLines(lines);
+        committedLines?.forEach((line) => line.remove());
+
+        let paths: Path[] = [];
+        connections?.forEach((annotationIds) => {
+          try {
+            const path = getConnectionPath({
+              annotationIds,
+              ornateViewer,
+              columnGap,
+              rowGap,
+            });
+
+            paths.push(path);
+          } catch (e) {
+            // report in a better via Sentry
+            console.error(e);
+          }
+        });
+        paths = getPathsWithoutOverlaps({ paths, columnGap, rowGap });
+        const lines = paths.map((path) =>
+          drawConnectionLine({ path, ornateViewer })
+        );
+        setCommittedLines(lines);
+        setHasRun(true);
+      }, 1500);
     }
   }, [connections, documentsUpdateHash]);
 };

@@ -34,8 +34,8 @@ export type ReactOrnateProps = {
 
 export const SLIDE_WIDTH = 2500;
 export const SHAMEFUL_SLIDE_HEIGHT = 1617;
-const SLIDE_COLUMN_GAP = 150;
-const SLIDE_ROW_GAP = 300;
+export const SLIDE_COLUMN_GAP = 150;
+export const SLIDE_ROW_GAP = 300;
 
 const ReactOrnate = ({
   documents,
@@ -122,6 +122,8 @@ const ReactOrnate = ({
                     x: (column - 1) * (SLIDE_WIDTH + SLIDE_COLUMN_GAP),
                     y: (row - 1) * (SHAMEFUL_SLIDE_HEIGHT + SLIDE_ROW_GAP),
                   },
+                  width: SLIDE_WIDTH,
+                  height: SHAMEFUL_SLIDE_HEIGHT,
                   groupId: id,
                 }
               );

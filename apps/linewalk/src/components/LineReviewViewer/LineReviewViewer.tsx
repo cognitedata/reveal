@@ -30,12 +30,40 @@ import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
 import ReactOrnate, {
   ReactOrnateProps,
   SHAMEFUL_SLIDE_HEIGHT,
+  SLIDE_COLUMN_GAP,
   SLIDE_WIDTH,
 } from './ReactOrnate';
 
 type LineReviewViewerProps = {
   lineReview: LineReview;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
+};
+
+const useFileConnections = (lineReview: LineReview) => {
+  const allSymbolInstances = lineReview.documents.flatMap(
+    ({ _annotations }) => _annotations.symbolInstances
+  );
+
+  const getSymbolNameByPathId = (pathId: string): string | undefined => {
+    const symbolInstance = allSymbolInstances.find(({ id }) => id === pathId);
+
+    if (symbolInstance === undefined) {
+      return undefined;
+    }
+
+    return symbolInstance.symbolName;
+  };
+
+  const fileConnections: DocumentConnection[] = lineReview.documents
+    .flatMap(({ _linking }) => _linking)
+    .filter(
+      (link) =>
+        getSymbolNameByPathId(link.from.instanceId) === 'fileConnection' &&
+        getSymbolNameByPathId(link.to.instanceId) === 'fileConnection'
+    )
+    .map((link) => [link.from.instanceId, link.to.instanceId]);
+
+  return fileConnections;
 };
 
 const getAnnotationsByDocument = (document: Document) => [
@@ -71,6 +99,42 @@ const getInteractableOverlays = (
     },
   }));
 };
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getAnnotationBoundingBox = (
+  document: Document,
+  annotationIds: string[],
+  prefix: string,
+  stroke = 'rgba(0,0,255,0.3)',
+  fill = 'rgba(0,0,255,0.1)'
+): Drawing[] =>
+  getAnnotationsByDocument(document)
+    .filter(({ id }) => annotationIds.includes(id))
+    .map((d) => {
+      return {
+        groupId: document.id,
+        id: `${prefix}-${d.id}`,
+        type: 'rect',
+        attrs: {
+          id: `${prefix}-${d.id}`,
+          ...mapPathToNewCoordinateSystem(
+            document._annotations.viewBox,
+            d.svgRepresentation.boundingBox,
+            { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
+          ),
+          strokeScaleEnabled: false,
+          strokeWidth: 6,
+          dash: [6, 6],
+          draggable: false,
+          unselectable: false,
+          data: d.svgRepresentation.svgPaths
+            .map(({ svgCommands }) => svgCommands)
+            .join(' '),
+          stroke,
+          fill,
+        },
+      };
+    });
 
 const getAnnotationOverlay = (
   document: Document,
@@ -166,20 +230,15 @@ const getIsoAnnotationIdByPidAnnotationId = (
   linking: Link[],
   pidPathId: string
 ): string | undefined => {
-  const match = linking.find((link) => link['p&id'] === pidPathId);
+  const match = linking.find((link) => link.from.instanceId === pidPathId);
 
   if (!match) {
     console.log('Did not find element in ISO corresponding to PID');
     return undefined;
   }
 
-  return match.iso;
+  return match.to.instanceId;
 };
-
-const connections: DocumentConnection[] = [
-  ['CONNECT_ANNOTATION_1', 'CONNECT_ANNOTATION_2'],
-  ['CONNECT_ANNOTATION_3', 'CONNECT_ANNOTATION_4'],
-];
 
 const flashDrawing = async (
   ornateRef: CogniteOrnate,
@@ -227,6 +286,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     useState<Discrepancy | null>(null);
   const [isAltPressed, setIsAltPressed] = useState(false);
   const { client } = useAuthContext();
+  const fileConnections = useFileConnections(lineReview);
 
   useEffect(() => {
     (async () => {
@@ -300,8 +360,19 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return;
     }
 
-    // TODOO: Handle multiple ISOs
-    const isoDocument = documents.find(({ type }) => type === DocumentType.ISO);
+    const isoDocuments = documents.filter(
+      ({ type }) => type === DocumentType.ISO
+    );
+
+    const isoDocumentIndex = isoDocuments.findIndex(({ _annotations }) =>
+      _annotations.symbolInstances.some(({ id }) => id === isoPathId)
+    );
+
+    if (isoDocumentIndex === -1) {
+      console.error('Couldnt find ISO document');
+    }
+
+    const isoDocument = isoDocuments[isoDocumentIndex];
 
     if (!isoDocument) {
       console.error('No ISO document available');
@@ -314,9 +385,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return;
     }
 
+    const shamefulHorizontalOffset =
+      (SLIDE_WIDTH + SLIDE_COLUMN_GAP) * isoDocumentIndex;
+
     isoOrnateRef.zoomToLocation(
       {
-        x: ISO_MODAL_ORNATE_WIDTH_PX / 2 - isoBoundingBox.x,
+        x:
+          ISO_MODAL_ORNATE_WIDTH_PX / 2 -
+          (shamefulHorizontalOffset + isoBoundingBox.x),
         y: ISO_MODAL_ORNATE_HEIGHT_PX / 2 - isoBoundingBox.y,
       },
       1
@@ -324,29 +400,37 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
     const drawings: Drawing[] = isoDocument._annotations.symbolInstances
       .filter(({ id }) => id === isoPathId)
-      .map((d) => ({
-        id: `flash-${d.id}`,
-        type: 'path',
-        attrs: {
+      .map((d) => {
+        const mappedCoordinates = mapPathToNewCoordinateSystem(
+          // TODOO: Handle multiple ISOs
+          isoDocument._annotations.viewBox,
+          d.svgRepresentation.boundingBox,
+          { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
+        );
+        return {
           id: `flash-${d.id}`,
-          ...mapPathToNewCoordinateSystem(
-            // TODOO: Handle multiple ISOs
-            isoDocument._annotations.viewBox,
-            d.svgRepresentation.boundingBox,
-            { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
-          ),
-          strokeScaleEnabled: false,
-          strokeWidth: 4,
-          dash: [1, 1],
-          draggable: false,
-          unselectable: true,
-          lineJoin: 'bevel',
-          data: d.svgRepresentation.svgPaths
-            .map(({ svgCommands }) => svgCommands)
-            .join(' '),
-          stroke: 'blue',
-        },
-      }));
+          type: 'path',
+          attrs: {
+            id: `flash-${d.id}`,
+            ...mappedCoordinates,
+            x: mappedCoordinates.x + shamefulHorizontalOffset,
+            y: mappedCoordinates.y,
+            // width: mappedCoordinates.scale.x,
+            // height: mappedCoordinates.scale.y,
+            strokeScaleEnabled: false,
+            strokeWidth: 4,
+            dash: [1, 1],
+            draggable: false,
+            unselectable: true,
+            lineJoin: 'bevel',
+            data: d.svgRepresentation.svgPaths
+              .map(({ svgCommands }) => svgCommands)
+              .join(' '),
+            stroke: 'blue',
+            inGroup: isoDocument.id,
+          },
+        };
+      });
 
     if (drawings.length <= 0) {
       return;
@@ -415,6 +499,20 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     setIsDiscrepancyModalOpen(false);
   };
 
+  const allSymbolInstances = lineReview.documents.flatMap(
+    ({ _annotations }) => _annotations.symbolInstances
+  );
+
+  const getSymbolNameByPathId = (pathId: string): string | undefined => {
+    const symbolInstance = allSymbolInstances.find(({ id }) => id === pathId);
+
+    if (symbolInstance === undefined) {
+      return undefined;
+    }
+
+    return symbolInstance.symbolName;
+  };
+
   const getDrawingsByDocumentId = (
     documents: Document[],
     documentId: DocumentId
@@ -428,6 +526,27 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
     return [
       ...document._opacities,
+      // ...getAnnotationOverlay(
+      //   document,
+      //   getAnnotationsByDocument(document).map(({ id }) => id),
+      //   'debug-paths',
+      //   'green'
+      // ),
+      // ...(document._linking
+      //   ? getAnnotationOverlay(
+      //       document,
+      //       document._linking.map(({ from: { instanceId } }) => instanceId),
+      //       'debug-navigatable',
+      //       'lightblue'
+      //     )
+      //   : []),
+      // ...getAnnotationBoundingBox(
+      //   document,
+      //   document._annotations.symbolInstances
+      //     .filter(({ symbolName }) => symbolName === 'fileConnection')
+      //     .map(({ id }) => id),
+      //   'debug-fileConnection-'
+      // ),
       ...getAnnotationOverlay(
         document,
         selectedAnnotationIds,
@@ -445,7 +564,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       ...(isAltPressed && document._linking
         ? getAnnotationOverlay(
             document,
-            document._linking.map((link) => link['p&id']),
+            document._linking
+              .map(({ from: { instanceId } }) => instanceId)
+              .filter((id) => getSymbolNameByPathId(id) !== 'fileConnection'),
             'navigatable',
             'blue'
           )
@@ -477,7 +598,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       )}
 
       <IsoModal
-        document={lineReview.documents.find(
+        documents={lineReview.documents.filter(
           ({ type }) => type === DocumentType.ISO
         )}
         visible={isIsoModalOpen}
@@ -513,7 +634,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         <ReactOrnate
           documents={documents}
           drawings={drawings}
-          connections={connections}
+          connections={fileConnections}
           onOrnateRef={onOrnateRef}
         />
       </div>

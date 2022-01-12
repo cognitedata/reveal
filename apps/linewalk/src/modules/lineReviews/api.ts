@@ -1,7 +1,13 @@
-import { MOCK_LINE_REVIEW_0040_0029 } from './mocks';
+import {
+  MOCK_LINE_REVIEW_0040_0029,
+  MOCK_LINE_REVIEW_0040_0132,
+} from './mocks';
 import { Document, LineReview } from './types';
 
-let MOCK_LINE_REVIEWS = [MOCK_LINE_REVIEW_0040_0029];
+let MOCK_LINE_REVIEWS = [
+  MOCK_LINE_REVIEW_0040_0029,
+  MOCK_LINE_REVIEW_0040_0132,
+];
 
 export const fetchLineReviews = async () => {
   // NEXT: Fetch from API

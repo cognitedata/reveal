@@ -14,7 +14,7 @@ type SchematicAnnotation = {
     svgPaths: { svgCommands: string }[];
   };
 
-  symbolName?: unknown;
+  symbolName?: string;
   pathIds: unknown;
   labelIds: unknown;
   labels: unknown;
@@ -77,8 +77,14 @@ export enum DocumentType {
 }
 
 export type Link = {
-  'p&id': string;
-  iso: string;
+  from: {
+    documentId: DocumentId;
+    instanceId: string;
+  };
+  to: {
+    documentId: DocumentId;
+    instanceId: string;
+  };
 };
 
 export type Document = {
