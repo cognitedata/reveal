@@ -1,31 +1,38 @@
 name: E2E Tests
-on: [pull_request]
+
+on:
+  push:
+    branch:
+      - master
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   test:
     name: Run Testcafe Tests
     runs-on: windows-latest
     env:
-      FUSION_BASE_URL: https://pr-${{ github.event.number }}.cdf-integrations-ui.preview.cogniteapp.com
+      FUSION_BASE_URL: https://next-release.fusion.cognite.com
       TEST_USER_EMAIL: ${{secrets.TESTUSER_EMAIL}}
       TEST_USER_PASSWORD: ${{secrets.TESTUSER_PASSWORD}}
       TESTCAFE_SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK}}
+      ENVIRONMENT: next-release
 
     steps:
-    - name: Check out qa-cdf-extpipe-testframework
-      uses: actions/checkout@v2
-      with:
-        repository: cognitedata/qa-cdf-extpipe-testframework
-        token: ${{ secrets.TESTREPO_TOKEN }}
-    
-    - name: Sleep for 7 minutes
-      run: Start-Sleep -s 420
-      shell: powershell
+      - name: Check out qa-cdf-extpipe-testframework
+        uses: actions/checkout@v2
+        with:
+          repository: cognitedata/qa-cdf-extpipe-testframework
+          token: ${{ secrets.TESTREPO_TOKEN }}
 
-    - name: Run tests
-      uses: DevExpress/testcafe-action@latest
-      with:
-        args: "chrome:headless tests"
+      - name: wait for 10 minutes
+        run: Start-Sleep -s 420
+        shell: powershell
+
+      - name: Run tests
+        uses: DevExpress/testcafe-action@latest
+        with:
+          args: "chrome:headless tests"
 
     # - name: Send mail
     #   if: always()
