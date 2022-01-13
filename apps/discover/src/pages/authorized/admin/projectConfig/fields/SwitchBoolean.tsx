@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Switch, Body } from '@cognite/cogs.js';
 
-import { Subtitle } from 'components/typography/Subtitle';
+import { SubtitlePlain } from 'components/typography/SubtitlePlain';
 
 export interface Props {
   name: string;
@@ -41,7 +41,7 @@ export const SwitchBoolean: React.FC<Props> = ({
           {helpfullLabel}
         </Body>
       </Switch>
-      {helpText && <Subtitle text={helpText} />}
+      <SubtitlePlain>{helpText}</SubtitlePlain>
     </div>
   );
 };

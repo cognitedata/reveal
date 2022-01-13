@@ -9,9 +9,10 @@ const StyledText = styled(Detail)`
   display: block;
 `;
 
-interface Props {
-  text: string;
-}
-export const Subtitle: React.FC<Props> = ({ text }) => {
-  return <StyledText>{text}</StyledText>;
+export const Subtitle: React.FC = ({ children }) => {
+  if (!children) {
+    return null;
+  }
+
+  return <StyledText role="doc-subtitle">{children}</StyledText>;
 };
