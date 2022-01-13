@@ -28,7 +28,8 @@ export function createInstancedMeshMaterial(): THREE.ShaderMaterial {
     },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.instancedMesh.fragment,
-    vertexShader: sectorShaders.instancedMesh.vertex
+    vertexShader: sectorShaders.instancedMesh.vertex,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -48,7 +49,8 @@ export function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -70,7 +72,8 @@ export function createTriangleMeshMaterial(): THREE.ShaderMaterial {
     },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
-    vertexShader: sectorShaders.detailedMesh.vertex
+    vertexShader: sectorShaders.detailedMesh.vertex,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -90,7 +93,8 @@ export function createBoxMaterial(): THREE.ShaderMaterial {
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
-    }
+    },
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -110,7 +114,8 @@ export function createCircleMaterial(): THREE.ShaderMaterial {
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
-    }
+    },
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -130,7 +135,8 @@ export function createConeMaterial(): THREE.ShaderMaterial {
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
-    }
+    },
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -150,7 +156,8 @@ export function createEccentricConeMaterial(): THREE.ShaderMaterial {
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
     fragmentShader: sectorShaders.eccentricConePrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -170,7 +177,8 @@ export function createGeneralRingMaterial(): THREE.ShaderMaterial {
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalRingPrimitive.vertex,
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -190,7 +198,8 @@ export function createEllipsoidSegmentMaterial(): THREE.ShaderMaterial {
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -209,7 +218,8 @@ export function createNutMaterial(): THREE.ShaderMaterial {
     },
     vertexShader: sectorShaders.nutPrimitive.vertex,
     fragmentShader: sectorShaders.nutPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -228,7 +238,8 @@ export function createQuadMaterial(): THREE.ShaderMaterial {
     },
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -248,7 +259,8 @@ export function createTrapeziumMaterial(): THREE.ShaderMaterial {
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
     fragmentShader: sectorShaders.trapeziumPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -271,6 +283,7 @@ export function createTorusSegmentMaterial(): THREE.ShaderMaterial {
     },
     vertexShader: sectorShaders.torusSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.torusSegmentPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
