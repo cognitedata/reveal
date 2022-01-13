@@ -12,13 +12,13 @@ uniform sampler2D matCapTexture;
 
 uniform vec2 treeIndexTextureSize;
 
-varying float v_treeIndex;
-varying vec3 v_color;
-varying vec3 v_normal;
+in float v_treeIndex;
+in vec3 v_color;
+in vec3 v_normal;
 
 uniform int renderMode;
 
-varying vec3 vViewPosition;
+in vec3 vViewPosition;
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);

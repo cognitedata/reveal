@@ -14,17 +14,17 @@ uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 
 uniform mat4 projectionMatrix;
-varying vec4 center;
-varying float hRadius;
-varying float height;
+in vec4 center;
+in float hRadius;
+in float height;
 
-varying vec4 U;
-varying vec4 V;
-varying vec4 sphereNormal;
+in vec4 U;
+in vec4 V;
+in vec4 sphereNormal;
 
-varying float v_treeIndex;
-varying vec3 v_color;
-varying vec3 v_normal;
+in float v_treeIndex;
+in vec3 v_color;
+in vec3 v_normal;
 
 uniform int renderMode;
 
