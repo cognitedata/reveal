@@ -1,6 +1,9 @@
 import * as dat from 'dat.gui';
 import { Cognite3DModel } from "@cognite/reveal";
 import { CogniteClient, Node3D } from "@cognite/sdk";
+import { TreeIndexNodeCollection } from '@cognite/reveal';
+import { NumericRange } from '@cognite/reveal';
+import { DefaultNodeAppearance } from '@cognite/reveal';
 
 export class InspectNodeUI {
   private readonly _uiFolder: dat.GUI;
@@ -25,13 +28,25 @@ export class InspectNodeUI {
     for (const node of nodes) {
       const nodeUi = this._uiFolder.addFolder(`${node.name} [depth=${node.depth}]`);
       this.registerUiFolder(nodeUi);
-      this.createNodePropertiesFolder(node, nodeUi);
+      this.createNodePropertiesFolder(model, node, nodeUi);
     }
   }
   
-  private createNodePropertiesFolder(node: Node3D, nodeUi: dat.GUI) {
-    nodeUi.add(node, 'treeIndex');
-    nodeUi.add(node, 'subtreeSize');
+  private createNodePropertiesFolder(model: Cognite3DModel, node: Node3D, nodeUi: dat.GUI) {
+    nodeUi.add(node, 'treeIndex').name('Tree index');
+    nodeUi.add(node, 'subtreeSize').name('Node count');
+    const actions = {
+      highlight: () => {
+        const nodeCollection = new TreeIndexNodeCollection(new NumericRange(node.treeIndex, node.subtreeSize));
+        model.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Highlighted);
+      },
+      resetAndHighlight: () => {
+        model.removeAllStyledNodeCollections();
+        actions.highlight();
+      }
+    };
+    nodeUi.add(actions, 'highlight').name('Highlight');
+    nodeUi.add(actions, 'resetAndHighlight').name('Reset+highlight');
 
     if (node.properties === undefined) {
       return;
