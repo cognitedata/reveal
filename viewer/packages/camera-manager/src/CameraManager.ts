@@ -12,10 +12,8 @@ import {
   PointerEventDelegate,
   ControlsState
 } from './types';
-import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
+import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import range from 'lodash/range';
-
-type CameraManagerEvents = 'cameraChange';
 export class CameraManager {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeData>()
@@ -358,7 +356,7 @@ export class CameraManager {
     this.isDisposed = true;
     this._controls.dispose();
     this.teardownControls();
-    this.disposeOfAllEventListeners();
+    disposeOfAllEventListeners(this._events);
     this._inputHandler.dispose();
   }
 
@@ -563,13 +561,6 @@ export class CameraManager {
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
 
     return { x, y };
-  }
-
-  private disposeOfAllEventListeners() {
-    const cameraManagerEvents = ['cameraChange'];
-    for (const event of cameraManagerEvents) {
-      this._events[event as CameraManagerEvents].unsubscribeAll();
-    }
   }
 
   private calculateDefaultDuration(distanceToCamera: number): number {

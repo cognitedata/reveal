@@ -11,7 +11,7 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
+import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
@@ -351,7 +351,7 @@ export class Cognite3DViewer {
     this.spinner.dispose();
 
     this._events.disposed.fire();
-    this.disposeOfAllEventListeners();
+    disposeOfAllEventListeners(this._events);
     this._mouseHandler.dispose();
   }
 
@@ -1323,16 +1323,6 @@ export class Cognite3DViewer {
     adjustCamera(this.camera, width, height);
 
     return true;
-  }
-
-  /**
-   * Method for deleting all external events that are associated with current instance of Cognite3DViewer.
-   */
-  private disposeOfAllEventListeners() {
-    const cognite3DViewerEvents = ['click', 'hover', 'cameraChange', 'sceneRendered', 'disposed'];
-    for (const event of cognite3DViewerEvents) {
-      this._events[event as Cognite3DViewerEvents].unsubscribeAll();
-    }
   }
 
   private readonly startPointerEventListeners = () => {

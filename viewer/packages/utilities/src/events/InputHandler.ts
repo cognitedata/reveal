@@ -8,8 +8,6 @@ import { assertNever } from '@reveal/utilities';
 import { Vector2 } from 'three';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
-
-type InputHandlerEvents = 'click' | 'hover';
 export class InputHandler {
   private readonly domElement: HTMLElement;
   private static readonly maxMoveDistance = 8;
@@ -61,7 +59,7 @@ export class InputHandler {
   }
 
   dispose(): void {
-    this.disposeOfAllEventListeners();
+    disposeOfAllEventListeners(this._events);
   }
 
   private setupEventListeners() {
@@ -148,10 +146,13 @@ export class InputHandler {
     this._events.hover.fire(clickOrTouchEventOffset(e, this.domElement));
   }, 100);
 
-  private disposeOfAllEventListeners() {
-    const inputHandlerEvents = ['click', 'hover'];
-    for (const event of inputHandlerEvents) {
-      this._events[event as InputHandlerEvents].unsubscribeAll();
-    }
+}
+
+ /**
+   * Method for deleting all external events that are associated with current instance of a class.
+   */
+export function disposeOfAllEventListeners(eventList: any) {
+  for (const eventType of Object.keys(eventList)) {
+    eventList[eventType].unsubscribeAll();
   }
 }
