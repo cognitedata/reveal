@@ -28,7 +28,8 @@ export function createInstancedMeshMaterial(): THREE.ShaderMaterial {
     },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.instancedMesh.fragment,
-    vertexShader: sectorShaders.instancedMesh.vertex
+    vertexShader: sectorShaders.instancedMesh.vertex,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -48,7 +49,8 @@ export function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -70,7 +72,8 @@ export function createTriangleMeshMaterial(): THREE.ShaderMaterial {
     },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
-    vertexShader: sectorShaders.detailedMesh.vertex
+    vertexShader: sectorShaders.detailedMesh.vertex,
+    glslVersion: THREE.GLSL3
   });
 }
 
