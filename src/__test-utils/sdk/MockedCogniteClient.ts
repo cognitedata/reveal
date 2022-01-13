@@ -1,6 +1,6 @@
 import noop from 'lodash/noop';
 
-import { CogniteEvent, IdEither } from '@cognite/sdk';
+import { CogniteEvent } from '@cognite/sdk';
 import { mockCogniteAssetList } from 'src/__test-utils/fixtures/assets';
 // import {
 //   getMockFileLinkWithExternalId,
@@ -56,18 +56,10 @@ export class MockedCogniteClient {
       };
     }): Promise<any[]> =>
       new Promise((resolve, reject) => {
-        // if (body.filter.metadata.type === 'well') {
-        //   if (body.search.name === '!simulate throw error!') {
-        //     // eslint-disable-next-line prefer-promise-reject-errors
-        //     reject({ message: 'Error' });
-        //   }
-        //
-        //   const wells = mockedWellResultFixture.filter((well) =>
-        //     well.name.includes(body.search.name)
-        //   );
-        //
-        //   resolve([...wells]);
-        // }
+        if (body.filter) {
+          reject(new Error('Filter not handled'));
+        }
+        resolve([]);
       }),
     list: (body: {
       filter: {
@@ -78,13 +70,10 @@ export class MockedCogniteClient {
       };
     }): Promise<{ items: any[] }> =>
       new Promise((resolve, reject) => {
-        // if (body.filter.metadata.type === 'wellbore') {
-        //   const wellbores = mockedWellboreResultFixture.filter(
-        //     (wellbore: any) => body.filter.parentIds.includes(wellbore.parentId)
-        //   );
-        //   resolve({ items: [...wellbores] });
-        // }
-        reject();
+        if (body.filter) {
+          reject(new Error('Filter not handled'));
+        }
+        resolve({ items: [] });
       }),
     retrieve: () => Promise.resolve(mockCogniteAssetList),
   };
