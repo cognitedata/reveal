@@ -102,6 +102,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-router-dom",
+    "@npm//@types/react-table",
     "@npm//@types/sinon",
     "@npm//@types/styled-components",
     "@npm//@types/uuid",

@@ -6,7 +6,6 @@ export const PagePath = {
   LINE_REVIEWS: '/lineReviews',
   LINE_REVIEW: '/lineReview/:id',
   SCARLET: '/scarlet',
-  SCARLET_EQUIPMENT: '/scarlet/:unitName/:equipmentName',
 };
 
 export const MenuBar = () => {

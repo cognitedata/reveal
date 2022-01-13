@@ -1,4 +1,5 @@
 import * as PDFJS from 'pdfjs-dist';
+import { PDFDocumentProxy } from 'pdfjs-dist/types/display/api';
 
 PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
 
@@ -7,8 +8,19 @@ PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/de
 // cap the minimum size of a document to be 2500px
 const MIN_DOC_SIZE = 2500;
 
-export const pdfToImage = async (file: string, pageNumber: number) => {
-  const pdf = await PDFJS.getDocument(file).promise;
+/**
+ *
+ * @param {string | PDFDocumentProxy} file The document scr or document itself
+ * @param {number} pageNumber
+ * @returns {string} Data URL
+ */
+export const pdfToImage = async (
+  file: string | PDFDocumentProxy,
+  pageNumber: number
+) => {
+  const pdf =
+    typeof file === 'string' ? await PDFJS.getDocument(file).promise : file;
+
   const page = await pdf.getPage(pageNumber);
   const container = document.createElement('div');
   const canvas = document.createElement('canvas');

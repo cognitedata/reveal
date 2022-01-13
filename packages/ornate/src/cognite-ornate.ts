@@ -4,6 +4,7 @@ import { Shape, ShapeConfig } from 'konva/lib/Shape';
 import { v4 as uuid } from 'uuid';
 import { Vector2d } from 'konva/lib/types';
 import { PDFDocument } from 'pdf-lib';
+import { PDFDocumentProxy } from 'pdfjs-dist/types/display/api';
 
 import { OrnateHistory, UpdateKeyType } from './containers/History';
 import { OrnateTransformer } from './containers/Transformer';
@@ -260,8 +261,12 @@ export class CogniteOrnate {
     this.transformer?.setSelectedNodes([]);
   };
 
+  /**
+   *
+   * @param {string | PDFDocumentProxy} pdfFile The document scr or document itself
+   */
   addPDFDocument = async (
-    pdfURL: string,
+    pdfFile: string | PDFDocumentProxy,
     pageNumber: number,
     metadata: Record<string, string>,
     options?: {
@@ -277,7 +282,7 @@ export class CogniteOrnate {
       zoomAfterLoad = true,
       groupId = uuid(),
     } = options || {};
-    const base64 = await pdfToImage(pdfURL, pageNumber);
+    const base64 = await pdfToImage(pdfFile, pageNumber);
     return new Promise<OrnatePDFDocument>((res, rej) => {
       const group = new Konva.Group({
         id: groupId,
@@ -635,6 +640,7 @@ export class CogniteOrnate {
       stroke: annotation.stroke,
       strokeWidth: annotation.strokeWidth,
       fill: annotation.fill,
+      cornerRadius: annotation.cornerRadius,
       unselectable: true,
       metadata: annotation.metadata,
       attachedToGroup: groupId,

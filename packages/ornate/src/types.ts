@@ -24,6 +24,7 @@ export type OrnateAnnotation = {
   strokeWidth?: number;
   metadata?: Record<string, string>;
   fill?: string;
+  cornerRadius?: number;
 };
 export type OrnateAnnotationInstance = {
   annotation: OrnateAnnotation;
