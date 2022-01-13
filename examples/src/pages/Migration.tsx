@@ -17,7 +17,6 @@ import {
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet,
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -411,8 +410,6 @@ export function Migration() {
         await addModel({ modelId: -1, revisionId: -1, localPath: modelUrl, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) })
       }
 
-      const selectedSet = new TreeIndexNodeCollection([]);
-
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
 
@@ -473,18 +470,6 @@ export function Migration() {
       });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
-  
-      const overlayTool = new HtmlOverlayTool(viewer,
-        { 
-          clusteringOptions: { 
-            mode: 'overlapInScreenSpace', 
-            createClusterElementCallback: cluster => {
-              return createOverlay(`${cluster.length}`);
-            }
-          }
-        });
-
-      new AxisViewTool(viewer);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
@@ -497,14 +482,8 @@ export function Migration() {
               {
                 const { treeIndex, point} = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                const overlayHtml = createOverlay(`Node ${treeIndex}`);
-
-                overlayTool.add(overlayHtml, point);
   
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
-
-                // highlight the object
-                selectedSet.updateSet(new IndexSet([treeIndex]));
               }
               break;
             case 'pointcloud':
@@ -519,6 +498,8 @@ export function Migration() {
           }
         }
       });
+
+      new AxisViewTool(viewer);
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {

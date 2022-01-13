@@ -1,7 +1,6 @@
 import * as dat from 'dat.gui';
 import { Cognite3DModel } from "@cognite/reveal";
 import { CogniteClient, Node3D } from "@cognite/sdk";
-import assert from 'assert';
 
 export class InspectNodeUI {
   private readonly _uiFolder: dat.GUI;
