@@ -378,7 +378,6 @@ export function Migration() {
 
       const clippingUi = new ClippingUI(gui.addFolder('Slicing'), planes => viewer.setSlicingPlanes(planes));
 
-
       const pcSettings = gui.addFolder('Point clouds');
       pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
       pcSettings.add(pointCloudParams, 'pointSize', 0, 20, 0.25).onFinishChange(() => pointCloudParams.apply());
@@ -473,7 +472,7 @@ export function Migration() {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
 
-      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Inspected node'), client);
+      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
   
       const overlayTool = new HtmlOverlayTool(viewer,
         { 
