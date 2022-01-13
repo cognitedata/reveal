@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Redirect, Route } from 'react-router-dom';
 
 import { ToastContainer } from '@cognite/cogs.js';
@@ -16,12 +16,29 @@ import { CreateFavoriteSetModal } from 'pages/authorized/favorites/modals';
 import { NotFoundPage } from 'pages/authorized/notfound';
 import { Search } from 'pages/authorized/search';
 
+import { LOG_APP_CLOSED, LOG_APP_NAMESPACE } from '../../constants/logging';
+import { useGlobalMetrics } from '../../hooks/useGlobalMetrics';
+
 import { CookieConsent } from './CookieConsent';
 import { Dashboard } from './search/dashboard';
 
 const Content = () => {
   useUserSyncQuery();
   const pageSettings = usePageSettings();
+
+  const metrics = useGlobalMetrics(LOG_APP_NAMESPACE);
+
+  useEffect(() => {
+    const cleanup = () => {
+      metrics.track(LOG_APP_CLOSED);
+    };
+
+    window.addEventListener('beforeunload', cleanup);
+
+    return () => {
+      window.removeEventListener('beforeunload', cleanup);
+    };
+  }, []);
 
   return (
     <div role="application">

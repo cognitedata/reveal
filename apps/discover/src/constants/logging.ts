@@ -49,3 +49,6 @@ export const LOG_DOCUMENT_SEARCH_NAMESPACE = 'documents:document_search';
 
 export const LOG_WELL_SEARCH = 'well_search';
 export const LOG_WELL_SEARCH_NAMESPACE = 'wells:well_search';
+
+export const LOG_APP_NAMESPACE = 'application';
+export const LOG_APP_CLOSED = 'closed';
