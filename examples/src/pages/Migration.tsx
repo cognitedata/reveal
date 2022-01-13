@@ -547,20 +547,3 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
 }
-
-function createOverlay(text: string): HTMLElement {
-  const overlayHtml = document.createElement('div');
-  overlayHtml.innerText = text;
-  overlayHtml.style.cssText = `
-    position: absolute; 
-    translate(-50%, -50%);
-
-    background: white; 
-    border-radius: 5px; 
-    border-color: black; 
-
-    pointer-events: none; 
-    touch-action: none;`;
-
-  return overlayHtml;
-}
