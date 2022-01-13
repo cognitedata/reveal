@@ -37,6 +37,7 @@ export class CameraManager {
   private static readonly DefaultMaxAnimationDuration = 1250;
   private static readonly DefaultMinDistance = 0.8;
   private static readonly DefaultMinZoomDistance = 0.4;
+  private static readonly DefaultMinimalTimeBetweenRaycasts = 0.08;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
     changeCameraTargetOnClick: false
@@ -529,7 +530,7 @@ export class CameraManager {
     const onWheel = async (e: any) => {
       const timeDelta = wheelClock.getDelta();
 
-      if (timeDelta > 0.08) scrollStarted = false;
+      if (timeDelta > CameraManager.DefaultMinimalTimeBetweenRaycasts) scrollStarted = false;
 
       const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
       const isZoomToCursor = this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor';

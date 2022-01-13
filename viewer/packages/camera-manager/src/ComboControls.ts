@@ -46,8 +46,8 @@ export class ComboControls extends EventDispatcher {
   public enableDamping: boolean = true;
   public dampingFactor: number = 0.25;
   public dynamicTarget: boolean = true;
-  public minDistance: number = 0.1;
-  public minZoomDistance: number = 0.1;
+  public minDistance: number = 0.8;
+  public minZoomDistance: number = 0.4;
   public dollyFactor: number = 0.99;
   public minPolarAngle: number = 0; // radians
   public maxPolarAngle: number = Math.PI; // radians
