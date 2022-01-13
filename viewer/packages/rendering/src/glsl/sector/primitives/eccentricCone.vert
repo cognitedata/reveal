@@ -3,29 +3,29 @@
 
 uniform mat4 inverseModelMatrix;
 
-attribute float a_treeIndex;
-attribute vec3 a_centerA;
-attribute vec3 a_centerB;
-attribute float a_radiusA;
-attribute float a_radiusB;
-attribute vec3 a_normal;
-attribute vec3 a_color;
+in float a_treeIndex;
+in vec3 a_centerA;
+in vec3 a_centerB;
+in float a_radiusA;
+in float a_radiusB;
+in vec3 a_normal;
+in vec3 a_color;
 
-varying float v_treeIndex;
+out float v_treeIndex;
 // We pack the radii into w-components
-varying vec4 v_centerA;
-varying vec4 v_centerB;
+out vec4 v_centerA;
+out vec4 v_centerB;
 
 // U, V, axis represent the 3x3 cone basis.
 // They are vec4 to pack extra data into the w-component
-// since Safari on iOS only supports 8 varying vec4 registers.
-varying vec4 U;
-varying vec4 V;
-varying vec4 axis;
-varying float height;
+// since Safari on iOS only supports 8 out vec4 registers.
+out vec4 U;
+out vec4 V;
+out vec4 axis;
+out float height;
 
-varying vec3 v_color;
-varying vec3 v_normal;
+out vec3 v_color;
+out vec3 v_normal;
 
 uniform vec2 treeIndexTextureSize;
 
