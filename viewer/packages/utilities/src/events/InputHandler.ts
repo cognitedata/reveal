@@ -145,13 +145,12 @@ export class InputHandler {
   private readonly onHoverCallback = debounce((e: MouseEvent) => {
     this._events.hover.fire(clickOrTouchEventOffset(e, this.domElement));
   }, 100);
-
 }
 
- /**
-   * Method for deleting all external events that are associated with current instance of a class.
-   */
-export function disposeOfAllEventListeners(eventList: any) {
+/**
+ * Method for deleting all external events that are associated with current instance of a class.
+ */
+export function disposeOfAllEventListeners(eventList: any): void {
   for (const eventType of Object.keys(eventList)) {
     eventList[eventType].unsubscribeAll();
   }
