@@ -14,6 +14,8 @@ export enum AssetWarnTypes {
   RejectedAnnotationAssetLinkedToFile,
 }
 
+const ANNOTATION_STATUS_ERROR_VISIBILITY_DELAY = 2000;
+
 const useAssetLinkWarning = (
   annotation: AnnotationTableItem,
   file: FileInfo,
@@ -37,10 +39,14 @@ const useAssetLinkWarning = (
           externalId: ann.linkedResourceExternalId,
         });
       }
-      const assetResponse = await dispatch(fetchAssets(assetPayload));
-      const assets = unwrapResult(assetResponse);
-      if (assets && assets.length) {
-        setAsset(assets[0]);
+      try {
+        const assetResponse = await dispatch(fetchAssets(assetPayload));
+        const assets = unwrapResult(assetResponse);
+        if (assets && assets.length) {
+          setAsset(assets[0]);
+        }
+      } catch (e) {
+        console.error('Error occurred while fetching asset!', e);
       }
     };
 
@@ -72,7 +78,7 @@ const useAssetLinkWarning = (
           setAssetWarnType(
             AssetWarnTypes.ApprovedAnnotationAssetNotLinkedToFile
           );
-        }, 1500);
+        }, ANNOTATION_STATUS_ERROR_VISIBILITY_DELAY);
       } else if (
         annotation.status === AnnotationStatus.Rejected &&
         file.assetIds?.includes(asset.id) &&
@@ -87,7 +93,7 @@ const useAssetLinkWarning = (
         rejectedAnnotationLinkedToFileTimer.current = setTimeout(() => {
           // timers delay showing error so other processes can be completed before showing error (file update)
           setAssetWarnType(AssetWarnTypes.RejectedAnnotationAssetLinkedToFile);
-        }, 2000);
+        }, ANNOTATION_STATUS_ERROR_VISIBILITY_DELAY);
       } else {
         setAssetWarnType(AssetWarnTypes.NoWarning);
       }
