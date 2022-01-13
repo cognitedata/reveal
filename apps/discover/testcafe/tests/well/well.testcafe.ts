@@ -12,9 +12,11 @@ import { startTest, getPostLogger, progress, logErrors } from '../../utils';
 
 // There could be filters applied with existing records
 // To trigger clear all button, make sure to do a empty records search
+
 const loggerPost = getPostLogger();
 const wellName = 'F-1';
 const sourcePill = `Source : ${source.toLowerCase()}`;
+const operatorName = 'Statoil Norway';
 
 fixture('Search wells page - text and filter based testing')
   .meta({ page: 'well:search', tenant: App.project }) // Used to run a single test file
@@ -83,22 +85,10 @@ startTest('apply source filter', async () => {
   // await App.wellSearchPage.everyRowContainsValue(filterOptionText);
 });
 
-startTest('apply block filter', async () => {
-  const category = App.filterClearPage.fieldBlockOperatorCaption;
-  const columnName = 'Block';
-  const filterOptionText = '15/9';
-
-  await App.resultTable.checkIfColumnExistsAndDisplayIfNotExists(columnName);
-  await App.sidebar.clickFilterCategory('Wells');
-  await App.sidebar.clickFilterSubCategory(category);
-  await App.sidebar.clickFilterOption(filterOptionText);
-  // await App.wellSearchPage.everyRowContainsValue(filterOptionText);
-});
-
 startTest('apply operator filter', async () => {
   const category = App.filterClearPage.fieldBlockOperatorCaption;
   const columnName = 'Operator';
-  const filterOptionText = 'Statoil Norway';
+  const filterOptionText = operatorName;
 
   await App.resultTable.checkIfColumnExistsAndDisplayIfNotExists(columnName);
   await App.sidebar.clickFilterCategory('Wells');

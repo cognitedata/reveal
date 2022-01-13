@@ -1,5 +1,6 @@
-import { filename, PROJECT } from '../../support/constants';
+import { PROJECT } from '../../support/constants';
 
+const filename = '15_9_19_A_1997_07_25';
 describe('Edit Favorites', () => {
   before(() => {
     cy.deleteAllFavorites();
@@ -75,6 +76,16 @@ describe('Edit Favorites', () => {
       cy.createFavorite({
         name: favoriteName,
       });
+
+      cy.intercept({
+        url: `/${PROJECT}/favorites/*/content`,
+        method: 'PATCH',
+      }).as('updateFavoriteContent');
+
+      cy.intercept({
+        url: `/${PROJECT}/favorites`,
+        method: 'GET',
+      }).as('getFavorites');
     });
 
     beforeEach(() => {
@@ -101,6 +112,7 @@ describe('Edit Favorites', () => {
         .should('be.visible')
         .click()
         .should('be.disabled');
+      cy.wait('@updateFavoriteContent');
 
       goToFavoritesPage();
       cy.findByText(favoriteName).click();
@@ -129,16 +141,6 @@ describe('Edit Favorites', () => {
     });
 
     it.skip('should add and remove wells and wellbores from content', () => {
-      cy.intercept({
-        url: `/${PROJECT}/favorites/*/content`,
-        method: 'PATCH',
-      }).as('updateFavoriteContent');
-
-      cy.intercept({
-        url: `/${PROJECT}/favorites`,
-        method: 'GET',
-      }).as('getFavorites');
-
       cy.log('Filter wells');
       cy.findByTestId('side-bar').findByText('Wells').click({ force: true });
       cy.findByText('Source').click({ force: true });
