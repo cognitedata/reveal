@@ -278,3 +278,19 @@ export const updateChartDateRange = (
     dateTo: newDateTo.toJSON(),
   };
 };
+
+export const updateSourceCollectionOrder = (
+  chart: Chart,
+  fromIndex: number,
+  toIndex: number
+) => {
+  const sourceCollection = chart.sourceCollection || [];
+  const sourceCollectionCopy = sourceCollection.slice();
+  const [removed] = sourceCollectionCopy.splice(fromIndex, 1);
+  sourceCollectionCopy.splice(toIndex, 0, removed);
+
+  return {
+    ...chart,
+    sourceCollection: sourceCollectionCopy,
+  };
+};

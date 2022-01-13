@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import get from 'lodash/get';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
@@ -25,7 +25,6 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
-  SourceCollectionData,
 } from 'models/chart/types';
 import { getEntryColor } from 'utils/colors';
 import { useSearchParam } from 'hooks/navigation';
@@ -36,7 +35,11 @@ import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { addWorkflow, updateAllRowsVisibility } from 'models/chart/updates';
+import {
+  addWorkflow,
+  updateAllRowsVisibility,
+  updateSourceCollectionOrder,
+} from 'models/chart/updates';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
@@ -188,7 +191,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     });
   }, [showAllChartRows, setChart]);
 
-  const openNodeEditor = () => {
+  const openNodeEditor = useCallback(() => {
     setWorkspaceMode('editor');
     if (!editorTimer && shouldTrackMetrics) {
       setEditorTimer(
@@ -201,17 +204,17 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         })
       );
     }
-  };
+  }, [chart?.workflowCollection, editorTimer, selectedSourceId]);
 
-  const handleCloseEditor = () => {
+  const handleCloseEditor = useCallback(() => {
     setWorkspaceMode('workspace');
     if (editorTimer) {
       editorTimer.stop();
       setEditorTimer(undefined);
     }
-  };
+  }, [editorTimer]);
 
-  const handleClickNewWorkflow = () => {
+  const handleClickNewWorkflow = useCallback(() => {
     if (!chart) {
       return;
     }
@@ -253,7 +256,97 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     setSelectedSourceId(newWorkflowId);
     openNodeEditor();
     trackUsage('ChartView.AddCalculation');
-  };
+  }, [chart, setChart, openNodeEditor]);
+
+  const handleSourceClick = useCallback((sourceId?: string) => {
+    setSelectedSourceId(sourceId);
+  }, []);
+
+  const handleInfoClick = useCallback(
+    (sourceId?: string) => {
+      const isSameSource = sourceId === selectedSourceId;
+      const showMenu = isSameSource ? !showContextMenu : true;
+      setShowContextMenu(showMenu);
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    },
+    [selectedSourceId, showContextMenu]
+  );
+
+  const handleCloseContextMenu = useCallback(() => {
+    setShowContextMenu(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
+
+  const handleOpenSearch = useCallback(() => {
+    setShowSearch(true);
+    trackUsage('ChartView.OpenSearch');
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
+
+  const handleCloseSearch = useCallback(() => {
+    setShowSearch(false);
+    setQuery('');
+    trackUsage('ChartView.CloseSearch');
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, [setQuery]);
+
+  const handleShowHideButtonClick = useCallback(
+    () => setShowAllChartRows((prevState) => !prevState),
+    []
+  );
+
+  const handleSettingsToggle = useCallback(
+    (key: string, value: boolean) => {
+      setChart((oldChart) => ({
+        ...oldChart!,
+        settings: {
+          showYAxis,
+          showMinMax,
+          showGridlines,
+          mergeUnits,
+          [key]: value,
+        },
+      }));
+    },
+    [mergeUnits, setChart, showGridlines, showMinMax, showYAxis]
+  );
+
+  const onDragEnd = useCallback(
+    (result: any) => {
+      if (!result.destination) {
+        return;
+      }
+
+      setChart((oldChart) =>
+        updateSourceCollectionOrder(
+          oldChart!,
+          result.source.index,
+          result.destination.index
+        )
+      );
+    },
+    [setChart]
+  );
+
+  const sources = useMemo(
+    () => [
+      ...(chart?.timeSeriesCollection || []).map(
+        (ts) =>
+          ({
+            type: 'timeseries',
+            ...ts,
+          } as ChartTimeSeries)
+      ),
+      ...(chart?.workflowCollection || []).map(
+        (wf) =>
+          ({
+            type: 'workflow',
+            ...wf,
+          } as ChartWorkflow)
+      ),
+    ],
+    [chart?.timeSeriesCollection, chart?.workflowCollection]
+  );
 
   if (!isFetched || (isFetched && originalChart && !chart)) {
     return <Icon type="Loading" />;
@@ -273,93 +366,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     );
   }
 
-  const handleSourceClick = async (sourceId?: string) => {
-    setSelectedSourceId(sourceId);
-  };
-
-  const handleInfoClick = async (sourceId?: string) => {
-    const isSameSource = sourceId === selectedSourceId;
-    const showMenu = isSameSource ? !showContextMenu : true;
-    setShowContextMenu(showMenu);
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-  };
-
-  const handleCloseContextMenu = async () => {
-    setShowContextMenu(false);
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-  };
-
-  const handleOpenSearch = async () => {
-    setShowSearch(true);
-    trackUsage('ChartView.OpenSearch');
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-  };
-
-  const handleCloseSearch = async () => {
-    setShowSearch(false);
-    setQuery('');
-    trackUsage('ChartView.CloseSearch');
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-  };
-
-  const handleShowHideButtonClick = () =>
-    setShowAllChartRows((prevState) => !prevState);
-
-  const handleSettingsToggle = async (key: string, value: boolean) => {
-    setChart((oldChart) => ({
-      ...oldChart!,
-      settings: {
-        showYAxis,
-        showMinMax,
-        showGridlines,
-        mergeUnits,
-        [key]: value,
-      },
-    }));
-  };
-
-  const sources = [
-    ...(chart.timeSeriesCollection || []).map(
-      (ts) =>
-        ({
-          type: 'timeseries',
-          ...ts,
-        } as ChartTimeSeries)
-    ),
-    ...(chart.workflowCollection || []).map(
-      (wf) =>
-        ({
-          type: 'workflow',
-          ...wf,
-        } as ChartWorkflow)
-    ),
-  ];
   const selectedSourceItem = sources.find((s) => s.id === selectedSourceId);
-
-  const reorder = (
-    sourceCollection: SourceCollectionData[],
-    startIndex: number,
-    endIndex: number
-  ) => {
-    const [removed] = sourceCollection.splice(startIndex, 1);
-    sourceCollection.splice(endIndex, 0, removed);
-    return sourceCollection;
-  };
-
-  const onDragEnd = (result: any) => {
-    if (!result.destination) {
-      return;
-    }
-
-    setChart((oldChart) => ({
-      ...oldChart!,
-      sourceCollection: reorder(
-        chart?.sourceCollection || [],
-        result.source.index,
-        result.destination.index
-      ),
-    }));
-  };
 
   return (
     <ChartViewContainer id="chart-view">
@@ -523,8 +530,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                               openNodeEditor={openNodeEditor}
                               onRowClick={handleSourceClick}
                               onInfoClick={handleInfoClick}
-                              dateFrom={chart.dateFrom}
-                              dateTo={chart.dateTo}
                             />
                             {provided.placeholder}
                           </tbody>

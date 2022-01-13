@@ -32,7 +32,6 @@ export default function TimeSeriesRows({
         <TimeSeriesRow
           key={t.id}
           mutate={updateChart}
-          chart={chart}
           timeseries={t}
           isWorkspaceMode={isWorkspaceMode}
           onRowClick={onRowClick}

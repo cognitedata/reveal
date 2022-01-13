@@ -14,7 +14,6 @@ import { DraggableProvided } from 'react-beautiful-dnd';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { timeseriesSummaryById } from 'models/timeseries/selectors';
 import flow from 'lodash/flow';
-import chartAtom from 'models/chart/atom';
 import { isEqual } from 'lodash';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
@@ -42,7 +41,6 @@ import {
 
 type Props = {
   mutate: (update: (c: Chart | undefined) => Chart) => void;
-  chart: Chart;
   timeseries: ChartTimeSeries;
   disabled?: boolean;
   isSelected?: boolean;
@@ -50,11 +48,12 @@ type Props = {
   onInfoClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
-  dateFrom: string;
   provided?: DraggableProvided | undefined;
-  dateTo: string;
   draggable?: boolean;
+  dateFrom?: string;
+  dateTo?: string;
 };
+
 export default function TimeSeriesRow({
   mutate,
   timeseries,
@@ -66,6 +65,8 @@ export default function TimeSeriesRow({
   isFileViewerMode = false,
   draggable = false,
   provided = undefined,
+  dateFrom,
+  dateTo,
 }: Props) {
   const {
     id,
@@ -81,10 +82,7 @@ export default function TimeSeriesRow({
     tsExternalId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
-  const [chart] = useRecoilState(chartAtom);
   const [, setLocalTimeseries] = useRecoilState(timeseriesAtom);
-  const dateFrom = chart?.dateFrom;
-  const dateTo = chart?.dateTo;
   const sdk = useSDK();
 
   const [debouncedRange] = useDebounce({ dateFrom, dateTo }, 50, {
