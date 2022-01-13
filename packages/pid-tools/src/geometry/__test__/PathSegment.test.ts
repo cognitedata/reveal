@@ -35,15 +35,16 @@ describe('LineSegment', () => {
     const lineSegment2 = new LineSegment(new Point(0, -10), new Point(0, 10));
     const lineSegment3 = new LineSegment(new Point(5, 0), new Point(5, 10));
 
-    const intersection12 = lineSegment1.getIntersection(lineSegment2);
+    const intersection12 = lineSegment1.getIntersection(lineSegment2)!;
     expect(intersection12.x).toBeCloseTo(0, decimalPrecision);
     expect(intersection12.y).toBeCloseTo(0, decimalPrecision);
 
-    const intersection13 = lineSegment1.getIntersection(lineSegment3);
+    const intersection13 = lineSegment1.getIntersection(lineSegment3)!;
     expect(intersection13.x).toBeCloseTo(5, decimalPrecision);
     expect(intersection13.y).toBeCloseTo(0, decimalPrecision);
 
-    const intersection23 = lineSegment1.getIntersection(lineSegment3);
-    expect(intersection23).toBe(undefined);
+    const intersection23 = lineSegment1.getIntersection(lineSegment3)!;
+    expect(intersection23.x).toBeCloseTo(5, decimalPrecision);
+    expect(intersection23.y).toBeCloseTo(0, decimalPrecision);
   });
 });
