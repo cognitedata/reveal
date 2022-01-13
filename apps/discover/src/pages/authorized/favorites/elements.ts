@@ -39,9 +39,6 @@ export const HoverMenuItem = styled.div`
   display: flex;
   justify-content: flex-start;
   width: 156px;
-  &:hover {
-    background-color: var(--cogs-red-8);
-  }
 `;
 
 export const DangerButton = styled(Menu.Item)`

@@ -2,6 +2,7 @@ import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import { PlotData } from 'plotly.js';
 import { convertPressure, changeUnitTo } from 'utils/units';
 
@@ -84,7 +85,7 @@ export const formatChartData = (
 
     if (
       measurement &&
-      measurement.columns.length > 0 &&
+      !isEmpty(measurement.columns) &&
       referenceColIndex > -1
     ) {
       const columnsMetadata = measurement.columns.reduce(
@@ -109,58 +110,58 @@ export const formatChartData = (
 
         const columnIndex = columnList.indexOf(curveName);
 
-        if (columnIndex > -1 && lineConfig) {
-          // Get column data unit
-          const xUnit = columnsMetadata[curveName].unit || '';
+        const curveExistInSequenceColumns = columnList.includes(curveName);
 
-          const isAngleCurve = xUnit === ANGLE_CURVES_UNIT;
-          let x: number[] = [];
-          let y: number[] = [];
-          rows.forEach((measurementRow) => {
-            const yValue = measurementRow[referenceColIndex] as number;
-            const xValue = measurementRow[columnIndex] as number;
-            if (
-              CHART_BREAK_POINTS.includes(xValue) ||
-              CHART_BREAK_POINTS.includes(yValue)
-            ) {
-              if (!isEmpty(x)) {
-                // Create the graph if next value is a breaking point value
-                pushCorveToChart(
-                  chartData,
-                  dataType,
-                  lineConfig,
-                  isAngleCurve,
-                  curveName,
-                  curveDescription,
-                  x,
-                  y
-                );
-                x = [];
-                y = [];
-              }
-              return;
-            }
-            y.push(changeUnitTo(yValue, tvdUnit, referenceUnit) || yValue);
-            if (isAngleCurve) {
-              x.push(xValue);
-            } else {
-              x.push(
-                convertPressure(xValue, xUnit, yValue, tvdUnit, pressureUnit)
-              );
-            }
-          });
+        if (!curveExistInSequenceColumns || isUndefined(lineConfig)) return;
 
-          pushCorveToChart(
-            chartData,
-            dataType,
-            lineConfig,
-            isAngleCurve,
-            curveName,
-            curveDescription,
-            x,
-            y
-          );
-        }
+        // Get column data unit
+        const xUnit = columnsMetadata[curveName].unit || '';
+
+        const isAngleCurve = xUnit === ANGLE_CURVES_UNIT;
+        let x: number[] = [];
+        let y: number[] = [];
+        rows.forEach((measurementRow) => {
+          const yValue = measurementRow[referenceColIndex] as number;
+          const xValue = measurementRow[columnIndex] as number;
+          if (
+            CHART_BREAK_POINTS.includes(xValue) ||
+            CHART_BREAK_POINTS.includes(yValue)
+          ) {
+            if (isEmpty(x)) return;
+            // Create the graph if next value is a breaking point value
+            pushCorveToChart(
+              chartData,
+              dataType,
+              lineConfig,
+              isAngleCurve,
+              curveName,
+              curveDescription,
+              x,
+              y
+            );
+            x = [];
+            y = [];
+          }
+          y.push(changeUnitTo(yValue, tvdUnit, referenceUnit) || yValue);
+          if (isAngleCurve) {
+            x.push(xValue);
+          } else {
+            x.push(
+              convertPressure(xValue, xUnit, yValue, tvdUnit, pressureUnit)
+            );
+          }
+        });
+
+        pushCorveToChart(
+          chartData,
+          dataType,
+          lineConfig,
+          isAngleCurve,
+          curveName,
+          curveDescription,
+          x,
+          y
+        );
       });
     }
   });

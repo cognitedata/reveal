@@ -55,15 +55,12 @@ export async function getMeasurementsByWellboreIds(
                   ...baseFilters,
                 },
               })
-              .then((response) =>
-                response.map((item) => ({
-                  ...item,
-                  assetId: wellboreAssetIdReverseMap[item.assetId as number],
-                  metadata: {
-                    ...item.metadata,
-                    dataType,
-                  },
-                }))
+              .then((sequences) =>
+                processSequenceResponse(
+                  sequences,
+                  wellboreAssetIdReverseMap,
+                  dataType
+                )
               )
           );
         }
@@ -108,3 +105,32 @@ export async function getMeasurementsByWellboreIds(
 
   return groupedData;
 }
+
+export const processSequenceResponse = (
+  sequences: Sequence[],
+  wellboreAssetIdMap: WellboreAssetIdMap,
+  dataType: string
+) => {
+  return sequences
+    .filter((sequence) => cleanPpfgResults(sequence, dataType))
+    .map((sequence) => ({
+      ...sequence,
+      assetId: wellboreAssetIdMap[sequence.assetId as number],
+      metadata: {
+        ...sequence.metadata,
+        dataType,
+      },
+    }));
+};
+
+/**
+ * Filter out sequences if metadata description doesn't includes `ppfg`
+ */
+export const cleanPpfgResults = (sequence: Sequence, dataType: string) => {
+  if (dataType !== 'ppfg') return true;
+  return sequence.columns.some(
+    (column) =>
+      column.metadata &&
+      column.metadata.description.toLowerCase().includes(dataType)
+  );
+};
