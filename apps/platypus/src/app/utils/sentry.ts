@@ -14,8 +14,8 @@ if (
     // This is populated by react-scripts. However, this can be overridden by
     // the app's build process if you wish.
     environment: environment.APP_ENV,
-    debug: true,
-    ignoreErrors: ['ResizeObserver loop'],
+    debug: false,
+    ignoreErrors: ['ResizeObserver loop limit exceeded'],
   });
 
   Sentry.setExtras({

@@ -17,7 +17,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
   const { t } = useTranslation('CodeEditor');
 
   return (
-    <div data-testid="code_editor">
+    <div data-testid="code_editor" style={{ height: '100%' }}>
       <PageToolbar title={t('editor_title', 'Editor')} titleLevel={6}>
         <SegmentedControl
           currentKey={props.currentView}

@@ -22,6 +22,7 @@ export const Notification = ({
   }
 
   if (type === 'error') {
+    console.error(message);
     toast.error(message, {
       autoClose,
     });

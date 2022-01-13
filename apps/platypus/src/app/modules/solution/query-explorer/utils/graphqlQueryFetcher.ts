@@ -21,10 +21,9 @@ export default {
             reject(result.error);
           }
 
-          resolve(result.getValue());
+          resolve(result.getValue().data);
         })
         .catch((error) => {
-          console.error(error);
           Notification({ type: 'error', message: error.message });
           reject(error);
         });
