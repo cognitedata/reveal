@@ -135,7 +135,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     vertexShader: coverageShaders.vertex,
     fragmentShader: coverageShaders.fragment,
     clipping: true,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 
   constructor(options: OrderSectorsByVisibleCoverageOptions) {
