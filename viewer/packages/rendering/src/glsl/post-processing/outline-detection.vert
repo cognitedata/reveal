@@ -1,11 +1,11 @@
-varying vec2 vUv;
+out vec2 vUv;
 
 // selection outline
 uniform vec2 texelSize;
-varying vec2 vUv0;
-varying vec2 vUv1;
-varying vec2 vUv2;
-varying vec2 vUv3;
+out vec2 vUv0;
+out vec2 vUv1;
+out vec2 vUv2;
+out vec2 vUv3;
 
 void main() {
   vUv = uv;
