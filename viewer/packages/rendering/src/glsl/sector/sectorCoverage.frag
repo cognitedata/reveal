@@ -2,13 +2,15 @@
 #pragma glslify: isClipped = require('../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: NodeAppearance = require('../base/nodeAppearance.glsl')
 
-varying mediump vec3 v_color;
-varying lowp float v_coverageFactor;
-varying lowp float v_visible;
-varying lowp vec2 v_seed;
+in mediump vec3 v_color;
+in lowp float v_coverageFactor;
+in lowp float v_visible;
+in lowp vec2 v_seed;
 
 
-varying vec3 v_viewPosition;
+in vec3 v_viewPosition;
+
+out vec4 outputColor;
     
 const NodeAppearance dummyNodeAppearance = NodeAppearance(vec4(0.0), false, false, false);
 
@@ -22,5 +24,5 @@ void main() {
         discard;
     }
 
-    gl_FragColor = vec4(v_color, 1.0);
+    outputColor = vec4(v_color, 1.0);
 }

@@ -1,6 +1,6 @@
 #pragma glslify: rand2d = require('../math/rand2d.glsl')
 
-varying vec2 vUv;
+in vec2 vUv;
 
 uniform mat4 projMatrix;
 uniform mat4 inverseProjectionMatrix;
@@ -13,6 +13,8 @@ uniform vec2 resolution;
 
 uniform float sampleRadius;
 uniform float bias;
+
+out vec4 outputColor;
 
 vec3 viewPosFromDepth(float depth, vec2 uv) {
   // Depth to clip space: [0, 1] -> [-1, 1]
@@ -98,5 +100,5 @@ void main(){
 
   float occlusionFactor = 1.0 - clamp(occlusion / float(MAX_KERNEL_SIZE), 0.0, 1.0);
 
-  gl_FragColor = vec4(vec3(occlusionFactor), 1.0);
+  outputColor = vec4(vec3(occlusionFactor), 1.0);
 }
