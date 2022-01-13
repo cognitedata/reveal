@@ -2,16 +2,16 @@
 
 uniform mat4 inverseModelMatrix;
 
-attribute mat4 a_instanceMatrix;
+in mat4 a_instanceMatrix;
 
-attribute float a_treeIndex;
-attribute vec3 a_color;
+in float a_treeIndex;
+in vec3 a_color;
 
-varying float v_treeIndex;
-varying vec3 v_normal;
-varying vec3 v_color;
+out float v_treeIndex;
+out vec3 v_normal;
+out vec3 v_color;
 
-varying vec3 vViewPosition;
+out vec3 vViewPosition;
 
 uniform vec2 treeIndexTextureSize;
 uniform sampler2D transformOverrideIndexTexture;

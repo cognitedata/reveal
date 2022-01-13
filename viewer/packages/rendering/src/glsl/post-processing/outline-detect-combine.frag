@@ -3,12 +3,12 @@
 
 #include <packing>
 
-varying vec2 vUv;
+in vec2 vUv;
 
-varying vec2 vUv0;
-varying vec2 vUv1;
-varying vec2 vUv2;
-varying vec2 vUv3;
+in vec2 vUv0;
+in vec2 vUv1;
+in vec2 vUv2;
+in vec2 vUv3;
 
 uniform sampler2D tFront;
 uniform sampler2D tFrontDepth;
@@ -31,6 +31,8 @@ uniform vec2 resolution;
 
 uniform float edgeStrengthMultiplier;
 uniform float edgeGrayScaleIntensity;
+
+out vec4 outputColor;
 
 const float infinity = 1e20;
 
@@ -95,7 +97,7 @@ void main() {
   if(any(equal(frontNeighborIndices, vec4(0.0))) && frontOutlineIndex > 0.0) 
   { 
     float borderColorIndex = max(max(frontNeighborIndices.x, frontNeighborIndices.y), max(frontNeighborIndices.z, frontNeighborIndices.w));
-    gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+    outputColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
 #if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth) 
     gl_FragDepthEXT = frontDepth;
 #endif
@@ -108,7 +110,7 @@ void main() {
 
     float a = customDepthTest > 0.0 ? ceil(customAlbedo.a) * 0.5 : ceil(backAlbedo.a) * 0.5;
 
-    gl_FragColor = vec4(frontAlbedo.rgb, 1.0) * (1.0 - a) + (vec4(backAlbedo.rgb, 1.0) * (1.0 - customDepthTest) + vec4(customAlbedo.rgb, 1.0) * customDepthTest) * a;
+    outputColor = vec4(frontAlbedo.rgb, 1.0) * (1.0 - a) + (vec4(backAlbedo.rgb, 1.0) * (1.0 - customDepthTest) + vec4(customAlbedo.rgb, 1.0) * customDepthTest) * a;
 #if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)   
     gl_FragDepthEXT = texture2D(tFrontDepth, vUv).r;
 #endif
@@ -122,7 +124,7 @@ void main() {
     if( any(equal(backNeighborIndices, vec4(0.0))) && backOutlineIndex > 0.0) 
     { 
       float borderColorIndex = max(max(backNeighborIndices.x, backNeighborIndices.y), max(backNeighborIndices.z, backNeighborIndices.w));
-      gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+      outputColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
 #if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)
       gl_FragDepthEXT = texture2D(tBackDepth, vUv).r;
 #endif
@@ -157,7 +159,7 @@ void main() {
     depth = mix(backDepth, ghostDepth, s);
   }
   
-  gl_FragColor = color * (1.0 - edgeStrength) + vec4(vec3(edgeGrayScaleIntensity) * edgeStrength, 1.0);
+  outputColor = color * (1.0 - edgeStrength) + vec4(vec3(edgeGrayScaleIntensity) * edgeStrength, 1.0);
 #if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)  
   gl_FragDepthEXT = depth;
 #endif

@@ -1,9 +1,6 @@
 precision highp float;
 
-out highp vec4 pc_fragColor;
-
 #define texture2D texture
-#define gl_FragColor pc_fragColor
 #define gl_FragDepthEXT gl_FragDepth 
 
 #pragma glslify: mul3 = require('../../math/mul3.glsl')

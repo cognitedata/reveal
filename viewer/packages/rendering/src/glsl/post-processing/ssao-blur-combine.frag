@@ -4,12 +4,14 @@
 // http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
 // generalized for two dimensions
 
-varying vec2 vUv;
+in vec2 vUv;
 
 uniform sampler2D tDiffuse;
 uniform sampler2D tAmbientOcclusion;
 
 uniform vec2 resolution;
+
+out vec4 outputColor;
 
 void main() {
   float blurredAO =
@@ -39,5 +41,5 @@ void main() {
       texture2D(tAmbientOcclusion, vUv + vec2(3.1111111, 0.0000000) / resolution).r * 0.0096130 +
       texture2D(tAmbientOcclusion, vUv).r * 0.0747681;
 
-  gl_FragColor = vec4(texture2D(tDiffuse, vUv).rgb * blurredAO, 1.0);
+  outputColor = vec4(texture2D(tDiffuse, vUv).rgb * blurredAO, 1.0);
 }
