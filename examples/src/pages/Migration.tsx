@@ -26,6 +26,7 @@ import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { InspectNodeUI } from '../utils/InspectNodeUi';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -471,6 +472,8 @@ export function Migration() {
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
+
+      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Inspected node'), client);
   
       const overlayTool = new HtmlOverlayTool(viewer,
         { 
@@ -499,9 +502,10 @@ export function Migration() {
 
                 overlayTool.add(overlayHtml, point);
   
+                inspectNodeUi.inspectNode(intersection.model, treeIndex);
+
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
-
               }
               break;
             case 'pointcloud':
