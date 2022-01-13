@@ -1,18 +1,27 @@
 import { Arguments } from 'yargs';
-import { generate } from '@graphql-codegen/cli';
+import { codegen } from '@graphql-codegen/core';
 import { CLICommand } from '../../common/cli-command';
 import { injectRCFile } from '../../common/config';
 // dont remove these unused imports as this are bundled by the webpack and used by the cli (standalone)
-import '@graphql-codegen/typescript';
-import '@graphql-codegen/typescript-operations';
-import '@graphql-codegen/typescript-resolvers';
-import '@graphql-codegen/typescript-react-apollo';
+import * as typescriptPlugin from '@graphql-codegen/typescript';
+import * as typescriptOperationsPlugin from '@graphql-codegen/typescript-operations';
+import * as typescriptResolversPlugin from '@graphql-codegen/typescript-resolvers';
+import * as typescriptReactApolloPlugin from '@graphql-codegen/typescript-react-apollo';
+import * as typescriptApolloAngularPlugin from '@graphql-codegen/typescript-apollo-angular';
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
 import { cwd } from 'process';
 import { SupportedGraphQLGeneratorPlugins } from '../../constants';
 import { TemplatesApiService } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
-import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
+import { CONSTANTS as C } from '../../constants';
+import {
+  buildClientSchema,
+  getIntrospectionQuery,
+  printSchema,
+  parse,
+} from 'graphql';
+import { readFile, stat, writeFile } from 'fs/promises';
+import { join, resolve } from 'path';
 
 export type TemplateGenerateCommandArgs = BaseArgs & {
   ['plugins']?: string[];
@@ -56,7 +65,6 @@ class TemplateGenerateCommand extends CLICommand {
   @injectRCFile()
   async execute(args: Arguments<TemplateGenerateCommandArgs>) {
     try {
-      const { plugins } = args;
       const client = getCogniteSDKClient();
       const templates = new TemplatesApiService(client);
       const response = await templates.runQuery({
@@ -72,13 +80,39 @@ class TemplateGenerateCommand extends CLICommand {
           'Failed to obtain results from introspection query'
         );
       }
-      await generate({
-        schema: printSchema(buildClientSchema(response.data)),
-        documents: args['operations-file'],
-        generates: {
-          [(cwd(), args['output-file'])]: { plugins },
+      let documents = [];
+      if (
+        args['operations-file'] &&
+        (await stat(resolve(args['operations-file']))).isFile()
+      ) {
+        const file = resolve(args['operations-file']);
+        const fileContent = await readFile(file, 'utf8');
+        documents = [{ document: parse(fileContent) }];
+      } else {
+        args.logger.warn(
+          'No operations file provided, skipping operation generations'
+        );
+      }
+
+      const generatedCode = await codegen({
+        filename: args['output-file'],
+        config: {},
+        documents,
+        schema: parse(printSchema(buildClientSchema(response.data))),
+        plugins: args.plugins.map((name) => ({ [name]: {} })),
+        pluginMap: {
+          [C.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT]: typescriptPlugin,
+          [C.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT_OPERATIONS]:
+            typescriptOperationsPlugin,
+          [C.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT_RESOLVERS]:
+            typescriptResolversPlugin,
+          [C.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT_REACT_APOLLO]:
+            typescriptReactApolloPlugin,
+          [C.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT_APOLLO_ANGULAR]:
+            typescriptApolloAngularPlugin,
         },
       });
+      await writeFile(join(cwd(), args['output-file']), generatedCode);
       args.logger.info('Types generated successfully');
     } catch (error) {
       args.logger.error(error);

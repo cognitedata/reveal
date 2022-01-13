@@ -27,12 +27,19 @@ export enum AUTH_CONFIG {
 export const CONSTANTS = {
   PROJECT_CONFIG_FILE_NAME: 'cdfrc.json',
   MANUAL_WEBSITE: 'https://github.com/cognitedata/platypus',
+  GRAPHQL_CODEGEN_PLUGINS_NAME: {
+    TYPESCRIPT: 'typescript',
+    TYPESCRIPT_OPERATIONS: 'typescript-operations',
+    TYPESCRIPT_RESOLVERS: 'typescript-resolvers',
+    TYPESCRIPT_REACT_APOLLO: 'typescript-react-apollo',
+    TYPESCRIPT_APOLLO_ANGULAR: 'typescript-apollo-angular',
+  },
 };
 
 export const SupportedGraphQLGeneratorPlugins = [
-  'typescript',
-  'typescript-operations',
-  'typescript-resolvers',
-  'typescript-react-apollo',
-  'typescript-apollo-angular',
+  CONSTANTS.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT,
+  CONSTANTS.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT_OPERATIONS,
+  CONSTANTS.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT_RESOLVERS,
+  CONSTANTS.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT_REACT_APOLLO,
+  CONSTANTS.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT_APOLLO_ANGULAR,
 ];

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/platypus-cli",
-  "version": "0.0.1-alpha.11",
+  "version": "0.0.1-alpha.12",
   "description": "A CLI for Platypus",
   "repository": "https://github.com/cognitedata/platypus/apps/platypus-cdf-cli",
   "author": "Cognite",
@@ -11,11 +11,9 @@
   },
   "dependencies": {
     "@cognite/sdk": "5.4.0",
-    "@graphql-codegen/typescript": "^2.4.2",
-    "@graphql-codegen/typescript-apollo-angular": "^3.3.2",
-    "@graphql-codegen/typescript-operations": "^2.2.2",
-    "@graphql-codegen/typescript-react-apollo": "^3.2.3",
-    "@graphql-codegen/typescript-resolvers": "^2.4.3",
     "tslib": "^2.0.0"
+  },
+  "resolutions": {
+    "graphql": "^15.6.1"
   }
 }
