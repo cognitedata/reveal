@@ -21,16 +21,14 @@ export const SourceTableHeader = ({
   return (
     <thead>
       <tr>
-        {mode === 'workspace' && (
-          <th
-            style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHide"
-          >
-            <SourceItem style={{ justifyContent: 'center' }}>
-              <SourceName>Style</SourceName>
-            </SourceItem>
-          </th>
-        )}
+        <th
+          style={{ width: 50, minWidth: 50, paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
+          <SourceItem style={{ justifyContent: 'center' }}>
+            <SourceName>Style</SourceName>
+          </SourceItem>
+        </th>
         <th>
           <SourceItem>
             <SourceName>

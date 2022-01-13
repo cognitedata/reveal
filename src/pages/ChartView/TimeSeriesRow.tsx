@@ -284,30 +284,28 @@ export default function TimeSeriesRow({
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
     >
-      {isWorkspaceMode && (
-        <td
-          style={{ textAlign: 'center', paddingLeft: 0 }}
-          className="downloadChartHide"
-        >
-          <Dropdown
-            disabled={!enabled}
-            content={
-              <AppearanceDropdown
-                selectedColor={color}
-                selectedLineStyle={lineStyle}
-                selectedLineWeight={lineWeight}
-                onUpdate={handleUpdateAppearance}
-              />
-            }
-          >
-            <StyleButton
-              styleType="ResourceTimeseries"
-              styleColor={color}
-              label="Timeseries"
+      <td
+        style={{ textAlign: 'center', paddingLeft: 0 }}
+        className="downloadChartHide"
+      >
+        <Dropdown
+          disabled={!enabled}
+          content={
+            <AppearanceDropdown
+              selectedColor={color}
+              selectedLineStyle={lineStyle}
+              selectedLineWeight={lineWeight}
+              onUpdate={handleUpdateAppearance}
             />
-          </Dropdown>
-        </td>
-      )}
+          }
+        >
+          <StyleButton
+            styleType="ResourceTimeseries"
+            styleColor={color}
+            label="Timeseries"
+          />
+        </Dropdown>
+      </td>
       <td>
         <SourceItem isDisabled={disabled} key={id}>
           <SourceStatus onClick={handleStatusIconClick}>

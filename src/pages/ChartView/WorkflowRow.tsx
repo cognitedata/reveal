@@ -355,30 +355,28 @@ export default function WorkflowRow({
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
     >
-      {isWorkspaceMode && (
-        <td
-          style={{ textAlign: 'center', paddingLeft: 0 }}
-          className="downloadChartHide"
-        >
-          <Dropdown
-            disabled={!enabled}
-            content={
-              <AppearanceDropdown
-                selectedColor={color}
-                selectedLineStyle={lineStyle}
-                selectedLineWeight={lineWeight}
-                onUpdate={handleUpdateAppearance}
-              />
-            }
-          >
-            <StyleButton
-              styleType="Function"
-              styleColor={color}
-              label="Workflow Function"
+      <td
+        style={{ textAlign: 'center', paddingLeft: 0 }}
+        className="downloadChartHide"
+      >
+        <Dropdown
+          disabled={!enabled}
+          content={
+            <AppearanceDropdown
+              selectedColor={color}
+              selectedLineStyle={lineStyle}
+              selectedLineWeight={lineWeight}
+              onUpdate={handleUpdateAppearance}
             />
-          </Dropdown>
-        </td>
-      )}
+          }
+        >
+          <StyleButton
+            styleType="Function"
+            styleColor={color}
+            label="Workflow Function"
+          />
+        </Dropdown>
+      </td>
       <td>
         <SourceItem key={id}>
           <SourceStatus
