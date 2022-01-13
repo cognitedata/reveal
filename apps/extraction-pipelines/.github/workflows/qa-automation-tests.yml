@@ -13,7 +13,7 @@ jobs:
     name: Run Testcafe Tests
     runs-on: windows-latest
     env:
-      FUSION_BASE_URL: https://next-release.fusion.cognite.com
+      FUSION_BASE_URL: https://fusion.cognite.com
       TEST_USER_EMAIL: ${{secrets.TESTUSER_EMAIL}}
       TEST_USER_PASSWORD: ${{secrets.TESTUSER_PASSWORD}}
       TESTCAFE_SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK}}
