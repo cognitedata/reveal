@@ -118,12 +118,19 @@ export class MetricsLogger {
   static trackError(error: Error, eventProps: EventProps): void {
     log.error(error);
 
-    this.trackEvent('error', {
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-      ...eventProps
-    });
+    if (error !== undefined) {
+      this.trackEvent('error', {
+        message: error.message || error,
+        name: error.name,
+        stack: error.stack,
+        ...eventProps
+      });
+    } else {
+      this.trackEvent('error', {
+        name: 'unknown',
+        ...eventProps
+      });
+    }
   }
 
   static trackCameraNavigation(eventProps: EventProps): void {
