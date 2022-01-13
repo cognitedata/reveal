@@ -32,12 +32,17 @@ toolbar.addFitCameraToModel();
 ```
 
 ## Add elements
-Each toolbar element in Reveal provides flexibilty for the user to add tooltip, icon image and a callback function to trigger when the icon button is clicked.
-New elements can be added to the toolbar using `addToolbarItem(toolTip: string, backgroundImageUri: string, isToggle: boolean, onClick: () => void)`
-- `toolTip` - Tooltip for the Icon button
+Each toolbar element in Reveal provides flexibilty for the user to add icon image, a callback function to trigger when the icon button is clicked and optional tooltip.
+New elements can be added to the toolbar by methods using
+`addToolbarButton(backgroundImageUri: string, onClick: () => void, toolTip: string = '')`
 - `backgroundImageUri` - Background image to be placed onto icon button. The image needs to be in string with `base64` format.
-- `isToggle` - Is the icon button used as toggle
-- `onClick` - Click event callback function which can be used to perform custom functionlity of the user
+- `onClick` - Click event callback function which will be used to perform custom functionlity provided by the user.
+- `toolTip` - Optional tooltip for the Icon button
+
+`addToolbarToogleButton(backgroundImageUri: string, onToggled: () => void, toolTip: string = '')`
+- `backgroundImageUri` - Background image to be placed onto icon button. The image needs to be in string with `base64` format.
+- `onToggled` - Click event callback function which will be used to perform custom functionlity provided by the user.
+- `toolTip` - Optional tooltip for the Icon button
 
 ### Creating new elements for the toolbar
 By creating ToolbarTool object, user can add elements to the new toolbar.
@@ -55,9 +60,9 @@ const callbackMsg = () => (
     alert("result called")
 );
 
-toolbar.addToolbarItem('Explode View', explodeIcon, true, callbackMsg);
-toolbar.addToolbarItem('Maps', geoMapicon, false, callbackMsg);
-toolbar.addToolbarItem('Clipping', clippingIcon, true, callbackMsg);
+toolbar.addToolbarButton(explodeIcon, callbackMsg, 'Explode View');
+toolbar.addToolbarButton(geoMapicon, callbackMsg, 'Maps');
+toolbar.addToolbarToogleButton(clippingIcon, callbackMsg, 'Clipping');
 ```
 
 ## Toolbar position

@@ -43,9 +43,9 @@ describe(ToolbarTool.name, () => {
 
     expect(toolbarContainer[0]).not.toBeEmpty();
 
-    tool.addToolbarItem('Tooltip1', '', true, iconClicked);
-    tool.addToolbarItem('Tooltip2', '', false, iconClicked);
-    tool.addToolbarItem('Tooltip3', '', false, iconClicked);
+    tool.addToolbarButton('', iconClicked, 'Tooltip1');
+    tool.addToolbarButton('', iconClicked, 'Tooltip2');
+    tool.addToolbarButton('', iconClicked, 'Tooltip3');
 
     expect(createElementMock).toBeCalledTimes(6);
 

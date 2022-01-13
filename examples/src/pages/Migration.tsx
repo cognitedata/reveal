@@ -531,9 +531,9 @@ export function Migration() {
       toolbar.addZoomPastToCursorToggle();
       toolbar.addFitCameraToModel();
 
-      toolbar.addToolbarItem('Explode View', explodeIcon, true, callbackMsg);
-      toolbar.addToolbarItem('Maps', geoMapicon, false, callbackMsg);
-      toolbar.addToolbarItem('Clipping', clippingIcon, true, callbackMsg);
+      toolbar.addToolbarButton(explodeIcon, callbackMsg, 'Explode View');
+      toolbar.addToolbarButton(geoMapicon, callbackMsg, 'Maps');
+      toolbar.addToolbarToogleButton(clippingIcon, callbackMsg, 'Clipping');
 
       const toolbarGui = gui.addFolder('Toolbar Options');
       const toolbarPosition = ['Top', 'Bottom', 'Left', 'Right'];

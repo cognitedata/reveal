@@ -70,12 +70,17 @@ export class Toolbar {
 
   /**
    * Create & adds a button icons into the toolbar container
-   * @param toolTip Tooltip message to added for the icon
    * @param backgroundImageUri Icon image to be displayed
    * @param isToggle Is the icon button used as toggle
-   * @param onClick Click event action for the icon
+   * @param onClick Click event action for the icon button
+   * @param toolTip Optional tooltip message to be added for the icon button
    */
-  public addToolbarItem(toolTip: string, backgroundImageUri: string, isToggle: boolean, onClick: () => void): void {
+  public addToolbarButton(
+    backgroundImageUri: string,
+    isToggle: boolean,
+    onClick: () => void,
+    toolTip: string = ''
+  ): void {
     const element = document.createElement('button');
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
