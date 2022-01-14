@@ -217,14 +217,14 @@ describe('tests useAssetLinkWarningHook', () => {
       expect(result.current).toBe(AssetWarnTypes.NoWarning);
     });
 
-    // reject annotation and sibling, file still linked to annotation sibling asset
+    // reject annotation and sibling, file still linked to annotation asset
     // there's another approved annotation with same asset
     act(() => {
       rerender(
         getRenderProps(
           rejectAnnotation(tagAnnotation),
           rejectAnnotation(tagAnnotationSibling),
-          [annotationSiblingAssetId],
+          [annotationAssetId, annotationSiblingAssetId],
           approveAnnotation(tagAnnotationWithSameAsset)
         )
       );
