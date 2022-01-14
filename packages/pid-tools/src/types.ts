@@ -21,15 +21,19 @@ export interface DiagramSymbol {
   svgRepresentations: SvgRepresentation[];
 }
 
-export interface DiagramSymbolInstance {
+export interface DiagramInstance {
+  type: string;
   pathIds: string[];
-  symbolId: string;
   labelIds: string[];
+}
+
+export interface DiagramSymbolInstance extends DiagramInstance {
+  symbolId: string;
   scale?: number;
 }
 
-export interface DiagramLineInstance extends DiagramSymbolInstance {
-  symbolId: 'Line';
+export interface DiagramLineInstance extends DiagramInstance {
+  type: 'Line';
 }
 
 export type DiagramInstanceId = string;
@@ -40,8 +44,8 @@ export interface DiagramConnection {
   direction: 'directed' | 'unknown';
 }
 
-export interface DiagramInstanceOutputFormat extends DiagramSymbolInstance {
-  id: string;
+export interface DiagramInstanceOutputFormat extends DiagramInstance {
+  symbolId?: string;
   svgRepresentation: SvgRepresentation;
   labels: DiagramLabelOutputFormat[];
 }

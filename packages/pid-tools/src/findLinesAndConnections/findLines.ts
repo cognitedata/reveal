@@ -1,8 +1,9 @@
 import {
   DiagramConnection,
   DiagramLineInstance,
-  DiagramSymbolInstance,
+  DiagramInstance,
   DiagramInstanceId,
+  DiagramSymbolInstance,
 } from '../types';
 import { getDiagramInstanceId, isDiagramInstanceInList } from '../utils';
 
@@ -53,8 +54,8 @@ export const detectLines = (
         ...deduplicatedVisitedLines.map(
           (newLine) =>
             ({
+              type: 'Line',
               pathIds: [newLine],
-              symbolId: 'Line',
               labelIds: [],
             } as DiagramLineInstance)
         )
@@ -99,7 +100,7 @@ const dfsCountConnectionsToSymbolsOrLines = (
 
 const findLinesInBetweenKnownInstances = (
   instanceId: DiagramInstanceId,
-  knownInstances: DiagramSymbolInstance[],
+  knownInstances: DiagramInstance[],
   connections: DiagramConnection[],
   visited: DiagramInstanceId[]
 ): DiagramInstanceId[] | null => {

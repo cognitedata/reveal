@@ -2,8 +2,8 @@
 import { PidPath } from '../pid';
 import {
   DiagramSymbol,
-  DiagramSymbolInstance,
   SvgRepresentation,
+  DiagramSymbolInstance,
 } from '../types';
 
 import { InstanceMatch, InstanceMatcher, MatchResult } from './InstanceMatcher';
@@ -26,6 +26,7 @@ export const findAllInstancesOfSymbol = (
 
     matches.forEach((match) => {
       symbolInstances.push({
+        type: symbol.symbolType,
         symbolId: symbol.id,
         pathIds: match.pathIds,
         scale: match.scale,

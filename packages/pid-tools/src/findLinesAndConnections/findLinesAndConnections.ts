@@ -1,6 +1,7 @@
 /* eslint-disable no-continue */
 import {
   DiagramConnection,
+  DiagramInstance,
   DiagramLineInstance,
   DiagramSymbolInstance,
 } from '../types';
@@ -38,7 +39,7 @@ export const getPotentialLines = (
   const potentialLines: DiagramLineInstance[] = matches.map(
     (pidPath) =>
       ({
-        symbolId: 'Line',
+        type: 'Line',
         pathIds: [pidPath.pathId],
         labelIds: [],
       } as DiagramLineInstance)
@@ -46,20 +47,29 @@ export const getPotentialLines = (
   return potentialLines;
 };
 
+export interface FindLinesAndConnectionsOutput {
+  newConnections: DiagramConnection[];
+  lineInstances: DiagramLineInstance[];
+}
+
 export const findLinesAndConnections = (
   pidDocument: PidDocument,
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
   oldConnections: DiagramConnection[]
-) => {
+): FindLinesAndConnectionsOutput => {
   const potentialLineInstanceList: DiagramLineInstance[] = getPotentialLines(
     symbolInstances,
     lineInstances,
     pidDocument
   );
 
+  const relevantSymbolInstances = symbolInstances.filter(
+    (symbolInstance) => symbolInstance.type !== 'Arrow'
+  );
+
   const connections: DiagramConnection[] = findConnections(
-    symbolInstances,
+    relevantSymbolInstances,
     [...lineInstances, ...potentialLineInstanceList],
     pidDocument
   );
@@ -68,10 +78,14 @@ export const findLinesAndConnections = (
     potentialLineInstanceList,
     connections,
     lineInstances,
-    symbolInstances
+    relevantSymbolInstances
   );
 
-  const knownInstances = [...symbolInstances, ...lineInstances, ...newLines];
+  const knownInstances = [
+    ...relevantSymbolInstances,
+    ...lineInstances,
+    ...newLines,
+  ];
   const prunedConnections = connections.filter((con) =>
     connectsToKnownInstances(con, knownInstances)
   );
@@ -91,7 +105,7 @@ export const findLinesAndConnections = (
 
 const connectsToKnownInstances = (
   connection: DiagramConnection,
-  knownInstances: DiagramSymbolInstance[]
+  knownInstances: DiagramInstance[]
 ) => {
   return (
     isDiagramInstanceInList(connection.end, knownInstances) &&

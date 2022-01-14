@@ -1,10 +1,13 @@
 export const SVG_ID = 'svg-id';
 
 export const symbolTypes = [
-  'Instrument',
-  'Reducer',
-  'Valve',
-  'Flange',
   'File connection',
+  'Instrument',
+  'Valve',
+  'Reducer',
+  'Flange',
+  'Cap',
+  'Insolation',
+  'Arrow',
   'Custom',
 ];

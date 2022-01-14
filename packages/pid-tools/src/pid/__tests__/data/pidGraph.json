@@ -154,28 +154,31 @@
   "lines": [],
   "symbolInstances": [
     {
-      "pathIds": ["path12862", "path12864", "path12866", "path12868"],
+      "type": "Fille connection",
       "symbolId": "File connection-131b3574-438a-4aa3-8058-160b99fc7eff",
+      "pathIds": ["path12862", "path12864", "path12866", "path12868"],
+      "labelIds": [],
       "boundingBox": {
         "x": 57.549991607666016,
         "y": 567.72998046875,
         "width": 79.03998947143555,
         "height": 14.8800048828125
-      },
-      "labels": []
+      }
     },
     {
-      "pathIds": ["path13606", "path13608", "path13610"],
+      "type": "Fille connection",
       "symbolId": "File connection-131b3574-438a-4aa3-8058-160b99fc7eff",
+      "pathIds": ["path13606", "path13608", "path13610"],
       "boundingBox": {
         "x": 1226.510009765625,
         "y": 390.2900085449219,
         "width": 79.0400390625,
         "height": 14.72003173828125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Fille connection",
       "pathIds": ["path13784", "path13786", "path13788"],
       "symbolId": "File connection-131b3574-438a-4aa3-8058-160b99fc7eff",
       "boundingBox": {
@@ -184,9 +187,10 @@
         "width": 79.0400390625,
         "height": 14.72003173828125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Reducer",
       "pathIds": ["path11818"],
       "symbolId": "Reducer-99a1a0fe-e7e7-4b95-91da-fe3e2eee7cc6",
       "boundingBox": {
@@ -195,9 +199,10 @@
         "width": 4.96002197265625,
         "height": 7.52001953125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Reducer",
       "pathIds": ["path11982"],
       "symbolId": "Reducer-99a1a0fe-e7e7-4b95-91da-fe3e2eee7cc6",
       "boundingBox": {
@@ -206,9 +211,10 @@
         "width": 4.959991455078125,
         "height": 7.52001953125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Reducer",
       "pathIds": ["path12166"],
       "symbolId": "Reducer-99a1a0fe-e7e7-4b95-91da-fe3e2eee7cc6",
       "boundingBox": {
@@ -217,9 +223,10 @@
         "width": 4.9600830078125,
         "height": 7.3599853515625
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Reducer",
       "pathIds": ["path12194"],
       "symbolId": "Reducer-99a1a0fe-e7e7-4b95-91da-fe3e2eee7cc6",
       "boundingBox": {
@@ -228,9 +235,10 @@
         "width": 4.95989990234375,
         "height": 7.3599853515625
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Reducer",
       "pathIds": ["path13760"],
       "symbolId": "Reducer-99a1a0fe-e7e7-4b95-91da-fe3e2eee7cc6",
       "boundingBox": {
@@ -239,9 +247,10 @@
         "width": 4.9600830078125,
         "height": 7.3599853515625
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": ["path12550", "path12554", "path12560", "path12562"],
       "symbolId": "Valve-980e4d04-cc1d-4279-b797-b6a7d0dfd45a",
       "boundingBox": {
@@ -250,9 +259,10 @@
         "width": 4.79998779296875,
         "height": 12.32000732421875
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": ["path12568", "path12572", "path12578", "path12580"],
       "symbolId": "Valve-980e4d04-cc1d-4279-b797-b6a7d0dfd45a",
       "boundingBox": {
@@ -261,9 +271,10 @@
         "width": 4.9599609375,
         "height": 12.32000732421875
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": ["path13674", "path13678", "path13684", "path13686"],
       "symbolId": "Valve-980e4d04-cc1d-4279-b797-b6a7d0dfd45a",
       "boundingBox": {
@@ -272,9 +283,10 @@
         "width": 4.79998779296875,
         "height": 12.32000732421875
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": ["path13882", "path13884", "path13888", "path13890"],
       "symbolId": "Valve-980e4d04-cc1d-4279-b797-b6a7d0dfd45a",
       "boundingBox": {
@@ -283,9 +295,10 @@
         "width": 4.96002197265625,
         "height": 12.32000732421875
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12222"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -294,9 +307,10 @@
         "width": 19.6800537109375,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12232"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -305,9 +319,10 @@
         "width": 19.6800537109375,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12280"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -316,9 +331,10 @@
         "width": 19.68011474609375,
         "height": 19.6800537109375
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12312"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -327,9 +343,10 @@
         "width": 19.679931640625,
         "height": 19.6800537109375
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12344"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -338,9 +355,10 @@
         "width": 19.67999267578125,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path14008"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -349,9 +367,10 @@
         "width": 19.679931640625,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path14140"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -360,9 +379,10 @@
         "width": 19.680023193359375,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path14156"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -371,9 +391,10 @@
         "width": 19.67999267578125,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path14184"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -382,9 +403,10 @@
         "width": 19.680023193359375,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path14306"],
       "symbolId": "Instrument-9b03ab12-37f0-4206-8362-b4a282246ed2",
       "boundingBox": {
@@ -393,9 +415,10 @@
         "width": 20,
         "height": 19.999969482421875
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12248", "path12250", "path12252", "path12254"],
       "symbolId": "Instrument-529273ec-4099-4139-bdaf-fbd36a711cd8",
       "boundingBox": {
@@ -404,9 +427,10 @@
         "width": 19.84002685546875,
         "height": 19.8399658203125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12264", "path12266", "path12268", "path12270"],
       "symbolId": "Instrument-529273ec-4099-4139-bdaf-fbd36a711cd8",
       "boundingBox": {
@@ -415,9 +439,10 @@
         "width": 19.84002685546875,
         "height": 19.84002685546875
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12296", "path12298", "path12300", "path12302"],
       "symbolId": "Instrument-529273ec-4099-4139-bdaf-fbd36a711cd8",
       "boundingBox": {
@@ -426,9 +451,10 @@
         "width": 19.83990478515625,
         "height": 19.84002685546875
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path12328", "path12330", "path12332", "path12334"],
       "symbolId": "Instrument-529273ec-4099-4139-bdaf-fbd36a711cd8",
       "boundingBox": {
@@ -437,9 +463,10 @@
         "width": 19.839996337890625,
         "height": 19.8399658203125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path14196", "path14198", "path14200", "path14202"],
       "symbolId": "Instrument-529273ec-4099-4139-bdaf-fbd36a711cd8",
       "boundingBox": {
@@ -448,9 +475,10 @@
         "width": 19.679931640625,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Instrument",
       "pathIds": ["path14218", "path14220", "path14222", "path14224"],
       "symbolId": "Instrument-529273ec-4099-4139-bdaf-fbd36a711cd8",
       "boundingBox": {
@@ -459,9 +487,10 @@
         "width": 19.840057373046875,
         "height": 19.67999267578125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Custom",
       "pathIds": ["path11846", "path11848"],
       "symbolId": "Custom-d0160b1b-6b5b-4b31-856f-c9a709a39bda",
       "boundingBox": {
@@ -470,9 +499,10 @@
         "width": 29.60003662109375,
         "height": 29.5999755859375
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Custom",
       "pathIds": ["path12128", "path12130"],
       "symbolId": "Custom-d0160b1b-6b5b-4b31-856f-c9a709a39bda",
       "boundingBox": {
@@ -481,7 +511,7 @@
         "width": 29.59991455078125,
         "height": 29.5999755859375
       },
-      "labels": []
+      "labelIds": []
     }
   ],
   "connections": []

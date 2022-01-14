@@ -1,15 +1,16 @@
 import { PidDocument } from '../pid/PidDocument';
 import {
   DiagramConnection,
+  DiagramInstance,
   DiagramInstanceId,
   DiagramLineInstance,
   DiagramSymbolInstance,
 } from '../types';
 
 export const getDiagramInstanceId = (
-  symbolInstance: DiagramSymbolInstance
+  diagramInstance: DiagramInstance
 ): DiagramInstanceId => {
-  return getDiagramInstanceIdFromPathIds(symbolInstance.pathIds);
+  return getDiagramInstanceIdFromPathIds(diagramInstance.pathIds);
 };
 
 export const getDiagramInstanceIdFromPathIds = (
@@ -19,36 +20,36 @@ export const getDiagramInstanceIdFromPathIds = (
 };
 
 export const getDiagramInstanceByPathId = (
-  symbolInstances: DiagramSymbolInstance[],
+  diagramInstances: DiagramInstance[],
   pathId: string
-): DiagramSymbolInstance | null => {
-  const symbolInstance = symbolInstances.filter((symbolInstance) =>
-    symbolInstance.pathIds.includes(pathId)
+): DiagramInstance | null => {
+  const diagramInstance = diagramInstances.filter((diagramInstance) =>
+    diagramInstance.pathIds.includes(pathId)
   );
-  if (symbolInstance.length > 0) {
-    return symbolInstance[0];
+  if (diagramInstance.length > 0) {
+    return diagramInstance[0];
   }
   return null;
 };
 
 export const isDiagramInstanceInList = (
   diagramId: DiagramInstanceId,
-  symbolInstances: DiagramSymbolInstance[]
+  diagramInstances: DiagramInstance[]
 ) => {
   return (
-    symbolInstances.find(
+    diagramInstances.find(
       (instance) => diagramId === getDiagramInstanceId(instance)
     ) !== undefined
   );
 };
 
 export const getInstanceByDiagramInstanceId = (
-  symbolInstances: DiagramSymbolInstance[],
+  diagramInstances: DiagramInstance[],
   diagramInstanceId: DiagramInstanceId
-): DiagramSymbolInstance | undefined => {
-  return symbolInstances.find(
-    (symbolInstance) =>
-      getDiagramInstanceId(symbolInstance) === diagramInstanceId
+): DiagramInstance | undefined => {
+  return diagramInstances.find(
+    (diagramInstance) =>
+      getDiagramInstanceId(diagramInstance) === diagramInstanceId
   );
 };
 
@@ -78,57 +79,39 @@ export const connectionExists = (
 };
 
 export const hasOverlappingPathIds = (
-  diagramSymbolInstance1: DiagramSymbolInstance,
-  DiagramSymbolInstance2: DiagramSymbolInstance
+  diagramInstance1: DiagramInstance,
+  diagramInstance2: DiagramInstance
 ) => {
-  return diagramSymbolInstance1.pathIds.some((e) =>
-    DiagramSymbolInstance2.pathIds.includes(e)
+  return diagramInstance1.pathIds.some((e) =>
+    diagramInstance2.pathIds.includes(e)
   );
-};
-
-const getPathSegmentLengthInSymbolInstance = (
-  pidDocument: PidDocument,
-  diagramSymbolInstance1: DiagramSymbolInstance
-) => {
-  let count = 0;
-  for (let i = 0; i < diagramSymbolInstance1.pathIds.length; i++) {
-    const pathId = diagramSymbolInstance1.pathIds[i];
-    const segmentList = pidDocument.getPidPathById(pathId)?.segmentList;
-    if (segmentList !== undefined) {
-      count += segmentList.length;
-    }
-  }
-  return count;
 };
 
 export const getLeastComplexDiagramSymbol = (
   pidDocument: PidDocument,
-  diagramSymbolInstance1: DiagramSymbolInstance,
-  diagramSymbolInstance2: DiagramSymbolInstance
+  diagramInstance1: DiagramSymbolInstance,
+  diagramInstance2: DiagramSymbolInstance
 ) => {
   // Most complicated in this sense, is the element with the most pathSegments.
   // Out idea is to use this when labeling circles, and circles with square,
   // to be able to determine that circle with square is the bigger/more complicated object.
+  const count1 = pidDocument.getPathSegmentsToPaths(
+    diagramInstance1.pathIds
+  ).length;
 
-  const count1 = getPathSegmentLengthInSymbolInstance(
-    pidDocument,
-    diagramSymbolInstance1
-  );
+  const count2 = pidDocument.getPathSegmentsToPaths(
+    diagramInstance2.pathIds
+  ).length;
 
-  const count2 = getPathSegmentLengthInSymbolInstance(
-    pidDocument,
-    diagramSymbolInstance2
-  );
-
-  return count1 > count2 ? diagramSymbolInstance2 : diagramSymbolInstance1;
+  return count1 > count2 ? diagramInstance2 : diagramInstance1;
 };
 
 export const getNoneOverlappingSymbolInstances = (
   pidDocument: PidDocument,
   symbolInstances: DiagramSymbolInstance[],
   newSymbolInstances: DiagramSymbolInstance[]
-) => {
-  const objectsToRemove: DiagramSymbolInstance[] = [];
+): DiagramSymbolInstance[] => {
+  const objectsToRemove: DiagramInstance[] = [];
   for (let i = 0; i < newSymbolInstances.length; i++) {
     const potentialInstance = newSymbolInstances[i];
 
@@ -152,10 +135,9 @@ export const getNoneOverlappingSymbolInstances = (
     }
   }
 
-  const prunedInstances: DiagramSymbolInstance[] = [
-    ...symbolInstances,
-    ...newSymbolInstances,
-  ].filter((instance) => objectsToRemove.includes(instance) === false);
+  const prunedInstances = [...symbolInstances, ...newSymbolInstances].filter(
+    (instance) => objectsToRemove.includes(instance) === false
+  );
 
   return prunedInstances;
 };

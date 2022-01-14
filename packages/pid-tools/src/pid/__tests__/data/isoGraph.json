@@ -100,6 +100,7 @@
   "lines": [],
   "symbolInstances": [
     {
+      "type": "Valve",
       "pathIds": [
         "path12160",
         "path12164",
@@ -116,9 +117,10 @@
         "width": 45.5999755859375,
         "height": 44.800048828125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": [
         "path12694",
         "path12698",
@@ -135,9 +137,10 @@
         "width": 45.5999755859375,
         "height": 44.80000305175781
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": [
         "path12782",
         "path12786",
@@ -154,9 +157,10 @@
         "width": 45.599945068359375,
         "height": 44.80003356933594
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": [
         "path13188",
         "path13192",
@@ -173,9 +177,10 @@
         "width": 45.7598876953125,
         "height": 44.9599609375
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": [
         "path12464",
         "path12468",
@@ -192,9 +197,10 @@
         "width": 23.03997802734375,
         "height": 52.480010986328125
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": [
         "path13994",
         "path13998",
@@ -211,9 +217,10 @@
         "width": 23.03997802734375,
         "height": 52.47996520996094
       },
-      "labels": []
+      "labelIds": []
     },
     {
+      "type": "Valve",
       "pathIds": ["path14290"],
       "symbolId": "Reducer-8d34ab6d-1111-4d7b-b66c-04de4305c9a4",
       "boundingBox": {
@@ -222,7 +229,7 @@
         "width": 11.8399658203125,
         "height": 22.720001220703125
       },
-      "labels": []
+      "labelIds": []
     }
   ],
   "connections": []

@@ -205,7 +205,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         setLines([
           ...lines,
           {
-            symbolId: 'Line',
+            type: 'Line',
             pathIds: [node.id],
             labelIds: [],
           } as DiagramLineInstance,
@@ -259,18 +259,18 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (!labelSelection) {
           return;
         }
-        const symbolInstance = getInstanceByDiagramInstanceId(
+        const diagramInstance = getInstanceByDiagramInstanceId(
           [...symbolInstances, ...lines],
           labelSelection
         );
-        if (!symbolInstance) {
+        if (!diagramInstance) {
           return;
         }
-        if (symbolInstance.symbolId === 'Line') {
+        if (diagramInstance.type === 'Line') {
           addOrRemoveLabelToInstance(
             node,
             node.id,
-            symbolInstance,
+            diagramInstance as DiagramLineInstance,
             lines,
             (arg) => {
               setLines(arg as DiagramLineInstance[]);
@@ -280,7 +280,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           addOrRemoveLabelToInstance(
             node,
             node.id,
-            symbolInstance,
+            diagramInstance as DiagramSymbolInstance,
             symbolInstances,
             setSymbolInstances
           );

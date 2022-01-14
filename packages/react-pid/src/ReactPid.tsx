@@ -5,11 +5,11 @@ import {
   PidDocument,
   DiagramSymbol,
   DiagramLineInstance,
-  DiagramSymbolInstance,
   SvgRepresentation,
   DiagramConnection,
   DiagramInstanceId,
   getNoneOverlappingSymbolInstances,
+  DiagramSymbolInstance,
   pruneSymbolOverlappingPathsFromLines,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
@@ -110,7 +110,7 @@ export const ReactPid: React.FC = () => {
 
     if (diagramSymbol === undefined) {
       diagramSymbol = {
-        id: `${symbolType}-${uuid()}`,
+        id: uuid(),
         symbolType,
         description,
         svgRepresentations: [svgRepresentation],

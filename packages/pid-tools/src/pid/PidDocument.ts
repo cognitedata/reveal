@@ -4,9 +4,9 @@ import {
   DiagramConnection,
   DiagramLineInstance,
   DiagramSymbol,
-  DiagramSymbolInstance,
   BoundingBox,
   SvgRepresentation,
+  DiagramSymbolInstance,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
 import { svgCommandsToSegments } from '../matcher/svgPathParser';
@@ -85,7 +85,7 @@ export class PidDocument {
         const width = Math.max(bBox.width, 2);
         const height = Math.max(bBox.height, 2);
         svgString.push(
-          `  <rect x="${bBox.x}" y="${bBox.y}" width="${width}" height="${height}" style="fill:blue;opacity:0.5" class="${line.symbolId}"/>`
+          `  <rect x="${bBox.x}" y="${bBox.y}" width="${width}" height="${height}" style="fill:blue;opacity:0.5" class="${line.pathIds[0]}"/>`
         );
       });
     }

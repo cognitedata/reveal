@@ -2,7 +2,6 @@
 import {
   DiagramInstanceId,
   DiagramLineInstance,
-  DiagramSymbolInstance,
   getDiagramInstanceId,
   isPathIdInInstance,
   PidDocument,
@@ -14,6 +13,8 @@ import {
   getPointTowardOtherPoint,
   connectionExists,
   getDiagramInstanceByPathId,
+  DiagramInstance,
+  DiagramSymbolInstance,
 } from '@cognite/pid-tools';
 
 import { ToolType } from '../../types';
@@ -28,7 +29,7 @@ export const isDiagramLine = (
 
 export const isSymbolInstance = (
   node: SVGElement,
-  symbolInstances: DiagramSymbolInstance[]
+  symbolInstances: DiagramInstance[]
 ) => {
   return symbolInstances.some((symbolInst) =>
     symbolInst.pathIds.includes(node.id)
@@ -57,7 +58,7 @@ export const isInLabelSelection = (
 };
 
 export const isLabelInInstance = (
-  instance: DiagramSymbolInstance,
+  instance: DiagramInstance,
   id: DiagramInstanceId
 ): boolean => {
   return instance.labelIds.includes(id);
@@ -65,15 +66,13 @@ export const isLabelInInstance = (
 
 export const isLabelInInstances = (
   node: SVGElement,
-  symbolInstances: DiagramSymbolInstance[]
+  instances: DiagramInstance[]
 ) => {
-  return symbolInstances.some((instance) =>
-    isLabelInInstance(instance, node.id)
-  );
+  return instances.some((instance) => isLabelInInstance(instance, node.id));
 };
 
 const getInstanceLabelIndex = (
-  instance: DiagramSymbolInstance,
+  instance: DiagramInstance,
   id: string
 ): number => {
   return instance.labelIds.findIndex((labelId) => labelId === id);
@@ -214,13 +213,13 @@ const applyPointerCursorStyleToNode = ({
   }
 };
 
-export const addOrRemoveLabelToInstance = (
+export function addOrRemoveLabelToInstance<Type extends DiagramInstance>(
   node: SVGElement,
   labelId: string,
-  instance: DiagramSymbolInstance | DiagramLineInstance,
-  instances: DiagramSymbolInstance[] | DiagramLineInstance[],
-  setter: (arg: DiagramSymbolInstance[] | DiagramLineInstance[]) => void
-) => {
+  instance: Type,
+  instances: Type[],
+  setter: (arg: Type[]) => void
+): void {
   const labelIndex = getInstanceLabelIndex(instance, node.id);
   if (labelIndex === -1) {
     instance.labelIds.push(labelId);
@@ -235,17 +234,17 @@ export const addOrRemoveLabelToInstance = (
       return oldInstance;
     })
   );
-};
+}
 
 export const colorSymbol = (
   diagramInstanceId: DiagramInstanceId,
   strokeColor: string,
-  symbolInstances: DiagramSymbolInstance[],
+  diagramInstances: DiagramInstance[],
   additionalStyles?: { [key: string]: string }
 ) => {
-  const symbolInstance = symbolInstances.filter(
+  const symbolInstance = diagramInstances.filter(
     (instance) => getDiagramInstanceId(instance) === diagramInstanceId
-  )[0] as DiagramSymbolInstance;
+  )[0] as DiagramInstance;
 
   if (symbolInstance) {
     symbolInstance.pathIds.forEach((pathId) => {
@@ -261,7 +260,7 @@ export const colorSymbol = (
 };
 
 export const setStrokeWidth = (
-  diagramInstance: DiagramSymbolInstance,
+  diagramInstance: DiagramInstance,
   strokeWidth: string
 ) => {
   diagramInstance.pathIds.forEach((pathId) => {
@@ -275,7 +274,7 @@ export const visualizeConnections = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
   connections: DiagramConnection[],
-  symbolInstances: DiagramSymbolInstance[],
+  symbolInstances: DiagramInstance[],
   lines: DiagramLineInstance[]
 ) => {
   const offset = 2;
@@ -295,7 +294,7 @@ export const visualizeConnections = (
 
     let startPoint: Point | undefined;
     let endPoint: Point | undefined;
-    if (startInstance.symbolId !== 'Line' && endInstance.symbolId === 'Line') {
+    if (startInstance.type !== 'Line' && endInstance.type !== 'Line') {
       // Both is symbol
       startPoint = pidDocument.getMidPointToPaths(startInstance.pathIds);
       endPoint = pidDocument.getMidPointToPaths(endInstance.pathIds);
@@ -305,10 +304,7 @@ export const visualizeConnections = (
         endPoint,
         offset
       );
-    } else if (
-      startInstance.symbolId === 'Line' &&
-      endInstance.symbolId === 'Line'
-    ) {
+    } else if (startInstance.type === 'Line' && endInstance.type === 'Line') {
       // Both is line
 
       const startPathSegments = pidDocument.getPathSegmentsToPaths(
@@ -364,7 +360,7 @@ export const visualizeConnections = (
     } else {
       // One symbol and one line
       const [symbol, line] =
-        startInstance.symbolId !== 'Line'
+        startInstance.type !== 'Line'
           ? [startInstance, endInstance]
           : [endInstance, startInstance];
 

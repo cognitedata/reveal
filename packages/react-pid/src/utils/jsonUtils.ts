@@ -11,7 +11,10 @@ import {
   DiagramInstanceOutputFormat,
 } from '@cognite/pid-tools';
 
-import { getDiagramInstanceOutputFormat } from './saveGraph';
+import {
+  getLineInstancesOutputFormat,
+  getSymbolInstancesOutputFormat,
+} from './saveGraph';
 
 export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
   const jsonData = {
@@ -38,8 +41,8 @@ const getGraphFormat = (
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[]
 ): Graph => {
-  const linesOutputFormat = getDiagramInstanceOutputFormat(pidDocument, lines);
-  const symbolInstancesOutputFormat = getDiagramInstanceOutputFormat(
+  const linesOutputFormat = getLineInstancesOutputFormat(pidDocument, lines);
+  const symbolInstancesOutputFormat = getSymbolInstancesOutputFormat(
     pidDocument,
     symbolInstances
   );
@@ -174,28 +177,28 @@ export const loadSymbolsFromJson = (
     const newLinesOutputFormat =
       jsonData.lines as DiagramInstanceOutputFormat[];
 
-    const newLines = newLinesOutputFormat.map((diagramInstanceOutputFormat) => {
+    const newLines = newLinesOutputFormat.map((newLineOutputFormat) => {
       return {
-        symbolId: diagramInstanceOutputFormat.symbolId,
-        pathIds: diagramInstanceOutputFormat.pathIds,
-        labelIds: diagramInstanceOutputFormat.labelIds,
+        type: 'Line',
+        pathIds: newLineOutputFormat.pathIds,
+        labelIds: newLineOutputFormat.labelIds,
       } as DiagramLineInstance;
     });
     setLines([...lines, ...newLines]);
   }
   if ('symbolInstances' in jsonData) {
-    const newDiagramInstancesOutputFormat =
+    const newSymbolInstancesOutputFormat =
       jsonData.symbolInstances as DiagramInstanceOutputFormat[];
 
-    const newSymbolInstances = newDiagramInstancesOutputFormat.map(
-      (diagramInstanceOutputFormat) => {
-        return {
-          symbolId: diagramInstanceOutputFormat.symbolId,
-          pathIds: diagramInstanceOutputFormat.pathIds,
-          labelIds: diagramInstanceOutputFormat.labelIds,
-        } as DiagramSymbolInstance;
-      }
-    );
+    const newSymbolInstances: DiagramSymbolInstance[] = [];
+    newSymbolInstancesOutputFormat.forEach((symbolInstanceOutputFormat) => {
+      newSymbolInstances.push({
+        type: symbolInstanceOutputFormat.type,
+        symbolId: symbolInstanceOutputFormat.symbolId,
+        pathIds: symbolInstanceOutputFormat.pathIds,
+        labelIds: symbolInstanceOutputFormat.labelIds,
+      } as DiagramSymbolInstance);
+    });
     setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
   }
 

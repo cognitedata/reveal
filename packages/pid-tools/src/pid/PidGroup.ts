@@ -1,5 +1,5 @@
 import { getDiagramInstanceIdFromPathIds } from '../utils';
-import { BoundingBox, DiagramSymbolInstance } from '../types';
+import { BoundingBox, DiagramInstance } from '../types';
 import { PidDocument, PidPath } from '../pid';
 import { PathSegment } from '../geometry';
 import {
@@ -22,12 +22,12 @@ export class PidGroup {
 
   static fromDiagramInstance(
     pidDocument: PidDocument,
-    diagramInstance: DiagramSymbolInstance
+    diagramInstance: DiagramInstance
   ) {
     const pidPaths = diagramInstance.pathIds.map(
       (pathId) => pidDocument.getPidPathById(pathId)!
     );
-    return new PidGroup(pidPaths, diagramInstance.symbolId === 'Line');
+    return new PidGroup(pidPaths, diagramInstance.type === 'Line');
   }
 
   getPathSegments(): PathSegment[] {
