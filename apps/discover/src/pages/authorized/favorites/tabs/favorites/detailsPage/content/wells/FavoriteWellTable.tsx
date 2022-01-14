@@ -161,11 +161,8 @@ export const FavoriteWellsTable: React.FC<Props> = ({
 
   const renderRowSubComponent = useDeepCallback(
     ({ row }) => {
-      const wellbores: WellboreId[] = wells
-        ? wells[
-            Object.keys(wells).filter((well) => well === row.original.id)[0]
-          ]
-        : [];
+      const wellbores: WellboreId[] = wells ? wells[row.original.id] : [];
+
       return (
         <FavoriteWellboreTable
           well={row.original}

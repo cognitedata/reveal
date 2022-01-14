@@ -126,7 +126,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
     // wellbore list not empty and wellbore row not in welbore list
     if (
       !isEmpty(favoriteWellIds[well.id]) &&
-      !favoriteWellIds[well.id].includes(row.original.id)
+      !favoriteWellIds[well.id].includes(String(row.original.id))
     )
       return null;
 

@@ -13,6 +13,7 @@ import {
   fetchPost,
 } from '../../../utils/fetch';
 import {
+  FavoriteContentWells,
   UpdateFavoriteContentData,
   UpdateFavoriteData,
 } from '../../favorite/types';
@@ -20,15 +21,38 @@ import {
 const getFavoritesEndpoint = (project: string) =>
   `${SIDECAR.discoverApiBaseUrl}/${project}/favorites`;
 
+const mapWellboreIdsToString = (
+  wells: FavoriteContentWells | undefined
+): FavoriteContentWells | undefined => {
+  return wells
+    ? Object.keys(wells || {}).reduce((current, wellId) => {
+        return {
+          ...current,
+          [wellId]: wells[wellId].map((wellboreId) => String(wellboreId)),
+        };
+      }, {})
+    : undefined;
+};
+
 export const favorites = {
   create: async (
     payload: FavoritePostSchema,
     headers: FetchHeaders,
     project: string
   ) =>
-    fetchPost<string>(getFavoritesEndpoint(project), payload, {
-      headers,
-    }),
+    fetchPost<string>(
+      getFavoritesEndpoint(project),
+      {
+        ...payload,
+        content: {
+          ...payload.content,
+          wells: mapWellboreIdsToString(payload.content?.wells),
+        },
+      },
+      {
+        headers,
+      }
+    ),
 
   update: async (
     data: UpdateFavoriteData,
@@ -46,7 +70,10 @@ export const favorites = {
   ) =>
     fetchPatch(
       `${getFavoritesEndpoint(project)}/${payload.id}/content`,
-      payload.updateData,
+      {
+        ...payload.updateData,
+        wells: mapWellboreIdsToString(payload.updateData.wells),
+      },
       { headers }
     ),
 

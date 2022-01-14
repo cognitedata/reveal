@@ -18,7 +18,7 @@ export const isSetFavoredInWells = (
         }
 
         return selectedWells[wellId].every((wellboreId) =>
-          favoriteWells[wellId].includes(wellboreId)
+          favoriteWells[wellId].includes(String(wellboreId))
         );
       }
 

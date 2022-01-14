@@ -49,6 +49,7 @@ const CreateFavoriteSetModal: React.FC = () => {
   const clearState = () => {
     setName('');
     setDescription('');
+    dispatch(setItemsToAddOnFavoriteCreation(undefined));
   };
 
   const handleOnConfirm = () => {
@@ -87,7 +88,6 @@ const CreateFavoriteSetModal: React.FC = () => {
 
     clearState();
     dispatch(hideCreateFavoriteModal());
-    dispatch(setItemsToAddOnFavoriteCreation(undefined));
   };
 
   return (
