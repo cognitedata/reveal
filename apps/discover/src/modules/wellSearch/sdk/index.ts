@@ -8,7 +8,6 @@ import { CommonWellFilter } from 'modules/wellSearch/types';
 
 import {
   extractWellboresFromWells,
-  getMeasurementsFromDepthMeasurementItems,
   mapSummaryCountsToStringArray,
   mapV2toV3NPTFilter,
   mapV3ToV2NPTItems,
@@ -99,11 +98,12 @@ export const getWellFilterFetchers = () => {
       getWellSDKClientV3()
         .summaries.operators()
         .then(mapSummaryCountsToStringArray),
-    // To be fixed very soon and will be fetched using the `Summaries API`.
     measurements: () =>
       getWellSDKClientV3()
-        .measurements.list({})
-        .then(getMeasurementsFromDepthMeasurementItems),
+        .summaries.measurementTypes()
+        .then((results) => {
+          return results.map((result) => result.type);
+        }),
     regions: () =>
       getWellSDKClientV3()
         .summaries.regions()

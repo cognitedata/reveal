@@ -1,7 +1,6 @@
 import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import uniq from 'lodash/uniq';
 
 import {
   WaterDepthLimits as WaterDepthLimitsV2,
@@ -39,7 +38,6 @@ import {
   Npt as NPTV3,
   DurationRange,
   SummaryCount,
-  DepthMeasurementItems,
 } from '@cognite/sdk-wells-v3';
 
 import { CommonWellFilter } from '../types';
@@ -75,18 +73,6 @@ export const mapSummaryCountsToStringArray = (
   summaryCounts: SummaryCount[]
 ): string[] => {
   return summaryCounts.map((summaryCount) => summaryCount.property);
-};
-
-export const getMeasurementsFromDepthMeasurementItems = (
-  depthMeasurementItems: DepthMeasurementItems
-): string[] => {
-  const allMeasurementTypes = depthMeasurementItems.items.map(
-    (depthMeasurement) =>
-      depthMeasurement.columns.map(
-        (depthMeasurementColumn) => depthMeasurementColumn.measurementType
-      )
-  );
-  return uniq(flatten(allMeasurementTypes));
 };
 
 export const mapV3ToV2Well = (well: WellV3): WellV2 => {
