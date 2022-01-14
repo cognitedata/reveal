@@ -1,6 +1,7 @@
 import { Operation } from '@cognite/calculation-backend';
 import { Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+import { sortBy } from 'lodash';
 
 const FunctionsList = ({
   category,
@@ -13,10 +14,11 @@ const FunctionsList = ({
   onFunctionClick: (event: React.MouseEvent, func: Operation) => void;
   onInfoButtonClick: (func: Operation) => void;
 }) => {
+  const sortedToolFunctionsByName = sortBy(toolFunctions, ['name']);
   return (
     <>
       <Menu.Header>{category}</Menu.Header>
-      {toolFunctions.filter(Boolean).map((func) => (
+      {sortedToolFunctionsByName.filter(Boolean).map((func) => (
         <Menu.Item
           key={func.name}
           onClick={(e) => onFunctionClick(e, func)}

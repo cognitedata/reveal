@@ -1,6 +1,7 @@
 import { Operation } from '@cognite/calculation-backend';
 import { Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+import { sortBy } from 'lodash';
 import FunctionsList from './FunctionsList';
 
 const CategoryMenu = ({
@@ -16,6 +17,15 @@ const CategoryMenu = ({
   onFunctionClick: (event: React.MouseEvent, func: Operation) => void;
   onInfoButtonClick: (func: Operation) => void;
 }) => {
+  const functionsByCategory = Object.entries(categories).map(
+    ([category, toolFunctions]) => ({
+      category,
+      toolFunctions,
+    })
+  );
+
+  const sortedFunctionsByCategory = sortBy(functionsByCategory, ['category']);
+
   return (
     <Menu style={{ boxShadow: 'none' }}>
       {/* Recent category */}
@@ -39,10 +49,10 @@ const CategoryMenu = ({
         </>
       )}
       {/* Toolbox function categories */}
-      {Object.entries(categories)
-        .filter(([category]) => category !== 'Recent')
+      {sortedFunctionsByCategory
+        .filter(({ category }) => category !== 'Recent')
         .map(
-          ([category, toolFunctions]) =>
+          ({ category, toolFunctions }) =>
             !!toolFunctions.length && (
               <Menu.Submenu
                 key={category}
