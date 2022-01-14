@@ -1,4 +1,4 @@
-import { PROJECT } from '../../support/constants';
+import { CLUSTER, PROJECT } from '../../support/constants';
 
 const filename = '15_9_19_A_1997_07_25';
 describe('Edit Favorites', () => {
@@ -73,10 +73,6 @@ describe('Edit Favorites', () => {
     const favoriteName = `favorite to edit content, ${Date.now()}`;
 
     before(() => {
-      cy.createFavorite({
-        name: favoriteName,
-      });
-
       cy.intercept({
         url: `/${PROJECT}/favorites/*/content`,
         method: 'PATCH',
@@ -86,6 +82,20 @@ describe('Edit Favorites', () => {
         url: `/${PROJECT}/favorites`,
         method: 'GET',
       }).as('getFavorites');
+
+      cy.intercept({
+        url: `/${PROJECT}/favorites/*`,
+        method: 'GET',
+      }).as('getOneFavorite');
+
+      cy.intercept({
+        url: `https://${CLUSTER}.cognitedata.com/api/playground/projects/${PROJECT}/documents/search`,
+        method: 'POST',
+      }).as('documentSearch');
+
+      cy.createFavorite({
+        name: favoriteName,
+      });
     });
 
     beforeEach(() => {
@@ -109,13 +119,18 @@ describe('Edit Favorites', () => {
 
       cy.log('Add document to favorite');
       cy.findByRole('button', { name: favoriteName })
-        .should('be.visible')
-        .click()
+        .click({ force: true })
         .should('be.disabled');
       cy.wait('@updateFavoriteContent');
 
       goToFavoritesPage();
       cy.findByText(favoriteName).click();
+      cy.url().should(
+        'contain',
+        `${Cypress.env('BASE_URL')}/${PROJECT}/favorites/`
+      );
+      cy.wait('@getOneFavorite');
+      cy.wait('@documentSearch');
 
       cy.log('check documents is added to favorite');
       cy.findByTestId('favorite-documents-table')
@@ -136,6 +151,7 @@ describe('Edit Favorites', () => {
 
       cy.findByRole('button', { name: 'Remove' }).click({ force: true });
       cy.findByRole('button', { name: 'Delete' }).click();
+      cy.wait('@updateFavoriteContent');
 
       cy.findByText(filename).should('not.exist');
     });
