@@ -39,6 +39,32 @@ export const deleteSymbolFromState = (
   setSymbols(symbolsToKeep);
 };
 
+const connectionHasInstanceId = (
+  instanceId: string,
+  connection: DiagramConnection
+) => {
+  return connection.start === instanceId || connection.end === instanceId;
+};
+
+export const deleteConnectionsUsingDeletedLinesFromState = (
+  deletedLineInstances: DiagramLineInstance[],
+  connections: DiagramConnection[],
+  setConnections: (diagramConnections: DiagramConnection[]) => void
+) => {
+  const deletedInstanceIds = deletedLineInstances.map((line) =>
+    getDiagramInstanceId(line)
+  );
+
+  const prunedConnections = connections.filter(
+    (connection) =>
+      deletedInstanceIds.some((lineInstanceId) =>
+        connectionHasInstanceId(lineInstanceId, connection)
+      ) === false
+  );
+
+  setConnections(prunedConnections);
+};
+
 export const deleteLineFromState = (
   line: DiagramLineInstance,
   lineInstances: DiagramLineInstance[],
@@ -47,12 +73,14 @@ export const deleteLineFromState = (
   setLines: (diagramLineInstances: DiagramLineInstance[]) => void
 ) => {
   const lineInstanceId = getDiagramInstanceId(line);
+
   setConnections(
     connections.filter(
       (connection) =>
-        connection.start !== lineInstanceId && connection.end !== lineInstanceId
+        connectionHasInstanceId(lineInstanceId, connection) === false
     )
   );
+
   setLines(
     lineInstances.filter(
       (lineInstance) => getDiagramInstanceId(lineInstance) !== lineInstanceId

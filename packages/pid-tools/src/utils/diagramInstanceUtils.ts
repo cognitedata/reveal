@@ -2,6 +2,7 @@ import { PidDocument } from '../pid/PidDocument';
 import {
   DiagramConnection,
   DiagramInstanceId,
+  DiagramLineInstance,
   DiagramSymbolInstance,
 } from '../types';
 
@@ -157,4 +158,30 @@ export const getNoneOverlappingSymbolInstances = (
   ].filter((instance) => objectsToRemove.includes(instance) === false);
 
   return prunedInstances;
+};
+
+export const pruneSymbolOverlappingPathsFromLines = (
+  lines: DiagramLineInstance[],
+  symbolInstances: DiagramSymbolInstance[]
+) => {
+  const symbolIds = symbolInstances.flatMap((symbol) => symbol.pathIds);
+
+  const prunedLines = [];
+  const linesToDelete = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    const nonSymbolPaths = line.pathIds.filter(
+      (pathId) => symbolIds.includes(pathId) === false
+    );
+
+    if (nonSymbolPaths.length) {
+      prunedLines.push({ ...line, pathIds: nonSymbolPaths });
+    } else {
+      linesToDelete.push(line);
+    }
+  }
+
+  return { prunedLines, linesToDelete };
 };

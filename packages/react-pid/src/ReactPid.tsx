@@ -10,6 +10,7 @@ import {
   DiagramConnection,
   DiagramInstanceId,
   getNoneOverlappingSymbolInstances,
+  pruneSymbolOverlappingPathsFromLines,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
 
@@ -21,6 +22,7 @@ import { SvgViewer } from './components/svg-viewer/SvgViewer';
 import { Viewport } from './components/viewport/Viewport';
 import {
   deleteConnectionFromState,
+  deleteConnectionsUsingDeletedLinesFromState,
   deleteSymbolFromState,
   getSymbolByTypeAndDescription,
 } from './utils/symbolUtils';
@@ -157,6 +159,20 @@ export const ReactPid: React.FC = () => {
       symbolInstances,
       newSymbolInstances
     );
+
+    const { prunedLines, linesToDelete } = pruneSymbolOverlappingPathsFromLines(
+      lines,
+      newSymbolInstances
+    );
+
+    deleteConnectionsUsingDeletedLinesFromState(
+      linesToDelete,
+      connections,
+      setConnections
+    );
+
+    setLines(prunedLines);
+
     setSymbolInstances(prunedInstances);
   };
 
