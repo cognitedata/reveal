@@ -200,7 +200,9 @@ export const getStepsFromWorkflowReactFlow = (
 ): ComputationStep[] => {
   const { flow } = workflow;
 
-  if (!flow) return [];
+  if (!flow) {
+    return [];
+  }
 
   const filteredElements = flow.elements.filter((node) => {
     switch (node.type) {
@@ -231,17 +233,38 @@ export const getStepsFromWorkflowReactFlow = (
 
   const validNodes: Node[] = [outputNode];
 
+  let loopDetected = false;
+
   // traversing from output node and all incomers and add it to validNodes until none left.
-  function findInputNodes(node: Node) {
+  function findInputNodes(node: Node, visited: Node[]) {
     const incomers = getIncomers(node as Node, elements);
-    incomers.forEach((n) => {
-      validNodes.unshift(n);
-      findInputNodes(n);
+
+    const localLoopDetected = incomers.some((incomer) =>
+      visited.includes(incomer)
+    );
+
+    if (localLoopDetected) {
+      loopDetected = loopDetected || true;
+      return null;
+    }
+
+    incomers.forEach((incomingNode) => {
+      validNodes.unshift(incomingNode);
+      findInputNodes(incomingNode, [...visited, incomingNode]);
     });
+
     return null;
   }
 
-  findInputNodes(outputNode);
+  findInputNodes(outputNode, [outputNode]);
+
+  /**
+   * If any loops are detected in the graph we
+   * abort and return an empty list of steps
+   */
+  if (loopDetected) {
+    return [];
+  }
 
   const parsedValidNodes = validNodes
     .filter(

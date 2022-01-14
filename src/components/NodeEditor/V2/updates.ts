@@ -40,6 +40,16 @@ export const makeConnectionInFlow = (
   const existingFlow = workflow.flow;
   let elements = existingFlow?.elements ?? [];
 
+  const isTargetSameAsSource = connection.source === connection.target;
+
+  /**
+   * You should not be able to connect
+   * nodes to themselves
+   */
+  if (isTargetSameAsSource) {
+    return workflow;
+  }
+
   const existingConnection = elements.find(
     (el) =>
       (el as Edge).target === connection.target &&
