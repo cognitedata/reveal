@@ -9,61 +9,61 @@ import { WrappedWithProviders } from 'src/__test-utils/renderer';
 import { AnnotationTableItem } from 'src/modules/Review/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
+const getDummyAnnotation = (
+  id?: number,
+  modelType?: number,
+  linkedResourceId?: number
+) => {
+  return {
+    ...AnnotationUtils.createVisionAnnotationStub(
+      id || 1,
+      'pump',
+      modelType || 1,
+      1,
+      123,
+      124
+    ),
+    linkedResourceId,
+    show: true,
+    selected: false,
+  } as AnnotationTableItem;
+};
+
+const dummyFile: FileInfo = {
+  id: 1,
+  uploaded: true,
+  name: 'one',
+  createdTime: new Date(2021, 0, 1, 7, 0, 0, 0),
+  lastUpdatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
+  sourceCreatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
+  uploadedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
+};
+
+const approveAnnotation = (annotation: AnnotationTableItem) => ({
+  ...annotation,
+  status: AnnotationStatus.Verified,
+});
+const rejectAnnotation = (annotation: AnnotationTableItem) => ({
+  ...annotation,
+  status: AnnotationStatus.Rejected,
+});
+
+const linkFileToAssets = (assetIds?: number[]) => ({
+  ...dummyFile,
+  assetIds,
+});
+
+const getRenderProps = (
+  annotation: AnnotationTableItem,
+  annotationSibling: AnnotationTableItem,
+  fileAssetIds: number[]
+) => ({
+  annotation,
+  file: linkFileToAssets(fileAssetIds),
+  allAnnotations: [annotation, annotationSibling],
+});
+
 describe('tests useAssetLinkWarningHook', () => {
-  const getDummyAnnotation = (
-    id?: number,
-    modelType?: number,
-    linkedResourceId?: number
-  ) => {
-    return {
-      ...AnnotationUtils.createVisionAnnotationStub(
-        id || 1,
-        'pump',
-        modelType || 1,
-        1,
-        123,
-        124
-      ),
-      linkedResourceId,
-      show: true,
-      selected: false,
-    } as AnnotationTableItem;
-  };
-
-  const dummyFile: FileInfo = {
-    id: 1,
-    uploaded: true,
-    name: 'one',
-    createdTime: new Date(2021, 0, 1, 7, 0, 0, 0),
-    lastUpdatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
-    sourceCreatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
-    uploadedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
-  };
-
-  const approveAnnotation = (annotation: AnnotationTableItem) => ({
-    ...annotation,
-    status: AnnotationStatus.Verified,
-  });
-  const rejectAnnotation = (annotation: AnnotationTableItem) => ({
-    ...annotation,
-    status: AnnotationStatus.Rejected,
-  });
-
-  const linkFileToAssets = (assetIds?: number[]) => ({
-    ...dummyFile,
-    assetIds,
-  });
-
-  const getRenderProps = (
-    annotation: AnnotationTableItem,
-    annotationSibling: AnnotationTableItem,
-    fileAssetIds: number[]
-  ) => ({
-    annotation,
-    file: linkFileToAssets(fileAssetIds),
-    allAnnotations: [annotation, annotationSibling],
-  });
-
   const annotationAssetId = 1;
   const annotationSiblingAssetId = 2;
   const tagAnnotation = getDummyAnnotation(
@@ -77,7 +77,7 @@ describe('tests useAssetLinkWarningHook', () => {
     annotationSiblingAssetId
   );
 
-  test('initial value', async () => {
+  test('tests rendering of the hook with different props', async () => {
     jest.mock('@cognite/cdf-sdk-singleton');
     jest.useFakeTimers();
 
@@ -146,7 +146,7 @@ describe('tests useAssetLinkWarningHook', () => {
       );
     });
 
-    // approve both annotations file linked to both assets
+    // approve both annotations, file linked to both assets
     act(() => {
       rerender(
         getRenderProps(
@@ -162,7 +162,7 @@ describe('tests useAssetLinkWarningHook', () => {
       expect(result.current).toBe(AssetWarnTypes.NoWarning);
     });
 
-    // reject annotation file still linked to annotation asset
+    // reject annotation, file still linked to annotation asset
     act(() => {
       rerender(
         getRenderProps(
@@ -180,13 +180,29 @@ describe('tests useAssetLinkWarningHook', () => {
       );
     });
 
-    // reject both annotations file still linked to annotation sibling asset
+    // reject both annotations, file still linked to annotation sibling asset
     act(() => {
       rerender(
         getRenderProps(
           rejectAnnotation(tagAnnotation),
           rejectAnnotation(tagAnnotationSibling),
           [annotationSiblingAssetId]
+        )
+      );
+    });
+
+    // assert no warning
+    await waitFor(() => {
+      expect(result.current).toBe(AssetWarnTypes.NoWarning);
+    });
+
+    // reject both annotations, file not linked to assets
+    act(() => {
+      rerender(
+        getRenderProps(
+          rejectAnnotation(tagAnnotation),
+          rejectAnnotation(tagAnnotationSibling),
+          []
         )
       );
     });
