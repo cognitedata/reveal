@@ -4,7 +4,6 @@ import { CogniteClient, Node3D } from "@cognite/sdk";
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { NumericRange } from '@cognite/reveal';
 import { DefaultNodeAppearance } from '@cognite/reveal';
-import { NodeStylingUI } from './NodeStylingUI';
 
 export class InspectNodeUI {
   private readonly _uiFolder: dat.GUI;
