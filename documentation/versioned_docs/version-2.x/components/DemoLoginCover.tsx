@@ -3,7 +3,7 @@
  */
 
 import React, { ReactElement, useEffect } from 'react';
-import { CogniteClient } from '@cognite/sdk-2.x';
+import { CogniteClient } from '@cognite/sdk';
 import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styled from 'styled-components';

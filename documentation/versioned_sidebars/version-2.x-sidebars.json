@@ -46,6 +46,10 @@
         },
         {
           "type": "doc",
+          "id": "version-2.x/examples/cad-prioritized-nodes"
+        },
+        {
+          "type": "doc",
           "id": "version-2.x/examples/cad-transform-override"
         },
         {
@@ -107,6 +111,10 @@
         {
           "type": "doc",
           "id": "version-2.x/examples/combine-models"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.x/examples/controlsmodes"
         }
       ]
     },

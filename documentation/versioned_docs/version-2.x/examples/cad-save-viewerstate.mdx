@@ -20,7 +20,7 @@ Depending on the application, the view state can be additionally transformed int
 
 In the example below, we keep simply print it to the developer console.
 
-```js runnable-2x
+```js runnable
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
@@ -38,7 +38,7 @@ Setting the viewer state assumes that model has already been loaded.
 An error will be thrown if a given state is loaded for a model which does not exist.
 :::
 
-```js runnable-2x
+```js runnable
 
 const myState = {
   "camera": {

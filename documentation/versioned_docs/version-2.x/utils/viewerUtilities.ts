@@ -2,7 +2,7 @@ import {
   Cognite3DModel,
   Cognite3DViewer,
   DefaultNodeAppearance,
-} from '@cognite/reveal-2.x';
+} from '@cognite/reveal';
 
 /**
  * Resets all event handlers on the viewer provided. This uses
