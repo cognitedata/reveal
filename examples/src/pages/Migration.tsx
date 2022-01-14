@@ -3,6 +3,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useMsal } from '@azure/msal-react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -21,28 +22,41 @@ import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
-import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
+import { createSDKFromEnvironment } from '../utils/example-helpers';
+import { IPublicClientApplication } from '@azure/msal-browser';
+
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
 
 export function Migration() {
+
+  const url = new URL(window.location.href);
+  const urlParams = url.searchParams;
+  const environmentParam = urlParams.get('env');
+
+  let msalInstance: IPublicClientApplication | undefined;
+  if (environmentParam) {
+    msalInstance = useMsal().instance;
+  }
+
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
 
     async function main() {
-      const url = new URL(window.location.href);
-      const urlParams = url.searchParams;
       const project = urlParams.get('project');
+      const geometryFilterInput = urlParams.get('geometryFilter');
       const modelUrl = urlParams.get('modelUrl');
 
-      const environmentParam = urlParams.get('env');
+      const geometryFilter = createGeometryFilter(geometryFilterInput);
+
       if (!modelUrl && !(environmentParam && project)) {
         throw Error('Must specify URL parameters "project" and "env", or "modelUrl"');
       }
@@ -54,8 +68,15 @@ export function Migration() {
         }
       };
 
-      // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+      let client: CogniteClient;;
+      if (project && environmentParam) {
+        client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.example',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
+      }
+
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -65,18 +86,17 @@ export function Migration() {
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any,
         continuousModelStreaming: true
       };
-      if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
-      } else if (modelUrl !== null) {
+
+      if (modelUrl !== null) {
         viewerOptions = {
           ...viewerOptions,
           // @ts-expect-error
           _localModels: true
         };
-      } else {
+      } else if (!(project && environmentParam)) {
         throw new Error('Must either provide URL parameters "env", "project", ' +
-          '"modelId" and "revisionId" to load model from CDF ' +
-          '"or "modelUrl" to load model from URL.');
+                        '"modelId" and "revisionId" to load model from CDF ' +
+                        '"or "modelUrl" to load model from URL.');
       }
 
       // Prepare viewer
@@ -160,13 +180,13 @@ export function Migration() {
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
         clippingUi.updateWorldBounds(totalBounds);
-    
+
         viewer.loadCameraFromModel(model);
         if (model instanceof Cognite3DModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);
         }
       }
-      const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
+      const modelUi = new ModelUi(gui.addFolder('Models'), viewer, msalInstance, handleModelAdded);
 
       const renderGui = gui.addFolder('Rendering');
       const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];
@@ -179,25 +199,25 @@ export function Migration() {
         viewer.requestRedraw();
       });
       renderGui.add(guiState, 'antiAliasing',
-        [
-          'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
-          'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
-        ]).name('Anti-alias').onFinishChange(v => {
-          urlParams.set('antialias', v);
-          window.location.href = url.toString();
-        });
+                    [
+                      'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
+                      'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
+      ]).name('Anti-alias').onFinishChange(v => {
+        urlParams.set('antialias', v);
+        window.location.href = url.toString();
+      });
       renderGui.add(guiState, 'ssaoQuality',
-        [
-          'disabled', 'medium', 'high', 'veryhigh'
-        ]).name('SSAO').onFinishChange(v => {
-          urlParams.set('ssao', v);
-          window.location.href = url.toString();
-        });
+                    [
+                      'disabled', 'medium', 'high', 'veryhigh'
+      ]).name('SSAO').onFinishChange(v => {
+        urlParams.set('ssao', v);
+        window.location.href = url.toString();
+      });
       renderGui.add(guiState, 'debugRenderStageTimings')
-        .name('Debug timings')
-        .onChange(enabled => {
-          (viewer as any).revealManager.debugRenderTiming = enabled;
-        });
+               .name('Debug timings')
+               .onChange(enabled => {
+                 (viewer as any).revealManager.debugRenderTiming = enabled;
+               });
 
       const debugGui = gui.addFolder('Debug');
       const debugStatsGui = debugGui.addFolder('Statistics');
@@ -409,6 +429,6 @@ export function Migration() {
       gui.destroy();
       viewer?.dispose();
     };
-  });
+});
   return <CanvasWrapper ref={canvasWrapperRef} />;
 }

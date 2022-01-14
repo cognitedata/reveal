@@ -16,8 +16,8 @@ type Props = {
 };
 
 type LoadingState = {
-  itemsLoaded: number; 
-  itemsRequested: number; 
+  itemsLoaded: number;
+  itemsRequested: number;
   itemsCulled: number;
 }
 
@@ -40,7 +40,9 @@ export function Cognite3DTestViewer(props: Props) {
       domElement: containerRef.current,
       onLoading: (itemsLoaded, itemsRequested, itemsCulled) => setLoadingState({itemsLoaded, itemsRequested, itemsCulled}),
       // Note! Pure fake - we will not contact CDF during our tests
-      sdk: new CogniteClient({appId: 'reveal-visual-tests'}),
+      sdk: new CogniteClient({appId: 'reveal-visual-tests',
+                              project: 'dummy',
+                              getToken: async () => 'dummy' }),
       // Instruct viewer to load models from local storage
       // @ts-expect-error
       _localModels: true,

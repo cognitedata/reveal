@@ -18,7 +18,7 @@ import {
   createDefaultRenderOptions,
 } from '../utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 import { suggestCameraConfig } from '../utils/cameraConfig';
@@ -130,11 +130,13 @@ export function SectorWithPointcloud() {
         modelUrl: pointCloudUrl,
       } = getPointCloudParams();
 
-      const client = new CogniteClient({
-        appId: 'reveal.example.hybrid-cad-pointcloud',
-      });
-      if ((modelRevision || pointCloudModelRevision) && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+      let client;
+      if (project && environmentParam) {
+        client = await createSDKFromEnvironment('reveal.example.hybrid-cad-pointcloud', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.hybrid-cad-pointcloud',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const scene = new THREE.Scene();
@@ -221,10 +223,10 @@ export function SectorWithPointcloud() {
         const needsUpdate =
           renderOptions.renderMode === RenderMode.AlwaysRender ||
           (renderOptions.renderMode === RenderMode.WhenNecessary &&
-            (controlsNeedUpdate ||
-              revealManager.needsRedraw ||
-              pointCloudGroup.needsRedraw ||
-              settingsChanged));
+           (controlsNeedUpdate ||
+            revealManager.needsRedraw ||
+            pointCloudGroup.needsRedraw ||
+            settingsChanged));
 
         if (needsUpdate) {
           applyRenderingFilters(scene, renderOptions.renderFilter);

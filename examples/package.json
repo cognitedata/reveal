@@ -28,6 +28,8 @@
     "@cognite/potree-core": "^1.5.0",
     "@cognite/reveal": "link:../viewer/dist",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
+    "@azure/msal-browser": "^2.21.0",
+    "@azure/msal-react": "^1.2.0",
     "camera-controls": "^1.25.1",
     "dat.gui": "^0.7.7",
     "geo-three": "^0.0.15",

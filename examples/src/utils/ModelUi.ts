@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
+import { IPublicClientApplication } from '@azure/msal-browser';
+
 import * as dat from 'dat.gui';
 
 export class ModelUi {
@@ -10,6 +12,8 @@ export class ModelUi {
   private readonly _cadModels = new Array<Cognite3DModel>();
   private readonly _pointCloudModels = new Array<CognitePointCloudModel>();
 
+  private readonly _msalInstance: IPublicClientApplication | undefined;
+
   private readonly _guiState: {
     modelId: number,
     revisionId: number,
@@ -18,8 +22,11 @@ export class ModelUi {
 
   private readonly _geometryFilterGui: dat.GUI;
 
-  constructor(modelGui: dat.GUI, viewer: Cognite3DViewer, onModelAdded: (model: CogniteModelBase) => void) {
+  constructor(modelGui: dat.GUI, viewer: Cognite3DViewer,
+              msalInstance: IPublicClientApplication | undefined,
+              onModelAdded: (model: CogniteModelBase) => void) {
     this._viewer = viewer;
+    this._msalInstance = msalInstance;
     this._onModelAdded = onModelAdded;
 
     const url = new URL(window.location.href);
@@ -128,7 +135,9 @@ export class ModelUi {
       this._onModelAdded(model);
     } catch (e) {
       console.error(e);
-      alert(`Model ID is invalid or is not supported`);
+      if (this._msalInstance) {
+        await this._msalInstance.loginRedirect();
+      }
     }
   }
 
