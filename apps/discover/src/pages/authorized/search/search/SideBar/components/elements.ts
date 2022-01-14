@@ -124,6 +124,7 @@ export const Panel = styled(DefaultPanel)`
     border-top: 1px solid var(--cogs-color-strokes-default);
     background: transparent;
     padding: 0 16px !important;
+    overflow: visible;
     & > .rc-collapse-content-box {
       margin: 0;
       padding-top: ${sizes.normal};
