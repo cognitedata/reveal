@@ -50,10 +50,12 @@ export class NodeStylingUI {
   }
 
   removeLastAddedCollection(): void {
-    const [, last] = this._model.styledNodeCollections;
-    if (last !== undefined) {
-      this._model.unassignStyledNodeCollection(last.nodeCollection);
+    if (this._model.styledNodeCollections.length === 0) {
+      return;
     }
+
+    const last = this._model.styledNodeCollections[this._model.styledNodeCollections.length - 1];
+    this._model.unassignStyledNodeCollection(last.nodeCollection);
   }
 
   resetStyling(): void {
