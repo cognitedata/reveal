@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
-import dat from 'dat.gui'; 
+import dat from 'dat.gui';
 import {
   AddModelOptions,
   Cognite3DViewer,
@@ -17,15 +17,15 @@ import {
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet,
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { InspectNodeUI } from '../utils/InspectNodeUi';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -86,7 +86,7 @@ export function Migration() {
           '"modelId" and "revisionId" to load model from CDF ' +
           '"or "modelUrl" to load model from URL.');
       }
-      
+
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
@@ -118,7 +118,7 @@ export function Migration() {
       async function addModel(options: AddModelOptions) {
         try {
           const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
-          
+
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
           totalBounds.expandByPoint(bounds.max);
@@ -314,7 +314,7 @@ export function Migration() {
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'drawcalls', 'random']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');      
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'sectorPathFilterRegex').name('Sectors path filter');
       debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
@@ -377,7 +377,6 @@ export function Migration() {
 
       const clippingUi = new ClippingUI(gui.addFolder('Slicing'), planes => viewer.setSlicingPlanes(planes));
 
-
       const pcSettings = gui.addFolder('Point clouds');
       pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
       pcSettings.add(pointCloudParams, 'pointSize', 0, 20, 0.25).onFinishChange(() => pointCloudParams.apply());
@@ -410,8 +409,6 @@ export function Migration() {
       } else if (modelUrl) {
         await addModel({ modelId: -1, revisionId: -1, localPath: modelUrl, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) })
       }
-
-      const selectedSet = new TreeIndexNodeCollection([]);
 
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
@@ -471,18 +468,8 @@ export function Migration() {
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
-  
-      const overlayTool = new HtmlOverlayTool(viewer,
-        { 
-          clusteringOptions: { 
-            mode: 'overlapInScreenSpace', 
-            createClusterElementCallback: cluster => {
-              return createOverlay(`${cluster.length}`);
-            }
-          }
-        });
 
-      new AxisViewTool(viewer);
+      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
@@ -493,15 +480,10 @@ export function Migration() {
           switch (intersection.type) {
             case 'cad':
               {
-                const { treeIndex, point} = intersection;
+                const { treeIndex, point } = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                const overlayHtml = createOverlay(`Node ${treeIndex}`);
 
-                overlayTool.add(overlayHtml, point);
-  
-                // highlight the object
-                selectedSet.updateSet(new IndexSet([treeIndex]));
-
+                inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }
               break;
             case 'pointcloud':
@@ -516,6 +498,8 @@ export function Migration() {
           }
         }
       });
+
+      new AxisViewTool(viewer);
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
@@ -562,21 +546,4 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
     return undefined;
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
-}
-
-function createOverlay(text: string): HTMLElement {
-  const overlayHtml = document.createElement('div');
-  overlayHtml.innerText = text;
-  overlayHtml.style.cssText = `
-    position: absolute; 
-    translate(-50%, -50%);
-
-    background: white; 
-    border-radius: 5px; 
-    border-color: black; 
-
-    pointer-events: none; 
-    touch-action: none;`;
-
-  return overlayHtml;
 }
