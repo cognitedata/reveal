@@ -181,6 +181,24 @@ describe('tests useAssetLinkWarningHook', () => {
       expect(result.current).toBe(AssetWarnTypes.NoWarning);
     });
 
+    // approve annotation and sibling, file linked to both assets
+    // there's a rejected annotation with same asset
+    act(() => {
+      rerender(
+        getRenderProps(
+          approveAnnotation(tagAnnotation),
+          approveAnnotation(tagAnnotationSibling),
+          [annotationAssetId, annotationSiblingAssetId],
+          rejectAnnotation(tagAnnotationWithSameAsset)
+        )
+      );
+    });
+
+    // assert no warning
+    await waitFor(() => {
+      expect(result.current).toBe(AssetWarnTypes.NoWarning);
+    });
+
     // reject annotation, file still linked to annotation asset
     act(() => {
       rerender(
