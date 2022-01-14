@@ -73,7 +73,12 @@ export class ViewStateHelper {
   }
 
   public async setState(viewerState: ViewerState): Promise<void> {
-    this._cameraControls.setState(viewerState.camera.position, viewerState.camera.target);
+    const camPos = viewerState.camera.position;
+    const camTarget = viewerState.camera.target;
+    this._cameraControls.setState(
+      new THREE.Vector3(camPos.x, camPos.y, camPos.z),
+      new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
+    );
 
     const cadModels = this._viewer.models
       .filter(model => model instanceof Cognite3DModel)
