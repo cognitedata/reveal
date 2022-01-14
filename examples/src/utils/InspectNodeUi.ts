@@ -4,6 +4,7 @@ import { CogniteClient, Node3D } from "@cognite/sdk";
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { NumericRange } from '@cognite/reveal';
 import { DefaultNodeAppearance } from '@cognite/reveal';
+import { NodeStylingUI } from './NodeStylingUI';
 
 export class InspectNodeUI {
   private readonly _uiFolder: dat.GUI;
@@ -17,9 +18,12 @@ export class InspectNodeUI {
 
   async inspectNode(model: Cognite3DModel, treeIndex: number): Promise<void> {
     this.clearUi();
+    this.createLoadingIndicator();
 
     const nodeId = await model.mapTreeIndexToNodeId(treeIndex);
     const nodes = await this._sdk.revisions3D.list3DNodeAncestors(model.modelId, model.revisionId, nodeId).autoPagingToArray();
+
+    this.clearUi();
     
     if (nodes.length === 0) {
       this.createNoNodes();
@@ -30,6 +34,11 @@ export class InspectNodeUI {
       this.registerUiFolder(nodeUi);
       this.createNodePropertiesFolder(model, node, nodeUi);
     }
+  }
+
+  private createLoadingIndicator() {
+    const loadingUi = this._uiFolder.addFolder('Loading...');
+    this.registerUiFolder(loadingUi);
   }
   
   private createNodePropertiesFolder(model: Cognite3DModel, node: Node3D, nodeUi: dat.GUI) {
