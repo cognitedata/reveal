@@ -22,7 +22,7 @@ should also be applied to ensure that the axis system is correct.
 
 The following example shows how to modify the coordinate system of a point cloud model to make it fit with a CAD model.
 
-```js runnable
+```js runnable-2x
 async function updateModelTransformation() {
   const pointCloudModel = await viewer.addModel({
     modelId: 5564365369975452 ,
@@ -48,7 +48,7 @@ updateModelTransformation();
 Geometry filters allows only loading geometry within a specified box. By loading the same model with different geometry
 filters, several subsections of the same model can be loaded in the same viewer.
 
-```js runnable
+```js runnable-2x
 viewer.models.forEach(x => viewer.removeModel(x));
 
 async function addFilteredModel(box) {
