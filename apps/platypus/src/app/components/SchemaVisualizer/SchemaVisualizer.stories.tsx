@@ -32,3 +32,8 @@ Default.args = {
     advisors: [String!]!
   }`),
 };
+export const Empty = Template.bind({});
+
+Empty.args = {
+  graphQLSchemaString: '',
+};

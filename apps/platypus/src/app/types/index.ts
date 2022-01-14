@@ -36,3 +36,8 @@ export interface AuthenticatedUser {
   project: string;
   projectId: string;
 }
+
+export type HtmlElementProps<T extends HTMLElement> = React.DetailedHTMLProps<
+  React.HTMLAttributes<T>,
+  T
+>;

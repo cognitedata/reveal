@@ -17,8 +17,5 @@
     "../**/*.spec.jsx",
     "../src/app/tests/render.tsx"
   ],
-  "include": [
-    "../src/**/*",
-    "*.js"
-  ]
+  "include": ["../src/**/*", "*.js"]
 }

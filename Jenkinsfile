@@ -85,6 +85,8 @@ static final String[] DIRS = [
   'production',
 ]
 
+static final String PR_COMMENT_MARKER = '[pr-server]\n'
+
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
@@ -105,6 +107,10 @@ def pods = { body ->
               dir('main') {
                 stage('Checkout code') {
                   checkout(scm)
+                }
+
+                stage('Delete comments') {
+                  deleteComments(PR_COMMENT_MARKER)
                 }
 
                 stage('Install dependencies') {

@@ -1,11 +1,7 @@
 import { Button, Title, TopBar } from '@cognite/cogs.js';
+import { HtmlElementProps } from '@platypus-app/types';
 import { useHistory } from 'react-router-dom';
 import { StyledTopBar } from './elements';
-
-type HtmlElementProps<T extends HTMLElement> = React.DetailedHTMLProps<
-  React.HTMLAttributes<T>,
-  T
->;
 
 export interface ToolbarProps extends HtmlElementProps<HTMLElement> {
   titleLevel?: number;

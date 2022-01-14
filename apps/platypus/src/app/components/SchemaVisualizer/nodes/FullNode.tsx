@@ -49,9 +49,11 @@ const renderTooltip = (args: readonly InputValueDefinitionNode[]) => {
   return (
     <>
       {args.map((arg) => (
-        <Body level={2} style={{ color: 'var(--cogs-text-inverted)' }}>{`${
-          arg.name.value
-        }: ${renderFieldType(arg.type)}`}</Body>
+        <Body
+          key={arg.name.value}
+          level={2}
+          style={{ color: 'var(--cogs-text-inverted)' }}
+        >{`${arg.name.value}: ${renderFieldType(arg.type)}`}</Body>
       ))}
     </>
   );
@@ -74,6 +76,9 @@ const PropertyItem = styled.div`
   .property-name.cogs-body-2 {
     color: var(--cogs-text-primary);
     flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .property-type {
     text-align: end;

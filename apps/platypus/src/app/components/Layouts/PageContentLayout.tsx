@@ -1,9 +1,5 @@
+import { HtmlElementProps } from '@platypus-app/types';
 import { StyledPageContentLayout } from './elements';
-
-type HtmlElementProps<T extends HTMLElement> = React.DetailedHTMLProps<
-  React.HTMLAttributes<T>,
-  T
->;
 
 type PageContentLayoutProps = {
   children: React.ReactNode;

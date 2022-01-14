@@ -1,5 +1,6 @@
 import { BreakingChangesModal } from './BreakingChangesModal';
 import { Wrapper } from '@platypus-app/components/Styles/storybook';
+import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'Components / BreakingChangesModal',
@@ -9,8 +10,8 @@ export default {
 export const Base = () => (
   <Wrapper>
     <BreakingChangesModal
-      onCancel={() => console.log('cancel')}
-      onUpdate={() => console.log('update')}
+      onCancel={() => action('cancel')}
+      onUpdate={() => action('update')}
       breakingChanges={'There are breaking changes!'}
       isUpdating={false}
     />

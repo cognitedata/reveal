@@ -3,7 +3,7 @@ import { Prompt, useHistory } from 'react-router-dom';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { Button } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
@@ -15,9 +15,10 @@ import { ErrorType } from '@platypus-core/boundaries/types/platypus-error';
 import { useSolution } from '../../hooks/useSolution';
 import { SchemaEditorMode } from '../types';
 import { BreakingChangesModal } from '../components/BreakingChangesModal';
-import { SchemaVisualization } from '../components/SchemaVisualization';
 import { CodeEditor } from '../components/CodeEditor';
 import { DataModelHeader } from '../components/DataModelHeader';
+import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
+import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
 
 export const DataModelPage = () => {
   const history = useHistory();
@@ -198,7 +199,19 @@ export const DataModelPage = () => {
             }
             sidebarWidth={'40%'}
             sidebarMinWidth={400}
-            content={<SchemaVisualization />}
+            content={
+              <Flex
+                data-testid="Schema_visualization"
+                direction="column"
+                style={{ height: '100%' }}
+              >
+                <PageToolbar
+                  title={t('preview_title', 'Preview')}
+                  titleLevel={6}
+                />
+                <SchemaVisualizer graphQLSchemaString={projectSchema} />
+              </Flex>
+            }
           />
         </PageContentLayout.Body>
       </PageContentLayout>

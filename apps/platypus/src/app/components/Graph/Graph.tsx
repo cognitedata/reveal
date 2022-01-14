@@ -12,7 +12,9 @@ import { SimulationLinkDatum, SimulationNodeDatum } from 'd3';
 
 import styled from 'styled-components/macro';
 import { getELKNodes } from './layout/elkLayout';
-import { Spinner } from '../Spinner/Spinner';
+import { getFitContentXYK } from './layout/fitLayout';
+import { HtmlElementProps } from '@platypus-app/types';
+import { loadFromCache, saveToCache } from './cache';
 
 export type Node = SimulationNodeDatum & {
   id: string;
@@ -69,6 +71,7 @@ export interface GraphProps<T> {
     data: SimulationLinkDatum<Node & T>,
     origEvent: any
   ) => void;
+  onLoadingStatus?: (isLoaded: boolean) => void;
 }
 
 export type GetOffsetFunction<T> = (link: SimulationLinkDatum<Node & T>) => {
@@ -104,8 +107,9 @@ export const Graph = <T,>({
   onLinkEvent,
   children,
   graphRef: ref,
+  onLoadingStatus,
   ...htmlProps
-}: GraphProps<T> & React.HTMLAttributes<HTMLDivElement>) => {
+}: GraphProps<T> & HtmlElementProps<HTMLDivElement>) => {
   // where the lines are drawn
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -136,35 +140,40 @@ export const Graph = <T,>({
     d3.Selection<Element, Node & T, HTMLDivElement | null, unknown> | undefined
   >(undefined);
 
-  const [isLoading, setLoading] = useState<boolean>(autoLayout);
-  const [nodes, setNodes] = useState<(Node & T)[]>(propsNodes);
+  const [isFittingContent, setFittingContent] = useState<boolean>(true);
+  const [isAutoLayouting, setIsAutoLayouting] = useState<boolean>(false);
+  const [nodes, setNodes] = useState<(Node & T)[]>([]);
+
+  const [transform, setTransform] = useState<{
+    k: number;
+    x: number;
+    y: number;
+  }>({ k: 1, x: 0, y: 0 });
+
+  const isLoading = isFittingContent || isAutoLayouting;
 
   useEffect(() => {
-    setNodes(propsNodes);
-    if (autoLayout) {
-      setLoading(true);
+    if (onLoadingStatus) {
+      onLoadingStatus(!isLoading);
     }
-  }, [propsNodes, autoLayout]);
+  }, [onLoadingStatus, isLoading]);
 
   useEffect(() => {
-    (async () => {
-      if (isLoading && d3Nodes) {
-        const nodesForRendering = await getELKNodes(
-          d3Nodes.nodes() as (Element & { __data__: Node })[],
-          propsLinks
-        );
-        setNodes(
-          propsNodes.map((el) => {
-            return {
-              ...el,
-              ...nodesForRendering.find((n) => n.id === el.id),
-            };
-          }) as (Node & T)[]
-        );
-        setLoading(false);
-      }
-    })();
-  }, [isLoading, nodes, d3Nodes, propsNodes, propsLinks]);
+    const cacheItems = loadFromCache(propsNodes);
+    const nodesWithCachedLocation = propsNodes.map((node) => ({
+      ...cacheItems[node.id],
+      ...node,
+    }));
+    setNodes(nodesWithCachedLocation);
+    if (
+      autoLayout &&
+      nodesWithCachedLocation.length !== 0 &&
+      nodesWithCachedLocation.some((el) => !el.fx || !el.fy)
+    ) {
+      setIsAutoLayouting(true);
+    }
+    setFittingContent(true);
+  }, [propsNodes, autoLayout]);
 
   const links: SimulationLinkDatum<Node & T>[] = useMemo(() => {
     // make lookups easy
@@ -186,12 +195,6 @@ export const Graph = <T,>({
       .filter((el) => el.source && el.target);
     return newLinks;
   }, [nodes, propsLinks]);
-
-  const [transform, setTransform] = useState<{
-    k: number;
-    x: number;
-    y: number;
-  }>({ k: 1, x: 0, y: 0 });
 
   const nodeChildren = useMemo(
     () =>
@@ -259,6 +262,9 @@ export const Graph = <T,>({
 
         // transform the links (if its curve vs line)
         d3Links.attr('d', (d: SimulationLinkDatum<Node & T>) => {
+          if (!d.source && !d.target) {
+            return '';
+          }
           const midXY = {
             x: getMidPoint(getTargetX(d), getSourceX(d)),
             y: getMidPoint(getTargetY(d), getSourceY(d)),
@@ -307,18 +313,25 @@ export const Graph = <T,>({
     [d3Nodes, d3Links, transform, useCurve, getOffset, containerRef]
   );
 
-  const onZoom = (transformation: { k: number; x: number; y: number }) => {
-    // this is called because d3 keeps internal state with "d3.zoom" which needs to be updated
-    d3.select(mainWrapperRef.current!).call(
-      d3.zoom<HTMLDivElement, any>().transform,
-      d3.zoomIdentity
-        .translate(transformation.x, transformation.y)
-        .scale(transformation.k)
-    );
-    setTransform(transformation);
-    ticked(transformation);
-  };
+  useEffect(() => {
+    ticked(transform);
+  }, [transform, ticked]);
 
+  const onZoom = useCallback(
+    (transformation: { k: number; x: number; y: number }) => {
+      // this is called because d3 keeps internal state with "d3.zoom" which needs to be updated
+      d3.select(mainWrapperRef.current!).call(
+        d3.zoom<HTMLDivElement, any>().transform,
+        d3.zoomIdentity
+          .translate(transformation.x, transformation.y)
+          .scale(transformation.k)
+      );
+      setTransform(transformation);
+    },
+    []
+  );
+
+  // Zoom callbacks
   useEffect(() => {
     if (mainWrapperRef.current) {
       const zoom = d3
@@ -326,12 +339,12 @@ export const Graph = <T,>({
         .scaleExtent([MIN_ZOOM, MAX_ZOOM])
         .on('zoom', (event) => {
           setTransform(event.transform);
-          ticked(event.transform);
         });
       d3.select(mainWrapperRef.current).call(zoom);
     }
   }, [ticked]);
 
+  // Hover callbacks
   useEffect(() => {
     if (d3Links && onLinkEvent) {
       d3Links
@@ -347,8 +360,9 @@ export const Graph = <T,>({
     }
   }, [d3Links, onLinkEvent]);
 
+  // Load data into d3 nodes
   useEffect(() => {
-    if (chart) {
+    if (chart && mainWrapperRef.current) {
       // Create links
       const newD3Lines = chart
         .select('g.links')
@@ -371,19 +385,25 @@ export const Graph = <T,>({
 
       setD3Nodes(newD3Nodes);
     }
-  }, [chart, links, nodes]);
+  }, [chart, links, nodes, mainWrapperRef]);
 
+  // Set up simulation with node and links
   useEffect(() => {
     if (simulation) {
-      // Starting simulation
-      simulation.nodes(nodes).on('tick', ticked);
+      simulation.nodes(nodes);
       simulation.force('link', d3.forceLink(links));
     }
-  }, [simulation, links, nodes, ticked]);
+  }, [simulation, links, nodes]);
+
+  // Update tick function
+  useEffect(() => {
+    if (simulation) {
+      simulation.on('tick', ticked);
+    }
+  }, [simulation, ticked]);
 
   useEffect(() => {
-    if (d3Nodes && simulation) {
-      const { k } = transform;
+    if (nodes && d3Nodes && simulation) {
       const dragStart = (_event: { active: any }, d: any) => {
         simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
@@ -391,14 +411,15 @@ export const Graph = <T,>({
       };
 
       const drag = (event: { dx: any; dy: any }, d: any) => {
-        d.fx += event.dx / k;
-        d.fy += event.dy / k;
+        d.fx += event.dx / transform.k;
+        d.fy += event.dy / transform.k;
         // This is a work around, enforce a rerender for the nodesChildren, which watches transform.
         setTransform((oldTransform) => ({ ...oldTransform }));
       };
 
-      const dragEnd = (event: { active: any }, _d: any) => {
+      const dragEnd = (event: { active: any }, d: any) => {
         if (!event.active) simulation.alphaTarget(0);
+        saveToCache(nodes, d.id, d.fx, d.fy);
       };
       d3Nodes.call(
         d3
@@ -408,7 +429,20 @@ export const Graph = <T,>({
           .on('end', dragEnd)
       );
     }
-  }, [d3Nodes, simulation, transform]);
+  }, [nodes, d3Nodes, simulation, transform.k]);
+
+  const fitContent = useCallback(() => {
+    if (d3Nodes && mainWrapperRef.current) {
+      const newZoom = getFitContentXYK<T>(
+        d3Nodes,
+        mainWrapperRef.current.clientWidth,
+        mainWrapperRef.current.clientHeight
+      );
+      if (newZoom) {
+        onZoom(newZoom);
+      }
+    }
+  }, [d3Nodes, onZoom]);
 
   useImperativeHandle(ref, () => ({
     zoomIn: (scaleFactor = 1.1) => {
@@ -425,59 +459,48 @@ export const Graph = <T,>({
         k: newScaleK > MIN_ZOOM ? newScaleK : MIN_ZOOM,
       });
     },
-    fitContent: () => {
-      if (d3Nodes) {
-        const initialNodes = d3Nodes.nodes().map((node: any) => ({
-          id: node.id,
-          width: node.clientWidth,
-          height: node.clientHeight,
-          x: node.__data__.x,
-          y: node.__data__.y,
-        }));
-
-        if (mainWrapperRef.current) {
-          const width = mainWrapperRef.current.clientWidth;
-          const height = mainWrapperRef.current.clientHeight;
-
-          // sort the nodes by x from lowest to highest
-          initialNodes.sort((a, b) => a.x - b.x);
-          const minXNode = initialNodes[0]; // left most node
-          const maxXNode = initialNodes[initialNodes.length - 1]; // right most node
-
-          // sort the nodes by y from lowest to highest
-          initialNodes.sort((a, b) => a.y - b.y);
-          const minYNode = initialNodes[0]; // top node
-          const maxYNode = initialNodes[initialNodes.length - 1]; // bottom node
-
-          const newX = -minXNode.x; // move backwards by x to origin
-          const newY = -minYNode.y; // move backwards by y to origin
-
-          // since the box's width/height is not "scaling" when zooming in/out, avoid it in the scale calculation
-          // scale => bounding box of the nodes / viewport width - max node's width
-          const scaleX = (maxXNode.x - minXNode.x) / (width - maxXNode.width);
-          // scale => bounding box of the nodes / viewport height - max node's height
-          const scaleY = (maxYNode.y - minYNode.y) / (height - maxYNode.height);
-
-          // take the max of the scales
-          const scaleK = Math.max(scaleX, scaleY);
-
-          // set zoom
-          onZoom({
-            x: newX / scaleK,
-            y: newY / scaleK,
-            k: 1 / scaleK,
-          });
-        }
-      }
-    },
+    fitContent,
     forceRerender: () => {
       ticked();
     },
   }));
 
+  // Do an auto fit if it is loading...
+  useEffect(() => {
+    (async () => {
+      if (isAutoLayouting && d3Nodes) {
+        const nodesForRendering = await getELKNodes(
+          d3Nodes.nodes() as (Element & { __data__: Node })[],
+          propsLinks
+        );
+        setNodes(
+          (prevNodes) =>
+            prevNodes.map((el) => {
+              return {
+                ...el,
+                ...nodesForRendering.find((n) => n.id === el.id),
+              };
+            }) as (Node & T)[]
+        );
+        setIsAutoLayouting(false);
+        setFittingContent(true);
+      }
+    })();
+  }, [isAutoLayouting, d3Nodes, propsLinks, onZoom]);
+
+  useEffect(() => {
+    if (!isAutoLayouting && isFittingContent) {
+      try {
+        fitContent();
+        setTimeout(() => setFittingContent(false), 300);
+      } catch {
+        // TODO sentry error
+      }
+    }
+  }, [isFittingContent, isAutoLayouting, fitContent]);
+
   return (
-    <Wrapper ref={mainWrapperRef} {...htmlProps}>
-      {isLoading && <Spinner style={{ position: 'absolute' }} />}
+    <Wrapper {...htmlProps} ref={mainWrapperRef}>
       <div className="node-container" ref={containerRef}>
         <svg className="chart" ref={svgRef}>
           <g className="links">{linksChildren}</g>
@@ -492,7 +515,6 @@ export const Graph = <T,>({
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  position: relative;
 
   svg,
   .node-container {
