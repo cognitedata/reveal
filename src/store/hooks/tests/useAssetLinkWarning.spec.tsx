@@ -56,11 +56,14 @@ const linkFileToAssets = (assetIds?: number[]) => ({
 const getRenderProps = (
   annotation: AnnotationTableItem,
   annotationSibling: AnnotationTableItem,
-  fileAssetIds: number[]
+  fileAssetIds: number[],
+  annotationWithSameAsset?: AnnotationTableItem
 ) => ({
   annotation,
   file: linkFileToAssets(fileAssetIds),
-  allAnnotations: [annotation, annotationSibling],
+  allAnnotations: annotationWithSameAsset
+    ? [annotation, annotationSibling, annotationWithSameAsset]
+    : [annotation, annotationSibling],
 });
 
 describe('tests useAssetLinkWarningHook', () => {
@@ -76,6 +79,11 @@ describe('tests useAssetLinkWarningHook', () => {
     VisionAPIType.TagDetection,
     annotationSiblingAssetId
   );
+  const tagAnnotationWithSameAsset = getDummyAnnotation(
+    3,
+    VisionAPIType.TagDetection,
+    annotationAssetId
+  );
 
   test('tests rendering of the hook with different props', async () => {
     jest.mock('@cognite/cdf-sdk-singleton');
@@ -87,7 +95,12 @@ describe('tests useAssetLinkWarningHook', () => {
         useAssetLinkWarning(annotation, file, allAnnotations),
       {
         wrapper: WrappedWithProviders,
-        initialProps: getRenderProps(tagAnnotation, tagAnnotationSibling, []),
+        initialProps: getRenderProps(
+          tagAnnotation,
+          tagAnnotationSibling,
+          [],
+          tagAnnotationWithSameAsset
+        ),
       }
     );
 
@@ -99,9 +112,12 @@ describe('tests useAssetLinkWarningHook', () => {
     // approve tag annotation and asset linked to file
     act(() => {
       rerender(
-        getRenderProps(approveAnnotation(tagAnnotation), tagAnnotationSibling, [
-          annotationAssetId,
-        ])
+        getRenderProps(
+          approveAnnotation(tagAnnotation),
+          tagAnnotationSibling,
+          [annotationAssetId],
+          tagAnnotationWithSameAsset
+        )
       );
     });
 
@@ -116,7 +132,8 @@ describe('tests useAssetLinkWarningHook', () => {
         getRenderProps(
           approveAnnotation(tagAnnotation),
           tagAnnotationSibling,
-          []
+          [],
+          tagAnnotationWithSameAsset
         )
       );
     });
@@ -128,13 +145,14 @@ describe('tests useAssetLinkWarningHook', () => {
       );
     });
 
-    // approve both annotations but file only linked to sibling annotation asset
+    // approve annotation and sibling but file only linked to sibling annotation asset
     act(() => {
       rerender(
         getRenderProps(
           approveAnnotation(tagAnnotation),
           approveAnnotation(tagAnnotationSibling),
-          [annotationSiblingAssetId]
+          [annotationSiblingAssetId],
+          tagAnnotationWithSameAsset
         )
       );
     });
@@ -146,13 +164,14 @@ describe('tests useAssetLinkWarningHook', () => {
       );
     });
 
-    // approve both annotations, file linked to both assets
+    // approve annotation and sibling, file linked to both assets
     act(() => {
       rerender(
         getRenderProps(
           approveAnnotation(tagAnnotation),
           approveAnnotation(tagAnnotationSibling),
-          [annotationAssetId, annotationSiblingAssetId]
+          [annotationAssetId, annotationSiblingAssetId],
+          tagAnnotationWithSameAsset
         )
       );
     });
@@ -168,7 +187,8 @@ describe('tests useAssetLinkWarningHook', () => {
         getRenderProps(
           rejectAnnotation(tagAnnotation),
           approveAnnotation(tagAnnotationSibling),
-          [annotationAssetId, annotationSiblingAssetId]
+          [annotationAssetId, annotationSiblingAssetId],
+          tagAnnotationWithSameAsset
         )
       );
     });
@@ -180,13 +200,14 @@ describe('tests useAssetLinkWarningHook', () => {
       );
     });
 
-    // reject both annotations, file still linked to annotation sibling asset
+    // reject annotation and sibling, file still linked to annotation sibling asset
     act(() => {
       rerender(
         getRenderProps(
           rejectAnnotation(tagAnnotation),
           rejectAnnotation(tagAnnotationSibling),
-          [annotationSiblingAssetId]
+          [annotationSiblingAssetId],
+          tagAnnotationWithSameAsset
         )
       );
     });
@@ -196,13 +217,32 @@ describe('tests useAssetLinkWarningHook', () => {
       expect(result.current).toBe(AssetWarnTypes.NoWarning);
     });
 
-    // reject both annotations, file not linked to assets
+    // reject annotation and sibling, file still linked to annotation sibling asset
+    // there's another approved annotation with same asset
     act(() => {
       rerender(
         getRenderProps(
           rejectAnnotation(tagAnnotation),
           rejectAnnotation(tagAnnotationSibling),
-          []
+          [annotationSiblingAssetId],
+          approveAnnotation(tagAnnotationWithSameAsset)
+        )
+      );
+    });
+
+    // assert no warning
+    await waitFor(() => {
+      expect(result.current).toBe(AssetWarnTypes.NoWarning);
+    });
+
+    // reject annotation and sibling, file not linked to assets
+    act(() => {
+      rerender(
+        getRenderProps(
+          rejectAnnotation(tagAnnotation),
+          rejectAnnotation(tagAnnotationSibling),
+          [],
+          tagAnnotationWithSameAsset
         )
       );
     });
