@@ -23,7 +23,7 @@ a matrix transformation and a flag if the transformation also should be applied 
 
 
 
-```jsx runnable-2x
+```jsx runnable
 const transform = new THREE.Matrix4();
 transform.setPosition(new THREE.Vector3(10, 10, 0));
 model.setNodeTransformByTreeIndex(532261, transform, true);
@@ -36,7 +36,7 @@ Resetting the transformation is done with `Cognite3DModel.resetNodeTransformByTr
 
 and a flag that determines if the node transform reset also should be applied to any child nodes of the given tree index.
 
-```jsx runnable-2x
+```jsx runnable
 model.resetNodeTransformByTreeIndex(532261, true);
 ```
 
@@ -58,7 +58,7 @@ the following statement:
 
 first applies `worldToModel`, then `rotationMatrix` and finally `modelToWorld`.
 
-```jsx runnable-2x
+```jsx runnable
 async function animate() {
   const boundingBox = await model.getBoundingBoxByTreeIndex(533010);
   const center = boundingBox.getCenter(new THREE.Vector3());

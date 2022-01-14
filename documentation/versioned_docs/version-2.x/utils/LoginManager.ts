@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient, REDIRECT } from '@cognite/sdk-2.x';
+import { CogniteClient, REDIRECT } from '@cognite/sdk';
 import { env } from './env';
 
 const tokenCacheKey = 'cachedAT';
