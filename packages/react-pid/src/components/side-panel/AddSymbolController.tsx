@@ -39,6 +39,7 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   return (
     <div>
       <Select
+        closeMenuOnSelect
         title="Symbol type"
         value={selectedSymbolTypeOption}
         onChange={setSelectedSymbolTypeOption}
