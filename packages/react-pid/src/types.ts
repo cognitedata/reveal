@@ -3,4 +3,5 @@ export type ToolType =
   | 'addLine'
   | 'connectInstances'
   | 'connectLabels'
-  | 'graphExplorer';
+  | 'graphExplorer'
+  | 'setLineNumber';

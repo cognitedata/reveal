@@ -71,11 +71,31 @@ export const isLabelInInstances = (
   return instances.some((instance) => isLabelInInstance(instance, node.id));
 };
 
-const getInstanceLabelIndex = (
-  instance: DiagramInstance,
-  id: string
-): number => {
-  return instance.labelIds.findIndex((labelId) => labelId === id);
+export const isNodeInLineNumber = (
+  node: SVGElement,
+  lineNumber: string | null,
+  diagramInstances: DiagramInstance[]
+) => {
+  if (lineNumber === null) return false;
+
+  if (node instanceof SVGTSpanElement) {
+    let isInLine = false;
+    diagramInstances
+      .filter((instance) => {
+        return instance.labelIds.includes(node.id);
+      })
+      .forEach((instance) => {
+        if (instance.lineNumbers.includes(lineNumber)) {
+          isInLine = true;
+        }
+      });
+    return isInLine;
+  }
+  const diagramInstnace = getDiagramInstanceByPathId(diagramInstances, node.id);
+
+  if (diagramInstnace === null) return false;
+
+  return diagramInstnace.lineNumbers.includes(lineNumber);
 };
 
 export const isInGraphSelection = (
@@ -87,12 +107,14 @@ export const isInGraphSelection = (
 
 const colorNode = (
   node: SVGElement,
-  color: string,
+  color: string | undefined,
   opacity: number | undefined = undefined
 ) => {
-  node.style.stroke = color;
-  if (node.style.fill !== 'none') {
-    node.style.fill = color;
+  if (color !== undefined) {
+    node.style.stroke = color;
+    if (node.style.fill !== 'none') {
+      node.style.fill = color;
+    }
   }
   if (opacity !== undefined) {
     if (node.style.fill !== 'none') {
@@ -103,43 +125,71 @@ const colorNode = (
   }
 };
 
-export const applyStyleToNode = (
-  node: SVGElement,
-  selection: SVGElement[],
-  connectionSelection: DiagramInstanceId | null,
-  labelSelection: DiagramInstanceId | null,
-  symbolInstances: DiagramSymbolInstance[],
-  lines: DiagramLineInstance[],
-  connections: DiagramConnection[],
-  graphPaths: DiagramInstanceId[][],
-  graphSelection: DiagramInstanceId | null,
-  active: ToolType
-) => {
+export interface ApplyStyleArgs {
+  node: SVGElement;
+  selection: SVGElement[];
+  connectionSelection: DiagramInstanceId | null;
+  labelSelection: DiagramInstanceId | null;
+  symbolInstances: DiagramSymbolInstance[];
+  lines: DiagramLineInstance[];
+  connections: DiagramConnection[];
+  graphPaths: DiagramInstanceId[][];
+  graphSelection: DiagramInstanceId | null;
+  active: ToolType;
+  activeLineNumber: string | null;
+}
+
+export const applyStyleToNode = ({
+  node,
+  selection,
+  connectionSelection,
+  labelSelection,
+  symbolInstances,
+  lines,
+  connections,
+  graphSelection,
+  active,
+  activeLineNumber,
+}: ApplyStyleArgs) => {
+  let color: string | undefined;
+  let opacity = 1;
+
   if (isDiagramLine(node, lines) || isLabelInInstances(node, lines)) {
-    colorNode(node, COLORS.diagramLine.color, COLORS.diagramLine.opacity);
+    ({ color, opacity } = COLORS.diagramLine);
   }
   if (
     isSymbolInstance(node, symbolInstances) ||
     isLabelInInstances(node, symbolInstances)
   ) {
-    colorNode(node, COLORS.symbol.color, COLORS.symbol.opacity);
+    ({ color, opacity } = COLORS.symbol);
   }
   if (isInConnectionSelection(node, connectionSelection)) {
     colorNode(node, COLORS.connectionSelection);
+    color = COLORS.connectionSelection;
   }
   if (isInLabelSelection(node, labelSelection)) {
-    colorNode(node, COLORS.labelSelection);
+    color = COLORS.labelSelection;
   }
   if (isInAddSymbolSelection(node, selection)) {
-    colorNode(
-      node,
-      COLORS.symbolSelection.color,
-      COLORS.symbolSelection.opacity
-    );
+    ({ color, opacity } = COLORS.symbolSelection);
   }
   if (isInGraphSelection(node, graphSelection)) {
-    colorNode(node, COLORS.connectionSelection);
+    color = COLORS.connectionSelection;
   }
+
+  if (active === 'setLineNumber') {
+    if (
+      !isNodeInLineNumber(node, activeLineNumber, [
+        ...symbolInstances,
+        ...lines,
+      ])
+    ) {
+      opacity = 0.23;
+    } else {
+      opacity = 1;
+    }
+  }
+  colorNode(node, color, opacity);
 
   applyPointerCursorStyleToNode({
     node,
@@ -210,30 +260,41 @@ const applyPointerCursorStyleToNode = ({
     if (labelSelection !== null && node instanceof SVGTSpanElement) {
       node.style.cursor = 'pointer';
     }
+  } else if (active === 'setLineNumber') {
+    if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines)) {
+      node.style.cursor = 'pointer';
+    }
   }
 };
 
 export function addOrRemoveLabelToInstance<Type extends DiagramInstance>(
-  node: SVGElement,
   labelId: string,
   instance: Type,
   instances: Type[],
   setter: (arg: Type[]) => void
 ): void {
-  const labelIndex = getInstanceLabelIndex(instance, node.id);
-  if (labelIndex === -1) {
-    instance.labelIds.push(labelId);
+  if (instance.labelIds.includes(labelId)) {
+    instance.labelIds = instance.labelIds.filter((li) => li !== labelId);
   } else {
-    instance.labelIds.splice(labelIndex, 1);
+    instance.labelIds = [...instance.labelIds, labelId];
   }
-  setter(
-    instances.map((oldInstance) => {
-      if (oldInstance.pathIds === instance.pathIds) {
-        return instance;
-      }
-      return oldInstance;
-    })
-  );
+  setter([...instances]);
+}
+
+export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
+  lineNumber: string,
+  instance: Type,
+  instances: Type[],
+  setter: (arg: Type[]) => void
+) {
+  if (instance.lineNumbers.includes(lineNumber)) {
+    instance.lineNumbers = instance.lineNumbers.filter(
+      (ln) => ln !== lineNumber
+    );
+  } else {
+    instance.lineNumbers = [...instance.lineNumbers, lineNumber];
+  }
+  setter([...instances]);
 }
 
 export const colorSymbol = (

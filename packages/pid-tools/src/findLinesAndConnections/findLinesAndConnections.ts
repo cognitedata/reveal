@@ -42,6 +42,7 @@ export const getPotentialLines = (
         type: 'Line',
         pathIds: [pidPath.pathId],
         labelIds: [],
+        lineNumbers: [],
       } as DiagramLineInstance)
   );
   return potentialLines;

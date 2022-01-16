@@ -12,6 +12,7 @@ export const createLines = (pathIds: string[]) => {
         type: 'Line',
         pathIds: [pathId],
         labelIds: [],
+        lineNumbers: [],
       } as DiagramLineInstance)
   );
 };
@@ -24,6 +25,7 @@ export const createSymbols = (pathIds: string[]) => {
         symbolId: 'symbolId',
         pathIds: [pathId],
         labelIds: [],
+        lineNumbers: [],
       } as DiagramSymbolInstance)
   );
 };

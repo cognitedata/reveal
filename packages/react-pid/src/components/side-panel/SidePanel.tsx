@@ -13,6 +13,7 @@ import { SaveSymbolData } from '../../ReactPid';
 import { CollapsableInstanceList } from './CollapsableInstanceList';
 import { FileController } from './FileController';
 import { AddSymbolController } from './AddSymbolController';
+import { AddLineNumberController } from './AddLineNumberController';
 
 const SidePanelWrapper = styled.div`
   display: grid;
@@ -47,6 +48,10 @@ interface SidePanelProps {
   fileUrl?: string;
   findLinesAndConnections: () => void;
   saveGraphAsJson: () => void;
+  lineNumbers: string[];
+  setLineNumbers: (arg: string[]) => void;
+  activeLineNumber: string | null;
+  setActiveLineNumber: (arg: string | null) => void;
 }
 
 export const SidePanel = ({
@@ -64,6 +69,10 @@ export const SidePanel = ({
   fileUrl,
   findLinesAndConnections,
   saveGraphAsJson,
+  lineNumbers,
+  setLineNumbers,
+  activeLineNumber,
+  setActiveLineNumber,
 }: SidePanelProps) => {
   const ActionWithCustomStyling: ToolBarButton[][] = [
     [
@@ -97,6 +106,12 @@ export const SidePanel = ({
         className: `${active === 'graphExplorer' && 'active'}`,
         description: 'Explore the wast graph universe',
       },
+      {
+        icon: 'String',
+        onClick: () => setActive('setLineNumber'),
+        className: `${active === 'setLineNumber' && 'active'}`,
+        description: 'Set line number',
+      },
     ],
   ];
 
@@ -121,8 +136,17 @@ export const SidePanel = ({
       <Button onClick={findLinesAndConnections}> Auto Analysis</Button>
 
       <div>
-        {active === 'addSymbol' &&
-          AddSymbolController({ selection, saveSymbol })}
+        {active === 'addSymbol' && (
+          <AddSymbolController selection={selection} saveSymbol={saveSymbol} />
+        )}
+        {active === 'setLineNumber' && (
+          <AddLineNumberController
+            lineNumbers={lineNumbers}
+            setLineNumbers={setLineNumbers}
+            activeLineNumber={activeLineNumber}
+            setActiveLineNumber={setActiveLineNumber}
+          />
+        )}
 
         <ToolBarWrapper>
           <ToolBar

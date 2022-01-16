@@ -31,6 +31,7 @@ export const findAllInstancesOfSymbol = (
         pathIds: match.pathIds,
         scale: match.scale,
         labelIds: [],
+        lineNumbers: [],
       });
     });
   }

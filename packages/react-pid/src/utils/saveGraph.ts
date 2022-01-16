@@ -27,6 +27,7 @@ export const getSymbolInstancesOutputFormat = (
       ),
       labelIds: diagramInstance.labelIds,
       labels,
+      lineNumbers: diagramInstance.lineNumbers,
     };
   });
 };
@@ -43,7 +44,6 @@ export const getLineInstancesOutputFormat = (
     return {
       id: getDiagramInstanceId(diagramInstance),
       type: diagramInstance.type,
-      symbolId: 'Line',
       pathIds: diagramInstance.pathIds,
       svgRepresentation: pidDocument.createSvgRepresentation(
         diagramInstance.pathIds,
@@ -52,6 +52,7 @@ export const getLineInstancesOutputFormat = (
       ),
       labelIds: diagramInstance.labelIds,
       labels,
+      lineNumbers: diagramInstance.lineNumbers,
     };
   });
 };

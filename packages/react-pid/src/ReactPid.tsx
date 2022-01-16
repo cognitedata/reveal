@@ -43,6 +43,8 @@ export const ReactPid: React.FC = () => {
 
   const [selection, setSelection] = useState<SVGElement[]>([]);
   const [lines, setLines] = useState<DiagramLineInstance[]>([]);
+  const [lineNumbers, setLineNumbers] = useState<string[]>([]);
+  const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
   const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
   const [symbolInstances, setSymbolInstances] = useState<
     DiagramSymbolInstance[]
@@ -77,13 +79,22 @@ export const ReactPid: React.FC = () => {
       setLines,
       lines,
       setConnections,
-      connections
+      connections,
+      lineNumbers,
+      setLineNumbers
     );
   };
 
   const saveGraphAsJsonWrapper = () => {
     if (pidDocument === undefined) return;
-    saveGraphAsJson(pidDocument, symbols, lines, symbolInstances, connections);
+    saveGraphAsJson(
+      pidDocument,
+      symbols,
+      lines,
+      symbolInstances,
+      connections,
+      lineNumbers
+    );
   };
 
   const findLinesAndConnections = () => {
@@ -202,6 +213,10 @@ export const ReactPid: React.FC = () => {
           fileUrl={fileUrl}
           findLinesAndConnections={findLinesAndConnections}
           saveGraphAsJson={saveGraphAsJsonWrapper}
+          lineNumbers={lineNumbers}
+          setLineNumbers={setLineNumbers}
+          activeLineNumber={activeLineNumber}
+          setActiveLineNumber={setActiveLineNumber}
         />
         <Viewport>
           {fileUrl === '' ? (
@@ -234,6 +249,7 @@ export const ReactPid: React.FC = () => {
               setPidDocument={setPidDocument}
               labelSelection={labelSelection}
               setLabelSelection={setLabelSelection}
+              activeLineNumber={activeLineNumber}
             />
           )}
         </Viewport>

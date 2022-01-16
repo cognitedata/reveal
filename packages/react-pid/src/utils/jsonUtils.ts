@@ -32,6 +32,7 @@ interface Graph {
   symbolInstances: DiagramInstanceOutputFormat[];
   lines: DiagramInstanceOutputFormat[];
   connections: DiagramConnection[];
+  lineNumbers: string[];
 }
 
 const getGraphFormat = (
@@ -39,7 +40,8 @@ const getGraphFormat = (
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
-  connections: DiagramConnection[]
+  connections: DiagramConnection[],
+  lineNumbers: string[]
 ): Graph => {
   const linesOutputFormat = getLineInstancesOutputFormat(pidDocument, lines);
   const symbolInstancesOutputFormat = getSymbolInstancesOutputFormat(
@@ -64,6 +66,7 @@ const getGraphFormat = (
     lines: linesOutputFormat,
     symbolInstances: symbolInstancesOutputFormat,
     connections,
+    lineNumbers,
   };
 };
 
@@ -72,14 +75,16 @@ export const saveGraphAsJson = (
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
-  connections: DiagramConnection[]
+  connections: DiagramConnection[],
+  lineNumbers: string[]
 ) => {
   const graphJson = getGraphFormat(
     pidDocument,
     symbols,
     lines,
     symbolInstances,
-    connections
+    connections,
+    lineNumbers
   );
 
   const fileToSave = new Blob([JSON.stringify(graphJson, undefined, 2)], {
@@ -152,7 +157,9 @@ export const loadSymbolsFromJson = (
   setLines: (diagramLines: DiagramLineInstance[]) => void,
   lines: DiagramLineInstance[],
   setConnections: (diagramConnections: DiagramConnection[]) => void,
-  connections: DiagramConnection[]
+  connections: DiagramConnection[],
+  lineNumbers: string[],
+  setLineNumbers: (arg: string[]) => void
 ) => {
   if ('symbols' in jsonData) {
     const newSymbols = jsonData.symbols as DiagramSymbol[];
@@ -182,6 +189,7 @@ export const loadSymbolsFromJson = (
         type: 'Line',
         pathIds: newLineOutputFormat.pathIds,
         labelIds: newLineOutputFormat.labelIds,
+        lineNumbers: newLineOutputFormat.lineNumbers,
       } as DiagramLineInstance;
     });
     setLines([...lines, ...newLines]);
@@ -205,5 +213,9 @@ export const loadSymbolsFromJson = (
   if ('connections' in jsonData) {
     const newConnections = jsonData.connections as DiagramConnection[];
     setConnections([...connections, ...newConnections]);
+  }
+
+  if ('lineNumbers' in jsonData) {
+    setLineNumbers([...lineNumbers, ...jsonData.lineNumbers]);
   }
 };

@@ -57,6 +57,7 @@ export const detectLines = (
               type: 'Line',
               pathIds: [newLine],
               labelIds: [],
+              lineNumbers: [],
             } as DiagramLineInstance)
         )
       );

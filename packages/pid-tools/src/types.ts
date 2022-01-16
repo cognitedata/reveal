@@ -25,6 +25,7 @@ export interface DiagramInstance {
   type: string;
   pathIds: string[];
   labelIds: string[];
+  lineNumbers: string[];
 }
 
 export interface DiagramSymbolInstance extends DiagramInstance {

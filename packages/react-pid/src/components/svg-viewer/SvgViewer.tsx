@@ -22,6 +22,7 @@ import { applyToLeafSVGElements } from '../../utils/svgDomUtils';
 
 import {
   addOrRemoveLabelToInstance,
+  addOrRemoveLineNumberToInstance,
   applyStyleToNode,
   colorSymbol,
   isDiagramLine,
@@ -47,6 +48,7 @@ interface SvgViewerProps {
   setLabelSelection: (arg: DiagramInstanceId | null) => void;
   pidDocument: PidDocument | undefined;
   setPidDocument: (arg: PidDocument) => void;
+  activeLineNumber: string | null;
 }
 
 export const SvgViewer: React.FC<SvgViewerProps> = ({
@@ -66,6 +68,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   setPidDocument,
   labelSelection,
   setLabelSelection,
+  activeLineNumber,
 }) => {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [graphSelection, setGraphSelection] =
@@ -114,7 +117,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           }
         );
       }
-    } else if (active === 'connectLabels') {
+    } else if (active === 'connectLabels' || active === 'setLineNumber') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
         node.id
@@ -165,7 +168,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           }
         );
       }
-    } else if (active === 'connectLabels') {
+    } else if (active === 'connectLabels' || active === 'setLineNumber') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
         node.id
@@ -208,6 +211,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
             type: 'Line',
             pathIds: [node.id],
             labelIds: [],
+            lineNumbers: [],
           } as DiagramLineInstance,
         ]);
       }
@@ -268,7 +272,6 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         }
         if (diagramInstance.type === 'Line') {
           addOrRemoveLabelToInstance(
-            node,
             node.id,
             diagramInstance as DiagramLineInstance,
             lines,
@@ -278,7 +281,6 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           );
         } else {
           addOrRemoveLabelToInstance(
-            node,
             node.id,
             diagramInstance as DiagramSymbolInstance,
             symbolInstances,
@@ -312,6 +314,30 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         setGraphPaths(paths);
         setGraphSelection(null);
       }
+    } else if (active === 'setLineNumber') {
+      if (activeLineNumber === null) return;
+
+      const diagramInstance = getDiagramInstanceByPathId(
+        [...symbolInstances, ...lines],
+        node.id
+      );
+      if (diagramInstance === null) return;
+
+      if (diagramInstance.type === 'Line') {
+        addOrRemoveLineNumberToInstance(
+          activeLineNumber,
+          diagramInstance as DiagramLineInstance,
+          lines,
+          setLines
+        );
+      } else {
+        addOrRemoveLineNumberToInstance(
+          activeLineNumber,
+          diagramInstance as DiagramSymbolInstance,
+          symbolInstances,
+          setSymbolInstances
+        );
+      }
     }
   };
 
@@ -329,7 +355,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         allSVGElements.push(node);
       }
 
-      applyStyleToNode(
+      applyStyleToNode({
         node,
         selection,
         connectionSelection,
@@ -339,8 +365,9 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         connections,
         graphPaths,
         graphSelection,
-        active
-      );
+        active,
+        activeLineNumber,
+      });
 
       node.addEventListener('mouseenter', () => onMouseEnter(node));
 
