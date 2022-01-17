@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import { toast, ToastContainer } from '@cognite/cogs.js';
-import { transformEquipmentData } from 'scarlet/transformations';
+import {
+  transformEquipmentData,
+  transformEquipmentType,
+} from 'scarlet/transformations';
 import { StorageActionType } from 'scarlet/types';
 import { useApi, useStorage } from 'scarlet/hooks';
 import { DataPanelProvider } from 'scarlet/contexts';
@@ -11,7 +14,6 @@ import {
   getEquipmentPCMS,
   getScannerDetections,
 } from 'scarlet/api';
-import { transformEquipmentType } from 'scarlet/transformations/equipment-type';
 
 import { BreadcrumbBar, PageBody, TopBar } from './components';
 import * as Styled from './style';

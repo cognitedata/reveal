@@ -53,9 +53,9 @@ const getEquipmentElements = (
         (detection) => detection.key === key && detection.valueAnnotation
       );
 
-      const value = itemDetections
-        ?.map((detection) => detection.valueAnnotation.value)
-        .join('');
+      const value = itemDetections?.find(
+        (detection) => detection.valueAnnotation.value
+      )?.valueAnnotation.value;
 
       return {
         ...config.equipmentElements[key],

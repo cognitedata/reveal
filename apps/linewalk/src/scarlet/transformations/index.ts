@@ -1,3 +1,4 @@
-export * from './equipment-config';
-export * from './equipment-data';
-export * from './scanner-detection';
+export * from './transformEquipmentConfig';
+export * from './transformEquipmentData';
+export * from './transformEquipmentType';
+export * from './transformScannerDetection';
