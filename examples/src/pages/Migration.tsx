@@ -17,7 +17,9 @@ import {
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet
+  IndexSet,
+  SceneRenderedEvent,
+  PointerEvent
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -297,7 +299,7 @@ export function Migration() {
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
 
-      viewer.on('sceneRendered', sceneRenderedEventArgs => {
+      viewer.on('sceneRendered', (sceneRenderedEventArgs: SceneRenderedEvent) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
         guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
         guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
@@ -482,7 +484,7 @@ export function Migration() {
 
       new AxisViewTool(viewer);
 
-      viewer.on('click', async event => {
+      viewer.on('click', async (event: PointerEvent) => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);

@@ -16,7 +16,8 @@ import {
   PotreePointColorType, 
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet
+  IndexSet,
+  PointerEvent
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig,
   MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat, BingMapType, HereMapType, HereMapScheme, HereMapImageFormat } from '@cognite/reveal/tools';
@@ -174,7 +175,7 @@ export function Geomap() {
       const selectedSet = new TreeIndexNodeCollection([]);
 
       new AxisViewTool(viewer);
-      viewer.on('click', async event => {
+      viewer.on('click', async (event: PointerEvent) => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);

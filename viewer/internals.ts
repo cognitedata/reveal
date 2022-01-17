@@ -14,5 +14,5 @@ export {
 } from './packages/cad-geometry-loaders';
 
 export { CadNode, SuggestedCameraConfig, RenderOptions, defaultRenderOptions } from './packages/rendering';
-export { NodeAppearanceProvider } from './packages/cad-styling';
+export { NodeAppearanceProvider, LoadingStateChangedEvent } from './packages/cad-styling';
 export { revealEnv } from './packages/utilities';
