@@ -10,7 +10,9 @@ import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
  * This tool will only work when {@link Cognite3dViewer} is initialized with {@see Cognite3DViewerOptions.continuousModelStreaming}
  * is set to true.
  *
- * @experimental This class is experimental and is not guaranteed to work in the future.
+ * This class is experimental and is not guaranteed to work in the future.
+ *
+ * @ignore Hide from public docs.
  */
 export class AutoCadBudgetTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
