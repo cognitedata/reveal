@@ -10,12 +10,15 @@ import { Separator } from 'components/Separator';
 import { FilterItem, FilterType } from 'components/FilterItem';
 import { Actions } from './Actions';
 import RowCount from './RowCount';
+import TableLastUpdatedTime from './TableLastUpdatedTime';
 
 type Props = {
   className?: string;
   isEmpty?: boolean;
   areTypesFetched?: boolean;
   hasActions?: boolean;
+  isTableLastUpdatedTimeFetched?: boolean;
+  tableLastUpdatedTime?: Date;
 };
 
 export const FilterBar = ({
@@ -23,6 +26,8 @@ export const FilterBar = ({
   isEmpty,
   areTypesFetched,
   hasActions,
+  isTableLastUpdatedTimeFetched,
+  tableLastUpdatedTime,
 }: Props): JSX.Element => {
   const {
     filters,
@@ -73,6 +78,10 @@ export const FilterBar = ({
       </FilterBar.List>
       {hasActions && (
         <Flex justifyContent="center" alignItems="center">
+          <TableLastUpdatedTime
+            isTableLastUpdatedTimeFetched={isTableLastUpdatedTimeFetched}
+            tableLastUpdatedTime={tableLastUpdatedTime}
+          />
           <Separator style={{ margin: '0 12px' }} />
           <Body
             level={2}

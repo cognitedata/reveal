@@ -73,6 +73,9 @@ export const useTableData = () => {
     return [];
   }, [rows.data]);
 
+  const tableLastUpdatedTime =
+    rawRows.length > 0 ? new Date(rawRows[0][LAST_UPDATED_DATAKEY]) : undefined;
+
   const getColumns = (): ColumnType[] => {
     const columnNames = rawRows[0] ? Object.keys(rawRows[0]) : [];
     const otherColumns: ColumnType[] = columnNames
@@ -133,6 +136,7 @@ export const useTableData = () => {
     rows: allRows,
     columns,
     filteredColumns,
+    tableLastUpdatedTime,
   };
 };
 
