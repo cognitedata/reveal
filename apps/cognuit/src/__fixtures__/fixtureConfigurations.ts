@@ -75,18 +75,6 @@ const extendedConfigurations = [
 
 const generatedColumns = [
   {
-    title: 'Author',
-    dataIndex: 'author',
-    key: 'author',
-    sorter: expect.any(Boolean),
-  },
-  {
-    title: 'Last updated',
-    dataIndex: 'last_updated',
-    key: 'last_updated',
-    sorter: expect.any(Boolean),
-  },
-  {
     title: 'Status',
     dataIndex: 'status_active',
     key: 'status_active',
@@ -137,18 +125,6 @@ const getColumnRules = columnRules({
 });
 
 const curatedColumns = [
-  {
-    Header: 'Author',
-    accessor: 'author',
-    Cell: expect.any(Function),
-    disableSortBy: expect.any(Boolean),
-  },
-  {
-    Header: 'Last updated',
-    accessor: 'last_updated',
-    Cell: expect.any(Function),
-    disableSortBy: expect.any(Boolean),
-  },
   {
     Header: 'Status',
     accessor: 'status_active',

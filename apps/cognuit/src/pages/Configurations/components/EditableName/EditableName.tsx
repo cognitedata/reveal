@@ -80,10 +80,10 @@ const EditableName = ({ name, onSaveChange }: Props) => {
   }
   return (
     <Container>
-      {text.length > 20 ? (
+      {text.length > 100 ? (
         <span className="name-wrapper">
           <Tooltip content={text}>
-            <span>{`${text.substring(0, 20)}...`}</span>
+            <span>{`${text.substring(0, 100)}...`}</span>
           </Tooltip>
         </span>
       ) : (

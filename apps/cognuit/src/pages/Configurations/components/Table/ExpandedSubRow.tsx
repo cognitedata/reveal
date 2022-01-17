@@ -1,5 +1,5 @@
 import { ExtendedConfigurationsResponse } from 'typings/interfaces';
-import { Badge } from '@cognite/cogs.js';
+import { Badge, Body } from '@cognite/cogs.js';
 import { getProgressStats } from 'pages/Configurations/utils/progress';
 
 import {
@@ -31,6 +31,10 @@ export function ExpandedSubRow({
             {new Date(record.last_updated).toLocaleString()}
           </ExpandedItemContent>
         </ExpandedItemRow>
+      </ExpandedItem>
+      <ExpandedItem>
+        <ExpandedItemLabel>Author: </ExpandedItemLabel>
+        <Body level={2}>{record.author}</Body>
       </ExpandedItem>
       {record.datatypes.length > 0 && (
         <ExpandedItem>

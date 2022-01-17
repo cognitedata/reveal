@@ -103,14 +103,12 @@ describe('Configurations/Table', () => {
       expect(screen.getByText('Last updated:')).toBeInTheDocument();
       expect(screen.getByText('Data types:')).toBeInTheDocument();
       expect(screen.getByText('Business tags:')).toBeInTheDocument();
+      expect(screen.getByText('Author:')).toBeInTheDocument();
 
       const { progress } = original;
       expect(
         screen.getByText(`PointSet (${progress.PointSet.total})`)
       ).toBeInTheDocument();
-
-      const [businessTag] = original.business_tags;
-      expect(screen.getByText(businessTag)).toBeInTheDocument();
     });
   });
 });
