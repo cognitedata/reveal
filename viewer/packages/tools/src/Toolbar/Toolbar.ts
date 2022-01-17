@@ -85,7 +85,7 @@ export class Toolbar {
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
 
-    if (backgroundImageUri.startsWith('data:image/png;base64')) {
+    if (this.checkURL(backgroundImageUri)) {
       const iconImage = new Image();
       iconImage.className = Toolbar.classnames.iconImg;
       iconImage.src = backgroundImageUri;
@@ -108,6 +108,10 @@ export class Toolbar {
 
     this._toolbarContainer.appendChild(element);
   }
+
+  private checkURL(url: string): boolean {
+    return String(url).match(/\.(svg)$/) != null;
+}
 
   /**
    * Set the position of the toolbar container

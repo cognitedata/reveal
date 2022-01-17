@@ -26,9 +26,9 @@ import { ClippingUI } from '../utils/ClippingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 
-import explodeIcon from './icons/Cognite_Icon_Set-42.png';
-import geoMapicon from './icons/Cognite_Icon_Set-54.png';
-import clippingIcon from './icons/Cognite_Icon_Set-63.png';
+import geoMapIcon from './icons/Map.svg';
+import clippingIcon from './icons/Timeseries.svg';
+import explodeIcon from './icons/Cube.svg';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -532,7 +532,7 @@ export function Migration() {
       toolbar.addFitCameraToModel();
 
       toolbar.addToolbarButton(explodeIcon, callbackMsg, 'Explode View');
-      toolbar.addToolbarButton(geoMapicon, callbackMsg, 'Maps');
+      toolbar.addToolbarButton(geoMapIcon, callbackMsg, 'Maps');
       toolbar.addToolbarToogleButton(clippingIcon, callbackMsg, 'Clipping');
 
       const toolbarGui = gui.addFolder('Toolbar Options');
