@@ -10,19 +10,28 @@ import { ResourceSelectionProvider } from 'app/context/ResourceSelectionContext'
 
 import { DateRangeProvider } from 'app/context/DateRangeContext';
 import { useSDK } from '@cognite/sdk-provider';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useUserInformation } from 'app/hooks';
 
 const Spinner = () => <Loader />;
 
 export default function App() {
   const { pathname, search, hash } = useLocation();
   const sdk = useSDK();
+  const { flow } = getFlow();
+  const { data: userInfo } = useUserInformation();
+
   return (
     <Suspense fallback={<Spinner />}>
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
             <DateRangeProvider>
-              <DataExplorationProvider sdk={sdk}>
+              <DataExplorationProvider
+                flow={flow}
+                sdk={sdk}
+                userInfo={userInfo}
+              >
                 <Switch>
                   <Redirect
                     from="/:url*(/+)"

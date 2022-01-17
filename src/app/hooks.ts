@@ -2,6 +2,8 @@ import qs from 'query-string';
 import { useParams, useHistory } from 'react-router-dom';
 import { ResourceType } from '@cognite/data-exploration';
 import { createLink } from '@cognite/cdf-utilities';
+import { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { useQuery } from 'react-query';
 
 import { SEARCH_KEY } from './utils/constants';
 
@@ -106,4 +108,8 @@ export const useCurrentResourceId = (): [
     }
   };
   return [idNumber, setCurrentResourceId];
+};
+
+export const useUserInformation = () => {
+  return useQuery('user-info', getUserInformation);
 };
