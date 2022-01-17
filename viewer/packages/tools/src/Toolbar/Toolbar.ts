@@ -84,11 +84,16 @@ export class Toolbar {
     const element = document.createElement('button');
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
-    const iconImage = new Image();
-    iconImage.className = Toolbar.classnames.iconImg;
-    iconImage.src = backgroundImageUri;
 
-    element.appendChild(iconImage);
+    if (backgroundImageUri.startsWith('data:image/png;base64')) {
+      const iconImage = new Image();
+      iconImage.className = Toolbar.classnames.iconImg;
+      iconImage.src = backgroundImageUri;
+
+      element.appendChild(iconImage);
+    } else {
+      element.innerHTML = backgroundImageUri;
+    }
 
     element.onclick = () => {
       if (isToggle) {

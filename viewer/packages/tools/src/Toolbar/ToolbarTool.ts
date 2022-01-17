@@ -8,11 +8,11 @@ import { Toolbar, ToolbarPosition } from './Toolbar';
 import { AxisViewTool } from '../AxisView/AxisViewTool';
 import { CameraControlsOptions } from '@reveal/core';
 
-import axisIcon from './icons/Cognite_Icon_Set-12.png';
-import screenshotIcon from './icons/Cognite_Icon_Set-14.png';
-import cameratargetIcon from './icons/Cognite_Icon_Set-19.png';
-import zoompastIcon from './icons/Cognite_Icon_Set-30.png';
-import fittocameraIcon from './icons/Cognite_Icon_Set-32.png';
+import svgAxisIcon from '!!raw-loader!./icons/Axis3D.svg';
+import svgScreenshotIcon from '!!raw-loader!./icons/Image.svg';
+import svgCameraTargetIcon from '!!raw-loader!./icons/Camera.svg';
+import svgZoomPastIcon from '!!raw-loader!./icons/ZoomIn.svg';
+import svgFitToCameraIcon from '!!raw-loader!./icons/FrameTool.svg';
 
 /**
  * Tool to help user to use the default toolbar items such as Camera & other features in Reveal to enable/disable it.
@@ -44,6 +44,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   /**
    * Add a Icon button into the Toolbar container
    * @param backgroundImageUri Background image to be placed onto icon
+   * @param isPng Is the background image a PNG file
    * @param onClick Click event callback function which will be used to perform custom functionlity of the user
    * @param toolTip Optional tooltip for the icon button
    */
@@ -54,6 +55,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   /**
    * Add a Icon toggle button into the Toolbar container
    * @param backgroundImageUri Background image to be placed onto icon
+   * @param isPng Is the background image a PNG file
    * @param onToggled Click event callback function which will be used to perform custom functionlity of the user
    * @param toolTip Optional tooltip for the icon button
    */
@@ -73,14 +75,14 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Add Enable or Disable Axis view tool to the Toolbar
    */
   public addAxisToolToggle(): void {
-    this.addToolbarToogleButton(axisIcon, this._handleAxisViewToolListener, 'Axis Tool');
+    this.addToolbarToogleButton(svgAxisIcon, this._handleAxisViewToolListener, 'Axis Tool');
   }
 
   /**
    * Add Save the screenshot of the canvas been rendered to the Toolbar
    */
   public addTakeScreenshotTool(): void {
-    this.addToolbarButton(screenshotIcon, this._handleScreenshotListener, 'Take Screenshot');
+    this.addToolbarButton(svgScreenshotIcon, this._handleScreenshotListener, 'Take Screenshot');
   }
 
   /**
@@ -88,7 +90,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    */
   public addCameraTargetOnClickToggle(): void {
     this.addToolbarToogleButton(
-      cameratargetIcon,
+      svgCameraTargetIcon,
       this._handleChangeCameraTargetListener,
       'Enable/Disable Camera Target on Click'
     );
@@ -99,7 +101,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    */
   public addZoomPastToCursorToggle(): void {
     this.addToolbarToogleButton(
-      zoompastIcon,
+      svgZoomPastIcon,
       this._handleCameraZoomPastCursorListener,
       'Toggle Zoom past/Zoom to Cursor'
     );
@@ -109,7 +111,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Adds Fit Camera to Model into Toolbar
    */
   public addFitCameraToModel(): void {
-    this.addToolbarButton(fittocameraIcon, this._handleFitCameraToModelListener, 'Fit Camera to Model');
+    this.addToolbarButton(svgFitToCameraIcon, this._handleFitCameraToModelListener, 'Fit Camera to Model');
   }
 
   /**

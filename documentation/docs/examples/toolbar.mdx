@@ -35,12 +35,12 @@ toolbar.addFitCameraToModel();
 Each toolbar element in Reveal provides flexibilty for the user to add icon image, a callback function to trigger when the icon button is clicked and optional tooltip.
 New elements can be added to the toolbar by methods using
 `addToolbarButton(backgroundImageUri: string, onClick: () => void, toolTip: string = '')`
-- `backgroundImageUri` - Background image to be placed onto icon button. The image needs to be in string with `base64` format.
+- `backgroundImageUri` - Background image to be placed onto icon button. Supported image format are .png & .svg and pass them as strings. The .png image needs to be in `base64` format.
 - `onClick` - Click event callback function which will be used to perform custom functionlity provided by the user.
 - `toolTip` - Optional tooltip for the Icon button
 
 `addToolbarToogleButton(backgroundImageUri: string, onToggled: () => void, toolTip: string = '')`
-- `backgroundImageUri` - Background image to be placed onto icon button. The image needs to be in string with `base64` format.
+- `backgroundImageUri` - Background image to be placed onto icon button. Supported image format are .png & .svg and pass them as strings. The .png image needs to be in `base64` format.
 - `onToggled` - Click event callback function which will be used to perform custom functionlity provided by the user.
 - `toolTip` - Optional tooltip for the Icon button
 
