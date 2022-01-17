@@ -93,10 +93,9 @@ export const FilePreview = ({
     return <>File {fileId} not found!</>;
   }
 
-  // TODO(CDFUX-1214): fix type problem when @cognite/data-exploration is updated
   return (
     <>
-      <CogniteFileViewer.Provider sdk={sdk as any} disableAutoFetch>
+      <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
         <ResourceTitleRow
           item={{ id: fileId!, type: 'file' }}
           beforeDefaultActions={
