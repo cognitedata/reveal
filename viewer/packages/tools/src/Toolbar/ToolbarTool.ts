@@ -44,7 +44,6 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   /**
    * Add a Icon button into the Toolbar container
    * @param backgroundImageUri Background image to be placed onto icon
-   * @param isPng Is the background image a PNG file
    * @param onClick Click event callback function which will be used to perform custom functionlity of the user
    * @param toolTip Optional tooltip for the icon button
    */
@@ -55,7 +54,6 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   /**
    * Add a Icon toggle button into the Toolbar container
    * @param backgroundImageUri Background image to be placed onto icon
-   * @param isPng Is the background image a PNG file
    * @param onToggled Click event callback function which will be used to perform custom functionlity of the user
    * @param toolTip Optional tooltip for the icon button
    */
