@@ -46,8 +46,12 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
     const textPosition = textNode.absolutePosition();
 
     const areaPosition = {
-      x: this.ornateInstance.stage.container().offsetLeft + textPosition.x,
-      y: this.ornateInstance.stage.container().offsetTop + textPosition.y,
+      x:
+        this.ornateInstance.stage.container().getBoundingClientRect().left +
+        textPosition.x,
+      y:
+        this.ornateInstance.stage.container().getBoundingClientRect().top +
+        textPosition.y,
     };
 
     const nodeTextValue = textNode.text();
