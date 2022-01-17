@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   PidDocument,
   DiagramSymbol,
@@ -15,7 +15,7 @@ import {
 import { v4 as uuid } from 'uuid';
 
 import { loadSymbolsFromJson, saveGraphAsJson } from './utils/jsonUtils';
-import { ToolType } from './types';
+import { DocumentType, ToolType } from './types';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
 import { SvgViewer } from './components/svg-viewer/SvgViewer';
@@ -39,7 +39,7 @@ export interface SaveSymbolData {
 
 export const ReactPid: React.FC = () => {
   const [fileUrl, setFileUrl] = useState<string>('');
-  const [active, setActive] = useState<ToolType>('addSymbol');
+  const [active, setActive] = useState<ToolType>('selectDocumentType');
 
   const [selection, setSelection] = useState<SVGElement[]>([]);
   const [lines, setLines] = useState<DiagramLineInstance[]>([]);
@@ -49,6 +49,9 @@ export const ReactPid: React.FC = () => {
   const [symbolInstances, setSymbolInstances] = useState<
     DiagramSymbolInstance[]
   >([]);
+  const [documentType, setDocumentType] = useState<DocumentType>(
+    DocumentType.unknown
+  );
 
   const [labelSelection, setLabelSelection] =
     useState<DiagramInstanceId | null>(null);
@@ -56,6 +59,12 @@ export const ReactPid: React.FC = () => {
   const [connections, setConnections] = React.useState<DiagramConnection[]>([]);
   const [connectionSelection, setConnectionSelection] =
     React.useState<DiagramInstanceId | null>(null);
+
+  useEffect(() => {
+    if (documentType !== DocumentType.unknown) {
+      setActive('addSymbol');
+    }
+  }, [documentType]);
 
   const setToolBarMode = (mode: ToolType) => {
     setSelection([]);
@@ -93,6 +102,7 @@ export const ReactPid: React.FC = () => {
       lines,
       symbolInstances,
       connections,
+      documentType,
       lineNumbers
     );
   };
@@ -187,13 +197,30 @@ export const ReactPid: React.FC = () => {
     setSymbolInstances(prunedInstances);
   };
 
-  const handleFileChange = ({ target }: any) => {
-    if (target && target.files.length > 0) {
-      setFileUrl(URL.createObjectURL(target.files[0]));
+  const evalFileName = (file: File) => {
+    const looksLikeIso = file.name.match(/L[0-9]{1,}/);
+    const looksLikePid = file.name.match(/MF/);
+
+    if (looksLikePid && !looksLikeIso) {
+      setDocumentType(DocumentType.pid);
+    } else if (looksLikeIso && !looksLikePid) {
+      setDocumentType(DocumentType.isometric);
+    }
+  };
+
+  const handleFileChange = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    if (target && target.files?.length) {
+      const file = target.files[0];
+      setFileUrl(URL.createObjectURL(file));
+      evalFileName(file);
       return;
     }
     setFileUrl('');
   };
+
+  const MemoizedSvgViewer = React.memo(SvgViewer);
 
   return (
     <ReactPidWrapper>
@@ -213,6 +240,8 @@ export const ReactPid: React.FC = () => {
           fileUrl={fileUrl}
           findLinesAndConnections={findLinesAndConnections}
           saveGraphAsJson={saveGraphAsJsonWrapper}
+          documentType={documentType}
+          setDocumentType={setDocumentType}
           lineNumbers={lineNumbers}
           setLineNumbers={setLineNumbers}
           activeLineNumber={activeLineNumber}
@@ -232,7 +261,7 @@ export const ReactPid: React.FC = () => {
               onChange={handleFileChange}
             />
           ) : (
-            <SvgViewer
+            <MemoizedSvgViewer
               fileUrl={fileUrl}
               active={active}
               symbolInstances={symbolInstances}

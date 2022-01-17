@@ -7,18 +7,20 @@ import {
   DiagramSymbolInstance,
 } from '@cognite/pid-tools';
 
-import { ToolType } from '../../types';
+import { DocumentType, ToolType } from '../../types';
 import { SaveSymbolData } from '../../ReactPid';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
 import { FileController } from './FileController';
 import { AddSymbolController } from './AddSymbolController';
+import { DocumentTypeSelector } from './DocumentTypeSelector';
 import { AddLineNumberController } from './AddLineNumberController';
 
 const SidePanelWrapper = styled.div`
   display: grid;
   grid-template-rows: max-content auto max-content;
   height: 100%;
+  position: relative;
 `;
 
 const ToolBarWrapper = styled.div`
@@ -48,6 +50,8 @@ interface SidePanelProps {
   fileUrl?: string;
   findLinesAndConnections: () => void;
   saveGraphAsJson: () => void;
+  documentType: DocumentType;
+  setDocumentType: (type: DocumentType) => void;
   lineNumbers: string[];
   setLineNumbers: (arg: string[]) => void;
   activeLineNumber: string | null;
@@ -69,6 +73,8 @@ export const SidePanel = ({
   fileUrl,
   findLinesAndConnections,
   saveGraphAsJson,
+  documentType,
+  setDocumentType,
   lineNumbers,
   setLineNumbers,
   activeLineNumber,
@@ -115,16 +121,30 @@ export const SidePanel = ({
     ],
   ];
 
+  const FileControllerWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & > span {
+      margin: 0 auto;
+    }
+  `;
+
   return (
     <SidePanelWrapper>
-      <FileController
-        disabled={fileUrl === ''}
-        symbols={symbols}
-        symbolInstances={symbolInstances}
-        lineInstances={lines}
-        loadSymbolsAsJson={loadSymbolsAsJson}
-        saveGraphAsJson={saveGraphAsJson}
-      />
+      <FileControllerWrapper>
+        <FileController
+          disabled={fileUrl === ''}
+          symbols={symbols}
+          symbolInstances={symbolInstances}
+          lineInstances={lines}
+          loadSymbolsAsJson={loadSymbolsAsJson}
+          saveGraphAsJson={saveGraphAsJson}
+        />
+        {documentType !== DocumentType.unknown && (
+          <span>Document type: {documentType}</span>
+        )}
+      </FileControllerWrapper>
       <CollapsableInstanceList
         symbols={symbols}
         symbolInstances={symbolInstances}
@@ -155,6 +175,9 @@ export const SidePanel = ({
           />
         </ToolBarWrapper>
       </div>
+      {active === 'selectDocumentType' && fileUrl !== '' && (
+        <DocumentTypeSelector setDocumentType={setDocumentType} />
+      )}
     </SidePanelWrapper>
   );
 };

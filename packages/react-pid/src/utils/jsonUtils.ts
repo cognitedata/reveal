@@ -11,6 +11,8 @@ import {
   DiagramInstanceOutputFormat,
 } from '@cognite/pid-tools';
 
+import { DocumentType } from '../types';
+
 import {
   getLineInstancesOutputFormat,
   getSymbolInstancesOutputFormat,
@@ -27,6 +29,7 @@ export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
 };
 
 interface Graph {
+  documentType: DocumentType;
   viewBox: BoundingBox;
   symbols: DiagramSymbol[];
   symbolInstances: DiagramInstanceOutputFormat[];
@@ -41,6 +44,7 @@ const getGraphFormat = (
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
+  documentType: DocumentType,
   lineNumbers: string[]
 ): Graph => {
   const linesOutputFormat = getLineInstancesOutputFormat(pidDocument, lines);
@@ -61,6 +65,7 @@ const getGraphFormat = (
   };
 
   return {
+    documentType,
     viewBox,
     symbols,
     lines: linesOutputFormat,
@@ -76,6 +81,7 @@ export const saveGraphAsJson = (
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
+  documentType: DocumentType,
   lineNumbers: string[]
 ) => {
   const graphJson = getGraphFormat(
@@ -84,6 +90,7 @@ export const saveGraphAsJson = (
     lines,
     symbolInstances,
     connections,
+    documentType,
     lineNumbers
   );
 
