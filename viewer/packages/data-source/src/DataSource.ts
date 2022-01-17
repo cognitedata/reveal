@@ -8,7 +8,6 @@ import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api'
 /**
  * Describes how Reveal data is stored, and provides means to create custom storage providers
  * that Reveal will fetch data from.
- * @version New since 2.2
  */
 export interface DataSource {
   /**
