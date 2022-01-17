@@ -111,7 +111,7 @@ export class Toolbar {
 
   private checkURL(url: string): boolean {
     return String(url).match(/\.(svg)$/) != null;
-}
+  }
 
   /**
    * Set the position of the toolbar container
