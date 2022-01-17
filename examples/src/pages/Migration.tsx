@@ -3,7 +3,6 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { useMsal } from '@azure/msal-react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -27,7 +26,6 @@ import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
-import { IPublicClientApplication } from '@azure/msal-browser';
 
 
 window.THREE = THREE;

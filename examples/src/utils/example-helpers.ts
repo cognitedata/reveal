@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { PublicClientApplication, EventType } from '@azure/msal-browser';
+import { PublicClientApplication } from '@azure/msal-browser';
 
 export function withBasePath(path: string) {
   let basePath = (process.env.PUBLIC_URL || '').trim();
@@ -106,82 +106,38 @@ export async function createSDKFromEnvironment(
   project: string,
   environmentParam: string): Promise<CogniteClient> {
 
-    const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
-    const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
+  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+  const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
 
   const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
   const scopes = [
-    `${baseUrl}/DATA.VIEW`,
-    `${baseUrl}/DATA.CHANGE`,
-    `${baseUrl}/IDENTITY`
+    `${baseUrl}/.default`
   ];
 
   const config = {
     auth: {
       clientId: credentialEnvironment.clientId,
-      authority: `https://login.microsoftonline.com/${credentialEnvironment.tenantId}`
+      authority: `https://login.microsoftonline.com/${credentialEnvironment.tenantId}`,
+      redirectUri: `${window.location.origin}`,
+      navigateToLoginRequestUrl: true,
     },
     cache: {
-      cacheLocation: "sessionStorage",
+      cacheLocation: "localStorage",
     },
   };
 
-  /* const msalObj = new PublicClientApplication(config);
+  const msalObj = new PublicClientApplication(config);
 
-  const token = await msalObj.acquireTokenPopup({ scopes });
-
-  const accounts = msalObj.getAllAccounts();
-  if (accounts.length > 0) {
-    msalObj.setActiveAccount(accounts[0]);
-  }
-
-  msalObj.addEventCallback((event) => {
-    if (event.eventType === EventType.LOGIN_SUCCESS && (event.payload as any).account) {
-      const account = (event.payload as any).account
-    }
-  }); */
 
   const getToken = async () => {
-    console.log("Called gettoken");
-    /* const accountId = sessionStorage.getItem('account');
-    console.log("Account id = ", accountId);
-    if (!accountId) {
-      console.log("Calling loginredirect");
-      await msalObj.loginRedirect();
-      console.log("LoginRedirect called");
-      throw new Error("No user id found");
-    }
+    const result = await msalObj.acquireTokenPopup({ scopes });
 
-    const account = msalObj.getAccountByLocalId(accountId);
-    if (!account) {
-      throw new Error("No user found");
-    }
-
-    console.log("Active account: " + account.username); */
-    /* const token = await msalObj.acquireTokenSilent({
-      account,
-      scopes
-      }); */
-    // const result = await msalObj.acquireTokenPopup({ scopes });
-    console.log("Got result");
-
-    return "AAAAAAHHHH"; // result.accessToken;
+    return result.accessToken;
   };
 
   const client = new CogniteClient({ appId,
                                      project,
                                      getToken });
-
+  await client.authenticate();
   return client;
-
-  /* await client.loginWithOAuth({
-      type: 'AAD_OAUTH',
-      options: {
-        clientId: credentialEnvironment.clientId,
-        cluster: credentialEnvironment.cluster,
-        tenantId: credentialEnvironment.tenantId,
-      }
-    });
-  client.setProject(project);
-  await client.authenticate(); */
 }

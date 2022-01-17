@@ -53,10 +53,6 @@ const ExampleView = (props: { page: ExampleRoute }) => {
   const credentialEnvironment = getCredentialEnvironment();
 
   if (credentialEnvironment) {
-    const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
-    const scopes = [`${baseUrl}/DATA.VIEW`,
-                    `${baseUrl}/DATA.CHANGE`,
-                    `${baseUrl}/IDENTITY`];
     const msalInstance = new PublicClientApplication({ auth: {
       clientId: credentialEnvironment.clientId,
       authority: `https://login.microsoftonline.com/${credentialEnvironment.tenantId}`

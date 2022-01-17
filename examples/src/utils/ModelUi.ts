@@ -135,9 +135,7 @@ export class ModelUi {
       this._onModelAdded(model);
     } catch (e) {
       console.error(e);
-      if (this._msalInstance) {
-        await this._msalInstance.loginRedirect();
-      }
+      alert(`ModelID is invalid or is not supported`);
     }
   }
 

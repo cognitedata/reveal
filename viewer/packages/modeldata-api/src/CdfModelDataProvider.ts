@@ -10,7 +10,7 @@ import { ModelDataProvider } from './types';
  */
 export class CdfModelDataProvider implements ModelDataProvider {
   private readonly client: CogniteClient;
-  private authenticationPromise: Promise<boolean>;
+  private authenticationPromise: Promise<string | undefined>;
 
   constructor(client: CogniteClient) {
     this.client = client;
