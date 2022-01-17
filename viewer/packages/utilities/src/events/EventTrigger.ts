@@ -5,14 +5,14 @@
 /**
  * Subscribable event source.
  */
-export class EventTrigger<TListener extends (...args: any[]) => void> {
-  private readonly _listeners: TListener[] = [];
+export class EventTrigger<TEventArgs> {
+  private readonly _listeners: ((eventArgs: TEventArgs) => void)[] = [];
 
-  subscribe(listener: TListener): void {
+  subscribe(listener: (eventArgs: TEventArgs) => void): void {
     this._listeners.push(listener);
   }
 
-  unsubscribe(listener: TListener): void {
+  unsubscribe(listener: (eventArgs: TEventArgs) => void): void {
     const index = this._listeners.indexOf(listener);
     if (index !== -1) {
       this._listeners.splice(index, 1);
@@ -23,7 +23,7 @@ export class EventTrigger<TListener extends (...args: any[]) => void> {
     this._listeners.splice(0);
   }
 
-  fire(...args: Parameters<TListener>): void {
-    this._listeners.forEach(listener => listener(...args));
+  fire(eventArgs: TEventArgs): void {
+    this._listeners.forEach(listener => listener(eventArgs));
   }
 }

@@ -3,25 +3,26 @@
  */
 
 import { assertNever, EventTrigger } from '@reveal/core/utilities';
+import { EventListener, EmptyEvent } from '@reveal/utilities';
 
 /**
  * Base class for tools attaching to a {@see Cognite3DViewer}.
  */
 export abstract class Cognite3DViewerToolBase {
-  private readonly _disposedEvent = new EventTrigger<() => void>();
+  private readonly _disposedEvent = new EventTrigger<EmptyEvent>();
   private _disposed = false;
 
   /**
    * Registers an event handler that is triggered when {@see Cognite3DViewerToolBase.dispose} is
    * called.
    * @param event
-   * @param handler
+   * @param listener
    * @internal
    */
-  on(event: 'disposed', handler: () => void): void {
+  on(event: 'disposed', listener: EventListener<EmptyEvent>): void {
     switch (event) {
       case 'disposed':
-        this._disposedEvent.subscribe(handler);
+        this._disposedEvent.subscribe(listener);
         break;
 
       default:
@@ -34,7 +35,7 @@ export abstract class Cognite3DViewerToolBase {
    * @param event
    * @param handler
    */
-  off(event: 'disposed', handler: () => void): void {
+  off(event: 'disposed', handler: EventListener<EmptyEvent>): void {
     switch (event) {
       case 'disposed':
         this._disposedEvent.unsubscribe(handler);
@@ -46,15 +47,15 @@ export abstract class Cognite3DViewerToolBase {
   }
 
   /**
-   * Disposes the element and triggeres the 'disposed' event before clearing the list
-   * of dipose-listeners.
+   * Disposes the element and triggers the 'disposed' event before clearing the list
+   * of dispose-listeners.
    */
   dispose(): void {
     if (this._disposed) {
       throw new Error('Already disposed');
     }
     this._disposed = true;
-    this._disposedEvent.fire();
+    this._disposedEvent.fire(null);
     this._disposedEvent.unsubscribeAll();
   }
 

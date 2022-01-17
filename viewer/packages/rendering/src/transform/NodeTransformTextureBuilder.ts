@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { TransformOverrideBuffer } from './TransformOverrideBuffer';
 
 import { determinePowerOfTwoDimensions, assertNever, NumericRange } from '@reveal/utilities';
-import { NodeTransformProvider } from './NodeTransformProvider';
+import { NodeTransformChangedEvent, NodeTransformProvider } from './NodeTransformProvider';
 
 export class NodeTransformTextureBuilder {
   private readonly _transformProvider: NodeTransformProvider;
@@ -70,7 +70,8 @@ export class NodeTransformTextureBuilder {
     this._needsUpdate = true;
   }
 
-  private handleTransformChanged(change: 'set' | 'reset', treeIndices: NumericRange, transform: THREE.Matrix4) {
+  private handleTransformChanged(event: NodeTransformChangedEvent) {
+    const { change, treeIndices, transform } = event;
     switch (change) {
       case 'set':
         this.setNodeTransform(treeIndices, transform);

@@ -9,17 +9,17 @@ import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } fro
 
 import { CadManager } from '../datamodels/cad/CadManager';
 import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
-import { LoadingStateChangeListener, PointCloudBudget } from './types';
+import { PointCloudBudget } from './types';
 import { SupportedModelTypes } from '../datamodels/base';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
 import { GeometryFilter } from '..';
 
 import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
-import { NodeAppearanceProvider } from '@reveal/cad-styling';
+import { LoadingStateChangedEvent, NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
-import { assertNever, EventTrigger } from '@reveal/utilities';
+import { assertNever, EventTrigger, EventListener } from '@reveal/utilities';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 
@@ -44,7 +44,7 @@ export class RevealManager {
   private _isDisposed = false;
   private readonly _subscriptions = new Subscription();
   private readonly _events = {
-    loadingStateChanged: new EventTrigger<LoadingStateChangeListener>()
+    loadingStateChanged: new EventTrigger<LoadingStateChangedEvent>()
   };
 
   private readonly _updateSubject: Subject<void>;
@@ -157,10 +157,10 @@ export class RevealManager {
     return this._cadManager.clippingPlanes;
   }
 
-  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+  public on(event: 'loadingStateChanged', listener: EventListener<LoadingStateChangedEvent>): void {
     switch (event) {
       case 'loadingStateChanged':
-        this._events.loadingStateChanged.subscribe(listener as LoadingStateChangeListener);
+        this._events.loadingStateChanged.subscribe(listener);
         break;
 
       default:
@@ -168,10 +168,10 @@ export class RevealManager {
     }
   }
 
-  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+  public off(event: 'loadingStateChanged', listener: EventListener<LoadingStateChangedEvent>): void {
     switch (event) {
       case 'loadingStateChanged':
-        this._events.loadingStateChanged.unsubscribe(listener as LoadingStateChangeListener);
+        this._events.loadingStateChanged.unsubscribe(listener);
         break;
 
       default:

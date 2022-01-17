@@ -116,12 +116,12 @@ describe('NodeAppearanceProvider', () => {
     nodeCollection.isLoading = true;
     nodeCollection.triggerChanged();
     jest.runAllTimers();
-    expect(isLoadingChangedListener).toBeCalledWith(true);
+    expect(isLoadingChangedListener).toBeCalledWith({ isLoading: true });
     isLoadingChangedListener.mockReset();
 
     nodeCollection.isLoading = false;
     nodeCollection.triggerChanged();
     jest.runAllTimers();
-    expect(isLoadingChangedListener).toBeCalledWith(false);
+    expect(isLoadingChangedListener).toBeCalledWith({ isLoading: false });
   });
 });

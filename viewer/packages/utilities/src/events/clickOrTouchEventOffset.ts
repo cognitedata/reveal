@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import { PointerEvent } from './types';
 
 /**
  * Determines clicked or touched coordinate as offset
@@ -8,10 +9,7 @@
  * @param target    HTML element to find coordinates relative to.
  * @returns A struct containing coordinates relative to the HTML element provided.
  */
-export function clickOrTouchEventOffset(
-  ev: MouseEvent | TouchEvent,
-  target: HTMLElement
-): { offsetX: number; offsetY: number } {
+export function clickOrTouchEventOffset(ev: MouseEvent | TouchEvent, target: HTMLElement): PointerEvent {
   const rect = target.getBoundingClientRect();
 
   if (ev instanceof MouseEvent) {

@@ -7,8 +7,8 @@ import TWEEN from '@tweenjs/tween.js';
 import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
-import { TimelineDateUpdateDelegate } from './types';
-import { EventTrigger, assertNever } from '@reveal/core/utilities';
+import { TimelineDateUpdatedEvent } from './types';
+import { EventListener, EventTrigger, assertNever } from '@reveal/utilities';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
@@ -17,7 +17,9 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private readonly _keyframes: Keyframe[];
   private _playback: TWEEN.Tween | undefined = undefined;
-  private readonly _events = { dateChanged: new EventTrigger<TimelineDateUpdateDelegate>() };
+  private readonly _events = {
+    dateChanged: new EventTrigger<TimelineDateUpdatedEvent>()
+  };
 
   constructor(cadModel: Cognite3DModel) {
     super();
@@ -31,7 +33,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param event `dateChanged` event
    * @param listener Listen to Timeline date Update during Playback
    */
-  public subscribe(event: 'dateChanged', listener: TimelineDateUpdateDelegate): void {
+  public subscribe(event: 'dateChanged', listener: EventListener<TimelineDateUpdatedEvent>): void {
     switch (event) {
       case 'dateChanged':
         this._events.dateChanged.subscribe(listener);
@@ -46,7 +48,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param event `dateChanged` event
    * @param listener Remove Listen to Timeline date Update
    */
-  public unsubscribe(event: 'dateChanged', listener: TimelineDateUpdateDelegate): void {
+  public unsubscribe(event: 'dateChanged', listener: EventListener<TimelineDateUpdatedEvent>): void {
     switch (event) {
       case 'dateChanged':
         this._events.dateChanged.unsubscribe(listener);

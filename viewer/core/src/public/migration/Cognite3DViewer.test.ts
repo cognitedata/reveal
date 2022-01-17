@@ -5,13 +5,15 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
+
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
+import { EventListener, EmptyEvent } from '@reveal/utilities';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
+import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
 import nock from 'nock';
-import { DisposedDelegate, SceneRenderedDelegate } from '../types';
-import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
+import { SceneRenderedEvent } from '../types';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 
@@ -70,7 +72,7 @@ describe('Cognite3DViewer', () => {
   });
 
   test('dispose raises disposed-event', () => {
-    const disposedListener: DisposedDelegate = jest.fn();
+    const disposedListener: EventListener<EmptyEvent> = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     viewer.on('disposed', disposedListener);
 
@@ -80,7 +82,7 @@ describe('Cognite3DViewer', () => {
   });
   test('on cameraChange triggers when position and target is changed', () => {
     // Arrange
-    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
+    const onCameraChange: (event: { position: THREE.Vector3; target: THREE.Vector3 }) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     viewer.on('cameraChange', onCameraChange);
 
@@ -113,7 +115,7 @@ describe('Cognite3DViewer', () => {
       .get(/.*\/scene.json/)
       .reply(200, sceneJson);
 
-    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
+    const onCameraChange: (event: { position: THREE.Vector3; target: THREE.Vector3 }) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     viewer.on('cameraChange', onCameraChange);
 
@@ -184,7 +186,7 @@ describe('Cognite3DViewer', () => {
       });
     let requestAnimationFrameCallback: FrameRequestCallback | undefined;
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
-    const onRendered: SceneRenderedDelegate = jest.fn();
+    const onRendered: EventListener<SceneRenderedEvent> = jest.fn();
     if (!requestAnimationFrameCallback) throw new Error('Animation frame not triggered');
 
     try {

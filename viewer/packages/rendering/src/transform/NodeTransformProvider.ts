@@ -4,35 +4,35 @@
 
 import * as THREE from 'three';
 
-import { assertNever, EventTrigger, NumericRange } from '@reveal/utilities';
+import { assertNever, EventListener, EventTrigger, NumericRange } from '@reveal/utilities';
 
 const identityTransform = new THREE.Matrix4().identity();
 
-export type NodeTransformChangeEventDelegate = (
-  change: 'set' | 'reset',
-  treeIndices: NumericRange,
-  transform: THREE.Matrix4
-) => void;
+export type NodeTransformChangedEvent = {
+  change: 'set' | 'reset';
+  treeIndices: NumericRange;
+  transform: THREE.Matrix4;
+};
 
 export class NodeTransformProvider {
   private readonly _events = {
-    changed: new EventTrigger<NodeTransformChangeEventDelegate>()
+    changed: new EventTrigger<NodeTransformChangedEvent>()
   };
 
-  on(event: 'changed', listener: NodeTransformChangeEventDelegate): void {
+  on(event: 'changed', listener: EventListener<NodeTransformChangedEvent>): void {
     switch (event) {
       case 'changed':
-        this._events.changed.subscribe(listener as NodeTransformChangeEventDelegate);
+        this._events.changed.subscribe(listener);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
     }
   }
 
-  off(event: 'changed', listener: NodeTransformChangeEventDelegate): void {
+  off(event: 'changed', listener: EventListener<NodeTransformChangedEvent>): void {
     switch (event) {
       case 'changed':
-        this._events.changed.unsubscribe(listener as NodeTransformChangeEventDelegate);
+        this._events.changed.unsubscribe(listener);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -40,10 +40,10 @@ export class NodeTransformProvider {
   }
 
   setNodeTransform(treeIndices: NumericRange, transform: THREE.Matrix4): void {
-    this._events.changed.fire('set', treeIndices, transform);
+    this._events.changed.fire({ change: 'set', treeIndices, transform });
   }
 
   resetNodeTransform(treeIndices: NumericRange): void {
-    this._events.changed.fire('reset', treeIndices, identityTransform);
+    this._events.changed.fire({ change: 'reset', treeIndices, transform: identityTransform });
   }
 }

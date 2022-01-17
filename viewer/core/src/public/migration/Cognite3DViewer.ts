@@ -11,28 +11,28 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
+import {
+  assertNever,
+  EventTrigger,
+  EventListener,
+  InputHandler,
+  disposeOfAllEventListeners,
+  EmptyEvent,
+  PointerEvent
+} from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
 
-import {
-  AddModelOptions,
-  Cognite3DViewerOptions,
-  Intersection,
-  CameraChangeDelegate,
-  PointerEventDelegate,
-  CadModelBudget,
-  PointCloudBudget
-} from './types';
+import { AddModelOptions, Cognite3DViewerOptions, Intersection, CadModelBudget, PointCloudBudget } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import { DisposedDelegate, SceneRenderedDelegate } from '../types';
+import { CameraChangedEvent, SceneRenderedEvent } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
@@ -107,11 +107,11 @@ export class Cognite3DViewer {
 
   private readonly _boundAnimate = this.animate.bind(this);
   private readonly _events = {
-    cameraChange: new EventTrigger<CameraChangeDelegate>(),
-    click: new EventTrigger<PointerEventDelegate>(),
-    hover: new EventTrigger<PointerEventDelegate>(),
-    sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
-    disposed: new EventTrigger<DisposedDelegate>()
+    cameraChange: new EventTrigger<CameraChangedEvent>(),
+    click: new EventTrigger<PointerEvent>(),
+    hover: new EventTrigger<PointerEvent>(),
+    sceneRendered: new EventTrigger<SceneRenderedEvent>(),
+    disposed: new EventTrigger<EmptyEvent>()
   };
   private readonly _mouseHandler: InputHandler;
 
@@ -228,7 +228,7 @@ export class Cognite3DViewer {
 
     this._cameraManager.on('cameraChange', event => {
       const { position, target } = event.camera;
-      this._events.cameraChange.fire(position.clone(), target.clone());
+      this._events.cameraChange.fire({ position: position.clone(), target: target.clone() });
     });
 
     const revealOptions = createRevealManagerOptions(options);
@@ -350,7 +350,7 @@ export class Cognite3DViewer {
     this._models.splice(0);
     this.spinner.dispose();
 
-    this._events.disposed.fire();
+    this._events.disposed.fire(null);
     disposeOfAllEventListeners(this._events);
     this._mouseHandler.dispose();
   }
@@ -359,7 +359,7 @@ export class Cognite3DViewer {
    * Triggered when the viewer is disposed. Listeners should clean up any
    * resources held and remove the reference to the viewer.
    */
-  on(event: 'disposed', callback: DisposedDelegate): void;
+  on(event: 'disposed', listener: EventListener<EmptyEvent>): void;
 
   /**
    * @example
@@ -368,7 +368,7 @@ export class Cognite3DViewer {
    * viewer.on('click', onClick);
    * ```
    */
-  on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  on(event: 'click' | 'hover', listener: EventListener<PointerEvent>): void;
   /**
    * @example
    * ```js
@@ -377,42 +377,46 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  on(event: 'cameraChange', listener: EventListener<CameraChangedEvent>): void;
   /**
-   * Event that is triggered immediatly after the scene has been rendered.
+   * Event that is triggered immediately after the scene has been rendered.
    * @param event Metadata about the rendering frame.
    * @param callback Callback to trigger when the event occurs.
    */
-  on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
+  on(event: 'sceneRendered', listener: EventListener<SceneRenderedEvent>): void;
   /**
    * Add event listener to the viewer.
    * Call {@link Cognite3DViewer.off} to remove an event listener.
    * @param event
-   * @param callback
+   * @param listener
    */
   on(
     event: Cognite3DViewerEvents,
-    callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate | DisposedDelegate
+    listener:
+      | EventListener<PointerEvent>
+      | EventListener<CameraChangedEvent>
+      | EventListener<SceneRenderedEvent>
+      | EventListener<EmptyEvent>
   ): void {
     switch (event) {
       case 'click':
-        this._events.click.subscribe(callback as PointerEventDelegate);
+        this._events.click.subscribe(listener as EventListener<PointerEvent>);
         break;
 
       case 'hover':
-        this._events.hover.subscribe(callback as PointerEventDelegate);
+        this._events.hover.subscribe(listener as EventListener<PointerEvent>);
         break;
 
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        this._events.cameraChange.subscribe(listener as EventListener<CameraChangedEvent>);
         break;
 
       case 'sceneRendered':
-        this._events.sceneRendered.subscribe(callback as SceneRenderedDelegate);
+        this._events.sceneRendered.subscribe(listener as EventListener<SceneRenderedEvent>);
         break;
 
       case 'disposed':
-        this._events.disposed.subscribe(callback as DisposedDelegate);
+        this._events.disposed.subscribe(listener as EventListener<EmptyEvent>);
         break;
 
       default:
@@ -426,10 +430,10 @@ export class Cognite3DViewer {
    * viewer.off('click', onClick);
    * ```
    */
-  off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
-  off(event: 'cameraChange', callback: CameraChangeDelegate): void;
-  off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
-  off(event: 'disposed', callback: DisposedDelegate): void;
+  off(event: 'click' | 'hover', listener: EventListener<PointerEvent>): void;
+  off(event: 'cameraChange', listener: EventListener<CameraChangedEvent>): void;
+  off(event: 'sceneRendered', listener: EventListener<SceneRenderedEvent>): void;
+  off(event: 'disposed', listener: EventListener<EmptyEvent>): void;
 
   /**
    * Remove event listener from the viewer.

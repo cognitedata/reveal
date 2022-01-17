@@ -1,21 +1,23 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
-import { EventTrigger } from './EventTrigger';
-import debounce from 'lodash/debounce';
-import { assertNever } from '@reveal/utilities';
 import { Vector2 } from 'three';
 
-type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
+import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
+import { EventListener, PointerEvent } from './types';
+import { EventTrigger } from './EventTrigger';
+import { assertNever } from '../assertNever';
+
+import debounce from 'lodash/debounce';
+
 export class InputHandler {
   private readonly domElement: HTMLElement;
   private static readonly maxMoveDistance = 8;
   private static readonly maxClickDuration = 250;
 
   private readonly _events = {
-    click: new EventTrigger<PointerEventDelegate>(),
-    hover: new EventTrigger<PointerEventDelegate>()
+    click: new EventTrigger<PointerEvent>(),
+    hover: new EventTrigger<PointerEvent>()
   };
 
   constructor(domElement: HTMLElement) {
@@ -30,28 +32,28 @@ export class InputHandler {
    * viewer.on('click', onClick);
    * ```
    */
-  on(event: 'click' | 'hover', callback: PointerEventDelegate): void {
+  on(event: 'click' | 'hover', listener: EventListener<PointerEvent>): void {
     switch (event) {
       case 'click':
-        this._events.click.subscribe(callback as PointerEventDelegate);
+        this._events.click.subscribe(listener);
         break;
 
       case 'hover':
-        this._events.hover.subscribe(callback as PointerEventDelegate);
+        this._events.hover.subscribe(listener);
         break;
       default:
         assertNever(event);
     }
   }
 
-  off(event: 'click' | 'hover', callback: PointerEventDelegate): void {
+  off(event: 'click' | 'hover', callback: EventListener<PointerEvent>): void {
     switch (event) {
       case 'click':
-        this._events.click.unsubscribe(callback as PointerEventDelegate);
+        this._events.click.unsubscribe(callback);
         break;
 
       case 'hover':
-        this._events.hover.unsubscribe(callback as PointerEventDelegate);
+        this._events.hover.unsubscribe(callback);
         break;
       default:
         assertNever(event);
@@ -150,7 +152,7 @@ export class InputHandler {
 /**
  * Method for deleting all external events that are associated with current instance of a class.
  */
-export function disposeOfAllEventListeners(eventList: any): void {
+export function disposeOfAllEventListeners(eventList: { [eventName: string]: EventTrigger<any> }): void {
   for (const eventType of Object.keys(eventList)) {
     eventList[eventType].unsubscribeAll();
   }

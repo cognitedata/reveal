@@ -4,13 +4,13 @@
 
 import * as THREE from 'three';
 import { Cognite3DViewer } from '@reveal/core';
-import { DisposedDelegate } from './types';
+import { EventListener, EmptyEvent } from '@reveal/utilities';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export class DebugCameraTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _onViewerDisposedHandler: DisposedDelegate;
+  private readonly _onViewerDisposedHandler: EventListener<EmptyEvent>;
   private _cameraHelper?: THREE.CameraHelper;
 
   private get viewerCamera(): THREE.PerspectiveCamera {

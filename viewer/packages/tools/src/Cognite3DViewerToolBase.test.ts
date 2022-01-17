@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { DisposedDelegate } from './types';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
+import { EventListener, EmptyEvent } from '@reveal/utilities';
 
 describe('Cognite3DViewerToolBase', () => {
   class MockedCognite3DViewerToolBase extends Cognite3DViewerToolBase {
@@ -17,7 +17,7 @@ describe('Cognite3DViewerToolBase', () => {
     tool = new MockedCognite3DViewerToolBase();
   });
   test('dispose() triggers disposed event', () => {
-    const handler: DisposedDelegate = jest.fn();
+    const handler: EventListener<EmptyEvent> = jest.fn();
     tool.on('disposed', handler);
 
     tool.dispose();

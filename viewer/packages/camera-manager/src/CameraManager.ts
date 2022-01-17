@@ -5,18 +5,19 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
+import { CameraChangedEvent, CameraManagerCallbackData, CameraControlsOptions, ControlsState } from './types';
 import {
-  CameraManagerCallbackData,
-  CameraControlsOptions,
-  CameraChangeData,
-  PointerEventDelegate,
-  ControlsState
-} from './types';
-import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
+  assertNever,
+  EventListener,
+  EventTrigger,
+  PointerEvent,
+  InputHandler,
+  disposeOfAllEventListeners
+} from '@reveal/utilities';
 import range from 'lodash/range';
 export class CameraManager {
   private readonly _events = {
-    cameraChange: new EventTrigger<CameraChangeData>()
+    cameraChange: new EventTrigger<CameraChangedEvent>()
   };
 
   private readonly _controls: ComboControls;
@@ -97,20 +98,20 @@ export class CameraManager {
     }
   }
 
-  on(event: 'cameraChange', callback: CameraChangeData): void {
+  on(event: 'cameraChange', listener: EventListener<CameraChangedEvent>): void {
     switch (event) {
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeData);
+        this._events.cameraChange.subscribe(listener);
         break;
       default:
         assertNever(event);
     }
   }
 
-  off(event: 'cameraChange', callback: CameraChangeData): void {
+  off(event: 'cameraChange', listener: EventListener<CameraChangedEvent>): void {
     switch (event) {
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeData);
+        this._events.cameraChange.subscribe(listener);
         break;
       default:
         assertNever(event);
@@ -480,7 +481,7 @@ export class CameraManager {
    */
   private teardownControls() {
     if (this._onClick !== undefined) {
-      this._inputHandler.off('click', this._onClick as PointerEventDelegate);
+      this._inputHandler.off('click', this._onClick as EventListener<PointerEvent>);
       this._onClick = undefined;
     }
     if (this._onWheel !== undefined) {

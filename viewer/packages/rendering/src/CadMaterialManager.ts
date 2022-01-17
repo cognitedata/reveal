@@ -11,7 +11,7 @@ import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
 import { NodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
-import { IndexSet, EventTrigger, assertNever } from '@reveal/utilities';
+import { IndexSet, EventTrigger, assertNever, EmptyEvent } from '@reveal/utilities';
 
 import throttle from 'lodash/throttle';
 
@@ -28,7 +28,7 @@ interface MaterialsWrapper {
 
 export class CadMaterialManager {
   private readonly _events = {
-    materialsChanged: new EventTrigger<() => void>()
+    materialsChanged: new EventTrigger<EmptyEvent>()
   };
 
   get clippingPlanes(): THREE.Plane[] {
@@ -241,7 +241,7 @@ export class CadMaterialManager {
   }
 
   private triggerMaterialsChanged() {
-    this._events.materialsChanged.fire();
+    this._events.materialsChanged.fire(null);
   }
 }
 

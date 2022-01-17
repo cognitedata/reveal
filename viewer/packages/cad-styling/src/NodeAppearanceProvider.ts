@@ -5,7 +5,9 @@
 import { NodeAppearance } from './NodeAppearance';
 import { NodeCollectionBase } from './NodeCollectionBase';
 
-import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
+import { IndexSet, assertNever, EventTrigger, EmptyEvent } from '@reveal/utilities';
+import { LoadingStateChangedEvent } from './types';
+
 import debounce from 'lodash/debounce';
 
 /**
@@ -26,19 +28,19 @@ export class NodeAppearanceProvider {
   private _lastFiredLoadingState?: boolean;
 
   private readonly _events = {
-    changed: new EventTrigger<() => void>(),
-    loadingStateChanged: new EventTrigger<(isLoading: boolean) => void>()
+    changed: new EventTrigger<EmptyEvent>(),
+    loadingStateChanged: new EventTrigger<LoadingStateChangedEvent>()
   };
 
   on(event: 'changed', listener: () => void): void;
-  on(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
-  on(event: 'changed' | 'loadingStateChanged', listener: (() => void) | ((isLoading: boolean) => void)): void {
+  on(event: 'loadingStateChanged', listener: (args: LoadingStateChangedEvent) => void): void;
+  on(event: 'changed' | 'loadingStateChanged', listener: (args: never | LoadingStateChangedEvent) => void): void {
     switch (event) {
       case 'changed':
         this._events.changed.subscribe(listener as () => void);
         break;
       case 'loadingStateChanged':
-        this._events.loadingStateChanged.subscribe(listener as (isLoading: boolean) => void);
+        this._events.loadingStateChanged.subscribe(listener as (args: { isLoading: boolean }) => void);
         break;
 
       default:
@@ -47,14 +49,14 @@ export class NodeAppearanceProvider {
   }
 
   off(event: 'changed', listener: () => void): void;
-  off(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
-  off(event: 'changed' | 'loadingStateChanged', listener: (() => void) | ((isLoading: boolean) => void)): void {
+  off(event: 'loadingStateChanged', listener: (args: LoadingStateChangedEvent) => void): void;
+  off(event: 'changed' | 'loadingStateChanged', listener: (args: never | LoadingStateChangedEvent) => void): void {
     switch (event) {
       case 'changed':
         this._events.changed.unsubscribe(listener as () => void);
         break;
       case 'loadingStateChanged':
-        this._events.loadingStateChanged.unsubscribe(listener as (isLoading: boolean) => void);
+        this._events.loadingStateChanged.unsubscribe(listener as (args: LoadingStateChangedEvent) => void);
         break;
 
       default:
@@ -115,7 +117,7 @@ export class NodeAppearanceProvider {
   }
 
   private notifyChanged() {
-    this._events.changed.fire();
+    this._events.changed.fire(null);
   }
 
   /**
@@ -126,7 +128,7 @@ export class NodeAppearanceProvider {
   private notifyLoadingStateChanged() {
     if (this._lastFiredLoadingState === this.isLoading) return;
     this._lastFiredLoadingState = this.isLoading;
-    this._events.loadingStateChanged.fire(this.isLoading);
+    this._events.loadingStateChanged.fire({ isLoading: this.isLoading });
   }
 
   private handleNodeCollectionChanged(_styledSet: StyledNodeCollection) {

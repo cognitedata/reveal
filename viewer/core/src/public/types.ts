@@ -42,7 +42,7 @@ export interface GeometryFilter {
 /**
  * Handler for events about data being loaded.
  */
-export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
+export type LoadingStateEvent = { loadingState: LoadingState };
 
 export * from '../datamodels/pointcloud/types';
 export * from './migration/types';

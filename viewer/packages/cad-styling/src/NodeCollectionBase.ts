@@ -3,7 +3,7 @@
  */
 
 import assert from 'assert';
-import { EventTrigger, IndexSet } from '@reveal/utilities';
+import { EmptyEvent, EventTrigger, IndexSet } from '@reveal/utilities';
 
 export type SerializedNodeCollection = {
   token: string;
@@ -15,7 +15,7 @@ export type SerializedNodeCollection = {
  * Abstract class for implementing a set of nodes to be styled.
  */
 export abstract class NodeCollectionBase {
-  private readonly _changedEvent = new EventTrigger<() => void>();
+  private readonly _changedEvent = new EventTrigger<EmptyEvent>();
   private readonly _classToken: string;
 
   protected constructor(classToken: string) {
@@ -64,7 +64,7 @@ export abstract class NodeCollectionBase {
    * Triggers the changed-event.
    */
   protected notifyChanged(): void {
-    this._changedEvent.fire();
+    this._changedEvent.fire(null);
   }
 
   abstract serialize(): SerializedNodeCollection;
