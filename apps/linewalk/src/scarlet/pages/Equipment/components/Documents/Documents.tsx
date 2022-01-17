@@ -1,11 +1,11 @@
-import { APIResponse, ScarletDocument } from 'modules/scarlet/types';
+import { APIState, EquipmentDocument } from 'scarlet/types';
 
 import { Ornate } from '..';
 
 import * as Styled from './style';
 
 type DocumentsProps = {
-  documentsQuery: APIResponse<ScarletDocument[]>;
+  documentsQuery: APIState<EquipmentDocument[]>;
 };
 
 export const Documents = ({ documentsQuery }: DocumentsProps) => {

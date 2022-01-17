@@ -1,5 +1,5 @@
 import { CogniteClient, FileLink, InternalId } from '@cognite/sdk';
-import { DataSetId, DocumentType, ScarletDocument } from 'scarlet/types';
+import { DataSetId, DocumentType, EquipmentDocument } from 'scarlet/types';
 
 export const getEquipmentDocuments = async (
   client: CogniteClient,
@@ -10,7 +10,7 @@ export const getEquipmentDocuments = async (
     unitName: string;
     equipmentName: string;
   }
-): Promise<ScarletDocument[]> => {
+): Promise<EquipmentDocument[]> => {
   const filesResponse = await client.files.list({
     filter: {
       externalIdPrefix: `${unitName}_${equipmentName}`,
@@ -33,15 +33,15 @@ export const getEquipmentDocuments = async (
     {} as Record<number, string>
   );
 
-  const documents: ScarletDocument[] = filesResponse.items.map((item) => ({
-    ...item,
-    downloadUrl: downloadUrlsDictionary[item.id],
-  }));
+  const documents: EquipmentDocument[] = filesResponse.items
+    .map((item) => ({
+      id: item.id,
+      externalId: item.externalId,
+      downloadUrl: downloadUrlsDictionary[item.id],
+      type: item.metadata?.document_type,
+    }))
+    .filter((document) => document.downloadUrl)
+    .sort((document) => (document.type === DocumentType.U1 ? -1 : 0));
 
-  return (
-    documents
-      .filter((document) => document.downloadUrl)
-      // .filter((a) => a.metadata?.document_type === DocumentType.U1)
-      .sort((a) => (a.metadata?.document_type === DocumentType.U1 ? -1 : 0))
-  );
+  return documents;
 };

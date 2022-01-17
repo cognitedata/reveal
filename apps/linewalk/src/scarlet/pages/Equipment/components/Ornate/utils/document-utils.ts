@@ -1,6 +1,6 @@
 import Konva from 'konva';
-import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
-import { DataElement, ScarletDocument } from 'scarlet/types';
+import { OrnatePDFDocument } from '@cognite/ornate';
+import { EquipmentDocument } from 'scarlet/types';
 
 const TEXT_PADDING = 40;
 const TEXT_SIZE = 60;
@@ -9,11 +9,11 @@ export const addDocumentTitle = ({
   document,
   ornateDocument,
 }: {
-  document: ScarletDocument;
+  document: EquipmentDocument;
   ornateDocument: OrnatePDFDocument;
 }) => {
   const text = new Konva.Text({
-    text: document.metadata?.document_type,
+    text: document.type || document.externalId || document.id.toString(),
     fill: 'rgba(0, 0, 0, 0.45)',
     fontSize: TEXT_SIZE,
     padding: TEXT_PADDING,
@@ -83,30 +83,4 @@ export const addPageNumber = ({
 
   group.add(text);
   ornateDocument.group.add(group);
-};
-
-export const addTags = ({
-  ornateViewer,
-  dataElements,
-  ornateDocument,
-}: {
-  ornateViewer: CogniteOrnate;
-  dataElements: DataElement[];
-  ornateDocument: OrnatePDFDocument;
-}) => {
-  ornateViewer!.addAnnotationsToGroup(
-    ornateDocument,
-    dataElements.map((dataElement) => ({
-      id: dataElement.id,
-      type: 'pct',
-      ...dataElement.boundingBox!,
-      stroke: '#D51A46',
-      strokeWidth: 6,
-      fill: 'rgba(244, 113, 139, 0.2)',
-      cornerRadius: 8,
-      // onClick: (x) => {
-      //   console.log(annotation, x);
-      // },
-    }))
-  );
 };

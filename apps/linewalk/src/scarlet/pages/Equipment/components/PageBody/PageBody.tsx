@@ -13,12 +13,10 @@ export const PageBody = () => {
   const dataElements = useMemo(
     () =>
       equipment.data?.equipmentElements.filter(
-        (item) => item.boundingBox && item.sourceDocumentId
+        (item) => item.scannerDetections?.length
       ),
-    [equipment.data]
+    [equipment]
   );
-
-  // -TODO: update to 25.9%
 
   return (
     <Styled.Container>

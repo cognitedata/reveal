@@ -1,25 +1,34 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import { toast, ToastContainer } from '@cognite/cogs.js';
-import { getEquipmentData } from 'scarlet/transformations';
+import { transformEquipmentData } from 'scarlet/transformations';
 import { StorageActionType } from 'scarlet/types';
-import { useApi, useStorageDispatch } from 'scarlet/hooks';
+import { useApi, useStorage } from 'scarlet/hooks';
 import { DataPanelProvider } from 'scarlet/contexts';
 import {
+  getEquipmentConfig,
   getEquipmentDocuments,
   getEquipmentPCMS,
-  getEquipmentScannerData,
+  getScannerDetections,
 } from 'scarlet/api';
+import { transformEquipmentType } from 'scarlet/transformations/equipment-type';
 
 import { BreadcrumbBar, PageBody, TopBar } from './components';
 import * as Styled from './style';
-import { mockEquipmentData } from './mocks';
 
 export const Equipment = () => {
   const { unitName, equipmentName } =
     useParams<{ unitName: string; equipmentName: string }>();
 
-  const scannerQuery = useApi(getEquipmentScannerData, {
+  const { storageState, storageDispatch } = useStorage();
+
+  const configQuery = useApi(
+    getEquipmentConfig,
+    {},
+    { data: storageState.equipmentConfig.data }
+  );
+
+  const scannerDetectionsQuery = useApi(getScannerDetections, {
     unitName,
     equipmentName,
   });
@@ -32,25 +41,29 @@ export const Equipment = () => {
     equipmentName,
   });
 
-  const storageDispatch = useStorageDispatch();
-
   useEffect(() => {
-    const { data, loading, error } = scannerQuery;
-    const equipmentData = getEquipmentData(data);
+    const loading =
+      configQuery.loading ||
+      scannerDetectionsQuery.loading ||
+      pcmsQuery.loading;
 
-    if (error) {
-      toast.error('Failed to load scanner data');
-    }
+    const equipmentData = loading
+      ? undefined
+      : transformEquipmentData({
+          config: configQuery.data,
+          scannerDetections: scannerDetectionsQuery.data,
+          type: transformEquipmentType(pcmsQuery.data?.equipment?.equip_group),
+        });
 
     storageDispatch({
       type: StorageActionType.SET_EQUIPMENT,
       equipment: {
-        data: mockEquipmentData(equipmentData),
+        data: equipmentData,
         loading,
-        error,
+        error: configQuery.error,
       },
     });
-  }, [scannerQuery]);
+  }, [configQuery, scannerDetectionsQuery, pcmsQuery, documentsQuery]);
 
   useEffect(() => {
     if (pcmsQuery.error) {
@@ -73,6 +86,23 @@ export const Equipment = () => {
       documents: documentsQuery,
     });
   }, [documentsQuery]);
+
+  useEffect(() => {
+    if (configQuery.error) {
+      toast.error('Failed to load equipment configuration');
+    }
+
+    storageDispatch({
+      type: StorageActionType.SET_EQUIPMENT_CONFIG,
+      config: configQuery,
+    });
+  }, [configQuery]);
+
+  useEffect(() => {
+    if (scannerDetectionsQuery.error) {
+      toast.error('Failed to load scanner data');
+    }
+  }, [scannerDetectionsQuery.error]);
 
   useEffect(
     () => () => {

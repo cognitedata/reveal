@@ -1,7 +1,6 @@
 import { DataElement } from '.';
 
-export type EquipmentData =
-  | {
-      equipmentElements: DataElement[];
-    }
-  | undefined;
+export type EquipmentData = {
+  type: string;
+  equipmentElements: DataElement[];
+};

@@ -6,6 +6,7 @@ const equipmentInitialState = {
   pcms: { loading: true },
   documents: { loading: true },
   equipment: { loading: true },
+  equipmentConfig: { loading: true },
 };
 
 const initialState: StorageState = {
@@ -33,6 +34,11 @@ function reducer(state: StorageState, action: StorageAction) {
       return {
         ...state,
         equipment: action.equipment,
+      };
+    case StorageActionType.SET_EQUIPMENT_CONFIG:
+      return {
+        ...state,
+        equipmentConfig: action.config,
       };
     case StorageActionType.RESET_EQUIPMENT_DATA:
       return {

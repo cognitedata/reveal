@@ -1,15 +1,17 @@
 import {
   APIState,
-  DocumentsData,
   EquipmentData,
   EquipmentListItem,
   PCMSData,
+  EquipmentConfig,
+  EquipmentDocument,
 } from 'scarlet/types';
 
 export type StorageState = {
   pcms: APIState<PCMSData>;
-  documents: APIState<DocumentsData>;
+  documents: APIState<EquipmentDocument[]>;
   equipment: APIState<EquipmentData>;
+  equipmentConfig: APIState<EquipmentConfig>;
   equipmentList?: {
     unitName: string;
     equipments: EquipmentListItem[];
@@ -23,7 +25,7 @@ export type StorageAction =
     }
   | {
       type: StorageActionType.SET_DOCUMENTS;
-      documents: APIState<DocumentsData>;
+      documents: APIState<EquipmentDocument[]>;
     }
   | {
       type: StorageActionType.SET_EQUIPMENT;
@@ -36,6 +38,10 @@ export type StorageAction =
       type: StorageActionType.SET_EQUIPMENT_LIST;
       unitName: string;
       equipments: EquipmentListItem[];
+    }
+  | {
+      type: StorageActionType.SET_EQUIPMENT_CONFIG;
+      config: APIState<EquipmentConfig>;
     };
 
 export enum StorageActionType {
@@ -43,6 +49,7 @@ export enum StorageActionType {
   SET_PCMS = 'set-pcms',
   SET_DOCUMENTS = 'set-documents',
   SET_EQUIPMENT = 'set-equipment',
+  SET_EQUIPMENT_CONFIG = 'set-equipment-config',
   RESET_EQUIPMENT_DATA = 'reset-equipment-data',
 
   // equipment-list

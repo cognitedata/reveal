@@ -3,7 +3,7 @@ import { DataElement as DataElementProps } from 'scarlet/types';
 import * as Styled from './style';
 
 export const DataElement = ({ label, value, unit }: DataElementProps) => {
-  const hasValue = value !== null && value !== undefined;
+  const hasValue = value !== null && value !== undefined && value !== '';
 
   return (
     <Styled.Container hasValue={hasValue}>

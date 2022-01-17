@@ -7,8 +7,8 @@ export const EquipmentPanel = () => {
 
   return (
     <>
-      {equipment.data?.equipmentElements?.map((item) => (
-        <DataElement key={item.scannerKey} {...item} />
+      {equipment.data?.equipmentElements?.map(({ key, ...item }) => (
+        <DataElement key={key} {...item} />
       ))}
     </>
   );

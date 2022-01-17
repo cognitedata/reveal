@@ -6,19 +6,20 @@ import { DataPanelAction, DataPanelActionType, DataPanelState } from './types';
 const getStorageName = (value: string) =>
   ['scarlet', 'dataPanel', value].join('_');
 
-const initialState: DataPanelState = {
+const getInitialState = (): DataPanelState => ({
   isVisible:
     sessionStorage?.getItem(getStorageName('isVisible')) === 'true' || false,
   currentOrigin:
     (sessionStorage?.getItem(
       getStorageName('currentOrigin')
     ) as DataElementOrigin) || DataElementOrigin.EQUIPMENT,
-};
+});
 
 export const DataPanelDispatchContext = React.createContext<
   React.Dispatch<DataPanelAction>
 >(() => null);
-export const DataPanelContext = React.createContext(initialState);
+
+export const DataPanelContext = React.createContext(getInitialState());
 
 function reducer(state: DataPanelState, action: DataPanelAction) {
   switch (action.type) {
@@ -51,7 +52,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
 }
 
 export const DataPanelProvider: React.FC = (props) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, getInitialState());
 
   return (
     <DataPanelContext.Provider value={state}>

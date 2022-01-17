@@ -1,68 +1,68 @@
-import { v4 as uuid } from 'uuid';
-import {
-  equipmentElementsConfig,
-  equipmentElementsPriorityConfig,
-} from 'scarlet/config';
 import {
   DataElement,
   EquipmentElementKey,
   EquipmentData,
-  ScannerData,
-  ScannerDataElement,
-  DataElementBoundingBox,
   DataElementOrigin,
+  ScannerDetection,
+  EquipmentConfig,
+  EquipmentType,
 } from 'scarlet/types';
+import { equipmentElementsPriority } from 'scarlet/config';
 
-export const getEquipmentData = (scannerData: ScannerData): EquipmentData => {
-  const equipmentElements = getEquipmentElements(scannerData);
+export const transformEquipmentData = ({
+  config,
+  scannerDetections,
+  type,
+}: {
+  config?: EquipmentConfig;
+  scannerDetections?: ScannerDetection[];
+  type?: EquipmentType;
+}): EquipmentData | undefined => {
+  if (!type || !config || !config.equipmentTypes[type]) return undefined;
 
-  return { equipmentElements };
+  const equipmentElements = getEquipmentElements(
+    type,
+    config,
+    scannerDetections
+  );
+
+  return { type, equipmentElements };
 };
 
-const getEquipmentElements = (scannerData: ScannerData): DataElement[] => {
-  if (!scannerData) return [];
+const getEquipmentElements = (
+  type: EquipmentType,
+  config: EquipmentConfig,
+  scannerDetections?: ScannerDetection[]
+): DataElement[] => {
+  const { equipmentElementKeys } = config.equipmentTypes[type];
 
-  const { equipment } = scannerData;
-  const keysWithoutPriority = Object.keys(equipment).filter(
+  const keysWithoutPriority = equipmentElementKeys.filter(
     (key) =>
-      !equipmentElementsPriorityConfig.includes(key as EquipmentElementKey) &&
+      !equipmentElementsPriority.includes(key as EquipmentElementKey) &&
       key !== 'components'
   );
 
   return [
-    ...equipmentElementsPriorityConfig.filter((key) => key in equipment),
+    ...equipmentElementsPriority.filter((key) =>
+      equipmentElementKeys.includes(key)
+    ),
     ...keysWithoutPriority,
   ]
     .map((key) => {
-      const element = equipment[key];
-      let elementConfig = equipmentElementsConfig[key as EquipmentElementKey];
+      const itemDetections = scannerDetections?.filter(
+        (detection) => detection.key === key && detection.valueAnnotation
+      );
 
-      if (!elementConfig) {
-        console.error('Missing configuration for equipment key:', key);
-        elementConfig = { label: key };
-      }
+      const value = itemDetections
+        ?.map((detection) => detection.valueAnnotation.value)
+        .join('');
 
       return {
-        id: uuid(),
-        scannerKey: key,
-        value: element?.value,
-        unit: element?.unit,
-        boundingBox: getBoundingBox(element),
-        sourceDocumentId: element?.source_document_id,
-        pageNumber: element?.page_number,
+        ...config.equipmentElements[key],
         origin: DataElementOrigin.EQUIPMENT,
-        ...elementConfig,
+        value,
+        scannerDetections: itemDetections,
       } as DataElement;
     })
     .filter((item) => item);
 };
-
-const getBoundingBox = (
-  element?: ScannerDataElement | null
-): DataElementBoundingBox | undefined =>
-  element?.bounding_box && {
-    x: element!.bounding_box.x_min,
-    y: element!.bounding_box.y_min,
-    width: element!.bounding_box.x_max - element!.bounding_box.x_min,
-    height: element!.bounding_box.y_max - element!.bounding_box.y_min,
-  };

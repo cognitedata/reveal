@@ -10,8 +10,8 @@ const initialState = {
 };
 
 export const useApi = <T>(
-  func: (client: CogniteClient, props: any) => Promise<T>,
-  props: any,
+  func: (client: CogniteClient, props?: any) => Promise<T>,
+  props?: any,
   options?: {
     data?: T;
   }

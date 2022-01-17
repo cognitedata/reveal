@@ -1,4 +1,4 @@
-import { EquipmentElementKey } from '.';
+import { ScannerDetection } from '.';
 
 export enum DataElementOrigin {
   EQUIPMENT = 'equipment',
@@ -9,35 +9,24 @@ export enum DataElementType {
   STRING = 'string',
   INT = 'int',
   FLOAT = 'float',
-  BOOLEAN = 'boolean',
-  ORIENTATION = 'vertical,horizontal',
+  BOOLEAN = 'bool',
   DATE = 'date',
 }
 
 export enum DataElementUnit {
   PSI = 'psi',
   FAHRENHEIT = 'F',
-  FEET = 'ft',
+  FEET = 'feet',
+  DEGREES = 'degrees',
+  INCHES = 'inches',
 }
 
 export type DataElement = {
-  id: string;
-  scannerKey: EquipmentElementKey | string;
+  key: string;
+  origin: DataElementOrigin;
   label: string;
-  value?: string | number;
+  value?: string;
   type?: DataElementType;
   unit?: DataElementUnit;
-  pcmsKey?: string;
-  confidence?: number;
-  sourceDocumentId?: number;
-  pageNumber?: number;
-  boundingBox?: DataElementBoundingBox;
-  origin: DataElementOrigin;
-};
-
-export type DataElementBoundingBox = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  scannerDetections?: ScannerDetection[];
 };

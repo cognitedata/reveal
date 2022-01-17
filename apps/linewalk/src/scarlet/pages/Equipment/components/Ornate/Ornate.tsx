@@ -1,18 +1,24 @@
 /* eslint-disable no-await-in-loop */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import * as PDFJS from 'pdfjs-dist';
 import { Loader } from '@cognite/cogs.js';
-import { DataElement, ScarletDocument } from 'scarlet/types';
+import { DataElement, DocumentType, EquipmentDocument } from 'scarlet/types';
 
-import { addDocumentTitle, addPageNumber, addTags } from './utils';
+import {
+  addDocumentTitle,
+  addPageNumber,
+  addTags,
+  removeTags,
+  Tag,
+} from './utils';
 import * as Styled from './style';
 
 PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
 
 export type OrnateProps = {
-  documents?: ScarletDocument[];
+  documents?: EquipmentDocument[];
   fullwidth?: boolean;
   dataElements?: DataElement[];
 };
@@ -25,16 +31,14 @@ const SLIDE_ROW_GAP = 200;
 
 type OrnateDocument = {
   ornateDocument: OrnatePDFDocument;
-  pageHeight: number;
-  pageWidth: number;
-  documentId: number;
+  id: number;
+  externalId?: string;
   pageNumber: number;
-  dataElements?: DataElement[];
 };
 
 export const Ornate = ({
   documents,
-  dataElements = [],
+  dataElements,
   fullwidth = false,
 }: OrnateProps) => {
   const componentContainerId = useRef(
@@ -42,9 +46,7 @@ export const Ornate = ({
   ).current;
   const ornateViewer = useRef<CogniteOrnate>();
   const [ornateDocuments, setOrnateDocuments] = useState<OrnateDocument[]>([]);
-  const [visibleDataElements, setVisibleDataElements] = useState<DataElement[]>(
-    []
-  );
+  const [currentTags, setCurrentTags] = useState<string[]>([]);
   const destroyDocumentLoadCallbacks = useRef<(() => void)[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -125,9 +127,8 @@ export const Ornate = ({
                   ...prevOrnateDocuments,
                   {
                     ornateDocument,
-                    pageHeight,
-                    pageWidth,
-                    documentId: document.id,
+                    id: document.id,
+                    externalId: document.externalId,
                     pageNumber,
                   },
                 ]);
@@ -150,37 +151,80 @@ export const Ornate = ({
     []
   );
 
+  const U1Document = useMemo(
+    () => documents?.find((document) => document.type === DocumentType.U1),
+    [documents]
+  );
+
+  const tags: Tag[] = useMemo(() => {
+    const result: Tag[] = [];
+
+    dataElements?.forEach((dataElement) => {
+      dataElement.scannerDetections?.forEach((scannerDetection) => {
+        if (!scannerDetection.valueAnnotation) return;
+
+        const documentExternalId =
+          scannerDetection.valueAnnotation.documentExternalId ||
+          U1Document?.externalId;
+
+        if (!documentExternalId) return;
+
+        result.push({
+          id: scannerDetection.id,
+          dataElement,
+          ...scannerDetection.valueAnnotation,
+          documentExternalId,
+        });
+      });
+    });
+
+    return result;
+  }, [U1Document, dataElements]);
+
   useEffect(() => {
     if (ornateDocuments.length) {
-      const newVisibleDataElements: DataElement[] = [];
+      const newCurrentTags: string[] = [];
       ornateDocuments.forEach((document) => {
-        const documentDataElements = dataElements?.filter(
-          (dataElement) =>
-            dataElement.sourceDocumentId === document.documentId &&
-            dataElement.pageNumber === document.pageNumber
+        const documentTags =
+          tags?.filter(
+            (tag) =>
+              tag.documentExternalId === document.externalId &&
+              tag.pageNumber === document.pageNumber
+          ) || [];
+
+        const newTags = documentTags?.filter(
+          (tag) => !currentTags.includes(tag.id)
         );
-        const newDataElements = documentDataElements?.filter((item) =>
-          visibleDataElements.every(
-            (visibleDataElement) => visibleDataElement.id !== item.id
-          )
-        );
 
-        // const deletedDataElements = visibleDataElements?.filter((item) =>
-        //   documentDataElements.every((dde) => dde.id !== item.id)
-        // );
+        if (newTags?.length) {
+          addTags({
+            ornateViewer: ornateViewer.current!,
+            ornateDocument: document.ornateDocument,
+            tags: newTags,
+          });
+        }
 
-        addTags({
-          ornateViewer: ornateViewer.current!,
-          ornateDocument: document.ornateDocument,
-          dataElements: newDataElements,
-        });
-
-        newVisibleDataElements.push(...documentDataElements);
+        newCurrentTags.push(...documentTags.map((tag) => tag.id));
       });
 
-      setVisibleDataElements(newVisibleDataElements);
+      const removedTagIds = currentTags.filter(
+        (id) => !newCurrentTags.includes(id)
+      );
+
+      if (removedTagIds.length) {
+        removeTags({
+          ornateViewer: ornateViewer.current!,
+          tagIds: removedTagIds,
+        });
+      }
+
+      setCurrentTags((prevTags) =>
+        JSON.stringify(prevTags) === JSON.stringify(newCurrentTags)
+          ? prevTags
+          : newCurrentTags
+      );
     }
-  }, [ornateDocuments, dataElements]);
+  }, [ornateDocuments, tags]);
 
   return (
     <Styled.Container>
