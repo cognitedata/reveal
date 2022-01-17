@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { MsalProvider } from '@azure/msal-react';
 import {
   ExampleRoute,
   exampleRoutes,
@@ -13,8 +12,6 @@ import {
 } from './routes';
 import { Container } from './components/styled';
 import styled from 'styled-components';
-import { getCredentialEnvironment } from './utils/example-helpers';
-import { PublicClientApplication } from '@azure/msal-browser';
 
 const PageContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 5px 0;
@@ -48,33 +45,6 @@ const PagesList = (props: { routes: ExampleRoute[] }) => {
     </UlStyled>
   );
 };
-
-const ExampleView = (props: { page: ExampleRoute }) => {
-  const credentialEnvironment = getCredentialEnvironment();
-
-  if (credentialEnvironment) {
-    const msalInstance = new PublicClientApplication({ auth: {
-      clientId: credentialEnvironment.clientId,
-      authority: `https://login.microsoftonline.com/${credentialEnvironment.tenantId}`
-    }});
-
-    return (<Container>
-      <MsalProvider instance={msalInstance}>
-        <Link to="/">Back to menu</Link>
-        <h1 style={{ margin: 0 }}>{props.page.menuTitle}</h1>
-        {props.page.component}
-      </MsalProvider>
-    </Container>);
-  }
-
-  return (
-    <Container>
-    <Link to="/">Back to menu</Link>
-    <h1 style={{ margin: 0 }}>{props.page.menuTitle}</h1>
-    {props.page.component}
-    </Container>
-  );
-}
 
 export default function App() {
   const MainMenuPage = () => (
@@ -111,7 +81,11 @@ export default function App() {
                       : page.path
                   }
                 >
-                  <ExampleView page={page} />
+                  <Container>
+                    <Link to="/">Back to menu</Link>
+                    <h1 style={{ margin: 0 }}>{page.menuTitle}</h1>
+                    {page.component}
+                  </Container>
                 </Route>
               ))}
 
