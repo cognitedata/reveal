@@ -808,7 +808,6 @@ export class Cognite3DViewer {
 
   /**
    * Returns the current active clipping planes.
-   * @version New in 2.1
    */
   getClippingPlanes(): THREE.Plane[] {
     return this.revealManager.clippingPlanes;
