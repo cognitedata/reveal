@@ -4,7 +4,19 @@ import { DefaultTool } from 'tools';
 import { ICogniteOrnateTool } from 'types';
 import { v4 as uuid } from 'uuid';
 
+import { insertStyles } from '../utils';
+import { CogniteOrnate } from '../cognite-ornate';
+
 import { Tool } from './Tool';
+
+const safeHtmlPattern = /<(?:.|\n)*?>/gm;
+
+const safeStrToHtml = (str = ''): string => {
+  return str.replace(safeHtmlPattern, '').replace(/\n/gi, '<br>');
+};
+
+const safeHtmlToStr = (str = ''): string =>
+  str.replace(/<br>/gi, '\n').replace(safeHtmlPattern, '');
 
 export class TextTool extends Tool implements ICogniteOrnateTool {
   cursor = 'text';
@@ -13,7 +25,23 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
   group: Konva.Group | null = null;
   readyToText = true;
 
+  constructor(ornateInstance: CogniteOrnate) {
+    super(ornateInstance);
+    insertStyles(
+      `
+.div-textbox-placeholder {
+  display: none;
+}
+.div-textbox:empty + .div-textbox-placeholder {
+  display: block;
+}`,
+      { id: 'div-textbox-style' }
+    );
+  }
+
   onTextEdit = (textNode: Konva.Text) => {
+    const topZIndex = 10000;
+
     textNode.hide();
     const textPosition = textNode.absolutePosition();
 
@@ -22,31 +50,25 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       y: this.ornateInstance.stage.container().offsetTop + textPosition.y,
     };
 
-    const textarea = document.createElement('textarea');
+    const nodeTextValue = textNode.text();
+
+    const textarea = document.createElement('div');
+    textarea.contentEditable = 'true';
     document.body.appendChild(textarea);
     // apply many styles to match text on canvas as close as possible
-    // remember that text rendering on canvas and on the textarea can be different
+    // remember that text rendering on canvas and on the content-editable div can be different
     // and sometimes it is hard to make it 100% the same. But we will try...
-    textarea.value = textNode.text();
-    textarea.placeholder = 'Type something';
+
+    textarea.innerHTML = safeStrToHtml(nodeTextValue);
+    textarea.className = 'div-textbox';
     textarea.style.position = 'absolute';
     textarea.style.top = `${areaPosition.y}px`;
     textarea.style.left = `${areaPosition.x}px`;
-    textarea.style.width = `${
-      textarea.value.length === 0
-        ? (textarea.placeholder.length || 1) *
-          textNode.fontSize() *
-          this.ornateInstance.stage.scale().x
-        : textNode.width() - textNode.padding() * 2
-    }px`;
-    textarea.style.height = `${
-      textNode.height() - textNode.padding() * 2 + 5
-    }px`;
     textarea.style.fontSize = `${
       textNode.fontSize() * this.ornateInstance.stage.scale().x
     }px`;
     textarea.style.border = 'none';
-    textarea.style.zIndex = '9999';
+    textarea.style.zIndex = `${topZIndex - 20}`;
     textarea.style.padding = '0px';
     textarea.style.margin = '0px';
     textarea.style.overflow = 'hidden';
@@ -64,28 +86,40 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       transform += `rotateZ(${rotation}deg)`;
     }
 
-    let px = 0;
-    // also we need to slightly move textarea on firefox
-    // because it jumps a bit
-    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    if (isFirefox) {
-      px += 2 + Math.round(textNode.fontSize() / 20);
-    }
-    transform += `translateY(-${px}px)`;
-
     textarea.style.transform = transform;
 
-    // reset height
-    textarea.style.height = 'auto';
-    // after browsers resized it we can set actual value
-    textarea.style.height = `${textarea.scrollHeight + 3}px`;
     setTimeout(() => {
       textarea.focus();
     });
 
+    // show placeholder
+    const placeholder = document.createElement('div');
+    placeholder.style.color = '#bfbfbf'; // --cogs-greyscale-grey4;
+
+    placeholder.style.position = 'absolute';
+    placeholder.style.top = `${areaPosition.y}px`;
+    placeholder.style.left = `${areaPosition.x}px`;
+    placeholder.style.fontSize = `${
+      textNode.fontSize() * this.ornateInstance.stage.scale().x
+    }px`;
+    placeholder.style.padding = '0px';
+    placeholder.style.margin = '0px';
+    placeholder.style.border = 'none';
+    placeholder.style.zIndex = `${topZIndex - 10}`;
+    placeholder.style.fontFamily = textNode.fontFamily();
+    placeholder.style.lineHeight = String(textNode.lineHeight());
+    placeholder.innerText = 'Type something';
+    placeholder.className = 'div-textbox-placeholder';
+
+    document.body.appendChild(placeholder);
+
     const removeTextarea = () => {
       textarea.parentNode?.removeChild(textarea);
       this.newText?.removeEventListener('ornate_text_destroy');
+
+      // remove placeholder
+      placeholder?.parentNode?.removeChild(placeholder);
+
       // show node only if there is a text
       if (textNode.text()) {
         textNode.show();
@@ -97,41 +131,15 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
 
     this.newText?.addEventListener('ornate_text_destroy', removeTextarea);
 
-    const setTextareaWidth = (nextWidth?: number) => {
-      let newWidth = nextWidth;
-
-      if (!newWidth) {
-        // set width for placeholder
-        newWidth =
-          (textarea.value.length < 10 ? 10 : textarea.value.length) *
-          textNode.fontSize() *
-          this.ornateInstance.stage.scale().x;
-      }
-      // some extra fixes on different browsers
-      const isSafari = /^((?!chrome|android).)*safari/i.test(
-        navigator.userAgent
-      );
-      const isFirefox =
-        navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-      if (isSafari || isFirefox) {
-        newWidth = Math.ceil(newWidth);
-      }
-
-      const isEdge = document.DOCUMENT_NODE || /Edge/.test(navigator.userAgent);
-      if (isEdge) {
-        newWidth += 1;
-      }
-      textarea.style.width = `${newWidth}px`;
-    };
-
-    textarea.addEventListener('keydown', (e) => {
+    textarea.addEventListener('keydown', (e: KeyboardEvent) => {
       e.cancelBubble = true;
-      // hide on enter
+
+      // hide textarea on enter
       // but don't hide on shift + enter
       if (e.key === 'Enter' && !e.shiftKey) {
-        textNode.text(textarea.value);
+        textNode.text(safeHtmlToStr(textarea.innerHTML));
         removeTextarea();
-        // allow text again after clicking enter
+        // allow texting
         this.readyToText = true;
         return;
       }
@@ -139,21 +147,13 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       if (e.key === 'Escape') {
         removeTextarea();
         this.readyToText = true;
-        return;
       }
-
-      setTextareaWidth();
-      textarea.style.height = 'auto';
-      textarea.style.height = `${
-        textarea.scrollHeight +
-        textNode.fontSize() * this.ornateInstance.stage.scale().x
-      }px`;
     });
 
     const handleOutsideClick = (e: MouseEvent) => {
       e.cancelBubble = true;
       if (e.target !== textarea) {
-        textNode.text(textarea.value);
+        textNode.text(safeHtmlToStr(textarea.innerHTML));
         removeTextarea();
         window.removeEventListener('mousedown', handleOutsideClick);
       }
