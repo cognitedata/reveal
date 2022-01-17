@@ -8,7 +8,7 @@ import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { BucketGrid2D } from './BucketGrid2D';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { assertNever, EventListener, EmptyEvent } from '@reveal/utilities';
+import { assertNever } from '@reveal/utilities';
 import { Cognite3DViewer, SceneRenderedEvent } from '@reveal/core';
 import { worldToViewportCoordinates } from '@reveal/core/utilities';
 
@@ -136,8 +136,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
   private readonly _compositeOverlays: HTMLElement[] = [];
 
-  private readonly _onSceneRenderedHandler: EventListener<SceneRenderedEvent>;
-  private readonly _onViewerDisposedHandler: EventListener<EmptyEvent>;
+  private readonly _onSceneRenderedHandler: (event: SceneRenderedEvent) => void;
+  private readonly _onViewerDisposedHandler: () => void;
   // Allocate variables needed for processing once to avoid allocations
   private readonly _preallocatedVariables = {
     camPos: new THREE.Vector3(),

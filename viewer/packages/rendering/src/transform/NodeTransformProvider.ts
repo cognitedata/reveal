@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { assertNever, EventListener, EventTrigger, NumericRange } from '@reveal/utilities';
+import { assertNever, EventTrigger, NumericRange } from '@reveal/utilities';
 
 const identityTransform = new THREE.Matrix4().identity();
 
@@ -19,7 +19,7 @@ export class NodeTransformProvider {
     changed: new EventTrigger<NodeTransformChangedEvent>()
   };
 
-  on(event: 'changed', listener: EventListener<NodeTransformChangedEvent>): void {
+  on(event: 'changed', listener: (event: NodeTransformChangedEvent) => void): void {
     switch (event) {
       case 'changed':
         this._events.changed.subscribe(listener);
@@ -29,7 +29,7 @@ export class NodeTransformProvider {
     }
   }
 
-  off(event: 'changed', listener: EventListener<NodeTransformChangedEvent>): void {
+  off(event: 'changed', listener: (event: NodeTransformChangedEvent) => void): void {
     switch (event) {
       case 'changed':
         this._events.changed.unsubscribe(listener);

@@ -9,7 +9,6 @@ export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
 export {
   EventTrigger,
-  EventListener,
   EmptyEvent,
   PointerEvent,
   clickOrTouchEventOffset,

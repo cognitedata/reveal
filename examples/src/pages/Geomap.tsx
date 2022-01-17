@@ -175,7 +175,7 @@ export function Geomap() {
       const selectedSet = new TreeIndexNodeCollection([]);
 
       new AxisViewTool(viewer);
-      viewer.on('click', async (event: PointerEvent) => {
+      viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);

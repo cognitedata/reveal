@@ -8,8 +8,3 @@ export type EmptyEvent = null;
  * @module @cognite/reveal
  */
 export type PointerEvent = { offsetX: number; offsetY: number };
-
-/**
- * Listener for events.
- */
-export type EventListener<TEventArgs> = (event: TEventArgs) => void;

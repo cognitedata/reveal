@@ -19,7 +19,7 @@ import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders
 import { LoadingStateChangedEvent, NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
-import { assertNever, EventTrigger, EventListener } from '@reveal/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 
@@ -157,7 +157,7 @@ export class RevealManager {
     return this._cadManager.clippingPlanes;
   }
 
-  public on(event: 'loadingStateChanged', listener: EventListener<LoadingStateChangedEvent>): void {
+  public on(event: 'loadingStateChanged', listener: (event: LoadingStateChangedEvent) => void): void {
     switch (event) {
       case 'loadingStateChanged':
         this._events.loadingStateChanged.subscribe(listener);
@@ -168,7 +168,7 @@ export class RevealManager {
     }
   }
 
-  public off(event: 'loadingStateChanged', listener: EventListener<LoadingStateChangedEvent>): void {
+  public off(event: 'loadingStateChanged', listener: (event: LoadingStateChangedEvent) => void): void {
     switch (event) {
       case 'loadingStateChanged':
         this._events.loadingStateChanged.unsubscribe(listener);

@@ -8,7 +8,7 @@ import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
 import { TimelineDateUpdatedEvent } from './types';
-import { EventListener, EventTrigger, assertNever } from '@reveal/utilities';
+import { EventTrigger, assertNever } from '@reveal/utilities';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
@@ -33,7 +33,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param event `dateChanged` event
    * @param listener Listen to Timeline date Update during Playback
    */
-  public subscribe(event: 'dateChanged', listener: EventListener<TimelineDateUpdatedEvent>): void {
+  public subscribe(event: 'dateChanged', listener: (event: TimelineDateUpdatedEvent) => void): void {
     switch (event) {
       case 'dateChanged':
         this._events.dateChanged.subscribe(listener);
@@ -48,7 +48,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param event `dateChanged` event
    * @param listener Remove Listen to Timeline date Update
    */
-  public unsubscribe(event: 'dateChanged', listener: EventListener<TimelineDateUpdatedEvent>): void {
+  public unsubscribe(event: 'dateChanged', listener: (event: TimelineDateUpdatedEvent) => void): void {
     switch (event) {
       case 'dateChanged':
         this._events.dateChanged.unsubscribe(listener);

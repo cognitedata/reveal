@@ -3,7 +3,7 @@
  */
 
 import { assertNever, EventTrigger } from '@reveal/core/utilities';
-import { EventListener, EmptyEvent } from '@reveal/utilities';
+import { EmptyEvent } from '@reveal/utilities';
 
 /**
  * Base class for tools attaching to a {@see Cognite3DViewer}.
@@ -19,7 +19,7 @@ export abstract class Cognite3DViewerToolBase {
    * @param listener
    * @internal
    */
-  on(event: 'disposed', listener: EventListener<EmptyEvent>): void {
+  on(event: 'disposed', listener: () => void): void {
     switch (event) {
       case 'disposed':
         this._disposedEvent.subscribe(listener);
@@ -35,10 +35,10 @@ export abstract class Cognite3DViewerToolBase {
    * @param event
    * @param handler
    */
-  off(event: 'disposed', handler: EventListener<EmptyEvent>): void {
+  off(event: 'disposed', listener: () => void): void {
     switch (event) {
       case 'disposed':
-        this._disposedEvent.unsubscribe(handler);
+        this._disposedEvent.unsubscribe(listener);
         break;
 
       default:

@@ -5,7 +5,7 @@
 import { LoadingState, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SectorQuads, RenderOptions } from '@reveal/rendering';
 import { SectorGeometry } from '@reveal/cad-parsers';
-export { EventListener, PointerEvent } from '@reveal/utilities';
+export { PointerEvent } from '@reveal/utilities';
 
 /**
  * @property logMetrics Might be used to disable usage statistics.

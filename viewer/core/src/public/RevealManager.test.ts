@@ -10,7 +10,6 @@ import { createGlContext } from '../../../test-utilities';
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { LoadingStateChangedEvent } from '@reveal/cad-styling';
-import { EventListener } from '@reveal/utilities';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
@@ -85,7 +84,7 @@ describe('RevealManager', () => {
 
   test('loadingStateChanged is not triggered if loading state doesnt change', () => {
     const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
-    const loadingStateChangedCb: EventListener<LoadingStateChangedEvent> = jest.fn();
+    const loadingStateChangedCb: (event: LoadingStateChangedEvent) => void = jest.fn();
     manager.on('loadingStateChanged', loadingStateChangedCb);
 
     manager.update(camera);

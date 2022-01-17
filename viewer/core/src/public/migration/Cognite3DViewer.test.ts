@@ -7,7 +7,6 @@ import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
 
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
-import { EventListener, EmptyEvent } from '@reveal/utilities';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
@@ -72,7 +71,7 @@ describe('Cognite3DViewer', () => {
   });
 
   test('dispose raises disposed-event', () => {
-    const disposedListener: EventListener<EmptyEvent> = jest.fn();
+    const disposedListener: () => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     viewer.on('disposed', disposedListener);
 
@@ -186,7 +185,7 @@ describe('Cognite3DViewer', () => {
       });
     let requestAnimationFrameCallback: FrameRequestCallback | undefined;
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
-    const onRendered: EventListener<SceneRenderedEvent> = jest.fn();
+    const onRendered: (event: SceneRenderedEvent) => void = jest.fn();
     if (!requestAnimationFrameCallback) throw new Error('Animation frame not triggered');
 
     try {

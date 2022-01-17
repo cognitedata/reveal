@@ -6,14 +6,7 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
 import { CameraChangedEvent, CameraManagerCallbackData, CameraControlsOptions, ControlsState } from './types';
-import {
-  assertNever,
-  EventListener,
-  EventTrigger,
-  PointerEvent,
-  InputHandler,
-  disposeOfAllEventListeners
-} from '@reveal/utilities';
+import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners, PointerEvent } from '@reveal/utilities';
 import range from 'lodash/range';
 export class CameraManager {
   private readonly _events = {
@@ -98,7 +91,7 @@ export class CameraManager {
     }
   }
 
-  on(event: 'cameraChange', listener: EventListener<CameraChangedEvent>): void {
+  on(event: 'cameraChange', listener: (event: CameraChangedEvent) => void): void {
     switch (event) {
       case 'cameraChange':
         this._events.cameraChange.subscribe(listener);
@@ -108,7 +101,7 @@ export class CameraManager {
     }
   }
 
-  off(event: 'cameraChange', listener: EventListener<CameraChangedEvent>): void {
+  off(event: 'cameraChange', listener: (event: CameraChangedEvent) => void): void {
     switch (event) {
       case 'cameraChange':
         this._events.cameraChange.subscribe(listener);
@@ -481,7 +474,7 @@ export class CameraManager {
    */
   private teardownControls() {
     if (this._onClick !== undefined) {
-      this._inputHandler.off('click', this._onClick as EventListener<PointerEvent>);
+      this._inputHandler.off('click', this._onClick as (event: PointerEvent) => void);
       this._onClick = undefined;
     }
     if (this._onWheel !== undefined) {

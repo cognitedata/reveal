@@ -4,7 +4,7 @@
 import { Vector2 } from 'three';
 
 import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
-import { EventListener, PointerEvent } from './types';
+import { PointerEvent } from './types';
 import { EventTrigger } from './EventTrigger';
 import { assertNever } from '../assertNever';
 
@@ -32,7 +32,7 @@ export class InputHandler {
    * viewer.on('click', onClick);
    * ```
    */
-  on(event: 'click' | 'hover', listener: EventListener<PointerEvent>): void {
+  on(event: 'click' | 'hover', listener: (event: PointerEvent) => void): void {
     switch (event) {
       case 'click':
         this._events.click.subscribe(listener);
@@ -46,7 +46,7 @@ export class InputHandler {
     }
   }
 
-  off(event: 'click' | 'hover', callback: EventListener<PointerEvent>): void {
+  off(event: 'click' | 'hover', callback: (event: PointerEvent) => void): void {
     switch (event) {
       case 'click':
         this._events.click.unsubscribe(callback);
