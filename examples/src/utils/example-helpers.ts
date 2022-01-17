@@ -100,7 +100,6 @@ export function getCredentialEnvironment(): CredentialEnvironment | undefined {
   return credentialEnvironmentList.environments[environmentParam];
 }
 
-
 export async function createSDKFromEnvironment(
   appId: string,
   project: string,
@@ -127,7 +126,6 @@ export async function createSDKFromEnvironment(
   };
 
   const msalObj = new PublicClientApplication(config);
-
 
   const getToken = async () => {
     const result = await msalObj.acquireTokenPopup({ scopes });
