@@ -5,9 +5,9 @@ import {
   FILE_TYPE_KEY,
   LABELS_KEY,
   LAST_CREATED_KEY,
-  LAST_UPDATED_KEY,
   PAGE_COUNT_KEY,
   SOURCE_KEY,
+  TOTAL_COUNT_KEY,
 } from '../constants';
 import {
   AggregateNames,
@@ -85,17 +85,19 @@ export const processFacets = (
     };
   });
 
-  const lastUpdatedTime = findResult('lastUpdatedTime').map((item) => {
-    const name = (item.group as { [LAST_UPDATED_KEY]: string }[])
-      .map((group) => group[LAST_UPDATED_KEY])
-      .join(' ');
-    return {
-      name,
-      key: name,
-      count: item.value,
-      selected: false,
-    };
-  });
+  const totalCount = (result.aggregates || []).find(
+    (item) => item.name === TOTAL_COUNT_KEY
+  );
+
+  const total = totalCount
+    ? [
+        {
+          name: TOTAL_COUNT_KEY,
+          key: TOTAL_COUNT_KEY,
+          count: totalCount.total,
+        },
+      ]
+    : [];
 
   const location = findResult('location').map((item) => {
     const name = (item.group as { [SOURCE_KEY]: string }[])
@@ -138,7 +140,7 @@ export const processFacets = (
   const finalFacets = {
     labels,
     lastcreated,
-    lastUpdatedTime,
+    total,
     location,
     filetype: groupMimetypesTogether,
     pageCount,

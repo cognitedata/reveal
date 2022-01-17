@@ -8,7 +8,7 @@ describe('processFacets', () => {
     expect(facets).toEqual({
       filetype: [],
       labels: [],
-      lastUpdatedTime: [],
+      total: [],
       lastcreated: [],
       location: [],
       pageCount: [],
@@ -33,12 +33,11 @@ describe('processFacets', () => {
           selected: false,
         },
       ],
-      lastUpdatedTime: [
+      total: [
         {
           count: 400,
-          key: '1396357617334',
-          name: '1396357617334',
-          selected: false,
+          key: 'total',
+          name: 'total',
         },
       ],
       lastcreated: [

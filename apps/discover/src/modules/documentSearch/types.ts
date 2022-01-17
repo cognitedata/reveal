@@ -123,7 +123,7 @@ export type AggregateNames =
   | 'location'
   | 'filetype'
   | 'lastcreated'
-  | 'lastUpdatedTime' // this is the backup for lastmodified, incase its not set;
+  | 'total'
   | 'pageCount';
 
 export type DocumentResultFacets = Record<AggregateNames, DocumentQueryFacet[]>;

@@ -3,10 +3,7 @@ import uniqueId from 'lodash/uniqueId';
 import { FileInfo, FileLink, InternalId, ExternalId } from '@cognite/sdk';
 import { Document } from '@cognite/sdk-playground';
 
-import {
-  LAST_CREATED_KEY,
-  LAST_UPDATED_KEY,
-} from 'modules/documentSearch/constants';
+import { LAST_CREATED_KEY } from 'modules/documentSearch/constants';
 import {
   DocumentType,
   DocumentMetadata,
@@ -151,14 +148,9 @@ export const mockAggregateResponse: DocumentsAggregatesResponse = {
       total: 300,
     },
     {
-      name: 'lastUpdatedTime',
-      groups: [
-        {
-          group: [{ [LAST_UPDATED_KEY]: 1396357617334 }],
-          value: 400,
-        },
-      ],
+      name: 'total',
       total: 400,
+      groups: [],
     },
     {
       name: 'lastcreated',
@@ -202,11 +194,11 @@ export const getMockDocumentFacets = (
       selected: false,
     },
   ],
-  lastUpdatedTime: [
+  total: [
     {
       count: 400,
-      key: '1396357617334',
-      name: '1396357617334',
+      key: 'total',
+      name: 'total',
       selected: false,
     },
   ],
@@ -251,7 +243,7 @@ export const getMockDocumentResultsEmptyFacets = (
 ): DocumentResultFacets => ({
   filetype: [],
   labels: [],
-  lastUpdatedTime: [],
+  total: [],
   lastcreated: [],
   location: [],
   pageCount: [],

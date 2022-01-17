@@ -29,7 +29,7 @@ export const getEmptyDocumentStateFacets = (): DocumentResultFacets => ({
   labels: [],
   lastcreated: [],
   location: [],
-  lastUpdatedTime: [],
+  total: [],
   pageCount: [],
 });
 

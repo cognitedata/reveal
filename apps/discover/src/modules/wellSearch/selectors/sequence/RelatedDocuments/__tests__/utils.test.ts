@@ -123,11 +123,11 @@ describe('related document util', () => {
             selected: false,
           },
         ],
-        lastUpdatedTime: [
+        total: [
           {
             count: 0,
-            key: '1396357617334',
-            name: '1396357617334',
+            key: 'total',
+            name: 'total',
             selected: false,
           },
         ],

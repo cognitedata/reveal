@@ -7,7 +7,7 @@ export const useDocumentResultCount = () => {
 
   return useDeepMemo(
     () =>
-      facets.lastUpdatedTime.reduce((result, value) => {
+      facets.total.reduce((result, value) => {
         return result + value.count;
       }, 0),
     [facets]
