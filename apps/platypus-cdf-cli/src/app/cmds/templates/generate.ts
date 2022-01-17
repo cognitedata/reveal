@@ -20,7 +20,8 @@ import {
   printSchema,
   parse,
 } from 'graphql';
-import { readFile, stat, writeFile } from 'fs/promises';
+import { promises } from 'fs';
+const { readFile, stat, writeFile } = promises;
 import { join, resolve } from 'path';
 
 export type TemplateGenerateCommandArgs = BaseArgs & {
