@@ -10,7 +10,7 @@ const Container = styled.div`
 const Info = () => {
   return (
     <Container>
-      <Title>Engineering Diagram Parsing Tool</Title>
+      <Title>Diagram Parsing Tool</Title>
       <ReactPid />
     </Container>
   );

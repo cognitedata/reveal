@@ -67,7 +67,7 @@ export const MenuBar = () => {
             onClick: handleNavigate(PAGES.INTERCOM),
           },
           {
-            name: 'P & ID',
+            name: 'P&ID',
             isActive: active === PAGES.PID,
             onClick: handleNavigate(PAGES.PID),
           },
