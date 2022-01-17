@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 import yargs, { scriptName } from 'yargs';
+import chalk from 'chalk';
 import { authenticate } from './app/middlewares/auth';
-
 import * as login from './app/cmds/login';
 import * as solutions from './app/cmds/solutions';
 import * as templates from './app/cmds/templates';
 import { init } from './app/middlewares/init';
-import { LogoutCommand } from './app/cmds/logout';
-import chalk from 'chalk';
+import status from './app/cmds/status';
+import logout from './app/cmds/logout';
 
 const config = {
   appId: 'platypus-cli',
@@ -21,7 +21,8 @@ scriptName('platypus')
   .command(login)
   .command(solutions)
   .command(templates)
-  .command(new LogoutCommand())
+  .command(logout)
+  .command(status)
   .version()
   .help(true)
   .fail((msg, err, args) => {
