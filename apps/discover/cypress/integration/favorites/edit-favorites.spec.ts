@@ -69,7 +69,7 @@ describe('Edit Favorites', () => {
     });
   });
 
-  describe('Content', () => {
+  describe.skip('Content', () => {
     const favoriteName = `favorite to edit content, ${Date.now()}`;
 
     before(() => {
