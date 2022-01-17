@@ -8,6 +8,9 @@ import { assertNever } from '@reveal/utilities';
 import { Vector2 } from 'three';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
+
+export type EventCollection = { [eventName: string]: EventTrigger<(...args: any[]) => void> };
+
 export class InputHandler {
   private readonly domElement: HTMLElement;
   private static readonly maxMoveDistance = 8;
@@ -150,7 +153,7 @@ export class InputHandler {
 /**
  * Method for deleting all external events that are associated with current instance of a class.
  */
-export function disposeOfAllEventListeners(eventList: any): void {
+export function disposeOfAllEventListeners(eventList: EventCollection): void {
   for (const eventType of Object.keys(eventList)) {
     eventList[eventType].unsubscribeAll();
   }
