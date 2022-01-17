@@ -12,8 +12,6 @@ import {
 } from 'modules/lineReviews/types';
 import { useEffect, useState } from 'react';
 import layers from 'utils/z';
-import head from 'lodash/head';
-import sortBy from 'lodash/sortBy';
 
 import { getDocumentUrl } from '../../modules/lineReviews/api';
 import { DocumentId } from '../../modules/lineReviews/DocumentId';
@@ -22,6 +20,8 @@ import isNotUndefined from '../../utils/isNotUndefined';
 import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
 import DiscrepancyModal from './DiscrepancyModal';
+import getAnnotationsByDocument from './getAnnotationsByDocument';
+import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
 import IsoModal, {
   ISO_MODAL_ORNATE_HEIGHT_PX,
   ISO_MODAL_ORNATE_WIDTH_PX,
@@ -36,6 +36,8 @@ import ReactOrnate, {
 
 type LineReviewViewerProps = {
   lineReview: LineReview;
+  discrepancies: Discrepancy[];
+  onDiscrepancyChange: (discrepancies: Discrepancy[]) => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
 };
 
@@ -66,10 +68,20 @@ const useFileConnections = (lineReview: LineReview) => {
   return fileConnections;
 };
 
-const getAnnotationsByDocument = (document: Document) => [
-  ...document._annotations.lines,
-  ...document._annotations.symbolInstances,
-];
+const mapPidAnnotationIdToIsoAnnotationId = (
+  documents: Document[],
+  pidAnnotationId: string
+) => {
+  const link = documents
+    .flatMap(({ _linking }) => _linking)
+    .find(({ from: { instanceId } }) => instanceId === pidAnnotationId);
+
+  if (link === undefined) {
+    return undefined;
+  }
+
+  return link.to.instanceId;
+};
 
 const getInteractableOverlays = (
   document: Document,
@@ -168,48 +180,6 @@ const getAnnotationOverlay = (
     }));
 };
 
-const RADIUS = 10;
-const getDiscrepancyCircleMarkersForDocument = (
-  document: Document,
-  discrepancies: Discrepancy[]
-): Drawing[] =>
-  discrepancies
-    .map((discrepancy) =>
-      head(
-        sortBy(
-          getAnnotationsByDocument(document)
-            .filter(({ id }) => discrepancy.ids.includes(id))
-            .map(
-              (d) =>
-                mapPathToNewCoordinateSystem(
-                  document._annotations.viewBox,
-                  d.svgRepresentation.boundingBox,
-                  { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
-                ),
-              ({ y }: { y: number }) => y
-            )
-        )
-      )
-    )
-    .filter(isNotUndefined)
-    .map(({ x, y }: { x: number; y: number }, index) => ({
-      groupId: document.id,
-      id: `circle-marker-${index}`,
-      type: 'circleMarker',
-      attrs: {
-        id: `circle-marker-${index}`,
-        draggable: false,
-        unselectable: true,
-        pinnedTo: {
-          x,
-          y,
-        },
-        number: index + 1,
-        radius: RADIUS,
-        color: '#CF1A17',
-      },
-    }));
-
 const findBoundingBoxByPathId = (document: Document, pathId: string) => {
   const datum = document._annotations.symbolInstances.find(
     ({ id }) => id === pathId
@@ -266,6 +236,8 @@ export type Discrepancy = {
 };
 
 const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
+  discrepancies,
+  onDiscrepancyChange,
   lineReview,
   onOrnateRef,
 }) => {
@@ -281,7 +253,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
-  const [discrepancies, setDiscrepancies] = useState<Discrepancy[]>([]);
   const [pendingDiscrepancy, setPendingDiscrepancy] =
     useState<Discrepancy | null>(null);
   const [isAltPressed, setIsAltPressed] = useState(false);
@@ -485,13 +456,13 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     if (!pendingDiscrepancy) {
       return;
     }
-    setDiscrepancies((discrepancies) =>
+    onDiscrepancyChange(
       discrepancies.filter(({ id }) => id !== pendingDiscrepancy.id)
     );
   };
 
   const onSaveDiscrepancy = (discrepancy: Discrepancy) => {
-    setDiscrepancies([
+    onDiscrepancyChange([
       ...discrepancies.filter((d) => d.id !== discrepancy.id),
       discrepancy,
     ]);
@@ -560,7 +531,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           '#CF1A17'
         )
       ),
-      ...getDiscrepancyCircleMarkersForDocument(document, discrepancies),
+      ...getDiscrepancyCircleMarkersForDocument(
+        document,
+        discrepancies,
+        (discrepancy) => {
+          setPendingDiscrepancy(discrepancy);
+          setIsDiscrepancyModalOpen(true);
+        }
+      ),
       ...(isAltPressed && document._linking
         ? getAnnotationOverlay(
             document,
@@ -601,6 +579,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         documents={lineReview.documents.filter(
           ({ type }) => type === DocumentType.ISO
         )}
+        discrepancies={discrepancies.map((discrepancy) => ({
+          ...discrepancy,
+          ids: discrepancy.ids
+            .map((id) =>
+              mapPidAnnotationIdToIsoAnnotationId(lineReview.documents, id)
+            )
+            .filter(isNotUndefined),
+        }))}
         visible={isIsoModalOpen}
         onOrnateRef={setIsoOrnateRef}
         onHidePress={() => setIsIsoModalOpen(false)}

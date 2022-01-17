@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Button } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
@@ -8,6 +9,8 @@ import { getDocumentUrl } from '../../modules/lineReviews/api';
 import { WorkspaceTool } from '../WorkSpaceTools/WorkSpaceTools';
 import { Document } from '../../modules/lineReviews/types';
 
+import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
+import { Discrepancy } from './LineReviewViewer';
 import ReactOrnate from './ReactOrnate';
 
 export const ISO_MODAL_ORNATE_WIDTH_PX = 600;
@@ -16,6 +19,7 @@ export const ISO_MODAL_ORNATE_HEIGHT_PX = 380;
 type IsoModalProps = {
   documents: Document[] | undefined;
   visible?: boolean;
+  discrepancies: Discrepancy[];
   onHidePress: () => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
 };
@@ -23,6 +27,7 @@ type IsoModalProps = {
 const IsoModal: React.FC<IsoModalProps> = ({
   documents,
   visible,
+  discrepancies,
   onOrnateRef,
   onHidePress,
 }) => {
@@ -53,6 +58,10 @@ const IsoModal: React.FC<IsoModalProps> = ({
   if (!isInitialized) {
     return null;
   }
+
+  const drawings = documents?.flatMap((document) =>
+    getDiscrepancyCircleMarkersForDocument(document, discrepancies)
+  );
 
   return (
     <div
@@ -85,6 +94,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
         <ReactOrnate
           onOrnateRef={onOrnateRef}
           documents={fetchedDocuments}
+          drawings={drawings}
           tools={[
             WorkspaceTool.SELECT,
             WorkspaceTool.MOVE,

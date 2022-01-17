@@ -275,12 +275,14 @@ export class CogniteOrnate {
       groupId?: string;
       width?: number;
       height?: number;
+      shouldCenterOnDoubleClick?: boolean;
     }
   ): Promise<OrnatePDFDocument> => {
     const {
       initialPosition = { x: 0, y: 0 },
       zoomAfterLoad = true,
       groupId = uuid(),
+      shouldCenterOnDoubleClick = true,
     } = options || {};
     const base64 = await pdfToImage(pdfFile, pageNumber);
     return new Promise<OrnatePDFDocument>((res, rej) => {
@@ -321,9 +323,11 @@ export class CogniteOrnate {
         group.add(baseRect);
         baseRect.zIndex(0);
 
-        group.on('dblclick', () => {
-          this.zoomToNode(group);
-        });
+        if (shouldCenterOnDoubleClick) {
+          group.on('dblclick', () => {
+            this.zoomToNode(group);
+          });
+        }
 
         this.baseLayer.draw();
         if (zoomAfterLoad) {

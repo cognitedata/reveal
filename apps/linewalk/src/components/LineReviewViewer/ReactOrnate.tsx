@@ -83,8 +83,8 @@ const ReactOrnate = ({
       // };
     }, 2000);
 
-    if (ornateViewer.current.tools.default) {
-      ornateViewer.current.currentTool = ornateViewer.current.tools.default;
+    if (ornateViewer.current.tools.move) {
+      ornateViewer.current.currentTool = ornateViewer.current.tools.move;
     }
   }, []);
 
@@ -125,6 +125,7 @@ const ReactOrnate = ({
                   width: SLIDE_WIDTH,
                   height: SHAMEFUL_SLIDE_HEIGHT,
                   groupId: id,
+                  shouldCenterOnDoubleClick: false,
                 }
               );
 

@@ -1,5 +1,6 @@
 import { Button, Modal, TextInput } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
+import { useAuthContext } from '@cognite/react-container';
 import LineReviewHeader from 'components/LineReviewHeader';
 import LineReviewViewer from 'components/LineReviewViewer';
 import { NullView } from 'components/NullView/NullView';
@@ -7,6 +8,7 @@ import useLineReviews from 'modules/lineReviews/hooks';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 
+import { Discrepancy } from '../components/LineReviewViewer/LineReviewViewer';
 import { updateLineReviews } from '../modules/lineReviews/api';
 import { LineReviewStatus } from '../modules/lineReviews/types';
 
@@ -21,8 +23,9 @@ const LineReview = () => {
   const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
+  const [discrepancies, setDiscrepancies] = useState<Discrepancy[]>([]);
 
-  // const { client } = useAuthContext();
+  const { client } = useAuthContext();
 
   // Populate data
   useEffect(() => {
@@ -44,8 +47,21 @@ const LineReview = () => {
 
   const onReportBackPress = () => setIsReportBackModalOpen(true);
 
-  const onReportBackSavePress = () => {
+  const onReportBackSavePress = async () => {
     setIsReportBackModalOpen(false);
+
+    if (client && discrepancies.length > 0) {
+      await client.events.create(
+        discrepancies.map((discrepancy) => ({
+          type: 'discrepancy',
+          startTime: new Date(),
+          endTime: new Date(),
+          metadata: {},
+          description: discrepancy.comment,
+        }))
+      );
+    }
+
     updateLineReviews([
       {
         ...lineReview,
@@ -122,7 +138,12 @@ const LineReview = () => {
         ornateRef={ornateRef}
         onReportBackPress={onReportBackPress}
       />
-      <LineReviewViewer lineReview={lineReview} onOrnateRef={setOrnateRef} />
+      <LineReviewViewer
+        discrepancies={discrepancies}
+        onDiscrepancyChange={setDiscrepancies}
+        lineReview={lineReview}
+        onOrnateRef={setOrnateRef}
+      />
     </div>
   );
 };
