@@ -16,6 +16,21 @@ This repo uses [Bazel](https://bazel.build/) as a build tool. To get that set up
 
 If you want to read more details about the Bazel setup, see [bazel.md](https://github.com/cognitedata/application-services/tree/master/bazel.md).
 
+After that you need to install the dependencies with: `yarn --frozen-lockfile`.
+If you are not logged in with npm it will fail, so please follow the relevant [guide](https://cognitedata.atlassian.net/wiki/spaces/AD/pages/147424318/The+Definitive+Onboarding+Guide+for+Application+Developers)
+
+### For M1 chips users
+
+To be able to use the repository with an M1 chip you need:
+
+- run iterm/terminal in rosetta mode
+- install homebrew under rosetta (if 'which brew' gives you /opt/homebrew/bin, you need to uninstall it)
+- install nvm under rosetta
+- install node 14 with rosetta nvm
+- run `npm install -g yarn`
+- run `yarn --frozen-lockfile` at the root of this monorepo
+- run `brew install bazelisk`
+
 ## Running cypress
 
 To work with cypress, you might have to install some dependencies on your machine.
@@ -40,9 +55,10 @@ Whenever you've added a dependency and started using it, you need to run `yarn u
 To create a new application:
 
 1. Clone this repo
-2. Copy and rename the `react-demo-app` folder
-3. By default you'll be using the `azure-dev` cluster. Ask someone to share the private keys (in lastpass) for the shared testing projects and put them into the `./private-keys` folder of your app.
-4. If it can not find the container, try and login with the gcloud utils:
+2. run `yarn --frozen-lockfile`
+3. run `yarn generate` and follow the prompts
+4. To go past the login screen when running `yarn start`, ask someone to share the private keys (in lastpass) for the shared testing projects and put them into the `./private-keys` folder of your app.
+5. If it can not find the container, try and login with the gcloud utils:
 
 ```
 gcloud auth login
@@ -58,8 +74,6 @@ This will spit out all of the boilerplate that you need to have a production-cap
 - Testcafe or Cypress
 - Folder / component layout
 - Authentication workflow
-
-3. Find and replace all the occurences of `*demo*` string to appropriate values
 
 ## Importing existing application
 

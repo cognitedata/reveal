@@ -12,6 +12,8 @@ function is_demo_app() {
   return $?
 }
 
+export SKIP_PREFLIGHT_CHECK="true"
+export DISABLE_ESLINT_PLUGIN="true"
 export REACT_APP_I18N_PSEUDO="${REACT_APP_I18N_PSEUDO:-false}"
 export REACT_APP_I18N_DEBUG="${REACT_APP_I18N_DEBUG:-true}"
 export REACT_APP_LANGUAGE="${REACT_APP_LANGUAGE:-en}"
