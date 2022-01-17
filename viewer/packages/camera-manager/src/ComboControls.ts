@@ -46,7 +46,8 @@ export class ComboControls extends EventDispatcher {
   public enableDamping: boolean = true;
   public dampingFactor: number = 0.25;
   public dynamicTarget: boolean = true;
-  public minDistance: number = 0.1;
+  public minDistance: number = 0.8;
+  public minZoomDistance: number = 0.4;
   public dollyFactor: number = 0.99;
   public minPolarAngle: number = 0; // radians
   public maxPolarAngle: number = Math.PI; // radians
@@ -112,7 +113,6 @@ export class ComboControls extends EventDispatcher {
 
     this._spherical.setFromVector3(camera.position);
     this._sphericalEnd.copy(this._spherical);
-
     domElement.addEventListener('mousedown', this.onMouseDown);
     domElement.addEventListener('touchstart', this.onTouchStart);
     domElement.addEventListener('wheel', this.onMouseWheel);
@@ -627,7 +627,7 @@ export class ComboControls extends EventDispatcher {
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const { dynamicTarget, minDistance, _raycaster, _targetEnd, _reusableCamera } = this;
+    const { dynamicTarget, minZoomDistance, _raycaster, _targetEnd, _reusableCamera } = this;
 
     const distFromCameraToScreenCenter = Math.tan(
       MathUtils.degToRad(90 - (this._camera as PerspectiveCamera).fov * 0.5)
@@ -638,20 +638,21 @@ export class ComboControls extends EventDispatcher {
 
     const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
     const distToTarget = cameraDirection.length();
+    const isDollyOut = deltaDistance > 0 ? true : false;
 
     _raycaster.setFromCamera({ x, y }, _reusableCamera);
 
     let radius = distToTarget + deltaDistance;
 
-    if (radius < minDistance) {
-      radius = minDistance;
+    if (radius < minZoomDistance && !isDollyOut) {
+      radius = distToTarget;
       if (dynamicTarget) {
         // push targetEnd forward
         _reusableCamera.getWorldDirection(cameraDirection);
         _targetEnd.add(cameraDirection.normalize().multiplyScalar(Math.abs(deltaDistance)));
       } else {
         // stops camera from moving forward
-        deltaDistance = distToTarget - radius;
+        deltaDistance = 0;
       }
     }
 
@@ -679,7 +680,7 @@ export class ComboControls extends EventDispatcher {
     cameraDirection: THREE.Vector3
   ) => {
     const {
-      minDistance,
+      minZoomDistance,
       _reusableVector3,
       _target,
       _scrollTarget,
@@ -698,12 +699,15 @@ export class ComboControls extends EventDispatcher {
 
     // Here we use the law of sines to determine how far we want to move the target.
     // Direction is always determined by scrollTarget-target vector
-    const targetToScrollTargetVec = _reusableVector3.subVectors(_scrollTarget, _target).normalize();
+    const targetToScrollTargetVec = _reusableVector3.subVectors(_scrollTarget, _target);
     const cameraToTargetVec = new Vector3().subVectors(_target, _camera.position);
     const cameraToScrollTargetVec = new Vector3().subVectors(_scrollTarget, _camera.position);
 
     const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
-    const targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.negate());
+    const targetScrollTargetCameraAngle = targetToScrollTargetVec
+      .clone()
+      .negate()
+      .angleTo(cameraToScrollTargetVec.clone().negate());
 
     let deltaTargetOffsetDistance =
       deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
@@ -725,18 +729,21 @@ export class ComboControls extends EventDispatcher {
     let radius = distToTarget + deltaDistance;
 
     // behaviour for scrolling with mouse wheel
-    if (radius < minDistance) {
+    if (radius < minZoomDistance) {
       this._temporarilyDisableDamping = true;
 
       // stops camera from moving forward only if target became close to scroll target
-      if (_scrollTarget.distanceTo(_target) < minDistance) {
-        radius = minDistance;
+      if (_scrollTarget.distanceTo(_target) < minZoomDistance || radius <= 0) {
         deltaTargetOffsetDistance = 0;
+        radius = distToTarget;
       }
     }
 
     // if we scroll out, we don't change the target
-    const targetOffset = targetToScrollTargetVec.multiplyScalar(!isDollyOut ? deltaTargetOffsetDistance : 0);
+    const targetOffset = targetToScrollTargetVec
+      .negate()
+      .normalize()
+      .multiplyScalar(!isDollyOut ? deltaTargetOffsetDistance : 0);
 
     return { targetOffset, radius };
   };
@@ -791,13 +798,12 @@ export class ComboControls extends EventDispatcher {
     moveOnlyTarget: boolean = false
   ) => {
     const { _reusableVector3, _targetEnd, _reusableCamera, _sphericalEnd, _camera } = this;
-
     //@ts-ignore
     _reusableCamera.copy(_camera);
     _reusableCamera.position.setFromSpherical(_sphericalEnd).add(_targetEnd);
     _reusableCamera.lookAt(_targetEnd);
 
-    const cameraDirection = _reusableVector3.setFromSpherical(_sphericalEnd);
+    const cameraDirection = _reusableVector3.clone().setFromSpherical(_sphericalEnd);
 
     if (moveOnlyTarget) {
       // move only target together with the camera, radius is constant (for 'w' and 's' keys movement)

@@ -34,7 +34,9 @@ export class CameraManager {
   private static readonly DefaultAnimationDuration = 300;
   private static readonly DefaultMinAnimationDuration = 300;
   private static readonly DefaultMaxAnimationDuration = 1250;
-  private static readonly DefaultMinDistance = 1;
+  private static readonly DefaultMinDistance = 0.8;
+  private static readonly DefaultMinZoomDistance = 0.4;
+  private static readonly DefaultMinimalTimeBetweenRaycasts = 0.08;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
     changeCameraTargetOnClick: false
@@ -77,9 +79,10 @@ export class CameraManager {
     this._domElement = domElement;
     this._inputHandler = new InputHandler(domElement);
     this._modelRaycastCallback = raycastFunction;
-    this._controls = new ComboControls(camera, domElement);
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
+    this._controls = new ComboControls(camera, domElement);
+    this._controls.minZoomDistance = CameraManager.DefaultMinZoomDistance;
 
     this._controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -175,7 +178,7 @@ export class CameraManager {
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...CameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
-    this.teardownControls();
+    this.teardownControls(false);
     this.setupControls();
   }
 
@@ -478,16 +481,17 @@ export class CameraManager {
   /**
    * Removes controls event listeners if they are defined.
    */
-  private teardownControls() {
+  private teardownControls(removeOnWheel: boolean = true): void {
     if (this._onClick !== undefined) {
       this._inputHandler.off('click', this._onClick as PointerEventDelegate);
       this._onClick = undefined;
     }
-    if (this._onWheel !== undefined) {
+    if (this._onWheel !== undefined && removeOnWheel) {
       this._domElement.removeEventListener('wheel', this._onWheel);
       this._onWheel = undefined;
     }
   }
+
   private handleMouseWheelActionChange(controlsOptions: CameraControlsOptions) {
     const { _controls: controls } = this;
 
@@ -527,25 +531,25 @@ export class CameraManager {
     const onWheel = async (e: any) => {
       const timeDelta = wheelClock.getDelta();
 
+      if (timeDelta > CameraManager.DefaultMinimalTimeBetweenRaycasts) scrollStarted = false;
+
       const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
+      const isZoomToCursor = this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor';
 
-      if (wantNewScrollTarget) {
+      if (wantNewScrollTarget && isZoomToCursor) {
         scrollStarted = true;
-
         const newTarget = await this.calculateNewTarget(e);
         this._controls.setScrollTarget(newTarget);
-      } else if (timeDelta > 0.08) {
-        scrollStarted = false;
       }
     };
 
-    this.handleMouseWheelActionChange(this._cameraControlsOptions);
+    if (this._controls) this.handleMouseWheelActionChange(this._cameraControlsOptions);
 
-    if (this._cameraControlsOptions.changeCameraTargetOnClick) {
+    if (this._cameraControlsOptions.changeCameraTargetOnClick && this._onClick === undefined) {
       this._inputHandler.on('click', onClick);
       this._onClick = onClick;
     }
-    if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
+    if (this._onWheel === undefined) {
       this._domElement.addEventListener('wheel', onWheel);
       this._onWheel = onWheel;
     }
