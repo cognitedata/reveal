@@ -16,8 +16,8 @@ type Props = {
 };
 
 type LoadingState = {
-  itemsLoaded: number;
-  itemsRequested: number;
+  itemsLoaded: number; 
+  itemsRequested: number; 
   itemsCulled: number;
 }
 

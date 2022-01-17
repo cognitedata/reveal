@@ -68,12 +68,11 @@ export function WalkablePath() {
         modelUrl: 'primitives',
       });
 
-
       let client;
       if (project && environmentParam) {
-        client = await createSDKFromEnvironment('reveal.example.walkablepath', project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.walkable-path', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.walkablepath',
+        client = new CogniteClient({ appId: 'reveal.example.walkable-path',
                                      project: 'dummy',
                                      getToken: async () => 'dummy' });
       }

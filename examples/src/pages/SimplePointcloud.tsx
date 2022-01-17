@@ -87,7 +87,7 @@ export function SimplePointcloud() {
                                      project: 'dummy',
                                      getToken: async () => 'dummy' });
       }
-
+      
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -105,10 +105,10 @@ export function SimplePointcloud() {
       for (const clazz of pointCloudNode.getClasses()) {
         enabledClasses[clazz] = true;
         classesGui.add(enabledClasses, `${clazz}`, true)
-                  .name(`Class ${clazz}`)
-                  .onChange(visible => {
-                    pointCloudNode.setClassVisible(clazz, visible);
-                  });
+          .name(`Class ${clazz}`)
+          .onChange(visible => {
+            pointCloudNode.setClassVisible(clazz, visible);
+          });
       }
 
       const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => {

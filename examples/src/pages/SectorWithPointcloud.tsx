@@ -223,10 +223,10 @@ export function SectorWithPointcloud() {
         const needsUpdate =
           renderOptions.renderMode === RenderMode.AlwaysRender ||
           (renderOptions.renderMode === RenderMode.WhenNecessary &&
-           (controlsNeedUpdate ||
-            revealManager.needsRedraw ||
-            pointCloudGroup.needsRedraw ||
-            settingsChanged));
+            (controlsNeedUpdate ||
+              revealManager.needsRedraw ||
+              pointCloudGroup.needsRedraw ||
+              settingsChanged));
 
         if (needsUpdate) {
           applyRenderingFilters(scene, renderOptions.renderFilter);

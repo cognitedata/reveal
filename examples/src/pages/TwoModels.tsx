@@ -29,7 +29,6 @@ function getModel2Params() {
 
 export function TwoModels() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     let revealManager: reveal.RevealManager;
@@ -71,7 +70,7 @@ export function TwoModels() {
         throw new Error(
           'Need to provide either project & modelId2/revisionId2 OR modelUrl2 as query parameters'
         );
-      }
+      }      
       scene.add(model2);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,

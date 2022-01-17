@@ -110,6 +110,12 @@ export function Migration() {
 
       // Add GUI for loading models and such
       const guiState = {
+        modelId: 0,
+        revisionId: 0,
+        geometryFilter:
+          geometryFilter !== undefined
+            ? { ...geometryFilter, enabled: true }
+            : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
@@ -197,25 +203,25 @@ export function Migration() {
         viewer.requestRedraw();
       });
       renderGui.add(guiState, 'antiAliasing',
-                    [
-                      'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
-                      'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
-      ]).name('Anti-alias').onFinishChange(v => {
-        urlParams.set('antialias', v);
-        window.location.href = url.toString();
-      });
+        [
+          'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
+          'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
+        ]).name('Anti-alias').onFinishChange(v => {
+          urlParams.set('antialias', v);
+          window.location.href = url.toString();
+        });
       renderGui.add(guiState, 'ssaoQuality',
-                    [
-                      'disabled', 'medium', 'high', 'veryhigh'
-      ]).name('SSAO').onFinishChange(v => {
-        urlParams.set('ssao', v);
-        window.location.href = url.toString();
-      });
+        [
+          'disabled', 'medium', 'high', 'veryhigh'
+        ]).name('SSAO').onFinishChange(v => {
+          urlParams.set('ssao', v);
+          window.location.href = url.toString();
+        });
       renderGui.add(guiState, 'debugRenderStageTimings')
-               .name('Debug timings')
-               .onChange(enabled => {
-                 (viewer as any).revealManager.debugRenderTiming = enabled;
-               });
+        .name('Debug timings')
+        .onChange(enabled => {
+          (viewer as any).revealManager.debugRenderTiming = enabled;
+        });
 
       const debugGui = gui.addFolder('Debug');
       const debugStatsGui = debugGui.addFolder('Statistics');
@@ -427,6 +433,6 @@ export function Migration() {
       gui.destroy();
       viewer?.dispose();
     };
-});
+  });
   return <CanvasWrapper ref={canvasWrapperRef} />;
 }
