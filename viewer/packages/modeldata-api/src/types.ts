@@ -13,7 +13,6 @@ export interface BinaryFileProvider {
 
 /**
  * Provides data for 3D models.
- * @version New since 2.2
  */
 export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
   /**

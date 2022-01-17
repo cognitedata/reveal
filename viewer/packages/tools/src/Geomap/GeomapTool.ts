@@ -11,7 +11,6 @@ import { MetricsLogger } from '@reveal/metrics';
 
 /**
  * The `GeomapTool` is a geolocation for the models and allow the user to place them on the maps.
- * @version New since 2.1.
  */
 export class GeomapTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
