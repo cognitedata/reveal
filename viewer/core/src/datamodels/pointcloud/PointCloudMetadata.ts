@@ -4,10 +4,14 @@
 
 import * as THREE from 'three';
 import { CameraConfiguration } from '@reveal/utilities';
+import { File3dFormat } from '@reveal/modeldata-api';
 
 export interface PointCloudMetadata {
-  modelBaseUrl: string;
-  modelMatrix: THREE.Matrix4;
-  cameraConfiguration?: CameraConfiguration;
-  scene: any;
+  readonly format: File3dFormat;
+  readonly formatVersion: number;
+
+  readonly modelBaseUrl: string;
+  readonly modelMatrix: THREE.Matrix4;
+  readonly cameraConfiguration?: CameraConfiguration;
+  readonly scene: any;
 }
