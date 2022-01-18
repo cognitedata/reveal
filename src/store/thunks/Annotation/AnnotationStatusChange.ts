@@ -1,5 +1,5 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { VisionFile } from 'src/modules/Common/store/files/types';
+import { VisionAsset, VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
@@ -13,16 +13,10 @@ export const AnnotationStatusChange = createAsyncThunk<
   { id: number; status: AnnotationStatus },
   ThunkConfig
 >('AnnotationStatusChange', async (payload, { getState, dispatch }) => {
-  const updateFileAndAnnotation = async (
+  const updateTagAnnotationAndFileAssetLinks = async (
     file: VisionFile,
     updatedAnnotation: VisionAnnotation
   ) => {
-    const unSavedAnnotation = { ...updatedAnnotation };
-
-    if (!(updatedAnnotation.modelType === VisionAPIType.TagDetection)) {
-      dispatch(UpdateAnnotations([unSavedAnnotation])); // update annotation
-      return;
-    }
     // eslint-disable-next-line no-nested-ternary
     const assetsToFetch = updatedAnnotation.linkedResourceId
       ? { id: updatedAnnotation.linkedResourceId }
@@ -32,57 +26,56 @@ export const AnnotationStatusChange = createAsyncThunk<
 
     const assetResponse = await dispatch(fetchAssets([assetsToFetch]));
     const assets = unwrapResult(assetResponse);
+    const asset = assets && assets.length ? assets[0] : null; // get the first (and only) asset
 
-    if (assets && assets.length) {
-      const asset = assets[0]; // get the first (and only) asset
-
-      if (unSavedAnnotation.status === AnnotationStatus.Verified) {
-        if (!(file.assetIds && file.assetIds.includes(asset.id))) {
-          // if file not linked to asset
-          await dispatch(
-            UpdateFiles([
-              {
-                id: Number(file.id),
-                update: {
-                  assetIds: {
-                    add: [asset.id],
-                  },
-                },
-              },
-            ])
-          );
-        }
-      } else if (unSavedAnnotation.status === AnnotationStatus.Rejected) {
-        if (file.assetIds && file.assetIds.includes(asset.id)) {
-          // if file linked to asset
-
-          const removeAssetIds = async (fileId: number, assetId: number) => {
-            await dispatch(
-              UpdateFiles([
-                {
-                  id: Number(fileId),
-                  update: {
-                    assetIds: {
-                      remove: [assetId],
-                    },
-                  },
-                },
-              ])
-            );
-          };
-          ToastUtils.onWarn(
-            'Rejecting detected asset tag',
-            'Do you want to remove the link between the file and the asset as well?',
-            () => {
-              removeAssetIds(file.id, asset.id);
-            },
-            'Remove asset link'
-          );
-        }
-      }
+    if (!asset) {
+      // preempt if asset is empty
+      return;
     }
 
-    dispatch(UpdateAnnotations([unSavedAnnotation])); // update annotation
+    if (
+      updatedAnnotation.status === AnnotationStatus.Verified &&
+      !fileIsLinkedToAsset(file, asset) // annotation is verified and file is not linked to asset
+    ) {
+      dispatch(
+        UpdateFiles([
+          {
+            id: Number(file.id),
+            update: {
+              assetIds: {
+                add: [asset.id],
+              },
+            },
+          },
+        ])
+      );
+    } else if (
+      unSavedAnnotation.status === AnnotationStatus.Rejected &&
+      fileIsLinkedToAsset(file, asset) // annotation is rejected and file linked to asset
+    ) {
+      const removeAssetIds = async (fileId: number, assetId: number) => {
+        await dispatch(
+          UpdateFiles([
+            {
+              id: Number(fileId),
+              update: {
+                assetIds: {
+                  remove: [assetId],
+                },
+              },
+            },
+          ])
+        );
+      };
+      ToastUtils.onWarn(
+        'Rejecting detected asset tag',
+        'Do you want to remove the link between the file and the asset as well?',
+        () => {
+          removeAssetIds(file.id, asset.id);
+        },
+        'Remove asset link'
+      );
+    }
   };
 
   const annotationState =
@@ -90,8 +83,17 @@ export const AnnotationStatusChange = createAsyncThunk<
   const file =
     getState().fileReducer.files.byId[annotationState.annotatedResourceId];
 
-  await updateFileAndAnnotation(file, {
+  const unSavedAnnotation = {
     ...annotationState,
     status: payload.status,
-  });
+  };
+
+  dispatch(UpdateAnnotations([unSavedAnnotation]));
+
+  if (unSavedAnnotation.modelType === VisionAPIType.TagDetection) {
+    await updateTagAnnotationAndFileAssetLinks(file, unSavedAnnotation); // update tag annotations and asset links in file
+  }
 });
+
+const fileIsLinkedToAsset = (file: VisionFile, asset: VisionAsset) =>
+  file.assetIds && file.assetIds.includes(asset.id);
