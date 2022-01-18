@@ -31,6 +31,32 @@ export const createCogniteSDKClientV7 = ({
   return new CogniteClientV7({ appId, baseUrl });
 };
 
+export const authenticateCogniteSDKV7 = ({
+  appId,
+  baseUrl,
+  project,
+  token,
+}: {
+  appId: string;
+  baseUrl: string;
+  project: string;
+  token: string;
+}) => {
+  const sdkV7 = createCogniteSDKClientV7({ appId, baseUrl });
+  setClientV7(sdkV7);
+  sdkV7.loginWithOAuth({
+    type: 'CDF_OAUTH',
+    options: {
+      project,
+      onAuthenticate: (login) => {
+        login.skip();
+      },
+      accessToken: token,
+    },
+  });
+  return sdkV7;
+};
+
 let globalEmail: string;
 export const setEmail = (email?: string) => {
   if (email) {
