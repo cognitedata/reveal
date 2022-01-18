@@ -1,6 +1,8 @@
 import React, { useMemo, useCallback, useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 
+import isArray from 'lodash/isArray';
+
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 
 import { ThreeDee } from 'components/3d';
@@ -178,7 +180,7 @@ const ThreeDeePreview: React.FC<Props> = ({
       casings.push(...orderedCasingsByBase(casingData[wbid]));
     }
 
-    if (ndsData) {
+    if (ndsData && isArray(ndsData[wbid])) {
       ndsEvents.push(...ndsData[wbid]);
     }
 
