@@ -11,7 +11,7 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
+import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
@@ -113,6 +113,7 @@ export class Cognite3DViewer {
     sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
     disposed: new EventTrigger<DisposedDelegate>()
   };
+  private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModelBase[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
@@ -256,6 +257,7 @@ export class Cognite3DViewer {
     }
     this.renderController = new RenderController(this.camera);
 
+    this._mouseHandler = new InputHandler(this.domElement);
     this.startPointerEventListeners();
 
     this.revealManager.setRenderTarget(
@@ -349,6 +351,8 @@ export class Cognite3DViewer {
     this.spinner.dispose();
 
     this._events.disposed.fire();
+    disposeOfAllEventListeners(this._events);
+    this._mouseHandler.dispose();
   }
 
   /**
@@ -1354,13 +1358,11 @@ export class Cognite3DViewer {
   }
 
   private readonly startPointerEventListeners = () => {
-    const mouseHandler = new InputHandler(this.domElement);
-
-    mouseHandler.on('click', e => {
+    this._mouseHandler.on('click', e => {
       this._events.click.fire(e);
     });
 
-    mouseHandler.on('hover', e => {
+    this._mouseHandler.on('hover', e => {
       this._events.hover.fire(e);
     });
   };
