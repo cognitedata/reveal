@@ -78,7 +78,7 @@
     "file-saver": "^2.0.2",
     "formik": "^2.2.9",
     "google-protobuf": "^3.17.3",
-    "graphology": "^0.23.1",
+    "graphology": "^0.23.2",
     "graphology-simple-path": "^0.1.1",
     "gridstack": "^4.2.5",
     "html2canvas": "^1.0.0-rc.5",
