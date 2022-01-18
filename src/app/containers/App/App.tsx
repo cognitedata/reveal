@@ -31,6 +31,10 @@ export default function App() {
                 flow={flow}
                 sdk={sdk}
                 userInfo={userInfo}
+                overrideURLMap={{
+                  pdfjsWorkerSrc:
+                    '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+                }}
               >
                 <Switch>
                   <Redirect
