@@ -7,7 +7,7 @@ import { VisionAPIType } from 'src/api/types';
 import { waitFor } from '@testing-library/react';
 import { WrappedWithProviders } from 'src/__test-utils/renderer';
 import { AnnotationTableItem } from 'src/modules/Review/types';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { mockFileList } from 'src/__test-utils/fixtures/files';
 
 const getDummyAnnotation = (
   id?: number,
@@ -29,16 +29,6 @@ const getDummyAnnotation = (
   } as AnnotationTableItem;
 };
 
-const dummyFile: FileInfo = {
-  id: 1,
-  uploaded: true,
-  name: 'one',
-  createdTime: new Date(2021, 0, 1, 7, 0, 0, 0),
-  lastUpdatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
-  sourceCreatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
-  uploadedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
-};
-
 const approveAnnotation = (annotation: AnnotationTableItem) => ({
   ...annotation,
   status: AnnotationStatus.Verified,
@@ -49,7 +39,7 @@ const rejectAnnotation = (annotation: AnnotationTableItem) => ({
 });
 
 const linkFileToAssets = (assetIds?: number[]) => ({
-  ...dummyFile,
+  ...mockFileList[0],
   assetIds,
 });
 
@@ -85,7 +75,7 @@ describe('tests useAssetLinkWarningHook', () => {
     annotationAssetId
   );
 
-  test('tests rendering of the hook with different props', async () => {
+  it('should test rendering of the hook with different props', async () => {
     jest.mock('@cognite/cdf-sdk-singleton');
     jest.useFakeTimers();
 

@@ -1,5 +1,4 @@
 import noop from 'lodash/noop';
-
 import { CogniteEvent } from '@cognite/sdk';
 import { mockCogniteAssetList } from 'src/__test-utils/fixtures/assets';
 
@@ -25,9 +24,6 @@ export class MockedCogniteClient {
         ],
       });
     },
-  };
-
-  files = {
   };
 
   assets = {
