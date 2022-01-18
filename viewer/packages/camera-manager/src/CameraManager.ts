@@ -12,9 +12,8 @@ import {
   PointerEventDelegate,
   ControlsState
 } from './types';
-import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
+import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import range from 'lodash/range';
-
 export class CameraManager {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeData>()
@@ -360,6 +359,8 @@ export class CameraManager {
     this.isDisposed = true;
     this._controls.dispose();
     this.teardownControls();
+    disposeOfAllEventListeners(this._events);
+    this._inputHandler.dispose();
   }
 
   private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
