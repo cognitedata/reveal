@@ -430,7 +430,7 @@ export const ModalFileUploader = ({
   };
 
   const removeFiles = () => {
-    setFileList((list) => list.filter((el) => el.status === 'done'));
+    setFileList([]);
   };
 
   const removeFile = (file: CogsFileInfo) => {

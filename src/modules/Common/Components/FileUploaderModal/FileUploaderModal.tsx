@@ -18,6 +18,8 @@ export const FileUploadModal = (props: FileUploadModalProps) => {
       visible={props.showModal}
       onCancel={props.onCancel}
       width={1000}
+      maskClosable={false}
+      closable={false}
       footer={null} // to remove default ok and cancel buttons
       bodyStyle={{
         backgroundColor: '#ffffff',
