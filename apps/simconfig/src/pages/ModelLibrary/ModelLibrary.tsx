@@ -1,10 +1,13 @@
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Button, Input, Select } from '@cognite/cogs.js';
+import { Button, Input } from '@cognite/cogs.js';
+import type { GetModelFileApiResponse } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
@@ -21,10 +24,14 @@ export function ModelLibrary() {
     },
     data: { modelFiles },
   } = useMatch<AppLocationGenerics>();
+
+  const [modelFilesList, setModelFileslist] = useState<
+    GetModelFileApiResponse[]
+  >(modelFiles?.modelFileList ?? []);
   const navigate = useNavigate();
 
-  if (!modelName && modelFiles?.modelFileList) {
-    const firstFile = modelFiles.modelFileList[0];
+  if (!modelName && modelFilesList.length) {
+    const firstFile = modelFilesList[0];
     navigate({
       to: `/model-library/models/${encodeURIComponent(
         firstFile.source
@@ -32,6 +39,23 @@ export function ModelLibrary() {
       replace: true,
     });
   }
+
+  const handleOnModelNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const searchText = event.target.value;
+    const modelFileList = modelFiles?.modelFileList ?? [];
+
+    if (!searchText) {
+      // Load complete list if the user has cleared the search box
+      setModelFileslist(modelFileList);
+      return;
+    }
+
+    setModelFileslist(
+      modelFileList.filter((model) =>
+        model.name.toLowerCase().includes(searchText.toLocaleLowerCase())
+      )
+    );
+  };
 
   return (
     <ModelLibraryContainer>
@@ -50,19 +74,12 @@ export function ModelLibrary() {
                 icon="Search"
                 maxLength={64}
                 name="modelName"
-                placeholder="Filter by model name"
+                placeholder="Search models"
                 size="small"
                 title=""
                 fullWidth
+                onChange={handleOnModelNameChange}
               />
-              <Field
-                as={Select}
-                icon="Configure"
-                name="attributes"
-                title="Filter by"
-                fullWidth
-              />
-              <Field as={Select} name="sortBy" title="Sort by" disableTyping />
             </Form>
           </Formik>
         </div>
@@ -74,7 +91,7 @@ export function ModelLibrary() {
               </Button>
             </Link>
           </div>
-          <ModelList modelFiles={modelFiles?.modelFileList ?? []} />
+          <ModelList modelFiles={modelFilesList} />
         </div>
       </ModelLibrarySidebar>
       <ModelLibraryContent>
