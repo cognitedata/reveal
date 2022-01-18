@@ -23,6 +23,8 @@ import { DefaultTool, CommentTool } from './tools';
 import { Tool } from './tools/Tool';
 import bgImage from './assets/bg.png';
 import { downloadURL, pdfToImage, ConnectedLine } from './utils';
+import getInputDeviceFromWheelEvent from './utils/getInputDeviceFromWheelEvent';
+import InputDevice from './utils/InputDevice';
 
 const defaultShapeSettings = {
   circle: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
@@ -405,9 +407,18 @@ export class CogniteOrnate {
     }
   };
 
-  onStageMouseWheel = (e: KonvaEventObject<WheelEvent>) => {
+  onStageMouseEnter = () => {
+    this.stage.container().style.cursor = this.currentTool?.cursor;
+  };
+
+  onStageMouseWheel = (
+    e: KonvaEventObject<WheelEvent & { wheelDeltaY?: number }>
+  ) => {
     e.evt.preventDefault();
-    if (e.evt.ctrlKey) {
+    if (
+      e.evt.ctrlKey ||
+      getInputDeviceFromWheelEvent(e.evt) === InputDevice.MOUSE
+    ) {
       this.onZoom(e.evt.deltaY, true);
       return;
     }
