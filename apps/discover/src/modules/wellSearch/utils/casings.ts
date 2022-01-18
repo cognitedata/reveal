@@ -71,9 +71,16 @@ export const getDupIdsBySize = (casings: Sequence[]) => {
     .map((casing) => casing.id);
 };
 
+const sortCasingsByDiameter = (casings: CasingType[]) => {
+  return sortBy(casings, (casing) => Number(casing.outerDiameter));
+};
+
 export const convertToPreviewData = (casings: CasingType[]) => {
+  // Need to show casings in increasing order of diameter
+  const sortedCasings = sortCasingsByDiameter(casings);
+
   // This finds the maximum depth of casings
-  const maxDepth = Math.max(...casings.map((o) => o.endDepth), 0);
+  const maxDepth = Math.max(...sortedCasings.map((o) => o.endDepth), 0);
   // If the casings length is empty, then this will return empty
   if (maxDepth === 0) {
     return [];
@@ -81,7 +88,7 @@ export const convertToPreviewData = (casings: CasingType[]) => {
   // This returns percentage value for casing depth
   const getPercentage = (value: number) => (value / maxDepth) * 100;
 
-  return casings.map((casing) => {
+  return sortedCasings.map((casing) => {
     const endDepth = Math.ceil(casing.endDepth);
     const casingDisplayName = casing.name || '';
     const getCasingName = (casing: CasingType) => {
