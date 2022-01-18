@@ -19,7 +19,7 @@ import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
-import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
+import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
 import { GenericSort, SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import { RootState } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';

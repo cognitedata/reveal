@@ -4,7 +4,7 @@ import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import { LoadingBar } from 'src/modules/Common/Components/LoadingBar/LoadingBar';
-import { ExplorationSearchBar } from 'src/modules/Explorer/Containers/ExplorationSearchBar';
+import { ExplorationSearchBar } from 'src/modules/Explorer/Components/ExplorationSearchBar';
 import { ExplorerToolbarContainerProps } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 
 type ExplorerToolbarProps = ExplorerToolbarContainerProps & {

@@ -1,4 +1,4 @@
-import { MediaTypeOption } from 'src/modules/Explorer/Components/Filters/types';
+import { MediaTypeOption } from 'src/modules/FilterSidePanel/types';
 
 export const VALID_MIME_TYPES: {
   type: string;

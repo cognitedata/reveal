@@ -1,5 +1,5 @@
 import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
-import { MediaTypeOption } from 'src/modules/Explorer/Components/Filters/types';
+import { MediaTypeOption } from 'src/modules/FilterSidePanel/types';
 
 export const getAllValidMimeTypes = () =>
   VALID_MIME_TYPES.map((mimeType) => mimeType.type);

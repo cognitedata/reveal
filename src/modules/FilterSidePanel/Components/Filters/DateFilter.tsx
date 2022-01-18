@@ -5,23 +5,14 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { DateRange } from '@cognite/cdf-sdk-singleton';
 import {
+  DateActions,
   DateFilterType,
+  DateOptions,
   VisionFileFilterProps,
   VisionFilterItemProps,
-} from './types';
+} from 'src/modules/FilterSidePanel/types';
 
 export const dateFormat = 'DD.MM.YYYY';
-
-export enum DateActions {
-  created = 'Created',
-  uploaded = 'Uploaded',
-  captured = 'Captured',
-}
-export enum DateOptions {
-  before = 'Before',
-  after = 'After',
-  range = 'Range',
-}
 
 // Overriding time as date selector get current time as default
 const getValidMaxDate = (date: moment.Moment) =>

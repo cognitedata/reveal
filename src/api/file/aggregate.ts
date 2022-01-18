@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { v3Client as client } from '@cognite/cdf-sdk-singleton';
-import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
+import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
 import { getValidMimeTypesByMediaType } from 'src/api/file/fetchFiles/mimeTypeUtils';
 
 export const totalFileCount = async (visionFilter: VisionFileFilterProps) => {

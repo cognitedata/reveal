@@ -4,7 +4,7 @@ import { TimePicker } from 'antd';
 import styled from 'styled-components';
 import moment from 'moment';
 import { DateRange } from '@cognite/cdf-sdk-singleton';
-import { VisionFilterItemProps } from './types';
+import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 
 export const timeFormat = 'hh:mm A';
 
