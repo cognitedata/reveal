@@ -205,4 +205,37 @@ describe('Documents', () => {
       .should('have.text', 'Document Preview')
       .type('{ESC}');
   });
+
+  it('Should search documents based on parent path', () => {
+    const filename = '15_9_19_A_1997_07_25.pdf';
+    cy.findByText('Documents').click();
+
+    cy.log(`Apply File Type filter: ${FILE_TYPE}`);
+    cy.contains('File Type').click({ force: true });
+
+    cy.findAllByTestId('filter-checkbox-label')
+      .contains(FILE_TYPE)
+      .should('be.visible')
+      .click();
+
+    cy.findByTestId('doc-result-table')
+      .findAllByTestId('table-row')
+      .should('have.length.greaterThan', 3);
+    cy.findByTitle(filename)
+      .parents('[data-testid="table-row"]')
+      .first()
+      .children()
+      .last()
+      .children()
+      .first()
+      .invoke('attr', 'style', 'opacity: 1')
+      .findByTestId('menu-button')
+      .trigger('mouseenter', { force: true });
+
+    cy.findByText('Open parent folder').click({ force: true });
+
+    cy.findByTestId('doc-result-table')
+      .findAllByTestId('table-row')
+      .should('have.length', 3);
+  });
 });
