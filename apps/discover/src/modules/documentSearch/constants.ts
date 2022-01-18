@@ -30,14 +30,24 @@ export const aggregates = [
     aggregate: 'count',
     groupBy: [FILE_TYPE_KEY],
   },
-  {
-    name: 'lastcreated',
-    aggregate: 'dateHistogram',
-    field: LAST_CREATED_KEY,
-    interval: 'year',
-  },
+  /**
+   * We don't use aggregate result for lastcreated date so this is not necessary,
+   * API only allows up to five aggregates to commenting this but keep the aggregrate
+   * in case of future need
+   */
+  // {
+  //   name: 'lastcreated',
+  //   aggregate: 'dateHistogram',
+  //   field: LAST_CREATED_KEY,
+  //   interval: 'year',
+  // },
   {
     name: TOTAL_COUNT_KEY,
     aggregate: 'count',
+  },
+  {
+    name: 'pageCount',
+    aggregate: 'count',
+    groupBy: [SOURCE_KEY],
   },
 ];
