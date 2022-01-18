@@ -107,8 +107,8 @@ export class MetricsLogger {
     MetricsLogger.trackEvent('toolCreated', { toolName });
   }
 
-  static trackLoadModel(eventProps: EventProps, modelIdentifier: any): void {
-    MetricsLogger.trackEvent('loadModel', { ...eventProps, modelIdentifier });
+  static trackLoadModel(eventProps: EventProps, modelIdentifier: any, modelVersion: number): void {
+    MetricsLogger.trackEvent('loadModel', { ...eventProps, modelIdentifier, modelVersion });
   }
 
   static trackCadModelStyled(nodeCollectionClassToken: string, appearance: any): void {
