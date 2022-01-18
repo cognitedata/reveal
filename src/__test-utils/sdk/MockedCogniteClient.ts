@@ -28,10 +28,6 @@ export class MockedCogniteClient {
   };
 
   files = {
-    // getDownloadUrls: (ids: IdEither[]) =>
-    //   Promise.resolve(ids.map(getMockFileLinkWithId)),
-    // retrieve: (ids: IdEither[]) =>
-    //   Promise.resolve(ids.map(getMockFileLinkWithId)),
   };
 
   assets = {
