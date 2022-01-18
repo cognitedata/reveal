@@ -26,11 +26,11 @@ const annotationSlice = createSlice({
   /* eslint-disable no-param-reassign */
   extraReducers: (builder) => {
     builder.addCase(
-      RetrieveAnnotations.pending,
-      (state: AnnotationState, { meta }) => {
+      RetrieveAnnotations.fulfilled,
+      (state: AnnotationState, { payload, meta }) => {
         const { fileIds, clearCache } = meta.arg;
 
-        // clear state
+        // clear states
         if (clearCache) {
           state.annotations.byId = {};
           state.files.byId = {};
@@ -45,12 +45,7 @@ const annotationSlice = createSlice({
             delete state.files.byId[fileId];
           });
         }
-      }
-    );
 
-    builder.addCase(
-      RetrieveAnnotations.fulfilled,
-      (state: AnnotationState, { payload }) => {
         // update annotations
         payload.forEach((annotation) => {
           if (
