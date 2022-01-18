@@ -56,7 +56,11 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
-  const { dataSetsWithExtpipes = [], isLoading: loading } = useDataSetsList();
+  const {
+    dataSetsWithExtpipes = [],
+    isExtpipesFetched,
+    isLoading: loading,
+  } = useDataSetsList();
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
@@ -313,7 +317,8 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
           ...getTableColumns(
             dataSetsWithExtpipes.map((x) => x.dataSet),
             showArchived,
-            withExtpipes
+            withExtpipes,
+            isExtpipesFetched
           ),
           ...(showArchived ? [statusColumn] : []),
           actionsColumn,
