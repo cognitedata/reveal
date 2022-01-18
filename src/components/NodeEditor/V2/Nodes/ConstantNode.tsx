@@ -4,7 +4,7 @@ import { memo, useEffect, useState, useCallback } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
 import { NodeTypes } from '../types';
-import { NodeWrapper } from './elements';
+import { NodeWrapper, NoDragWrapper } from './elements';
 import NodeHandle from './NodeHandle';
 import NodeWithActionBar from './NodeWithActionBar';
 
@@ -87,15 +87,17 @@ const ConstantNode = memo(
           <span>Constant</span>
           {!isInputVisible && <Value>{value}</Value>}
           {isInputVisible && (
-            <Input
-              type="number"
-              value={localValue}
-              isValid={isValid}
-              onDoubleClick={handleInputDoubleClick}
-              onKeyPress={handleKeyPress}
-              onChange={handleChange}
-              onBlur={handleUpdateValue}
-            />
+            <NoDragWrapper>
+              <Input
+                type="number"
+                value={localValue}
+                isValid={isValid}
+                onDoubleClick={handleInputDoubleClick}
+                onKeyPress={handleKeyPress}
+                onChange={handleChange}
+                onBlur={handleUpdateValue}
+              />
+            </NoDragWrapper>
           )}
         </NodeWrapper>
       </NodeWithActionBar>

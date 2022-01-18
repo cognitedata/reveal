@@ -8,6 +8,7 @@ import { ParameterFormProps } from './types';
 import FunctionParameterSelect from './FunctionParameterSelect';
 import { InputContainer } from './elements';
 import FunctionParameterCheckbox from './FunctionParameterCheckbox';
+import { NoDragWrapper } from '../../elements';
 
 const FunctionParameterForm = ({
   nodeId,
@@ -73,15 +74,17 @@ const FunctionParameterForm = ({
               label={name}
               description={description}
             />
-            <Input
-              {...inputProps(type)}
-              name={name}
-              value={formData[param]}
-              onChange={(event) =>
-                handleFormValueChange(param, type, event.target.value)
-              }
-              onDoubleClick={(e) => e.stopPropagation()}
-            />
+            <NoDragWrapper>
+              <Input
+                {...inputProps(type)}
+                name={name}
+                value={formData[param]}
+                onChange={(event) =>
+                  handleFormValueChange(param, type, event.target.value)
+                }
+                onDoubleClick={(e) => e.stopPropagation()}
+              />
+            </NoDragWrapper>
           </InputContainer>
         );
       })}

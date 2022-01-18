@@ -34,3 +34,7 @@ export const InputWrapper = styled.div`
   align-items: center;
   margin: 5px 0;
 `;
+
+export const NoDragWrapper = styled.div.attrs(() => ({
+  className: 'nodrag',
+}))``;

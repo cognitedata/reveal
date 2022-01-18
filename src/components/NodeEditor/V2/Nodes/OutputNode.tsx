@@ -1,7 +1,12 @@
 import { memo, useEffect, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import { Input } from '@cognite/cogs.js';
-import { ColorBlock, InputWrapper, NodeWrapper } from './elements';
+import {
+  ColorBlock,
+  InputWrapper,
+  NodeWrapper,
+  NoDragWrapper,
+} from './elements';
 import NodeHandle from './NodeHandle';
 
 export type OutputNodeDataDehydrated = { readOnly: boolean };
@@ -34,15 +39,17 @@ const OutputNode = memo(({ data, selected }: NodeProps<OutputNodeData>) => {
       ) : (
         <InputWrapper>
           <ColorBlock color={color} />
-          <Input
-            value={localName}
-            onChange={(event) => {
-              setLocalName(event.target.value);
-            }}
-            onBlur={() => {
-              onOutputNameChange(localName);
-            }}
-          />
+          <NoDragWrapper>
+            <Input
+              value={localName}
+              onChange={(event) => {
+                setLocalName(event.target.value);
+              }}
+              onBlur={() => {
+                onOutputNameChange(localName);
+              }}
+            />
+          </NoDragWrapper>
         </InputWrapper>
       )}
     </NodeWrapper>

@@ -1,4 +1,5 @@
 import { Select } from '@cognite/cogs.js';
+import { NoDragWrapper } from '../../elements';
 import { InputContainer } from './elements';
 import FunctionParameterFormLabel from './FunctionParameterFormLabel';
 import { ParameterFormElementProps } from './types';
@@ -27,18 +28,20 @@ const FunctionParameterSelect = ({
   return (
     <InputContainer>
       <FunctionParameterFormLabel label={name} description={description} />
-      <Select
-        key={`${nodeId}-${param}`}
-        value={
-          selectOptions.find((o) => o.value === functionData[param]) ||
-          defaultOption!
-        }
-        options={selectOptions}
-        onChange={(option: { label: string; value: any }) => {
-          onInputValueChange(param, type, option.value);
-        }}
-        closeMenuOnSelect
-      />
+      <NoDragWrapper>
+        <Select
+          key={`${nodeId}-${param}`}
+          value={
+            selectOptions.find((o) => o.value === functionData[param]) ||
+            defaultOption!
+          }
+          options={selectOptions}
+          onChange={(option: { label: string; value: any }) => {
+            onInputValueChange(param, type, option.value);
+          }}
+          closeMenuOnSelect
+        />
+      </NoDragWrapper>
     </InputContainer>
   );
 };
