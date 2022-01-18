@@ -1,6 +1,6 @@
 import React from 'react';
 import { AssetSelect } from '@cognite/data-exploration';
-import { VisionFilterItemProps } from './types';
+import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 
 export const AssetSelectFilter = ({
   filter,

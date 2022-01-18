@@ -1,7 +1,6 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import {
   hideFileMetadata,
   selectExplorerSelectedFileIdsInSortedOrder,
@@ -28,8 +27,9 @@ import { pushMetric } from 'src/utils/pushMetric';
 import { ExplorerFileUploadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
 import { ExplorerFileDownloadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
 import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
-import { FilterSidePanel } from './FilterSidePanel';
-import { ExplorerToolbarContainer } from './ExplorerToolbarContainer';
+import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSidePanel';
+import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
+import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 
 pushMetric('Vision.Explorer');
 

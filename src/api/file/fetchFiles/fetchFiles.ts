@@ -1,7 +1,7 @@
 import { FileInfo, sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { lastValueFrom, of, Subject } from 'rxjs';
 import { expand, finalize, takeUntil, takeWhile, tap } from 'rxjs/operators';
-import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
+import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { fileFilterByAnnotation } from 'src/api/annotation/fileFilterByAnnotation';
 import { filterByTime } from 'src/api/file/fetchFiles/filterByTimeUtils';

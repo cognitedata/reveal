@@ -7,7 +7,10 @@ import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/Populat
 import styled from 'styled-components';
 import { Radio, RadioChangeEvent } from 'antd';
 import { ClearButton } from 'src/modules/Explorer/Components/ClearButton';
-import { AnnotationFilterType, VisionFilterItemProps } from './types';
+import {
+  AnnotationFilterType,
+  VisionFilterItemProps,
+} from 'src/modules/FilterSidePanel/types';
 
 const annotationStateOptions: { [key: string]: string } = {
   verified: 'True (verified annotations)',

@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DateRange, FileInfo, Range } from '@cognite/cdf-sdk-singleton';
-import { DateActions } from 'src/modules/Explorer/Components/Filters/DateFilter';
-import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
+import { DateRange, FileInfo } from '@cognite/cdf-sdk-singleton';
+import {
+  DateActions,
+  VisionFileFilterProps,
+} from 'src/modules/FilterSidePanel/types';
 
 export const calculateTotalSeconds = (time?: Date) =>
   time
