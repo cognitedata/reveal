@@ -47,7 +47,7 @@ describe(ToolbarTool.name, () => {
     tool.addToolbarButton('', iconClicked, 'Tooltip2');
     tool.addToolbarButton('', iconClicked, 'Tooltip3');
 
-    expect(createElementMock).toBeCalledTimes(3);
+    expect(createElementMock).toBeCalledTimes(6);
 
     expect(toolbarContainer[0].hasChildNodes()).toBeTrue;
 
@@ -76,7 +76,7 @@ describe(ToolbarTool.name, () => {
     tool.addZoomPastToCursorToggle();
     tool.addFitCameraToModel();
 
-    expect(createElementMock).toBeCalledTimes(5);
+    expect(createElementMock).toBeCalledTimes(10);
 
     expect(toolbarContainer[0].hasChildNodes()).toBeTrue;
 
