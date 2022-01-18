@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
-import { selectFileAnnotationsByType } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectFileAnnotationsByType } from 'src/modules/Common/store/annotation/selectors';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { AnnotationsListPreview } from 'src/modules/FileDetails/Containers/FileDetailsAnnotationsPreview/AnnotationsListPreview';
 import styled from 'styled-components';
@@ -22,16 +22,26 @@ export const FileDetailsAnnotationsPreview = ({
   onReviewClick: (id: number) => void;
   onAnnotationDeleteClick: (annotationId: number) => void;
 }) => {
+  // need to create two instances of selector from selector factory since we are using them with different parameters
+  const selectFileAnnotationsByOcrObjectTypes = useMemo(
+    makeSelectFileAnnotationsByType,
+    []
+  );
+  const selectFileAnnotationsByTagDetectionType = useMemo(
+    makeSelectFileAnnotationsByType,
+    []
+  );
+
   const textAndObjectAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
-      selectFileAnnotationsByType(annotationReducer, fileInfo.id, [
+      selectFileAnnotationsByOcrObjectTypes(annotationReducer, fileInfo.id, [
         VisionAPIType.OCR,
         VisionAPIType.ObjectDetection,
       ])
   );
 
   const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
-    selectFileAnnotationsByType(annotationReducer, fileInfo.id, [
+    selectFileAnnotationsByTagDetectionType(annotationReducer, fileInfo.id, [
       VisionAPIType.TagDetection,
     ])
   );

@@ -1,10 +1,10 @@
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { selectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Tooltip } from '@cognite/cogs.js';
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import ImageIcon from 'src/assets/ImageIcon.svg';
 import ImageWithExifIcon from 'src/assets/ImageWithExifIcon.svg';
@@ -42,6 +42,7 @@ export const ExifIcon = styled.div`
 export function NameRenderer({
   rowData: { name, id, mimeType, geoLocation },
 }: CellRenderer) {
+  const selectFileAnnotations = useMemo(makeSelectFileAnnotations, []);
   const hasAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
       !!selectFileAnnotations(annotationReducer, id).length
