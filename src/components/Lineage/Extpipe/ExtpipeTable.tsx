@@ -2,7 +2,7 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import Table from 'antd/lib/table';
 import Timeline from 'antd/lib/timeline';
-import { Button, Colors } from '@cognite/cogs.js';
+import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { createLink, getEnv } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
 import InfoTooltip from 'components/InfoTooltip';
@@ -22,6 +22,7 @@ import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
 
 interface ExtpipeTableProps extends ExtpipeSourceExtractorProps {
   dataSetWithExtpipes: DataSetWithExtpipes;
+  isExtpipesFetched?: boolean;
 }
 
 export const EXTPIPES_HEADING: Readonly<string> = 'Extraction pipelines';
@@ -41,6 +42,7 @@ const StyledButton = styled(Button)`
 
 const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   dataSetWithExtpipes,
+  isExtpipesFetched,
 }: PropsWithChildren<ExtpipeTableProps>) => {
   const { extpipes, dataSet } = dataSetWithExtpipes;
 
@@ -82,13 +84,17 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
         <NoDataText>{PERMISSION_TEXT}</NoDataText>
       ) : (
         <>
-          <Table
-            columns={ExtpipeTableColumns}
-            dataSource={extpipes}
-            pagination={{ pageSize: 5 }}
-            rowKey={(record: Extpipe) => `${record?.id}`}
-            getPopupContainer={getContainer}
-          />
+          {isExtpipesFetched ? (
+            <Table
+              columns={ExtpipeTableColumns}
+              dataSource={extpipes}
+              pagination={{ pageSize: 5 }}
+              rowKey={(record: Extpipe) => `${record?.id}`}
+              getPopupContainer={getContainer}
+            />
+          ) : (
+            <Icon type="LoadingSpinner" />
+          )}
         </>
       )}
     </Timeline.Item>

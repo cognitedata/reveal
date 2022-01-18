@@ -26,7 +26,6 @@ import {
   wait,
 } from 'utils/utils';
 import {
-  fetchExtpipesByDataSetId,
   getExtractionPipelineApiUrl,
   mapDataSetExtpipe,
 } from 'utils/extpipeUtils';
@@ -193,13 +192,9 @@ export type DataSetWithExtpipes = {
   dataSet: DataSetV3;
   extpipes: Extpipe[];
 };
-export const useDataSetsList = (): {
-  dataSetsWithExtpipes?: DataSetWithExtpipes[];
-  error: any;
-  isExtpipesFetched: boolean;
-  isLoading: boolean;
-} => {
-  const { data: extpipes = [], ...extpipesQuery } = useQuery(
+
+export const useExtpipes = (dataSetId?: number) => {
+  const { data, ...extpipesQuery } = useQuery(
     getListExtpipesKey(),
     async () => {
       let list: Extpipe[] = [];
@@ -215,6 +210,27 @@ export const useDataSetsList = (): {
     }
   );
 
+  const extpipes = useMemo(() => {
+    if (dataSetId && data) {
+      return data.filter(({ dataSetId: testId }) => testId === dataSetId);
+    }
+    return data;
+  }, [data, dataSetId]);
+
+  return {
+    data: extpipes,
+    ...extpipesQuery,
+  };
+};
+
+export const useDataSetsList = (): {
+  dataSetsWithExtpipes?: DataSetWithExtpipes[];
+  error: any;
+  isExtpipesFetched: boolean;
+  isLoading: boolean;
+} => {
+  const { data: extpipes = [], ...extpipesQuery } = useExtpipes();
+
   const { data: dataSets = [], ...dataSetsQuery } = useQuery(
     getListDatasetsKey(),
     () => sdk.datasets.list().autoPagingToArray({ limit: -1 }),
@@ -225,6 +241,8 @@ export const useDataSetsList = (): {
     return mapDataSetExtpipe(parseDataSetsList(dataSets), extpipes);
   }, [dataSets, extpipes]);
 
+  console.log(dataSetsWithExtpipes, dataSets, extpipes);
+
   return {
     dataSetsWithExtpipes,
     isExtpipesFetched: extpipesQuery.isFetched,
@@ -233,28 +251,28 @@ export const useDataSetsList = (): {
 };
 
 export const useDataSetWithExtpipes = (id?: number) => {
-  const { data: dataSetWithExtpipes, ...rest } = useQuery(
+  const { data: extpipes = [], ...extpipesQuery } = useExtpipes(id);
+
+  const { data: dataSet, ...rest } = useQuery(
     getRetrieveByDataSetIdKey(String(id)),
     // eslint-disable-next-line consistent-return
     async () => {
       if (id) {
         const [resDataSet] = await sdk.datasets.retrieve([{ id }]);
-        let extpipes: Extpipe[] = [];
-
-        try {
-          extpipes = await fetchExtpipesByDataSetId(id);
-        } catch (e) {
-          extpipes = [];
-        }
-        return {
-          dataSet: parseDataSet(resDataSet),
-          extpipes,
-        };
+        return parseDataSet(resDataSet);
       }
     },
     { onError, enabled: !!id }
   );
-  return { dataSetWithExtpipes, ...rest };
+
+  return {
+    dataSetWithExtpipes: {
+      dataSet,
+      extpipes,
+    },
+    isExtpipesFetched: extpipesQuery.isFetched,
+    ...rest,
+  };
 };
 
 export const useDataSetOwners = (
