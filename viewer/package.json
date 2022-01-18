@@ -60,6 +60,7 @@
     "three": "0.137.0"
   },
   "devDependencies": {
+    "@azure/msal-browser": "^2.21.0",
     "@cognite/sdk": "^7.0.0",
     "@cognite/sdk-core": "^4.1.0",
     "@types/dat.gui": "^0.7.7",
