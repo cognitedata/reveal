@@ -10,7 +10,11 @@ import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
 
 describe('NodeCollectionDeserializer', () => {
   test('deserialize TreeIndexSet without option parameter', async () => {
-    const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+    const sdk = new CogniteClient({
+      appId: 'cognite.reveal.unittest',
+      project: 'dummy',
+      getToken: async () => 'dummy'
+    });
     const deserializer = NodeCollectionDeserializer.Instance;
 
     const nodeCollection = new TreeIndexNodeCollection(new IndexSet([1, 3, 5]));
