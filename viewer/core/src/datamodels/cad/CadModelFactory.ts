@@ -4,13 +4,14 @@
 import * as THREE from 'three';
 
 import { BoundingBoxClipper } from '../../utilities/BoundingBoxClipper';
-import { GeometryFilter } from '../..';
+import { GeometryFilter, SupportedModelTypes } from '../..';
 import { CadModelClipper } from './sector/CadModelClipper';
 
 import { GltfSectorRepository, SectorRepository, V8SectorRepository } from '@reveal/sector-loader';
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata, CadModelMetadataRepository } from '@reveal/cad-parsers';
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import { MetricsLogger } from '@reveal/metrics';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
@@ -36,7 +37,14 @@ export class CadModelFactory {
     const modelMetadata = createClippedModel(metadata, geometryClipBox);
 
     const { modelIdentifier, scene, format, formatVersion } = modelMetadata;
-
+    const modelType: SupportedModelTypes = 'cad';
+    MetricsLogger.trackLoadModel(
+      {
+        type: modelType
+      },
+      modelIdentifier,
+      formatVersion
+    );
     const sectorRepository = this.getSectorRepository(format, formatVersion);
 
     this._materialManager.addModelMaterials(modelIdentifier, scene.maxTreeIndex);

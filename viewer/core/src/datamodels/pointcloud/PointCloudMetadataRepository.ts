@@ -39,12 +39,13 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, output.format);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
-
     const modelBaseUrl = await baseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
     const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
+      format: output.format as File3dFormat,
+      formatVersion: output.version,
       modelBaseUrl,
       modelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, identityMatrix),

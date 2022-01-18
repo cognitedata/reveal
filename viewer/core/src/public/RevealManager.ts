@@ -201,13 +201,6 @@ export class RevealManager {
     modelIdentifier: ModelIdentifier,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
-    MetricsLogger.trackLoadModel(
-      {
-        type
-      },
-      modelIdentifier
-    );
-
     switch (type) {
       case 'cad': {
         return this._cadManager.addModel(modelIdentifier, options?.geometryFilter);
