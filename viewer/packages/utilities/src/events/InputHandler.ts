@@ -9,6 +9,8 @@ import { Vector2 } from 'three';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
+export type EventCollection = { [eventName: string]: EventTrigger<(...args: any[]) => void> };
+
 export class InputHandler {
   private readonly domElement: HTMLElement;
   private static readonly maxMoveDistance = 8;
@@ -57,6 +59,10 @@ export class InputHandler {
       default:
         assertNever(event);
     }
+  }
+
+  dispose(): void {
+    disposeOfAllEventListeners(this._events);
   }
 
   private setupEventListeners() {
@@ -142,4 +148,13 @@ export class InputHandler {
   private readonly onHoverCallback = debounce((e: MouseEvent) => {
     this._events.hover.fire(clickOrTouchEventOffset(e, this.domElement));
   }, 100);
+}
+
+/**
+ * Method for deleting all external events that are associated with current instance of a class.
+ */
+export function disposeOfAllEventListeners(eventList: EventCollection): void {
+  for (const eventType of Object.keys(eventList)) {
+    eventList[eventType].unsubscribeAll();
+  }
 }
