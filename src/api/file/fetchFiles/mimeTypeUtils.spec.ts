@@ -2,8 +2,8 @@ import {
   getAllValidMimeTypes,
   getValidMimeTypesByMediaType,
 } from 'src/api/file/fetchFiles/mimeTypeUtils';
-import { MediaTypeOption } from 'src/modules/Explorer/Components/Filters/types';
 import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
+import { MediaTypeOption } from 'src/modules/FilterSidePanel/types';
 
 const allMimeTypes = VALID_MIME_TYPES.map((mimeType) => mimeType.type);
 

@@ -1,11 +1,8 @@
 import { DateRange, FileInfo } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
-import {
-  DateActions,
-  DateOptions,
-} from 'src/modules/Explorer/Components/Filters/DateFilter';
-import { timeFormat } from 'src/modules/Explorer/Components/Filters/TimeFilter';
 import { mockFileInfo } from 'src/__test-utils/data/mockFileInfo';
+import { timeFormat } from 'src/modules/FilterSidePanel/Components/Filters/TimeFilter';
+import { DateActions, DateOptions } from 'src/modules/FilterSidePanel/types';
 import {
   calculateTotalSeconds,
   filterByTime,
