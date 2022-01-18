@@ -2,16 +2,6 @@ import noop from 'lodash/noop';
 
 import { CogniteEvent } from '@cognite/sdk';
 import { mockCogniteAssetList } from 'src/__test-utils/fixtures/assets';
-// import {
-//   getMockFileLinkWithExternalId,
-//   getMockFileLinkWithInternalId,
-// } from 'src/__test-utils/fixtures/document';
-
-// const getMockFileLinkWithId = (id: IdEither) => {
-//   if ('id' in id) return getMockFileLinkWithInternalId(id);
-//   if ('externalId' in id) return getMockFileLinkWithExternalId(id);
-//   return false;
-// };
 
 export class MockedCogniteClient {
   loginWithOAuth = noop;
