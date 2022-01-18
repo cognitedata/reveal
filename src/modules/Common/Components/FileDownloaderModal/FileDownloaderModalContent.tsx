@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import moment from 'moment';
 import {
   FileLink,
@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { selectAnnotationsForAllFiles } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import { renameDuplicates } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { getDownloadControls } from './DownloadControlButtons';
 import {
@@ -44,8 +44,12 @@ export const FileDownloaderModalContent = ({
   );
   const [hideDropDown, setHideDropDown] = useState<boolean>(true);
   const [downloadedMessage, setDownloadedMessage] = useState<string>('0%');
+  const selectAnnotationsForFileIds = useMemo(
+    makeSelectAnnotationsForFileIds,
+    []
+  );
   const annotations = useSelector(({ annotationReducer }: RootState) =>
-    selectAnnotationsForAllFiles(annotationReducer, fileIds)
+    selectAnnotationsForFileIds(annotationReducer, fileIds)
   );
 
   const annotationStatusMap = () => {
