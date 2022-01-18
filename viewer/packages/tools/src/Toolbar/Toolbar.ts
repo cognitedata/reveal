@@ -105,7 +105,6 @@ export class Toolbar {
     this._toolbarContainer.appendChild(element);
   }
 
-
   /**
    * Set the position of the toolbar container
    * @param position ToolbarPosition value such as Top, Bottom, Left, Right within the canvas
