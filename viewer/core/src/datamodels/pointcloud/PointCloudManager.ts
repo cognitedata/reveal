@@ -14,6 +14,8 @@ import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { Observable } from 'rxjs';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
+import { MetricsLogger } from '@reveal/metrics';
+import { SupportedModelTypes } from '@reveal/core';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
@@ -65,6 +67,16 @@ export class PointCloudManager {
 
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
+
+    const modelType: SupportedModelTypes = 'pointcloud';
+    MetricsLogger.trackLoadModel(
+      {
+        type: modelType
+      },
+      modelIdentifier,
+      metadata.formatVersion
+    );
+
     const nodeWrapper = this._pointCloudFactory.createModel(metadata);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
     const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
