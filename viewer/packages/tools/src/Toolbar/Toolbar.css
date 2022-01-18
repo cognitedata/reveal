@@ -49,10 +49,11 @@
 
 .reveal-viewer-toolbar-icon-img {
   position:absolute;
-  height: 36px;
-  width: 36px;
+  height: 16px;
+  width: 16px;
   border-radius: 50%;
-  opacity: 0.5;
+  filter: invert(1);
+  fill: white;
   -webkit-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);

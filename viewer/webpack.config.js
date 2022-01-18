@@ -71,11 +71,11 @@ module.exports = env => {
           exclude: [/src\/.*\.test\.tsx?/, /src\/.*\/stubs\//]
         },
         {
-          test: /\.(svg|jpg|jpeg|gif)$/,
+          test: /\.(jpg|jpeg|gif)$/,
           use: ['file-loader']
         },
         {
-          test: /\.(png)$/,
+          test: /\.(png|svg)$/,
           use: ['url-loader']
         },
         {

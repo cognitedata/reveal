@@ -85,15 +85,11 @@ export class Toolbar {
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
 
-    if (this.checkURL(backgroundImageUri)) {
-      const iconImage = new Image();
-      iconImage.className = Toolbar.classnames.iconImg;
-      iconImage.src = backgroundImageUri;
+    const iconImage = new Image();
+    iconImage.className = Toolbar.classnames.iconImg;
+    iconImage.src = backgroundImageUri;
 
-      element.appendChild(iconImage);
-    } else {
-      element.innerHTML = backgroundImageUri;
-    }
+    element.appendChild(iconImage);
 
     element.onclick = () => {
       if (isToggle) {
@@ -109,9 +105,6 @@ export class Toolbar {
     this._toolbarContainer.appendChild(element);
   }
 
-  private checkURL(url: string): boolean {
-    return String(url).match(/\.(svg)$/) != null;
-  }
 
   /**
    * Set the position of the toolbar container
