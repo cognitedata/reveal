@@ -9,7 +9,6 @@ import { Vector2 } from 'three';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
-//TODO savokr 17-01-2022: Change EventCollection type to be more specific by contstraining types of possible events (see draft PR).
 export type EventCollection = { [eventName: string]: EventTrigger<(...args: any[]) => void> };
 
 export class InputHandler {
