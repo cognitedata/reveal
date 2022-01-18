@@ -7,10 +7,7 @@ import { workflowsAtom } from 'models/workflows/atom';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import CalculationCallStatus from 'components/CalculationCallStatus';
 import EditableText from 'components/EditableText';
-import {
-  convertWorkflowToV1,
-  isWorkflowRunnable,
-} from 'components/NodeEditor/utils';
+import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { UnitDropdown } from 'components/UnitDropdown';
 import { flow, isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -505,16 +502,6 @@ export default function WorkflowRow({
                   <Menu.Item onClick={openNodeEditor} appendIcon="Function">
                     <span>Edit calculation</span>
                   </Menu.Item>
-                  {workflow.version === 'v2' && (
-                    <Menu.Item
-                      onClick={() => {
-                        update(id, convertWorkflowToV1(workflow));
-                        openNodeEditor();
-                      }}
-                    >
-                      <span>Edit calculation in legacy node editor</span>
-                    </Menu.Item>
-                  )}
                 </WorkflowMenu>
               }
             >
