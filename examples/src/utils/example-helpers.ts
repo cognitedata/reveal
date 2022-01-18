@@ -175,6 +175,6 @@ export async function createSDKFromEnvironment(
   const client = new CogniteClient({ appId,
                                      project,
                                      getToken });
-
+  await client.authenticate();
   return client;
 }
