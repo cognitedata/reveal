@@ -3,11 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { ClearButton } from 'src/modules/Explorer/Components/ClearButton';
-import { FilterItemHeader } from 'src/modules/Explorer/Components/FilterItemHeader';
-import {
-  FilterPanelConfigItem,
-  getFilterPanelItems,
-} from 'src/modules/Explorer/Components/getFilterPanelItems';
 import {
   selectExploreFileCount,
   setExplorerFilter,
@@ -20,6 +15,11 @@ import { RootState } from 'src/store/rootReducer';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
+import {
+  FilterPanelConfigItem,
+  getFilterPanelItems,
+} from 'src/modules/FilterSidePanel/Components/getFilterPanelItems';
+import { FilterItemHeader } from 'src/modules/FilterSidePanel/Components/FilterItemHeader';
 
 const { Panel } = Collapse;
 

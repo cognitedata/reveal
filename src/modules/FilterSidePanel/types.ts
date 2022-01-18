@@ -1,9 +1,19 @@
 import { FileFilterProps, DateRange } from '@cognite/cdf-sdk-singleton';
-import { DateActions, DateOptions } from './DateFilter';
 
 export enum MediaTypeOption {
   image = 'Image',
   video = 'Video',
+}
+
+export enum DateActions {
+  created = 'Created',
+  uploaded = 'Uploaded',
+  captured = 'Captured',
+}
+export enum DateOptions {
+  before = 'Before',
+  after = 'After',
+  range = 'Range',
 }
 
 export type VisionFilterItemProps = {

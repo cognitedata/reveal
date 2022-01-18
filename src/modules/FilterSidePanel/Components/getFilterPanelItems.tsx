@@ -1,5 +1,6 @@
 import React from 'react';
-import { DirectoryPrefixesProvider } from 'src/modules/Explorer/Containers/DirectoryPrefixesProvider';
+import { DirectoryPrefixesProvider } from 'src/modules/FilterSidePanel/Containers/DirectoryPrefixesProvider';
+import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
 import { AssetSelectFilter } from './Filters/AssetSelectFilter';
 import { DateFilter } from './Filters/DateFilter';
 import { DataSetSelectFilter } from './Filters/DataSetSelectFilter';
@@ -8,7 +9,6 @@ import { MetadataSelectFilter } from './Filters/MetadataSelectFilter';
 import { ExternalIdFilter } from './Filters/ExternalIDFilter';
 import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
 import { AnnotationFilter } from './Filters/AnnotationFilter';
-import { VisionFileFilterProps } from './Filters/types';
 import { TimeFilter } from './Filters/TimeFilter';
 import { MediaTypeFilter } from './Filters/MediaTypeFilter';
 

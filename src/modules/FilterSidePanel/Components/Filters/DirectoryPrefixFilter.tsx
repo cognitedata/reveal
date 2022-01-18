@@ -3,7 +3,10 @@ import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail } from '@cognite/cogs.js';
 import { StringFilter } from '@cognite/data-exploration';
-import { VisionFilterItemProps, VisionFileFilterProps } from './types';
+import {
+  VisionFileFilterProps,
+  VisionFilterItemProps,
+} from 'src/modules/FilterSidePanel/types';
 
 const extractSubDirectories = (subdirectoryPaths: string[]) => {
   const subDirectories = subdirectoryPaths

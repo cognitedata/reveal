@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { MetadataFilter } from '@cognite/data-exploration';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { VisionFilterItemProps } from './types';
+import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 
 export const MetadataSelectFilter = ({
   filter,

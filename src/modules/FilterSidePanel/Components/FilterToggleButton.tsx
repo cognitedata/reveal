@@ -16,5 +16,5 @@ export default function FilterToggleButton({
 }
 
 const HideFiltersTooltip = styled(Tooltip)`
-  margin-bottom: 8;
+  margin-bottom: 8px;
 `;

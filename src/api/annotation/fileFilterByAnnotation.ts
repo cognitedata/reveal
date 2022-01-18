@@ -1,4 +1,4 @@
-import { AnnotationFilterType } from 'src/modules/Explorer/Components/Filters/types';
+import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { Annotation } from 'src/api/types';

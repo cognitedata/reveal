@@ -3,7 +3,7 @@ import React from 'react';
 import {
   MediaTypeOption,
   VisionFilterItemProps,
-} from 'src/modules/Explorer/Components/Filters/types';
+} from 'src/modules/FilterSidePanel/types';
 import styled from 'styled-components';
 
 export const MediaTypeFilter = ({
