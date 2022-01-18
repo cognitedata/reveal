@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { PublicClientApplication } from '@azure/msal-browser';
+import { EventType, PublicClientApplication } from '@azure/msal-browser';
 
 export function withBasePath(path: string) {
   let basePath = (process.env.PUBLIC_URL || '').trim();
@@ -109,9 +109,12 @@ export async function createSDKFromEnvironment(
   const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
 
   const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
-  const scopes = [
-    `${baseUrl}/.default`
+  const cdfScopes = [
+    `${baseUrl}/user_impersonation`,
+    `${baseUrl}/IDENTITY`
   ];
+
+  const userScopes = ['User.Read'];
 
   const config = {
     auth: {
@@ -121,21 +124,57 @@ export async function createSDKFromEnvironment(
       navigateToLoginRequestUrl: true,
     },
     cache: {
-      cacheLocation: "localStorage",
+      cacheLocation: 'localStorage',
+      storeAuthStateInCookie: false
     },
+  };
+
+  const redirectRequest = {
+    scopes: userScopes,
+    extraScopesToConsent: cdfScopes,
+    redirectStartPage: window.location.href
   };
 
   const msalObj = new PublicClientApplication(config);
 
-  const getToken = async () => {
-    const result = await msalObj.acquireTokenPopup({ scopes });
+  const accountList = msalObj.getAllAccounts();
+  if (accountList.length > 0) {
+    msalObj.setActiveAccount(accountList[0]);
+  }
 
-    return result.accessToken;
-  };
+  msalObj.addEventCallback((event) => {
+    if (event && event.eventType === EventType.LOGIN_SUCCESS && (event.payload as any).account) {
+      const account = (event.payload as any).account;
+      msalObj.setActiveAccount(account);
+    }
+  });
+
+  await msalObj.handleRedirectPromise();
+
+  const account = msalObj.getActiveAccount();
+
+  if (!account) {
+    msalObj.loginRedirect(redirectRequest);
+  }
+
+  const getToken = async () => {
+    const account = msalObj.getActiveAccount();
+
+    if (!account) {
+      throw Error("No local account found");
+    }
+
+    const { accessToken } = await msalObj.acquireTokenSilent({
+      account,
+      scopes: cdfScopes
+    });
+
+    return accessToken;
+  }
 
   const client = new CogniteClient({ appId,
                                      project,
                                      getToken });
-  await client.authenticate();
+
   return client;
 }
