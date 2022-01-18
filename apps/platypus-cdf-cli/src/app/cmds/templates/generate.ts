@@ -114,7 +114,7 @@ class TemplateGenerateCommand extends CLICommand {
         },
       });
       await writeFile(join(cwd(), args['output-file']), generatedCode);
-      args.logger.info('Types generated successfully');
+      args.logger.success('Types generated successfully');
     } catch (error) {
       args.logger.error(error);
     }

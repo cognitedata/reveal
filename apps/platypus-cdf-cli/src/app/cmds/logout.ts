@@ -9,7 +9,7 @@ class LogoutCommand implements CommandModule {
 
   handler(arg: Arguments<BaseArgs>) {
     setProjectConfigItem(ROOT_CONFIG_KEY.AUTH, undefined);
-    arg.logger.info('You have been logout successfully!');
+    arg.logger.success('You have been logout successfully!');
   }
 }
 

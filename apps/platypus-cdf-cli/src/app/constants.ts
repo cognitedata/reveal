@@ -1,6 +1,7 @@
 export enum AUTH_TYPE {
+  PKCE = 'interactive',
   CLIENT_SECRET = 'clientSecret',
-  LEGACY = 'legacy',
+  APIKEY = 'legacy',
 }
 
 export enum LOGIN_STATUS {
@@ -13,7 +14,8 @@ export enum ROOT_CONFIG_KEY {
 }
 
 export enum AUTH_CONFIG {
-  AUTH_TOKEN = 'authToken',
+  MSAL_AUTH_CACHE = 'msalTokenCache',
+  ACCOUNT_INFO = 'msalAccountInfo',
   AUTH_TYPE = 'authType',
   LOGIN_STATUS = 'loginStatus',
   CLIENT_ID = 'clientId',

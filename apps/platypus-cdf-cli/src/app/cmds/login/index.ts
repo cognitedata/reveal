@@ -44,13 +44,17 @@ export const builder = (yargs: Argv<LoginArgs>) =>
     .check(validateClusterName)
     .option('auth-type', {
       type: 'string',
-      default: AUTH_TYPE.CLIENT_SECRET,
+      default: AUTH_TYPE.PKCE,
       description: 'Auth type',
     })
-    .choices('auth-type', [AUTH_TYPE.CLIENT_SECRET, AUTH_TYPE.LEGACY]);
+    .choices('auth-type', [
+      AUTH_TYPE.PKCE,
+      AUTH_TYPE.CLIENT_SECRET,
+      AUTH_TYPE.LEGACY,
+    ]);
 
 export const handler = async (arg: Arguments<BaseArgs>) => {
-  arg.logger.info('Login Success');
+  arg.logger.success('Login Success');
 };
 
 export const validateClusterName = ({

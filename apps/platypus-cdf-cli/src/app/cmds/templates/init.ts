@@ -96,7 +96,7 @@ class TemplateInitCommand implements CommandModule {
         JSON.stringify(config, undefined, 2)
       );
 
-      logger.info(
+      logger.success(
         `Solution "${args['template-group-id']}" is successfully initialized!`
       );
     } catch (error) {

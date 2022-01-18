@@ -5,22 +5,25 @@ import _debug from 'debug';
 const d = _debug('platypus-cli:general');
 
 export class Log extends Logger {
-  debug(msg: string, ...optionalParams: any[]): void {
+  debug(msg: string, ..._optionalParams: any[]): void {
     d(msg);
   }
-  info(msg: string, ...optionalParams: any[]): void {
+  success(msg: string, ..._optionalParams: any[]): void {
     console.info(chalk.green(msg));
   }
-  warn(msg: string, ...optionalParams: any[]): void {
+  info(msg: string, ..._optionalParams: any[]): void {
+    console.info(chalk.blueBright(msg));
+  }
+  warn(msg: string, ..._optionalParams: any[]): void {
     console.warn(chalk.yellow(msg));
   }
-  error(msg: string, ...optionalParams: any[]): void {
+  error(msg: string, ..._optionalParams: any[]): void {
     console.error(chalk.red(msg));
   }
-  fatal(msg: string, ...optionalParams: any[]): void {
-    this.error(msg, optionalParams);
+  fatal(msg: string, ..._optionalParams: any[]): void {
+    this.error(msg, _optionalParams);
   }
-  log(msg: string, ...optionalParams: any[]): void {
+  log(msg: string, ..._optionalParams: any[]): void {
     console.log(chalk.cyan(msg));
   }
 }

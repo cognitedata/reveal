@@ -51,5 +51,5 @@ export const handler = async (
     return args.logger.error(result.error);
   }
 
-  args.logger.info(`Solution "${args.name}" is successfully created.`);
+  args.logger.success(`Solution "${args.name}" is successfully created.`);
 };

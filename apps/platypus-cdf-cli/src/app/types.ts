@@ -20,7 +20,8 @@ export type LoginArgs = BaseArgs & {
 
 export interface ProjectConfig extends Omit<LoginArgs, keyof BaseArgs> {
   [AUTH_CONFIG.LOGIN_STATUS]: LOGIN_STATUS;
-  [AUTH_CONFIG.AUTH_TOKEN]: string;
+  [AUTH_CONFIG.MSAL_AUTH_CACHE]?: string;
+  [AUTH_CONFIG.ACCOUNT_INFO]?: string;
 }
 
 export interface KeyValuePairs {

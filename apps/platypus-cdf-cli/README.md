@@ -18,7 +18,10 @@ We currently support these commands
 
 ## Login
 
-- [Client Credential (**recommended**)](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) mode is designed for long lasting token where you will need to provide `client_id` and `client_secret` for your application, this kind of token are long lasting and meant for machine interactions like CI/CD.
+- Regular login (**default**) - via browser
+  `yarn login` will take you through login flow with a browser popup. This is ideal for users on any computer (non-machines). For machine oriented login flow, take a look at the next option - Client Credentials.
+
+- [Client Credential](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) mode is designed for long lasting token where you will need to provide `client_id` and `client_secret` for your application, this kind of token are long lasting and meant for machine interactions like CI/CD.
 
   `platypus login --client-secret=<code>`
 

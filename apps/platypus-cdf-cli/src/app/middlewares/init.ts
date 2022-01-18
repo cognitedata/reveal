@@ -16,7 +16,10 @@ export async function init(args: Arguments<LoginArgs>) {
     shouldNotifyInNpmScript: true,
     distTag: 'alpha',
     pkg,
-  }).notify({message: 'There is a newer version of {packageName} is available.\nTo update run `{updateCommand}`\nTo skip check https://github.com/cognitedata/platypus/blob/master/apps/platypus-cdf-cli/README.md#update-notifier'});
+  }).notify({
+    message:
+      'There is a newer version of {packageName} is available.\nTo update run `{updateCommand}`\nTo skip check https://github.com/cognitedata/platypus/blob/master/apps/platypus-cdf-cli/README.md#update-notifier',
+  });
 
   // set config object
   setConfig(
@@ -26,7 +29,11 @@ export async function init(args: Arguments<LoginArgs>) {
   args.logger = new Log();
   // set auth type based on api_key
   if (args.apiKey) {
-    args.authType = AUTH_TYPE.LEGACY;
-    args['auth-type'] = AUTH_TYPE.LEGACY;
+    args.authType = AUTH_TYPE.APIKEY;
+    args['auth-type'] = AUTH_TYPE.APIKEY;
+  }
+  if (args.clientSecret) {
+    args.authType = AUTH_TYPE.CLIENT_SECRET;
+    args['auth-type'] = AUTH_TYPE.CLIENT_SECRET;
   }
 }

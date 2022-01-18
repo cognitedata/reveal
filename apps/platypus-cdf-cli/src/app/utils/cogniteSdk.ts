@@ -1,6 +1,6 @@
 import { CogniteClient as CogniteClientV6 } from '@cognite/sdk-v6';
 import { CogniteClient } from '@cognite/sdk';
-import { ProjectConfig } from '../types';
+import { BaseArgs, ProjectConfig } from '../types';
 import { getAuthToken } from './auth';
 import { AUTH_TYPE } from '../constants';
 
@@ -14,7 +14,7 @@ export const setCogniteSDKClient = (
   client = newClient as unknown as CogniteClientV6;
 };
 
-export const createSdkClient = (authArgs: ProjectConfig) => {
+export const createSdkClient = (authArgs: ProjectConfig & BaseArgs) => {
   const { cluster, authType, project } = authArgs;
   const baseUrl = `https://${cluster}.cognitedata.com`;
   const appId = 'Platypus';
@@ -22,8 +22,8 @@ export const createSdkClient = (authArgs: ProjectConfig) => {
   const client = new CogniteClientV6({
     appId,
     project,
-    baseUrl: authType === AUTH_TYPE.LEGACY ? '' : baseUrl,
-    apiKeyMode: authType === AUTH_TYPE.LEGACY,
+    baseUrl: authType === AUTH_TYPE.APIKEY ? '' : baseUrl,
+    apiKeyMode: authType === AUTH_TYPE.APIKEY,
     getToken: getAuthToken(authArgs),
   });
 
