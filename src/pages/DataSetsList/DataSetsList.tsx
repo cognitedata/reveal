@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { History } from 'history';
 import NewHeader from 'components/NewHeader';
 import { Button, Icon, Input } from '@cognite/cogs.js';
@@ -39,7 +39,6 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const { appPath } = useParams<{ appPath: string }>();
 
   const [qualityFilter, setQualityFilter] = useState<string>('all');
-  const [tableData, setTableData] = useState<DataSetRow[]>([]);
   const [searchValue, setSearchValue] = useLocalStorage<string>(
     'data-sets-search',
     ''
@@ -66,20 +65,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
     'WRITE'
   );
 
-  useEffect(() => {
-    if (!loading) {
-      handleTableData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSetsWithExtpipes, qualityFilter, searchValue, showArchived]);
-
-  const handleModalClose = () => {
-    setCreationDrawerVisible(false);
-    setMode('create');
-    setSelectedDataSet(undefined);
-  };
-
-  const handleTableData = () => {
+  const tableData = useMemo(() => {
     let tableDataSets: DataSetRow[] = [];
     if (dataSetsWithExtpipes?.length && !loading) {
       const dataSetsList = handleDataSetsFilters(
@@ -109,7 +95,20 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
         }
       );
     }
-    setTableData(tableDataSets);
+    return tableDataSets;
+  }, [
+    dataSetsWithExtpipes,
+    loading,
+    qualityFilter,
+    searchValue,
+    setSearchValue,
+    showArchived,
+  ]);
+
+  const handleModalClose = () => {
+    setCreationDrawerVisible(false);
+    setMode('create');
+    setSelectedDataSet(undefined);
   };
 
   const getSourcesList = () => {
