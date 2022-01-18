@@ -1,0 +1,76 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: concurrently
+    versions:
+    - 6.0.0
+    - 6.0.1
+  - dependency-name: "@types/react"
+    versions:
+    - 17.0.0
+    - 17.0.1
+    - 17.0.2
+    - 17.0.3
+  - dependency-name: eslint-config-prettier
+    versions:
+    - 7.2.0
+    - 8.1.0
+  - dependency-name: "@types/react-dom"
+    versions:
+    - 17.0.0
+    - 17.0.1
+    - 17.0.2
+    - 17.0.3
+  - dependency-name: single-spa-react
+    versions:
+    - 4.0.0
+    - 4.1.0
+    - 4.1.1
+  - dependency-name: less-loader
+    versions:
+    - 8.0.0
+  - dependency-name: "@sentry/browser"
+    versions:
+    - 6.0.3
+    - 6.0.4
+    - 6.1.0
+  - dependency-name: react-scripts
+    versions:
+    - 4.0.2
+  - dependency-name: antd
+    versions:
+    - 4.11.2
+    - 4.12.0
+    - 4.12.1
+    - 4.12.2
+  - dependency-name: "@rescripts/cli"
+    versions:
+    - 0.0.15
+  - dependency-name: react-dom
+    versions:
+    - 17.0.1
+  - dependency-name: "@types/single-spa-react"
+    versions:
+    - 3.0.1
+  - dependency-name: "@testing-library/react"
+    versions:
+    - 11.2.3
+    - 11.2.4
+    - 11.2.5
+  - dependency-name: commander
+    versions:
+    - 7.0.0
+  - dependency-name: postcss-prefixwrap
+    versions:
+    - 1.20.0
+  - dependency-name: react
+    versions:
+    - 17.0.1
+  commit-message:
+    prefix: chore
+    include: scope
