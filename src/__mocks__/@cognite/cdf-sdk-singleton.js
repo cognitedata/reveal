@@ -1,4 +1,4 @@
-import { MockedCogniteClient } from 'src/__test-utils/sdk/MockedCogniteClient';
+import { MockedCogniteClient } from 'src/__mocks__/MockedCogniteClient';
 
 export default {
   project: 'test',
