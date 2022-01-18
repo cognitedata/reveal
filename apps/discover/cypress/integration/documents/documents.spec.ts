@@ -185,33 +185,15 @@ describe('Documents', () => {
     cy.contains(EXPAND_MAP_TEXT).should('not.exist');
   });
 
-  it('Click Preview document hover button', () => {
-    cy.performSearch(filename);
-    cy.findAllByTestId('table-row')
-      .first()
-      .children()
-      .last()
-      .children()
-      .first()
-      .invoke('attr', 'style', 'opacity: 1');
-
-    cy.findAllByTestId('table-row')
-      .first()
-      .contains('Preview')
-      .click({ force: true });
-
-    cy.get('div[class*="cogs-modal-header"]')
-      .should('be.visible')
-      .should('have.text', 'Document Preview')
-      .type('{ESC}');
-  });
-
   it('Should search documents based on parent path', () => {
     const filename = '15_9_19_A_1997_07_25.pdf';
-    cy.findByText('Documents').click();
+    cy.findByTestId('side-bar')
+      .findByText('Documents')
+      .should('be.visible')
+      .click();
 
     cy.log(`Apply File Type filter: ${FILE_TYPE}`);
-    cy.contains('File Type').click({ force: true });
+    cy.contains('File Type').should('be.visible').click({ force: true });
 
     cy.findAllByTestId('filter-checkbox-label')
       .contains(FILE_TYPE)
@@ -237,5 +219,26 @@ describe('Documents', () => {
     cy.findByTestId('doc-result-table')
       .findAllByTestId('table-row')
       .should('have.length', 3);
+  });
+
+  it('Click Preview document hover button', () => {
+    cy.performSearch(filename);
+    cy.findAllByTestId('table-row')
+      .first()
+      .children()
+      .last()
+      .children()
+      .first()
+      .invoke('attr', 'style', 'opacity: 1');
+
+    cy.findAllByTestId('table-row')
+      .first()
+      .contains('Preview')
+      .click({ force: true });
+
+    cy.get('div[class*="cogs-modal-header"]')
+      .should('be.visible')
+      .should('have.text', 'Document Preview')
+      .type('{ESC}');
   });
 });
