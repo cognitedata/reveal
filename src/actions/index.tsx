@@ -193,28 +193,29 @@ export type DataSetWithExtpipes = {
   extpipes: Extpipe[];
 };
 
-export const useExtpipes = (dataSetId?: number) => {
-  const { data, ...extpipesQuery } = useQuery(
-    getListExtpipesKey(),
-    async () => {
-      let list: Extpipe[] = [];
-      try {
-        const res = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
-          withCredentials: true,
-        });
-        list = res.data.items ?? [];
-      } catch (e) {
-        list = [];
-      }
-      return list;
+export const useExtpipes = () => {
+  return useQuery(getListExtpipesKey(), async () => {
+    let list: Extpipe[] = [];
+    try {
+      const res = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
+        withCredentials: true,
+      });
+      list = res.data.items ?? [];
+    } catch (e) {
+      list = [];
     }
-  );
+    return list;
+  });
+};
+
+export const useDataSetExtpipes = (dataSetId?: number) => {
+  const { data, ...extpipesQuery } = useExtpipes();
 
   const extpipes = useMemo(() => {
     if (dataSetId && data) {
       return data.filter(({ dataSetId: testId }) => testId === dataSetId);
     }
-    return data;
+    return [];
   }, [data, dataSetId]);
 
   return {
@@ -241,8 +242,6 @@ export const useDataSetsList = (): {
     return mapDataSetExtpipe(parseDataSetsList(dataSets), extpipes);
   }, [dataSets, extpipes]);
 
-  console.log(dataSetsWithExtpipes, dataSets, extpipes);
-
   return {
     dataSetsWithExtpipes,
     isExtpipesFetched: extpipesQuery.isFetched,
@@ -251,7 +250,7 @@ export const useDataSetsList = (): {
 };
 
 export const useDataSetWithExtpipes = (id?: number) => {
-  const { data: extpipes = [], ...extpipesQuery } = useExtpipes(id);
+  const { data: extpipes = [], ...extpipesQuery } = useDataSetExtpipes(id);
 
   const { data: dataSet, ...rest } = useQuery(
     getRetrieveByDataSetIdKey(String(id)),
