@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 // import * as Sentry from '@sentry/browser';
 // import config from 'utils/config';
 import './set-public-path';
+import { configure } from 'react-hotkeys';
 import singleSpaReact from 'single-spa-react';
 
 import App from './App';
@@ -34,6 +35,30 @@ const lifecycles = singleSpaReact({
 
   // must be aligned with that id https://github.com/cognitedata/cdf-hub/pull/896/files#diff-bb6612be43d4f0ceceee1b286daf301a80e54aa1fc25edd5017a1aff986d6503R96
   domElementGetter: () => document.getElementById('cdf-vision-subapp')!,
+});
+configure({
+  // logLevel: 'debug',
+  ignoreRepeatedEventsWhenKeyHeldDown: false,
+  stopEventPropagationAfterIgnoring: false,
+  stopEventPropagationAfterHandling: false,
+  // todo: remove after https://github.com/greena13/react-hotkeys/issues/237
+  ignoreEventsCondition: (keyEvent) => {
+    const IGNORED_TAGS = ['input', 'select', 'textarea'];
+
+    const eventIsFromIgnoredInput =
+      keyEvent.target &&
+      IGNORED_TAGS.includes(
+        (keyEvent.target as HTMLElement).tagName.toLowerCase()
+      );
+    const eventIsFromEditableText =
+      keyEvent.target && (keyEvent.target as HTMLElement).isContentEditable;
+    if (eventIsFromIgnoredInput || eventIsFromEditableText) {
+      return true;
+    }
+    return (
+      keyEvent.key === ' ' || keyEvent.key === 'Enter' || keyEvent.key === 'Tab'
+    );
+  },
 });
 
 export const { bootstrap, mount, unmount } = lifecycles;

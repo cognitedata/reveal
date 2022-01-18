@@ -1,5 +1,6 @@
 import React from 'react';
+import { CellRenderer } from 'src/modules/Common/types';
 
-export function StringHeaderRenderer(cellProps: { column: { title: string } }) {
-  return <div>{cellProps.column.title}</div>;
+export function StringHeaderRenderer({ column: { title } }: CellRenderer) {
+  return <div>{title}</div>;
 }

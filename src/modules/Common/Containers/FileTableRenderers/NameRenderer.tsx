@@ -1,19 +1,26 @@
-import { CellRenderer } from 'src/modules/Common/Types';
+import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
+import { selectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
+import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectUpdatedFileDetails } from 'src/modules/FileMetaData/fileMetadataSlice';
 import { Tooltip } from '@cognite/cogs.js';
-import exifIcon from 'src/assets/exifIcon.svg';
 import React from 'react';
 import styled from 'styled-components';
+import ImageIcon from 'src/assets/ImageIcon.svg';
+import ImageWithExifIcon from 'src/assets/ImageWithExifIcon.svg';
+import VideoIcon from 'src/assets/VideoIcon.svg';
+import VideoWithExifIcon from 'src/assets/VideoWithExifIcon.svg';
+import ImageWithAnnotationsIcon from 'src/assets/ImageWithAnnotationsIcon.svg';
+import ImageWithAnnotationsAndExifIcon from 'src/assets/ImageWithAnnotationsAndExifIcon.svg';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
 export const FileNameText = styled.div`
-  display: flex;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   flex: 0 1 auto;
   display: inline-block;
+  margin-left: 10px;
 `;
 
 export const FileRow = styled.div`
@@ -27,25 +34,64 @@ export const FileRow = styled.div`
 export const ExifIcon = styled.div`
   display: flex;
   padding-bottom: 15px;
-  padding-right: 0px;
-  padding-left: 0px;
+  padding-right: 0;
+  padding-left: 0;
   flex: 0 0 auto;
 `;
 
-export function NameRenderer({ rowData: { name, id } }: CellRenderer) {
-  const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(id))
+export function NameRenderer({
+  rowData: { name, id, mimeType, geoLocation },
+}: CellRenderer) {
+  const hasAnnotations = useSelector(
+    ({ annotationReducer }: RootState) =>
+      !!selectFileAnnotations(annotationReducer, id).length
   );
-  return (
-    <FileRow>
-      <FileNameText>{name}</FileNameText>
-      {fileDetails?.geoLocation && (
-        <Tooltip content="Exif data added">
+
+  const renderIcon = () => {
+    const isVideoFile = isVideo({ mimeType } as FileInfo);
+    let icon;
+
+    if (hasAnnotations) {
+      icon = geoLocation ? (
+        <Tooltip content="Geolocated">
           <ExifIcon>
-            <img src={exifIcon} alt="exifIcon" />
+            <img
+              src={ImageWithAnnotationsAndExifIcon}
+              alt="ImageWithAnnotationsAndExifIcon"
+            />
           </ExifIcon>
         </Tooltip>
-      )}
+      ) : (
+        <img src={ImageWithAnnotationsIcon} alt="ImageWithAnnotationsIcon" />
+      );
+    } else if (isVideoFile) {
+      icon = geoLocation ? (
+        <Tooltip content="Geolocated">
+          <ExifIcon>
+            <img src={VideoWithExifIcon} alt="VideoWithExifIcon" />
+          </ExifIcon>
+        </Tooltip>
+      ) : (
+        <img src={VideoIcon} alt="VideoIcon" />
+      );
+    } else {
+      icon = geoLocation ? (
+        <Tooltip content="Geolocated">
+          <ExifIcon>
+            <img src={ImageWithExifIcon} alt="ImageWithExifIcon" />
+          </ExifIcon>
+        </Tooltip>
+      ) : (
+        <img src={ImageIcon} alt="ImageIcon" />
+      );
+    }
+
+    return icon;
+  };
+  return (
+    <FileRow>
+      {renderIcon()}
+      <FileNameText>{name}</FileNameText>
     </FileRow>
   );
 }

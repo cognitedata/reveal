@@ -1,15 +1,23 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import './commonActions';
+import fileReducer from 'src/modules/Common/store/files/slice';
+import commonReducer from 'src/modules/Common/store/common/slice';
+import annotationReducer from 'src/modules/Common/store/annotation/slice';
+import annotationLabelReducer from 'src/modules/Review/store/annotationLabelSlice';
+import fileDetailsSlice from 'src/modules/FileDetails/fileDetailsSlice';
+import explorerReducer from 'src/modules/Explorer/store/explorerSlice';
 import processSlice from 'src/modules/Process/processSlice';
-import previewSlice from 'src/modules/Preview/previewSlice';
-import uploadedFiles from 'src/modules/Upload/uploadedFilesSlice';
-import fileMetadataSlice from 'src/modules/FileMetaData/fileMetadataSlice';
+import reviewSlice from 'src/modules/Review/store/reviewSlice';
 
 const rootReducer = combineReducers({
-  uploadedFiles,
+  fileReducer,
+  commonReducer,
   processSlice,
-  previewSlice,
-  fileMetadataSlice,
+  reviewSlice,
+  fileDetailsSlice,
+  annotationReducer,
+  explorerReducer,
+  annotationLabelReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

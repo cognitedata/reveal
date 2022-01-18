@@ -1,125 +1,76 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { FileInfo as File } from '@cognite/sdk';
-import { Loader, useFileIcon } from '@cognite/data-exploration';
-
-import {
-  Body,
-  DocumentIcon,
-  Button,
-  Dropdown,
-  Menu,
-  Tooltip,
-} from '@cognite/cogs.js';
+import React, { useMemo } from 'react';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
-import { selectUpdatedFileDetails } from 'src/modules/FileMetaData/fileMetadataSlice';
-import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
-import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
-import { TableDataItem } from 'src/modules/Common/Types';
-import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
-import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { Popover } from '../Popover';
+import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
+import {
+  isProcessingFile,
+  makeSelectAnnotationStatuses,
+} from 'src/modules/Process/processSlice';
+import { TableDataItem } from 'src/modules/Common/types';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
+import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
+import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
+import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export const MapPopup = ({
   item,
   style,
+  onClose,
+  actionDisabled,
 }: {
   item: TableDataItem | undefined;
   style?: React.CSSProperties;
+  actionDisabled: boolean;
+  onClose: () => void;
 }) => {
   if (!item) {
     return <div />;
   }
-
-  // TODO: from FileGridPreview -> refactor
-  const [imageUrl, setImage] = useState<string | undefined>(undefined);
-  const { data, isError } = useFileIcon({
-    id: item.id,
-    uploaded: true,
-    mimeType: item.mimeType,
-  } as File);
-
-  const isPreviewable = true; // TODO: check if file is previewable
-  useEffect(() => {
-    if (data) {
-      const arrayBufferView = new Uint8Array(data);
-      const blob = new Blob([arrayBufferView]);
-      setImage(URL.createObjectURL(blob));
-    }
-    return () => {
-      setImage((url) => {
-        if (url) {
-          URL.revokeObjectURL(url);
-        }
-        return undefined;
-      });
-    };
-  }, [data]);
-
-  const image = useMemo(() => {
-    if (isPreviewable) {
-      if (imageUrl) {
-        return <img src={imageUrl} alt="" />;
-      }
-      if (!isError) {
-        return <Loader />;
-      }
-    }
-    return (
-      <>
-        <DocumentIcon file={item.name} style={{ height: 36, width: 36 }} />
-        {isError && <Body level={3}>Unable to preview file.</Body>}
-      </>
-    );
-  }, [imageUrl, isPreviewable, item, isError]);
+  const dispatch = useDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { menuActions, rowKey, ...fileInfo } = item;
 
   const handleReview = () => {
-    if (item.menu?.onReviewClick) {
-      item.menu.onReviewClick(item.id);
-    }
+    if (menuActions.onReviewClick)
+      menuActions.onReviewClick(fileInfo as FileInfo);
   };
 
-  const handleMetadataEdit = () => {
-    if (item.menu?.showMetadataPreview) {
-      item.menu.showMetadataPreview(item.id);
-    }
+  const handleFileDetails = () => {
+    if (menuActions.onFileDetailsClicked)
+      menuActions.onFileDetailsClicked(fileInfo as FileInfo);
   };
 
-  const MenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
-      <Menu.Item onClick={handleMetadataEdit}>File details</Menu.Item>
-      <Menu.Item>Delete</Menu.Item>
-    </Menu>
+  const handleFileDelete = () => {
+    dispatch(DeleteFilesById([item.id]));
+  };
+
+  const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
+  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
+    getAnnotationCounts(annotationReducer, item.id)
   );
 
-  const selectAnnotationBadgeProps = useMemo(
-    makeAnnotationBadgePropsByFileId,
-    []
-  );
-  const annotationsBadgeProps = useSelector((state: RootState) =>
-    selectAnnotationBadgeProps(state, item.id)
+  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
+    getAnnotationStatuses(processSlice, item.id)
   );
 
-  const annotations = Object.keys(annotationsBadgeProps) as Array<
-    keyof AnnotationsBadgeProps
-  >;
-  const reviewDisabled = annotations.some((key) =>
-    ['Queued', 'Running'].includes(annotationsBadgeProps[key]?.status || '')
-  );
+  const reviewDisabled = isProcessingFile(annotationStatuses);
+
   const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(item.id))
+    selectUpdatedFileDetails(state, item.id)
   );
 
   return (
     <MapPopupContainer style={style}>
       <div className="preview">
-        <div className="image">{image}</div>
+        <div className="image">
+          <Thumbnail fileInfo={fileInfo as FileInfo} />
+        </div>
         <div className="fileDetails">
           <table>
             <tbody>
@@ -145,38 +96,29 @@ export const MapPopup = ({
             </tbody>
           </table>
         </div>
-        <div className="action">
-          <Dropdown content={MenuContent}>
-            <Button
-              type="ghost"
-              icon="MoreOverflowEllipsisHorizontal"
-              aria-label="action button"
-            />
-          </Dropdown>
+        <div className="close">
+          <Button
+            type="ghost"
+            icon="Close"
+            size="small"
+            aria-label="close popup"
+            onClick={onClose}
+          />
         </div>
       </div>
       <div className="footer">
         <div className="badge">
-          <Popover
-            placement="bottom"
-            trigger="mouseenter click"
-            content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
-          >
-            <>{AnnotationsBadge(annotationsBadgeProps)}</>
-          </Popover>
+          {AnnotationsBadgePopover(annotationCounts, annotationStatuses)}
         </div>
-        <div className="review">
-          <Button
-            type="secondary"
-            icon="ArrowRight"
-            iconPlacement="right"
-            onClick={handleReview}
-            size="small"
-            disabled={reviewDisabled}
-            aria-label="review button"
-          >
-            Review
-          </Button>
+        <div className="action">
+          <ActionMenu
+            showExifIcon={fileDetails?.geoLocation !== undefined}
+            reviewDisabled={reviewDisabled}
+            actionDisabled={actionDisabled}
+            handleReview={handleReview}
+            handleFileDelete={handleFileDelete}
+            handleFileDetails={handleFileDetails}
+          />
         </div>
       </div>
     </MapPopupContainer>
@@ -190,7 +132,7 @@ const MapPopupContainer = styled.div`
   border: 1px solid #c4c4c4;
   overflow: hidden;
   max-width: 500px;
-  grid-template-rows: 86px 50px;
+  grid-template-rows: 86px 55px;
   grid-template-areas:
     'preview'
     'footer';
@@ -200,7 +142,7 @@ const MapPopupContainer = styled.div`
     display: grid;
     padding-left: 12px;
     grid-template-columns: 100px 150px 70px;
-    grid-template-areas: 'image fileDetails action';
+    grid-template-areas: 'image fileDetails close';
 
     .image {
       grid-area: image;
@@ -235,7 +177,6 @@ const MapPopupContainer = styled.div`
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        white-space: nowrap;
         max-width: 150px;
       }
       .exif > img {
@@ -244,10 +185,11 @@ const MapPopupContainer = styled.div`
       }
     }
 
-    .action {
-      grid-area: action;
+    .close {
+      grid-area: close;
       justify-self: end;
       padding-right: 12px;
+      padding-top: 2px;
     }
   }
 
@@ -260,13 +202,13 @@ const MapPopupContainer = styled.div`
     padding: 12px;
     row-gap: 19px;
     grid-template-columns: 3fr 1fr 1fr;
-    grid-template-areas: 'badge badge badge . review';
+    grid-template-areas: 'badge badge badge . action';
 
     .badge {
       grid-area: badge;
     }
-    .review {
-      grid-area: review;
+    .action {
+      grid-area: action;
     }
   }
 

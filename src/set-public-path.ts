@@ -1,4 +1,5 @@
 import { setPublicPath } from 'systemjs-webpack-interop';
+// eslint-disable-next-line no-restricted-imports
 import { name } from '../package.json';
 
 /* This dynamically sets the webpack public path so that code splits work properly. See related:

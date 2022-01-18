@@ -1,13 +1,13 @@
 import React from 'react';
+import {
+  setDataSetIds,
+  setExtractExif,
+} from 'src/modules/Common/store/files/slice';
 import styled from 'styled-components';
 import { Checkbox, Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  setDataSetIds,
-  setExtractExif,
-} from 'src/modules/Upload/uploadedFilesSlice';
 import { DataSetSelect } from '@cognite/data-exploration';
 import 'antd/dist/antd.css';
 
@@ -19,10 +19,8 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
   const queryClient = new QueryClient();
   const dispatch = useDispatch();
 
-  const { dataSetIds } = useSelector((state: RootState) => state.uploadedFiles);
-  const { extractExif } = useSelector(
-    (state: RootState) => state.uploadedFiles
-  );
+  const { dataSetIds } = useSelector((state: RootState) => state.fileReducer);
+  const { extractExif } = useSelector((state: RootState) => state.fileReducer);
 
   return (
     <OptionContainer>
@@ -39,13 +37,14 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
               dispatch(setDataSetIds(value));
             }}
             selectedDataSetIds={dataSetIds}
+            allowClear
           />
         </DatasetContainer>
       </QueryClientProvider>
       <Checkbox
         name="exif-option"
         disabled={isDisabled}
-        value={extractExif}
+        checked={extractExif}
         onChange={(value) => {
           dispatch(setExtractExif(value));
         }}

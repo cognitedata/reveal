@@ -1,23 +1,67 @@
+import React, { useMemo, useRef } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import ReactBaseTable, { BaseTableProps, Column } from 'react-base-table';
-import { CellRenderer, TableDataItem } from 'src/modules/Common/Types';
-import React, { useMemo } from 'react';
+import ReactBaseTable, { Column, ColumnShape, RowKey } from 'react-base-table';
+import {
+  CellRenderer,
+  SelectableTableColumnShape,
+  TableDataItem,
+} from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectionRenderer';
 import { SelectAllHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
 import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
+import { FileListTableProps } from 'src/modules/Common/Components/FileTable/types';
+import { TimeHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/TimeHeaderRenderer';
 
-export type SelectableTableProps = Omit<
-  BaseTableProps<TableDataItem>,
-  'width'
-> & {
+export type SelectableTableProps = FileListTableProps<TableDataItem> & {
   selectable: boolean;
   rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
-  onRowSelect: (id: number, selected: boolean) => void;
+  rowClassNames?: (data: {
+    columns: ColumnShape<TableDataItem>[];
+    rowData: TableDataItem;
+    rowIndex: number;
+  }) => string;
+  rowEventHandlers?: {
+    [key: string]: (args: {
+      rowData: TableDataItem;
+      rowIndex: number;
+      rowKey: RowKey;
+      event: React.SyntheticEvent;
+    }) => void;
+  };
+  overlayRenderer: () => JSX.Element;
+  emptyRenderer: () => JSX.Element;
 };
 
+const defaultCellRenderers = {
+  header: StringHeaderRenderer,
+  selected: SelectionRenderer,
+  selectedHeader: SelectAllHeaderRenderer,
+};
+
+let rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element } = {};
+
 export function SelectableTable(props: SelectableTableProps) {
+  const tableRef = useRef<any>(null);
+  const {
+    data,
+    selectedIds,
+    onItemSelect,
+    allRowsSelected,
+    onSelectAllRows,
+    onSelectPage,
+    sortKey,
+    reverse,
+    fetchedCount,
+    setSortKey,
+    setReverse,
+    tableFooter,
+    selectable,
+    rowEventHandlers,
+    rowClassNames,
+  } = props;
+
   const handleSelectChange = ({
     rowData,
     selected,
@@ -26,15 +70,17 @@ export function SelectableTable(props: SelectableTableProps) {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    props.onRowSelect(rowData.id, selected);
+    onItemSelect(rowData, selected);
   };
 
-  const [rendererMap, columns] = useMemo(() => {
-    if (props.selectable) {
-      const localRendererMap = {
-        ...props.rendererMap,
-        selected: SelectionRenderer,
-      };
+  const fileIdsInCurrentPage = data.map((file) => file.id);
+
+  const columns: SelectableTableColumnShape<TableDataItem>[] = useMemo(() => {
+    rendererMap = {
+      ...defaultCellRenderers,
+      ...props.rendererMap,
+    };
+    if (selectable) {
       const selectionColumn = {
         key: 'selected',
         title: 'All',
@@ -43,15 +89,20 @@ export function SelectableTable(props: SelectableTableProps) {
         flexShrink: 0,
         onChange: handleSelectChange,
         align: Column.Alignment.LEFT,
+        allSelected: allRowsSelected,
+        onSelectAll: onSelectAllRows,
+        selectedIds,
+        onSelectPage,
+        fileIdsInCurrentPage,
+        fetchedCount,
       };
-      const cols = [selectionColumn, ...props.columns];
-      return [localRendererMap, cols];
+      return [selectionColumn, ...props.columns];
     }
-    return [props.rendererMap, props.columns];
-  }, [props.columns, props.selectable, props.rendererMap]);
+    return props.columns;
+  }, [props.columns, selectable, props.rendererMap, props.data]);
 
   const Cell = (cellProps: any) => {
-    const renderer = rendererMap[cellProps.column.key];
+    const renderer = rendererMap[cellProps.column.dataKey];
     if (renderer) {
       return renderer(cellProps);
     }
@@ -62,6 +113,16 @@ export function SelectableTable(props: SelectableTableProps) {
     if (cellProps.column.key === 'selected') {
       return SelectAllHeaderRenderer(cellProps);
     }
+    if (cellProps.column.key === 'Timestamp') {
+      return TimeHeaderRenderer({
+        ...cellProps,
+        sortKey,
+        reverse,
+        setSortKey,
+        setReverse,
+      });
+    }
+
     return StringHeaderRenderer(cellProps);
   };
 
@@ -77,13 +138,31 @@ export function SelectableTable(props: SelectableTableProps) {
           width: 'auto',
         }}
       >
-        {({ width }) => (
+        {({ width, height }) => (
           <ReactBaseTable<TableDataItem>
+            ref={tableRef}
+            {...props}
             columns={columns}
-            maxHeight={Infinity}
             width={width}
+            height={height}
             components={components}
-            data={props.data}
+            data={data}
+            rowClassName={rowClassNames}
+            rowEventHandlers={rowEventHandlers}
+            onColumnSort={({ key }) => {
+              if (setSortKey && (key as string) !== sortKey) {
+                setSortKey(key as string);
+                if (setReverse && reverse) {
+                  setReverse(false);
+                }
+              } else if (setReverse) setReverse(!reverse);
+            }}
+            sortBy={{
+              key: sortKey || '',
+              order: reverse ? 'asc' : 'desc',
+            }}
+            footerHeight={tableFooter ? 50 : 0}
+            footerRenderer={tableFooter}
           />
         )}
       </AutoSizer>

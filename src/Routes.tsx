@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { useUserContext } from '@cognite/cdf-utilities';
 import NotFound from 'src/pages/NotFound';
@@ -17,6 +17,10 @@ function routeWrapper(
         acl: 'filesAcl',
         actions: ['READ', 'WRITE'],
       },
+      {
+        acl: 'groupsAcl',
+        actions: ['LIST'],
+      },
     ];
     if (!userHasCapabilities(user, capabilities)) {
       return <NoAccessPage capabilities={capabilities} />;
@@ -29,32 +33,44 @@ const routes = [
   {
     exact: true,
     path: '/:tenant/vision',
-    component: (props: RouteComponentProps) =>
-      LazyWrapper(props, () => import('src/pages/Home')),
+    component: (props: RouteComponentProps) => {
+      const compRoute = useMemo(() => () => import('src/pages/Home'), []);
+
+      return <LazyWrapper routeProps={props} importFn={compRoute} />;
+    },
   },
   {
     exact: true,
     path: '/:tenant/vision/workflow/review/:fileId',
-    component: (props: RouteComponentProps) =>
-      LazyWrapper(props, () => import('src/modules/Preview/Containers/Review')),
+    component: (props: RouteComponentProps) => {
+      const compRoute = useMemo(
+        () => () => import('src/modules/Review/Containers/Review'),
+        []
+      );
+
+      return <LazyWrapper routeProps={props} importFn={compRoute} />;
+    },
   },
   {
     exact: false,
     path: '/:tenant/vision/workflow/:step',
-    component: (props: RouteComponentProps) =>
-      LazyWrapper(
-        props,
-        () => import('src/modules/Workflow/WorkflowContainer')
-      ),
+    component: (props: RouteComponentProps) => {
+      const compRoute = useMemo(() => () => import('src/pages/Process'), []);
+
+      return <LazyWrapper routeProps={props} importFn={compRoute} />;
+    },
   },
   {
     exact: true,
     path: '/:tenant/vision/explore',
-    component: (props: RouteComponentProps) =>
-      LazyWrapper(
-        props,
-        () => import('src/modules/Explorer/Containers/Explorer')
-      ),
+    component: (props: RouteComponentProps) => {
+      const compRoute = useMemo(
+        () => () => import('src/modules/Explorer/Containers/Explorer'),
+        []
+      );
+
+      return <LazyWrapper routeProps={props} importFn={compRoute} />;
+    },
   },
 ];
 
@@ -68,7 +84,7 @@ export function Routes() {
           key={r.path}
           exact={r.exact}
           path={r.path}
-          component={routeWrapper(r.component, user)}
+          render={routeWrapper(r.component, user)}
         />
       ))}
 

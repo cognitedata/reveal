@@ -1,4 +1,7 @@
-import { CogsFile, WebkitFile } from '../types';
+import {
+  CogsFile,
+  WebkitFile,
+} from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 
 export * from './attrAccept';
 

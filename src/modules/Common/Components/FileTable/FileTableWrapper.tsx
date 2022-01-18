@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { lightGrey } from 'src/utils/Colors';
 
+// todo: remove hardcoded BaseTable class prefixes since they can change on classPrefix of BaseTable
 const TableWrapperInner = styled.div`
   .BaseTable {
     box-shadow: 0 2px 4px 0 #eeeeee;
@@ -106,14 +107,15 @@ const TableWrapperInner = styled.div`
   }
 
   .BaseTable__header {
-    overflow: hidden !important;
+    overflow: visible !important;
   }
 
-  .BaseTable .BaseTable__header,
+  /* .BaseTable .BaseTable__header,  // commented to allow table scroll
   .BaseTable .BaseTable__body {
     outline: none;
     overflow: visible !important;
   }
+  */
 
   .BaseTable__header-row,
   .BaseTable__row {
@@ -293,15 +295,17 @@ const TableWrapperInner = styled.div`
 export const TableWrapper = styled(TableWrapperInner)(
   (props: { disableScroll?: boolean }) => css`
     width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: inherit;
+    /* overflow-x: hidden; // commented to allow table scroll
+    overflow-y: auto; */
+    overflow: hidden;
     .row {
       transition: 0.3s all;
       border-bottom: 1px solid ${lightGrey};
     }
     .BaseTable__header-cell {
       background: ${Colors['greyscale-grey2'].hex()};
+      overflow: visible !important;
     }
     .BaseTable__header-row {
       border-bottom: 1px solid ${lightGrey};

@@ -2,16 +2,18 @@ import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import {
   AnnotationJobResponse,
   DetectionModelDataProvider,
+  DetectionModelParams,
 } from 'src/api/types';
 
 // tag and ocr api quite similar that's why this base class exists
 // in further, when api will be normalized, all these provides should be removed in favor
 // of using some one generic provider like that one
 export abstract class BaseDetectionModelDataProvider
-  implements DetectionModelDataProvider {
+  implements DetectionModelDataProvider
+{
   protected abstract url: string;
 
-  postJob(fileIds: number[]) {
+  postJob(fileIds: number[], parameters?: DetectionModelParams) {
     return sdk
       .post<AnnotationJobResponse>(this.url, {
         data: {
@@ -20,6 +22,7 @@ export abstract class BaseDetectionModelDataProvider
               fileId: id,
             };
           }),
+          ...parameters,
         },
       })
       .then((response) => {

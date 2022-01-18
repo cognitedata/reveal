@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@cognite/cogs.js';
+import { useDebounce } from 'use-debounce';
 
-export const ExplorationSearchBar = () => {
-  // TODO: add the nesscarry states: https://github.com/cognitedata/data-exploration/blob/master/src/app/containers/Exploration/ExplorationSearchBar.tsx
+export const ExplorationSearchBar = (props: {
+  searchString?: string;
+  onChange: (text: string) => void;
+}) => {
+  const [text, setText] = useState(props.searchString || '');
+  const [searchValue] = useDebounce(text, 400);
+
+  useEffect(() => {
+    props.onChange(searchValue);
+  }, [searchValue]);
 
   return (
     <Input
@@ -10,12 +19,15 @@ export const ExplorationSearchBar = () => {
       variant="noBorder"
       fullWidth
       style={{
+        border: '2px solid #D9D9D9',
+        borderRadius: '6px',
         background: 'transparent',
       }}
       icon="Search"
       placeholder="Search..."
-      onChange={() => {}}
-      value=""
+      onChange={(e) => setText(e.target.value)}
+      value={text}
+      clearable={{ callback: () => setText(''), labelText: 'clear' }}
     />
   );
 };

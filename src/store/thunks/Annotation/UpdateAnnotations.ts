@@ -1,0 +1,48 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { ThunkConfig } from 'src/store/rootReducer';
+import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
+import {
+  getFieldOrSetNull,
+  validateAnnotation,
+} from 'src/api/annotation/utils';
+import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import { Annotation } from 'src/api/types';
+
+export const UpdateAnnotations = createAsyncThunk<
+  VisionAnnotation[],
+  Annotation[],
+  ThunkConfig
+>('UpdateAnnotations', async (annotations) => {
+  if (!annotations.length) {
+    return [];
+  }
+
+  const filteredAnnotations = annotations.filter((annotation) =>
+    validateAnnotation(annotation)
+  ); // validate annotations
+
+  const annotationUpdateRequest = {
+    items: filteredAnnotations.map((ann) => ({
+      id: ann.id,
+      update: {
+        text: getFieldOrSetNull(ann.text),
+        status: getFieldOrSetNull(ann.status),
+        region: getFieldOrSetNull(
+          ann.region
+            ? {
+                shape: ann.region.shape,
+                vertices: ann.region.vertices,
+              }
+            : null
+        ),
+        data: getFieldOrSetNull(ann.data),
+      },
+    })),
+  };
+  const response = await AnnotationApi.update(annotationUpdateRequest);
+  const responseAnnotations = response.data.items;
+
+  const updatedVisionAnnotations =
+    AnnotationUtils.convertToVisionAnnotations(responseAnnotations);
+  return updatedVisionAnnotations;
+});

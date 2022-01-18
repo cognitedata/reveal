@@ -1,17 +1,19 @@
 import { createAction } from '@reduxjs/toolkit';
 import { AnnotationJob, VisionAPIType } from 'src/api/types';
-import { VisionAnnotation } from 'src/utils/AnnotationUtils';
 
-export const fileProcessUpdate = createAction<{
-  fileIds: number[];
-  job: AnnotationJob;
-  modelType: VisionAPIType;
-}>('fileProcessUpdate');
+export const fileProcessUpdate =
+  createAction<{
+    fileIds: number[];
+    job: AnnotationJob;
+    modelType: VisionAPIType;
+  }>('fileProcessUpdate');
 
-export const addAnnotations = createAction<VisionAnnotation[]>(
-  'addAnnotations'
+export const clearFileState = createAction<number[]>('clearFileState');
+
+export const clearExplorerFileState = createAction<number[]>(
+  'clearExplorerFileState'
 );
 
-export const deleteAnnotationsFromState = createAction<string[]>(
-  'deleteAnnotations'
+export const deselectAllSelectionsReviewPage = createAction<void>(
+  'deselectAllSelectionsReviewPage'
 );

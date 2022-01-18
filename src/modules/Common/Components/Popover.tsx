@@ -35,7 +35,7 @@ export const Popover = ({
 const StyledTooltip = styled(Tooltip)`
   background: #fff;
   color: #000;
-  box-shadow: 0px 0px 8px ${lightGrey};
+  box-shadow: 0 0 8px ${lightGrey};
   padding: 8px;
   .tippy-arrow {
     color: #fff;

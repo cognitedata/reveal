@@ -42,7 +42,7 @@ function FileStatusColumn({ file }: FileStatusColumnProps) {
           {getHumanReadableFileSize(file.size, 0)}
         </DetailStyled>
         <Icon
-          type="Check"
+          type="Checkmark"
           style={{ color: '#31C25A', marginLeft: '17.45px' }}
         />
       </>

@@ -26,11 +26,11 @@ import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 // import carouselStyle from 'antd/es/carousel/style/index.less';
 // import cascaderStyle from 'antd/es/cascader/style/index.less';
 // import checkboxStyle from 'antd/es/checkbox/style/index.less';
-// import collapseStyle from 'antd/es/collapse/style/index.less';
+import collapseStyle from 'antd/es/collapse/style/index.less';
 // import commentStyle from 'antd/es/comment/style/index.less';
 import configProviderStyle from 'antd/es/config-provider/style/index.less';
 import coreStyle from 'antd/es/style/core/index.less';
-// import datePickerStyle from 'antd/es/date-picker/style/index.less';
+import datePickerStyle from 'antd/es/date-picker/style/index.less';
 // import descriptionsStyle from 'antd/es/descriptions/style/index.less';
 // import dividerStyle from 'antd/es/divider/style/index.less';
 import drawerStyle from 'antd/es/drawer/style/index.less';
@@ -40,8 +40,8 @@ import dropdownStyle from 'antd/es/dropdown/style/index.less';
 import gridStyle from 'antd/es/grid/style/index.less';
 // import iconStyle from 'antd/es/icon/style/index.less';
 // import imageStyle from 'antd/es/image/style/index.less';
-// impor inputNumberStyle from 'antd/es/input-number/style/index.less';
-// import inputStyle from 'antd/es/input/style/index.less';
+import inputNumberStyle from 'antd/es/input-number/style/index.less';
+import inputStyle from 'antd/es/input/style/index.less';
 // import layoutStyle from 'antd/es/layout/style/index.less';
 // import listStyle from 'antd/es/list/style/index.less';
 // import localeProviderStyle from 'antd/es/locale-provider/style/index.less';
@@ -54,7 +54,7 @@ import notificationStyle from 'antd/es/notification/style/index.less';
 // import pageHeaderStyle from 'antd/es/page-header/style/index.less';
 // import paginationStyle from 'antd/es/pagination/style/index.less';
 // import popconfirmStyle from 'antd/es/popconfirm/style/index.less';
-// import popoverStyle from 'antd/es/popover/style/index.less';
+import popoverStyle from 'antd/es/popover/style/index.less';
 // import progressStyle from 'antd/es/progress/style/index.less';
 // import radioStyle from 'antd/es/radio/style/index.less';
 // import rateStyle from 'antd/es/rate/style/index.less';
@@ -68,8 +68,8 @@ import spinStyle from 'antd/es/spin/style/index.less';
 import stepsStyle from 'antd/es/steps/style/index.less';
 // import switchStyle from 'antd/es/switch/style/index.less';
 // import tableStyle from 'antd/es/table/style/index.less';
-// import tabsStyle from 'antd/es/tabs/style/index.less';
-// import tagStyle from 'antd/es/tag/style/index.less';
+import tabsStyle from 'antd/es/tabs/style/index.less';
+import tagStyle from 'antd/es/tag/style/index.less';
 // import themeStyle from 'antd/es/style/themes/index.less';
 // import timePickerStyle from 'antd/es/time-picker/style/index.less';
 // import timelineStyle from 'antd/es/timeline/style/index.less';
@@ -90,16 +90,19 @@ const styles = [
   // buttonStyle,
   // cardStyle,
   // checkboxStyle,
-  // collapseStyle,
+  collapseStyle,
   configProviderStyle,
   coreStyle,
   // dividerStyle,
+  datePickerStyle,
   drawerStyle,
   dropdownStyle,
   // emptyStyle,
   // formStyle,
   gridStyle,
   // iconStyle,
+  inputNumberStyle,
+  inputStyle,
   // inputStyle,
   // listStyle,
   // menuStyle,
@@ -107,7 +110,7 @@ const styles = [
   modalStyle,
   notificationStyle,
   // paginationStyle,
-  // popoverStyle,
+  popoverStyle,
   // progressStyle,
   // radioStyle,
   // resultStyle,
@@ -116,7 +119,8 @@ const styles = [
   spinStyle,
   stepsStyle,
   // tableStyle,
-  // tabsStyle,
+  tabsStyle,
+  tagStyle,
   tooltipStyle,
   // treeStyle,
   typographyStyle,

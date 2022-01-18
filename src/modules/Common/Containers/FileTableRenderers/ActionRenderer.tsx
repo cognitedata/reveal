@@ -1,75 +1,97 @@
 import React, { useMemo } from 'react';
-import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
+import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
+import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
-import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
-import { CellRenderer } from 'src/modules/Common/Types';
+import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import styled from 'styled-components';
+import {
+  isProcessingFile,
+  makeSelectAnnotationStatuses,
+} from 'src/modules/Process/processSlice';
+import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
+import { VisionMode } from 'src/constants/enums/VisionEnums';
+import { selectExplorerSelectedIds } from 'src/modules/Explorer/store/explorerSlice';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+
+export function ActionRenderer(
+  rowData: TableDataItem,
+  mode: VisionMode,
+  actionDisabled: boolean
+) {
+  const dispatch = useDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { menuActions, rowKey, ...fileInfo } = rowData;
+
+  const handleFileDetails = () => {
+    if (menuActions?.onFileDetailsClicked) {
+      menuActions.onFileDetailsClicked(fileInfo as FileInfo);
+    }
+  };
+
+  const handleFileDelete = () => {
+    const { id } = rowData;
+    dispatch(DeleteFilesById([id]));
+  };
+
+  const handleReview = () => {
+    if (menuActions?.onReviewClick) {
+      menuActions.onReviewClick(fileInfo as FileInfo);
+    }
+  };
+
+  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
+    getAnnotationStatuses(processSlice, rowData.id)
+  );
+  const fileDetails = useSelector((state: RootState) =>
+    selectUpdatedFileDetails(state, rowData.id)
+  );
+
+  const reviewDisabled = isProcessingFile(annotationStatuses);
+
+  const showReviewButton = mode === VisionMode.Contextualize;
+
+  return (
+    <Action>
+      {showReviewButton && (
+        <ReviewButton
+          disabled={reviewDisabled}
+          onClick={handleReview}
+          noBackground
+        />
+      )}
+      <ActionMenu
+        showExifIcon={fileDetails?.geoLocation !== undefined}
+        actionDisabled={actionDisabled}
+        reviewDisabled={reviewDisabled}
+        handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
+        handleFileDelete={handleFileDelete}
+        handleFileDetails={handleFileDetails}
+      />
+    </Action>
+  );
+}
+
+export function ActionRendererExplorer({ rowData }: CellRenderer) {
+  const filesSelected = useSelector(
+    (state: RootState) =>
+      !!selectExplorerSelectedIds(state.explorerReducer).length
+  );
+  return ActionRenderer(rowData, VisionMode.Explore, filesSelected);
+}
+
+export function ActionRendererProcess({ rowData }: CellRenderer) {
+  const filesSelected = useSelector(
+    (state: RootState) => !!selectAllSelectedIds(state.fileReducer).length
+  );
+  return ActionRenderer(rowData, VisionMode.Contextualize, filesSelected);
+}
 
 export const Action = styled.div`
   display: flex;
   align-items: flex-end;
+  gap: 10px;
 `;
-
-export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
-  const selectAnnotationBadgeProps = useMemo(
-    makeAnnotationBadgePropsByFileId,
-    []
-  );
-  const annotationsBadgeProps = useSelector((state: RootState) =>
-    selectAnnotationBadgeProps(state, id)
-  );
-
-  const handleMetadataEdit = () => {
-    if (menu?.showMetadataPreview) {
-      menu.showMetadataPreview(id);
-    }
-  };
-
-  // todo: bind actions
-  const MenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
-      <Menu.Item onClick={handleMetadataEdit}>Edit file details</Menu.Item>
-      <Menu.Item>Delete</Menu.Item>
-    </Menu>
-  );
-
-  const handleReview = () => {
-    if (menu?.onReviewClick) {
-      menu.onReviewClick(id);
-    }
-  };
-  const annotations = Object.keys(annotationsBadgeProps) as Array<
-    keyof AnnotationsBadgeProps
-  >;
-  const reviewDisabled = annotations.some((key) =>
-    ['Queued', 'Running'].includes(annotationsBadgeProps[key]?.status || '')
-  );
-
-  return (
-    <Action>
-      <Button
-        type="secondary"
-        icon="ArrowRight"
-        iconPlacement="right"
-        style={{ marginRight: '10px' }}
-        onClick={handleReview}
-        disabled={reviewDisabled}
-      >
-        Review
-      </Button>
-      <Dropdown content={MenuContent}>
-        <Button
-          type="secondary"
-          icon="MoreOverflowEllipsisHorizontal"
-          aria-label="dropdown button"
-        />
-      </Dropdown>
-    </Action>
-  );
-}

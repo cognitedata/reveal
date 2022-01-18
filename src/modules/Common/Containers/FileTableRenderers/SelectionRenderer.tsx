@@ -1,9 +1,9 @@
-import { CellRenderer } from 'src/modules/Common/Types';
+import { SelectableTableCellRenderer } from 'src/modules/Common/types';
 import React from 'react';
 import { Checkbox } from '@cognite/cogs.js';
 
-export function SelectionRenderer(props: CellRenderer) {
-  const { onChange } = props.column;
+export function SelectionRenderer(props: SelectableTableCellRenderer) {
+  const { onChange, selectedIds } = props.column;
   const handleChange = (change: boolean) => {
     onChange({
       selected: change,
@@ -11,10 +11,15 @@ export function SelectionRenderer(props: CellRenderer) {
       rowIndex: props.rowIndex,
     });
   };
+  const handleClick = (evt: any) => {
+    // dummy handler to stop event propagation
+    evt.stopPropagation();
+  };
   return (
     <Checkbox
-      name={`check-${props.rowIndex}`}
-      value={props.rowData.selected}
+      onClick={handleClick}
+      name={`check-${props.rowData.rowKey}`}
+      checked={selectedIds?.includes(props.rowData.id)}
       onChange={handleChange}
     />
   );

@@ -1,15 +1,23 @@
-import React, { ComponentType, lazy, ReactNode, Suspense } from 'react';
-import Spin from 'antd/lib/spin';
+import { Loader } from '@cognite/cogs.js';
+import React, {
+  ComponentType,
+  lazy,
+  ReactNode,
+  Suspense,
+  useMemo,
+} from 'react';
 
-export function LazyWrapper<P>(
-  props: P,
-  importFn: () => Promise<{ default: ComponentType<any> }>,
-  loadingComponent: ReactNode = <Spin size="large" />
-) {
-  const LazyComp = lazy(importFn);
+export function LazyWrapper<P>(props: {
+  routeProps: P;
+  importFn: () => Promise<{ default: ComponentType<any> }>;
+  loadingComponent?: ReactNode;
+}) {
+  const loader = props.loadingComponent || <Loader />;
+  const LazyComp = useMemo(() => lazy(props.importFn), [props.importFn]);
+
   return (
-    <Suspense fallback={loadingComponent}>
-      <LazyComp {...props} />
+    <Suspense fallback={loader}>
+      <LazyComp {...props.routeProps} />
     </Suspense>
   );
 }

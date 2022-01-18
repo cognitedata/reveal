@@ -1,20 +1,26 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 
+import { loadState, saveState } from 'src/utils/Localstorage';
 import rootReducer from './rootReducer';
 
-const index = configureStore({
+const store = configureStore({
   reducer: rootReducer,
   middleware: getDefaultMiddleware({}),
+  preloadedState: loadState(),
+});
+
+store.subscribe(() => {
+  saveState(store.getState());
 });
 
 if (process.env.NODE_ENV === 'development' && module.hot) {
   module.hot.accept('./rootReducer', () => {
     // eslint-disable-next-line global-require
     const newRootReducer = require('./rootReducer').default;
-    index.replaceReducer(newRootReducer);
+    store.replaceReducer(newRootReducer);
   });
 }
 
-export type AppDispatch = typeof index.dispatch;
+export type AppDispatch = typeof store.dispatch;
 
-export default index;
+export default store;

@@ -1,97 +1,89 @@
 import {
   Annotation,
+  AnnotationMetadata,
+  AnnotationRegion,
   AnnotationSource,
   AnnotationType,
   DetectedAnnotation,
-  VisionAPIType,
+  LinkedAnnotation,
   RegionType,
+  Vertex,
+  VisionAPIType,
 } from 'src/api/types';
+import { UnsavedAnnotation } from 'src/api/annotation/types';
+import {
+  ColorsObjectDetection,
+  ColorsOCR,
+  ColorsPersonDetection,
+  ColorsTagDetection,
+  ColorsTextAndIconsSecondary,
+} from 'src/constants/Colors';
+import { Keypoint } from 'src/modules/Review/types';
+import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
+import { AllIconTypes } from '@cognite/cogs.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum AnnotationStatus {
   Verified = 'verified',
-  Rejected = 'deleted',
+  Rejected = 'rejected',
+  Deleted = 'deleted', // todo: remove this once this is not needed
   Unhandled = 'unhandled',
 }
 
-export enum AnnotationDrawerMode {
-  LinkAsset,
-  AddAnnotation,
-}
-
-export type DrawFunction = (
-  canvas: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number
-) => void;
-
-export type AnnotationStyle = {
-  backgroundColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
-  highlight?: boolean;
-  draw?: DrawFunction;
+export type KeypointItem = Required<Keypoint> & {
+  id: string;
+  selected: boolean;
 };
 
-export type AnnotationBoundingBox = {
-  xMax: number;
-  xMin: number;
-  yMax: number;
-  yMin: number;
+export type KeypointVertex = Vertex & KeypointItem;
+
+export type VisionAnnotationRegion = Pick<AnnotationRegion, 'shape'> & {
+  vertices: Array<Vertex | KeypointVertex>;
 };
 
-export type UnsavedAnnotation = Omit<
+export type VisionAnnotation = Omit<
   Annotation,
-  'id' | 'createdTime' | 'lastUpdatedTime'
->;
-
-export interface VisionAnnotation
-  extends Omit<
-    Annotation,
-    'id' | 'region' | 'createdTime' | 'lastUpdatedTime'
-  > {
-  id?: string;
+  | 'linkedResourceId'
+  | 'linkedResourceExternalId'
+  | 'linkedResourceType'
+  | 'region'
+> & {
+  region?: VisionAnnotationRegion;
   label: string;
   type: RegionType;
   color: string;
-  box?: AnnotationBoundingBox;
-  status: AnnotationStatus;
-  createdTime?: number;
-  lastUpdatedTime?: number;
-  virtual?: boolean;
   modelType: VisionAPIType;
-}
+  linkedResourceId?: number;
+  linkedResourceExternalId?: string;
+  linkedResourceType?: 'asset';
+};
 
 export const ModelTypeStyleMap = {
-  [VisionAPIType.OCR]: {
-    color: '#404040',
-    backgroundColor: '#F0FCF8',
-  },
-  [VisionAPIType.TagDetection]: {
-    color: '#C945DB',
-    backgroundColor: '#F4DAF8',
-  },
-  [VisionAPIType.ObjectDetection]: {
-    color: '#FF8746',
-    backgroundColor: '#FFE1D1',
-  },
+  [VisionAPIType.OCR]: ColorsOCR,
+  [VisionAPIType.TagDetection]: ColorsTagDetection,
+  [VisionAPIType.ObjectDetection]: ColorsObjectDetection,
+  [VisionAPIType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
   [VisionAPIType.OCR]: 'Scan',
   [VisionAPIType.TagDetection]: 'ResourceAssets',
   [VisionAPIType.ObjectDetection]: 'Scan',
+  [VisionAPIType.CustomModel]: 'Scan',
 };
 
-export const ModelTypeSourceMap: { [key: number]: AnnotationSource } = {
+export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationType } = {
   [VisionAPIType.OCR]: 'vision/ocr',
   [VisionAPIType.TagDetection]: 'vision/tagdetection',
   [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
+  [VisionAPIType.CustomModel]: 'vision/custommodel',
 };
-export const ModelTypeAnnotationTypeMap = {
-  [VisionAPIType.OCR]: 'vision/ocr',
-  [VisionAPIType.TagDetection]: 'vision/tagdetection',
-  [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
+
+export const AnnotationTypeModelTypeMap = {
+  'vision/ocr': VisionAPIType.OCR,
+  'vision/tagdetection': VisionAPIType.TagDetection,
+  'vision/objectdetection': VisionAPIType.ObjectDetection,
+  user_defined: VisionAPIType.ObjectDetection,
+  CDF_ANNOTATION_TEMPLATE: VisionAPIType.ObjectDetection,
 };
 
 export class AnnotationUtils {
@@ -101,133 +93,101 @@ export class AnnotationUtils {
     return `${modelType}-${fileId}`;
   }
 
-  public static getAnnotationColor(modelType: VisionAPIType): string {
+  public static getAnnotationColor(
+    text: string,
+    modelType: VisionAPIType,
+    data?: AnnotationMetadata
+  ): string {
+    if (data) {
+      if (data.color) {
+        return data.color;
+      }
+      if (data.keypoint) {
+        return ColorsTextAndIconsSecondary.color;
+      }
+    }
+    if (text === 'person') {
+      return ColorsPersonDetection.color;
+    }
     return ModelTypeStyleMap[modelType].color;
   }
 
-  public static generateAnnotationId(
-    fileId: string,
-    type: AnnotationType,
-    index: number
-  ): string {
-    return `${index}-${type}-${fileId}`;
-  }
-
-  public static getAnnotationStyle(
-    color: string,
-    status?: AnnotationStatus
-  ): AnnotationStyle {
-    const lineColor = color;
-    const { lineWidth } = AnnotationUtils;
-
-    if (status && status === AnnotationStatus.Verified) {
-      return {
-        strokeColor: lineColor,
-        strokeWidth: lineWidth,
-        highlight: false,
-      };
-    }
-
-    const drawDashedRectangle = (
-      canvas: CanvasRenderingContext2D,
-      x: number,
-      y: number,
-      width: number,
-      height: number
-    ) => {
-      canvas.beginPath();
-      /* eslint-disable no-param-reassign */
-      canvas.strokeStyle = lineColor;
-      canvas.lineWidth = lineWidth;
-      /* eslint-enable no-param-reassign */
-      canvas.setLineDash([5, 5]);
-      canvas.moveTo(x, y);
-      canvas.rect(
-        x - lineWidth / 2,
-        y - lineWidth / 2,
-        width + lineWidth,
-        height + lineWidth
-      );
-      canvas.stroke();
-    };
-
-    return {
-      draw: drawDashedRectangle,
-    };
-  }
+  public static getIconType = (annotation: {
+    text: string;
+    modelType: VisionAPIType;
+  }) => {
+    return annotation.text === 'person'
+      ? 'Personrounded'
+      : (ModelTypeIconMap[annotation.modelType] as AllIconTypes);
+  };
 
   public static convertToVisionAnnotations(
-    annotations: Annotation[] | UnsavedAnnotation[]
+    annotations: Annotation[]
   ): VisionAnnotation[] {
-    return annotations.map((value: Annotation | UnsavedAnnotation) => {
+    return annotations.map((value) => {
       let ann = AnnotationUtils.createVisionAnnotationStub(
+        value.id,
         value.text,
         AnnotationUtils.getAnnotationsDetectionModelType(value),
         value.annotatedResourceId,
-        value.region && {
-          xMin: value.region.vertices[0].x,
-          yMin: value.region.vertices[0].y,
-          xMax: value.region.vertices[1].x,
-          yMax: value.region.vertices[1].y,
-        },
+        value.createdTime,
+        value.lastUpdatedTime,
+        value.region,
         value.region && value.region.shape,
         value.source,
         value.status,
         value.data,
         value.annotationType,
-        value.annotatedResourceExternalId,
-        value.linkedResourceId,
-        value.linkedResourceExternalId
+        value.annotatedResourceExternalId
       );
 
-      if (isAnnotation(value)) {
+      if (isLinkedAnnotation(value)) {
         ann = {
           ...ann,
-          id: value.id.toString(),
-          createdTime: value.createdTime,
-          lastUpdatedTime: value.lastUpdatedTime,
+          linkedResourceId: value.linkedResourceId,
+          linkedResourceExternalId: value.linkedResourceExternalId,
+          linkedResourceType: 'asset',
         };
+      }
+      if (isKeyPointAnnotation(value)) {
+        ann = populateKeyPoints(ann);
       }
       return ann;
     });
   }
 
   public static createVisionAnnotationStub(
+    id: number,
     text: string,
     modelType: VisionAPIType,
     fileId: number,
-    box?: AnnotationBoundingBox,
+    createdTime: number,
+    lastUpdatedTime: number,
+    region?: AnnotationRegion,
     type: RegionType = 'rectangle',
     source: AnnotationSource = 'user',
     status = AnnotationStatus.Unhandled,
-    data = {},
+    data?: AnnotationMetadata,
     annotationType: AnnotationType = 'vision/ocr',
     fileExternalId?: string,
     assetId?: number,
-    assetExternalId?: string,
-    id?: string,
-    createdTime?: number,
-    lastUpdatedTime?: number,
-    virtual = false
+    assetExternalId?: string
   ): VisionAnnotation {
     return {
-      color:
-        text === 'person'
-          ? '#1AA3C1'
-          : AnnotationUtils.getAnnotationColor(modelType),
+      color: AnnotationUtils.getAnnotationColor(text, modelType, data),
       modelType,
       type,
       source,
-      status,
+      status: tempConvertAnnotationStatus(status),
       text,
       label: text,
-      data,
+      data: data || {},
       annotatedResourceId: fileId,
       annotatedResourceType: 'file',
       annotatedResourceExternalId: fileExternalId!,
       annotationType,
       id,
-      box,
+      region,
       ...(!!assetId && {
         linkedResourceId: assetId,
         linkedResourceExternalId: assetExternalId,
@@ -235,27 +195,15 @@ export class AnnotationUtils {
       }),
       createdTime,
       lastUpdatedTime,
-      virtual,
     };
   }
 
-  public static convertToAnnotation(
-    value: VisionAnnotation
-  ): Annotation | UnsavedAnnotation {
-    const ann: UnsavedAnnotation = {
-      region: value.box && {
-        shape: value.type,
-        vertices: [
-          {
-            x: value.box.xMin,
-            y: value.box.yMin,
-          },
-          {
-            x: value.box.xMax,
-            y: value.box.yMax,
-          },
-        ],
-      },
+  public static convertToAnnotation(value: VisionAnnotation): Annotation {
+    const ann: Annotation = {
+      id: value.id,
+      createdTime: value.createdTime,
+      lastUpdatedTime: value.lastUpdatedTime,
+      region: value.region,
       source: value.source,
       status: value.status,
       text: value.text,
@@ -268,34 +216,159 @@ export class AnnotationUtils {
       annotationType: value.annotationType,
     };
 
-    if (!!value.id && !!value.lastUpdatedTime && !!value.createdTime) {
-      const savedAnn: Annotation = {
-        ...ann,
-        id: parseInt(value.id, 10),
-        createdTime: value.createdTime,
-        lastUpdatedTime: value.lastUpdatedTime,
-      };
-      return savedAnn;
-    }
     return ann;
   }
 
   public static getAnnotationsDetectionModelType = (
-    ann: Annotation | UnsavedAnnotation
+    ann: Annotation
   ): VisionAPIType => {
-    if (
-      ann.linkedResourceType === 'asset' &&
-      (ann.linkedResourceId || ann.linkedResourceExternalId)
-    ) {
+    if (isLinkedAnnotation(ann)) {
       return VisionAPIType.TagDetection;
     }
 
-    if (ann.source === 'vision/objectdetection') {
-      return VisionAPIType.ObjectDetection;
+    if (ann.annotationType === 'vision/ocr') {
+      return VisionAPIType.OCR;
     }
-    return VisionAPIType.OCR;
+    return VisionAPIType.ObjectDetection;
   };
 }
+
+const populateKeyPoints = (annotation: VisionAnnotation) => {
+  const keypointAnnotation: VisionAnnotation = { ...annotation };
+  const keypointMeta = (annotation.data as AnnotationMetadata).keypoints;
+
+  if (keypointAnnotation.region) {
+    if (keypointMeta) {
+      keypointAnnotation.region.vertices =
+        keypointAnnotation.region.vertices.map((vertex, index) => {
+          const keyPointData =
+            (keypointMeta.find(
+              (keyPointMetaItem) => keyPointMetaItem.order === String(index + 1)
+            ) as KeypointItem) || {};
+
+          return {
+            ...vertex,
+            ...keyPointData,
+            defaultPosition: [vertex.x, vertex.y],
+            id: `${annotation.id}-${keyPointData.caption}`,
+          };
+        });
+    } else {
+      keypointAnnotation.region.vertices =
+        keypointAnnotation.region.vertices.map((vertex, index) => {
+          const keyPointData = {
+            order: String(index + 1),
+            caption: annotation.text,
+            color: ColorsObjectDetection.color,
+          };
+
+          return {
+            ...vertex,
+            ...keyPointData,
+            defaultPosition: [vertex.x, vertex.y],
+            id: `${annotation.id}-${keyPointData.order}`,
+          };
+        });
+      keypointAnnotation.data = { ...keypointAnnotation.data, keypoint: true };
+    }
+  }
+  // Populate keypoint data
+
+  // const keypointCollections = predefinedAnnotations?.predefinedKeyPoints;
+  // let keypointCollection: KeypointCollection | undefined;
+  // if (keypointCollections && keypointCollections.length) {
+  //   keypointCollection = keypointCollections.find(
+  //     (collection) => collection.collectionName === annotation.text
+  //   );
+  // }
+  // if (
+  //   keypointCollection &&
+  //   keypointAnnotation.region &&
+  //   keypointAnnotation.region.vertices
+  // ) {
+  //   keypointAnnotation.keypoints = keypointAnnotation.region.vertices.map(
+  //     (vertex, index) => {
+  //       const vertexOrder = String(index + 1);
+  //       const keypointSetting = keypointCollection?.keypoints?.find(
+  //         (keypoint) => keypoint.order === vertexOrder
+  //       );
+  //       if (keypointSetting) {
+  //         return {
+  //           id: vertex.id!,
+  //           color: keypointSetting.color,
+  //           label: keypointSetting.caption,
+  //           order: keypointSetting.order,
+  //         };
+  //       }
+  //       return {
+  //         id: vertex.id!,
+  //         color: keypointAnnotation.color,
+  //         label: 'No Collection Found',
+  //         order: vertexOrder,
+  //       };
+  //     }
+  //   );
+  // } else {
+  //   keypointAnnotation.keypoints = keypointAnnotation!.region!.vertices.map(
+  //     (vertex, index) => ({
+  //       id: vertex.id!,
+  //       color: keypointAnnotation.color,
+  //       label: 'No Collection Found',
+  //       order: String(index + 1),
+  //     })
+  //   );
+  // }
+  return keypointAnnotation;
+};
+
+export const getAnnotationCounts = (annotations: VisionAnnotation[]) => {
+  const counts: { [text: string]: number } = {};
+
+  annotations.forEach((item) => {
+    counts[item.label] = 1 + (counts[item.label] || 0);
+  });
+
+  return counts;
+};
+
+export const getAnnotationsBadgeCounts = (annotations: VisionAnnotation[]) => {
+  const annotationsBadgeProps: AnnotationsBadgeCounts = {
+    objects: 0,
+    assets: 0,
+    text: 0,
+    gdpr: 0,
+    mostFrequentObject: undefined,
+  };
+  if (annotations) {
+    annotationsBadgeProps.text = annotations.filter(
+      (item) => item.modelType === VisionAPIType.OCR
+    ).length;
+
+    annotationsBadgeProps.assets = annotations.filter(
+      (item) => item.modelType === VisionAPIType.TagDetection
+    ).length;
+
+    annotationsBadgeProps.gdpr = annotations.filter(
+      (item) =>
+        item.modelType === VisionAPIType.ObjectDetection &&
+        item.label === 'person'
+    ).length;
+
+    const objects = annotations.filter(
+      (item) =>
+        [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
+          item.modelType
+        ) && item.label !== 'person'
+    );
+    annotationsBadgeProps.objects = objects.length;
+    const counts = getAnnotationCounts(objects);
+    annotationsBadgeProps.mostFrequentObject = Object.entries(counts).length
+      ? Object.entries(counts).reduce((a, b) => (a[1] > b[1] ? a : b))
+      : undefined;
+  }
+
+  return annotationsBadgeProps;
+};
 
 export const isAnnotation = (
   ann: DetectedAnnotation | Annotation | UnsavedAnnotation
@@ -308,3 +381,28 @@ export const isUnSavedAnnotation = (
 ): ann is UnsavedAnnotation => {
   return !(ann as Annotation).lastUpdatedTime;
 };
+
+export const isLinkedAnnotation = (ann: Annotation): boolean => {
+  return !!(ann as LinkedAnnotation).linkedResourceType;
+};
+
+export const isKeyPointAnnotation = (ann: Annotation): boolean => {
+  return (ann as LinkedAnnotation).region?.shape === 'points';
+};
+
+export const createUniqueId = (text: string): string => {
+  return `${text.replace(/(\s)/g, '_').trim()}-${uuidv4()}`;
+};
+
+// todo: remove this function once they are not needed - start
+
+export const tempConvertAnnotationStatus = (
+  status: AnnotationStatus
+): AnnotationStatus => {
+  if (status === AnnotationStatus.Deleted) {
+    return AnnotationStatus.Rejected;
+  }
+  return status;
+};
+
+// todo: remove these function once they are not needed - end

@@ -1,104 +1,96 @@
-import React, { useState } from 'react';
+/* eslint-disable @cognite/no-number-z-index */
+import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
-import { FileToolbar } from 'src/modules/Workflow/components/FileToolbar';
+import { FileToolbar } from 'src/modules/Process/Containers/FileToolbar';
 import { Title } from '@cognite/cogs.js';
-import {
-  getParamLink,
-  workflowRoutes,
-} from 'src/modules/Workflow/workflowRoutes';
-import { useHistory } from 'react-router-dom';
-import {
-  setSelectedFileId,
-  showFileMetadataPreview,
-} from 'src/modules/Process/processSlice';
-
-import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import styled from 'styled-components';
-import { resetEditHistory } from 'src/modules/FileMetaData/fileMetadataSlice';
-import { FileActions, TableDataItem } from 'src/modules/Common/Types';
-import {
-  selectAllFiles,
-  setFileSelectState,
-} from 'src/modules/Upload/uploadedFilesSlice';
 import { pushMetric } from 'src/utils/pushMetric';
-import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
-import { MapView } from '../../Common/Components/MapView/MapView';
+import { ProcessResults } from 'src/modules/Process/Containers/ProcessResults';
+import { ViewMode } from 'src/modules/Common/types';
+import {
+  hideFileMetadata,
+  setCurrentView,
+  setFocusedFileId,
+} from 'src/modules/Process/processSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { ProcessToolBar } from 'src/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
+import { ProcessFooter } from 'src/modules/Process/Containers/ProcessFooter';
+import { RootState } from 'src/store/rootReducer';
+import { ProcessFileUploadModalContainer } from 'src/modules/Process/Containers/ProcessFileUploadModalContainer';
+import { ProcessFileDownloadModalContainer } from 'src/modules/Process/Containers/ProcessFileDownloadModalContainer';
+import { ProcessBulkEditModalContainer } from 'src/modules/Process/Containers/ProcessBulkEditModalContainer';
+import { ExploreModalContainer } from 'src/modules/Process/Containers/ExploreModalContainer';
+
+const ResultsContainer = styled.div`
+  flex: 1;
+  height: calc(100% - 50px);
+`;
+
+const TitleContainer = styled.div`
+  padding: 5px 0;
+`;
 
 pushMetric('Vision.Process');
 const queryClient = new QueryClient();
 
 export default function ProcessStep() {
-  const history = useHistory();
-  const uploadedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.uploadedFiles)
+  const dispatch = useDispatch();
+
+  const currentView = useSelector(
+    ({ processSlice }: RootState) => processSlice.currentView
   );
 
-  const dispatch = useDispatch();
-  const [currentView, setCurrentView] = useState<string>('list');
-
-  const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
-    const menuActions: FileActions = {
-      showMetadataPreview: (fileId: number) => {
-        dispatch(setSelectedFileId(fileId));
-        dispatch(resetEditHistory());
-        dispatch(showFileMetadataPreview());
-      },
-      onReviewClick: (fileId: number) => {
-        history.push(
-          getParamLink(workflowRoutes.review, ':fileId', String(fileId))
-        );
-      },
+  useEffect(() => {
+    return () => {
+      dispatch(hideFileMetadata());
     };
-
-    return {
-      id: file.id,
-      name: file.name,
-      mimeType: file.mimeType || '',
-      menu: menuActions,
-      selected: file.selected,
-    };
-  });
-  /* eslint-disable react/prop-types */
-  const renderGridCell = (props: GridCellProps<TableDataItem>) => {
-    return <FileGridPreview item={props.item} style={props.style} />;
-  };
-
-  const renderView = () => {
-    if (currentView === 'grid') {
-      return (
-        <GridTable
-          data={tableData}
-          renderCell={renderGridCell}
-          minCellWidth={350}
-        />
-      );
-    }
-    if (currentView === 'map') {
-      return <MapView data={tableData} />;
-    }
-
-    const handleRowSelect = (id: number, selected: boolean) => {
-      dispatch(setFileSelectState(id, selected));
-    };
-
-    return <FileTable data={tableData} onRowSelect={handleRowSelect} />;
-  };
-  console.log('Re-rendering process page');
+  }, []);
   return (
     <>
+      <Deselect />
+      <ProcessFileUploadModalContainer />
+      <ProcessFileDownloadModalContainer />
       <QueryClientProvider client={queryClient}>
-        <Title level={2}>Process and detect annotations</Title>
-        <FileToolbar currentView={currentView} onViewChange={setCurrentView} />
-        <Container>{renderView()}</Container>
+        <TitleContainer>
+          <Title level={2}>Contextualize Imagery Data</Title>
+        </TitleContainer>
+        <ProcessToolBar />
+        <FileToolbar
+          currentView={currentView}
+          onViewChange={(view) => dispatch(setCurrentView(view as ViewMode))}
+        />
+        <ResultsContainer>
+          <ProcessResults currentView={currentView as ViewMode} />
+        </ResultsContainer>
+        <ProcessFooter />
+        <ExploreModalContainer />
+        <ProcessBulkEditModalContainer />
       </QueryClientProvider>
     </>
   );
 }
 
-const Container = styled.div`
-  flex: 1;
+const Deselect = () => {
+  const dispatch = useDispatch();
+  const focusedFileId = useSelector(
+    ({ processSlice }: RootState) => processSlice.focusedFileId
+  );
+  return (
+    <DeselectContainer
+      onClick={() => {
+        if (focusedFileId) {
+          dispatch(setFocusedFileId(null));
+        }
+      }}
+    />
+  );
+};
+
+const DeselectContainer = styled.div`
+  position: fixed;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 `;
