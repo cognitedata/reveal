@@ -1,11 +1,12 @@
 import { Link, useMatch } from 'react-location';
 
-import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
-import { Button, Label } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 
 import { useTitle } from 'hooks/useTitle';
+
+import CalculationDetailsDataSection from './CalculationDetailsDataSection';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -24,7 +25,6 @@ export function CalculationDetails() {
     // No model file returned
     throw new Error('Model file or calculation missing');
   }
-
   return (
     <CalculationDetailsContainer>
       <h2>
@@ -59,35 +59,9 @@ export function CalculationDetails() {
           <div>{modelCalculation.configuration.connector}</div>
         </div>
       </ConfigurationMetadata>
-      <ConfigurationData>
-        <ConfigurationDataSection
-          // TODO(SIM-209) Refactor out to separate component
-          className={classNames({
-            enabled: modelCalculation.configuration.schedule.enabled,
-            disabled: !modelCalculation.configuration.schedule.enabled,
-          })}
-        >
-          <h3>
-            Schedule{' '}
-            {modelCalculation.configuration.schedule.enabled || (
-              <Label size="small" variant="danger">
-                disabled
-              </Label>
-            )}
-          </h3>
-          <div className="properties">
-            <div className="entry">
-              <div>Start</div>
-              <div>{modelCalculation.configuration.schedule.start}</div>
-            </div>
-            <div className="entry">
-              <div>Repeat</div>
-              <div>{modelCalculation.configuration.schedule.repeat}</div>
-            </div>
-          </div>
-        </ConfigurationDataSection>
-      </ConfigurationData>
-      {/* <pre>{JSON.stringify(modelCalculation, null, 2)}</pre> */}
+      <CalculationDetailsDataSection
+        configuration={modelCalculation.configuration}
+      />
     </CalculationDetailsContainer>
   );
 }
@@ -100,26 +74,6 @@ const CalculationDetailsContainer = styled.main`
     column-gap: 12px;
     span:last-of-type {
       flex: 1 1 auto;
-    }
-  }
-`;
-
-const ConfigurationData = styled.div``;
-
-const ConfigurationDataSection = styled.div`
-  h3 {
-    margin-top: 24px;
-  }
-  &.disabled .properties {
-    opacity: 0.5;
-  }
-  .properties {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    .entry {
-      div:nth-child(1) {
-        font-weight: bold;
-      }
     }
   }
 `;
