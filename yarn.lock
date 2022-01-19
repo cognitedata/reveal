@@ -8053,6 +8053,14 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-virtualized@^9.21.10":
+  version "9.21.16"
+  resolved "https://registry.yarnpkg.com/@types/react-virtualized/-/react-virtualized-9.21.16.tgz#5e33c7e8a7c187f2b6d542132fc7a1d132b34f9d"
+  integrity sha512-25QMrouz1VKq5T68+9JfRq3GP4JmN20ARi+hl5z7NMmriy07XmGd1Yh3I4EIZjmifpXhHZoQS/ny2fzZRyiAiw==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/react" "*"
+
 "@types/react@*", "@types/react@>=16.9.0", "@types/react@^17.0.24":
   version "17.0.24"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.24.tgz#7e1b3f78d0fc53782543f9bce6d949959a5880bd"
@@ -8237,6 +8245,11 @@
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/@types/url-parse/-/url-parse-1.4.4.tgz#ebeb0ec8b581318739cf73e9f9b186f610764255"
   integrity sha512-KtQLad12+4T/NfSxpoDhmr22+fig3T7/08QCgmutYA6QSznSRmEtuL95GrhVV40/0otTEdFc+etRcCTqhh1q5Q==
+
+"@types/utm@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/utm/-/utm-1.1.1.tgz#50f08a5bfd62dfad3916a8af34e96a70de5f3241"
+  integrity sha512-iIqxs3T7X2drAkeTn0DE3Xpcx5z0MHXJFnjvvWCTzZDF0CnM5D2CGn4eEFZi+uHNnCXx4j/3vA8MO6+xXpQYqA==
 
 "@types/uuid@^8.3.1":
   version "8.3.1"
