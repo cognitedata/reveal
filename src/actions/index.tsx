@@ -230,16 +230,16 @@ export const useDataSetsList = (): {
   isExtpipesFetched: boolean;
   isLoading: boolean;
 } => {
-  const { data: extpipes = [], ...extpipesQuery } = useExtpipes();
+  const { data: extpipes, ...extpipesQuery } = useExtpipes();
 
-  const { data: dataSets = [], ...dataSetsQuery } = useQuery(
+  const { data: dataSets, ...dataSetsQuery } = useQuery(
     getListDatasetsKey(),
     () => sdk.datasets.list().autoPagingToArray({ limit: -1 }),
     { onError }
   );
 
   const dataSetsWithExtpipes = useMemo(() => {
-    return mapDataSetExtpipe(parseDataSetsList(dataSets), extpipes);
+    return mapDataSetExtpipe(parseDataSetsList(dataSets ?? []), extpipes ?? []);
   }, [dataSets, extpipes]);
 
   return {
