@@ -1,19 +1,20 @@
+import { screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
+import { setupServer } from 'msw/node';
 
+import { getMockWellsGeometry } from '__mocks/mockWellsGeometry';
 import { getMockDocument } from '__test-utils/fixtures/document';
 import {
   getMockGeometry,
   getMockPointGeo,
 } from '__test-utils/fixtures/geometry';
-import { getMockWellOld } from '__test-utils/fixtures/well';
-import { testWrapper } from '__test-utils/renderer';
+import { getWrapper, testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import {
   ExternalWellsFeature,
   useDataFeatures,
 } from 'modules/map/hooks/useDataFeatures';
-import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import {
   DOCUMENT_LAYER_ID,
   WELL_HEADS_LAYER_ID,
@@ -29,13 +30,17 @@ jest.mock('modules/wellSearch/hooks/useWellQueryResultSelectors', () => ({
 
 const selectedLayers = [WELL_HEADS_LAYER_ID, DOCUMENT_LAYER_ID];
 
+const mockServer = setupServer(getMockWellsGeometry());
+
 describe('useDataFeatures', () => {
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
   beforeEach(() => {
     (useDocumentResultHits as jest.Mock).mockImplementation(() => [
       getMockDocument({ id: '1', geolocation: getMockGeometry() }),
       getMockDocument({ id: '2' }),
     ]);
-    (useWellQueryResultWells as jest.Mock).mockImplementation(() => []);
   });
 
   it('should return empty array for empty state', async () => {
@@ -43,7 +48,7 @@ describe('useDataFeatures', () => {
     const store = getMockedStore();
 
     const { result } = renderHook(() => useDataFeatures(selectedLayers, []), {
-      wrapper: ({ children }) => testWrapper({ store, children }),
+      wrapper: getWrapper(store),
     });
 
     expect(result.current.features).toHaveLength(0);
@@ -54,9 +59,6 @@ describe('useDataFeatures', () => {
       getMockDocument({ id: '1' }),
       getMockDocument({ id: '2' }),
     ]);
-    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
-      getMockWellOld({ id: 1 }),
-    ]);
 
     const store = getMockedStore({
       wellSearch: {
@@ -69,7 +71,7 @@ describe('useDataFeatures', () => {
     const { result, waitForNextUpdate } = renderHook(
       () => useDataFeatures(selectedLayers, []),
       {
-        wrapper: ({ children }) => testWrapper({ store, children }),
+        wrapper: getWrapper(store),
       }
     );
     waitForNextUpdate();
@@ -78,10 +80,6 @@ describe('useDataFeatures', () => {
   });
 
   it('should return correct data for documents and wells that have geolocation', async () => {
-    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
-      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
-    ]);
-
     const store = getMockedStore({
       wellSearch: {
         selectedWellIds: {
@@ -90,22 +88,17 @@ describe('useDataFeatures', () => {
       },
     });
 
-    const { result, waitForNextUpdate } = renderHook(
-      () => useDataFeatures(selectedLayers, []),
-      {
-        wrapper: ({ children }) => testWrapper({ store, children }),
-      }
-    );
-    waitForNextUpdate();
+    const TestComponent: React.FC = () => {
+      const data = useDataFeatures(selectedLayers, []);
+      return <div>Total: {data.features.length}</div>;
+    };
 
-    expect(result.current.features).toHaveLength(2);
+    testRenderer(TestComponent, store);
+
+    expect(await screen.findByText('Total: 2')).toBeInTheDocument();
   });
 
   it('should return correct data from state and remote wells', async () => {
-    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
-      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
-    ]);
-
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -128,23 +121,35 @@ describe('useDataFeatures', () => {
       },
     });
 
-    const { result, waitForNextUpdate } = renderHook(
-      () => useDataFeatures(selectedLayers, externalWells),
-      {
-        wrapper: ({ children }) => testWrapper({ store, children }),
-      }
-    );
-    waitForNextUpdate();
+    const TestComponent: React.FC = () => {
+      const data = useDataFeatures(selectedLayers, externalWells);
+      return (
+        <>
+          {data?.features.map((well, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <button type="button" key={index}>
+              {well.id || well?.properties?.id || 'Empty'}
+            </button>
+          ))}
+        </>
+      );
+    };
 
-    expect(result.current.features).toHaveLength(3);
-    expect(result.current.features[2].id).toEqual(123);
+    testRenderer(TestComponent, store);
+
+    expect(
+      await screen.findByRole('button', { name: /123/i })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('button', { name: /well-collection-1/ })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('button', { name: /Empty/i })
+    ).toBeInTheDocument();
+    expect(await (await screen.findAllByRole('button')).length).toEqual(3);
   });
 
   it('should return empty array when no layers are selected based on data from state and remote wells', async () => {
-    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
-      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
-    ]);
-
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -170,7 +175,7 @@ describe('useDataFeatures', () => {
     const { result, waitForNextUpdate } = renderHook(
       () => useDataFeatures([], externalWells),
       {
-        wrapper: ({ children }) => testWrapper({ store, children }),
+        wrapper: getWrapper(store),
       }
     );
 
@@ -180,10 +185,6 @@ describe('useDataFeatures', () => {
   });
 
   it('should set isBlurred and isSelected properties correctly', async () => {
-    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
-      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
-    ]);
-
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -209,32 +210,47 @@ describe('useDataFeatures', () => {
       },
     });
 
-    const { result, waitForNextUpdate } = renderHook(
-      () => useDataFeatures(selectedLayers, externalWells),
-      {
-        wrapper: ({ children }) => testWrapper({ store, children }),
-      }
-    );
-    waitForNextUpdate();
+    const TestComponent: React.FC = () => {
+      const data = useDataFeatures(selectedLayers, externalWells);
+      return (
+        <>
+          {data?.features.map((well) => {
+            const id = `${well.id || well?.properties?.id}:${
+              well.properties?.isSelected
+            }:${well.properties?.isBlurred}`;
+            return (
+              <button type="button" key={id}>
+                {id}
+              </button>
+            );
+          })}
+        </>
+      );
+    };
+
+    testRenderer(TestComponent, store);
 
     // documents is selected so isblurred is false
-    expect(result.current.features[0].properties?.isSelected).toEqual('true');
-    expect(result.current.features[0].properties?.isBlurred).toBeFalsy();
+    expect(
+      await screen.findByRole('button', { name: /:true:false/ })
+    ).toBeInTheDocument();
 
     // well should have isBlurred true since its not selected and there are documents selected
-    expect(result.current.features[1].properties?.isSelected).toEqual('false');
-    expect(result.current.features[1].properties?.isBlurred).toBeTruthy();
+    expect(
+      await screen.findByRole('button', {
+        name: /123:false:true/,
+      })
+    ).toBeInTheDocument();
 
     // remote well heads are cannot be selected and they are blurred if any document or well is selected
-    expect(result.current.features[2].properties?.isSelected).toEqual('false');
-    expect(result.current.features[2].properties?.isBlurred).toBeTruthy();
+    expect(
+      await screen.findByRole('button', {
+        name: /well-collection-1:false:true/,
+      })
+    ).toBeInTheDocument();
   });
 
-  it('should remove external wells that have same id as wells from results', () => {
-    (useWellQueryResultWells as jest.Mock).mockImplementation(() => [
-      getMockWellOld({ id: 1, geometry: getMockPointGeo() }),
-    ]);
-
+  it('should remove external wells that have same id as wells from results', async () => {
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -257,14 +273,21 @@ describe('useDataFeatures', () => {
       },
     });
 
-    const { result, waitForNextUpdate } = renderHook(
-      () => useDataFeatures(selectedLayers, externalWells),
-      {
-        wrapper: ({ children }) => testWrapper({ store, children }),
-      }
-    );
-    waitForNextUpdate();
+    const TestComponent: React.FC = () => {
+      const data = useDataFeatures(selectedLayers, externalWells);
+      return (
+        <>
+          {data?.features.map((well) => (
+            <button type="button" key={`id-${well.id || well?.properties?.id}`}>
+              {well.id || well?.properties?.id}
+            </button>
+          ))}
+        </>
+      );
+    };
 
-    expect(result.current.features).toHaveLength(2);
+    testRenderer(TestComponent, store);
+
+    expect((await screen.findAllByRole('button')).length).toEqual(2);
   });
 });

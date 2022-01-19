@@ -1,18 +1,8 @@
-import { mapService } from 'modules/map/service';
-
 import { Layers } from '../types';
 
 const MAP_DATA_URL = 'https://storage.googleapis.com/discover_layers_us/';
 
 const owaUiDevLayers = {
-  Well_Heads: {
-    remoteService: mapService.getWellHeads,
-    name: 'Well Heads',
-    color: 'transparent',
-    defaultOn: true,
-    mapLayers: [],
-    weight: 101,
-  },
   Well_Path: {
     remote: `${MAP_DATA_URL}Well_Path.json`,
     name: 'Well Paths',

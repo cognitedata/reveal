@@ -12,6 +12,8 @@ import { MockedSDKWells } from '__mocks/MockedSDKWells';
 import { configureCacheMock } from '__test-utils/mockCache';
 import { configureLocalStorageMock } from '__test-utils/mockLocalstorage';
 
+export const TEST_PROJECT = 'testProject';
+
 jest.mock('@cognite/metrics', () => mocks);
 jest.setTimeout(3000);
 
@@ -101,11 +103,12 @@ setClient(new MockedCogniteClient());
 jest.mock('@cognite/react-container', () => {
   const { ...rest } = jest.requireActual('@cognite/react-container');
   const getCogniteSDKClient = () => new MockedCogniteClient();
+  const getTenantInfo = () => [TEST_PROJECT];
   const getAuthHeaders = () => ({
     auth: true,
     Authorization: 'Bearer fake-token',
   });
-  return { ...rest, getCogniteSDKClient, getAuthHeaders };
+  return { ...rest, getTenantInfo, getCogniteSDKClient, getAuthHeaders };
 });
 
 jest.mock('@cognite/sdk-wells-v2', () => {

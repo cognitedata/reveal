@@ -1,9 +1,8 @@
-import { RequestHandler, rest } from 'msw';
+import { rest } from 'msw';
 
 import { UMSUser } from '@cognite/user-management-service-types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type MSWRequest = RequestHandler<any, any, any, any>;
+import { MSWRequest } from '__test-utils/types';
 
 const responseData: UMSUser = {
   id: '1',

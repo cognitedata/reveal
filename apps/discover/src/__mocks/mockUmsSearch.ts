@@ -1,11 +1,10 @@
-import { RequestHandler, rest } from 'msw';
+import { rest } from 'msw';
 
 import { UMSUser } from '@cognite/user-management-service-types';
 
-import { SIDECAR } from '../constants/app';
+import { MSWRequest } from '__test-utils/types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type MSWRequest = RequestHandler<any, any, any, any>;
+import { SIDECAR } from '../constants/app';
 
 const responseData: UMSUser[] = [
   {

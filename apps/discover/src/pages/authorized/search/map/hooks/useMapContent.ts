@@ -16,11 +16,11 @@ import { reportException } from '@cognite/react-errors';
 
 import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
 import { useJsonHeaders } from 'modules/api/service';
-import { setSources, patchSource, setAssets } from 'modules/map/actions';
+import { setSources, setAssets } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
 import { mapService } from 'modules/map/service';
 import { MapDataSource } from 'modules/map/types';
-import { RemoteServiceResponse, LegacyLayer } from 'tenants/types';
+import { LegacyLayer } from 'tenants/types';
 
 import { getAssetFilter, getAssetData } from '../utils';
 
@@ -33,33 +33,14 @@ export const useMapContent = () => {
   const dispatch = useDispatch();
   const headers = useJsonHeaders();
 
-  const startLazyLoad = (lazyIds: [string, string][]) => {
-    lazyIds.forEach(async (lazyId) => {
-      const [id, cursor] = lazyId;
-      const service = (layers[id] as LegacyLayer).remoteService;
-      let nextCursor: string | undefined = cursor;
-      while (nextCursor && service) {
-        // eslint-disable-next-line no-await-in-loop
-        const response: RemoteServiceResponse = await service(tenant, headers);
-        dispatch(
-          patchSource({
-            id,
-            data: response,
-          })
-        );
-        nextCursor = response.nextCursor;
-      }
-    });
-  };
-
   useEffect(() => {
     const tempSources: MapDataSource[] = [];
     const promises: Promise<void>[] = [];
     let cancellablePromise: CancellablePromise | undefined;
-    const lazyIds: [string, string][] = [];
 
     if (layersReady && !sources) {
       Object.keys(layers).forEach((id) => {
+        // console.log('Adding layer:', id);
         const { remote, remoteService, local, asset } = layers[
           id
         ] as LegacyLayer;
@@ -92,11 +73,13 @@ export const useMapContent = () => {
           promises.push(
             remoteService(tenant, headers).then(
               (content: FeatureCollection) => {
+                // console.log('Adding remote service layer:', content);
                 pushResponse(content);
               }
             )
           );
         }
+
         if (!isUndefined((layers[id] as ProjectConfigMapLayers).disabled)) {
           promises.push(
             geospatialV1.getGeoJSON(id).then((geoJSON) => {
@@ -113,9 +96,6 @@ export const useMapContent = () => {
         cancellablePromise.promise
           .then(() => {
             dispatch(setSources(tempSources));
-
-            // it is always empty array: remove this
-            startLazyLoad(lazyIds);
           })
           .catch((error) => {
             log('Some layers failed to load');

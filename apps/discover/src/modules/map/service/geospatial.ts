@@ -1,5 +1,5 @@
+import { Geometry } from '@turf/helpers';
 import head from 'lodash/head';
-import isArray from 'lodash/isArray';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { API_PLAYGROUND_DOMAIN } from 'constants/app';
@@ -9,7 +9,13 @@ import { FetchHeaders } from '../../../utils/fetch';
 import { discoverAPI } from '../../api/service';
 import { getGeospatialSDKClient } from '../sdk';
 
-import { SpatialSearchItemResponse } from './getMapContent';
+export interface SpatialSearchItemResponse {
+  assetIds: number[];
+  name: string;
+  attributes: {
+    head: Geometry;
+  };
+}
 
 const cache: {
   getLicenses?: Promise<{ features: any; type: string }>;
@@ -56,36 +62,6 @@ export const getGenericMapLayer = async () => {
       return result;
     });
 };
-
-export async function getWellHeads(tenant: string, headers: FetchHeaders) {
-  const response = await discoverAPI.geospatial.search(
-    {
-      data: {
-        limit: 1000,
-        layer: 'wellhead',
-        source: 'well-data-layer',
-        attributes: ['head'],
-      },
-    },
-    headers,
-    tenant
-  );
-  const items = isArray(response) ? response : [];
-
-  const features = items.map((item: SpatialSearchItemResponse) => ({
-    type: 'Feature',
-    properties: {
-      id: head(item.assetIds),
-      highlight: 'true',
-    },
-    ...item.attributes,
-    geometry: item.attributes.head,
-  }));
-  return {
-    features,
-    type: 'FeatureCollection',
-  };
-}
 
 export async function getFields(tenant: string) {
   if (cache.getFields) {

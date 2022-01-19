@@ -13,6 +13,7 @@ import { searchHistory } from './searchHistory';
 import { seismic } from './seismic';
 import { stats } from './stats';
 import { user } from './user';
+import { well } from './well';
 
 export const getDefaultHeader = () => ({
   'Content-Type': 'application/json',
@@ -36,14 +37,15 @@ export const useJsonHeaders = (
 };
 
 export const discoverAPI = {
-  savedSearches,
-  stats,
-  seismic,
   documents,
-  user,
   favorites,
   feedback,
-  projectConfig,
-  searchHistory,
   geospatial,
+  projectConfig,
+  savedSearches,
+  searchHistory,
+  seismic,
+  stats,
+  user,
+  well,
 };

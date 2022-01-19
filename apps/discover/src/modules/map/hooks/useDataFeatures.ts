@@ -6,13 +6,12 @@ import {
   GeometryCollection,
 } from '@turf/helpers';
 import includes from 'lodash/includes';
-import reduce from 'lodash/reduce';
 
 import { useDeepMemo } from 'hooks/useDeep';
+import { useWellAllGeometryQuery } from 'modules/api/well/useWellQuery';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import { useSelectedDocumentIds } from 'modules/documentSearch/selectors';
 import { getDocumentGeoPoint } from 'modules/documentSearch/utils/getGeoPoint';
-import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { useWells } from 'modules/wellSearch/selectors';
 import {
   DOCUMENT_LAYER_ID,
@@ -21,10 +20,18 @@ import {
   WELL_MARKER,
 } from 'pages/authorized/search/map/constants';
 
+import { useCreateAllWellCollection } from './useCreateAllWellCollection';
+
 export type ExternalWellsFeature = Feature<
   Geometry | GeometryCollection,
   { id: number }
 >;
+
+export const useWellQueryGeometryResultWells = () => {
+  const { data: wells } = useWellAllGeometryQuery();
+
+  return wells ? wells.features || [] : [];
+};
 
 export const useDataFeatures = (
   selectedLayers: string[],
@@ -33,7 +40,8 @@ export const useDataFeatures = (
   const documentHits = useDocumentResultHits();
   const selectedDocumentIds = useSelectedDocumentIds();
 
-  const wells = useWellQueryResultWells();
+  const wells = useWellQueryGeometryResultWells();
+
   const { selectedWellIds } = useWells();
 
   const selectedDocumentsWithGeo = useDeepMemo(() => {
@@ -44,7 +52,12 @@ export const useDataFeatures = (
   }, [documentHits, selectedDocumentIds]);
 
   const selectedWellsWithGeo = useDeepMemo(() => {
-    return wells.filter((well) => well.geometry && selectedWellIds[well.id]);
+    return wells.filter(
+      (well) =>
+        well.geometry &&
+        well.properties?.id &&
+        selectedWellIds[well.properties?.id]
+    );
   }, [selectedWellIds, wells]);
 
   const documentSource: Feature[] = useDeepMemo(() => {
@@ -69,59 +82,40 @@ export const useDataFeatures = (
     });
   }, [documentHits, selectedDocumentIds, selectedWellsWithGeo]);
 
-  const wellSource: Feature[] = useDeepMemo(() => {
-    return reduce(
-      wells,
-      (results, well) => {
-        if (well?.geometry) {
-          const isSelected = selectedWellIds[well.id];
-          const wellFeature = turfFeature(well.geometry, {
-            id: well.id,
-            iconType: WELL_MARKER,
-            isSelected: isSelected ? 'true' : 'false',
-            isBlurred: isSelected
-              ? false
-              : selectedWellsWithGeo.length > 0 ||
-                selectedDocumentsWithGeo.length > 0,
-            customLayer: true,
-          }) as Feature<Geometry>;
-
-          results.push(wellFeature);
-        }
-
-        return results;
-      },
-      [] as Feature<Geometry>[]
-    );
-  }, [wells, selectedWellIds, selectedDocumentsWithGeo]);
+  // console.log('All wells', wells);
+  const wellCollection = useCreateAllWellCollection({
+    selectedWellIds,
+    anotherReasonToBlur:
+      selectedWellsWithGeo.length > 0 || selectedDocumentsWithGeo.length > 0,
+  });
 
   const documentSourceCollection = useDeepMemo(
     () => featureCollection(documentSource),
     [documentSource]
   );
 
-  const wellCollection = useDeepMemo(
-    () => featureCollection(wellSource),
-    [wellSource]
+  const wellIds = useDeepMemo(
+    () => wells.map((well) => well.properties?.id),
+    [wells]
   );
 
-  const wellIds = useDeepMemo(() => wells.map((well) => well.id), [wells]);
-
   const externalWellsCollection = useDeepMemo(() => {
-    return externalWells
-      .map((well) => ({
-        ...well,
-        properties: {
-          ...well.properties,
-          iconType: WELL_MARKER,
-          isSelected: 'false',
-          isBlurred:
-            selectedWellsWithGeo.length > 0 ||
-            selectedDocumentsWithGeo.length > 0,
-          customLayer: true,
-        },
-      }))
-      .filter((well) => !wellIds.includes(well.properties.id));
+    const externalWellFeatures = externalWells.map((well) => ({
+      ...well,
+      properties: {
+        ...well.properties,
+        iconType: WELL_MARKER,
+        isSelected: 'false',
+        isBlurred:
+          selectedWellsWithGeo.length > 0 ||
+          selectedDocumentsWithGeo.length > 0,
+        customLayer: true,
+      },
+    }));
+
+    return externalWellFeatures.filter(
+      (well) => !wellIds.includes(`${well.id}` || `${well.properties.id}`)
+    );
   }, [externalWells, selectedWellsWithGeo, selectedDocumentsWithGeo, wellIds]);
 
   const features = useDeepMemo(

@@ -64,6 +64,11 @@ export const ONLY_FETCH_ONCE = {
   cacheTime: Infinity,
 };
 
+const WELLS_DISCOVER = 'wellsFromDiscoverApi';
+export const WELLS_DISCOVER_QUERY_KEY = {
+  GEOMETRY: [WELLS_DISCOVER, 'geometry'],
+};
+
 const WELLS = 'wells';
 export const WELL_QUERY_KEY = {
   SEARCH: [WELLS, 'search'],

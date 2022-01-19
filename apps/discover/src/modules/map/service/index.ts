@@ -1,5 +1,4 @@
 import {
-  getWellHeads,
   getFields,
   getDiscoveries,
   getLicenses,
@@ -20,7 +19,6 @@ import { getMapContent } from './getMapContent';
 
 export const mapService = {
   getMapContent,
-  getWellHeads,
   getFields,
   getDiscoveries,
   getLicenses,

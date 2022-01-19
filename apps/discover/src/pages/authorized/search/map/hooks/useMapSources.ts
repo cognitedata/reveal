@@ -22,6 +22,7 @@ export const useMapSources = () => {
   );
 
   const resultSources = useDeepMemo(
+    // this creates the sources and set's up the clustering layer
     () => createSources(seismicCollection, features),
     [features, seismicCollection]
   );

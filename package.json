@@ -17,7 +17,7 @@
   "dependencies": {
     "@cognite/cogs.js": "5.6.4",
     "@cognite/comment-service-types": "^0.0.7",
-    "@cognite/discover-api-types": "0.2.42",
+    "@cognite/discover-api-types": "0.2.45",
     "@cognite/eslint-config": "link:packages/eslint-config",
     "@cognite/eslint-plugin": "link:packages/eslint-plugin",
     "@cognite/fas-utils": "^3.1.2",
@@ -99,7 +99,7 @@
     "mime-types": "^2.1.34",
     "mixpanel-browser": "^2.35.0",
     "moment": "^2.29.1",
-    "msw": "^0.34.0",
+    "msw": "^0.35.0",
     "pdf-lib": "^1.16.0",
     "pdfjs-dist": "2.6.347",
     "plotly.js": "^1.54.7",

@@ -1,6 +1,7 @@
 import { RenderOptions as RtlRenderOptions } from '@testing-library/react';
 import { RenderHookOptions as RTLRenderHookOptions } from '@testing-library/react-hooks';
 import { AppStore as OrignalAppStore } from 'core';
+import { RequestHandler } from 'msw';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -22,3 +23,6 @@ export type AppStore = {
     StoreState,
     ThunkDispatch<StoreState, undefined, StoreAction>
   >;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type MSWRequest = RequestHandler<any, any, any, any>;

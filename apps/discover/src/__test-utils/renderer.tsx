@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { RenderResult, RenderOptions } from '@testing-library/react';
 import { renderHook, RenderHookOptions } from '@testing-library/react-hooks';
-import { Store } from 'redux';
+import { AnyAction, Store } from 'redux';
 
 import { ToastContainer } from '@cognite/cogs.js';
 import { ConditionalWrapper } from '@cognite/react-container';
@@ -14,11 +14,23 @@ import { ConditionalWrapper } from '@cognite/react-container';
 import { render } from '__test-utils/custom-render';
 import { getMockedStore } from '__test-utils/store.utils';
 
+export const getWrapper =
+  (store: Store<any, AnyAction> | undefined) =>
+  ({ children }: { children: React.ReactNode }) =>
+    testWrapper({ store, children });
+
 export const testWrapper: React.FC<{ store?: Store }> = ({
   store,
   children,
 }) => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // ✅ turns retries off for tests
+        retry: false,
+      },
+    },
+  });
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
