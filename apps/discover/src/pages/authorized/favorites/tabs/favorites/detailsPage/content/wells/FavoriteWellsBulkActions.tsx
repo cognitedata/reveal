@@ -84,24 +84,30 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   };
 
   const removeSelectedWellboresAndWells = (): void => {
-    let newFavoriteWells: FavoriteContentWells = favoriteWells;
-
+    let newFavoriteWells: FavoriteContentWells = { ...favoriteWells };
     if (!favoriteWells) return;
 
-    Object.keys(selectedWellboresList).forEach((wellId) => {
-      // checking favorite well contains all the wellbores(denoted as empty []), then remove selected wellbores
-      if (isEmpty(favoriteWells[wellId])) {
-        newFavoriteWells[wellId] = getRemainingWellboreList(wellId);
-      } else {
-        newFavoriteWells[wellId] = favoriteWells[wellId].filter(
-          (wellboreId) => !selectedWellboresList[wellId].includes(wellboreId)
-        );
-      }
-      // removing well if no wellbore is left after removing wellbores
-      if (isEmpty(newFavoriteWells[wellId])) {
-        newFavoriteWells = omit(newFavoriteWells, wellId);
-      }
-    });
+    if (
+      isEmpty(selectedWellboresList) &&
+      Object.values(selectedWellIdsList).every((isSelected) => isSelected)
+    ) {
+      newFavoriteWells = {};
+    } else {
+      Object.keys(selectedWellboresList).forEach((wellId) => {
+        // checking favorite well contains all the wellbores(denoted as empty []), then remove selected wellbores
+        if (isEmpty(favoriteWells[wellId])) {
+          newFavoriteWells[wellId] = getRemainingWellboreList(wellId);
+        } else {
+          newFavoriteWells[wellId] = favoriteWells[wellId].filter(
+            (wellboreId) => !selectedWellboresList[wellId].includes(wellboreId)
+          );
+        }
+        // removing well if no wellbore is left after removing wellbores
+        if (isEmpty(newFavoriteWells[wellId])) {
+          newFavoriteWells = omit(newFavoriteWells, wellId);
+        }
+      });
+    }
 
     removeFromQueryCache(newFavoriteWells);
   };

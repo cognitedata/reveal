@@ -3,7 +3,7 @@ import { MODULES } from './constants';
 export type SearchInput = string;
 export type NumericRange = number[];
 export type MultiSelect = string[];
-export type SelectedMap = { [key: number]: boolean };
+export type SelectedMap = { [key: string]: boolean };
 
 export interface FilterDataState {
   nds: {
