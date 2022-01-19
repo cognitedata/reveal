@@ -26,6 +26,8 @@ import { downloadURL, pdfToImage, ConnectedLine } from './utils';
 import getInputDeviceFromWheelEvent from './utils/getInputDeviceFromWheelEvent';
 import InputDevice from './utils/InputDevice';
 
+const RIGHT_MOUSE_BUTTON = 2;
+
 const defaultShapeSettings = {
   circle: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
   line: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
@@ -164,9 +166,8 @@ export class CogniteOrnate {
     this.stage.on('mouseup', this.onStageMouseUp);
     this.stage.on('wheel', this.onStageMouseWheel);
     this.stage.on('mouseover', this.onStageMouseOver);
-    this.stage.on('mouseenter', () => {
-      this.stage.container().style.cursor = this.currentTool?.cursor;
-    });
+    this.stage.on('contextmenu', this.onStageContextMenu);
+    this.stage.on('mouseenter', this.onStageMouseEnter);
     this.currentTool.onInit();
 
     // Ensure responsiveness
@@ -388,6 +389,11 @@ export class CogniteOrnate {
   };
 
   onStageMouseDown = (e: KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button === RIGHT_MOUSE_BUTTON) {
+      this.stage.startDrag();
+      return;
+    }
+
     if (this.currentTool?.onMouseDown) {
       this.currentTool.onMouseDown(e);
     }
@@ -400,6 +406,11 @@ export class CogniteOrnate {
   };
 
   onStageMouseUp = (e: KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button === RIGHT_MOUSE_BUTTON) {
+      this.stage.stopDrag();
+      return;
+    }
+
     if (this.currentTool?.onMouseUp) {
       this.currentTool.onMouseUp(e);
     }
@@ -410,10 +421,6 @@ export class CogniteOrnate {
     if (this.currentTool.onMouseOver) {
       this.currentTool.onMouseOver(e);
     }
-  };
-
-  onStageMouseEnter = () => {
-    this.stage.container().style.cursor = this.currentTool?.cursor;
   };
 
   onStageMouseWheel = (
@@ -436,6 +443,18 @@ export class CogniteOrnate {
 
     this.stage.x(x);
     this.stage.y(y);
+  };
+
+  onStageContextMenu = (e: KonvaEventObject<MouseEvent>) => {
+    e.evt.preventDefault();
+  };
+
+  onStageMouseEnter = () => {
+    this.stage.container().style.cursor = this.currentTool?.cursor;
+
+    if (this.stage.isDragging()) {
+      this.stage.stopDrag();
+    }
   };
 
   onZoom = (scale: number, pointer: boolean) => {
