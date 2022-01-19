@@ -14,7 +14,7 @@ import { LoadMoreButton } from 'components/tablev3/elements';
 import { showInfoMessageWithTitle } from 'components/toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
 import { useIsOwner } from 'modules/api/user/utils';
 import {
   downloadFileFromUrl,

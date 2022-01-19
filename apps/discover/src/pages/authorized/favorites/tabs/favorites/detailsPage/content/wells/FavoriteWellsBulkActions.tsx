@@ -12,7 +12,7 @@ import { Button } from '@cognite/cogs.js';
 import { CloseButton, ViewButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
 import { useDeepMemo } from 'hooks/useDeep';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';

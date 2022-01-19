@@ -7,8 +7,8 @@ import navigation from 'constants/navigation';
 import {
   useFavoriteDuplicateMutate,
   useFavoritesDeleteMutate,
-  useFavoritesGetAllQuery,
-} from 'modules/api/favorites/useFavoritesQuery';
+} from 'modules/api/favorites/useFavoritesMutate';
+import { useFavoritesGetAllQuery } from 'modules/api/favorites/useFavoritesQuery';
 import { useIsOwner } from 'modules/api/user/utils';
 import { useViewMode } from 'modules/favorite/selectors';
 import { FavoriteSummary, ViewModeType } from 'modules/favorite/types';

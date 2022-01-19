@@ -54,7 +54,8 @@ export const updateFavoriteContent = async (
 ) => {
   const headers = await getTokenHeaders();
   const updateContent = await favorites.updateFavoriteContent(
-    data,
+    data.id,
+    data.updateData,
     headers,
     App.project
   );

@@ -6,14 +6,14 @@ import { discoverAPI } from 'modules/api/service';
 
 import { favorites } from '../favorites';
 import {
-  useFavoritesCreateMutate,
   useFavoriteDuplicateMutate,
-  useFavoritesUpdateMutate,
-  useFavoriteUpdateContent,
+  useFavoritesCreateMutate,
   useFavoritesDeleteMutate,
   useFavoriteShareMutate,
-  useFavoritesGetOneQuery,
-} from '../useFavoritesQuery';
+  useFavoritesUpdateMutate,
+  useFavoriteUpdateContent,
+} from '../useFavoritesMutate';
+import { useFavoritesGetOneQuery } from '../useFavoritesQuery';
 
 const favoriteSpy: { [method: string]: jest.SpyInstance } = {};
 

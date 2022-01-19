@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
 import { FavoriteContentWells, FavoriteSummary } from 'modules/favorite/types';
 import {
   getDocumentExistInFavorite,

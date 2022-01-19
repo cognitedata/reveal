@@ -1,6 +1,10 @@
 import {
   FavoriteDetails,
+  FavoritePatchContentSchema,
+  FavoritePatchSchema,
   FavoritePostSchema,
+  FavoriteRemoveSharePostSchema,
+  FavoriteSharePostSchema,
   FavoriteSummary,
 } from '@cognite/discover-api-types';
 
@@ -12,11 +16,7 @@ import {
   fetchPatch,
   fetchPost,
 } from '../../../utils/fetch';
-import {
-  FavoriteContentWells,
-  UpdateFavoriteContentData,
-  UpdateFavoriteData,
-} from '../../favorite/types';
+import { FavoriteContentWells } from '../../favorite/types';
 
 const getFavoritesEndpoint = (project: string) =>
   `${SIDECAR.discoverApiBaseUrl}/${project}/favorites`;
@@ -55,24 +55,26 @@ export const favorites = {
     ),
 
   update: async (
-    data: UpdateFavoriteData,
+    favoriteId: string,
+    body: FavoritePatchSchema,
     headers: FetchHeaders,
     project: string
   ) =>
-    fetchPatch(`${getFavoritesEndpoint(project)}/${data.id}`, data.updateData, {
+    fetchPatch(`${getFavoritesEndpoint(project)}/${favoriteId}`, body, {
       headers,
     }),
 
   updateFavoriteContent: async (
-    payload: UpdateFavoriteContentData,
+    favoriteId: string,
+    body: FavoritePatchContentSchema,
     headers: FetchHeaders,
     project: string
   ) =>
     fetchPatch(
-      `${getFavoritesEndpoint(project)}/${payload.id}/content`,
+      `${getFavoritesEndpoint(project)}/${favoriteId}/content`,
       {
-        ...payload.updateData,
-        wells: mapWellboreIdsToString(payload.updateData.wells),
+        ...body,
+        wells: mapWellboreIdsToString(body.wells),
       },
       { headers }
     ),
@@ -94,41 +96,27 @@ export const favorites = {
 
   duplicate: async <T>(
     id: string,
-    payload: FavoritePostSchema,
+    body: FavoritePostSchema,
     headers: FetchHeaders,
     project: string
   ) =>
-    fetchPost<T>(`${getFavoritesEndpoint(project)}/duplicate/${id}`, payload, {
+    fetchPost<T>(`${getFavoritesEndpoint(project)}/duplicate/${id}`, body, {
       headers,
     }),
 
   share: async <T>(
-    favoriteId: string,
-    userIds: string[],
+    body: FavoriteSharePostSchema,
     headers: FetchHeaders,
     project: string
   ) =>
-    fetchPost<T>(
-      `${getFavoritesEndpoint(project)}/share`,
-      {
-        id: favoriteId,
-        shareWithUsers: userIds,
-      },
-      { headers }
-    ),
+    fetchPost<T>(`${getFavoritesEndpoint(project)}/share`, body, { headers }),
 
   removeShare: async <T>(
-    favoriteId: string,
-    user: string,
+    body: FavoriteRemoveSharePostSchema,
     headers: FetchHeaders,
     project: string
   ) =>
-    fetchPost<T>(
-      `${getFavoritesEndpoint(project)}/removeshare`,
-      {
-        id: favoriteId,
-        user,
-      },
-      { headers }
-    ),
+    fetchPost<T>(`${getFavoritesEndpoint(project)}/removeshare`, body, {
+      headers,
+    }),
 };
