@@ -53,6 +53,9 @@ export const formatChartData = (
 
     const dataType = MeasurementType[dataTypeStr];
 
+    /**
+     * Process other data ( eg FIT or LOT )
+     */
     if (config && otherTypes.includes(dataTypeStr.toUpperCase())) {
       const convertedData = convertOtherDataToPlotly(
         measurement,
@@ -104,8 +107,6 @@ export const formatChartData = (
 
         if (processedCurves.includes(curveDescription)) return;
 
-        processedCurves.push(curveDescription);
-
         const lineConfig = MEASUREMENT_CURVE_CONFIG[dataType][curveName];
 
         const columnIndex = columnList.indexOf(curveName);
@@ -113,6 +114,8 @@ export const formatChartData = (
         const curveExistInSequenceColumns = columnList.includes(curveName);
 
         if (!curveExistInSequenceColumns || isUndefined(lineConfig)) return;
+
+        processedCurves.push(curveDescription);
 
         // Get column data unit
         const xUnit = columnsMetadata[curveName].unit || '';
@@ -123,12 +126,16 @@ export const formatChartData = (
         rows.forEach((measurementRow) => {
           const yValue = measurementRow[referenceColIndex] as number;
           const xValue = measurementRow[columnIndex] as number;
+          /**
+           * When then is a breaking point ( coordinates are not smooth but wayward) we breat the chart (line)
+           * from that point and draw a another one from the next coordinate
+           */
           if (
             CHART_BREAK_POINTS.includes(xValue) ||
             CHART_BREAK_POINTS.includes(yValue)
           ) {
             if (isEmpty(x)) return;
-            // Create the graph if next value is a breaking point value
+            // Consider already collected values list as a one line and clear the arrays
             pushCorveToChart(
               chartData,
               dataType,
@@ -141,6 +148,10 @@ export const formatChartData = (
             );
             x = [];
             y = [];
+            /**
+             * Skipping the breaking point coordinates
+             */
+            return;
           }
           y.push(changeUnitTo(yValue, tvdUnit, referenceUnit) || yValue);
           if (isAngleCurve) {

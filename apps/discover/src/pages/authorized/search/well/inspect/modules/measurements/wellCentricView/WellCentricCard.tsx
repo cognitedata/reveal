@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import uniqueBy from 'lodash/uniqBy';
 import { v4 as uuid } from 'uuid';
 
 import { Checkbox } from '@cognite/cogs.js';
@@ -83,7 +84,10 @@ export const WellCentricCard: React.FC<Props> = ({
       />
       <Footer>
         <LegendsHolder expanded={showAll} ref={legendsHolderRef}>
-          {filterByMainChartType(chartData).map((row) => {
+          {uniqueBy(filterByMainChartType(chartData), (row) => {
+            const customdata = row.customdata as string[];
+            return customdata[0];
+          }).map((row) => {
             const customdata = row.customdata as string[];
             return (
               <CurveIndicator
