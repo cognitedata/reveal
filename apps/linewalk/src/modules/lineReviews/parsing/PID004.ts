@@ -9,8 +9,8 @@ export default {
   symbols: [
     {
       id: 'c056dcdc-0f72-468f-9eca-a4bff620e0f0',
-      symbolName: 'Instrument',
-      description: 'Instrument',
+      symbolName: 'instrument',
+      description: 'instrument',
       svgRepresentations: [
         {
           boundingBox: {
@@ -30,7 +30,7 @@ export default {
     },
     {
       id: 'c0cac05a-7bc9-42ca-8e13-ebe08a60b6cc',
-      symbolName: 'Flange',
+      symbolName: 'flange',
       description: 'horizontal',
       svgRepresentations: [
         {
@@ -55,7 +55,7 @@ export default {
     },
     {
       id: 'b1a120b9-543e-4d4c-a339-44748c9b999d',
-      symbolName: 'Cap',
+      symbolName: 'cap',
       description: '(right)',
       svgRepresentations: [
         {
@@ -96,7 +96,7 @@ export default {
     },
     {
       id: '8590eee2-abe9-4d32-a2e2-2f2d94b4a95b',
-      symbolName: 'Valve',
+      symbolName: 'valve',
       description: 'open (horizontal)',
       svgRepresentations: [
         {
@@ -117,7 +117,7 @@ export default {
     },
     {
       id: '2378ea6f-018a-43fe-8448-f19a7a8777d9',
-      symbolName: 'Valve',
+      symbolName: 'valve',
       description: 'closed (vertical)',
       svgRepresentations: [
         {
@@ -142,7 +142,7 @@ export default {
     },
     {
       id: '884d1bc8-24c4-44c7-8f57-0727337cb778',
-      symbolName: 'File connection',
+      symbolName: 'fileConnection',
       description: 'open (horizontal)',
       svgRepresentations: [
         {
@@ -163,7 +163,7 @@ export default {
     },
     {
       id: '55761723-de8c-4e2a-8edb-fdb3441847f8',
-      symbolName: 'Cap',
+      symbolName: 'cap',
       description: 'screwed plug',
       svgRepresentations: [
         {
@@ -206,7 +206,7 @@ export default {
     },
     {
       id: '61823b1b-f5d5-45a7-a069-042e4d3f05e6',
-      symbolName: 'Reducer',
+      symbolName: 'reducer',
       description: '(right)',
       svgRepresentations: [
         {
@@ -227,7 +227,7 @@ export default {
     },
     {
       id: '9f0c5783-55e2-428a-b3db-a52c5b1b2ea5',
-      symbolName: 'Valve',
+      symbolName: 'valve',
       description: 'closed (horizontal)',
       svgRepresentations: [
         {
@@ -252,7 +252,7 @@ export default {
     },
     {
       id: '9f590fde-d3d2-47de-b953-8425c7c08428',
-      symbolName: 'File connection',
+      symbolName: 'fileConnection',
       description: '(right)',
       svgRepresentations: [
         {
@@ -287,7 +287,7 @@ export default {
   lines: [
     {
       id: 'path130',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path130'],
       svgRepresentation: {
@@ -308,7 +308,7 @@ export default {
     },
     {
       id: 'path110',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path110'],
       svgRepresentation: {
@@ -329,7 +329,7 @@ export default {
     },
     {
       id: 'path88',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path88'],
       svgRepresentation: {
@@ -350,7 +350,7 @@ export default {
     },
     {
       id: 'path154',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path154'],
       svgRepresentation: {
@@ -371,7 +371,7 @@ export default {
     },
     {
       id: 'path100',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path100'],
       svgRepresentation: {
@@ -392,7 +392,7 @@ export default {
     },
     {
       id: 'path1264',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path1264'],
       svgRepresentation: {
@@ -413,7 +413,7 @@ export default {
     },
     {
       id: 'path652',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path652'],
       svgRepresentation: {
@@ -445,7 +445,7 @@ export default {
     },
     {
       id: 'path156',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path156'],
       svgRepresentation: {
@@ -466,7 +466,7 @@ export default {
     },
     {
       id: 'path158',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path158'],
       svgRepresentation: {
@@ -487,7 +487,7 @@ export default {
     },
     {
       id: 'path1886',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path1886'],
       svgRepresentation: {
@@ -508,7 +508,7 @@ export default {
     },
     {
       id: 'path1892',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path1892'],
       svgRepresentation: {
@@ -529,7 +529,7 @@ export default {
     },
     {
       id: 'path1902',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path1902'],
       svgRepresentation: {
@@ -550,7 +550,7 @@ export default {
     },
     {
       id: 'path2434',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path2434'],
       svgRepresentation: {
@@ -582,7 +582,7 @@ export default {
     },
     {
       id: 'path2446',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path2446'],
       svgRepresentation: {
@@ -603,7 +603,7 @@ export default {
     },
     {
       id: 'path2448',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path2448'],
       svgRepresentation: {
@@ -624,7 +624,7 @@ export default {
     },
     {
       id: 'path2432',
-      type: 'Line',
+      symbolName: 'Line',
       symbolId: 'Line',
       pathIds: ['path2432'],
       svgRepresentation: {
@@ -647,7 +647,7 @@ export default {
   symbolInstances: [
     {
       id: 'path3892',
-      type: 'Instrument',
+      symbolName: 'instrument',
       symbolId: 'c056dcdc-0f72-468f-9eca-a4bff620e0f0',
       pathIds: ['path3892'],
       svgRepresentation: {
@@ -690,7 +690,7 @@ export default {
     },
     {
       id: 'path102-path104',
-      type: 'Flange',
+      symbolName: 'flange',
       symbolId: 'c0cac05a-7bc9-42ca-8e13-ebe08a60b6cc',
       pathIds: ['path102', 'path104'],
       svgRepresentation: {
@@ -725,7 +725,7 @@ export default {
     },
     {
       id: 'path1870-path1872-path1874-path1876-path1878-path1880',
-      type: 'Cap',
+      symbolName: 'cap',
       symbolId: 'b1a120b9-543e-4d4c-a339-44748c9b999d',
       pathIds: [
         'path1870',
@@ -779,7 +779,7 @@ export default {
     },
     {
       id: 'path112',
-      type: 'Valve',
+      symbolName: 'valve',
       symbolId: '8590eee2-abe9-4d32-a2e2-2f2d94b4a95b',
       pathIds: ['path112'],
       svgRepresentation: {
@@ -812,7 +812,7 @@ export default {
     },
     {
       id: 'path4168-path4172',
-      type: 'Valve',
+      symbolName: 'valve',
       symbolId: '2378ea6f-018a-43fe-8448-f19a7a8777d9',
       pathIds: ['path4168', 'path4172'],
       svgRepresentation: {
@@ -849,7 +849,7 @@ export default {
     },
     {
       id: 'path2450',
-      type: 'File connection',
+      symbolName: 'fileConnection',
       symbolId: '884d1bc8-24c4-44c7-8f57-0727337cb778',
       pathIds: ['path2450'],
       svgRepresentation: {
@@ -882,7 +882,7 @@ export default {
     },
     {
       id: 'path1888-path1890',
-      type: 'Cap',
+      symbolName: 'cap',
       symbolId: '55761723-de8c-4e2a-8edb-fdb3441847f8',
       pathIds: ['path1888', 'path1890'],
       svgRepresentation: {
@@ -906,7 +906,7 @@ export default {
     },
     {
       id: 'path1894-path1896',
-      type: 'Cap',
+      symbolName: 'cap',
       symbolId: '55761723-de8c-4e2a-8edb-fdb3441847f8',
       pathIds: ['path1894', 'path1896'],
       svgRepresentation: {
@@ -941,7 +941,7 @@ export default {
     },
     {
       id: 'path1904',
-      type: 'Reducer',
+      symbolName: 'reducer',
       symbolId: '61823b1b-f5d5-45a7-a069-042e4d3f05e6',
       pathIds: ['path1904'],
       svgRepresentation: {
@@ -974,7 +974,7 @@ export default {
     },
     {
       id: 'path162-path166',
-      type: 'Valve',
+      symbolName: 'valve',
       symbolId: '9f0c5783-55e2-428a-b3db-a52c5b1b2ea5',
       pathIds: ['path162', 'path166'],
       svgRepresentation: {
@@ -1021,7 +1021,7 @@ export default {
     },
     {
       id: 'path3154-path3156-path3158-path3160',
-      type: 'File connection',
+      symbolName: 'fileConnection',
       symbolId: '9f590fde-d3d2-47de-b953-8425c7c08428',
       pathIds: ['path3154', 'path3156', 'path3158', 'path3160'],
       svgRepresentation: {

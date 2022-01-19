@@ -1,6 +1,7 @@
 import { Button } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
 import StatusTag from 'components/StatusTag';
+import Konva from 'konva';
 import { LineReview } from 'modules/lineReviews/types';
 import { PagePath } from 'pages/Menubar';
 import { useHistory } from 'react-router';
@@ -46,9 +47,12 @@ const LineReviewHeader = ({
               type="link"
               onClick={() => {
                 if (ornateRef) {
-                  const node = ornateRef.stage.findOne(`#${document.id}`);
+                  const node = ornateRef.stage.findOne(
+                    `#${document.id}`
+                  ) as Konva.Group;
+
                   if (node) {
-                    ornateRef.zoomToNode(node);
+                    ornateRef.zoomToGroup(node, { scaleFactor: 0.85 });
                   }
                 }
               }}

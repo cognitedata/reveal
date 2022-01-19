@@ -1,8 +1,7 @@
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import Konva from 'konva';
 
-type Point = [number, number];
-export type Path = Point[];
+import { Path, Point, Segment } from './types';
 
 const getAnnotationDataById = (
   id: string,
@@ -65,73 +64,74 @@ const getLineToDocumentSide = (
   switch (minDistance) {
     case distance.top:
       return [
-        [annotationRect.x + annotationRect.width / 2, annotationRect.y],
-        [
-          annotationRect.x + annotationRect.width / 2,
-          documentRect.y - halfRowGap,
-        ],
+        { x: annotationRect.x + annotationRect.width / 2, y: annotationRect.y },
+        {
+          x: annotationRect.x + annotationRect.width / 2,
+          y: documentRect.y - halfRowGap,
+        },
       ];
     case distance.left:
       return [
-        [annotationRect.x, annotationRect.y + annotationRect.height / 2],
-        [
-          documentRect.x - halfColumnGap,
-          annotationRect.y + annotationRect.height / 2,
-        ],
+        {
+          x: annotationRect.x,
+          y: annotationRect.y + annotationRect.height / 2,
+        },
+        {
+          x: documentRect.x - halfColumnGap,
+          y: annotationRect.y + annotationRect.height / 2,
+        },
       ];
     case distance.right:
       return [
-        [
-          annotationRect.x + annotationRect.width,
-          annotationRect.y + annotationRect.height / 2,
-        ],
-        [
-          documentRect.x + documentRect.width + halfColumnGap,
-          annotationRect.y + annotationRect.height / 2,
-        ],
+        {
+          x: annotationRect.x + annotationRect.width,
+          y: annotationRect.y + annotationRect.height / 2,
+        },
+        {
+          x: documentRect.x + documentRect.width + halfColumnGap,
+          y: annotationRect.y + annotationRect.height / 2,
+        },
       ];
     case distance.bottom:
       return [
-        [
-          annotationRect.x + annotationRect.width / 2,
-          annotationRect.y + annotationRect.height,
-        ],
-        [
-          annotationRect.x + annotationRect.width / 2,
-          documentRect.y + documentRect.height + halfRowGap,
-        ],
+        {
+          x: annotationRect.x + annotationRect.width / 2,
+          y: annotationRect.y + annotationRect.height,
+        },
+        {
+          x: annotationRect.x + annotationRect.width / 2,
+          y: documentRect.y + documentRect.height + halfRowGap,
+        },
       ];
   }
 
   return [];
 };
 
-type BuildMiddlePathsProps = {
-  endPoint: Point;
-  path: Path;
-  middlePoints: Point[];
-};
-
 const buildMiddlePaths = ({
   endPoint,
   path,
   middlePoints,
-}: BuildMiddlePathsProps): Path[] => {
+}: {
+  endPoint: Point;
+  path: Path;
+  middlePoints: Point[];
+}): Path[] => {
   const lastPoint = getLast(path);
   const secondLastPoint = path.length > 1 ? path[path.length - 2] : undefined;
 
-  if (lastPoint[0] === endPoint[0] || lastPoint[1] === endPoint[1]) {
+  if (lastPoint.x === endPoint.x || lastPoint.y === endPoint.y) {
     return [[...path, endPoint]];
   }
 
   const connectedMiddlePoints = middlePoints.filter(
     (item) =>
       !path.includes(item) &&
-      (item[0] === lastPoint[0] || item[1] === lastPoint[1]) &&
+      (item.x === lastPoint.x || item.y === lastPoint.y) &&
       // check that it changes direction but not on the same line
       (!secondLastPoint ||
-        (item[0] === lastPoint[0] && item[0] !== secondLastPoint[0]) ||
-        (item[1] === lastPoint[1] && item[1] !== secondLastPoint[1]))
+        (item.x === lastPoint.x && item.x !== secondLastPoint.x) ||
+        (item.y === lastPoint.y && item.y !== secondLastPoint.y))
   );
 
   if (connectedMiddlePoints.length === 0) return [];
@@ -149,16 +149,6 @@ const buildMiddlePaths = ({
   return [];
 };
 
-type FindShortestPathProps = {
-  startPoint: Point;
-  endPoint: Point;
-  ornateViewer: CogniteOrnate;
-  columnGap: number;
-  rowGap: number;
-  startDocument: OrnatePDFDocument;
-  endDocument: OrnatePDFDocument;
-};
-
 const findShortestMiddlePath = ({
   startPoint,
   endPoint,
@@ -167,7 +157,15 @@ const findShortestMiddlePath = ({
   rowGap,
   startDocument,
   endDocument,
-}: FindShortestPathProps): Path => {
+}: {
+  startPoint: Point;
+  endPoint: Point;
+  ornateViewer: CogniteOrnate;
+  columnGap: number;
+  rowGap: number;
+  startDocument: OrnatePDFDocument;
+  endDocument: OrnatePDFDocument;
+}): Path => {
   const halfColumnGap = columnGap / 2;
   const halfRowGap = rowGap / 2;
 
@@ -179,10 +177,13 @@ const findShortestMiddlePath = ({
       });
 
       return [
-        [d.x - halfColumnGap, d.y - halfRowGap] as Point,
-        [d.x + d.width + halfColumnGap, d.y - halfRowGap] as Point,
-        [d.x + d.width + halfColumnGap, d.y + d.height + halfRowGap] as Point,
-        [d.x - halfColumnGap, d.y + d.height + halfRowGap] as Point,
+        { x: d.x - halfColumnGap, y: d.y - halfRowGap },
+        { x: d.x + d.width + halfColumnGap, y: d.y - halfRowGap },
+        {
+          x: d.x + d.width + halfColumnGap,
+          y: d.y + d.height + halfRowGap,
+        },
+        { x: d.x - halfColumnGap, y: d.y + d.height + halfRowGap },
       ];
     })
     .flat()
@@ -190,7 +191,7 @@ const findShortestMiddlePath = ({
       (item, i, list) =>
         i ===
         list.findIndex(
-          (listItem) => listItem[0] === item[0] && listItem[1] === item[1]
+          (listItem) => listItem.x === item.x && listItem.y === item.y
         )
     );
 
@@ -207,8 +208,8 @@ const findShortestMiddlePath = ({
         (result, point, i, list) =>
           result +
           (i > 0
-            ? Math.abs(point[0] - list[i - 1][0]) +
-              Math.abs(point[1] - list[i - 1][1])
+            ? Math.abs(point.x - list[i - 1].x) +
+              Math.abs(point.y - list[i - 1].y)
             : 0),
         0
       ),
@@ -233,19 +234,17 @@ type JoinPathProps = {
 const joinPath = ({ startPath, middlePath = [], endPath }: JoinPathProps) =>
   startPath.concat(middlePath, endPath.reverse());
 
-type GetConnectionPathProps = {
-  annotationIds: [string, string];
-  ornateViewer: CogniteOrnate;
-  columnGap: number;
-  rowGap: number;
-};
-
 export const getConnectionPath = ({
   annotationIds,
   ornateViewer,
   columnGap,
   rowGap,
-}: GetConnectionPathProps): Path => {
+}: {
+  annotationIds: [string, string];
+  ornateViewer: CogniteOrnate;
+  columnGap: number;
+  rowGap: number;
+}): Path => {
   if (annotationIds.length !== 2) {
     throw new Error(
       `!!! Unable to connect annotations: ${JSON.stringify(annotationIds)}`
@@ -297,55 +296,18 @@ export const getConnectionPath = ({
   return joinPath({ startPath, middlePath, endPath });
 };
 
-type DrawConnectionLineProps = {
-  path: Path;
-  ornateViewer: CogniteOrnate;
-};
-
-export const drawConnectionLine = ({
-  path: points,
-  ornateViewer,
-}: DrawConnectionLineProps) => {
-  const group = new Konva.Group();
-
-  for (let i = 1; i < points.length; i++) {
-    const lineSegment = new Konva.Arrow({
-      tension: 0,
-      points: [...points[i - 1], ...points[i]],
-      stroke: 'rgba(0,0,0,1)',
-      pointerLength: 20,
-      pointerWidth: 20,
-      dash: [6, 6],
-      strokeWidth: 3,
-      userGenerated: true,
-      fill: 'black',
-      name: 'drawing',
-      type: 'line',
-      unselectable: true,
-    });
-
-    group.add(lineSegment);
-  }
-
-  return ornateViewer.baseLayer.add(group);
-};
-
-type GetPathsWithoutOverlapsPerAxeProps = {
-  paths: Path[];
-  columnGap: number;
-  rowGap: number;
-  axe: 0 | 1; // x: 0, y: 1
-};
-
-type Segment = [Point, Point];
-
 export const getPathsWithoutOverlapsPerAxe = ({
   paths,
   columnGap,
   rowGap,
   axe,
-}: GetPathsWithoutOverlapsPerAxeProps): Path[] => {
-  const otherAxe = axe ? 0 : 1;
+}: {
+  paths: Path[];
+  columnGap: number;
+  rowGap: number;
+  axe: 'x' | 'y'; // x: 0, y: 1
+}): Path[] => {
+  const otherAxe = axe === 'y' ? 'x' : 'y';
   const gap = axe ? columnGap : rowGap;
 
   const axeSegments = paths.reduce(
@@ -353,9 +315,13 @@ export const getPathsWithoutOverlapsPerAxe = ({
       result.concat(
         path.reduce((pathResult, point, i, list) => {
           // skip start and end points
-          if ([0, 1, list.length - 1].includes(i)) return pathResult;
-          if (point[otherAxe] === list[i - 1][otherAxe])
+          if ([0, 1, list.length - 1].includes(i)) {
+            return pathResult;
+          }
+
+          if (point[otherAxe] === list[i - 1][otherAxe]) {
             pathResult.push([list[i - 1], point]);
+          }
           return pathResult;
         }, [] as Segment[])
       ),
@@ -413,10 +379,10 @@ export const getPathsWithoutOverlapsPerAxe = ({
       const nextPoint = path[i + 1];
       const isOverlap = overlapSegments.some(
         (item) =>
-          item[0][0] === point[0] &&
-          item[0][1] === point[1] &&
-          item[1][0] === nextPoint[0] &&
-          item[1][1] === nextPoint[1]
+          item[0].x === point.x &&
+          item[0].y === point.y &&
+          item[1].x === nextPoint.x &&
+          item[1].y === nextPoint.y
       );
 
       if (isOverlap) {
@@ -437,17 +403,15 @@ export const getPathsWithoutOverlapsPerAxe = ({
   });
 };
 
-type GetPathsWithoutOverlapsProps = {
-  paths: Path[];
-  columnGap: number;
-  rowGap: number;
-};
-
 export const getPathsWithoutOverlaps = ({
   paths,
   ...props
-}: GetPathsWithoutOverlapsProps): Path[] => {
-  return ([0, 1] as (0 | 1)[]).reduce(
+}: {
+  paths: Path[];
+  columnGap: number;
+  rowGap: number;
+}): Path[] => {
+  return (['x', 'y'] as ('x' | 'y')[]).reduce(
     (resultPaths, axe) =>
       getPathsWithoutOverlapsPerAxe({ ...props, paths: resultPaths, axe }),
     paths

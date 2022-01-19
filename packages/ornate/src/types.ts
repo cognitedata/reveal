@@ -43,7 +43,8 @@ export type Drawing = {
     | 'stamp'
     | 'squiggle'
     | 'path'
-    | 'circleMarker';
+    | 'circleMarker'
+    | 'arrow';
   attrs: any;
   groupId?: string;
   onClick?: (event: KonvaEventObject<MouseEvent>) => void;

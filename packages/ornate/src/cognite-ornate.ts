@@ -60,6 +60,13 @@ const getShapeByDrawing = (drawing: Drawing) => {
     });
   }
 
+  if (drawing.type === 'arrow') {
+    return new Konva.Arrow({
+      ...drawing.attrs,
+      id: drawing.id,
+    });
+  }
+
   if (drawing.type === 'line') {
     return new Konva.Line({ ...drawing.attrs, id: drawing.id });
   }

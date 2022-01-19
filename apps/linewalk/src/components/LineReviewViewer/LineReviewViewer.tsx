@@ -5,7 +5,6 @@ import { useAuthContext } from '@cognite/react-container';
 import { KonvaEventObject } from 'konva/lib/Node';
 import {
   Document,
-  DocumentConnection,
   DocumentType,
   LineReview,
   Link,
@@ -16,12 +15,14 @@ import layers from 'utils/z';
 import { getDocumentUrl } from '../../modules/lineReviews/api';
 import { DocumentId } from '../../modules/lineReviews/DocumentId';
 import delayMs from '../../utils/delayMs';
+import getFileConnectionGroups from '../../utils/getFileConnectionDrawings';
 import isNotUndefined from '../../utils/isNotUndefined';
 import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
 import DiscrepancyModal from './DiscrepancyModal';
 import getAnnotationsByDocument from './getAnnotationsByDocument';
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
+import getFileConnections from './getFileConnections';
 import IsoModal, {
   ISO_MODAL_ORNATE_HEIGHT_PX,
   ISO_MODAL_ORNATE_WIDTH_PX,
@@ -31,6 +32,7 @@ import ReactOrnate, {
   ReactOrnateProps,
   SHAMEFUL_SLIDE_HEIGHT,
   SLIDE_COLUMN_GAP,
+  SLIDE_ROW_GAP,
   SLIDE_WIDTH,
 } from './ReactOrnate';
 
@@ -39,33 +41,6 @@ type LineReviewViewerProps = {
   discrepancies: Discrepancy[];
   onDiscrepancyChange: (discrepancies: Discrepancy[]) => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
-};
-
-const useFileConnections = (lineReview: LineReview) => {
-  const allSymbolInstances = lineReview.documents.flatMap(
-    ({ _annotations }) => _annotations.symbolInstances
-  );
-
-  const getSymbolNameByPathId = (pathId: string): string | undefined => {
-    const symbolInstance = allSymbolInstances.find(({ id }) => id === pathId);
-
-    if (symbolInstance === undefined) {
-      return undefined;
-    }
-
-    return symbolInstance.symbolName;
-  };
-
-  const fileConnections: DocumentConnection[] = lineReview.documents
-    .flatMap(({ _linking }) => _linking)
-    .filter(
-      (link) =>
-        getSymbolNameByPathId(link.from.instanceId) === 'fileConnection' &&
-        getSymbolNameByPathId(link.to.instanceId) === 'fileConnection'
-    )
-    .map((link) => [link.from.instanceId, link.to.instanceId]);
-
-  return fileConnections;
 };
 
 const mapPidAnnotationIdToIsoAnnotationId = (
@@ -257,7 +232,12 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     useState<Discrepancy | null>(null);
   const [isAltPressed, setIsAltPressed] = useState(false);
   const { client } = useAuthContext();
-  const fileConnections = useFileConnections(lineReview);
+  const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
+    undefined
+  );
+  const [selectedFileConnectionId, setSelectedFileConnectionId] = useState<
+    string | undefined
+  >(undefined);
 
   useEffect(() => {
     (async () => {
@@ -554,12 +534,28 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   };
 
   const drawings = [
-    ...[
-      ...lineReview.documents.filter(({ type }) => type === DocumentType.PID),
-    ].flatMap((document) =>
-      getDrawingsByDocumentId(lineReview.documents, document.id)
-    ),
+    ...lineReview.documents
+      .filter(({ type }) => type === DocumentType.PID)
+      .flatMap((document) =>
+        getDrawingsByDocumentId(lineReview.documents, document.id)
+      ),
   ];
+
+  const groups = ornateRef
+    ? getFileConnectionGroups({
+        ornateViewer: ornateRef,
+        connections: getFileConnections(lineReview),
+        columnGap: SLIDE_COLUMN_GAP,
+        rowGap: SLIDE_ROW_GAP,
+        onSelect: (id: string) =>
+          selectedFileConnectionId === id
+            ? setSelectedFileConnectionId(undefined)
+            : setSelectedFileConnectionId(id),
+        selectedId: selectedFileConnectionId,
+      })
+    : [];
+
+  console.log('selected', selectedFileConnectionId);
 
   return (
     <>
@@ -619,9 +615,12 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         />
         <ReactOrnate
           documents={documents}
+          groups={groups}
           drawings={drawings}
-          connections={fileConnections}
-          onOrnateRef={onOrnateRef}
+          onOrnateRef={(ref) => {
+            setOrnateRef(ref);
+            onOrnateRef(ref);
+          }}
         />
       </div>
     </>
