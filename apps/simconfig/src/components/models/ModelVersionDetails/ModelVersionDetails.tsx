@@ -78,7 +78,13 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
               </Button>
             </div>
             <div className="charts-link">
-              <Button href="" icon="LineChart" target="_blank" type="primary">
+              <Button
+                disabled={!boundaryConditions?.chartsUrl}
+                href={boundaryConditions?.chartsUrl}
+                icon="LineChart"
+                target="_blank"
+                type="primary"
+              >
                 View in Charts
               </Button>
             </div>
