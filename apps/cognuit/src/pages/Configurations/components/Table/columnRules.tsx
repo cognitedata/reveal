@@ -193,12 +193,16 @@ export const columnRules: (actions: Props) => Rule[] = ({
                 }}
               >
                 {value.statusActive ? (
-                  <svg width="6" height="6">
-                    <rect
-                      width="6"
-                      height="6"
-                      style={{ fill: 'currentColor' }}
-                    />
+                  <svg
+                    width="6"
+                    height="6"
+                    style={{
+                      fill: 'currentColor',
+                      marginTop: '2.5px',
+                      marginLeft: '3px',
+                    }}
+                  >
+                    <rect width="6" height="6" />
                   </svg>
                 ) : (
                   <Icon type="ChevronRight" />

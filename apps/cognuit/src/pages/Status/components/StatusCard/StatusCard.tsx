@@ -35,7 +35,7 @@ export const StatusCard: React.FC<HeartbeatsConnector> = ({
     }
 
     return (
-      <Flex justifyContent="center">
+      <Flex justifyContent="center" style={{ marginTop: '32px' }}>
         <Body level={2}>Instance not found</Body>
       </Flex>
     );
