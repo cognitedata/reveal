@@ -41,6 +41,11 @@ const SCALE_SENSITIVITY = 0.96;
 const SCALE_MAX = 5;
 const SCALE_MIN = 0.05;
 
+type ZoomToGroupOptions = {
+  duration?: number;
+  scaleFactor?: number;
+};
+
 export type CogniteOrnateOptions = {
   container: string;
 };
@@ -579,11 +584,17 @@ export class CogniteOrnate {
     this.stage.batchDraw();
   }
 
-  zoomToGroup(group: Konva.Group, duration = 0.35) {
-    const rawScale = Math.min(
-      this.stage.width() / group.width(),
-      this.stage.height() / group.height()
-    );
+  zoomToGroup(group: Konva.Group, zoomToGroupOptions?: ZoomToGroupOptions) {
+    const ZOOM_TO_GROUP_OPTIONS_DEFAULTS = { duration: 0.35, scaleFactor: 1 };
+    const { duration, scaleFactor } = {
+      ...ZOOM_TO_GROUP_OPTIONS_DEFAULTS,
+      ...zoomToGroupOptions,
+    };
+    const rawScale =
+      Math.min(
+        this.stage.width() / group.width(),
+        this.stage.height() / group.height()
+      ) * scaleFactor;
     const scale = Math.min(Math.max(rawScale, SCALE_MIN), SCALE_MAX);
     // Scale the location, and center it to the screen
     const location = {
