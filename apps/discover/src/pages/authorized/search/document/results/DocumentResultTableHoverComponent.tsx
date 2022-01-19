@@ -57,6 +57,7 @@ export const DocumentResultTableHoverComponent = ({
       />
       <Dropdown
         openOnHover
+        appendTo={document.body}
         content={
           <Menu>
             {onExtractParentFolderHandle && (

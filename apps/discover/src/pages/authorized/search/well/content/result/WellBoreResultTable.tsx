@@ -96,6 +96,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
               content={
                 <Menu>
                   <Menu.Submenu
+                    appendTo={document.body}
                     content={
                       <AddToFavoriteSetMenu
                         wells={{ [well.id]: [row.original.id] }}

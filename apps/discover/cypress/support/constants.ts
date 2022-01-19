@@ -6,3 +6,5 @@ export const EXPAND_MAP_TEXT = 'Click to expand the map';
 export const CLEAR_ALL_TEXT = 'Clear all';
 export const INSUFFICIENT_ACCESS_RIGHTS_MESSAGE =
   'Insufficient access rights. You have been redirected to the main page.';
+
+export const CREATE_NEW_SET = 'Create new set';

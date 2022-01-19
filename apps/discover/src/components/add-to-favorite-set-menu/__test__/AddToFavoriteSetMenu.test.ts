@@ -47,7 +47,7 @@ describe('Add to favorite set', () => {
     expect(favoriteItems).toHaveLength(mockFavorites.length);
 
     // should have "Create new Set" button
-    expect(screen.getByText('Create new Set')).toBeInTheDocument();
+    expect(screen.getByText('Create new set')).toBeInTheDocument();
   });
 
   test('should mark item favored based on selected documents or wells', async () => {
@@ -100,7 +100,7 @@ describe('Add to favorite set', () => {
     expect(handleFavoriteUpdate).toHaveBeenCalledTimes(1);
   });
 
-  test('should trigger action to open modal when "Create new Set" is clicked', async () => {
+  test('should trigger action to open modal when "Create new set" is clicked', async () => {
     (useFavoritesSortedByName as jest.Mock).mockReturnValue({
       data: mockFavorites,
     });
@@ -114,7 +114,7 @@ describe('Add to favorite set', () => {
     ];
 
     await defaultTestInit({ documentIds: [4, 5] });
-    const createButton = screen.getByText('Create new Set');
+    const createButton = screen.getByText('Create new set');
     createButton.click();
     expect(store.getActions()).toEqual(expectedActions);
   });

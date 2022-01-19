@@ -1,3 +1,5 @@
+import { CREATE_NEW_SET } from '../../support/constants';
+
 describe('Creating Favorites', () => {
   beforeEach(() => {
     cy.visit(Cypress.env('BASE_URL'));
@@ -44,6 +46,14 @@ describe('Creating Favorites', () => {
       .should('have.length', 1);
   };
 
+  const clickCreateNewSetButton = () => {
+    const createNewSetButton = cy.findByRole('button', {
+      name: CREATE_NEW_SET,
+    });
+
+    createNewSetButton.click({ force: true });
+  };
+
   describe('Favorites Page', () => {
     it('has the option to create favorites from  here', () => {
       goToFavoritesPage();
@@ -77,8 +87,7 @@ describe('Creating Favorites', () => {
         force: true,
       });
 
-      cy.findByText('Create new Set').click({ force: true });
-      cy.findByText('Create new set').should('be.visible');
+      clickCreateNewSetButton();
 
       const favoriteName = `Favorite from DocumentResult hover, ${Date.now()}`;
       createFavorite(favoriteName);
@@ -103,8 +112,8 @@ describe('Creating Favorites', () => {
         .should('be.visible')
         .click();
 
-      cy.findByText('Create new Set').click({ force: true });
-      cy.findByText('Create new set').should('be.visible');
+      clickCreateNewSetButton();
+
       createFavorite(favoriteName);
       goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
@@ -132,8 +141,7 @@ describe('Creating Favorites', () => {
         force: true,
       });
 
-      cy.findByText('Create new Set').click({ force: true });
-      cy.findByText('Create new set').should('be.visible');
+      clickCreateNewSetButton();
 
       const favoriteName = `Favorite from WellResult hover well, ${Date.now()}`;
       createFavorite(favoriteName);
@@ -162,8 +170,7 @@ describe('Creating Favorites', () => {
         force: true,
       });
 
-      cy.findByText('Create new Set').click({ force: true });
-      cy.findByText('Create new set').should('be.visible');
+      clickCreateNewSetButton();
 
       const favoriteName = `Favorite from WellResult hover wellbore, ${Date.now()}`;
       createFavorite(favoriteName);
@@ -187,8 +194,7 @@ describe('Creating Favorites', () => {
         .findByTestId('welldata-favorite-all-button')
         .click();
 
-      cy.findByText('Create new Set').click({ force: true });
-      cy.findByText('Create new set').should('be.visible');
+      clickCreateNewSetButton();
 
       const favoriteName = `Favorite from WellResult bulk actions, ${Date.now()}`;
       createFavorite(favoriteName);
