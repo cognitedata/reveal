@@ -1,8 +1,8 @@
-import { NodeUtils } from "@/UserInterface/utils/NodeUtils";
-import { ValueProperty } from "@/Core/Property/Base/ValueProperty";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import { Appearance } from "@/Core/States/Appearance";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { NodeUtils } from 'UserInterface/utils/NodeUtils';
+import { ValueProperty } from 'Core/Property/Base/ValueProperty';
+import { ExpanderProperty } from 'Core/Property/Concrete/Folder/ExpanderProperty';
+import { Appearance } from 'Core/States/Appearance';
+import { BaseNode } from 'Core/Nodes/BaseNode';
 
 export class SettingsNodeUtils {
   public static setPropertyValue<T>(id: string, value: T): void {
@@ -18,8 +18,7 @@ export class SettingsNodeUtils {
   public static setPropertyFolderExpand(id: string, expand: boolean): void {
     const property = NodeUtils.getPropertyById(id);
 
-    if (property instanceof ExpanderProperty)
-      property.expanded = expand;
+    if (property instanceof ExpanderProperty) property.expanded = expand;
     else {
       console.warn("Couldn't find property!");
     }
@@ -37,7 +36,7 @@ export class SettingsNodeUtils {
 
   public static populateSettingsFolder(node: BaseNode): void {
     NodeUtils.properties = null;
-    const settings = new ExpanderProperty("Settings");
+    const settings = new ExpanderProperty('Settings');
     {
       const expander = settings.createExpander(Appearance.generalSettingsName);
       node.populateInfo(expander);
@@ -47,7 +46,9 @@ export class SettingsNodeUtils {
       node.populateStatistics(expander);
     }
     {
-      const expander = settings.createExpanderWithToolbar(Appearance.visualSettingsName);
+      const expander = settings.createExpanderWithToolbar(
+        Appearance.visualSettingsName
+      );
       node.populateRenderStyle(expander);
     }
     NodeUtils.properties = settings;

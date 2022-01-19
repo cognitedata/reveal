@@ -11,61 +11,78 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
-import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
-import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import Icon from "@images/Nodes/CasingLogNode.png";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { CasingLog } from 'SubSurface/Wells/Logs/CasingLog';
+import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
+import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
+import Icon from 'images/Nodes/CasingLogNode.png';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class CasingLogNode extends BaseLogNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "CasingLogNode";
+  static className = 'CasingLogNode';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get log(): CasingLog | null { return this.anyData as CasingLog; }
+  public get log(): CasingLog | null {
+    return this.anyData as CasingLog;
+  }
 
-  public set log(value: CasingLog | null) { this.anyData = value; }
+  public set log(value: CasingLog | null) {
+    this.anyData = value;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return CasingLogNode.className; }
+  public get /* override */ className(): string {
+    return CasingLogNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === CasingLogNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === CasingLogNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Casing"; }
+  public get /* override */ typeName(): string {
+    return 'Casing';
+  }
 
-  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+  public /* override */ getIcon(): string {
+    return this.dataIsLost ? super.getIcon() : Icon;
+  }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
     const { log } = this;
-    if (!log)
-      return;
+    if (!log) return;
 
-    folder.addReadOnlyRange1("Radius", log.radiusRange, 0);
+    folder.addReadOnlyRange1('Radius', log.radiusRange, 0);
   }
 
   //= =================================================
   // OVERRIDES of BaseLogNode
   //= =================================================
 
-  public /* override */ get wellLogType(): WellLogType { return WellLogType.Casing; }
+  public get /* override */ wellLogType(): WellLogType {
+    return WellLogType.Casing;
+  }
 }

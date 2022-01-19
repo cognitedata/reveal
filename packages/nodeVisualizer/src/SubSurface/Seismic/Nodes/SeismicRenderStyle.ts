@@ -11,19 +11,23 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import cloneDeep from "lodash/cloneDeep";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
+import cloneDeep from 'lodash/cloneDeep';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { BaseStyle } from 'Core/Styles/BaseStyle';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { SliderProperty } from 'Core/Property/Concrete/Property/SliderProperty';
 
 export class SeismicRenderStyle extends BaseRenderStyle {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public opacity = new SliderProperty({ name: "Opacity", value: 0.5, use: false });
+  public opacity = new SliderProperty({
+    name: 'Opacity',
+    value: 0.5,
+    use: false,
+  });
 
   //= =================================================
   // CONSTRUCTOR
@@ -37,7 +41,9 @@ export class SeismicRenderStyle extends BaseRenderStyle {
   // OVERRIDES of BaseStyle
   //= =================================================
 
-  public /* override */ clone(): BaseStyle { return cloneDeep<SeismicRenderStyle>(this); }
+  public /* override */ clone(): BaseStyle {
+    return cloneDeep<SeismicRenderStyle>(this);
+  }
 
   protected /* override */ populateCore(folder: BasePropertyFolder) {
     folder.addChild(this.opacity);

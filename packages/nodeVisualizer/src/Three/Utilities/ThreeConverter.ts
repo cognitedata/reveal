@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
-import * as Color from "color";
+import * as THREE from 'three';
+import * as Color from 'color';
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Vector3 } from 'Core/Geometry/Vector3';
 
 const maxByte = 255;
 
@@ -23,15 +23,30 @@ export class ThreeConverter {
   // STATIC METHODS
   //= =================================================
 
-  public static toThreeColor(value: Color): THREE.Color { return new THREE.Color(value.red() / maxByte, value.green() / maxByte, value.blue() / maxByte); }
+  public static toThreeColor(value: Color): THREE.Color {
+    return new THREE.Color(
+      value.red() / maxByte,
+      value.green() / maxByte,
+      value.blue() / maxByte
+    );
+  }
 
-  public static toThreeVector3(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
+  public static toThreeVector3(value: Vector3): THREE.Vector3 {
+    return new THREE.Vector3(value.x, value.y, value.z);
+  }
 
-  public static fromThreeVector3(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
+  public static fromThreeVector3(value: THREE.Vector3): Vector3 {
+    return new Vector3(value.x, value.y, value.z);
+  }
 
-  public static fromThreeVector2(value: THREE.Vector2): Vector3 { return new Vector3(value.x, value.y, 0); }
+  public static fromThreeVector2(value: THREE.Vector2): Vector3 {
+    return new Vector3(value.x, value.y, 0);
+  }
 
-  public static copyToThreeVector3(destination: THREE.Vector3, source: Vector3) {
+  public static copyToThreeVector3(
+    destination: THREE.Vector3,
+    source: Vector3
+  ) {
     destination.x = source.x;
     destination.y = source.y;
     destination.z = source.z;

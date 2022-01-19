@@ -11,38 +11,49 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
-import SettingsTreeNodeIcon from "@images/Nodes/SettingsTreeNode.png";
+import { BaseTreeNode } from 'Core/Nodes/BaseTreeNode';
+import SettingsTreeNodeIcon from 'images/Nodes/SettingsTreeNode.png';
 
 export class SettingsTreeNode extends BaseTreeNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "SettingsTreeNode";
+  static className = 'SettingsTreeNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return SettingsTreeNode.className; }
+  public get /* override */ className(): string {
+    return SettingsTreeNode.className;
+  }
 
-  public /* override */ getIcon(): string { return SettingsTreeNodeIcon; }
+  public /* override */ getIcon(): string {
+    return SettingsTreeNodeIcon;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === SettingsTreeNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === SettingsTreeNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "SettingsTree"; }
+  public get /* override */ typeName(): string {
+    return 'SettingsTree';
+  }
 
-  public /* override */ getName(): string { return "Settings"; }
-
+  public /* override */ getName(): string {
+    return 'Settings';
+  }
 }

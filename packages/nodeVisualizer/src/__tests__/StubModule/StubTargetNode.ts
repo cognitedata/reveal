@@ -11,41 +11,41 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
+import { BaseTargetNode } from 'Core/Nodes/BaseTargetNode';
 
 export class StubTargetNode extends BaseTargetNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "StubTargetNode";
+  static className = 'StubTargetNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
   public constructor() {
- super();
-}
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string {
- return StubTargetNode.className;
-}
+  public get /* override */ className(): string {
+    return StubTargetNode.className;
+  }
 
   public /* override */ isA(className: string): boolean {
- return className === StubTargetNode.className || super.isA(className);
-}
+    return className === StubTargetNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
   // eslint-disable-next-line lodash/prefer-constant
-  public /* override */ get typeName(): string {
-    return "Stub target";
+  public get /* override */ typeName(): string {
+    return 'Stub target';
   }
 }

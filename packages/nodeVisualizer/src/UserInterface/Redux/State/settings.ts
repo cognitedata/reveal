@@ -1,4 +1,4 @@
-import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
+import { ToolBarType } from 'UserInterface/Components/Settings/Types';
 
 // TitleBar interface
 export interface TitleBarState {
@@ -8,16 +8,16 @@ export interface TitleBarState {
 }
 
 export interface ISettingsPropertyState {
-  name: string,
-  displayName: string,
-  type: string,
-  value: number | string | boolean,
-  children: string[],
-  parent?: string,
-  readonly?: boolean,
-  expanded?: boolean,
-  tooltip?: string,
-  options?: any[],
+  name: string;
+  displayName: string;
+  type: string;
+  value: number | string | boolean;
+  children: string[];
+  parent?: string;
+  readonly?: boolean;
+  expanded?: boolean;
+  tooltip?: string;
+  options?: any[];
   colorMapOptions?: string[][];
 }
 
@@ -25,6 +25,6 @@ export interface ISettingsPropertyState {
 export interface ISettingsState {
   currentNodeId: string;
   titleBar: TitleBarState;
-  expandedSections: {[sectionName: string]: boolean};
+  expandedSections: { [sectionName: string]: boolean };
   updateUICount: number;
 }

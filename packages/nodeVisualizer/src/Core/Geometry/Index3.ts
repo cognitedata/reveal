@@ -11,14 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Index2 } from "@/Core/Geometry/Index2";
+import { Index2 } from 'Core/Geometry/Index2';
 
 export class Index3 {
   //= =================================================
   // STATIC PROPERTIES
   //= =================================================
 
-  public static get newZero(): Index3 { return new Index3(0, 0, 0); }
+  public static get newZero(): Index3 {
+    return new Index3(0, 0, 0);
+  }
 
   //= =================================================
   // INSTANCE FIELDS
@@ -48,9 +50,13 @@ export class Index3 {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get size(): number { return this.i * this.j * this.k; }
+  public get size(): number {
+    return this.i * this.j * this.k;
+  }
 
-  public get isZero(): boolean { return this.i === 0 && this.j === 0 && this.k === 0; }
+  public get isZero(): boolean {
+    return this.i === 0 && this.j === 0 && this.k === 0;
+  }
 
   //= =================================================
   // INSTANCE METHODS: Getters
@@ -58,14 +64,20 @@ export class Index3 {
 
   public getAt(dimension: number): number {
     switch (dimension) {
-      case 0: return this.i;
-      case 1: return this.j;
-      case 2: return this.k;
-      default: return Number.NaN;
+      case 0:
+        return this.i;
+      case 1:
+        return this.j;
+      case 2:
+        return this.k;
+      default:
+        return Number.NaN;
     }
   }
 
-  public toString(): string { return `(${this.i}, ${this.j}, ${this.k})`; }
+  public toString(): string {
+    return `(${this.i}, ${this.j}, ${this.k})`;
+  }
 
   //= =================================================
   // INSTANCE METHODS: Operations

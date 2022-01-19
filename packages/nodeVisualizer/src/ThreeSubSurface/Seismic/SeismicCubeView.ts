@@ -11,24 +11,28 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { Changes } from "@/Core/Views/Changes";
-import { BaseView } from "@/Core/Views/BaseView";
-import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
-import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { Changes } from 'Core/Views/Changes';
+import { BaseView } from 'Core/Views/BaseView';
+import { SeismicCubeNode } from 'SubSurface/Seismic/Nodes/SeismicCubeNode';
+import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
 
 export class SeismicCubeView extends BaseView {
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  private get node(): SeismicCubeNode { return super.getNode() as SeismicCubeNode; }
+  private get node(): SeismicCubeNode {
+    return super.getNode() as SeismicCubeNode;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -56,13 +60,11 @@ export class SeismicCubeView extends BaseView {
   private updatePlanes(args: NodeEventArgs): void {
     const { node } = this;
     const survey = node.surveyNode;
-    if (!survey)
-      return;
+    if (!survey) return;
 
     for (const planeNode of survey.getDescendantsByType(SeismicPlaneNode)) {
       const view = planeNode.getViewByTarget(this.renderTarget);
-      if (view)
-        view.update(args);
+      if (view) view.update(args);
     }
   }
 }

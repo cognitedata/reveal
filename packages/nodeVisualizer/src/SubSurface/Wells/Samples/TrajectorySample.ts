@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { MdSample } from "@/SubSurface/Wells/Samples/MdSample";
-import { Ma } from "@/Core/Primitives/Ma";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { MdSample } from 'SubSurface/Wells/Samples/MdSample';
+import { Ma } from 'Core/Primitives/Ma';
 
 export class TrajectorySample extends MdSample {
   //= =================================================
@@ -39,9 +39,13 @@ export class TrajectorySample extends MdSample {
   // OVERRIDES from MdSample
   //= =================================================
 
-  public /* override */ toString(): string { return `${super.toString()} Point: ${this.point}`; }
+  public /* override */ toString(): string {
+    return `${super.toString()} Point: ${this.point}`;
+  }
 
-  public /* override */ getSampleText(): string { return this.point.toString(); }
+  public /* override */ getSampleText(): string {
+    return this.point.toString();
+  }
 
   //= =================================================
   // INSTANCE METHODS
@@ -61,21 +65,20 @@ export class TrajectorySample extends MdSample {
     // Code take from https://gis.stackexchange.com/questions/13484/how-to-convert-distance-azimuth-dip-to-xyz
 
     const deltaMd = this.md - prevSample.md;
-    const b = Math.acos(Math.cos(i2 - i1) - (Math.sin(i1) * Math.sin(i2) * (1 - Math.cos(a2 - a1)))); // f(x)
-    const rf = Math.abs(b) < 0.00001 ? 1 : 2 / b * Math.tan(b / 2); // Note: lim x->0 => f(x)->1
-    const a = rf * deltaMd / 2;
+    const b = Math.acos(
+      Math.cos(i2 - i1) - Math.sin(i1) * Math.sin(i2) * (1 - Math.cos(a2 - a1))
+    ); // f(x)
+    const rf = Math.abs(b) < 0.00001 ? 1 : (2 / b) * Math.tan(b / 2); // Note: lim x->0 => f(x)->1
+    const a = (rf * deltaMd) / 2;
     const c = Math.sin(i1) * Math.sin(a1);
 
     const dx = a * (c + Math.sin(i2) * Math.sin(a2));
     const dy = a * (c + Math.sin(i2) * Math.cos(a2));
     const dz = a * (Math.cos(i1) + Math.cos(i2));
 
-    if (Number.isNaN(dx))
-      return false;
-    if (Number.isNaN(dy))
-      return false;
-    if (Number.isNaN(dz))
-      return false;
+    if (Number.isNaN(dx)) return false;
+    if (Number.isNaN(dy)) return false;
+    if (Number.isNaN(dz)) return false;
 
     const prevPoint = prevSample.point;
     this.point.x = prevPoint.x + dx;

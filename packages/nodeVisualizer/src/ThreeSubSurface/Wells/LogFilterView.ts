@@ -11,18 +11,20 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
-import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { Changes } from "@/Core/Views/Changes";
-import { BaseView } from "@/Core/Views/BaseView";
+import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
+import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { Changes } from 'Core/Views/Changes';
+import { BaseView } from 'Core/Views/BaseView';
 
 export class LogFilterView extends BaseView {
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  private get node(): BaseLogNode { return super.getNode() as BaseLogNode; }
+  private get node(): BaseLogNode {
+    return super.getNode() as BaseLogNode;
+  }
 
   private get trajectoryNode(): WellTrajectoryNode | null {
     const { node } = this;
@@ -33,7 +35,9 @@ export class LogFilterView extends BaseView {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -66,12 +70,10 @@ export class LogFilterView extends BaseView {
 
   protected updateTrajectory(args: NodeEventArgs | null = null): void {
     const { trajectoryNode } = this;
-    if (!trajectoryNode)
-      return;
+    if (!trajectoryNode) return;
 
     const trajectoryView = trajectoryNode.getViewByTarget(this.renderTarget);
-    if (!trajectoryView)
-      return;
+    if (!trajectoryView) return;
 
     trajectoryView.update(args ?? new NodeEventArgs(Changes.filter));
   }

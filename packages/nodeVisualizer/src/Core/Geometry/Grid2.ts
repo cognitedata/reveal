@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Index2 } from "@/Core/Geometry/Index2";
-import { Shape } from "@/Core/Geometry/Shape";
-import { Range3 } from "@/Core/Geometry/Range3";
+import { Index2 } from 'Core/Geometry/Index2';
+import { Shape } from 'Core/Geometry/Shape';
+import { Range3 } from 'Core/Geometry/Range3';
 
 export class Grid2 extends Shape {
   //= =================================================
@@ -40,25 +40,37 @@ export class Grid2 extends Shape {
   // OVERRIDES of Shape:
   //= =================================================
 
-  public /* override */ clone(): Shape { return new Grid2(this.nodeSize); }
+  public /* override */ clone(): Shape {
+    return new Grid2(this.nodeSize);
+  }
 
-  public/* override */ expandBoundingBox(_: Range3): void { }
+  public /* override */ expandBoundingBox(_: Range3): void {}
 
   //= =================================================
   // INSTANCE METHODS: Getters
   //= =================================================
 
-  public toString(): string { return `(${this.nodeSize})`; }
+  public toString(): string {
+    return `(${this.nodeSize})`;
+  }
 
-  public getNodeIndex(i: number, j: number) { return i + this.nodeSize.i * j; }
+  public getNodeIndex(i: number, j: number) {
+    return i + this.nodeSize.i * j;
+  }
 
-  public getCellIndex(i: number, j: number) { return i + this.cellSize.i * j; }
+  public getCellIndex(i: number, j: number) {
+    return i + this.cellSize.i * j;
+  }
 
   //= =================================================
   // INSTANCE METHODS: Requests
   //= =================================================
 
-  public isNodeInside(i: number, j: number) { return i >= 0 && j >= 0 && i < this.nodeSize.i && j < this.nodeSize.j; }
+  public isNodeInside(i: number, j: number) {
+    return i >= 0 && j >= 0 && i < this.nodeSize.i && j < this.nodeSize.j;
+  }
 
-  public isCellInside(i: number, j: number) { return i >= 0 && j >= 0 && i < this.cellSize.i && j < this.cellSize.j; }
+  public isCellInside(i: number, j: number) {
+    return i >= 0 && j >= 0 && i < this.cellSize.i && j < this.cellSize.j;
+  }
 }

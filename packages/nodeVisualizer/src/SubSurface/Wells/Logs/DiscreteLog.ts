@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Random } from "@/Core/Primitives/Random";
+import { Range1 } from 'Core/Geometry/Range1';
+import { Random } from 'Core/Primitives/Random';
 
-import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
-import { DiscreteLogSample } from "@/SubSurface/Wells/Samples/DiscreteLogSample";
-import { BaseLog } from "@/SubSurface/Wells/Logs/BaseLog";
+import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
+import { DiscreteLogSample } from 'SubSurface/Wells/Samples/DiscreteLogSample';
+import { BaseLog } from 'SubSurface/Wells/Logs/BaseLog';
 
 export class DiscreteLog extends BaseLog {
   //= =================================================
@@ -37,12 +37,13 @@ export class DiscreteLog extends BaseLog {
   // INSTANCE METHODS: Getter
   //= =================================================
 
-  public getAt(index: number): DiscreteLogSample { return this.samples[index] as DiscreteLogSample; }
+  public getAt(index: number): DiscreteLogSample {
+    return this.samples[index] as DiscreteLogSample;
+  }
 
   public getConcreteSampleByMd(md: number): DiscreteLogSample | null {
     const floatIndex = this.getFloatIndexAtMd(md);
-    if (floatIndex < 0)
-      return null;
+    if (floatIndex < 0) return null;
 
     const index = Math.floor(floatIndex);
     return this.samples[index] as DiscreteLogSample;
@@ -53,8 +54,7 @@ export class DiscreteLog extends BaseLog {
   //= =================================================
 
   public get valueRange(): Range1 {
-    if (!this._valueRange)
-      this._valueRange = this.calculateValueRange();
+    if (!this._valueRange) this._valueRange = this.calculateValueRange();
     return this._valueRange;
   }
 
@@ -72,8 +72,7 @@ export class DiscreteLog extends BaseLog {
   public expandValueRange(range: Range1): void {
     for (let i = this.samples.length - 1; i >= 0; i--) {
       const sample = this.getAt(i);
-      if (sample.isMdEmpty || sample.isEmpty)
-        continue;
+      if (sample.isMdEmpty || sample.isEmpty) continue;
 
       range.add(sample.value);
     }
@@ -83,7 +82,10 @@ export class DiscreteLog extends BaseLog {
   // INSTANCE METHODS: Operations
   //= =================================================
 
-  public static createByRandom(mdRange: Range1, valueRange: Range1): DiscreteLog {
+  public static createByRandom(
+    mdRange: Range1,
+    valueRange: Range1
+  ): DiscreteLog {
     const log = new DiscreteLog();
     const numSamples = 20;
 
@@ -94,5 +96,4 @@ export class DiscreteLog extends BaseLog {
     log.sortByMd();
     return log;
   }
-
 }

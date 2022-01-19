@@ -11,48 +11,62 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { AxisRenderStyle } from "@/Core/Nodes/Decorations/AxisRenderStyle";
-import AxisNodeIcon from "@images/Nodes/AxisNode.png";
+import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { AxisRenderStyle } from 'Core/Nodes/Decorations/AxisRenderStyle';
+import AxisNodeIcon from 'images/Nodes/AxisNode.png';
 
 export class AxisNode extends BaseVisualNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "AxisNode";
+  static className = 'AxisNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get renderStyle(): AxisRenderStyle | null { return this.getRenderStyle() as AxisRenderStyle; }
+  public get renderStyle(): AxisRenderStyle | null {
+    return this.getRenderStyle() as AxisRenderStyle;
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return AxisNode.className; }
+  public get /* override */ className(): string {
+    return AxisNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === AxisNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === AxisNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Axis"; }
+  public get /* override */ typeName(): string {
+    return 'Axis';
+  }
 
-  public /* override */ getIcon(): string { return AxisNodeIcon; }
+  public /* override */ getIcon(): string {
+    return AxisNodeIcon;
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new AxisRenderStyle(targetId);
   }
 }

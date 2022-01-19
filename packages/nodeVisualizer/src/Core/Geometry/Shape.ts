@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Range1 } from "@/Core/Geometry/Range1";
+import { Range3 } from 'Core/Geometry/Range3';
+import { Range1 } from 'Core/Geometry/Range1';
 
 export abstract class Shape {
   //= =================================================
@@ -25,11 +25,12 @@ export abstract class Shape {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get zRange(): Range1 { return this.boundingBox.z; }
+  public get zRange(): Range1 {
+    return this.boundingBox.z;
+  }
 
   public get boundingBox(): Range3 {
-    if (!this._boundingBox)
-      this._boundingBox = this.calculateBoundingBox();
+    if (!this._boundingBox) this._boundingBox = this.calculateBoundingBox();
     return this._boundingBox;
   }
 

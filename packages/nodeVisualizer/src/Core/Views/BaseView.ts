@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseTargetNode } from 'Core/Nodes/BaseTargetNode';
 
 export abstract class BaseView {
   //= =================================================
@@ -31,17 +31,25 @@ export abstract class BaseView {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get hasTarget(): boolean { return this._target != null; }
+  public get hasTarget(): boolean {
+    return this._target != null;
+  }
 
-  public get targetId(): TargetId { return this.getTarget().targetId; }
+  public get targetId(): TargetId {
+    return this.getTarget().targetId;
+  }
 
-  protected get renderTarget(): BaseTargetNode { return this.getTarget() as BaseTargetNode; }
+  protected get renderTarget(): BaseTargetNode {
+    return this.getTarget() as BaseTargetNode;
+  }
 
   //= =================================================
   // VIRTUAL METHODS:s
   //= =================================================
 
-  public get /* virtual */ isVisible(): boolean { return true; }
+  public get /* virtual */ isVisible(): boolean {
+    return true;
+  }
 
   protected /* virtual */ initializeCore(): void {
     // Override this function to initialize your view
@@ -88,25 +96,20 @@ export abstract class BaseView {
   //= =================================================
 
   public getNode(): BaseNode {
-    if (!this._node)
-      throw Error("The node is missing in the view");
+    if (!this._node) throw Error('The node is missing in the view');
     return this._node;
   }
 
   public getTarget(): ITargetIdAccessor {
-    if (!this._target)
-      throw Error("The target is missing in the view");
+    if (!this._target) throw Error('The target is missing in the view');
     return this._target;
   }
 
   protected getStyle(): BaseRenderStyle {
     let style: BaseRenderStyle | null;
-    if (!this._target)
-      style = this.getNode().getRenderStyle(TargetId.empty);
-    else
-      style = this.getNode().getRenderStyle(this.targetId);
-    if (!style)
-      throw Error("The style is missing in the view");
+    if (!this._target) style = this.getNode().getRenderStyle(TargetId.empty);
+    else style = this.getNode().getRenderStyle(this.targetId);
+    if (!style) throw Error('The style is missing in the view');
     return style;
   }
 
@@ -156,12 +159,9 @@ export abstract class BaseView {
 
   public verify(): boolean {
     // Used in unit testing
-    if (!this.getNode())
-      return false;
-    if (!this.getTarget())
-      return false;
-    if (!this.getNode().isInitialized)
-      return false;
+    if (!this.getNode()) return false;
+    if (!this.getTarget()) return false;
+    if (!this.getNode().isInitialized) return false;
     return true;
   }
 }

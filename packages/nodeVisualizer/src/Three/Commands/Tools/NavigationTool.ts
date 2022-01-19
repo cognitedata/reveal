@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
-import PanBaseToolIcon from "@images/Commands/NavigationTool.png";
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { BaseTool } from 'Three/Commands/Tools/BaseTool';
+import PanBaseToolIcon from 'images/Commands/NavigationTool.png';
 
 export class NavigationTool extends BaseTool {
   //= =================================================
@@ -23,16 +23,22 @@ export class NavigationTool extends BaseTool {
   // OVERRIDES of BaseCommand
   //= =================================================
 
-  public /* override */ getName(): string { return "Navigation"; }
+  public /* override */ getName(): string {
+    return 'Navigation';
+  }
 
-  public /* override */ getIcon(): string { return PanBaseToolIcon; }
+  public /* override */ getIcon(): string {
+    return PanBaseToolIcon;
+  }
 
   protected /* override */ getTooltipCore(): string {
-    return `${this.getDisplayName()}\n` +
-    "Left button drag: Rotate\n" +
-    "Right button drag: Move\n" +
-    "Wheel: Zoom in or out\n" +
-    "Left click: Pick any object in 3D to get information";
+    return (
+      `${this.getDisplayName()}\n` +
+      'Left button drag: Rotate\n' +
+      'Right button drag: Move\n' +
+      'Wheel: Zoom in or out\n' +
+      'Left click: Pick any object in 3D to get information'
+    );
   }
 
   //= =================================================
@@ -41,8 +47,7 @@ export class NavigationTool extends BaseTool {
 
   public /* override */ onActivate(): void {
     const { target } = this;
-    if (!target)
-      return;
+    if (!target) return;
 
     const { viewInfo } = target;
     viewInfo.clear();

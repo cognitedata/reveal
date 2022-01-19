@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import clone from "lodash/clone";
+import clone from 'lodash/clone';
 
-import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
+import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
 
 export class DiscreteLogSample extends BaseLogSample {
   //= =================================================
@@ -35,15 +35,23 @@ export class DiscreteLogSample extends BaseLogSample {
   // OVERRIDES of MdSample
   //= =================================================
 
-  public /* override */ toString(): string { return `${super.toString()} Value: ${this.value}`; }
+  public /* override */ toString(): string {
+    return `${super.toString()} Value: ${this.value}`;
+  }
 
-  public /* override */ getSampleText(): string { return Number.isNaN(this.value) ? "Not defined" : this.value.toFixed(0); }
+  public /* override */ getSampleText(): string {
+    return Number.isNaN(this.value) ? 'Not defined' : this.value.toFixed(0);
+  }
 
   //= =================================================
   // OVERRIDES of BaseLogSample
   //= =================================================
 
-  public /* override */ get isEmpty(): boolean { return Number.isNaN(this.value); }
+  public get /* override */ isEmpty(): boolean {
+    return Number.isNaN(this.value);
+  }
 
-  public /* override */ clone(): BaseLogSample { return clone<DiscreteLogSample>(this); }
+  public /* override */ clone(): BaseLogSample {
+    return clone<DiscreteLogSample>(this);
+  }
 }

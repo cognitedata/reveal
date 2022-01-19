@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import cloneDeep from "lodash/cloneDeep";
+import cloneDeep from 'lodash/cloneDeep';
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Index3 } from "@/Core/Geometry/Index3";
-import { Grid3 } from "@/Core/Geometry/Grid3";
-import { Shape } from "@/Core/Geometry/Shape";
-import { Index2 } from "@/Core/Geometry/Index2";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Index3 } from 'Core/Geometry/Index3';
+import { Grid3 } from 'Core/Geometry/Grid3';
+import { Shape } from 'Core/Geometry/Shape';
+import { Index2 } from 'Core/Geometry/Index2';
 
 export class RegularGrid3 extends Grid3 {
   //= =================================================
@@ -43,7 +43,9 @@ export class RegularGrid3 extends Grid3 {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get rotationAngle(): number { return this._rotationAngle; }
+  public get rotationAngle(): number {
+    return this._rotationAngle;
+  }
 
   public set rotationAngle(value: number) {
     this._hasRotationAngle = value !== 0;
@@ -62,25 +64,33 @@ export class RegularGrid3 extends Grid3 {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(nodeSize: Index3, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined) {
+  public constructor(
+    nodeSize: Index3,
+    origin: Vector3,
+    inc: Vector3,
+    rotationAngle: number | undefined = undefined
+  ) {
     super(nodeSize);
     this.origin = origin;
     this.inc = inc;
-    if (rotationAngle !== undefined)
-      this.rotationAngle = rotationAngle;
+    if (rotationAngle !== undefined) this.rotationAngle = rotationAngle;
   }
 
   //= =================================================
   // OVERRIDES of object
   //= =================================================
 
-  public /* override */ toString(): string { return `nodeSize: ${this.nodeSize} origin: ${this.origin} inc: ${this.inc} rotationAngle: ${this.rotationAngle}`; }
+  public /* override */ toString(): string {
+    return `nodeSize: ${this.nodeSize} origin: ${this.origin} inc: ${this.inc} rotationAngle: ${this.rotationAngle}`;
+  }
 
   //= =================================================
   // OVERRIDES of Shape
   //= =================================================
 
-  public /* override */ clone(): Shape { return cloneDeep(this); }
+  public /* override */ clone(): Shape {
+    return cloneDeep(this);
+  }
 
   public expandBoundingBox(boundingBox: Range3): void {
     boundingBox.addRange(this.getCornerRange());
@@ -90,7 +100,12 @@ export class RegularGrid3 extends Grid3 {
   // INSTANCE METHODS: Getters: Node position
   //= =================================================
 
-  public getNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3 {
+  public getNodePosition(
+    i: number,
+    j: number,
+    k: number,
+    result?: Vector3
+  ): Vector3 {
     if (!result)
       // eslint-disable-next-line no-param-reassign
       result = Vector3.newZero;
@@ -109,7 +124,12 @@ export class RegularGrid3 extends Grid3 {
     return result;
   }
 
-  public getRelativeNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3 {
+  public getRelativeNodePosition(
+    i: number,
+    j: number,
+    k: number,
+    result?: Vector3
+  ): Vector3 {
     if (!result)
       // eslint-disable-next-line no-param-reassign
       result = Vector3.newZero;
@@ -130,11 +150,21 @@ export class RegularGrid3 extends Grid3 {
     return result;
   }
 
-  public getCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3 {
+  public getCellCenter(
+    i: number,
+    j: number,
+    k: number,
+    result?: Vector3
+  ): Vector3 {
     return this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
-  public getRelativeCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3 {
+  public getRelativeCellCenter(
+    i: number,
+    j: number,
+    k: number,
+    result?: Vector3
+  ): Vector3 {
     return this.getRelativeNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
@@ -147,7 +177,8 @@ export class RegularGrid3 extends Grid3 {
     const dy = position.y - this.origin.y;
     const dz = position.z - this.origin.z;
 
-    let i; let j: number;
+    let i;
+    let j: number;
     if (this._hasRotationAngle) {
       const x = dx * this._cosRotationAngle + dy * this._sinRotationAngle;
       const y = -dx * this._sinRotationAngle + dy * this._cosRotationAngle;
@@ -187,7 +218,12 @@ export class RegularGrid3 extends Grid3 {
     range.add(corner);
     this.getNodePosition(this.nodeSize.i - 1, 0, 0, corner);
     range.add(corner);
-    this.getNodePosition(this.nodeSize.i - 1, this.nodeSize.j - 1, this.nodeSize.k - 1, corner); // This get the max z
+    this.getNodePosition(
+      this.nodeSize.i - 1,
+      this.nodeSize.j - 1,
+      this.nodeSize.k - 1,
+      corner
+    ); // This get the max z
     range.add(corner);
     return range;
   }

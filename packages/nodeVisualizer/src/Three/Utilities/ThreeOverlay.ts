@@ -11,19 +11,18 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
-import Color from "color";
+import * as THREE from 'three';
+import Color from 'color';
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { ViewInfo } from "@/Core/Views/ViewInfo";
-import { TextItem } from "@/Core/Views/TextItem";
-import { Canvas } from "@/Three/Utilities/Canvas";
-import { Util } from "@/Core/Primitives/Util";
-import { Appearance } from "@/Core/States/Appearance";
-import { Polyline } from "@/Core/Geometry/Polyline";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { ViewInfo } from 'Core/Views/ViewInfo';
+import { TextItem } from 'Core/Views/TextItem';
+import { Canvas } from 'Three/Utilities/Canvas';
+import { Util } from 'Core/Primitives/Util';
+import { Appearance } from 'Core/States/Appearance';
+import { Polyline } from 'Core/Geometry/Polyline';
 
 export class ThreeOverlay {
-
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
@@ -43,31 +42,44 @@ export class ThreeOverlay {
   // INSTANCE METHODS:
   //= =================================================
 
-  public render(renderer: THREE.WebGLRenderer, viewInfo: ViewInfo, delta: Vector3, fgColor: Color, bgColor: Color): void {
-    if (viewInfo.isEmpty)
-      return;
+  public render(
+    renderer: THREE.WebGLRenderer,
+    viewInfo: ViewInfo,
+    delta: Vector3,
+    fgColor: Color,
+    bgColor: Color
+  ): void {
+    if (viewInfo.isEmpty) return;
 
-    if (!this.delta.equals(delta))
-      this.initialize(delta);
+    if (!this.delta.equals(delta)) this.initialize(delta);
 
     const { context } = this;
-    if (!context)
-      return;
+    if (!context) return;
 
-    if (!this.texture)
-      return;
+    if (!this.texture) return;
 
-    if (!this.scene)
-      return;
+    if (!this.scene) return;
 
-    if (!this.camera)
-      return;
+    if (!this.camera) return;
 
     context.clearRect(0, 0, this.delta.x, this.delta.y);
 
     this.renderPolyline(context, viewInfo.polyline, fgColor, bgColor);
-    this.renderTextItems(context, viewInfo.items, delta, Appearance.viewerOverlayFontSize, Appearance.viewerOverlayFgColor, Appearance.viewerOverlayBgColor);
-    this.renderFooter(context, viewInfo.footer, Appearance.viewerFooterFontSize, fgColor, bgColor);
+    this.renderTextItems(
+      context,
+      viewInfo.items,
+      delta,
+      Appearance.viewerOverlayFontSize,
+      Appearance.viewerOverlayFgColor,
+      Appearance.viewerOverlayBgColor
+    );
+    this.renderFooter(
+      context,
+      viewInfo.footer,
+      Appearance.viewerFooterFontSize,
+      fgColor,
+      bgColor
+    );
     this.texture.needsUpdate = true;
     renderer.render(this.scene, this.camera);
   }
@@ -81,21 +93,17 @@ export class ThreeOverlay {
       this.texture.dispose();
       this.texture = null;
     }
-    if (this.context)
-      this.context = null;
-    if (this.camera)
-      this.camera = null;
+    if (this.context) this.context = null;
+    if (this.camera) this.camera = null;
     if (this.scene) {
       while (this.scene.children.length) {
         const child = this.scene.children[0];
         this.scene.remove(child);
         if (child instanceof THREE.Mesh) {
           const material = child.material as THREE.Material;
-          if (material)
-            material.dispose();
+          if (material) material.dispose();
           const { geometry } = child;
-          if (geometry)
-            geometry.dispose();
+          if (geometry) geometry.dispose();
         }
       }
     }
@@ -108,19 +116,25 @@ export class ThreeOverlay {
     //  http://www.evermade.fi/pure-three-js-hud/
     //  For more fanciness, follow me on Twitter @jalajoki
     this.clear();
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement('canvas');
 
     this.delta = delta;
 
     canvas.width = this.delta.x;
     canvas.height = this.delta.y;
 
-    this.context = canvas.getContext("2d");
-    if (!this.context)
-      return;
+    this.context = canvas.getContext('2d');
+    if (!this.context) return;
 
     // Create the camera and set the viewport to match the screen dimensions.
-    this.camera = new THREE.OrthographicCamera(-this.delta.x / 2, this.delta.x / 2, this.delta.y / 2, -this.delta.y / 2, 0, 30);
+    this.camera = new THREE.OrthographicCamera(
+      -this.delta.x / 2,
+      this.delta.x / 2,
+      this.delta.y / 2,
+      -this.delta.y / 2,
+      0,
+      30
+    );
 
     // Create texture from rendered graphics.
     this.texture = new THREE.CanvasTexture(canvas);
@@ -135,8 +149,7 @@ export class ThreeOverlay {
     const planeGeometry = new THREE.PlaneGeometry(this.delta.x, this.delta.y);
     const plane = new THREE.Mesh(planeGeometry, material);
 
-    if (!this.scene)
-      this.scene = new THREE.Scene();
+    if (!this.scene) this.scene = new THREE.Scene();
     this.scene.add(plane);
   }
 
@@ -144,26 +157,33 @@ export class ThreeOverlay {
   // INSTANCE METHODS: Render
   //= =================================================
 
-  public renderTextItems(context: CanvasRenderingContext2D, items: TextItem[], delta: Vector3, fontSize: number, fgColor: Color, bgColor: Color): void {
-    if (!items || !items.length)
-      return;
+  public renderTextItems(
+    context: CanvasRenderingContext2D,
+    items: TextItem[],
+    delta: Vector3,
+    fontSize: number,
+    fgColor: Color,
+    bgColor: Color
+  ): void {
+    if (!items || !items.length) return;
 
     const margin = fontSize * 0.33;
     const spacing = fontSize;
     const lineDy = 1.5 * fontSize;
 
-    context.textAlign = "left";
-    context.textBaseline = "top";
+    context.textAlign = 'left';
+    context.textBaseline = 'top';
 
     // Measure the keys
     let keyDx = 0;
     let allDx = 0;
     for (const item of items) {
-      context.font = item.isBold ? Canvas.getBoldFont(fontSize) : Canvas.getNormalFont(fontSize);
+      context.font = item.isBold
+        ? Canvas.getBoldFont(fontSize)
+        : Canvas.getNormalFont(fontSize);
       const metric = context.measureText(item.key);
       allDx = Math.max(allDx, metric.width);
-      if (item.value === undefined)
-        continue;
+      if (item.value === undefined) continue;
 
       keyDx = Math.max(keyDx, metric.width);
     }
@@ -211,7 +231,9 @@ export class ThreeOverlay {
     x += margin;
     y += margin;
     for (const item of items) {
-      context.font = item.isBold ? Canvas.getBoldFont(fontSize) : Canvas.getNormalFont(fontSize);
+      context.font = item.isBold
+        ? Canvas.getBoldFont(fontSize)
+        : Canvas.getNormalFont(fontSize);
       context.fillText(item.key, x, y);
       y += item.dy;
     }
@@ -224,45 +246,57 @@ export class ThreeOverlay {
       if (item.value !== undefined) {
         if (item.isMultiLine)
           Canvas.fillText(context, item.value, x, y, maxKeyDx + margin, lineDy);
-        else
-          context.fillText(item.value, x, y);
+        else context.fillText(item.value, x, y);
       }
       y += item.dy;
     }
   }
 
-  public measureValue(context: CanvasRenderingContext2D, item: TextItem, maxWidth: number, lineHeight: number): void {
-    if (item.dy > 0)
-      return; // Already done
+  public measureValue(
+    context: CanvasRenderingContext2D,
+    item: TextItem,
+    maxWidth: number,
+    lineHeight: number
+  ): void {
+    if (item.dy > 0) return; // Already done
 
     item.isMultiLine = false;
     item.dy = lineHeight;
     item.dx = 0;
 
-    if (item.value === undefined)
-      return;
+    if (item.value === undefined) return;
 
     item.dx = context.measureText(item.value).width;
     if (item.dx > maxWidth) {
       item.isMultiLine = true;
       item.dx = maxWidth;
-      item.dy = Canvas.measureTextHeight(context, item.value, 1.025 * maxWidth, lineHeight);
+      item.dy = Canvas.measureTextHeight(
+        context,
+        item.value,
+        1.025 * maxWidth,
+        lineHeight
+      );
     }
   }
 
-  public renderFooter(context: CanvasRenderingContext2D, text: string, fontSize: number, fgColor: Color, _bgColor: Color): void {
-    if (Util.isEmpty(text))
-      return;
+  public renderFooter(
+    context: CanvasRenderingContext2D,
+    text: string,
+    fontSize: number,
+    fgColor: Color,
+    _bgColor: Color
+  ): void {
+    if (Util.isEmpty(text)) return;
 
     context.fillStyle = Canvas.getColor(fgColor);
     context.shadowBlur = 2;
-    context.shadowColor = "rgba(0, 0, 0, 0.5)";
+    context.shadowColor = 'rgba(0, 0, 0, 0.5)';
     context.shadowOffsetX = 3;
     context.shadowOffsetY = 3;
 
     context.font = Canvas.getNormalFont(fontSize);
-    context.textAlign = "right";
-    context.textBaseline = "bottom";
+    context.textAlign = 'right';
+    context.textBaseline = 'bottom';
 
     context.fillText(text, this.delta.x - 6, this.delta.y - 3);
 
@@ -271,9 +305,13 @@ export class ThreeOverlay {
     context.shadowOffsetY = 0;
   }
 
-  public renderPolyline(context: CanvasRenderingContext2D, polyline: Polyline | null, fgColor: Color, bgColor: Color): void {
-    if (!polyline || polyline.length < 1)
-      return;
+  public renderPolyline(
+    context: CanvasRenderingContext2D,
+    polyline: Polyline | null,
+    fgColor: Color,
+    bgColor: Color
+  ): void {
+    if (!polyline || polyline.length < 1) return;
 
     context.beginPath();
     let point = polyline.list[0];
@@ -282,10 +320,9 @@ export class ThreeOverlay {
       point = polyline.list[i];
       context.lineTo(point.x, point.y);
     }
-    if (polyline.isClosed)
-      context.closePath();
+    if (polyline.isClosed) context.closePath();
 
-    context.lineCap = "round";
+    context.lineCap = 'round';
     context.lineWidth = 3;
     context.strokeStyle = Canvas.getColor(fgColor);
     context.stroke();

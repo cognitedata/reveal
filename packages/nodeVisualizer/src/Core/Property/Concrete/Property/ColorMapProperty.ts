@@ -1,9 +1,9 @@
-import { ValueProperty } from "@/Core/Property/Base/ValueProperty";
-import { ColorMaps } from "@/Core/Primitives/ColorMaps";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
-import { Appearance } from "@/Core/States/Appearance";
-import { IPropertyExtraOptionDataParams } from "@/Core/Property/Base/IPropertyExtraOptionDataParms";
+import { ValueProperty } from 'Core/Property/Base/ValueProperty';
+import { ColorMaps } from 'Core/Primitives/ColorMaps';
+import { Range1 } from 'Core/Geometry/Range1';
+import { IPropertyParams } from 'Core/Property/Base/IPropertyParams';
+import { Appearance } from 'Core/States/Appearance';
+import { IPropertyExtraOptionDataParams } from 'Core/Property/Base/IPropertyExtraOptionDataParms';
 
 export class ColorMapProperty extends ValueProperty<string> {
   //= =================================================
@@ -19,17 +19,17 @@ export class ColorMapProperty extends ValueProperty<string> {
   // INSTANCE METHODS
   //= =================================================
 
-  public getColorMapOptionColors(colorCount: number): IPropertyExtraOptionDataParams[] | null {
+  public getColorMapOptionColors(
+    colorCount: number
+  ): IPropertyExtraOptionDataParams[] | null {
     const options = this.getExpandedOptions() as string[];
-    if (!options.length)
-      return null;
+    if (!options.length) return null;
 
-    return (options as string[]).map(colorMapName => {
+    return (options as string[]).map((colorMapName) => {
       const colorMapOptionData = { colorMapColors: [] as string[] };
       const colorMap = ColorMaps.get(colorMapName);
-      if (!colorMap)
-        return colorMapOptionData;
-        
+      if (!colorMap) return colorMapOptionData;
+
       const range = new Range1(0, colorCount - 1);
       for (let i = 0; i < colorCount; i++) {
         const fraction = range.getFraction(i);

@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Util } from "@/Core/Primitives/Util";
+import { Util } from 'Core/Primitives/Util';
 
 export class TextItem {
   //= =================================================
@@ -34,7 +34,9 @@ export class TextItem {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get hasValue(): boolean { return Util.isEmpty(this.value); }
+  public get hasValue(): boolean {
+    return Util.isEmpty(this.value);
+  }
 
   //= =================================================
   // CONSTRUCTOR

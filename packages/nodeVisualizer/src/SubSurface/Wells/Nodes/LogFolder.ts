@@ -11,47 +11,61 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { FolderNode } from "@/Core/Nodes/FolderNode";
-import FolderNodeGreyscale from "@images/Nodes/FolderNodeGreyscale.png";
-import { ITarget } from "@/Core/Interfaces/ITarget";
-import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
+import { FolderNode } from 'Core/Nodes/FolderNode';
+import FolderNodeGreyscale from 'images/Nodes/FolderNodeGreyscale.png';
+import { ITarget } from 'Core/Interfaces/ITarget';
+import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
 
 export class LogFolder extends FolderNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "LogFolder";
+  static className = 'LogFolder';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
+  public get trajectoryNode(): WellTrajectoryNode | null {
+    return this.getAncestorByType(WellTrajectoryNode);
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return LogFolder.className; }
+  public get /* override */ className(): string {
+    return LogFolder.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === LogFolder.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === LogFolder.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Log folder"; }
+  public get /* override */ typeName(): string {
+    return 'Log folder';
+  }
 
-  public /* override */ getIcon(): string { return FolderNodeGreyscale; }
+  public /* override */ getIcon(): string {
+    return FolderNodeGreyscale;
+  }
 
-  public /* override */ canChangeColor(): boolean { return true; }
+  public /* override */ canChangeColor(): boolean {
+    return true;
+  }
 
   public /* virtual */ getCheckBoxEnabled(target?: ITarget | null): boolean {
     const { trajectoryNode } = this;

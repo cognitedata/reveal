@@ -1,41 +1,38 @@
-import { NodeUtils } from "@/UserInterface/utils/NodeUtils";
-import { TreeCheckState } from "@/UserInterface/NodeVisualizer/Explorer/TreeCheckState";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
+import { NodeUtils } from 'UserInterface/utils/NodeUtils';
+import { TreeCheckState } from 'UserInterface/NodeVisualizer/Explorer/TreeCheckState';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { CheckBoxState } from 'Core/Enums/CheckBoxState';
 
 export class ExplorerNodeUtils {
   public static selectNodeById(nodeId: string, selectionState: boolean) {
     const node = NodeUtils.getNodeById(nodeId);
 
-    if (!node)
-      return;
+    if (!node) return;
 
     try {
       node.setSelectedInteractive(selectionState);
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("Error Selecting Node", err);
+      console.warn('Error Selecting Node', err);
     }
   }
 
   public static toggleVisibleById(nodeId: string) {
     const node = NodeUtils.getNodeById(nodeId);
 
-    if (!node)
-      return;
+    if (!node) return;
 
     try {
       node.toggleVisibleInteractive();
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("Error Viewing Node", err);
+      console.warn('Error Viewing Node', err);
     }
   }
 
   public static setNodeExpandById(nodeId: string, expandState: boolean) {
     const node = NodeUtils.getNodeById(nodeId);
-    if (!node)
-      return;
+    if (!node) return;
 
     try {
       if (expandState !== node.isExpanded) {
@@ -43,7 +40,7 @@ export class ExplorerNodeUtils {
       }
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("Error Expanding Node", err);
+      console.warn('Error Expanding Node', err);
     }
   }
 
@@ -82,8 +79,7 @@ export class ExplorerNodeUtils {
 
     if (rootNode) {
       for (const child of rootNode.children) {
-        if (child.isTab)
-          tabNodes.push(child);
+        if (child.isTab) tabNodes.push(child);
       }
     }
     return tabNodes;

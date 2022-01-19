@@ -11,17 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { TargetTreeNode } from "@/Core/Nodes/Trees/TargetTreeNode";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
-import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { TargetTreeNode } from 'Core/Nodes/Trees/TargetTreeNode';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseTargetNode } from 'Core/Nodes/BaseTargetNode';
+import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
 
 export class BaseRootNode extends BaseNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "BaseRootNode";
+  static className = 'BaseRootNode';
 
   //= =================================================
   // CONSTRUCTOR
@@ -29,7 +29,7 @@ export class BaseRootNode extends BaseNode {
 
   public constructor() {
     super();
-    this.name = "Root";
+    this.name = 'Root';
   }
 
   //= =================================================
@@ -38,8 +38,7 @@ export class BaseRootNode extends BaseNode {
 
   public get targets(): TargetTreeNode {
     const child = this.getChildByType(TargetTreeNode);
-    if (!child)
-      throw new Error(`Cannot find the ${TargetTreeNode.className}`);
+    if (!child) throw new Error(`Cannot find the ${TargetTreeNode.className}`);
     return child;
   }
 
@@ -47,19 +46,27 @@ export class BaseRootNode extends BaseNode {
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return BaseRootNode.className; }
+  public get /* override */ className(): string {
+    return BaseRootNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === BaseRootNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === BaseRootNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ canChangeColor(): boolean { return false; }
+  public /* override */ canChangeColor(): boolean {
+    return false;
+  }
 
-  public /* override */ get typeName(): string { return "Root"; }
+  public get /* override */ typeName(): string {
+    return 'Root';
+  }
 
-  protected /* override */ get activeTargetIdAccessor(): ITargetIdAccessor | null {
+  protected get /* override */ activeTargetIdAccessor(): ITargetIdAccessor | null {
     const targetNode = this.activeTarget;
     return targetNode as ITargetIdAccessor;
   }
@@ -74,7 +81,7 @@ export class BaseRootNode extends BaseNode {
   // VIRTUAL METHODS
   //= =================================================
 
-  public /* virtual */ clearData(): void { }
+  public /* virtual */ clearData(): void {}
 
   //= =================================================
   // INSTANCE METHODS
@@ -90,7 +97,11 @@ export class BaseRootNode extends BaseNode {
 
   private static _active: BaseNode | null;
 
-  public static get active(): BaseNode | null { return BaseRootNode._active; }
+  public static get active(): BaseNode | null {
+    return BaseRootNode._active;
+  }
 
-  public static set active(value: BaseNode | null) { BaseRootNode._active = value; }
+  public static set active(value: BaseNode | null) {
+    BaseRootNode._active = value;
+  }
 }

@@ -11,54 +11,71 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { CasingLogStyle } from "@/SubSurface/Wells/Styles/CasingLogStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
-import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
-import { ColorType } from "@/Core/Enums/ColorType";
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { CasingLogStyle } from 'SubSurface/Wells/Styles/CasingLogStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
+import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
+import CasingLogNodeIcon from 'images/Nodes/CasingLogNode.png';
+import { ColorType } from 'Core/Enums/ColorType';
 
 export class CasingFilterLogNode extends BaseFilterLogNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "CasingFilterLogNode";
+  static className = 'CasingFilterLogNode';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get renderStyle(): CasingLogStyle | null { return this.getRenderStyle() as CasingLogStyle; }
+  public get renderStyle(): CasingLogStyle | null {
+    return this.getRenderStyle() as CasingLogStyle;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return CasingFilterLogNode.className; }
+  public get /* override */ className(): string {
+    return CasingFilterLogNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === CasingFilterLogNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === CasingFilterLogNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Casing"; }
+  public get /* override */ typeName(): string {
+    return 'Casing';
+  }
 
-  public /* override */ getIcon(): string { return CasingLogNodeIcon; }
+  public /* override */ getIcon(): string {
+    return CasingLogNodeIcon;
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new CasingLogStyle(targetId);
   }
 
-  public /* override */ supportsColorType(colorType: ColorType, _: boolean): boolean {
+  public /* override */ supportsColorType(
+    colorType: ColorType,
+    _: boolean
+  ): boolean {
     switch (colorType) {
       case ColorType.Specified:
       case ColorType.Parent:
@@ -75,5 +92,7 @@ export class CasingFilterLogNode extends BaseFilterLogNode {
   // OVERRIDES of BaseLogNode
   //= =================================================
 
-  public /* override */ get wellLogType(): WellLogType { return WellLogType.Casing; }
+  public get /* override */ wellLogType(): WellLogType {
+    return WellLogType.Casing;
+  }
 }

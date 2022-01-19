@@ -11,31 +11,39 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
-import { Base3DView } from "@/Core/Views/Base3DView";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
-import { ViewInfo } from "@/Core/Views/ViewInfo";
+import * as THREE from 'three';
+import { Base3DView } from 'Core/Views/Base3DView';
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { ThreeTransformer } from 'Three/Utilities/ThreeTransformer';
+import { ViewInfo } from 'Core/Views/ViewInfo';
 
 export abstract class BaseThreeView extends Base3DView {
-  public static readonly noPicking = "noPicking";
+  public static readonly noPicking = 'noPicking';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  protected get camera(): THREE.Camera { return this.renderTarget.camera; }
+  protected get camera(): THREE.Camera {
+    return this.renderTarget.camera;
+  }
 
-  public get transformer(): ThreeTransformer { return this.renderTarget.transformer; }
+  public get transformer(): ThreeTransformer {
+    return this.renderTarget.transformer;
+  }
 
-  protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
+  protected get renderTarget(): ThreeRenderTargetNode {
+    return super.getTarget() as ThreeRenderTargetNode;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -60,11 +68,18 @@ export abstract class BaseThreeView extends Base3DView {
   // VIRTUAL METHODS
   //= =================================================
 
-  protected get scene(): THREE.Scene { return this.renderTarget.scene; }
+  protected get scene(): THREE.Scene {
+    return this.renderTarget.scene;
+  }
 
-  public /* virtual */ shouldPick(): boolean { return true; }
+  public /* virtual */ shouldPick(): boolean {
+    return true;
+  }
 
-  public /* virtual */ onShowInfo(_viewInfo: ViewInfo, _intersection: THREE.Intersection): void { }
+  public /* virtual */ onShowInfo(
+    _viewInfo: ViewInfo,
+    _intersection: THREE.Intersection
+  ): void {}
 
   //= =================================================
   // INSTANCE METHODS
@@ -72,8 +87,7 @@ export abstract class BaseThreeView extends Base3DView {
 
   protected invalidateTarget(): void {
     const target = this.renderTarget;
-    if (!target)
-      return;
+    if (!target) return;
 
     target.invalidate();
   }

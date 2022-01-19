@@ -11,52 +11,72 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
-import * as Color from "color";
+import * as THREE from 'three';
+import * as Color from 'color';
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { Canvas } from "@/Three/Utilities/Canvas";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
+import { Canvas } from 'Three/Utilities/Canvas';
 
 export class SpriteCreator {
   //= =================================================
   // STATIC METHODS:
   //= =================================================
 
-  public static createByPositionAndDirection(text: string, position: Vector3, tickDirection: Vector3, worldHeight: number, color: Color): THREE.Sprite | null {
+  public static createByPositionAndDirection(
+    text: string,
+    position: Vector3,
+    tickDirection: Vector3,
+    worldHeight: number,
+    color: Color
+  ): THREE.Sprite | null {
     const label = SpriteCreator.create(text, worldHeight, color);
-    if (!label)
-      return null;
+    if (!label) return null;
 
     // Align the text
-    label.position.x = position.x + tickDirection.x * label.scale.x / 2;
-    label.position.y = position.y + tickDirection.y * label.scale.y / 2;
-    label.position.z = position.z + tickDirection.z * label.scale.z / 2;
+    label.position.x = position.x + (tickDirection.x * label.scale.x) / 2;
+    label.position.y = position.y + (tickDirection.y * label.scale.y) / 2;
+    label.position.z = position.z + (tickDirection.z * label.scale.z) / 2;
     return label;
   }
 
-  public static createByPositionAndAlignment(text: string, position: Vector3, alignment: number, worldHeight: number, color: Color): THREE.Sprite | null {
+  public static createByPositionAndAlignment(
+    text: string,
+    position: Vector3,
+    alignment: number,
+    worldHeight: number,
+    color: Color
+  ): THREE.Sprite | null {
     const sprite = SpriteCreator.create(text, worldHeight, color);
-    if (!sprite)
-      return null;
+    if (!sprite) return null;
 
     ThreeConverter.copyToThreeVector3(sprite.position, position);
     SpriteCreator.align(sprite, alignment);
     return sprite;
   }
 
-  public static create(text: string, worldHeight: number, color: Color): THREE.Sprite | null {
+  public static create(
+    text: string,
+    worldHeight: number,
+    color: Color
+  ): THREE.Sprite | null {
     const canvas = SpriteCreator.createCanvasWithText(text, color);
-    if (!canvas)
-      return null;
+    if (!canvas) return null;
     return SpriteCreator.createSprite(canvas, worldHeight);
   }
 
-  public static createSprite(canvas: HTMLCanvasElement, worldHeight: number): THREE.Sprite {
+  public static createSprite(
+    canvas: HTMLCanvasElement,
+    worldHeight: number
+  ): THREE.Sprite {
     const texture = SpriteCreator.createTexture(canvas);
     const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(worldHeight * canvas.width / canvas.height, worldHeight, 1);
+    sprite.scale.set(
+      (worldHeight * canvas.width) / canvas.height,
+      worldHeight,
+      1
+    );
     return sprite;
   }
 
@@ -72,23 +92,25 @@ export class SpriteCreator {
     return texture;
   }
 
-  public static createCanvasWithText(text: string, color: Color): HTMLCanvasElement | null {
+  public static createCanvasWithText(
+    text: string,
+    color: Color
+  ): HTMLCanvasElement | null {
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = 2;
     const fontSize = 40;
     const font = Canvas.getNormalFont(fontSize);
 
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    if (!context)
-      return null;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) return null;
 
     // measure how long the name will be
     context.font = font;
     const textWidth = context.measureText(text).width;
 
     const doubleBorderSize = borderSize * 2;
-    const width = (textWidth + 2 * doubleBorderSize);
+    const width = textWidth + 2 * doubleBorderSize;
     const height = fontSize + doubleBorderSize;
 
     canvas.width = width;
@@ -96,8 +118,8 @@ export class SpriteCreator {
 
     // need to set font again after resizing canvas
     context.font = font;
-    context.textBaseline = "middle";
-    context.textAlign = "center";
+    context.textBaseline = 'middle';
+    context.textAlign = 'center';
 
     // context.fillStyle = 'red';
     // context.fillRect(0, 0, width, height);

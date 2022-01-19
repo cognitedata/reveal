@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Shape } from "@/Core/Geometry/Shape";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Shape } from 'Core/Geometry/Shape';
 
 export class Points extends Shape {
   //= =================================================
@@ -22,13 +22,17 @@ export class Points extends Shape {
 
   public list: Vector3[] = [];
 
-  public get length(): number { return this.list.length; }
+  public get length(): number {
+    return this.list.length;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Shape:
@@ -40,9 +44,8 @@ export class Points extends Shape {
     return result;
   }
 
-  public/* override */ expandBoundingBox(boundingBox: Range3): void {
-    for (const point of this.list)
-      boundingBox.add(point);
+  public /* override */ expandBoundingBox(boundingBox: Range3): void {
+    for (const point of this.list) boundingBox.add(point);
   }
 
   //= =================================================
@@ -51,8 +54,7 @@ export class Points extends Shape {
 
   public getSum(): Vector3 {
     const sum = Vector3.newZero;
-    for (const point of this.list)
-      sum.add(point);
+    for (const point of this.list) sum.add(point);
     return sum;
   }
 
@@ -71,15 +73,22 @@ export class Points extends Shape {
   // INSTANCE METHODS: Operations
   //= =================================================
 
-  public add(point: Vector3): void { this.list.push(point); }
+  public add(point: Vector3): void {
+    this.list.push(point);
+  }
 
-  public clear(): void { this.list.splice(0, this.list.length); }
+  public clear(): void {
+    this.list.splice(0, this.list.length);
+  }
 
   //= =================================================
   // STATIC METHODS:
   //= =================================================
 
-  public static createByRandom(pointCount: number, boundingBox: Range3): Points {
+  public static createByRandom(
+    pointCount: number,
+    boundingBox: Range3
+  ): Points {
     const result = new Points();
     for (let i = 0; i < pointCount; i++)
       result.add(Vector3.getRandom(boundingBox));

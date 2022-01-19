@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import cloneDeep from "lodash/cloneDeep";
+import cloneDeep from 'lodash/cloneDeep';
 
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { TargetId } from 'Core/Primitives/TargetId';
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { BaseStyle } from 'Core/Styles/BaseStyle';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class PotreeRenderStyle extends BaseRenderStyle {
   //= =================================================
@@ -29,13 +29,17 @@ export class PotreeRenderStyle extends BaseRenderStyle {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(targetId: TargetId) { super(targetId); }
+  public constructor(targetId: TargetId) {
+    super(targetId);
+  }
 
   //= =================================================
   // OVERRIDES of BaseStyle
   //= =================================================
 
-  public /* override */ clone(): BaseStyle { return cloneDeep<PotreeRenderStyle>(this); }
+  public /* override */ clone(): BaseStyle {
+    return cloneDeep<PotreeRenderStyle>(this);
+  }
 
-  protected /* override */ populateCore(_folder: BasePropertyFolder) { }
+  protected /* override */ populateCore(_folder: BasePropertyFolder) {}
 }

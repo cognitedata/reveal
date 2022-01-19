@@ -1,15 +1,19 @@
-import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
-import { getFulfilledTrace, getLineRange, traceRejected } from "@/__tests__/SubSurface/Seismic/mock";
-import { Index3 } from "@/Core/Geometry/Index3";
-import { MockCogniteSeismicClient } from '@/__tests__/utils';
-import {Vector3} from "@/Core/Geometry/Vector3";
-import {Index2} from "@/Core/Geometry/Index2";
+import { SeismicCube } from 'SubSurface/Seismic/Data/SeismicCube';
+import {
+  getFulfilledTrace,
+  getLineRange,
+  traceRejected,
+} from '__tests__/SubSurface/Seismic/mock';
+import { Index3 } from 'Core/Geometry/Index3';
+import { MockCogniteSeismicClient } from '__tests__/utils';
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Index2 } from 'Core/Geometry/Index2';
 
 const size = new Index3(10, 10, 10);
-const origin = new Vector3(1,1,1);
-const inc = new Vector3(1,1,1);
+const origin = new Vector3(1, 1, 1);
+const inc = new Vector3(1, 1, 1);
 const fileId = 'id';
-const seismicClient = new MockCogniteSeismicClient({api_url: 'test'});
+const seismicClient = new MockCogniteSeismicClient({ api_url: 'test' });
 let cube: SeismicCube;
 
 describe('Seismic Cube', () => {
@@ -46,10 +50,12 @@ describe('Seismic Cube', () => {
       .mockRejectedValueOnce(traceRejected)
       .mockRejectedValueOnce(traceRejected)
       .mockRejectedValueOnce(traceRejected)
-      .mockRejectedValueOnce(traceRejected)
+      .mockRejectedValueOnce(traceRejected);
     const loadedCube = await SeismicCube.loadCube(seismicClient, fileId);
 
-    expect(loadedCube!.nodeSize).toEqual(new Index3(i + 1, j + 1, traceLength + 1));
+    expect(loadedCube!.nodeSize).toEqual(
+      new Index3(i + 1, j + 1, traceLength + 1)
+    );
   });
   test('should call getTrace', async () => {
     cube.fileId = 'id';
@@ -57,7 +63,11 @@ describe('Seismic Cube', () => {
     cube.loadTrace(new Index2(1, 1));
 
     expect(seismicClient.volume.getTrace).toHaveBeenCalledTimes(1);
-    expect(seismicClient.volume.getTrace).toHaveBeenCalledWith({id: fileId}, 1, 1);
+    expect(seismicClient.volume.getTrace).toHaveBeenCalledWith(
+      { id: fileId },
+      1,
+      1
+    );
   });
   test('should ignore getTrace call in case of fileId or client is not provided', async () => {
     const trace = await cube.loadTrace(new Index2(1, 1));

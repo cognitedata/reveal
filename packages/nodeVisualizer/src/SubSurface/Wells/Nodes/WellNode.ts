@@ -11,17 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import WellNodeIcon from "@images/Nodes/WellNode.png";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import WellNodeIcon from 'images/Nodes/WellNode.png';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class WellNode extends BaseNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "WellNode";
+  static className = 'WellNode';
 
   //= =================================================
   // INSTANCE FIELDS
@@ -31,35 +31,49 @@ export class WellNode extends BaseNode {
 
   public waterDepth = 0;
 
-  public elevationType: string = "";
+  public elevationType: string = '';
 
-  public get origin(): Vector3 { return new Vector3(this.wellHead.x, this.wellHead.y, 0); }
+  public get origin(): Vector3 {
+    return new Vector3(this.wellHead.x, this.wellHead.y, 0);
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return WellNode.className; }
+  public get /* override */ className(): string {
+    return WellNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === WellNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === WellNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Well"; }
+  public get /* override */ typeName(): string {
+    return 'Well';
+  }
 
-  public /* override */ getIcon(): string { return WellNodeIcon; }
+  public /* override */ getIcon(): string {
+    return WellNodeIcon;
+  }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
-    folder.addReadOnlyVector2("Wellhead", this.wellHead, 2);
-    folder.addReadOnlyInteger("# Trajectories", this.children.length);
+    folder.addReadOnlyVector2('Wellhead', this.wellHead, 2);
+    folder.addReadOnlyInteger('# Trajectories', this.children.length);
   }
 }

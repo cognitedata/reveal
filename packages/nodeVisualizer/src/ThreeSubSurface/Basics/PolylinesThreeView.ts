@@ -11,33 +11,39 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
+import * as THREE from 'three';
 
-import { Colors } from "@/Core/Primitives/Colors";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { ColorType } from "@/Core/Enums/ColorType";
+import { Colors } from 'Core/Primitives/Colors';
+import { Range3 } from 'Core/Geometry/Range3';
+import { ColorType } from 'Core/Enums/ColorType';
 
-import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
-import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { PointsThreeView } from "@/ThreeSubSurface/Basics/PointsThreeView";
+import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
+import { PolylinesRenderStyle } from 'SubSurface/Basics/PolylinesRenderStyle';
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
+import { PointsThreeView } from 'ThreeSubSurface/Basics/PointsThreeView';
 
 export class PolylinesThreeView extends BaseGroupThreeView {
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }
+  protected get node(): PolylinesNode {
+    return super.getNode() as PolylinesNode;
+  }
 
-  protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
+  protected get style(): PolylinesRenderStyle {
+    return super.getStyle() as PolylinesRenderStyle;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -51,7 +57,9 @@ export class PolylinesThreeView extends BaseGroupThreeView {
   // OVERRIDES of Base3DView
   //= =================================================
 
-  public /* override */ calculateBoundingBoxCore(): Range3 | undefined { return this.node.boundingBox; }
+  public /* override */ calculateBoundingBoxCore(): Range3 | undefined {
+    return this.node.boundingBox;
+  }
 
   //= =================================================
   // OVERRIDES of BaseGroupThreeView
@@ -62,8 +70,7 @@ export class PolylinesThreeView extends BaseGroupThreeView {
     const { style } = this;
 
     const { polylines } = node;
-    if (!polylines)
-      throw Error("polylines is missing in view");
+    if (!polylines) throw Error('polylines is missing in view');
 
     let color = node.getColor();
     const { colorType } = style;
@@ -72,11 +79,17 @@ export class PolylinesThreeView extends BaseGroupThreeView {
     const { transformer } = this;
 
     for (const polyline of polylines.list) {
-      const geometry = PointsThreeView.createBufferGeometry(polyline, transformer);
+      const geometry = PointsThreeView.createBufferGeometry(
+        polyline,
+        transformer
+      );
       if (colorType === ColorType.Different)
         color = Colors.getNextColor(group.children.length);
 
-      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(color), linewidth: style.lineWidth });
+      const material = new THREE.LineBasicMaterial({
+        color: ThreeConverter.toThreeColor(color),
+        linewidth: style.lineWidth,
+      });
       const line = new THREE.Line(geometry, material);
       group.add(line);
     }

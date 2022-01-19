@@ -1,8 +1,8 @@
-import isNumber from "lodash/isNumber";
-import startCase from "lodash/startCase";
-import { BaseProperty } from "@/Core/Property/Base/BaseProperty";
-import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
-import { IPropertyExtraOptionDataParams } from "@/Core/Property/Base/IPropertyExtraOptionDataParms";
+import isNumber from 'lodash/isNumber';
+import startCase from 'lodash/startCase';
+import { BaseProperty } from 'Core/Property/Base/BaseProperty';
+import { IPropertyParams } from 'Core/Property/Base/IPropertyParams';
+import { IPropertyExtraOptionDataParams } from 'Core/Property/Base/IPropertyExtraOptionDataParms';
 
 //= =================================================
 // TYPES AND DELEGATES
@@ -33,19 +33,33 @@ export abstract class ValueProperty<T> extends BaseProperty {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get isValueEnabled(): boolean { return this.use && this.isEnabled; }
+  public get isValueEnabled(): boolean {
+    return this.use && this.isEnabled;
+  }
 
-  public get isEnabled(): boolean { return this._isEnabledDelegate === undefined || this._isEnabledDelegate(); }
+  public get isEnabled(): boolean {
+    return this._isEnabledDelegate === undefined || this._isEnabledDelegate();
+  }
 
-  public get hasOptions(): boolean { return this._options !== undefined; }
+  public get hasOptions(): boolean {
+    return this._options !== undefined;
+  }
 
-  public get options(): T | T[] | undefined { return this._options; }
+  public get options(): T | T[] | undefined {
+    return this._options;
+  }
 
-  public set options(value: T | T[] | undefined) { this._options = value; }
+  public set options(value: T | T[] | undefined) {
+    this._options = value;
+  }
 
-  public get useName(): string { return `use${this.name.charAt(0).toUpperCase()}${this.name.substring(1)}`; }
+  public get useName(): string {
+    return `use${this.name.charAt(0).toUpperCase()}${this.name.substring(1)}`;
+  }
 
-  public get isOptional(): boolean { return this._use !== undefined; }
+  public get isOptional(): boolean {
+    return this._use !== undefined;
+  }
 
   //= =================================================
   // INSTANCE DELEGATES
@@ -55,19 +69,31 @@ export abstract class ValueProperty<T> extends BaseProperty {
 
   private _isEnabledDelegate?: IsEnabled;
 
-  private _optionValidationDelegate?: ValidateOption
+  private _optionValidationDelegate?: ValidateOption;
 
-  public get applyDelegate(): StringAction | undefined { return this._applyDelegate; }
+  public get applyDelegate(): StringAction | undefined {
+    return this._applyDelegate;
+  }
 
-  public set applyDelegate(value: StringAction | undefined) { this._applyDelegate = value; }
+  public set applyDelegate(value: StringAction | undefined) {
+    this._applyDelegate = value;
+  }
 
-  public get isEnabledDelegate(): IsEnabled | undefined { return this._isEnabledDelegate; }
+  public get isEnabledDelegate(): IsEnabled | undefined {
+    return this._isEnabledDelegate;
+  }
 
-  public set isEnabledDelegate(value: IsEnabled | undefined) { this._isEnabledDelegate = value; }
+  public set isEnabledDelegate(value: IsEnabled | undefined) {
+    this._isEnabledDelegate = value;
+  }
 
-  public get optionValidationDelegate(): ValidateOption | undefined { return this._optionValidationDelegate; }
+  public get optionValidationDelegate(): ValidateOption | undefined {
+    return this._optionValidationDelegate;
+  }
 
-  public set optionValidationDelegate(value: ValidateOption | undefined) { this._optionValidationDelegate = value; }
+  public set optionValidationDelegate(value: ValidateOption | undefined) {
+    this._optionValidationDelegate = value;
+  }
 
   //= =================================================
   // CONSTRUCTOR
@@ -85,22 +111,22 @@ export abstract class ValueProperty<T> extends BaseProperty {
     // Set the value
     if (params.instance) {
       if (params.value !== undefined)
-        throw Error("Property has both value and instance");
+        throw Error('Property has both value and instance');
 
       if (!Reflect.has(params.instance, this.name)) {
         this.displayName = `NOT_FOUND ${this.name}`;
         return;
       }
-      if (Reflect.has(params.instance, this.useName))
-        this._use = true; // just set it either true or false
+      if (Reflect.has(params.instance, this.useName)) this._use = true; // just set it either true or false
 
       this._instance = params.instance;
-      this.displayName = this.name.charAt(0).toUpperCase() + startCase(this.name).substring(1).toLowerCase();
+      this.displayName =
+        this.name.charAt(0).toUpperCase() +
+        startCase(this.name).substring(1).toLowerCase();
     } else if (params.value !== undefined) {
       this._value = params.value;
       this._use = params.use;
-    } else
-      throw Error("Property has no value or instance");
+    } else throw Error('Property has no value or instance');
   }
 
   //= =================================================
@@ -118,49 +144,38 @@ export abstract class ValueProperty<T> extends BaseProperty {
   //= =================================================
 
   public get value(): T {
-    if (!this._instance)
-      return this._value as T;
+    if (!this._instance) return this._value as T;
     return Reflect.get(this._instance, this.name) as T;
   }
 
   public set value(value: T) {
-    if (this.isReadOnly)
-      throw Error("Cannot set to a readonly property");
+    if (this.isReadOnly) throw Error('Cannot set to a readonly property');
 
-    if (this.value === value)
-      return; // not changed
+    if (this.value === value) return; // not changed
 
-    if (!this._instance)
-      this._value = value as T;
-    else
-      Reflect.set(this._instance, this.name, value);
+    if (!this._instance) this._value = value as T;
+    else Reflect.set(this._instance, this.name, value);
     this.apply();
   }
 
   public get use(): boolean {
-    if (this._use === undefined)
-      return true;
+    if (this._use === undefined) return true;
 
-    if (!this._instance)
-      return this._use;
+    if (!this._instance) return this._use;
 
     return Reflect.get(this._instance, this.useName) as boolean;
   }
 
   public set use(value: boolean) {
-    if (this.isReadOnly)
-      throw Error("Cannot set use on a readonly property");
+    if (this.isReadOnly) throw Error('Cannot set use on a readonly property');
 
     if (this._use === undefined)
-      throw Error("Cannot set use, it is not optional");
+      throw Error('Cannot set use, it is not optional');
 
-    if (this.use === value)
-      return; // not changed
+    if (this.use === value) return; // not changed
 
-    if (!this._instance)
-      this._use = value;
-    else
-      Reflect.set(this._instance, this.useName, value);
+    if (!this._instance) this._use = value;
+    else Reflect.set(this._instance, this.useName, value);
     this.apply();
   }
 
@@ -168,20 +183,24 @@ export abstract class ValueProperty<T> extends BaseProperty {
   // INSTANCE METHODS
   //= =================================================
 
-  public /* virtual */ extraOptionsData(): IPropertyExtraOptionDataParams[] | null { return null; };
+  public /* virtual */ extraOptionsData():
+    | IPropertyExtraOptionDataParams[]
+    | null {
+    return null;
+  }
 
   private apply(): void {
-    if (this._applyDelegate)
-      this._applyDelegate(this.name);
+    if (this._applyDelegate) this._applyDelegate(this.name);
   }
 
   public getExpandedOptions<K extends keyof T>(): T[] | [K, T[K]][] | [] {
     let opt: T[] | [K, T[K]][] = [];
-    const validateOption = (val: T[K] | T): boolean => (this.optionValidationDelegate ? this.optionValidationDelegate(val) : true);
+    const validateOption = (val: T[K] | T): boolean =>
+      this.optionValidationDelegate ? this.optionValidationDelegate(val) : true;
 
     if (this._options) {
-      if ("length" in this._options)
-        opt = this._options.filter(val => validateOption(val));
+      if ('length' in this._options)
+        opt = this._options.filter((val) => validateOption(val));
       else {
         const optionsTuple: [K, T[K]][] = [];
         for (const enumKey of Object.keys(this._options) as K[]) {
@@ -189,7 +208,9 @@ export abstract class ValueProperty<T> extends BaseProperty {
           if (isNumber(this._options[enumKey]))
             optionsTuple.push([enumKey, this._options[enumKey]]);
         }
-        opt = optionsTuple.filter(val => validateOption(val[ExpandedOption.Value]));
+        opt = optionsTuple.filter((val) =>
+          validateOption(val[ExpandedOption.Value])
+        );
       }
     }
     return opt;
@@ -199,5 +220,7 @@ export abstract class ValueProperty<T> extends BaseProperty {
   // VIRTUAL METHODS
   //= =================================================
 
-  public /* virtual */ getOptionIcon(_option: T): string { return ""; }
+  public /* virtual */ getOptionIcon(_option: T): string {
+    return '';
+  }
 }

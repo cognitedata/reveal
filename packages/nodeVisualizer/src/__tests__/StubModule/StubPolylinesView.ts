@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
-import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
-import { Base3DView } from "@/Core/Views/Base3DView";
+import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
+import { PolylinesRenderStyle } from 'SubSurface/Basics/PolylinesRenderStyle';
+import { Base3DView } from 'Core/Views/Base3DView';
 
-import { StubTargetNode } from "@/__tests__/StubModule/StubTargetNode";
+import { StubTargetNode } from '__tests__/StubModule/StubTargetNode';
 
 export class StubPolylinesView extends Base3DView {
   //= =================================================
@@ -23,24 +23,24 @@ export class StubPolylinesView extends Base3DView {
   //= =================================================
 
   public constructor() {
- super();
-}
+    super();
+  }
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
   protected get node(): PolylinesNode {
- return super.getNode() as PolylinesNode;
-}
+    return super.getNode() as PolylinesNode;
+  }
 
   protected get style(): PolylinesRenderStyle {
- return super.getStyle() as PolylinesRenderStyle;
-}
+    return super.getStyle() as PolylinesRenderStyle;
+  }
 
   protected get target(): StubTargetNode {
- return super.getTarget() as StubTargetNode;
-}
+    return super.getTarget() as StubTargetNode;
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -48,33 +48,25 @@ export class StubPolylinesView extends Base3DView {
 
   protected /* override */ initializeCore(): void {
     const { node } = this;
-    if (!node)
-      throw Error("The node is not set");
+    if (!node) throw Error('The node is not set');
 
     const { style } = this;
-    if (!style)
-      throw Error("The style is not set");
+    if (!style) throw Error('The style is not set');
 
     const { target } = this;
-    if (!target)
-      throw Error("The target is not set");
+    if (!target) throw Error('The target is not set');
 
-    if (!target.isInitialized)
-      throw Error("The target is not initialized");
+    if (!target.isInitialized) throw Error('The target is not initialized');
 
-    if (!node.isInitialized)
-      throw Error("The node is not initialized");
+    if (!node.isInitialized) throw Error('The node is not initialized');
 
     const { polylines } = node;
-    if (!polylines)
-      throw Error("The polylines is missing in view");
+    if (!polylines) throw Error('The polylines is missing in view');
 
     let count = 0;
     for (const polyline of polylines.list)
-      for (const _ of polyline.list)
-        count += 1;
+      for (const _ of polyline.list) count += 1;
 
-    if (count === 0)
-      throw Error("No data in the polylines");
+    if (count === 0) throw Error('No data in the polylines');
   }
 }

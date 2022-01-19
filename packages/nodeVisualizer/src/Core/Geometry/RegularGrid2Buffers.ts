@@ -11,9 +11,9 @@
 // Copyright (c) Cognite aS. all rights reserved.
 //= ====================================================================================
 
-import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
-import { TrianglesBuffers } from "@/Core/Geometry/TrianglesBuffers";
-import { Vector3 } from "@/Core/Geometry/Vector3";
+import { RegularGrid2 } from 'Core/Geometry/RegularGrid2';
+import { TrianglesBuffers } from 'Core/Geometry/TrianglesBuffers';
+import { Vector3 } from 'Core/Geometry/Vector3';
 
 export class RegularGrid2Buffers extends TrianglesBuffers {
   //= =================================================
@@ -21,7 +21,8 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
   //= =================================================
 
   public constructor(grid: RegularGrid2, makeUvs: boolean) {
-    const [uniqueIndexes, numUniqueIndex] = RegularGrid2Buffers.createUniqueIndexes(grid);
+    const [uniqueIndexes, numUniqueIndex] =
+      RegularGrid2Buffers.createUniqueIndexes(grid);
     super(numUniqueIndex, makeUvs);
     this.makeBuffers(grid, uniqueIndexes);
     this.makeTriangleIndexes(grid, uniqueIndexes);
@@ -41,11 +42,9 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
       for (let i = grid.nodeSize.i - 1; i >= 0; i--) {
         const nodeIndex = grid.getNodeIndex(i, j);
         const uniqueIndex = uniqueIndexes[nodeIndex];
-        if (uniqueIndex < 0)
-          continue;
+        if (uniqueIndex < 0) continue;
 
-        if (!grid.getRelativeNodePosition(i, j, position))
-          continue;
+        if (!grid.getRelativeNodePosition(i, j, position)) continue;
 
         grid.getNormal(i, j, position.z, false, normal);
         const u = zRange.getFraction(position.z);
@@ -54,7 +53,10 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
     }
   }
 
-  private makeTriangleIndexes(grid: RegularGrid2, uniqueIndexes: number[]): void {
+  private makeTriangleIndexes(
+    grid: RegularGrid2,
+    uniqueIndexes: number[]
+  ): void {
     // Generate the triangle indices
     // Should be strip, but could not get it to work
     for (let i = 0; i < grid.nodeSize.i - 1; i++) {
@@ -70,13 +72,12 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
         const unique3 = uniqueIndexes[nodeIndex3];
 
         let triangleCount = 0;
-        if (unique0 >= 0)  triangleCount += 1;
-        if (unique1 >= 0)  triangleCount += 1;
-        if (unique2 >= 0)  triangleCount += 1;
-        if (unique3 >= 0)  triangleCount += 1;
+        if (unique0 >= 0) triangleCount += 1;
+        if (unique1 >= 0) triangleCount += 1;
+        if (unique2 >= 0) triangleCount += 1;
+        if (unique3 >= 0) triangleCount += 1;
 
-        if (triangleCount < 3)
-          continue;
+        if (triangleCount < 3) continue;
 
         // (i,j+1)     (i+1,j+1)
         //     3------2
@@ -84,12 +85,10 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
         //     0------1
         // (i,j)       (i+1,j)
 
-        if (unique0 < 0)
-          this.addTriangle(unique1, unique2, unique3);
+        if (unique0 < 0) this.addTriangle(unique1, unique2, unique3);
         if (triangleCount === 4 || unique1 < 0)
           this.addTriangle(unique0, unique2, unique3);
-        if (unique2 < 0)
-          this.addTriangle(unique0, unique1, unique3);
+        if (unique2 < 0) this.addTriangle(unique0, unique1, unique3);
         if (triangleCount === 4 || unique3 < 0)
           this.addTriangle(unique0, unique1, unique2);
       }
@@ -105,8 +104,7 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
         if (grid.isNodeDef(i, j)) {
           uniqueIndexes[nodeIndex] = numUniqueIndex;
           numUniqueIndex += 1;
-        } else
-          uniqueIndexes[nodeIndex] = -1;
+        } else uniqueIndexes[nodeIndex] = -1;
       }
     }
     return [uniqueIndexes, numUniqueIndex];

@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseView } from "@/Core/Views/BaseView";
-import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseView } from 'Core/Views/BaseView';
+import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
 
 export interface ITarget extends ITargetIdAccessor {
   canShowView(node: BaseNode): boolean;

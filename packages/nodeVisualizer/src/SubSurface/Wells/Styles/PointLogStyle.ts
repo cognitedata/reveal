@@ -11,38 +11,53 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import cloneDeep from "lodash/cloneDeep";
+import cloneDeep from 'lodash/cloneDeep';
 
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { ColorType } from "@/Core/Enums/ColorType";
-import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
-import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
+import { TargetId } from 'Core/Primitives/TargetId';
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { ColorType } from 'Core/Enums/ColorType';
+import { BaseStyle } from 'Core/Styles/BaseStyle';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { NumberProperty } from 'Core/Property/Concrete/Property/NumberProperty';
+import { ColorTypeProperty } from 'Core/Property/Concrete/Property/ColorTypeProperty';
 
 export class PointLogStyle extends BaseRenderStyle {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
+  public colorType = new ColorTypeProperty({
+    name: 'Color Type',
+    value: ColorType.Specified,
+  });
 
-  public radius = new NumberProperty({ name: "Radius", value: 20, options: [10, 20, 25, 30, 50, 75, 100, 200] });
+  public radius = new NumberProperty({
+    name: 'Radius',
+    value: 20,
+    options: [10, 20, 25, 30, 50, 75, 100, 200],
+  });
 
-  public fontSize = new NumberProperty({ name: "Font Size", value: 20, options: BaseRenderStyle.fontSizeOptions });
+  public fontSize = new NumberProperty({
+    name: 'Font Size',
+    value: 20,
+    options: BaseRenderStyle.fontSizeOptions,
+  });
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(targetId: TargetId) { super(targetId); }
+  public constructor(targetId: TargetId) {
+    super(targetId);
+  }
 
   //= =================================================
   // OVERRIDES of BaseStyle
   //= =================================================
 
-  public /* override */ clone(): BaseStyle { return cloneDeep<PointLogStyle>(this); }
+  public /* override */ clone(): BaseStyle {
+    return cloneDeep<PointLogStyle>(this);
+  }
 
   protected /* override */ populateCore(folder: BasePropertyFolder) {
     super.populateCore(folder);

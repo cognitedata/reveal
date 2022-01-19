@@ -1,8 +1,7 @@
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { BaseCommand } from "@/Core/Commands/BaseCommand";
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { BaseCommand } from 'Core/Commands/BaseCommand';
 
 export abstract class ThreeRenderTargetCommand extends BaseCommand {
-
   public target: null | ThreeRenderTargetNode = null; // Get the node to invoke the command on
 
   //= =================================================
@@ -18,7 +17,11 @@ export abstract class ThreeRenderTargetCommand extends BaseCommand {
   // OVERRIDES of BaseCommand
   //= =================================================
 
-  public /* override */ isEnabled(): boolean { return this.target != null; }
+  public /* override */ isEnabled(): boolean {
+    return this.target != null;
+  }
 
-  public /* override */ get isChecked(): boolean { return false; }
+  public get /* override */ isChecked(): boolean {
+    return false;
+  }
 }

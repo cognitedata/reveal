@@ -11,20 +11,26 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Random } from "@/Core/Primitives/Random";
-import { Ma } from "@/Core/Primitives/Ma";
+import { Range3 } from 'Core/Geometry/Range3';
+import { Random } from 'Core/Primitives/Random';
+import { Ma } from 'Core/Primitives/Ma';
 
 export class Vector3 {
   //= =================================================
   // STATIC PROPERTIES
   //= =================================================
 
-  public static get newUp(): Vector3 { return new Vector3(0, 0, 1); }
+  public static get newUp(): Vector3 {
+    return new Vector3(0, 0, 1);
+  }
 
-  public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
+  public static get newZero(): Vector3 {
+    return new Vector3(0, 0, 0);
+  }
 
-  public static get newEmpty(): Vector3 { return new Vector3(Number.NaN, Number.NaN, Number.NaN); }
+  public static get newEmpty(): Vector3 {
+    return new Vector3(Number.NaN, Number.NaN, Number.NaN);
+  }
 
   //= =================================================
   // INSTANCE FIELDS
@@ -40,23 +46,41 @@ export class Vector3 {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get isEmpty(): boolean { return Number.isNaN(this.x) || Number.isNaN(this.y) || Number.isNaN(this.z); }
+  public get isEmpty(): boolean {
+    return Number.isNaN(this.x) || Number.isNaN(this.y) || Number.isNaN(this.z);
+  }
 
-  public get isZero(): boolean { return this.x === 0 || this.y === 0 || this.z === 0; }
+  public get isZero(): boolean {
+    return this.x === 0 || this.y === 0 || this.z === 0;
+  }
 
-  public get squareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
+  public get squareLength(): number {
+    return this.x * this.x + this.y * this.y + this.z * this.z;
+  }
 
-  public get length(): number { return Math.sqrt(this.squareLength); }
+  public get length(): number {
+    return Math.sqrt(this.squareLength);
+  }
 
-  public get angle(): number { return Math.atan2(this.y, this.x); }
+  public get angle(): number {
+    return Math.atan2(this.y, this.x);
+  }
 
-  public get minCoord(): number { return Math.min(this.x, this.y, this.z); }
+  public get minCoord(): number {
+    return Math.min(this.x, this.y, this.z);
+  }
 
-  public get maxCoord(): number { return Math.max(this.x, this.y, this.z); }
+  public get maxCoord(): number {
+    return Math.max(this.x, this.y, this.z);
+  }
 
-  public get absMinCoord(): number { return Math.min(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z)); }
+  public get absMinCoord(): number {
+    return Math.min(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
+  }
 
-  public get absMaxCoord(): number { return Math.max(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z)); }
+  public get absMaxCoord(): number {
+    return Math.max(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
+  }
 
   public get absMinDimension(): number {
     let result = 0;
@@ -96,36 +120,64 @@ export class Vector3 {
   // INSTANCE METHODS: Requests
   //= =================================================
 
-  public equals(other: Vector3): boolean { return this.x === other.x && this.y === other.y && this.z === other.z; }
+  public equals(other: Vector3): boolean {
+    return this.x === other.x && this.y === other.y && this.z === other.z;
+  }
 
   //= =================================================
   // INSTANCE METHODS: Getters
   //= =================================================
 
-  public toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
+  public toString(): string {
+    return `(${this.x}, ${this.y}, ${this.z})`;
+  }
 
-  public getString(decimals: number): string { return `(${this.x.toFixed(decimals)}, ${this.y.toFixed(decimals)}, ${this.z.toFixed(decimals)})`; }
+  public getString(decimals: number): string {
+    return `(${this.x.toFixed(decimals)}, ${this.y.toFixed(
+      decimals
+    )}, ${this.z.toFixed(decimals)})`;
+  }
 
-  public squareDistance(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y) + Ma.square(this.z - other.z); }
+  public squareDistance(other: Vector3): number {
+    return (
+      Ma.square(this.x - other.x) +
+      Ma.square(this.y - other.y) +
+      Ma.square(this.z - other.z)
+    );
+  }
 
-  public squareDistance2(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y); }
+  public squareDistance2(other: Vector3): number {
+    return Ma.square(this.x - other.x) + Ma.square(this.y - other.y);
+  }
 
-  public distance(other: Vector3): number { return Math.sqrt(this.squareDistance(other)); }
+  public distance(other: Vector3): number {
+    return Math.sqrt(this.squareDistance(other));
+  }
 
-  public distance2(other: Vector3): number { return Math.sqrt(this.squareDistance2(other)); }
+  public distance2(other: Vector3): number {
+    return Math.sqrt(this.squareDistance2(other));
+  }
 
   public getAt(dimension: number): number {
     switch (dimension) {
-      case 0: return this.x;
-      case 1: return this.y;
-      case 2: return this.z;
-      default: return Number.NaN;
+      case 0:
+        return this.x;
+      case 1:
+        return this.y;
+      case 2:
+        return this.z;
+      default:
+        return Number.NaN;
     }
   }
 
-  public getDot(other: Vector3): number { return this.x * other.x + this.y * other.y + this.z * other.z; }
+  public getDot(other: Vector3): number {
+    return this.x * other.x + this.y * other.y + this.z * other.z;
+  }
 
-  public getCross2(other: Vector3): number { return this.x * other.y - this.y * other.x; }
+  public getCross2(other: Vector3): number {
+    return this.x * other.y - this.y * other.x;
+  }
 
   public getCross(other: Vector3): Vector3 {
     return new Vector3(
@@ -147,9 +199,15 @@ export class Vector3 {
 
   public setAt(dimension: number, value: number): void {
     switch (dimension) {
-      case 0: this.x = value; break;
-      case 1: this.y = value; break;
-      case 2: this.z = value; break;
+      case 0:
+        this.x = value;
+        break;
+      case 1:
+        this.y = value;
+        break;
+      case 2:
+        this.z = value;
+        break;
     }
   }
 
@@ -177,8 +235,7 @@ export class Vector3 {
 
   public normalize(): boolean {
     const { length } = this;
-    if (length < Number.EPSILON)
-      return false;
+    if (length < Number.EPSILON) return false;
 
     this.divideScalar(length);
     return true;
@@ -277,19 +334,27 @@ export class Vector3 {
 
   public static getAxis(dimension: number): Vector3 {
     switch (dimension) {
-      case 0: return new Vector3(1, 0, 0);
-      case 1: return new Vector3(0, 1, 0);
-      case 2: return new Vector3(0, 0, 1);
-      default: return Vector3.newEmpty;
+      case 0:
+        return new Vector3(1, 0, 0);
+      case 1:
+        return new Vector3(0, 1, 0);
+      case 2:
+        return new Vector3(0, 0, 1);
+      default:
+        return Vector3.newEmpty;
     }
   }
 
   public static getAxisName(dimension: number): string {
     switch (dimension) {
-      case 0: return "X";
-      case 1: return "Y";
-      case 2: return "Z";
-      default: return "Undefined";
+      case 0:
+        return 'X';
+      case 1:
+        return 'Y';
+      case 2:
+        return 'Z';
+      default:
+        return 'Undefined';
     }
   }
 
@@ -303,12 +368,23 @@ export class Vector3 {
   }
 
   // Return = (A + B + C + D) / 4
-  public static getCenterOf4(a: Vector3, b: Vector3, c: Vector3, d: Vector3): Vector3 {
-    return new Vector3((a.x + b.x + c.x + d.x) / 4, (a.y + b.y + c.y + d.y) / 4, (a.z + b.z + c.z + d.z) / 4);
+  public static getCenterOf4(
+    a: Vector3,
+    b: Vector3,
+    c: Vector3,
+    d: Vector3
+  ): Vector3 {
+    return new Vector3(
+      (a.x + b.x + c.x + d.x) / 4,
+      (a.y + b.y + c.y + d.y) / 4,
+      (a.z + b.z + c.z + d.z) / 4
+    );
   }
 
   // Return = A + B * fb
-  public static addWithFactor(a: Vector3, b: Vector3, fb: number): Vector3 { return new Vector3(a.x + b.x * fb, a.y + b.y * fb, a.z + b.z * fb); }
+  public static addWithFactor(a: Vector3, b: Vector3, fb: number): Vector3 {
+    return new Vector3(a.x + b.x * fb, a.y + b.y * fb, a.z + b.z * fb);
+  }
 
   // Return = A - B
   public static substract(a: Vector3, b: Vector3): Vector3 {

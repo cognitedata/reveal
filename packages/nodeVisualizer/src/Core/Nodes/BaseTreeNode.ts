@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseNode } from 'Core/Nodes/BaseNode';
 
 export abstract class BaseTreeNode extends BaseNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "BaseTreeNode";
+  static className = 'BaseTreeNode';
 
   //= =================================================
   // CONSTRUCTOR
@@ -33,19 +33,31 @@ export abstract class BaseTreeNode extends BaseNode {
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return BaseTreeNode.className; }
+  public get /* override */ className(): string {
+    return BaseTreeNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === BaseTreeNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === BaseTreeNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ isVisibleInTreeControl(): boolean { return false; }
+  public /* override */ isVisibleInTreeControl(): boolean {
+    return false;
+  }
 
-  public /* override */ canChangeName(): boolean { return false; }
+  public /* override */ canChangeName(): boolean {
+    return false;
+  }
 
-  public /* override */ canChangeColor(): boolean { return false; }
+  public /* override */ canChangeColor(): boolean {
+    return false;
+  }
 
-  public /* override */ isTree(): boolean { return true; }
+  public /* override */ isTree(): boolean {
+    return true;
+  }
 }

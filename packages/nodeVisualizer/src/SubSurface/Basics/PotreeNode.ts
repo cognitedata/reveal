@@ -11,55 +11,71 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { PotreeRenderStyle } from "@/SubSurface/Basics/PotreeRenderStyle";
+import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { PotreeRenderStyle } from 'SubSurface/Basics/PotreeRenderStyle';
 
 export class PotreeNode extends BaseVisualNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "PotreeNode";
+  static className = 'PotreeNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  private _url: string = "";
+  private _url: string = '';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get url(): string { return this._url; }
+  public get url(): string {
+    return this._url;
+  }
 
-  public set url(value: string) { this._url = value; }
+  public set url(value: string) {
+    this._url = value;
+  }
 
-  public get renderStyle(): PotreeRenderStyle | null { return this.getRenderStyle() as PotreeRenderStyle; }
+  public get renderStyle(): PotreeRenderStyle | null {
+    return this.getRenderStyle() as PotreeRenderStyle;
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return PotreeNode.className; }
+  public get /* override */ className(): string {
+    return PotreeNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === PotreeNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === PotreeNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Potree"; }
+  public get /* override */ typeName(): string {
+    return 'Potree';
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new PotreeRenderStyle(targetId);
   }
 }

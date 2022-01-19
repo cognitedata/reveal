@@ -11,50 +11,66 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { PointLog } from "@/SubSurface/Wells/Logs/PointLog";
-import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
-import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import Icon from "@images/Nodes/PointLogNode.png";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { PointLog } from 'SubSurface/Wells/Logs/PointLog';
+import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
+import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
+import Icon from 'images/Nodes/PointLogNode.png';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class PointLogNode extends BaseLogNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "PointLogNode";
+  static className = 'PointLogNode';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get log(): PointLog | null { return this.anyData as PointLog; }
+  public get log(): PointLog | null {
+    return this.anyData as PointLog;
+  }
 
-  public set log(value: PointLog | null) { this.anyData = value; }
+  public set log(value: PointLog | null) {
+    this.anyData = value;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return PointLogNode.className; }
+  public get /* override */ className(): string {
+    return PointLogNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === PointLogNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === PointLogNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "RiskLog"; }
+  public get /* override */ typeName(): string {
+    return 'RiskLog';
+  }
 
-  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+  public /* override */ getIcon(): string {
+    return this.dataIsLost ? super.getIcon() : Icon;
+  }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
   }
 
@@ -62,5 +78,7 @@ export class PointLogNode extends BaseLogNode {
   // OVERRIDES of BaseLogNode
   //= =================================================
 
-  public /* override */ get wellLogType(): WellLogType { return WellLogType.Point; }
+  public get /* override */ wellLogType(): WellLogType {
+    return WellLogType.Point;
+  }
 }

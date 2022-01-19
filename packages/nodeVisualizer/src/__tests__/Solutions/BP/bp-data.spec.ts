@@ -1,5 +1,9 @@
-import { BPData } from "@/Solutions/BP/BPData";
-import { mapMetadataKeys, MetadataKeyMapping, WellboreMetadata } from "@/Solutions/BP/MetadataTransform";
+import { BPData } from 'Solutions/BP/BPData';
+import {
+  mapMetadataKeys,
+  MetadataKeyMapping,
+  WellboreMetadata,
+} from 'Solutions/BP/MetadataTransform';
 import { well, mappedWellbore } from './subsurface.mock';
 
 describe('BPData', () => {
@@ -7,7 +11,7 @@ describe('BPData', () => {
     const data = new BPData({
       wells: [well],
       wellBores: [],
-      trajectories: []
+      trajectories: [],
     });
     const expectWellsMap = new Map();
 
@@ -21,30 +25,36 @@ describe('BPData', () => {
       elevation_value: 'e_value',
       elevation_value_unit: 'e_value_unit',
     };
-    const data = new BPData({
+    const data = new BPData(
+      {
         wells: [well],
         // @ts-ignore
         wellBores: [mappedWellbore],
-        trajectories: []
+        trajectories: [],
       },
       {
-      wellbore: {
-        datasource: wellboreData => mapMetadataKeys(mapping, wellboreData)
+        wellbore: {
+          datasource: (wellboreData) => mapMetadataKeys(mapping, wellboreData),
+        },
       }
-    });
-    const { data: { metadata } } = data.wellBoreToWellMap.get(mappedWellbore.id)!;
+    );
+    const {
+      data: { metadata },
+    } = data.wellBoreToWellMap.get(mappedWellbore.id)!;
 
     expect(metadata.elevation_type).toEqual(mappedWellbore.metadata.e_type);
     expect(metadata.elevation_value).toEqual(mappedWellbore.metadata.e_value);
-    expect(metadata.elevation_value_unit).toEqual(mappedWellbore.metadata.e_value_unit);
+    expect(metadata.elevation_value_unit).toEqual(
+      mappedWellbore.metadata.e_value_unit
+    );
   });
   test('should not add wellbore with invalid metadata', () => {
     const data = new BPData({
-        wells: [well],
-        // @ts-ignore
-        wellBores: [mappedWellbore],
-        trajectories: []
-      });
+      wells: [well],
+      // @ts-ignore
+      wellBores: [mappedWellbore],
+      trajectories: [],
+    });
     expect(data.wellBoreToWellMap.size).toEqual(0);
   });
 });

@@ -11,39 +11,53 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import Icon from "@images/Nodes/SeismicCubeNode.png";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import Icon from 'images/Nodes/SeismicCubeNode.png';
+import { BaseTreeNode } from 'Core/Nodes/BaseTreeNode';
 
 export class SeismicTreeNode extends BaseTreeNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "SeismicTreeNode";
+  static className = 'SeismicTreeNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return SeismicTreeNode.className; }
+  public get /* override */ className(): string {
+    return SeismicTreeNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === SeismicTreeNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === SeismicTreeNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Seismic Tree"; }
+  public get /* override */ typeName(): string {
+    return 'Seismic Tree';
+  }
 
-  public /* override */ getIcon(): string { return Icon; }
+  public /* override */ getIcon(): string {
+    return Icon;
+  }
 
-  public /* override */ getName(): string { return "Seismic"; }
+  public /* override */ getName(): string {
+    return 'Seismic';
+  }
 
-  public /* override */ get isTab(): boolean { return true; }
+  public get /* override */ isTab(): boolean {
+    return true;
+  }
 }

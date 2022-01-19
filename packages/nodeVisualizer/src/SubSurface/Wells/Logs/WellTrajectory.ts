@@ -11,21 +11,21 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
-import * as Color from "color";
+import * as THREE from 'three';
+import * as Color from 'color';
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Random } from "@/Core/Primitives/Random";
-import { Ma } from "@/Core/Primitives/Ma";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Range1 } from 'Core/Geometry/Range1';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Random } from 'Core/Primitives/Random';
+import { Ma } from 'Core/Primitives/Ma';
 
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
 
-import { TrajectorySample } from "@/SubSurface/Wells/Samples/TrajectorySample";
-import { MdSamples } from "@/SubSurface/Wells/Logs/MdSamples";
-import { RenderSample } from "@/SubSurface/Wells/Samples/RenderSample";
-import { LineSegment3 } from "@/Core/Geometry/LineSegment";
+import { TrajectorySample } from 'SubSurface/Wells/Samples/TrajectorySample';
+import { MdSamples } from 'SubSurface/Wells/Logs/MdSamples';
+import { RenderSample } from 'SubSurface/Wells/Samples/RenderSample';
+import { LineSegment3 } from 'Core/Geometry/LineSegment';
 
 export class WellTrajectory extends MdSamples {
   //= =================================================
@@ -45,8 +45,7 @@ export class WellTrajectory extends MdSamples {
   //= =================================================
 
   public get boundingBox(): Range3 {
-    if (!this._boundingBox)
-      this._boundingBox = this.calculateBoundingBox();
+    if (!this._boundingBox) this._boundingBox = this.calculateBoundingBox();
     return this._boundingBox;
   }
 
@@ -64,8 +63,7 @@ export class WellTrajectory extends MdSamples {
   public expandRange(range: Range3): void {
     for (const baseSample of this.samples) {
       const sample = baseSample as TrajectorySample;
-      if (sample)
-        range.add(sample.point);
+      if (sample) range.add(sample.point);
     }
   }
 
@@ -73,21 +71,27 @@ export class WellTrajectory extends MdSamples {
   // INSTANCE METHODS: Getters
   //= =================================================
 
-  public getAt(index: number): TrajectorySample { return this.samples[index] as TrajectorySample; }
+  public getAt(index: number): TrajectorySample {
+    return this.samples[index] as TrajectorySample;
+  }
 
-  public getPositionAt(i: number): Vector3 { return this.getAt(i).point; }
+  public getPositionAt(i: number): Vector3 {
+    return this.getAt(i).point;
+  }
 
-  public getTopPosition(): Vector3 { return this.getAt(0).point; }
+  public getTopPosition(): Vector3 {
+    return this.getAt(0).point;
+  }
 
-  public getBasePosition(): Vector3 { return this.getAt(this.length - 1).point; }
+  public getBasePosition(): Vector3 {
+    return this.getAt(this.length - 1).point;
+  }
 
   public getPositionAtMd(md: number, result: Vector3): boolean {
     const maxIndex = this.samples.length - 1;
-    if (maxIndex < 0)
-      return false;
+    if (maxIndex < 0) return false;
 
-    if (md < this.samples[0].md || this.samples[maxIndex].md < md)
-      return false;
+    if (md < this.samples[0].md || this.samples[maxIndex].md < md) return false;
 
     let index = this.binarySearch(md);
     if (index >= 0) {
@@ -114,14 +118,13 @@ export class WellTrajectory extends MdSamples {
 
   public getTangentAtMd(md: number, result: Vector3): boolean {
     const maxIndex = this.samples.length - 1;
-    if (maxIndex < 0)
-      return false;
+    if (maxIndex < 0) return false;
 
-    let index0: number; let index1: number;
+    let index0: number;
+    let index1: number;
     if (md <= this.samples[0].md) {
       index0 = 0;
       index1 = 1;
-
     } else if (md >= this.samples[maxIndex].md) {
       index0 = maxIndex - 1;
       index1 = maxIndex;
@@ -138,7 +141,7 @@ export class WellTrajectory extends MdSamples {
       }
     }
     if (index0 >= index1) {
-      Error("Index error in tangent");
+      Error('Index error in tangent');
       return false;
     }
     const minSample = this.samples[index0] as TrajectorySample;
@@ -152,11 +155,11 @@ export class WellTrajectory extends MdSamples {
   }
 
   public getTangentAt(i: number, result: Vector3): boolean {
-    let index0: number; let index1: number;
+    let index0: number;
+    let index1: number;
     if (i === 0) {
       index0 = 0;
       index1 = 1;
-
     } else if (i >= this.samples.length - 1) {
       index0 = this.samples.length - 2;
       index1 = this.samples.length - 1;
@@ -165,7 +168,7 @@ export class WellTrajectory extends MdSamples {
       index1 = i + 1;
     }
     if (index0 >= index1) {
-      Error("Index error in tangent");
+      Error('Index error in tangent');
       return false;
     }
     const minSample = this.samples[index0] as TrajectorySample;
@@ -199,19 +202,16 @@ export class WellTrajectory extends MdSamples {
         closestDistance = distance;
       }
     }
-    if (!closestPoint)
-      return Number.NaN;
+    if (!closestPoint) return Number.NaN;
 
     const minSample = this.getAt(index);
     const maxSample = this.getAt(index + 1);
 
     const distanceToMin = minSample.point.distance(closestPoint);
-    if (Ma.isAbsEqual(distanceToMin, 0, 0.0001))
-      return minSample.md;
+    if (Ma.isAbsEqual(distanceToMin, 0, 0.0001)) return minSample.md;
 
     const distanceToMax = maxSample.point.distance(closestPoint);
-    if (Ma.isAbsEqual(distanceToMax, 0, 0.0001))
-      return maxSample.md;
+    if (Ma.isAbsEqual(distanceToMax, 0, 0.0001)) return maxSample.md;
 
     const totalDistance = distanceToMin + distanceToMax;
     const minFraction = distanceToMin / totalDistance;
@@ -228,7 +228,9 @@ export class WellTrajectory extends MdSamples {
     const samples: RenderSample[] = [];
     for (let i = 0; i < this.length; i++) {
       const sample = this.getAt(i);
-      samples.push(new RenderSample(sample.point.clone(), sample.md, radius, color));
+      samples.push(
+        new RenderSample(sample.point.clone(), sample.md, radius, color)
+      );
     }
     return samples;
   }

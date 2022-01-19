@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
+import * as THREE from 'three';
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Vector3 } from 'Core/Geometry/Vector3';
 
 export class TrianglesBuffers {
   //= =================================================
@@ -36,7 +36,9 @@ export class TrianglesBuffers {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get hasUvs(): boolean { return this.uvs.length > 0; }
+  public get hasUvs(): boolean {
+    return this.uvs.length > 0;
+  }
 
   //= =================================================
   // CONSTRUCTOR
@@ -54,11 +56,22 @@ export class TrianglesBuffers {
 
   public getBufferGeometry(): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.Float32BufferAttribute(this.positions, 3, true));
-    geometry.setAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, false)); // Auto normalizing
-    geometry.setIndex(new THREE.Uint32BufferAttribute(this.triangleIndexes, 1, true));
+    geometry.setAttribute(
+      'position',
+      new THREE.Float32BufferAttribute(this.positions, 3, true)
+    );
+    geometry.setAttribute(
+      'normal',
+      new THREE.Float32BufferAttribute(this.normals, 3, false)
+    ); // Auto normalizing
+    geometry.setIndex(
+      new THREE.Uint32BufferAttribute(this.triangleIndexes, 1, true)
+    );
     if (this.hasUvs)
-      geometry.setAttribute("uv", new THREE.Float32BufferAttribute(this.uvs, 2, true));
+      geometry.setAttribute(
+        'uv',
+        new THREE.Float32BufferAttribute(this.uvs, 2, true)
+      );
     return geometry;
   }
 
@@ -66,7 +79,13 @@ export class TrianglesBuffers {
   // INSTANCE METHODS: Operations
   //= =================================================
 
-  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0): void {
+  public addPair(
+    p1: Vector3,
+    p2: Vector3,
+    n1: Vector3,
+    n2: Vector3,
+    u = 0
+  ): void {
     if (this.uniqueIndex >= 2) {
       //     2------3
       //     |      |
@@ -82,10 +101,14 @@ export class TrianglesBuffers {
 
     this.add(p1, n1, u);
     this.add(p2, n2, u);
-
   }
 
-  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, fraction: number): void {
+  public addPair2(
+    p1: Vector3,
+    p2: Vector3,
+    normal: Vector3,
+    fraction: number
+  ): void {
     if (this.uniqueIndex >= 2) {
       //     2------3
       //     |      |
@@ -122,7 +145,12 @@ export class TrianglesBuffers {
     this.uniqueIndex += 1;
   }
 
-  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u = 0): void {
+  protected setAt(
+    uniqueIndex: number,
+    position: Vector3,
+    normal: Vector3,
+    u = 0
+  ): void {
     {
       const index = 3 * uniqueIndex;
       this.positions[index + 0] = position.x;
@@ -132,8 +160,7 @@ export class TrianglesBuffers {
       this.normals[index + 1] = normal.y;
       this.normals[index + 2] = normal.z;
     }
-    if (this.hasUvs)
-      this.setUAt(uniqueIndex, u);
+    if (this.hasUvs) this.setUAt(uniqueIndex, u);
   }
 
   public setUAt(uniqueIndex: number, u: number): void {

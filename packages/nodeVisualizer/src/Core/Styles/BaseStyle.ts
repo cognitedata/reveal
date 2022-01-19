@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export abstract class BaseStyle {
   //= =================================================
   // VIRTUAL METHODS
   //= =================================================
 
-  protected /* virtual */ populateCore(_folder: BasePropertyFolder) { }
+  protected /* virtual */ populateCore(_folder: BasePropertyFolder) {}
 
   //= =================================================
   // INSTANCE METHODS

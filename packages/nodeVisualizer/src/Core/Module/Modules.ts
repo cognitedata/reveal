@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
-import { ViewFactory } from "@/Core/Views/ViewFactory";
-import { BaseModule } from "@/Core/Module/BaseModule";
-import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
+import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
+import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
+import { ViewFactory } from 'Core/Views/ViewFactory';
+import { BaseModule } from 'Core/Module/BaseModule';
+import { VirtualUserInterface } from 'Core/States/VirtualUserInterface';
 
 export class Modules {
   //= =================================================
@@ -31,8 +31,7 @@ export class Modules {
   private static _instance: Modules | null = null;
 
   public static get instance(): Modules {
-    if (!Modules._instance)
-      Modules._instance = new Modules();
+    if (!Modules._instance) Modules._instance = new Modules();
     return Modules._instance;
   }
 
@@ -41,8 +40,7 @@ export class Modules {
   //= =================================================
 
   private constructor() {
-    if (Modules._instance)
-      throw new Error("Error - use Modules.instance");
+    if (Modules._instance) throw new Error('Error - use Modules.instance');
   }
 
   //= =================================================
@@ -65,20 +63,16 @@ export class Modules {
 
   public initializeWhenPopulated(root: BaseRootNode): void {
     root.initializeRecursive();
-    for (const module of this.modules)
-      module.initializeWhenPopulated(root);
+    for (const module of this.modules) module.initializeWhenPopulated(root);
 
-    for (const module of this.modules)
-      module.setDefaultVisible(root);
+    for (const module of this.modules) module.setDefaultVisible(root);
 
     const target = root.activeTarget as BaseRenderTargetNode;
-    if (target)
-      target.viewAll();
+    if (target) target.viewAll();
   }
 
   public startAnimate(root: BaseRootNode): void {
-    for (const module of this.modules)
-      module.startAnimate(root);
+    for (const module of this.modules) module.startAnimate(root);
   }
 
   public createRoot(): BaseRootNode {
@@ -87,18 +81,15 @@ export class Modules {
     for (let i = this.modules.length - 1; i >= 0; --i) {
       const module = this.modules[i];
       root = module.createRoot();
-      if (root)
-        break;
+      if (root) break;
     }
-    if (!root)
-      throw Error("No module has implemented createRoot()");
+    if (!root) throw Error('No module has implemented createRoot()');
 
     root.initializeRecursive();
     root.clearData();
 
     // Load the data
-    for (const module of this.modules)
-      module.loadData(root);
+    for (const module of this.modules) module.loadData(root);
 
     BaseRootNode.active = root;
     return root;
@@ -109,8 +100,7 @@ export class Modules {
     for (let i = this.modules.length - 1; i >= 0; --i) {
       const module = this.modules[i];
       const renderTarget = module.createRenderTargetNode();
-      if (renderTarget)
-        return renderTarget;
+      if (renderTarget) return renderTarget;
     }
     return null;
   }
@@ -125,13 +115,11 @@ export class Modules {
   //= =================================================
 
   private installPackages(): void {
-    for (const module of this.modules)
-      module.installPackages();
+    for (const module of this.modules) module.installPackages();
   }
 
   private registerViews(): void {
     const factory = ViewFactory.instance;
-    for (const module of this.modules)
-      module.registerViews(factory);
+    for (const module of this.modules) module.registerViews(factory);
   }
 }

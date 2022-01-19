@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { UniqueId } from "@/Core/Primitives/UniqueId";
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { UniqueId } from 'Core/Primitives/UniqueId';
+import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
 
 export class NodePointer {
   //= =================================================
@@ -28,11 +28,17 @@ export class NodePointer {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get uniqueId(): UniqueId | null { return this._uniqueId; };
+  public get uniqueId(): UniqueId | null {
+    return this._uniqueId;
+  }
 
-  public get isEmpty(): boolean { return !this._uniqueId || this._uniqueId.isEmpty; }
+  public get isEmpty(): boolean {
+    return !this._uniqueId || this._uniqueId.isEmpty;
+  }
 
-  public get node(): BaseNode | null { return this.getNode(); }
+  public get node(): BaseNode | null {
+    return this.getNode();
+  }
 
   public set node(value: BaseNode | null) {
     this.clearIndexes();
@@ -44,8 +50,7 @@ export class NodePointer {
   //= =================================================
 
   public constructor(node?: BaseNode) {
-    if (node)
-      this._uniqueId = node.uniqueId.clone();
+    if (node) this._uniqueId = node.uniqueId.clone();
   }
 
   //= =================================================
@@ -53,19 +58,15 @@ export class NodePointer {
   //= =================================================
 
   public getNode(anyInTheSameTree?: BaseNode): BaseNode | null {
-    if (this.isEmpty)
-      return null;
+    if (this.isEmpty) return null;
 
-    if (!this._uniqueId)
-      return null;
+    if (!this._uniqueId) return null;
 
     const root = this.getRoot(anyInTheSameTree);
-    if (!root)
-      return null;
+    if (!root) return null;
 
     let result = this.getNodeByIndexes(root);
-    if (result)
-      return result;
+    if (result) return result;
 
     result = root.getDescendantByUniqueId(this._uniqueId);
     if (!result) {
@@ -83,20 +84,17 @@ export class NodePointer {
   }
 
   private getNodeByIndexes(root: BaseNode): BaseNode | null {
-    if (this._indexes.length === 0)
-      return null;
+    if (this._indexes.length === 0) return null;
 
     let node = root;
     for (const index of this._indexes) {
-      if (!node)
-        break;
+      if (!node) break;
 
       if (!node.children) {
         this.clearIndexes();
         return null;
       }
-      if (index >= node.children.length)
-        break;
+      if (index >= node.children.length) break;
 
       node = node.children[index];
     }
@@ -132,8 +130,7 @@ export class NodePointer {
     let { parent } = child;
     while (parent) {
       const index = parent.children.indexOf(child);
-      if (index < 0)
-        throw new Error("index < 0");
+      if (index < 0) throw new Error('index < 0');
 
       this._indexes.push(index);
       child = parent;

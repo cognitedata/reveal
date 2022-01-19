@@ -11,37 +11,49 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { FolderNode } from "@/Core/Nodes/FolderNode";
-import FolderNodeGreyscale from "@images/Nodes/FolderNodeGreyscale.png";
+import { FolderNode } from 'Core/Nodes/FolderNode';
+import FolderNodeGreyscale from 'images/Nodes/FolderNodeGreyscale.png';
 
 export class WellFolder extends FolderNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "WellFolder";
+  static className = 'WellFolder';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return WellFolder.className; }
+  public get /* override */ className(): string {
+    return WellFolder.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === WellFolder.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === WellFolder.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Well folder"; }
+  public get /* override */ typeName(): string {
+    return 'Well folder';
+  }
 
-  public /* override */ getIcon(): string { return FolderNodeGreyscale; }
+  public /* override */ getIcon(): string {
+    return FolderNodeGreyscale;
+  }
 
-  public /* override */ canChangeColor(): boolean { return true; }
+  public /* override */ canChangeColor(): boolean {
+    return true;
+  }
 }

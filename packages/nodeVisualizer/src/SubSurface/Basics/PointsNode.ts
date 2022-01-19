@@ -11,24 +11,24 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { ColorType } from "@/Core/Enums/ColorType";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Points } from "@/Core/Geometry/Points";
+import { ColorType } from 'Core/Enums/ColorType';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Points } from 'Core/Geometry/Points';
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { PointsRenderStyle } from "@/SubSurface/Basics/PointsRenderStyle";
-import Icon from "@images/Nodes/PointsNode.png";
-import { DataNode } from "@/Core/Nodes/DataNode";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import {ColorMaps} from "@/Core/Primitives/ColorMaps";
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { PointsRenderStyle } from 'SubSurface/Basics/PointsRenderStyle';
+import Icon from 'images/Nodes/PointsNode.png';
+import { DataNode } from 'Core/Nodes/DataNode';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { ColorMaps } from 'Core/Primitives/ColorMaps';
 
 export class PointsNode extends DataNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "PointsNode";
+  static className = 'PointsNode';
 
   //= =================================================
   // CONSTRUCTOR
@@ -43,45 +43,67 @@ export class PointsNode extends DataNode {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get points(): Points | null { return this.anyData; }
+  public get points(): Points | null {
+    return this.anyData;
+  }
 
-  public set points(value: Points | null) { this.anyData = value; }
+  public set points(value: Points | null) {
+    this.anyData = value;
+  }
 
-  public get renderStyle(): PointsRenderStyle | null { return this.getRenderStyle() as PointsRenderStyle; }
+  public get renderStyle(): PointsRenderStyle | null {
+    return this.getRenderStyle() as PointsRenderStyle;
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return PointsNode.className; }
+  public get /* override */ className(): string {
+    return PointsNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === PointsNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === PointsNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Points"; }
+  public get /* override */ typeName(): string {
+    return 'Points';
+  }
 
-  public /* override */ hasColorMap(): boolean { return true; }
+  public /* override */ hasColorMap(): boolean {
+    return true;
+  }
 
-  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+  public /* override */ getIcon(): string {
+    return this.dataIsLost ? super.getIcon() : Icon;
+  }
 
-  public /* override */ get boundingBox(): Range3 { return this.points ? this.points.boundingBox : new Range3(); }
+  public get /* override */ boundingBox(): Range3 {
+    return this.points ? this.points.boundingBox : new Range3();
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new PointsRenderStyle(targetId);
   }
 
   public /* override */ verifyRenderStyle(style: BaseRenderStyle) {
-    if (!(style instanceof PointsRenderStyle))
-      return;
+    if (!(style instanceof PointsRenderStyle)) return;
 
     if (!this.supportsColorType(style.colorType, false))
       style.colorType = ColorType.Specified;
   }
 
-  public /* override */ supportsColorType(colorType: ColorType, _: boolean): boolean {
+  public /* override */ supportsColorType(
+    colorType: ColorType,
+    _: boolean
+  ): boolean {
     switch (colorType) {
       case ColorType.ColorMap:
       case ColorType.Specified:
@@ -92,14 +114,15 @@ export class PointsNode extends DataNode {
     }
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
 
     const { points } = this;
-    if (!points)
-      return;
+    if (!points) return;
 
-    folder.addReadOnlyInteger("# Points", points.length);
+    folder.addReadOnlyInteger('# Points', points.length);
     folder.addReadOnlyRange3(points.boundingBox);
   }
 }

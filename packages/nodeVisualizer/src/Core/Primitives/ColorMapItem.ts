@@ -12,8 +12,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as Color from "color";
-import { ColorInterpolation } from "@/Core/Primitives/ColorInterpolation";
+import * as Color from 'color';
+import { ColorInterpolation } from 'Core/Primitives/ColorInterpolation';
 
 export class ColorMapItem {
   //= =================================================
@@ -70,19 +70,15 @@ export class ColorMapItem {
 
       if (this.interpolation === ColorInterpolation.HsvMax) {
         if (h1 < h2) {
-          if (h2 - h1 < 180)
-            h2 -= 360;
+          if (h2 - h1 < 180) h2 -= 360;
         } else {
-          if (h1 - h2 < 180)
-            h2 += 360;
+          if (h1 - h2 < 180) h2 += 360;
         }
       } else {
         if (h1 < h2) {
-          if (h2 - h1 > 180)
-            h2 -= 360;
+          if (h2 - h1 > 180) h2 -= 360;
         } else {
-          if (h1 - h2 > 180)
-            h2 += 360;
+          if (h1 - h2 > 180) h2 += 360;
         }
       }
       const h = h1 * value1 + h2 * value2;

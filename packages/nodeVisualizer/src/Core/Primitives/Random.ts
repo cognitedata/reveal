@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from "@/Core/Geometry/Range1";
+import { Range1 } from 'Core/Geometry/Range1';
 
 export class Random {
   //= =================================================
@@ -39,14 +39,12 @@ export class Random {
   }
 
   public static getGaussian(mean = 0, stdDev = 1): number {
-    for (; ;) {
+    for (;;) {
       const a = Math.random();
-      if (a <= Number.EPSILON)
-        continue;
+      if (a <= Number.EPSILON) continue;
 
       const b = Math.random();
-      if (b <= Number.EPSILON)
-        continue;
+      if (b <= Number.EPSILON) continue;
 
       const gausian = Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
       return gausian * stdDev + mean;

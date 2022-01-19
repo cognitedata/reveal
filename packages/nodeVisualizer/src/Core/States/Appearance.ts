@@ -1,5 +1,5 @@
-import * as Color from "color";
-import { Colors } from "@/Core/Primitives/Colors";
+import * as Color from 'color';
+import { Colors } from 'Core/Primitives/Colors';
 
 export class Appearance {
   //= =================================================
@@ -37,11 +37,11 @@ export class Appearance {
   // Settings Panel
   static valuesPerColorMap = 20; // values in color map image
 
-  static generalSettingsName = "General Settings";
+  static generalSettingsName = 'General Settings';
 
-  static statisticsName = "Statistics";
+  static statisticsName = 'Statistics';
 
-  static visualSettingsName = "Visual Settings"
+  static visualSettingsName = 'Visual Settings';
 
   static generalSettingsDefaultExpanded = true;
 
@@ -52,13 +52,13 @@ export class Appearance {
   static readonlyInputColor = Color.rgb(217, 247, 253).hex();
 
   // For the viewer
-  static viewerFooter = "Cognite subsurface viewer";
+  static viewerFooter = 'Cognite subsurface viewer';
 
   static viewerIsLightBackground = false; // True is white, False is black
 
   static viewerSmallestCameraDeltaAngle = Math.PI / 100;
 
-  static viewerFontType = "sans-serif"; // "Helvetica" Use brush instead here?
+  static viewerFontType = 'sans-serif'; // "Helvetica" Use brush instead here?
 
   static viewerOverlayFontSize = 15;
 

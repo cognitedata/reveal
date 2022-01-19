@@ -11,35 +11,45 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import Icon from "@images/Nodes/ColorMapNode.png";
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import Icon from 'images/Nodes/ColorMapNode.png';
 
 export class ColorMapNode extends BaseNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "ColorMapNode";
+  static className = 'ColorMapNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return ColorMapNode.className; }
+  public get /* override */ className(): string {
+    return ColorMapNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === ColorMapNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === ColorMapNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Color Map"; }
+  public get /* override */ typeName(): string {
+    return 'Color Map';
+  }
 
-  public /* override */ getIcon(): string { return Icon; }
+  public /* override */ getIcon(): string {
+    return Icon;
+  }
 }

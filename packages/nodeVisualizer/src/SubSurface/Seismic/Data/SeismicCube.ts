@@ -11,16 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Index3 } from "@/Core/Geometry/Index3";
-import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
-import { Trace } from "@/SubSurface/Seismic/Data/Trace";
-import { Index2 } from "@/Core/Geometry/Index2";
-import SeismicSDK from "@cognite/seismic-sdk-js";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Statistics } from "@/Core/Geometry/Statistics";
-import { Ma } from "@/Core/Primitives/Ma";
-import { Range3 } from "@/Core/Geometry/Range3";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Index3 } from 'Core/Geometry/Index3';
+import { RegularGrid3 } from 'Core/Geometry/RegularGrid3';
+import { Trace } from 'SubSurface/Seismic/Data/Trace';
+import { Index2 } from 'Core/Geometry/Index2';
+import SeismicSDK from '@cognite/seismic-sdk-js';
+import { Range1 } from 'Core/Geometry/Range1';
+import { Statistics } from 'Core/Geometry/Statistics';
+import { Ma } from 'Core/Primitives/Ma';
+import { Range3 } from 'Core/Geometry/Range3';
 
 export class SeismicCube extends RegularGrid3 {
   //= =================================================
@@ -35,7 +35,7 @@ export class SeismicCube extends RegularGrid3 {
 
   public client: SeismicSDK.CogniteSeismicClient | null = null;
 
-  public fileId = "";
+  public fileId = '';
 
   private _valueRange?: Range1;
 
@@ -45,19 +45,32 @@ export class SeismicCube extends RegularGrid3 {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get numberOfTraces(): number { return (this.nodeSize.i - 1) * (this.nodeSize.j - 1); }
+  public get numberOfTraces(): number {
+    return (this.nodeSize.i - 1) * (this.nodeSize.j - 1);
+  }
 
-  public get valueRange(): Range1 | undefined { return this._valueRange; }
+  public get valueRange(): Range1 | undefined {
+    return this._valueRange;
+  }
 
-  public set valueRange(range: Range1 | undefined) { this._valueRange = range; }
+  public set valueRange(range: Range1 | undefined) {
+    this._valueRange = range;
+  }
 
-  public get statistics(): Statistics | undefined { return this._statistics; }
+  public get statistics(): Statistics | undefined {
+    return this._statistics;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(nodeSize: Index3, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined) {
+  public constructor(
+    nodeSize: Index3,
+    origin: Vector3,
+    inc: Vector3,
+    rotationAngle: number | undefined = undefined
+  ) {
     super(nodeSize, origin, inc, rotationAngle);
     this._traces = new Array<Trace | null>(this.numberOfTraces);
   }
@@ -69,12 +82,10 @@ export class SeismicCube extends RegularGrid3 {
   public getTrace(i: number, j: number): Trace | null {
     const index = this.getCellIndex2(i, j);
     let trace = this._traces[index];
-    if (trace)
-      return trace;
+    if (trace) return trace;
 
     trace = this.readTrace(i, j);
-    if (!trace)
-      return null;
+    if (!trace) return null;
 
     this.garbageCollectAt(i, j);
     this._traces[index] = trace;
@@ -82,7 +93,12 @@ export class SeismicCube extends RegularGrid3 {
   }
 
   public getRegularGrid(): RegularGrid3 {
-    const result = new RegularGrid3(this.nodeSize, this.origin, this.inc, this.rotationAngle);
+    const result = new RegularGrid3(
+      this.nodeSize,
+      this.origin,
+      this.inc,
+      this.rotationAngle
+    );
     result.startCell.copy(this.startCell);
     return result;
   }
@@ -93,7 +109,10 @@ export class SeismicCube extends RegularGrid3 {
 
   private readTrace(i: number, j: number): Trace | null {
     const trace = new Trace(this.cellSize.k);
-    trace.generateSynthetic(i / (this.cellSize.i - 1), j / (this.cellSize.j - 1));
+    trace.generateSynthetic(
+      i / (this.cellSize.i - 1),
+      j / (this.cellSize.j - 1)
+    );
     return trace;
   }
 
@@ -124,9 +143,12 @@ export class SeismicCube extends RegularGrid3 {
   // INSTANCE METHODS: Load
   //= =================================================
 
-  public loadTraces(minCell: Index2, maxCell: Index2, includeTraceHeader?: boolean): Promise<SeismicSDK.Trace[]> | null {
-    if (!this.client || !this.fileId)
-      return null;
+  public loadTraces(
+    minCell: Index2,
+    maxCell: Index2,
+    includeTraceHeader?: boolean
+  ): Promise<SeismicSDK.Trace[]> | null {
+    if (!this.client || !this.fileId) return null;
 
     const iline = { min: minCell.i, max: maxCell.i };
     const xline = { min: minCell.j, max: maxCell.j };
@@ -137,16 +159,19 @@ export class SeismicCube extends RegularGrid3 {
     xline.max += this.startCell.j;
 
     // console.log(`volume.get() inline: ${iline.min} / ${iline.max} xline: ${xline.min} / ${xline.max}`);
-    return this.client.volume.get({id: this.fileId}, { iline, xline }, includeTraceHeader);
+    return this.client.volume.get(
+      { id: this.fileId },
+      { iline, xline },
+      includeTraceHeader
+    );
   }
 
   public loadTrace(cell: Index2): Promise<SeismicSDK.Trace> | null {
-    if (!this.client || !this.fileId)
-      return null;
+    if (!this.client || !this.fileId) return null;
 
     const inline = cell.i + this.startCell.i;
     const xline = cell.j + this.startCell.j;
-    return this.client.volume.getTrace({id: this.fileId}, inline, xline);
+    return this.client.volume.getTrace({ id: this.fileId }, inline, xline);
   }
 
   public calculateStatistics(): Promise<void> {
@@ -163,16 +188,14 @@ export class SeismicCube extends RegularGrid3 {
     maxCell = new Index2(iMax, jHalf);
     const promise2 = this.loadTraces(minCell, maxCell);
 
-    return Promise.all([promise1, promise2]).then(multiTraces => {
+    return Promise.all([promise1, promise2]).then((multiTraces) => {
       const statistics = new Statistics();
       for (const traces of multiTraces) {
-        if (!traces)
-          continue;
+        if (!traces) continue;
 
         for (const trace of traces) {
           for (const value of trace.traceList) {
-            if (value === 0)
-              continue;
+            if (value === 0) continue;
 
             statistics.add(value);
           }
@@ -187,23 +210,21 @@ export class SeismicCube extends RegularGrid3 {
   // STATIC METHODS: Load
   //= =================================================
 
-  public static async loadCube(client: SeismicSDK.CogniteSeismicClient, fileId: string): Promise<SeismicCube | null> {
+  public static async loadCube(
+    client: SeismicSDK.CogniteSeismicClient,
+    fileId: string
+  ): Promise<SeismicCube | null> {
     const lineRange = await client.file.getLineRange({ id: fileId });
-    if (!lineRange)
-      throw Error("lineRange in undefined");
-    if (!lineRange.inline)
-      throw Error("lineRange.inline in undefined");
-    if (!lineRange.xline)
-      throw Error("lineRange.inline in undefined");
+    if (!lineRange) throw Error('lineRange in undefined');
+    if (!lineRange.inline) throw Error('lineRange.inline in undefined');
+    if (!lineRange.xline) throw Error('lineRange.inline in undefined');
 
     const { inline, xline, traceSampleCount } = lineRange;
     const numCellsI = inline.max.value - inline.min.value;
     const numCellsJ = xline.max.value - xline.min.value;
 
-    if (numCellsI <= 0)
-      throw Error("numCellsI is 0");
-    if (numCellsJ <= 0)
-      throw Error("numCellsJ is 0");
+    if (numCellsI <= 0) throw Error('numCellsI is 0');
+    if (numCellsJ <= 0) throw Error('numCellsJ is 0');
 
     let numCellsK = traceSampleCount ? traceSampleCount.value : 0;
 
@@ -211,13 +232,12 @@ export class SeismicCube extends RegularGrid3 {
       client.volume.getTrace({ id: fileId }, inline.min.value, xline.min.value),
       client.volume.getTrace({ id: fileId }, inline.max.value, xline.min.value),
       client.volume.getTrace({ id: fileId }, inline.max.value, xline.max.value),
-      client.volume.getTrace({ id: fileId }, inline.min.value, xline.max.value)
+      client.volume.getTrace({ id: fileId }, inline.min.value, xline.max.value),
     ];
 
     const resultList = await Promise.allSettled(promises);
     for (const result of resultList) {
-      if (result.status !== "fulfilled")
-        continue;
+      if (result.status !== 'fulfilled') continue;
 
       numCellsK = Math.max(result.value.traceList.length, numCellsK);
     }

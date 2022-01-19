@@ -13,7 +13,7 @@
 
 /* eslint-disable max-classes-per-file */
 
-import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseNode } from 'Core/Nodes/BaseNode';
 
 export class NodeEventArgs {
   //= =================================================
@@ -34,13 +34,18 @@ export class NodeEventArgs {
   // INSTANCE METHODS: Requests
   //= =================================================
 
-  public get isEmpty(): boolean { return this.changes === null || this.changes.length === 0; }
+  public get isEmpty(): boolean {
+    return this.changes === null || this.changes.length === 0;
+  }
 
   public isChanged(...changes: symbol[]): boolean {
-    if (!this.changes)
-      return false;
+    if (!this.changes) return false;
     for (const changed of changes)
-      if (this.changes.some((desc: ChangedDescription) => desc.changed === changed))
+      if (
+        this.changes.some(
+          (desc: ChangedDescription) => desc.changed === changed
+        )
+      )
         return true;
     return false;
   }
@@ -48,11 +53,10 @@ export class NodeEventArgs {
   public isNameChanged(changed: symbol, ...names: string[]): boolean {
     // This igonores space and case.
     const name = this.getName(changed);
-    if (!name)
-      return false;
+    if (!name) return false;
 
     const isUpperCase = (s: string) => /[A-Z]/.test(s);
-    const isSpace = (s: string) => s === " ";
+    const isSpace = (s: string) => s === ' ';
 
     const { length } = name;
     for (const otherName of names) {
@@ -61,27 +65,21 @@ export class NodeEventArgs {
 
       for (let i = 0, j = 0; i < length && found; i++) {
         let a = name.charAt(i);
-        if (isSpace(a))
-          continue;
+        if (isSpace(a)) continue;
 
-        if (isUpperCase(a))
-          a = a.toLowerCase();
+        if (isUpperCase(a)) a = a.toLowerCase();
 
-        for (; j < otherLength;) {
+        for (; j < otherLength; ) {
           let b = otherName.charAt(j);
           j += 1;
-          if (isSpace(b))
-            continue;
+          if (isSpace(b)) continue;
 
-          if (isUpperCase(b))
-            b = b.toLowerCase();
-          if (b !== a)
-            found = false;
+          if (isUpperCase(b)) b = b.toLowerCase();
+          if (b !== a) found = false;
           break;
         }
       }
-      if (found)
-        return true;
+      if (found) return true;
     }
     return false;
   }
@@ -90,12 +88,16 @@ export class NodeEventArgs {
   // INSTANCE METHODS: Getters
   //= =================================================
 
-  private getChangedDescription(changed: symbol): ChangedDescription | undefined {
-    if (!this.changes)
-      return undefined;
-    if (this.changes.length === 1) // optimalization
+  private getChangedDescription(
+    changed: symbol
+  ): ChangedDescription | undefined {
+    if (!this.changes) return undefined;
+    if (this.changes.length === 1)
+      // optimalization
       return this.changes[0].changed === changed ? this.changes[0] : undefined;
-    return this.changes.find((desc: ChangedDescription) => desc.changed === changed);
+    return this.changes.find(
+      (desc: ChangedDescription) => desc.changed === changed
+    );
   }
 
   private getName(changed: symbol): string | undefined {
@@ -113,10 +115,8 @@ export class NodeEventArgs {
   //= =================================================
 
   public add(changed: symbol, name?: string) {
-    if (changed === undefined)
-      return;
-    if (!this.changes)
-      this.changes = [];
+    if (changed === undefined) return;
+    if (!this.changes) this.changes = [];
 
     this.changes.push(new ChangedDescription(changed, name));
   }
@@ -133,7 +133,11 @@ class ChangedDescription {
 
   public origin: BaseNode | null;
 
-  public constructor(changed: symbol, name?: string, origin: BaseNode | null = null) {
+  public constructor(
+    changed: symbol,
+    name?: string,
+    origin: BaseNode | null = null
+  ) {
     this.changed = changed;
     this.name = name;
     this.origin = origin;

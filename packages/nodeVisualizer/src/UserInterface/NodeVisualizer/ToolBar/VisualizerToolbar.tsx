@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Draggable from 'react-draggable';
-import { Appearance } from '@/Core/States/Appearance';
-import { Icon } from '@/UserInterface/Components/Icon/Icon';
-import { ToolBarSelect } from '@/UserInterface/Components/ToolBarSelect/ToolBarSelect';
+import { Appearance } from 'Core/States/Appearance';
+import { Icon } from 'UserInterface/Components/Icon/Icon';
+import { ToolBarSelect } from 'UserInterface/Components/ToolBarSelect/ToolBarSelect';
 import { Icon as CogsIcon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 

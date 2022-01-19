@@ -1,6 +1,6 @@
-import { ValueProperty } from "@/Core/Property/Base/ValueProperty";
-import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
-import { BandPosition } from "@/Core/Enums/BandPosition";
+import { ValueProperty } from 'Core/Property/Base/ValueProperty';
+import { IPropertyParams } from 'Core/Property/Base/IPropertyParams';
+import { BandPosition } from 'Core/Enums/BandPosition';
 
 export class BandPositionProperty extends ValueProperty<BandPosition> {
   //= =================================================

@@ -11,28 +11,32 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { ViewFactory } from "@/Core/Views/ViewFactory";
-import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
+import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
+import { ViewFactory } from 'Core/Views/ViewFactory';
+import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
 
 export abstract class BaseModule {
   //= =================================================
   // VIRTUAL METHODS:
   //= =================================================
 
-  public /* virtual */ installPackages(): void { }
+  public /* virtual */ installPackages(): void {}
 
-  public /* virtual */ registerViews(_: ViewFactory): void { }
+  public /* virtual */ registerViews(_: ViewFactory): void {}
 
-  public /* virtual */ createRoot(): BaseRootNode | null { return null; }
+  public /* virtual */ createRoot(): BaseRootNode | null {
+    return null;
+  }
 
-  public /* virtual */ createRenderTargetNode(): BaseRenderTargetNode | null { return null; }
+  public /* virtual */ createRenderTargetNode(): BaseRenderTargetNode | null {
+    return null;
+  }
 
-  public /* virtual */ loadData(_: BaseRootNode): void { }
+  public /* virtual */ loadData(_: BaseRootNode): void {}
 
-  public /* virtual */ initializeWhenPopulated(_: BaseRootNode): void { }
+  public /* virtual */ initializeWhenPopulated(_: BaseRootNode): void {}
 
-  public /* virtual */ setDefaultVisible(_: BaseRootNode): void { }
+  public /* virtual */ setDefaultVisible(_: BaseRootNode): void {}
 
-  public /* virtual */ startAnimate(_: BaseRootNode) :void { }
+  public /* virtual */ startAnimate(_: BaseRootNode): void {}
 }

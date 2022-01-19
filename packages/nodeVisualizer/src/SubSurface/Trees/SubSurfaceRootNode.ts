@@ -11,22 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
 
-import { WellTreeNode } from "@/SubSurface/Trees/WellTreeNode";
-import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
-import { CompassNode } from "@/Core/Nodes/Decorations/CompassNode";
+import { WellTreeNode } from 'SubSurface/Trees/WellTreeNode';
+import { AxisNode } from 'Core/Nodes/Decorations/AxisNode';
+import { CompassNode } from 'Core/Nodes/Decorations/CompassNode';
 
-import { OthersTreeNode } from "@/SubSurface/Trees/OthersTreeNode";
-import RootNodeIcon from "@images/Nodes/RootNode.png";
-import { SeismicTreeNode } from "@/SubSurface/Trees/SeismicTreeNode";
+import { OthersTreeNode } from 'SubSurface/Trees/OthersTreeNode';
+import RootNodeIcon from 'images/Nodes/RootNode.png';
+import { SeismicTreeNode } from 'SubSurface/Trees/SeismicTreeNode';
 
 export class SubSurfaceRootNode extends BaseRootNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "SubSurfaceRootNode";
+  static className = 'SubSurfaceRootNode';
 
   //= =================================================
   // PROPERTIES
@@ -48,23 +48,33 @@ export class SubSurfaceRootNode extends BaseRootNode {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return SubSurfaceRootNode.className; }
+  public get /* override */ className(): string {
+    return SubSurfaceRootNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === SubSurfaceRootNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === SubSurfaceRootNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ isVisibleInTreeControl(): boolean { return false; }
+  public /* override */ isVisibleInTreeControl(): boolean {
+    return false;
+  }
 
-  public /* override */ getIcon(): string { return RootNodeIcon; }
+  public /* override */ getIcon(): string {
+    return RootNodeIcon;
+  }
 
   protected /* override */ initializeCore(): void {
     super.initializeCore();
@@ -87,14 +97,11 @@ export class SubSurfaceRootNode extends BaseRootNode {
   public /* override */ clearData(): void {
     super.clearData();
     const { wells } = this;
-    if (wells)
-      wells.remove();
+    if (wells) wells.remove();
     const { seismic } = this;
-    if (seismic)
-      seismic.remove();
+    if (seismic) seismic.remove();
     const { others } = this;
-    if (others)
-      others.remove();
+    if (others) others.remove();
   }
 
   //= =================================================

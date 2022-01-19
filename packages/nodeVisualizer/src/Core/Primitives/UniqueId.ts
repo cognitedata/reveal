@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { v4 as uuid } from "uuid";
-import { Util } from "@/Core/Primitives/Util";
+import { v4 as uuid } from 'uuid';
+import { Util } from 'Core/Primitives/Util';
 
 export class UniqueId {
   //= =================================================
@@ -21,9 +21,13 @@ export class UniqueId {
 
   public static readonly empty = new UniqueId();
 
-  public static new(): UniqueId { return new UniqueId(uuid()); }
+  public static new(): UniqueId {
+    return new UniqueId(uuid());
+  }
 
-  public static create(other: string): UniqueId { return new UniqueId(other); };
+  public static create(other: string): UniqueId {
+    return new UniqueId(other);
+  }
 
   //= =================================================
   // INSTANCE FIELDS
@@ -35,23 +39,35 @@ export class UniqueId {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get isEmpty(): boolean { return Util.isEmpty(this._id); }
+  public get isEmpty(): boolean {
+    return Util.isEmpty(this._id);
+  }
 
-  public /* override */ toString(): string { return `${this._id}`; }
+  public /* override */ toString(): string {
+    return `${this._id}`;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  private constructor(id?: string) { this._id = id; }
+  private constructor(id?: string) {
+    this._id = id;
+  }
 
-  public /* copy constructor */ clone(): UniqueId { return new UniqueId(this._id); }
+  public /* copy constructor */ clone(): UniqueId {
+    return new UniqueId(this._id);
+  }
 
   //= =================================================
   // INSTANCE METHODS
   //= =================================================
 
-  public equals(other: UniqueId): boolean { return this._id === other._id; }
+  public equals(other: UniqueId): boolean {
+    return this._id === other._id;
+  }
 
-  public equalString(other: string): boolean { return this._id ? this._id === other : false; }
+  public equalString(other: string): boolean {
+    return this._id ? this._id === other : false;
+  }
 }

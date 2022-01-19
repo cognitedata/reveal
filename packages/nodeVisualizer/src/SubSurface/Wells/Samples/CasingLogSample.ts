@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import clone from "lodash/clone";
+import clone from 'lodash/clone';
 
-import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
+import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
 
 export class CasingLogSample extends BaseLogSample {
   //= =================================================
@@ -24,11 +24,11 @@ export class CasingLogSample extends BaseLogSample {
 
   public radius: number;
 
-  public name: string = "";
+  public name: string = '';
 
-  public comments: string = "";
+  public comments: string = '';
 
-  public currentStatusComment: string = "";
+  public currentStatusComment: string = '';
 
   //= =================================================
   // CONSTRUCTOR
@@ -44,15 +44,25 @@ export class CasingLogSample extends BaseLogSample {
   // OVERRIDES of MdSample
   //= =================================================
 
-  public /* override */ toString(): string { return `${super.toString()} Radius: ${this.radius}`; }
+  public /* override */ toString(): string {
+    return `${super.toString()} Radius: ${this.radius}`;
+  }
 
-  public /* override */ getSampleText(): string { return Number.isNaN(this.radius) ? "No casing" : `Radius = ${this.radius.toFixed(3)}`; }
+  public /* override */ getSampleText(): string {
+    return Number.isNaN(this.radius)
+      ? 'No casing'
+      : `Radius = ${this.radius.toFixed(3)}`;
+  }
 
   //= =================================================
   // OVERRIDES of BaseLogSample
   //= =================================================
 
-  public /* override */ get isEmpty(): boolean { return Number.isNaN(this.radius); }
+  public get /* override */ isEmpty(): boolean {
+    return Number.isNaN(this.radius);
+  }
 
-  public /* override */ clone(): BaseLogSample { return clone<CasingLogSample>(this); }
+  public /* override */ clone(): BaseLogSample {
+    return clone<CasingLogSample>(this);
+  }
 }

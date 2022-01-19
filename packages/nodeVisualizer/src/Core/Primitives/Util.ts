@@ -11,17 +11,20 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Units } from "@/Core/Primitives/Units";
-import isNil from "lodash/isNil";
+import { Units } from 'Core/Primitives/Units';
+import isNil from 'lodash/isNil';
 
 export class Util {
-  public static isEmpty(value: string | null | undefined): boolean { return !value || value.length === 0; }
+  public static isEmpty(value: string | null | undefined): boolean {
+    return !value || value.length === 0;
+  }
 
-  public static equalsIgnoreCase(value1: string, value2: string): boolean { return value1.toLowerCase() === value2.toLowerCase(); }
+  public static equalsIgnoreCase(value1: string, value2: string): boolean {
+    return value1.toLowerCase() === value2.toLowerCase();
+  }
 
   public static cocatinate(name: string, value?: any): string {
-    if (isNil(value))
-      return `, ${name}`;
+    if (isNil(value)) return `, ${name}`;
     return `, ${name}: ${value}`;
   }
 
@@ -33,7 +36,7 @@ export class Util {
   public static getNumber(text: string): number {
     const value = Number(text);
     if (Number.isNaN(value)) {
-      console.warn("not a number");
+      console.warn('not a number');
       return value;
     }
     return value;
@@ -41,11 +44,9 @@ export class Util {
 
   public static getNumberWithUnit(text: string, unit: string): number {
     let value = Util.getNumber(text);
-    if (Number.isNaN(value))
-      return value;
+    if (Number.isNaN(value)) return value;
 
-    if (Units.isFeet(unit))
-      value *= Units.Feet;
+    if (Units.isFeet(unit)) value *= Units.Feet;
 
     return value;
   }

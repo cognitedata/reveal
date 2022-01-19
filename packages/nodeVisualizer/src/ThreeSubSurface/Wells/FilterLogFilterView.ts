@@ -11,23 +11,27 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
-import { BaseView } from "@/Core/Views/BaseView";
-import { Changes } from "@/Core/Views/Changes";
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
+import { BaseView } from 'Core/Views/BaseView';
+import { Changes } from 'Core/Views/Changes';
 
 export class FilterLogFilterView extends BaseView {
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  private get node(): BaseFilterLogNode { return super.getNode() as BaseFilterLogNode; }
+  private get node(): BaseFilterLogNode {
+    return super.getNode() as BaseFilterLogNode;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -37,13 +41,14 @@ export class FilterLogFilterView extends BaseView {
     super.updateCore(args);
     const { node } = this;
 
-    if (args.isChanged(Changes.renderStyle, Changes.nodeName, Changes.nodeColor))
+    if (
+      args.isChanged(Changes.renderStyle, Changes.nodeName, Changes.nodeColor)
+    )
       return; // Update in the node itself
 
     for (const logNode of node.getAllLogs()) {
       const view = logNode.getViewByTarget(this.renderTarget);
-      if (view)
-        view.update(args);
+      if (view) view.update(args);
     }
   }
 
@@ -66,8 +71,7 @@ export class FilterLogFilterView extends BaseView {
     const { node } = this;
     for (const logNode of node.getAllLogs()) {
       const { trajectoryNode } = logNode;
-      if (!trajectoryNode)
-        continue;
+      if (!trajectoryNode) continue;
 
       if (trajectoryNode.isVisible(this.renderTarget))
         logNode.setVisibleInteractive(visible, this.renderTarget);

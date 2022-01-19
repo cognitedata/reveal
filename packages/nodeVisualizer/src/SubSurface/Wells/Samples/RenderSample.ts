@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as Color from "color";
+import * as Color from 'color';
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Colors } from "@/Core/Primitives/Colors";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Colors } from 'Core/Primitives/Colors';
 
-import { MdSample } from "@/SubSurface/Wells/Samples/MdSample";
+import { MdSample } from 'SubSurface/Wells/Samples/MdSample';
 
 export class RenderSample extends MdSample {
   //= =================================================
@@ -33,19 +33,28 @@ export class RenderSample extends MdSample {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get isEmpty(): boolean { return this.radius <= 0 || Number.isNaN(this.radius); }
+  public get isEmpty(): boolean {
+    return this.radius <= 0 || Number.isNaN(this.radius);
+  }
 
   //= =================================================
   // OVERRIDES of MdSample
   //= =================================================
 
-  public /* override */ toString(): string { return `${super.toString()} Point: ${this.point} radius: ${this.radius}`; }
+  public /* override */ toString(): string {
+    return `${super.toString()} Point: ${this.point} radius: ${this.radius}`;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  constructor(point: Vector3, md: number, radius = 0, color: Color = Colors.white) {
+  constructor(
+    point: Vector3,
+    md: number,
+    radius = 0,
+    color: Color = Colors.white
+  ) {
     super(md);
     this.point = point;
     this.radius = radius;
@@ -56,5 +65,7 @@ export class RenderSample extends MdSample {
   // INSTANCE METHODS
   //= =================================================
 
-  public isEqualColorAndRadius(other: RenderSample): boolean { return this.color === other.color && this.radius === other.radius; }
+  public isEqualColorAndRadius(other: RenderSample): boolean {
+    return this.color === other.color && this.radius === other.radius;
+  }
 }

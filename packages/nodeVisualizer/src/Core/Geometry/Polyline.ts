@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Points } from "@/Core/Geometry/Points";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Shape } from "@/Core/Geometry/Shape";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Points } from 'Core/Geometry/Points';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Shape } from 'Core/Geometry/Shape';
 
 export class Polyline extends Points {
   //= =================================================
@@ -27,7 +27,9 @@ export class Polyline extends Points {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Shape:
@@ -59,12 +61,13 @@ export class Polyline extends Points {
     return length;
   }
 
-  public getArea(): number { return Math.abs(this.getSignedArea()); }
+  public getArea(): number {
+    return Math.abs(this.getSignedArea());
+  }
 
   public getSignedArea(): number {
     const n = this.length;
-    if (n === 2)
-      return 0;
+    if (n === 2) return 0;
 
     let area = 0;
     const first = this.list[0];
@@ -84,7 +87,10 @@ export class Polyline extends Points {
   // STATIC METHODS:
   //= =================================================
 
-  public static createByRandom(pointCount: number, boundingBox: Range3): Polyline {
+  public static createByRandom(
+    pointCount: number,
+    boundingBox: Range3
+  ): Polyline {
     const result = new Polyline();
     for (let i = 0; i < pointCount; i++)
       result.add(Vector3.getRandom(boundingBox));

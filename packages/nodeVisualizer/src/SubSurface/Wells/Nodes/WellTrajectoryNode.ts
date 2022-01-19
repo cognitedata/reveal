@@ -11,79 +11,103 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { ColorType } from "@/Core/Enums/ColorType";
-import { Range3 } from "@/Core/Geometry/Range3";
+import { ColorType } from 'Core/Enums/ColorType';
+import { Range3 } from 'Core/Geometry/Range3';
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
-import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
-import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
-import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { WellTrajectoryStyle } from 'SubSurface/Wells/Styles/WellTrajectoryStyle';
+import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
+import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
+import { FilterLogFolder } from 'SubSurface/Wells/Filters/FilterLogFolder';
 
-import Icon from "@images/Nodes/WellTrajectoryNode.png";
-import { DataNode } from "@/Core/Nodes/DataNode";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import Icon from 'images/Nodes/WellTrajectoryNode.png';
+import { DataNode } from 'Core/Nodes/DataNode';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class WellTrajectoryNode extends DataNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "WellTrajectoryNode";
+  static className = 'WellTrajectoryNode';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get trajectory(): WellTrajectory | null { return this.anyData; }
+  public get trajectory(): WellTrajectory | null {
+    return this.anyData;
+  }
 
-  public set trajectory(value: WellTrajectory | null) { this.anyData = value; }
+  public set trajectory(value: WellTrajectory | null) {
+    this.anyData = value;
+  }
 
-  public get renderStyle(): WellTrajectoryStyle | null { return this.getRenderStyle() as WellTrajectoryStyle; }
+  public get renderStyle(): WellTrajectoryStyle | null {
+    return this.getRenderStyle() as WellTrajectoryStyle;
+  }
 
-  public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
+  public get wellNode(): WellNode | null {
+    return this.getAncestorByType(WellNode);
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return WellTrajectoryNode.className; }
+  public get /* override */ className(): string {
+    return WellTrajectoryNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === WellTrajectoryNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === WellTrajectoryNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "WellTrajectory"; }
+  public get /* override */ typeName(): string {
+    return 'WellTrajectory';
+  }
 
-  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+  public /* override */ getIcon(): string {
+    return this.dataIsLost ? super.getIcon() : Icon;
+  }
 
-  public /* override */ get boundingBox(): Range3 { return this.trajectory ? this.trajectory.boundingBox : new Range3(); }
+  public get /* override */ boundingBox(): Range3 {
+    return this.trajectory ? this.trajectory.boundingBox : new Range3();
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new WellTrajectoryStyle(targetId);
   }
 
   public /* override */ verifyRenderStyle(style: BaseRenderStyle) {
-    if (!(style instanceof WellTrajectoryStyle))
-      return;
+    if (!(style instanceof WellTrajectoryStyle)) return;
 
     if (!this.supportsColorType(style.nameColorType.value, false))
       style.nameColorType.value = ColorType.ForeGround;
-      
+
     if (!this.supportsColorType(style.trajectoryColorType.value, false))
       style.trajectoryColorType.value = ColorType.Specified;
   }
 
-  public /* override */ supportsColorType(colorType: ColorType, _: boolean): boolean {
+  public /* override */ supportsColorType(
+    colorType: ColorType,
+    _: boolean
+  ): boolean {
     switch (colorType) {
       case ColorType.Specified:
       case ColorType.Parent:
@@ -97,14 +121,15 @@ export class WellTrajectoryNode extends DataNode {
     }
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
     const { trajectory } = this;
-    if (!trajectory)
-      return;
+    if (!trajectory) return;
 
-    folder.addReadOnlyInteger("# Points", trajectory.length);
-    folder.addReadOnlyRange1("Md", trajectory.mdRange, 2);
+    folder.addReadOnlyInteger('# Points', trajectory.length);
+    folder.addReadOnlyRange1('Md', trajectory.mdRange, 2);
     folder.addReadOnlyRange3(trajectory.boundingBox, 2);
   }
 
@@ -114,8 +139,7 @@ export class WellTrajectoryNode extends DataNode {
 
   public getFilterLogFolder(): FilterLogFolder | null {
     const treeNode = this.getTreeNode();
-    if (!treeNode)
-      return null;
+    if (!treeNode) return null;
 
     return treeNode.getChildByType(FilterLogFolder);
   }

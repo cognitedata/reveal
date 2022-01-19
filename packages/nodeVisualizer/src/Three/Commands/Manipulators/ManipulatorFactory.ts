@@ -12,8 +12,8 @@
 //= ====================================================================================
 
 /* eslint-disable max-classes-per-file */
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseManipulator } from "@/Three/Commands/Manipulators/BaseManipulator";
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseManipulator } from 'Three/Commands/Manipulators/BaseManipulator';
 
 export class ManipulatorFactory {
   //= =================================================
@@ -28,7 +28,7 @@ export class ManipulatorFactory {
 
   private constructor() {
     if (ManipulatorFactory._instance)
-      throw new Error("Error - use ManipulatorFactory.instance");
+      throw new Error('Error - use ManipulatorFactory.instance');
   }
 
   //= =================================================
@@ -48,18 +48,24 @@ export class ManipulatorFactory {
   //= =================================================
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  public register<T extends BaseManipulator>(className: string, ManipulatorType: new () => T, targetClassName: string): void {
+  public register<T extends BaseManipulator>(
+    className: string,
+    ManipulatorType: new () => T,
+    targetClassName: string
+  ): void {
     const key = this.getKey(className, targetClassName);
     const func = () => new ManipulatorType();
     const product = new Product(func);
     this.products.set(key, product);
   }
 
-  public create(node: BaseNode, targetClassName: string): BaseManipulator | null {
+  public create(
+    node: BaseNode,
+    targetClassName: string
+  ): BaseManipulator | null {
     const key = this.getKeyByNode(node, targetClassName);
     const product = this.products.get(key);
-    if (product === undefined)
-      return null;
+    if (product === undefined) return null;
 
     return product.func();
   }
@@ -73,9 +79,13 @@ export class ManipulatorFactory {
   // INSTANCE METHODS: Helpers
   //= =================================================
 
-  private getKeyByNode(node: BaseNode, targetClassName: string): string { return this.getKey(node.className, targetClassName); }
+  private getKeyByNode(node: BaseNode, targetClassName: string): string {
+    return this.getKey(node.className, targetClassName);
+  }
 
-  private getKey(nodeType: string, targetClassName: string): string { return `${nodeType}.${targetClassName}`; }
+  private getKey(nodeType: string, targetClassName: string): string {
+    return `${nodeType}.${targetClassName}`;
+  }
 }
 
 class Product {

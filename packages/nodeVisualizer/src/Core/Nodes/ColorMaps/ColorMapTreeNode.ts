@@ -11,37 +11,49 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
-import Icon from "@images/Nodes/ColorMapNode.png";
+import { BaseTreeNode } from 'Core/Nodes/BaseTreeNode';
+import Icon from 'images/Nodes/ColorMapNode.png';
 
 export class ColorMapTreeNode extends BaseTreeNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "ColorMapTreeNode";
+  static className = 'ColorMapTreeNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return ColorMapTreeNode.className; }
+  public get /* override */ className(): string {
+    return ColorMapTreeNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === ColorMapTreeNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === ColorMapTreeNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Colormaps"; }
+  public get /* override */ typeName(): string {
+    return 'Colormaps';
+  }
 
-  public /* override */ getIcon(): string { return Icon; }
+  public /* override */ getIcon(): string {
+    return Icon;
+  }
 
-  public /* override */ getName(): string { return "Colormaps"; }
+  public /* override */ getName(): string {
+    return 'Colormaps';
+  }
 }

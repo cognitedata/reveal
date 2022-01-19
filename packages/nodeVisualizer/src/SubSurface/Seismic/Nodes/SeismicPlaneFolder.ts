@@ -11,43 +11,57 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import Icon from "@images/Nodes/SeismicPlaneFolder.png";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import Icon from 'images/Nodes/SeismicPlaneFolder.png';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class SeismicPlaneFolder extends BaseNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "SeismicPlaneFolder";
+  static className = 'SeismicPlaneFolder';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return SeismicPlaneFolder.className; }
+  public get /* override */ className(): string {
+    return SeismicPlaneFolder.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === SeismicPlaneFolder.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === SeismicPlaneFolder.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Planes"; }
+  public get /* override */ typeName(): string {
+    return 'Planes';
+  }
 
-  public /* override */ canChangeName(): boolean { return false; }
+  public /* override */ canChangeName(): boolean {
+    return false;
+  }
 
-  public /* override */ canChangeColor(): boolean { return false; }
+  public /* override */ canChangeColor(): boolean {
+    return false;
+  }
 
-  public /* override */ getIcon(): string { return Icon; }
+  public /* override */ getIcon(): string {
+    return Icon;
+  }
 
   protected /* override */ initializeCore() {
     super.initializeCore();
@@ -62,8 +76,10 @@ export class SeismicPlaneFolder extends BaseNode {
     }
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
-    folder.addReadOnlyInteger("# Planes", this.childCount);
+    folder.addReadOnlyInteger('# Planes', this.childCount);
   }
 }

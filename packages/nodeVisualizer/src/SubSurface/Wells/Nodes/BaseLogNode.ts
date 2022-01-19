@@ -11,28 +11,28 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as Color from "color";
+import * as Color from 'color';
 
-import { BaseLog } from "@/SubSurface/Wells/Logs/BaseLog";
-import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
-import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
-import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
-import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
-import { Util } from "@/Core/Primitives/Util";
-import { ITarget } from "@/Core/Interfaces/ITarget";
-import { DataNode } from "@/Core/Nodes/DataNode";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { ColorType } from "@/Core/Enums/ColorType";
-import { NodePointer } from "@/Core/Nodes/Utilities/NodePointer";
+import { BaseLog } from 'SubSurface/Wells/Logs/BaseLog';
+import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
+import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
+import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
+import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
+import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
+import { Util } from 'Core/Primitives/Util';
+import { ITarget } from 'Core/Interfaces/ITarget';
+import { DataNode } from 'Core/Nodes/DataNode';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { ColorType } from 'Core/Enums/ColorType';
+import { NodePointer } from 'Core/Nodes/Utilities/NodePointer';
 
 export abstract class BaseLogNode extends DataNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "BaseLogNode";
+  static className = 'BaseLogNode';
 
   //= =================================================
   // INSTANCE FIELDS
@@ -44,32 +44,39 @@ export abstract class BaseLogNode extends DataNode {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get log(): BaseLog | null { return this.anyData; }
+  public get log(): BaseLog | null {
+    return this.anyData;
+  }
 
-  public set log(value: BaseLog | null) { this.anyData = value; }
+  public set log(value: BaseLog | null) {
+    this.anyData = value;
+  }
 
-  public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
+  public get wellNode(): WellNode | null {
+    return this.getAncestorByType(WellNode);
+  }
 
-  public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
+  public get trajectoryNode(): WellTrajectoryNode | null {
+    return this.getAncestorByType(WellTrajectoryNode);
+  }
 
-  public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.trajectory : null; }
+  public get trajectory(): WellTrajectory | null {
+    const node = this.trajectoryNode;
+    return node ? node.trajectory : null;
+  }
 
   public get filterLogNode(): BaseFilterLogNode | null {
     const { node } = this.nodePointer;
-    if (node instanceof BaseFilterLogNode)
-      return node;
+    if (node instanceof BaseFilterLogNode) return node;
 
     const { trajectoryNode } = this;
-    if (!trajectoryNode)
-      return null;
+    if (!trajectoryNode) return null;
 
     const filterLogFolder = trajectoryNode.getFilterLogFolder();
-    if (!filterLogFolder)
-      return null;
+    if (!filterLogFolder) return null;
 
     const filterLogNode = filterLogFolder.getFilterLogNode(this);
-    if (!filterLogNode)
-      return null;
+    if (!filterLogNode) return null;
 
     this.nodePointer.node = filterLogNode;
     return filterLogNode;
@@ -79,29 +86,40 @@ export abstract class BaseLogNode extends DataNode {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return BaseLogNode.className; }
+  public get /* override */ className(): string {
+    return BaseLogNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === BaseLogNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === BaseLogNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ hasIconColor(): boolean { return true; }
+  public /* override */ hasIconColor(): boolean {
+    return true;
+  }
 
-  public /* override */ canChangeColor(): boolean { return false; }
+  public /* override */ canChangeColor(): boolean {
+    return false;
+  }
 
-  public /* override */ canChangeName(): boolean { return this.nodePointer.isEmpty; }
+  public /* override */ canChangeName(): boolean {
+    return this.nodePointer.isEmpty;
+  }
 
   public /* override */ getName(): string {
-    if (this.nodePointer.isEmpty)
-      return super.getName();
+    if (this.nodePointer.isEmpty) return super.getName();
     const { filterLogNode } = this;
     return filterLogNode ? filterLogNode.getName() : super.getName();
   }
@@ -116,22 +134,30 @@ export abstract class BaseLogNode extends DataNode {
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
-  public /* override */ supportsColorType(colorType: ColorType, solid: boolean): boolean {
+  public /* override */ supportsColorType(
+    colorType: ColorType,
+    solid: boolean
+  ): boolean {
     const { filterLogNode } = this;
-    return filterLogNode ? filterLogNode.supportsColorType(colorType, solid) : false;
+    return filterLogNode
+      ? filterLogNode.supportsColorType(colorType, solid)
+      : false;
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
     const { log } = this;
-    if (!log)
-      return;
+    if (!log) return;
 
-    folder.addReadOnlyRange1("Md", log.mdRange, 2);
-    folder.addReadOnlyInteger("# Samples", log.length);
+    folder.addReadOnlyRange1('Md', log.mdRange, 2);
+    folder.addReadOnlyInteger('# Samples', log.length);
   }
 
-  public /* override */ get renderStyleRoot(): BaseNode | null { return this.filterLogNode; }
+  public get /* override */ renderStyleRoot(): BaseNode | null {
+    return this.filterLogNode;
+  }
 
   //= =================================================
   // VIRTUAL METHODS
@@ -144,6 +170,9 @@ export abstract class BaseLogNode extends DataNode {
   //= =================================================
 
   public isEqual(other: BaseFilterLogNode): boolean {
-    return this.wellLogType === other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
+    return (
+      this.wellLogType === other.wellLogType &&
+      Util.equalsIgnoreCase(this.name, other.name)
+    );
   }
 }

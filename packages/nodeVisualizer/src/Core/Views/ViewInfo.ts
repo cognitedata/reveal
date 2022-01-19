@@ -11,18 +11,18 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Util } from "@/Core/Primitives/Util";
-import { TextItem } from "@/Core/Views/TextItem";
-import { Polyline } from "@/Core/Geometry/Polyline";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseCommand } from "@/Core/Commands/BaseCommand";
+import { Util } from 'Core/Primitives/Util';
+import { TextItem } from 'Core/Views/TextItem';
+import { Polyline } from 'Core/Geometry/Polyline';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseCommand } from 'Core/Commands/BaseCommand';
 
 export class ViewInfo {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public footer: string = "";
+  public footer: string = '';
 
   public items: TextItem[] = [];
 
@@ -33,11 +33,9 @@ export class ViewInfo {
   //= =================================================
 
   public get isEmpty(): boolean {
-    if (!Util.isEmpty(this.footer))
-      return false;
+    if (!Util.isEmpty(this.footer)) return false;
 
-    if (this.items.length > 0)
-      return false;
+    if (this.items.length > 0) return false;
 
     return true;
   }
@@ -47,23 +45,39 @@ export class ViewInfo {
   //= =================================================
 
   // Add header of various types
-  public addHeader(header: string) { this.items.push(new TextItem(`${header}`, true)); }
+  public addHeader(header: string) {
+    this.items.push(new TextItem(`${header}`, true));
+  }
 
-  public addActiveTool(tool: BaseCommand) { this.items.push(new TextItem(`${tool.getDisplayName()}`, true)); }
+  public addActiveTool(tool: BaseCommand) {
+    this.items.push(new TextItem(`${tool.getDisplayName()}`, true));
+  }
 
-  public addPickedNode(node: BaseNode) { this.items.push(new TextItem(`Picked ${node.displayName}:`, true)); }
+  public addPickedNode(node: BaseNode) {
+    this.items.push(new TextItem(`Picked ${node.displayName}:`, true));
+  }
 
   // Add text only
-  public addText(key: string) { this.items.push(new TextItem(key, false)); }
+  public addText(key: string) {
+    this.items.push(new TextItem(key, false));
+  }
 
   // Add key - value pair
-  public addValue(key: string, value: string) { this.items.push(new TextItem(key, true, value)); }
+  public addValue(key: string, value: string) {
+    this.items.push(new TextItem(key, true, value));
+  }
 
-  public addTabbedValue(key: string, value: string) { this.items.push(new TextItem(`   ${key}`, true, value)); }
+  public addTabbedValue(key: string, value: string) {
+    this.items.push(new TextItem(`   ${key}`, true, value));
+  }
 
-  public addNumber(key: string, value: number, fractionDigits: number) { this.addValue(key, value.toFixed(fractionDigits)); }
+  public addNumber(key: string, value: number, fractionDigits: number) {
+    this.addValue(key, value.toFixed(fractionDigits));
+  }
 
-  public setPolyline(polyline: Polyline) { this.polyline = polyline; }
+  public setPolyline(polyline: Polyline) {
+    this.polyline = polyline;
+  }
 
   //= =================================================
   // INSTANCE METHODS: Operations

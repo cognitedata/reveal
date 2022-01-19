@@ -1,13 +1,13 @@
-import { Viewer } from "@/UserInterface/Components/Viewers/Viewer";
+import { Viewer } from 'UserInterface/Components/Viewers/Viewer';
 
 export class ViewerUtils {
-    private static viewers: { [key: string]: Viewer } = {};
+  private static viewers: { [key: string]: Viewer } = {};
 
-    public static addViewer(key: string, viewer: Viewer): void {
-      ViewerUtils.viewers[key] = viewer;
-    }
+  public static addViewer(key: string, viewer: Viewer): void {
+    ViewerUtils.viewers[key] = viewer;
+  }
 
-    public static getViewers(): { [key: string]: Viewer; } {
-      return ViewerUtils.viewers;
-    }
+  public static getViewers(): { [key: string]: Viewer } {
+    return ViewerUtils.viewers;
+  }
 }

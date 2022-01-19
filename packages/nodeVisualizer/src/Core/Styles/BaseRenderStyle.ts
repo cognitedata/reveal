@@ -11,16 +11,21 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { BaseStyle } from 'Core/Styles/BaseStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
 
-export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAccessor {
+export abstract class BaseRenderStyle
+  extends BaseStyle
+  implements ITargetIdAccessor
+{
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  protected static readonly fontSizeOptions: number[] = [6, 7, 8, 9, 10, 12, 14, 16, 20, 24, 30, 36, 50];
+  protected static readonly fontSizeOptions: number[] = [
+    6, 7, 8, 9, 10, 12, 14, 16, 20, 24, 30, 36, 50,
+  ];
 
   //= =================================================
   // INSTANCE FIELDS
@@ -34,9 +39,13 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get targetId(): TargetId { return this._targetId; }
+  public get targetId(): TargetId {
+    return this._targetId;
+  }
 
-  public set targetId(value: TargetId) { this._targetId = value; }
+  public set targetId(value: TargetId) {
+    this._targetId = value;
+  }
 
   //= =================================================
   // CONSTRUCTOR

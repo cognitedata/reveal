@@ -11,22 +11,26 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { BaseView } from "@/Core/Views/BaseView";
-import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { BaseView } from 'Core/Views/BaseView';
+import { SurveyNode } from 'SubSurface/Seismic/Nodes/SurveyNode';
 
 export class SurveyView extends BaseView {
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  private get node(): SurveyNode { return super.getNode() as SurveyNode; }
+  private get node(): SurveyNode {
+    return super.getNode() as SurveyNode;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView

@@ -2,7 +2,7 @@
  * Created by phil on 5/12/20
  */
 
-import { Metadata, WellboreMetadata } from "@/Solutions/BP/MetadataTransform";
+import { Metadata, WellboreMetadata } from 'Solutions/BP/MetadataTransform';
 
 /**
  * Overview

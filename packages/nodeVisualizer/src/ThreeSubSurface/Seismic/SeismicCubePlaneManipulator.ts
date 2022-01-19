@@ -1,13 +1,13 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { Index3 } from "@/Core/Geometry/Index3";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { Changes } from "@/Core/Views/Changes";
-import { BaseManipulator } from "@/Three/Commands/Manipulators/BaseManipulator";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
+import { Index3 } from 'Core/Geometry/Index3';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { Changes } from 'Core/Views/Changes';
+import { BaseManipulator } from 'Three/Commands/Manipulators/BaseManipulator';
+import { BaseNode } from 'Core/Nodes/BaseNode';
 
 export class SeismicCubePlaneManipulator extends BaseManipulator {
   //= =================================================
@@ -27,16 +27,22 @@ export class SeismicCubePlaneManipulator extends BaseManipulator {
     this._perpedicularPlane = null;
   }
 
-  public /* override */ onMouseDown(target: ThreeRenderTargetNode, node: BaseNode, intersection: THREE.Intersection, ray: THREE.Ray): boolean {
+  public /* override */ onMouseDown(
+    target: ThreeRenderTargetNode,
+    node: BaseNode,
+    intersection: THREE.Intersection,
+    ray: THREE.Ray
+  ): boolean {
     const planeNode = node as SeismicPlaneNode;
-    if (!planeNode)
-      return false;
+    if (!planeNode) return false;
 
     this._capureNode = planeNode;
     this._perpedicularPlane = new THREE.Plane();
 
     const planeNormal = planeNode.normal;
-    let perpedicularPlaneNormal = ThreeConverter.fromThreeVector3(ray.direction);
+    let perpedicularPlaneNormal = ThreeConverter.fromThreeVector3(
+      ray.direction
+    );
     const cosAngle = planeNormal.getDot(perpedicularPlaneNormal);
     const angle = Math.acos(Math.abs(cosAngle));
 
@@ -46,25 +52,28 @@ export class SeismicCubePlaneManipulator extends BaseManipulator {
       perpedicularPlaneNormal.z -= Math.sign(cosAngle);
       perpedicularPlaneNormal.normalize();
     }
-    this._perpedicularPlane.setFromNormalAndCoplanarPoint(ThreeConverter.toThreeVector3(perpedicularPlaneNormal), intersection.point);
+    this._perpedicularPlane.setFromNormalAndCoplanarPoint(
+      ThreeConverter.toThreeVector3(perpedicularPlaneNormal),
+      intersection.point
+    );
     return true;
   }
 
-  public /* override */ onMouseDrag(target: ThreeRenderTargetNode, ray: THREE.Ray, finished: boolean): void {
+  public /* override */ onMouseDrag(
+    target: ThreeRenderTargetNode,
+    ray: THREE.Ray,
+    finished: boolean
+  ): void {
     const planeNode = this._capureNode as SeismicPlaneNode;
-    if (!planeNode)
-      return;
+    if (!planeNode) return;
 
-    if (!this._perpedicularPlane)
-      return;
+    if (!this._perpedicularPlane) return;
 
     const cube = planeNode.surveyCube;
-    if (!cube)
-      return;
+    if (!cube) return;
 
     const intersection = new THREE.Vector3();
-    if (!ray.intersectPlane(this._perpedicularPlane, intersection))
-      return;
+    if (!ray.intersectPlane(this._perpedicularPlane, intersection)) return;
 
     const { transformer } = target;
     const position = transformer.toWorld(intersection);
@@ -73,12 +82,17 @@ export class SeismicCubePlaneManipulator extends BaseManipulator {
 
     const perpendicularIndex = resultCell.getAt(planeNode.perpendicularAxis);
     if (planeNode.moveTo(perpendicularIndex)) {
-      planeNode.notify(new NodeEventArgs(Changes.geometry, finished ? "" : "InDragging"));
+      planeNode.notify(
+        new NodeEventArgs(Changes.geometry, finished ? '' : 'InDragging')
+      );
       target.viewInfo.clear();
-      target.viewInfo.addText(`Moving plane \`${planeNode.name}\` to index ${planeNode.realPerpendicularIndex + 1}.`);
+      target.viewInfo.addText(
+        `Moving plane \`${planeNode.name}\` to index ${
+          planeNode.realPerpendicularIndex + 1
+        }.`
+      );
       target.invalidate();
     }
-    if (finished)
-      planeNode.notify(new NodeEventArgs(Changes.nodeName));
+    if (finished) planeNode.notify(new NodeEventArgs(Changes.nodeName));
   }
 }

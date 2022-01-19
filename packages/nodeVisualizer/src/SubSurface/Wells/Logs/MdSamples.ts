@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Ma } from "@/Core/Primitives/Ma";
+import { Range1 } from 'Core/Geometry/Range1';
+import { Ma } from 'Core/Primitives/Ma';
 
-import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
-import { MdSample } from "@/SubSurface/Wells/Samples/MdSample";
+import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
+import { MdSample } from 'SubSurface/Wells/Samples/MdSample';
 
 export abstract class MdSamples {
   //= =================================================
@@ -30,25 +30,32 @@ export abstract class MdSamples {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get length(): number { return this.samples.length; }
+  public get length(): number {
+    return this.samples.length;
+  }
 
-  public get firstSample(): MdSample | null { return this.samples.length > 0 ? this.samples[0] : null; }
+  public get firstSample(): MdSample | null {
+    return this.samples.length > 0 ? this.samples[0] : null;
+  }
 
-  public get lastSample(): MdSample | null { return this.samples.length > 0 ? this.samples[this.samples.length - 1] : null; }
+  public get lastSample(): MdSample | null {
+    return this.samples.length > 0
+      ? this.samples[this.samples.length - 1]
+      : null;
+  }
 
   //= =================================================
   // VIRTUAL METHODS
   //= =================================================
 
   public /* virtual */ getSampleByMd(_md: number): BaseLogSample | null {
-    Error("Illegal usage for this type of log");
+    Error('Illegal usage for this type of log');
     return null;
   }
 
   public /* virtual */ expandMdRange(range: Range1): void {
     for (const sample of this.samples)
-      if (!sample.isMdEmpty)
-        range.add(sample.md);
+      if (!sample.isMdEmpty) range.add(sample.md);
   }
 
   //= =================================================
@@ -57,32 +64,26 @@ export abstract class MdSamples {
 
   public getClosestIndexAtMd(md: number): number {
     const index = this.getFloatIndexAtMd(md);
-    if (index < 0)
-      return - 1;
+    if (index < 0) return -1;
     return Math.round(index);
   }
 
   public getFloatIndexAtMd(md: number): number {
     const maxIndex = this.samples.length - 1;
-    if (maxIndex < 0)
-      return -1;
+    if (maxIndex < 0) return -1;
 
-    if (md < this.samples[0].md || this.samples[maxIndex].md < md)
-      return -1;
+    if (md < this.samples[0].md || this.samples[maxIndex].md < md) return -1;
 
     let index = this.binarySearch(md);
-    if (index >= 0)
-      return index;
+    if (index >= 0) return index;
 
     index = ~index;
 
     const minSample = this.samples[index - 1];
-    if (Ma.isEqual(md, minSample.md))
-      return index - 1;
+    if (Ma.isEqual(md, minSample.md)) return index - 1;
 
     const maxSample = this.samples[index];
-    if (Ma.isEqual(md, maxSample.md))
-      return index;
+    if (Ma.isEqual(md, maxSample.md)) return index;
 
     const remainder = (md - minSample.md) / (maxSample.md - minSample.md);
     return index - 1 + remainder;
@@ -93,8 +94,7 @@ export abstract class MdSamples {
   //= =================================================
 
   public get mdRange(): Range1 {
-    if (!this._mdRange)
-      this._mdRange = this.calculateMdRange();
+    if (!this._mdRange) this._mdRange = this.calculateMdRange();
     return this._mdRange;
   }
 

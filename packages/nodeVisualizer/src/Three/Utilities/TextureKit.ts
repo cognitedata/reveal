@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
+import * as THREE from 'three';
 
-import * as Color from "color";
-import { ColorMap } from "@/Core/Primitives/ColorMap";
-import { Range1 } from "@/Core/Geometry/Range1";
+import * as Color from 'color';
+import { ColorMap } from 'Core/Primitives/ColorMap';
+import { Range1 } from 'Core/Geometry/Range1';
 
 export class TextureKit {
   //= =================================================
@@ -23,20 +23,34 @@ export class TextureKit {
   //= =================================================
 
   private static createTexture(rgbs: Uint8Array): THREE.DataTexture | null {
-    return new THREE.DataTexture(rgbs, rgbs.length / (2 * 3), 2, THREE.RGBFormat);
+    return new THREE.DataTexture(
+      rgbs,
+      rgbs.length / (2 * 3),
+      2,
+      THREE.RGBFormat
+    );
   }
 
   public static create1D(colorMap: ColorMap | null): THREE.DataTexture | null {
-    if (!colorMap)
-      return null;
+    if (!colorMap) return null;
     const rgbs = colorMap.create1DColors();
     return TextureKit.createTexture(rgbs);
   }
 
-  public static create1DContours(colorMap: ColorMap | null, range: Range1, increment: number, volume: number, color?: Color): THREE.DataTexture | null {
-    if (!colorMap)
-      return null;
-    const rgbs = colorMap.create1DContourColors(range, increment, volume, color);
+  public static create1DContours(
+    colorMap: ColorMap | null,
+    range: Range1,
+    increment: number,
+    volume: number,
+    color?: Color
+  ): THREE.DataTexture | null {
+    if (!colorMap) return null;
+    const rgbs = colorMap.create1DContourColors(
+      range,
+      increment,
+      volume,
+      color
+    );
     return TextureKit.createTexture(rgbs);
   }
 }

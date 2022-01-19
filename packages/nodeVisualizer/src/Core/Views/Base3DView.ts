@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
-import { BaseView } from "@/Core/Views/BaseView";
-import { Changes } from "@/Core/Views/Changes";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { ViewInfo } from "@/Core/Views/ViewInfo";
+import { Range3 } from 'Core/Geometry/Range3';
+import { BaseView } from 'Core/Views/BaseView';
+import { Changes } from 'Core/Views/Changes';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { ViewInfo } from 'Core/Views/ViewInfo';
 
 export abstract class Base3DView extends BaseView {
   //= =================================================
@@ -28,7 +28,9 @@ export abstract class Base3DView extends BaseView {
   // CONSTRUCTOR
   //= =================================================
 
-  protected constructor() { super(); }
+  protected constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -36,8 +38,7 @@ export abstract class Base3DView extends BaseView {
 
   protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
-    if (args.isChanged(Changes.geometry))
-      this.touchBoundingBox();
+    if (args.isChanged(Changes.geometry)) this.touchBoundingBox();
   }
 
   //= =================================================
@@ -49,7 +50,7 @@ export abstract class Base3DView extends BaseView {
     return undefined;
   }
 
-  protected /* virtual */ getViewInfoCore(_viewInfo: ViewInfo): void { }
+  protected /* virtual */ getViewInfoCore(_viewInfo: ViewInfo): void {}
 
   //= =================================================
   // INSTANCE METHODS:
@@ -60,8 +61,7 @@ export abstract class Base3DView extends BaseView {
   }
 
   public get boundingBox(): Range3 | undefined {
-    if (!this._boundingBox)
-      this._boundingBox = this.calculateBoundingBoxCore();
+    if (!this._boundingBox) this._boundingBox = this.calculateBoundingBoxCore();
     return this._boundingBox;
   }
 

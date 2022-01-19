@@ -11,35 +11,44 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
 
 export class CompassNode extends BaseVisualNode {
-
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "CompassNode";
+  static className = 'CompassNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return CompassNode.className; }
+  public get /* override */ className(): string {
+    return CompassNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === CompassNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === CompassNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Compass"; }
+  public get /* override */ typeName(): string {
+    return 'Compass';
+  }
 
-  public /* override */ getIcon(): string { return ""; }
+  public /* override */ getIcon(): string {
+    return '';
+  }
 }

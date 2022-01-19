@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import CameraControls from "camera-controls";
-import * as Three from "three";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Ma } from "@/Core/Primitives/Ma";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
+import CameraControls from 'camera-controls';
+import * as Three from 'three';
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Ma } from 'Core/Primitives/Ma';
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { BaseTool } from 'Three/Commands/Tools/BaseTool';
 
 // https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
 // https://github.com/yomotsu/camera-controls
@@ -41,11 +41,12 @@ export class CameraControl {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get camera(): Three.PerspectiveCamera | Three.OrthographicCamera { return this._camera; }
+  public get camera(): Three.PerspectiveCamera | Three.OrthographicCamera {
+    return this._camera;
+  }
 
   public get controls(): CameraControls {
-    if (!this._controls)
-      throw Error("Controls is not set");
+    if (!this._controls) throw Error('Controls is not set');
     return this._controls;
   }
 
@@ -69,7 +70,9 @@ export class CameraControl {
       CameraControl._isCameraControlInstalled = true;
     }
 
-    this._camera = isPerspectiveMode ? this.createPerspectiveCamera(target) : this.createOrthographicCamera(target);
+    this._camera = isPerspectiveMode
+      ? this.createPerspectiveCamera(target)
+      : this.createOrthographicCamera(target);
     this._camera.position.set(0, 0, 5);
     this._camera.up.set(0, 0, 1);
     this._controls = new CameraControls(this._camera, target.domElement);
@@ -81,8 +84,7 @@ export class CameraControl {
 
   public onResize(target: ThreeRenderTargetNode): void {
     const camera = this._camera;
-    if (!this._camera)
-      return;
+    if (!this._camera) return;
 
     if (camera instanceof Three.PerspectiveCamera) {
       camera.aspect = target.aspectRatio;
@@ -107,8 +109,7 @@ export class CameraControl {
       this.controls.mouseButtons.left = CameraControls.ACTION.NONE;
     else if (this.is2D)
       this.controls.mouseButtons.left = CameraControls.ACTION.TRUCK;
-    else
-      this.controls.mouseButtons.left = CameraControls.ACTION.ROTATE;
+    else this.controls.mouseButtons.left = CameraControls.ACTION.ROTATE;
 
     // default values:
     // controls.mouseButtons.left = CameraControls.ACTION.ROTATE;
@@ -117,8 +118,7 @@ export class CameraControl {
   }
 
   public viewFrom(boundingBox: Range3 | undefined, index: number): boolean {
-    if (!boundingBox || boundingBox.isEmpty)
-      return false;
+    if (!boundingBox || boundingBox.isEmpty) return false;
 
     const { controls } = this;
     const { camera } = this;
@@ -127,8 +127,7 @@ export class CameraControl {
     if (camera instanceof Three.PerspectiveCamera) {
       const fov = Ma.toRad(camera.fov);
       distanceFactor = 0.65 / (camera.aspect * Math.tan(fov / 2));
-    } else
-      distanceFactor = 2;
+    } else distanceFactor = 2;
 
     const targetPosition = boundingBox.center;
     const position = boundingBox.center;
@@ -143,10 +142,17 @@ export class CameraControl {
       tempTarget = controls.getTarget(tempTarget);
 
       // View all
-      const direction = Vector3.substract(ThreeConverter.fromThreeVector3(tempPosition), ThreeConverter.fromThreeVector3(tempTarget));
+      const direction = Vector3.substract(
+        ThreeConverter.fromThreeVector3(tempPosition),
+        ThreeConverter.fromThreeVector3(tempTarget)
+      );
       direction.normalize();
 
-      const dots = new Vector3(Vector3.getAxis(0).getDot(direction), Vector3.getAxis(1).getDot(direction), Vector3.getAxis(2).getDot(direction));
+      const dots = new Vector3(
+        Vector3.getAxis(0).getDot(direction),
+        Vector3.getAxis(1).getDot(direction),
+        Vector3.getAxis(2).getDot(direction)
+      );
       const deltaWeight = dots.clone();
       deltaWeight.abs();
       deltaWeight.negate();
@@ -164,14 +170,24 @@ export class CameraControl {
     if (index === -1) {
       // View all with a slope
       distanceFactor /= 2;
-      const distanceX = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
-      const distanceY = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
-      const distanceZ = Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor * Math.sin(Math.PI / 8);
+      const distanceX =
+        Math.max(boundingBox.y.delta, boundingBox.z.delta) *
+        distanceFactor *
+        Math.sin(Math.PI / 4);
+      const distanceY =
+        Math.max(boundingBox.x.delta, boundingBox.z.delta) *
+        distanceFactor *
+        Math.sin(Math.PI / 4);
+      const distanceZ =
+        Math.max(boundingBox.x.delta, boundingBox.y.delta) *
+        distanceFactor *
+        Math.sin(Math.PI / 8);
       position.x = boundingBox.max.x + distanceX;
       position.y = boundingBox.max.y + distanceY;
       position.z = boundingBox.max.z + distanceZ;
     } else if (index === 0 || index === 1) {
-      const distance = Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor;
+      const distance =
+        Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor;
       if (index === 0) {
         // Top
         controls.rotateTo(0, Math.PI / 2, false);
@@ -183,7 +199,8 @@ export class CameraControl {
         position.z = boundingBox.min.z - distance;
       }
     } else if (index === 2 || index === 3) {
-      const distance = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor;
+      const distance =
+        Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor;
       if (index === 2) {
         // South
         controls.rotateTo(Math.PI / 2, 0, false);
@@ -194,7 +211,8 @@ export class CameraControl {
         position.y = boundingBox.max.y + distance;
       }
     } else if (index === 4 || index === 5) {
-      const distance = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor;
+      const distance =
+        Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor;
       if (index === 4) {
         // West
         controls.rotateTo(0, 0, false);
@@ -218,23 +236,29 @@ export class CameraControl {
     controls.dollyTo(distance / 2, true);
   }
 
-  public viewAllAlternative(camera: Three.PerspectiveCamera, controls: CameraControls, boundingBox: Range3 | undefined, fitOffset = 1.2) {
-    if (!boundingBox)
-      return;
+  public viewAllAlternative(
+    camera: Three.PerspectiveCamera,
+    controls: CameraControls,
+    boundingBox: Range3 | undefined,
+    fitOffset = 1.2
+  ) {
+    if (!boundingBox) return;
 
     // Transform it......
     const size = ThreeConverter.toThreeVector3(boundingBox.delta);
     const center = ThreeConverter.toThreeVector3(boundingBox.center);
 
     const maxSize = Math.max(size.x, size.y, size.z);
-    const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
+    const fitHeightDistance =
+      maxSize / (2 * Math.atan((Math.PI * camera.fov) / 360));
     const fitWidthDistance = fitHeightDistance / camera.aspect;
     const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
 
     let target = new Three.Vector3();
     target = controls.getTarget(target);
 
-    const direction = target.clone()
+    const direction = target
+      .clone()
       .sub(camera.position)
       .normalize()
       .multiplyScalar(distance);
@@ -250,13 +274,24 @@ export class CameraControl {
   // INSTANCE METHODS: Creators
   //= =================================================
 
-  private createPerspectiveCamera(target: ThreeRenderTargetNode): Three.PerspectiveCamera {
+  private createPerspectiveCamera(
+    target: ThreeRenderTargetNode
+  ): Three.PerspectiveCamera {
     const aspectRatio = target ? target.aspectRatio : undefined;
     return new Three.PerspectiveCamera(45, aspectRatio, 0.1, 10_000);
   }
 
-  private createOrthographicCamera(target: ThreeRenderTargetNode): Three.OrthographicCamera {
+  private createOrthographicCamera(
+    target: ThreeRenderTargetNode
+  ): Three.OrthographicCamera {
     const range = target.pixelRange;
-    return new Three.OrthographicCamera(-range.x.delta / 2, range.x.delta / 2, range.y.delta / 2, -range.y.delta / 2, 0.1, 10_000);
+    return new Three.OrthographicCamera(
+      -range.x.delta / 2,
+      range.x.delta / 2,
+      range.y.delta / 2,
+      -range.y.delta / 2,
+      0.1,
+      10_000
+    );
   }
 }

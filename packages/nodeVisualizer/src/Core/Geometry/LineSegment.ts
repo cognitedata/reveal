@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Vector3 } from 'Core/Geometry/Vector3';
 
 export class LineSegment3 {
   //= =================================================
@@ -28,17 +28,20 @@ export class LineSegment3 {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get min(): Vector3 { return this.origin; }
+  public get min(): Vector3 {
+    return this.origin;
+  }
 
-  public get max(): Vector3 { return Vector3.addWithFactor(this.origin, this.vector, this.length); }
+  public get max(): Vector3 {
+    return Vector3.addWithFactor(this.origin, this.vector, this.length);
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
   public constructor(min?: Vector3, max?: Vector3) {
-    if (min === undefined || max === undefined)
-      return;
+    if (min === undefined || max === undefined) return;
     this.set(min, max);
   }
 
@@ -51,10 +54,8 @@ export class LineSegment3 {
     result.substract(this.origin);
 
     let t = this.vector.getDot(result);
-    if (t < 0)
-      t = 0;
-    else if (t > this.length)
-      t = this.length;
+    if (t < 0) t = 0;
+    else if (t > this.length) t = this.length;
 
     result.copy(this.vector);
     result.multiplyScalar(t);

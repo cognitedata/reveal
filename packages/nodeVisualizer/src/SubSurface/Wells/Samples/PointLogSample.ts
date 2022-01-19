@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import clone from "lodash/clone";
+import clone from 'lodash/clone';
 
-import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
+import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
 
 export class PointLogSample extends BaseLogSample {
   //= =================================================
@@ -24,11 +24,11 @@ export class PointLogSample extends BaseLogSample {
 
   public description: string;
 
-  public subtype: string = "";
+  public subtype: string = '';
 
-  public riskSubCategory: string = "";
+  public riskSubCategory: string = '';
 
-  public details: string = "";
+  public details: string = '';
 
   public isOpen = false;
 
@@ -36,28 +36,39 @@ export class PointLogSample extends BaseLogSample {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(description: string, topMd: number, topMdUnit?: string, baseMd?: number) {
+  public constructor(
+    description: string,
+    topMd: number,
+    topMdUnit?: string,
+    baseMd?: number
+  ) {
     super(topMd, topMdUnit);
     this.description = description;
-    if (baseMd === undefined || Number.isNaN(baseMd))
-      this.baseMd = topMd;
-    else
-      this.baseMd = baseMd;
+    if (baseMd === undefined || Number.isNaN(baseMd)) this.baseMd = topMd;
+    else this.baseMd = baseMd;
   }
 
   //= =================================================
   // OVERRIDES of MdSample
   //= =================================================
 
-  public /* override */ toString(): string { return `${super.toString()} Value: ${this.description}`; }
+  public /* override */ toString(): string {
+    return `${super.toString()} Value: ${this.description}`;
+  }
 
-  public /* override */ getSampleText(): string { return this.description; }
+  public /* override */ getSampleText(): string {
+    return this.description;
+  }
 
   //= =================================================
   // OVERRIDES of BaseLogSample
   //= =================================================
 
-  public /* override */ get isEmpty(): boolean { return false; }
+  public get /* override */ isEmpty(): boolean {
+    return false;
+  }
 
-  public /* override */ clone(): BaseLogSample { return clone<PointLogSample>(this); }
+  public /* override */ clone(): BaseLogSample {
+    return clone<PointLogSample>(this);
+  }
 }

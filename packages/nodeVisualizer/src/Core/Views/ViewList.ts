@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseView } from "@/Core/Views/BaseView";
-import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { BaseView } from 'Core/Views/BaseView';
+import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
 
 export class ViewList {
   //= =================================================
@@ -25,7 +25,9 @@ export class ViewList {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get count(): number { return this.list.length; }
+  public get count(): number {
+    return this.list.length;
+  }
 
   //= =================================================
   // INSTANCE METHODS
@@ -37,8 +39,7 @@ export class ViewList {
 
   public remove(view: BaseView): boolean {
     const index = this.list.indexOf(view, 0);
-    if (index < 0)
-      return false;
+    if (index < 0) return false;
 
     this.list.splice(index, 1);
     return true;
@@ -49,15 +50,15 @@ export class ViewList {
   }
 
   public getViewByTarget(target: ITargetIdAccessor): BaseView | null {
-    const resultView = this.list.find((view: BaseView) => view.getTarget() === target);
+    const resultView = this.list.find(
+      (view: BaseView) => view.getTarget() === target
+    );
     return resultView === undefined ? null : resultView;
   }
 
   public isOk(): boolean {
     // Used in unit testing
-    for (const view of this.list)
-      if (!view.verify())
-        return false;
+    for (const view of this.list) if (!view.verify()) return false;
     return true;
   }
 }

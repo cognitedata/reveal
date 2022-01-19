@@ -1,9 +1,8 @@
-import { Toolbar } from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
-import { IToolbarGroups } from "@/Core/Interfaces/IToolbarGroups";
-import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
+import { Toolbar } from 'UserInterface/NodeVisualizer/ToolBar/Toolbar';
+import { IToolbarGroups } from 'Core/Interfaces/IToolbarGroups';
+import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
 
 export class Viewer {
-
   // Name of the viewer
   private name: string;
 
@@ -21,17 +20,27 @@ export class Viewer {
     this.htmlElement = ref;
   }
 
-  public setTarget(target: BaseRenderTargetNode) { this.target = target; }
+  public setTarget(target: BaseRenderTargetNode) {
+    this.target = target;
+  }
 
   public setToolbarCommands(toolbar: Toolbar) {
     this.toolbarCommands = toolbar.getCommands();
   }
 
-  public getTarget() { return this.target; };
+  public getTarget() {
+    return this.target;
+  }
 
-  public getToolbarCommands() { return this.toolbarCommands; };
+  public getToolbarCommands() {
+    return this.toolbarCommands;
+  }
 
-  public getHTMLElement() { return this.htmlElement; };
+  public getHTMLElement() {
+    return this.htmlElement;
+  }
 
-  public getName() { return this.name; };
+  public getName() {
+    return this.name;
+  }
 }

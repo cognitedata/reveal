@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseModule } from "@/Core/Module/BaseModule";
-import { ViewFactory } from "@/Core/Views/ViewFactory";
-import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { SubSurfaceRootNode } from "@/SubSurface/Trees/SubSurfaceRootNode";
+import { BaseModule } from 'Core/Module/BaseModule';
+import { ViewFactory } from 'Core/Views/ViewFactory';
+import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
+import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
+import { SubSurfaceRootNode } from 'SubSurface/Trees/SubSurfaceRootNode';
 
-import { StubPolylinesView } from "@/__tests__/StubModule/StubPolylinesView";
-import { StubTargetNode } from "@/__tests__/StubModule/StubTargetNode";
+import { StubPolylinesView } from '__tests__/StubModule/StubPolylinesView';
+import { StubTargetNode } from '__tests__/StubModule/StubTargetNode';
 
 export class StubModule extends BaseModule {
   //= =================================================
@@ -26,10 +26,14 @@ export class StubModule extends BaseModule {
   //= =================================================
 
   public /* override */ registerViews(factory: ViewFactory): void {
-    factory.register(PolylinesNode.className, StubPolylinesView, StubTargetNode.className);
+    factory.register(
+      PolylinesNode.className,
+      StubPolylinesView,
+      StubTargetNode.className
+    );
   }
 
   public /* override */ createRoot(): BaseRootNode {
- return new SubSurfaceRootNode();
-}
+    return new SubSurfaceRootNode();
+  }
 }

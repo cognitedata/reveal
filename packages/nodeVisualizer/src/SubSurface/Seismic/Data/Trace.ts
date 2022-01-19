@@ -11,20 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Random } from "@/Core/Primitives/Random";
+import { Random } from 'Core/Primitives/Random';
 
 export class Trace {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public values: Array<number>;// Float32Array;
+  public values: Array<number>; // Float32Array;
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get length(): number { return this.values.length; }
+  public get length(): number {
+    return this.values.length;
+  }
 
   //= =================================================
   // CONSTRUCTOR
@@ -38,17 +40,22 @@ export class Trace {
   // CONSTRUCTOR
   //= =================================================
 
-  public getAt(index: number): number { return this.values[index]; }
+  public getAt(index: number): number {
+    return this.values[index];
+  }
 
-  public setAt(index: number, value: number): void { this.values[index] = value; }
+  public setAt(index: number, value: number): void {
+    this.values[index] = value;
+  }
 
   public generateSynthetic(x: number, y: number) {
     // x and y is [0,1]
-    const _x = Math.sin(x * Math.PI / 3) + Random.getGaussian(0, 0.5);
-    const _y = Math.sin(y * Math.PI / 2) + Random.getGaussian(0, 0.5);
+    const _x = Math.sin((x * Math.PI) / 3) + Random.getGaussian(0, 0.5);
+    const _y = Math.sin((y * Math.PI) / 2) + Random.getGaussian(0, 0.5);
     for (let k = this.length - 1; k >= 0; k--) {
       const z = k / (this.length - 1); // Z is [0,1]
-      this.values[k] = (_x + _y) * Math.sin(2 * Math.PI * z * 20) + Random.getGaussian(0, 0.5);
+      this.values[k] =
+        (_x + _y) * Math.sin(2 * Math.PI * z * 20) + Random.getGaussian(0, 0.5);
     }
   }
 }

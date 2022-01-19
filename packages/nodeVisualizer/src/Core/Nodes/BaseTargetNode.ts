@@ -1,28 +1,30 @@
-import * as Color from "color";
+import * as Color from 'color';
 
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { ITarget } from "@/Core/Interfaces/ITarget";
-import { ViewFactory } from "@/Core/Views/ViewFactory";
-import { ViewList } from "@/Core/Views/ViewList";
-import { BaseView } from "@/Core/Views/BaseView";
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
-import { Colors } from "@/Core/Primitives/Colors";
-import { Util } from "@/Core/Primitives/Util";
+import { TargetId } from 'Core/Primitives/TargetId';
+import { ITarget } from 'Core/Interfaces/ITarget';
+import { ViewFactory } from 'Core/Views/ViewFactory';
+import { ViewList } from 'Core/Views/ViewList';
+import { BaseView } from 'Core/Views/BaseView';
+import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { isInstanceOf, Class } from 'Core/Primitives/ClassT';
+import { Colors } from 'Core/Primitives/Colors';
+import { Util } from 'Core/Primitives/Util';
 
 export abstract class BaseTargetNode extends BaseNode implements ITarget {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "BaseTargetNode";
+  static className = 'BaseTargetNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  protected constructor() { super(); }
+  protected constructor() {
+    super();
+  }
 
   //= =================================================
   // INSTANCE FIELDS
@@ -36,36 +38,54 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get viewsShownHere(): ViewList { return this._viewsShownHere; }
+  public get viewsShownHere(): ViewList {
+    return this._viewsShownHere;
+  }
 
-  public get targetId(): TargetId { return new TargetId(this.className, this.uniqueId); }
+  public get targetId(): TargetId {
+    return new TargetId(this.className, this.uniqueId);
+  }
 
-  public get fgColor(): Color { return this.isLightBackground ? Colors.black : Colors.white; }
+  public get fgColor(): Color {
+    return this.isLightBackground ? Colors.black : Colors.white;
+  }
 
-  public get bgColor(): Color { return this.getColor(); }
+  public get bgColor(): Color {
+    return this.getColor();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return BaseTargetNode.className; }
+  public get /* override */ className(): string {
+    return BaseTargetNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === BaseTargetNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === BaseTargetNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ getColor(): Color { return this.isLightBackground ? Colors.white : Colors.black; }
+  public /* override */ getColor(): Color {
+    return this.isLightBackground ? Colors.white : Colors.black;
+  }
 
-  public /* override */ get typeName(): string { return "Target"; }
+  public get /* override */ typeName(): string {
+    return 'Target';
+  }
 
-  public /* override */ canBeActive(): boolean { return true; }
+  public /* override */ canBeActive(): boolean {
+    return true;
+  }
 
   public /* override */ getDebugString(): string {
     let result = super.getDebugString();
     if (this.viewsShownHere.count > 0)
-      result += Util.cocatinate("viewsShownHere", this.viewsShownHere.count);
+      result += Util.cocatinate('viewsShownHere', this.viewsShownHere.count);
     return result;
   }
 
@@ -88,8 +108,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
 
   public hasVisibleView(node: BaseVisualNode): boolean {
     const view = node.views.getViewByTarget(this);
-    if (!view)
-      return false;
+    if (!view) return false;
 
     return view.isVisible;
   }
@@ -98,16 +117,14 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
     let view = node.views.getViewByTarget(this);
     if (!view) {
       view = this.createViewCore(node);
-      if (!view)
-        return false;
+      if (!view) return false;
 
       view.attach(node, this);
       node.views.add(view);
       this._viewsShownHere.add(view);
       // view.isVisible = true;
       view.initialize();
-    } else
-      return false;
+    } else return false;
 
     view.onShow();
 
@@ -116,8 +133,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
 
   public hideView(node: BaseVisualNode): boolean {
     const view = node.views.getViewByTarget(this);
-    if (!view)
-      return false;
+    if (!view) return false;
 
     this.removeViewShownHere(view);
     node.views.remove(view);
@@ -130,8 +146,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
     //   view.onHide();
     //   view.isVisible = false;
     // }
-    if (view.isVisible)
-      view.onHide();
+    if (view.isVisible) view.onHide();
 
     view.dispose();
     this._viewsShownHere.remove(view);
@@ -143,8 +158,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
   //= =================================================
 
   public getBgColor(hasAxis: boolean): Color {
-    if (!hasAxis)
-      return this.bgColor;
+    if (!hasAxis) return this.bgColor;
     return this.isLightBackground ? Colors.lightGrey : Colors.darkGrey;
   }
 
@@ -158,8 +172,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
       // view.isVisible = false;
       view.dispose();
       const node = view.getNode();
-      if (node instanceof BaseVisualNode)
-        node.views.remove(view);
+      if (node instanceof BaseVisualNode) node.views.remove(view);
       view.detach();
     }
     this._viewsShownHere.clear();
@@ -168,14 +181,11 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
   public hasViewOfNodeType<T extends BaseNode>(classType: Class<T>): boolean {
     for (const view of this.viewsShownHere.list) {
       const node = view.getNode();
-      if (!node)
-        continue;
+      if (!node) continue;
 
-      if (!isInstanceOf(node, classType))
-        continue;
+      if (!isInstanceOf(node, classType)) continue;
 
-      if (view.isVisible)
-        return true;
+      if (view.isVisible) return true;
     }
     return false;
   }
@@ -183,11 +193,9 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
   public getViewByNode(node: BaseNode): BaseView | null {
     for (const view of this.viewsShownHere.list) {
       const otherNode = view.getNode();
-      if (!otherNode)
-        continue;
+      if (!otherNode) continue;
 
-      if (otherNode === node)
-        return view;
+      if (otherNode === node) return view;
     }
     return null;
   }

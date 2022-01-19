@@ -1,5 +1,5 @@
-import { BaseCommand } from "@/Core/Commands/BaseCommand";
-import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
+import { BaseCommand } from 'Core/Commands/BaseCommand';
+import { IconTypes } from 'UserInterface/Components/Icon/IconTypes';
 
 export type ToolBarType = {
   icon: { type: string; name: string };
@@ -13,8 +13,12 @@ export type ToolBarType = {
 // Setting panel Prop type
 export type SettingPanelProps = {
   id?: string;
-  titleBar?: { name: string; icon?: { src?: string; description?: string, color?: string }; toolBar: ToolBarType };
-  expandedSections: {[sectionName: string]: boolean},
+  titleBar?: {
+    name: string;
+    icon?: { src?: string; description?: string; color?: string };
+    toolBar: ToolBarType;
+  };
+  expandedSections: { [sectionName: string]: boolean };
   onSectionExpand: (sectionId: string, expandStatus: boolean) => void;
   onPropertyValueChange: (elementId: string, value: any) => void;
   onPropertyUseChange: (elementId: string, value: boolean) => void;
@@ -80,7 +84,7 @@ export interface IBaseSettingsElement {
 export interface ISelectOption {
   label: string;
   value: any;
-  iconSrc?: string
+  iconSrc?: string;
 }
 
 export interface ICommonSelectProps {
@@ -93,5 +97,5 @@ export interface ICommonSelectProps {
 }
 export interface ICommonSelectExtraOptionData {
   colorMapColors?: string[];
-  colorTypeIconData?: { icon?: string, color?: string }
+  colorTypeIconData?: { icon?: string; color?: string };
 }

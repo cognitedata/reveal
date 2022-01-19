@@ -1,5 +1,5 @@
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseCommand } from "@/Core/Commands//BaseCommand";
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseCommand } from 'Core/Commands//BaseCommand';
 
 export abstract class BaseNodeCommand extends BaseCommand {
   public node: null | BaseNode = null; // Get the node to invoke the command on
@@ -17,5 +17,7 @@ export abstract class BaseNodeCommand extends BaseCommand {
   // OVERRIDES of BaseCommand
   //= =================================================
 
-  public /* override */ isEnabled(): boolean { return this.node != null; }
+  public /* override */ isEnabled(): boolean {
+    return this.node != null;
+  }
 }

@@ -11,39 +11,53 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseNode } from "@/Core/Nodes//BaseNode";
-import FolderNodeIcon from "@images/Nodes/FolderNode.png";
+import { BaseNode } from 'Core/Nodes//BaseNode';
+import FolderNodeIcon from 'images/Nodes/FolderNode.png';
 
 export class FolderNode extends BaseNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "FolderNode";
+  static className = 'FolderNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return FolderNode.className; }
+  public get /* override */ className(): string {
+    return FolderNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === FolderNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === FolderNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Folder"; }
+  public get /* override */ typeName(): string {
+    return 'Folder';
+  }
 
-  public /* override */ getIcon(): string { return FolderNodeIcon; }
+  public /* override */ getIcon(): string {
+    return FolderNodeIcon;
+  }
 
-  public /* override */ canChangeColor(): boolean { return true; }
+  public /* override */ canChangeColor(): boolean {
+    return true;
+  }
 
-  public /* override */ canChangeName(): boolean { return true; }
+  public /* override */ canChangeName(): boolean {
+    return true;
+  }
 }

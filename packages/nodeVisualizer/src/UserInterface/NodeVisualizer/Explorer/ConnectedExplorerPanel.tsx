@@ -1,23 +1,22 @@
 import { connect } from 'react-redux';
-import { Explorer } from '@/UserInterface/Components/Explorer/Explorer';
+import { Explorer } from 'UserInterface/Components/Explorer/Explorer';
 import { Dispatch } from 'redux';
-import { State } from '@/UserInterface/Redux/State/State';
+import { State } from 'UserInterface/Redux/State/State';
 import {
   getAllTabs,
   getCurrentTabIndex,
   getNodeTree,
   onSelectedTabChange,
-} from '@/UserInterface/Redux/reducers/ExplorerReducer';
-import { onSelectedNodeChange } from '@/UserInterface/Redux/reducers/SettingsReducer';
-import { ExplorerNodeUtils } from '@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils';
+} from 'UserInterface/Redux/reducers/ExplorerReducer';
+import { onSelectedNodeChange } from 'UserInterface/Redux/reducers/SettingsReducer';
+import { ExplorerNodeUtils } from 'UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils';
 
 function mapDispatchToExplorerPanel(dispatch: Dispatch) {
   return {
     onTabChange: (tabIndex: number): void => {
       dispatch(onSelectedTabChange({ selectedTabIndex: tabIndex }));
-      const currentSelectedNode = ExplorerNodeUtils.getSelectedNodeOfCurrentTab(
-        tabIndex
-      );
+      const currentSelectedNode =
+        ExplorerNodeUtils.getSelectedNodeOfCurrentTab(tabIndex);
       if (currentSelectedNode)
         dispatch(onSelectedNodeChange(currentSelectedNode));
     },

@@ -11,73 +11,97 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { ColorType } from "@/Core/Enums/ColorType";
-import { Polylines } from "@/Core/Geometry/Polylines";
+import { Range3 } from 'Core/Geometry/Range3';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { ColorType } from 'Core/Enums/ColorType';
+import { Polylines } from 'Core/Geometry/Polylines';
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
-import Icon from "@images/Nodes/PolylinesNode.png";
-import { DataNode } from "@/Core/Nodes/DataNode";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { PolylinesRenderStyle } from 'SubSurface/Basics/PolylinesRenderStyle';
+import Icon from 'images/Nodes/PolylinesNode.png';
+import { DataNode } from 'Core/Nodes/DataNode';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class PolylinesNode extends DataNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "PolylinesNode";
+  static className = 'PolylinesNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get polylines(): Polylines | null { return this.anyData; }
+  public get polylines(): Polylines | null {
+    return this.anyData;
+  }
 
-  public set polylines(value: Polylines | null) { this.anyData = value; }
+  public set polylines(value: Polylines | null) {
+    this.anyData = value;
+  }
 
-  public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
+  public get renderStyle(): PolylinesRenderStyle | null {
+    return this.getRenderStyle() as PolylinesRenderStyle;
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return PolylinesNode.className; }
+  public get /* override */ className(): string {
+    return PolylinesNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === PolylinesNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === PolylinesNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Polylines"; }
+  public get /* override */ typeName(): string {
+    return 'Polylines';
+  }
 
-  public /* override */ hasColorMap(): boolean { return true; }
+  public /* override */ hasColorMap(): boolean {
+    return true;
+  }
 
-  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+  public /* override */ getIcon(): string {
+    return this.dataIsLost ? super.getIcon() : Icon;
+  }
 
-  public /* override */ get boundingBox(): Range3 { return this.polylines ? this.polylines.boundingBox : new Range3(); }
+  public get /* override */ boundingBox(): Range3 {
+    return this.polylines ? this.polylines.boundingBox : new Range3();
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new PolylinesRenderStyle(targetId);
   }
 
   public /* override */ verifyRenderStyle(style: BaseRenderStyle) {
-    if (!(style instanceof PolylinesRenderStyle))
-      return;
+    if (!(style instanceof PolylinesRenderStyle)) return;
 
     if (!this.supportsColorType(style.colorType, false))
       style.colorType = ColorType.Specified;
   }
 
-  public /* override */ supportsColorType(colorType: ColorType, _: boolean): boolean {
+  public /* override */ supportsColorType(
+    colorType: ColorType,
+    _: boolean
+  ): boolean {
     switch (colorType) {
       case ColorType.Different:
       case ColorType.Specified:
@@ -88,19 +112,19 @@ export class PolylinesNode extends DataNode {
     }
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
 
     const { polylines } = this;
-    if (!polylines)
-      return;
+    if (!polylines) return;
 
     let pointCount = 0;
-    for (const polyline of polylines.list)
-      pointCount += polyline.length;
+    for (const polyline of polylines.list) pointCount += polyline.length;
 
-    folder.addReadOnlyInteger("# Polylines", polylines.length);
-    folder.addReadOnlyInteger("# Points", pointCount);
+    folder.addReadOnlyInteger('# Polylines', polylines.length);
+    folder.addReadOnlyInteger('# Points', pointCount);
     folder.addReadOnlyRange3(polylines.boundingBox);
   }
 }

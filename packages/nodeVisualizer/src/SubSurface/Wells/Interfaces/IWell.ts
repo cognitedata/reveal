@@ -2,7 +2,7 @@
  * Created by phil on 5/12/20
  */
 
-import { Metadata, WellMetadata } from "@/Solutions/BP/MetadataTransform";
+import { Metadata, WellMetadata } from 'Solutions/BP/MetadataTransform';
 
 /**
  * Overview

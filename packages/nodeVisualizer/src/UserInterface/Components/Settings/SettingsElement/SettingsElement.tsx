@@ -3,12 +3,12 @@ import Color from 'color';
 import {
   ISettingsElement,
   ISettingsElementProps,
-} from '@/UserInterface/Components/Settings/Types';
-import { ElementTypes } from '@/UserInterface/Components/Settings/ElementTypes';
-import { CompactColorPicker } from '@/UserInterface/Components/CompactColorPicker/CompactColorPicker';
-import { Icon } from '@/UserInterface/Components/Icon/Icon';
-import { CommonSelectBase } from '@/UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
-import { ToolbarToolTip } from '@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
+} from 'UserInterface/Components/Settings/Types';
+import { ElementTypes } from 'UserInterface/Components/Settings/ElementTypes';
+import { CompactColorPicker } from 'UserInterface/Components/CompactColorPicker/CompactColorPicker';
+import { Icon } from 'UserInterface/Components/Icon/Icon';
+import { CommonSelectBase } from 'UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
+import { ToolbarToolTip } from 'UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
 import { Checkbox, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
 

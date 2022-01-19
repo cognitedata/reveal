@@ -11,34 +11,44 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import { BaseTreeNode } from 'Core/Nodes/BaseTreeNode';
 
 export class TargetTreeNode extends BaseTreeNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "TargetTreeNode";
+  static className = 'TargetTreeNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return TargetTreeNode.className; }
+  public get /* override */ className(): string {
+    return TargetTreeNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === TargetTreeNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === TargetTreeNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "TargetTree"; }
+  public get /* override */ typeName(): string {
+    return 'TargetTree';
+  }
 
-  public /* override */ getName(): string { return "Targets"; }
+  public /* override */ getName(): string {
+    return 'Targets';
+  }
 }

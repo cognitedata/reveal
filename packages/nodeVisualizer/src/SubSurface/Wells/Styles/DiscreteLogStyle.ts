@@ -11,33 +11,40 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import cloneDeep from "lodash/cloneDeep";
+import cloneDeep from 'lodash/cloneDeep';
 
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import { BandPositionProperty } from "@/Core/Property/Concrete/Property/BandPositionProperty";
-import { BandPosition } from "@/Core/Enums/BandPosition";
+import { TargetId } from 'Core/Primitives/TargetId';
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { BaseStyle } from 'Core/Styles/BaseStyle';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { BandPositionProperty } from 'Core/Property/Concrete/Property/BandPositionProperty';
+import { BandPosition } from 'Core/Enums/BandPosition';
 
 export class DiscreteLogStyle extends BaseRenderStyle {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public bandPosition = new BandPositionProperty({ name: "Band Position", value: BandPosition.Automatic });
+  public bandPosition = new BandPositionProperty({
+    name: 'Band Position',
+    value: BandPosition.Automatic,
+  });
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(targetId: TargetId) { super(targetId); }
+  public constructor(targetId: TargetId) {
+    super(targetId);
+  }
 
   //= =================================================
   // OVERRIDES of BaseStyle
   //= =================================================
 
-  public /* override */ clone(): BaseStyle { return cloneDeep<DiscreteLogStyle>(this); }
+  public /* override */ clone(): BaseStyle {
+    return cloneDeep<DiscreteLogStyle>(this);
+  }
 
   protected /* override */ populateCore(folder: BasePropertyFolder) {
     super.populateCore(folder);

@@ -11,10 +11,10 @@
 // Copyright (c) Cognite aS. all rights reserved.
 //= ====================================================================================
 
-import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Ma } from "@/Core/Primitives/Ma";
-import { Range1 } from "@/Core/Geometry/Range1";
+import { RegularGrid2 } from 'Core/Geometry/RegularGrid2';
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Ma } from 'Core/Primitives/Ma';
+import { Range1 } from 'Core/Geometry/Range1';
 
 export class ContouringService {
   //= =================================================
@@ -34,7 +34,6 @@ export class ContouringService {
   //= =================================================
 
   public constructor(inc: number) {
-
     this.inc = inc;
     this.tolerance = this.inc / 1000;
   }
@@ -44,7 +43,6 @@ export class ContouringService {
   //= =================================================
 
   public createContoursAsXyzArray(grid: RegularGrid2): number[] {
-
     const p0 = Vector3.newZero;
     const p1 = Vector3.newZero;
     const p2 = Vector3.newZero;
@@ -58,13 +56,12 @@ export class ContouringService {
         const isDef3 = grid.getRelativeNodePosition(i + 0, j + 1, p3);
 
         let triangleCount = 0;
-        if (isDef0)  triangleCount += 1;
-        if (isDef2)  triangleCount += 1;
-        if (isDef2)  triangleCount += 1;
-        if (isDef3)  triangleCount += 1;
+        if (isDef0) triangleCount += 1;
+        if (isDef2) triangleCount += 1;
+        if (isDef2) triangleCount += 1;
+        if (isDef3) triangleCount += 1;
 
-        if (triangleCount < 3)
-          continue;
+        if (triangleCount < 3) continue;
 
         // (i,j+1)     (i+1,j+1)
         //     3------2
@@ -72,14 +69,10 @@ export class ContouringService {
         //     0------1
         // (i,j)       (i+1,j)
 
-        if (!isDef0)
-          this.addTriangle(p1, p2, p3);
-        if (triangleCount === 4 || !isDef1)
-          this.addTriangle(p0, p2, p3);
-        if (!isDef2)
-          this.addTriangle(p0, p1, p3);
-        if (triangleCount === 4 || !isDef3)
-          this.addTriangle(p0, p1, p2);
+        if (!isDef0) this.addTriangle(p1, p2, p3);
+        if (triangleCount === 4 || !isDef1) this.addTriangle(p0, p2, p3);
+        if (!isDef2) this.addTriangle(p0, p1, p3);
+        if (triangleCount === 4 || !isDef3) this.addTriangle(p0, p1, p2);
       }
     }
     return this.positions;
@@ -90,7 +83,6 @@ export class ContouringService {
   //= =================================================
 
   private addTriangle(a: Vector3, b: Vector3, c: Vector3): void {
-
     this.range.set(Ma.min(a.z, b.z, c.z), Ma.max(a.z, b.z, c.z));
 
     for (const anyTick of this.range.getFastTicks(this.inc, this.tolerance)) {
@@ -101,14 +93,10 @@ export class ContouringService {
 
   private addLevelAt(z: number, a: Vector3, b: Vector3, c: Vector3): boolean {
     // Make sure we don't run into numerical problems
-    if (Ma.isAbsEqual(a.z, z, this.tolerance))
-      a.z = z + this.tolerance;
-    if (Ma.isAbsEqual(b.z, z, this.tolerance))
-      b.z = z + this.tolerance;
-    if (Ma.isAbsEqual(c.z, z, this.tolerance))
-      c.z = z + this.tolerance;
-    if (Ma.isAbsEqual(a.z, b.z, this.tolerance))
-      b.z = a.z + this.tolerance;
+    if (Ma.isAbsEqual(a.z, z, this.tolerance)) a.z = z + this.tolerance;
+    if (Ma.isAbsEqual(b.z, z, this.tolerance)) b.z = z + this.tolerance;
+    if (Ma.isAbsEqual(c.z, z, this.tolerance)) c.z = z + this.tolerance;
+    if (Ma.isAbsEqual(a.z, b.z, this.tolerance)) b.z = a.z + this.tolerance;
 
     // Special cases, check exact intersection on the corner or along the edges
     if (a.z === z) {
@@ -149,24 +137,19 @@ export class ContouringService {
     let numPoints = 0;
     if (Ma.isInside(a.z, z, b.z)) {
       this.addLinearInterpolation(a, b, z);
-       numPoints += 1;
+      numPoints += 1;
     }
     if (Ma.isInside(b.z, z, c.z)) {
-      if (numPoints === 0)
-        this.addLinearInterpolation(b, c, z);
-      else
-        this.addLinearInterpolation(b, c, z);
-       numPoints += 1;
+      if (numPoints === 0) this.addLinearInterpolation(b, c, z);
+      else this.addLinearInterpolation(b, c, z);
+      numPoints += 1;
     }
     if (numPoints < 2 && Ma.isInside(c.z, z, a.z)) {
-      if (numPoints === 0)
-        this.addLinearInterpolation(c, a, z);
-      else
-        this.addLinearInterpolation(c, a, z);
-       numPoints += 1;
+      if (numPoints === 0) this.addLinearInterpolation(c, a, z);
+      else this.addLinearInterpolation(c, a, z);
+      numPoints += 1;
     }
-    if (numPoints === 2)
-      return true;
+    if (numPoints === 2) return true;
 
     if (numPoints === 1) {
       // Remove the last added

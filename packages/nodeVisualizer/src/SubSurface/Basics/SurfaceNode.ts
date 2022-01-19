@@ -11,25 +11,25 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
-import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
-import { ColorType } from "@/Core/Enums/ColorType";
+import { Range3 } from 'Core/Geometry/Range3';
+import { RegularGrid2 } from 'Core/Geometry/RegularGrid2';
+import { ColorType } from 'Core/Enums/ColorType';
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { SurfaceRenderStyle } from 'SubSurface/Basics/SurfaceRenderStyle';
 
-import Icon from "@images/Nodes/SurfaceNode.png";
-import { DataNode } from "@/Core/Nodes/DataNode";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import { ColorMaps } from "@/Core/Primitives/ColorMaps";
+import Icon from 'images/Nodes/SurfaceNode.png';
+import { DataNode } from 'Core/Nodes/DataNode';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { ColorMaps } from 'Core/Primitives/ColorMaps';
 
 export class SurfaceNode extends DataNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "SurfaceNode";
+  static className = 'SurfaceNode';
 
   //= =================================================
   // CONSTRUCTOR
@@ -44,49 +44,66 @@ export class SurfaceNode extends DataNode {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get surface(): RegularGrid2 | null { return this.anyData; }
+  public get surface(): RegularGrid2 | null {
+    return this.anyData;
+  }
 
-  public set surface(value: RegularGrid2 | null) { this.anyData = value; }
+  public set surface(value: RegularGrid2 | null) {
+    this.anyData = value;
+  }
 
-  public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
+  public get renderStyle(): SurfaceRenderStyle | null {
+    return this.getRenderStyle() as SurfaceRenderStyle;
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return SurfaceNode.className; }
+  public get /* override */ className(): string {
+    return SurfaceNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === SurfaceNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === SurfaceNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Surface"; }
+  public get /* override */ typeName(): string {
+    return 'Surface';
+  }
 
-  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+  public /* override */ getIcon(): string {
+    return this.dataIsLost ? super.getIcon() : Icon;
+  }
 
-  public /* override */ hasColorMap(): boolean { return true; }
+  public /* override */ hasColorMap(): boolean {
+    return true;
+  }
 
-  public /* override */ get boundingBox(): Range3 { return this.surface ? this.surface.boundingBox : new Range3(); }
+  public get /* override */ boundingBox(): Range3 {
+    return this.surface ? this.surface.boundingBox : new Range3();
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new SurfaceRenderStyle(targetId);
   }
 
   public /* override */ verifyRenderStyle(style: BaseRenderStyle) {
-    if (!(style instanceof SurfaceRenderStyle))
-      return;
+    if (!(style instanceof SurfaceRenderStyle)) return;
 
     const { boundingBox } = this;
-    if (boundingBox.isEmpty)
-      return;
+    if (boundingBox.isEmpty) return;
 
     const zRange = boundingBox.z;
     {
       const increment = style.increment.value;
-      if (increment <= 0)
-        style.increment.value = zRange.getBestInc();
+      if (increment <= 0) style.increment.value = zRange.getBestInc();
     }
     if (!style.increment.hasOptions) {
       const options: number[] = [];
@@ -99,7 +116,10 @@ export class SurfaceNode extends DataNode {
     }
   }
 
-  public /* override */ supportsColorType(colorType: ColorType, solid: boolean): boolean {
+  public /* override */ supportsColorType(
+    colorType: ColorType,
+    solid: boolean
+  ): boolean {
     switch (colorType) {
       case ColorType.Specified:
       case ColorType.Parent:
@@ -115,17 +135,18 @@ export class SurfaceNode extends DataNode {
     }
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
 
     const { surface } = this;
-    if (!surface)
-      return;
+    if (!surface) return;
 
-    folder.addReadOnlyIndex2("# Cells", surface.cellSize);
-    folder.addReadOnlyVector2("Spacing", surface.inc);
-    folder.addReadOnlyVector2("Origin", surface.origin);
-    folder.addReadOnlyAngle("Rotation", surface.rotationAngle);
+    folder.addReadOnlyIndex2('# Cells', surface.cellSize);
+    folder.addReadOnlyVector2('Spacing', surface.inc);
+    folder.addReadOnlyVector2('Origin', surface.origin);
+    folder.addReadOnlyAngle('Rotation', surface.rotationAngle);
     folder.addReadOnlyRange3(surface.boundingBox);
   }
 }

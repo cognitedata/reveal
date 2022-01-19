@@ -1,9 +1,8 @@
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
-import CopyImageIcon from "@images/Commands/CopyImage.png";
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
+import CopyImageIcon from 'images/Commands/CopyImage.png';
 
 export class CopyImageCommand extends ThreeRenderTargetCommand {
-
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
@@ -16,19 +15,21 @@ export class CopyImageCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //= =================================================
 
-  public /* override */ getName(): string { 
-    if(this.isFirefox())
-      return "Copy a image of the viewer to the clipboard (Not supported in Firefox)"; 
-    return "Copy a image of the viewer to the clipboard"; 
+  public /* override */ getName(): string {
+    if (this.isFirefox())
+      return 'Copy a image of the viewer to the clipboard (Not supported in Firefox)';
+    return 'Copy a image of the viewer to the clipboard';
   }
 
-  public /* override */ getIcon(): string { return CopyImageIcon; }
-  
+  public /* override */ getIcon(): string {
+    return CopyImageIcon;
+  }
+
   protected /* override */ invokeCore(): boolean {
-    if(this.isFirefox()) return true;
+    if (this.isFirefox()) return true;
     this.target?.domElement.toBlob((blob: any) => {
       // @ts-ignore
-      navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
     });
     return true;
   }

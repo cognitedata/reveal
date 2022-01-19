@@ -1,38 +1,38 @@
 /* eslint-disable max-classes-per-file */
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Range1 } from 'Core/Geometry/Range1';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Vector3 } from 'Core/Geometry/Vector3';
 
-import { SubSurfaceRootNode } from "@/SubSurface/Trees/SubSurfaceRootNode";
+import { SubSurfaceRootNode } from 'SubSurface/Trees/SubSurfaceRootNode';
 
-import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
-import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
-import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
-import { FolderNode } from "@/Core/Nodes/FolderNode";
+import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
+import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
+import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
+import { FolderNode } from 'Core/Nodes/FolderNode';
 
-import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";
-import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
-import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
+import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
+import { FloatLogNode } from 'SubSurface/Wells/Nodes/FloatLogNode';
+import { DiscreteLogNode } from 'SubSurface/Wells/Nodes/DiscreteLogNode';
 
-import { PointLog } from "@/SubSurface/Wells/Logs/PointLog";
-import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
-import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
-import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
-import { Random } from "@/Core/Primitives/Random";
-import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
-import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
-import { SurfaceNode } from "@/SubSurface/Basics/SurfaceNode";
-import { WellFolder } from "@/SubSurface/Wells/Nodes/WellFolder";
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { LogFolder } from "@/SubSurface/Wells/Nodes/LogFolder";
-import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
-import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
-import { DataNode } from "@/Core/Nodes/DataNode";
-import { Ma } from "@/Core/Primitives/Ma";
-import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
-import { SubSurfaceModule } from "@/Solutions/BP/SubSurfaceModule";
-import { PointsNode } from "@/SubSurface/Basics/PointsNode";
-import { Points } from "@/Core/Geometry/Points";
+import { PointLog } from 'SubSurface/Wells/Logs/PointLog';
+import { FloatLog } from 'SubSurface/Wells/Logs/FloatLog';
+import { DiscreteLog } from 'SubSurface/Wells/Logs/DiscreteLog';
+import { CasingLogNode } from 'SubSurface/Wells/Nodes/CasingLogNode';
+import { Random } from 'Core/Primitives/Random';
+import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
+import { RegularGrid2 } from 'Core/Geometry/RegularGrid2';
+import { SurfaceNode } from 'SubSurface/Basics/SurfaceNode';
+import { WellFolder } from 'SubSurface/Wells/Nodes/WellFolder';
+import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
+import { LogFolder } from 'SubSurface/Wells/Nodes/LogFolder';
+import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
+import { IDataLoader } from 'Core/Interfaces/IDataLoader';
+import { DataNode } from 'Core/Nodes/DataNode';
+import { Ma } from 'Core/Primitives/Ma';
+import { CasingLog } from 'SubSurface/Wells/Logs/CasingLog';
+import { SubSurfaceModule } from 'Solutions/BP/SubSurfaceModule';
+import { PointsNode } from 'SubSurface/Basics/PointsNode';
+import { Points } from 'Core/Geometry/Points';
 
 export class SyntheticSubSurfaceModule extends SubSurfaceModule {
   //= =================================================
@@ -62,8 +62,7 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
   }
 
   private static addHorizonPoints(root: BaseRootNode): void {
-    if (!(root instanceof SubSurfaceRootNode))
-      return;
+    if (!(root instanceof SubSurfaceRootNode)) return;
 
     const horizonPoints: Vector3[] = [];
     const shift = Range3.newTest.clone();
@@ -72,7 +71,13 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
     for (let i = 0; i < 100; i++) {
       for (let j = 0; j < 100; j++) {
         const z = Random.getGaussian() * 10;
-        horizonPoints.push(new Vector3(i * space + shift.x.min, j * space + shift.y.min, z * space));
+        horizonPoints.push(
+          new Vector3(
+            i * space + shift.x.min,
+            j * space + shift.y.min,
+            z * space
+          )
+        );
       }
     }
 
@@ -92,8 +97,7 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
   //= =================================================
 
   private static addSurfaces(root: BaseRootNode): void {
-    if (!(root instanceof SubSurfaceRootNode))
-      return;
+    if (!(root instanceof SubSurfaceRootNode)) return;
 
     const smoothNumberOfPasses = 3;
     const powerOf2 = 8;
@@ -113,7 +117,13 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
           const range = Range3.newTest.clone();
           range.expandByFraction(0.2);
           range.z.set(-1000 + (k - 1) * 300, -1500 + (k - 1) * 300);
-          node.surface = RegularGrid2.createFractal(range, powerOf2, dampning, smoothNumberOfPasses, Ma.toRad(5));
+          node.surface = RegularGrid2.createFractal(
+            range,
+            powerOf2,
+            dampning,
+            smoothNumberOfPasses,
+            Ma.toRad(5)
+          );
           parent1.addChild(node);
         }
       }
@@ -133,8 +143,7 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
   //= =================================================
 
   private static addWells(root: BaseRootNode): void {
-    if (!(root instanceof SubSurfaceRootNode))
-      return;
+    if (!(root instanceof SubSurfaceRootNode)) return;
 
     const numberOfFolder = 5;
     const numberOfTrajectories = 2;
@@ -159,7 +168,11 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
         wellNode.name = `${folderIndex + 1}-${Random.getInt2(10000, 20000)}`;
 
         // Add some random trajectories to the well
-        for (let trajectoryIndex = 0; trajectoryIndex < numberOfTrajectories; trajectoryIndex++) {
+        for (
+          let trajectoryIndex = 0;
+          trajectoryIndex < numberOfTrajectories;
+          trajectoryIndex++
+        ) {
           const trajectoryNode = new WellTrajectoryNode();
           trajectoryNode.name = `Traj ${trajectoryIndex + 1}`;
           trajectoryNode.dataLoader = trajectoryDataLoader;
@@ -170,7 +183,7 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
             const logNode = new CasingLogNode();
             logNode.dataLoader = logDataLoader;
-            logNode.name = "Casing";
+            logNode.name = 'Casing';
             trajectoryNode.addChild(logNode);
           }
           let folder = new LogFolder();
@@ -182,18 +195,12 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
             const logNode = new FloatLogNode();
             logNode.dataLoader = logDataLoader;
             let name: string | null = null;
-            if (logIndex === 0)
-              name = "Gamma ray";
-            else if (logIndex === 1)
-              name = "Resisivity";
-            else if (logIndex === 2)
-              name = "Neutron density";
-            else if (logIndex === 3)
-              name = "Permeability";
-            else if (logIndex === 4)
-              name = "Permeability";
-            if (name)
-              logNode.name = name;
+            if (logIndex === 0) name = 'Gamma ray';
+            else if (logIndex === 1) name = 'Resisivity';
+            else if (logIndex === 2) name = 'Neutron density';
+            else if (logIndex === 3) name = 'Permeability';
+            else if (logIndex === 4) name = 'Permeability';
+            if (name) logNode.name = name;
             folder.addChild(logNode);
           }
           folder = new LogFolder();
@@ -204,7 +211,7 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
             const logNode = new DiscreteLogNode();
             logNode.dataLoader = logDataLoader;
-            logNode.name = "Zone log";
+            logNode.name = 'Zone log';
             folder.addChild(logNode);
           }
           // Add some random point logs to the trajectory
@@ -223,7 +230,9 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
 
   private static setWellsAndLogsVisible(root: BaseRootNode): void {
     for (const well of root.getDescendantsByType(WellNode)) {
-      for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode)) {
+      for (const wellTrajectory of well.getDescendantsByType(
+        WellTrajectoryNode
+      )) {
         wellTrajectory.setVisibleInteractive(true);
         break;
       }
@@ -245,15 +254,12 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
   private static animate(_root: BaseRootNode) {
     // if (!(root instanceof SubSurfaceRootNode))
     //   return;
-
     // const { wells } = root;
     // if (!wells)
     //   return;
-
     // eslint-disable-next-line no-unreachable
     // for (const node of wells.getDescendantsByType(WellTrajectoryNode))
     // {
-
     //   if (Random.isTrue(0.025))
     //     node.toggleVisibleInteractive();
     // }
@@ -277,8 +283,7 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
 
 class TrajectoryDataLoader implements IDataLoader {
   load(origin: DataNode): any {
-    if (!(origin instanceof WellTrajectoryNode))
-      return null;
+    if (!(origin instanceof WellTrajectoryNode)) return null;
 
     return WellTrajectory.createByRandom(Vector3.newZero);
   }
@@ -286,12 +291,10 @@ class TrajectoryDataLoader implements IDataLoader {
 
 class LogDataLoader implements IDataLoader {
   load(origin: DataNode): any {
-    if (!(origin instanceof BaseLogNode))
-      return null;
+    if (!(origin instanceof BaseLogNode)) return null;
 
     const { trajectory } = origin;
-    if (!trajectory)
-      return null;
+    if (!trajectory) return null;
 
     const mdRange = trajectory.mdRange.clone();
     if (origin instanceof CasingLogNode) {
@@ -313,7 +316,7 @@ class LogDataLoader implements IDataLoader {
     if (origin instanceof PointLogNode) {
       return PointLog.createByRandom(mdRange, 10);
     }
-    Error("Can not load these data");
+    Error('Can not load these data');
     return null;
   }
 }

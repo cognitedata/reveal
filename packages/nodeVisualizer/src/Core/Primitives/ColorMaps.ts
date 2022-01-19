@@ -11,29 +11,29 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as Color from "color";
-import { Colors } from "@/Core/Primitives/Colors";
-import { ColorMap } from "@/Core/Primitives/ColorMap";
-import { ColorInterpolation } from "@/Core/Primitives/ColorInterpolation";
+import * as Color from 'color';
+import { Colors } from 'Core/Primitives/Colors';
+import { ColorMap } from 'Core/Primitives/ColorMap';
+import { ColorInterpolation } from 'Core/Primitives/ColorInterpolation';
 
 export class ColorMaps {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public static readonly seismicName = "Seismic";
+  public static readonly seismicName = 'Seismic';
 
-  public static readonly seismicRevName = "Seismic Rev";
+  public static readonly seismicRevName = 'Seismic Rev';
 
-  public static readonly rainbowName = "Rainbow";
+  public static readonly rainbowName = 'Rainbow';
 
-  public static readonly rainbowRevName = "Rainbow Rev";
+  public static readonly rainbowRevName = 'Rainbow Rev';
 
-  public static readonly greyScaleName = "GreyScale";
+  public static readonly greyScaleName = 'GreyScale';
 
-  public static readonly greyScaleRevName = "GreyScale Rev";
+  public static readonly greyScaleRevName = 'GreyScale Rev';
 
-  public static readonly terrainName = "terrain";
+  public static readonly terrainName = 'terrain';
 
   private static _map: Map<string, ColorMap> | null = null;
 
@@ -57,8 +57,7 @@ export class ColorMaps {
   //= =================================================
 
   private static get colorMaps(): Map<string, ColorMap> {
-    if (!ColorMaps._map)
-      ColorMaps._map = ColorMaps.createColorMaps();
+    if (!ColorMaps._map) ColorMaps._map = ColorMaps.createColorMaps();
     return ColorMaps._map;
   }
 
@@ -84,7 +83,7 @@ export class ColorMaps {
 
   private static createSeismic(reverse: boolean): ColorMap {
     const colorMap = new ColorMap();
-    const a = 0.20;
+    const a = 0.2;
     const b = 0.25;
 
     const interpolation = ColorInterpolation.Rgb;
@@ -97,8 +96,7 @@ export class ColorMaps {
     colorMap.add(Color.rgb(191, 0, 0), 1 - a, interpolation);
     colorMap.add(Colors.yellow, 1, interpolation);
     colorMap.name = reverse ? ColorMaps.seismicRevName : ColorMaps.seismicName;
-    if (reverse)
-      colorMap.reverse();
+    if (reverse) colorMap.reverse();
     return colorMap;
   }
 
@@ -108,8 +106,7 @@ export class ColorMaps {
     colorMap.add(Colors.magenta, 0, interpolation);
     colorMap.add(Colors.red, 1, interpolation);
     colorMap.name = reverse ? ColorMaps.rainbowRevName : ColorMaps.rainbowName;
-    if (reverse)
-      colorMap.reverse();
+    if (reverse) colorMap.reverse();
     return colorMap;
   }
 
@@ -118,9 +115,10 @@ export class ColorMaps {
     const interpolation = ColorInterpolation.HsvMax;
     colorMap.add(Colors.white, 0, interpolation);
     colorMap.add(Colors.black, 1, interpolation);
-    colorMap.name = reverse ? ColorMaps.greyScaleRevName : ColorMaps.greyScaleName;
-    if (reverse)
-      colorMap.reverse();
+    colorMap.name = reverse
+      ? ColorMaps.greyScaleRevName
+      : ColorMaps.greyScaleName;
+    if (reverse) colorMap.reverse();
     return colorMap;
   }
 
@@ -137,5 +135,4 @@ export class ColorMaps {
     colorMap.reverse();
     return colorMap;
   }
-
 }

@@ -11,20 +11,20 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import Icon from "@images/Nodes/SurveyNode.png";
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
-import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
-import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Icon from 'images/Nodes/SurveyNode.png';
+import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
+import { RegularGrid3 } from 'Core/Geometry/RegularGrid3';
+import { SeismicPlaneFolder } from 'SubSurface/Seismic/Nodes/SeismicPlaneFolder';
+import { SeismicOutlineNode } from 'SubSurface/Seismic/Nodes/SeismicOutlineNode';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { Range3 } from 'Core/Geometry/Range3';
 
 export class SurveyNode extends BaseVisualNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "SurveyNode";
+  static className = 'SurveyNode';
 
   public surveyCube: RegularGrid3 | null = null;
 
@@ -32,27 +32,41 @@ export class SurveyNode extends BaseVisualNode {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return SurveyNode.className; }
+  public get /* override */ className(): string {
+    return SurveyNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === SurveyNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === SurveyNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Survey"; }
+  public get /* override */ typeName(): string {
+    return 'Survey';
+  }
 
-  public /* override */ getIcon(): string { return Icon; }
+  public /* override */ getIcon(): string {
+    return Icon;
+  }
 
-  public /* override */ canChangeColor(): boolean { return false; }
+  public /* override */ canChangeColor(): boolean {
+    return false;
+  }
 
-  public /* override */ get boundingBox(): Range3 { return this.surveyCube ? this.surveyCube.boundingBox : new Range3(); }
+  public get /* override */ boundingBox(): Range3 {
+    return this.surveyCube ? this.surveyCube.boundingBox : new Range3();
+  }
 
   protected /* override */ initializeCore() {
     super.initializeCore();
@@ -64,18 +78,19 @@ export class SurveyNode extends BaseVisualNode {
       this.addChild(new SeismicPlaneFolder());
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
 
     const cube = this.surveyCube;
-    if (!cube)
-      return;
+    if (!cube) return;
 
-    folder.addReadOnlyIndex3("# Cells", cube.cellSize);
-    folder.addReadOnlyIndex2("Start cell", cube.startCell);
-    folder.addReadOnlyVector3("Spacing", cube.inc);
-    folder.addReadOnlyVector3("Origin", cube.origin);
-    folder.addReadOnlyAngle("Rotation", cube.rotationAngle);
+    folder.addReadOnlyIndex3('# Cells', cube.cellSize);
+    folder.addReadOnlyIndex2('Start cell', cube.startCell);
+    folder.addReadOnlyVector3('Spacing', cube.inc);
+    folder.addReadOnlyVector3('Origin', cube.origin);
+    folder.addReadOnlyAngle('Rotation', cube.rotationAngle);
     folder.addReadOnlyRange3(cube.boundingBox);
   }
 }

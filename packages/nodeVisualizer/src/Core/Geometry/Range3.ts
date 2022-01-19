@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Ma } from "@/Core/Primitives/Ma";
+import { Range1 } from 'Core/Geometry/Range1';
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Ma } from 'Core/Primitives/Ma';
 
 export class Range3 {
   //= =================================================
@@ -50,33 +50,50 @@ export class Range3 {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get isEmpty(): boolean { return this.x.isEmpty || this.y.isEmpty || this.z.isEmpty; }
+  public get isEmpty(): boolean {
+    return this.x.isEmpty || this.y.isEmpty || this.z.isEmpty;
+  }
 
-  public get min(): Vector3 { return new Vector3(this.x.min, this.y.min, this.z.min); }
+  public get min(): Vector3 {
+    return new Vector3(this.x.min, this.y.min, this.z.min);
+  }
 
-  public get max(): Vector3 { return new Vector3(this.x.max, this.y.max, this.z.max); }
+  public get max(): Vector3 {
+    return new Vector3(this.x.max, this.y.max, this.z.max);
+  }
 
-  public get delta(): Vector3 { return new Vector3(this.x.delta, this.y.delta, this.z.delta); }
+  public get delta(): Vector3 {
+    return new Vector3(this.x.delta, this.y.delta, this.z.delta);
+  }
 
-  public get center(): Vector3 { return new Vector3(this.x.center, this.y.center, this.z.center); }
+  public get center(): Vector3 {
+    return new Vector3(this.x.center, this.y.center, this.z.center);
+  }
 
-  public get aspectRatio2(): number { return this.x.delta / this.y.delta; }
+  public get aspectRatio2(): number {
+    return this.x.delta / this.y.delta;
+  }
 
-  public get volume(): number { return this.x.delta * this.y.delta * this.z.delta; }
+  public get volume(): number {
+    return this.x.delta * this.y.delta * this.z.delta;
+  }
 
-  public get diagonal(): number { return Math.sqrt(Ma.square(this.x.delta) + Ma.square(this.y.delta) + Ma.square(this.z.delta)); }
+  public get diagonal(): number {
+    return Math.sqrt(
+      Ma.square(this.x.delta) +
+        Ma.square(this.y.delta) +
+        Ma.square(this.z.delta)
+    );
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
   public constructor(min?: Vector3, max?: Vector3) {
-    if (min === undefined && max !== undefined)
-      this.set(max, max);
-    else if (min !== undefined && max === undefined)
-      this.set(min, min);
-    else if (min !== undefined && max !== undefined)
-      this.set(min, max);
+    if (min === undefined && max !== undefined) this.set(max, max);
+    else if (min !== undefined && max === undefined) this.set(min, min);
+    else if (min !== undefined && max !== undefined) this.set(min, max);
   }
 
   public /* copy constructor */ clone(): Range3 {
@@ -92,16 +109,21 @@ export class Range3 {
   //= =================================================
 
   public isEqual(other: Range3 | undefined): boolean {
-    if (!other)
-      return false;
-    return this.x.isEqual(other.x) && this.y.isEqual(other.y) && this.z.isEqual(other.z);
+    if (!other) return false;
+    return (
+      this.x.isEqual(other.x) &&
+      this.y.isEqual(other.y) &&
+      this.z.isEqual(other.z)
+    );
   }
 
   //= =================================================
   // INSTANCE METHODS: Getters
   //= =================================================
 
-  public toString(): string { return `(X: ${this.x.toString()}, Y: ${this.y.toString()}, Z: ${this.z.toString()})`; }
+  public toString(): string {
+    return `(X: ${this.x.toString()}, Y: ${this.y.toString()}, Z: ${this.z.toString()})`;
+  }
 
   getCornerPoints(): Vector3[] {
     const corners: Vector3[] = [];
@@ -120,15 +142,25 @@ export class Range3 {
     //   0---X---1
 
     switch (corner) {
-      case 0: return new Vector3(this.x.min, this.y.min, this.z.min);
-      case 1: return new Vector3(this.x.max, this.y.min, this.z.min);
-      case 2: return new Vector3(this.x.max, this.y.max, this.z.min);
-      case 3: return new Vector3(this.x.min, this.y.max, this.z.min);
-      case 4: return new Vector3(this.x.min, this.y.min, this.z.max);
-      case 5: return new Vector3(this.x.max, this.y.min, this.z.max);
-      case 6: return new Vector3(this.x.max, this.y.max, this.z.max);
-      case 7: return new Vector3(this.x.min, this.y.max, this.z.max);
-      default: Error("getCornerPoint"); return Vector3.newEmpty;
+      case 0:
+        return new Vector3(this.x.min, this.y.min, this.z.min);
+      case 1:
+        return new Vector3(this.x.max, this.y.min, this.z.min);
+      case 2:
+        return new Vector3(this.x.max, this.y.max, this.z.min);
+      case 3:
+        return new Vector3(this.x.min, this.y.max, this.z.min);
+      case 4:
+        return new Vector3(this.x.min, this.y.min, this.z.max);
+      case 5:
+        return new Vector3(this.x.max, this.y.min, this.z.max);
+      case 6:
+        return new Vector3(this.x.max, this.y.max, this.z.max);
+      case 7:
+        return new Vector3(this.x.min, this.y.max, this.z.max);
+      default:
+        Error('getCornerPoint');
+        return Vector3.newEmpty;
     }
   }
 
@@ -161,8 +193,7 @@ export class Range3 {
   }
 
   public addRange(value: Range3 | undefined): void {
-    if (value === undefined)
-      return;
+    if (value === undefined) return;
     this.x.addRange(value.x);
     this.y.addRange(value.y);
     this.z.addRange(value.z);
@@ -190,7 +221,12 @@ export class Range3 {
   // STATIC METHODS:
   //= =================================================
 
-  public static createByMinAndMax(xmin: number, ymin: number, xmax: number, ymax: number): Range3 {
+  public static createByMinAndMax(
+    xmin: number,
+    ymin: number,
+    xmax: number,
+    ymax: number
+  ): Range3 {
     const range = new Range3();
     range.x.set(xmin, xmax);
     range.y.set(ymin, ymax);
@@ -198,7 +234,12 @@ export class Range3 {
     return range;
   }
 
-  public static createByMinAndDelta(xmin: number, ymin: number, dx: number, dy: number): Range3 {
+  public static createByMinAndDelta(
+    xmin: number,
+    ymin: number,
+    dx: number,
+    dy: number
+  ): Range3 {
     const range = new Range3();
     range.x.set(xmin, xmin + dx);
     range.y.set(ymin, ymin + dy);
@@ -226,46 +267,59 @@ export class Range3 {
 
   public static getWallNormal(wallIndex: number): Vector3 {
     switch (wallIndex) {
-      case 0: return new Vector3(-1, +0, +0);
-      case 1: return new Vector3(+0, -1, +0);
-      case 2: return new Vector3(+0, +0, -1);
-      case 3: return new Vector3(+1, +0, +0);
-      case 4: return new Vector3(+0, +1, +0);
-      case 5: return new Vector3(+0, +0, +1);
-      default: Error("getWallNormal"); return Vector3.newEmpty;
+      case 0:
+        return new Vector3(-1, +0, +0);
+      case 1:
+        return new Vector3(+0, -1, +0);
+      case 2:
+        return new Vector3(+0, +0, -1);
+      case 3:
+        return new Vector3(+1, +0, +0);
+      case 4:
+        return new Vector3(+0, +1, +0);
+      case 5:
+        return new Vector3(+0, +0, +1);
+      default:
+        Error('getWallNormal');
+        return Vector3.newEmpty;
     }
   }
 
   public static getWallCornerIndexes(wallIndex: number): number[] {
     // These as CCW
     switch (wallIndex) {
-      case 0: return [3, 0, 4, 7];
-      case 1: return [0, 1, 5, 4];
-      case 2: return [3, 2, 1, 0];
-      case 3: return [1, 2, 6, 5];
-      case 4: return [2, 3, 7, 6];
-      case 5: return [4, 5, 6, 7];
-      default: Error("getWallCornerIndexes"); return [0, 0, 0, 0];
+      case 0:
+        return [3, 0, 4, 7];
+      case 1:
+        return [0, 1, 5, 4];
+      case 2:
+        return [3, 2, 1, 0];
+      case 3:
+        return [1, 2, 6, 5];
+      case 4:
+        return [2, 3, 7, 6];
+      case 5:
+        return [4, 5, 6, 7];
+      default:
+        Error('getWallCornerIndexes');
+        return [0, 0, 0, 0];
     }
   }
 
-  public static getTickDirection(wallIndex1: number, wallIndex2: number): Vector3 {
+  public static getTickDirection(
+    wallIndex1: number,
+    wallIndex2: number
+  ): Vector3 {
     const vector = new Vector3(0, 0, 0);
 
-    if (wallIndex1 === 0 || wallIndex2 === 0)
-      vector.x = -Math.SQRT1_2;
-    if (wallIndex1 === 3 || wallIndex2 === 3)
-      vector.x = Math.SQRT1_2;
+    if (wallIndex1 === 0 || wallIndex2 === 0) vector.x = -Math.SQRT1_2;
+    if (wallIndex1 === 3 || wallIndex2 === 3) vector.x = Math.SQRT1_2;
 
-    if (wallIndex1 === 1 || wallIndex2 === 1)
-      vector.y = -Math.SQRT1_2;
-    if (wallIndex1 === 4 || wallIndex2 === 4)
-      vector.y = Math.SQRT1_2;
+    if (wallIndex1 === 1 || wallIndex2 === 1) vector.y = -Math.SQRT1_2;
+    if (wallIndex1 === 4 || wallIndex2 === 4) vector.y = Math.SQRT1_2;
 
-    if (wallIndex1 === 2 || wallIndex2 === 2)
-      vector.z = -Math.SQRT1_2;
-    if (wallIndex1 === 5 || wallIndex2 === 5)
-      vector.z = Math.SQRT1_2;
+    if (wallIndex1 === 2 || wallIndex2 === 2) vector.z = -Math.SQRT1_2;
+    if (wallIndex1 === 5 || wallIndex2 === 5) vector.z = Math.SQRT1_2;
 
     return vector;
   }

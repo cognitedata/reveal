@@ -11,16 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { UniqueId } from "@/Core/Primitives/UniqueId";
-import { RenderStyleResolution } from "@/Core/Enums/RenderStyleResolution";
-import { Util } from "@/Core/Primitives/Util";
+import { UniqueId } from 'Core/Primitives/UniqueId';
+import { RenderStyleResolution } from 'Core/Enums/RenderStyleResolution';
+import { Util } from 'Core/Primitives/Util';
 
 export class TargetId {
   //= =================================================
   // STATIC METHODS
   //= =================================================
 
-  public static readonly empty = new TargetId("", UniqueId.empty);
+  public static readonly empty = new TargetId('', UniqueId.empty);
 
   //= =================================================
   // INSTANCE FIELDS
@@ -34,17 +34,29 @@ export class TargetId {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get typeName(): string { return this._typeName; }
+  public get typeName(): string {
+    return this._typeName;
+  }
 
-  public set typeName(value: string) { this._typeName = value; }
+  public set typeName(value: string) {
+    this._typeName = value;
+  }
 
-  public get uniqueId(): UniqueId { return this._uniqueId; }
+  public get uniqueId(): UniqueId {
+    return this._uniqueId;
+  }
 
-  public set uniqueId(value: UniqueId) { this._uniqueId = value; }
+  public set uniqueId(value: UniqueId) {
+    this._uniqueId = value;
+  }
 
-  public get isEmpty(): boolean { return Util.isEmpty(this.typeName) && this.uniqueId.isEmpty; }
+  public get isEmpty(): boolean {
+    return Util.isEmpty(this.typeName) && this.uniqueId.isEmpty;
+  }
 
-  public /* override */ toString(): string { return `(${this.typeName}, ${this.uniqueId})`; }
+  public /* override */ toString(): string {
+    return `(${this.typeName}, ${this.uniqueId})`;
+  }
 
   //= =================================================
   // CONSTRUCTOR
@@ -55,17 +67,26 @@ export class TargetId {
     this._uniqueId = uniqueId;
   }
 
-  public /* copy constructor */ clone(): TargetId { return new TargetId(this.typeName, this.uniqueId); }
+  public /* copy constructor */ clone(): TargetId {
+    return new TargetId(this.typeName, this.uniqueId);
+  }
 
   //= =================================================
   // INSTANCE METHODS: Requests
   //= =================================================
 
-  public hasSameTypeName(targetId: TargetId): boolean { return this.typeName === targetId.typeName; }
+  public hasSameTypeName(targetId: TargetId): boolean {
+    return this.typeName === targetId.typeName;
+  }
 
-  public hasSameUniqueId(targetId: TargetId): boolean { return this.uniqueId.equals(targetId.uniqueId); }
+  public hasSameUniqueId(targetId: TargetId): boolean {
+    return this.uniqueId.equals(targetId.uniqueId);
+  }
 
-  public equals(targetIdOnTargetNode: TargetId, renderStyleResolution: RenderStyleResolution): boolean {
+  public equals(
+    targetIdOnTargetNode: TargetId,
+    renderStyleResolution: RenderStyleResolution
+  ): boolean {
     switch (renderStyleResolution) {
       case RenderStyleResolution.Global:
         return this.isEmpty;
@@ -73,11 +94,10 @@ export class TargetId {
       case RenderStyleResolution.Target:
         return this.hasSameTypeName(targetIdOnTargetNode);
 
-      case RenderStyleResolution.Unique:
-      {
+      case RenderStyleResolution.Unique: {
         const result = this.hasSameUniqueId(targetIdOnTargetNode);
         if (!this.hasSameTypeName(targetIdOnTargetNode))
-          throw Error("The TypeName should be equal");
+          throw Error('The TypeName should be equal');
         return result;
       }
       default:
@@ -92,7 +112,7 @@ export class TargetId {
   public set(id: TargetId, renderStyleResolution: RenderStyleResolution): void {
     switch (renderStyleResolution) {
       case RenderStyleResolution.Global:
-        this.typeName = "";
+        this.typeName = '';
         this.uniqueId = UniqueId.empty;
         break;
 

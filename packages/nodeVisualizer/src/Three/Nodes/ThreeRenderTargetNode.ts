@@ -11,50 +11,50 @@
 // Copyright (c) Cognite AS. All rights reserved.
 // =====================================================================================
 
-import * as THREE from "three";
-import CameraControls from "camera-controls";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Colors } from "@/Core/Primitives/Colors";
-import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
-import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { ThreeOverlay } from "@/Three/Utilities/ThreeOverlay";
-import { Ma } from "@/Core/Primitives/Ma";
-import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
-import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
-import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
-import { IToolbar } from "@/Core/Interfaces/IToolbar";
-import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
-import { CameraControl } from "@/Three/Nodes/CameraControl";
-import { ToggleCameraTypeCommand } from "@/Three/Commands/ToggleCameraTypeCommand";
-import { CopyImageCommand } from "@/Three/Commands/CopyImageCommand";
-import { MeasureDistanceTool } from "@/Three/Commands/Tools/MeasureDistanceTool";
-import { ToggleFullscreenCommand } from "@/Three/Commands/ToggleFullscreenCommand";
-import { NavigationTool } from "@/Three/Commands/Tools/NavigationTool";
-import { EditTool } from "@/Three/Commands/Tools/EditTool";
-import { ZoomTool } from "@/Three/Commands/Tools/ZoomTool";
-import { ZoomToTargetTool } from "@/Three/Commands/Tools/ZoomToTargetTool";
-import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
-import { ToolController } from "@/Three/Nodes/ToolController";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
-import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
-import { ZScaleCommand } from "@/Three/Commands/ZScaleCommand";
-import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { ToolbarGroupIds } from "@/Three/Nodes/ToolbarGroupIds";
-import { BaseCommand } from "@/Core/Commands/BaseCommand";
-import { Toggle3Dand2DCommand } from "@/Three/Commands/Toggle3Dand2DCommand";
-import { ThreeMiniWindow } from "@/Three/Utilities/ThreeMiniWindow";
-import { ToggleCompassVisibleCommand } from "@/Three/Commands/ToggleCompassVisibleCommand";
+import * as THREE from 'three';
+import CameraControls from 'camera-controls';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Colors } from 'Core/Primitives/Colors';
+import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
+import { AxisNode } from 'Core/Nodes/Decorations/AxisNode';
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
+import { ThreeOverlay } from 'Three/Utilities/ThreeOverlay';
+import { Ma } from 'Core/Primitives/Ma';
+import { ViewAllCommand } from 'Three/Commands/ViewAllCommand';
+import { ToggleAxisVisibleCommand } from 'Three/Commands/ToggleAxisVisibleCommand';
+import { ToggleBgColorCommand } from 'Three/Commands/ToggleBgColorCommand';
+import { IToolbar } from 'Core/Interfaces/IToolbar';
+import { ViewFromCommand } from 'Three/Commands/ViewFromCommand';
+import { CameraControl } from 'Three/Nodes/CameraControl';
+import { ToggleCameraTypeCommand } from 'Three/Commands/ToggleCameraTypeCommand';
+import { CopyImageCommand } from 'Three/Commands/CopyImageCommand';
+import { MeasureDistanceTool } from 'Three/Commands/Tools/MeasureDistanceTool';
+import { ToggleFullscreenCommand } from 'Three/Commands/ToggleFullscreenCommand';
+import { NavigationTool } from 'Three/Commands/Tools/NavigationTool';
+import { EditTool } from 'Three/Commands/Tools/EditTool';
+import { ZoomTool } from 'Three/Commands/Tools/ZoomTool';
+import { ZoomToTargetTool } from 'Three/Commands/Tools/ZoomToTargetTool';
+import { BaseTool } from 'Three/Commands/Tools/BaseTool';
+import { ToolController } from 'Three/Nodes/ToolController';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseThreeView } from 'Three/BaseViews/BaseThreeView';
+import { ThreeTransformer } from 'Three/Utilities/ThreeTransformer';
+import { ZScaleCommand } from 'Three/Commands/ZScaleCommand';
+import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
+import { ToolbarGroupIds } from 'Three/Nodes/ToolbarGroupIds';
+import { BaseCommand } from 'Core/Commands/BaseCommand';
+import { Toggle3Dand2DCommand } from 'Three/Commands/Toggle3Dand2DCommand';
+import { ThreeMiniWindow } from 'Three/Utilities/ThreeMiniWindow';
+import { ToggleCompassVisibleCommand } from 'Three/Commands/ToggleCompassVisibleCommand';
 
-const directionalLightName = "DirectionalLight";
+const directionalLightName = 'DirectionalLight';
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // =================================================
   // STATIC FIELDS
   // =================================================
 
-  static className = "ThreeRenderTargetNode";
+  static className = 'ThreeRenderTargetNode';
 
   // ==================================================
   // INSTANCE FIELDS
@@ -84,34 +84,53 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // INSTANCE PROPERTIES: Tools
   // ==================================================
 
-  public setPreviousTool() { this._toolController.setPreviousTool(this._cameraControl); }
+  public setPreviousTool() {
+    this._toolController.setPreviousTool(this._cameraControl);
+  }
 
-  public set activeTool(tool: BaseTool | null) { this._toolController.setActiveTool(tool, this._cameraControl); }
+  public set activeTool(tool: BaseTool | null) {
+    this._toolController.setActiveTool(tool, this._cameraControl);
+  }
 
-  public get activeTool(): BaseTool | null { return this._toolController.activeTool; }
+  public get activeTool(): BaseTool | null {
+    return this._toolController.activeTool;
+  }
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get is2D(): boolean { return this.cameraControl.is2D; }
+  public get is2D(): boolean {
+    return this.cameraControl.is2D;
+  }
 
-  public get camera(): THREE.PerspectiveCamera | THREE.OrthographicCamera { return this.cameraControl.camera; }
+  public get camera(): THREE.PerspectiveCamera | THREE.OrthographicCamera {
+    return this.cameraControl.camera;
+  }
 
-  private get controls(): CameraControls { return this.cameraControl.controls; }
+  private get controls(): CameraControls {
+    return this.cameraControl.controls;
+  }
 
-  public get transformer(): ThreeTransformer { return this._transformer; }
+  public get transformer(): ThreeTransformer {
+    return this._transformer;
+  }
 
-  private get directionalLight(): THREE.DirectionalLight | null { return this.scene.getObjectByName(directionalLightName) as THREE.DirectionalLight; }
+  private get directionalLight(): THREE.DirectionalLight | null {
+    return this.scene.getObjectByName(
+      directionalLightName
+    ) as THREE.DirectionalLight;
+  }
 
-  public get zScale(): number { return this._transformer.zScale; }
+  public get zScale(): number {
+    return this._transformer.zScale;
+  }
 
   public set zScale(value: number) {
     if (this._transformer.zScale <= 0)
-      throw Error("ZScale cannot be less or equal 0");
+      throw Error('ZScale cannot be less or equal 0');
 
-    if (this._transformer.zScale === value)
-      return;
+    if (this._transformer.zScale === value) return;
 
     // Clear the views
     this._transformer.zScale = value;
@@ -119,26 +138,26 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   }
 
   public get scene(): THREE.Scene {
-    if (!this._scene)
-      throw Error("Scene is not set");
+    if (!this._scene) throw Error('Scene is not set');
     return this._scene;
   }
 
   public get miniWindowScene(): THREE.Scene {
-    if (!this._miniWindow)
-      throw Error("Mini window ccene is not set");
+    if (!this._miniWindow) throw Error('Mini window ccene is not set');
     return this._miniWindow.scene;
   }
-  
+
   public get cameraControl(): CameraControl {
-    if (!this._cameraControl)
-      throw Error("Camera is not set");
+    if (!this._cameraControl) throw Error('Camera is not set');
     return this._cameraControl;
   }
 
   private get renderer(): THREE.WebGLRenderer {
     if (!this._renderer) {
-      const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        preserveDrawingBuffer: true,
+      });
       renderer.autoClear = false;
       renderer.gammaFactor = 2.2;
       this._renderer = renderer;
@@ -150,15 +169,23 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(fractionRange: Range3 | undefined) { super(fractionRange); }
+  public constructor(fractionRange: Range3 | undefined) {
+    super(fractionRange);
+  }
 
   // ==================================================
   // OVERRIDES of TargetNode
   // ==================================================
 
-  public /* override */ get className(): string { return ThreeRenderTargetNode.className; }
+  public get /* override */ className(): string {
+    return ThreeRenderTargetNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === ThreeRenderTargetNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return (
+      className === ThreeRenderTargetNode.className || super.isA(className)
+    );
+  }
 
   // ==================================================
   // OVERRIDES of BaseNode
@@ -173,18 +200,41 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     // Create lights
     {
       const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
-      const directionalLight = new THREE.DirectionalLight(ThreeConverter.toThreeColor(Colors.white), 0.95);
+      const directionalLight = new THREE.DirectionalLight(
+        ThreeConverter.toThreeColor(Colors.white),
+        0.95
+      );
       directionalLight.name = directionalLightName;
       this._scene.add(ambientLight);
       this._scene.add(directionalLight);
     }
     this.domElement.tabIndex = 1; // Trick to let keydown works!
     this.addOrRemoveUpdateEvent(true);
-    this.domElement.addEventListener("click", (event) => this._toolController.onMouseClick(this, event), false);
-    this.domElement.addEventListener("mousedown", (event) => this._toolController.onMouseDown(this, event), false);
-    this.domElement.addEventListener("mouseup", (event) => this._toolController.onMouseUp(this, event), false);
-    this.domElement.addEventListener("mousemove", (event) => this._toolController.onMouseMove(this, event), false);
-    this.domElement.addEventListener("keydown", (event) => this._toolController.onKeyDown(this, event), false);
+    this.domElement.addEventListener(
+      'click',
+      (event) => this._toolController.onMouseClick(this, event),
+      false
+    );
+    this.domElement.addEventListener(
+      'mousedown',
+      (event) => this._toolController.onMouseDown(this, event),
+      false
+    );
+    this.domElement.addEventListener(
+      'mouseup',
+      (event) => this._toolController.onMouseUp(this, event),
+      false
+    );
+    this.domElement.addEventListener(
+      'mousemove',
+      (event) => this._toolController.onMouseMove(this, event),
+      false
+    );
+    this.domElement.addEventListener(
+      'keydown',
+      (event) => this._toolController.onKeyDown(this, event),
+      false
+    );
     this.render();
   }
 
@@ -192,13 +242,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // OVERRIDES of BaseRenderTargetNode
   // ==================================================
 
-  public /* override */ get domElement(): HTMLCanvasElement { return this.renderer.domElement; }
+  public get /* override */ domElement(): HTMLCanvasElement {
+    return this.renderer.domElement;
+  }
 
   public /* override */ onResize(): void {
     const { pixelRange } = this;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
-    if (this._cameraControl)
-      this._cameraControl.onResize(this);
+    if (this._cameraControl) this._cameraControl.onResize(this);
     this.invalidate();
     this._prevPixelRange = pixelRange;
   }
@@ -206,7 +257,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   public /* override */ viewAll(): boolean {
     const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
-    return !this._cameraControl ? false : this._cameraControl.viewRange(boundingBox);
+    return !this._cameraControl
+      ? false
+      : this._cameraControl.viewRange(boundingBox);
   }
 
   public /* override */ addTools(toolbar: IToolbar): void {
@@ -220,16 +273,44 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     this.addTool(toolbar, ToolbarGroupIds.Tools, new MeasureDistanceTool(this));
 
     this.addTool(toolbar, ToolbarGroupIds.Actions, new ViewAllCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleAxisVisibleCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleCompassVisibleCommand(this));
+    this.addTool(
+      toolbar,
+      ToolbarGroupIds.Actions,
+      new ToggleAxisVisibleCommand(this)
+    );
+    this.addTool(
+      toolbar,
+      ToolbarGroupIds.Actions,
+      new ToggleCompassVisibleCommand(this)
+    );
     this.addTool(toolbar, ToolbarGroupIds.Actions, new CopyImageCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleBgColorCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleFullscreenCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new Toggle3Dand2DCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleCameraTypeCommand(this));
+    this.addTool(
+      toolbar,
+      ToolbarGroupIds.Actions,
+      new ToggleBgColorCommand(this)
+    );
+    this.addTool(
+      toolbar,
+      ToolbarGroupIds.Actions,
+      new ToggleFullscreenCommand(this)
+    );
+    this.addTool(
+      toolbar,
+      ToolbarGroupIds.Actions,
+      new Toggle3Dand2DCommand(this)
+    );
+    this.addTool(
+      toolbar,
+      ToolbarGroupIds.Actions,
+      new ToggleCameraTypeCommand(this)
+    );
 
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)
-      this.addTool(toolbar, ToolbarGroupIds.ViewFrom, new ViewFromCommand(this, viewFrom));
+      this.addTool(
+        toolbar,
+        ToolbarGroupIds.ViewFrom,
+        new ViewFromCommand(this, viewFrom)
+      );
 
     this.addTool(toolbar, ToolbarGroupIds.Settings, new ZScaleCommand(this));
   }
@@ -266,32 +347,25 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   }
 
   private getViewByObject(object: THREE.Object3D): BaseThreeView | null {
-    for (; ;) {
-      if (!object.visible)
-        return null;
+    for (;;) {
+      if (!object.visible) return null;
 
       // If the object is marked by noPicking, no picking should be done
-      if (object.userData[BaseThreeView.noPicking])
-        return null;
+      if (object.userData[BaseThreeView.noPicking]) return null;
 
       if (object.name) {
         for (const view of this.viewsShownHere.list) {
-          if (!(view instanceof BaseThreeView))
-            continue;
+          if (!(view instanceof BaseThreeView)) continue;
 
-          if (!view.shouldPick())
-            continue;
+          if (!view.shouldPick()) continue;
 
           const node = view.getNode();
-          if (!node)
-            continue;
+          if (!node) continue;
 
-          if (node.uniqueId.equalString(object.name))
-            return view;
+          if (node.uniqueId.equalString(object.name)) return view;
         }
       }
-      if (!object.parent)
-        break;
+      if (!object.parent) break;
 
       // eslint-disable-next-line no-param-reassign
       object = object.parent;
@@ -299,18 +373,21 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     return null;
   }
 
-  public getNodeByMouseEvent(event: MouseEvent): [BaseNode | null, THREE.Intersection | null] {
+  public getNodeByMouseEvent(
+    event: MouseEvent
+  ): [BaseNode | null, THREE.Intersection | null] {
     const [view, intersection] = this.getViewByMouseEvent(event);
     return view ? [view.getNode(), intersection] : [null, null];
   }
 
-  public getViewByMouseEvent(event: MouseEvent): [BaseThreeView | null, THREE.Intersection | null] {
+  public getViewByMouseEvent(
+    event: MouseEvent
+  ): [BaseThreeView | null, THREE.Intersection | null] {
     const pixel = this.getMouseRelativePosition(event);
     const intersections = this.getIntersections(pixel);
     for (const intersection of intersections) {
       const view = this.getViewByObject(intersection.object);
-      if (view)
-        return [view, intersection];
+      if (view) return [view, intersection];
     }
     return [null, null];
   }
@@ -320,8 +397,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // ==================================================
 
   public addTool(toolbar: IToolbar, groupId: string, command: BaseCommand) {
-    if (command instanceof BaseTool)
-      this._toolController.add(command);
+    if (command instanceof BaseTool) this._toolController.add(command);
 
     toolbar.add(groupId, command);
   }
@@ -334,8 +410,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     const { camera } = this;
     const { controls } = this;
     const light = this.directionalLight;
-    if (!light)
-      return;
+    if (!light) return;
 
     // The idea of this function is letting the light track the camera,
     let position = new THREE.Vector3();
@@ -378,14 +453,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // ==================================================
 
   public get isPerspectiveMode(): boolean {
-    if (this.camera instanceof THREE.PerspectiveCamera)
-      return true;
+    if (this.camera instanceof THREE.PerspectiveCamera) return true;
     return false;
   }
 
   public set isPerspectiveMode(isPerspectiveMode: boolean) {
-    if (isPerspectiveMode === this.isPerspectiveMode)
-      return;
+    if (isPerspectiveMode === this.isPerspectiveMode) return;
 
     const { azimuthAngle } = this.cameraControl.controls;
     const { polarAngle } = this.cameraControl.controls;
@@ -419,13 +492,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   public viewFrom(index: number): boolean {
     const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
-    return !this._cameraControl ? false : this._cameraControl.viewFrom(boundingBox, index);
+    return !this._cameraControl
+      ? false
+      : this._cameraControl.viewFrom(boundingBox, index);
   }
 
   public updateAllViews(): void {
     for (const view of this.viewsShownHere.list) {
-      if (!(view instanceof BaseGroupThreeView))
-        continue;
+      if (!(view instanceof BaseGroupThreeView)) continue;
       view.touch();
     }
     this.invalidate();
@@ -433,26 +507,31 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
 
   private addOrRemoveUpdateEvent(add: boolean): void {
     if (add)
-      this.controls.addEventListener("update", () => this.updateLightPosition());
+      this.controls.addEventListener('update', () =>
+        this.updateLightPosition()
+      );
     else
-      this.controls.removeEventListener("update", () => this.updateLightPosition());
+      this.controls.removeEventListener('update', () =>
+        this.updateLightPosition()
+      );
   }
 
   private updateNearAndFarPlane(): void {
-    if (!this.isInitialized)
-      return;
+    if (!this.isInitialized) return;
 
     const { camera } = this;
     const boundingBox = this.getBoundingBoxFromViews();
-    if (!boundingBox || boundingBox.isEmpty)
-      return;
+    if (!boundingBox || boundingBox.isEmpty) return;
 
     this.transformer.transformRangeTo3D(boundingBox);
 
     const { diagonal } = boundingBox;
     const near = 0.001 * diagonal;
     const far = 2 * diagonal + this.cameraControl.distance;
-    if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far)) {
+    if (
+      !Ma.isAbsEqual(camera.near, near, 0.1 * near) ||
+      !Ma.isAbsEqual(camera.far, far, 0.1 * far)
+    ) {
       camera.near = near;
       camera.far = far;
       camera.updateProjectionMatrix();
@@ -466,13 +545,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   private _prevPixelRange: Range3 = new Range3();
 
   public render(): void {
-    requestAnimationFrame(() => { this.render(); });
+    requestAnimationFrame(() => {
+      this.render();
+    });
 
-    if (!this.isInitialized)
-      return;
+    if (!this.isInitialized) return;
 
-    if (!this.pixelRange.isEqual(this._prevPixelRange))
-      this.onResize();
+    if (!this.pixelRange.isEqual(this._prevPixelRange)) this.onResize();
 
     const { controls } = this;
     let needsUpdate = true;
@@ -480,20 +559,17 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       const delta = this.clock.getDelta();
       needsUpdate = controls.update(delta);
     }
-    if (!this.isInvalidated && !needsUpdate)
-      return;
+    if (!this.isInvalidated && !needsUpdate) return;
 
     this.updateNearAndFarPlane();
 
-    if (this.isEmpty)
-      this.isEmpty = !this.viewFrom(-1);
+    if (this.isEmpty) this.isEmpty = !this.viewFrom(-1);
 
     const hasAxis = this.hasViewOfNodeType(AxisNode);
     const background = ThreeConverter.toThreeColor(this.getBgColor(hasAxis));
     this.scene.background = background;
 
-    for (const view of this.viewsShownHere.list)
-      view.beforeRender();
+    for (const view of this.viewsShownHere.list) view.beforeRender();
 
     this.renderFast();
     this.invalidate(false);
@@ -503,6 +579,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     this.renderer.render(this.scene, this.camera);
     this._miniWindow.render(this.renderer);
     const viewInfo = this.fillViewInfo();
-    this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);
+    this._overlay.render(
+      this.renderer,
+      viewInfo,
+      this.pixelRange.delta,
+      this.fgColor,
+      this.bgColor
+    );
   }
 }

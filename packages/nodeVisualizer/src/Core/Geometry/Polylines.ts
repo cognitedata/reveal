@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Polyline } from "@/Core/Geometry/Polyline";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Shape } from "@/Core/Geometry/Shape";
+import { Polyline } from 'Core/Geometry/Polyline';
+import { Range3 } from 'Core/Geometry/Range3';
+import { Shape } from 'Core/Geometry/Shape';
 
 export class Polylines extends Shape {
   //= =================================================
@@ -22,13 +22,17 @@ export class Polylines extends Shape {
 
   public list: Polyline[] = [];
 
-  public get length(): number { return this.list.length; }
+  public get length(): number {
+    return this.list.length;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Shape:
@@ -41,7 +45,7 @@ export class Polylines extends Shape {
     return result;
   }
 
-  public/* override */ expandBoundingBox(boundingBox: Range3): void {
+  public /* override */ expandBoundingBox(boundingBox: Range3): void {
     for (const polyline of this.list)
       boundingBox.addRange(polyline.boundingBox);
   }
@@ -50,15 +54,23 @@ export class Polylines extends Shape {
   // INSTANCE METHODS: Operations
   //= =================================================
 
-  public add(polyline: Polyline): void { this.list.push(polyline); }
+  public add(polyline: Polyline): void {
+    this.list.push(polyline);
+  }
 
-  public clear(): void { this.list.splice(0, this.list.length); }
+  public clear(): void {
+    this.list.splice(0, this.list.length);
+  }
 
   //= =================================================
   // STATIC METHODS:
   //= =================================================
 
-  public static createByRandom(polylinesCount: number, pointCount: number, boundingBox: Range3): Polylines {
+  public static createByRandom(
+    polylinesCount: number,
+    pointCount: number,
+    boundingBox: Range3
+  ): Polylines {
     const result = new Polylines();
     for (let i = 0; i < polylinesCount; i++)
       result.list.push(Polyline.createByRandom(pointCount, boundingBox));

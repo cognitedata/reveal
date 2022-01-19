@@ -11,28 +11,28 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
+import * as THREE from 'three';
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range3 } from "@/Core/Geometry/Range3";
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { Range3 } from 'Core/Geometry/Range3';
 
-import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
+import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
 
-import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
 
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
+import { SpriteCreator } from 'Three/Utilities/SpriteCreator';
 
-import { Colors } from "@/Core/Primitives/Colors";
-import { Canvas } from "@/Three/Utilities/Canvas";
-import { Changes } from "@/Core/Views/Changes";
-import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
-import { Appearance } from "@/Core/States/Appearance";
-import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
-import { PointLogStyle } from "@/SubSurface/Wells/Styles/PointLogStyle";
-import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
-import { ViewInfo } from "@/Core/Views/ViewInfo";
+import { Colors } from 'Core/Primitives/Colors';
+import { Canvas } from 'Three/Utilities/Canvas';
+import { Changes } from 'Core/Views/Changes';
+import { BaseThreeView } from 'Three/BaseViews/BaseThreeView';
+import { Appearance } from 'Core/States/Appearance';
+import { WellTrajectoryStyle } from 'SubSurface/Wells/Styles/WellTrajectoryStyle';
+import { PointLogStyle } from 'SubSurface/Wells/Styles/PointLogStyle';
+import { WellTrajectoryView } from 'ThreeSubSurface/Wells/WellTrajectoryView';
+import { ViewInfo } from 'Core/Views/ViewInfo';
 
 const selectedRadiusFactor = 1.2;
 
@@ -45,21 +45,27 @@ export class PointLogView extends BaseGroupThreeView {
 
   private cameraPosition = new Vector3(0, 0, 1);
 
-  public static readonly sphereName = "sphere";
+  public static readonly sphereName = 'sphere';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  protected get node(): PointLogNode { return super.getNode() as PointLogNode; }
+  protected get node(): PointLogNode {
+    return super.getNode() as PointLogNode;
+  }
 
-  private get style(): PointLogStyle { return super.getStyle() as PointLogStyle; }
+  private get style(): PointLogStyle {
+    return super.getStyle() as PointLogStyle;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -72,7 +78,13 @@ export class PointLogView extends BaseGroupThreeView {
 
   protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
-    if (args.isChanged(Changes.renderStyle, Changes.nodeColor, Changes.pointOpenOrClosed))
+    if (
+      args.isChanged(
+        Changes.renderStyle,
+        Changes.nodeColor,
+        Changes.pointOpenOrClosed
+      )
+    )
       this.touch();
   }
 
@@ -81,28 +93,23 @@ export class PointLogView extends BaseGroupThreeView {
   //= =================================================
 
   public /* override */ calculateBoundingBoxCore(): Range3 | undefined {
-    if (!this.isVisible)
-      return undefined;
+    if (!this.isVisible) return undefined;
 
     const { node } = this;
     const { trajectory } = node;
-    if (!trajectory)
-      return undefined;
+    if (!trajectory) return undefined;
 
     const { wellNode } = this.node;
-    if (!wellNode)
-      return undefined;
+    if (!wellNode) return undefined;
 
     const { log } = node;
-    if (!log)
-      return undefined;
+    if (!log) return undefined;
 
     const boundingBox = new Range3();
     const position = Vector3.newZero;
     for (let i = log.samples.length - 1; i >= 0; i--) {
       const sample = log.getAt(i);
-      if (sample.isMdEmpty)
-        continue;
+      if (sample.isMdEmpty) continue;
 
       if (trajectory.getPositionAtMd(sample.md, position))
         boundingBox.add(position);
@@ -120,21 +127,17 @@ export class PointLogView extends BaseGroupThreeView {
   public /* override */ beforeRender(): void {
     super.beforeRender();
     const parent = this.object3D;
-    if (!parent)
-      return;
+    if (!parent) return;
 
     const { node } = this;
     const { log } = node;
-    if (!log)
-      return;
+    if (!log) return;
 
     const { wellNode } = node;
-    if (!wellNode)
-      return;
+    if (!wellNode) return;
 
     const { trajectory } = node;
-    if (!trajectory)
-      return;
+    if (!trajectory) return;
 
     const { transformer } = this;
     const { camera } = this;
@@ -151,8 +154,7 @@ export class PointLogView extends BaseGroupThreeView {
 
     // Check if camera has move slightly
     const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
-    if (angle < Appearance.viewerSmallestCameraDeltaAngle)
-      return;
+    if (angle < Appearance.viewerSmallestCameraDeltaAngle) return;
 
     this.cameraDirection = cameraDirection;
     this.cameraPosition = cameraPosition;
@@ -163,18 +165,14 @@ export class PointLogView extends BaseGroupThreeView {
 
     for (const child of parent.children) {
       const index = child.userData.label;
-      if (index === undefined)
-        continue;
+      if (index === undefined) continue;
 
       const sample = log.getAt(index);
-      if (sample.isMdEmpty)
-        continue;
+      if (sample.isMdEmpty) continue;
 
-      if (!trajectory.getPositionAtMd(sample.md, position))
-        continue;
+      if (!trajectory.getPositionAtMd(sample.md, position)) continue;
 
-      if (!trajectory.getTangentAtMd(sample.md, tangent))
-        continue;
+      if (!trajectory.getTangentAtMd(sample.md, tangent)) continue;
 
       transformer.transformRelativeTo3D(position);
       transformer.transformTangentTo3D(tangent);
@@ -188,37 +186,40 @@ export class PointLogView extends BaseGroupThreeView {
     }
   }
 
-  public /* override */ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void {
+  public /* override */ onShowInfo(
+    viewInfo: ViewInfo,
+    intersection: THREE.Intersection
+  ): void {
     const parent = this.object3D;
-    if (!parent)
-      return;
+    if (!parent) return;
 
     const index = intersection.object.userData[PointLogView.sphereName];
-    if (index === undefined)
-      return;
+    if (index === undefined) return;
 
     const { node } = this;
     const { trajectory } = node;
-    if (!trajectory)
-      return;
+    if (!trajectory) return;
 
     const { log } = node;
-    if (!log)
-      return;
+    if (!log) return;
 
     const sample = log.getAt(index);
-    if (!sample)
-      return;
+    if (!sample) return;
 
-    const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md, sample.mdUnit);
-    if (md === undefined)
-      return;
+    const md = WellTrajectoryView.startPickingAndReturnMd(
+      this,
+      viewInfo,
+      intersection,
+      sample.md,
+      sample.mdUnit
+    );
+    if (md === undefined) return;
 
     viewInfo.addPickedNode(node);
-    viewInfo.addTabbedValue("Description", sample.description);
-    viewInfo.addTabbedValue("Subtype", sample.subtype);
-    viewInfo.addTabbedValue("Subcategory", sample.riskSubCategory);
-    viewInfo.addTabbedValue("Details", sample.details);
+    viewInfo.addTabbedValue('Description', sample.description);
+    viewInfo.addTabbedValue('Subtype', sample.subtype);
+    viewInfo.addTabbedValue('Subcategory', sample.riskSubCategory);
+    viewInfo.addTabbedValue('Details', sample.details);
   }
 
   //= =================================================
@@ -228,21 +229,20 @@ export class PointLogView extends BaseGroupThreeView {
   protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const { node } = this;
     const { wellNode } = node;
-    if (!wellNode)
-      return null;
+    if (!wellNode) return null;
 
     const { trajectory } = node;
-    if (!trajectory)
-      return null;
+    if (!trajectory) return null;
 
     const { style } = this;
-    if (!style)
-      return null;
+    if (!style) return null;
 
-    const color = node.getColorByColorType(style.colorType.value, this.renderTarget.fgColor);
+    const color = node.getColorByColorType(
+      style.colorType.value,
+      this.renderTarget.fgColor
+    );
     const { log } = node;
-    if (!log)
-      throw Error("Well trajectory is missing");
+    if (!log) throw Error('Well trajectory is missing');
 
     const group = new THREE.Group();
     const { transformer } = this;
@@ -252,10 +252,12 @@ export class PointLogView extends BaseGroupThreeView {
     const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
     const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
 
-    const closedMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toThreeColor(color) });
+    const closedMaterial = new THREE.MeshPhongMaterial({
+      color: ThreeConverter.toThreeColor(color),
+    });
     const openMaterial = new THREE.MeshPhongMaterial({
       color: ThreeConverter.toThreeColor(color),
-      emissive: ThreeConverter.toThreeColor(Colors.selectedEmissive)
+      emissive: ThreeConverter.toThreeColor(Colors.selectedEmissive),
     });
 
     const up = Vector3.newUp;
@@ -264,19 +266,19 @@ export class PointLogView extends BaseGroupThreeView {
 
     for (let index = 0; index < log.samples.length; index++) {
       const sample = log.getAt(index);
-      if (sample.isMdEmpty)
-        continue;
+      if (sample.isMdEmpty) continue;
 
-      if (!trajectory.getPositionAtMd(sample.md, position))
-        continue;
+      if (!trajectory.getPositionAtMd(sample.md, position)) continue;
 
-      if (!trajectory.getTangentAtMd(sample.md, tangent))
-        continue;
+      if (!trajectory.getTangentAtMd(sample.md, tangent)) continue;
 
       transformer.transformRelativeTo3D(position);
       transformer.transformTangentTo3D(tangent);
 
-      const sphere = new THREE.Mesh(sample.isOpen ? openGeometry : closedGeometry, sample.isOpen ? openMaterial : closedMaterial);
+      const sphere = new THREE.Mesh(
+        sample.isOpen ? openGeometry : closedGeometry,
+        sample.isOpen ? openMaterial : closedMaterial
+      );
       sphere.scale.z = 0.3333;
 
       if (Math.abs(tangent.z) < 0.999) {
@@ -293,11 +295,19 @@ export class PointLogView extends BaseGroupThreeView {
       group.add(sphere);
 
       if (sample.isOpen) {
-        const cameraDirection = Vector3.substract(position, this.cameraPosition);
+        const cameraDirection = Vector3.substract(
+          position,
+          this.cameraPosition
+        );
         const prependicular = cameraDirection.getNormal(tangent);
         position.addWithFactor(prependicular, selectedRadius);
 
-        const label = PointLogView.createLabel(node.name, sample.description, position, style.fontSize.value);
+        const label = PointLogView.createLabel(
+          node.name,
+          sample.description,
+          position,
+          style.fontSize.value
+        );
         if (label) {
           label.center = new THREE.Vector2(0, 1);
           label.userData.label = index;
@@ -317,37 +327,44 @@ export class PointLogView extends BaseGroupThreeView {
   protected get radius(): number {
     let radius = 20;
     const { node } = this;
-    if (!node)
-      return radius;
+    if (!node) return radius;
 
     const { style } = this;
-    if (style)
-      radius = style.radius.value;
+    if (style) radius = style.radius.value;
 
     const { trajectoryNode } = node;
-    if (!trajectoryNode)
-      return radius;
+    if (!trajectoryNode) return radius;
 
-    const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellTrajectoryStyle;
-    if (wellRenderStyle)
-      radius += wellRenderStyle.radius.value;
+    const wellRenderStyle = trajectoryNode.getRenderStyle(
+      this.targetId
+    ) as WellTrajectoryStyle;
+    if (wellRenderStyle) radius += wellRenderStyle.radius.value;
 
     return radius;
   }
 
-  public static createLabel(header: string, text: string, position: Vector3, worldfontSize: number): THREE.Sprite | null {
+  public static createLabel(
+    header: string,
+    text: string,
+    position: Vector3,
+    worldfontSize: number
+  ): THREE.Sprite | null {
     const pixelfontSize = 30;
     const maxWidth = pixelfontSize * 20;
-    const canvas = PointLogView.createCanvasWithText(header, text, maxWidth, pixelfontSize);
-    if (!canvas)
-      return null;
+    const canvas = PointLogView.createCanvasWithText(
+      header,
+      text,
+      maxWidth,
+      pixelfontSize
+    );
+    if (!canvas) return null;
 
     const texture = SpriteCreator.createTexture(canvas);
     const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(spriteMaterial);
 
-    const width = worldfontSize * canvas.width / pixelfontSize;
-    const height = worldfontSize * canvas.height / pixelfontSize;
+    const width = (worldfontSize * canvas.width) / pixelfontSize;
+    const height = (worldfontSize * canvas.height) / pixelfontSize;
 
     sprite.scale.set(width, height, 1);
 
@@ -355,7 +372,12 @@ export class PointLogView extends BaseGroupThreeView {
     return sprite;
   }
 
-  public static createCanvasWithText(header: string, text: string, maxWidth: number, fontSize: number): HTMLCanvasElement | null {
+  public static createCanvasWithText(
+    header: string,
+    text: string,
+    maxWidth: number,
+    fontSize: number
+  ): HTMLCanvasElement | null {
     const margin = 0.025 * maxWidth;
     const lineSpacing = 0.5;
     const lineHeight = fontSize * (1 + lineSpacing);
@@ -363,10 +385,9 @@ export class PointLogView extends BaseGroupThreeView {
     const headerFont = Canvas.getBolderFont(fontSize + 2);
 
     // https://www.javascripture.com/CanvasRenderingContext2D
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    if (!context)
-      return null;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) return null;
 
     // Initialize header size
     context.font = headerFont;
@@ -376,8 +397,13 @@ export class PointLogView extends BaseGroupThreeView {
     if (headerWidth > maxWidth) {
       headerMultiLine = true;
       headerWidth = maxWidth;
-      headerHeight = Canvas.measureTextHeight(context, header, maxWidth + margin, lineHeight);
-      headerHeight -= fontSize * lineSpacing / 2;
+      headerHeight = Canvas.measureTextHeight(
+        context,
+        header,
+        maxWidth + margin,
+        lineHeight
+      );
+      headerHeight -= (fontSize * lineSpacing) / 2;
     } else {
       headerMultiLine = false;
       headerHeight = fontSize;
@@ -390,8 +416,13 @@ export class PointLogView extends BaseGroupThreeView {
     if (textWidth > maxWidth) {
       textMultiLine = true;
       textWidth = maxWidth;
-      textHeight = Canvas.measureTextHeight(context, text, maxWidth + margin, lineHeight);
-      textHeight -= fontSize * lineSpacing / 2;
+      textHeight = Canvas.measureTextHeight(
+        context,
+        text,
+        maxWidth + margin,
+        lineHeight
+      );
+      textHeight -= (fontSize * lineSpacing) / 2;
     } else {
       textMultiLine = false;
       textHeight = fontSize;
@@ -411,23 +442,28 @@ export class PointLogView extends BaseGroupThreeView {
     context.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
 
     // need to set font again after resizing canvas
-    context.textBaseline = "top";
-    context.textAlign = "start";
+    context.textBaseline = 'top';
+    context.textAlign = 'start';
     context.fillStyle = Canvas.getColor(Colors.black);
     let y = margin;
 
     context.font = headerFont;
     if (headerMultiLine)
-      Canvas.fillText(context, header, margin, y, maxWidth + margin, lineHeight);
-    else
-      context.fillText(header, margin, y);
+      Canvas.fillText(
+        context,
+        header,
+        margin,
+        y,
+        maxWidth + margin,
+        lineHeight
+      );
+    else context.fillText(header, margin, y);
 
     y += headerHeight + 0.5 * fontSize;
     context.font = textFont;
     if (textMultiLine)
       Canvas.fillText(context, text, margin, y, maxWidth + margin, lineHeight);
-    else
-      context.fillText(text, margin, y);
+    else context.fillText(text, margin, y);
 
     return canvas;
   }

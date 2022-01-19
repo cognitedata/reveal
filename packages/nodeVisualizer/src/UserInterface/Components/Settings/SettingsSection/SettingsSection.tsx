@@ -3,19 +3,13 @@ import {
   ISettingsSection,
   ISettingsElement,
   ISettingsSectionProps,
-} from '@/UserInterface/Components/Settings/Types';
-import { ExpansionView } from '@/UserInterface/Components/ExpansionView/ExpansionView';
-import { SettingsElement } from '@/UserInterface/Components/Settings/SettingsElement/SettingsElement';
+} from 'UserInterface/Components/Settings/Types';
+import { ExpansionView } from 'UserInterface/Components/ExpansionView/ExpansionView';
+import { SettingsElement } from 'UserInterface/Components/Settings/SettingsElement/SettingsElement';
 
 export const SettingsSection = (props: ISettingsSectionProps) => {
-  const {
-    id,
-    name,
-    isExpanded,
-    toolBar,
-    subSections,
-    elements,
-  } = props.section;
+  const { id, name, isExpanded, toolBar, subSections, elements } =
+    props.section;
 
   return (
     <ExpansionView

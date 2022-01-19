@@ -11,43 +11,49 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
-import Color from "color";
+import * as THREE from 'three';
+import Color from 'color';
 
-import { Range3 } from "@/Core/Geometry/Range3";
+import { Range3 } from 'Core/Geometry/Range3';
 
-import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
+import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
 
-import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { CasingLogNode } from 'SubSurface/Wells/Nodes/CasingLogNode';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
 
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { RenderSample } from "@/SubSurface/Wells/Samples/RenderSample";
-import { Colors } from "@/Core/Primitives/Colors";
-import { TrajectoryBufferGeometry } from "@/ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry";
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
-import { CasingLogStyle } from "@/SubSurface/Wells/Styles/CasingLogStyle";
-import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
-import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
-import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
-import { ViewInfo } from "@/Core/Views/ViewInfo";
-import { Changes } from "@/Core/Views/Changes";
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
+import { RenderSample } from 'SubSurface/Wells/Samples/RenderSample';
+import { Colors } from 'Core/Primitives/Colors';
+import { TrajectoryBufferGeometry } from 'ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry';
+import { Vector3 } from 'Core/Geometry/Vector3';
+import { WellTrajectoryStyle } from 'SubSurface/Wells/Styles/WellTrajectoryStyle';
+import { CasingLogStyle } from 'SubSurface/Wells/Styles/CasingLogStyle';
+import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
+import { CasingLog } from 'SubSurface/Wells/Logs/CasingLog';
+import { WellTrajectoryView } from 'ThreeSubSurface/Wells/WellTrajectoryView';
+import { ViewInfo } from 'Core/Views/ViewInfo';
+import { Changes } from 'Core/Views/Changes';
 
 export class CasingLogView extends BaseGroupThreeView {
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  protected get node(): CasingLogNode { return super.getNode() as CasingLogNode; }
+  protected get node(): CasingLogNode {
+    return super.getNode() as CasingLogNode;
+  }
 
-  private get style(): CasingLogStyle { return super.getStyle() as CasingLogStyle; }
+  private get style(): CasingLogStyle {
+    return super.getStyle() as CasingLogStyle;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -60,8 +66,7 @@ export class CasingLogView extends BaseGroupThreeView {
 
   protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
-    if (args.isChanged(Changes.renderStyle, Changes.nodeColor))
-      this.touch();
+    if (args.isChanged(Changes.renderStyle, Changes.nodeColor)) this.touch();
   }
 
   //= =================================================
@@ -69,25 +74,20 @@ export class CasingLogView extends BaseGroupThreeView {
   //= =================================================
 
   public /* override */ calculateBoundingBoxCore(): Range3 | undefined {
-    if (!this.isVisible)
-      return undefined;
+    if (!this.isVisible) return undefined;
 
     const { node } = this;
     const { trajectory } = node;
-    if (!trajectory)
-      return undefined;
+    if (!trajectory) return undefined;
 
     const { style } = this;
-    if (!style)
-      return undefined;
+    if (!style) return undefined;
 
     const { wellNode } = this.node;
-    if (!wellNode)
-      return undefined;
+    if (!wellNode) return undefined;
 
     const { log } = node;
-    if (!log)
-      return undefined;
+    if (!log) return undefined;
 
     const boundingBox = new Range3();
     let maxSampleRadius = 0;
@@ -95,8 +95,7 @@ export class CasingLogView extends BaseGroupThreeView {
 
     for (let i = log.samples.length - 1; i >= 0; i--) {
       const sample = log.getAt(i);
-      if (sample.isMdEmpty || sample.isEmpty)
-        continue;
+      if (sample.isMdEmpty || sample.isEmpty) continue;
 
       maxSampleRadius = Math.max(sample.radius, maxSampleRadius);
       if (trajectory.getPositionAtMd(sample.md, position))
@@ -104,32 +103,42 @@ export class CasingLogView extends BaseGroupThreeView {
       if (trajectory.getPositionAtMd(sample.baseMd, position))
         boundingBox.add(position);
     }
-    const maxRadius = maxSampleRadius * style.radiusFactor.value + this.trajectoryRadius;
+    const maxRadius =
+      maxSampleRadius * style.radiusFactor.value + this.trajectoryRadius;
     boundingBox.expandByMargin(maxRadius);
     boundingBox.translate(wellNode.origin);
     return boundingBox;
   }
 
-  public /* override */ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void {
-    const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection);
-    if (md === undefined)
-      return;
+  public /* override */ onShowInfo(
+    viewInfo: ViewInfo,
+    intersection: THREE.Intersection
+  ): void {
+    const md = WellTrajectoryView.startPickingAndReturnMd(
+      this,
+      viewInfo,
+      intersection
+    );
+    if (md === undefined) return;
 
     const { node } = this;
     viewInfo.addPickedNode(node);
 
     const { log } = node;
-    if (!log)
-      return;
+    if (!log) return;
 
     const sample = log.getConcreteSampleByMd(md);
-    if (!sample)
-      return;
+    if (!sample) return;
 
-    viewInfo.addTabbedValue("Name", sample.name);
-    viewInfo.addTabbedValue("Radius", Number.isNaN(sample.radius) || sample.radius === 0 ? "No casing" : sample.radius.toFixed(3));
-    viewInfo.addTabbedValue("Comments", sample.comments);
-    viewInfo.addTabbedValue("Status comment", sample.currentStatusComment);
+    viewInfo.addTabbedValue('Name', sample.name);
+    viewInfo.addTabbedValue(
+      'Radius',
+      Number.isNaN(sample.radius) || sample.radius === 0
+        ? 'No casing'
+        : sample.radius.toFixed(3)
+    );
+    viewInfo.addTabbedValue('Comments', sample.comments);
+    viewInfo.addTabbedValue('Status comment', sample.currentStatusComment);
   }
 
   //= =================================================
@@ -139,24 +148,28 @@ export class CasingLogView extends BaseGroupThreeView {
   protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const { node } = this;
     const { wellNode } = node;
-    if (!wellNode)
-      return null;
+    if (!wellNode) return null;
 
     const { style } = this;
-    if (!style)
-      return null;
+    if (!style) return null;
 
-    const color = node.getColorByColorType(style.colorType.value, this.renderTarget.fgColor);
+    const color = node.getColorByColorType(
+      style.colorType.value,
+      this.renderTarget.fgColor
+    );
     const { trajectory } = node;
-    if (!trajectory)
-      return null;
+    if (!trajectory) return null;
 
     const { log } = node;
-    if (!log)
-      throw Error("Well trajectory is missing");
+    if (!log) throw Error('Well trajectory is missing');
 
     const parent = new THREE.Group();
-    const samples = this.createRenderSamples(trajectory, log, color, style.radiusFactor.value);
+    const samples = this.createRenderSamples(
+      trajectory,
+      log,
+      color,
+      style.radiusFactor.value
+    );
     if (samples && samples.length > 0) {
       const geometry = new TrajectoryBufferGeometry(samples);
       const material = new THREE.MeshStandardMaterial({
@@ -179,41 +192,54 @@ export class CasingLogView extends BaseGroupThreeView {
   // INSTANCE METHODS: Creators
   //= =================================================
 
-  public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color, radiusFactor: number): RenderSample[] {
+  public createRenderSamples(
+    trajectory: WellTrajectory,
+    log: CasingLog,
+    color: Color,
+    radiusFactor: number
+  ): RenderSample[] {
     const { trajectoryRadius } = this;
 
     const samples: RenderSample[] = [];
     for (let logIndex = 0; logIndex < log.length; logIndex++) {
       const sample = log.getAt(logIndex);
-      if (sample.isMdEmpty)
-        continue;
+      if (sample.isMdEmpty) continue;
 
-      if (Number.isNaN(sample.baseMd))
-        continue;
+      if (Number.isNaN(sample.baseMd)) continue;
 
-      if (Number.isNaN(sample.radius))
-        continue;
+      if (Number.isNaN(sample.radius)) continue;
 
       const sampleRadius = sample.radius * radiusFactor + trajectoryRadius;
       const topPosition = Vector3.newZero;
       if (trajectory.getPositionAtMd(sample.md, topPosition))
-        samples.push(new RenderSample(topPosition, sample.md, sampleRadius, color));
+        samples.push(
+          new RenderSample(topPosition, sample.md, sampleRadius, color)
+        );
 
       // Push in all values between <sample.md, sample.baseMd>
       for (let wellIndex = 0; wellIndex < trajectory.length; wellIndex++) {
         const trajectorySample = trajectory.getAt(wellIndex);
-        if (trajectorySample.md >= sample.baseMd)
-          break; // Too far
+        if (trajectorySample.md >= sample.baseMd) break; // Too far
         if (sample.md < trajectorySample.md)
-          samples.push(new RenderSample(trajectorySample.point.clone(), trajectorySample.md, sampleRadius, color));
+          samples.push(
+            new RenderSample(
+              trajectorySample.point.clone(),
+              trajectorySample.md,
+              sampleRadius,
+              color
+            )
+          );
       }
       const basePosition = Vector3.newZero;
-      if (!trajectory.getPositionAtMd(sample.baseMd, basePosition))
-        continue;
+      if (!trajectory.getPositionAtMd(sample.baseMd, basePosition)) continue;
 
       // Add a nan value to the end to terminate it
-      samples.push(new RenderSample(basePosition, sample.baseMd, sampleRadius, color));
-      samples.push(new RenderSample(basePosition.clone(), sample.baseMd, 0, color));
+      samples.push(
+        new RenderSample(basePosition, sample.baseMd, sampleRadius, color)
+      );
+      samples.push(
+        new RenderSample(basePosition.clone(), sample.baseMd, 0, color)
+      );
     }
     const { transformer } = this;
     for (const sample of samples)
@@ -272,16 +298,15 @@ export class CasingLogView extends BaseGroupThreeView {
 
   protected get trajectoryRadius(): number {
     const { node } = this;
-    if (!node)
-      return 0;
+    if (!node) return 0;
 
     const { trajectoryNode } = node;
-    if (!trajectoryNode)
-      return 0;
+    if (!trajectoryNode) return 0;
 
-    const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellTrajectoryStyle;
-    if (!wellRenderStyle)
-      return 0;
+    const wellRenderStyle = trajectoryNode.getRenderStyle(
+      this.targetId
+    ) as WellTrajectoryStyle;
+    if (!wellRenderStyle) return 0;
 
     return wellRenderStyle.radius.value;
   }

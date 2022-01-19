@@ -11,13 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
+import * as THREE from 'three';
 
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { Colors } from "@/Core/Primitives/Colors";
+import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
+import { Colors } from 'Core/Primitives/Colors';
 
 export class ThreeMiniWindow {
-
   public static compassSize = 0.125;
 
   // ==================================================
@@ -26,7 +25,14 @@ export class ThreeMiniWindow {
 
   private _scene: THREE.Scene | null = null;
 
-  private _camera: THREE.OrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
+  private _camera: THREE.OrthographicCamera = new THREE.OrthographicCamera(
+    -1,
+    1,
+    1,
+    -1,
+    -1,
+    1
+  );
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -38,7 +44,10 @@ export class ThreeMiniWindow {
 
       // Add some lights
       const ambientLight = new THREE.AmbientLight(0x404040, 0.35); // soft white light
-      const directionalLight = new THREE.DirectionalLight(ThreeConverter.toThreeColor(Colors.white), 0.90);
+      const directionalLight = new THREE.DirectionalLight(
+        ThreeConverter.toThreeColor(Colors.white),
+        0.9
+      );
       directionalLight.position.set(0, 0, 1);
       this._scene.add(ambientLight);
       this._scene.add(directionalLight);
@@ -51,11 +60,15 @@ export class ThreeMiniWindow {
   // ==================================================
 
   public render(renderer: THREE.WebGLRenderer): void {
-
     const size = renderer.getSize(new THREE.Vector2());
     const meanSideSize = (size.x + size.y) / 2;
     const viewportSize = meanSideSize * ThreeMiniWindow.compassSize;
-    renderer.setViewport(size.width - viewportSize, 0, viewportSize, viewportSize);
+    renderer.setViewport(
+      size.width - viewportSize,
+      0,
+      viewportSize,
+      viewportSize
+    );
     renderer.render(this.scene, this._camera);
     renderer.setViewport(0, 0, size.x, size.y);
   }

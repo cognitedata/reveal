@@ -1,10 +1,10 @@
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Polylines } from "@/Core/Geometry/Polylines";
-import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
-import { SubSurfaceRootNode } from "@/SubSurface/Trees/SubSurfaceRootNode";
-import { Modules } from "@/Core/Module/Modules";
-import { StubModule } from "@/__tests__/StubModule/StubModule";
-import { StubTargetNode } from "@/__tests__/StubModule/StubTargetNode";
+import { Range3 } from 'Core/Geometry/Range3';
+import { Polylines } from 'Core/Geometry/Polylines';
+import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
+import { SubSurfaceRootNode } from 'SubSurface/Trees/SubSurfaceRootNode';
+import { Modules } from 'Core/Module/Modules';
+import { StubModule } from '__tests__/StubModule/StubModule';
+import { StubTargetNode } from '__tests__/StubModule/StubTargetNode';
 
 export class StubRootCreator {
   public static createTestRoot(): SubSurfaceRootNode {
@@ -22,8 +22,7 @@ export class StubRootCreator {
       root.targets.addChild(node);
       node.initialize();
     }
-    if (!root.activeTarget)
-      throw Error("target is not added properly");
+    if (!root.activeTarget) throw Error('target is not added properly');
 
     // Create 4 polylines
     const tree = root.getOthersByForce();

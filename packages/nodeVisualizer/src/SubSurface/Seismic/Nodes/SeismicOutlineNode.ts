@@ -11,23 +11,25 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import Icon from "@images/Nodes/SeismicOutlineNode.png";
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
-import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
+import Icon from 'images/Nodes/SeismicOutlineNode.png';
+import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
+import { RegularGrid3 } from 'Core/Geometry/RegularGrid3';
+import { SurveyNode } from 'SubSurface/Seismic/Nodes/SurveyNode';
 
 export class SeismicOutlineNode extends BaseVisualNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "SeismicOutlineNode";
+  static className = 'SeismicOutlineNode';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get surveyNode(): SurveyNode | null { return this.getAncestorByType(SurveyNode); }
+  public get surveyNode(): SurveyNode | null {
+    return this.getAncestorByType(SurveyNode);
+  }
 
   public get surveyCube(): RegularGrid3 | null {
     const { surveyNode } = this;
@@ -38,25 +40,39 @@ export class SeismicOutlineNode extends BaseVisualNode {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return SeismicOutlineNode.className; }
+  public get /* override */ className(): string {
+    return SeismicOutlineNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === SeismicOutlineNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === SeismicOutlineNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Outline"; }
+  public get /* override */ typeName(): string {
+    return 'Outline';
+  }
 
-  public /* override */ canChangeName(): boolean { return false; }
+  public /* override */ canChangeName(): boolean {
+    return false;
+  }
 
-  public /* override */ canChangeColor(): boolean { return false; }
+  public /* override */ canChangeColor(): boolean {
+    return false;
+  }
 
-  public /* override */ getIcon(): string { return Icon; }
+  public /* override */ getIcon(): string {
+    return Icon;
+  }
 }

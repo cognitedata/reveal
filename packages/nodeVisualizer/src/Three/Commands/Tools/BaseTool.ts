@@ -1,5 +1,5 @@
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
 
 export abstract class BaseTool extends ThreeRenderTargetCommand {
   //= =================================================
@@ -14,18 +14,18 @@ export abstract class BaseTool extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //= =================================================
 
-  public /* override */ get isCheckable(): boolean { return true; }
+  public get /* override */ isCheckable(): boolean {
+    return true;
+  }
 
-  public /* override */ get isChecked(): boolean {
-    if (!this.target)
-      return false;
+  public get /* override */ isChecked(): boolean {
+    if (!this.target) return false;
 
     return this.target.activeTool === this;
   }
 
   protected /* override */ invokeCore(): boolean {
-    if (!this.target)
-      return false;
+    if (!this.target) return false;
 
     this.target.activeTool = this;
     return true;
@@ -35,23 +35,25 @@ export abstract class BaseTool extends ThreeRenderTargetCommand {
   // VIRTUAL METHODS
   //= =================================================
 
-  public /* virtual */ overrideLeftButton(): boolean { return false; }
+  public /* virtual */ overrideLeftButton(): boolean {
+    return false;
+  }
 
-  public /* virtual */ onActivate(): void { }
+  public /* virtual */ onActivate(): void {}
 
-  public /* virtual */ onDeactivate(): void { }
+  public /* virtual */ onDeactivate(): void {}
 
-  public /* virtual */ onMouseHover(_event: MouseEvent): void { }
+  public /* virtual */ onMouseHover(_event: MouseEvent): void {}
 
-  public /* virtual */ onMouseClick(_event: MouseEvent): void { }
+  public /* virtual */ onMouseClick(_event: MouseEvent): void {}
 
-  public /* virtual */ onMouseDown(_event: MouseEvent): void { }
+  public /* virtual */ onMouseDown(_event: MouseEvent): void {}
 
-  public /* virtual */ onMouseDrag(_event: MouseEvent): void { }
+  public /* virtual */ onMouseDrag(_event: MouseEvent): void {}
 
-  public /* virtual */ onMouseUp(_event: MouseEvent): void { }
+  public /* virtual */ onMouseUp(_event: MouseEvent): void {}
 
-  public /* virtual */ onKeyDown(_event: KeyboardEvent): void { }
+  public /* virtual */ onKeyDown(_event: KeyboardEvent): void {}
 
   //= =================================================
   // INSTANCE METHODS
@@ -59,19 +61,16 @@ export abstract class BaseTool extends ThreeRenderTargetCommand {
 
   public onShowInfo(event: MouseEvent): void {
     const { target } = this;
-    if (!target)
-      return;
+    if (!target) return;
 
     const { viewInfo } = target;
     const preCount = viewInfo.items.length;
     viewInfo.clear();
 
     const [view, intersection] = target.getViewByMouseEvent(event);
-    if (view && intersection)
-      view.onShowInfo(viewInfo, intersection);
+    if (view && intersection) view.onShowInfo(viewInfo, intersection);
 
     const postCount = viewInfo.items.length;
-    if (preCount > 0 || postCount > 0)
-      target.invalidate();
+    if (preCount > 0 || postCount > 0) target.invalidate();
   }
 }

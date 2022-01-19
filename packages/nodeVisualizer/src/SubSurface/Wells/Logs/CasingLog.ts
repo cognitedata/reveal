@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Random } from "@/Core/Primitives/Random";
+import { Range1 } from 'Core/Geometry/Range1';
+import { Random } from 'Core/Primitives/Random';
 
-import { CasingLogSample } from "@/SubSurface/Wells/Samples/CasingLogSample";
-import { BaseLog } from "@/SubSurface/Wells/Logs/BaseLog";
-import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
+import { CasingLogSample } from 'SubSurface/Wells/Samples/CasingLogSample';
+import { BaseLog } from 'SubSurface/Wells/Logs/BaseLog';
+import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
 
 export class CasingLog extends BaseLog {
   //= =================================================
@@ -33,7 +33,7 @@ export class CasingLog extends BaseLog {
     return this.getConcreteSampleByMd(md);
   }
 
-  public/* override */ expandMdRange(range: Range1): void {
+  public /* override */ expandMdRange(range: Range1): void {
     for (let i = this.length - 1; i >= 0; i--) {
       const sample = this.getAt(i);
       range.add(sample.md);
@@ -45,7 +45,9 @@ export class CasingLog extends BaseLog {
   // INSTANCE METHODS: Getters
   //= =================================================
 
-  public getAt(index: number): CasingLogSample { return this.samples[index] as CasingLogSample; }
+  public getAt(index: number): CasingLogSample {
+    return this.samples[index] as CasingLogSample;
+  }
 
   public getConcreteSampleByMd(md: number): CasingLogSample | null {
     let sampleWithMaxRadius: CasingLogSample | null = null;
@@ -65,8 +67,7 @@ export class CasingLog extends BaseLog {
   //= =================================================
 
   public get radiusRange(): Range1 {
-    if (!this._radiusRange)
-      this._radiusRange = this.calculateRadiusRange();
+    if (!this._radiusRange) this._radiusRange = this.calculateRadiusRange();
     return this._radiusRange;
   }
 
@@ -84,8 +85,7 @@ export class CasingLog extends BaseLog {
   public expandRadiusRange(range: Range1): void {
     for (let i = this.length - 1; i >= 0; i--) {
       const sample = this.getAt(i);
-      if (sample.isMdEmpty || sample.isEmpty)
-        continue;
+      if (sample.isMdEmpty || sample.isEmpty) continue;
 
       range.add(sample.radius);
     }
@@ -101,7 +101,7 @@ export class CasingLog extends BaseLog {
     mdInc = Random.getGaussian(mdInc, mdInc / 10);
 
     for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc) {
-      const radius = (numSamples - k) * 15 / numSamples;
+      const radius = ((numSamples - k) * 15) / numSamples;
       log.samples.push(new CasingLogSample(radius, md, md + mdInc / 2));
     }
     return log;

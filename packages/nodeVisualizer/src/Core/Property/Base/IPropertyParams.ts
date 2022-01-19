@@ -1,4 +1,8 @@
-import { IsEnabled, StringAction, ValidateOption } from "@/Core/Property/Base/ValueProperty";
+import {
+  IsEnabled,
+  StringAction,
+  ValidateOption,
+} from 'Core/Property/Base/ValueProperty';
 
 export interface IPropertyParams<T> {
   name: string;

@@ -1,8 +1,11 @@
-import { Dispatch } from "redux";
-import { Changes } from "@/Core/Views/Changes";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { onSelectedNodeChange, onSettingsReset } from "@/UserInterface/Redux/reducers/SettingsReducer";
+import { Dispatch } from 'redux';
+import { Changes } from 'Core/Views/Changes';
+import { BaseNode } from 'Core/Nodes/BaseNode';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import {
+  onSelectedNodeChange,
+  onSettingsReset,
+} from 'UserInterface/Redux/reducers/SettingsReducer';
 import {
   onCheckboxStateChange,
   onExpandStateChange,
@@ -11,8 +14,8 @@ import {
   onNodeNameChange,
   onNodeIconChange,
   onNodeIsLoadingChange,
-  onNodeIsLoadingErrorChange
-} from "@/UserInterface/Redux/reducers/ExplorerReducer";
+  onNodeIsLoadingErrorChange,
+} from 'UserInterface/Redux/reducers/ExplorerReducer';
 
 export class NotificationsToActionsAdaptor {
   private readonly dispatcher: Dispatch;
@@ -22,7 +25,9 @@ export class NotificationsToActionsAdaptor {
   }
 
   processEvent(sender: BaseNode, args: NodeEventArgs): void {
-    if (args.isEmpty) { return; }
+    if (args.isEmpty) {
+      return;
+    }
 
     // test for all change notifications
     if (args.isChanged(Changes.visibleState))
@@ -42,8 +47,8 @@ export class NotificationsToActionsAdaptor {
     if (args.isChanged(Changes.resetStyle))
       this.dispatcher(onSettingsReset(sender));
     if (args.isChanged(Changes.loaded))
-      this.dispatcher(onNodeIsLoadingChange(sender))
+      this.dispatcher(onNodeIsLoadingChange(sender));
     if (args.isChanged(Changes.loadingError))
-      this.dispatcher(onNodeIsLoadingErrorChange(sender))
+      this.dispatcher(onNodeIsLoadingErrorChange(sender));
   }
 }

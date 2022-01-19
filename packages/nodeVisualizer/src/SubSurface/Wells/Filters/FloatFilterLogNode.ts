@@ -11,68 +11,87 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { FloatLogStyle } from "@/SubSurface/Wells/Styles/FloatLogStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
-import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
-import { ColorType } from "@/Core/Enums/ColorType";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import { Statistics } from "@/Core/Geometry/Statistics";
-import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { FloatLogStyle } from 'SubSurface/Wells/Styles/FloatLogStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
+import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
+import FloatLogNodeIcon from 'images/Nodes/FloatLogNode.png';
+import { ColorType } from 'Core/Enums/ColorType';
+import { Range1 } from 'Core/Geometry/Range1';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { Statistics } from 'Core/Geometry/Statistics';
+import { FloatLogNode } from 'SubSurface/Wells/Nodes/FloatLogNode';
 
 export class FloatFilterLogNode extends BaseFilterLogNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "FloatFilterLogNode";
+  static className = 'FloatFilterLogNode';
 
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public propertyType = "";
+  public propertyType = '';
 
-  public unit = "";
+  public unit = '';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get renderStyle(): FloatLogStyle | null { return this.getRenderStyle() as FloatLogStyle; }
+  public get renderStyle(): FloatLogStyle | null {
+    return this.getRenderStyle() as FloatLogStyle;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return FloatFilterLogNode.className; }
+  public get /* override */ className(): string {
+    return FloatFilterLogNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === FloatFilterLogNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === FloatFilterLogNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "FloatLog"; }
+  public get /* override */ typeName(): string {
+    return 'FloatLog';
+  }
 
-  public /* override */ getIcon(): string { return FloatLogNodeIcon; }
+  public /* override */ getIcon(): string {
+    return FloatLogNodeIcon;
+  }
 
-  public /* override */ hasColorMap(): boolean { return true; }
+  public /* override */ hasColorMap(): boolean {
+    return true;
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new FloatLogStyle(targetId);
   }
 
-  public /* override */ supportsColorType(colorType: ColorType, solid: boolean): boolean {
+  public /* override */ supportsColorType(
+    colorType: ColorType,
+    solid: boolean
+  ): boolean {
     switch (colorType) {
       case ColorType.Specified:
       case ColorType.Parent:
@@ -90,37 +109,39 @@ export class FloatFilterLogNode extends BaseFilterLogNode {
 
   protected /* override */ populateInfoCore(folder: BasePropertyFolder): void {
     super.populateInfoCore(folder);
-    folder.addString({ name: "propertyType", instance: this, readonly: false });
-    folder.addString({ name: "unit", instance: this, readonly: false });
+    folder.addString({ name: 'propertyType', instance: this, readonly: false });
+    folder.addString({ name: 'unit', instance: this, readonly: false });
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
     const statistics = this.getStatistics();
-    folder.addReadOnlyRange1("Values", statistics.range);
-    folder.addReadOnlyStatistics("Statistics", statistics);
+    folder.addReadOnlyRange1('Values', statistics.range);
+    folder.addReadOnlyStatistics('Statistics', statistics);
   }
 
   public /* override */ verifyRenderStyle(style: BaseRenderStyle) {
-    if (!(style instanceof FloatLogStyle))
-      return;
+    if (!(style instanceof FloatLogStyle)) return;
 
     const valueRange = this.getValueRange();
-    if (valueRange.isEmpty)
-      return;
+    if (valueRange.isEmpty) return;
 
-    function round(value: number) { return Math.round(value * 10000) / 10000; }
-    if (Number.isNaN(style.min.value))
-      style.min.value = round(valueRange.min);
-    if (Number.isNaN(style.max.value))
-      style.max.value = round(valueRange.max);
+    function round(value: number) {
+      return Math.round(value * 10000) / 10000;
+    }
+    if (Number.isNaN(style.min.value)) style.min.value = round(valueRange.min);
+    if (Number.isNaN(style.max.value)) style.max.value = round(valueRange.max);
   }
 
   //= =================================================
   // OVERRIDES of BaseLogNode
   //= =================================================
 
-  public /* override */ get wellLogType(): WellLogType { return WellLogType.Float; }
+  public get /* override */ wellLogType(): WellLogType {
+    return WellLogType.Float;
+  }
 
   //= =================================================
   // INSTANCE METHODS
@@ -133,14 +154,12 @@ export class FloatFilterLogNode extends BaseFilterLogNode {
   private getStatistics(): Statistics {
     const statistics = new Statistics();
     for (const logNode of this.getAllLogs()) {
-      if (!(logNode instanceof FloatLogNode))
-        continue;
+      if (!(logNode instanceof FloatLogNode)) continue;
 
       // if (!logNode.hasDataInMemory)
       //   continue;
       const { log } = logNode;
-      if (!log)
-        continue;
+      if (!log) continue;
 
       statistics.addStatistics(log.statistics);
     }

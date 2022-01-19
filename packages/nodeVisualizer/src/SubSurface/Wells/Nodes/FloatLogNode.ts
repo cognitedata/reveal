@@ -11,18 +11,18 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
-import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
-import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import Icon from "@images/Nodes/FloatLogNode.png";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { FloatLog } from 'SubSurface/Wells/Logs/FloatLog';
+import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
+import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
+import Icon from 'images/Nodes/FloatLogNode.png';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class FloatLogNode extends BaseLogNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "FloatLogNode";
+  static className = 'FloatLogNode';
 
   //= =================================================
   // INSTANCE FIEDLS
@@ -34,47 +34,66 @@ export class FloatLogNode extends BaseLogNode {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get log(): FloatLog | null { return this.anyData as FloatLog; }
+  public get log(): FloatLog | null {
+    return this.anyData as FloatLog;
+  }
 
-  public set log(value: FloatLog | null) { this.anyData = value; }
+  public set log(value: FloatLog | null) {
+    this.anyData = value;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return FloatLogNode.className; }
+  public get /* override */ className(): string {
+    return FloatLogNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === FloatLogNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === FloatLogNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "FloatLog"; }
+  public get /* override */ typeName(): string {
+    return 'FloatLog';
+  }
 
-  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+  public /* override */ getIcon(): string {
+    return this.dataIsLost ? super.getIcon() : Icon;
+  }
 
-  public /* override */ getNameExtension(): string | null { return this.unit; }
+  public /* override */ getNameExtension(): string | null {
+    return this.unit;
+  }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
     const { log } = this;
-    if (!log)
-      return;
+    if (!log) return;
 
-    folder.addReadOnlyRange1("Values", log.valueRange);
-    folder.addReadOnlyStatistics("Statistics", log.statistics);
+    folder.addReadOnlyRange1('Values', log.valueRange);
+    folder.addReadOnlyStatistics('Statistics', log.statistics);
   }
 
   //= =================================================
   // OVERRIDES of BaseLogNode
   //= =================================================
 
-  public /* override */ get wellLogType(): WellLogType { return WellLogType.Float; }
+  public get /* override */ wellLogType(): WellLogType {
+    return WellLogType.Float;
+  }
 }

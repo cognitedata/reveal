@@ -11,30 +11,36 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from "three";
+import * as THREE from 'three';
 
-import * as Potree from "@cognite/potree-core";
+import * as Potree from '@cognite/potree-core';
 
-import { PotreeNode } from "@/SubSurface/Basics/PotreeNode";
-import { PotreeRenderStyle } from "@/SubSurface/Basics/PotreeRenderStyle";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { Util } from "@/Core/Primitives/Util";
+import { PotreeNode } from 'SubSurface/Basics/PotreeNode';
+import { PotreeRenderStyle } from 'SubSurface/Basics/PotreeRenderStyle';
+import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
+import { Util } from 'Core/Primitives/Util';
 
 export class PotreeThreeView extends BaseGroupThreeView {
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  protected get node(): PotreeNode { return super.getNode() as PotreeNode; }
+  protected get node(): PotreeNode {
+    return super.getNode() as PotreeNode;
+  }
 
-  protected get style(): PotreeRenderStyle { return super.getStyle() as PotreeRenderStyle; }
+  protected get style(): PotreeRenderStyle {
+    return super.getStyle() as PotreeRenderStyle;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of BaseView
@@ -53,8 +59,7 @@ export class PotreeThreeView extends BaseGroupThreeView {
     const { style } = this;
 
     const path = node.url;
-    if (Util.isEmpty(path))
-      return null;
+    if (Util.isEmpty(path)) return null;
 
     const group: Potree.Group = new Potree.Group();
     group.setPointBudget(style.budget);

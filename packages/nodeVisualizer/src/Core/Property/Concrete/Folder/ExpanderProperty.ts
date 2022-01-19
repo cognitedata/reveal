@@ -1,5 +1,5 @@
-import { GroupProperty } from "@/Core/Property/Concrete/Folder/GroupProperty";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { GroupProperty } from 'Core/Property/Concrete/Folder/GroupProperty';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 
 export class ExpanderProperty extends BasePropertyFolder {
   //= =================================================
@@ -14,11 +14,17 @@ export class ExpanderProperty extends BasePropertyFolder {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get expanded(): boolean { return this._expanded; }
+  public get expanded(): boolean {
+    return this._expanded;
+  }
 
-  public set expanded(value: boolean) { this._expanded = value; }
+  public set expanded(value: boolean) {
+    this._expanded = value;
+  }
 
-  public get showToolbar(): boolean { return this._showToolbar; }
+  public get showToolbar(): boolean {
+    return this._showToolbar;
+  }
 
   //= =================================================
   // CONSTRUCTOR
@@ -49,7 +55,7 @@ export class ExpanderProperty extends BasePropertyFolder {
   // INSTANCE METHODS
   //= =================================================
 
-  createExpanderWithToolbar(name: string,): BasePropertyFolder {
+  createExpanderWithToolbar(name: string): BasePropertyFolder {
     const folder = new ExpanderProperty(name, true);
     this.addChild(folder);
     return folder;

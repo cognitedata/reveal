@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Ma } from "@/Core/Primitives/Ma";
+import { Ma } from 'Core/Primitives/Ma';
 
 export class MdSample {
   //= =================================================
@@ -26,29 +26,44 @@ export class MdSample {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get isMdEmpty(): boolean { return Number.isNaN(this.md); }
+  public get isMdEmpty(): boolean {
+    return Number.isNaN(this.md);
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(md = 0, mdUnit?: string) { this.md = md; this.mdUnit = mdUnit}
+  public constructor(md = 0, mdUnit?: string) {
+    this.md = md;
+    this.mdUnit = mdUnit;
+  }
 
   //= =================================================
   // VIRTUAL METHODS
   //= =================================================
 
-  public /* virtual */ toString(): string { return `Md: ${this.md}`; }
+  public /* virtual */ toString(): string {
+    return `Md: ${this.md}`;
+  }
 
-  public /* virtual */ getSampleText(): string { return ``; }
+  public /* virtual */ getSampleText(): string {
+    return ``;
+  }
 
-  public /* virtual */ translate(deltaMd: number, _isAtMinMd: boolean): void { this.md += deltaMd; }
+  public /* virtual */ translate(deltaMd: number, _isAtMinMd: boolean): void {
+    this.md += deltaMd;
+  }
 
-  public /* virtual */ isPickedOnEdge(md: number, margin: number) { return Math.abs(this.md - md) <= margin; }
+  public /* virtual */ isPickedOnEdge(md: number, margin: number) {
+    return Math.abs(this.md - md) <= margin;
+  }
 
   //= =================================================
   // STATIC METHODS
   //= =================================================
 
-  public static compareMd(a: MdSample, b: MdSample): number { return Ma.compare(a.md, b.md); }
+  public static compareMd(a: MdSample, b: MdSample): number {
+    return Ma.compare(a.md, b.md);
+  }
 }

@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
-import ZoomBaseToolIcon from "@images/Commands/ZoomTool.png";
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { BaseTool } from 'Three/Commands/Tools/BaseTool';
+import ZoomBaseToolIcon from 'images/Commands/ZoomTool.png';
 
 export class ZoomTool extends BaseTool {
   //= =================================================
@@ -15,13 +15,16 @@ export class ZoomTool extends BaseTool {
   // OVERRIDES of BaseCommand
   //= =================================================
 
-  public /* override */ getName(): string { return "Rectangle zoom"; }
+  public /* override */ getName(): string {
+    return 'Rectangle zoom';
+  }
 
-  public /* override */ getIcon(): string { return ZoomBaseToolIcon; }
+  public /* override */ getIcon(): string {
+    return ZoomBaseToolIcon;
+  }
 
   protected /* override */ getTooltipCore(): string {
-    return `${this.getDisplayName()}\n` +
-      "Not implemented yet.";
+    return `${this.getDisplayName()}\n` + 'Not implemented yet.';
   }
 
   //= =================================================
@@ -30,8 +33,7 @@ export class ZoomTool extends BaseTool {
 
   public /* override */ onActivate(): void {
     const { target } = this;
-    if (!target)
-      return;
+    if (!target) return;
 
     const { viewInfo } = target;
     viewInfo.clear();

@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { CameraControl } from "@/Three/Nodes/CameraControl";
-import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
+import { CameraControl } from 'Three/Nodes/CameraControl';
+import { BaseTool } from 'Three/Commands/Tools/BaseTool';
+import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
+import { VirtualUserInterface } from 'Core/States/VirtualUserInterface';
 
 export class ToolController {
   //= =================================================
@@ -31,7 +31,9 @@ export class ToolController {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get activeTool(): BaseTool | null { return this._activeTool; }
+  public get activeTool(): BaseTool | null {
+    return this._activeTool;
+  }
 
   //= =================================================
   // INSTANCE METHODS
@@ -46,12 +48,13 @@ export class ToolController {
       this.setActiveTool(this._previousTool, cameraControl);
   }
 
-  public setActiveTool(tool: BaseTool | null, cameraControl: CameraControl | null) {
-    if (!tool)
-      return;
+  public setActiveTool(
+    tool: BaseTool | null,
+    cameraControl: CameraControl | null
+  ) {
+    if (!tool) return;
 
-    if (this._activeTool === tool)
-      return;
+    if (this._activeTool === tool) return;
 
     if (this._activeTool) {
       this._activeTool.onDeactivate();
@@ -59,8 +62,7 @@ export class ToolController {
     }
     this._activeTool = tool;
     this._activeTool.onActivate();
-    if (!cameraControl)
-      return;
+    if (!cameraControl) return;
 
     cameraControl.setLeftButton(this._activeTool);
   }
@@ -72,39 +74,33 @@ export class ToolController {
   public onMouseClick(target: ThreeRenderTargetNode, event: MouseEvent): void {
     target.domElement.focus();
     const tool = this.activeTool;
-    if (tool)
-      tool.onMouseClick(event);
+    if (tool) tool.onMouseClick(event);
   }
 
   public onMouseDown(target: ThreeRenderTargetNode, event: MouseEvent): void {
     target.domElement.focus();
     // https://www.w3schools.com/jsref/obj_mouseevent.asp
     const tool = this.activeTool;
-    if (tool)
-      tool.onMouseDown(event);
+    if (tool) tool.onMouseDown(event);
   }
 
   public onMouseUp(target: ThreeRenderTargetNode, event: MouseEvent): void {
     // https://www.w3schools.com/jsref/obj_mouseevent.asp
     const tool = this.activeTool;
-    if (tool)
-      tool.onMouseUp(event);
+    if (tool) tool.onMouseUp(event);
   }
 
   public onMouseMove(target: ThreeRenderTargetNode, event: MouseEvent): void {
     // https://www.w3schools.com/jsref/obj_mouseevent.asp
     if (event.buttons === 1) {
-      if (event.movementX === 0 && event.movementX === 0)
-        return;
+      if (event.movementX === 0 && event.movementX === 0) return;
 
       const tool = this.activeTool;
-      if (tool)
-        tool.onMouseDrag(event);
+      if (tool) tool.onMouseDrag(event);
     }
     if (event.buttons === 0) {
       const tool = this.activeTool;
-      if (tool)
-        tool.onMouseHover(event);
+      if (tool) tool.onMouseHover(event);
     }
   }
 
@@ -125,7 +121,6 @@ export class ToolController {
       }
     }
     const tool = this.activeTool;
-    if (tool)
-      tool.onKeyDown(event);
+    if (tool) tool.onKeyDown(event);
   }
 }

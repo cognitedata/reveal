@@ -11,42 +11,56 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
-import WellNodeIcon from "@images/Nodes/WellNode.png";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import { FilterLogFolder } from 'SubSurface/Wells/Filters/FilterLogFolder';
+import WellNodeIcon from 'images/Nodes/WellNode.png';
+import { BaseTreeNode } from 'Core/Nodes/BaseTreeNode';
 
 export class WellTreeNode extends BaseTreeNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "WellTreeNode";
+  static className = 'WellTreeNode';
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return WellTreeNode.className; }
+  public get /* override */ className(): string {
+    return WellTreeNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === WellTreeNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === WellTreeNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "WellTree"; }
+  public get /* override */ typeName(): string {
+    return 'WellTree';
+  }
 
-  public /* override */ getIcon(): string { return WellNodeIcon; }
+  public /* override */ getIcon(): string {
+    return WellNodeIcon;
+  }
 
-  public /* override */ getName(): string { return "Wells"; }
+  public /* override */ getName(): string {
+    return 'Wells';
+  }
 
-  public /* override */ get isTab(): boolean { return true; }
+  public get /* override */ isTab(): boolean {
+    return true;
+  }
 
   //= =================================================
   // INSTANCE METHODS

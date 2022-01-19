@@ -11,54 +11,71 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { PointLogStyle } from "@/SubSurface/Wells/Styles/PointLogStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
-import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import PointLogNodeIcon from "@images/Nodes/PointLogNode.png";
-import { ColorType } from "@/Core/Enums/ColorType";
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { PointLogStyle } from 'SubSurface/Wells/Styles/PointLogStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
+import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
+import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
+import PointLogNodeIcon from 'images/Nodes/PointLogNode.png';
+import { ColorType } from 'Core/Enums/ColorType';
 
 export class PointFilterLogNode extends BaseFilterLogNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "PointFilterLogNode";
+  static className = 'PointFilterLogNode';
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get renderStyle(): PointLogStyle | null { return this.getRenderStyle() as PointLogStyle; }
+  public get renderStyle(): PointLogStyle | null {
+    return this.getRenderStyle() as PointLogStyle;
+  }
 
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return PointFilterLogNode.className; }
+  public get /* override */ className(): string {
+    return PointFilterLogNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === PointFilterLogNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === PointFilterLogNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "PointLog"; }
+  public get /* override */ typeName(): string {
+    return 'PointLog';
+  }
 
-  public /* override */ getIcon(): string { return PointLogNodeIcon; }
+  public /* override */ getIcon(): string {
+    return PointLogNodeIcon;
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new PointLogStyle(targetId);
   }
 
-  public /* override */ supportsColorType(colorType: ColorType, _solid: boolean): boolean {
+  public /* override */ supportsColorType(
+    colorType: ColorType,
+    _solid: boolean
+  ): boolean {
     switch (colorType) {
       case ColorType.Specified:
       case ColorType.Parent:
@@ -75,5 +92,7 @@ export class PointFilterLogNode extends BaseFilterLogNode {
   // OVERRIDES of BaseLogNode
   //= =================================================
 
-  public /* override */ get wellLogType(): WellLogType { return WellLogType.Point; }
+  public get /* override */ wellLogType(): WellLogType {
+    return WellLogType.Point;
+  }
 }

@@ -12,8 +12,8 @@
 //= ====================================================================================
 
 /* eslint-disable max-classes-per-file */
-import { BaseView } from "@/Core/Views/BaseView";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseView } from 'Core/Views/BaseView';
+import { BaseNode } from 'Core/Nodes/BaseNode';
 
 export class ViewFactory {
   //= =================================================
@@ -28,7 +28,7 @@ export class ViewFactory {
 
   private constructor() {
     if (ViewFactory._instance)
-      throw new Error("Error - use ViewFactory.instance");
+      throw new Error('Error - use ViewFactory.instance');
   }
 
   //= =================================================
@@ -38,8 +38,7 @@ export class ViewFactory {
   private static _instance: ViewFactory | null = null;
 
   public static get instance(): ViewFactory {
-    if (!ViewFactory._instance)
-      ViewFactory._instance = new ViewFactory();
+    if (!ViewFactory._instance) ViewFactory._instance = new ViewFactory();
     return ViewFactory._instance;
   }
 
@@ -48,7 +47,11 @@ export class ViewFactory {
   //= =================================================
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  public register<T extends BaseView>(className: string, ViewType: new () => T, targetClassName: string): void {
+  public register<T extends BaseView>(
+    className: string,
+    ViewType: new () => T,
+    targetClassName: string
+  ): void {
     const key = this.getKey(className, targetClassName);
     const func = () => new ViewType();
     const product = new Product(func);
@@ -58,8 +61,7 @@ export class ViewFactory {
   public create(node: BaseNode, targetClassName: string): BaseView | null {
     const key = this.getKeyByNode(node, targetClassName);
     const product = this.products.get(key);
-    if (product === undefined)
-      return null;
+    if (product === undefined) return null;
 
     return product.func();
   }
@@ -73,9 +75,13 @@ export class ViewFactory {
   // INSTANCE METHODS: Helpers
   //= =================================================
 
-  private getKeyByNode(node: BaseNode, targetClassName: string): string { return this.getKey(node.className, targetClassName); }
+  private getKeyByNode(node: BaseNode, targetClassName: string): string {
+    return this.getKey(node.className, targetClassName);
+  }
 
-  private getKey(nodeType: string, targetClassName: string): string { return `${nodeType}.${targetClassName}`; }
+  private getKey(nodeType: string, targetClassName: string): string {
+    return `${nodeType}.${targetClassName}`;
+  }
 }
 
 //= =================================================

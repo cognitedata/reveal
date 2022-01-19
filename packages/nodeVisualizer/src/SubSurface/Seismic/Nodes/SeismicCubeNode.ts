@@ -11,98 +11,132 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
+import { Range3 } from 'Core/Geometry/Range3';
+import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
+import { TargetId } from 'Core/Primitives/TargetId';
 
-import Icon from "@images/Nodes/SeismicCubeNode.png";
-import { DataNode } from "@/Core/Nodes/DataNode";
-import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
-import { ITarget } from "@/Core/Interfaces/ITarget";
-import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
-import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
-import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
-import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
-import { SeismicRenderStyle } from "@/SubSurface/Seismic/Nodes/SeismicRenderStyle";
-import { Util } from "@/Core/Primitives/Util";
+import Icon from 'images/Nodes/SeismicCubeNode.png';
+import { DataNode } from 'Core/Nodes/DataNode';
+import { SeismicCube } from 'SubSurface/Seismic/Data/SeismicCube';
+import { ITarget } from 'Core/Interfaces/ITarget';
+import { SurveyNode } from 'SubSurface/Seismic/Nodes/SurveyNode';
+import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
+import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { SeismicRenderStyle } from 'SubSurface/Seismic/Nodes/SeismicRenderStyle';
+import { Util } from 'Core/Primitives/Util';
 
 export class SeismicCubeNode extends DataNode {
   //= =================================================
   // STATIC FIELDS
   //= =================================================
 
-  static className = "SeismicCubeNode";
+  static className = 'SeismicCubeNode';
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+  }
 
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get seismicCube(): SeismicCube | null { return this.anyData; }
+  public get seismicCube(): SeismicCube | null {
+    return this.anyData;
+  }
 
-  public set seismicCube(value: SeismicCube | null) { this.anyData = value; }
+  public set seismicCube(value: SeismicCube | null) {
+    this.anyData = value;
+  }
 
-  public get renderStyle(): SeismicRenderStyle | null { return this.getRenderStyle() as SeismicRenderStyle; }
+  public get renderStyle(): SeismicRenderStyle | null {
+    return this.getRenderStyle() as SeismicRenderStyle;
+  }
 
-  public get surveyNode(): SurveyNode | null { return this.getAncestorByType(SurveyNode); }
+  public get surveyNode(): SurveyNode | null {
+    return this.getAncestorByType(SurveyNode);
+  }
 
   //= =================================================
   // OVERRIDES of Identifiable
   //= =================================================
 
-  public /* override */ get className(): string { return SeismicCubeNode.className; }
+  public get /* override */ className(): string {
+    return SeismicCubeNode.className;
+  }
 
-  public /* override */ isA(className: string): boolean { return className === SeismicCubeNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean {
+    return className === SeismicCubeNode.className || super.isA(className);
+  }
 
   //= =================================================
   // OVERRIDES of BaseNode
   //= =================================================
 
-  public /* override */ get typeName(): string { return "Seismic Cube"; }
+  public get /* override */ typeName(): string {
+    return 'Seismic Cube';
+  }
 
-  public /* override */ hasColorMap(): boolean { return true; }
+  public /* override */ hasColorMap(): boolean {
+    return true;
+  }
 
-  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+  public /* override */ getIcon(): string {
+    return this.dataIsLost ? super.getIcon() : Icon;
+  }
 
-  public /* override */ isRadio(_target: ITarget | null): boolean { return true; }
+  public /* override */ isRadio(_target: ITarget | null): boolean {
+    return true;
+  }
 
-  public /* override */ canChangeColor(): boolean { return false; }
+  public /* override */ canChangeColor(): boolean {
+    return false;
+  }
 
-  public /* override */ get boundingBox(): Range3 { return this.seismicCube ? this.seismicCube.boundingBox : new Range3(); }
+  public get /* override */ boundingBox(): Range3 {
+    return this.seismicCube ? this.seismicCube.boundingBox : new Range3();
+  }
 
-  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
+  public /* override */ createRenderStyle(
+    targetId: TargetId
+  ): BaseRenderStyle | null {
     return new SeismicRenderStyle(targetId);
   }
 
-  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
+  protected /* override */ populateStatisticsCore(
+    folder: BasePropertyFolder
+  ): void {
     super.populateStatisticsCore(folder);
 
     const cube = this.seismicCube;
-    if (!cube)
-      return;
+    if (!cube) return;
 
-    folder.addReadOnlyString("FileId", cube.fileId);
-    folder.addReadOnlyIndex3("# Cells", cube.cellSize);
-    folder.addReadOnlyIndex2("Start cell", cube.startCell);
-    folder.addReadOnlyVector3("Spacing", cube.inc);
-    folder.addReadOnlyVector3("Origin", cube.origin);
-    folder.addReadOnlyAngle("Rotation", cube.rotationAngle);
+    folder.addReadOnlyString('FileId', cube.fileId);
+    folder.addReadOnlyIndex3('# Cells', cube.cellSize);
+    folder.addReadOnlyIndex2('Start cell', cube.startCell);
+    folder.addReadOnlyVector3('Spacing', cube.inc);
+    folder.addReadOnlyVector3('Origin', cube.origin);
+    folder.addReadOnlyAngle('Rotation', cube.rotationAngle);
     folder.addReadOnlyRange3(cube.boundingBox);
-    folder.addReadOnlyRange1("Values (approx)", cube.valueRange);
-    folder.addReadOnlyStatistics("Statistics (approx)", cube.statistics);
+    folder.addReadOnlyRange1('Values (approx)', cube.valueRange);
+    folder.addReadOnlyStatistics('Statistics (approx)', cube.statistics);
   }
 
   //= =================================================
   // INSTANCE METHODS
   //= =================================================
 
-  public async load(client: CogniteSeismicClient, fileId: string): Promise<void> {
+  public async load(
+    client: CogniteSeismicClient,
+    fileId: string
+  ): Promise<void> {
     if (!client || Util.isEmpty(fileId)) {
-      console.error("Cannot load Seismic Data!, Cognite client or file id is not available!");
+      console.error(
+        'Cannot load Seismic Data!, Cognite client or file id is not available!'
+      );
       return;
     }
 
@@ -111,23 +145,26 @@ export class SeismicCubeNode extends DataNode {
     try {
       const cube = await SeismicCube.loadCube(client, fileId);
 
-      if (!cube)
-        return;
+      if (!cube) return;
 
       this.seismicCube = cube;
-      if (this.surveyNode)
-        this.surveyNode.surveyCube = cube.getRegularGrid();
+      if (this.surveyNode) this.surveyNode.surveyCube = cube.getRegularGrid();
 
       // Just to set ensure the index properly
       if (this.surveyNode) {
         this.surveyNode.surveyCube = cube.getRegularGrid();
-        for (const plane of this.surveyNode.getDescendantsByType(SeismicPlaneNode)) {
+        for (const plane of this.surveyNode.getDescendantsByType(
+          SeismicPlaneNode
+        )) {
           plane.notifyNameChanged();
         }
       }
-    } catch(error) {
+    } catch (error) {
       this.seismicCube = null;
-      console.error(`Can not load seismic cube.\nError message: ${error.message}`, error);
+      console.error(
+        `Can not load seismic cube.\nError message: ${error.message}`,
+        error
+      );
     }
 
     this.setLoadingState(false);

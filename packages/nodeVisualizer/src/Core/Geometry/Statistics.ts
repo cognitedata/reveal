@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from "@/Core/Geometry/Range1";
+import { Range1 } from 'Core/Geometry/Range1';
 
 export class Statistics {
   //= =================================================
@@ -30,40 +30,57 @@ export class Statistics {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  public get isEmpty(): boolean { return this._n === 0; }
+  public get isEmpty(): boolean {
+    return this._n === 0;
+  }
 
-  public get n(): number { return this._n; }
+  public get n(): number {
+    return this._n;
+  }
 
-  public get mean(): number { return this.isEmpty ? Number.NaN : this._sum / this._n; }
+  public get mean(): number {
+    return this.isEmpty ? Number.NaN : this._sum / this._n;
+  }
 
-  public get sum(): number { return this._sum; }
+  public get sum(): number {
+    return this._sum;
+  }
 
-  public get sumSquared(): number { return this._sumSquared; }
+  public get sumSquared(): number {
+    return this._sumSquared;
+  }
 
-  public get variance(): number { return this.isEmpty ? Number.NaN : (this._sumSquared - this._sum * this._sum / this._n) / this._n; }
+  public get variance(): number {
+    return this.isEmpty
+      ? Number.NaN
+      : (this._sumSquared - (this._sum * this._sum) / this._n) / this._n;
+  }
 
-  public get stdDev(): number { return this.isEmpty ? Number.NaN : Math.sqrt(this.variance); }
+  public get stdDev(): number {
+    return this.isEmpty ? Number.NaN : Math.sqrt(this.variance);
+  }
 
-  public get range(): Range1 { return this._range; }
+  public get range(): Range1 {
+    return this._range;
+  }
 
   //= =================================================
   // INSTANCE METHODS: Getters
   //= =================================================
 
   public getStdDev(mean: number): number {
-    if (this.isEmpty)
-      return Number.NaN;
+    if (this.isEmpty) return Number.NaN;
 
     const variance = this._sumSquared / this._n - mean * mean;
     return variance <= 0 ? 0 : Math.sqrt(variance);
   }
 
   public getMostOfRange(sigma: number, mean?: number): Range1 | undefined {
-    if (this.n <= 2)
-      return undefined;
+    if (this.n <= 2) return undefined;
 
     const range = new Range1(mean === undefined ? this.mean : mean);
-    const margin = sigma * (mean === undefined ? this.stdDev : this.getStdDev(mean));
+    const margin =
+      sigma * (mean === undefined ? this.stdDev : this.getStdDev(mean));
     range.expandByMargin(margin);
     return range;
   }
@@ -87,8 +104,7 @@ export class Statistics {
   }
 
   public addWithNaN(value: number): void {
-    if (!Number.isNaN(value))
-      this.add(value);
+    if (!Number.isNaN(value)) this.add(value);
   }
 
   public clear(): void {
