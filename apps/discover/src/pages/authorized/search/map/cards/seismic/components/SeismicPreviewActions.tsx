@@ -32,7 +32,7 @@ export const SeismicPreviewActions: React.FC<Props> = ({
         <FlexGrow />
         <MarginRightSmallContainer>
           <Button
-            icon="LargeLeft"
+            icon="ChevronLeftLarge"
             size="small"
             onClick={handleNavigateToPrevious}
             aria-label="Seismic previous"
@@ -40,7 +40,7 @@ export const SeismicPreviewActions: React.FC<Props> = ({
         </MarginRightSmallContainer>
         <MarginRightSmallContainer>
           <Button
-            icon="LargeRight"
+            icon="ChevronRightLarge"
             size="small"
             onClick={handleNavigateToNext}
             aria-label="Seismic next"

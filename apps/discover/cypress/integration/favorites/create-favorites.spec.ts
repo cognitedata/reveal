@@ -13,9 +13,7 @@ describe('Creating Favorites', () => {
 
   const goToFavoritesPage = () => {
     cy.log('go to Favorites page');
-    cy.findByTestId('top-bar')
-      .findByRole('link', { name: 'Favorites' })
-      .click();
+    cy.findByTestId('top-bar').findByRole('tab', { name: 'Favorites' }).click();
     cy.url().should('include', '/favorites');
   };
 
@@ -25,18 +23,22 @@ describe('Creating Favorites', () => {
     cy.findByText(name).should('be.visible');
   };
 
-  const checkFavoriteContainsDocument = (name) => {
+  const checkFavoriteContainsDocument = (favoriteName) => {
     cy.log('Check if favorite is created with the document');
-    cy.findByText(name).click();
+    cy.findByText(favoriteName).should('be.visible').click();
     cy.findByTestId('favorite-documents-table')
       .findAllByTestId('table-row')
       .should('have.length', 1);
   };
 
-  const checkFavoriteContainsWell = (name) => {
+  const checkFavoriteContainsWell = (favoriteName) => {
     cy.log('Check if favorite is created with the well');
-    cy.findByText(name).click();
-    cy.findAllByRole('tab').eq(1).click();
+    cy.findByText(favoriteName).should('be.visible').click();
+    cy.findByTestId('favorite-details-content-navigation')
+      .findAllByRole('tab')
+      .eq(1)
+      .click();
+
     cy.findByTestId('favorite-wells-table')
       .findAllByTestId('table-row')
       .should('have.length', 1);

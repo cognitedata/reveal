@@ -1,4 +1,4 @@
-import { t, Selector, ClientFunction } from 'testcafe';
+import { t, ClientFunction } from 'testcafe';
 import { screen } from '@testing-library/testcafe';
 
 import { log, logErrors } from '../utils';
@@ -15,7 +15,7 @@ fixture('App')
 
 test('Check sidecar page content', async () => {
   log('Goto the sidecar page');
-  const sidecarInfo = Selector('button').withText('Sidecar Info');
+  const sidecarInfo = screen.getByRole('tab', { name: 'Sidecar Info' });
   await t.expect(sidecarInfo.exists).ok('');
 
   await t.click(sidecarInfo);

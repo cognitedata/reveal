@@ -33,7 +33,7 @@ export const MenuBar = () => {
   }, []);
 
   return (
-    <TopBar>
+    <TopBar data-testid="top-bar">
       <TopBar.Left>
         <Link to={PAGES.HOME}>
           <TopBar.Logo title="React Demo App" />

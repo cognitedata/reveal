@@ -5,7 +5,7 @@ beforeEach(login);
 describe('Comments', () => {
   it('Checking comments page', () => {
     cy.log('Goto the comments page');
-    cy.get('[role="link"]').contains('Comments').click();
+    cy.get('[role="tab"]').contains('Comments').click();
 
     cy.contains('Slider').click();
 

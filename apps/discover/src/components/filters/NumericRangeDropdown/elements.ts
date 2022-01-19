@@ -16,7 +16,7 @@ export const DropdownLabel = styled(Label)`
   color: var(--cogs-text-primary);
   width: 100%;
   border: 2px solid transparent;
-  height: ${sizes.normal};
+  height: 36px;
   i {
     color: var(--cogs-graphics-unknown);
   }

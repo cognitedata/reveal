@@ -15,7 +15,7 @@ fixture('Comments')
 
 test('Checking comments page', async () => {
   log('Goto the comments page');
-  const menuButton = screen.getByRole('link', { name: 'Comments' });
+  const menuButton = screen.getByRole('tab', { name: 'Comments' });
   await t.click(menuButton);
 
   await t.click(screen.getByText('Slider'));

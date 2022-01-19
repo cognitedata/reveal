@@ -23,7 +23,7 @@ class Topbar {
   public readonly clickNavigationTab = async (tabName: string) => {
     progress(`Clicking '${tabName}' tab in topbar`);
 
-    const tab = this.topbar.find('button').withText(tabName);
+    const tab = this.topbar.find('div').withText(tabName);
     await t.click(tab);
   };
 

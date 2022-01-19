@@ -39,7 +39,7 @@ describe('Wells inspect view', () => {
         .click();
 
       cy.log('Go to NPT Events tab');
-      cy.findByRole('tablist')
+      cy.findByTestId('well-inspect-navigation-tabs')
         .findByRole('tab', { name: 'NPT Events' })
         .should('be.visible')
         .click();

@@ -42,8 +42,8 @@ export interface Props {
 }
 
 enum FavoriteTabs {
-  'documents',
-  'wells',
+  documents = 'documents',
+  wells = 'wells',
 }
 
 export const FavoriteDetailsContent: React.FC<Props> = ({
@@ -154,7 +154,7 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
   return (
     <>
       <PageContainer>
-        <TabBar>
+        <TabBar data-testid="favorite-details-content-navigation">
           <Tabs activeKey={activeTab} onChange={handleNavigation}>
             <Tabs.TabPane
               key={FavoriteTabs.documents}

@@ -12,9 +12,7 @@ describe('Edit Favorites', () => {
 
   const goToFavoritesPage = () => {
     cy.log('go to Favorites page');
-    cy.findByTestId('top-bar')
-      .findByRole('link', { name: 'Favorites' })
-      .click();
+    cy.findByTestId('top-bar').findByRole('tab', { name: 'Favorites' }).click();
     cy.url().should('include', '/favorites');
   };
 

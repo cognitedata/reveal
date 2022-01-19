@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
@@ -16,7 +16,7 @@ import { MultiSelectProps, MultiSelectOptionType } from './types';
 
 export const MultiSelect: React.FC<MultiSelectProps> = ({
   options: data = [],
-  selectedOptions = [],
+  selectedOptions,
   onValueChange,
   isTextCapitalized = false,
   isOptionsSorted = true,
@@ -40,12 +40,12 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       : processedOptions;
   }, [data, isOptionsSorted]);
 
-  const value = useMemo(
-    () => options.filter((option) => selectedOptions.includes(option.label)),
-    [selectedOptions]
+  const [value, setValue] = useState<OptionType<MultiSelectOptionType>[]>(
+    options.filter((option) => selectedOptions?.includes(option.label))
   );
 
   const onChange = (values: OptionType<MultiSelectOptionType>[]) => {
+    setValue(values);
     onValueChange((values || []).map((option) => option.label));
   };
 

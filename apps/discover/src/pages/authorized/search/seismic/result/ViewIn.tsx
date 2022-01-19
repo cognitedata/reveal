@@ -58,7 +58,7 @@ export const ViewInSelector = () => {
       >
         <Button
           variant="default"
-          icon="Up"
+          icon="ChevronUp"
           iconPlacement="right"
           data-testid="seismic-view-in-button"
           aria-label="View button"
