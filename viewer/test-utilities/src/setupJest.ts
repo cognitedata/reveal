@@ -31,6 +31,8 @@ const consoleWarn = console.warn.bind(console);
   }
 };
 
+// Filter error generated from Unit test refering to WebGL1 shaders in ThreeJS.
+// "THREE.WebGLProgram: Shader Error XXXX - VALIDATE_STATUS false"
 const consoleError = console.error.bind(console);
 (console as any).error = (message?: any, ...optionalParams: any[]) => {
   const messageStr = message + '';
