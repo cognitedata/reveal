@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,7 +7,6 @@ import { StoreState } from 'core';
 import { ObjectFeedback } from '@cognite/discover-api-types';
 
 import { Modal } from 'components/modal';
-import { UNCLASSIFIED_DOCUMENT_TYPE } from 'components/modals/constants';
 import { UndoToast } from 'components/toast';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
 import { useDocument } from 'hooks/useDocument';
@@ -44,13 +43,13 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const [categories, setCategories] = useState<string[]>([
-    UNCLASSIFIED_DOCUMENT_TYPE,
-  ]);
   const [isSensitiveData, setSensitiveData] = useState(false);
   const [isIncorrectGeo, setIncorrectGeo] = useState(false);
   const [isIncorrectDocType, setIncorrectDocType] = useState(false);
-  const [correctDocType, setCorrectDocType] = useState('');
+  const [correctDocType, setCorrectDocType] = useState({
+    label: '',
+    value: '',
+  });
   const [isOther, setOther] = useState(false);
   const [freeText, setFreeText] = useState('');
   const [showUndoToast, setShowUndoToast] = useState<boolean>(false);
@@ -59,13 +58,7 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
   const { mutateAsync: addObjectFeedback } = useFeedbackCreateMutate('object');
   const removeSensitiveDocument = useRemoveSensitiveDocument();
 
-  const { data: allLabels } = useQueryDocumentLabels();
-
-  useEffect(() => {
-    if (allLabels) {
-      setCategories(allLabels.map((label) => label.name));
-    }
-  }, [JSON.stringify(allLabels)]);
+  const { data: categories } = useQueryDocumentLabels();
 
   const [doc] = useDocument(documentId);
 
@@ -83,7 +76,7 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
         break;
       case 'isIncorrectDocType':
         setIncorrectDocType(value);
-        setCorrectDocType('');
+        setCorrectDocType({ label: '', value: '' });
         break;
       case 'isOther':
         setOther(value);
@@ -95,8 +88,11 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
     setFreeText(event.target.value);
   };
 
-  const handleSetCorrectDocumentType = (docType: string) => {
-    setCorrectDocType(docType);
+  const handleSetCorrectDocumentType = (value: {
+    label: string;
+    value: string;
+  }) => {
+    setCorrectDocType(value);
   };
 
   const handleSendClick = () => {
@@ -126,7 +122,8 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
     };
 
     if (isDocumentTypeFeedback) {
-      feedback.suggestedType = correctDocType;
+      feedback.suggestedType = correctDocType.label;
+      feedback.suggestedTypeLabelId = correctDocType.value;
     }
     sendObjectFeedback(feedback, addObjectFeedback);
 
@@ -143,7 +140,7 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
     setIncorrectDocType(false);
     setOther(false);
     setFreeText('');
-    setCorrectDocType('');
+    setCorrectDocType({ label: '', value: '' });
     handleClose();
   };
 

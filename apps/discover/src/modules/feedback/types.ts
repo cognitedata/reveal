@@ -119,6 +119,7 @@ export interface DocumentFeedbackItem extends FeedbackItem {
   isSensitiveData: boolean;
   originalType?: string;
   suggestedType?: string;
+  suggestedTypeLabelId?: string;
 }
 
 export interface FeedbackSetItem {

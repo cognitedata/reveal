@@ -13,6 +13,14 @@
           }
         },
         {
+          "documentFeedbackAcl": {
+            "actions": ["READ", "DELETE", "CREATE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
           "labelsAcl": {
             "actions": ["READ", "WRITE"],
             "scope": {

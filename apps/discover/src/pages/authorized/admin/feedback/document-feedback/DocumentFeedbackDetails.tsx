@@ -21,6 +21,8 @@ import {
   TableDropdown,
 } from '../elements';
 
+import { DocumentFeedbackDocumentTypeActions } from './DocumentFeedbackDocumentTypeActions';
+
 interface Props {
   feedback: DocumentFeedbackItem;
   // deleted?: boolean;
@@ -70,6 +72,7 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
     */
     setAssessment(undefined);
   };
+
   return (
     <TableDropdown>
       {feedback.isSensitiveData && (
@@ -97,22 +100,49 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
           type="path"
         />
         <MetadataTable
-          columns={2}
+          columns={3}
           metadata={[
-            { label: t('File name'), value: feedback.fileName },
+            { label: t('Document title'), value: feedback?.documentExternalId },
             { label: t('Feedback ID'), value: feedback.id },
             {
               label: t('Current document type'),
               value: feedback?.originalType,
               type: 'label',
             },
-            {
-              label: t('Suggested document type'),
-              value: feedback?.suggestedType,
-              type: 'label',
-            },
           ]}
         />
+
+        {feedback?.suggestedType && !feedback?.suggestedTypeLabelId && (
+          <MarginBottomNormalContainer>
+            <MetadataItem
+              label={t('Suggested document type')}
+              value="Feedback is outdated. Please archive this feedback"
+              type="text"
+            />
+          </MarginBottomNormalContainer>
+        )}
+
+        {feedback?.suggestedType && feedback?.suggestedTypeLabelId && (
+          <MarginBottomNormalContainer>
+            <MetadataItem
+              label={t('Suggested document type')}
+              value={feedback.suggestedType}
+              type="text"
+              actions={
+                <DocumentFeedbackDocumentTypeActions
+                  documentId={feedback.documentId}
+                  originalDocumentType={feedback?.originalType}
+                  suggestedDocumentType={{
+                    label: feedback.suggestedType,
+                    value: feedback.suggestedTypeLabelId,
+                  }}
+                  userId={feedback?.user?.id || 'unknown'}
+                />
+              }
+            />
+          </MarginBottomNormalContainer>
+        )}
+
         <MarginBottomNormalContainer>
           <MetadataItem
             label={t('User comment')}

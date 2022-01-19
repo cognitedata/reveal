@@ -8,11 +8,13 @@ import { formatItem, FormatItemProps } from './formatItem';
 
 type MetaDataItemProps = {
   label?: string;
+  actions?: JSX.Element | JSX.Element[];
 } & FormatItemProps;
 export const MetadataItem: React.FC<MetaDataItemProps> = ({
   label,
   value,
   type,
+  actions,
 }) => {
   return (
     <MetadataContainer
@@ -20,7 +22,9 @@ export const MetadataItem: React.FC<MetaDataItemProps> = ({
       data-testid={`metadata-label-${label}`}
     >
       {label && <Label>{label}</Label>}
-      <Value>{formatItem({ value, type })}</Value>
+      <Value styles={{ display: 'flex' }}>
+        {formatItem({ value, type, actions })}
+      </Value>
     </MetadataContainer>
   );
 };

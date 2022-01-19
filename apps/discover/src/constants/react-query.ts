@@ -124,3 +124,13 @@ const LAYERS = 'layers';
 export const LAYERS_QUERY_KEY = {
   ALL: [LAYERS, 'get'],
 };
+
+export const TOKEN_INSPECT_QUERY_KEY = {
+  all: ['token-inspect'],
+  lists: () => [...TOKEN_INSPECT_QUERY_KEY.all, 'list'],
+};
+
+export const DOCUMENT_FEEDBACK_QUERY_KEY = {
+  all: ['document-feedback'],
+  lists: () => [...DOCUMENT_FEEDBACK_QUERY_KEY.all, 'list'],
+};

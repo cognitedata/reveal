@@ -18,12 +18,19 @@ import { Text } from './formats/Text';
 export interface FormatItemProps {
   value?: string | string[] | number | React.ReactNode[] | false | null;
   type?: 'text' | 'path' | 'filesize' | 'date' | 'label' | 'componentlist';
+  actions?: JSX.Element | JSX.Element[];
 }
 
 const maxLabels = 9;
 
-export const formatItem = ({ value, type }: FormatItemProps) => {
+export const formatItem = ({ value, type, actions }: FormatItemProps) => {
   if (type === 'text') {
+    if (actions) {
+      <Text>
+        {value || 'Unknown'} {actions}
+      </Text>;
+    }
+
     return (
       <Text>{value || <EmptyCell>{EMPTY_COMMENT_PLACEHOLDER}</EmptyCell>}</Text>
     );
