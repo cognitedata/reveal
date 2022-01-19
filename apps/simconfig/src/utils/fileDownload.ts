@@ -1,28 +1,44 @@
-export const forceDownloadDialog = async (
-  fileName: string,
-  fileSrc: string
+import { toast } from '@cognite/cogs.js';
+import type { Metadata } from '@cognite/simconfig-api-sdk/rtk';
+
+export const downloadModelFile = async (
+  authToken: string,
+  project: string,
+  baseUrl: string,
+  modelFileMetaData: Metadata
 ) => {
-  let hasError = false;
-  await fetch(fileSrc)
-    .then(async (response) => {
-      if (!response.ok) {
-        throw response;
-      }
-      return response.blob();
-    })
-    .then((blob) => {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-    })
-    .catch((error) => {
-      if (error instanceof Response) {
-        hasError = true;
-      }
-    });
-  return hasError;
+  const { simulator, modelName, version, fileName } = modelFileMetaData;
+  const url = new URL(
+    `/${project}/models/${modelName}/versions/${version}/file`,
+    baseUrl
+  );
+  const { searchParams } = url;
+
+  searchParams.set('simulator', simulator);
+
+  const response = await fetch(url.toString(), {
+    headers: new Headers({
+      'Accept': '*/*',
+      'Content-Type': 'application/octet-stream',
+      'Authorization': `Bearer ${authToken}`,
+    }),
+  });
+  if (response.status >= 400) {
+    toast.error(response.statusText);
+    return;
+  }
+
+  const blob = await response.blob();
+
+  triggerDownloadFromBlob(fileName, blob);
+};
+
+export const triggerDownloadFromBlob = (fileName: string, blob: Blob) => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', fileName);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode?.removeChild(link);
 };

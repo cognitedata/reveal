@@ -4,11 +4,16 @@ import formatISO9075 from 'date-fns/formatISO9075';
 import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
-import { Button, Icon, Skeleton } from '@cognite/cogs.js';
-import { useGetModelBoundaryConditionListQuery } from '@cognite/simconfig-api-sdk/rtk';
+import { Button, Icon, Skeleton, toast } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
+import { useGetModelBoundaryConditionListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
-import { selectProject } from 'store/simconfigApiProperties/selectors';
+import {
+  selectAuthToken,
+  selectBaseUrl,
+  selectProject,
+} from 'store/simconfigApiProperties/selectors';
+import { downloadModelFile } from 'utils/fileDownload';
 
 import { BoundaryConditionTable } from './BoundaryConditionTable';
 
@@ -18,8 +23,11 @@ interface ModelVersionDetailsProps {
 
 export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   const project = useSelector(selectProject);
+  const token = useSelector(selectAuthToken);
+  const baseUrl = useSelector(selectBaseUrl);
 
-  const { simulator, modelName, version } = modelFile.metadata;
+  const { metadata } = modelFile;
+  const { simulator, modelName, version } = metadata;
 
   const { data: boundaryConditions, isFetching: isFetchingBoundaryConditions } =
     useGetModelBoundaryConditionListQuery({
@@ -32,6 +40,16 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   if (isFetchingBoundaryConditions) {
     return <Skeleton.List lines={2} />;
   }
+
+  const onDownloadClicked = async () => {
+    if (!token || !baseUrl) {
+      toast.error(
+        'An error occured while downloading the file, please reload the page and try again.'
+      );
+      return;
+    }
+    await downloadModelFile(token, project, baseUrl, modelFile.metadata);
+  };
 
   return (
     <ModelVersionDetailsContainer>
@@ -55,7 +73,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
           </div>
           <div className="actions">
             <div className="download-link">
-              <Button href="" icon="Download" target="_blank">
+              <Button icon="Download" onClick={onDownloadClicked}>
                 Download
               </Button>
             </div>

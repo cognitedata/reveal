@@ -6,9 +6,14 @@ import type { CogniteApiError } from '@cognite/simconfig-api-sdk/rtk';
 
 export function errorNotificationMiddleware(_api: MiddlewareAPI) {
   return (next: Dispatch) =>
-    (action: PayloadAction<{ data: { error: CogniteApiError } }>) => {
+    (
+      action: PayloadAction<{
+        data: { error: CogniteApiError };
+        error: CogniteApiError;
+      }>
+    ) => {
       if (isRejectedWithValue(action)) {
-        toast.error(action.payload.data.error.message);
+        toast.error(action.error.message ?? action.payload.error.message);
       }
       return next(action);
     };
