@@ -38,7 +38,7 @@ export const DocumentSearchContent: React.FC = () => {
 
   const handleDeselectAll = useCallback(() => {
     dispatch(documentSearchActions.unselectDocumentIds(selectedDocumentIds));
-  }, []);
+  }, [dispatch, selectedDocumentIds]);
 
   const labels = useLabelsQuery();
 
