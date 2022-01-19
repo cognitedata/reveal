@@ -15,6 +15,12 @@ export const getListDatasetsKey = (...rest: any[]) => [
   ...rest,
 ];
 
+export const getListExtpipesKey = (...rest: any[]) => [
+  baseKey,
+  'extpipes',
+  ...rest,
+];
+
 export const getDataSetOwnersByIdKey = (id: string, ...rest: any[]) => [
   baseKey,
   'owners',

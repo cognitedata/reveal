@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/utils';
 import WriteProtectedIcon from 'components/WriteProtectedIcon';
 import {
@@ -52,7 +53,8 @@ const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
 const getTableColumns = (
   dataSets: DataSet[],
   showArchived: boolean,
-  isExtpipeFlag: boolean
+  isExtpipeFlag: boolean,
+  isExtpipesFetched?: boolean
 ) => [
   {
     title: 'Name',
@@ -82,7 +84,7 @@ const getTableColumns = (
     defaultSortOrder:
       getItemFromStorage('dataset-description-column') || undefined,
   },
-  ...(isExtpipeFlag ? [extpipeTableColumn()] : []),
+  ...(isExtpipeFlag ? [extpipeTableColumn(isExtpipesFetched)] : []),
   {
     title: <div style={{ lineHeight: '32px' }}>Labels</div>,
     dataIndex: 'labels',
@@ -132,13 +134,17 @@ const getTableColumns = (
   },
 ];
 
-const extpipeTableColumn = () => {
+const extpipeTableColumn = (isExtpipesFetched?: boolean) => {
   return {
     title: 'Extraction pipelines',
     dataIndex: 'extpipes',
     key: 'extpipes',
     width: '20%',
     render: (_value: string, record: DataSetRow) => {
+      if (!isExtpipesFetched) {
+        return <Icon type="LoadingSpinner" />;
+      }
+
       return (
         <NoStyleList>
           {Array.isArray(record.extpipes) &&

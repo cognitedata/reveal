@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import Spin from 'antd/lib/spin';
 import Card from 'antd/lib/card';

@@ -96,7 +96,7 @@ const DataSetEditor = ({
       }}
       title={
         <DrawerHeader>
-          {dataSetWithExtpipes?.dataSet.name ?? 'Create data set'}
+          {dataSetWithExtpipes?.dataSet?.name ?? 'Create data set'}
         </DrawerHeader>
       }
       width="60%"
