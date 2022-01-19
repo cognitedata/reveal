@@ -121,7 +121,7 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
       <Row>
         <InfoContainer>
           <ResourceNameWrapper>
-            <Icon type="ResourceAssets" size={14} />
+            <Icon type="Assets" size={14} />
             <Highlighter
               highlightStyle={{
                 backgroundColor: Colors['yellow-4'].alpha(0.4),

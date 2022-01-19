@@ -34,7 +34,7 @@ const EditorControls = ({
         <Icon type="ZoomOut" />
       </CustomControlButton>
       <CustomControlButton onClick={() => fitView({ padding: 0.2 })}>
-        <Icon type="ExpandMax" />
+        <Icon type="FullScreen" />
       </CustomControlButton>
 
       <Dropdown

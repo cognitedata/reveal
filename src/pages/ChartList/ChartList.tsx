@@ -184,7 +184,7 @@ const ChartList = () => {
   return (
     <div id="chart-list" style={{ padding: 16, width: '100%' }}>
       <div style={{ margin: 20 }}>
-        <Button type="primary" icon="PlusCompact" onClick={handleNewChart}>
+        <Button type="primary" icon="Add" onClick={handleNewChart}>
           {t('chartList.newChartBtn', 'New chart')}
         </Button>
       </div>
@@ -255,7 +255,7 @@ const ChartList = () => {
         </div>
       </div>
       <div style={{ textAlign: 'center' }}>
-        {loading && <Icon type="Loading" />}
+        {loading && <Icon type="Loader" />}
       </div>
       {viewOption === 'list' && (
         <ListHeader>

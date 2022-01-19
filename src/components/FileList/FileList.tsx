@@ -26,7 +26,7 @@ const FileListItem = ({
         return <img src={imageUrl} alt="" />;
       }
       if (isLoading) {
-        return <Icon type="Loading" />;
+        return <Icon type="Loader" />;
       }
     }
     return (
@@ -64,7 +64,7 @@ export const FileList = ({
   }, [selectedFileId, data, onFileClick]);
 
   if (isLoading) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
 
   if (data.length === 0) {

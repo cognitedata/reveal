@@ -294,7 +294,7 @@ const ConnectNodeEditor = ({
         >
           <Button
             type="primary"
-            icon="PlusCompact"
+            icon="Add"
             onClick={() => toggleAddNodeMenu(true)}
           >
             Add

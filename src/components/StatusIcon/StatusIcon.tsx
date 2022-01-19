@@ -13,16 +13,16 @@ export const StatusIcon = ({ status }: StatusIconProps) => {
   switch (status) {
     case CalculationStatusStatusEnum.Pending:
     case CalculationStatusStatusEnum.Running:
-      return <Icon type="Loading" />;
+      return <Icon type="Loader" />;
     case CalculationStatusStatusEnum.Success:
       return <Icon type="Checkmark" />;
     case CalculationStatusStatusEnum.Cancelled:
-      return <Icon type="WarningStroke" />;
+      return <Icon type="Warning" />;
     case CalculationStatusStatusEnum.Unknown:
       return <Icon type="Help" />;
     case CalculationStatusStatusEnum.Failed:
     case CalculationStatusStatusEnum.Error:
-      return <Icon type="ErrorStroked" title="Failed" />;
+      return <Icon type="Error" title="Failed" />;
     default:
       return null;
   }
@@ -34,16 +34,16 @@ export function getIconTypeFromStatus(
   switch (status) {
     case CalculationStatusStatusEnum.Pending:
     case CalculationStatusStatusEnum.Running:
-      return 'Loading';
+      return 'Loader';
     case CalculationStatusStatusEnum.Success:
       return 'Checkmark';
     case CalculationStatusStatusEnum.Cancelled:
-      return 'WarningStroke';
+      return 'Warning';
     case CalculationStatusStatusEnum.Unknown:
       return 'Help';
     case CalculationStatusStatusEnum.Failed:
     case CalculationStatusStatusEnum.Error:
-      return 'ErrorStroked';
+      return 'Error';
     default:
       return 'Cognite';
   }

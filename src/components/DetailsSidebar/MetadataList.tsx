@@ -18,7 +18,7 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
   });
 
   if (isLoading) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
 
   return (

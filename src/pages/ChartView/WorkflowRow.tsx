@@ -469,7 +469,7 @@ export default function WorkflowRow({
             >
               <Button
                 type="ghost"
-                icon="Trash"
+                icon="Delete"
                 style={{ height: 28 }}
                 aria-label="delete"
               />
@@ -507,7 +507,7 @@ export default function WorkflowRow({
             >
               <Button
                 type="ghost"
-                icon="MoreOverflowEllipsisHorizontal"
+                icon="EllipsisHorizontal"
                 style={{ height: 28 }}
                 aria-label="more"
               />

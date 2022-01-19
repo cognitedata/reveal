@@ -77,7 +77,10 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
               >
                 <span>Rename</span>
               </Menu.Item>
-              <Menu.Item onClick={() => handleDeleteChart()} appendIcon="Trash">
+              <Menu.Item
+                onClick={() => handleDeleteChart()}
+                appendIcon="Delete"
+              >
                 <span>Delete</span>
               </Menu.Item>
             </>
@@ -93,7 +96,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
     >
       <Button
         type="ghost"
-        icon="MoreOverflowEllipsisVertical"
+        icon="EllipsisVertical"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         aria-label="more"
       />

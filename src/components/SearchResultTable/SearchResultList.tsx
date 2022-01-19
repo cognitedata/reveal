@@ -42,11 +42,11 @@ export default function SearchResultList({ query }: Props) {
   );
 
   if (isError) {
-    return <Icon type="XLarge" />;
+    return <Icon type="CloseLarge" />;
   }
 
   if (isLoading) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
   if (assets?.length === 0) {
     return null;

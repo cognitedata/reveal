@@ -33,7 +33,7 @@ export const AnnotationPopover = ({
   }
 
   if (isLoading) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
 
   if (!asset) {
@@ -44,7 +44,7 @@ export const AnnotationPopover = ({
     <StyledMenu>
       <TitleContainer>
         <IconBackground>
-          <Icon type="ResourceAssets" />
+          <Icon type="Assets" />
         </IconBackground>
         <AssetInfoContainer>
           <Title level={5}>{asset.name}</Title>
@@ -97,7 +97,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   };
 
   if (isLoading) {
-    return <Icon type="Loading" style={{ margin: 10 }} />;
+    return <Icon type="Loader" style={{ margin: 10 }} />;
   }
 
   if (timeseries.length === 0) {

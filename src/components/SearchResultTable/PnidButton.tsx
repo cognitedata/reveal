@@ -48,7 +48,7 @@ export const PnidButton = ({
     <WithTooltip content={showTooltip ? 'P&IDs' : undefined}>
       <Button
         type="ghost"
-        icon="ResourceDocuments"
+        icon="Document"
         onClick={() => {
           move(`/${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`);
 

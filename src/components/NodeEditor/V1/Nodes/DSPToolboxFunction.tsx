@@ -156,7 +156,7 @@ export const ConfigPanel = ({
           <div style={{ marginTop: 8 }}>
             <Tooltip
               disabled={!description}
-              type="primary"
+              theme="cogs-primary"
               content={description}
             >
               <ParameterTitle>
@@ -193,8 +193,8 @@ export const ConfigPanel = ({
   return (
     <>
       <h4>Tool Function</h4>
-      {error && <Icon style={{ color: 'white' }} type="XLarge" />}
-      {isLoading && <Icon style={{ color: 'white' }} type="Loading" />}
+      {error && <Icon style={{ color: 'white' }} type="CloseLarge" />}
+      {isLoading && <Icon style={{ color: 'white' }} type="Loader" />}
       {operations && (
         <ToolboxFunctionDropdown
           categories={getCategories(operations)}

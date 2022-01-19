@@ -121,7 +121,7 @@ export const ChartActions = () => {
           disabled={!isOwner}
         >
           <Button
-            icon="Trash"
+            icon="Delete"
             type="ghost"
             disabled={!isOwner}
             aria-label="delete"

@@ -54,7 +54,7 @@ export default function TimeseriesSearchResultItem({
           <ResourceContainer>
             <InfoContainer>
               <ResourceNameWrapper>
-                <Icon type="ResourceTimeseries" style={{ minWidth: 14 }} />
+                <Icon type="Timeseries" style={{ minWidth: 14 }} />
                 <Highlighter
                   highlightStyle={{
                     backgroundColor: Colors['yellow-4'].alpha(0.4),

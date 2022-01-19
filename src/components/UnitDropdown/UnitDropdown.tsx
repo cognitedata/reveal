@@ -140,7 +140,7 @@ export const UnitDropdown = ({
     >
       <Button
         disabled={disabled}
-        icon="ChevronDownCompact"
+        icon="ChevronDown"
         type="ghost"
         variant="outline"
         iconPlacement="right"

@@ -63,11 +63,11 @@ export default function SearchTimeseries({ query }: Props) {
   );
 
   if (isError) {
-    return <Icon type="XLarge" />;
+    return <Icon type="CloseLarge" />;
   }
 
   if (isLoading) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
 
   if (timeseries?.length === 0) {

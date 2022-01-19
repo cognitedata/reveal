@@ -23,7 +23,7 @@ interface SharingDropdownProps {
 const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
   const [, setChart] = useRecoilState(chartAtom);
   const [shareIconType, setShareIconType] = useState<
-    'Copy' | 'Checkmark' | 'ErrorStroked'
+    'Copy' | 'Checkmark' | 'Error'
   >('Copy');
   const shareableLink = window.location.href;
 
@@ -45,7 +45,7 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
       trackUsage('ChartView.CopyLink');
       setTimeout(() => setShareIconType('Copy'), 3000);
     } catch (e) {
-      setShareIconType('ErrorStroked');
+      setShareIconType('Error');
       setTimeout(() => setShareIconType('Copy'), 3000);
     }
   };

@@ -312,7 +312,7 @@ const PlotlyChartComponent = ({
       {isLoadingChartData && <LoadingIcon />}
       {isFetchingPreview ? (
         <LoadingContainer>
-          <Icon type="LoadingSpinner" />
+          <Icon type="Loader" />
         </LoadingContainer>
       ) : (
         <PlotWrapper onMouseMove={handleMouseMoveOnChart}>

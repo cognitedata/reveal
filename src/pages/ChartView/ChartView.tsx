@@ -349,7 +349,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   );
 
   if (!isFetched || (isFetched && originalChart && !chart)) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
 
   if (isError) {
@@ -377,11 +377,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <Header className="downloadChartHide" inSearch={showSearch}>
           {!showSearch && (
             <section className="actions">
-              <Button
-                icon="PlusCompact"
-                type="primary"
-                onClick={handleOpenSearch}
-              >
+              <Button icon="Add" type="primary" onClick={handleOpenSearch}>
                 Add time series
               </Button>
               <Button
@@ -420,7 +416,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </Tooltip>
             <Tooltip content={`${showMinMax ? 'Hide' : 'Show'} min/max`}>
               <Button
-                icon="ResourceTimeseries"
+                icon="Timeseries"
                 type={showMinMax ? 'link' : 'ghost'}
                 aria-label="view"
                 onClick={() =>
@@ -481,7 +477,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </Tooltip>
             <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
               <Button
-                icon="ChartStackedView"
+                icon="StackedChart"
                 type={stackedMode ? 'link' : 'ghost'}
                 onClick={() => setStackedMode(!stackedMode)}
                 aria-label="view"

@@ -16,7 +16,7 @@ export const TimeseriesStyleButton = Template.bind({});
 export const WorkflowStyleButton = Template.bind({});
 
 TimeseriesStyleButton.args = {
-  styleType: 'ResourceTimeseries',
+  styleType: 'Timeseries',
   styleColor: '#6929c4',
   label: 'Timeseries',
 };

@@ -300,7 +300,7 @@ export default function TimeSeriesRow({
           }
         >
           <StyleButton
-            styleType="ResourceTimeseries"
+            styleType="Timeseries"
             styleColor={color}
             label="Timeseries"
           />
@@ -400,7 +400,7 @@ export default function TimeSeriesRow({
           >
             <Button
               type="ghost"
-              icon="Trash"
+              icon="Delete"
               style={{ height: 28 }}
               aria-label="delete"
             />
@@ -434,7 +434,7 @@ export default function TimeSeriesRow({
               // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
               <Button
                 type="ghost"
-                icon="MoreOverflowEllipsisHorizontal"
+                icon="EllipsisHorizontal"
                 style={{ height: 28 }}
                 disabled
                 aria-label="more"

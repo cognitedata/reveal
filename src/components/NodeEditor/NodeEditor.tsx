@@ -73,7 +73,7 @@ const NodeEditor = ({
   }
 
   if (isLoadingOperations) {
-    return <Icon type="LoadingSpinner" />;
+    return <Icon type="Loader" />;
   }
 
   /**

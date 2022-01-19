@@ -79,7 +79,7 @@ const ToolboxFunctionDropdown = ({
       >
         {!children ? (
           <Button
-            icon="ChevronDownCompact"
+            icon="ChevronDown"
             iconPlacement="right"
             onClick={() => {
               setIsDropdownVisible(!isDropdownVisible);

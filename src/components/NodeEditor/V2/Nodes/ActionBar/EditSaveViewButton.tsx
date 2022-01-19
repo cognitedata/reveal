@@ -1,4 +1,4 @@
-import { Button } from '@cognite/cogs.js';
+import { Button, IconType } from '@cognite/cogs.js';
 import { MouseEventHandler } from 'react';
 
 type Props = {
@@ -14,7 +14,7 @@ const EditSaveViewButton = ({
   disabled,
   onClick,
 }: Props) => {
-  const buttonIconAndLabel = (): [string, string] => {
+  const buttonIconAndLabel = (): [IconType, string] => {
     if (readOnly && !isEditing) return ['EyeShow', 'See Details'];
     if (isEditing) return ['Checkmark', 'Save'];
     return ['Edit', 'Edit'];

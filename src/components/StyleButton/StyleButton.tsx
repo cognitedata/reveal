@@ -9,10 +9,10 @@
  * @label String for wai-aria
  */
 
-import { Button } from '@cognite/cogs.js';
+import { Button, IconType } from '@cognite/cogs.js';
 
 export type StyleButtonProps = {
-  styleType: string;
+  styleType: IconType;
   styleColor: string;
   label: string;
 };

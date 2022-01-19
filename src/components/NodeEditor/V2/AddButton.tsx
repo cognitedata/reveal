@@ -95,7 +95,7 @@ export const AddMenu = ({
             addFunctionNode(event, func);
           }}
         >
-          <Menu.Item appendIcon="ChevronRightCompact">Function</Menu.Item>
+          <Menu.Item appendIcon="ChevronRight">Function</Menu.Item>
         </ToolboxFunctionDropdown>
       )}
       <Menu.Item onClick={addConstantNode}>Constant</Menu.Item>

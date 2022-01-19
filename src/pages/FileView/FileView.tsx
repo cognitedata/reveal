@@ -63,7 +63,7 @@ export const FileView = () => {
   }, [showAllChartRows, setChart]);
 
   if (!isAssetFetched) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
 
   if (!asset) {
@@ -79,7 +79,7 @@ export const FileView = () => {
       <FileSidebar>
         <Header>
           <Button
-            icon="ArrowBack"
+            icon="ArrowLeft"
             style={{ marginBottom: 20 }}
             onClick={() => move(`/${chartId}`)}
           >

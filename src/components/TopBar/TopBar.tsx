@@ -74,7 +74,7 @@ const TopBarWrapper = () => {
                 name: t('topBar.feedback'),
                 component: (
                   <span className="downloadChartHide">
-                    <Icon type="SpeechBubble" />
+                    <Icon type="Comment" />
                   </span>
                 ),
                 onClick: () => chat.show(),

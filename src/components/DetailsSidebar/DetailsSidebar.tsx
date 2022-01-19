@@ -38,7 +38,7 @@ const renderStatusIcon = (status?: StatisticsStatusStatusEnum) => {
   switch (status) {
     case StatisticsStatusStatusEnum.Pending:
     case StatisticsStatusStatusEnum.Running:
-      return <Icon type="Loading" />;
+      return <Icon type="Loader" />;
     case StatisticsStatusStatusEnum.Success:
       return <Icon type="Checkmark" />;
     case StatisticsStatusStatusEnum.Failed:

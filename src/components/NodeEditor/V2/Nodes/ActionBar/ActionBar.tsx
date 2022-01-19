@@ -74,7 +74,7 @@ const ActionBar = ({ actions, capabilities, status, data }: Props) => {
       {onRemoveClick && (
         <Button
           type="ghost"
-          icon="Trash"
+          icon="Delete"
           aria-label="Remove"
           title="Remove"
           disabled={!canRemove}

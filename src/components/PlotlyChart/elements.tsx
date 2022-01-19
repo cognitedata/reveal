@@ -5,7 +5,7 @@ import Layers from 'utils/z-index';
 /* eslint-disable @cognite/no-number-z-index */
 export const LoadingIcon = () => (
   <Icon
-    type="Loading"
+    type="Loader"
     style={{
       top: 10,
       left: 10,
