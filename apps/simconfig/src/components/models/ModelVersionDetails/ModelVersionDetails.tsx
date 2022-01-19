@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import formatISO9075 from 'date-fns/formatISO9075';
@@ -26,6 +27,8 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   const token = useSelector(selectAuthToken);
   const baseUrl = useSelector(selectBaseUrl);
 
+  const [isModelFileDownloading, setIsModelFileDownloading] = useState(false);
+
   const { metadata } = modelFile;
   const { simulator, modelName, version } = metadata;
 
@@ -48,7 +51,9 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       );
       return;
     }
+    setIsModelFileDownloading(true);
     await downloadModelFile(token, project, baseUrl, modelFile.metadata);
+    setIsModelFileDownloading(false);
   };
 
   return (
@@ -73,7 +78,12 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
           </div>
           <div className="actions">
             <div className="download-link">
-              <Button icon="Download" onClick={onDownloadClicked}>
+              <Button
+                disabled={isModelFileDownloading}
+                icon="Download"
+                loading={isModelFileDownloading}
+                onClick={onDownloadClicked}
+              >
                 Download
               </Button>
             </div>
