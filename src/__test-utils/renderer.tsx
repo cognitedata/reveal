@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
@@ -12,23 +12,25 @@ import { ToastContainer } from '@cognite/cogs.js';
 import { render } from 'src/__test-utils/custom-render';
 import { getMockedStore } from 'src/__test-utils/store.utils';
 
-interface Props {
-  component: React.FC<any>;
+type Props<T> = {
   store?: Store;
-  props?: any;
-}
-const WrappedWithProviders: React.FC<Props> = ({
+  // eslint-disable-next-line react/no-unused-prop-types
+  props?: T;
+  children?: ReactNode;
+};
+
+export const WrappedWithProviders = <T extends unknown>({
   store,
-  component,
-  props = {},
-}) => {
+  props,
+  children,
+}: Props<T>) => {
   const queryClient = new QueryClient();
 
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <Provider store={store || getMockedStore()}>
-          {React.createElement(component, props)}
+          {React.cloneElement(children as ReactElement, { ...(props as {}) })}
         </Provider>
         <ToastContainer />
       </QueryClientProvider>
@@ -36,12 +38,15 @@ const WrappedWithProviders: React.FC<Props> = ({
   );
 };
 
-export const testRenderer = (
+export const testRenderer = <T extends unknown>(
   component: React.FC<any>,
   store?: Store,
-  props?: any
+  props?: T
 ): RenderResult => {
+  const Component = component;
   return render(
-    <WrappedWithProviders store={store} component={component} props={props} />
+    <WrappedWithProviders store={store} props={props}>
+      <Component />
+    </WrappedWithProviders>
   );
 };
