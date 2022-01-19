@@ -5,17 +5,10 @@ import { useAsset, useAssetTimeseries } from 'hooks/cdf-assets';
 import styled from 'styled-components/macro';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import dayjs from 'dayjs';
-import { useParams } from 'react-router-dom';
-import { Timeseries } from '@cognite/sdk';
-import {
-  addTimeseries,
-  removeTimeseries,
-  covertTSToChartTS,
-} from 'models/chart/updates';
 import { trackUsage } from 'services/metrics';
-import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import { useAddRemoveTimeseries } from 'components/Search/hooks';
 
 export const AnnotationPopover = ({
   annotations,
@@ -62,9 +55,9 @@ export const AnnotationPopover = ({
 };
 
 export const TimeseriesList = ({ assetId }: { assetId: number }) => {
-  const { chartId } = useParams<{ chartId: string }>();
-  const [chart, setChart] = useRecoilState(chartAtom);
-  const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
+  const [chart] = useRecoilState(chartAtom);
+  const handleTimeSeriesClick = useAddRemoveTimeseries();
+
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
 
   const sparklineStartDate = dayjs()
@@ -73,28 +66,6 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
     .toDate();
 
   const sparklineEndDate = dayjs().endOf('day').toDate();
-
-  const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
-    if (!chart) {
-      return;
-    }
-    const tsToRemove = chart.timeSeriesCollection?.find(
-      (t) => t.tsExternalId === timeSeries.externalId
-    );
-    if (tsToRemove) {
-      setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
-    } else {
-      if (timeSeries.assetId) {
-        addAssetToRecent(timeSeries.assetId, timeSeries.id);
-      } else {
-        addTsToRecent(timeSeries.id);
-      }
-
-      const ts = covertTSToChartTS(timeSeries, chartId);
-      setChart((oldChart) => addTimeseries(oldChart!, ts));
-      trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
-    }
-  };
 
   if (isLoading) {
     return <Icon type="Loader" style={{ margin: 10 }} />;
@@ -132,6 +103,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
             onClick={(e) => {
               e.preventDefault();
               handleTimeSeriesClick(ts);
+              trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
             }}
             name={`${ts.id}`}
             value={

@@ -17,12 +17,19 @@ export const useSearchParam = (
   }
 
   const setSearchParam = (newVal?: string) => {
+    /**
+     * To avoid updating to stale values we must
+     * use window.location here, and not the cached location
+     * from the useLocation hook
+     */
+    const currentSearch = qs.parse(window.location.search);
+
     const newSearch = newVal
       ? {
-          ...search,
-          [name]: newVal,
+          ...currentSearch,
+          [name]: encodeURIComponent(newVal),
         }
-      : omit(search, name);
+      : omit(currentSearch, name);
 
     history[pushState ? 'push' : 'replace']({
       pathname: location.pathname,
@@ -31,6 +38,7 @@ export const useSearchParam = (
       state: location.state,
     });
   };
+
   return [val ? decodeURIComponent(val) : undefined, setSearchParam];
 };
 

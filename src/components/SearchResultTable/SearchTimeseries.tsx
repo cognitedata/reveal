@@ -1,22 +1,12 @@
 import { useMemo } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Button, Checkbox } from '@cognite/cogs.js';
-import { useParams } from 'react-router-dom';
 import { Timeseries } from '@cognite/sdk';
 import { useCdfItems, useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
-import {
-  addTimeseries,
-  covertTSToChartTS,
-  removeTimeseries,
-  updateSourceAxisForChart,
-} from 'models/chart/updates';
-import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'services/metrics';
-import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
+import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import chartAtom from 'models/chart/atom';
-import { AxisUpdate } from 'components/PlotlyChart';
 import RecentViewSources from './RecentViewSources';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 
@@ -24,10 +14,8 @@ type Props = {
   query: string;
 };
 export default function SearchTimeseries({ query }: Props) {
-  const sdk = useSDK();
-  const { chartId } = useParams<{ chartId: string }>();
-  const [chart, setChart] = useRecoilState(chartAtom);
-  const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
+  const [chart] = useRecoilState(chartAtom);
+  const handleTimeSeriesClick = useAddRemoveTimeseries();
 
   const {
     data: resourcesBySearch,
@@ -78,50 +66,6 @@ export default function SearchTimeseries({ query }: Props) {
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 
-  const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
-    if (!chart) {
-      return;
-    }
-
-    const tsToRemove = chart.timeSeriesCollection?.find(
-      (t) => t.tsId === timeSeries.id
-    );
-
-    if (tsToRemove) {
-      setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
-    } else {
-      const newTs = covertTSToChartTS(timeSeries, chartId, []);
-      setChart((oldChart) => addTimeseries(oldChart!, newTs));
-
-      if (timeSeries.assetId) {
-        // add both asset and ts if asset exists
-        addAssetToRecent(timeSeries.assetId, timeSeries.id);
-      } else {
-        addTsToRecent(timeSeries.id);
-      }
-
-      // Calculate y-axis / range
-      const range = await calculateDefaultYAxis({
-        chart,
-        sdk,
-        timeSeriesExternalId: timeSeries.externalId || '',
-      });
-
-      const axisUpdate: AxisUpdate = {
-        id: newTs.id,
-        type: 'timeseries',
-        range,
-      };
-
-      // Update y axis when ready
-      setChart((oldChart) =>
-        updateSourceAxisForChart(oldChart!, { x: [], y: [axisUpdate] })
-      );
-
-      trackUsage('ChartView.AddTimeSeries', { source: 'search' });
-    }
-  };
-
   const searchResultElements = timeseries?.map((ts) => (
     <TimeseriesSearchResultItem
       key={ts.id}
@@ -132,6 +76,7 @@ export default function SearchTimeseries({ query }: Props) {
           onClick={(e) => {
             e.preventDefault();
             handleTimeSeriesClick(ts);
+            trackUsage('ChartView.AddTimeSeries', { source: 'search' });
           }}
           name={`${ts.id}`}
           checked={selectedExternalIds?.includes(ts.externalId || '')}

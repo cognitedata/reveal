@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
-import * as React from 'react';
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 import { useFilesAssetAppearsIn } from 'components/FileList';
@@ -11,13 +10,11 @@ import { useNavigate } from 'hooks/navigation';
 export const PnidButton = ({
   asset,
   timeseriesExternalId,
-  showTooltip = true,
   hideWhenEmpty = true,
   children,
 }: {
   asset?: Asset;
   timeseriesExternalId?: string;
-  showTooltip?: boolean;
   hideWhenEmpty?: boolean;
   children?: ReactNode;
 }) => {
@@ -45,34 +42,24 @@ export const PnidButton = ({
   }
 
   return (
-    <WithTooltip content={showTooltip ? 'P&IDs' : undefined}>
-      <Button
-        type="ghost"
-        icon="Document"
-        onClick={() => {
-          move(`/${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`);
+    <Button
+      type={asset ? 'tertiary' : 'ghost'}
+      icon="Document"
+      onClick={() => {
+        move(`/${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`);
 
-          // `asset` prop is passed in only when button is placed in search view for now
-          // There is probably a better way to determine whether the source is search or time series row?
-          trackUsage('ChartView.ViewFiles', {
-            source: asset ? 'search' : 'chart',
-          });
-        }}
-        style={{ height: 28 }}
-        aria-label="search"
-      >
-        {children}
-      </Button>
-    </WithTooltip>
+        // `asset` prop is passed in only when button is placed in search view for now
+        // There is probably a better way to determine whether the source is search or time series row?
+        trackUsage('ChartView.ViewFiles', {
+          source: asset ? 'search' : 'chart',
+        });
+      }}
+      style={{ height: 28 }}
+      iconPlacement="right"
+      size="small"
+      aria-label="search"
+    >
+      {children}
+    </Button>
   );
-};
-
-const WithTooltip = ({
-  content,
-  children,
-}: {
-  content?: string;
-  children: React.ReactElement;
-}) => {
-  return content ? <Tooltip content={content}>{children}</Tooltip> : children;
 };

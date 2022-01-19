@@ -381,7 +381,6 @@ export default function TimeSeriesRow({
         >
           <PnidButton
             timeseriesExternalId={tsExternalId}
-            showTooltip={false}
             hideWhenEmpty={false}
           />
         </td>

@@ -2,25 +2,13 @@ import { useEffect } from 'react';
 import { Checkbox, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { Asset, Timeseries } from '@cognite/sdk';
-import { useParams } from 'react-router-dom';
-import {
-  addTimeseries,
-  covertTSToChartTS,
-  removeTimeseries,
-  updateSourceAxisForChart,
-} from 'models/chart/updates';
-import { calculateDefaultYAxis } from 'utils/axis';
-import { useSDK } from '@cognite/sdk-provider';
-import { trackUsage } from 'services/metrics';
-import {
-  useAddToRecentLocalStorage,
-  useRecentViewLocalStorage,
-} from 'hooks/recently-used';
+import { useRecentViewLocalStorage } from 'hooks/recently-used';
 import { useCdfItems } from 'hooks/cognite-functions';
 import { useQueryClient } from 'react-query';
 import { useRecoilState } from 'recoil';
+import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import chartAtom from 'models/chart/atom';
-import { AxisUpdate } from 'components/PlotlyChart';
+import { trackUsage } from 'services/metrics';
 import AssetSearchHit from './AssetSearchHit';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 
@@ -30,12 +18,10 @@ type Props = {
 
 const RecentViewSources = ({ viewType }: Props) => {
   const title = viewType === 'assets' ? 'tags / assets' : 'time series';
-  const sdk = useSDK();
-  const { chartId } = useParams<{ chartId: string }>();
-  const [chart, setChart] = useRecoilState(chartAtom);
+  const [chart] = useRecoilState(chartAtom);
   // Takes alot of time to load data
   const { data: rvResults } = useRecentViewLocalStorage(viewType, []);
-  const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
+  const handleTimeSeriesClick = useAddRemoveTimeseries();
 
   const cached = useQueryClient();
   const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
@@ -52,49 +38,6 @@ const RecentViewSources = ({ viewType }: Props) => {
     false,
     { enabled: !!rvResults && rvResults.length > 0 }
   );
-
-  const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
-    if (!chart) {
-      return;
-    }
-
-    const tsToRemove = chart.timeSeriesCollection?.find(
-      (t) => t.tsId === timeSeries.id
-    );
-
-    if (tsToRemove) {
-      setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
-    } else {
-      const newTs = covertTSToChartTS(timeSeries, chartId, []);
-      setChart((oldChart) => addTimeseries(oldChart!, newTs));
-
-      if (timeSeries.assetId) {
-        addAssetToRecent(timeSeries.assetId, timeSeries.id);
-      } else {
-        addTsToRecent(timeSeries.id);
-      }
-
-      // Calculate y-axis / range
-      const range = await calculateDefaultYAxis({
-        chart,
-        sdk,
-        timeSeriesExternalId: timeSeries.externalId || '',
-      });
-
-      const axisUpdate: AxisUpdate = {
-        id: newTs.id,
-        type: 'timeseries',
-        range,
-      };
-
-      // Update y axis when ready
-      setChart((oldChart) =>
-        updateSourceAxisForChart(oldChart!, { x: [], y: [axisUpdate] })
-      );
-
-      trackUsage('ChartView.AddTimeSeries', { source: 'search' });
-    }
-  };
 
   if (!rvResults || rvResults.length === 0) {
     return null;
@@ -123,6 +66,9 @@ const RecentViewSources = ({ viewType }: Props) => {
                     onClick={(e) => {
                       e.preventDefault();
                       handleTimeSeriesClick(ts);
+                      trackUsage('ChartView.AddTimeSeries', {
+                        source: 'search',
+                      });
                     }}
                     name={`${ts.id}`}
                     checked={selectedExternalIds?.includes(ts.externalId || '')}

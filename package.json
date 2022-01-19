@@ -58,6 +58,7 @@
     "react-flow-renderer": "^9.6.11",
     "react-highlight-words": "^0.17.0",
     "react-i18next": "^11.15.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-markdown": "^7.1.1",
     "react-plotly.js": "^2.5.1",
     "react-query": "^3.25.0",

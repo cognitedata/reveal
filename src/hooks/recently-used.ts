@@ -89,7 +89,7 @@ export const useAddToRecentLocalStorage = () => {
   return {
     addAssetToRecent: (assetId: number, timeseriesId: number) =>
       addAssetToRecentLocalStorage(project, assetId, timeseriesId, cached),
-    addTsToRecent: (timeseriesId: number) =>
+    addTimeseriesToRecent: (timeseriesId: number) =>
       addTSToRecentLocalStorage(project, timeseriesId, cached),
   };
 };

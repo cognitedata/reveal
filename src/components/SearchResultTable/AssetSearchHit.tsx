@@ -1,26 +1,20 @@
-import { useMemo } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { Icon, Checkbox, Button, Colors } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
-import { useInfiniteList, useAggregate } from '@cognite/sdk-react-query-hooks';
+import { useAggregate, useList } from '@cognite/sdk-react-query-hooks';
 import { Asset, Timeseries } from '@cognite/sdk';
-import {
-  addTimeseries,
-  covertTSToChartTS,
-  removeTimeseries,
-  updateSourceAxisForChart,
-} from 'models/chart/updates';
-import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'services/metrics';
 import Highlighter from 'react-highlight-words';
-import { useAddToRecentLocalStorage } from 'hooks/recently-used';
+import { useAddRemoveTimeseries } from 'components/Search/hooks';
+import { useSearchParam } from 'hooks/navigation';
+import { ASSET_KEY } from 'utils/constants';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
-import { AxisUpdate } from 'components/PlotlyChart';
 import { removeIllegalCharacters } from 'utils/text';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
+
+const TIMESERIES_COUNT = 5;
 
 type Props = {
   asset: Asset;
@@ -29,73 +23,25 @@ type Props = {
 };
 
 export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
-  const sdk = useSDK();
-  const [chart, setChart] = useRecoilState(chartAtom);
-  const { addAssetToRecent } = useAddToRecentLocalStorage();
+  const [__, setUrlAssetId] = useSearchParam(ASSET_KEY, false);
+  const [chart] = useRecoilState(chartAtom);
+  const handleTimeSeriesClick = useAddRemoveTimeseries();
 
-  const { data, hasNextPage, fetchNextPage } = useInfiniteList<Timeseries>(
-    'timeseries',
-    5,
-    {
-      assetIds: [asset.id],
-    }
-  );
+  const { data: timeseries = [] } = useList<Timeseries>('timeseries', {
+    filter: { assetIds: [asset.id] },
+    limit: TIMESERIES_COUNT,
+  });
 
   const { data: dataAmount } = useAggregate('timeseries', {
     assetIds: [asset.id],
   });
 
-  const timeseries = useMemo(
-    () =>
-      data?.pages?.reduce(
-        (accl, page) => accl.concat(page.items),
-        [] as Timeseries[]
-      ),
-    [data]
-  );
-
   const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 
-  const handleTimeSeriesClick = async (ts: Timeseries) => {
-    if (!chart) {
-      return;
-    }
-
-    const tsToRemove = chart.timeSeriesCollection?.find(
-      (t) => t.tsExternalId === ts.externalId
-    );
-
-    if (tsToRemove) {
-      setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
-    } else {
-      const newTs = covertTSToChartTS(ts, chart.id, []);
-      setChart((oldChart) => addTimeseries(oldChart!, newTs));
-
-      // Add to recentlyViewed assets and timeseries
-      addAssetToRecent(asset.id, ts.id);
-
-      // Calculate y-axis / range
-      const range = await calculateDefaultYAxis({
-        chart,
-        sdk,
-        timeSeriesExternalId: ts.externalId || '',
-      });
-
-      const axisUpdate: AxisUpdate = {
-        id: newTs.id,
-        type: 'timeseries',
-        range,
-      };
-
-      // Update y axis when ready
-      setChart((oldChart) =>
-        updateSourceAxisForChart(oldChart!, { x: [], y: [axisUpdate] })
-      );
-
-      trackUsage('ChartView.AddTimeSeries', { source: 'search' });
-    }
+  const handleSelectAsset = (assetId: number) => {
+    setUrlAssetId(String(assetId));
   };
 
   const searchResultElements = timeseries?.map((ts) => (
@@ -108,6 +54,7 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
           onClick={(e) => {
             e.preventDefault();
             handleTimeSeriesClick(ts);
+            trackUsage('ChartView.AddTimeSeries', { source: 'search' });
           }}
           name={`${ts.id}`}
           checked={selectedExternalIds?.includes(ts.externalId || '')}
@@ -121,7 +68,7 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
       <Row>
         <InfoContainer>
           <ResourceNameWrapper>
-            <Icon type="Assets" size={14} />
+            <Icon type="Assets" size={14} style={{ marginRight: 5 }} />
             <Highlighter
               highlightStyle={{
                 backgroundColor: Colors['yellow-4'].alpha(0.4),
@@ -129,6 +76,9 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
               }}
               searchWords={[removeIllegalCharacters(query)]}
               textToHighlight={asset.name}
+              className="cogs-anchor"
+              onClick={() => handleSelectAsset(asset.id)}
+              style={{ cursor: 'pointer' }}
             />
           </ResourceNameWrapper>
 
@@ -144,7 +94,6 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
           </Description>
         </InfoContainer>
         <Right>
-          <AssetCount>{dataAmount?.count} </AssetCount>
           <DelayedComponent delay={100}>
             <PnidButtonContainer>
               <PnidButton asset={asset}>P&amp;ID</PnidButton>
@@ -162,11 +111,10 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
       <Row>
         <TSList>
           {searchResultElements}
-          {hasNextPage && (
+          {dataAmount && dataAmount.count > TIMESERIES_COUNT && (
             <TSItem>
-              <Button type="link" onClick={() => fetchNextPage()}>
-                Additional time series (
-                {(dataAmount?.count || 0) - (timeseries?.length || 0)})
+              <Button type="link" onClick={() => handleSelectAsset(asset.id)}>
+                View all ({dataAmount.count})
               </Button>
             </TSItem>
           )}
@@ -193,16 +141,6 @@ const AssetItem = styled.div<{ outline?: boolean }>`
   border-radius: 5px;
   margin-bottom: 10px;
   padding: 10px 15px 0px 15px;
-`;
-
-const AssetCount = styled.span`
-  background-color: #fff;
-  border: 1px solid var(--cogs-greyscale-grey4);
-  border-radius: 5px;
-  float: right;
-  padding: 0 5px;
-  margin-right: 8px;
-  line-height: 26px;
 `;
 
 const TSList = styled.ul`
@@ -236,7 +174,7 @@ const InfoContainer = styled.div`
 const ResourceNameWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: top;
+  align-items: center;
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;
@@ -245,7 +183,6 @@ const ResourceNameWrapper = styled.div`
 const Description = styled.span`
   margin-left: 20px;
   font-size: 10px;
-  padding-top: 4px;
 `;
 
 const Right = styled.div`
