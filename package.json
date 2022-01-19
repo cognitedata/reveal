@@ -121,7 +121,7 @@
     "serve": "^11.3.2",
     "sinon": "^12.0.1",
     "testcafe": "^1.9.4",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.4"
   },
   "resolutions": {
     "react": "^17.0.1",
