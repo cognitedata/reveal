@@ -19,7 +19,7 @@ export class PromiseUtils {
   /**
    * Awaits all promises in the list of promises available, returning them in an async iterator
    * as they finish. The function completes when all promises has completed and the results have
-   * been yielded, or one of the promises provided rejects. This function is similar to
+   * been yielded. Each result is given as a PromiseResult object. This function is similar to
    * Promise.all(), except that it returns results as they are ready and doesn't wait for all
    * operations to finish.
    *
