@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { Shape, ShapeConfig } from 'konva/lib/Shape';
+import throttle from 'lodash/throttle';
 import { v4 as uuid } from 'uuid';
 import { Vector2d } from 'konva/lib/types';
 import { PDFDocument } from 'pdf-lib';
@@ -138,6 +139,7 @@ export class CogniteOrnate {
   shapeSettings: ShapeSettings = defaultShapeSettings;
   transformer: OrnateTransformer | undefined;
   tools: Record<string, Tool> = {};
+  resizeObserver?: ResizeObserver;
 
   constructor(options: CogniteOrnateOptions) {
     const host = document.querySelector(options.container) as HTMLDivElement;
@@ -179,7 +181,11 @@ export class CogniteOrnate {
 
     // Ensure responsiveness
     this.fitStageIntoParentContainer();
-    window.addEventListener('resize', this.fitStageIntoParentContainer);
+    const throttledResizeHandler = throttle(() => {
+      this.fitStageIntoParentContainer();
+    }, 25);
+    this.resizeObserver = new ResizeObserver(throttledResizeHandler);
+    this.resizeObserver.observe(this.host);
 
     this.initBackgroundLayer();
   }
@@ -724,6 +730,7 @@ export class CogniteOrnate {
     this.isDrawing = false;
     this.documents = [];
     this.connectedLineGroup = [];
+    this.resizeObserver?.unobserve(this.host);
     this.init();
   };
 
