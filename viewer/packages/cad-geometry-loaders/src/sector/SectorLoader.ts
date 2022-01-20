@@ -97,8 +97,6 @@ export class SectorLoader {
   }
 
   private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
-    let sectorCuller: SectorCuller;
-
     if (isLegacyModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
       return this._v8SectorCuller;
     } else if (isGltfModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
@@ -106,7 +104,6 @@ export class SectorLoader {
     } else {
       throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
     }
-    return sectorCuller;
   }
 
   private async filterSectors(
