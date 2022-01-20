@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
+import isUndefined from 'lodash/isUndefined';
 
 import { Loading } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -51,22 +52,21 @@ export const CurveCentricView: React.FC<Props> = ({
   const [chartRendering, setChartRendering] = useState<boolean>(false);
 
   const updateChartData = () => {
-    if (data) {
-      const wellboreChartData = selectedInspectWellbores.map((wellbore) => {
-        const chartData = formatChartData(
-          data[wellbore.id],
-          geomechanicsCurves,
-          ppfgCurves,
-          otherTypes,
-          measurementReference,
-          pressureUnit.toLowerCase(),
-          userPreferredUnit,
-          config
-        );
-        return mapToCurveCentric(chartData, wellbore);
-      });
-      setCharts(flatten(wellboreChartData));
-    }
+    if (isUndefined(data)) return;
+    const wellboreChartData = selectedInspectWellbores.map((wellbore) => {
+      const chartData = formatChartData(
+        data[wellbore.id],
+        geomechanicsCurves,
+        ppfgCurves,
+        otherTypes,
+        measurementReference,
+        pressureUnit.toLowerCase(),
+        userPreferredUnit,
+        config
+      );
+      return mapToCurveCentric(chartData, wellbore);
+    });
+    setCharts(flatten(wellboreChartData));
   };
 
   useEffect(() => {
@@ -90,6 +90,7 @@ export const CurveCentricView: React.FC<Props> = ({
     otherTypes,
     userPreferredUnit,
   ]);
+
   const wellCards = useMemo(() => {
     const axisNames = {
       x: `Pressure (${pressureUnit.toLowerCase()})`,
