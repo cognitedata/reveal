@@ -7,29 +7,29 @@ import {
 import reduce from 'lodash/reduce';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { useWellAllGeometryQuery } from 'modules/api/well/useWellQuery';
+import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { WELL_MARKER } from 'pages/authorized/search/map/constants';
 
 /**
  * This creates the data source for all the wells on the map
  * the data is from discover-api all well geometry endpoint
  */
-export const useCreateAllWellCollection = ({
+export const useCreateAllWellCollectionV2 = ({
   selectedWellIds,
   anotherReasonToBlur,
 }: {
   selectedWellIds: Record<string, boolean>;
   anotherReasonToBlur?: boolean;
 }) => {
-  const { data } = useWellAllGeometryQuery();
+  const data = useWellQueryResultWells();
 
   const wellSource: Feature[] = useDeepMemo(() => {
     return reduce(
-      data?.features,
+      data,
       (results, well) => {
         // console.log('Checking well:', well);
         if (well?.geometry) {
-          const id = well.properties?.id;
+          const { id } = well;
 
           const isSelected = id && selectedWellIds[id];
 
