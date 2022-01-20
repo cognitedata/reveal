@@ -116,7 +116,7 @@ const FunctionNode = memo(
               </div>
               <div>
                 {toolFunction.outputs.map(({ name }) => (
-                  <InputName>{name}</InputName>
+                  <InputName key={name}>{name}</InputName>
                 ))}
               </div>
             </Flex>
