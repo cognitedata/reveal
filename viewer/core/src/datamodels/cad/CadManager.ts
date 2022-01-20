@@ -96,12 +96,10 @@ export class CadManager {
       this._cadModelUpdateHandler.consumedSectorObservable().subscribe({
         next: consumeNextSector,
         error: error => {
-          if (error) {
-            MetricsLogger.trackError(error, {
-              moduleName: 'CadManager',
-              methodName: 'constructor'
-            });
-          }
+          MetricsLogger.trackError(error, {
+            moduleName: 'CadManager',
+            methodName: 'constructor'
+          });
         }
       })
     );

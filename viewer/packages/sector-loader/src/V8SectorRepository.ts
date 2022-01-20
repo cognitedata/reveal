@@ -94,9 +94,7 @@ export class V8SectorRepository implements SectorRepository {
       }
     } catch (error) {
       this._consumedSectorCache.remove(cacheKey);
-      if (error) {
-        MetricsLogger.trackError(error as Error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
-      }
+      MetricsLogger.trackError(error as Error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
       throw error;
     }
   }
