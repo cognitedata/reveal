@@ -14,7 +14,7 @@ describe('PromiseUtils', () => {
 
     test('Single item list', async () => {
       const results = await asyncIteratorToArray(PromiseUtils.raceUntilAllCompleted([Promise.resolve(1)]));
-      expect(results).toEqual([1]);
+      expect(results).toEqual([{ result: 1 }]);
     });
 
     test('Two items, returns items in order they are finished', async () => {
@@ -26,7 +26,7 @@ describe('PromiseUtils', () => {
       p2.resolve(2);
       p1.resolve(1);
 
-      expect(await results).toEqual([2, 1]);
+      expect(await results).toEqual([{ result: 2 }, { result: 1 }]);
     });
 
     test('Two items, one rejects - rejects', async () => {
@@ -36,8 +36,9 @@ describe('PromiseUtils', () => {
       const operations = PromiseUtils.raceUntilAllCompleted([p1.promise, p2.promise]);
       const results = asyncIteratorToArray(operations);
       p1.reject('error');
+      p2.resolve(1);
 
-      expect(results).toReject();
+      expect(await results).toEqual([{ error: 'error' }, { result: 1 }]);
     });
   });
 });
