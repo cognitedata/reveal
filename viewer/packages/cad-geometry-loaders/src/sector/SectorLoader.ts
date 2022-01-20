@@ -124,10 +124,9 @@ export class SectorLoader {
     models: CadNode[]
   ): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(async wantedSector => {
-      const model = models.filter(
-        model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier
-      )[0];
-      return model.loadSector(wantedSector)
+      const model = models.filter(model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier)[0];
+      return model
+        .loadSector(wantedSector)
         .catch(error => {
           log.error('Failed to load sector', wantedSector, 'error:', error);
           // Ignore error but mark sector as discarded since we didn't load any geometry
