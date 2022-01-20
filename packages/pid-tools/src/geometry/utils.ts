@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 import { Point } from './Point';
 import { PathSegment } from './PathSegment';
 
@@ -45,9 +46,11 @@ export const getPointTowardOtherPoint = (
   towardPoint: Point,
   offset: number
 ) => {
-  const length = point.distance(towardPoint);
-  const dxNorm = (towardPoint.x - point.x) / length;
-  const dyNorm = (towardPoint.y - point.y) / length;
+  const distance = point.distance(towardPoint);
+  if (distance === 0) return point;
+
+  const dxNorm = (towardPoint.x - point.x) / distance;
+  const dyNorm = (towardPoint.y - point.y) / distance;
 
   return new Point(point.x + offset * dxNorm, point.y + offset * dyNorm);
 };
@@ -84,4 +87,70 @@ export const getClosestPathSegments = (
   });
 
   return [closestPathSegment1, closestPathSegment2];
+};
+
+type ClosestPointsWithIndecies = {
+  point1: Point;
+  index1: number;
+  point2: Point;
+  index2: number;
+  distance: number;
+};
+
+export const getClosestPointsOnSegments = (
+  pathSegments1: PathSegment[],
+  pathSegments2: PathSegment[]
+): ClosestPointsWithIndecies | undefined => {
+  let closestPointsWithIndecies: ClosestPointsWithIndecies | undefined;
+  let minDistance = Infinity;
+
+  pathSegments1.forEach((pathSegment1, index1) => {
+    pathSegments2.forEach((pathSegment2, index2) => {
+      const { thisPoint, otherPoint, distance } =
+        pathSegment1.getClosestPointsOnSegments(pathSegment2);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestPointsWithIndecies = {
+          point1: thisPoint,
+          index1,
+          point2: otherPoint,
+          index2,
+          distance,
+        };
+      }
+    });
+  });
+
+  return closestPointsWithIndecies;
+};
+
+type ClosestPointWithIndex = {
+  point: Point;
+  index: number;
+  distance: number;
+  percentAlongPath: number;
+};
+
+export const getClosestPointOnSegments = (
+  point: Point,
+  pathSegments: PathSegment[]
+): ClosestPointWithIndex | undefined => {
+  let closestPointWithIndex: ClosestPointWithIndex | undefined;
+  let minDistance = Infinity;
+
+  pathSegments.forEach((pathSegment, index) => {
+    const { pointOnSegment, percentAlongPath, distance } =
+      pathSegment.getClosestPointOnSegment(point);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestPointWithIndex = {
+        point: pointOnSegment,
+        distance,
+        index,
+        percentAlongPath,
+      };
+    }
+  });
+
+  return closestPointWithIndex;
 };

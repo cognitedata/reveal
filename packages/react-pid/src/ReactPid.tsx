@@ -8,6 +8,7 @@ import {
   DiagramConnection,
   DiagramInstanceId,
   getNoneOverlappingSymbolInstances,
+  PathReplacement,
   DiagramSymbolInstance,
   pruneSymbolOverlappingPathsFromLines,
   DocumentType,
@@ -39,6 +40,14 @@ export const ReactPid: React.FC = () => {
 
   const [selection, setSelection] = useState<SVGElement[]>([]);
   const [lines, setLines] = useState<DiagramLineInstance[]>([]);
+
+  const [splitSelection, setSplitSelection] = React.useState<string | null>(
+    null
+  );
+  const [pathReplacements, setPathReplacements] = useState<PathReplacement[]>(
+    []
+  );
+
   const [lineNumbers, setLineNumbers] = useState<string[]>([]);
   const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
   const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
@@ -70,6 +79,7 @@ export const ReactPid: React.FC = () => {
 
   const setToolBarMode = (mode: ToolType) => {
     setSelection([]);
+    setSplitSelection(null);
     setConnectionSelection(null);
     setLabelSelection(null);
     setActive(mode);
@@ -91,6 +101,8 @@ export const ReactPid: React.FC = () => {
       lines,
       setConnections,
       connections,
+      pathReplacements,
+      setPathReplacements,
       lineNumbers,
       setLineNumbers
     );
@@ -104,6 +116,7 @@ export const ReactPid: React.FC = () => {
       lines,
       symbolInstances,
       connections,
+      pathReplacements,
       documentType,
       lineNumbers
     );
@@ -276,11 +289,16 @@ export const ReactPid: React.FC = () => {
               setLines={setLines}
               selection={selection}
               setSelection={setSelection}
+              splitSelection={splitSelection}
+              setSplitSelection={setSplitSelection}
+              pathReplacements={pathReplacements}
+              setPathReplacements={setPathReplacements}
               connectionSelection={connectionSelection}
               setConnectionSelection={setConnectionSelection}
               connections={connections}
               setConnections={setConnections}
               setPidDocument={setPidDocument}
+              getPidDocument={getPidDocument}
               labelSelection={labelSelection}
               setLabelSelection={setLabelSelection}
               activeLineNumber={activeLineNumber}

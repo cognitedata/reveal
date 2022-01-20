@@ -8,6 +8,7 @@ import {
   getNoneOverlappingSymbolInstances,
   BoundingBox,
   DiagramInstanceOutputFormat,
+  PathReplacement,
   DocumentType,
   PidDocumentWithDom,
 } from '@cognite/pid-tools';
@@ -34,6 +35,7 @@ interface Graph {
   symbolInstances: DiagramInstanceOutputFormat[];
   lines: DiagramInstanceOutputFormat[];
   connections: DiagramConnection[];
+  pathReplacements: PathReplacement[];
   lineNumbers: string[];
 }
 
@@ -43,6 +45,7 @@ const getGraphFormat = (
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
+  pathReplacements: PathReplacement[],
   documentType: DocumentType,
   lineNumbers: string[]
 ): Graph => {
@@ -68,6 +71,7 @@ const getGraphFormat = (
     lines: linesOutputFormat,
     symbolInstances: symbolInstancesOutputFormat,
     connections,
+    pathReplacements,
     lineNumbers,
   };
 };
@@ -78,6 +82,7 @@ export const saveGraphAsJson = (
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
+  pathReplacements: PathReplacement[],
   documentType: DocumentType,
   lineNumbers: string[]
 ) => {
@@ -87,6 +92,7 @@ export const saveGraphAsJson = (
     lines,
     symbolInstances,
     connections,
+    pathReplacements,
     documentType,
     lineNumbers
   );
@@ -100,13 +106,19 @@ export const saveGraphAsJson = (
 export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
   const missingIds: string[] = [];
 
+  const trackMissingPathIds = (pathId: string) => {
+    if (pathId.includes('_')) return; // comes from PathReplacements
+
+    if (svg.getElementById(pathId) === null) {
+      missingIds.push(pathId);
+    }
+  };
+
   if ('lines' in jsonData) {
     (jsonData.lines as DiagramLineInstance[]).forEach(
       (e: DiagramLineInstance) =>
-        e.pathIds.forEach((id: string) => {
-          if (svg.getElementById(id) === null) {
-            missingIds.push(id);
-          }
+        e.pathIds.forEach((pathId: string) => {
+          trackMissingPathIds(pathId);
         })
     );
   }
@@ -114,10 +126,8 @@ export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
   if ('symbolInstances' in jsonData) {
     (jsonData.symbolInstances as DiagramSymbolInstance[]).forEach(
       (e: DiagramSymbolInstance) =>
-        e.pathIds.forEach((id: string) => {
-          if (svg.getElementById(id) === null) {
-            missingIds.push(id);
-          }
+        e.pathIds.forEach((pathId: string) => {
+          trackMissingPathIds(pathId);
         })
     );
   }
@@ -126,14 +136,10 @@ export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
     (jsonData.connections as DiagramConnection[]).forEach(
       (connection: DiagramConnection) => {
         connection.end.split('-').forEach((pathId) => {
-          if (svg.getElementById(pathId) === null) {
-            missingIds.push(pathId);
-          }
+          trackMissingPathIds(pathId);
         });
         connection.start.split('-').forEach((pathId) => {
-          if (svg.getElementById(pathId) === null) {
-            missingIds.push(pathId);
-          }
+          trackMissingPathIds(pathId);
         });
       }
     );
@@ -162,6 +168,8 @@ export const loadSymbolsFromJson = (
   lines: DiagramLineInstance[],
   setConnections: (diagramConnections: DiagramConnection[]) => void,
   connections: DiagramConnection[],
+  pathReplacements: PathReplacement[],
+  setPathReplacements: (args: PathReplacement[]) => void,
   lineNumbers: string[],
   setLineNumbers: (arg: string[]) => void
 ) => {
@@ -213,12 +221,14 @@ export const loadSymbolsFromJson = (
     });
     setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
   }
-
   if ('connections' in jsonData) {
     const newConnections = jsonData.connections as DiagramConnection[];
     setConnections([...connections, ...newConnections]);
   }
-
+  if ('pathReplacements' in jsonData) {
+    const newPathReplacements = jsonData.pathReplacements as PathReplacement[];
+    setPathReplacements([...pathReplacements, ...newPathReplacements]);
+  }
   if ('lineNumbers' in jsonData) {
     setLineNumbers([...lineNumbers, ...jsonData.lineNumbers]);
   }

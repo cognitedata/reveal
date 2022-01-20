@@ -2,6 +2,10 @@ export interface SvgPath {
   svgCommands: string;
 }
 
+export interface SvgPathWithId extends SvgPath {
+  id: string;
+}
+
 export interface BoundingBox {
   x: number;
   y: number;
@@ -35,6 +39,11 @@ export interface DiagramSymbolInstance extends DiagramInstance {
 
 export interface DiagramLineInstance extends DiagramInstance {
   type: 'Line';
+}
+
+export interface PathReplacement {
+  pathId: string;
+  replacementPaths: SvgPathWithId[];
 }
 
 export type DiagramInstanceId = string;

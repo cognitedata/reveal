@@ -8,6 +8,8 @@ import {
   SVG_ID,
   getDiagramInstanceByPathId,
   getInstanceByDiagramInstanceId,
+  PathReplacement,
+  applyPathReplacementInSvg,
   PidDocumentWithDom,
 } from '@cognite/pid-tools';
 import { useEffect, useState } from 'react';
@@ -27,6 +29,7 @@ import {
   colorSymbol,
   isDiagramLine,
   isInAddSymbolSelection,
+  isSymbolInstance,
   setStrokeWidth,
   visualizeConnections,
 } from './utils';
@@ -40,6 +43,10 @@ interface SvgViewerProps {
   setLines: (arg: DiagramLineInstance[]) => void;
   selection: SVGElement[];
   setSelection: (arg: SVGElement[]) => void;
+  splitSelection: string | null;
+  setSplitSelection: (args: string | null) => void;
+  pathReplacements: PathReplacement[];
+  setPathReplacements: (args: PathReplacement[]) => void;
   connectionSelection: DiagramInstanceId | null;
   setConnectionSelection: (arg: DiagramInstanceId | null) => void;
   connections: DiagramConnection[];
@@ -47,6 +54,7 @@ interface SvgViewerProps {
   labelSelection: DiagramInstanceId | null;
   setLabelSelection: (arg: DiagramInstanceId | null) => void;
   setPidDocument: (arg: PidDocumentWithDom) => void;
+  getPidDocument: () => PidDocumentWithDom | undefined;
   activeLineNumber: string | null;
 }
 
@@ -59,11 +67,16 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   setLines,
   selection,
   setSelection,
+  splitSelection,
+  setSplitSelection,
+  pathReplacements,
+  setPathReplacements,
   connectionSelection,
   setConnectionSelection,
   connections,
   setConnections,
   setPidDocument,
+  getPidDocument,
   labelSelection,
   setLabelSelection,
   activeLineNumber,
@@ -186,6 +199,9 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   /* eslint-enable no-param-reassign */
 
   const onMouseClick = (node: SVGElement) => {
+    const pidDocument = getPidDocument();
+    if (pidDocument === undefined) return;
+
     if (active === 'addSymbol') {
       if (!(node instanceof SVGTSpanElement)) {
         const alreadySelected = isInAddSymbolSelection(node, selection);
@@ -219,6 +235,34 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           } as DiagramLineInstance,
         ]);
       }
+    } else if (active === 'splitLine') {
+      if (node instanceof SVGTSpanElement) return;
+      if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines))
+        return;
+
+      // Remove line if it was already selected
+      if (splitSelection === node.id) {
+        setSplitSelection(null);
+        return;
+      }
+      if (splitSelection !== null) {
+        const tJunctionPathReplacements = pidDocument
+          .getPidPathById(splitSelection)
+          ?.getTJunctionByIntersectionWith(
+            pidDocument.getPidPathById(node.id)!
+          );
+
+        if (!tJunctionPathReplacements) {
+          return;
+        }
+        setPathReplacements([
+          ...pathReplacements,
+          ...tJunctionPathReplacements,
+        ]);
+        setSplitSelection(null);
+        return;
+      }
+      setSplitSelection(node.id);
     } else if (active === 'connectInstances') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
@@ -353,6 +397,10 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
     svg.style.width = '100%';
     svg.style.height = '100%';
 
+    pathReplacements.forEach((pathReplacement) => {
+      applyPathReplacementInSvg(svg as SVGSVGElement, pathReplacement);
+    });
+
     const allSVGElements: SVGElement[] = [];
     applyToLeafSVGElements(svg, (node) => {
       allSVGElements.push(node);
@@ -362,6 +410,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         selection,
         connectionSelection,
         labelSelection,
+        splitSelection,
         symbolInstances,
         lines,
         connections,
@@ -396,6 +445,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
     }
   };
+
   /* eslint-enable no-param-reassign */
   useEffect(() => {
     if (active !== 'graphExplorer') {

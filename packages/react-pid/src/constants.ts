@@ -15,8 +15,9 @@ export const COLORS = {
   connectionSelection: 'LightGreen',
   labelSelection: 'coral',
   connection: {
-    color: 'DarkRed',
+    color: 'DarkGreen',
     strokeWidth: 3,
     opacity: 0.4,
   },
+  splitLine: 'Peru',
 };

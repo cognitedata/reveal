@@ -84,7 +84,7 @@ export const SidePanel = ({
   activeLineNumber,
   setActiveLineNumber,
 }: SidePanelProps) => {
-  const ActionWithCustomStyling: ToolBarButton[][] = [
+  const toolBarButtonGroups: ToolBarButton[][] = [
     [
       {
         icon: 'Add',
@@ -124,6 +124,15 @@ export const SidePanel = ({
       },
     ],
   ];
+
+  if (documentType === DocumentType.pid) {
+    toolBarButtonGroups[0].push({
+      icon: 'Slice',
+      onClick: () => setActive('splitLine'),
+      className: `${active === 'splitLine' && 'active'}`,
+      description: 'Split line',
+    });
+  }
 
   const FileControllerWrapper = styled.div`
     display: flex;
@@ -174,10 +183,7 @@ export const SidePanel = ({
         )}
 
         <ToolBarWrapper>
-          <ToolBar
-            direction="horizontal"
-            buttonGroups={ActionWithCustomStyling}
-          />
+          <ToolBar direction="vertical" buttonGroups={toolBarButtonGroups} />
         </ToolBarWrapper>
       </div>
       {active === 'selectDocumentType' && fileUrl !== '' && (
