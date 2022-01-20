@@ -29,7 +29,7 @@ export class CameraUI {
     const url = new URL(window.location.href);
     url.searchParams.set('camPos', vector3ToString(position));
     url.searchParams.set('camTarget', vector3ToString(target));
-
+    // Update URL without reloading
     window.history.replaceState(null, document.title, url.toString());
   }
 
