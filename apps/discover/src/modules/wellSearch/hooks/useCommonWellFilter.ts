@@ -43,7 +43,7 @@ export const useCommonWellFilter = () => {
     if (geoFilter && geoFilter.length) {
       commonWellFilter.polygon = {
         geoJsonGeometry: geoFilter[0].geometry as unknown as Polygon,
-        crs: 'epsg:4326',
+        crs: 'EPSG:4326',
       };
     }
 
