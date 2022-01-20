@@ -124,24 +124,24 @@ export class SectorLoader {
     models: CadNode[]
   ): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(async wantedSector => {
-      try {
-        const model = models.filter(
-          model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier
-        )[0];
-        return model.loadSector(wantedSector);
-      } catch (error) {
-        log.error('Failed to load sector', wantedSector, 'error:', error);
-        // Ignore error but mark sector as discarded since we didn't load any geometry
-        return {
-          modelIdentifier: wantedSector.modelIdentifier,
-          metadata: wantedSector.metadata,
-          levelOfDetail: LevelOfDetail.Discarded,
-          group: undefined,
-          instancedMeshes: undefined
-        };
-      } finally {
-        progressHelper.reportNewSectorsLoaded(1);
-      }
+      const model = models.filter(
+        model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier
+      )[0];
+      return model.loadSector(wantedSector)
+        .catch(error => {
+          log.error('Failed to load sector', wantedSector, 'error:', error);
+          // Ignore error but mark sector as discarded since we didn't load any geometry
+          return {
+            modelIdentifier: wantedSector.modelIdentifier,
+            metadata: wantedSector.metadata,
+            levelOfDetail: LevelOfDetail.Discarded,
+            group: undefined,
+            instancedMeshes: undefined
+          };
+        })
+        .finally(() => {
+          progressHelper.reportNewSectorsLoaded(1);
+        });
     });
     return consumedPromises;
   }
