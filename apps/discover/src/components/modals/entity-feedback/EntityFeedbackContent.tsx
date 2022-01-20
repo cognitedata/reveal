@@ -2,8 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Checkbox, OptionType } from '@cognite/cogs.js';
-
-import { DocumentPayloadLabel } from 'modules/api/documents/types';
+import { DocumentPayload } from '@cognite/discover-api-types';
 
 import {
   FEEDBACK_ACTION_TITLE,
@@ -44,7 +43,7 @@ export interface Props {
   isOther: boolean;
   freeText: string;
   currentDocumentType: string;
-  documentTypes: DocumentPayloadLabel[];
+  documentTypes: DocumentPayload[];
   handleSetCorrectDocumentType: (event: any) => void;
   handleTextChanged: (event: any) => void;
 }

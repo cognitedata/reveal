@@ -5,10 +5,10 @@ import isEqual from 'lodash/isEqual';
 import styled from 'styled-components/macro';
 
 import { Body, Icon } from '@cognite/cogs.js';
+import { DocumentPayload } from '@cognite/discover-api-types';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { DocumentPayload } from 'modules/api/documents/types';
 import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
 import { DocumentQueryFacets } from 'modules/documentSearch/types';
 import { useFilterAppliedFilters } from 'modules/sidebar/selectors';
@@ -144,7 +144,6 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
               }
 
               if (currentFacet.externalId) {
-                // @ts-expect-error hack cause type is wrong
                 return currentFacet.externalId === item.id;
               }
 

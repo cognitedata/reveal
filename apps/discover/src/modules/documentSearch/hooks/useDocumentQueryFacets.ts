@@ -2,14 +2,14 @@ import { useMemo } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 
-import { DocumentCategory } from 'modules/api/documents/types';
+import { DocumentCategoriesFacets } from 'modules/api/documents/types';
 import { useDocumentCategoryQuery } from 'modules/api/documents/useDocumentQuery';
 
 import { patchDocumentPayloadCount } from '../utils/availableDocumentResultsCount';
 
 import { useDocumentsCategories } from './useDocumentsCategories';
 
-let documentCategoryData: DocumentCategory;
+let documentCategoryData: DocumentCategoriesFacets;
 
 export const useDocumentQueryFacets = () => {
   const { isLoading, error, data } = useDocumentCategoryQuery();

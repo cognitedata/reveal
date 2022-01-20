@@ -1,11 +1,14 @@
+import React from 'react';
+
 import styled from 'styled-components/macro';
 
+import { DocumentCategories } from '@cognite/discover-api-types';
 import { reportException } from '@cognite/react-errors';
 
 import Skeleton from 'components/skeleton';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import {
-  DocumentCategory as DocumentCategoryType,
+  DocumentCategoriesFacets,
   DocumentError,
 } from 'modules/api/documents/types';
 import { useDocumentCategoryQuery } from 'modules/api/documents/useDocumentQuery';
@@ -17,13 +20,15 @@ const Wrapper = styled.div`
 `;
 
 interface Props {
-  children(data: DocumentCategoryType): React.ReactNode;
+  children(
+    data: DocumentCategories | DocumentCategoriesFacets
+  ): React.ReactNode;
 }
 
 const Documents: React.FC<
   Props & {
     isLoading: boolean;
-    data?: DocumentCategoryType | DocumentError;
+    data?: DocumentCategories | DocumentCategoriesFacets | DocumentError;
     error: unknown;
   }
 > = ({ isLoading, data, error, children }) => {
