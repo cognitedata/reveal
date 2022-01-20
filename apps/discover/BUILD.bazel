@@ -14,7 +14,6 @@ load("//rules/test:testcafe_batch_test.bzl", "testcafe_batch_test")
 load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("@npm//cypress:index.bzl", "cypress")
-load("@npm//typescript:index.bzl", "tsc")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -674,22 +673,16 @@ ts_project(
     ],
 )
 
-tsc(
+ts_project(
     name = "cypress_files",
-    args = [
-        "--project",
-        "$(execpath :cypress/tsconfig.json)",
-        "--outDir",
-        "$(RULEDIR)/cypress_files",
-    ],
-    data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + CYPRESS_FILES + [
-        ":cypress/tsconfig.json",
+    srcs = CYPRESS_FILES,
+    tsconfig = "cypress/tsconfig.json",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "@npm//@testing-library/cypress",
         "@npm//cypress",
         "@npm//@types/node",
         "@npm//express",
     ],
-    output_dir = True,
 )
 
 cypress_web_test(
@@ -712,7 +705,7 @@ cypress_web_test(
     # Your cypress plugin used to configure cypress and boot your server
     plugin_file = ":plugin_file",
     templated_args = [
-        "--config supportFile=./apps/discover/cypress_files/cypress/support,integrationFolder=./apps/discover/cypress_files/cypress/integration,pluginsFile=./apps/discover/cypress/plugin.js" +
+        "--config supportFile=./apps/discover/cypress/support,integrationFolder=./apps/discover/cypress/integration,pluginsFile=./apps/discover/cypress/plugin.js" +
         ",videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video" +
         ",screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",
     ],
@@ -724,7 +717,7 @@ cypress(
         "run",
         "--headed",
         "--project ./apps/discover",
-        "--config supportFile=cypress_files/cypress/support,integrationFolder=cypress_files/cypress/integration",
+        "--config supportFile=cypress/support,integrationFolder=cypress/integration",
     ],
     data = [
         "cypress.json",
