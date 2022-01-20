@@ -132,7 +132,7 @@ describe('SectorLoader', () => {
       .returns(value => {
         if (first) {
           first = false;
-          throw new Error('error');
+          return Promise.reject('Could not load sector');
         } else return repository.loadSector(value);
       });
 
