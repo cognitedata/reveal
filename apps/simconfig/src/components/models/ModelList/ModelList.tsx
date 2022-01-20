@@ -6,6 +6,7 @@ import type { UseTrailProps } from '@react-spring/web';
 
 import styled from 'styled-components/macro';
 
+import { Skeleton } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 
 import { hashCode } from 'utils/stringUtils';
@@ -13,9 +14,10 @@ import { hashCode } from 'utils/stringUtils';
 interface ModelListProps {
   modelFiles: ModelFile[];
   className?: string;
+  isFetchingModelFiles: boolean;
 }
 
-export function ModelList({ modelFiles, className }: ModelListProps) {
+export function ModelList({ modelFiles, className, isFetchingModelFiles }: ModelListProps) {
   const springRef = useSpringRef();
   const [modelFilesTrail, modelFilesSpring] = useTrail(
     modelFiles.length,
@@ -32,6 +34,19 @@ export function ModelList({ modelFiles, className }: ModelListProps) {
       x: 0,
     });
   });
+
+  if(isFetchingModelFiles){
+    return (
+      <ModelFilesListSkeleton>
+        <Skeleton.Rectangle height="65px" width="100%" />
+        <Skeleton.Rectangle height="65px" width="100%" />
+        <Skeleton.Rectangle height="65px" width="100%" />
+        <Skeleton.Rectangle height="65px" width="100%" />
+        <Skeleton.Rectangle height="65px" width="100%" />
+        <Skeleton.Rectangle height="65px" width="100%" />
+      </ModelFilesListSkeleton>
+    )
+  }
 
   return (
     <ModelListElement className={className}>
@@ -104,6 +119,12 @@ const ModelListElement = styled.ul`
         }
       }
     }
+  }
+`;
+
+const ModelFilesListSkeleton = styled.div`
+  div {
+    margin-bottom: 12px;
   }
 `;
 

@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -8,6 +8,7 @@ import styled from 'styled-components/macro';
 
 import { Button, Input } from '@cognite/cogs.js';
 import type { GetModelFileApiResponse } from '@cognite/simconfig-api-sdk/rtk';
+import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
@@ -22,13 +23,17 @@ export function ModelLibrary() {
       simulator = 'UNKNOWN',
       selectedTab = 'model-versions',
     },
-    data: { modelFiles },
   } = useMatch<AppLocationGenerics>();
 
   const [modelFilesList, setModelFileslist] = useState<
     GetModelFileApiResponse[]
-  >(modelFiles?.modelFileList ?? []);
+  >([]);
   const navigate = useNavigate();
+
+  const {
+    data: modelFiles,
+    isFetching: isFetchingModelFiles
+  } = useGetModelFileListQuery({ project });
 
   if (!modelName && modelFilesList.length) {
     const firstFile = modelFilesList[0];
@@ -39,6 +44,10 @@ export function ModelLibrary() {
       replace: true,
     });
   }
+
+  useEffect(() => {
+    setModelFileslist(modelFiles?.modelFileList ?? []);
+  }, [modelFiles])
 
   const handleOnModelNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const searchText = event.target.value;
@@ -91,7 +100,10 @@ export function ModelLibrary() {
               </Button>
             </Link>
           </div>
-          <ModelList modelFiles={modelFilesList} />
+          <ModelList
+            isFetchingModelFiles={isFetchingModelFiles}
+            modelFiles={modelFilesList}
+          />
         </div>
       </ModelLibrarySidebar>
       <ModelLibraryContent>
@@ -117,7 +129,7 @@ const ModelLibrarySidebar = styled.aside`
   flex-flow: column nowrap;
   flex: 0 1 auto;
   max-width: 400px;
-  min-width: 250px;
+  min-width: 400px;
   .header {
     background: var(--cogs-greyscale-grey1);
     padding: 0 24px;

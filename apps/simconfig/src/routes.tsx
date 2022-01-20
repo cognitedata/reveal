@@ -46,12 +46,9 @@ export function routes(
     {
       path: 'model-library',
       loader: async () => ({
-        definitions: (await dispatch(api.endpoints.getDefinitions.initiate()))
-          .data,
-        modelFiles: (
-          await dispatch(api.endpoints.getModelFileList.initiate({ project }))
-        ).data,
-      }),
+          definitions: (await dispatch(api.endpoints.getDefinitions.initiate()))
+            .data,
+        }),
       meta: {
         title: () => 'Model library',
       },

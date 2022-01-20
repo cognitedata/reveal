@@ -66,7 +66,7 @@ const acceptedFileTypes = Object.keys(FileExtensionToSimulator);
 
 interface ComponentProps {
   initialModelFormState?: ModelFormState;
-  onUpload?: () => void;
+  onUpload?: (modelName: string, source: string) => void;
 }
 
 export function ModelForm({
@@ -172,7 +172,7 @@ export function ModelForm({
     }
 
     if (onUpload) {
-      onUpload();
+      onUpload(metadata.modelName, simulator);
     }
   };
 
