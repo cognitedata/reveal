@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { SearchBox } from 'components/filters';
@@ -7,14 +7,17 @@ import { useFilterDataNpt } from 'modules/filterData/selectors';
 
 import { NPT_NAME_FILTER_PLACEHOLDER } from './constants';
 
-export const NPTFilterByName = React.memo(() => {
+export const NPTFilterByName = () => {
   const { searchPhrase } = useFilterDataNpt();
   const dispatch = useDispatch();
 
-  const handleFilterByName = (name: string) => {
-    if (searchPhrase === name) return;
-    dispatch(filterDataActions.setNptSearchPhrase(name));
-  };
+  const handleFilterByName = useCallback(
+    (name: string) => {
+      if (searchPhrase === name) return;
+      dispatch(filterDataActions.setNptSearchPhrase(name));
+    },
+    [searchPhrase]
+  );
 
   return (
     <SearchBox
@@ -23,4 +26,4 @@ export const NPTFilterByName = React.memo(() => {
       onSearch={handleFilterByName}
     />
   );
-});
+};

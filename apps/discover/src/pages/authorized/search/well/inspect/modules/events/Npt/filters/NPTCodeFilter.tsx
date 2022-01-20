@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { MultiSelect } from 'components/filters';
+import { useDeepMemo } from 'hooks/useDeep';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataNpt } from 'modules/filterData/selectors';
-import { NPTEvent } from 'modules/wellSearch/types';
-import { getNPTFilterOptions } from 'modules/wellSearch/utils/events';
 
 import {
   FILTER_THEME,
@@ -15,20 +14,19 @@ import {
 } from './constants';
 
 export const NPTCodeFilter = React.memo(
-  ({ events }: { events: NPTEvent[] }) => {
-    const { nptCodes } = useMemo(() => getNPTFilterOptions(events), [events]);
+  ({ nptCodes }: { nptCodes: string[] }) => {
     const { nptCode } = useFilterDataNpt();
     const dispatch = useDispatch();
 
-    useEffect(() => {
-      dispatch(filterDataActions.setNptCode(nptCodes));
-    }, []);
-
-    const displayValue = useMemo(() => {
+    const displayValue = useDeepMemo(() => {
       if (nptCode.length === 1) return nptCode[0];
       if (nptCode.length === nptCodes.length) return SELECTED_ALL_DISPLAY_VALUE;
       return undefined;
     }, [nptCode, nptCodes]);
+
+    const handleValueChange = useCallback((values: string[]) => {
+      dispatch(filterDataActions.setNptCode(values));
+    }, []);
 
     return (
       <MultiSelect
@@ -37,9 +35,7 @@ export const NPTCodeFilter = React.memo(
         SelectAllLabel={SELECT_ALL_LABEL}
         options={nptCodes}
         selectedOptions={nptCode}
-        onValueChange={(values: string[]) =>
-          dispatch(filterDataActions.setNptCode(values))
-        }
+        onValueChange={handleValueChange}
         enableSelectAll
         showCustomCheckbox
         showSelectedItemCount={nptCode.length > 1}

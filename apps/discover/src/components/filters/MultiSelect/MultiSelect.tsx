@@ -1,10 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
 import { caseInsensitiveSort } from 'utils/sort';
 
 import { Select, OptionType } from '@cognite/cogs.js';
+
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import {
   MultiSelectContainer,
@@ -29,7 +31,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   hideClearIndicator,
   ...rest
 }) => {
-  const options: OptionType<MultiSelectOptionType>[] = useMemo(() => {
+  const options: OptionType<MultiSelectOptionType>[] = useDeepMemo(() => {
     const processedOptions = data.map((option) => ({
       label: get(option, 'value', option),
       value: option,
@@ -40,12 +42,21 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       : processedOptions;
   }, [data, isOptionsSorted]);
 
-  const [value, setValue] = useState<OptionType<MultiSelectOptionType>[]>(
-    options.filter((option) => selectedOptions?.includes(option.label))
-  );
+  const [value, setValue] = useState<OptionType<MultiSelectOptionType>[]>([]);
+
+  useDeepEffect(() => {
+    if (isUndefined(selectedOptions)) return;
+
+    const value = options.filter((option) =>
+      selectedOptions.includes(option.label)
+    );
+    setValue(value);
+  }, [options, selectedOptions]);
 
   const onChange = (values: OptionType<MultiSelectOptionType>[]) => {
-    setValue(values);
+    if (isUndefined(selectedOptions)) {
+      setValue(values);
+    }
     onValueChange((values || []).map((option) => option.label));
   };
 

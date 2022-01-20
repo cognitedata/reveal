@@ -5,7 +5,7 @@ import { SelectProps } from '@cognite/cogs.js';
 export interface MultiSelectProps
   extends Omit<SelectProps<MultiSelectOptionType>, 'value' | 'options'> {
   options: MultiSelectOptionType[];
-  selectedOptions: MultiSelectOptionValue[];
+  selectedOptions?: MultiSelectOptionValue[];
   onValueChange: (values: string[]) => void;
   isTextCapitalized?: boolean;
   isOptionsSorted?: boolean;

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { batch, useDispatch } from 'react-redux';
 
 import { Row, Col } from '@cognite/cogs.js';
 
+import { useDeepMemo } from 'hooks/useDeep';
+import { filterDataActions } from 'modules/filterData/actions';
 import { NPTEvent } from 'modules/wellSearch/types';
+import { getNPTFilterOptions } from 'modules/wellSearch/utils/events';
 
 import { NPTCodeFilter } from './NPTCodeFilter';
 import { NPTDetailCodeFilter } from './NPTDetailCodeFilter';
@@ -13,9 +17,22 @@ export const FilterContainer: React.FC<{
   events: NPTEvent[];
   isVisible: boolean;
 }> = React.memo(({ events, isVisible }) => {
-  if (!isVisible) {
-    return null;
-  }
+  const dispatch = useDispatch();
+
+  const { minMaxDuration, nptCodes, nptDetailCodes } = useDeepMemo(
+    () => getNPTFilterOptions(events),
+    [events]
+  );
+
+  useEffect(() => {
+    batch(() => {
+      dispatch(filterDataActions.setNptDuration(minMaxDuration));
+      dispatch(filterDataActions.setNptCode(nptCodes));
+      dispatch(filterDataActions.setNptDetailCode(nptDetailCodes));
+    });
+  }, []);
+
+  if (!isVisible) return null;
 
   return (
     <Row>
@@ -24,15 +41,15 @@ export const FilterContainer: React.FC<{
       </Col>
 
       <Col span={7}>
-        <NPTDurationFilter events={events} />
+        <NPTDurationFilter minMaxDuration={minMaxDuration} />
       </Col>
 
       <Col span={6}>
-        <NPTCodeFilter events={events} />
+        <NPTCodeFilter nptCodes={nptCodes} />
       </Col>
 
       <Col span={6}>
-        <NPTDetailCodeFilter events={events} />
+        <NPTDetailCodeFilter nptDetailCodes={nptDetailCodes} />
       </Col>
     </Row>
   );
