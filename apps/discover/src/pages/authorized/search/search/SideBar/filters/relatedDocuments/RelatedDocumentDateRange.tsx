@@ -7,7 +7,7 @@ import { dateToEpoch, ifRangeIsSameTimeModifyToDayRange } from 'utils/date';
 import { Dropdown, Menu, Range } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/buttons';
-import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useQuery';
+import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { useSetRelatedDocumentFilters } from 'modules/filterData/hooks/useSetRelatedDocumentFilters';
 

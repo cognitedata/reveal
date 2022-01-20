@@ -7,6 +7,7 @@ import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
 import { discoverAPI } from 'modules/api/service';
 
+import { adaptSaveSearchContentToSchemaBody } from './adaptSavedSearch';
 import { SAVED_SEARCHES_CURRENT_KEY } from './constants';
 import { normalizeSavedSearch } from './normalizeSavedSearch';
 import { SavedSearchContent, SavedSearchQuery } from './types';
@@ -34,18 +35,26 @@ export const updateCurrentSearch = async (
   );
   // console.log('After normalize:', savingResponse);
 
+  const savedSearchSchemaBody =
+    adaptSaveSearchContentToSchemaBody(savingResponse);
+
   if (!waitForResponse) {
     discoverAPI.savedSearches
-      .save(savingResponse, SAVED_SEARCHES_CURRENT_KEY, headers, tenant)
+      .create(
+        SAVED_SEARCHES_CURRENT_KEY,
+        savedSearchSchemaBody,
+        headers,
+        tenant
+      )
       .catch((error) => {
         reportException(error);
       });
     return { ...savingResponse, updated_at: new Date().getTime() };
   }
 
-  return discoverAPI.savedSearches.save(
-    savingResponse,
+  return discoverAPI.savedSearches.create(
     SAVED_SEARCHES_CURRENT_KEY,
+    savedSearchSchemaBody,
     headers,
     tenant
   );
@@ -83,36 +92,4 @@ export const combineOldAndNew = (
 
 export const convertGeoJsonToGeometry = (geoJson: GeoJson): Geometry => {
   return geoJson.geometry;
-};
-
-// need to use this for react-query mutate requires only one arg
-export const createSavedSearch = ({
-  values,
-  name,
-  headers,
-  tenant,
-}: {
-  values: SavedSearchContent;
-  name: string;
-  headers: FetchHeaders;
-  tenant: string;
-}) => {
-  try {
-    return discoverAPI.savedSearches.save(values, name, headers, tenant);
-  } catch (error) {
-    reportException(error as string);
-    return Promise.reject(error);
-  }
-};
-
-export const deleteSavedSearch = ({
-  id,
-  headers,
-  tenant,
-}: {
-  id: string;
-  headers: FetchHeaders;
-  tenant: string;
-}) => {
-  return discoverAPI.savedSearches.delete(id, headers, tenant);
 };

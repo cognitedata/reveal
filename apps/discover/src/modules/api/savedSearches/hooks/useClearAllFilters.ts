@@ -1,5 +1,5 @@
 import { documentFacetsStructure as facets } from 'modules/api/documents/structure';
-import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
+import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useSavedSearchQuery';
 
 import { normalizeSavedSearch } from '../normalizeSavedSearch';
 

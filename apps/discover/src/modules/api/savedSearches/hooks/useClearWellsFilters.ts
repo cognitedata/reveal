@@ -1,4 +1,4 @@
-import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
+import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { WellFilterMapValue } from 'modules/wellSearch/types';
 
 export const useClearWellsFilters = () => {

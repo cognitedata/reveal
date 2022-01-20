@@ -6,6 +6,7 @@ import {
 } from 'react-query';
 
 import { getTenantInfo } from '@cognite/react-container';
+import { reportException } from '@cognite/react-errors';
 import { DocumentsFilter } from '@cognite/sdk-playground';
 
 import {
@@ -14,9 +15,9 @@ import {
 } from 'constants/logging';
 import { RELATED_DOCUMENT_KEY } from 'constants/react-query';
 import { TimeLogStages, useMetricLogger } from 'hooks/useTimeLog';
+import { adaptSaveSearchContentToSchemaBody } from 'modules/api/savedSearches/adaptSavedSearch';
 import { SavedSearchContent } from 'modules/api/savedSearches/types';
-import { createSavedSearch } from 'modules/api/savedSearches/utils';
-import { useJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import { documentSearchService } from 'modules/documentSearch/service';
 import {
   AggregateNames,
@@ -169,17 +170,20 @@ export const useMutateRelatedDocumentPatch = () => {
   const [tenant] = getTenantInfo();
 
   return useMutation(
-    async (props: SavedSearchContent) => {
-      await createSavedSearch({
-        values: props,
-        name: RELATED_DOCUMENT_KEY,
-        headers,
-        tenant,
-      });
+    async (savedSearchContent: SavedSearchContent) => {
+      await discoverAPI.savedSearches
+        .create(
+          RELATED_DOCUMENT_KEY,
+          adaptSaveSearchContentToSchemaBody(savedSearchContent),
+          headers,
+          tenant
+        )
+        .catch((error) => reportException(String(error)));
+
       // if the saved search returns an error, we still need the filters to work properly
       // hence returning a new promise with the filters
       return new Promise<SavedSearchContent>((resolve) => {
-        resolve(props);
+        resolve(savedSearchContent);
       });
     },
     {

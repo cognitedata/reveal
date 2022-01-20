@@ -21,7 +21,7 @@ import {
   useSavedSearchSort,
   useSavedSearchSortClear,
 } from 'modules/api/savedSearches/hooks/useSavedSearchSort';
-import { useQuerySavedSearchCurrent } from 'modules/api/savedSearches/useQuery';
+import { useQuerySavedSearchCurrent } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';

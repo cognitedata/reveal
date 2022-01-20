@@ -5,7 +5,6 @@ import { isEnterPressed } from 'utils/general.helper';
 import { log } from 'utils/log';
 
 import { Dropdown, Input, Menu, Tooltip, Icon } from '@cognite/cogs.js';
-import { getTenantInfo } from '@cognite/react-container';
 
 import Divider from 'components/divider';
 import OverwriteSearchModal from 'components/modals/overwrite-search-modal';
@@ -14,13 +13,13 @@ import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
 import { useSavedSearchNavigation } from 'hooks/useSavedSearchNavigation';
 import { SavedSearchContent } from 'modules/api/savedSearches';
+import { adaptSaveSearchContentToSchemaBody } from 'modules/api/savedSearches/adaptSavedSearch';
 import { useSavedSearch } from 'modules/api/savedSearches/hooks';
-import { useQuerySavedSearchesList } from 'modules/api/savedSearches/useQuery';
 import {
   useSavedSearchCreateMutate,
   useSavedSearchDeleteMutate,
 } from 'modules/api/savedSearches/useSavedSearchesMutate';
-import { useJsonHeaders } from 'modules/api/service';
+import { useQuerySavedSearchesList } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { GenericApiError } from 'modules/api/types';
 
 import {
@@ -99,13 +98,11 @@ export const SavedSearches: React.FC = React.memo(() => {
     setCurrentName('');
   };
   // temp, need to refactor the api call into a mutate file
-  const headers = useJsonHeaders();
   const currentSavedSearch = useCurrentSavedSearchState();
   const savedSearchList = useQuerySavedSearchesList();
-  const [tenant] = getTenantInfo();
 
-  const { mutateAsync: createMutate } = useSavedSearchCreateMutate();
-  const { mutateAsync: deleteMutate } = useSavedSearchDeleteMutate();
+  const { mutateAsync: createSavedSearch } = useSavedSearchCreateMutate();
+  const { mutateAsync: deleteSavedSearch } = useSavedSearchDeleteMutate();
 
   const isCurrentNameInSavedSearch = savedSearchList.data?.find(
     (record) => record.name === currentName
@@ -113,11 +110,7 @@ export const SavedSearches: React.FC = React.memo(() => {
 
   const overWriteSearch = async () => {
     if (isCurrentNameInSavedSearch?.value.id) {
-      await deleteMutate({
-        id: isCurrentNameInSavedSearch?.value.id,
-        headers,
-        tenant,
-      });
+      await deleteSavedSearch(isCurrentNameInSavedSearch?.value.id);
     }
     handleCreateSavedSearch();
     setIsOverwriteSearchModalOpen(false);
@@ -151,11 +144,9 @@ export const SavedSearches: React.FC = React.memo(() => {
       return;
     }
 
-    const doingCreateMutate = createMutate({
-      values: currentSavedSearch,
-      name: currentName,
-      headers,
-      tenant,
+    const doingCreateMutate = createSavedSearch({
+      id: currentName,
+      body: adaptSaveSearchContentToSchemaBody(currentSavedSearch),
     });
 
     setCurrentName('');

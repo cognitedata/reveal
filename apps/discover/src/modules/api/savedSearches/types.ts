@@ -21,7 +21,7 @@ export interface SavedSearchContent {
   id?: string;
   query?: string;
   filters: SearchOptionFilters;
-  sortBy?: SearchOptionSortBy;
+  sortBy?: SavedSearchSortBy;
   geoJson?: GeoJson[]; // this is the new field we should move to
   createdTime?: string;
   owner?: BasicUserInfo;
@@ -37,13 +37,11 @@ export interface SearchOptionFilters {
   extraGeoJsonFilters?: MapLayerGeoJsonFilter[];
 }
 
-export type SearchOptionSortBy = SavedSearchSortBy;
-
 // we should not be introducing new types, this stuff already exists
 // let's work on removing this:
 export interface SavedSearchQuery {
   phrase?: string;
   geoFilter?: GeoJson[];
   filters?: SearchOptionFilters;
-  sortBy?: SearchOptionSortBy;
+  sortBy?: SavedSearchSortBy;
 }
