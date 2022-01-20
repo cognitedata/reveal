@@ -4,6 +4,7 @@ import {
   DiagramInstance,
   DiagramLineInstance,
   DiagramSymbolInstance,
+  DocumentType,
 } from '../types';
 import {
   connectionExists,
@@ -11,7 +12,7 @@ import {
   isDiagramInstanceInList,
   isPathIdInInstance,
 } from '../utils';
-import { PidDocument, PidGroup } from '../pid';
+import { PidDocument, PidGroup, PidPath } from '../pid';
 
 import { findConnections } from './findConnections';
 import { detectLines } from './findLines';
@@ -26,16 +27,34 @@ export const getOverlappingPidGroups = (
 export const getPotentialLines = (
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
-  pidDocument: PidDocument
+  pidDocument: PidDocument,
+  documentType: DocumentType
 ) => {
   const allInstances = [...symbolInstances, ...lineInstances];
 
+  const isPathInAnyInstance = (path: PidPath) =>
+    !allInstances.some((diagramInstance) =>
+      isPathIdInInstance(path.pathId, getDiagramInstanceId(diagramInstance))
+    );
+
+  const isPathValidForDocumentType = (path: PidPath) =>
+    documentType !== DocumentType.isometric ||
+    path.segmentList.some(
+      (pathSegment) => pathSegment.pathType === 'CurveSegment'
+    ) === false;
+
+  const isPathStrokeValid = (path: PidPath) =>
+    documentType === DocumentType.isometric
+      ? path.style?.strokeLinejoin === 'miter'
+      : path.style?.stroke !== null;
+
   const matches = pidDocument.pidPaths.filter(
     (path) =>
-      !allInstances.some((diagramInstance) =>
-        isPathIdInInstance(path.pathId, getDiagramInstanceId(diagramInstance))
-      )
+      isPathValidForDocumentType(path) &&
+      isPathInAnyInstance(path) &&
+      isPathStrokeValid(path)
   );
+
   const potentialLines: DiagramLineInstance[] = matches.map(
     (pidPath) =>
       ({
@@ -55,6 +74,7 @@ export interface FindLinesAndConnectionsOutput {
 
 export const findLinesAndConnections = (
   pidDocument: PidDocument,
+  documentType: DocumentType,
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
   oldConnections: DiagramConnection[]
@@ -62,7 +82,8 @@ export const findLinesAndConnections = (
   const potentialLineInstanceList: DiagramLineInstance[] = getPotentialLines(
     symbolInstances,
     lineInstances,
-    pidDocument
+    pidDocument,
+    documentType
   );
 
   const relevantSymbolInstances = symbolInstances.filter(

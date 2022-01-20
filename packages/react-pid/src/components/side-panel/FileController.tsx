@@ -5,6 +5,7 @@ import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  PidDocumentWithDom,
 } from '@cognite/pid-tools';
 
 import {
@@ -23,6 +24,7 @@ interface FileControllerProps {
   disabled: boolean;
   loadSymbolsAsJson: (json: any) => void;
   saveGraphAsJson: () => void;
+  getPidDocument: () => PidDocumentWithDom | undefined;
 }
 
 export const FileController: React.FC<FileControllerProps> = ({
@@ -32,6 +34,7 @@ export const FileController: React.FC<FileControllerProps> = ({
   loadSymbolsAsJson,
   saveGraphAsJson,
   lineInstances,
+  getPidDocument,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -42,7 +45,8 @@ export const FileController: React.FC<FileControllerProps> = ({
           return response.json();
         })
         .then((json) => {
-          if (isValidSymbolFileSchema(json)) {
+          const pidDocument = getPidDocument();
+          if (pidDocument && isValidSymbolFileSchema(json, pidDocument.svg)) {
             loadSymbolsAsJson(json);
           }
         });

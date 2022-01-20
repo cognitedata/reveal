@@ -301,6 +301,7 @@ export const colorSymbol = (
   diagramInstanceId: DiagramInstanceId,
   strokeColor: string,
   diagramInstances: DiagramInstance[],
+  mainSvg: SVGSVGElement,
   additionalStyles?: { [key: string]: string }
 ) => {
   const symbolInstance = diagramInstances.filter(
@@ -309,25 +310,21 @@ export const colorSymbol = (
 
   if (symbolInstance) {
     symbolInstance.pathIds.forEach((pathId) => {
-      Object.assign(
-        (document.getElementById(pathId) as unknown as SVGElement).style,
-        {
-          ...additionalStyles,
-          stroke: strokeColor,
-        }
-      );
+      Object.assign((mainSvg.getElementById(pathId) as SVGElement).style, {
+        ...additionalStyles,
+        stroke: strokeColor,
+      });
     });
   }
 };
 
 export const setStrokeWidth = (
   diagramInstance: DiagramInstance,
-  strokeWidth: string
+  strokeWidth: string,
+  svg: SVGSVGElement
 ) => {
   diagramInstance.pathIds.forEach((pathId) => {
-    (
-      document.getElementById(pathId) as unknown as SVGElement
-    ).style.strokeWidth = strokeWidth;
+    (svg.getElementById(pathId) as SVGElement).style.strokeWidth = strokeWidth;
   });
 };
 
@@ -468,6 +465,7 @@ export const visualizeConnections = (
     }
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
     path.setAttribute(
       'd',
       `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`

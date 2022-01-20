@@ -1,6 +1,5 @@
-import { SVG_ID } from '../constants';
 import { BoundingBox, DiagramLabelOutputFormat } from '../types';
-import { translatePointWithDOM } from '../matcher/svgPathParser';
+import { translatePointWithDom } from '../matcher/svgPathParser';
 
 export class PidTspan {
   id: string;
@@ -13,16 +12,15 @@ export class PidTspan {
     this.text = text;
   }
 
-  static fromSVGTSpan(tSpan: SVGTSpanElement) {
+  static fromSVGTSpan(tSpan: SVGTSpanElement, svg: SVGSVGElement) {
     const bBox = (tSpan.parentElement as unknown as SVGTextElement).getBBox();
-    const svg = document.getElementById(SVG_ID) as unknown as SVGSVGElement;
 
-    const bBoxXYMin = translatePointWithDOM(bBox.x, bBox.y, {
+    const bBoxXYMin = translatePointWithDom(bBox.x, bBox.y, {
       svg,
       currentElem: tSpan,
     });
 
-    const bBoxXYMax = translatePointWithDOM(
+    const bBoxXYMax = translatePointWithDom(
       bBox.x + bBox.width,
       bBox.y + bBox.height,
       {

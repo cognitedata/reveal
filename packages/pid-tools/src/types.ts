@@ -56,3 +56,9 @@ export interface DiagramLabelOutputFormat {
   text: string;
   boundingBox: BoundingBox;
 }
+
+export enum DocumentType {
+  pid = 'P&ID',
+  isometric = 'Isometric',
+  unknown = 'Unknown',
+}

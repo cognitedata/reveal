@@ -5,9 +5,11 @@ import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  DocumentType,
+  PidDocumentWithDom,
 } from '@cognite/pid-tools';
 
-import { DocumentType, ToolType } from '../../types';
+import { ToolType } from '../../types';
 import { SaveSymbolData } from '../../ReactPid';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
@@ -36,6 +38,7 @@ const ToolBarWrapper = styled.div`
 `;
 
 interface SidePanelProps {
+  getPidDocument: () => PidDocumentWithDom | undefined;
   active: ToolType;
   symbols: DiagramSymbol[];
   lines: DiagramLineInstance[];
@@ -59,6 +62,7 @@ interface SidePanelProps {
 }
 
 export const SidePanel = ({
+  getPidDocument,
   active,
   symbols,
   lines,
@@ -140,6 +144,7 @@ export const SidePanel = ({
           lineInstances={lines}
           loadSymbolsAsJson={loadSymbolsAsJson}
           saveGraphAsJson={saveGraphAsJson}
+          getPidDocument={getPidDocument}
         />
         {documentType !== DocumentType.unknown && (
           <span>Document type: {documentType}</span>

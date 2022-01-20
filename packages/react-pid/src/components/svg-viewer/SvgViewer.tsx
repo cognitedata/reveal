@@ -5,10 +5,10 @@ import {
   DiagramLineInstance,
   DiagramSymbolInstance,
   getDiagramInstanceId,
-  PidDocument,
   SVG_ID,
   getDiagramInstanceByPathId,
   getInstanceByDiagramInstanceId,
+  PidDocumentWithDom,
 } from '@cognite/pid-tools';
 import { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
@@ -46,8 +46,7 @@ interface SvgViewerProps {
   setConnections: (arg: DiagramConnection[]) => void;
   labelSelection: DiagramInstanceId | null;
   setLabelSelection: (arg: DiagramInstanceId | null) => void;
-  pidDocument: PidDocument | undefined;
-  setPidDocument: (arg: PidDocument) => void;
+  setPidDocument: (arg: PidDocumentWithDom) => void;
   activeLineNumber: string | null;
 }
 
@@ -64,7 +63,6 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   setConnectionSelection,
   connections,
   setConnections,
-  pidDocument,
   setPidDocument,
   labelSelection,
   setLabelSelection,
@@ -76,7 +74,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   const [graphPaths, setGraphPaths] = useState<DiagramInstanceId[][]>([]);
 
   /* eslint-disable no-param-reassign */
-  const onMouseEnter = (node: SVGElement) => {
+  const onMouseEnter = (node: SVGElement, mainSvg: SVGSVGElement) => {
     const boldStrokeWidth = (
       1.5 * parseInt(node.style.strokeWidth, 10)
     ).toString();
@@ -87,7 +85,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
       if (symbolInstance === null) return;
 
-      setStrokeWidth(symbolInstance, boldStrokeWidth);
+      setStrokeWidth(symbolInstance, boldStrokeWidth, mainSvg);
     } else if (active === 'graphExplorer') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
@@ -112,6 +110,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           diagramInstanceId,
           COLORS.graphPath,
           [...symbolInstances, ...lines],
+          mainSvg,
           {
             filter: `hue-rotate(${(graphPathIndex + 1) * 100}deg)`,
           }
@@ -124,14 +123,18 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
 
       if (symbolInstance === null) return;
-      setStrokeWidth(symbolInstance, boldStrokeWidth);
+      setStrokeWidth(symbolInstance, boldStrokeWidth, mainSvg);
     }
     node.style.strokeWidth = boldStrokeWidth;
   };
   /* eslint-enable no-param-reassign */
 
   /* eslint-disable no-param-reassign */
-  const onMouseLeave = (node: SVGElement, originalStrokeWidth: string) => {
+  const onMouseLeave = (
+    node: SVGElement,
+    originalStrokeWidth: string,
+    mainSvg: SVGSVGElement
+  ) => {
     if (active === 'connectInstances') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
@@ -139,7 +142,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
       if (symbolInstance === null) return;
 
-      setStrokeWidth(symbolInstance, originalStrokeWidth);
+      setStrokeWidth(symbolInstance, originalStrokeWidth, mainSvg);
     } else if (active === 'graphExplorer') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
@@ -163,6 +166,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           diagramInstanceId,
           COLORS.graphPath,
           [...symbolInstances, ...lines],
+          mainSvg,
           {
             filter: 'hue-rotate(0)',
           }
@@ -175,7 +179,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
 
       if (symbolInstance === null) return;
-      setStrokeWidth(symbolInstance, originalStrokeWidth);
+      setStrokeWidth(symbolInstance, originalStrokeWidth, mainSvg);
     }
     node.style.strokeWidth = originalStrokeWidth;
   };
@@ -351,9 +355,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
 
     const allSVGElements: SVGElement[] = [];
     applyToLeafSVGElements(svg, (node) => {
-      if (pidDocument === undefined) {
-        allSVGElements.push(node);
-      }
+      allSVGElements.push(node);
 
       applyStyleToNode({
         node,
@@ -369,11 +371,11 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         activeLineNumber,
       });
 
-      node.addEventListener('mouseenter', () => onMouseEnter(node));
+      node.addEventListener('mouseenter', () => onMouseEnter(node, svg));
 
       const originalStrokeWidth = node.style.strokeWidth;
       node.addEventListener('mouseleave', () => {
-        onMouseLeave(node, originalStrokeWidth);
+        onMouseLeave(node, originalStrokeWidth, svg);
       });
 
       node.addEventListener('click', () => {
@@ -381,9 +383,10 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       });
     });
 
-    if (pidDocument === undefined) {
-      setPidDocument(PidDocument.fromSVGElements(allSVGElements));
-    } else if (active === 'connectInstances') {
+    const pidDocument = PidDocumentWithDom.fromSVG(svg, allSVGElements);
+    setPidDocument(pidDocument);
+
+    if (pidDocument && active === 'connectInstances') {
       visualizeConnections(
         svg,
         pidDocument,
@@ -394,7 +397,6 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
     }
   };
   /* eslint-enable no-param-reassign */
-
   useEffect(() => {
     if (active !== 'graphExplorer') {
       return;

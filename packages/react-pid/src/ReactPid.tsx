@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  PidDocument,
   DiagramSymbol,
   DiagramLineInstance,
   SvgRepresentation,
@@ -11,11 +10,13 @@ import {
   getNoneOverlappingSymbolInstances,
   DiagramSymbolInstance,
   pruneSymbolOverlappingPathsFromLines,
+  DocumentType,
+  PidDocumentWithDom,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
 
 import { loadSymbolsFromJson, saveGraphAsJson } from './utils/jsonUtils';
-import { DocumentType, ToolType } from './types';
+import { ToolType } from './types';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
 import { SvgViewer } from './components/svg-viewer/SvgViewer';
@@ -26,11 +27,6 @@ import {
   deleteSymbolFromState,
   getSymbolByTypeAndDescription,
 } from './utils/symbolUtils';
-
-let pidDocument: PidDocument | undefined;
-const setPidDocument = (pidDoc: PidDocument) => {
-  pidDocument = pidDoc;
-};
 
 export interface SaveSymbolData {
   symbolType: string;
@@ -59,6 +55,12 @@ export const ReactPid: React.FC = () => {
   const [connections, setConnections] = React.useState<DiagramConnection[]>([]);
   const [connectionSelection, setConnectionSelection] =
     React.useState<DiagramInstanceId | null>(null);
+
+  let pidDocument: PidDocumentWithDom | undefined;
+  const setPidDocument = (arg: PidDocumentWithDom) => {
+    pidDocument = arg;
+  };
+  const getPidDocument = () => pidDocument;
 
   useEffect(() => {
     if (documentType !== DocumentType.unknown) {
@@ -111,7 +113,12 @@ export const ReactPid: React.FC = () => {
     if (pidDocument === undefined) return;
 
     const { lineInstances, newConnections } =
-      pidDocument.findLinesAndConnection(symbolInstances, lines, connections);
+      pidDocument.findLinesAndConnection(
+        documentType,
+        symbolInstances,
+        lines,
+        connections
+      );
 
     setLines([...lines, ...lineInstances]);
     setConnections(newConnections);
@@ -220,8 +227,6 @@ export const ReactPid: React.FC = () => {
     setFileUrl('');
   };
 
-  const MemoizedSvgViewer = React.memo(SvgViewer);
-
   return (
     <ReactPidWrapper>
       <ReactPidLayout>
@@ -246,6 +251,7 @@ export const ReactPid: React.FC = () => {
           setLineNumbers={setLineNumbers}
           activeLineNumber={activeLineNumber}
           setActiveLineNumber={setActiveLineNumber}
+          getPidDocument={getPidDocument}
         />
         <Viewport>
           {fileUrl === '' ? (
@@ -261,7 +267,7 @@ export const ReactPid: React.FC = () => {
               onChange={handleFileChange}
             />
           ) : (
-            <MemoizedSvgViewer
+            <SvgViewer
               fileUrl={fileUrl}
               active={active}
               symbolInstances={symbolInstances}
@@ -274,7 +280,6 @@ export const ReactPid: React.FC = () => {
               setConnectionSelection={setConnectionSelection}
               connections={connections}
               setConnections={setConnections}
-              pidDocument={pidDocument}
               setPidDocument={setPidDocument}
               labelSelection={labelSelection}
               setLabelSelection={setLabelSelection}

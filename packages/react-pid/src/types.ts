@@ -6,9 +6,3 @@ export type ToolType =
   | 'graphExplorer'
   | 'selectDocumentType'
   | 'setLineNumber';
-
-export enum DocumentType {
-  pid = 'P&ID',
-  isometric = 'Isometric',
-  unknown = 'Unknown',
-}

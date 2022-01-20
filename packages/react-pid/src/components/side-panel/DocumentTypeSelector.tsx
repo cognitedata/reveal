@@ -1,7 +1,6 @@
 import { Button } from '@cognite/cogs.js';
+import { DocumentType } from '@cognite/pid-tools';
 import styled from 'styled-components';
-
-import { DocumentType } from '../../types';
 
 const SidePanelOverlay = styled.div`
   position: absolute;

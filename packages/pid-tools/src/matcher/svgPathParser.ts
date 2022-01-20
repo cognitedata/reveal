@@ -1,6 +1,5 @@
 import { parseSVG, makeAbsolute, CommandMadeAbsolute } from 'svg-path-parser';
 
-import { SVG_ID } from '../constants';
 import { CurveSegment, LineSegment, PathSegment, Point } from '../geometry';
 
 type PointTranslationParams = {
@@ -8,7 +7,7 @@ type PointTranslationParams = {
   svg: SVGSVGElement;
 };
 
-export const translatePointWithDOM = (
+export const translatePointWithDom = (
   x: number,
   y: number,
   params: PointTranslationParams
@@ -52,23 +51,22 @@ const getPoint = (
     return new Point(x, y);
   }
 
-  const translatedPoint = translatePointWithDOM(x, y, params) as DOMPoint;
+  const translatedPoint = translatePointWithDom(x, y, params) as DOMPoint;
   return new Point(translatedPoint.x, translatedPoint.y);
 };
 
 export const getSegments = (
   commands: CommandMadeAbsolute[],
+  mainSVG: SVGSVGElement | undefined = undefined,
   pathId: string | null = null
 ): PathSegment[] => {
   const segments: PathSegment[] = [];
 
   let params: PointTranslationParams | undefined;
-  if (pathId) {
-    const mainSVG = document.getElementById(SVG_ID) as unknown as SVGSVGElement;
-
-    const currentElem = document.getElementById(
+  if (pathId && mainSVG) {
+    const currentElem = mainSVG.getElementById(
       pathId as string
-    ) as unknown as SVGPathElement;
+    ) as SVGPathElement;
 
     params = { currentElem, svg: mainSVG };
   }
@@ -101,12 +99,18 @@ export const getSegments = (
   return segments;
 };
 
-export const svgCommandsToSegments = (
+export const svgCommandsToSegments = (d: string): PathSegment[] => {
+  const commands = makeAbsolute(parseSVG(d));
+  return getSegments(commands);
+};
+
+export const svgCommandsToSegmentsWithDom = (
   d: string,
+  mainSVG: SVGSVGElement,
   pathId: string | null = null
 ): PathSegment[] => {
   const commands = makeAbsolute(parseSVG(d));
-  return getSegments(commands, pathId);
+  return getSegments(commands, mainSVG, pathId);
 };
 
 export const segmentsToSvgCommands = (

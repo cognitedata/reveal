@@ -6,12 +6,11 @@ import {
   DiagramConnection,
   PidDocument,
   getNoneOverlappingSymbolInstances,
-  SVG_ID,
   BoundingBox,
   DiagramInstanceOutputFormat,
+  DocumentType,
+  PidDocumentWithDom,
 } from '@cognite/pid-tools';
-
-import { DocumentType } from '../types';
 
 import {
   getLineInstancesOutputFormat,
@@ -39,7 +38,7 @@ interface Graph {
 }
 
 const getGraphFormat = (
-  pidDocument: PidDocument,
+  pidDocument: PidDocumentWithDom,
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
@@ -53,9 +52,7 @@ const getGraphFormat = (
     symbolInstances
   );
 
-  const svgViewBox = (
-    document.getElementById(SVG_ID) as unknown as SVGSVGElement
-  ).viewBox;
+  const svgViewBox = pidDocument.svg.viewBox;
 
   const viewBox = {
     x: svgViewBox.baseVal.x,
@@ -76,7 +73,7 @@ const getGraphFormat = (
 };
 
 export const saveGraphAsJson = (
-  pidDocument: PidDocument,
+  pidDocument: PidDocumentWithDom,
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
@@ -100,14 +97,14 @@ export const saveGraphAsJson = (
   saveAs(fileToSave, 'Graph.json');
 };
 
-export const isValidSymbolFileSchema = (jsonData: any) => {
+export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
   const missingIds: string[] = [];
 
   if ('lines' in jsonData) {
     (jsonData.lines as DiagramLineInstance[]).forEach(
       (e: DiagramLineInstance) =>
         e.pathIds.forEach((id: string) => {
-          if (document.getElementById(id) === null) {
+          if (svg.getElementById(id) === null) {
             missingIds.push(id);
           }
         })
@@ -118,7 +115,7 @@ export const isValidSymbolFileSchema = (jsonData: any) => {
     (jsonData.symbolInstances as DiagramSymbolInstance[]).forEach(
       (e: DiagramSymbolInstance) =>
         e.pathIds.forEach((id: string) => {
-          if (document.getElementById(id) === null) {
+          if (svg.getElementById(id) === null) {
             missingIds.push(id);
           }
         })
@@ -129,12 +126,12 @@ export const isValidSymbolFileSchema = (jsonData: any) => {
     (jsonData.connections as DiagramConnection[]).forEach(
       (connection: DiagramConnection) => {
         connection.end.split('-').forEach((pathId) => {
-          if (document.getElementById(pathId) === null) {
+          if (svg.getElementById(pathId) === null) {
             missingIds.push(pathId);
           }
         });
         connection.start.split('-').forEach((pathId) => {
-          if (document.getElementById(pathId) === null) {
+          if (svg.getElementById(pathId) === null) {
             missingIds.push(pathId);
           }
         });
