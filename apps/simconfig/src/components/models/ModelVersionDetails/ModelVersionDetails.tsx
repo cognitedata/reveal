@@ -38,18 +38,24 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   const {
     data: boundaryConditions,
     isFetching: isFetchingBoundaryConditions,
-    isSuccess: isSuccessBoundaryConditions
-  } =
-    useGetModelBoundaryConditionListQuery({
+    isSuccess: isSuccessBoundaryConditions,
+  } = useGetModelBoundaryConditionListQuery(
+    {
       project,
       simulator,
       modelName,
       version,
-    }, {pollingInterval: !isProcessingReady ? PROCESSING_POLLING_INTERVAL : undefined});
+    },
+    {
+      pollingInterval: !isProcessingReady
+        ? PROCESSING_POLLING_INTERVAL
+        : undefined,
+    }
+  );
 
   useEffect(() => {
-    if(boundaryConditions?.modelBoundaryConditionList.length){
-      setIsProcessingReady(true)
+    if (boundaryConditions?.modelBoundaryConditionList.length) {
+      setIsProcessingReady(true);
     }
   }, [boundaryConditions]);
 
@@ -90,25 +96,26 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
             </div>
           </div>
           <div className="actions">
-            <div className="download-link">
-              <Button
-                disabled={isModelFileDownloading}
-                icon="Download"
-                loading={isModelFileDownloading}
-                onClick={onDownloadClicked}
-              >
-                Download
-              </Button>
-            </div>
             <div className="charts-link">
               <Button
                 disabled={!boundaryConditions?.chartsUrl}
                 href={boundaryConditions?.chartsUrl}
                 icon="LineChart"
                 target="_blank"
-                type="primary"
+                type="tertiary"
               >
                 View in Charts
+              </Button>
+            </div>
+            <div className="download-link">
+              <Button
+                disabled={isModelFileDownloading}
+                icon="Download"
+                loading={isModelFileDownloading}
+                type="tertiary"
+                onClick={onDownloadClicked}
+              >
+                Download
               </Button>
             </div>
           </div>

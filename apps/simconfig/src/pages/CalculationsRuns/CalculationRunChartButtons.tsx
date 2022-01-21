@@ -22,7 +22,7 @@ export function CalculationRunChartButtons({
     useGetCalculationQuery({
       project,
       externalId,
-      eventId
+      eventId,
     });
 
   if (!chartLinks) {

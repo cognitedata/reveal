@@ -7922,6 +7922,14 @@
     "@types/react" "*"
     date-fns "^2.16.1"
 
+"@types/react-date-range@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@types/react-date-range/-/react-date-range-1.4.2.tgz#6e4ab5b385ab375473d87507b0966021ae88a258"
+  integrity sha512-C6RxGJutLcpGdmMjztZfzemr8RHq45UqXLaxUN4M7c1fGqVhTwt2l3KU9zEJolwSVZ4DvjNLK+PFh4j0tXxDdA==
+  dependencies:
+    "@types/react" "*"
+    date-fns "^2.16.1"
+
 "@types/react-dom@*", "@types/react-dom@>=16.9.0", "@types/react-dom@^17.0.8":
   version "17.0.8"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.8.tgz#3180de6d79bf53762001ad854e3ce49f36dd71fc"
@@ -25790,6 +25798,16 @@ react-date-range@^1.1.3:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-date-range/-/react-date-range-1.2.0.tgz#33ad05c05d0ba6ff325fcaf5a7c6829863dc6d04"
   integrity sha512-s9gBz3EditePvUIZZZTSKkt/CRlTaa+upMEe5/5z4eP2TmkwD8a480iBWpPvtmHz1eR26vGX0WflpVwZS1wywA==
+  dependencies:
+    classnames "^2.2.6"
+    prop-types "^15.7.2"
+    react-list "^0.8.13"
+    shallow-equal "^1.2.1"
+
+react-date-range@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-date-range/-/react-date-range-1.4.0.tgz#d2073b85bdb4185e4dde288ce29198dd90074045"
+  integrity sha512-+9t0HyClbCqw1IhYbpWecjsiaftCeRN5cdhsi9v06YdimwyMR2yYHWcgVn3URwtN/txhqKpEZB6UX1fHpvK76w==
   dependencies:
     classnames "^2.2.6"
     prop-types "^15.7.2"

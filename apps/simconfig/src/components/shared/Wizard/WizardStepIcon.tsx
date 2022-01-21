@@ -120,4 +120,24 @@ export const WizardStepIconContainer = styled.div<{
       background-position: 0 0;
     }
   }
+  &.disabled {
+    &.active {
+      .cogs-icon {
+        opacity: 1;
+        background: var(--cogs-border-default);
+        color: var(--cogs-white);
+        box-shadow: inset 0 0 0 ${(props) => props.borderWidth}px
+          var(--cogs-primary);
+      }
+      &::before {
+        background-position: 0 0;
+      }
+    }
+    &.completed {
+      .cogs-icon {
+        opacity: 1;
+        color: var(--cogs-border-default);
+      }
+    }
+  }
 `;

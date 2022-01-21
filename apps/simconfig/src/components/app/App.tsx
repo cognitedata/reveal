@@ -28,7 +28,6 @@ export default function App() {
   enhanceSimconfigApiEndpoints();
 
   useEffect(() => {
-    // TODO(SIM-209) Move to location loader
     void dispatch(fetchGroups(cdfClient));
 
     dispatch(
@@ -56,7 +55,7 @@ export default function App() {
         defaultPendingElement={<Loader />}
         defaultPendingMs={50}
         location={location}
-        routes={routes(dispatch, project)}
+        routes={routes(dispatch)}
       >
         <RoutedAppContainer>
           <MenuBar />

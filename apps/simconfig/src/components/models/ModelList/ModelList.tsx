@@ -1,12 +1,7 @@
-import { useEffect } from 'react';
 import { Link } from 'react-location';
-
-import { a, useSpringRef, useTrail } from '@react-spring/web';
-import type { UseTrailProps } from '@react-spring/web';
 
 import styled from 'styled-components/macro';
 
-import { Skeleton } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 
 import { hashCode } from 'utils/stringUtils';
@@ -14,48 +9,13 @@ import { hashCode } from 'utils/stringUtils';
 interface ModelListProps {
   modelFiles: ModelFile[];
   className?: string;
-  isFetchingModelFiles: boolean;
 }
 
-export function ModelList({
-  modelFiles,
-  className,
-  isFetchingModelFiles,
-}: ModelListProps) {
-  const springRef = useSpringRef();
-  const [modelFilesTrail, modelFilesSpring] = useTrail(
-    modelFiles.length,
-    (): UseTrailProps => ({
-      ref: springRef,
-      opacity: 0,
-      x: -20,
-    })
-  );
-
-  useEffect(() => {
-    modelFilesSpring.start({
-      opacity: 1,
-      x: 0,
-    });
-  });
-
-  if (isFetchingModelFiles) {
-    return (
-      <ModelFilesListSkeleton>
-        <Skeleton.Rectangle height="65px" width="100%" />
-        <Skeleton.Rectangle height="65px" width="100%" />
-        <Skeleton.Rectangle height="65px" width="100%" />
-        <Skeleton.Rectangle height="65px" width="100%" />
-        <Skeleton.Rectangle height="65px" width="100%" />
-        <Skeleton.Rectangle height="65px" width="100%" />
-      </ModelFilesListSkeleton>
-    );
-  }
-
+export function ModelList({ modelFiles, className }: ModelListProps) {
   return (
     <ModelListElement className={className}>
-      {modelFiles.map((modelFile, index) => (
-        <a.li key={modelFile.id} style={modelFilesTrail[index]}>
+      {modelFiles.map((modelFile) => (
+        <li key={modelFile.id}>
           <Link
             getActiveProps={() => ({ className: 'active' })}
             role="link"
@@ -75,7 +35,7 @@ export function ModelList({
               </div>
             </div>
           </Link>
-        </a.li>
+        </li>
       ))}
     </ModelListElement>
   );
@@ -126,12 +86,6 @@ const ModelListElement = styled.ul`
   }
 `;
 
-const ModelFilesListSkeleton = styled.div`
-  div {
-    margin-bottom: 12px;
-  }
-`;
-
 interface SimulatorIconProps {
   content: string;
   gradientOffset?: number;
@@ -142,9 +96,8 @@ const SimulatorIcon = styled.span<SimulatorIconProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  font-size: 18px;
+  width: 36px;
+  height: 36px;
   color: var(--cogs-primary);
   border: 1px solid var(--cogs-primary);
   border-radius: var(--cogs-border-radius--default);

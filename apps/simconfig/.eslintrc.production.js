@@ -244,6 +244,13 @@ module.exports = {
       },
     ],
     'react/jsx-boolean-value': 'warn',
+    'jsx-a11y/label-has-associated-control': [
+      'error',
+      {
+        controlComponents: ['Field'],
+        depth: 3,
+      },
+    ],
 
     '@cognite/styled-macro': 'error',
     '@cognite/require-t-function': 'error',

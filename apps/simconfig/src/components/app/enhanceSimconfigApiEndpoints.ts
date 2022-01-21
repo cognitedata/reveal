@@ -23,6 +23,10 @@ export const enhanceSimconfigApiEndpoints = () => {
           },
         ],
       },
+      upsertCalculation: {
+        invalidatesTags: ['ModelCalculation'],
+      },
+
       getModelFileList: {
         providesTags: (result) => [
           ...(result?.modelFileList ?? []).map(({ externalId }) => ({
@@ -40,6 +44,10 @@ export const enhanceSimconfigApiEndpoints = () => {
           },
         ],
       },
+      createModelFile: {
+        invalidatesTags: [{ type: 'ModelFile', id: ID_LIST }],
+      },
+
       getModelFileVersionList: {
         providesTags: (result) => [
           ...(result?.modelFileList ?? []).map(({ externalId }) => ({
@@ -48,12 +56,8 @@ export const enhanceSimconfigApiEndpoints = () => {
           })),
         ],
       },
-
-      createModelFile: {
-        invalidatesTags: () => [{ type: 'ModelFile', id: ID_LIST }],
-      },
       updateModelFileVersion: {
-        invalidatesTags: () => ['ModelFile'],
+        invalidatesTags: ['ModelFile'],
       },
     },
   });

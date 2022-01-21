@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Link } from 'react-location';
+import { useMatchRoute, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import { Avatar, TopBar } from '@cognite/cogs.js';
@@ -11,6 +11,8 @@ import { selectProject } from 'store/simconfigApiProperties/selectors';
 export function MenuBar() {
   const project = useSelector(selectProject);
   const { authState } = useContext(CdfClientContext);
+  const matchRoute = useMatchRoute();
+  const navigate = useNavigate();
 
   return (
     <TopBar>
@@ -19,29 +21,29 @@ export function MenuBar() {
           subtitle={<div>{project}</div>}
           title="Cognite Simulator Configuration"
         />
-        <nav aria-label="Main" className="cogs-topbar--item__navigation">
-          <Link
-            className="cogs-btn cogs-btn-secondary cogs-btn--padding navigation-item"
-            getActiveProps={() => ({ className: 'active' })}
-            role="link"
-            to="/model-library"
-          >
-            Model library
-          </Link>
-          <Link
-            className="cogs-btn cogs-btn-secondary cogs-btn--padding navigation-item"
-            getActiveProps={() => ({ className: 'active' })}
-            role="link"
-            to="/calculations/runs"
-          >
-            Run browser
-          </Link>
-        </nav>
+        <TopBar.Navigation
+          links={[
+            {
+              name: 'Model library',
+              isActive: !!matchRoute({ to: 'model-library' }),
+              onClick: () => {
+                navigate({ to: '/model-library' });
+              },
+            },
+            {
+              name: 'Run browser',
+              isActive: !!matchRoute({ to: 'calculations/runs' }),
+              onClick: () => {
+                navigate({ to: '/calculations/runs' });
+              },
+            },
+          ]}
+        />
       </TopBar.Left>
       <TopBar.Right>
-        <TopBar.Item style={{ padding: '0 24px' }}>
+        <div className="cogs-topbar--item" style={{ padding: '0 24px' }}>
           <SimulatorStatus />
-        </TopBar.Item>
+        </div>
         <TopBar.Actions
           actions={[
             {

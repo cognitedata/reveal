@@ -8,12 +8,23 @@ export function errorNotificationMiddleware(_api: MiddlewareAPI) {
   return (next: Dispatch) =>
     (
       action: PayloadAction<{
-        data: { error: CogniteApiError };
-        error: CogniteApiError;
+        status?: number;
+        data?: { error?: CogniteApiError };
+        error?: CogniteApiError;
       }>
     ) => {
       if (isRejectedWithValue(action)) {
-        toast.error(action.error.message ?? action.payload.error.message);
+        // Don't display notification on 404 errors
+        if (
+          action.payload.data?.error?.message &&
+          action.payload.status !== 404
+        ) {
+          toast.error(
+            `Request failed: ${
+              action.payload.error?.message ?? 'Unknown error'
+            } (${action.error.message ?? '-'})`
+          );
+        }
       }
       return next(action);
     };

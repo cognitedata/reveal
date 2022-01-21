@@ -49,7 +49,6 @@ export function FileInput({
         </Flex>
       </DropTextWrapper>
       <div>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className="cogs-btn cogs-btn--padding" htmlFor="file-upload">
           Browse...
           <HiddenInputFile

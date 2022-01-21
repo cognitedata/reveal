@@ -2,6 +2,7 @@ import type { ChangeEvent } from 'react';
 import { useContext, useRef } from 'react';
 
 import { Field, Form, Formik } from 'formik';
+import styled from 'styled-components/macro';
 
 import { Button, Input, Select, toast } from '@cognite/cogs.js';
 import type {
@@ -15,7 +16,6 @@ import {
   useUpdateModelFileVersionMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
-import { HiddenInputFile } from 'components/forms/controls/elements';
 import { FileInput } from 'components/forms/controls/FileInput';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useAppSelector } from 'store/hooks';
@@ -37,8 +37,6 @@ import {
 } from './constants';
 import { InputRow } from './elements';
 import type { ModelFormState } from './types';
-
-import type { FormikProps } from 'formik';
 
 const getInitialModelFormState = (): ModelFormState => ({
   boundaryConditions: getSelectEntriesFromMap(BoundaryCondition),
@@ -66,7 +64,7 @@ const acceptedFileTypes = Object.keys(FileExtensionToSimulator);
 
 interface ComponentProps {
   initialModelFormState?: ModelFormState;
-  onUpload?: (modelName: string, source: string) => void;
+  onUpload?: (metadata: CreateMetadata | UpdateMetadata) => void;
 }
 
 export function ModelForm({
@@ -172,7 +170,7 @@ export function ModelForm({
     }
 
     if (onUpload) {
-      onUpload(metadata.modelName, simulator);
+      onUpload(metadata);
     }
   };
 
@@ -201,7 +199,7 @@ export function ModelForm({
         isSubmitting,
         errors,
         validateField,
-      }: FormikProps<ModelFormState>) => (
+      }) => (
         <Form>
           <InputRow>
             {file ? (
@@ -333,3 +331,12 @@ export function ModelForm({
     </Formik>
   );
 }
+
+const HiddenInputFile = styled.input`
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+`;
