@@ -109,8 +109,8 @@ describe('SectorLoader', () => {
     // Arrange
     const alreadyLoadedSector = createConsumedSector(createWantedSector(model, model.scene.root));
     stateHandler.updateState(
-      alreadyLoadedSector.metadata.id,
       alreadyLoadedSector.modelIdentifier,
+      alreadyLoadedSector.metadata.id,
       alreadyLoadedSector.levelOfDetail
     );
     const updateStateFn = jest.spyOn(stateHandler, 'updateState');

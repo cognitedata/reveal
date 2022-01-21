@@ -86,7 +86,7 @@ export class SectorLoader {
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
 
     const changedSectors = prioritizedResult.wantedSectors.filter(sector =>
-      hasSectorChanged(sector.metadata.id, sector.modelIdentifier, sector.levelOfDetail)
+      hasSectorChanged(sector.modelIdentifier, sector.metadata.id, sector.levelOfDetail)
     );
 
     const progressHelper = new ProgressReportHelper(this._progressCallback);
@@ -102,8 +102,8 @@ export class SectorLoader {
         const resolvedSector = consumed.result;
         if (currentBatchId === this._batchId && resolvedSector !== undefined) {
           this._modelStateHandler.updateState(
-            resolvedSector.metadata.id,
             resolvedSector.modelIdentifier,
+            resolvedSector.metadata.id,
             resolvedSector.levelOfDetail
           );
           yield resolvedSector;

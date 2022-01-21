@@ -9,7 +9,7 @@ import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadSch
 import Log from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 
-describe('SectorDownloadScheduler', () => {
+describe(SectorDownloadScheduler.name, () => {
   let sectorDownloadScheduler: SectorDownloadScheduler;
   let currentLogLevel: LogLevelNumbers;
 

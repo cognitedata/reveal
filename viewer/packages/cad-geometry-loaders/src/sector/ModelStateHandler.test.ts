@@ -31,11 +31,11 @@ describe('ModelStateHandler', () => {
     const consumedSimple: ConsumedSector = { ...simple, group: undefined, instancedMeshes: undefined };
 
     modelStateHandler.updateState(
-      consumedSimple.metadata.id,
       consumedSimple.modelIdentifier,
+      consumedSimple.metadata.id,
       consumedSimple.levelOfDetail
     );
-    expect(modelStateHandler.hasStateChanged(simple.metadata.id, simple.modelIdentifier, simple.levelOfDetail)).toBe(
+    expect(modelStateHandler.hasStateChanged(simple.modelIdentifier, simple.metadata.id, simple.levelOfDetail)).toBe(
       false
     );
 
@@ -43,8 +43,8 @@ describe('ModelStateHandler', () => {
     differentSectors.forEach(wantedSector => {
       expect(
         modelStateHandler.hasStateChanged(
-          wantedSector.metadata.id,
           wantedSector.modelIdentifier,
+          wantedSector.metadata.id,
           wantedSector.levelOfDetail
         )
       ).toBe(true);
@@ -58,14 +58,14 @@ describe('ModelStateHandler', () => {
     sectors.forEach(wantedSector => {
       const consumedSector: ConsumedSector = { ...wantedSector, group: undefined, instancedMeshes: undefined };
       modelStateHandler.updateState(
-        consumedSector.metadata.id,
         consumedSector.modelIdentifier,
+        consumedSector.metadata.id,
         consumedSector.levelOfDetail
       );
       expect(
         modelStateHandler.hasStateChanged(
-          wantedSector.metadata.id,
           wantedSector.modelIdentifier,
+          wantedSector.metadata.id,
           wantedSector.levelOfDetail
         )
       ).toBe(false);
