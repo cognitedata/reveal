@@ -89,7 +89,7 @@ export class GltfSectorRepository implements SectorRepository {
             geometryBatchingQueue.push({
               type,
               geometryBuffer: filteredGeometryBuffer,
-              instanceId: `primitive_${type.toString()}`
+              instanceId: `${RevealGeometryCollectionType[type].toString()}`
             });
             break;
           case RevealGeometryCollectionType.InstanceMesh:
