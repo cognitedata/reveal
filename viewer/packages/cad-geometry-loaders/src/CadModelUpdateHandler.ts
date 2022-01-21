@@ -117,7 +117,6 @@ export class CadModelUpdateHandler {
 
   updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cameraSubject.next(camera);
-    this._progressSubject.next(notLoadingState);
   }
 
   set clippingPlanes(value: THREE.Plane[]) {

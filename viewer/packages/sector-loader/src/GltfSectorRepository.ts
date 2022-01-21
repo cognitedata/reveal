@@ -7,8 +7,10 @@ import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { SectorRepository } from '..';
+import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
+
+import { SectorRepository } from './SectorRepository';
 import { filterGeometryOutsideClipBox } from '../../cad-parsers/src/cad/filterPrimitivesV9';
 
 import assert from 'assert';
@@ -47,67 +49,76 @@ export class GltfSectorRepository implements SectorRepository {
       });
     }
 
-    const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
-      sector.modelBaseUrl,
-      metadata.sectorFileName!
-    );
-
-    const group = new AutoDisposeGroup();
-
-    const parsedSectorGeometry = this._gltfSectorParser.parseSector(sectorByteBuffer);
-
-    const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
-
-    const geometryBatchingQueue: ParsedGeometry[] = [];
-
-    parsedSectorGeometry.forEach(parsedGeometry => {
-      const type = parsedGeometry.type as RevealGeometryCollectionType;
-
-      const filteredGeometryBuffer = filterGeometryOutsideClipBox(
-        parsedGeometry.geometryBuffer,
-        type,
-        sector.geometryClipBox ?? undefined
+    try {
+      const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
+        sector.modelBaseUrl,
+        metadata.sectorFileName!
       );
 
-      if (!filteredGeometryBuffer) return;
+      const group = new AutoDisposeGroup();
 
-      switch (type) {
-        case RevealGeometryCollectionType.BoxCollection:
-        case RevealGeometryCollectionType.CircleCollection:
-        case RevealGeometryCollectionType.ConeCollection:
-        case RevealGeometryCollectionType.EccentricConeCollection:
-        case RevealGeometryCollectionType.EllipsoidSegmentCollection:
-        case RevealGeometryCollectionType.GeneralCylinderCollection:
-        case RevealGeometryCollectionType.GeneralRingCollection:
-        case RevealGeometryCollectionType.QuadCollection:
-        case RevealGeometryCollectionType.TorusSegmentCollection:
-        case RevealGeometryCollectionType.TrapeziumCollection:
-        case RevealGeometryCollectionType.NutCollection:
-          geometryBatchingQueue.push({ type, geometryBuffer: filteredGeometryBuffer, instanceId: type.toString() });
-          break;
-        case RevealGeometryCollectionType.InstanceMesh:
-          geometryBatchingQueue.push({
-            type,
-            geometryBuffer: filteredGeometryBuffer,
-            instanceId: parsedGeometry.instanceId!
-          });
-          break;
-        case RevealGeometryCollectionType.TriangleMesh:
-          this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
-          break;
-        default:
-          assertNever(type);
-      }
-    });
+      const parsedSectorGeometry = this._gltfSectorParser.parseSector(sectorByteBuffer);
 
-    return {
-      levelOfDetail: sector.levelOfDetail,
-      group: group,
-      instancedMeshes: [],
-      metadata: metadata,
-      modelIdentifier: sector.modelIdentifier,
-      geometryBatchingQueue: geometryBatchingQueue
-    };
+      const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
+
+      const geometryBatchingQueue: ParsedGeometry[] = [];
+
+      parsedSectorGeometry.forEach(parsedGeometry => {
+        const type = parsedGeometry.type as RevealGeometryCollectionType;
+
+        const filteredGeometryBuffer = filterGeometryOutsideClipBox(
+          parsedGeometry.geometryBuffer,
+          type,
+          sector.geometryClipBox ?? undefined
+        );
+
+        if (!filteredGeometryBuffer) return;
+
+        switch (type) {
+          case RevealGeometryCollectionType.BoxCollection:
+          case RevealGeometryCollectionType.CircleCollection:
+          case RevealGeometryCollectionType.ConeCollection:
+          case RevealGeometryCollectionType.EccentricConeCollection:
+          case RevealGeometryCollectionType.EllipsoidSegmentCollection:
+          case RevealGeometryCollectionType.GeneralCylinderCollection:
+          case RevealGeometryCollectionType.GeneralRingCollection:
+          case RevealGeometryCollectionType.QuadCollection:
+          case RevealGeometryCollectionType.TorusSegmentCollection:
+          case RevealGeometryCollectionType.TrapeziumCollection:
+          case RevealGeometryCollectionType.NutCollection:
+            geometryBatchingQueue.push({
+              type,
+              geometryBuffer: filteredGeometryBuffer,
+              instanceId: RevealGeometryCollectionType[type].toString()
+            });
+            break;
+          case RevealGeometryCollectionType.InstanceMesh:
+            geometryBatchingQueue.push({
+              type,
+              geometryBuffer: filteredGeometryBuffer,
+              instanceId: parsedGeometry.instanceId!
+            });
+            break;
+          case RevealGeometryCollectionType.TriangleMesh:
+            this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
+            break;
+          default:
+            assertNever(type);
+        }
+      });
+
+      return {
+        levelOfDetail: sector.levelOfDetail,
+        group: group,
+        instancedMeshes: [],
+        metadata: metadata,
+        modelIdentifier: sector.modelIdentifier,
+        geometryBatchingQueue: geometryBatchingQueue
+      };
+    } catch (error) {
+      MetricsLogger.trackError(error as Error, { moduleName: 'GltfSectorRepository', methodName: 'loadSector' });
+      throw error;
+    }
   }
 
   private createTreeIndexSet(geometry: THREE.BufferGeometry): Map<number, number> {
