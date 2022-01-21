@@ -283,11 +283,5 @@ function applyClippingPlanesToRawShaderMaterial(
     NUM_CLIPPING_PLANES: clippingPlanesAsUniform.length,
     UNION_CLIPPING_PLANES: 0
   };
-  if (clippingPlanesAsUniform.length > 0) {
-    material.uniforms['clippingPlanes'] = {
-      value: clippingPlanesAsUniform
-    };
-  } else {
-    delete material.uniforms['clippingPlanes'];
-  }
+  material.needsUpdate = true;
 }
