@@ -88,15 +88,15 @@ export class SectorLoader {
       const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, progressHelper);
       const consumedPromises = this.startLoadingBatch(filteredSectors, progressHelper, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
-        this._modelStateHandler.updateState(consumed);
-        yield consumed;
+        if (consumed.result !== undefined) {
+          this._modelStateHandler.updateState(consumed.result);
+          yield consumed.result;
+        }
       }
     }
   }
 
   private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
-    let sectorCuller: SectorCuller;
-
     if (isLegacyModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
       return this._v8SectorCuller;
     } else if (isGltfModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
@@ -104,7 +104,6 @@ export class SectorLoader {
     } else {
       throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
     }
-    return sectorCuller;
   }
 
   private async filterSectors(
@@ -125,24 +124,23 @@ export class SectorLoader {
     models: CadNode[]
   ): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(async wantedSector => {
-      try {
-        const model = models.filter(
-          model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier
-        )[0];
-        return model.loadSector(wantedSector);
-      } catch (error) {
-        log.error('Failed to load sector', wantedSector, 'error:', error);
-        // Ignore error but mark sector as discarded since we didn't load any geometry
-        return {
-          modelIdentifier: wantedSector.modelIdentifier,
-          metadata: wantedSector.metadata,
-          levelOfDetail: LevelOfDetail.Discarded,
-          group: undefined,
-          instancedMeshes: undefined
-        };
-      } finally {
-        progressHelper.reportNewSectorsLoaded(1);
-      }
+      const model = models.filter(model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier)[0];
+      return model
+        .loadSector(wantedSector)
+        .catch(error => {
+          log.error('Failed to load sector', wantedSector, 'error:', error);
+          // Ignore error but mark sector as discarded since we didn't load any geometry
+          return {
+            modelIdentifier: wantedSector.modelIdentifier,
+            metadata: wantedSector.metadata,
+            levelOfDetail: LevelOfDetail.Discarded,
+            group: undefined,
+            instancedMeshes: undefined
+          };
+        })
+        .finally(() => {
+          progressHelper.reportNewSectorsLoaded(1);
+        });
     });
     return consumedPromises;
   }

@@ -28,12 +28,16 @@ export class CdfModelDataProvider implements ModelDataProvider {
       Accept: '*/*'
     };
 
-    const response = await this.fetchWithRetry(url, { headers, method: 'GET' });
+    const response = await this.fetchWithRetry(url, { headers, method: 'GET' }).catch(_err => {
+      throw Error('Could not download binary file');
+    });
     return response.arrayBuffer();
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
-    const response = await this.client.get(`${baseUrl}/${fileName}`);
+    const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
+      throw Error('Could not download Json file');
+    });
     return response.data;
   }
 
