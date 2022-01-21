@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import get from 'lodash/get';
 
 import Skeleton from 'components/skeleton';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useSearchHasAnyAppliedFilters } from 'hooks/useSearchHasAnyAppliedFilters';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
   useClearWellsFilters,
@@ -43,8 +41,6 @@ export const WellsFilter = () => {
   const [filterCalled, setFilterCalled] = useState<boolean>(false);
   const filters = useAppliedWellFilters();
   const setWellsFilters = useSetWellsFiltersAsync();
-  const history = useHistory();
-  const anyAppliedFilters = useSearchHasAnyAppliedFilters();
   const clearWellFilters = useClearWellsFilters();
   const filterConfigsByCategory = useFilterConfigByCategory();
   const metrics = useGlobalMetrics('search');
@@ -85,11 +81,7 @@ export const WellsFilter = () => {
     });
 
     const filtersToApply = { ...filters, ...{ [id]: selectedVals } };
-    setWellsFilters(filtersToApply).then(() => {
-      if (!anyAppliedFilters) {
-        history.push('welldata');
-      }
-    });
+    setWellsFilters(filtersToApply);
   };
 
   // eg: "Well Characteristics"
