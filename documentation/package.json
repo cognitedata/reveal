@@ -12,6 +12,7 @@
   "scripts": {
     "start": "yarn run apiref && cross-env HTTPS=true docusaurus start --port=9000",
     "build": "yarn run apiref && docusaurus build",
+    "build:fast": "yarn run apiref && docusaurus build --no-minify",
     "swizzle": "docusaurus swizzle",
     "apiref": "yarn run apiref:generate && yarn run apiref:concat",
     "apiref:generate": "typedoc --listInvalidSymbolLinks",
