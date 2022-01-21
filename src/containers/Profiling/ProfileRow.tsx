@@ -59,9 +59,22 @@ export default function ProfileRow({ allCount, profile }: Props) {
 
   const getPercentage = (portion: number, total: number) => {
     const percentage = total === 0 ? 0 : (100 * portion) / total;
-    if (percentage === 0 || percentage === 100) return percentage;
-    if (percentage > 0 && percentage < 10) return percentage.toFixed(2);
-    else return percentage.toFixed(1);
+    let result;
+    if (percentage === 0 || percentage === 100) {
+      result = percentage;
+    } else if (percentage > 0 && percentage < 10) {
+      result = percentage.toFixed(2);
+    } else {
+      result = percentage.toFixed(1);
+    }
+
+    if (result === '0.00' && portion !== 0) {
+      result = '0.01';
+    } else if (result === '100.0' && portion !== total) {
+      result = '99.9';
+    }
+
+    return result;
   };
   const getLabelVariant = (percentage: number | string, type: string) => {
     if (type === 'empty') {
