@@ -86,7 +86,11 @@ export class GltfSectorRepository implements SectorRepository {
           case RevealGeometryCollectionType.TorusSegmentCollection:
           case RevealGeometryCollectionType.TrapeziumCollection:
           case RevealGeometryCollectionType.NutCollection:
-            geometryBatchingQueue.push({ type, geometryBuffer: filteredGeometryBuffer, instanceId: type.toString() });
+            geometryBatchingQueue.push({
+              type,
+              geometryBuffer: filteredGeometryBuffer,
+              instanceId: RevealGeometryCollectionType[type].toString()
+            });
             break;
           case RevealGeometryCollectionType.InstanceMesh:
             geometryBatchingQueue.push({
