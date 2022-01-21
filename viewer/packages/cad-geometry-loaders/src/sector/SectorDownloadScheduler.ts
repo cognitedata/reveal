@@ -40,19 +40,7 @@ export class SectorDownloadScheduler {
       }
 
       if (this._pendingSectorDownloads.size < this._maxConcurrentSectorDownloads) {
-        const sectorDownload = downloadSector(sector).catch(error => {
-          log.error('Failed to load sector', sector, 'error:', error);
-          return {
-            modelIdentifier: sector.modelIdentifier,
-            metadata: sector.metadata,
-            levelOfDetail: LevelOfDetail.Discarded,
-            group: undefined,
-            instancedMeshes: undefined
-          } as ConsumedSector;
-        });
-        this._pendingSectorDownloads.set(sectorIdentifier, sectorDownload);
-        this.getNextQueuedSectorDownload(sectorDownload, sectorIdentifier);
-        return sectorDownload;
+        return this.addSectorToPendingDownloads(downloadSector, sector, sectorIdentifier);
       }
 
       const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
@@ -68,6 +56,26 @@ export class SectorDownloadScheduler {
 
       return deferredSectorDownloadPromise;
     });
+  }
+
+  private addSectorToPendingDownloads(
+    downloadSector: (sector: WantedSector) => Promise<ConsumedSector>,
+    sector: WantedSector,
+    sectorIdentifier: string
+  ) {
+    const sectorDownload = downloadSector(sector).catch(error => {
+      log.error('Failed to load sector', sector, 'error:', error);
+      return {
+        modelIdentifier: sector.modelIdentifier,
+        metadata: sector.metadata,
+        levelOfDetail: LevelOfDetail.Discarded,
+        group: undefined,
+        instancedMeshes: undefined
+      } as ConsumedSector;
+    });
+    this._pendingSectorDownloads.set(sectorIdentifier, sectorDownload);
+    this.getNextQueuedSectorDownload(sectorDownload, sectorIdentifier);
+    return sectorDownload;
   }
 
   private getNextQueuedSectorDownload(sectorDownload: Promise<ConsumedSector>, sectorIdentifier: string) {
