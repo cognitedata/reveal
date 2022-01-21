@@ -15,8 +15,8 @@ import { CogniteClient } from '@cognite/sdk';
 
 export type ViewerState = {
   camera: {
-    position: THREE.Vector3;
-    target: THREE.Vector3;
+    position: { x: number; y: number; z: number };
+    target: { x: number; y: number; z: number };
   };
   models: ModelState[];
 };
