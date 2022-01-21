@@ -99,9 +99,7 @@ void main() {
   { 
     float borderColorIndex = max(max(frontNeighborIndices.x, frontNeighborIndices.y), max(frontNeighborIndices.z, frontNeighborIndices.w));
     outputColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
-#if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth) 
     outputFragDepth = frontDepth;
-#endif
     return;
   }
 
@@ -112,9 +110,7 @@ void main() {
     float a = customDepthTest > 0.0 ? ceil(customAlbedo.a) * 0.5 : ceil(backAlbedo.a) * 0.5;
 
     outputColor = vec4(frontAlbedo.rgb, 1.0) * (1.0 - a) + (vec4(backAlbedo.rgb, 1.0) * (1.0 - customDepthTest) + vec4(customAlbedo.rgb, 1.0) * customDepthTest) * a;
-#if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)   
     outputFragDepth = texture2D(tFrontDepth, vUv).r;
-#endif
     return;
   }
 
@@ -126,9 +122,7 @@ void main() {
     { 
       float borderColorIndex = max(max(backNeighborIndices.x, backNeighborIndices.y), max(backNeighborIndices.z, backNeighborIndices.w));
       outputColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
-#if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)
       outputFragDepth = texture2D(tBackDepth, vUv).r;
-#endif
       return;
     }
   }

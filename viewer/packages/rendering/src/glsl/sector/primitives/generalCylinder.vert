@@ -93,10 +93,8 @@ void main() {
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
     vec3 up = normalize(cross(left, lDir));
 
-#ifndef GL_EXT_frag_depth
     // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
     newPosition.x *= 1.0 - (a_radius * (position.x + 1.0) * 0.0025 / halfHeight);
-#endif
 
     vec3 surfacePoint = center + mat3(halfHeight*lDir, leftUpScale*left, leftUpScale*up) * newPosition;
     vec3 transformed = surfacePoint;
