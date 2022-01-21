@@ -1,0 +1,161 @@
+---
+id: axisviewtool
+title: Axis cross tool
+description: Axis cross tool to show orientation of the model.
+---
+
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+To effectivly navigate a 3D model it is often useful to have an helper to show the orientation of the model. The `AxisViewTool` is
+a configurable overlay that shows the current orientation of the model. It also reacts to clicks, orienting the camera to face
+clicked.
+
+<img src={useBaseUrl('/img/axisviewtool.png')} alt="AxisViewTool" />
+
+The appearance of the tool is highly configurable, with options to set:
+- Background color of each face of the orientation box
+- Labels, font size and font color of each face
+- Outline width and color of each face
+- Compass north-orientation, label, font color and size
+- Compass tick color
+- Animation speed when clicking a face of the orientation box
+- Size and padding
+- Position - either absolute, or relative to a corner of the viewer
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Basic example
+
+By default, the axis tool will be placed in the lower right corner
+of the viewer, and initialization is very easy:
+
+```jsx runnable-3x
+// import { AxisViewTool } from '@cognite/reveal/tools';
+
+new AxisViewTool(viewer);
+```
+
+## Customize axis cross position
+
+It is possible to specify a custom position for the axis tool.
+Position can be specified using either `RelativePosition` or `AbsolutePosition`.
+Using `AbsolutePosition` will position the axis cross at a specific position within the canvas of the viewer.
+
+:::note
+The Y axis is positive upwards, meaning that 0 is at the bottom of the viewer.
+:::
+
+```jsx runnable-3x
+// import { AxisViewTool } from '@cognite/reveal/tools';
+
+new AxisViewTool(viewer, {
+  position: { 
+    xAbsolute: viewer.domElement.clientWidth / 2 - 64, 
+    yAbsolute: 10
+  },
+  size: 128
+});
+```
+
+
+
+Using `RelativePosition` will position the axis cross relative to a specific corner (will also handle screen resize).
+
+```jsx runnable-3x
+// import { AxisViewTool, Corner } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  position: {
+    corner: Corner.TopRight,
+    padding: new THREE.Vector2(50, 50)
+  }
+};
+new AxisViewTool(viewer, axisConfig);
+```
+
+## Customize axis cross size and animation speed
+
+When clicking a face of the orientation box, the camera will move to face the respective direction.
+The animation speed of this movement can be configured. Size of the axis tool is also configurable.
+
+
+```jsx runnable-3x
+// import { AxisViewTool } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  animationSpeed: 2000, // Suuuuuper-slow
+  size: 256 // In pixels
+};
+new AxisViewTool(viewer, axisConfig);
+```
+
+
+## Customize orientation faces
+
+Each of the faces of the orientation box can be styled.
+
+```jsx runnable-3x
+// import { AxisViewTool } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  faces: {
+    xNegativeFace: {
+      label: 'Left',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x660000)
+    },
+    xPositiveFace: {
+      label: 'Right',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x660000)
+    },
+    yNegativeFace: {
+      label: 'Down',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x006600)
+    },
+    yPositiveFace: {
+      label: 'Top',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x006600)
+    },
+    zNegativeFace: {
+      label: 'Back',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x000066)
+    },
+    zPositiveFace: {
+      label: 'Front',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x000066)
+    }
+  }
+};
+new AxisViewTool(viewer, axisConfig);
+```
+
+In addition to the settings demonstrated above, the following settings can be set:
+- `fontSize` - size of the label font. Automatically determined when undefined
+- `outlineColor` - color of the outline of each of the faces
+- `outlineSize` - width of the outline. Automatically determine when undefined
+
+## Customize compass
+
+The compass at the base can be customized to change the orientation label (which
+defaults to N for North), font color and size and tick color.
+
+
+```jsx runnable-3x
+// import { AxisViewTool } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  compass: {
+    ringLabel: 'S',
+    labelDelta: 0, // Place at South
+    fontColor: new THREE.Color('white'),
+    tickColor: new THREE.Color('white')
+  }
+};
+new AxisViewTool(viewer, axisConfig);
+```

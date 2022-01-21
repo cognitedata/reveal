@@ -31,6 +31,11 @@ const versionedImportNode = {
     value:
       "import { LiveCodeSnippet } from '@site/versioned_docs/version-2.x/components/LiveCodeSnippet';",
   },
+  'runnable-3x': {
+    type: 'import',
+    value:
+      "import { LiveCodeSnippet } from '@site/versioned_docs/version-3.x/components/LiveCodeSnippet';",
+  }
 };
 
 module.exports = () => {
