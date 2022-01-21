@@ -74,7 +74,7 @@ const CreateTableModal = ({
     isUploadCompleted,
     onConfirmUpload,
     uploadPercentage,
-  } = useCSVUpload(file, selectedColumnIndex);
+  } = useCSVUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
   const { errors, handleBlur, handleChange, handleSubmit, values } =
     useFormik<CreateTableFormValues>({
@@ -167,6 +167,7 @@ const CreateTableModal = ({
   function selectPrimaryKeyMethod(method: PrimaryKeyMethod): () => void {
     return (): void => {
       setSelectedPrimaryKeyMethod(method);
+      setSelectedColumnIndex(-1);
     };
   }
 
