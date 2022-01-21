@@ -46,7 +46,6 @@ export function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -81,7 +80,6 @@ export function createBoxMaterial(): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
     clipping: false,
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -102,7 +100,6 @@ export function createCircleMaterial(): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     name: 'Primitives (Circle)',
     clipping: false,
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.circlePrimitive.vertex,
     fragmentShader: sectorShaders.circlePrimitive.fragment,
     side: THREE.DoubleSide,
@@ -123,7 +120,6 @@ export function createConeMaterial(): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     name: 'Primitives (Cone)',
     clipping: false,
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.conePrimitive.vertex,
     fragmentShader: sectorShaders.conePrimitive.fragment,
     side: THREE.DoubleSide,
@@ -153,7 +149,6 @@ export function createEccentricConeMaterial(): THREE.ShaderMaterial {
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
     fragmentShader: sectorShaders.eccentricConePrimitive.fragment,
     side: THREE.DoubleSide,
@@ -174,7 +169,6 @@ export function createGeneralRingMaterial(): THREE.ShaderMaterial {
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalRingPrimitive.vertex,
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -195,7 +189,6 @@ export function createEllipsoidSegmentMaterial(): THREE.ShaderMaterial {
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -256,7 +249,6 @@ export function createTrapeziumMaterial(): THREE.ShaderMaterial {
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
     fragmentShader: sectorShaders.trapeziumPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -278,7 +270,6 @@ export function createTorusSegmentMaterial(): THREE.ShaderMaterial {
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
     extensions: {
-      fragDepth: true,
       derivatives: true
     },
     vertexShader: sectorShaders.torusSegmentPrimitive.vertex,
