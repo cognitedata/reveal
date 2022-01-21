@@ -32,14 +32,6 @@ export function MenuBar() {
             className="cogs-btn cogs-btn-secondary cogs-btn--padding navigation-item"
             getActiveProps={() => ({ className: 'active' })}
             role="link"
-            to="/calculations"
-          >
-            Calculations
-          </Link>
-          <Link
-            className="cogs-btn cogs-btn-secondary cogs-btn--padding navigation-item"
-            getActiveProps={() => ({ className: 'active' })}
-            role="link"
             to="/calculations/runs"
           >
             Run browser

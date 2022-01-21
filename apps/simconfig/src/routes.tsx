@@ -16,6 +16,7 @@ import type {
 import { api } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationConfiguration } from 'pages/CalculationConfiguration/CalculationConfiguration';
+import { CalculationRuns } from 'pages/CalculationsRuns/CalculationsRuns';
 import { NewModel } from 'pages/ModelLibrary';
 import type { StoreState } from 'store/types';
 
@@ -31,6 +32,11 @@ export type AppLocationGenerics = MakeGenerics<{
   Params: Record<string, string> & {
     simulator?: Simulator;
     calculationType?: CalculationType;
+  };
+  RunListParams: Record<string, string> & {
+    simulator?: Simulator;
+    calculationType?: CalculationType;
+    modelName?: string;
   };
   RouteMeta: {
     title?: (params?: AppLocationGenerics['Params']) => string;
@@ -140,6 +146,19 @@ export function routes(
     },
     {
       path: 'logout',
+    },
+    {
+      path: 'calculations',
+      loader: async () => ({
+        definitions: (await dispatch(api.endpoints.getDefinitions.initiate()))
+          .data,
+      }),
+      children: [
+        {
+          path: 'runs',
+          element: <CalculationRuns/>
+        }
+      ]
     },
     {
       element: <Navigate to="model-library" replace />,
