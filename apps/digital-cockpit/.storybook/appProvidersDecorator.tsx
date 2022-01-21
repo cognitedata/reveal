@@ -33,10 +33,17 @@ export default makeDecorator({
   parameterName: APP_PROVIDERS_PARAMETER_NAME,
   skipIfNoParametersOrOptions: false,
   wrapper: (story, context, { parameters }: AppProvidersWrapperSettings) => {
-    const { redux: storyRedux, pathname: maybePathname } = parameters || {};
+    const {
+      redux: storyRedux,
+      pathname: maybePathname,
+      mockCdfClient,
+    } = parameters || {};
 
     const initialState = merge({}, INITIAL_TEST_STATE, storyRedux);
-    const mockCDFClient = createMockCdfClient();
+    const mockCDFClient = mockCdfClient
+      ? mockCdfClient(createMockCdfClient())
+      : createMockCdfClient();
+
     const mockAPIClient = createMockApiClient();
     const history = createBrowserHistory();
     // @ts-ignore

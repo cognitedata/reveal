@@ -78,6 +78,7 @@ DEPENDENCIES = [
     "@npm//react-modal",
     "@npm//react-redux",
     "@npm//react-router-dom",
+    "@npm//react-query",
     "@npm//redux",
     "@npm//redux-devtools-extension",
     "@npm//redux-thunk",
@@ -365,6 +366,11 @@ start_storybook(
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
     ],
+    env = {
+        # As long as react_scripts does not allow eslint 8 we need this variable
+        "SKIP_PREFLIGHT_CHECK": "true",
+        "DISABLE_ESLINT_PLUGIN": "true",
+    },
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.
         # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
