@@ -231,11 +231,6 @@ export const appSteps = [
         value: 'cypress',
       },
       {
-        short: 'Testcafe',
-        name: 'Testcafe Library',
-        value: 'testcafe',
-      },
-      {
         short: 'None',
         name: 'No Library',
         value: 'none',
