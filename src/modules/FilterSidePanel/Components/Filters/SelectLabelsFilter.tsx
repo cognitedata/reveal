@@ -2,28 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { LabelFilter as LabelFilterComp } from '@cognite/data-exploration';
 import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 import styled from 'styled-components';
-import { Body, Detail } from '@cognite/cogs.js';
-import { Radio } from 'antd';
+import { Body } from '@cognite/cogs.js';
 import { Label } from '@cognite/cdf-sdk-singleton';
 import isEqual from 'lodash-es/isEqual';
+import { FilterAndOrOption } from 'src/modules/FilterSidePanel/Components/FilterAndOrOption';
 
 export const SelectLabelsFilter = ({
   filter,
   setFilter,
 }: VisionFilterItemProps) => {
-  const [anyAllState, setAnyAllState] = useState('any');
+  const [anyAllState, setAnyAllState] = useState<'any' | 'all' | ''>('');
 
-  const handleAnyAllOptionChange = (value: string) => {
+  const handleAnyAllOptionChange = (value: 'any' | 'all') => {
     setAnyAllState(value);
   };
 
   const setLabelFilter = (newFilterLabels?: Label[]) => {
     let labelFilter;
     if (newFilterLabels) {
-      if (anyAllState === 'any') {
-        labelFilter = { containsAny: newFilterLabels };
-      } else {
+      if (anyAllState === 'all') {
         labelFilter = { containsAll: newFilterLabels };
+      } else {
+        // set any as default
+        labelFilter = { containsAny: newFilterLabels };
       }
     }
     if (!isEqual(filter.labels, labelFilter)) {
@@ -41,7 +42,7 @@ export const SelectLabelsFilter = ({
     } else if (labelFilter?.containsAll?.length) {
       setAnyAllState('all');
     } else {
-      setAnyAllState('any');
+      setAnyAllState('');
     }
   }, [filter.labels]);
 
@@ -56,28 +57,10 @@ export const SelectLabelsFilter = ({
       <HeaderContainer>
         <Body level={4}>Labels</Body>
       </HeaderContainer>
-      <RadioContainer>
-        <Radio
-          name="any"
-          value="any"
-          checked={anyAllState === 'any'}
-          onChange={(evt) => handleAnyAllOptionChange(evt.target.value)}
-          key="any"
-        >
-          {' '}
-          <Detail>Or</Detail>
-        </Radio>
-        <Radio
-          name="all"
-          value="all"
-          checked={anyAllState === 'all'}
-          onChange={(evt) => handleAnyAllOptionChange(evt.target.value)}
-          key="all"
-        >
-          {' '}
-          <Detail>And</Detail>
-        </Radio>
-      </RadioContainer>
+      <FilterAndOrOption
+        option={anyAllState}
+        onOptionChange={handleAnyAllOptionChange}
+      />
       <LabelFilterComp
         resourceType="file"
         value={
@@ -103,8 +86,4 @@ const Container = styled.div`
 `;
 const HeaderContainer = styled.div`
   display: flex;
-`;
-const RadioContainer = styled.div`
-  display: flex;
-  gap: 20px;
 `;
