@@ -18,7 +18,7 @@ module.exports = {
       // Optional: Algolia search parameters
       searchParameters: {
         // https://www.algolia.com/doc/api-reference/api-parameters/facetFilters/?client=javascript
-        facetFilters: [['version:1.x', 'version:2.x']],
+        facetFilters: [['version:1.x', 'version:2.x', 'version:3.x']],
       },
 
       //... other Algolia params https://autocomplete-experimental.netlify.app/docs/docsearchmodal/#reference
