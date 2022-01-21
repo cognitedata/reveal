@@ -1,3 +1,7 @@
+## 1.1.1 Jan 21 2021
+
+- Bumps version for react-container
+
 ## 1.1.0 Oct 15 2021
 
 - Bumps version for react-container
