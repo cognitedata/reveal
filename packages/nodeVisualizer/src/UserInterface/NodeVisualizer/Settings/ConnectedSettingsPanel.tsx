@@ -7,7 +7,7 @@ import { SettingsNodeUtils } from 'UserInterface/NodeVisualizer/Settings/Setting
 
 function mapDispatchToSettingsPanel(dispatch: Dispatch) {
   return {
-    onSectionExpand: (sectionName, expandStatus) => {
+    onSectionExpand: (sectionName: string, expandStatus: boolean) => {
       dispatch(onSectionExpand(sectionName, expandStatus));
     },
     onPropertyValueChange: (id: string, value: any) => {

@@ -14,7 +14,6 @@
 import { Range3 } from 'Core/Geometry/Range3';
 import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
 import { TargetId } from 'Core/Primitives/TargetId';
-
 import Icon from 'images/Nodes/SeismicCubeNode.png';
 import { DataNode } from 'Core/Nodes/DataNode';
 import { SeismicCube } from 'SubSurface/Seismic/Data/SeismicCube';
@@ -161,10 +160,12 @@ export class SeismicCubeNode extends DataNode {
       }
     } catch (error) {
       this.seismicCube = null;
-      console.error(
-        `Can not load seismic cube.\nError message: ${error.message}`,
-        error
-      );
+      if (error instanceof Error) {
+        console.error(
+          `Can not load seismic cube.\nError message: ${error.message}`,
+          error
+        );
+      }
     }
 
     this.setLoadingState(false);

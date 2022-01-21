@@ -61,7 +61,7 @@ interface ExpandButtonProps {
 }
 
 export const ExpandButton = (props: ExpandButtonProps) => {
-  const [expanded, setExpanded] = useState(props.expanded || true);
+  const [expanded, setExpanded] = useState<boolean>(props.expanded || true);
 
   const onEvent = (e: MouseEvent<HTMLDivElement>) => {
     if (expanded) {

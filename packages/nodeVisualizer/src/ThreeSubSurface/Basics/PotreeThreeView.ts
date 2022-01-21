@@ -12,9 +12,7 @@
 //= ====================================================================================
 
 import * as THREE from 'three';
-
 import * as Potree from '@cognite/potree-core';
-
 import { PotreeNode } from 'SubSurface/Basics/PotreeNode';
 import { PotreeRenderStyle } from 'SubSurface/Basics/PotreeRenderStyle';
 import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
@@ -61,6 +59,7 @@ export class PotreeThreeView extends BaseGroupThreeView {
     const path = node.url;
     if (Util.isEmpty(path)) return null;
 
+    // @ts-expect-error potential real error
     const group: Potree.Group = new Potree.Group();
     group.setPointBudget(style.budget);
 

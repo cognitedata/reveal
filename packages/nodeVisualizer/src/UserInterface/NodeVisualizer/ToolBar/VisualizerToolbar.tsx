@@ -91,7 +91,11 @@ export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
     if (!dragging) setDragging(true);
   };
 
-  const addButton = (groupId, index, command) => {
+  const addButton = (
+    groupId: string,
+    index: number,
+    command: IToolbarButton
+  ) => {
     return (
       <ToolbarIcon
         size={Appearance.toolbarIconSize}
@@ -116,7 +120,11 @@ export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
     );
   };
 
-  const addDropdown = (groupId, index, command) => {
+  const addDropdown = (
+    groupId: string,
+    index: number,
+    command: IToolbarButton
+  ) => {
     return (
       <ToolBarSelect
         key={`toolbar-select-${index}`}

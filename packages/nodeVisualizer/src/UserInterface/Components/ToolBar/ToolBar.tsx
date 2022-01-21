@@ -22,7 +22,7 @@ export const ToolBar = (props: ToolBarProps) => {
       {(toolBar as []).map((config: any) => {
         let name;
         let icon;
-        let invoke;
+        let invoke: () => void;
 
         if (config instanceof BaseCommand) {
           name = config.getDisplayName();
@@ -48,7 +48,7 @@ export const ToolBar = (props: ToolBarProps) => {
 
         const selected = config.isChecked;
 
-        const handleClick = (event) => {
+        const handleClick = (event: React.MouseEvent<unknown>) => {
           event.stopPropagation();
           invoke();
         };

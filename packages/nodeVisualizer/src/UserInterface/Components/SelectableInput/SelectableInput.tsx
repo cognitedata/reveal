@@ -23,7 +23,10 @@ interface SelectableInputProps {
 
 const dropdownOffset = 40;
 
-const renderMenu = (optionsList: SelectableOption[] = [], handleItemClick) => {
+const renderMenu = (
+  handleItemClick: (item: string) => void,
+  optionsList: SelectableOption[] = []
+) => {
   return (
     <Menu>
       {optionsList.map((option) => (
@@ -79,11 +82,11 @@ export const SelectableInput = (props: SelectableInputProps) => {
     setOpen(false);
   };
 
-  const handleValueChange = (event) => {
+  const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDisplayValue(event.target.value);
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event: React.KeyboardEvent<unknown>) => {
     HTMLUtils.onEnter(handleEnter)(event);
   };
 
@@ -99,7 +102,7 @@ export const SelectableInput = (props: SelectableInputProps) => {
       </StyledInput>
       <Dropdown
         visible={open}
-        content={renderMenu(options, handleMenuItemClick)}
+        content={renderMenu(handleMenuItemClick, options)}
         onClickOutside={handleClose}
         offset={[-dropdownOffset, 0]}
       >

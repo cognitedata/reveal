@@ -110,6 +110,7 @@ export const SettingsElement = (props: ISettingsElementProps) => {
             value={selectValue}
             disabled={disabled}
             onChange={(e) => {
+              // @ts-expect-error potential real error
               onChange(id, e.value);
             }}
           />
@@ -123,7 +124,7 @@ export const SettingsElement = (props: ISettingsElementProps) => {
         element = subElements?.map((elm) => renderInputElement(elm));
         break;
       default:
-        element = <></>;
+        element = null;
     }
 
     return (

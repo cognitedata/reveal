@@ -171,6 +171,7 @@ export class BPData {
     }
     for (let index = 0; index < columns.length; index++) {
       const columnName = columns[index].name;
+      // @ts-expect-error potential real error
       columnIndexes[columnName] = index;
     }
   }

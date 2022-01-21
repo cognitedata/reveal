@@ -365,9 +365,9 @@ export const getCurrentNodes = createSelector(
 
 export const getNodeTree = createSelector([getCurrentNodes], (nodeStates) => {
   const nodeTree: ITreeNode[] = [];
-  const nodeTreeMap = {};
+  const nodeTreeMap: Record<string, ITreeNode> = {};
 
-  for (const nodeState of nodeStates) {
+  nodeStates.forEach((nodeState) => {
     const treeNode = { ...nodeState, children: [] };
 
     nodeTreeMap[nodeState.uniqueId] = treeNode;
@@ -380,7 +380,7 @@ export const getNodeTree = createSelector([getCurrentNodes], (nodeStates) => {
         parent.children.push(treeNode);
       else nodeTree.push(treeNode);
     }
-  }
+  });
 
   return nodeTree;
 });

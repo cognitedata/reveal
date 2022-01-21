@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExplorerTabsPropType } from 'UserInterface/Components/Explorer/ExplorerTypes';
 import styled from 'styled-components';
-import { TabPane as Tab, Tabs } from '@cognite/cogs.js';
+import { Tabs } from '@cognite/cogs.js';
 
 // Renders Explorer Tabs
 export const ExplorerTabs = (props: ExplorerTabsPropType) => {
@@ -16,7 +16,7 @@ export const ExplorerTabs = (props: ExplorerTabsPropType) => {
   return (
     <StyledTabs activeKey={selectedTabIndex.toString()} onChange={handleChange}>
       {tabs.map((tab, index) => (
-        <Tab key={index.toString()} tab={<span>{tab.name}</span>} />
+        <Tabs.TabPane key={index.toString()} tab={<span>{tab.name}</span>} />
       ))}
     </StyledTabs>
   );

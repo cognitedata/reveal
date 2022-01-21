@@ -1,5 +1,4 @@
 import isObject from 'lodash/isObject';
-
 import { BaseNode } from 'Core/Nodes/BaseNode';
 import { UniqueId } from 'Core/Primitives/UniqueId';
 import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
@@ -173,15 +172,18 @@ export class NodeUtils {
 
   private static createSelectOptions(
     options: any[] | [string, any][],
-    iconDelegate?: Function
+    iconDelegate?: any
   ): ISelectOption[] {
     const items: ISelectOption[] = [];
     if (options && options.length > 0) {
       for (const option of options) {
         if (isObject(option)) {
           items.push({
+            // @ts-expect-error potential real error
             label: option[ExpandedOption.Label],
+            // @ts-expect-error potential real error
             value: option[ExpandedOption.Value],
+            // @ts-expect-error potential real error
             iconSrc: iconDelegate && iconDelegate(option[ExpandedOption.Value]),
           });
         } else {

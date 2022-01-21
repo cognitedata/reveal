@@ -5,5 +5,6 @@ module.exports = {
   rules: {
     ...baseConfig.rules,
     // We can extend package rules below
+    'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement'],
   },
 };

@@ -6,7 +6,7 @@ import {
 import styled from 'styled-components';
 import { statusBarHeight } from 'UserInterface/styles/styled.props';
 
-interface Viewer3DProps {
+export interface Viewer3DProps {
   viewer3D: React.RefCallback<HTMLElement>;
   toolbar: React.ComponentType<VisualizerToolbarProps>;
   toolbarConfig?: ToolbarConfig;

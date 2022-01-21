@@ -46,20 +46,23 @@ export const SettingsPanel = (props: SettingPanelProps) => {
               toolBar={titleBar.toolBar}
             />
           )}
-          {sections.map((section) => {
-            section.isExpanded = expandedSections[section.id];
-            return (
-              section.elements.length > 0 && (
-                <SettingsSection
-                  key={`${section.name}-section`}
-                  section={section}
-                  onExpand={onSectionExpand}
-                  onPropertyValueChange={handleValueChange}
-                  onPropertyUseChange={handleUsePropertyChange}
-                />
-              )
-            );
-          })}
+          {
+            // @ts-expect-error potential real error
+            sections.map((section) => {
+              section.isExpanded = expandedSections[section.id];
+              return (
+                section.elements.length > 0 && (
+                  <SettingsSection
+                    key={`${section.name}-section`}
+                    section={section}
+                    onExpand={onSectionExpand}
+                    onPropertyValueChange={handleValueChange}
+                    onPropertyUseChange={handleUsePropertyChange}
+                  />
+                )
+              );
+            })
+          }
         </>
       ) : null}
     </SettingsPanelWrapper>

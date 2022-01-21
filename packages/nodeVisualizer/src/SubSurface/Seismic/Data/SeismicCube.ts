@@ -31,7 +31,7 @@ export class SeismicCube extends RegularGrid3 {
 
   private readonly _usedTraces: Index2[] = [];
 
-  private _maxTracesInMemory: number = 1000;
+  private _maxTracesInMemory = 1000;
 
   public client: SeismicSDK.CogniteSeismicClient | null = null;
 
@@ -235,6 +235,7 @@ export class SeismicCube extends RegularGrid3 {
       client.volume.getTrace({ id: fileId }, inline.min.value, xline.max.value),
     ];
 
+    // @ts-expect-error potential real error
     const resultList = await Promise.allSettled(promises);
     for (const result of resultList) {
       if (result.status !== 'fulfilled') continue;

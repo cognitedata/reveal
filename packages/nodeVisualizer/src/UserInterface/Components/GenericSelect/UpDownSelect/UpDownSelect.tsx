@@ -3,6 +3,7 @@ import { ICommonSelectProps } from 'UserInterface/Components/Settings/Types';
 import { NumericUtils } from 'UserInterface/Foundation/Utils/numericUtils';
 import { Button, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import isString from 'lodash/isString';
 
 interface UpDownSelectProps extends ICommonSelectProps {
   node: React.ReactElement<ICommonSelectProps, any>;
@@ -15,11 +16,13 @@ export const UpDownSelect = (props: UpDownSelectProps) => {
       onChange(updateVal);
     }
   };
-  const handleChange = (event) => {
-    if (event.target) {
-      updateState(event.target.value);
-    } else {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement> | string
+  ) => {
+    if (isString(event)) {
       updateState(event);
+    } else {
+      updateState(event.target.value);
     }
   };
 

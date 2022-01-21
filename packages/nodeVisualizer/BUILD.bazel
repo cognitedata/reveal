@@ -41,6 +41,7 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//@cognite/geospatial-sdk-js",
     "@npm//@cognite/potree-core",
+    "@npm//@cognite/cogs.js",
     "@npm//@cognite/seismic-sdk-js",
     "@npm//@reduxjs/toolkit",
     "@npm//color",
@@ -55,6 +56,7 @@ DEPENDENCIES = [
     "@npm//redux",
     "@npm//three",
     "@npm//utm",
+    "@npm//uuid",
     "@npm//styled-components",
     "@npm//camera-controls",
     "@npm//immer",
@@ -71,10 +73,12 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react-redux",
     "@npm//@types/styled-components",
     "@npm//@types/utm",
+    "@npm//@types/uuid",
 ]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
+    "@npm//@rollup/plugin-image",    
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//rollup-plugin-json",
@@ -177,11 +181,14 @@ copy_to_bin(
 rollup(
     name = "dist",
     args = [
+        "--banner=//node-visualizer",
+        "--node_options=--require=./$(execpath //scripts:log.js)",        
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",
         "rollup.config.js",
     ],
-    data = DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "//scripts:log.js",        
         ":chdir.js",
         ":copy_static_files",
         ":package-json",
@@ -190,8 +197,6 @@ rollup(
         "@npm//@types/jest",
         "@npm//@types/node",
         "@npm//tslib",
-        "@npm//rollup-plugin-json",
-        "@npm//rollup-plugin-typescript2",
     ],
     output_dir = True,
 )
