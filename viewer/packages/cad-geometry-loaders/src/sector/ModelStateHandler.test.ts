@@ -30,12 +30,24 @@ describe('ModelStateHandler', () => {
     modelStateHandler.addModel(simple.modelIdentifier);
     const consumedSimple: ConsumedSector = { ...simple, group: undefined, instancedMeshes: undefined };
 
-    modelStateHandler.updateState(consumedSimple);
-    expect(modelStateHandler.hasStateChanged(simple)).toBe(false);
+    modelStateHandler.updateState(
+      consumedSimple.modelIdentifier,
+      consumedSimple.metadata.id,
+      consumedSimple.levelOfDetail
+    );
+    expect(modelStateHandler.hasStateChanged(simple.modelIdentifier, simple.metadata.id, simple.levelOfDetail)).toBe(
+      false
+    );
 
     const differentSectors: WantedSector[] = [detailed, discarded];
     differentSectors.forEach(wantedSector => {
-      expect(modelStateHandler.hasStateChanged(wantedSector)).toBe(true);
+      expect(
+        modelStateHandler.hasStateChanged(
+          wantedSector.modelIdentifier,
+          wantedSector.metadata.id,
+          wantedSector.levelOfDetail
+        )
+      ).toBe(true);
     });
   });
 
@@ -45,8 +57,18 @@ describe('ModelStateHandler', () => {
     const sectors = [simple, detailed, discarded];
     sectors.forEach(wantedSector => {
       const consumedSector: ConsumedSector = { ...wantedSector, group: undefined, instancedMeshes: undefined };
-      modelStateHandler.updateState(consumedSector);
-      expect(modelStateHandler.hasStateChanged(wantedSector)).toBe(false);
+      modelStateHandler.updateState(
+        consumedSector.modelIdentifier,
+        consumedSector.metadata.id,
+        consumedSector.levelOfDetail
+      );
+      expect(
+        modelStateHandler.hasStateChanged(
+          wantedSector.modelIdentifier,
+          wantedSector.metadata.id,
+          wantedSector.levelOfDetail
+        )
+      ).toBe(false);
     });
   });
 });
