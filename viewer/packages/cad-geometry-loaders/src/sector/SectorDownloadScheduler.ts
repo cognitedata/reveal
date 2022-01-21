@@ -12,14 +12,17 @@ export type SectorDownloadData = {
   downloadSector: (sector: WantedSector) => Promise<ConsumedSector>;
 };
 
+type QueuedSectorData = {
+  sector: WantedSector;
+  downloadSector: (sector: WantedSector) => Promise<ConsumedSector>;
+  queuedDeferredPromise: DeferredPromise<ConsumedSector>;
+};
+
 export class SectorDownloadScheduler {
   private readonly _maxConcurrentSectorDownloads: number;
 
   private readonly _pendingSectorDownloads: Map<string, Promise<ConsumedSector>>;
-  private readonly _queuedSectorDownloads: Map<
-    string,
-    [WantedSector, (sector: WantedSector) => Promise<ConsumedSector>, DeferredPromise<ConsumedSector>]
-  >;
+  private readonly _queuedSectorDownloads: Map<string, QueuedSectorData>;
   private readonly _sectorDownloadQueue: string[];
 
   get numberOfPendingDownloads(): number {
@@ -40,7 +43,7 @@ export class SectorDownloadScheduler {
   public queueSectorBatchForDownload(downloadData: SectorDownloadData[]): Promise<ConsumedSector>[] {
     return downloadData.map(sectorDownloadData => {
       const { sector, downloadSector } = sectorDownloadData;
-      const sectorIdentifier = `${sector.metadata.id}-${sector.modelIdentifier}`;
+      const sectorIdentifier = this.getSectorIdentifier(sector.modelIdentifier, sector.metadata.id);
       const pendingSector = this._pendingSectorDownloads.get(sectorIdentifier);
 
       if (pendingSector !== undefined) {
@@ -51,19 +54,31 @@ export class SectorDownloadScheduler {
         return this.addSectorToPendingDownloads(downloadSector, sector, sectorIdentifier);
       }
 
-      const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
-
-      if (queuedSector !== undefined) {
-        const [_0, _1, downloadPromise] = queuedSector;
-        return downloadPromise;
-      }
-
-      const deferredSectorDownloadPromise = new DeferredPromise<ConsumedSector>();
-      this._sectorDownloadQueue.push(sectorIdentifier);
-      this._queuedSectorDownloads.set(sectorIdentifier, [sector, downloadSector, deferredSectorDownloadPromise]);
-
-      return deferredSectorDownloadPromise;
+      return this.getOrAddToQueuedDownloads(sector, sectorIdentifier, downloadSector);
     });
+  }
+
+  private getOrAddToQueuedDownloads(
+    sector: WantedSector,
+    sectorIdentifier: string,
+    downloadSector: (sector: WantedSector) => Promise<ConsumedSector>
+  ): Promise<ConsumedSector> {
+    const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
+
+    if (queuedSector !== undefined) {
+      const { queuedDeferredPromise } = queuedSector;
+      return queuedDeferredPromise;
+    }
+
+    const queuedDeferredPromise = new DeferredPromise<ConsumedSector>();
+    this._sectorDownloadQueue.push(sectorIdentifier);
+    this._queuedSectorDownloads.set(sectorIdentifier, {
+      sector,
+      downloadSector,
+      queuedDeferredPromise
+    });
+
+    return queuedDeferredPromise;
   }
 
   private addSectorToPendingDownloads(
@@ -101,15 +116,19 @@ export class SectorDownloadScheduler {
 
       assert(queuedSector !== undefined);
 
-      const [sectorData, downloadCallback, downloadPromise] = queuedSector;
+      const { sector, downloadSector, queuedDeferredPromise } = queuedSector;
 
-      const sectorDownload = downloadCallback(sectorData);
+      const sectorDownload = downloadSector(sector);
       this._pendingSectorDownloads.set(nextSectorIdentifier, sectorDownload);
       sectorDownload.then(consumedSector => {
-        downloadPromise.resolve(consumedSector);
+        queuedDeferredPromise.resolve(consumedSector);
       });
 
       this.getNextQueuedSectorDownload(sectorDownload, nextSectorIdentifier);
     });
+  }
+
+  private getSectorIdentifier(modelIdentifer: string, sectorId: number): string {
+    return `${sectorId}-${modelIdentifer}`;
   }
 }
