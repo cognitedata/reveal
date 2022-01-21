@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import formatISO9075 from 'date-fns/formatISO9075';
@@ -22,25 +22,38 @@ interface ModelVersionDetailsProps {
   modelFile: ModelFile;
 }
 
+const PROCESSING_POLLING_INTERVAL = 2000; // 2 seconds
+
 export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   const project = useSelector(selectProject);
   const token = useSelector(selectAuthToken);
   const baseUrl = useSelector(selectBaseUrl);
 
   const [isModelFileDownloading, setIsModelFileDownloading] = useState(false);
+  const [isProcessingReady, setIsProcessingReady] = useState(false);
 
   const { metadata } = modelFile;
   const { simulator, modelName, version } = metadata;
 
-  const { data: boundaryConditions, isFetching: isFetchingBoundaryConditions } =
+  const {
+    data: boundaryConditions,
+    isFetching: isFetchingBoundaryConditions,
+    isSuccess: isSuccessBoundaryConditions
+  } =
     useGetModelBoundaryConditionListQuery({
       project,
       simulator,
       modelName,
       version,
-    });
+    }, {pollingInterval: !isProcessingReady ? PROCESSING_POLLING_INTERVAL : undefined});
 
-  if (isFetchingBoundaryConditions) {
+  useEffect(() => {
+    if(boundaryConditions?.modelBoundaryConditionList.length){
+      setIsProcessingReady(true)
+    }
+  }, [boundaryConditions]);
+
+  if (isFetchingBoundaryConditions && !isSuccessBoundaryConditions) {
     return <Skeleton.List lines={2} />;
   }
 
