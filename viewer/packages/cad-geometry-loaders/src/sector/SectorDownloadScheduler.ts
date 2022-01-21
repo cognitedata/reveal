@@ -2,9 +2,15 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+import log from '@reveal/logger';
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
 import assert from 'assert';
+
+export type SectorDownloadData = {
+  sector: WantedSector;
+  downloadSector: (sector: WantedSector) => Promise<ConsumedSector>;
+};
 
 export class SectorDownloadScheduler {
   private readonly _maxConcurrentSectorDownloads: number;
@@ -23,11 +29,9 @@ export class SectorDownloadScheduler {
     this._sectorDownloadQueue = [];
   }
 
-  public queueSectorBatchForDownload(
-    sectors: WantedSector[],
-    downloadSector: (sector: WantedSector) => Promise<ConsumedSector>
-  ): Promise<ConsumedSector>[] {
-    return sectors.map(sector => {
+  public queueSectorBatchForDownload(downloadData: SectorDownloadData[]): Promise<ConsumedSector>[] {
+    return downloadData.map(sectorDownloadData => {
+      const { sector, downloadSector } = sectorDownloadData;
       const sectorIdentifier = `${sector.metadata.id}-${sector.modelIdentifier}`;
       const pendingSector = this._pendingSectorDownloads.get(sectorIdentifier);
 
@@ -36,7 +40,16 @@ export class SectorDownloadScheduler {
       }
 
       if (this._pendingSectorDownloads.size < this._maxConcurrentSectorDownloads) {
-        const sectorDownload = downloadSector(sector);
+        const sectorDownload = downloadSector(sector).catch(error => {
+          log.error('Failed to load sector', sector, 'error:', error);
+          return {
+            modelIdentifier: sector.modelIdentifier,
+            metadata: sector.metadata,
+            levelOfDetail: LevelOfDetail.Discarded,
+            group: undefined,
+            instancedMeshes: undefined
+          } as ConsumedSector;
+        });
         this._pendingSectorDownloads.set(sectorIdentifier, sectorDownload);
         this.getNextQueuedSectorDownload(sectorDownload, sectorIdentifier);
         return sectorDownload;

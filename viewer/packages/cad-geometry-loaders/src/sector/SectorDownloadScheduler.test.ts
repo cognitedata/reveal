@@ -2,13 +2,26 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
 import { IMock, Mock } from 'moq.ts';
-import { SectorDownloadScheduler } from './SectorDownloadScheduler';
+import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
+import Log from '@reveal/logger';
+import { LogLevelNumbers } from 'loglevel';
 
 describe('SectorDownloadScheduler', () => {
   let sectorDownloadScheduler: SectorDownloadScheduler;
+  let currentLogLevel: LogLevelNumbers;
+
+  beforeAll(() => {
+    currentLogLevel = Log.getLevel();
+    Log.setLevel('silent');
+  });
+
+  afterAll(() => {
+    Log.setLevel(currentLogLevel);
+  });
+
   beforeEach(() => {
     const queueSize = 20;
     sectorDownloadScheduler = new SectorDownloadScheduler(queueSize);
@@ -21,10 +34,12 @@ describe('SectorDownloadScheduler', () => {
       return createConsumedSectorMock(sector).object();
     };
 
+    const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
+      return { sector, downloadSector: downloadSectorMock };
+    });
+
     // Act
-    const downloadedSector = await Promise.any(
-      sectorDownloadScheduler.queueSectorBatchForDownload(wantedSectors, downloadSectorMock)
-    );
+    const downloadedSector = await Promise.any(sectorDownloadScheduler.queueSectorBatchForDownload(sectorDownloadData));
 
     // Assert
     expect(wantedSectors[0].modelIdentifier).toBe(downloadedSector.modelIdentifier);
@@ -41,8 +56,12 @@ describe('SectorDownloadScheduler', () => {
     };
 
     // Act
-    const firstBatch = sectorDownloadScheduler.queueSectorBatchForDownload([wantedSectors[0]], downloadSectorMock);
-    const secondBatch = sectorDownloadScheduler.queueSectorBatchForDownload([wantedSectors[0]], downloadSectorMock);
+    const firstBatch = sectorDownloadScheduler.queueSectorBatchForDownload([
+      { sector: wantedSectors[0], downloadSector: downloadSectorMock }
+    ]);
+    const secondBatch = sectorDownloadScheduler.queueSectorBatchForDownload([
+      { sector: wantedSectors[0], downloadSector: downloadSectorMock }
+    ]);
 
     // Assert
     expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(1);
@@ -69,8 +88,12 @@ describe('SectorDownloadScheduler', () => {
       return createConsumedSectorMock(sector).object();
     };
 
+    const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
+      return { sector, downloadSector: downloadSectorMock };
+    });
+
     // Act
-    const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(wantedSectors, downloadSectorMock);
+    const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(sectorDownloadData);
 
     expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(20);
     expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(1);
@@ -103,8 +126,12 @@ describe('SectorDownloadScheduler', () => {
       return createConsumedSectorMock(sector).object();
     };
 
+    const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
+      return { sector, downloadSector: downloadSectorMock };
+    });
+
     // Act
-    const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(wantedSectors, downloadSectorMock);
+    const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(sectorDownloadData);
 
     // Assert
     expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(20);
@@ -128,6 +155,44 @@ describe('SectorDownloadScheduler', () => {
     expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(0);
     expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(0);
   });
+
+  test('If a sector fails, it should return a discarded consumed sector', async () => {
+    // Setup
+    const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
+    const stalledDownload = new DeferredPromise<void>();
+    const downloadSectorMock = async (sector: WantedSector) => {
+      await stalledDownload;
+      if (sector.metadata.id === 11) {
+        throw new Error('Sector with ID 11 failed');
+      }
+      return createConsumedSectorMock(sector).object();
+    };
+
+    const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
+      return { sector, downloadSector: downloadSectorMock };
+    });
+
+    // Act
+    const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(sectorDownloadData);
+
+    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(20);
+    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(1);
+
+    stalledDownload.resolve();
+    const resolvedSectors = await Promise.all(queuedSectorBatch);
+
+    // Assert
+    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(0);
+    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(0);
+
+    resolvedSectors.forEach(sector => {
+      if (sector.metadata.id === 11) {
+        expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
+      } else {
+        expect(sector.levelOfDetail).toBe(LevelOfDetail.Detailed);
+      }
+    });
+  });
 });
 
 function createMockWantedSectors(numberOfSectors: number, modelIdentifier: string): WantedSector[] {
@@ -146,6 +211,8 @@ function createConsumedSectorMock(wantedSector: WantedSector): IMock<ConsumedSec
     .setup(p => p.modelIdentifier)
     .returns(wantedSector.modelIdentifier)
     .setup(p => p.metadata.id)
-    .returns(wantedSector.metadata.id);
+    .returns(wantedSector.metadata.id)
+    .setup(p => p.levelOfDetail)
+    .returns(LevelOfDetail.Detailed);
   return consumedSector;
 }

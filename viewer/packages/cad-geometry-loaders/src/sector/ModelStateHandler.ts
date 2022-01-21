@@ -3,7 +3,7 @@
  */
 
 import { SceneModelState } from './rxSectorUtilities';
-import { WantedSector, ConsumedSector, LevelOfDetail } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 
 import assert from 'assert';
 
@@ -14,15 +14,21 @@ export class ModelStateHandler {
     this._sceneModelState = {} as SceneModelState;
   }
 
-  hasStateChanged(wantedSector: WantedSector): boolean {
-    const modelState = this._sceneModelState[wantedSector.modelIdentifier];
-    assert(modelState !== undefined, `Model ${wantedSector.modelIdentifier} has not been added`);
-    const sectorLevelOfDetail = modelState[wantedSector.metadata.id];
+  hasStateChanged(sectorId: number, modelIdentifier: string, levelOfDetail: LevelOfDetail): boolean {
+    const modelState = this._sceneModelState[modelIdentifier];
+    assert(modelState !== undefined, `Model ${modelIdentifier} has not been added`);
+    const sectorLevelOfDetail = modelState[sectorId];
     if (sectorLevelOfDetail !== undefined) {
-      return sectorLevelOfDetail !== wantedSector.levelOfDetail;
+      return sectorLevelOfDetail !== levelOfDetail;
     } else {
-      return wantedSector.levelOfDetail !== LevelOfDetail.Discarded;
+      return levelOfDetail !== LevelOfDetail.Discarded;
     }
+  }
+
+  getState(sectorId: number, modelIdentifier: string): LevelOfDetail {
+    const modelState = this._sceneModelState[modelIdentifier];
+    assert(modelState !== undefined, `Model ${modelIdentifier} has not been added`);
+    return modelState[sectorId] ?? LevelOfDetail.Discarded;
   }
 
   addModel(modelIdentifier: string): void {
@@ -35,18 +41,18 @@ export class ModelStateHandler {
     delete this._sceneModelState[modelIdentifier];
   }
 
-  updateState(consumedSector: ConsumedSector): void {
-    if (this._sceneModelState[consumedSector.modelIdentifier] === undefined) {
+  updateState(sectorId: number, modelIdentifier: string, levelOfDetail: LevelOfDetail): void {
+    if (this._sceneModelState[modelIdentifier] === undefined) {
       // Received sector from model but the model is not added - happens when
       // sectors from newly removed model are loaded
       return;
     }
 
-    const modelState = this._sceneModelState[consumedSector.modelIdentifier];
-    if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
-      delete modelState[consumedSector.metadata.id];
+    const modelState = this._sceneModelState[modelIdentifier];
+    if (levelOfDetail === LevelOfDetail.Discarded) {
+      delete modelState[sectorId];
     } else {
-      modelState[consumedSector.metadata.id] = consumedSector.levelOfDetail;
+      modelState[sectorId] = levelOfDetail;
     }
   }
 }
