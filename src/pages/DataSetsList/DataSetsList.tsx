@@ -167,14 +167,14 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const statusColumn = {
     title: 'Status',
     key: 'status',
-    width: '15%',
+    width: '5%',
     render: (row: DataSetRow) =>
       row.archived && <Tag color="red">Archived</Tag>,
   };
 
   const actionsColumn = {
     title: <div style={{ textAlign: 'center', width: '100%' }}>Actions</div>,
-    width: '10%',
+    width: '5%',
     key: 'id',
     render: actionsRender,
   };
