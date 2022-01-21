@@ -128,7 +128,7 @@ jest_test(
     ],
     jest_args = [],
     jest_config = "jest.config.js",
-    service_name = "nodeVisualizer",
+    service_name = "node-visualizer",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
 )
 

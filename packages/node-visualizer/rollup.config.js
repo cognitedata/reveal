@@ -34,7 +34,13 @@ export default {
       typescript: require('typescript'),
     }),
     images({
-      incude: ['**/*.svg', '**/*.jpg', '**/**/*.png', 'images/**/*.png'],
+      incude: [
+        '**/*.svg',
+        '**/*.jpg',
+        '**/**/*.png',
+        'images/**/*.png',
+        'images/Nodes/*.png',
+      ],
     }),
     json(),
   ],
