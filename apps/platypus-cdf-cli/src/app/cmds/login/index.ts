@@ -50,7 +50,7 @@ export const builder = (yargs: Argv<LoginArgs>) =>
     .choices('auth-type', [
       AUTH_TYPE.PKCE,
       AUTH_TYPE.CLIENT_SECRET,
-      AUTH_TYPE.LEGACY,
+      AUTH_TYPE.APIKEY,
     ]);
 
 export const handler = async (arg: Arguments<BaseArgs>) => {
@@ -86,6 +86,6 @@ export const validateApiKey = ({
   apiKey: string;
   authType: AUTH_TYPE;
 }): boolean | string =>
-  authType === AUTH_TYPE.LEGACY && (!apiKey || apiKey === '')
+  authType === AUTH_TYPE.APIKEY && (!apiKey || apiKey === '')
     ? 'api-key must be provided for legacy auth'
     : true;
