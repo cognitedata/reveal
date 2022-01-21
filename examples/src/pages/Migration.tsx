@@ -376,7 +376,7 @@ export function Migration() {
         cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
       });
 
-      const clippingUi = new ClippingUI(gui.addFolder('Slicing'), planes => viewer.setSlicingPlanes(planes));
+      const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => viewer.setClippingPlanes(planes));
       new CameraUI(viewer, gui.addFolder('Camera'));
 
       const pcSettings = gui.addFolder('Point clouds');
