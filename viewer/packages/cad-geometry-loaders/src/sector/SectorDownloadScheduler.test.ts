@@ -64,8 +64,8 @@ describe(SectorDownloadScheduler.name, () => {
     ]);
 
     // Assert
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(1);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(0);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(1);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
 
     stalledDownload.resolve();
 
@@ -95,14 +95,14 @@ describe(SectorDownloadScheduler.name, () => {
     // Act
     const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(sectorDownloadData);
 
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(20);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(1);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(1);
 
     await Promise.any(queuedSectorBatch);
 
     // Assert
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(20);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(0);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
   });
 
   test('The download queue should be able to flush twice', async () => {
@@ -134,26 +134,26 @@ describe(SectorDownloadScheduler.name, () => {
     const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(sectorDownloadData);
 
     // Assert
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(20);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(21);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(21);
 
     // release first set
     firstStalledDownload.resolve();
     await Promise.all(queuedSectorBatch.slice(0, 20));
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(20);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(1);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(1);
 
     // release second set
     secondStalledDownload.resolve();
     await Promise.all(queuedSectorBatch.slice(20, 40));
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(1);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(0);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(1);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
 
     // release third set
     thirdStalledDownload.resolve();
     await queuedSectorBatch[40];
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(0);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(0);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(0);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
   });
 
   test('If a sector fails, it should return a discarded consumed sector', async () => {
@@ -175,15 +175,15 @@ describe(SectorDownloadScheduler.name, () => {
     // Act
     const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(sectorDownloadData);
 
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(20);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(1);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(1);
 
     stalledDownload.resolve();
     const resolvedSectors = await Promise.all(queuedSectorBatch);
 
     // Assert
-    expect((sectorDownloadScheduler as any)._pendingSectorDownloads.size).toBe(0);
-    expect((sectorDownloadScheduler as any)._queuedSectorDownloads.size).toBe(0);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(0);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
 
     resolvedSectors.forEach(sector => {
       if (sector.metadata.id === 11) {

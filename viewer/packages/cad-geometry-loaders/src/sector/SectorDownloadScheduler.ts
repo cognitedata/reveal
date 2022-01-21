@@ -22,6 +22,14 @@ export class SectorDownloadScheduler {
   >;
   private readonly _sectorDownloadQueue: string[];
 
+  get numberOfPendingDownloads(): number {
+    return this._pendingSectorDownloads.size;
+  }
+
+  get numberOfQueuedDownloads(): number {
+    return this._queuedSectorDownloads.size;
+  }
+
   constructor(maxConcurrentSectorDownloads = 20) {
     this._maxConcurrentSectorDownloads = maxConcurrentSectorDownloads;
     this._pendingSectorDownloads = new Map();
