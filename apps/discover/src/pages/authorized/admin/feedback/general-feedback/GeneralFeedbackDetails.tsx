@@ -4,10 +4,10 @@ import styled from 'styled-components/macro';
 import { shortDate } from 'utils/date';
 
 import { Button } from '@cognite/cogs.js';
+import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 
 import { Typography } from 'components/typography';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
-import { GeneralFeedbackItem } from 'modules/feedback/types';
 import { Flex, sizes } from 'styles/layout';
 
 const FeedbackDetailsTableContainer = styled.div`
@@ -33,13 +33,16 @@ const FeedbackDetailsTableDescription = styled(Typography)`
   margin-left: ${sizes.normal};
 `;
 
-interface props {
-  feedback: GeneralFeedbackItem;
+interface Props {
+  feedback: GeneralFeedbackResponse;
   deleted?: boolean;
 }
 
-export const GeneralFeedbackDetails: React.FC<props> = (props) => {
-  const { feedback, deleted } = props;
+export const GeneralFeedbackDetails: React.FC<Props> = ({
+  feedback,
+  deleted,
+}) => {
+  const { t } = useTranslation('Admin');
 
   const handleReplyToUser = () => {
     const content = generateReplyToUserContent(feedback);
@@ -49,7 +52,6 @@ export const GeneralFeedbackDetails: React.FC<props> = (props) => {
   };
 
   const comment = feedback.comment || '-';
-  const { t } = useTranslation('Admin');
 
   return (
     <FeedbackDetailsTableContainer>

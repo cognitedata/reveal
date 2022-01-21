@@ -52,9 +52,9 @@ export function routes(
     {
       path: 'model-library',
       loader: async () => ({
-          definitions: (await dispatch(api.endpoints.getDefinitions.initiate()))
-            .data,
-        }),
+        definitions: (await dispatch(api.endpoints.getDefinitions.initiate()))
+          .data,
+      }),
       meta: {
         title: () => 'Model library',
       },

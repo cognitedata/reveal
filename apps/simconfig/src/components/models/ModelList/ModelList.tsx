@@ -17,7 +17,11 @@ interface ModelListProps {
   isFetchingModelFiles: boolean;
 }
 
-export function ModelList({ modelFiles, className, isFetchingModelFiles }: ModelListProps) {
+export function ModelList({
+  modelFiles,
+  className,
+  isFetchingModelFiles,
+}: ModelListProps) {
   const springRef = useSpringRef();
   const [modelFilesTrail, modelFilesSpring] = useTrail(
     modelFiles.length,
@@ -35,7 +39,7 @@ export function ModelList({ modelFiles, className, isFetchingModelFiles }: Model
     });
   });
 
-  if(isFetchingModelFiles){
+  if (isFetchingModelFiles) {
     return (
       <ModelFilesListSkeleton>
         <Skeleton.Rectangle height="65px" width="100%" />
@@ -45,7 +49,7 @@ export function ModelList({ modelFiles, className, isFetchingModelFiles }: Model
         <Skeleton.Rectangle height="65px" width="100%" />
         <Skeleton.Rectangle height="65px" width="100%" />
       </ModelFilesListSkeleton>
-    )
+    );
   }
 
   return (

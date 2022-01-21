@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
+import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 
 import MetadataTable, { MetadataItem } from 'components/metadataTable';
 import {
@@ -10,7 +11,6 @@ import {
 } from 'modules/api/feedback';
 import { ASSESS } from 'modules/feedback/constants';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
-import { DocumentFeedbackItem } from 'modules/feedback/types';
 import { MarginBottomNormalContainer } from 'styles/layout';
 
 import { AssessDropdown } from '../common/AssessDropdown';
@@ -24,17 +24,17 @@ import {
 import { DocumentFeedbackDocumentTypeActions } from './DocumentFeedbackDocumentTypeActions';
 
 interface Props {
-  feedback: DocumentFeedbackItem;
+  feedback: ObjectFeedbackResponse;
   // deleted?: boolean;
 }
 
 interface BaseProps {
-  feedback: DocumentFeedbackItem;
+  feedback: ObjectFeedbackResponse;
   action?: React.ReactElement;
 }
 
 interface DeletedProps {
-  feedback: DocumentFeedbackItem;
+  feedback: ObjectFeedbackResponse;
 }
 
 const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {

@@ -30,10 +30,8 @@ export function ModelLibrary() {
   >([]);
   const navigate = useNavigate();
 
-  const {
-    data: modelFiles,
-    isFetching: isFetchingModelFiles
-  } = useGetModelFileListQuery({ project });
+  const { data: modelFiles, isFetching: isFetchingModelFiles } =
+    useGetModelFileListQuery({ project });
 
   if (!modelName && modelFilesList.length) {
     const firstFile = modelFilesList[0];
@@ -47,7 +45,7 @@ export function ModelLibrary() {
 
   useEffect(() => {
     setModelFileslist(modelFiles?.modelFileList ?? []);
-  }, [modelFiles])
+  }, [modelFiles]);
 
   const handleOnModelNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const searchText = event.target.value;

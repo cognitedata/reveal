@@ -1,10 +1,10 @@
 import React from 'react';
 
+import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import EmptyState from 'components/emptyState';
 import { useFeedbackGetAllQuery } from 'modules/api/feedback/useFeedbackQuery';
-import { DocumentFeedbackItem } from 'modules/feedback/types';
 
 import { DocumentFeedbackTable } from './DocumentFeedbackTable';
 
@@ -12,13 +12,8 @@ const DocumentFeedback: React.FC<{
   setCommentTarget: SetCommentTarget;
   commentTarget?: CommentTarget;
 }> = ({ setCommentTarget, commentTarget }) => {
-  const {
-    isLoading,
-    data,
-  }: {
-    isLoading: boolean;
-    data?: DocumentFeedbackItem[];
-  } = useFeedbackGetAllQuery('object');
+  const { isLoading, data } =
+    useFeedbackGetAllQuery<ObjectFeedbackResponse[]>('object');
 
   if (isLoading || !data?.length) {
     return (

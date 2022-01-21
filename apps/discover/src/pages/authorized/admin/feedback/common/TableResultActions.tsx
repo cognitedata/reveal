@@ -3,7 +3,6 @@ import { PropsWithChildren } from 'react';
 import styled from 'styled-components/macro';
 
 import { BaseButton, CommentButton } from 'components/buttons';
-import { FeedbackItem } from 'modules/feedback/types';
 import { sizes } from 'styles/layout';
 
 import { ActionContainer } from './elements';
@@ -25,7 +24,7 @@ interface prop<FeedbackObject> {
   deleteFeedback: (row: FeedbackObject) => void;
 }
 
-const TableResultActions = <FeedbackObject extends FeedbackItem>(
+const TableResultActions = <FeedbackObject extends { id: string }>(
   props: PropsWithChildren<prop<FeedbackObject>>
 ) => {
   const {

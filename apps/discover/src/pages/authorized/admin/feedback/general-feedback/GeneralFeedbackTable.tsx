@@ -6,6 +6,7 @@ import sortBy from 'lodash/sortBy';
 import { shortDate } from 'utils/date';
 import { sortDates } from 'utils/sortDates';
 
+import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import EmptyState from 'components/emptyState';
@@ -23,7 +24,6 @@ import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { FIELDS } from 'modules/feedback/constants';
 import { feedbackHelper } from 'modules/feedback/helper';
-import { GeneralFeedbackItem } from 'modules/feedback/types';
 import { User } from 'modules/user/types';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 
@@ -44,12 +44,12 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
   commentTarget,
 }) => {
   const { data, isLoading, isError } =
-    useFeedbackGetAllQuery<GeneralFeedbackItem[]>('general');
+    useFeedbackGetAllQuery<GeneralFeedbackResponse[]>('general');
   const { mutateAsync: updateGeneralFeedback } =
     useFeedbackUpdateMutate('general');
   const { generalFeedbackShowDeleted } = useFeedback();
   const [isOpen, setOpen] = useState(false);
-  const [feedback, setFeedback] = useState<GeneralFeedbackItem>();
+  const [feedback, setFeedback] = useState<GeneralFeedbackResponse>();
   const [expandedIds, setExpandedIds] = useState<TableResults>({});
   const { data: user } = useUserProfileQuery();
   const [highlightedIds, setHighlightedIds] = useState<TableResults>();
@@ -58,7 +58,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
    * Reason for eslint-disable: components that are inline-rendered for React-Table cell,
    * makes sense to be "inlined", as it is easier to read and closer to the column cell settings.
    */
-  const feedbackColumns: ColumnMap<GeneralFeedbackItem> = {
+  const feedbackColumns: ColumnMap<GeneralFeedbackResponse> = {
     screenshot: {
       Header: '',
       accessor: 'screenshotB64',
@@ -169,7 +169,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
             });
           }}
           recoverFeedback={recoverFeedback}
-          assignFeedback={(feedback: GeneralFeedbackItem) =>
+          assignFeedback={(feedback: GeneralFeedbackResponse) =>
             assignFeedback(feedback, user)
           }
           deleteGeneralFeedback={handleDeleteGeneralFeedback}
@@ -216,17 +216,17 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
   const handleUpdateFeedbackStatus = (feedbackId: string, status: number) =>
     updateFeedbackStatus(feedbackId, status, updateGeneralFeedback);
 
-  const recoverFeedback = (feedback: GeneralFeedbackItem) => {
+  const recoverFeedback = (feedback: GeneralFeedbackResponse) => {
     recoverGeneralFeedback(feedback.id, updateGeneralFeedback);
   };
   const assignFeedback = (
-    feedback: GeneralFeedbackItem,
+    feedback: GeneralFeedbackResponse,
     user: User | undefined
   ) => {
     return assignGeneralFeedback(feedback.id, user, updateGeneralFeedback);
   };
 
-  const handleDeleteGeneralFeedback = (feedback: GeneralFeedbackItem) =>
+  const handleDeleteGeneralFeedback = (feedback: GeneralFeedbackResponse) =>
     deleteGeneralFeedback(feedback.id, updateGeneralFeedback);
 
   const renderRowSubComponent = useCallback(
@@ -234,7 +234,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       return (
         <GeneralFeedbackDetails
           deleted={generalFeedbackShowDeleted}
-          feedback={row.original as GeneralFeedbackItem}
+          feedback={row.original as GeneralFeedbackResponse}
         />
       );
     },
@@ -243,7 +243,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
 
   const handleRowClick = useCallback(
     (row: RowProps & { isSelected: boolean }) => {
-      const feedback = row.original as GeneralFeedbackItem;
+      const feedback = row.original as GeneralFeedbackResponse;
       setExpandedIds((state) => ({
         ...state,
         [feedback.id]: !state[feedback.id],
@@ -288,7 +288,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
         <GeneralScreenshotModal setOpen={setOpen} feedbackId={feedback?.id} />
       )}
 
-      <Table<GeneralFeedbackItem>
+      <Table<GeneralFeedbackResponse>
         id="feedback-result-table"
         data={toggleGeneralFeedbackData}
         columns={columns}

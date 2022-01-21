@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
+import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
+
 import { BlankModal } from 'components/modal';
 import { useFeedbackGetOneQuery } from 'modules/api/feedback';
-import { GeneralFeedbackItem } from 'modules/feedback/types';
 
 const ImagePreview = styled.img`
   max-width: 100%;
@@ -21,7 +22,7 @@ export const GeneralScreenshotModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation('Admin');
 
-  const { data } = useFeedbackGetOneQuery<GeneralFeedbackItem>(
+  const { data } = useFeedbackGetOneQuery<GeneralFeedbackResponse>(
     'general',
     feedbackId
   );

@@ -1,10 +1,11 @@
 import { shortDate } from 'utils/date';
 
-import { APP_NAME } from 'constants/general';
 import {
-  DocumentFeedbackItem,
-  GeneralFeedbackItem,
-} from 'modules/feedback/types';
+  GeneralFeedbackResponse,
+  ObjectFeedbackResponse,
+} from '@cognite/discover-api-types';
+
+import { APP_NAME } from 'constants/general';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 
 function shortCommentText(
@@ -36,7 +37,7 @@ export const feedbackHelper = {
   shortCommentText,
 };
 
-type FeedbackType = GeneralFeedbackItem | DocumentFeedbackItem;
+type FeedbackType = GeneralFeedbackResponse | ObjectFeedbackResponse;
 
 export const generateReplyToUserContent = (feedback: FeedbackType) => {
   const subject = `${APP_NAME} feedback with ID ${feedback.id} is now being handled.`;
@@ -49,8 +50,14 @@ export const generateReplyToUserContent = (feedback: FeedbackType) => {
       : '.'
   }`;
 
+  const getEmail = () => {
+    if (feedback?.user && 'email' in feedback.user) {
+      return (feedback.user as any).email;
+    }
+    return '';
+  };
+
   return (
-    feedback.user &&
-    `mailto:${feedback.user?.email || ''}?subject=${subject}&body=${body}`
+    feedback.user && `mailto:${getEmail()}?subject=${subject}&body=${body}`
   );
 };

@@ -14,14 +14,12 @@ export function NewModel() {
       )}/${encodeURIComponent(modelName)}`,
       replace: true,
     });
-  }
+  };
 
   return (
     <NewModelContainer>
       <h2>Configure new model</h2>
-      <ModelForm
-        onUpload={handleRedirect}
-      />
+      <ModelForm onUpload={handleRedirect} />
     </NewModelContainer>
   );
 }
