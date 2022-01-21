@@ -106,7 +106,13 @@ export class GeometryBatchingManager {
     const offset = interleavedBufferView.byteOffset;
 
     const interleavedAttributesView = new Uint8Array(interleavedArrayBuffer, offset, length);
+
     const { batchId, bufferIsReallocated, updateRange } = defragBuffer.add(interleavedAttributesView);
+
+    const inputBufferByteStride = interleavedBufferView.BYTES_PER_ELEMENT * instanceAttributes[0].attribute.data.stride;
+
+    assert(updateRange.byteCount % inputBufferByteStride === 0);
+    assert(updateRange.byteOffset % inputBufferByteStride === 0);
 
     for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
       incrementOrInsertIndex(mesh.userData.treeIndices, treeIndexInterleavedAttribute.getX(i));

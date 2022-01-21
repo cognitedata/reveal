@@ -26,6 +26,7 @@ import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { InspectNodeUI } from '../utils/InspectNodeUi';
+import { CameraUI } from '../utils/CameraUI';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -376,6 +377,7 @@ export function Migration() {
       });
 
       const clippingUi = new ClippingUI(gui.addFolder('Slicing'), planes => viewer.setSlicingPlanes(planes));
+      new CameraUI(viewer, gui.addFolder('Camera'));
 
       const pcSettings = gui.addFolder('Point clouds');
       pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
