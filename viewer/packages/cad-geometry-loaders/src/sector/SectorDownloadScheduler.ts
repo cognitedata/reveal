@@ -97,11 +97,11 @@ export class SectorDownloadScheduler {
       } as ConsumedSector;
     });
     this._pendingSectorDownloads.set(sectorIdentifier, sectorDownload);
-    this.getNextQueuedSectorDownload(sectorDownload, sectorIdentifier);
+    this.processNextQueuedSectorDownload(sectorDownload, sectorIdentifier);
     return sectorDownload;
   }
 
-  private getNextQueuedSectorDownload(sectorDownload: Promise<ConsumedSector>, sectorIdentifier: string) {
+  private processNextQueuedSectorDownload(sectorDownload: Promise<ConsumedSector>, sectorIdentifier: string) {
     sectorDownload.then(_ => {
       this._pendingSectorDownloads.delete(sectorIdentifier);
       const nextSectorIdentifier = this._sectorDownloadQueue.shift();
@@ -124,7 +124,7 @@ export class SectorDownloadScheduler {
         queuedDeferredPromise.resolve(consumedSector);
       });
 
-      this.getNextQueuedSectorDownload(sectorDownload, nextSectorIdentifier);
+      this.processNextQueuedSectorDownload(sectorDownload, nextSectorIdentifier);
     });
   }
 
