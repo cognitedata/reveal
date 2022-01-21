@@ -108,7 +108,11 @@ describe('SectorLoader', () => {
   test('loadSectors only updates changed sectors', async () => {
     // Arrange
     const alreadyLoadedSector = createConsumedSector(createWantedSector(model, model.scene.root));
-    stateHandler.updateState(alreadyLoadedSector);
+    stateHandler.updateState(
+      alreadyLoadedSector.modelIdentifier,
+      alreadyLoadedSector.metadata.id,
+      alreadyLoadedSector.levelOfDetail
+    );
     const updateStateFn = jest.spyOn(stateHandler, 'updateState');
 
     // Act

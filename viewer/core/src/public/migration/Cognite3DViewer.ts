@@ -787,14 +787,6 @@ export class Cognite3DViewer {
   }
 
   /**
-   * @param slicingPlanes
-   * @deprecated Since version 2.1, will be removed in version 3.0. Use {@link setClippingPlanes}.
-   */
-  setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    this.setClippingPlanes(slicingPlanes);
-  }
-
-  /**
    * Returns the current active clipping planes.
    */
   getClippingPlanes(): THREE.Plane[] {
