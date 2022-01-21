@@ -78,7 +78,7 @@ TYPE_DEPENDENCIES = [
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
-    "@npm//@rollup/plugin-image",    
+    "@npm//@rollup/plugin-image",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//rollup-plugin-json",
@@ -182,13 +182,13 @@ rollup(
     name = "dist",
     args = [
         "--banner=//node-visualizer",
-        "--node_options=--require=./$(execpath //scripts:log.js)",        
+        "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",
         "rollup.config.js",
     ],
     data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "//scripts:log.js",        
+        "//scripts:log.js",
         ":chdir.js",
         ":copy_static_files",
         ":package-json",
