@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ConsumedSector, WantedSector, LevelOfDetail, CadModelMetadata } from '@reveal/cad-parsers';
+import { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad-parsers';
 
 import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 import { SectorCuller } from './culling/SectorCuller';
@@ -11,9 +11,9 @@ import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 import { ByScreenSizeSectorCuller } from './culling/ByScreenSizeSectorCuller';
 
-import log from '@reveal/logger';
 import { CadNode } from '@reveal/rendering';
 import { File3dFormat } from '@reveal/modeldata-api';
+import { SectorDownloadScheduler } from './SectorDownloadScheduler';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -37,6 +37,9 @@ export class SectorLoader {
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
   private readonly _gltfSectorCuller: SectorCuller;
   private readonly _continuousModelStreaming: boolean;
+  private readonly _sectorDownloadScheduler: SectorDownloadScheduler;
+
+  private _batchId = 0;
 
   constructor(
     sectorCuller: SectorCuller,
@@ -49,6 +52,8 @@ export class SectorLoader {
     // the proper sector culler (create factory)
     this._v8SectorCuller = sectorCuller;
     this._gltfSectorCuller = new ByScreenSizeSectorCuller();
+
+    this._sectorDownloadScheduler = new SectorDownloadScheduler(SectorLoadingBatchSize);
 
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
@@ -79,19 +84,31 @@ export class SectorLoader {
     this._collectStatisticsCallback(prioritizedResult.spentBudget);
 
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
-    const changedSectors = prioritizedResult.wantedSectors.filter(hasSectorChanged);
+
+    const changedSectors = prioritizedResult.wantedSectors.filter(sector =>
+      hasSectorChanged(sector.modelIdentifier, sector.metadata.id, sector.levelOfDetail)
+    );
 
     const progressHelper = new ProgressReportHelper(this._progressCallback);
     progressHelper.start(changedSectors.length);
 
+    this._batchId++;
+    const currentBatchId = this._batchId;
+
     for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
       const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, progressHelper);
-      const consumedPromises = this.startLoadingBatch(filteredSectors, progressHelper, cadModels);
+      const consumedPromises = this.startLoadingBatch(filteredSectors, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
-        if (consumed.result !== undefined) {
-          this._modelStateHandler.updateState(consumed.result);
-          yield consumed.result;
+        const resolvedSector = consumed.result;
+        if (currentBatchId === this._batchId && resolvedSector !== undefined) {
+          this._modelStateHandler.updateState(
+            resolvedSector.modelIdentifier,
+            resolvedSector.metadata.id,
+            resolvedSector.levelOfDetail
+          );
+          yield resolvedSector;
         }
+        progressHelper.reportNewSectorsLoaded(1);
       }
     }
   }
@@ -101,9 +118,8 @@ export class SectorLoader {
       return this._v8SectorCuller;
     } else if (isGltfModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
       return this._gltfSectorCuller;
-    } else {
-      throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
     }
+    throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
   }
 
   private async filterSectors(
@@ -118,31 +134,13 @@ export class SectorLoader {
     return filteredSectors;
   }
 
-  private startLoadingBatch(
-    batch: WantedSector[],
-    progressHelper: ProgressReportHelper,
-    models: CadNode[]
-  ): Promise<ConsumedSector>[] {
-    const consumedPromises = batch.map(async wantedSector => {
+  private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<ConsumedSector>[] {
+    const consumedPromises = batch.map(wantedSector => {
       const model = models.filter(model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier)[0];
-      return model
-        .loadSector(wantedSector)
-        .catch(error => {
-          log.error('Failed to load sector', wantedSector, 'error:', error);
-          // Ignore error but mark sector as discarded since we didn't load any geometry
-          return {
-            modelIdentifier: wantedSector.modelIdentifier,
-            metadata: wantedSector.metadata,
-            levelOfDetail: LevelOfDetail.Discarded,
-            group: undefined,
-            instancedMeshes: undefined
-          };
-        })
-        .finally(() => {
-          progressHelper.reportNewSectorsLoaded(1);
-        });
+      return { sector: wantedSector, downloadSector: model.loadSector.bind(model) };
     });
-    return consumedPromises;
+
+    return this._sectorDownloadScheduler.queueSectorBatchForDownload(consumedPromises);
   }
 }
 
