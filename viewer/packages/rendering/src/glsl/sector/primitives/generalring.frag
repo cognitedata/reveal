@@ -1,7 +1,7 @@
 precision highp float;
 
 #define texture2D texture
-#define gl_FragDepthEXT gl_FragDepth
+// #define gl_FragDepthEXT gl_FragDepth
 
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
