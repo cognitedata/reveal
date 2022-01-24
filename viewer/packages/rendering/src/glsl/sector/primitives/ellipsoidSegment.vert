@@ -75,10 +75,8 @@ void main() {
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
     vec3 up = normalize(cross(left, lDir));
 
-#ifndef GL_EXT_frag_depth
     // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
     newPosition.x *= 1.0 - (a_verticalRadius * (position.x + 1.0) * 0.0025 / a_height);
-#endif
 
     // Negative angle means height larger than radius,
     // so we should have full size so we can render the largest part of the ellipsoid segment

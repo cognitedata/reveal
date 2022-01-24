@@ -11,20 +11,9 @@ float computeFragmentDepth(vec3 p, mat4 projectionMatrix) {
   return ((gl_DepthRange.diff * (projected_intersection_z / projected_intersection_w)) + gl_DepthRange.near + gl_DepthRange.far) * .5;
 }
 
-#if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth) 
-
 float updateFragmentDepth(vec3 p,mat4 projectionMatrix) {
-  gl_FragDepthEXT = computeFragmentDepth(p, projectionMatrix);
-  return gl_FragDepthEXT;
+  gl_FragDepth = computeFragmentDepth(p, projectionMatrix);
+  return gl_FragDepth;
 }
-
-#else
-
-float updateFragmentDepth(vec3 p, mat4 projectionMatrix){
-  // Extension not available - not much we can do.
-  return computeFragmentDepth(p, projectionMatrix);
-}
-
-#endif
 
 #pragma glslify:export(updateFragmentDepth)
