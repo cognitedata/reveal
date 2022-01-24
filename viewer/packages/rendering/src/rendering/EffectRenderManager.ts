@@ -778,6 +778,7 @@ export class EffectRenderManager {
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Green, RevealColors.Green);
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Red, RevealColors.Red);
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Orange, CogniteColors.Orange);
+    outlineColorTexture.needsUpdate = true;
     return outlineColorTexture;
   }
 
