@@ -5,7 +5,7 @@ import * as reactQuery from 'react-query';
 
 import { render, sandbox } from '../../utils/test';
 
-import Base from './ProjectSelector';
+import Base, { ProjectResult } from './ProjectSelector';
 
 const getProps = () => {
   const client = new CogniteClient({ appId: 'test' });
@@ -27,9 +27,11 @@ const getProps = () => {
 
 describe('<ProjectSelector />', () => {
   it('Should render the button', () => {
+    const data: ProjectResult[] = [{ projectUrlName: 'test-1', groups: [1] }];
+
     // @ts-expect-error - missing args
     sandbox.stub(reactQuery, 'useQuery').returns({
-      data: [{ projectUrlName: 'test-1' }],
+      data,
       isFetched: true,
       isError: false,
       refetch: jest.fn(),
@@ -40,10 +42,40 @@ describe('<ProjectSelector />', () => {
     expect(screen.getByText('Continue')).toBeInTheDocument();
   });
 
+  it('Should show only projects we have groups in', () => {
+    const data: ProjectResult[] = [
+      {
+        projectUrlName: 'test-1',
+        groups: [1],
+      },
+      {
+        projectUrlName: 'test-2',
+        groups: [],
+      },
+    ];
+
+    // @ts-expect-error - missing useQuery args
+    sandbox.stub(reactQuery, 'useQuery').returns({
+      data,
+      isFetched: true,
+      isError: false,
+      refetch: jest.fn(),
+    });
+
+    render(<Base {...getProps()} />);
+
+    fireEvent.click(screen.getByText('Select a project'));
+
+    expect(screen.getByText('test-1')).toBeInTheDocument();
+    expect(screen.queryByText('test-2')).not.toBeInTheDocument();
+  });
+
   it('Should handle network errors', () => {
+    const data: ProjectResult[] = [];
+
     // @ts-expect-error - missing args
     sandbox.stub(reactQuery, 'useQuery').returns({
-      data: [],
+      data,
       isFetched: true,
       isError: true,
       refetch: jest.fn(),
@@ -56,9 +88,11 @@ describe('<ProjectSelector />', () => {
   });
 
   it('Should select a project', () => {
+    const data: ProjectResult[] = [{ projectUrlName: 'test-1', groups: [1] }];
+
     // @ts-expect-error - missing args
     sandbox.stub(reactQuery, 'useQuery').returns({
-      data: [{ projectUrlName: 'test-1' }],
+      data,
       isFetched: true,
       isError: false,
       refetch: jest.fn(),

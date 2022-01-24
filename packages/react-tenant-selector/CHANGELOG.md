@@ -1,3 +1,7 @@
+## 2.1.0 Jan 24 2022
+
+- Only show projects the user has groups for in project selector list
+
 ## 2.0.2 Oct 15 2021
 
 - Re-build
