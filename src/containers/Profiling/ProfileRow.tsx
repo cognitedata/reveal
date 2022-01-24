@@ -98,7 +98,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
     <>
       <StyledTableRow key="profile" onClick={() => setExpanded(!expanded)}>
         <TableCell>{<ColumnIcon dataKey={label} />}</TableCell>
-        <TableCell>{label}</TableCell>
+        <TableCell style={{ overflowWrap: 'anywhere' }}>{label}</TableCell>
         <TableCell>
           <NumberOrMissingTd
             dataType="Empty"
