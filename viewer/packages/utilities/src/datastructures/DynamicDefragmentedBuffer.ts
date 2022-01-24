@@ -69,10 +69,8 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
   }
 
   public remove(batchId: number): {
-    updateRange: {
-      byteOffset: number;
-      byteCount: number;
-    };
+    byteOffset: number;
+    byteCount: number;
   } {
     const batch = this._batchMap.get(batchId);
 
@@ -111,7 +109,7 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
     this._batchMap.delete(batchId);
 
-    return { updateRange: { byteOffset, byteCount } };
+    return { byteOffset, byteCount };
   }
 
   public getRangeForBatchId(batchId: number): { byteOffset: number; byteCount: number } {
