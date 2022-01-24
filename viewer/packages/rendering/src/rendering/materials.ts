@@ -41,7 +41,6 @@ export function createMaterials(
     name: 'Primitives (Box)',
     clipping: true,
     clippingPlanes,
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -57,7 +56,6 @@ export function createMaterials(
     name: 'Primitives (Circle)',
     clipping: true,
     clippingPlanes,
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.circlePrimitive.vertex,
     fragmentShader: sectorShaders.circlePrimitive.fragment,
     // TODO double side is not necessary for all,
@@ -112,7 +110,6 @@ export function createMaterials(
         value: new THREE.Matrix3()
       }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalRingPrimitive.vertex,
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
     // TODO we can avoid drawing DoubleSide if we flip the ring in Rust and adjust the angle and
@@ -130,7 +127,6 @@ export function createMaterials(
         value: new THREE.Matrix4()
       }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.conePrimitive.vertex,
     fragmentShader: sectorShaders.conePrimitive.fragment,
     side: THREE.DoubleSide,
@@ -146,7 +142,6 @@ export function createMaterials(
         value: new THREE.Matrix4()
       }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
     fragmentShader: sectorShaders.eccentricConePrimitive.fragment,
     side: THREE.DoubleSide,
@@ -163,7 +158,6 @@ export function createMaterials(
       }
     },
 
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -194,7 +188,6 @@ export function createMaterials(
         value: new THREE.Vector3()
       }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -210,7 +203,6 @@ export function createMaterials(
         value: new THREE.Matrix4()
       }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
     fragmentShader: sectorShaders.trapeziumPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -227,7 +219,6 @@ export function createMaterials(
       }
     },
     extensions: {
-      fragDepth: true,
       derivatives: true
     },
     vertexShader: sectorShaders.torusSegmentPrimitive.vertex,
@@ -245,7 +236,6 @@ export function createMaterials(
         value: new THREE.Matrix4()
       }
     },
-    extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
     side: THREE.DoubleSide,

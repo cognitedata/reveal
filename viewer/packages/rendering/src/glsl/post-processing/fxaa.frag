@@ -86,7 +86,5 @@ void main() {
   outputColor = fxaa(tDiffuse, v_fragCoord, 
     resolution, inverseResolution, 
     v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
-#if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)
-  gl_FragDepthEXT = texture2D(tDepth, v_uv).r;
-#endif
+  gl_FragDepth = texture2D(tDepth, v_uv).r;
 }
