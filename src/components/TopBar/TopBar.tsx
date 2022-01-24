@@ -56,7 +56,7 @@ const TopBarWrapper = () => {
             <>
               <TopBar.Item style={{ borderLeft: 'none' }}>
                 <ChartDetails>
-                  {dayjs(chart?.updatedAt).format('YYYY-MM-DD')} ·{' '}
+                  {dayjs(chart?.updatedAt).format('MMM D, YYYY')} ·{' '}
                   {chart.userInfo?.displayName ||
                     chart.userInfo?.email ||
                     chart.user}

@@ -116,6 +116,7 @@ const DateRangeSelector = () => {
       </Column>
       <Column>
         <DateRange
+          format="MMM D, YYYY"
           range={{
             startDate: new Date(chart.dateFrom || new Date()),
             endDate: new Date(chart.dateTo || new Date()),

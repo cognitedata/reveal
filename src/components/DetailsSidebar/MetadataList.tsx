@@ -37,7 +37,9 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
       <DataSetItem timeseries={timeseries} />
       <MetadataItem
         label="Updated"
-        value={dayjs(timeseries?.lastUpdatedTime).format('YYYY-MM-DD HH:mm:ss')}
+        value={dayjs(timeseries?.lastUpdatedTime).format(
+          'MMM D, YYYY HH:mm:ss'
+        )}
       />
       <MetadataItem label="Step" value={timeseries?.isStep ? 'Yes' : 'No'} />
       <MetadataItem label="ID" value={timeseries?.id} copyable />
