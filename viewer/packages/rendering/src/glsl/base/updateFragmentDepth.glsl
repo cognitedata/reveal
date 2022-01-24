@@ -12,8 +12,8 @@ float computeFragmentDepth(vec3 p, mat4 projectionMatrix) {
 }
 
 float updateFragmentDepth(vec3 p,mat4 projectionMatrix) {
-  gl_FragDepthEXT = computeFragmentDepth(p, projectionMatrix);
-  return gl_FragDepthEXT;
+  gl_FragDepth = computeFragmentDepth(p, projectionMatrix);
+  return gl_FragDepth;
 }
 
 #pragma glslify:export(updateFragmentDepth)
