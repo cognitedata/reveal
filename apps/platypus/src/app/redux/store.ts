@@ -8,10 +8,10 @@ import {
   AnyAction,
 } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
-import { environment } from '../../environments/environment';
 
 import globalReducer from './reducers/global/globalReducer';
 import solutionSlice from './reducers/global/solutionReducer';
+import { environment } from '../../environments/environment';
 
 const createReducer = (asyncReducers: any) => {
   return combineReducers({

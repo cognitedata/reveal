@@ -8,17 +8,25 @@ import { ToastContainer } from '@cognite/cogs.js';
 import Routes from './Routes';
 import sidecar from './utils/sidecar';
 import store from './redux/store';
+import { environment } from '../environments/environment';
+import { ConditionalReduxProvider } from './utils/ReactContainerMock';
+import { AuthContainerMock } from './AuthContainerMock';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly
 (window as any).global = window;
 
 function App() {
+  const ContainerComponent =
+    environment.APP_ENV === 'mock' ? ConditionalReduxProvider : Container;
+
+  const AuthContainerComponent =
+    environment.APP_ENV === 'mock' ? AuthContainerMock : AuthContainer;
   return (
     <>
       <ToastContainer />
-      <Container sidecar={sidecar} store={store}>
-        <AuthContainer>
+      <ContainerComponent sidecar={sidecar} store={store}>
+        <AuthContainerComponent>
           <GlobalStyle />
           <StyledWrapper>
             <Router basename="platypus">
@@ -27,8 +35,8 @@ function App() {
               </StyledPage>
             </Router>
           </StyledWrapper>
-        </AuthContainer>
-      </Container>
+        </AuthContainerComponent>
+      </ContainerComponent>
     </>
   );
 }

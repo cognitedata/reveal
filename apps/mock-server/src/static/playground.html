@@ -1,0 +1,187 @@
+<html>
+
+<head>
+  <title>Express HTML</title>
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src='https://unpkg.com/react-router-dom@5.3.0/umd/react-router-dom.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+  <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+  <link rel="stylesheet" href="https://unpkg.com/graphiql/graphiql.min.css" />
+  <script src="https://unpkg.com/graphiql/graphiql.min.js" type="application/javascript"></script>
+  <style>
+    body {
+      height: 100%;
+      margin: 0;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #graphiql {
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id='root'></div>
+
+
+  <script type='text/babel'>
+
+    const Link = ReactRouterDOM.Link;
+    const Route = ReactRouterDOM.Route;
+    const { useState, useEffect } = React;
+
+    function createFetcher(url) {
+      return function graphQLFetcher(graphQLParams) {
+        return fetch(
+          url,
+          {
+            method: 'post',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(graphQLParams),
+            credentials: 'omit',
+          },
+        ).then(function (response) {
+          return response.json().catch(function () {
+            return response.text();
+          });
+        });
+      }
+    }
+
+
+    const App = () => (
+      <ReactRouterDOM.HashRouter>
+        <nav className="navbar navbar-inverse navbar-static-top">
+          <div className="container">
+            <a className="navbar-brand" href="/">Home</a>
+            <ul className="nav navbar-nav">
+              <li >
+                <Link to="/templates">Templates</Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+
+        <Route path="/" exact component={Home} />
+        <Route path="/templates" component={Templates} />
+      </ReactRouterDOM.HashRouter>
+    );
+
+    const Home = () => (<div className="jumbotron" style={{ margin: '40px' }}>
+      <h1>Playground!</h1>
+      <p>This is a collection of APIs that are highly experimental and is meant as a way to communicate a few things we're experimenting with. Please use these APIs with care, as we issue no guarantees these APIs won't break. Have fun!</p>
+      <p><a className="btn btn-primary btn-lg" target="_blank" href="https://docs.cognite.com/api/playground/" role="button">Learn more</a></p>
+
+    </div>);
+
+    const Templates = () => {
+      const [isReady, setIsReady] = useState(false);
+      const [selectedTemplateGroup, setSelectedTemplateGroup] = useState('');
+      const [templateGroupVersion, setTemplateGroupVersion] = useState(0);
+      const [templateGroups, setTemplateGroups] = useState([]);
+      const [isVersionsSelectDisabled, setIsVersionsSelectDisabled] = useState(true);
+      const [templateGroupVersions, setTemplateGroupVersions] = useState([]);
+      const [fetcherUrl, setFetcherUrl] = useState('');
+
+      useEffect(() => {
+        const origin = window.location.origin;
+        fetch(origin + "/api/v1/projects/templategroups/list", {
+          method: 'POST',
+          body: {}
+        }).then((res) => res.json()).then((data) => {
+          if (!data || !data.items || !data.items.length) {
+            alert('We were not able to fetch template groups from mock server!');
+          }
+
+          const templateGroups = data.items;
+          console.log(templateGroups)
+          setTemplateGroups(templateGroups);
+        })
+      }, []);
+
+      useEffect(() => {
+        if (!selectedTemplateGroup) {
+          return;
+        }
+        const origin = window.location.origin;
+
+        fetch(origin + "/api/v1/projects/templategroups/" + selectedTemplateGroup + "/versions/list", {
+          method: 'POST',
+          body: {}
+        }).then((res) => res.json()).then((data) => {
+          if (!data || !data.items || !data.items.length) {
+            alert('We were not able to fetch template group versions from mock server!');
+          }
+
+          const templateGroupVersions = data.items;
+          setTemplateGroupVersions(templateGroupVersions);
+        })
+      }, [selectedTemplateGroup]);
+
+      return (
+        <div>
+          <div className="jumbotron" style={{ margin: '40px', padding: '40px' }}>
+            <div className="form-inline" >
+              <div className="form-group">
+                <label >Template Group</label>
+                <select
+                  className="form-control"
+                  style={{ marginLeft: '10px' }}
+                  value={selectedTemplateGroup}
+                  onChange={(e) => {
+                    setSelectedTemplateGroup(e.target.value);
+                    setTemplateGroupVersions([]);
+                    setIsVersionsSelectDisabled(false);
+                  }}>
+                  <option value="">Please Select</option>
+                  {templateGroups.map(o => (
+                    <option key={o.externalId} value={o.externalId}>{o.externalId}</option>
+                  ))}
+                </select>
+              </div>
+              {templateGroupVersions ?
+                (<div className="form-group" style={{ marginLeft: '10px' }} >
+                  <label >Template Group Version</label>
+                  <select
+                    className="form-control"
+                    style={{ marginLeft: '10px' }}
+                    value={templateGroupVersion}
+                    onChange={(e) => {
+                      const schema = templateGroupVersions.find((x) => x.version === +e.target.value);
+                      const origin = window.location.origin;
+                      setFetcherUrl(origin + "/api/v1/projects/templategroups/" + selectedTemplateGroup + "/versions/" + e.target.value + "/graphql/");
+                      setTemplateGroupVersion(schema);
+
+                    }}>
+                    <option value="">Please Select</option>
+                    {templateGroupVersions.map(o => (
+                      <option key={o.version} value={o.version}>{o.version}</option>
+                    ))}
+                  </select>
+                </div>)
+                : null}
+            </div>
+
+          </div>
+          {(selectedTemplateGroup && templateGroupVersion && fetcherUrl) ?
+            <GraphiQL fetcher={createFetcher(fetcherUrl)} defaultVariableEditorOpen={true} />
+            : <p className="text-center">Please select template and version first</p>}
+        </div>
+      )
+    }
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+  </script>
+</body>
+
+</html>

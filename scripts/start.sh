@@ -34,6 +34,11 @@ case "$variant": in
     export REACT_APP_ENV="staging"
     ;;
 
+  mock*)
+    configuration="--configuration=mock"
+    export REACT_APP_ENV="mock"
+    ;;
+
   *)
     echo "Unknown build type: ${variant}"
     exit 1

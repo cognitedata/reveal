@@ -74,3 +74,19 @@ To test:
 # Platypus CLI
 
 Read more [here](./apps/platypus-cdf-cli/README.md)
+
+# Mock Server
+
+We have developed a mock server that can be used for local development and used for running E2E tests.
+
+Read more [here](./apps/mock-server/README.md) how to use it.
+
+To run, use following command:
+`nx serve mock-server`
+
+Server will be running on following URL: http://localhost:4002
+
+If you want to pass CLI arguments using nx serve, you can use `--args=` and pass the args that you want.
+
+Example:
+`nx serve mock-server --args="./data-provider.js --config=./mock-server-config.js --port=4001"`

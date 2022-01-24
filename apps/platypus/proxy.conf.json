@@ -1,0 +1,14 @@
+{
+	"/login/status": {
+	  "target": "http://localhost:4002",
+	  "secure": false,
+	  "changeOrigin": true,
+	  "logLevel": "error"
+	},
+	"/api": {
+	  "target": "http://localhost:4002",
+	  "secure": false,
+	  "changeOrigin": true,
+	  "logLevel": "error"
+	}
+}

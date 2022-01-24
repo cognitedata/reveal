@@ -9,13 +9,17 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/libs/cog-data-grid",
             "tsConfig": "libs/cog-data-grid/tsconfig.lib.json",
             "project": "libs/cog-data-grid/package.json",
             "entryFile": "libs/cog-data-grid/src/index.ts",
-            "external": ["react/jsx-runtime"],
+            "external": [
+              "react/jsx-runtime"
+            ],
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
             "assets": [
               {
@@ -28,14 +32,20 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/cog-data-grid/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "libs/cog-data-grid/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/cog-data-grid"],
+          "outputs": [
+            "coverage/libs/cog-data-grid"
+          ],
           "options": {
             "jestConfig": "libs/cog-data-grid/jest.config.js",
             "passWithNoTests": true
@@ -50,7 +60,9 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "defaultConfiguration": "production",
           "options": {
             "outputPath": "dist/apps/demo-app-react",
@@ -63,7 +75,9 @@
               "apps/demo-app-react/src/favicon.ico",
               "apps/demo-app-react/src/assets"
             ],
-            "styles": ["apps/demo-app-react/src/styles.css"],
+            "styles": [
+              "apps/demo-app-react/src/styles.css"
+            ],
             "scripts": [],
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
@@ -99,14 +113,20 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/demo-app-react/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "apps/demo-app-react/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/demo-app-react"],
+          "outputs": [
+            "coverage/apps/demo-app-react"
+          ],
           "options": {
             "jestConfig": "apps/demo-app-react/jest.config.js",
             "passWithNoTests": true
@@ -134,14 +154,20 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/demo-app-react-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/demo-app-react-e2e/**/*.{js,ts}"
+            ]
           }
         }
       },
       "tags": [],
-      "implicitDependencies": ["demo-app-react"]
+      "implicitDependencies": [
+        "demo-app-react"
+      ]
     },
     "graph": {
       "root": "libs/graph",
@@ -150,26 +176,129 @@
       "targets": {
         "build": {
           "executor": "@nrwl/workspace:tsc",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/libs/graph",
             "main": "libs/graph/src/index.ts",
             "tsConfig": "libs/graph/tsconfig.lib.json",
-            "assets": ["libs/graph/*.md"]
+            "assets": [
+              "libs/graph/*.md"
+            ]
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/graph/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/graph/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/graph"],
+          "outputs": [
+            "coverage/libs/graph"
+          ],
           "options": {
             "jestConfig": "libs/graph/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "mock-server": {
+      "root": "apps/mock-server",
+      "sourceRoot": "apps/mock-server/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": [
+            "{options.outputPath}"
+          ],
+          "options": {
+            "outputPath": "dist/apps/mock-server",
+            "main": "apps/mock-server/src/main.ts",
+            "tsConfig": "apps/mock-server/tsconfig.app.json",
+            "assets": [
+              "apps/mock-server/src/assets",
+              "apps/mock-server/src/static"
+            ],
+            "webpackConfig": "tools/custom-webpack-configurations/mock-server-webpack-config.js"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/mock-server/src/environments/environment.ts",
+                  "with": "apps/mock-server/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "mock-server:build"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": [
+            "{options.outputFile}"
+          ],
+          "options": {
+            "lintFilePatterns": [
+              "apps/mock-server/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/apps/mock-server"
+          ],
+          "options": {
+            "jestConfig": "apps/mock-server/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "mock-data": {
+      "root": "libs/mock-data",
+      "sourceRoot": "libs/mock-data/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": [
+            "{options.outputFile}"
+          ],
+          "options": {
+            "lintFilePatterns": [
+              "libs/mock-data/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/mock-data"
+          ],
+          "options": {
+            "jestConfig": "libs/mock-data/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -183,7 +312,9 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "build",
             "index": "apps/platypus/src/index.html",
@@ -195,7 +326,9 @@
               "apps/platypus/src/manifest.json",
               "apps/platypus/src/assets"
             ],
-            "styles": ["apps/platypus/src/styles.css"],
+            "styles": [
+              "apps/platypus/src/styles.css"
+            ],
             "scripts": [],
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
@@ -221,6 +354,22 @@
                   "maximumError": "3mb"
                 }
               ]
+            },
+
+            "mock": {
+              "fileReplacements": [
+                {
+                "replace": "apps/platypus/src/environments/environment.ts",
+                "with": "apps/platypus/src/environments/environment.mock.ts"
+                }
+              ],
+              "optimization": false,
+              "outputHashing": "all",
+              "sourceMap": true,
+              "extractCss": false,
+              "namedChunks": false,
+              "extractLicenses": false,
+              "vendorChunk": false
             },
             "staging": {
               "fileReplacements": [
@@ -271,7 +420,10 @@
         "postbuild": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["mkdir -p scripts/js", "cp *.map scripts/js"],
+            "commands": [
+              "mkdir -p scripts/js",
+              "cp *.map scripts/js"
+            ],
             "cwd": "build",
             "parallel": false
           }
@@ -283,6 +435,11 @@
             "hmr": true
           },
           "configurations": {
+            "mock": {
+              "buildTarget": "platypus:build:mock",
+              "hmr": true,
+              "proxyConfig": "apps/platypus/proxy.conf.json"
+            },
             "preview": {
               "buildTarget": "platypus:build:preview",
               "hmr": false
@@ -299,14 +456,20 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/platypus/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "apps/platypus/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/platypus"],
+          "outputs": [
+            "coverage/apps/platypus"
+          ],
           "options": {
             "jestConfig": "apps/platypus/jest.config.js",
             "passWithNoTests": true
@@ -329,7 +492,9 @@
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "uiFramework": "@storybook/react",
             "outputPath": "storybook-static",
@@ -353,12 +518,16 @@
       "targets": {
         "build": {
           "executor": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/platypus-cdf-cli",
             "main": "apps/platypus-cdf-cli/src/main.ts",
             "tsConfig": "apps/platypus-cdf-cli/tsconfig.app.json",
-            "assets": ["apps/platypus-cdf-cli/src/assets"],
+            "assets": [
+              "apps/platypus-cdf-cli/src/assets"
+            ],
             "generatePackageJson": true,
             "extractLicenses": true,
             "sourceMap": true,
@@ -396,14 +565,20 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/platypus-cdf-cli/**/*.ts"]
+            "lintFilePatterns": [
+              "apps/platypus-cdf-cli/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/platypus-cdf-cli"],
+          "outputs": [
+            "coverage/apps/platypus-cdf-cli"
+          ],
           "options": {
             "jestConfig": "apps/platypus-cdf-cli/jest.config.js",
             "passWithNoTests": true
@@ -419,14 +594,20 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/platypus-core/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/platypus-core/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/platypus-core"],
+          "outputs": [
+            "coverage/libs/platypus-core"
+          ],
           "options": {
             "jestConfig": "libs/platypus-core/jest.config.js",
             "passWithNoTests": true
@@ -442,14 +623,20 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/platypus-infrastructure/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/platypus-infrastructure/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/platypus-infrastructure"],
+          "outputs": [
+            "coverage/libs/platypus-infrastructure"
+          ],
           "options": {
             "jestConfig": "libs/platypus-infrastructure/jest.config.js",
             "passWithNoTests": true
@@ -465,14 +652,20 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/platypus-ui/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/platypus-ui/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/platypus-ui"],
+          "outputs": [
+            "coverage/libs/platypus-ui"
+          ],
           "options": {
             "jestConfig": "libs/platypus-ui/jest.config.js",
             "passWithNoTests": true

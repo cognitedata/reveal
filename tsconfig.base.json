@@ -34,11 +34,14 @@
       "@platypus-app/*": [
         "apps/platypus/src/app/*"
       ],
-      "@platypus/platypus-core": [
-        "libs/platypus-core/src/index.ts"
-      ],
       "@platypus-core/*": [
         "libs/platypus-core/src/lib/*"
+      ],
+      "@platypus/mock-data": [
+        "libs/mock-data/src/index.ts"
+      ],
+      "@platypus/platypus-core": [
+        "libs/platypus-core/src/index.ts"
       ],
       "@platypus/platypus-infrastructure": [
         "libs/platypus-infrastructure/src/index.ts"
