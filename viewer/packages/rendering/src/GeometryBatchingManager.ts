@@ -73,16 +73,9 @@ export class GeometryBatchingManager {
 
       this.removeTreeIndicesFromMeshUserData(mesh, batchUpdateRange);
 
-      defragBuffer.remove(batchId);
+      const defragBufferUpdateRange = defragBuffer.remove(batchId);
 
-      const defragBufferEnd = defragBuffer.length;
-
-      const updateRange = {
-        byteOffset: batchUpdateRange.byteOffset,
-        byteCount: defragBufferEnd - batchUpdateRange.byteOffset
-      };
-
-      this.updateInstanceAttributes(mesh, updateRange);
+      this.updateInstanceAttributes(mesh, defragBufferUpdateRange);
 
       mesh.count -= instanceCount;
     });
