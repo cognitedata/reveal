@@ -45,7 +45,7 @@ jobs:
         working-directory: documentation
         run: |
           yarn install --immutable
-          yarn build
+          yarn build:fast
 
       - name: Deploy documentation preview 🚀
         uses: peaceiris/actions-gh-pages@v3
