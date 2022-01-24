@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import Tag from 'antd/lib/tag';
-import sdk from '@cognite/cdf-sdk-singleton';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
   FieldLabel,
   BlockedInformationWrapper,
@@ -23,7 +23,7 @@ import message from 'antd/lib/message';
 import { useRawList } from 'actions';
 import { useQueryClient } from 'react-query';
 import Spin from 'antd/lib/spin';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 
 interface RawSectionProps {
@@ -44,8 +44,9 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
   const [createVisible, setCreateVisible] = useState<boolean>(false);
   const [nameField, setNameField] = useState<string>('');
 
-  const { data: hasRawList } = useUserCapabilities('rawAcl', 'LIST');
-  const { data: hasRawRead } = useUserCapabilities('rawAcl', 'READ');
+  const { flow } = getFlow();
+  const { data: hasRawList } = usePermissions(flow, 'rawAcl', 'LIST');
+  const { data: hasRawRead } = usePermissions(flow, 'rawAcl', 'READ');
 
   const hasRawPermissions = hasRawList && hasRawRead;
 

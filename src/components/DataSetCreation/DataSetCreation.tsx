@@ -18,7 +18,8 @@ import documentationIcon from 'assets/documentationIcon.svg';
 import dataConsumerIcon from 'assets/DataConsumer.svg';
 import { getContainer, isNotNilOrWhitespace } from 'utils/utils';
 import { useFlag } from '@cognite/react-feature-flags';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInformation } from 'hooks/useUserInformation';
+import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';
 import GetDataInPage from '../GetDataInPage';
 import TransformPage from '../TransformPage';
 import DocumentationPage from '../DocumentationPage';
@@ -43,7 +44,7 @@ interface DataSetCreationProps {
 }
 
 const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
-  const { data: userData } = useUserInfo();
+  const { data: userData } = useUserInformation();
 
   const [selectedSection, setSelectedSection] = useState<string>('');
   const [dataSetName, setDataSetName] = useState<string>('');
@@ -61,6 +62,10 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
   const didRemoveNameOrDescription =
     (props.dataSet?.name !== '' && dataSetName === '') ||
     (props.dataSet?.description !== '' && dataSetDescription === '');
+
+  const nameOrDescTooLong =
+    (dataSetName?.length ?? 0) > NAME_MAX_LENGTH ||
+    (dataSetDescription?.length ?? 0) > DESC_MAX_LENGTH;
 
   useEffect(() => {
     if (saveSections) {
@@ -362,7 +367,11 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         {props.dataSet && isEditing && (
           <CreateButton
             onClick={() => updateDataSetFields()}
-            disabled={props.changesSaved || didRemoveNameOrDescription}
+            disabled={
+              props.changesSaved ||
+              didRemoveNameOrDescription ||
+              nameOrDescTooLong
+            }
             type="primary"
           >
             Save
@@ -381,7 +390,11 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
             >
               <CreateButton
                 onClick={() => createSet()}
-                disabled={dataSetName === '' || dataSetDescription === ''}
+                disabled={
+                  dataSetName === '' ||
+                  dataSetDescription === '' ||
+                  nameOrDescTooLong
+                }
                 type="primary"
               >
                 Create
@@ -492,7 +505,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
       )}
       {!props.changesSaved && props.dataSet && (
         <SaveButton
-          disabled={didRemoveNameOrDescription}
+          disabled={didRemoveNameOrDescription || nameOrDescTooLong}
           type="primary"
           onClick={() => updateDataSetFields()}
         >

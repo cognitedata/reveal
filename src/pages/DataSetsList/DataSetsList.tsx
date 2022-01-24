@@ -16,7 +16,8 @@ import { setItemInStorage } from 'utils/localStorage';
 import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
 import useLocalStorage from 'hooks/useLocalStorage';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useParams } from 'react-router';
 import isArray from 'lodash/isArray';
 import getTableColumns, { DataSetRow } from './TableColumns';
@@ -64,7 +65,9 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
-  const { data: hasWritePermissions } = useUserCapabilities(
+  const { flow } = getFlow();
+  const { data: hasWritePermissions } = usePermissions(
+    flow,
     'datasetsAcl',
     'WRITE'
   );

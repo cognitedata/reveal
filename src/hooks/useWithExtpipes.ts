@@ -1,12 +1,15 @@
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useFlag } from '@cognite/react-feature-flags';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export const useWithExtpipes = () => {
   const isFlagExtpipe = useFlag('EXTPIPES_allowlist', {
     fallback: false,
     forceRerender: true,
   });
-  const { data: hasExtpipesPermission, ...queryProps } = useUserCapabilities(
+  const { flow } = getFlow();
+  const { data: hasExtpipesPermission, ...queryProps } = usePermissions(
+    flow,
     'extractionPipelinesAcl',
     'READ'
   );

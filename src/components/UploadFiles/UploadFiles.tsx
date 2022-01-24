@@ -7,12 +7,12 @@ import Spin from 'antd/lib/spin';
 import { Button, Icon } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import isString from 'lodash/isString';
-import sdk from '@cognite/cdf-sdk-singleton';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { UploadFile } from 'antd/lib/upload/interface';
 import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
 import { FileInfo } from 'utils/types';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { nameToAclTypeMap } from 'utils/utils';
 
 interface UploadFileProps {
@@ -91,7 +91,9 @@ const UploadFiles = ({
   setFileList,
   setChangesSaved,
 }: UploadFileProps): JSX.Element => {
-  const filesReadCapability = useUserCapabilities(
+  const { flow } = getFlow();
+  const filesReadCapability = usePermissions(
+    flow,
     nameToAclTypeMap.files,
     'READ'
   );

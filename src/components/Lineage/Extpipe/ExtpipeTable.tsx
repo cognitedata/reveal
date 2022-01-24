@@ -4,9 +4,10 @@ import Table from 'antd/lib/table';
 import Timeline from 'antd/lib/timeline';
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { createLink, getEnv } from '@cognite/cdf-utilities';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getContainer } from 'utils/utils';
 import InfoTooltip from 'components/InfoTooltip';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { DataSetWithExtpipes } from 'actions';
 import {
   EmptyLineageDot,
@@ -46,7 +47,9 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
 }: PropsWithChildren<ExtpipeTableProps>) => {
   const { extpipes, dataSet } = dataSetWithExtpipes;
 
-  const permissionsExtractionPipelines = useUserCapabilities(
+  const { flow } = getFlow();
+  const permissionsExtractionPipelines = usePermissions(
+    flow,
     'extractionPipelinesAcl',
     'WRITE'
   );

@@ -19,7 +19,8 @@ import DataSetEditor from 'pages/DataSetEditor';
 import notification from 'antd/lib/notification';
 import BasicInfoCard from 'components/BasicInfoCard';
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
   DataSetWithExtpipes,
   useDataSetWithExtpipes,
@@ -51,7 +52,9 @@ const DataSetDetails = (): JSX.Element => {
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
-  const { data: hasWritePermissions } = useUserCapabilities(
+  const { flow } = getFlow();
+  const { data: hasWritePermissions } = usePermissions(
+    flow,
     'datasetsAcl',
     'WRITE'
   );

@@ -1,7 +1,12 @@
 import GlobalStyles from 'styles/GlobalStyles';
 import React, { Suspense, useMemo } from 'react';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthWrapper,
+  getEnv,
+  getProject,
+  SubAppWrapper,
+} from '@cognite/cdf-utilities';
 import { createHistory } from 'utils/history';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { projectName } from 'utils/utils';
@@ -14,6 +19,8 @@ import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
 
 const App = () => {
+  const project = getProject();
+  const env = getEnv();
   const history = createHistory();
 
   const queryClient = new QueryClient({
@@ -31,8 +38,7 @@ const App = () => {
       <GlobalStyles>
         <AuthWrapper
           loadingScreen={<Loader />}
-          showLoader
-          subAppName="data-sets"
+          login={() => loginAndAuthIfNeeded(project, env)}
         >
           <SDKProvider sdk={sdk}>
             <FlagProvider

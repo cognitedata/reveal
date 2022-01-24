@@ -1,9 +1,9 @@
 {
   "name": "@cognite/cdf-data-sets",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
-    "start": "BROWSER=none WDS_SOCKET_PORT=3080 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3080 rescripts start",
+    "start": "env BROWSER=none WDS_SOCKET_PORT=3080 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3080 rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
     "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-data-sets -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
@@ -16,13 +16,13 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^0.7.3",
+    "@cognite/cdf-utilities": "^0.10.1",
     "@cognite/cogs.js": "^3.36.0",
     "@cognite/metrics": "^1.2.1",
     "@cognite/react-feature-flags": "^0.2.2-rc.0",
-    "@cognite/sdk": "5.1.1",
+    "@cognite/sdk": "^6.3.1",
     "@cognite/sdk-provider": "^1.0.0",
-    "@cognite/sdk-react-query-hooks": "^5.2.0",
+    "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@google-cloud/storage": "^5.15.3",
     "@rescripts/cli": "^0.0.16",
     "@rescripts/utilities": "^0.0.8",
