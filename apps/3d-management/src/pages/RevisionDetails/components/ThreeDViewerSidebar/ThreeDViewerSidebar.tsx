@@ -6,7 +6,7 @@ import {
   THREE,
 } from '@cognite/reveal';
 import React from 'react';
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { Tuple3, RevisionCameraProperties } from '@cognite/sdk';
 import styled from 'styled-components';
 import {
   Legacy3DModel,
@@ -33,8 +33,8 @@ type RevisionUpdatePayload = {
   modelId: number;
   revisionId: number;
   published?: boolean;
-  rotation?: v3.Tuple3<number>;
-  camera?: v3.RevisionCameraProperties;
+  rotation?: Tuple3<number>;
+  camera?: RevisionCameraProperties;
 };
 
 type Props = {
@@ -57,7 +57,7 @@ export default function ThreeDViewerSidebar(props: Props) {
     (window as any).viewer = props.viewer;
   }, [props.model, props.viewer]);
 
-  const [updateRevisionMutation] = useUpdateRevisionMutation();
+  const { mutate: updateRevisionMutation } = useUpdateRevisionMutation();
 
   const treeViewFeatureFlagIsEnabled =
     useFlag('3DM_tree-view') || !isProduction();

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import React, { useEffect } from 'react';
-import { v3Client } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   PropertyFilterNodeCollection,
   Cognite3DModel,
@@ -23,7 +23,7 @@ export function useFilteredNodesHighlights({
   );
 
   const filteredNodes = React.useRef<PropertyFilterNodeCollection>(
-    new PropertyFilterNodeCollection(v3Client as any, model, {
+    new PropertyFilterNodeCollection(sdk as any, model, {
       requestPartitions: 10,
     })
   );

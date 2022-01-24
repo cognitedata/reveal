@@ -50,7 +50,7 @@ pods {
   def gitAuthor
   def getTitle
   def isPullRequest = !!env.CHANGE_ID
-  def isRelease = env.BRANCH_NAME == 'master'
+  def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'release-staging'
 
   def context_checkout = "continuous-integration/jenkins/checkout"
   def context_install = "continuous-integration/jenkins/install"

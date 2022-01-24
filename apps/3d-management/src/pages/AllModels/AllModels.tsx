@@ -1,14 +1,8 @@
-import { v3 } from '@cognite/cdf-sdk-singleton';
-import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
+import { Model3D } from '@cognite/sdk';
 import { useMetrics } from 'src/hooks/useMetrics';
 import React, { ChangeEvent, useState } from 'react';
 import ModelRevisions from 'src/pages/AllModels/components/ModelRevisions/ModelRevisions';
-import {
-  APP_TITLE,
-  DEFAULT_MARGIN_V,
-  getContainer,
-  userHasCapabilities,
-} from 'src/utils';
+import { APP_TITLE, DEFAULT_MARGIN_V, getContainer } from 'src/utils';
 import { Modal, Steps, message } from 'antd';
 
 import { Button, Flex, Input } from '@cognite/cogs.js';
@@ -23,12 +17,12 @@ import { RouteComponentProps } from 'react-router';
 import { useCreateModelMutation } from 'src/hooks/models';
 import { useModels } from 'src/hooks/models/useModels';
 import { useCreateRevisionMutation } from 'src/hooks/revisions';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 const { Step } = Steps;
 
-type Props = RouteComponentProps & {
-  user: AuthenticatedUserWithGroups;
-};
+type Props = RouteComponentProps;
 
 const TableOperations = styled.div`
   margin: 20px 0 16px 0;
@@ -62,16 +56,16 @@ const ButtonRow = styled.div`
 
 export default function AllModels(props: Props) {
   const metrics = useMetrics('3D');
-
   const modelsQuery = useModels();
+  const { data: models } = modelsQuery;
 
-  const [createModel] = useCreateModelMutation();
-  const [createRevision] = useCreateRevisionMutation();
+  const { mutate: createModel } = useCreateModelMutation();
+  const { mutate: createRevision } = useCreateRevisionMutation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newModelName, setNewModelName] = useState('');
   const [currentUploadStep, setCurrentUploadStep] = useState<number>(0);
-  const [createdModel, setCreatedModel] = useState<v3.Model3D>();
+  const [createdModel, setCreatedModel] = useState<Model3D>();
 
   const isFormFilled = newModelName.length > 0;
 
@@ -93,12 +87,18 @@ export default function AllModels(props: Props) {
     }
   };
 
-  const { data: models } = modelsQuery;
+  const { flow } = getFlow();
+  const {
+    data: hasThreedCreateCapability,
+    isFetched: isFetchedThreedCreate,
+  } = usePermissions(flow, 'threedAcl', 'CREATE');
+  const {
+    data: hasFilesWriteCapability,
+    isFetched: isFetchedFilesWrite,
+  } = usePermissions(flow, 'filesAcl', 'WRITE');
 
-  const showAddModelButton = userHasCapabilities(props.user, [
-    { acl: 'threedAcl', actions: ['CREATE'] },
-    { acl: 'filesAcl', actions: ['WRITE'] },
-  ]);
+  const showAddModelButton =
+    hasThreedCreateCapability && hasFilesWriteCapability;
 
   const modelUploadSteps = [
     {
@@ -178,7 +178,7 @@ export default function AllModels(props: Props) {
     },
   ];
 
-  if (modelsQuery.isLoading) {
+  if (modelsQuery.isLoading || !isFetchedFilesWrite || !isFetchedThreedCreate) {
     return <Spinner />;
   }
 
