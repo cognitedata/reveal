@@ -1,21 +1,13 @@
 module.exports = {
-  extends: [
-    '@cognite',
-    'plugin:testing-library/react',
-    'plugin:lodash/recommended',
-    'plugin:testcafe/recommended',
-  ],
-  plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'react-hooks'],
+  extends: ['plugin:prettier/recommended'],
   rules: {
-    '@cognite/no-unissued-todos': [
-      'error',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
-    ],
+    'no-console': ['error'],
+    'no-nested-ternary': 'error',
 
-    'max-classes-per-file': ['off'],
-    'lines-between-class-members': ['off'],
-    'class-methods-use-this': ['off'],
-
+    'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+    'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
@@ -23,12 +15,6 @@ module.exports = {
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],
     'jest/no-export': ['off'],
-
-    'lodash/prefer-lodash-method': ['off'],
-    'lodash/prop-shorthand': ['off'],
-    'lodash/prefer-constant': ['off'],
-    'lodash/prefer-is-nil': ['off'],
-    'lodash/prefer-get': ['off'],
 
     '@typescript-eslint/no-unused-vars': [
       'error',

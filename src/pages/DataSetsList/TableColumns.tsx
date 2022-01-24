@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/utils';
 import WriteProtectedIcon from 'components/WriteProtectedIcon';
 import {
@@ -52,13 +53,13 @@ const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
 const getTableColumns = (
   dataSets: DataSet[],
   showArchived: boolean,
-  isExtpipeFlag: boolean
+  isExtpipeFlag: boolean,
+  isExtpipesFetched?: boolean
 ) => [
   {
     title: 'Name',
     dataIndex: 'name',
     key: 'dataset-name-column',
-    width: '20%',
     sorter: (a: DataSetRow, b: DataSetRow) => stringCompare(a.name, b.name),
     render: (_value: string, record: DataSetRow) => (
       <span>
@@ -82,12 +83,11 @@ const getTableColumns = (
     defaultSortOrder:
       getItemFromStorage('dataset-description-column') || undefined,
   },
-  ...(isExtpipeFlag ? [extpipeTableColumn()] : []),
+  ...(isExtpipeFlag ? [extpipeTableColumn(isExtpipesFetched)] : []),
   {
     title: <div style={{ lineHeight: '32px' }}>Labels</div>,
     dataIndex: 'labels',
     key: 'labels',
-    width: '30%',
     filterIcon: (filtered: boolean) => <ColumnFilterIcon filtered={filtered} />,
     filters: getLabelsList(dataSets, showArchived).map((val) => ({
       text: val,
@@ -109,7 +109,6 @@ const getTableColumns = (
   {
     title: 'Governance status',
     key: 'quality',
-    width: '15%',
     render: (row: DataSetRow) => (
       <div style={{ display: 'inline-box' }}>
         {row.quality === undefined && (
@@ -132,13 +131,16 @@ const getTableColumns = (
   },
 ];
 
-const extpipeTableColumn = () => {
+const extpipeTableColumn = (isExtpipesFetched?: boolean) => {
   return {
     title: 'Extraction pipelines',
     dataIndex: 'extpipes',
     key: 'extpipes',
-    width: '20%',
     render: (_value: string, record: DataSetRow) => {
+      if (!isExtpipesFetched) {
+        return <Icon type="LoadingSpinner" />;
+      }
+
       return (
         <NoStyleList>
           {Array.isArray(record.extpipes) &&

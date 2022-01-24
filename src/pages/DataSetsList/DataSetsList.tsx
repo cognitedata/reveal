@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { History } from 'history';
 import NewHeader from 'components/NewHeader';
 import { Button, Icon, Input } from '@cognite/cogs.js';
@@ -40,7 +40,6 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const { appPath } = useParams<{ appPath: string }>();
 
   const [qualityFilter, setQualityFilter] = useState<string>('all');
-  const [tableData, setTableData] = useState<DataSetRow[]>([]);
   const [searchValue, setSearchValue] = useLocalStorage<string>(
     'data-sets-search',
     ''
@@ -58,7 +57,11 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
-  const { dataSetsWithExtpipes = [], isLoading: loading } = useDataSetsList();
+  const {
+    dataSetsWithExtpipes = [],
+    isExtpipesFetched,
+    isLoading: loading,
+  } = useDataSetsList();
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
@@ -69,20 +72,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
     'WRITE'
   );
 
-  useEffect(() => {
-    if (!loading) {
-      handleTableData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSetsWithExtpipes, qualityFilter, searchValue, showArchived]);
-
-  const handleModalClose = () => {
-    setCreationDrawerVisible(false);
-    setMode('create');
-    setSelectedDataSet(undefined);
-  };
-
-  const handleTableData = () => {
+  const tableData = useMemo(() => {
     let tableDataSets: DataSetRow[] = [];
     if (dataSetsWithExtpipes?.length && !loading) {
       const dataSetsList = handleDataSetsFilters(
@@ -112,7 +102,20 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
         }
       );
     }
-    setTableData(tableDataSets);
+    return tableDataSets;
+  }, [
+    dataSetsWithExtpipes,
+    loading,
+    qualityFilter,
+    searchValue,
+    setSearchValue,
+    showArchived,
+  ]);
+
+  const handleModalClose = () => {
+    setCreationDrawerVisible(false);
+    setMode('create');
+    setSelectedDataSet(undefined);
   };
 
   const getSourcesList = () => {
@@ -167,14 +170,14 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const statusColumn = {
     title: 'Status',
     key: 'status',
-    width: '15%',
+    width: '5%',
     render: (row: DataSetRow) =>
       row.archived && <Tag color="red">Archived</Tag>,
   };
 
   const actionsColumn = {
     title: <div style={{ textAlign: 'center', width: '100%' }}>Actions</div>,
-    width: '10%',
+    width: '5%',
     key: 'id',
     render: actionsRender,
   };
@@ -317,7 +320,8 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
           ...getTableColumns(
             dataSetsWithExtpipes.map((x) => x.dataSet),
             showArchived,
-            withExtpipes
+            withExtpipes,
+            isExtpipesFetched
           ),
           ...(showArchived ? [statusColumn] : []),
           actionsColumn,
