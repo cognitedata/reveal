@@ -224,13 +224,9 @@ const ReactOrnate = ({
   useEffect(() => {
     if (isInitialized) {
       onOrnateRef?.(ornateViewer.current);
-      ornateViewer.current?.zoomToLocation(
-        {
-          x: 100,
-          y: 100,
-        },
-        0.22
-      );
+      ornateViewer.current?.zoomToGroup(ornateViewer.current?.baseLayer, {
+        scaleFactor: 0.95,
+      });
     }
   }, [isInitialized]);
 

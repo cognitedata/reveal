@@ -23,10 +23,7 @@ import DiscrepancyModal from './DiscrepancyModal';
 import getAnnotationsByDocument from './getAnnotationsByDocument';
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
 import getFileConnections from './getFileConnections';
-import IsoModal, {
-  ISO_MODAL_ORNATE_HEIGHT_PX,
-  ISO_MODAL_ORNATE_WIDTH_PX,
-} from './IsoModal';
+import IsoModal from './IsoModal';
 import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
 import ReactOrnate, {
   ReactOrnateProps,
@@ -341,11 +338,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
     isoOrnateRef.zoomToLocation(
       {
-        x:
-          ISO_MODAL_ORNATE_WIDTH_PX / 2 -
-          (shamefulHorizontalOffset + isoBoundingBox.x),
-        y: ISO_MODAL_ORNATE_HEIGHT_PX / 2 - isoBoundingBox.y,
+        x: -(
+          shamefulHorizontalOffset +
+          isoBoundingBox.x +
+          isoBoundingBox.scale.x / 2
+        ),
+        y: -(isoBoundingBox.y + isoBoundingBox.scale.y / 2),
       },
+      0.7,
       1
     );
 
@@ -588,7 +588,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         onHidePress={() => setIsIsoModalOpen(false)}
       />
       <div
-        style={{ height: 'calc(100vh - 180px - 60px)', position: 'relative' }}
+        style={{ height: 'calc(100vh - 125px - 56px)', position: 'relative' }}
       >
         {!isIsoModalOpen && (
           <div

@@ -1,20 +1,126 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Input, OptionType, Select, Table } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
+import React, { useCallback, useEffect, useState } from 'react';
+import { OptionType, Select, Table, TextInput } from '@cognite/cogs.js';
 import useLineReviews from 'modules/lineReviews/hooks';
-import { LineReview, LineReviewStatus } from 'modules/lineReviews/types';
+import {
+  LineReview,
+  LineReviewStatus,
+  Document,
+} from 'modules/lineReviews/types';
 import { useHistory } from 'react-router';
 import StatusTag from 'components/StatusTag';
+import styled from 'styled-components';
 
-import { LineReviewsWrapper, Stats } from './elements';
+import { getDocumentUrl } from '../modules/lineReviews/api';
+
+import * as Styled from './styled';
+import { LineReviewsWrapper } from './elements';
+import Statistic from './Statistic';
 
 type LineReviewTableProps = {
   onRowClick: (lineReview: LineReview) => void;
   lineReviews: LineReview[];
 };
 
+const FiltersContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  > * {
+    margin-right: 8px;
+  }
+  padding-bottom: 16px;
+`;
+
+const FilterContainer = styled.div`
+  width: 220px;
+`;
+
 const StatusCell = ({ value }: { value: string }) => (
   <StatusTag status={value as LineReviewStatus} />
 );
+
+const IsoCell = ({ value: documents }: { value: LineReview['documents'] }) => {
+  return <FileCell value={documents.filter(({ type }) => type === 'ISO')} />;
+};
+
+const PidCell = ({ value: documents }: { value: LineReview['documents'] }) => {
+  return <FileCell value={documents.filter(({ type }) => type === 'PID')} />;
+};
+
+type BadgeProps = {
+  label: string;
+  onClick: (event: React.MouseEvent) => void;
+};
+
+const StyledBadgeContainer = styled.span`
+  color: #4a67fb;
+  border: 1px solid #4a67fb;
+  box-sizing: border-box;
+  border-radius: 4px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 16px;
+  /* identical to box height, or 160% */
+
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-feature-settings: 'cpsp' on, 'ss04' on;
+`;
+
+const Badge: React.FC<BadgeProps> = ({ label, onClick }) => (
+  <StyledBadgeContainer onClick={onClick}>{label}</StyledBadgeContainer>
+);
+
+const FileCell = ({ value: documents }: { value: LineReview['documents'] }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { client } = useAuthContext();
+
+  if (documents.length === 0) {
+    return <div>N/A</div>;
+  }
+
+  const onFileClick = async (
+    event: React.MouseEvent,
+    client: any,
+    document: Document
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const url = await getDocumentUrl(client, document);
+    window.open(url);
+  };
+
+  return (
+    <>
+      {documents
+        .slice(0, isExpanded ? undefined : 1)
+        .map((document, index, slicedArray) => (
+          <React.Fragment key={document.id}>
+            <span>
+              {/* eslint-disable-next-line */}
+              <a onClick={(e) => onFileClick(e, client, document)}>
+                {document.fileExternalId}
+              </a>{' '}
+              &nbsp;
+            </span>
+            {index < slicedArray.length - 1 && <br />}
+          </React.Fragment>
+        ))}
+      {documents.length > 1 && (
+        <Badge
+          label={isExpanded ? '<<' : `+${documents.length}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            setIsExpanded((v) => !v);
+          }}
+        />
+      )}
+    </>
+  );
+};
 
 const AssigneeCell = ({ value }: { value: { name: string }[] }) =>
   value.length === 0 ? (
@@ -33,6 +139,10 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
     <Table
       columns={[
         {
+          Header: 'System',
+          accessor: 'system',
+        },
+        {
           Header: 'Name',
           accessor: 'name',
         },
@@ -41,10 +151,18 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
           accessor: 'status',
           Cell: StatusCell,
         },
-        // {
-        //   Header: 'LineReview',
-        //   accessor: 'description',
-        // },
+        {
+          id: 'iso',
+          Header: 'ISO',
+          accessor: 'documents',
+          Cell: IsoCell,
+        },
+        {
+          id: 'pid',
+          Header: 'PID',
+          accessor: 'documents',
+          Cell: PidCell,
+        },
         {
           Header: 'Assignee',
           accessor: 'assignees',
@@ -144,60 +262,69 @@ const LineReviews = () => {
 
   return (
     <LineReviewsWrapper>
-      <Stats>
-        <div className="stat">
-          <div className="number">{lineReviews.length}</div>
-          <div className="text">LineReviews identified</div>
-        </div>
-        <div className="stat">
-          {/* <div className="number"> */}
-          {/*  {lineReviews.filter((d) => d.status === 'REVIEW').length} */}
-          {/* </div> */}
-          <div className="text">Under Review</div>
-        </div>
-        <div className="stat">
-          {/* <div className="number"> */}
-          {/*  {lineReviews.filter((d) => d.status === 'RESOLVED').length} */}
-          {/* </div> */}
-          <div className="text">Completed</div>
-        </div>
-      </Stats>
+      <Styled.StatisticsContainer>
+        <Statistic
+          number={lineReviews.length}
+          title="Assigned Lines"
+          body="out of 273 ISOs for Unit 40"
+        />
+        <Statistic
+          number={lineReviews.length}
+          title="Under Review"
+          body="Forwarded for onsite or remote check"
+        />
+        <Statistic
+          number={lineReviews.length}
+          title="Completed"
+          body="Checked and validate onsite"
+        />
+      </Styled.StatisticsContainer>
+
       <div style={{ padding: 62 }}>
-        <div className="filters">
-          <Input
-            className="filter-input"
-            placeholder="Search"
-            icon="Search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-          />
-          <Select
-            className="filter-input"
-            isMulti
-            title="Status"
-            value={status}
-            onChange={setStatus}
-            options={statusOptions}
-          />
-          <Select
-            className="filter-input"
-            isMulti
-            title="Assignee"
-            value={assignee}
-            onChange={setAssignee}
-            options={assigneeOptions}
-          />
-        </div>
-        <div>
-          <LineReviewTable
-            lineReviews={lineReviews.filter(filterLineReviews)}
-            onRowClick={(lineReview) => {
-              history.push(`/LineReview/${lineReview.id}`);
-            }}
-          />
-        </div>
+        <FiltersContainer>
+          <FilterContainer>
+            <TextInput
+              // className="filter-input"
+              placeholder="Search"
+              icon="Search"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              fullWidth
+            />
+          </FilterContainer>
+
+          <FilterContainer>
+            <Select
+              className="filter-input"
+              isMulti
+              title="Status"
+              value={status}
+              onChange={setStatus}
+              options={statusOptions}
+              fullWidth
+            />
+          </FilterContainer>
+
+          <FilterContainer>
+            <Select
+              className="filter-input"
+              isMulti
+              title="Assignee"
+              value={assignee}
+              onChange={setAssignee}
+              options={assigneeOptions}
+              fullWidth
+            />
+          </FilterContainer>
+        </FiltersContainer>
+        <LineReviewTable
+          lineReviews={lineReviews.filter(filterLineReviews)}
+          onRowClick={(lineReview) => {
+            history.push(`/LineReview/${lineReview.id}`);
+          }}
+        />
       </div>
     </LineReviewsWrapper>
   );
