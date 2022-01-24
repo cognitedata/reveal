@@ -88,10 +88,8 @@ void main() {
     U.xyz = normalize(normalMatrix * U.xyz);
     V.xyz = normalize(normalMatrix * V.xyz);
 
-#ifndef GL_EXT_frag_depth
     // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
     newPosition.x *= 1.0 - (a_radiusA * (position.x + 1.0) * 0.0025 / height);
-#endif
 
     v_centerA.xyz = mul3(viewMatrix, mul3(modelMatrix, centerA));
     v_centerB.xyz = mul3(viewMatrix, mul3(modelMatrix, centerB));
