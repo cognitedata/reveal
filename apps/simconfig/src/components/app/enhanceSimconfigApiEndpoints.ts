@@ -59,6 +59,9 @@ export const enhanceSimconfigApiEndpoints = () => {
       updateModelFileVersion: {
         invalidatesTags: ['ModelFile'],
       },
+      runModelCalculation: {
+        invalidatesTags: () => ['ModelCalculation'],
+      },
     },
   });
 };

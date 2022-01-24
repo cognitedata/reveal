@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -11,18 +11,25 @@ import {
   Icon,
   Menu,
   Skeleton,
+  toast,
 } from '@cognite/cogs.js';
 import type {
   CalculationType,
   Simulator,
 } from '@cognite/simconfig-api-sdk/rtk';
-import { useGetModelCalculationListQuery } from '@cognite/simconfig-api-sdk/rtk';
+import {
+  useGetModelCalculationListQuery,
+  useRunModelCalculationMutation,
+} from '@cognite/simconfig-api-sdk/rtk';
 
+import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { isSuccessResponse } from 'utils/responseUtils';
 
 import { CalculationRunTypeIndicator } from './CalculationRunTypeIndicator';
 import { CalculationScheduleIndicator } from './CalculationScheduleIndicator';
 import { CalculationStatusIndicator } from './CalculationStatusIndicator';
+import { STATUS_POLLING_INTERVAL } from './constants';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -39,24 +46,48 @@ export function CalculationList({
 }: CalculationListProps) {
   const project = useSelector(selectProject);
   const navigate = useNavigate();
+  const [runModelCalculations] = useRunModelCalculationMutation();
+  const { authState } = useContext(CdfClientContext);
+  const [shouldPoll, setShouldPoll] = useState<boolean>(false);
 
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
 
   const { data: modelCalculations, isFetching: isFetchingModelCalculations } =
-    useGetModelCalculationListQuery({
-      project,
-      simulator,
-      modelName,
-    });
+    useGetModelCalculationListQuery(
+      {
+        project,
+        simulator,
+        modelName,
+      },
+      { pollingInterval: shouldPoll ? STATUS_POLLING_INTERVAL : undefined }
+    );
+
+  useEffect(() => {
+    if (!modelCalculations?.modelCalculationList) {
+      return;
+    }
+    const hasReadyOrRunningCalculation =
+      !!modelCalculations.modelCalculationList.find(
+        (calculation) => calculation.latestRun?.metadata.status === 'ready'
+      );
+
+    if (hasReadyOrRunningCalculation) {
+      setShouldPoll(true);
+    }
+  }, [modelCalculations, isFetchingModelCalculations]);
 
   if (!isFetchingModelCalculations && !modelCalculations) {
     // Uninitialized state
     return null;
   }
 
-  if (isFetchingModelCalculations || !definitions || !modelCalculations) {
+  if (
+    (isFetchingModelCalculations && !shouldPoll) ||
+    !definitions ||
+    !modelCalculations
+  ) {
     return <Skeleton.List lines={4} borders />;
   }
 
@@ -70,6 +101,31 @@ export function CalculationList({
   const nonConfiguredCalculations = calculationTypes.filter(
     (calculationType) => !configuredCalculations.includes(calculationType)
   );
+
+  const onRunClick = (calcType?: CalculationType) => async () => {
+    if (!authState?.email) {
+      toast.error('No user email found, please refresh and try again');
+      return;
+    }
+
+    if (!calcType) {
+      toast.error('Missing metadata, please refresh and try again');
+      return;
+    }
+
+    const response = await runModelCalculations({
+      modelName,
+      project,
+      simulator,
+      runModelCalculationRequestModel: {
+        userEmail: authState.email,
+        calculationType: calcType,
+      },
+    });
+    if (!isSuccessResponse(response)) {
+      toast.error('Running calculation failed, try again');
+    }
+  };
 
   if (showConfigured) {
     return !modelCalculations.modelCalculationList.length ? (
@@ -86,6 +142,7 @@ export function CalculationList({
               loading={calculation.latestRun?.metadata.status === 'running'}
               size="small"
               type="secondary"
+              onClick={onRunClick(calculation.latestRun?.metadata.calcType)}
             >
               {calculation.latestRun?.metadata.status === 'running'
                 ? 'Running'
