@@ -230,7 +230,6 @@ export class EffectRenderManager {
         edgeStrengthMultiplier: { value: 2.5 },
         edgeGrayScaleIntensity: { value: 0.1 }
       },
-      extensions: { fragDepth: true },
       defines: {
         EDGES:
           this._renderOptions.edgeDetectionParameters?.enabled ?? defaultRenderOptions.edgeDetectionParameters.enabled
@@ -288,7 +287,6 @@ export class EffectRenderManager {
       },
       vertexShader: fxaaShaders.vertex,
       fragmentShader: fxaaShaders.fragment,
-      extensions: { fragDepth: true },
       glslVersion: THREE.GLSL3
     });
 
