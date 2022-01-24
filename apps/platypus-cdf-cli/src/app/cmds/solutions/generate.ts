@@ -2,7 +2,6 @@ import { Arguments } from 'yargs';
 import { codegen } from '@graphql-codegen/core';
 import { CLICommand } from '../../common/cli-command';
 import { injectRCFile } from '../../common/config';
-// dont remove these unused imports as this are bundled by the webpack and used by the cli (standalone)
 import * as typescriptPlugin from '@graphql-codegen/typescript';
 import * as typescriptOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as typescriptResolversPlugin from '@graphql-codegen/typescript-resolvers';
@@ -11,7 +10,7 @@ import * as typescriptApolloAngularPlugin from '@graphql-codegen/typescript-apol
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
 import { cwd } from 'process';
 import { SupportedGraphQLGeneratorPlugins } from '../../constants';
-import { TemplatesApiService } from '@platypus/platypus-core';
+import { SolutionsApiService } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import { CONSTANTS } from '../../constants';
 import {
@@ -24,13 +23,33 @@ import { promises } from 'fs';
 const { readFile, stat, writeFile } = promises;
 import { join, resolve } from 'path';
 
-export type TemplateGenerateCommandArgs = BaseArgs & {
+export type SolutionsGenerateCommandArgs = BaseArgs & {
+  ['project-name']: string;
+  ['api-name']: string;
   ['plugins']?: string[];
   ['output-file']?: string;
   ['operations-file']?: string;
 };
 
 const commandArgs = [
+  {
+    name: 'project-name',
+    description: 'The name of the project',
+    required: true,
+    type: CommandArgumentType.STRING,
+    prompt: 'What is the name of the project?',
+    help: 'The name of the project',
+    example: '--project-name=schema-test',
+  },
+  {
+    name: 'api-name',
+    description: 'The name of the API',
+    required: true,
+    type: CommandArgumentType.STRING,
+    prompt: 'What is the name of the API?',
+    help: 'The name of the API',
+    example: '--api-name=movieApi',
+  },
   {
     name: 'plugins',
     description: 'Plugin which will be use for code generation',
@@ -41,6 +60,7 @@ const commandArgs = [
     options: {
       choices: SupportedGraphQLGeneratorPlugins,
     },
+    example: '--plugins=typescript,typescript-operations',
   },
   {
     name: 'operations-file',
@@ -61,16 +81,19 @@ const commandArgs = [
 
 const command = 'generate';
 const describe =
-  'Generate will help to generate a graphql client code for the schema of the current template';
-class TemplateGenerateCommand extends CLICommand {
+  'Generate will help to generate a graphql client code for the schema you provide by fetching the introspection query from the server';
+class SolutionGenerateCommand extends CLICommand {
   @injectRCFile()
-  async execute(args: Arguments<TemplateGenerateCommandArgs>) {
+  async execute(args: Arguments<SolutionsGenerateCommandArgs>) {
     try {
       const client = getCogniteSDKClient();
-      const templates = new TemplatesApiService(client);
-      const response = await templates.runQuery({
-        solutionId: args.solutionConfig.config.templateId,
-        schemaVersion: args.solutionConfig.config.templateVersion.toString(),
+      const solutions = new SolutionsApiService(client);
+      const response = await solutions.runQuery({
+        solutionId: args['project-name'],
+        schemaVersion: '1',
+        extras: {
+          apiName: args['api-name'],
+        },
         graphQlParams: {
           query: getIntrospectionQuery(),
           operationName: 'IntrospectionQuery',
@@ -99,7 +122,7 @@ class TemplateGenerateCommand extends CLICommand {
         filename: args['output-file'],
         config: {},
         documents,
-        schema: parse(printSchema(buildClientSchema(response.data))),
+        schema: parse(printSchema(buildClientSchema(response.data.data))),
         plugins: args.plugins.map((name) => ({ [name]: {} })),
         pluginMap: {
           [CONSTANTS.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT]: typescriptPlugin,
@@ -114,11 +137,13 @@ class TemplateGenerateCommand extends CLICommand {
         },
       });
       await writeFile(join(cwd(), args['output-file']), generatedCode);
-      args.logger.success('Types generated successfully');
+      args.logger.success(
+        `Successfully generated types in ${args['output-file']}`
+      );
     } catch (error) {
       args.logger.error(error);
     }
   }
 }
 
-export default new TemplateGenerateCommand(command, describe, commandArgs);
+export default new SolutionGenerateCommand(command, describe, commandArgs);

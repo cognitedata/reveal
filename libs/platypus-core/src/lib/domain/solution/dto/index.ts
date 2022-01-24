@@ -42,6 +42,9 @@ export interface RunQueryDTO {
   /** SolutionId (template group external id) */
   solutionId: string;
   schemaVersion: string;
+  extras?: {
+    [key: string]: unknown;
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
