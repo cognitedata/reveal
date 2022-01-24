@@ -11,6 +11,7 @@ import {
   PathReplacement,
   DiagramSymbolInstance,
   pruneSymbolOverlappingPathsFromLines,
+  DiagramEquipmentTagInstance,
   DocumentType,
   PidDocumentWithDom,
 } from '@cognite/pid-tools';
@@ -51,6 +52,10 @@ export const ReactPid: React.FC = () => {
   const [lineNumbers, setLineNumbers] = useState<string[]>([]);
   const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
   const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
+  const [equipmentTags, setEquipmentTags] = useState<
+    DiagramEquipmentTagInstance[]
+  >([]);
+  const [activeTagName, setActiveTagName] = useState<string>();
   const [symbolInstances, setSymbolInstances] = useState<
     DiagramSymbolInstance[]
   >([]);
@@ -104,7 +109,9 @@ export const ReactPid: React.FC = () => {
       pathReplacements,
       setPathReplacements,
       lineNumbers,
-      setLineNumbers
+      setLineNumbers,
+      equipmentTags,
+      setEquipmentTags
     );
   };
 
@@ -118,7 +125,8 @@ export const ReactPid: React.FC = () => {
       connections,
       pathReplacements,
       documentType,
-      lineNumbers
+      lineNumbers,
+      equipmentTags
     );
   };
 
@@ -240,6 +248,12 @@ export const ReactPid: React.FC = () => {
     setFileUrl('');
   };
 
+  useEffect(() => {
+    if (active !== 'addEquipmentTag' && activeTagName !== undefined) {
+      setActiveTagName(undefined);
+    }
+  }, [active]);
+
   return (
     <ReactPidWrapper>
       <ReactPidLayout>
@@ -264,6 +278,10 @@ export const ReactPid: React.FC = () => {
           setLineNumbers={setLineNumbers}
           activeLineNumber={activeLineNumber}
           setActiveLineNumber={setActiveLineNumber}
+          equipmentTags={equipmentTags}
+          setEquipmentTags={setEquipmentTags}
+          activeTagName={activeTagName}
+          setActiveTagName={setActiveTagName}
           getPidDocument={getPidDocument}
         />
         <Viewport>
@@ -302,6 +320,10 @@ export const ReactPid: React.FC = () => {
               labelSelection={labelSelection}
               setLabelSelection={setLabelSelection}
               activeLineNumber={activeLineNumber}
+              equipmentTags={equipmentTags}
+              setEquipmentTags={setEquipmentTags}
+              activeTagName={activeTagName}
+              setActiveTagName={setActiveTagName}
             />
           )}
         </Viewport>

@@ -27,18 +27,27 @@ export interface DiagramSymbol {
 
 export interface DiagramInstance {
   type: string;
-  pathIds: string[];
   labelIds: string[];
   lineNumbers: string[];
 }
 
-export interface DiagramSymbolInstance extends DiagramInstance {
+export interface DiagramInstanceWithPaths extends DiagramInstance {
+  pathIds: string[];
+}
+
+export interface DiagramSymbolInstance extends DiagramInstanceWithPaths {
   symbolId: string;
   scale?: number;
 }
 
-export interface DiagramLineInstance extends DiagramInstance {
+export interface DiagramLineInstance extends DiagramInstanceWithPaths {
   type: 'Line';
+}
+
+export interface DiagramEquipmentTagInstance extends DiagramInstance {
+  description: string[];
+  name: string;
+  type: 'EquipmentTag';
 }
 
 export interface PathReplacement {
@@ -54,7 +63,7 @@ export interface DiagramConnection {
   direction: 'directed' | 'unknown';
 }
 
-export interface DiagramInstanceOutputFormat extends DiagramInstance {
+export interface DiagramInstanceOutputFormat extends DiagramInstanceWithPaths {
   symbolId?: string;
   svgRepresentation: SvgRepresentation;
   labels: DiagramLabelOutputFormat[];
@@ -63,6 +72,13 @@ export interface DiagramInstanceOutputFormat extends DiagramInstance {
 export interface DiagramLabelOutputFormat {
   id: string;
   text: string;
+  boundingBox: BoundingBox;
+}
+
+export interface DiagramEquipmentTagOutputFormat {
+  name: string;
+  labels: DiagramLabelOutputFormat[];
+  lineNumbers: string[];
   boundingBox: BoundingBox;
 }
 

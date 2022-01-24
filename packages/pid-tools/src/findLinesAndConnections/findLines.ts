@@ -1,7 +1,7 @@
 import {
   DiagramConnection,
   DiagramLineInstance,
-  DiagramInstance,
+  DiagramInstanceWithPaths,
   DiagramInstanceId,
   DiagramSymbolInstance,
 } from '../types';
@@ -101,7 +101,7 @@ const dfsCountConnectionsToSymbolsOrLines = (
 
 const findLinesInBetweenKnownInstances = (
   instanceId: DiagramInstanceId,
-  knownInstances: DiagramInstance[],
+  knownInstances: DiagramInstanceWithPaths[],
   connections: DiagramConnection[],
   visited: DiagramInstanceId[]
 ): DiagramInstanceId[] | null => {

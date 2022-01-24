@@ -11,9 +11,12 @@ import {
   PathReplacement,
   DocumentType,
   PidDocumentWithDom,
+  DiagramEquipmentTagInstance,
+  DiagramEquipmentTagOutputFormat,
 } from '@cognite/pid-tools';
 
 import {
+  getEquipmentTagOutputFormat,
   getLineInstancesOutputFormat,
   getSymbolInstancesOutputFormat,
 } from './saveGraph';
@@ -37,6 +40,7 @@ interface Graph {
   connections: DiagramConnection[];
   pathReplacements: PathReplacement[];
   lineNumbers: string[];
+  equipmentTags: DiagramEquipmentTagOutputFormat[];
 }
 
 const getGraphFormat = (
@@ -47,12 +51,17 @@ const getGraphFormat = (
   connections: DiagramConnection[],
   pathReplacements: PathReplacement[],
   documentType: DocumentType,
-  lineNumbers: string[]
+  lineNumbers: string[],
+  equipmentTags: DiagramEquipmentTagInstance[]
 ): Graph => {
   const linesOutputFormat = getLineInstancesOutputFormat(pidDocument, lines);
   const symbolInstancesOutputFormat = getSymbolInstancesOutputFormat(
     pidDocument,
     symbolInstances
+  );
+  const equipmentTagInstancesFormat = getEquipmentTagOutputFormat(
+    pidDocument,
+    equipmentTags
   );
 
   const svgViewBox = pidDocument.svg.viewBox;
@@ -73,6 +82,7 @@ const getGraphFormat = (
     connections,
     pathReplacements,
     lineNumbers,
+    equipmentTags: equipmentTagInstancesFormat,
   };
 };
 
@@ -84,7 +94,8 @@ export const saveGraphAsJson = (
   connections: DiagramConnection[],
   pathReplacements: PathReplacement[],
   documentType: DocumentType,
-  lineNumbers: string[]
+  lineNumbers: string[],
+  equipmentTags: DiagramEquipmentTagInstance[]
 ) => {
   const graphJson = getGraphFormat(
     pidDocument,
@@ -94,7 +105,8 @@ export const saveGraphAsJson = (
     connections,
     pathReplacements,
     documentType,
-    lineNumbers
+    lineNumbers,
+    equipmentTags
   );
 
   const fileToSave = new Blob([JSON.stringify(graphJson, undefined, 2)], {
@@ -106,11 +118,11 @@ export const saveGraphAsJson = (
 export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
   const missingIds: string[] = [];
 
-  const trackMissingPathIds = (pathId: string) => {
-    if (pathId.includes('_')) return; // comes from PathReplacements
+  const trackMissingId = (id: string) => {
+    if (id.includes('_')) return; // comes from PathReplacements
 
-    if (svg.getElementById(pathId) === null) {
-      missingIds.push(pathId);
+    if (svg.getElementById(id) === null) {
+      missingIds.push(id);
     }
   };
 
@@ -118,7 +130,7 @@ export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
     (jsonData.lines as DiagramLineInstance[]).forEach(
       (e: DiagramLineInstance) =>
         e.pathIds.forEach((pathId: string) => {
-          trackMissingPathIds(pathId);
+          trackMissingId(pathId);
         })
     );
   }
@@ -127,7 +139,7 @@ export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
     (jsonData.symbolInstances as DiagramSymbolInstance[]).forEach(
       (e: DiagramSymbolInstance) =>
         e.pathIds.forEach((pathId: string) => {
-          trackMissingPathIds(pathId);
+          trackMissingId(pathId);
         })
     );
   }
@@ -136,10 +148,20 @@ export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
     (jsonData.connections as DiagramConnection[]).forEach(
       (connection: DiagramConnection) => {
         connection.end.split('-').forEach((pathId) => {
-          trackMissingPathIds(pathId);
+          trackMissingId(pathId);
         });
         connection.start.split('-').forEach((pathId) => {
-          trackMissingPathIds(pathId);
+          trackMissingId(pathId);
+        });
+      }
+    );
+  }
+
+  if ('equipmentTags' in jsonData) {
+    (jsonData.equipmentTags as DiagramEquipmentTagOutputFormat[]).forEach(
+      (tag: DiagramEquipmentTagOutputFormat) => {
+        tag.labels.forEach((label) => {
+          trackMissingId(label.id);
         });
       }
     );
@@ -148,7 +170,7 @@ export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
   if (missingIds.length !== 0) {
     // eslint-disable-next-line no-console
     console.log(
-      `Incorrect JSON file. Path ID${
+      `Incorrect JSON file. ID${
         missingIds.length === 0 ? '' : 's'
       } ${missingIds} was not found in SVG.`
     );
@@ -171,7 +193,9 @@ export const loadSymbolsFromJson = (
   pathReplacements: PathReplacement[],
   setPathReplacements: (args: PathReplacement[]) => void,
   lineNumbers: string[],
-  setLineNumbers: (arg: string[]) => void
+  setLineNumbers: (arg: string[]) => void,
+  equipmentTags: DiagramEquipmentTagInstance[],
+  setEquipmentTags: (tags: DiagramEquipmentTagInstance[]) => void
 ) => {
   if ('symbols' in jsonData) {
     const newSymbols = jsonData.symbols as DiagramSymbol[];
@@ -231,5 +255,30 @@ export const loadSymbolsFromJson = (
   }
   if ('lineNumbers' in jsonData) {
     setLineNumbers([...lineNumbers, ...jsonData.lineNumbers]);
+  }
+
+  if ('equipmentTags' in jsonData) {
+    const newEquipmentTags = (
+      jsonData.equipmentTags as DiagramEquipmentTagOutputFormat[]
+    ).map((tag) =>
+      tag.labels.reduce<DiagramEquipmentTagInstance>(
+        (prev, curr) => ({
+          ...prev,
+          description:
+            curr.text === tag.name
+              ? prev.description
+              : [...prev.description, curr.text],
+          labelIds: [...prev.labelIds, curr.id],
+        }),
+        {
+          name: tag.name,
+          description: [],
+          labelIds: [],
+          type: 'EquipmentTag',
+          lineNumbers: tag.lineNumbers,
+        }
+      )
+    );
+    setEquipmentTags([...equipmentTags, ...newEquipmentTags]);
   }
 };

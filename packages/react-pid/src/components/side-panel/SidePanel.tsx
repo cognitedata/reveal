@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
 import {
   DiagramConnection,
+  DiagramEquipmentTagInstance,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
@@ -26,7 +27,8 @@ const SidePanelWrapper = styled.div`
 `;
 
 const ToolBarWrapper = styled.div`
-  padding: 40px;
+  margin: 40px auto;
+  width: fit-content;
   .active {
     background-color: var(--cogs-btn-color-primary);
     color: white;
@@ -59,6 +61,10 @@ interface SidePanelProps {
   setLineNumbers: (arg: string[]) => void;
   activeLineNumber: string | null;
   setActiveLineNumber: (arg: string | null) => void;
+  equipmentTags: DiagramEquipmentTagInstance[];
+  setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
+  activeTagName: string | undefined;
+  setActiveTagName: (arg: string | undefined) => void;
 }
 
 export const SidePanel = ({
@@ -83,6 +89,10 @@ export const SidePanel = ({
   setLineNumbers,
   activeLineNumber,
   setActiveLineNumber,
+  equipmentTags,
+  setEquipmentTags,
+  activeTagName,
+  setActiveTagName,
 }: SidePanelProps) => {
   const toolBarButtonGroups: ToolBarButton[][] = [
     [
@@ -117,10 +127,16 @@ export const SidePanel = ({
         description: 'Explore the wast graph universe',
       },
       {
-        icon: 'String',
+        icon: 'Number',
         onClick: () => setActive('setLineNumber'),
         className: `${active === 'setLineNumber' && 'active'}`,
         description: 'Set line number',
+      },
+      {
+        icon: 'String',
+        onClick: () => setActive('addEquipmentTag'),
+        className: `${active === 'addEquipmentTag' && 'active'}`,
+        description: 'Add equipment tag',
       },
     ],
   ];
@@ -142,6 +158,11 @@ export const SidePanel = ({
       margin: 0 auto;
     }
   `;
+
+  const setActiveTagWrapper = (arg: string | undefined) => {
+    setActive('addEquipmentTag');
+    setActiveTagName(arg);
+  };
 
   return (
     <SidePanelWrapper>
@@ -166,6 +187,10 @@ export const SidePanel = ({
         deleteSymbol={deleteSymbol}
         deleteConnection={deleteConnection}
         connections={connections}
+        equipmentTags={equipmentTags}
+        setEquipmentTags={setEquipmentTags}
+        activeTagName={activeTagName}
+        setActiveTagName={setActiveTagWrapper}
       />
       <Button onClick={findLinesAndConnections}> Auto Analysis</Button>
 

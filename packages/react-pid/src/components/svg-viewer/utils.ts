@@ -12,8 +12,10 @@ import {
   getPointTowardOtherPoint,
   connectionExists,
   getDiagramInstanceByPathId,
-  DiagramInstance,
+  DiagramInstanceWithPaths,
   DiagramSymbolInstance,
+  DiagramEquipmentTagInstance,
+  DiagramInstance,
   getClosestPointsOnSegments,
   getClosestPointOnSegments,
   T_JUNCTION,
@@ -31,7 +33,7 @@ export const isDiagramLine = (
 
 export const isSymbolInstance = (
   node: SVGElement,
-  symbolInstances: DiagramInstance[]
+  symbolInstances: DiagramInstanceWithPaths[]
 ) => {
   return symbolInstances.some((symbolInst) =>
     symbolInst.pathIds.includes(node.id)
@@ -60,7 +62,7 @@ export const isInLabelSelection = (
 };
 
 export const isLabelInInstance = (
-  instance: DiagramInstance,
+  instance: DiagramInstanceWithPaths,
   id: DiagramInstanceId
 ): boolean => {
   return instance.labelIds.includes(id);
@@ -68,7 +70,7 @@ export const isLabelInInstance = (
 
 export const isLabelInInstances = (
   node: SVGElement,
-  instances: DiagramInstance[]
+  instances: DiagramInstanceWithPaths[]
 ) => {
   return instances.some((instance) => isLabelInInstance(instance, node.id));
 };
@@ -76,7 +78,7 @@ export const isLabelInInstances = (
 export const isNodeInLineNumber = (
   node: SVGElement,
   lineNumber: string | null,
-  diagramInstances: DiagramInstance[]
+  diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   if (lineNumber === null) return false;
 
@@ -127,6 +129,28 @@ const colorNode = (
   }
 };
 
+export const isInActiveEquipmentTag = (
+  node: SVGElement,
+  activeTagName: string | undefined,
+  equipmentTags: DiagramEquipmentTagInstance[]
+) => {
+  if (activeTagName === undefined) return false;
+
+  const activeTag = equipmentTags.find((tag) => tag.name === activeTagName);
+
+  if (activeTag === undefined) return false;
+
+  return activeTag.labelIds.includes(node.id);
+};
+
+export const isInEquipmentTags = (
+  node: SVGElement,
+  equipmentTags: DiagramEquipmentTagInstance[]
+): boolean => {
+  const allNodeIds = equipmentTags.flatMap((tag) => tag.labelIds);
+  return allNodeIds.includes(node.id);
+};
+
 export interface ApplyStyleArgs {
   node: SVGElement;
   selection: SVGElement[];
@@ -139,6 +163,8 @@ export interface ApplyStyleArgs {
   graphSelection: DiagramInstanceId | null;
   active: ToolType;
   activeLineNumber: string | null;
+  equipmentTags: DiagramEquipmentTagInstance[];
+  activeTagName: string | undefined;
   splitSelection: string | null;
 }
 
@@ -153,6 +179,8 @@ export const applyStyleToNode = ({
   graphSelection,
   active,
   activeLineNumber,
+  equipmentTags,
+  activeTagName,
   splitSelection,
 }: ApplyStyleArgs) => {
   let color: string | undefined;
@@ -182,6 +210,11 @@ export const applyStyleToNode = ({
   }
   if (isInGraphSelection(node, graphSelection)) {
     color = COLORS.connectionSelection;
+  }
+  if (isInActiveEquipmentTag(node, activeTagName, equipmentTags)) {
+    color = COLORS.activeLabel;
+  } else if (isInEquipmentTags(node, equipmentTags)) {
+    color = COLORS.labelSelection;
   }
 
   if (node.id.includes(T_JUNCTION)) {
@@ -286,10 +319,16 @@ const applyPointerCursorStyleToNode = ({
     if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines)) {
       node.style.cursor = 'pointer';
     }
+  } else if (active === 'addEquipmentTag') {
+    if (node instanceof SVGTSpanElement) {
+      node.style.cursor = 'pointer';
+    }
   }
 };
 
-export function addOrRemoveLabelToInstance<Type extends DiagramInstance>(
+export function addOrRemoveLabelToInstance<
+  Type extends DiagramInstanceWithPaths
+>(
   labelId: string,
   instance: Type,
   instances: Type[],
@@ -319,16 +358,39 @@ export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
   setter([...instances]);
 }
 
+export function addOrRemoveLabelToEquipmentTag(
+  label: SVGTSpanElement,
+  tag: DiagramEquipmentTagInstance
+): void {
+  if (tag.labelIds.includes(label.id)) {
+    tag.labelIds = tag.labelIds.filter((li) => li !== label.id);
+    if (label.innerHTML === tag.name) {
+      const { 0: firstDesc, ...rest } = tag.description;
+      tag.name = firstDesc;
+      tag.description = Object.values(rest);
+    } else {
+      tag.description = tag.description.filter((li) => li !== label.innerHTML);
+    }
+  } else {
+    tag.labelIds = [...tag.labelIds, label.id];
+    if (tag.name) {
+      tag.description = [...tag.description, label.innerHTML];
+    } else {
+      tag.name = label.innerHTML;
+    }
+  }
+}
+
 export const colorSymbol = (
   diagramInstanceId: DiagramInstanceId,
   strokeColor: string,
-  diagramInstances: DiagramInstance[],
+  diagramInstances: DiagramInstanceWithPaths[],
   mainSvg: SVGSVGElement,
   additionalStyles?: { [key: string]: string }
 ) => {
   const symbolInstance = diagramInstances.filter(
     (instance) => getDiagramInstanceId(instance) === diagramInstanceId
-  )[0] as DiagramInstance;
+  )[0] as DiagramInstanceWithPaths;
 
   if (symbolInstance) {
     symbolInstance.pathIds.forEach((pathId) => {
@@ -341,7 +403,7 @@ export const colorSymbol = (
 };
 
 export const setStrokeWidth = (
-  diagramInstance: DiagramInstance,
+  diagramInstance: DiagramInstanceWithPaths,
   strokeWidth: string,
   svg: SVGSVGElement
 ) => {
@@ -354,7 +416,7 @@ export const visualizeConnections = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
   connections: DiagramConnection[],
-  symbolInstances: DiagramInstance[],
+  symbolInstances: DiagramInstanceWithPaths[],
   lines: DiagramLineInstance[]
 ) => {
   const offset = 2;

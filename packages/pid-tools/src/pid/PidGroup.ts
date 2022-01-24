@@ -1,5 +1,5 @@
 import { getDiagramInstanceIdFromPathIds } from '../utils';
-import { BoundingBox, DiagramInstance } from '../types';
+import { BoundingBox, DiagramInstanceWithPaths } from '../types';
 import { PidDocument, PidPath } from '../pid';
 import { PathSegment } from '../geometry';
 import {
@@ -22,7 +22,7 @@ export class PidGroup {
 
   static fromDiagramInstance(
     pidDocument: PidDocument,
-    diagramInstance: DiagramInstance
+    diagramInstance: DiagramInstanceWithPaths
   ) {
     const pidPaths = diagramInstance.pathIds.map(
       (pathId) => pidDocument.getPidPathById(pathId)!

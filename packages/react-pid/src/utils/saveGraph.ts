@@ -4,6 +4,9 @@ import {
   PidDocument,
   getDiagramInstanceId,
   DiagramLineInstance,
+  DiagramEquipmentTagInstance,
+  DiagramEquipmentTagOutputFormat,
+  getEncolosingBoundingBox,
 } from '@cognite/pid-tools';
 
 export const getSymbolInstancesOutputFormat = (
@@ -53,6 +56,25 @@ export const getLineInstancesOutputFormat = (
       labelIds: diagramInstance.labelIds,
       labels,
       lineNumbers: diagramInstance.lineNumbers,
+    };
+  });
+};
+
+export const getEquipmentTagOutputFormat = (
+  pidDocument: PidDocument,
+  equipmentTags: DiagramEquipmentTagInstance[]
+): DiagramEquipmentTagOutputFormat[] => {
+  return equipmentTags.map((equipmentTag) => {
+    const labels = equipmentTag.labelIds.map((labelId) =>
+      pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
+    );
+    return {
+      name: equipmentTag.name,
+      labels,
+      lineNumbers: equipmentTag.lineNumbers,
+      boundingBox: getEncolosingBoundingBox(
+        labels.map((label) => label.boundingBox)
+      ),
     };
   });
 };

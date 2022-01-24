@@ -1,14 +1,15 @@
 import { PidDocument } from '../pid/PidDocument';
 import {
   DiagramConnection,
-  DiagramInstance,
+  DiagramInstanceWithPaths,
   DiagramInstanceId,
   DiagramLineInstance,
   DiagramSymbolInstance,
+  DiagramEquipmentTagInstance,
 } from '../types';
 
 export const getDiagramInstanceId = (
-  diagramInstance: DiagramInstance
+  diagramInstance: DiagramInstanceWithPaths
 ): DiagramInstanceId => {
   return getDiagramInstanceIdFromPathIds(diagramInstance.pathIds);
 };
@@ -20,9 +21,9 @@ export const getDiagramInstanceIdFromPathIds = (
 };
 
 export const getDiagramInstanceByPathId = (
-  diagramInstances: DiagramInstance[],
+  diagramInstances: DiagramInstanceWithPaths[],
   pathId: string
-): DiagramInstance | null => {
+): DiagramInstanceWithPaths | null => {
   const diagramInstance = diagramInstances.filter((diagramInstance) =>
     diagramInstance.pathIds.includes(pathId)
   );
@@ -34,7 +35,7 @@ export const getDiagramInstanceByPathId = (
 
 export const isDiagramInstanceInList = (
   diagramId: DiagramInstanceId,
-  diagramInstances: DiagramInstance[]
+  diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   return (
     diagramInstances.find(
@@ -44,9 +45,9 @@ export const isDiagramInstanceInList = (
 };
 
 export const getInstanceByDiagramInstanceId = (
-  diagramInstances: DiagramInstance[],
+  diagramInstances: DiagramInstanceWithPaths[],
   diagramInstanceId: DiagramInstanceId
-): DiagramInstance | undefined => {
+): DiagramInstanceWithPaths | undefined => {
   return diagramInstances.find(
     (diagramInstance) =>
       getDiagramInstanceId(diagramInstance) === diagramInstanceId
@@ -79,8 +80,8 @@ export const connectionExists = (
 };
 
 export const hasOverlappingPathIds = (
-  diagramInstance1: DiagramInstance,
-  diagramInstance2: DiagramInstance
+  diagramInstance1: DiagramInstanceWithPaths,
+  diagramInstance2: DiagramInstanceWithPaths
 ) => {
   return diagramInstance1.pathIds.some((e) =>
     diagramInstance2.pathIds.includes(e)
@@ -111,7 +112,7 @@ export const getNoneOverlappingSymbolInstances = (
   symbolInstances: DiagramSymbolInstance[],
   newSymbolInstances: DiagramSymbolInstance[]
 ): DiagramSymbolInstance[] => {
-  const objectsToRemove: DiagramInstance[] = [];
+  const objectsToRemove: DiagramInstanceWithPaths[] = [];
   for (let i = 0; i < newSymbolInstances.length; i++) {
     const potentialInstance = newSymbolInstances[i];
 
@@ -166,4 +167,30 @@ export const pruneSymbolOverlappingPathsFromLines = (
   }
 
   return { prunedLines, linesToDelete };
+};
+
+export const createEquipmentTagInstance = (
+  node: SVGTSpanElement
+): DiagramEquipmentTagInstance => {
+  return {
+    name: node.innerHTML,
+    description: [],
+    labelIds: [node.id],
+    type: 'EquipmentTag',
+    lineNumbers: [],
+  };
+};
+
+export const getDiagramEquipmentTagInstanceByName = (
+  name: string,
+  equipmentTags: DiagramEquipmentTagInstance[]
+) => {
+  return equipmentTags.find((tag) => tag.name === name);
+};
+
+export const getDiagramEquipmentTagInstanceByLabelId = (
+  labelId: string,
+  equipmentTags: DiagramEquipmentTagInstance[]
+) => {
+  return equipmentTags.find((tag) => tag.labelIds.includes(labelId));
 };

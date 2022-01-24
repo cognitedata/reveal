@@ -8,9 +8,13 @@ import {
   SVG_ID,
   getDiagramInstanceByPathId,
   getInstanceByDiagramInstanceId,
+  createEquipmentTagInstance,
+  DiagramEquipmentTagInstance,
+  getDiagramEquipmentTagInstanceByName,
   PathReplacement,
   applyPathReplacementInSvg,
   PidDocumentWithDom,
+  getDiagramEquipmentTagInstanceByLabelId,
 } from '@cognite/pid-tools';
 import { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
@@ -23,6 +27,7 @@ import { ToolType } from '../../types';
 import { applyToLeafSVGElements } from '../../utils/svgDomUtils';
 
 import {
+  addOrRemoveLabelToEquipmentTag,
   addOrRemoveLabelToInstance,
   addOrRemoveLineNumberToInstance,
   applyStyleToNode,
@@ -56,6 +61,10 @@ interface SvgViewerProps {
   setPidDocument: (arg: PidDocumentWithDom) => void;
   getPidDocument: () => PidDocumentWithDom | undefined;
   activeLineNumber: string | null;
+  equipmentTags: DiagramEquipmentTagInstance[];
+  setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
+  activeTagName: string | undefined;
+  setActiveTagName: (arg: string | undefined) => void;
 }
 
 export const SvgViewer: React.FC<SvgViewerProps> = ({
@@ -80,6 +89,10 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   labelSelection,
   setLabelSelection,
   activeLineNumber,
+  equipmentTags,
+  setEquipmentTags,
+  activeTagName,
+  setActiveTagName,
 }) => {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [graphSelection, setGraphSelection] =
@@ -138,7 +151,13 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       if (symbolInstance === null) return;
       setStrokeWidth(symbolInstance, boldStrokeWidth, mainSvg);
     }
-    node.style.strokeWidth = boldStrokeWidth;
+    if (active === 'addEquipmentTag') {
+      if (node instanceof SVGTSpanElement) {
+        node.style.fontWeight = '600';
+      }
+    } else {
+      node.style.strokeWidth = boldStrokeWidth;
+    }
   };
   /* eslint-enable no-param-reassign */
 
@@ -194,6 +213,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       if (symbolInstance === null) return;
       setStrokeWidth(symbolInstance, originalStrokeWidth, mainSvg);
     }
+    node.style.fontWeight = '';
     node.style.strokeWidth = originalStrokeWidth;
   };
   /* eslint-enable no-param-reassign */
@@ -386,6 +406,34 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           setSymbolInstances
         );
       }
+    } else if (
+      active === 'addEquipmentTag' &&
+      node instanceof SVGTSpanElement
+    ) {
+      if (activeTagName) {
+        const tag = getDiagramEquipmentTagInstanceByName(
+          activeTagName,
+          equipmentTags
+        );
+        if (tag === undefined) return;
+        addOrRemoveLabelToEquipmentTag(node, tag);
+        setActiveTagName(tag.name);
+        setEquipmentTags(
+          equipmentTags.filter((tag) => tag.labelIds.length > 0)
+        );
+      } else {
+        const tag = getDiagramEquipmentTagInstanceByLabelId(
+          node.id,
+          equipmentTags
+        );
+        if (tag === undefined) {
+          const newTag = createEquipmentTagInstance(node);
+          setEquipmentTags([...equipmentTags, newTag]);
+          setActiveTagName(newTag.name);
+        } else {
+          setActiveTagName(tag.name);
+        }
+      }
     }
   };
 
@@ -418,6 +466,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         graphSelection,
         active,
         activeLineNumber,
+        equipmentTags,
+        activeTagName,
       });
 
       node.addEventListener('mouseenter', () => onMouseEnter(node, svg));
@@ -458,6 +508,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       graphInstance.mergeEdge(connections[i].end, connections[i].start);
     }
     setGraph(graphInstance);
+    setActiveTagName(undefined);
   }, [active]);
 
   return (

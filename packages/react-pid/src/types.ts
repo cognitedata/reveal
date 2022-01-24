@@ -6,4 +6,11 @@ export type ToolType =
   | 'connectLabels'
   | 'graphExplorer'
   | 'selectDocumentType'
-  | 'setLineNumber';
+  | 'setLineNumber'
+  | 'addEquipmentTag';
+
+export enum DocumentType {
+  pid = 'P&ID',
+  isometric = 'Isometric',
+  unknown = 'Unknown',
+}

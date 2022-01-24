@@ -1,7 +1,7 @@
 /* eslint-disable no-continue */
 import {
   DiagramConnection,
-  DiagramInstance,
+  DiagramInstanceWithPaths,
   DiagramLineInstance,
   DiagramSymbolInstance,
   DocumentType,
@@ -127,7 +127,7 @@ export const findLinesAndConnections = (
 
 const connectsToKnownInstances = (
   connection: DiagramConnection,
-  knownInstances: DiagramInstance[]
+  knownInstances: DiagramInstanceWithPaths[]
 ) => {
   return (
     isDiagramInstanceInList(connection.end, knownInstances) &&

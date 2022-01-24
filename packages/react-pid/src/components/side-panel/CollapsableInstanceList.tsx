@@ -4,12 +4,14 @@ import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  DiagramEquipmentTagInstance,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
 import { Collapse, Icon } from '@cognite/cogs.js';
 
 import { getInstancesBySymbol, getInstanceCount } from './utils';
 import { CollapsableSymbolHeader } from './CollapsableSymbolHeader';
+import { EquipmentTagPanel } from './EquipmentTagPanel';
 
 const ScrollWrapper = styled.div`
   height: 100%;
@@ -35,6 +37,10 @@ interface CollapsableInstanceListProps {
   connections: DiagramConnection[];
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
+  equipmentTags: DiagramEquipmentTagInstance[];
+  setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
+  activeTagName: string | undefined;
+  setActiveTagName: (arg: string | undefined) => void;
 }
 
 export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
@@ -45,6 +51,10 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
     connections,
     deleteSymbol,
     deleteConnection,
+    equipmentTags,
+    setEquipmentTags,
+    activeTagName,
+    setActiveTagName,
   }) => {
     const renderSymbolInstances = (
       symbolInstances: DiagramSymbolInstance[],
@@ -125,6 +135,14 @@ pathIds: [${instance.pathIds.join(', ')}]}`}
             ))}
           </Collapse.Panel>
         </Collapse>
+
+        <CollapseSeperator>Equipment tags</CollapseSeperator>
+        <EquipmentTagPanel
+          equipmentTags={equipmentTags}
+          setEquipmentTags={setEquipmentTags}
+          activeTagName={activeTagName}
+          setActiveTagName={setActiveTagName}
+        />
       </ScrollWrapper>
     );
   };

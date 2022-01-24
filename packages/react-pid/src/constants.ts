@@ -14,6 +14,7 @@ export const COLORS = {
   },
   connectionSelection: 'LightGreen',
   labelSelection: 'coral',
+  activeLabel: 'red',
   connection: {
     color: 'DarkGreen',
     strokeWidth: 3,
