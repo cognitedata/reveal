@@ -186,7 +186,6 @@ export class CogniteOrnate {
     }, 25);
     this.resizeObserver = new ResizeObserver(throttledResizeHandler);
     this.resizeObserver.observe(this.host);
-
     this.initBackgroundLayer();
   }
 
@@ -596,19 +595,29 @@ export class CogniteOrnate {
     }
   }
 
+  /**
+   * Zoom to the given location
+   * @param location specifies the center of the location to zoom to
+   * @param scale
+   * @param duration
+   */
   zoomToLocation(
     location: { x: number; y: number },
     scale: number,
     duration = 0.35
   ) {
+    const deltaX = this.stage.width() / 2;
+    const deltaY = this.stage.height() / 2;
+    const x = scale * location.x + deltaX;
+    const y = scale * location.y + deltaY;
     const tween = new Konva.Tween({
       duration,
       easing: Konva.Easings.EaseInOut,
       node: this.stage,
       scaleX: scale,
       scaleY: scale,
-      x: location.x,
-      y: location.y,
+      x,
+      y,
     });
     tween.onFinish = () => tween.destroy();
 
@@ -622,23 +631,21 @@ export class CogniteOrnate {
       ...ZOOM_TO_GROUP_OPTIONS_DEFAULTS,
       ...zoomToGroupOptions,
     };
+    const { width: groupWidth, height: groupHeight } = group.getClientRect({
+      skipTransform: true,
+      skipStroke: true,
+    });
     const rawScale =
       Math.min(
-        this.stage.width() / group.width(),
-        this.stage.height() / group.height()
+        this.stage.width() / groupWidth,
+        this.stage.height() / groupHeight
       ) * scaleFactor;
     const scale = Math.min(Math.max(rawScale, SCALE_MIN), SCALE_MAX);
-    // Scale the location, and center it to the screen
     const location = {
-      x:
-        -group.x() * scale +
-        this.stage.width() / 2 -
-        (group.width() * scale) / 2,
-      y:
-        -group.y() * scale +
-        this.stage.height() / 2 -
-        (group.height() * scale) / 2,
+      x: -group.x() - groupWidth / 2,
+      y: -group.y() - groupHeight / 2,
     };
+
     this.zoomToLocation(location, scale, duration);
   }
 
@@ -653,11 +660,10 @@ export class CogniteOrnate {
 
     const scale = Math.min(Math.max(rawScale, SCALE_MIN), SCALE_MAX);
 
-    // Scale the location, and center it to the screen
+    // Scale the location
     const location = {
-      x: -rect.x * scale + this.stage.width() / 2 - (node.width() * scale) / 2,
-      y:
-        -rect.y * scale + this.stage.height() / 2 - (node.height() * scale) / 2,
+      x: -rect.x - node.width() / 2,
+      y: -rect.y - node.height() / 2,
     };
     this.zoomToLocation(location, scale, duration);
   }
