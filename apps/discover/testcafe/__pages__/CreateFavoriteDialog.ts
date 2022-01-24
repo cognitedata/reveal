@@ -63,8 +63,7 @@ class CreateFavoriteDialog {
 
   public readonly closeIcon = Selector(`.cogs-modal-close`).nth(0);
 
-  getFooterButton = (text: string) =>
-    screen.getByRole('button').withExactText(text);
+  getFooterButton = (text: string) => Selector('button').withExactText(text);
 
   clickCreateButton = async () => {
     progress('Click create button');

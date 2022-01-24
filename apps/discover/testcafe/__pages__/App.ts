@@ -30,6 +30,7 @@ export const filename = '15_9_19_A_1980_01_01';
 export const fileType = 'PDF';
 export const documentCategory = 'Unclassified';
 export const source = 'Volve';
+export const operator = 'Statoil Norway';
 export const duplicateFileName = 'Volve_Well_Summary_15_9-19.pdf';
 export const wellDataSearchPhrase = 'Well F';
 
@@ -115,7 +116,9 @@ class App {
 
   public readonly checkifToasterAppears = async (text: string) => {
     progress(`Check for confirmation toast`, true);
-    await t.expect(this.toaster.find('div').withText(text).exists).ok();
+    await t
+      .expect(this.toaster.find('div').withText(text).exists)
+      .ok({ timeout: 2000 });
   };
 }
 

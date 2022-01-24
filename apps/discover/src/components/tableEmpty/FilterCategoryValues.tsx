@@ -38,7 +38,11 @@ export const FilterCategoryValues: React.FC = () => {
                   );
                 };
                 return (
-                  <ValueContainer map={value} key={`${id}-${value}`}>
+                  <ValueContainer
+                    map={value}
+                    key={`${id}-${value}`}
+                    data-testid="filter-tag"
+                  >
                     <ValueSpan>{displayName || value} </ValueSpan>
                     <RemoveValue
                       data-testid="remove-btn"

@@ -26,7 +26,7 @@ export const SearchInputValues: React.FC<Props> = ({
   return (
     <SearchInputContainer>
       <Title>{t(caption)}: </Title>
-      <ValueContainer>
+      <ValueContainer data-testid="filter-tag">
         <ValueSpan>{value} </ValueSpan>
         <RemoveValue data-testid="remove-btn" onClick={onClick} />
       </ValueContainer>

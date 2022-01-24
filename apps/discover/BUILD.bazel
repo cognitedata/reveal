@@ -544,7 +544,7 @@ testcafe(
         "chromium --use-gl=swiftshader --disable-software-rasterizer --window-size=1920,1040",
         "testcafe",
         "--stop-on-first-fail",
-        "--fixture-meta page=well:map",
+        "--fixture-meta page=well:search",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + SCRIPTS + [
         ":start",

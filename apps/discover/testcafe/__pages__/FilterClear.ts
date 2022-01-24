@@ -56,7 +56,7 @@ class FilterClearPage {
         progress(`Cannot find button`);
       }
     } catch (error) {
-      progress('Cannot find filter clear button', error);
+      progress(`Cannot find filter clear button: ${error}`);
     }
   };
 
@@ -77,7 +77,7 @@ class FilterClearPage {
   };
 
   checkIfTagExists = async (name: string, exists = true) => {
-    progress(`Check if '${name} filter tag ${!exists && 'not'} exists`);
+    progress(`Check if '${name} filter tag ${exists ? '' : 'not'} exists`);
     await t
       .expect(this.getFilterTag(name).exists)
       .eql(exists, { timeout: 2000 });
