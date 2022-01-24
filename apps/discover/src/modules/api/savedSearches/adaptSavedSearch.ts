@@ -1,6 +1,6 @@
 import { SavedSearchSchemaBody } from '@cognite/discover-api-types';
 
-import { SavedSearchContent } from './types';
+import { SavedSearchState } from './types';
 
 /**
  * The types `geoJson` and `filters` should not be casted.
@@ -8,7 +8,7 @@ import { SavedSearchContent } from './types';
  * This will not break the current behavior. Just to use the discover-api-types in the mutations. [PP-2399]
  */
 export const adaptSaveSearchContentToSchemaBody = (
-  savedSearchContent: SavedSearchContent
+  savedSearchContent: SavedSearchState
 ): SavedSearchSchemaBody => {
   return {
     query: savedSearchContent.query || '',

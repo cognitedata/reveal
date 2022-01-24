@@ -50,14 +50,8 @@ export const generateReplyToUserContent = (feedback: FeedbackType) => {
       : '.'
   }`;
 
-  const getEmail = () => {
-    if (feedback?.user && 'email' in feedback.user) {
-      return (feedback.user as any).email;
-    }
-    return '';
-  };
-
   return (
-    feedback.user && `mailto:${getEmail()}?subject=${subject}&body=${body}`
+    feedback.user &&
+    `mailto:${feedback.user.email || ''}?subject=${subject}&body=${body}`
   );
 };

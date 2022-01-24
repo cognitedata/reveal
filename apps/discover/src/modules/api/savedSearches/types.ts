@@ -1,4 +1,7 @@
-import { SavedSearchSortBy } from '@cognite/discover-api-types';
+import {
+  SavedSearchSortBy,
+  SearchHistoryResponse,
+} from '@cognite/discover-api-types';
 import { DocumentsFilter } from '@cognite/sdk-playground';
 import { GeoJson } from '@cognite/seismic-sdk-js';
 
@@ -15,6 +18,8 @@ export interface SavedSearchItem {
   owner?: BasicUserInfo;
   id?: string;
 }
+
+export type SavedSearchState = SavedSearchContent | SearchHistoryResponse;
 
 export interface SavedSearchContent {
   name?: string;

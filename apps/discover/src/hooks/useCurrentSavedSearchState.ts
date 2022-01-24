@@ -1,4 +1,4 @@
-import { SavedSearchContent } from 'modules/api/savedSearches/types';
+import { SavedSearchState } from 'modules/api/savedSearches';
 import { useGeoFilter } from 'modules/map/selectors';
 import { useSortByOptions } from 'modules/resultPanel/selectors';
 import {
@@ -12,7 +12,7 @@ import {
   useAppliedMapGeoJsonFilters,
 } from '../modules/sidebar/selectors';
 
-export const useCurrentSavedSearchState = (): SavedSearchContent => {
+export const useCurrentSavedSearchState = (): SavedSearchState => {
   const searchPhrase = useSearchPhrase();
   const documentFilters = useAppliedDocumentFilters();
   const wellFilters = useAppliedWellFilters();

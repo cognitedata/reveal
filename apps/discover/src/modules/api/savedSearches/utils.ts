@@ -10,7 +10,11 @@ import { discoverAPI } from 'modules/api/service';
 import { adaptSaveSearchContentToSchemaBody } from './adaptSavedSearch';
 import { SAVED_SEARCHES_CURRENT_KEY } from './constants';
 import { normalizeSavedSearch } from './normalizeSavedSearch';
-import { SavedSearchContent, SavedSearchQuery } from './types';
+import {
+  SavedSearchContent,
+  SavedSearchQuery,
+  SavedSearchState,
+} from './types';
 import { getEmptyFilters } from './utils/getEmptyFilters';
 
 /**
@@ -23,7 +27,7 @@ import { getEmptyFilters } from './utils/getEmptyFilters';
  * @param tenant - project for the xhr call
  */
 export const updateCurrentSearch = async (
-  currentSavedSearch: SavedSearchContent,
+  currentSavedSearch: SavedSearchState,
   savedSearchPatchContent: SavedSearchQuery | SavedSearchContent,
   waitForResponse: boolean,
   headers: FetchHeaders,
@@ -61,8 +65,8 @@ export const updateCurrentSearch = async (
 };
 
 export const combineOldAndNew = (
-  oldContent: SavedSearchContent,
-  newContent: SavedSearchQuery | Partial<SavedSearchContent>
+  oldContent: SavedSearchState,
+  newContent: SavedSearchQuery | Partial<SavedSearchState>
 ) => {
   // eslint-disable-next-line no-debugger
   // debugger;

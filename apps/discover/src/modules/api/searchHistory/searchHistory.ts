@@ -1,4 +1,4 @@
-import { SavedSearchContent } from 'modules/api/savedSearches/types';
+import { SearchHistoryResponse } from '@cognite/discover-api-types';
 
 import { SIDECAR } from '../../../constants/app';
 import { fetchGet, FetchHeaders } from '../../../utils/fetch';
@@ -8,7 +8,7 @@ const getSearchHistoryEndpoint = (project: string) =>
 
 export const searchHistory = {
   list: async (headers: FetchHeaders, project: string) =>
-    fetchGet<SavedSearchContent[]>(getSearchHistoryEndpoint(project), {
+    fetchGet<SearchHistoryResponse[]>(getSearchHistoryEndpoint(project), {
       headers,
     }),
 };
