@@ -1,29 +1,30 @@
 import {
   DataElement,
-  EquipmentElementKey,
   EquipmentData,
   DataElementOrigin,
   ScannerDetection,
   EquipmentConfig,
   EquipmentType,
+  DataElementState,
 } from 'scarlet/types';
-import { equipmentElementsPriority } from 'scarlet/config';
 
 export const transformEquipmentData = ({
   config,
   scannerDetections,
+  equipmentState,
   type,
 }: {
   config?: EquipmentConfig;
   scannerDetections?: ScannerDetection[];
+  equipmentState?: EquipmentData;
   type?: EquipmentType;
 }): EquipmentData | undefined => {
   if (!type || !config || !config.equipmentTypes[type]) return undefined;
-
   const equipmentElements = getEquipmentElements(
     type,
     config,
-    scannerDetections
+    scannerDetections,
+    equipmentState?.equipmentElements
   );
 
   return { type, equipmentElements };
@@ -32,22 +33,12 @@ export const transformEquipmentData = ({
 const getEquipmentElements = (
   type: EquipmentType,
   config: EquipmentConfig,
-  scannerDetections?: ScannerDetection[]
+  scannerDetections?: ScannerDetection[],
+  savedElements: DataElement[] = []
 ): DataElement[] => {
   const { equipmentElementKeys } = config.equipmentTypes[type];
 
-  const keysWithoutPriority = equipmentElementKeys.filter(
-    (key) =>
-      !equipmentElementsPriority.includes(key as EquipmentElementKey) &&
-      key !== 'components'
-  );
-
-  return [
-    ...equipmentElementsPriority.filter((key) =>
-      equipmentElementKeys.includes(key)
-    ),
-    ...keysWithoutPriority,
-  ]
+  const equipmentElements = equipmentElementKeys
     .map((key) => {
       const itemDetections = scannerDetections?.filter(
         (detection) => detection.key === key && detection.valueAnnotation
@@ -57,12 +48,29 @@ const getEquipmentElements = (
         (detection) => detection.valueAnnotation.value
       )?.valueAnnotation.value;
 
+      if (!config.equipmentElements[key]) return undefined;
+
+      const savedElement = savedElements.find((item) => item.key === key);
+
+      // do not update omitted or approved data-elements
+      // only label, unit and type could be updated from config file
+      if (savedElement?.state !== DataElementState.PENDING) {
+        return {
+          ...savedElement,
+          ...config.equipmentElements[key],
+        };
+      }
+
       return {
+        ...savedElement,
         ...config.equipmentElements[key],
         origin: DataElementOrigin.EQUIPMENT,
         value,
         scannerDetections: itemDetections,
+        state: DataElementState.PENDING,
       } as DataElement;
     })
     .filter((item) => item);
+
+  return equipmentElements as DataElement[];
 };

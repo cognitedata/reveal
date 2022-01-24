@@ -1,6 +1,6 @@
 import { EquipmentElementKey } from 'scarlet/types';
 
-export const equipmentElementsPriority = [
+export const sortedKeys = [
   EquipmentElementKey.UNIT,
   EquipmentElementKey.EQUIP_ID,
   EquipmentElementKey.EQUIP_TYPE_DESCRIPTION,

@@ -1,6 +1,6 @@
 import { generatePath, Redirect, Route, Switch } from 'react-router-dom';
 
-import { StorageProvider } from './contexts';
+import { AppProvider } from './contexts';
 import { Equipment, EquipmentList } from './pages';
 import { RoutePath } from './routes';
 
@@ -9,11 +9,11 @@ const defaultEquipmentsUrl = generatePath(RoutePath.EQUIPMENT_LIST, {
 });
 
 export const ScarletApp = () => (
-  <StorageProvider>
+  <AppProvider>
     <Switch>
       <Route path={RoutePath.EQUIPMENT} render={() => <Equipment />} />
       <Route path={RoutePath.EQUIPMENT_LIST} render={() => <EquipmentList />} />
       <Redirect from="" to={defaultEquipmentsUrl} />
     </Switch>
-  </StorageProvider>
+  </AppProvider>
 );

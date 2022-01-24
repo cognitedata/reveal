@@ -5,13 +5,14 @@ import {
   transformEquipmentData,
   transformEquipmentType,
 } from 'scarlet/transformations';
-import { StorageActionType } from 'scarlet/types';
-import { useApi, useStorage } from 'scarlet/hooks';
+import { AppActionType } from 'scarlet/types';
+import { useApi, useAppContext } from 'scarlet/hooks';
 import { DataPanelProvider } from 'scarlet/contexts';
 import {
   getEquipmentConfig,
   getEquipmentDocuments,
   getEquipmentPCMS,
+  getEquipmentState,
   getScannerDetections,
 } from 'scarlet/api';
 
@@ -22,12 +23,12 @@ export const Equipment = () => {
   const { unitName, equipmentName } =
     useParams<{ unitName: string; equipmentName: string }>();
 
-  const { storageState, storageDispatch } = useStorage();
+  const { appState, appDispatch } = useAppContext();
 
   const configQuery = useApi(
     getEquipmentConfig,
     {},
-    { data: storageState.equipmentConfig.data }
+    { data: appState.equipmentConfig.data }
   );
 
   const scannerDetectionsQuery = useApi(getScannerDetections, {
@@ -42,38 +43,64 @@ export const Equipment = () => {
     unitName,
     equipmentName,
   });
+  const equipmentStateQuery = useApi(getEquipmentState, {
+    unitName,
+    equipmentName,
+  });
+
+  useEffect(() => {
+    appDispatch({
+      type: AppActionType.INIT_EQUIPMENT,
+      unitName,
+      equipmentName,
+    });
+
+    return () => {
+      appDispatch({
+        type: AppActionType.CLEANUP_EQUIPMENT_DATA,
+      });
+    };
+  }, []);
 
   useEffect(() => {
     const loading =
       configQuery.loading ||
       scannerDetectionsQuery.loading ||
-      pcmsQuery.loading;
+      pcmsQuery.loading ||
+      equipmentStateQuery.loading;
 
     const equipmentData = loading
       ? undefined
       : transformEquipmentData({
           config: configQuery.data,
           scannerDetections: scannerDetectionsQuery.data,
+          equipmentState: equipmentStateQuery.data,
           type: transformEquipmentType(pcmsQuery.data?.equipment?.equip_group),
         });
 
-    storageDispatch({
-      type: StorageActionType.SET_EQUIPMENT,
+    appDispatch({
+      type: AppActionType.SET_EQUIPMENT,
       equipment: {
         data: equipmentData,
         loading,
         error: configQuery.error,
       },
     });
-  }, [configQuery, scannerDetectionsQuery, pcmsQuery, documentsQuery]);
+  }, [
+    configQuery,
+    scannerDetectionsQuery,
+    pcmsQuery,
+    documentsQuery,
+    equipmentStateQuery,
+  ]);
 
   useEffect(() => {
     if (pcmsQuery.error) {
       toast.error('Failed to load pcms data');
     }
 
-    storageDispatch({
-      type: StorageActionType.SET_PCMS,
+    appDispatch({
+      type: AppActionType.SET_PCMS,
       pcms: pcmsQuery,
     });
   }, [pcmsQuery]);
@@ -83,8 +110,8 @@ export const Equipment = () => {
       toast.error('Failed to load documents');
     }
 
-    storageDispatch({
-      type: StorageActionType.SET_DOCUMENTS,
+    appDispatch({
+      type: AppActionType.SET_DOCUMENTS,
       documents: documentsQuery,
     });
   }, [documentsQuery]);
@@ -94,8 +121,8 @@ export const Equipment = () => {
       toast.error('Failed to load equipment configuration');
     }
 
-    storageDispatch({
-      type: StorageActionType.SET_EQUIPMENT_CONFIG,
+    appDispatch({
+      type: AppActionType.SET_EQUIPMENT_CONFIG,
       config: configQuery,
     });
   }, [configQuery]);
@@ -105,15 +132,6 @@ export const Equipment = () => {
       toast.error('Failed to load scanner data');
     }
   }, [scannerDetectionsQuery.error]);
-
-  useEffect(
-    () => () => {
-      storageDispatch({
-        type: StorageActionType.RESET_EQUIPMENT_DATA,
-      });
-    },
-    []
-  );
 
   return (
     <Styled.Container>

@@ -1,5 +1,5 @@
-import { DataElementOrigin } from 'scarlet/types';
 import { useDataPanelState } from 'scarlet/hooks';
+import { DataElementOrigin } from 'scarlet/types';
 
 import { EquipmentPanel } from '..';
 

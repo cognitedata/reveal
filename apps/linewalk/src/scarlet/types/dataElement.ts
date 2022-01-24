@@ -21,6 +21,12 @@ export enum DataElementUnit {
   INCHES = 'inches',
 }
 
+export enum DataElementState {
+  OMITTED = 'omitted',
+  PENDING = 'pending',
+  APPROVED = 'approved',
+}
+
 export type DataElement = {
   key: string;
   origin: DataElementOrigin;
@@ -29,4 +35,6 @@ export type DataElement = {
   type?: DataElementType;
   unit?: DataElementUnit;
   scannerDetections?: ScannerDetection[];
+  state: DataElementState;
+  stateReason?: string;
 };

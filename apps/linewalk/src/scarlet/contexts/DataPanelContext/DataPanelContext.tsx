@@ -3,15 +3,14 @@ import { DataElementOrigin } from 'scarlet/types';
 
 import { DataPanelAction, DataPanelActionType, DataPanelState } from './types';
 
-const getStorageName = (value: string) =>
-  ['scarlet', 'dataPanel', value].join('_');
+const getAppName = (value: string) => ['scarlet', 'dataPanel', value].join('_');
 
 const getInitialState = (): DataPanelState => ({
   isVisible:
-    sessionStorage?.getItem(getStorageName('isVisible')) === 'true' || false,
+    sessionStorage?.getItem(getAppName('isVisible')) === 'true' || false,
   currentOrigin:
     (sessionStorage?.getItem(
-      getStorageName('currentOrigin')
+      getAppName('currentOrigin')
     ) as DataElementOrigin) || DataElementOrigin.EQUIPMENT,
 });
 
@@ -25,10 +24,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
   switch (action.type) {
     case DataPanelActionType.TOGGLE_PANEL: {
       const isVisible = !state.isVisible;
-      sessionStorage?.setItem(
-        getStorageName('isVisible'),
-        isVisible.toString()
-      );
+      sessionStorage?.setItem(getAppName('isVisible'), isVisible.toString());
 
       return {
         ...state,
@@ -37,7 +33,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
     }
 
     case DataPanelActionType.SET_CURRENT_ORIGIN: {
-      sessionStorage?.setItem(getStorageName('currentOrigin'), action.origin);
+      sessionStorage?.setItem(getAppName('currentOrigin'), action.origin);
 
       return {
         ...state,

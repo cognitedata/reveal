@@ -1,21 +1,24 @@
 import { useMemo } from 'react';
 import { CollapsablePanel } from '@cognite/cogs.js';
-import { useDataPanelState, useStorageState } from 'scarlet/hooks';
+import { useDataPanelState, useAppState } from 'scarlet/hooks';
+import { DataElementState } from 'scarlet/types';
 
-import { DataPanel, DataPanelControllers, Ornate } from '..';
+import { DataElementModals, DataPanel, DataPanelControllers, Ornate } from '..';
 
 import * as Styled from './style';
 
 export const PageBody = () => {
   const dataPanelState = useDataPanelState();
-  const { documents, equipment } = useStorageState();
+  const { documents, equipment } = useAppState();
 
   const dataElements = useMemo(
     () =>
       equipment.data?.equipmentElements.filter(
-        (item) => item.scannerDetections?.length
+        (item) =>
+          item.state !== DataElementState.OMITTED &&
+          item.scannerDetections?.length
       ),
-    [equipment]
+    [equipment.data]
   );
 
   return (
@@ -32,6 +35,8 @@ export const PageBody = () => {
         />
         <DataPanelControllers />
       </CollapsablePanel>
+
+      <DataElementModals />
     </Styled.Container>
   );
 };

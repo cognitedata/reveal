@@ -1,8 +1,16 @@
-import { DataElementOrigin } from 'scarlet/types';
+import {
+  DataElement,
+  DataElementOrigin,
+  DataElementState,
+} from 'scarlet/types';
 
 export type DataPanelState = {
   isVisible: boolean;
   currentOrigin: DataElementOrigin;
+  modal?: {
+    dataElement: DataElement;
+    state: DataElementState;
+  };
 };
 
 export type DataPanelAction =

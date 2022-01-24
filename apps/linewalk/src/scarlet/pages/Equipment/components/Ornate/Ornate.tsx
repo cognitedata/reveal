@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import * as PDFJS from 'pdfjs-dist';
-import { Loader } from '@cognite/cogs.js';
 import { DataElement, DocumentType, EquipmentDocument } from 'scarlet/types';
 
 import {
@@ -48,7 +47,6 @@ export const Ornate = ({
   const [ornateDocuments, setOrnateDocuments] = useState<OrnateDocument[]>([]);
   const [currentTags, setCurrentTags] = useState<string[]>([]);
   const destroyDocumentLoadCallbacks = useRef<(() => void)[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // Setup Ornate
   useEffect(() => {
@@ -139,7 +137,6 @@ export const Ornate = ({
             return true;
           })
         );
-        setIsInitialized(true);
       })();
     }
   }, [documents]);
@@ -170,7 +167,7 @@ export const Ornate = ({
         if (!documentExternalId) return;
 
         result.push({
-          id: scannerDetection.id,
+          id: scannerDetection.id + dataElement.state,
           dataElement,
           ...scannerDetection.valueAnnotation,
           documentExternalId,
@@ -234,12 +231,6 @@ export const Ornate = ({
         </Styled.FullWidthContainer>
       ) : (
         <div id={componentContainerId} />
-      )}
-
-      {!isInitialized && (
-        <Styled.LoaderContainer>
-          <Loader infoTitle="Loading documents" darkMode={false} />
-        </Styled.LoaderContainer>
       )}
     </Styled.Container>
   );

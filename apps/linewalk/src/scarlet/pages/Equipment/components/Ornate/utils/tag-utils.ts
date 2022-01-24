@@ -1,5 +1,5 @@
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
-import { Annotation, DataElement } from 'scarlet/types';
+import { Annotation, DataElement, DataElementState } from 'scarlet/types';
 
 export type Tag = Annotation & {
   id: string;
@@ -21,9 +21,8 @@ export const addTags = ({
       id: tag.id,
       type: 'pct',
       ...tag.boundingBox!,
-      stroke: '#FF8746',
+      ...getColorsByTag(tag),
       strokeWidth: 6,
-      fill: 'rgba(255, 135, 70, 0.2)',
       cornerRadius: 8,
       onClick: () => {
         console.log(tag.dataElement);
@@ -43,3 +42,14 @@ export const removeTags = ({
   const nodes = ornateViewer.stage.find(selector);
   nodes.forEach((node) => node.remove());
 };
+
+const getColorsByTag = (tag: Tag) =>
+  tag.dataElement.state === DataElementState.APPROVED
+    ? {
+        stroke: '#18AF8E',
+        fill: `rgba(7, 141, 121, 0.1)`,
+      }
+    : {
+        stroke: '#FF8746',
+        fill: 'rgba(255, 135, 70, 0.2)',
+      };

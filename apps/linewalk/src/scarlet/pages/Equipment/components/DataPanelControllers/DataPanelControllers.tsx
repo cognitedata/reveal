@@ -1,10 +1,10 @@
 import { DataElementOrigin, DataPanelActionType } from 'scarlet/types';
-import { useDataPanel } from 'scarlet/hooks';
+import { useDataPanelContext } from 'scarlet/hooks';
 
 import * as Styled from './style';
 
 export const DataPanelControllers = () => {
-  const { dataPanelState, dataPanelDispatch } = useDataPanel();
+  const { dataPanelState, dataPanelDispatch } = useDataPanelContext();
   const isEquipment =
     dataPanelState.currentOrigin === DataElementOrigin.EQUIPMENT;
   const isComponent =
