@@ -60,7 +60,6 @@ const getTableColumns = (
     title: 'Name',
     dataIndex: 'name',
     key: 'dataset-name-column',
-    width: '20%',
     sorter: (a: DataSetRow, b: DataSetRow) => stringCompare(a.name, b.name),
     render: (_value: string, record: DataSetRow) => (
       <span>
@@ -89,7 +88,6 @@ const getTableColumns = (
     title: <div style={{ lineHeight: '32px' }}>Labels</div>,
     dataIndex: 'labels',
     key: 'labels',
-    width: '30%',
     filterIcon: (filtered: boolean) => <ColumnFilterIcon filtered={filtered} />,
     filters: getLabelsList(dataSets, showArchived).map((val) => ({
       text: val,
@@ -111,7 +109,6 @@ const getTableColumns = (
   {
     title: 'Governance status',
     key: 'quality',
-    width: '15%',
     render: (row: DataSetRow) => (
       <div style={{ display: 'inline-box' }}>
         {row.quality === undefined && (
@@ -139,7 +136,6 @@ const extpipeTableColumn = (isExtpipesFetched?: boolean) => {
     title: 'Extraction pipelines',
     dataIndex: 'extpipes',
     key: 'extpipes',
-    width: '20%',
     render: (_value: string, record: DataSetRow) => {
       if (!isExtpipesFetched) {
         return <Icon type="LoadingSpinner" />;
