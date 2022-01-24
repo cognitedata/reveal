@@ -1,5 +1,5 @@
 /* eslint-disable @cognite/no-number-z-index */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { ClearButton } from 'src/modules/Explorer/Components/ClearButton';
@@ -34,10 +34,10 @@ export const FilterSidePanel = () => {
   );
   const filterCount = Object.values(filter).filter((f) => f).length;
 
-  const setFilter = (newFilter: FileFilterProps) => {
+  const setFilter = useCallback((newFilter: FileFilterProps) => {
     cancelFetch();
     dispatch(setExplorerFilter(newFilter));
-  };
+  }, []);
 
   const disableClearAllFilters = filterCount <= 0;
   const clearAllFilters = () => {
