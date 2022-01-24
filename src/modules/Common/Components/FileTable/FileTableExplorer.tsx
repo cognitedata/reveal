@@ -1,4 +1,5 @@
 import React from 'react';
+import mime from 'mime-types';
 import { Column, ColumnShape } from 'react-base-table';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
@@ -54,8 +55,15 @@ export function FileTableExplorer(props: FileListTableProps<TableDataItem>) {
     },
     {
       key: 'mimeType',
-      title: 'Mime Type',
+      title: 'File Type',
       dataKey: 'mimeType',
+      dataGetter: (
+        { rowData } // Convert mime type to file type
+      ) => {
+        const mimeType = rowData.mimeType ? rowData.mimeType : '';
+        const extension = mime.extension(mimeType) || 'Unknown';
+        return extension.toUpperCase();
+      },
       width: 150,
       align: Column.Alignment.LEFT,
       sortable: true,
