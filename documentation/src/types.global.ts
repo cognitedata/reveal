@@ -4,8 +4,8 @@ import CogniteClient from "@cognite/sdk/dist/src/cogniteClient";
 declare global {
   interface Window {
     viewer?: Cognite3DViewer;
-    model?: Cognite3DModel | CognitePointCloudModel
-    sdk?: CogniteClient
+    model?: Cognite3DModel | CognitePointCloudModel;
+    sdk?: CogniteClient;
   }
 }
 
