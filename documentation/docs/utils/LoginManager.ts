@@ -9,13 +9,15 @@ import { env } from './env';
 // login manager is merely global state, stored outside of react state,
 // because react state is not preserved between mdx examples
 export class LoginManager {
-  readonly isLoggedIn: boolean;
   private token: string | undefined;
+
+  readonly isLoggedIn: boolean;
   readonly project: string;
   readonly cluster: string;
 
   constructor(project: string, cluster: string) {
     this.token = this.handleLoginFromRedirect();
+
     this.isLoggedIn = !!this.token;
     this.project = project;
     this.cluster = cluster;
