@@ -53,7 +53,7 @@ interface SidePanelProps {
   deleteConnection: (connection: DiagramConnection) => void;
   connections: DiagramConnection[];
   fileUrl?: string;
-  findLinesAndConnections: () => void;
+  autoAnalysis: () => void;
   saveGraphAsJson: () => void;
   documentType: DocumentType;
   setDocumentType: (type: DocumentType) => void;
@@ -81,7 +81,7 @@ export const SidePanel = ({
   deleteConnection,
   connections,
   fileUrl,
-  findLinesAndConnections,
+  autoAnalysis,
   saveGraphAsJson,
   documentType,
   setDocumentType,
@@ -192,7 +192,7 @@ export const SidePanel = ({
         activeTagName={activeTagName}
         setActiveTagName={setActiveTagWrapper}
       />
-      <Button onClick={findLinesAndConnections}> Auto Analysis</Button>
+      <Button onClick={autoAnalysis}> Auto Analysis</Button>
 
       <div>
         {active === 'addSymbol' && (

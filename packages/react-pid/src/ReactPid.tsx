@@ -14,6 +14,7 @@ import {
   DiagramEquipmentTagInstance,
   DocumentType,
   PidDocumentWithDom,
+  getDiagramInstanceId,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
 
@@ -130,9 +131,10 @@ export const ReactPid: React.FC = () => {
     );
   };
 
-  const findLinesAndConnections = () => {
+  const autoAnalysis = () => {
     if (pidDocument === undefined) return;
 
+    // find lines and connections
     const { lineInstances, newConnections } =
       pidDocument.findLinesAndConnection(
         documentType,
@@ -143,6 +145,25 @@ export const ReactPid: React.FC = () => {
 
     setLines([...lines, ...lineInstances]);
     setConnections(newConnections);
+
+    // connect labels to symbol instances
+    const pidLabelSymbolInstanceConnection =
+      pidDocument.connectLabelsToSymbolInstances(symbolInstances);
+    if (pidLabelSymbolInstanceConnection.length > 0) {
+      setSymbolInstances(
+        symbolInstances.map((symbolInstance) => {
+          pidLabelSymbolInstanceConnection.forEach((labelSymbolConnection) => {
+            if (
+              getDiagramInstanceId(symbolInstance) ===
+              labelSymbolConnection.instanceId
+            ) {
+              symbolInstance.labelIds.push(labelSymbolConnection.labelId);
+            }
+          });
+          return symbolInstance;
+        })
+      );
+    }
   };
 
   const setOrUpdateSymbol = (
@@ -270,7 +291,7 @@ export const ReactPid: React.FC = () => {
           deleteSymbol={deleteSymbol}
           deleteConnection={deleteConnection}
           fileUrl={fileUrl}
-          findLinesAndConnections={findLinesAndConnections}
+          autoAnalysis={autoAnalysis}
           saveGraphAsJson={saveGraphAsJsonWrapper}
           documentType={documentType}
           setDocumentType={setDocumentType}

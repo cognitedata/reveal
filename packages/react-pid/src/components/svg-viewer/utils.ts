@@ -508,3 +508,37 @@ export const visualizeConnections = (
     svg.insertBefore(path, svg.children[0]);
   });
 };
+
+export const visualizeLabels = (
+  svg: SVGSVGElement,
+  pidDocument: PidDocument,
+  symbolInstances: DiagramInstanceWithPaths[]
+) => {
+  symbolInstances.forEach((symbolInstance) => {
+    const symbolMidPoint = pidDocument.getMidPointToPaths(
+      symbolInstance.pathIds
+    );
+    symbolInstance.labelIds.forEach((labelId) => {
+      const pidTspan = pidDocument.getPidTspanById(labelId);
+      if (pidTspan === null) return;
+
+      const labelPoint = pidTspan.getMidPoint();
+
+      const path = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'path'
+      );
+
+      path.setAttribute(
+        'd',
+        `M ${symbolMidPoint.x} ${symbolMidPoint.y} L ${labelPoint.x} ${labelPoint.y}`
+      );
+
+      path.setAttribute(
+        'style',
+        `stroke:${COLORS.connection.color};stroke-width:${COLORS.connection.strokeWidth};opacity:${COLORS.connection.opacity};stroke-linecap:round`
+      );
+      svg.insertBefore(path, svg.children[0]);
+    });
+  });
+};

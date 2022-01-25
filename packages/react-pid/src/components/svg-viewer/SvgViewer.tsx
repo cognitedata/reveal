@@ -37,6 +37,7 @@ import {
   isSymbolInstance,
   setStrokeWidth,
   visualizeConnections,
+  visualizeLabels,
 } from './utils';
 
 interface SvgViewerProps {
@@ -485,7 +486,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
     const pidDocument = PidDocumentWithDom.fromSVG(svg, allSVGElements);
     setPidDocument(pidDocument);
 
-    if (pidDocument && active === 'connectInstances') {
+    if (pidDocument === undefined) return;
+    if (active === 'connectInstances') {
       visualizeConnections(
         svg,
         pidDocument,
@@ -493,6 +495,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         symbolInstances,
         lines
       );
+    } else if (active === 'connectLabels') {
+      visualizeLabels(svg, pidDocument, symbolInstances);
     }
   };
 

@@ -8,15 +8,23 @@ import {
   SvgRepresentation,
   DiagramSymbolInstance,
   DocumentType,
+  DiagramInstanceId,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
 import { svgCommandsToSegments } from '../matcher/svgPathParser';
 import { findAllInstancesOfSymbol } from '../matcher';
 import { PathSegment, Point } from '../geometry';
+import { AUTO_ANALYSIS_LABEL_THRESHOLD } from '../constants';
 
 import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
 import { PidPath } from './PidPath';
+import { PidGroup } from './PidGroup';
+
+export type LabelSymbolInstanceConnection = {
+  labelId: string;
+  instanceId: DiagramInstanceId;
+};
 
 export class PidDocument {
   pidPaths: PidPath[];
@@ -130,6 +138,48 @@ export class PidDocument {
       lineInstances,
       connections
     );
+  }
+
+  connectLabelsToSymbolInstances(
+    symbolInstances: DiagramSymbolInstance[]
+  ): LabelSymbolInstanceConnection[] {
+    const pidLabelIdsAlreadyConnected = new Set<string>();
+    symbolInstances.forEach((symbolInstance) => {
+      symbolInstance.labelIds.forEach((labelId) => {
+        pidLabelIdsAlreadyConnected.add(labelId);
+      });
+    });
+
+    const pidLabelsToConnect = this.pidLabels.filter((pidLabel) => {
+      return !pidLabelIdsAlreadyConnected.has(pidLabel.id);
+    });
+
+    const labelSymbolInstanceConnections: LabelSymbolInstanceConnection[] = [];
+
+    const symbolGroups = symbolInstances.map((symbolInstance) =>
+      PidGroup.fromDiagramInstance(this, symbolInstance)
+    );
+
+    pidLabelsToConnect.forEach((pidLabel) => {
+      const labelMidPoint = pidLabel.getMidPoint();
+
+      symbolGroups.sort((a, b) => {
+        return a.distance(labelMidPoint) - b.distance(labelMidPoint);
+      });
+
+      const closestSymbolGroup = symbolGroups[0];
+      if (
+        closestSymbolGroup.distance(labelMidPoint) <
+        AUTO_ANALYSIS_LABEL_THRESHOLD
+      ) {
+        labelSymbolInstanceConnections.push({
+          labelId: pidLabel.id,
+          instanceId: closestSymbolGroup.diagramInstanceId,
+        });
+      }
+    });
+
+    return labelSymbolInstanceConnections;
   }
 
   getBoundingBoxToPaths(pathIds: string[]): BoundingBox {

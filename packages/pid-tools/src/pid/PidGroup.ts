@@ -1,7 +1,7 @@
 import { getDiagramInstanceIdFromPathIds } from '../utils';
 import { BoundingBox, DiagramInstanceWithPaths } from '../types';
 import { PidDocument, PidPath } from '../pid';
-import { PathSegment } from '../geometry';
+import { getClosestPointOnSegments, PathSegment, Point } from '../geometry';
 import {
   overlapBoxBox,
   overlapLineBox,
@@ -50,6 +50,15 @@ export class PidGroup {
       return overlapBoxBox(this.boundingBox, other.boundingBox);
     }
     return false;
+  }
+
+  distance(point: Point): number {
+    const closestPointData = getClosestPointOnSegments(
+      point,
+      this.getPathSegments()
+    );
+    if (closestPointData === undefined) return Infinity;
+    return closestPointData.distance;
   }
 
   get diagramInstanceId() {

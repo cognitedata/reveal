@@ -31,6 +31,12 @@ export const getBoundingBox = (
   };
 };
 
+export const calculateMidPointFromBoundingBox = (boundingBox: BoundingBox) => {
+  const x = boundingBox.x + boundingBox.width / 2;
+  const y = boundingBox.y + boundingBox.height / 2;
+  return new Point(x, y);
+};
+
 export const getEncolosingBoundingBox = (
   boundingBoxes: BoundingBox[]
 ): BoundingBox => {
