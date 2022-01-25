@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import { shortDate } from 'utils/date';
+import { getDateOrDefaultText } from 'utils/date';
 import { sortDates } from 'utils/sortDates';
 
 import { ColumnType } from 'components/tablev3';
@@ -37,7 +37,7 @@ export const generateOverviewColumns = (
     },
     {
       Header: 'Spud Date',
-      accessor: (row) => shortDate(row.spudDate),
+      accessor: (row) => getDateOrDefaultText(row.spudDate),
       sortType: (rowA, rowB) => {
         const date1 = get(rowA, 'original.spudDate', '');
         const date2 = get(rowB, 'original.spudDate', '');
