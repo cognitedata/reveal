@@ -37,11 +37,6 @@ export function Migration() {
   const urlParams = url.searchParams;
   const environmentParam = urlParams.get('env');
 
-  let msalInstance: IPublicClientApplication | undefined;
-  if (environmentParam) {
-    msalInstance = useMsal().instance;
-  }
-
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
