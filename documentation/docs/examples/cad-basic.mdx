@@ -43,6 +43,11 @@ async function main() {
 }
 main();
 ```
+`CogniteClient` version 6 and later requires a `getToken` function for authentication.
+In this documentation we have made a class called `LoginManager` that handles this. To
+access the `publicdata` project you can use the [class yourself](insert link!), but
+accessing data in other projects may require different authentication flows.
+You can read more about different types of authentication flow in [the CogniteClient documentation](https://docs.cognite.com/dev/guides/sdk/js/authentication/).
 
 Models can be temporarily hidden using `Cognite3DModel.visible`. Note that
 the viewer must be explicitly re-rendered after setting the visibility flag:
