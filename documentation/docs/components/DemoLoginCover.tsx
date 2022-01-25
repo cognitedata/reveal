@@ -59,7 +59,10 @@ export default function DemoLoginCover(props: Props): ReactElement {
     getToken: async () => loginManager.getToken()
   });
 
-  client.authenticate();
+  if (loginManager.isLoggedIn) {
+    client.authenticate();
+  }
+
   window.sdk = client;
 
   const coverUrl = useBaseUrl('/img/login_cover.png');
