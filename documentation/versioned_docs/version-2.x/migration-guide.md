@@ -261,7 +261,7 @@ const revisionId = 5688854005909501;
 const sdk = new CogniteClient({
   appId: 'cognite.reveal.docs.IsModelCompatible',
 });
-await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }}); // With Cognite authentication flow
+await sdk.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }}); // With Cognite authentication flow
 await sdk.authenticate();
 
 // Request a list of formats
