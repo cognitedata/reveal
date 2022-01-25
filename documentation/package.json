@@ -57,6 +57,7 @@
     "cross-env": "^7.0.2",
     "geo-three": "^0.0.15",
     "npm-to-yarn": "^1.0.1",
+    "query-string": "^7.1.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-live": "^2.3.0",
