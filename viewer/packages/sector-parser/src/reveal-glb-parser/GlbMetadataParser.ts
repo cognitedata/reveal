@@ -20,10 +20,16 @@ export class GlbMetadataParser {
 
     const { length: jsonLength, json } = this.parseJson(glbByteData);
 
+    console.log(jsonLength);
+    console.log(json);
+
     const { length: binContentLength, byteOffsetToBinContent } = this.parseBinHeaders(
       glbByteData,
       GlbMetadataParser.CHUNK_HEADER_BYTE_SIZE + jsonLength
     );
+
+    console.log(binContentLength);
+    console.log(byteOffsetToBinContent);
 
     return {
       json,

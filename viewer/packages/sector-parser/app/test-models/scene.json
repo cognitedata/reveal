@@ -1,1 +1,33 @@
-{"version":9,"projectId":123,"modelId":456,"revisionId":789,"subRevisionId":999,"maxTreeIndex":76,"sectors":[{"id":0,"sectorFileName":"0.glb","path":"0/","depth":0,"boundingBox":{"min":{"x":-1.3934096876224187,"y":-1,"z":-1.788780573085674},"max":{"x":28.29323544313644,"y":25.458996612973937,"z":1.6256651949082248}},"estimatedTriangleCount":11632,"estimatedDrawCallCount":17,"maxDiagonalLength":2.8284271247461907,"minDiagonalLength":1,"downloadSize":27880}]}
+{
+  "version": 9,
+  "projectId": 123,
+  "modelId": 456,
+  "revisionId": 789,
+  "subRevisionId": 999,
+  "maxTreeIndex": 43,
+  "sectors": [
+    {
+      "id": 0,
+      "sectorFileName": "0_draco.glb",
+      "path": "0/",
+      "depth": 0,
+      "boundingBox": {
+        "min": {
+          "x": -1316.8027213404823,
+          "y": -1770.8916665849442,
+          "z": -191.63078756991405
+        },
+        "max": {
+          "x": 155.7767694772933,
+          "y": 2374.999999461079,
+          "z": 631.8531036377054
+        }
+      },
+      "estimatedTriangleCount": 34574,
+      "estimatedDrawCallCount": 16,
+      "minDiagonalLength": 250.00001525878906,
+      "maxDiagonalLength": 938.6343383789062,
+      "downloadSize": 623224
+    }
+  ]
+}

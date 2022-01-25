@@ -17,6 +17,7 @@ import {
 } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
 import { TypedArrayConstructor } from '@reveal/utilities';
+import draco3dgltf from 'draco3dgltf';
 
 export class GltfSectorParser {
   private readonly _glbMetadataParser: GlbMetadataParser;
@@ -49,6 +50,13 @@ export class GltfSectorParser {
   public parseSector(data: ArrayBuffer): ParsedGeometry[] {
     const headers = this._glbMetadataParser.parseGlbMetadata(data);
     const json = headers.json;
+    draco3dgltf.createDecoderModule().then(asd => {
+      const decoder = new asd.Decoder();
+      const buffer = new asd.DecoderBuffer();
+      buffer.Init(new Int8Array(data), data.byteLength);
+      // const geometryType = decoder.GetEncodedGeometryType(buffer);
+      // console.log('geo: ' + geometryType);
+    });
     return this.traverseDefaultSceneNodes(json, headers, data);
   }
 
