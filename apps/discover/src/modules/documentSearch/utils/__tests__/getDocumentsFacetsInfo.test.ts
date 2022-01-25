@@ -1,11 +1,11 @@
-import { mockAggregateResponse } from '__test-utils/fixtures/document';
+import { getMockAPIResponse } from '__test-utils/fixtures/document';
 
 import { getDocumentsFacetsInfo } from '../getDocumentsFacetsInfo';
 import { processFacets } from '../processFacets';
 
 describe('getDocumentsFacetsInfo', () => {
   it('should return documents facets info', () => {
-    const facets = processFacets(mockAggregateResponse);
+    const facets = processFacets(getMockAPIResponse());
     const facetsInfo = getDocumentsFacetsInfo(facets, {});
     expect(facetsInfo).toEqual([
       { content: [{ count: 100, name: 'PDF' }], name: 'File Type' },
@@ -15,7 +15,7 @@ describe('getDocumentsFacetsInfo', () => {
   });
 
   it('should return labels mapped documents facets info', () => {
-    const facets = processFacets(mockAggregateResponse);
+    const facets = processFacets(getMockAPIResponse());
     const facetsInfo = getDocumentsFacetsInfo(facets, {
       TestId: 'NewIdTestId',
       TestSource: 'NewTestSource',

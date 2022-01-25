@@ -7,6 +7,11 @@ function escapeRegExp(value = '') {
 }
 
 export const getFilepath = (item: Document) => {
+  if (!item) {
+    // just incase API data is bad
+    return '';
+  }
+
   const absoluteFilepath =
     item.sourceFile.directory ||
     getMetadataItem(item, 'parentPath') ||

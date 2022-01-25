@@ -7,12 +7,20 @@ import { setClient } from 'utils/getCogniteSDKClient';
 import * as mocks from '@cognite/metrics/dist/mocks';
 
 import { MockedCogniteClient } from '__mocks/MockedCogniteClient';
-import { MockedDocumentSDKClient } from '__mocks/MockedDocumentSDKClient';
 import { MockedSDKWells } from '__mocks/MockedSDKWells';
 import { configureCacheMock } from '__test-utils/mockCache';
 import { configureLocalStorageMock } from '__test-utils/mockLocalstorage';
+import { SIDECAR } from 'constants/app';
+import { authenticateDocumentSDK } from 'modules/documentSearch/sdk';
 
 export const TEST_PROJECT = 'testProject';
+
+authenticateDocumentSDK(
+  'discover-test',
+  `https://${SIDECAR.cdfCluster}.cognitedata.com`,
+  TEST_PROJECT,
+  'test-token'
+);
 
 jest.mock('@cognite/metrics', () => mocks);
 jest.setTimeout(3000);
@@ -115,12 +123,6 @@ jest.mock('@cognite/sdk-wells-v2', () => {
   const { ...rest } = jest.requireActual('@cognite/sdk-wells-v2');
   const createWellsClient = () => new MockedSDKWells();
   return { ...rest, createWellsClient };
-});
-
-jest.mock('modules/documentSearch/sdk', () => {
-  const { ...rest } = jest.requireActual('modules/documentSearch/sdk');
-  const getDocumentSDKClient = () => new MockedDocumentSDKClient();
-  return { ...rest, getDocumentSDKClient };
 });
 
 jest.mock('utils/log', () => {

@@ -1,4 +1,4 @@
-import { mockAggregateResponse } from '__test-utils/fixtures/document';
+import { getMockAPIResponse } from '__test-utils/fixtures/document';
 
 import { processFacets } from '../processFacets';
 
@@ -15,7 +15,7 @@ describe('processFacets', () => {
     });
   });
   it('should return facets from document response', () => {
-    const facets = processFacets(mockAggregateResponse);
+    const facets = processFacets(getMockAPIResponse());
     expect(facets).toEqual({
       filetype: [
         {
