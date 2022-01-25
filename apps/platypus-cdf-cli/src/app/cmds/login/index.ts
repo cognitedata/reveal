@@ -1,6 +1,8 @@
 import { Arguments, Argv } from 'yargs';
 import { BaseArgs, LoginArgs } from '../../types';
-import { AUTH_TYPE } from '../../constants';
+import { AUTH_TYPE, SETTINGS } from '../../constants';
+import { promiseWithTimeout } from '../../utils/general';
+import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const command = 'login [project]';
 export const desc = 'Login to CDF for using Platypus';
@@ -54,6 +56,12 @@ export const builder = (yargs: Argv<LoginArgs>) =>
     ]);
 
 export const handler = async (arg: Arguments<BaseArgs>) => {
+  const client = getCogniteSDKClient();
+  await promiseWithTimeout(
+    SETTINGS.TIMEOUT,
+    () => client.assets.list({ limit: 1 }),
+    'Timeout while authenticating user, please make sure you have entered valid parameters like cluster, project etc.'
+  );
   arg.logger.success('Login Success');
 };
 

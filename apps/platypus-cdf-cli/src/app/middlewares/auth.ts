@@ -34,7 +34,7 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
     }
 
     await (client as unknown as CogniteClient).authenticate();
-    await client.assets.list({ limit: 1 });
+
     setProjectConfig({
       [AUTH_CONFIG.LOGIN_STATUS]: LOGIN_STATUS.SUCCESS,
       [AUTH_CONFIG.CLIENT_SECRET]: projectConfig.clientSecret,
