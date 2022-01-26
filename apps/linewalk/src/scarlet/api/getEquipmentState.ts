@@ -22,5 +22,7 @@ export const getEquipmentState = async (
 
   const data = await fetch(url).then((response) => response.json());
 
+  // await client.files.delete([{ id: file.id }]);
+
   return data;
 };

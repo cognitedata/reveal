@@ -3,7 +3,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import * as PDFJS from 'pdfjs-dist';
-import { DataElement, DocumentType, EquipmentDocument } from 'scarlet/types';
+import {
+  DataElement,
+  DataPanelActionType,
+  DetectionState,
+  EquipmentDocument,
+} from 'scarlet/types';
+import { useDataPanelDispatch } from 'scarlet/hooks';
 
 import {
   addDocumentTitle,
@@ -47,6 +53,13 @@ export const Ornate = ({
   const [ornateDocuments, setOrnateDocuments] = useState<OrnateDocument[]>([]);
   const [currentTags, setCurrentTags] = useState<string[]>([]);
   const destroyDocumentLoadCallbacks = useRef<(() => void)[]>([]);
+  const dataPanelDispatch = useDataPanelDispatch();
+
+  const openDataElementCard = (dataElement: DataElement) =>
+    dataPanelDispatch({
+      type: DataPanelActionType.OPEN_DATA_ELEMENT,
+      dataElement,
+    });
 
   // Setup Ornate
   useEffect(() => {
@@ -148,35 +161,30 @@ export const Ornate = ({
     []
   );
 
-  const U1Document = useMemo(
-    () => documents?.find((document) => document.type === DocumentType.U1),
-    [documents]
-  );
-
   const tags: Tag[] = useMemo(() => {
     const result: Tag[] = [];
 
     dataElements?.forEach((dataElement) => {
-      dataElement.scannerDetections?.forEach((scannerDetection) => {
-        if (!scannerDetection.valueAnnotation) return;
-
-        const documentExternalId =
-          scannerDetection.valueAnnotation.documentExternalId ||
-          U1Document?.externalId;
-
-        if (!documentExternalId) return;
-
-        result.push({
-          id: scannerDetection.id + dataElement.state,
-          dataElement,
-          ...scannerDetection.valueAnnotation,
-          documentExternalId,
+      dataElement.detections
+        ?.filter(
+          (detection) =>
+            detection.boundingBox &&
+            detection.documentExternalId &&
+            detection.state !== DetectionState.OMITTED
+        )
+        .forEach((detection) => {
+          result.push({
+            id: detection.id + dataElement.state,
+            dataElement,
+            boundingBox: detection.boundingBox,
+            documentExternalId: detection.documentExternalId,
+            pageNumber: detection.pageNumber,
+          });
         });
-      });
     });
 
     return result;
-  }, [U1Document, dataElements]);
+  }, [dataElements]);
 
   useEffect(() => {
     if (ornateDocuments.length) {
@@ -198,6 +206,7 @@ export const Ornate = ({
             ornateViewer: ornateViewer.current!,
             ornateDocument: document.ornateDocument,
             tags: newTags,
+            onClick: openDataElementCard,
           });
         }
 

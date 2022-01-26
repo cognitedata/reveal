@@ -41,6 +41,18 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
       };
     }
 
+    case DataPanelActionType.OPEN_DATA_ELEMENT:
+      return {
+        ...state,
+        visibleDataElement: action.dataElement,
+      };
+
+    case DataPanelActionType.CLOSE_DATA_ELEMENT:
+      return {
+        ...state,
+        visibleDataElement: undefined,
+      };
+
     default: {
       return state;
     }

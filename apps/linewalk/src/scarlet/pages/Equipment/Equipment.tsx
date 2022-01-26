@@ -67,7 +67,8 @@ export const Equipment = () => {
       configQuery.loading ||
       scannerDetectionsQuery.loading ||
       pcmsQuery.loading ||
-      equipmentStateQuery.loading;
+      equipmentStateQuery.loading ||
+      documentsQuery.loading;
 
     const equipmentData = loading
       ? undefined
@@ -75,7 +76,9 @@ export const Equipment = () => {
           config: configQuery.data,
           scannerDetections: scannerDetectionsQuery.data,
           equipmentState: equipmentStateQuery.data,
+          pcms: pcmsQuery.data,
           type: transformEquipmentType(pcmsQuery.data?.equipment?.equip_group),
+          documents: documentsQuery.data,
         });
 
     appDispatch({

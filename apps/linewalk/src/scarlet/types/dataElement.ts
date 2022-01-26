@@ -1,4 +1,4 @@
-import { ScannerDetection } from '.';
+import { Detection } from '.';
 
 export enum DataElementOrigin {
   EQUIPMENT = 'equipment',
@@ -31,10 +31,10 @@ export type DataElement = {
   key: string;
   origin: DataElementOrigin;
   label: string;
-  value?: string;
   type?: DataElementType;
   unit?: DataElementUnit;
-  scannerDetections?: ScannerDetection[];
+  detections: Detection[];
   state: DataElementState;
   stateReason?: string;
+  pcmsValue?: string;
 };

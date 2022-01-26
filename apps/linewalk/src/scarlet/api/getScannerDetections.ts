@@ -1,19 +1,27 @@
 import { CogniteClient } from '@cognite/sdk';
 import { transformScannerDetection } from 'scarlet/transformations';
-import { DataSetId, ScannerDetection } from 'scarlet/types';
+import { DataSetId, Detection } from 'scarlet/types';
 
 export const getScannerDetections = async (
   client: CogniteClient,
   { unitName, equipmentName }: { unitName: string; equipmentName: string }
-): Promise<ScannerDetection[]> => {
+): Promise<Detection[]> => {
   const file = await client.files
     .list({
       filter: {
-        externalIdPrefix: `dev_${unitName}_${equipmentName}`,
+        externalIdPrefix: `${unitName}_${equipmentName}`,
         dataSetIds: [{ id: DataSetId.P66_ScarletScannerResults }],
       },
     })
-    .then((response) => response.items.pop());
+    .then((response) =>
+      response.items
+        .sort(
+          (a, b) =>
+            parseInt(a.metadata?.scanner_version || '0', 10) -
+            parseInt(b.metadata?.scanner_version || '0', 10)
+        )
+        ?.pop()
+    );
 
   if (!file) return Promise.resolve([]);
 

@@ -10,10 +10,12 @@ export const addTags = ({
   tags,
   ornateViewer,
   ornateDocument,
+  onClick,
 }: {
   tags: Tag[];
   ornateViewer: CogniteOrnate;
   ornateDocument: OrnatePDFDocument;
+  onClick: (dataElement: DataElement) => void;
 }) => {
   ornateViewer!.addAnnotationsToGroup(
     ornateDocument,
@@ -25,7 +27,7 @@ export const addTags = ({
       strokeWidth: 6,
       cornerRadius: 8,
       onClick: () => {
-        console.log(tag.dataElement);
+        onClick(tag.dataElement);
       },
     }))
   );

@@ -1,10 +1,12 @@
 import { Icon } from '@cognite/cogs.js';
-import { useAppDispatch } from 'scarlet/hooks';
+import { useAppDispatch, useDataPanelDispatch } from 'scarlet/hooks';
 import {
   AppActionType,
   DataElement as DataElementType,
   DataElementState,
+  DataPanelActionType,
 } from 'scarlet/types';
+import { getDataElementValue } from 'scarlet/utils';
 
 import * as Styled from './style';
 
@@ -13,8 +15,10 @@ type DataElementProps = {
 };
 
 export const DataElement = ({ dataElement }: DataElementProps) => {
-  const { label, value, state } = dataElement;
+  const { label, state } = dataElement;
   const appDispatch = useAppDispatch();
+  const dataPanelDispatch = useDataPanelDispatch();
+  const value = getDataElementValue(dataElement);
 
   const hasValue = value !== null && value !== undefined && value !== '';
   const isApproved = state === DataElementState.APPROVED;
@@ -24,6 +28,12 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
       type: AppActionType.SHOW_DATA_ELEMENT_STATE_MODAL,
       dataElement,
       state,
+    });
+
+  const openDataElementCard = (dataElement: DataElementType) =>
+    dataPanelDispatch({
+      type: DataPanelActionType.OPEN_DATA_ELEMENT,
+      dataElement,
     });
 
   return (
@@ -41,18 +51,18 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
           </Styled.Button>
         )}
 
-        {!isApproved && hasValue && (
+        {/* {!isApproved && hasValue && (
           <Styled.Button
             aria-label="Approve"
             onClick={() => showModal(DataElementState.APPROVED)}
           >
             <Icon type="Checkmark" />
           </Styled.Button>
-        )}
+        )} */}
 
         <Styled.Button
           aria-label={isApproved ? 'View' : 'Edit'}
-          onClick={() => console.log('Edit', dataElement)}
+          onClick={() => openDataElementCard(dataElement)}
         >
           <Icon type={isApproved ? 'EyeShow' : 'Edit'} />
         </Styled.Button>

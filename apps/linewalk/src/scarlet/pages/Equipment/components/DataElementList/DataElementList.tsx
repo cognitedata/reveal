@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { DataElement, DataElementState } from 'scarlet/types';
+import { getDataElementValue } from 'scarlet/utils';
 
 import {
   DataElement as DataElementComponent,
@@ -25,7 +26,12 @@ export const DataElementList = ({
     () =>
       data &&
       [...data]
+        .map((dataElement) => ({
+          dataElement,
+          value: getDataElementValue(dataElement),
+        }))
         .sort(sortDataElements(sortedKeys))
+        .map((item) => item.dataElement)
         .filter((item) => item.state !== DataElementState.OMITTED),
     [data]
   );

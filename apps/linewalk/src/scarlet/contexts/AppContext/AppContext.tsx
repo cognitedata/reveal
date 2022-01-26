@@ -2,7 +2,7 @@ import React, { useReducer } from 'react';
 import { useSaveEquipment } from 'scarlet/hooks';
 
 import { AppAction, AppActionType, AppState } from '.';
-import { updateDataElementState } from './utils';
+import { removeDetection, updateDataElementState } from './utils';
 
 const equipmentInitialState = {
   unitName: '',
@@ -57,6 +57,25 @@ function reducer(state: AppState, action: AppAction) {
         ...state,
         saveState: action.saveState,
       };
+    case AppActionType.APPROVE_DETECTION: {
+      return {
+        ...state,
+      };
+    }
+    case AppActionType.REMOVE_DETECTION: {
+      const equipmentToSave = removeDetection(
+        state.equipment.data!,
+        action.dataElement,
+        action.detection
+      );
+      return {
+        ...state,
+        saveState: {
+          loading: true,
+          data: equipmentToSave,
+        },
+      };
+    }
     case AppActionType.UPDATE_DATA_ELEMENT_STATE: {
       const equipmentToSave = updateDataElementState(
         state.equipment.data!,

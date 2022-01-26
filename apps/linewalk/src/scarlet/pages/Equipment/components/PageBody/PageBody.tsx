@@ -15,8 +15,7 @@ export const PageBody = () => {
     () =>
       equipment.data?.equipmentElements.filter(
         (item) =>
-          item.state !== DataElementState.OMITTED &&
-          item.scannerDetections?.length
+          item.state !== DataElementState.OMITTED && item.detections?.length
       ),
     [equipment.data]
   );

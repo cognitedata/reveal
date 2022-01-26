@@ -2,6 +2,8 @@ import {
   DataElement,
   DataElementOrigin,
   DataElementState,
+  Detection,
+  DetectionState,
   EquipmentData,
 } from 'scarlet/types';
 
@@ -23,6 +25,31 @@ export const updateDataElementState = (
       state,
       stateReason,
     };
+  }
+  return equipment;
+};
+
+export const removeDetection = (
+  equipmentOrigin: EquipmentData,
+  dataElementOrigin: DataElement,
+  detection: Detection
+): EquipmentData => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  const dataElement: DataElement = deepCopy(dataElementOrigin);
+
+  if (dataElement.origin === DataElementOrigin.EQUIPMENT) {
+    const dataElementIndex = equipment.equipmentElements.findIndex(
+      (item) => item.key === dataElement.key
+    );
+    const detectionIndex = dataElement.detections!.findIndex(
+      (item) => item.id === detection.id
+    );
+    dataElement.detections![detectionIndex!] = {
+      ...detection,
+      isModified: true,
+      state: DetectionState.OMITTED,
+    };
+    equipment.equipmentElements[dataElementIndex] = dataElement;
   }
   return equipment;
 };

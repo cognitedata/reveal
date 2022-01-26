@@ -65,6 +65,7 @@ export const Container = styled.div<{
   padding: 10px;
   margin: 8px;
   display: flex;
+  align-items: center;
 
   ${({ hasValue, state }) => {
     if (state === DataElementState.APPROVED) {
