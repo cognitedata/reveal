@@ -16,7 +16,7 @@ describe('AutoMLModelListItem', () => {
     const props = { model: mockCogniteAutoMLModel[0] };
     testRenderer(TestComponent, undefined, props);
     expect(screen.getByText('valve-detector')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('Completed')).toBeInTheDocument();
     expect(screen.getByTestId('automl-list-item').className).not.toContain(
       'active'
@@ -24,7 +24,7 @@ describe('AutoMLModelListItem', () => {
   });
 
   it('should be active when job id and model id are similar', () => {
-    const props = { model: mockCogniteAutoMLModel[0], selectedModelId: 2 };
+    const props = { model: mockCogniteAutoMLModel[0], selectedModelId: 1 };
     testRenderer(TestComponent, undefined, props);
     expect(screen.getByTestId('automl-list-item').className).toContain(
       'active'
