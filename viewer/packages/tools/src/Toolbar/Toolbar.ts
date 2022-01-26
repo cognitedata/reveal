@@ -14,7 +14,7 @@ export type ToolbarPosition = 'top' | 'right' | 'bottom' | 'left';
  * Toolbar class which creates a container to hold all icons within the toolbar
  */
 export class Toolbar {
-  private _toolbarContainer: HTMLDivElement;
+  private readonly _toolbarContainer: HTMLDivElement;
   private static readonly stylesId = 'reveal-viewer-toolbar-styles';
   private readonly _canvasElement: HTMLCanvasElement | null;
 

@@ -6,7 +6,6 @@ import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Toolbar, ToolbarPosition } from './Toolbar';
 import { AxisViewTool } from '../AxisView/AxisViewTool';
-import { CameraControlsOptions } from '@reveal/core';
 
 import svgAxisIcon from './icons/Axis3D.svg';
 import svgScreenshotIcon from './icons/Image.svg';
@@ -22,10 +21,9 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolbar: Toolbar;
   private axisTool: AxisViewTool | undefined;
-  private cameraControlOption: CameraControlsOptions;
 
-  private readonly _handleAxisViewToolListener = this.axisView.bind(this);
-  private readonly _handleScreenshotListener = this.screenShot.bind(this);
+  private readonly _handleAxisViewToolListener = this.toggleAxisViewTool.bind(this);
+  private readonly _handleScreenshotListener = this.saveScreenShot.bind(this);
   private readonly _handleChangeCameraTargetListener = this.changeCameraTargetOnClick.bind(this);
   private readonly _handleCameraZoomPastCursorListener = this.toggleCameraZoomPastToCursor.bind(this);
   private readonly _handleFitCameraToModelListener = this.fitCameraToAllModels.bind(this);
@@ -35,10 +33,6 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
 
     this._viewer = viewer;
     this._toolbar = new Toolbar(this._viewer);
-    this.cameraControlOption = {
-      onClickTargetChange: false,
-      mouseWheelAction: 'zoomPastCursor'
-    };
   }
 
   /**
@@ -115,7 +109,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   /**
    * Enable or Disable Axis view tool
    */
-  private axisView(): void {
+  private toggleAxisViewTool(): void {
     if (this.axisTool === undefined) {
       this.axisTool = new AxisViewTool(this._viewer);
     } else {
@@ -127,7 +121,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   /**
    * Save the screenshot of the canvas been rendered
    */
-  private async screenShot(): Promise<void> {
+  private async saveScreenShot(): Promise<void> {
     const downloadLink = document.createElement('a');
     downloadLink.setAttribute('download', 'ScreenshotImage.png');
     const url = await this._viewer.getScreenshot();
@@ -139,20 +133,22 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Toggle enabling/disabling the Camera target on mouse click
    */
   private changeCameraTargetOnClick(): void {
-    this.cameraControlOption.onClickTargetChange = !this.cameraControlOption.onClickTargetChange;
-    this._viewer.setCameraControlsOptions(this.cameraControlOption);
+    const cameraControlOption = this._viewer.getCameraControlsOptions();
+    cameraControlOption.changeCameraTargetOnClick = !cameraControlOption.changeCameraTargetOnClick;
+    this._viewer.setCameraControlsOptions(cameraControlOption);
   }
 
   /**
    * Toggle camera for "Zoom Past Cursor" and "Zoom To Cursor"
    */
   private toggleCameraZoomPastToCursor(): void {
-    if (this.cameraControlOption.mouseWheelAction === 'zoomPastCursor') {
-      this.cameraControlOption.mouseWheelAction = 'zoomToCursor';
+    const cameraControlOption = this._viewer.getCameraControlsOptions();
+    if (cameraControlOption.mouseWheelAction === 'zoomPastCursor') {
+      cameraControlOption.mouseWheelAction = 'zoomToCursor';
     } else {
-      this.cameraControlOption.mouseWheelAction = 'zoomPastCursor';
+      cameraControlOption.mouseWheelAction = 'zoomPastCursor';
     }
-    this._viewer.setCameraControlsOptions(this.cameraControlOption);
+    this._viewer.setCameraControlsOptions(cameraControlOption);
   }
 
   /**

@@ -19,7 +19,7 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, HtmlOverlayTool, ToolbarTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, HtmlOverlayTool, ToolbarTool, GeomapTool, MapConfig, MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
@@ -519,8 +519,26 @@ export function Migration() {
       });
 
       //Toobar
-      const callbackMsg = () : void => {
-        alert("result called");
+      let map: GeomapTool | undefined;
+      const mapConfig: MapConfig = {
+        provider: MapProviders.MapboxMap,
+        APIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
+        mode: MapboxMode.Style,
+        id: MapboxStyle.Satellite_Streets,
+        tileFormat: MapboxImageFormat.JPG70,
+        latlong: {
+          latitude: 59.9016426931744,
+          longitude: 10.607235872426175
+        }
+      };
+      const geomapToggle = () : void => {
+        if(map === undefined) {
+        map = new GeomapTool(viewer, mapConfig);
+        }
+        else {
+          map.dispose();
+          map = undefined;
+        }
       }
 
       const toolbar = new ToolbarTool(viewer);
@@ -531,28 +549,12 @@ export function Migration() {
       toolbar.addZoomPastToCursorToggle();
       toolbar.addFitCameraToModel();
 
-      toolbar.addToolbarButton(explodeIcon, callbackMsg, 'Explode View');
-      toolbar.addToolbarButton(geoMapIcon, callbackMsg, 'Maps');
-      toolbar.addToolbarToogleButton(clippingIcon, callbackMsg, 'Clipping');
+      toolbar.addToolbarToogleButton(geoMapIcon, geomapToggle, 'Maps');
 
       const toolbarGui = gui.addFolder('Toolbar Options');
-      const toolbarPosition = ['Top', 'Bottom', 'Left', 'Right'];
+      const toolbarPosition = ['top', 'bottom', 'left', 'right'];
       toolbarGui.add(guiState, 'toolbarPosition', toolbarPosition).name('toolbarPosition').onFinishChange(value => {
-        switch(value) {
-          case 'Top':
-            toolbar.setPosition('top');
-            break;
-          case 'Left':
-            toolbar.setPosition('left');
-            break;
-          case 'Right':
-            toolbar.setPosition('right');
-            break;
-          case 'Bottom':
-          default:
-            toolbar.setPosition('bottom');
-            break;
-        }
+        toolbar.setPosition(value);
       });
     }
 
