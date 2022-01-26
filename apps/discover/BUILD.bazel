@@ -656,7 +656,15 @@ _CYPRESS_FILES = glob([
     "cypress/integration/**/*.ts",
 ])
 
-CYPRESS_EXTERNAL_FILES = ["src/constants/app.ts"]
+CYPRESS_EXTERNAL_FILES = [
+    "src/constants/app.ts",
+    "src/modules/wellSearch/constantsSidebarFilters.ts",
+    "src/components/add-to-favorite-set-menu/constants.ts",
+    "src/components/emptyState/constants.ts",
+    "src/pages/authorized/search/map/constants.ts",
+    "src/core/constants.ts",
+    "src/components/tableEmpty/constants.ts",
+]
 
 CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES
 

@@ -5,12 +5,12 @@ import { MultiSelect } from 'components/filters';
 import { useDeepMemo } from 'hooks/useDeep';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataNpt } from 'modules/filterData/selectors';
+import { NPT_CODE } from 'modules/wellSearch/constantsSidebarFilters';
 
 import {
   FILTER_THEME,
   SELECT_ALL_LABEL,
   SELECTED_ALL_DISPLAY_VALUE,
-  NPT_CODE_FILTER_TITLE,
 } from './constants';
 
 export const NPTCodeFilter = React.memo(
@@ -31,7 +31,7 @@ export const NPTCodeFilter = React.memo(
     return (
       <MultiSelect
         theme={FILTER_THEME}
-        title={NPT_CODE_FILTER_TITLE}
+        title={NPT_CODE}
         SelectAllLabel={SELECT_ALL_LABEL}
         options={nptCodes}
         selectedOptions={nptCode}

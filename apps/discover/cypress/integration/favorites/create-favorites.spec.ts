@@ -1,4 +1,4 @@
-import { CREATE_NEW_SET } from '../../support/constants';
+import { CREATE_NEW_SET } from '../../../src/components/add-to-favorite-set-menu/constants';
 
 describe('Creating Favorites', () => {
   beforeEach(() => {

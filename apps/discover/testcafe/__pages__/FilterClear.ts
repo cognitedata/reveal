@@ -5,9 +5,11 @@ import { NO_RESULTS_TEXT } from '../../src/components/emptyState/constants';
 import {
   CLEAR_ALL_TEXT,
   SEARCH_VALUE_LABEL,
-  DATA_SOURCE_LABEL,
 } from '../../src/components/tableEmpty/constants';
-import { FIELD_BLOCK_OPERATOR } from '../../src/modules/wellSearch/constantsSidebarFilters';
+import {
+  DATA_SOURCE,
+  FIELD_BLOCK_OPERATOR,
+} from '../../src/modules/wellSearch/constantsSidebarFilters';
 import { progress } from '../utils';
 
 class FilterClearPage {
@@ -26,7 +28,7 @@ class FilterClearPage {
     this.noResult().find('span').withText(SEARCH_VALUE_LABEL).nth(0);
 
   public readonly dataSourceContainer = () =>
-    this.noResult().find('span').withText(DATA_SOURCE_LABEL).nth(0);
+    this.noResult().find('span').withText(DATA_SOURCE).nth(0);
 
   public readonly fieldContainer = () =>
     this.noResult().find('span').withText(FIELD_BLOCK_OPERATOR).nth(0);

@@ -1,4 +1,5 @@
-import { CLEAR_ALL_TEXT, NO_RESULTS_TEXT } from '../constants';
+import { NO_RESULTS_TEXT } from '../../../src/components/emptyState/constants';
+import { CLEAR_ALL_TEXT } from '../../../src/components/tableEmpty/constants';
 
 Cypress.Commands.add('clearAllFilters', () => {
   cy.log(`Searching for 'no results'`);
