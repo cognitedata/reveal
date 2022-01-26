@@ -2,8 +2,10 @@ import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
 import {
   mockCogniteAutoMLModelList,
   mockCogniteAutoMLModel,
+  mockCogniteAutoMLTrainingJob,
 } from 'src/__test-utils/fixtures/automlModels';
 import { HttpResponse, v3Client } from '@cognite/cdf-sdk-singleton';
+import { AutoMLModelType } from 'src/api/autoML/types';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => ({
   v3Client: {
@@ -78,6 +80,45 @@ describe('AutoML API /automl/jobid', () => {
       Promise.resolve(mockedData);
     const json = await AutoMLAPI.getAutoMLModel(2);
 
+    expect(json).toMatchObject({});
+  });
+});
+
+describe('AutoML start training job', () => {
+  test('should return training job data', async () => {
+    const mockedData = {
+      data: mockCogniteAutoMLTrainingJob[0],
+      status: 200,
+      headers: {},
+    };
+
+    const { name, modelType, items } = mockCogniteAutoMLTrainingJob[0];
+
+    v3Client.post = async (): Promise<HttpResponse<any>> =>
+      Promise.resolve(mockedData);
+    const json = await AutoMLAPI.startAutoMLJob(
+      name,
+      modelType as AutoMLModelType,
+      items
+    );
+
+    expect(json).toMatchObject(mockCogniteAutoMLTrainingJob[0]);
+  });
+
+  test('should return empty object when job creation fails', async () => {
+    const mockedData = {
+      data: undefined,
+      status: 200,
+      headers: {},
+    };
+    const { name, modelType, items } = mockCogniteAutoMLTrainingJob[0];
+    v3Client.post = async (): Promise<HttpResponse<any>> =>
+      Promise.resolve(mockedData);
+    const json = await AutoMLAPI.startAutoMLJob(
+      name,
+      modelType as AutoMLModelType,
+      items
+    );
     expect(json).toMatchObject({});
   });
 });

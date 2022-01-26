@@ -19,6 +19,44 @@ export const mockCogniteAutoMLModelList = [
   },
 ];
 
+export const mockCogniteAutoMLTrainingJob = [
+  {
+    name: 'valve-detector',
+    jobId: 2,
+    modelType: 'objectdetection',
+    status: 'Completed',
+    createdTime: 1639502118758,
+    startTime: 1639502120371,
+    statusTime: 1639511202313,
+    items: [
+      {
+        id: 10,
+      },
+      {
+        externalId: 'image1.png',
+      },
+    ],
+  },
+
+  {
+    name: 'gauge-reader',
+    jobId: 1,
+    modelType: 'classification',
+    status: 'Completed',
+    createdTime: 1639436895522,
+    startTime: 1639436896998,
+    statusTime: 1639445061156,
+    items: [
+      {
+        id: 20,
+      },
+      {
+        externalId: 'image2.png',
+      },
+    ],
+  },
+];
+
 export const mockCogniteAutoMLModel = [
   {
     name: 'valve-detector',
