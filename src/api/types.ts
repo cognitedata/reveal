@@ -16,7 +16,12 @@ export interface DetectionModelDataProvider {
   fetchJobById(jobId: number): Promise<AnnotationJobResponse>;
 }
 
-export type JobStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
+export type JobStatus =
+  | 'Queued'
+  | 'Collecting'
+  | 'Running'
+  | 'Completed'
+  | 'Failed';
 export type RegionType = 'points' | 'rectangle' | 'polygon' | 'polyline';
 export type Vertex = {
   x: number;
