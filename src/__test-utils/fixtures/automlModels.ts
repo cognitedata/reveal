@@ -22,7 +22,7 @@ export const mockCogniteAutoMLModelList = [
 export const mockCogniteAutoMLModel = [
   {
     name: 'valve-detector',
-    jobId: 2,
+    jobId: 1,
     modelType: 'objectdetection',
     status: 'Completed',
     createdTime: 1639502118758,
@@ -104,9 +104,9 @@ export const mockCogniteAutoMLModel = [
 
   {
     name: 'gauge-reader',
-    jobId: 1,
+    jobId: 2,
     modelType: 'classification',
-    status: 'Completed',
+    status: 'Running',
     createdTime: 1639436895522,
     startTime: 1639436896998,
     statusTime: 1639445061156,
