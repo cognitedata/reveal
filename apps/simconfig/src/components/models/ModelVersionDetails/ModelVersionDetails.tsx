@@ -15,6 +15,8 @@ import {
   selectProject,
 } from 'store/simconfigApiProperties/selectors';
 import { downloadModelFile } from 'utils/fileDownload';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
 
 import { BoundaryConditionTable } from './BoundaryConditionTable';
 
@@ -59,6 +61,16 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     }
   }, [boundaryConditions]);
 
+  useEffect(() => {
+    if (isProcessingReady) {
+      trackUsage(TRACKING_EVENTS.MODEL_VERSION_DEAILS, {
+        modelName: decodeURI(modelName),
+        modelVersion: version,
+        simulator,
+      });
+    }
+  }, [modelName, isProcessingReady, simulator, version]);
+
   if (isFetchingBoundaryConditions && !isSuccessBoundaryConditions) {
     return <Skeleton.List lines={2} />;
   }
@@ -70,6 +82,13 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       );
       return;
     }
+
+    trackUsage(TRACKING_EVENTS.MODEL_VERSION_DOWNLOAD, {
+      modelName: decodeURI(modelName),
+      modelVersion: version,
+      simulator,
+    });
+
     setIsModelFileDownloading(true);
     await downloadModelFile(token, project, baseUrl, modelFile.metadata);
     setIsModelFileDownloading(false);

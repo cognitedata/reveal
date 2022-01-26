@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 
 import styled from 'styled-components/macro';
@@ -22,6 +22,8 @@ import { ModelForm } from 'components/forms/ModelForm';
 import { CalculationList, ModelVersionList } from 'components/models';
 import { useTitle } from 'hooks/useTitle';
 import { CdfClientContext } from 'providers/CdfClientProvider';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
 import { isSuccessResponse } from 'utils/responseUtils';
 
 import type { AppLocationGenerics } from 'routes';
@@ -53,6 +55,13 @@ export function ModelDetails({
     useGetModelFileQuery({ project, modelName, simulator });
 
   useTitle(modelFile?.metadata.modelName);
+
+  useEffect(() => {
+    trackUsage(TRACKING_EVENTS.MODEL_DETAILS_VIEW, {
+      modelName: decodeURI(modelName),
+      simulator,
+    });
+  }, [modelName, simulator]);
 
   if (!isFetchingModelFile && !modelFile) {
     // Uninitialized state
@@ -89,7 +98,17 @@ export function ModelDetails({
   const extraContent: Record<string, JSX.Element | undefined> = {
     'model-versions': (
       <Link to="../new-version">
-        <Button icon="Add" size="small" type="tertiary">
+        <Button
+          icon="Add"
+          size="small"
+          type="tertiary"
+          onClick={() => {
+            trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {
+              simulator,
+              modelName: decodeURI(modelName),
+            });
+          }}
+        >
           New version
         </Button>
       </Link>
@@ -149,6 +168,10 @@ export function ModelDetails({
         activeKey={selectedTab}
         tabBarExtraContent={extraContent[selectedTab] ?? null}
         onChange={(tab) => {
+          trackUsage(TRACKING_EVENTS.MODEL_CALC_LIST, {
+            simulator,
+            modelName: decodeURI(modelName),
+          });
           navigate({ to: `../${tab}` });
         }}
       >

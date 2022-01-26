@@ -24,6 +24,8 @@ import {
 
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
 import { isSuccessResponse } from 'utils/responseUtils';
 
 import { CalculationRunTypeIndicator } from './CalculationRunTypeIndicator';
@@ -201,6 +203,12 @@ export function CalculationList({
                     <Menu.Divider />
                     <Menu.Item
                       onClick={() => {
+                        trackUsage(TRACKING_EVENTS.MODEL_CALC_EDIT, {
+                          modelName: decodeURI(modelName),
+                          simulator,
+                          calculationType:
+                            calculation.configuration.calculationType,
+                        });
                         navigate({
                           to: `${encodeURIComponent(
                             calculation.configuration.calculationType
@@ -234,7 +242,16 @@ export function CalculationList({
     <NonConfiguredCalculationList>
       {nonConfiguredCalculations.map((calculationType) => (
         <React.Fragment key={calculationType}>
-          <Link to={`${encodeURIComponent(calculationType)}/configuration`}>
+          <Link
+            to={`${encodeURIComponent(calculationType)}/configuration`}
+            onClick={() => {
+              trackUsage(TRACKING_EVENTS.MODEL_CACL_CONFIG, {
+                modelName: decodeURI(modelName),
+                simulator,
+                calculationType,
+              });
+            }}
+          >
             <Button
               className="configure-calculation"
               icon="Settings"

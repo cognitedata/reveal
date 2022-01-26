@@ -9,6 +9,8 @@ import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -72,7 +74,14 @@ export function ModelLibrary() {
           </div>
           <div className="new-model">
             <Link to="/model-library/new-model">
-              <Button icon="Add" type="primary" block>
+              <Button
+                icon="Add"
+                type="primary"
+                block
+                onClick={() => {
+                  trackUsage(TRACKING_EVENTS.NEW_MODEL, { simulator });
+                }}
+              >
                 New model
               </Button>
             </Link>

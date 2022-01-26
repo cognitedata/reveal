@@ -225,7 +225,7 @@ react_scripts(
         # Specify your Sentry DSN is the URL used to report runtime issues
         "REACT_APP_SENTRY_DSN": "https://8e7b7c02805d4384963d341c7428ad4e@o124058.ingest.sentry.io/5904266",
         # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "1cc1cdc82fb93ec9a20a690216de41e4",
+        "REACT_APP_MIXPANEL_TOKEN": "071f5119a9f05349bee1e1391b8c3c2c",
         # Specify your locize.io project ID used for localization
         "REACT_APP_LOCIZE_PROJECT_ID": "1ee63b21-27c7-44ad-891f-4bd9af378b72",
 
@@ -315,7 +315,7 @@ react_scripts(
         "REACT_APP_LOCIZE_VERSION": "latest",
         "REACT_APP_MIXPANEL_DEBUG": "false",
         # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "1cc1cdc82fb93ec9a20a690216de41e4",
+        "REACT_APP_MIXPANEL_TOKEN": "071f5119a9f05349bee1e1391b8c3c2c",
     },
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.
