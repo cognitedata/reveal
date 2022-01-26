@@ -27,8 +27,6 @@ import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 
 import geoMapIcon from './icons/Map.svg';
-import clippingIcon from './icons/Timeseries.svg';
-import explodeIcon from './icons/Cube.svg';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
