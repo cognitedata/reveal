@@ -11,14 +11,17 @@ type SidePanelDatabaseListItemTooltipProps = {
 };
 
 const StyledDatabaseListItemTooltipWrapper = styled(Tooltip)`
-  background-color: ${Colors.white};
-  border-radius: 12px;
+  && {
+    background-color: ${Colors.white};
+    border-radius: 12px;
+
+    .tippy-arrow {
+      color: ${Colors.white};
+    }
+  }
+
   max-width: unset !important; /* overrides cogs style */
   min-width: 200px;
-
-  .tippy-arrow {
-    color: ${Colors.white};
-  }
 
   .tippy-content {
     background-color: ${Colors.white};
