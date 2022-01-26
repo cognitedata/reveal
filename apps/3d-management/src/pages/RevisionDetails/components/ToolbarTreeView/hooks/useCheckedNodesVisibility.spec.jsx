@@ -181,6 +181,7 @@ describe('useCheckedNodesVisibility tests', () => {
             .sort();
         });
       },
+      updateStyledNodeCollection() {},
       unassignStyledNodeCollection: jest.fn(),
     };
 
