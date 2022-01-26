@@ -9,19 +9,10 @@ import NoAccessPage from 'src/pages/NoAccessPage';
 
 function routeWrapper(
   Component: any,
-  user: AuthenticatedUserWithGroups
+  user: AuthenticatedUserWithGroups,
+  capabilities: [{ acl: string; actions: [] }]
 ): (routerProps: RouteComponentProps) => any {
   return (routeProps: RouteComponentProps) => {
-    const capabilities = [
-      {
-        acl: 'filesAcl',
-        actions: ['READ', 'WRITE'],
-      },
-      {
-        acl: 'groupsAcl',
-        actions: ['LIST'],
-      },
-    ];
     if (!userHasCapabilities(user, capabilities)) {
       return <NoAccessPage capabilities={capabilities} />;
     }
@@ -38,6 +29,16 @@ const routes = [
 
       return <LazyWrapper routeProps={props} importFn={compRoute} />;
     },
+    capabilities: [
+      {
+        acl: 'filesAcl',
+        actions: ['READ', 'WRITE'],
+      },
+      {
+        acl: 'groupsAcl',
+        actions: ['LIST'],
+      },
+    ],
   },
   {
     exact: true,
@@ -50,6 +51,16 @@ const routes = [
 
       return <LazyWrapper routeProps={props} importFn={compRoute} />;
     },
+    capabilities: [
+      {
+        acl: 'filesAcl',
+        actions: ['READ', 'WRITE'],
+      },
+      {
+        acl: 'groupsAcl',
+        actions: ['LIST'],
+      },
+    ],
   },
   {
     exact: false,
@@ -59,6 +70,16 @@ const routes = [
 
       return <LazyWrapper routeProps={props} importFn={compRoute} />;
     },
+    capabilities: [
+      {
+        acl: 'filesAcl',
+        actions: ['READ', 'WRITE'],
+      },
+      {
+        acl: 'groupsAcl',
+        actions: ['LIST'],
+      },
+    ],
   },
   {
     exact: true,
@@ -71,6 +92,38 @@ const routes = [
 
       return <LazyWrapper routeProps={props} importFn={compRoute} />;
     },
+    capabilities: [
+      {
+        acl: 'filesAcl',
+        actions: ['READ', 'WRITE'],
+      },
+      {
+        acl: 'groupsAcl',
+        actions: ['LIST'],
+      },
+    ],
+  },
+  {
+    exact: true,
+    path: '/:tenant/vision/models',
+    component: (props: RouteComponentProps) => {
+      const compRoute = useMemo(
+        () => () => import('src/modules/AutoML/Components/AutoML'),
+        []
+      );
+
+      return <LazyWrapper routeProps={props} importFn={compRoute} />;
+    },
+    capabilities: [
+      {
+        acl: 'groupsAcl',
+        actions: ['LIST'],
+      },
+      {
+        acl: 'visionModelAcl',
+        actions: ['READ'],
+      },
+    ],
   },
 ];
 
@@ -84,7 +137,11 @@ export function Routes() {
           key={r.path}
           exact={r.exact}
           path={r.path}
-          render={routeWrapper(r.component, user)}
+          render={routeWrapper(
+            r.component,
+            user,
+            r.capabilities as [{ acl: string; actions: [] }]
+          )}
         />
       ))}
 
