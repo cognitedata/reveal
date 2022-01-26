@@ -32,6 +32,7 @@ export class CadModelUpdateHandler {
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
+  private readonly _prioritizedLoadingHintsSubject: Subject<void> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
   private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
@@ -55,8 +56,9 @@ export class CadModelUpdateHandler {
     };
 
     /* Creates and observable that emits an event when either of the observables emitts an item.
-     * ------- new camera ---------\
-     * --- new clipping plane ------\
+     * ------- new camera --------\
+     * --- new clipping plane -----\
+     * --- new priority load hint --\
      * --- new clip intersection ----\_______ DetermineSectorsInput
      * --- new global loading hints--/
      * --- new camera motion state -/
@@ -68,6 +70,7 @@ export class CadModelUpdateHandler {
         this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
         this._budgetSubject.pipe(startWith(this._budget))
       ]).pipe(map(makeSettingsInput)),
+      this._prioritizedLoadingHintsSubject,
       combineLatest([
         this._cameraSubject.pipe(auditTime(500)),
         this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600))
@@ -138,6 +141,7 @@ export class CadModelUpdateHandler {
   addModel(model: CadNode): void {
     this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'add' });
+    model.nodeAppearanceProvider.on('prioritizedAreasChanged', () => this.updatePrioritizedAreas());
   }
 
   removeModel(model: CadNode): void {
@@ -147,6 +151,10 @@ export class CadModelUpdateHandler {
 
   updateLoadingHints(cadLoadingHints: CadLoadingHints): void {
     this._loadingHintsSubject.next(cadLoadingHints);
+  }
+
+  updatePrioritizedAreas(): void {
+    this._prioritizedLoadingHintsSubject.next();
   }
 
   consumedSectorObservable(): Observable<ConsumedSector> {
@@ -201,8 +209,9 @@ function makeClippingInput([clippingPlanes]: [THREE.Plane[]]): ClippingInput {
   return { clippingPlanes };
 }
 
-function createDetermineSectorsInput([settings, camera, clipping, models]: [
+function createDetermineSectorsInput([settings, _, camera, clipping, models]: [
   SettingsInput,
+  void,
   CameraInput,
   ClippingInput,
   CadNode[]
