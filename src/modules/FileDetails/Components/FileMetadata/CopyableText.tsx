@@ -1,19 +1,15 @@
 import React, { ReactText, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Icon } from '@cognite/cogs.js';
-
-const copyIconColor = '#4a67fb';
-const copiedIconColor = '#3ad27f';
+import { Button, Colors, Icon } from '@cognite/cogs.js';
 
 const CopiedIconContainer = styled.div`
-  color: ${copiedIconColor};
+  color: ${Colors.success.hex()};
   margin-left: 9px;
   padding: 2px 0;
   height: 22px;
 `;
 
 const CopyButton = styled(Button)`
-  color: ${copyIconColor};
   margin-left: 9px;
   height: 22px;
 `;
@@ -27,6 +23,7 @@ const CopyableTextContainer = styled.div`
 const CopyButtonContainer = (props: {
   copied: boolean;
   onClick: (...args: any) => void;
+  copyIconColor?: string;
 }) => {
   if (props.copied) {
     return (
@@ -45,6 +42,7 @@ const CopyButtonContainer = (props: {
       icon="Copy"
       iconPlacement="right"
       aria-label="copy button"
+      style={{ color: props.copyIconColor || Colors['midblue-3'].hex() }}
     />
   );
 };
@@ -53,8 +51,9 @@ export const CopyableText = (props: {
   children: any;
   copyable?: boolean;
   text?: ReactText;
+  copyIconColor?: string;
 }) => {
-  const { copyable, text } = props;
+  const { copyable, text, copyIconColor } = props;
   const [copied, setCopied] = useState(false);
 
   const onCopyClick = () => {
@@ -92,7 +91,11 @@ export const CopyableText = (props: {
     <CopyableTextContainer>
       {props.children}
       {copyable && text && (
-        <CopyButtonContainer copied={copied} onClick={onCopyClick} />
+        <CopyButtonContainer
+          copied={copied}
+          onClick={onCopyClick}
+          copyIconColor={copyIconColor}
+        />
       )}
     </CopyableTextContainer>
   );
