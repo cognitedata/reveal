@@ -142,6 +142,8 @@ export class CadModelUpdateHandler {
     this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'add' });
     model.nodeAppearanceProvider.on('prioritizedAreasChanged', () => this.updatePrioritizedAreas());
+    // Ensure there is at least one call in the line for the model to load
+    this.updatePrioritizedAreas();
   }
 
   removeModel(model: CadNode): void {
