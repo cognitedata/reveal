@@ -10,6 +10,7 @@ import { SelectedNode } from 'src/store/modules/TreeView';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import debounce from 'lodash/debounce';
+import { assignOrUpdateStyledNodeCollection } from 'src/utils/sdk/3dNodeStylingUtils';
 
 export function useSelectedNodesHighlights({
   model,
@@ -28,7 +29,7 @@ export function useSelectedNodesHighlights({
 
   useEffect(() => {
     const selectedTreeIndicesNodeSet = selectedTreeIndicesNodeSetRef.current;
-    model.assignStyledNodeCollection(selectedTreeIndicesNodeSet, {});
+    assignOrUpdateStyledNodeCollection(model, selectedTreeIndicesNodeSet, {});
     return () => {
       if (selectedTreeIndicesNodeSet) {
         model.unassignStyledNodeCollection(selectedTreeIndicesNodeSet);
@@ -41,7 +42,8 @@ export function useSelectedNodesHighlights({
   useEffect(() => {
     model.setDefaultNodeAppearance({ renderGhosted: ghostModeEnabled });
 
-    model.assignStyledNodeCollection(
+    assignOrUpdateStyledNodeCollection(
+      model,
       selectedTreeIndicesNodeSetRef.current,
       ghostModeEnabled
         ? { renderGhosted: false }
