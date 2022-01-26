@@ -1520,10 +1520,10 @@
     skmeans "^0.11.3"
     three "0.133.0"
 
-"@cognite/reveal-3.x@npm:@cognite/reveal@3.0.0-alpha.0":
-  version "3.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.0.0-alpha.0.tgz#085b91e85c1b27d2cacc7b86e98e8b58e9e91894"
-  integrity sha512-L5kPty9HynMi15mmARqQl9XdqiZxdXgpqDhHuGae8TycXlw5Dwn1CGwJJv/30QTUMQQKEfwxLAbOQ4n7IPdMzQ==
+"@cognite/reveal-3.x@npm:@cognite/reveal@3.x.x":
+  version "3.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.0.0-alpha.2.tgz#d604d6fa354d8dbc0e0be86c526e6caa7a71192a"
+  integrity sha512-eCp4YG7UVoo1nw+eLx5AZ9bmDLi2XXK5dv19349NwQk4+U7WYDFWtJLo0rAMBCfCrMvb5RjRIHND6ZD4iuknIg==
   dependencies:
     "@cognite/potree-core" "^1.5.1"
     "@cognite/reveal-parser-worker" "1.3.0"
@@ -2518,6 +2518,11 @@
   version "0.135.0"
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.135.0.tgz#db7f9d9699b60aba844fc5b2893adf6dd6811665"
   integrity sha512-l7WLhIHjhHMtlpyTSltPPAKLpiMwgMD1hXHj59AVUpYRoZP7Fd9NNOSRSvZBCPLpTHPYojgQvSJCoza9zoL7bg==
+
+"@types/three@0.136.0":
+  version "0.136.0"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.136.0.tgz#6ffd7487563fd3d4f1c794be0ab45f58197f3275"
+  integrity sha512-yNBe5U3B+eSZU+pmiDxeq3hDyF+ftYghFkY3y0ayZrF8SjoUMVIRXqEfJX39wTSDsiY4/+tkmKgNxhhIKbnxeQ==
 
 "@types/uglify-js@*":
   version "3.13.1"
@@ -13228,6 +13233,11 @@ three@0.135.0:
   version "0.135.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.135.0.tgz#cff4ec8edd3c51ce9bc7e88d13e8eafed4d0ddfc"
   integrity sha512-kuEpuuxRzLv0MDsXai9huCxOSQPZ4vje6y0gn80SRmQvgz6/+rI0NAvCRAw56zYaWKMGMfqKWsxF9Qa2Z9xymQ==
+
+three@0.136.0:
+  version "0.136.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.136.0.tgz#b1504db021b46398ef468aa7849f3dcabb814f50"
+  integrity sha512-+fEMX7nYLz2ZesVP/dyifli5Jf8gR3XPAnFJveQ80aMhibFduzrADnjMbARXh8+W9qLK7rshJCjAIL/6cDxC+A==
 
 through2@^0.6.3:
   version "0.6.5"
