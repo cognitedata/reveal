@@ -6,7 +6,7 @@ import { Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { makeSelectAnnotationStatuses } from 'src/modules/Process/processSlice';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/processSlice';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export function NameAndAnnotationRenderer({
@@ -17,7 +17,7 @@ export function NameAndAnnotationRenderer({
     selectAnnotationCounts(annotationReducer, id)
   );
 
-  const selectAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const selectAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     selectAnnotationStatuses(processSlice, id)
   );

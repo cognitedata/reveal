@@ -21,6 +21,7 @@ import {
 import { useSelector } from 'react-redux';
 import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { getFakeQueuedJob } from 'src/api/detectionUtils';
+import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
@@ -514,33 +515,48 @@ export const selectUnfinishedJobs = createSelector(
   }
 );
 
-export const makeSelectAnnotationStatuses = () =>
-  createSelector(selectJobsByFileId, (fileJobs) => {
-    const annotationBadgeProps = {
-      tag: {},
-      gdpr: {},
-      text: {},
-      objects: {},
-    };
-    fileJobs.forEach((job) => {
-      const statusData = { status: job.status, statusTime: job.statusTime };
-      if (job.type === VisionAPIType.OCR) {
-        annotationBadgeProps.text = statusData;
-      }
-      if (job.type === VisionAPIType.TagDetection) {
-        annotationBadgeProps.tag = statusData;
-      }
-      if (
-        [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
-          job.type
-        )
-      ) {
-        annotationBadgeProps.objects = statusData;
-        annotationBadgeProps.gdpr = statusData;
-      }
-    });
-    return annotationBadgeProps as AnnotationsBadgeStatuses;
-  });
+const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
+export const makeSelectJobStatusForFile = () =>
+  createDeepEqualSelector(
+    (state: State, fileId: number) => fileId,
+    selectJobsByFileId,
+    (fileId, fileJobs) => {
+      const annotationBadgeProps = {
+        tag: {},
+        gdpr: {},
+        text: {},
+        objects: {},
+      };
+      fileJobs.forEach((job) => {
+        let status = 'Running';
+        if (job.status === 'Queued') {
+          status = 'Queued';
+        } else if (job.completedFileIds?.includes(fileId)) {
+          status = 'Completed';
+        } else if (job.failedFileIds?.includes(fileId)) {
+          status = 'Failed';
+        }
+
+        const statusData = { status, statusTime: job.statusTime };
+        if (job.type === VisionAPIType.OCR) {
+          annotationBadgeProps.text = statusData;
+        }
+        if (job.type === VisionAPIType.TagDetection) {
+          annotationBadgeProps.tag = statusData;
+        }
+        if (
+          [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
+            job.type
+          )
+        ) {
+          annotationBadgeProps.objects = statusData;
+          annotationBadgeProps.gdpr = statusData;
+        }
+      });
+      return annotationBadgeProps as AnnotationsBadgeStatuses;
+    }
+  );
 
 export const selectPageCount = createSelector(
   (state: State) => state.fileIds,

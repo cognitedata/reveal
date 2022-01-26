@@ -19,6 +19,10 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
       } = job;
       const completedFileIds: number[] = completedFileIdsFromState || [];
       const failedFileIds: number[] = failedFileIdsFromState || [];
+      let annotationsSavedFileIds: number[] = [];
+      const addToAnnotationsSavedFileIds = (ids: number[]) => {
+        annotationsSavedFileIds = [...annotationsSavedFileIds, ...ids];
+      };
 
       const doesFileExist = (fileId: number) =>
         getState().fileReducer.files.byId[fileId];
@@ -43,6 +47,8 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
                   modelType,
                   completedFileIds,
                   failedFileIds,
+                  annotationsSavedFileIds,
+                  addToAnnotationsSavedFileIds,
                 })
               ).unwrap();
             }

@@ -3,13 +3,13 @@ import {
   CellRenderer,
 } from 'src/modules/Common/types';
 import React, { useMemo } from 'react';
-import { makeSelectAnnotationStatuses } from 'src/modules/Process/processSlice';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/processSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { TimeDisplay } from '@cognite/data-exploration';
 
 export function StatusRenderer({ rowData: { id } }: CellRenderer) {
-  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, id)
   );

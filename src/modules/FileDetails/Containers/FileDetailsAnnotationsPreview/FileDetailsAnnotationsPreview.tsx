@@ -9,7 +9,7 @@ import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
 import {
   isProcessingFile,
-  makeSelectAnnotationStatuses,
+  makeSelectJobStatusForFile,
 } from 'src/modules/Process/processSlice';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 
@@ -46,7 +46,7 @@ export const FileDetailsAnnotationsPreview = ({
     ])
   );
 
-  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, fileInfo.id)
   );

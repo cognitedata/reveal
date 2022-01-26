@@ -25,16 +25,28 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
     modelType: VisionAPIType;
     completedFileIds: number[];
     failedFileIds: number[];
+    annotationsSavedFileIds: number[];
+    addToAnnotationsSavedFileIds: (ids: number[]) => void;
   },
   ThunkConfig
 >(
   'AnnotationDetectionJobUpdate',
   async (
-    { job, fileIds, modelType, completedFileIds, failedFileIds },
+    {
+      job,
+      fileIds,
+      modelType,
+      completedFileIds,
+      failedFileIds,
+      annotationsSavedFileIds,
+      addToAnnotationsSavedFileIds,
+    },
     { dispatch }
   ) => {
+    let savedVisionAnnotation: VisionAnnotation[] = [];
     if (job.status === 'Running' || job.status === 'Completed') {
       let unsavedAnnotations: UnsavedAnnotation[] = [];
+      const pendingAnnotationsSavedFileIds: number[] = [];
       let assetIdMap = new Map<number, VisionAsset>();
 
       const newCompletedFileIds =
@@ -99,44 +111,58 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
 
       // save new prediction results as annotations
       newAnnotationJobResults.forEach((annResult) => {
-        const { annotations } = annResult;
+        // as annResults contains annotation already saved Files, filtering them
+        if (!annotationsSavedFileIds.includes(annResult.fileId)) {
+          const { annotations, fileId } = annResult;
+          pendingAnnotationsSavedFileIds.push(fileId);
 
-        if (annotations && annotations.length) {
-          const unsavedAnnotationsForFile = annotations
-            .map((ann) => {
-              if (ann.assetIds && ann.assetIds.length) {
-                return ann.assetIds.map((assetId) => {
-                  const asset = assetIdMap.get(assetId);
-                  return getUnsavedAnnotation(
-                    ann.text,
-                    job.type,
-                    annResult.fileId,
-                    'context_api',
-                    enforceRegionValidity(ann.region),
-                    AnnotationStatus.Unhandled,
-                    { confidence: ann.confidence },
-                    asset?.id,
-                    asset?.externalId
-                  );
-                });
-              }
-              return getUnsavedAnnotation(
-                ann.text,
-                job.type,
-                annResult.fileId,
-                'context_api',
-                enforceRegionValidity(ann.region),
-                AnnotationStatus.Unhandled,
-                { confidence: ann.confidence }
-              );
-            })
-            .filter((item): item is UnsavedAnnotation[] => !!item)
-            .flat();
-          unsavedAnnotations = unsavedAnnotations.concat(
-            unsavedAnnotationsForFile
-          );
+          if (annotations && annotations.length) {
+            const unsavedAnnotationsForFile = annotations
+              .map((ann) => {
+                if (ann.assetIds && ann.assetIds.length) {
+                  return ann.assetIds.map((assetId) => {
+                    const asset = assetIdMap.get(assetId);
+                    return getUnsavedAnnotation(
+                      ann.text,
+                      job.type,
+                      annResult.fileId,
+                      'context_api',
+                      enforceRegionValidity(ann.region),
+                      AnnotationStatus.Unhandled,
+                      { confidence: ann.confidence },
+                      asset?.id,
+                      asset?.externalId
+                    );
+                  });
+                }
+                return getUnsavedAnnotation(
+                  ann.text,
+                  job.type,
+                  annResult.fileId,
+                  'context_api',
+                  enforceRegionValidity(ann.region),
+                  AnnotationStatus.Unhandled,
+                  { confidence: ann.confidence }
+                );
+              })
+              .filter((item): item is UnsavedAnnotation[] => !!item)
+              .flat();
+            unsavedAnnotations = unsavedAnnotations.concat(
+              unsavedAnnotationsForFile
+            );
+          }
         }
       });
+
+      if (unsavedAnnotations.length) {
+        const savedAnnotationResponse = await dispatch(
+          SaveAnnotations(unsavedAnnotations)
+        );
+        const savedAnnotations = unwrapResult(savedAnnotationResponse);
+        addToAnnotationsSavedFileIds(pendingAnnotationsSavedFileIds);
+        savedVisionAnnotation =
+          AnnotationUtils.convertToVisionAnnotations(savedAnnotations);
+      }
 
       dispatch(
         fileProcessUpdate({
@@ -156,15 +182,7 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
           })
         );
       }
-
-      if (unsavedAnnotations.length) {
-        const savedAnnotationResponse = await dispatch(
-          SaveAnnotations(unsavedAnnotations)
-        );
-        const savedAnnotations = unwrapResult(savedAnnotationResponse);
-        return AnnotationUtils.convertToVisionAnnotations(savedAnnotations);
-      }
     }
-    return [];
+    return savedVisionAnnotation;
   }
 );

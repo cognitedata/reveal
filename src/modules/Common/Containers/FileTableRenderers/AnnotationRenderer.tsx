@@ -3,7 +3,7 @@ import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { makeSelectAnnotationStatuses } from 'src/modules/Process/processSlice';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/processSlice';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export function AnnotationRenderer({ rowData: { id } }: CellRenderer) {
@@ -12,7 +12,7 @@ export function AnnotationRenderer({ rowData: { id } }: CellRenderer) {
     selectAnnotationCounts(annotationReducer, id)
   );
 
-  const selectAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const selectAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     selectAnnotationStatuses(processSlice, id)
   );
