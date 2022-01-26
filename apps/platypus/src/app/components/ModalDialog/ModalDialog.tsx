@@ -40,7 +40,9 @@ export const ModalDialog = ({
       {...rest}
     >
       <div className="title">
-        <Title level={4}>{title}</Title>
+        <Title data-cy="modal-title" level={4}>
+          {title}
+        </Title>
       </div>
       {children}
       <div className="buttons">
@@ -48,6 +50,7 @@ export const ModalDialog = ({
           <Button
             type="ghost"
             onClick={() => onCancel()}
+            data-cy="modal-cancel-button"
             style={{ marginRight: '10px' }}
           >
             {t('cancel', 'Cancel')}
@@ -58,6 +61,7 @@ export const ModalDialog = ({
           disabled={okDisabled}
           loading={okProgress}
           type={okType}
+          data-cy="modal-ok-button"
         >
           {okButtonName || t('ok', 'Ok')}
         </Button>

@@ -73,7 +73,7 @@ export const CreateSolution = ({
       okProgress={creating}
       okType="primary"
     >
-      <CreateSolutionModalContent>
+      <CreateSolutionModalContent data-cy="create-solution-modal">
         <Body level={2} strong>
           {t('modal_name_title', 'Name')}
         </Body>
@@ -81,6 +81,7 @@ export const CreateSolution = ({
           fullWidth
           autoFocus
           name="solutionName"
+          data-cy="input-solution-name"
           value={solutionName}
           placeholder={t('modal_name_input_placeholder', 'Enter name')}
           onChange={(e) => {
@@ -111,6 +112,7 @@ export const CreateSolution = ({
         </Body>
         <Textarea
           name="solutionDescription"
+          data-cy="input-solution-description"
           value={solutionDescription}
           onChange={(e) => setSolutionDescription(e.target.value)}
           placeholder={t(

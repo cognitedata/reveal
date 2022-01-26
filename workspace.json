@@ -511,6 +511,40 @@
       },
       "tags": []
     },
+    "platypus-e2e": {
+      "root": "apps/platypus",
+      "sourceRoot": "apps/platypus-e2e/src",
+      "projectType": "application",
+      "targets": {
+        "e2e": {
+          "executor": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/platypus-e2e/cypress.json",
+            "devServerTarget": "platypus:serve:mock"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "platypus:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": [
+            "{options.outputFile}"
+          ],
+          "options": {
+            "lintFilePatterns": [
+              "apps/platypus-e2e/**/*.{js,ts}"
+            ]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "platypus"
+      ]
+    },
     "platypus-cdf-cli": {
       "root": "apps/platypus-cdf-cli",
       "sourceRoot": "apps/platypus-cdf-cli/src",

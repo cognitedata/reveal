@@ -1,0 +1,13 @@
+{
+  "fileServerFolder": ".",
+  "fixturesFolder": "./src/fixtures",
+  "integrationFolder": "./src/integration",
+  "modifyObstructiveCode": false,
+  "supportFile": "./src/support/index.ts",
+  "pluginsFile": false,
+  "video": false,
+  "videosFolder": "../../dist/cypress/apps/platypus-e2e/videos",
+  "screenshotsFolder": "../../dist/cypress/apps/platypus-e2e/screenshots",
+  "chromeWebSecurity": false,
+  "screenshotOnRunFailure": false
+}

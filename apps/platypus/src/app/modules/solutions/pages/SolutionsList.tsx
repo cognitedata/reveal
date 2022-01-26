@@ -82,8 +82,13 @@ export const SolutionsList = () => {
   return (
     <StyledSolutionListWrapper>
       <Flex justifyContent="space-between" className="header">
-        <Title level={3}>{t('solutions_title', 'Solutions')}</Title>
-        <Button onClick={() => setCreateSolution(true)}>
+        <Title level={3} data-cy="solutions-title">
+          {t('solutions_title', 'Solutions')}
+        </Title>
+        <Button
+          data-cy="create-solution-btn"
+          onClick={() => setCreateSolution(true)}
+        >
           {t('create_solution_btn', 'Create solution')}
         </Button>
       </Flex>

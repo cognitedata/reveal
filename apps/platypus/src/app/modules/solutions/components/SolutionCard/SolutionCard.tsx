@@ -57,6 +57,7 @@ export const SolutionCard = ({
                 e.stopPropagation();
               }}
               className="delete"
+              data-cy="delete-solution-menu-item"
             >
               {t('delete', 'Delete')}
             </Menu.Item>
@@ -93,10 +94,11 @@ export const SolutionCard = ({
       key={solution.id}
       className="z-4"
       data-testid={`solution-card`}
+      data-cy={`solution-card`}
     >
       <div className="top">
         <div>
-          <Title level={5} className="title">
+          <Title level={5} className="title" data-cy="solution-card-title">
             {solution.name}
             <span className="version" role="definition">
               <Label size="small" variant="unknown">
@@ -115,6 +117,7 @@ export const SolutionCard = ({
             e.stopPropagation();
           }}
           role="menu"
+          data-cy="solution-card-menu"
         >
           {renderMenu()}
         </div>
