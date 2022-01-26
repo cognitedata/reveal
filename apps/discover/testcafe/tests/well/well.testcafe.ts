@@ -1,24 +1,17 @@
 import { t } from 'testcafe';
 
-import { NOTIFICATION_MESSAGE } from '../../../src/components/add-to-favorite-set-menu/constants';
-import { CREATE_SET_MODAL_BUTTON_TEXT } from '../../../src/pages/authorized/favorites/constants';
 import { WELLS_TAB_TITLE_KEY } from '../../../src/pages/authorized/search/constants';
 import App, {
   wellDataSearchPhrase,
   source,
   operator,
 } from '../../__pages__/App';
-import {
-  deleteAllAndCreateSetForTestRun,
-  deleteFavorites,
-} from '../../fixtures/favorites';
 import { startTest, getPostLogger, progress, logErrors } from '../../utils';
 
 // There could be filters applied with existing records
 // To trigger clear all button, make sure to do a empty records search
 
 const loggerPost = getPostLogger();
-const wellName = 'F-1';
 const sourcePill = `Source : ${source.toLowerCase()}`;
 const operatorName = 'Statoil Norway';
 
@@ -340,36 +333,6 @@ startTest('preserve well tab between routes', async () => {
 //   );
 //   await t.expect(noFiltersResultsCount).eql(emptySearchResultsCount);
 // });
-
-// this test is flaky. need to make it more stable please.
-startTest.skip(
-  'Add well to a existing favorite set using hover actions',
-  async () => {
-    const { favoriteSetName } = await deleteAllAndCreateSetForTestRun();
-
-    await App.wellSearchPage.doSearch(wellDataSearchPhrase);
-    await App.resultTable.hasResults();
-    await App.resultTable.clickRowWithText(wellName);
-    await App.resultTable.addRowItemToExistingFavoriteSetUsingHoverActions(
-      wellName,
-      favoriteSetName
-    );
-  }
-);
-
-// this test is flaky. need to make it more stable please.
-startTest('Add well to a new favorite set using hover actions', async () => {
-  await deleteFavorites();
-  await App.wellSearchPage.doSearch(wellDataSearchPhrase);
-  await App.resultTable.hasResults();
-  await App.resultTable.clickRowWithText(wellName);
-  await App.resultTable.addRowItemToNewFavoriteSetUsingHoverActions(wellName);
-  await App.createFavoriteDialog.fillCreateFavoriteSetDetailsAndClickButton(
-    'New_Fav_Set',
-    CREATE_SET_MODAL_BUTTON_TEXT
-  );
-  await App.checkifToasterAppears(NOTIFICATION_MESSAGE);
-});
 
 startTest(
   `Apply well filters and see if filter tags are available, clear ${sourcePill}`,

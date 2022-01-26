@@ -8,7 +8,7 @@ import BaseSearchPage from './BaseSearch';
 import CreateFavoriteDialog from './CreateFavoriteDialog';
 import DeleteSavedSearchDialog from './DeleteSavedSearchDialog';
 import DocumentSearchPage from './DocumentSearch';
-import FavoritesPage from './Favourites';
+import FavoritesPage from './Favorites';
 import FilterClearPage from './FilterClear';
 import GeneralFeedbackDialog from './GeneralFeedbackDialog';
 import Map from './Map';

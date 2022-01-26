@@ -8,11 +8,6 @@ import {
 
 import { FavoritePostSchema } from '@cognite/discover-api-types';
 
-import {
-  UpdateFavoriteContentData,
-  UpdateFavoriteData,
-} from 'modules/favorite/types';
-
 import { favorites } from '../favorites';
 
 jest.mock('utils/fetch', () => ({
@@ -36,16 +31,12 @@ describe('favorites api', () => {
   });
 
   it('should call `fetchPatch` on `update` as expected', async () => {
-    const data: UpdateFavoriteData = { id, updateData: {} };
-
-    await favorites.update(data, headers, project);
+    await favorites.update(id, {}, headers, project);
     expect(fetchPatch).toBeCalledTimes(1);
   });
 
   it('should call `fetchPatch` on `updateFavoriteContent` as expected', async () => {
-    const payload: UpdateFavoriteContentData = { id, updateData: {} };
-
-    await favorites.updateFavoriteContent(payload, headers, project);
+    await favorites.updateFavoriteContent(id, {}, headers, project);
     expect(fetchPatch).toBeCalledTimes(1);
   });
 
@@ -72,7 +63,7 @@ describe('favorites api', () => {
   });
 
   it('should call `fetchPost` on `share` as expected', async () => {
-    await favorites.share(id, [], headers, project);
+    await favorites.share({ id, shareWithUsers: [] }, headers, project);
     expect(fetchPost).toBeCalledTimes(1);
   });
 });
