@@ -1,5 +1,10 @@
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { AutoMLModel, AutoMLTrainingJob } from './types';
+import { IdEither, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import {
+  AutoMLModel,
+  AutoMLModelType,
+  AutoMLTrainingJob,
+  AutoMLTrainingJobPostRequest,
+} from './types';
 
 export class AutoMLAPI {
   public static listAutoMLModels = async (): Promise<AutoMLModel[]> => {
@@ -19,6 +24,27 @@ export class AutoMLAPI {
       `${sdk.getBaseUrl()}/api/playground/projects/${
         sdk.project
       }/context/vision/automl/${id}`
+    );
+    return response.data || {};
+  };
+
+  public static startAutoMLJob = async (
+    name: string,
+    modelType: AutoMLModelType,
+    fileIds: IdEither[]
+  ): Promise<AutoMLTrainingJobPostRequest> => {
+    const data = {
+      data: {
+        items: fileIds,
+        name,
+        modelType,
+      },
+    };
+    const response = await sdk.post(
+      `${sdk.getBaseUrl()}/api/playground/projects/${
+        sdk.project
+      }/context/vision/automl`,
+      data
     );
     return response.data || {};
   };

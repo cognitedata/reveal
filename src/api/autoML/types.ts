@@ -1,3 +1,4 @@
+import { IdEither } from '@cognite/cdf-sdk-singleton';
 import { JobStatus } from 'src/api/types';
 
 export type AutoMLModelType = 'classification' | 'objectdetection';
@@ -27,4 +28,8 @@ export interface AutoMLTrainingJob extends AutoMLModel {
   createdTime: number;
   startTime: number;
   statusTime: number;
+}
+
+export interface AutoMLTrainingJobPostRequest extends AutoMLTrainingJob {
+  items: IdEither[];
 }
