@@ -183,6 +183,7 @@ describe('useCheckedNodesVisibility tests', () => {
       },
       updateStyledNodeCollection() {},
       unassignStyledNodeCollection: jest.fn(),
+      styledNodeCollections: [],
     };
 
     // start with all checked
