@@ -23,6 +23,7 @@ import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions,
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
+import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 
@@ -125,6 +126,7 @@ export function Migration() {
 
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
+            new NodeStylingUI(gui.addFolder(`Node styling #${cadModels.length + 1}`), client, model);
             cadModels.push(model);
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
