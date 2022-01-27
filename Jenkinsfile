@@ -439,9 +439,10 @@ pods {
           if (changedApps) {
             changedApps.split('\n').each {
               def target = it.split(':')[0]
+              def environment = it.split('spinnaker_deployment_')[1]
               def nameTag = sh(
                 label: "Push ${target} Docker image",
-                script: "bazel --bazelrc=.ci.bazelrc run ${target}:push 2>&1 | grep 'Successfully pushed Docker image to' | awk '{ print \$NF }'",
+                script: "bazel --bazelrc=.ci.bazelrc run ${target}:push_${environment} 2>&1 | grep 'Successfully pushed Docker image to' | awk '{ print \$NF }'",
                 returnStdout: true
               ).trim()
               print("Pushed Docker image $nameTag")
