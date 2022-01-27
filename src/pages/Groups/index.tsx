@@ -24,7 +24,7 @@ import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
-import { stringContains } from './utils';
+import { isDeprecated, stringContains } from './utils';
 
 const { Text } = Typography;
 
@@ -205,7 +205,9 @@ export default function Groups() {
       key: 'capability',
       render(g: Group) {
         if (g.capabilities && g.capabilities.length > 0) {
-          return g.capabilities.map(c => <CapabilityTag capability={c} />);
+          return g.capabilities
+            .filter(isDeprecated)
+            .map(c => <CapabilityTag capability={c} />);
         }
 
         return <>No permissions specified</>;
