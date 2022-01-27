@@ -152,7 +152,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * const visibleNodes = new TreeIndexNodeCollection(someTreeIndices);
    * model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
-   * @throws Error if node collection already has been assigned to the model.
    */
   assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance): void {
     MetricsLogger.trackCadModelStyled(nodeCollection.classToken, appearance);
