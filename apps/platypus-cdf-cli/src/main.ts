@@ -23,6 +23,11 @@ scriptName('platypus')
   .command(templates)
   .command(logout)
   .command(status)
+  .option('verbose', {
+    type: 'boolean',
+    default: false,
+    describe: 'Show debug messages',
+  })
   .version()
   .help(true)
   .fail((msg, err, args) => {

@@ -4,6 +4,7 @@ import { AUTH_CONFIG, AUTH_TYPE, LOGIN_STATUS } from './constants';
 
 export type BaseArgs = {
   appId: string;
+  verbose: boolean;
   logger: Logger;
   solutionConfig?: ConfigSchema;
 };

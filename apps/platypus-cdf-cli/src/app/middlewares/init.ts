@@ -7,6 +7,8 @@ import { setConfig } from '../utils/config';
 import { AUTH_TYPE } from '../constants';
 import { Log } from '../utils/logger';
 
+import { enable } from 'debug';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../../../package.json');
 
@@ -20,6 +22,11 @@ export async function init(args: Arguments<LoginArgs>) {
     message:
       'There is a newer version of {packageName} is available.\nTo update run `{updateCommand}`\nTo skip check https://github.com/cognitedata/platypus/blob/master/apps/platypus-cdf-cli/README.md#update-notifier',
   });
+
+  // enable debug logger if --verbose flag is set
+  if (args.verbose) {
+    enable('platypus*');
+  }
 
   // set config object
   setConfig(

@@ -116,6 +116,7 @@
     "@testing-library/react": "12.1.2",
     "@testing-library/react-hooks": "7.0.2",
     "@types/d3": "7.0.0",
+    "@types/debug": "^4.1.7",
     "@types/jest": "27.0.2",
     "@types/lodash": "^4.14.178",
     "@types/lru-cache": "^5.1.1",
