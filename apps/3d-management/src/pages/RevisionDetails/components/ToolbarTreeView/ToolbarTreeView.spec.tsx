@@ -52,13 +52,13 @@ describe('ToolbarTreeView test cases', () => {
 
   it('loads root node and its children on mount', async () => {
     renderWithProviders(<ToolbarTreeViewWrapper />);
-    expect(await screen.findByText('RootNode')).toBeTruthy();
-    expect(await screen.findByText('Cube')).toBeTruthy();
-    expect(await screen.findByText('Camera')).toBeTruthy();
-    expect(await screen.findByText('Light')).toBeTruthy();
+    expect(await screen.findByText('RootNode')).toBeInTheDocument();
+    expect(await screen.findByText('Cube')).toBeInTheDocument();
+    expect(await screen.findByText('Camera')).toBeInTheDocument();
+    expect(await screen.findByText('Light')).toBeInTheDocument();
 
     // original model doesn't have it, we use fakeCursor in fixture to achieve it
-    expect(await screen.findByText('Load more...')).toBeTruthy();
+    expect(await screen.findByText('Load more...')).toBeInTheDocument();
   });
 
   it('loads node children when expand button is clicked', async () => {
@@ -77,7 +77,7 @@ describe('ToolbarTreeView test cases', () => {
     ).toBeInTheDocument();
 
     // shows children
-    expect(await screen.findByText('Cube (4)')).toBeTruthy();
+    expect(await screen.findByText('Cube (4)')).toBeInTheDocument();
 
     // hides loading icon
     expect(
@@ -88,6 +88,6 @@ describe('ToolbarTreeView test cases', () => {
   it('loads more children when "Load more" button is clicked', async () => {
     renderWithProviders(<ToolbarTreeViewWrapper />);
     userEvent.click(await screen.findByText('Load more...'));
-    expect(await screen.findByText('Fake child')).toBeTruthy();
+    expect(await screen.findByText('Fake child')).toBeInTheDocument();
   });
 });

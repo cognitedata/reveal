@@ -82,7 +82,7 @@
     "enzyme-adapter-react-16": "^1.15.6",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.2.0",
-    "eslint-plugin-jest-dom": "^3.6.5",
+    "eslint-plugin-jest-dom": "^4.0.1",
     "eslint-plugin-lodash": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react-hooks": "^4.2.0",
