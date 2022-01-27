@@ -13,7 +13,7 @@ import type {
 import { api } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationConfiguration } from 'pages/CalculationConfiguration/CalculationConfiguration';
-import { CalculationRuns } from 'pages/CalculationsRuns/CalculationsRuns';
+import { CalculationRuns } from 'pages/CalculationRuns/CalculationRuns';
 import { NewModel } from 'pages/ModelLibrary';
 import type { StoreState } from 'store/types';
 

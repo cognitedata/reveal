@@ -22,6 +22,7 @@ import {
   useRunModelCalculationMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { GraphicContainer } from 'components/shared/elements';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
@@ -302,12 +303,4 @@ const NonConfiguredCalculationList = styled.div`
   .configure-calculation {
     font-size: var(--cogs-detail-font-size);
   }
-`;
-
-const GraphicContainer = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  gap: 12px;
-  color: var(--cogs-text-secondary);
 `;

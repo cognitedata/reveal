@@ -17,7 +17,7 @@ export function CalculationRunChartButtons({
 }: CalculationRunChartButtonsProps) {
   const project = useSelector(selectProject);
   const externalId = calculationRun.metadata.calcConfig;
-  const eventId = String(calculationRun.id);
+  const eventId = calculationRun.id?.toString();
   const { data: chartLinks, isFetching: isFetchingChartLinks } =
     useGetCalculationQuery({
       project,
@@ -25,12 +25,12 @@ export function CalculationRunChartButtons({
       eventId,
     });
 
-  if (!chartLinks) {
-    return null;
+  if (isFetchingChartLinks) {
+    return <Skeleton.Rectangle />;
   }
 
-  if (isFetchingChartLinks) {
-    return <Skeleton.Rectangle height="50" width="100%" />;
+  if (!chartLinks) {
+    return null;
   }
 
   return (
@@ -40,8 +40,7 @@ export function CalculationRunChartButtons({
         icon="LineChart"
         loading={isFetchingChartLinks}
         target="_blank"
-        type="primary"
-        toggled
+        type="tertiary"
       >
         Open Inputs in Charts
       </Button>
@@ -51,8 +50,7 @@ export function CalculationRunChartButtons({
         icon="LineChart"
         loading={isFetchingChartLinks}
         target="_blank"
-        type="primary"
-        toggled
+        type="tertiary"
       >
         Open Outputs in Charts
       </Button>
@@ -62,7 +60,5 @@ export function CalculationRunChartButtons({
 
 const ChartButtonGroups = styled.div`
   display: flex;
-  width: 50%;
-  justify-content: space-between;
-  padding-top: 1em;
+  column-gap: 12px;
 `;
