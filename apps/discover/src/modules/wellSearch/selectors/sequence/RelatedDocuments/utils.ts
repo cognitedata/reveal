@@ -19,15 +19,22 @@ export const getSelectedWellboreIds = (
   );
 };
 
-export const getDocumentConfig = (
-  selectedWellboreIds: number[]
+export const formatAssetIdsFilter = (
+  selectedWellboreIds: number[],
+  v3Enabled: boolean
 ): DocumentConfig => {
+  let key = 'assetExternalIds';
+
+  if (!v3Enabled) {
+    key = 'assetIds';
+  }
+
   return {
     filters: {
-      assetIds: {
+      [key]: {
         containsAny: selectedWellboreIds,
       },
-    },
+    } as any,
   };
 };
 

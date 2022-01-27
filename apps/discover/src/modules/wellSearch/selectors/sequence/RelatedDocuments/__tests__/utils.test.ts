@@ -8,7 +8,7 @@ import {
 
 import {
   filterBySelectedWellboreIds,
-  getDocumentConfig,
+  formatAssetIdsFilter,
   getFilterQuery,
   getMergedFacets,
   getSelectedWellboreIds,
@@ -22,7 +22,7 @@ describe('related document util', () => {
 
   it('should return document config', async () => {
     const ids = [1234];
-    const config = getDocumentConfig(ids);
+    const config = formatAssetIdsFilter(ids, false);
     expect(config.filters.assetIds.containsAny).toEqual(ids);
   });
 

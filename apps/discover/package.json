@@ -22,6 +22,7 @@
     "start:a": "REACT_APP_PROJECT=discover-e2e-azure-dev REACT_APP_CLUSTER=azure-dev ./scripts/start.sh",
     "start:b": "REACT_APP_PROJECT=discover-e2e-bluefield REACT_APP_CLUSTER=bluefield ./scripts/start.sh",
     "start:c": "REACT_APP_PROJECT=discover-dev-bluefield REACT_APP_CLUSTER=bluefield ./scripts/start.sh",
+    "start:d": "REACT_APP_PROJECT=bp-northeurope REACT_APP_CLUSTER=bp-northeurope ./scripts/start.sh",
     "start:idp:a": "REACT_APP_PROJECT=discover-e2e-azure-dev REACT_APP_CLUSTER=azure-dev ./scripts/startIdP.sh",
     "start:idp:b": "REACT_APP_PROJECT=discover-e2e-bluefield REACT_APP_CLUSTER=bluefield ./scripts/startIdP.sh",
     "start:idp:c": "REACT_APP_PROJECT=discover-dev-bluefield REACT_APP_CLUSTER=bluefield ./scripts/startIdP.sh",

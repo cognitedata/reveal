@@ -32,9 +32,10 @@ import {
   useWellInspectSelectedWellbores,
 } from 'modules/wellInspect/hooks/useWellInspect';
 import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
+import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 
 import { useRelatedDocumentFilterQuery } from './useRelatedDocumentFilterQuery';
-import { getDocumentConfig, getMergedFacets } from './utils';
+import { formatAssetIdsFilter, getMergedFacets } from './utils';
 
 export const SAVED_RELATED_DOCUMENTS = 'savedRelatedDocuments';
 const SELECTED_WELLBORES_RELATED_DOCUMENTS =
@@ -56,9 +57,14 @@ const useWellboresRelatedDocumentsCategories =
     const wellboreAssetIds = selectedWellbores.map(
       (row) => wellboreAssetIdMap[row.id]
     );
+    const isV3Enabled = useEnabledWellSdkV3();
     return useQuery<DocumentResultFacets>(
       [SELECTED_WELLBORES_RELATED_DOCUMENTS, wellboreAssetIds],
-      () => documentSearchService.getCategoriesByAssetIds(wellboreAssetIds)
+      () =>
+        documentSearchService.getCategoriesByAssetIds(
+          wellboreAssetIds,
+          isV3Enabled
+        )
     );
   };
 
@@ -91,8 +97,10 @@ export const useQuerySavedRelatedDocuments = (
   const filterQuery = useRelatedDocumentFilterQuery();
   const wellboreIds = useWellInspectSelectedWellboreIds();
   const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
-  const { filters } = getDocumentConfig(
-    wellboreIds.map((id) => wellboreAssetIdMap[id])
+  const isV3Enabled = useEnabledWellSdkV3();
+  const { filters } = formatAssetIdsFilter(
+    wellboreIds.map((id) => wellboreAssetIdMap[id]),
+    isV3Enabled
   );
   const { data: wellboresFacets } = useWellboresRelatedDocumentsCategories();
 
