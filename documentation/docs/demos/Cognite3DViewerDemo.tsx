@@ -6,7 +6,8 @@ import React, { useEffect, useRef } from 'react';
 import {
   AddModelOptions,
   Cognite3DViewer,
-  SupportedModelTypes
+  SupportedModelTypes,
+  THREE
 } from '@cognite/reveal';
 
 import { CanvasWrapper } from '@site/docs/components/styled';
@@ -34,6 +35,8 @@ export default function Cognite3DViewerDemo({
       domElement: canvasWrapperRef.current,
       antiAliasingHint: 'msaa4+fxaa'
     });
+    const size = viewer.renderer.getSize( new THREE.Vector2() );
+    viewer.renderer.setSize(size.x, size.y);
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
