@@ -72,13 +72,18 @@ export function CalculationList({
     }
     const hasReadyOrRunningCalculation =
       !!modelCalculations.modelCalculationList.find(
-        (calculation) => calculation.latestRun?.metadata.status === 'ready'
+        (calculation) =>
+          calculation.latestRun?.metadata.status === 'ready' ||
+          calculation.latestRun?.metadata.status === 'running'
       );
 
     if (hasReadyOrRunningCalculation) {
       setShouldPoll(true);
+      return;
     }
-  }, [modelCalculations, isFetchingModelCalculations]);
+
+    setShouldPoll(false);
+  }, [modelCalculations]);
 
   if (!isFetchingModelCalculations && !modelCalculations) {
     // Uninitialized state
@@ -127,6 +132,7 @@ export function CalculationList({
     if (!isSuccessResponse(response)) {
       toast.error('Running calculation failed, try again');
     }
+    setShouldPoll(true);
   };
 
   if (showConfigured) {
@@ -140,11 +146,14 @@ export function CalculationList({
           <React.Fragment key={calculation.externalId}>
             <Button
               className="run-calculation"
+              disabled={
+                calculation.latestRun?.metadata.status === 'ready' || shouldPoll
+              }
               icon="Play"
               loading={calculation.latestRun?.metadata.status === 'running'}
               size="small"
               type="secondary"
-              onClick={onRunClick(calculation.latestRun?.metadata.calcType)}
+              onClick={onRunClick(calculation.configuration.calculationType)}
             >
               {calculation.latestRun?.metadata.status === 'running'
                 ? 'Running'
