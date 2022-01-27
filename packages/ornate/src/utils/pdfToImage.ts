@@ -43,5 +43,5 @@ export const pdfToImage = async (
   canvasContainer.appendChild(canvas);
   const data = canvas.toDataURL();
   canvas.remove();
-  return data;
+  return { data, pdf };
 };

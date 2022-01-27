@@ -1,3 +1,7 @@
+## 1.1.14
+
+- FEAT: Include PDF page information in group
+
 ## 1.1.3
 
 - BUG: Ensure documents are always visible on export

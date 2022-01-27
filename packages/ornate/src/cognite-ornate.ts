@@ -304,10 +304,12 @@ export class CogniteOrnate {
       groupId = uuid(),
       shouldCenterOnDoubleClick = true,
     } = options || {};
-    const base64 = await pdfToImage(pdfFile, pageNumber);
+    const { data: base64, pdf } = await pdfToImage(pdfFile, pageNumber);
     return new Promise<OrnatePDFDocument>((res, rej) => {
       const group = new Konva.Group({
         id: groupId,
+        PDFCurrentPage: pageNumber,
+        PDFMaxPages: pdf.numPages,
       });
       this.baseLayer.add(group);
       const image = new Image(options?.width, options?.height);
