@@ -153,7 +153,7 @@ export class CadModelUpdateHandler {
     this._loadingHintsSubject.next(cadLoadingHints);
   }
 
-  updatePrioritizedAreas(): void {
+  private updatePrioritizedAreas(): void {
     this._prioritizedLoadingHintsSubject.next();
   }
 
