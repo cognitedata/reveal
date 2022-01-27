@@ -33,7 +33,7 @@
     "dayjs": "^1.10.4",
     "history": "^4.7.2",
     "lodash": "^4.17.21",
-    "query-string": "^7.0.0",
+    "query-string": "^7.1.0",
     "re-resizable": "^6.9.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
