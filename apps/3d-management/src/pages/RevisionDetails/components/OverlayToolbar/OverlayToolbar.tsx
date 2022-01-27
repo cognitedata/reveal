@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToolBarButton, ToolBar } from '@cognite/cogs.js';
+import { ToolBarButton, ToolBar, Slider } from '@cognite/cogs.js';
 import {
   Cognite3DModel,
   Cognite3DViewer,
@@ -24,5 +24,17 @@ export function OverlayToolbar({ viewer, model }: Props) {
       },
     ],
   ];
+
+  if (model instanceof CognitePointCloudModel) {
+    const pointSizeSlider = (
+      <Slider min={0} max={5} defaultValue={model.pointSize} />
+    );
+    const pointSizeTool: ToolBarButton = {
+      icon: 'Scan',
+      description: 'Point size',
+      dropdownContent: pointSizeSlider,
+    };
+    buttonGroups[0].push(pointSizeTool);
+  }
   return <ToolBar direction="horizontal" buttonGroups={buttonGroups} />;
 }
