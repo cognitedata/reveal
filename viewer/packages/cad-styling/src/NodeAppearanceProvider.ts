@@ -3,10 +3,10 @@
  */
 
 import { NodeAppearance } from './NodeAppearance';
-import { NodeCollectionBase } from './NodeCollectionBase';
+import { NodeCollection } from './NodeCollection';
+import { PrioritizedArea } from './prioritized/types';
 
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
-import { PrioritizedArea } from './prioritized/types';
 
 import debounce from 'lodash/debounce';
 
@@ -18,7 +18,7 @@ import debounce from 'lodash/debounce';
 export type ApplyStyleDelegate = (treeIndices: IndexSet, appearance: NodeAppearance) => void;
 
 type StyledNodeCollection = {
-  nodeCollection: NodeCollectionBase;
+  nodeCollection: NodeCollection;
   appearance: NodeAppearance;
   handleNodeCollectionChangedListener: () => void;
 };
@@ -65,7 +65,7 @@ export class NodeAppearanceProvider {
     }
   }
 
-  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance): void {
+  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void {
     const existingCollection = this._styledCollections.find(x => x.nodeCollection === nodeCollection);
     if (existingCollection !== undefined) {
       existingCollection.appearance = appearance;
@@ -85,7 +85,7 @@ export class NodeAppearanceProvider {
     }
   }
 
-  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase): void {
+  unassignStyledNodeCollection(nodeCollection: NodeCollection): void {
     const index = this._styledCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('NodeCollection not added');

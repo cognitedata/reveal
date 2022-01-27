@@ -6,14 +6,15 @@ import * as THREE from 'three';
 import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
 import { AreaCollection } from './prioritized/AreaCollection';
 import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
+import { NodeCollection } from './NodeCollection';
+import { SerializedNodeCollection } from './SerializedNodeCollection';
 
 import { NumericRange, IndexSet } from '@reveal/utilities';
 
 /**
  * Node collection that holds a set of nodes defined by a set of tree indices.
  */
-export class TreeIndexNodeCollection extends NodeCollectionBase {
+export class TreeIndexNodeCollection extends NodeCollection {
   public static readonly classToken = 'TreeIndexNodeCollection';
 
   private _treeIndices: IndexSet;

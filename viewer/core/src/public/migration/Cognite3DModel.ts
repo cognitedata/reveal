@@ -17,7 +17,7 @@ import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@re
 import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
-import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
+import { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -67,7 +67,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly cadModel: CadModelMetadata;
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
-  private readonly _styledNodeCollections: { nodeCollection: NodeCollectionBase; appearance: NodeAppearance }[] = [];
+  private readonly _styledNodeCollections: { nodeCollection: NodeCollection; appearance: NodeAppearance }[] = [];
 
   /**
    * @param modelId
@@ -122,7 +122,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Returns all currently registered node collections and associated appearance.
    */
-  get styledNodeCollections(): { nodeCollection: NodeCollectionBase; appearance: NodeAppearance }[] {
+  get styledNodeCollections(): { nodeCollection: NodeCollection; appearance: NodeAppearance }[] {
     return [...this._styledNodeCollections];
   }
 
@@ -133,7 +133,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * color code the 3D model based on information (e.g. coloring the 3D model
    * by construction status).
    *
-   * The {@link NodeCollectionBase} can be updated dynamically and the rendered nodes will be
+   * The {@link NodeCollection} can be updated dynamically and the rendered nodes will be
    * updated automatically as the styling changes. The appearance of the style nodes
    * cannot be changed.
    *
@@ -152,9 +152,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * const visibleNodes = new TreeIndexNodeCollection(someTreeIndices);
    * model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
-   * @throws Error if node collection already has been assigned to the model.
    */
-  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance): void {
+  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void {
     MetricsLogger.trackCadModelStyled(nodeCollection.classToken, appearance);
 
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
@@ -172,7 +171,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    * @throws Error if node collection isn't assigned to the model.
    */
-  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase): void {
+  unassignStyledNodeCollection(nodeCollection: NodeCollection): void {
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('Node collection has not been assigned to model');

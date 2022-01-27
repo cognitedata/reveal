@@ -9,7 +9,7 @@ import { CogniteClient, Node3D } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
-import { AreaCollection, EmptyAreaCollection, NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+import { AreaCollection, EmptyAreaCollection, NodeCollection, SerializedNodeCollection } from '@reveal/cad-styling';
 import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
 
 import range from 'lodash/range';
@@ -29,9 +29,9 @@ export type PropertyFilterNodeCollectionOptions = {
 
 /**
  * Represents a set of nodes that has matching node properties to a provided filter. Note that
- * a node is considered to match if it or a {@link NodeCollectionBase} ancestors match the filter.
+ * a node is considered to match if it or a {@link NodeCollection} ancestors match the filter.
  */
-export class PropertyFilterNodeCollection extends NodeCollectionBase {
+export class PropertyFilterNodeCollection extends NodeCollection {
   public static readonly classToken = 'PropertyFilterNodeCollection';
 
   private readonly _client: CogniteClient;

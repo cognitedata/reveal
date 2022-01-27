@@ -13,7 +13,7 @@
 export { NodeAppearanceProvider, NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from '@reveal/cad-styling';
 
 export {
-  NodeCollectionBase,
+  NodeCollection,
   TreeIndexNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
