@@ -167,10 +167,10 @@ describe('NodesTreeView test cases', () => {
     // more info https://kentcdodds.com/blog/fix-the-not-wrapped-in-act-warning#how-to-fix-the-act-warning
     await screen.findByText('RootNode');
 
-    expect(screen.queryByText('RootNode')).toBeTruthy();
-    expect(screen.queryByText('0-0')).toBeTruthy();
-    expect(screen.queryByText('0-0-1-0')).toBeTruthy();
-    expect(screen.queryByText('0-2')).toBeTruthy();
+    expect(screen.queryByText('RootNode')).toBeInTheDocument();
+    expect(screen.queryByText('0-0')).toBeInTheDocument();
+    expect(screen.queryByText('0-0-1-0')).toBeInTheDocument();
+    expect(screen.queryByText('0-2')).toBeInTheDocument();
     expect(screen.queryAllByText(LOAD_MORE)).toHaveLength(2);
   });
 
@@ -506,8 +506,8 @@ describe('NodesTreeView test cases', () => {
       );
       (await screen.findByTestId(treeViewFocusContainerId)).focus();
 
-      expect(screen.queryByText('0-0-0')).toBeFalsy();
-      expect(screen.queryByText('0-2-0')).toBeFalsy();
+      expect(screen.queryByText('0-0-0')).not.toBeInTheDocument();
+      expect(screen.queryByText('0-2-0')).not.toBeInTheDocument();
 
       fireEvent.keyDown(document.activeElement!, {
         key: TrackedKeys.ArrowRight,
@@ -534,8 +534,8 @@ describe('NodesTreeView test cases', () => {
         key: TrackedKeys.ArrowLeft,
       });
 
-      expect(screen.queryByText('0-0-0')).toBeFalsy();
-      expect(screen.queryByText('0-2-0')).toBeFalsy();
+      expect(screen.queryByText('0-0-0')).not.toBeInTheDocument();
+      expect(screen.queryByText('0-2-0')).not.toBeInTheDocument();
     });
 
     it('removes the selection on ESC is pressed', async () => {
