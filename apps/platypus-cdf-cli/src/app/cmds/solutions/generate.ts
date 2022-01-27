@@ -1,7 +1,6 @@
 import { Arguments } from 'yargs';
 import { codegen } from '@graphql-codegen/core';
 import { CLICommand } from '../../common/cli-command';
-import { injectRCFile } from '../../common/config';
 import * as typescriptPlugin from '@graphql-codegen/typescript';
 import * as typescriptOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as typescriptResolversPlugin from '@graphql-codegen/typescript-resolvers';
@@ -22,6 +21,9 @@ import {
 import { promises } from 'fs';
 const { readFile, stat, writeFile } = promises;
 import { join, resolve } from 'path';
+import { D as _D } from '../../utils/logger';
+
+const D = _D.extend('solutions:generate');
 
 export type SolutionsGenerateCommandArgs = BaseArgs & {
   ['project-name']: string;
@@ -52,7 +54,8 @@ const commandArgs = [
   },
   {
     name: 'plugins',
-    description: 'Plugin which will be use for code generation',
+    description:
+      'Plugin which will be use for code generation (each plugin-name separated by space)',
     required: true,
     type: CommandArgumentType.MULTI_SELECT,
     prompt:
@@ -60,7 +63,7 @@ const commandArgs = [
     options: {
       choices: SupportedGraphQLGeneratorPlugins,
     },
-    example: '--plugins=typescript,typescript-operations',
+    example: `--plugins=${SupportedGraphQLGeneratorPlugins.join(' ')}`,
   },
   {
     name: 'operations-file',
@@ -83,11 +86,12 @@ const command = 'generate';
 const describe =
   'Generate will help to generate a graphql client code for the schema you provide by fetching the introspection query from the server';
 class SolutionGenerateCommand extends CLICommand {
-  @injectRCFile()
   async execute(args: Arguments<SolutionsGenerateCommandArgs>) {
     try {
       const client = getCogniteSDKClient();
+      D('Initialize the Cognite SDK client');
       const solutions = new SolutionsApiService(client);
+      D('Fetching the introspection query from the server');
       const response = await solutions.runQuery({
         solutionId: args['project-name'],
         schemaVersion: '1',
@@ -99,7 +103,14 @@ class SolutionGenerateCommand extends CLICommand {
           operationName: 'IntrospectionQuery',
         },
       });
+      D(`got introspection query response: ${JSON.stringify(response)}`);
       if (response.errors) {
+        D(`got errors: ${JSON.stringify(response.errors)}`);
+        if (response.errors.length > 0) {
+          return args.logger.error(
+            response.errors.map((error) => error.message).join('\n')
+          );
+        }
         return args.logger.error(
           'Failed to obtain results from introspection query'
         );
@@ -109,6 +120,7 @@ class SolutionGenerateCommand extends CLICommand {
         args['operations-file'] &&
         (await stat(resolve(args['operations-file']))).isFile()
       ) {
+        D(`got operations file: ${args['operations-file']}`);
         const file = resolve(args['operations-file']);
         const fileContent = await readFile(file, 'utf8');
         documents = [{ document: parse(fileContent) }];
@@ -117,12 +129,12 @@ class SolutionGenerateCommand extends CLICommand {
           'No operations file provided, skipping operation generations'
         );
       }
-
+      D('Generating the code, this may take a while');
       const generatedCode = await codegen({
         filename: args['output-file'],
         config: {},
         documents,
-        schema: parse(printSchema(buildClientSchema(response.data.data))),
+        schema: parse(printSchema(buildClientSchema(response.data))),
         plugins: args.plugins.map((name) => ({ [name]: {} })),
         pluginMap: {
           [CONSTANTS.GRAPHQL_CODEGEN_PLUGINS_NAME.TYPESCRIPT]: typescriptPlugin,
@@ -136,11 +148,14 @@ class SolutionGenerateCommand extends CLICommand {
             typescriptApolloAngularPlugin,
         },
       });
+      D(`generated code: ${generatedCode}`);
       await writeFile(join(cwd(), args['output-file']), generatedCode);
+      D('Done');
       args.logger.success(
         `Successfully generated types in ${args['output-file']}`
       );
     } catch (error) {
+      D(`got error: ${JSON.stringify(error)}`);
       args.logger.error(error);
     }
   }
