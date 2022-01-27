@@ -70,7 +70,7 @@ export class CadModelUpdateHandler {
         this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
         this._budgetSubject.pipe(startWith(this._budget))
       ]).pipe(map(makeSettingsInput)),
-      this._prioritizedLoadingHintsSubject,
+      this._prioritizedLoadingHintsSubject.pipe(startWith(undefined as void)),
       combineLatest([
         this._cameraSubject.pipe(auditTime(500)),
         this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600))
@@ -142,8 +142,6 @@ export class CadModelUpdateHandler {
     this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'add' });
     model.nodeAppearanceProvider.on('prioritizedAreasChanged', () => this.updatePrioritizedAreas());
-    // Ensure there is at least one call in the line for the model to load
-    this.updatePrioritizedAreas();
   }
 
   removeModel(model: CadNode): void {
