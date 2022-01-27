@@ -1,0 +1,52 @@
+name: Platypus Cypress Tests
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'apps/platypus/**'
+      - 'libs/platypus-core/**'
+      - 'libs/platypus-infrastructure/**'
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Set NPMKEY variable
+        run: |
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          echo "::set-output name=NPMKEY::$NPMKEY"
+        id: npm_auth_key
+
+      - name: Create .npmrc
+        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+
+      - name: Install Dependency & Build
+        run: |
+          yarn install --frozen-lockfile
+          rm .npmrc
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        # let's give this action an ID so we can refer
+        # to its output values later
+        id: cypress
+        # Continue the build in case of an error, as we need to set the
+        # commit status in the next step, both in case of success and failure
+        continue-on-error: true
+        # execute Cypress using a custom test command
+        with:
+          # let's make sure our tests pass on Chrome browser
+          browser: chrome
+          headless: true
+          start: yarn nx serve mock-server
+          wait-on: 'http://localhost:4002'
+          # wait for 1 minute for the server to respond
+          wait-on-timeout: 60
+          # Run the cypress tests
+          command: yarn nx e2e platypus-e2e --headless

@@ -65,7 +65,6 @@
     "yargs-parser": "^21.0.0"
   },
   "scripts": {
-    "tt": "nx serve platypus",
     "start": "./scripts/start.sh",
     "build": "./scripts/build.sh",
     "test": "./scripts/test.sh",
