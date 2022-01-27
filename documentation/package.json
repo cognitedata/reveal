@@ -50,7 +50,7 @@
     "react-dom": "^16.8.4",
     "react-live": "^2.3.0",
     "styled-components": "^5.1.1",
-    "three": "0.125.2"
+    "three": "0.137.0"
   },
   "devDependencies": {
     "@types/react": "^16.9.41",
