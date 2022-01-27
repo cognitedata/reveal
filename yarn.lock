@@ -2359,9 +2359,11 @@
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
+  uid ""
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
   version "0.0.0"
+  uid ""
 
 "@cognite/fas-tools@^1.3.3":
   version "1.3.3"
@@ -26122,10 +26124,10 @@ react-popper@^2.2.4:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"
 
-react-query@^3.34.4:
-  version "3.34.4"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.34.4.tgz#da926717683fd9e9e310d46ab6f60f76a80ffaae"
-  integrity sha512-1Pa7pNJF9I+UdQ1RvqmBO9tWvBNfzNeJM3vYApcE2SL4Hbwy6q4U7ce4u+SWQnLMFit3z8WWp9OXpcDqEQ/E1A==
+react-query@^3.34.12:
+  version "3.34.12"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.34.12.tgz#dcaaf7b629f0868aae8afef9fb7692f6ea7643bf"
+  integrity sha512-flDdudQVH4CqE+kNYYYyo4g2Yjek3H/36G3b9bK5oe26jD5gFnx+PPwnq0gayq5z2dcSfr2z4+drvuyeZ3A5QQ==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"

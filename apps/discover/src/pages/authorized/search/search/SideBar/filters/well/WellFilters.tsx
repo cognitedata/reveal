@@ -4,7 +4,6 @@ import get from 'lodash/get';
 
 import Skeleton from 'components/skeleton';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
   useClearWellsFilters,
   useSetWellsFiltersAsync,
@@ -30,12 +29,7 @@ import { Title } from './Title';
 const loader = <Skeleton.List lines={6} borders />;
 
 export const WellsFilter = () => {
-  const usePreferredUnit = useUserPreferencesMeasurement();
-  const {
-    isFetching,
-    data: filterOptions,
-    refetch,
-  } = useWellFilterOptions(usePreferredUnit);
+  const { isFetching, data: filterOptions } = useWellFilterOptions();
   const [selectedOptions, setSelectedOptions] = useState<WellFilterMap>({});
   // const [changedCategories, setChangedCategories] = useState<SelectedMap>({});
   const [filterCalled, setFilterCalled] = useState<boolean>(false);
@@ -44,10 +38,6 @@ export const WellsFilter = () => {
   const clearWellFilters = useClearWellsFilters();
   const filterConfigsByCategory = useFilterConfigByCategory();
   const metrics = useGlobalMetrics('search');
-
-  useEffect(() => {
-    refetch();
-  }, [usePreferredUnit]);
 
   useEffect(() => {
     /**

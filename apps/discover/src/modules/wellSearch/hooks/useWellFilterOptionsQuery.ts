@@ -1,24 +1,31 @@
 import { useQuery, useQueryClient } from 'react-query';
 
 import { ONLY_FETCH_ONCE, WELL_QUERY_KEY } from 'constants/react-query';
-import { UserPrefferedUnit } from 'constants/units';
 
+import { useUserPreferencesMeasurement } from '../../../hooks/useUserPreferences';
 import { getFilterOptions } from '../service';
 
-export const useWellFilterOptions = (unit: UserPrefferedUnit) => {
-  return useQuery(WELL_QUERY_KEY.FILTER_OPTIONS, () => getFilterOptions(unit), {
-    ...ONLY_FETCH_ONCE,
-  });
+export const useWellFilterOptions = () => {
+  const usePreferredUnit = useUserPreferencesMeasurement();
+  return useQuery(
+    [...WELL_QUERY_KEY.FILTER_OPTIONS, usePreferredUnit],
+    () => getFilterOptions(usePreferredUnit),
+    {
+      ...ONLY_FETCH_ONCE,
+    }
+  );
 };
 
-export const usePrefetchWellFilterOptions = (unit?: UserPrefferedUnit) => {
+export const usePrefetchWellFilterOptions = () => {
+  const usePreferredUnit = useUserPreferencesMeasurement();
   const queryClient = useQueryClient();
 
-  if (!unit) {
+  if (!usePreferredUnit) {
     return;
   }
 
-  queryClient.prefetchQuery(WELL_QUERY_KEY.FILTER_OPTIONS, () =>
-    getFilterOptions(unit)
+  queryClient.prefetchQuery(
+    [...WELL_QUERY_KEY.FILTER_OPTIONS, usePreferredUnit],
+    () => getFilterOptions(usePreferredUnit)
   );
 };
