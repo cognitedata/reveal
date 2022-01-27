@@ -1,19 +1,17 @@
 import { useEffect } from 'react';
 import styled from 'styled-components/macro';
-import { useScreenshot } from 'use-screenshot-hook';
 import { Button, Popconfirm, toast, Tooltip, TopBar } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks/navigation';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import { duplicate } from 'models/chart/updates';
-import { downloadImage, toggleDownloadChartElements } from 'utils/charts';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import DownloadDropdown from 'components/DownloadDropdown/DownloadDropdown';
 
 export const ChartActions = () => {
-  const { takeScreenshot } = useScreenshot();
   const move = useNavigate();
   const [chart] = useRecoilState(chartAtom);
   const { data: login } = useUserInfo();
@@ -91,20 +89,11 @@ export const ChartActions = () => {
       <Tooltip content="Share">
         <SharingDropdown chart={chart} disabled={!isOwner} />
       </Tooltip>
-      <Tooltip content="Download chart">
-        <Button
-          icon="Download"
-          type="ghost"
-          aria-label="download"
-          onClick={() => {
-            const height = toggleDownloadChartElements(true);
-            takeScreenshot('png').then((image) => {
-              toggleDownloadChartElements(false, height);
-              downloadImage(image, chart.name);
-            });
-          }}
-        />
+      <Divider />
+      <Tooltip content="Download Chart">
+        <DownloadDropdown chart={chart} />
       </Tooltip>
+      <Divider />
       <Tooltip content="Duplicate">
         <Button
           icon="Copy"

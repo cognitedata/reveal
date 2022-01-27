@@ -6,7 +6,12 @@ import {
   ChartWorkflowV1,
 } from 'models/chart/types';
 import { v4 as uuidv4 } from 'uuid';
+import ms from 'ms';
 import { getEntryColor } from './colors';
+
+export function getGranularityInMS(granularity: string): number {
+  return ms(granularity);
+}
 
 export const calculateGranularity = (
   domain: number[],

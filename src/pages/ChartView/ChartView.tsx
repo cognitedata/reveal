@@ -49,6 +49,7 @@ import {
   NodeDataDehydratedVariants,
   NodeTypes,
 } from 'components/NodeEditor/V2/types';
+import TimePeriodSelector from 'components/TimePeriodSelector';
 import SourceRows from './SourceRows';
 
 import {
@@ -485,7 +486,14 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               />
             </Tooltip>
             <Divider />
-            <DateRangeSelector />
+            <RangeWrapper>
+              <RangeColumn>
+                <TimePeriodSelector />
+              </RangeColumn>
+              <RangeColumn>
+                <DateRangeSelector />
+              </RangeColumn>
+            </RangeWrapper>
           </section>
         </Header>
         <ChartContainer>
@@ -578,6 +586,17 @@ const DropdownWrapper = styled.div`
   padding: 8px;
   display: flex;
   flex-direction: column;
+`;
+
+const RangeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+const RangeColumn = styled.div`
+  margin: 2px 6px;
 `;
 
 export default ChartView;
