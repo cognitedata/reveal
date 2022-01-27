@@ -160,6 +160,9 @@ describe('NodeAppearanceTextureBuilder', () => {
   });
 
   test('add custom color then updating superset without color keeps color', () => {
+    // Need to do this here, as we want two elements in our buffer
+    const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
+
     const customColor: [number, number, number] = [127, 128, 129];
 
     const set = new TreeIndexNodeCollection(new IndexSet([0]));
@@ -176,10 +179,13 @@ describe('NodeAppearanceTextureBuilder', () => {
     jest.runAllTimers();
     builder.build();
 
-    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([...customColor, 1]);
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...customColor, 1]);
   });
 
   test('add custom color then updating superset with color 0, 0, 0 keeps color', () => {
+    // Need to do this here, as we want two elements in our buffer
+    const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
+
     const customColor: [number, number, number] = [127, 128, 129];
 
     const set = new TreeIndexNodeCollection(new IndexSet([0]));
@@ -196,7 +202,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     jest.runAllTimers();
     builder.build();
 
-    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([...customColor, 1]);
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...customColor, 1]);
   });
 
   test('setDefaultStyle() triggers needs update', () => {
