@@ -30,18 +30,26 @@ export class NodeAppearanceProvider {
 
   private readonly _events = {
     changed: new EventTrigger<() => void>(),
-    loadingStateChanged: new EventTrigger<(isLoading: boolean) => void>()
+    loadingStateChanged: new EventTrigger<(isLoading: boolean) => void>(),
+    prioritizedAreasChanged: new EventTrigger<() => void>()
   };
 
   on(event: 'changed', listener: () => void): void;
   on(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
-  on(event: 'changed' | 'loadingStateChanged', listener: (() => void) | ((isLoading: boolean) => void)): void {
+  on(event: 'prioritizedAreasChanged', listener: () => void): void;
+  on(
+    event: 'changed' | 'loadingStateChanged' | 'prioritizedAreasChanged',
+    listener: (() => void) | ((isLoading: boolean) => void)
+  ): void {
     switch (event) {
       case 'changed':
         this._events.changed.subscribe(listener as () => void);
         break;
       case 'loadingStateChanged':
         this._events.loadingStateChanged.subscribe(listener as (isLoading: boolean) => void);
+        break;
+      case 'prioritizedAreasChanged':
+        this._events.prioritizedAreasChanged.subscribe(listener as () => void);
         break;
 
       default:
@@ -51,13 +59,19 @@ export class NodeAppearanceProvider {
 
   off(event: 'changed', listener: () => void): void;
   off(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
-  off(event: 'changed' | 'loadingStateChanged', listener: (() => void) | ((isLoading: boolean) => void)): void {
+  off(
+    event: 'changed' | 'loadingStateChanged' | 'prioritizedAreasChanged',
+    listener: (() => void) | ((isLoading: boolean) => void)
+  ): void {
     switch (event) {
       case 'changed':
         this._events.changed.unsubscribe(listener as () => void);
         break;
       case 'loadingStateChanged':
         this._events.loadingStateChanged.unsubscribe(listener as (isLoading: boolean) => void);
+        break;
+      case 'prioritizedAreasChanged':
+        this._events.prioritizedAreasChanged.unsubscribe(listener as () => void);
         break;
 
       default:
@@ -82,6 +96,10 @@ export class NodeAppearanceProvider {
       this._styledCollections.push(styledCollection);
       nodeCollection.on('changed', styledCollection.handleNodeCollectionChangedListener);
       this.scheduleNotifyChanged();
+    }
+
+    if (appearance.prioritizedForLoadingHint) {
+      this.notifyPrioritizedAreasChanged();
     }
   }
 
@@ -157,5 +175,9 @@ export class NodeAppearanceProvider {
   private handleNodeCollectionChanged(_styledSet: StyledNodeCollection) {
     this.scheduleNotifyChanged();
     this.notifyLoadingStateChanged();
+  }
+
+  private notifyPrioritizedAreasChanged() {
+    this._events.prioritizedAreasChanged.fire();
   }
 }
