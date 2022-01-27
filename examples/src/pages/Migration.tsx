@@ -14,8 +14,6 @@ import {
   Cognite3DModel,
   CameraControlsOptions,
   CognitePointCloudModel,
-  PotreePointColorType,
-  PotreePointShape,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
