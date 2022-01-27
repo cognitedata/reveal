@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ToolBarButton, ToolBar, Slider } from '@cognite/cogs.js';
 import {
   Cognite3DModel,
@@ -9,6 +9,15 @@ import {
   Legacy3DModel,
   Legacy3DViewer,
 } from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+
+import styled from 'styled-components';
+
+const SliderContainer = styled.div`
+  display: flex;
+  > div {
+    margin: 32px;
+  }
+`;
 
 type Props = {
   viewer: Cognite3DViewer | Legacy3DViewer;
@@ -27,7 +36,9 @@ export function OverlayToolbar({ viewer, model }: Props) {
 
   if (model instanceof CognitePointCloudModel) {
     const pointSizeSlider = (
-      <Slider min={0} max={5} defaultValue={model.pointSize} />
+      <SliderContainer>
+        <Slider min={0} max={5} step={0.1} defaultValue={model.pointSize} />
+      </SliderContainer>
     );
     const pointSizeTool: ToolBarButton = {
       icon: 'Scan',
