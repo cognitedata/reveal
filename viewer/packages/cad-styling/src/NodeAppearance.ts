@@ -75,8 +75,7 @@ const DefaultAppearance: NodeAppearance = {
   renderGhosted: false,
   renderInFront: false,
   outlineColor: NodeOutlineColor.NoOutline,
-  color: [0, 0, 0] as [number, number, number],
-  prioritizedForLoadingHint: 0
+  color: [0, 0, 0] as [number, number, number]
 };
 
 /**
