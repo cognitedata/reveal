@@ -8,10 +8,10 @@ import { Toolbar, ToolbarPosition } from './Toolbar';
 import { AxisViewTool } from '../AxisView/AxisViewTool';
 
 import svgAxisIcon from './icons/Axis3D.svg';
-import svgScreenshotIcon from './icons/Image.svg';
-import svgCameraTargetIcon from './icons/Camera.svg';
-import svgZoomPastIcon from './icons/ZoomIn.svg';
-import svgFitToCameraIcon from './icons/FrameTool.svg';
+import svgScreenshotIcon from './icons/Camera.svg';
+import svgCameraTargetIcon from './icons/CameraTarget.svg';
+import svgZoomPastIcon from './icons/ZoomPast.svg';
+import svgFitToCameraIcon from './icons/Cube.svg';
 
 /**
  * Tool to help user to use the default toolbar items such as Camera & other features in Reveal to enable/disable it.

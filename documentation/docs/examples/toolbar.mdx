@@ -48,21 +48,35 @@ New elements can be added to the toolbar by methods using
 By creating ToolbarTool object, user can add elements to the new toolbar.
 
 ```jsx
-// import { ToolbarTool } from '@cognite/reveal/tools';
+// import { ToolbarTool, GeomapTool, MapProviders, MapboxMode, MapboxStyle, MapboxImageFormat } from '@cognite/reveal/tools';
 
-// import explodeIcon from './img/Cube.svg';
 // import geoMapIcon from './img/Map.svg';
-// import clippingIcon from './img/Timeseries.svg';
 
 const toolbar = new ToolbarTool(viewer);
 
-const callbackMsg = () => (
-    alert("result called")
-);
+let map: GeomapTool | undefined;
+const mapConfig: MapConfig = {
+  provider: MapProviders.MapboxMap,
+  APIKey: APIKeys.MapboxAPI,
+  mode: MapboxMode.Style,
+  id: MapboxStyle.Satellite_Streets,
+  tileFormat: MapboxImageFormat.JPG70,
+  latlong: {
+    latitude: 59.9016426931744,
+    longitude: 10.607235872426175
+  }
+};
+const geomapToggle = () : void => {
+  if(map === undefined) {
+    map = new GeomapTool(viewer, mapConfig);
+  }
+  else {
+    map.dispose();
+    map = undefined;
+  }
+}
 
-toolbar.addToolbarButton(explodeIcon, callbackMsg, 'Explode View');
-toolbar.addToolbarButton(geoMapIcon, callbackMsg, 'Maps');
-toolbar.addToolbarToogleButton(clippingIcon, callbackMsg, 'Clipping');
+toolbar.addToolbarToogleButton(geoMapIcon, callbackMsg, 'Maps');
 ```
 
 ## Toolbar position
