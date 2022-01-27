@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { BlueFilterTag } from 'components/tag/BlueFilterTag';
-import { ClearTag } from 'components/tag/ClearTag';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { getEmptyFacets } from 'modules/documentSearch/utils';
 import { useSetRelatedDocumentFilters } from 'modules/filterData/hooks/useSetRelatedDocumentFilters';
@@ -41,12 +39,6 @@ export const RelatedDocumentAppliedFilters: React.FC<Props> = (props) => {
     searchPhrase: phrase,
   };
   return (
-    <DocumentAppliedFiltersCore
-      filterTagComponent={BlueFilterTag}
-      clearTagComponent={ClearTag}
-      {...props}
-      data={data}
-      actions={actions}
-    />
+    <DocumentAppliedFiltersCore {...props} data={data} actions={actions} />
   );
 };

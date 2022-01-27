@@ -77,9 +77,8 @@ class Sidebar {
   documentClearAllFilterTag = () =>
     Selector('[data-testid="side-bar"]')
       .find('[data-testid="document-filter-container"]')
-      .find('span')
-      .withText(CLEAR_ALL_TEXT)
-      .find('svg');
+      .find('[data-testid="clear-all-filter-button"]')
+      .withText(CLEAR_ALL_TEXT);
 
   wellFilterTagWithText = (text: string) =>
     Selector('[data-testid="side-bar"]')

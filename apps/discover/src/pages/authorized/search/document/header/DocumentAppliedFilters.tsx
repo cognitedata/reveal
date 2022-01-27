@@ -2,10 +2,10 @@ import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
+import { Button, Label } from '@cognite/cogs.js';
 import { GeoJsonGeometryTypes } from '@cognite/seismic-sdk-js';
 
-import { FilterTagProps } from 'components/tag/BlueFilterTag';
-import { ClearTagProps } from 'components/tag/ClearTag';
+import { CLEAR_ALL_TEXT } from 'components/tableEmpty/constants';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentAppliedFilterEntries } from 'modules/api/documents/hooks/useDocumentAppliedFilters';
 import { useDocumentFormatFilter } from 'modules/api/documents/hooks/useDocumentFormatFilter';
@@ -37,8 +37,6 @@ export enum ClearAllScenarios {
 }
 
 interface Props {
-  filterTagComponent: React.FC<FilterTagProps>;
-  clearTagComponent: React.FC<ClearTagProps>;
   showGeoFilters?: boolean;
   showSearchPhraseTag?: boolean;
   showClearTag?: boolean;
@@ -86,8 +84,6 @@ export const DocumentAppliedFilters: React.FC<Props> = (props) => {
 };
 
 interface CoreProps {
-  filterTagComponent: React.FC<FilterTagProps>;
-  clearTagComponent: React.FC<ClearTagProps>;
   showGeoFilters?: boolean;
   showSearchPhraseTag?: boolean;
   showClearTag?: boolean;
@@ -113,8 +109,6 @@ interface CoreProps {
 
 export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
   ({
-    filterTagComponent,
-    clearTagComponent,
     showGeoFilters = false,
     showClearTag = false,
     showSearchPhraseTag = false,
@@ -219,18 +213,30 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
       onClick: () => void
     ) => (
       <TagWrapper key={key}>
-        {React.createElement(filterTagComponent, {
-          tag,
-          onClick,
-        })}
+        <Label
+          key={key}
+          size="medium"
+          variant="default"
+          icon="Close"
+          iconPlacement="right"
+          onClick={onClick}
+          data-testid="filter-tag"
+        >
+          {tag}
+        </Label>
       </TagWrapper>
     );
 
     const createClearAllTagElement = (onClick: () => void) => (
       <TagWrapper>
-        {React.createElement(clearTagComponent, {
-          onClick,
-        })}
+        <Button
+          type="secondary"
+          size="small"
+          onClick={onClick}
+          data-testid="clear-all-filter-button"
+        >
+          {CLEAR_ALL_TEXT}
+        </Button>
       </TagWrapper>
     );
 

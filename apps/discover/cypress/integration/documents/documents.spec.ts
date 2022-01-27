@@ -85,19 +85,13 @@ describe('Documents', () => {
     cy.get(`input[type=checkbox][id*="${FILE_TYPE}"]`).should('be.checked');
 
     cy.log('Remove input filter value by filter tag');
-    cy.findAllByTestId('filter-tag')
-      .contains(filename)
-      .findByTestId('close')
-      .click();
+    cy.findAllByTestId('filter-tag').contains(filename).click();
 
     cy.log('Check result after input removal');
     cy.findAllByTestId('table-row').should('have.length.greaterThan', 1);
 
     cy.log('Remove File Type filter by filter tag');
-    cy.findAllByTestId('filter-tag')
-      .contains(FILE_TYPE)
-      .findByTestId('close')
-      .click();
+    cy.findAllByTestId('filter-tag').contains(FILE_TYPE).click();
 
     // this should be dynamic (it should check it is just more results than before this filter was removed)
     // cy.log('Check result after file type removal');
@@ -135,7 +129,6 @@ describe('Documents', () => {
     cy.findAllByTestId('filter-tag')
       .contains('Created:')
       .should('exist')
-      .findByTestId('close')
       .click();
 
     /**
@@ -165,10 +158,7 @@ describe('Documents', () => {
     cy.findAllByTestId('filter-tag').contains(FILE_TYPE);
     cy.findAllByTestId('filter-tag').contains(DOCUMENT_CATEGORY);
     cy.findAllByTestId('filter-tag').contains(SOURCE_DRIVE);
-    cy.findAllByTestId('filter-tag')
-      .contains(FILE_TYPE)
-      .findByTestId('close')
-      .click();
+    cy.findAllByTestId('filter-tag').contains(FILE_TYPE).click();
 
     cy.log('Remove all filter by pressing "Clear all" filter tag');
     cy.clearAllFilters();
