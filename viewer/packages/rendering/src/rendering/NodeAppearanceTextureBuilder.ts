@@ -234,7 +234,10 @@ function fillRGBA(rgbaBuffer: Uint8ClampedArray, style: NodeAppearance) {
 function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style: NodeAppearance) {
   const [r, g, b, a] = appearanceToColorOverride(style);
   // Create a bit mask for updating color (update if style contains color, don't update if it doesn't)
-  const updateRgbBitmask = style.color !== undefined ? 0b11111111 : 0;
+  const updateRgbBitmask =
+    style.color !== undefined && !(style.color[0] === 0 && style.color[1] === 0 && style.color[2] === 0)
+      ? 0b11111111
+      : 0;
   const keepRgbBitmask = ~updateRgbBitmask;
   const updateR = r & updateRgbBitmask;
   const updateG = g & updateRgbBitmask;
@@ -252,11 +255,15 @@ function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style
 
   treeIndices.forEachRange(range => {
     for (let i = range.from; i <= range.toInclusive; ++i) {
+      const oldR = rgbaBuffer[4 * i + 0];
+      const oldG = rgbaBuffer[4 * i + 1];
+      const oldB = rgbaBuffer[4 * i + 2];
+
       // Combine color - this will replace color if the style provided sets color or keep
       // the old color if not
-      rgbaBuffer[4 * i + 0] = (r & keepRgbBitmask) | updateR;
-      rgbaBuffer[4 * i + 1] = (g & keepRgbBitmask) | updateG;
-      rgbaBuffer[4 * i + 2] = (b & keepRgbBitmask) | updateB;
+      rgbaBuffer[4 * i + 0] = (oldR & keepRgbBitmask) | updateR;
+      rgbaBuffer[4 * i + 1] = (oldG & keepRgbBitmask) | updateG;
+      rgbaBuffer[4 * i + 2] = (oldB & keepRgbBitmask) | updateB;
       // Update "settings" - this will override any settings provided by the style,
       // but keep any existing setting that is not provided by the style
       rgbaBuffer[4 * i + 3] = (rgbaBuffer[4 * i + 3] & keepAlphaBitmask) | updateAlpha;
