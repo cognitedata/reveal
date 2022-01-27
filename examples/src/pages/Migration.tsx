@@ -27,6 +27,7 @@ import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
+import { PointCloudUi } from '../utils/PointCloudUi';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -101,21 +102,6 @@ export function Migration() {
 
       const totalBounds = new THREE.Box3();
 
-      const pointCloudParams = {
-        pointSize: 1.0,
-        budget: 2_000_000,
-        pointColorType: PotreePointColorType.Rgb,
-        pointShape: PotreePointShape.Circle,
-        apply: () => {
-          viewer.pointCloudBudget = { numberOfPoints: pointCloudParams.budget };
-          pointCloudModels.forEach(model => {
-            model.pointSize = pointCloudParams.pointSize;
-            model.pointColorType = pointCloudParams.pointColorType;
-            model.pointShape = pointCloudParams.pointShape;
-          });
-        }
-      };
-
       async function addModel(options: AddModelOptions) {
         try {
           const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
@@ -131,7 +117,6 @@ export function Migration() {
             cadModels.push(model);
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
-            pointCloudParams.apply();
           }
           if (createGeometryFilterFromState(guiState.geometryFilter) === undefined) {
             createGeometryFilterStateFromBounds(bounds, guiState.geometryFilter);
@@ -378,28 +363,7 @@ export function Migration() {
 
       const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => viewer.setClippingPlanes(planes));
       new CameraUI(viewer, gui.addFolder('Camera'));
-
-      const pcSettings = gui.addFolder('Point clouds');
-      pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
-      pcSettings.add(pointCloudParams, 'pointSize', 0, 20, 0.25).onFinishChange(() => pointCloudParams.apply());
-      pcSettings.add(pointCloudParams, 'pointColorType', {
-        Rgb: PotreePointColorType.Rgb,
-        Depth: PotreePointColorType.Depth,
-        Height: PotreePointColorType.Height,
-        PointIndex: PotreePointColorType.PointIndex,
-        LevelOfDetail: PotreePointColorType.LevelOfDetail,
-        Classification: PotreePointColorType.Classification,
-      }).onFinishChange(valueStr => {
-        pointCloudParams.pointColorType = parseInt(valueStr, 10);
-        pointCloudParams.apply()
-      });
-      pcSettings.add(pointCloudParams, 'pointShape', {
-        Circle: PotreePointShape.Circle,
-        Square: PotreePointShape.Square
-      }).onFinishChange(valueStr => {
-        pointCloudParams.pointShape = parseInt(valueStr, 10);
-        pointCloudParams.apply()
-      });
+      new PointCloudUi(viewer, gui.addFolder('Point clouds'));
 
       // Load model if provided by URL
       const modelIdStr = urlParams.get('modelId');
