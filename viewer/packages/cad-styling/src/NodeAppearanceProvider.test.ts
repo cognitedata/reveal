@@ -169,4 +169,21 @@ describe('NodeAppearanceProvider', () => {
       expect(isContained).toBeTrue();
     }
   });
+
+  test('assigning priority triggers callback', () => {
+    const nodeCollection0 = new TreeIndexNodeCollection(new IndexSet([1, 3, 5]));
+    const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([6, 8, 10]));
+    const nodeCollection2 = new TreeIndexNodeCollection(new IndexSet([4, 3, 2]));
+
+    let numCalls = 0;
+    provider.on('prioritizedAreasChanged', () => {
+      numCalls++;
+    });
+
+    provider.assignStyledNodeCollection(nodeCollection0, { prioritizedForLoadingHint: 5 });
+    provider.assignStyledNodeCollection(nodeCollection1, { visible: true });
+    provider.assignStyledNodeCollection(nodeCollection2, { prioritizedForLoadingHint: 5 });
+
+    expect(numCalls).toBe(2);
+  });
 });
