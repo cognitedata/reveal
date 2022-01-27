@@ -13,9 +13,11 @@ import {
   NumberField,
 } from 'components/forms/elements';
 
+import type { StepProps } from '../types';
+
 import type { AppLocationGenerics } from 'routes';
 
-export function AdvancedStep() {
+export function AdvancedStep({ isEditing }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();
   const {
     data: { definitions },
@@ -155,6 +157,7 @@ export function AdvancedStep() {
               {values.estimateBHP.method === 'GradientTraverse' ? (
                 <>
                   <NumberField
+                    disabled={isEditing}
                     max={100000}
                     min={0}
                     name="estimateBHP.gaugeDepth.value"

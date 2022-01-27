@@ -4,7 +4,7 @@ import { useMatch } from 'react-location';
 import { Field, useFormikContext } from 'formik';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { Input, Select } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js';
 import type {
   CalculationTemplate,
   TimeSeries,
@@ -14,6 +14,7 @@ import {
   FormContainer,
   FormHeader,
   FormRowStacked,
+  StyledInput,
 } from 'components/forms/elements';
 
 import type { AppLocationGenerics } from 'routes';
@@ -63,7 +64,7 @@ export function OutputStep() {
             <FormHeader>{name}</FormHeader>
             <FormRowStacked>
               <Field
-                as={Input}
+                as={StyledInput}
                 name={`outputTimeSeries.${index}.externalId`}
                 setValue={(value: string) => {
                   setFieldValue(`outputTimeSeries.${index}.externalId`, value);
@@ -71,6 +72,8 @@ export function OutputStep() {
                 title="Timeseries"
                 type="text"
                 value={externalId}
+                width={400}
+                disabled
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setFieldValue(
                     `outputTimeSeries.${index}.externalId`,

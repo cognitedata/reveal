@@ -47,7 +47,7 @@ export const NumberInput = styled(Input)`
 
 export const FormRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: baseline;
   column-gap: 12px;
   & > label:first-child {
     flex: 1 1 33%;
@@ -60,7 +60,7 @@ export const FormRow = styled.div`
 
 export const FormRowStacked = styled.div`
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   column-gap: 12px;
   .cogs-select {
     min-width: 220px;
@@ -96,6 +96,10 @@ export function TextField({
   );
 }
 
+export const StyledInput = styled(Input)((props) => ({
+  width: props.width,
+}));
+
 export function NumberField({
   name,
   label,
@@ -105,13 +109,16 @@ export function NumberField({
 }: React.InputHTMLAttributes<unknown> & {
   label?: (value: number) => JSX.Element | string;
   setValue?: (value: number) => void;
+  error?: string;
 }) {
-  const { values, setFieldValue } = useFormikContext<Record<string, unknown>>();
+  const { errors, values, setFieldValue } =
+    useFormikContext<Record<string, unknown>>();
   if (!name) {
     return null;
   }
 
   const value = getNodeFromPath(values, name);
+  const errorText = getNodeFromPath(errors, name);
 
   const labelProps:
     | (React.HTMLAttributes<unknown> & {
@@ -133,6 +140,7 @@ export function NumberField({
   return (
     <Field
       as={NumberInput}
+      error={errorText}
       name={name}
       setValue={(value: number) => {
         if (setValue) {
@@ -163,14 +171,20 @@ export function NumberField({
 export function TimeSeriesField({
   externalIdField,
   aggregateTypeField,
+  externalIdDisabled,
+  aggregateTypeDisabled,
 }: {
   externalIdField: string;
   aggregateTypeField: string;
+  externalIdDisabled?: boolean;
+  aggregateTypeDisabled?: boolean;
 }) {
-  const { values, setFieldValue } = useFormikContext<Record<string, unknown>>();
+  const { errors, values, setFieldValue } =
+    useFormikContext<Record<string, unknown>>();
 
   const externalIdValue = getNodeFromPath(values, externalIdField);
   const aggregateTypeValue = getNodeFromPath(values, aggregateTypeField);
+  const externalIdErrorText = getNodeFromPath(errors, externalIdField);
 
   if (
     typeof externalIdValue !== 'string' ||
@@ -182,14 +196,17 @@ export function TimeSeriesField({
   return (
     <>
       <Field
-        as={Input}
+        as={StyledInput}
+        disabled={externalIdDisabled}
+        error={externalIdErrorText}
         name={externalIdField}
         setValue={(value: string) => {
           setFieldValue(externalIdField, value);
         }}
-        title="Timeseries"
+        title="Time series"
         type="text"
         value={externalIdValue}
+        width={400}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           setFieldValue(externalIdField, event.currentTarget.value);
         }}
@@ -204,13 +221,22 @@ export function TimeSeriesField({
             setFieldValue(aggregateTypeField, value);
           }}
         >
-          <SegmentedControl.Button key="average">
+          <SegmentedControl.Button
+            disabled={aggregateTypeDisabled}
+            key="average"
+          >
             Average
           </SegmentedControl.Button>
-          <SegmentedControl.Button key="stepInterpolation">
+          <SegmentedControl.Button
+            disabled={aggregateTypeDisabled}
+            key="stepInterpolation"
+          >
             Step
           </SegmentedControl.Button>
-          <SegmentedControl.Button key="interpolation">
+          <SegmentedControl.Button
+            disabled={aggregateTypeDisabled}
+            key="interpolation"
+          >
             Interpolated
           </SegmentedControl.Button>
         </SegmentedControl>

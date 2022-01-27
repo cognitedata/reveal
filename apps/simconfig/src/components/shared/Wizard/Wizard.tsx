@@ -21,6 +21,7 @@ interface WizardProps extends TabsProps {
   onChangeStep?: (currentStep: string, nextStep: string) => boolean;
   onCancel?: () => void;
   onComplete?: () => void;
+  valid?: boolean;
 }
 
 export function Wizard({
@@ -30,6 +31,7 @@ export function Wizard({
   onChangeStep,
   onCancel,
   onComplete,
+  valid = true,
   ...additionalProps
 }: WizardProps) {
   const stepKeys = children.reduce<string[]>(
@@ -144,7 +146,7 @@ export function Wizard({
               Next step
             </Button>
           ) : (
-            <Button type="primary" onClick={onComplete}>
+            <Button disabled={!valid} type="primary" onClick={onComplete}>
               Finish
             </Button>
           )}

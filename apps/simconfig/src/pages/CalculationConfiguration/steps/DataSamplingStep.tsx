@@ -12,7 +12,9 @@ import {
   TimeSeriesField,
 } from 'components/forms/elements';
 
-export function DataSamplingStep() {
+import type { StepProps } from '../types';
+
+export function DataSamplingStep({ isEditing }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();
 
   return (
@@ -67,6 +69,7 @@ export function DataSamplingStep() {
           <FormRow>
             <TimeSeriesField
               aggregateTypeField="logicalCheck.aggregateType"
+              externalIdDisabled={isEditing}
               externalIdField="logicalCheck.externalId"
             />
           </FormRow>
@@ -118,6 +121,7 @@ export function DataSamplingStep() {
           <FormRow>
             <TimeSeriesField
               aggregateTypeField="steadyStateDetection.aggregateType"
+              externalIdDisabled={isEditing}
               externalIdField="steadyStateDetection.externalId"
             />
           </FormRow>

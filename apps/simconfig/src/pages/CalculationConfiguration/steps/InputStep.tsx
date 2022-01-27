@@ -18,9 +18,11 @@ import {
   TimeSeriesField,
 } from 'components/forms/elements';
 
+import type { StepProps } from '../types';
+
 import type { AppLocationGenerics } from 'routes';
 
-export function InputStep() {
+export function InputStep({ isEditing }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();
   const {
     data: { definitions },
@@ -85,7 +87,9 @@ export function InputStep() {
             <FormHeader>{name}</FormHeader>
             <FormRowStacked>
               <TimeSeriesField
+                aggregateTypeDisabled={isEditing}
                 aggregateTypeField={`inputTimeSeries.${index}.aggregateType`}
+                externalIdDisabled={isEditing}
                 externalIdField={`inputTimeSeries.${index}.sensorExternalId`}
               />
 
@@ -93,6 +97,7 @@ export function InputStep() {
                 <div className="title">Unit</div>
                 <Field
                   as={Select}
+                  disabled={isEditing}
                   name={`inputTimeSeries.${index}.unit`}
                   options={unitTypeOptions[unitType]}
                   value={unitTypeOptions[unitType].find(

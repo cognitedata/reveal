@@ -1,14 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Calendar } from 'react-date-range';
 
-import {
-  format,
-  formatISO9075,
-  getDate,
-  getMonth,
-  getYear,
-  set,
-} from 'date-fns';
+import { getDate, getMonth, getYear, set } from 'date-fns';
 import { Field, useFormikContext } from 'formik';
 
 import type { OptionType } from '@cognite/cogs.js';
@@ -29,6 +22,13 @@ import {
   NumberField,
 } from 'components/forms/elements';
 
+import type { ScheduleRepeat, ScheduleStart } from '../types';
+import {
+  INTERVAL_OPTIONS,
+  getScheduleRepeat,
+  getScheduleStart,
+} from '../utils';
+
 export function ScheduleStep() {
   const closeCalendar = () => {
     setIsCalendarVisible(false);
@@ -38,15 +38,10 @@ export function ScheduleStep() {
 
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
-  const scheduleRepeat = useMemo((): ScheduleRepeat => {
-    const count = parseInt(values.schedule.repeat, 10);
-    const interval =
-      values.schedule.repeat.match(/[dhm]/)?.[0] ?? intervalOptions[0].value;
-    const intervalOption = intervalOptions.find(
-      (it) => it.value === values.schedule.repeat.match(/[dhm]/)?.[0]
-    );
-    return { count, interval, intervalOption };
-  }, [values.schedule.repeat]);
+  const scheduleRepeat = useMemo(
+    () => getScheduleRepeat(values.schedule.repeat),
+    [values.schedule.repeat]
+  );
 
   const setScheduleRepeat = ({
     count = scheduleRepeat.count,
@@ -55,12 +50,10 @@ export function ScheduleStep() {
     setFieldValue('schedule.repeat', `${count}${interval}`);
   };
 
-  const scheduleStart = useMemo(() => {
-    const date = new Date(values.schedule.start);
-    const dateString = formatISO9075(date, { representation: 'date' });
-    const timeString = format(new Date(values.schedule.start), 'HH:mm');
-    return { date, dateString, timeString };
-  }, [values.schedule.start]);
+  const scheduleStart = useMemo(
+    () => getScheduleStart(values.schedule.start),
+    [values.schedule.start]
+  );
 
   const setScheduleStart = ({
     date = scheduleStart.date,
@@ -93,7 +86,7 @@ export function ScheduleStep() {
           }}
         />
       </FormHeader>
-      {values.logicalCheck.enabled ? (
+      {values.schedule.enabled ? (
         <>
           <FormRow>
             <label htmlFor="schedule-step-calendar">Start</label>
@@ -153,12 +146,11 @@ export function ScheduleStep() {
             />
             <Field
               as={Select}
-              name="schedule.repeat"
-              options={intervalOptions}
+              options={INTERVAL_OPTIONS}
               value={scheduleRepeat.intervalOption}
               closeMenuOnSelect
               onChange={({
-                value: interval = intervalOptions[0].value,
+                value: interval = INTERVAL_OPTIONS[0].value,
               }: OptionType<string>) => {
                 setScheduleRepeat({ interval });
               }}
@@ -169,24 +161,3 @@ export function ScheduleStep() {
     </FormContainer>
   );
 }
-
-interface ScheduleStart {
-  date: Date;
-  dateString: string;
-  timeString: string;
-}
-
-interface ScheduleRepeat {
-  count: number;
-  interval: string;
-  intervalOption?: ValueOptionType<string>;
-}
-
-type ValueOptionType<T> = OptionType<T> &
-  Required<Pick<OptionType<T>, 'value'>>;
-
-const intervalOptions: ValueOptionType<string>[] = [
-  { label: 'minutes', value: 'm' },
-  { label: 'hours', value: 'h' },
-  { label: 'days', value: 'd' },
-];

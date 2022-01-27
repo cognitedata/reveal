@@ -95,6 +95,7 @@ DEPENDENCIES = [
     "@npm//react-spring",
     "@npm//redux",
     "@npm//styled-components",
+    "@npm//yup",
     "//packages/metrics",
     "//packages/auth-utils",
     "//packages/sidecar",
