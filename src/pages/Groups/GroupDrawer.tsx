@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Group, GroupSpec } from '@cognite/sdk';
 import { useQueryClient } from 'react-query';
 import { useRouteMatch } from 'react-router';
-import { useUpdateGroup } from 'hooks';
+import { useGroups, useUpdateGroup } from 'hooks';
 import CapabilitiesSelector from './CapabilitiesSelector';
 
 const Button = styled(CogsButton)`
@@ -20,6 +20,7 @@ type Props = {
 };
 export default function GroupDrawer({ group, onClose }: Props) {
   const client = useQueryClient();
+  const { data: groups = [] } = useGroups(true);
   const [caps, setCaps] = useState(group?.capabilities || []);
   const tenant = useRouteMatch<{ tenant: string }>('/:tenant')?.params.tenant;
 
@@ -77,10 +78,24 @@ export default function GroupDrawer({ group, onClose }: Props) {
       >
         <Form.Item
           hasFeedback={isLoading}
-          validateStatus="validating"
           name="name"
           label="Unique name"
-          rules={[{ required: true, message: 'Please input the group name!' }]}
+          rules={[
+            { required: true, message: 'Please input the group name!' },
+            {
+              validator: (_, value) => {
+                const isDuplicate = groups.some(
+                  ({ name }) => name === value && name !== group?.name
+                );
+                if (isDuplicate) {
+                  return Promise.reject(
+                    new Error('The name should be unique.')
+                  );
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
           extra="Enter a unique name for the group."
         >
           <Input disabled={isLoading} />
