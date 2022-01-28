@@ -1,5 +1,5 @@
 import { Icon } from '@cognite/cogs.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useDataPanelDispatch } from 'scarlet/hooks';
 import {
   AppActionType,
@@ -33,8 +33,13 @@ export const CardHeader = ({ dataElement }: CardHeaderProps) => {
       state: DataElementState.OMITTED,
     });
     toggleMenu();
-    onBackButton();
   };
+
+  useEffect(() => {
+    if (dataElement.state === DataElementState.OMITTED) {
+      onBackButton();
+    }
+  }, [dataElement]);
 
   return (
     <Styled.Container>

@@ -14,13 +14,13 @@ const getSortingRank = (
 ) => {
   let rate = 0;
   if (dataElement.state === DataElementState.APPROVED) {
-    rate += 1000000;
+    rate -= 1000000;
   } else if (![undefined, null, ''].includes(value)) {
-    rate += 100000;
+    rate -= 100000;
   }
 
   let sortKeysRate = sortedKeys.indexOf(dataElement.key);
-  if (sortKeysRate === -1) sortKeysRate = 10000;
+  if (sortKeysRate === -1) sortKeysRate = -10000;
 
   rate += sortKeysRate;
 

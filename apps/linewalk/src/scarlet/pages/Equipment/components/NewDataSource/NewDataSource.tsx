@@ -3,10 +3,18 @@ import { Icon } from '@cognite/cogs.js';
 import { BoundingBoxGraphic } from './BoundingBoxGraphic';
 import * as Styled from './style';
 
-export const NewDataSource = () => {
+type NewDataSourceProps = {
+  isActive: boolean;
+};
+
+export const NewDataSource = ({ isActive }: NewDataSourceProps) => {
   return (
-    <Styled.Collapse expandIcon={expandIcon}>
+    <Styled.Collapse
+      expandIcon={expandIcon}
+      defaultActiveKey={isActive ? 'new' : undefined}
+    >
       <Styled.Panel
+        key="new"
         header={
           <Styled.Header className="cogs-body-3 strong">
             Add new data source

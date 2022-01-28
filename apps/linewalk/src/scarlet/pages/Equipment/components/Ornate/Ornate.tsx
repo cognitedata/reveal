@@ -1,23 +1,18 @@
 /* eslint-disable no-await-in-loop */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import * as PDFJS from 'pdfjs-dist';
 import {
   DataElement,
   DataPanelActionType,
-  DetectionState,
   EquipmentDocument,
 } from 'scarlet/types';
-import { useDataPanelDispatch } from 'scarlet/hooks';
+import { useDataPanelDispatch, useOrnateTags } from 'scarlet/hooks';
 
-import {
-  addDocumentTitle,
-  addPageNumber,
-  addTags,
-  removeTags,
-  Tag,
-} from './utils';
+import { WorkspaceTools } from '..';
+
+import { addDocumentTitle, addPageNumber, addTags, removeTags } from './utils';
 import * as Styled from './style';
 
 PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
@@ -25,7 +20,6 @@ PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/de
 export type OrnateProps = {
   documents?: EquipmentDocument[];
   fullwidth?: boolean;
-  dataElements?: DataElement[];
 };
 
 const VIEW_OFFSET_X = 150;
@@ -41,11 +35,7 @@ type OrnateDocument = {
   pageNumber: number;
 };
 
-export const Ornate = ({
-  documents,
-  dataElements,
-  fullwidth = false,
-}: OrnateProps) => {
+export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
   const componentContainerId = useRef(
     `react-ornate-instance-${uuid()}`
   ).current;
@@ -54,6 +44,7 @@ export const Ornate = ({
   const [currentTags, setCurrentTags] = useState<string[]>([]);
   const destroyDocumentLoadCallbacks = useRef<(() => void)[]>([]);
   const dataPanelDispatch = useDataPanelDispatch();
+  const tags = useOrnateTags();
 
   const openDataElementCard = (dataElement: DataElement) =>
     dataPanelDispatch({
@@ -102,7 +93,10 @@ export const Ornate = ({
                 const ornateDocument = await ornateRef?.addPDFDocument(
                   pdfDocument,
                   pageNumber,
-                  {},
+                  {
+                    documentExternalId: document.externalId!,
+                    pageNumber: pageNumber.toString(),
+                  },
                   {
                     zoomAfterLoad: false,
                     initialPosition: {
@@ -161,31 +155,6 @@ export const Ornate = ({
     []
   );
 
-  const tags: Tag[] = useMemo(() => {
-    const result: Tag[] = [];
-
-    dataElements?.forEach((dataElement) => {
-      dataElement.detections
-        ?.filter(
-          (detection) =>
-            detection.boundingBox &&
-            detection.documentExternalId &&
-            detection.state !== DetectionState.OMITTED
-        )
-        .forEach((detection) => {
-          result.push({
-            id: detection.id + dataElement.state,
-            dataElement,
-            boundingBox: detection.boundingBox,
-            documentExternalId: detection.documentExternalId,
-            pageNumber: detection.pageNumber,
-          });
-        });
-    });
-
-    return result;
-  }, [dataElements]);
-
   useEffect(() => {
     if (ornateDocuments.length) {
       const newCurrentTags: string[] = [];
@@ -193,8 +162,8 @@ export const Ornate = ({
         const documentTags =
           tags?.filter(
             (tag) =>
-              tag.documentExternalId === document.externalId &&
-              tag.pageNumber === document.pageNumber
+              tag.detection.documentExternalId === document.externalId &&
+              tag.detection.pageNumber === document.pageNumber
           ) || [];
 
         const newTags = documentTags?.filter(
@@ -241,6 +210,8 @@ export const Ornate = ({
       ) : (
         <div id={componentContainerId} />
       )}
+
+      <WorkspaceTools ornateRef={ornateViewer.current} />
     </Styled.Container>
   );
 };

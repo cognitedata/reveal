@@ -6,3 +6,4 @@ export * from './getEquipmentState';
 export * from './getScannerDetections';
 export * from './getUnitAsset';
 export * from './saveEquipment';
+export * from './updateEquipmentPCMS';

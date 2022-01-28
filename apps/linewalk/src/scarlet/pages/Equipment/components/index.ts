@@ -17,3 +17,4 @@ export * from './NewDataSource';
 export * from './Ornate';
 export * from './PageBody';
 export * from './TopBar';
+export * from './WorkspaceTools';

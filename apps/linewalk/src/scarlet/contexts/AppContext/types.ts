@@ -8,6 +8,7 @@ import {
   DataElement,
   DataElementState,
   Detection,
+  Annotation,
 } from 'scarlet/types';
 
 export type AppState = {
@@ -69,6 +70,11 @@ export type AppAction =
       stateReason?: string;
     }
   | {
+      type: AppActionType.ADD_DETECTION;
+      dataElement: DataElement;
+      annotation: Annotation;
+    }
+  | {
       type: AppActionType.APPROVE_DETECTION;
       dataElement: DataElement;
       detection: Detection;
@@ -97,6 +103,7 @@ export enum AppActionType {
   SET_EQUIPMENT_CONFIG = 'set-equipment-config',
   SET_SAVE_SATE = 'set-save-state',
   UPDATE_DATA_ELEMENT_STATE = 'update-data-element-state',
+  ADD_DETECTION = 'add-detection',
   APPROVE_DETECTION = 'approve-detection',
   REMOVE_DETECTION = 'remove-detection',
   SHOW_DATA_ELEMENT_STATE_MODAL = 'show-data-element-state-modal',
