@@ -485,7 +485,7 @@ __metadata:
     "@types/node": ^14.14.5
     "@types/random-seed": ^0.3.3
     "@types/skmeans": ^0.11.1
-    "@types/three": 0.136.0
+    "@types/three": 0.137.0
     "@types/tween.js": ^18.5.1
     "@typescript-eslint/eslint-plugin": ^4.29.1
     "@typescript-eslint/parser": ^4.29.1
@@ -529,7 +529,7 @@ __metadata:
     rxjs: ^7.1.0
     shx: ^0.3.3
     skmeans: ^0.11.3
-    three: 0.136.0
+    three: 0.137.0
     ts-jest: ^26.4.3
     ts-loader: 8.0.7
     tsc-alias: ^1.3.10
@@ -1361,10 +1361,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.136.0":
-  version: 0.136.0
-  resolution: "@types/three@npm:0.136.0"
-  checksum: eb2f8074a9f1bc2fe8a0f7bd890028d910d258a1a94d8c64fa6d576b2888f94a3b97ef5098a3db72854cb2c74d31a7d46ab4706faf812ac85d9821a75f57cff4
+"@types/three@npm:0.137.0":
+  version: 0.137.0
+  resolution: "@types/three@npm:0.137.0"
+  checksum: 32674dd002b0f249b995167b52e0e4d21af314260339ab09cf6898ae7d1bf000442d1da76673a0fcb5f8164878ba62b61202a1e2175afe2d76de8119d9821e04
   languageName: node
   linkType: hard
 
@@ -12170,10 +12170,10 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"three@npm:0.136.0":
-  version: 0.136.0
-  resolution: "three@npm:0.136.0"
-  checksum: 9183f83a75901edb85034fe8f6d52bf6daaece554e40d42f8eef5dead13a09e5f67548ee7cccd6c34bde42a91c5e8fa2ccb4a1b80783d7986bda4ec9f58bfe7f
+"three@npm:0.137.0":
+  version: 0.137.0
+  resolution: "three@npm:0.137.0"
+  checksum: c3d005a73818a8023d014af4803c12e34ab5b095f50ac58c994173d6f433a480ad4547543b106f95ee240c827272b1de2eca48dcafd2b65cdcd0a0f3e5bf128b
   languageName: node
   linkType: hard
 
