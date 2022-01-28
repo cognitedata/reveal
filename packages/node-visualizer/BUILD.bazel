@@ -16,6 +16,7 @@ SOURCES = glob(
         "src/*.tsx",
         "src/**/*.ts",
         "src/**/*.tsx",
+        "src/**/*.png",
     ],
     exclude = ["src/**/*.spec.ts"],
 )
