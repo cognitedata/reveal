@@ -71,7 +71,7 @@ describe('Well Reducer', () => {
       wellboreId: well.wellbores[0].id,
       isSelected: true,
     });
-    expect(state.selectedWellIds).toEqual({ 1234: true, 1235: true });
+    expect(state.selectedWellIds).toEqual({ 1234: true });
   });
 
   it(`should set log type data in wellboreData state`, () => {

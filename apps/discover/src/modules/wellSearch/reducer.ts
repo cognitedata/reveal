@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import unset from 'lodash/unset';
@@ -66,7 +67,8 @@ export function wellReducer(
     }
 
     case TOGGLE_SELECTED_WELLS: {
-      const { selectedWellIds, selectedWellboreIds } = state;
+      // temporary fix, will refactor this properly in another PR.
+      const { selectedWellIds, selectedWellboreIds } = cloneDeep(state);
 
       action.wells.forEach((wellData) => {
         if (action.isSelected) {
@@ -86,7 +88,7 @@ export function wellReducer(
     }
 
     case TOGGLE_SELECTED_WELLBORE_OF_WELL: {
-      const { selectedWellIds, selectedWellboreIds } = state;
+      const { selectedWellIds, selectedWellboreIds } = cloneDeep(state);
 
       if (action.isSelected) {
         set(selectedWellboreIds, action.wellboreId, true);
