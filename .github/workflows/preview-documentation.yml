@@ -4,9 +4,8 @@ on:
   pull_request:
     branches-ignore:
       - 'dependabot/**'
-
 jobs:
-  build-and-deploy:
+  build:
     name: Publish documentation preview
     runs-on: ubuntu-latest
     steps:
@@ -47,6 +46,12 @@ jobs:
           yarn install --immutable
           yarn build:fast
 
+  deploy:
+    name: Deploy preview documentation
+    concurrency: deploy-preview-documentation
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Deploy documentation preview 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
