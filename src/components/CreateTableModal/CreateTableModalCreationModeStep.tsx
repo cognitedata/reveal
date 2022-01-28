@@ -1,17 +1,13 @@
 import React from 'react';
 
-import { Upload } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload';
 import styled from 'styled-components';
 
-import { Body, Colors, Detail } from '@cognite/cogs.js';
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
-import { CustomIcon } from 'components/CustomIcon';
+import Dropzone from 'components/Dropzone/Dropzone';
 
 import CreateTableModalOption from './CreateTableModalOption';
 import { CreationMode } from './CreateTableModal';
-
-const { Dragger } = Upload;
 
 type CreateTableModalCreationModeStepProps = {
   isCreatingTable: boolean;
@@ -47,16 +43,7 @@ const CreateTableModalCreationModeStep = ({
     <FormFieldWrapper isRequired title="Select one">
       <StyledCreateOptions>
         <StyledCreateOption>
-          <StyledDragger {...fileProps}>
-            <StyledDocumentIcon />
-            <StyledDocumentIconHover />
-            <StyledCreateOptionTitle level={6} strong>
-              Upload CSV file
-            </StyledCreateOptionTitle>
-            <StyledCreateOptionDetail strong>
-              Drag and drop, or click to select
-            </StyledCreateOptionDetail>
-          </StyledDragger>
+          <Dropzone {...fileProps} />
         </StyledCreateOption>
         <StyledCreateOption>
           <CreateTableModalOption
@@ -90,76 +77,6 @@ const StyledCreateOption = styled.li`
   .ant-upload-list {
     display: none;
   }
-`;
-
-const StyledDocumentIcon = styled(CustomIcon).attrs({
-  icon: 'DocumentIconDisabled',
-})`
-  height: 40px;
-`;
-
-const StyledDocumentIconHover = styled(CustomIcon).attrs({
-  icon: 'DocumentIconHover',
-})`
-  height: 40px;
-`;
-
-const StyledDragger = styled(Dragger)`
-  && {
-    background-color: ${Colors['bg-accent'].hex()};
-    border-color: ${Colors['border-default'].hex()};
-    border-radius: 6px;
-    padding: 0px;
-
-    .ant-upload-btn {
-      display: flex !important; /* overrides antd style */
-      padding: 36px !important; /* overrides antd style */
-      flex-direction: column;
-    }
-
-    ${StyledDocumentIconHover} {
-      display: none;
-    }
-
-    :hover {
-      background-color: ${Colors['bg-hover'].hex()};
-      border-color: ${Colors['bg-status-small--accent'].hex()};
-
-      ${StyledDocumentIcon} {
-        display: none;
-      }
-
-      ${StyledDocumentIconHover} {
-        display: unset;
-      }
-    }
-
-    :active {
-      background-color: ${Colors['bg-selected'].hex()};
-      border-color: ${Colors['bg-status-small--accent-hover'].hex()};
-      border-width: 2px;
-      padding: 0px;
-
-      .ant-upload-btn {
-        padding: 35px !important; /* overrides antd style */
-      }
-    }
-  }
-
-  &&.ant-upload-drag-hover {
-    background-color: ${Colors['bg-hover'].hex()};
-    border-color: ${Colors['bg-status-small--accent'].hex()};
-  }
-`;
-
-const StyledCreateOptionTitle = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
-  margin: 16px 0 8px;
-`;
-
-const StyledCreateOptionDetail = styled(Detail)`
-  color: ${Colors['text-hint'].hex()};
-  text-align: center;
 `;
 
 export default CreateTableModalCreationModeStep;
