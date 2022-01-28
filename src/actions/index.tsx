@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import handleError from 'utils/handleError';
 import omit from 'lodash/omit';
 import {
@@ -26,7 +26,6 @@ import {
   wait,
 } from 'utils/utils';
 import {
-  fetchExtpipesByDataSetId,
   getExtractionPipelineApiUrl,
   mapDataSetExtpipe,
 } from 'utils/extpipeUtils';
@@ -37,6 +36,7 @@ import {
   listGroupsKey,
   listRawDatabasesKey,
   listRawTablesKey,
+  getListExtpipesKey,
 } from './keys';
 
 export const invalidateDataSetQueries = (
@@ -192,57 +192,86 @@ export type DataSetWithExtpipes = {
   dataSet: DataSetV3;
   extpipes: Extpipe[];
 };
+
+export const useExtpipes = () => {
+  return useQuery(getListExtpipesKey(), async () => {
+    let list: Extpipe[] = [];
+    try {
+      const res = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
+        withCredentials: true,
+      });
+      list = res.data.items ?? [];
+    } catch (e) {
+      list = [];
+    }
+    return list;
+  });
+};
+
+export const useDataSetExtpipes = (dataSetId?: number) => {
+  const { data, ...extpipesQuery } = useExtpipes();
+
+  const extpipes = useMemo(() => {
+    if (dataSetId && data) {
+      return data.filter(({ dataSetId: testId }) => testId === dataSetId);
+    }
+    return [];
+  }, [data, dataSetId]);
+
+  return {
+    data: extpipes,
+    ...extpipesQuery,
+  };
+};
+
 export const useDataSetsList = (): {
   dataSetsWithExtpipes?: DataSetWithExtpipes[];
   error: any;
+  isExtpipesFetched: boolean;
   isLoading: boolean;
 } => {
-  const { data: dataSetsWithExtpipes, ...rest } = useQuery(
+  const { data: extpipes, ...extpipesQuery } = useExtpipes();
+
+  const { data: dataSets, ...dataSetsQuery } = useQuery(
     getListDatasetsKey(),
-    async () => {
-      const newDataSets = await sdk.datasets
-        .list()
-        .autoPagingToArray({ limit: -1 });
-      let extpipes: Extpipe[] = [];
-      try {
-        const res = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
-          withCredentials: true,
-        });
-        extpipes = res.data.items ?? [];
-      } catch (e) {
-        extpipes = [];
-      }
-      return mapDataSetExtpipe(parseDataSetsList(newDataSets), extpipes);
-    },
+    () => sdk.datasets.list().autoPagingToArray({ limit: -1 }),
     { onError }
   );
 
-  return { dataSetsWithExtpipes, ...rest };
+  const dataSetsWithExtpipes = useMemo(() => {
+    return mapDataSetExtpipe(parseDataSetsList(dataSets ?? []), extpipes ?? []);
+  }, [dataSets, extpipes]);
+
+  return {
+    dataSetsWithExtpipes,
+    isExtpipesFetched: extpipesQuery.isFetched,
+    ...dataSetsQuery,
+  };
 };
 
 export const useDataSetWithExtpipes = (id?: number) => {
-  const { data: dataSetWithExtpipes, ...rest } = useQuery(
+  const { data: extpipes = [], ...extpipesQuery } = useDataSetExtpipes(id);
+
+  const { data: dataSet, ...rest } = useQuery(
     getRetrieveByDataSetIdKey(String(id)),
     // eslint-disable-next-line consistent-return
     async () => {
       if (id) {
         const [resDataSet] = await sdk.datasets.retrieve([{ id }]);
-        let extpipes: Extpipe[] = [];
-
-        try {
-          extpipes = await fetchExtpipesByDataSetId(id);
-        } catch (e) {
-          extpipes = [];
-        }
-        return {
-          dataSet: parseDataSet(resDataSet),
-          extpipes,
-        };
+        return parseDataSet(resDataSet);
       }
     },
     { onError, enabled: !!id }
   );
-  return { dataSetWithExtpipes, ...rest };
+
+  return {
+    dataSetWithExtpipes: {
+      dataSet,
+      extpipes,
+    },
+    isExtpipesFetched: extpipesQuery.isFetched,
+    ...rest,
+  };
 };
 
 export const useDataSetOwners = (

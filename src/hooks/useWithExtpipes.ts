@@ -3,7 +3,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export const useWithExtpipes = () => {
-  const isFlagExtpipe = useFlag('DATA_EXTPIPES_allowlist', {
+  const isFlagExtpipe = useFlag('EXTPIPES_allowlist', {
     fallback: false,
     forceRerender: true,
   });

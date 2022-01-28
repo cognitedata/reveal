@@ -22,6 +22,7 @@ import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
+  DataSetWithExtpipes,
   useDataSetWithExtpipes,
   useUpdateDataSetVisibility,
 } from '../../actions/index';
@@ -43,6 +44,7 @@ const DataSetDetails = (): JSX.Element => {
 
   const {
     dataSetWithExtpipes,
+    isExtpipesFetched,
     isLoading: loading,
     error,
   } = useDataSetWithExtpipes(Number(dataSetId));
@@ -212,7 +214,12 @@ const DataSetDetails = (): JSX.Element => {
                     />
                   </TabPane>
                   <TabPane tab="LINEAGE" key="2">
-                    <Lineage dataSetWithExtpipes={dataSetWithExtpipes} />
+                    <Lineage
+                      dataSetWithExtpipes={
+                        dataSetWithExtpipes as DataSetWithExtpipes
+                      }
+                      isExtpipesFetched={isExtpipesFetched}
+                    />
                   </TabPane>
                   <TabPane tab="DOCUMENTATION" key="3">
                     <DocumentationsTab dataSet={dataSet} />

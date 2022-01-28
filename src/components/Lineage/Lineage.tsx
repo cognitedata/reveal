@@ -34,13 +34,14 @@ const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
 interface LineageProps {
   dataSetWithExtpipes?: DataSetWithExtpipes;
+  isExtpipesFetched?: boolean;
 }
 
 export interface RawWithUpdateTime extends RawTable {
   lastUpdate: string;
 }
 
-const Lineage = ({ dataSetWithExtpipes }: LineageProps) => {
+const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
   const [transformationsData, setTransformationsData] = useState<any[]>([]);
   const [disableTransformations, setDisableTransformations] =
     useState<boolean>(false);
@@ -154,9 +155,13 @@ const Lineage = ({ dataSetWithExtpipes }: LineageProps) => {
           <ExtpipeTable
             dataSetWithExtpipes={dataSetWithExtpipes}
             extractorAccounts={extractorAccounts}
+            isExtpipesFetched={isExtpipesFetched}
             sourceNames={sourceNames}
           />
-          <ExtpipeRawTables dataSet={dataSetWithExtpipes} />
+          <ExtpipeRawTables
+            dataSet={dataSetWithExtpipes}
+            isExtpipesFetched={isExtpipesFetched}
+          />
           {usedTransformations && (
             <Timeline.Item dot={<LineageDot />}>
               <LineageTitle>Transformations</LineageTitle>

@@ -22,6 +22,8 @@ import Collapse from 'antd/lib/collapse';
 import { useCdfGroups, useLabelSuggestions } from 'actions';
 import Alert from 'antd/lib/alert';
 
+import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';
+
 const { Panel } = Collapse;
 
 interface DataSetInfoFormProps {
@@ -50,8 +52,16 @@ declare module 'antd/lib/select' {
 
 const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
   const { groups: groupsList, isLoading, error } = useCdfGroups();
-
   const { labels: labelSuggestions } = useLabelSuggestions();
+
+  const nameTooLongError =
+    (props.dataSetName?.length ?? 0) > NAME_MAX_LENGTH
+      ? `Name cannot exceed ${NAME_MAX_LENGTH} characters`
+      : false;
+  const descTooLongError =
+    (props.dataSetDescription?.length ?? 0) > DESC_MAX_LENGTH
+      ? `Description cannot exceed ${DESC_MAX_LENGTH} characters`
+      : false;
 
   return (
     <Col span={24}>
@@ -68,9 +78,10 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         }}
         type="text"
         placeholder="Name"
+        error={nameTooLongError}
       />
-      <RequiredFieldLabel>Description</RequiredFieldLabel>
 
+      <RequiredFieldLabel>Description</RequiredFieldLabel>
       <InputField
         style={{ height: ' 60px' }}
         value={props.dataSetDescription}
@@ -82,9 +93,10 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         }}
         placeholder="Description"
         size="large"
+        error={descTooLongError}
       />
-      <FieldLabel>Labels</FieldLabel>
 
+      <FieldLabel>Labels</FieldLabel>
       <Select
         mode="tags"
         style={{ width: '600px', background: theme.blandColor }}

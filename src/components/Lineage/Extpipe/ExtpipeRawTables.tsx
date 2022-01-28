@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { Icon } from '@cognite/cogs.js';
 import Table from 'antd/lib/table';
 import Timeline from 'antd/lib/timeline';
 import {
@@ -28,10 +29,12 @@ export interface RawExtpipeWithUpdateTime extends RawTable {
 
 interface ExtpipeRawTablesProps {
   dataSet?: DataSetWithExtpipes;
+  isExtpipesFetched?: boolean;
 }
 
 export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
   dataSet,
+  isExtpipesFetched,
 }: PropsWithChildren<ExtpipeRawTablesProps>) => {
   const [rawList, setRawList] = useState<RawExtpipeWithUpdateTime[]>([]);
   const [loadingRaw, setLoadingRaw] = useState<boolean>(true);
@@ -56,17 +59,20 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
       <LineageSubTitle>
         The RAW tables below are used in this data extpipe.
       </LineageSubTitle>
-
-      <Table
-        loading={loadingRaw}
-        columns={rawTablesColumnsWithExtpipe()}
-        dataSource={rawList}
-        pagination={{ pageSize: 5 }}
-        rowKey={(record: RawExtpipeWithUpdateTime) =>
-          `${record.databaseName}/${record.tableName}`
-        }
-        getPopupContainer={getContainer}
-      />
+      {isExtpipesFetched ? (
+        <Table
+          loading={loadingRaw}
+          columns={rawTablesColumnsWithExtpipe()}
+          dataSource={rawList}
+          pagination={{ pageSize: 5 }}
+          rowKey={(record: RawExtpipeWithUpdateTime) =>
+            `${record.databaseName}/${record.tableName}`
+          }
+          getPopupContainer={getContainer}
+        />
+      ) : (
+        <Icon type="LoadingSpinner" />
+      )}
     </Timeline.Item>
   );
 };
