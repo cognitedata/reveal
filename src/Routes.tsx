@@ -1,19 +1,32 @@
 import React, { useMemo } from 'react';
 import { Loader } from '@cognite/cogs.js';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import NotFound from 'src/pages/NotFound';
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import NoAccessPage from 'src/pages/NoAccessPage';
+import { useUserCapabilities } from './hooks/useUserCapabilities';
 
-function routeWrapper(
-  Component: any
-): (routerProps: RouteComponentProps) => any {
-  return (routeProps: RouteComponentProps) => {
-    return <Component {...routeProps} />;
-  };
-}
+const RouteWrapper = ({
+  Component,
+  capabilities,
+  ...routeProps
+}: {
+  Component: any;
+  capabilities: { acl: string; actions: string[] }[];
+} & RouteComponentProps): JSX.Element => {
+  const { data: hasCapabilities, isFetched } =
+    useUserCapabilities(capabilities);
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (!hasCapabilities) {
+    return <NoAccessPage capabilities={capabilities} />;
+  }
+
+  return <Component {...routeProps} />;
+};
 
 const routes = [
   {
@@ -123,50 +136,6 @@ const routes = [
 ];
 
 export function Routes() {
-  const { flow } = getFlow();
-  const {
-    data: filesRead,
-    isFetched: filesReadFetched,
-    error: filesReadError,
-  } = usePermissions(flow, 'filesAcl', 'READ');
-  const {
-    data: filesWrite,
-    isFetched: filesWriteFetched,
-    error: filesWriteError,
-  } = usePermissions(flow, 'filesAcl', 'WRITE');
-  const {
-    data: groupsList,
-    isFetched: groupsListFetched,
-    error: groupsReadError,
-  } = usePermissions(flow, 'filesAcl', 'WRITE');
-
-  const permissionError = filesReadError || filesWriteError || groupsReadError;
-  const loading = !filesReadFetched || !filesWriteFetched || !groupsListFetched;
-
-  if (permissionError) {
-    return <p>Error retrieving permissions</p>;
-  }
-  if (loading) {
-    return <Loader />;
-  }
-
-  if (!filesRead || !filesWrite || !groupsList) {
-    return (
-      <NoAccessPage
-        capabilities={[
-          {
-            acl: 'filesAcl',
-            actions: ['READ', 'WRITE'],
-          },
-          {
-            acl: 'groupsAcl',
-            actions: ['LIST'],
-          },
-        ]}
-      />
-    );
-  }
-
   return (
     <Switch>
       {routes.map((r) => (
@@ -174,7 +143,13 @@ export function Routes() {
           key={r.path}
           exact={r.exact}
           path={r.path}
-          render={routeWrapper(r.component)}
+          render={(routeProps) => (
+            <RouteWrapper
+              Component={r.component}
+              capabilities={r.capabilities}
+              {...routeProps}
+            />
+          )}
         />
       ))}
 
