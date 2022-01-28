@@ -159,6 +159,52 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1]);
   });
 
+  test('add custom color then updating superset without color keeps color', () => {
+    // Need to do this here, as we want two elements in our buffer
+    const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
+
+    const customColor: [number, number, number] = [127, 128, 129];
+
+    const set = new TreeIndexNodeCollection(new IndexSet([0]));
+    const style0: NodeAppearance = { color: customColor, visible: true };
+    styleProvider.assignStyledNodeCollection(set, style0);
+
+    jest.runAllTimers();
+    builder.build();
+
+    const superSet = new TreeIndexNodeCollection(new IndexSet([0, 1]));
+    const style1: NodeAppearance = { visible: true };
+    styleProvider.assignStyledNodeCollection(superSet, style1);
+
+    jest.runAllTimers();
+    builder.build();
+
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...customColor, 1]);
+  });
+
+  test('add custom color then updating superset with color 0, 0, 0 keeps color', () => {
+    // Need to do this here, as we want two elements in our buffer
+    const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
+
+    const customColor: [number, number, number] = [127, 128, 129];
+
+    const set = new TreeIndexNodeCollection(new IndexSet([0]));
+    const style0: NodeAppearance = { color: customColor, visible: true };
+    styleProvider.assignStyledNodeCollection(set, style0);
+
+    jest.runAllTimers();
+    builder.build();
+
+    const superSet = new TreeIndexNodeCollection(new IndexSet([0, 1]));
+    const style1: NodeAppearance = { color: [0, 0, 0] };
+    styleProvider.assignStyledNodeCollection(superSet, style1);
+
+    jest.runAllTimers();
+    builder.build();
+
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...customColor, 1]);
+  });
+
   test('setDefaultStyle() triggers needs update', () => {
     builder.build(); // Clear needsUpdate
     expect(builder.needsUpdate).toBeFalse();
