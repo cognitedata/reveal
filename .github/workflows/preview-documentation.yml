@@ -6,7 +6,7 @@ on:
       - 'dependabot/**'
 jobs:
   build:
-    name: Publish documentation preview
+    name: Build preview documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -47,7 +47,7 @@ jobs:
           yarn build:fast
 
   deploy:
-    name: Deploy preview documentation
+    name: Publish preview documentation
     concurrency: deploy-preview-documentation
     runs-on: ubuntu-latest
     needs: build
