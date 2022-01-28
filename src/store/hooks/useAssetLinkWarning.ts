@@ -5,7 +5,7 @@ import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { unwrapResult } from '@reduxjs/toolkit';
 
 export enum AssetWarnTypes {

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { EnsureNonEmptyResource } from '@cognite/data-exploration';
-import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps, FileInfo } from '@cognite/sdk';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
 import { FileTableExplorer } from 'src/modules/Common/Components/FileTable/FileTableExplorer';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';

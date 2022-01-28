@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps } from '@cognite/sdk';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
 import {

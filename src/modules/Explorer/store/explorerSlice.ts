@@ -6,12 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { SelectFilter } from 'src/modules/Common/types';
-import {
-  FileGeoLocation,
-  FileInfo,
-  Label,
-  Metadata,
-} from '@cognite/cdf-sdk-singleton';
+import { FileGeoLocation, FileInfo, Label, Metadata } from '@cognite/sdk';
 import { clearExplorerFileState } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';

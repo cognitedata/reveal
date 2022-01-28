@@ -1,5 +1,5 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import React, { ReactElement } from 'react';
+import { FileInfo } from '@cognite/sdk';
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {

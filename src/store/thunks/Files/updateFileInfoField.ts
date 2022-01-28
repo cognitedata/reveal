@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { Label, Metadata } from '@cognite/cdf-sdk-singleton';
+import { Label, Metadata } from '@cognite/sdk';
 import isEqual from 'lodash-es/isEqual';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 

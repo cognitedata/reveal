@@ -1,6 +1,6 @@
 // state helper functions
 
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 
 // convert to state

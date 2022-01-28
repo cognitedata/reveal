@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, FileInfo } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import ReactPlayer from 'react-player';

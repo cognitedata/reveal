@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { ReactText } from 'react';
 
 // ToDo: remove { directory?: string } once FileInfo have been properly updated with directory field
