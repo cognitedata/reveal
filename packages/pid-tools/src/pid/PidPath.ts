@@ -13,7 +13,7 @@ import {
   getClosestPointsOnSegments,
 } from '../geometry';
 import { PathReplacement, SvgPathWithId } from '../types';
-import { T_JUNCTION } from '../constants';
+import { T_JUNCTION, T_JUNCTION_SIZE } from '../constants';
 
 interface PidPathStyle {
   strokeLinejoin: string;
@@ -84,8 +84,6 @@ export class PidPath {
 
     if (closestPoints === undefined) return null;
 
-    const tLength = 2;
-
     const {
       index1: thisIndex,
       point1: intersection,
@@ -94,7 +92,7 @@ export class PidPath {
     } = closestPoints;
 
     // we do not want to create a 'T' junction if the the distance between the base and top is too big
-    if (distance > tLength / 2) return null;
+    if (distance > T_JUNCTION_SIZE / 2) return null;
 
     // calculate the new shorten path for the base and the point at where the buttom of the T should start
     let splitGuideTPoint: Point;
@@ -109,7 +107,7 @@ export class PidPath {
       splitGuideTPoint = getPointTowardOtherPoint(
         splitGuideSegment.start,
         splitGuideSegment.stop,
-        tLength
+        T_JUNCTION_SIZE
       );
       splitGuideSvgPathWithId = {
         svgCommands: segmentsToSvgCommands([
@@ -122,7 +120,7 @@ export class PidPath {
       splitGuideTPoint = getPointTowardOtherPoint(
         splitGuideSegment.stop,
         splitGuideSegment.start,
-        tLength
+        T_JUNCTION_SIZE
       );
       splitGuideSvgPathWithId = {
         svgCommands: segmentsToSvgCommands([
@@ -138,12 +136,12 @@ export class PidPath {
     const line1StopPoint = getPointTowardOtherPoint(
       intersection,
       start,
-      tLength
+      T_JUNCTION_SIZE
     );
     const line2StartPoint = getPointTowardOtherPoint(
       intersection,
       stop,
-      tLength
+      T_JUNCTION_SIZE
     );
     const lineSegmentReplacementCommands: SvgPathWithId[] = [
       {

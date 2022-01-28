@@ -1,4 +1,5 @@
 /* eslint-disable no-continue */
+import { AUTO_ANALYSIS_DISTANCE_THRESHOLD } from '../constants';
 import {
   DiagramConnection,
   DiagramInstanceWithPaths,
@@ -21,7 +22,9 @@ export const getOverlappingPidGroups = (
   pidGroups: PidGroup[],
   instance: PidGroup
 ) => {
-  return pidGroups.filter((pidGroup) => instance.isOverlap(pidGroup));
+  return pidGroups.filter((pidGroup) =>
+    instance.isClose(pidGroup, AUTO_ANALYSIS_DISTANCE_THRESHOLD)
+  );
 };
 
 export const getPotentialLines = (

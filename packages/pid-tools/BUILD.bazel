@@ -37,14 +37,12 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//intersects",
     "@npm//svg-parser",
     "@npm//svg-path-parser",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
-    "@npm//@types/intersects",
     "@npm//@types/svg-parser",
     "@npm//@types/svg-path-parser",
 ]

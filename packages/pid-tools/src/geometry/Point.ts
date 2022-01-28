@@ -1,3 +1,5 @@
+import { BoundingBox } from '../types';
+
 export class Point {
   x: number;
   y: number;
@@ -55,5 +57,12 @@ export class Point {
     const newX = scaleX * (this.x - translatePoint.x);
     const newY = scaleY * (this.y - translatePoint.y);
     return new Point(newX, newY);
+  }
+
+  static midPointFromBoundingBox(boundingBox: BoundingBox): Point {
+    return new Point(
+      boundingBox.x + boundingBox.width / 2,
+      boundingBox.y + boundingBox.height / 2
+    );
   }
 }
