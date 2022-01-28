@@ -6,7 +6,7 @@ import React, { ComponentType, Suspense } from 'react';
 import styled from 'styled-components';
 import { DemoProps } from './DemoProps';
 import { CogniteClient } from '@cognite/sdk-2.x';
-import { env } from '@site/docs/utils/env';
+import { env } from '@site/versioned_docs/version-2.x/utils/env';
 
 const DemoContainer = styled.div`
   height: calc(min(85vh, 600px));
@@ -20,10 +20,10 @@ const DemoLoginCover = React.lazy(() => import('./DemoLoginCover'));
 
 const components: Record<string, ComponentType<DemoProps>> = {
   Cognite3DViewerDemo: React.lazy(() =>
-    import('@site/docs/demos/Cognite3DViewerDemo')
+    import('@site/versioned_docs/version-2.x/demos/Cognite3DViewerDemo')
   ),
   ModelPreviewDemo: React.lazy(() =>
-    import('@site/docs/demos/ModelPreviewDemo')
+    import('@site/versioned_docs/version-2.x/demos/ModelPreviewDemo')
   ),
 };
 
