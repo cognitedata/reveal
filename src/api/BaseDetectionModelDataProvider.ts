@@ -1,4 +1,4 @@
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   AnnotationJobResponse,
   DetectionModelDataProvider,

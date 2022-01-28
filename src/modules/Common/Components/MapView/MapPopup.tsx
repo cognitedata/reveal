@@ -10,7 +10,7 @@ import {
   makeSelectJobStatusForFile,
 } from 'src/modules/Process/processSlice';
 import { TableDataItem } from 'src/modules/Common/types';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';

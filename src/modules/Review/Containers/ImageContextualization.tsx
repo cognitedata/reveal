@@ -21,7 +21,7 @@ import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable
 import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
 import { useDispatch, useSelector } from 'react-redux';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 

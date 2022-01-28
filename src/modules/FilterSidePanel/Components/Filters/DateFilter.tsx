@@ -3,7 +3,7 @@ import { SegmentedControl, Title } from '@cognite/cogs.js';
 import { DatePicker } from 'antd';
 import styled from 'styled-components';
 import moment from 'moment';
-import { DateRange } from '@cognite/cdf-sdk-singleton';
+import { DateRange } from '@cognite/sdk';
 import {
   DateActions,
   DateFilterType,

@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { IdEither, sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { IdEither } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 
@@ -8,7 +9,7 @@ export const fetchAssets = createAsyncThunk<
   IdEither[],
   ThunkConfig
 >('fetchAssets', async (assetIds) => {
-  const assets = await sdkv3.assets.retrieve(assetIds);
+  const assets = await sdk.assets.retrieve(assetIds);
   return assets.map((asset) => ({
     ...asset,
     createdTime: asset.createdTime.getTime(),

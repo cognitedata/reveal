@@ -1,4 +1,4 @@
-import { DateRange, FileInfo } from '@cognite/cdf-sdk-singleton';
+import { DateRange, FileInfo } from '@cognite/sdk';
 import moment from 'moment';
 import { mockFileInfo } from 'src/__test-utils/data/mockFileInfo';
 import { timeFormat } from 'src/modules/FilterSidePanel/Components/Filters/TimeFilter';

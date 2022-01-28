@@ -1,4 +1,5 @@
-import { FileInfo, sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { lastValueFrom, of, Subject } from 'rxjs';
 import { expand, finalize, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
@@ -47,12 +48,12 @@ export const fetchFiles = async (
       let filteredItems: FileInfo[] = [];
 
       if (search.name) {
-        newItems = await sdkv3.files.search({
+        newItems = await sdk.files.search({
           filter: { ...filter, mimeType: mimeTypes[data.mimeTypeIndex] },
           search,
         });
       } else {
-        ({ items: newItems, nextCursor } = await sdkv3.files.list({
+        ({ items: newItems, nextCursor } = await sdk.files.list({
           filter: { ...filter, mimeType: mimeTypes[data.mimeTypeIndex] },
           limit: limit < 1000 ? limit : 1000,
           cursor: data.nextCursor,
