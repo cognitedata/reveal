@@ -43,7 +43,7 @@
     "@cognite/reveal": "link:../viewer/dist",
     "@cognite/reveal-1.x": "npm:@cognite/reveal@1.x.x",
     "@cognite/reveal-2.x": "npm:@cognite/reveal@2.x.x",
-    "@cognite/reveal-3.x": "npm:@cognite/reveal@3.x.x",
+    "@cognite/reveal-3.x": "npm:@cognite/reveal@^3.0.0-alpha",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "@cognite/sdk-1.x": "npm:@cognite/sdk@^3.4.0",
     "@cognite/sdk-2.x": "npm:@cognite/sdk@^5.1.3",
