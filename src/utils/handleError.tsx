@@ -31,6 +31,8 @@ const generateStatusMessage = (errorCode: number): string | null => {
     case 404:
     case 403:
       return 'We could not find what you were looking for. Keep in mind that this may be due to insufficient access rights.';
+    case 409:
+      return 'External ID cannot be a duplicate. Please choose another external ID.';
     case 500:
     case 503:
       return 'Something went wrong. Please try again in a bit.';
