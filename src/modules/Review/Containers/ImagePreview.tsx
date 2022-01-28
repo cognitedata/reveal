@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { ReactText, useEffect, useState } from 'react';

@@ -14,7 +14,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { TableDataItem } from 'src/modules/Common/types';
-import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps } from '@cognite/sdk';
 import { AppDispatch } from 'src/store';
 import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
 

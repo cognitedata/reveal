@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { selectAllFilesSelected } from 'src/modules/Common/store/files/selectors';
 import { createFileState } from 'src/store/util/StateUtils';
 import { mockFileList } from 'src/__test-utils/fixtures/files';

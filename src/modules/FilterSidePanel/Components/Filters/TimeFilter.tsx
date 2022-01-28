@@ -3,7 +3,7 @@ import { Button, Title } from '@cognite/cogs.js';
 import { TimePicker } from 'antd';
 import styled from 'styled-components';
 import moment from 'moment';
-import { DateRange } from '@cognite/cdf-sdk-singleton';
+import { DateRange } from '@cognite/sdk';
 import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 
 export const timeFormat = 'hh:mm A';

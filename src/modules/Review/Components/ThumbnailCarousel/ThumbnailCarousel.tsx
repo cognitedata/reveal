@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { getIdfromUrl } from 'src/utils/tenancy';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import { Button, Icon } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 // Import Swiper styles
 import swiperStyles from 'swiper/swiper-bundle.css';
 

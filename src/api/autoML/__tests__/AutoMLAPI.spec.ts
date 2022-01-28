@@ -4,15 +4,14 @@ import {
   mockCogniteAutoMLModel,
   mockCogniteAutoMLTrainingJob,
 } from 'src/__test-utils/fixtures/automlModels';
-import { HttpResponse, v3Client } from '@cognite/cdf-sdk-singleton';
+import v3Client from '@cognite/cdf-sdk-singleton';
+import { HttpResponse } from '@cognite/sdk';
 import { AutoMLModelType } from 'src/api/autoML/types';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => ({
-  v3Client: {
-    get: jest.fn(),
-    project: 'test',
-    getBaseUrl: () => 'url',
-  },
+  get: jest.fn(),
+  project: 'test',
+  getBaseUrl: () => 'url',
 }));
 
 describe('AutoML API: /automl/list', () => {

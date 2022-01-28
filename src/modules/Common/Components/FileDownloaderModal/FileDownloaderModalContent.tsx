@@ -1,10 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import moment from 'moment';
-import {
-  FileLink,
-  IdEither,
-  v3Client as sdk,
-} from '@cognite/cdf-sdk-singleton';
+import { FileLink, IdEither } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Dropdown, Menu, Title, Button, Body, Radio } from '@cognite/cogs.js';
 import { saveAs } from 'file-saver';
 import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';

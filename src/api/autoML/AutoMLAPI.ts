@@ -1,4 +1,5 @@
-import { IdEither, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { IdEither } from '@cognite/sdk';
 import {
   AutoMLModel,
   AutoMLModelType,

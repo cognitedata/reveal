@@ -40,7 +40,7 @@ import styled from 'styled-components';
 import { Detail } from '@cognite/cogs.js';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';

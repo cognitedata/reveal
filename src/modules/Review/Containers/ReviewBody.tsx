@@ -1,4 +1,5 @@
-import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Title } from '@cognite/cogs.js';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Spin } from 'antd';
@@ -160,7 +161,8 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                 >
                   {file && (
-                    <DataExplorationProvider sdk={sdk}>
+                    // TODO(CDFUX-1190): fix type problem when sdk singleton starts consuming sdk v6
+                    <DataExplorationProvider sdk={sdk as any}>
                       <QueryClientProvider client={queryClient}>
                         <FileDetailsReview fileObj={file} />
                       </QueryClientProvider>

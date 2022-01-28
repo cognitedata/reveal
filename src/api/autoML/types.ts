@@ -1,4 +1,4 @@
-import { IdEither } from '@cognite/cdf-sdk-singleton';
+import { IdEither } from '@cognite/sdk';
 import { JobStatus } from 'src/api/types';
 
 export type AutoMLModelType = 'classification' | 'objectdetection';
