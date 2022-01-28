@@ -147,9 +147,7 @@ export function CalculationList({
           <React.Fragment key={calculation.externalId}>
             <Button
               className="run-calculation"
-              disabled={
-                calculation.latestRun?.metadata.status === 'ready' || shouldPoll
-              }
+              disabled={calculation.latestRun?.metadata.status === 'ready'}
               icon="Play"
               loading={calculation.latestRun?.metadata.status === 'running'}
               size="small"
