@@ -34,6 +34,8 @@ interface DataSetCreationProps {
   loading: boolean;
   createDataSet(dataSet: CreationDataSet): void;
   updateDataSet(dataSet: DataSet): void;
+  datasetCreated?: boolean;
+  datasetCreatedError?: boolean;
   dataSet?: DataSet;
   changesSaved: boolean;
   setChangesSaved(value: boolean): void;
@@ -44,6 +46,7 @@ interface DataSetCreationProps {
 }
 
 const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
+  const { datasetCreated, datasetCreatedError, setChangesSaved } = props;
   const { data: userData } = useUserInformation();
 
   const [selectedSection, setSelectedSection] = useState<string>('');
@@ -259,9 +262,9 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         selectedLabels !== props.dataSet.metadata.consoleLabels ||
         writeProtected !== props.dataSet.writeProtected
       ) {
-        props.setChangesSaved(false);
+        setChangesSaved(false);
       } else {
-        props.setChangesSaved(true);
+        setChangesSaved(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -293,7 +296,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         newDataSet.metadata.consoleLabels = selectedLabels;
       }
       props.updateDataSet(newDataSet);
-      props.setChangesSaved(true);
+      setChangesSaved(true);
       setSaveSections(false);
       setIsEditing(false);
       closeSectionModal();
@@ -328,10 +331,19 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         newDs.metadata.consoleLabels = selectedLabels;
       }
       props.createDataSet(newDs);
-      props.setChangesSaved(true);
-      setIsEditing(false);
     }
   };
+
+  useEffect(() => {
+    if (datasetCreated && !datasetCreatedError) {
+      setChangesSaved(true);
+      setIsEditing(false);
+    }
+  }, [datasetCreated, datasetCreatedError, setChangesSaved]);
+
+  useEffect(() => {
+    setIsEditing(true);
+  }, []);
 
   return (
     <div>
@@ -357,7 +369,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
             setDataSetDescription={setDataSetDescription}
             selectedLabels={selectedLabels}
             setSelectedLabels={setSelectedLabels}
-            setChangesSaved={props.setChangesSaved}
+            setChangesSaved={setChangesSaved}
             writeProtected={writeProtected}
             setWriteProtected={setWriteProtected}
             owners={props.owners}
@@ -450,7 +462,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           }
           closeModal={() => setSelectedSection('')}
           changesSaved={props.changesSaved}
-          setChangesSaved={props.setChangesSaved}
+          setChangesSaved={setChangesSaved}
           sourceSuggestions={props.sourceSuggestions}
           visible={selectedSection === 'Document data extraction'}
           saveSection={saveSections}
@@ -463,7 +475,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           }
           closeModal={() => setSelectedSection('')}
           changesSaved={props.changesSaved}
-          setChangesSaved={props.setChangesSaved}
+          setChangesSaved={setChangesSaved}
           visible={selectedSection === 'Transformations'}
           saveSection={saveSections}
         />
@@ -475,7 +487,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           }
           closeModal={() => setSelectedSection('')}
           changesSaved={props.changesSaved}
-          setChangesSaved={props.setChangesSaved}
+          setChangesSaved={setChangesSaved}
           visible={selectedSection === 'Documentation'}
           saveSection={saveSections}
         />
@@ -487,7 +499,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
             }
             closeModal={() => setSelectedSection('')}
             changesSaved={props.changesSaved}
-            setChangesSaved={props.setChangesSaved}
+            setChangesSaved={setChangesSaved}
             visible={selectedSection === 'Consumers'}
             saveSection={saveSections}
           />
