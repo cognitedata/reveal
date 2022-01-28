@@ -1520,10 +1520,10 @@
     skmeans "^0.11.3"
     three "0.133.0"
 
-"@cognite/reveal-3.x@npm:@cognite/reveal@3.0.0-alpha.0":
-  version "3.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.0.0-alpha.0.tgz#085b91e85c1b27d2cacc7b86e98e8b58e9e91894"
-  integrity sha512-L5kPty9HynMi15mmARqQl9XdqiZxdXgpqDhHuGae8TycXlw5Dwn1CGwJJv/30QTUMQQKEfwxLAbOQ4n7IPdMzQ==
+"@cognite/reveal-3.x@npm:@cognite/reveal@^3.0.0-alpha":
+  version "3.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.0.0-alpha.2.tgz#d604d6fa354d8dbc0e0be86c526e6caa7a71192a"
+  integrity sha512-eCp4YG7UVoo1nw+eLx5AZ9bmDLi2XXK5dv19349NwQk4+U7WYDFWtJLo0rAMBCfCrMvb5RjRIHND6ZD4iuknIg==
   dependencies:
     "@cognite/potree-core" "^1.5.1"
     "@cognite/reveal-parser-worker" "1.3.0"
