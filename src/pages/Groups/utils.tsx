@@ -40,11 +40,8 @@ const nameToAclTypeMap = {
   filepipelines: 'filePipelinesAcl',
   documentfeedback: 'documentFeedbackAcl',
   annotations: 'annotationsAcl',
-  types: 'typesAcl',
   digitaltwin: 'digitalTwinAcl',
-  generic: 'genericsAcl',
   pipelines: 'pipelinesAcl',
-  modelhosting: 'modelHostingAcl',
   analytics: 'analyticsAcl',
   functions: 'functionsAcl',
   geospatial: 'geospatialAcl',
@@ -65,7 +62,6 @@ const nameToFormattedName = {
   transformations: 'Transformations',
   extractionpipelines: 'Extraction pipelines',
   extractionruns: 'Extraction pipeline runs',
-  modelhosting: 'Model hosting',
   entitymatching: 'Entity matching',
   documentpipelines: 'Document pipelines',
   filepipelines: 'File pipelines',
@@ -90,7 +86,6 @@ const capabilityTypeGroups = [
       'seismic',
       'sequences',
       'timeseries',
-      'types',
       'templategroups',
       'templateinstances',
     ],
@@ -109,8 +104,6 @@ const capabilityTypeGroups = [
       'extractionpipelines',
       'extractionruns',
       'digitaltwin',
-      'modelhosting',
-      'generic',
       'functions',
       'transformations',
       'labels',
@@ -157,11 +150,8 @@ export const capabilityDescriptions = {
   labels:
     'With labels you as an IT manager or data engineer can create a predefined set of managed terms that you can use to annotate and group assets',
   seismic: 'Seismic is a representation of cubes of seismic traces',
-  types:
-    'Types store defined schemas, e.g. a schema for what data should be defined for a valve',
   digitaltwin:
     'Digital twin is a representation of a 3D world used in a digital twin application',
-  modelhosting: 'Model hosting lets you deploy and schedule models',
   entitymatching: 'Match resources to their corresponding entity',
   annotations: 'Edit annotations in documents',
   sessions:
@@ -172,6 +162,8 @@ export const capabilityDescriptions = {
   visionmodel:
     'Computer vision models are used to analyze and extract information from imagery data.',
 };
+
+const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
 
 export const getActionsFromCapability = (
   capability: CogniteCapability | SingleCogniteCapability
@@ -201,9 +193,6 @@ export const getCapabilityName = (capability: any): string => {
   } else if (typeof capability === 'object') {
     const acl = Object.keys(capability)[0];
     capabilityName = `${acl.replace('Acl', '')}`.toLowerCase();
-  }
-  if (capabilityName === 'generics') {
-    capabilityName = 'generic';
   }
   if (capabilityName === 'threed') {
     capabilityName = '3d';
@@ -415,4 +404,9 @@ export const hasAnyValidGroupForOIDC = (groups?: Group[]): boolean => {
         })
     )
   );
+};
+
+export const isDeprecated = (capability: SingleCogniteCapability): boolean => {
+  const capabilityName: string = Object.keys(capability)[0];
+  return !deprecatedAclTypes.includes(capabilityName);
 };
