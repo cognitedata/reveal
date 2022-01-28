@@ -8,7 +8,9 @@ import useLineReviews from 'modules/lineReviews/hooks';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 
+import getUniqueDocumentsByDiscrepancy from '../components/LineReviewViewer/getUniqueDocumentsByDiscrepancy';
 import { Discrepancy } from '../components/LineReviewViewer/LineReviewViewer';
+import mapPidAnnotationIdsToIsoAnnotationIds from '../components/LineReviewViewer/mapPidAnnotationIdsToIsoAnnotationIds';
 import { updateLineReviews } from '../modules/lineReviews/api';
 import { LineReviewStatus } from '../modules/lineReviews/types';
 
@@ -56,6 +58,7 @@ const LineReview = () => {
           type: 'discrepancy',
           startTime: new Date(),
           endTime: new Date(),
+          assetIds: [5375761618838894], // Hardcoded asset for L132.
           metadata: {},
           description: discrepancy.comment,
         }))
@@ -80,9 +83,7 @@ const LineReview = () => {
     >
       <Modal
         visible={isReportBackModalOpen}
-        onCancel={() => {
-          setIsReportBackModalOpen(false);
-        }}
+        onCancel={() => setIsReportBackModalOpen(false)}
         footer={null}
       >
         <h2>Report back</h2>
@@ -90,30 +91,72 @@ const LineReview = () => {
           You are about to send this report for further checking. The following
           discrepancies will be included in the report:
         </p>
-        <div>
-          <b>Branch line connection to 41_N757 not found in ISO</b>
-        </div>
 
-        <div>
-          MF:{' '}
-          <a //eslint-disable-line
-            onClick={() => {
-              return undefined;
-            }}
-          >
-            RBD_G0040_MF_004
-          </a>
-        </div>
-        <div>
-          ISO:{' '}
-          <a //eslint-disable-line
-            onClick={() => {
-              return undefined;
-            }}
-          >
-            G0040-L029-1
-          </a>
-        </div>
+        {discrepancies.length === 0 && (
+          <p>
+            <b>No discrepancies marked yet</b>
+          </p>
+        )}
+
+        {discrepancies.map((discrepancy) => {
+          const uniqueDiscrepancyIsos = getUniqueDocumentsByDiscrepancy(
+            lineReview.documents,
+            mapPidAnnotationIdsToIsoAnnotationIds(
+              lineReview.documents,
+              discrepancy.ids
+            )
+          ).filter((document) => document.type === 'ISO');
+          const usedDiscrepancyIsos =
+            uniqueDiscrepancyIsos.length === 0
+              ? lineReview.documents.filter(
+                  (document) => document.type === 'ISO'
+                )
+              : uniqueDiscrepancyIsos;
+          return (
+            <div key={discrepancy.id}>
+              <div>
+                <b>{discrepancy.comment}</b>
+              </div>
+
+              <div>
+                <b>MF:</b>{' '}
+                {getUniqueDocumentsByDiscrepancy(
+                  lineReview.documents,
+                  discrepancy.ids
+                )
+                  .filter((document) => document.type === 'PID')
+                  .map((document) => (
+                    <>
+                      <a //eslint-disable-line
+                        onClick={() => {
+                          return undefined;
+                        }}
+                      >
+                        {document.fileExternalId}
+                      </a>{' '}
+                    </>
+                  ))}
+              </div>
+              <div>
+                <b>ISO:</b>{' '}
+                {usedDiscrepancyIsos
+                  .filter((document) => document.type === 'ISO')
+                  .map((document) => (
+                    <>
+                      <a //eslint-disable-line
+                        onClick={() => {
+                          return undefined;
+                        }}
+                      >
+                        {document.fileExternalId}
+                      </a>{' '}
+                    </>
+                  ))}
+              </div>
+              <br />
+            </div>
+          );
+        })}
 
         <br />
         <TextInput placeholder="Comments..." style={{ width: '100%' }} />

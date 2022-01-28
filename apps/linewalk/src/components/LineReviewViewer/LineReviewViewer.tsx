@@ -3,12 +3,7 @@ import { Button } from '@cognite/cogs.js';
 import { CogniteOrnate, Drawing } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
 import { KonvaEventObject } from 'konva/lib/Node';
-import {
-  Document,
-  DocumentType,
-  LineReview,
-  Link,
-} from 'modules/lineReviews/types';
+import { Document, DocumentType, LineReview } from 'modules/lineReviews/types';
 import { useEffect, useState } from 'react';
 import layers from 'utils/z';
 
@@ -23,6 +18,7 @@ import DiscrepancyModal from './DiscrepancyModal';
 import getAnnotationsByDocument from './getAnnotationsByDocument';
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
 import getFileConnections from './getFileConnections';
+import getIsoLinkByPidAnnotationId from './getIsoLinkByPidAnnotationId';
 import IsoModal from './IsoModal';
 import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
 import ReactOrnate, {
@@ -168,20 +164,6 @@ const findBoundingBoxByPathId = (document: Document, pathId: string) => {
   );
 };
 
-const getIsoAnnotationIdByPidAnnotationId = (
-  linking: Link[],
-  pidPathId: string
-): string | undefined => {
-  const match = linking.find((link) => link.from.instanceId === pidPathId);
-
-  if (!match) {
-    console.log('Did not find element in ISO corresponding to PID');
-    return undefined;
-  }
-
-  return match.to.instanceId;
-};
-
 const flashDrawing = async (
   ornateRef: CogniteOrnate,
   drawing: Drawing,
@@ -295,16 +277,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return;
     }
 
-    const linking = documents
-      .filter(({ type }) => type === DocumentType.PID)
-      .flatMap(({ _linking }) => _linking);
-
-    const isoPathId = getIsoAnnotationIdByPidAnnotationId(
-      linking,
-      pidAnnotationId
-    );
-    if (!isoPathId) {
-      console.log('Could not find isoPathId for annotationId', pidAnnotationId);
+    const isoLink = getIsoLinkByPidAnnotationId(documents, pidAnnotationId);
+    if (!isoLink) {
+      console.log('Could not find iso link for annotationId', pidAnnotationId);
       return;
     }
 
@@ -312,8 +287,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       ({ type }) => type === DocumentType.ISO
     );
 
-    const isoDocumentIndex = isoDocuments.findIndex(({ _annotations }) =>
-      _annotations.symbolInstances.some(({ id }) => id === isoPathId)
+    const isoDocumentIndex = isoDocuments.findIndex(
+      ({ id }) => id === isoLink.to.documentId
     );
 
     if (isoDocumentIndex === -1) {
@@ -327,9 +302,15 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return;
     }
 
-    const isoBoundingBox = findBoundingBoxByPathId(isoDocument, isoPathId);
+    const isoBoundingBox = findBoundingBoxByPathId(
+      isoDocument,
+      isoLink.to.instanceId
+    );
     if (!isoBoundingBox) {
-      console.log('Could not find isoBoundingBox for isoPathId', isoPathId);
+      console.log(
+        'Could not find isoBoundingBox for isoPathId',
+        isoLink.to.instanceId
+      );
       return;
     }
 
@@ -350,7 +331,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     );
 
     const drawings: Drawing[] = isoDocument._annotations.symbolInstances
-      .filter(({ id }) => id === isoPathId)
+      .filter(({ id }) => id === isoLink.to.instanceId)
       .map((d) => {
         const mappedCoordinates = mapPathToNewCoordinateSystem(
           // TODOO: Handle multiple ISOs
@@ -396,7 +377,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     { evt }: KonvaEventObject<MouseEvent>,
     annotationId: string
   ): void => {
-    console.log('Clicked');
     if (evt.shiftKey) {
       toggleAnnotationSelection(annotationId);
       return;
