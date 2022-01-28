@@ -105,7 +105,8 @@ const getShapeByDrawing = (drawing: Drawing) => {
   }
 
   if (drawing.type === 'comment') {
-    return CommentTool.create({ ...drawing.attrs, id: drawing.id });
+    // attrs contains the id for comments
+    return CommentTool.create({ ...drawing.attrs });
   }
 
   throw new Error(`Drawing referenced unsupported shape: ${drawing.type}`);
