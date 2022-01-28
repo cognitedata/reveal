@@ -1,7 +1,7 @@
 import { CLUSTER, PROJECT } from '../../support/constants';
 
 const filename = '15_9_19_A_1997_07_25';
-describe.skip('Edit Favorites', () => {
+describe('Edit Favorites', () => {
   before(() => {
     cy.deleteAllFavorites();
 
