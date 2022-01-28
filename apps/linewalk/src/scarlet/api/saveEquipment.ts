@@ -1,5 +1,8 @@
 import { CogniteClient } from '@cognite/sdk';
 import { DataSetId, EquipmentData } from 'scarlet/types';
+import config from 'utils/config';
+
+const isDevelopment = config.env === 'development';
 
 export const saveEquipment = async (
   client: CogniteClient,
@@ -9,7 +12,14 @@ export const saveEquipment = async (
     equipment,
   }: { unitName: string; equipmentName: string; equipment: EquipmentData }
 ): Promise<boolean> => {
-  const id = [unitName, equipmentName, 'state'].join('_');
+  const fileParts = [unitName, equipmentName, 'state'];
+
+  if (isDevelopment) {
+    fileParts.unshift('dev');
+  }
+
+  const id = fileParts.join('_');
+
   try {
     await client.files.upload(
       {

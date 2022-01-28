@@ -1,14 +1,22 @@
 import { CogniteClient } from '@cognite/sdk';
 import { DataSetId } from 'scarlet/types';
+import config from 'utils/config';
+
+const isDevelopment = config.env === 'development';
 
 export const getEquipmentState = async (
   client: CogniteClient,
   { unitName, equipmentName }: { unitName: string; equipmentName: string }
 ): Promise<any> => {
+  const fileParts = [unitName, equipmentName];
+  if (isDevelopment) {
+    fileParts.unshift('dev');
+  }
+
   const file = await client.files
     .list({
       filter: {
-        externalIdPrefix: `${unitName}_${equipmentName}`,
+        externalIdPrefix: fileParts.join('_'),
         dataSetIds: [{ id: DataSetId.P66_ScarletViewState }],
       },
     })

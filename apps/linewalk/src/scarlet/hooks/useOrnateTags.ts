@@ -30,13 +30,14 @@ export const useOrnateTags = (): OrnateTag[] => {
             detection.state !== DetectionState.OMITTED
         )
         .forEach((detection) => {
-          if (
-            !visibleDataElement &&
-            dataElement.state === DataElementState.APPROVED &&
-            detection.state !== DetectionState.APPROVED
-          ) {
-            return;
-          }
+          // -TODO: enable later, should be off now for demo purpose
+          // if (
+          //   !visibleDataElement &&
+          //   dataElement.state === DataElementState.APPROVED &&
+          //   detection.state !== DetectionState.APPROVED
+          // ) {
+          //   return;
+          // }
 
           result.push({
             id: detection.id + detection.state,
