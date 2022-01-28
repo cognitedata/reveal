@@ -145,6 +145,7 @@ export const mapV2toV3WellFilter = (
 ): WellFilterV3 => {
   const filters = {
     quadrant: toPropertyFilter(wellFilter.quadrants),
+    region: toPropertyFilter(wellFilter.regions),
     block: toPropertyFilter(wellFilter.blocks),
     field: toPropertyFilter(wellFilter.fields),
     operator: toPropertyFilter(wellFilter.operators),
