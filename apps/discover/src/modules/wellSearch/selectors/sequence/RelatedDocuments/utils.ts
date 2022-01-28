@@ -1,3 +1,7 @@
+import isEmpty from 'lodash/isEmpty';
+
+import { DocumentsFilter } from '@cognite/sdk-playground';
+
 import { TableResults } from 'components/tablev3';
 import { SavedSearchContent } from 'modules/api/savedSearches';
 import {
@@ -6,7 +10,6 @@ import {
   DocumentsFacets,
   DocumentType,
 } from 'modules/documentSearch/types';
-import { DocumentConfig } from 'tenants/types';
 
 // return an numbers list of selected wellbore ids
 export const getSelectedWellboreIds = (
@@ -22,11 +25,15 @@ export const getSelectedWellboreIds = (
 export const formatAssetIdsFilter = (
   selectedWellboreIds: number[],
   v3Enabled: boolean
-): DocumentConfig => {
+): { filters: DocumentsFilter } => {
   let key = 'assetExternalIds';
 
   if (!v3Enabled) {
     key = 'assetIds';
+  }
+
+  if (isEmpty(selectedWellboreIds)) {
+    return { filters: {} };
   }
 
   return {
@@ -34,7 +41,7 @@ export const formatAssetIdsFilter = (
       [key]: {
         containsAny: selectedWellboreIds,
       },
-    } as any,
+    },
   };
 };
 

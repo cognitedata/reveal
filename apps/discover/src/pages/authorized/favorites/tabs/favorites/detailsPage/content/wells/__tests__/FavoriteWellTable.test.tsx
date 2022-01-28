@@ -1,8 +1,12 @@
 import { fireEvent, screen } from '@testing-library/react';
+import { setupServer } from 'msw/node';
 
-import { testRendererModal } from '__test-utils/renderer';
+import { getMockConfigGet } from '__mocks/getMockConfigGet';
+import { getMockWellById } from '__mocks/getMockWellById';
+import { getMockWell } from '__test-utils/fixtures/well/well';
+import { testRenderer } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT } from 'components/emptyState/constants';
-import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 import {
   FAVORITE_SET_NO_WELLS,
   REMOVE_FROM_SET_TEXT,
@@ -10,100 +14,68 @@ import {
 
 import { FavoriteWellsTable, Props } from '../FavoriteWellTable';
 
-jest.mock('react-redux', () => ({
-  useDispatch: () => jest.fn(),
-}));
-
-jest.mock('modules/wellSearch/hooks/useWellsFavoritesQuery', () => ({
-  useFavoriteWellResultQuery: jest.fn(),
-}));
-
-jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
-  useWellsByIds: jest.fn(),
-}));
+const mockServer = setupServer(getMockWellById(), getMockConfigGet());
 
 describe('Favorite Wellbore table', () => {
-  const defaultTestInit = (viewProps?: Props) =>
-    testRendererModal(FavoriteWellsTable, undefined, viewProps);
+  const defaultTestInit = (viewProps?: Props, store = getMockedStore()) =>
+    testRenderer(FavoriteWellsTable, store, viewProps);
 
   afterEach(async () => jest.clearAllMocks());
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
 
   it('should render table correctly', async () => {
-    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
-      data: [
-        {
-          matchingId: '308f0eb7-f40c-4df6-bc6e-303b8c9f97f0',
-          name: 'Test well',
-          description: 'Well F-1',
-          field: 'SLEIPNER',
-          operator: 'Statoil Norway',
-          id: '12',
-        },
-      ],
-      isLoading: false,
-    }));
-
+    const well = getMockWell();
     await defaultTestInit({
-      wells: {},
+      wells: {
+        'test-well-1': [],
+      },
       removeWell: jest.fn(),
       favoriteId: '1',
     });
-    expect(screen.getByText('Test well')).toBeInTheDocument();
-    expect(screen.getByText('Statoil Norway')).toBeInTheDocument();
-    expect(screen.getByText('SLEIPNER')).toBeInTheDocument();
+
+    expect(screen.getAllByText(LOADING_TEXT).length).toEqual(2);
+    // wait for everything to finish loading
+    expect(await screen.findByText(well.name)).toBeInTheDocument();
+    expect(screen.queryAllByText(LOADING_TEXT).length).toEqual(0);
+
+    expect(screen.getByText(well.operator || '-error-')).toBeInTheDocument();
+    expect(screen.getByText(well.field || '-error-')).toBeInTheDocument();
     expect(screen.getByText('View')).toBeInTheDocument();
     expect(screen.getByTestId('menu-button')).toBeInTheDocument();
   });
 
   it('should render the no well message', async () => {
-    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
-      data: [],
-      isLoading: false,
-    }));
-
     await defaultTestInit({
       wells: {},
       removeWell: jest.fn(),
       favoriteId: '1',
     });
 
-    expect(screen.getByText(FAVORITE_SET_NO_WELLS)).toBeInTheDocument();
+    expect(await screen.findByText(FAVORITE_SET_NO_WELLS)).toBeInTheDocument();
   });
 
   it('should render loading message when `isLoading` is true and no data', async () => {
-    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
-      data: [{}],
-      isLoading: true,
-    }));
-
     await defaultTestInit({
       wells: {},
       removeWell: jest.fn(),
       favoriteId: '1',
     });
-    expect(screen.getAllByText(LOADING_TEXT).length).toEqual(2);
+    expect(await screen.findByText(LOADING_TEXT)).toBeInTheDocument();
+    expect(screen.getAllByText(LOADING_TEXT).length).toEqual(1);
   });
 
-  it('should render remove button when hover the more option button', async () => {
-    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
-      data: [
-        {
-          matchingId: '308f0eb7-f40c-4df6-bc6e-303b8c9f97f0',
-          name: 'Test well',
-          description: 'Well F-1',
-          field: 'SLEIPNER',
-          operator: 'Statoil Norway',
-          id: '12',
-        },
-      ],
-      isLoading: false,
-    }));
-
+  it('should render remove button when hovering over the more options button', async () => {
     await defaultTestInit({
-      wells: {},
+      wells: {
+        'test-well-1': [],
+      },
       removeWell: jest.fn(),
       favoriteId: '1',
     });
+
+    // wait for everything to finish loading
+    expect(await screen.findByText(getMockWell().name)).toBeInTheDocument();
 
     fireEvent.mouseEnter(screen.getByTestId('menu-button'), {
       bubbles: true,

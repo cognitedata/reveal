@@ -9,6 +9,8 @@ import {
   getWellById,
   getWellItemsByFilter,
 } from 'modules/wellSearch/sdk';
+import { mapV3ToV2Well } from 'modules/wellSearch/sdk/utils';
+import { getWellsByMatchingIds } from 'modules/wellSearch/sdk/v3';
 import { CommonWellFilter, Well, WellId } from 'modules/wellSearch/types';
 import { normalizeWells } from 'modules/wellSearch/utils/wells';
 
@@ -29,6 +31,12 @@ export function getAllByFilters(
 
 export function getWellsByWellIds(wellIds: WellId[]) {
   return Promise.all(wellIds.map(getWellById)).then(normalizeWells);
+}
+
+export function getWellsByWellIdsv3(wellIds: WellId[]) {
+  return getWellsByMatchingIds(wellIds).then((wells) =>
+    normalizeWells(wells.map(mapV3ToV2Well))
+  );
 }
 
 export async function getWellsWithWellbores(wells: Well[]) {

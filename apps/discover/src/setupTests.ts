@@ -7,17 +7,26 @@ import { setClient } from 'utils/getCogniteSDKClient';
 import * as mocks from '@cognite/metrics/dist/mocks';
 
 import { MockedCogniteClient } from '__mocks/MockedCogniteClient';
-import { MockedSDKWells } from '__mocks/MockedSDKWells';
 import { configureCacheMock } from '__test-utils/mockCache';
 import { configureLocalStorageMock } from '__test-utils/mockLocalstorage';
 import { SIDECAR } from 'constants/app';
 import { authenticateDocumentSDK } from 'modules/documentSearch/sdk';
+import { setEnableWellSDKV3 } from 'modules/wellSearch/sdk';
+import { authenticateWellSDK } from 'modules/wellSearch/sdk/v3';
 
 export const TEST_PROJECT = 'testProject';
 
 authenticateDocumentSDK(
   'discover-test',
   `https://${SIDECAR.cdfCluster}.cognitedata.com`,
+  TEST_PROJECT,
+  'test-token'
+);
+
+setEnableWellSDKV3();
+authenticateWellSDK(
+  SIDECAR.applicationId,
+  SIDECAR.cdfApiBaseUrl,
   TEST_PROJECT,
   'test-token'
 );
@@ -117,12 +126,6 @@ jest.mock('@cognite/react-container', () => {
     Authorization: 'Bearer fake-token',
   });
   return { ...rest, getTenantInfo, getCogniteSDKClient, getAuthHeaders };
-});
-
-jest.mock('@cognite/sdk-wells-v2', () => {
-  const { ...rest } = jest.requireActual('@cognite/sdk-wells-v2');
-  const createWellsClient = () => new MockedSDKWells();
-  return { ...rest, createWellsClient };
 });
 
 jest.mock('utils/log', () => {

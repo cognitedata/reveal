@@ -63,8 +63,11 @@ const useWellboresRelatedDocumentsCategories =
       () =>
         documentSearchService.getCategoriesByAssetIds(
           wellboreAssetIds,
-          isV3Enabled
-        )
+          !!isV3Enabled
+        ),
+      {
+        enabled: isV3Enabled !== undefined,
+      }
     );
   };
 

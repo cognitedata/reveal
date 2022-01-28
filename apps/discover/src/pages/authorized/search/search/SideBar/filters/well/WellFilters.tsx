@@ -83,8 +83,6 @@ export const WellsFilter = () => {
       () => (
         <>
           {filterConfigs.map((filterConfig) => {
-            // console.log('filterConfig', filterConfig);
-
             return (
               <CommonFilter
                 key={filterConfig.id}

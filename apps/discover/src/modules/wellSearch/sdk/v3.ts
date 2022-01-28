@@ -18,7 +18,7 @@ export const authenticateWellSDK = (
 ) => {
   client = createWellsClient(appId, baseUrl);
 
-  client.loginWithToken({
+  return client.loginWithToken({
     project,
     accessToken,
   });
@@ -33,5 +33,17 @@ export const getWellByMatchingId = async (id: WellId) => {
     client.wells.retrieveMultiple(
       toIdentifierItems([toIdentifier(id)])
     ) as Promise<WellItems>
-  ).then((response) => response.items[0]);
+  ).then((response) => {
+    return response.items[0];
+  });
+};
+
+export const getWellsByMatchingIds = async (ids: WellId[]) => {
+  return (
+    client.wells.retrieveMultiple(
+      toIdentifierItems(ids.map((id) => toIdentifier(id)))
+    ) as Promise<WellItems>
+  ).then((response) => {
+    return response.items;
+  });
 };

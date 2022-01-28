@@ -1,6 +1,7 @@
 import { Row } from 'react-table';
 
 import {
+  Document,
   DocumentsAggregate,
   DocumentsAggregatesResponse as DocumentsAggregatesSDKResponse,
   DocumentsFilter,
@@ -72,6 +73,8 @@ export interface DocumentMetadata {
 export interface DocumentHighlight {
   content: string[];
 }
+
+export type DocumentApiResponseItems = { item: Document }[];
 
 export interface DocumentType {
   // data state

@@ -1,7 +1,10 @@
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
+import { DocumentsAggregatesResponse } from '@cognite/sdk-playground';
+
 import { MSWRequest } from '__test-utils/types';
+import { DocumentApiResponseItems } from 'modules/documentSearch/types';
 
 import {
   getMockAPIResponse,
@@ -9,7 +12,8 @@ import {
 } from '../__test-utils/fixtures/document';
 import { SIDECAR } from '../constants/app';
 
-const responseData = getMockAPIResponse([getMockApiResultItem()]);
+const responseData: DocumentsAggregatesResponse<DocumentApiResponseItems> =
+  getMockAPIResponse([{ item: getMockApiResultItem() }]);
 
 export const getMockDocumentSearch = (): MSWRequest => {
   const url = `https://${SIDECAR.cdfCluster}.cognitedata.com/api/playground/projects/${TEST_PROJECT}/documents/search`;

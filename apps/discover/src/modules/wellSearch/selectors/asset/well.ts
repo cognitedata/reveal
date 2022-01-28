@@ -51,7 +51,7 @@ export const useSelectedWellsForFavorites = () => {
 export const useSelectedWellIds = () => {
   const enabledWellSDKV3 = useEnabledWellSdkV3();
   return useSelector((state) =>
-    selectedWellIdsSelector(state, enabledWellSDKV3)
+    selectedWellIdsSelector(state, !!enabledWellSDKV3)
   );
 };
 

@@ -75,6 +75,7 @@ export const WELL_QUERY_KEY = {
   WELLBORES: [WELLS, 'wellbores'],
   FAVORITE: [WELLS, 'favoriteWells'],
   FILTER_OPTIONS: [WELLS, 'filterOptions'],
+  WELLS_ONE: [WELLS, 'wells'],
   WELLS_CACHE: [WELLS, 'wells', 'cache'],
   CASINGS: [WELLS, 'casings'],
   CASINGS_CACHE: [WELLS, 'casings', 'cache'],

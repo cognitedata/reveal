@@ -9,6 +9,7 @@ import {
   DocumentMetadata,
   DocumentResultFacets,
   DocumentsFacets,
+  DocumentApiResponseItems,
 } from 'modules/documentSearch/types';
 
 import { getMockGeometry } from './geometry';
@@ -114,9 +115,9 @@ export const getMockFileInfo = (extras?: Partial<FileInfo>): FileInfo => ({
 });
 
 export const getMockAPIResponse = (
-  items: Document[] = [],
-  aggregates: DocumentsAggregatesResponse<Document[]>['aggregates'] = []
-): DocumentsAggregatesResponse<Document[]> => ({
+  items: DocumentApiResponseItems = [],
+  aggregates: DocumentsAggregatesResponse<DocumentApiResponseItems>['aggregates'] = []
+): DocumentsAggregatesResponse<DocumentApiResponseItems> => ({
   items: items || [],
   aggregates: [
     {

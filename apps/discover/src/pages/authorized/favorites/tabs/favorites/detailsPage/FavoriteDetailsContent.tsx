@@ -22,7 +22,7 @@ import {
 } from 'modules/documentPreview/utils';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
 import { FavoriteDocumentData } from 'modules/favorite/types';
-import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
+import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';
 import {
   DOWNLOAD_MESSAGE,
   DOWNLOADING,
@@ -61,10 +61,9 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
 
   const [currentFetchPage, setCurrentFetchPage] = useState(0);
 
-  const { isLoading: isWellsLoading, isIdle: isWellsIdle } =
-    useFavoriteWellResultQuery(
-      content?.wells ? Object.keys(content.wells) : []
-    );
+  const { isLoading: isWellsLoading, isIdle: isWellsIdle } = useWellsCacheQuery(
+    content?.wells ? Object.keys(content.wells) : []
+  );
 
   const [documentId, setDocumentId] = useState<string | undefined>(undefined);
   const { mutateAsync: mutateFavoriteContent } = useFavoriteUpdateContent();
@@ -151,6 +150,11 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
     });
   };
 
+  const showLoadMore =
+    !(isDocumentsLoading || isDocumentsIdle) &&
+    content &&
+    documents.length < content.documentIds.length;
+
   return (
     <>
       <PageContainer>
@@ -204,19 +208,17 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
                     isLoading={isDocumentsIdle || isDocumentsLoading}
                   />
 
-                  {!(isDocumentsLoading || isDocumentsIdle) &&
-                    content &&
-                    documents.length < content.documentIds.length && (
-                      <FlexAlignJustifyContent>
-                        <LoadMoreButton
-                          loading={isFetchingNextPage}
-                          onClick={() => {
-                            fetchNextPage({ pageParam: currentFetchPage + 1 });
-                            setCurrentFetchPage((prevState) => prevState + 1);
-                          }}
-                        />
-                      </FlexAlignJustifyContent>
-                    )}
+                  {showLoadMore && (
+                    <FlexAlignJustifyContent>
+                      <LoadMoreButton
+                        loading={isFetchingNextPage}
+                        onClick={() => {
+                          fetchNextPage({ pageParam: currentFetchPage + 1 });
+                          setCurrentFetchPage((prevState) => prevState + 1);
+                        }}
+                      />
+                    </FlexAlignJustifyContent>
+                  )}
                 </>
               )}
             />
