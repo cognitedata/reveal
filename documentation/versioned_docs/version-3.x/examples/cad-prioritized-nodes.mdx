@@ -4,7 +4,7 @@ title: Prioritize nodes for loading
 describe: Reveal may be instructed to treat specific nodes as "prioritized" with regards to geometry streaming.
 ---
 
-import { DemoWrapper } from '@site/docs/components/DemoWrapper';
+import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWrapper';
 
 A developer may assign nodes of a model as "prioritized" in relation to geometry loading.
 By giving nodes a "prioritization weight", a developer can influence Reveal to load, or keep loaded, certain parts of a model when it would otherwise discard them in favor of e.g. geometry that is closer to the camera. Note that assigning prioritization weights to nodes does not guarantee that they will be loaded at all times; the loader will still account for the rendering budget.

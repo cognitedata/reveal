@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import React, { useEffect } from 'react';
-import { DemoProps } from '@site/docs/components/DemoProps';
+import { DemoProps } from '@site/versioned_docs/version-2.x/components/DemoProps';
 import '@google/model-viewer';
 import { ItemsResponse } from '@cognite/sdk-2.x';
 
