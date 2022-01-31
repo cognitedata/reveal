@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import React, { ReactElement, useEffect, useMemo } from 'react';
 import { ResultData } from 'src/modules/Common/types';
-import { setLoadingAnnotations } from 'src/modules/Explorer/store/explorerSlice';
+import { setLoadingAnnotations } from 'src/modules/Explorer/store/slice';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 export function AnnotationLoader(props: {

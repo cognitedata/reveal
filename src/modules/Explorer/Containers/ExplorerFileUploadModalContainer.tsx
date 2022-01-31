@@ -2,7 +2,7 @@ import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal
 import {
   addExplorerUploadedFileId,
   setExplorerFileUploadModalVisibility,
-} from 'src/modules/Explorer/store/explorerSlice';
+} from 'src/modules/Explorer/store/slice';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';

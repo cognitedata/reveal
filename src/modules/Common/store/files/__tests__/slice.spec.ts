@@ -5,22 +5,13 @@ import reducer, {
   setFileSelectState,
 } from 'src/modules/Common/store/files/slice';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { FileInfo } from '@cognite/sdk';
-import { createFileState } from 'src/store/util/StateUtils';
+import {
+  createFileState,
+  VisionFilesToFileState,
+} from 'src/store/util/StateUtils';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 
 describe('Test files reducer', () => {
-  const VisionFilesToFileState = (visionFileList: FileInfo[]) =>
-    Object.assign(
-      {},
-      ...visionFileList.map((visionFile: FileInfo) => {
-        const fileId = visionFile.id.toString();
-        return {
-          [fileId]: createFileState(visionFile),
-        };
-      })
-    );
-
   test('should return the initial state', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(initialState);
   });

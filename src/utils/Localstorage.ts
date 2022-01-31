@@ -1,7 +1,5 @@
-import {
-  explorerReducerInitialState,
-  ExplorerReducerState,
-} from 'src/modules/Explorer/store/explorerSlice';
+import { ExplorerState } from 'src/modules/Explorer/types';
+import { explorerReducerInitialState } from 'src/modules/Explorer/store/slice';
 import {
   annotationLabelReducerInitialState,
   AnnotationLabelReducerState,
@@ -64,7 +62,7 @@ export type OfflineState = {
   >;
   reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
   explorerSlice: Pick<
-    ExplorerReducerState,
+    ExplorerState,
     'filter' | 'query' | 'sortMeta' | 'focusedFileId'
   >;
 };

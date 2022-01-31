@@ -11,11 +11,11 @@ import { ViewMode } from 'src/modules/Common/types';
 import { RootState } from 'src/store/rootReducer';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import {
-  selectExplorerSelectedFileIdsInSortedOrder,
   setCurrentView,
   setExplorerFileUploadModalVisibility,
   setExplorerQueryString,
-} from 'src/modules/Explorer/store/explorerSlice';
+} from 'src/modules/Explorer/store/slice';
+import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/selectors';
 import {
   getLink,
   getParamLink,

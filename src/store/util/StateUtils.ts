@@ -15,6 +15,17 @@ export const createFileState = (file: FileInfo): VisionFile => {
   };
 };
 
+export const VisionFilesToFileState = (visionFileList: FileInfo[]) =>
+  Object.assign(
+    {},
+    ...visionFileList.map((visionFile: FileInfo) => {
+      const fileId = visionFile.id.toString();
+      return {
+        [fileId]: createFileState(visionFile),
+      };
+    })
+  );
+
 // convert from state helper functions
 
 export const createFileInfo = (file: VisionFile): FileInfo => {
