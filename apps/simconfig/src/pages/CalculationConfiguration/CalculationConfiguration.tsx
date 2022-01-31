@@ -11,7 +11,9 @@ import type {
   AggregateType,
   CalculationTemplate,
   CalculationType,
+  InputTimeSeries,
   LengthUnit,
+  TimeSeries,
 } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useGetModelCalculationQuery,
@@ -86,6 +88,10 @@ export function CalculationConfiguration() {
 
   const [upsertCalculation] = useUpsertCalculationMutation();
 
+  const isEditing = !!modelCalculation?.configuration;
+  const initialValues =
+    modelCalculation?.configuration ?? configurationTemplate;
+
   if (
     isFetchingModelFile ||
     isFetchingConfigurationTemplate ||
@@ -94,7 +100,7 @@ export function CalculationConfiguration() {
     return <Skeleton.List lines={5} />;
   }
 
-  if (!modelFile || !configurationTemplate) {
+  if (!modelFile || !configurationTemplate || !initialValues) {
     return null;
   }
 
@@ -107,7 +113,9 @@ export function CalculationConfiguration() {
 
   const { dataSet: dataSetId } = simulatorConnector;
 
-  const isEditing = !!modelCalculation?.configuration;
+  const calculationTemplateSchema = getCalculationTemplateSchema({
+    getInputTimeSeries: getInputTimeSeries(initialValues.inputTimeSeries),
+  });
 
   return (
     <CalculationConfigurationContainer>
@@ -124,8 +132,10 @@ export function CalculationConfiguration() {
         </Link>
       </h2>
       <Formik
-        initialValues={modelCalculation?.configuration ?? configurationTemplate}
-        validationSchema={CalculationTemplateSchema}
+        initialValues={initialValues}
+        validateOnChange={false}
+        validationSchema={calculationTemplateSchema}
+        validateOnBlur
         onSubmit={async (values) => {
           try {
             await upsertCalculation({
@@ -144,11 +154,18 @@ export function CalculationConfiguration() {
           }
         }}
       >
-        {({ handleSubmit, isValid }) => (
+        {({ handleSubmit, isValid, values, setValues }) => (
           <Form onSubmit={handleSubmit}>
             <Wizard
               valid={isValid}
               animated
+              onChangeStep={() => {
+                const ret = calculationTemplateSchema.cast(
+                  values
+                ) as CalculationTemplate;
+                setValues(ret);
+                return true;
+              }}
               onComplete={() => {
                 handleSubmit();
               }}
@@ -175,10 +192,10 @@ export function CalculationConfiguration() {
                 <InputStep isEditing={isEditing} />
               </Wizard.Step>
               <Wizard.Step icon="OutputData" key="output" title="Outputs">
-                <OutputStep />
+                <OutputStep isEditing={isEditing} />
               </Wizard.Step>
               <Wizard.Step icon="Checkmark" key="summary" title="Summary">
-                <YupValidationErrors schema={CalculationTemplateSchema} />
+                <YupValidationErrors schema={calculationTemplateSchema} />
                 <SummaryStep />
               </Wizard.Step>
             </Wizard>
@@ -212,17 +229,14 @@ function YupValidationErrors({ schema }: YupValidationErrorsProps) {
       <ValidationErrorContainer>
         <h3>Form validation failed</h3>
         <p>Please correct the following errors before submitting:</p>
-        <dl>
-          {inner.map(({ path, message, params }) => (
-            <React.Fragment key={path}>
-              <dt>
-                <Icon type="InputData" />
-                {(params as { spec?: { label?: string } }).spec?.label ?? path}
-              </dt>
-              <dd>{message}</dd>
-            </React.Fragment>
+        <ul>
+          {inner.map(({ path, message }) => (
+            <li key={path}>
+              <Icon type="WarningTriangle" />
+              {message}
+            </li>
           ))}
-        </dl>
+        </ul>
       </ValidationErrorContainer>
     );
   }
@@ -236,17 +250,13 @@ const ValidationErrorContainer = styled.section`
   h3 {
     color: var(--cogs-text-status-small--danger);
   }
-  dl {
-    margin-left: 12px;
+  ul {
+    list-style: none;
   }
-  dt {
-    display: inline-flex;
+  li {
+    display: flex;
     align-items: center;
-    font-weight: bold;
-    gap: 8px;
-  }
-  dd {
-    margin-left: 24px;
+    column-gap: 8px;
   }
 `;
 
@@ -274,84 +284,181 @@ type PresetCalculationTemplateFields =
   | 'unitSystem'
   | 'userEmail';
 
-const CalculationTemplateSchema: ObjectSchema<
-  Omit<CalculationTemplate, PresetCalculationTemplateFields>
-> = Yup.object({
-  schedule: Yup.object().when(
-    'dataSampling.validationWindow',
-    ([validationWindow]: number[]) =>
-      Yup.object({
-        enabled: Yup.boolean().defined(),
-        start: Yup.number().defined(),
-        repeat: Yup.string()
-          .label('Schedule repeat')
-          .defined()
-          .test(
-            'less-than-validation-window',
-            `Must be less than validation window (${validationWindow} minutes)`,
-            (value) =>
-              !!(value && getScheduleRepeat(value).minutes <= validationWindow)
-          )
-          .test(
-            'greater-than-15-minutes',
-            'Must be more frequent than 15 minutes',
-            (value) => !!(value && getScheduleRepeat(value).minutes >= 15)
-          ),
-      }).defined()
-  ),
-  dataSampling: Yup.object({
-    validationWindow: Yup.number().defined().label('Validation window').min(15),
-    samplingWindow: Yup.number()
-      .defined()
-      .label('Sampling window')
-      .lessThan(
-        Yup.ref('validationWindow'),
-        'Must be less than validation window'
-      )
-      .min(0),
-    granularity: Yup.number().defined().label('Granularity').min(1),
-  }).defined(),
-  logicalCheck: Yup.object({
-    enabled: Yup.boolean().defined(),
-    externalId: Yup.string().defined().label('Logical check time series'),
-    aggregateType: Yup.string<AggregateType>(),
-    check: Yup.string<'eq' | 'ge' | 'gt' | 'le' | 'lt' | 'ne'>(),
-    value: Yup.number().label('Logical check value'),
-  }).defined(),
-  steadyStateDetection: Yup.object({
-    enabled: Yup.boolean().defined(),
-    externalId: Yup.string()
-      .defined()
-      .label('Steady state detection time series'),
-    aggregateType: Yup.string<AggregateType>(),
-    minSectionSize: Yup.number()
-      .defined()
-      .label('Min. section size')
-      .moreThan(0),
-    varThreshold: Yup.number().defined().label('Var threshold').min(0),
-    slopeThreshold: Yup.number().defined().label('Slope threshold').lessThan(0),
-  }).defined(),
-  rootFindingSettings: Yup.object({
-    mainSolution: Yup.string<'max' | 'min'>(),
-    rootTolerance: Yup.number().label('Root tolerance').moreThan(0),
-    bracket: Yup.object({
-      lowerBound: Yup.number().label('Lower bound').min(0),
-      upperBound: Yup.number()
-        .label('Upper bound')
-        .moreThan(Yup.ref('lowerBound')),
+const getInputTimeSeries =
+  (validTimeSeries: InputTimeSeries[] = []) =>
+  (values: CalculationTemplate) => {
+    if (values.calculationType !== 'VLP' && values.calculationType !== 'IPR') {
+      return values.inputTimeSeries;
+    }
+
+    const isEstimateBHPEnabled = values.estimateBHP.enabled;
+    const isGradientTraverse = values.estimateBHP.method === 'GradientTraverse';
+    const isLiftCurveGaugeBhp =
+      values.estimateBHP.method === 'LiftCurveGaugeBhp';
+    const isLiftCurveRate = values.estimateBHP.method === 'LiftCurveRate';
+
+    const isInputTimeSeriesEnabled: Partial<
+      Record<CalculationType, Partial<Record<TimeSeries['type'], boolean>>>
+    > = {
+      VLP: {
+        BHP: !isEstimateBHPEnabled,
+        BHPg:
+          isEstimateBHPEnabled && (isGradientTraverse || isLiftCurveGaugeBhp),
+        GasRate: isEstimateBHPEnabled && isLiftCurveRate,
+      },
+      IPR: {
+        BHP: !isEstimateBHPEnabled,
+        BHPg:
+          isEstimateBHPEnabled && (isGradientTraverse || isLiftCurveGaugeBhp),
+        GasRate: isEstimateBHPEnabled && isLiftCurveRate,
+        THP: isEstimateBHPEnabled && (isLiftCurveGaugeBhp || isLiftCurveRate),
+        THT: isEstimateBHPEnabled && (isLiftCurveGaugeBhp || isLiftCurveRate),
+      },
+    };
+
+    return validTimeSeries.reduce<InputTimeSeries[]>(
+      (filteredInputTimeSeries, inputTimeSeries) => {
+        // Create a new input time series array - ensure all required time
+        // series fields are present by using the initial values (which
+        // includes all valid input time series for this calculation) as
+        // fallback entries
+        const { type } = inputTimeSeries;
+        const isEnabled =
+          isInputTimeSeriesEnabled[values.calculationType]?.[type];
+        if (isEnabled !== undefined && !isEnabled) {
+          return filteredInputTimeSeries;
+        }
+        return [
+          ...filteredInputTimeSeries,
+          values.inputTimeSeries.find(
+            (existingTimeSeries) => existingTimeSeries.type === type
+          ) ?? inputTimeSeries,
+        ];
+      },
+      []
+    );
+  };
+
+const getCalculationTemplateSchema = ({
+  getInputTimeSeries,
+}: {
+  getInputTimeSeries?: (values: CalculationTemplate) => InputTimeSeries[];
+}): ObjectSchema<Omit<CalculationTemplate, PresetCalculationTemplateFields>> =>
+  Yup.object({
+    schedule: Yup.object().when(
+      'dataSampling.validationWindow',
+      ([validationWindow]: number[]) =>
+        Yup.object({
+          enabled: Yup.boolean().defined(),
+          start: Yup.number().defined(),
+          repeat: Yup.string()
+            .label('Schedule interval')
+            .defined()
+            .test(
+              'less-than-validation-window',
+              `Schedule interval must be less than validation window (${validationWindow} minutes)`,
+              (value) =>
+                !!(
+                  value && getScheduleRepeat(value).minutes <= validationWindow
+                )
+            )
+            .test(
+              'greater-than-15-minutes',
+              'Schedule interval must be more frequent than 15 minutes',
+              (value) => !!(value && getScheduleRepeat(value).minutes >= 15)
+            ),
+        }).defined()
+    ),
+    dataSampling: Yup.object({
+      validationWindow: Yup.number()
+        .defined()
+        .label('Validation window')
+        .min(15),
+      samplingWindow: Yup.number()
+        .defined()
+        .label('Sampling window')
+        .lessThan(
+          Yup.ref('validationWindow'),
+          'Sampling window must be less than validation window'
+        )
+        .min(0),
+      granularity: Yup.number().defined().label('Granularity').min(1),
+    }).defined(),
+    logicalCheck: Yup.object({
+      enabled: Yup.boolean().defined(),
+      externalId: Yup.string()
+        .when('enabled', { is: true, then: (schema) => schema.required() })
+        .ensure()
+        .label('Logical check time series'),
+      aggregateType: Yup.string<AggregateType>()
+        .ensure()
+        .when('enabled', {
+          is: true,
+          then: (schema) => schema.required(),
+        })
+        .label('Logical check sampling method'),
+      check: Yup.string<'eq' | 'ge' | 'gt' | 'le' | 'lt' | 'ne'>()
+        .ensure()
+        .when('enabled', { is: true, then: (schema) => schema.required() })
+        .label('Logical check'),
+      value: Yup.number()
+        .default(0)
+        .when('enabled', { is: true, then: (schema) => schema.required() })
+        .label('Logical check value'),
     }),
-  }),
-  estimateBHP: Yup.object({
-    enabled: Yup.boolean(),
-    method: Yup.string<
-      'GradientTraverse' | 'LiftCurveGaugeBhp' | 'LiftCurveRate' | 'None'
-    >(),
-    gaugeDepth: Yup.object({
-      value: Yup.number().label('Gauge depth').min(0),
-      unit: Yup.string<LengthUnit>(),
-      unitType: Yup.string<'Length'>(),
+    steadyStateDetection: Yup.object({
+      enabled: Yup.boolean().defined(),
+      externalId: Yup.string()
+        .when('enabled', { is: true, then: (schema) => schema.required() })
+        .ensure()
+        .label('Steady state detection time series'),
+      aggregateType: Yup.string<AggregateType>()
+        .when('enabled', {
+          is: true,
+          then: (schema) => schema.required(),
+        })
+        .ensure()
+        .label('Steady state detection sampling method'),
+      minSectionSize: Yup.number()
+        .when('enabled', { is: true, then: (schema) => schema.required() })
+        .defined()
+        .label('Min. section size')
+        .moreThan(0),
+      varThreshold: Yup.number()
+        .when('enabled', { is: true, then: (schema) => schema.required() })
+        .defined()
+        .label('Var threshold')
+        .min(0),
+      slopeThreshold: Yup.number()
+        .when('enabled', { is: true, then: (schema) => schema.required() })
+        .defined()
+        .label('Slope threshold')
+        .lessThan(0),
+    }).defined(),
+    rootFindingSettings: Yup.object({
+      mainSolution: Yup.string<'max' | 'min'>(),
+      rootTolerance: Yup.number().label('Root tolerance').moreThan(0),
+      bracket: Yup.object({
+        lowerBound: Yup.number().label('Lower bound').min(0),
+        upperBound: Yup.number()
+          .label('Upper bound')
+          .moreThan(Yup.ref('lowerBound')),
+      }),
     }),
-  }),
-  inputTimeSeries: Yup.array().defined(),
-  outputTimeSeries: Yup.array().defined(),
-});
+    estimateBHP: Yup.object({
+      enabled: Yup.boolean(),
+      method: Yup.string<
+        'GradientTraverse' | 'LiftCurveGaugeBhp' | 'LiftCurveRate' | 'None'
+      >(),
+      gaugeDepth: Yup.object({
+        value: Yup.number().label('Gauge depth').min(0),
+        unit: Yup.string<LengthUnit>(),
+        unitType: Yup.string<'Length'>(),
+      }),
+    }),
+    inputTimeSeries: Yup.array().ensure().defined(),
+    outputTimeSeries: Yup.array().ensure().defined(),
+  }).transform((values: CalculationTemplate) => ({
+    ...values,
+    inputTimeSeries: getInputTimeSeries?.(values),
+  }));

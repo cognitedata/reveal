@@ -17,9 +17,11 @@ import {
   StyledInput,
 } from 'components/forms/elements';
 
+import type { StepProps } from '../types';
+
 import type { AppLocationGenerics } from 'routes';
 
-export function OutputStep() {
+export function OutputStep({ isEditing }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();
   const {
     data: { definitions },
@@ -86,6 +88,7 @@ export function OutputStep() {
                 <div className="title">Unit</div>
                 <Field
                   as={Select}
+                  isDisabled={isEditing}
                   name={`outputTimeSeries.${index}.unit`}
                   options={unitTypeOptions[unitType]}
                   value={unitTypeOptions[unitType].find(

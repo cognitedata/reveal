@@ -1,9 +1,11 @@
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Input, SegmentedControl } from '@cognite/cogs.js';
+import { Input, TextInput } from '@cognite/cogs.js';
 
 import { getNodeFromPath } from 'utils/formUtils';
+
+import { SegmentedControl } from './controls/SegmentedControl';
 
 export const FormHeader = styled.h3`
   display: flex;
@@ -20,7 +22,8 @@ export const FormContainer = styled.div`
   row-gap: 12px;
 `;
 
-export const NumberInput = styled(Input)`
+export const NumberInput = styled(TextInput)`
+  width: ${(props) => props.width ?? 100}px;
   .title:empty {
     display: none;
   }
@@ -108,7 +111,7 @@ export function NumberField({
   ...props
 }: React.InputHTMLAttributes<unknown> & {
   label?: (value: number) => JSX.Element | string;
-  setValue?: (value: number) => void;
+  setValue?: (value: string) => void;
   error?: string;
 }) {
   const { errors, values, setFieldValue } =
@@ -134,28 +137,19 @@ export function NumberField({
         }
       : undefined;
 
-  const numberValue =
-    typeof value === 'string' ? parseFloat(value || '0') : value;
-
   return (
     <Field
       as={NumberInput}
       error={errorText}
       name={name}
-      setValue={(value: number) => {
-        if (setValue) {
-          setValue(value);
-        } else {
-          setFieldValue(name, value);
-        }
-      }}
+      step={props.step ?? 'any'}
       // XXX Cogs.js hack to ensure input is wrapped in container element
       // eslint-disable-next-line react/jsx-no-useless-fragment
       title={title ?? <></>}
       type="number"
-      value={numberValue}
+      value={value}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = +event.currentTarget.value;
+        const { value } = event.currentTarget;
         if (setValue) {
           setValue(value);
         } else {
@@ -185,6 +179,7 @@ export function TimeSeriesField({
   const externalIdValue = getNodeFromPath(values, externalIdField);
   const aggregateTypeValue = getNodeFromPath(values, aggregateTypeField);
   const externalIdErrorText = getNodeFromPath(errors, externalIdField);
+  const aggregateTypeErrorText = getNodeFromPath(errors, aggregateTypeField);
 
   if (
     typeof externalIdValue !== 'string' ||
@@ -216,27 +211,20 @@ export function TimeSeriesField({
         <div className="title">Sampling method</div>
         <SegmentedControl
           currentKey={aggregateTypeValue}
+          disabled={aggregateTypeDisabled}
+          error={aggregateTypeErrorText as string}
           fullWidth
           onButtonClicked={(value: string) => {
             setFieldValue(aggregateTypeField, value);
           }}
         >
-          <SegmentedControl.Button
-            disabled={aggregateTypeDisabled}
-            key="average"
-          >
+          <SegmentedControl.Button key="average">
             Average
           </SegmentedControl.Button>
-          <SegmentedControl.Button
-            disabled={aggregateTypeDisabled}
-            key="stepInterpolation"
-          >
+          <SegmentedControl.Button key="stepInterpolation">
             Step
           </SegmentedControl.Button>
-          <SegmentedControl.Button
-            disabled={aggregateTypeDisabled}
-            key="interpolation"
-          >
+          <SegmentedControl.Button key="interpolation">
             Interpolated
           </SegmentedControl.Button>
         </SegmentedControl>

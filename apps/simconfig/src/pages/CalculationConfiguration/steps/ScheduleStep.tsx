@@ -136,12 +136,13 @@ export function ScheduleStep() {
             <label htmlFor="schedule-step-repeat">Repeat every</label>
             <NumberField
               id="schedule-step-repeat"
-              max={86400}
               min={1}
               name="schedule.repeat"
-              setValue={(count: number) => {
-                setScheduleRepeat({ count });
+              setValue={(count: string) => {
+                setScheduleRepeat({ count: +count });
               }}
+              step={1}
+              value={parseInt(values.schedule.repeat, 10)}
               width={120}
             />
             <Field

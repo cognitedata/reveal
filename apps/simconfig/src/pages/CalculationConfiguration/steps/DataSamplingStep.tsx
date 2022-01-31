@@ -1,8 +1,9 @@
 import { Field, useFormikContext } from 'formik';
 
-import { SegmentedControl, Switch } from '@cognite/cogs.js';
+import { Switch } from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
+import { SegmentedControl } from 'components/forms/controls/SegmentedControl';
 import {
   FormContainer,
   FormHeader,
@@ -15,7 +16,8 @@ import {
 import type { StepProps } from '../types';
 
 export function DataSamplingStep({ isEditing }: StepProps) {
-  const { values, setFieldValue } = useFormikContext<CalculationTemplate>();
+  const { errors, values, setFieldValue } =
+    useFormikContext<CalculationTemplate>();
 
   return (
     <FormContainer>
@@ -23,8 +25,7 @@ export function DataSamplingStep({ isEditing }: StepProps) {
       <FormRowStacked>
         <NumberField
           label={(value: number) => (value === 1 ? 'minute' : 'minutes')}
-          max={86400}
-          min={1}
+          min={15}
           name="dataSampling.validationWindow"
           step={1}
           title="Validation window"
@@ -33,8 +34,7 @@ export function DataSamplingStep({ isEditing }: StepProps) {
 
         <NumberField
           label={(value: number) => (value === 1 ? 'minute' : 'minutes')}
-          max={86400}
-          min={1}
+          min={0}
           name="dataSampling.samplingWindow"
           step={1}
           title="Sampling window"
@@ -43,7 +43,6 @@ export function DataSamplingStep({ isEditing }: StepProps) {
 
         <NumberField
           label={(value: number) => (value === 1 ? 'minute' : 'minutes')}
-          max={86400}
           min={1}
           name="dataSampling.granularity"
           step={1}
@@ -77,7 +76,8 @@ export function DataSamplingStep({ isEditing }: StepProps) {
             <div className="cogs-input-container">
               <div className="title">Check</div>
               <SegmentedControl
-                currentKey={values.logicalCheck.check}
+                currentKey={values.logicalCheck.check ?? ''}
+                error={errors.logicalCheck?.check}
                 fullWidth
                 onButtonClicked={(value: string) => {
                   setFieldValue('logicalCheck.check', value);
@@ -92,14 +92,7 @@ export function DataSamplingStep({ isEditing }: StepProps) {
               </SegmentedControl>
             </div>
 
-            <NumberField
-              max={100000}
-              min={0}
-              name="logicalCheck.value"
-              step={1}
-              title="Value"
-              width={120}
-            />
+            <NumberField name="logicalCheck.value" title="Value" width={120} />
           </FormRow>
         </>
       ) : null}
@@ -127,26 +120,20 @@ export function DataSamplingStep({ isEditing }: StepProps) {
           </FormRow>
           <FormRow>
             <NumberField
-              max={100000}
               min={0}
               name="steadyStateDetection.minSectionSize"
-              step={1}
               title="Min. section size"
               width={120}
             />
             <NumberField
-              max={100000}
               min={0}
               name="steadyStateDetection.varThreshold"
-              step={1}
               title="Var threshold"
               width={120}
             />
             <NumberField
-              max={100000}
-              min={0}
+              max={0}
               name="steadyStateDetection.slopeThreshold"
-              step={1}
               title="Slope threshold"
               width={120}
             />

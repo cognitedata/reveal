@@ -323,8 +323,14 @@ const ConfigurationSection = styled.div`
 
 const ChokeCurve = styled.div`
   div {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
+    display: flex;
+    .opening,
+    .value {
+      flex: 1 0 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
   .opening {
     font-weight: bold;

@@ -70,18 +70,15 @@ export function AdvancedStep({ isEditing }: StepProps) {
           {values.chokeCurve?.opening.map((opening, index) => (
             <FormRowStacked key={opening}>
               <NumberField
-                max={0}
-                min={100}
+                max={100}
+                min={0}
                 name={`chokeCurve.opening.${index}`}
-                step={0.1}
+                step={1}
                 title="Opening"
                 width={120}
               />
               <NumberField
-                max={1000}
-                min={0}
                 name={`chokeCurve.setting.${index}`}
-                step={0.01}
                 title="Value"
                 width={120}
               />
@@ -143,6 +140,7 @@ export function AdvancedStep({ isEditing }: StepProps) {
                 <div className="title">Method</div>
                 <Field
                   as={Select}
+                  isDisabled={isEditing}
                   name="estimateBHP.method"
                   options={bhpEstimationMethodOptions}
                   value={bhpEstimationMethodOptions.find(
@@ -158,10 +156,8 @@ export function AdvancedStep({ isEditing }: StepProps) {
                 <>
                   <NumberField
                     disabled={isEditing}
-                    max={100000}
                     min={0}
                     name="estimateBHP.gaugeDepth.value"
-                    step={1}
                     title="Length"
                     width={120}
                   />
@@ -205,26 +201,19 @@ export function AdvancedStep({ isEditing }: StepProps) {
               />
             </div>
             <NumberField
-              max={100000}
               min={0}
               name="rootFindingSettings.rootTolerance"
-              step={0.01}
               title="Tolerance"
               width={120}
             />
             <NumberField
-              max={100000}
               min={0}
               name="rootFindingSettings.bracket.lowerBound"
-              step={0.01}
               title="Lower bound"
               width={120}
             />
             <NumberField
-              max={100000}
-              min={0}
               name="rootFindingSettings.bracket.upperBound"
-              step={0.01}
               title="Upper bound"
               width={120}
             />

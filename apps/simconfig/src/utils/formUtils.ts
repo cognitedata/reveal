@@ -37,7 +37,7 @@ export type DotNestedKeys<T> = (
 export const getNodeFromPath = <InputType extends Record<string, unknown>>(
   inputObject: InputType,
   path: DotNestedKeys<InputType>
-) =>
+): unknown =>
   path
     .split('.')
     .reduce<unknown>(

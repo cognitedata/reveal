@@ -1,15 +1,11 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useMatch } from 'react-location';
 
 import { Field, useFormikContext } from 'formik';
 
 import type { OptionType } from '@cognite/cogs.js';
 import { Label, Select } from '@cognite/cogs.js';
-import type {
-  CalculationTemplate,
-  CalculationType,
-  TimeSeries,
-} from '@cognite/simconfig-api-sdk/rtk';
+import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import {
   FormContainer,
@@ -43,45 +39,9 @@ export function InputStep({ isEditing }: StepProps) {
     {}
   );
 
-  const validTimeSeries = useMemo(() => {
-    if (values.calculationType !== 'VLP' && values.calculationType !== 'IPR') {
-      return values.inputTimeSeries;
-    }
-
-    const isEstimateBHPEnabled = values.estimateBHP.enabled;
-    const isGradientTraverse = values.estimateBHP.method === 'GradientTraverse';
-    const isLiftCurveGaugeBhp =
-      values.estimateBHP.method === 'LiftCurveGaugeBhp';
-    const isLiftCurveRate = values.estimateBHP.method === 'LiftCurveRate';
-
-    const isInputTimeSeriesEnabled: Partial<
-      Record<CalculationType, Partial<Record<TimeSeries['type'], boolean>>>
-    > = {
-      VLP: {
-        BHP: !isEstimateBHPEnabled,
-        BHPg:
-          isEstimateBHPEnabled && (isGradientTraverse || isLiftCurveGaugeBhp),
-        GasRate: isEstimateBHPEnabled && isLiftCurveRate,
-      },
-      IPR: {
-        BHP: !isEstimateBHPEnabled,
-        BHPg:
-          isEstimateBHPEnabled && (isGradientTraverse || isLiftCurveGaugeBhp),
-        GasRate: isEstimateBHPEnabled && isLiftCurveRate,
-        THP: isEstimateBHPEnabled && (isLiftCurveGaugeBhp || isLiftCurveRate),
-        THT: isEstimateBHPEnabled && (isLiftCurveGaugeBhp || isLiftCurveRate),
-      },
-    };
-
-    return values.inputTimeSeries.filter(
-      ({ type }) =>
-        isInputTimeSeriesEnabled[values.calculationType]?.[type] ?? true
-    );
-  }, [values]);
-
   return (
     <FormContainer>
-      {validTimeSeries.map(
+      {values.inputTimeSeries.map(
         ({ type, name, unit, unitType, sampleExternalId }, index) => (
           <React.Fragment key={type}>
             <FormHeader>{name}</FormHeader>
@@ -97,7 +57,7 @@ export function InputStep({ isEditing }: StepProps) {
                 <div className="title">Unit</div>
                 <Field
                   as={Select}
-                  disabled={isEditing}
+                  isDisabled={isEditing}
                   name={`inputTimeSeries.${index}.unit`}
                   options={unitTypeOptions[unitType]}
                   value={unitTypeOptions[unitType].find(
