@@ -5,9 +5,10 @@
 import { IndexSet } from '@reveal/utilities';
 import { AreaCollection } from '../prioritized/AreaCollection';
 import { EmptyAreaCollection } from '../prioritized/EmptyAreaCollection';
-import { NodeCollectionBase, SerializedNodeCollection } from '../NodeCollectionBase';
+import { NodeCollection } from '../NodeCollection';
+import { SerializedNodeCollection } from '../SerializedNodeCollection';
 
-export class StubNodeCollection extends NodeCollectionBase {
+export class StubNodeCollection extends NodeCollection {
   private _indexSet = new IndexSet();
   private _areas: AreaCollection = EmptyAreaCollection.instance();
   private _isLoading = false;

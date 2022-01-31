@@ -8,7 +8,7 @@ import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { NodeCollectionBase, SerializedNodeCollection, EmptyAreaCollection, AreaCollection } from '@reveal/cad-styling';
+import { NodeCollection, SerializedNodeCollection, EmptyAreaCollection, AreaCollection } from '@reveal/cad-styling';
 
 import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
@@ -20,7 +20,7 @@ import cloneDeep from 'lodash/cloneDeep';
  * is considered to be part of an asset if it has a direct asset mapping or if one of its ancestors has an asset mapping
  * to the asset.
  */
-export class AssetNodeCollection extends NodeCollectionBase {
+export class AssetNodeCollection extends NodeCollection {
   public static readonly classToken = 'AssetNodeCollection';
 
   private readonly _client: CogniteClient;

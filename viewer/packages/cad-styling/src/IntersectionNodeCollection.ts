@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
+import { SerializedNodeCollection } from './SerializedNodeCollection';
 import { UnionNodeCollection } from './UnionNodeCollection';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
 import { AreaCollection } from './prioritized/AreaCollection';
@@ -9,6 +9,7 @@ import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
 import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 
 import { IndexSet } from '@reveal/utilities';
+import { NodeCollection } from './NodeCollection';
 
 /**
  * Node collection that is the intersection between a set of underlying node collections.
@@ -18,7 +19,7 @@ export class IntersectionNodeCollection extends CombineNodeCollectionBase {
 
   public static readonly classToken = 'IntersectionNodeCollection';
 
-  constructor(nodeCollections?: NodeCollectionBase[]) {
+  constructor(nodeCollections?: NodeCollection[]) {
     super(UnionNodeCollection.classToken, nodeCollections);
   }
 
