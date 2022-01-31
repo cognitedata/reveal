@@ -14,7 +14,7 @@ The serialized JSON blob also keeps information about styling/filtering of the m
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Getting the viewer state
-In the example below we apply some filter to our loaded model using the `NodeCollectionBase` type from [Styling Cad models](./cad-styling.mdx).
+In the example below we apply some filter to our loaded model using the `NodeCollection` type from [Styling CAD models](./cad-styling.mdx).
 Then we can call the ```viewer.getViewState()``` function which return a serialized JSON blob containing the view state.
 Depending on the application, the view state can be additionally transformed into e.g. a URL parameter and transferred through a link.
 
@@ -91,30 +91,30 @@ viewer.setViewState(myState);
 ## Serializing and deserializing custom node collections
 
 When working with styled custom node collections, the Reveal viewer needs to know how to serialize and deserialize the set.
-Serialization is handled through the abstract method `serialize` which needs to be implemented when extending `NodeCollectionBase`.
+Serialization is handled through the abstract method `serialize` which needs to be implemented when extending `NodeCollection`.
 The output of `serialize` is of type `SerializedNodeCollection` and contains a `token` which is used to recreate
-the `NodeCollectionBase` during deserialization, and a `state` object which contains the data needed to restore
-the `NodeCollectionBase`. It is up to the application developer to fill this state object with any nessesary
-data needed to recreate the state of the `NodeCollectionBase`. An optional `options` object can also be supplied
+the `NodeCollection` during deserialization, and a `state` object which contains the data needed to restore
+the `NodeCollection`. It is up to the application developer to fill this state object with any nessesary
+data needed to recreate the state of the `NodeCollection`. An optional `options` object can also be supplied
 containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
 The contents returned from `serialize` is contained in the result of `getViewState`.
 
-In addition to serialization, Reveal also needs to know how to recreate the custom `NodeCollectionBase` during
+In addition to serialization, Reveal also needs to know how to recreate the custom `NodeCollection` during
 deserialization. This is done by calling the free-function `registerCustomNodeCollectionType` with the same `token`
-defined by the custom `NodeCollectionBase` and a lambda function which instantiates and restore the state of
-the `NodeCollectionBase`. The lambda function has two parameters: the `descriptor` containing the state and
-options which should be applied to the `NodeCollectionBase` and the context containing an instance of
+defined by the custom `NodeCollection` and a lambda function which instantiates and restore the state of
+the `NodeCollection`. The lambda function has two parameters: the `descriptor` containing the state and
+options which should be applied to the `NodeCollection` and the context containing an instance of
 the [CogniteClient from the Cognite SDK](https://docs.cognite.com/dev/guides/sdk/js/) and the `Cognite3DModel`
-which the `NodeCollectionBase` was originally applied to. It is up to the application developer how and if they
+which the `NodeCollection` was originally applied to. It is up to the application developer how and if they
 want to use the context and/or descriptor, but it is provided as a convinience.
 
-An example of a simple custom `NodeCollectionBase` can be seen below.
-For more information on creating a custom `NodeCollectionBase`, see [create custom node collections](cad-styling-custom).
+An example of a simple custom `NodeCollection` can be seen below.
+For more information on creating a custom `NodeCollection`, see [create custom node collections](cad-styling-custom).
 
 ```js
-// import { IndexSet, NodeCollectionBase, registerCustomNodeCollectionType } from '@cognite/reveal';
+// import { IndexSet, NodeCollection, registerCustomNodeCollectionType } from '@cognite/reveal';
 
-class MyNodeCollection extends NodeCollectionBase {
+class MyNodeCollection extends NodeCollection {
 
   isLoading = false;
   _indexSet = new IndexSet();
