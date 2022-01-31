@@ -7,7 +7,7 @@ import { log } from 'utils/log';
 import { Sequence } from '@cognite/sdk';
 
 import { TRACK_CONFIG } from 'modules/wellSearch/constants';
-import { SequenceRow } from 'modules/wellSearch/types';
+import { SequenceData, SequenceRow } from 'modules/wellSearch/types';
 
 const LOG_COLOMNS = TRACK_CONFIG.filter(
   (track) => track.type === 'DepthLogs'
@@ -50,20 +50,22 @@ export const getRowData = async (logs: Sequence[], logsFrmTops: Sequence[]) => {
 };
 
 // This is used to start row data fetching for single log
-const startLogRowDataFetch = async (log: Sequence) => {
-  const logColumns = getLogColumns(log);
+export const startLogRowDataFetch = async (
+  sequence: Sequence
+): Promise<SequenceData> => {
+  const logColumns = getLogColumns(sequence);
 
   if (
     logColumns.length === 0 ||
     (logColumns.length === 1 && logColumns[0] === 'DEPT')
   ) {
     return new Promise((resolve) => {
-      resolve({ log, rows: [] });
+      resolve({ sequence, rows: [] });
     });
   }
 
   // Get row data margins based on metadata start depth and end depth
-  const { startMargin, endMargin } = getRowDataMargins(log);
+  const { startMargin, endMargin } = getRowDataMargins(sequence);
 
   // This will update with searched valued rows in start and end search
   const searchedValuedRowsSets: SequenceRow[][] = [];
@@ -72,7 +74,7 @@ const startLogRowDataFetch = async (log: Sequence) => {
   let valuedStartMargin = await findValuedStartMargin(
     startMargin,
     endMargin,
-    log.id,
+    sequence.id,
     logColumns,
     searchedValuedRowsSets
   );
@@ -81,7 +83,7 @@ const startLogRowDataFetch = async (log: Sequence) => {
   let valuedEndMargin = await findValuedEndMargin(
     valuedStartMargin || startMargin,
     endMargin,
-    log.id,
+    sequence.id,
     logColumns,
     searchedValuedRowsSets
   );
@@ -94,7 +96,7 @@ const startLogRowDataFetch = async (log: Sequence) => {
     valuedStartMargin = await findValuedStartMargin(
       startMargin,
       valuedEndMargin,
-      log.id,
+      sequence.id,
       logColumns,
       searchedValuedRowsSets
     );
@@ -127,29 +129,34 @@ const startLogRowDataFetch = async (log: Sequence) => {
   // eslint-disable-next-line consistent-return
   return Promise.all(
     requestSlots.map((requestSlot) =>
-      parallelDataFetcher(log.id, requestSlot[0], requestSlot[1], logColumns)
+      parallelDataFetcher(
+        sequence.id,
+        requestSlot[0],
+        requestSlot[1],
+        logColumns
+      )
     )
   )
     .then((parallelDataSets) => {
       let parallelData: SequenceRow[] = [...sortedValuedRows];
       parallelData = parallelData.concat(...parallelDataSets);
-      return { log, rows: sortBy(parallelData, 'rowNumber') };
+      return { sequence, rows: sortBy(parallelData, 'rowNumber') };
     })
-    .catch(() => {
-      return { log, rows: [] };
-    });
+    .catch(() => ({ sequence, rows: [] }));
 };
 
 // This is used to start row data fetching for single log
-const startLogFrmTopsRowDataFetch = async (log: Sequence) => {
-  const logColumns = getLogFrmTopsColumns(log);
+export const startLogFrmTopsRowDataFetch = async (
+  sequence: Sequence
+): Promise<SequenceData> => {
+  const logColumns = getLogFrmTopsColumns(sequence);
 
   if (
     logColumns.length === 0 ||
     (logColumns.length === 1 && logColumns[0] === 'MD')
   ) {
     return new Promise((resolve) => {
-      resolve({ log, rows: [] });
+      resolve({ sequence, rows: [] });
     });
   }
 
@@ -164,14 +171,14 @@ const startLogFrmTopsRowDataFetch = async (log: Sequence) => {
   await queryFrmTopsAll(
     startMargin,
     endMargin,
-    log.id,
+    sequence.id,
     logColumns,
     searchedValuedRowsSets
   );
 
   if (searchedValuedRowsSets.length === 0) {
     return new Promise((resolve) => {
-      resolve({ log, rows: [] });
+      resolve({ sequence, rows: [] });
     });
   }
 
@@ -185,7 +192,7 @@ const startLogFrmTopsRowDataFetch = async (log: Sequence) => {
   sortedValuedRows = sortedValuedRows.concat(...sortedValuedRowsSets);
 
   return new Promise((resolve) => {
-    resolve({ log, rows: sortedValuedRows });
+    resolve({ sequence, rows: sortedValuedRows });
   });
 };
 

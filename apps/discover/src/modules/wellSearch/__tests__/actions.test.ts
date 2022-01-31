@@ -1,7 +1,7 @@
 import { PartialStoreState } from 'core';
 import fetchMock from 'fetch-mock';
 
-import { Asset, Sequence } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 
 import {
   getDefaultWell,
@@ -16,8 +16,6 @@ import { wellSearchActions } from '../actions';
 import {
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
-  SET_LOG_TYPE,
-  SET_LOGS_ROW_DATA,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   Well,
@@ -108,41 +106,6 @@ describe('Well search Actions', () => {
           well,
           wellboreId,
           isSelected,
-        },
-      ]);
-    });
-  });
-
-  describe('getLogType', () => {
-    it(`should fetch log types for the give wellbore`, async () => {
-      const { store } = getDefaultTestValues();
-      const logId = 1234;
-      await store.dispatch(
-        wellSearchActions.getLogType(
-          [logId],
-          {},
-          [{}, {}],
-          ['logsFrmTops', 'logs']
-        ) as any
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_LOG_TYPE,
-          data: { logs: { [logId]: [] }, logsFrmTops: { [logId]: [] } },
-        },
-      ]);
-    });
-  });
-
-  describe('getLogData', () => {
-    it(`should fetch log rows for the given logs`, async () => {
-      const { store } = getDefaultTestValues();
-      const log = { id: 1234 } as Sequence;
-      await store.dispatch(wellSearchActions.getLogData([log], [log]) as any);
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_LOGS_ROW_DATA,
-          data: { logs: [{ log, rows: [] }], logsFrmTops: [{ log, rows: [] }] },
         },
       ]);
     });

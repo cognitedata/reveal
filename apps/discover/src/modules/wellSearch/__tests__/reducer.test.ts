@@ -1,4 +1,4 @@
-import { Sequence, Asset } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 
 import { mockedWellsFixture } from '__test-utils/fixtures/well';
 
@@ -7,8 +7,6 @@ import {
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
   TOGGLE_SELECTED_WELLBORE_OF_WELL,
-  SET_LOG_TYPE,
-  SET_LOGS_ROW_DATA,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   SET_WELLBORE_ASSETS,
   SET_GRAIN_ANALYSIS_DATA,
@@ -84,60 +82,6 @@ describe('Well Reducer', () => {
       isSelected: true,
     });
     expect(state.selectedWellIds).toEqual({ 1234: true });
-  });
-
-  it(`should set log type data in wellboreData state`, () => {
-    const log = { id: 231324234223, name: 'log 1' } as Sequence;
-    const wellboreId = 1234;
-    const state = wellReducer(
-      { ...initialState, wellboreData: {} },
-      {
-        type: SET_LOG_TYPE,
-        data: {
-          logs: { [wellboreId]: [log] },
-          logsFrmTops: { [wellboreId]: [log] },
-        },
-      }
-    );
-    expect(state.wellboreData).toEqual({
-      [wellboreId]: {
-        logType: [{ sequence: log }],
-        logsFrmTops: [{ sequence: log }],
-      },
-    });
-  });
-
-  it(`should set log low data in wellboreData state`, () => {
-    const wellboreId = 1234;
-    const log = {
-      id: 231324234223,
-      name: 'log 1',
-      assetId: wellboreId,
-    } as Sequence;
-    const state = wellReducer(
-      {
-        ...initialState,
-        wellboreData: {
-          [wellboreId]: {
-            logType: [{ sequence: log }],
-            logsFrmTops: [{ sequence: log }],
-          },
-        },
-      },
-      {
-        type: SET_LOGS_ROW_DATA,
-        data: {
-          logs: [{ log, rows: [] }],
-          logsFrmTops: [{ log, rows: [] }],
-        },
-      }
-    );
-    expect(state.wellboreData).toEqual({
-      [wellboreId]: {
-        logType: [{ sequence: log, rows: [] }],
-        logsFrmTops: [{ sequence: log, rows: [] }],
-      },
-    });
   });
 
   it(`should set assets in wellboreData state`, () => {

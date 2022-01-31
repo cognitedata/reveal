@@ -86,6 +86,8 @@ export const WELL_QUERY_KEY = {
   NPT_EVENTS: [WELLS, 'npt', 'old'],
   NPT_EVENTS_CACHE: [WELLS, 'npt', 'cache'],
   MEASUREMENTS: [WELLS, 'measurements'],
+  LOGS: [WELLS, 'logs'],
+  FORMATION_TOPS: [WELLS, 'logsFrmTops'],
   LOGS_PPFGS: ['logsPPFGs'],
 };
 

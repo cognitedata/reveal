@@ -4,13 +4,10 @@ import set from 'lodash/set';
 import unset from 'lodash/unset';
 
 import {
-  SET_LOG_TYPE,
-  SET_LOGS_ROW_DATA,
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
   WellState,
   WellSearchAction,
-  SequenceData,
   SET_WELLBORE_ASSETS,
   AssetData,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
@@ -110,87 +107,6 @@ export function wellReducer(
       }
 
       return { ...state, selectedWellIds, selectedWellboreIds };
-    }
-
-    case SET_LOG_TYPE: {
-      const updatedWellboreData = { ...state.wellboreData };
-      Object.keys(action.data.logs).forEach((wellboreId) => {
-        const wbId = Number(wellboreId);
-        if (action.data.logs[wbId]) {
-          if (updatedWellboreData[wbId]) {
-            updatedWellboreData[wbId].logType = action.data.logs[wbId].map(
-              (sequence) => ({
-                sequence,
-              })
-            );
-          } else {
-            updatedWellboreData[wbId] = {
-              logType: action.data.logs[wbId].map((sequence) => ({ sequence })),
-            };
-          }
-        }
-      });
-      Object.keys(action.data.logsFrmTops).forEach((wellboreId) => {
-        const wbId = Number(wellboreId);
-        if (action.data.logsFrmTops[wbId]) {
-          if (updatedWellboreData[wbId]) {
-            updatedWellboreData[wbId].logsFrmTops = action.data.logsFrmTops[
-              wbId
-            ].map((sequence) => ({
-              sequence,
-            }));
-          } else {
-            updatedWellboreData[wbId] = {
-              logsFrmTops: action.data.logsFrmTops[wbId].map((sequence) => ({
-                sequence,
-              })),
-            };
-          }
-        }
-      });
-      return {
-        ...state,
-        wellboreData: updatedWellboreData,
-      };
-    }
-
-    case SET_LOGS_ROW_DATA: {
-      const updatedWellboreData = { ...state.wellboreData };
-
-      action.data.logs.forEach((logData) => {
-        const wellboreId = logData.log.assetId as number;
-        const newLogList = (
-          updatedWellboreData[wellboreId].logType as SequenceData[]
-        ).map((logRow) =>
-          logRow.sequence.id === logData.log.id
-            ? { ...logRow, rows: logData.rows }
-            : logRow
-        );
-        updatedWellboreData[wellboreId] = {
-          ...updatedWellboreData[wellboreId],
-          ...{ logType: newLogList },
-        };
-      });
-
-      action.data.logsFrmTops.forEach((logData) => {
-        const wellboreId = logData.log.assetId as number;
-        const newLogList = (
-          updatedWellboreData[wellboreId].logsFrmTops as SequenceData[]
-        ).map((logRow) =>
-          logRow.sequence.id === logData.log.id
-            ? { ...logRow, rows: logData.rows }
-            : logRow
-        );
-        updatedWellboreData[wellboreId] = {
-          ...updatedWellboreData[wellboreId],
-          ...{ logsFrmTops: newLogList },
-        };
-      });
-
-      return {
-        ...state,
-        ...{ wellboreData: updatedWellboreData },
-      };
     }
 
     case SET_WELLBORE_ASSETS: {

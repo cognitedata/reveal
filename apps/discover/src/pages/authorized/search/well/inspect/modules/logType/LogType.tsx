@@ -2,18 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { Sequence } from '@cognite/sdk';
-
 import { Loading } from 'components/loading/Loading';
 import { Modal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataLog } from 'modules/filterData/selectors';
-import {
-  useLogTypes,
-  useSelectedWellBoresLogs,
-} from 'modules/wellSearch/selectors';
+import { useSelectedWellboreLogs } from 'modules/wellInspect/hooks/useWellLogsQuerySelectors';
 
 import { COMMON_COLUMN_WIDTHS, NO_LOGS_ERROR_MESSAGE } from '../../constants';
 import PreviewSelector from '../common/PreviewSelector';
@@ -61,14 +56,12 @@ const tableOptions = {
 
 export const LogType: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [logTypes, setLogTypes] = useState<Sequence[]>([]);
+  const [logTypes, setLogTypes] = useState<LogTypeData[]>([]);
   const { selectedIds } = useFilterDataLog();
   const dispatch = useDispatch();
   const { t } = useTranslation('WellData');
 
-  const { isLoading: logsLoading } = useSelectedWellBoresLogs();
-
-  const data: LogTypeData[] = useLogTypes();
+  const { data, isLoading } = useSelectedWellboreLogs();
 
   const customSelectedIds = useMemo(() => {
     const tempSelectedIds = { ...selectedIds };
@@ -87,7 +80,7 @@ export const LogType: React.FC = () => {
     [data, customSelectedIds]
   );
 
-  if (logsLoading) {
+  if (isLoading) {
     return <Loading />;
   }
 
