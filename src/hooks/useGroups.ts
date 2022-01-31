@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 export const useGroups = (all = false) => {
   const sdk = useSDK();
   return useQuery(['groups', { all }], async () => {
-    const list = await sdk.groups.list({ all: true });
+    const list = await sdk.groups.list({ all });
     return list.sort((a, b) => {
       try {
         return (a.name || '').localeCompare(b.name || '');
