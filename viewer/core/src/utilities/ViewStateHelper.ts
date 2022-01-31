@@ -14,7 +14,7 @@ import { NodeAppearance } from '@reveal/cad-styling';
 import { CogniteClient } from '@cognite/sdk';
 
 export type ViewerState = {
-  camera: {
+  camera?: {
     position: { x: number; y: number; z: number };
     target: { x: number; y: number; z: number };
   };
@@ -73,12 +73,14 @@ export class ViewStateHelper {
   }
 
   public async setState(viewerState: ViewerState): Promise<void> {
-    const camPos = viewerState.camera.position;
-    const camTarget = viewerState.camera.target;
-    this._cameraControls.setState(
-      new THREE.Vector3(camPos.x, camPos.y, camPos.z),
-      new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
-    );
+    if (viewerState.camera !== undefined) {
+      const camPos = viewerState.camera.position;
+      const camTarget = viewerState.camera.target;
+      this._cameraControls.setState(
+        new THREE.Vector3(camPos.x, camPos.y, camPos.z),
+        new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
+      );
+    }
 
     const cadModels = this._viewer.models
       .filter(model => model instanceof Cognite3DModel)
