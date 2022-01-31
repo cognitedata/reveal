@@ -14,14 +14,14 @@ const SQUARE_HEIGHT = 32;
 
 export class ListTool extends Tool implements ICogniteOrnateTool {
   cursor = 'default';
-  listDrawingLayer = new Konva.Layer();
+  listbaseLayer = new Konva.Layer();
   markers: Marker[] = [];
   onMarkersChange: (nextMarkers: Marker[]) => void = noop;
   numberGroups: Konva.Group[] = [];
 
   constructor(ornateInstance: CogniteOrnate) {
     super(ornateInstance);
-    ornateInstance.stage.add(this.listDrawingLayer);
+    ornateInstance.stage.add(this.listbaseLayer);
   }
 
   reset = () => {
@@ -106,7 +106,7 @@ export class ListTool extends Tool implements ICogniteOrnateTool {
         group.add(numberGroup);
       }
     } else {
-      this.listDrawingLayer.add(numberGroup);
+      this.listbaseLayer.add(numberGroup);
     }
 
     this.markers.push(marker);

@@ -130,9 +130,6 @@ export class CogniteOrnate {
   baseLayer: Konva.Layer = new Konva.Layer({
     name: 'baseLayer',
   });
-  drawingLayer: Konva.Layer = new Konva.Layer({
-    name: 'drawingLayer',
-  });
   history: OrnateHistory = new OrnateHistory([], []);
   isDrawing = false;
   currentTool: Tool = new DefaultTool(this);
@@ -168,7 +165,6 @@ export class CogniteOrnate {
     // Add layers to stage
     this.stage.add(this.backgroundLayer);
     this.stage.add(this.baseLayer);
-    this.stage.add(this.drawingLayer);
 
     // Initialise mouse events
     this.stage.on('mousedown', this.onStageMouseDown);
@@ -251,11 +247,11 @@ export class CogniteOrnate {
     if (shape === null) return;
     const groupName = shape.attrs?.attachedToGroup || shape.attrs?.inGroup;
     const group = this.stage.findOne(`#${groupName}`) as Konva.Group;
-    const layer: Konva.Layer | Konva.Group = group || this.drawingLayer;
+    const layer: Konva.Layer | Konva.Group = group || this.baseLayer;
     this.history.addShape(shape);
     layer.add(shape);
     if (!group) {
-      this.drawingLayer.draw();
+      this.baseLayer.draw();
     }
   };
 
@@ -747,7 +743,7 @@ export class CogniteOrnate {
     return drawings.map((drawing) => {
       const container = drawing.groupId
         ? getGroupById(drawing.groupId, this.stage)
-        : this.drawingLayer;
+        : this.baseLayer;
       const shape = getShapeByDrawing(drawing);
       if (drawing.onClick) {
         shape.on('click', drawing.onClick);

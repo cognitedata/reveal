@@ -52,7 +52,7 @@ export class StampTool extends Tool implements ICogniteOrnateTool {
       });
       this.imageSize = [node.width(), node.height()];
 
-      this.ornateInstance.drawingLayer.add(node);
+      this.ornateInstance.baseLayer.add(node);
 
       this.previewNode = node;
     });
@@ -71,7 +71,7 @@ export class StampTool extends Tool implements ICogniteOrnateTool {
 
   onMouseUp = (e: KonvaEventObject<MouseEvent>) => {
     this.previewNode?.show();
-    const { drawingLayer } = this.ornateInstance;
+    const { baseLayer } = this.ornateInstance;
     this.ornateInstance.isDrawing = true;
 
     // If we're over an item with a group attachment, add it there instead.
@@ -96,8 +96,8 @@ export class StampTool extends Tool implements ICogniteOrnateTool {
       });
 
       if (!this.group) {
-        drawingLayer.add(node);
-        drawingLayer.draw();
+        baseLayer.add(node);
+        baseLayer.draw();
         return;
       }
       this.group.add(node);

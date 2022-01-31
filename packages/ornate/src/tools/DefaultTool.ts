@@ -54,6 +54,10 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
 
   onMouseDown = () => {
     this.mouseMoved = false;
+    // Since documents or other shapes can be added after the transformer
+    // was added, make sure to move the transformer to the top to ensure
+    // that all the handles are shown correctly
+    this.ornateInstance.transformer?.moveToTop();
   };
 
   onMouseOver = (e: KonvaEventObject<MouseEvent>) => {
