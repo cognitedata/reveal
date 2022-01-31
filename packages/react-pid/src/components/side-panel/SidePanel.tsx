@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
+import { Button, ToolBarButton } from '@cognite/cogs.js';
 import {
   DiagramConnection,
   DiagramEquipmentTagInstance,
@@ -26,24 +26,6 @@ const SidePanelWrapper = styled.div`
   grid-template-rows: max-content max-content auto max-content;
   height: 100%;
   position: relative;
-`;
-
-const ToolBarWrapper = styled.div`
-  margin: 40px auto;
-  width: fit-content;
-  .active {
-    background-color: var(--cogs-btn-color-primary);
-    color: white;
-    &:hover {
-      background-color: var(--cogs-btn-color-primary);
-      color: white;
-    }
-  }
-`;
-
-const FileControllerWrapper = styled.div`
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid #d9d9d9;
 `;
 
 interface SidePanelProps {
@@ -101,6 +83,14 @@ export const SidePanel = ({
   activeTagName,
   setActiveTagName,
 }: SidePanelProps) => {
+  const FileControllerWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & > span {
+      margin: 0 auto;
+    }
+  `;
   const toolBarButtonGroups: ToolBarButton[][] = [
     [
       {
@@ -202,10 +192,6 @@ export const SidePanel = ({
             setActiveLineNumber={setActiveLineNumber}
           />
         )}
-
-        <ToolBarWrapper>
-          <ToolBar direction="vertical" buttonGroups={toolBarButtonGroups} />
-        </ToolBarWrapper>
       </div>
       {active === 'selectDocumentType' && fileUrl !== '' && (
         <DocumentTypeSelector setDocumentType={setDocumentType} />

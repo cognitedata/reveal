@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { Input, Button, Select, OptionType } from '@cognite/cogs.js';
+import { Button, Select, OptionType } from '@cognite/cogs.js';
 import { symbolTypes } from '@cognite/pid-tools';
 
 import { SaveSymbolData } from '../../ReactPid';
+
+import { StyledInput } from './elements';
 
 const symbolTypeOptions: OptionType<string>[] = symbolTypes.map(
   (symbolType) => ({
@@ -44,8 +46,11 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
         value={selectedSymbolTypeOption}
         onChange={setSelectedSymbolTypeOption}
         options={symbolTypeOptions}
+        menuPlacement="top"
+        maxMenuHeight={500}
       />
-      <Input
+      <StyledInput
+        width={100}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Description"

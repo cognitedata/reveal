@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
-import { Input, Button, Select, OptionType } from '@cognite/cogs.js';
+import { Button, Select, OptionType } from '@cognite/cogs.js';
+
+import { StyledInput } from './elements';
 
 interface AddLineNumberControllerProps {
   lineNumbers: string[];
@@ -46,6 +48,8 @@ export const AddLineNumberController: React.FC<AddLineNumberControllerProps> =
             onChange={setSelectedLineNumberWrapper}
             options={lineNumbersOptions}
             closeMenuOnSelect
+            menuPlacement="top"
+            maxMenuHeight={500}
           />
         );
       }
@@ -55,7 +59,7 @@ export const AddLineNumberController: React.FC<AddLineNumberControllerProps> =
     return (
       <div>
         {LineNumberSelector()}
-        <Input
+        <StyledInput
           value={newLineNumber}
           onChange={(e) => setNewLineNumber(e.target.value)}
           placeholder="New line number"

@@ -34,6 +34,7 @@ import {
   deleteSymbolFromState,
   getSymbolByTypeAndDescription,
 } from './utils/symbolUtils';
+import { Toolbar } from './components/toolbar/Toolbar';
 
 export interface SaveSymbolData {
   symbolType: string;
@@ -391,6 +392,11 @@ export const ReactPid: React.FC = () => {
               setActiveTagName={setActiveTagName}
             />
           )}
+          <Toolbar
+            active={active}
+            setActive={setToolBarMode}
+            documentType={documentMetadata.type}
+          />
         </Viewport>
       </ReactPidLayout>
     </ReactPidWrapper>
