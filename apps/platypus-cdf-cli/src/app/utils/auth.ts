@@ -11,8 +11,6 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
   const baseUrl = `https://${arg.cluster}.cognitedata.com`;
   const scopes = [`${baseUrl}/.default`, 'offline_access'];
 
-  console.log(arg);
-
   if (arg.authType === AUTH_TYPE.APIKEY) {
     return arg.apiKey;
   }

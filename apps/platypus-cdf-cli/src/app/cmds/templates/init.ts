@@ -67,11 +67,6 @@ class TemplateInitCommand implements CommandModule {
       ]);
 
       args = { ...args, ...version };
-      if (!versions.includes(parseInt(args['template-version']))) {
-        throw new Error(
-          `Templates version (${args['template-version']}) not found for template group "${args['template-group-id']}"`
-        );
-      }
     }
 
     if (

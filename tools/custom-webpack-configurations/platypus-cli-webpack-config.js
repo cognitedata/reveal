@@ -13,6 +13,14 @@ module.exports = (config, context) => {
     plugins: [
       ...config.plugins,
       new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: "apps/platypus-cdf-cli/**/*.md",
+            to: "[name][ext]",
+          },
+        ]
+      })
     ]
   };
 };

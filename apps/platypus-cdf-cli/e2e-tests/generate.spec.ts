@@ -13,7 +13,6 @@ describe('E2E for Templates Generate', () => {
       '--client-secret',
       process.env.CLIENT_SECRET
     );
-    console.log(response);
     expect(response).toMatch('Login Success');
   });
   it('Templates Init', async () => {

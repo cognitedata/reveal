@@ -33,8 +33,6 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
       delete projectConfig[AUTH_CONFIG.ACCOUNT_INFO];
     }
 
-    console.log('projectConfig: ', projectConfig);
-
     let client = getCogniteSDKClient();
     if (!client) {
       client = createSdkClient(projectConfig);
