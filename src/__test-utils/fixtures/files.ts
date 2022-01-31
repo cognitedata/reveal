@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/sdk';
+import { FileGeoLocation, FileInfo } from '@cognite/sdk';
 
 /**
  * Test data for test filterByTime fn
@@ -15,6 +15,10 @@ export const mockFileList: FileInfo[] = [
     createdTime: new Date(2021, 0, 1, 7, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
+    geoLocation: {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [1, 2] },
+    } as FileGeoLocation,
   },
   {
     id: 2,
@@ -23,6 +27,10 @@ export const mockFileList: FileInfo[] = [
     createdTime: new Date(2021, 0, 1, 12, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 1, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 12, 0, 0, 0),
+    geoLocation: {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [3, 4] },
+    } as FileGeoLocation,
   },
   {
     id: 3,

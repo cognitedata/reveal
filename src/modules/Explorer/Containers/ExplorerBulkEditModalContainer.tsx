@@ -2,7 +2,7 @@ import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditMo
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectExplorerAllSelectedFilesInSortedOrder } from 'src/modules/Explorer/store/explorerSlice';
+import { selectExplorerAllSelectedFilesInSortedOrder } from 'src/modules/Explorer/store/selectors';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import {
   setBulkEditModalVisibility,

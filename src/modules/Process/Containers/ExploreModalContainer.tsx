@@ -6,11 +6,11 @@ import {
   setSelectFromExploreModalVisibility,
 } from 'src/modules/Process/processSlice';
 import {
-  selectExplorerSelectedFileIdsInSortedOrder,
   setExplorerFileSelectState,
   setExplorerModalFocusedFileId,
   setExplorerModalQueryString,
-} from 'src/modules/Explorer/store/explorerSlice';
+} from 'src/modules/Explorer/store/slice';
+import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/selectors';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { TableDataItem } from 'src/modules/Common/types';
