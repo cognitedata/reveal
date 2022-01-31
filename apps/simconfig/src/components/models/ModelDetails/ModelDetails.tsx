@@ -82,6 +82,11 @@ export function ModelDetails({
       throw new Error('No user email found');
     }
 
+    trackUsage(TRACKING_EVENTS.MODEL_CALC_RUN_ALL, {
+      modelName: decodeURI(modelName),
+      simulator,
+    });
+
     const response = await runModelCalculations({
       modelName,
       project,

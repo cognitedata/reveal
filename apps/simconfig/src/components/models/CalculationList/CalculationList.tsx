@@ -121,6 +121,12 @@ export function CalculationList({
       return;
     }
 
+    trackUsage(TRACKING_EVENTS.MODEL_CALC_RUN_NOW, {
+      calculationType: calcType,
+      modelName: decodeURI(modelName),
+      simulator,
+    });
+
     const response = await runModelCalculations({
       modelName,
       project,
@@ -195,13 +201,24 @@ export function CalculationList({
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
+                        const { modelName, simulator, calculationType } =
+                          calculation.configuration;
+
+                        trackUsage(
+                          TRACKING_EVENTS.MODEL_CALC_VIEW_RUN_HISTORY,
+                          {
+                            calculationType,
+                            modelName,
+                            simulator,
+                          }
+                        );
+
                         navigate({
                           to: '/calculations/runs',
                           search: {
-                            modelName: calculation.configuration.modelName,
-                            simulator: calculation.configuration.simulator,
-                            calculationType:
-                              calculation.configuration.calculationType,
+                            modelName,
+                            simulator,
+                            calculationType,
                           },
                         });
                       }}

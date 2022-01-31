@@ -7,6 +7,8 @@ import { Avatar, TopBar } from '@cognite/cogs.js';
 import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
 
 export function MenuBar() {
   const project = useSelector(selectProject);
@@ -34,6 +36,7 @@ export function MenuBar() {
               name: 'Run browser',
               isActive: !!matchRoute({ to: 'calculations/runs' }),
               onClick: () => {
+                trackUsage(TRACKING_EVENTS.RUN_BROWSER_VIEW, {});
                 navigate({ to: '/calculations/runs' });
               },
             },
@@ -51,6 +54,9 @@ export function MenuBar() {
               component: (
                 <Avatar text={authState?.email ?? 'unknown@example.org'} />
               ),
+              onClick: () => {
+                trackUsage(TRACKING_EVENTS.PROFILE_AVATAR_CLICK);
+              },
             },
           ]}
         />
