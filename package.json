@@ -58,7 +58,7 @@
     "reselect": "^4.0.0",
     "rxjs": "^7.1.0",
     "single-spa-react": "^3.1.0",
-    "styled-components": "^5.2.1",
+    "styled-components": "^5.3.3",
     "swiper": "^6.8.0",
     "systemjs-webpack-interop": "^2.3.5",
     "use-debounce": "^6.0.1",
