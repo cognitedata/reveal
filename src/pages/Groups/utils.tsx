@@ -36,7 +36,6 @@ const nameToAclTypeMap = {
   seismic: 'seismicAcl',
   relationships: 'relationshipsAcl',
   entitymatching: 'entitymatchingAcl',
-  documentpipelines: 'documentPipelinesAcl',
   filepipelines: 'filePipelinesAcl',
   documentfeedback: 'documentFeedbackAcl',
   annotations: 'annotationsAcl',
@@ -63,7 +62,6 @@ const nameToFormattedName = {
   extractionpipelines: 'Extraction pipelines',
   extractionruns: 'Extraction pipeline runs',
   entitymatching: 'Entity matching',
-  documentpipelines: 'Document pipelines',
   filepipelines: 'File pipelines',
   documentfeedback: 'Document feedback',
   annotations: 'Annotations',
@@ -109,7 +107,6 @@ const capabilityTypeGroups = [
       'labels',
       'geospatial',
       'entitymatching',
-      'documentpipelines',
       'filepipelines',
       'documentfeedback',
       'annotations',
@@ -163,7 +160,12 @@ export const capabilityDescriptions = {
     'Computer vision models are used to analyze and extract information from imagery data.',
 };
 
-const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
+const deprecatedAclTypes = [
+  'documentPipelinesAcl',
+  'genericsAcl',
+  'modelHostingAcl',
+  'typesAcl',
+];
 
 export const getActionsFromCapability = (
   capability: CogniteCapability | SingleCogniteCapability
