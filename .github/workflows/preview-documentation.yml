@@ -71,10 +71,6 @@ jobs:
           name: preview-docs
           path: documentation/
 
-      - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: documentation/
-
       - name: Deploy documentation preview 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
