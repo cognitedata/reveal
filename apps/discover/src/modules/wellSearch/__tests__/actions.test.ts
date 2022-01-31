@@ -76,7 +76,9 @@ describe('Well search Actions', () => {
       const { store } = getDefaultTestValues();
       const well = getMockWell() as unknown as Well;
       const isSelected = true;
-      store.dispatch(wellSearchActions.toggleSelectedWells([well], isSelected));
+      store.dispatch(
+        wellSearchActions.toggleSelectedWells([well], { isSelected })
+      );
       expect(store.getActions()).toEqual([
         {
           type: TOGGLE_SELECTED_WELLS,

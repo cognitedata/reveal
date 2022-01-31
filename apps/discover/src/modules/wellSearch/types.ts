@@ -89,6 +89,7 @@ interface ToggleExpandedWellId {
 }
 
 interface ToggleSelectedWells {
+  clear?: boolean;
   type: typeof TOGGLE_SELECTED_WELLS;
   wells: Well[];
   isSelected: boolean;

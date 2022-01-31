@@ -5,7 +5,12 @@ describe('Wells: Related documents', () => {
     cy.acceptCookies();
   });
   it('Should have zero results', () => {
-    cy.performWellsSearch(['F-1']);
+    cy.performWellsSearch({
+      search: { query: 'F-1' },
+      select: { wells: ['F-1'] },
+    });
+
+    cy.openInspectView();
 
     cy.goToWellsTab('Related Documents');
 

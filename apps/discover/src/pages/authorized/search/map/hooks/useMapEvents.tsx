@@ -223,7 +223,9 @@ export const useMapEvents = () => {
 
         if (wellId && wellIds.includes(wellId)) {
           dispatch(
-            wellSearchActions.toggleSelectedWells([wellsById[wellId]], true)
+            wellSearchActions.toggleSelectedWells([wellsById[wellId]], {
+              isSelected: true,
+            })
           );
         }
         metrics.track('click-open-well-preview-button');

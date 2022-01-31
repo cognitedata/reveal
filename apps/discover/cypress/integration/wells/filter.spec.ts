@@ -21,7 +21,7 @@ import {
 
 const SELECT_TEXT = 'Select...';
 
-describe('Wells sidebar filters', () => {
+describe('Wells: Sidebar filters', () => {
   beforeEach(() => {
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
@@ -30,8 +30,7 @@ describe('Wells sidebar filters', () => {
     cy.log('Perform empty search');
     cy.performSearch('');
 
-    cy.log('Go to wells tab');
-    cy.findByRole('tab', { name: 'Wells' }).should('be.visible').click();
+    cy.goToTab('Wells');
   });
 
   it('Should display wells sidebar filters and results properly', () => {

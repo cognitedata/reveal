@@ -5,9 +5,21 @@ type KeyOfType<T, U> = {
   [P in keyof T]-?: T[P] extends U ? P : never;
 }[keyof T];
 
+export type WellInspectTabs =
+  | 'Overview'
+  | 'Trajectories'
+  | 'NDS Events'
+  | 'NPT Events'
+  | 'Casings'
+  | 'Well logs'
+  | 'Related Documents'
+  | 'Digital Rocks'
+  | 'Geomechanics & PPFG'
+  | '3D';
+
 type Tab = {
   key: KeyOfType<Required<WellConfig>, { enabled?: boolean }>;
-  name: string;
+  name: WellInspectTabs;
   path: string;
   standalone?: boolean;
 };

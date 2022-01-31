@@ -52,7 +52,12 @@ export const WellsBulkActions: React.FC = () => {
   };
 
   const handleDeselectAll = () => {
-    dispatch(wellSearchActions.toggleSelectedWells(wells, false));
+    dispatch(
+      wellSearchActions.toggleSelectedWells(wells, {
+        isSelected: false,
+        clear: true,
+      })
+    );
   };
 
   const handleClickView = () => {
@@ -119,6 +124,7 @@ export const WellsBulkActions: React.FC = () => {
         tooltip={t(CLEAR_SELECTION_TEXT)}
         onClick={handleDeselectAll}
         aria-label={CLEAR_SELECTION_TEXT}
+        data-testid="wells-bulk-action-close"
       />
     </TableBulkActions>
   );

@@ -124,7 +124,7 @@ describe('Creating Favorites', () => {
   describe('Well results page', () => {
     it('Create favorite from Well results hover on well', () => {
       cy.performSearch('');
-      cy.goToTab('Wells').click();
+      cy.goToTab('Wells');
 
       cy.findByTestId('well-result-table')
         .findAllByTestId('table-row')
@@ -152,7 +152,7 @@ describe('Creating Favorites', () => {
 
     it('Create favorite from Well results hover on wellbore', () => {
       cy.performSearch('');
-      cy.goToTab('Wells').click();
+      cy.goToTab('Wells');
 
       cy.findByTestId('well-result-table')
         .findAllByTestId('table-cell-expanded')
@@ -182,7 +182,7 @@ describe('Creating Favorites', () => {
 
     it('Create favorite from Well results bulk actions', () => {
       cy.performSearch('');
-      cy.goToTab('Wells').click();
+      cy.goToTab('Wells');
 
       cy.findByTestId('well-result-table')
         .findAllByTestId('table-row')

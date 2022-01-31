@@ -124,7 +124,7 @@ export const WellResultTable: React.FC = () => {
     (row: RowProps<Well>, isSelected: boolean) => {
       const well = row.original;
       batch(() => {
-        dispatch(wellSearchActions.toggleSelectedWells([well], isSelected));
+        dispatch(wellSearchActions.toggleSelectedWells([well], { isSelected }));
         dispatch(wellSearchActions.toggleExpandedWell(well));
       });
     },
@@ -133,7 +133,7 @@ export const WellResultTable: React.FC = () => {
 
   const handleRowsSelect = useDeepCallback(
     (isSelected: boolean) => {
-      dispatch(wellSearchActions.toggleSelectedWells(wells, isSelected));
+      dispatch(wellSearchActions.toggleSelectedWells(wells, { isSelected }));
     },
     [wells]
   );

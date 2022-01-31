@@ -70,6 +70,10 @@ export function wellReducer(
       // temporary fix, will refactor this properly in another PR.
       const { selectedWellIds, selectedWellboreIds } = cloneDeep(state);
 
+      if (action.clear) {
+        return { ...state, selectedWellIds: {}, selectedWellboreIds: {} };
+      }
+
       action.wells.forEach((wellData) => {
         if (action.isSelected) {
           set(selectedWellIds, wellData.id, true);

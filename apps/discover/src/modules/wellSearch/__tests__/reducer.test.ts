@@ -63,6 +63,18 @@ describe('Well Reducer', () => {
     expect(state.selectedWellIds).toEqual({ 1234: true, 1235: true });
   });
 
+  it('should clear all the selected wells and wellbores', () => {
+    const state = wellReducer(initialState, {
+      type: TOGGLE_SELECTED_WELLS,
+      wells: mockedWellsFixture,
+      isSelected: true,
+      clear: true,
+    });
+
+    expect(state.selectedWellIds).toEqual({});
+    expect(state.selectedWellboreIds).toEqual({});
+  });
+
   it(`should toggle selected wellbore of well`, () => {
     const well = mockedWellsFixture[0];
     const state = wellReducer(initialState, {

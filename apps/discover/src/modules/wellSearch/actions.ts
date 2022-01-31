@@ -83,13 +83,17 @@ function toggleExpandedWell(well: Well, reset = false): ThunkResult<void> {
 
 function toggleSelectedWells(
   wells: Well[],
-  isSelected: boolean
+  options: {
+    isSelected: boolean;
+    clear?: boolean;
+  }
 ): ThunkResult<void> {
   return (dispatch) => {
     dispatch({
       type: TOGGLE_SELECTED_WELLS,
       wells,
-      isSelected,
+      isSelected: options.isSelected,
+      clear: options.clear,
     });
   };
 }
