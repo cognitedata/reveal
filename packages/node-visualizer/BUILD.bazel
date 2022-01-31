@@ -92,10 +92,6 @@ DEV_DEPENDENCIES = [
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "__tests__": "dist/__tests__",
-    "utils": "dist/utils",
-    "index" : "dist/index",
-    "images": "dist/images",
-    "Core" : "dist/Core",
 }
 
 ### end of auto-generated helpers ###
