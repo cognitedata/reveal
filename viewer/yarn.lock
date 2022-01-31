@@ -497,8 +497,6 @@ __metadata:
     core-js: ^3.6.5
     cross-var: ^1.1.0
     dat.gui: ^0.7.7
-    draco3d: ^1.5.0
-    draco3dgltf: ^1.5.0
     eslint: ^7.12.1
     eslint-config-prettier: ^6.14.0
     eslint-plugin-header: ^3.1.0
@@ -4799,20 +4797,6 @@ __metadata:
     no-case: ^3.0.4
     tslib: ^2.0.3
   checksum: a65e3519414856df0228b9f645332f974f2bf5433370f544a681122eab59e66038fc3349b4be1cdc47152779dac71a5864f1ccda2f745e767c46e9c6543b1169
-  languageName: node
-  linkType: hard
-
-"draco3d@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "draco3d@npm:1.5.0"
-  checksum: e3ccfd5950007489271746d514f0db9e37c5d05be78cc160e3a65f596c840423a9caa17f7ec1287f5b16790faa6579f94ca962cfbc843865de6f483c03c5dd23
-  languageName: node
-  linkType: hard
-
-"draco3dgltf@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "draco3dgltf@npm:1.5.0"
-  checksum: ad5260feb7a13c9202a3f787eecd230142c6693c7af98075107639b35d4e1f398b79843acb333320704cf1af69e5fe060218cd4e99e931df55c5387b0c12ed19
   languageName: node
   linkType: hard
 

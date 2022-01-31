@@ -33,14 +33,29 @@ export function createInstancedMeshMaterial(): THREE.ShaderMaterial {
   });
 }
 
-export function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+export function createGeneralCylinderMaterial(): THREE.RawShaderMaterial {
+  return new THREE.RawShaderMaterial({
     name: 'Primitives (General cylinder)',
     clipping: false,
     uniforms: {
       renderMode: { value: 1 },
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      modelViewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
+      },
+      cameraPosition: {
+        value: new THREE.Vector3()
       },
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
@@ -156,15 +171,27 @@ export function createEccentricConeMaterial(): THREE.ShaderMaterial {
   });
 }
 
-export function createGeneralRingMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
+  return new THREE.RawShaderMaterial({
     name: 'Primitives (General rings)',
     clipping: false,
     uniforms: {
-      renderMode: { value: 1 },
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
+      },
+      renderMode: { value: 1 },
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }

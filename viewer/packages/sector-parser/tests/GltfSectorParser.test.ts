@@ -11,11 +11,11 @@ import { RevealGeometryCollectionType } from '../src/types';
 describe(GltfSectorParser.name, () => {
   let parsedResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
 
-  beforeAll(() => {
+  beforeAll(async () => {
     const parser = new GltfSectorParser();
     const buffer = fs.readFileSync(__dirname + '/test.glb');
 
-    parsedResult = parser.parseSector(buffer.buffer);
+    parsedResult = await parser.parseSector(buffer.buffer);
   });
 
   test('Parsing test.glb should have 11 output primitive types', () => {

@@ -16,8 +16,9 @@ import {
   ParsedGeometry
 } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
-import { TypedArrayConstructor } from '@reveal/utilities';
-import draco3dgltf from 'draco3dgltf';
+import { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
+import type { Attribute, DataType, Decoder, DecoderModule, Mesh } from 'draco3dgltf';
+import DracoDecoderModule from './draco_decoder_gltf.js';
 
 export class GltfSectorParser {
   private readonly _glbMetadataParser: GlbMetadataParser;
@@ -43,43 +44,46 @@ export class GltfSectorParser {
     [5126, Float32Array]
   ]);
 
+  private readonly _dracoDecoderModule: Promise<DecoderModule>;
+
   constructor() {
     this._glbMetadataParser = new GlbMetadataParser();
+    this._dracoDecoderModule = DracoDecoderModule();
   }
 
-  public parseSector(data: ArrayBuffer): ParsedGeometry[] {
+  public async parseSector(data: ArrayBuffer): Promise<ParsedGeometry[]> {
     const headers = this._glbMetadataParser.parseGlbMetadata(data);
     const json = headers.json;
-    draco3dgltf.createDecoderModule().then(asd => {
-      const decoder = new asd.Decoder();
-      const buffer = new asd.DecoderBuffer();
-      buffer.Init(new Int8Array(data), data.byteLength);
-      // const geometryType = decoder.GetEncodedGeometryType(buffer);
-      // console.log('geo: ' + geometryType);
-    });
+
     return this.traverseDefaultSceneNodes(json, headers, data);
   }
 
-  private traverseDefaultSceneNodes(json: GltfJson, headers: GlbHeaderData, data: ArrayBuffer) {
+  private async traverseDefaultSceneNodes(json: GltfJson, headers: GlbHeaderData, data: ArrayBuffer) {
     const typedGeometryBuffers: ParsedGeometry[] = [];
 
     const defaultSceneNodeIds = json.scenes[json.scene].nodes;
 
-    defaultSceneNodeIds
-      .map(nodeId => json.nodes[nodeId])
-      .forEach(node => {
-        const processedNode = this.processNode(node, headers, data)!;
-        if (processedNode === undefined) {
-          return;
-        }
+    await Promise.all(
+      defaultSceneNodeIds
+        .map(nodeId => json.nodes[nodeId])
+        .map(async node => {
+          const processedNode = await this.processNode(node, headers, data)!;
+          if (processedNode === undefined) {
+            return;
+          }
 
-        typedGeometryBuffers.push(processedNode);
-      });
+          typedGeometryBuffers.push(processedNode);
+        })
+    );
 
     return typedGeometryBuffers;
   }
 
-  private processNode(node: Node, glbHeaderData: GlbHeaderData, data: ArrayBuffer): ParsedGeometry | undefined {
+  private async processNode(
+    node: Node,
+    glbHeaderData: GlbHeaderData,
+    data: ArrayBuffer
+  ): Promise<ParsedGeometry> | undefined {
     const instancingExtension = node.extensions?.EXT_mesh_gpu_instancing;
     const meshId = node.mesh;
 
@@ -100,11 +104,13 @@ export class GltfSectorParser {
 
     switch (geometryType) {
       case RevealGeometryCollectionType.InstanceMesh:
+        // return undefined;
         assert(payload.instancingExtension !== undefined);
         return this.processInstancedTriangleMesh(payload);
       case RevealGeometryCollectionType.TriangleMesh:
         assert(payload.instancingExtension === undefined);
-        this.processTriangleMesh(payload);
+        await this.processTriangleMesh(payload);
+        // return undefined;
         break;
       default:
         assert(payload.instancingExtension !== undefined);
@@ -168,7 +174,7 @@ export class GltfSectorParser {
     );
   }
 
-  private processTriangleMesh(payload: GeometryProcessingPayload) {
+  private async processTriangleMesh(payload: GeometryProcessingPayload) {
     const { bufferGeometry, glbHeaderData, meshId, data } = payload;
 
     const json = glbHeaderData.json;
@@ -180,6 +186,56 @@ export class GltfSectorParser {
     assert(mesh.primitives.length === 1);
 
     const primitive = mesh.primitives[0];
+    const dracoCompression = primitive.extensions?.KHR_draco_mesh_compression;
+
+    if (dracoCompression !== undefined) {
+      const dracoBufferView = json.bufferViews[dracoCompression.bufferView];
+
+      const offsetToBinChunk = payload.glbHeaderData.byteOffsetToBinContent;
+
+      const asd = new Int8Array(data, offsetToBinChunk + dracoBufferView.byteOffset, dracoBufferView.byteLength);
+
+      const module = await this._dracoDecoderModule;
+
+      const buffer = new module.DecoderBuffer();
+      buffer.Init(asd, asd.length);
+
+      const decoder = new module.Decoder();
+      const geometryType = decoder.GetEncodedGeometryType(buffer);
+      if (geometryType === module.TRIANGULAR_MESH) {
+        const dracoMesh = new module.Mesh();
+        const status = decoder.DecodeBufferToMesh(buffer, dracoMesh);
+
+        if (!status.ok() || dracoMesh.ptr === 0) {
+          throw new Error(`Failed to decode draco mesh. Error: ${status.error_msg()}`);
+        }
+
+        console.log('faces: ' + dracoMesh.num_faces());
+        console.log('points: ' + dracoMesh.num_points());
+
+        console.log('Indices: ');
+        console.log(decodeIndex(decoder, dracoMesh, module));
+        const draco_data_type = new Map<number, DataType>([
+          [5120, module.DT_INT8],
+          [5121, module.DT_UINT8],
+          [5122, module.DT_INT16],
+          [5123, module.DT_UINT16],
+          [5125, module.DT_UINT32],
+          [5126, module.DT_FLOAT32]
+        ]);
+        Object.keys(primitive.attributes).forEach(p => {
+          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[p]);
+          const componentType = json.accessors[primitive.attributes[p]].componentType;
+          const dracoType = draco_data_type.get(componentType)!;
+          const jsType = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
+          // console.log(dracoType);
+          // console.log(jsType);
+          const decodedAttribute = decodeAttribute(decoder, dracoMesh, dracoAttribute, dracoType, jsType, module);
+          console.log(p);
+          console.log(decodedAttribute.buffer);
+        });
+      }
+    }
 
     this.setIndexBuffer(payload, primitive, data, bufferGeometry);
 
@@ -203,6 +259,57 @@ export class GltfSectorParser {
         default:
           throw new Error();
       }
+    }
+
+    function decodeAttribute(
+      decoder: Decoder,
+      mesh: Mesh,
+      attribute: Attribute,
+      dracoDataType: DataType,
+      jsType: TypedArrayConstructor,
+      decoderModule: DecoderModule
+    ): TypedArray {
+      const dataType = dracoDataType;
+      const ArrayCtor = jsType;
+      const numComponents = attribute.num_components();
+      const numPoints = mesh.num_points();
+      const numValues = numPoints * numComponents;
+      const byteLength: number = numValues * ArrayCtor.BYTES_PER_ELEMENT;
+
+      const ptr = decoderModule._malloc(byteLength);
+      console.log(ptr);
+      decoder.GetAttributeDataArrayForAllPoints(mesh, attribute, dataType, byteLength, ptr);
+      const array: TypedArray = new ArrayCtor(decoderModule.HEAPF32.buffer, ptr, numValues).slice();
+      decoderModule._free(ptr);
+
+      console.log('asdasd');
+      console.log(decoderModule.HEAP8.buffer);
+
+      return array;
+    }
+
+    function decodeIndex(decoder: Decoder, mesh: Mesh, decoderModule: DecoderModule): Uint16Array | Uint32Array {
+      const numFaces = mesh.num_faces();
+      const numIndices = numFaces * 3;
+
+      let ptr: number;
+      let indices: Uint16Array | Uint32Array;
+
+      if (mesh.num_points() <= 65534) {
+        const byteLength = numIndices * Uint16Array.BYTES_PER_ELEMENT;
+        ptr = decoderModule._malloc(byteLength);
+        decoder.GetTrianglesUInt16Array(mesh, byteLength, ptr);
+        indices = new Uint16Array(decoderModule.HEAPU16.buffer, ptr, numIndices).slice();
+      } else {
+        const byteLength = numIndices * Uint32Array.BYTES_PER_ELEMENT;
+        ptr = decoderModule._malloc(byteLength);
+        decoder.GetTrianglesUInt32Array(mesh, byteLength, ptr);
+        indices = new Uint32Array(decoderModule.HEAPU32.buffer, ptr, numIndices).slice();
+      }
+
+      decoderModule._free(ptr);
+
+      return indices;
     }
   }
 

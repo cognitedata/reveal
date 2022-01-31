@@ -11,8 +11,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     // Strict Type-Checking Options
-    "strict": true,
+    "strict": false,
     // Module Resolution Options
+    "allowJs": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "declaration": true,
