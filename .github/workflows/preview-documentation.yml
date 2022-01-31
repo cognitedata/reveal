@@ -54,6 +54,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Initialize variables
+        run: |
+          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+
       - name: Deploy documentation preview 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
