@@ -378,22 +378,9 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       );
       const stage = ornateViewer.current && ornateViewer.current.stage;
       if (ornateViewer.current && stage) {
-        const baseLayer = (stage?.children || []).find(
-          (child) => child.name() === 'baseLayer'
-        );
-        const boxSurroundingAllDocs =
-          // @ts-ignore
-          baseLayer && baseLayer.getClientRect({ relativeTo: stage });
-        const { x, y, height, width } = boxSurroundingAllDocs || {};
-        const group = new Konva.Group({
-          x,
-          y,
-          width,
-          height,
+        ornateViewer.current.zoomToGroup(ornateViewer.current.baseLayer, {
+          relativeTo: stage as unknown as Konva.Container,
         });
-        if (x && y && width && height) {
-          ornateViewer.current.zoomToGroup(group);
-        }
       }
       contents.markers.forEach((marker) => {
         (ornateViewer.current!.tools.list as ListTool).addMarker({

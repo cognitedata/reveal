@@ -1,3 +1,11 @@
+## 1.1.16
+
+- BUG: Accept relativeTo field for zoomToGroup options
+
+## 1.1.15
+
+- BUG: Persist comment shape ids
+
 ## 1.1.14
 
 - FEAT: Include PDF page information in group

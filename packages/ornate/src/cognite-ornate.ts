@@ -47,6 +47,7 @@ const SCALE_MIN = 0.05;
 type ZoomToGroupOptions = {
   duration?: number;
   scaleFactor?: number;
+  relativeTo?: Konva.Container;
 };
 
 export type CogniteOrnateOptions = {
@@ -626,13 +627,19 @@ export class CogniteOrnate {
 
   zoomToGroup(group: Konva.Group, zoomToGroupOptions?: ZoomToGroupOptions) {
     const ZOOM_TO_GROUP_OPTIONS_DEFAULTS = { duration: 0.35, scaleFactor: 1 };
-    const { duration, scaleFactor } = {
+    const { duration, scaleFactor, relativeTo } = {
       ...ZOOM_TO_GROUP_OPTIONS_DEFAULTS,
       ...zoomToGroupOptions,
     };
-    const { width: groupWidth, height: groupHeight } = group.getClientRect({
+    const {
+      width: groupWidth,
+      height: groupHeight,
+      x,
+      y,
+    } = group.getClientRect({
       skipTransform: true,
       skipStroke: true,
+      relativeTo,
     });
     const rawScale =
       Math.min(
@@ -641,8 +648,8 @@ export class CogniteOrnate {
       ) * scaleFactor;
     const scale = Math.min(Math.max(rawScale, SCALE_MIN), SCALE_MAX);
     const location = {
-      x: -group.x() - groupWidth / 2,
-      y: -group.y() - groupHeight / 2,
+      x: -x - groupWidth / 2,
+      y: -y - groupHeight / 2,
     };
 
     this.zoomToLocation(location, scale, duration);
