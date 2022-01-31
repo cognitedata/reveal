@@ -21,9 +21,9 @@ import {
 import { promises } from 'fs';
 const { readFile, stat, writeFile } = promises;
 import { join, resolve } from 'path';
-import { D as _D } from '../../utils/logger';
+import { DEBUG as _DEBUG } from '../../utils/logger';
 
-const D = _D.extend('solutions:generate');
+const DEBUG = _DEBUG.extend('solutions:generate');
 
 export type SolutionsGenerateCommandArgs = BaseArgs & {
   ['project-name']: string;
@@ -89,9 +89,9 @@ class SolutionGenerateCommand extends CLICommand {
   async execute(args: Arguments<SolutionsGenerateCommandArgs>) {
     try {
       const client = getCogniteSDKClient();
-      D('Initialize the Cognite SDK client');
+      DEBUG('Initialize the Cognite SDK client');
       const solutions = new SolutionsApiService(client);
-      D('Fetching the introspection query from the server');
+      DEBUG('Fetching the introspection query from the server');
       const response = await solutions.runQuery({
         solutionId: args['project-name'],
         schemaVersion: '1',
@@ -103,9 +103,9 @@ class SolutionGenerateCommand extends CLICommand {
           operationName: 'IntrospectionQuery',
         },
       });
-      D(`got introspection query response: ${JSON.stringify(response)}`);
+      DEBUG(`got introspection query response: ${JSON.stringify(response)}`);
       if (response.errors) {
-        D(`got errors: ${JSON.stringify(response.errors)}`);
+        DEBUG(`got errors: ${JSON.stringify(response.errors)}`);
         if (response.errors.length > 0) {
           return args.logger.error(
             response.errors.map((error) => error.message).join('\n')
@@ -120,7 +120,7 @@ class SolutionGenerateCommand extends CLICommand {
         args['operations-file'] &&
         (await stat(resolve(args['operations-file']))).isFile()
       ) {
-        D(`got operations file: ${args['operations-file']}`);
+        DEBUG(`got operations file: ${args['operations-file']}`);
         const file = resolve(args['operations-file']);
         const fileContent = await readFile(file, 'utf8');
         documents = [{ document: parse(fileContent) }];
@@ -129,7 +129,7 @@ class SolutionGenerateCommand extends CLICommand {
           'No operations file provided, skipping operation generations'
         );
       }
-      D('Generating the code, this may take a while');
+      DEBUG('Generating the code, this may take a while');
       const generatedCode = await codegen({
         filename: args['output-file'],
         config: {},
@@ -148,14 +148,14 @@ class SolutionGenerateCommand extends CLICommand {
             typescriptApolloAngularPlugin,
         },
       });
-      D(`generated code: ${generatedCode}`);
+      DEBUG(`generated code: ${generatedCode}`);
       await writeFile(join(cwd(), args['output-file']), generatedCode);
-      D('Done');
+      DEBUG('Done');
       args.logger.success(
         `Successfully generated types in ${args['output-file']}`
       );
     } catch (error) {
-      D(`got error: ${JSON.stringify(error)}`);
+      DEBUG(`got error: ${JSON.stringify(error)}`);
       args.logger.error(error);
     }
   }

@@ -18,7 +18,8 @@ export type TemplateInitCommandArgs = BaseArgs & {
 
 class TemplateInitCommand implements CommandModule {
   public readonly command = 'init [name]';
-  public readonly describe = 'Init a PLatypus Solution';
+  public readonly describe =
+    'Initialize an existing template solution from templates backend';
   builder(argv: Argv<TemplateInitCommandArgs>) {
     return argv
       .option('template-group-id', {
@@ -28,11 +29,7 @@ class TemplateInitCommand implements CommandModule {
       .option('template-version', {
         type: 'string',
         description: 'Version for the template group this will be locked to',
-      })
-      .check(({ 'template-version': version }) =>
-        // eslint-disable-next-line lodash/prefer-lodash-typecheck
-        version ? typeof version === 'number' : true
-      );
+      });
   }
   async handler(_args: Arguments<TemplateInitCommandArgs>) {
     if (existsSync(join(cwd(), CONSTANTS.PROJECT_CONFIG_FILE_NAME))) {
@@ -70,6 +67,15 @@ class TemplateInitCommand implements CommandModule {
       ]);
 
       args = { ...args, ...version };
+    }
+
+    if (
+      args['template-version'] &&
+      !versions.includes(parseInt(args['template-version'], 10))
+    ) {
+      throw new Error(
+        `Version ${args['template-version']} does not exist, please make sure you have the right version`
+      );
     }
 
     const { logger } = args;
