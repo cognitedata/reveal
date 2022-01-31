@@ -71,13 +71,14 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     []
   );
 
+  // TODO(PP-2504): The whole selection and complicated logic needs to be refactored and unit-tested
   const handleRowSelect = useCallback((row: RowProps<Well>) => {
     setExpandedIds((state) => ({
       ...state,
       [row.original.id]: true,
     }));
     setSelectedWellIds((state) => {
-      setWellbores(row, state[row.original.id]);
+      setWellbores(row.original, state[row.original.id]);
       return {
         ...state,
         [row.original.id]: !state[row.original.id],
@@ -85,14 +86,14 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     });
   }, []);
 
-  const setWellbores = (row: RowProps<Well>, isContain: boolean): void => {
-    const wellbores = getContainWellbores(row.original);
+  const setWellbores = (well: Well, isContain: boolean): void => {
+    const wellbores = getContainWellbores(well);
     setSelectedWellboreIdsWithWellId((prevState) =>
       isContain
-        ? { ...prevState, [row.original.id]: [] }
+        ? { ...prevState, [well.id]: [] }
         : {
             ...prevState,
-            [row.original.id]: wellbores
+            [well.id]: wellbores
               ? wellbores.flatMap((wellbore) => [wellbore])
               : [],
           }
@@ -117,7 +118,12 @@ export const FavoriteWellsTable: React.FC<Props> = ({
       );
 
       setSelectedWellIds(selectedWellIdsList);
-      setSelectedWellboreIdsWithWellId({});
+      Object.keys(selectedWellIdsList).forEach((wellId) => {
+        const well = data?.find((well) => well.id === wellId);
+        if (well) {
+          setWellbores(well, !value);
+        }
+      });
     },
     [data]
   );
