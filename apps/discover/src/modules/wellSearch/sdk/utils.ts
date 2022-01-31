@@ -154,8 +154,8 @@ export const mapV2toV3WellFilter = (
     sources: wellFilter.sources,
     waterDepth: wellFilter.waterDepth,
     spudDate: undefinedIfAllKeysUndefined({
-      min: wellFilter.spudDate?.min?.toDateString(),
-      max: wellFilter.spudDate?.max?.toDateString(),
+      min: wellFilter.spudDate?.min?.toISOString(),
+      max: wellFilter.spudDate?.max?.toISOString(),
     }),
     polygon: mapV2toV3PolygonFilter(wellFilter.polygon),
     trajectories: undefinedIfAllKeysUndefined({
