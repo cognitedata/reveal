@@ -7,18 +7,18 @@ import {
   PidDocument,
   getNoneOverlappingSymbolInstances,
   BoundingBox,
-  DiagramInstanceOutputFormat,
+  DiagramInstanceWithPathsOutputFormat,
   PathReplacement,
-  DocumentType,
   PidDocumentWithDom,
   DiagramEquipmentTagInstance,
   DiagramEquipmentTagOutputFormat,
+  DocumentMetadata,
+  DiagramSymbolInstanceOutputFormat,
 } from '@cognite/pid-tools';
 
 import {
   getEquipmentTagOutputFormat,
-  getLineInstancesOutputFormat,
-  getSymbolInstancesOutputFormat,
+  getDiagramInstancesOutputFormat,
 } from './saveGraph';
 
 export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
@@ -32,11 +32,11 @@ export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
 };
 
 interface Graph {
-  documentType: DocumentType;
+  documentMetadata: DocumentMetadata;
   viewBox: BoundingBox;
   symbols: DiagramSymbol[];
-  symbolInstances: DiagramInstanceOutputFormat[];
-  lines: DiagramInstanceOutputFormat[];
+  symbolInstances: DiagramInstanceWithPathsOutputFormat[];
+  lines: DiagramInstanceWithPathsOutputFormat[];
   connections: DiagramConnection[];
   pathReplacements: PathReplacement[];
   lineNumbers: string[];
@@ -50,12 +50,12 @@ const getGraphFormat = (
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
   pathReplacements: PathReplacement[],
-  documentType: DocumentType,
+  documentMetadata: DocumentMetadata,
   lineNumbers: string[],
   equipmentTags: DiagramEquipmentTagInstance[]
 ): Graph => {
-  const linesOutputFormat = getLineInstancesOutputFormat(pidDocument, lines);
-  const symbolInstancesOutputFormat = getSymbolInstancesOutputFormat(
+  const linesOutputFormat = getDiagramInstancesOutputFormat(pidDocument, lines);
+  const symbolInstancesOutputFormat = getDiagramInstancesOutputFormat(
     pidDocument,
     symbolInstances
   );
@@ -64,18 +64,9 @@ const getGraphFormat = (
     equipmentTags
   );
 
-  const svgViewBox = pidDocument.svg.viewBox;
-
-  const viewBox = {
-    x: svgViewBox.baseVal.x,
-    y: svgViewBox.baseVal.y,
-    width: svgViewBox.baseVal.width,
-    height: svgViewBox.baseVal.height,
-  };
-
   return {
-    documentType,
-    viewBox,
+    documentMetadata,
+    viewBox: pidDocument.viewBox,
     symbols,
     lines: linesOutputFormat,
     symbolInstances: symbolInstancesOutputFormat,
@@ -93,7 +84,7 @@ export const saveGraphAsJson = (
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
   pathReplacements: PathReplacement[],
-  documentType: DocumentType,
+  documentMetadata: DocumentMetadata,
   lineNumbers: string[],
   equipmentTags: DiagramEquipmentTagInstance[]
 ) => {
@@ -104,7 +95,7 @@ export const saveGraphAsJson = (
     symbolInstances,
     connections,
     pathReplacements,
-    documentType,
+    documentMetadata,
     lineNumbers,
     equipmentTags
   );
@@ -218,7 +209,7 @@ export const loadSymbolsFromJson = (
   }
   if ('lines' in jsonData) {
     const newLinesOutputFormat =
-      jsonData.lines as DiagramInstanceOutputFormat[];
+      jsonData.lines as DiagramInstanceWithPathsOutputFormat[];
 
     const newLines = newLinesOutputFormat.map((newLineOutputFormat) => {
       return {
@@ -232,18 +223,8 @@ export const loadSymbolsFromJson = (
   }
   if ('symbolInstances' in jsonData) {
     const newSymbolInstancesOutputFormat =
-      jsonData.symbolInstances as DiagramInstanceOutputFormat[];
-
-    const newSymbolInstances: DiagramSymbolInstance[] = [];
-    newSymbolInstancesOutputFormat.forEach((symbolInstanceOutputFormat) => {
-      newSymbolInstances.push({
-        type: symbolInstanceOutputFormat.type,
-        symbolId: symbolInstanceOutputFormat.symbolId,
-        pathIds: symbolInstanceOutputFormat.pathIds,
-        labelIds: symbolInstanceOutputFormat.labelIds,
-      } as DiagramSymbolInstance);
-    });
-    setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
+      jsonData.symbolInstances as DiagramSymbolInstanceOutputFormat[];
+    setSymbolInstances([...symbolInstances, ...newSymbolInstancesOutputFormat]);
   }
   if ('connections' in jsonData) {
     const newConnections = jsonData.connections as DiagramConnection[];

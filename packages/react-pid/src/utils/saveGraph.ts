@@ -1,61 +1,31 @@
 import {
-  DiagramInstanceOutputFormat,
-  DiagramSymbolInstance,
+  DiagramInstanceWithPathsOutputFormat,
   PidDocument,
   getDiagramInstanceId,
-  DiagramLineInstance,
   DiagramEquipmentTagInstance,
   DiagramEquipmentTagOutputFormat,
   getEncolosingBoundingBox,
+  DiagramInstanceWithPaths,
 } from '@cognite/pid-tools';
 
-export const getSymbolInstancesOutputFormat = (
+export const getDiagramInstancesOutputFormat = (
   pidDocument: PidDocument,
-  diagramInstances: DiagramSymbolInstance[]
-): DiagramInstanceOutputFormat[] => {
+  diagramInstances: DiagramInstanceWithPaths[]
+): DiagramInstanceWithPathsOutputFormat[] => {
   return diagramInstances.map((diagramInstance) => {
     const labels = diagramInstance.labelIds.map((labelId) =>
       pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
     );
 
     return {
+      ...diagramInstance,
       id: getDiagramInstanceId(diagramInstance),
-      type: diagramInstance.type,
-      symbolId: diagramInstance.symbolId,
-      pathIds: diagramInstance.pathIds,
       svgRepresentation: pidDocument.createSvgRepresentation(
         diagramInstance.pathIds,
         true,
         4
       ),
-      labelIds: diagramInstance.labelIds,
       labels,
-      lineNumbers: diagramInstance.lineNumbers,
-    };
-  });
-};
-
-export const getLineInstancesOutputFormat = (
-  pidDocument: PidDocument,
-  lineInstances: DiagramLineInstance[]
-): DiagramInstanceOutputFormat[] => {
-  return lineInstances.map((diagramInstance) => {
-    const labels = diagramInstance.labelIds.map((labelId) =>
-      pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
-    );
-
-    return {
-      id: getDiagramInstanceId(diagramInstance),
-      type: diagramInstance.type,
-      pathIds: diagramInstance.pathIds,
-      svgRepresentation: pidDocument.createSvgRepresentation(
-        diagramInstance.pathIds,
-        true,
-        4
-      ),
-      labelIds: diagramInstance.labelIds,
-      labels,
-      lineNumbers: diagramInstance.lineNumbers,
     };
   });
 };

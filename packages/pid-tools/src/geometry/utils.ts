@@ -1,5 +1,5 @@
 /* eslint-disable no-continue */
-import { BoundingBox } from 'types';
+import { BoundingBox } from '../types';
 
 import { Point } from './Point';
 import { PathSegment } from './PathSegment';
@@ -29,12 +29,6 @@ export const getBoundingBox = (
     width: maxX - minX,
     height: maxY - minY,
   };
-};
-
-export const calculateMidPointFromBoundingBox = (boundingBox: BoundingBox) => {
-  const x = boundingBox.x + boundingBox.width / 2;
-  const y = boundingBox.y + boundingBox.height / 2;
-  return new Point(x, y);
 };
 
 export const getEncolosingBoundingBox = (

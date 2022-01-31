@@ -18,7 +18,7 @@ const ScrollWrapper = styled.div`
   overflow-y: scroll;
 `;
 
-const CollapseSeperator = styled.div`
+export const CollapseSeperator = styled.div`
   padding: 0.5rem 1rem;
   text-align: left;
   background: #f7f7f7;
@@ -28,6 +28,10 @@ const CollapseSeperator = styled.div`
 const ConnectionItem = styled.div`
   display: grid;
   grid-template-columns: auto max-content;
+`;
+
+const Pre = styled.pre`
+  font-size: 0.75rem;
 `;
 
 interface CollapsableInstanceListProps {
@@ -63,14 +67,9 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
       return (
         <div>
           {getInstancesBySymbol(symbolInstances, symbol).map((instance) => (
-            <p key={instance.pathIds.join('')}>
-              {`{scale: ${
-                instance.scale === undefined
-                  ? undefined
-                  : instance.scale.toFixed(3)
-              },
-pathIds: [${instance.pathIds.join(', ')}]}`}
-            </p>
+            <Pre key={instance.pathIds.join('')}>
+              {JSON.stringify(instance, undefined, 2)}
+            </Pre>
           ))}
         </div>
       );

@@ -326,22 +326,6 @@ const applyPointerCursorStyleToNode = ({
   }
 };
 
-export function addOrRemoveLabelToInstance<
-  Type extends DiagramInstanceWithPaths
->(
-  labelId: string,
-  instance: Type,
-  instances: Type[],
-  setter: (arg: Type[]) => void
-): void {
-  if (instance.labelIds.includes(labelId)) {
-    instance.labelIds = instance.labelIds.filter((li) => li !== labelId);
-  } else {
-    instance.labelIds = [...instance.labelIds, labelId];
-  }
-  setter([...instances]);
-}
-
 export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
   lineNumber: string,
   instance: Type,
@@ -356,29 +340,6 @@ export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
     instance.lineNumbers = [...instance.lineNumbers, lineNumber];
   }
   setter([...instances]);
-}
-
-export function addOrRemoveLabelToEquipmentTag(
-  label: SVGTSpanElement,
-  tag: DiagramEquipmentTagInstance
-): void {
-  if (tag.labelIds.includes(label.id)) {
-    tag.labelIds = tag.labelIds.filter((li) => li !== label.id);
-    if (label.innerHTML === tag.name) {
-      const { 0: firstDesc, ...rest } = tag.description;
-      tag.name = firstDesc;
-      tag.description = Object.values(rest);
-    } else {
-      tag.description = tag.description.filter((li) => li !== label.innerHTML);
-    }
-  } else {
-    tag.labelIds = [...tag.labelIds, label.id];
-    if (tag.name) {
-      tag.description = [...tag.description, label.innerHTML];
-    } else {
-      tag.name = label.innerHTML;
-    }
-  }
 }
 
 export const colorSymbol = (

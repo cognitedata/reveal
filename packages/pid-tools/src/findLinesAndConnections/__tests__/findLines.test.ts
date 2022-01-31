@@ -21,7 +21,7 @@ export const createSymbols = (pathIds: string[]) => {
   return pathIds.map(
     (pathId) =>
       ({
-        type: 'symbol',
+        type: 'Instrument',
         symbolId: 'symbolId',
         pathIds: [pathId],
         labelIds: [],

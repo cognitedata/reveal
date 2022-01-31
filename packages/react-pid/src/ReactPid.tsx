@@ -15,6 +15,10 @@ import {
   DocumentType,
   PidDocumentWithDom,
   getDiagramInstanceId,
+  addOrRemoveLabelToInstance,
+  DocumentMetadata,
+  PidDocumentMetadata,
+  IsoDocumentMetadata,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
 
@@ -60,16 +64,18 @@ export const ReactPid: React.FC = () => {
   const [symbolInstances, setSymbolInstances] = useState<
     DiagramSymbolInstance[]
   >([]);
-  const [documentType, setDocumentType] = useState<DocumentType>(
-    DocumentType.unknown
-  );
+  const [documentMetadata, setDocumentMetadata] = useState<DocumentMetadata>({
+    type: DocumentType.unknown,
+    name: 'Unknown',
+    unit: 'Unknown',
+  });
 
   const [labelSelection, setLabelSelection] =
     useState<DiagramInstanceId | null>(null);
 
-  const [connections, setConnections] = React.useState<DiagramConnection[]>([]);
+  const [connections, setConnections] = useState<DiagramConnection[]>([]);
   const [connectionSelection, setConnectionSelection] =
-    React.useState<DiagramInstanceId | null>(null);
+    useState<DiagramInstanceId | null>(null);
 
   let pidDocument: PidDocumentWithDom | undefined;
   const setPidDocument = (arg: PidDocumentWithDom) => {
@@ -77,11 +83,30 @@ export const ReactPid: React.FC = () => {
   };
   const getPidDocument = () => pidDocument;
 
+  const setDocumentType = (documentType: DocumentType) => {
+    if (documentType === DocumentType.pid) {
+      setDocumentMetadata({
+        type: DocumentType.pid,
+        documentNumber: -1,
+        unit: 'Unknown',
+      } as PidDocumentMetadata);
+    } else if (documentType === DocumentType.isometric) {
+      setDocumentMetadata({
+        type: DocumentType.isometric,
+        lineNumber: 'Unknown',
+        unit: 'Unknown',
+      } as IsoDocumentMetadata);
+    }
+  };
+
   useEffect(() => {
-    if (documentType !== DocumentType.unknown) {
+    if (
+      documentMetadata.type !== DocumentType.unknown &&
+      active === 'selectDocumentType'
+    ) {
       setActive('addSymbol');
     }
-  }, [documentType]);
+  }, [documentMetadata]);
 
   const setToolBarMode = (mode: ToolType) => {
     setSelection([]);
@@ -125,7 +150,7 @@ export const ReactPid: React.FC = () => {
       symbolInstances,
       connections,
       pathReplacements,
-      documentType,
+      documentMetadata,
       lineNumbers,
       equipmentTags
     );
@@ -137,7 +162,7 @@ export const ReactPid: React.FC = () => {
     // find lines and connections
     const { lineInstances, newConnections } =
       pidDocument.findLinesAndConnection(
-        documentType,
+        documentMetadata.type,
         symbolInstances,
         lines,
         connections
@@ -157,7 +182,11 @@ export const ReactPid: React.FC = () => {
               getDiagramInstanceId(symbolInstance) ===
               labelSymbolConnection.instanceId
             ) {
-              symbolInstance.labelIds.push(labelSymbolConnection.labelId);
+              addOrRemoveLabelToInstance(
+                labelSymbolConnection.labelId,
+                labelSymbolConnection.labelText,
+                symbolInstance
+              );
             }
           });
           return symbolInstance;
@@ -247,13 +276,28 @@ export const ReactPid: React.FC = () => {
   };
 
   const evalFileName = (file: File) => {
-    const looksLikeIso = file.name.match(/L[0-9]{1,}/);
-    const looksLikePid = file.name.match(/MF/);
+    const looksLikeIso = file.name.match(/L[0-9]{1,}-[0-9]/);
+    const looksLikePid = file.name.match(/MF_[0-9]{1,}/);
+
+    const unit = file.name.match(/G[0-9]{4}/);
+    const { name } = file;
 
     if (looksLikePid && !looksLikeIso) {
-      setDocumentType(DocumentType.pid);
+      const documentNumber = parseInt(looksLikePid[0].substring(3), 10);
+      setDocumentMetadata({
+        type: DocumentType.pid,
+        name,
+        unit: unit ? unit[0] : 'Unknown',
+        documentNumber,
+      } as PidDocumentMetadata);
     } else if (looksLikeIso && !looksLikePid) {
-      setDocumentType(DocumentType.isometric);
+      const lineNumber = looksLikeIso[0];
+      setDocumentMetadata({
+        type: DocumentType.isometric,
+        name,
+        unit: unit ? unit[0] : 'Unknown',
+        lineNumber,
+      } as IsoDocumentMetadata);
     }
   };
 
@@ -293,7 +337,7 @@ export const ReactPid: React.FC = () => {
           fileUrl={fileUrl}
           autoAnalysis={autoAnalysis}
           saveGraphAsJson={saveGraphAsJsonWrapper}
-          documentType={documentType}
+          documentMetadata={documentMetadata}
           setDocumentType={setDocumentType}
           lineNumbers={lineNumbers}
           setLineNumbers={setLineNumbers}

@@ -4,7 +4,7 @@ export const T_JUNCTION = 'tjunction';
 
 export const T_JUNCTION_SIZE = 2;
 export const AUTO_ANALYSIS_DISTANCE_THRESHOLD = 1;
-export const AUTO_ANALYSIS_LABEL_THRESHOLD = 9;
+export const AUTO_ANALYSIS_LABEL_THRESHOLD = 10;
 
 export const symbolTypes = [
   'File connection',
@@ -16,4 +16,4 @@ export const symbolTypes = [
   'Insolation',
   'Arrow',
   'Custom',
-];
+] as const;

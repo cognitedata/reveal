@@ -14,7 +14,11 @@ import {
   PathReplacement,
   applyPathReplacementInSvg,
   PidDocumentWithDom,
+  addOrRemoveLabelToInstance,
+  addOrRemoveLineNumberToInstance,
   getDiagramEquipmentTagInstanceByLabelId,
+  addOrRemoveLabelToEquipmentTag,
+  isLine,
 } from '@cognite/pid-tools';
 import { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
@@ -27,9 +31,6 @@ import { ToolType } from '../../types';
 import { applyToLeafSVGElements } from '../../utils/svgDomUtils';
 
 import {
-  addOrRemoveLabelToEquipmentTag,
-  addOrRemoveLabelToInstance,
-  addOrRemoveLineNumberToInstance,
   applyStyleToNode,
   colorSymbol,
   isDiagramLine,
@@ -339,22 +340,12 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (!diagramInstance) {
           return;
         }
-        if (diagramInstance.type === 'Line') {
-          addOrRemoveLabelToInstance(
-            node.id,
-            diagramInstance as DiagramLineInstance,
-            lines,
-            (arg) => {
-              setLines(arg as DiagramLineInstance[]);
-            }
-          );
+        if (isLine(diagramInstance)) {
+          addOrRemoveLabelToInstance(node.id, node.innerHTML, diagramInstance);
+          setLines([...lines]);
         } else {
-          addOrRemoveLabelToInstance(
-            node.id,
-            diagramInstance as DiagramSymbolInstance,
-            symbolInstances,
-            setSymbolInstances
-          );
+          addOrRemoveLabelToInstance(node.id, node.innerHTML, diagramInstance);
+          setSymbolInstances([...symbolInstances]);
         }
       }
     } else if (active === 'graphExplorer') {

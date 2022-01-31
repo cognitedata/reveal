@@ -1,7 +1,12 @@
 import { getDiagramInstanceIdFromPathIds } from '../utils';
 import { BoundingBox, DiagramInstanceWithPaths } from '../types';
 import { PidDocument, PidPath } from '../pid';
-import { getClosestPointsOnSegments, PathSegment, Point } from '../geometry';
+import {
+  getClosestPointOnSegments,
+  getClosestPointsOnSegments,
+  PathSegment,
+  Point,
+} from '../geometry';
 
 import { calculatePidPathsBoundingBox } from './utils';
 
@@ -45,7 +50,13 @@ export class PidGroup {
     }
 
     if (other instanceof Point) {
-      return this.midPoint.distance(other);
+      const closestPoints = getClosestPointOnSegments(
+        other,
+        this.getPathSegments()
+      );
+
+      if (closestPoints === undefined) return Infinity;
+      return closestPoints.distance;
     }
     return Infinity;
   }

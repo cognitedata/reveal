@@ -1,6 +1,6 @@
 import { BoundingBox, DiagramLabelOutputFormat } from '../types';
 import { translatePointWithDom } from '../matcher/svgPathParser';
-import { calculateMidPointFromBoundingBox, Point } from '../geometry';
+import { Point } from '../geometry';
 
 export class PidTspan {
   id: string;
@@ -42,7 +42,7 @@ export class PidTspan {
   }
 
   getMidPoint(): Point {
-    return calculateMidPointFromBoundingBox(this.boundingBox);
+    return Point.midPointFromBoundingBox(this.boundingBox);
   }
 
   toDiagramLabelOutputFormat(): DiagramLabelOutputFormat {

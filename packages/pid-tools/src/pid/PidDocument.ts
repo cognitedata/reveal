@@ -8,6 +8,7 @@ import {
   SvgRepresentation,
   DiagramSymbolInstance,
   DocumentType,
+  FileConnectionInstance,
   DiagramInstanceId,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
@@ -20,18 +21,22 @@ import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
 import { PidPath } from './PidPath';
 import { PidGroup } from './PidGroup';
+import { getFileConnectionsWithPosition } from './fileConnectionUtils';
 
 export type LabelSymbolInstanceConnection = {
   labelId: string;
+  labelText: string;
   instanceId: DiagramInstanceId;
 };
 
 export class PidDocument {
   pidPaths: PidPath[];
   pidLabels: PidTspan[];
-  constructor(paths: PidPath[], labels: PidTspan[]) {
+  viewBox: BoundingBox;
+  constructor(paths: PidPath[], labels: PidTspan[], viewBox: BoundingBox) {
     this.pidPaths = paths;
     this.pidLabels = labels;
+    this.viewBox = viewBox;
   }
 
   getPidPathById(pathId: string): PidPath | null {
@@ -118,11 +123,19 @@ export class PidDocument {
         );
       }
     });
-    return new PidDocument(pidPaths, []);
+
+    const viewBox: BoundingBox = { x: 0, y: 0, width: 10, height: 10 }; // Fix: Retrieve from svgString
+    return new PidDocument(pidPaths, [], viewBox);
   }
 
   findAllInstancesOfSymbol(symbol: DiagramSymbol): DiagramSymbolInstance[] {
-    return findAllInstancesOfSymbol(this.pidPaths, symbol);
+    return findAllInstancesOfSymbol(this, symbol);
+  }
+
+  getFileConnectionsWithPosition(
+    fileConnections: FileConnectionInstance[]
+  ): FileConnectionInstance[] {
+    return getFileConnectionsWithPosition(this, fileConnections);
   }
 
   findLinesAndConnection(
@@ -174,6 +187,7 @@ export class PidDocument {
       ) {
         labelSymbolInstanceConnections.push({
           labelId: pidLabel.id,
+          labelText: pidLabel.text,
           instanceId: closestSymbolGroup.diagramInstanceId,
         });
       }
@@ -217,8 +231,13 @@ export class PidDocument {
 export class PidDocumentWithDom extends PidDocument {
   svg: SVGSVGElement;
 
-  constructor(svg: SVGSVGElement, paths: PidPath[], labels: PidTspan[]) {
-    super(paths, labels);
+  constructor(
+    svg: SVGSVGElement,
+    paths: PidPath[],
+    labels: PidTspan[],
+    viewBox: BoundingBox
+  ) {
+    super(paths, labels, viewBox);
     this.svg = svg;
   }
 
@@ -233,6 +252,14 @@ export class PidDocumentWithDom extends PidDocument {
       .map((svgElement) => {
         return PidTspan.fromSVGTSpan(svgElement as SVGTSpanElement, svg);
       });
-    return new PidDocumentWithDom(svg, paths, labels);
+
+    const viewBox = {
+      x: svg.viewBox.baseVal.x,
+      y: svg.viewBox.baseVal.y,
+      width: svg.viewBox.baseVal.width,
+      height: svg.viewBox.baseVal.height,
+    };
+
+    return new PidDocumentWithDom(svg, paths, labels, viewBox);
   }
 }

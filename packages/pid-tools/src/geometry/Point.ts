@@ -59,6 +59,12 @@ export class Point {
     return new Point(newX, newY);
   }
 
+  normalize(boundingBox: BoundingBox) {
+    const newX = (this.x - boundingBox.x) / boundingBox.width;
+    const newY = (this.y - boundingBox.y) / boundingBox.height;
+    return new Point(newX, newY);
+  }
+
   static midPointFromBoundingBox(boundingBox: BoundingBox): Point {
     return new Point(
       boundingBox.x + boundingBox.width / 2,

@@ -6,6 +6,7 @@ import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  DocumentMetadata,
   DocumentType,
   PidDocumentWithDom,
 } from '@cognite/pid-tools';
@@ -18,10 +19,11 @@ import { FileController } from './FileController';
 import { AddSymbolController } from './AddSymbolController';
 import { DocumentTypeSelector } from './DocumentTypeSelector';
 import { AddLineNumberController } from './AddLineNumberController';
+import { DocumentInfo } from './DocumentInfo';
 
 const SidePanelWrapper = styled.div`
   display: grid;
-  grid-template-rows: max-content auto max-content;
+  grid-template-rows: max-content max-content auto max-content;
   height: 100%;
   position: relative;
 `;
@@ -37,6 +39,11 @@ const ToolBarWrapper = styled.div`
       color: white;
     }
   }
+`;
+
+const FileControllerWrapper = styled.div`
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #d9d9d9;
 `;
 
 interface SidePanelProps {
@@ -55,7 +62,7 @@ interface SidePanelProps {
   fileUrl?: string;
   autoAnalysis: () => void;
   saveGraphAsJson: () => void;
-  documentType: DocumentType;
+  documentMetadata: DocumentMetadata;
   setDocumentType: (type: DocumentType) => void;
   lineNumbers: string[];
   setLineNumbers: (arg: string[]) => void;
@@ -83,7 +90,7 @@ export const SidePanel = ({
   fileUrl,
   autoAnalysis,
   saveGraphAsJson,
-  documentType,
+  documentMetadata,
   setDocumentType,
   lineNumbers,
   setLineNumbers,
@@ -141,7 +148,7 @@ export const SidePanel = ({
     ],
   ];
 
-  if (documentType === DocumentType.pid) {
+  if (documentMetadata.type === DocumentType.pid) {
     toolBarButtonGroups[0].push({
       icon: 'Slice',
       onClick: () => setActive('splitLine'),
@@ -149,15 +156,6 @@ export const SidePanel = ({
       description: 'Split line',
     });
   }
-
-  const FileControllerWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    & > span {
-      margin: 0 auto;
-    }
-  `;
 
   const setActiveTagWrapper = (arg: string | undefined) => {
     setActive('addEquipmentTag');
@@ -176,10 +174,8 @@ export const SidePanel = ({
           saveGraphAsJson={saveGraphAsJson}
           getPidDocument={getPidDocument}
         />
-        {documentType !== DocumentType.unknown && (
-          <span>Document type: {documentType}</span>
-        )}
       </FileControllerWrapper>
+      <DocumentInfo documentMetadata={documentMetadata} />
       <CollapsableInstanceList
         symbols={symbols}
         symbolInstances={symbolInstances}
