@@ -91,8 +91,11 @@ DEV_DEPENDENCIES = [
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
+    "__tests__": "dist/__tests__",
     "utils": "dist/utils",
-    "images" : "dist/images",
+    "index" : "dist/index",
+    "images": "dist/images",
+    "Core" : "dist/Core",
 }
 
 ### end of auto-generated helpers ###
@@ -126,6 +129,7 @@ jest_test(
     name = "jest_test",
     srcs = SOURCES + TESTS + [
         "//packages:jest.config.js",
+        "//packages:jest.react.config.js",
         ":tsconfig.json",
         "//:tsconfig.json",
         "//packages:tsconfig.json",

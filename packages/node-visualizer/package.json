@@ -47,5 +47,18 @@
   "homepage": "https://github.com/cognitedata/applications#readme",
   "browserslist": [
     "defaults"
-  ]
+  ],
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "__tests__",
+      ".stories."
+    ],
+    "moduleNameMapper": {
+      "^@cognite/(.*)/dist/mocks$": [
+        "../../../packages/$1/src/mocks",
+        "../../../packages/$1/dist/mocks"
+      ]
+    }
+  }
 }
