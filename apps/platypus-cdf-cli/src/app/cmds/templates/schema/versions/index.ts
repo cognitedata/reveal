@@ -1,4 +1,4 @@
-import versionsListCmd from './versions-list';
+import versionsListCmd from './list';
 import { Argv } from 'yargs';
 
 export const command = 'versions <command>';

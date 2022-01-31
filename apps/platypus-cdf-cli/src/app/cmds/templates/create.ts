@@ -12,23 +12,19 @@ export const commandArgs = [
     type: CommandArgumentType.STRING,
     required: true,
     example:
-      '$0 templates create --externalId=template-group-external-id --description=some description --owner=email-addres@domain',
+      '$0 templates create --externalId=test-id --description="some description" --owner=email-addres@domain.tld',
   },
   {
     name: 'description',
     description: 'Template group description',
     prompt: 'Enter description for your template group',
     type: CommandArgumentType.STRING,
-    required: true,
-    initial: '',
   },
   {
     name: 'owner',
-    description: 'Template group owner',
-    prompt: 'Enter template group owner',
+    description: "Template group owner's email address",
+    prompt: "Enter template group owner's email address",
     type: CommandArgumentType.STRING,
-    required: false,
-    initial: '',
   },
 ] as CommandArgument[];
 

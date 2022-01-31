@@ -2,11 +2,11 @@ import { Logger } from '@platypus/platypus-core';
 import chalk from 'chalk';
 import _debug from 'debug';
 
-export const D = _debug('platypus-cli');
+export const DEBUG = _debug('platypus-cli');
 
 export class Log extends Logger {
   debug(msg: string, ..._optionalParams: any[]): void {
-    D(msg);
+    DEBUG(msg);
   }
   success(msg: string, ..._optionalParams: any[]): void {
     console.info(chalk.green(msg));
