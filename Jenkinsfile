@@ -21,14 +21,14 @@ static final Map<String, String> CONTEXTS = [
 ]
 
 void bazelPod(Map params = new HashMap(), body) {
-  def bazelVersion = params.bazelVersion ?: '4.2.1'
+  def bazelVersion = params.bazelVersion ?: '5.0.0'
 
   podTemplate(
       containers: [
           containerTemplate(
               name: 'bazel',
               // TODO: Define custom docker image to include bazel instead of installing
-              image: "eu.gcr.io/cognitedata/apps-tools/bazel-applications:4.2.1-1",
+              image: "eu.gcr.io/cognitedata/apps-tools/bazel-applications:5.0.0-1",
               command: '/bin/cat -',
               resourceRequestCpu: '3000m',
               resourceLimitCpu: '16000m',
@@ -90,7 +90,7 @@ def pods = { body ->
       ),
     ]
   ) {
-    bazelPod(bazelVersion: '4.2.1') {
+    bazelPod(bazelVersion: '5.0.0') {
       spinnaker.pod() {
         yarn.pod(nodeVersion: NODE_VERSION) {
           previewServer.pod(nodeVersion: NODE_VERSION) {
