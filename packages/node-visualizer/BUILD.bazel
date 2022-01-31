@@ -84,6 +84,8 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/react",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
+    "@npm//@rollup/plugin-alias",
+    "@npm//@rollup/plugin-node-resolve",
     "@npm//typescript",
 ]
 

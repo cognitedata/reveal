@@ -1,6 +1,8 @@
 import typescript from 'rollup-plugin-typescript2';
 import json from 'rollup-plugin-json';
 import images from '@rollup/plugin-image';
+import alias from '@rollup/plugin-alias';
+import resolve from '@rollup/plugin-node-resolve';
 
 import pkg from './package.json';
 
@@ -28,8 +30,18 @@ export default {
     'lodash/isArray',
     'lodash/clone',
     'lodash/cloneDeep',
+    'lodash/isNil',
+    'lodash/startCase',
+    'lodash/isNumber',
+    'prop-types',
   ],
   plugins: [
+    alias({
+      entries: {
+        images: `${__dirname}/src/images`,
+      },
+    }),
+    resolve(),
     typescript({
       typescript: require('typescript'),
     }),
@@ -37,7 +49,7 @@ export default {
       incude: [
         '**/*.svg',
         '**/*.jpg',
-        '**/**/*.png',
+        '**/*.png',
         'images/**/*.png',
         'images/Nodes/*.png',
       ],
