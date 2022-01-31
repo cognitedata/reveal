@@ -48,6 +48,8 @@ jobs:
 
   deploy:
     name: Publish documentation preview
+    # Ensures that there only will be executed one "instance" of this operation
+    # across all ongoing Github Action executions
     concurrency: deploy-preview-documentation
     runs-on: ubuntu-latest
     needs: build
