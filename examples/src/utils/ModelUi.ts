@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel } from "@cognite/reveal";
+import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
 
@@ -46,12 +46,16 @@ export class ModelUi {
         const model = this._cadModels[0] || this._pointCloudModels[0];
         viewer.fitCameraToModel(model);
       },
+      saveModelStateToUrl: () => {
+        this.saveModelStateToUrl();
+      }
     };
 
     modelGui.add(this._guiState, 'modelId').name('Model ID');
     modelGui.add(this._guiState, 'revisionId').name('Revision ID');
     modelGui.add(guiActions, 'addModel').name('Load model');
     modelGui.add(guiActions, 'fitToModel').name('Fit camera');
+    modelGui.add(guiActions, 'saveModelStateToUrl').name('Save model state to url');
 
     this._geometryFilterGui = modelGui.addFolder('Geometry Filter');
     initializeGeometryFilterGui(this._geometryFilterGui, this._viewer, this._guiState.geometryFilter);
@@ -70,6 +74,30 @@ export class ModelUi {
     const urlParams = url.searchParams;
 
     // Load model if provided by URL
+    await this.restoreModelsFromIds(urlParams);
+
+    const modelState = urlParams.get('modelState');
+    if (modelState !== null) {
+      await this.restoreModelState(modelState);
+    } 
+  }
+
+  private saveModelStateToUrl() {
+    const state = this._viewer.getViewState();
+    const modelState = { models: state.models };
+    
+    const url = new URL(window.location.href);
+    url.searchParams.set('modelState', JSON.stringify(modelState));
+    // Update URL without reloading
+    window.history.replaceState(null, document.title, url.toString());
+  }
+
+  private async restoreModelState(modelState: string) {
+    const state = JSON.parse(modelState) as ViewerState;
+    this._viewer.setViewState(state);
+  }
+
+  private async restoreModelsFromIds(urlParams: URLSearchParams) {
     const modelIdStr = urlParams.get('modelId');
     const revisionIdStr = urlParams.get('revisionId');
     const modelUrl = urlParams.get('modelUrl');
@@ -78,7 +106,7 @@ export class ModelUi {
       const revisionId = Number.parseInt(revisionIdStr, 10);
       await this.addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter) });
     } else if (modelUrl) {
-      await this.addModel({ modelId: -1, revisionId: -1, localPath: modelUrl, geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter) })
+      await this.addModel({ modelId: -1, revisionId: -1, localPath: modelUrl, geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter) });
     }
   }
 
@@ -126,40 +154,40 @@ function createGeometryFilter(input: string | null): { center: THREE.Vector3, si
   return { center: new THREE.Vector3().copy(parsed.center), size: new THREE.Vector3().copy(parsed.size) };
 }
 
-function initializeGeometryFilterGui(uiFolder: dat.GUI, 
+function initializeGeometryFilterGui(uiFolder: dat.GUI,
   viewer: Cognite3DViewer, geometryFilterState: { center: THREE.Vector3; size: THREE.Vector3; enabled: boolean; }): void {
-    let geometryFilterPreview: THREE.Object3D | undefined = undefined;
-    const updateGeometryFilterPreview = () => {
-      if (geometryFilterPreview) {
-        viewer.removeObject3D(geometryFilterPreview);
-      }
-      const geometryFilter = createGeometryFilterFromState(geometryFilterState);
-      if (geometryFilter) {
-        geometryFilterPreview = new THREE.Box3Helper(geometryFilter.boundingBox, new THREE.Color('cyan'));
-        viewer.addObject3D(geometryFilterPreview);
-      }
-    };
-    
-    const guiActions = {
-      applyGeometryFilter: () => {
-        const url = new URL(window.location.href);
-        url.searchParams.set('geometryFilter', JSON.stringify(geometryFilterState));
-        window.location.href = url.toString();
-      },
-      resetGeometryFilter: () => {
-        const url = new URL(window.location.href);
-        url.searchParams.delete('geometryFilter');
-        window.location.href = url.toString();
-      }
-    };
+  let geometryFilterPreview: THREE.Object3D | undefined = undefined;
+  const updateGeometryFilterPreview = () => {
+    if (geometryFilterPreview) {
+      viewer.removeObject3D(geometryFilterPreview);
+    }
+    const geometryFilter = createGeometryFilterFromState(geometryFilterState);
+    if (geometryFilter) {
+      geometryFilterPreview = new THREE.Box3Helper(geometryFilter.boundingBox, new THREE.Color('cyan'));
+      viewer.addObject3D(geometryFilterPreview);
+    }
+  };
 
-    uiFolder.add(geometryFilterState.center, 'x', -1000, 1000, 1).name('CenterX').onChange(updateGeometryFilterPreview);
-    uiFolder.add(geometryFilterState.center, 'y', -1000, 1000, 1).name('CenterY').onChange(updateGeometryFilterPreview);
-    uiFolder.add(geometryFilterState.center, 'z', -1000, 1000, 1).name('CenterZ').onChange(updateGeometryFilterPreview);
-    uiFolder.add(geometryFilterState.size, 'x', 0, 100, 1).name('SizeX').onChange(updateGeometryFilterPreview);
-    uiFolder.add(geometryFilterState.size, 'y', 0, 100, 1).name('SizeY').onChange(updateGeometryFilterPreview);
-    uiFolder.add(geometryFilterState.size, 'z', 0, 100, 1).name('SizeZ').onChange(updateGeometryFilterPreview);
-    uiFolder.add(geometryFilterState, 'enabled').name('Apply to new models?');
-    uiFolder.add(guiActions, 'applyGeometryFilter').name('Apply and reload');
-    uiFolder.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
+  const guiActions = {
+    applyGeometryFilter: () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('geometryFilter', JSON.stringify(geometryFilterState));
+      window.location.href = url.toString();
+    },
+    resetGeometryFilter: () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('geometryFilter');
+      window.location.href = url.toString();
+    }
+  };
+
+  uiFolder.add(geometryFilterState.center, 'x', -1000, 1000, 1).name('CenterX').onChange(updateGeometryFilterPreview);
+  uiFolder.add(geometryFilterState.center, 'y', -1000, 1000, 1).name('CenterY').onChange(updateGeometryFilterPreview);
+  uiFolder.add(geometryFilterState.center, 'z', -1000, 1000, 1).name('CenterZ').onChange(updateGeometryFilterPreview);
+  uiFolder.add(geometryFilterState.size, 'x', 0, 100, 1).name('SizeX').onChange(updateGeometryFilterPreview);
+  uiFolder.add(geometryFilterState.size, 'y', 0, 100, 1).name('SizeY').onChange(updateGeometryFilterPreview);
+  uiFolder.add(geometryFilterState.size, 'z', 0, 100, 1).name('SizeZ').onChange(updateGeometryFilterPreview);
+  uiFolder.add(geometryFilterState, 'enabled').name('Apply to new models?');
+  uiFolder.add(guiActions, 'applyGeometryFilter').name('Apply and reload');
+  uiFolder.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
 }
