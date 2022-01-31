@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { UploadChangeParam } from 'antd/lib/upload';
 import { notification } from 'antd';
-import { Button, Colors, Detail, Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
@@ -10,12 +10,11 @@ import { getContainer, trimFileExtension } from 'utils/utils';
 import { useCSVUpload } from 'hooks/csv-upload';
 import { useActiveTableContext } from 'contexts';
 
-import { CustomIcon } from 'components/CustomIcon';
-import Dragger from 'components/Dragger';
 import Modal from 'components/Modal/Modal';
 import CreateTableModalUploadStep from 'components/CreateTableModal/CreateTableModalUploadStep';
 import CreateTableModalPrimaryKeyStep from 'components/CreateTableModal/CreateTableModalPrimaryKeyStep';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
+import Dropzone from 'components/Dropzone/Dropzone';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
@@ -83,17 +82,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   const isStepUpload = file && (isUpload || isUploadCompleted);
 
   const renderModalContent = () => {
-    if (isStepAddFile)
-      return (
-        <StyledDragger {...fileProps}>
-          <StyledDocumentIcon />
-          <StyledDocumentIconHover />
-          <StyledModalTitle level={6}>Add CSV file</StyledModalTitle>
-          <StyledModalDetail strong>
-            Drag and drop, or click to select.
-          </StyledModalDetail>
-        </StyledDragger>
-      );
+    if (isStepAddFile) return <Dropzone {...fileProps} />;
     if (isStepUpload)
       return (
         <CreateTableModalUploadStep
@@ -146,25 +135,6 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 
 export default UploadCSV;
 
-const StyledModalTitle = styled(Title)`
-  margin: 16px 0 8px 0;
-`;
-const StyledModalDetail = styled(Detail)`
-  color: ${Colors['greyscale-grey6'].hex()};
-`;
-
-const StyledDocumentIcon = styled(CustomIcon).attrs({
-  icon: 'DocumentIconDisabled',
-})`
-  height: 40px;
-`;
-
-const StyledDocumentIconHover = styled(CustomIcon).attrs({
-  icon: 'DocumentIconHover',
-})`
-  height: 40px;
-`;
-
 const StyledModalFooter = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -172,19 +142,5 @@ const StyledModalFooter = styled.div`
 
   & > :first-child {
     margin-right: 8px;
-  }
-`;
-
-const StyledDragger = styled(Dragger)`
-  ${StyledDocumentIconHover} {
-    display: none;
-  }
-  &:hover {
-    ${StyledDocumentIcon} {
-      display: none;
-    }
-    ${StyledDocumentIconHover} {
-      display: unset;
-    }
   }
 `;
