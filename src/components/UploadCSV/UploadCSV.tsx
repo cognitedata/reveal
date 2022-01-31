@@ -35,7 +35,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     isUploadFailed,
     isParsing,
     onConfirmUpload,
-  } = useCSVUpload(file, selectedColumnIndex);
+  } = useCSVUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
   const onCancelUpload = () => {
     if (file && isParsing && !isUploadCompleted) {
@@ -56,6 +56,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     (method: PrimaryKeyMethod): (() => void) =>
     (): void => {
       setSelectedPrimaryKeyMethod(method);
+      setSelectedColumnIndex(-1);
     };
 
   const fileProps = {

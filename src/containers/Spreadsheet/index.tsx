@@ -33,6 +33,7 @@ export const Spreadsheet = (): JSX.Element => {
     isFetching,
     hasNextPage,
     fetchNextPage,
+    tableLastUpdatedTime,
   } = useTableData();
   const { isFetched: areTypesFetched } = useColumnType(database, table);
 
@@ -45,6 +46,8 @@ export const Spreadsheet = (): JSX.Element => {
         isEmpty={isEmpty}
         areTypesFetched={areTypesFetched}
         hasActions={true}
+        isTableLastUpdatedTimeFetched={isFetched}
+        tableLastUpdatedTime={tableLastUpdatedTime}
       />
       {isLoading ? (
         <Loader />

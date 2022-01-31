@@ -6,10 +6,12 @@ import { notification } from 'antd';
 import { useSDK } from '@cognite/sdk-provider';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 
+import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import { sleep } from 'utils/utils';
 
 export const useCSVUpload = (
   file: File | undefined,
+  selectedPrimaryKeyMethod: PrimaryKeyMethod | undefined,
   selectedKeyIndex: number
 ) => {
   const sdk = useSDK();
@@ -39,7 +41,10 @@ export const useCSVUpload = (
     return [newUploadPercentage, size];
   }, [uploadedCursor, file, isUpload]);
 
-  const selectedColumn = columns?.[selectedKeyIndex];
+  const selectedColumn =
+    selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn
+      ? columns?.[selectedKeyIndex]
+      : undefined;
 
   useEffect(
     () => () => {
