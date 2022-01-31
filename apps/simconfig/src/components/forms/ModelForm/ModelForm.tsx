@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react';
 import { useContext, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
@@ -13,13 +14,14 @@ import type {
 import {
   getTypedFormData,
   useCreateModelFileMutation,
+  useGetSimulatorsListQuery,
   useUpdateModelFileVersionMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { FileInput } from 'components/forms/controls/FileInput';
+import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { useAppSelector } from 'store/hooks';
-import { selectSimulators } from 'store/simulator/selectors';
+import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { isAuthenticated } from 'utils/authUtils';
 import {
   getFileExtensionFromFileName,
@@ -73,15 +75,17 @@ export function ModelForm({
 }: React.PropsWithoutRef<ComponentProps>) {
   const inputFile = useRef<HTMLInputElement>(null);
   const { authState } = useContext(CdfClientContext);
-  const simulators = useAppSelector(selectSimulators);
+
+  const project = useSelector(selectProject);
+  const { data: simulatorsList } = useGetSimulatorsListQuery(
+    { project },
+    { pollingInterval: HEARTBEAT_POLL_INTERVAL }
+  );
 
   const isNewModel = !initialModelFormState;
   const modelFormState = !initialModelFormState
     ? getInitialModelFormState()
     : initialModelFormState;
-
-  const { dataSet } = simulators[0];
-  modelFormState.fileInfo.dataSetId = dataSet;
 
   const onButtonClick = () => {
     if (inputFile.current) {
@@ -128,11 +132,16 @@ export function ModelForm({
         throw new Error(`Missing required property: 'unitSystem'`);
       }
 
+      const availableSimulator = simulatorsList?.simulators?.find(
+        (connectorSimulator) => connectorSimulator.simulator === simulator
+      );
+
       const fileInfo: FileInfo = {
         ...formFileInfo,
         // Override linked values from metadata
         name: metadata.modelName,
         source: simulator,
+        dataSetId: availableSimulator?.dataSetId ?? 0,
       };
 
       const response = await createModel({

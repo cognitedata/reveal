@@ -19,14 +19,14 @@ import {
   useGetModelCalculationQuery,
   useGetModelCalculationTemplateQuery,
   useGetModelFileQuery,
+  useGetSimulatorsListQuery,
   useUpsertCalculationMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { Wizard } from 'components/shared/Wizard';
+import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
 import { useTitle } from 'hooks/useTitle';
-import { useAppSelector } from 'store/hooks';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
-import { selectSimulators } from 'store/simulator/selectors';
 
 import { AdvancedStep } from './steps/AdvancedStep';
 import { DataSamplingStep } from './steps/DataSamplingStep';
@@ -51,6 +51,11 @@ export function CalculationConfiguration() {
   } = useMatch<AppLocationGenerics>();
   const navigate = useNavigate();
 
+  const { data: simulatorsList } = useGetSimulatorsListQuery(
+    { project },
+    { pollingInterval: HEARTBEAT_POLL_INTERVAL }
+  );
+
   const { data: modelFile, isFetching: isFetchingModelFile } =
     useGetModelFileQuery({ project, modelName, simulator });
 
@@ -62,8 +67,7 @@ export function CalculationConfiguration() {
 
   useTitle(`${calculationName} / ${modelFile?.metadata.modelName ?? '...'}`);
 
-  const simulators = useAppSelector(selectSimulators);
-  const simulatorConnector = simulators.find(
+  const simulatorConnector = simulatorsList?.simulators?.find(
     (connectorSimulator) => connectorSimulator.simulator === simulator
   );
 
@@ -83,7 +87,7 @@ export function CalculationConfiguration() {
     modelName,
     calculationType: encodedCalculationType,
     simulator,
-    connector: simulatorConnector?.name ?? 'unknown',
+    connector: simulatorConnector?.connectorName ?? 'unknown',
   });
 
   const [upsertCalculation] = useUpsertCalculationMutation();
@@ -111,7 +115,7 @@ export function CalculationConfiguration() {
     return null;
   }
 
-  const { dataSet: dataSetId } = simulatorConnector;
+  const { dataSetId } = simulatorConnector;
 
   const calculationTemplateSchema = getCalculationTemplateSchema({
     getInputTimeSeries: getInputTimeSeries(initialValues.inputTimeSeries),

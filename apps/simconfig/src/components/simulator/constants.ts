@@ -1,0 +1,3 @@
+export const HEARTBEAT_TIMEOUT_SECONDS = 60000; // 60 seconds
+export const HEARTBEAT_POLL_INTERVAL = 30000; // 30 seconds
+export const HEADER_VISIBLE_SIMULATORS_COUNT = 3;

@@ -5,12 +5,10 @@ import { api as simconfigApi } from '@cognite/simconfig-api-sdk/rtk';
 import { groupReducer } from './group';
 import { errorNotificationMiddleware } from './middleware/errorNotificationMiddleware';
 import { simconfigApiPropertiesReducer } from './simconfigApiProperties';
-import { simulatorReducer } from './simulator';
 
 export const store = configureStore({
   reducer: {
     group: groupReducer,
-    simulator: simulatorReducer,
     simconfigApiProperties: simconfigApiPropertiesReducer,
 
     // RTK Query reducers
