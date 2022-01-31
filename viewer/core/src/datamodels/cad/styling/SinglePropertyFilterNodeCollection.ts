@@ -9,7 +9,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
 import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
-import { AreaCollection, EmptyAreaCollection, NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+import { AreaCollection, EmptyAreaCollection, NodeCollection, SerializedNodeCollection } from '@reveal/cad-styling';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
@@ -22,7 +22,7 @@ import cloneDeep from 'lodash/cloneDeep';
  * nodes within a set of areas or systems. The node set is optimized for matching with properties with
  * a large number of values (i.e. thousands).
  */
-export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
+export class SinglePropertyFilterNodeCollection extends NodeCollection {
   public static readonly classToken = 'SinglePropertyNodeCollection';
 
   private readonly _client: CogniteClient;

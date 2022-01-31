@@ -1,7 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
+import { SerializedNodeCollection } from './SerializedNodeCollection';
+import { NodeCollection } from './NodeCollection';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
 import { AreaCollection } from './prioritized/AreaCollection';
 import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
@@ -17,7 +18,7 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
 
   public static readonly classToken = 'UnionNodeCollection';
 
-  constructor(nodeCollections?: NodeCollectionBase[]) {
+  constructor(nodeCollections?: NodeCollection[]) {
     super(UnionNodeCollection.classToken, nodeCollections);
   }
 
