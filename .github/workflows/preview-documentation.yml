@@ -46,6 +46,13 @@ jobs:
           yarn install --immutable
           yarn build:fast
 
+      - name: Upload documentation artifact 
+        uses: actions/upload-artifact@v2
+        with:
+          name: preview-docs
+          path: documentation/build/
+
+
   deploy:
     name: Publish documentation preview
     # Ensures that there only will be executed one "instance" of this operation
@@ -58,13 +65,23 @@ jobs:
         run: |
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
+      - name: Download documentation artifact 
+        uses: actions/download-artifact@v2
+        with:
+          name: preview-docs
+          path: documentation/
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: documentation/
+
       - name: Deploy documentation preview 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DEPLOY_KEY }}
           external_repository: cognitedata/reveal-docs-preview
           publish_branch: master
-          publish_dir: documentation/build
+          publish_dir: documentation/
           destination_dir: ${{ env.PR_NUMBER }}
           keep_files: false
 
