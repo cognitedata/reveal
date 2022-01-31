@@ -30,10 +30,10 @@ export const mockCogniteAutoMLTrainingJob = [
     statusTime: 1639511202313,
     items: [
       {
-        id: 10,
+        fileId: 10,
       },
       {
-        externalId: 'image1.png',
+        fileExternalId: 'image1.png',
       },
     ],
   },
@@ -48,10 +48,10 @@ export const mockCogniteAutoMLTrainingJob = [
     statusTime: 1639445061156,
     items: [
       {
-        id: 20,
+        fileId: 20,
       },
       {
-        externalId: 'image2.png',
+        fileExternalId: 'image2.png',
       },
     ],
   },
