@@ -617,6 +617,15 @@
             "jestConfig": "apps/platypus-cdf-cli/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "e2e": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "jest apps/platypus-cdf-cli/e2e-tests -c apps/platypus-cdf-cli/jest.config.js --runInBand --verbose"
+            ],
+            "parallel": false
+          }
         }
       },
       "tags": []

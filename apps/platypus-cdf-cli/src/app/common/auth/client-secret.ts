@@ -22,9 +22,11 @@ export const getAccessTokenForClientSecret = async (
     cache: { cachePlugin },
   });
 
+  console.log('getAccessTokenForClientSecret');
+
   // MUST DO: Need to load credentials from local cache store first.
   readFromCache(cca.getTokenCache());
-
+  console.log('getAccessTokenForClientSecret after readFromCache');
   return cca
     .acquireTokenByClientCredential({ scopes, authority })
     .then(handleResponse);

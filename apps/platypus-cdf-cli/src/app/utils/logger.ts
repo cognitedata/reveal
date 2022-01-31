@@ -15,7 +15,7 @@ export class Log extends Logger {
     console.info(chalk.blueBright(msg));
   }
   warn(msg: string, ..._optionalParams: any[]): void {
-    console.warn(chalk.yellow(msg));
+    console.log(chalk.yellow(msg));
   }
   error(msg: string, ..._optionalParams: any[]): void {
     console.error(chalk.red(msg));

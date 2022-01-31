@@ -1,0 +1,35 @@
+name: Release & Deploy Platypus CLI
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "apps/platypus-cdf-cli/**"
+jobs:
+  E2ETests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Set NPMKEY variable
+        run: |
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          echo "::set-output name=NPMKEY::$NPMKEY"
+        id: npm_auth_key
+
+      - name: Create .npmrc
+        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+
+      - name: Install Dependency & Build
+        run: |
+          yarn install --frozen-lockfile
+          rm .npmrc
+          yarn build production platypus-cdf-cli
+
+      - name: Run the E2E Tests
+        run: |
+          yarn nx run platypus-cdf-cli:e2e

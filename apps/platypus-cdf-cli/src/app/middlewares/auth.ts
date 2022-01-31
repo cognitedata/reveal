@@ -13,9 +13,14 @@ import {
 } from '../utils/config';
 import { AUTH_CONFIG, LOGIN_STATUS, ROOT_CONFIG_KEY } from '../constants';
 import { getCommandName } from '../utils/yargs-utils';
+import { skipMiddleware } from './util';
 
 export async function authenticate(arg: Arguments<BaseArgs>) {
   try {
+    // skip auth check for some commands
+    if (skipMiddleware(arg)) {
+      return;
+    }
     // get stored accessToken, authType and try to login and initialize SDK
     const storedProjectConfig = getProjectConfig();
 
@@ -27,6 +32,8 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
       delete projectConfig[AUTH_CONFIG.MSAL_AUTH_CACHE];
       delete projectConfig[AUTH_CONFIG.ACCOUNT_INFO];
     }
+
+    console.log('projectConfig: ', projectConfig);
 
     let client = getCogniteSDKClient();
     if (!client) {

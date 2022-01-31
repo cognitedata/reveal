@@ -1,4 +1,4 @@
-name: Release & Deploy Platypus CLI
+name: Release & Deploy Platypus CLI Documentation
 on:
   push:
     branches:

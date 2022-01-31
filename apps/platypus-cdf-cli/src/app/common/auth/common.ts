@@ -6,6 +6,7 @@ import { setProjectConfig } from '../../utils/config';
 export const handleResponse = async (
   response: AuthenticationResult | null
 ): Promise<AuthenticationResult> => {
+  console.log('handleResponse: ', response);
   setProjectConfig({
     [AUTH_CONFIG.ACCOUNT_INFO]: JSON.stringify(response.account),
   });
