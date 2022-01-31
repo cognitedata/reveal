@@ -10,7 +10,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install dependencies
-        run: npm install @commitlint/config-conventional
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}" > .npmrc
+          yarn add @commitlint/config-conventional --frozen-lockfile
+          rm .npmrc
       - name: Validate PR title
         uses: cognitedata/lint-pr-title-action@master
         with:

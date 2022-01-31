@@ -88,7 +88,7 @@ export const FileDetailsAbstract = ({
             }}
             title={
               <div style={{ display: 'flex' }}>
-                <Icon type="DataStudio" style={{ marginRight: '4px' }} />
+                <Icon type="Assets" style={{ marginRight: '4px' }} />
                 <span>Detected Asset tags</span>
               </div>
             }
@@ -108,7 +108,7 @@ export const FileDetailsAbstract = ({
             }}
             title={
               <div style={{ display: 'flex' }}>
-                <Icon type="DataStudio" style={{ marginRight: '4px' }} />
+                <Icon type="Assets" style={{ marginRight: '4px' }} />
                 <span>Detected File tags</span>
               </div>
             }

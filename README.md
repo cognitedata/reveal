@@ -21,7 +21,7 @@ yarn test:once:unittests
 
 ## Running local copy online
 
-- clone the Context UI P&ID repository - `git clone https://github.com/cognitedata/datastudio.git`
+- clone the Context UI P&ID repository - `git clone https://github.com/cognitedata/context-ui-pnid.git`
 - `yarn` -> `yarn start`
 - navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)
 - open Console

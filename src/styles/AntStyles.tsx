@@ -154,7 +154,7 @@ Dropdown.defaultProp = {
     document.getElementsByClassName(ids.styleScope).item(0)!,
 };
 
-Spin.setDefaultIndicator(<Icon type="Loading" />);
+Spin.setDefaultIndicator(<Icon type="Loader" />);
 
 export function AntStyles(props: { children: React.Node }) {
   useEffect(() => {

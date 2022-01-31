@@ -5,7 +5,7 @@ import { Icon, Colors } from '@cognite/cogs.js';
 export const Loader = () => {
   return (
     <Wrapper>
-      <Icon type="Loading" />
+      <Icon type="Loader" />
     </Wrapper>
   );
 };

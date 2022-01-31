@@ -1,4 +1,4 @@
-import { FileInfo, FileRequestFilter } from '@cognite/cdf-sdk-singleton';
+import { FileInfo, FileRequestFilter } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { useAnnotationsForFiles } from 'hooks';
 import { PENDING_LABEL } from './useReviewFiles';

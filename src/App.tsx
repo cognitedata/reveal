@@ -1,40 +1,48 @@
 import React, { useEffect } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { Router, Route, Switch } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
+
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { CogniteClient } from '@cognite/sdk';
-import sdk from 'sdk-singleton';
-import { Loader } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import debounce from 'lodash/debounce';
+import { Loader } from '@cognite/cogs.js';
+import {
+  AuthWrapper,
+  SubAppWrapper,
+  getProject,
+  getEnv,
+} from '@cognite/cdf-utilities';
+
 import { createBrowserHistory } from 'history';
+import debounce from 'lodash/debounce';
+
 import store, { persistedState, loadLocalStorage } from 'store';
 import { AppStateProvider } from 'context';
 import { AntStyles, GlobalStyles } from 'styles';
 import RootApp from 'pages/App';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { setItemInStorage } from 'hooks/useLocalStorage';
+
 import * as pdfjs from 'pdfjs-dist';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
 
 const App = () => {
   const tenant = window.location.pathname.split('/')[1];
-  const history = createBrowserHistory();
 
   if (!tenant) {
     throw new Error('tenant missing');
   }
 
+  const history = createBrowserHistory();
+  const project = getProject();
+  const env = getEnv();
   const LS_KEY = `PNID_CONTEXTUALIZATION_${tenant}`;
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
-    localStorage.setItem(LS_KEY, JSON.stringify(localStorageContent));
+    setItemInStorage(LS_KEY, JSON.stringify(localStorageContent));
   }, 333);
-
-  store.subscribe(updateLocalStorage);
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -44,6 +52,8 @@ const App = () => {
       },
     },
   });
+
+  store.subscribe(updateLocalStorage);
 
   useEffect(() => {
     loadLocalStorage(LS_KEY, store);
@@ -58,19 +68,17 @@ const App = () => {
 
   return (
     // If styles are broken please check: .rescripts#PrefixWrap(
-    <QueryClientProvider client={queryClient}>
-      <GlobalStyles>
-        <AntStyles>
-          <SubAppWrapper padding={false}>
-            <AuthWrapper
-              showLoader
-              includeGroups
-              loadingScreen={<Loader darkMode={false} />}
-              subAppName="context-ui-pnid"
-            >
-              <SDKProvider sdk={sdk as CogniteClient}>
-                <AppStateProvider>
-                  <Provider store={store}>
+    <GlobalStyles>
+      <AntStyles>
+        <AuthWrapper
+          loadingScreen={<Loader darkMode={false} />}
+          login={() => loginAndAuthIfNeeded(project, env)}
+        >
+          <SDKProvider sdk={sdk}>
+            <QueryClientProvider client={queryClient}>
+              <AppStateProvider>
+                <Provider store={store}>
+                  <SubAppWrapper title="Interactive Engineering Diagrams">
                     <Router history={history}>
                       <Switch>
                         <Route
@@ -79,15 +87,14 @@ const App = () => {
                         />
                       </Switch>
                     </Router>
-                  </Provider>
-                </AppStateProvider>
-              </SDKProvider>
-            </AuthWrapper>
-          </SubAppWrapper>
-        </AntStyles>
-      </GlobalStyles>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+                  </SubAppWrapper>
+                </Provider>
+              </AppStateProvider>
+            </QueryClientProvider>
+          </SDKProvider>
+        </AuthWrapper>
+      </AntStyles>
+    </GlobalStyles>
   );
 };
 

@@ -4,7 +4,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { InternalId } from '@cognite/sdk';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { followCursorsGenerator } from 'helpers/Helpers';
 import {
   ResourceState,
@@ -27,16 +27,6 @@ type ListPartialAction = {
   nth: number;
   result: number[];
 };
-
-type ListAction = {
-  scope: Query;
-  all: boolean;
-  partition: number;
-  nth: number;
-};
-interface ListDoneAction extends ListAction {
-  result: number[];
-}
 
 function getKey(scope: any, all: any) {
   return JSON.stringify({

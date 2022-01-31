@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { callUntilCompleted } from 'helpers/Helpers';
 import { trackTimedUsage, PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { FileUploadResponse } from '@cognite/sdk';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import GCSUploader from 'components/GCSUploader';
 import { Vertices } from 'modules/types';
 import {

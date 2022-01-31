@@ -150,7 +150,7 @@ export const DiagramsSettingsBar = (props: Props) => {
           <MenuButton
             type={primarySetting === 'svgSave' ? 'tertiary' : 'ghost'}
             variant={primarySetting === 'svgSave' ? 'default' : 'inverted'}
-            icon={isConverting ? 'LoadingSpinner' : undefined}
+            icon={isConverting ? 'Loader' : undefined}
             disabled={isConverting}
             onClick={onSaveSVGClick}
           >
@@ -171,7 +171,7 @@ export const DiagramsSettingsBar = (props: Props) => {
         )}
         <MenuButton
           type="secondary"
-          icon="XLarge"
+          icon="CloseLarge"
           variant="inverted"
           onClick={onClose}
         />

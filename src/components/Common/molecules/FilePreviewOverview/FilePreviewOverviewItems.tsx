@@ -127,7 +127,7 @@ const AssetItem = ({
 
   return (
     <ItemWrapper>
-      <Icon type="DataStudio" />
+      <Icon type="Assets" />
       <div className="details">
         <Body onClick={onItemClick}>
           {asset ? (

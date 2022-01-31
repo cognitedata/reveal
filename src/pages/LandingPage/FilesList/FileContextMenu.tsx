@@ -56,7 +56,7 @@ export const FileContextMenu = ({ file }: Props) => {
         Approve pending tags
       </MenuButton>
       <MenuButton
-        icon="XLarge"
+        icon="CloseLarge"
         iconPlacement="left"
         style={buttonStyle}
         onClick={onFileReject}
@@ -65,7 +65,7 @@ export const FileContextMenu = ({ file }: Props) => {
         Reject pending tags
       </MenuButton>
       <MenuButton
-        icon="Trash"
+        icon="Delete"
         iconPlacement="left"
         style={buttonStyle}
         onClick={onFileTagsClear}

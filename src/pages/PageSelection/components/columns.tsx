@@ -38,7 +38,7 @@ export const getColumns: any = (resourceType: ResourceType) => {
         }
       >
         <Flex align justify>
-          {isAsset ? <Icon type="ResourceAssets" /> : <InteractiveIcon />}
+          {isAsset ? <Icon type="Assets" /> : <InteractiveIcon />}
         </Flex>
       </Popover>
       <span style={{ marginLeft: '12px', fontWeight: 500 }}>

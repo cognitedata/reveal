@@ -42,7 +42,7 @@ export default function DiagramReviewStatus({ fileId, size }: Props) {
   return (
     <Tooltip title={fileStatus.tooltip}>
       <StyledLabel size={size} variant={fileStatus.variant}>
-        {isFetched ? fileStatus.label : <Icon type="Loading" />}
+        {isFetched ? fileStatus.label : <Icon type="Loader" />}
       </StyledLabel>
     </Tooltip>
   );

@@ -1,7 +1,6 @@
 @Library('jenkins-helpers') _
 
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
-static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#datastudio-logs"
 // deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-context-ui-pnid'

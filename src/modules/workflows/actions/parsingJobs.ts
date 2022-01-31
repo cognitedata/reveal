@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FileInfo } from '@cognite/sdk';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import handleError from 'utils/handleError';
 import {

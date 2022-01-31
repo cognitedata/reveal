@@ -7,7 +7,7 @@ import {
 } from 'hooks';
 import { ModalSaveSVG } from 'containers';
 import { MenuButton, DropdownMenu } from 'components/Common';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 // Context menu for a single diagram
@@ -37,7 +37,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
       <MenuButton
         type="ghost"
         aria-label="Button-Approve-Single"
-        icon={isLoading ? 'LoadingSpinner' : 'Checkmark'}
+        icon={isLoading ? 'Loader' : 'Checkmark'}
         iconPlacement="left"
         onClick={() => onApproveDiagrams(true)}
         disabled={isLoading || isApproved || isFailed}
@@ -48,7 +48,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
       <MenuButton
         type="ghost"
         aria-label="Button-Save-SVG-Single"
-        icon={isConverting ? 'LoadingSpinner' : 'Save'}
+        icon={isConverting ? 'Loader' : 'Save'}
         iconPlacement="left"
         onClick={onSaveSVGClick}
         disabled={isConverting || isFailed}
@@ -59,7 +59,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
       <MenuButton
         type="ghost-danger"
         aria-label="Button-Reject-Single"
-        icon={isLoading ? 'LoadingSpinner' : 'XLarge'}
+        icon={isLoading ? 'Loader' : 'CloseLarge'}
         iconPlacement="left"
         onClick={() => onRejectDiagrams(true)}
         disabled={isLoading || isFailed || isApproved}
@@ -70,7 +70,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
       <MenuButton
         type="ghost-danger"
         aria-label="Button-Clear-Single"
-        icon={isLoading ? 'LoadingSpinner' : 'Trash'}
+        icon={isLoading ? 'Loader' : 'Delete'}
         iconPlacement="left"
         onClick={() => onClearTags([file.id])}
         disabled={isLoading}

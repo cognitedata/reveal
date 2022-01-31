@@ -19,7 +19,7 @@ export const FilterMenu = ({ options }: FileMenuProps): JSX.Element => {
   return (
     <Dropdown content={filterMenu} visible={isMenuOpen}>
       <Button
-        icon="ChevronDownCompact"
+        icon="ChevronDown"
         iconPlacement="right"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >

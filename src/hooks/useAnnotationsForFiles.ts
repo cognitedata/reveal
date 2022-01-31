@@ -8,7 +8,7 @@ import {
   convertEventsToAnnotations,
   CogniteAnnotation,
 } from '@cognite/annotations';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 
 export type FileWithAnnotations = FileInfo & {
   annotations: CogniteAnnotation[];

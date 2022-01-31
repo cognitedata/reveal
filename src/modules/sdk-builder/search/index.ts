@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { InternalId } from '@cognite/sdk';
 import { RootState } from 'store';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   ApiSearchResult,
   Query,

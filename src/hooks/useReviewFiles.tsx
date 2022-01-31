@@ -3,11 +3,12 @@ import { useMutation, useQueryClient } from 'react-query';
 import chunk from 'lodash/chunk';
 import uniqBy from 'lodash/uniqBy';
 import { Modal, notification } from 'antd';
+
 import { Body } from '@cognite/cogs.js';
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   useCdfItem,
   useCdfItems,
-  useUserInfo,
   useList,
 } from '@cognite/sdk-react-query-hooks';
 import {
@@ -22,7 +23,8 @@ import {
   updateAnnotations,
   linkFileToAssetIds,
 } from '@cognite/annotations';
-import sdk from 'sdk-singleton';
+import { useUserId } from 'hooks/useUserId';
+
 import { sleep } from 'utils/utils';
 import handleError from 'utils/handleError';
 import { useAnnotationsForFiles } from './useAnnotationsForFiles';
@@ -73,8 +75,7 @@ export const isFilePending = (file?: FileInfo) => {
 export const useReviewFiles = (fileIds: Array<number>) => {
   const client = useQueryClient();
 
-  const { data: userData } = useUserInfo();
-  const { email = 'UNKNOWN' } = userData || {};
+  const { mail } = useUserId();
 
   const { data: files } = useCdfItems<FileInfo>(
     'files',
@@ -164,7 +165,7 @@ export const useReviewFiles = (fileIds: Array<number>) => {
               set: approve ? 'verified' : 'deleted',
             },
             checkedBy: {
-              set: email,
+              set: mail,
             },
           },
         }))

@@ -290,7 +290,7 @@ export const FilePreviewOverview = ({
             key="assets"
             header={
               <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="DataStudio" />
+                <Icon className="cogs-icon resource-icon" type="Assets" />
                 <Title level={5}>Assets</Title>
                 <div className="spacer" />
                 <Badge
@@ -298,7 +298,7 @@ export const FilePreviewOverview = ({
                   background={Colors['purple-5'].hex()}
                 />
                 <Icon
-                  type={open.includes('assets') ? 'Up' : 'ChevronDownCompact'}
+                  type={open.includes('assets') ? 'ChevronUp' : 'ChevronDown'}
                 />
               </CollapseHeader>
             }
@@ -350,7 +350,7 @@ export const FilePreviewOverview = ({
                   background={Colors['midorange-5'].hex()}
                 />
                 <Icon
-                  type={open.includes('files') ? 'Up' : 'ChevronDownCompact'}
+                  type={open.includes('files') ? 'ChevronUp' : 'ChevronDown'}
                 />
               </CollapseHeader>
             }

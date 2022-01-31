@@ -1,4 +1,4 @@
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { CogniteClient, IdEither } from '@cognite/sdk';
 import { projectName, getCdfEnvFromUrl } from 'utils/config';
 

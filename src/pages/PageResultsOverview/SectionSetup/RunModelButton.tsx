@@ -59,9 +59,7 @@ export default function RunModelButton(): JSX.Element {
         onClick={onRunModelClick}
         disabled={jobStarted}
         icon={
-          (jobStarted && 'LoadingSpinner') ||
-          (isJobRejected && 'Refresh') ||
-          undefined
+          (jobStarted && 'Loader') || (isJobRejected && 'Refresh') || undefined
         }
         iconPlacement="right"
       >

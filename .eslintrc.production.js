@@ -45,9 +45,6 @@ module.exports = {
     'lodash/prefer-noop': ['off'],
     'lodash/prefer-lodash-typecheck': ['off'],
 
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-    ],
+    '@typescript-eslint/no-unused-vars': ['off'],
   },
 };

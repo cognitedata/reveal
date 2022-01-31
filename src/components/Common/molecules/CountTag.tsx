@@ -11,8 +11,8 @@ type CountTagProps = {
 };
 
 const iconForType = {
-  assets: 'ResourceAssets',
-  files: 'ResourceDocuments',
+  assets: 'Assets',
+  files: 'Document',
 };
 export const CountTag = ({
   value,

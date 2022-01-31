@@ -18,6 +18,7 @@ export * from './useJobStatusLabels';
 export * from './useFileStatus';
 export * from './useJobStarted';
 export * from './useJobs';
+export * from './useUserId';
 
 // dev
 export * from './useTraceRerender';

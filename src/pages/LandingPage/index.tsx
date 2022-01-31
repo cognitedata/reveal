@@ -3,7 +3,7 @@ import { Button, Title } from '@cognite/cogs.js';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { Flex, PageTitle } from 'components/Common';
 import { useWorkflowCreateNew } from 'modules/workflows';
-import { FileRequestFilter } from '@cognite/cdf-sdk-singleton';
+import { FileRequestFilter } from '@cognite/sdk';
 import { useAnnotatedFiles } from 'hooks';
 import { DiagramsSettingsBar } from 'containers';
 import { Loading, TitleRow } from './components';

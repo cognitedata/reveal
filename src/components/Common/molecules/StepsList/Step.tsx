@@ -43,7 +43,7 @@ export default function Step(props: StepProps) {
   };
 
   const showStepIconOrNumber = (): JSX.Element => {
-    if (isCurrent) return <Icon type="ArrowForward" size={small ? 14 : 16} />;
+    if (isCurrent) return <Icon type="ArrowRight" size={small ? 14 : 16} />;
     if (wasVisited) return <Icon type="Checkmark" size={small ? 14 : 16} />;
     const stepNumber = stepIndex + 1;
     return <>{stepNumber}</>;

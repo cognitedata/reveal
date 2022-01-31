@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Input } from '@cognite/cogs.js';
-import { FileRequestFilter, InternalId } from '@cognite/cdf-sdk-singleton';
+import { FileRequestFilter, InternalId } from '@cognite/sdk';
 import { DataSetSelect, MimeTypeSelect } from 'components/Filters';
 
 interface FilterBarProps {

@@ -3,7 +3,7 @@ import { FileInfo } from '@cognite/sdk';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { useSDK } from '@cognite/sdk-provider';
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   Loader,
   ErrorFeedback,
@@ -19,8 +19,6 @@ import {
 import { useAnnotationsDetails } from 'hooks';
 
 export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
-  const sdk = useSDK();
-
   const {
     data: file,
     isFetched,

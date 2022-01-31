@@ -59,7 +59,7 @@ export const AssetDetailsAbstract = ({
           >
             <SmallTitle style={{ display: 'flex', alignItems: 'center' }}>
               <IconWrapper>
-                <Icon type="DataStudio" />
+                <Icon type="Assets" />
               </IconWrapper>
               <span
                 style={{
@@ -193,7 +193,7 @@ export const AssetDetailsAbstract = ({
         >
           <SmallTitle style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
-              <Icon type="DataStudio" />
+              <Icon type="Assets" />
             </IconWrapper>
             <span
               style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}

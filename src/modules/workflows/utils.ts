@@ -3,7 +3,7 @@ import {
   createAnnotations,
   listAnnotationsForFile,
 } from '@cognite/annotations';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   workflowDiagramStatusSelector,
   workflowAllResourcesStatusSelector,

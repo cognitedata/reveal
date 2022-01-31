@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useContext, Suspense } from 'react';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import {
   useRouteMatch,
   useHistory,
@@ -7,12 +8,14 @@ import {
   Redirect,
   useLocation,
 } from 'react-router-dom';
+
 import {
   Loader,
   FileContextualizationContextProvider,
   DataExplorationProvider,
 } from '@cognite/data-exploration';
-import sdk, { getAuthState } from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import {
@@ -22,6 +25,9 @@ import {
 } from 'context';
 import NotFound from 'pages/NotFound';
 import { staticRoot } from 'routes/paths';
+
+import { setItemInStorage } from 'hooks/useLocalStorage';
+import { useUserId } from 'hooks';
 
 const Routes = React.lazy(() => import('routes'));
 
@@ -33,11 +39,11 @@ export default function App() {
   } = useContext(AppStateContext);
   const history = useHistory();
   const { location } = history;
-  const { username } = getAuthState();
   const { pathname, search, hash } = useLocation();
   const {
     params: { tenant: tenantFromUrl },
   } = useRouteMatch<{ tenant: string }>();
+  const { username } = useUserId();
 
   const cdfEnvFromUrl = queryString.parse(window.location.search).env as string;
 
@@ -56,6 +62,10 @@ export default function App() {
   }, [cdfEnvFromUrl, cdfEnvFromContext, history, location.pathname]);
 
   useEffect(() => {
+    if (username) {
+      // to be used in metrics
+      setItemInStorage('context-ui-pnid-username', username);
+    }
     trackUsage('App.Load');
   }, [username]);
 
@@ -90,6 +100,7 @@ export default function App() {
           </ResourceActionsProvider>
         </ResourceSelectionProvider>
       </FileContextualizationContextProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </Suspense>
   );
 }

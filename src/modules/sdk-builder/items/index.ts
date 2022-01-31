@@ -1,5 +1,5 @@
 import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { ExternalId, InternalId, CogniteInternalId } from '@cognite/sdk';
 import { RootState } from 'store';
 import {

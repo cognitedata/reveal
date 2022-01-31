@@ -139,7 +139,7 @@ export function IconExpand(props: IconExpandProps) {
   const { expanded, onExpand } = props.record;
   return (
     <Icon
-      type="ChevronRightCompact"
+      type="ChevronRight"
       className={expanded ? 'expanded' : ''}
       onClick={(e) => {
         onExpand(props.record, e);

@@ -24,9 +24,7 @@ type Props = {
   showSelected: boolean;
 };
 type RecordType = (Asset | FileInfo) & unknown;
-export default function SelectionTable<T extends RecordType>(
-  props: Props
-): JSX.Element {
+export default function SelectionTable(props: Props): JSX.Element {
   const {
     type,
     filter,

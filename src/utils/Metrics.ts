@@ -1,5 +1,6 @@
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import sdk, { getAuthState } from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getItemFromStorage } from 'hooks/useLocalStorage';
 
 export type Props = { [key: string]: string | number | boolean | Props | null };
 
@@ -14,8 +15,7 @@ export const trackUsage = (
   }
 
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
-
-  const { username } = getAuthState();
+  const username = getItemFromStorage('context-ui-pnid-username') ?? 'unknown';
 
   if (host.indexOf('localhost') === -1) {
     trackEvent(`EngineeringDiagrams.${event}`, {
@@ -23,7 +23,7 @@ export const trackUsage = (
       project: sdk.project,
       version: 1,
       appVersion: process.env.REACT_APP_VERSION,
-      location: window.location.pathname,
+      location: pathname,
       user: username,
       pathname: pathWithoutTenant,
     });

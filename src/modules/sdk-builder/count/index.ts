@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { RootState } from 'store';
 import { ResourceType, ApiCountResult, CountState, Query } from 'modules/types';
 import { createCountSelector } from './selectors';

@@ -55,7 +55,7 @@ export default function Preview(props: Props) {
           <>
             <TabTitle>Assets</TabTitle>
             <Badge
-              text={counts.asset}
+              text={counts?.asset ?? '—'}
               background={Colors['greyscale-grey3'].hex()}
             />
           </>
@@ -69,7 +69,7 @@ export default function Preview(props: Props) {
           <>
             <TabTitle>Diagrams</TabTitle>
             <Badge
-              text={counts.file}
+              text={counts?.file ?? '—'}
               background={Colors['greyscale-grey3'].hex()}
             />
           </>

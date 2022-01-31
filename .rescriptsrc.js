@@ -65,7 +65,10 @@ const addLoaders = (config) => {
                 loader: 'less-loader',
                 options: {
                   lessOptions: {
-                    modifyVars: colors,
+                    modifyVars: {
+                      ...colors,
+                      'root-entry-name': 'default',
+                    },
                     javascriptEnabled: true,
                   },
                 },

@@ -23,7 +23,7 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
         type="ghost"
         aria-label="Button-Save-SVG-All"
         iconPlacement="left"
-        icon={isConverting ? 'LoadingSpinner' : 'Save'}
+        icon={isConverting ? 'Loader' : 'Save'}
         onClick={onSaveSVGClick}
         disabled={isDisabled}
         style={{ width: '100%', justifyContent: 'flex-start' }}
@@ -33,7 +33,7 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
       <MenuButton
         type="ghost-danger"
         aria-label="Button-Reject-All"
-        icon={isLoading ? 'LoadingSpinner' : 'Trash'}
+        icon={isLoading ? 'Loader' : 'Delete'}
         iconPlacement="left"
         onClick={() => onRejectDiagrams(true)}
         disabled={isLoading || !canRejectAll}

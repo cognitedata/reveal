@@ -22,7 +22,7 @@ export default function TitleBar(props: Props) {
   return (
     <TitleRowWrapper>
       <Button
-        icon="ArrowBack"
+        icon="ArrowLeft"
         aria-label="Button-Back"
         onClick={() => goToPrevStep()}
       >
@@ -43,7 +43,7 @@ export default function TitleBar(props: Props) {
             />
             <Dropdown content={<MenuSingle file={file!} />}>
               <Button
-                icon="MoreOverflowEllipsisHorizontal"
+                icon="EllipsisHorizontal"
                 aria-label="Button-More-All"
                 type="secondary"
               />

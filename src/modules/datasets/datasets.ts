@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { DataSet, DataSetFilterRequest } from '@cognite/sdk';
 import zipObject from 'lodash/zipObject';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { followCursors } from 'helpers';
 import { count as countAssets } from 'modules/assets';
 import { count as countFiles } from 'modules/files';

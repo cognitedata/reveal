@@ -17,7 +17,7 @@ export const Dropdown = (props: Props) => {
     content,
     dropdownDisabled,
     buttonDisabled,
-    icon = 'MoreOverflowEllipsisHorizontal',
+    icon = 'EllipsisHorizontal',
   } = props;
   const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
 

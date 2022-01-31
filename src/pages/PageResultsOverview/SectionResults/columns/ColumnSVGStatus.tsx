@@ -32,11 +32,11 @@ const convertStatusMap = (
   onSVGViewClick: () => void,
   error?: string
 ): { [key: string]: JSX.Element } => ({
-  Queued: <Icon type="LoadingSpinner" />,
-  Distributing: <Icon type="LoadingSpinner" />,
-  Distributed: <Icon type="LoadingSpinner" />,
-  Running: <Icon type="LoadingSpinner" />,
-  Collecting: <Icon type="LoadingSpinner" />,
+  Queued: <Icon type="Loader" />,
+  Distributing: <Icon type="Loader" />,
+  Distributed: <Icon type="Loader" />,
+  Running: <Icon type="Loader" />,
+  Collecting: <Icon type="Loader" />,
   Completed: (
     <Button size="small" type="tertiary" onClick={onSVGViewClick}>
       View SVG

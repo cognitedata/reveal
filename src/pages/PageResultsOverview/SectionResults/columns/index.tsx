@@ -20,7 +20,7 @@ export interface AdjustedFileInfo extends FileInfo {
   svg?: boolean;
 }
 export const getColumns: any = (
-  workflowId: number,
+  _workflowId: number,
   showLoadingSkeleton: boolean
 ) => {
   return [
