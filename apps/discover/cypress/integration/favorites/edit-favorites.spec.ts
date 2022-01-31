@@ -67,10 +67,23 @@ describe('Edit Favorites', () => {
     });
   });
 
-  describe.skip('Content', () => {
+  describe('Content', () => {
     const favoriteName = `favorite to edit content, ${Date.now()}`;
 
     before(() => {
+      cy.intercept({
+        url: `https://${CLUSTER}.cognitedata.com/api/playground/projects/${PROJECT}/documents/search`,
+        method: 'POST',
+      }).as('documentSearch');
+
+      cy.createFavorite({
+        name: favoriteName,
+      });
+    });
+
+    beforeEach(() => {
+      cy.findByRole('heading', { name: 'Cognite Discover' }).click();
+
       cy.intercept({
         url: `/${PROJECT}/favorites/*/content`,
         method: 'PATCH',
@@ -85,19 +98,6 @@ describe('Edit Favorites', () => {
         url: `/${PROJECT}/favorites/*`,
         method: 'GET',
       }).as('getOneFavorite');
-
-      cy.intercept({
-        url: `https://${CLUSTER}.cognitedata.com/api/playground/projects/${PROJECT}/documents/search`,
-        method: 'POST',
-      }).as('documentSearch');
-
-      cy.createFavorite({
-        name: favoriteName,
-      });
-    });
-
-    beforeEach(() => {
-      cy.findByRole('heading', { name: 'Cognite Discover' }).click();
     });
 
     it('should add and remove documents from content', () => {
@@ -154,6 +154,7 @@ describe('Edit Favorites', () => {
       cy.findByText(filename).should('not.exist');
     });
 
+    // This in unstable, needs work
     it.skip('should add and remove wells and wellbores from content', () => {
       cy.log('Filter wells');
       cy.findByTestId('side-bar').findByText('Wells').click({ force: true });
