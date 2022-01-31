@@ -85,6 +85,7 @@ DEPENDENCIES = [
     "@npm//reselect",
     "@npm//styled-components",
     "@npm//typesafe-actions",
+    "@npm//victory",
     "//packages/metrics",
     "//packages/z-index",
     "//packages/react-i18n",

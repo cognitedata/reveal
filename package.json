@@ -155,6 +155,7 @@
     "typesafe-actions": "^5.1.0",
     "unleash-proxy-client": "^1.6.0",
     "uuid": "^8.3.2",
+    "victory": "^36.2.1",
     "web-vitals": "^2.0.1",
     "yup": "1.0.0-beta.2"
   },
@@ -311,6 +312,7 @@
     }
   },
   "resolutions": {
-    "@cognite/sdk-v7/@cognite/sdk-core": "^3.4.1"
+    "@cognite/sdk-v7/@cognite/sdk-core": "^3.4.1",
+    "d3-scale": "3.3.0"
   }
 }

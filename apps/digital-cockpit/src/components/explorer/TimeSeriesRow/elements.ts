@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const DocumentRowWrapper = styled.div`
+export const RowWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 16px;
@@ -9,15 +9,13 @@ export const DocumentRowWrapper = styled.div`
   &:hover {
     background: var(--cogs-midblue-8) !important;
   }
-  .document-row--image {
-    width: 148px;
+  .row--image {
+    width: 256px;
     height: 64px;
-    background: var(--cogs-greyscale-grey2);
     margin-right: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
 
     img {
       object-fit: cover;
@@ -25,7 +23,7 @@ export const DocumentRowWrapper = styled.div`
     }
   }
 
-  .document-row--meta {
+  .row--meta {
     display: flex;
     flex-direction: column;
     h4,
@@ -34,10 +32,10 @@ export const DocumentRowWrapper = styled.div`
       font-weight: 500;
       font-size: 14px;
       line-height: 20px;
-      color: #333333;
+      color: var(--cogs-greyscale-grey9);
     }
     div {
-      color: #595959;
+      color: var(--cogs-greyscale-grey7);
     }
   }
 `;
