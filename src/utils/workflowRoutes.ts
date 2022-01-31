@@ -5,6 +5,7 @@ export type WorkflowStepKey =
   | 'process'
   | 'review'
   | 'explore'
+  | 'models'
   | 'home';
 
 export const workflowRoutes: Record<WorkflowStepKey, string> = {
@@ -12,6 +13,7 @@ export const workflowRoutes: Record<WorkflowStepKey, string> = {
   process: '/:tenant/vision/workflow/process',
   review: '/:tenant/vision/workflow/review/:fileId',
   explore: '/:tenant/vision/explore',
+  models: '/:tenant/vision/models',
   home: '/:tenant',
 };
 

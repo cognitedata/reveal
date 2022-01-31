@@ -4,9 +4,10 @@ import {
   mockCogniteAutoMLModel,
   mockCogniteAutoMLTrainingJob,
 } from 'src/__test-utils/fixtures/automlModels';
-import v3Client from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpResponse } from '@cognite/sdk';
 import { AutoMLModelType } from 'src/api/autoML/types';
+import { CDFResourceId } from 'src/api/types';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => ({
   get: jest.fn(),
@@ -21,7 +22,7 @@ describe('AutoML API: /automl/list', () => {
       status: 200,
       headers: {},
     };
-    v3Client.get = async (): Promise<HttpResponse<any>> =>
+    sdk.get = async (): Promise<HttpResponse<any>> =>
       Promise.resolve(mockedData);
     const json = await AutoMLAPI.listAutoMLModels();
 
@@ -34,7 +35,7 @@ describe('AutoML API: /automl/list', () => {
       status: 200,
       headers: {},
     };
-    v3Client.get = async (): Promise<HttpResponse<any>> =>
+    sdk.get = async (): Promise<HttpResponse<any>> =>
       Promise.resolve(mockedData);
     const json = await AutoMLAPI.listAutoMLModels();
 
@@ -47,7 +48,7 @@ describe('AutoML API: /automl/list', () => {
       status: 200,
       headers: {},
     };
-    v3Client.get = async (): Promise<HttpResponse<any>> =>
+    sdk.get = async (): Promise<HttpResponse<any>> =>
       Promise.resolve(mockedData);
     const json = await AutoMLAPI.listAutoMLModels();
 
@@ -62,7 +63,7 @@ describe('AutoML API /automl/jobid', () => {
       status: 200,
       headers: {},
     };
-    v3Client.get = async (): Promise<HttpResponse<any>> =>
+    sdk.get = async (): Promise<HttpResponse<any>> =>
       Promise.resolve(mockedData);
     const json = await AutoMLAPI.getAutoMLModel(0);
 
@@ -75,7 +76,7 @@ describe('AutoML API /automl/jobid', () => {
       status: 200,
       headers: {},
     };
-    v3Client.get = async (): Promise<HttpResponse<any>> =>
+    sdk.get = async (): Promise<HttpResponse<any>> =>
       Promise.resolve(mockedData);
     const json = await AutoMLAPI.getAutoMLModel(2);
 
@@ -93,31 +94,33 @@ describe('AutoML start training job', () => {
 
     const { name, modelType, items } = mockCogniteAutoMLTrainingJob[0];
 
-    v3Client.post = async (): Promise<HttpResponse<any>> =>
+    sdk.post = async (): Promise<HttpResponse<any>> =>
       Promise.resolve(mockedData);
     const json = await AutoMLAPI.startAutoMLJob(
       name,
       modelType as AutoMLModelType,
-      items
+      items as CDFResourceId[]
     );
 
-    expect(json).toMatchObject(mockCogniteAutoMLTrainingJob[0]);
+    expect(json).toBe(mockCogniteAutoMLTrainingJob[0]);
   });
 
-  test('should return empty object when job creation fails', async () => {
-    const mockedData = {
-      data: undefined,
-      status: 200,
-      headers: {},
-    };
+  test('should log error and return undefined when job creation fails', async () => {
     const { name, modelType, items } = mockCogniteAutoMLTrainingJob[0];
-    v3Client.post = async (): Promise<HttpResponse<any>> =>
-      Promise.resolve(mockedData);
+    sdk.post = async () => {
+      throw Error();
+    };
+
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
     const json = await AutoMLAPI.startAutoMLJob(
       name,
       modelType as AutoMLModelType,
-      items
+      items as CDFResourceId[]
     );
-    expect(json).toMatchObject({});
+    expect(json).toBe(undefined);
+    expect(consoleSpy).toHaveBeenCalled();
   });
 });

@@ -30,6 +30,7 @@ import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/
 import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSidePanel';
 import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
+import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 
 pushMetric('Vision.Explorer');
 
@@ -170,6 +171,7 @@ const Explorer = () => {
             </DrawerContainer>
           )}
           <ExplorerBulkEditModalContainer />
+          <ExplorerModelTrainingModalContainer />
         </QueryClientProvider>
       </Wrapper>
     </>

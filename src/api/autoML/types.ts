@@ -1,5 +1,4 @@
-import { IdEither } from '@cognite/sdk';
-import { JobStatus } from 'src/api/types';
+import { CDFResourceId, JobStatus } from 'src/api/types';
 
 export type AutoMLModelType = 'classification' | 'objectdetection';
 
@@ -31,5 +30,5 @@ export interface AutoMLTrainingJob extends AutoMLModel {
 }
 
 export interface AutoMLTrainingJobPostRequest extends AutoMLTrainingJob {
-  items: IdEither[];
+  items: CDFResourceId[];
 }

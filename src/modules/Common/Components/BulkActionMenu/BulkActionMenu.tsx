@@ -19,6 +19,7 @@ export const BulkActionMenu = ({
   onReview,
   onBulkEdit,
   onDelete,
+  onTrainModel,
   style,
   processingFiles,
 }: {
@@ -29,6 +30,7 @@ export const BulkActionMenu = ({
   onReview?: () => void;
   onBulkEdit?: () => void;
   onDelete?: () => void;
+  onTrainModel?: () => void;
   style?: any;
   processingFiles?: boolean;
 }) => {
@@ -38,6 +40,11 @@ export const BulkActionMenu = ({
   const exceededLimitMessage = `Total number of files that can be processed simultaneously is ${maxSelectCount}`;
 
   const visionMLEnabled = useFlag('VISION_ML', {
+    fallback: false,
+    forceRerender: true,
+  });
+
+  const visionAutoMLEnabled = useFlag('VISION_AutoML', {
     fallback: false,
     forceRerender: true,
   });
@@ -80,6 +87,12 @@ export const BulkActionMenu = ({
         <Menu.Item onClick={onReview} disabled={!count}>
           <Icon type="Edit" style={{ marginRight: 17 }} />
           <Detail strong>Review {count}</Detail>
+        </Menu.Item>
+      )}
+      {visionAutoMLEnabled && onTrainModel && (
+        <Menu.Item onClick={onTrainModel} disabled={!count}>
+          <Icon type="PlusCompact" style={{ marginRight: 17 }} />
+          <Detail strong>Train Model {count}</Detail>
         </Menu.Item>
       )}
       {onDownload && (
