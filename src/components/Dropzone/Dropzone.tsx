@@ -23,7 +23,7 @@ const Dropzone = ({
         <StyledDropzoneOnDrop>
           <Icon type="Upload" />
           <StyledDropzoneOnDropText level={6}>
-            Drop to Upload CSV
+            Drop to upload CSV
           </StyledDropzoneOnDropText>
         </StyledDropzoneOnDrop>
         <StyledDocumentIcon />
