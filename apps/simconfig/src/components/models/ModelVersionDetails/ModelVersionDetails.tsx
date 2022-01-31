@@ -7,7 +7,10 @@ import styled from 'styled-components/macro';
 
 import { Button, Icon, Skeleton, toast } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
-import { useGetModelBoundaryConditionListQuery } from '@cognite/simconfig-api-sdk/rtk';
+import {
+  useGetModelBoundaryConditionListQuery,
+  useGetModelFileQuery,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import {
   selectAuthToken,
@@ -36,7 +39,11 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
 
   const { metadata } = modelFile;
   const { simulator, modelName, version } = metadata;
-
+  const pollingOptions = {
+    pollingInterval: !isProcessingReady
+      ? PROCESSING_POLLING_INTERVAL
+      : undefined,
+  };
   const {
     data: boundaryConditions,
     isFetching: isFetchingBoundaryConditions,
@@ -48,18 +55,28 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       modelName,
       version,
     },
+    pollingOptions
+  );
+  const { data: modelFileItem } = useGetModelFileQuery(
     {
-      pollingInterval: !isProcessingReady
-        ? PROCESSING_POLLING_INTERVAL
-        : undefined,
-    }
+      project,
+      modelName: modelFile.name,
+      simulator,
+      version: modelFile.metadata.version,
+    },
+    pollingOptions
   );
 
   useEffect(() => {
-    if (boundaryConditions?.modelBoundaryConditionList.length) {
+    const hasBoundaryConditions =
+      boundaryConditions?.modelBoundaryConditionList.length;
+    const hasCalculationFailed =
+      modelFileItem?.metadata.errorMessage !== undefined;
+
+    if (hasBoundaryConditions || hasCalculationFailed) {
       setIsProcessingReady(true);
     }
-  }, [boundaryConditions]);
+  }, [boundaryConditions, modelFileItem]);
 
   useEffect(() => {
     if (isProcessingReady) {
@@ -99,7 +116,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       <BoundaryConditionsContainer>
         <BoundaryConditionTable
           boundaryConditions={boundaryConditions?.modelBoundaryConditionList}
-          modelFile={modelFile}
+          modelFile={modelFileItem}
         />
       </BoundaryConditionsContainer>
       <ModelVersionProperties>

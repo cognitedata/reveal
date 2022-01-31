@@ -78,6 +78,11 @@ export function ModelVersionList({
                 <span className="description">
                   {modelFile.metadata.description || '(no description)'}
                 </span>
+                {modelFile.metadata.errorMessage && (
+                  <Label size="small" variant="danger">
+                    Error
+                  </Label>
+                )}
                 {!index && <Label size="small">latest version</Label>}
               </div>
             }
