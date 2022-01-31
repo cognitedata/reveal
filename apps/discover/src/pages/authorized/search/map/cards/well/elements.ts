@@ -8,7 +8,6 @@ export const WellboreRow = styled(Flex)`
   height: 36px;
   border-radius: 4px;
   background-color: var(--cogs-greyscale-grey2);
-  margin-top: ${sizes.extraSmall};
   margin-bottom: ${sizes.extraSmall};
 `;
 

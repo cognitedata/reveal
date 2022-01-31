@@ -14,8 +14,9 @@ export const PathContainer = styled.div`
 `;
 
 export const PathHeader = styled(Label)`
-  margin-bottom: 0px !important;
+  margin-bottom: ${sizes.extraSmall} !important;
 `;
+
 export const PreviewHeader = styled(Label)`
   margin-bottom: ${sizes.extraSmall};
 `;
