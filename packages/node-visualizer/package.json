@@ -53,12 +53,6 @@
       "node_modules",
       "__tests__",
       ".stories."
-    ],
-    "moduleNameMapper": {
-      "^@cognite/(.*)/dist/mocks$": [
-        "../../../packages/$1/src/mocks",
-        "../../../packages/$1/dist/mocks"
-      ]
-    }
+    ]
   }
 }
