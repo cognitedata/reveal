@@ -4,10 +4,9 @@ on:
   pull_request:
     branches-ignore:
       - 'dependabot/**'
-
 jobs:
-  build-and-deploy:
-    name: Publish documentation preview
+  build:
+    name: Build preview documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -47,6 +46,14 @@ jobs:
           yarn install --immutable
           yarn build:fast
 
+  deploy:
+    name: Publish documentation preview
+    # Ensures that there only will be executed one "instance" of this operation
+    # across all ongoing Github Action executions
+    concurrency: deploy-preview-documentation
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Deploy documentation preview 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
