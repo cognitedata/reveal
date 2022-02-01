@@ -8,6 +8,7 @@ import {
   DiagramSymbolInstance,
   DocumentMetadata,
   DocumentType,
+  GraphDocument,
   PidDocumentWithDom,
 } from '@cognite/pid-tools';
 
@@ -36,7 +37,7 @@ interface SidePanelProps {
   symbolInstances: DiagramSymbolInstance[];
   selection: SVGElement[];
   setActive: (arg0: ToolType) => void;
-  loadSymbolsAsJson: (args0: string) => void;
+  loadSymbolsAsJson: (json: GraphDocument) => void;
   saveSymbol: (options: SaveSymbolData, selection: SVGElement[]) => void;
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;

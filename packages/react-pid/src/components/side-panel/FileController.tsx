@@ -5,6 +5,7 @@ import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  GraphDocument,
   PidDocumentWithDom,
 } from '@cognite/pid-tools';
 
@@ -22,7 +23,7 @@ interface FileControllerProps {
   symbolInstances: DiagramSymbolInstance[];
   lineInstances: DiagramLineInstance[];
   disabled: boolean;
-  loadSymbolsAsJson: (json: any) => void;
+  loadSymbolsAsJson: (json: GraphDocument) => void;
   saveGraphAsJson: () => void;
   getPidDocument: () => PidDocumentWithDom | undefined;
 }

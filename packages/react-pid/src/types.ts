@@ -8,9 +8,3 @@ export type ToolType =
   | 'selectDocumentType'
   | 'setLineNumber'
   | 'addEquipmentTag';
-
-export enum DocumentType {
-  pid = 'P&ID',
-  isometric = 'Isometric',
-  unknown = 'Unknown',
-}

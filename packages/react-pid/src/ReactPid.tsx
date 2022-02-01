@@ -14,11 +14,13 @@ import {
   DiagramEquipmentTagInstance,
   DocumentType,
   PidDocumentWithDom,
+  SymbolType,
   getDiagramInstanceId,
   addOrRemoveLabelToInstance,
   DocumentMetadata,
   PidDocumentMetadata,
   IsoDocumentMetadata,
+  GraphDocument,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
 
@@ -37,7 +39,7 @@ import {
 import { Toolbar } from './components/toolbar/Toolbar';
 
 export interface SaveSymbolData {
-  symbolType: string;
+  symbolType: SymbolType;
   description: string;
 }
 
@@ -117,7 +119,7 @@ export const ReactPid: React.FC = () => {
     setActive(mode);
   };
 
-  const loadSymbolsAsJson = (jsonData: any) => {
+  const loadSymbolsAsJson = (jsonData: GraphDocument) => {
     if (pidDocument === undefined) {
       return;
     }

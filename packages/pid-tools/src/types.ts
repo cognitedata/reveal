@@ -20,19 +20,19 @@ export interface SvgRepresentation {
   boundingBox: BoundingBox;
 }
 
-export type SymbolTypes = typeof symbolTypes[number];
+export type SymbolType = typeof symbolTypes[number];
 
 export interface DiagramSymbol {
   id: string; // uuid
-  symbolType: SymbolTypes;
+  symbolType: SymbolType;
   description: string;
   svgRepresentations: SvgRepresentation[];
 }
 
-export type DiagramTypes = SymbolTypes | 'Line' | 'EquipmentTag';
+export type DiagramType = SymbolType | 'Line' | 'EquipmentTag';
 
 export interface DiagramInstance {
-  type: DiagramTypes;
+  type: DiagramType;
   labelIds: string[];
   assetExternalId?: string;
   lineNumbers: string[];
@@ -53,6 +53,7 @@ export interface DiagramLineInstance extends DiagramInstanceWithPaths {
 }
 
 export interface DiagramSymbolInstance extends DiagramInstanceWithPaths {
+  type: SymbolType;
   symbolId: string;
   scale?: number;
 }
@@ -97,17 +98,29 @@ export interface DiagramLabelOutputFormat {
   boundingBox: BoundingBox;
 }
 
-export interface DiagramEquipmentTagOutputFormat {
+export interface DiagramEquipmentTagOutputFormat extends DiagramInstance {
   name: string;
-  labels: DiagramLabelOutputFormat[];
-  lineNumbers: string[];
   boundingBox: BoundingBox;
+  labels: DiagramLabelOutputFormat[];
 }
 
 export enum DocumentType {
   pid = 'P&ID',
   isometric = 'Isometric',
   unknown = 'Unknown',
+}
+
+export interface GraphDocument {
+  documentMetadata: DocumentMetadata;
+  viewBox: BoundingBox;
+  symbols: DiagramSymbol[];
+  symbolInstances: DiagramSymbolInstanceOutputFormat[];
+  lines: DiagramInstanceWithPathsOutputFormat[];
+  connections: DiagramConnection[];
+  pathReplacements: PathReplacement[];
+  lineNumbers: string[];
+  equipmentTags: DiagramEquipmentTagOutputFormat[];
+  labels: DiagramLabelOutputFormat[];
 }
 
 interface DocumentMetadataBase {

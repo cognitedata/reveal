@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { Button, Select, OptionType } from '@cognite/cogs.js';
-import { symbolTypes } from '@cognite/pid-tools';
+import { symbolTypes, SymbolType } from '@cognite/pid-tools';
 
 import { SaveSymbolData } from '../../ReactPid';
 
 import { StyledInput } from './elements';
 
-const symbolTypeOptions: OptionType<string>[] = symbolTypes.map(
+const symbolTypeOptions: OptionType<SymbolType>[] = symbolTypes.map(
   (symbolType) => ({
     label: symbolType,
+    value: symbolType,
   })
 );
 
@@ -24,12 +25,12 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   const [description, setDescription] = React.useState<string>('');
 
   const [selectedSymbolTypeOption, setSelectedSymbolTypeOption] =
-    React.useState<OptionType<string>>(symbolTypeOptions[0]);
+    React.useState<OptionType<SymbolType>>(symbolTypeOptions[0]);
 
   const saveSymbolWrapper = () => {
     setDescription('');
     saveSymbol(
-      { symbolType: selectedSymbolTypeOption.label, description },
+      { symbolType: selectedSymbolTypeOption.value!, description },
       selection
     );
   };

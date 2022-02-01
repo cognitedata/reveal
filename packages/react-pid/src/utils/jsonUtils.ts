@@ -6,19 +6,19 @@ import {
   DiagramConnection,
   PidDocument,
   getNoneOverlappingSymbolInstances,
-  BoundingBox,
   DiagramInstanceWithPathsOutputFormat,
   PathReplacement,
   PidDocumentWithDom,
   DiagramEquipmentTagInstance,
   DiagramEquipmentTagOutputFormat,
+  GraphDocument,
   DocumentMetadata,
-  DiagramSymbolInstanceOutputFormat,
 } from '@cognite/pid-tools';
 
 import {
   getEquipmentTagOutputFormat,
   getDiagramInstancesOutputFormat,
+  getDiagramSymbolInstancesOutputFormat,
 } from './saveGraph';
 
 export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
@@ -31,18 +31,6 @@ export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
   saveAs(fileToSave, 'Legend.json');
 };
 
-interface Graph {
-  documentMetadata: DocumentMetadata;
-  viewBox: BoundingBox;
-  symbols: DiagramSymbol[];
-  symbolInstances: DiagramInstanceWithPathsOutputFormat[];
-  lines: DiagramInstanceWithPathsOutputFormat[];
-  connections: DiagramConnection[];
-  pathReplacements: PathReplacement[];
-  lineNumbers: string[];
-  equipmentTags: DiagramEquipmentTagOutputFormat[];
-}
-
 const getGraphFormat = (
   pidDocument: PidDocumentWithDom,
   symbols: DiagramSymbol[],
@@ -53,9 +41,9 @@ const getGraphFormat = (
   documentMetadata: DocumentMetadata,
   lineNumbers: string[],
   equipmentTags: DiagramEquipmentTagInstance[]
-): Graph => {
+): GraphDocument => {
   const linesOutputFormat = getDiagramInstancesOutputFormat(pidDocument, lines);
-  const symbolInstancesOutputFormat = getDiagramInstancesOutputFormat(
+  const symbolInstancesOutputFormat = getDiagramSymbolInstancesOutputFormat(
     pidDocument,
     symbolInstances
   );
@@ -63,6 +51,10 @@ const getGraphFormat = (
     pidDocument,
     equipmentTags
   );
+
+  const labels = pidDocument.pidLabels.map((label) => {
+    return label.toDiagramLabelOutputFormat();
+  });
 
   return {
     documentMetadata,
@@ -74,6 +66,7 @@ const getGraphFormat = (
     pathReplacements,
     lineNumbers,
     equipmentTags: equipmentTagInstancesFormat,
+    labels,
   };
 };
 
@@ -106,7 +99,10 @@ export const saveGraphAsJson = (
   saveAs(fileToSave, 'Graph.json');
 };
 
-export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
+export const isValidSymbolFileSchema = (
+  jsonData: any,
+  svg: SVGSVGElement
+): jsonData is GraphDocument => {
   const missingIds: string[] = [];
 
   const trackMissingId = (id: string) => {
@@ -171,7 +167,7 @@ export const isValidSymbolFileSchema = (jsonData: any, svg: SVGSVGElement) => {
 };
 
 export const loadSymbolsFromJson = (
-  jsonData: any,
+  jsonData: GraphDocument,
   setSymbols: (diagramSymbols: DiagramSymbol[]) => void,
   symbols: DiagramSymbol[],
   pidDocument: PidDocument,
@@ -222,17 +218,13 @@ export const loadSymbolsFromJson = (
     setLines([...lines, ...newLines]);
   }
   if ('symbolInstances' in jsonData) {
-    const newSymbolInstancesOutputFormat =
-      jsonData.symbolInstances as DiagramSymbolInstanceOutputFormat[];
-    setSymbolInstances([...symbolInstances, ...newSymbolInstancesOutputFormat]);
+    setSymbolInstances([...symbolInstances, ...jsonData.symbolInstances]);
   }
   if ('connections' in jsonData) {
-    const newConnections = jsonData.connections as DiagramConnection[];
-    setConnections([...connections, ...newConnections]);
+    setConnections([...connections, ...jsonData.connections]);
   }
   if ('pathReplacements' in jsonData) {
-    const newPathReplacements = jsonData.pathReplacements as PathReplacement[];
-    setPathReplacements([...pathReplacements, ...newPathReplacements]);
+    setPathReplacements([...pathReplacements, ...jsonData.pathReplacements]);
   }
   if ('lineNumbers' in jsonData) {
     setLineNumbers([...lineNumbers, ...jsonData.lineNumbers]);

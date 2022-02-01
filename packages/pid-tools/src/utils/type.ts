@@ -1,7 +1,7 @@
 import {
   DiagramInstance,
   DiagramLineInstance,
-  DiagramTypes,
+  DiagramType,
   FileConnectionInstance,
   PidDocumentMetadata,
   IsoDocumentMetadata,
@@ -11,20 +11,20 @@ import {
 
 export const isOfDiagramType = <T extends DiagramInstance>(
   diagramInstance: any,
-  diagramType: DiagramTypes
+  diagramType: DiagramType
 ): diagramInstance is T => diagramInstance.type === diagramType;
 
 export const isFileConnection = (
   diagramInstance: any
 ): diagramInstance is FileConnectionInstance => {
-  const fileConnection: DiagramTypes = 'File connection';
+  const fileConnection: DiagramType = 'File connection';
   return diagramInstance.type === fileConnection;
 };
 
 export const isLine = (
   diagramInstance: any
 ): diagramInstance is DiagramLineInstance => {
-  const line: DiagramTypes = 'Line';
+  const line: DiagramType = 'Line';
   return diagramInstance.type === line;
 };
 
