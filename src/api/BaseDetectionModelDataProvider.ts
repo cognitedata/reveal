@@ -29,8 +29,10 @@ export abstract class BaseDetectionModelDataProvider
         if (response.status === 201 || response.status === 200) {
           return response.data;
         }
-        // todo: handle error
         throw new Error(JSON.stringify(response));
+      })
+      .catch((error) => {
+        throw new Error(JSON.stringify(error.errorMessage));
       });
   }
 
@@ -41,8 +43,10 @@ export abstract class BaseDetectionModelDataProvider
         if (response.status === 200) {
           return response.data;
         }
-        // todo: handle error
         throw new Error(JSON.stringify(response));
+      })
+      .catch((error) => {
+        throw new Error(JSON.stringify(error.errorMessage));
       });
   }
 }
