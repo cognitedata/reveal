@@ -497,9 +497,32 @@ export const visualizeLabels = (
 
       path.setAttribute(
         'style',
-        `stroke:${COLORS.connection.color};stroke-width:${COLORS.connection.strokeWidth};opacity:${COLORS.connection.opacity};stroke-linecap:round`
+        `stroke:${COLORS.connection.color};stroke-width:${
+          COLORS.connection.strokeWidth / 2
+        };opacity:${COLORS.connection.opacity};stroke-linecap:round`
       );
       svg.insertBefore(path, svg.children[0]);
+
+      const rect = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'rect'
+      );
+
+      rect.setAttribute(
+        'style',
+        `stroke:${COLORS.connection.color};opacity:${0.1}`
+      );
+
+      const { x, y, width, height } = pidTspan.boundingBox;
+
+      rect.setAttribute('x', `${x}`);
+      rect.setAttribute('y', `${y}`);
+      rect.setAttribute('width', `${width}`);
+      rect.setAttribute('height', `${height}`);
+
+      rect.id = `${pidTspan.id}_rect`;
+
+      svg.insertBefore(rect, svg.children[0]);
     });
   });
 };

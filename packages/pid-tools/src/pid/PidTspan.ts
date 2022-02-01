@@ -16,12 +16,12 @@ export class PidTspan {
   static fromSVGTSpan(tSpan: SVGTSpanElement, svg: SVGSVGElement) {
     const bBox = (tSpan.parentElement as unknown as SVGTextElement).getBBox();
 
-    const bBoxXYMin = translatePointWithDom(bBox.x, bBox.y, {
+    const bBoxTopLeft = translatePointWithDom(bBox.x, bBox.y, {
       svg,
       currentElem: tSpan,
     });
 
-    const bBoxXYMax = translatePointWithDom(
+    const bBoxBottomRight = translatePointWithDom(
       bBox.x + bBox.width,
       bBox.y + bBox.height,
       {
@@ -30,11 +30,14 @@ export class PidTspan {
       }
     );
 
-    const width = bBoxXYMax.x - bBoxXYMin.x;
-    const height = bBoxXYMax.y - bBoxXYMin.y;
+    const x = Math.min(bBoxTopLeft.x, bBoxBottomRight.x);
+    const y = Math.min(bBoxTopLeft.y, bBoxBottomRight.y);
+    const width = Math.abs(bBoxTopLeft.x - bBoxBottomRight.x);
+    const height = Math.abs(bBoxTopLeft.y - bBoxBottomRight.y);
+
     const boundingBox = {
-      x: bBoxXYMin.x,
-      y: bBoxXYMin.y,
+      x,
+      y,
       width,
       height,
     };
