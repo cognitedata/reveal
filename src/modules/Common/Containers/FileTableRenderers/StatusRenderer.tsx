@@ -45,5 +45,9 @@ export function StatusRenderer({ rowData: { id } }: CellRenderer) {
     return <div style={{ textTransform: 'capitalize' }}>Queued</div>;
   }
 
+  if (statuses.some((key) => annotationStatuses[key]?.status === 'Failed')) {
+    return <div style={{ textTransform: 'capitalize' }}>Failed</div>;
+  }
+
   return <div style={{ textTransform: 'capitalize' }}>Unprocessed</div>;
 }
