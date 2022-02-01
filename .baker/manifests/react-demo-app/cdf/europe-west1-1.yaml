@@ -47,12 +47,12 @@ spec:
       containers:
       - env:
         - name: URL_PREFIX
-          value: fas-demo.app.europe-west1-1
+          value: fas-demo.app
         image: eu.gcr.io/cognitedata/apps/react-demo-app
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
-            path: /
+            path: /fas-demo-prod/configMap.json
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 5
@@ -64,7 +64,7 @@ spec:
         readinessProbe:
           failureThreshold: 10
           httpGet:
-            path: /
+            path: /fas-demo-prod/configMap.json
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5
@@ -93,7 +93,7 @@ spec:
   acmeProvider:
     authority: none
   ambassador_id: ambassador-apps
-  hostname: fas-demo.app.europe-west1-1.cogniteapp.com
+  hostname: fas-demo.app.cogniteapp.com
   tlsSecret:
     name: apps-certificate-cogniteapp-com-secret
 ---
@@ -109,7 +109,7 @@ spec:
   add_response_headers:
     Strict-Transport-Security: max-age=31536000
   ambassador_id: ambassador-apps
-  host: fas-demo.app.europe-west1-1.cogniteapp.com
+  host: fas-demo.app.cogniteapp.com
   prefix: /
   rewrite: ""
   service: react-demo-app

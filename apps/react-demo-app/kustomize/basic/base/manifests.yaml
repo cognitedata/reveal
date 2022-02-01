@@ -64,13 +64,13 @@ spec:
               memory: 128Mi
           livenessProbe:
             httpGet:
-              path: /
+              path: /fas-demo-prod/configMap.json
               port: 8080
             initialDelaySeconds: 60
             periodSeconds: 5
           readinessProbe:
             httpGet:
-              path: /
+              path: /fas-demo-prod/configMap.json
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5

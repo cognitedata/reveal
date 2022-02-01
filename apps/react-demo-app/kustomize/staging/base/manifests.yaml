@@ -41,8 +41,23 @@ spec:
   template:
     spec:
       containers:
-        - image: eu.gcr.io/cognitedata/apps/react-demo-app
+        - image: eu.gcr.io/cognitedata/apps/react-demo-app-staging
           name: react-demo-app
           env:
             - name: URL_PREFIX
               value: fas-demo.app.staging.${account}
+          livenessProbe:
+            httpGet:
+              path: /fas-demo/configMap.json
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /fas-demo/configMap.json
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 10

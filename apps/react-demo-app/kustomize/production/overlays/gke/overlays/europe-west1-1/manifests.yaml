@@ -9,7 +9,7 @@ metadata:
     team: apps
   name: react-demo-app
 spec:
-  hostname: fas-demo.app.staging.cogniteapp.com
+  hostname: fas-demo.app.cogniteapp.com
 ---
 apiVersion: getambassador.io/v2
 kind: Mapping
@@ -19,7 +19,7 @@ metadata:
     team: apps
   name: react-demo-app
 spec:
-  host: fas-demo.app.staging.cogniteapp.com
+  host: fas-demo.app.cogniteapp.com
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -29,8 +29,8 @@ spec:
   template:
     spec:
       containers:
-        - image: eu.gcr.io/cognitedata/apps/react-demo-app-staging
+        - image: eu.gcr.io/cognitedata/apps/react-demo-app
           name: react-demo-app
           env:
             - name: URL_PREFIX
-              value: fas-demo.app.staging
+              value: fas-demo.app
