@@ -109,6 +109,7 @@ TYPE_DEPENDENCIES = [
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
     "@npm//@storybook/addons",
+    "@npm//@storybook/addon-actions",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/testcafe",
