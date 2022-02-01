@@ -28,7 +28,7 @@ import {
   EXTRACTOR_TEXT,
 } from 'components/Lineage/Extractor/Extractor';
 import * as Sentry from '@sentry/browser';
-import { DataSetWithExtpipes } from 'actions';
+import { DataSetWithExtpipes, useUpdateDataSetTransformations } from 'actions';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
@@ -42,6 +42,7 @@ export interface RawWithUpdateTime extends RawTable {
 }
 
 const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
+  const { updateDataSetTransformations } = useUpdateDataSetTransformations();
   const [transformationsData, setTransformationsData] = useState<any[]>([]);
   const [disableTransformations, setDisableTransformations] =
     useState<boolean>(false);
@@ -117,8 +118,15 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
     }
   }, [dataSetWithExtpipes]);
 
-  const onDeleteTransformationClick = () => {
-    /** todo */
+  const onDeleteTransformationClick = (transformation: any) => {
+    if (!dataSetWithExtpipes) return;
+    const transformationData = transformation.hidden
+      ? transformation.storedData
+      : transformation;
+    updateDataSetTransformations(
+      dataSetWithExtpipes.dataSet,
+      transformationData
+    );
   };
 
   useEffect(() => {
@@ -182,10 +190,7 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
                 </NoDataText>
               ) : (
                 <Table
-                  columns={transformationsColumns(
-                    dataSetWithExtpipes.dataSet,
-                    onDeleteTransformationClick
-                  )}
+                  columns={transformationsColumns(onDeleteTransformationClick)}
                   dataSource={transformationsData}
                   pagination={{ pageSize: 5 }}
                   rowKey="id"

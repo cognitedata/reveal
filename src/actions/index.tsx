@@ -1,13 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import handleError from 'utils/handleError';
 import omit from 'lodash/omit';
-import {
-  CreationDataSet,
-  DataSet,
-  DataSetV3,
-  Extpipe,
-  TransformationDetails,
-} from 'utils/types';
+import { CreationDataSet, DataSet, DataSetV3, Extpipe } from 'utils/types';
 import { DataSetPatch, Group } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
@@ -156,16 +150,16 @@ export const useUpdateDataSetTransformations = () => {
 
   const updateDataSetTransformations = async (
     dataset: DataSet,
-    transformation: TransformationDetails
+    transformation: any
   ) => {
     const newDataSet = { ...dataset };
     if (Array.isArray(newDataSet.metadata.transformations)) {
       newDataSet.metadata.transformations =
-        newDataSet.metadata.transformations.filter(
-          (currentTransformation) => currentTransformation !== transformation
-        );
+        newDataSet.metadata.transformations.filter((currentTransformation) => {
+          const transformationId = transformation.id ?? transformation.name;
+          return currentTransformation.name !== transformationId;
+        });
     }
-
     updateDataSet(newDataSet);
   };
 

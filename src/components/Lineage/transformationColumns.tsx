@@ -5,29 +5,24 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 import { Button, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { DataSet } from 'utils/types';
 import HiddenTransformation from './HiddenTranformation';
 
 const transformationsColumns = (
-  dataSet: DataSet,
-  onDeleteTransformationClick: () => void
+  onDeleteTransformationClick: (transformation: any) => void
 ) => [
   {
     key: 'name',
     title: 'Transform',
     sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
     render: (_text: string, transform: any) => {
-      const { hidden, storedData, id, name } = transform;
       const onTransformationClick = () =>
         trackEvent(
           'DataSets.LineageFlow.Clicked on an external transformation'
         );
+      if (transform.hidden)
+        return <HiddenTransformation transformation={transform.storedData} />;
       const env = getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : '';
-      const href = `/${sdk.project}/transformations/${id}${env}`;
-      if (hidden)
-        return (
-          <HiddenTransformation transformation={storedData} dataSet={dataSet} />
-        );
+      const href = `/${sdk.project}/transformations/${transform.id}${env}`;
       return (
         <a
           onClick={onTransformationClick}
@@ -35,7 +30,7 @@ const transformationsColumns = (
           target="_blank"
           rel="noopener noreferrer"
         >
-          {name}
+          {transform.name}
         </a>
       );
     },
@@ -84,12 +79,12 @@ const transformationsColumns = (
   },
   {
     key: 'actions',
-    render: () => (
+    render: (_: string, transform: any) => (
       <Button
         icon="Delete"
         size="small"
         type="ghost-danger"
-        onClick={onDeleteTransformationClick}
+        onClick={() => onDeleteTransformationClick(transform)}
       />
     ),
   },
