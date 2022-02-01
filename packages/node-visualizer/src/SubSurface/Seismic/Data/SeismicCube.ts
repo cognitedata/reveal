@@ -217,11 +217,16 @@ export class SeismicCube extends RegularGrid3 {
     const lineRange = await client.file.getLineRange({ id: fileId });
     if (!lineRange) throw Error('lineRange in undefined');
     if (!lineRange.inline) throw Error('lineRange.inline in undefined');
-    if (!lineRange.xline) throw Error('lineRange.inline in undefined');
+    if (!lineRange.xline) throw Error('lineRange.xline in undefined');
 
     const { inline, xline, traceSampleCount } = lineRange;
-    const numCellsI = inline.max.value - inline.min.value;
-    const numCellsJ = xline.max.value - xline.min.value;
+    const inlineMaxValue = inline?.max?.value;
+    const inlineMinValue = inline?.min?.value;
+    const xlineMaxValue = xline?.max?.value;
+    const xlineMinValue = xline?.min?.value;
+
+    const numCellsI = inlineMaxValue - inlineMinValue;
+    const numCellsJ = xlineMaxValue - xlineMinValue;
 
     if (numCellsI <= 0) throw Error('numCellsI is 0');
     if (numCellsJ <= 0) throw Error('numCellsJ is 0');
@@ -229,10 +234,10 @@ export class SeismicCube extends RegularGrid3 {
     let numCellsK = traceSampleCount ? traceSampleCount.value : 0;
 
     const promises = [
-      client.volume.getTrace({ id: fileId }, inline.min.value, xline.min.value),
-      client.volume.getTrace({ id: fileId }, inline.max.value, xline.min.value),
-      client.volume.getTrace({ id: fileId }, inline.max.value, xline.max.value),
-      client.volume.getTrace({ id: fileId }, inline.min.value, xline.max.value),
+      client.volume.getTrace({ id: fileId }, inlineMinValue, xlineMinValue),
+      client.volume.getTrace({ id: fileId }, inlineMaxValue, xlineMinValue),
+      client.volume.getTrace({ id: fileId }, inlineMaxValue, xlineMaxValue),
+      client.volume.getTrace({ id: fileId }, inlineMinValue, xlineMaxValue),
     ];
 
     // @ts-expect-error potential real error
@@ -308,7 +313,7 @@ export class SeismicCube extends RegularGrid3 {
     //   cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
     // }
 
-    cube.startCell = new Index2(inline.min.value, xline.min.value);
+    cube.startCell = new Index2(inlineMinValue, xlineMinValue);
     cube.client = client;
     cube.fileId = fileId;
 

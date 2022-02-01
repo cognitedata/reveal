@@ -68,7 +68,7 @@ export class Modules {
     for (const module of this.modules) module.setDefaultVisible(root);
 
     const target = root.activeTarget as BaseRenderTargetNode;
-    if (target) target.viewAll();
+    if (target) target.viewAll?.();
   }
 
   public startAnimate(root: BaseRootNode): void {

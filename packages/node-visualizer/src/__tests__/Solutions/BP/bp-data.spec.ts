@@ -4,7 +4,7 @@ import {
   MetadataKeyMapping,
   WellboreMetadata,
 } from 'Solutions/BP/MetadataTransform';
-import { well, mappedWellbore } from './subsurface.mock';
+import { well, mappedWellbore } from '../../../__mocks__/subsurface.mock';
 
 describe('BPData', () => {
   test('should add wells to the data structure', () => {

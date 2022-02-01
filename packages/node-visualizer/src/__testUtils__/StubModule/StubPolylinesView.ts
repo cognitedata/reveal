@@ -15,7 +15,7 @@ import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
 import { PolylinesRenderStyle } from 'SubSurface/Basics/PolylinesRenderStyle';
 import { Base3DView } from 'Core/Views/Base3DView';
 
-import { StubTargetNode } from '__tests__/StubModule/StubTargetNode';
+import { StubTargetNode } from '__testUtils__/StubModule/StubTargetNode';
 
 export class StubPolylinesView extends Base3DView {
   //= =================================================

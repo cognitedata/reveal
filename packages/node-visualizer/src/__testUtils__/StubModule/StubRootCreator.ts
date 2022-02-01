@@ -3,8 +3,8 @@ import { Polylines } from 'Core/Geometry/Polylines';
 import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
 import { SubSurfaceRootNode } from 'SubSurface/Trees/SubSurfaceRootNode';
 import { Modules } from 'Core/Module/Modules';
-import { StubModule } from '__tests__/StubModule/StubModule';
-import { StubTargetNode } from '__tests__/StubModule/StubTargetNode';
+import { StubModule } from '__testUtils__/StubModule/StubModule';
+import { StubTargetNode } from '__testUtils__/StubModule/StubTargetNode';
 
 export class StubRootCreator {
   public static createTestRoot(): SubSurfaceRootNode {

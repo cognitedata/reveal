@@ -24,7 +24,7 @@ import {
   mappedWellbore,
   trajectory,
   trajectoryData,
-} from '../../src/__tests__/Solutions/BP/subsurface.mock';
+} from '../../src/__mocks__/subsurface.mock';
 import {
   bpWells,
   bpWellBores,
@@ -37,7 +37,7 @@ import {
   bpNptEvents,
   noDataWells,
   noDataWellbores,
-} from '../../src/__tests__/Solutions/BP/subsurfaceWithEvents.mock';
+} from '../../src/__mocks__/subsurfaceWithEvents.mock';
 
 const StyledRow = styled(Row)`
   margin-bottom: 5px;
@@ -135,7 +135,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
   const [apiUrl, setApiUrl] = useState(process.env.API_URL || '');
   const [fileId, setFileId] = useState(process.env.FILE_ID || '');
 
-  const onFormSubmit = (values) => {
+  const onFormSubmit = (values: AuthFormValue) => {
     const { apiKey: key, apiUrl: url, fileId: id } = values;
     setApiKey(key);
     setApiUrl(url);
@@ -271,7 +271,7 @@ export const AuthWrapperHorizons: React.FC<AuthWrapperProps> = (props) => {
   const [project, setProject] = useState(process.env.project || '');
   const [externalId, setExternalId] = useState('synthetic_horizon');
 
-  const onFormSubmit = (values) => {
+  const onFormSubmit = (values: AuthFormValue) => {
     const { apiKey: key, apiUrl: url, project: prj, externalId: eid } = values;
     setApiKey(key);
     setApiUrl(url);
@@ -394,7 +394,7 @@ export const NodeVisualiserWithWellsAndEventsInMeter = () => {
       ...event,
       metadata: {
         ...event.metadata,
-        npt_md: event['npt_md'] / 0.0022046,
+        npt_md: event.npt_md / 0.0022046,
         npt_md_unit: 'meter',
       },
     };

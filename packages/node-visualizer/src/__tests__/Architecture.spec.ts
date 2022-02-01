@@ -5,16 +5,16 @@ import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
 import { isInstanceOf } from 'Core/Primitives/ClassT';
 import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
 
-import { StubRootCreator } from '__tests__/StubModule/StubRootCreator';
-import { StubTargetNode } from '__tests__/StubModule/StubTargetNode';
+import { StubRootCreator } from '__testUtils__/StubModule/StubRootCreator';
+import { StubTargetNode } from '__testUtils__/StubModule/StubTargetNode';
 
-describe('Hierarcy', () => {
+describe('Hierarchy', () => {
   // Create the root
-  test('Identifyable', () => testIdentifyable());
+  test('Identifiable', () => testIdentifiable());
   test('boundingBox', () => boundingBox());
 
   test('getDescendantsByType', () => getDescendantsByType());
-  test('Hierarcy', () => testHierarcy());
+  test('Hierarchy', () => testHierarchy());
   test('isVisible/SetVisible', () => isVisibleSetVisible());
   test('count views', () => countView());
 
@@ -43,7 +43,7 @@ describe('Hierarcy', () => {
   // METHODS:
   // ==================================================
 
-  function testIdentifyable(): void {
+  function testIdentifiable(): void {
     const node = new PolylinesNode();
     expect('PolylinesNode').toBe(node.className);
     expect('PolylinesNode').toBe(PolylinesNode.className);
@@ -70,10 +70,10 @@ describe('Hierarcy', () => {
       expect(StubTargetNode.className).toBe(descendant.className);
   }
 
-  function testHierarcy(): void {
+  function testHierarchy(): void {
     const root = StubRootCreator.createTestRoot();
     const child = root.getChild(0);
-    expect(root.childCount).toBe(5);
+    expect(root.childCount).toBe(2);
     expect(child).not.toBeNull();
     expect(child.childIndex).toBe(0);
     expect(child.hasParent).toBe(true);
@@ -86,12 +86,12 @@ describe('Hierarcy', () => {
     {
       let n = 0;
       for (const _ of root.getThisAndDescendants()) n += 1;
-      expect(n).toBe(12);
+      expect(n).toBe(11);
     }
     {
       let n = 0;
       for (const _ of root.getDescendants()) n += 1;
-      expect(n).toBe(11);
+      expect(n).toBe(10);
     }
     {
       let n = 0;

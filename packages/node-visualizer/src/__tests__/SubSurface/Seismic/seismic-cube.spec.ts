@@ -3,9 +3,9 @@ import {
   getFulfilledTrace,
   getLineRange,
   traceRejected,
-} from '__tests__/SubSurface/Seismic/mock';
+} from '__mocks__/seismic.mock';
 import { Index3 } from 'Core/Geometry/Index3';
-import { MockCogniteSeismicClient } from '__tests__/utils';
+import { MockCogniteSeismicClient } from '__testUtils__/utils';
 import { Vector3 } from 'Core/Geometry/Vector3';
 import { Index2 } from 'Core/Geometry/Index2';
 

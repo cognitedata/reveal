@@ -17,8 +17,8 @@ import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
 import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
 import { SubSurfaceRootNode } from 'SubSurface/Trees/SubSurfaceRootNode';
 
-import { StubPolylinesView } from '__tests__/StubModule/StubPolylinesView';
-import { StubTargetNode } from '__tests__/StubModule/StubTargetNode';
+import { StubPolylinesView } from '__testUtils__/StubModule/StubPolylinesView';
+import { StubTargetNode } from '__testUtils__/StubModule/StubTargetNode';
 
 export class StubModule extends BaseModule {
   //= =================================================
