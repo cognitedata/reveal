@@ -18,6 +18,7 @@ module.exports = {
     '@typescript-eslint/no-this-alias': ['off'],
     'import/order': ['off'],
     'jest/no-conditional-expect': ['off'],
+    'jest/no-mocks-import': ['off'],
     'lodash/prefer-matches': ['off'],
     'no-bitwise': ['off'],
     'no-console': ['off'],
