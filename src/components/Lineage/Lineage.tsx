@@ -117,6 +117,10 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
     }
   }, [dataSetWithExtpipes]);
 
+  const onDeleteTransformationClick = () => {
+    /** todo */
+  };
+
   useEffect(() => {
     getTransformations();
   }, [getTransformations]);
@@ -178,7 +182,10 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
                 </NoDataText>
               ) : (
                 <Table
-                  columns={transformationsColumns(dataSetWithExtpipes.dataSet)}
+                  columns={transformationsColumns(
+                    dataSetWithExtpipes.dataSet,
+                    onDeleteTransformationClick
+                  )}
                   dataSource={transformationsData}
                   pagination={{ pageSize: 5 }}
                   rowKey="id"

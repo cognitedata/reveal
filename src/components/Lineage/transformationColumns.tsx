@@ -3,12 +3,15 @@ import { stringCompare, getStringCdfEnv } from 'utils/utils';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
-import { Icon } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { DataSet } from 'utils/types';
 import HiddenTransformation from './HiddenTranformation';
 
-const transformationsColumns = (dataSet: DataSet) => [
+const transformationsColumns = (
+  dataSet: DataSet,
+  onDeleteTransformationClick: () => void
+) => [
   {
     key: 'name',
     title: 'Transform',
@@ -78,6 +81,17 @@ const transformationsColumns = (dataSet: DataSet) => [
         </CellTransformation>
       );
     },
+  },
+  {
+    key: 'actions',
+    render: () => (
+      <Button
+        icon="Delete"
+        size="small"
+        type="ghost-danger"
+        onClick={onDeleteTransformationClick}
+      />
+    ),
   },
 ];
 
