@@ -16,6 +16,7 @@ import {
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { ToastUtils } from 'src/utils/ToastUtils';
 
 export const AnnotationDetectionJobUpdate = createAsyncThunk<
   VisionAnnotation[],
@@ -54,10 +55,27 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
           ?.map((item) => item.fileId)
           .filter((item) => !completedFileIds.includes(item)) || [];
 
+      if (job.failedItems && job.failedItems.length) {
+        job.failedItems.forEach((failedItem) => {
+          if (
+            !failedItem.items.every((failedFile) =>
+              failedFileIds.includes(failedFile.fileId)
+            )
+          ) {
+            ToastUtils.onFailure(
+              `Some files could not be processed: ${failedItem.errorMessage}`
+            );
+          }
+        });
+      }
+
       const newFailedFileIds: number[] =
         job.failedItems
           // Use first item in batch to check if the batch has failed
-          ?.map((failedJob) => failedJob.items[0].fileId)
+          ?.map((failedJob) =>
+            failedJob.items.map((failedFile) => failedFile.fileId)
+          )
+          .reduce((acc, next) => acc.concat(next), []) // flatten the array
           .filter((fileId) => !failedFileIds.includes(fileId)) || [];
 
       // filter out previously completed files
