@@ -47,7 +47,7 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
   };
 
   onMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-    const { drawingLayer } = this.ornateInstance;
+    const { baseLayer } = this.ornateInstance;
     if (!this.newLine) {
       return;
     }
@@ -77,7 +77,7 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
         this.newLine.points([currPoints[0], currPoints[1], x, y]);
       }
 
-      drawingLayer.draw();
+      baseLayer.draw();
     }
   };
 

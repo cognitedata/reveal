@@ -51,7 +51,7 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
   };
 
   onMouseMove = () => {
-    const { drawingLayer } = this.ornateInstance;
+    const { baseLayer } = this.ornateInstance;
     if (!this.newCircle) {
       return;
     }
@@ -69,7 +69,7 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
       const height = translatedMousePosition.y - this.newCircle.y();
       this.setDimensions(width, height);
 
-      drawingLayer.draw();
+      baseLayer.draw();
     }
   };
 
