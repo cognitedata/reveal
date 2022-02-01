@@ -54,6 +54,13 @@ DEV_DEPENDENCIES = [
     "@npm//typescript",
 ]
 
+TEST_DEPENDENCIES = glob([
+    "src/*.json",
+    "src/**/*.json",
+    "src/*.svg",
+    "src/**/*.svg",
+])
+
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "constants": "dist/constants",
@@ -95,7 +102,7 @@ prettier_test(
 
 jest_test(
     name = "jest_test",
-    srcs = SOURCES + TESTS + [
+    srcs = SOURCES + TESTS + TEST_DEPENDENCIES + [
         "//packages:jest.config.js",
         ":tsconfig.json",
         "//:tsconfig.json",

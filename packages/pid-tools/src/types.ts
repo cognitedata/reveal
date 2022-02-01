@@ -34,6 +34,7 @@ export type DiagramTypes = SymbolTypes | 'Line' | 'EquipmentTag';
 export interface DiagramInstance {
   type: DiagramTypes;
   labelIds: string[];
+  assetExternalId?: string;
   lineNumbers: string[];
 }
 
