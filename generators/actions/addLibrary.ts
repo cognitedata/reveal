@@ -48,17 +48,10 @@ const removeFromBazel = (file: string, commandToRemove: string): void => {
   fs.writeFileSync(file, bazelContent);
 };
 
-const cypressAction: LibraryAction = (base) => {
-  fs.rmdirSync(path.join(base, 'testcafe'), { recursive: true });
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const doNothing: LibraryAction = () => {};
 
-  removeFilesFromFolder(path.join(base, 'scripts'), 'testcafe-');
-  removeFromPackage(path.join(base, 'package.json'), 'testcafe');
-  removeFromBazel(path.join(base, 'BUILD.bazel'), 'testcafe');
-  fs.rmSync(path.join(base, 'tsconfig.testcafe.json'));
-  fs.rmSync(path.join(base, '.testcaferc.json'));
-};
-
-const testcafeAction: LibraryAction = (base) => {
+const removeCypressAction: LibraryAction = (base) => {
   fs.rmdirSync(path.join(base, 'cypress'), { recursive: true });
 
   removeFilesFromFolder(path.join(base, 'scripts'), 'cypress-');
@@ -68,16 +61,14 @@ const testcafeAction: LibraryAction = (base) => {
 };
 
 const everyActions: LibraryAction = (base) => {
-  cypressAction(base);
-  testcafeAction(base);
+  removeCypressAction(base);
 
   removeFromBazel(path.join(base, 'BUILD.bazel'), 'E2E tests');
   fs.rmdirSync(path.join(base, 'private-keys'), { recursive: true });
 };
 
 const libraryActions: Record<string, LibraryAction> = {
-  cypress: cypressAction,
-  testcafe: testcafeAction,
+  cypress: doNothing,
   none: everyActions,
 };
 

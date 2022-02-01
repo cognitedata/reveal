@@ -1,32 +1,28 @@
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
-import { Annotation, DataElement } from 'scarlet/types';
-
-export type Tag = Annotation & {
-  id: string;
-  dataElement: DataElement;
-};
+import { DataElement, DetectionState, OrnateTag } from 'scarlet/types';
 
 export const addTags = ({
   tags,
   ornateViewer,
   ornateDocument,
+  onClick,
 }: {
-  tags: Tag[];
+  tags: OrnateTag[];
   ornateViewer: CogniteOrnate;
   ornateDocument: OrnatePDFDocument;
+  onClick: (dataElement: DataElement) => void;
 }) => {
   ornateViewer!.addAnnotationsToGroup(
     ornateDocument,
     tags.map((tag) => ({
       id: tag.id,
       type: 'pct',
-      ...tag.boundingBox!,
-      stroke: '#FF8746',
+      ...tag.detection.boundingBox!,
+      ...getColorsByTag(tag),
       strokeWidth: 6,
-      fill: 'rgba(255, 135, 70, 0.2)',
       cornerRadius: 8,
       onClick: () => {
-        console.log(tag.dataElement);
+        onClick(tag.dataElement);
       },
     }))
   );
@@ -43,3 +39,14 @@ export const removeTags = ({
   const nodes = ornateViewer.stage.find(selector);
   nodes.forEach((node) => node.remove());
 };
+
+const getColorsByTag = (tag: OrnateTag) =>
+  tag.detection.state === DetectionState.APPROVED
+    ? {
+        stroke: '#18AF8E',
+        fill: `rgba(7, 141, 121, 0.1)`,
+      }
+    : {
+        stroke: '#FF8746',
+        fill: 'rgba(255, 135, 70, 0.2)',
+      };

@@ -5,3 +5,4 @@ export * from './constants';
 export * from './findLinesAndConnections';
 export * from './pid';
 export * from './geometry';
+export * from './linewalk-parser';

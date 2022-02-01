@@ -76,9 +76,6 @@ run --incompatible_strict_action_env
 # collect coverage information from test targets
 coverage --instrument_test_targets
 
-# Don't create bazel-out symlink
-build --experimental_no_product_name_out_symlink
-
 # Specify a binary that Bazel runs before every build
 # Variables defined can be used as env variables later on
 # https://docs.bazel.build/versions/master/user-manual.html#flag--workspace_status_command

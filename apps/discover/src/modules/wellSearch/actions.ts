@@ -10,14 +10,11 @@ import {
   WellboreId,
 } from 'modules/wellSearch/types';
 
-import { wellSearchService, SequenceFilter } from './service';
+import { wellSearchService } from './service';
 import {
-  SET_LOG_TYPE,
-  SET_LOGS_ROW_DATA,
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
   Well,
-  LogTypes,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   AssetTypes,
@@ -83,13 +80,17 @@ function toggleExpandedWell(well: Well, reset = false): ThunkResult<void> {
 
 function toggleSelectedWells(
   wells: Well[],
-  isSelected: boolean
+  options: {
+    isSelected: boolean;
+    clear?: boolean;
+  }
 ): ThunkResult<void> {
   return (dispatch) => {
     dispatch({
       type: TOGGLE_SELECTED_WELLS,
       wells,
-      isSelected,
+      isSelected: options.isSelected,
+      clear: options.clear,
     });
   };
 }
@@ -110,81 +111,6 @@ function toggleSelectedWellboreOfWell({
       wellboreId,
       isSelected,
     });
-  };
-}
-
-function getLogType(
-  wellboreIds: number[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
-  logQueries: SequenceFilter[] = [],
-  logTypes: LogTypes[] = []
-): ThunkResult<void> {
-  const wellboreAssetIdReverseMap =
-    getWellboreAssetIdReverseMap(wellboreAssetIdMap);
-  return (dispatch) => {
-    const fetchingIndex: Record<number, LogTypes> = {};
-    const fetching = logQueries.map((filters, index) => {
-      fetchingIndex[index] = logTypes[index];
-      return wellSearchService
-        .getSequenceByWellboreIds(
-          wellboreIds.map((id) => wellboreAssetIdMap[id]),
-          {
-            ...filters,
-          }
-        )
-        .then((response) => {
-          return response.map((item) => ({
-            ...item,
-            assetId: wellboreAssetIdReverseMap[item.assetId as number],
-          }));
-        });
-    });
-
-    return Promise.all(fetching).then((fetchedSequenceSet) => {
-      interface DataFetched {
-        [key: number]: Sequence[];
-      }
-      const data: Record<LogTypes, DataFetched> = {
-        logs: [],
-        logsFrmTops: [],
-      };
-
-      fetchedSequenceSet.forEach((sequenceSet, sequenceFetchingIndex) => {
-        const indexKey = fetchingIndex[sequenceFetchingIndex];
-
-        data[indexKey] = {
-          ...data[indexKey],
-          ...(groupBy(sequenceSet, 'assetId') || {}),
-        };
-
-        wellboreIds.forEach((wellboreId) => {
-          if (!data[indexKey][wellboreId]) {
-            data[indexKey][wellboreId] = [];
-          }
-        });
-      });
-
-      dispatch({
-        type: SET_LOG_TYPE,
-        data,
-      });
-    });
-  };
-}
-
-function getLogData(
-  logs: Sequence[],
-  logsFrmTops: Sequence[]
-): ThunkResult<void> {
-  return (dispatch) => {
-    return wellSearchService
-      .getLogsDataByLogs(logs, logsFrmTops)
-      .then((logsData: { logs: any[]; logsFrmTops: any[] }) => {
-        dispatch({
-          type: SET_LOGS_ROW_DATA,
-          data: logsData,
-        });
-      });
   };
 }
 
@@ -316,8 +242,6 @@ export const wellSearchActions = {
   toggleSelectedWellboreOfWell,
   getWellboreAssets,
   toggleExpandedWell,
-  getLogType,
-  getLogData,
   getDigitalRockSamples,
   getGrainAnalysisData,
   addSelectedColumn,

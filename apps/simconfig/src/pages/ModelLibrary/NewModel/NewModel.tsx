@@ -11,8 +11,13 @@ export function NewModel() {
     <NewModelContainer>
       <h2>Configure new model</h2>
       <ModelForm
-        onUpload={() => {
-          navigate({ to: '/model-library' });
+        onUpload={({ modelName, simulator }) => {
+          navigate({
+            to: `/model-library/models/${encodeURIComponent(
+              simulator
+            )}/${encodeURIComponent(modelName)}`,
+            replace: true,
+          });
         }}
       />
     </NewModelContainer>

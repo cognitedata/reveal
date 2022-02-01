@@ -18,18 +18,13 @@ coverage
 # NPM
 npm-public-credentials.txt
 
-# testcafe
-*.jwk-key.json
-testcafe/screenshots
-testcafe/videos
-testcafe/logs
-res.xml
-
 # cypress
 cypress/plugins
 cypress/screenshots
 cypress/support
 cypress/videos
+*.jwk-key.json
+res.xml
 
 #storybook
 storybook-static/

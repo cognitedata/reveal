@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Checkbox, OptionType } from '@cognite/cogs.js';
+import { DocumentPayload } from '@cognite/discover-api-types';
 
 import {
   FEEDBACK_ACTION_TITLE,
@@ -42,7 +43,7 @@ export interface Props {
   isOther: boolean;
   freeText: string;
   currentDocumentType: string;
-  documentTypes: any[];
+  documentTypes: DocumentPayload[];
   handleSetCorrectDocumentType: (event: any) => void;
   handleTextChanged: (event: any) => void;
 }
@@ -73,17 +74,17 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
   const documentTypesOptions: OptionType<string>[] = useMemo(
     () =>
       documentTypes
-        .filter((docType: string) => docType !== currentDocumentType)
-        .map((docType: string) => ({ label: docType })),
+        .filter((docType) => docType.name !== currentDocumentType)
+        .map((docType) => ({ label: docType.name, value: docType.id })),
     [documentTypes, currentDocumentType]
   );
 
   const handleChangeDocumentTypeSelectDropdown = (
     selected: OptionType<string>
   ) => {
-    const value = selected.label;
+    const { label, value } = selected;
     setDocumentTypeDropdownValue(value);
-    handleSetCorrectDocumentType(value);
+    handleSetCorrectDocumentType({ value, label });
   };
 
   return (

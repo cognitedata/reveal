@@ -48,17 +48,19 @@ export const useFilterConfigByCategory = () => {
       });
 
     return filterCategoricalData(filteredConfigData);
-  }, [config, userPreferredUnit]);
+  }, [config, userPreferredUnit, enabledWellSDKV3]);
 };
 
 export const filterCategoricalData = (filteredConfigData: FilterConfig[]) => {
   return Object.values(groupBy(filteredConfigData, 'category')).map(
-    (categoryFilterConfigs) => ({
-      title: head(categoryFilterConfigs)?.category || '',
-      filterConfigs: categoryFilterConfigs,
-      filterConfigIds: categoryFilterConfigs.map(
-        (filterConfig) => filterConfig.id
-      ),
-    })
+    (categoryFilterConfigs) => {
+      return {
+        title: head(categoryFilterConfigs)?.category || '',
+        filterConfigs: categoryFilterConfigs,
+        filterConfigIds: categoryFilterConfigs.map(
+          (filterConfig) => filterConfig.id
+        ),
+      };
+    }
   );
 };

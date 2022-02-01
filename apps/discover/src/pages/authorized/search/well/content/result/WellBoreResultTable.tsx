@@ -16,9 +16,9 @@ import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/tablev3';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useFavoriteWellIds } from 'modules/api/favorites/hooks/useFavoriteWellIds';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useFavoriteWellIds } from 'modules/wellSearch/hooks/useFavoriteWellIds';
 import { useWellQueryResultWellbores } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { useWells } from 'modules/wellSearch/selectors';
 import { Wellbore, Well } from 'modules/wellSearch/types';
@@ -96,6 +96,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
               content={
                 <Menu>
                   <Menu.Submenu
+                    appendTo={document.body}
                     content={
                       <AddToFavoriteSetMenu
                         wells={{ [well.id]: [row.original.id] }}

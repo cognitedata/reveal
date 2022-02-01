@@ -1,6 +1,6 @@
 import { SavedSearchSortBy } from '@cognite/discover-api-types';
 
-import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
+import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useSavedSearchQuery';
 
 export const useSavedSearchSort = () => {
   const { mutate } = useMutatePatchSavedSearch();

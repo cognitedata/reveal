@@ -152,15 +152,15 @@ class ResultTable {
     await this.hoverRowWithText(text);
 
     progress(`Hover three dots of row with text ${text}`);
-    await t.click(
+    await t.hover(
       this.getRowWithText(text).find('[data-testid="menu-button"]')
     );
 
     progress('Wait for the menu to show');
     await t.wait(500);
 
-    progress('Click the "Add to favorites" button');
-    await t.click(await Selector('button').withText('Add to favorites'));
+    progress('Hover the "Add to favorites" button');
+    await t.hover(Selector('button').withText('Add to favorites'));
   };
 
   addRowItemToExistingFavoriteSetUsingHoverActions = async (
@@ -168,7 +168,7 @@ class ResultTable {
     setName: string
   ) => {
     await this.openAddToFavoritesSubmenuOfRowHoverActions(text);
-    await t.click(screen.getByText(setName));
+    await t.click(Selector('button').withText(setName));
   };
 
   addRowItemToNewFavoriteSetUsingHoverActions = async (text: string) => {
@@ -190,7 +190,8 @@ class ResultTable {
     await t.expect(resultsCount).eql(0);
 
     progress('Wait for the no-results page to appear');
-    await t.expect(App.filterClearPage.noResult().exists).eql(true);
+    const emptyStateExists = await App.filterClearPage.noResult().exists;
+    await t.expect(emptyStateExists).eql(true);
   };
 
   hasResultsAtLeast = async (atLeast: number) => {
@@ -249,9 +250,9 @@ class ResultTable {
   };
 
   checkIfColumnExists = async (columnName: string, exists = true) => {
-    progress(`Check if '${columnName}' column ${!exists && 'not'} exists`);
+    progress(`Check if '${columnName}' column ${exists ? '' : 'not'} exists`);
     const columnExists = await this.getColumnHeader(columnName).exists;
-    t.expect(columnExists).eql(exists);
+    await t.expect(columnExists).eql(exists);
     return columnExists;
   };
 

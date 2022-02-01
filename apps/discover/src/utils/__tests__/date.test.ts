@@ -1,26 +1,29 @@
 import {
-  getDateOrDefaultText,
-  shortDateTime,
-  getYear,
-  getDocumentFormatFromDate,
-  shortDate,
-  shortDateToDate,
-  toDate,
-  startOf,
-  endOf,
-  ifRangeIsSameTimeModifyToDayRange,
-  now,
-  subtract,
-  fromNow,
+  CHART_AXIS_LABEL_DATE_FORMAT,
   dateToEpoch,
-  getYearFromNumber,
-  isValidDate,
-  getDateByMatchingRegex,
-  getTimeDuration,
-  longDate,
+  DOCUMENT_DATE_FORMAT,
+  endOf,
   formatDate,
-  SHORT_DATE_FORMAT,
+  fromNow,
+  getDateByMatchingRegex,
+  getDateOrDefaultText,
+  getDocumentFormatFromDate,
+  getTimeDuration,
+  getYear,
+  getYearFromNumber,
+  ifRangeIsSameTimeModifyToDayRange,
+  isValidDate,
   LONG_DATE_FORMAT,
+  longDate,
+  now,
+  SHORT_DATE_FORMAT,
+  shortDate,
+  shortDateTime,
+  shortDateToDate,
+  startOf,
+  subtract,
+  TIME_AND_DATE_FORMAT,
+  toDate,
 } from '../date';
 
 describe('date helpers', () => {
@@ -66,6 +69,15 @@ describe('date helpers', () => {
       expect(getDateOrDefaultText()).toEqual('N/A');
       expect(getDateOrDefaultText('')).toEqual('N/A');
       expect(getDateOrDefaultText(new Date('2000'))).toEqual('01.Jan.2000');
+      expect(getDateOrDefaultText('2021-04-15T13:31:27.767Z')).toEqual(
+        '15.Apr.2021'
+      );
+      expect(
+        getDateOrDefaultText('2021-04-15T13:31:27.767Z', LONG_DATE_FORMAT)
+      ).toEqual('15 April, 2021');
+      expect(
+        getDateOrDefaultText('2021-04-15T13:31:27.767', TIME_AND_DATE_FORMAT)
+      ).toEqual('15.Apr.21 01:31:27');
     });
 
     test('should return short date time', () => {
@@ -77,8 +89,21 @@ describe('date helpers', () => {
     test('should return formatted date', () => {
       const date = new Date(2000, 1, 12);
 
-      expect(formatDate(date, SHORT_DATE_FORMAT)).toEqual('12.Feb.2000');
+      expect(formatDate(date.toISOString(), SHORT_DATE_FORMAT)).toEqual(
+        '12.Feb.2000'
+      );
       expect(formatDate(date, LONG_DATE_FORMAT)).toEqual('12 February, 2000');
+      expect(formatDate(date, TIME_AND_DATE_FORMAT)).toEqual(
+        '12.Feb.00 12:00:00'
+      );
+      expect(
+        formatDate(new Date('2021-04-15T13:31:27.767Z'), DOCUMENT_DATE_FORMAT)
+      ).toMatch(
+        /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/
+      );
+      expect(formatDate(date, CHART_AXIS_LABEL_DATE_FORMAT)).toEqual(
+        'Feb 2000'
+      );
     });
 
     test('should return short date', () => {
@@ -173,6 +198,7 @@ describe('date helpers', () => {
         test('should return correct boolean', () => {
           expect(isValidDate(new Date())).toBeTruthy();
           expect(isValidDate(shortDate(new Date(2020, 11, 21)))).toBeTruthy();
+          expect(isValidDate('2021-04-15T13:31:27.767Z')).toBeTruthy();
 
           // we expect a warning to be thrown by momentjs
           expect(isValidDate('some test date')).toBeFalsy();

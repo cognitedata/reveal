@@ -6,8 +6,9 @@ import map from 'lodash/map';
 import max from 'lodash/max';
 import min from 'lodash/min';
 
+import { DocumentPayload } from '@cognite/discover-api-types';
+
 import { NumericRangeFilter } from 'components/filters';
-import { DocumentPayload } from 'modules/api/documents/types';
 import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
 import {
   DocumentQueryFacet,

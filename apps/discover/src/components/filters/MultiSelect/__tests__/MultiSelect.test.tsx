@@ -14,7 +14,6 @@ describe('MultiSelect', () => {
   const testInit = async (extraProps?: Partial<MultiSelectProps>) => {
     page({
       options: [],
-      selectedOptions: [],
       title: 'test-title',
       onValueChange,
       isOptionsSorted: true,

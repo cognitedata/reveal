@@ -12,7 +12,7 @@ import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';

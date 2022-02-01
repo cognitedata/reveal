@@ -5,7 +5,7 @@ import { reportException } from '@cognite/react-errors';
 
 import { showErrorMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useFavoritesUpdateMutate } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoritesUpdateMutate } from 'modules/api/favorites/useFavoritesMutate';
 import { FavoriteMetadata, FavoriteSummary } from 'modules/favorite/types';
 import BaseFavoriteCreationModal from 'pages/authorized/favorites/modals/baseFavoriteCreationModal/BaseFavoriteCreationModal';
 

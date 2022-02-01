@@ -1,58 +1,76 @@
 import {
-  DiagramInstanceOutputFormat,
-  DiagramSymbolInstance,
   PidDocument,
   getDiagramInstanceId,
-  DiagramLineInstance,
+  DiagramEquipmentTagInstance,
+  DiagramEquipmentTagOutputFormat,
+  getEncolosingBoundingBox,
+  DiagramSymbolInstanceOutputFormat,
+  DiagramSymbolInstance,
+  DiagramInstanceWithPaths,
+  DiagramInstanceWithPathsOutputFormat,
 } from '@cognite/pid-tools';
 
-export const getSymbolInstancesOutputFormat = (
+export const getDiagramInstancesOutputFormat = (
   pidDocument: PidDocument,
-  diagramInstances: DiagramSymbolInstance[]
-): DiagramInstanceOutputFormat[] => {
+  diagramInstances: DiagramInstanceWithPaths[]
+): DiagramInstanceWithPathsOutputFormat[] => {
   return diagramInstances.map((diagramInstance) => {
     const labels = diagramInstance.labelIds.map((labelId) =>
       pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
     );
 
     return {
+      ...diagramInstance,
       id: getDiagramInstanceId(diagramInstance),
-      type: diagramInstance.type,
-      symbolId: diagramInstance.symbolId,
-      pathIds: diagramInstance.pathIds,
       svgRepresentation: pidDocument.createSvgRepresentation(
         diagramInstance.pathIds,
         true,
         4
       ),
-      labelIds: diagramInstance.labelIds,
       labels,
-      lineNumbers: diagramInstance.lineNumbers,
     };
   });
 };
 
-export const getLineInstancesOutputFormat = (
+export const getDiagramSymbolInstancesOutputFormat = (
   pidDocument: PidDocument,
-  lineInstances: DiagramLineInstance[]
-): DiagramInstanceOutputFormat[] => {
-  return lineInstances.map((diagramInstance) => {
+  symbolInstances: DiagramSymbolInstance[]
+): DiagramSymbolInstanceOutputFormat[] => {
+  return symbolInstances.map((diagramInstance) => {
     const labels = diagramInstance.labelIds.map((labelId) =>
       pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
     );
 
     return {
+      ...diagramInstance,
       id: getDiagramInstanceId(diagramInstance),
-      type: diagramInstance.type,
-      pathIds: diagramInstance.pathIds,
       svgRepresentation: pidDocument.createSvgRepresentation(
         diagramInstance.pathIds,
         true,
         4
       ),
-      labelIds: diagramInstance.labelIds,
       labels,
-      lineNumbers: diagramInstance.lineNumbers,
+    };
+  });
+};
+
+export const getEquipmentTagOutputFormat = (
+  pidDocument: PidDocument,
+  equipmentTags: DiagramEquipmentTagInstance[]
+): DiagramEquipmentTagOutputFormat[] => {
+  return equipmentTags.map((equipmentTag) => {
+    const labels = equipmentTag.labelIds.map((labelId) =>
+      pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
+    );
+    return {
+      name: equipmentTag.name,
+      labels,
+      labelIds: equipmentTag.labelIds,
+      type: equipmentTag.type,
+      lineNumbers: equipmentTag.lineNumbers,
+      boundingBox: getEncolosingBoundingBox(
+        labels.map((label) => label.boundingBox)
+      ),
     };
   });
 };

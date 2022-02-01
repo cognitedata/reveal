@@ -27,6 +27,7 @@ import PID027Opacities from './parsing/PID027-Opacities';
 export const MOCK_LINE_REVIEW_0040_0029: LineReview = {
   id: 'LINE_REVIEW_ID_0029_123',
   name: 'G0040_L029',
+  system: '06 - HCO',
   status: LineReviewStatus.OPEN,
   assignees: [{ name: 'Garima' }],
   documents: [
@@ -375,6 +376,7 @@ export const MOCK_LINE_REVIEW_0040_0029: LineReview = {
 export const MOCK_LINE_REVIEW_0040_0132: LineReview = {
   id: 'LINE_REVIEW_ID_0132_123',
   name: 'G0040_L132',
+  system: '06 - HCO',
   status: LineReviewStatus.OPEN,
   assignees: [{ name: 'Garima' }],
   documents: [

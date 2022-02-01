@@ -27,7 +27,7 @@ const getEquipmentIds = async (
 
   let list = await client.files.list({
     filter: {
-      externalIdPrefix: `dev_${unitName}_`,
+      externalIdPrefix: `${unitName}_`,
       dataSetIds: [{ id: DataSetId.P66_ScarletScannerResults }],
     },
     limit: 1000,
@@ -38,7 +38,7 @@ const getEquipmentIds = async (
   do {
     if (next) list = await next(); // eslint-disable-line no-await-in-loop
     equipmentIds = equipmentIds.concat(
-      list.items.map((item) => item.name.split('_')[2])
+      list.items.map((item) => item.name.split('_')[1])
     );
     next = list.next;
   } while (list.next);

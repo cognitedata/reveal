@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
+import { useDeepMemo } from 'hooks/useDeep';
 import { useFilterDataNpt } from 'modules/filterData/selectors';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { getFilteredNPTEvents } from 'modules/wellSearch/utils/events';
@@ -10,7 +11,7 @@ export const NPTTable: React.FC<{ events: NPTEvent[] }> = React.memo(
   ({ events }) => {
     const filterDataNpt = useFilterDataNpt();
 
-    const filteredEvents = useMemo(
+    const filteredEvents = useDeepMemo(
       () => getFilteredNPTEvents(events, filterDataNpt),
       [events, filterDataNpt]
     );

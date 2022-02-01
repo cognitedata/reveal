@@ -3,11 +3,7 @@ import last from 'lodash/last';
 import { endOf, startOf } from 'utils/date';
 
 import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discover-api-types';
-import {
-  LengthUnitEnum,
-  MeasurementType,
-  WellFilter,
-} from '@cognite/sdk-wells-v2';
+import { MeasurementType, WellFilter } from '@cognite/sdk-wells-v2';
 
 import { FEET, UserPrefferedUnit } from 'constants/units';
 import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
@@ -20,6 +16,19 @@ import {
   WELL_CHARACTERISTICS,
   MEASUREMENTS,
   DATA_SOURCE,
+  FIELD,
+  WELL_TYPE,
+  SPUD_DATE,
+  MAXIMUM_INCLINATION_ANGLE,
+  NDS_RISKS_TYPE,
+  NPT_CODE,
+  NPT_DETAIL_CODE,
+  REGION,
+  KB_ELEVATION_TEXT,
+  MD_ELEVATION_TEXT,
+  TVD,
+  DOGLEG_SEVERITY,
+  WATER_DEPTH,
 } from '../constantsSidebarFilters';
 import {
   getNDSRiskTypes,
@@ -64,7 +73,7 @@ export const filterConfigs = (
 ): FilterConfig[] => [
   {
     id: FilterIDs.DATA_SOURCE,
-    name: 'Source',
+    name: DATA_SOURCE,
     key: 'data_source_filter',
     category: DATA_SOURCE,
     type: FilterTypes.CHECKBOXES,
@@ -77,7 +86,7 @@ export const filterConfigs = (
     id: FilterIDs.REGION,
     category: FIELD_BLOCK_OPERATOR,
     key: 'field_block_operator_filter.region',
-    name: 'Region',
+    name: REGION,
     type: FilterTypes.MULTISELECT,
     fetcher: wellFilterFetchers?.regions,
     filterParameters: (values): WellFilter => ({
@@ -86,7 +95,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.FIELD,
-    name: 'Field',
+    name: FIELD,
     key: 'field_block_operator_filter.field',
     category: FIELD_BLOCK_OPERATOR,
     type: FilterTypes.CHECKBOXES,
@@ -120,7 +129,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.WELL_TYPE,
-    name: 'Well Type',
+    name: WELL_TYPE,
     key: 'well_characteristics_filter.well_type',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.MULTISELECT,
@@ -133,7 +142,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.KB,
-    name: `KB elevation (${unit})`,
+    name: `${KB_ELEVATION_TEXT} (${unit})`,
     key: 'well_characteristics_filter.kb_elevation',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
@@ -141,20 +150,18 @@ export const filterConfigs = (
       wellFilterFetchers
         ?.kbLimits()
         .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
-    filterParameters: (values): FiltersOnlySupportSdkV3 => ({
-      trajectories: {
-        maxMeasuredDepth: {
-          min: values[0] as number,
-          max: values[1] as number,
-          unit: unitToLengthUnitEnum(unit),
-        },
+    filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
+      datum: {
+        min: values[0] as number,
+        max: values[1] as number,
+        unit: unitToLengthUnitEnum(userPreferredUnit),
       },
     }),
     enableOnlySdkV3: true,
   },
   {
     id: FilterIDs.MD,
-    name: `MD elevation (${unit})`,
+    name: `${MD_ELEVATION_TEXT} (${unit})`,
     key: 'well_characteristics_filter.md',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
@@ -162,19 +169,19 @@ export const filterConfigs = (
       wellFilterFetchers
         ?.mdLimits()
         .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
-    filterParameters: (values): WellFilter => ({
+    filterParameters: (values, userPreferredUnit): WellFilter => ({
       hasTrajectory: {
         maxMeasuredDepth: {
           min: values[0] as number,
           max: values[1] as number,
-          unit: unitToLengthUnitEnum(unit),
+          unit: unitToLengthUnitEnum(userPreferredUnit),
         },
       },
     }),
   },
   {
     id: FilterIDs.TVD,
-    name: `TVD (${unit})`,
+    name: `${TVD} (${unit})`,
     key: 'well_characteristics_filter.tvd',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
@@ -182,12 +189,12 @@ export const filterConfigs = (
       wellFilterFetchers
         ?.tvdLimits()
         .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
-    filterParameters: (values): FiltersOnlySupportSdkV3 => ({
+    filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
       trajectories: {
         maxTrueVerticalDepth: {
           min: values[0] as number,
           max: values[1] as number,
-          unit: unitToLengthUnitEnum(unit),
+          unit: unitToLengthUnitEnum(userPreferredUnit),
         },
       },
     }),
@@ -195,7 +202,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.DOG_LEG_SEVERITY,
-    name: `Dogleg Severity (Degree/ ${
+    name: `${DOGLEG_SEVERITY} (Degree/ ${
       unit === FEET
         ? wellCharacteristicsDls?.feetDistanceInterval
         : wellCharacteristicsDls?.meterDistanceInterval
@@ -207,16 +214,16 @@ export const filterConfigs = (
       wellFilterFetchers
         ?.dogLegSeverityLimts()
         .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
-    filterParameters: (values): FiltersOnlySupportSdkV3 => ({
+    filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
       trajectories: {
         maxDoglegSeverity: {
           min: values[0] as number,
           max: values[1] as number,
           unit: {
             angleUnit: 'degree',
-            distanceUnit: unitToLengthUnitEnum(unit),
+            distanceUnit: unitToLengthUnitEnum(userPreferredUnit),
             distanceInterval:
-              unit === FEET
+              userPreferredUnit === FEET
                 ? wellCharacteristicsDls?.feetDistanceInterval
                 : wellCharacteristicsDls?.meterDistanceInterval,
           },
@@ -227,7 +234,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.WATER_DEPTH,
-    name: `Water Depth (${unit})`,
+    name: `${WATER_DEPTH} (${unit})`,
     key: 'well_characteristics_filter.water_depth',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
@@ -235,17 +242,17 @@ export const filterConfigs = (
       getWellsWaterDepthLimits()?.then((response) =>
         getWaterDepthLimitsInUnit(response, unit)
       ),
-    filterParameters: (values): WellFilter => ({
+    filterParameters: (values, userPreferredUnit): WellFilter => ({
       waterDepth: {
         min: values[0] as number,
         max: values[1] as number,
-        unit: LengthUnitEnum.FOOT,
+        unit: unitToLengthUnitEnum(userPreferredUnit),
       },
     }),
   },
   {
     id: FilterIDs.SPUD_DATE,
-    name: 'Spud Date',
+    name: SPUD_DATE,
     key: 'well_characteristics_filter.spud_date',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.DATE_RANGE,
@@ -259,7 +266,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.MAXIMUM_INCLINATION_ANGLE,
-    name: 'Maximum Inclination Angle (o)',
+    name: MAXIMUM_INCLINATION_ANGLE,
     key: 'well_characteristics_filter.maximum_inclination_angle',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
@@ -294,7 +301,7 @@ export const filterConfigs = (
   {
     id: FilterIDs.NDS_RISKS_TYPE,
     key: 'nds_filter',
-    name: 'NDS Risk Type',
+    name: NDS_RISKS_TYPE,
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
     fetcher: getNDSRiskTypes,
@@ -348,7 +355,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.NPT_CODE,
-    name: 'NPT Code',
+    name: NPT_CODE,
     key: 'npt_filter',
     category: NPT_EVENTS,
     type: FilterTypes.CHECKBOXES,
@@ -363,7 +370,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.NPT_DETAIL_CODE,
-    name: 'NPT Detail Code',
+    name: NPT_DETAIL_CODE,
     key: 'npt_filter',
     category: NPT_EVENTS,
     type: FilterTypes.CHECKBOXES,

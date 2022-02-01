@@ -41,11 +41,17 @@ export const formatDate = (
   currentFormat?: MomentFormatSpecification
 ): string => moment(date, currentFormat).format(targetFormat);
 
+/**
+ * @deprecated The method should not be used, use getDateOrDefaultText instead
+ */
 export const shortDate = (
   date?: MomentInput,
   currentFormat?: MomentFormatSpecification
 ): string => formatDate(date || now(), SHORT_DATE_FORMAT, currentFormat);
 
+/**
+ * @deprecated The method should not be used, use getDateOrDefaultText instead
+ */
 export const longDate = (
   date?: MomentInput,
   currentFormat?: MomentFormatSpecification
@@ -65,17 +71,17 @@ export const currentDate = (): Date => moment().toDate();
 
 export const getDateOrDefaultText = (
   possibleDate?: string | Date,
-  currentFormat: string = SHORT_DATE_FORMAT
+  targetFormat: DateFormat = SHORT_DATE_FORMAT
 ) => {
   if (
     possibleDate === undefined ||
     possibleDate === '' ||
-    !isValidDate(possibleDate, currentFormat)
+    !isValidDate(possibleDate)
   ) {
     return DATE_NOT_AVAILABLE;
   }
 
-  return shortDate(possibleDate, currentFormat);
+  return formatDate(possibleDate, targetFormat);
 };
 
 export const now = () => moment.now();
@@ -152,7 +158,7 @@ export const ifRangeIsSameTimeModifyToDayRange = (range: Range) => {
 
 export const isValidDate = (
   date: Date | string,
-  currentFormat: string = SHORT_DATE_FORMAT
+  currentFormat?: string
 ): boolean => {
   let checkingDate;
   if (isString(date) && moment(date, currentFormat).isValid()) {

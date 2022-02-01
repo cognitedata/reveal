@@ -2,20 +2,30 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  PidDocument,
   DiagramSymbol,
   DiagramLineInstance,
   SvgRepresentation,
   DiagramConnection,
   DiagramInstanceId,
   getNoneOverlappingSymbolInstances,
+  PathReplacement,
   DiagramSymbolInstance,
   pruneSymbolOverlappingPathsFromLines,
+  DiagramEquipmentTagInstance,
+  DocumentType,
+  PidDocumentWithDom,
+  SymbolType,
+  getDiagramInstanceId,
+  addOrRemoveLabelToInstance,
+  DocumentMetadata,
+  PidDocumentMetadata,
+  IsoDocumentMetadata,
+  GraphDocument,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
 
 import { loadSymbolsFromJson, saveGraphAsJson } from './utils/jsonUtils';
-import { DocumentType, ToolType } from './types';
+import { ToolType } from './types';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
 import { SvgViewer } from './components/svg-viewer/SvgViewer';
@@ -26,14 +36,10 @@ import {
   deleteSymbolFromState,
   getSymbolByTypeAndDescription,
 } from './utils/symbolUtils';
-
-let pidDocument: PidDocument | undefined;
-const setPidDocument = (pidDoc: PidDocument) => {
-  pidDocument = pidDoc;
-};
+import { Toolbar } from './components/toolbar/Toolbar';
 
 export interface SaveSymbolData {
-  symbolType: string;
+  symbolType: SymbolType;
   description: string;
 }
 
@@ -43,37 +49,77 @@ export const ReactPid: React.FC = () => {
 
   const [selection, setSelection] = useState<SVGElement[]>([]);
   const [lines, setLines] = useState<DiagramLineInstance[]>([]);
+
+  const [splitSelection, setSplitSelection] = React.useState<string | null>(
+    null
+  );
+  const [pathReplacements, setPathReplacements] = useState<PathReplacement[]>(
+    []
+  );
+
   const [lineNumbers, setLineNumbers] = useState<string[]>([]);
   const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
   const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
+  const [equipmentTags, setEquipmentTags] = useState<
+    DiagramEquipmentTagInstance[]
+  >([]);
+  const [activeTagName, setActiveTagName] = useState<string>();
   const [symbolInstances, setSymbolInstances] = useState<
     DiagramSymbolInstance[]
   >([]);
-  const [documentType, setDocumentType] = useState<DocumentType>(
-    DocumentType.unknown
-  );
+  const [documentMetadata, setDocumentMetadata] = useState<DocumentMetadata>({
+    type: DocumentType.unknown,
+    name: 'Unknown',
+    unit: 'Unknown',
+  });
 
   const [labelSelection, setLabelSelection] =
     useState<DiagramInstanceId | null>(null);
 
-  const [connections, setConnections] = React.useState<DiagramConnection[]>([]);
+  const [connections, setConnections] = useState<DiagramConnection[]>([]);
   const [connectionSelection, setConnectionSelection] =
-    React.useState<DiagramInstanceId | null>(null);
+    useState<DiagramInstanceId | null>(null);
+
+  let pidDocument: PidDocumentWithDom | undefined;
+  const setPidDocument = (arg: PidDocumentWithDom) => {
+    pidDocument = arg;
+  };
+  const getPidDocument = () => pidDocument;
+
+  const setDocumentType = (documentType: DocumentType) => {
+    if (documentType === DocumentType.pid) {
+      setDocumentMetadata({
+        type: DocumentType.pid,
+        documentNumber: -1,
+        unit: 'Unknown',
+      } as PidDocumentMetadata);
+    } else if (documentType === DocumentType.isometric) {
+      setDocumentMetadata({
+        type: DocumentType.isometric,
+        lineNumber: 'Unknown',
+        unit: 'Unknown',
+      } as IsoDocumentMetadata);
+    }
+  };
 
   useEffect(() => {
-    if (documentType !== DocumentType.unknown) {
+    if (
+      documentMetadata.type !== DocumentType.unknown &&
+      active === 'selectDocumentType'
+    ) {
       setActive('addSymbol');
     }
-  }, [documentType]);
+  }, [documentMetadata]);
 
   const setToolBarMode = (mode: ToolType) => {
     setSelection([]);
+    setSplitSelection(null);
     setConnectionSelection(null);
     setLabelSelection(null);
     setActive(mode);
   };
 
-  const loadSymbolsAsJson = (jsonData: any) => {
+  const loadSymbolsAsJson = (jsonData: GraphDocument) => {
     if (pidDocument === undefined) {
       return;
     }
@@ -89,8 +135,12 @@ export const ReactPid: React.FC = () => {
       lines,
       setConnections,
       connections,
+      pathReplacements,
+      setPathReplacements,
       lineNumbers,
-      setLineNumbers
+      setLineNumbers,
+      equipmentTags,
+      setEquipmentTags
     );
   };
 
@@ -102,19 +152,50 @@ export const ReactPid: React.FC = () => {
       lines,
       symbolInstances,
       connections,
-      documentType,
-      lineNumbers
+      pathReplacements,
+      documentMetadata,
+      lineNumbers,
+      equipmentTags
     );
   };
 
-  const findLinesAndConnections = () => {
+  const autoAnalysis = () => {
     if (pidDocument === undefined) return;
 
+    // find lines and connections
     const { lineInstances, newConnections } =
-      pidDocument.findLinesAndConnection(symbolInstances, lines, connections);
+      pidDocument.findLinesAndConnection(
+        documentMetadata.type,
+        symbolInstances,
+        lines,
+        connections
+      );
 
     setLines([...lines, ...lineInstances]);
     setConnections(newConnections);
+
+    // connect labels to symbol instances
+    const pidLabelSymbolInstanceConnection =
+      pidDocument.connectLabelsToSymbolInstances(symbolInstances);
+    if (pidLabelSymbolInstanceConnection.length > 0) {
+      setSymbolInstances(
+        symbolInstances.map((symbolInstance) => {
+          pidLabelSymbolInstanceConnection.forEach((labelSymbolConnection) => {
+            if (
+              getDiagramInstanceId(symbolInstance) ===
+              labelSymbolConnection.instanceId
+            ) {
+              addOrRemoveLabelToInstance(
+                labelSymbolConnection.labelId,
+                labelSymbolConnection.labelText,
+                symbolInstance
+              );
+            }
+          });
+          return symbolInstance;
+        })
+      );
+    }
   };
 
   const setOrUpdateSymbol = (
@@ -198,13 +279,28 @@ export const ReactPid: React.FC = () => {
   };
 
   const evalFileName = (file: File) => {
-    const looksLikeIso = file.name.match(/L[0-9]{1,}/);
-    const looksLikePid = file.name.match(/MF/);
+    const looksLikeIso = file.name.match(/L[0-9]{1,}-[0-9]/);
+    const looksLikePid = file.name.match(/MF_[0-9]{1,}/);
+
+    const unit = file.name.match(/G[0-9]{4}/);
+    const { name } = file;
 
     if (looksLikePid && !looksLikeIso) {
-      setDocumentType(DocumentType.pid);
+      const documentNumber = parseInt(looksLikePid[0].substring(3), 10);
+      setDocumentMetadata({
+        type: DocumentType.pid,
+        name,
+        unit: unit ? unit[0] : 'Unknown',
+        documentNumber,
+      } as PidDocumentMetadata);
     } else if (looksLikeIso && !looksLikePid) {
-      setDocumentType(DocumentType.isometric);
+      const lineNumber = looksLikeIso[0];
+      setDocumentMetadata({
+        type: DocumentType.isometric,
+        name,
+        unit: unit ? unit[0] : 'Unknown',
+        lineNumber,
+      } as IsoDocumentMetadata);
     }
   };
 
@@ -220,7 +316,11 @@ export const ReactPid: React.FC = () => {
     setFileUrl('');
   };
 
-  const MemoizedSvgViewer = React.memo(SvgViewer);
+  useEffect(() => {
+    if (active !== 'addEquipmentTag' && activeTagName !== undefined) {
+      setActiveTagName(undefined);
+    }
+  }, [active]);
 
   return (
     <ReactPidWrapper>
@@ -238,14 +338,19 @@ export const ReactPid: React.FC = () => {
           deleteSymbol={deleteSymbol}
           deleteConnection={deleteConnection}
           fileUrl={fileUrl}
-          findLinesAndConnections={findLinesAndConnections}
+          autoAnalysis={autoAnalysis}
           saveGraphAsJson={saveGraphAsJsonWrapper}
-          documentType={documentType}
+          documentMetadata={documentMetadata}
           setDocumentType={setDocumentType}
           lineNumbers={lineNumbers}
           setLineNumbers={setLineNumbers}
           activeLineNumber={activeLineNumber}
           setActiveLineNumber={setActiveLineNumber}
+          equipmentTags={equipmentTags}
+          setEquipmentTags={setEquipmentTags}
+          activeTagName={activeTagName}
+          setActiveTagName={setActiveTagName}
+          getPidDocument={getPidDocument}
         />
         <Viewport>
           {fileUrl === '' ? (
@@ -261,7 +366,7 @@ export const ReactPid: React.FC = () => {
               onChange={handleFileChange}
             />
           ) : (
-            <MemoizedSvgViewer
+            <SvgViewer
               fileUrl={fileUrl}
               active={active}
               symbolInstances={symbolInstances}
@@ -270,17 +375,30 @@ export const ReactPid: React.FC = () => {
               setLines={setLines}
               selection={selection}
               setSelection={setSelection}
+              splitSelection={splitSelection}
+              setSplitSelection={setSplitSelection}
+              pathReplacements={pathReplacements}
+              setPathReplacements={setPathReplacements}
               connectionSelection={connectionSelection}
               setConnectionSelection={setConnectionSelection}
               connections={connections}
               setConnections={setConnections}
-              pidDocument={pidDocument}
               setPidDocument={setPidDocument}
+              getPidDocument={getPidDocument}
               labelSelection={labelSelection}
               setLabelSelection={setLabelSelection}
               activeLineNumber={activeLineNumber}
+              equipmentTags={equipmentTags}
+              setEquipmentTags={setEquipmentTags}
+              activeTagName={activeTagName}
+              setActiveTagName={setActiveTagName}
             />
           )}
+          <Toolbar
+            active={active}
+            setActive={setToolBarMode}
+            documentType={documentMetadata.type}
+          />
         </Viewport>
       </ReactPidLayout>
     </ReactPidWrapper>

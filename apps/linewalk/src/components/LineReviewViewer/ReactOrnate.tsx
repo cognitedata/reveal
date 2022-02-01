@@ -1,13 +1,18 @@
+import Konva from 'konva';
 import { useEffect, useRef, useState } from 'react';
 import { CogniteOrnate, OrnateTransformer, Drawing } from '@cognite/ornate';
 import WorkSpaceTools from 'components/WorkSpaceTools';
 import { v4 as uuid } from 'uuid';
 import isEqual from 'lodash/isEqual';
-import { DocumentConnection } from 'modules/lineReviews/types';
-import { useDrawConnections } from 'hooks/useDrawConnections';
 
 import useElementDescendantFocus from '../../utils/useElementDescendantFocus';
 import { WorkspaceTool } from '../WorkSpaceTools/WorkSpaceTools';
+
+export type Group = {
+  id: string;
+  onClick: () => void;
+  drawings: Drawing[];
+};
 
 export type ReactOrnateProps = {
   documents: {
@@ -25,8 +30,8 @@ export type ReactOrnateProps = {
     row?: number;
     column?: number;
   }[];
+  groups?: Group[];
   drawings?: Drawing[];
-  connections?: DocumentConnection[];
   onAnnotationClick?: (nodes: any) => void;
   onOrnateRef?: (ref: CogniteOrnate | undefined) => void;
   tools?: WorkspaceTool[];
@@ -37,10 +42,74 @@ export const SHAMEFUL_SLIDE_HEIGHT = 1617;
 export const SLIDE_COLUMN_GAP = 150;
 export const SLIDE_ROW_GAP = 300;
 
+const useSyncDrawings = (
+  ornateRef: CogniteOrnate | undefined,
+  drawings: Drawing[] | undefined,
+  isInitialized: boolean
+) => {
+  const [committedDrawings, setCommittedDrawings] = useState<Drawing[]>([]);
+
+  useEffect(() => {
+    if (isInitialized && ornateRef) {
+      if (isEqual(drawings, committedDrawings)) {
+        return;
+      }
+
+      // Stupid version:
+      // If a drawing has changed, remove all old drawings and add everything again
+      committedDrawings.forEach((drawing) =>
+        drawing.id ? ornateRef.removeShapeById(drawing.id) : undefined
+      );
+
+      drawings?.forEach((drawing) => ornateRef.addDrawings(drawing));
+      setCommittedDrawings(drawings || []);
+    }
+  }, [drawings, isInitialized]);
+};
+
+const useSyncGroups = (
+  ornateRef: CogniteOrnate | undefined,
+  groups: Group[] | undefined,
+  isInitialized: boolean
+) => {
+  const [committedGroups, setCommittedGroups] = useState<Group[]>([]);
+
+  useEffect(() => {
+    if (isInitialized && ornateRef) {
+      if (isEqual(groups, committedGroups)) {
+        return;
+      }
+
+      committedGroups.forEach((group) =>
+        group.id ? ornateRef.removeShapeById(group.id) : undefined
+      );
+
+      groups?.forEach((group) => {
+        const konvaGroup = new Konva.Group({
+          id: group.id,
+        });
+
+        if (group.onClick) {
+          konvaGroup.on('click', group.onClick);
+        }
+
+        ornateRef.baseLayer.add(konvaGroup);
+        group.drawings.forEach((drawing) =>
+          ornateRef.addDrawings({
+            ...drawing,
+            groupId: group.id,
+          })
+        );
+      });
+      setCommittedGroups(groups || []);
+    }
+  }, [groups, isInitialized]);
+};
+
 const ReactOrnate = ({
   documents,
   drawings,
-  connections,
+  groups,
   tools,
   onOrnateRef,
 }: ReactOrnateProps) => {
@@ -50,16 +119,10 @@ const ReactOrnate = ({
   ).current;
   const ornateViewer = useRef<CogniteOrnate>();
   const [isInitialized, setIsInitialized] = useState(false);
-  const [committedDrawings, setCommittedDrawings] = useState<Drawing[]>([]);
-
   const { isFocused } = useElementDescendantFocus(containerRef);
 
-  useDrawConnections({
-    ornateViewer: ornateViewer.current,
-    connections,
-    rowGap: Math.min(SLIDE_COLUMN_GAP, SLIDE_ROW_GAP),
-    columnGap: SLIDE_COLUMN_GAP,
-  });
+  useSyncDrawings(ornateViewer.current, drawings, isInitialized);
+  useSyncGroups(ornateViewer.current, groups, isInitialized);
 
   // Setup Ornate
   useEffect(() => {
@@ -161,34 +224,11 @@ const ReactOrnate = ({
   useEffect(() => {
     if (isInitialized) {
       onOrnateRef?.(ornateViewer.current);
-      ornateViewer.current?.zoomToLocation(
-        {
-          x: 100,
-          y: 100,
-        },
-        0.22
-      );
+      ornateViewer.current?.zoomToGroup(ornateViewer.current?.baseLayer, {
+        scaleFactor: 0.95,
+      });
     }
   }, [isInitialized]);
-
-  useEffect(() => {
-    const ornateRef = ornateViewer.current!;
-
-    if (isInitialized) {
-      if (isEqual(drawings, committedDrawings)) {
-        return;
-      }
-
-      // Stupid version:
-      // If a drawing has changed, remove all old drawings and add everything again
-      committedDrawings.forEach((drawing) =>
-        drawing.id ? ornateRef.removeShapeById(drawing.id) : undefined
-      );
-
-      drawings?.forEach((drawing) => ornateRef.addDrawings(drawing));
-      setCommittedDrawings(drawings || []);
-    }
-  }, [drawings, connections, isInitialized]);
 
   return (
     <div

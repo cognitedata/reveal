@@ -44,14 +44,14 @@ interface Props {
   component: React.FC<any>;
   store?: Store;
   props?: any;
+  queryClient?: QueryClient;
 }
 const WrappedWithProviders: React.FC<Props> = ({
   store,
   component,
   props = {},
+  queryClient = new QueryClient(),
 }) => {
-  const queryClient = new QueryClient();
-
   const storeWrapper = (children: React.ReactNode) => {
     return store ? (
       <Provider store={store}>{children}</Provider>
@@ -106,6 +106,19 @@ export const testRenderer = (
 ): RenderResult => {
   return render(
     <WrappedWithProviders store={store} component={component} props={props} />,
+    options
+  );
+};
+
+// this is usefull when you want to share the react-query state across multiple component renders
+// eg: for testing caching
+export const testRendererForHooks = (
+  component: React.FC<any>,
+  queryClient?: QueryClient,
+  options?: RenderOptions
+): RenderResult => {
+  return render(
+    <WrappedWithProviders component={component} queryClient={queryClient} />,
     options
   );
 };

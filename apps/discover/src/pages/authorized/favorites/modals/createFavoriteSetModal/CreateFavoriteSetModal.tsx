@@ -7,7 +7,7 @@ import { reportException } from '@cognite/react-errors';
 import { NOTIFICATION_MESSAGE } from 'components/add-to-favorite-set-menu/constants';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useFavoritesCreateMutate } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoritesCreateMutate } from 'modules/api/favorites/useFavoritesMutate';
 import { hideCreateFavoriteModal } from 'modules/favorite/reducer';
 
 import { setItemsToAddOnFavoriteCreation } from '../../../../../modules/favorite/reducer';

@@ -2,11 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Label, Flex } from '@cognite/cogs.js';
-
-import { DocumentFeedbackItem } from 'modules/feedback/types';
+import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 
 interface Props {
-  feedback: DocumentFeedbackItem;
+  feedback: ObjectFeedbackResponse;
 }
 export const DocumentFeedbackLabels: React.FC<Props> = ({ feedback }) => {
   const { t } = useTranslation('Admin');

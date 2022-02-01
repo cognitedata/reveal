@@ -52,7 +52,7 @@ spec:
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
-            path: /
+            path: /fas-demo-prod/configMap.json
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 5
@@ -64,7 +64,7 @@ spec:
         readinessProbe:
           failureThreshold: 10
           httpGet:
-            path: /
+            path: /fas-demo-prod/configMap.json
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5

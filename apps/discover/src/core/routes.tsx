@@ -8,6 +8,8 @@ import { WhiteLoader } from 'components/loading';
 
 import { showErrorMessage } from '../components/toast';
 
+import { INSUFFICIENT_ACCESS_RIGHTS_MESSAGE } from './constants';
+
 const PageLayout: React.FC<RouteProps> = ({ children }) => <>{children}</>;
 
 export const PageRoute = ({ ...rest }: RouteProps) => {
@@ -31,12 +33,9 @@ export const ProtectedRoute = ({
   if (isAuthenticated) {
     return <Route {...routeProps} />;
   }
-  showErrorMessage(
-    'Insufficient access rights. You have been redirected to the main page.',
-    {
-      delay: 1500,
-    }
-  );
+  showErrorMessage(INSUFFICIENT_ACCESS_RIGHTS_MESSAGE, {
+    delay: 1500,
+  });
 
   return <Redirect to={returnPath} />;
 };

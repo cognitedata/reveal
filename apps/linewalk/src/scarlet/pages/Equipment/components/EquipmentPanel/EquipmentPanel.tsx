@@ -1,15 +1,18 @@
-import { useStorageState } from 'scarlet/hooks';
+import { useAppState } from 'scarlet/hooks';
 
-import { DataElement } from '..';
+import { DataElementList } from '..';
+
+import { sortedKeys } from './utils';
 
 export const EquipmentPanel = () => {
-  const { equipment } = useStorageState();
+  const { equipment } = useAppState();
 
   return (
-    <>
-      {equipment.data?.equipmentElements?.map(({ key, ...item }) => (
-        <DataElement key={key} {...item} />
-      ))}
-    </>
+    <DataElementList
+      data={equipment.data?.equipmentElements}
+      loading={equipment.loading}
+      skeletonAmount={20}
+      sortedKeys={sortedKeys}
+    />
   );
 };

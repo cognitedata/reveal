@@ -42,7 +42,7 @@ export function ExampleChart() {
         });
         setAxisLabel(`${description.substr(0, 20)} (${unit ?? 'n/a'})`);
       } catch (e) {
-        console.error('Error while reading timeseries (missing permissions?)');
+        console.error('Error while reading time series (missing permissions?)');
         return;
       }
 

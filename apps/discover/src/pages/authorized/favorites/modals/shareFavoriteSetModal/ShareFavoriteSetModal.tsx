@@ -8,10 +8,10 @@ import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
 import { UserOption } from 'components/search-users/SearchUsers';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import {
-  useFavoriteRemoveShareMutate,
-  useFavoritesGetOneQuery,
   useFavoriteShareMutate,
-} from 'modules/api/favorites/useFavoritesQuery';
+  useFavoriteRemoveShareMutate,
+} from 'modules/api/favorites/useFavoritesMutate';
+import { useFavoritesGetOneQuery } from 'modules/api/favorites/useFavoritesQuery';
 import {
   REMOVE_SHARE_SUCCESS_TOAST,
   SHARE_FAVORITE_MODAL_TITLE,

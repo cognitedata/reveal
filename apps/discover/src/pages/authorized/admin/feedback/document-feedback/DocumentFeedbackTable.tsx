@@ -7,6 +7,7 @@ import sortBy from 'lodash/sortBy';
 import { shortDate } from 'utils/date';
 import { sortDates } from 'utils/sortDates';
 
+import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import { OKModal } from 'components/modal';
@@ -24,7 +25,6 @@ import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { FIELDS } from 'modules/feedback/constants';
 import { feedbackHelper } from 'modules/feedback/helper';
-import { DocumentFeedbackItem } from 'modules/feedback/types';
 import { User } from 'modules/user/types';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 
@@ -41,17 +41,17 @@ import {
 import { DocumentFeedbackLabels } from './DocumentFeedbackLabels';
 
 type UpdateFeedbackAssignee = (
-  feedback: DocumentFeedbackItem,
+  feedback: ObjectFeedbackResponse,
   user?: User
 ) => void;
 type HandleUpdateFeedbackStatus = (
-  feedback: DocumentFeedbackItem,
+  feedback: ObjectFeedbackResponse,
   status: number
 ) => void;
 
 const getRowStatusColumn =
   (handleUpdateFeedbackStatus: HandleUpdateFeedbackStatus) =>
-  (cell: Cell<DocumentFeedbackItem>) =>
+  (cell: Cell<ObjectFeedbackResponse>) =>
     (
       <StatusColumn
         status={cell.row.original.status}
@@ -64,7 +64,7 @@ const getRowStatusColumn =
 
 const getRowAssigneeColumn =
   (updateFeedbackAssignee: UpdateFeedbackAssignee, user?: User) =>
-  (cell: Cell<DocumentFeedbackItem>) =>
+  (cell: Cell<ObjectFeedbackResponse>) =>
     (
       <AssigneeColumn
         assignee={cell.row.original.assignee}
@@ -74,7 +74,7 @@ const getRowAssigneeColumn =
     );
 
 interface Props {
-  documentFeedbackItems: DocumentFeedbackItem[];
+  documentFeedbackItems: ObjectFeedbackResponse[];
   setCommentTarget: SetCommentTarget;
   commentTarget?: CommentTarget;
 }
@@ -84,7 +84,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
   commentTarget,
 }) => {
   const { objectFeedbackShowDeleted } = useFeedback();
-  const [_feedback, setFeedback] = useState<DocumentFeedbackItem>();
+  const [_feedback, setFeedback] = useState<ObjectFeedbackResponse>();
 
   const { t } = useTranslation('Admin');
 
@@ -98,7 +98,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
   const [expandedIds, setExpandedIds] = useState<TableResults>({});
   const [isDeleteWarningOpen, setDeleteWarningOpen] = useState(false);
 
-  const isSensitiveByAdmin = (item: DocumentFeedbackItem) => {
+  const isSensitiveByAdmin = (item: ObjectFeedbackResponse) => {
     if (
       !Object.prototype.hasOwnProperty.call(item, 'isSensitiveByAdmin') ||
       item.isSensitiveByAdmin === null
@@ -129,7 +129,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
    * Reason for eslint-disable: components that are inline-rendered for React-Table cell,
    * makes sense to be "inlined", as it is easier to read and closer to the column cell settings.
    */
-  const feedbackColumns: ColumnMap<DocumentFeedbackItem> = {
+  const feedbackColumns: ColumnMap<ObjectFeedbackResponse> = {
     markedAs: {
       Header: FIELDS.markedAs.display,
       accessor: 'markedAs',
@@ -172,7 +172,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <span>
-          {cell.row.original.comment.length ? (
+          {cell.row.original.comment?.length ? (
             feedbackHelper.shortCommentText(cell.row.original.comment, 65, 75)
           ) : (
             <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
@@ -180,15 +180,15 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
         </span>
       ),
       sortType: (row1, row2) => {
-        if (row1.original.comment.length && row2.original.comment.length) {
+        if (row1.original.comment?.length && row2.original.comment?.length) {
           return row1.original.comment.localeCompare(row2.original.comment);
         }
 
-        if (row1.original.comment.length && !row2.original.comment.length) {
+        if (row1.original.comment?.length && !row2.original.comment?.length) {
           return -1;
         }
 
-        if (row2.original.comment.length && !row1.original.comment.length) {
+        if (row2.original.comment?.length && !row1.original.comment?.length) {
           return 1;
         }
 
@@ -286,11 +286,11 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     },
   });
 
-  const recoverFeedback = (feedback: DocumentFeedbackItem) => {
+  const recoverFeedback = (feedback: ObjectFeedbackResponse) => {
     recoverObjectFeedback(feedback.id, updateDocumentFeedback);
   };
 
-  const handleDeleteGeneralFeedback = (feedback: DocumentFeedbackItem) => {
+  const handleDeleteGeneralFeedback = (feedback: ObjectFeedbackResponse) => {
     if (feedback.isSensitiveData) {
       if (isSensitiveByAdmin(feedback) === null) {
         setDeleteWarningOpen(true);
@@ -302,7 +302,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
 
   const handleRowClick = useCallback(
     (row: RowProps & { isSelected: boolean }) => {
-      const feedback = row.original as DocumentFeedbackItem;
+      const feedback = row.original as ObjectFeedbackResponse;
       setExpandedIds((state) => ({
         ...state,
         [feedback.id]: !state[feedback.id],
@@ -316,13 +316,13 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       if (!objectFeedbackShowDeleted) {
         return (
           <DocumentFeedbackDetails
-            feedback={row.original as DocumentFeedbackItem}
+            feedback={row.original as ObjectFeedbackResponse}
           />
         );
       }
       return (
         <DeletedDocumentFeedbackDetails
-          feedback={row.original as DocumentFeedbackItem}
+          feedback={row.original as ObjectFeedbackResponse}
         />
       );
     },
@@ -349,7 +349,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
         )}
       </OKModal>
 
-      <Table<DocumentFeedbackItem>
+      <Table<ObjectFeedbackResponse>
         id="feedback-result-table"
         data={toggleDocumentFeedbackData}
         columns={columns}

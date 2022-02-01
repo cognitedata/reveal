@@ -7,11 +7,11 @@ describe('isValidSymbolFileSchema', () => {
   test('Simple valid JSON', () => {
     document.body.innerHTML = `
     <div>
-      <h1 id="path8272" />  
-      <h1 id="path11336" />  
-      <h1 id="path7868" />  
-      <h1 id="path7870" />  
-      <h1 id="path7872" />  
+      <h1 id="path8272" />
+      <h1 id="path11336" />
+      <h1 id="path7868" />
+      <h1 id="path7870" />
+      <h1 id="path7872" />
       <h1 id="path7874" />
     </div>`;
 
@@ -45,18 +45,21 @@ describe('isValidSymbolFileSchema', () => {
         },
       ],
     };
-    const isValid = isValidSymbolFileSchema(jsonData);
+    const isValid = isValidSymbolFileSchema(
+      jsonData,
+      document as unknown as SVGSVGElement
+    );
     expect(isValid).toEqual(true);
   });
 
   test('Connection refering to non existing end path', () => {
     document.body.innerHTML = `
     <div>
-      <h1 id="path8272" />  
-      <h1 id="path11336" />  
-      <h1 id="path7868" />  
-      <h1 id="path7870" />  
-      <h1 id="path7872" />  
+      <h1 id="path8272" />
+      <h1 id="path11336" />
+      <h1 id="path7868" />
+      <h1 id="path7870" />
+      <h1 id="path7872" />
       <h1 id="path7874" />
     </div>`;
 
@@ -90,18 +93,21 @@ describe('isValidSymbolFileSchema', () => {
         },
       ],
     };
-    const isValid = isValidSymbolFileSchema(jsonData);
+    const isValid = isValidSymbolFileSchema(
+      jsonData,
+      document as unknown as SVGSVGElement
+    );
     expect(isValid).toEqual(false);
   });
 
   test('Simple valid JSON without connection', () => {
     document.body.innerHTML = `
     <div>
-      <h1 id="path8272" />  
-      <h1 id="path11336" />  
-      <h1 id="path7868" />  
-      <h1 id="path7870" />  
-      <h1 id="path7872" />  
+      <h1 id="path8272" />
+      <h1 id="path11336" />
+      <h1 id="path7868" />
+      <h1 id="path7870" />
+      <h1 id="path7872" />
       <h1 id="path7874" />
     </div>`;
 
@@ -123,7 +129,10 @@ describe('isValidSymbolFileSchema', () => {
         },
       ],
     };
-    const isValid = isValidSymbolFileSchema(jsonData);
+    const isValid = isValidSymbolFileSchema(
+      jsonData,
+      document as unknown as SVGSVGElement
+    );
     expect(isValid).toEqual(true);
   });
 
@@ -132,7 +141,7 @@ describe('isValidSymbolFileSchema', () => {
     <div>
       <h1 id="path7868" />
       <h1 id="path7870" />
-      <h1 id="path7872" />  
+      <h1 id="path7872" />
       <h1 id="path7874" />
     </div>`;
 
@@ -145,7 +154,10 @@ describe('isValidSymbolFileSchema', () => {
         },
       ],
     };
-    const isValid = isValidSymbolFileSchema(jsonData);
+    const isValid = isValidSymbolFileSchema(
+      jsonData,
+      document as unknown as SVGSVGElement
+    );
     expect(isValid).toEqual(true);
   });
 
@@ -157,7 +169,10 @@ describe('isValidSymbolFileSchema', () => {
       lines: [],
       symbolInstances: [],
     };
-    const isValid = isValidSymbolFileSchema(jsonData);
+    const isValid = isValidSymbolFileSchema(
+      jsonData,
+      document as unknown as SVGSVGElement
+    );
     expect(isValid).toEqual(true);
   });
 
@@ -186,7 +201,10 @@ describe('isValidSymbolFileSchema', () => {
         },
       ],
     };
-    const isValid = isValidSymbolFileSchema(jsonData);
+    const isValid = isValidSymbolFileSchema(
+      jsonData,
+      document as unknown as SVGSVGElement
+    );
     expect(isValid).toEqual(false);
   });
 
@@ -211,16 +229,19 @@ describe('isValidSymbolFileSchema', () => {
         },
       ],
     };
-    const isValid = isValidSymbolFileSchema(jsonData);
+    const isValid = isValidSymbolFileSchema(
+      jsonData,
+      document as unknown as SVGSVGElement
+    );
     expect(isValid).toEqual(false);
   });
 
   test('all in symbolInstance, not none in lines', () => {
     document.body.innerHTML = `
     <div>
-      <h1 id="path7868" />  
-      <h1 id="path7870" />  
-      <h1 id="path7872" />  
+      <h1 id="path7868" />
+      <h1 id="path7870" />
+      <h1 id="path7872" />
       <h1 id="path7874" />
     </div>`;
 
@@ -242,7 +263,10 @@ describe('isValidSymbolFileSchema', () => {
         },
       ],
     };
-    const isValid = isValidSymbolFileSchema(jsonData);
+    const isValid = isValidSymbolFileSchema(
+      jsonData,
+      document as unknown as SVGSVGElement
+    );
     expect(isValid).toEqual(false);
   });
 });

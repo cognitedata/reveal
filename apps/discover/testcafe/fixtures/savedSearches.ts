@@ -1,9 +1,11 @@
 // import { documentFacetsStructure as emptyFacets } from '../../src/modules/api/documents/structure';
+
 import {
   normalizeSavedSearch,
   SavedSearchContent,
   savedSearches,
 } from '../../src/modules/api/savedSearches';
+import { adaptSaveSearchContentToSchemaBody } from '../../src/modules/api/savedSearches/adaptSavedSearch';
 import App from '../__pages__/App';
 import { getTokenHeaders, progress } from '../utils';
 
@@ -27,10 +29,14 @@ export const deleteSavedSearches = async (
   });
 
   const normalizeResult = await normalizeSavedSearch(savedSearch);
+
+  const id = 'current';
+  const body = adaptSaveSearchContentToSchemaBody(normalizeResult);
+
   try {
     await Promise.all(deleting);
     // await savedSearches.delete('current', token, App.project);
-    await savedSearches.save(normalizeResult, 'current', headers, App.project);
+    await savedSearches.create(id, body, headers, App.project);
   } catch (error) {
     console.error(error);
   }
@@ -40,14 +46,16 @@ export const deleteSavedSearches = async (
 };
 
 export const createSavedSearches = async (
-  name: string,
+  id: string,
   savedSearch: Partial<SavedSearchContent> = {}
 ) => {
   const headers = await getTokenHeaders();
 
   const normalizeResult = await normalizeSavedSearch(savedSearch);
+  const body = adaptSaveSearchContentToSchemaBody(normalizeResult);
+
   try {
-    await savedSearches.save(normalizeResult, name, headers, App.project);
+    await savedSearches.create(id, body, headers, App.project);
   } catch (error) {
     console.error(error);
   }

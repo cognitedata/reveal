@@ -18,7 +18,5 @@ APP_NAME=$1
 # Directory to save the output for junit-jest
 export JEST_JUNIT_OUTPUT_DIR="$(abspath "$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/$APP_NAME")"
 
-export SKIP_PREFLIGHT_CHECK=true
-
 # Directory to save coverage for jest
 exec "${@:2}" --coverageDirectory="$(abspath "$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/$APP_NAME/coverage")"

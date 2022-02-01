@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 
 import styled from 'styled-components/macro';
@@ -10,13 +10,21 @@ import {
   SegmentedControl,
   Skeleton,
   Tabs,
+  toast,
 } from '@cognite/cogs.js';
 import type { Simulator } from '@cognite/simconfig-api-sdk/rtk';
-import { useGetModelFileQuery } from '@cognite/simconfig-api-sdk/rtk';
+import {
+  useGetModelFileQuery,
+  useRunModelCalculationMutation,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelForm } from 'components/forms/ModelForm';
 import { CalculationList, ModelVersionList } from 'components/models';
 import { useTitle } from 'hooks/useTitle';
+import { CdfClientContext } from 'providers/CdfClientProvider';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
+import { isSuccessResponse } from 'utils/responseUtils';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -39,10 +47,21 @@ export function ModelDetails({
 
   const navigate = useNavigate();
   const [showCalculations, setShowCalculations] = useState('configured');
+  const { authState } = useContext(CdfClientContext);
+
+  const [runModelCalculations] = useRunModelCalculationMutation();
+
   const { data: modelFile, isFetching: isFetchingModelFile } =
     useGetModelFileQuery({ project, modelName, simulator });
 
   useTitle(modelFile?.metadata.modelName);
+
+  useEffect(() => {
+    trackUsage(TRACKING_EVENTS.MODEL_DETAILS_VIEW, {
+      modelName: decodeURI(modelName),
+      simulator,
+    });
+  }, [modelName, simulator]);
 
   if (!isFetchingModelFile && !modelFile) {
     // Uninitialized state
@@ -58,17 +77,54 @@ export function ModelDetails({
     throw new Error('No model file returned from backend');
   }
 
+  const onClickRunAll = async () => {
+    if (!authState?.email) {
+      throw new Error('No user email found');
+    }
+
+    trackUsage(TRACKING_EVENTS.MODEL_CALC_RUN_ALL, {
+      modelName: decodeURI(modelName),
+      simulator,
+    });
+
+    const response = await runModelCalculations({
+      modelName,
+      project,
+      simulator,
+      runModelCalculationRequestModel: {
+        userEmail: authState.email,
+      },
+    });
+    if (!isSuccessResponse(response)) {
+      toast.error('Running calculation failed, try again');
+    }
+  };
+
   const extraContent: Record<string, JSX.Element | undefined> = {
     'model-versions': (
       <Link to="../new-version">
-        <Button icon="Add" size="small" type="tertiary">
+        <Button
+          icon="Add"
+          size="small"
+          type="tertiary"
+          onClick={() => {
+            trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {
+              simulator,
+              modelName: decodeURI(modelName),
+            });
+          }}
+        >
           New version
         </Button>
       </Link>
     ),
     'calculations': (
       <>
-        <SegmentedControl size="small" onButtonClicked={setShowCalculations}>
+        <SegmentedControl
+          currentKey={showCalculations}
+          size="small"
+          onButtonClicked={setShowCalculations}
+        >
           <SegmentedControl.Button key="configured">
             Configured
           </SegmentedControl.Button>
@@ -78,13 +134,12 @@ export function ModelDetails({
         </SegmentedControl>
         <Popconfirm
           content="Run all calculations?"
+          disabled={showCalculations === 'not-configured'}
           theme="cogs"
-          onConfirm={() => {
-            // eslint-disable-next-line no-console
-            console.log('Confirmed!');
-          }}
+          onConfirm={onClickRunAll}
         >
           <Button
+            disabled={showCalculations === 'not-configured'}
             icon="Play"
             size="small"
             type="tertiary"
@@ -118,6 +173,10 @@ export function ModelDetails({
         activeKey={selectedTab}
         tabBarExtraContent={extraContent[selectedTab] ?? null}
         onChange={(tab) => {
+          trackUsage(TRACKING_EVENTS.MODEL_CALC_LIST, {
+            simulator,
+            modelName: decodeURI(modelName),
+          });
           navigate({ to: `../${tab}` });
         }}
       >

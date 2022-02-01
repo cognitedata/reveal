@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-tenant-selector",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -14,9 +14,8 @@
   ],
   "scripts": {
     "build": "bazel build :react-tenant-selector",
-    "test": "../../node_modules/.bin/jest",
     "test:watch": "yarn test --watchAll",
-    "test:bazel": "bazel test :jest_test",
+    "test": "bazel test :jest_test",
     "test:bazel-run": "ibazel run :jest --",
     "lint": "bazel test :eslint_test :prettier_test",
     "eslint": "bazel test :eslint_test",

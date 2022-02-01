@@ -3,7 +3,7 @@ import { isOfType } from 'utils/type';
 
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
-import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
+import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useSavedSearchQuery';
 
 import { convertGeometryToGeoJson } from '../normalizeSavedSearch';
 

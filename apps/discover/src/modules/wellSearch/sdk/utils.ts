@@ -145,6 +145,7 @@ export const mapV2toV3WellFilter = (
 ): WellFilterV3 => {
   const filters = {
     quadrant: toPropertyFilter(wellFilter.quadrants),
+    region: toPropertyFilter(wellFilter.regions),
     block: toPropertyFilter(wellFilter.blocks),
     field: toPropertyFilter(wellFilter.fields),
     operator: toPropertyFilter(wellFilter.operators),
@@ -153,8 +154,8 @@ export const mapV2toV3WellFilter = (
     sources: wellFilter.sources,
     waterDepth: wellFilter.waterDepth,
     spudDate: undefinedIfAllKeysUndefined({
-      min: wellFilter.spudDate?.min?.toDateString(),
-      max: wellFilter.spudDate?.max?.toDateString(),
+      min: wellFilter.spudDate?.min?.toISOString(),
+      max: wellFilter.spudDate?.max?.toISOString(),
     }),
     polygon: mapV2toV3PolygonFilter(wellFilter.polygon),
     trajectories: undefinedIfAllKeysUndefined({

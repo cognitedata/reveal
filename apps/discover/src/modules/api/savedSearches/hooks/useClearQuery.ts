@@ -1,4 +1,4 @@
-import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
+import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useSavedSearchQuery';
 
 export const useClearQuery = () => {
   const { mutateAsync } = useMutatePatchSavedSearch();

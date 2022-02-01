@@ -1,4 +1,4 @@
-import { ScannerDetection } from '.';
+import { Detection } from '.';
 
 export enum DataElementOrigin {
   EQUIPMENT = 'equipment',
@@ -21,12 +21,20 @@ export enum DataElementUnit {
   INCHES = 'inches',
 }
 
+export enum DataElementState {
+  OMITTED = 'omitted',
+  PENDING = 'pending',
+  APPROVED = 'approved',
+}
+
 export type DataElement = {
   key: string;
   origin: DataElementOrigin;
   label: string;
-  value?: string;
   type?: DataElementType;
   unit?: DataElementUnit;
-  scannerDetections?: ScannerDetection[];
+  detections: Detection[];
+  state: DataElementState;
+  stateReason?: string;
+  pcmsValue?: string;
 };

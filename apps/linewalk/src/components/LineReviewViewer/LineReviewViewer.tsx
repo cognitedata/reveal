@@ -3,34 +3,29 @@ import { Button } from '@cognite/cogs.js';
 import { CogniteOrnate, Drawing } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
 import { KonvaEventObject } from 'konva/lib/Node';
-import {
-  Document,
-  DocumentConnection,
-  DocumentType,
-  LineReview,
-  Link,
-} from 'modules/lineReviews/types';
+import { Document, DocumentType, LineReview } from 'modules/lineReviews/types';
 import { useEffect, useState } from 'react';
 import layers from 'utils/z';
 
 import { getDocumentUrl } from '../../modules/lineReviews/api';
 import { DocumentId } from '../../modules/lineReviews/DocumentId';
 import delayMs from '../../utils/delayMs';
+import getFileConnectionGroups from '../../utils/getFileConnectionDrawings';
 import isNotUndefined from '../../utils/isNotUndefined';
 import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
 import DiscrepancyModal from './DiscrepancyModal';
 import getAnnotationsByDocument from './getAnnotationsByDocument';
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
-import IsoModal, {
-  ISO_MODAL_ORNATE_HEIGHT_PX,
-  ISO_MODAL_ORNATE_WIDTH_PX,
-} from './IsoModal';
+import getFileConnections from './getFileConnections';
+import getIsoLinkByPidAnnotationId from './getIsoLinkByPidAnnotationId';
+import IsoModal from './IsoModal';
 import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
 import ReactOrnate, {
   ReactOrnateProps,
   SHAMEFUL_SLIDE_HEIGHT,
   SLIDE_COLUMN_GAP,
+  SLIDE_ROW_GAP,
   SLIDE_WIDTH,
 } from './ReactOrnate';
 
@@ -39,33 +34,6 @@ type LineReviewViewerProps = {
   discrepancies: Discrepancy[];
   onDiscrepancyChange: (discrepancies: Discrepancy[]) => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
-};
-
-const useFileConnections = (lineReview: LineReview) => {
-  const allSymbolInstances = lineReview.documents.flatMap(
-    ({ _annotations }) => _annotations.symbolInstances
-  );
-
-  const getSymbolNameByPathId = (pathId: string): string | undefined => {
-    const symbolInstance = allSymbolInstances.find(({ id }) => id === pathId);
-
-    if (symbolInstance === undefined) {
-      return undefined;
-    }
-
-    return symbolInstance.symbolName;
-  };
-
-  const fileConnections: DocumentConnection[] = lineReview.documents
-    .flatMap(({ _linking }) => _linking)
-    .filter(
-      (link) =>
-        getSymbolNameByPathId(link.from.instanceId) === 'fileConnection' &&
-        getSymbolNameByPathId(link.to.instanceId) === 'fileConnection'
-    )
-    .map((link) => [link.from.instanceId, link.to.instanceId]);
-
-  return fileConnections;
 };
 
 const mapPidAnnotationIdToIsoAnnotationId = (
@@ -196,20 +164,6 @@ const findBoundingBoxByPathId = (document: Document, pathId: string) => {
   );
 };
 
-const getIsoAnnotationIdByPidAnnotationId = (
-  linking: Link[],
-  pidPathId: string
-): string | undefined => {
-  const match = linking.find((link) => link.from.instanceId === pidPathId);
-
-  if (!match) {
-    console.log('Did not find element in ISO corresponding to PID');
-    return undefined;
-  }
-
-  return match.to.instanceId;
-};
-
 const flashDrawing = async (
   ornateRef: CogniteOrnate,
   drawing: Drawing,
@@ -257,7 +211,12 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     useState<Discrepancy | null>(null);
   const [isAltPressed, setIsAltPressed] = useState(false);
   const { client } = useAuthContext();
-  const fileConnections = useFileConnections(lineReview);
+  const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
+    undefined
+  );
+  const [selectedFileConnectionId, setSelectedFileConnectionId] = useState<
+    string | undefined
+  >(undefined);
 
   useEffect(() => {
     (async () => {
@@ -318,16 +277,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return;
     }
 
-    const linking = documents
-      .filter(({ type }) => type === DocumentType.PID)
-      .flatMap(({ _linking }) => _linking);
-
-    const isoPathId = getIsoAnnotationIdByPidAnnotationId(
-      linking,
-      pidAnnotationId
-    );
-    if (!isoPathId) {
-      console.log('Could not find isoPathId for annotationId', pidAnnotationId);
+    const isoLink = getIsoLinkByPidAnnotationId(documents, pidAnnotationId);
+    if (!isoLink) {
+      console.log('Could not find iso link for annotationId', pidAnnotationId);
       return;
     }
 
@@ -335,8 +287,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       ({ type }) => type === DocumentType.ISO
     );
 
-    const isoDocumentIndex = isoDocuments.findIndex(({ _annotations }) =>
-      _annotations.symbolInstances.some(({ id }) => id === isoPathId)
+    const isoDocumentIndex = isoDocuments.findIndex(
+      ({ id }) => id === isoLink.to.documentId
     );
 
     if (isoDocumentIndex === -1) {
@@ -350,9 +302,15 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return;
     }
 
-    const isoBoundingBox = findBoundingBoxByPathId(isoDocument, isoPathId);
+    const isoBoundingBox = findBoundingBoxByPathId(
+      isoDocument,
+      isoLink.to.instanceId
+    );
     if (!isoBoundingBox) {
-      console.log('Could not find isoBoundingBox for isoPathId', isoPathId);
+      console.log(
+        'Could not find isoBoundingBox for isoPathId',
+        isoLink.to.instanceId
+      );
       return;
     }
 
@@ -361,16 +319,19 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
     isoOrnateRef.zoomToLocation(
       {
-        x:
-          ISO_MODAL_ORNATE_WIDTH_PX / 2 -
-          (shamefulHorizontalOffset + isoBoundingBox.x),
-        y: ISO_MODAL_ORNATE_HEIGHT_PX / 2 - isoBoundingBox.y,
+        x: -(
+          shamefulHorizontalOffset +
+          isoBoundingBox.x +
+          isoBoundingBox.scale.x / 2
+        ),
+        y: -(isoBoundingBox.y + isoBoundingBox.scale.y / 2),
       },
+      0.7,
       1
     );
 
     const drawings: Drawing[] = isoDocument._annotations.symbolInstances
-      .filter(({ id }) => id === isoPathId)
+      .filter(({ id }) => id === isoLink.to.instanceId)
       .map((d) => {
         const mappedCoordinates = mapPathToNewCoordinateSystem(
           // TODOO: Handle multiple ISOs
@@ -416,7 +377,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     { evt }: KonvaEventObject<MouseEvent>,
     annotationId: string
   ): void => {
-    console.log('Clicked');
     if (evt.shiftKey) {
       toggleAnnotationSelection(annotationId);
       return;
@@ -554,12 +514,28 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   };
 
   const drawings = [
-    ...[
-      ...lineReview.documents.filter(({ type }) => type === DocumentType.PID),
-    ].flatMap((document) =>
-      getDrawingsByDocumentId(lineReview.documents, document.id)
-    ),
+    ...lineReview.documents
+      .filter(({ type }) => type === DocumentType.PID)
+      .flatMap((document) =>
+        getDrawingsByDocumentId(lineReview.documents, document.id)
+      ),
   ];
+
+  const groups = ornateRef
+    ? getFileConnectionGroups({
+        ornateViewer: ornateRef,
+        connections: getFileConnections(lineReview),
+        columnGap: SLIDE_COLUMN_GAP,
+        rowGap: SLIDE_ROW_GAP,
+        onSelect: (id: string) =>
+          selectedFileConnectionId === id
+            ? setSelectedFileConnectionId(undefined)
+            : setSelectedFileConnectionId(id),
+        selectedId: selectedFileConnectionId,
+      })
+    : [];
+
+  console.log('selected', selectedFileConnectionId);
 
   return (
     <>
@@ -592,7 +568,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         onHidePress={() => setIsIsoModalOpen(false)}
       />
       <div
-        style={{ height: 'calc(100vh - 180px - 60px)', position: 'relative' }}
+        style={{ height: 'calc(100vh - 125px - 56px)', position: 'relative' }}
       >
         {!isIsoModalOpen && (
           <div
@@ -619,9 +595,12 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         />
         <ReactOrnate
           documents={documents}
+          groups={groups}
           drawings={drawings}
-          connections={fileConnections}
-          onOrnateRef={onOrnateRef}
+          onOrnateRef={(ref) => {
+            setOrnateRef(ref);
+            onOrnateRef(ref);
+          }}
         />
       </div>
     </>

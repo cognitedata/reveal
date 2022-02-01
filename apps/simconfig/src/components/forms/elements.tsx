@@ -1,86 +1,234 @@
+import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Button, Input, Select, Switch, Title } from '@cognite/cogs.js';
+import { Input, TextInput } from '@cognite/cogs.js';
 
-export const InputRow = styled.div`
-  margin: 12px 0;
-  width: fit-content;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-`;
-export const InputInfoRow = styled.div`
-  width: fit-content;
-  display: flex;
-  gap: 6px;
-`;
-export const DoubleInputRow = styled.div`
-  display: flex;
-  width: 300px;
+import { getNodeFromPath } from 'utils/formUtils';
 
-  > * {
-    &.cogs-select {
-      flex: 1;
+import { SegmentedControl } from './controls/SegmentedControl';
+
+export const FormHeader = styled.h3`
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+  &:not(:first-child) {
+    margin-top: 24px;
+  }
+`;
+
+export const FormContainer = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 12px;
+`;
+
+export const NumberInput = styled(TextInput)`
+  width: ${(props) => props.width ?? 100}px;
+  .title:empty {
+    display: none;
+  }
+  input[type='number'] {
+    appearance: auto !important;
+  }
+  & + .arrows {
+    display: none !important;
+  }
+  .cogs-input {
+    padding-right: var(--cogs-input-side-padding);
+  }
+  .input-wrapper {
+    display: flex;
+    padding: 0;
+  }
+  &.label-icon {
+    .input-icon {
+      width: auto;
+      margin: 0 24px 0 0;
     }
   }
 `;
 
-export const InputFullWidth = styled(Input)`
-  width: ${(props) => props.width ?? '300px'};
-`;
-
-export const InputFullWidthForDouble = styled(Input)`
-  width: ${(props) => props.width ?? '300px'};
-  margin-top: -4px;
-`;
-
-export const SelectForDouble = styled(Select)`
-  margin-top: 22px !important;
-`;
-
-export const InputArea = styled.div`
-  margin: 20px 0;
-  padding: 24px;
-  border: 2px solid #bfbfbf;
-  border-radius: 6px;
-  position: relative;
-`;
-export const InputAreaTitle = styled(Title)`
-  position: absolute;
-  padding-right: 10px;
-  padding-left: 10px;
-  top: -17px;
-  background-color: white;
-`;
-export const SectionTitle = styled(Title)`
-  text-transform: uppercase;
-  margin-bottom: 30px;
-`;
-export const FormButton = styled(Button)`
-  float: right;
-  margin-left: 4px;
-`;
-
-export const InputAreaSwitch = styled(Switch)`
-  margin-left: 5px;
-`;
-export const InputWithLabelContainer = styled.div`
+export const FormRow = styled.div`
   display: flex;
-  flex-direction: column;
-  width: 200px;
-`;
-export const InputWithLabelContainerWide = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 300px;
+  align-items: baseline;
+  column-gap: 12px;
+  & > label:first-child {
+    flex: 1 1 33%;
+    max-width: 240px;
+  }
+  .cogs-select {
+    min-width: 120px;
+  }
 `;
 
-export const InputLabel = styled.div`
-  display: block;
-  margin-bottom: 4px;
-  color: var(--cogs-greyscale-grey8);
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 20px;
-  text-transform: capitalize;
+export const FormRowStacked = styled.div`
+  display: flex;
+  align-items: baseline;
+  column-gap: 12px;
+  .cogs-select {
+    min-width: 220px;
+  }
 `;
+
+export function TextField({
+  name,
+  ...props
+}: React.InputHTMLAttributes<unknown>) {
+  const { values, setFieldValue } = useFormikContext<Record<string, unknown>>();
+
+  if (!name) {
+    return null;
+  }
+
+  const value = getNodeFromPath(values, name);
+
+  return (
+    <Field
+      as={Input}
+      name={name}
+      setValue={(newValue: typeof value) => {
+        setFieldValue(name, newValue);
+      }}
+      type="text"
+      value={value}
+      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+        setFieldValue(name, event.currentTarget.value);
+      }}
+      {...props}
+    />
+  );
+}
+
+export const StyledInput = styled(Input)((props) => ({
+  width: props.width,
+}));
+
+export function NumberField({
+  name,
+  label,
+  title,
+  setValue,
+  ...props
+}: React.InputHTMLAttributes<unknown> & {
+  label?: (value: number) => JSX.Element | string;
+  setValue?: (value: string) => void;
+  error?: string;
+}) {
+  const { errors, values, setFieldValue } =
+    useFormikContext<Record<string, unknown>>();
+  if (!name) {
+    return null;
+  }
+
+  const value = getNodeFromPath(values, name);
+  const errorText = getNodeFromPath(errors, name);
+
+  const labelProps:
+    | (React.HTMLAttributes<unknown> & {
+        icon?: JSX.Element;
+        iconPlacement?: string;
+      })
+    | undefined =
+    label && typeof value === 'number'
+      ? {
+          className: `${props.className ?? ''} label-icon`,
+          icon: <>{label(value)}</>,
+          iconPlacement: 'right',
+        }
+      : undefined;
+
+  return (
+    <Field
+      as={NumberInput}
+      error={errorText}
+      name={name}
+      step={props.step ?? 'any'}
+      // XXX Cogs.js hack to ensure input is wrapped in container element
+      // eslint-disable-next-line react/jsx-no-useless-fragment
+      title={title ?? <></>}
+      type="number"
+      value={value}
+      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget;
+        if (setValue) {
+          setValue(value);
+        } else {
+          setFieldValue(name, value);
+        }
+      }}
+      {...labelProps}
+      {...props}
+    />
+  );
+}
+
+export function TimeSeriesField({
+  externalIdField,
+  aggregateTypeField,
+  externalIdDisabled,
+  aggregateTypeDisabled,
+}: {
+  externalIdField: string;
+  aggregateTypeField: string;
+  externalIdDisabled?: boolean;
+  aggregateTypeDisabled?: boolean;
+}) {
+  const { errors, values, setFieldValue } =
+    useFormikContext<Record<string, unknown>>();
+
+  const externalIdValue = getNodeFromPath(values, externalIdField);
+  const aggregateTypeValue = getNodeFromPath(values, aggregateTypeField);
+  const externalIdErrorText = getNodeFromPath(errors, externalIdField);
+  const aggregateTypeErrorText = getNodeFromPath(errors, aggregateTypeField);
+
+  if (
+    typeof externalIdValue !== 'string' ||
+    typeof aggregateTypeValue !== 'string'
+  ) {
+    return null;
+  }
+
+  return (
+    <>
+      <Field
+        as={StyledInput}
+        disabled={externalIdDisabled}
+        error={externalIdErrorText}
+        name={externalIdField}
+        setValue={(value: string) => {
+          setFieldValue(externalIdField, value);
+        }}
+        title="Time series"
+        type="text"
+        value={externalIdValue}
+        width={400}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          setFieldValue(externalIdField, event.currentTarget.value);
+        }}
+      />
+
+      <div className="cogs-input-container">
+        <div className="title">Sampling method</div>
+        <SegmentedControl
+          currentKey={aggregateTypeValue}
+          disabled={aggregateTypeDisabled}
+          error={aggregateTypeErrorText as string}
+          fullWidth
+          onButtonClicked={(value: string) => {
+            setFieldValue(aggregateTypeField, value);
+          }}
+        >
+          <SegmentedControl.Button key="average">
+            Average
+          </SegmentedControl.Button>
+          <SegmentedControl.Button key="stepInterpolation">
+            Step
+          </SegmentedControl.Button>
+          <SegmentedControl.Button key="interpolation">
+            Interpolated
+          </SegmentedControl.Button>
+        </SegmentedControl>
+      </div>
+    </>
+  );
+}

@@ -1,0 +1,36 @@
+---
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  annotations:
+    external-dns.ambassador-service: ambassador-apps.apps
+  labels:
+    app: react-demo-app
+    team: apps
+  name: react-demo-app
+spec:
+  hostname: fas-demo.app.cogniteapp.com
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  labels:
+    app: react-demo-app
+    team: apps
+  name: react-demo-app
+spec:
+  host: fas-demo.app.cogniteapp.com
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-demo-app
+spec:
+  template:
+    spec:
+      containers:
+        - image: eu.gcr.io/cognitedata/apps/react-demo-app
+          name: react-demo-app
+          env:
+            - name: URL_PREFIX
+              value: fas-demo.app

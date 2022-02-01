@@ -7,22 +7,36 @@ import {
   BoundingBox,
   SvgRepresentation,
   DiagramSymbolInstance,
+  DocumentType,
+  FileConnectionInstance,
+  DiagramInstanceId,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
 import { svgCommandsToSegments } from '../matcher/svgPathParser';
 import { findAllInstancesOfSymbol } from '../matcher';
 import { PathSegment, Point } from '../geometry';
+import { AUTO_ANALYSIS_LABEL_THRESHOLD } from '../constants';
 
 import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
 import { PidPath } from './PidPath';
+import { PidGroup } from './PidGroup';
+import { getFileConnectionsWithPosition } from './fileConnectionUtils';
+
+export type LabelSymbolInstanceConnection = {
+  labelId: string;
+  labelText: string;
+  instanceId: DiagramInstanceId;
+};
 
 export class PidDocument {
   pidPaths: PidPath[];
   pidLabels: PidTspan[];
-  constructor(paths: PidPath[], labels: PidTspan[]) {
+  viewBox: BoundingBox;
+  constructor(paths: PidPath[], labels: PidTspan[], viewBox: BoundingBox) {
     this.pidPaths = paths;
     this.pidLabels = labels;
+    this.viewBox = viewBox;
   }
 
   getPidPathById(pathId: string): PidPath | null {
@@ -53,7 +67,7 @@ export class PidDocument {
     svgString.push(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n`);
 
     const bBox = calculatePidPathsBoundingBox(this.pidPaths);
-    svgString.push(`<svg 
+    svgString.push(`<svg
   xmlns="http://www.w3.org/2000/svg"
   viewBox="${bBox.x.toFixed(2)} ${bBox.y.toFixed(2)} ${bBox.height.toFixed(
       2
@@ -109,38 +123,77 @@ export class PidDocument {
         );
       }
     });
-    return new PidDocument(pidPaths, []);
-  }
 
-  static fromSVGElements(svgElements: SVGElement[]) {
-    const paths = svgElements
-      .filter((svgElement) => svgElement instanceof SVGPathElement)
-      .map((svgElement) => {
-        return PidPath.fromSVGElement(svgElement as SVGPathElement);
-      });
-    const labels = svgElements
-      .filter((svgElement) => svgElement instanceof SVGTSpanElement)
-      .map((svgElement) => {
-        return PidTspan.fromSVGTSpan(svgElement as SVGTSpanElement);
-      });
-    return new PidDocument(paths, labels);
+    const viewBox: BoundingBox = { x: 0, y: 0, width: 10, height: 10 }; // Fix: Retrieve from svgString
+    return new PidDocument(pidPaths, [], viewBox);
   }
 
   findAllInstancesOfSymbol(symbol: DiagramSymbol): DiagramSymbolInstance[] {
-    return findAllInstancesOfSymbol(this.pidPaths, symbol);
+    return findAllInstancesOfSymbol(this, symbol);
+  }
+
+  getFileConnectionsWithPosition(
+    fileConnections: FileConnectionInstance[]
+  ): FileConnectionInstance[] {
+    return getFileConnectionsWithPosition(this, fileConnections);
   }
 
   findLinesAndConnection(
+    documentType: DocumentType,
     symbolInstances: DiagramSymbolInstance[],
     lineInstances: DiagramLineInstance[],
     connections: DiagramConnection[]
   ) {
     return findLinesAndConnections(
       this,
+      documentType,
       symbolInstances,
       lineInstances,
       connections
     );
+  }
+
+  connectLabelsToSymbolInstances(
+    symbolInstances: DiagramSymbolInstance[]
+  ): LabelSymbolInstanceConnection[] {
+    const pidLabelIdsAlreadyConnected = new Set<string>();
+    symbolInstances.forEach((symbolInstance) => {
+      symbolInstance.labelIds.forEach((labelId) => {
+        pidLabelIdsAlreadyConnected.add(labelId);
+      });
+    });
+
+    const pidLabelsToConnect = this.pidLabels.filter((pidLabel) => {
+      return !pidLabelIdsAlreadyConnected.has(pidLabel.id);
+    });
+
+    const labelSymbolInstanceConnections: LabelSymbolInstanceConnection[] = [];
+
+    const symbolGroups = symbolInstances.map((symbolInstance) =>
+      PidGroup.fromDiagramInstance(this, symbolInstance)
+    );
+
+    pidLabelsToConnect.forEach((pidLabel) => {
+      const labelMidPoint = pidLabel.getMidPoint();
+
+      symbolGroups.sort((a, b) => {
+        return a.distance(labelMidPoint) - b.distance(labelMidPoint);
+      });
+
+      const closestSymbolGroup = symbolGroups[0];
+      if (
+        closestSymbolGroup.distance(labelMidPoint) <
+        AUTO_ANALYSIS_LABEL_THRESHOLD
+      ) {
+        labelSymbolInstanceConnections.push({
+          labelId: pidLabel.id,
+          labelText: pidLabel.text,
+          instanceId: closestSymbolGroup.diagramInstanceId,
+        });
+      }
+    });
+
+    return labelSymbolInstanceConnections;
   }
 
   getBoundingBoxToPaths(pathIds: string[]): BoundingBox {
@@ -172,5 +225,41 @@ export class PidDocument {
   ): SvgRepresentation {
     const pidPaths = pathIds.map((pathId) => this.getPidPathById(pathId)!);
     return createSvgRepresentation(pidPaths, normalized, toFixed);
+  }
+}
+
+export class PidDocumentWithDom extends PidDocument {
+  svg: SVGSVGElement;
+
+  constructor(
+    svg: SVGSVGElement,
+    paths: PidPath[],
+    labels: PidTspan[],
+    viewBox: BoundingBox
+  ) {
+    super(paths, labels, viewBox);
+    this.svg = svg;
+  }
+
+  static fromSVG(svg: SVGSVGElement, svgElements: SVGElement[]) {
+    const paths = svgElements
+      .filter((svgElement) => svgElement instanceof SVGPathElement)
+      .map((svgElement) => {
+        return PidPath.fromSVGElement(svgElement as SVGPathElement, svg);
+      });
+    const labels = svgElements
+      .filter((svgElement) => svgElement instanceof SVGTSpanElement)
+      .map((svgElement) => {
+        return PidTspan.fromSVGTSpan(svgElement as SVGTSpanElement, svg);
+      });
+
+    const viewBox = {
+      x: svg.viewBox.baseVal.x,
+      y: svg.viewBox.baseVal.y,
+      width: svg.viewBox.baseVal.width,
+      height: svg.viewBox.baseVal.height,
+    };
+
+    return new PidDocumentWithDom(svg, paths, labels, viewBox);
   }
 }

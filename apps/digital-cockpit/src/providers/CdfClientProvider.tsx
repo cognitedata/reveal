@@ -11,6 +11,11 @@ export interface CdfClientProviderProps {
   children: React.ReactNode;
 }
 
+/**
+ * Do not use! Use CdfSdkContext instead
+ * The 'extended' sdk (CdfClient) will be removed in favor for useQuery hooks
+ * @depricated
+ */
 export const CdfClientProvider: FC<CdfClientProviderProps> = ({
   client,
   children,

@@ -7,14 +7,18 @@ import {
   PidDocument,
   DiagramConnection,
   getInstanceByDiagramInstanceId,
-  getClosestPathSegments,
   Point,
   getPointsCloserToEachOther,
   getPointTowardOtherPoint,
   connectionExists,
   getDiagramInstanceByPathId,
-  DiagramInstance,
+  DiagramInstanceWithPaths,
   DiagramSymbolInstance,
+  DiagramEquipmentTagInstance,
+  DiagramInstance,
+  getClosestPointsOnSegments,
+  getClosestPointOnSegments,
+  T_JUNCTION,
 } from '@cognite/pid-tools';
 
 import { ToolType } from '../../types';
@@ -29,7 +33,7 @@ export const isDiagramLine = (
 
 export const isSymbolInstance = (
   node: SVGElement,
-  symbolInstances: DiagramInstance[]
+  symbolInstances: DiagramInstanceWithPaths[]
 ) => {
   return symbolInstances.some((symbolInst) =>
     symbolInst.pathIds.includes(node.id)
@@ -58,7 +62,7 @@ export const isInLabelSelection = (
 };
 
 export const isLabelInInstance = (
-  instance: DiagramInstance,
+  instance: DiagramInstanceWithPaths,
   id: DiagramInstanceId
 ): boolean => {
   return instance.labelIds.includes(id);
@@ -66,7 +70,7 @@ export const isLabelInInstance = (
 
 export const isLabelInInstances = (
   node: SVGElement,
-  instances: DiagramInstance[]
+  instances: DiagramInstanceWithPaths[]
 ) => {
   return instances.some((instance) => isLabelInInstance(instance, node.id));
 };
@@ -74,7 +78,7 @@ export const isLabelInInstances = (
 export const isNodeInLineNumber = (
   node: SVGElement,
   lineNumber: string | null,
-  diagramInstances: DiagramInstance[]
+  diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   if (lineNumber === null) return false;
 
@@ -125,6 +129,28 @@ const colorNode = (
   }
 };
 
+export const isInActiveEquipmentTag = (
+  node: SVGElement,
+  activeTagName: string | undefined,
+  equipmentTags: DiagramEquipmentTagInstance[]
+) => {
+  if (activeTagName === undefined) return false;
+
+  const activeTag = equipmentTags.find((tag) => tag.name === activeTagName);
+
+  if (activeTag === undefined) return false;
+
+  return activeTag.labelIds.includes(node.id);
+};
+
+export const isInEquipmentTags = (
+  node: SVGElement,
+  equipmentTags: DiagramEquipmentTagInstance[]
+): boolean => {
+  const allNodeIds = equipmentTags.flatMap((tag) => tag.labelIds);
+  return allNodeIds.includes(node.id);
+};
+
 export interface ApplyStyleArgs {
   node: SVGElement;
   selection: SVGElement[];
@@ -137,6 +163,9 @@ export interface ApplyStyleArgs {
   graphSelection: DiagramInstanceId | null;
   active: ToolType;
   activeLineNumber: string | null;
+  equipmentTags: DiagramEquipmentTagInstance[];
+  activeTagName: string | undefined;
+  splitSelection: string | null;
 }
 
 export const applyStyleToNode = ({
@@ -150,6 +179,9 @@ export const applyStyleToNode = ({
   graphSelection,
   active,
   activeLineNumber,
+  equipmentTags,
+  activeTagName,
+  splitSelection,
 }: ApplyStyleArgs) => {
   let color: string | undefined;
   let opacity = 1;
@@ -170,11 +202,23 @@ export const applyStyleToNode = ({
   if (isInLabelSelection(node, labelSelection)) {
     color = COLORS.labelSelection;
   }
+  if (node.id === splitSelection) {
+    color = COLORS.splitLine;
+  }
   if (isInAddSymbolSelection(node, selection)) {
     ({ color, opacity } = COLORS.symbolSelection);
   }
   if (isInGraphSelection(node, graphSelection)) {
     color = COLORS.connectionSelection;
+  }
+  if (isInActiveEquipmentTag(node, activeTagName, equipmentTags)) {
+    color = COLORS.activeLabel;
+  } else if (isInEquipmentTags(node, equipmentTags)) {
+    color = COLORS.labelSelection;
+  }
+
+  if (node.id.includes(T_JUNCTION)) {
+    node.style.strokeWidth = '2';
   }
 
   if (active === 'setLineNumber') {
@@ -199,6 +243,7 @@ export const applyStyleToNode = ({
     symbolInstances,
     lines,
     connections,
+    splitSelection,
   });
 };
 
@@ -210,6 +255,7 @@ interface CursorStyleOptions {
   symbolInstances: DiagramSymbolInstance[];
   lines: DiagramLineInstance[];
   connections: DiagramConnection[];
+  splitSelection: string | null;
 }
 
 const applyPointerCursorStyleToNode = ({
@@ -231,6 +277,15 @@ const applyPointerCursorStyleToNode = ({
       !isSymbolInstance(node, symbolInstances)
     ) {
       node.style.cursor = 'pointer';
+    }
+  } else if (active === 'splitLine') {
+    if (node instanceof SVGPathElement) {
+      if (
+        !isSymbolInstance(node, symbolInstances) &&
+        !isDiagramLine(node, lines)
+      ) {
+        node.style.cursor = 'pointer';
+      }
     }
   } else if (active === 'connectInstances') {
     if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines)) {
@@ -264,22 +319,12 @@ const applyPointerCursorStyleToNode = ({
     if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines)) {
       node.style.cursor = 'pointer';
     }
+  } else if (active === 'addEquipmentTag') {
+    if (node instanceof SVGTSpanElement) {
+      node.style.cursor = 'pointer';
+    }
   }
 };
-
-export function addOrRemoveLabelToInstance<Type extends DiagramInstance>(
-  labelId: string,
-  instance: Type,
-  instances: Type[],
-  setter: (arg: Type[]) => void
-): void {
-  if (instance.labelIds.includes(labelId)) {
-    instance.labelIds = instance.labelIds.filter((li) => li !== labelId);
-  } else {
-    instance.labelIds = [...instance.labelIds, labelId];
-  }
-  setter([...instances]);
-}
 
 export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
   lineNumber: string,
@@ -300,34 +345,31 @@ export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
 export const colorSymbol = (
   diagramInstanceId: DiagramInstanceId,
   strokeColor: string,
-  diagramInstances: DiagramInstance[],
+  diagramInstances: DiagramInstanceWithPaths[],
+  mainSvg: SVGSVGElement,
   additionalStyles?: { [key: string]: string }
 ) => {
   const symbolInstance = diagramInstances.filter(
     (instance) => getDiagramInstanceId(instance) === diagramInstanceId
-  )[0] as DiagramInstance;
+  )[0] as DiagramInstanceWithPaths;
 
   if (symbolInstance) {
     symbolInstance.pathIds.forEach((pathId) => {
-      Object.assign(
-        (document.getElementById(pathId) as unknown as SVGElement).style,
-        {
-          ...additionalStyles,
-          stroke: strokeColor,
-        }
-      );
+      Object.assign((mainSvg.getElementById(pathId) as SVGElement).style, {
+        ...additionalStyles,
+        stroke: strokeColor,
+      });
     });
   }
 };
 
 export const setStrokeWidth = (
-  diagramInstance: DiagramInstance,
-  strokeWidth: string
+  diagramInstance: DiagramInstanceWithPaths,
+  strokeWidth: string,
+  svg: SVGSVGElement
 ) => {
   diagramInstance.pathIds.forEach((pathId) => {
-    (
-      document.getElementById(pathId) as unknown as SVGElement
-    ).style.strokeWidth = strokeWidth;
+    (svg.getElementById(pathId) as SVGElement).style.strokeWidth = strokeWidth;
   });
 };
 
@@ -335,12 +377,10 @@ export const visualizeConnections = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
   connections: DiagramConnection[],
-  symbolInstances: DiagramInstance[],
+  symbolInstances: DiagramInstanceWithPaths[],
   lines: DiagramLineInstance[]
 ) => {
   const offset = 2;
-  const maxLength = 10;
-  const intersectionThreshold = 3;
   const instances = [...symbolInstances, ...lines];
   connections.forEach((connection) => {
     const startInstance = getInstanceByDiagramInstanceId(
@@ -375,49 +415,15 @@ export const visualizeConnections = (
         endInstance.pathIds
       );
 
-      const [startPathSegment, endPathSegment] = getClosestPathSegments(
+      const closestPoints = getClosestPointsOnSegments(
         startPathSegments,
         endPathSegments
       );
 
-      const intersection = startPathSegment.getIntersection(endPathSegment);
-      if (intersection === undefined) {
-        startPoint = startPathSegment.midPoint;
-        endPoint = endPathSegment.midPoint;
-      } else {
-        if (
-          intersection.distance(startPathSegment.start) <
-            intersectionThreshold ||
-          intersection.distance(startPathSegment.stop) < intersectionThreshold
-        ) {
-          startPoint = getPointTowardOtherPoint(
-            intersection,
-            startPathSegment.midPoint,
-            Math.min(
-              maxLength,
-              intersection.distance(startPathSegment.midPoint) - offset
-            )
-          );
-        } else {
-          startPoint = intersection;
-        }
+      if (closestPoints === undefined) return;
 
-        if (
-          intersection.distance(endPathSegment.start) < intersectionThreshold ||
-          intersection.distance(endPathSegment.stop) < intersectionThreshold
-        ) {
-          endPoint = getPointTowardOtherPoint(
-            intersection,
-            endPathSegment.midPoint,
-            Math.min(
-              maxLength,
-              intersection.distance(endPathSegment.midPoint) - offset
-            )
-          );
-        } else {
-          endPoint = intersection;
-        }
-      }
+      startPoint = closestPoints.point1;
+      endPoint = closestPoints.point2;
     } else {
       // One symbol and one line
       const [symbol, line] =
@@ -426,48 +432,31 @@ export const visualizeConnections = (
           : [endInstance, startInstance];
 
       const symbolPoint = pidDocument.getMidPointToPaths(symbol.pathIds);
+      const lineSegments = pidDocument.getPathSegmentsToPaths(line.pathIds);
 
-      // Use path segment with start/stop point closest to `symbolPoint`
-      let linePoint: undefined | Point;
-      const linePathSegments = pidDocument.getPathSegmentsToPaths(line.pathIds);
-      let minDistance = Infinity;
-      linePathSegments.forEach((pathSegment) => {
-        const startDistance = symbolPoint.distance(pathSegment.start);
-        if (startDistance < minDistance) {
-          minDistance = startDistance;
-          linePoint = getPointTowardOtherPoint(
-            pathSegment.start,
-            pathSegment.stop,
-            Math.min(
-              maxLength,
-              pathSegment.start.distance(pathSegment.midPoint)
-            )
-          );
-        }
+      const closestPoint = getClosestPointOnSegments(symbolPoint, lineSegments);
+      if (closestPoint === undefined) return;
 
-        const stopDistance = symbolPoint.distance(pathSegment.stop);
-        if (stopDistance < minDistance) {
-          minDistance = stopDistance;
-          linePoint = getPointTowardOtherPoint(
-            pathSegment.stop,
-            pathSegment.start,
-            Math.min(maxLength, pathSegment.stop.distance(pathSegment.midPoint))
-          );
-        }
-      });
-
-      startPoint = symbolPoint;
-      endPoint = linePoint;
-      if (endPoint === undefined) return;
-
-      [startPoint, endPoint] = getPointsCloserToEachOther(
-        startPoint,
-        endPoint,
-        offset
-      );
+      if (closestPoint.percentAlongPath < 0.05) {
+        endPoint = getPointTowardOtherPoint(
+          closestPoint.point,
+          lineSegments[closestPoint.index].stop,
+          offset
+        );
+      } else if (closestPoint.percentAlongPath > 0.95) {
+        endPoint = getPointTowardOtherPoint(
+          closestPoint.point,
+          lineSegments[closestPoint.index].start,
+          offset
+        );
+      } else {
+        endPoint = closestPoint.point;
+      }
+      startPoint = getPointTowardOtherPoint(symbolPoint, endPoint, offset);
     }
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
     path.setAttribute(
       'd',
       `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`
@@ -478,5 +467,62 @@ export const visualizeConnections = (
       `stroke:${COLORS.connection.color};stroke-width:${COLORS.connection.strokeWidth};opacity:${COLORS.connection.opacity};stroke-linecap:round`
     );
     svg.insertBefore(path, svg.children[0]);
+  });
+};
+
+export const visualizeLabels = (
+  svg: SVGSVGElement,
+  pidDocument: PidDocument,
+  symbolInstances: DiagramInstanceWithPaths[]
+) => {
+  symbolInstances.forEach((symbolInstance) => {
+    const symbolMidPoint = pidDocument.getMidPointToPaths(
+      symbolInstance.pathIds
+    );
+    symbolInstance.labelIds.forEach((labelId) => {
+      const pidTspan = pidDocument.getPidTspanById(labelId);
+      if (pidTspan === null) return;
+
+      const labelPoint = pidTspan.getMidPoint();
+
+      const path = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'path'
+      );
+
+      path.setAttribute(
+        'd',
+        `M ${symbolMidPoint.x} ${symbolMidPoint.y} L ${labelPoint.x} ${labelPoint.y}`
+      );
+
+      path.setAttribute(
+        'style',
+        `stroke:${COLORS.connection.color};stroke-width:${
+          COLORS.connection.strokeWidth / 2
+        };opacity:${COLORS.connection.opacity};stroke-linecap:round`
+      );
+      svg.insertBefore(path, svg.children[0]);
+
+      const rect = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'rect'
+      );
+
+      rect.setAttribute(
+        'style',
+        `stroke:${COLORS.connection.color};opacity:${0.1}`
+      );
+
+      const { x, y, width, height } = pidTspan.boundingBox;
+
+      rect.setAttribute('x', `${x}`);
+      rect.setAttribute('y', `${y}`);
+      rect.setAttribute('width', `${width}`);
+      rect.setAttribute('height', `${height}`);
+
+      rect.id = `${pidTspan.id}_rect`;
+
+      svg.insertBefore(rect, svg.children[0]);
+    });
   });
 };

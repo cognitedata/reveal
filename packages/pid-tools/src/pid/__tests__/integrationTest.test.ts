@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 import path from 'path';
 
 import { PidDocument } from '../../pid/PidDocument';
@@ -88,14 +88,9 @@ const checkFindAllInstancesOfSymbol = (
   });
 };
 
-const fileExists = (filePath: string) => {
-  return existsSync(path.resolve(__dirname, filePath));
-};
-
 describe('IntegrationMatcherTests', () => {
   test('pid.svg', () => {
     const svgPath = './data/pid.svg';
-    if (!fileExists(svgPath)) return;
 
     const [pidDocument, graph] = loadPidDocumentAndGraph(
       svgPath,
@@ -117,10 +112,9 @@ describe('IntegrationMatcherTests', () => {
 
   test('iso.svg', () => {
     const svgPath = './data/iso.svg';
-    if (!fileExists(svgPath)) return;
 
     const [pidDocument, graph] = loadPidDocumentAndGraph(
-      './data/iso.svg',
+      svgPath,
       './data/isoGraph.json'
     );
 

@@ -7,5 +7,3 @@ export const SELECTED_ALL_DISPLAY_VALUE = 'All';
 
 export const NPT_NAME_FILTER_PLACEHOLDER = 'Filter by name';
 export const NPT_DURATION_FILTER_TITLE = 'NPT Duration (hrs)';
-export const NPT_CODE_FILTER_TITLE = 'NPT Code';
-export const NPT_DETAIL_CODE_FILTER_TITLE = 'NPT Detail Code';

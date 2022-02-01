@@ -2,7 +2,12 @@ import { Dictionary } from '@reduxjs/toolkit';
 import { PlotData } from 'plotly.js';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
-import { Metadata, Sequence, Asset, CogniteEvent } from '@cognite/sdk';
+import {
+  Metadata,
+  Sequence as DefaultSequence,
+  Asset,
+  CogniteEvent,
+} from '@cognite/sdk';
 import {
   NPT,
   Well as SDKWell,
@@ -16,6 +21,7 @@ import {
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { TableResults } from '../../components/tablev3/resultTypes';
+import { UserPrefferedUnit } from '../../constants/units';
 import { PossibleDateRangeDate } from '../../utils/date';
 import { DocumentType } from '../documentSearch/types';
 
@@ -24,8 +30,6 @@ export const TOGGLE_SELECTED_WELLBORE_OF_WELL =
   'WELL_TOGGLE_SELECTED_WELLBORE_OF_WELL';
 export const TOGGLE_EXPANDED_WELL_ID = 'WELL_TOGGLE_EXPANDED_WELL_ID';
 
-export const SET_LOG_TYPE = 'WELL_SET_LOG_TYPE';
-export const SET_LOGS_ROW_DATA = 'WELL_SET_LOGS_ROW_DATA';
 export const SET_WELLBORE_ASSETS = 'WELL_SET_WELLBORE_ASSETS';
 export const SET_WELLBORE_DIGITAL_ROCK_SAMPLES =
   'WELL_SET_WELLBORE_DIGITAL_ROCK_SAMPLES';
@@ -52,6 +56,10 @@ export interface WellState {
 }
 
 // other types:
+
+export interface Sequence extends DefaultSequence {
+  wellboreId?: WellboreId;
+}
 
 export interface TrajectoryColumnR {
   name: string;
@@ -88,6 +96,7 @@ interface ToggleExpandedWellId {
 }
 
 interface ToggleSelectedWells {
+  clear?: boolean;
   type: typeof TOGGLE_SELECTED_WELLS;
   wells: Well[];
   isSelected: boolean;
@@ -100,32 +109,11 @@ interface ToggleSelectedWellboreOfWell {
   isSelected: boolean;
 }
 
-interface SetLogType {
-  type: typeof SET_LOG_TYPE;
-  data: {
-    logs: { [key: number]: Sequence[] };
-    logsFrmTops: { [key: number]: Sequence[] };
-  };
-}
-
 interface SetGrainAnalysisData {
   type: typeof SET_GRAIN_ANALYSIS_DATA;
   digitalRockSample: Asset;
   grainAnalysisType: GrainAnalysisTypes;
   data: SequenceData[];
-}
-
-type RowLogsResponse = {
-  log: Sequence;
-  rows: SequenceRow[];
-};
-
-interface SetLogsData {
-  type: typeof SET_LOGS_ROW_DATA;
-  data: {
-    logs: RowLogsResponse[];
-    logsFrmTops: RowLogsResponse[];
-  };
 }
 
 interface SetWellboreAssets {
@@ -158,8 +146,6 @@ export type WellSearchAction =
   | ToggleExpandedWellId
   | ToggleSelectedWells
   | ToggleSelectedWellboreOfWell
-  | SetLogType
-  | SetLogsData
   | SetWellboreAssets
   | SetWellboreDigitalRockSamples
   | SetGrainAnalysisData
@@ -242,8 +228,6 @@ export interface AssetData {
 
 export interface WellboreData {
   [key: number]: {
-    logType?: SequenceData[];
-    logsFrmTops?: SequenceData[];
     fit?: SequenceData[];
     lot?: SequenceData[];
     documents?: DocumentType[];
@@ -293,7 +277,8 @@ export type FilterConfig = {
     | Promise<any | string[] | number[] | (Date | undefined)[]>
     | undefined;
   filterParameters?: (
-    filters: string[] | Date[] | number[]
+    filters: string[] | Date[] | number[],
+    userPreferredUnit: UserPrefferedUnit
   ) => CommonWellFilter;
   isTextCapitalized?: boolean;
   enableOnlySdkV3?: boolean;

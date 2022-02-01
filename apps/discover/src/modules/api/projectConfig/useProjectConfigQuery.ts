@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   useMutation,
   useQuery,
@@ -62,6 +63,27 @@ export function useProjectConfigGetQuery(): UseQueryResult<ProjectConfig> {
     }
   );
 }
+
+export const useProjectConfigByKey = <K extends keyof ProjectConfig>(
+  key: K
+) => {
+  const headers = useJsonHeaders({}, true);
+  const [project] = getTenantInfo();
+
+  return useQuery(
+    PROJECT_CONFIG_QUERY_KEY.CONFIG,
+    () => discoverAPI.projectConfig.getConfig(headers, project),
+    {
+      enabled: Boolean(project),
+      select: React.useCallback(
+        (data) => {
+          return data[key];
+        },
+        [key]
+      ),
+    }
+  );
+};
 
 export function useProjectConfigMetadataGetQuery(): UseQueryResult<Metadata> {
   const headers = useJsonHeaders({}, true);

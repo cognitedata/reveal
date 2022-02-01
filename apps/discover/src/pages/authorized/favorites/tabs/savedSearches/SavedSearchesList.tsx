@@ -7,7 +7,6 @@ import { sortDates } from 'utils/sortDates';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
-import { getTenantInfo } from '@cognite/react-container';
 
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
@@ -21,12 +20,11 @@ import navigation from 'constants/navigation';
 import { useSavedSearchNavigation } from 'hooks/useSavedSearchNavigation';
 import { useSavedSearch } from 'modules/api/savedSearches/hooks/useSavedSearch';
 import { SavedSearchItem } from 'modules/api/savedSearches/types';
-import { useQuerySavedSearchesList } from 'modules/api/savedSearches/useQuery';
 import {
   useSavedSearchAddShareMutate,
   useSavedSearchDeleteMutate,
 } from 'modules/api/savedSearches/useSavedSearchesMutate';
-import { useJsonHeaders } from 'modules/api/service';
+import { useQuerySavedSearchesList } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
@@ -51,8 +49,6 @@ export const SavedSearches: React.FC<{
 }> = ({ setCommentTarget, commentTarget }) => {
   const { t } = useTranslation('Saved Searches');
   const options = { checkable: false, flex: false, disableSorting: true };
-  const headers = useJsonHeaders({}, true);
-  const [tenant] = getTenantInfo();
   const user = useUserProfileQuery();
   const [selectedItem, setSelectedItem] = useState<
     SavedSearchItem | undefined
@@ -66,7 +62,7 @@ export const SavedSearches: React.FC<{
   }, []);
 
   const { mutateAsync: addShare } = useSavedSearchAddShareMutate();
-  const { mutate: deleteMutate } = useSavedSearchDeleteMutate();
+  const { mutate: deleteSavedSearch } = useSavedSearchDeleteMutate();
   const loadSavedSearch = useSavedSearch();
   const handleSavedSearchNavigation = useSavedSearchNavigation();
 
@@ -101,7 +97,7 @@ export const SavedSearches: React.FC<{
     if (!selectedItem?.value.id) return;
 
     showSuccessMessage(t(SAVED_SEARCH_DELETED_MESSAGE));
-    deleteMutate({ id: selectedItem.value.id, headers, tenant });
+    deleteSavedSearch(selectedItem.value.id);
     closeActionModal();
   };
 

@@ -11,12 +11,14 @@ import {
   isValidDuration,
 } from 'utils/timeUtils';
 
-interface CalculationScheduleIndicatorProps {
+interface CalculationScheduleIndicatorProps
+  extends React.HTMLAttributes<unknown> {
   schedule: CalculationSchedule;
 }
 
 export function CalculationScheduleIndicator({
   schedule,
+  ...props
 }: CalculationScheduleIndicatorProps) {
   if (!schedule.enabled) {
     return (
@@ -41,7 +43,7 @@ export function CalculationScheduleIndicator({
     format(repeatStart, DurationFormatMap[repeatInterval]);
 
   return (
-    <CalculationScheduleIndicatorContainer>
+    <CalculationScheduleIndicatorContainer {...props}>
       <Icon type="Clock" />
       Every {formattedInterval}
       {formattedStart && ` starting at ${formattedStart}`}

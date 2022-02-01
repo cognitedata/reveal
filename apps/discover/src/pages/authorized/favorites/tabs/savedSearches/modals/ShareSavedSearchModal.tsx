@@ -7,8 +7,8 @@ import { BasicShareModal } from 'components/basic-share-modal';
 import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
 import { UserOption } from 'components/search-users/SearchUsers';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
-import { useQuerySavedSearcheGetOne } from 'modules/api/savedSearches/useQuery';
 import { useSavedSearchRemoveShareMutate } from 'modules/api/savedSearches/useSavedSearchesMutate';
+import { useQuerySavedSearcheGetOne } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { REMOVE_SHARE_SUCCESS_TOAST } from 'pages/authorized/favorites/modals/constants';
 
 interface Props {

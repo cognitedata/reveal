@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -11,18 +11,28 @@ import {
   Icon,
   Menu,
   Skeleton,
+  toast,
 } from '@cognite/cogs.js';
 import type {
   CalculationType,
   Simulator,
 } from '@cognite/simconfig-api-sdk/rtk';
-import { useGetModelCalculationListQuery } from '@cognite/simconfig-api-sdk/rtk';
+import {
+  useGetModelCalculationListQuery,
+  useRunModelCalculationMutation,
+} from '@cognite/simconfig-api-sdk/rtk';
 
+import { GraphicContainer } from 'components/shared/elements';
+import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
+import { isSuccessResponse } from 'utils/responseUtils';
 
 import { CalculationRunTypeIndicator } from './CalculationRunTypeIndicator';
 import { CalculationScheduleIndicator } from './CalculationScheduleIndicator';
 import { CalculationStatusIndicator } from './CalculationStatusIndicator';
+import { STATUS_POLLING_INTERVAL } from './constants';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -39,24 +49,53 @@ export function CalculationList({
 }: CalculationListProps) {
   const project = useSelector(selectProject);
   const navigate = useNavigate();
+  const [runModelCalculations] = useRunModelCalculationMutation();
+  const { authState } = useContext(CdfClientContext);
+  const [shouldPoll, setShouldPoll] = useState<boolean>(false);
 
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
 
   const { data: modelCalculations, isFetching: isFetchingModelCalculations } =
-    useGetModelCalculationListQuery({
-      project,
-      simulator,
-      modelName,
-    });
+    useGetModelCalculationListQuery(
+      {
+        project,
+        simulator,
+        modelName,
+      },
+      { pollingInterval: shouldPoll ? STATUS_POLLING_INTERVAL : undefined }
+    );
+
+  useEffect(() => {
+    if (!modelCalculations?.modelCalculationList) {
+      return;
+    }
+    const hasReadyOrRunningCalculation =
+      !!modelCalculations.modelCalculationList.find(
+        (calculation) =>
+          calculation.latestRun?.metadata.status === 'ready' ||
+          calculation.latestRun?.metadata.status === 'running'
+      );
+
+    if (hasReadyOrRunningCalculation) {
+      setShouldPoll(true);
+      return;
+    }
+
+    setShouldPoll(false);
+  }, [modelCalculations]);
 
   if (!isFetchingModelCalculations && !modelCalculations) {
     // Uninitialized state
     return null;
   }
 
-  if (isFetchingModelCalculations || !definitions || !modelCalculations) {
+  if (
+    (isFetchingModelCalculations && !shouldPoll) ||
+    !definitions ||
+    !modelCalculations
+  ) {
     return <Skeleton.List lines={4} borders />;
   }
 
@@ -71,6 +110,38 @@ export function CalculationList({
     (calculationType) => !configuredCalculations.includes(calculationType)
   );
 
+  const onRunClick = (calcType?: CalculationType) => async () => {
+    if (!authState?.email) {
+      toast.error('No user email found, please refresh and try again');
+      return;
+    }
+
+    if (!calcType) {
+      toast.error('Missing metadata, please refresh and try again');
+      return;
+    }
+
+    trackUsage(TRACKING_EVENTS.MODEL_CALC_RUN_NOW, {
+      calculationType: calcType,
+      modelName: decodeURI(modelName),
+      simulator,
+    });
+
+    const response = await runModelCalculations({
+      modelName,
+      project,
+      simulator,
+      runModelCalculationRequestModel: {
+        userEmail: authState.email,
+        calculationType: calcType,
+      },
+    });
+    if (!isSuccessResponse(response)) {
+      toast.error('Running calculation failed, try again');
+    }
+    setShouldPoll(true);
+  };
+
   if (showConfigured) {
     return !modelCalculations.modelCalculationList.length ? (
       <GraphicContainer>
@@ -82,10 +153,12 @@ export function CalculationList({
           <React.Fragment key={calculation.externalId}>
             <Button
               className="run-calculation"
+              disabled={calculation.latestRun?.metadata.status === 'ready'}
               icon="Play"
               loading={calculation.latestRun?.metadata.status === 'running'}
               size="small"
               type="secondary"
+              onClick={onRunClick(calculation.configuration.calculationType)}
             >
               {calculation.latestRun?.metadata.status === 'running'
                 ? 'Running'
@@ -128,13 +201,24 @@ export function CalculationList({
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
+                        const { modelName, simulator, calculationType } =
+                          calculation.configuration;
+
+                        trackUsage(
+                          TRACKING_EVENTS.MODEL_CALC_VIEW_RUN_HISTORY,
+                          {
+                            calculationType,
+                            modelName,
+                            simulator,
+                          }
+                        );
+
                         navigate({
                           to: '/calculations/runs',
                           search: {
-                            modelName: calculation.configuration.modelName,
-                            simulator: calculation.configuration.simulator,
-                            calculationType:
-                              calculation.configuration.calculationType,
+                            modelName,
+                            simulator,
+                            calculationType,
                           },
                         });
                       }}
@@ -144,6 +228,12 @@ export function CalculationList({
                     <Menu.Divider />
                     <Menu.Item
                       onClick={() => {
+                        trackUsage(TRACKING_EVENTS.MODEL_CALC_EDIT, {
+                          modelName: decodeURI(modelName),
+                          simulator,
+                          calculationType:
+                            calculation.configuration.calculationType,
+                        });
                         navigate({
                           to: `${encodeURIComponent(
                             calculation.configuration.calculationType
@@ -177,7 +267,16 @@ export function CalculationList({
     <NonConfiguredCalculationList>
       {nonConfiguredCalculations.map((calculationType) => (
         <React.Fragment key={calculationType}>
-          <Link to={`${encodeURIComponent(calculationType)}/configuration`}>
+          <Link
+            to={`${encodeURIComponent(calculationType)}/configuration`}
+            onClick={() => {
+              trackUsage(TRACKING_EVENTS.MODEL_CACL_CONFIG, {
+                modelName: decodeURI(modelName),
+                simulator,
+                calculationType,
+              });
+            }}
+          >
             <Button
               className="configure-calculation"
               icon="Settings"
@@ -219,12 +318,4 @@ const NonConfiguredCalculationList = styled.div`
   .configure-calculation {
     font-size: var(--cogs-detail-font-size);
   }
-`;
-
-const GraphicContainer = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  gap: 12px;
-  color: var(--cogs-text-secondary);
 `;

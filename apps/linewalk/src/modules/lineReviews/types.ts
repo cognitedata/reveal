@@ -124,6 +124,7 @@ type LineReviewDiscrepancy = {
 export type LineReview = {
   id: string;
   name: string;
+  system: string;
   documents: Document[];
   discrepancies: LineReviewDiscrepancy[];
   assignees: Assignee[];

@@ -1,4 +1,5 @@
-import { SearchOptionSortBy } from 'modules/api/savedSearches/types';
+import { SavedSearchSortBy } from '@cognite/discover-api-types';
+
 import { Modules } from 'modules/sidebar/types';
 
 import {
@@ -8,7 +9,7 @@ import {
 } from './constants';
 
 export interface ResultPanelState {
-  sortBy: SearchOptionSortBy;
+  sortBy: SavedSearchSortBy;
   panelWidth?: number;
   activePanel?: Modules;
 }
@@ -25,7 +26,7 @@ interface SetActivePanel {
 
 interface SetSortByOptions {
   type: typeof SET_SORT_BY_OPTIONS;
-  payload: SearchOptionSortBy;
+  payload: SavedSearchSortBy;
 }
 
 export type ResultPanelActions =

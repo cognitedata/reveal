@@ -3,16 +3,21 @@ import mergeWith from 'lodash/mergeWith';
 import { getCogniteSDKClient, doReAuth } from 'utils/getCogniteSDKClient';
 
 import { reportException } from '@cognite/react-errors';
-import { DocumentsFilter, DocumentsSearch } from '@cognite/sdk-playground';
+import {
+  DocumentsFilter,
+  DocumentsSearch,
+  ExternalDocumentsSearch,
+} from '@cognite/sdk-playground';
 
 import { showErrorMessage } from 'components/toast';
-import { aggregates } from 'modules/documentSearch/constants';
+import { aggregates } from 'modules/documentSearch/aggregates';
 import {
   SearchQueryFull,
   DocumentResult,
   AggregateNames,
 } from 'modules/documentSearch/types';
 import { toDocument } from 'modules/documentSearch/utils';
+import { formatAssetIdsFilter } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/utils';
 
 import { getDocumentSDKClient } from './sdk';
 import { processFacets } from './utils/processFacets';
@@ -121,18 +126,17 @@ const documentsByIds = (documentIds: number[]) => {
   });
 };
 
-const getCategoriesByAssetIds = (assetIds: number[]) =>
-  getDocumentSDKClient()
+const getCategoriesByAssetIds = (assetIds: number[], v3Enabled: boolean) => {
+  const { filters } = formatAssetIdsFilter(assetIds, v3Enabled);
+
+  return getDocumentSDKClient()
     .documents.search({
       limit: 0,
-      filter: {
-        assetIds: {
-          containsAny: assetIds,
-        },
-      },
+      filter: filters,
       aggregates,
     })
     .then((result) => processFacets(result));
+};
 
 const getCategoriesByQuery = (
   query: SearchQueryFull,
@@ -140,19 +144,28 @@ const getCategoriesByQuery = (
   category: AggregateNames
 ) => {
   const queryInfo = getSearchQuery(query);
-  return getDocumentSDKClient()
-    .documents.search({
-      limit: 0,
-      search: queryInfo.query,
-      filter: mergeWith(queryInfo.filter, filters, (objValue, srcValue) => {
-        if (isArray(objValue)) {
-          return objValue.concat(srcValue);
-        }
 
-        return undefined;
-      }),
-      aggregates: aggregates.filter((aggregate) => aggregate.name === category),
-    })
+  const searchBody: ExternalDocumentsSearch = {
+    limit: 0,
+    search: queryInfo.query,
+    filter: mergeWith(queryInfo.filter, filters, (objValue, srcValue) => {
+      if (isArray(objValue)) {
+        return objValue.concat(srcValue);
+      }
+
+      return undefined;
+    }),
+  };
+
+  const filteredAggregates = aggregates.filter(
+    (aggregate) => aggregate.name === category
+  );
+  if (filteredAggregates.length > 0) {
+    searchBody.aggregates = filteredAggregates;
+  }
+
+  return getDocumentSDKClient()
+    .documents.search(searchBody)
     .then((result) => ({
       facets: processFacets(result)[category],
       total: result.aggregates ? result.aggregates[0].total : 0,

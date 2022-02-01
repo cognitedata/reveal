@@ -1,1 +1,1 @@
-export { findAllInstancesOfSymbol } from './findAllInstancesOfSymbol';
+export * from './findAllInstancesOfSymbol';

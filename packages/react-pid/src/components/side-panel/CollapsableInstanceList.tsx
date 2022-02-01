@@ -4,19 +4,21 @@ import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  DiagramEquipmentTagInstance,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
 import { Collapse, Icon } from '@cognite/cogs.js';
 
 import { getInstancesBySymbol, getInstanceCount } from './utils';
 import { CollapsableSymbolHeader } from './CollapsableSymbolHeader';
+import { EquipmentTagPanel } from './EquipmentTagPanel';
 
 const ScrollWrapper = styled.div`
   height: 100%;
   overflow-y: scroll;
 `;
 
-const CollapseSeperator = styled.div`
+export const CollapseSeperator = styled.div`
   padding: 0.5rem 1rem;
   text-align: left;
   background: #f7f7f7;
@@ -28,6 +30,10 @@ const ConnectionItem = styled.div`
   grid-template-columns: auto max-content;
 `;
 
+const Pre = styled.pre`
+  font-size: 0.75rem;
+`;
+
 interface CollapsableInstanceListProps {
   symbols: DiagramSymbol[];
   symbolInstances: DiagramSymbolInstance[];
@@ -35,6 +41,10 @@ interface CollapsableInstanceListProps {
   connections: DiagramConnection[];
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
+  equipmentTags: DiagramEquipmentTagInstance[];
+  setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
+  activeTagName: string | undefined;
+  setActiveTagName: (arg: string | undefined) => void;
 }
 
 export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
@@ -45,6 +55,10 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
     connections,
     deleteSymbol,
     deleteConnection,
+    equipmentTags,
+    setEquipmentTags,
+    activeTagName,
+    setActiveTagName,
   }) => {
     const renderSymbolInstances = (
       symbolInstances: DiagramSymbolInstance[],
@@ -53,14 +67,9 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
       return (
         <div>
           {getInstancesBySymbol(symbolInstances, symbol).map((instance) => (
-            <p key={instance.pathIds.join('')}>
-              {`{scale: ${
-                instance.scale === undefined
-                  ? undefined
-                  : instance.scale.toFixed(3)
-              },
-pathIds: [${instance.pathIds.join(', ')}]}`}
-            </p>
+            <Pre key={instance.pathIds.join('')}>
+              {JSON.stringify(instance, undefined, 2)}
+            </Pre>
           ))}
         </div>
       );
@@ -125,6 +134,14 @@ pathIds: [${instance.pathIds.join(', ')}]}`}
             ))}
           </Collapse.Panel>
         </Collapse>
+
+        <CollapseSeperator>Equipment tags</CollapseSeperator>
+        <EquipmentTagPanel
+          equipmentTags={equipmentTags}
+          setEquipmentTags={setEquipmentTags}
+          activeTagName={activeTagName}
+          setActiveTagName={setActiveTagName}
+        />
       </ScrollWrapper>
     );
   };

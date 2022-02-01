@@ -6,16 +6,19 @@ import {
   DiagramConnection,
   PidDocument,
   getNoneOverlappingSymbolInstances,
-  SVG_ID,
-  BoundingBox,
-  DiagramInstanceOutputFormat,
+  DiagramInstanceWithPathsOutputFormat,
+  PathReplacement,
+  PidDocumentWithDom,
+  DiagramEquipmentTagInstance,
+  DiagramEquipmentTagOutputFormat,
+  GraphDocument,
+  DocumentMetadata,
 } from '@cognite/pid-tools';
 
-import { DocumentType } from '../types';
-
 import {
-  getLineInstancesOutputFormat,
-  getSymbolInstancesOutputFormat,
+  getEquipmentTagOutputFormat,
+  getDiagramInstancesOutputFormat,
+  getDiagramSymbolInstancesOutputFormat,
 } from './saveGraph';
 
 export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
@@ -28,61 +31,55 @@ export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
   saveAs(fileToSave, 'Legend.json');
 };
 
-interface Graph {
-  documentType: DocumentType;
-  viewBox: BoundingBox;
-  symbols: DiagramSymbol[];
-  symbolInstances: DiagramInstanceOutputFormat[];
-  lines: DiagramInstanceOutputFormat[];
-  connections: DiagramConnection[];
-  lineNumbers: string[];
-}
-
 const getGraphFormat = (
-  pidDocument: PidDocument,
+  pidDocument: PidDocumentWithDom,
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
-  documentType: DocumentType,
-  lineNumbers: string[]
-): Graph => {
-  const linesOutputFormat = getLineInstancesOutputFormat(pidDocument, lines);
-  const symbolInstancesOutputFormat = getSymbolInstancesOutputFormat(
+  pathReplacements: PathReplacement[],
+  documentMetadata: DocumentMetadata,
+  lineNumbers: string[],
+  equipmentTags: DiagramEquipmentTagInstance[]
+): GraphDocument => {
+  const linesOutputFormat = getDiagramInstancesOutputFormat(pidDocument, lines);
+  const symbolInstancesOutputFormat = getDiagramSymbolInstancesOutputFormat(
     pidDocument,
     symbolInstances
   );
+  const equipmentTagInstancesFormat = getEquipmentTagOutputFormat(
+    pidDocument,
+    equipmentTags
+  );
 
-  const svgViewBox = (
-    document.getElementById(SVG_ID) as unknown as SVGSVGElement
-  ).viewBox;
-
-  const viewBox = {
-    x: svgViewBox.baseVal.x,
-    y: svgViewBox.baseVal.y,
-    width: svgViewBox.baseVal.width,
-    height: svgViewBox.baseVal.height,
-  };
+  const labels = pidDocument.pidLabels.map((label) => {
+    return label.toDiagramLabelOutputFormat();
+  });
 
   return {
-    documentType,
-    viewBox,
+    documentMetadata,
+    viewBox: pidDocument.viewBox,
     symbols,
     lines: linesOutputFormat,
     symbolInstances: symbolInstancesOutputFormat,
     connections,
+    pathReplacements,
     lineNumbers,
+    equipmentTags: equipmentTagInstancesFormat,
+    labels,
   };
 };
 
 export const saveGraphAsJson = (
-  pidDocument: PidDocument,
+  pidDocument: PidDocumentWithDom,
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
-  documentType: DocumentType,
-  lineNumbers: string[]
+  pathReplacements: PathReplacement[],
+  documentMetadata: DocumentMetadata,
+  lineNumbers: string[],
+  equipmentTags: DiagramEquipmentTagInstance[]
 ) => {
   const graphJson = getGraphFormat(
     pidDocument,
@@ -90,8 +87,10 @@ export const saveGraphAsJson = (
     lines,
     symbolInstances,
     connections,
-    documentType,
-    lineNumbers
+    pathReplacements,
+    documentMetadata,
+    lineNumbers,
+    equipmentTags
   );
 
   const fileToSave = new Blob([JSON.stringify(graphJson, undefined, 2)], {
@@ -100,16 +99,25 @@ export const saveGraphAsJson = (
   saveAs(fileToSave, 'Graph.json');
 };
 
-export const isValidSymbolFileSchema = (jsonData: any) => {
+export const isValidSymbolFileSchema = (
+  jsonData: any,
+  svg: SVGSVGElement
+): jsonData is GraphDocument => {
   const missingIds: string[] = [];
+
+  const trackMissingId = (id: string) => {
+    if (id.includes('_')) return; // comes from PathReplacements
+
+    if (svg.getElementById(id) === null) {
+      missingIds.push(id);
+    }
+  };
 
   if ('lines' in jsonData) {
     (jsonData.lines as DiagramLineInstance[]).forEach(
       (e: DiagramLineInstance) =>
-        e.pathIds.forEach((id: string) => {
-          if (document.getElementById(id) === null) {
-            missingIds.push(id);
-          }
+        e.pathIds.forEach((pathId: string) => {
+          trackMissingId(pathId);
         })
     );
   }
@@ -117,10 +125,8 @@ export const isValidSymbolFileSchema = (jsonData: any) => {
   if ('symbolInstances' in jsonData) {
     (jsonData.symbolInstances as DiagramSymbolInstance[]).forEach(
       (e: DiagramSymbolInstance) =>
-        e.pathIds.forEach((id: string) => {
-          if (document.getElementById(id) === null) {
-            missingIds.push(id);
-          }
+        e.pathIds.forEach((pathId: string) => {
+          trackMissingId(pathId);
         })
     );
   }
@@ -129,14 +135,20 @@ export const isValidSymbolFileSchema = (jsonData: any) => {
     (jsonData.connections as DiagramConnection[]).forEach(
       (connection: DiagramConnection) => {
         connection.end.split('-').forEach((pathId) => {
-          if (document.getElementById(pathId) === null) {
-            missingIds.push(pathId);
-          }
+          trackMissingId(pathId);
         });
         connection.start.split('-').forEach((pathId) => {
-          if (document.getElementById(pathId) === null) {
-            missingIds.push(pathId);
-          }
+          trackMissingId(pathId);
+        });
+      }
+    );
+  }
+
+  if ('equipmentTags' in jsonData) {
+    (jsonData.equipmentTags as DiagramEquipmentTagOutputFormat[]).forEach(
+      (tag: DiagramEquipmentTagOutputFormat) => {
+        tag.labels.forEach((label) => {
+          trackMissingId(label.id);
         });
       }
     );
@@ -145,7 +157,7 @@ export const isValidSymbolFileSchema = (jsonData: any) => {
   if (missingIds.length !== 0) {
     // eslint-disable-next-line no-console
     console.log(
-      `Incorrect JSON file. Path ID${
+      `Incorrect JSON file. ID${
         missingIds.length === 0 ? '' : 's'
       } ${missingIds} was not found in SVG.`
     );
@@ -155,7 +167,7 @@ export const isValidSymbolFileSchema = (jsonData: any) => {
 };
 
 export const loadSymbolsFromJson = (
-  jsonData: any,
+  jsonData: GraphDocument,
   setSymbols: (diagramSymbols: DiagramSymbol[]) => void,
   symbols: DiagramSymbol[],
   pidDocument: PidDocument,
@@ -165,8 +177,12 @@ export const loadSymbolsFromJson = (
   lines: DiagramLineInstance[],
   setConnections: (diagramConnections: DiagramConnection[]) => void,
   connections: DiagramConnection[],
+  pathReplacements: PathReplacement[],
+  setPathReplacements: (args: PathReplacement[]) => void,
   lineNumbers: string[],
-  setLineNumbers: (arg: string[]) => void
+  setLineNumbers: (arg: string[]) => void,
+  equipmentTags: DiagramEquipmentTagInstance[],
+  setEquipmentTags: (tags: DiagramEquipmentTagInstance[]) => void
 ) => {
   if ('symbols' in jsonData) {
     const newSymbols = jsonData.symbols as DiagramSymbol[];
@@ -189,7 +205,7 @@ export const loadSymbolsFromJson = (
   }
   if ('lines' in jsonData) {
     const newLinesOutputFormat =
-      jsonData.lines as DiagramInstanceOutputFormat[];
+      jsonData.lines as DiagramInstanceWithPathsOutputFormat[];
 
     const newLines = newLinesOutputFormat.map((newLineOutputFormat) => {
       return {
@@ -202,27 +218,40 @@ export const loadSymbolsFromJson = (
     setLines([...lines, ...newLines]);
   }
   if ('symbolInstances' in jsonData) {
-    const newSymbolInstancesOutputFormat =
-      jsonData.symbolInstances as DiagramInstanceOutputFormat[];
-
-    const newSymbolInstances: DiagramSymbolInstance[] = [];
-    newSymbolInstancesOutputFormat.forEach((symbolInstanceOutputFormat) => {
-      newSymbolInstances.push({
-        type: symbolInstanceOutputFormat.type,
-        symbolId: symbolInstanceOutputFormat.symbolId,
-        pathIds: symbolInstanceOutputFormat.pathIds,
-        labelIds: symbolInstanceOutputFormat.labelIds,
-      } as DiagramSymbolInstance);
-    });
-    setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
+    setSymbolInstances([...symbolInstances, ...jsonData.symbolInstances]);
   }
-
   if ('connections' in jsonData) {
-    const newConnections = jsonData.connections as DiagramConnection[];
-    setConnections([...connections, ...newConnections]);
+    setConnections([...connections, ...jsonData.connections]);
   }
-
+  if ('pathReplacements' in jsonData) {
+    setPathReplacements([...pathReplacements, ...jsonData.pathReplacements]);
+  }
   if ('lineNumbers' in jsonData) {
     setLineNumbers([...lineNumbers, ...jsonData.lineNumbers]);
+  }
+
+  if ('equipmentTags' in jsonData) {
+    const newEquipmentTags = (
+      jsonData.equipmentTags as DiagramEquipmentTagOutputFormat[]
+    ).map((tag) =>
+      tag.labels.reduce<DiagramEquipmentTagInstance>(
+        (prev, curr) => ({
+          ...prev,
+          description:
+            curr.text === tag.name
+              ? prev.description
+              : [...prev.description, curr.text],
+          labelIds: [...prev.labelIds, curr.id],
+        }),
+        {
+          name: tag.name,
+          description: [],
+          labelIds: [],
+          type: 'EquipmentTag',
+          lineNumbers: tag.lineNumbers,
+        }
+      )
+    );
+    setEquipmentTags([...equipmentTags, ...newEquipmentTags]);
   }
 };

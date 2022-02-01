@@ -75,6 +75,7 @@ export const WELL_QUERY_KEY = {
   WELLBORES: [WELLS, 'wellbores'],
   FAVORITE: [WELLS, 'favoriteWells'],
   FILTER_OPTIONS: [WELLS, 'filterOptions'],
+  WELLS_ONE: [WELLS, 'wells'],
   WELLS_CACHE: [WELLS, 'wells', 'cache'],
   CASINGS: [WELLS, 'casings'],
   CASINGS_CACHE: [WELLS, 'casings', 'cache'],
@@ -85,6 +86,8 @@ export const WELL_QUERY_KEY = {
   NPT_EVENTS: [WELLS, 'npt', 'old'],
   NPT_EVENTS_CACHE: [WELLS, 'npt', 'cache'],
   MEASUREMENTS: [WELLS, 'measurements'],
+  LOGS: [WELLS, 'logs'],
+  FORMATION_TOPS: [WELLS, 'logsFrmTops'],
   LOGS_PPFGS: ['logsPPFGs'],
 };
 
@@ -123,4 +126,14 @@ export const PROJECT_CONFIG_QUERY_KEY = {
 const LAYERS = 'layers';
 export const LAYERS_QUERY_KEY = {
   ALL: [LAYERS, 'get'],
+};
+
+export const TOKEN_INSPECT_QUERY_KEY = {
+  all: ['token-inspect'],
+  lists: () => [...TOKEN_INSPECT_QUERY_KEY.all, 'list'],
+};
+
+export const DOCUMENT_FEEDBACK_QUERY_KEY = {
+  all: ['document-feedback'],
+  lists: () => [...DOCUMENT_FEEDBACK_QUERY_KEY.all, 'list'],
 };

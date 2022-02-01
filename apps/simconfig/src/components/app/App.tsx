@@ -15,6 +15,7 @@ import { fetchGroups } from 'store/group/thunks';
 import { useAppDispatch } from 'store/hooks';
 import { selectIsAppInitialized } from 'store/selectors';
 import { simconfigApiPropertiesSlice } from 'store/simconfigApiProperties';
+import { identifyUser } from 'utils/metrics/tracking';
 import sidecar from 'utils/sidecar';
 
 import { enhanceSimconfigApiEndpoints } from './enhanceSimconfigApiEndpoints';
@@ -28,8 +29,11 @@ export default function App() {
   enhanceSimconfigApiEndpoints();
 
   useEffect(() => {
-    // TODO(SIM-209) Move to location loader
     void dispatch(fetchGroups(cdfClient));
+
+    if (authState?.authenticated) {
+      identifyUser(authState.email);
+    }
 
     dispatch(
       simconfigApiPropertiesSlice.actions.setBaseUrl(
@@ -56,7 +60,7 @@ export default function App() {
         defaultPendingElement={<Loader />}
         defaultPendingMs={50}
         location={location}
-        routes={routes(dispatch, project)}
+        routes={routes(dispatch)}
       >
         <RoutedAppContainer>
           <MenuBar />

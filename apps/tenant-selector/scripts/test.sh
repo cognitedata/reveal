@@ -11,5 +11,5 @@ set -e
   --reporters=jest-junit \
   --runInBand \
   --detectOpenHandles \
-  --env=jest-environment-jsdom-sixteen \
+  --env=jest-environment-jsdom \
   "$@"

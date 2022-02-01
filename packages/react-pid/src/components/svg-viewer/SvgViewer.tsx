@@ -5,10 +5,20 @@ import {
   DiagramLineInstance,
   DiagramSymbolInstance,
   getDiagramInstanceId,
-  PidDocument,
   SVG_ID,
   getDiagramInstanceByPathId,
   getInstanceByDiagramInstanceId,
+  createEquipmentTagInstance,
+  DiagramEquipmentTagInstance,
+  getDiagramEquipmentTagInstanceByName,
+  PathReplacement,
+  applyPathReplacementInSvg,
+  PidDocumentWithDom,
+  addOrRemoveLabelToInstance,
+  addOrRemoveLineNumberToInstance,
+  getDiagramEquipmentTagInstanceByLabelId,
+  addOrRemoveLabelToEquipmentTag,
+  isLine,
 } from '@cognite/pid-tools';
 import { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
@@ -21,14 +31,14 @@ import { ToolType } from '../../types';
 import { applyToLeafSVGElements } from '../../utils/svgDomUtils';
 
 import {
-  addOrRemoveLabelToInstance,
-  addOrRemoveLineNumberToInstance,
   applyStyleToNode,
   colorSymbol,
   isDiagramLine,
   isInAddSymbolSelection,
+  isSymbolInstance,
   setStrokeWidth,
   visualizeConnections,
+  visualizeLabels,
 } from './utils';
 
 interface SvgViewerProps {
@@ -40,15 +50,23 @@ interface SvgViewerProps {
   setLines: (arg: DiagramLineInstance[]) => void;
   selection: SVGElement[];
   setSelection: (arg: SVGElement[]) => void;
+  splitSelection: string | null;
+  setSplitSelection: (args: string | null) => void;
+  pathReplacements: PathReplacement[];
+  setPathReplacements: (args: PathReplacement[]) => void;
   connectionSelection: DiagramInstanceId | null;
   setConnectionSelection: (arg: DiagramInstanceId | null) => void;
   connections: DiagramConnection[];
   setConnections: (arg: DiagramConnection[]) => void;
   labelSelection: DiagramInstanceId | null;
   setLabelSelection: (arg: DiagramInstanceId | null) => void;
-  pidDocument: PidDocument | undefined;
-  setPidDocument: (arg: PidDocument) => void;
+  setPidDocument: (arg: PidDocumentWithDom) => void;
+  getPidDocument: () => PidDocumentWithDom | undefined;
   activeLineNumber: string | null;
+  equipmentTags: DiagramEquipmentTagInstance[];
+  setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
+  activeTagName: string | undefined;
+  setActiveTagName: (arg: string | undefined) => void;
 }
 
 export const SvgViewer: React.FC<SvgViewerProps> = ({
@@ -60,15 +78,23 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   setLines,
   selection,
   setSelection,
+  splitSelection,
+  setSplitSelection,
+  pathReplacements,
+  setPathReplacements,
   connectionSelection,
   setConnectionSelection,
   connections,
   setConnections,
-  pidDocument,
   setPidDocument,
+  getPidDocument,
   labelSelection,
   setLabelSelection,
   activeLineNumber,
+  equipmentTags,
+  setEquipmentTags,
+  activeTagName,
+  setActiveTagName,
 }) => {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [graphSelection, setGraphSelection] =
@@ -76,7 +102,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   const [graphPaths, setGraphPaths] = useState<DiagramInstanceId[][]>([]);
 
   /* eslint-disable no-param-reassign */
-  const onMouseEnter = (node: SVGElement) => {
+  const onMouseEnter = (node: SVGElement, mainSvg: SVGSVGElement) => {
     const boldStrokeWidth = (
       1.5 * parseInt(node.style.strokeWidth, 10)
     ).toString();
@@ -87,7 +113,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
       if (symbolInstance === null) return;
 
-      setStrokeWidth(symbolInstance, boldStrokeWidth);
+      setStrokeWidth(symbolInstance, boldStrokeWidth, mainSvg);
     } else if (active === 'graphExplorer') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
@@ -112,6 +138,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           diagramInstanceId,
           COLORS.graphPath,
           [...symbolInstances, ...lines],
+          mainSvg,
           {
             filter: `hue-rotate(${(graphPathIndex + 1) * 100}deg)`,
           }
@@ -124,14 +151,24 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
 
       if (symbolInstance === null) return;
-      setStrokeWidth(symbolInstance, boldStrokeWidth);
+      setStrokeWidth(symbolInstance, boldStrokeWidth, mainSvg);
     }
-    node.style.strokeWidth = boldStrokeWidth;
+    if (active === 'addEquipmentTag') {
+      if (node instanceof SVGTSpanElement) {
+        node.style.fontWeight = '600';
+      }
+    } else {
+      node.style.strokeWidth = boldStrokeWidth;
+    }
   };
   /* eslint-enable no-param-reassign */
 
   /* eslint-disable no-param-reassign */
-  const onMouseLeave = (node: SVGElement, originalStrokeWidth: string) => {
+  const onMouseLeave = (
+    node: SVGElement,
+    originalStrokeWidth: string,
+    mainSvg: SVGSVGElement
+  ) => {
     if (active === 'connectInstances') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
@@ -139,7 +176,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
       if (symbolInstance === null) return;
 
-      setStrokeWidth(symbolInstance, originalStrokeWidth);
+      setStrokeWidth(symbolInstance, originalStrokeWidth, mainSvg);
     } else if (active === 'graphExplorer') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
@@ -163,6 +200,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           diagramInstanceId,
           COLORS.graphPath,
           [...symbolInstances, ...lines],
+          mainSvg,
           {
             filter: 'hue-rotate(0)',
           }
@@ -175,13 +213,17 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       );
 
       if (symbolInstance === null) return;
-      setStrokeWidth(symbolInstance, originalStrokeWidth);
+      setStrokeWidth(symbolInstance, originalStrokeWidth, mainSvg);
     }
+    node.style.fontWeight = '';
     node.style.strokeWidth = originalStrokeWidth;
   };
   /* eslint-enable no-param-reassign */
 
   const onMouseClick = (node: SVGElement) => {
+    const pidDocument = getPidDocument();
+    if (pidDocument === undefined) return;
+
     if (active === 'addSymbol') {
       if (!(node instanceof SVGTSpanElement)) {
         const alreadySelected = isInAddSymbolSelection(node, selection);
@@ -215,6 +257,34 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           } as DiagramLineInstance,
         ]);
       }
+    } else if (active === 'splitLine') {
+      if (node instanceof SVGTSpanElement) return;
+      if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines))
+        return;
+
+      // Remove line if it was already selected
+      if (splitSelection === node.id) {
+        setSplitSelection(null);
+        return;
+      }
+      if (splitSelection !== null) {
+        const tJunctionPathReplacements = pidDocument
+          .getPidPathById(splitSelection)
+          ?.getTJunctionByIntersectionWith(
+            pidDocument.getPidPathById(node.id)!
+          );
+
+        if (!tJunctionPathReplacements) {
+          return;
+        }
+        setPathReplacements([
+          ...pathReplacements,
+          ...tJunctionPathReplacements,
+        ]);
+        setSplitSelection(null);
+        return;
+      }
+      setSplitSelection(node.id);
     } else if (active === 'connectInstances') {
       const symbolInstance = getDiagramInstanceByPathId(
         [...symbolInstances, ...lines],
@@ -270,22 +340,12 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (!diagramInstance) {
           return;
         }
-        if (diagramInstance.type === 'Line') {
-          addOrRemoveLabelToInstance(
-            node.id,
-            diagramInstance as DiagramLineInstance,
-            lines,
-            (arg) => {
-              setLines(arg as DiagramLineInstance[]);
-            }
-          );
+        if (isLine(diagramInstance)) {
+          addOrRemoveLabelToInstance(node.id, node.innerHTML, diagramInstance);
+          setLines([...lines]);
         } else {
-          addOrRemoveLabelToInstance(
-            node.id,
-            diagramInstance as DiagramSymbolInstance,
-            symbolInstances,
-            setSymbolInstances
-          );
+          addOrRemoveLabelToInstance(node.id, node.innerHTML, diagramInstance);
+          setSymbolInstances([...symbolInstances]);
         }
       }
     } else if (active === 'graphExplorer') {
@@ -338,6 +398,34 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           setSymbolInstances
         );
       }
+    } else if (
+      active === 'addEquipmentTag' &&
+      node instanceof SVGTSpanElement
+    ) {
+      if (activeTagName) {
+        const tag = getDiagramEquipmentTagInstanceByName(
+          activeTagName,
+          equipmentTags
+        );
+        if (tag === undefined) return;
+        addOrRemoveLabelToEquipmentTag(node, tag);
+        setActiveTagName(tag.name);
+        setEquipmentTags(
+          equipmentTags.filter((tag) => tag.labelIds.length > 0)
+        );
+      } else {
+        const tag = getDiagramEquipmentTagInstanceByLabelId(
+          node.id,
+          equipmentTags
+        );
+        if (tag === undefined) {
+          const newTag = createEquipmentTagInstance(node);
+          setEquipmentTags([...equipmentTags, newTag]);
+          setActiveTagName(newTag.name);
+        } else {
+          setActiveTagName(tag.name);
+        }
+      }
     }
   };
 
@@ -349,17 +437,20 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
     svg.style.width = '100%';
     svg.style.height = '100%';
 
+    pathReplacements.forEach((pathReplacement) => {
+      applyPathReplacementInSvg(svg as SVGSVGElement, pathReplacement);
+    });
+
     const allSVGElements: SVGElement[] = [];
     applyToLeafSVGElements(svg, (node) => {
-      if (pidDocument === undefined) {
-        allSVGElements.push(node);
-      }
+      allSVGElements.push(node);
 
       applyStyleToNode({
         node,
         selection,
         connectionSelection,
         labelSelection,
+        splitSelection,
         symbolInstances,
         lines,
         connections,
@@ -367,13 +458,15 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         graphSelection,
         active,
         activeLineNumber,
+        equipmentTags,
+        activeTagName,
       });
 
-      node.addEventListener('mouseenter', () => onMouseEnter(node));
+      node.addEventListener('mouseenter', () => onMouseEnter(node, svg));
 
       const originalStrokeWidth = node.style.strokeWidth;
       node.addEventListener('mouseleave', () => {
-        onMouseLeave(node, originalStrokeWidth);
+        onMouseLeave(node, originalStrokeWidth, svg);
       });
 
       node.addEventListener('click', () => {
@@ -381,9 +474,11 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       });
     });
 
-    if (pidDocument === undefined) {
-      setPidDocument(PidDocument.fromSVGElements(allSVGElements));
-    } else if (active === 'connectInstances') {
+    const pidDocument = PidDocumentWithDom.fromSVG(svg, allSVGElements);
+    setPidDocument(pidDocument);
+
+    if (pidDocument === undefined) return;
+    if (active === 'connectInstances') {
       visualizeConnections(
         svg,
         pidDocument,
@@ -391,10 +486,12 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         symbolInstances,
         lines
       );
+    } else if (active === 'connectLabels') {
+      visualizeLabels(svg, pidDocument, symbolInstances);
     }
   };
-  /* eslint-enable no-param-reassign */
 
+  /* eslint-enable no-param-reassign */
   useEffect(() => {
     if (active !== 'graphExplorer') {
       return;
@@ -406,6 +503,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       graphInstance.mergeEdge(connections[i].end, connections[i].start);
     }
     setGraph(graphInstance);
+    setActiveTagName(undefined);
   }, [active]);
 
   return (

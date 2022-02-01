@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import uniqueBy from 'lodash/uniqBy';
 import { v4 as uuid } from 'uuid';
@@ -42,6 +42,8 @@ type Props = {
   onToggle: (id: WellboreId) => void;
 };
 
+const LEGEND_HOLDER_SHOW_ALL_HEIGHT = 16;
+
 export const WellCentricCard: React.FC<Props> = ({
   wellbore,
   chartData,
@@ -51,9 +53,17 @@ export const WellCentricCard: React.FC<Props> = ({
 }) => {
   const [showAll, setShowAll] = useState<boolean>(false);
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
-  const displayShowAll = (legendsHolderRef?.current?.scrollHeight || 0) > 16;
+  const [displayShowAllButton, setDisplayShowAllButton] =
+    useState<boolean>(false);
   const fitChart = filterByChartType(chartData, [MeasurementType.fit])[0];
   const lotChart = filterByChartType(chartData, [MeasurementType.lot])[0];
+
+  useEffect(() => {
+    setDisplayShowAllButton(
+      (legendsHolderRef?.current?.scrollHeight || 0) >
+        LEGEND_HOLDER_SHOW_ALL_HEIGHT
+    );
+  }, [legendsHolderRef]);
 
   return (
     <Wrapper>
@@ -85,16 +95,16 @@ export const WellCentricCard: React.FC<Props> = ({
       <Footer>
         <LegendsHolder expanded={showAll} ref={legendsHolderRef}>
           {uniqueBy(filterByMainChartType(chartData), (row) => {
-            const customdata = row.customdata as string[];
-            return customdata[0];
+            const [curveDisplayName] = row.customdata as string[];
+            return curveDisplayName || '';
           }).map((row) => {
-            const customdata = row.customdata as string[];
+            const [curveDisplayName] = row.customdata as string[];
             return (
               <CurveIndicator
-                key={`${wellbore.description}-${customdata[0]}-${uuid()}`}
+                key={`${wellbore.description}-${curveDisplayName}-${uuid()}`}
               >
                 <CurveColorCode line={row.line} marker={row.marker} />
-                <span>{customdata[0]}</span>
+                <span>{curveDisplayName}</span>
               </CurveIndicator>
             );
           })}
@@ -115,7 +125,7 @@ export const WellCentricCard: React.FC<Props> = ({
         </LegendsHolder>
 
         <BaseButton
-          hidden={!displayShowAll}
+          hidden={!displayShowAllButton}
           type="ghost"
           size="small"
           icon={showAll ? 'ChevronUp' : 'ChevronDown'}

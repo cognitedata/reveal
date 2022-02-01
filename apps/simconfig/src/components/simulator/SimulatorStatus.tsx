@@ -1,65 +1,101 @@
-import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
-import { Colors, Icon } from '@cognite/cogs.js';
+import styled from 'styled-components/macro';
 
-import { usePolling } from 'hooks/usePolling';
-import { CdfClientContext } from 'providers/CdfClientProvider';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { HEARTBEAT_POLL_INTERVAL } from 'store/simulator/constants';
+import { Label, Skeleton, Tooltip } from '@cognite/cogs.js';
+import { useGetSimulatorsListQuery } from '@cognite/simconfig-api-sdk/rtk';
+
 import {
-  selectAvailableSimulators,
-  selectIsSimulatorInitialized,
-  selectSimulators,
-} from 'store/simulator/selectors';
-import { fetchSimulators } from 'store/simulator/thunks';
+  HEADER_VISIBLE_SIMULATORS_COUNT,
+  HEARTBEAT_POLL_INTERVAL,
+} from 'components/simulator/constants';
+import { selectProject } from 'store/simconfigApiProperties/selectors';
 
-import { SimulatorTag } from './elements';
+import { SimulatorList } from './SimulatorList';
+import { SimulatorStatusLabel } from './SimulatorStatusLabel';
 
-interface Color {
-  hex: () => string;
-}
+export function SimulatorStatus() {
+  const project = useSelector(selectProject);
 
-function SimulatorStatusComponent() {
-  const dispatch = useAppDispatch();
-  const { cdfClient } = useContext(CdfClientContext);
-  const simulators = useAppSelector(selectSimulators);
-  const isSimulatorInitialized = useSelector(selectIsSimulatorInitialized);
-  const availableSimulators = useSelector(selectAvailableSimulators);
-
-  usePolling(
-    () => {
-      void dispatch(fetchSimulators(cdfClient));
-    },
-    HEARTBEAT_POLL_INTERVAL * 1000,
-    true
-  );
-
-  if (!isSimulatorInitialized) {
-    return <Icon type="Loader" />;
-  }
-
-  if (simulators.length && availableSimulators) {
-    return (
-      <SimulatorTag
-        color={(Colors['graphics-success'] as Color).hex()}
-        icon="Checkmark"
-        simulators={simulators}
-      >
-        {simulators[0].simulator} available
-      </SimulatorTag>
+  const { data: simulatorsList, isLoading: isLoadingSimulatorsList } =
+    useGetSimulatorsListQuery(
+      { project },
+      { pollingInterval: HEARTBEAT_POLL_INTERVAL }
     );
+
+  if (isLoadingSimulatorsList) {
+    return <Skeleton.Rectangle width="100px" />;
   }
+
+  if (!simulatorsList?.simulators?.length) {
+    return null;
+  }
+
+  const simulators = simulatorsList.simulators.slice(
+    0,
+    HEADER_VISIBLE_SIMULATORS_COUNT
+  );
+  const simulatorsOverflow = simulatorsList.simulators.slice(
+    HEADER_VISIBLE_SIMULATORS_COUNT
+  );
 
   return (
-    <SimulatorTag
-      color={(Colors['graphics-danger'] as Color).hex()}
-      icon="WarningTriangle"
-      simulators={simulators}
-    >
-      Simulator unavailable
-    </SimulatorTag>
+    <SimulatorStatusContainer>
+      {simulators.map((simulator) => (
+        <div key={simulator.connectorName}>
+          <SimulatorTooltip
+            content={<SimulatorList simulators={[simulator]} />}
+          >
+            <SimulatorStatusLabel
+              simulator={simulator}
+              title={simulator.simulator}
+            />
+          </SimulatorTooltip>
+        </div>
+      ))}
+
+      {simulatorsOverflow.length ? (
+        <div>
+          <SimulatorTooltip
+            content={<SimulatorList simulators={simulatorsOverflow} />}
+          >
+            <Label
+              aria-label="Show additional simulators"
+              className="cogs-label--is-interactive"
+              size="small"
+              variant="unknown"
+            >
+              +
+              {simulatorsList.simulators.length -
+                HEADER_VISIBLE_SIMULATORS_COUNT}
+            </Label>
+          </SimulatorTooltip>
+        </div>
+      ) : null}
+    </SimulatorStatusContainer>
   );
 }
 
-export const SimulatorStatus = SimulatorStatusComponent;
+const SimulatorStatusContainer = styled.div`
+  display: flex;
+  column-gap: 12px;
+  align-items: center;
+  & > div > span {
+    display: flex;
+    align-items: center;
+  }
+  .cogs-label {
+    column-gap: 6px;
+  }
+`;
+
+const SimulatorTooltip = styled(Tooltip).attrs(() => ({
+  placement: 'bottom-end',
+  theme: 'cogs-light',
+  trigger: 'click',
+  interactive: true,
+}))`
+  .tippy-content {
+    padding: 0;
+  }
+`;

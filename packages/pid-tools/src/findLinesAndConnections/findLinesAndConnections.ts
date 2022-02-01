@@ -1,9 +1,11 @@
 /* eslint-disable no-continue */
+import { AUTO_ANALYSIS_DISTANCE_THRESHOLD } from '../constants';
 import {
   DiagramConnection,
-  DiagramInstance,
+  DiagramInstanceWithPaths,
   DiagramLineInstance,
   DiagramSymbolInstance,
+  DocumentType,
 } from '../types';
 import {
   connectionExists,
@@ -11,7 +13,7 @@ import {
   isDiagramInstanceInList,
   isPathIdInInstance,
 } from '../utils';
-import { PidDocument, PidGroup } from '../pid';
+import { PidDocument, PidGroup, PidPath } from '../pid';
 
 import { findConnections } from './findConnections';
 import { detectLines } from './findLines';
@@ -20,22 +22,42 @@ export const getOverlappingPidGroups = (
   pidGroups: PidGroup[],
   instance: PidGroup
 ) => {
-  return pidGroups.filter((pidGroup) => instance.isOverlap(pidGroup));
+  return pidGroups.filter((pidGroup) =>
+    instance.isClose(pidGroup, AUTO_ANALYSIS_DISTANCE_THRESHOLD)
+  );
 };
 
 export const getPotentialLines = (
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
-  pidDocument: PidDocument
+  pidDocument: PidDocument,
+  documentType: DocumentType
 ) => {
   const allInstances = [...symbolInstances, ...lineInstances];
 
+  const isPathInAnyInstance = (path: PidPath) =>
+    !allInstances.some((diagramInstance) =>
+      isPathIdInInstance(path.pathId, getDiagramInstanceId(diagramInstance))
+    );
+
+  const isPathValidForDocumentType = (path: PidPath) =>
+    documentType !== DocumentType.isometric ||
+    path.segmentList.some(
+      (pathSegment) => pathSegment.pathType === 'CurveSegment'
+    ) === false;
+
+  const isPathStrokeValid = (path: PidPath) =>
+    documentType === DocumentType.isometric
+      ? path.style?.strokeLinejoin === 'miter'
+      : path.style?.stroke !== null;
+
   const matches = pidDocument.pidPaths.filter(
     (path) =>
-      !allInstances.some((diagramInstance) =>
-        isPathIdInInstance(path.pathId, getDiagramInstanceId(diagramInstance))
-      )
+      isPathValidForDocumentType(path) &&
+      isPathInAnyInstance(path) &&
+      isPathStrokeValid(path)
   );
+
   const potentialLines: DiagramLineInstance[] = matches.map(
     (pidPath) =>
       ({
@@ -55,6 +77,7 @@ export interface FindLinesAndConnectionsOutput {
 
 export const findLinesAndConnections = (
   pidDocument: PidDocument,
+  documentType: DocumentType,
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
   oldConnections: DiagramConnection[]
@@ -62,7 +85,8 @@ export const findLinesAndConnections = (
   const potentialLineInstanceList: DiagramLineInstance[] = getPotentialLines(
     symbolInstances,
     lineInstances,
-    pidDocument
+    pidDocument,
+    documentType
   );
 
   const relevantSymbolInstances = symbolInstances.filter(
@@ -106,7 +130,7 @@ export const findLinesAndConnections = (
 
 const connectsToKnownInstances = (
   connection: DiagramConnection,
-  knownInstances: DiagramInstance[]
+  knownInstances: DiagramInstanceWithPaths[]
 ) => {
   return (
     isDiagramInstanceInList(connection.end, knownInstances) &&

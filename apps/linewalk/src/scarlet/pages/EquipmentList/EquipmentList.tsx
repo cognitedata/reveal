@@ -3,36 +3,35 @@ import { Table, Loader, Input, Graphic } from '@cognite/cogs.js';
 import debounce from 'lodash/debounce';
 import { useHistory, useParams, generatePath } from 'react-router-dom';
 import { getEquipmentList } from 'scarlet/api';
-import { useApi, useStorage } from 'scarlet/hooks';
+import { useApi, useAppContext } from 'scarlet/hooks';
 import { RoutePath } from 'scarlet/routes';
 
 import { BreadcrumbBar } from './components';
 import * as Styled from './style';
-import { ColumnAccessor, EquipmentListItem, StorageActionType } from './types';
+import { ColumnAccessor, EquipmentListItem, AppActionType } from './types';
 import { getCellValue } from './utils';
 
 export const EquipmentList = () => {
   const { unitName } = useParams<{ unitName: string }>();
   const history = useHistory();
-  const { storageState, storageDispatch } = useStorage();
+  const { appState, appDispatch } = useAppContext();
 
-  const isDataAvailableInStorage =
-    storageState.equipmentList?.unitName === unitName;
+  const isDataAvailableInApp = appState.equipmentList?.unitName === unitName;
 
   const { data, loading, error } = useApi<EquipmentListItem[]>(
     getEquipmentList,
     { unitName },
     {
-      data: isDataAvailableInStorage
-        ? storageState?.equipmentList?.equipments || undefined
+      data: isDataAvailableInApp
+        ? appState?.equipmentList?.equipments || undefined
         : undefined,
     }
   );
 
   useEffect(() => {
-    if (data && !isDataAvailableInStorage) {
-      storageDispatch({
-        type: StorageActionType.SET_EQUIPMENT_LIST,
+    if (data && !isDataAvailableInApp) {
+      appDispatch({
+        type: AppActionType.SET_EQUIPMENT_LIST,
         unitName,
         equipments: data,
       });

@@ -1,5 +1,6 @@
 import type { DefinitionMap } from '@cognite/simconfig-api-sdk/rtk';
 
+// TODO(SIM-209) Migrate to definitions endpoint
 export const FileExtensionToSimulator: Record<
   string,
   keyof DefinitionMap['type']['simulator']
@@ -7,6 +8,7 @@ export const FileExtensionToSimulator: Record<
   '.out': 'PROSPER',
 };
 
+// TODO(SIM-209) Use definitions endpoint
 export const Simulator: Record<
   keyof DefinitionMap['type']['simulator'],
   string
@@ -15,6 +17,7 @@ export const Simulator: Record<
   PROSPER: 'PROSPER',
 };
 
+// TODO(SIM-209) Use definitions endpoint
 export const UnitSystem = {
   OilField: 'Oil field units',
   // eslint-disable-next-line
@@ -29,6 +32,7 @@ export const UnitSystem = {
   LatSI: 'Latin SI units',
 };
 
+// TODO(SIM-209) Use definitions endpoint
 export const BoundaryCondition = {
   ResPress: 'Reservoir pressure',
   CGR: 'Condensate gas ratio',
@@ -41,7 +45,9 @@ export const BoundaryCondition = {
   ResThick: 'Reservoir thickness',
 };
 
+// TODO(SIM-209) Use definitions endpoint
 export const DEFAULT_MODEL_SOURCE: keyof DefinitionMap['type']['simulator'] =
   'PROSPER';
+// TODO(SIM-209) Use definitions endpoint
 export const DEFAULT_UNIT_SYSTEM: keyof DefinitionMap['type']['unitSystem'] =
   'OilField';

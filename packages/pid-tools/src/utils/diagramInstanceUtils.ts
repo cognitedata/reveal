@@ -2,13 +2,17 @@ import { PidDocument } from '../pid/PidDocument';
 import {
   DiagramConnection,
   DiagramInstance,
+  DiagramInstanceWithPaths,
   DiagramInstanceId,
   DiagramLineInstance,
   DiagramSymbolInstance,
+  DiagramEquipmentTagInstance,
 } from '../types';
 
+import { isFileConnection } from './type';
+
 export const getDiagramInstanceId = (
-  diagramInstance: DiagramInstance
+  diagramInstance: DiagramInstanceWithPaths
 ): DiagramInstanceId => {
   return getDiagramInstanceIdFromPathIds(diagramInstance.pathIds);
 };
@@ -20,9 +24,9 @@ export const getDiagramInstanceIdFromPathIds = (
 };
 
 export const getDiagramInstanceByPathId = (
-  diagramInstances: DiagramInstance[],
+  diagramInstances: DiagramInstanceWithPaths[],
   pathId: string
-): DiagramInstance | null => {
+): DiagramInstanceWithPaths | null => {
   const diagramInstance = diagramInstances.filter((diagramInstance) =>
     diagramInstance.pathIds.includes(pathId)
   );
@@ -34,7 +38,7 @@ export const getDiagramInstanceByPathId = (
 
 export const isDiagramInstanceInList = (
   diagramId: DiagramInstanceId,
-  diagramInstances: DiagramInstance[]
+  diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   return (
     diagramInstances.find(
@@ -44,9 +48,9 @@ export const isDiagramInstanceInList = (
 };
 
 export const getInstanceByDiagramInstanceId = (
-  diagramInstances: DiagramInstance[],
+  diagramInstances: DiagramInstanceWithPaths[],
   diagramInstanceId: DiagramInstanceId
-): DiagramInstance | undefined => {
+): DiagramInstanceWithPaths | undefined => {
   return diagramInstances.find(
     (diagramInstance) =>
       getDiagramInstanceId(diagramInstance) === diagramInstanceId
@@ -79,8 +83,8 @@ export const connectionExists = (
 };
 
 export const hasOverlappingPathIds = (
-  diagramInstance1: DiagramInstance,
-  diagramInstance2: DiagramInstance
+  diagramInstance1: DiagramInstanceWithPaths,
+  diagramInstance2: DiagramInstanceWithPaths
 ) => {
   return diagramInstance1.pathIds.some((e) =>
     diagramInstance2.pathIds.includes(e)
@@ -111,7 +115,7 @@ export const getNoneOverlappingSymbolInstances = (
   symbolInstances: DiagramSymbolInstance[],
   newSymbolInstances: DiagramSymbolInstance[]
 ): DiagramSymbolInstance[] => {
-  const objectsToRemove: DiagramInstance[] = [];
+  const objectsToRemove: DiagramInstanceWithPaths[] = [];
   for (let i = 0; i < newSymbolInstances.length; i++) {
     const potentialInstance = newSymbolInstances[i];
 
@@ -166,4 +170,104 @@ export const pruneSymbolOverlappingPathsFromLines = (
   }
 
   return { prunedLines, linesToDelete };
+};
+
+/* eslint-disable no-param-reassign */
+export function addOrRemoveLabelToInstance<
+  Type extends DiagramInstanceWithPaths
+>(labelId: string, labelText: string, instance: Type): void {
+  if (instance.labelIds.includes(labelId)) {
+    instance.labelIds = instance.labelIds.filter((li) => li !== labelId);
+  } else {
+    instance.labelIds = [...instance.labelIds, labelId];
+    if (isFileConnection(instance)) {
+      const labelTextWithoutWhiteSpace = labelText.replace(/\s/g, '');
+      const documentNumber = labelTextWithoutWhiteSpace.match(/MF_[0-9]{1,}/g);
+
+      if (documentNumber) {
+        instance.documentNumber = parseInt(documentNumber[0].substring(3), 10);
+      }
+
+      const toPositionRegex =
+        labelTextWithoutWhiteSpace.match(/^[A-Z][0-9]{0,}$/);
+      if (toPositionRegex) {
+        [instance.toPosition] = toPositionRegex;
+      }
+
+      const unit = labelText.match(/G[0-9]{4}/);
+      if (unit) {
+        [instance.unit] = unit;
+      }
+    }
+  }
+}
+/* eslint-enable no-param-reassign */
+
+/* eslint-disable no-param-reassign */
+export function addOrRemoveLabelToEquipmentTag(
+  label: SVGTSpanElement,
+  tag: DiagramEquipmentTagInstance
+): void {
+  if (tag.labelIds.includes(label.id)) {
+    tag.labelIds = tag.labelIds.filter((li) => li !== label.id);
+    if (label.innerHTML === tag.name) {
+      const { 0: firstDesc, ...rest } = tag.description;
+      tag.name = firstDesc;
+      tag.description = Object.values(rest);
+    } else {
+      tag.description = tag.description.filter((li) => li !== label.innerHTML);
+    }
+  } else {
+    tag.labelIds = [...tag.labelIds, label.id];
+    if (tag.name) {
+      tag.description = [...tag.description, label.innerHTML];
+    } else {
+      tag.name = label.innerHTML;
+    }
+  }
+}
+/* eslint-enable no-param-reassign */
+
+/* eslint-disable no-param-reassign */
+export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
+  lineNumber: string,
+  instance: Type,
+  instances: Type[],
+  setter: (arg: Type[]) => void
+) {
+  if (instance.lineNumbers.includes(lineNumber)) {
+    instance.lineNumbers = instance.lineNumbers.filter(
+      (ln) => ln !== lineNumber
+    );
+  } else {
+    instance.lineNumbers = [...instance.lineNumbers, lineNumber];
+  }
+  setter([...instances]);
+}
+/* eslint-enable no-param-reassign */
+
+export const createEquipmentTagInstance = (
+  node: SVGTSpanElement
+): DiagramEquipmentTagInstance => {
+  return {
+    name: node.innerHTML,
+    description: [],
+    labelIds: [node.id],
+    type: 'EquipmentTag',
+    lineNumbers: [],
+  };
+};
+
+export const getDiagramEquipmentTagInstanceByName = (
+  name: string,
+  equipmentTags: DiagramEquipmentTagInstance[]
+) => {
+  return equipmentTags.find((tag) => tag.name === name);
+};
+
+export const getDiagramEquipmentTagInstanceByLabelId = (
+  labelId: string,
+  equipmentTags: DiagramEquipmentTagInstance[]
+) => {
+  return equipmentTags.find((tag) => tag.labelIds.includes(labelId));
 };

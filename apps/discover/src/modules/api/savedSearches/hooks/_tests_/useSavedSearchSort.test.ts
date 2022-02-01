@@ -1,13 +1,13 @@
 import { renderHook } from '@testing-library/react-hooks';
 
-import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
+import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useSavedSearchQuery';
 
 import {
   useSavedSearchSort,
   useSavedSearchSortClear,
 } from '../useSavedSearchSort';
 
-jest.mock('modules/api/savedSearches/useQuery', () => ({
+jest.mock('modules/api/savedSearches/useSavedSearchQuery', () => ({
   useMutatePatchSavedSearch: jest.fn(),
 }));
 

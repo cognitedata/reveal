@@ -1,6 +1,8 @@
-import React, { useMemo, useCallback, useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import React, { useMemo, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 
+import flatten from 'lodash/flatten';
+import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 
 import { Sequence, CogniteEvent } from '@cognite/sdk';
@@ -14,9 +16,11 @@ import {
   useCreateMetricAndStartTimeLogger,
   TimeLogStages,
 } from 'hooks/useTimeLog';
+import { useFetchWellFormationTopsRowData } from 'modules/wellInspect/hooks/useFetchWellFormationTopsRowData';
+import { useFetchWellLogsRowData } from 'modules/wellInspect/hooks/useFetchWellLogsRowData';
+import { useWellFormationTopsQuery } from 'modules/wellInspect/hooks/useWellFormationTopsQuery';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
-import { wellSearchActions } from 'modules/wellSearch/actions';
+import { useWellLogsQuery } from 'modules/wellInspect/hooks/useWellLogsQuery';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
@@ -34,22 +38,21 @@ const ThreeDeeEmptyStateLoader: React.FC = () => {
 };
 
 type Props = ReturnType<typeof mapStateToProps>;
-const ThreeDeePreview: React.FC<Props> = ({
-  selectedWellboreIds,
-  wellboreData,
-}: Props) => {
+const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
+  const [isWellLogsRowDataFetching, setWellLogsRowDataFetching] =
+    useState<boolean>(false);
+  const [
+    isWellFormationTopsRowDataFetching,
+    setWellFormationTopsRowDataFetching,
+  ] = useState<boolean>(false);
+
   const renderTimer = useCreateMetricAndStartTimeLogger(
     TimeLogStages.Render,
     LOG_THREE_DEE_PREVIEW,
     LOG_WELLS_THREE_DEE
   );
-  const [loadingMap, setLoadingMap] = React.useState<{
-    [key: string]: boolean;
-  }>({});
 
-  const dispatch = useDispatch();
   const { data: config } = useWellConfig();
-  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const wells = useWellInspectSelectedWells();
 
   const { data: casingData, isLoading: casingLoading } =
@@ -63,6 +66,9 @@ const ThreeDeePreview: React.FC<Props> = ({
     isLoading: trajectoriesLoading,
   } = useTrajectoriesQuery();
 
+  const fetchWellLogsRowData = useFetchWellLogsRowData();
+  const fetchWellFormationTopsRowData = useFetchWellFormationTopsRowData();
+
   const casings: Sequence[] = [];
   const logs: any = {};
   const logsFrmTops: any = {};
@@ -75,7 +81,7 @@ const ThreeDeePreview: React.FC<Props> = ({
     [selectedWells]
   );
 
-  const wbIds = useMemo(
+  const wellboreIds = useMemo(
     () =>
       Object.keys(selectedWellboreIds)
         .map((id) => Number(id))
@@ -83,99 +89,60 @@ const ThreeDeePreview: React.FC<Props> = ({
     [selectedWellboreIds]
   );
 
-  const pristineIds = useMemo(() => {
-    const logsPristineIds: number[] = [];
-    const logsRowPristineIds: Sequence[] = [];
-    const logsFrmTopsRowPristineIds: Sequence[] = [];
+  const { data: wellLogs, isLoading: isWellLogsLoading } =
+    useWellLogsQuery(wellboreIds);
+  const { data: wellFormationTops, isLoading: isWellFormationTopsLoading } =
+    useWellFormationTopsQuery(wellboreIds);
 
-    wbIds.forEach((wbid) => {
-      // Get Wellbore ids to fetch logs
-      if (!wellboreData[wbid]?.logType) {
-        logsPristineIds.push(wbid);
-      }
-
-      // Get Logs ids to fetch logs row data
-      if (wellboreData[wbid] && wellboreData[wbid].logType) {
-        (wellboreData[wbid].logType || []).forEach((logData) => {
-          if (!logData.rows) {
-            logsRowPristineIds.push(logData.sequence);
-          }
-        });
-      }
-
-      // Get LogsFrmTops ids to fetch logsfrmTops row data
-      if (wellboreData[wbid] && wellboreData[wbid].logsFrmTops) {
-        (wellboreData[wbid].logsFrmTops || []).forEach((logData) => {
-          if (!logData.rows) {
-            logsFrmTopsRowPristineIds.push(logData.sequence);
-          }
-        });
-      }
-    });
-    return {
-      logs: logsPristineIds,
-      logsRows: logsRowPristineIds,
-      logsFrmTopsRows: logsFrmTopsRowPristineIds,
-    };
-  }, [wellboreData]);
-
-  const isLogsPristineIdsNotEmpty = pristineIds.logs.length > 0;
-  const isLogsRowsPristineIdsNotEmpty = pristineIds.logsRows.length > 0;
   const isEventsLoading =
     casingLoading || ndsLoading || nptLoading || trajectoriesLoading;
+  const isWellLogsDataLoading =
+    !wellLogs || isWellLogsLoading || isWellLogsRowDataFetching;
+  const isWellFormationTopsDataLoading =
+    !wellFormationTops ||
+    isWellFormationTopsLoading ||
+    isWellFormationTopsRowDataFetching;
+
+  const fetchRowDataForWellLogs = async () => {
+    if (isWellLogsDataLoading) return;
+    setWellLogsRowDataFetching(true);
+    const sequences = flatten(Object.values(wellLogs)).map(
+      (sequenceData) => sequenceData.sequence
+    );
+    await fetchWellLogsRowData(sequences);
+    setWellLogsRowDataFetching(false);
+  };
+
+  const fetchRowDataForFormationTops = async () => {
+    if (isWellFormationTopsDataLoading) return;
+    setWellFormationTopsRowDataFetching(true);
+    const sequences = flatten(Object.values(wellFormationTops)).map(
+      (sequenceData) => sequenceData.sequence
+    );
+    await fetchWellFormationTopsRowData(sequences);
+    setWellFormationTopsRowDataFetching(false);
+  };
 
   useEffect(() => {
-    // Fetch logs
-    if (isLogsPristineIdsNotEmpty && !loadingMap.Logs) {
-      dispatch(
-        wellSearchActions.getLogType(
-          pristineIds.logs,
-          wellboreAssetIdMap,
-          config?.logs?.queries,
-          config?.logs?.types
-        )
-      );
-      setLoading({ Logs: true });
-    }
-  }, [isLogsPristineIdsNotEmpty, loadingMap.Logs]);
+    fetchRowDataForWellLogs();
+  }, [wellLogs, isWellLogsLoading]);
 
   useEffect(() => {
-    // Fetch logs rows
-    if (isLogsRowsPristineIdsNotEmpty && !loadingMap.logsRows) {
-      dispatch(
-        wellSearchActions.getLogData(
-          pristineIds.logsRows,
-          pristineIds.logsFrmTopsRows
-        )
-      );
-      setLoading({ LogsRows: true });
-    }
-  }, [isLogsRowsPristineIdsNotEmpty, loadingMap.Logs]);
+    fetchRowDataForFormationTops();
+  }, [wellFormationTops, isWellFormationTopsLoading]);
 
   useEffect(() => renderTimer?.stop(), [renderTimer]);
 
-  const setLoading = useCallback(
-    (data) => setLoadingMap((state) => ({ ...state, ...data })),
-    []
-  );
-
-  if (!config) {
-    return <ThreeDeeEmptyStateLoader />;
-  }
-  // Show loader while fetching events
-  if (isEventsLoading) {
-    return <ThreeDeeEmptyStateLoader />;
-  }
-  // Show loader while fetching logs
-  if (isLogsPristineIdsNotEmpty) {
-    return <ThreeDeeEmptyStateLoader />;
-  }
-  // Show loader while fetching logs rows
-  if (isLogsRowsPristineIdsNotEmpty) {
+  if (
+    !config ||
+    isEventsLoading ||
+    isWellLogsDataLoading ||
+    isWellFormationTopsDataLoading
+  ) {
     return <ThreeDeeEmptyStateLoader />;
   }
 
-  wbIds.forEach((wbid) => {
+  wellboreIds.forEach((wbid) => {
     if (casingData) {
       casings.push(...orderedCasingsByBase(casingData[wbid]));
     }
@@ -184,21 +151,19 @@ const ThreeDeePreview: React.FC<Props> = ({
       ndsEvents.push(...ndsData[wbid]);
     }
 
-    logs[wbid] = (wellboreData[wbid].logType || []).map((logData) => ({
-      assetId: logData.sequence.assetId,
+    logs[wbid] = get(wellLogs, wbid, []).map((logData) => ({
+      assetId: logData.sequence.wellboreId,
       name: logData.sequence.name,
       items: logData.rows,
       state: 'LOADED',
     }));
 
-    logsFrmTops[wbid] = (wellboreData[wbid].logsFrmTops || []).map(
-      (logData) => ({
-        assetId: logData.sequence.assetId,
-        name: logData.sequence.name,
-        items: logData.rows,
-        state: 'LOADED',
-      })
-    );
+    logsFrmTops[wbid] = get(wellFormationTops, wbid, []).map((logData) => ({
+      assetId: logData.sequence.wellboreId,
+      name: logData.sequence.name,
+      items: logData.rows,
+      state: 'LOADED',
+    }));
   });
 
   return (
@@ -226,7 +191,6 @@ const ThreeDeePreview: React.FC<Props> = ({
  */
 const mapStateToProps = (state: StoreState) => ({
   selectedWellboreIds: state.wellInspect.selectedWellboreIds,
-  wellboreData: state.wellSearch.wellboreData,
 });
 
 export default connect(mapStateToProps)(ThreeDeePreview);

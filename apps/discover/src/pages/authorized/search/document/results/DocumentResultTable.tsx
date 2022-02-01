@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
 import compact from 'lodash/compact';
@@ -21,7 +21,7 @@ import {
   useSavedSearchSort,
   useSavedSearchSortClear,
 } from 'modules/api/savedSearches/hooks/useSavedSearchSort';
-import { useQuerySavedSearchCurrent } from 'modules/api/savedSearches/useQuery';
+import { useQuerySavedSearchCurrent } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';
@@ -160,6 +160,12 @@ export const DocumentResultTable: React.FC = () => {
     [data]
   );
 
+  const documentIdsRef = useRef(documentIds);
+
+  useEffect(() => {
+    documentIdsRef.current = documentIds;
+  }, [documentIds]);
+
   const columns = useDeepMemo(
     () =>
       sortBy(
@@ -222,12 +228,16 @@ export const DocumentResultTable: React.FC = () => {
   const handleRowsSelect = useDeepCallback(
     (selected: boolean) => {
       if (selected) {
-        dispatch(documentSearchActions.selectDocumentIds(documentIds));
+        dispatch(
+          documentSearchActions.selectDocumentIds(documentIdsRef.current)
+        );
       } else {
-        dispatch(documentSearchActions.unselectDocumentIds(documentIds));
+        dispatch(
+          documentSearchActions.unselectDocumentIds(documentIdsRef.current)
+        );
       }
     },
-    [documentIds]
+    [documentIdsRef.current]
   );
 
   const handleSort = useCallback((sortBy: SortBy[]) => {

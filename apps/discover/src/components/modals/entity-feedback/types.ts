@@ -6,7 +6,7 @@ export type Field =
 
 export type EntityFeedbackModalState = {
   isIncorrectDocType: boolean;
-  correctDocType: string;
+  correctDocType: { label: string; value: string };
   isSensitiveData: boolean;
   isIncorrectGeo: boolean;
   isOther: boolean;

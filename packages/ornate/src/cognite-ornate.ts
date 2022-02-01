@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { Shape, ShapeConfig } from 'konva/lib/Shape';
+import throttle from 'lodash/throttle';
 import { v4 as uuid } from 'uuid';
 import { Vector2d } from 'konva/lib/types';
 import { PDFDocument } from 'pdf-lib';
@@ -26,6 +27,8 @@ import { downloadURL, pdfToImage, ConnectedLine } from './utils';
 import getInputDeviceFromWheelEvent from './utils/getInputDeviceFromWheelEvent';
 import InputDevice from './utils/InputDevice';
 
+const RIGHT_MOUSE_BUTTON = 2;
+
 const defaultShapeSettings = {
   circle: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
   line: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
@@ -44,6 +47,7 @@ const SCALE_MIN = 0.05;
 type ZoomToGroupOptions = {
   duration?: number;
   scaleFactor?: number;
+  relativeTo?: Konva.Container;
 };
 
 export type CogniteOrnateOptions = {
@@ -53,6 +57,13 @@ export type CogniteOrnateOptions = {
 const getShapeByDrawing = (drawing: Drawing) => {
   if (drawing.type === 'path') {
     return new Konva.Path({
+      ...drawing.attrs,
+      id: drawing.id,
+    });
+  }
+
+  if (drawing.type === 'arrow') {
+    return new Konva.Arrow({
       ...drawing.attrs,
       id: drawing.id,
     });
@@ -95,7 +106,8 @@ const getShapeByDrawing = (drawing: Drawing) => {
   }
 
   if (drawing.type === 'comment') {
-    return CommentTool.create({ ...drawing.attrs, id: drawing.id });
+    // attrs contains the id for comments
+    return CommentTool.create({ ...drawing.attrs });
   }
 
   throw new Error(`Drawing referenced unsupported shape: ${drawing.type}`);
@@ -129,6 +141,7 @@ export class CogniteOrnate {
   shapeSettings: ShapeSettings = defaultShapeSettings;
   transformer: OrnateTransformer | undefined;
   tools: Record<string, Tool> = {};
+  resizeObserver?: ResizeObserver;
 
   constructor(options: CogniteOrnateOptions) {
     const host = document.querySelector(options.container) as HTMLDivElement;
@@ -164,15 +177,17 @@ export class CogniteOrnate {
     this.stage.on('mouseup', this.onStageMouseUp);
     this.stage.on('wheel', this.onStageMouseWheel);
     this.stage.on('mouseover', this.onStageMouseOver);
-    this.stage.on('mouseenter', () => {
-      this.stage.container().style.cursor = this.currentTool?.cursor;
-    });
+    this.stage.on('contextmenu', this.onStageContextMenu);
+    this.stage.on('mouseenter', this.onStageMouseEnter);
     this.currentTool.onInit();
 
     // Ensure responsiveness
     this.fitStageIntoParentContainer();
-    window.addEventListener('resize', this.fitStageIntoParentContainer);
-
+    const throttledResizeHandler = throttle(() => {
+      this.fitStageIntoParentContainer();
+    }, 25);
+    this.resizeObserver = new ResizeObserver(throttledResizeHandler);
+    this.resizeObserver.observe(this.host);
     this.initBackgroundLayer();
   }
 
@@ -291,10 +306,12 @@ export class CogniteOrnate {
       groupId = uuid(),
       shouldCenterOnDoubleClick = true,
     } = options || {};
-    const base64 = await pdfToImage(pdfFile, pageNumber);
+    const { data: base64, pdf } = await pdfToImage(pdfFile, pageNumber);
     return new Promise<OrnatePDFDocument>((res, rej) => {
       const group = new Konva.Group({
         id: groupId,
+        PDFCurrentPage: pageNumber,
+        PDFMaxPages: pdf.numPages,
       });
       this.baseLayer.add(group);
       const image = new Image(options?.width, options?.height);
@@ -388,6 +405,11 @@ export class CogniteOrnate {
   };
 
   onStageMouseDown = (e: KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button === RIGHT_MOUSE_BUTTON) {
+      this.stage.startDrag();
+      return;
+    }
+
     if (this.currentTool?.onMouseDown) {
       this.currentTool.onMouseDown(e);
     }
@@ -400,6 +422,11 @@ export class CogniteOrnate {
   };
 
   onStageMouseUp = (e: KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button === RIGHT_MOUSE_BUTTON) {
+      this.stage.stopDrag();
+      return;
+    }
+
     if (this.currentTool?.onMouseUp) {
       this.currentTool.onMouseUp(e);
     }
@@ -410,10 +437,6 @@ export class CogniteOrnate {
     if (this.currentTool.onMouseOver) {
       this.currentTool.onMouseOver(e);
     }
-  };
-
-  onStageMouseEnter = () => {
-    this.stage.container().style.cursor = this.currentTool?.cursor;
   };
 
   onStageMouseWheel = (
@@ -436,6 +459,18 @@ export class CogniteOrnate {
 
     this.stage.x(x);
     this.stage.y(y);
+  };
+
+  onStageContextMenu = (e: KonvaEventObject<MouseEvent>) => {
+    e.evt.preventDefault();
+  };
+
+  onStageMouseEnter = () => {
+    this.stage.container().style.cursor = this.currentTool?.cursor;
+
+    if (this.stage.isDragging()) {
+      this.stage.stopDrag();
+    }
   };
 
   onZoom = (scale: number, pointer: boolean) => {
@@ -564,19 +599,29 @@ export class CogniteOrnate {
     }
   }
 
+  /**
+   * Zoom to the given location
+   * @param location specifies the center of the location to zoom to
+   * @param scale
+   * @param duration
+   */
   zoomToLocation(
     location: { x: number; y: number },
     scale: number,
     duration = 0.35
   ) {
+    const deltaX = this.stage.width() / 2;
+    const deltaY = this.stage.height() / 2;
+    const x = scale * location.x + deltaX;
+    const y = scale * location.y + deltaY;
     const tween = new Konva.Tween({
       duration,
       easing: Konva.Easings.EaseInOut,
       node: this.stage,
       scaleX: scale,
       scaleY: scale,
-      x: location.x,
-      y: location.y,
+      x,
+      y,
     });
     tween.onFinish = () => tween.destroy();
 
@@ -586,27 +631,31 @@ export class CogniteOrnate {
 
   zoomToGroup(group: Konva.Group, zoomToGroupOptions?: ZoomToGroupOptions) {
     const ZOOM_TO_GROUP_OPTIONS_DEFAULTS = { duration: 0.35, scaleFactor: 1 };
-    const { duration, scaleFactor } = {
+    const { duration, scaleFactor, relativeTo } = {
       ...ZOOM_TO_GROUP_OPTIONS_DEFAULTS,
       ...zoomToGroupOptions,
     };
+    const {
+      width: groupWidth,
+      height: groupHeight,
+      x,
+      y,
+    } = group.getClientRect({
+      skipTransform: true,
+      skipStroke: true,
+      relativeTo,
+    });
     const rawScale =
       Math.min(
-        this.stage.width() / group.width(),
-        this.stage.height() / group.height()
+        this.stage.width() / groupWidth,
+        this.stage.height() / groupHeight
       ) * scaleFactor;
     const scale = Math.min(Math.max(rawScale, SCALE_MIN), SCALE_MAX);
-    // Scale the location, and center it to the screen
     const location = {
-      x:
-        -group.x() * scale +
-        this.stage.width() / 2 -
-        (group.width() * scale) / 2,
-      y:
-        -group.y() * scale +
-        this.stage.height() / 2 -
-        (group.height() * scale) / 2,
+      x: -x - groupWidth / 2,
+      y: -y - groupHeight / 2,
     };
+
     this.zoomToLocation(location, scale, duration);
   }
 
@@ -621,11 +670,10 @@ export class CogniteOrnate {
 
     const scale = Math.min(Math.max(rawScale, SCALE_MIN), SCALE_MAX);
 
-    // Scale the location, and center it to the screen
+    // Scale the location
     const location = {
-      x: -rect.x * scale + this.stage.width() / 2 - (node.width() * scale) / 2,
-      y:
-        -rect.y * scale + this.stage.height() / 2 - (node.height() * scale) / 2,
+      x: -rect.x - node.width() / 2,
+      y: -rect.y - node.height() / 2,
     };
     this.zoomToLocation(location, scale, duration);
   }
@@ -698,6 +746,7 @@ export class CogniteOrnate {
     this.isDrawing = false;
     this.documents = [];
     this.connectedLineGroup = [];
+    this.resizeObserver?.unobserve(this.host);
     this.init();
   };
 

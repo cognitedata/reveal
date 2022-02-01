@@ -7,6 +7,8 @@ export const Container = styled.div`
   right: 0;
   top: 0;
   bottom: 0;
+  overflow-y: hidden;
+  width: 60px;
 `;
 
 export const ToggleButton = styled(Button)`

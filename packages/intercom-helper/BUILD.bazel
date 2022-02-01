@@ -1,5 +1,5 @@
-load("@npm//rollup:index.bzl", "rollup")
 load("@npm//jest:index.bzl", "jest")
+load("@npm//@bazel/typescript:index.bzl", "ts_config", "ts_project")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("//rules/test:jest.bzl", "jest_test")
@@ -39,10 +39,7 @@ DEPENDENCIES = ["@npm//axios"]
 TYPE_DEPENDENCIES = ["@npm//@types/axios"]
 
 # Dev dependencies from package.json
-DEV_DEPENDENCIES = [
-    "@npm//rollup-plugin-json",
-    "@npm//rollup-plugin-typescript2",
-]
+DEV_DEPENDENCIES = []
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
@@ -135,7 +132,6 @@ write_file(
 copy_to_bin(
     name = "copy_static_files",
     srcs = SOURCES + [
-        ":rollup.config.js",
         ":tsconfig.json",
     ],
 )
@@ -147,29 +143,28 @@ append_deps(
     package = "package.json",
 )
 
-rollup(
-    name = "dist",
-    args = [
-        "--banner=//intercom-helper",
-        "--node_options=--require=./$(execpath //scripts:log.js)",
-        "--node_options=--require=./$(execpath chdir.js)",
-        "-c",
-        "rollup.config.js",
+ts_config(
+    name = "ts_config_build",
+    src = ":tsconfig.build.json",
+    deps = [
+        ":tsconfig.json",
+        "//:tsconfig.json",
+        "//packages:tsconfig.json",
     ],
-    data = DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "//scripts:log.js",
-        ":chdir.js",
-        ":copy_static_files",
-        ":package-json",
-        "//packages:tsconfig",
-        "//:tsconfig",
+)
+
+ts_project(
+    name = "compile_ts",
+    srcs = SOURCES,
+    declaration = True,
+    out_dir = "dist",
+    resolve_json_module = True,
+    root_dir = "src",
+    tsconfig = ":ts_config_build",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "@npm//@types/jest",
         "@npm//@types/node",
-        "@npm//tslib",
-        "@npm//rollup-plugin-json",
-        "@npm//rollup-plugin-typescript2",
     ],
-    output_dir = True,
 )
 
 _mappings = module_mappings(
@@ -182,7 +177,7 @@ js_library(
     package_name = "@cognite/intercom-helper",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
-    deps = DEPENDENCIES + [":dist"],
+    deps = DEPENDENCIES + [":compile_ts"],
 )
 
 pkg_npm(
@@ -190,7 +185,7 @@ pkg_npm(
     package_name = "@cognite/intercom-helper",
     visibility = ["//visibility:public"],
     deps = [
-        ":dist",
+        ":compile_ts",
         "package-json",
     ] + _mappings,
 )

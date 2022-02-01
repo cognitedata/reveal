@@ -6,6 +6,8 @@ import { CogniteAuth, getFlow } from '@cognite/auth-utils';
 import { StyledProjectFormContainer } from './elements';
 import { fetchProjects } from './fetchProjects';
 
+export type ProjectResult = { projectUrlName: string; groups: number[] };
+
 interface Props {
   enabled?: boolean;
   authClient?: CogniteAuth;
@@ -25,7 +27,7 @@ const ProjectSelector: React.FC<Props> = ({
     isFetched,
     isError,
     refetch,
-  } = useQuery<{ projectUrlName: string }[] | undefined>(
+  } = useQuery<ProjectResult[] | undefined>(
     ['projects'],
     async () => fetchProjects({ enabled, authClient }),
     {
@@ -33,16 +35,18 @@ const ProjectSelector: React.FC<Props> = ({
     }
   );
 
-  const projects = data.map((d) => ({
-    urlName: d.projectUrlName,
-    label: d.projectUrlName,
+  const projects = data.map((project) => ({
+    label: project.projectUrlName,
+    enabled: project.groups.length > 0,
   }));
 
   // if there is only one
   // then we auto select that for the user
   React.useEffect(() => {
     if (projects.length === 1) {
-      setSelectedProject(projects[0].urlName);
+      if (projects[0].enabled) {
+        setSelectedProject(projects[0].label);
+      }
     }
   }, [projects]);
 
@@ -54,17 +58,23 @@ const ProjectSelector: React.FC<Props> = ({
 
   const ProjectsContent = (
     <Menu>
-      {projects.map((dir) => (
-        <Menu.Item
-          onClick={() => {
-            setSelectedProject(dir.urlName);
-            setShowMenu(false);
-          }}
-          key={dir.urlName}
-        >
-          {dir.urlName}
-        </Menu.Item>
-      ))}
+      {projects.map((project) => {
+        if (!project.enabled) {
+          return null;
+        }
+
+        return (
+          <Menu.Item
+            onClick={() => {
+              setSelectedProject(project.label);
+              setShowMenu(false);
+            }}
+            key={project.label}
+          >
+            {project.label}
+          </Menu.Item>
+        );
+      })}
     </Menu>
   );
 

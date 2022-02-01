@@ -1,6 +1,6 @@
-import { SVG_ID } from '../constants';
 import { BoundingBox, DiagramLabelOutputFormat } from '../types';
-import { translatePointWithDOM } from '../matcher/svgPathParser';
+import { translatePointWithDom } from '../matcher/svgPathParser';
+import { Point } from '../geometry';
 
 export class PidTspan {
   id: string;
@@ -13,16 +13,15 @@ export class PidTspan {
     this.text = text;
   }
 
-  static fromSVGTSpan(tSpan: SVGTSpanElement) {
+  static fromSVGTSpan(tSpan: SVGTSpanElement, svg: SVGSVGElement) {
     const bBox = (tSpan.parentElement as unknown as SVGTextElement).getBBox();
-    const svg = document.getElementById(SVG_ID) as unknown as SVGSVGElement;
 
-    const bBoxXYMin = translatePointWithDOM(bBox.x, bBox.y, {
+    const bBoxTopLeft = translatePointWithDom(bBox.x, bBox.y, {
       svg,
       currentElem: tSpan,
     });
 
-    const bBoxXYMax = translatePointWithDOM(
+    const bBoxBottomRight = translatePointWithDom(
       bBox.x + bBox.width,
       bBox.y + bBox.height,
       {
@@ -31,15 +30,22 @@ export class PidTspan {
       }
     );
 
-    const width = bBoxXYMax.x - bBoxXYMin.x;
-    const height = bBoxXYMax.y - bBoxXYMin.y;
+    const x = Math.min(bBoxTopLeft.x, bBoxBottomRight.x);
+    const y = Math.min(bBoxTopLeft.y, bBoxBottomRight.y);
+    const width = Math.abs(bBoxTopLeft.x - bBoxBottomRight.x);
+    const height = Math.abs(bBoxTopLeft.y - bBoxBottomRight.y);
+
     const boundingBox = {
-      x: bBoxXYMin.x,
-      y: bBoxXYMin.y,
+      x,
+      y,
       width,
       height,
     };
     return new PidTspan(tSpan.id, tSpan.innerHTML, boundingBox);
+  }
+
+  getMidPoint(): Point {
+    return Point.midPointFromBoundingBox(this.boundingBox);
   }
 
   toDiagramLabelOutputFormat(): DiagramLabelOutputFormat {

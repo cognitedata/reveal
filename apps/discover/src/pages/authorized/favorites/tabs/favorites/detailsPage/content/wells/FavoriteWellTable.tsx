@@ -15,7 +15,7 @@ import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
-import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
+import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';
 import { Well, WellboreId, WellId } from 'modules/wellSearch/types';
 import { wellColumns, WellResultTableOptions } from 'pages/authorized/constant';
 import {
@@ -34,7 +34,6 @@ export interface Props {
   wells: FavoriteContentWells | undefined;
   favoriteId: string;
 }
-
 export const FavoriteWellsTable: React.FC<Props> = ({
   wells,
   removeWell,
@@ -42,7 +41,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation('Favorites');
   const [wellIds, setWellIds] = useState<WellId[]>([]);
-  const { data, isLoading } = useFavoriteWellResultQuery(wellIds);
+  const { data, isLoading } = useWellsCacheQuery(wellIds);
   const navigateToWellInspect = useNavigateToWellInspect();
 
   const [tableOptions] = useState<Options>(WellResultTableOptions);
@@ -50,16 +49,11 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const [selectedWellIds, setSelectedWellIds] = useState<SelectedMap>({});
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
   const [hoveredWell, setHoveredWell] = useState<Well>();
-  const [wellsData, setWellsData] = useState<Well[]>(data || []);
 
   const [selectedWellboreIdsWithWellId, setSelectedWellboreIdsWithWellId] =
     useState<FavoriteContentWells>({});
 
   useDeepEffect(() => setWellIds(wells ? Object.keys(wells) : []), [wells]);
-
-  useDeepEffect(() => {
-    setWellsData(data || []);
-  }, [data]);
 
   const columns = useDeepMemo(
     () => Object.values(wellColumns || []),
@@ -77,13 +71,14 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     []
   );
 
+  // TODO(PP-2504): The whole selection and complicated logic needs to be refactored and unit-tested
   const handleRowSelect = useCallback((row: RowProps<Well>) => {
     setExpandedIds((state) => ({
       ...state,
       [row.original.id]: true,
     }));
     setSelectedWellIds((state) => {
-      setWellbores(row, state[row.original.id]);
+      setWellbores(row.original, state[row.original.id]);
       return {
         ...state,
         [row.original.id]: !state[row.original.id],
@@ -91,14 +86,14 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     });
   }, []);
 
-  const setWellbores = (row: RowProps<Well>, isContain: boolean): void => {
-    const wellbores = getContainWellbores(row.original);
+  const setWellbores = (well: Well, isContain: boolean): void => {
+    const wellbores = getContainWellbores(well);
     setSelectedWellboreIdsWithWellId((prevState) =>
       isContain
-        ? { ...prevState, [row.original.id]: [] }
+        ? { ...prevState, [well.id]: [] }
         : {
             ...prevState,
-            [row.original.id]: wellbores
+            [well.id]: wellbores
               ? wellbores.flatMap((wellbore) => [wellbore])
               : [],
           }
@@ -114,7 +109,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
 
   const handleRowsSelect = useCallback(
     (value: boolean) => {
-      const selectedWellIdsList: SelectedMap = wellsData.reduce(
+      const selectedWellIdsList: SelectedMap = (data || []).reduce(
         (result, item) => {
           const selectedWellMap: SelectedMap = { [item.id]: value };
           return { ...result, ...selectedWellMap };
@@ -123,9 +118,14 @@ export const FavoriteWellsTable: React.FC<Props> = ({
       );
 
       setSelectedWellIds(selectedWellIdsList);
-      setSelectedWellboreIdsWithWellId({});
+      Object.keys(selectedWellIdsList).forEach((wellId) => {
+        const well = data?.find((well) => well.id === wellId);
+        if (well) {
+          setWellbores(well, !value);
+        }
+      });
     },
-    [wellsData]
+    [data]
   );
 
   const setWellboreIds = (wellId: WellId, wellboreId: WellboreId) => {
@@ -198,14 +198,6 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     });
   };
 
-  const getEmptyStateTitle = () => {
-    if (isLoading) return t(LOADING_TEXT);
-    if (wellIdsNotEmpty) return t(LOADING_TEXT);
-    return t(FAVORITE_SET_NO_WELLS);
-  };
-
-  const wellIdsNotEmpty = wellIds && wellIds?.length > 0;
-
   const renderRowHoverComponent: React.FC<{
     row: RowProps<Well>;
   }> = ({ row }) => {
@@ -240,16 +232,19 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     );
   };
 
-  const isWellsLoading = isLoading || !wellsData.length;
-
-  if (isWellsLoading) {
-    return <EmptyState emptyTitle={getEmptyStateTitle()} />;
+  if (isLoading || !data) {
+    return <EmptyState emptyTitle={t(LOADING_TEXT)} />;
   }
+
+  if (data.length === 0) {
+    return <EmptyState emptyTitle={t(FAVORITE_SET_NO_WELLS)} />;
+  }
+
   return (
     <FavoriteWellWrapper>
       <Table<Well>
         id="favorite-wells-table"
-        data={wellsData}
+        data={data}
         columns={columns}
         renderRowSubComponent={renderRowSubComponent}
         handleRowClick={handleRowClick}

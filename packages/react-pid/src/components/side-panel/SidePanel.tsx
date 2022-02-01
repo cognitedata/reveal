@@ -1,13 +1,18 @@
 import styled from 'styled-components';
-import { Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
+import { Button, ToolBarButton } from '@cognite/cogs.js';
 import {
   DiagramConnection,
+  DiagramEquipmentTagInstance,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  DocumentMetadata,
+  DocumentType,
+  GraphDocument,
+  PidDocumentWithDom,
 } from '@cognite/pid-tools';
 
-import { DocumentType, ToolType } from '../../types';
+import { ToolType } from '../../types';
 import { SaveSymbolData } from '../../ReactPid';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
@@ -15,50 +20,45 @@ import { FileController } from './FileController';
 import { AddSymbolController } from './AddSymbolController';
 import { DocumentTypeSelector } from './DocumentTypeSelector';
 import { AddLineNumberController } from './AddLineNumberController';
+import { DocumentInfo } from './DocumentInfo';
 
 const SidePanelWrapper = styled.div`
   display: grid;
-  grid-template-rows: max-content auto max-content;
+  grid-template-rows: max-content max-content auto max-content;
   height: 100%;
   position: relative;
 `;
 
-const ToolBarWrapper = styled.div`
-  padding: 40px;
-  .active {
-    background-color: var(--cogs-btn-color-primary);
-    color: white;
-    &:hover {
-      background-color: var(--cogs-btn-color-primary);
-      color: white;
-    }
-  }
-`;
-
 interface SidePanelProps {
+  getPidDocument: () => PidDocumentWithDom | undefined;
   active: ToolType;
   symbols: DiagramSymbol[];
   lines: DiagramLineInstance[];
   symbolInstances: DiagramSymbolInstance[];
   selection: SVGElement[];
   setActive: (arg0: ToolType) => void;
-  loadSymbolsAsJson: (args0: string) => void;
+  loadSymbolsAsJson: (json: GraphDocument) => void;
   saveSymbol: (options: SaveSymbolData, selection: SVGElement[]) => void;
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
   connections: DiagramConnection[];
   fileUrl?: string;
-  findLinesAndConnections: () => void;
+  autoAnalysis: () => void;
   saveGraphAsJson: () => void;
-  documentType: DocumentType;
+  documentMetadata: DocumentMetadata;
   setDocumentType: (type: DocumentType) => void;
   lineNumbers: string[];
   setLineNumbers: (arg: string[]) => void;
   activeLineNumber: string | null;
   setActiveLineNumber: (arg: string | null) => void;
+  equipmentTags: DiagramEquipmentTagInstance[];
+  setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
+  activeTagName: string | undefined;
+  setActiveTagName: (arg: string | undefined) => void;
 }
 
 export const SidePanel = ({
+  getPidDocument,
   active,
   symbols,
   lines,
@@ -71,16 +71,28 @@ export const SidePanel = ({
   deleteConnection,
   connections,
   fileUrl,
-  findLinesAndConnections,
+  autoAnalysis,
   saveGraphAsJson,
-  documentType,
+  documentMetadata,
   setDocumentType,
   lineNumbers,
   setLineNumbers,
   activeLineNumber,
   setActiveLineNumber,
+  equipmentTags,
+  setEquipmentTags,
+  activeTagName,
+  setActiveTagName,
 }: SidePanelProps) => {
-  const ActionWithCustomStyling: ToolBarButton[][] = [
+  const FileControllerWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & > span {
+      margin: 0 auto;
+    }
+  `;
+  const toolBarButtonGroups: ToolBarButton[][] = [
     [
       {
         icon: 'Add',
@@ -113,22 +125,33 @@ export const SidePanel = ({
         description: 'Explore the wast graph universe',
       },
       {
-        icon: 'String',
+        icon: 'Number',
         onClick: () => setActive('setLineNumber'),
         className: `${active === 'setLineNumber' && 'active'}`,
         description: 'Set line number',
       },
+      {
+        icon: 'String',
+        onClick: () => setActive('addEquipmentTag'),
+        className: `${active === 'addEquipmentTag' && 'active'}`,
+        description: 'Add equipment tag',
+      },
     ],
   ];
 
-  const FileControllerWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    & > span {
-      margin: 0 auto;
-    }
-  `;
+  if (documentMetadata.type === DocumentType.pid) {
+    toolBarButtonGroups[0].push({
+      icon: 'Slice',
+      onClick: () => setActive('splitLine'),
+      className: `${active === 'splitLine' && 'active'}`,
+      description: 'Split line',
+    });
+  }
+
+  const setActiveTagWrapper = (arg: string | undefined) => {
+    setActive('addEquipmentTag');
+    setActiveTagName(arg);
+  };
 
   return (
     <SidePanelWrapper>
@@ -140,11 +163,10 @@ export const SidePanel = ({
           lineInstances={lines}
           loadSymbolsAsJson={loadSymbolsAsJson}
           saveGraphAsJson={saveGraphAsJson}
+          getPidDocument={getPidDocument}
         />
-        {documentType !== DocumentType.unknown && (
-          <span>Document type: {documentType}</span>
-        )}
       </FileControllerWrapper>
+      <DocumentInfo documentMetadata={documentMetadata} />
       <CollapsableInstanceList
         symbols={symbols}
         symbolInstances={symbolInstances}
@@ -152,8 +174,12 @@ export const SidePanel = ({
         deleteSymbol={deleteSymbol}
         deleteConnection={deleteConnection}
         connections={connections}
+        equipmentTags={equipmentTags}
+        setEquipmentTags={setEquipmentTags}
+        activeTagName={activeTagName}
+        setActiveTagName={setActiveTagWrapper}
       />
-      <Button onClick={findLinesAndConnections}> Auto Analysis</Button>
+      <Button onClick={autoAnalysis}> Auto Analysis</Button>
 
       <div>
         {active === 'addSymbol' && (
@@ -167,13 +193,6 @@ export const SidePanel = ({
             setActiveLineNumber={setActiveLineNumber}
           />
         )}
-
-        <ToolBarWrapper>
-          <ToolBar
-            direction="horizontal"
-            buttonGroups={ActionWithCustomStyling}
-          />
-        </ToolBarWrapper>
       </div>
       {active === 'selectDocumentType' && fileUrl !== '' && (
         <DocumentTypeSelector setDocumentType={setDocumentType} />

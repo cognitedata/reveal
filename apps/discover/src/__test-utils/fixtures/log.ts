@@ -1,5 +1,6 @@
 import { CreatedAndLastUpdatedTime, Sequence } from '@cognite/sdk';
 
+import { SequenceData, SequenceRow } from 'modules/wellSearch/types';
 import { SequenceLogType } from 'pages/authorized/search/well/inspect/modules/logType/interfaces';
 import { LogData } from 'pages/authorized/search/well/inspect/modules/logType/LogViewer/Log/interfaces';
 
@@ -72,5 +73,40 @@ export const MockSequenceLogTypeData: SequenceLogType[] = [
       logType: 'ppfg',
       assetId: 11111,
     },
+  },
+];
+
+export const sequenceData: SequenceData[] = [
+  {
+    sequence: {
+      id: 1,
+      metadata: {},
+      ...createdAndLastUpdatedTime,
+      columns: [
+        {
+          name: 'FP_COMPOSITE_LOW',
+          valueType: 'STRING',
+          id: 1,
+          ...createdAndLastUpdatedTime,
+        },
+        {
+          name: 'FP_COMPOSITE_ML',
+          valueType: 'STRING',
+          id: 2,
+          ...createdAndLastUpdatedTime,
+        },
+      ],
+    },
+  },
+];
+
+export const frmLogsData: SequenceData[] = [
+  {
+    sequence: {
+      id: 2,
+      columns: [],
+      ...createdAndLastUpdatedTime,
+    },
+    rows: [new SequenceRow(0, [1, 2, 3, 4], [])],
   },
 ];

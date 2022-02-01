@@ -1,37 +1,47 @@
-import type { ChangeEvent } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Button, Input } from '@cognite/cogs.js';
-import type { GetModelFileApiResponse } from '@cognite/simconfig-api-sdk/rtk';
+import { Button, Input, Skeleton } from '@cognite/cogs.js';
+import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
 
 import type { AppLocationGenerics } from 'routes';
 
 export function ModelLibrary() {
   const project = useSelector(selectProject);
   const {
-    params: {
-      modelName,
-      simulator = 'UNKNOWN',
-      selectedTab = 'model-versions',
-    },
-    data: { modelFiles },
+    params: { modelName, simulator, selectedTab = 'model-versions' },
   } = useMatch<AppLocationGenerics>();
 
-  const [modelFilesList, setModelFileslist] = useState<
-    GetModelFileApiResponse[]
-  >(modelFiles?.modelFileList ?? []);
+  const { data: modelFiles, isFetching: isFetchingModelFiles } =
+    useGetModelFileListQuery({ project });
+  const [modelNameFilter, setModelNameFilter] = useState('');
   const navigate = useNavigate();
 
-  if (!modelName && modelFilesList.length) {
-    const firstFile = modelFilesList[0];
+  const modelFileList = useMemo(
+    () =>
+      (modelFiles?.modelFileList ?? []).filter((modelFile) => {
+        if (modelNameFilter) {
+          return modelFile.name.toLowerCase().includes(modelNameFilter);
+        }
+        return true;
+      }),
+    [modelFiles?.modelFileList, modelNameFilter]
+  );
+
+  if (isFetchingModelFiles) {
+    return <Skeleton.List lines={5} />;
+  }
+
+  if (!modelName && modelFileList.length) {
+    const firstFile = modelFileList[0];
     navigate({
       to: `/model-library/models/${encodeURIComponent(
         firstFile.source
@@ -40,58 +50,45 @@ export function ModelLibrary() {
     });
   }
 
-  const handleOnModelNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const searchText = event.target.value;
-    const modelFileList = modelFiles?.modelFileList ?? [];
-
-    if (!searchText) {
-      // Load complete list if the user has cleared the search box
-      setModelFileslist(modelFileList);
-      return;
-    }
-
-    setModelFileslist(
-      modelFileList.filter((model) =>
-        model.name.toLowerCase().includes(searchText.toLocaleLowerCase())
-      )
-    );
-  };
+  if (!simulator) {
+    return null;
+  }
 
   return (
     <ModelLibraryContainer>
       <ModelLibrarySidebar>
         <div className="header">
-          <Formik
-            initialValues={{}}
-            onSubmit={() => {
-              // eslint-disable-next-line no-console
-              console.log('Submit search');
-            }}
-          >
-            <Form>
-              <Field
-                as={Input}
-                icon="Search"
-                maxLength={64}
-                name="modelName"
-                placeholder="Search models"
-                size="small"
-                title=""
-                fullWidth
-                onChange={handleOnModelNameChange}
-              />
-            </Form>
-          </Formik>
-        </div>
-        <div className="model-list">
+          <div className="form">
+            <Input
+              icon="Search"
+              maxLength={64}
+              name="modelName"
+              placeholder="Search models"
+              size="small"
+              title=""
+              fullWidth
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setModelNameFilter(event.target.value.toLocaleLowerCase());
+              }}
+            />
+          </div>
           <div className="new-model">
             <Link to="/model-library/new-model">
-              <Button icon="Add" type="primary" block>
+              <Button
+                icon="Add"
+                type="primary"
+                block
+                onClick={() => {
+                  trackUsage(TRACKING_EVENTS.NEW_MODEL, { simulator });
+                }}
+              >
                 New model
               </Button>
             </Link>
           </div>
-          <ModelList modelFiles={modelFilesList} />
+        </div>
+        <div className="model-list">
+          <ModelList modelFiles={modelFileList} />
         </div>
       </ModelLibrarySidebar>
       <ModelLibraryContent>
@@ -122,7 +119,7 @@ const ModelLibrarySidebar = styled.aside`
     background: var(--cogs-greyscale-grey1);
     padding: 0 24px;
     box-shadow: 0 0 2px var(--cogs-greyscale-grey5);
-    form {
+    .form {
       font-size: var(--cogs-detail-font-size);
       .cogs-icon {
         width: 12px !important;

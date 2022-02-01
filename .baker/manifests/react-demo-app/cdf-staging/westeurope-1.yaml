@@ -48,11 +48,11 @@ spec:
       - env:
         - name: URL_PREFIX
           value: fas-demo.app.staging.westeurope-1
-        image: eu.gcr.io/cognitedata/apps/react-demo-app
+        image: eu.gcr.io/cognitedata/apps/react-demo-app-staging
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
-            path: /
+            path: /fas-demo/configMap.json
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 5
@@ -64,7 +64,7 @@ spec:
         readinessProbe:
           failureThreshold: 10
           httpGet:
-            path: /
+            path: /fas-demo/configMap.json
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5

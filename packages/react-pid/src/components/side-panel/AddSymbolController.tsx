@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { Input, Button, Select, OptionType } from '@cognite/cogs.js';
-import { symbolTypes } from '@cognite/pid-tools';
+import { Button, Select, OptionType } from '@cognite/cogs.js';
+import { symbolTypes, SymbolType } from '@cognite/pid-tools';
 
 import { SaveSymbolData } from '../../ReactPid';
 
-const symbolTypeOptions: OptionType<string>[] = symbolTypes.map(
+import { StyledInput } from './elements';
+
+const symbolTypeOptions: OptionType<SymbolType>[] = symbolTypes.map(
   (symbolType) => ({
     label: symbolType,
+    value: symbolType,
   })
 );
 
@@ -22,12 +25,12 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   const [description, setDescription] = React.useState<string>('');
 
   const [selectedSymbolTypeOption, setSelectedSymbolTypeOption] =
-    React.useState<OptionType<string>>(symbolTypeOptions[0]);
+    React.useState<OptionType<SymbolType>>(symbolTypeOptions[0]);
 
   const saveSymbolWrapper = () => {
     setDescription('');
     saveSymbol(
-      { symbolType: selectedSymbolTypeOption.label, description },
+      { symbolType: selectedSymbolTypeOption.value!, description },
       selection
     );
   };
@@ -44,8 +47,11 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
         value={selectedSymbolTypeOption}
         onChange={setSelectedSymbolTypeOption}
         options={symbolTypeOptions}
+        menuPlacement="top"
+        maxMenuHeight={500}
       />
-      <Input
+      <StyledInput
+        width={100}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Description"

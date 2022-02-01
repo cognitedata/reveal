@@ -1,4 +1,8 @@
-import { DocumentType } from 'modules/documentSearch/types';
+import {
+  GeneralFeedbackResponse,
+  ObjectFeedbackResponse,
+} from '@cognite/discover-api-types';
+
 import { FIELDS } from 'modules/feedback/constants';
 import { BasicUserInfo } from 'modules/user/types';
 
@@ -51,7 +55,7 @@ export interface FeedbackState {
   filterAssigned: SimpleFilter[];
   filterFlags: SimpleFilter[];
 
-  generalFeedback: GeneralFeedbackItem[];
+  generalFeedback: GeneralFeedbackResponse[];
   generalFeedbackSearch: string;
   generalFeedbackSortField: typeof FIELDS.status.field;
   generalFeedbackSortAscending: boolean;
@@ -62,7 +66,7 @@ export interface FeedbackState {
   pagesGeneralFeedback: number;
   generalFeedbackSearchquery: '' | null;
   // Object feedback
-  objectFeedback: DocumentFeedbackItem[];
+  objectFeedback: ObjectFeedbackResponse[];
   objectFeedbackSearch: string;
   objectFeedbackSortField: typeof FIELDS.status.field;
   objectFeedbackSortAscending: boolean;
@@ -98,29 +102,6 @@ export interface FeedbackItem {
   createdTime: string;
 }
 
-// internal discover type, not the external API type
-export interface GeneralFeedbackItem extends FeedbackItem {
-  screenshotB64: string;
-  state: {
-    search?: any;
-  };
-}
-
-// internal discover type, not the external API type
-export interface DocumentFeedbackItem extends FeedbackItem {
-  assignee?: BasicUserInfo;
-  documentId: DocumentType['id'];
-  documentExternalId?: string;
-  fileLocation?: string;
-  fileName?: string;
-  isIncorrectGeo: boolean;
-  isOther: boolean;
-  isSensitiveByAdmin?: boolean;
-  isSensitiveData: boolean;
-  originalType?: string;
-  suggestedType?: string;
-}
-
 export interface FeedbackSetItem {
   type: typeof SET_ITEM;
   item: FeedbackItem;
@@ -150,7 +131,7 @@ export interface GetAllGeneral {
 }
 export interface UpdateGeneral {
   type: typeof UPDATE_GENERAL;
-  item: GeneralFeedbackItem;
+  item: GeneralFeedbackResponse;
 }
 export interface SortFieldGeneral {
   type: typeof SORT_FIELD_GENERAL;

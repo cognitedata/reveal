@@ -57,6 +57,7 @@ export const getEquipmentPCMS = async (
     .filter((item) => item) as Metadata[];
 
   return {
+    equipmentAssetExternalId: equipmentAsset.externalId,
     equipment,
     components,
   };

@@ -1,15 +1,15 @@
 import uniqueId from 'lodash/uniqueId';
 
 import { FileInfo, FileLink, InternalId, ExternalId } from '@cognite/sdk';
-import { Document } from '@cognite/sdk-playground';
+import { Document, DocumentsAggregatesResponse } from '@cognite/sdk-playground';
 
 import { LAST_CREATED_KEY } from 'modules/documentSearch/constants';
 import {
   DocumentType,
   DocumentMetadata,
-  DocumentsAggregatesResponse,
   DocumentResultFacets,
   DocumentsFacets,
+  DocumentApiResponseItems,
 } from 'modules/documentSearch/types';
 
 import { getMockGeometry } from './geometry';
@@ -114,8 +114,11 @@ export const getMockFileInfo = (extras?: Partial<FileInfo>): FileInfo => ({
   ...extras,
 });
 
-export const mockAggregateResponse: DocumentsAggregatesResponse = {
-  items: [],
+export const getMockAPIResponse = (
+  items: DocumentApiResponseItems = [],
+  aggregates: DocumentsAggregatesResponse<DocumentApiResponseItems>['aggregates'] = []
+): DocumentsAggregatesResponse<DocumentApiResponseItems> => ({
+  items: items || [],
   aggregates: [
     {
       name: 'filetype',
@@ -172,8 +175,9 @@ export const mockAggregateResponse: DocumentsAggregatesResponse = {
       ],
       total: 10,
     },
+    ...(aggregates || []),
   ],
-};
+});
 
 export const getMockDocumentFacets = (
   extras?: Partial<DocumentResultFacets>

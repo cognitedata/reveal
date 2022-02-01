@@ -1,16 +1,11 @@
 import { screen, fireEvent } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
-import { useFavoriteWellResultQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 
 import { FavoriteWellsBulkActions, Props } from '../FavoriteWellsBulkActions';
 
 jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
-}));
-
-jest.mock('modules/wellSearch/hooks/useWellsFavoritesQuery', () => ({
-  useFavoriteWellResultQuery: jest.fn(),
 }));
 
 jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
@@ -24,12 +19,6 @@ jest.mock('modules/api/favorites/useFavoritesQuery', () => ({
 }));
 
 describe('Favorite Bulk action bar', () => {
-  beforeEach(() => {
-    (useFavoriteWellResultQuery as jest.Mock).mockImplementation(() => ({
-      data: [],
-    }));
-  });
-
   afterEach(async () => jest.clearAllMocks());
 
   const defaultTestInit = (viewProps?: Props) =>

@@ -12,7 +12,7 @@ import { Button } from '@cognite/cogs.js';
 import { CloseButton, ViewButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
 import { useDeepMemo } from 'hooks/useDeep';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
@@ -84,24 +84,30 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   };
 
   const removeSelectedWellboresAndWells = (): void => {
-    let newFavoriteWells: FavoriteContentWells = favoriteWells;
-
+    let newFavoriteWells: FavoriteContentWells = { ...favoriteWells };
     if (!favoriteWells) return;
 
-    Object.keys(selectedWellboresList).forEach((wellId) => {
-      // checking favorite well contains all the wellbores(denoted as empty []), then remove selected wellbores
-      if (isEmpty(favoriteWells[wellId])) {
-        newFavoriteWells[wellId] = getRemainingWellboreList(wellId);
-      } else {
-        newFavoriteWells[wellId] = favoriteWells[wellId].filter(
-          (wellboreId) => !selectedWellboresList[wellId].includes(wellboreId)
-        );
-      }
-      // removing well if no wellbore is left after removing wellbores
-      if (isEmpty(newFavoriteWells[wellId])) {
-        newFavoriteWells = omit(newFavoriteWells, wellId);
-      }
-    });
+    if (
+      isEmpty(selectedWellboresList) &&
+      Object.values(selectedWellIdsList).every((isSelected) => isSelected)
+    ) {
+      newFavoriteWells = {};
+    } else {
+      Object.keys(selectedWellboresList).forEach((wellId) => {
+        // checking favorite well contains all the wellbores(denoted as empty []), then remove selected wellbores
+        if (isEmpty(favoriteWells[wellId])) {
+          newFavoriteWells[wellId] = getRemainingWellboreList(wellId);
+        } else {
+          newFavoriteWells[wellId] = favoriteWells[wellId].filter(
+            (wellboreId) => !selectedWellboresList[wellId].includes(wellboreId)
+          );
+        }
+        // removing well if no wellbore is left after removing wellbores
+        if (isEmpty(newFavoriteWells[wellId])) {
+          newFavoriteWells = omit(newFavoriteWells, wellId);
+        }
+      });
+    }
 
     removeFromQueryCache(newFavoriteWells);
   };

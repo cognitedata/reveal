@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
 import compact from 'lodash/compact';
@@ -17,10 +17,10 @@ import { Table, RowProps } from 'components/tablev3';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useFavoriteWellIds } from 'modules/api/favorites/hooks/useFavoriteWellIds';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useFavoriteWellIds } from 'modules/wellSearch/hooks/useFavoriteWellIds';
 import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
 import { Well } from 'modules/wellSearch/types';
@@ -49,6 +49,11 @@ export const WellResultTable: React.FC = () => {
   const userPreferredUnit = useUserPreferencesMeasurement();
   const dispatch = useDispatch();
   const navigateToWellInspect = useNavigateToWellInspect();
+  const wellsRef = useRef(wells);
+
+  useEffect(() => {
+    wellsRef.current = wells;
+  }, [wells]);
 
   const columns = useDeepMemo(
     () =>
@@ -124,7 +129,7 @@ export const WellResultTable: React.FC = () => {
     (row: RowProps<Well>, isSelected: boolean) => {
       const well = row.original;
       batch(() => {
-        dispatch(wellSearchActions.toggleSelectedWells([well], isSelected));
+        dispatch(wellSearchActions.toggleSelectedWells([well], { isSelected }));
         dispatch(wellSearchActions.toggleExpandedWell(well));
       });
     },
@@ -133,9 +138,11 @@ export const WellResultTable: React.FC = () => {
 
   const handleRowsSelect = useDeepCallback(
     (isSelected: boolean) => {
-      dispatch(wellSearchActions.toggleSelectedWells(wells, isSelected));
+      dispatch(
+        wellSearchActions.toggleSelectedWells(wellsRef.current, { isSelected })
+      );
     },
-    [wells]
+    [wellsRef.current]
   );
 
   const renderRowSubComponent = useCallback(({ row }) => {

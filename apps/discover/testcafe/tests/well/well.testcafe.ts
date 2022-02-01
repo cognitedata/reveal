@@ -1,20 +1,17 @@
 import { t } from 'testcafe';
 
-import { NOTIFICATION_MESSAGE } from '../../../src/components/add-to-favorite-set-menu/constants';
-import { CREATE_SET_MODAL_BUTTON_TEXT } from '../../../src/pages/authorized/favorites/constants';
 import { WELLS_TAB_TITLE_KEY } from '../../../src/pages/authorized/search/constants';
-import App, { wellDataSearchPhrase, source } from '../../__pages__/App';
-import {
-  deleteAllAndCreateSetForTestRun,
-  deleteFavorites,
-} from '../../fixtures/favorites';
+import App, {
+  wellDataSearchPhrase,
+  source,
+  operator,
+} from '../../__pages__/App';
 import { startTest, getPostLogger, progress, logErrors } from '../../utils';
 
 // There could be filters applied with existing records
 // To trigger clear all button, make sure to do a empty records search
 
 const loggerPost = getPostLogger();
-const wellName = 'F-1';
 const sourcePill = `Source : ${source.toLowerCase()}`;
 const operatorName = 'Statoil Norway';
 
@@ -56,7 +53,7 @@ startTest.skip('Accessing the wellbore table', async () => {
     .eql(true);
 });
 
-startTest.skip('Apply Column Settings', async () => {
+startTest('Apply Column Settings', async () => {
   const columnName = 'Well';
 
   await App.wellSearchPage.doEmptySearch();
@@ -185,114 +182,66 @@ startTest('apply operator filter', async () => {
 //   await t.expect(originalCount).eql(newCount);
 // });
 
-startTest.skip('Set search input for no records', async () => {
+startTest('Show empty results state and clear search value', async () => {
   const search = '12345';
 
-  await App.navigateToResultsPage('Wells');
   await App.wellSearchPage.doSearch(search);
-
   await App.resultTable.hasNoResults();
-  const originalCount = await App.resultTable.getResultsCount();
-
   await App.filterClearPage.checkIfTagExists(search);
-
   await App.filterClearPage.clearSearchInput();
-
   await App.resultTable.hasResults();
-  const newCount = await App.resultTable.getResultsCount();
-
-  progress(`Original count: ${originalCount}`);
-  progress(`After count: ${newCount}`);
-  await t.expect(newCount).gt(originalCount);
 });
 
-startTest.skip(
-  'Results should be filtered down(less number of results) after applying filters',
+startTest(
+  'Results should be filtered down (less number of results) after applying filters',
   async () => {
-    const originalCount = await App.resultTable.getResultsCount();
+    await App.wellSearchPage.doEmptySearch();
+    const beforeApplyingFiltersCont = await App.resultTable.getResultsCount();
+    progress(`Before applying filters count: ${beforeApplyingFiltersCont}`);
 
     await App.sidebar.clickFilterCategory('Wells');
     await App.sidebar.clickFilterSubCategory(
       App.filterClearPage.dataSourceCaption
     );
-    await App.sidebar.clickFilterOption('BOEM');
-
+    await App.sidebar.clickFilterOption(source);
     await App.sidebar.clickFilterSubCategory(
       App.filterClearPage.fieldBlockOperatorCaption
     );
-    await App.wellSearchPage.clickAutoCompleteOptionInFilterDropdown(
-      App.filterClearPage.fieldBlockOperatorCaption,
-      'Block',
-      '0001'
-    );
-    await App.wellSearchPage.clickAutoCompleteOptionInFilterDropdown(
-      App.filterClearPage.fieldBlockOperatorCaption,
-      'Operator',
-      '00001'
-    );
+    await App.sidebar.clickFilterOption(operator);
 
-    const afterApplyingFiltersCont = await App.resultTable.row.count;
+    const afterApplyingFiltersCont = await App.resultTable.getResultsCount();
     progress(`After applying filters count: ${afterApplyingFiltersCont}`);
+    await t.expect(afterApplyingFiltersCont).lt(beforeApplyingFiltersCont);
 
-    await t.expect(afterApplyingFiltersCont).lt(originalCount);
+    progress('Undo applied filters');
+    await App.sidebar.clickFilterOption(operator);
+    await App.sidebar.clickFilterOption(source);
 
-    progress('Clear source filters');
-    await t.click(App.filterClearPage.getDataSourceCloseBtn());
-
-    progress('Clear field etc filters');
-    await t.click(App.filterClearPage.getFieldCloseBtn());
-
-    const afterClearinFiltersCount = await App.resultTable.row.count;
-    progress(`New count: ${afterClearinFiltersCount}`);
-
-    await t.expect(afterClearinFiltersCount).gt(0);
-    await t.expect(afterClearinFiltersCount).eql(originalCount);
+    const afterClearingFiltersCount = await App.resultTable.getResultsCount();
+    progress(`After clearing filters count: ${afterClearingFiltersCount}`);
+    await t.expect(afterClearingFiltersCount).eql(beforeApplyingFiltersCont);
   }
 );
 
-startTest.skip('Apply clear all filter button', async () => {
+startTest('Apply clear all filter button', async () => {
+  const noResultsOperator = 'Pretty Polly ASA';
+
   const originalCount = await App.resultTable.getResultsCount();
   progress(`Original count: ${originalCount}`);
 
   await App.wellSearchPage.doSearch(wellDataSearchPhrase);
-
   await App.sidebar.clickFilterCategory('Wells');
   await App.sidebar.clickFilterSubCategory(
     App.filterClearPage.dataSourceCaption
   );
-  await App.sidebar.clickFilterOption('BOEM');
-
+  await App.sidebar.clickFilterOption(source);
   await App.sidebar.clickFilterSubCategory(
     App.filterClearPage.fieldBlockOperatorCaption
   );
-  await App.wellSearchPage.clickAutoCompleteOptionInFilterDropdown(
-    App.filterClearPage.fieldBlockOperatorCaption,
-    'Block',
-    '0001'
-  );
-  await App.wellSearchPage.clickAutoCompleteOptionInFilterDropdown(
-    App.filterClearPage.fieldBlockOperatorCaption,
-    'Operator',
-    '00001'
-  );
-
-  progress('Wait for the no-results page to appear');
-  await t.expect(App.filterClearPage.noResult().exists).ok({ timeout: 10000 });
-
-  const newCount = await App.resultTable.row.count;
-
-  progress('No records should be found');
-  await t.expect(newCount).eql(0);
-
-  progress('Clear All filters');
-  await t.click(App.filterClearPage.clearAllFiltersBtn());
-
-  await t.expect(App.resultTable.row.exists).ok({ timeout: 2000 });
-
-  const afterClearCount = await App.resultTable.row.count;
-  progress(`New count: ${afterClearCount}`);
-
-  await t.expect(afterClearCount).eql(originalCount);
+  await App.sidebar.clickFilterOption(noResultsOperator);
+  await App.resultTable.hasNoResults();
+  await App.filterClearPage.clearAllFilters();
+  await App.resultTable.hasNumberOfSearchResults(originalCount);
 });
 
 startTest.skip('Check the well card on the map', async () => {
@@ -384,39 +333,6 @@ startTest('preserve well tab between routes', async () => {
 //   );
 //   await t.expect(noFiltersResultsCount).eql(emptySearchResultsCount);
 // });
-
-// this test is flaky. need to make it more stable please.
-startTest.skip(
-  'Add well to a existing favorite set using hover actions',
-  async () => {
-    const { favoriteSetName } = await deleteAllAndCreateSetForTestRun();
-
-    await App.wellSearchPage.doSearch(wellDataSearchPhrase);
-    await App.resultTable.hasResults();
-    await App.resultTable.clickRowWithText(wellName);
-    await App.resultTable.addRowItemToExistingFavoriteSetUsingHoverActions(
-      wellName,
-      favoriteSetName
-    );
-  }
-);
-
-// this test is flaky. need to make it more stable please.
-startTest.skip(
-  'Add well to a new favorite set using hover actions',
-  async () => {
-    await deleteFavorites();
-    await App.wellSearchPage.doSearch(wellDataSearchPhrase);
-    await App.resultTable.hasResults();
-    await App.resultTable.clickRowWithNth(0);
-    await App.resultTable.addRowItemToNewFavoriteSetUsingHoverActions(wellName);
-    await App.createFavoriteDialog.fillCreateFavoriteSetDetailsAndClickButton(
-      'New_Fav_Set',
-      CREATE_SET_MODAL_BUTTON_TEXT
-    );
-    await App.checkifToasterAppears(NOTIFICATION_MESSAGE);
-  }
-);
 
 startTest(
   `Apply well filters and see if filter tags are available, clear ${sourcePill}`,

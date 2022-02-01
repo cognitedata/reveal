@@ -1,0 +1,15 @@
+{
+  "name": "linewalk-parser",
+  "version": "0.0.30",
+  "description": "Compile Graph-documents to Linewalk format",
+  "scripts": {
+    "calc-lines": "ts-node node-script.ts && npm version patch"
+  },
+  "types": "node",
+  "devDependencies": {
+    "ts-node": "^10.4.0"
+  },
+  "dependencies": {
+    "typescript": "^4.5.5"
+  }
+}

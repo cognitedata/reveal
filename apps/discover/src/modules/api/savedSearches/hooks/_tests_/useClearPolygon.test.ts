@@ -2,11 +2,11 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import { GeoJson, Geometry } from '@cognite/seismic-sdk-js';
 
-import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
+import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useSavedSearchQuery';
 
 import { useClearPolygon, useSetPolygon } from '../useClearPolygon';
 
-jest.mock('modules/api/savedSearches/useQuery', () => ({
+jest.mock('modules/api/savedSearches/useSavedSearchQuery', () => ({
   useMutatePatchSavedSearch: jest.fn(),
 }));
 

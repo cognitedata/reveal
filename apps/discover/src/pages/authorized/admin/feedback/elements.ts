@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 
+import { Label } from '@cognite/cogs.js';
+
 import { FlexRow, sizes } from 'styles/layout';
 
 export const TabBar = styled(FlexRow)`
@@ -44,3 +46,8 @@ export const TableDropdown = styled.div`
 export const FeedbackContent = styled.div`
   overflow: hidden;
 `;
+
+export const SmallGreyLabel = styled(Label).attrs({
+  size: 'small',
+  variant: 'unknown',
+})``;

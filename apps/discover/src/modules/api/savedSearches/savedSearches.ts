@@ -3,6 +3,7 @@ import reduce from 'lodash/reduce';
 import {
   SavedSearchAddShareSchemaBody,
   SavedSearchRemoveShareSchemaPOST,
+  SavedSearchSchemaBody,
 } from '@cognite/discover-api-types';
 
 import { SIDECAR } from '../../../constants/app';
@@ -98,15 +99,15 @@ export const savedSearches = {
     );
   },
 
-  save: async (
-    searchOptions: SavedSearchContent,
-    name: string,
+  create: async (
+    id: string,
+    body: SavedSearchSchemaBody,
     headers: FetchHeaders,
     tenant: string
   ): Promise<SavedSearchContent | GenericApiError> => {
     const response = await fetchPut<SavedSearchSaveResponse>(
-      `${SIDECAR.discoverApiBaseUrl}/${tenant}/${SAVED_SEARCH_ENDPOINT}/${name}`,
-      searchOptions,
+      `${SIDECAR.discoverApiBaseUrl}/${tenant}/${SAVED_SEARCH_ENDPOINT}/${id}`,
+      body,
       { headers }
     );
 
@@ -118,13 +119,13 @@ export const savedSearches = {
   },
 
   addShare: async (
-    payload: SavedSearchAddShareSchemaBody,
+    body: SavedSearchAddShareSchemaBody,
     headers: FetchHeaders,
     tenant: string
   ): Promise<SavedSearchContent | GenericApiError> => {
     const response = await fetchPost<SavedSearchSaveResponse>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/${SAVED_SEARCH_ENDPOINT}/share`,
-      payload,
+      body,
       { headers }
     );
 
@@ -136,15 +137,10 @@ export const savedSearches = {
   },
 
   removeShare: async <T>(
-    id: string,
-    user: string,
+    body: SavedSearchRemoveShareSchemaPOST,
     headers: FetchHeaders,
     tenant: string
   ) => {
-    const body: SavedSearchRemoveShareSchemaPOST = {
-      id,
-      user,
-    };
     return fetchPost<T>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/${SAVED_SEARCH_ENDPOINT}/removeshare`,
       body,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import formatISO9075 from 'date-fns/formatISO9075';
@@ -7,7 +7,10 @@ import styled from 'styled-components/macro';
 
 import { Button, Icon, Skeleton, toast } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
-import { useGetModelBoundaryConditionListQuery } from '@cognite/simconfig-api-sdk/rtk';
+import {
+  useGetModelBoundaryConditionListQuery,
+  useGetModelFileQuery,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import {
   selectAuthToken,
@@ -15,6 +18,8 @@ import {
   selectProject,
 } from 'store/simconfigApiProperties/selectors';
 import { downloadModelFile } from 'utils/fileDownload';
+import { TRACKING_EVENTS } from 'utils/metrics/constants';
+import { trackUsage } from 'utils/metrics/tracking';
 
 import { BoundaryConditionTable } from './BoundaryConditionTable';
 
@@ -22,25 +27,68 @@ interface ModelVersionDetailsProps {
   modelFile: ModelFile;
 }
 
+const PROCESSING_POLLING_INTERVAL = 2000; // 2 seconds
+
 export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   const project = useSelector(selectProject);
   const token = useSelector(selectAuthToken);
   const baseUrl = useSelector(selectBaseUrl);
 
   const [isModelFileDownloading, setIsModelFileDownloading] = useState(false);
+  const [isProcessingReady, setIsProcessingReady] = useState(false);
 
   const { metadata } = modelFile;
   const { simulator, modelName, version } = metadata;
-
-  const { data: boundaryConditions, isFetching: isFetchingBoundaryConditions } =
-    useGetModelBoundaryConditionListQuery({
+  const pollingOptions = {
+    pollingInterval: !isProcessingReady
+      ? PROCESSING_POLLING_INTERVAL
+      : undefined,
+  };
+  const {
+    data: boundaryConditions,
+    isFetching: isFetchingBoundaryConditions,
+    isSuccess: isSuccessBoundaryConditions,
+  } = useGetModelBoundaryConditionListQuery(
+    {
       project,
       simulator,
       modelName,
       version,
-    });
+    },
+    pollingOptions
+  );
+  const { data: modelFileItem } = useGetModelFileQuery(
+    {
+      project,
+      modelName: modelFile.name,
+      simulator,
+      version: modelFile.metadata.version,
+    },
+    pollingOptions
+  );
 
-  if (isFetchingBoundaryConditions) {
+  useEffect(() => {
+    const hasBoundaryConditions =
+      boundaryConditions?.modelBoundaryConditionList.length;
+    const hasCalculationFailed =
+      modelFileItem?.metadata.errorMessage !== undefined;
+
+    if (hasBoundaryConditions || hasCalculationFailed) {
+      setIsProcessingReady(true);
+    }
+  }, [boundaryConditions, modelFileItem]);
+
+  useEffect(() => {
+    if (isProcessingReady) {
+      trackUsage(TRACKING_EVENTS.MODEL_VERSION_DEAILS, {
+        modelName: decodeURI(modelName),
+        modelVersion: version,
+        simulator,
+      });
+    }
+  }, [modelName, isProcessingReady, simulator, version]);
+
+  if (isFetchingBoundaryConditions && !isSuccessBoundaryConditions) {
     return <Skeleton.List lines={2} />;
   }
 
@@ -51,6 +99,13 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       );
       return;
     }
+
+    trackUsage(TRACKING_EVENTS.MODEL_VERSION_DOWNLOAD, {
+      modelName: decodeURI(modelName),
+      modelVersion: version,
+      simulator,
+    });
+
     setIsModelFileDownloading(true);
     await downloadModelFile(token, project, baseUrl, modelFile.metadata);
     setIsModelFileDownloading(false);
@@ -61,7 +116,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       <BoundaryConditionsContainer>
         <BoundaryConditionTable
           boundaryConditions={boundaryConditions?.modelBoundaryConditionList}
-          modelFile={modelFile}
+          modelFile={modelFileItem}
         />
       </BoundaryConditionsContainer>
       <ModelVersionProperties>
@@ -77,25 +132,26 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
             </div>
           </div>
           <div className="actions">
-            <div className="download-link">
-              <Button
-                disabled={isModelFileDownloading}
-                icon="Download"
-                loading={isModelFileDownloading}
-                onClick={onDownloadClicked}
-              >
-                Download
-              </Button>
-            </div>
             <div className="charts-link">
               <Button
                 disabled={!boundaryConditions?.chartsUrl}
                 href={boundaryConditions?.chartsUrl}
                 icon="LineChart"
                 target="_blank"
-                type="primary"
+                type="tertiary"
               >
                 View in Charts
+              </Button>
+            </div>
+            <div className="download-link">
+              <Button
+                disabled={isModelFileDownloading}
+                icon="Download"
+                loading={isModelFileDownloading}
+                type="tertiary"
+                onClick={onDownloadClicked}
+              >
+                Download
               </Button>
             </div>
           </div>

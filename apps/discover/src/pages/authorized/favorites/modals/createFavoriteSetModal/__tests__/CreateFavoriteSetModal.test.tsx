@@ -20,7 +20,7 @@ jest.mock('@cognite/react-errors', () => ({
   reportException: jest.fn(),
 }));
 
-jest.mock('modules/api/favorites/useFavoritesQuery', () => ({
+jest.mock('modules/api/favorites/useFavoritesMutate', () => ({
   useFavoritesCreateMutate: () => ({
     mutateAsync: (props: Props) =>
       new Promise((resolve, reject) => {
@@ -46,7 +46,7 @@ describe('Create Favorite Set Model', () => {
     const store: Store = getMockedStore({
       favorites: {
         isCreateModalVisible: props,
-        itemsToAddAfterFavoriteCreation: { documentIds: [] },
+        itemsToAddOnFavoriteCreation: { documentIds: [] },
       },
     });
     return testRendererModal(CreateFavoriteSetModal, store);

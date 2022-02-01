@@ -6,6 +6,7 @@ import {
 } from 'react-query';
 
 import { getTenantInfo } from '@cognite/react-container';
+import { reportException } from '@cognite/react-errors';
 import { DocumentsFilter } from '@cognite/sdk-playground';
 
 import {
@@ -14,9 +15,9 @@ import {
 } from 'constants/logging';
 import { RELATED_DOCUMENT_KEY } from 'constants/react-query';
 import { TimeLogStages, useMetricLogger } from 'hooks/useTimeLog';
+import { adaptSaveSearchContentToSchemaBody } from 'modules/api/savedSearches/adaptSavedSearch';
 import { SavedSearchContent } from 'modules/api/savedSearches/types';
-import { createSavedSearch } from 'modules/api/savedSearches/utils';
-import { useJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import { documentSearchService } from 'modules/documentSearch/service';
 import {
   AggregateNames,
@@ -31,9 +32,10 @@ import {
   useWellInspectSelectedWellbores,
 } from 'modules/wellInspect/hooks/useWellInspect';
 import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
+import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 
 import { useRelatedDocumentFilterQuery } from './useRelatedDocumentFilterQuery';
-import { getDocumentConfig, getMergedFacets } from './utils';
+import { formatAssetIdsFilter, getMergedFacets } from './utils';
 
 export const SAVED_RELATED_DOCUMENTS = 'savedRelatedDocuments';
 const SELECTED_WELLBORES_RELATED_DOCUMENTS =
@@ -55,9 +57,17 @@ const useWellboresRelatedDocumentsCategories =
     const wellboreAssetIds = selectedWellbores.map(
       (row) => wellboreAssetIdMap[row.id]
     );
+    const isV3Enabled = useEnabledWellSdkV3();
     return useQuery<DocumentResultFacets>(
       [SELECTED_WELLBORES_RELATED_DOCUMENTS, wellboreAssetIds],
-      () => documentSearchService.getCategoriesByAssetIds(wellboreAssetIds)
+      () =>
+        documentSearchService.getCategoriesByAssetIds(
+          wellboreAssetIds,
+          !!isV3Enabled
+        ),
+      {
+        enabled: isV3Enabled !== undefined,
+      }
     );
   };
 
@@ -90,8 +100,10 @@ export const useQuerySavedRelatedDocuments = (
   const filterQuery = useRelatedDocumentFilterQuery();
   const wellboreIds = useWellInspectSelectedWellboreIds();
   const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
-  const { filters } = getDocumentConfig(
-    wellboreIds.map((id) => wellboreAssetIdMap[id])
+  const isV3Enabled = useEnabledWellSdkV3();
+  const { filters } = formatAssetIdsFilter(
+    wellboreIds.map((id) => wellboreAssetIdMap[id]),
+    isV3Enabled
   );
   const { data: wellboresFacets } = useWellboresRelatedDocumentsCategories();
 
@@ -169,17 +181,20 @@ export const useMutateRelatedDocumentPatch = () => {
   const [tenant] = getTenantInfo();
 
   return useMutation(
-    async (props: SavedSearchContent) => {
-      await createSavedSearch({
-        values: props,
-        name: RELATED_DOCUMENT_KEY,
-        headers,
-        tenant,
-      });
+    async (savedSearchContent: SavedSearchContent) => {
+      await discoverAPI.savedSearches
+        .create(
+          RELATED_DOCUMENT_KEY,
+          adaptSaveSearchContentToSchemaBody(savedSearchContent),
+          headers,
+          tenant
+        )
+        .catch((error) => reportException(String(error)));
+
       // if the saved search returns an error, we still need the filters to work properly
       // hence returning a new promise with the filters
       return new Promise<SavedSearchContent>((resolve) => {
-        resolve(props);
+        resolve(savedSearchContent);
       });
     },
     {

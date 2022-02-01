@@ -1,4 +1,5 @@
-import { DocumentPayload } from 'modules/api/documents/types';
+import { DocumentPayload } from '@cognite/discover-api-types';
+
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { CategoryTypes } from 'modules/sidebar/types';
 

@@ -77,7 +77,11 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
     if (this.mouseMoved) {
       return;
     }
-
+    if (e.target.attrs.name?.includes('_anchor')) {
+      // slightly move of anchor or double click on it causes a Transformer
+      // throws a "Maximum call stack size exceeded" error
+      return;
+    }
     if (this.selectedNode?.attrs.type === 'text') {
       const tempNode = this.selectedNode as Konva.Text;
       (this.ornateInstance.tools.text as TextTool).onTextEdit(tempNode);

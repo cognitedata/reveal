@@ -2,14 +2,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@cognite/cogs.js';
-
-import { GeneralFeedbackItem } from 'modules/feedback/types';
+import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 
 import { useFeedback } from '../../Selector';
 
 export const ScreenshotColumn: React.FC<{
-  feedbackRow: GeneralFeedbackItem;
-  setSelectedFeedback: (row: GeneralFeedbackItem) => void;
+  feedbackRow: GeneralFeedbackResponse;
+  setSelectedFeedback: (row: GeneralFeedbackResponse) => void;
   setOpen: (value: boolean) => void;
 }> = (props) => {
   const { feedbackRow, setSelectedFeedback, setOpen } = props;

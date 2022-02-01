@@ -3,7 +3,6 @@ load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//react-scripts:index.bzl", "react_scripts")
-load("@npm//testcafe:index.bzl", "testcafe")
 load("@npm//cypress:index.bzl", "cypress")
 load("@com_github_cognitedata_bazel_tools//k8s/kubeval:kubeval.bzl", "kubeval_test")
 load("//rules:baker_bake.bzl", "baker_bake")
@@ -12,7 +11,6 @@ load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers
 load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
-load("//rules/test:testcafe_test.bzl", "testcafe_test")
 load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/container:container_build.bzl", "container_build")
@@ -31,10 +29,6 @@ _TESTS = [
     "src/utils/test/*",
 ]
 
-_TESTS_TESTCAFE = [
-    "testcafe/**/*.ts",
-]
-
 _TESTS_CYPRESS = [
     "cypress/**/*.test.ts",
 ]
@@ -50,8 +44,6 @@ _SOURCES = [
 
 TESTS = glob(_TESTS + _STORYBOOK)
 
-TESTS_TESTCAFE = glob(_TESTS_TESTCAFE)
-
 TESTS_CYPRESS = glob(_TESTS_CYPRESS)
 
 STORYBOOK = glob(_STORYBOOK)
@@ -60,11 +52,6 @@ SOURCES = glob(
     _SOURCES,
     exclude = _TESTS + _STORYBOOK,
 )
-
-SCRIPTS = glob([
-    "scripts/*",
-    "scripts/**/*",
-])
 
 PUBLIC = glob([
     "public/*",
@@ -121,7 +108,6 @@ DEV_DEPENDENCIES = [
     "@npm//@storybook/addons",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
-    "@npm//@testing-library/testcafe",
     "@npm//eslint-plugin-import",
     "@npm//sinon",
 ]
@@ -207,14 +193,12 @@ react_scripts(
         "build",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
-        # see patches/react-scripts+4.0.3.patch
+        # see patches/react-scripts+5.0.0.patch
         # we have added this plugin into webpack so Bazel should know about it
         # TODO: move build script into a custom rules with defined plugin once and for all
         "@npm//tsconfig-paths-webpack-plugin",
     ],
     env = {
-        # As long as react_scripts does not allow eslint 8 we need this variable
-        "SKIP_PREFLIGHT_CHECK": "true",
         # Specify your Sentry DSN is the URL used to report runtime issues
         "REACT_APP_SENTRY_DSN": "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732",
         # Specify your Mixpanel project token used in users analytics
@@ -270,8 +254,6 @@ react_scripts(
         "chdir-workspace.js",
     ],
     env = {
-        # As long as react_scripts does not allow eslint 8 we need this variable
-        "SKIP_PREFLIGHT_CHECK": "true",
         "DISABLE_ESLINT_PLUGIN": "true",
     },
     tags = [
@@ -294,8 +276,6 @@ react_scripts(
         "chdir-workspace.js",
     ],
     env = {
-        # As long as react_scripts does not allow eslint 8 we need this variable
-        "SKIP_PREFLIGHT_CHECK": "true",
         "DISABLE_ESLINT_PLUGIN": "true",
         "HTTPS": "true",
         "REACT_APP_I18N_DEBUG": "true",
@@ -331,8 +311,8 @@ sh_binary(
     srcs = ["//rules/build_sed:sed_darwin.sh"],
 )
 
-# Replace PUBLIC_URL_VALUE placeholder with '' in order to run testcafe
-# If you need additional env vars being set during testcafe run add them into
+# Replace PUBLIC_URL_VALUE placeholder with '' in order to run cypress
+# If you need additional env vars being set during cypress run add them into
 # :build target above and override here
 build_sed(
     name = "build_sed",
@@ -346,57 +326,6 @@ build_sed(
 )
 
 ### E2E Tests End ###
-
-### Testcafe ###
-
-copy_to_bin(
-    name = "copy_testcafe_files",
-    srcs = TESTS_TESTCAFE + [
-        ".testcaferc.json",
-        "tsconfig.testcafe.json",
-    ],
-)
-
-testcafe_test(
-    name = "testcafe_test",
-    # folder name to store artifacts during CI run
-    app_name = "react-demo-app",
-    args = [
-        "'chrome --headless --no-sandbox --disable-software-rasterizer'",
-        "'testcafe/desktop'",
-        "--stop-on-first-fail",
-        "--app './scripts/testcafe-bazel-serve.sh'",
-        "–q",
-        "--config-file .testcaferc.json",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
-        ":build_sed",
-        "copy_testcafe_files",
-    ],
-    env = {
-        "BASE_URL": "http://localhost:11111",
-    },
-)
-
-testcafe(
-    name = "testcafe",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "'chrome --disable-software-rasterizer'",
-        "'testcafe/desktop'",
-        "--stop-on-first-fail",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
-        ":start",
-        "chdir-workspace.js",
-        "copy_testcafe_files",
-    ],
-    env = {
-        "BASE_URL": "https://localhost:3000",
-    },
-)
-
-### Testcafe End ###
 
 ### Cypress ###
 
@@ -464,6 +393,8 @@ build_storybook(
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "copy_storybook_files",
         "@npm//tsconfig-paths-webpack-plugin",
+        "@npm//@storybook/manager-webpack5",
+        "@npm//@storybook/builder-webpack5",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",

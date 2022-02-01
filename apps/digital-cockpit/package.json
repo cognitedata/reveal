@@ -3,9 +3,8 @@
   "version": "1.1.2",
   "private": true,
   "scripts": {
-    "start": "./scripts/start.sh",
-    "start:bazel": "ibazel run :start",
-    "start:application-services": "REACT_APP_DC_API_URL=http://localhost:8001 yarn start:bazel",
+    "start": "ibazel run :start",
+    "start:application-services": "REACT_APP_DC_API_URL=http://localhost:8001 yarn start",
     "build": "./scripts/build.sh",
     "build:bazel": "bazel build :build_sed",
     "test": "./scripts/test.sh",

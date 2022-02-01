@@ -1,6 +1,7 @@
 import EmptyState from 'components/emptyState';
 import { DocumentContentAppliedFilters } from 'pages/authorized/search/document/header/DocumentContentAppliedFilters';
-import { FlexAlignJustifyContent } from 'styles/layout';
+
+import { AppliedFilterWrapper } from './element';
 
 interface Props {
   isLoading?: boolean;
@@ -8,9 +9,9 @@ interface Props {
 export const NoResults: React.FC<Props> = ({ isLoading }) => {
   return (
     <EmptyState isLoading={isLoading}>
-      <FlexAlignJustifyContent>
+      <AppliedFilterWrapper>
         <DocumentContentAppliedFilters />
-      </FlexAlignJustifyContent>
+      </AppliedFilterWrapper>
     </EmptyState>
   );
 };

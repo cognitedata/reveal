@@ -7,7 +7,7 @@ import { isEnterPressed } from 'utils/general.helper';
 import { Input } from '@cognite/cogs.js';
 
 import { documentFacetsStructure } from 'modules/api/documents/structure';
-import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useQuery';
+import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { useSetRelatedDocumentFilters } from 'modules/filterData/hooks/useSetRelatedDocumentFilters';
 
 import { InputContainer } from './elements';

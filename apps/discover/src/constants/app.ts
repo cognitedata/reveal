@@ -7,6 +7,7 @@ import {
 } from '@cognite/sidecar';
 
 // More info: https://cog.link/discover-projects
+// const CLUSTER: CDFCluster = 'bp-northeurope';
 const CLUSTER: CDFCluster =
   (process.env.REACT_APP_CLUSTER as CDFCluster) || 'bluefield';
 

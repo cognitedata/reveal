@@ -1,0 +1,102 @@
+diff --git a/node_modules/react-scripts/config/webpack.config.js b/node_modules/react-scripts/config/webpack.config.js
+index 2b1b3bb..92ad838 100644
+--- a/node_modules/react-scripts/config/webpack.config.js
++++ b/node_modules/react-scripts/config/webpack.config.js
+@@ -33,6 +33,7 @@ const ForkTsCheckerWebpackPlugin =
+     ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
+     : require('react-dev-utils/ForkTsCheckerWebpackPlugin');
+ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
++const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
+ // @remove-on-eject-begin
+ const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
+ // @remove-on-eject-end
+@@ -329,31 +330,36 @@ module.exports = function (webpackEnv) {
+         ...(modules.webpackAliases || {}),
+       },
+       plugins: [
++        // Resolve the path aliases.
++        new TsconfigPathsPlugin(),
+         // Prevents users from importing files from outside of src/ (or node_modules/).
+         // This often causes confusion because we only process files within src/ with babel.
+         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
+         // please link the files into your node_modules/ and let module-resolution kick in.
+         // Make sure your source files are compiled, as they will not be processed in any way.
+-        new ModuleScopePlugin(paths.appSrc, [
+-          paths.appPackageJson,
+-          reactRefreshRuntimeEntry,
+-          reactRefreshWebpackPluginRuntimeEntry,
+-          babelRuntimeEntry,
+-          babelRuntimeEntryHelpers,
+-          babelRuntimeRegenerator,
+-        ]),
++        // Remove the ModuleScopePlugin which throws when we try to import something
++        // outside of src/.
++        // new ModuleScopePlugin(paths.appSrc, [
++        //   paths.appPackageJson,
++        //   reactRefreshRuntimeEntry,
++        //   reactRefreshWebpackPluginRuntimeEntry,
++        //   babelRuntimeEntry,
++        //   babelRuntimeEntryHelpers,
++        //   babelRuntimeRegenerator,
++        // ]),
+       ],
+     },
+     module: {
+       strictExportPresence: true,
+       rules: [
+         // Handle node_modules packages that contain sourcemaps
+-        shouldUseSourceMap && {
+-          enforce: 'pre',
+-          exclude: /@babel(?:\/|\\{1,2})runtime/,
+-          test: /\.(js|mjs|jsx|ts|tsx|css)$/,
+-          loader: require.resolve('source-map-loader'),
+-        },
++        // Disable this rule until we fix @cognite/sdk sourcemaps
++        // shouldUseSourceMap && {
++        //   enforce: 'pre',
++        //   exclude: /@babel(?:\/|\\{1,2})runtime/,
++        //   test: /\.(js|mjs|jsx|ts|tsx|css)$/,
++        //   loader: require.resolve('source-map-loader'),
++        // },
+         {
+           // "oneOf" will traverse all following loaders until one will
+           // match the requirements. When no loader matches it will fall
+@@ -413,7 +419,9 @@ module.exports = function (webpackEnv) {
+             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
+             {
+               test: /\.(js|mjs|jsx|ts|tsx)$/,
+-              include: paths.appSrc,
++              // Let Babel compile outside of src/.
++              include: path.resolve(fs.realpathSync(process.cwd()), '../../'),
++              exclude: /node_modules/,
+               loader: require.resolve('babel-loader'),
+               options: {
+                 customize: require.resolve(
+diff --git a/node_modules/react-scripts/scripts/utils/createJestConfig.js b/node_modules/react-scripts/scripts/utils/createJestConfig.js
+index ff1c581..3e63a10 100644
+--- a/node_modules/react-scripts/scripts/utils/createJestConfig.js
++++ b/node_modules/react-scripts/scripts/utils/createJestConfig.js
+@@ -65,6 +65,9 @@ module.exports = (resolve, rootDir, isEjecting) => {
+       'jest-watch-typeahead/filename',
+       'jest-watch-typeahead/testname',
+     ],
++    haste: {
++      enableSymlinks: true,
++    },
+     resetMocks: true,
+   };
+   if (rootDir) {
+diff --git a/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js b/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
+index cdc2d77..56639f7 100644
+--- a/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
++++ b/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
+@@ -156,7 +156,8 @@ function verifyTypeScriptSetup() {
+           : 'react',
+       reason: 'to support the new JSX transform in React 17',
+     },
+-    paths: { value: undefined, reason: 'aliased imports are not supported' },
++    // In order to be able to specify paths in tsconfig.json
++    // to resolve //packages/* we need to override this behaviour
+   };
+ 
+   const formatDiagnosticHost = {

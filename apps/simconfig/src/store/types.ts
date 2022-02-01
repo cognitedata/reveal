@@ -5,7 +5,6 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import type { GroupState } from './group/types';
-import type { SimulatorState } from './simulator/types';
 
 export enum RequestStatus {
   Idle,
@@ -17,6 +16,5 @@ export enum RequestStatus {
 export type StoreState = SimconfigApiBaseStoreState & {
   auth?: AuthContext;
   group: GroupState;
-  simulator: SimulatorState;
   simconfigApiProperties: SimconfigApiPropertiesState;
 };

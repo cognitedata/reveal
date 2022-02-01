@@ -1,5 +1,6 @@
+import { DocumentPayload } from '@cognite/discover-api-types';
+
 import { CONTEXTUALIZE_URL, SIDECAR } from 'constants/app';
-import { DocumentPayloadLabel } from 'modules/api/documents/types';
 
 export const canContextualize = (labels: string[]) => {
   const contextualizeableLabels: string[] = [
@@ -23,13 +24,14 @@ export const extractDocumentLabelsFomAllLabels = (
   documentLabels: {
     externalId: string;
   }[],
-  allLabels: DocumentPayloadLabel[]
+  allLabels: DocumentPayload[]
 ): string[] => {
+  const documentExternalIds = documentLabels.map(
+    (documentLabel) => documentLabel.externalId
+  );
   return allLabels
     .filter((label) =>
-      documentLabels
-        .map((documentLabel) => documentLabel.externalId)
-        .includes(label.id)
+      label.id ? documentExternalIds.includes(label.id) : false
     )
     .map((label) => label.name);
 };

@@ -2,7 +2,7 @@ import get from 'lodash/get';
 import { getEmptyGeometry } from 'utils/geometry';
 
 import { documentValuesPayload } from 'modules/api/documents/structure';
-import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useQuery';
+import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { useMutateRelatedDocumentPatch } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/RelatedDocumentUseQuery';
 

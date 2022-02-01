@@ -21,6 +21,7 @@ import {
   SET_CATEGORY_FILTERS,
   SET_SEARCH_PHRASE,
 } from '../constants';
+import { Modules } from '../types';
 
 describe('Actions', () => {
   test('Generate toggle filter bar action', () => {
@@ -28,7 +29,7 @@ describe('Actions', () => {
   });
 
   test('Generate set category page action', () => {
-    expect(setCategoryPage('wells')).toEqual({
+    expect(setCategoryPage(Modules.WELLS)).toEqual({
       type: SET_CATEGORY_PAGE,
       payload: 'wells',
     });
@@ -70,7 +71,7 @@ describe('Actions', () => {
 
   test('Generate update category collapse key action', () => {
     expect(
-      updateCategoryCollapseKey({ category: 'wells', value: ['0', '1'] })
+      updateCategoryCollapseKey({ category: Modules.WELLS, value: ['0', '1'] })
     ).toEqual({
       type: UPDATE_CATEGORY_COLLAPSE_KEY,
       payload: { category: 'wells', value: ['0', '1'] },

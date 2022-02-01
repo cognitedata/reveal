@@ -29,11 +29,12 @@ export const useCreateAllWellCollection = ({
       (results, well) => {
         // console.log('Checking well:', well);
         if (well?.geometry) {
-          const isSelected =
-            well.properties?.id && selectedWellIds[well.properties?.id];
+          const id = well.properties?.id;
+
+          const isSelected = id && selectedWellIds[id];
 
           const wellFeature = turfFeature(well.geometry, {
-            id: well.properties?.id,
+            id,
             highlight: 'true',
             iconType: WELL_MARKER,
             isSelected: isSelected ? 'true' : 'false',

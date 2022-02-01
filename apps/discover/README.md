@@ -85,9 +85,11 @@ We have two test systems at the moment. So you can run them in two modes. But we
 
 (Make sure you always do this for azure-dev or bluefield)
 
-```sh
-yarn start:local
-```
+| Cluster   | Project (fakeIdp)      | Command            |
+| --------- | ---------------------- | ------------------ |
+| bluefield | discover-e2e-bluefield | `sh yarn start:b ` |
+| bluefield | discover-dev-bluefield | `sh yarn start:c ` |
+| azure-dev | discover-e2e-azure-dev | `sh yarn start:a ` |
 
 ### Cypress: Run tests
 
@@ -127,14 +129,12 @@ yarn cypress:ci
 
 ### Testcafe: Run tests
 
-```sh
-yarn testcafe:bazel-run-live
-```
+`sh yarn testcafe ` or `sh yarn testcafe --fixture-meta page=savedSearches` for specific test
 
-or:
+For linux:
 
 ```sh
-yarn testcafe:bazel-run-live-linux --fixture-meta page=savedSearches
+yarn testcafe:linux --fixture-meta page=savedSearches
 ```
 
 ### How to ingest data into the test tenants

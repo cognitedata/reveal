@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Row } from 'react-table';
 
 import get from 'lodash/get';
@@ -6,6 +6,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 
 import { Table, TableResults } from 'components/tablev3';
+import { useDeepEffect } from 'hooks/useDeep';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { SortBy } from 'pages/types';
 
@@ -36,7 +37,7 @@ export const NptWellsTable: React.FC<{ events: NPTEvent[] }> = ({ events }) => {
     },
   };
 
-  useEffect(() => {
+  useDeepEffect(() => {
     const groupedWellbores = groupBy(events, accessors.WELL_NAME);
     const wells = Object.keys(groupedWellbores).map((wellName) => ({
       id: wellName,
@@ -46,16 +47,16 @@ export const NptWellsTable: React.FC<{ events: NPTEvent[] }> = ({ events }) => {
 
     setWells(wells);
     setSortBy([]);
-  }, [JSON.stringify(events)]);
+  }, [events]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (isEmpty(wells)) return;
 
     setExpandedWells({
       ...expandedWells,
       [wells[0].id]: true,
     });
-  }, [JSON.stringify(wells)]);
+  }, [wells]);
 
   const handleRowClick = useCallback(
     (row: Row) => {

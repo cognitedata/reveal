@@ -1,7 +1,27 @@
 import { BoundingBox } from '../types';
 
 import { Point } from './Point';
-import { approxeq, getBoundingBox } from './utils';
+import { approxeq, getBoundingBox, getPointTowardOtherPoint } from './utils';
+
+export type IntersectionData = {
+  intersection: Point;
+  thisPercentAlongPath: number;
+  otherPercentAlongPath: number;
+};
+
+export type ClosestPointOnSegment = {
+  pointOnSegment: Point;
+  percentAlongPath: number;
+  distance: number;
+};
+
+export type ClosestPointsOnSegment = {
+  thisPoint: Point;
+  thisPercentAlongPath: number;
+  otherPoint: Point;
+  otherPercentAlongPath: number;
+  distance: number; // distance between `thisPoint` and `otherPoint`
+};
 
 export abstract class PathSegment {
   start: Point;
@@ -51,10 +71,7 @@ export abstract class PathSegment {
     return theta;
   }
 
-  getIntersection = (
-    other: PathSegment,
-    extendLinesIfNeeded = true
-  ): Point | undefined => {
+  getIntersection = (other: PathSegment): IntersectionData | undefined => {
     // Note: This doens not work properly on Curve segments curently
 
     // line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
@@ -66,35 +83,109 @@ export abstract class PathSegment {
     const y3 = other.start.y;
     const x4 = other.stop.x;
     const y4 = other.stop.y;
-
     // Check if none of the lines are of length 0
     if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) {
       return undefined;
     }
-
     const denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
-
     // Lines are parallel
     if (denominator === 0) {
       return undefined;
     }
 
-    const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator;
-    if (!extendLinesIfNeeded) {
-      const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator;
-
-      // is the intersection along the segments
-      if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
-        return undefined;
-      }
-    }
+    const thisPercentAlongPath =
+      ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator;
+    const otherPercentAlongPath =
+      ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator;
 
     // Return a object with the x and y coordinates of the intersection
-    const x = x1 + ua * (x2 - x1);
-    const y = y1 + ua * (y2 - y1);
+    const x = x1 + thisPercentAlongPath * (x2 - x1);
+    const y = y1 + otherPercentAlongPath * (y2 - y1);
 
-    return new Point(x, y);
+    return {
+      intersection: new Point(x, y),
+      thisPercentAlongPath,
+      otherPercentAlongPath,
+    };
   };
+
+  getClosestPointOnSegment(point: Point): ClosestPointOnSegment {
+    // Note: This does not work properly on Curve segments curently
+    // Based on: https://stackoverflow.com/a/6853926
+    const A = point.x - this.start.x;
+    const B = point.y - this.start.y;
+    const C = this.stop.x - this.start.x;
+    const D = this.stop.y - this.start.y;
+
+    const dot = A * C + B * D;
+    const lenSq = C * C + D * D;
+    let percentAlongPath = 0;
+    if (lenSq !== 0) {
+      percentAlongPath = dot / lenSq;
+    }
+
+    percentAlongPath = Math.min(1, Math.max(percentAlongPath, 0));
+    const pointOnSegment = this.getPointOnSegment(percentAlongPath);
+    const distance = pointOnSegment.distance(point);
+    return { pointOnSegment, percentAlongPath, distance };
+  }
+
+  getPointOnSegment(percentAlongPath: number): Point {
+    return getPointTowardOtherPoint(
+      this.start,
+      this.stop,
+      percentAlongPath * this.length
+    );
+  }
+
+  getClosestPointsOnSegments(other: PathSegment): ClosestPointsOnSegment {
+    const intersectionData = this.getIntersection(other);
+    if (intersectionData !== undefined) {
+      let { thisPercentAlongPath, otherPercentAlongPath } = intersectionData;
+      thisPercentAlongPath = Math.max(0, Math.min(1, thisPercentAlongPath));
+      otherPercentAlongPath = Math.max(0, Math.min(1, otherPercentAlongPath));
+
+      const thisPoint = this.getPointOnSegment(thisPercentAlongPath);
+      const otherPoint = other.getPointOnSegment(otherPercentAlongPath);
+      const distance = thisPoint.distance(otherPoint);
+      return {
+        thisPoint,
+        thisPercentAlongPath,
+        otherPoint,
+        otherPercentAlongPath,
+        distance,
+      };
+    }
+
+    // parallell
+    const {
+      pointOnSegment: closestPointStart,
+      percentAlongPath: startPercentAlongPath,
+      distance: startDistance,
+    } = other.getClosestPointOnSegment(this.start);
+    const {
+      pointOnSegment: closestPointStop,
+      percentAlongPath: stopPercentAlongPath,
+      distance: stopDistance,
+    } = other.getClosestPointOnSegment(this.stop);
+
+    if (startDistance < stopDistance) {
+      return {
+        thisPoint: this.start,
+        thisPercentAlongPath: 0,
+        otherPoint: closestPointStart,
+        otherPercentAlongPath: startPercentAlongPath,
+        distance: startDistance,
+      };
+    }
+    return {
+      thisPoint: this.stop,
+      thisPercentAlongPath: 1,
+      otherPoint: closestPointStop,
+      otherPercentAlongPath: stopPercentAlongPath,
+      distance: stopDistance,
+    };
+  }
 }
 
 export class LineSegment extends PathSegment {
@@ -181,7 +272,7 @@ export class CurveSegment extends PathSegment {
     );
   }
 
-  // This is a naive implementation. The geometric mid point should include `start` and `stop`
+  // This is a naive implementation. The geometric mid point should include `controlPoint1` and `controlPoint2`
   get midPoint(): Point {
     return this.start.average(this.stop);
   }

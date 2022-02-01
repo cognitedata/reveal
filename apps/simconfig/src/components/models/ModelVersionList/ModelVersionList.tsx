@@ -50,7 +50,6 @@ export function ModelVersionList({
             : data?.modelFileList[0].id.toString()
         }
         expandIcon={expandIcon}
-        accordion
       >
         {data?.modelFileList.map((modelFile, index) => (
           <Collapse.Panel
@@ -79,6 +78,11 @@ export function ModelVersionList({
                 <span className="description">
                   {modelFile.metadata.description || '(no description)'}
                 </span>
+                {modelFile.metadata.errorMessage && (
+                  <Label size="small" variant="danger">
+                    Error
+                  </Label>
+                )}
                 {!index && <Label size="small">latest version</Label>}
               </div>
             }
@@ -111,7 +115,7 @@ const expandIcon = ({ isActive }: CollapsePanelProps) => (
     style={{
       marginRight: 8,
       transition: 'transform .2s',
-      transform: `rotate(${isActive ? 0 : -180}deg)`,
+      transform: `rotate(${isActive ? 0 : -90}deg)`,
     }}
     type="ChevronDown"
   />

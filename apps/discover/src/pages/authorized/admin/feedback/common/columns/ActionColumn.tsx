@@ -4,11 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@cognite/cogs.js';
 
 import { Tooltip } from 'components/tooltip';
-import { FeedbackItem } from 'modules/feedback/types';
 
 import TableResultActions from '../TableResultActions';
 
-interface prop<FeedbackObject extends FeedbackItem> {
+interface prop<FeedbackObject extends { id: string }> {
   feedbackRow: FeedbackObject;
   showDeleted: boolean;
   setSelectedFeedback: (row: FeedbackObject) => void;
@@ -18,7 +17,7 @@ interface prop<FeedbackObject extends FeedbackItem> {
   deleteGeneralFeedback: (row: FeedbackObject) => void;
 }
 
-export const ActionColumn = <FeedbackObject extends FeedbackItem>(
+export const ActionColumn = <FeedbackObject extends { id: string }>(
   props: PropsWithChildren<prop<FeedbackObject>>
 ) => {
   const {

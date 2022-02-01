@@ -1,6 +1,7 @@
 import isUndefined from 'lodash/isUndefined';
 
-import { DocumentPayload } from 'modules/api/documents/types';
+import { DocumentPayload } from '@cognite/discover-api-types';
+
 import { DocumentQueryFacet } from 'modules/documentSearch/types';
 
 export const patchDocumentPayloadCount = (

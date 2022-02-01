@@ -3,6 +3,7 @@
   "include": ["src/*.ts"],
   "compilerOptions": {
     "rootDirs": ["src"],
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "lib": ["ES2019", "DOM"]
   }
 }

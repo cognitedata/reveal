@@ -1,5 +1,6 @@
 /* eslint-disable no-continue */
-import { PidPath } from '../pid';
+import { isFileConnection } from '../utils';
+import { PidDocument, PidPath } from '../pid';
 import {
   DiagramSymbol,
   SvgRepresentation,
@@ -9,10 +10,11 @@ import {
 import { InstanceMatch, InstanceMatcher, MatchResult } from './InstanceMatcher';
 
 export const findAllInstancesOfSymbol = (
-  pidPaths: PidPath[],
+  pidDocument: PidDocument,
   symbol: DiagramSymbol
 ): DiagramSymbolInstance[] => {
   const symbolInstances: DiagramSymbolInstance[] = [];
+  const { pidPaths } = pidDocument;
 
   for (
     let svgRepIndex = 0;
@@ -36,6 +38,10 @@ export const findAllInstancesOfSymbol = (
     });
   }
 
+  if (symbol.symbolType === 'File connection') {
+    const fileConnections = symbolInstances.filter(isFileConnection);
+    return pidDocument.getFileConnectionsWithPosition(fileConnections);
+  }
   return symbolInstances;
 };
 

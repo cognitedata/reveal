@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import get from 'lodash/get';
 
 import Skeleton from 'components/skeleton';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useSearchHasAnyAppliedFilters } from 'hooks/useSearchHasAnyAppliedFilters';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
   useClearWellsFilters,
   useSetWellsFiltersAsync,
@@ -32,26 +29,15 @@ import { Title } from './Title';
 const loader = <Skeleton.List lines={6} borders />;
 
 export const WellsFilter = () => {
-  const usePreferredUnit = useUserPreferencesMeasurement();
-  const {
-    isFetching,
-    data: filterOptions,
-    refetch,
-  } = useWellFilterOptions(usePreferredUnit);
+  const { isFetching, data: filterOptions } = useWellFilterOptions();
   const [selectedOptions, setSelectedOptions] = useState<WellFilterMap>({});
   // const [changedCategories, setChangedCategories] = useState<SelectedMap>({});
   const [filterCalled, setFilterCalled] = useState<boolean>(false);
   const filters = useAppliedWellFilters();
   const setWellsFilters = useSetWellsFiltersAsync();
-  const history = useHistory();
-  const anyAppliedFilters = useSearchHasAnyAppliedFilters();
   const clearWellFilters = useClearWellsFilters();
   const filterConfigsByCategory = useFilterConfigByCategory();
   const metrics = useGlobalMetrics('search');
-
-  useEffect(() => {
-    refetch();
-  }, [usePreferredUnit]);
 
   useEffect(() => {
     /**
@@ -85,11 +71,7 @@ export const WellsFilter = () => {
     });
 
     const filtersToApply = { ...filters, ...{ [id]: selectedVals } };
-    setWellsFilters(filtersToApply).then(() => {
-      if (!anyAppliedFilters) {
-        history.push('welldata');
-      }
-    });
+    setWellsFilters(filtersToApply);
   };
 
   // eg: "Well Characteristics"
@@ -101,8 +83,6 @@ export const WellsFilter = () => {
       () => (
         <>
           {filterConfigs.map((filterConfig) => {
-            // console.log('filterConfig', filterConfig);
-
             return (
               <CommonFilter
                 key={filterConfig.id}

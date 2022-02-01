@@ -1,5 +1,10 @@
 import { TableResults } from 'components/tablev3';
-import { Well, WellboreId, WellId } from 'modules/wellSearch/types';
+import {
+  SequenceData,
+  Well,
+  WellboreId,
+  WellId,
+} from 'modules/wellSearch/types';
 
 export const SET_PREREQUISITE_DATA = 'WELL_INSPECT_SET_PREREQUISITE_DATA';
 export const TOGGLE_SELECTED_WELL = 'WELL_INSPECT_TOGGLE_SELECTED_WELL';
@@ -14,6 +19,8 @@ export const SET_SELECTED_RELATED_DOCUMENT_COLUMNS =
 export type BooleanSelection = {
   [key: string]: boolean;
 };
+
+export type WellSequenceData = Record<WellboreId, SequenceData[]>;
 
 export interface WellInspectState {
   selectedWellIds: BooleanSelection;

@@ -73,7 +73,7 @@ def _jest_test(name, service_name, srcs, deps, jest_config, jest_args = [], **kw
         "@npm//jest-junit",
         "@npm//jest-localstorage-mock",
         "@npm//jest-css-modules-transform",
-        "@npm//jest-environment-jsdom-sixteen",
+        "@npm//jest-environment-jsdom",
         "@npm//jest-transform-stub",
         "@npm//ts-jest",
         file_name,

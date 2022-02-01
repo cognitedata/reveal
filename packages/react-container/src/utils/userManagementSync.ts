@@ -37,7 +37,7 @@ export const syncUser = async (
         headers: {
           ...getAuthorizationHeader(authState.idToken || authState.token),
           // Used for legacy token
-          fasAppId: sidecar.aadApplicationId,
+          fasAppId: sidecar.aadApplicationId ? sidecar.aadApplicationId : '',
         },
       }
     )

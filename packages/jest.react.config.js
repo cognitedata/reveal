@@ -19,5 +19,5 @@ module.exports = {
     ],
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  testEnvironment: 'jest-environment-jsdom-sixteen',
+  testEnvironment: 'jest-environment-jsdom',
 };

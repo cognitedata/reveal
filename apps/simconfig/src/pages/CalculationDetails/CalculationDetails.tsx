@@ -1,25 +1,44 @@
 import { Link, useMatch } from 'react-location';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Skeleton } from '@cognite/cogs.js';
+import {
+  useGetModelCalculationQuery,
+  useGetModelFileQuery,
+} from '@cognite/simconfig-api-sdk/rtk';
 
+import { CalculationSummary } from 'components/calculation/CalculationSummary';
 import { useTitle } from 'hooks/useTitle';
-
-import CalculationDetailsDataSection from './CalculationDetailsDataSection';
+import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import type { AppLocationGenerics } from 'routes';
 
 export function CalculationDetails() {
+  const project = useSelector(selectProject);
   const {
-    data: { modelFile, modelCalculation },
+    params: { modelName, simulator = 'UNKNOWN', calculationType = 'IPR' },
   } = useMatch<AppLocationGenerics>();
+  const { data: modelFile, isFetching: isFetchingModelFile } =
+    useGetModelFileQuery({ project, modelName, simulator });
+  const { data: modelCalculation, isFetching: isFetchingModelCalculation } =
+    useGetModelCalculationQuery({
+      project,
+      modelName,
+      simulator,
+      calculationType,
+    });
 
   useTitle(
     `${modelCalculation?.configuration.calculationName ?? '...'} / ${
       modelFile?.metadata.modelName ?? '...'
     }`
   );
+
+  if (isFetchingModelFile || isFetchingModelCalculation) {
+    return <Skeleton.List lines={5} />;
+  }
 
   if (!modelFile || !modelCalculation) {
     // No model file returned
@@ -59,9 +78,7 @@ export function CalculationDetails() {
           <div>{modelCalculation.configuration.connector}</div>
         </div>
       </ConfigurationMetadata>
-      <CalculationDetailsDataSection
-        configuration={modelCalculation.configuration}
-      />
+      <CalculationSummary configuration={modelCalculation.configuration} />
     </CalculationDetailsContainer>
   );
 }

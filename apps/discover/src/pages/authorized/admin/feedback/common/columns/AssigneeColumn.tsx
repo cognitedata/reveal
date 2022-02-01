@@ -2,14 +2,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Dropdown, Menu, Label } from '@cognite/cogs.js';
+import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 
 import { NoPropagationWrapper } from 'components/buttons/NoPropagationWrapper';
 import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
-import { BasicUserInfo } from 'modules/user/types';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 
 interface Props {
-  assignee?: BasicUserInfo;
+  assignee?: ObjectFeedbackResponse['assignee'];
   assignFeedback: () => void;
   unassignFeedback: () => void;
 }
@@ -24,7 +24,7 @@ export const AssigneeColumn: React.FC<Props> = (props) => {
   const { t } = useTranslation('Admin');
   const user = useUserProfileQuery();
   const [visibleAssignee, setVisibleAssignee] = React.useState<
-    undefined | BasicUserInfo
+    undefined | ObjectFeedbackResponse['assignee']
   >(assignee);
 
   const isAssigned = !!visibleAssignee;

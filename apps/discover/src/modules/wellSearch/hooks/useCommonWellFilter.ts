@@ -3,6 +3,7 @@ import merge from 'lodash/merge';
 import { Polygon } from '@cognite/sdk-wells-v2';
 
 import { useDeepMemo } from 'hooks/useDeep';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useGeoFilter } from 'modules/map/selectors';
 import {
   useAppliedWellFilters,
@@ -16,6 +17,7 @@ export const useCommonWellFilter = () => {
   const wellFilters = useAppliedWellFilters();
   const geoFilter = useGeoFilter();
   const searchPhrase = useSearchPhrase();
+  const userPreferredUnit = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
     const commonWellFilter: CommonWellFilter = Object.keys(wellFilters).reduce(
@@ -24,14 +26,23 @@ export const useCommonWellFilter = () => {
         const { filterParameters } = filterConfigsById[id];
         return filterParameters && wellFilters[id].length
           ? merge(prev, {
-              ...filterParameters(wellFilters[id] as string[]),
+              ...filterParameters(
+                wellFilters[id] as string[],
+                userPreferredUnit
+              ),
               npt: {
                 ...prev.npt,
-                ...filterParameters(wellFilters[id] as string[]).npt,
+                ...filterParameters(
+                  wellFilters[id] as string[],
+                  userPreferredUnit
+                ).npt,
               },
               nds: {
                 ...prev.nds,
-                ...filterParameters(wellFilters[id] as string[]).nds,
+                ...filterParameters(
+                  wellFilters[id] as string[],
+                  userPreferredUnit
+                ).nds,
               },
             })
           : prev;
@@ -43,7 +54,7 @@ export const useCommonWellFilter = () => {
     if (geoFilter && geoFilter.length) {
       commonWellFilter.polygon = {
         geoJsonGeometry: geoFilter[0].geometry as unknown as Polygon,
-        crs: 'epsg:4326',
+        crs: 'EPSG:4326',
       };
     }
 
@@ -53,5 +64,5 @@ export const useCommonWellFilter = () => {
     }
 
     return commonWellFilter;
-  }, [wellFilters, geoFilter, searchPhrase]);
+  }, [wellFilters, geoFilter, searchPhrase, userPreferredUnit]);
 };

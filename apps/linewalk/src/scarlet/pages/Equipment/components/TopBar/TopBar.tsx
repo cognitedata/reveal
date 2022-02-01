@@ -1,6 +1,6 @@
 import { Button, Skeleton } from '@cognite/cogs.js';
 import { generatePath, useHistory } from 'react-router-dom';
-import { useStorageState } from 'scarlet/hooks';
+import { useAppState } from 'scarlet/hooks';
 import { RoutePath } from 'scarlet/routes';
 
 import * as Styled from './style';
@@ -11,7 +11,7 @@ type TopBarProps = {
 };
 
 export const TopBar = ({ unitName, equipmentName }: TopBarProps) => {
-  const { documents } = useStorageState();
+  const { documents } = useAppState();
   const history = useHistory();
   const equipmentListPath = generatePath(RoutePath.EQUIPMENT_LIST, {
     unitName,

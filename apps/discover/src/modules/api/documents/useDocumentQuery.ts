@@ -1,20 +1,20 @@
 import { useQuery } from 'react-query';
 
+import {
+  DocumentCategories,
+  DocumentPayload,
+} from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { DOCUMENT_CATEGORIES_QUERY_KEY } from 'constants/react-query';
-import {
-  DocumentPayloadLabel,
-  DocumentCategory,
-  DocumentError,
-} from 'modules/api/documents/types';
+import { DocumentError } from 'modules/api/documents/types';
 import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 
 export const useDocumentCategoryQuery = () => {
   const headers = useJsonHeaders();
   const [tenant] = getTenantInfo();
 
-  return useQuery<DocumentCategory | DocumentError>(
+  return useQuery<DocumentCategories | DocumentError>(
     DOCUMENT_CATEGORIES_QUERY_KEY,
     () => discoverAPI.documents.category(headers, tenant),
     {
@@ -27,10 +27,10 @@ export const useDocumentCategoryQuery = () => {
 export const useQueryDocumentLabels = () => {
   const { data: categoryData, ...rest } = useDocumentCategoryQuery();
 
-  let data: DocumentPayloadLabel[] = [];
+  let data: DocumentPayload[] = [];
 
   if (categoryData && 'labels' in categoryData) {
-    data = categoryData.labels as DocumentPayloadLabel[];
+    data = categoryData.labels as DocumentPayload[];
   }
 
   return { data, ...rest };

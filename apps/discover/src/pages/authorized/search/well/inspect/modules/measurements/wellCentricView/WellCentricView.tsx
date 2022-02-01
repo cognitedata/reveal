@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import uniqBy from 'lodash/uniqBy';
 
 import { Loading } from 'components/loading';
@@ -74,24 +75,23 @@ export const WellCentricView: React.FC<Props> = ({
   };
 
   const updateChartData = () => {
-    if (data) {
-      const filteredChartData = selectedInspectWellbores
-        .map((wellbore) => ({
-          wellbore,
-          chartData: formatChartData(
-            data[wellbore.id],
-            geomechanicsCurves,
-            ppfgCurves,
-            otherTypes,
-            measurementReference,
-            pressureUnit.toLowerCase(),
-            userPreferredUnit,
-            config
-          ),
-        }))
-        .filter((row) => row.chartData.length > 0);
-      setWellboreChartData(filteredChartData);
-    }
+    if (isUndefined(data)) return;
+    const filteredChartData = selectedInspectWellbores
+      .map((wellbore) => ({
+        wellbore,
+        chartData: formatChartData(
+          data[wellbore.id],
+          geomechanicsCurves,
+          ppfgCurves,
+          otherTypes,
+          measurementReference,
+          pressureUnit.toLowerCase(),
+          userPreferredUnit,
+          config
+        ),
+      }))
+      .filter((row) => !isEmpty(row.chartData));
+    setWellboreChartData(filteredChartData);
   };
 
   useEffect(() => {

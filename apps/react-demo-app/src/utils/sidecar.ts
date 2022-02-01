@@ -32,7 +32,7 @@ const getAadApplicationId = (cluster: string) => {
   };
 };
 
-// we are overwriting the window.__cogniteSidecar object because the tenant-selector
+// We are overwriting the window.__cogniteSidecar object because the tenant-selector
 // reads from this variable, so when you test on localhost, it (TSA) will not access via this file
 // but via the window.__cogniteSidecar global
 // now that this var is updated, all should work as expected.
