@@ -1,0 +1,19 @@
+schema: '1'
+id: 'react-demo-app-staging-cdf'
+pipeline:
+  application: react-demo-app
+  name: deploy-react-demo-app-staging-cdf
+  template:
+    source: spinnaker://deployMulticloudCoreFromPubsub
+  variables:
+    service: 'react-demo-app'
+    pipeline: 'staging'
+    githubRepository: applications
+    dockerImageName: apps/react-demo-app-staging
+    manualJudgementDev: true
+configuration:
+  description: 'Deploy fas-demo to CDF staging clusters'
+  inherit:
+    - triggers
+    - expectedArtifacts
+    - notifications

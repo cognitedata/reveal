@@ -100,6 +100,11 @@ def container_build(name, app_name, app_id, build_layer, docker_repo, environmen
         tags = ["manual"],
     )
 
+    pipeline_name = app_name
+
+    if environment == "staging":
+        pipeline_name += "-staging"
+
     # Called from Jenkins
     spinnaker_deployment(
         name = "spinnaker_deployment_%s" % environment,
@@ -107,7 +112,7 @@ def container_build(name, app_name, app_id, build_layer, docker_repo, environmen
         baked_manifests = ["//.baker:%s-manifests" % app_name],
         image = ":push_%s" % environment,
         service_name = app_name,
-        spinnaker_pipeline = "//spinnaker-config/%s:spinnaker-config" % app_name,
+        spinnaker_pipeline = "//spinnaker-config/%s:spinnaker-config" % pipeline_name,
         tags = ["manual"],
         deps = [
             build_layer,

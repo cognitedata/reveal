@@ -4,10 +4,10 @@ pipeline:
   application: react-demo-app
   name: deploy-react-demo-app-cdf
   template:
-    source: spinnaker://deployInClusterStagingMulticloudCoreFromPubsub
+    source: spinnaker://deployMulticloudCoreFromPubsub
   variables:
     service: 'react-demo-app'
-    pipeline: 'cdf'
+    pipeline: 'prod'
     githubRepository: applications
     dockerImageName: apps/react-demo-app
     manualJudgementDev: true
