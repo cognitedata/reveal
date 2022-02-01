@@ -78,7 +78,7 @@ pods {
   def gitAuthor
   def getTitle
   def isPullRequest = !!env.CHANGE_ID
-  def isRelease = env.BRANCH_NAME == 'master'
+  def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME.startsWith('release-')
   def bucketBundles = "cdf-hub-bundles"
   def projectProduction = "cognitedata-production"
 
@@ -104,60 +104,62 @@ pods {
       gitTitle = sh(returnStdout: true, script: "git show -s --format='%s' HEAD").trim()
       gitAuthor = sh(returnStdout: true, script: "git show -s --format='%ae' HEAD").trim()
     }
-  
+
     githubNotifyWrapper(context_install) {
         stage('Install dependencies') {
             yarn.setup()
         }
     }
 
-    parallel(
-      'Lint': {
-        container('fas') {
-          stageWithNotify('Lint') {
-            sh("yarn lint")
-          }
-        }
-      },
-      'Test': {
-        container('fas') {
-          stageWithNotify('Unit tests') {
-            sh("yarn test")
-          }
-        }
-      },
-      'Preview': {
-        if(!isPullRequest) {
-          print "No PR previews for release builds"
-          return;
-        }
-        stageWithNotify('Build and deploy PR') {
-          previewServer(
-            buildCommand: 'yarn build:preview',
-            prefix: 'pr',
-            buildFolder: 'build',
-            commentPrefix: PR_COMMENT_MARKER
-          )
-        }
-      },
-      'Build': {
-            if (isPullRequest) {
-                println "Skipping build for pull requests"
-                return
+    threadPool(
+      tasks: [
+        'Lint': {
+          container('fas') {
+            stageWithNotify('Lint') {
+              sh("yarn lint")
             }
-            stageWithNotify('Build for FAS') {
-                fas.build(
-                appId: APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build',
-                shouldPublishSourceMap: false
-                )
-            }   
+          }
+        },
+        'Test': {
+          container('fas') {
+            stageWithNotify('Unit tests') {
+              sh("yarn test")
+            }
+          }
+        },
+        'Preview': {
+          if(!isPullRequest) {
+            print "No PR previews for release builds"
+            return;
+          }
+          stageWithNotify('Build and deploy PR') {
+            previewServer(
+              buildCommand: 'yarn build:preview',
+              prefix: 'pr',
+              buildFolder: 'build',
+              commentPrefix: PR_COMMENT_MARKER
+            )
+          }
+        },
+        'Build': {
+          if (isPullRequest) {
+            println "Skipping build for pull requests"
+            return
+          }
+          stageWithNotify('Build for FAS') {
+              fas.build(
+              appId: APP_ID,
+              repo: APPLICATION_REPO_ID,
+              buildCommand: 'yarn build',
+              shouldPublishSourceMap: false
+              )
+          }
         }
+      ],
+      workers: 2,
     )
 
     if (isRelease) {
-
       stageWithNotify('Deploy to FAS') {
         fas.publish(
           shouldPublishSourceMap: false
@@ -166,4 +168,3 @@ pods {
     }
   }
 }
-
