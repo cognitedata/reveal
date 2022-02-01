@@ -24,50 +24,51 @@ interface ErrorNotificationProps extends ApiError {
   sendToSentry?: boolean;
 }
 
-const generateStatusMessage = (errorCode: number): string => {
+const generateStatusMessage = (errorCode: number): string | null => {
   switch (errorCode) {
     case 401:
       return 'Your account has insufficient access rights. Contact your project administrator.';
     case 404:
     case 403:
       return 'We could not find what you were looking for. Keep in mind that this may be due to insufficient access rights.';
+    case 409:
+      return 'External ID cannot be a duplicate. Please choose another external ID.';
     case 500:
     case 503:
-      return 'Something went terribly wrong. You can try again in a bit.';
+      return 'Something went wrong. Please try again in a bit.';
     case undefined:
       return 'We experienced a network issue while handling your request. Please make sure you are connected to the internet and try again.';
     default:
-      return `Something went wrong. Please contact Cognite support if the error persists. Error code: ${errorCode}`;
+      return null;
   }
 };
 
-const generateErrorTitle = (error: ApiError, extraMessage?: string) => (
-  <Paragraph ellipsis={{ rows: 1, expandable: true }}>
-    {extraMessage || generateStatusMessage(error.status)}
-  </Paragraph>
+const generateErrorTitle = (errorMsg?: string) => (
+  <Paragraph ellipsis={{ rows: 1, expandable: true }}>{errorMsg}</Paragraph>
 );
 
 const generateErrorDescription = (
   error: ApiError,
-  extraDescription?: string
-) => (
-  <Paragraph ellipsis={{ rows: 3, expandable: true }}>
-    <strong>{extraDescription}</strong>
-    {error.errors?.map((err) => err?.message)}
-  </Paragraph>
-);
+  customDescription?: string
+) => {
+  const httpError = generateStatusMessage(error.status);
+  const errorMsgs = error.errors?.map((err) => err?.message) ?? null;
+  const genericError = `Something went wrong. Please contact Cognite support if the error persists. Error code: ${error.status}`;
+
+  const description =
+    customDescription ?? httpError ?? errorMsgs ?? genericError;
+  return (
+    <Paragraph ellipsis={{ rows: 3, expandable: true }}>
+      <strong>{description}</strong>
+    </Paragraph>
+  );
+};
 
 export const handleError = (props: ErrorNotificationProps): void => {
-  const {
-    message = '',
-    description,
-    duration = 6,
-    status,
-    sendToSentry = true,
-  } = props;
+  const { description, duration = 6, status, sendToSentry = true } = props;
   const errorObject: ApiError = { ...props };
 
-  const errorTitle = generateErrorTitle(errorObject, message);
+  const errorTitle = generateErrorTitle('Something went wrong');
   const errorDescription = generateErrorDescription(errorObject, description);
 
   if (status !== 401 && status !== 403 && sendToSentry) {

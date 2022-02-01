@@ -45,6 +45,7 @@ const DataSetEditor = ({
     isLoading: isCreating,
     createdDataSetId,
     isSuccess: datasetCreated,
+    isError: datasetCreatedError,
   } = useCreateDataSetMutation();
   const { updateOwners, isLoading: isUpdatingOwners } =
     useUpdateDataSetOwners();
@@ -112,6 +113,8 @@ const DataSetEditor = ({
         dataSet={dataSetWithExtpipes?.dataSet}
         changesSaved={changesSaved}
         setChangesSaved={setChangesSaved}
+        datasetCreated={datasetCreated}
+        datasetCreatedError={datasetCreatedError}
         updateDataSet={updateDataSet}
         sourceSuggestions={sourceSuggestions}
         closeModal={handleCloseModal}
