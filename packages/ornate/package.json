@@ -1,6 +1,6 @@
 {
   "name": "@cognite/ornate",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "description": "",
   "source": "src/index.ts",
   "main": "dist/index.js",
