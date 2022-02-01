@@ -133,13 +133,18 @@ pods {
             return;
           }
           stageWithNotify('Build and deploy PR') {
+            def package_name = "@cognite/cdf-data-sets";
+            def prefix = jenkinsHelpersUtil.determineRepoName();
+            def domain = "fusion-preview";
             previewServer(
-              buildCommand: 'yarn build:preview',
-              prefix: 'pr',
+              buildCommand: 'yarn build',
               buildFolder: 'build',
-              commentPrefix: PR_COMMENT_MARKER
+              prefix: prefix,
+              repo: domain
             )
-          }
+            deleteComments("[FUSION_PREVIEW_URL]")
+            def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+            pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
         },
         'Build': {
           if (isPullRequest) {
@@ -147,12 +152,12 @@ pods {
             return
           }
           stageWithNotify('Build for FAS') {
-              fas.build(
+            fas.build(
               appId: APP_ID,
               repo: APPLICATION_REPO_ID,
               buildCommand: 'yarn build',
               shouldPublishSourceMap: false
-              )
+            )
           }
         }
       ],
