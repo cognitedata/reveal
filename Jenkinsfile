@@ -54,32 +54,30 @@ static final String SLACK_CHANNEL = 'devflow-charts'
 //    which are named release-[NNN].
 //
 // No other options are supported at this time.
-static final String VERSIONING_STRATEGY = "multi-branch"
+static final String VERSIONING_STRATEGY = 'multi-branch'
 
 // == End of customization. Everything below here is common. == \\
 
 static final String NODE_VERSION = 'node:12'
 
 static final Map<String, String> CONTEXTS = [
-  checkout: "continuous-integration/jenkins/checkout",
-  setup: "continuous-integration/jenkins/setup",
-  lint: "continuous-integration/jenkins/lint",
-  unitTests: "continuous-integration/jenkins/unit-tests",
-  buildStaging: "continuous-integration/jenkins/build-staging",
-  publishStaging: "continuous-integration/jenkins/publish-staging",
-  buildProduction: "continuous-integration/jenkins/build-production",
-  publishProduction: "continuous-integration/jenkins/publish-production",
-  buildPreview: "continuous-integration/jenkins/build-preview",
-  publishPreview: "continuous-integration/jenkins/publish-preview",
+  checkout: 'continuous-integration/jenkins/checkout',
+  setup: 'continuous-integration/jenkins/setup',
+  lint: 'continuous-integration/jenkins/lint',
+  unitTests: 'continuous-integration/jenkins/unit-tests',
+  buildStaging: 'continuous-integration/jenkins/build-staging',
+  publishStaging: 'continuous-integration/jenkins/publish-staging',
+  buildProduction: 'continuous-integration/jenkins/build-production',
+  publishProduction: 'continuous-integration/jenkins/publish-production',
+  buildPreview: 'continuous-integration/jenkins/build-preview',
+  publishPreview: 'continuous-integration/jenkins/publish-preview',
 ]
 
 // Copy these before installing dependencies so that we don't have to
 // copy the entire node_modules directory tree as well.
 static final String[] DIRS = [
   'lint',
-  'testcafe',
   'unit-tests',
-  // 'storybook',
   'preview',
   'staging',
   'production',
@@ -96,28 +94,22 @@ def pods = { body ->
         mixpanelToken: MIXPANEL_TOKEN,
       ) {
         codecov.pod {
-          testcafe.pod() {
-            properties([
-              buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
-            ])
-
-            node(POD_LABEL) {
-              dir('main') {
-                stageWithNotify('Checkout code', CONTEXTS.checkout) {
-                  checkout(scm)
-                }
-
-                stageWithNotify('Install dependencies', CONTEXTS.setup) {
-                  yarn.setup()
-                }
-
-                yarn.copy(
-                  dirs: DIRS
-                )
+          properties([
+            buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+          ])
+          node(POD_LABEL) {
+            dir('main') {
+              stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                checkout(scm)
               }
-
-              body()
+              stageWithNotify('Install dependencies', CONTEXTS.setup) {
+                yarn.setup()
+              }
+              yarn.copy(
+                dirs: DIRS
+              )
             }
+            body()
           }
         }
       }
@@ -154,19 +146,13 @@ pods {
                 if (isPullRequest) {
                   summarizeTestResults()
                 }
-                stage("Upload coverage reports") {
+                stage('Upload coverage reports') {
                   codecov.uploadCoverageReport()
                 }
               }
             }
           }
         },
-
-        // 'Storybook': {
-        //   previewServer.runStorybookStage(
-        //     shouldExecute: isPullRequest
-        //   )
-        // },
 
         'Preview': {
           dir('preview') {
@@ -206,22 +192,13 @@ pods {
             }
           }
         },
-
-        // TBA
-        // 'E2e': {
-        //   testcafe.runE2EStage(
-        //     shouldExecute: !isRelease,
-        //     buildCommand: 'yarn testcafe:build',
-        //     runCommand: 'yarn testcafe:start'
-        //   )
-        // },
       ],
       workers: 3,
     )
 
     stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
       if (!isPullRequest) {
-        print "Not a PR, no need to preview"
+        print 'Not a PR, no need to preview'
         return
       }
       dir('preview') {
@@ -233,12 +210,11 @@ pods {
 
     stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
       if (!isStaging) {
-        print "Not pushing to staging, no need to preview"
+        print 'Not pushing to staging, no need to preview'
         return
       }
       dir('staging') {
         fas.publish()
-
       }
 
       // in 'single-branch' mode we always publish 'staging' and 'master' builds
@@ -246,7 +222,7 @@ pods {
       // so it is ok to skip this message in that case
       //
       // note: the actual deployment of each is determined by versionSpec in FAS
-      if (VERSIONING_STRATEGY != "single-branch") {
+      if (VERSIONING_STRATEGY != 'single-branch') {
         dir('main') {
           slack.send(
             channel: SLACK_CHANNEL,
@@ -256,12 +232,10 @@ pods {
       }
     }
 
-
     if (isProduction && PRODUCTION_APP_ID) {
       stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
         dir('production') {
           fas.publish()
-
         }
 
         dir('main') {

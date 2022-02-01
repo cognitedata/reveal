@@ -9,8 +9,6 @@ import '@cognite/cogs.js/dist/cogs.css';
 import 'antd/dist/antd.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
-require('dotenv').config();
-
 configureI18n({
   localStorageLanguageKey: 'chartsCurrentLanguage',
   lng: localStorage.getItem('chartsCurrentLanguage') || 'en',

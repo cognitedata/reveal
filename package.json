@@ -45,7 +45,6 @@
     "classnames": "^2.3.1",
     "date-fns": "^2.24.0",
     "dayjs": "^1.10.7",
-    "dotenv": "^10.0.0",
     "file-saver": "^2.0.5",
     "firebase": "^8.10.0",
     "joi": "^17.5.0",
@@ -121,11 +120,7 @@
     "jest-environment-jsdom-sixteen": "^2.0.0",
     "jest-junit": "^13.0.0",
     "jira-prepare-commit-msg": "^1.6.2",
-    "kill-port": "^1.6.1",
     "prettier": "^2.1.2",
-    "serve": "^11.3.2",
-    "sinon": "^12.0.1",
-    "testcafe": "^1.9.4",
     "typescript": "^4.5.4"
   },
   "resolutions": {
