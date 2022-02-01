@@ -15,12 +15,24 @@ export class OrnateTransformer extends Konva.Transformer {
   constructor(ornateInstance?: CogniteOrnate) {
     super();
     this.ornateInstance = ornateInstance;
+    this.hide();
   }
 
   setSelectedNodes = (nodes: Node<NodeConfig>[]) => {
     // Update to accept multiple nodes
     if (!nodes) {
       return;
+    }
+
+    // The Transformer can affect the calculated sizing of the parent layer
+    // when it's not attached any nodes, so we hide it when this is the case
+    // to avoid this edge case. This is probably a Konva bug.
+    if (nodes.length === 0 && this.isVisible()) {
+      this.hide();
+    }
+
+    if (nodes.length > 0 && !this.isVisible()) {
+      this.show();
     }
 
     this.nodes(nodes);
@@ -73,7 +85,7 @@ export class OrnateTransformer extends Konva.Transformer {
     if (this.group) {
       this.group.add(...nodesFromClipboard);
     } else {
-      this.ornateInstance?.drawingLayer.add(...nodesFromClipboard);
+      this.ornateInstance?.baseLayer.add(...nodesFromClipboard);
     }
 
     this.setSelectedNodes(nodesFromClipboard);

@@ -14,7 +14,9 @@ const SQUARE_HEIGHT = 32;
 
 export class ListTool extends Tool implements ICogniteOrnateTool {
   cursor = 'default';
-  listDrawingLayer = new Konva.Layer();
+  listDrawingLayer = new Konva.Layer({
+    name: 'listDrawingLayer',
+  });
   markers: Marker[] = [];
   onMarkersChange: (nextMarkers: Marker[]) => void = noop;
   numberGroups: Konva.Group[] = [];
