@@ -4,7 +4,7 @@ services:
   - name: 'react-demo-app'
     email: 'frontend-app-server@cognite.com'
     pipelines:
-      - name: cdf
+      - name: prod
         cluster_selection_rules:
           - description: 'react-demo-app cdf deployment pipeline'
             expression: 'cdf:true && (vendor:gke || vendor:aks)'
@@ -14,7 +14,7 @@ services:
             '-c',
             "/scripts/kustomize_vendor_and_cluster_overlays.sh apps/react-demo-app/kustomize/production | sed \"s|\\${account}|${BAKER_CLUSTER}|g\"",
           ]
-      - name: cdf-staging
+      - name: staging
         cluster_selection_rules:
           - description: 'react-demo-app cdf staging deployment pipeline'
             expression: 'cdf:true && (vendor:gke || vendor:aks)'
