@@ -1,22 +1,24 @@
 module.exports = {
-  extends: ['./.eslintrc.production.js', 'plugin:storybook/recommended'],
-  // We can relax some settings here for nicer development experience; warnings will crash in CI
+  extends: ['@cognite'],
   rules: {
-    'prettier/prettier': [
-      'warn',
-      {
-        singleQuote: true,
-        trailingComma: 'es5',
-        arrowParens: 'always',
-        endOfLine: 'auto',
-      },
-    ],
-    '@cognite/no-unissued-todos': ['warn', { issuePattern: ': CHART-[0-9]+' }],
+    'react/react-in-jsx-scope': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/require-default-props': 'off',
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': 'error',
+    'no-param-reassign': ['error', { props: false }],
+    '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars-experimental': [
-      'warn',
-      {
-        ignoredNamesRegex: '^_',
-      },
+      'error',
+      { ignoredNamesRegex: '^_' },
     ],
   },
+  overrides: [
+    {
+      files: ['**/*.stories.tsx'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+  ],
 };

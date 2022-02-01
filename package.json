@@ -9,7 +9,7 @@
     "test:watch": "./scripts/test.sh",
     "test:ci": "./scripts/test.sh --coverage --reporters=default --reporters=jest-junit --watchAll=false ",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,jsx,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
-    "lint": "eslint --config .eslintrc.production.js 'src/**/*.{js,jsx,ts,tsx}' 'public/index.html'",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' 'public/index.html'",
     "lint:fix": "yarn lint --fix",
     "storybook": "start-storybook -p 6006 -s public",
     "testcafe:run": "BASE_URL=http://localhost:11111 testcafe 'chromium:headless --no-sandbox' 'testcafe/desktop' --stop-on-first-fail",
