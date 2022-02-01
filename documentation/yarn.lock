@@ -1260,8 +1260,16 @@
   dependencies:
     comlink "4.3.1"
 
+"@cognite/reveal-parser-worker@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.3.0.tgz#9910121ba90cad684a91b3b04e6df0528ea671f5"
+  integrity sha512-39wuqtdogmZfTmnQhigNpgU/nfYG3POpUFKFO/FMKJKJ+pAsCCZfu4IPEXCDAevJS6/K+mEViPSLL6+Gagi1HQ==
+  dependencies:
+    comlink "4.3.1"
+
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
+  uid ""
 
 "@cognite/sdk-1.x@npm:@cognite/sdk@^3.4.0":
   version "3.5.2"
@@ -1306,6 +1314,7 @@
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
+  uid ""
 
 "@cognite/three-combo-controls@^1.4.3":
   version "1.4.3"

@@ -222,7 +222,14 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
 
-    this._cameraManager = new CameraManager(this.camera, this.canvas, this.modelIntersectionCallback.bind(this));
+    this._mouseHandler = new InputHandler(this.canvas);
+
+    this._cameraManager = new CameraManager(
+      this.camera,
+      this.canvas,
+      this._mouseHandler,
+      this.modelIntersectionCallback.bind(this)
+    );
     this._cameraManager.automaticControlsSensitivity = this._automaticControlsSensitivity;
     this._cameraManager.automaticNearFarPlane = this._automaticNearFarPlane;
 
@@ -255,9 +262,8 @@ export class Cognite3DViewer {
         options.sdk
       );
     }
-    this.renderController = new RenderController(this.camera);
 
-    this._mouseHandler = new InputHandler(this.domElement);
+    this.renderController = new RenderController(this.camera);
     this.startPointerEventListeners();
 
     this.revealManager.setRenderTarget(
