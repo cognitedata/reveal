@@ -16,7 +16,10 @@ import styled from 'styled-components/macro';
 import { datapointsToCSV, Delimiters, downloadCSV } from 'utils/csv';
 import { wait } from 'utils/helpers';
 import { format as formatDate } from 'date-fns';
-import { fetchDataPoints } from './utils';
+import { DatapointAggregates } from '@cognite/sdk';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import { fetchDataPoints, fetchRawDatapoints } from './utils';
 
 type Props = {
   isOpen?: boolean;
@@ -39,6 +42,7 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
   const [isHumanReadableDates, setIsHumanReadableDates] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [isDoneExporting, setIsDoneExporting] = useState(false);
+  const [isRawDownload, setIsRawDownload] = useState(false);
   const [error, setError] = useState<Error>();
   const sdk = useSDK();
 
@@ -78,40 +82,119 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
         const aggregate = 'average';
         const granularity = selectedGranularity || '1d';
         const humanReadableDateFormat = 'yyyy-MM-dd HH:mm:ss';
+        const bundleName = `${chart?.name} ${formatDate(
+          new Date(),
+          humanReadableDateFormat
+        )}`;
 
         /**
          * Fetch all datapoints for all the visible time series
          */
-        const data = await fetchDataPoints(sdk, {
-          start: new Date(chart?.dateFrom || new Date()).getTime(),
-          end: new Date(chart?.dateTo || new Date()).getTime(),
-          items: externalIds.map((externalId) => ({ externalId })),
-          granularity,
-          aggregates: [aggregate],
-        });
+        const data = isRawDownload
+          ? await fetchRawDatapoints(
+              sdk,
+              {
+                start: new Date(chart?.dateFrom || new Date()).getTime(),
+                end: new Date(chart?.dateTo || new Date()).getTime(),
+                items: externalIds.map((externalId) => ({ externalId })),
+                granularity,
+                aggregates: [aggregate],
+              },
+              chart?.timeSeriesCollection
+            )
+          : await fetchDataPoints(sdk, {
+              start: new Date(chart?.dateFrom || new Date()).getTime(),
+              end: new Date(chart?.dateTo || new Date()).getTime(),
+              items: externalIds.map((externalId) => ({ externalId })),
+              granularity,
+              aggregates: [aggregate],
+            });
 
         /**
-         * Convert to CSV
+         * Split into separate downloads if downloading raw data
          */
-        const csv = datapointsToCSV({
-          data,
-          aggregate,
-          delimiter: selectedDelimiter,
-          format: isHumanReadableDates ? humanReadableDateFormat : undefined,
-          formatLabel: (externalId) =>
-            chart?.timeSeriesCollection?.find(
-              (ts) => externalId === ts.tsExternalId
-            )?.name || externalId,
-          granularity,
-        });
+        const downloadChunks: {
+          filename: string;
+          output: DatapointAggregates[];
+        }[] = isRawDownload
+          ? data.map((item) => ({
+              filename:
+                chart?.timeSeriesCollection?.find(
+                  (ts) => item.externalId === ts.tsExternalId
+                )?.name ||
+                item.externalId ||
+                String(item.id),
+              output: [item],
+            }))
+          : [
+              {
+                filename: bundleName,
+                output: data,
+              },
+            ];
 
         /**
-         * Perform download
+         * Handle download of single CSV (aggregates)
          */
-        downloadCSV(
-          csv,
-          `${chart?.name} ${formatDate(new Date(), humanReadableDateFormat)}`
-        );
+        if (!isRawDownload) {
+          /**
+           * Convert to CSV
+           */
+          const csv = datapointsToCSV({
+            data: downloadChunks[0].output,
+            aggregate,
+            delimiter: selectedDelimiter,
+            format: isHumanReadableDates ? humanReadableDateFormat : undefined,
+            formatLabel: (externalId) =>
+              chart?.timeSeriesCollection?.find(
+                (ts) => externalId === ts.tsExternalId
+              )?.name || externalId,
+            granularity,
+            isRaw: isRawDownload,
+          });
+
+          /**
+           * Perform download
+           */
+          downloadCSV(csv, downloadChunks[0].filename);
+        } else {
+          /**
+           * Handle .zip bundle download for raw data
+           */
+          const zipBundle = new JSZip();
+
+          // eslint-disable-next-line no-restricted-syntax
+          for (const chunk of downloadChunks) {
+            /**
+             * Convert to CSV
+             */
+            const csv = datapointsToCSV({
+              data: chunk.output,
+              aggregate,
+              delimiter: selectedDelimiter,
+              format: isHumanReadableDates
+                ? humanReadableDateFormat
+                : undefined,
+              formatLabel: (externalId) =>
+                chart?.timeSeriesCollection?.find(
+                  (ts) => externalId === ts.tsExternalId
+                )?.name || externalId,
+              granularity,
+              isRaw: isRawDownload,
+            });
+
+            /**
+             * Add to .zip bundle
+             */
+            zipBundle.file(`${chunk.filename}.csv`, csv);
+          }
+
+          /**
+           * Perform download
+           */
+          const fileContent = await zipBundle.generateAsync({ type: 'blob' });
+          saveAs(fileContent as Blob, bundleName);
+        }
 
         /**
          * Success indicator
@@ -135,6 +218,7 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
     selectedDelimiter,
     selectedGranularity,
     isHumanReadableDates,
+    isRawDownload,
   ]);
 
   return (
@@ -170,12 +254,29 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
           </Tooltip>
         </Label>
         <FullWidthInput
+          disabled={isRawDownload}
           onChange={(event) => setSelectedGranularity(event.target.value)}
           value={selectedGranularity}
           placeholder="1d (default)"
           type="text"
         />
         <ExampleText>Examples: 30s, 45m, 2h, 3d</ExampleText>
+      </FieldContainer>
+
+      <FieldContainer>
+        <Checkbox
+          name="rawDatapoints"
+          value={isRawDownload}
+          onChange={(checked) => setIsRawDownload(checked)}
+        />
+        <Label>
+          <Tooltip
+            maxWidth={350}
+            content="Download raw data points from the source - without aggregation, limited to 100,000 points per time series"
+          >
+            <>Download raw data (separate file per time series)</>
+          </Tooltip>
+        </Label>
       </FieldContainer>
 
       <FieldContainer>
@@ -206,7 +307,10 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
           onChange={(checked) => setIsHumanReadableDates(checked)}
         />
         <Label>
-          <Tooltip content="Set the date format to 'yyyy-mm-dd HH:mm:ss' - otherwise it will be a timestamp">
+          <Tooltip
+            maxWidth={350}
+            content="Set the date format to 'yyyy-mm-dd HH:mm:ss' - otherwise it will be a timestamp"
+          >
             <>Human readable dates</>
           </Tooltip>
         </Label>
@@ -215,9 +319,12 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
       <BottomContainer>
         <StatusContainer>
           {error && (
-            <StatusText>
-              <StatusIcon type="Error" /> Export failed
-            </StatusText>
+            <Tooltip maxWidth={350} content={error.message}>
+              <StatusText>
+                <StatusIcon style={{ color: 'var(--cogs-red)' }} type="Error" />{' '}
+                Export failed
+              </StatusText>
+            </Tooltip>
           )}
           {!error && isExporting && (
             <StatusText>
@@ -226,7 +333,11 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
           )}
           {!error && isDoneExporting && (
             <StatusText>
-              <StatusIcon type="Checkmark" /> Export successful
+              <StatusIcon
+                style={{ color: 'var(--cogs-green)' }}
+                type="Checkmark"
+              />{' '}
+              Export successful
             </StatusText>
           )}
         </StatusContainer>

@@ -10,6 +10,7 @@ export interface DatapointsToCSVProps {
   delimiter?: Delimiters;
   format?: string;
   formatLabel?: (externalId: string) => string;
+  isRaw?: boolean;
 }
 
 export enum Delimiters {
@@ -25,21 +26,31 @@ export function datapointsToCSV({
   delimiter = Delimiters.Comma,
   format,
   formatLabel = (str) => str,
+  isRaw = false,
 }: DatapointsToCSVProps): string {
   const labels = data.map(({ id, externalId }) => {
     const idString = externalId || id.toString();
     return formatLabel(idString);
   });
 
-  const arrangedData = arrangeDatapointsByTimestamp({
-    data,
-    aggregate,
-    granularity,
-  });
+  const arrangedData = isRaw
+    ? arrangeRawData(data)
+    : arrangeDatapointsByTimestamp({
+        data,
+        aggregate,
+        granularity,
+      });
 
   const csvStrings = generateCSVStringsArray(arrangedData, delimiter, format);
 
   return [['timestamp', ...labels].join(delimiter), ...csvStrings].join('\r\n');
+}
+
+function arrangeRawData(data: DatapointAggregates[]): (number | string)[][] {
+  return data[0].datapoints.map(({ timestamp, average }) => [
+    new Date(timestamp).getTime(),
+    average!,
+  ]);
 }
 
 export function downloadCSV(src: string, filename: string = 'data.csv') {

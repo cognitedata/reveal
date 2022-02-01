@@ -4,11 +4,16 @@ import {
   DatapointInfo,
   CogniteClient,
   IdEither,
+  Datapoints,
+  DatapointAggregate,
+  DatapointsQueryExternalId,
 } from '@cognite/sdk';
+import dayjs from 'dayjs';
 
 import { range, last } from 'lodash';
+import { ChartTimeSeries } from 'models/chart/types';
 import { pAll } from 'utils/helpers';
-import { getGranularityInMS } from 'utils/timeseries';
+import { calculateGranularity, getGranularityInMS } from 'utils/timeseries';
 
 const CELL_LIMIT = 10000;
 
@@ -98,4 +103,87 @@ export const fetchDataPoints = async (
       return dp;
     });
   });
+};
+
+export const fetchRawDatapoints = async (
+  sdk: CogniteClient,
+  request: DatapointsMultiQuery,
+  timeseriesCollection: ChartTimeSeries[] = []
+): Promise<DatapointAggregates[]> => {
+  /**
+   * Check if any of the series being downloaded contain more than 100000 points
+   * (which is the limit for a single query)
+   */
+
+  const parallelizedQueries = request.items.map((item) => ({
+    ...request,
+    items: [item],
+  }));
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const parallelizedQuery of parallelizedQueries) {
+    const countRequest: DatapointsMultiQuery = {
+      ...parallelizedQuery,
+      granularity: calculateGranularity(
+        [dayjs(request.start).valueOf(), dayjs(request.end).valueOf()],
+        1000
+      ),
+      aggregates: ['count'],
+    };
+
+    // eslint-disable-next-line no-await-in-loop
+    const [countResult] = await sdk.datapoints.retrieve(countRequest);
+
+    const aggregatedCount = (
+      countResult?.datapoints as DatapointAggregate[]
+    ).reduce((point: number, c: DatapointAggregate) => {
+      return point + (c.count || 0);
+    }, 0);
+
+    const timeseriesName = timeseriesCollection.find(
+      (ts) =>
+        ts.tsExternalId ===
+        (countRequest.items[0] as DatapointsQueryExternalId).externalId
+    )?.name;
+
+    if (aggregatedCount > 100000) {
+      throw new Error(
+        `You tried to download more than 100,000 data points for the time series named '${timeseriesName}'. Please choose a smaller time span and/or a larger granularity.`
+      );
+    }
+  }
+
+  const rawParallizedQueries = parallelizedQueries.map((query) => ({
+    ...query,
+    granularity: undefined,
+    aggregates: undefined,
+    includeOutsidePoints: true,
+    limit: 100000,
+  }));
+
+  const rawParallizedRequestThunks = rawParallizedQueries.map(
+    (query) => () => sdk.datapoints.retrieve(query)
+  );
+
+  const rawResults: Datapoints[][] = (await pAll(
+    rawParallizedRequestThunks,
+    5
+  )) as Datapoints[][];
+
+  const results: DatapointAggregates[] = rawResults.map((result) => {
+    return {
+      ...result[0],
+      isStep: false,
+      isString: false,
+      datapoints: result[0].datapoints.map(
+        (p) =>
+          ({
+            ...p,
+            average: p.value,
+          } as DatapointAggregate)
+      ),
+    };
+  });
+
+  return results;
 };
