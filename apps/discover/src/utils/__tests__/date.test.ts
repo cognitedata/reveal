@@ -25,6 +25,7 @@ import {
   TIME_AND_DATE_FORMAT,
   toDate,
 } from '../date';
+import { ISODateRegex } from '../isISODateRegex';
 
 describe('date helpers', () => {
   describe('toEpoch', () => {
@@ -98,9 +99,7 @@ describe('date helpers', () => {
       );
       expect(
         formatDate(new Date('2021-04-15T13:31:27.767Z'), DOCUMENT_DATE_FORMAT)
-      ).toMatch(
-        /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/
-      );
+      ).toMatch(ISODateRegex);
       expect(formatDate(date, CHART_AXIS_LABEL_DATE_FORMAT)).toEqual(
         'Feb 2000'
       );

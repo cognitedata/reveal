@@ -661,6 +661,7 @@ CYPRESS_EXTERNAL_FILES = [
     "src/pages/authorized/search/map/constants.ts",
     "src/core/constants.ts",
     "src/components/tableEmpty/constants.ts",
+    "src/utils/isISODateRegex.ts",
 ]
 
 CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES

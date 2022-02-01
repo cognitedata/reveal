@@ -116,7 +116,9 @@ export const WellsFilter = () => {
         key={category.title}
       >
         {/* Filter Elements */}
-        <WellFilters filterConfigs={category.filterConfigs} index={index} />
+        <div data-testid={category.title}>
+          <WellFilters filterConfigs={category.filterConfigs} index={index} />
+        </div>
       </FilterCollapse.Panel>
     ));
   }, [
