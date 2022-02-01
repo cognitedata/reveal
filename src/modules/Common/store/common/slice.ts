@@ -12,8 +12,8 @@ import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotat
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
+import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { BulkEditUnsavedState, CommonState } from './types';
 
 export const initialState: CommonState = {
@@ -67,8 +67,8 @@ const commonSlice = createSlice({
         UpdateAnnotations,
         UpdateFiles,
         SaveAnnotationTemplates,
-        postAnnotationJob,
-        PollJobs
+        PollJobs,
+        postAnnotationJob
       ),
       (state, { error }) => {
         if (error && error.message) {
