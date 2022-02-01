@@ -6,19 +6,18 @@ import * as THREE from 'three';
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 
-import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
-
 import { RevealCameraControls } from '@reveal/camera-manager';
 import { NodeAppearance } from '@reveal/cad-styling';
 
 import { CogniteClient } from '@cognite/sdk';
+import { NodeCollectionDeserializer } from '@reveal/core';
 
 export type ViewerState = {
-  camera: {
+  camera?: {
     position: { x: number; y: number; z: number };
     target: { x: number; y: number; z: number };
   };
-  models: ModelState[];
+  models?: ModelState[];
 };
 
 export type ModelState = {
@@ -73,19 +72,30 @@ export class ViewStateHelper {
   }
 
   public async setState(viewerState: ViewerState): Promise<void> {
-    const camPos = viewerState.camera.position;
-    const camTarget = viewerState.camera.target;
+    if (viewerState.camera !== undefined) {
+      this.setCameraFromState(viewerState.camera);
+    }
+    if (viewerState.models !== undefined) {
+      this.setModelState(viewerState.models);
+    }
+  }
+
+  private setCameraFromState(cameraState: Exclude<ViewerState['camera'], undefined>) {
+    const camPos = cameraState.position;
+    const camTarget = cameraState.target;
     this._cameraControls.setState(
       new THREE.Vector3(camPos.x, camPos.y, camPos.z),
       new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
     );
+  }
 
+  private async setModelState(modelsState: Exclude<ViewerState['models'], undefined>) {
     const cadModels = this._viewer.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel);
 
     await Promise.all(
-      viewerState.models
+      modelsState
         .map(state => {
           const model = cadModels.find(model => model.modelId == state.modelId && model.revisionId == state.revisionId);
           if (model === undefined) {
