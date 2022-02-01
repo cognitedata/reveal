@@ -13,6 +13,7 @@ export interface AnnotationPreview
 export type AnnotationStatuses = {
   status: JobStatus;
   statusTime: number;
+  error?: string;
 };
 
 export interface AnnotationsBadgeCounts {

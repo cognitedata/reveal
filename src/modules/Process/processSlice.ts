@@ -1,10 +1,15 @@
 import { createSelector, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import {
   AnnotationJob,
+  AnnotationJobCompleted,
+  AnnotationJobRunning,
   DetectionModelParams,
   VisionAPIType,
 } from 'src/api/types';
-import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
+import {
+  AnnotationsBadgeStatuses,
+  AnnotationStatuses,
+} from 'src/modules/Common/types';
 import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
 import isEqual from 'lodash-es/isEqual';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
@@ -27,6 +32,7 @@ export type JobState = AnnotationJob & {
   fileIds: number[];
   completedFileIds?: number[];
   failedFileIds?: number[];
+  failedFiles?: { fileId: number; error: string }[];
 };
 export type State = GenericTabularState & {
   fileIds: number[];
@@ -398,6 +404,21 @@ const addJobToState = (
     completedFileIds,
     failedFileIds,
   };
+
+  if (job.status === 'Completed' || job.status === 'Running') {
+    jobState.failedFiles = (
+      job as AnnotationJobRunning | AnnotationJobCompleted
+    ).failedItems?.reduce(
+      (acc: { fileId: number; error: string }[], next) =>
+        acc.concat(
+          next.items.map((item) => ({
+            fileId: item.fileId,
+            error: next.errorMessage,
+          }))
+        ),
+      []
+    );
+  }
   const existingJob = state.jobs.byId[job.jobId];
   if (!existingJob || !isEqual(jobState, existingJob)) {
     if (existingJob) {
@@ -549,7 +570,11 @@ export const makeSelectJobStatusForFile = () =>
           status = 'Failed';
         }
 
-        const statusData = { status, statusTime: job.statusTime };
+        const statusData = {
+          status,
+          statusTime: job.statusTime,
+          error: job.failedFiles?.find((file) => file.fileId === fileId)?.error,
+        };
         if (job.type === VisionAPIType.OCR) {
           annotationBadgeProps.text = statusData;
         }
@@ -621,6 +646,15 @@ export const isProcessingFile = (
   return statuses.some((key) =>
     ['Queued', 'Running'].includes(annotationStatuses[key]?.status || '')
   );
+};
+
+export const hasJobsFailedForFile = (
+  annotationStatuses: AnnotationsBadgeStatuses
+) => {
+  const statuses = Object.values(
+    annotationStatuses
+  ) as Array<AnnotationStatuses>;
+  return statuses.some((value) => value.status === 'Failed' || !!value.error);
 };
 
 // hooks
