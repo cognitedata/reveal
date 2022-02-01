@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
 import compact from 'lodash/compact';
@@ -49,6 +49,11 @@ export const WellResultTable: React.FC = () => {
   const userPreferredUnit = useUserPreferencesMeasurement();
   const dispatch = useDispatch();
   const navigateToWellInspect = useNavigateToWellInspect();
+  const wellsRef = useRef(wells);
+
+  useEffect(() => {
+    wellsRef.current = wells;
+  }, [wells]);
 
   const columns = useDeepMemo(
     () =>
@@ -133,9 +138,11 @@ export const WellResultTable: React.FC = () => {
 
   const handleRowsSelect = useDeepCallback(
     (isSelected: boolean) => {
-      dispatch(wellSearchActions.toggleSelectedWells(wells, { isSelected }));
+      dispatch(
+        wellSearchActions.toggleSelectedWells(wellsRef.current, { isSelected })
+      );
     },
-    [wells]
+    [wellsRef.current]
   );
 
   const renderRowSubComponent = useCallback(({ row }) => {
