@@ -3,7 +3,7 @@ import { stringCompare, getStringCdfEnv } from 'utils/utils';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import HiddenTransformation from './HiddenTranformation';
 
@@ -63,9 +63,9 @@ const transformationsColumns = (
     render: (_text: string, transform: any) => {
       const { hidden, owner: _owner, ownerIsCurrentUser } = transform;
       const owner = ownerIsCurrentUser ? (
-        <>
+        <CellTransformation>
           <Icon type="User" /> me
-        </>
+        </CellTransformation>
       ) : (
         _owner?.user ?? ''
       );
@@ -80,24 +80,25 @@ const transformationsColumns = (
   {
     key: 'actions',
     render: (_: string, transform: any) => (
-      <Button
-        icon="Delete"
-        size="small"
-        type="ghost-danger"
-        onClick={() => onDeleteTransformationClick(transform)}
-      />
+      <Popconfirm
+        content="Are you sure you want to remove this transformation from this data set?"
+        onConfirm={() => onDeleteTransformationClick(transform)}
+      >
+        <Button icon="Delete" size="small" type="ghost-danger" />
+      </Popconfirm>
     ),
   },
 ];
 
 export default transformationsColumns;
 
-const CellTransformation = styled.p.attrs(
+const CellTransformation = styled.div.attrs(
   ({ $hidden }: { $hidden?: boolean }) => {
     const style: React.CSSProperties = {};
     if ($hidden) style.fontStyle = 'italic';
     return { style };
   }
 )<{ $hidden?: boolean }>`
-  margin-bottom: 0;
+  display: flex;
+  align-items: center;
 `;
