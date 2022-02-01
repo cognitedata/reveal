@@ -15,13 +15,13 @@ describe('AxisViewTool', () => {
   let canvasContainer: HTMLElement;
   let viewer: Cognite3DViewer;
 
-  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  mockClientAuthentication(sdk);
-  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
-  const renderer = new THREE.WebGLRenderer({ context });
-  const domSize = { height: 480, width: 640 };
-
   beforeEach(() => {
+    const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+    mockClientAuthentication(sdk);
+    const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
+    const renderer = new THREE.WebGLRenderer({ context });
+    const domSize = { height: 480, width: 640 };
+
     canvasContainer = document.createElement('div');
     canvasContainer.style.width = `${domSize.width}px`;
     canvasContainer.style.height = `${domSize.height}px`;
