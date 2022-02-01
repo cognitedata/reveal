@@ -65,7 +65,7 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
   };
 
   onMouseMove = () => {
-    const { baseLayer } = this.ornateInstance;
+    const { drawingLayer } = this.ornateInstance;
     if (!this.newRect) {
       return;
     }
@@ -75,7 +75,7 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
       this.newRect.width(translatedMousePosition.x - this.newRect.x());
       this.newRect.height(translatedMousePosition.y - this.newRect.y());
 
-      baseLayer.draw();
+      drawingLayer.draw();
     }
   };
 

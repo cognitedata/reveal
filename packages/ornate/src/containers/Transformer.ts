@@ -73,7 +73,7 @@ export class OrnateTransformer extends Konva.Transformer {
     if (this.group) {
       this.group.add(...nodesFromClipboard);
     } else {
-      this.ornateInstance?.baseLayer.add(...nodesFromClipboard);
+      this.ornateInstance?.drawingLayer.add(...nodesFromClipboard);
     }
 
     this.setSelectedNodes(nodesFromClipboard);

@@ -37,7 +37,7 @@ export class SquiggleTool extends Tool implements ICogniteOrnateTool {
   };
 
   onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    const { baseLayer } = this.ornateInstance;
+    const { drawingLayer } = this.ornateInstance;
     this.ornateInstance.isDrawing = true;
 
     // If we're over an item with a group attachment, add it there instead.
@@ -65,15 +65,15 @@ export class SquiggleTool extends Tool implements ICogniteOrnateTool {
     this.shape.on('transformend', this.rescale);
 
     if (!this.group) {
-      baseLayer.add(this.shape);
-      baseLayer.draw();
+      drawingLayer.add(this.shape);
+      drawingLayer.draw();
       return;
     }
     this.group.add(this.shape);
   };
 
   onMouseMove = () => {
-    const { baseLayer } = this.ornateInstance;
+    const { drawingLayer } = this.ornateInstance;
     if (!this.shape) {
       return;
     }
@@ -83,7 +83,7 @@ export class SquiggleTool extends Tool implements ICogniteOrnateTool {
       this.shape.width(translatedMousePosition.x - this.shape.x());
       this.shape.height(translatedMousePosition.y - this.shape.y());
 
-      baseLayer.draw();
+      drawingLayer.draw();
     }
   };
 

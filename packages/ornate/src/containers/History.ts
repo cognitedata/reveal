@@ -95,7 +95,8 @@ export class OrnateHistory {
     const groupName =
       latestChange.update?.attachedToGroup || latestChange.update?.inGroup;
     const group = ornateInstance.stage.findOne(`#${groupName}`) as Konva.Group;
-    const layer: Konva.Layer | Konva.Group = group || ornateInstance.baseLayer;
+    const layer: Konva.Layer | Konva.Group =
+      group || ornateInstance.drawingLayer;
     if (latestChange && latestChange.action === 'create') {
       this.undoHistory.pop();
       const newChange = {
@@ -148,7 +149,8 @@ export class OrnateHistory {
     const groupName =
       latestChange.update?.attachedToGroup || latestChange.update?.inGroup;
     const group = ornateInstance.stage.findOne(`#${groupName}`) as Konva.Group;
-    const layer: Konva.Layer | Konva.Group = group || ornateInstance.baseLayer;
+    const layer: Konva.Layer | Konva.Group =
+      group || ornateInstance.drawingLayer;
     if (latestChange && latestChange.action === 'create') {
       this.redoHistory.pop();
       const newChange = {

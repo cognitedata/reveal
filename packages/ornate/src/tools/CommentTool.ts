@@ -68,7 +68,7 @@ export class CommentTool extends Tool implements ICogniteOrnateTool {
   onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (this.hoveringCommentIcon) return;
 
-    const { baseLayer } = this.ornateInstance;
+    const { drawingLayer } = this.ornateInstance;
 
     // If we're over an item with a group attachment, add it there instead.
     const groupName =
@@ -99,8 +99,8 @@ export class CommentTool extends Tool implements ICogniteOrnateTool {
     });
 
     if (!this.group) {
-      baseLayer.add(image);
-      baseLayer.draw();
+      drawingLayer.add(image);
+      drawingLayer.draw();
       return;
     }
     this.group.add(image);

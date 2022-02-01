@@ -135,7 +135,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         setSelectedNode(nodes[0]);
       };
       ornateViewer.current.transformer = ornateTransformer;
-      ornateViewer.current.baseLayer.add(ornateViewer.current.transformer);
+      ornateViewer.current.drawingLayer.add(ornateViewer.current.transformer);
 
       ornateViewer.current.tools = {
         move: new MoveTool(ornateViewer.current),
