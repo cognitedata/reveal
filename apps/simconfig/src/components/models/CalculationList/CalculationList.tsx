@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -36,6 +36,7 @@ import { STATUS_POLLING_INTERVAL } from './constants';
 
 import type { AppLocationGenerics } from 'routes';
 
+type TriggeredRunInfo = Record<string, number>;
 interface CalculationListProps {
   simulator: Simulator;
   modelName: string;
@@ -52,6 +53,7 @@ export function CalculationList({
   const [runModelCalculations] = useRunModelCalculationMutation();
   const { authState } = useContext(CdfClientContext);
   const [shouldPoll, setShouldPoll] = useState<boolean>(false);
+  const [triggeredRuns, setTriggeredRuns] = useState<TriggeredRunInfo>();
 
   const {
     data: { definitions },
@@ -67,24 +69,48 @@ export function CalculationList({
       { pollingInterval: shouldPoll ? STATUS_POLLING_INTERVAL : undefined }
     );
 
+  const isRunTriggered = useCallback(
+    (externalId: string, lastUpdatedTime?: number) => {
+      // if the run has not run before, or has not been triggered manually
+      if (
+        !lastUpdatedTime ||
+        triggeredRuns === undefined ||
+        !(externalId in triggeredRuns)
+      ) {
+        return false;
+      }
+      // if its manually triggered and triggered time is later than last
+      // updated time (ie run button pressed but new data not received yet)
+      return (
+        externalId in triggeredRuns &&
+        triggeredRuns[externalId] >= new Date(lastUpdatedTime).getTime()
+      );
+    },
+    [triggeredRuns]
+  );
+
   useEffect(() => {
     if (!modelCalculations?.modelCalculationList) {
       return;
     }
-    const hasReadyOrRunningCalculation =
+    const hasReadyRunningOrTriggeredCalculation =
       !!modelCalculations.modelCalculationList.find(
         (calculation) =>
           calculation.latestRun?.metadata.status === 'ready' ||
-          calculation.latestRun?.metadata.status === 'running'
+          calculation.latestRun?.metadata.status === 'running' ||
+          isRunTriggered(
+            calculation.externalId,
+            calculation.latestRun?.lastUpdatedTime
+          )
       );
 
-    if (hasReadyOrRunningCalculation) {
+    if (hasReadyRunningOrTriggeredCalculation) {
       setShouldPoll(true);
       return;
     }
 
     setShouldPoll(false);
-  }, [modelCalculations]);
+  }, [modelCalculations, isRunTriggered]);
 
   if (!isFetchingModelCalculations && !modelCalculations) {
     // Uninitialized state
@@ -110,37 +136,39 @@ export function CalculationList({
     (calculationType) => !configuredCalculations.includes(calculationType)
   );
 
-  const onRunClick = (calcType?: CalculationType) => async () => {
-    if (!authState?.email) {
-      toast.error('No user email found, please refresh and try again');
-      return;
-    }
+  const onRunClick =
+    (calcType: CalculationType, externalId: string) => async () => {
+      if (!authState?.email) {
+        toast.error('No user email found, please refresh and try again');
+        return;
+      }
 
-    if (!calcType) {
-      toast.error('Missing metadata, please refresh and try again');
-      return;
-    }
-
-    trackUsage(TRACKING_EVENTS.MODEL_CALC_RUN_NOW, {
-      calculationType: calcType,
-      modelName: decodeURI(modelName),
-      simulator,
-    });
-
-    const response = await runModelCalculations({
-      modelName,
-      project,
-      simulator,
-      runModelCalculationRequestModel: {
-        userEmail: authState.email,
+      trackUsage(TRACKING_EVENTS.MODEL_CALC_RUN_NOW, {
         calculationType: calcType,
-      },
-    });
-    if (!isSuccessResponse(response)) {
-      toast.error('Running calculation failed, try again');
-    }
-    setShouldPoll(true);
-  };
+        modelName: decodeURI(modelName),
+        simulator,
+      });
+
+      const response = await runModelCalculations({
+        modelName,
+        project,
+        simulator,
+        runModelCalculationRequestModel: {
+          userEmail: authState.email,
+          calculationType: calcType,
+        },
+      });
+
+      if (!isSuccessResponse(response)) {
+        toast.error('Running calculation failed, try again');
+        return;
+      }
+      setTriggeredRuns({
+        ...triggeredRuns,
+        [externalId]: new Date().getTime(),
+      });
+      setShouldPoll(true);
+    };
 
   if (showConfigured) {
     return !modelCalculations.modelCalculationList.length ? (
@@ -153,12 +181,21 @@ export function CalculationList({
           <React.Fragment key={calculation.externalId}>
             <Button
               className="run-calculation"
-              disabled={calculation.latestRun?.metadata.status === 'ready'}
+              disabled={
+                calculation.latestRun?.metadata.status === 'ready' ||
+                isRunTriggered(
+                  calculation.externalId,
+                  calculation.latestRun?.lastUpdatedTime
+                )
+              }
               icon="Play"
               loading={calculation.latestRun?.metadata.status === 'running'}
               size="small"
               type="secondary"
-              onClick={onRunClick(calculation.configuration.calculationType)}
+              onClick={onRunClick(
+                calculation.configuration.calculationType,
+                calculation.externalId
+              )}
             >
               {calculation.latestRun?.metadata.status === 'running'
                 ? 'Running'
