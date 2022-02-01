@@ -292,7 +292,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   };
 
   if (!didFetchWithExtpipes) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
 
   return (

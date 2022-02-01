@@ -96,7 +96,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
               getPopupContainer={getContainer}
             />
           ) : (
-            <Icon type="LoadingSpinner" />
+            <Icon type="Loader" />
           )}
         </>
       )}

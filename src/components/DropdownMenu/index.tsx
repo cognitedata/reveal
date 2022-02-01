@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Button,
-  AllIconTypes,
+  IconType,
   Dropdown as CogsDropdown,
   Colors,
 } from '@cognite/cogs.js';
@@ -12,7 +12,7 @@ interface DropdownProps {
   content: React.ReactNode;
   dropdownDisabled?: boolean;
   buttonDisabled?: boolean;
-  icon?: AllIconTypes;
+  icon?: IconType;
 }
 
 interface DropdownMenuContentProps {
@@ -22,7 +22,7 @@ interface DropdownMenuContentProps {
     key: string;
     disabled?: boolean;
     loading?: boolean;
-    icon?: AllIconTypes;
+    icon?: IconType;
   }>;
 }
 
@@ -30,7 +30,7 @@ export const Dropdown = ({
   content,
   dropdownDisabled,
   buttonDisabled,
-  icon = 'MoreOverflowEllipsisHorizontal',
+  icon = 'EllipsisHorizontal',
 }: DropdownProps) => {
   const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
 

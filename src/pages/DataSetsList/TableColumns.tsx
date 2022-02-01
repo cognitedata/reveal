@@ -138,7 +138,7 @@ const extpipeTableColumn = (isExtpipesFetched?: boolean) => {
     key: 'extpipes',
     render: (_value: string, record: DataSetRow) => {
       if (!isExtpipesFetched) {
-        return <Icon type="LoadingSpinner" />;
+        return <Icon type="Loader" />;
       }
 
       return (

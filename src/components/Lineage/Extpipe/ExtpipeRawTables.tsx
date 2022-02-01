@@ -71,7 +71,7 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
           getPopupContainer={getContainer}
         />
       ) : (
-        <Icon type="LoadingSpinner" />
+        <Icon type="Loader" />
       )}
     </Timeline.Item>
   );
