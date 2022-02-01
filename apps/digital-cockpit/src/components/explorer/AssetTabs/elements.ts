@@ -1,0 +1,30 @@
+import styled from 'styled-components';
+
+export const AssetBreadcrumbsWrapper = styled.div`
+  color: var(--cogs-greyscale-grey6);
+  font-weight: 600;
+  margin-bottom: 15px;
+
+  .breadcrumb-item {
+    text-transform: uppercase;
+  }
+  .breadcrumb-divider {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+`;
+export const AssetTabsWrapper = styled.div`
+  & .cogs-tabs {
+    .rc-tabs-nav-wrap {
+      border-bottom: 2px solid var(--cogs-greyscale-grey2);
+    }
+    .rc-tabs-content {
+      padding-top: 20px;
+    }
+  }
+`;
+export const AssetTitle = styled.h2`
+  font-family: Inter;
+  font-size: 18px;
+  line-height: 24px;
+`;

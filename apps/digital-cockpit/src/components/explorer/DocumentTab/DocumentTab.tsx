@@ -1,5 +1,5 @@
 import { Badge, Input } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
+import { CogniteInternalId, FileInfo } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
 import { useMemo, useState } from 'react';
 import { UseQueryResult } from 'react-query';
@@ -14,7 +14,9 @@ import { DocumentRowWrapper } from '../DocumentRow/DocumentRowWrapper';
 import { DocumentTabWrapper } from './elements';
 
 export type DocumentTabProps = {
-  assetId: number;
+  // current version of @cognite/sdk v5.6.2 doesn't support parameter assetExternalIds
+  // in FilesSearchFilter. So we can only use CogniteInternalId here
+  assetId: CogniteInternalId;
   groupByField?: string;
 };
 

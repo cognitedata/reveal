@@ -263,10 +263,15 @@ export const randomAssets: Asset[] = [
   },
 ];
 
-export const getRandomAssets = (
-  parentId: CogniteInternalId,
-  count = 1
-): Asset[] => {
+export const getRandomAssets = ({
+  parentId,
+  id,
+  count = 1,
+}: {
+  parentId?: CogniteInternalId;
+  id?: CogniteInternalId;
+  count: number;
+}): Asset[] => {
   const result = [];
   // eslint-disable-next-line no-plusplus
   while (count--) {
@@ -276,7 +281,7 @@ export const getRandomAssets = (
     result.push({
       ...randAst,
       parentId,
-      id: +randAst.id + randId,
+      id: id || +randAst.id + randId,
       externalId: `${randAst.externalId}_${randId}`,
     });
   }

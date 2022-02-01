@@ -39,10 +39,10 @@ AssetSearchPanel.story = configureStory({
         setTimeout(
           () =>
             resolve(
-              getRandomAssets(
-                (parentIds?.[0] as number) || rootAssets[0].id,
-                limit || 2
-              )
+              getRandomAssets({
+                parentId: (parentIds?.[0] as number) || rootAssets[0].id,
+                count: limit || 2,
+              })
             ),
           1000 // emulate request delay
         );
@@ -65,10 +65,10 @@ AssetSearchPanel.story = configureStory({
         return Promise.resolve({ items: rootAssets });
       }
       return new Promise((resolve) => {
-        const randAssets = getRandomAssets(
-          parentIds?.[0] || rootAssets[0].id,
-          limit
-        );
+        const randAssets = getRandomAssets({
+          parentId: parentIds?.[0] || rootAssets[0].id,
+          count: limit,
+        });
         setTimeout(
           () =>
             resolve({

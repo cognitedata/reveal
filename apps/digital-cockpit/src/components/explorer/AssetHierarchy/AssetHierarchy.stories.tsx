@@ -38,10 +38,10 @@ AssetTree.story = configureStory({
         return Promise.resolve({ items: rootAssets });
       }
       return new Promise((resolve) => {
-        const randAssets = getRandomAssets(
-          parentIds?.[0] || rootAssets[0].id,
-          limit
-        );
+        const randAssets = getRandomAssets({
+          parentId: parentIds?.[0] || rootAssets[0].id,
+          count: limit,
+        });
         setTimeout(
           () =>
             resolve({
