@@ -13,6 +13,7 @@ import { defaultAxisBoxConfig } from './types';
 
 describe('AxisViewTool', () => {
   let canvasContainer: HTMLElement;
+  let domSize: { height: number; width: number };
   let viewer: Cognite3DViewer;
 
   beforeEach(() => {
@@ -20,8 +21,8 @@ describe('AxisViewTool', () => {
     mockClientAuthentication(sdk);
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const renderer = new THREE.WebGLRenderer({ context });
-    const domSize = { height: 480, width: 640 };
 
+    domSize = { height: 480, width: 640 };
     canvasContainer = document.createElement('div');
     canvasContainer.style.width = `${domSize.width}px`;
     canvasContainer.style.height = `${domSize.height}px`;
