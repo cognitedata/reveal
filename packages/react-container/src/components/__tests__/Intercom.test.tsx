@@ -46,8 +46,8 @@ describe('Intercom', () => {
     expect(intercomPackage.intercomInitialization).toHaveBeenCalledWith('myId');
 
     // act lets us better handle promises in useEffect
-    // promise setImmediate lets us wait to the nextTick for the mocked promise to be over
-    await act(() => new Promise(setImmediate));
+    // promise lets us wait to the nextTick for the mocked promise to be over
+    await act(() => new Promise(process.nextTick));
     expect(intercomPackage.intercomHelper.boot).toHaveBeenCalledWith(
       intercomSettings
     );

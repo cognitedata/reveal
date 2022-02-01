@@ -1,42 +1,67 @@
 diff --git a/node_modules/react-scripts/config/webpack.config.js b/node_modules/react-scripts/config/webpack.config.js
-index 26c2a65..2fb71df 100644
+index 2b1b3bb..92ad838 100644
 --- a/node_modules/react-scripts/config/webpack.config.js
 +++ b/node_modules/react-scripts/config/webpack.config.js
-@@ -34,6 +34,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
- const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
- const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
+@@ -33,6 +33,7 @@ const ForkTsCheckerWebpackPlugin =
+     ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
+     : require('react-dev-utils/ForkTsCheckerWebpackPlugin');
  const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 +const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
  // @remove-on-eject-begin
  const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
  // @remove-on-eject-end
-@@ -346,6 +347,8 @@ module.exports = function (webpackEnv) {
+@@ -329,31 +330,36 @@ module.exports = function (webpackEnv) {
          ...(modules.webpackAliases || {}),
        },
        plugins: [
 +        // Resolve the path aliases.
 +        new TsconfigPathsPlugin(),
-         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
-         // guards against forgotten dependencies and such.
-         PnpWebpackPlugin,
-@@ -354,10 +357,12 @@ module.exports = function (webpackEnv) {
+         // Prevents users from importing files from outside of src/ (or node_modules/).
+         // This often causes confusion because we only process files within src/ with babel.
          // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
          // please link the files into your node_modules/ and let module-resolution kick in.
          // Make sure your source files are compiled, as they will not be processed in any way.
 -        new ModuleScopePlugin(paths.appSrc, [
 -          paths.appPackageJson,
--          reactRefreshOverlayEntry,
+-          reactRefreshRuntimeEntry,
+-          reactRefreshWebpackPluginRuntimeEntry,
+-          babelRuntimeEntry,
+-          babelRuntimeEntryHelpers,
+-          babelRuntimeRegenerator,
 -        ]),
 +        // Remove the ModuleScopePlugin which throws when we try to import something
 +        // outside of src/.
 +        // new ModuleScopePlugin(paths.appSrc, [
 +        //   paths.appPackageJson,
-+        //   reactRefreshOverlayEntry,
++        //   reactRefreshRuntimeEntry,
++        //   reactRefreshWebpackPluginRuntimeEntry,
++        //   babelRuntimeEntry,
++        //   babelRuntimeEntryHelpers,
++        //   babelRuntimeRegenerator,
 +        // ]),
        ],
      },
-     resolveLoader: {
-@@ -403,7 +408,9 @@ module.exports = function (webpackEnv) {
+     module: {
+       strictExportPresence: true,
+       rules: [
+         // Handle node_modules packages that contain sourcemaps
+-        shouldUseSourceMap && {
+-          enforce: 'pre',
+-          exclude: /@babel(?:\/|\\{1,2})runtime/,
+-          test: /\.(js|mjs|jsx|ts|tsx|css)$/,
+-          loader: require.resolve('source-map-loader'),
+-        },
++        // Disable this rule until we fix @cognite/sdk sourcemaps
++        // shouldUseSourceMap && {
++        //   enforce: 'pre',
++        //   exclude: /@babel(?:\/|\\{1,2})runtime/,
++        //   test: /\.(js|mjs|jsx|ts|tsx|css)$/,
++        //   loader: require.resolve('source-map-loader'),
++        // },
+         {
+           // "oneOf" will traverse all following loaders until one will
+           // match the requirements. When no loader matches it will fall
+@@ -413,7 +419,9 @@ module.exports = function (webpackEnv) {
              // The preset includes JSX, Flow, TypeScript, and some ESnext features.
              {
                test: /\.(js|mjs|jsx|ts|tsx)$/,
@@ -47,8 +72,22 @@ index 26c2a65..2fb71df 100644
                loader: require.resolve('babel-loader'),
                options: {
                  customize: require.resolve(
+diff --git a/node_modules/react-scripts/scripts/utils/createJestConfig.js b/node_modules/react-scripts/scripts/utils/createJestConfig.js
+index ff1c581..3e63a10 100644
+--- a/node_modules/react-scripts/scripts/utils/createJestConfig.js
++++ b/node_modules/react-scripts/scripts/utils/createJestConfig.js
+@@ -65,6 +65,9 @@ module.exports = (resolve, rootDir, isEjecting) => {
+       'jest-watch-typeahead/filename',
+       'jest-watch-typeahead/testname',
+     ],
++    haste: {
++      enableSymlinks: true,
++    },
+     resetMocks: true,
+   };
+   if (rootDir) {
 diff --git a/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js b/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
-index 949f34a..4c67426 100644
+index cdc2d77..56639f7 100644
 --- a/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
 +++ b/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
 @@ -156,7 +156,8 @@ function verifyTypeScriptSetup() {

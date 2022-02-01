@@ -7,6 +7,9 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'd.ts'],
   testEnvironment: 'node',
   coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
+  haste: {
+    enableSymlinks: true,
+  },
   moduleNameMapper: {
     // resolve @cognite/<package>/dist/mocks to
     // 1. @cognite/<package>/src/mocks when running plain jest

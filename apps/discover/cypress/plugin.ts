@@ -4,6 +4,7 @@ import path from 'path';
 import webpackPreprocessor from '@cypress/webpack-preprocessor';
 import express from 'express';
 import { v1 as uuid } from 'uuid';
+import webpack from 'webpack';
 
 module.exports = (on, config) => {
   const port = process.env.PORT;
@@ -30,6 +31,13 @@ module.exports = (on, config) => {
       '@cognite': path.resolve('./packages'),
     },
   };
+  const plugins = options.webpackOptions.plugins || [];
+  options.webpackOptions.plugins = [
+    ...plugins,
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+  ];
 
   on('file:preprocessor', webpackPreprocessor(options));
 

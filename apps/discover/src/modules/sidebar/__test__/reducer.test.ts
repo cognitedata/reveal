@@ -13,13 +13,14 @@ import {
   SET_SEARCH_PHRASE,
 } from '../constants';
 import { sidebar as reducer, initialState } from '../reducer';
+import { Modules } from '../types';
 
 describe('search.reducer', () => {
   test('returns initial state', () => {
     expect(
       reducer(initialState, {
         type: SET_CATEGORY_PAGE,
-        payload: 'wells',
+        payload: Modules.WELLS,
       })
     ).toBeDefined();
   });
@@ -33,7 +34,7 @@ describe('search.reducer', () => {
   test('Set category page to wells', () => {
     const state = reducer(initialState, {
       type: SET_CATEGORY_PAGE,
-      payload: 'wells',
+      payload: Modules.WELLS,
     });
     expect(state.category).toBe('wells');
   });
@@ -42,7 +43,7 @@ describe('search.reducer', () => {
     const state = reducer(initialState, {
       type: UPDATE_CATEGORY_APPLIED_FILTER,
       payload: {
-        category: 'documents',
+        category: Modules.DOCUMENTS,
         facet: 'filetype',
         value: ['option1', 'option2'],
       },
@@ -57,7 +58,7 @@ describe('search.reducer', () => {
     const state = reducer(initialState, {
       type: UPDATE_CATEGORY_APPLIED_FILTER,
       payload: {
-        category: 'wells',
+        category: Modules.WELLS,
         facet: 0,
         value: ['check2'],
       },
@@ -70,7 +71,7 @@ describe('search.reducer', () => {
     const state = reducer(initialState, {
       type: UPDATE_CATEGORY_APPLIED_FILTERS,
       payload: {
-        category: 'documents',
+        category: Modules.DOCUMENTS,
         value: documentFilters,
       },
     });
@@ -89,7 +90,7 @@ describe('search.reducer', () => {
     const state = reducer(initialState, {
       type: UPDATE_CATEGORY_APPLIED_FILTERS,
       payload: {
-        category: 'wells',
+        category: Modules.WELLS,
         value: wellAppliedFilters,
       },
     });

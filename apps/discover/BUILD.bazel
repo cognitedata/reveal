@@ -120,6 +120,7 @@ DEPENDENCIES = [
     "@npm//maplibre-gl",
     "@npm//msw",
     "@npm//moment",
+    "@npm//url-parse",
     "@npm//plotly.js",
     "@npm//proj4",
     "@npm//react-autosuggest",
@@ -299,7 +300,7 @@ react_scripts(
         "build",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
-        # see patches/react-scripts+4.0.3.patch
+        # see patches/react-scripts+5.0.0.patch
         # we have added this plugin into webpack so Bazel should know about it
         # TODO: move build script into a custom rules with defined plugin once and for all
         "@npm//tsconfig-paths-webpack-plugin",
@@ -314,8 +315,6 @@ react_scripts(
     ],
     env = {
         "EXTEND_ESLINT": "true",
-        # As long as react_scripts does not allow eslint 8 we need this variable
-        "SKIP_PREFLIGHT_CHECK": "true",
         "REACT_APP_SENTRY_DSN": "https://73501539810546ed8fd963457833f566@o124058.ingest.sentry.io/5208164",
         "REACT_APP_LOCIZE_PROJECT_ID": "b0fef6b6-5821-4946-9acc-cb9c41568a75",
         "REACT_APP_ENABLE_REDUX_LOGGER": "false",
@@ -398,8 +397,6 @@ react_scripts(
         "chdir-workspace.js",
     ],
     env = {
-        # As long as react_scripts does not allow eslint 8 we need this variable
-        "SKIP_PREFLIGHT_CHECK": "true",
         "DISABLE_ESLINT_PLUGIN": "true",
     },
     tags = [
@@ -422,8 +419,6 @@ react_scripts(
         "chdir-workspace.js",
     ],
     env = {
-        # As long as react_scripts does not allow eslint 8 we need this variable
-        "SKIP_PREFLIGHT_CHECK": "true",
         "DISABLE_ESLINT_PLUGIN": "true",
         "HTTPS": "true",
         "REACT_APP_DEBUG_METRICS": "true",
@@ -578,12 +573,14 @@ build_storybook(
     chdir = "$(RULEDIR)",
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "copy_storybook_files",
+        "@npm//@storybook/manager-webpack5",
+        "@npm//@storybook/builder-webpack5",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/addon-viewport",
         "@npm//@storybook/preset-create-react-app",
         "@npm//@storybook/react",
-        # see patches/react-scripts+4.0.3.patch
+        # see patches/react-scripts+5.0.0.patch
         # we have added this plugin into webpack so Bazel should know about it
         # TODO: move build script into a custom rules with defined plugin once and for all
         "@npm//tsconfig-paths-webpack-plugin",
@@ -678,6 +675,7 @@ ts_project(
         "@npm//@types/node",
         "@npm//@types/webpack-dev-server",
         "@npm//express",
+        "@npm//webpack",
     ],
 )
 

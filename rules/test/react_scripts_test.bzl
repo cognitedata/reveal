@@ -27,7 +27,7 @@ def react_scripts_test(name, app_name, data, timeout = "long", args = []):
     _react_scripts(
         name = "%s_base" % name,
         data = [
-            "@npm//jest-environment-jsdom-sixteen",
+            "@npm//jest-environment-jsdom",
             "@npm//jest-junit",
         ] + data,
     )
@@ -51,7 +51,7 @@ def react_scripts_test(name, app_name, data, timeout = "long", args = []):
             "--reporters=jest-junit",
             "--runInBand",
             "--detectOpenHandles",
-            "--env=jest-environment-jsdom-sixteen",
+            "--env=jest-environment-jsdom",
         ] + args,
         data = [
             file_name,
