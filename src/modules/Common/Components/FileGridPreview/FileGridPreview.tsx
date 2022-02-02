@@ -10,7 +10,7 @@ import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import {
   isProcessingFile,
-  makeSelectAnnotationStatuses,
+  makeSelectJobStatusForFile,
 } from 'src/modules/Process/processSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/sdk';
@@ -57,7 +57,7 @@ export const FileGridPreview = ({
     getAnnotationCounts(annotationReducer, item.id)
   );
 
-  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, item.id)
   );

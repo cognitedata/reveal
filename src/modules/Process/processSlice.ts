@@ -21,9 +21,12 @@ import {
 import { useSelector } from 'react-redux';
 import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { getFakeQueuedJob } from 'src/api/detectionUtils';
+import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
+  completedFileIds?: number[];
+  failedFileIds?: number[];
 };
 export type State = GenericTabularState & {
   fileIds: number[];
@@ -233,8 +236,16 @@ const processSlice = createGenericTabularDataSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
-      const { fileIds, job, modelType } = payload;
-      addJobToState(state, fileIds, job, modelType);
+      const { fileIds, job, modelType, completedFileIds, failedFileIds } =
+        payload;
+      addJobToState(
+        state,
+        fileIds,
+        job,
+        modelType,
+        completedFileIds,
+        failedFileIds
+      );
     });
 
     /* postAnnotationJobs */
@@ -328,6 +339,9 @@ const processSlice = createGenericTabularDataSlice({
   /* eslint-enable no-param-reassign */
 });
 
+export type { State as ProcessReducerState };
+export { initialState as processReducerInitialState };
+
 export const {
   setProcessFileIds,
   removeJobById,
@@ -361,10 +375,18 @@ const addJobToState = (
   state: State,
   fileIds: number[],
   job: AnnotationJob,
-  modelType: VisionAPIType
+  modelType: VisionAPIType,
+  completedFileIds?: number[],
+  failedFileIds?: number[]
 ) => {
   /* eslint-disable  no-param-reassign */
-  const jobState: JobState = { ...job, fileIds, type: modelType };
+  const jobState: JobState = {
+    ...job,
+    fileIds,
+    type: modelType,
+    completedFileIds,
+    failedFileIds,
+  };
   const existingJob = state.jobs.byId[job.jobId];
   if (!existingJob || !isEqual(jobState, existingJob)) {
     if (existingJob) {
@@ -480,33 +502,61 @@ export const selectIsProcessingStarted = createSelector(
   }
 );
 
-export const makeSelectAnnotationStatuses = () =>
-  createSelector(selectJobsByFileId, (fileJobs) => {
-    const annotationBadgeProps = {
-      tag: {},
-      gdpr: {},
-      text: {},
-      objects: {},
-    };
-    fileJobs.forEach((job) => {
-      const statusData = { status: job.status, statusTime: job.statusTime };
-      if (job.type === VisionAPIType.OCR) {
-        annotationBadgeProps.text = statusData;
-      }
-      if (job.type === VisionAPIType.TagDetection) {
-        annotationBadgeProps.tag = statusData;
-      }
-      if (
-        [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
-          job.type
-        )
-      ) {
-        annotationBadgeProps.objects = statusData;
-        annotationBadgeProps.gdpr = statusData;
-      }
-    });
-    return annotationBadgeProps as AnnotationsBadgeStatuses;
-  });
+export const selectUnfinishedJobs = createSelector(
+  (state: State) => state.jobs.allIds,
+  selectAllJobs,
+  (allJobIds, allJobs) => {
+    return allJobIds
+      .map((id) => allJobs[id])
+      .filter(
+        (job) =>
+          job.jobId > 0 && (job.status === 'Queued' || job.status === 'Running')
+      );
+  }
+);
+
+const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
+export const makeSelectJobStatusForFile = () =>
+  createDeepEqualSelector(
+    (state: State, fileId: number) => fileId,
+    selectJobsByFileId,
+    (fileId, fileJobs) => {
+      const annotationBadgeProps = {
+        tag: {},
+        gdpr: {},
+        text: {},
+        objects: {},
+      };
+      fileJobs.forEach((job) => {
+        let status = 'Running';
+        if (job.status === 'Queued') {
+          status = 'Queued';
+        } else if (job.completedFileIds?.includes(fileId)) {
+          status = 'Completed';
+        } else if (job.failedFileIds?.includes(fileId)) {
+          status = 'Failed';
+        }
+
+        const statusData = { status, statusTime: job.statusTime };
+        if (job.type === VisionAPIType.OCR) {
+          annotationBadgeProps.text = statusData;
+        }
+        if (job.type === VisionAPIType.TagDetection) {
+          annotationBadgeProps.tag = statusData;
+        }
+        if (
+          [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
+            job.type
+          )
+        ) {
+          annotationBadgeProps.objects = statusData;
+          annotationBadgeProps.gdpr = statusData;
+        }
+      });
+      return annotationBadgeProps as AnnotationsBadgeStatuses;
+    }
+  );
 
 export const selectPageCount = createSelector(
   (state: State) => state.fileIds,

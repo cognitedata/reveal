@@ -25,6 +25,7 @@ import {
   setPageSize,
   useIsSelectedInProcess,
   useProcessFilesSelected,
+  selectUnfinishedJobs,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -44,6 +45,7 @@ import { FileInfo } from '@cognite/sdk';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -62,6 +64,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
 
   const processFiles = useSelector((state: RootState) =>
     selectProcessSortedFiles(state)
+  );
+
+  const unfinishedJobs = useSelector(({ processSlice }: RootState) =>
+    selectUnfinishedJobs(processSlice)
   );
 
   const allFilesSelected = useSelector((state: RootState) =>
@@ -205,6 +211,11 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     ),
     []
   );
+
+  useEffect(() => {
+    // Resume Annotation Jobs
+    dispatch(PollJobs(unfinishedJobs));
+  }, []);
 
   return (
     <>

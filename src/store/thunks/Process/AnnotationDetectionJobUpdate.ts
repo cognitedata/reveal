@@ -14,22 +14,57 @@ import {
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
+import { fileProcessUpdate } from 'src/store/commonActions';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 export const AnnotationDetectionJobUpdate = createAsyncThunk<
   VisionAnnotation[],
-  { job: AnnotationJob; completedFileIds: number[] },
+  {
+    job: AnnotationJob;
+    fileIds: number[];
+    modelType: VisionAPIType;
+    completedFileIds: number[];
+    failedFileIds: number[];
+    annotationsSavedFileIds: number[];
+    addToAnnotationsSavedFileIds: (ids: number[]) => void;
+  },
   ThunkConfig
 >(
   'AnnotationDetectionJobUpdate',
-  async ({ job, completedFileIds }, { dispatch }) => {
+  async (
+    {
+      job,
+      fileIds,
+      modelType,
+      completedFileIds,
+      failedFileIds,
+      annotationsSavedFileIds,
+      addToAnnotationsSavedFileIds,
+    },
+    { dispatch }
+  ) => {
+    let savedVisionAnnotation: VisionAnnotation[] = [];
     if (job.status === 'Running' || job.status === 'Completed') {
       let unsavedAnnotations: UnsavedAnnotation[] = [];
+      const pendingAnnotationsSavedFileIds: number[] = [];
       let assetIdMap = new Map<number, VisionAsset>();
+
+      const newCompletedFileIds =
+        job.items
+          ?.map((item) => item.fileId)
+          .filter((item) => !completedFileIds.includes(item)) || [];
+
+      const newFailedFileIds: number[] =
+        job.failedItems
+          // Use first item in batch to check if the batch has failed
+          ?.map((failedJob) => failedJob.items[0].fileId)
+          .filter((fileId) => !failedFileIds.includes(fileId)) || [];
 
       // filter out previously completed files
       const newAnnotationJobResults =
-        job.items?.filter((item) => !completedFileIds.includes(item.fileId)) ||
-        [];
+        job.items?.filter((item) =>
+          newCompletedFileIds.includes(item.fileId)
+        ) || [];
 
       // fetch assets if tag detection
       if (
@@ -76,42 +111,46 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
 
       // save new prediction results as annotations
       newAnnotationJobResults.forEach((annResult) => {
-        const { annotations } = annResult;
+        // as annResults contains annotation already saved Files, filtering them
+        if (!annotationsSavedFileIds.includes(annResult.fileId)) {
+          const { annotations, fileId } = annResult;
+          pendingAnnotationsSavedFileIds.push(fileId);
 
-        if (annotations && annotations.length) {
-          const unsavedAnnotationsForFile = annotations
-            .map((ann) => {
-              if (ann.assetIds && ann.assetIds.length) {
-                return ann.assetIds.map((assetId) => {
-                  const asset = assetIdMap.get(assetId);
-                  return getUnsavedAnnotation(
-                    ann.text,
-                    job.type,
-                    annResult.fileId,
-                    'context_api',
-                    enforceRegionValidity(ann.region),
-                    AnnotationStatus.Unhandled,
-                    { confidence: ann.confidence },
-                    asset?.id,
-                    asset?.externalId
-                  );
-                });
-              }
-              return getUnsavedAnnotation(
-                ann.text,
-                job.type,
-                annResult.fileId,
-                'context_api',
-                enforceRegionValidity(ann.region),
-                AnnotationStatus.Unhandled,
-                { confidence: ann.confidence }
-              );
-            })
-            .filter((item): item is UnsavedAnnotation[] => !!item)
-            .flat();
-          unsavedAnnotations = unsavedAnnotations.concat(
-            unsavedAnnotationsForFile
-          );
+          if (annotations && annotations.length) {
+            const unsavedAnnotationsForFile = annotations
+              .map((ann) => {
+                if (ann.assetIds && ann.assetIds.length) {
+                  return ann.assetIds.map((assetId) => {
+                    const asset = assetIdMap.get(assetId);
+                    return getUnsavedAnnotation(
+                      ann.text,
+                      job.type,
+                      annResult.fileId,
+                      'context_api',
+                      enforceRegionValidity(ann.region),
+                      AnnotationStatus.Unhandled,
+                      { confidence: ann.confidence },
+                      asset?.id,
+                      asset?.externalId
+                    );
+                  });
+                }
+                return getUnsavedAnnotation(
+                  ann.text,
+                  job.type,
+                  annResult.fileId,
+                  'context_api',
+                  enforceRegionValidity(ann.region),
+                  AnnotationStatus.Unhandled,
+                  { confidence: ann.confidence }
+                );
+              })
+              .filter((item): item is UnsavedAnnotation[] => !!item)
+              .flat();
+            unsavedAnnotations = unsavedAnnotations.concat(
+              unsavedAnnotationsForFile
+            );
+          }
         }
       });
 
@@ -120,9 +159,30 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
           SaveAnnotations(unsavedAnnotations)
         );
         const savedAnnotations = unwrapResult(savedAnnotationResponse);
-        return AnnotationUtils.convertToVisionAnnotations(savedAnnotations);
+        addToAnnotationsSavedFileIds(pendingAnnotationsSavedFileIds);
+        savedVisionAnnotation =
+          AnnotationUtils.convertToVisionAnnotations(savedAnnotations);
+      }
+
+      dispatch(
+        fileProcessUpdate({
+          modelType,
+          fileIds,
+          job,
+          completedFileIds: [...completedFileIds, ...newCompletedFileIds],
+          failedFileIds: [...failedFileIds, ...newFailedFileIds],
+        })
+      );
+
+      if (newCompletedFileIds.length) {
+        await dispatch(
+          RetrieveAnnotations({
+            fileIds: newCompletedFileIds,
+            clearCache: false,
+          })
+        );
       }
     }
-    return [];
+    return savedVisionAnnotation;
   }
 );

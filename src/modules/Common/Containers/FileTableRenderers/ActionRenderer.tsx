@@ -9,7 +9,7 @@ import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import styled from 'styled-components';
 import {
   isProcessingFile,
-  makeSelectAnnotationStatuses,
+  makeSelectJobStatusForFile,
 } from 'src/modules/Process/processSlice';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
@@ -42,7 +42,7 @@ export function ActionRenderer(
     }
   };
 
-  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, rowData.id)
   );

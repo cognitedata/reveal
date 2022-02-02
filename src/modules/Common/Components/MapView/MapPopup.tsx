@@ -7,7 +7,7 @@ import { RootState } from 'src/store/rootReducer';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import {
   isProcessingFile,
-  makeSelectAnnotationStatuses,
+  makeSelectJobStatusForFile,
 } from 'src/modules/Process/processSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/sdk';
@@ -54,7 +54,7 @@ export const MapPopup = ({
     getAnnotationCounts(annotationReducer, item.id)
   );
 
-  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, item.id)
   );
