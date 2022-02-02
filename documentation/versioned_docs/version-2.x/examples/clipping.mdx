@@ -32,7 +32,7 @@ is used to create clipping planes. This function accepts a direction that define
 the plane and a point on the plane. For example, the following
 code will create a clipping plane that only accepts geometry below `Y = 55`:
 
-```jsx runnable-2x
+```jsx runnable
 const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, 55, 0);
 const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation, point);
@@ -47,7 +47,7 @@ triggered after updating the plane before the change will have a visual effect. 
 
 Below is an example animates a clipping plane by ping-ponging the plane in the vertical direction.
 
-```js runnable-2x
+```js runnable
 const bbox = model.getModelBoundingBox();
 
 const orientation = new THREE.Vector3(0, -1, 0);
@@ -83,7 +83,7 @@ to manipulate the clipping planes.
 
 After running this snippet the clipping plane can be manipulated by dragging the white manipulator.
 
-```js runnable-2x
+```js runnable
 // import { DragControls } from 'three/examples/jsm/controls/DragControls';
 
 const bounds = model.getModelBoundingBox();

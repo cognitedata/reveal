@@ -30,7 +30,7 @@ The appearance of the tool is highly configurable, with options to set:
 By default, the axis tool will be placed in the lower right corner
 of the viewer, and initialization is very easy:
 
-```jsx runnable-2x
+```jsx runnable
 // import { AxisViewTool } from '@cognite/reveal/tools';
 
 new AxisViewTool(viewer);
@@ -46,7 +46,7 @@ Using `AbsolutePosition` will position the axis cross at a specific position wit
 The Y axis is positive upwards, meaning that 0 is at the bottom of the viewer.
 :::
 
-```jsx runnable-2x
+```jsx runnable
 // import { AxisViewTool } from '@cognite/reveal/tools';
 
 new AxisViewTool(viewer, {
@@ -62,7 +62,7 @@ new AxisViewTool(viewer, {
 
 Using `RelativePosition` will position the axis cross relative to a specific corner (will also handle screen resize).
 
-```jsx runnable-2x
+```jsx runnable
 // import { AxisViewTool, Corner } from '@cognite/reveal/tools';
 
 const axisConfig = {
@@ -80,7 +80,7 @@ When clicking a face of the orientation box, the camera will move to face the re
 The animation speed of this movement can be configured. Size of the axis tool is also configurable.
 
 
-```jsx runnable-2x
+```jsx runnable
 // import { AxisViewTool } from '@cognite/reveal/tools';
 
 const axisConfig = {
@@ -95,7 +95,7 @@ new AxisViewTool(viewer, axisConfig);
 
 Each of the faces of the orientation box can be styled.
 
-```jsx runnable-2x
+```jsx runnable
 // import { AxisViewTool } from '@cognite/reveal/tools';
 
 const axisConfig = {
@@ -146,7 +146,7 @@ The compass at the base can be customized to change the orientation label (which
 defaults to N for North), font color and size and tick color.
 
 
-```jsx runnable-2x
+```jsx runnable
 // import { AxisViewTool } from '@cognite/reveal/tools';
 
 const axisConfig = {

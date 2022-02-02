@@ -19,7 +19,7 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 The following example detects intersections at clicked positions and marks the intersected positions
 using a red sphere.
 
-```js runnable-2x
+```js runnable
 viewer.on('click', async event => {
   const intersection = await viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
@@ -35,7 +35,7 @@ viewer.on('click', async event => {
 
 It's quite common to highlight clicked objects. This can be achieved by using [the node styling API](./cad-styling.mdx).
 
-```js runnable-2x
+```js runnable
 const selectedNodes = new TreeIndexNodeCollection();
 model.assignStyledNodeCollection(selectedNodes, DefaultNodeAppearance.Highlighted);
 
@@ -55,7 +55,7 @@ highlight the entire equipment (e.g. a tank) and not just the individual pieces 
 This can be achieved by determining the ancestor tree indices of the clicked geometry. `Cognite3DModel.getAncestorTreeIndices()`
 can be used to determine this.
 
-```js runnable-2x
+```js runnable
 const selectedNodes = new TreeIndexNodeCollection();
 model.assignStyledNodeCollection(selectedNodes, DefaultNodeAppearance.Highlighted);
 
