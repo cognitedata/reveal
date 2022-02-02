@@ -140,7 +140,7 @@ pods {
           pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
         }
       }
-    },
+    }
     
     if (isRelease) {
       container('fas') {
