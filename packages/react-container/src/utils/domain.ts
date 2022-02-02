@@ -1,3 +1,8 @@
+const joinDomainArray = (sections: string[]): string => {
+  // ew1 cluster is an empty string so we filter it out
+  return sections.filter((key) => !!key).join('.');
+};
+
 export const getNewDomain = (hostname: string, cluster: string) => {
   const sections = hostname.split('.');
 
@@ -8,7 +13,7 @@ export const getNewDomain = (hostname: string, cluster: string) => {
   if (sections.length === 3) {
     // eg: foo.cogniteapp.com
     const [app, domain, tld] = sections;
-    return [app, cluster, domain, tld].join('.');
+    return joinDomainArray([app, cluster, domain, tld]);
   }
   if (sections.length === 4) {
     if (
@@ -18,11 +23,11 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     ) {
       // eg: foo.preview.cogniteapp.com
       const [app, type, domain, tld] = sections;
-      return [app, type, cluster, domain, tld].join('.');
+      return joinDomainArray([app, type, cluster, domain, tld]);
     }
     // eg: foo.cluster.cogniteapp.com
     const [app, _cluster, domain, tld] = sections;
-    return [app, cluster, domain, tld].join('.');
+    return joinDomainArray([app, cluster, domain, tld]);
   }
   if (sections.length === 5) {
     if (
@@ -32,7 +37,7 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     ) {
       // eg: foo.preview.cluster.cogniteapp.com
       const [app, type, _cluster, domain, tld] = sections;
-      return [app, type, cluster, domain, tld].join('.');
+      return joinDomainArray([app, type, cluster, domain, tld]);
     }
   }
   throw new Error('Domain is not supported');

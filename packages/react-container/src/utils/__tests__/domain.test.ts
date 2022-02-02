@@ -1,6 +1,12 @@
 import { getNewDomain } from '../domain';
 
 describe('getNewDomain', () => {
+  it('Should validate localhost and default port', () => {
+    expect(getNewDomain('localhost', 'cluster1')).toBe('localhost:3000');
+  });
+  it('Should validate ew1 cluster', () => {
+    expect(getNewDomain('foo.cogniteapp.com', '')).toBe('foo.cogniteapp.com');
+  });
   it('Should validate foo.cogniteapp.com', () => {
     expect(getNewDomain('foo.cogniteapp.com', 'cluster1')).toBe(
       'foo.cluster1.cogniteapp.com'
@@ -11,9 +17,19 @@ describe('getNewDomain', () => {
       'foo.cluster1.cogniteapp.com'
     );
   });
+  it('Should validate ew1 cluster on preview', () => {
+    expect(getNewDomain('foo.preview.cogniteapp.com', '')).toBe(
+      'foo.preview.cogniteapp.com'
+    );
+  });
   it('Should validate foo.preview.cogniteapp.com', () => {
     expect(getNewDomain('foo.preview.cogniteapp.com', 'cluster1')).toBe(
       'foo.preview.cluster1.cogniteapp.com'
+    );
+  });
+  it('Should validate ew1 cluster on staging', () => {
+    expect(getNewDomain('foo.staging.cogniteapp.com', '')).toBe(
+      'foo.staging.cogniteapp.com'
     );
   });
   it('Should validate foo.staging.cogniteapp.com', () => {
