@@ -70,7 +70,7 @@ const initialDetectionModelParameters = {
   },
 };
 
-const initialState: State = {
+export const initialState: State = {
   focusedFileId: null,
   showFileMetadata: false,
   currentView: 'list',
