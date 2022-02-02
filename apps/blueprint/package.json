@@ -1,0 +1,75 @@
+{
+  "name": "@cognite/blueprint",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "ibazel run :start",
+    "build": "./scripts/build.sh",
+    "build:bazel": "bazel build :build_sed",
+    "test": "./scripts/test.sh",
+    "test:bazel": "ibazel test :test",
+    "lint": "../../node_modules/.bin/concurrently \"yarn prettier\" \"yarn eslint\"",
+    "lint:bazel": "bazel test :eslint_test :prettier_test",
+    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}' 'public/index.html'",
+    "eslint:changed": "../../node_modules/.bin/eslint --config .eslintrc.production.js",
+    "eslint:fix": "yarn eslint --fix",
+    "eslint:bazel": "bazel test :eslint_test",
+    "eslint:bazel-fix": "bazel run :eslint_test -- --fix",
+    "prettier": "../../node_modules/.bin/prettier --config ../../.prettierrc.js -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "prettier:fix": "../../node_modules/.bin/prettier --config ../../.prettierrc.js --write -l 'src/**/*.{js,ts,tsx}'",
+    "prettier:bazel": "bazel test :prettier_test",
+    "prettier:bazel-fix": "bazel run :prettier_test -- --write",
+    "storybook": "../../node_modules/.bin/start-storybook -p 6006",
+    "storybook:bazel": "ibazel run :start-storybook",
+    "build-storybook": "../../node_modules/.bin/build-storybook",
+    "build-storybook:bazel": "bazel build :storybook-static",
+    "testcafe:start-idp": "./scripts/start-fake-idp.sh",
+    "testcafe:run-live": "./scripts/testcafe-run-live.sh",
+    "testcafe:bazel-run-live": "ibazel run :testcafe",
+    "update-helpers": "bazel run :generate_package_json_helpers",
+    "deploy": "cd ../.. && ./scripts/deploy.sh blueprint"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "__tests__",
+      ".stories."
+    ],
+    "moduleNameMapper": {
+      "^@cognite/(.*)/dist/mocks$": [
+        "<rootDir>/../../packages/$1/src/mocks",
+        "<rootDir>/../../packages/$1/dist/mocks"
+      ],
+      "^@cognite/(?!cogs.js|sdk|testing)(.*)$": [
+        "../../../packages/$1/src",
+        "../../../packages/$1/dist",
+        "<rootDir>/../../packages/$1/src",
+        "<rootDir>/../../packages/$1/dist"
+      ]
+    }
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "pdfjs-dist": "2.6.347"
+  },
+  "resolutions": {
+    "pdfjs-dist": "2.6.347"
+  },
+  "devDependencies": {
+    "@types/color": "^3.0.2"
+  }
+}

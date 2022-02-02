@@ -1,0 +1,29 @@
+# dependencies
+node_modules
+yarn-error.log
+package-lock.json
+
+# build
+build
+
+# testing
+coverage
+
+#misc
+.npmrc
+.idea
+.env
+.DS_Store
+
+# NPM
+npm-public-credentials.txt
+
+# testcafe
+*.jwk-key.json
+testcafe/screenshots
+testcafe/videos
+testcafe/logs
+res.xml
+
+#storybook
+storybook-static/
