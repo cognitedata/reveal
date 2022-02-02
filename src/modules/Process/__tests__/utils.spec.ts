@@ -32,7 +32,7 @@ describe('Test util hasJobsFailedForFile', () => {
   it('Return return true if one of the jobs is providing an error', () => {
     const badgeProps = {
       ...mockAnnotationBadgeProps,
-      gdpr: {},
+      gdpr: {} as AnnotationStatuses,
       objects: {
         ...mockAnnotationBadgeProps.objects,
         error: 'Error occurred!!',
