@@ -1,5 +1,6 @@
 {
   "integrationFolder": "cypress",
   "videoUploadOnPasses": false,
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "retries": 2
 }

@@ -526,7 +526,7 @@ testcafe(
     env = {
         "REACT_APP_CLUSTER": "bluefield",
         "REACT_APP_E2E_USER": REACT_APP_E2E_USER,
-        "BASE_URL": "https://127.0.0.1:3000",
+        "BASE_URL": "https://localhost:3000",
     },
 )
 

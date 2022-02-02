@@ -19,7 +19,7 @@ module.exports = {
       '../../../packages/$1/dist/mocks',
     ],
     // we don't want external private packages to be treated as local
-    '^@cognite/(?!cogs.js|sdk)(.*)$': [
+    '^@cognite/(?!cogs.js|sdk|cdf-hub-tenant-selector)(.*)$': [
       '../../../packages/$1/src',
       '../../../packages/$1/dist',
       '<rootDir>/../../packages/$1/src',

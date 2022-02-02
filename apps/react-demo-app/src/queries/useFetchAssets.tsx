@@ -8,7 +8,8 @@ const assetKeys = {
 const doFetchAssets = ({ client }: { client: CogniteClient }) => {
   return client.assets
     .list({
-      filter: { source: 'test-items' },
+      // Un comment this line to filter assets
+      // filter: { source: 'test-items' },
     })
     .then((result) => result.items);
 };

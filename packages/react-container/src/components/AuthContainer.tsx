@@ -42,7 +42,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     AuthContext | undefined
   >();
   const [loading, setLoading] = React.useState(true);
-  const { flow, options } = getFlow();
+  const { flow, options } = getFlow(tenant);
   const queryClient = useQueryClient();
   const { aadApplicationId, applicationId, cdfCluster } = sidecar;
 

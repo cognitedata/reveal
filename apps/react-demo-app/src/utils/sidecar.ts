@@ -55,6 +55,29 @@ const getAadApplicationId = (cluster: string) => {
     projectId: '1ee63b21-27c7-44ad-891f-4bd9af378b72', // <- move this to release-configs
     version: 'Production', // <- move this to release-configs
   },
+  availableClusters: [
+    {
+      label: 'Multi customer environments',
+      options: [{ value: '', label: 'Europe 1 (Google)', legacyAuth: true }],
+    },
+    {
+      label: 'Single customer environments',
+      options: [
+        { value: 'bp-northeurope', label: 'BP North Europe' },
+        { value: 'omv', label: 'OMV', legacyAuth: true },
+        { value: 'pgs', label: 'PGS', legacyAuth: true },
+        { value: 'power-no', label: 'Power NO (Google)', legacyAuth: true },
+      ],
+    },
+    {
+      label: 'Staging environments',
+      options: [
+        { value: 'greenfield', label: 'greenfield', legacyAuth: true },
+        { value: 'bluefield', label: 'bluefield' },
+        { value: 'azure-dev', label: 'azure-dev' },
+      ],
+    },
+  ],
   intercomSettings: {
     app_id: 'ou1uyk2p',
     hide_default_launcher: true,

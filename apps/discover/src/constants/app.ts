@@ -67,7 +67,7 @@ const sidecarOverridesWithCustomFakeIdpUser: Partial<SidecarConfig> = {
       : [],
 };
 
-type DiscoverSidecarConfig = SidecarConfig & {
+export type DiscoverSidecarConfig = SidecarConfig & {
   mixpanel: string;
   unleash: string;
 };

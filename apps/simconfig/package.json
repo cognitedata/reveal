@@ -43,7 +43,7 @@
         "<rootDir>/../../packages/$1/src/mocks",
         "<rootDir>/../../packages/$1/dist/mocks"
       ],
-      "^@cognite/(?!cogs.js|sdk|testing)(.*)$": [
+      "^@cognite/(?!cogs.js|sdk|testing|cdf-hub-tenant-selector)(.*)$": [
         "../../../packages/$1/src",
         "../../../packages/$1/dist",
         "<rootDir>/../../packages/$1/src",

@@ -1,3 +1,7 @@
+## 1.0.2 Jan 17 2022
+
+- Add generic ErrorExpandable
+
 ## 1.0.1 Oct 11 2021
 
 - Add generic ErrorPage

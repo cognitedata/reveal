@@ -58,6 +58,8 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
     "@npm//@types/history",
+    "@npm//@cognite/cdf-hub-tenant-selector",
+    "@npm//query-string",
     "@npm//axios",
     "@npm//jwt-decode",
     "@npm//lodash",
@@ -90,6 +92,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react-i18next",
     "@npm//@types/react-redux",
     "@npm//@types/react-router-dom",
+    "@npm//@types/styled-components",
 ]
 
 # Dev dependencies from package.json

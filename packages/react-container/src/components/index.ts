@@ -7,3 +7,4 @@ export * from './LoopDetector';
 export * from './QueryClientProvider';
 export * from './Sentry';
 export * from './TranslationWrapper';
+export * from './TenantSelectorWrapper';

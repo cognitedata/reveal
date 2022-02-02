@@ -18,6 +18,15 @@ export type CDFCluster =
   | 'statnett'
   | 'westeurope-1';
 
+export type CDFClusterSet = {
+  label: string;
+  options: {
+    label: string;
+    value: CDFCluster | '';
+    legacyAuth?: boolean;
+  }[];
+};
+
 export type FakeIdp = {
   cluster: string;
   customExpiry?: number;
@@ -56,6 +65,7 @@ export type SidecarConfig = ApiBaseUrls & {
   directoryTenantId?: string;
   disableAzureLogin?: boolean;
   disableLegacyLogin?: boolean;
+  availableClusters?: CDFClusterSet[];
   disableTranslations?: boolean;
   docsSiteBaseUrl: string;
   enableUserManagement?: boolean;

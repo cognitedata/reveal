@@ -23,22 +23,18 @@ export const getFakeIdPInfoFromStorage = () =>
     FAKE_IDP_LS_KEY
   );
 
-export const doFakeIdPLogin = (options: FakeIdp) => {
+export const doFakeIdPLogin = async (options: FakeIdp) => {
   const excludeList = ['idToken', 'accessToken', 'name'];
   const goodOptions = omit(options, ...excludeList);
-  return axios
-    .post(`http://localhost:8200/login/token`, {
-      ...goodOptions,
-      // for testing expired tokens:
-      // customExpiry: Math.floor(new Date().getTime() / 1000) + 15, // 15 second token
-    })
-    .then((result) => {
-      saveToLocalStorage(FAKE_IDP_LS_KEY, {
-        ...goodOptions,
-        idToken: result.data.id_token,
-        accessToken: result.data.access_token,
-      });
-
-      return result;
-    });
+  const result = await axios.post(`http://localhost:8200/login/token`, {
+    ...goodOptions,
+    // for testing expired tokens:
+    // customExpiry: Math.floor(new Date().getTime() / 1000) + 15, // 15 second token
+  });
+  saveToLocalStorage(FAKE_IDP_LS_KEY, {
+    ...goodOptions,
+    idToken: result.data.id_token,
+    accessToken: result.data.access_token,
+  });
+  return result;
 };

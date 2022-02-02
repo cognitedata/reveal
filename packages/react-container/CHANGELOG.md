@@ -1,3 +1,8 @@
+## 4.0.0 Jan 27 2022
+
+- Replaced `Tenant selector with @cognite/cdf-hub-tenant-selector`
+- Extended functionality to allow dynamic cluster list
+
 ## 3.0.0 Dec 17 2021
 
 - Added `ReactQueryDevtools` by default

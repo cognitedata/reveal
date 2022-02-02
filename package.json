@@ -15,6 +15,7 @@
     "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
+    "@cognite/cdf-hub-tenant-selector": "^0.14.0",
     "@cognite/cogs.js": "5.10.0",
     "@cognite/comment-service-types": "^0.0.7",
     "@cognite/discover-api-types": "0.2.49",
@@ -108,6 +109,7 @@
     "plotly.js": "^1.54.7",
     "proj4": "^2.6.2",
     "prop-types": "^15.7.2",
+    "query-string": "^7.0.1",
     "randexp": "^0.5.3",
     "rc-collapse": "^3.1.1",
     "react": "17.0.2",
@@ -328,6 +330,7 @@
     }
   },
   "resolutions": {
+    "@cognite/cdf-hub-tenant-selector/@cognite/auth-utils/@cognite/sdk": "5.6.2",
     "@cognite/sdk-v7/@cognite/sdk-core": "^3.4.1",
     "@storybook/router": "~6.3.10",
     "d3-scale": "3.3.0"

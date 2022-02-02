@@ -1,5 +1,6 @@
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { ErrorPage } from './ErrorPage';
+export { default as ErrorExpandable } from './ErrorExpandable';
 export { default as ErrorId } from './ErrorId';
 export { default as ErrorWatcher } from './ErrorWatcher';
 export { ImpossibleStateError, UnreachableCaseError } from './errors';

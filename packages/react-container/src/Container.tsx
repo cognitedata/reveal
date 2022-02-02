@@ -7,7 +7,6 @@ import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { withI18nSuspense } from '@cognite/react-i18n';
 import { SentryProps } from '@cognite/react-sentry';
-import { TenantSelector } from '@cognite/react-tenant-selector';
 import { SidecarConfig } from '@cognite/sidecar';
 import '@cognite/cogs.js/dist/cogs.css';
 
@@ -18,6 +17,7 @@ import {
   ConditionalQueryClientProvider,
   ConditionalSentry,
   TranslationWrapper,
+  TenantSelectorWrapper,
 } from './components';
 import { IntercomContainer } from './components/Intercom';
 import { useCogniteSDKClient, createBrowserHistory } from './internal';
@@ -82,28 +82,17 @@ const RawContainer: React.FC<Props> = ({
     }
   }, []); // no deps, this only runs once.
 
-  // console.log('Gate info:', {
-  //   initialTenantOrApiKeyTenant,
-  //   initialTenant,
-  //   possibleTenant,
-  // });
-
   if (!possibleTenant) {
     if (!initialTenantOrApiKeyTenant) {
-      return <TenantSelector sidecar={sidecar} />;
+      return <TenantSelectorWrapper sidecar={sidecar} />;
     }
-
     history.push(`/${initialTenantOrApiKeyTenant}/`);
     document.location.reload();
-
     return <Loader />;
   }
-
-  let ChosenAuthContainer = AuthContainer;
-
-  if (apiKey) {
-    ChosenAuthContainer = AuthContainerForApiKeyMode;
-  }
+  const ChosenAuthContainer = apiKey
+    ? AuthContainerForApiKeyMode
+    : AuthContainer;
 
   const refreshPage = () => {
     document.location.href = '/';

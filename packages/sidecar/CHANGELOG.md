@@ -1,3 +1,7 @@
+## 0.3.0 Jan 7 2022
+
+- add CDFClusterSet types for Tenant Selector config
+
 ## 0.2.0 Oct 27 2021
 
 - add infield and infield-cache APIs
