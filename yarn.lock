@@ -2741,19 +2741,19 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@^3.36.0":
-  version "3.38.4"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.38.4.tgz#8f51d342e8509a0586d82e5ee0725226edc34ef9"
-  integrity sha512-trRyPklED6M58RBsf5/H1QPDPlHkTJ2lUsUG+4R7vZI0a4awxfVaiBwRMw7C21nhqMv8zBRo7L/0521inoxPDg==
+"@cognite/cogs.js@^3.38.4":
+  version "3.44.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
+  integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
+    axios "^0.21.2"
     classnames "^2.3.1"
     color "^3.1.2"
     dayjs "^1.9.7"
     eslint-config-stylelint "^13.1.1"
     focus-visible "^5.1.0"
-    lorem-ipsum "^2.0.3"
     match-sorter "^6.3.0"
     rc-collapse "^1.11.8"
     rc-drawer "^4.1.0"
@@ -2764,14 +2764,15 @@
     react-select "^3.1.0"
     react-table "^7.6.0"
     react-toastify "^6.0.9"
+    resize-observer-polyfill "^1.5.1"
     stylelint "^13.13.1"
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^3.38.4":
-  version "3.44.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
-  integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
+"@cognite/cogs.js@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.10.0.tgz#fdabe6e43c21c5fdb080119c7332cbec890e4b3b"
+  integrity sha512-Feqb/h0BA69VrlidRqtVAfdHdOUPUjwJi6BikczmNk9YlHwfKvNailN1HULkvnm2BftH3FNJYn5+Wl6bKMT3bg==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -7950,7 +7951,7 @@ comma-separated-tokens@^1.0.0:
   resolved "https://registry.npmjs.org/comma-separated-tokens/-/comma-separated-tokens-1.0.8.tgz"
   integrity sha512-GHuDRO12Sypu2cV70d1dkA2EUmXHgntrzbpvOB+Qy+49ypNfGgFQIC2fhhXbnyrJRynDCAARsT7Ou0M6hirpfw==
 
-commander@^2.17.1, commander@^2.19.0, commander@^2.20.0:
+commander@^2.19.0, commander@^2.20.0:
   version "2.20.3"
   resolved "https://registry.npmjs.org/commander/-/commander-2.20.3.tgz"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
@@ -13589,13 +13590,6 @@ loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
-
-lorem-ipsum@^2.0.3:
-  version "2.0.4"
-  resolved "https://registry.npmjs.org/lorem-ipsum/-/lorem-ipsum-2.0.4.tgz"
-  integrity sha512-TD+ERYfxjYiUfOyaKU6OH4euumNVeKoo3BxIhokb7bGmoCULsME48onF9NVxYK3CU1z9L5ALnkDkW8lIkHvMNQ==
-  dependencies:
-    commander "^2.17.1"
 
 lower-case@^1.1.1:
   version "1.1.4"
