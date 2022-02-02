@@ -26,7 +26,7 @@ export const SchemaVersionSelect = ({
   }, [versions]);
 
   return (
-    <StyledVersionContainer>
+    <StyledVersionContainer data-cy="schema-version-select">
       <Select
         value={{
           value: selectedVersion,

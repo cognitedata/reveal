@@ -35,7 +35,9 @@ export const PageToolbar = ({
             }}
           />
         )}
-        <Title level={titleLevel}>{title}</Title>
+        <Title data-cy="page-title" level={titleLevel}>
+          {title}
+        </Title>
         {behindTitle && <div>{behindTitle}</div>}
       </TopBar.Left>
       {children && <TopBar.Right>{children}</TopBar.Right>}

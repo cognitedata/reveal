@@ -112,9 +112,10 @@ export const DataModelPage = () => {
   const renderTools = () => {
     if (mode === SchemaEditorMode.Edit) {
       return (
-        <>
+        <div data-cy="data-model-toolbar-actions">
           <Button
             type="secondary"
+            data-cy="discard-btn"
             onClick={() => {
               setProjectSchema(
                 selectedSchema && selectedSchema.schema
@@ -131,6 +132,7 @@ export const DataModelPage = () => {
 
           <Button
             type="primary"
+            data-cy="publish-schema-btn"
             onClick={() => onSaveOrPublish()}
             loading={saving}
             disabled={
@@ -141,13 +143,14 @@ export const DataModelPage = () => {
           >
             {t('publish', 'Publish')}
           </Button>
-        </>
+        </div>
       );
     }
 
     return (
       <Button
         type="primary"
+        data-cy="edit-schema-btn"
         onClick={() => setMode(SchemaEditorMode.Edit)}
         className="editButton"
       >

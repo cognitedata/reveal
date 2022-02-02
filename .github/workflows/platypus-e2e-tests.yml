@@ -38,7 +38,7 @@ jobs:
         id: cypress
         # Continue the build in case of an error, as we need to set the
         # commit status in the next step, both in case of success and failure
-        continue-on-error: true
+        continue-on-error: false
         # execute Cypress using a custom test command
         with:
           # let's make sure our tests pass on Chrome browser
