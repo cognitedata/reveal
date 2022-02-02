@@ -3,8 +3,8 @@ import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import styled from 'styled-components/macro';
 
-import { FilterTagProps } from 'components/tag/BlueFilterTag';
-import { ClearTagProps } from 'components/tag/ClearTag';
+import { FilterClearAllButton } from 'components/buttons/FilterClearAllButton';
+import { SelectedFilterLabel } from 'components/labels/SelectedFilterLabel';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useClearPolygon } from 'modules/api/savedSearches/hooks/useClearPolygon';
 import { useClearQuery } from 'modules/api/savedSearches/hooks/useClearQuery';
@@ -22,13 +22,15 @@ import { FilterValues } from 'modules/wellSearch/types';
 import { reomveAppliedFilterValue } from 'modules/wellSearch/utils/filters';
 import { sizes } from 'styles/layout';
 
+import { TagWrapper } from '../../document/header/elements';
+
 const Container = styled.div`
   margin-top: ${sizes.small};
+  display: flex;
+  flex-wrap: wrap;
 `;
 
 interface Props {
-  filterTagComponent: React.FC<FilterTagProps>;
-  clearTagComponent: React.FC<ClearTagProps>;
   showGeoFilters?: boolean;
   showClearTag?: boolean;
   showSearchPhraseTag?: boolean;
@@ -36,8 +38,6 @@ interface Props {
 
 export const WellAppliedFilters: React.FC<Props> = React.memo(
   ({
-    filterTagComponent,
-    clearTagComponent,
     showGeoFilters = false,
     showClearTag = false,
     showSearchPhraseTag = false,
@@ -81,21 +81,17 @@ export const WellAppliedFilters: React.FC<Props> = React.memo(
 
     const createFilterTagElement = (
       key: string,
-      tag: any,
+      tag: string,
       onClick: () => void
     ) => (
-      <div key={key}>
-        {React.createElement(filterTagComponent, {
-          tag,
-          onClick,
-        })}
-      </div>
+      <TagWrapper key={key}>
+        <SelectedFilterLabel onClick={onClick} key={key} tag={tag} />
+      </TagWrapper>
     );
 
-    const createClearTagElement = (onClick: () => void) =>
-      React.createElement(clearTagComponent, {
-        onClick,
-      });
+    const createClearTagElement = (onClick: () => void) => (
+      <FilterClearAllButton onClick={onClick} />
+    );
 
     return (
       <Container data-testid="well-filter-container">

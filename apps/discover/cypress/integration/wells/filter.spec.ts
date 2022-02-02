@@ -17,6 +17,7 @@ import {
   MD_ELEVATION_TEXT,
   TVD,
   WATER_DEPTH,
+  DATA_SOURCE,
   NDS_SEVERITY,
   NDS_PROBABILITY,
   NPT_DURATION,
@@ -70,27 +71,23 @@ describe('Wells sidebar filters', () => {
       method: 'POST',
     }).as('searchWells');
 
-    cy.log(`Click Source filter and check`);
-    cy.findByTestId('side-bar')
-      .contains('Source')
-      .as('source')
-      .should('be.visible')
-      .click();
+    cy.clickOnFilter(DATA_SOURCE);
 
     cy.log('Checking source values');
     cy.contains('callisto').should('be.visible').click();
     cy.contains('volve').should('be.visible');
     checkRequestContainsFilter({ sources: ['callisto'] });
 
-    cy.log('Minimize source section');
-    cy.get('@source').click();
+    cy.log('Checking visibility of selected source');
+    cy.findAllByTestId('filter-tag')
+      .contains(`${DATA_SOURCE} : callisto`)
+      .as('sourec-callisto')
+      .should('be.visible');
 
-    cy.log(`Expand ${FIELD_BLOCK_OPERATOR} section and check visibility`);
-    cy.findByTestId('side-bar')
-      .contains(FIELD_BLOCK_OPERATOR)
-      .as('region-field')
-      .should('be.visible')
-      .click();
+    cy.log('Minimize source section');
+    cy.clickOnFilter(DATA_SOURCE);
+
+    cy.clickOnFilter(FIELD_BLOCK_OPERATOR);
 
     cy.log('Expand region filter and check visibility');
     cy.findAllByTestId('filter-item-wrapper')
@@ -156,15 +153,14 @@ describe('Wells sidebar filters', () => {
      * Block is not covered with test yet, missing data
      * */
 
-    cy.log('Minimize section');
-    cy.get('@region-field').click();
+    cy.log('Checking visibility of selected field');
+    cy.findAllByTestId('filter-tag')
+      .contains(`${FIELD} : Erinome`)
+      .should('be.visible');
 
-    cy.log(`Expand ${WELL_CHARACTERISTICS} filter`);
-    cy.findByTestId('side-bar')
-      .contains(WELL_CHARACTERISTICS)
-      .as('wel-characteristics')
-      .should('be.visible')
-      .click();
+    cy.clickOnFilter(FIELD_BLOCK_OPERATOR);
+
+    cy.clickOnFilter(WELL_CHARACTERISTICS);
 
     cy.log(
       `Check visibility and expand ${WELL_TYPE} filter inside ${WELL_CHARACTERISTICS}`
@@ -422,15 +418,8 @@ describe('Wells sidebar filters', () => {
       },
     });
 
-    cy.log(`Minimize ${WELL_CHARACTERISTICS} filter`);
-    cy.get('@wel-characteristics').click();
-
-    cy.log(`Check visibility and expand ${MEASUREMENTS} filter`);
-    cy.findByTestId('side-bar')
-      .contains(MEASUREMENTS)
-      .as('measurements')
-      .should('be.visible')
-      .click();
+    cy.clickOnFilter(WELL_CHARACTERISTICS);
+    cy.clickOnFilter(MEASUREMENTS);
 
     cy.log('Check visibility of last value in measurement drop-down');
     cy.findByTestId('Measurements').findByText(SELECT_TEXT).click();
@@ -445,14 +434,10 @@ describe('Wells sidebar filters', () => {
       },
     });
     cy.log(`Minimize ${MEASUREMENTS} filter`);
-    cy.get('@measurements').click();
+    // cy.findAllByTestId('filter-item-wrapper').eq(13).click();
+    cy.clickOnFilter(MEASUREMENTS);
 
-    cy.log('Check visibility and expand `NDS` filter');
-    cy.findByTestId('side-bar')
-      .contains(NDS_RISKS)
-      .as('nds')
-      .should('be.visible')
-      .click();
+    cy.clickOnFilter(NDS_RISKS);
 
     cy.log(`Check visibility and expand ${NDS_RISKS_TYPE}`);
     cy.findByTestId(NDS_RISKS)
@@ -514,14 +499,9 @@ describe('Wells sidebar filters', () => {
       },
     });
 
-    cy.log('Minimize `NDS` filter');
-    cy.get('@nds').click();
+    cy.clickOnFilter(NDS_RISKS);
 
-    cy.log('Check visibility and expand `NPT` filter');
-    cy.findByTestId('side-bar')
-      .contains(NPT_EVENTS)
-      .should('be.visible')
-      .click();
+    cy.clickOnFilter(NPT_EVENTS);
 
     cy.findByTestId(NPT_EVENTS)
       .findAllByTestId('filter-item-wrapper')
@@ -567,6 +547,7 @@ describe('Wells sidebar filters', () => {
     });
 
     cy.log(`Check visibility and expand ${NPT_DETAIL_CODE} filter`);
+
     cy.get('@nptFilters').eq(2).as('nptDetailCode');
     cy.get('@nptDetailCode').contains(NPT_DETAIL_CODE);
     cy.get('@nptDetailCode').contains(SELECT_TEXT).click();
@@ -587,5 +568,25 @@ describe('Wells sidebar filters', () => {
         exists: true,
       },
     });
+
+    cy.clickOnFilter(NPT_EVENTS);
+
+    cy.log('Clear all selected filters');
+    cy.findByTestId('clear-all-btn').click();
+
+    cy.log('Selecting filters for check filter labels');
+    cy.clickOnFilter(DATA_SOURCE);
+    cy.contains('callisto').should('be.visible').click();
+    cy.clickOnFilter(FIELD_BLOCK_OPERATOR);
+    cy.get('@region').contains(SELECT_TEXT).should('be.visible').click();
+    cy.contains('Jovian System').should('be.visible').click();
+
+    cy.log('Remove selected filter');
+    cy.get('@sourec-callisto').click();
+    cy.get('@sourec-callisto').should('not.exist');
+
+    cy.log('Remove all selected filters');
+    cy.findAllByTestId('clear-all-filter-button').should('be.visible').click();
+    cy.findAllByTestId('filter-tag').should('not.exist');
   });
 });

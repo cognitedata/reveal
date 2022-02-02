@@ -88,10 +88,8 @@ class Sidebar {
 
   wellClearAllFilterTag = () =>
     Selector('[data-testid="side-bar"]')
-      .find('[data-testid="well-filter-container"]')
-      .find('span')
-      .withText(CLEAR_ALL_TEXT)
-      .find('svg');
+      .find('[data-testid="clear-all-filter-button"]')
+      .withText(CLEAR_ALL_TEXT);
 
   searchHistorySugession = (phrase: string) =>
     this.searchSuggetionsPanel.find('div').withExactText(phrase);
