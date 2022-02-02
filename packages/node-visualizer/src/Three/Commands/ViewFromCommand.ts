@@ -1,11 +1,11 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import ViewFromCommandBottomIcon from 'images/Commands/ViewFromCommand_Bottom.png';
-import ViewFromCommandTopIcon from 'images/Commands/ViewFromCommand_Top.png';
-import ViewFromCommandEastIcon from 'images/Commands/ViewFromCommand_East.png';
-import ViewFromCommandWestIcon from 'images/Commands/ViewFromCommand_West.png';
-import ViewFromCommandSouthIcon from 'images/Commands/ViewFromCommand_South.png';
-import ViewFromCommandNorthIcon from 'images/Commands/ViewFromCommand_North.png';
+import ViewFromCommandBottomIcon from '../../images/Commands/ViewFromCommand_Bottom.png';
+import ViewFromCommandEastIcon from '../../images/Commands/ViewFromCommand_East.png';
+import ViewFromCommandNorthIcon from '../../images/Commands/ViewFromCommand_North.png';
+import ViewFromCommandSouthIcon from '../../images/Commands/ViewFromCommand_South.png';
+import ViewFromCommandTopIcon from '../../images/Commands/ViewFromCommand_Top.png';
+import ViewFromCommandWestIcon from '../../images/Commands/ViewFromCommand_West.png';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class ViewFromCommand extends ThreeRenderTargetCommand {
   private viewFrom: number;

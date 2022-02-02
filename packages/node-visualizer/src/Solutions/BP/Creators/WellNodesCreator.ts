@@ -1,11 +1,12 @@
-import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
-import { BPData } from 'Solutions/BP/BPData';
-import { WellNodeCreator } from 'Solutions/BP/Creators/WellNodeCreator';
-import { WellTrajectoryNodeCreator } from 'Solutions/BP/Creators/WellTrajectoryNodeCreator';
-import { WellLogCreator } from 'Solutions/BP/Creators/WellLogCreator';
-import { WellCasingCreator } from 'Solutions/BP/Creators/WellCasingCreator';
-import { Util } from 'Core/Primitives/Util';
-import { Units } from 'Core/Primitives/Units';
+import { Units } from '../../../Core/Primitives/Units';
+import { Util } from '../../../Core/Primitives/Util';
+import { WellNode } from '../../../SubSurface/Wells/Nodes/WellNode';
+import { BPData } from '../BPData';
+
+import { WellCasingCreator } from './WellCasingCreator';
+import { WellLogCreator } from './WellLogCreator';
+import { WellNodeCreator } from './WellNodeCreator';
+import { WellTrajectoryNodeCreator } from './WellTrajectoryNodeCreator';
 
 export class WellNodesCreator {
   static create(bpData: BPData | null): WellNode[] | null {

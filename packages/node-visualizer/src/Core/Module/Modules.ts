@@ -11,11 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
-import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
-import { ViewFactory } from 'Core/Views/ViewFactory';
-import { BaseModule } from 'Core/Module/BaseModule';
-import { VirtualUserInterface } from 'Core/States/VirtualUserInterface';
+import { BaseRenderTargetNode } from '../Nodes/BaseRenderTargetNode';
+import { BaseRootNode } from '../Nodes/BaseRootNode';
+import { VirtualUserInterface } from '../States/VirtualUserInterface';
+import { ViewFactory } from '../Views/ViewFactory';
+
+import { BaseModule } from './BaseModule';
 
 export class Modules {
   //= =================================================

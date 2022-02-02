@@ -11,18 +11,19 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Util } from 'Core/Primitives/Util';
-import { TextItem } from 'Core/Views/TextItem';
-import { Polyline } from 'Core/Geometry/Polyline';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
+import { BaseCommand } from '../Commands/BaseCommand';
+import { Polyline } from '../Geometry/Polyline';
+import { BaseNode } from '../Nodes/BaseNode';
+import { Util } from '../Primitives/Util';
+
+import { TextItem } from './TextItem';
 
 export class ViewInfo {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public footer: string = '';
+  public footer = '';
 
   public items: TextItem[] = [];
 

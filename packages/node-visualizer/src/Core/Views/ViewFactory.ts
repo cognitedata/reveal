@@ -12,8 +12,8 @@
 //= ====================================================================================
 
 /* eslint-disable max-classes-per-file */
-import { BaseView } from 'Core/Views/BaseView';
-import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseNode } from '../Nodes/BaseNode';
+import { BaseView } from '../Views/BaseView';
 
 export class ViewFactory {
   //= =================================================

@@ -2,14 +2,14 @@ import React, { KeyboardEvent, MouseEvent } from 'react';
 import styled from 'styled-components';
 
 // icons
-import Frame from 'images/Checkboxes/Frame.png';
-import FrameStippled from 'images/Checkboxes/FrameStippled.png';
-import FocusNormal from 'images/Checkboxes/FocusNormal.png';
-import FocusFilter from 'images/Checkboxes/FocusFilter.png';
-import BackgroundNormal from 'images/Checkboxes/BackgroundNormal.png';
-import BackgroundFilter from 'images/Checkboxes/BackgroundFilter.png';
-import CheckedAll from 'images/Checkboxes/CheckedAll.png';
-import CheckedSome from 'images/Checkboxes/CheckedSome.png';
+import Frame from '../../../images/Checkboxes/Frame.png';
+import FrameStippled from '../../../images/Checkboxes/FrameStippled.png';
+import FocusNormal from '../../../images/Checkboxes/FocusNormal.png';
+import FocusFilter from '../../../images/Checkboxes/FocusFilter.png';
+import BackgroundNormal from '../../../images/Checkboxes/BackgroundNormal.png';
+import BackgroundFilter from '../../../images/Checkboxes/BackgroundFilter.png';
+import CheckedAll from '../../../images/Checkboxes/CheckedAll.png';
+import CheckedSome from '../../../images/Checkboxes/CheckedSome.png';
 
 interface SpanProps {
   readonly background?: string;

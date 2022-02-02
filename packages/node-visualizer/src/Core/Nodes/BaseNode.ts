@@ -13,31 +13,31 @@
 
 import * as Color from 'color';
 
-import { UniqueId } from 'Core/Primitives/UniqueId';
-import { Identifiable } from 'Core/Primitives/Identifiable';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { Class, isInstanceOf } from 'Core/Primitives/ClassT';
-import { RenderStyleResolution } from 'Core/Enums/RenderStyleResolution';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { ColorType } from 'Core/Enums/ColorType';
-import { Colors } from 'Core/Primitives/Colors';
-import { Changes } from 'Core/Views/Changes';
-import { CheckBoxState } from 'Core/Enums/CheckBoxState';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import { Util } from 'Core/Primitives/Util';
-import { VirtualUserInterface } from 'Core/States/VirtualUserInterface';
-import { FileType } from 'Core/Enums/FileType';
-import { Range3 } from 'Core/Geometry/Range3';
-import { ColorTypeProperty } from 'Core/Property/Concrete/Property/ColorTypeProperty';
-import { ValueProperty } from 'Core/Property/Base/ValueProperty';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { ColorMaps } from 'Core/Primitives/ColorMaps';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
-import { ResetVisualSettingsCommand } from 'Core/Commands/SettingsPanel/ResetVisualSettingsCommand';
-import { CopyFolderVisualSettingsCommand } from 'Core/Commands/SettingsPanel/CopyFolderVisualSettingsCommand';
-import { CopySystemVisualSettingsCommand } from 'Core/Commands/SettingsPanel/CopySystemVisualSettingsCommand';
+import { Changes } from '../Views/Changes';
+import { CheckBoxState } from '../Enums/CheckBoxState';
+import { ITarget } from '../Interfaces/ITarget';
+import { Util } from '../Primitives/Util';
+import { VirtualUserInterface } from '../States/VirtualUserInterface';
+import { FileType } from '../Enums/FileType';
+import { Range3 } from '../Geometry/Range3';
+import { ColorTypeProperty } from '../Property/Concrete/Property/ColorTypeProperty';
+import { ValueProperty } from '../Property/Base/ValueProperty';
+import { BasePropertyFolder } from '../Property/Base/BasePropertyFolder';
+import { ColorMaps } from '../Primitives/ColorMaps';
+import { BaseCommand } from '../Commands/BaseCommand';
+import { ResetVisualSettingsCommand } from '../Commands/SettingsPanel/ResetVisualSettingsCommand';
+import { CopyFolderVisualSettingsCommand } from '../Commands/SettingsPanel/CopyFolderVisualSettingsCommand';
+import { CopySystemVisualSettingsCommand } from '../Commands/SettingsPanel/CopySystemVisualSettingsCommand';
+import { ColorType } from '../Enums/ColorType';
+import { RenderStyleResolution } from '../Enums/RenderStyleResolution';
+import { ITargetIdAccessor } from '../Interfaces/ITargetIdAccessor';
+import { Class, isInstanceOf } from '../Primitives/ClassT';
+import { Colors } from '../Primitives/Colors';
+import { Identifiable } from '../Primitives/Identifiable';
+import { TargetId } from '../Primitives/TargetId';
+import { UniqueId } from '../Primitives/UniqueId';
+import { BaseRenderStyle } from '../Styles/BaseRenderStyle';
+import { NodeEventArgs } from '../Views/NodeEventArgs';
 
 export abstract class BaseNode extends Identifiable {
   //= =================================================
@@ -66,11 +66,11 @@ export abstract class BaseNode extends Identifiable {
 
   private _isExpanded = false;
 
-  private _isActive: boolean = false;
+  private _isActive = false;
 
-  private _isSelected: boolean = false;
+  private _isSelected = false;
 
-  private _isInitialized: boolean = false;
+  private _isInitialized = false;
 
   private _uniqueId: UniqueId = UniqueId.new();
 
@@ -80,7 +80,7 @@ export abstract class BaseNode extends Identifiable {
 
   private _renderStyles: BaseRenderStyle[] = [];
 
-  private _isLoading: boolean = false;
+  private _isLoading = false;
 
   private _loadingError?: string;
 
@@ -875,7 +875,7 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Loading states management
   //= =================================================
 
-  public setLoadingState(isLoading: boolean = true): void {
+  public setLoadingState(isLoading = true): void {
     this.isLoading = isLoading;
     this.notifyLoadedData();
   }

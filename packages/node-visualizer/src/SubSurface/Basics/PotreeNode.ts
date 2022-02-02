@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { PotreeRenderStyle } from 'SubSurface/Basics/PotreeRenderStyle';
+import { BaseVisualNode } from '../../Core/Nodes/BaseVisualNode';
+import { TargetId } from '../../Core/Primitives/TargetId';
+import { BaseRenderStyle } from '../../Core/Styles/BaseRenderStyle';
+import { PotreeRenderStyle } from '../Basics/PotreeRenderStyle';
 
 export class PotreeNode extends BaseVisualNode {
   //= =================================================
@@ -35,7 +35,7 @@ export class PotreeNode extends BaseVisualNode {
   // INSTANCE FIELDS
   //= =================================================
 
-  private _url: string = '';
+  private _url = '';
 
   //= =================================================
   // INSTANCE PROPERTIES

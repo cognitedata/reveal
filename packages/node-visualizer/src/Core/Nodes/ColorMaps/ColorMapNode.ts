@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import Icon from 'images/Nodes/ColorMapNode.png';
+import Icon from '../../images/Nodes/ColorMapNode.png';
+import { BaseNode } from '../../Nodes/BaseNode';
 
 export class ColorMapNode extends BaseNode {
   //= =================================================

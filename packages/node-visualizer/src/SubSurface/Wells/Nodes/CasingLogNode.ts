@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { CasingLog } from 'SubSurface/Wells/Logs/CasingLog';
-import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
-import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
-import Icon from 'images/Nodes/CasingLogNode.png';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { CasingLog } from '../../../SubSurface/Wells/Logs/CasingLog';
+import { BaseLogNode } from '../../../SubSurface/Wells/Nodes/BaseLogNode';
+import { WellLogType } from '../../../SubSurface/Wells/Logs/WellLogType';
+import Icon from '../../../images/Nodes/CasingLogNode.png';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
 
 export class CasingLogNode extends BaseLogNode {
   //= =================================================

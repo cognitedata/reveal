@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@cognite/cogs.js';
 
-import { Select } from 'components/dropdown';
+import { Select } from 'components/select/Select';
 import { SurveyFile } from 'modules/seismicSearch/types';
 
 import { HeaderButtonsWrapper } from '../elements';

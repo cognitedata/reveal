@@ -6,9 +6,9 @@ import styled from 'styled-components/macro';
 
 import { Checkbox, Loader, Button, Tabs } from '@cognite/cogs.js';
 
-import { Select } from 'components/dropdown';
 import { BlankModal } from 'components/modal';
 // import { showInfoMessage } from 'components/toast';
+import { Select } from 'components/select/Select';
 import { Typography } from 'components/typography';
 import { useSeismic, useSelectedFiles } from 'modules/seismicSearch/selectors';
 import { SeismicCollection, Slices } from 'modules/seismicSearch/types';

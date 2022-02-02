@@ -1,16 +1,20 @@
 import React from 'react';
+
+import styled from 'styled-components';
+
 import Color from 'color';
+
+import { Checkbox, Input } from '@cognite/cogs.js';
+
+import { CompactColorPicker } from '../../../../UserInterface/Components/CompactColorPicker/CompactColorPicker';
+import { CommonSelectBase } from '../../../../UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
+import { Icon } from '../../../../UserInterface/Components/Icon/Icon';
+import { ElementTypes } from '../../../../UserInterface/Components/Settings/ElementTypes';
 import {
   ISettingsElement,
   ISettingsElementProps,
-} from 'UserInterface/Components/Settings/Types';
-import { ElementTypes } from 'UserInterface/Components/Settings/ElementTypes';
-import { CompactColorPicker } from 'UserInterface/Components/CompactColorPicker/CompactColorPicker';
-import { Icon } from 'UserInterface/Components/Icon/Icon';
-import { CommonSelectBase } from 'UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
-import { ToolbarToolTip } from 'UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
-import { Checkbox, Input } from '@cognite/cogs.js';
-import styled from 'styled-components';
+} from '../../../../UserInterface/Components/Settings/Types';
+import { ToolbarToolTip } from '../../../../UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
 
 /**
  * Responsible for rendering dynamic inputs

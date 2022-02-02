@@ -13,17 +13,17 @@
 
 import cloneDeep from 'lodash/cloneDeep';
 
-import { TargetId } from 'Core/Primitives/TargetId';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { BaseStyle } from 'Core/Styles/BaseStyle';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { TargetId } from '../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../Core/Property/Base/BasePropertyFolder';
+import { BaseRenderStyle } from '../../Core/Styles/BaseRenderStyle';
+import { BaseStyle } from '../../Core/Styles/BaseStyle';
 
 export class PotreeRenderStyle extends BaseRenderStyle {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public budget: number = 2_000_000;
+  public budget = 2_000_000;
 
   //= =================================================
   // CONSTRUCTOR

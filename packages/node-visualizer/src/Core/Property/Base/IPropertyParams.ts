@@ -2,7 +2,7 @@ import {
   IsEnabled,
   StringAction,
   ValidateOption,
-} from 'Core/Property/Base/ValueProperty';
+} from '../Property/Base/ValueProperty';
 
 export interface IPropertyParams<T> {
   name: string;

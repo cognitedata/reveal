@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Shape } from 'Core/Geometry/Shape';
+import { Range3 } from './Range3';
+import { Shape } from './Shape';
+import { Vector3 } from './Vector3';
 
 export class Points extends Shape {
   //= =================================================

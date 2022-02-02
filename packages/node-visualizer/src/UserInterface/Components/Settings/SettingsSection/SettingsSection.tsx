@@ -1,11 +1,12 @@
 import React from 'react';
+
+import { ExpansionView } from '../../../../UserInterface/Components/ExpansionView/ExpansionView';
+import { SettingsElement } from '../../../../UserInterface/Components/Settings/SettingsElement/SettingsElement';
 import {
   ISettingsSection,
   ISettingsElement,
   ISettingsSectionProps,
-} from 'UserInterface/Components/Settings/Types';
-import { ExpansionView } from 'UserInterface/Components/ExpansionView/ExpansionView';
-import { SettingsElement } from 'UserInterface/Components/Settings/SettingsElement/SettingsElement';
+} from '../../../../UserInterface/Components/Settings/Types';
 
 export const SettingsSection = (props: ISettingsSectionProps) => {
   const { id, name, isExpanded, toolBar, subSections, elements } =

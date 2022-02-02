@@ -11,13 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
-import { IDataLoader } from 'Core/Interfaces/IDataLoader';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import Icon from 'images/Commands/Delete.png';
-import { Changes } from 'Core/Views/Changes';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import Icon from '../../images/Commands/Delete.png';
+import { IDataLoader } from '../Interfaces/IDataLoader';
+import { ITarget } from '../Interfaces/ITarget';
+import { BasePropertyFolder } from '../Property/Base/BasePropertyFolder';
+import { Changes } from '../Views/Changes';
+import { NodeEventArgs } from '../Views/NodeEventArgs';
+
+import { BaseVisualNode } from './BaseVisualNode';
 
 export abstract class DataNode extends BaseVisualNode {
   //= =================================================

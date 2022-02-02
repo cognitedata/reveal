@@ -11,15 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import IconI from 'images/Nodes/SeismicPlaneNodeI.png';
-import IconJ from 'images/Nodes/SeismicPlaneNodeJ.png';
-import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
-import { SurveyNode } from 'SubSurface/Seismic/Nodes/SurveyNode';
-import { RegularGrid3 } from 'Core/Geometry/RegularGrid3';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Index2 } from 'Core/Geometry/Index2';
-import { Index3 } from 'Core/Geometry/Index3';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { Index2 } from '../../../Core/Geometry/Index2';
+import { Index3 } from '../../../Core/Geometry/Index3';
+import { RegularGrid3 } from '../../../Core/Geometry/RegularGrid3';
+import { Vector3 } from '../../../Core/Geometry/Vector3';
+import { BaseVisualNode } from '../../../Core/Nodes/BaseVisualNode';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import IconI from '../../../images/Nodes/SeismicPlaneNodeI.png';
+import IconJ from '../../../images/Nodes/SeismicPlaneNodeJ.png';
+
+import { SurveyNode } from './SurveyNode';
 
 export class SeismicPlaneNode extends BaseVisualNode {
   //= =================================================
@@ -247,7 +248,7 @@ export class SeismicPlaneNode extends BaseVisualNode {
     return true;
   }
 
-  public createCells(useIndex: boolean = true): Index2[] {
+  public createCells(useIndex = true): Index2[] {
     const { surveyCube } = this;
     if (!surveyCube) throw Error('surveyCube is not set');
 

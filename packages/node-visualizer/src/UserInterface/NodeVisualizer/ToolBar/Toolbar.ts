@@ -1,6 +1,6 @@
-import { IToolbar } from 'Core/Interfaces/IToolbar';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
-import { IToolbarGroups } from 'Core/Interfaces/IToolbarGroups';
+import { IToolbar } from '../../../Core/Interfaces/IToolbar';
+import { BaseCommand } from '../../../Core/Commands/BaseCommand';
+import { IToolbarGroups } from '../../../Core/Interfaces/IToolbarGroups';
 
 /**
  * Visualizer toolbar implementation

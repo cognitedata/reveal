@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { ISettingsState } from 'UserInterface/Redux/State/settings';
 import Color from 'color';
-import { ActionTypes } from 'UserInterface/Redux/actions/ActionTypes';
-import { Appearance } from 'Core/States/Appearance';
-import { SettingsNodeUtils } from 'UserInterface/NodeVisualizer/Settings/SettingsNodeUtils';
-import { NodeUtils } from 'UserInterface/utils/NodeUtils';
+
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
+import { Appearance } from '../../../Core/States/Appearance';
+import { SettingsNodeUtils } from '../../../UserInterface/NodeVisualizer/Settings/SettingsNodeUtils';
+import { ActionTypes } from '../../../UserInterface/Redux/actions/ActionTypes';
+import { ISettingsState } from '../../../UserInterface/Redux/State/settings';
+import { NodeUtils } from '../../../UserInterface/utils/NodeUtils';
 
 // Initial settings state
 const initialState = {

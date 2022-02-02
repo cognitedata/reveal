@@ -11,18 +11,18 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from 'Core/Geometry/Range1';
+import { Range1 } from '../Geometry/Range1';
 
 export class Statistics {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  private _sumSquared: number = 0;
+  private _sumSquared = 0;
 
-  private _sum: number = 0;
+  private _sum = 0;
 
-  private _n: number = 0;
+  private _n = 0;
 
   private _range: Range1 = new Range1();
 

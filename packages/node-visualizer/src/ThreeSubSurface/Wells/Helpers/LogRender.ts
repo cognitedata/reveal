@@ -11,25 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import * as Color from 'color';
+import * as THREE from 'three';
 
-import { Range1 } from 'Core/Geometry/Range1';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { TrianglesBuffers } from 'Core/Geometry/TrianglesBuffers';
-
-import { Colors } from 'Core/Primitives/Colors';
-
-import { Canvas } from 'Three/Utilities/Canvas';
-
-import { FloatLog } from 'SubSurface/Wells/Logs/FloatLog';
-import { PointLog } from 'SubSurface/Wells/Logs/PointLog';
-import { DiscreteLog } from 'SubSurface/Wells/Logs/DiscreteLog';
-import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { ThreeTransformer } from 'Three/Utilities/ThreeTransformer';
-import { FloatLogStyle } from 'SubSurface/Wells/Styles/FloatLogStyle';
-import { ColorMap } from 'Core/Primitives/ColorMap';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { TrianglesBuffers } from '../../../Core/Geometry/TrianglesBuffers';
+import { Vector3 } from '../../../Core/Geometry/Vector3';
+import { ColorMap } from '../../../Core/Primitives/ColorMap';
+import { Colors } from '../../../Core/Primitives/Colors';
+import { DiscreteLog } from '../../../SubSurface/Wells/Logs/DiscreteLog';
+import { FloatLog } from '../../../SubSurface/Wells/Logs/FloatLog';
+import { PointLog } from '../../../SubSurface/Wells/Logs/PointLog';
+import { WellTrajectory } from '../../../SubSurface/Wells/Logs/WellTrajectory';
+import { FloatLogStyle } from '../../../SubSurface/Wells/Styles/FloatLogStyle';
+import { Canvas } from '../../../Three/Utilities/Canvas';
+import { ThreeConverter } from '../../../Three/Utilities/ThreeConverter';
+import { ThreeTransformer } from '../../../Three/Utilities/ThreeTransformer';
 
 export class LogRender {
   //= =================================================

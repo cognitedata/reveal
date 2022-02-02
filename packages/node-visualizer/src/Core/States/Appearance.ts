@@ -1,5 +1,6 @@
 import * as Color from 'color';
-import { Colors } from 'Core/Primitives/Colors';
+
+import { Colors } from '../Primitives/Colors';
 
 export class Appearance {
   //= =================================================

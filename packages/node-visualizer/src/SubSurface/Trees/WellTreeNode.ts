@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { FilterLogFolder } from 'SubSurface/Wells/Filters/FilterLogFolder';
-import WellNodeIcon from 'images/Nodes/WellNode.png';
-import { BaseTreeNode } from 'Core/Nodes/BaseTreeNode';
+import { BaseTreeNode } from '../../Core/Nodes/BaseTreeNode';
+import WellNodeIcon from '../../images/Nodes/WellNode.png';
+import { FilterLogFolder } from '../Wells/Filters/FilterLogFolder';
 
 export class WellTreeNode extends BaseTreeNode {
   //= =================================================

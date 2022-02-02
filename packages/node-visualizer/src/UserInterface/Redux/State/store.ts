@@ -1,7 +1,8 @@
-import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import isObject from 'lodash/isObject';
-import { NodeVisualizerMiddleware } from 'UserInterface/Redux/Middlewares/NodeVisualizerMiddleware';
-import { NodeVisualizerReducer } from 'UserInterface/Redux/reducers/NodeVisualizerReducer';
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
+
+import { NodeVisualizerMiddleware } from '../Middlewares/NodeVisualizerMiddleware';
+import { NodeVisualizerReducer } from '../reducers/NodeVisualizerReducer';
 
 const composeEnhancers =
   // @ts-expect-error does not exist on window

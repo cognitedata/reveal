@@ -13,11 +13,13 @@
 
 // eslint-disable-next-line max-classes-per-file
 import Color from 'color';
-import { Ma } from 'Core/Primitives/Ma';
-import { ColorMapItem } from 'Core/Primitives/ColorMapItem';
-import { ColorInterpolation } from 'Core/Primitives/ColorInterpolation';
-import { Range1 } from 'Core/Geometry/Range1';
-import { Colors } from 'Core/Primitives/Colors';
+
+import { Range1 } from '../Geometry/Range1';
+
+import { ColorInterpolation } from './ColorInterpolation';
+import { ColorMapItem } from './ColorMapItem';
+import { Colors } from './Colors';
+import { Ma } from './Ma';
 
 export class ColorMap {
   //= =================================================
@@ -26,9 +28,9 @@ export class ColorMap {
 
   private _items: ColorMapItem[] = [];
 
-  private _maxIndex: number = 0;
+  private _maxIndex = 0;
 
-  public name: string = '';
+  public name = '';
 
   //= =================================================
   // CONSTRUCTOR
@@ -101,7 +103,7 @@ export class ColorMap {
   // INSTANCE METHODS: Operations
   //= =================================================
 
-  public create1DColors(size: number = 1000): Uint8Array {
+  public create1DColors(size = 1000): Uint8Array {
     const height = 2;
     const rgbs = new Uint8Array(3 * size * height);
 
@@ -123,7 +125,7 @@ export class ColorMap {
     increment: number,
     volume: number,
     solidColor?: Color,
-    size: number = 1000
+    size = 1000
   ): Uint8Array {
     const height = 2;
     const rgbs = new Uint8Array(3 * size * height);

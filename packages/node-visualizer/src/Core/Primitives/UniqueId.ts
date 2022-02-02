@@ -12,7 +12,8 @@
 //= ====================================================================================
 
 import { v4 as uuid } from 'uuid';
-import { Util } from 'Core/Primitives/Util';
+
+import { Util } from './Util';
 
 export class UniqueId {
   //= =================================================

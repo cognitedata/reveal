@@ -11,13 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { PointLogStyle } from 'SubSurface/Wells/Styles/PointLogStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
-import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
-import PointLogNodeIcon from 'images/Nodes/PointLogNode.png';
-import { ColorType } from 'Core/Enums/ColorType';
+import { ColorType } from '../../../Core/Enums/ColorType';
+import { TargetId } from '../../../Core/Primitives/TargetId';
+import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
+import PointLogNodeIcon from '../../../images/Nodes/PointLogNode.png';
+import { BaseFilterLogNode } from '../../Wells/Filters/BaseFilterLogNode';
+import { WellLogType } from '../../Wells/Logs/WellLogType';
+import { PointLogStyle } from '../../Wells/Styles/PointLogStyle';
 
 export class PointFilterLogNode extends BaseFilterLogNode {
   //= =================================================

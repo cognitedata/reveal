@@ -1,5 +1,5 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
+import { ThreeRenderTargetNode } from '../../Nodes/ThreeRenderTargetNode';
 
 export abstract class BaseManipulator {
   //= =================================================

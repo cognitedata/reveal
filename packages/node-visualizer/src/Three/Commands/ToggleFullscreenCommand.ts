@@ -1,8 +1,8 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import FullScreenCommandIcon from 'images/Commands/FullScreen.png';
-import ExitFullScreenCommandIcon from 'images/Commands/ExitFullScreen.png';
-import { VirtualUserInterface } from 'Core/States/VirtualUserInterface';
+import { VirtualUserInterface } from '../../Core/States/VirtualUserInterface';
+import ExitFullScreenCommandIcon from '../../images/Commands/ExitFullScreen.png';
+import FullScreenCommandIcon from '../../images/Commands/FullScreen.png';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class ToggleFullscreenCommand extends ThreeRenderTargetCommand {
   private _isFullScreen = false;

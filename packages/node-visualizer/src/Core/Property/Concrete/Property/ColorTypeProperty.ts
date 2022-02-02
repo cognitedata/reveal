@@ -1,18 +1,16 @@
-import { ColorType } from 'Core/Enums/ColorType';
-import {
-  ValueProperty,
-  ExpandedOption,
-} from 'Core/Property/Base/ValueProperty';
-import { IPropertyParams } from 'Core/Property/Base/IPropertyParams';
-import ColorPnG from 'images/ColorTypes/Color.png';
-import ColorMap from 'images/ColorTypes/ColorMap.png';
-import Different from 'images/ColorTypes/Different.png';
-import Folder from 'images/ColorTypes/Folder.png';
 import Color from 'color';
+
+import ColorPnG from '../../../../images/ColorTypes/Color.png';
+import ColorMap from '../../../../images/ColorTypes/ColorMap.png';
+import Different from '../../../../images/ColorTypes/Different.png';
+import Folder from '../../../../images/ColorTypes/Folder.png';
+import { ColorType } from '../../../Enums/ColorType';
 import {
-  IPropertyExtraOptionDataParams,
   ColorTypeIconParams,
-} from 'Core/Property/Base/IPropertyExtraOptionDataParms';
+  IPropertyExtraOptionDataParams,
+} from '../../Base/IPropertyExtraOptionDataParms';
+import { IPropertyParams } from '../../Base/IPropertyParams';
+import { ValueProperty, ExpandedOption } from '../../Base/ValueProperty';
 
 export class ColorTypeProperty extends ValueProperty<ColorType> {
   //= =================================================

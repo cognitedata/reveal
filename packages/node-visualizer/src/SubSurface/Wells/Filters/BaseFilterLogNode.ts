@@ -11,14 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
-import { FilterLogFolder } from 'SubSurface/Wells/Filters/FilterLogFolder';
-import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
-import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { Changes } from 'Core/Views/Changes';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { ITarget } from '../../../Core/Interfaces/ITarget';
+import { BaseVisualNode } from '../../../Core/Nodes/BaseVisualNode';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import { Changes } from '../../../Core/Views/Changes';
+import { NodeEventArgs } from '../../../Core/Views/NodeEventArgs';
+import { WellLogType } from '../../Wells/Logs/WellLogType';
+import { BaseLogNode } from '../../Wells/Nodes/BaseLogNode';
+
+import { FilterLogFolder } from './FilterLogFolder';
 
 export abstract class BaseFilterLogNode extends BaseVisualNode {
   //= =================================================

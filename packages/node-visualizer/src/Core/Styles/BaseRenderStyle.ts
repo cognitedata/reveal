@@ -11,9 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseStyle } from 'Core/Styles/BaseStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
+import { ITargetIdAccessor } from '../Interfaces/ITargetIdAccessor';
+import { TargetId } from '../Primitives/TargetId';
+
+import { BaseStyle } from './BaseStyle';
 
 export abstract class BaseRenderStyle
   extends BaseStyle
@@ -33,7 +34,7 @@ export abstract class BaseRenderStyle
 
   private _targetId: TargetId;
 
-  public isDefault: boolean = false;
+  public isDefault = false;
 
   //= =================================================
   // INSTANCE PROPERTIES

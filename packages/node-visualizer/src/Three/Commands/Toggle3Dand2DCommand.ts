@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import Icon from 'images/Commands/Toggle3Dand2DCommand.png';
+import Icon from '../../images/Commands/Toggle3Dand2DCommand.png';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class Toggle3Dand2DCommand extends ThreeRenderTargetCommand {
   private wasPerspectiveMode = true;

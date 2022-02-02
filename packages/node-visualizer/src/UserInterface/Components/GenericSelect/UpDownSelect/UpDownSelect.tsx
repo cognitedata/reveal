@@ -1,9 +1,13 @@
 import React from 'react';
-import { ICommonSelectProps } from 'UserInterface/Components/Settings/Types';
-import { NumericUtils } from 'UserInterface/Foundation/Utils/numericUtils';
-import { Button, Icon } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
 import isString from 'lodash/isString';
+
+import { Button, Icon } from '@cognite/cogs.js';
+
+import { ICommonSelectProps } from '../../../../UserInterface/Components/Settings/Types';
+import { NumericUtils } from '../../../../UserInterface/Foundation/Utils/numericUtils';
 
 interface UpDownSelectProps extends ICommonSelectProps {
   node: React.ReactElement<ICommonSelectProps, any>;

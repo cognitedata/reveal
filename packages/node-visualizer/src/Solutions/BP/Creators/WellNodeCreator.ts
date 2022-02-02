@@ -1,8 +1,9 @@
 import * as utm from 'utm';
-import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Util } from 'Core/Primitives/Util';
-import { IWell } from 'SubSurface/Wells/Interfaces/IWell';
+
+import { Vector3 } from '../../../Core/Geometry/Vector3';
+import { Util } from '../../../Core/Primitives/Util';
+import { IWell } from '../../../SubSurface/Wells/Interfaces/IWell';
+import { WellNode } from '../../../SubSurface/Wells/Nodes/WellNode';
 
 export class WellNodeCreator {
   public static create(wellData: IWell | null): WellNode | null {

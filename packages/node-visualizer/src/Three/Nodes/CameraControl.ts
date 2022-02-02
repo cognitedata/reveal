@@ -13,12 +13,13 @@
 
 import CameraControls from 'camera-controls';
 import * as Three from 'three';
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Ma } from 'Core/Primitives/Ma';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { BaseTool } from 'Three/Commands/Tools/BaseTool';
+
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { Ma } from '../../Core/Primitives/Ma';
+import { BaseTool } from '../Commands/Tools/BaseTool';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
+import { ThreeConverter } from '../Utilities/ThreeConverter';
 
 // https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
 // https://github.com/yomotsu/camera-controls
@@ -35,7 +36,7 @@ export class CameraControl {
 
   private _controls: CameraControls | null = null;
 
-  public is2D: boolean = false;
+  public is2D = false;
 
   //= =================================================
   // INSTANCE PROPERTIES

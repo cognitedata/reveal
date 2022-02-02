@@ -2,9 +2,9 @@ import React from 'react';
 import {
   ToolbarConfig,
   VisualizerToolbarProps,
-} from 'UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
+} from '../../../UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
 import styled from 'styled-components';
-import { statusBarHeight } from 'UserInterface/styles/styled.props';
+import { statusBarHeight } from '../../../UserInterface/styles/styled.props';
 
 export interface Viewer3DProps {
   viewer3D: React.RefCallback<HTMLElement>;

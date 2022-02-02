@@ -13,8 +13,8 @@
 
 import * as THREE from 'three';
 
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { Colors } from 'Core/Primitives/Colors';
+import { Colors } from '../../Core/Primitives/Colors';
+import { ThreeConverter } from '../Utilities/ThreeConverter';
 
 export class ThreeMiniWindow {
   public static compassSize = 0.125;

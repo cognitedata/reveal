@@ -1,5 +1,6 @@
-import { Util } from 'Core/Primitives/Util';
-import { IWell, WellId } from 'SubSurface/Wells/Interfaces/IWell';
+import { ICasing } from 'SubSurface/Wells/Interfaces/ICasing';
+import { ILog } from 'SubSurface/Wells/Interfaces/ILog';
+import { IRiskEvent } from 'SubSurface/Wells/Interfaces/IRisk';
 import {
   ITrajectory,
   TrajectoryId,
@@ -8,15 +9,16 @@ import {
   ITrajectoryColumnIndices,
   ITrajectoryRows,
 } from 'SubSurface/Wells/Interfaces/ITrajectoryRows';
+import { IWell, WellId } from 'SubSurface/Wells/Interfaces/IWell';
 import {
   IWellBore,
   IWellBoreMeta,
   WellBoreId,
 } from 'SubSurface/Wells/Interfaces/IWellBore';
-import { IRiskEvent } from 'SubSurface/Wells/Interfaces/IRisk';
-import { ILog } from 'SubSurface/Wells/Interfaces/ILog';
-import { ICasing } from 'SubSurface/Wells/Interfaces/ICasing';
-import { Metadata, validateMetadata } from 'Solutions/BP/MetadataTransform';
+
+import { Util } from '../../Core/Primitives/Util';
+
+import { Metadata, validateMetadata } from './MetadataTransform';
 // Represent BP data
 
 export type DataTransform<T> = (data: Metadata) => T;

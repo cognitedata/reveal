@@ -1,5 +1,5 @@
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { BaseNode } from '../Nodes/BaseNode';
+import { NodeEventArgs } from '../Views/NodeEventArgs';
 
 export interface IUserInterface {
   updateNode(node: BaseNode, args: NodeEventArgs): void;

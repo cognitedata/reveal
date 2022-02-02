@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseView } from 'Core/Views/BaseView';
-import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
+import { ITargetIdAccessor } from '../Interfaces/ITargetIdAccessor';
+import { BaseView } from '../Views/BaseView';
 
 export class ViewList {
   //= =================================================

@@ -1,8 +1,11 @@
 import React from 'react';
-import { ToolBar } from 'UserInterface/Components/ToolBar/ToolBar';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
+
 import styled from 'styled-components';
+
 import { Icon } from '@cognite/cogs.js';
+
+import { BaseCommand } from '../../../Core/Commands/BaseCommand';
+import { ToolBar } from '../../../UserInterface/Components/ToolBar/ToolBar';
 
 interface ExpansionViewProps {
   id: string;

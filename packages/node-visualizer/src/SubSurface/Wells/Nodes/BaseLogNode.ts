@@ -13,19 +13,19 @@
 
 import * as Color from 'color';
 
-import { BaseLog } from 'SubSurface/Wells/Logs/BaseLog';
-import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
-import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
-import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
-import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
-import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
-import { Util } from 'Core/Primitives/Util';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import { DataNode } from 'Core/Nodes/DataNode';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { ColorType } from 'Core/Enums/ColorType';
-import { NodePointer } from 'Core/Nodes/Utilities/NodePointer';
+import { BaseLog } from '../../../SubSurface/Wells/Logs/BaseLog';
+import { WellNode } from '../../../SubSurface/Wells/Nodes/WellNode';
+import { WellTrajectoryNode } from '../../../SubSurface/Wells/Nodes/WellTrajectoryNode';
+import { WellTrajectory } from '../../../SubSurface/Wells/Logs/WellTrajectory';
+import { WellLogType } from '../../../SubSurface/Wells/Logs/WellLogType';
+import { BaseFilterLogNode } from '../../../SubSurface/Wells/Filters/BaseFilterLogNode';
+import { Util } from '../../../Core/Primitives/Util';
+import { ITarget } from '../../../Core/Interfaces/ITarget';
+import { DataNode } from '../../../Core/Nodes/DataNode';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
+import { ColorType } from '../../../Core/Enums/ColorType';
+import { NodePointer } from '../../../Core/Nodes/Utilities/NodePointer';
 
 export abstract class BaseLogNode extends DataNode {
   //= =================================================

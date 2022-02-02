@@ -1,21 +1,22 @@
 import Color from 'color';
-import { Index3 } from 'Core/Geometry/Index3';
-import { Index2 } from 'Core/Geometry/Index2';
-import { Range1 } from 'Core/Geometry/Range1';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Statistics } from 'Core/Geometry/Statistics';
-import { StringProperty } from 'Core/Property/Concrete/Property/StringProperty';
-import { ColorProperty } from 'Core/Property/Concrete/Property/ColorProperty';
-import { ColorMapProperty } from 'Core/Property/Concrete/Property/ColorMapProperty';
-import { IPropertyParams } from 'Core/Property/Base/IPropertyParams';
-import { Ma } from 'Core/Primitives/Ma';
-import { ColorType } from 'Core/Enums/ColorType';
-import { BaseProperty } from 'Core/Property/Base/BaseProperty';
-import { SliderProperty } from 'Core/Property/Concrete/Property/SliderProperty';
-import { NumberProperty } from 'Core/Property/Concrete/Property/NumberProperty';
-import { ColorTypeProperty } from 'Core/Property/Concrete/Property/ColorTypeProperty';
-import { BooleanProperty } from 'Core/Property/Concrete/Property/BooleanProperty';
+
+import { ColorType } from '../../Enums/ColorType';
+import { Index2 } from '../../Geometry/Index2';
+import { Index3 } from '../../Geometry/Index3';
+import { Range1 } from '../../Geometry/Range1';
+import { Range3 } from '../../Geometry/Range3';
+import { Statistics } from '../../Geometry/Statistics';
+import { Vector3 } from '../../Geometry/Vector3';
+import { Ma } from '../../Primitives/Ma';
+import { BaseProperty } from '../../Property/Base/BaseProperty';
+import { IPropertyParams } from '../../Property/Base/IPropertyParams';
+import { BooleanProperty } from '../../Property/Concrete/Property/BooleanProperty';
+import { ColorMapProperty } from '../../Property/Concrete/Property/ColorMapProperty';
+import { ColorProperty } from '../../Property/Concrete/Property/ColorProperty';
+import { ColorTypeProperty } from '../../Property/Concrete/Property/ColorTypeProperty';
+import { NumberProperty } from '../../Property/Concrete/Property/NumberProperty';
+import { SliderProperty } from '../../Property/Concrete/Property/SliderProperty';
+import { StringProperty } from '../../Property/Concrete/Property/StringProperty';
 
 const FractionDigitsDefault = 2;
 

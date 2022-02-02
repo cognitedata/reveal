@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
+import { BaseVisualNode } from '../../Nodes/BaseVisualNode';
 
 export class CompassNode extends BaseVisualNode {
   //= =================================================

@@ -15,6 +15,7 @@ import {
 import { toWellSequence } from 'modules/wellSearch/utils';
 
 import { FIELD_BLOCK_OPERATOR } from '../../../src/modules/wellSearch/constantsSidebarFilters';
+import { StoreState } from '../../core';
 
 import { createdAndLastUpdatedTime } from './log';
 
@@ -137,7 +138,7 @@ export const mockedWellStateFixture = {
   },
 };
 
-export const mockedWellStateWithSelectedWells = {
+export const mockedWellStateWithSelectedWells: StoreState = {
   wellSearch: {
     ...mockedWellStateFixture.wellSearch,
     selectedWellIds: {
@@ -146,8 +147,11 @@ export const mockedWellStateWithSelectedWells = {
     selectedWellboreIds: {
       759155409324993: true,
     },
+    // this will be gone soon, transferred to react-query
     wellboreData: {
       759155409324993: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         logType: [],
         ppfg: [],
       },
@@ -156,6 +160,8 @@ export const mockedWellStateWithSelectedWells = {
         ppfg: [],
         digitalRocks: [
           {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             asset: {
               id: 1123123,
             },
@@ -265,6 +271,7 @@ export const mockedWellStateWithSelectedWells = {
       source: true,
       category: true,
     },
+    goBackNavigationPath: '',
   },
 };
 

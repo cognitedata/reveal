@@ -133,14 +133,15 @@ export const Toolbar: React.FC<VisualizerToolbarProps> = ({
 }: VisualizerToolbarProps) => {
   return (
     <Container>
-      {Object.keys(config).map((groupId) => (
-        <Flex key={groupId} wrap="wrap" gap={4} style={{ width: '25%' }}>
-          {renderGroup(visualizerId, groupId, config[groupId], {
-            onToolbarButtonClick,
-            onToolbarSelectionChange,
-          })}
-        </Flex>
-      ))}
+      {config &&
+        Object.keys(config).map((groupId) => (
+          <Flex key={groupId} wrap="wrap" gap={4} style={{ width: '25%' }}>
+            {renderGroup(visualizerId, groupId, config[groupId], {
+              onToolbarButtonClick,
+              onToolbarSelectionChange,
+            })}
+          </Flex>
+        ))}
     </Container>
   );
 };

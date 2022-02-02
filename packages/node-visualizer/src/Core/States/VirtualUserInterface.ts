@@ -1,6 +1,6 @@
-import { IUserInterface } from 'Core/Interfaces/IUserInterface';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { IUserInterface } from '../Interfaces/IUserInterface';
+import { BaseNode } from '../Nodes/BaseNode';
+import { NodeEventArgs } from '../Views/NodeEventArgs';
 
 export class VirtualUserInterface {
   //= =================================================

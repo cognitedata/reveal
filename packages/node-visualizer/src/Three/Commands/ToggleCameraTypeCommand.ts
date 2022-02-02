@@ -1,7 +1,7 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import ToggleCameraTypeCommandOrthographicIcon from 'images/Commands/ToggleCameraTypeCommandOrthographic.png';
-import ToggleCameraTypeCommandPerspectiveIcon from 'images/Commands/ToggleCameraTypeCommandPerspective.png';
+import ToggleCameraTypeCommandOrthographicIcon from '../../images/Commands/ToggleCameraTypeCommandOrthographic.png';
+import ToggleCameraTypeCommandPerspectiveIcon from '../../images/Commands/ToggleCameraTypeCommandPerspective.png';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand {
   //= =================================================

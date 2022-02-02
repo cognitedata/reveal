@@ -11,10 +11,10 @@
 // Copyright (c) Cognite aS. all rights reserved.
 //= ====================================================================================
 
-import { RegularGrid2 } from 'Core/Geometry/RegularGrid2';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Ma } from 'Core/Primitives/Ma';
-import { Range1 } from 'Core/Geometry/Range1';
+import { Range1 } from '../Geometry/Range1';
+import { RegularGrid2 } from '../Geometry/RegularGrid2';
+import { Vector3 } from '../Geometry/Vector3';
+import { Ma } from '../Primitives/Ma';
 
 export class ContouringService {
   //= =================================================

@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { AxisRenderStyle } from 'Core/Nodes/Decorations/AxisRenderStyle';
-import AxisNodeIcon from 'images/Nodes/AxisNode.png';
+import AxisNodeIcon from '../../../images/Nodes/AxisNode.png';
+import { BaseVisualNode } from '../../Nodes/BaseVisualNode';
+import { AxisRenderStyle } from '../../Nodes/Decorations/AxisRenderStyle';
+import { TargetId } from '../../Primitives/TargetId';
+import { BaseRenderStyle } from '../../Styles/BaseRenderStyle';
 
 export class AxisNode extends BaseVisualNode {
   //= =================================================

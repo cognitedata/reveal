@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { MdSample } from 'SubSurface/Wells/Samples/MdSample';
-import { Ma } from 'Core/Primitives/Ma';
+import { Vector3 } from '../../../Core/Geometry/Vector3';
+import { MdSample } from '../../../SubSurface/Wells/Samples/MdSample';
+import { Ma } from '../../../Core/Primitives/Ma';
 
 export class TrajectorySample extends MdSample {
   //= =================================================

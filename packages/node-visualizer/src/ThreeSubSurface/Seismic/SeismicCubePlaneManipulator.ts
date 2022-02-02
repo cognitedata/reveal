@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { Index3 } from 'Core/Geometry/Index3';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { Changes } from 'Core/Views/Changes';
-import { BaseManipulator } from 'Three/Commands/Manipulators/BaseManipulator';
-import { BaseNode } from 'Core/Nodes/BaseNode';
+import { Index3 } from '../../Core/Geometry/Index3';
+import { BaseNode } from '../../Core/Nodes/BaseNode';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { SeismicPlaneNode } from '../../SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { BaseManipulator } from '../../Three/Commands/Manipulators/BaseManipulator';
+import { ThreeRenderTargetNode } from '../../Three/Nodes/ThreeRenderTargetNode';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
 
 export class SeismicCubePlaneManipulator extends BaseManipulator {
   //= =================================================

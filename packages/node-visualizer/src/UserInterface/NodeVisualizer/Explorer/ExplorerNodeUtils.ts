@@ -1,7 +1,7 @@
-import { NodeUtils } from 'UserInterface/utils/NodeUtils';
-import { TreeCheckState } from 'UserInterface/NodeVisualizer/Explorer/TreeCheckState';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { CheckBoxState } from 'Core/Enums/CheckBoxState';
+import { NodeUtils } from '../../../UserInterface/utils/NodeUtils';
+import { TreeCheckState } from '../../../UserInterface/NodeVisualizer/Explorer/TreeCheckState';
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
+import { CheckBoxState } from '../../../Core/Enums/CheckBoxState';
 
 export class ExplorerNodeUtils {
   public static selectNodeById(nodeId: string, selectionState: boolean) {

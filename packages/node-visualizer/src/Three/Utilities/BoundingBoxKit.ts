@@ -12,11 +12,12 @@
 //= ====================================================================================
 
 import * as THREE from 'three';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Colors } from 'Core/Primitives/Colors';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { ThreeTransformer } from 'Three/Utilities/ThreeTransformer';
 import { Group } from 'three';
+
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Colors } from '../../Core/Primitives/Colors';
+import { ThreeConverter } from '../Utilities/ThreeConverter';
+import { ThreeTransformer } from '../Utilities/ThreeTransformer';
 
 export class BoundingBoxKit {
   static getBoundingBox(

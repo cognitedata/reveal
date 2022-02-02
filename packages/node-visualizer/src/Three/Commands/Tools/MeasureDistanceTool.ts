@@ -1,9 +1,9 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { BaseTool } from 'Three/Commands/Tools/BaseTool';
-import MeasureDistanceToolIcon from 'images/Commands/MeasureDistanceTool.png';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { Polyline } from 'Core/Geometry/Polyline';
-import { Vector3 } from 'Core/Geometry/Vector3';
+import { Polyline } from '../../../Core/Geometry/Polyline';
+import { Vector3 } from '../../../Core/Geometry/Vector3';
+import MeasureDistanceToolIcon from '../../../images/Commands/MeasureDistanceTool.png';
+import { BaseTool } from '../../Commands/Tools/BaseTool';
+import { ThreeRenderTargetNode } from '../../Nodes/ThreeRenderTargetNode';
+import { ThreeConverter } from '../../Utilities/ThreeConverter';
 
 export class MeasureDistanceTool extends BaseTool {
   //= =================================================

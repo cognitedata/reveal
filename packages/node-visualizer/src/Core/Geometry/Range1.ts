@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Ma } from 'Core/Primitives/Ma';
+import { Ma } from '../Primitives/Ma';
 
 export class Range1 {
   //= =================================================
@@ -38,11 +38,11 @@ export class Range1 {
   // INSTANCE FIELDS
   //= =================================================
 
-  private _min: number = 0;
+  private _min = 0;
 
-  private _max: number = 0;
+  private _max = 0;
 
-  private _isEmpty: boolean = true;
+  private _isEmpty = true;
 
   //= =================================================
   // INSTANCE PROPERTIES

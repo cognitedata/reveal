@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { FolderNode } from 'Core/Nodes/FolderNode';
-import FolderNodeGreyscale from 'images/Nodes/FolderNodeGreyscale.png';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
+import { FolderNode } from '../../../Core/Nodes/FolderNode';
+import FolderNodeGreyscale from '../../../images/Nodes/FolderNodeGreyscale.png';
+import { ITarget } from '../../../Core/Interfaces/ITarget';
+import { WellTrajectoryNode } from '../../../SubSurface/Wells/Nodes/WellTrajectoryNode';
 
 export class LogFolder extends FolderNode {
   //= =================================================

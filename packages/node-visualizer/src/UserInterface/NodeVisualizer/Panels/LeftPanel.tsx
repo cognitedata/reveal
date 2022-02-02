@@ -1,20 +1,23 @@
 import React, { useMemo } from 'react';
-import { ExplorerPropType } from 'UserInterface/Components/Explorer/ExplorerTypes';
 import { connect } from 'react-redux';
+import SplitPane from 'react-split-pane';
+
+import styled from 'styled-components';
+
 import { Dispatch } from 'redux';
+
+import { ExplorerPropType } from '../../Components/Explorer/ExplorerTypes';
 import {
   getAllTabs,
   getCurrentTabIndex,
   getNodeTree,
   onSelectedTabChange,
-} from 'UserInterface/Redux/reducers/ExplorerReducer';
-import { ExplorerNodeUtils } from 'UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils';
-import { onSelectedNodeChange } from 'UserInterface/Redux/reducers/SettingsReducer';
-import { State } from 'UserInterface/Redux/State/State';
-import { ConnectedSettingsPanel } from 'UserInterface/NodeVisualizer/Settings/ConnectedSettingsPanel';
-import SplitPane from 'react-split-pane';
-import styled from 'styled-components';
-import { panelBackground } from 'UserInterface/styles/styled.props';
+} from '../../Redux/reducers/ExplorerReducer';
+import { onSelectedNodeChange } from '../../Redux/reducers/SettingsReducer';
+import { State } from '../../Redux/State/State';
+import { panelBackground } from '../../styles/styled.props';
+import { ExplorerNodeUtils } from '../Explorer/ExplorerNodeUtils';
+import { ConnectedSettingsPanel } from '../Settings/ConnectedSettingsPanel';
 
 function mapDispatchToExplorerPanel(dispatch: Dispatch) {
   return {

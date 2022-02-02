@@ -11,21 +11,19 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import * as Color from 'color';
+import * as THREE from 'three';
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Range1 } from 'Core/Geometry/Range1';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Random } from 'Core/Primitives/Random';
-import { Ma } from 'Core/Primitives/Ma';
-
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-
-import { TrajectorySample } from 'SubSurface/Wells/Samples/TrajectorySample';
-import { MdSamples } from 'SubSurface/Wells/Logs/MdSamples';
-import { RenderSample } from 'SubSurface/Wells/Samples/RenderSample';
-import { LineSegment3 } from 'Core/Geometry/LineSegment';
+import { LineSegment3 } from '../../../Core/Geometry/LineSegment';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { Range3 } from '../../../Core/Geometry/Range3';
+import { Vector3 } from '../../../Core/Geometry/Vector3';
+import { Ma } from '../../../Core/Primitives/Ma';
+import { Random } from '../../../Core/Primitives/Random';
+import { MdSamples } from '../../../SubSurface/Wells/Logs/MdSamples';
+import { RenderSample } from '../../../SubSurface/Wells/Samples/RenderSample';
+import { TrajectorySample } from '../../../SubSurface/Wells/Samples/TrajectorySample';
+import { ThreeConverter } from '../../../Three/Utilities/ThreeConverter';
 
 export class WellTrajectory extends MdSamples {
   //= =================================================

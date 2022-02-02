@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Index3 } from 'Core/Geometry/Index3';
-import { Shape } from 'Core/Geometry/Shape';
-import { Range3 } from 'Core/Geometry/Range3';
+import { Index3 } from '../Geometry/Index3';
+import { Range3 } from '../Geometry/Range3';
+import { Shape } from '../Geometry/Shape';
 
 export class Grid3 extends Shape {
   //= =================================================

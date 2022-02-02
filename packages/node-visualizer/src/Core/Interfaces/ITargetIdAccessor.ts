@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { TargetId } from 'Core/Primitives/TargetId';
+import { TargetId } from '../Primitives/TargetId';
 
 export interface ITargetIdAccessor {
   targetId: TargetId;

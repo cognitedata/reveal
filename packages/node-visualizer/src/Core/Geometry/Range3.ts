@@ -11,9 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from 'Core/Geometry/Range1';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Ma } from 'Core/Primitives/Ma';
+import { Vector3 } from '../Geometry/Vector3';
+import { Ma } from '../Primitives/Ma';
+
+import { Range1 } from './Range1';
 
 export class Range3 {
   //= =================================================

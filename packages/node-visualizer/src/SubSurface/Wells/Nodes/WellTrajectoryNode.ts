@@ -11,19 +11,19 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { ColorType } from 'Core/Enums/ColorType';
-import { Range3 } from 'Core/Geometry/Range3';
+import { ColorType } from '../../../Core/Enums/ColorType';
+import { Range3 } from '../../../Core/Geometry/Range3';
 
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { WellTrajectoryStyle } from 'SubSurface/Wells/Styles/WellTrajectoryStyle';
-import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
-import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
-import { FilterLogFolder } from 'SubSurface/Wells/Filters/FilterLogFolder';
+import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
+import { TargetId } from '../../../Core/Primitives/TargetId';
+import { WellTrajectoryStyle } from '../../../SubSurface/Wells/Styles/WellTrajectoryStyle';
+import { WellTrajectory } from '../../../SubSurface/Wells/Logs/WellTrajectory';
+import { WellNode } from '../../../SubSurface/Wells/Nodes/WellNode';
+import { FilterLogFolder } from '../../../SubSurface/Wells/Filters/FilterLogFolder';
 
-import Icon from 'images/Nodes/WellTrajectoryNode.png';
-import { DataNode } from 'Core/Nodes/DataNode';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import Icon from '../../../images/Nodes/WellTrajectoryNode.png';
+import { DataNode } from '../../../Core/Nodes/DataNode';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
 
 export class WellTrajectoryNode extends DataNode {
   //= =================================================

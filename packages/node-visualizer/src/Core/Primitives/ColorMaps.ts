@@ -12,9 +12,10 @@
 //= ====================================================================================
 
 import * as Color from 'color';
-import { Colors } from 'Core/Primitives/Colors';
-import { ColorMap } from 'Core/Primitives/ColorMap';
-import { ColorInterpolation } from 'Core/Primitives/ColorInterpolation';
+
+import { ColorInterpolation } from './ColorInterpolation';
+import { ColorMap } from './ColorMap';
+import { Colors } from './Colors';
 
 export class ColorMaps {
   //= =================================================

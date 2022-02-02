@@ -11,16 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from 'Core/Geometry/Range3';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { ColorType } from 'Core/Enums/ColorType';
-import { Polylines } from 'Core/Geometry/Polylines';
-
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { PolylinesRenderStyle } from 'SubSurface/Basics/PolylinesRenderStyle';
-import Icon from 'images/Nodes/PolylinesNode.png';
-import { DataNode } from 'Core/Nodes/DataNode';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { ColorType } from '../../Core/Enums/ColorType';
+import { Polylines } from '../../Core/Geometry/Polylines';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { DataNode } from '../../Core/Nodes/DataNode';
+import { TargetId } from '../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../Core/Property/Base/BasePropertyFolder';
+import { BaseRenderStyle } from '../../Core/Styles/BaseRenderStyle';
+import Icon from '../../images/Nodes/PolylinesNode.png';
+import { PolylinesRenderStyle } from '../Basics/PolylinesRenderStyle';
 
 export class PolylinesNode extends DataNode {
   //= =================================================

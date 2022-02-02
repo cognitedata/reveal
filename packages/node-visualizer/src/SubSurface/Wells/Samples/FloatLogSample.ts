@@ -13,7 +13,7 @@
 
 import clone from 'lodash/clone';
 
-import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
+import { BaseLogSample } from '../../../SubSurface/Wells/Samples/BaseLogSample';
 
 export class FloatLogSample extends BaseLogSample {
   //= =================================================

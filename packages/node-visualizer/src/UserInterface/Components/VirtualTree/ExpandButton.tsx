@@ -1,11 +1,11 @@
 import React, { useState, KeyboardEvent, MouseEvent } from 'react';
 import styled from 'styled-components';
 // images
-import ExpandOpen from 'images/Expanders/ExpandOpen.png';
-import ExpandClosed from 'images/Expanders/ExpandClosed.png';
-import ExpandOpenFocus from 'images/Expanders/ExpandOpenFocus.png';
-import ExpandClosedFocus from 'images/Expanders/ExpandClosedFocus.png';
-import { HTMLUtils } from 'UserInterface/Foundation/Utils/HTMLUtils';
+import ExpandOpen from '../../../images/Expanders/ExpandOpen.png';
+import ExpandClosed from '../../../images/Expanders/ExpandClosed.png';
+import ExpandOpenFocus from '../../../images/Expanders/ExpandOpenFocus.png';
+import ExpandClosedFocus from '../../../images/Expanders/ExpandClosedFocus.png';
+import { HTMLUtils } from '../../../UserInterface/Foundation/Utils/HTMLUtils';
 
 interface ExpandProps {
   readonly expanded?: boolean;

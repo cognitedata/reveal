@@ -15,6 +15,7 @@
     "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
+    "@babel/runtime": "^7.16.7",
     "@cognite/cdf-hub-tenant-selector": "^0.14.0",
     "@cognite/cogs.js": "5.10.0",
     "@cognite/comment-service-types": "^0.0.7",
@@ -173,6 +174,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
+    "@babel/plugin-transform-runtime": "^7.16.10",
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-react": "^7.16.0",
     "@bazel/cypress": "4.6.1",

@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { Changes } from 'Core/Views/Changes';
-import { BaseView } from 'Core/Views/BaseView';
-import { SeismicCubeNode } from 'SubSurface/Seismic/Nodes/SeismicCubeNode';
-import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { BaseView } from '../../Core/Views/BaseView';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { SeismicCubeNode } from '../../SubSurface/Seismic/Nodes/SeismicCubeNode';
+import { SeismicPlaneNode } from '../../SubSurface/Seismic/Nodes/SeismicPlaneNode';
 
 export class SeismicCubeView extends BaseView {
   //= =================================================

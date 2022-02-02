@@ -11,28 +11,26 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
+import { PointLogNode } from '../../SubSurface/Wells/Nodes/PointLogNode';
+import { PointLogStyle } from '../../SubSurface/Wells/Styles/PointLogStyle';
+import { WellTrajectoryStyle } from '../../SubSurface/Wells/Styles/WellTrajectoryStyle';
 import * as THREE from 'three';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+import { Canvas } from '../../Three/Utilities/Canvas';
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Range3 } from 'Core/Geometry/Range3';
+import { BaseThreeView } from '../../Three/BaseViews/BaseThreeView';
+import { SpriteCreator } from '../../Three/Utilities/SpriteCreator';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
 
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
+import { WellTrajectoryView } from '../../ThreeSubSurface/Wells/WellTrajectoryView';
 
-import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { SpriteCreator } from 'Three/Utilities/SpriteCreator';
-
-import { Colors } from 'Core/Primitives/Colors';
-import { Canvas } from 'Three/Utilities/Canvas';
-import { Changes } from 'Core/Views/Changes';
-import { BaseThreeView } from 'Three/BaseViews/BaseThreeView';
-import { Appearance } from 'Core/States/Appearance';
-import { WellTrajectoryStyle } from 'SubSurface/Wells/Styles/WellTrajectoryStyle';
-import { PointLogStyle } from 'SubSurface/Wells/Styles/PointLogStyle';
-import { WellTrajectoryView } from 'ThreeSubSurface/Wells/WellTrajectoryView';
-import { ViewInfo } from 'Core/Views/ViewInfo';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { Colors } from '../../Core/Primitives/Colors';
+import { Appearance } from '../../Core/States/Appearance';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { ViewInfo } from '../../Core/Views/ViewInfo';
 
 const selectedRadiusFactor = 1.2;
 

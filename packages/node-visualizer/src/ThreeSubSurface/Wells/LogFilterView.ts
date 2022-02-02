@@ -11,11 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
-import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { Changes } from 'Core/Views/Changes';
-import { BaseView } from 'Core/Views/BaseView';
+import { BaseLogNode } from '../../SubSurface/Wells/Nodes/BaseLogNode';
+import { WellTrajectoryNode } from '../../SubSurface/Wells/Nodes/WellTrajectoryNode';
+
+import { BaseView } from '../../Core/Views/BaseView';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 export class LogFilterView extends BaseView {
   //= =================================================

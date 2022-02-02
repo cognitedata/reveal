@@ -13,25 +13,26 @@
 
 import * as THREE from 'three';
 
-import { SeismicRenderStyle } from 'SubSurface/Seismic/Nodes/SeismicRenderStyle';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
-import { SeismicCubeNode } from 'SubSurface/Seismic/Nodes/SeismicCubeNode';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { RegularGrid3Buffers } from 'Core/Geometry/RegularGrid3Buffers';
-import { TextureKit } from 'Three/Utilities/TextureKit';
-import { Colors } from 'Core/Primitives/Colors';
-import { SeismicCube } from 'SubSurface/Seismic/Data/SeismicCube';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Index2 } from 'Core/Geometry/Index2';
-import { Changes } from 'Core/Views/Changes';
-import { RegularGrid3 } from 'Core/Geometry/RegularGrid3';
-import { ViewInfo } from 'Core/Views/ViewInfo';
-import { ColorMaps } from 'Core/Primitives/ColorMaps';
-import { UniqueId } from 'Core/Primitives/UniqueId';
 import SeismicSDK from '@cognite/seismic-sdk-js';
+
+import { Index2 } from '../../Core/Geometry/Index2';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { RegularGrid3 } from '../../Core/Geometry/RegularGrid3';
+import { RegularGrid3Buffers } from '../../Core/Geometry/RegularGrid3Buffers';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { ColorMaps } from '../../Core/Primitives/ColorMaps';
+import { Colors } from '../../Core/Primitives/Colors';
+import { UniqueId } from '../../Core/Primitives/UniqueId';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { ViewInfo } from '../../Core/Views/ViewInfo';
+import { SeismicCube } from '../../SubSurface/Seismic/Data/SeismicCube';
+import { SeismicCubeNode } from '../../SubSurface/Seismic/Nodes/SeismicCubeNode';
+import { SeismicPlaneNode } from '../../SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { SeismicRenderStyle } from '../../SubSurface/Seismic/Nodes/SeismicRenderStyle';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+import { TextureKit } from '../../Three/Utilities/TextureKit';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
 
 const solidName = 'Solid';
 

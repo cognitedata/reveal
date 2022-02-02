@@ -11,16 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import Color from 'color';
+import * as THREE from 'three';
 
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { SeismicOutlineNode } from 'SubSurface/Seismic/Nodes/SeismicOutlineNode';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Changes } from 'Core/Views/Changes';
-import { Colors } from 'Core/Primitives/Colors';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Colors } from '../../Core/Primitives/Colors';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { SeismicOutlineNode } from '../../SubSurface/Seismic/Nodes/SeismicOutlineNode';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
 
 export class SeismicOutlineView extends BaseGroupThreeView {
   //= =================================================

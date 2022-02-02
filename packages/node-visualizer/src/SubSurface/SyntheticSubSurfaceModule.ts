@@ -1,38 +1,35 @@
 /* eslint-disable max-classes-per-file */
-import { Range1 } from 'Core/Geometry/Range1';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Vector3 } from 'Core/Geometry/Vector3';
+import { Points } from '../Core/Geometry/Points';
+import { Range1 } from '../Core/Geometry/Range1';
+import { Range3 } from '../Core/Geometry/Range3';
+import { RegularGrid2 } from '../Core/Geometry/RegularGrid2';
+import { Vector3 } from '../Core/Geometry/Vector3';
+import { IDataLoader } from '../Core/Interfaces/IDataLoader';
+import { BaseRootNode } from '../Core/Nodes/BaseRootNode';
+import { DataNode } from '../Core/Nodes/DataNode';
+import { FolderNode } from '../Core/Nodes/FolderNode';
+import { Ma } from '../Core/Primitives/Ma';
+import { Random } from '../Core/Primitives/Random';
+import { SubSurfaceModule } from '../Solutions/BP/SubSurfaceModule';
 
-import { SubSurfaceRootNode } from 'SubSurface/Trees/SubSurfaceRootNode';
-
-import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
-import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
-import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
-import { FolderNode } from 'Core/Nodes/FolderNode';
-
-import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
-import { FloatLogNode } from 'SubSurface/Wells/Nodes/FloatLogNode';
-import { DiscreteLogNode } from 'SubSurface/Wells/Nodes/DiscreteLogNode';
-
-import { PointLog } from 'SubSurface/Wells/Logs/PointLog';
-import { FloatLog } from 'SubSurface/Wells/Logs/FloatLog';
-import { DiscreteLog } from 'SubSurface/Wells/Logs/DiscreteLog';
-import { CasingLogNode } from 'SubSurface/Wells/Nodes/CasingLogNode';
-import { Random } from 'Core/Primitives/Random';
-import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
-import { RegularGrid2 } from 'Core/Geometry/RegularGrid2';
-import { SurfaceNode } from 'SubSurface/Basics/SurfaceNode';
-import { WellFolder } from 'SubSurface/Wells/Nodes/WellFolder';
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
-import { LogFolder } from 'SubSurface/Wells/Nodes/LogFolder';
-import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
-import { IDataLoader } from 'Core/Interfaces/IDataLoader';
-import { DataNode } from 'Core/Nodes/DataNode';
-import { Ma } from 'Core/Primitives/Ma';
-import { CasingLog } from 'SubSurface/Wells/Logs/CasingLog';
-import { SubSurfaceModule } from 'Solutions/BP/SubSurfaceModule';
-import { PointsNode } from 'SubSurface/Basics/PointsNode';
-import { Points } from 'Core/Geometry/Points';
+import { PointsNode } from './Basics/PointsNode';
+import { SurfaceNode } from './Basics/SurfaceNode';
+import { SubSurfaceRootNode } from './Trees/SubSurfaceRootNode';
+import { BaseFilterLogNode } from './Wells/Filters/BaseFilterLogNode';
+import { CasingLog } from './Wells/Logs/CasingLog';
+import { DiscreteLog } from './Wells/Logs/DiscreteLog';
+import { FloatLog } from './Wells/Logs/FloatLog';
+import { PointLog } from './Wells/Logs/PointLog';
+import { WellTrajectory } from './Wells/Logs/WellTrajectory';
+import { BaseLogNode } from './Wells/Nodes/BaseLogNode';
+import { CasingLogNode } from './Wells/Nodes/CasingLogNode';
+import { DiscreteLogNode } from './Wells/Nodes/DiscreteLogNode';
+import { FloatLogNode } from './Wells/Nodes/FloatLogNode';
+import { LogFolder } from './Wells/Nodes/LogFolder';
+import { PointLogNode } from './Wells/Nodes/PointLogNode';
+import { WellFolder } from './Wells/Nodes/WellFolder';
+import { WellNode } from './Wells/Nodes/WellNode';
+import { WellTrajectoryNode } from './Wells/Nodes/WellTrajectoryNode';
 
 export class SyntheticSubSurfaceModule extends SubSurfaceModule {
   //= =================================================

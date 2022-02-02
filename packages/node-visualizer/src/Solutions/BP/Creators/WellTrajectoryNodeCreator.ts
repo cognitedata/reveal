@@ -1,11 +1,11 @@
-import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
-import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { TrajectorySample } from 'SubSurface/Wells/Samples/TrajectorySample';
+import { Vector3 } from '../../../Core/Geometry/Vector3';
 import {
   ITrajectoryColumnIndices,
   ITrajectoryRows,
-} from 'SubSurface/Wells/Interfaces/ITrajectoryRows';
+} from '../../../SubSurface/Wells/Interfaces/ITrajectoryRows';
+import { WellTrajectory } from '../../../SubSurface/Wells/Logs/WellTrajectory';
+import { WellTrajectoryNode } from '../../../SubSurface/Wells/Nodes/WellTrajectoryNode';
+import { TrajectorySample } from '../../../SubSurface/Wells/Samples/TrajectorySample';
 
 export class WellTrajectoryNodeCreator {
   public static create(

@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from 'Core/Geometry/Range1';
+import { Range1 } from '../Geometry/Range1';
 
 export class Random {
   //= =================================================
@@ -34,7 +34,7 @@ export class Random {
     return min + Math.random() * (max - min);
   }
 
-  public static isTrue(probability: number = 0.5): boolean {
+  public static isTrue(probability = 0.5): boolean {
     return Math.random() < probability;
   }
 

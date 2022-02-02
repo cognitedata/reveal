@@ -1,15 +1,13 @@
-import { ActionTypes } from 'UserInterface/Redux/actions/ActionTypes';
-import Color from 'color';
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  IExplorerState,
-  ITreeNodeState,
-} from 'UserInterface/Redux/State/explorer';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { TreeCheckState } from 'UserInterface/NodeVisualizer/Explorer/TreeCheckState';
-import { ExplorerNodeUtils } from 'UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils';
-import { State } from 'UserInterface/Redux/State/State';
-import { ITreeNode } from 'UserInterface/Components/VirtualTree/ITreeNode';
+import Color from 'color';
+
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
+import { ITreeNode } from '../../Components/VirtualTree/ITreeNode';
+import { ExplorerNodeUtils } from '../../NodeVisualizer/Explorer/ExplorerNodeUtils';
+import { TreeCheckState } from '../../NodeVisualizer/Explorer/TreeCheckState';
+import { ActionTypes } from '../actions/ActionTypes';
+import { IExplorerState, ITreeNodeState } from '../State/explorer';
+import { State } from '../State/State';
 
 const initialState: IExplorerState = {
   tabs: [],

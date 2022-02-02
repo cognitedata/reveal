@@ -1,14 +1,14 @@
-import { GroupProperty } from 'Core/Property/Concrete/Folder/GroupProperty';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { BasePropertyFolder } from '../../Base/BasePropertyFolder';
+import { GroupProperty } from '../../Concrete/Folder/GroupProperty';
 
 export class ExpanderProperty extends BasePropertyFolder {
   //= =================================================
   // INSTANCE MEMBERS
   //= =================================================
 
-  private _expanded: boolean = true;
+  private _expanded = true;
 
-  private _showToolbar: boolean = false;
+  private _showToolbar = false;
 
   //= =================================================
   // INSTANCE PROPERTIES
@@ -30,7 +30,7 @@ export class ExpanderProperty extends BasePropertyFolder {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(name: string, showToolbar: boolean = false) {
+  public constructor(name: string, showToolbar = false) {
     super(name);
     this._showToolbar = showToolbar;
   }

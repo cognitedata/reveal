@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip } from '@cognite/cogs.js';
-import { getIcon } from 'UserInterface/Components/Icon/IconSelector';
-import { IconTypes } from 'UserInterface/Components/Icon/IconTypes';
+import { getIcon } from '../../../UserInterface/Components/Icon/IconSelector';
+import { IconTypes } from '../../../UserInterface/Components/Icon/IconTypes';
 import styled from 'styled-components';
 
 interface ToolbarToolTipProps {

@@ -11,17 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Points } from 'Core/Geometry/Points';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Shape } from 'Core/Geometry/Shape';
+import { Points } from '../Geometry/Points';
+import { Range3 } from '../Geometry/Range3';
+import { Shape } from '../Geometry/Shape';
+import { Vector3 } from '../Geometry/Vector3';
 
 export class Polyline extends Points {
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
 
-  public isClosed: boolean = false;
+  public isClosed = false;
 
   //= =================================================
   // CONSTRUCTOR
@@ -45,7 +45,7 @@ export class Polyline extends Points {
   // INSTANCE METHODS: Getters
   //= =================================================
 
-  public getLength(dimension: number = 3): number {
+  public getLength(dimension = 3): number {
     let length = 0;
     const maxIndex = this.list.length - 1;
     for (let i = 1; i <= maxIndex; i++) {

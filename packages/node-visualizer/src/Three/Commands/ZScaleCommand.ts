@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import { Util } from 'Core/Primitives/Util';
+import { Util } from '../../Core/Primitives/Util';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class ZScaleCommand extends ThreeRenderTargetCommand {
   //= =================================================

@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import * as Color from 'color';
+import * as THREE from 'three';
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { Canvas } from 'Three/Utilities/Canvas';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { Canvas } from '../Utilities/Canvas';
+import { ThreeConverter } from '../Utilities/ThreeConverter';
 
 export class SpriteCreator {
   //= =================================================

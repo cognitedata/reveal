@@ -11,16 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import Color from 'color';
+import * as THREE from 'three';
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { ViewInfo } from 'Core/Views/ViewInfo';
-import { TextItem } from 'Core/Views/TextItem';
-import { Canvas } from 'Three/Utilities/Canvas';
-import { Util } from 'Core/Primitives/Util';
-import { Appearance } from 'Core/States/Appearance';
-import { Polyline } from 'Core/Geometry/Polyline';
+import { Polyline } from '../../Core/Geometry/Polyline';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { Util } from '../../Core/Primitives/Util';
+import { Appearance } from '../../Core/States/Appearance';
+import { TextItem } from '../../Core/Views/TextItem';
+import { ViewInfo } from '../../Core/Views/ViewInfo';
+import { Canvas } from '../Utilities/Canvas';
 
 export class ThreeOverlay {
   //= =================================================

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { HTMLUtils } from 'UserInterface/Foundation/Utils/HTMLUtils';
+import { HTMLUtils } from '../../../UserInterface/Foundation/Utils/HTMLUtils';
 import {
   Dropdown,
   Input,

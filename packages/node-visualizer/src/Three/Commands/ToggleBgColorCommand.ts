@@ -1,7 +1,7 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import ToggleBgColorCommandBlackIcon from 'images/Commands/ToggleBgColorCommandBlack.png';
-import ToggleBgColorCommandWhiteIcon from 'images/Commands/ToggleBgColorCommandWhite.png';
+import ToggleBgColorCommandBlackIcon from '../../images/Commands/ToggleBgColorCommandBlack.png';
+import ToggleBgColorCommandWhiteIcon from '../../images/Commands/ToggleBgColorCommandWhite.png';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class ToggleBgColorCommand extends ThreeRenderTargetCommand {
   //= =================================================

@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from 'Core/Geometry/Range1';
-import { Random } from 'Core/Primitives/Random';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { Random } from '../../../Core/Primitives/Random';
 
-import { CasingLogSample } from 'SubSurface/Wells/Samples/CasingLogSample';
-import { BaseLog } from 'SubSurface/Wells/Logs/BaseLog';
-import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
+import { CasingLogSample } from '../../../SubSurface/Wells/Samples/CasingLogSample';
+import { BaseLog } from '../../../SubSurface/Wells/Logs/BaseLog';
+import { BaseLogSample } from '../../../SubSurface/Wells/Samples/BaseLogSample';
 
 export class CasingLog extends BaseLog {
   //= =================================================

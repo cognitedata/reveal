@@ -1,9 +1,9 @@
 import React, { KeyboardEvent, MouseEvent } from 'react';
 import styled from 'styled-components';
-import FocusRadioOff from 'images/Checkboxes/FocusRadioOff.png';
-import FocusRadioOn from 'images/Checkboxes/FocusRadioOn.png';
-import RadioOff from 'images/Checkboxes/RadioOff.png';
-import RadioOn from 'images/Checkboxes/RadioOn.png';
+import FocusRadioOff from '../../../images/Checkboxes/FocusRadioOff.png';
+import FocusRadioOn from '../../../images/Checkboxes/FocusRadioOn.png';
+import RadioOff from '../../../images/Checkboxes/RadioOff.png';
+import RadioOn from '../../../images/Checkboxes/RadioOn.png';
 
 interface SpanProps {
   readonly background?: string;

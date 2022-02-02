@@ -1,12 +1,12 @@
+import { PointLogNode } from '../../SubSurface/Wells/Nodes/PointLogNode';
 import * as THREE from 'three';
+import { BaseManipulator } from '../../Three/Commands/Manipulators/BaseManipulator';
+import { ThreeRenderTargetNode } from '../../Three/Nodes/ThreeRenderTargetNode';
+import { PointLogView } from '../../ThreeSubSurface/Wells/PointLogView';
 
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { Changes } from 'Core/Views/Changes';
-import { BaseManipulator } from 'Three/Commands/Manipulators/BaseManipulator';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
-import { PointLogView } from 'ThreeSubSurface/Wells/PointLogView';
+import { BaseNode } from '../../Core/Nodes/BaseNode';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 export class PointLogManipulator extends BaseManipulator {
   //= =================================================

@@ -11,16 +11,18 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Index3 } from 'Core/Geometry/Index3';
-import { RegularGrid3 } from 'Core/Geometry/RegularGrid3';
-import { Trace } from 'SubSurface/Seismic/Data/Trace';
-import { Index2 } from 'Core/Geometry/Index2';
 import SeismicSDK from '@cognite/seismic-sdk-js';
-import { Range1 } from 'Core/Geometry/Range1';
-import { Statistics } from 'Core/Geometry/Statistics';
-import { Ma } from 'Core/Primitives/Ma';
-import { Range3 } from 'Core/Geometry/Range3';
+
+import { Index2 } from '../../../Core/Geometry/Index2';
+import { Index3 } from '../../../Core/Geometry/Index3';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { Range3 } from '../../../Core/Geometry/Range3';
+import { RegularGrid3 } from '../../../Core/Geometry/RegularGrid3';
+import { Statistics } from '../../../Core/Geometry/Statistics';
+import { Vector3 } from '../../../Core/Geometry/Vector3';
+import { Ma } from '../../../Core/Primitives/Ma';
+
+import { Trace } from './Trace';
 
 export class SeismicCube extends RegularGrid3 {
   //= =================================================

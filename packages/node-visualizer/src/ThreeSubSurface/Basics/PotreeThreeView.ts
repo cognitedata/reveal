@@ -11,13 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
+import { PotreeNode } from '../../SubSurface/Basics/PotreeNode';
+import { PotreeRenderStyle } from '../../SubSurface/Basics/PotreeRenderStyle';
 import * as THREE from 'three';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+
 import * as Potree from '@cognite/potree-core';
-import { PotreeNode } from 'SubSurface/Basics/PotreeNode';
-import { PotreeRenderStyle } from 'SubSurface/Basics/PotreeRenderStyle';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { Util } from 'Core/Primitives/Util';
+
+import { Util } from '../../Core/Primitives/Util';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 export class PotreeThreeView extends BaseGroupThreeView {
   //= =================================================

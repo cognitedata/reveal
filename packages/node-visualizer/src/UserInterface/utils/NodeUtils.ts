@@ -1,29 +1,30 @@
 import isObject from 'lodash/isObject';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { UniqueId } from 'Core/Primitives/UniqueId';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { BaseProperty } from 'Core/Property/Base/BaseProperty';
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
-import { ColorMapProperty } from 'Core/Property/Concrete/Property/ColorMapProperty';
+
+import { BaseCommand } from '../../Core/Commands/BaseCommand';
+import { BaseNode } from '../../Core/Nodes/BaseNode';
+import { BaseRootNode } from '../../Core/Nodes/BaseRootNode';
+import { UniqueId } from '../../Core/Primitives/UniqueId';
+import { BaseProperty } from '../../Core/Property/Base/BaseProperty';
+import { BasePropertyFolder } from '../../Core/Property/Base/BasePropertyFolder';
 import {
   ValueProperty,
   ExpandedOption,
-} from 'Core/Property/Base/ValueProperty';
-import { ExpanderProperty } from 'Core/Property/Concrete/Folder/ExpanderProperty';
-import { GroupProperty } from 'Core/Property/Concrete/Folder/GroupProperty';
-import { ElementTypes } from 'UserInterface/Components/Settings/ElementTypes';
+} from '../../Core/Property/Base/ValueProperty';
+import { ExpanderProperty } from '../../Core/Property/Concrete/Folder/ExpanderProperty';
+import { GroupProperty } from '../../Core/Property/Concrete/Folder/GroupProperty';
+import { BooleanProperty } from '../../Core/Property/Concrete/Property/BooleanProperty';
+import { ColorMapProperty } from '../../Core/Property/Concrete/Property/ColorMapProperty';
+import { ColorProperty } from '../../Core/Property/Concrete/Property/ColorProperty';
+import { ColorTypeProperty } from '../../Core/Property/Concrete/Property/ColorTypeProperty';
+import { NumberProperty } from '../../Core/Property/Concrete/Property/NumberProperty';
+import { SliderProperty } from '../../Core/Property/Concrete/Property/SliderProperty';
+import { StringProperty } from '../../Core/Property/Concrete/Property/StringProperty';
+import { ElementTypes } from '../../UserInterface/Components/Settings/ElementTypes';
 import {
   ISettingsSection,
   ISettingsElement,
   ISelectOption,
-} from 'UserInterface/Components/Settings/Types';
-import { StringProperty } from 'Core/Property/Concrete/Property/StringProperty';
-import { ColorProperty } from 'Core/Property/Concrete/Property/ColorProperty';
-import { SliderProperty } from 'Core/Property/Concrete/Property/SliderProperty';
-import { BooleanProperty } from 'Core/Property/Concrete/Property/BooleanProperty';
-import { NumberProperty } from 'Core/Property/Concrete/Property/NumberProperty';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
-import { ColorTypeProperty } from 'Core/Property/Concrete/Property/ColorTypeProperty';
+} from '../../UserInterface/Components/Settings/Types';
 
 export class NodeUtils {
   //= =================================================

@@ -11,41 +11,43 @@
 // Copyright (c) Cognite AS. All rights reserved.
 // =====================================================================================
 
-import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Colors } from 'Core/Primitives/Colors';
-import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
-import { AxisNode } from 'Core/Nodes/Decorations/AxisNode';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { ThreeOverlay } from 'Three/Utilities/ThreeOverlay';
-import { Ma } from 'Core/Primitives/Ma';
-import { ViewAllCommand } from 'Three/Commands/ViewAllCommand';
-import { ToggleAxisVisibleCommand } from 'Three/Commands/ToggleAxisVisibleCommand';
-import { ToggleBgColorCommand } from 'Three/Commands/ToggleBgColorCommand';
-import { IToolbar } from 'Core/Interfaces/IToolbar';
-import { ViewFromCommand } from 'Three/Commands/ViewFromCommand';
-import { CameraControl } from 'Three/Nodes/CameraControl';
-import { ToggleCameraTypeCommand } from 'Three/Commands/ToggleCameraTypeCommand';
-import { CopyImageCommand } from 'Three/Commands/CopyImageCommand';
-import { MeasureDistanceTool } from 'Three/Commands/Tools/MeasureDistanceTool';
-import { ToggleFullscreenCommand } from 'Three/Commands/ToggleFullscreenCommand';
-import { NavigationTool } from 'Three/Commands/Tools/NavigationTool';
-import { EditTool } from 'Three/Commands/Tools/EditTool';
-import { ZoomTool } from 'Three/Commands/Tools/ZoomTool';
-import { ZoomToTargetTool } from 'Three/Commands/Tools/ZoomToTargetTool';
-import { BaseTool } from 'Three/Commands/Tools/BaseTool';
-import { ToolController } from 'Three/Nodes/ToolController';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { BaseThreeView } from 'Three/BaseViews/BaseThreeView';
-import { ThreeTransformer } from 'Three/Utilities/ThreeTransformer';
-import { ZScaleCommand } from 'Three/Commands/ZScaleCommand';
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { ToolbarGroupIds } from 'Three/Nodes/ToolbarGroupIds';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
-import { Toggle3Dand2DCommand } from 'Three/Commands/Toggle3Dand2DCommand';
-import { ThreeMiniWindow } from 'Three/Utilities/ThreeMiniWindow';
-import { ToggleCompassVisibleCommand } from 'Three/Commands/ToggleCompassVisibleCommand';
+import * as THREE from 'three';
+
+import { BaseCommand } from '../../Core/Commands/BaseCommand';
+import { ThreeOverlay } from '../Utilities/ThreeOverlay';
+
+import { Range3 } from '../../Core/Geometry/Range3';
+import { IToolbar } from '../../Core/Interfaces/IToolbar';
+import { BaseNode } from '../../Core/Nodes/BaseNode';
+import { BaseRenderTargetNode } from '../../Core/Nodes/BaseRenderTargetNode';
+import { AxisNode } from '../../Core/Nodes/Decorations/AxisNode';
+import { Colors } from '../../Core/Primitives/Colors';
+import { Ma } from '../../Core/Primitives/Ma';
+import { BaseGroupThreeView } from '../BaseViews/BaseGroupThreeView';
+import { BaseThreeView } from '../BaseViews/BaseThreeView';
+import { CopyImageCommand } from '../Commands/CopyImageCommand';
+import { Toggle3Dand2DCommand } from '../Commands/Toggle3Dand2DCommand';
+import { ToggleAxisVisibleCommand } from '../Commands/ToggleAxisVisibleCommand';
+import { ToggleBgColorCommand } from '../Commands/ToggleBgColorCommand';
+import { ToggleCameraTypeCommand } from '../Commands/ToggleCameraTypeCommand';
+import { ToggleCompassVisibleCommand } from '../Commands/ToggleCompassVisibleCommand';
+import { ToggleFullscreenCommand } from '../Commands/ToggleFullscreenCommand';
+import { BaseTool } from '../Commands/Tools/BaseTool';
+import { EditTool } from '../Commands/Tools/EditTool';
+import { MeasureDistanceTool } from '../Commands/Tools/MeasureDistanceTool';
+import { NavigationTool } from '../Commands/Tools/NavigationTool';
+import { ZoomTool } from '../Commands/Tools/ZoomTool';
+import { ZoomToTargetTool } from '../Commands/Tools/ZoomToTargetTool';
+import { ViewAllCommand } from '../Commands/ViewAllCommand';
+import { ViewFromCommand } from '../Commands/ViewFromCommand';
+import { ZScaleCommand } from '../Commands/ZScaleCommand';
+import { CameraControl } from '../Nodes/CameraControl';
+import { ToolbarGroupIds } from '../Nodes/ToolbarGroupIds';
+import { ToolController } from '../Nodes/ToolController';
+import { ThreeConverter } from '../Utilities/ThreeConverter';
+import { ThreeMiniWindow } from '../Utilities/ThreeMiniWindow';
+import { ThreeTransformer } from '../Utilities/ThreeTransformer';
 
 const directionalLightName = 'DirectionalLight';
 
@@ -54,7 +56,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // STATIC FIELDS
   // =================================================
 
-  static className = 'ThreeRenderTargetNode';
+  static className = '..RenderTargetNode';
 
   // ==================================================
   // INSTANCE FIELDS

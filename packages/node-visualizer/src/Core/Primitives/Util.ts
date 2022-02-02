@@ -11,8 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Units } from 'Core/Primitives/Units';
 import isNil from 'lodash/isNil';
+
+import { Units } from './Units';
 
 export class Util {
   public static isEmpty(value: string | null | undefined): boolean {

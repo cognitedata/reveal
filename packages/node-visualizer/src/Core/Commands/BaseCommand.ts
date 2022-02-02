@@ -1,4 +1,4 @@
-import { Util } from 'Core/Primitives/Util';
+import { Util } from '../Primitives/Util';
 
 export abstract class BaseCommand {
   //= =================================================

@@ -11,17 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { ColorType } from 'Core/Enums/ColorType';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Points } from 'Core/Geometry/Points';
+import { ColorType } from '../../Core/Enums/ColorType';
+import { Points } from '../../Core/Geometry/Points';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { DataNode } from '../../Core/Nodes/DataNode';
+import { ColorMaps } from '../../Core/Primitives/ColorMaps';
+import { TargetId } from '../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../Core/Property/Base/BasePropertyFolder';
+import { BaseRenderStyle } from '../../Core/Styles/BaseRenderStyle';
+import Icon from '../../images/Nodes/PointsNode.png';
 
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { PointsRenderStyle } from 'SubSurface/Basics/PointsRenderStyle';
-import Icon from 'images/Nodes/PointsNode.png';
-import { DataNode } from 'Core/Nodes/DataNode';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { ColorMaps } from 'Core/Primitives/ColorMaps';
+import { PointsRenderStyle } from './PointsRenderStyle';
 
 export class PointsNode extends DataNode {
   //= =================================================

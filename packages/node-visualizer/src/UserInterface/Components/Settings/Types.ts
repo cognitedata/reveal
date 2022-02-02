@@ -1,5 +1,5 @@
-import { BaseCommand } from 'Core/Commands/BaseCommand';
-import { IconTypes } from 'UserInterface/Components/Icon/IconTypes';
+import { BaseCommand } from '../../../Core/Commands/BaseCommand';
+import { IconTypes } from '../../../UserInterface/Components/Icon/IconTypes';
 
 export type ToolBarType = {
   icon: { type: string; name: string };

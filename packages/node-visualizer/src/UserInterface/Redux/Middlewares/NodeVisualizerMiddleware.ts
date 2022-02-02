@@ -1,6 +1,7 @@
 import { MiddlewareAPI, Dispatch } from 'redux';
-import { ActionTypes } from 'UserInterface/Redux/actions/ActionTypes';
-import { ViewerUtils } from 'UserInterface/NodeVisualizer/Viewers/ViewerUtils';
+
+import { ViewerUtils } from '../../NodeVisualizer/Viewers/ViewerUtils';
+import { ActionTypes } from '../actions/ActionTypes';
 
 // TODO: Remove this middleware if possible
 // Common middleware

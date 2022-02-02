@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Util } from 'Core/Primitives/Util';
+import { Util } from '../Primitives/Util';
 
 export class TextItem {
   //= =================================================

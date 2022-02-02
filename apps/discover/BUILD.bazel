@@ -199,6 +199,8 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/testcafe",
     "@npm//@testing-library/user-event",
     "@npm//babel-eslint",
+    "@npm//@babel/runtime",
+    "@npm//@babel/plugin-transform-runtime",
     "@npm//eslint-plugin-import",
     "@npm//eslint-plugin-jsx-a11y",
     "@npm//eslint-plugin-react-hooks",

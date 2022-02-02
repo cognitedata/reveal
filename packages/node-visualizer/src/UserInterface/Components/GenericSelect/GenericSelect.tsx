@@ -1,7 +1,8 @@
 import React from 'react';
-import { UpDownSelect } from 'UserInterface/Components/GenericSelect/UpDownSelect/UpDownSelect';
-import { CommonSelectBase } from 'UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
-import { ICommonSelectProps } from 'UserInterface/Components/Settings/Types';
+
+import { CommonSelectBase } from '../../../UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
+import { UpDownSelect } from '../../../UserInterface/Components/GenericSelect/UpDownSelect/UpDownSelect';
+import { ICommonSelectProps } from '../../../UserInterface/Components/Settings/Types';
 
 interface GenericSelectProps extends ICommonSelectProps {
   node?: React.ReactElement<ICommonSelectProps, any>;

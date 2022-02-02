@@ -11,9 +11,9 @@
 // Copyright (c) Cognite aS. all rights reserved.
 //= ====================================================================================
 
-import { RegularGrid2 } from 'Core/Geometry/RegularGrid2';
-import { TrianglesBuffers } from 'Core/Geometry/TrianglesBuffers';
-import { Vector3 } from 'Core/Geometry/Vector3';
+import { RegularGrid2 } from '../Geometry/RegularGrid2';
+import { TrianglesBuffers } from '../Geometry/TrianglesBuffers';
+import { Vector3 } from '../Geometry/Vector3';
 
 export class RegularGrid2Buffers extends TrianglesBuffers {
   //= =================================================

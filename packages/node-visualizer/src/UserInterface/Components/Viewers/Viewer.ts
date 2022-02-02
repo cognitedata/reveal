@@ -1,6 +1,6 @@
-import { Toolbar } from 'UserInterface/NodeVisualizer/ToolBar/Toolbar';
-import { IToolbarGroups } from 'Core/Interfaces/IToolbarGroups';
-import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
+import { Toolbar } from '../../../UserInterface/NodeVisualizer/ToolBar/Toolbar';
+import { IToolbarGroups } from '../../../Core/Interfaces/IToolbarGroups';
+import { BaseRenderTargetNode } from '../../../Core/Nodes/BaseRenderTargetNode';
 
 export class Viewer {
   // Name of the viewer

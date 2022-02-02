@@ -11,18 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
+import { PolylinesNode } from '../../SubSurface/Basics/PolylinesNode';
+import { PolylinesRenderStyle } from '../../SubSurface/Basics/PolylinesRenderStyle';
 import * as THREE from 'three';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
+import { PointsThreeView } from '../../ThreeSubSurface/Basics/PointsThreeView';
 
-import { Colors } from 'Core/Primitives/Colors';
-import { Range3 } from 'Core/Geometry/Range3';
-import { ColorType } from 'Core/Enums/ColorType';
-
-import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
-import { PolylinesRenderStyle } from 'SubSurface/Basics/PolylinesRenderStyle';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { PointsThreeView } from 'ThreeSubSurface/Basics/PointsThreeView';
+import { ColorType } from '../../Core/Enums/ColorType';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Colors } from '../../Core/Primitives/Colors';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 export class PolylinesThreeView extends BaseGroupThreeView {
   //= =================================================

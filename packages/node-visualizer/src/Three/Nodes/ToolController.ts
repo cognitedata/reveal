@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { CameraControl } from 'Three/Nodes/CameraControl';
-import { BaseTool } from 'Three/Commands/Tools/BaseTool';
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { VirtualUserInterface } from 'Core/States/VirtualUserInterface';
+import { VirtualUserInterface } from '../../Core/States/VirtualUserInterface';
+import { BaseTool } from '../Commands/Tools/BaseTool';
+import { CameraControl } from '../Nodes/CameraControl';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class ToolController {
   //= =================================================

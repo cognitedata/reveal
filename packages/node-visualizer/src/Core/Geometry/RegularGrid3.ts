@@ -13,12 +13,12 @@
 
 import cloneDeep from 'lodash/cloneDeep';
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Index3 } from 'Core/Geometry/Index3';
-import { Grid3 } from 'Core/Geometry/Grid3';
-import { Shape } from 'Core/Geometry/Shape';
-import { Index2 } from 'Core/Geometry/Index2';
+import { Grid3 } from '../Geometry/Grid3';
+import { Index2 } from '../Geometry/Index2';
+import { Index3 } from '../Geometry/Index3';
+import { Range3 } from '../Geometry/Range3';
+import { Shape } from '../Geometry/Shape';
+import { Vector3 } from '../Geometry/Vector3';
 
 export class RegularGrid3 extends Grid3 {
   //= =================================================

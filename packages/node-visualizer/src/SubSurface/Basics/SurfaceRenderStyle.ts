@@ -12,14 +12,15 @@
 //= ====================================================================================
 
 import cloneDeep from 'lodash/cloneDeep';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { BaseStyle } from 'Core/Styles/BaseStyle';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { NumberProperty } from 'Core/Property/Concrete/Property/NumberProperty';
-import { ColorTypeProperty } from 'Core/Property/Concrete/Property/ColorTypeProperty';
-import { SliderProperty } from 'Core/Property/Concrete/Property/SliderProperty';
-import { ColorType } from 'Core/Enums/ColorType';
+
+import { ColorType } from '../../Core/Enums/ColorType';
+import { TargetId } from '../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../Core/Property/Base/BasePropertyFolder';
+import { ColorTypeProperty } from '../../Core/Property/Concrete/Property/ColorTypeProperty';
+import { NumberProperty } from '../../Core/Property/Concrete/Property/NumberProperty';
+import { SliderProperty } from '../../Core/Property/Concrete/Property/SliderProperty';
+import { BaseRenderStyle } from '../../Core/Styles/BaseRenderStyle';
+import { BaseStyle } from '../../Core/Styles/BaseStyle';
 
 export class SurfaceRenderStyle extends BaseRenderStyle {
   //= =================================================

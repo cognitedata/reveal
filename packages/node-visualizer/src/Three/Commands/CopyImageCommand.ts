@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import CopyImageIcon from 'images/Commands/CopyImage.png';
+import CopyImageIcon from '../../images/Commands/CopyImage.png';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class CopyImageCommand extends ThreeRenderTargetCommand {
   //= =================================================

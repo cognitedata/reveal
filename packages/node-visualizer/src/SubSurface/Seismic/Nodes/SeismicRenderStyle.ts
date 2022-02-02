@@ -12,11 +12,12 @@
 //= ====================================================================================
 
 import cloneDeep from 'lodash/cloneDeep';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { BaseStyle } from 'Core/Styles/BaseStyle';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { SliderProperty } from 'Core/Property/Concrete/Property/SliderProperty';
+
+import { TargetId } from '../../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import { SliderProperty } from '../../../Core/Property/Concrete/Property/SliderProperty';
+import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
+import { BaseStyle } from '../../../Core/Styles/BaseStyle';
 
 export class SeismicRenderStyle extends BaseRenderStyle {
   //= =================================================

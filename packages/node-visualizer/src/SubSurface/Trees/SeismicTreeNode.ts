@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import Icon from 'images/Nodes/SeismicCubeNode.png';
-import { BaseTreeNode } from 'Core/Nodes/BaseTreeNode';
+import { BaseTreeNode } from '../../Core/Nodes/BaseTreeNode';
+import Icon from '../../images/Nodes/SeismicCubeNode.png';
 
 export class SeismicTreeNode extends BaseTreeNode {
   //= =================================================

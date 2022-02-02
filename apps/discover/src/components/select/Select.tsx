@@ -26,6 +26,9 @@ interface Props<T> {
   keyField: string; // would be nice to do: keyof T, but we want to use 'get' for nested keys
   style?: any; // wrapping style - DEPRECATED - wrap before you use this.
 }
+
+// TODO(PP-2528): Delete this component and replace with the one from Cogs
+
 export const Select = <T,>({
   renderDisplay,
   children,

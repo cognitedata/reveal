@@ -1,5 +1,5 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetCommand } from '../../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../../Nodes/ThreeRenderTargetNode';
 
 export abstract class BaseTool extends ThreeRenderTargetCommand {
   //= =================================================

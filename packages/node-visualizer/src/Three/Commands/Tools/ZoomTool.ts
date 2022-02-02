@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { BaseTool } from 'Three/Commands/Tools/BaseTool';
-import ZoomBaseToolIcon from 'images/Commands/ZoomTool.png';
+import ZoomBaseToolIcon from '../../../images/Commands/ZoomTool.png';
+import { BaseTool } from '../../Commands/Tools/BaseTool';
+import { ThreeRenderTargetNode } from '../../Nodes/ThreeRenderTargetNode';
 
 export class ZoomTool extends BaseTool {
   //= =================================================

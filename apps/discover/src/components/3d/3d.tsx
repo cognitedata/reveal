@@ -8,6 +8,8 @@ import {
   SubSurfaceModule,
   Modules,
   ThreeModule,
+  BPDataOptions,
+  BaseRootNode,
 } from '@cognite/node-visualizer';
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 import {
@@ -38,7 +40,7 @@ interface WellsData {
   logsFrmTops?: any;
 }
 
-const normalizeWellsData = (wellsData: WellsData): WellsData => {
+const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
   const {
     wells = [],
     wellBores = [],
@@ -48,7 +50,7 @@ const normalizeWellsData = (wellsData: WellsData): WellsData => {
     ndsEvents = [],
     nptEvents = [],
     logs = {},
-    logsFrmTops = {},
+    // logsFrmTops = {},
   } = wellsData;
 
   return {
@@ -60,7 +62,7 @@ const normalizeWellsData = (wellsData: WellsData): WellsData => {
     ndsEvents,
     nptEvents,
     logs,
-    logsFrmTops,
+    // logsFrmTops,
   };
 };
 
@@ -76,7 +78,7 @@ const ThreeDee: React.FC<Props> = ({
   logsFrmTops,
   fileId,
 }) => {
-  const [root, setRoot] = useState();
+  const [root, setRoot] = useState<BaseRootNode>();
 
   useEffect(() => {
     Modules.instance.clearModules();
@@ -115,7 +117,7 @@ const ThreeDee: React.FC<Props> = ({
 
   return (
     <ThemeProvider theme={ThreeDeeTheme}>
-      <NodeVisualizerProvider root={root} toolbar={Toolbar} />
+      {root && <NodeVisualizerProvider root={root} toolbar={Toolbar} />}
     </ThemeProvider>
   );
 };

@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from 'Core/Geometry/Range1';
-import { Ma } from 'Core/Primitives/Ma';
-import { Random } from 'Core/Primitives/Random';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { Ma } from '../../../Core/Primitives/Ma';
+import { Random } from '../../../Core/Primitives/Random';
 
-import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
-import { FloatLogSample } from 'SubSurface/Wells/Samples/FloatLogSample';
-import { BaseLog } from 'SubSurface/Wells/Logs/BaseLog';
-import { Statistics } from 'Core/Geometry/Statistics';
+import { BaseLogSample } from '../../../SubSurface/Wells/Samples/BaseLogSample';
+import { FloatLogSample } from '../../../SubSurface/Wells/Samples/FloatLogSample';
+import { BaseLog } from '../../../SubSurface/Wells/Logs/BaseLog';
+import { Statistics } from '../../../Core/Geometry/Statistics';
 
 export class FloatLog extends BaseLog {
   //= =================================================

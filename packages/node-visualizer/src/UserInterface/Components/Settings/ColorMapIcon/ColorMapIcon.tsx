@@ -1,5 +1,5 @@
 import React from 'react';
-import { ICommonSelectExtraOptionData } from 'UserInterface/Components/Settings/Types';
+import { ICommonSelectExtraOptionData } from '../../../UserInterface/Components/Settings/Types';
 import styled from 'styled-components';
 
 export interface ColorMapIconProps {

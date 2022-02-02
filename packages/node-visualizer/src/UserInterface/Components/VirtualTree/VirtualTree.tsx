@@ -1,13 +1,13 @@
 import React, { KeyboardEvent } from 'react';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { List as VirtualList } from 'react-virtualized/dist/es/List';
-import { readCssVariablePixelNumber } from 'UserInterface/Foundation/Utils/cssUtils';
-import { HTMLUtils } from 'UserInterface/Foundation/Utils/HTMLUtils';
-import { TreeItemButton } from 'UserInterface/Components/VirtualTree/TreeItemControl';
-import { ChromaIcon } from 'UserInterface/Components/ChromaIcon/ChromaIcon';
-import { ExpandButton } from 'UserInterface/Components/VirtualTree/ExpandButton';
-import { VirtualTreeProps } from 'UserInterface/Components/VirtualTree/VirtualTreeProps';
-import { ITreeNode } from 'UserInterface/Components/VirtualTree//ITreeNode';
+import { readCssVariablePixelNumber } from '../../../UserInterface/Foundation/Utils/cssUtils';
+import { HTMLUtils } from '../../../UserInterface/Foundation/Utils/HTMLUtils';
+import { TreeItemButton } from '../../../UserInterface/Components/VirtualTree/TreeItemControl';
+import { ChromaIcon } from '../../../UserInterface/Components/ChromaIcon/ChromaIcon';
+import { ExpandButton } from '../../../UserInterface/Components/VirtualTree/ExpandButton';
+import { VirtualTreeProps } from '../../../UserInterface/Components/VirtualTree/VirtualTreeProps';
+import { ITreeNode } from '../../../UserInterface/Components/VirtualTree/ITreeNode';
 import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
 

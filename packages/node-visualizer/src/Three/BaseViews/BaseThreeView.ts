@@ -12,11 +12,12 @@
 //= ====================================================================================
 
 import * as THREE from 'three';
-import { Base3DView } from 'Core/Views/Base3DView';
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { ThreeTransformer } from 'Three/Utilities/ThreeTransformer';
-import { ViewInfo } from 'Core/Views/ViewInfo';
+import { ThreeRenderTargetNode } from '../../Three/Nodes/ThreeRenderTargetNode';
+import { ThreeTransformer } from '../../Three/Utilities/ThreeTransformer';
+
+import { Base3DView } from '../../Core/Views/Base3DView';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { ViewInfo } from '../../Core/Views/ViewInfo';
 
 export abstract class BaseThreeView extends Base3DView {
   public static readonly noPicking = 'noPicking';

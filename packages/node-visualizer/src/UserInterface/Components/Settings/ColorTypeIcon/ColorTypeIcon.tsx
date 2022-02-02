@@ -1,6 +1,6 @@
 import React from 'react';
-import { ChromaIcon } from 'UserInterface/Components/ChromaIcon/ChromaIcon';
-import { ICommonSelectExtraOptionData } from 'UserInterface/Components/Settings/Types';
+import { ChromaIcon } from '../../../UserInterface/Components/ChromaIcon/ChromaIcon';
+import { ICommonSelectExtraOptionData } from '../../../UserInterface/Components/Settings/Types';
 
 export const ColorTypeIcon = (props: {
   data?: ICommonSelectExtraOptionData;

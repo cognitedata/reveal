@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from 'Core/Geometry/Range1';
-import { Ma } from 'Core/Primitives/Ma';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { Ma } from '../../../Core/Primitives/Ma';
 
-import { BaseLogSample } from 'SubSurface/Wells/Samples/BaseLogSample';
-import { MdSample } from 'SubSurface/Wells/Samples/MdSample';
+import { BaseLogSample } from '../../../SubSurface/Wells/Samples/BaseLogSample';
+import { MdSample } from '../../../SubSurface/Wells/Samples/MdSample';
 
 export abstract class MdSamples {
   //= =================================================

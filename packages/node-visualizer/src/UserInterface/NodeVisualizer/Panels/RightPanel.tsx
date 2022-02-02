@@ -1,8 +1,10 @@
 import React from 'react';
-import { ConnectedViewer3D } from 'UserInterface/NodeVisualizer/Viewers/ConnectedViewer3D';
-import { VisualizerToolbarProps } from 'UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
+
 import styled from 'styled-components';
-import { panelBackground } from 'UserInterface/styles/styled.props';
+
+import { panelBackground } from '../../styles/styled.props';
+import { VisualizerToolbarProps } from '../ToolBar/VisualizerToolbar';
+import { ConnectedViewer3D } from '../Viewers/ConnectedViewer3D';
 
 interface RightPanelProps {
   viewer3D: React.RefCallback<HTMLElement>;

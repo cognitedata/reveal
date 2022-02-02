@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { UniqueId } from 'Core/Primitives/UniqueId';
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
+import { BaseNode } from '../../Nodes/BaseNode';
+import { BaseRootNode } from '../../Nodes/BaseRootNode';
+import { UniqueId } from '../../Primitives/UniqueId';
 
 export class NodePointer {
   //= =================================================

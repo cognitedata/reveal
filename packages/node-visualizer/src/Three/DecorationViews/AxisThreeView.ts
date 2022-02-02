@@ -11,22 +11,21 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import * as Color from 'color';
 import isEqual from 'lodash/isEqual';
+import * as THREE from 'three';
 
-import { Range1 } from 'Core/Geometry/Range1';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Colors } from 'Core/Primitives/Colors';
-import { Ma } from 'Core/Primitives/Ma';
-
-import { AxisNode } from 'Core/Nodes/Decorations/AxisNode';
-import { AxisRenderStyle } from 'Core/Nodes/Decorations/AxisRenderStyle';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { SpriteCreator } from 'Three/Utilities/SpriteCreator';
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
+import { Range1 } from '../../Core/Geometry/Range1';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { AxisNode } from '../../Core/Nodes/Decorations/AxisNode';
+import { AxisRenderStyle } from '../../Core/Nodes/Decorations/AxisRenderStyle';
+import { Colors } from '../../Core/Primitives/Colors';
+import { Ma } from '../../Core/Primitives/Ma';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { BaseGroupThreeView } from '../BaseViews/BaseGroupThreeView';
+import { SpriteCreator } from '../Utilities/SpriteCreator';
+import { ThreeConverter } from '../Utilities/ThreeConverter';
 
 const wallIndex0Name = 'wallIndex0';
 const wallIndex1Name = 'wallIndex1';

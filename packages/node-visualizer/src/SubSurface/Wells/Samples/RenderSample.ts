@@ -13,10 +13,10 @@
 
 import * as Color from 'color';
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Colors } from 'Core/Primitives/Colors';
+import { Vector3 } from '../../../Core/Geometry/Vector3';
+import { Colors } from '../../../Core/Primitives/Colors';
 
-import { MdSample } from 'SubSurface/Wells/Samples/MdSample';
+import { MdSample } from '../../../SubSurface/Wells/Samples/MdSample';
 
 export class RenderSample extends MdSample {
   //= =================================================

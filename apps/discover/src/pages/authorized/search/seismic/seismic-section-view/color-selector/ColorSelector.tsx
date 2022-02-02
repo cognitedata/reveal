@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@cognite/cogs.js';
 
-import { Select } from 'components/dropdown';
+import { Select } from 'components/select/Select';
 
 import { colors } from '../constants';
 import { HeaderButtonsWrapper } from '../elements';

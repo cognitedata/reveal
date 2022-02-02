@@ -11,9 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from 'Core/Geometry/Range3';
-import { Random } from 'Core/Primitives/Random';
-import { Ma } from 'Core/Primitives/Ma';
+import { Ma } from '../Primitives/Ma';
+import { Random } from '../Primitives/Random';
+
+import { Range3 } from './Range3';
 
 export class Vector3 {
   //= =================================================

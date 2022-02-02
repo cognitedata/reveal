@@ -11,19 +11,19 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
-import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
-import { PointFilterLogNode } from 'SubSurface/Wells/Filters/PointFilterLogNode';
-import { FloatFilterLogNode } from 'SubSurface/Wells/Filters/FloatFilterLogNode';
-import { FloatLogNode } from 'SubSurface/Wells/Nodes/FloatLogNode';
-import { DiscreteFilterLogNode } from 'SubSurface/Wells/Filters/DiscreteFilterLogNode';
-import { DiscreteLogNode } from 'SubSurface/Wells/Nodes/DiscreteLogNode';
-import { CasingFilterLogNode } from 'SubSurface/Wells/Filters/CasingFilterLogNode';
-import { CasingLogNode } from 'SubSurface/Wells/Nodes/CasingLogNode';
-import FilterLogFolderIcon from 'images/Nodes/FilterLogFolder.png';
+import { ITarget } from '../../../Core/Interfaces/ITarget';
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
+import FilterLogFolderIcon from '../../../images/Nodes/FilterLogFolder.png';
+import { BaseFilterLogNode } from '../../Wells/Filters/BaseFilterLogNode';
+import { CasingFilterLogNode } from '../../Wells/Filters/CasingFilterLogNode';
+import { DiscreteFilterLogNode } from '../../Wells/Filters/DiscreteFilterLogNode';
+import { FloatFilterLogNode } from '../../Wells/Filters/FloatFilterLogNode';
+import { PointFilterLogNode } from '../../Wells/Filters/PointFilterLogNode';
+import { BaseLogNode } from '../../Wells/Nodes/BaseLogNode';
+import { CasingLogNode } from '../../Wells/Nodes/CasingLogNode';
+import { DiscreteLogNode } from '../../Wells/Nodes/DiscreteLogNode';
+import { FloatLogNode } from '../../Wells/Nodes/FloatLogNode';
+import { PointLogNode } from '../../Wells/Nodes/PointLogNode';
 
 export class FilterLogFolder extends BaseNode {
   //= =================================================

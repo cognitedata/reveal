@@ -11,17 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { FloatLogStyle } from 'SubSurface/Wells/Styles/FloatLogStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
-import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
-import FloatLogNodeIcon from 'images/Nodes/FloatLogNode.png';
-import { ColorType } from 'Core/Enums/ColorType';
-import { Range1 } from 'Core/Geometry/Range1';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { Statistics } from 'Core/Geometry/Statistics';
-import { FloatLogNode } from 'SubSurface/Wells/Nodes/FloatLogNode';
+import { ColorType } from '../../../Core/Enums/ColorType';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { Statistics } from '../../../Core/Geometry/Statistics';
+import { TargetId } from '../../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
+import FloatLogNodeIcon from '../../../images/Nodes/FloatLogNode.png';
+import { BaseFilterLogNode } from '../../Wells/Filters/BaseFilterLogNode';
+import { WellLogType } from '../../Wells/Logs/WellLogType';
+import { FloatLogNode } from '../../Wells/Nodes/FloatLogNode';
+import { FloatLogStyle } from '../../Wells/Styles/FloatLogStyle';
 
 export class FloatFilterLogNode extends BaseFilterLogNode {
   //= =================================================

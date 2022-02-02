@@ -1,9 +1,10 @@
-import { Range3 } from 'Core/Geometry/Range3';
-import { BaseTargetNode } from 'Core/Nodes/BaseTargetNode';
-import { Base3DView } from 'Core/Views/Base3DView';
-import { ViewInfo } from 'Core/Views/ViewInfo';
-import { Appearance } from 'Core/States/Appearance';
-import { IToolbar } from 'Core/Interfaces/IToolbar';
+import { Range3 } from '../Geometry/Range3';
+import { IToolbar } from '../Interfaces/IToolbar';
+import { Appearance } from '../States/Appearance';
+import { Base3DView } from '../Views/Base3DView';
+import { ViewInfo } from '../Views/ViewInfo';
+
+import { BaseTargetNode } from './BaseTargetNode';
 
 export abstract class BaseRenderTargetNode extends BaseTargetNode {
   //= =================================================
@@ -117,7 +118,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode {
     return viewInfo;
   }
 
-  public invalidate(value: boolean = true): void {
+  public invalidate(value = true): void {
     this._isInvalidated = value;
   }
 }

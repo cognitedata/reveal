@@ -11,23 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import * as Color from 'color';
+import { PointsNode } from '../../SubSurface/Basics/PointsNode';
+import { PointsRenderStyle } from '../../SubSurface/Basics/PointsRenderStyle';
+import * as THREE from 'three';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
+import { ThreeTransformer } from '../../Three/Utilities/ThreeTransformer';
 
-import { Points } from 'Core/Geometry/Points';
-import { Range3 } from 'Core/Geometry/Range3';
-import { ColorType } from 'Core/Enums/ColorType';
-import { Colors } from 'Core/Primitives/Colors';
-
-import { PointsNode } from 'SubSurface/Basics/PointsNode';
-import { PointsRenderStyle } from 'SubSurface/Basics/PointsRenderStyle';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { ThreeTransformer } from 'Three/Utilities/ThreeTransformer';
-import { ColorMaps } from 'Core/Primitives/ColorMaps';
-import { ColorMap } from 'Core/Primitives/ColorMap';
-import { Changes } from 'Core/Views/Changes';
+import { ColorType } from '../../Core/Enums/ColorType';
+import { Points } from '../../Core/Geometry/Points';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { ColorMap } from '../../Core/Primitives/ColorMap';
+import { ColorMaps } from '../../Core/Primitives/ColorMaps';
+import { Colors } from '../../Core/Primitives/Colors';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 export class PointsThreeView extends BaseGroupThreeView {
   //= =================================================

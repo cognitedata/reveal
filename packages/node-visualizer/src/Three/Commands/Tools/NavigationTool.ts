@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { BaseTool } from 'Three/Commands/Tools/BaseTool';
-import PanBaseToolIcon from 'images/Commands/NavigationTool.png';
+import PanBaseToolIcon from '../../../images/Commands/NavigationTool.png';
+import { BaseTool } from '../../Commands/Tools/BaseTool';
+import { ThreeRenderTargetNode } from '../../Nodes/ThreeRenderTargetNode';
 
 export class NavigationTool extends BaseTool {
   //= =================================================

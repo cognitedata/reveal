@@ -1,15 +1,16 @@
 import * as Color from 'color';
 
-import { TargetId } from 'Core/Primitives/TargetId';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import { ViewFactory } from 'Core/Views/ViewFactory';
-import { ViewList } from 'Core/Views/ViewList';
-import { BaseView } from 'Core/Views/BaseView';
-import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { isInstanceOf, Class } from 'Core/Primitives/ClassT';
-import { Colors } from 'Core/Primitives/Colors';
-import { Util } from 'Core/Primitives/Util';
+import { ITarget } from '../Interfaces/ITarget';
+import { isInstanceOf, Class } from '../Primitives/ClassT';
+import { Colors } from '../Primitives/Colors';
+import { TargetId } from '../Primitives/TargetId';
+import { Util } from '../Primitives/Util';
+import { BaseView } from '../Views/BaseView';
+import { ViewFactory } from '../Views/ViewFactory';
+import { ViewList } from '../Views/ViewList';
+
+import { BaseNode } from './BaseNode';
+import { BaseVisualNode } from './BaseVisualNode';
 
 export abstract class BaseTargetNode extends BaseNode implements ITarget {
   //= =================================================

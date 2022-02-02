@@ -1,9 +1,10 @@
 /* eslint-disable quotes */
-import FolderIcon from 'images/Actions/Folder.png';
-import { BaseNodeCommand } from 'Core/Commands/BaseNodeCommand';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { Changes } from 'Core/Views/Changes';
+
+import FolderIcon from '../../../images/Actions/Folder.png';
+import { BaseRenderStyle } from '../../Styles/BaseRenderStyle';
+import { Changes } from '../../Views/Changes';
+import { NodeEventArgs } from '../../Views/NodeEventArgs';
+import { BaseNodeCommand } from '../BaseNodeCommand';
 
 export class CopyFolderVisualSettingsCommand extends BaseNodeCommand {
   //= =================================================

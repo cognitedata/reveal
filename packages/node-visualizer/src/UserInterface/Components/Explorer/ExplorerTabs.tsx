@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExplorerTabsPropType } from 'UserInterface/Components/Explorer/ExplorerTypes';
+import { ExplorerTabsPropType } from '../../../UserInterface/Components/Explorer/ExplorerTypes';
 import styled from 'styled-components';
 import { Tabs } from '@cognite/cogs.js';
 

@@ -12,13 +12,12 @@
 //= ====================================================================================
 
 import * as THREE from 'three';
+import { BaseThreeView } from '../../Three/BaseViews/BaseThreeView';
+import { BoundingBoxKit } from '../../Three/Utilities/BoundingBoxKit';
 
-import { Range3 } from 'Core/Geometry/Range3';
-
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { Changes } from 'Core/Views/Changes';
-import { BaseThreeView } from 'Three/BaseViews/BaseThreeView';
-import { BoundingBoxKit } from 'Three/Utilities/BoundingBoxKit';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 export abstract class BaseGroupThreeView extends BaseThreeView {
   //= =================================================

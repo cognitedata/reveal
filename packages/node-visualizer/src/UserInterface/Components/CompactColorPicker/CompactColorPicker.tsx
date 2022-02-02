@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { ColorResult, CompactPicker } from 'react-color';
-import Color from 'color';
+
 import styled from 'styled-components';
-import { applicationDefaultFontSize } from 'UserInterface/styles/styled.props';
+
+import Color from 'color';
+
+import { applicationDefaultFontSize } from '../../../UserInterface/styles/styled.props';
 
 interface CompactColorPickerProps {
   value: string;

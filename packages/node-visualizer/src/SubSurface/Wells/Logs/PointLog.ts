@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range1 } from 'Core/Geometry/Range1';
-import { Random } from 'Core/Primitives/Random';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { Random } from '../../../Core/Primitives/Random';
 
-import { PointLogSample } from 'SubSurface/Wells/Samples/PointLogSample';
-import { BaseLog } from 'SubSurface/Wells/Logs/BaseLog';
+import { PointLogSample } from '../../../SubSurface/Wells/Samples/PointLogSample';
+import { BaseLog } from '../../../SubSurface/Wells/Logs/BaseLog';
 
 export class PointLog extends BaseLog {
   //= =================================================

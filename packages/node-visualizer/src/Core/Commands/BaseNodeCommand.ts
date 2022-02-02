@@ -1,5 +1,6 @@
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { BaseCommand } from 'Core/Commands//BaseCommand';
+import { BaseNode } from '../Nodes/BaseNode';
+
+import { BaseCommand } from './BaseCommand';
 
 export abstract class BaseNodeCommand extends BaseCommand {
   public node: null | BaseNode = null; // Get the node to invoke the command on

@@ -11,18 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from 'Core/Geometry/Range3';
-import { RegularGrid2 } from 'Core/Geometry/RegularGrid2';
-import { ColorType } from 'Core/Enums/ColorType';
+import { ColorType } from '../../Core/Enums/ColorType';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { RegularGrid2 } from '../../Core/Geometry/RegularGrid2';
+import { DataNode } from '../../Core/Nodes/DataNode';
+import { ColorMaps } from '../../Core/Primitives/ColorMaps';
+import { TargetId } from '../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../Core/Property/Base/BasePropertyFolder';
+import { BaseRenderStyle } from '../../Core/Styles/BaseRenderStyle';
+import Icon from '../../images/Nodes/SurfaceNode.png';
 
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { SurfaceRenderStyle } from 'SubSurface/Basics/SurfaceRenderStyle';
-
-import Icon from 'images/Nodes/SurfaceNode.png';
-import { DataNode } from 'Core/Nodes/DataNode';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { ColorMaps } from 'Core/Primitives/ColorMaps';
+import { SurfaceRenderStyle } from './SurfaceRenderStyle';
 
 export class SurfaceNode extends DataNode {
   //= =================================================

@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { FolderNode } from 'Core/Nodes/FolderNode';
-import FolderNodeGreyscale from 'images/Nodes/FolderNodeGreyscale.png';
+import { FolderNode } from '../../../Core/Nodes/FolderNode';
+import FolderNodeGreyscale from '../../../images/Nodes/FolderNodeGreyscale.png';
 
 export class WellFolder extends FolderNode {
   //= =================================================

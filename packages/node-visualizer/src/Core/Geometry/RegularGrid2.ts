@@ -13,13 +13,13 @@
 
 import cloneDeep from 'lodash/cloneDeep';
 
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Range1 } from 'Core/Geometry/Range1';
-import { Range3 } from 'Core/Geometry/Range3';
-import { Index2 } from 'Core/Geometry/Index2';
-import { Grid2 } from 'Core/Geometry/Grid2';
-import { Random } from 'Core/Primitives/Random';
-import { Shape } from 'Core/Geometry/Shape';
+import { Grid2 } from '../Geometry/Grid2';
+import { Index2 } from '../Geometry/Index2';
+import { Range1 } from '../Geometry/Range1';
+import { Range3 } from '../Geometry/Range3';
+import { Shape } from '../Geometry/Shape';
+import { Vector3 } from '../Geometry/Vector3';
+import { Random } from '../Primitives/Random';
 
 export class RegularGrid2 extends Grid2 {
   //= =================================================
@@ -345,7 +345,7 @@ export class RegularGrid2 extends Grid2 {
     this.touch();
   }
 
-  public smoothSimple(numberOfPasses: number = 1): void {
+  public smoothSimple(numberOfPasses = 1): void {
     if (numberOfPasses <= 0) return;
     let buffer = new Float32Array(this.nodeSize.size);
     for (let pass = 0; pass < numberOfPasses; pass++) {
@@ -388,8 +388,8 @@ export class RegularGrid2 extends Grid2 {
   static createFractal(
     boundingBox: Range3,
     powerOf2: number,
-    dampning: number = 0.7,
-    smoothNumberOfPasses: number = 0,
+    dampning = 0.7,
+    smoothNumberOfPasses = 0,
     rotationAngle: number
   ): RegularGrid2 {
     const origin = Vector3.newZero;

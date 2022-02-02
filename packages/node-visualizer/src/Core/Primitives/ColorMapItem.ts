@@ -13,7 +13,8 @@
 //= ====================================================================================
 
 import * as Color from 'color';
-import { ColorInterpolation } from 'Core/Primitives/ColorInterpolation';
+
+import { ColorInterpolation } from './ColorInterpolation';
 
 export class ColorMapItem {
   //= =================================================

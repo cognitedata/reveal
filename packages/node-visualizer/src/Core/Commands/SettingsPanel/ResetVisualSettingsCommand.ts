@@ -1,7 +1,7 @@
-import ResetIcon from 'images/Actions/Reset.png';
-import { BaseNodeCommand } from 'Core/Commands/BaseNodeCommand';
-import { Changes } from 'Core/Views/Changes';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import ResetIcon from '../../../images/Actions/Reset.png';
+import { Changes } from '../../Views/Changes';
+import { NodeEventArgs } from '../../Views/NodeEventArgs';
+import { BaseNodeCommand } from '../BaseNodeCommand';
 
 export class ResetVisualSettingsCommand extends BaseNodeCommand {
   //= =================================================

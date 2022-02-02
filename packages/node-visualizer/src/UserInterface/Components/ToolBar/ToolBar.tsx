@@ -1,7 +1,7 @@
 import React from 'react';
-import { ToolBarType } from 'UserInterface/Components/Settings/Types';
-import { Icon } from 'UserInterface/Components/Icon/Icon';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
+import { ToolBarType } from '../../../UserInterface/Components/Settings/Types';
+import { Icon } from '../../../UserInterface/Components/Icon/Icon';
+import { BaseCommand } from '../../../Core/Commands/BaseCommand';
 import styled from 'styled-components';
 
 interface ToolBarProps {

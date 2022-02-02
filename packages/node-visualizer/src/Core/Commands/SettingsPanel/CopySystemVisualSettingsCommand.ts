@@ -1,9 +1,9 @@
 /* eslint-disable quotes */
-import SolutionIcon from 'images/Actions/Solution.png';
-import { BaseNodeCommand } from 'Core/Commands/BaseNodeCommand';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { Changes } from 'Core/Views/Changes';
+import SolutionIcon from '../../../images/Actions/Solution.png';
+import { BaseRenderStyle } from '../../Styles/BaseRenderStyle';
+import { Changes } from '../../Views/Changes';
+import { NodeEventArgs } from '../../Views/NodeEventArgs';
+import { BaseNodeCommand } from '../BaseNodeCommand';
 
 export class CopySystemVisualSettingsCommand extends BaseNodeCommand {
   //= =================================================

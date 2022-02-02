@@ -1,11 +1,11 @@
 import { Dispatch } from 'redux';
-import { Changes } from 'Core/Views/Changes';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
+import { Changes } from '../../Core/Views/Changes';
+import { BaseNode } from '../../Core/Nodes/BaseNode';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 import {
   onSelectedNodeChange,
   onSettingsReset,
-} from 'UserInterface/Redux/reducers/SettingsReducer';
+} from '../../UserInterface/Redux/reducers/SettingsReducer';
 import {
   onCheckboxStateChange,
   onExpandStateChange,
@@ -15,7 +15,7 @@ import {
   onNodeIconChange,
   onNodeIsLoadingChange,
   onNodeIsLoadingErrorChange,
-} from 'UserInterface/Redux/reducers/ExplorerReducer';
+} from '../../UserInterface/Redux/reducers/ExplorerReducer';
 
 export class NotificationsToActionsAdaptor {
   private readonly dispatcher: Dispatch;

@@ -1,7 +1,9 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import { setCssVariable } from 'UserInterface/Foundation/Utils/cssUtils';
-import { iconSize } from 'UserInterface/styles/styled.props';
+
+import { setCssVariable } from '../../../UserInterface/Foundation/Utils/cssUtils';
+import { iconSize } from '../../../UserInterface/styles/styled.props';
 
 export interface ImageProps {
   readonly background?: string;

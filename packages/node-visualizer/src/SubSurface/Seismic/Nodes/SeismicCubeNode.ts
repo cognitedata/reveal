@@ -11,19 +11,21 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Range3 } from 'Core/Geometry/Range3';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import Icon from 'images/Nodes/SeismicCubeNode.png';
-import { DataNode } from 'Core/Nodes/DataNode';
-import { SeismicCube } from 'SubSurface/Seismic/Data/SeismicCube';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import { SurveyNode } from 'SubSurface/Seismic/Nodes/SurveyNode';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
 import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
-import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
-import { SeismicRenderStyle } from 'SubSurface/Seismic/Nodes/SeismicRenderStyle';
-import { Util } from 'Core/Primitives/Util';
+
+import { Range3 } from '../../../Core/Geometry/Range3';
+import { ITarget } from '../../../Core/Interfaces/ITarget';
+import { DataNode } from '../../../Core/Nodes/DataNode';
+import { TargetId } from '../../../Core/Primitives/TargetId';
+import { Util } from '../../../Core/Primitives/Util';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
+import Icon from '../../../images/Nodes/SeismicCubeNode.png';
+import { SeismicCube } from '../Data/SeismicCube';
+
+import { SeismicPlaneNode } from './SeismicPlaneNode';
+import { SeismicRenderStyle } from './SeismicRenderStyle';
+import { SurveyNode } from './SurveyNode';
 
 export class SeismicCubeNode extends DataNode {
   //= =================================================

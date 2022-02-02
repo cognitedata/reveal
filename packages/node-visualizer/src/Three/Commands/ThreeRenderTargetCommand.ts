@@ -1,5 +1,5 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
+import { BaseCommand } from '../../Core/Commands/BaseCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export abstract class ThreeRenderTargetCommand extends BaseCommand {
   public target: null | ThreeRenderTargetNode = null; // Get the node to invoke the command on

@@ -11,10 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import Icon from 'images/Nodes/SeismicPlaneFolder.png';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import Icon from '../../../images/Nodes/SeismicPlaneFolder.png';
+
+import { SeismicPlaneNode } from './SeismicPlaneNode';
 
 export class SeismicPlaneFolder extends BaseNode {
   //= =================================================

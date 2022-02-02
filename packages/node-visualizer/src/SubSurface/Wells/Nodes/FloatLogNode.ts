@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { FloatLog } from 'SubSurface/Wells/Logs/FloatLog';
-import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
-import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
-import Icon from 'images/Nodes/FloatLogNode.png';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
+import { FloatLog } from '../../../SubSurface/Wells/Logs/FloatLog';
+import { BaseLogNode } from '../../../SubSurface/Wells/Nodes/BaseLogNode';
+import { WellLogType } from '../../../SubSurface/Wells/Logs/WellLogType';
+import Icon from '../../../images/Nodes/FloatLogNode.png';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
 
 export class FloatLogNode extends BaseLogNode {
   //= =================================================

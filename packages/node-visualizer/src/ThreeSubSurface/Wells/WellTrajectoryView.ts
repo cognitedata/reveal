@@ -12,40 +12,36 @@
 //= ====================================================================================
 
 import * as Color from 'color';
+import { BaseLogNode } from '../../SubSurface/Wells/Nodes/BaseLogNode';
+import { DiscreteLogNode } from '../../SubSurface/Wells/Nodes/DiscreteLogNode';
+import { FloatLogNode } from '../../SubSurface/Wells/Nodes/FloatLogNode';
+import { WellTrajectoryNode } from '../../SubSurface/Wells/Nodes/WellTrajectoryNode';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+import { SpriteCreator } from '../../Three/Utilities/SpriteCreator';
+import { LogRender } from '../../ThreeSubSurface/Wells/Helpers/LogRender';
+import { TrajectoryBufferGeometry } from '../../ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry';
+import { BaseNode } from '../../Core/Nodes/BaseNode';
+import { Appearance } from '../../Core/States/Appearance';
+import { PointLogNode } from '../../SubSurface/Wells/Nodes/PointLogNode';
+import { Units } from '../../Core/Primitives/Units';
+import { WellNode } from '../../SubSurface/Wells/Nodes/WellNode';
+import { BaseThreeView } from '../../Three/BaseViews/BaseThreeView';
+import { ViewInfo } from '../../Core/Views/ViewInfo';
+import { FloatLogStyle } from '../../SubSurface/Wells/Styles/FloatLogStyle';
+import { DiscreteLogStyle } from '../../SubSurface/Wells/Styles/DiscreteLogStyle';
+import { WellTrajectoryStyle } from '../../SubSurface/Wells/Styles/WellTrajectoryStyle';
 import * as THREE from 'three';
-
-import { Range3 } from 'Core/Geometry/Range3';
-import { Range1 } from 'Core/Geometry/Range1';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { Colors } from 'Core/Primitives/Colors';
-
-import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
-import { FloatLogNode } from 'SubSurface/Wells/Nodes/FloatLogNode';
-import { DiscreteLogNode } from 'SubSurface/Wells/Nodes/DiscreteLogNode';
-import { WellTrajectoryStyle } from 'SubSurface/Wells/Styles/WellTrajectoryStyle';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { Changes } from 'Core/Views/Changes';
-import { BandPosition } from 'Core/Enums/BandPosition';
-
-import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
-
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { SpriteCreator } from 'Three/Utilities/SpriteCreator';
-import { LogRender } from 'ThreeSubSurface/Wells/Helpers/LogRender';
-import { TrajectoryBufferGeometry } from 'ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { Appearance } from 'Core/States/Appearance';
-import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
-import { Units } from 'Core/Primitives/Units';
-import { WellNode } from 'SubSurface/Wells/Nodes/WellNode';
-import { BaseThreeView } from 'Three/BaseViews/BaseThreeView';
-import { ViewInfo } from 'Core/Views/ViewInfo';
-import { FloatLogStyle } from 'SubSurface/Wells/Styles/FloatLogStyle';
-import { DiscreteLogStyle } from 'SubSurface/Wells/Styles/DiscreteLogStyle';
-import { Canvas } from 'Three/Utilities/Canvas';
-import { ColorMaps } from 'Core/Primitives/ColorMaps';
-import { ColorType } from 'Core/Enums/ColorType';
+import { Canvas } from '../../Three/Utilities/Canvas';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
+import { BandPosition } from '../../Core/Enums/BandPosition';
+import { ColorType } from '../../Core/Enums/ColorType';
+import { Range1 } from '../../Core/Geometry/Range1';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { ColorMaps } from '../../Core/Primitives/ColorMaps';
+import { Colors } from '../../Core/Primitives/Colors';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 const trajectoryName = 'trajectory';
 const trajectoryLabelName = 'trajectoryLabel';

@@ -1,7 +1,7 @@
 import React from 'react';
-import { SelectableInput } from 'UserInterface/Components/SelectableInput/SelectableInput';
-import { ToolbarToolTip } from 'UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
-import { GenericSelect } from 'UserInterface/Components/GenericSelect/GenericSelect';
+import { SelectableInput } from '../../../UserInterface/Components/SelectableInput/SelectableInput';
+import { ToolbarToolTip } from '../../../UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
+import { GenericSelect } from '../../../UserInterface/Components/GenericSelect/GenericSelect';
 
 interface ToolBarSelectProps {
   options?: string[];

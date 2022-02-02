@@ -11,28 +11,27 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import Color from 'color';
+import { CasingLog } from '../../SubSurface/Wells/Logs/CasingLog';
+import { WellTrajectory } from '../../SubSurface/Wells/Logs/WellTrajectory';
+import { CasingLogNode } from '../../SubSurface/Wells/Nodes/CasingLogNode';
+import { RenderSample } from '../../SubSurface/Wells/Samples/RenderSample';
+import { CasingLogStyle } from '../../SubSurface/Wells/Styles/CasingLogStyle';
+import { WellTrajectoryStyle } from '../../SubSurface/Wells/Styles/WellTrajectoryStyle';
+import * as THREE from 'three';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
+import { TrajectoryBufferGeometry } from '../../ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry';
 
-import { Range3 } from 'Core/Geometry/Range3';
+import { WellTrajectoryView } from '../../ThreeSubSurface/Wells/WellTrajectoryView';
+import { Range3 } from '../../Core/Geometry/Range3';
 
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { Colors } from '../../Core/Primitives/Colors';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
-import { CasingLogNode } from 'SubSurface/Wells/Nodes/CasingLogNode';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { RenderSample } from 'SubSurface/Wells/Samples/RenderSample';
-import { Colors } from 'Core/Primitives/Colors';
-import { TrajectoryBufferGeometry } from 'ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { WellTrajectoryStyle } from 'SubSurface/Wells/Styles/WellTrajectoryStyle';
-import { CasingLogStyle } from 'SubSurface/Wells/Styles/CasingLogStyle';
-import { WellTrajectory } from 'SubSurface/Wells/Logs/WellTrajectory';
-import { CasingLog } from 'SubSurface/Wells/Logs/CasingLog';
-import { WellTrajectoryView } from 'ThreeSubSurface/Wells/WellTrajectoryView';
-import { ViewInfo } from 'Core/Views/ViewInfo';
-import { Changes } from 'Core/Views/Changes';
+import { ViewInfo } from '../../Core/Views/ViewInfo';
+import { Changes } from '../../Core/Views/Changes';
 
 export class CasingLogView extends BaseGroupThreeView {
   //= =================================================

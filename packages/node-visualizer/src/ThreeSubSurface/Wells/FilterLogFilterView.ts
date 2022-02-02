@@ -11,10 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
-import { BaseView } from 'Core/Views/BaseView';
-import { Changes } from 'Core/Views/Changes';
+import { BaseFilterLogNode } from '../../SubSurface/Wells/Filters/BaseFilterLogNode';
+
+import { BaseView } from '../../Core/Views/BaseView';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 export class FilterLogFilterView extends BaseView {
   //= =================================================

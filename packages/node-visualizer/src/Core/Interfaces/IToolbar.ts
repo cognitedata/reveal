@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseCommand } from 'Core/Commands/BaseCommand';
+import { BaseCommand } from '../Commands/BaseCommand';
 
 export interface IToolbar {
   add(groupId: string, command: BaseCommand): void;

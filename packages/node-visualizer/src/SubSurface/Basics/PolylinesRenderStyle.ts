@@ -13,11 +13,11 @@
 
 import cloneDeep from 'lodash/cloneDeep';
 
-import { TargetId } from 'Core/Primitives/TargetId';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { ColorType } from 'Core/Enums/ColorType';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { BaseStyle } from 'Core/Styles/BaseStyle';
+import { ColorType } from '../../Core/Enums/ColorType';
+import { TargetId } from '../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../Core/Property/Base/BasePropertyFolder';
+import { BaseRenderStyle } from '../../Core/Styles/BaseRenderStyle';
+import { BaseStyle } from '../../Core/Styles/BaseStyle';
 
 export class PolylinesRenderStyle extends BaseRenderStyle {
   //= =================================================

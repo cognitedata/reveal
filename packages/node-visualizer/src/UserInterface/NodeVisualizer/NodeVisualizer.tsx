@@ -1,29 +1,36 @@
-// import 'UserInterface/styles/scss/react-split-pane.scss';
+// import '../styles/scss/react-split-pane.scss';
 
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SplitPane from 'react-split-pane';
-import { RightPanel } from 'UserInterface/NodeVisualizer/Panels/RightPanel';
-import { LeftPanel } from 'UserInterface/NodeVisualizer/Panels/LeftPanel';
-import { NotificationsToActionsAdaptor } from 'UserInterface/Adapters/NotificationToAction';
-import { VirtualUserInterface } from 'Core/States/VirtualUserInterface';
-import { UserInterfaceListener } from 'UserInterface/Adapters/UserInterfaceListener';
-import { Modules } from 'Core/Module/Modules';
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
-import { Viewer } from 'UserInterface/Components/Viewers/Viewer';
-import { Toolbar } from 'UserInterface/NodeVisualizer/ToolBar/Toolbar';
-import { Appearance } from 'Core/States/Appearance';
-import { State } from 'UserInterface/Redux/State/State';
-import { generateNodeTree } from 'UserInterface/Redux/reducers/ExplorerReducer';
-import { initializeToolbarStatus } from 'UserInterface/Redux/reducers/VisualizersReducer';
-import { ViewerUtils } from 'UserInterface/NodeVisualizer/Viewers/ViewerUtils';
-import { ExplorerPropType } from 'UserInterface/Components/Explorer/ExplorerTypes';
-import { Explorer } from 'UserInterface/Components/Explorer/Explorer';
+
+import styled from 'styled-components';
+
+import { Modules } from '../../Core/Module/Modules';
+import { BaseRootNode } from '../../Core/Nodes/BaseRootNode';
+import { Appearance } from '../../Core/States/Appearance';
+import { VirtualUserInterface } from '../../Core/States/VirtualUserInterface';
+import { NotificationsToActionsAdaptor } from '../Adapters/NotificationToAction';
+import { UserInterfaceListener } from '../Adapters/UserInterfaceListener';
+import { Viewer } from '../Components/Viewers/Viewer';
+
+import { State } from '../Redux/State/State';
+import { LeftPanel } from './Panels/LeftPanel';
+import { RightPanel } from './Panels/RightPanel';
+
+import { Toolbar } from './ToolBar/Toolbar';
+
+import { generateNodeTree } from '../Redux/reducers/ExplorerReducer';
+import { initializeToolbarStatus } from '../Redux/reducers/VisualizersReducer';
+
 import {
   VisualizerToolbar,
   VisualizerToolbarProps,
-} from 'UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
-import styled from 'styled-components';
+} from './ToolBar/VisualizerToolbar';
+import { ViewerUtils } from './Viewers/ViewerUtils';
+
+import { ExplorerPropType } from '../Components/Explorer/ExplorerTypes';
+import { Explorer } from '../Components/Explorer/Explorer';
 
 export interface NodeVisualizerProps {
   /**

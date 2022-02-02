@@ -1,11 +1,11 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
+import { BaseRootNode } from '../../../Core/Nodes/BaseRootNode';
 import {
   NodeVisualizer,
   NodeVisualizerProps,
-} from 'UserInterface/NodeVisualizer/NodeVisualizer';
+} from '../../../UserInterface/NodeVisualizer/NodeVisualizer';
 import { getStore } from '../State/store';
 
 export const NodeVisualizerProvider: React.FC<

@@ -13,7 +13,7 @@
 
 /* eslint-disable max-classes-per-file */
 
-import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseNode } from '../Nodes/BaseNode';
 
 export class NodeEventArgs {
   //= =================================================

@@ -11,12 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 // =====================================================================================
 
-import * as THREE from 'three';
-import { CompassNode } from 'Core/Nodes/Decorations/CompassNode';
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { Range3 } from 'Core/Geometry/Range3';
 import Color from 'color';
+import * as THREE from 'three';
+
+import { Range3 } from '../../Core/Geometry/Range3';
+import { CompassNode } from '../../Core/Nodes/Decorations/CompassNode';
+import { BaseGroupThreeView } from '../BaseViews/BaseGroupThreeView';
+import { ThreeConverter } from '../Utilities/ThreeConverter';
 
 export class CompassThreeView extends BaseGroupThreeView {
   // ==================================================

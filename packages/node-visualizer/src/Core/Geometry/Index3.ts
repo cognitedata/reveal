@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { Index2 } from 'Core/Geometry/Index2';
+import { Index2 } from '../Geometry/Index2';
 
 export class Index3 {
   //= =================================================

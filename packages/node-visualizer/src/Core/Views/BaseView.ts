@@ -11,12 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { BaseTargetNode } from 'Core/Nodes/BaseTargetNode';
+import { ITargetIdAccessor } from '../Interfaces/ITargetIdAccessor';
+import { BaseNode } from '../Nodes/BaseNode';
+import { BaseTargetNode } from '../Nodes/BaseTargetNode';
+import { TargetId } from '../Primitives/TargetId';
+import { BaseRenderStyle } from '../Styles/BaseRenderStyle';
+
+import { NodeEventArgs } from './NodeEventArgs';
 
 export abstract class BaseView {
   //= =================================================

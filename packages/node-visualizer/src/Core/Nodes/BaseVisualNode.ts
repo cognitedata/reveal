@@ -11,14 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { ViewList } from 'Core/Views/ViewList';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseNode } from 'Core/Nodes/BaseNode';
-import { ITarget } from 'Core/Interfaces/ITarget';
-import { CheckBoxState } from 'Core/Enums/CheckBoxState';
-import { Util } from 'Core/Primitives/Util';
-import { ITargetIdAccessor } from 'Core/Interfaces/ITargetIdAccessor';
-import { BaseView } from 'Core/Views/BaseView';
+import { CheckBoxState } from '../Enums/CheckBoxState';
+import { ITarget } from '../Interfaces/ITarget';
+import { ITargetIdAccessor } from '../Interfaces/ITargetIdAccessor';
+import { Util } from '../Primitives/Util';
+import { BaseView } from '../Views/BaseView';
+import { NodeEventArgs } from '../Views/NodeEventArgs';
+import { ViewList } from '../Views/ViewList';
+
+import { BaseNode } from './BaseNode';
 
 export abstract class BaseVisualNode extends BaseNode {
   //= =================================================

@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { ActionTypes } from 'UserInterface/Redux/actions/ActionTypes';
-import { ICommonState } from 'UserInterface/Redux/State/common';
+
+import { ActionTypes } from '../../../UserInterface/Redux/actions/ActionTypes';
+import { ICommonState } from '../../../UserInterface/Redux/State/common';
 
 const initialState: ICommonState = {
   isFullscreen: false,

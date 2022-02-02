@@ -1,7 +1,7 @@
-import { TreeCheckBox } from 'UserInterface/Components/VirtualTree/TreeCheckbox';
-import { TreeRadioButton } from 'UserInterface/Components/VirtualTree/TreeRadioButton';
+import { TreeCheckBox } from '../../../UserInterface/Components/VirtualTree/TreeCheckbox';
+import { TreeRadioButton } from '../../../UserInterface/Components/VirtualTree/TreeRadioButton';
 import React, { KeyboardEvent, useState } from 'react';
-import { HTMLUtils } from 'UserInterface/Foundation/Utils/HTMLUtils';
+import { HTMLUtils } from '../../../UserInterface/Foundation/Utils/HTMLUtils';
 
 interface TreeItemButtonProps {
   id: string;

@@ -13,7 +13,7 @@
 
 import * as THREE from 'three';
 
-import { Vector3 } from 'Core/Geometry/Vector3';
+import { Vector3 } from '../Geometry/Vector3';
 
 export class TrianglesBuffers {
   //= =================================================

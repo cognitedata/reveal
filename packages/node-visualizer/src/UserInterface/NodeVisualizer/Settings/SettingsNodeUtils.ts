@@ -1,8 +1,8 @@
-import { NodeUtils } from 'UserInterface/utils/NodeUtils';
-import { ValueProperty } from 'Core/Property/Base/ValueProperty';
-import { ExpanderProperty } from 'Core/Property/Concrete/Folder/ExpanderProperty';
-import { Appearance } from 'Core/States/Appearance';
-import { BaseNode } from 'Core/Nodes/BaseNode';
+import { NodeUtils } from '../../../UserInterface/utils/NodeUtils';
+import { ValueProperty } from '../../../Core/Property/Base/ValueProperty';
+import { ExpanderProperty } from '../../../Core/Property/Concrete/Folder/ExpanderProperty';
+import { Appearance } from '../../../Core/States/Appearance';
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
 
 export class SettingsNodeUtils {
   public static setPropertyValue<T>(id: string, value: T): void {

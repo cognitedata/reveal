@@ -11,13 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import Icon from 'images/Nodes/SurveyNode.png';
-import { BaseVisualNode } from 'Core/Nodes/BaseVisualNode';
-import { RegularGrid3 } from 'Core/Geometry/RegularGrid3';
-import { SeismicPlaneFolder } from 'SubSurface/Seismic/Nodes/SeismicPlaneFolder';
-import { SeismicOutlineNode } from 'SubSurface/Seismic/Nodes/SeismicOutlineNode';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { Range3 } from 'Core/Geometry/Range3';
+import { Range3 } from '../../../Core/Geometry/Range3';
+import { RegularGrid3 } from '../../../Core/Geometry/RegularGrid3';
+import { BaseVisualNode } from '../../../Core/Nodes/BaseVisualNode';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import Icon from '../../../images/Nodes/SurveyNode.png';
+
+import { SeismicOutlineNode } from './SeismicOutlineNode';
+import { SeismicPlaneFolder } from './SeismicPlaneFolder';
 
 export class SurveyNode extends BaseVisualNode {
   //= =================================================

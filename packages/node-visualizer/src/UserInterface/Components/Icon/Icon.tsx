@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { getIcon } from 'UserInterface/Components/Icon/IconSelector';
-import { ToolbarToolTip } from 'UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
-import { IconTypes } from 'UserInterface/Components/Icon/IconTypes';
+import { getIcon } from '../../../UserInterface/Components/Icon/IconSelector';
+import { ToolbarToolTip } from '../../../UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
+import { IconTypes } from '../../../UserInterface/Components/Icon/IconTypes';
 
 interface IconProps {
   type?: IconTypes;

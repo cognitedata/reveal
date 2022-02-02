@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IVisualizerState } from 'UserInterface/Redux/State/visualizer';
-import { BaseCommand } from 'Core/Commands/BaseCommand';
-import { Viewer } from 'UserInterface/Components/Viewers/Viewer';
-import { ViewerUtils } from 'UserInterface/NodeVisualizer/Viewers/ViewerUtils';
-import { IToolbarGroups } from 'Core/Interfaces/IToolbarGroups';
+
+import { BaseCommand } from '../../../Core/Commands/BaseCommand';
+import { IToolbarGroups } from '../../../Core/Interfaces/IToolbarGroups';
+import { Viewer } from '../../../UserInterface/Components/Viewers/Viewer';
+import { ViewerUtils } from '../../../UserInterface/NodeVisualizer/Viewers/ViewerUtils';
+import { IVisualizerState } from '../../../UserInterface/Redux/State/visualizer';
 
 // Initial settings state
 const initialState: IVisualizerState = {

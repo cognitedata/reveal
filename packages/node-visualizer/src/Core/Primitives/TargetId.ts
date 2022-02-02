@@ -11,9 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { UniqueId } from 'Core/Primitives/UniqueId';
-import { RenderStyleResolution } from 'Core/Enums/RenderStyleResolution';
-import { Util } from 'Core/Primitives/Util';
+import { RenderStyleResolution } from '../Enums/RenderStyleResolution';
+
+import { UniqueId } from './UniqueId';
+import { Util } from './Util';
 
 export class TargetId {
   //= =================================================

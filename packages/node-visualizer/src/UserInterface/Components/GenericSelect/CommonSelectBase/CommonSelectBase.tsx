@@ -1,7 +1,10 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Select } from '@cognite/cogs.js';
-import { ICommonSelectProps } from 'UserInterface/Components/Settings/Types';
+
+import { ICommonSelectProps } from '../../../../UserInterface/Components/Settings/Types';
 
 const CommonSelect = styled(Select)`
   display: flex;

@@ -14,56 +14,56 @@
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
 
-import { BaseModule } from 'Core/Module/BaseModule';
-import { ViewFactory } from 'Core/Views/ViewFactory';
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
-import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
+import { BaseModule } from '../Core/Module/BaseModule';
+import { ViewFactory } from '../Core/Views/ViewFactory';
+import { ThreeRenderTargetNode } from '../Three/Nodes/ThreeRenderTargetNode';
+import { BaseRootNode } from '../Core/Nodes/BaseRootNode';
+import { BaseRenderTargetNode } from '../Core/Nodes/BaseRenderTargetNode';
 
-import { AxisNode } from 'Core/Nodes/Decorations/AxisNode';
-import { CompassNode } from 'Core/Nodes/Decorations/CompassNode';
+import { AxisNode } from '../Core/Nodes/Decorations/AxisNode';
+import { CompassNode } from '../Core/Nodes/Decorations/CompassNode';
 
-import { PointsNode } from 'SubSurface/Basics/PointsNode';
-import { PolylinesNode } from 'SubSurface/Basics/PolylinesNode';
-import { SurfaceNode } from 'SubSurface/Basics/SurfaceNode';
-import { PotreeNode } from 'SubSurface/Basics/PotreeNode';
+import { PointsNode } from '../SubSurface/Basics/PointsNode';
+import { PolylinesNode } from '../SubSurface/Basics/PolylinesNode';
+import { SurfaceNode } from '../SubSurface/Basics/SurfaceNode';
+import { PotreeNode } from '../SubSurface/Basics/PotreeNode';
 
-import { AxisThreeView } from 'Three/DecorationViews/AxisThreeView';
-import { CompassThreeView } from 'Three/DecorationViews/CompassThreeView';
-import { PointsThreeView } from 'ThreeSubSurface/Basics/PointsThreeView';
-import { PolylinesThreeView } from 'ThreeSubSurface/Basics/PolylinesThreeView';
-import { SurfaceThreeView } from 'ThreeSubSurface/Basics/SurfaceThreeView';
-import { PotreeThreeView } from 'ThreeSubSurface/Basics/PotreeThreeView';
+import { AxisThreeView } from '../Three/DecorationViews/AxisThreeView';
+import { CompassThreeView } from '../Three/DecorationViews/CompassThreeView';
+import { PointsThreeView } from './Basics/PointsThreeView';
+import { PolylinesThreeView } from './Basics/PolylinesThreeView';
+import { SurfaceThreeView } from './Basics/SurfaceThreeView';
+import { PotreeThreeView } from './Basics/PotreeThreeView';
 
 // Wells:
-import { WellTrajectoryNode } from 'SubSurface/Wells/Nodes/WellTrajectoryNode';
-import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
-import { FloatLogNode } from 'SubSurface/Wells/Nodes/FloatLogNode';
-import { DiscreteLogNode } from 'SubSurface/Wells/Nodes/DiscreteLogNode';
+import { WellTrajectoryNode } from '../SubSurface/Wells/Nodes/WellTrajectoryNode';
+import { PointLogNode } from '../SubSurface/Wells/Nodes/PointLogNode';
+import { FloatLogNode } from '../SubSurface/Wells/Nodes/FloatLogNode';
+import { DiscreteLogNode } from '../SubSurface/Wells/Nodes/DiscreteLogNode';
 
-import { WellTrajectoryView } from 'ThreeSubSurface/Wells/WellTrajectoryView';
-import { PointLogView } from 'ThreeSubSurface/Wells/PointLogView';
-import { LogFilterView } from 'ThreeSubSurface/Wells/LogFilterView';
-import { CasingLogNode } from 'SubSurface/Wells/Nodes/CasingLogNode';
-import { CasingLogView } from 'ThreeSubSurface/Wells/CasingLogView';
-import { BaseTargetNode } from 'Core/Nodes/BaseTargetNode';
-import { CasingFilterLogNode } from 'SubSurface/Wells/Filters/CasingFilterLogNode';
-import { PointFilterLogNode } from 'SubSurface/Wells/Filters/PointFilterLogNode';
-import { FloatFilterLogNode } from 'SubSurface/Wells/Filters/FloatFilterLogNode';
-import { DiscreteFilterLogNode } from 'SubSurface/Wells/Filters/DiscreteFilterLogNode';
-import { FilterLogFilterView } from 'ThreeSubSurface/Wells/FilterLogFilterView';
-import { SeismicCubePlaneView } from 'ThreeSubSurface/Seismic/SeismicCubePlaneView';
-import { SeismicPlaneNode } from 'SubSurface/Seismic/Nodes/SeismicPlaneNode';
-import { SeismicCubeNode } from 'SubSurface/Seismic/Nodes/SeismicCubeNode';
-import { SeismicCubeView } from 'ThreeSubSurface/Seismic/SeismicCubeView';
-import { SurveyNode } from 'SubSurface/Seismic/Nodes/SurveyNode';
-import { SurveyView } from 'ThreeSubSurface/Seismic/SurveyView';
-import { ManipulatorFactory } from 'Three/Commands/Manipulators/ManipulatorFactory';
-import { SeismicCubePlaneManipulator } from 'ThreeSubSurface/Seismic/SeismicCubePlaneManipulator';
-import { PointLogManipulator } from 'ThreeSubSurface/Wells/PointLogManipulator';
-import { SeismicOutlineView } from 'ThreeSubSurface/Seismic/SeismicOutlineView';
-import { SeismicOutlineNode } from 'SubSurface/Seismic/Nodes/SeismicOutlineNode';
-import { Range3 } from 'Core/Geometry/Range3';
+import { WellTrajectoryView } from './Wells/WellTrajectoryView';
+import { PointLogView } from './Wells/PointLogView';
+import { LogFilterView } from './Wells/LogFilterView';
+import { CasingLogNode } from '../SubSurface/Wells/Nodes/CasingLogNode';
+import { CasingLogView } from './Wells/CasingLogView';
+import { BaseTargetNode } from '../Core/Nodes/BaseTargetNode';
+import { CasingFilterLogNode } from '../SubSurface/Wells/Filters/CasingFilterLogNode';
+import { PointFilterLogNode } from '../SubSurface/Wells/Filters/PointFilterLogNode';
+import { FloatFilterLogNode } from '../SubSurface/Wells/Filters/FloatFilterLogNode';
+import { DiscreteFilterLogNode } from '../SubSurface/Wells/Filters/DiscreteFilterLogNode';
+import { FilterLogFilterView } from './Wells/FilterLogFilterView';
+import { SeismicCubePlaneView } from './Seismic/SeismicCubePlaneView';
+import { SeismicPlaneNode } from '../SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { SeismicCubeNode } from '../SubSurface/Seismic/Nodes/SeismicCubeNode';
+import { SeismicCubeView } from './Seismic/SeismicCubeView';
+import { SurveyNode } from '../SubSurface/Seismic/Nodes/SurveyNode';
+import { SurveyView } from './Seismic/SurveyView';
+import { ManipulatorFactory } from '../Three/Commands/Manipulators/ManipulatorFactory';
+import { SeismicCubePlaneManipulator } from './Seismic/SeismicCubePlaneManipulator';
+import { PointLogManipulator } from './Wells/PointLogManipulator';
+import { SeismicOutlineView } from './Seismic/SeismicOutlineView';
+import { SeismicOutlineNode } from '../SubSurface/Seismic/Nodes/SeismicOutlineNode';
+import { Range3 } from '../Core/Geometry/Range3';
 
 export class ThreeModule extends BaseModule {
   //= =================================================

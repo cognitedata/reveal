@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import ViewAllCommandIcon from 'images/Commands/ViewAllCommand.png';
+import ViewAllCommandIcon from '../../images/Commands/ViewAllCommand.png';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class ViewAllCommand extends ThreeRenderTargetCommand {
   //= =================================================

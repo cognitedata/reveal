@@ -11,15 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { DiscreteLogStyle } from 'SubSurface/Wells/Styles/DiscreteLogStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
-import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
-import DiscreteLogNodeIcon from 'images/Nodes/DiscreteLogNode.png';
-import { BasePropertyFolder } from 'Core/Property/Base/BasePropertyFolder';
-import { Range1 } from 'Core/Geometry/Range1';
-import { DiscreteLogNode } from 'SubSurface/Wells/Nodes/DiscreteLogNode';
+import { Range1 } from '../../../Core/Geometry/Range1';
+import { TargetId } from '../../../Core/Primitives/TargetId';
+import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
+import DiscreteLogNodeIcon from '../../../images/Nodes/DiscreteLogNode.png';
+import { BaseFilterLogNode } from '../../Wells/Filters/BaseFilterLogNode';
+import { WellLogType } from '../../Wells/Logs/WellLogType';
+import { DiscreteLogNode } from '../../Wells/Nodes/DiscreteLogNode';
+import { DiscreteLogStyle } from '../../Wells/Styles/DiscreteLogStyle';
 
 export class DiscreteFilterLogNode extends BaseFilterLogNode {
   //= =================================================

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ExplorerPropType } from 'UserInterface/Components/Explorer/ExplorerTypes';
-import { ExplorerTabs } from 'UserInterface/Components/Explorer/ExplorerTabs';
-import { VirtualTree } from 'UserInterface/Components/VirtualTree/VirtualTree';
+import { ExplorerPropType } from '../../../UserInterface/Components/Explorer/ExplorerTypes';
+import { ExplorerTabs } from '../../../UserInterface/Components/Explorer/ExplorerTabs';
+import { VirtualTree } from '../../../UserInterface/Components/VirtualTree/VirtualTree';
 import styled from 'styled-components';
 
 // Renders Tree Controller

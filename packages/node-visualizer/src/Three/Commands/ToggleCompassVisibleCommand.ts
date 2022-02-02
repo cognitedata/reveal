@@ -1,7 +1,7 @@
-import { ThreeRenderTargetNode } from 'Three/Nodes/ThreeRenderTargetNode';
-import { ThreeRenderTargetCommand } from 'Three/Commands/ThreeRenderTargetCommand';
-import { CompassNode } from 'Core/Nodes/Decorations/CompassNode';
-import ToggleCompassVisibleCommandIcon from 'images/Commands/ToggleCompassVisibleCommand.png';
+import { CompassNode } from '../../Core/Nodes/Decorations/CompassNode';
+import ToggleCompassVisibleCommandIcon from '../../images/Commands/ToggleCompassVisibleCommand.png';
+import { ThreeRenderTargetCommand } from '../Commands/ThreeRenderTargetCommand';
+import { ThreeRenderTargetNode } from '../Nodes/ThreeRenderTargetNode';
 
 export class ToggleCompassVisibleCommand extends ThreeRenderTargetCommand {
   //= =================================================

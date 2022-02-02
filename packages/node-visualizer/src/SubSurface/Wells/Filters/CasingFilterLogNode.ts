@@ -11,13 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRenderStyle } from 'Core/Styles/BaseRenderStyle';
-import { CasingLogStyle } from 'SubSurface/Wells/Styles/CasingLogStyle';
-import { TargetId } from 'Core/Primitives/TargetId';
-import { BaseFilterLogNode } from 'SubSurface/Wells/Filters/BaseFilterLogNode';
-import { WellLogType } from 'SubSurface/Wells/Logs/WellLogType';
-import CasingLogNodeIcon from 'images/Nodes/CasingLogNode.png';
-import { ColorType } from 'Core/Enums/ColorType';
+import { ColorType } from '../../../Core/Enums/ColorType';
+import { TargetId } from '../../../Core/Primitives/TargetId';
+import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
+import CasingLogNodeIcon from '../../../images/Nodes/CasingLogNode.png';
+import { BaseFilterLogNode } from '../../Wells/Filters/BaseFilterLogNode';
+import { WellLogType } from '../../Wells/Logs/WellLogType';
+import { CasingLogStyle } from '../../Wells/Styles/CasingLogStyle';
 
 export class CasingFilterLogNode extends BaseFilterLogNode {
   //= =================================================

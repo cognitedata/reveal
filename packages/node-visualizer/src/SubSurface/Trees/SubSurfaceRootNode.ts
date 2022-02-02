@@ -11,15 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
-
-import { WellTreeNode } from 'SubSurface/Trees/WellTreeNode';
-import { AxisNode } from 'Core/Nodes/Decorations/AxisNode';
-import { CompassNode } from 'Core/Nodes/Decorations/CompassNode';
-
-import { OthersTreeNode } from 'SubSurface/Trees/OthersTreeNode';
-import RootNodeIcon from 'images/Nodes/RootNode.png';
-import { SeismicTreeNode } from 'SubSurface/Trees/SeismicTreeNode';
+import { BaseRootNode } from '../../Core/Nodes/BaseRootNode';
+import { AxisNode } from '../../Core/Nodes/Decorations/AxisNode';
+import { CompassNode } from '../../Core/Nodes/Decorations/CompassNode';
+import RootNodeIcon from '../../images/Nodes/RootNode.png';
+import { OthersTreeNode } from '../Trees/OthersTreeNode';
+import { SeismicTreeNode } from '../Trees/SeismicTreeNode';
+import { WellTreeNode } from '../Trees/WellTreeNode';
 
 export class SubSurfaceRootNode extends BaseRootNode {
   //= =================================================

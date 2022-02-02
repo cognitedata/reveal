@@ -1,22 +1,26 @@
-import { FloatLog } from 'SubSurface/Wells/Logs/FloatLog';
-import { FloatLogNode } from 'SubSurface/Wells/Nodes/FloatLogNode';
-import { PointLog } from 'SubSurface/Wells/Logs/PointLog';
-import { PointLogSample } from 'SubSurface/Wells/Samples/PointLogSample';
-import { PointLogNode } from 'SubSurface/Wells/Nodes/PointLogNode';
-import { LogFolder } from 'SubSurface/Wells/Nodes/LogFolder';
-import { Util } from 'Core/Primitives/Util';
-import { FloatLogSample } from 'SubSurface/Wells/Samples/FloatLogSample';
-import { BaseLogNode } from 'SubSurface/Wells/Nodes/BaseLogNode';
-import { DiscreteLog } from 'SubSurface/Wells/Logs/DiscreteLog';
-import { DiscreteLogSample } from 'SubSurface/Wells/Samples/DiscreteLogSample';
-import { DiscreteLogNode } from 'SubSurface/Wells/Nodes/DiscreteLogNode';
-import { BaseNode } from 'Core/Nodes/BaseNode';
+import { BaseNode } from '../../../Core/Nodes/BaseNode';
+import { Util } from '../../../Core/Primitives/Util';
+import {
+  ILog,
+  ILogRow,
+  ILogRowColumn,
+} from '../../../SubSurface/Wells/Interfaces/ILog';
 import {
   INdsMetadata,
   INptMetaData,
   IRiskEvent,
-} from 'SubSurface/Wells/Interfaces/IRisk';
-import { ILog, ILogRow, ILogRowColumn } from 'SubSurface/Wells/Interfaces/ILog';
+} from '../../../SubSurface/Wells/Interfaces/IRisk';
+import { DiscreteLog } from '../../../SubSurface/Wells/Logs/DiscreteLog';
+import { FloatLog } from '../../../SubSurface/Wells/Logs/FloatLog';
+import { PointLog } from '../../../SubSurface/Wells/Logs/PointLog';
+import { BaseLogNode } from '../../../SubSurface/Wells/Nodes/BaseLogNode';
+import { DiscreteLogSample } from '../../../SubSurface/Wells/Samples/DiscreteLogSample';
+import { DiscreteLogNode } from '../../../SubSurface/Wells/Nodes/DiscreteLogNode';
+import { FloatLogNode } from '../../../SubSurface/Wells/Nodes/FloatLogNode';
+import { LogFolder } from '../../../SubSurface/Wells/Nodes/LogFolder';
+import { PointLogNode } from '../../../SubSurface/Wells/Nodes/PointLogNode';
+import { FloatLogSample } from '../../../SubSurface/Wells/Samples/FloatLogSample';
+import { PointLogSample } from '../../../SubSurface/Wells/Samples/PointLogSample';
 
 export class WellLogCreator {
   //= =================================================

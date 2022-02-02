@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { BaseView } from 'Core/Views/BaseView';
-import { SurveyNode } from 'SubSurface/Seismic/Nodes/SurveyNode';
+import { BaseView } from '../../Core/Views/BaseView';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { SurveyNode } from '../../SubSurface/Seismic/Nodes/SurveyNode';
 
 export class SurveyView extends BaseView {
   //= =================================================

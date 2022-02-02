@@ -11,24 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
+import { SurfaceNode } from '../../SubSurface/Basics/SurfaceNode';
+import { SurfaceRenderStyle } from '../../SubSurface/Basics/SurfaceRenderStyle';
 import * as THREE from 'three';
+import { BaseGroupThreeView } from '../../Three/BaseViews/BaseGroupThreeView';
+import { TextureKit } from '../../Three/Utilities/TextureKit';
+import { ThreeConverter } from '../../Three/Utilities/ThreeConverter';
 
-import { ColorType } from 'Core/Enums/ColorType';
-import { Range3 } from 'Core/Geometry/Range3';
-
-import { SurfaceNode } from 'SubSurface/Basics/SurfaceNode';
-import { SurfaceRenderStyle } from 'SubSurface/Basics/SurfaceRenderStyle';
-import { NodeEventArgs } from 'Core/Views/NodeEventArgs';
-import { RegularGrid2Buffers } from 'Core/Geometry/RegularGrid2Buffers';
-
-import { BaseGroupThreeView } from 'Three/BaseViews/BaseGroupThreeView';
-import { ThreeConverter } from 'Three/Utilities/ThreeConverter';
-import { TextureKit } from 'Three/Utilities/TextureKit';
-import { ContouringService } from 'Core/Geometry/ContouringService';
-import { ColorMaps } from 'Core/Primitives/ColorMaps';
-import { ViewInfo } from 'Core/Views/ViewInfo';
-import { Changes } from 'Core/Views/Changes';
-import { Colors } from 'Core/Primitives/Colors';
+import { ColorType } from '../../Core/Enums/ColorType';
+import { ContouringService } from '../../Core/Geometry/ContouringService';
+import { Range3 } from '../../Core/Geometry/Range3';
+import { RegularGrid2Buffers } from '../../Core/Geometry/RegularGrid2Buffers';
+import { ColorMaps } from '../../Core/Primitives/ColorMaps';
+import { Colors } from '../../Core/Primitives/Colors';
+import { Changes } from '../../Core/Views/Changes';
+import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import { ViewInfo } from '../../Core/Views/ViewInfo';
 
 const solidName = 'Solid';
 const contoursName = 'Contour';

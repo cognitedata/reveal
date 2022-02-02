@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { MdSample } from 'SubSurface/Wells/Samples/MdSample';
+import { MdSample } from '../../../SubSurface/Wells/Samples/MdSample';
 
 export abstract class BaseLogSample extends MdSample {
   //= =================================================

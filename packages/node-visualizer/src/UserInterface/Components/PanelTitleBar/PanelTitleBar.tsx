@@ -1,7 +1,7 @@
 import React from 'react';
-import { ToolBar } from 'UserInterface/Components/ToolBar/ToolBar';
-import { ToolBarType } from 'UserInterface/Components/Settings/Types';
-import { ChromaIcon } from 'UserInterface/Components/ChromaIcon/ChromaIcon';
+import { ToolBar } from '../../../UserInterface/Components/ToolBar/ToolBar';
+import { ToolBarType } from '../../../UserInterface/Components/Settings/Types';
+import { ChromaIcon } from '../../../UserInterface/Components/ChromaIcon/ChromaIcon';
 import styled from 'styled-components';
 
 interface PanelTitleBarProps {

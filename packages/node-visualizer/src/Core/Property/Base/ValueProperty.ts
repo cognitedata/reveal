@@ -1,8 +1,9 @@
 import isNumber from 'lodash/isNumber';
 import startCase from 'lodash/startCase';
-import { BaseProperty } from 'Core/Property/Base/BaseProperty';
-import { IPropertyParams } from 'Core/Property/Base/IPropertyParams';
-import { IPropertyExtraOptionDataParams } from 'Core/Property/Base/IPropertyExtraOptionDataParms';
+
+import { BaseProperty } from './BaseProperty';
+import { IPropertyExtraOptionDataParams } from './IPropertyExtraOptionDataParms';
+import { IPropertyParams } from './IPropertyParams';
 
 //= =================================================
 // TYPES AND DELEGATES

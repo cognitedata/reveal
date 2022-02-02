@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import * as THREE from 'three';
 import * as Color from 'color';
+import * as THREE from 'three';
 
-import { SpriteCreator } from 'Three/Utilities/SpriteCreator';
-import { Appearance } from 'Core/States/Appearance';
-import { ColorMap } from 'Core/Primitives/ColorMap';
+import { ColorMap } from '../../Core/Primitives/ColorMap';
+import { Appearance } from '../../Core/States/Appearance';
+import { SpriteCreator } from '../Utilities/SpriteCreator';
 
 export class Canvas {
   // A lot of tips here:
@@ -164,7 +164,7 @@ export class Canvas {
     fontSize: number,
     color: Color | null,
     rightBand: boolean,
-    outerMost: boolean = true
+    outerMost = true
   ) {
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = fontSize * 0.1;

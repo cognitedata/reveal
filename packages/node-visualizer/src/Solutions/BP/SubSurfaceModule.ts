@@ -1,21 +1,20 @@
-import { BaseModule } from 'Core/Module/BaseModule';
-import { BaseRootNode } from 'Core/Nodes/BaseRootNode';
-import { SubSurfaceRootNode } from 'SubSurface/Trees/SubSurfaceRootNode';
-import {
-  BPData,
-  BPDataOptions,
-  MetadataTransformationMap,
-} from 'Solutions/BP/BPData';
-import { WellNodesCreator } from 'Solutions/BP/Creators/WellNodesCreator';
-import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
-import { SeismicCubeNode } from 'SubSurface/Seismic/Nodes/SeismicCubeNode';
-import { ColorMaps } from 'Core/Primitives/ColorMaps';
-import { SurveyNode } from 'SubSurface/Seismic/Nodes/SurveyNode';
-import { PointsNode } from 'SubSurface/Basics/PointsNode';
-import { Points } from 'Core/Geometry/Points';
-import { Vector3 } from 'Core/Geometry/Vector3';
-import { CogniteGeospatialClient } from '@cognite/geospatial-sdk-js';
 import * as utm from 'utm';
+
+import { CogniteGeospatialClient } from '@cognite/geospatial-sdk-js';
+import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
+
+import { Points } from '../../Core/Geometry/Points';
+import { Vector3 } from '../../Core/Geometry/Vector3';
+import { BaseModule } from '../../Core/Module/BaseModule';
+import { BaseRootNode } from '../../Core/Nodes/BaseRootNode';
+import { ColorMaps } from '../../Core/Primitives/ColorMaps';
+import { PointsNode } from '../../SubSurface/Basics/PointsNode';
+import { SeismicCubeNode } from '../../SubSurface/Seismic/Nodes/SeismicCubeNode';
+import { SurveyNode } from '../../SubSurface/Seismic/Nodes/SurveyNode';
+import { SubSurfaceRootNode } from '../../SubSurface/Trees/SubSurfaceRootNode';
+
+import { BPData, BPDataOptions, MetadataTransformationMap } from './BPData';
+import { WellNodesCreator } from './Creators/WellNodesCreator';
 
 type Tuple3<T> = [T, T, T];
 
