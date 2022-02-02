@@ -45,8 +45,8 @@ export const TRAJECTORY_COLUMN_NAME_MAP = {
   azimuth: 'azimuth',
   inclination: 'inclination',
   tvd: 'trueVerticalDepth',
-  x_offset: 'easting',
-  y_offset: 'northing',
+  x_offset: 'eastOffset',
+  y_offset: 'northOffset',
   equivalent_departure: 'equivalentDeparture',
 };
 
