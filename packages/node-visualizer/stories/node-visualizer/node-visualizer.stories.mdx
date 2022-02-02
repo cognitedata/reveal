@@ -1,0 +1,198 @@
+import { Meta, Story, ArgsTable } from '@storybook/addon-docs/blocks';
+import {
+  AuthWrapper,
+  NodeVisualizerComponent,
+  NodeVisualizerExplorer,
+  NodeVisualizerToolbar,
+  NodeVisualizerWrapper,
+  AuthWrapperHorizons,
+  NodeVisualiserWithWells,
+  NodeVisualiserWithWellsAndEvents,
+  NodeVisualiserWithWellsAndEventsInMeter,
+  NodeVisualiserWellboresWithNoData,
+} from './node-visualizer.helper';
+import { Explorer, Toolbar } from './components';
+
+<Meta title="Node-visualizer/Use-cases" />
+
+# Node Visualizer
+
+`<NodeVisualizer />` is a component for 3D model node visualization.
+
+## Basic usage
+
+To use component you should:
+
+- login to npm via `yarn login`
+- add library to your project
+- import component, redux reduce and stor
+
+  e
+
+- init root module to provide it for `NodeVisualizer` component
+
+Simple init code snippet might look something like:
+
+```typescript tsx
+import {
+  NodeVisualizer,
+  NodeVisualizerReducer,
+  NodeVisualizerMiddleware,
+  SyntheticSubSurfaceModule,
+  ThreeModule,
+  Modules,
+} from '@cognite/node-visualizer';
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
+import { Provider } from 'react-redux';
+
+// Create redux store
+const store = createStore(
+  combineReducers({ ...NodeVisualizerReducer }),
+  applyMiddleware(...NodeVisualizerMiddleware)
+);
+
+// init three module
+const modules = Modules.instance;
+
+modules.clearModules();
+modules.add(new ThreeModule());
+
+// API_URL, API_KEY and FILE_ID come from env variables in this case
+const syntheticModule = new SyntheticSubSurfaceModule();
+syntheticModule.addSeismicCube(
+  new CogniteSeismicClient({
+    api_url: process.env.API_URL || 'https://api.cognitedata.com',
+    api_key: process.env.API_KEY,
+  }),
+  process.env.FILE_ID
+);
+modules.add(syntheticModule);
+modules.install();
+
+const root = modules.createRoot();
+
+function App() {
+  return (
+    <div className="App">
+      <Provider store={store}>
+        <NodeVisualizer root={root} />
+      </Provider>
+    </div>
+  );
+}
+```
+
+So, the result can be something like example below except the way, how you provide api credentials (key, url, file id).
+Example below uses form to define **API_URL**, **API_KEY** and **FILE_ID**.
+
+<Story name="Basic">
+  <AuthWrapper />
+</Story>
+
+### Properties:
+
+<ArgsTable of={NodeVisualizerComponent} />
+
+## Custom toolbar and explorer
+
+To customize node tree and toolbar appearance `explorer` and `toolbar` props can be specified
+
+<Story name="Custom explorer and toolbar">
+  <AuthWrapper explorer={Explorer} toolbar={Toolbar} />
+</Story>
+
+In case above node tree explorer component receive props:
+
+<ArgsTable of={NodeVisualizerExplorer} />
+
+And props for custom toolbar:
+
+<ArgsTable of={NodeVisualizerToolbar} />
+
+## Synthetic data usage
+
+<Story name="Synthetic data usage">
+  <NodeVisualizerWrapper />
+</Story>
+
+## Initialize horizon points
+
+<Story name="Horizons">
+  <AuthWrapperHorizons />
+</Story>
+
+To provide data about horizons you should use `SubSurfaceModule`:
+
+```typescript
+const subSurfaceModule = new SubSurfaceModule();
+const client = CogniteGeospatialClient({
+  project: 'project_name',
+  api_key: 'api_key',
+  api_url: 'api_url',
+});
+
+module.addHorizonData(client, ['horizon_external_id']);
+```
+
+## Map wellbores metadata keys
+
+<Story name="Map wellbores metadata">
+  <NodeVisualiserWithWells />
+</Story>
+
+You can map wellbores metadata in case if it has different structure then `IWellBoreMeta`:
+
+```typescript
+import { mapMetadataKeys } from '@cognite/node-visualizer';
+import type { MetadataKeyMapping, WellboreMetadata, IWellBore } from '@cognite/node-visualizer';
+
+const mapping: MetadataKeyMapping<WellboreMetadata> = {
+  elevation_type: 'e_type',
+  elevation_value: 'some_value',
+  elevation_value_unit: 'some_another_value_unit',
+  bh_x_coordinate: 'x_coordinate',
+  bh_y_coordinate: 'y_coordinate',
+};
+const mappingFunction:  = (data: IWellBore) => mapMetadataKeys(mapping, data);
+const subSurfaceModule = new SubSurfaceModule();
+subSurfaceModule.addWellData({
+  well: [...wells],
+  wellbores: [...wellbores],
+  trajectories: [...trajectories]
+}, {
+  wellbore: {
+    key1: mappingFunction,
+    // key2: <another function to modify metadata>
+  }
+});
+```
+
+When you provide a second argument as `{ wellbore: { ... } }` it means,
+that module is going to use transform functions one by one in case of receiving wellbore with invalid
+metadata structure (some required keys from `WellboreMetadata` might be undefined). If it fails to
+transform metadata to have `WellboreMetadata` keys in place, that wellbore will not be added to the data structure.
+
+`mapMetadataKeys` is a function which can help with metadata mapping, but you feel free to
+provide any own function to handle this logic. Main requirement is to implement expected type:
+
+```typescript
+(data: Metadata) => IWellBoreMeta;
+```
+
+## Bp Node Visualizer
+
+<Story name="Bp Map wellbores metadata">
+  <NodeVisualiserWithWellsAndEvents />
+</Story>
+
+## Bp Node Visualizer events in meter
+
+<Story name="Bp Map wellbores metadata meter">
+  <NodeVisualiserWithWellsAndEventsInMeter />
+</Story>
+
+## Node Visualizer wellbore with no data
+
+<Story name="Wellbores with no data">
+  <NodeVisualiserWellboresWithNoData />
+</Story>

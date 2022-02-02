@@ -1,0 +1,58 @@
+{
+  "name": "@cognite/node-visualizer",
+  "version": "2.0.0",
+  "description": "Spatial visualizer for Cognite",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "engines": {
+    "node": ">=12"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bazel build :node-visualizer",
+    "test": "../../node_modules/.bin/jest",
+    "test:watch": "yarn test --watchAll",
+    "test:bazel": "bazel test :jest_test",
+    "test:bazel-run": "ibazel run :jest --",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers",
+    "storybook": "ibazel run :start-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cognitedata/applications.git"
+  },
+  "keywords": [
+    "subsurface",
+    "cognite",
+    "spatial-visualization",
+    "3d",
+    "react",
+    "node-visualizer",
+    "subsurface-visualization"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cognitedata/applications/issues"
+  },
+  "homepage": "https://github.com/cognitedata/applications#readme",
+  "browserslist": [
+    "defaults"
+  ],
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "__tests__",
+      ".stories."
+    ]
+  }
+}
