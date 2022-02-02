@@ -235,7 +235,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const CreateButton = (
     <Button
       type="primary"
-      icon="Plus"
+      icon="Add"
       style={{ marginLeft: '20px', marginRight: '20px' }}
       onClick={() => {
         setCreationDrawerVisible(true);
