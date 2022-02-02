@@ -207,11 +207,12 @@ Then in the test:
 
 #### Errors
 
-| Error message                            | Fix                                                                                                                                                |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `gyp: No Xcode or CLT version detected!` | [Follow these steps](https://medium.com/flawless-app-stories/gyp-no-xcode-or-clt-version-detected-macos-catalina-anansewaa-38b536389e8d)           |
-| `Yarn cannot find ...........`           | <ol><li>Did you run `npm login`?</li><li>Are you [added](https://github.com/cognitedata/terraform-npm/blob/master/cogniters.tf) here?</li></ol>    |
-| `iBazel ........... permission denied`   | Workaround until fixed: Run `bazel clean --expunge`. If that doesn't work, delete `/private/var/tmp/_bazel_***` and run the expunge command after. |
+| Error message                                                                           | Fix                                                                                                                                                |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gyp: No Xcode or CLT version detected!`                                                | [Follow these steps](https://medium.com/flawless-app-stories/gyp-no-xcode-or-clt-version-detected-macos-catalina-anansewaa-38b536389e8d)           |
+| `Yarn cannot find ...........`                                                          | <ol><li>Did you run `npm login`?</li><li>Are you [added](https://github.com/cognitedata/terraform-npm/blob/master/cogniters.tf) here?</li></ol>    |
+| `iBazel ........... permission denied`                                                  | Workaround until fixed: Run `bazel clean --expunge`. If that doesn't work, delete `/private/var/tmp/_bazel_***` and run the expunge command after. |
+| `Validation Error: haste.enableSymlinks is incompatible with watchman` in unit testings | Try with `yarn test --no-watchman`.                                                                                                                |
 
 #### Local debugging
 
@@ -368,10 +369,10 @@ You don't have to run both containers. Just run one, and run the other part loca
 
 Note: the build of the app that the server hosts, needs to have the REACT_APP_API_KEY set BEFORE the build is run, since that env var is baked into `process.env`.
 
-## Running [(discover-api service)](https://github.com/cognitedata/application-services/tree/master/services/discover-api) locally
+## Running [discover-api service](https://github.com/cognitedata/application-services/tree/master/services/discover-api) locally
 
 1. Set `localDiscover` variable `true` in src/constants/app.ts file in discover.
-2. Clone the [(application services)](https://github.com/cognitedata/application-services) repository.
+2. Clone the [application services](https://github.com/cognitedata/application-services) repository.
 3. Go through the README section in application services.
 
 # PR Process
