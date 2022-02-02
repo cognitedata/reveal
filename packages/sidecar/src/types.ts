@@ -38,6 +38,7 @@ export type ApiBaseUrls = {
   commentServiceBaseUrl: string;
   digitalCockpitApiBaseUrl: string;
   discoverApiBaseUrl: string;
+  powerOpsApiBaseUrl: string;
   infieldApiBaseUrl: string;
   infieldCacheApiBaseUrl: string;
   userManagementServiceBaseUrl: string;
