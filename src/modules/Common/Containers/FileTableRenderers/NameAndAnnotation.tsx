@@ -34,7 +34,9 @@ export function NameAndAnnotationRenderer({
           </Tooltip>
         )}
       </FileRow>
-      {AnnotationsBadgePopover(annotationCounts, annotationStatuses)}
+      <AnnotationsBadgeContainer>
+        {AnnotationsBadgePopover(annotationCounts, annotationStatuses)}
+      </AnnotationsBadgeContainer>
     </Container>
   );
 }
@@ -51,6 +53,10 @@ export const FileRow = styled.div`
   height: inherit;
   width: inherit;
   align-items: center;
+`;
+
+const AnnotationsBadgeContainer = styled.div`
+  display: flex;
 `;
 
 const Filename = styled.div`
