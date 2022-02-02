@@ -16,7 +16,7 @@ const StatusTag = ({ status }: StatusTagProps) => {
 
   if (status === LineReviewStatus.REVIEWED) {
     return (
-      <Label size="small" variant="success">
+      <Label size="small" variant="warning">
         {status}
       </Label>
     );

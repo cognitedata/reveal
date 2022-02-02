@@ -1,17 +1,10 @@
-import { useAuthContext } from '@cognite/react-container';
 import React, { useCallback, useEffect, useState } from 'react';
 import { OptionType, Select, Table, TextInput } from '@cognite/cogs.js';
 import useLineReviews from 'modules/lineReviews/hooks';
-import {
-  LineReview,
-  LineReviewStatus,
-  Document,
-} from 'modules/lineReviews/types';
+import { LineReview, LineReviewStatus } from 'modules/lineReviews/types';
 import { useHistory } from 'react-router';
 import StatusTag from 'components/StatusTag';
 import styled from 'styled-components';
-
-import { getDocumentUrl } from '../modules/lineReviews/api';
 
 import * as Styled from './styled';
 import { LineReviewsWrapper } from './elements';
@@ -76,22 +69,10 @@ const Badge: React.FC<BadgeProps> = ({ label, onClick }) => (
 
 const FileCell = ({ value: documents }: { value: LineReview['documents'] }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { client } = useAuthContext();
 
   if (documents.length === 0) {
     return <div>N/A</div>;
   }
-
-  const onFileClick = async (
-    event: React.MouseEvent,
-    client: any,
-    document: Document
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const url = await getDocumentUrl(client, document);
-    window.open(url);
-  };
 
   return (
     <>
@@ -100,10 +81,7 @@ const FileCell = ({ value: documents }: { value: LineReview['documents'] }) => {
         .map((document, index, slicedArray) => (
           <React.Fragment key={document.id}>
             <span>
-              {/* eslint-disable-next-line */}
-              <a onClick={(e) => onFileClick(e, client, document)}>
-                {document.fileExternalId}
-              </a>{' '}
+              {document.fileExternalId}
               &nbsp;
             </span>
             {index < slicedArray.length - 1 && <br />}
