@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { ServiceAccount } from '@cognite/sdk';
-import { useGroups, usePermissions } from 'hooks';
+import { useGroups, usePermissions, useRefreshToken } from 'hooks';
 import { stringContains } from '../Groups/utils';
 
 function GroupTag({ id }: { id: number }) {
@@ -21,6 +21,7 @@ function GroupTag({ id }: { id: number }) {
 export default function EditGroups({ account }: { account: ServiceAccount }) {
   const client = useQueryClient();
   const sdk = useSDK();
+  const { refreshToken } = useRefreshToken();
   const [localList, setLocalList] = useState<number[]>(account.groups || []);
   const [editMode, setEditMode] = useState(false);
   const { data: allGroups = [] } = useGroups(true);
@@ -56,6 +57,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
           key: 'service-account-update',
           message: 'Service account updated',
         });
+        refreshToken();
       },
       onError() {
         client.invalidateQueries(['service-accounts']);
