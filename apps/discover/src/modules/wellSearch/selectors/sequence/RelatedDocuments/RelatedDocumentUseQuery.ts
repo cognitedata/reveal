@@ -5,6 +5,8 @@ import {
   UseQueryResult,
 } from 'react-query';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
 import { DocumentsFilter } from '@cognite/sdk-playground';
@@ -58,15 +60,14 @@ const useWellboresRelatedDocumentsCategories =
       (row) => wellboreAssetIdMap[row.id]
     );
     const isV3Enabled = useEnabledWellSdkV3();
+
+    const { filters } = formatAssetIdsFilter(wellboreAssetIds, isV3Enabled);
+
     return useQuery<DocumentResultFacets>(
       [SELECTED_WELLBORES_RELATED_DOCUMENTS, wellboreAssetIds],
-      () =>
-        documentSearchService.getCategoriesByAssetIds(
-          wellboreAssetIds,
-          !!isV3Enabled
-        ),
+      () => documentSearchService.getCategoriesByAssetIds(filters),
       {
-        enabled: isV3Enabled !== undefined,
+        enabled: isV3Enabled !== undefined && !isEmpty(filters),
       }
     );
   };
@@ -84,7 +85,9 @@ const useRelatedDocumentsCategories = (
     [RELATED_DOCUMENTS_AGGREGATES[category], query, filters],
     () => documentSearchService.getCategoriesByQuery(query, filters, category),
     {
-      enabled: filterQuery.facets[category as DocumentFacet].length > 0,
+      enabled:
+        filterQuery.facets[category as DocumentFacet].length > 0 &&
+        !isEmpty(filters),
     }
   );
 };
@@ -101,10 +104,12 @@ export const useQuerySavedRelatedDocuments = (
   const wellboreIds = useWellInspectSelectedWellboreIds();
   const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const isV3Enabled = useEnabledWellSdkV3();
+
   const { filters } = formatAssetIdsFilter(
     wellboreIds.map((id) => wellboreAssetIdMap[id]),
     isV3Enabled
   );
+
   const { data: wellboresFacets } = useWellboresRelatedDocumentsCategories();
 
   /** **************** Get master response applying all filters ***************** */
@@ -121,6 +126,9 @@ export const useQuerySavedRelatedDocuments = (
         .finally(() => {
           stopNetworkTimer();
         });
+    },
+    {
+      enabled: !isEmpty(filters),
     }
   );
 

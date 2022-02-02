@@ -17,7 +17,6 @@ import {
   AggregateNames,
 } from 'modules/documentSearch/types';
 import { toDocument } from 'modules/documentSearch/utils';
-import { formatAssetIdsFilter } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/utils';
 
 import { getDocumentSDKClient } from './sdk';
 import { processFacets } from './utils/processFacets';
@@ -126,9 +125,7 @@ const documentsByIds = (documentIds: number[]) => {
   });
 };
 
-const getCategoriesByAssetIds = (assetIds: number[], v3Enabled: boolean) => {
-  const { filters } = formatAssetIdsFilter(assetIds, v3Enabled);
-
+const getCategoriesByAssetIds = (filters: DocumentsFilter) => {
   return getDocumentSDKClient()
     .documents.search({
       limit: 0,

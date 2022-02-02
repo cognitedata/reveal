@@ -25,11 +25,19 @@ export const RelatedDocumentTypeFilter = () => {
   const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
-    if (facets?.labels) setOptions(orderBy(facets.labels, 'count', 'desc'));
+    if (facets?.labels) {
+      setOptions(orderBy(facets.labels, 'count', 'desc'));
+    } else {
+      setOptions([]);
+    }
   }, [JSON.stringify(facets?.labels)]);
 
   useEffect(() => {
-    if (!isUndefined(facetCounts?.labels)) setTotal(facetCounts.labels);
+    if (!isUndefined(facetCounts?.labels)) {
+      setTotal(facetCounts.labels);
+    } else {
+      setTotal(0);
+    }
   }, [JSON.stringify(facetCounts?.labels)]);
 
   const toggleFilter = (key: string) => {
