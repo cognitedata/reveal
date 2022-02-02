@@ -37,7 +37,7 @@ export class DeleteTemplateGroupCommand extends CLICommand {
   @injectRCFile()
   async execute(args: Arguments<DeleteTemplateGroupCommandArgs>) {
     try {
-      const id = args.solutionConfig.config.templateId;
+      const id = args.solutionConfig.all.config.templateId;
       if (args.confirm) {
         DEBUG`Deleting template group ${id}`;
 

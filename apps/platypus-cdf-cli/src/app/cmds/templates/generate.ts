@@ -69,8 +69,9 @@ class TemplateGenerateCommand extends CLICommand {
       const client = getCogniteSDKClient();
       const templates = new TemplatesApiService(client);
       const response = await templates.runQuery({
-        solutionId: args.solutionConfig.config.templateId,
-        schemaVersion: args.solutionConfig.config.templateVersion.toString(),
+        solutionId: args.solutionConfig.all.config.templateId,
+        schemaVersion:
+          args.solutionConfig.all.config.templateVersion.toString(),
         graphQlParams: {
           query: getIntrospectionQuery(),
           operationName: 'IntrospectionQuery',

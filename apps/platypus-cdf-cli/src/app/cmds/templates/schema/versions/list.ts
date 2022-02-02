@@ -24,7 +24,7 @@ export class TemplatesVersionsListCommand extends CLICommand {
     DEBUG`Retrieving list of versions for template group`;
 
     const versions = await templatesApi.listSchemaVersions({
-      solutionId: args.solutionConfig.config.templateId,
+      solutionId: args.solutionConfig.all.config.templateId,
     });
     DEBUG`List of versions retrieved successfully, ${JSON.stringify(versions)}`;
 

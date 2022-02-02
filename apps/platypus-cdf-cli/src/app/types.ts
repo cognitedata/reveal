@@ -1,12 +1,11 @@
 import { Logger, ValidationRule } from '@platypus/platypus-core';
-import { ConfigSchema } from './common/config';
 import { AUTH_CONFIG, AUTH_TYPE, LOGIN_STATUS } from './constants';
 
 export type BaseArgs = {
   appId: string;
   verbose: boolean;
   logger: Logger;
-  solutionConfig?: ConfigSchema;
+  solutionConfig?: CLIConfigManager<SolutionConfigType>;
 };
 
 export type LoginArgs = BaseArgs & {
@@ -105,4 +104,44 @@ export interface CommandArgument {
   /* Example how to use some command */
   example?: string;
   skip?: ((state: any) => boolean | Promise<boolean>) | boolean;
+}
+
+export type SolutionConfigType = {
+  version: number;
+  name: string;
+  config: {
+    templateId: string;
+    templateVersion: number;
+    project: string;
+    cluster: string;
+    schema?: string;
+  };
+};
+export interface CLIConfigManager<T> {
+  all: T;
+  /**
+   * Get an item
+   * @param key The string key to get
+   * @return The contents of the config from key $key
+   */
+  get(key: keyof T): T[keyof T];
+
+  /**
+   * Set an item
+   * @param key The string key
+   * @param val The value to set
+   */
+  set(key: keyof T, value: T[typeof key]): void;
+
+  /**
+   * Delete an item.
+   * @param key The key to delete
+   */
+  delete(key: keyof T): void;
+
+  /**
+   * Clear the config.
+   * Equivalent to <code>Configstore.all = {};</code>
+   */
+  clear(): void;
 }

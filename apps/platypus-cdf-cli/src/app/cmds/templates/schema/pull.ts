@@ -9,8 +9,6 @@ import Response, {
 import { BaseArgs } from '@cognite/platypus-cdf-cli/app/types';
 import { injectRCFile } from '@cognite/platypus-cdf-cli/app/common/config';
 import { CONSTANTS } from '@cognite/platypus-cdf-cli/app/constants';
-import { cwd } from 'process';
-import { join } from 'path';
 
 export const command = 'pull';
 export const desc = `Downloads the schema for the given template group (version is read from "${CONSTANTS.PROJECT_CONFIG_FILE_NAME}" file).`;
@@ -28,8 +26,8 @@ export class TemplatesSchemaPullCommand extends CLICommand {
     DEBUG`Retrieving list of versions for template group`;
 
     const schema = await templatesApi.listSchemaVersions({
-      solutionId: args.solutionConfig.config.templateId,
-      version: args.solutionConfig.config.templateVersion.toString(),
+      solutionId: args.solutionConfig.all.config.templateId,
+      version: args.solutionConfig.all.config.templateVersion.toString(),
     });
     DEBUG`Got the schema, ${JSON.stringify(schema)}`;
 

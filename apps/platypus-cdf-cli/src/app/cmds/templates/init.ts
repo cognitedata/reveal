@@ -2,10 +2,9 @@ import { existsSync, promises } from 'fs';
 import { join } from 'path';
 import { cwd } from 'process';
 import { Arguments, Argv, CommandModule } from 'yargs';
-import { ConfigSchema } from '../../common/config';
 import { askUserForInput } from '../../common/prompt';
 import { CONSTANTS } from '../../constants';
-import { BaseArgs } from '../../types';
+import { BaseArgs, SolutionConfigType } from '../../types';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import { getProjectConfig } from '../../utils/config';
 
@@ -87,7 +86,8 @@ class TemplateInitCommand implements CommandModule {
       }
 
       const { cluster, project } = projectConfig;
-      const config: ConfigSchema = {
+
+      const config: SolutionConfigType = {
         version: 1,
         name: args['template-group-id'],
         config: {
