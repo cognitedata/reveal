@@ -1,41 +1,35 @@
 import React from 'react';
-import { Button } from '@cognite/cogs.js';
+import { Flex, Icon } from '@cognite/cogs.js';
 import Popover from 'antd/lib/popover';
-import { useUpdateDataSetTransformations } from 'actions';
-import { TransformationDetails, DataSet } from '../../utils/types';
+import { TransformationDetails } from '../../utils/types';
 
 interface HiddenTransformationProps {
   transformation: TransformationDetails;
-  dataSet: DataSet;
 }
 
 const HiddenTransformation = ({
   transformation,
-  dataSet,
 }: HiddenTransformationProps) => {
-  const { updateDataSetTransformations } = useUpdateDataSetTransformations();
-
   const message = (
-    <p>
+    <div>
       Transformation of ID <strong>{transformation?.name}</strong> is not
-      visible, this may be due to it being delete or private to another user.{' '}
-      <Button
-        type="link"
-        onClick={() => updateDataSetTransformations(dataSet, transformation)}
-      >
-        Click here
-      </Button>{' '}
-      to remove this transformation from this data set.
-    </p>
+      visible. This may be due to it being deleted or private to another user.
+    </div>
   );
   return (
-    <Popover
-      content={message}
-      overlayStyle={{ width: '300px' }}
-      placement="left"
-    >
-      <p style={{ fontStyle: 'italic' }}>{transformation?.name}</p>
-    </Popover>
+    <Flex alignItems="center" style={{ fontStyle: 'italic' }}>
+      <Popover
+        content={message}
+        overlayStyle={{ width: '300px' }}
+        placement="left"
+      >
+        <Icon
+          type="WarningTriangle"
+          style={{ cursor: 'help', marginRight: '4px' }}
+        />
+      </Popover>
+      {transformation?.name}
+    </Flex>
   );
 };
 
