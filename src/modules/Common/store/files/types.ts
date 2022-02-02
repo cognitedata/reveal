@@ -1,4 +1,4 @@
-import { Asset, FileInfo } from '@cognite/cdf-sdk-singleton';
+import { Asset, FileInfo } from '@cognite/sdk';
 
 // TODO: use Pick instead of Omit?
 export type VisionFile = Omit<

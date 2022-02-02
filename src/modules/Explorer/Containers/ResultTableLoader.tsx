@@ -22,11 +22,11 @@ import {
   setExplorerFiles,
   setIsLoading,
   setPercentageScanned,
-  selectExplorerSortedFiles,
   setLoadingAnnotations,
   setFocusedFileId,
   showFileMetadata,
-} from 'src/modules/Explorer/store/explorerSlice';
+} from 'src/modules/Explorer/store/slice';
+import { selectExplorerSortedFiles } from 'src/modules/Explorer/store/selectors';
 import { clearExplorerFileState } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';

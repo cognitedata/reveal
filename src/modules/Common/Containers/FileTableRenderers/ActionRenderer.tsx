@@ -13,8 +13,8 @@ import {
 } from 'src/modules/Process/processSlice';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { selectExplorerSelectedIds } from 'src/modules/Explorer/store/explorerSlice';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { selectExplorerSelectedIds } from 'src/modules/Explorer/store/selectors';
+import { FileInfo } from '@cognite/sdk';
 
 export function ActionRenderer(
   rowData: TableDataItem,

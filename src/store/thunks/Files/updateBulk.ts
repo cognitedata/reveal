@@ -1,4 +1,4 @@
-import { Label } from '@cognite/cdf-sdk-singleton';
+import { Label } from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';

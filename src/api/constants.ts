@@ -1,0 +1,1 @@
+export const MAX_AUTOML_MODEL_NAME_LENGTH = 250;

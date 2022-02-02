@@ -1,24 +1,32 @@
 import React, { useMemo } from 'react';
+import { Loader } from '@cognite/cogs.js';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
-import { useUserContext } from '@cognite/cdf-utilities';
 import NotFound from 'src/pages/NotFound';
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
-import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
-import { userHasCapabilities } from 'src/utils';
 import NoAccessPage from 'src/pages/NoAccessPage';
+import { useUserCapabilities } from './hooks/useUserCapabilities';
 
-function routeWrapper(
-  Component: any,
-  user: AuthenticatedUserWithGroups,
-  capabilities: [{ acl: string; actions: [] }]
-): (routerProps: RouteComponentProps) => any {
-  return (routeProps: RouteComponentProps) => {
-    if (!userHasCapabilities(user, capabilities)) {
-      return <NoAccessPage capabilities={capabilities} />;
-    }
-    return <Component {...routeProps} user={user} />;
-  };
-}
+const RouteWrapper = ({
+  Component,
+  capabilities,
+  ...routeProps
+}: {
+  Component: any;
+  capabilities: { acl: string; actions: string[] }[];
+} & RouteComponentProps): JSX.Element => {
+  const { data: hasCapabilities, isFetched } =
+    useUserCapabilities(capabilities);
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (!hasCapabilities) {
+    return <NoAccessPage capabilities={capabilities} />;
+  }
+
+  return <Component {...routeProps} />;
+};
 
 const routes = [
   {
@@ -128,8 +136,6 @@ const routes = [
 ];
 
 export function Routes() {
-  const user = useUserContext();
-
   return (
     <Switch>
       {routes.map((r) => (
@@ -137,10 +143,12 @@ export function Routes() {
           key={r.path}
           exact={r.exact}
           path={r.path}
-          render={routeWrapper(
-            r.component,
-            user,
-            r.capabilities as [{ acl: string; actions: [] }]
+          render={(routeProps) => (
+            <RouteWrapper
+              Component={r.component}
+              capabilities={r.capabilities}
+              {...routeProps}
+            />
           )}
         />
       ))}

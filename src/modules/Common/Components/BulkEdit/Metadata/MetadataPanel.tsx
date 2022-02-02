@@ -4,7 +4,7 @@ import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditO
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
-import { Metadata } from '@cognite/cdf-sdk-singleton';
+import { Metadata } from '@cognite/sdk';
 
 const getMetadataKeys = (
   selectedFiles: VisionFile[],

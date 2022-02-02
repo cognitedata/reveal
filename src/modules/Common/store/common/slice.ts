@@ -17,6 +17,7 @@ import { BulkEditUnsavedState, CommonState } from './types';
 export const initialState: CommonState = {
   showFileDownloadModal: false,
   showBulkEditModal: false,
+  showModelTrainingModal: false,
   bulkEditUnsavedState: {},
   saveState: {
     mode: 'saved' as CDFStatusModes,
@@ -34,6 +35,9 @@ const commonSlice = createSlice({
     },
     setBulkEditModalVisibility(state, action: PayloadAction<boolean>) {
       state.showBulkEditModal = action.payload;
+    },
+    setModelTrainingModalVisibility(state, action: PayloadAction<boolean>) {
+      state.showModelTrainingModal = action.payload;
     },
     setBulkEditUnsaved(state, action: PayloadAction<BulkEditUnsavedState>) {
       state.bulkEditUnsavedState = action.payload;
@@ -78,6 +82,7 @@ const commonSlice = createSlice({
 export const {
   setFileDownloadModalVisibility,
   setBulkEditModalVisibility,
+  setModelTrainingModalVisibility,
   setBulkEditUnsaved,
 } = commonSlice.actions;
 

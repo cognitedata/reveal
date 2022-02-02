@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Label } from '@cognite/cdf-sdk-singleton';
+import { Label } from '@cognite/sdk';
 import { selectFileById } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
 import {

@@ -3,7 +3,7 @@ import React, { ReactText } from 'react';
 import styled from 'styled-components';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationsTable/AssetLinkWarning';
 import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/CollapsibleAnnotationTableRow/CollapsibleAnnotationTableRow';
 import { AnnotationTableItem } from 'src/modules/Review/types';

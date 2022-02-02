@@ -3,12 +3,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import {
   hideFileMetadata,
-  selectExplorerSelectedFileIdsInSortedOrder,
   setExplorerFileSelectState,
   setFocusedFileId,
   showFileMetadata,
   toggleExplorerFilterView,
-} from 'src/modules/Explorer/store/explorerSlice';
+} from 'src/modules/Explorer/store/slice';
+import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/selectors';
 import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
@@ -30,6 +30,7 @@ import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/
 import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSidePanel';
 import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
+import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 
 pushMetric('Vision.Explorer');
 
@@ -170,6 +171,7 @@ const Explorer = () => {
             </DrawerContainer>
           )}
           <ExplorerBulkEditModalContainer />
+          <ExplorerModelTrainingModalContainer />
         </QueryClientProvider>
       </Wrapper>
     </>

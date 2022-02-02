@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileChangeUpdate, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import { FileChangeUpdate } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';

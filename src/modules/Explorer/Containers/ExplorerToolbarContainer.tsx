@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
 import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
 import {
+  setModelTrainingModalVisibility,
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
 } from 'src/modules/Common/store/common/slice';
@@ -11,11 +12,11 @@ import { ViewMode } from 'src/modules/Common/types';
 import { RootState } from 'src/store/rootReducer';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import {
-  selectExplorerSelectedFileIdsInSortedOrder,
   setCurrentView,
   setExplorerFileUploadModalVisibility,
   setExplorerQueryString,
-} from 'src/modules/Explorer/store/explorerSlice';
+} from 'src/modules/Explorer/store/slice';
+import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/selectors';
 import {
   getLink,
   getParamLink,
@@ -59,6 +60,10 @@ export const ExplorerToolbarContainer = (
   const onDownload = () => {
     dispatch(setFileDownloadModalVisibility(true));
   };
+
+  const onTrainModel = () => {
+    dispatch(setModelTrainingModalVisibility(true));
+  };
   const onContextualise = () => {
     dispatch(PopulateProcessFiles(selectedFileIds));
     history.push(getLink(workflowRoutes.process));
@@ -95,6 +100,7 @@ export const ExplorerToolbarContainer = (
       onReview={onReview}
       onDelete={onDelete}
       onBulkEdit={onBulkEdit}
+      onTrainModel={onTrainModel}
     />
   );
 };

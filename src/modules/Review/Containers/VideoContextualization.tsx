@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
 import { VisionAPIType } from 'src/api/types';
 import { useDispatch } from 'react-redux';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 export const VideoContextualization = (props: {

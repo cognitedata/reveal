@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectExplorerAllFiles } from 'src/modules/Explorer/store/explorerSlice';
+import { selectExplorerAllFiles } from 'src/modules/Explorer/store/selectors';
 import { RootState } from 'src/store/rootReducer';
 
 export const DirectoryPrefixesProvider = ({

@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 import { Modal } from 'antd';
 import React, {
   CSSProperties,

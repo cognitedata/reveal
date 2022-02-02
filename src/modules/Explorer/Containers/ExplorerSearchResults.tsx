@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { EnsureNonEmptyResource } from '@cognite/data-exploration';
-import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps, FileInfo } from '@cognite/sdk';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
 import { FileTableExplorer } from 'src/modules/Common/Components/FileTable/FileTableExplorer';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';
@@ -16,7 +16,6 @@ import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBa
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
-  selectExplorerAllFilesSelected,
   setReverse,
   setSortKey,
   setCurrentPage,
@@ -24,10 +23,13 @@ import {
   setMapTableTabKey,
   setExplorerSelectedFiles,
   setSelectedAllExplorerFiles,
+  setDefaultTimestampKey,
+} from 'src/modules/Explorer/store/slice';
+import { selectExplorerAllFilesSelected } from 'src/modules/Explorer/store/selectors';
+import {
   useIsSelectedInExplorer,
   useExplorerFilesSelected,
-  setDefaultTimestampKey,
-} from 'src/modules/Explorer/store/explorerSlice';
+} from 'src/modules/Explorer/store/hooks';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';

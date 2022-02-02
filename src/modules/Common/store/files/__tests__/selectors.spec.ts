@@ -1,20 +1,8 @@
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { selectAllFilesSelected } from 'src/modules/Common/store/files/selectors';
-import { createFileState } from 'src/store/util/StateUtils';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
+import { VisionFilesToFileState } from 'src/store/util/StateUtils';
 
 describe('Test files reducer', () => {
-  const VisionFilesToFileState = (visionFileList: FileInfo[]) =>
-    Object.assign(
-      {},
-      ...visionFileList.map((visionFile: FileInfo) => {
-        const fileId = visionFile.id.toString();
-        return {
-          [fileId]: createFileState(visionFile),
-        };
-      })
-    );
-
   test('should return true since all files are selected', () => {
     const fileIds = [1, 2];
 

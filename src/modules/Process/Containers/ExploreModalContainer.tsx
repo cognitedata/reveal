@@ -6,15 +6,15 @@ import {
   setSelectFromExploreModalVisibility,
 } from 'src/modules/Process/processSlice';
 import {
-  selectExplorerSelectedFileIdsInSortedOrder,
   setExplorerFileSelectState,
   setExplorerModalFocusedFileId,
   setExplorerModalQueryString,
-} from 'src/modules/Explorer/store/explorerSlice';
+} from 'src/modules/Explorer/store/slice';
+import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/selectors';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { TableDataItem } from 'src/modules/Common/types';
-import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps } from '@cognite/sdk';
 import { AppDispatch } from 'src/store';
 import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
 

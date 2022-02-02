@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { v3Client as client } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
 import { getValidMimeTypesByMediaType } from 'src/api/file/fetchFiles/mimeTypeUtils';
 
@@ -23,7 +23,7 @@ export const totalFileCount = async (visionFilter: VisionFileFilterProps) => {
 
   await Promise.all(
     mimeTypes.map(async (m) => {
-      const aggregates = await client.files.aggregate({
+      const aggregates = await sdk.files.aggregate({
         filter: { ...validFilters, mimeType: m },
       });
       fileCounts.push(aggregates[0].count);

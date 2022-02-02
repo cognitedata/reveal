@@ -5,7 +5,7 @@ import commonReducer from 'src/modules/Common/store/common/slice';
 import annotationReducer from 'src/modules/Common/store/annotation/slice';
 import annotationLabelReducer from 'src/modules/Review/store/annotationLabelSlice';
 import fileDetailsSlice from 'src/modules/FileDetails/fileDetailsSlice';
-import explorerReducer from 'src/modules/Explorer/store/explorerSlice';
+import explorerReducer from 'src/modules/Explorer/store/slice';
 import processSlice from 'src/modules/Process/processSlice';
 import reviewSlice from 'src/modules/Review/store/reviewSlice';
 
