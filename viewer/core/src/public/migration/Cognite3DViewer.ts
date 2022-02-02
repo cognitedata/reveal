@@ -602,29 +602,31 @@ export class Cognite3DViewer {
    * .
    * @param model
    */
-  removeModel(model: Cognite3DModel | CognitePointCloudModel): void {
+  removeModel(model: CogniteModelBase): void {
     const modelIdx = this._models.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this.scene.remove(model);
-    this.renderController.redraw();
 
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
+        this.scene.remove(cadModel);
         this.revealManager.removeModel(model.type, cadModel.cadNode);
-        return;
+        break;
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
+        this.scene.remove(pcModel);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
-        return;
+        break;
 
       default:
         assertNever(model.type, `Model type ${model.type} cannot be removed`);
     }
+
+    this.renderController.redraw();
   }
 
   /**
