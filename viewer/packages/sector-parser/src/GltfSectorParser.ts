@@ -104,13 +104,11 @@ export class GltfSectorParser {
 
     switch (geometryType) {
       case RevealGeometryCollectionType.InstanceMesh:
-        // return undefined;
         assert(payload.instancingExtension !== undefined);
         return this.processInstancedTriangleMesh(payload);
       case RevealGeometryCollectionType.TriangleMesh:
         assert(payload.instancingExtension === undefined);
         await this.processTriangleMesh(payload);
-        // return undefined;
         break;
       default:
         assert(payload.instancingExtension !== undefined);
@@ -210,11 +208,8 @@ export class GltfSectorParser {
           throw new Error(`Failed to decode draco mesh. Error: ${status.error_msg()}`);
         }
 
-        console.log('faces: ' + dracoMesh.num_faces());
-        console.log('points: ' + dracoMesh.num_points());
-
-        console.log('Indices: ');
-        console.log(decodeIndex(decoder, dracoMesh, module));
+        const indices = decodeIndex(decoder, dracoMesh, module);
+        bufferGeometry.setIndex(new THREE.BufferAttribute(indices, 1));
         const draco_data_type = new Map<number, DataType>([
           [5120, module.DT_INT8],
           [5121, module.DT_UINT8],
@@ -223,30 +218,123 @@ export class GltfSectorParser {
           [5125, module.DT_UINT32],
           [5126, module.DT_FLOAT32]
         ]);
-        Object.keys(primitive.attributes).forEach(p => {
-          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[p]);
-          const componentType = json.accessors[primitive.attributes[p]].componentType;
-          const dracoType = draco_data_type.get(componentType)!;
-          const jsType = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
-          // console.log(dracoType);
-          // console.log(jsType);
-          const decodedAttribute = decodeAttribute(decoder, dracoMesh, dracoAttribute, dracoType, jsType, module);
-          console.log(p);
-          console.log(decodedAttribute.buffer);
+
+        const attributesBufferLength = Object.keys(primitive.attributes).map(attributeName => {
+          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[attributeName]);
+          const componentType = json.accessors[primitive.attributes[attributeName]].componentType;
+
+          return {
+            attributeName,
+            numberOfValues: dracoMesh.num_points() * dracoAttribute.num_components(),
+            componentType
+          };
         });
+
+        const cummulativeLength = attributesBufferLength.reduce(
+          (parialSum, element) =>
+            parialSum +
+            element.numberOfValues *
+              GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(element.componentType)!.BYTES_PER_ELEMENT,
+          0
+        );
+
+        const stride = attributesBufferLength
+          .map(p => {
+            const { attributeName, componentType } = p;
+            const dracoAttribute = decoder.GetAttributeByUniqueId(
+              dracoMesh,
+              dracoCompression.attributes[attributeName]
+            );
+
+            return (
+              dracoAttribute.num_components() *
+              GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!.BYTES_PER_ELEMENT
+            );
+          })
+          .reduce((partialSum, element) => partialSum + element, 0);
+
+        const ptr = module._malloc(cummulativeLength);
+
+        let cummulative = 0;
+
+        attributesBufferLength.forEach(attrData => {
+          const { attributeName, numberOfValues, componentType } = attrData;
+          const dracoType = draco_data_type.get(componentType)!;
+          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[attributeName]);
+          const byteLength =
+            numberOfValues * GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!.BYTES_PER_ELEMENT;
+          decoder.GetAttributeDataArrayForAllPoints(
+            dracoMesh,
+            dracoAttribute,
+            dracoType,
+            byteLength,
+            ptr + cummulative
+          );
+          cummulative += byteLength;
+        });
+
+        const dracoDataView = new Uint8Array(module.HEAP8.buffer, ptr, cummulativeLength);
+
+        const interleavedBuffer = new Uint8Array(new ArrayBuffer(cummulativeLength));
+
+        {
+          let offset = 0;
+          attributesBufferLength.forEach((p, n) => {
+            console.log(p.attributeName);
+            const { attributeName, componentType } = p;
+            const dracoAttribute = decoder.GetAttributeByUniqueId(
+              dracoMesh,
+              dracoCompression.attributes[attributeName]
+            );
+            const attrSize =
+              dracoAttribute.num_components() *
+              GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!.BYTES_PER_ELEMENT;
+            for (let i = 0; i < dracoMesh.num_points(); i++) {
+              const attr = dracoDataView.subarray(
+                i * attrSize + n * dracoMesh.num_points() * offset,
+                i * attrSize + n * dracoMesh.num_points() * offset + attrSize
+              );
+              interleavedBuffer.set(attr, i * stride + offset);
+            }
+            offset += attrSize;
+            console.log(offset);
+          });
+        }
+
+        const threeInterleaved = new THREE.InterleavedBuffer(interleavedBuffer, stride);
+
+        // console.log(stride);
+        console.log(dracoDataView);
+        console.log(interleavedBuffer);
+        console.log(dracoMesh.num_points());
+        module._free(ptr);
+
+        // Object.keys(primitive.attributes).forEach(p => {
+        //   const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[p]);
+        //   const componentType = json.accessors[primitive.attributes[p]].componentType;
+        //   const dracoType = draco_data_type.get(componentType)!;
+        //   const jsType = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
+        //   const decodedAttribute = decodeAttribute(decoder, dracoMesh, dracoAttribute, dracoType, jsType, module);
+        //   if (p === 'POSITION') {
+        //     bufferGeometry.setAttribute('position', new THREE.BufferAttribute(decodedAttribute, 3));
+        //   }
+        //   if (p === 'COLOR_0') {
+        //     bufferGeometry.setAttribute('color', new THREE.BufferAttribute(decodedAttribute, 4));
+        //   }
+        // });
       }
+    } else {
+      this.setIndexBuffer(payload, primitive, data, bufferGeometry);
+
+      this.setInterleavedBufferAttributes<THREE.InterleavedBuffer>(
+        payload.glbHeaderData,
+        primitive.attributes,
+        payload.data,
+        attributeNameTransformer,
+        payload.bufferGeometry,
+        THREE.InterleavedBuffer
+      );
     }
-
-    this.setIndexBuffer(payload, primitive, data, bufferGeometry);
-
-    this.setInterleavedBufferAttributes<THREE.InterleavedBuffer>(
-      payload.glbHeaderData,
-      primitive.attributes,
-      payload.data,
-      attributeNameTransformer,
-      payload.bufferGeometry,
-      THREE.InterleavedBuffer
-    );
 
     function attributeNameTransformer(attributeName: string) {
       switch (attributeName) {
@@ -270,21 +358,16 @@ export class GltfSectorParser {
       decoderModule: DecoderModule
     ): TypedArray {
       const dataType = dracoDataType;
-      const ArrayCtor = jsType;
+      const ArrayViewConstructor = jsType;
       const numComponents = attribute.num_components();
       const numPoints = mesh.num_points();
       const numValues = numPoints * numComponents;
-      const byteLength: number = numValues * ArrayCtor.BYTES_PER_ELEMENT;
+      const byteLength: number = numValues * ArrayViewConstructor.BYTES_PER_ELEMENT;
 
       const ptr = decoderModule._malloc(byteLength);
-      console.log(ptr);
       decoder.GetAttributeDataArrayForAllPoints(mesh, attribute, dataType, byteLength, ptr);
-      const array: TypedArray = new ArrayCtor(decoderModule.HEAPF32.buffer, ptr, numValues).slice();
+      const array: TypedArray = new ArrayViewConstructor(decoderModule.HEAP8.buffer, ptr, numValues).slice();
       decoderModule._free(ptr);
-
-      console.log('asdasd');
-      console.log(decoderModule.HEAP8.buffer);
-
       return array;
     }
 
@@ -295,7 +378,7 @@ export class GltfSectorParser {
       let ptr: number;
       let indices: Uint16Array | Uint32Array;
 
-      if (mesh.num_points() <= 65534) {
+      if (mesh.num_points() <= 2 ** 16) {
         const byteLength = numIndices * Uint16Array.BYTES_PER_ELEMENT;
         ptr = decoderModule._malloc(byteLength);
         decoder.GetTrianglesUInt16Array(mesh, byteLength, ptr);

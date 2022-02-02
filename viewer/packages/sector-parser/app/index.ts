@@ -96,10 +96,7 @@ async function init() {
     await Promise.all(
       buffers.map(async element => {
         const geometries = await loader.parseSector(element);
-        console.log(geometries);
-        console.log(geometries.length);
         geometries.forEach(result => {
-          console.log(result);
           const material = materialMap.get(result.type)!;
           const mesh = new THREE.Mesh(result.geometryBuffer, material);
           mesh.frustumCulled = false;

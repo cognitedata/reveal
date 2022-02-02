@@ -187,4 +187,23 @@ describe(GltfSectorParser.name, () => {
     // Quad geometry
     expect(trapeziums.attributes['position'].count).toBe(4);
   });
+
+  test('asdasdad', () => {
+    const input = { buffer: new Uint8Array([0, 1, 2, 3, 4, 5]), attributeByteLengths: [1, 2], numPoints: 2 };
+    const output = new Uint8Array(6);
+    copyLinearToInterleaved(input, output);
+
+    expect(output.toString()).toBe([0, 2, 3, 1, 4, 5].toString());
+  });
 });
+
+function copyLinearToInterleaved(
+  input: { buffer: Uint8Array; attributeByteLengths: number[]; numPoints: number },
+  output: Uint8Array
+) {
+  const stride = input.attributeByteLengths.reduce((partialSum, element) => partialSum + element, 0);
+
+  input.attributeByteLengths.forEach(attrByteLength => {
+    for (let i = 0; i < input.numPoints; i++) {}
+  });
+}
