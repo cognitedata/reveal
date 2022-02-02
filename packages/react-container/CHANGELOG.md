@@ -1,3 +1,7 @@
+## 4.0.1 Feb 2 2022
+
+- Fix bug in domain redirection of tenant-selector
+
 ## 4.0.0 Jan 27 2022
 
 - Replaced `Tenant selector with @cognite/cdf-hub-tenant-selector`
