@@ -1,9 +1,9 @@
-import type { AuthContext } from '@cognite/react-container';
 import type {
   SimconfigApiBaseStoreState,
   SimconfigApiPropertiesState,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import type { AppState } from './app/types';
 import type { GroupState } from './group/types';
 
 export enum RequestStatus {
@@ -13,8 +13,8 @@ export enum RequestStatus {
   Error,
 }
 
-export type StoreState = SimconfigApiBaseStoreState & {
-  auth?: AuthContext;
+export interface StoreState extends SimconfigApiBaseStoreState {
+  app: AppState;
   group: GroupState;
   simconfigApiProperties: SimconfigApiPropertiesState;
-};
+}

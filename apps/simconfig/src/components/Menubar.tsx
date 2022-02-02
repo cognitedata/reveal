@@ -1,18 +1,17 @@
-import { useContext } from 'react';
 import { useMatchRoute, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import { Avatar, TopBar } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
 
 import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
-import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
 export function MenuBar() {
   const project = useSelector(selectProject);
-  const { authState } = useContext(CdfClientContext);
+  const { authState } = useAuthContext();
   const matchRoute = useMatchRoute();
   const navigate = useNavigate();
 

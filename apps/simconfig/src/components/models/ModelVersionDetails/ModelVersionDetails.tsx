@@ -13,7 +13,7 @@ import {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import {
-  selectAuthToken,
+  selectAuthHeaders,
   selectBaseUrl,
   selectProject,
 } from 'store/simconfigApiProperties/selectors';
@@ -31,7 +31,7 @@ const PROCESSING_POLLING_INTERVAL = 2000; // 2 seconds
 
 export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   const project = useSelector(selectProject);
-  const token = useSelector(selectAuthToken);
+  const headers = useSelector(selectAuthHeaders);
   const baseUrl = useSelector(selectBaseUrl);
 
   const [isModelFileDownloading, setIsModelFileDownloading] = useState(false);
@@ -93,7 +93,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   }
 
   const onDownloadClicked = async () => {
-    if (!token || !baseUrl) {
+    if (!headers || !baseUrl) {
       toast.error(
         'An error occured while downloading the file, please reload the page and try again.'
       );
@@ -107,7 +107,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     });
 
     setIsModelFileDownloading(true);
-    await downloadModelFile(token, project, baseUrl, modelFile.metadata);
+    await downloadModelFile(headers, project, baseUrl, modelFile.metadata);
     setIsModelFileDownloading(false);
   };
 

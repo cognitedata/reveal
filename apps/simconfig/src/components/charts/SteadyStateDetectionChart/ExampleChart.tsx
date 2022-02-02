@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ParentSize } from '@visx/responsive';
 
@@ -6,6 +6,7 @@ import { extent } from 'd3';
 import styled from 'styled-components/macro';
 
 import { SegmentedControl, Slider } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
 import type { DatapointAggregate } from '@cognite/sdk';
 import type {
   AggregateType,
@@ -13,11 +14,10 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { SteadyStateDetectionChart } from 'components/charts/SteadyStateDetectionChart/SteadyStateDetectionChart';
-import { CdfClientContext } from 'providers/CdfClientProvider';
 import type { Datapoint } from 'utils/ssd/timeseries';
 
 export function ExampleChart() {
-  const { cdfClient } = useContext(CdfClientContext);
+  const { client } = useAuthContext();
   const [threshold, setThreshold] = useState(0);
   const [minSegmentDistance, setMinSegmentDistance] = useState(15);
   const [varianceThreshold, setVarianceThreshold] = useState(5);
@@ -32,10 +32,13 @@ export function ExampleChart() {
 
   useEffect(() => {
     async function getExampleTimeseries() {
+      if (!client) {
+        return;
+      }
       try {
         const {
           items: [{ unit, description }],
-        } = await cdfClient.timeseries.list({
+        } = await client.timeseries.list({
           filter: {
             externalIdPrefix: 'UK_PI_CFAW.003-PI011.PV',
           },
@@ -46,7 +49,7 @@ export function ExampleChart() {
         return;
       }
 
-      const [{ datapoints }] = await cdfClient.datapoints.retrieve({
+      const [{ datapoints }] = await client.datapoints.retrieve({
         items: [
           {
             externalId: 'UK_PI_CFAW.003-PI011.PV',
@@ -74,7 +77,7 @@ export function ExampleChart() {
       setStep(Math.ceil(min / 100) / 100);
     }
     void getExampleTimeseries();
-  }, [cdfClient.datapoints, cdfClient.timeseries]);
+  }, [client, client?.datapoints, client?.timeseries]);
 
   if (!cdfData.length) {
     return null;

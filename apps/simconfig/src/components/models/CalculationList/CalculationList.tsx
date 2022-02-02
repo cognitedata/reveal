@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -13,6 +13,7 @@ import {
   Skeleton,
   toast,
 } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
 import type {
   CalculationType,
   Simulator,
@@ -23,7 +24,6 @@ import {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { GraphicContainer } from 'components/shared/elements';
-import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
@@ -51,7 +51,7 @@ export function CalculationList({
   const project = useSelector(selectProject);
   const navigate = useNavigate();
   const [runModelCalculations] = useRunModelCalculationMutation();
-  const { authState } = useContext(CdfClientContext);
+  const { authState } = useAuthContext();
   const [shouldPoll, setShouldPoll] = useState<boolean>(false);
   const [triggeredRuns, setTriggeredRuns] = useState<TriggeredRunInfo>();
 

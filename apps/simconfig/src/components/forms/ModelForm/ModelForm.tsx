@@ -1,11 +1,12 @@
 import type { ChangeEvent } from 'react';
-import { useContext, useRef } from 'react';
+import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Button, Input, Select, toast } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
 import type {
   CreateMetadata,
   FileInfo,
@@ -20,7 +21,6 @@ import {
 
 import { FileInput } from 'components/forms/controls/FileInput';
 import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
-import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { isAuthenticated } from 'utils/authUtils';
 import {
@@ -74,7 +74,7 @@ export function ModelForm({
   onUpload,
 }: React.PropsWithoutRef<ComponentProps>) {
   const inputFile = useRef<HTMLInputElement>(null);
-  const { authState } = useContext(CdfClientContext);
+  const { authState } = useAuthContext();
 
   const project = useSelector(selectProject);
   const { data: simulatorsList } = useGetSimulatorsListQuery(

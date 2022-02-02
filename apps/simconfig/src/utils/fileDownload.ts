@@ -1,8 +1,9 @@
 import { toast } from '@cognite/cogs.js';
+import type { HttpHeaders } from '@cognite/sdk';
 import type { Metadata } from '@cognite/simconfig-api-sdk/rtk';
 
 export const downloadModelFile = async (
-  authToken: string,
+  headers: HttpHeaders,
   project: string,
   baseUrl: string,
   modelFileMetaData: Metadata
@@ -20,7 +21,7 @@ export const downloadModelFile = async (
     headers: new Headers({
       'Accept': '*/*',
       'Content-Type': 'application/octet-stream',
-      'Authorization': `Bearer ${authToken}`,
+      ...headers,
     }),
   });
   if (response.status >= 400) {
