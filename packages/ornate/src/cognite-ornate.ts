@@ -414,6 +414,13 @@ export class CogniteOrnate {
   };
 
   onStageMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+    this.setCursor(
+      e.target.eventListeners.click === undefined &&
+        e.target.eventListeners.dblclick === undefined
+        ? this.currentTool.cursor
+        : 'pointer'
+    );
+
     if (this.currentTool?.onMouseMove) {
       this.currentTool.onMouseMove(e);
     }
@@ -728,13 +735,6 @@ export class CogniteOrnate {
           document: doc,
         });
       });
-      rect.on('mouseenter', () => {
-        this.stage.container().style.cursor = 'pointer';
-      });
-      rect.on('mouseleave', () => {
-        this.stage.container().style.cursor =
-          this.currentTool?.cursor || 'default';
-      });
     }
     return rect;
   }
@@ -863,5 +863,11 @@ export class CogniteOrnate {
 
     // To do: replace the file name with the workspace name
     downloadURL(pdfBytes, `${fileName}.pdf`);
+  };
+
+  getCursor = (): string => this.stage.container().style.cursor;
+
+  setCursor = (cursor: string): void => {
+    this.stage.container().style.cursor = cursor;
   };
 }

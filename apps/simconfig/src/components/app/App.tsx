@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Outlet, ReactLocation, Router } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -7,13 +7,16 @@ import { routes } from 'routes';
 import styled from 'styled-components/macro';
 
 import { Loader, ToastContainer } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
 
 import { MenuBar } from 'components/Menubar';
 import { useTitle } from 'hooks/useTitle';
-import { CdfClientContext } from 'providers/CdfClientProvider';
-import { fetchGroups } from 'store/group/thunks';
+import { appSlice } from 'store/app';
+import {
+  selectIsAuthenticated,
+  selectIsInitialized,
+} from 'store/app/selectors';
 import { useAppDispatch } from 'store/hooks';
-import { selectIsAppInitialized } from 'store/selectors';
 import { simconfigApiPropertiesSlice } from 'store/simconfigApiProperties';
 import { identifyUser } from 'utils/metrics/tracking';
 import sidecar from 'utils/sidecar';
@@ -22,32 +25,50 @@ import { enhanceSimconfigApiEndpoints } from './enhanceSimconfigApiEndpoints';
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { cdfClient, authState } = useContext(CdfClientContext);
-  const isAppInitialized = useSelector(selectIsAppInitialized);
-  const project = authState?.project ?? '';
+  const { client, authState, reauthenticate } = useAuthContext();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const isInitialized = useSelector(selectIsInitialized);
 
+  simconfigApiPropertiesSlice.actions.setProperties({
+    baseUrl: sidecar.simconfigApiBaseUrl,
+  });
   enhanceSimconfigApiEndpoints();
 
   useEffect(() => {
-    void dispatch(fetchGroups(cdfClient));
-
-    if (authState?.authenticated) {
-      identifyUser(authState.email);
+    if (!client || !authState?.authenticated) {
+      return;
     }
 
-    dispatch(
-      simconfigApiPropertiesSlice.actions.setBaseUrl(
-        sidecar.simconfigApiBaseUrl
-      )
-    );
-    dispatch(
-      simconfigApiPropertiesSlice.actions.setAuthToken(authState?.token)
-    );
-    dispatch(simconfigApiPropertiesSlice.actions.setProject(project));
-  }, [authState, cdfClient, dispatch, project]);
+    identifyUser(authState.email);
 
-  if (!isAppInitialized) {
-    return <Loader />;
+    dispatch(appSlice.actions.setIsAuthenticated(true));
+
+    dispatch(
+      simconfigApiPropertiesSlice.actions.setProperties({
+        authHeaders: client.getDefaultRequestHeaders(),
+        baseUrl: sidecar.simconfigApiBaseUrl,
+        project: client.project,
+      })
+    );
+
+    dispatch(appSlice.actions.setIsInitialized(true));
+  }, [authState, client, dispatch]);
+
+  if (!client || !isInitialized) {
+    return null;
+  }
+
+  if (!isAuthenticated && reauthenticate) {
+    const handleReauth = async () => {
+      try {
+        await reauthenticate();
+      } catch (e) {
+        console.error('Re-authentication failed:', e);
+        window.location.href = '/';
+      }
+    };
+    void handleReauth();
+    return null;
   }
 
   const location = new ReactLocation();
@@ -56,7 +77,7 @@ export default function App() {
     <>
       <GlobalStyles />
       <Router
-        basepath={`/${project}`}
+        basepath={`/${client.project}`}
         defaultPendingElement={<Loader />}
         defaultPendingMs={50}
         location={location}

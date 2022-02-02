@@ -17,12 +17,13 @@ export function errorNotificationMiddleware(_api: MiddlewareAPI) {
         // Don't display notification on 404 errors
         if (
           action.payload.data?.error?.message &&
+          action.payload.status !== 401 &&
           action.payload.status !== 404
         ) {
           toast.error(
-            `Request failed: ${
-              action.payload.error?.message ?? 'Unknown error'
-            } (${action.error.message ?? '-'})`
+            `Request failed: ${action.error.message ?? '(no message)'} (${
+              action.payload.data.error.message
+            })`
           );
         }
       }

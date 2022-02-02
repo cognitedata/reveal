@@ -46,7 +46,6 @@ export class CommentTool extends Tool implements ICogniteOrnateTool {
         e.cancelBubble = true;
 
         const evt = new CustomEvent('onCommentClick', { detail: image });
-
         document.dispatchEvent(evt);
       });
     });
@@ -91,11 +90,9 @@ export class CommentTool extends Tool implements ICogniteOrnateTool {
 
     image.on('mouseover', () => {
       this.hoveringCommentIcon = true;
-      this.ornateInstance.stage.container().style.cursor = 'pointer';
     });
     image.on('mouseleave', () => {
       this.hoveringCommentIcon = false;
-      this.ornateInstance.stage.container().style.cursor = this.cursor;
     });
 
     if (!this.group) {

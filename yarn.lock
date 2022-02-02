@@ -3162,10 +3162,10 @@
     typedoc-plugin-markdown "^2.3.1"
     xhr2 "^0.2.0"
 
-"@cognite/simconfig-api-sdk@0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-0.5.2.tgz#105f26f98282ad9d8247531882a74839eed4736f"
-  integrity sha512-XzQZO5yiw0bcfvLtxwnhQyhxLd8t0gtKIm7tl0glzygXJ12z1bnhc1KsdngZTika9cwtC7CiFBtVV9yyWDxqWw==
+"@cognite/simconfig-api-sdk@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-0.6.0.tgz#8051de48909987146cf518c799064fc4e09987c1"
+  integrity sha512-ylVnI8RceGFAflmq/7RBJCpPmhIJedHagsG2UCkM7hcRtkiJ2GrURH9gWMmyRr3oCUn15/CY63iFMx7Iu+orcQ==
 
 "@cognite/subsurface-interfaces@0.0.3":
   version "0.0.3"

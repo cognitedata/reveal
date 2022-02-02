@@ -2,10 +2,10 @@ import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { Button, Label } from '@cognite/cogs.js';
 import { GeoJsonGeometryTypes } from '@cognite/seismic-sdk-js';
 
-import { CLEAR_ALL_TEXT } from 'components/tableEmpty/constants';
+import { FilterClearAllButton } from 'components/buttons/FilterClearAllButton';
+import { SelectedFilterLabel } from 'components/labels/SelectedFilterLabel';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentAppliedFilterEntries } from 'modules/api/documents/hooks/useDocumentAppliedFilters';
 import { useDocumentFormatFilter } from 'modules/api/documents/hooks/useDocumentFormatFilter';
@@ -213,30 +213,13 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
       onClick: () => void
     ) => (
       <TagWrapper key={key}>
-        <Label
-          key={key}
-          size="medium"
-          variant="default"
-          icon="Close"
-          iconPlacement="right"
-          onClick={onClick}
-          data-testid="filter-tag"
-        >
-          {tag}
-        </Label>
+        <SelectedFilterLabel onClick={onClick} key={key} tag={tag} />
       </TagWrapper>
     );
 
     const createClearAllTagElement = (onClick: () => void) => (
       <TagWrapper>
-        <Button
-          type="secondary"
-          size="small"
-          onClick={onClick}
-          data-testid="clear-all-filter-button"
-        >
-          {CLEAR_ALL_TEXT}
-        </Button>
+        <FilterClearAllButton onClick={onClick} />
       </TagWrapper>
     );
 

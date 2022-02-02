@@ -17,11 +17,43 @@ import {
   MD_ELEVATION_TEXT,
   TVD,
   WATER_DEPTH,
+  DATA_SOURCE,
+  NDS_SEVERITY,
+  NDS_PROBABILITY,
+  NPT_DURATION,
 } from '../../../src/modules/wellSearch/constantsSidebarFilters';
+import { ISODateRegex } from '../../../src/utils/isISODateRegex';
 
 const SELECT_TEXT = 'Select...';
 
-describe('Wells: Sidebar filters', () => {
+const checkRequestContainsFilter = (expectedFilter: unknown) => {
+  cy.wait('@searchWells')
+    .its('request.body.filter')
+    .should((body) => {
+      return assert.deepInclude(body, expectedFilter);
+    });
+};
+
+const checkSpudDateFilter = () => {
+  cy.wait('@searchWells')
+    .its('request.body.filter')
+    .should((body) => {
+      expect(body.spudDate).haveOwnProperty('min');
+      expect(body.spudDate).haveOwnProperty('max');
+      expect(body.spudDate.min).match(ISODateRegex);
+      expect(body.spudDate.max).match(ISODateRegex);
+      expect(new Date(body.spudDate.min).getFullYear()).eq(2021);
+      expect(new Date(body.spudDate.max).getFullYear()).eq(2021);
+
+      expect(new Date(body.spudDate.min).getMonth()).eq(6);
+      expect(new Date(body.spudDate.max).getMonth()).eq(6);
+
+      expect(new Date(body.spudDate.min).getDate()).eq(1);
+      expect(new Date(body.spudDate.max).getDate()).eq(10);
+    });
+};
+
+describe('Wells sidebar filters', () => {
   beforeEach(() => {
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
@@ -34,26 +66,28 @@ describe('Wells: Sidebar filters', () => {
   });
 
   it('Should display wells sidebar filters and results properly', () => {
-    cy.log(`Click Source filter and check`);
-    cy.findByTestId('side-bar')
-      .contains('Source')
-      .as('source')
-      .should('be.visible')
-      .click();
+    cy.intercept({
+      url: '**/wdl/wells/list',
+      method: 'POST',
+    }).as('searchWells');
+
+    cy.clickOnFilter(DATA_SOURCE);
 
     cy.log('Checking source values');
     cy.contains('callisto').should('be.visible').click();
     cy.contains('volve').should('be.visible');
+    checkRequestContainsFilter({ sources: ['callisto'] });
+
+    cy.log('Checking visibility of selected source');
+    cy.findAllByTestId('filter-tag')
+      .contains(`${DATA_SOURCE} : callisto`)
+      .as('sourec-callisto')
+      .should('be.visible');
 
     cy.log('Minimize source section');
-    cy.get('@source').click();
+    cy.clickOnFilter(DATA_SOURCE);
 
-    cy.log(`Expand ${FIELD_BLOCK_OPERATOR} section and check visibility`);
-    cy.findByTestId('side-bar')
-      .contains(FIELD_BLOCK_OPERATOR)
-      .as('region-field')
-      .should('be.visible')
-      .click();
+    cy.clickOnFilter(FIELD_BLOCK_OPERATOR);
 
     cy.log('Expand region filter and check visibility');
     cy.findAllByTestId('filter-item-wrapper')
@@ -67,6 +101,13 @@ describe('Wells: Sidebar filters', () => {
     cy.log('Check dropdown values');
     cy.contains('Discover').should('be.visible');
     cy.contains('Jovian System').should('be.visible').click();
+
+    checkRequestContainsFilter({
+      region: {
+        isSet: true,
+        oneOf: ['Jovian System'],
+      },
+    });
 
     cy.log('Expand `Field` section with visibility check');
     cy.get('@filter-items')
@@ -86,158 +127,466 @@ describe('Wells: Sidebar filters', () => {
       .contains('Pretty Polly ASA')
       .should('be.visible')
       .click();
+    checkRequestContainsFilter({
+      operator: {
+        isSet: true,
+        oneOf: ['Pretty Polly ASA'],
+      },
+    });
 
-    cy.get('@field').contains(SELECT_TEXT).should('be.visible').click();
+    cy.get('@field')
+      .contains(SELECT_TEXT)
+      .should('be.visible')
+      .click({ force: true });
 
     cy.log('Check visibility of drop-down values');
     cy.contains('Carme').should('be.visible');
     cy.contains('Erinome').should('be.visible').click();
+    checkRequestContainsFilter({
+      field: {
+        isSet: true,
+        oneOf: ['Erinome'],
+      },
+    });
 
-    cy.log('Minimize section');
-    cy.get('@region-field').click();
+    /**
+     * Block is not covered with test yet, missing data
+     * */
 
-    cy.log(`Expand ${WELL_CHARACTERISTICS} filter`);
-    cy.findByTestId('side-bar')
-      .contains(WELL_CHARACTERISTICS)
-      .as('wel-characteristics')
-      .should('be.visible')
-      .click();
+    cy.log('Checking visibility of selected field');
+    cy.findAllByTestId('filter-tag')
+      .contains(`${FIELD} : Erinome`)
+      .should('be.visible');
+
+    cy.clickOnFilter(FIELD_BLOCK_OPERATOR);
+
+    cy.clickOnFilter(WELL_CHARACTERISTICS);
 
     cy.log(
       `Check visibility and expand ${WELL_TYPE} filter inside ${WELL_CHARACTERISTICS}`
     );
     cy.findAllByTestId('filter-item-wrapper')
-      .eq(5)
-      .as('well-type')
       .contains(WELL_TYPE)
-      .should('be.visible');
-    cy.get('@well-type').contains(SELECT_TEXT).click();
+      .should('be.visible')
+      .siblings()
+      .first()
+      .click();
 
     cy.log('Checking last value of the dropdown and minimize');
-    cy.contains('shallow').should('be.visible');
-    cy.get('@well-type').contains(SELECT_TEXT).click();
+    cy.contains('shallow').should('be.visible').click();
+    checkRequestContainsFilter({
+      wellType: {
+        isSet: true,
+        oneOf: ['shallow'],
+      },
+    });
 
     cy.log(`Checking visibility of ${WELL_CHARACTERISTICS} filters`);
     cy.findAllByTestId('filter-item-wrapper')
-      .eq(6)
       .contains(KB_ELEVATION_TEXT)
+      .as('kb-elevation')
+      .scrollIntoView()
       .should('be.visible');
 
+    // move first slider to the right 2 times
+    cy.get('@kb-elevation')
+      .siblings()
+      .first()
+      .findAllByRole('slider')
+      .first()
+      .click()
+      .type('{rightarrow}{rightarrow}');
+
+    checkRequestContainsFilter({
+      datum: {
+        min: 2,
+        max: 100,
+        unit: 'foot',
+      },
+    });
+
+    // move second slider to the left 5 times
+    cy.get('@kb-elevation')
+      .siblings()
+      .first()
+      .findAllByRole('slider')
+      .last()
+      .click()
+      .type('{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}');
+
+    checkRequestContainsFilter({
+      datum: {
+        min: 2,
+        max: 95,
+        unit: 'foot',
+      },
+    });
+
     cy.findAllByTestId('filter-item-wrapper')
-      .eq(7)
-      .as('md-elevation')
       .contains(MD_ELEVATION_TEXT)
-      .should('be.visible');
+      .scrollIntoView()
+      .should('be.visible')
+      .as('md-elevation');
+
+    // move first slider to the right 1 time
+    cy.get('@md-elevation')
+      .siblings()
+      .first()
+      .findAllByRole('slider')
+      .first()
+      .as('firstSlider');
+
+    cy.get('@firstSlider').click().type('{rightarrow}');
+
+    checkRequestContainsFilter({
+      trajectories: {
+        maxMeasuredDepth: {
+          min: 1,
+          max: 50000,
+          unit: 'foot',
+        },
+      },
+    });
 
     cy.findAllByTestId('filter-item-wrapper')
-      .eq(8)
       .contains(TVD)
-      .should('be.visible');
+      .scrollIntoView()
+      .should('be.visible')
+      .as('tvd');
+
+    cy.get('@tvd')
+      .siblings()
+      .first()
+      .findAllByRole('slider')
+      .last()
+      .click()
+      .type('{leftArrow}{leftArrow}');
+    checkRequestContainsFilter({
+      trajectories: {
+        maxMeasuredDepth: {
+          min: 1,
+          max: 50000,
+          unit: 'foot',
+        },
+        maxTrueVerticalDepth: {
+          min: 0,
+          max: 49998,
+          unit: 'foot',
+        },
+      },
+    });
 
     cy.findAllByTestId('filter-item-wrapper')
-      .eq(9)
       .contains(DOGLEG_SEVERITY)
-      .should('be.visible');
+      .scrollIntoView()
+      .should('be.visible')
+      .as('doglegSeverity');
+
+    cy.get('@doglegSeverity')
+      .siblings()
+      .first()
+      .findAllByRole('slider')
+      .first()
+      .click()
+      .type('{rightarrow}');
+
+    checkRequestContainsFilter({
+      trajectories: {
+        maxMeasuredDepth: {
+          min: 1,
+          max: 50000,
+          unit: 'foot',
+        },
+        maxTrueVerticalDepth: {
+          min: 0,
+          max: 49998,
+          unit: 'foot',
+        },
+        maxDoglegSeverity: {
+          min: 1,
+          max: 100,
+          unit: {
+            angleUnit: 'degree',
+            distanceUnit: 'foot',
+          },
+        },
+      },
+    });
 
     cy.findAllByTestId('filter-item-wrapper')
-      .eq(10)
-      .as('water-depth')
+      .contains(DOGLEG_SEVERITY)
+      .siblings()
+      .last()
+      .findByTestId('to')
+      .type('{selectAll}50{enter}');
+    checkRequestContainsFilter({
+      trajectories: {
+        maxMeasuredDepth: {
+          min: 1,
+          max: 50000,
+          unit: 'foot',
+        },
+        maxTrueVerticalDepth: {
+          min: 0,
+          max: 49998,
+          unit: 'foot',
+        },
+        maxDoglegSeverity: {
+          min: 1,
+          max: 50,
+          unit: {
+            angleUnit: 'degree',
+            distanceUnit: 'foot',
+          },
+        },
+      },
+    });
+
+    cy.findAllByTestId('filter-item-wrapper')
       .contains(WATER_DEPTH)
-      .should('be.visible');
+      .as('water-depth');
 
     cy.get('@water-depth')
+      .siblings()
+      .last()
       .findByTestId('from')
-      .type('{backspace}{backspace}{backspace}950');
+      .type('{backspace}{backspace}{backspace}950{enter}');
+
+    checkRequestContainsFilter({
+      waterDepth: {
+        min: 9500,
+        max: 9843,
+        unit: 'foot',
+      },
+    });
 
     cy.findAllByTestId('filter-item-wrapper')
-      .eq(11)
       .contains(SPUD_DATE)
-      .should('be.visible');
+      .as('spudDate');
+
+    cy.get('@spudDate')
+      .siblings()
+      .first()
+      .findByPlaceholderText('From')
+      .click();
+
+    const currentMonth = new Date().toLocaleString('default', {
+      month: 'long',
+    });
+    const currentYear = new Date().getFullYear();
+
+    cy.findByDisplayValue(currentYear).should('exist').select('2021');
+    cy.findByDisplayValue(currentMonth).should('exist').select('July');
+    // accessing by class is wrong, but there was no other option in this case, until COGS provides a better accessor
+    cy.get('.rdrDayNumber').contains('1').click();
+    cy.get('.rdrDayNumber').contains('10').click();
+    cy.findByRole('button', { name: 'Apply' }).click();
+    checkSpudDateFilter();
 
     cy.findAllByTestId('filter-item-wrapper')
-      .eq(12)
-      .scrollIntoView()
       .contains(MAXIMUM_INCLINATION_ANGLE)
-      .should('be.visible');
+      .siblings()
+      .last()
+      .findByTestId('from')
+      .type('100{enter}');
 
-    cy.log(`Minimize ${WELL_CHARACTERISTICS} filter`);
-    cy.get('@wel-characteristics').click();
+    checkRequestContainsFilter({
+      trajectories: {
+        maxMeasuredDepth: {
+          min: 1,
+          max: 50000,
+          unit: 'foot',
+        },
+        maxTrueVerticalDepth: {
+          min: 0,
+          max: 49998,
+          unit: 'foot',
+        },
+        maxDoglegSeverity: {
+          min: 1,
+          max: 50,
+          unit: {
+            angleUnit: 'degree',
+            distanceUnit: 'foot',
+          },
+        },
+        maxInclination: {
+          min: 100,
+          max: 180,
+          unit: 'degree',
+        },
+      },
+    });
 
-    cy.log(`Check visibility and expand ${MEASUREMENTS} filter`);
-    cy.findByTestId('side-bar')
-      .contains(MEASUREMENTS)
-      .as('measurements')
-      .should('be.visible')
-      .click();
+    cy.clickOnFilter(WELL_CHARACTERISTICS);
+    cy.clickOnFilter(MEASUREMENTS);
 
     cy.log('Check visibility of last value in measurement drop-down');
-    cy.findAllByTestId('filter-item-wrapper').eq(13).click();
-    cy.contains('salinity').scrollIntoView().should('be.visible');
-
+    cy.findByTestId('Measurements').findByText(SELECT_TEXT).click();
+    cy.contains('salinity').scrollIntoView().should('be.visible').click();
+    checkRequestContainsFilter({
+      depthMeasurements: {
+        containsAny: [
+          {
+            measurementType: 'salinity',
+          },
+        ],
+      },
+    });
     cy.log(`Minimize ${MEASUREMENTS} filter`);
-    cy.findAllByTestId('filter-item-wrapper').eq(13).click();
-    cy.get('@measurements').click();
+    // cy.findAllByTestId('filter-item-wrapper').eq(13).click();
+    cy.clickOnFilter(MEASUREMENTS);
 
-    cy.log('Check visibility and expand `NDS` filter');
-    cy.findByTestId('side-bar')
-      .contains(NDS_RISKS)
-      .as('nds')
-      .should('be.visible')
-      .click();
+    cy.clickOnFilter(NDS_RISKS);
 
     cy.log(`Check visibility and expand ${NDS_RISKS_TYPE}`);
-    cy.findAllByTestId('filter-item-wrapper')
-      .eq(14)
+    cy.findByTestId(NDS_RISKS)
+      .findAllByTestId('filter-item-wrapper')
+      .as('ndsFilters')
+      .first()
       .as('nds-risk')
       .contains(NDS_RISKS_TYPE)
       .should('be.visible');
     cy.get('@nds-risk').contains(SELECT_TEXT).click();
+    cy.findByText('Hydraulics').click();
+    checkRequestContainsFilter({
+      nds: {
+        exists: true,
+        riskTypes: {
+          containsAny: ['Hydraulics'],
+        },
+      },
+    });
 
-    cy.log('Check visibility of last value of drop-down');
-    cy.contains('Wellbore stability').scrollIntoView().should('be.visible');
-
-    cy.log('Minimize `NDS` filter');
-    cy.get('@nds').click();
-
-    cy.log('Check visibility and expand `NPT` filter');
-    cy.findByTestId('side-bar')
-      .contains(NPT_EVENTS)
-      .as('npt')
-      .should('be.visible')
+    cy.get('@ndsFilters').eq(1).contains(NDS_SEVERITY);
+    cy.get('@ndsFilters')
+      .eq(1)
+      .findAllByTestId('filter-checkbox-label')
+      .eq(2)
       .click();
 
+    checkRequestContainsFilter({
+      nds: {
+        exists: true,
+        riskTypes: {
+          containsAny: ['Hydraulics'],
+        },
+        severities: {
+          containsAny: [2],
+        },
+      },
+    });
+
+    cy.get('@ndsFilters').eq(2).contains(NDS_PROBABILITY);
+    cy.get('@ndsFilters')
+      .eq(2)
+      .findAllByTestId('filter-checkbox-label')
+      .last()
+      .click();
+
+    checkRequestContainsFilter({
+      nds: {
+        exists: true,
+        riskTypes: {
+          containsAny: ['Hydraulics'],
+        },
+        severities: {
+          containsAny: [2],
+        },
+        probabilities: {
+          containsAny: [5],
+        },
+      },
+    });
+
+    cy.clickOnFilter(NDS_RISKS);
+
+    cy.clickOnFilter(NPT_EVENTS);
+
+    cy.findByTestId(NPT_EVENTS)
+      .findAllByTestId('filter-item-wrapper')
+      .as('nptFilters');
+
+    cy.get('@nptFilters')
+      .first()
+      .as('nptDurationFilter')
+      .contains(NPT_DURATION);
+    cy.get('@nptDurationFilter')
+      .findAllByRole('slider')
+      .first()
+      .click()
+      .type('{rightarrow}{rightarrow}{rightarrow}{rightarrow}');
+    checkRequestContainsFilter({
+      npt: {
+        duration: {
+          min: 4,
+          max: 10,
+          unit: 'hour',
+        },
+        exists: true,
+      },
+    });
+
     cy.log(`Check visibility and expand ${NPT_CODE} filter`);
-    cy.findAllByTestId('filter-item-wrapper')
-      .eq(18)
-      .as('npt-code')
-      .contains(NPT_CODE)
-      .should('be.visible');
-    cy.get('@npt-code').contains(SELECT_TEXT).click();
-
-    cy.log('Scrolldown main sidebar container');
-
-    cy.log(`Check visibility of last value of ${NPT_CODE} filter`);
-    cy.contains('TESTC').scrollIntoView().should('be.visible');
-
-    cy.log(`Minimize ${NPT_CODE} filter`);
-    cy.get('@npt-code').contains(SELECT_TEXT).click();
+    cy.get('@nptFilters').eq(1).as('nptCode');
+    cy.get('@nptCode').contains(NPT_CODE);
+    cy.get('@nptCode').contains(SELECT_TEXT).click();
+    cy.findByText('TESTC').click();
+    checkRequestContainsFilter({
+      npt: {
+        duration: {
+          min: 4,
+          max: 10,
+          unit: 'hour',
+        },
+        nptCodes: {
+          containsAll: ['TESTC'],
+        },
+        exists: true,
+      },
+    });
 
     cy.log(`Check visibility and expand ${NPT_DETAIL_CODE} filter`);
-    cy.findAllByTestId('filter-item-wrapper')
-      .eq(19)
-      .as('npt-detail-code')
-      .contains(NPT_DETAIL_CODE)
-      .should('be.visible');
-    cy.get('@npt-detail-code').contains(SELECT_TEXT).click();
 
-    cy.log('Check visibility of last value of the dropdown');
-    cy.contains('XTRE').scrollIntoView().should('be.visible').click();
+    cy.get('@nptFilters').eq(2).as('nptDetailCode');
+    cy.get('@nptDetailCode').contains(NPT_DETAIL_CODE);
+    cy.get('@nptDetailCode').contains(SELECT_TEXT).click();
+    cy.findByText('BARR').click();
+    checkRequestContainsFilter({
+      npt: {
+        nptCodeDetails: {
+          containsAll: ['BARR'],
+        },
+        duration: {
+          min: 4,
+          max: 10,
+          unit: 'hour',
+        },
+        nptCodes: {
+          containsAll: ['TESTC'],
+        },
+        exists: true,
+      },
+    });
 
-    cy.log('Minimize NPT filter');
-    cy.get('@npt').click();
+    cy.clickOnFilter(NPT_EVENTS);
 
-    cy.findByTestId('well-result-table')
-      .findAllByTestId('table-row')
-      .should('have.length', 1);
+    cy.log('Clear all selected filters');
+    cy.findByTestId('clear-all-btn').click();
+
+    cy.log('Selecting filters for check filter labels');
+    cy.clickOnFilter(DATA_SOURCE);
+    cy.contains('callisto').should('be.visible').click();
+    cy.clickOnFilter(FIELD_BLOCK_OPERATOR);
+    cy.get('@region').contains(SELECT_TEXT).should('be.visible').click();
+    cy.contains('Jovian System').should('be.visible').click();
+
+    cy.log('Remove selected filter');
+    cy.get('@sourec-callisto').click();
+    cy.get('@sourec-callisto').should('not.exist');
+
+    cy.log('Remove all selected filters');
+    cy.findAllByTestId('clear-all-filter-button').should('be.visible').click();
+    cy.findAllByTestId('filter-tag').should('not.exist');
   });
 });

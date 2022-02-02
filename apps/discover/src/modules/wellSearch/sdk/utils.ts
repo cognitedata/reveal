@@ -38,6 +38,7 @@ import {
   Npt as NPTV3,
   DurationRange,
   SummaryCount,
+  AngleUnitEnum,
 } from '@cognite/sdk-wells-v3';
 
 import { CommonWellFilter } from '../types';
@@ -162,8 +163,15 @@ export const mapV2toV3WellFilter = (
       maxMeasuredDepth: wellFilter.hasTrajectory?.maxMeasuredDepth,
       maxTrueVerticalDepth: wellFilter.trajectories?.maxTrueVerticalDepth,
       maxDoglegSeverity: wellFilter.trajectories?.maxDoglegSeverity,
+      maxInclination: wellFilter.hasTrajectory?.maxInclination
+        ? {
+            ...wellFilter.hasTrajectory?.maxInclination,
+            unit: AngleUnitEnum.Degree,
+          }
+        : undefined,
     }),
     datum: wellFilter.datum,
+    depthMeasurements: wellFilter.hasMeasurements,
   } as WellFilterV3;
 
   if (wellFilter.npt && !isEmpty(wellFilter.npt)) {

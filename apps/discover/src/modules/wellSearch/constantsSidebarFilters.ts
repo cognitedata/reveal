@@ -14,7 +14,10 @@ export const WELL_TYPE = 'Well Type';
 export const SPUD_DATE = 'Spud Date';
 export const MAXIMUM_INCLINATION_ANGLE = 'Maximum Inclination Angle (o)';
 export const NDS_RISKS_TYPE = 'NDS Risk Type';
+export const NDS_SEVERITY = 'NDS Severity';
+export const NDS_PROBABILITY = 'NDS Probability';
 export const NPT_CODE = 'NPT Code';
+export const NPT_DURATION = 'NPT Duration';
 export const NPT_DETAIL_CODE = 'NPT Detail Code';
 export const REGION = 'Region';
 

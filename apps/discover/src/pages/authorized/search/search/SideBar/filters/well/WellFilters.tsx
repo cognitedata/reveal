@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 
 import Skeleton from 'components/skeleton';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -63,14 +65,16 @@ export const WellsFilter = () => {
       [id]: selectedVals,
     });
 
-    // setChangedCategories((state) => ({ ...state, [filterCategory]: true }));
     setFilterCalled(true);
     metrics.track('click-sidebar-wells-filter', {
       filter: filterGroupName,
       value: selectedVals,
     });
 
-    const filtersToApply = { ...filters, ...{ [id]: selectedVals } };
+    const filtersToApply = isEmpty(selectedVals)
+      ? omit(filters, id)
+      : { ...filters, ...{ [id]: selectedVals } };
+
     setWellsFilters(filtersToApply);
   };
 
@@ -116,7 +120,9 @@ export const WellsFilter = () => {
         key={category.title}
       >
         {/* Filter Elements */}
-        <WellFilters filterConfigs={category.filterConfigs} index={index} />
+        <div data-testid={category.title}>
+          <WellFilters filterConfigs={category.filterConfigs} index={index} />
+        </div>
       </FilterCollapse.Panel>
     ));
   }, [

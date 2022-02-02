@@ -29,6 +29,9 @@ import {
   TVD,
   DOGLEG_SEVERITY,
   WATER_DEPTH,
+  NDS_SEVERITY,
+  NDS_PROBABILITY,
+  NPT_DURATION,
 } from '../constantsSidebarFilters';
 import {
   getNDSRiskTypes,
@@ -314,7 +317,7 @@ export const filterConfigs = (
   {
     id: FilterIDs.NDS_SEVERITY,
     key: 'nds_filter',
-    name: 'NDS Severity',
+    name: NDS_SEVERITY,
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
     fetcher: () => Promise.resolve([0, 1, 2, 3, 4]),
@@ -327,7 +330,7 @@ export const filterConfigs = (
   {
     id: FilterIDs.NDS_PROBABILITY,
     key: 'nds_filter',
-    name: 'NDS Probability',
+    name: NDS_PROBABILITY,
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
     fetcher: () => Promise.resolve([0, 1, 2, 3, 4, 5]),
@@ -339,7 +342,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.NPT_DURATION,
-    name: 'NPT Duration (hrs)',
+    name: `${NPT_DURATION} (hrs)`,
     key: 'npt_filter',
     category: NPT_EVENTS,
     type: FilterTypes.NUMERIC_RANGE,

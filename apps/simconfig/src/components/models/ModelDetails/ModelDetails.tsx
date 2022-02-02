@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 
 import styled from 'styled-components/macro';
@@ -12,6 +12,7 @@ import {
   Tabs,
   toast,
 } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
 import type { Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useGetModelFileQuery,
@@ -21,7 +22,6 @@ import {
 import { ModelForm } from 'components/forms/ModelForm';
 import { CalculationList, ModelVersionList } from 'components/models';
 import { useTitle } from 'hooks/useTitle';
-import { CdfClientContext } from 'providers/CdfClientProvider';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 import { isSuccessResponse } from 'utils/responseUtils';
@@ -47,7 +47,7 @@ export function ModelDetails({
 
   const navigate = useNavigate();
   const [showCalculations, setShowCalculations] = useState('configured');
-  const { authState } = useContext(CdfClientContext);
+  const { authState } = useAuthContext();
 
   const [runModelCalculations] = useRunModelCalculationMutation();
 

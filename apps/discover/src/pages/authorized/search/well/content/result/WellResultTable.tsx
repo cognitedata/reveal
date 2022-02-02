@@ -32,6 +32,7 @@ import { SearchTableResultActionContainer } from 'pages/authorized/search/elemen
 import { generateWellColumns } from 'pages/authorized/search/well/utils';
 import { FlexRow } from 'styles/layout';
 
+import { WellAppliedFilters } from '../../filters/WellAppliedFilters';
 import { WellOptionPanel } from '../WellOptionPanel';
 
 import { WellsContainer } from './elements';
@@ -215,7 +216,10 @@ export const WellResultTable: React.FC = () => {
   return (
     <WellsContainer>
       <SearchTableResultActionContainer>
-        <SearchBreadcrumb stats={wellsStats} />
+        <div>
+          <SearchBreadcrumb stats={wellsStats} />
+          <WellAppliedFilters showClearTag />
+        </div>
         <WellOptionPanel />
       </SearchTableResultActionContainer>
       <Table<Well>

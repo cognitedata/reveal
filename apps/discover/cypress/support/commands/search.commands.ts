@@ -94,6 +94,15 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('clickOnFilter', (filterName: string) => {
+  cy.log(`Click on ${filterName}`);
+  cy.findByTestId('side-bar')
+    .contains(filterName)
+    .scrollIntoView()
+    .should('be.visible')
+    .click();
+});
+
 type WellSearch = {
   search?: {
     query?: string;
@@ -124,4 +133,5 @@ export interface SearchCommands {
   clearAllFilters(): void;
   performWellsSearch(search: WellSearch): void;
   goToTab(tab: 'Documents' | 'Wells' | 'Seismic'): void;
+  clickOnFilter(filter: string): void;
 }
