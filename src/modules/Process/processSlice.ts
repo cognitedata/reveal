@@ -304,10 +304,21 @@ const processSlice = createGenericTabularDataSlice({
           if (state.files.byId[fileId]) {
             const { jobIds } = state.files.byId[fileId];
             jobIds.forEach((jobId) => {
-              delete state.jobs.byId[jobId];
-              state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
-                parseInt(id, 10)
+              const job = state.jobs.byId[jobId];
+              const otherFilesInJob = job.fileIds.filter(
+                (otherFileId) => otherFileId !== fileId
               );
+              if (
+                otherFilesInJob.every(
+                  (otherFileId) => !state.files.byId[otherFileId]
+                )
+              ) {
+                // if every other file of the job is deleted
+                delete state.jobs.byId[jobId];
+                state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
+                  parseInt(id, 10)
+                );
+              }
             });
           }
 
