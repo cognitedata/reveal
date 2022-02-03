@@ -204,20 +204,10 @@ const processSlice = createGenericTabularDataSlice({
       state.availableDetectionModels[modelIndex].modelName = modelName;
     },
     removeJobById(state, action: PayloadAction<number>) {
-      const existingJob = state.jobs.byId[action.payload];
-      if (existingJob) {
-        const { fileIds } = existingJob;
-        fileIds.forEach((id) => {
-          const file = state.files.byId[id];
-          if (file && file.jobIds.includes(action.payload)) {
-            state.files.byId[id].jobIds = file.jobIds.filter(
-              (jid) => jid !== action.payload
-            );
-          }
-        });
-      }
+      removeJobFromFiles(state, action.payload);
+
       delete state.jobs.byId[action.payload];
-      state.files.allIds = Object.keys(state.files.byId).map((id) =>
+      state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
         parseInt(id, 10)
       );
     },
@@ -278,15 +268,7 @@ const processSlice = createGenericTabularDataSlice({
       const queuedJob = state.jobs.byId[getFakeQueuedJob(modelType).jobId];
 
       if (queuedJob) {
-        // remove or update queued job
-        fileIds.forEach((id) => {
-          const file = state.files.byId[id];
-          if (file && file.jobIds.includes(queuedJob.jobId)) {
-            state.files.byId[id].jobIds = file.jobIds.filter(
-              (jid) => jid !== queuedJob.jobId
-            );
-          }
-        });
+        removeJobFromFiles(state, queuedJob.jobId);
 
         const filteredFileIds = queuedJob.fileIds.filter(
           (fid) => !fileIds.includes(fid)
@@ -295,6 +277,9 @@ const processSlice = createGenericTabularDataSlice({
 
         if (!filteredFileIds.length) {
           delete state.jobs.byId[queuedJob.jobId];
+          state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
+            parseInt(id, 10)
+          );
         }
       }
 
@@ -388,6 +373,24 @@ export const {
 
 export default processSlice.reducer;
 
+/* eslint-disable  no-param-reassign */
+const removeJobFromFiles = (state: State, jobId: number) => {
+  const existingJob = state.jobs.byId[jobId];
+
+  if (existingJob && existingJob.fileIds && existingJob.fileIds.length) {
+    const { fileIds } = existingJob;
+
+    fileIds.forEach((id) => {
+      const file = state.files.byId[id];
+      if (file && file.jobIds.includes(jobId)) {
+        state.files.byId[id].jobIds = file.jobIds.filter(
+          (jid) => jid !== jobId
+        );
+      }
+    });
+  }
+};
+
 const addJobToState = (
   state: State,
   fileIds: number[],
@@ -396,7 +399,6 @@ const addJobToState = (
   completedFileIds?: number[],
   failedFileIds?: number[]
 ) => {
-  /* eslint-disable  no-param-reassign */
   const jobState: JobState = {
     ...job,
     fileIds,
@@ -456,9 +458,8 @@ const addJobToState = (
       parseInt(id, 10)
     );
   }
-  /* eslint-enable  no-param-reassign */
 };
-
+/* eslint-enable  no-param-reassign */
 // selectors
 
 export const selectAllFilesDict = (

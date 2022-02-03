@@ -32,7 +32,7 @@ export abstract class BaseDetectionModelDataProvider
         throw new Error(JSON.stringify(response));
       })
       .catch((error) => {
-        throw new Error(JSON.stringify(error.errorMessage));
+        throw new Error(JSON.stringify(error.errorMessage || error.message));
       });
   }
 
@@ -46,7 +46,7 @@ export abstract class BaseDetectionModelDataProvider
         throw new Error(JSON.stringify(response));
       })
       .catch((error) => {
-        throw new Error(JSON.stringify(error.errorMessage));
+        throw new Error(JSON.stringify(error.errorMessage) || error.message);
       });
   }
 }

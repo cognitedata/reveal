@@ -10,7 +10,7 @@ type Options<T> = {
   /* intermediate response that doesn't pass isCompleted check */
   onTick?: (data: T) => unknown;
 
-  onError?: (error: unknown) => unknown;
+  onError?: (error: Error) => unknown;
 
   pollingInterval?: number;
 };

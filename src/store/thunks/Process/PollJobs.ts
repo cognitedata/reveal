@@ -4,6 +4,7 @@ import { AnnotationJob } from 'src/api/types';
 import { JobState, removeJobById } from 'src/modules/Process/processSlice';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { fetchUntilComplete } from 'src/utils';
+import { ToastUtils } from 'src/utils/ToastUtils';
 import { AnnotationDetectionJobUpdate } from './AnnotationDetectionJobUpdate';
 
 export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
@@ -54,10 +55,20 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
             }
           },
 
-          onError: (error) => {
-            dispatch(removeJobById(job.jobId));
+          onError: (error: Error) => {
+            const formatedError = `Error occurred while fetching jobs: ${JSON.stringify(
+              error.message,
+              null,
+              4
+            )}`;
+            ToastUtils.onFailure(formatedError);
+
+            if (job.status === 'Queued' && job.jobId < 0) {
+              dispatch(removeJobById(job.jobId));
+            }
+
             // eslint-disable-next-line no-console
-            console.error(error); // todo better error handling of polling errors
+            console.error(error);
           },
         }
       );
