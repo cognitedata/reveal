@@ -73,11 +73,12 @@ export class CameraManager {
   constructor(
     camera: THREE.PerspectiveCamera,
     domElement: HTMLElement,
+    inputHandler: InputHandler,
     raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>
   ) {
     this._camera = camera;
     this._domElement = domElement;
-    this._inputHandler = new InputHandler(domElement);
+    this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
 
     this.setCameraControlsOptions(this._cameraControlsOptions);

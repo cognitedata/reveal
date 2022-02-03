@@ -222,7 +222,14 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
 
-    this._cameraManager = new CameraManager(this.camera, this.canvas, this.modelIntersectionCallback.bind(this));
+    this._mouseHandler = new InputHandler(this.canvas);
+
+    this._cameraManager = new CameraManager(
+      this.camera,
+      this.canvas,
+      this._mouseHandler,
+      this.modelIntersectionCallback.bind(this)
+    );
     this._cameraManager.automaticControlsSensitivity = this._automaticControlsSensitivity;
     this._cameraManager.automaticNearFarPlane = this._automaticNearFarPlane;
 
@@ -255,9 +262,8 @@ export class Cognite3DViewer {
         options.sdk
       );
     }
-    this.renderController = new RenderController(this.camera);
 
-    this._mouseHandler = new InputHandler(this.domElement);
+    this.renderController = new RenderController(this.camera);
     this.startPointerEventListeners();
 
     this.revealManager.setRenderTarget(
@@ -602,29 +608,31 @@ export class Cognite3DViewer {
    * .
    * @param model
    */
-  removeModel(model: Cognite3DModel | CognitePointCloudModel): void {
+  removeModel(model: CogniteModelBase): void {
     const modelIdx = this._models.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this.scene.remove(model);
-    this.renderController.redraw();
 
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
+        this.scene.remove(cadModel);
         this.revealManager.removeModel(model.type, cadModel.cadNode);
-        return;
+        break;
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
+        this.scene.remove(pcModel);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
-        return;
+        break;
 
       default:
         assertNever(model.type, `Model type ${model.type} cannot be removed`);
     }
+
+    this.renderController.redraw();
   }
 
   /**
