@@ -54,6 +54,8 @@ export class CogniteAuth {
   private makeNewCDFClient() {
     this.client = new CogniteClient({ appId: this.options.appName });
     this.setCluster();
+
+    return this.client;
   }
 
   subscribers: {
@@ -63,9 +65,11 @@ export class CogniteAuth {
   public async loginAndAuthIfNeeded({
     flow,
     project,
+    reauth,
   }: {
-    flow?: AuthFlow;
     project: string;
+    flow?: AuthFlow;
+    reauth?: boolean;
   }): Promise<AuthenticatedUser> {
     const { flow: savedFlow } = getFlow();
 
@@ -85,7 +89,9 @@ export class CogniteAuth {
         this.publishAuthState();
 
         if (this.options.aad) {
-          const response = await this.getClient().loginWithOAuth({
+          const client = reauth ? this.makeNewCDFClient() : this.getClient();
+
+          const response = await client.loginWithOAuth({
             type: 'AAD_OAUTH',
             options: {
               clientId: this.options.aad?.appId,

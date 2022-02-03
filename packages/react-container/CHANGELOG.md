@@ -4,6 +4,7 @@
 
 ## 4.0.1 Feb 2 2022
 
+- Use new `auth-utils` with `reauth` option when doing reauth `loginAndAuthIfNeeded` call
 - Fix bug in domain redirection of tenant-selector
 
 ## 4.0.0 Jan 27 2022

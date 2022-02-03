@@ -87,11 +87,13 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
               authState: authenticatedUser,
               reauthenticate: async () => {
                 queryClient.clear();
+
                 authClient.invalidateAuth();
 
                 if (authenticatedUser.project) {
                   return authClient.loginAndAuthIfNeeded({
                     project: authenticatedUser.project,
+                    // reauth: true,
                   });
                 }
 

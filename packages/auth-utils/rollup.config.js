@@ -25,6 +25,7 @@ export default [
       'lodash/isFunction',
       'lodash/isString',
       'lodash/isObject',
+      'lodash/omit',
     ],
     plugins: [
       typescript({

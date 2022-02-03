@@ -1,3 +1,8 @@
+## 2.2.1 Feb 2 2022
+
+- Add `reauth` prop to `loginAndAuthIfNeeded` to allow for new client creation
+  This attempts to fix the problem of not being able to get new tokens
+
 ## 2.2.0 Jan 7 2022
 
 - Published new version to force external apps to update SDK to v5.6.2
