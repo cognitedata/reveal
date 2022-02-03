@@ -13,6 +13,7 @@ import {
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { Modules } from 'modules/sidebar/types';
 import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';
+import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 import { useFilterConfigByCategory } from 'modules/wellSearch/hooks/useFilterConfigByCategory';
 import { useWellFilterOptions } from 'modules/wellSearch/hooks/useWellFilterOptionsQuery';
 import {
@@ -41,6 +42,7 @@ export const WellsFilter = () => {
   const filters = useAppliedWellFilters();
   const setWellsFilters = useSetWellsFiltersAsync();
   const clearWellFilters = useClearWellsFilters();
+  const enabledWellSDKV3 = useEnabledWellSdkV3();
 
   const filterConfigsByCategory = useFilterConfigByCategory();
   const metrics = useGlobalMetrics('search');
@@ -130,7 +132,8 @@ export const WellsFilter = () => {
     return (
       <>
         {filterConfigsByCategory.map((category, index) => {
-          const hasCustomRegion = category.title === FIELD_BLOCK_OPERATOR;
+          const hasCustomRegion =
+            enabledWellSDKV3 && category.title === FIELD_BLOCK_OPERATOR;
 
           return (
             <FilterCollapse.Panel
