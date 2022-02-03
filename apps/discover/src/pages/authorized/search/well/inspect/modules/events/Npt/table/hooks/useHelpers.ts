@@ -75,7 +75,7 @@ export const useSelectedWellboreNptEventsTableColumns = () => {
         maxWidth: '0.3fr',
         accessor: (row: NPTEvent) => {
           const duration = processAccessor(row, accessors.DURATION);
-          if (duration) return getTimeDuration(duration, 'days');
+          if (duration) return getTimeDuration(duration, 'hours');
           return null;
         },
       };

@@ -124,7 +124,7 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
                 title="Duration"
                 value={getTimeDuration(
                   get(nptEvent, accessors.DURATION),
-                  'days'
+                  'hours'
                 )}
               />
               <Card

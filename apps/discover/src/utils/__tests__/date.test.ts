@@ -209,6 +209,8 @@ describe('date helpers', () => {
           expect(getTimeDuration(5000)).toEqual('5s');
           expect(getTimeDuration(17.8, 'days')).toEqual('17d 19h 12m');
           expect(getTimeDuration(45.2, 'days')).toEqual('1M 15d 4h 48m');
+          expect(getTimeDuration(25, 'hours')).toEqual('1d 1h');
+          expect(getTimeDuration(65, 'minutes')).toEqual('1h 5m');
           expect(getTimeDuration(1425.2, 'days')).toEqual(
             '3Y 10M 1125d 4h 48m'
           );
