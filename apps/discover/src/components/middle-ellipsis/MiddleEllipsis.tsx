@@ -1,74 +1,67 @@
-import { useCallback } from 'react';
+import React, { useRef } from 'react';
 
 import { DEFAULT_TOOLTIP_PLACEMENT } from 'components/buttons';
 import { Tooltip } from 'components/tooltip';
+import { useElementOverflowing } from 'hooks/useElementOverflowing';
 
 import {
-  MiddleEllipsisTooltipContainer,
-  MiddleEllipsisWrapper,
-  SpanFlex,
+  MiddleEllipsisContainer,
+  MiddleEllipsisContent,
+  RelativeText,
+  FixedText,
 } from './element';
-import { updateTextWithMiddleEllipsis } from './utils';
 
-export const MiddleEllipsis: React.FC<{ children: React.ReactElement }> = (
-  props
-) => {
-  const handleReferenceChange = useCallback(
-    (node: HTMLElement) => {
-      if (node) {
-        window.addEventListener('resize', () => {
-          setUpMiddleEllipse(node);
-        });
-        setUpMiddleEllipse(node);
-      }
-    },
-    [props]
-  );
+export const MiddleEllipsis: React.FC<{ value: string; fixedLength?: number }> =
+  ({ value, fixedLength }) => {
+    const ref = useRef<HTMLElement>();
 
-  const setUpMiddleEllipse = (currentNode: HTMLElement) => {
-    const { parentElement } = currentNode;
-    const firstChildNode = currentNode.firstChild as HTMLElement;
+    const showTooltip = useElementOverflowing(ref?.current);
 
-    if (currentNode && firstChildNode && parentElement) {
-      const IsCurrentNodeLarger =
-        currentNode.offsetWidth > parentElement?.offsetWidth;
-
-      updateTextWithMiddleEllipsis(
-        IsCurrentNodeLarger ? parentElement : currentNode,
-        firstChildNode
-      );
-    }
-  };
-
-  return (
-    <MiddleEllipsisWrapper ref={handleReferenceChange}>
-      {props.children}
-    </MiddleEllipsisWrapper>
-  );
-};
-
-export const getMiddleEllipsisWrapper = (value: string, showTooltip = true) => {
-  const middleEllipsisComponent = (
-    <MiddleEllipsis>
-      <span title={value} data-testid="middle-ellipsis-text">
-        {value}
-      </span>
-    </MiddleEllipsis>
-  );
-
-  if (showTooltip) {
     return (
-      <MiddleEllipsisTooltipContainer>
+      <MiddleEllipsisContainer>
         <Tooltip
           title={value}
           key={value}
+          enabled={showTooltip}
           placement={DEFAULT_TOOLTIP_PLACEMENT}
         >
-          <SpanFlex>{middleEllipsisComponent}</SpanFlex>
+          {getMiddleEllipsisWrapper({ value, ref }, fixedLength)}
         </Tooltip>
-      </MiddleEllipsisTooltipContainer>
+      </MiddleEllipsisContainer>
     );
-  }
+  };
 
-  return middleEllipsisComponent;
+export const getMiddleEllipsisWrapper = (
+  {
+    value,
+    ref,
+  }: {
+    value?: string;
+    ref?: React.MutableRefObject<HTMLElement | undefined>;
+  },
+  fixedLength = 10
+): React.ReactElement => {
+  if (value === undefined) {
+    return <></>;
+  }
+  // spotted a case where the input might be a number.
+  if (typeof value !== 'string') return value;
+
+  const textBreakLength = value.length - fixedLength;
+  const isValueGreaterThanFixedLength = value.length > fixedLength;
+
+  return (
+    <MiddleEllipsisContent aria-label={value} title={value}>
+      {isValueGreaterThanFixedLength ? (
+        <>
+          <RelativeText ref={ref}>
+            {value.slice(0, textBreakLength)}
+          </RelativeText>
+          <FixedText>{value.slice(textBreakLength)}</FixedText>
+        </>
+      ) : (
+        <RelativeText ref={ref}>{value}</RelativeText>
+      )}
+    </MiddleEllipsisContent>
+  );
 };

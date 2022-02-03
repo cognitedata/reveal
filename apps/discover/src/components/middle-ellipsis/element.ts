@@ -1,15 +1,28 @@
 import styled from 'styled-components/macro';
 
-// Can't use a div containers since table row renders the childrens inside a <p>
-// React DOM doesn't allow to use <div> or <p> inside the <p>
-export const MiddleEllipsisTooltipContainer = styled.span`
+export const MiddleEllipsisContent = styled.div`
+  display: inline-flex;
+  flex-wrap: nowrap;
+  max-width: 100%;
+`;
+
+export const RelativeText = styled.div`
+  flex: 0 1 auto;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: pre;
+`;
+
+export const FixedText = styled.div`
+  flex: 1 0 auto;
+  white-space: pre-wrap;
+  text-transform: initial;
+`;
+
+export const MiddleEllipsisContainer = styled.div`
   width: inherit;
-`;
 
-export const SpanFlex = styled.span`
-  display: flex;
-`;
-
-export const MiddleEllipsisWrapper = styled.span`
-  white-space: nowrap;
+  & > span {
+    width: inherit;
+  }
 `;

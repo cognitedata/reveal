@@ -6,6 +6,7 @@ import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 
 import { Tooltip } from 'components/tooltip';
+import { useElementOverflowing } from 'hooks/useElementOverflowing';
 
 import { CellContentWrapper, CellValueWrapper } from './elements';
 
@@ -22,19 +23,7 @@ export const TableCell: React.FC<Props> = React.memo(({ cell }) => {
 
 const CellText = ({ children }: any) => {
   const elementRef = React.useRef<HTMLElement>(null);
-  const [overflowing, setOverflowing] = React.useState(false);
-
-  React.useLayoutEffect(() => {
-    const element = elementRef.current;
-    if (element) {
-      setOverflowing(isElementOverflowing(element));
-    }
-  }, []);
-
-  const isElementOverflowing = (element: HTMLElement): boolean => {
-    if (isNil(element)) return false;
-    return element.offsetWidth < element.scrollWidth;
-  };
+  const overflowing = useElementOverflowing(elementRef?.current);
 
   const isCellValueEmpty = (value: string | number): boolean => {
     return !(

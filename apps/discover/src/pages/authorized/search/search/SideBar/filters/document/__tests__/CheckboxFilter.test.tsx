@@ -91,8 +91,8 @@ describe('CheckboxFilter without selected values from state', () => {
 
   it('should expands and collapse checkbox filter list items as expected', async () => {
     const testInitialRender = () => {
-      expect(screen.getByText('Compressed 1')).toBeInTheDocument();
-      expect(screen.getByText('Compressed 2')).toBeInTheDocument();
+      expect(screen.getByTitle('Compressed 1')).toBeInTheDocument();
+      expect(screen.getByTitle('Compressed 2')).toBeInTheDocument();
       expect(screen.getAllByRole('checkbox')).toHaveLength(2);
       expect(screen.getByText('View more')).toBeInTheDocument();
       expect(screen.queryByText('View less')).not.toBeInTheDocument();
@@ -105,8 +105,8 @@ describe('CheckboxFilter without selected values from state', () => {
     // Expand
     fireEvent.click(screen.getByText('View more'));
 
-    expect(screen.getByText('Compressed 1')).toBeInTheDocument();
-    expect(screen.getByText('Compressed 8')).toBeInTheDocument();
+    expect(screen.getByTitle('Compressed 1')).toBeInTheDocument();
+    expect(screen.getByTitle('Compressed 8')).toBeInTheDocument();
     expect(screen.getAllByRole('checkbox')).toHaveLength(8);
     expect(screen.getByText('View less')).toBeInTheDocument();
     expect(screen.queryByText('View more')).not.toBeInTheDocument();

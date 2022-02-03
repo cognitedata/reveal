@@ -10,7 +10,7 @@ import { Icon, AllIconTypes } from '@cognite/cogs.js';
 
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
-import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { Table, RowProps } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
@@ -58,8 +58,7 @@ export const columnMap: ColumnMap<DocumentTypeDataModel> = {
     width: '300px',
     maxWidth: '1fr', // Fills up the available space
     order: 0,
-    Cell: (cell) =>
-      getMiddleEllipsisWrapper(cell.row.original.doc.filename, false),
+    Cell: (cell) => <MiddleEllipsis value={cell.row.original.doc.filename} />,
   },
   creationdate: {
     id: 'created',

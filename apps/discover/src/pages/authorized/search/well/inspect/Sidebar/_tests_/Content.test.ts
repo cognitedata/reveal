@@ -35,7 +35,7 @@ describe('Well Inspect Sidebar Content', () => {
     const well = await screen.findByText('WellA');
     expect(well).toBeInTheDocument();
 
-    const wellbore = await screen.findByText('WellboreDescription WellboreA');
+    const wellbore = await screen.findByTitle('WellboreDescription WellboreA');
     expect(wellbore).toBeInTheDocument();
   });
 });

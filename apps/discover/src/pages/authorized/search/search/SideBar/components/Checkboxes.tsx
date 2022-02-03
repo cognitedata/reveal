@@ -6,7 +6,7 @@ import { v1 } from 'uuid';
 
 import { Checkbox } from '@cognite/cogs.js';
 
-import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 
 import {
   CheckboxContainer,
@@ -92,7 +92,7 @@ export const Checkboxes: React.FC<Props> = ({
                   data-testid="filter-checkbox-label"
                   level={2}
                 >
-                  {getMiddleEllipsisWrapper(row.name, false)}
+                  <MiddleEllipsis value={row.name} />
                 </CheckboxFacetText>
                 {!hideResultsCount && renderBadgeContent(row)}
               </CheckboxItemContainer>

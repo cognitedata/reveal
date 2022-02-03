@@ -22,10 +22,10 @@ interface Props {
   removeSelectedColumn: (column: Column) => void;
 }
 
+const availableColumns = getAvailableColumns(columnMap);
+
 const OptionsPanelContainer: React.FC<Props> = (props) => {
   const { selectedColumns, addSelectedColumn, removeSelectedColumn } = props;
-
-  const availableColumns = getAvailableColumns(columnMap);
 
   const handleColumnSelection = (column: AvailableColumn) => {
     const toggledColumn = {
@@ -46,6 +46,7 @@ const OptionsPanelContainer: React.FC<Props> = (props) => {
       selected: selectedColumns.includes(availableColumn.field),
     };
   });
+
   const sortedColumns = sortBy(mergedColumns, 'order');
 
   return (

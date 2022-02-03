@@ -80,7 +80,7 @@ Cypress.Commands.add(
         select.wells.forEach((wellName) => {
           cy.log(`Selecting well "${wellName}"`);
           cy.findByTestId('well-result-table')
-            .findByText(wellName)
+            .findByTitle(wellName)
             .closest('[data-testid="table-row"]')
             .find('input[type=checkbox]')
             .check({ force: true });

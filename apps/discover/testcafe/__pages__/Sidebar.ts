@@ -130,11 +130,18 @@ class Sidebar {
     await t.click(element);
   };
 
-  getFilterOption = (name: string) => this.filterOption.withText(name);
+  getFilterOption = (name: string) => {
+    return this.filterOption.withText(name);
+  };
 
   clickFilterOption = async (name: string) => {
     progress(`Click checkbox of filter option: ${name}`);
-    await t.click(this.getFilterOption(name));
+
+    if (await this.getFilterOption(name).exists) {
+      await t.click(this.getFilterOption(name));
+    } else {
+      await t.click(Selector(`div[aria-label='${name}']`));
+    }
   };
 
   clickNthFilterOption = async (nth: number) => {

@@ -230,7 +230,7 @@ class ResultTable {
   goToMoreOptionsOfRowIncludesCell = async (cellContent: string) => {
     progress(`Go to more options of row includes '${cellContent}'`);
 
-    const row = Selector('[data-testid="table-row"]').withText(cellContent);
+    const row = Selector('[data-testid="table-row"]').nth(0);
 
     progress(`Hover row includes '${cellContent}' in result list`, true);
     await this.hoverRow(row);

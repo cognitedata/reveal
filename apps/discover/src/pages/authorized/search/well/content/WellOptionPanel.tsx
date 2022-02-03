@@ -10,8 +10,9 @@ import { wellColumns } from 'pages/authorized/constant';
 
 import OptionsPanel from '../../document/header/options/OptionsPanel';
 
+const availableColumns = getAvailableColumns(wellColumns);
+
 export const WellOptionPanel: React.FC = () => {
-  const availableColumns = getAvailableColumns(wellColumns);
   const { selectedColumns } = useWells();
   const dispatch = useDispatch();
 

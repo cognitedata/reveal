@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { Checkbox } from '@cognite/cogs.js';
 
-import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { wellInspectActions } from 'modules/wellInspect/actions';
 import { useWellInspectWells } from 'modules/wellInspect/hooks/useWellInspect';
 import {
@@ -25,7 +25,7 @@ import {
   WellLabelValue,
 } from './elements';
 
-export const Content = () => {
+export const Content: React.FC = () => {
   const wells = useWellInspectWells();
   const isColoredWellbores = useColoredWellbores();
   const { selectedWellIds, selectedWellboreIds } = useWellInspectSelection();
@@ -88,11 +88,12 @@ export const Content = () => {
                     handleClickWellbore(well, wellbore.id, isSelected)
                   }
                   name={`sidebar-wellbore-${wellbore.id}`}
+                  style={{ width: '100%' }}
                 >
                   <CheckboxContent>
-                    {getMiddleEllipsisWrapper(
-                      `${wellbore.description} ${wellbore.name}`
-                    )}
+                    <MiddleEllipsis
+                      value={`${wellbore.description} ${wellbore.name}`}
+                    />
                   </CheckboxContent>
                 </Checkbox>
               </BlockContentItem>

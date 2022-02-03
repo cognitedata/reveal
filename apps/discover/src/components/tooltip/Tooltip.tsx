@@ -9,6 +9,7 @@ export interface Props {
   placement?: TooltipPlacement;
   enterDelay?: number;
   enabled?: boolean;
+  className?: string;
 }
 
 export const Tooltip: React.FC<Props> = ({
@@ -16,6 +17,7 @@ export const Tooltip: React.FC<Props> = ({
   placement,
   children,
   enterDelay,
+  className,
   enabled = true,
 }) => {
   return (
@@ -24,6 +26,7 @@ export const Tooltip: React.FC<Props> = ({
       content={title}
       delay={enterDelay}
       disabled={!enabled}
+      className={className}
     >
       {children as React.ReactElement}
     </DefaultTooltip>
