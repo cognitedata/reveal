@@ -3,13 +3,14 @@ import { Modal, Dropdown, Menu, Typography, notification } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions } from 'hooks';
+import { usePermissions, useRefreshToken } from 'hooks';
 
 const { Text } = Typography;
 
 export default function Actions({ id, name }: { id: number; name: string }) {
   const sdk = useSDK();
   const client = useQueryClient();
+  const { refreshToken } = useRefreshToken();
   const { data: hasPermission } = usePermissions('usersAcl', 'DELETE');
   const { mutateAsync: generateNewKey } = useMutation(
     () => sdk.apiKeys.create([{ serviceAccountId: id }]),
@@ -42,6 +43,7 @@ export default function Actions({ id, name }: { id: number; name: string }) {
         message: 'Service account deleted',
       });
       client.invalidateQueries(['service-accounts']);
+      refreshToken();
     },
     onError(error) {
       notification.error({

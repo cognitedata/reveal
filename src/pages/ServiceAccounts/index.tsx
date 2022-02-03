@@ -16,7 +16,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { sleep } from 'utils/utils';
 
-import { useGroups, usePermissions } from 'hooks';
+import { useGroups, usePermissions, useRefreshToken } from 'hooks';
 import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
 import columns from './columns';
 import { stringContains } from '../Groups/utils';
@@ -26,6 +26,7 @@ const { Option } = Select;
 export default function ServiceAccounts() {
   const sdk = useSDK();
   const client = useQueryClient();
+  const { refreshToken } = useRefreshToken();
   const [searchValue, setSearchValue] = useState('');
   const [newName, setNewName] = useState('');
   const [newGroups, setNewGroups] = useState([]);
@@ -51,6 +52,7 @@ export default function ServiceAccounts() {
           message: 'Service account created',
         });
         client.invalidateQueries(['service-accounts']);
+        refreshToken();
       },
       onError(error) {
         notification.error({

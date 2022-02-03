@@ -1,9 +1,11 @@
-import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
+import { getEnv, getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient, Group } from '@cognite/sdk';
 import { useMutation, UseMutationOptions, useQuery } from 'react-query';
 import { usePermissions as _usePermissions } from '@cognite/sdk-react-query-hooks';
-import { sleep } from './utils/utils';
+import { LEGACY_SESSION_TOKEN_KEY } from 'utils/constants';
+import { sleep } from 'utils/utils';
 
 export const useGroups = (all = false) => {
   const sdk = useSDK();
@@ -82,6 +84,19 @@ export const useUpdateGroup = (
 ) => {
   const sdk = useSDK();
   return useMutation(getUpdater(sdk, project), o);
+};
+
+export const useRefreshToken = () => {
+  const env = getEnv() || 'api';
+  const project = getProject();
+
+  const refreshToken = async () => {
+    const sessionStorageKey = `${LEGACY_SESSION_TOKEN_KEY}_${env}_${project}`;
+    sessionStorage.removeItem(sessionStorageKey);
+    await getToken();
+  };
+
+  return { refreshToken };
 };
 
 export const forUnitTests = {
