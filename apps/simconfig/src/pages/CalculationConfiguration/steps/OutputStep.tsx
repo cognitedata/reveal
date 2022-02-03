@@ -19,6 +19,8 @@ import {
 
 import type { StepProps } from '../types';
 
+import { OutputInfoDrawer } from './infoDrawers/OutputInfoDrawer';
+
 import type { AppLocationGenerics } from 'routes';
 
 export function OutputStep({ isEditing }: StepProps) {
@@ -60,6 +62,10 @@ export function OutputStep({ isEditing }: StepProps) {
 
   return (
     <FormContainer>
+      <FormHeader>
+        Output configuration
+        <OutputInfoDrawer />
+      </FormHeader>
       {validTimeSeries.map(
         ({ type, name, unit, unitType, externalId }, index) => (
           <React.Fragment key={type}>

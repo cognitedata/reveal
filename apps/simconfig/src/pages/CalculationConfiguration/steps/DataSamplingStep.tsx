@@ -13,13 +13,20 @@ import {
   TimeSeriesField,
 } from 'components/forms/elements';
 
+import { DataSamplingInfoDrawer } from './infoDrawers/DataSamplingInfoDrawer';
+import { LogicalCheckInfoDrawer } from './infoDrawers/LogicalCheckInfoDrawer';
+import { SteadyStateDetectionInfoDrawer } from './infoDrawers/SteadyStateDetectionInfoDrawer';
+
 export function DataSamplingStep() {
   const { errors, values, setFieldValue } =
     useFormikContext<CalculationTemplate>();
 
   return (
     <FormContainer>
-      <FormHeader>Data sampling configuration</FormHeader>
+      <FormHeader>
+        Data sampling configuration
+        <DataSamplingInfoDrawer />
+      </FormHeader>
       <FormRowStacked>
         <NumberField
           label={(value: number) => (value === 1 ? 'minute' : 'minutes')}
@@ -51,6 +58,7 @@ export function DataSamplingStep() {
 
       <FormHeader>
         Logical check
+        <LogicalCheckInfoDrawer />
         <Field
           as={Switch}
           checked={values.logicalCheck.enabled}
@@ -96,6 +104,7 @@ export function DataSamplingStep() {
 
       <FormHeader>
         Steady state detection
+        <SteadyStateDetectionInfoDrawer />
         <Field
           as={Switch}
           checked={values.steadyStateDetection.enabled}

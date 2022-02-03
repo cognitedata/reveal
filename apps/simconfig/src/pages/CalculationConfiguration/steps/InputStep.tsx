@@ -16,6 +16,8 @@ import {
 
 import type { StepProps } from '../types';
 
+import { InputInfoDrawer } from './infoDrawers/InputInfoDrawer';
+
 import type { AppLocationGenerics } from 'routes';
 
 export function InputStep({ isEditing }: StepProps) {
@@ -41,6 +43,10 @@ export function InputStep({ isEditing }: StepProps) {
 
   return (
     <FormContainer>
+      <FormHeader>
+        Input configuration
+        <InputInfoDrawer />
+      </FormHeader>
       {values.inputTimeSeries.map(
         ({ type, name, unit, unitType, sampleExternalId }, index) => (
           <React.Fragment key={type}>
