@@ -31,7 +31,7 @@ the nodes.
 If nodes in the 3D model has an attribute `'PDMS.Type'`, `PropertyFilterNodeCollection` can be used to
 retrieve nodes of a certain type. In the following example, only pipes are accepted:
 
-```js runnable
+```js runnable-2x
 // import { PropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
@@ -47,7 +47,7 @@ might increase the performance radically by fetching result from the server in p
 To partition requests, provide the number of partitions using the `requestPartitions`-option
 to the `PropertyFilterNodeCollection`-constructor:
 
-```js runnable
+```js runnable-2x
 // import { PropertyFilterNodeCollection, DefaultNodeAppearance, NodeOutlineColor } from '@cognite/reveal';
 
 const nodesFromFile = new PropertyFilterNodeCollection(sdk, model, { requestPartitions: 10 });
@@ -67,7 +67,7 @@ seperate queries.
 
 When doing this as a single query, no `IntersectionNodeCollection` is necessary and the code is quite compact:
 
-```js runnable
+```js runnable-2x
 // import { PropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
@@ -79,7 +79,7 @@ model.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [4
 
 Combining two separate queries requires the use of `IntersectionNodeCollection`:
 
-```js runnable
+```js runnable-2x
 // import { PropertyFilterNodeCollection, IntersectionNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const mechNodes = new PropertyFilterNodeCollection(sdk, model);
@@ -110,7 +110,7 @@ or style. In this case, `SinglePropertyFilterNodeCollection` might be useful. Th
 one node property towards many values - e.g. a node identifier towards a list of IDs. This node set
 supports thoushands of IDs - `PropertyFilterNodeCollection` only supports one matching value.
 
-```js runnable
+```js runnable-2x
 // import { SinglePropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const nodeSet = new SinglePropertyFilterNodeCollection(sdk, model, { requestPartitions: 10 });
@@ -132,7 +132,7 @@ model.assignStyledNodeCollection(nodeSet, { renderGhosted: false, outlineColor: 
 Often it is interesting to invert results from filters to find elements that does not match the query. This
 can be done using `InvertedNodeCollection`.
 
-```js runnable
+```js runnable-2x
 // import { PropertyFilterNodeCollection, InvertedNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const livingQuarters = new PropertyFilterNodeCollection(sdk, model);
