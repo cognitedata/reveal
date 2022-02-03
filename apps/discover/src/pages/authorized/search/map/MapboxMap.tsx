@@ -246,7 +246,7 @@ export const Map: React.FC<Props> = ({
         console.log('Error in y when changing map to:', flyTo);
         safe = false;
       }
-      if (flyTo.center[0] < -90 || flyTo.center[0] > 90) {
+      if (flyTo.center[0] < -180 || flyTo.center[0] > 180) {
         // eslint-disable-next-line no-console
         console.log('Error in x when changing map to:', flyTo);
         safe = false;
