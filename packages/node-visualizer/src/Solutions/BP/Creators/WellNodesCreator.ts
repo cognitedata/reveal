@@ -16,7 +16,7 @@ export class WellNodesCreator {
 
     if (!wellMap || wellMap.size === 0) return null;
 
-    const wellNodeMap = new Map<number, WellNode>();
+    const wellNodeMap = new Map<string, WellNode>();
     const wellNodes: WellNode[] = [];
 
     for (const wellData of wellMap.values()) {

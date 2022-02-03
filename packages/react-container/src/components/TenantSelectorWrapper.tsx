@@ -156,7 +156,7 @@ export function TenantSelectorWrapper({ sidecar }: Props) {
       {fakeIdp && (
         <>
           {flow === 'FAKE_IDP' && <ErrorDisplay />}
-          <div style={{ position: 'absolute', bottom: '16px', left: '16px' }}>
+          <div style={{ position: 'absolute', bottom: '1%', left: '42%' }}>
             {fakeIdp
               ?.filter((fakeIdp) => fakeIdp.cluster === cluster)
               .map((fakeIdp) => (

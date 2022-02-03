@@ -8,14 +8,14 @@ import { Metadata, WellMetadata } from 'Solutions/BP/MetadataTransform';
  * Overview
  * This is the interface for the Well object
  */
-export type WellId = number;
+export type WellId = string;
 
 export interface IWellMeta extends WellMetadata, Metadata {}
 
 export interface IWell {
   externalId: string;
   name: string;
-  parentId: number;
+  parentId: string;
   parentExternalId: string;
   description: string;
   dataSetId: number;

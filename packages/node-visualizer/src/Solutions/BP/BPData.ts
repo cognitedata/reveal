@@ -56,7 +56,7 @@ export class BPData {
 
   private _wellBoreToNPTEventsMap = new Map<WellBoreId, IRiskEvent[]>();
 
-  private _wellBoreToLogsMap?: { [key: number]: ILog[] };
+  private _wellBoreToLogsMap?: { [key: string]: ILog[] };
 
   private _trajectoryDataColumnIndexes: ITrajectoryColumnIndices = {};
 
@@ -109,6 +109,7 @@ export class BPData {
         transformers: metadataTransform,
         type: 'wellbore',
       });
+
       const valid = this.validateWellBore(mappedWellBore);
       if (valid) {
         this._wellBoreToWellMap.set(wellBore.id, {
@@ -192,7 +193,7 @@ export class BPData {
   }
 
   private generateWellBoreRiskEventMap(
-    riskEventMap: Map<number, IRiskEvent[]>,
+    riskEventMap: Map<string, IRiskEvent[]>,
     riskEvents?: IRiskEvent[]
   ) {
     if (!riskEvents || !riskEvents.length) return;
@@ -245,14 +246,23 @@ export class BPData {
   }
 
   private validateWellBore(wellBore: IWellBore): boolean {
-    if (
-      this.wellMap.has(wellBore.parentId) &&
-      validateMetadata(wellBore.metadata, 'wellbore')
-    ) {
+    if (this.wellMap.has(wellBore.parentId)) {
+      if (!validateMetadata(wellBore.metadata, 'wellbore')) {
+        console.warn(
+          'Wellbore metadata does not have all valid fields',
+          wellBore.metadata
+        );
+        return false;
+      }
+
       return true;
     }
 
-    console.warn('Orphan WellBore, Parent Well not found!', wellBore);
+    console.warn(
+      'Orphan WellBore, Parent Well not found!',
+      { wellBore },
+      { wellMap: this.wellMap }
+    );
     return false;
   }
 
@@ -274,6 +284,8 @@ export class BPData {
     if (this.trajectoryMap.has(trajectoryData.id)) {
       return true;
     }
+
+    console.log('this.trajectoryMap', this.trajectoryMap);
 
     console.warn(
       'Orphan Trajectory Data Item, Parent Trajectory not found!',
@@ -342,7 +354,7 @@ export class BPData {
     return this._wellBoreToLogsMap;
   }
 
-  public get wellBoreToCasingDataMap(): Map<number, ICasing[]> {
+  public get wellBoreToCasingDataMap(): Map<string, ICasing[]> {
     return this._wellBoreToCasingDataMap;
   }
 }

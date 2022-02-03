@@ -3,6 +3,7 @@ const baseConfig = require('../jest.react.config.js');
 
 module.exports = {
   ...baseConfig,
+  coveragePathIgnorePatterns: ['node_modules', '__tests__', '.stories.'],
   moduleNameMapper: {
     '.+\\.(svg|png|jpg|ttf|woff|woff2)$': [
       '<rootDir>/../../node_modules/jest-transform-stub',

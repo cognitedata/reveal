@@ -21,12 +21,8 @@ import {
 } from 'constants/units';
 
 import { TrajectoryColumnR, Well } from '../types';
-import {
-  convertObject,
-  mapWellboresToThreeD,
-  toBooleanMap,
-  getRangeLimitInUnit,
-} from '../utils';
+import { convertObject, toBooleanMap, getRangeLimitInUnit } from '../utils';
+import { mapWellboresToThreeD } from '../utils/threed';
 import { getExistColumns } from '../utils/trajectory';
 
 const cmToftFactor = 30.48;

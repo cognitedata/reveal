@@ -75,7 +75,7 @@ export interface ITrajectoryColumn {
 
 export interface ITrajectory {
   id: TrajectoryId;
-  assetId: number;
+  assetId: string;
   externalId: string;
   name: string; // Name is "" in some cases
   description: string;

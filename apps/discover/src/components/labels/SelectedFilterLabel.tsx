@@ -2,18 +2,12 @@ import { Label } from '@cognite/cogs.js';
 
 export interface Props {
   onClick: () => void;
-  key: string;
   tag: string;
 }
 
-export const SelectedFilterLabel: React.FunctionComponent<Props> = ({
-  onClick,
-  key,
-  tag,
-}) => {
+export const SelectedFilterLabel: React.FC<Props> = ({ onClick, tag }) => {
   return (
     <Label
-      key={key}
       size="medium"
       variant="default"
       icon="Close"

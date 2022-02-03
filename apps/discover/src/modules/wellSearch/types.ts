@@ -181,6 +181,15 @@ export interface Wellbore
   description?: string;
 }
 
+export type ThreeDNPTEvents = {
+  assetIds: any[];
+  subType: string | undefined;
+  description: string | undefined;
+  metadata: {
+    npt_md: number | undefined;
+  };
+};
+
 export interface WellSequence {
   name: string;
   id: number;

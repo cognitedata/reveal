@@ -26,11 +26,6 @@ import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSe
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { useNptEventsFor3D } from 'modules/wellSearch/selectors';
-import { Well } from 'modules/wellSearch/types';
-import {
-  mapWellboresToThreeD,
-  mapWellsToThreeD,
-} from 'modules/wellSearch/utils';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
 
 const ThreeDeeEmptyStateLoader: React.FC = () => {
@@ -74,14 +69,14 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   const logsFrmTops: any = {};
   const ndsEvents: CogniteEvent[] = [];
 
-  const selectedWells: Well[] = useMemo(() => mapWellsToThreeD(wells), [wells]);
-
-  const selectedWellbores = useMemo(
-    () => mapWellboresToThreeD(selectedWells),
-    [selectedWells]
-  );
-
   const wellboreIds = useMemo(
+    () =>
+      Object.keys(selectedWellboreIds)
+        .map((id) => String(id))
+        .filter((id) => selectedWellboreIds[id]),
+    [selectedWellboreIds]
+  );
+  const wellboreIdsNumber = useMemo(
     () =>
       Object.keys(selectedWellboreIds)
         .map((id) => Number(id))
@@ -90,9 +85,9 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   );
 
   const { data: wellLogs, isLoading: isWellLogsLoading } =
-    useWellLogsQuery(wellboreIds);
+    useWellLogsQuery(wellboreIdsNumber);
   const { data: wellFormationTops, isLoading: isWellFormationTopsLoading } =
-    useWellFormationTopsQuery(wellboreIds);
+    useWellFormationTopsQuery(wellboreIdsNumber);
 
   const isEventsLoading =
     casingLoading || ndsLoading || nptLoading || trajectoriesLoading;
@@ -143,7 +138,7 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   }
 
   wellboreIds.forEach((wbid) => {
-    if (casingData) {
+    if (casingData && casingData[wbid]) {
       casings.push(...orderedCasingsByBase(casingData[wbid]));
     }
 
@@ -166,19 +161,30 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
     }));
   });
 
+  const safeTrajectoryRows = trajectoryRows.map((row) => {
+    return {
+      ...row,
+      columns: row.columns.map((column) => {
+        return {
+          ...column,
+          // these should not be optional from project config!
+          name: column.name || '',
+          valueType: column.valueType || '',
+        };
+      }),
+    };
+  });
+
   return (
     <ThreeDee
-      {...{
-        wells: selectedWells as any[],
-        wellBores: selectedWellbores as any[],
-        trajectories: trajectories as any[],
-        trajectoryData: trajectoryRows,
-        casings,
-        logs,
-        logsFrmTops,
-        ndsEvents,
-        nptEvents: nptEvents as any[],
-      }}
+      wells={wells}
+      trajectories={trajectories}
+      trajectoryData={safeTrajectoryRows}
+      casings={casings}
+      logs={logs}
+      logsFrmTops={logsFrmTops}
+      ndsEvents={ndsEvents}
+      nptEvents={nptEvents}
     />
   );
 };

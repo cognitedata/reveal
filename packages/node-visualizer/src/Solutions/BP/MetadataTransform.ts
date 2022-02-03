@@ -13,9 +13,19 @@ const wellMetadata = {
   water_depth_unit: 'water_depth_unit',
 };
 
+const casingMetadata = {
+  assy_name: 'assy_name',
+  assy_comments: 'assy_comments',
+  assy_hole_size: 'assy_hole_size',
+  assy_original_md_top: 'assy_original_md_top',
+  assy_original_md_base: 'assy_original_md_base',
+  assy_current_status_comment: 'assy_current_status_comment',
+};
+
 const metadataValidationMap = {
   well: validateWellMetadata,
   wellbore: validateWellboreMetadata,
+  casing: validateCasingMetadata,
 };
 
 type ValidationMetadataTypes = keyof typeof metadataValidationMap;
@@ -66,7 +76,15 @@ export function validateMetadata(
 }
 
 function validateWellboreMetadata(data: Metadata): boolean {
-  return Object.keys(wellboreMetadata).every((key: string) => data[key]);
+  return Object.keys(wellboreMetadata).every(
+    (key: string) => data[key] !== undefined
+  );
+}
+
+function validateCasingMetadata(data: Metadata): boolean {
+  return Object.keys(casingMetadata).every(
+    (key: string) => data[key] !== undefined
+  );
 }
 
 function validateWellMetadata(data: Metadata): boolean {

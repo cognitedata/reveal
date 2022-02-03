@@ -12,14 +12,15 @@ import {
   BaseRootNode,
 } from '@cognite/node-visualizer';
 import { Sequence, CogniteEvent } from '@cognite/sdk';
-import {
-  Wellbore,
-  Well,
-  Trajectory,
-  TrajectoryRows,
-} from '@cognite/subsurface-interfaces';
+import { TrajectoryRows } from '@cognite/subsurface-interfaces';
 
 import { getSeismicSDKClient } from 'modules/seismicSearch/service';
+import { ThreeDNPTEvents, Well } from 'modules/wellSearch/types';
+import {
+  mapWellboresToThreeD,
+  mapWellsToThreeD,
+  mapCasingsToThreeD,
+} from 'modules/wellSearch/utils/threed';
 import { ThreeDeeTheme } from 'styles/ThreeDeeTheme';
 
 import { Toolbar } from './Toolbar';
@@ -30,12 +31,11 @@ export interface Props extends WellsData {
 
 interface WellsData {
   wells?: Well[];
-  wellBores?: Wellbore[];
-  trajectories?: Trajectory[];
+  trajectories?: Sequence[];
   trajectoryData?: TrajectoryRows[];
   casings?: Sequence[];
   ndsEvents?: CogniteEvent[];
-  nptEvents?: CogniteEvent[];
+  nptEvents?: ThreeDNPTEvents[];
   logs?: any;
   logsFrmTops?: any;
 }
@@ -43,7 +43,6 @@ interface WellsData {
 const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
   const {
     wells = [],
-    wellBores = [],
     trajectories = [],
     trajectoryData = [],
     casings = [],
@@ -53,22 +52,23 @@ const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
     // logsFrmTops = {},
   } = wellsData;
 
-  return {
-    wells,
-    wellBores,
+  const result: BPDataOptions = {
+    wells: mapWellsToThreeD(wells),
+    wellBores: mapWellboresToThreeD(wells),
     trajectories,
     trajectoryData,
-    casings,
+    casings: mapCasingsToThreeD(casings),
     ndsEvents,
     nptEvents,
     logs,
     // logsFrmTops,
   };
+
+  return result;
 };
 
 const ThreeDee: React.FC<Props> = ({
   wells,
-  wellBores,
   trajectories,
   trajectoryData,
   ndsEvents,
@@ -96,7 +96,6 @@ const ThreeDee: React.FC<Props> = ({
       subsurfaceModule.addWellData(
         normalizeWellsData({
           wells,
-          wellBores,
           trajectories,
           trajectoryData,
           casings,

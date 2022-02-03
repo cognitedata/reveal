@@ -10,7 +10,6 @@ describe('Selected filter label', () => {
 
   const props: Props = {
     onClick: jest.fn(),
-    key: '',
     tag: 'testing-tag',
   };
 

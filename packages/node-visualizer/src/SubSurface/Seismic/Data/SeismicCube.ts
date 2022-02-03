@@ -227,6 +227,15 @@ export class SeismicCube extends RegularGrid3 {
     const xlineMaxValue = xline?.max?.value;
     const xlineMinValue = xline?.min?.value;
 
+    if (
+      !inlineMaxValue ||
+      !inlineMinValue ||
+      !xlineMaxValue ||
+      !xlineMinValue
+    ) {
+      throw Error('Missing a required data point');
+    }
+
     const numCellsI = inlineMaxValue - inlineMinValue;
     const numCellsJ = xlineMaxValue - xlineMinValue;
 

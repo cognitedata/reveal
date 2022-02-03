@@ -53,7 +53,7 @@ export class Appearance {
   static readonlyInputColor = Color.rgb(217, 247, 253).hex();
 
   // For the viewer
-  static viewerFooter = 'Cognite subsurface viewer';
+  static viewerFooter = ' ';
 
   static viewerIsLightBackground = false; // True is white, False is black
 

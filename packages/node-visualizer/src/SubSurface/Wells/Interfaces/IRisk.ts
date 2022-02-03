@@ -65,7 +65,7 @@ export interface IRiskEvent {
   subtype: string;
   description: string;
   metadata: IRiskMetadata;
-  assetIds: number[];
+  assetIds: string[];
   source: string;
   id: number;
   lastUpdatedTime: string;

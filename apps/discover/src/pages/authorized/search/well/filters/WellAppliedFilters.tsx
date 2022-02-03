@@ -85,7 +85,7 @@ export const WellAppliedFilters: React.FC<Props> = React.memo(
       onClick: () => void
     ) => (
       <TagWrapper key={key}>
-        <SelectedFilterLabel onClick={onClick} key={key} tag={tag} />
+        <SelectedFilterLabel onClick={onClick} tag={tag} />
       </TagWrapper>
     );
 

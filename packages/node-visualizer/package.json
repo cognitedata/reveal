@@ -47,12 +47,5 @@
   "homepage": "https://github.com/cognitedata/applications#readme",
   "browserslist": [
     "defaults"
-  ],
-  "jest": {
-    "coveragePathIgnorePatterns": [
-      "node_modules",
-      "__tests__",
-      ".stories."
-    ]
-  }
+  ]
 }

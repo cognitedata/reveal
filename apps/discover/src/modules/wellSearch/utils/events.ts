@@ -20,6 +20,7 @@ import {
 import {
   IdWellboreMap,
   NPTEvent,
+  ThreeDNPTEvents,
   Well,
   Wellbore,
   WellboreNPTEventsMap,
@@ -131,7 +132,7 @@ export const mapWellInfoToNPTEvents = (
 export const convertTo3DNPTEvents = (
   eventsMap: WellboreNPTEventsMap,
   wells: Well[]
-) => {
+): ThreeDNPTEvents[] => {
   const wellbores = getIdWellboreMap(wells);
   return flatten(
     Object.keys(eventsMap).map((key) => {

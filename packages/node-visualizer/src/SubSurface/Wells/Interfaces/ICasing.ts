@@ -43,10 +43,10 @@ export interface ICasingColumns {
 }
 
 export interface ICasing {
-  id: number;
+  id: string;
   name: string;
   description: string;
-  assetId: number;
+  assetId: string;
   externalId: string;
   metadata: ICasingMetadata;
   columns: ICasingColumns[];

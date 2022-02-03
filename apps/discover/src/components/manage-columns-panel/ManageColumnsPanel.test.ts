@@ -7,8 +7,6 @@ import { testRenderer } from '__test-utils/renderer';
 
 import ManageColumnsPanel from './ManageColumnsPanel';
 
-jest.mock('@cognite/node-visualizer', () => ({}));
-
 const defaultProps = {
   isOpen: true,
   columns: [

@@ -213,7 +213,7 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
       onClick: () => void
     ) => (
       <TagWrapper key={key}>
-        <SelectedFilterLabel onClick={onClick} key={key} tag={tag} />
+        <SelectedFilterLabel onClick={onClick} tag={tag} />
       </TagWrapper>
     );
 

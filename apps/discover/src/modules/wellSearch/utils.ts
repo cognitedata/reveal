@@ -190,44 +190,6 @@ export const processSpudDateLimits = (spudDateLimits: SpudDateLimits) => {
   ];
 };
 
-export const mapWellsToThreeD = (wells: Well[]) => {
-  return wells.map((well) => ({
-    ...well,
-    metadata: {
-      x_coordinate: get(well, 'geometry.coordinates[0]'),
-      y_coordinate: get(well, 'geometry.coordinates[1]'),
-    },
-  }));
-};
-
-export const mapWellboresToThreeD = (wells: Well[]) => {
-  return ([] as Wellbore[])
-    .concat(
-      ...wells
-        .filter((row) => row.wellbores)
-        .map((row) =>
-          row.wellbores
-            ? row.wellbores.map((wellbore) => ({
-                ...wellbore,
-                metadata: {
-                  ...(wellbore.metadata || {}),
-                  // Added these as a temporary fix for 3d component
-                  elevation_value_unit: get(row, 'datum.elevation.unit', ''),
-                  elevation_value: get(row, 'datum.elevation.value', ''),
-                  elevation_type: 'KB',
-                  bh_x_coordinate: get(row, 'metadata.x_coordinate', ''),
-                  bh_y_coordinate: get(row, 'metadata.y_coordinate', ''),
-                },
-              }))
-            : []
-        )
-    )
-    .map((wellbore) => ({
-      ...wellbore,
-      parentId: wellbore.wellId,
-    }));
-};
-
 export const toBooleanMap = (list: (number | string)[], status = true) =>
   list.reduce(
     (booleanMap, key) => ({

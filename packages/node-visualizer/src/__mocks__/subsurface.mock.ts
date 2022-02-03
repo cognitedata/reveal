@@ -1,7 +1,7 @@
 export const well = {
-  id: 2,
+  id: '2',
   externalId: 'ex_id',
-  parentId: 3,
+  parentId: '3',
   name: 'well_name',
   description: 'well_description',
   metadata: {
@@ -35,9 +35,9 @@ export const well = {
 };
 
 export const wellbore = {
-  id: 33,
+  id: '33',
   externalId: 'wellbore_external_id',
-  parentId: 2,
+  parentId: '2',
   name: 'wellbore_name',
   description: 'wellbore description',
   metadata: {
@@ -56,9 +56,9 @@ export const wellbore = {
 };
 
 export const mappedWellbore = {
-  id: 44,
+  id: '44',
   externalId: 'wellbore_external_id',
-  parentId: 2,
+  parentId: '2',
   name: 'wellbore_name',
   description: 'wellbore description',
   metadata: {
@@ -79,7 +79,7 @@ export const trajectory = {
   id: 123,
   name: 'Wellpath',
   description: '',
-  assetId: 44,
+  assetId: '44',
   externalId: 'trajectory_external_id',
   metadata: {
     acscan_md_min: '0.0',
