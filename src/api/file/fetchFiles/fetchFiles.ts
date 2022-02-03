@@ -7,6 +7,7 @@ import { totalFileCount } from 'src/api/file/aggregate';
 import { fileFilterByAnnotation } from 'src/api/annotation/fileFilterByAnnotation';
 import { filterByTime } from 'src/api/file/fetchFiles/filterByTimeUtils';
 import { getValidMimeTypesByMediaType } from 'src/api/file/fetchFiles/mimeTypeUtils';
+import { getValidFilters } from 'src/api/utils/getValidFilters';
 
 const requestCancelSubject: Subject<boolean> = new Subject<boolean>();
 export const cancelFetch = () => {
@@ -22,16 +23,14 @@ export const fetchFiles = async (
   handleSetIsLoading: (loading: boolean) => void,
   handleSetPercentageScanned: (percentComplete: number) => void
 ): Promise<FileInfo[]> => {
-  // remove additional VisionFileFilters to get FileFilterProps type filter for list request. (except directoryPrefix)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { annotation, dateFilter, timeRange, mimeType, mediaType, ...filter } =
-    visionFilter;
+  const validFilters = getValidFilters(visionFilter);
+  const { annotation, timeRange, mimeType, mediaType } = visionFilter;
 
   const mimeTypes = mimeType
     ? [mimeType]
     : getValidMimeTypesByMediaType(mediaType);
 
-  const totalCount = await totalFileCount(filter);
+  const totalCount = await totalFileCount(validFilters);
 
   // isLoading should be true after totalFileCount finished to avoid showing wrong percentage
   handleSetIsLoading(true);
@@ -49,12 +48,12 @@ export const fetchFiles = async (
 
       if (search.name) {
         newItems = await sdk.files.search({
-          filter: { ...filter, mimeType: mimeTypes[data.mimeTypeIndex] },
+          filter: { ...validFilters, mimeType: mimeTypes[data.mimeTypeIndex] },
           search,
         });
       } else {
         ({ items: newItems, nextCursor } = await sdk.files.list({
-          filter: { ...filter, mimeType: mimeTypes[data.mimeTypeIndex] },
+          filter: { ...validFilters, mimeType: mimeTypes[data.mimeTypeIndex] },
           limit: limit < 1000 ? limit : 1000,
           cursor: data.nextCursor,
         }));

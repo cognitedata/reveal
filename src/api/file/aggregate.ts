@@ -1,21 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import sdk from '@cognite/cdf-sdk-singleton';
 import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
 import { getValidMimeTypesByMediaType } from 'src/api/file/fetchFiles/mimeTypeUtils';
+import { getValidFilters } from 'src/api/utils/getValidFilters';
 
 export const totalFileCount = async (visionFilter: VisionFileFilterProps) => {
   const fileCounts: number[] = [];
 
-  // remove additional VisionFileFilters to get FileFilterProps type filter for list request. (except directoryPrefix)
   // Todo: aggregate result should consider additional vision filters to get correct result
-  const {
-    annotation,
-    dateFilter,
-    timeRange,
-    mimeType,
-    mediaType,
-    ...validFilters
-  } = visionFilter;
+  const validFilters = getValidFilters(visionFilter);
+  const { mimeType, mediaType } = visionFilter;
 
   const mimeTypes = mimeType
     ? [mimeType]
