@@ -738,7 +738,7 @@ export class ComboControls extends EventDispatcher {
     // behaviour for scrolling with mouse wheel
     if (radius < minZoomDistance) {
       this._temporarilyDisableDamping = true;
-      
+
       // stops camera from moving forward only if target became close to scroll target
       if (_scrollTarget.distanceTo(_target) < minZoomDistance) {
         deltaTargetOffsetDistance = 0;
@@ -747,7 +747,7 @@ export class ComboControls extends EventDispatcher {
 
       if (radius <= 0) {
         deltaTargetOffsetDistance = 0;
-        
+
         if (_scrollTarget.distanceTo(_target) > minZoomDistance) {
           radius = minZoomDistance;
           this._targetEnd.add(cameraDirection.normalize().multiplyScalar(-(minZoomDistance - distToTarget)));
