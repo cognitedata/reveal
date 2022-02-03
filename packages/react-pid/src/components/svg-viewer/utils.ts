@@ -280,10 +280,7 @@ const applyPointerCursorStyleToNode = ({
     }
   } else if (active === 'splitLine') {
     if (node instanceof SVGPathElement) {
-      if (
-        !isSymbolInstance(node, symbolInstances) &&
-        !isDiagramLine(node, lines)
-      ) {
+      if (!isSymbolInstance(node, symbolInstances)) {
         node.style.cursor = 'pointer';
       }
     }

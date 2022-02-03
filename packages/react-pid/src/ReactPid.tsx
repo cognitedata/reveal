@@ -20,7 +20,9 @@ import {
   DocumentMetadata,
   PidDocumentMetadata,
   IsoDocumentMetadata,
+  getDiagramInstanceByPathId,
   GraphDocument,
+  T_JUNCTION,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
 
@@ -102,6 +104,25 @@ export const ReactPid: React.FC = () => {
     }
   };
 
+  const splitPathsWithManySegments = () => {
+    const newPathReplacement: PathReplacement[] = [];
+    const diagramInstances = [...lines, ...symbolInstances];
+    pidDocument?.pidPaths.forEach((pidPath) => {
+      if (
+        getDiagramInstanceByPathId(diagramInstances, pidPath.pathId) === null &&
+        !pidPath.pathId.includes(T_JUNCTION)
+      ) {
+        const possiblePathReplacement =
+          pidPath?.getPathReplacementIfManySegments();
+
+        if (possiblePathReplacement) {
+          newPathReplacement.push(possiblePathReplacement);
+        }
+      }
+    });
+    setPathReplacements([...pathReplacements, ...newPathReplacement]);
+  };
+
   useEffect(() => {
     if (
       documentMetadata.type !== DocumentType.unknown &&
@@ -163,15 +184,14 @@ export const ReactPid: React.FC = () => {
     if (pidDocument === undefined) return;
 
     // find lines and connections
-    const { lineInstances, newConnections } =
-      pidDocument.findLinesAndConnection(
-        documentMetadata.type,
-        symbolInstances,
-        lines,
-        connections
-      );
+    const { newLines, newConnections } = pidDocument.findLinesAndConnection(
+      documentMetadata.type,
+      symbolInstances,
+      lines,
+      connections
+    );
 
-    setLines([...lines, ...lineInstances]);
+    setLines([...lines, ...newLines]);
     setConnections(newConnections);
 
     // connect labels to symbol instances
@@ -351,6 +371,7 @@ export const ReactPid: React.FC = () => {
           activeTagName={activeTagName}
           setActiveTagName={setActiveTagName}
           getPidDocument={getPidDocument}
+          splitLines={splitPathsWithManySegments}
         />
         <Viewport>
           {fileUrl === '' ? (

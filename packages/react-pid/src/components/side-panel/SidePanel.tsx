@@ -29,6 +29,15 @@ const SidePanelWrapper = styled.div`
   position: relative;
 `;
 
+const FileControllerWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  & > span {
+    margin: 0 auto;
+  }
+`;
+
 interface SidePanelProps {
   getPidDocument: () => PidDocumentWithDom | undefined;
   active: ToolType;
@@ -55,6 +64,7 @@ interface SidePanelProps {
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
   activeTagName: string | undefined;
   setActiveTagName: (arg: string | undefined) => void;
+  splitLines: () => void;
 }
 
 export const SidePanel = ({
@@ -83,15 +93,8 @@ export const SidePanel = ({
   setEquipmentTags,
   activeTagName,
   setActiveTagName,
+  splitLines,
 }: SidePanelProps) => {
-  const FileControllerWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    & > span {
-      margin: 0 auto;
-    }
-  `;
   const toolBarButtonGroups: ToolBarButton[][] = [
     [
       {
@@ -179,7 +182,12 @@ export const SidePanel = ({
         activeTagName={activeTagName}
         setActiveTagName={setActiveTagWrapper}
       />
-      <Button onClick={autoAnalysis}> Auto Analysis</Button>
+
+      {documentMetadata.type === DocumentType.pid && (
+        <Button onClick={splitLines}>Split Lines</Button>
+      )}
+
+      <Button onClick={autoAnalysis}>Auto Analysis</Button>
 
       <div>
         {active === 'addSymbol' && (

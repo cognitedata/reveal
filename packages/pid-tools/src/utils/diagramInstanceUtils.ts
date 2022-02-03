@@ -23,10 +23,10 @@ export const getDiagramInstanceIdFromPathIds = (
   return pathIds.sort().join('-');
 };
 
-export const getDiagramInstanceByPathId = (
-  diagramInstances: DiagramInstanceWithPaths[],
+export function getDiagramInstanceByPathId<T extends DiagramInstanceWithPaths>(
+  diagramInstances: T[],
   pathId: string
-): DiagramInstanceWithPaths | null => {
+): T | null {
   const diagramInstance = diagramInstances.filter((diagramInstance) =>
     diagramInstance.pathIds.includes(pathId)
   );
@@ -34,7 +34,7 @@ export const getDiagramInstanceByPathId = (
     return diagramInstance[0];
   }
   return null;
-};
+}
 
 export const isDiagramInstanceInList = (
   diagramId: DiagramInstanceId,

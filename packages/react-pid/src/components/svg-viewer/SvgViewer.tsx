@@ -259,8 +259,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       }
     } else if (active === 'splitLine') {
       if (node instanceof SVGTSpanElement) return;
-      if (isSymbolInstance(node, symbolInstances) || isDiagramLine(node, lines))
-        return;
+      if (isSymbolInstance(node, symbolInstances)) return;
 
       // Remove line if it was already selected
       if (splitSelection === node.id) {
@@ -277,6 +276,19 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (!tJunctionPathReplacements) {
           return;
         }
+        const oldLineIds = [node.id, splitSelection];
+        setLines(lines.filter((line) => !oldLineIds.includes(line.pathIds[0])));
+
+        setConnections(
+          connections.filter(
+            (connection) =>
+              !(
+                oldLineIds.includes(connection.end) ||
+                oldLineIds.includes(connection.start)
+              )
+          )
+        );
+
         setPathReplacements([
           ...pathReplacements,
           ...tJunctionPathReplacements,
@@ -477,7 +489,6 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
     const pidDocument = PidDocumentWithDom.fromSVG(svg, allSVGElements);
     setPidDocument(pidDocument);
 
-    if (pidDocument === undefined) return;
     if (active === 'connectInstances') {
       visualizeConnections(
         svg,

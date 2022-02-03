@@ -157,6 +157,8 @@ export class PidDocument {
     symbolInstances: DiagramSymbolInstance[]
   ): LabelSymbolInstanceConnection[] {
     const pidLabelIdsAlreadyConnected = new Set<string>();
+    if (symbolInstances.length === 0) return [];
+
     symbolInstances.forEach((symbolInstance) => {
       symbolInstance.labelIds.forEach((labelId) => {
         pidLabelIdsAlreadyConnected.add(labelId);

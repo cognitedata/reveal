@@ -15,6 +15,10 @@ const CollapseHeader = styled.div`
   width: 100%;
 `;
 
+const NextButton = styled(Button)`
+  width: 100%;
+`;
+
 const EquipmentTagPanelHeader = ({
   equipmentTag,
   deleteTag,
@@ -49,10 +53,6 @@ export const EquipmentTagPanel: React.FC<EquipmentTagPanelProps> = ({
   const deleteTag = (name: string) => {
     setEquipmentTags(equipmentTags.filter((tag) => tag.name !== name));
   };
-
-  const NextButton = styled(Button)`
-    width: 100%;
-  `;
 
   return (
     <>

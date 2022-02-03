@@ -120,8 +120,10 @@ export const getClosestPathSegments = (
 type ClosestPointsWithIndecies = {
   point1: Point;
   index1: number;
+  percentAlongPath1: number;
   point2: Point;
   index2: number;
+  percentAlongPath2: number;
   distance: number;
 };
 
@@ -134,14 +136,21 @@ export const getClosestPointsOnSegments = (
 
   pathSegments1.forEach((pathSegment1, index1) => {
     pathSegments2.forEach((pathSegment2, index2) => {
-      const { thisPoint, otherPoint, distance } =
-        pathSegment1.getClosestPointsOnSegments(pathSegment2);
+      const {
+        thisPoint,
+        thisPercentAlongPath,
+        otherPoint,
+        otherPercentAlongPath,
+        distance,
+      } = pathSegment1.getClosestPointsOnSegments(pathSegment2);
       if (distance < minDistance) {
         minDistance = distance;
         closestPointsWithIndecies = {
           point1: thisPoint,
+          percentAlongPath1: thisPercentAlongPath,
           index1,
           point2: otherPoint,
+          percentAlongPath2: otherPercentAlongPath,
           index2,
           distance,
         };

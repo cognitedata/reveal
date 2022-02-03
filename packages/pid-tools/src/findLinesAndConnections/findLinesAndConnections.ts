@@ -72,7 +72,7 @@ export const getPotentialLines = (
 
 export interface FindLinesAndConnectionsOutput {
   newConnections: DiagramConnection[];
-  lineInstances: DiagramLineInstance[];
+  newLines: DiagramLineInstance[];
 }
 
 export const findLinesAndConnections = (
@@ -124,7 +124,7 @@ export const findLinesAndConnections = (
 
   return {
     newConnections: prunedNewConnections,
-    lineInstances: newLines,
+    newLines,
   };
 };
 

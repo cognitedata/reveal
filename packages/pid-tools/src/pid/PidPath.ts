@@ -11,6 +11,7 @@ import {
   LineSegment,
   getPointTowardOtherPoint,
   getClosestPointsOnSegments,
+  CurveSegment,
 } from '../geometry';
 import { PathReplacement, SvgPathWithId } from '../types';
 import { T_JUNCTION, T_JUNCTION_SIZE } from '../constants';
@@ -18,6 +19,7 @@ import { T_JUNCTION, T_JUNCTION_SIZE } from '../constants';
 interface PidPathStyle {
   strokeLinejoin: string;
   stroke: string;
+  fill: string;
 }
 
 export class PidPath {
@@ -57,7 +59,7 @@ export class PidPath {
   }
 
   static fromSVGElement(svgElement: SVGPathElement, mainSVG: SVGSVGElement) {
-    const { strokeLinejoin, stroke } = svgElement.style;
+    const { strokeLinejoin, stroke, fill } = svgElement.style;
     return new PidPath(
       svgCommandsToSegmentsWithDom(
         svgElement.getAttribute('d') as string,
@@ -65,7 +67,7 @@ export class PidPath {
         svgElement.id
       ),
       svgElement.id,
-      { strokeLinejoin, stroke }
+      { strokeLinejoin, stroke, fill }
     );
   }
 
@@ -87,9 +89,20 @@ export class PidPath {
     const {
       index1: thisIndex,
       point1: intersection,
+      percentAlongPath1,
       index2: splitGuideIndex,
+      percentAlongPath2,
       distance,
     } = closestPoints;
+
+    if (
+      !(
+        percentAlongPath1 > 0.1 &&
+        percentAlongPath1 < 0.9 &&
+        (percentAlongPath2 < 0.1 || percentAlongPath2 > 0.9)
+      )
+    )
+      return null;
 
     // we do not want to create a 'T' junction if the the distance between the base and top is too big
     if (distance > T_JUNCTION_SIZE / 2) return null;
@@ -177,5 +190,24 @@ export class PidPath {
         replacementPaths: [splitGuideSvgPathWithId],
       },
     ];
+  }
+
+  getPathReplacementIfManySegments(): PathReplacement | null {
+    if (
+      this.segmentList.length > 1 &&
+      !this.segmentList.some((segment) => segment instanceof CurveSegment) &&
+      this.style?.fill === 'none'
+    ) {
+      return {
+        pathId: this.pathId,
+        replacementPaths: this.segmentList.map((pathSegment, index) => {
+          return {
+            id: `${this.pathId}_${index}`,
+            svgCommands: segmentsToSvgCommands([pathSegment]),
+          };
+        }),
+      };
+    }
+    return null;
   }
 }
