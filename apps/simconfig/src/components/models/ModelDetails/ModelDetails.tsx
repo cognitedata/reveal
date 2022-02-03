@@ -29,20 +29,19 @@ import { isSuccessResponse } from 'utils/responseUtils';
 import type { AppLocationGenerics } from 'routes';
 
 interface ModelDetailsProps {
-  selectedTab?: string;
   project: string;
   modelName: string;
-  simulator: Simulator;
+  simulator?: Simulator;
 }
 
 export function ModelDetails({
-  selectedTab = 'model-versions',
   project,
   modelName,
-  simulator,
+  simulator = 'UNKNOWN',
 }: ModelDetailsProps) {
   const {
     data: { definitions },
+    params: { selectedTab = 'model-versions' },
   } = useMatch<AppLocationGenerics>();
 
   const navigate = useNavigate();
@@ -52,7 +51,10 @@ export function ModelDetails({
   const [runModelCalculations] = useRunModelCalculationMutation();
 
   const { data: modelFile, isFetching: isFetchingModelFile } =
-    useGetModelFileQuery({ project, modelName, simulator });
+    useGetModelFileQuery(
+      { project, modelName, simulator },
+      { skip: simulator === 'UNKNOWN' }
+    );
 
   useTitle(modelFile?.metadata.modelName);
 

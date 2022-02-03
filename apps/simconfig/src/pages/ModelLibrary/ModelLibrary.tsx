@@ -17,7 +17,7 @@ import type { AppLocationGenerics } from 'routes';
 export function ModelLibrary() {
   const project = useSelector(selectProject);
   const {
-    params: { modelName, simulator, selectedTab = 'model-versions' },
+    params: { modelName, simulator },
   } = useMatch<AppLocationGenerics>();
 
   const { data: modelFiles, isFetching: isFetchingModelFiles } =
@@ -40,7 +40,7 @@ export function ModelLibrary() {
     return <Skeleton.List lines={5} />;
   }
 
-  if (!modelName && modelFileList.length) {
+  if (!modelName && modelFileList.length > 0) {
     const firstFile = modelFileList[0];
     navigate({
       to: `/model-library/models/${encodeURIComponent(
@@ -48,10 +48,6 @@ export function ModelLibrary() {
       )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
       replace: true,
     });
-  }
-
-  if (!simulator) {
-    return null;
   }
 
   return (
@@ -95,7 +91,6 @@ export function ModelLibrary() {
         <ModelDetails
           modelName={modelName}
           project={project}
-          selectedTab={selectedTab}
           simulator={simulator}
         />
       </ModelLibraryContent>
