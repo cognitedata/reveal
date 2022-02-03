@@ -21,6 +21,9 @@ export const DOCUMENT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 export const CHART_AXIS_LABEL_DATE_FORMAT = 'MMM YYYY';
 export const DATE_NOT_AVAILABLE = 'N/A';
 
+// NUMERIC TIME FORMATS
+export const HOURS_IN_A_DAY = 24;
+
 export type DateFormat =
   | typeof SHORT_DATE_FORMAT
   | typeof LONG_DATE_FORMAT

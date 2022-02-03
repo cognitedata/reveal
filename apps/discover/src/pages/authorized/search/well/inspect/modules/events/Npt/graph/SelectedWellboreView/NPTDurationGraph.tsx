@@ -9,6 +9,7 @@ import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../../constants';
 import { NPT_GRAPH_OPTIONS } from '../constants';
+import { adaptEventsToDaysDuration } from '../utils';
 
 import {
   NPT_DURATION_GRAPH_TITLE,
@@ -30,11 +31,16 @@ export const NPTDurationGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
       []
     );
 
+    const adaptedEvents = useMemo(
+      () => adaptEventsToDaysDuration(events),
+      [events]
+    );
+
     return (
       <ChartWrapper>
         <StackedBarChart<NPTEvent>
           id="selected-wellbore-npt-duration-graph"
-          data={events}
+          data={adaptedEvents}
           xAxis={{
             accessor: accessors.DURATION,
             title: NPT_DURATION_GRAPH_X_AXIS_TITLE,

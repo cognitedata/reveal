@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
-import { Body, Menu } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 
 import { FlexColumn, FlexRow, sizes } from 'styles/layout';
 
@@ -67,11 +67,8 @@ export const NPTEventsTableWrapper = styled.div`
   }
 `;
 
-export const NPTEventCard = styled(Menu)`
-  padding: ${sizes.small};
+export const NPTEventCard = styled.div`
   width: 648px;
-  margin-top: ${sizes.normal};
-  margin-bottom: ${sizes.normal};
 `;
 
 export const CardSection = styled(FlexColumn)`

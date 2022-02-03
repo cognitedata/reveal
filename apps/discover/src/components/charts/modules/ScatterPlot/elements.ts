@@ -25,9 +25,3 @@ export const Plot = styled.div`
 export const PlotTooltip = styled(Tooltip)`
   transform: translateY(${PLOT_BORDER_SIZE}px);
 `;
-
-export const PlotTooltipHTML = styled(PlotTooltip)`
-  background: none;
-  margin: -${sizes.normal};
-  transform: translateY(0px);
-`;

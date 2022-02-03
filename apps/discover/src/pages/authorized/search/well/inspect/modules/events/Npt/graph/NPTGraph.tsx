@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import get from 'lodash/get';
 import { now, fromNow } from 'utils/date';
 
 import {
@@ -19,6 +18,7 @@ import {
   NPT_GRAPH_OPTIONS,
 } from './constants';
 import { SelectedWellbore } from './types';
+import { adaptEventsToDaysDuration } from './utils';
 
 interface Props {
   events: NPTEvent[];
@@ -50,10 +50,7 @@ export const NPTGraph: React.FC<Props> = React.memo(
     const data: NPTEvent[] = useMemo(() => {
       setLastUpdatedTime(now());
 
-      return events.map((event) => ({
-        ...event,
-        [accessors.DURATION]: get(event, accessors.DURATION, 0) / 24,
-      }));
+      return adaptEventsToDaysDuration(events);
     }, [events]);
 
     const handleOnUpdateGraph = useCallback(
