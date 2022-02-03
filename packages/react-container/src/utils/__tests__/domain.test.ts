@@ -57,4 +57,11 @@ describe('getNewDomain', () => {
       '1234-foo.pr.cluster1.cogniteapp.com'
     );
   });
+  it('Should validate pr-1234.foo.preview.cogniteapp.com', () => {
+    // legacy PR previews
+    // can be removed once Infield migrated to the new format (INFIELD-1930)
+    expect(getNewDomain('pr-1234.foo.preview.cogniteapp.com', '')).toBe(
+      'pr-1234.foo.preview.cogniteapp.com'
+    );
+  });
 });

@@ -1,3 +1,7 @@
+## 4.0.2 Feb 3 2022
+
+- Support legacy PR preview format: https://pr-xxxx.appname.preview.cogniteapp.com
+
 ## 4.0.1 Feb 2 2022
 
 - Fix bug in domain redirection of tenant-selector

@@ -39,6 +39,12 @@ export const getNewDomain = (hostname: string, cluster: string) => {
       const [app, type, _cluster, domain, tld] = sections;
       return joinDomainArray([app, type, cluster, domain, tld]);
     }
+    if (sections[2] === 'preview') {
+      // eg: pr-1234.foo.preview.cogniteapp.com
+      // legacy PR previews, can be removed once Infield migrates to the new format (INFIELD-1930)
+      const [prNumber, appName, type, domain, tld] = sections;
+      return joinDomainArray([prNumber, appName, type, domain, tld]);
+    }
   }
   throw new Error('Domain is not supported');
 };
