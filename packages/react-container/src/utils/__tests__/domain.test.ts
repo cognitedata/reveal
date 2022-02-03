@@ -59,7 +59,7 @@ describe('getNewDomain', () => {
   });
   it('Should validate pr-1234.foo.preview.cogniteapp.com', () => {
     // legacy PR previews
-    // can be removed once Infield migrated to the new format (INFIELD-1930)
+    // TODO(INFIELD-1930): can be removed once Infield migrated to the new format
     expect(getNewDomain('pr-1234.foo.preview.cogniteapp.com', '')).toBe(
       'pr-1234.foo.preview.cogniteapp.com'
     );

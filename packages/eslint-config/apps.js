@@ -18,10 +18,7 @@ module.exports = {
   ],
   rules: {
     ...baseConfig.rules,
-    '@cognite/no-unissued-todos': [
-      'error',
-      { issuePattern: '\\(((CG|DEMO|DTC|CM|PP|CWP|SIM)-[0-9]+)\\)' },
-    ],
+    '@cognite/no-unissued-todos': 'error',
 
     'jsx-a11y/anchor-is-valid': [
       'error',

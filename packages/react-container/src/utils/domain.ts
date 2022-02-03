@@ -41,7 +41,7 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     }
     if (sections[2] === 'preview') {
       // eg: pr-1234.foo.preview.cogniteapp.com
-      // legacy PR previews, can be removed once Infield migrates to the new format (INFIELD-1930)
+      // TODO(INFIELD-1930): legacy PR previews, can be removed once Infield migrates to the new format
       const [prNumber, appName, type, domain, tld] = sections;
       return joinDomainArray([prNumber, appName, type, domain, tld]);
     }
