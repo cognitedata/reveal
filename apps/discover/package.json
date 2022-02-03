@@ -28,7 +28,7 @@
     "storybook": "../../node_modules/.bin/start-storybook -p 6006",
     "storybook:bazel": "ibazel run :start-storybook",
     "build-storybook:bazel": "bazel build :storybook-static",
-    "test": "bazel run :jest --",
+    "test": "bazel run :jest -- --no-watchman",
     "test:debug": "yarn test --runInBand",
     "test:coverage": "yarn test --collectCoverage",
     "update-helpers": "bazel run :generate_package_json_helpers",

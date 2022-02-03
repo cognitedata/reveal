@@ -110,18 +110,19 @@ export function fetchPatch<T>(url: string, body: any, options?: FetchOptions) {
 interface GetOptions extends FetchOptions {
   handleRawResponse?: (response: Response) => void;
 }
-export function fetchGet<T>(url: string, options: GetOptions = {}) {
+export async function fetchGet<T>(url: string, options: GetOptions = {}) {
   const requestOptions = {
     method: 'GET',
     headers: options?.headers,
   };
 
-  return fetch(url, requestOptions).then((response) => {
-    if (options.handleRawResponse) {
-      options.handleRawResponse(response);
-    }
-    return handleResponse<T>(response, requestOptions);
-  });
+  const response = await fetch(url, requestOptions);
+
+  if (options.handleRawResponse) {
+    options.handleRawResponse(response);
+  }
+
+  return handleResponse<T>(response, requestOptions);
 }
 
 // interface DeleteOptions extends FetchOptions {}

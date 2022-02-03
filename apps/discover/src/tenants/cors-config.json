@@ -8,6 +8,7 @@
       "https://discover.preview.cogniteapp.com",
       "https://discover.staging.cogniteapp.com",
       "https://discover.uat.cogniteapp.com",
+      "https://discover.staging.bluefield.cogniteapp.com",
       "https://discover.staging.greenfield.cogniteapp.com",
       "https://discover.staging.pgs.cogniteapp.com",
       "https://discover.pgs.cogniteapp.com",
@@ -17,6 +18,7 @@
       "https://discover.bp-northeurope.cogniteapp.com",
       "https://discover.staging.bp-northeurope.cogniteapp.com",
       "https://discover.preview.bp-northeurope.cogniteapp.com",
+      "https://1789-discover.pr.bp-northeurope.cogniteapp.com",
       "https://localhost:11111",
       "https://localhost:3000"
     ],

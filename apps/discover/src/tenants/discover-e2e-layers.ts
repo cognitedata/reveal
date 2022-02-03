@@ -5,7 +5,7 @@ export const AKER_BP_DATA_URL = `${MAP_DATA_URL}akerbp/`;
 const layers = {
   akerBPLicense: {
     remote: `${AKER_BP_DATA_URL}Licenses_AkerBP.json`,
-    name: 'Licenses Aker BP',
+    name: 'Licenses',
     color: 'rgba(251, 59, 134, 0.8)',
     weight: 30,
     // AkerBPLicense: 'rgba(251, 176, 59, 0.8)',
@@ -44,7 +44,7 @@ const layers = {
   },
   AkerBPPartner: {
     remote: `${AKER_BP_DATA_URL}Licenses_AkerBP_Partners.json`,
-    name: 'Licences AkerBP Partners',
+    name: 'Licences Partners',
     color: 'rgba(0, 0, 0, 0.6)',
     defaultOn: false,
     mapLayers: [
@@ -71,7 +71,7 @@ const layers = {
   },
   akerBpFields: {
     remote: `${MAP_DATA_URL}Fields.json`,
-    name: 'Fields Aker BP',
+    name: 'Fields',
     color: 'rgba(0, 172, 79, 0.8)',
     defaultOn: true,
     weight: 20,

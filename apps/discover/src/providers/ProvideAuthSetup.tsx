@@ -76,9 +76,9 @@ export const ProvideAuthSetup: React.FC<{
   };
 
   React.useEffect(() => {
-    if (projectConfig && authState.client) {
-      setReAuth(authState.reauthenticate);
+    setReAuth(authState.reauthenticate);
 
+    if (projectConfig && authState.client) {
       const tokenToUse = authState.authState?.token;
 
       if (!tokenToUse) {

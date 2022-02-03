@@ -59,7 +59,7 @@ window.__cogniteSidecar = {
       roles: [],
       tokenId: 'discover-e2e',
       userId: 'discover-e2e-bluefield-user', // this is overwritten in CI
-      // if you need to test expired tokens:
+      // if you need to test expired tokens, modify: packages/auth-utils/src/fakeIdP.ts
       // customExpiry: Math.floor(new Date().getTime() / 1000) + 15, // expire after 15 seconds
     },
     {
@@ -115,6 +115,7 @@ window.__cogniteSidecar = {
       roles: ['administer'],
       tokenId: 'discover-dev',
       userId: 'discover-dev-bluefield-user', // this is overwritten in CI
+      // customExpiry: Math.floor(new Date().getTime() / 1000) + 15, // expire after 15 seconds
     },
   ],
   disableIntercom: false,
