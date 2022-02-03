@@ -55,6 +55,7 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
           ?.map((item) => item.fileId)
           .filter((item) => !completedFileIds.includes(item)) || [];
 
+      // loop failed items (sub jobs) and show error notification for new failed items
       if (job.failedItems && job.failedItems.length) {
         job.failedItems.forEach((failedItem) => {
           if (
@@ -71,11 +72,10 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
 
       const newFailedFileIds: number[] =
         job.failedItems
-          // Use first item in batch to check if the batch has failed
           ?.map((failedJob) =>
             failedJob.items.map((failedFile) => failedFile.fileId)
           )
-          .reduce((acc, next) => acc.concat(next), []) // flatten the array
+          .flat() // flatten the array
           .filter((fileId) => !failedFileIds.includes(fileId)) || [];
 
       // filter out previously completed files

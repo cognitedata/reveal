@@ -142,7 +142,7 @@ CogsTooltip.defaultProps = {
   appendTo: getContainer,
 };
 
-notification.config({ getContainer });
+notification.config({ getContainer, maxCount: 3 });
 
 message.config({ getContainer });
 

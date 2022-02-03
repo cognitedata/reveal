@@ -1,6 +1,9 @@
 import React from 'react';
 import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
-import { isProcessingFile } from 'src/modules/Process/processSlice';
+import {
+  hasJobsFailedForFile,
+  isProcessingFile,
+} from 'src/modules/Process/processSlice';
 import { Popover } from 'src/modules/Common/Components/Popover';
 import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
 import {
@@ -12,7 +15,9 @@ export const AnnotationsBadgePopover = (
   annotationCounts: AnnotationsBadgeCounts,
   annotationStatuses: AnnotationsBadgeStatuses
 ) => {
-  const showPopover = !isProcessingFile(annotationStatuses);
+  const showPopover =
+    !isProcessingFile(annotationStatuses) &&
+    !hasJobsFailedForFile(annotationStatuses);
   if (showPopover)
     return (
       <Popover

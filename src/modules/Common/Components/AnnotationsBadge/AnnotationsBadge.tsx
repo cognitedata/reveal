@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body, Button, Icon } from '@cognite/cogs.js';
+import { Body, Button, Icon, Tooltip } from '@cognite/cogs.js';
 import {
   AnnotationsBadgeCounts,
   AnnotationsBadgeStatuses,
@@ -12,6 +12,15 @@ const setBadge = (count: number, statuses?: AnnotationStatuses) => {
     return <Icon type="Loading" />;
   }
   if (statuses?.status === 'Failed') {
+    if (statuses?.error) {
+      return (
+        <Tooltip placement="bottom" content={statuses.error}>
+          <span style={{ width: '100px' }}>
+            <Icon type="ErrorStroked" />
+          </span>
+        </Tooltip>
+      );
+    }
     return <Icon type="ErrorStroked" />;
   }
 
