@@ -9,7 +9,7 @@ import {
   DiagramEquipmentTagInstance,
 } from '../types';
 
-import { isFileConnection } from './type';
+import { isFileConnection, isLineConnection } from './type';
 
 export const getDiagramInstanceId = (
   diagramInstance: DiagramInstanceWithPaths
@@ -197,6 +197,22 @@ export function addOrRemoveLabelToInstance<
       const unit = labelText.match(/G[0-9]{4}/);
       if (unit) {
         [instance.unit] = unit;
+      }
+    }
+    if (isLineConnection(instance)) {
+      const character = labelText.match(/'[A-Z]'/);
+      if (character) {
+        instance.letterIndex = character[0].slice(1, -1);
+      }
+
+      const isSameFile = labelText === 'SAME';
+      if (isSameFile) {
+        instance.pointsToFileName = 'SAME';
+      }
+
+      const fileName = labelText.match(/L[0-9]{1,}-[0-9]{1,}/);
+      if (fileName) {
+        [instance.pointsToFileName] = fileName;
       }
     }
   }

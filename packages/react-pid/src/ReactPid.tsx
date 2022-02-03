@@ -196,7 +196,10 @@ export const ReactPid: React.FC = () => {
 
     // connect labels to symbol instances
     const pidLabelSymbolInstanceConnection =
-      pidDocument.connectLabelsToSymbolInstances(symbolInstances);
+      pidDocument.connectLabelsToSymbolInstances(
+        documentMetadata.type,
+        symbolInstances
+      );
     if (pidLabelSymbolInstanceConnection.length > 0) {
       setSymbolInstances(
         symbolInstances.map((symbolInstance) => {
@@ -299,7 +302,7 @@ export const ReactPid: React.FC = () => {
   };
 
   const evalFileName = (file: File) => {
-    const looksLikeIso = file.name.match(/L[0-9]{1,}-[0-9]/);
+    const looksLikeIso = file.name.match(/L[0-9]{1,}-[0-9]{1,}/);
     const looksLikePid = file.name.match(/MF_[0-9]{1,}/);
 
     const unit = file.name.match(/G[0-9]{4}/);

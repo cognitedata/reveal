@@ -66,6 +66,12 @@ export interface FileConnectionInstance extends DiagramSymbolInstance {
   unit?: string; // // points to `DocumentMetadata.unit`
 }
 
+export interface LineConnectionInstance extends DiagramSymbolInstance {
+  type: 'Line connection';
+  letterIndex?: string; // A/B/C
+  pointsToFileName?: string; // point to IsoDocumentMetadata.lineNumber or 'SAME' if on the same document
+}
+
 export interface PathReplacement {
   pathId: string;
   replacementPaths: SvgPathWithId[];

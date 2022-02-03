@@ -15,7 +15,10 @@ import { findLinesAndConnections } from '../findLinesAndConnections';
 import { svgCommandsToSegments } from '../matcher/svgPathParser';
 import { findAllInstancesOfSymbol } from '../matcher';
 import { PathSegment, Point } from '../geometry';
-import { AUTO_ANALYSIS_LABEL_THRESHOLD } from '../constants';
+import {
+  AUTO_ANALYSIS_LABEL_THRESHOLD_ISO,
+  AUTO_ANALYSIS_LABEL_THRESHOLD_PID,
+} from '../constants';
 
 import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
@@ -154,6 +157,7 @@ export class PidDocument {
   }
 
   connectLabelsToSymbolInstances(
+    documentType: DocumentType,
     symbolInstances: DiagramSymbolInstance[]
   ): LabelSymbolInstanceConnection[] {
     const pidLabelIdsAlreadyConnected = new Set<string>();
@@ -182,11 +186,13 @@ export class PidDocument {
         return a.distance(labelMidPoint) - b.distance(labelMidPoint);
       });
 
+      const labelTreshold =
+        documentType === DocumentType.isometric
+          ? AUTO_ANALYSIS_LABEL_THRESHOLD_ISO
+          : AUTO_ANALYSIS_LABEL_THRESHOLD_PID;
+
       const closestSymbolGroup = symbolGroups[0];
-      if (
-        closestSymbolGroup.distance(labelMidPoint) <
-        AUTO_ANALYSIS_LABEL_THRESHOLD
-      ) {
+      if (closestSymbolGroup.distance(labelMidPoint) < labelTreshold) {
         labelSymbolInstanceConnections.push({
           labelId: pidLabel.id,
           labelText: pidLabel.text,

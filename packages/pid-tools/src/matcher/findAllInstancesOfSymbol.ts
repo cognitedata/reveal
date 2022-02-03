@@ -42,6 +42,7 @@ export const findAllInstancesOfSymbol = (
     const fileConnections = symbolInstances.filter(isFileConnection);
     return pidDocument.getFileConnectionsWithPosition(fileConnections);
   }
+
   return symbolInstances;
 };
 

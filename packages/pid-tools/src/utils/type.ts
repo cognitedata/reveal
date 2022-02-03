@@ -7,6 +7,7 @@ import {
   IsoDocumentMetadata,
   DocumentType,
   DocumentMetadata,
+  LineConnectionInstance,
 } from '../types';
 
 export const isOfDiagramType = <T extends DiagramInstance>(
@@ -19,6 +20,13 @@ export const isFileConnection = (
 ): diagramInstance is FileConnectionInstance => {
   const fileConnection: DiagramType = 'File connection';
   return diagramInstance.type === fileConnection;
+};
+
+export const isLineConnection = (
+  diagramInstance: any
+): diagramInstance is LineConnectionInstance => {
+  const lineConnection: DiagramType = 'Line connection';
+  return diagramInstance.type === lineConnection;
 };
 
 export const isLine = (

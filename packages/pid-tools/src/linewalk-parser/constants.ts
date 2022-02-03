@@ -22,6 +22,7 @@ export const symbolTypeMap: {
   Line: 'line',
   EquipmentTag: 'equipmentType',
   'File connection': 'fileConnection',
+  'Line connection': 'fileConnection',
   Instrument: 'instrument',
   Valve: 'valve',
   Reducer: 'reducer',
