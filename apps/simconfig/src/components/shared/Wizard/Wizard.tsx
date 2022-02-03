@@ -20,8 +20,9 @@ interface WizardProps extends TabsProps {
   children: WizardStepElement[];
   onChangeStep?: (currentStep: string, nextStep: string) => boolean;
   onCancel?: () => void;
-  onComplete?: () => void;
-  valid?: boolean;
+  onSubmit?: () => Promise<boolean>;
+  isValid?: boolean;
+  isSubmitting?: boolean;
 }
 
 export function Wizard({
@@ -30,8 +31,9 @@ export function Wizard({
   children,
   onChangeStep,
   onCancel,
-  onComplete,
-  valid = true,
+  onSubmit,
+  isValid = true,
+  isSubmitting = false,
   ...additionalProps
 }: WizardProps) {
   const stepKeys = children.reduce<string[]>(
@@ -120,7 +122,12 @@ export function Wizard({
       <WizardNavigation>
         <div className="return">
           {onCancel ? (
-            <Button className="cancel" type="ghost" onClick={onCancel}>
+            <Button
+              className="cancel"
+              disabled={isSubmitting}
+              type="ghost"
+              onClick={onCancel}
+            >
               Cancel
             </Button>
           ) : null}
@@ -128,6 +135,7 @@ export function Wizard({
         <div className="navigation">
           {previousKey !== undefined ? (
             <Button
+              disabled={isSubmitting}
               type="ghost"
               onClick={() => {
                 setStep(stepKeys[previousKey]);
@@ -146,7 +154,12 @@ export function Wizard({
               Next step
             </Button>
           ) : (
-            <Button disabled={!valid} type="primary" onClick={onComplete}>
+            <Button
+              disabled={!isValid}
+              loading={isSubmitting}
+              type="primary"
+              onClick={onSubmit}
+            >
               Finish
             </Button>
           )}

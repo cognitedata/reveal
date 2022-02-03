@@ -59,7 +59,7 @@ export function AdvancedStep({ isEditing }: StepProps) {
               name="chokeCurve.unit"
               options={lengthUnitOptions}
               value={lengthUnitOptions.find(
-                (option) => option.value === values.chokeCurve?.unit
+                (option) => option.value === values.chokeCurve.unit
               )}
               closeMenuOnSelect
               onChange={({ value }: OptionType<string>) => {
@@ -67,38 +67,47 @@ export function AdvancedStep({ isEditing }: StepProps) {
               }}
             />
           </div>
-          {values.chokeCurve?.opening.map((opening, index) => (
-            <FormRowStacked key={opening}>
-              <NumberField
-                max={100}
-                min={0}
-                name={`chokeCurve.opening.${index}`}
-                step={1}
-                title="Opening"
-                width={120}
-              />
-              <NumberField
-                name={`chokeCurve.setting.${index}`}
-                title="Value"
-                width={120}
-              />
+          {values.chokeCurve.opening.map((opening, index) => (
+            <div
+              key={opening}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                columnGap: '6px',
+              }}
+            >
+              <FormRowStacked>
+                <NumberField
+                  max={100}
+                  min={0}
+                  name={`chokeCurve.opening.${index}`}
+                  step={1}
+                  title="Opening"
+                  width={120}
+                />
+                <NumberField
+                  name={`chokeCurve.setting.${index}`}
+                  title="Value"
+                  width={120}
+                />
+              </FormRowStacked>
               <Label
                 icon="AddLarge"
                 size="small"
                 onClick={() => {
-                  const opening = [...(values.chokeCurve?.opening ?? [])];
+                  const opening = [...values.chokeCurve.opening];
                   opening.splice(
                     index,
                     0,
-                    values.chokeCurve?.opening[index] ?? 0
+                    values.chokeCurve.opening[index] ?? 0
                   );
                   setFieldValue('chokeCurve.opening', opening);
 
-                  const setting = [...(values.chokeCurve?.setting ?? [])];
+                  const setting = [...values.chokeCurve.setting];
                   setting.splice(
                     index,
                     0,
-                    values.chokeCurve?.setting[index] ?? 0
+                    values.chokeCurve.setting[index] ?? 0
                   );
                   setFieldValue('chokeCurve.setting', setting);
                 }}
@@ -108,16 +117,16 @@ export function AdvancedStep({ isEditing }: StepProps) {
                 size="small"
                 variant="danger"
                 onClick={() => {
-                  const opening = [...(values.chokeCurve?.opening ?? [])];
+                  const opening = [...values.chokeCurve.opening];
                   opening.splice(index, 1);
                   setFieldValue('chokeCurve.opening', opening);
 
-                  const setting = [...(values.chokeCurve?.setting ?? [])];
+                  const setting = [...values.chokeCurve.setting];
                   setting.splice(index, 1);
                   setFieldValue('chokeCurve.setting', setting);
                 }}
               />
-            </FormRowStacked>
+            </div>
           ))}
         </>
       ) : (

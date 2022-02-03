@@ -66,6 +66,7 @@ type WindowType = typeof window & {
     app_id: 'ou1uyk2p',
     hide_default_launcher: true,
   },
+  disableIntercom: true,
   ...(window as WindowType).__cogniteSidecar,
 };
 

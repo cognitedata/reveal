@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -82,13 +81,16 @@ export function CalculationConfiguration() {
   const {
     data: configurationTemplate,
     isFetching: isFetchingConfigurationTemplate,
-  } = useGetModelCalculationTemplateQuery({
-    project,
-    modelName,
-    calculationType: encodedCalculationType,
-    simulator,
-    connector: simulatorConnector?.connectorName ?? 'unknown',
-  });
+  } = useGetModelCalculationTemplateQuery(
+    {
+      project,
+      modelName,
+      calculationType: encodedCalculationType,
+      simulator,
+      connector: simulatorConnector?.connectorName ?? 'unknown',
+    },
+    { skip: !simulatorConnector?.connectorName }
+  );
 
   const [upsertCalculation] = useUpsertCalculationMutation();
 
@@ -140,6 +142,7 @@ export function CalculationConfiguration() {
         validateOnChange={false}
         validationSchema={calculationTemplateSchema}
         validateOnBlur
+        validateOnMount
         onSubmit={async (values) => {
           try {
             await upsertCalculation({
@@ -158,11 +161,15 @@ export function CalculationConfiguration() {
           }
         }}
       >
-        {({ handleSubmit, isValid, values, setValues }) => (
-          <Form onSubmit={handleSubmit}>
+        {({ submitForm, isSubmitting, isValid, values, setValues }) => (
+          <Form>
             <Wizard
-              valid={isValid}
+              isSubmitting={isSubmitting}
+              isValid={isValid}
               animated
+              onCancel={() => {
+                navigate({ to: '../..' });
+              }}
               onChangeStep={() => {
                 const ret = calculationTemplateSchema.cast(
                   values
@@ -170,9 +177,7 @@ export function CalculationConfiguration() {
                 setValues(ret);
                 return true;
               }}
-              onComplete={() => {
-                handleSubmit();
-              }}
+              onSubmit={submitForm}
             >
               <Wizard.Step icon="Calendar" key="schedule" title="Schedule">
                 <ScheduleStep />
@@ -182,7 +187,7 @@ export function CalculationConfiguration() {
                 key="data-sampling"
                 title="Data sampling"
               >
-                <DataSamplingStep isEditing={isEditing} />
+                <DataSamplingStep />
               </Wizard.Step>
               <Wizard.Step
                 disabled={!['ChokeDp', 'VLP', 'IPR'].includes(calculationType)}
@@ -282,8 +287,10 @@ type PresetCalculationTemplateFields =
   | 'calculationType'
   | 'connector'
   | 'dataModelVersion'
+  | 'inputTimeSeries'
   | 'modelName'
   | 'outputSequences'
+  | 'outputTimeSeries'
   | 'simulator'
   | 'unitSystem'
   | 'userEmail';
@@ -439,6 +446,14 @@ const getCalculationTemplateSchema = ({
         .label('Slope threshold')
         .lessThan(0),
     }).defined(),
+    chokeCurve: Yup.object({
+      opening: Yup.array().of(
+        Yup.number().min(0).max(100).required().default(0)
+      ),
+      setting: Yup.array().of(Yup.number().required().default(0)),
+    })
+      .optional()
+      .default(undefined),
     rootFindingSettings: Yup.object({
       mainSolution: Yup.string<'max' | 'min'>(),
       rootTolerance: Yup.number().label('Root tolerance').moreThan(0),
@@ -448,7 +463,9 @@ const getCalculationTemplateSchema = ({
           .label('Upper bound')
           .moreThan(Yup.ref('lowerBound')),
       }),
-    }),
+    })
+      .optional()
+      .default(undefined),
     estimateBHP: Yup.object({
       enabled: Yup.boolean(),
       method: Yup.string<
@@ -459,8 +476,23 @@ const getCalculationTemplateSchema = ({
         unit: Yup.string<LengthUnit>(),
         unitType: Yup.string<'Length'>(),
       }),
-    }),
-    inputTimeSeries: Yup.array().ensure().defined(),
+    })
+      .optional()
+      .default(undefined),
+    inputTimeSeries: Yup.array()
+      .of(
+        Yup.object({
+          name: Yup.string<InputTimeSeries['name']>().required().ensure(),
+          type: Yup.string<InputTimeSeries['type']>().required().ensure(),
+          unit: Yup.string().required().ensure(),
+          unitType: Yup.string<InputTimeSeries['unitType']>().required(),
+          sensorExternalId: Yup.string().required(),
+          aggregateType: Yup.string<AggregateType>().required(),
+          sampleExternalId: Yup.string().required(),
+        }).required()
+      )
+      .ensure()
+      .defined(),
     outputTimeSeries: Yup.array().ensure().defined(),
   }).transform((values: CalculationTemplate) => ({
     ...values,

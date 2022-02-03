@@ -164,28 +164,105 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
             <div className="entry">
               <div>Unit</div>
               <div>
-                <NullableValue value={configuration.chokeCurve?.unit} />
+                <NullableValue value={configuration.chokeCurve.unit} />
               </div>
             </div>
           </div>
           <ChokeCurve>
             <div>
-              {configuration.chokeCurve?.opening.map((opening) => (
+              {configuration.chokeCurve.opening.map((opening) => (
                 <span className="opening" key={opening}>
                   {opening}%{' '}
                 </span>
               ))}
             </div>
             <div>
-              {configuration.chokeCurve?.opening.map((opening, index) => (
+              {configuration.chokeCurve.opening.map((opening, index) => (
                 <NullableValue
                   key={opening}
                   rejectFalsyValues={false}
-                  value={configuration.chokeCurve?.setting[index]}
+                  value={configuration.chokeCurve.setting[index]}
                 />
               ))}
             </div>
           </ChokeCurve>
+        </ConfigurationSection>
+      ) : null}
+
+      {'estimateBHP' in configuration ? (
+        <ConfigurationSection
+          className={classNames({
+            enabled: configuration.estimateBHP.enabled,
+            disabled: !configuration.estimateBHP.enabled,
+          })}
+        >
+          <h3>
+            BHP estimation{' '}
+            {configuration.estimateBHP.enabled || (
+              <Label size="small" variant="danger">
+                disabled
+              </Label>
+            )}
+          </h3>
+          <div className="properties">
+            <div className="entry">
+              <div>Method</div>
+              <div>
+                <NullableValue value={configuration.estimateBHP.method} />
+              </div>
+            </div>
+            <div className="entry">
+              <div>Gauge depth</div>
+              <div>
+                <NullableValue
+                  value={configuration.estimateBHP.gaugeDepth?.value}
+                />{' '}
+                <NullableValue
+                  value={configuration.estimateBHP.gaugeDepth?.unit}
+                />
+              </div>
+            </div>
+          </div>
+        </ConfigurationSection>
+      ) : null}
+
+      {'rootFindingSettings' in configuration ? (
+        <ConfigurationSection>
+          <h3>Root finding</h3>
+          <div className="properties">
+            <div className="entry">
+              <div>Main solution</div>
+              <div>
+                <NullableValue
+                  value={configuration.rootFindingSettings.mainSolution}
+                />
+              </div>
+            </div>
+            <div className="entry">
+              <div>Tolerance</div>
+              <div>
+                <NullableValue
+                  value={configuration.rootFindingSettings.rootTolerance}
+                />
+              </div>
+            </div>
+            <div className="entry">
+              <div>Lower bound</div>
+              <div>
+                <NullableValue
+                  value={configuration.rootFindingSettings.bracket.lowerBound}
+                />
+              </div>
+            </div>
+            <div className="entry">
+              <div>Upper bound</div>
+              <div>
+                <NullableValue
+                  value={configuration.rootFindingSettings.bracket.upperBound}
+                />
+              </div>
+            </div>
+          </div>
         </ConfigurationSection>
       ) : null}
 
