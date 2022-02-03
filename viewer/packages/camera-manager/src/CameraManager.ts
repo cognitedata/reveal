@@ -448,13 +448,12 @@ export class CameraManager {
   ): THREE.Vector3 {
     const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
     
-    const lastScrollTargetDistance = this.cameraControls.getScrollTarget().distanceTo(this._camera.position),
-      lastTargetDistance = this.cameraControls.getState().target.distanceTo(this._camera.position);
+    const lastScrollTargetDistance = this.cameraControls.getScrollTarget().distanceTo(this._camera.position);
 
     const newTargetDistance = (lastScrollTargetDistance <= this.cameraControls.minDistance) ? 
       Math.min(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize)/2 :
       lastScrollTargetDistance;
-    console.log('d', lastScrollTargetDistance)  
+        
     this._raycaster.setFromCamera(cursorPosition, this._camera);
 
     const farPoint = this._raycaster.ray.direction

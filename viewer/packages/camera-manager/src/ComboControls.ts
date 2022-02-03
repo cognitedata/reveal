@@ -727,7 +727,7 @@ export class ComboControls extends EventDispatcher {
       maxDeltaDownscaleCoefficient,
       minDeltaDownscaleCoefficient
     );
-    console.log('c', deltaDownscaleCoefficient);
+    
     if (Math.abs(deltaDistance) > this.minDistance || Math.abs(deltaTargetOffsetDistance) > this.minDistance) {
       deltaDistance *= deltaDownscaleCoefficient;
       deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
@@ -745,13 +745,8 @@ export class ComboControls extends EventDispatcher {
         radius = distToTarget;
       }
       if (radius <= 0) {
-        if (_scrollTarget.distanceTo(_target) > minZoomDistance) {
-          radius = minZoomDistance;
-          deltaTargetOffsetDistance = (minZoomDistance - distToTarget) * targetOffsetToDeltaRatio;
-        } else {
           deltaTargetOffsetDistance = 0;
           radius = distToTarget;
-        }
       }
     }
 
