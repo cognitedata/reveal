@@ -1,13 +1,31 @@
+import React from 'react';
 import { CogsFileInfo } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import { getHumanReadableFileSize } from 'src/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
 import styled from 'styled-components';
-import { Detail, Icon } from '@cognite/cogs.js';
-import React from 'react';
+import { AllIconTypes, Detail, Icon } from '@cognite/cogs.js';
 import { Progress } from 'antd';
+import { MimeTypes } from 'src/constants/validMimeTypes';
 
 type FileListItemProps = {
   file: CogsFileInfo;
   onRemove: (file: CogsFileInfo) => unknown;
+};
+
+const getIcon = (fileType: string): AllIconTypes => {
+  switch (fileType) {
+    // Image
+    case MimeTypes.jpg:
+    case MimeTypes.jpeg:
+    case MimeTypes.png:
+      return 'Image' as AllIconTypes;
+    // Video
+    case MimeTypes.mp4:
+    case MimeTypes.webm:
+      return 'VideoCam' as AllIconTypes;
+    // Others
+    default:
+      return 'Placeholder' as AllIconTypes;
+  }
 };
 
 export function FileListItem({ file, onRemove }: FileListItemProps) {
@@ -15,7 +33,7 @@ export function FileListItem({ file, onRemove }: FileListItemProps) {
     <FileListItemContainer>
       <div className="nameAndIcon">
         <Icon
-          type="Image"
+          type={getIcon(file.type)}
           style={{
             marginRight: '16px',
           }}
