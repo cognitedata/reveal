@@ -21,4 +21,25 @@ export const well = {
       }
     );
   },
+  getGroups: async ({
+    headers,
+    project,
+  }: {
+    headers: FetchHeaders;
+    project: string;
+  }) => {
+    // type tmp_type = Record<string, Record<string, string[]>>;
+    type tmp_type = {
+      regions: Record<string, unknown>;
+      fields: Record<string, { region?: string }>;
+      blocks: Record<string, { region?: string; field?: string }>;
+    };
+
+    return fetchGet<tmp_type>(
+      `${SIDECAR.discoverApiBaseUrl}/${project}/${URL}/groups`,
+      {
+        headers,
+      }
+    );
+  },
 };

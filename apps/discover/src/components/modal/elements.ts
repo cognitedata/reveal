@@ -38,3 +38,8 @@ export const ModalFullWidthContainer = styled.div`
   margin-right: -${MODAL_PADDING};
   padding: ${MODAL_PADDING};
 `;
+
+export const RoundedModalStyle = {
+  borderRadius: '8px',
+  top: 'calc(50% - 130px)',
+};

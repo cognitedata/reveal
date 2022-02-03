@@ -8,6 +8,9 @@ const values = [0, 100];
 const selectedValues = [2, 10];
 const onValueChange = jest.fn();
 
+const toId = 'To-';
+const fromId = 'From-';
+
 describe('Numeric Range Filter', () => {
   const page = (viewProps?: any) =>
     testRenderer(NumericRangeFilter, undefined, viewProps);
@@ -52,8 +55,8 @@ describe('Numeric Range Filter', () => {
 
   it(`Input boxes should be editable`, async () => {
     await defaultTestInit(defaultProps);
-    expect(screen.getByTestId('to')).toBeEnabled();
-    expect(screen.getByTestId('from')).toBeEnabled();
+    expect(screen.getByTestId(toId)).toBeEnabled();
+    expect(screen.getByTestId(fromId)).toBeEnabled();
   });
 
   it(`Input boxes should be readonly`, async () => {
@@ -65,8 +68,8 @@ describe('Numeric Range Filter', () => {
     };
 
     await defaultTestInit(props);
-    expect(screen.getByTestId('to')).toHaveAttribute('readonly');
-    expect(screen.getByTestId('from')).toHaveAttribute('readonly');
+    expect(screen.getByTestId(toId)).toHaveAttribute('readonly');
+    expect(screen.getByTestId(fromId)).toHaveAttribute('readonly');
   });
 
   it(`Should limit input value to minimum value`, async () => {
@@ -74,11 +77,11 @@ describe('Numeric Range Filter', () => {
 
     await defaultTestInit(defaultProps);
 
-    fireEvent.change(screen.getByTestId('from'), {
+    fireEvent.change(screen.getByTestId(fromId), {
       target: { value: minValue - 1 },
     });
-    fireEvent.blur(screen.getByTestId('from'));
-    expect(screen.getByTestId('from')).toHaveValue(minValue);
+    fireEvent.blur(screen.getByTestId(fromId));
+    expect(screen.getByTestId(fromId)).toHaveValue(minValue);
   });
 
   it(`Should limit input value to maximum value`, async () => {
@@ -86,26 +89,26 @@ describe('Numeric Range Filter', () => {
 
     await defaultTestInit(defaultProps);
 
-    fireEvent.change(screen.getByTestId('to'), {
+    fireEvent.change(screen.getByTestId(toId), {
       target: { value: maxValue + 1 },
     });
-    fireEvent.blur(screen.getByTestId('to'));
-    expect(screen.getByTestId('to')).toHaveValue(maxValue);
+    fireEvent.blur(screen.getByTestId(toId));
+    expect(screen.getByTestId(toId)).toHaveValue(maxValue);
   });
 
-  it(`Should fire callback on valid input for 'from'`, async () => {
+  it(`Should fire callback on valid input for ${fromId}`, async () => {
     await defaultTestInit(defaultProps);
 
-    fireEvent.change(screen.getByTestId('from'), { target: { value: 50 } });
-    fireEvent.blur(screen.getByTestId('from'));
+    fireEvent.change(screen.getByTestId(fromId), { target: { value: 50 } });
+    fireEvent.blur(screen.getByTestId(fromId));
     expect(onValueChange).toBeCalledWith([50, 100]);
   });
 
-  it(`Should fire callback on valid input for 'to'`, async () => {
+  it(`Should fire callback on valid input for ${toId}`, async () => {
     await defaultTestInit(defaultProps);
 
-    fireEvent.change(screen.getByTestId('to'), { target: { value: 50 } });
-    fireEvent.blur(screen.getByTestId('to'));
+    fireEvent.change(screen.getByTestId(toId), { target: { value: 50 } });
+    fireEvent.blur(screen.getByTestId(toId));
     expect(onValueChange).toBeCalledWith([0, 50]);
   });
 
@@ -117,7 +120,7 @@ describe('Numeric Range Filter', () => {
 
     await defaultTestInit(props);
 
-    expect(screen.getByTestId('from')).toHaveValue(selectedValues[0]);
-    expect(screen.getByTestId('to')).toHaveValue(selectedValues[1]);
+    expect(screen.getByTestId(fromId)).toHaveValue(selectedValues[0]);
+    expect(screen.getByTestId(toId)).toHaveValue(selectedValues[1]);
   });
 });

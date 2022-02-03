@@ -28,11 +28,11 @@ export const useAllWellSearchResultQuery = (): UseQueryResult<Well[]> => {
   const queryClient = useQueryClient();
 
   useDeepEffect(() => {
-    queryClient.invalidateQueries([WELL_QUERY_KEY.SEARCH, 'allWells']);
+    queryClient.invalidateQueries(WELL_QUERY_KEY.ALL);
   }, [wellFilter]);
 
   return useQuery(
-    [WELL_QUERY_KEY.SEARCH, 'allWells'],
+    WELL_QUERY_KEY.ALL,
     ({ signal }) => {
       return getAllByFilters(wellFilter, { signal });
     },
@@ -49,7 +49,7 @@ export const useWellSearchResultQuery = (): UseQueryResult<Well[]> => {
   const addToWellsCache = useAddToWellsCache();
 
   return useQuery(
-    [WELL_QUERY_KEY.SEARCH, wellFilter],
+    WELL_QUERY_KEY.SEARCH(wellFilter),
     () => {
       const timer = wellSearchMetric.start(LOG_WELL_SEARCH_NAMESPACE, {
         stage: TimeLogStages.Network,

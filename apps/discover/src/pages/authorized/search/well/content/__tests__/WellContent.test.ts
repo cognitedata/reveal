@@ -12,8 +12,6 @@ import { WellState } from 'modules/wellSearch/types';
 // import { EMPTY_WELL_RESULT_TEXT } from '../WellSearchEmpty';
 import Content from '../Content';
 
-jest.mock('@cognite/node-visualizer', () => ({}));
-
 jest.mock('modules/wellSearch/hooks/useWellSearchResultQuery', () => ({
   useWellSearchResultQuery: jest.fn(),
 }));

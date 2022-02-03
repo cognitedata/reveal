@@ -87,10 +87,12 @@ export const getWellFilterFetchers = () => {
 
   return {
     fields: () =>
+      // unused now, take from discover-api groups instead
       getWellSDKClientV3()
         .summaries.fields()
         .then(mapSummaryCountsToStringArray),
     blocks: () =>
+      // unused now, take from discover-api groups instead
       getWellSDKClientV3()
         .summaries.blocks()
         .then(mapSummaryCountsToStringArray),
@@ -104,10 +106,11 @@ export const getWellFilterFetchers = () => {
         .then((results) => {
           return results.map((result) => result.type);
         }),
-    regions: () =>
-      getWellSDKClientV3()
-        .summaries.regions()
-        .then(mapSummaryCountsToStringArray),
+    regions: async () => {
+      // unused now, take from discover-api groups instead
+      const regions = await getWellSDKClientV3().summaries.regions();
+      return mapSummaryCountsToStringArray(regions);
+    },
     mdLimits,
     tvdLimits,
     kbLimits,

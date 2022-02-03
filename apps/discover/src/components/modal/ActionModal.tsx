@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 
 import styled from 'styled-components/macro';
 
-import { Button, Tooltip, AllIconTypes } from '@cognite/cogs.js';
+import { Button, Tooltip, IconType } from '@cognite/cogs.js';
 
 import { BlankModal } from './BlankModal';
 import { Props } from './Modal';
@@ -34,14 +34,16 @@ interface Action {
   title: string;
   text?: string;
   onClick?: () => void;
-  icon?: AllIconTypes;
+  icon?: IconType;
   disabled?: boolean;
 }
 
 export interface ActionModalProps extends Props {
   actions?: Action[];
 }
-
+/*
+ * Action modal is a modal that has a topbar with actions
+ */
 export const ActionModal: React.FC<ActionModalProps> = ({
   children,
   actions,

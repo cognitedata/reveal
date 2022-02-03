@@ -22,6 +22,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   onValueChange,
   isTextCapitalized = false,
   isOptionsSorted = true,
+  footer = () => null,
   title,
   titlePlacement = 'default',
   displayValue,
@@ -73,7 +74,11 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
   const renderTitleAboveSelectComponent = () => {
     if (title && titlePlacement === 'top') {
-      return <MultiSelectTitle>{title}</MultiSelectTitle>;
+      return (
+        <MultiSelectTitle aria-label={`${title} label`}>
+          {title}
+        </MultiSelectTitle>
+      );
     }
     return null;
   };
@@ -90,22 +95,34 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     return null;
   };
 
+  const renderDropdown = (menu: React.ReactNode) => {
+    return (
+      <>
+        {menu}
+        {footer()}
+      </>
+    );
+  };
+
   return (
     <MultiSelectContainer
       outlined={isUndefined(theme)}
       hideClearIndicator={hideClearIndicator}
       data-testid="multi-select-container"
+      aria-label={`${title} list`}
     >
       {renderTitleAboveSelectComponent()}
       <Select
         isMulti
         options={options}
+        // aria-labelledby={title}
         value={value}
         onChange={onChange}
         formatOptionLabel={formatOptionLabel || formatOptionLabelDefault}
         title={titlePlacement === 'default' && title}
         placeholderSelectElement={renderPlaceholderSelectElement()}
         theme={theme}
+        dropdownRender={renderDropdown}
         {...rest}
       />
     </MultiSelectContainer>

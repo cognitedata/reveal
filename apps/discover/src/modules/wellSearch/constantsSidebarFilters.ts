@@ -20,6 +20,8 @@ export const NPT_CODE = 'NPT Code';
 export const NPT_DURATION = 'NPT Duration';
 export const NPT_DETAIL_CODE = 'NPT Detail Code';
 export const REGION = 'Region';
+export const BLOCK = 'Block';
+export const OPERATOR = 'Operator';
 
 export const KB_ELEVATION_TEXT = 'KB elevation';
 export const MD_ELEVATION_TEXT = 'MD elevation';

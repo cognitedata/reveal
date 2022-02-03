@@ -2,6 +2,8 @@
 // is that it will make it easier to keep the
 // format in sync
 
+import { CommonWellFilter } from 'modules/wellSearch/types';
+
 import { FeedbackType } from '../modules/api/feedback/types';
 import { SAVED_SEARCHES_CURRENT_KEY } from '../modules/api/savedSearches/constants';
 
@@ -67,14 +69,16 @@ export const ONLY_FETCH_ONCE = {
 const WELLS_DISCOVER = 'wellsFromDiscoverApi';
 export const WELLS_DISCOVER_QUERY_KEY = {
   GEOMETRY: [WELLS_DISCOVER, 'geometry'],
+  GROUPS: [WELLS_DISCOVER, 'groups'],
 };
 
 const WELLS = 'wells';
 export const WELL_QUERY_KEY = {
-  SEARCH: [WELLS, 'search'],
+  SEARCH: (filter: CommonWellFilter) => [WELLS, 'search', filter],
   WELLBORES: [WELLS, 'wellbores'],
   FAVORITE: [WELLS, 'favoriteWells'],
   FILTER_OPTIONS: [WELLS, 'filterOptions'],
+  ALL: [WELLS, 'allWells'],
   WELLS_ONE: [WELLS, 'wells'],
   WELLS_CACHE: [WELLS, 'wells', 'cache'],
   CASINGS: [WELLS, 'casings'],

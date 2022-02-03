@@ -46,11 +46,13 @@ interface FilterPanelProps {
   title: string;
   showApplyButton?: boolean;
   handleApplyClick?: () => void;
+  headerTestId?: string;
 }
 const FilterPanel = ({
   children,
   showApplyButton,
   handleApplyClick = noop,
+  headerTestId = '',
   title,
   ...rest
 }: FilterPanelProps) => {
@@ -58,7 +60,7 @@ const FilterPanel = ({
     <Panel
       {...rest}
       header={
-        <>
+        <div data-testid={headerTestId}>
           <Container>
             <FilterTitle title={title} />
           </Container>
@@ -76,7 +78,7 @@ const FilterPanel = ({
               Apply
             </Button>
           )}
-        </>
+        </div>
       }
       key={title && title.split(' ').join('-')}
     >

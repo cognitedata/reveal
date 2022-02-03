@@ -12,6 +12,7 @@ export interface MultiSelectProps
   titlePlacement?: TitlePlacement;
   displayValue?: string;
   hideClearIndicator?: boolean;
+  footer?: () => React.ReactElement;
 }
 
 export type MultiSelectOptionValue = string | number | PossibleDateRangeDate;

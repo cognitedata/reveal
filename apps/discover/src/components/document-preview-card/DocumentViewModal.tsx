@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
-import { AllIconTypes, Button } from '@cognite/cogs.js';
+import { IconType, Button } from '@cognite/cogs.js';
 
 import { WhiteLoaderInline } from 'components/loading';
 import { ActionModal, OKModal } from 'components/modal';
@@ -174,7 +174,7 @@ const DocumentViewModal: React.FC<Props> = ({
       onCancel={onModalClose}
       actions={[
         {
-          icon: 'Download' as AllIconTypes,
+          icon: 'Download' as IconType,
           title: t('Download document'),
           onClick: getDownloadUrlFromDoc,
         },

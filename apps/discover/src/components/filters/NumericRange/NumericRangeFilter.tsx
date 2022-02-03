@@ -3,6 +3,7 @@ import React, { ChangeEvent, useState } from 'react';
 import debounce from 'lodash/debounce';
 import isNumber from 'lodash/isNumber';
 import toNumber from 'lodash/toNumber';
+import { toId } from 'utils/toId';
 
 import { Input, RangeSlider } from '@cognite/cogs.js';
 
@@ -126,7 +127,8 @@ export const NumericRangeFilter: React.FC<Props> = ({
       </RangeSliderWrapper>
       <InputWrapper>
         <Input
-          id="From"
+          id={`From-${toId(config?.title || '')}`}
+          data-testid={`From-${toId(config?.title || '')}`}
           title="From"
           value={toNumber(fastMinMax[0])}
           onChange={handleMinChange}
@@ -139,11 +141,11 @@ export const NumericRangeFilter: React.FC<Props> = ({
           max={max}
           variant="titleAsPlaceholder"
           readOnly={!config?.editableTextFields}
-          data-testid="from"
         />
         <FlexGrow />
         <Input
-          id="To"
+          id={`To-${toId(config?.title || '')}`}
+          data-testid={`To-${toId(config?.title || '')}`}
           title="To"
           value={toNumber(fastMinMax[1])}
           onBlur={handleMaxBlur}
@@ -156,7 +158,6 @@ export const NumericRangeFilter: React.FC<Props> = ({
           max={max}
           variant="titleAsPlaceholder"
           readOnly={!config?.editableTextFields}
-          data-testid="to"
         />
       </InputWrapper>
     </RangeFilterWrapper>

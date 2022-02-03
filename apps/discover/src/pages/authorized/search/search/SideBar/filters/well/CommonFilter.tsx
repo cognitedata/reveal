@@ -17,12 +17,16 @@ import { Checkboxes } from '../../components/Checkboxes';
 import { DateRange, DateRangeFilter } from './DateRangeFilter';
 import { MultiSelectWrapper } from './elements';
 
-type Props = {
-  filterConfig: FilterConfig;
+export type Props = {
+  filterConfig: Pick<
+    FilterConfig,
+    'type' | 'id' | 'name' | 'isTextCapitalized'
+  >;
   onValueChange: (filterId: number, value: any) => void;
   options: (WellFilterOption | WellFilterOptionValue)[];
   selectedOptions: string | WellFilterOptionValue[];
   displayFilterTitle?: boolean;
+  footer?: () => React.ReactElement;
 };
 
 export const CommonFilter = ({
@@ -31,6 +35,7 @@ export const CommonFilter = ({
   selectedOptions,
   options: originalOptions,
   displayFilterTitle = true,
+  footer,
 }: Props) => {
   const {
     type: filterType,
@@ -62,6 +67,8 @@ export const CommonFilter = ({
     />
   );
 
+  const title = displayFilterTitle ? filterName : '';
+
   const createMultiSelectElement = () => (
     <MultiSelectWrapper>
       <MultiSelect
@@ -69,10 +76,11 @@ export const CommonFilter = ({
         selectedOptions={
           isArray(selectedOptions) ? selectedOptions : [selectedOptions]
         }
-        title={displayFilterTitle ? filterName : ''}
+        title={title}
         titlePlacement="top"
         onValueChange={(values: string[]) => onValueChange(filterId, values)}
         isTextCapitalized={isTextCapitalized}
+        footer={footer}
       />
     </MultiSelectWrapper>
   );
@@ -87,7 +95,7 @@ export const CommonFilter = ({
     return (
       <Checkboxes
         data={data}
-        title={displayFilterTitle ? filterName : ''}
+        title={title}
         onValueChange={(values: string[]) => onValueChange(filterId, values)}
       />
     );
@@ -112,12 +120,16 @@ export const CommonFilter = ({
     (filterType === FilterTypes.CHECKBOXES &&
       (options.length >= 10 || isEmpty(options)))
   ) {
+    // console.log('Multiselect:', title || 'unknown');
     returnElement = createMultiSelectElement();
   } else if (filterType === FilterTypes.CHECKBOXES) {
+    // console.log('Checkbox:', title || 'unknown');
     returnElement = createCheckboxElement();
   } else if (filterType === FilterTypes.DATE_RANGE) {
+    // console.log('Date:', title || 'unknown');
     returnElement = createDateRangeElement();
   } else {
+    // console.log('Numeric:', title || 'unknown');
     returnElement = createNumericRangeFilter();
   }
 

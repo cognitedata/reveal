@@ -16,3 +16,12 @@ export const useWellAllGeometryQuery = () => {
     () => discoverAPI.well.get({ headers, project })
   );
 };
+
+export const useWellGroupsQuery = () => {
+  const headers = useJsonHeaders();
+  const [project] = getTenantInfo();
+
+  return useQuery(WELLS_DISCOVER_QUERY_KEY.GROUPS, () =>
+    discoverAPI.well.getGroups({ headers, project })
+  );
+};

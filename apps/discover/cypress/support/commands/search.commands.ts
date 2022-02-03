@@ -1,17 +1,19 @@
 import { NO_RESULTS_TEXT } from '../../../src/components/emptyState/constants';
-import { CLEAR_ALL_TEXT } from '../../../src/components/tableEmpty/constants';
 
 Cypress.Commands.add('goToTab', (tab: 'Documents' | 'Wells' | 'Seismic') => {
   cy.log(`Go to ${tab} tab`);
   cy.findByRole('tab', { name: tab }).should('be.visible').click();
 });
 
-Cypress.Commands.add('clearAllFilters', () => {
-  cy.log(`Searching for 'no results'`);
-  cy.get('span').contains(NO_RESULTS_TEXT).should('exist');
+Cypress.Commands.add('clearAllFilters', (expectEmptyResults = true) => {
+  if (expectEmptyResults) {
+    cy.log(`Searching for 'no results'`);
+    cy.get('span').contains(NO_RESULTS_TEXT).should('exist');
+  }
 
   cy.log(`Clicking on clear all filters`);
-  cy.contains(CLEAR_ALL_TEXT).click();
+  cy.findAllByTestId('clear-all-filter-button').should('be.visible').click();
+  cy.findAllByTestId('filter-tag').should('not.exist');
 });
 
 Cypress.Commands.add(
@@ -94,15 +96,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('clickOnFilter', (filterName: string) => {
-  cy.log(`Click on ${filterName}`);
-  cy.findByTestId('side-bar')
-    .contains(filterName)
-    .scrollIntoView()
-    .should('be.visible')
-    .click();
-});
-
 type WellSearch = {
   search?: {
     query?: string;
@@ -130,8 +123,7 @@ type WellSearch = {
 
 export interface SearchCommands {
   performSearch(searchString: string, clearAllFilters?: boolean): void;
-  clearAllFilters(): void;
+  clearAllFilters(expectEmptyResults?: boolean): void;
   performWellsSearch(search: WellSearch): void;
   goToTab(tab: 'Documents' | 'Wells' | 'Seismic'): void;
-  clickOnFilter(filter: string): void;
 }

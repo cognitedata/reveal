@@ -12,6 +12,7 @@ import {
 } from 'modules/api/savedSearches/hooks/useClearWellsFilters';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { Modules } from 'modules/sidebar/types';
+import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';
 import { useFilterConfigByCategory } from 'modules/wellSearch/hooks/useFilterConfigByCategory';
 import { useWellFilterOptions } from 'modules/wellSearch/hooks/useWellFilterOptionsQuery';
 import {
@@ -24,6 +25,8 @@ import { BaseFilter } from '../../components/BaseFilter';
 import { FilterCollapse } from '../../components/FilterCollapse';
 import Header from '../common/Header';
 
+import { Operator } from './categories/Operator';
+import { RegionFieldBlock } from './categories/RegionFieldBlock';
 import { CommonFilter } from './CommonFilter';
 import { TITLE, CATEGORY } from './constants';
 import { Title } from './Title';
@@ -38,6 +41,7 @@ export const WellsFilter = () => {
   const filters = useAppliedWellFilters();
   const setWellsFilters = useSetWellsFiltersAsync();
   const clearWellFilters = useClearWellsFilters();
+
   const filterConfigsByCategory = useFilterConfigByCategory();
   const metrics = useGlobalMetrics('search');
 
@@ -64,6 +68,7 @@ export const WellsFilter = () => {
       ...selectedOptions,
       [id]: selectedVals,
     });
+    // console.log('selectedOptions', selectedOptions);
 
     setFilterCalled(true);
     metrics.track('click-sidebar-wells-filter', {
@@ -75,6 +80,16 @@ export const WellsFilter = () => {
       ? omit(filters, id)
       : { ...filters, ...{ [id]: selectedVals } };
 
+    setWellsFilters(filtersToApply);
+  };
+
+  const handleClear = (changes: Record<number, WellFilterOptionValue[]>) => {
+    setSelectedOptions({
+      ...selectedOptions,
+      ...changes,
+    });
+
+    const filtersToApply = { ...filters, ...changes };
     setWellsFilters(filtersToApply);
   };
 
@@ -112,25 +127,63 @@ export const WellsFilter = () => {
       return loader;
     }
 
-    return filterConfigsByCategory.map((category, index) => (
-      <FilterCollapse.Panel
-        title={category.title}
-        // showApplyButton={changedCategories[index]}
-        // handleApplyClick={() => applyFilters(index)}
-        key={category.title}
-      >
-        {/* Filter Elements */}
-        <div data-testid={category.title}>
-          <WellFilters filterConfigs={category.filterConfigs} index={index} />
-        </div>
-      </FilterCollapse.Panel>
-    ));
+    return (
+      <>
+        {filterConfigsByCategory.map((category, index) => {
+          const hasCustomRegion = category.title === FIELD_BLOCK_OPERATOR;
+
+          return (
+            <FilterCollapse.Panel
+              title={category.title}
+              // showApplyButton={changedCategories[index]}
+              // handleApplyClick={() => applyFilters(index)}
+              key={category.title}
+              headerTestId={category.title}
+            >
+              {/* 
+              something pretty strange is going on with FilterCollapse.Panel
+              had some trouble getting this to render properly when using it in a different place...
+              using this index overwride for now, but if you can work it out, it would be better to just 
+              render RegionFieldBlock in it's owner FilterCollapse above this
+               */}
+              {hasCustomRegion && (
+                <>
+                  <RegionFieldBlock
+                    key="filter-category-RegionFieldBlock"
+                    regionFieldBlockConfig={category.filterConfigs}
+                    onValueChange={onValueChange}
+                    selectedOptions={selectedOptions}
+                    handleClear={handleClear}
+                  />
+                  <Operator
+                    key="filter-category-Operator"
+                    allConfig={category.filterConfigs}
+                    onValueChange={onValueChange}
+                    selectedOptions={selectedOptions}
+                  />
+                </>
+              )}
+
+              {/* Filter Elements */}
+              {!hasCustomRegion && (
+                <WellFilters
+                  filterConfigs={category.filterConfigs}
+                  index={index}
+                />
+              )}
+            </FilterCollapse.Panel>
+          );
+        })}
+      </>
+    );
   }, [
     isFetching,
     filterConfigsByCategory,
     selectedOptions,
     filters,
     filterOptions,
+    onValueChange,
+    RegionFieldBlock,
   ]);
 
   return (
