@@ -22,6 +22,7 @@ import {
   IsoDocumentMetadata,
   getDiagramInstanceByPathId,
   GraphDocument,
+  Orientation,
   T_JUNCTION,
 } from '@cognite/pid-tools';
 import { v4 as uuid } from 'uuid';
@@ -43,6 +44,7 @@ import { Toolbar } from './components/toolbar/Toolbar';
 export interface SaveSymbolData {
   symbolType: SymbolType;
   description: string;
+  direction?: Orientation;
 }
 
 export const ReactPid: React.FC = () => {
@@ -225,7 +227,7 @@ export const ReactPid: React.FC = () => {
     symbolData: SaveSymbolData,
     svgRepresentation: SvgRepresentation
   ) => {
-    const { symbolType, description } = symbolData;
+    const { symbolType, description, direction } = symbolData;
 
     let diagramSymbol = getSymbolByTypeAndDescription(
       symbols,
@@ -239,6 +241,7 @@ export const ReactPid: React.FC = () => {
         symbolType,
         description,
         svgRepresentations: [svgRepresentation],
+        orientation: direction,
       } as DiagramSymbol;
 
       setSymbols([...symbols, diagramSymbol]);

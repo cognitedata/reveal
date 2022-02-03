@@ -1,5 +1,5 @@
 import { Point } from '../geometry';
-import { FileConnectionInstance, BoundingBox } from '../types';
+import { FileConnectionInstance, BoundingBox, FileDirection } from '../types';
 
 import { PidDocument } from './PidDocument';
 import { PidTspan } from './PidTspan';
@@ -93,10 +93,25 @@ export const getFileConnectionsWithPosition = (
         normalizedMidPoint,
         leftColumnLabels
       );
+      let fileDirection: FileDirection;
+      switch (fileConnection.orientation) {
+        case 'Left':
+          fileDirection = 'Out';
+          break;
+        case 'Right':
+          fileDirection = 'In';
+          break;
+        case 'Left & Right':
+          fileDirection = 'Unidirectional';
+          break;
+        default:
+          fileDirection = 'Unknown';
+      }
       return {
         ...fileConnection,
         position: `A${closestLeftLabel.text}`,
         labelIds: [...fileConnection.labelIds, closestLeftLabel.id],
+        fileDirection,
       };
     }
 
@@ -107,10 +122,26 @@ export const getFileConnectionsWithPosition = (
         rightColumnLabels
       );
 
+      let fileDirection: FileDirection;
+      switch (fileConnection.orientation) {
+        case 'Left':
+          fileDirection = 'In';
+          break;
+        case 'Right':
+          fileDirection = 'Out';
+          break;
+        case 'Left & Right':
+          fileDirection = 'Unidirectional';
+          break;
+        default:
+          fileDirection = 'Unknown';
+      }
+
       return {
         ...fileConnection,
         position: `B${closestRightLabel.text}`,
         labelIds: [...fileConnection.labelIds, closestRightLabel.id],
+        fileDirection,
       };
     }
 
@@ -121,13 +152,32 @@ export const getFileConnectionsWithPosition = (
         topColumnLabels
       );
 
+      let fileDirection: FileDirection;
+      switch (fileConnection.orientation) {
+        case 'Up':
+          fileDirection = 'Out';
+          break;
+        case 'Down':
+          fileDirection = 'In';
+          break;
+        case 'Up & Down':
+          fileDirection = 'Unidirectional';
+          break;
+        default:
+          fileDirection = 'Unknown';
+      }
+
       return {
         ...fileConnection,
         position: closestTopLabel.text,
         labelIds: [...fileConnection.labelIds, closestTopLabel.id],
+        fileDirection,
       };
     }
 
-    return fileConnection;
+    return {
+      ...fileConnection,
+      fileDirection: 'Unknown',
+    };
   });
 };

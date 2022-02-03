@@ -1,4 +1,4 @@
-import { symbolTypes } from './constants';
+import { orientations, symbolTypes } from './constants';
 
 export interface SvgPath {
   svgCommands: string;
@@ -27,6 +27,7 @@ export interface DiagramSymbol {
   symbolType: SymbolType;
   description: string;
   svgRepresentations: SvgRepresentation[];
+  orientation?: Orientation;
 }
 
 export type DiagramType = SymbolType | 'Line' | 'EquipmentTag';
@@ -58,12 +59,18 @@ export interface DiagramSymbolInstance extends DiagramInstanceWithPaths {
   scale?: number;
 }
 
+export type Orientation = typeof orientations[number];
+
+export type FileDirection = 'In' | 'Out' | 'Unidirectional' | 'Unknown';
+
 export interface FileConnectionInstance extends DiagramSymbolInstance {
   type: 'File connection';
   position?: string; // 'A5', 'B3' or similar
   toPosition?: string;
   documentNumber?: number; // points to `PidDocumentMetadata.documentNumber`
   unit?: string; // // points to `DocumentMetadata.unit`
+  orientation: Orientation;
+  fileDirection?: FileDirection;
 }
 
 export interface LineConnectionInstance extends DiagramSymbolInstance {

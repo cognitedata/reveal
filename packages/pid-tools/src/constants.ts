@@ -19,3 +19,12 @@ export const symbolTypes = [
   'Custom',
   'Line connection', // This is only in ISOs
 ] as const;
+
+export const orientations = [
+  'Left',
+  'Right',
+  'Up',
+  'Down',
+  'Left & Right',
+  'Up & Down',
+] as const;

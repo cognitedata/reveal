@@ -5,6 +5,7 @@ import {
   DiagramSymbol,
   SvgRepresentation,
   DiagramSymbolInstance,
+  FileConnectionInstance,
 } from '../types';
 
 import { InstanceMatch, InstanceMatcher, MatchResult } from './InstanceMatcher';
@@ -27,14 +28,26 @@ export const findAllInstancesOfSymbol = (
     );
 
     matches.forEach((match) => {
-      symbolInstances.push({
-        type: symbol.symbolType,
-        symbolId: symbol.id,
-        pathIds: match.pathIds,
-        scale: match.scale,
-        labelIds: [],
-        lineNumbers: [],
-      });
+      if (symbol.symbolType === 'File connection') {
+        symbolInstances.push({
+          type: symbol.symbolType,
+          symbolId: symbol.id,
+          pathIds: match.pathIds,
+          scale: match.scale,
+          labelIds: [],
+          lineNumbers: [],
+          orientation: symbol.orientation!,
+        } as FileConnectionInstance);
+      } else {
+        symbolInstances.push({
+          type: symbol.symbolType,
+          symbolId: symbol.id,
+          pathIds: match.pathIds,
+          scale: match.scale,
+          labelIds: [],
+          lineNumbers: [],
+        });
+      }
     });
   }
 

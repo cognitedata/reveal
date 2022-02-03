@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Button, Select, OptionType } from '@cognite/cogs.js';
-import { symbolTypes, SymbolType } from '@cognite/pid-tools';
+import {
+  symbolTypes,
+  SymbolType,
+  Orientation,
+  orientations,
+} from '@cognite/pid-tools';
 
 import { SaveSymbolData } from '../../ReactPid';
 
@@ -10,6 +15,13 @@ const symbolTypeOptions: OptionType<SymbolType>[] = symbolTypes.map(
   (symbolType) => ({
     label: symbolType,
     value: symbolType,
+  })
+);
+
+const directionOptions: OptionType<Orientation>[] = orientations.map(
+  (direction) => ({
+    label: direction,
+    value: direction,
   })
 );
 
@@ -27,12 +39,27 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   const [selectedSymbolTypeOption, setSelectedSymbolTypeOption] =
     React.useState<OptionType<SymbolType>>(symbolTypeOptions[0]);
 
+  const [direction, setDirection] = React.useState<OptionType<Orientation>>(
+    directionOptions[1]
+  );
+
   const saveSymbolWrapper = () => {
     setDescription('');
-    saveSymbol(
-      { symbolType: selectedSymbolTypeOption.value!, description },
-      selection
-    );
+    if (selectedSymbolTypeOption.value === 'File connection') {
+      saveSymbol(
+        {
+          symbolType: selectedSymbolTypeOption.value!,
+          description,
+          direction: direction.value,
+        },
+        selection
+      );
+    } else {
+      saveSymbol(
+        { symbolType: selectedSymbolTypeOption.value!, description },
+        selection
+      );
+    }
   };
 
   const isDisabled = () => {
@@ -40,7 +67,7 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   };
 
   return (
-    <div>
+    <>
       <Select
         closeMenuOnSelect
         title="Symbol type"
@@ -50,34 +77,47 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
         menuPlacement="top"
         maxMenuHeight={500}
       />
-      <StyledInput
-        width={100}
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description"
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            if (isDisabled()) {
-              return true;
-            }
-            saveSymbolWrapper();
-            event.preventDefault();
-            return false;
-          }
-          return true;
-        }}
-        postfix={
-          <Button
-            type="primary"
-            onClick={() => {
+      {selectedSymbolTypeOption.value === 'File connection' && (
+        <Select
+          closeMenuOnSelect
+          title="Direction"
+          value={direction}
+          onChange={setDirection}
+          options={directionOptions}
+          menuPlacement="top"
+          maxMenuHeight={500}
+        />
+      )}
+      <div>
+        <StyledInput
+          width={100}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Description"
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              if (isDisabled()) {
+                return true;
+              }
               saveSymbolWrapper();
-            }}
-            disabled={isDisabled()}
-          >
-            Add
-          </Button>
-        }
-      />
-    </div>
+              event.preventDefault();
+              return false;
+            }
+            return true;
+          }}
+          postfix={
+            <Button
+              type="primary"
+              onClick={() => {
+                saveSymbolWrapper();
+              }}
+              disabled={isDisabled()}
+            >
+              Add
+            </Button>
+          }
+        />
+      </div>
+    </>
   );
 };
