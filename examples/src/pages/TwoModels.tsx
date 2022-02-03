@@ -105,7 +105,7 @@ export function TwoModels() {
         const needsUpdate = controlsNeedUpdate || revealManager.needsRedraw;
 
         if (needsUpdate) {
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           revealManager.resetRedraw();
         }
       });

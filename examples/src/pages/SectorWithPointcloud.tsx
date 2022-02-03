@@ -225,7 +225,7 @@ export function SectorWithPointcloud() {
 
         if (needsUpdate) {
           applyRenderingFilters(scene, renderOptions.renderFilter);
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           settingsChanged = false;
           revealManager.resetRedraw();
         }

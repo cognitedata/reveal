@@ -149,7 +149,7 @@ export function WalkablePath() {
           walkablePathUpdated
         ) {
           updated = false;
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           revealManager.resetRedraw();
         }
       });

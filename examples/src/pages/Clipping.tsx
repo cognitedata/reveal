@@ -126,7 +126,7 @@ export function Clipping() {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || guiNeedsUpdate) {
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           guiNeedsUpdate = false;
           revealManager.resetRedraw();
         }
