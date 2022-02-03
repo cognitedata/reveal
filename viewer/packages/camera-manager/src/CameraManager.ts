@@ -73,7 +73,7 @@ export class CameraManager {
   constructor(
     camera: THREE.PerspectiveCamera,
     domElement: HTMLElement,
-    raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>
+    raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>,
   ) {
     this._camera = camera;
     this._domElement = domElement;
@@ -447,15 +447,20 @@ export class CameraManager {
     modelsBoundingBox: THREE.Box3
   ): THREE.Vector3 {
     const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
+    
+    const lastScrollTargetDistance = this.cameraControls.getScrollTarget().distanceTo(this._camera.position),
+      lastTargetDistance = this.cameraControls.getState().target.distanceTo(this._camera.position);
 
+    const newTargetDistance = (lastScrollTargetDistance <= this.cameraControls.minDistance) ? 
+      Math.min(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize)/2 :
+      lastScrollTargetDistance;
+    console.log('d', lastScrollTargetDistance)  
     this._raycaster.setFromCamera(cursorPosition, this._camera);
 
     const farPoint = this._raycaster.ray.direction
       .clone()
       .normalize()
-      .multiplyScalar(
-        Math.max(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize)
-      )
+      .multiplyScalar(newTargetDistance)
       .add(this._camera.position);
 
     return farPoint;
