@@ -3,6 +3,7 @@
  */
 
 import { CogniteClient, REDIRECT } from '@cognite/sdk';
+import { REVEAL_VERSION } from '@cognite/reveal';
 import { env } from './env';
 
 const tokenCacheKey = 'cachedAT';
@@ -21,7 +22,7 @@ class LoginManager {
     this.isLoggedIn = !!accessToken;
 
     this.client = new CogniteClient({
-      appId: 'reveal-docs-' + env.version,
+      appId: 'reveal-docs-' + REVEAL_VERSION,
     });
 
     // to make it available in examples
