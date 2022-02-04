@@ -66,7 +66,7 @@ const DocumentFilterTitle = () => {
       }
       title={TITLE}
       category={CATEGORY}
-      description="Search for documents by source, format, type, creation date and more"
+      description="Search for documents by source, format, type, creation date and more"
       handleClearFilters={clearDocumentFilters}
     />
   );

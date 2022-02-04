@@ -3264,11 +3264,6 @@
     "@cognite/metrics" "1.1.1"
     lodash "4.17.21"
 
-"@cognite/subsurface-interfaces@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@cognite/subsurface-interfaces/-/subsurface-interfaces-0.0.3.tgz#9a6651c75cf42d568080ceb36c825972768df228"
-  integrity sha512-HI8vFbmTqBMilaTOyH8L/r3Y8x2HHCVq1yZzaulcUXfh4sA7S2AojEDwgKosXAXm91mo0U0GtqpdjnRvlo8y+Q==
-
 "@cognite/user-management-service-types@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@cognite/user-management-service-types/-/user-management-service-types-0.1.2.tgz#02b5c561450759690d06f52d4be0d1f5546a9a39"
@@ -8949,10 +8944,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-color@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-3.0.5.tgz#b8bdf8df7085bd1577658fb37d9a18d7ba3963bb"
-  integrity sha512-0VZy8Uq5x04cW5QFz24Qw8MMMlsMi8Bb+XG5h59ATqPnWVq6OheHtrwv5LeakdTRDaECQnExJNSFOsSe4Eo/zQ==
+"@types/react-color@^3.0.2":
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-3.0.6.tgz#602fed023802b2424e7cd6ff3594ccd3d5055f9a"
+  integrity sha512-OzPIO5AyRmLA7PlOyISlgabpYUa3En74LP8mTMa0veCA719SvYQov4WLMsHvCgXP+L+KI9yGhYnqZafVGG0P4w==
   dependencies:
     "@types/react" "*"
     "@types/reactcss" "*"

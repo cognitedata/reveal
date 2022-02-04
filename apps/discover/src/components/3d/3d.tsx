@@ -6,13 +6,13 @@ import { ThemeProvider } from 'styled-components/macro';
 import {
   NodeVisualizerProvider,
   SubSurfaceModule,
+  ITrajectoryRows,
   Modules,
   ThreeModule,
   BPDataOptions,
   BaseRootNode,
 } from '@cognite/node-visualizer';
 import { Sequence, CogniteEvent } from '@cognite/sdk';
-import { TrajectoryRows } from '@cognite/subsurface-interfaces';
 
 import { getSeismicSDKClient } from 'modules/seismicSearch/service';
 import { ThreeDNPTEvents, Well } from 'modules/wellSearch/types';
@@ -32,7 +32,7 @@ export interface Props extends WellsData {
 interface WellsData {
   wells?: Well[];
   trajectories?: Sequence[];
-  trajectoryData?: TrajectoryRows[];
+  trajectoryData?: ITrajectoryRows[];
   casings?: Sequence[];
   ndsEvents?: CogniteEvent[];
   nptEvents?: ThreeDNPTEvents[];

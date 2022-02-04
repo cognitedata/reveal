@@ -96,7 +96,6 @@ DEPENDENCIES = [
     "@npm//@cognite/sdk-playground",
     "@npm//@cognite/sdk-v7",
     "@npm//@cognite/seismic-sdk-js",
-    "@npm//@cognite/subsurface-interfaces",
     "@npm//@cognite/videx-wellog",
     "@npm//@cognite/user-management-service-types",
     "@npm//@fontsource/inter",
