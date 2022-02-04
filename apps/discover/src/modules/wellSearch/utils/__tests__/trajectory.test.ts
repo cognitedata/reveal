@@ -1,12 +1,17 @@
 import { useSelector } from 'react-redux';
 
-import { mockedTrajectoryData } from '__test-utils/fixtures/trajectory';
+import { AngleUnitEnum, DistanceUnitEnum } from '@cognite/sdk-wells-v3';
+
+import {
+  getMockedTrajectoryData,
+  mockedTrajectoryDataV3,
+} from '__test-utils/fixtures/trajectory';
 import {
   mockedSequencesResultFixture,
   mockedWellStateFixture,
 } from '__test-utils/fixtures/well';
 
-import { findIndexByName, mapWellInfo } from '../trajectory';
+import { findIndexByName, mapWellInfo, mapMetadataUnit } from '../trajectory';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
@@ -43,14 +48,53 @@ describe('Trajectory utils', () => {
   });
 
   it(`should find index by name`, () => {
-    const index = findIndexByName('Depth', mockedTrajectoryData, {
+    const index = findIndexByName('Depth', getMockedTrajectoryData(), {
       Depth: 'Depth',
     });
     expect(index).toEqual(0);
 
-    const invalidIndex = findIndexByName('Invalid', mockedTrajectoryData, {
+    const invalidIndex = findIndexByName('Invalid', getMockedTrajectoryData(), {
       Depth: 'Depth',
     });
     expect(invalidIndex).toEqual(-1);
+  });
+
+  it('should return correct unit with trajectory data type', () => {
+    const unitOfTVD = mapMetadataUnit(
+      { name: 'tvd' },
+      mockedTrajectoryDataV3()
+    );
+    const unitOfMD = mapMetadataUnit({ name: 'md' }, mockedTrajectoryDataV3());
+    const unitOfInclination = mapMetadataUnit(
+      { name: 'inclination' },
+      mockedTrajectoryDataV3()
+    );
+    const unitOfAzimuth = mapMetadataUnit(
+      { name: 'azimuth' },
+      mockedTrajectoryDataV3()
+    );
+
+    const unitOfED = mapMetadataUnit(
+      { name: 'equivalent_departure' },
+      mockedTrajectoryDataV3()
+    );
+
+    const unitOfXOffset = mapMetadataUnit(
+      { name: 'x_offset' },
+      mockedTrajectoryDataV3()
+    );
+
+    const unitOfYOffset = mapMetadataUnit(
+      { name: 'y_offset' },
+      mockedTrajectoryDataV3()
+    );
+
+    expect(unitOfTVD).toEqual(DistanceUnitEnum.Meter);
+    expect(unitOfMD).toEqual(DistanceUnitEnum.Meter);
+    expect(unitOfInclination).toEqual(AngleUnitEnum.Degree);
+    expect(unitOfAzimuth).toEqual(AngleUnitEnum.Degree);
+    expect(unitOfED).toEqual(DistanceUnitEnum.Meter);
+    expect(unitOfXOffset).toEqual(DistanceUnitEnum.Meter);
+    expect(unitOfYOffset).toEqual(unitOfXOffset);
   });
 });

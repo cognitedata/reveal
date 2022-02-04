@@ -32,6 +32,7 @@ import {
 import {
   getExistColumns,
   mapDataToTrajectoryRowType,
+  mapMetadataUnit,
 } from 'modules/wellSearch/utils/trajectory';
 
 import { TRAJECTORY_COLUMNS, TRAJECTORY_COLUMN_NAME_MAP } from './constants';
@@ -127,9 +128,16 @@ export const convertToCustomTrajectoryData = (
     trajectoryData.rows.map((row) => row.trueVerticalDepth)
   );
 
+  const sequenceColumns: SequenceColumn[] = columns.map((column) => {
+    return {
+      ...(column as SequenceColumn),
+      metadata: { unit: mapMetadataUnit(column, trajectoryData) },
+    };
+  });
+
   const sequence = {
     id: trajectoryId,
-    columns: columns as SequenceColumn[],
+    columns: sequenceColumns,
     assetId: wellboreId,
     name: trajectoryData.source.sourceName,
     externalId: trajectoryData.wellboreAssetExternalId,

@@ -1,6 +1,7 @@
 import convert from 'convert-units';
 import get from 'lodash/get';
 import head from 'lodash/head';
+import isEqual from 'lodash/isEqual';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
 import {
@@ -8,9 +9,11 @@ import {
   ProjectConfigWellsTrajectoryColumns,
 } from '@cognite/discover-api-types';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
+import { TrajectoryData as TrajectoryDataV3 } from '@cognite/sdk-wells-v3';
 
 import { FEET } from 'constants/units';
 
+import { TRAJECTORY_COLUMN_NAME_MAP } from '../service/sequence/constants';
 import { SequenceRow, TrajectoryRow, TrajectoryRows, Well } from '../types';
 
 export const getExistColumns = (
@@ -107,4 +110,25 @@ export const getDataPointInPreferredUnit = (
       columnMetaData ? get(UNITS_TO_STANDARD, columnMetaData.unit, FEET) : FEET
     )
     .to(prefferedUnit as any);
+};
+
+export const mapMetadataUnit = (
+  column: ProjectConfigWellsTrajectoryColumns,
+  trajectoryData: TrajectoryDataV3
+): string => {
+  const colName = column.name as keyof typeof TRAJECTORY_COLUMN_NAME_MAP;
+  const trajectoryColumnNameValue = TRAJECTORY_COLUMN_NAME_MAP[colName];
+
+  if (
+    isEqual(trajectoryColumnNameValue, TRAJECTORY_COLUMN_NAME_MAP.x_offset) ||
+    isEqual(trajectoryColumnNameValue, TRAJECTORY_COLUMN_NAME_MAP.y_offset)
+  ) {
+    return trajectoryData.offsetUnit;
+  }
+
+  const trajectoryUnitType = String(
+    `${trajectoryColumnNameValue}Unit`
+  ) as keyof TrajectoryDataV3;
+
+  return String(trajectoryData[trajectoryUnitType]);
 };

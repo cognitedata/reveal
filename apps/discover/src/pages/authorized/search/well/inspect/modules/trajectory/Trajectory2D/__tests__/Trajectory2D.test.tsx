@@ -1,33 +1,30 @@
 import { screen } from '@testing-library/react';
+import { setupServer } from 'msw/node';
 
-import { mockedTrajectoryData } from '__test-utils/fixtures/trajectory';
+import { getMockConfigGet } from '__mocks/getMockConfigGet';
+import { getMockedTrajectoryData } from '__test-utils/fixtures/trajectory';
 import { testRenderer } from '__test-utils/renderer';
 
 import { Trajectory2D, Props } from '../Trajectory2D';
 
-jest.mock(
-  '../../../../../../../../../modules/wellSearch/hooks/useWellConfig',
-  () => ({
-    useWellConfig: () => ({
-      data: {},
-    }),
-  })
-);
+const mockServer = setupServer(getMockConfigGet());
 
 describe('Trajectory2D', () => {
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
   const defaultTestInit = async (props?: Props) =>
     testRenderer(Trajectory2D, undefined, props);
 
-  it(`should press enter`, async () => {
+  it(`should render default view`, async () => {
     await defaultTestInit({
-      selectedTrajectoryData: mockedTrajectoryData,
+      selectedTrajectoryData: getMockedTrajectoryData(),
       selectedTrajectories: [],
       selectedWellbores: [],
       showWellWellboreDropdown: true,
     });
 
-    expect(screen.getAllByTestId('wellbore-dropdown').length).toBeGreaterThan(
-      0
-    );
+    const results = await screen.findAllByTestId('wellbore-dropdown');
+    expect(results.length).toBeGreaterThan(0);
   });
 });
