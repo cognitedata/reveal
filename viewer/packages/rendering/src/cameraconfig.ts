@@ -31,11 +31,11 @@ export function suggestCameraConfig(rootSector: SectorMetadata): SuggestedCamera
   const bounds = new THREE.Box3(averageMin, averageMax);
   const target = bounds.getCenter(new THREE.Vector3());
   const extent = bounds.getSize(new THREE.Vector3());
-  extent.x *= -2.0;
-  extent.y *= -2.0;
-  extent.z *= 2.0;
 
-  const position = new THREE.Vector3().addVectors(target, extent);
+  const positionDirection = new THREE.Vector3(-1.0 / extent.x, -1.0 / extent.y, 1.0 / extent.z).normalize();
+  positionDirection.multiplyScalar(extent.length());
+
+  const position = new THREE.Vector3().addVectors(target, positionDirection);
 
   return {
     position,
