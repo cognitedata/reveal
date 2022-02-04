@@ -1,3 +1,8 @@
+## 4.0.4 Feb 4 2022
+
+- Fixed path for local auth-utils package that broke after the tenant selector was changed
+- Fixed some other minor Rollup build errors (Unresolved/Circular dependencies)
+
 ## 4.0.3 Feb 3 2022
 
 - Fixed a problem with CDF project validation case-sensitiveness

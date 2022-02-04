@@ -19,6 +19,7 @@
     "sourceMap": true,
     "paths": {
       "@cognite/*": [
+        "../../../packages/*/dist",
         "../../../packages/*/src",
         "<rootDir>/../../packages/*/src",
         "../../../node_modules/@cognite/*",

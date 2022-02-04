@@ -3,7 +3,7 @@ import { SidecarConfig } from '@cognite/sidecar';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { reportException } from '@cognite/react-errors';
 
-import { getAuthorizationHeader } from '../auth';
+import { getAuthorizationHeader } from '../auth/headers';
 
 import { log } from './log';
 

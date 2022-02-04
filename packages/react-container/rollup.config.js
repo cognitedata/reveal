@@ -26,6 +26,7 @@ export default [
       'lodash/noop',
       'lodash/merge',
       '@cognite/cogs.js/dist/cogs.css',
+      'react-query/devtools',
       'history',
     ],
     plugins: [
