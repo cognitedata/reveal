@@ -70,34 +70,39 @@ export const Content: React.FC = () => {
           </BlockHeader>
 
           <BlockContent>
-            {well.wellbores.map((wellbore) => (
-              <BlockContentItem
-                key={wellbore.id}
-                overlay={
-                  isColoredWellbores && wellbore.metadata?.color.endsWith('_')
-                }
-              >
-                <Checkbox
-                  color={
-                    isColoredWellbores
-                      ? wellbore.metadata?.color.replace('_', '')
-                      : DEFAULT_WELLBORE_COLOR
+            {well.wellbores.map((wellbore) => {
+              const wellboreTitle =
+                wellbore.description === wellbore.name
+                  ? wellbore.name
+                  : `${wellbore.description} ${wellbore.name}`;
+
+              return (
+                <BlockContentItem
+                  key={wellbore.id}
+                  overlay={
+                    isColoredWellbores && wellbore.metadata?.color.endsWith('_')
                   }
-                  checked={selectedWellboreIds[wellbore.id]}
-                  onChange={(isSelected) =>
-                    handleClickWellbore(well, wellbore.id, isSelected)
-                  }
-                  name={`sidebar-wellbore-${wellbore.id}`}
-                  style={{ width: '100%' }}
                 >
-                  <CheckboxContent>
-                    <MiddleEllipsis
-                      value={`${wellbore.description} ${wellbore.name}`}
-                    />
-                  </CheckboxContent>
-                </Checkbox>
-              </BlockContentItem>
-            ))}
+                  <Checkbox
+                    color={
+                      isColoredWellbores
+                        ? wellbore.metadata?.color.replace('_', '')
+                        : DEFAULT_WELLBORE_COLOR
+                    }
+                    checked={selectedWellboreIds[wellbore.id]}
+                    onChange={(isSelected) =>
+                      handleClickWellbore(well, wellbore.id, isSelected)
+                    }
+                    name={`sidebar-wellbore-${wellbore.id}`}
+                    style={{ width: '100%' }}
+                  >
+                    <CheckboxContent>
+                      <MiddleEllipsis value={wellboreTitle} />
+                    </CheckboxContent>
+                  </Checkbox>
+                </BlockContentItem>
+              );
+            })}
           </BlockContent>
         </SidebarContentBlock>
       ))}
