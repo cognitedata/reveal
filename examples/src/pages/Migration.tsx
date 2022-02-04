@@ -113,21 +113,6 @@ export function Migration() {
           if (model instanceof Cognite3DModel) {
             new NodeStylingUI(gui.addFolder(`Node styling #${cadModels.length + 1}`), client, model);
             cadModels.push(model);
-
-
-            const startTime = performance.now();
-            const requests = [1,2,3,4,5,6,7,8,9,10].map(async p => {
-              const response = client.revisions3D.list3DNodes(model.modelId, model.revisionId, {
-                limit: 1000,
-                sortByNodeId: true,
-                partition: `${p}/10`
-              }).autoPagingToArray();
-              return await response;
-            });
-            const allNodes = (await Promise.all(requests)).flat();
-            const endTime = performance.now();
-            console.log(`Retrieved ${allNodes.length} nodes in ${endTime - startTime} ms`, allNodes);
-
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
           }
