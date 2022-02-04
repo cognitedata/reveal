@@ -1,34 +1,39 @@
-import Konva from 'konva';
-import { useEffect, useState } from 'react';
-import { CogniteOrnate, MoveTool, ToolType } from '@cognite/ornate';
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { CogniteOrnate } from '@cognite/ornate';
 import { AnnotationIcon, DrawingIcon } from 'components/CustomIcons';
+import { WorkspaceTool } from 'components/LineReviewViewer/useWorkspaceTools';
+import { useState } from 'react';
 
 import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
 import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
 
-type Layer = 'ANNOTATIONS' | 'DRAWINGS' | 'MARKERS';
-
-export enum WorkspaceTool {
-  LAYERS = 'layers',
-  SELECT = 'select',
-  MOVE = 'move',
-  LINE = 'line',
-  RECTANGLE = 'rectangle',
-  CIRCLE = 'circle',
-  TEXT = 'text',
-  COMMENT = 'comment',
-  SQUIGGLE = 'squiggle',
+enum NodeSelector {
+  ANNOTATIONS = '.annotation',
+  DRAWINGS = '.drawing',
 }
 
 type WorkSpaceToolsProps = {
+  tool: WorkspaceTool;
+  onToolChange: (tool: WorkspaceTool) => void;
   enabledTools?: WorkspaceTool[];
   ornateRef?: CogniteOrnate;
   areKeyboardShortcutsEnabled: boolean;
 };
 
+const DEFAULT_LAYER_STYLE = {
+  marginRight: 16,
+  filter: '',
+  opacity: 1,
+};
+const HIDDEN_LAYER_STYLE = {
+  filter: 'grayscale(1)',
+  opacity: 0.66,
+};
+
 const WorkSpaceTools = ({
+  tool,
+  onToolChange,
   enabledTools = [
     WorkspaceTool.LAYERS,
     WorkspaceTool.SELECT,
@@ -42,56 +47,18 @@ const WorkSpaceTools = ({
   ornateRef,
   areKeyboardShortcutsEnabled,
 }: WorkSpaceToolsProps) => {
-  const [activeTool, setActiveTool] = useState<ToolType>('default');
-  const [layerStatus, setLayerStatus] = useState<Record<Layer, boolean>>({
-    ANNOTATIONS: true,
-    DRAWINGS: true,
-    MARKERS: true,
-  });
+  const [layerStatus, setLayerStatus] = useState<Record<NodeSelector, boolean>>(
+    {
+      [NodeSelector.ANNOTATIONS]: true,
+      [NodeSelector.DRAWINGS]: true,
+    }
+  );
 
-  useEffect(() => {
-    if (ornateRef) {
-      const moveTool = new MoveTool(ornateRef);
-      // eslint-disable-next-line no-param-reassign
-      ornateRef.tools = {
-        move: moveTool,
-        default: moveTool,
-      };
-      onToolChange('move');
-    }
-  }, [ornateRef]);
-
-  useEffect(() => {
-    ornateRef?.handleToolChange(activeTool);
-  }, [ornateRef, activeTool]);
-
-  const onToolChange = (tool: ToolType) => {
-    if (tool !== activeTool) {
-      setActiveTool(tool);
-    }
-  };
-
-  const onSetLayerVisibility = (layer: Layer, visible: boolean) => {
-    const shapes: Konva.Node[] = [];
-    if (layer === 'ANNOTATIONS') {
-      // Get annotations. Then filter out the ones affected by the list tool
-      shapes.push(
-        ...(ornateRef?.stage.find('.annotation') || []).filter(
-          (shape) => !shape.attrs.inList
-        )
-      );
-    }
-    if (layer === 'DRAWINGS') {
-      shapes.push(
-        ...(ornateRef?.stage.find('.drawing') || []).filter(
-          (shape) => !shape.attrs.inList
-        )
-      );
-    }
-    if (layer === 'MARKERS') {
-      shapes.push(...(ornateRef?.stage.find('.marker') || []));
-    }
-    shapes.forEach((shape) => {
+  const onSetLayerVisibility = (
+    layerModifier: NodeSelector,
+    visible: boolean
+  ) => {
+    (ornateRef?.stage.find(layerModifier) ?? []).forEach((shape) => {
       if (visible) {
         shape.show();
       } else {
@@ -100,25 +67,12 @@ const WorkSpaceTools = ({
     });
   };
 
-  const onToggleLayer = (layer: Layer) => {
+  const onToggleLayer = (layer: NodeSelector) => {
     onSetLayerVisibility(layer, !layerStatus[layer]);
     setLayerStatus((prev) => ({
       ...prev,
       [layer]: !layerStatus[layer],
     }));
-  };
-
-  const styleItem = (visible: boolean) => {
-    const style = {
-      marginRight: 16,
-      filter: '',
-      opacity: 1,
-    };
-    if (!visible) {
-      style.filter = 'grayscale(1)';
-      style.opacity = 0.66;
-    }
-    return style;
   };
 
   return (
@@ -130,15 +84,25 @@ const WorkSpaceTools = ({
               <Menu>
                 <Menu.Header>Click to turn on / off</Menu.Header>
                 <Menu.Item
-                  onClick={() => onToggleLayer('ANNOTATIONS')}
-                  style={styleItem(layerStatus.ANNOTATIONS)}
+                  onClick={() => onToggleLayer(NodeSelector.ANNOTATIONS)}
+                  style={{
+                    ...DEFAULT_LAYER_STYLE,
+                    ...(layerStatus[NodeSelector.ANNOTATIONS]
+                      ? HIDDEN_LAYER_STYLE
+                      : {}),
+                  }}
                 >
                   <AnnotationIcon style={{ marginRight: 8 }} />
                   lineReviews
                 </Menu.Item>
                 <Menu.Item
-                  onClick={() => onToggleLayer('DRAWINGS')}
-                  style={styleItem(layerStatus.DRAWINGS)}
+                  onClick={() => onToggleLayer(NodeSelector.DRAWINGS)}
+                  style={{
+                    ...DEFAULT_LAYER_STYLE,
+                    ...(layerStatus[NodeSelector.DRAWINGS]
+                      ? HIDDEN_LAYER_STYLE
+                      : {}),
+                  }}
                 >
                   <DrawingIcon style={{ marginRight: 8 }} />
                   Drawings
@@ -150,7 +114,7 @@ const WorkSpaceTools = ({
             <Button
               type="ghost"
               size="small"
-              onClick={() => onToolChange('move')}
+              onClick={() => onToolChange(WorkspaceTool.MOVE)}
               title="Layers"
             >
               <Icon type="Layers" />
@@ -160,19 +124,51 @@ const WorkSpaceTools = ({
           <ToolboxSeparator />
         </>
       )}
+      {enabledTools.includes(WorkspaceTool.SELECT) && (
+        <Button
+          type="ghost"
+          size="small"
+          title="Move M"
+          onClick={() => onToolChange(WorkspaceTool.SELECT)}
+          disabled={tool === WorkspaceTool.SELECT}
+        >
+          <Icon type="Cursor" />
+        </Button>
+      )}
       {enabledTools.includes(WorkspaceTool.MOVE) && (
         <Button
           type="ghost"
           size="small"
           title="Move M"
-          onClick={() => onToolChange('move')}
-          disabled={activeTool === 'move'}
+          onClick={() => onToolChange(WorkspaceTool.MOVE)}
+          disabled={tool === 'move'}
         >
           <Icon type="Grab" />
         </Button>
       )}
+      {enabledTools.includes(WorkspaceTool.LINK) && (
+        <Button
+          type="ghost"
+          size="small"
+          title="Link alt/option"
+          onClick={() => onToolChange(WorkspaceTool.LINK)}
+          disabled={tool === WorkspaceTool.LINK}
+        >
+          <Icon type="Link" />
+        </Button>
+      )}
       {areKeyboardShortcutsEnabled && (
-        <KeyboardShortcut keys="m" onKeyDown={() => onToolChange('move')} />
+        <KeyboardShortcut
+          keys="alt"
+          onKeyDown={() => onToolChange(WorkspaceTool.LINK)}
+          onKeyRelease={() => onToolChange(WorkspaceTool.MOVE)}
+        />
+      )}
+      {areKeyboardShortcutsEnabled && (
+        <KeyboardShortcut
+          keys="m"
+          onKeyDown={() => onToolChange(WorkspaceTool.MOVE)}
+        />
       )}
     </WorkSpaceToolsWrapper>
   );

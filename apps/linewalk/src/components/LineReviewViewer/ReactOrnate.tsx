@@ -1,12 +1,10 @@
 import Konva from 'konva';
 import { useEffect, useRef, useState } from 'react';
 import { CogniteOrnate, OrnateTransformer, Drawing } from '@cognite/ornate';
-import WorkSpaceTools from 'components/WorkSpaceTools';
 import { v4 as uuid } from 'uuid';
 import isEqual from 'lodash/isEqual';
 
 import useElementDescendantFocus from '../../utils/useElementDescendantFocus';
-import { WorkspaceTool } from '../WorkSpaceTools/WorkSpaceTools';
 
 export type Group = {
   id: string;
@@ -34,7 +32,10 @@ export type ReactOrnateProps = {
   drawings?: Drawing[];
   onAnnotationClick?: (nodes: any) => void;
   onOrnateRef?: (ref: CogniteOrnate | undefined) => void;
-  tools?: WorkspaceTool[];
+  renderWorkspaceTools?: (
+    ornateRef: CogniteOrnate | undefined,
+    isFocused: boolean
+  ) => JSX.Element;
 };
 
 export const SLIDE_WIDTH = 2500;
@@ -110,8 +111,8 @@ const ReactOrnate = ({
   documents,
   drawings,
   groups,
-  tools,
   onOrnateRef,
+  renderWorkspaceTools,
 }: ReactOrnateProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const componentContainerId = useRef(
@@ -242,11 +243,7 @@ const ReactOrnate = ({
     >
       <div id={componentContainerId} />
 
-      <WorkSpaceTools
-        enabledTools={tools}
-        ornateRef={ornateViewer.current}
-        areKeyboardShortcutsEnabled={isFocused}
-      />
+      {renderWorkspaceTools?.(ornateViewer.current, isFocused)}
     </div>
   );
 };

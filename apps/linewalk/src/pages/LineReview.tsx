@@ -165,7 +165,11 @@ const LineReview = () => {
         <footer>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div>
-              <Button type="ghost" icon="Document" />
+              <Button
+                type="ghost"
+                icon="Document"
+                onClick={() => ornateRef?.onExport()}
+              />
             </div>
             <div>
               <Button type="secondary">Cancel</Button>&nbsp;&nbsp;

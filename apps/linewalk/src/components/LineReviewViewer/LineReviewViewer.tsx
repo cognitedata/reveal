@@ -12,7 +12,7 @@ import { DocumentId } from '../../modules/lineReviews/DocumentId';
 import delayMs from '../../utils/delayMs';
 import getFileConnectionGroups from '../../utils/getFileConnectionDrawings';
 import isNotUndefined from '../../utils/isNotUndefined';
-import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
+import WorkSpaceTools from '../WorkSpaceTools';
 
 import DiscrepancyModal from './DiscrepancyModal';
 import getAnnotationsByDocument from './getAnnotationsByDocument';
@@ -28,6 +28,7 @@ import ReactOrnate, {
   SLIDE_ROW_GAP,
   SLIDE_WIDTH,
 } from './ReactOrnate';
+import useWorkspaceTools, { WorkspaceTool } from './useWorkspaceTools';
 
 type LineReviewViewerProps = {
   lineReview: LineReview;
@@ -53,13 +54,15 @@ const mapPidAnnotationIdToIsoAnnotationId = (
 
 const getInteractableOverlays = (
   document: Document,
-  onPathClick: (event: KonvaEventObject<MouseEvent>, pathId: string) => void
+  onPathClick:
+    | ((event: KonvaEventObject<MouseEvent>, pathId: string) => void)
+    | undefined
 ): Drawing[] => {
   return getAnnotationsByDocument(document).map((d) => ({
     groupId: document.id,
     id: d.id,
     type: 'path',
-    onClick: (event) => onPathClick(event, d.id),
+    onClick: onPathClick ? (event) => onPathClick(event, d.id) : undefined,
     attrs: {
       ...mapPathToNewCoordinateSystem(
         document._annotations.viewBox,
@@ -69,7 +72,6 @@ const getInteractableOverlays = (
       id: d.id,
       strokeScaleEnabled: false,
       strokeWidth: 6,
-      hitStrokeWidth: 20,
       stroke: 'transparent',
       draggable: false,
       unselectable: true,
@@ -120,7 +122,7 @@ const getAnnotationOverlay = (
   document: Document,
   annotationIds: string[],
   prefix: string,
-  stroke = 'orange'
+  stroke: string
 ): Drawing[] => {
   return getAnnotationsByDocument(document)
     .filter(({ id }) => annotationIds.includes(id))
@@ -209,7 +211,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   );
   const [pendingDiscrepancy, setPendingDiscrepancy] =
     useState<Discrepancy | null>(null);
-  const [isAltPressed, setIsAltPressed] = useState(false);
   const { client } = useAuthContext();
   const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
@@ -217,6 +218,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   const [selectedFileConnectionId, setSelectedFileConnectionId] = useState<
     string | undefined
   >(undefined);
+  const { tool, onToolChange } = useWorkspaceTools(ornateRef);
+  const { tool: isoModalTool, onToolChange: onIsoModalToolChange } =
+    useWorkspaceTools(isoOrnateRef);
 
   useEffect(() => {
     (async () => {
@@ -377,12 +381,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     { evt }: KonvaEventObject<MouseEvent>,
     annotationId: string
   ): void => {
-    if (evt.shiftKey) {
-      toggleAnnotationSelection(annotationId);
-      return;
-    }
-
-    if (evt.altKey) {
+    if (tool === WorkspaceTool.LINK) {
       centerOnIsoAnnotationByPidAnnotationId(
         lineReview.documents,
         annotationId
@@ -390,24 +389,39 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return;
     }
 
+    if (tool !== WorkspaceTool.SELECT) {
+      return;
+    }
+
     const foundDiscrepancy = discrepancies.find((discrepancy) =>
       discrepancy.ids.includes(annotationId)
     );
+
     if (foundDiscrepancy) {
       setPendingDiscrepancy(foundDiscrepancy);
       setIsDiscrepancyModalOpen(true);
       return;
     }
 
-    if (selectedAnnotationIds.length > 0) {
-      setPendingDiscrepancy({
-        id: selectedAnnotationIds.join('-'),
-        ids: selectedAnnotationIds,
-        comment: '',
-        createdAt: new Date(),
-      });
-      setIsDiscrepancyModalOpen(true);
+    if (evt.shiftKey) {
+      toggleAnnotationSelection(annotationId);
+      return;
     }
+
+    const usedAnnotationIds =
+      selectedAnnotationIds.length > 0 &&
+      selectedAnnotationIds.includes(annotationId)
+        ? selectedAnnotationIds
+        : [annotationId];
+
+    setSelectedAnnotationIds(usedAnnotationIds);
+    setPendingDiscrepancy({
+      id: usedAnnotationIds.join('-'),
+      ids: usedAnnotationIds,
+      comment: '',
+      createdAt: new Date(),
+    });
+    setIsDiscrepancyModalOpen(true);
   };
 
   const onDeletePendingDiscrepancy = () => {
@@ -481,35 +495,43 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       ...getAnnotationOverlay(
         document,
         selectedAnnotationIds,
-        'current-selection'
+        'current-selection',
+        'rgba(41,114,225, 0.6)'
       ),
       ...discrepancies.flatMap((discrepancy) =>
         getAnnotationOverlay(
           document,
           discrepancy.ids,
           discrepancy.id,
-          '#CF1A17'
+          'rgba(207,26,23, 0.6)'
         )
       ),
-      ...getDiscrepancyCircleMarkersForDocument(
-        document,
-        discrepancies,
-        (discrepancy) => {
-          setPendingDiscrepancy(discrepancy);
-          setIsDiscrepancyModalOpen(true);
-        }
-      ),
-      ...(isAltPressed && document._linking
+      ...(tool === WorkspaceTool.LINK && document._linking
         ? getAnnotationOverlay(
             document,
             document._linking
               .map(({ from: { instanceId } }) => instanceId)
               .filter((id) => getSymbolNameByPathId(id) !== 'fileConnection'),
             'navigatable',
-            'blue'
+            '#39A263'
           )
         : []),
-      ...getInteractableOverlays(document, onAnnotationClick),
+      ...getInteractableOverlays(
+        document,
+        [WorkspaceTool.SELECT, WorkspaceTool.LINK].includes(tool)
+          ? onAnnotationClick
+          : undefined
+      ),
+      ...getDiscrepancyCircleMarkersForDocument(
+        document,
+        discrepancies,
+        tool === WorkspaceTool.SELECT
+          ? (discrepancy) => {
+              setPendingDiscrepancy(discrepancy);
+              setIsDiscrepancyModalOpen(true);
+            }
+          : undefined
+      ),
     ];
   };
 
@@ -566,6 +588,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         visible={isIsoModalOpen}
         onOrnateRef={setIsoOrnateRef}
         onHidePress={() => setIsIsoModalOpen(false)}
+        tool={isoModalTool}
+        onToolChange={onIsoModalToolChange}
       />
       <div
         style={{ height: 'calc(100vh - 125px - 56px)', position: 'relative' }}
@@ -588,11 +612,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
             </Button>
           </div>
         )}
-        <KeyboardShortcut
-          keys="alt"
-          onKeyDown={() => setIsAltPressed(true)}
-          onKeyRelease={() => setIsAltPressed(false)}
-        />
         <ReactOrnate
           documents={documents}
           groups={groups}
@@ -601,6 +620,20 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
             setOrnateRef(ref);
             onOrnateRef(ref);
           }}
+          renderWorkspaceTools={(ornate, isFocused) => (
+            <WorkSpaceTools
+              tool={tool}
+              onToolChange={onToolChange}
+              ornateRef={ornate}
+              enabledTools={[
+                WorkspaceTool.LAYERS,
+                WorkspaceTool.SELECT,
+                WorkspaceTool.MOVE,
+                WorkspaceTool.LINK,
+              ]}
+              areKeyboardShortcutsEnabled={isFocused}
+            />
+          )}
         />
       </div>
     </>

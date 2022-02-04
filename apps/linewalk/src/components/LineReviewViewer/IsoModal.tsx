@@ -6,13 +6,14 @@ import React, { useEffect, useState } from 'react';
 import layers from 'utils/z';
 
 import { getDocumentUrl } from '../../modules/lineReviews/api';
-import { WorkspaceTool } from '../WorkSpaceTools/WorkSpaceTools';
+import WorkSpaceTools from '../WorkSpaceTools/WorkSpaceTools';
 import { Document } from '../../modules/lineReviews/types';
 
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
 import { Discrepancy } from './LineReviewViewer';
 import ReactOrnate from './ReactOrnate';
 import useDimensions from './useDimensions';
+import { WorkspaceTool } from './useWorkspaceTools';
 
 const INITIAL_WIDTH = 643;
 const INITIAL_HEIGHT = 526;
@@ -23,6 +24,8 @@ type IsoModalProps = {
   discrepancies: Discrepancy[];
   onHidePress: () => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
+  tool: WorkspaceTool;
+  onToolChange: (tool: WorkspaceTool) => void;
 };
 
 const RESIZABLE_CORNER_SIZE = 15;
@@ -33,6 +36,8 @@ const IsoModal: React.FC<IsoModalProps> = ({
   discrepancies,
   onOrnateRef,
   onHidePress,
+  tool,
+  onToolChange,
 }) => {
   const [modalRef, setModalRef] = useState<HTMLElement | null>(null);
   const { client } = useAuthContext();
@@ -135,11 +140,15 @@ const IsoModal: React.FC<IsoModalProps> = ({
           onOrnateRef={onOrnateRef}
           documents={fetchedDocuments}
           drawings={drawings}
-          tools={[
-            WorkspaceTool.SELECT,
-            WorkspaceTool.MOVE,
-            WorkspaceTool.COMMENT,
-          ]}
+          renderWorkspaceTools={(ornate, isFocused) => (
+            <WorkSpaceTools
+              tool={tool}
+              enabledTools={[WorkspaceTool.MOVE, WorkspaceTool.COMMENT]}
+              onToolChange={onToolChange}
+              ornateRef={ornate}
+              areKeyboardShortcutsEnabled={isFocused}
+            />
+          )}
         />
       </div>
       <div
