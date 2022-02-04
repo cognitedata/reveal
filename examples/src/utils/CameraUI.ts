@@ -23,8 +23,8 @@ export class CameraUI {
   }
 
   private saveCameraToUrl(): void {
-    const position = this._viewer.getCameraPosition();
-    const target = this._viewer.getCameraTarget();
+    const position = this._viewer.cameraManager.getCameraPosition();
+    const target = this._viewer.cameraManager.getCameraTarget();
 
     const url = new URL(window.location.href);
     url.searchParams.set('camPos', vector3ToString(position));
@@ -50,8 +50,8 @@ export class CameraUI {
       const camPos = stringToVector3(camPosParam);
       const camTarget = stringToVector3(camTargetParam);
 
-      this._viewer.setCameraPosition(camPos);
-      this._viewer.setCameraTarget(camTarget);
+      this._viewer.cameraManager.setCameraPosition(camPos);
+      this._viewer.cameraManager.setCameraTarget(camTarget);
     }
     catch (error) {
       alert('Could not restore camera from URL: ' + error);

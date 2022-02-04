@@ -61,7 +61,30 @@ export interface RevealCameraControls extends THREE.EventDispatcher {
    */
   setScrollTarget: (target: THREE.Vector3) => void;
 }
+/**
+ * Camera manager interface.
+ * */
+export interface CameraManagerInterface {
+  setCameraTarget: (target: THREE.Vector3) => void;
+  getCameraTarget: () => THREE.Vector3;
 
+  setCameraPosition: (position: THREE.Vector3) => void;
+  getCameraPosition: () => THREE.Vector3;
+  /**
+   * Required for understadning of `cameraChanged` definition for other parts of Reveal
+   * @param event 
+   * @param callback 
+   */
+  on(event: 'cameraChange', callback: CameraChangeData): void;
+  off(event: 'cameraChange', callback: CameraChangeData): void;
+
+  fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
+
+  update(deltaTime: number, boundingBox: THREE.Box3): void;
+
+  dispose(): void;
+
+ }
 export type CameraManagerCallbackData = {
   intersection: {
     /**
