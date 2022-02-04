@@ -141,6 +141,7 @@ export class CogniteOrnate {
   transformer: OrnateTransformer | undefined;
   tools: Record<string, Tool> = {};
   resizeObserver?: ResizeObserver;
+  mouseOverGroup?: Konva.Group;
 
   constructor(options: CogniteOrnateOptions) {
     const host = document.querySelector(options.container) as HTMLDivElement;

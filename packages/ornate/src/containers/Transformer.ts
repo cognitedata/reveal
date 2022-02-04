@@ -5,8 +5,6 @@ import noop from 'lodash/noop';
 import { v4 as uuid } from 'uuid';
 
 export class OrnateTransformer extends Konva.Transformer {
-  group?: Konva.Group;
-  groupName?: string;
   clipboard: Node<NodeConfig>[] = [];
   onSelectNodes: (nodes: Node<NodeConfig>[]) => void = noop;
   onCopyNodes: () => void = noop;
@@ -73,26 +71,21 @@ export class OrnateTransformer extends Konva.Transformer {
     }
 
     const nodesFromClipboard = this.clipboard.map((node: Node<NodeConfig>) => {
-      const { x, y } = this.getPosition(this.group);
+      const { x, y } = this.getPosition(this.ornateInstance?.mouseOverGroup);
       return node.clone({
         id: uuid(),
-        inGroup: this.groupName,
+        inGroup: this.ornateInstance?.mouseOverGroup?.id(),
         x,
         y,
       });
     });
 
-    if (this.group) {
-      this.group.add(...nodesFromClipboard);
+    if (this.ornateInstance?.mouseOverGroup) {
+      this.ornateInstance?.mouseOverGroup.add(...nodesFromClipboard);
     } else {
       this.ornateInstance?.baseLayer.add(...nodesFromClipboard);
     }
 
     this.setSelectedNodes(nodesFromClipboard);
-  };
-
-  updateGroup = (group: Konva.Group, groupName: string) => {
-    this.group = group;
-    this.groupName = groupName;
   };
 }

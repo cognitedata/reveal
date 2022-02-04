@@ -63,10 +63,8 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
   onMouseOver = (e: KonvaEventObject<MouseEvent>) => {
     const groupName =
       e.target.attrs?.attachedToGroup || e.target.attrs?.inGroup;
-    const group = this.ornateInstance.stage.findOne(`#${groupName}`);
-    this.ornateInstance.transformer?.updateGroup(
-      group as Konva.Group,
-      groupName
+    this.ornateInstance.mouseOverGroup = this.ornateInstance.stage.findOne(
+      `#${groupName}`
     );
   };
 
