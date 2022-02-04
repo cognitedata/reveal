@@ -26,7 +26,6 @@ import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
-import { SkinnedMesh } from 'three';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
