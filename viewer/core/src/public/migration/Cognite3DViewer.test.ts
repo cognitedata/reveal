@@ -83,8 +83,8 @@ describe('Cognite3DViewer', () => {
     viewer.on('cameraChange', onCameraChange);
 
     // Act
-    viewer.setCameraTarget(new THREE.Vector3(123, 456, 789));
-    viewer.setCameraPosition(new THREE.Vector3(1, 2, 3));
+    viewer.cameraManager.setCameraTarget(new THREE.Vector3(123, 456, 789));
+    viewer.cameraManager.setCameraPosition(new THREE.Vector3(1, 2, 3));
 
     // Assert
     expect(onCameraChange).toBeCalledTimes(2);
@@ -136,8 +136,8 @@ describe('Cognite3DViewer', () => {
     TWEEN.update(TWEEN.now());
 
     // Assert
-    expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
-    expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeTrue();
+    expect(viewer.cameraManager.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(bSphere.containsPoint(viewer.cameraManager.getCameraPosition())).toBeTrue();
   });
 
   test('fitCameraToBoundingBox with 1000 duration, moves camera over time', () => {
@@ -151,13 +151,13 @@ describe('Cognite3DViewer', () => {
     viewer.fitCameraToBoundingBox(bbox, 1000);
     const now = TWEEN.now();
     TWEEN.update(now + 500);
-    expect(viewer.getCameraTarget()).not.toEqual(bbox.getCenter(new THREE.Vector3()));
-    expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeFalse();
+    expect(viewer.cameraManager.getCameraTarget()).not.toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(bSphere.containsPoint(viewer.cameraManager.getCameraPosition())).toBeFalse();
     TWEEN.update(now + 1000);
 
     // Assert
-    expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
-    expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeTrue();
+    expect(viewer.cameraManager.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(bSphere.containsPoint(viewer.cameraManager.getCameraPosition())).toBeTrue();
   });
 
   test('viewer can add/remove Object3d on scene', () => {
@@ -205,30 +205,30 @@ describe('Cognite3DViewer', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     const box = new THREE.Box3(new THREE.Vector3(-1001, -1001, -1001), new THREE.Vector3(-1000, -1000, -1000));
-    const originalCameraPosition = viewer.getCameraPosition();
-    const originalCameraTarget = viewer.getCameraTarget();
+    const originalCameraPosition = viewer.cameraManager.getCameraPosition();
+    const originalCameraTarget = viewer.cameraManager.getCameraTarget();
 
     // Act
     viewer.fitCameraToBoundingBox(box, 0);
 
     // Assert
-    expect(viewer.getCameraPosition()).not.toEqual(originalCameraPosition);
-    expect(viewer.getCameraTarget()).not.toEqual(originalCameraTarget);
+    expect(viewer.cameraManager.getCameraPosition()).not.toEqual(originalCameraPosition);
+    expect(viewer.cameraManager.getCameraTarget()).not.toEqual(originalCameraTarget);
   });
 
   test('setCameraControlsOptions changes internal state of camera controls options', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
-    const originalCameraControlsOptions = viewer.getCameraControlsOptions();
+    const originalCameraControlsOptions = viewer.cameraManager.getCameraControlsOptions();
 
     // Act
-    viewer.setCameraControlsOptions({
+    viewer.cameraManager.setCameraControlsOptions({
       changeCameraTargetOnClick: !originalCameraControlsOptions.changeCameraTargetOnClick,
       mouseWheelAction: 'zoomToTarget'
     });
 
     // Assert
-    const newCameraControlsOptions = viewer.getCameraControlsOptions();
+    const newCameraControlsOptions = viewer.cameraManager.getCameraControlsOptions();
 
     expect(newCameraControlsOptions.changeCameraTargetOnClick).not.toEqual(
       originalCameraControlsOptions.changeCameraTargetOnClick

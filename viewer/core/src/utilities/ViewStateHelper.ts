@@ -43,7 +43,7 @@ export class ViewStateHelper {
   constructor(viewer: Cognite3DViewer, cdfClient: CogniteClient) {
     this._viewer = viewer;
     this._cdfClient = cdfClient;
-    this._cameraControls = viewer.cameraControls;
+    this._cameraControls = viewer.cameraManager.cameraControls;
   }
 
   public getCurrentState(): ViewerState {

@@ -196,7 +196,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const targetPosition = intersects[0].object.position.clone().normalize();
     const targetUp = (intersects[0].object.userData.upVector as THREE.Vector3).clone();
 
-    this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraControls, targetPosition, targetUp);
+    this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraManager.cameraControls, targetPosition, targetUp);
 
     return true;
   }

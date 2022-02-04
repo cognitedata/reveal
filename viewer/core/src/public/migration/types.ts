@@ -97,8 +97,8 @@ export interface Cognite3DViewerOptions {
    * When false, the sensitivity of the camera controls will not be updated automatically.
    * This can be useful to better control the sensitivity of the 3D navigation.
    *
-   * When not set, control the sensitivity of the camera using `viewer.cameraControls.minDistance`
-   * and `viewer.cameraControls.maxDistance`.
+   * When not set, control the sensitivity of the camera using `viewer.cameraManager.cameraControls.minDistance`
+   * and `viewer.cameraManager.cameraControls.maxDistance`.
    */
   automaticControlsSensitivity?: boolean;
   /** Renderer used to visualize model (optional). */

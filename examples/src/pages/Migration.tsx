@@ -98,7 +98,7 @@ export function Migration() {
         mouseWheelAction: 'zoomToCursor',
       }
 
-      viewer.setCameraControlsOptions(controlsOptions);
+      viewer.cameraManager.setCameraControlsOptions(controlsOptions);
 
       // Add GUI for loading models and such
       const guiState = {
@@ -250,8 +250,8 @@ export function Migration() {
         let insideSectors = 0;
         let maxInsideDepth = -1;
         let maxDepth = -1;
-        const cameraPosition = viewer.getCameraPosition();
-        modelUi.cadModels.forEach(m => {
+        const cameraPosition = viewer.cameraManager.getCameraPosition();
+        cadModels.forEach(m => {
           m.traverse(x => {
             // Hacky way to access internals of SectorNode
             const depth = (x.hasOwnProperty('depth') && typeof (x as any).depth === 'number') ? (x as any).depth as number : 0;
@@ -352,10 +352,10 @@ export function Migration() {
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
       controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
-        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
+        viewer.cameraManager.setCameraControlsOptions({ ...viewer.cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
       });
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
-        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), changeCameraTargetOnClick: value });
+        viewer.cameraManager.setCameraControlsOptions({ ...viewer.cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);

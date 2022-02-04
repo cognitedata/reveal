@@ -10,11 +10,13 @@ import {
   CameraControlsOptions,
   CameraChangeData,
   PointerEventDelegate,
-  ControlsState
+  ControlsState,
+  CameraManagerInterface
 } from './types';
 import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import range from 'lodash/range';
-export class CameraManager {
+
+export class CameraManager implements CameraManagerInterface {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeData>()
   };
@@ -135,10 +137,18 @@ export class CameraManager {
     this.moveCameraTo(position, target, duration);
   }
 
+   /**
+   * Sets whether camera controls through mouse, touch and keyboard are enabled.
+   * This can be useful to e.g. temporarily disable navigation when manipulating other
+   * objects in the scene or when implementing a "cinematic" viewer.
+   */
   set cameraControlsEnabled(enabled: boolean) {
     this._controls.enabled = enabled;
   }
 
+  /**
+   * Gets whether camera controls through mouse, touch and keyboard are enabled.
+   */
   get cameraControlsEnabled(): boolean {
     return this._controls.enabled;
   }
@@ -151,10 +161,55 @@ export class CameraManager {
     return this._controls.enableKeyboardNavigation;
   }
 
+  /**
+   * Allows to move camera with WASD or arrows keys.
+   */
+   enableKeyboardNavigation(): void {
+    this.keyboardNavigationEnabled = true;
+  }
+
+  /**
+   * Disables camera movement by pressing WASD or arrows keys.
+   */
+   disableKeyboardNavigation(): void {
+    this.keyboardNavigationEnabled = false;
+  }
+
+  /**
+   * Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
+   * for documentation. Note that by default the `minDistance` setting of the controls will
+   * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
+   */
   get cameraControls(): ComboControls {
     return this._controls;
   }
 
+  /**
+     * @obvious
+     * @returns Camera's target in world space.
+     */
+  getCameraTarget(): THREE.Vector3 {
+    if (this.isDisposed) {
+      return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
+    }
+    return this._controls.getState().target.clone();
+  }
+
+  /**
+   * Set camera's target.
+   * @public
+   * @param target Target in world space.
+   * @param animated Whether change of target should be animated or not (default is false).
+   * @example
+   * ```js
+   * // store position, target
+   * const position = cameraManager.getCameraPosition();
+   * const target = cameraManager.getCameraTarget();
+   * // restore position, target
+   * cameraManager.setCameraPosition(position);
+   * cameraManager.setCameraTarget(target);
+   * ```
+   */
   setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
     if (this.isDisposed) {
       return;
@@ -168,14 +223,53 @@ export class CameraManager {
     this._controls.setState(controlsState.position, controlsState.target);
   }
 
+  /**
+   * @obvious
+   * @returns Camera's position in world space.
+   */
+  getCameraPosition(): THREE.Vector3 {
+    if (this.isDisposed) {
+      return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
+    }
+    return this._camera.position.clone();
+  }
+
+  /**
+   * @obvious
+   * @param position Position in world space.
+   * @example
+   * ```js
+   * // store position, target
+   * const position = viewer.getCameraPosition();
+   * const target = viewer.getCameraTarget();
+   * // restore position, target
+   * viewer.setCameraPosition(position);
+   * viewer.setCameraTarget(target);
+   * ```
+   */
+  setCameraPosition(position: THREE.Vector3): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this._controls.setState(position, this._controls.getState().target);
+  }
+ 
+
   getCameraControlsState(): ControlsState {
     return this._controls.getState();
   }
 
+  /**
+   * Gets camera controls options.
+   */
   getCameraControlsOptions(): CameraControlsOptions {
     return this._cameraControlsOptions;
   }
 
+  /**
+   * Sets camera control options. See {@link CameraControlsOptions}.
+   * @param controlsOptions JSON object with camera controls options.
+   */
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...CameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
@@ -353,6 +447,11 @@ export class CameraManager {
   }
 
   updateCameraControlsState(deltaTime: number): void {
+    this._controls.update(deltaTime);
+  }
+
+  update(deltaTime: number, boundingBox: THREE.Box3) {
+    this.updateCameraNearAndFar(this._camera, boundingBox);
     this._controls.update(deltaTime);
   }
 
