@@ -124,14 +124,14 @@ export interface CLIConfigManager<T> {
    * @param key The string key to get
    * @return The contents of the config from key $key
    */
-  get(key: keyof T): T[keyof T];
+  get(key: string): T[keyof T];
 
   /**
    * Set an item
    * @param key The string key
    * @param val The value to set
    */
-  set(key: keyof T, value: T[typeof key]): void;
+  set(key: string, value: unknown): void;
 
   /**
    * Delete an item.

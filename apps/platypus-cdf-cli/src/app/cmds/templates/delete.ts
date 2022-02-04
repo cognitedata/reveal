@@ -7,10 +7,12 @@ import Response, {
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
 import { injectRCFile } from '../../common/config';
 import { Arguments } from 'yargs';
-import { unlink } from 'fs/promises';
+import { promises } from 'fs';
 import { CONSTANTS } from '../../constants';
 import { join } from 'path';
 import { cwd } from 'process';
+
+const { unlink } = promises;
 
 export const command = 'delete';
 
@@ -54,10 +56,20 @@ export class DeleteTemplateGroupCommand extends CLICommand {
 
         Response.log(`Deleted the template group "${id}" successfully.`);
 
+        // delete the config file cdfrc.json
         unlink(join(cwd(), CONSTANTS.PROJECT_CONFIG_FILE_NAME)).catch((err) => {
           DEBUG`${err}`;
           Response.error('Failed to delete the project config file');
         });
+
+        // delete the schema file if it exists
+        const schemaFile = args.solutionConfig.get('config.schema') as string;
+        if (schemaFile) {
+          unlink(join(cwd(), schemaFile)).catch((err) => {
+            DEBUG`${err}`;
+            Response.error('Failed to delete the schema file');
+          });
+        }
       }
     } catch (error) {
       DEBUG`${error}`;

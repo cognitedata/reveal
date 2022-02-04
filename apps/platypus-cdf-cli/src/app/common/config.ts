@@ -52,12 +52,12 @@ class SolutionConfigManager<T> implements CLIConfigManager<T> {
     this.all = this.store.all;
   }
 
-  get(key: keyof T): T[keyof T] {
-    return this.store.get(key as string);
+  get(key: string): T[keyof T] {
+    return this.store.get(key);
   }
 
-  set(key: keyof T, value: T[keyof T]): void {
-    return this.store.set(key as string, value);
+  set(key: string, value: unknown): void {
+    return this.store.set(key, value);
   }
 
   delete(key: keyof T): void {
