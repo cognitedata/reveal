@@ -21,6 +21,7 @@ function ensureYAngleBelowThresholdForNormalizedVector(direction: THREE.Vector3)
     const xzLength = xzProjection.length();
     if (xzLength <= 1e-4) {
       xzProjection.x = 1.0;
+      xzProjection.y = 1.0;
     }
 
     xzProjection.normalize().multiplyScalar(Math.cos(MAX_VERTICAL_ANGLE));
