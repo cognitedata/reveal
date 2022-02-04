@@ -15,7 +15,7 @@ export const getTenancy = (
   }
 
   // split strings on 'something/'
-  const match = pathname.match(/^\/([a-z0-9-]+)\/?/);
+  const match = pathname.match(/^\/([a-z0-9-]+)\/?/i);
 
   if (!match) {
     return '';

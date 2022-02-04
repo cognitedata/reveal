@@ -49,7 +49,7 @@ const RawContainer: React.FC<Props> = ({
   intercomSettings,
   sentrySettings,
 }) => {
-  const [possibleTenant, initialTenant] = getTenantInfo(window.location);
+  const [_possibleTenant, initialTenant] = getTenantInfo(window.location);
 
   const {
     applicationId,
@@ -61,7 +61,7 @@ const RawContainer: React.FC<Props> = ({
     reactQueryDevtools,
   } = sidecar;
 
-  const [history] = React.useState(() => createBrowserHistory(possibleTenant));
+  const [history] = React.useState(() => createBrowserHistory(initialTenant));
 
   const client = useCogniteSDKClient(applicationId, {
     baseUrl: cdfApiBaseUrl,
@@ -70,8 +70,8 @@ const RawContainer: React.FC<Props> = ({
   const initialTenantOrApiKeyTenant = project || initialTenant;
 
   React.useEffect(() => {
-    storage.init({ tenant: possibleTenant, appName: applicationId });
-  }, [possibleTenant, applicationId]);
+    storage.init({ tenant: initialTenant, appName: applicationId });
+  }, [initialTenant, applicationId]);
 
   React.useEffect(() => {
     if (apiKey) {
@@ -82,7 +82,7 @@ const RawContainer: React.FC<Props> = ({
     }
   }, []); // no deps, this only runs once.
 
-  if (!possibleTenant) {
+  if (!initialTenant) {
     if (!initialTenantOrApiKeyTenant) {
       return <TenantSelectorWrapper sidecar={sidecar} />;
     }

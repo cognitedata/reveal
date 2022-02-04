@@ -1,3 +1,7 @@
+## 4.0.3 Feb 3 2022
+
+- Fixed a problem with CDF project validation case-sensitiveness
+
 ## 4.0.2 Feb 3 2022
 
 - Support legacy PR preview format: https://pr-xxxx.appname.preview.cogniteapp.com
