@@ -21,7 +21,7 @@ class LoginManager {
     this.isLoggedIn = !!accessToken;
 
     this.client = new CogniteClient({
-      appId: 'cognite.reveal.docs.Cognite3DViewer',
+      appId: 'reveal-docs-' + env.version,
     });
 
     // to make it available in examples

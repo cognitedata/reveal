@@ -1,8 +1,11 @@
+import { REVEAL_VERSION } from '@cognite/reveal';
+
 function getNumber(arg: string | undefined): number | undefined {
   return typeof arg === 'string' ? parseInt(arg, 10) : arg
 }
 
 export const env = {
+  version: REVEAL_VERSION,
   project: process.env.PROJECT || 'publicdata',
   cad: {
     modelId: getNumber(process.env.CAD_ID) || 3356984403684032,
