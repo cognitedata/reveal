@@ -6,25 +6,18 @@ import styled from 'styled-components/macro';
 import {
   Button,
   Icon,
-  Popconfirm,
   SegmentedControl,
   Skeleton,
   Tabs,
-  toast,
 } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
 import type { Simulator } from '@cognite/simconfig-api-sdk/rtk';
-import {
-  useGetModelFileQuery,
-  useRunModelCalculationMutation,
-} from '@cognite/simconfig-api-sdk/rtk';
+import { useGetModelFileQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelForm } from 'components/forms/ModelForm';
 import { CalculationList, ModelVersionList } from 'components/models';
 import { useTitle } from 'hooks/useTitle';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
-import { isSuccessResponse } from 'utils/responseUtils';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -46,9 +39,6 @@ export function ModelDetails({
 
   const navigate = useNavigate();
   const [showCalculations, setShowCalculations] = useState('configured');
-  const { authState } = useAuthContext();
-
-  const [runModelCalculations] = useRunModelCalculationMutation();
 
   const { data: modelFile, isFetching: isFetchingModelFile } =
     useGetModelFileQuery(
@@ -79,29 +69,6 @@ export function ModelDetails({
     throw new Error('No model file returned from backend');
   }
 
-  const onClickRunAll = async () => {
-    if (!authState?.email) {
-      throw new Error('No user email found');
-    }
-
-    trackUsage(TRACKING_EVENTS.MODEL_CALC_RUN_ALL, {
-      modelName: decodeURI(modelName),
-      simulator,
-    });
-
-    const response = await runModelCalculations({
-      modelName,
-      project,
-      simulator,
-      runModelCalculationRequestModel: {
-        userEmail: authState.email,
-      },
-    });
-    if (!isSuccessResponse(response)) {
-      toast.error('Running calculation failed, try again');
-    }
-  };
-
   const extraContent: Record<string, JSX.Element | undefined> = {
     'model-versions': (
       <Link to="../new-version">
@@ -121,36 +88,18 @@ export function ModelDetails({
       </Link>
     ),
     'calculations': (
-      <>
-        <SegmentedControl
-          currentKey={showCalculations}
-          size="small"
-          onButtonClicked={setShowCalculations}
-        >
-          <SegmentedControl.Button key="configured">
-            Configured
-          </SegmentedControl.Button>
-          <SegmentedControl.Button key="not-configured">
-            Not configured
-          </SegmentedControl.Button>
-        </SegmentedControl>
-        <Popconfirm
-          content="Run all calculations?"
-          disabled={showCalculations === 'not-configured'}
-          theme="cogs"
-          onConfirm={onClickRunAll}
-        >
-          <Button
-            disabled={showCalculations === 'not-configured'}
-            icon="Play"
-            size="small"
-            type="tertiary"
-            // loading
-          >
-            Run all
-          </Button>
-        </Popconfirm>
-      </>
+      <SegmentedControl
+        currentKey={showCalculations}
+        size="small"
+        onButtonClicked={setShowCalculations}
+      >
+        <SegmentedControl.Button key="configured">
+          Configured
+        </SegmentedControl.Button>
+        <SegmentedControl.Button key="not-configured">
+          Not configured
+        </SegmentedControl.Button>
+      </SegmentedControl>
     ),
   };
 
