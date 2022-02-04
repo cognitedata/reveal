@@ -44,13 +44,22 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
     case DataPanelActionType.OPEN_DATA_ELEMENT:
       return {
         ...state,
+        isVisible: true,
         visibleDataElement: action.dataElement,
+        activeDetection: action.detection,
       };
 
     case DataPanelActionType.CLOSE_DATA_ELEMENT:
       return {
         ...state,
         visibleDataElement: undefined,
+        activeDetection: undefined,
+      };
+
+    case DataPanelActionType.SET_ACTIVE_DETECTION:
+      return {
+        ...state,
+        activeDetection: action.detection,
       };
 
     default: {

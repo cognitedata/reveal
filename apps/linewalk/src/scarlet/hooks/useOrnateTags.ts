@@ -3,9 +3,12 @@ import { DataElementState, DetectionState, OrnateTag } from 'scarlet/types';
 
 import { useAppState, useDataPanelState } from '.';
 
-export const useOrnateTags = (): OrnateTag[] => {
+export const useOrnateTags = (): {
+  tags: OrnateTag[];
+  activeTag?: OrnateTag;
+} => {
   const { equipment } = useAppState();
-  const { visibleDataElement } = useDataPanelState();
+  const { visibleDataElement, activeDetection } = useDataPanelState();
 
   const dataElements = useMemo(
     () =>
@@ -50,5 +53,11 @@ export const useOrnateTags = (): OrnateTag[] => {
     return result;
   }, [dataElements]);
 
-  return tags;
+  const activeTag = useMemo(() => {
+    if (!activeDetection) return undefined;
+    const tag = tags.find((tag) => tag.detection.id === activeDetection.id);
+    return tag && (JSON.parse(JSON.stringify(tag)) as OrnateTag);
+  }, [tags, activeDetection]);
+
+  return { tags, activeTag };
 };

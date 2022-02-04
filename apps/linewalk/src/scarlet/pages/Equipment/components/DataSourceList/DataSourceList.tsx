@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CollapsePanelProps, Icon } from '@cognite/cogs.js';
-import { useAppState } from 'scarlet/hooks';
-import { DataElement, DetectionState, DetectionType } from 'scarlet/types';
+import { useAppState, useDataPanelState } from 'scarlet/hooks';
+import { DataElement, DetectionState } from 'scarlet/types';
+import usePrevious from 'hooks/usePrevious';
 
 import { DataSource, DataSourceHeader, NewDataSource } from '..';
 
@@ -14,7 +15,9 @@ type DataSourceListProps = {
 export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
   const { pcms } = useAppState();
   const isPCMSAvailable = Boolean(pcms.data);
+  const [activeDetectionIds, setActiveDetectionIds] = useState<string[]>([]);
   const [sortingIds, setSortingIds] = useState<string[]>([]);
+  const { activeDetection } = useDataPanelState();
 
   const detections = useMemo(
     () =>
@@ -42,22 +45,53 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
     );
   }, []);
 
-  const defaultActiveKey = useMemo(() => {
-    if (!detections.length) return 'PCMS';
+  // set initial active detection
+  useEffect(() => {
+    if (!detections.length) {
+      setActiveDetectionIds(['PCMS']);
+      return;
+    }
 
-    const detectionIds = detections
-      .filter(
-        (item) =>
-          item.state === DetectionState.APPROVED ||
-          (item.type === DetectionType.MANUAL && !item.value)
-      )
-      .map((item) => item.id);
+    if (activeDetection) {
+      setActiveDetectionIds([activeDetection.id]);
+      return;
+    }
 
-    return detectionIds.length ? detectionIds : detections[0].id;
+    const approvedDetectionId = detections.find(
+      (item) => item.state === DetectionState.APPROVED
+    )?.id;
+
+    setActiveDetectionIds([approvedDetectionId || detections[0].id]);
+  }, []);
+
+  // open new detection
+  const prevDetections = usePrevious(detections);
+  useEffect(() => {
+    if (prevDetections) {
+      const prevDetectionsIds = prevDetections.map((detection) => detection.id);
+      const newDetection = detections.find(
+        (detection) => !prevDetectionsIds.includes(detection.id)
+      );
+      if (newDetection) {
+        setActiveDetectionIds((prev) => [...prev, newDetection.id]);
+      }
+    }
   }, [detections]);
 
   let amount = detections.length;
   if (isPCMSAvailable) amount += 1;
+
+  // zoom to new detection if panel was opened
+  const prevActiveDetectionIds = usePrevious(activeDetectionIds);
+  const newActiveDetectionId = useMemo(() => {
+    if (!prevActiveDetectionIds) return undefined;
+
+    const newDetectionId = activeDetectionIds.find(
+      (id) => !prevActiveDetectionIds?.includes(id)
+    );
+
+    return newDetectionId;
+  }, [activeDetectionIds]);
 
   return (
     <>
@@ -66,31 +100,27 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
         <span className="strong">Data sources ({amount})</span>
       </Styled.Header>
 
-      {isPCMSAvailable && (
-        <Styled.Collapse
-          expandIcon={expandIcon}
-          defaultActiveKey={defaultActiveKey}
-        >
+      <Styled.Collapse
+        expandIcon={expandIcon}
+        activeKey={activeDetectionIds}
+        onChange={setActiveDetectionIds as any}
+      >
+        {isPCMSAvailable && (
           <Styled.Panel
             header={<DataSourceHeader label="PCMS" disabled />}
             isActive={!detections.length}
             key="PCMS"
           >
             <DataSource
+              id="PCMS"
               dataElement={dataElement}
               value={dataElement.pcmsValue}
               disabled
             />
           </Styled.Panel>
-        </Styled.Collapse>
-      )}
+        )}
 
-      {detections.map((detection) => (
-        <Styled.Collapse
-          expandIcon={expandIcon}
-          defaultActiveKey={defaultActiveKey}
-          key={detection.id}
-        >
+        {detections.map((detection) => (
           <Styled.Panel
             header={
               <DataSourceHeader
@@ -102,13 +132,15 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
             isActive
           >
             <DataSource
+              id={detection.id}
               dataElement={dataElement}
               detection={detection}
               value={detection.value}
+              focused={detection.id === newActiveDetectionId}
             />
           </Styled.Panel>
-        </Styled.Collapse>
-      ))}
+        ))}
+      </Styled.Collapse>
       <NewDataSource isActive={!detections.length} />
     </>
   );

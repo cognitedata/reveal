@@ -4,15 +4,21 @@ import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import * as PDFJS from 'pdfjs-dist';
 import {
-  DataElement,
   DataPanelActionType,
   EquipmentDocument,
+  OrnateTag,
 } from 'scarlet/types';
 import { useDataPanelDispatch, useOrnateTags } from 'scarlet/hooks';
 
 import { WorkspaceTools } from '..';
 
-import { addDocumentTitle, addPageNumber, addTags, removeTags } from './utils';
+import {
+  addDocumentTitle,
+  addPageNumber,
+  addTags,
+  removeTags,
+  zoomToTag,
+} from './utils';
 import * as Styled from './style';
 
 PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
@@ -39,17 +45,19 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
   const componentContainerId = useRef(
     `react-ornate-instance-${uuid()}`
   ).current;
+  const container = useRef<HTMLDivElement>(null);
   const ornateViewer = useRef<CogniteOrnate>();
   const [ornateDocuments, setOrnateDocuments] = useState<OrnateDocument[]>([]);
   const [currentTags, setCurrentTags] = useState<string[]>([]);
   const destroyDocumentLoadCallbacks = useRef<(() => void)[]>([]);
   const dataPanelDispatch = useDataPanelDispatch();
-  const tags = useOrnateTags();
+  const { tags, activeTag } = useOrnateTags();
 
-  const openDataElementCard = (dataElement: DataElement) =>
+  const openDataElementCard = (tag: OrnateTag) =>
     dataPanelDispatch({
       type: DataPanelActionType.OPEN_DATA_ELEMENT,
-      dataElement,
+      dataElement: tag.dataElement,
+      detection: tag.detection,
     });
 
   // Setup Ornate
@@ -201,8 +209,17 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
     }
   }, [ornateDocuments, tags]);
 
+  useEffect(() => {
+    if (!activeTag || !ornateViewer.current) return;
+
+    const node = ornateViewer.current?.stage.findOne(`#${activeTag.id}`);
+    if (node) {
+      zoomToTag(ornateViewer.current, container.current!, node);
+    }
+  }, [ornateViewer, activeTag]);
+
   return (
-    <Styled.Container>
+    <Styled.Container ref={container}>
       {fullwidth ? (
         <Styled.FullWidthContainer>
           <div id={componentContainerId} />

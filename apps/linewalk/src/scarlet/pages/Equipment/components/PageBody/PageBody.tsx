@@ -5,6 +5,8 @@ import { DataElementModals, DataPanel, DataPanelControllers, Ornate } from '..';
 
 import * as Styled from './style';
 
+export const SIDE_PANEL_RIGHT_WIDTH = 450;
+
 export const PageBody = () => {
   const dataPanelState = useDataPanelState();
   const { documents } = useAppState();
@@ -14,7 +16,7 @@ export const PageBody = () => {
       <CollapsablePanel
         sidePanelRight={<DataPanel />}
         sidePanelRightVisible={dataPanelState.isVisible}
-        sidePanelRightWidth={450}
+        sidePanelRightWidth={SIDE_PANEL_RIGHT_WIDTH}
       >
         <Ornate documents={documents?.data} fullwidth />
         <DataPanelControllers />
