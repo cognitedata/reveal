@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -21,6 +22,9 @@ declare namespace Cypress {
     getCogsToast<E extends Node = HTMLElement>(
       type: 'success' | 'error'
     ): Chainable<JQuery<E>>;
+    setQueryExplorerQuery(query: string): void;
+    clickQueryExplorerExecuteQuery(): void;
+    assertQueryExplorerResult(expectedResult: any, timeout?: number): void;
   }
 }
 //
@@ -39,3 +43,33 @@ Cypress.Commands.add('getCogsToast', (type, ...args) => {
 
   return cy.get(`.Toastify .${cogsTypeClass}`, ...args);
 });
+
+Cypress.Commands.add('clickQueryExplorerExecuteQuery', () => {
+  // eslint-disable-next-line
+  cy.wait(300);
+  return cy.get('.execute-button').click();
+});
+
+Cypress.Commands.add('setQueryExplorerQuery', (query: string) => {
+  // eslint-disable-next-line
+  cy.wait(300);
+  cy.window().then((window) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return window.g.getQueryEditor().setValue(query);
+  });
+});
+
+Cypress.Commands.add(
+  'assertQueryExplorerResult',
+  (mockSuccess, timeout = 400) => {
+    // eslint-disable-next-line
+    cy.wait(timeout);
+    return cy.window().then((w) => {
+      // eslint-disable-next-line
+      // @ts-ignore
+      const value = w.g.resultComponent.viewer.getValue();
+      expect(value).to.deep.equal(JSON.stringify(mockSuccess, null, 2));
+    });
+  }
+);
