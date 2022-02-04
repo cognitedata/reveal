@@ -13,6 +13,3 @@ export {
   Intersection,
   CameraConfiguration
 } from './public/migration/types';
-
-const REVEAL_VERSION = process.env.VERSION;
-export { REVEAL_VERSION };
