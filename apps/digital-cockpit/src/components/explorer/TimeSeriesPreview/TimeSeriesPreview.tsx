@@ -1,14 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
-import { VictoryLine } from 'victory';
+import { VictoryAxis, VictoryChart, VictoryLine } from 'victory';
 import Loading from 'components/utils/Loading';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
+import { Colors } from '@cognite/cogs.js';
 
 export type TimeSeriesPreviewProps = {
   timeSeries: Timeseries;
+  showYAxis?: boolean;
 };
 
-const TimeSeriesPreview = ({ timeSeries }: TimeSeriesPreviewProps) => {
+const TimeSeriesPreview = ({
+  timeSeries,
+  showYAxis = false,
+}: TimeSeriesPreviewProps) => {
   const {
     data: datapoints,
     isLoading,
@@ -49,19 +54,49 @@ const TimeSeriesPreview = ({ timeSeries }: TimeSeriesPreviewProps) => {
     return <div>No data</div>;
   }
 
-  return (
-    <svg viewBox={`0 0 ${width} 350`} preserveAspectRatio="none" width="100%">
-      <VictoryLine
-        style={{
-          data: { stroke: '#4A67FB', strokeWidth: 6 },
-        }}
-        standalone={false}
-        data={data}
-        width={width}
-        height={350}
-      />
-    </svg>
+  const lineChart = (
+    <VictoryLine
+      style={{
+        data: { stroke: '#4A67FB', strokeWidth: 6 },
+      }}
+      standalone={false}
+      data={data}
+      width={width}
+      height={350}
+    />
   );
+
+  const renderSimplePreview = () => {
+    return (
+      <svg viewBox={`0 0 ${width} 350`} preserveAspectRatio="none" width="100%">
+        {lineChart}
+      </svg>
+    );
+  };
+
+  const renderPreviewWithYAxis = () => {
+    return (
+      <VictoryChart padding={{ top: 30, bottom: 30, left: 20, right: 45 }}>
+        {lineChart}
+        <VictoryAxis
+          dependentAxis
+          offsetX={40}
+          orientation="right"
+          style={{
+            axis: { stroke: 'none' },
+            ticks: { stroke: Colors['greyscale-grey7'].hex(), size: 5 },
+            tickLabels: {
+              fill: Colors['greyscale-grey7'].hex(),
+              fontSize: 20,
+              padding: 5,
+            },
+          }}
+        />
+      </VictoryChart>
+    );
+  };
+
+  return showYAxis ? renderPreviewWithYAxis() : renderSimplePreview();
 };
 
 export default TimeSeriesPreview;

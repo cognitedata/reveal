@@ -5,6 +5,7 @@ import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
 
 export type useDatapointsQueryOptions = {
   latestOnly?: boolean;
+  limit?: number;
 };
 
 const useDatapointsQuery = (
@@ -24,7 +25,10 @@ const useDatapointsQuery = (
           }))
         );
       }
-      return client.datapoints.retrieve({ items: references });
+      return client.datapoints.retrieve({
+        items: references,
+        limit: options?.limit,
+      });
     },
     {
       enabled: Boolean(references),

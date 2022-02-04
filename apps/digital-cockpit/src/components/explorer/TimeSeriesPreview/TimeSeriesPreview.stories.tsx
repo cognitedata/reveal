@@ -23,12 +23,19 @@ const meta: Meta<TimeSeriesPreviewProps> = {
         type: 'object',
       },
     },
+    showYAxis: {
+      name: 'Show Y Axis',
+      defaultValue: false,
+      control: {
+        type: 'boolean',
+      },
+    },
   },
 };
 
 export default meta;
 
-const Template: ExtendedStory<TimeSeriesPreviewProps> = (args) => (
+const SimpleTemplate: ExtendedStory<TimeSeriesPreviewProps> = (args) => (
   <div>
     <div style={{ width: 100, height: 50 }}>
       <TimeSeriesPreview {...args} />
@@ -42,8 +49,30 @@ const Template: ExtendedStory<TimeSeriesPreviewProps> = (args) => (
   </div>
 );
 
-export const Standard = Template.bind({});
+const YAxisTemplate: ExtendedStory<TimeSeriesPreviewProps> = (args) => (
+  <div>
+    <div style={{ width: 300, height: 150 }}>
+      <TimeSeriesPreview {...args} />
+    </div>
+    <div style={{ width: 600, height: 200 }}>
+      <TimeSeriesPreview {...args} />
+    </div>
+  </div>
+);
+
+export const Standard = SimpleTemplate.bind({});
 Standard.story = configureStory({
+  mockCdfClient: (client: CdfClient) => {
+    client.cogniteClient.datapoints.retrieve = () => {
+      return Promise.resolve([MockDatapoints.datapoint(10)]);
+    };
+    return client;
+  },
+});
+
+export const WithYAxis = YAxisTemplate.bind({});
+WithYAxis.args = { showYAxis: true };
+WithYAxis.story = configureStory({
   mockCdfClient: (client: CdfClient) => {
     client.cogniteClient.datapoints.retrieve = () => {
       return Promise.resolve([MockDatapoints.datapoint(10)]);
