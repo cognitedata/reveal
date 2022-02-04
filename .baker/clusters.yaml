@@ -67,6 +67,8 @@ clusters:
   metadata:
     auth_cluster_name: az-ams-aloe
     azure_region: westeurope
+    azure_resource_group: default
+    azure_cluster_name: az-ams-aloe
     azure_subscription_id: 7f369c2b-e70a-4750-8dbc-95f66565f7a1
     environment: production
     google_project_id: cognite-ext-az-ams-aloe
@@ -82,6 +84,8 @@ clusters:
     auth_cluster_name: az-eastus-1
     azure_region: eastus
     azure_secondary_region: westus
+    azure_resource_group: default
+    azure_cluster_name: az-eastus-1
     azure_subscription_id: 8e0c685e-4e99-4c89-8e55-bd4a6ab3fd32
     environment: production
     google_project_id: cognite-ext-az-eastus-1
@@ -97,6 +101,8 @@ clusters:
     auth_cluster_name: az-power-no-northeurope
     azure_region: northeurope
     customer: ["power-no"]
+    azure_resource_group: default
+    azure_cluster_name: az-power-no-northeurope
     azure_subscription_id: ad98b0ae-29cd-451e-bed7-462ff68333d6
     environment: production
     google_project_id: cognite-ext-az-power-no-northe
@@ -112,6 +118,8 @@ clusters:
     auth_cluster_name: azure-dev
     azure_region: westeurope
     azure_secondary_region: northeurope
+    azure_resource_group: azure-dev
+    azure_cluster_name: azure-dev
     azure_subscription_id: 531564ca-ed4c-48b5-b4d0-6363b20c3aeb
     environment: development
     google_project_id: cognite-ext-azure-dev
@@ -127,6 +135,8 @@ clusters:
     auth_cluster_name: bluefield
     azure_region: westeurope
     azure_secondary_region: northeurope
+    azure_resource_group: default
+    azure_cluster_name: bluefield
     azure_subscription_id: 573323ab-bb78-495c-81a3-ce62c9341aa4
     environment: staging
     google_project_id: cognite-ext-bluefield
@@ -142,6 +152,8 @@ clusters:
     auth_cluster_name: bp-northeurope
     azure_region: northeurope
     azure_secondary_region: westeurope
+    azure_resource_group: default
+    azure_cluster_name: bp-northeurope
     azure_subscription_id: 7b8e1d8a-7489-40e7-a360-4c5fe43a79a7
     environment: production
     google_project_id: cognite-ext-bp-northeurope
@@ -157,6 +169,8 @@ clusters:
     auth_cluster_name: westeurope-1
     azure_region: westeurope
     azure_secondary_region: northeurope
+    azure_resource_group: default
+    azure_cluster_name: westeurope-1
     azure_subscription_id: c9c52f3e-bfc2-4315-a750-641898f79e6d
     environment: production
     google_project_id: cognite-ext-westeurope-1
@@ -174,6 +188,7 @@ clusters:
     auth_cluster_name: cognitedata-europe-west1-1
     cluster_name: cdp
     environment: production
+    google_region: europe-west1
     google_project_id: cognitedata-europe-west1-1
     region: europe-west1
 - name: greenfield
@@ -188,6 +203,7 @@ clusters:
     auth_cluster_name: cognitedata-greenfield
     cluster_name: cdp
     environment: staging
+    google_region: europe-west1
     google_project_id: cognitedata-greenfield
     region: europe-west1
 - name: omv
@@ -203,6 +219,7 @@ clusters:
     cluster_name: cdp
     customer: ["omv"]
     environment: production
+    google_region: europe-west1
     google_project_id: cognitedata-omv
     region: europe-west1
 - name: statnett
@@ -217,6 +234,7 @@ clusters:
     cluster_name: cdp
     customer: ["statnett"]
     environment: production
+    google_region: europe-west1
     google_project_id: cognitedata-statnett
     region: europe-west1
 - name: power-no
@@ -231,6 +249,7 @@ clusters:
     cluster_name: cdp
     customer: ["power-no"]
     environment: production
+    google_region: europe-west1
     google_project_id: cognitedata-power-no
     region: europe-west1
 - name: pgs
@@ -245,6 +264,7 @@ clusters:
     cluster_name: cdp
     customer: ["pgs"]
     environment: production
+    google_region: europe-west1
     google_project_id: cognitedata-pg-s
     region: europe-west1
 - name: asia-northeast1-1
@@ -259,6 +279,7 @@ clusters:
     auth_cluster_name: asia-northeast1-1
     cluster_name: cdp
     environment: production
+    google_region: asia-northeast1
     google_project_id: cdf-asia-northeast1-1
     region: asia-northeast1
 
@@ -271,6 +292,7 @@ clusters:
   metadata:
     cluster_name: cognitedata-development
     environment: development
+    google_region: europe-west1
     google_project_id: cognitedata-development
     region: europe-west1
 - name: cognitedata-test
@@ -281,6 +303,7 @@ clusters:
   metadata:
     cluster_name: cognitedata-test
     environment: staging
+    google_region: europe-west1
     google_project_id: cognitedata-test
     region: europe-west1
 - name: cognitedata-production
@@ -291,6 +314,7 @@ clusters:
   metadata:
     cluster_name: cognitedata-production
     environment: production
+    google_region: europe-west1
     google_project_id: cognitedata-production
     region: europe-west1
 
@@ -302,6 +326,7 @@ clusters:
   metadata:
     cluster_name: infra
     environment: production
+    google_region: europe-west1
     google_project_id: cognitedata
     region: europe-west1
 - name: jenkins-ci
@@ -312,6 +337,7 @@ clusters:
   metadata:
     cluster_name: jenkins-ci
     environment: production
+    google_region: europe-west1
     google_project_id: cognite-jenkins-ci
     region: europe-west1
 - name: jenkins-cd
@@ -322,6 +348,7 @@ clusters:
   metadata:
     cluster_name: jenkins-cd
     environment: production
+    google_region: europe-west1
     google_project_id: cognite-jenkins-cd
     region: europe-west1
 
@@ -334,6 +361,7 @@ clusters:
   metadata:
     cluster_name: security-development
     environment: development
+    google_region: europe-west1
     google_project_id: cognite-security
     region: europe-west1
 - name: security-production
@@ -344,6 +372,7 @@ clusters:
   metadata:
     cluster_name: security-production
     environment: production
+    google_region: europe-west1
     google_project_id: cognite-security
     region: europe-west1
 
@@ -356,6 +385,7 @@ clusters:
   metadata:
     cluster_name: dbre-development
     environment: development
+    google_region: europe-west1
     google_project_id: cognite-dbre
     region: europe-west1
 
@@ -368,6 +398,7 @@ clusters:
   metadata:
     cluster_name: cdp-fn
     environment: production
+    google_region: europe-west1
     google_project_id: cognitedata-europe-west1-1-fn
     region: europe-west1
 - name: asia-northeast1-1-fn
@@ -378,6 +409,7 @@ clusters:
   metadata:
     cluster_name: cdp-fn
     environment: production
+    google_region: asia-northeast1
     google_project_id: cdf-asia-northeast1-1-fn
     region: asia-northeast1
 
