@@ -188,6 +188,8 @@ export const useMapEvents = () => {
   };
 
   const markerClickEvent = (e: MapMouseEvent) => {
+    if (drawMode === 'draw_polygon') return;
+
     // prevent bubbling the event to other layers
     const event = e.originalEvent;
     event.cancelBubble = true;
