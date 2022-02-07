@@ -1,11 +1,13 @@
 import { Badge, Input } from '@cognite/cogs.js';
 import { CogniteInternalId, FileInfo } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import useFileSearchQuery from 'hooks/useQuery/useFileSearchQuery';
 import NoData from 'components/utils/NoData';
 import Loading from 'components/utils/Loading';
+import usePagination from 'hooks/usePagination';
+import useFileAggregateQuery from 'hooks/useQuery/useFileAggregateQuery';
 
 import DocumentGrouper from '../DocumentGrouper';
 import DocumentRow from '../DocumentRow';
@@ -26,7 +28,18 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
   // The field we pass to the query (so we can debounce)
   const [query, setQuery] = useState('');
   const debouncedSetQuery = useMemo(() => debounce(setQuery, 300), []);
+  const { renderPagination, getPageData, resetPages } = usePagination();
 
+  const { data: totalFilesOnAsset } = useFileAggregateQuery({
+    filter: {
+      assetIds: [assetId],
+    },
+  });
+  const { data: totalFilesUnderAsset } = useFileAggregateQuery({
+    filter: {
+      assetSubtreeIds: [{ id: assetId }],
+    },
+  });
   const assetQuery = useFileSearchQuery({
     filter: {
       assetIds: [assetId],
@@ -34,8 +47,9 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
     search: {
       name: query,
     },
-    limit: 10,
+    limit: 500,
   });
+
   const relatedQuery = useFileSearchQuery({
     filter: {
       assetSubtreeIds: [{ id: assetId }],
@@ -43,37 +57,52 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
     search: {
       name: query,
     },
-    limit: 10,
+    limit: 500,
   });
 
-  const renderSection = ({
-    data,
-    isLoading,
-  }: UseQueryResult<FileInfo[], unknown>) => {
+  useEffect(() => {
+    resetPages();
+  }, [relatedQuery.data, assetQuery.data]);
+
+  const renderSection = (
+    { data, isLoading }: UseQueryResult<FileInfo[], unknown>,
+    paginationName: string
+  ) => {
     if (isLoading) {
       return <Loading />;
     }
-    if (!data) {
+    if (!data || data.length === 0) {
       return <NoData type="Documents" />;
     }
     if (groupByField) {
       return (
         <DocumentGrouper files={data} groupByField={groupByField}>
-          {(documents) => (
+          {(documents, type) => (
             <DocumentRowWrapper>
-              {documents.map((document, i) => (
-                <DocumentRow key={document.id} document={document} />
-              ))}
+              {getPageData(documents, `${paginationName}-${type}`).map(
+                (document, i) => (
+                  <DocumentRow key={document.id} document={document} />
+                )
+              )}
+              {renderPagination({
+                name: `${paginationName}-${type}`,
+                total: data.length,
+              })}
             </DocumentRowWrapper>
           )}
         </DocumentGrouper>
       );
     }
+
     return (
       <DocumentRowWrapper>
-        {data.map((document, i) => (
+        {getPageData(data, paginationName).map((document) => (
           <DocumentRow key={document.id} document={document} />
         ))}
+        {renderPagination({
+          name: paginationName,
+          total: data.length,
+        })}
       </DocumentRowWrapper>
     );
   };
@@ -91,15 +120,25 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
       />
       <section>
         <h3>
-          On this asset <Badge text={String(assetQuery.data?.length || 0)} />
+          On this asset{' '}
+          <Badge
+            text={String(
+              (query ? assetQuery.data?.length : totalFilesOnAsset) || 0
+            )}
+          />
         </h3>
-        {renderSection(assetQuery)}
+        {renderSection(assetQuery, 'thisAsset')}
       </section>
       <section>
         <h3>
-          Related assets <Badge text={String(relatedQuery.data?.length || 0)} />
+          Related documents{' '}
+          <Badge
+            text={String(
+              (query ? relatedQuery.data?.length : totalFilesUnderAsset) || 0
+            )}
+          />
         </h3>
-        {renderSection(relatedQuery)}
+        {renderSection(relatedQuery, 'relatedAssets')}
       </section>
     </DocumentTabWrapper>
   );

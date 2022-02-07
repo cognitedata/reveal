@@ -176,6 +176,27 @@ const LeftSidebar: React.FC = () => {
           style={{ width: 12 }}
         />
       </CollapseButton>
+      <ItemsContainer>
+        <NavLink
+          to="/explore"
+          key="explorer"
+          onClick={() => {
+            metrics.track('Navigated to Explorer', {
+              key: 'explorer',
+              application: 'explorer',
+            });
+          }}
+        >
+          <ApplicationNavigationItem
+            item={{
+              iconKey: 'Cognite',
+              key: 'Explorer',
+              title: 'Explorer',
+              url: '/explore',
+            }}
+          />
+        </NavLink>
+      </ItemsContainer>
       {!!applications.length && (
         <>
           <TitleContainer>

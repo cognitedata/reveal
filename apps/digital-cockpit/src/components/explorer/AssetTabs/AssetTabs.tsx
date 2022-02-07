@@ -1,5 +1,5 @@
-import { Asset, AssetIdEither } from '@cognite/sdk';
-import React, { useEffect, useState } from 'react';
+import { AssetIdEither } from '@cognite/sdk';
+import React, { useEffect } from 'react';
 import DocumentTab from 'components/explorer/DocumentTab';
 import { Icon, Tabs } from '@cognite/cogs.js';
 import {
@@ -7,6 +7,10 @@ import {
   useAssetRetrieveQuery,
 } from 'hooks/useQuery/useAssetQuery';
 import Loading from 'components/utils/Loading';
+import { NavLink } from 'react-router-dom';
+
+import EventTab from '../EventTab';
+import TimeSeriesTab from '../TimeSeriesTab';
 
 import { AssetTabKey } from './types';
 import {
@@ -17,9 +21,15 @@ import {
 
 export type AssetTabsProps = {
   assetId: AssetIdEither;
+  activeTabKey?: AssetTabKey;
+  onTabChange?: (nextKey: AssetTabKey) => void;
 };
 
-const AssetTabs: React.FC<AssetTabsProps> = ({ assetId }) => {
+const AssetTabs: React.FC<AssetTabsProps> = ({
+  assetId,
+  activeTabKey,
+  onTabChange,
+}) => {
   const currentAssetQuery = useAssetRetrieveQuery([assetId]);
   const currentAsset = currentAssetQuery.data?.[0];
 
@@ -39,6 +49,10 @@ const AssetTabs: React.FC<AssetTabsProps> = ({ assetId }) => {
     }
   }, [currentAssetQuery.isError, assetBreadcrumbsQuery.isError]);
 
+  if (!currentAsset) {
+    return <Loading />;
+  }
+
   const tabs: {
     title: string;
     key: AssetTabKey;
@@ -52,12 +66,21 @@ const AssetTabs: React.FC<AssetTabsProps> = ({ assetId }) => {
     {
       title: 'Documents',
       key: 'documents',
-      content: <DocumentTab assetId={currentAsset?.id as number} />,
+      content: <DocumentTab assetId={currentAsset.id} />,
     },
-    { title: 'Events', key: 'events', content: null },
+    {
+      title: 'Events',
+      key: 'events',
+      content: <EventTab assetId={currentAsset.id} />,
+    },
     { title: '3D', key: '3d', content: null },
-    { title: 'Time Series', key: 'timeseries', content: null },
-    { title: 'Boards', key: 'boards', content: null },
+    {
+      title: 'Time Series',
+      key: 'timeseries',
+      content: <TimeSeriesTab assetId={currentAsset.id} />,
+    },
+    // Coming soon
+    // { title: 'Boards', key: 'boards', content: null },
   ];
 
   const renderBreadcrumbs = () => {
@@ -72,9 +95,16 @@ const AssetTabs: React.FC<AssetTabsProps> = ({ assetId }) => {
         {assetBreadcrumbsQuery.data
           .slice()
           .reverse()
-          .map((asset, index, { length }) => (
+          .map((asset) => (
             <span key={asset.id}>
-              <span className="breadcrumb-item">{asset.name}</span>
+              <NavLink
+                to={`/explore/${asset.id}${
+                  activeTabKey ? `/${activeTabKey}` : ''
+                }`}
+                className="breadcrumb-item"
+              >
+                {asset.name}
+              </NavLink>
               <span className="breadcrumb-divider">/</span>
             </span>
           ))}
@@ -96,7 +126,10 @@ const AssetTabs: React.FC<AssetTabsProps> = ({ assetId }) => {
       <>
         <AssetTitle>{currentAsset?.name}</AssetTitle>
         {renderBreadcrumbs()}
-        <Tabs>
+        <Tabs
+          activeKey={activeTabKey}
+          onChange={(next) => onTabChange && onTabChange(next as AssetTabKey)}
+        >
           {tabs.map((tab) => (
             <Tabs.TabPane tab={tab.title} key={tab.key}>
               {tab.content}

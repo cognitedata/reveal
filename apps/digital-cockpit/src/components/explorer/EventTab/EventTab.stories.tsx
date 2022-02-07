@@ -36,6 +36,8 @@ const Template: ExtendedStory<EventTabProps> = (args) => <EventTab {...args} />;
 export const Standard = Template.bind({});
 Standard.story = configureStory({
   mockCdfClient: (client: CdfClient) => {
+    client.cogniteClient.events.aggregate.count = () =>
+      Promise.resolve([{ count: 100 }]);
     client.cogniteClient.events.search = mockSearch();
     return client;
   },

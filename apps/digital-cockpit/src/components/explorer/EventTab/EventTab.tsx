@@ -1,11 +1,13 @@
 import { Badge, Input } from '@cognite/cogs.js';
 import { CogniteEvent } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import NoData from 'components/utils/NoData';
 import Loading from 'components/utils/Loading';
 import useEventSearchQuery from 'hooks/useQuery/useEventSearchQuery';
+import usePagination from 'hooks/usePagination';
+import useEventAggregateQuery from 'hooks/useQuery/useEventAggregateQuery';
 
 import EventRow from '../EventRow';
 import { TableWrapper } from '../EventRow/TableWrapper';
@@ -22,7 +24,19 @@ const EventTab = ({ assetId }: EventTabProps) => {
   const [value, setValue] = useState('');
   // The field we pass to the query (so we can debounce)
   const [query, setQuery] = useState('');
+  const { getPageData, renderPagination, resetPages } = usePagination();
   const debouncedSetQuery = useMemo(() => debounce(setQuery, 300), []);
+
+  const { data: eventsOnAsset } = useEventAggregateQuery({
+    filter: {
+      assetIds: [assetId],
+    },
+  });
+  const { data: eventsUnderAsset } = useEventAggregateQuery({
+    filter: {
+      assetSubtreeIds: [{ id: assetId }],
+    },
+  });
 
   const assetQuery = useEventSearchQuery({
     filter: {
@@ -31,7 +45,7 @@ const EventTab = ({ assetId }: EventTabProps) => {
     search: {
       description: query,
     },
-    limit: 10,
+    limit: 500,
   });
   const relatedQuery = useEventSearchQuery({
     filter: {
@@ -40,27 +54,34 @@ const EventTab = ({ assetId }: EventTabProps) => {
     search: {
       description: query,
     },
-    limit: 10,
+    limit: 500,
   });
 
-  const renderSection = ({
-    data,
-    isLoading,
-  }: UseQueryResult<CogniteEvent[], unknown>) => {
+  useEffect(() => {
+    resetPages();
+  }, [relatedQuery.data, assetQuery.data]);
+
+  const renderSection = (
+    { data, isLoading }: UseQueryResult<CogniteEvent[], unknown>,
+    name: string
+  ) => {
     if (isLoading) {
       return <Loading />;
     }
-    if (!data) {
+    if (!data || data.length === 0) {
       return <NoData type="Events" />;
     }
 
     return (
-      <TableWrapper>
-        <EventRowHeader />
-        {data.map((event) => (
-          <EventRow key={event.id} event={event} />
-        ))}
-      </TableWrapper>
+      <>
+        <TableWrapper>
+          <EventRowHeader />
+          {getPageData(data, name).map((event) => (
+            <EventRow key={event.id} event={event} />
+          ))}
+        </TableWrapper>
+        {renderPagination({ name, total: data.length })}
+      </>
     );
   };
   return (
@@ -77,15 +98,25 @@ const EventTab = ({ assetId }: EventTabProps) => {
       />
       <section>
         <h3>
-          On this asset <Badge text={String(assetQuery.data?.length || 0)} />
+          On this asset{' '}
+          <Badge
+            text={String(
+              (query ? assetQuery.data?.length : eventsOnAsset) || 0
+            )}
+          />
         </h3>
-        {renderSection(assetQuery)}
+        {renderSection(assetQuery, 'thisAsset')}
       </section>
       <section>
         <h3>
-          Related assets <Badge text={String(relatedQuery.data?.length || 0)} />
+          Related events{' '}
+          <Badge
+            text={String(
+              (query ? relatedQuery.data?.length : eventsUnderAsset) || 0
+            )}
+          />
         </h3>
-        {renderSection(relatedQuery)}
+        {renderSection(relatedQuery, 'relatedAssets')}
       </section>
     </TabWrapper>
   );

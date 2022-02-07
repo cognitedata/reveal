@@ -14,12 +14,21 @@ export const AssetBreadcrumbsWrapper = styled.div`
   }
 `;
 export const AssetTabsWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   & .cogs-tabs {
     .rc-tabs-nav-wrap {
       border-bottom: 2px solid var(--cogs-greyscale-grey2);
     }
     .rc-tabs-content {
-      padding-top: 20px;
+      padding: 24px 16px;
+      height: 100%;
+      overflow: auto;
+    }
+    .rc-tabs-content-holder {
+      height: 100%;
+      padding-bottom: 64px;
     }
   }
 `;

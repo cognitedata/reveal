@@ -3,8 +3,8 @@ import styled from 'styled-components';
 export const TrWrapper = styled.tr`
   padding: 8px 24px;
   border-bottom: 2px solid var(--cogs-greyscale-grey2);
-  cursor: pointer;
-  &:hover {
+  &:not(.header):hover {
+    cursor: pointer;
     background: var(--cogs-midblue-8) !important;
   }
   .row--types {

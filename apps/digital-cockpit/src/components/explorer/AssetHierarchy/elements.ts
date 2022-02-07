@@ -11,6 +11,12 @@ export const TreeNodeWrapper = styled.div`
     left: 10px;
     top: 9px;
   }
+  .rc-collapse {
+    background: transparent;
+  }
+  .rc-collapse-content {
+    background: transparent;
+  }
   & .rc-collapse-item,
   & .rc-collapse-header {
     border: none !important;
@@ -20,17 +26,20 @@ export const TreeNodeWrapper = styled.div`
   }
   & .rc-collapse-item > .rc-collapse-header {
     padding: 6px 16px;
+    background: transparent;
   }
   & .leaf-item {
     padding: 6px 16px 6px 28px;
     margin: 0;
-    background: white;
     color: #666666;
     cursor: pointer;
     line-height: 22px;
   }
   & .selected > .rc-collapse-header,
-  & .selected.leaf-asset {
+  & .selected.leaf-item {
     font-weight: bold;
+  }
+  .onAssetSelect {
+    background: transparent;
   }
 `;

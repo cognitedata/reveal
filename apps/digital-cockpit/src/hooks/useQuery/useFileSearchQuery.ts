@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import { FileInfo, FilesSearchFilter } from '@cognite/sdk';
 import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
 

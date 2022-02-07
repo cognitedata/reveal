@@ -1,6 +1,14 @@
 import styled from 'styled-components';
 
 export const AssetSearchWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .content {
+    height: 100%;
+    overflow: auto;
+    padding-bottom: 32px;
+  }
   .search-input {
     .input-wrapper,
     input {
@@ -32,14 +40,13 @@ export const AssetSearchItem = styled.div`
   & .asset-title {
     margin: 0;
     font-size: 14px;
-    line-height: 20px;
     max-height: 20px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
   }
   & .asset-description {
-    margin-top: 6px;
+    margin-top: 4px;
     font-size: 12px;
     font-weight: 500;
     color: var(--cogs-greyscale-grey6);

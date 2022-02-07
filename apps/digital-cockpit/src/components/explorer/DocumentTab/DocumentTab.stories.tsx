@@ -51,6 +51,8 @@ const Template: ExtendedStory<DocumentTabProps> = (args) => (
 export const Standard = Template.bind({});
 Standard.story = configureStory({
   mockCdfClient: (client: CdfClient) => {
+    client.cogniteClient.files.aggregate = () =>
+      Promise.resolve([{ count: 100 }]);
     client.cogniteClient.get = mockGet;
     client.cogniteClient.files.search = mockSearch();
     return client;
@@ -63,6 +65,8 @@ Grouped.args = {
 };
 Grouped.story = configureStory({
   mockCdfClient: (client: CdfClient) => {
+    client.cogniteClient.files.aggregate = () =>
+      Promise.resolve([{ count: 100 }]);
     client.cogniteClient.files.search = mockSearch();
     client.cogniteClient.get = mockGet;
     return client;

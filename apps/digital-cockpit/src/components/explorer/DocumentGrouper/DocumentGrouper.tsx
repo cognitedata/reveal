@@ -8,7 +8,7 @@ export type DocumentGrouperProps = {
   files: FileInfo[];
   groupByField: string;
   nameMappings?: Record<string, string>;
-  children: (files: FileInfo[]) => React.ReactNode;
+  children: (files: FileInfo[], type: string) => React.ReactNode;
   odd?: boolean;
 };
 
@@ -60,7 +60,7 @@ const DocumentGrouper = ({
           })`}
           key={group.fieldValue}
         >
-          {children(group.files)}
+          {children(group.files, group.fieldValue)}
         </Collapse.Panel>
       ))}
     </StyledCollapse>

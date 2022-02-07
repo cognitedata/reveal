@@ -34,7 +34,7 @@ const mapAssetsById = (assets: Asset[] = []): AssetNodesById =>
 type AssetHierarchyProps = {
   rootNodes?: AssetIdEither[];
   selectedAssetId?: AssetIdEither;
-  onSelect: (nextAssetId: CogniteExternalId) => void;
+  onSelect: (asset: Asset) => void;
 };
 
 const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
@@ -199,7 +199,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
     );
   };
 
-  const onItemSelect = async (assetInternalId: string) => {
+  const onItemSelect = async (assetInternalId: number) => {
     const assetNode = assetNodesById[assetInternalId];
     if (!assetNode) {
       return;
@@ -208,7 +208,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       externalId: assetNode.asset.externalId,
       id: assetNode.asset.id,
     });
-    onSelect(assetNode.asset.externalId || '');
+    onSelect(assetNode.asset);
 
     if (!assetNode.isLeaf && !assetNode.children) {
       // load asset children
@@ -230,9 +230,9 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
     <div
       className={`leaf-item ${isSelectedAsset(asset) ? 'selected' : ''}`}
       key={asset.id}
-      onClick={() => onItemSelect(`${asset.id}`)}
+      onClick={() => onItemSelect(asset.id)}
       onKeyDown={(e) => {
-        e.key === 'Enter' && onItemSelect(`${asset.id}`);
+        e.key === 'Enter' && onItemSelect(asset.id);
       }}
       role="button"
       tabIndex={tabIndex}
@@ -280,7 +280,11 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
 
   const renderTreeNode = (nodeIds: number[], parentNode?: AssetNode) =>
     !nodeIds || nodeIds.length === 0 ? null : (
-      <Collapse accordion ghost onChange={onItemSelect}>
+      <Collapse
+        accordion
+        ghost
+        onChange={(assetId) => onItemSelect(Number(assetId))}
+      >
         <>
           {nodeIds.map((assetId, index) => {
             const node = assetNodesById[assetId];

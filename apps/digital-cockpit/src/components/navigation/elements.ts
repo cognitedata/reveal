@@ -32,7 +32,7 @@ export const CollapseButton = styled.div<{ open: boolean }>`
   height: 32px;
   position: absolute;
   right: 0;
-  top: 12px;
+  bottom: 12px;
   justify-content: center;
   align-items: center;
   transform: translateX(50%);

@@ -55,7 +55,8 @@ const TimeSeriesRow = ({ timeSeries, onClick }: TimeSeriesRowProps) => {
       <section className="row--meta">
         <h4>{timeSeries.name}</h4>
         <div>
-          {renderLatest()} • {timeSeries.description}
+          {renderLatest()}
+          {timeSeries.description && ` • ${timeSeries.description}`}
         </div>
       </section>
     </RowWrapper>

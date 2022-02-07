@@ -1,8 +1,7 @@
 import { Asset, CogniteInternalId } from '@cognite/sdk';
-import React, { useContext, useMemo, useState } from 'react';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import React, { useMemo, useState } from 'react';
 import debounce from 'lodash/debounce';
-import { UseQueryResult, useQuery } from 'react-query';
+import { UseQueryResult } from 'react-query';
 import { Input, Tooltip } from '@cognite/cogs.js';
 import Loading from 'components/utils/Loading';
 import { useAssetSearchQuery } from 'hooks/useQuery/useAssetQuery';
@@ -20,7 +19,6 @@ const AssetSearch: React.FC<AssetSearchProps> = ({
   cleanStateComponent,
   limit = 20,
 }) => {
-  const { client } = useContext(CogniteSDKContext);
   // The actual value of the input field
   const [value, setValue] = useState('');
   // The field we pass to the query (so we can debounce)
@@ -30,12 +28,16 @@ const AssetSearch: React.FC<AssetSearchProps> = ({
     CogniteInternalId | undefined
   >();
 
-  const assetSearchQuery = useAssetSearchQuery({
-    search: {
-      name: query,
-    },
-    limit,
-  });
+  const assetSearchQuery = useAssetSearchQuery(
+    query
+      ? {
+          search: {
+            name: query,
+          },
+          limit,
+        }
+      : undefined
+  );
 
   const onAssetSelect = (asset: Asset) => {
     setSelectedAssetId(asset.id);
@@ -94,7 +96,7 @@ const AssetSearch: React.FC<AssetSearchProps> = ({
           debouncedSetQuery(e.target.value);
         }}
       />
-      {renderAssetsPanel()}
+      <div className="content">{renderAssetsPanel()}</div>
     </AssetSearchWrapper>
   );
 };

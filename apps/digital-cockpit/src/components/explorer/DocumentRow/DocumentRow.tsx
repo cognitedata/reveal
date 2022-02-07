@@ -1,6 +1,8 @@
+import { Buffer } from 'buffer';
+
+import { useContext, useState } from 'react';
 import { DocumentIcon, Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { useContext, useState } from 'react';
 import { useQuery } from 'react-query';
 import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
 
@@ -23,10 +25,20 @@ const DocumentRow = ({
     ['getFileImage', document.id],
     () =>
       client
-        .get(`/api/v1/projects/${client.project}/files/icon?id=${document.id}`)
-        .then((x) => x.data),
+        .get(
+          `/api/playground/projects/${client.project}/documents/preview?documentId=${document.id}`,
+          { headers: { Accept: 'image/png' }, responseType: 'arraybuffer' }
+        )
+        .then((response) => {
+          return `data:image/png;base64,${Buffer.from(response.data).toString(
+            'base64'
+          )}`;
+        }),
     {
       enabled: Boolean(document.id),
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
     }
   );
 

@@ -47,6 +47,8 @@ Standard.story = configureStory({
   mockCdfClient: (client: CdfClient) => {
     client.cogniteClient.datapoints.retrieve = mockDatapointsRetrieve;
     client.cogniteClient.datapoints.retrieveLatest = mockDatapointsRetrieve;
+    client.cogniteClient.timeseries.aggregate = () =>
+      Promise.resolve([{ count: 100 }]);
     client.cogniteClient.timeseries.search = mockSearch();
     return client;
   },

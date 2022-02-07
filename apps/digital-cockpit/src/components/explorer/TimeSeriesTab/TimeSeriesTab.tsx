@@ -1,11 +1,13 @@
 import { Badge, Input } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import NoData from 'components/utils/NoData';
 import Loading from 'components/utils/Loading';
 import useTimeSeriesSearchQuery from 'hooks/useQuery/useTimeSeriesSearchQuery';
+import usePagination from 'hooks/usePagination';
+import useTimeSeriesAggregateQuery from 'hooks/useQuery/useTimeSeriesAggregateQuery';
 
 import TimeSeriesRow from '../TimeSeriesRow';
 import { RowWrapper } from '../TimeSeriesRow/RowWrapper';
@@ -21,43 +23,60 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
   const [value, setValue] = useState('');
   // The field we pass to the query (so we can debounce)
   const [query, setQuery] = useState('');
+  const { renderPagination, getPageData, resetPages } = usePagination();
   const debouncedSetQuery = useMemo(() => debounce(setQuery, 300), []);
+
+  const { data: totalTimeSeriesOnAsset } = useTimeSeriesAggregateQuery({
+    filter: {
+      assetIds: [assetId],
+    },
+  });
+  const { data: totalTimeSeriesUnderAsset } = useTimeSeriesAggregateQuery({
+    filter: {
+      assetSubtreeIds: [{ id: assetId }],
+    },
+  });
 
   const assetQuery = useTimeSeriesSearchQuery({
     filter: {
       assetIds: [assetId],
     },
     search: {
-      name: query,
+      name: query || undefined,
     },
-    limit: 10,
+    limit: 500,
   });
   const relatedQuery = useTimeSeriesSearchQuery({
     filter: {
       assetSubtreeIds: [{ id: assetId }],
     },
     search: {
-      name: query,
+      name: query || undefined,
     },
-    limit: 10,
+    limit: 500,
   });
 
-  const renderSection = ({
-    data,
-    isLoading,
-  }: UseQueryResult<Timeseries[], unknown>) => {
+  useEffect(() => {
+    resetPages();
+  }, [relatedQuery.data, assetQuery.data]);
+
+  const renderSection = (
+    { data, isLoading }: UseQueryResult<Timeseries[], unknown>,
+    name: string
+  ) => {
     if (isLoading) {
       return <Loading />;
     }
-    if (!data) {
+    if (!data || data.length === 0) {
       return <NoData type="Timeseries" />;
     }
 
     return (
       <RowWrapper>
-        {data.map((timeSeries) => (
+        {getPageData(data, name).map((timeSeries) => (
           <TimeSeriesRow key={timeSeries.id} timeSeries={timeSeries} />
         ))}
+        {renderPagination({ name, total: data.length })}
       </RowWrapper>
     );
   };
@@ -75,15 +94,26 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
       />
       <section>
         <h3>
-          On this asset <Badge text={String(assetQuery.data?.length || 0)} />
+          On this asset{' '}
+          <Badge
+            text={String(
+              (query ? assetQuery.data?.length : totalTimeSeriesOnAsset) || 0
+            )}
+          />
         </h3>
-        {renderSection(assetQuery)}
+        {renderSection(assetQuery, 'thisAsset')}
       </section>
       <section>
         <h3>
-          Related assets <Badge text={String(relatedQuery.data?.length || 0)} />
+          Related time series{' '}
+          <Badge
+            text={String(
+              (query ? relatedQuery.data?.length : totalTimeSeriesUnderAsset) ||
+                0
+            )}
+          />
         </h3>
-        {renderSection(relatedQuery)}
+        {renderSection(relatedQuery, 'relatedAssets')}
       </section>
     </TabWrapper>
   );
