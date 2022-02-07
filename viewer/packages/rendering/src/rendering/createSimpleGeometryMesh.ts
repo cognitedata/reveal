@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 
-import { disposeAttributeArrayOnUpload } from '@reveal/utilities';
+import { disposeAttributeArrayOnUpload, incrementOrInsertIndex } from '@reveal/utilities';
 import { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from '@reveal/cad-parsers';
 
 import { Materials } from './materials';
@@ -96,10 +96,10 @@ export function createSimpleGeometryMesh(
   function setTreeIndicesToUserData() {
     const treeIndexAttributeOffset = 3;
 
-    const treeIndices = new Set();
+    const treeIndices = new Map<number, number>();
 
     for (let i = 0; i < attributeValues.length / stride; i++) {
-      treeIndices.add(attributeValues[i * stride + treeIndexAttributeOffset]);
+      incrementOrInsertIndex(treeIndices, attributeValues[i * stride + treeIndexAttributeOffset]);
     }
     obj.userData.treeIndices = treeIndices;
   }

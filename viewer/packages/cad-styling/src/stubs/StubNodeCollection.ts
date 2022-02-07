@@ -3,10 +3,14 @@
  */
 
 import { IndexSet } from '@reveal/utilities';
-import { NodeCollectionBase, SerializedNodeCollection } from '../NodeCollectionBase';
+import { AreaCollection } from '../prioritized/AreaCollection';
+import { EmptyAreaCollection } from '../prioritized/EmptyAreaCollection';
+import { NodeCollection } from '../NodeCollection';
+import { SerializedNodeCollection } from '../SerializedNodeCollection';
 
-export class StubNodeCollection extends NodeCollectionBase {
+export class StubNodeCollection extends NodeCollection {
   private _indexSet = new IndexSet();
+  private _areas: AreaCollection = EmptyAreaCollection.instance();
   private _isLoading = false;
 
   constructor() {
@@ -21,6 +25,12 @@ export class StubNodeCollection extends NodeCollectionBase {
   }
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+  getAreas(): AreaCollection {
+    return this._areas;
+  }
+  setAreas(areas: AreaCollection): void {
+    this._areas = areas;
   }
   setIndexSet(set: IndexSet): void {
     this._indexSet = set;

@@ -9,6 +9,9 @@ import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { StubNodeCollection } from './stubs/StubNodeCollection';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
+import { createRandomBoxes } from '../../../test-utilities/src/createBoxes';
+import * as SeededRandom from 'random-seed';
+
 describe('NodeAppearanceProvider', () => {
   let provider: NodeAppearanceProvider;
 
@@ -123,5 +126,64 @@ describe('NodeAppearanceProvider', () => {
     nodeCollection.triggerChanged();
     jest.runAllTimers();
     expect(isLoadingChangedListener).toBeCalledWith(false);
+  });
+
+  test('getPrioritizedAreas returns areas that contain all boxes for all collections', () => {
+    const rand = SeededRandom.create('someseed');
+    const boxes0 = createRandomBoxes(100, 10, 30, rand);
+    const boxes1 = createRandomBoxes(100, 10, 30, rand);
+
+    const nodeCollection0 = new TreeIndexNodeCollection(new IndexSet([1, 3, 5]));
+    const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([6, 9, 12]));
+
+    nodeCollection0.addAreas(boxes0);
+    nodeCollection1.addAreas(boxes1);
+
+    provider.assignStyledNodeCollection(nodeCollection0, { prioritizedForLoadingHint: 5 });
+    provider.assignStyledNodeCollection(nodeCollection1, { prioritizedForLoadingHint: 4 });
+
+    const areas = provider.getPrioritizedAreas();
+
+    const containedInSomeArea0 = new Array<boolean>(boxes0.length).fill(false);
+    const containedInSomeArea1 = new Array<boolean>(boxes1.length).fill(false);
+
+    for (const area of areas) {
+      for (let i = 0; i < boxes0.length; i++) {
+        if (area.area.containsBox(boxes0[i])) {
+          containedInSomeArea0[i] = true;
+        }
+      }
+
+      for (let i = 0; i < boxes1.length; i++) {
+        if (area.area.containsBox(boxes1[i])) {
+          containedInSomeArea1[i] = true;
+        }
+      }
+    }
+
+    for (const isContained of containedInSomeArea0) {
+      expect(isContained).toBeTrue();
+    }
+
+    for (const isContained of containedInSomeArea1) {
+      expect(isContained).toBeTrue();
+    }
+  });
+
+  test('assigning priority triggers callback', () => {
+    const nodeCollection0 = new TreeIndexNodeCollection(new IndexSet([1, 3, 5]));
+    const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([6, 8, 10]));
+    const nodeCollection2 = new TreeIndexNodeCollection(new IndexSet([4, 3, 2]));
+
+    let numCalls = 0;
+    provider.on('prioritizedAreasChanged', () => {
+      numCalls++;
+    });
+
+    provider.assignStyledNodeCollection(nodeCollection0, { prioritizedForLoadingHint: 5 });
+    provider.assignStyledNodeCollection(nodeCollection1, { visible: true });
+    provider.assignStyledNodeCollection(nodeCollection2, { prioritizedForLoadingHint: 5 });
+
+    expect(numCalls).toBe(2);
   });
 });

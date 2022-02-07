@@ -17,7 +17,9 @@ import {
   ModelDataProvider, 
   ModelIdentifier, 
   ModelMetadataProvider, 
-  NodesApiClient
+  NodesApiClient,
+  File3dFormat,
+  BlobOutputMetadata
 } from '@cognite/reveal/extensions/datasource';
 
 class MyDataSource implements DataSource {
@@ -33,7 +35,16 @@ class MyDataSource implements DataSource {
 }
 
 class MyModelMetadataProvider implements ModelMetadataProvider {
-  getModelUri(identifier: ModelIdentifier): Promise<string> {
+  getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]> {
+    return Promise.resolve([
+      {
+        blobId: -1,
+        format: File3dFormat.RevealCadModel,
+        version: 8
+      }
+    ]);
+  }
+  getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string> {
     // Note! identifier will always be a CdfModelIdentifier
     return Promise.resolve('/primitives');
   }
@@ -43,7 +54,7 @@ class MyModelMetadataProvider implements ModelMetadataProvider {
     // Use default camera
     return Promise.resolve(undefined);
   }
-  getModelMatrix(identifier: ModelIdentifier): Promise<THREE.Matrix4> {
+  getModelMatrix(identifier: ModelIdentifier, format: File3dFormat | string): Promise<THREE.Matrix4> {
     // Note! identifier will always be a CdfModelIdentifier
 
     // CAD models are usually stored in Z-up, while Reveal uses Y-up, so
@@ -92,7 +103,7 @@ class MyNodesApiClient implements NodesApiClient {
   determineNodeAncestorsByNodeId(modelId: number, revisionId: number, nodeId: number, generation: number): Promise<{treeIndex: number; subtreeSize: number }> {
     throw new Error('Not supported.');
   }
-  getBoundingBoxByNodeId(modelId: number, revisionId: number, nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+  getBoundingBoxesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<THREE.Box3[]> {
     throw new Error('Not supported.');
   }
 }

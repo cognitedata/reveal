@@ -56,8 +56,8 @@ nodes that should stand out. In Reveal 2, this is replaced by `Cognite3DModel.se
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-In general, it is recommended to use the [specialized `NodeCollectionBase`-implementations](examples/cad-styling) for best performance. However,
-it is possible to use `TreeIndexNodeCollection` as a migration step. This allows the use of previously implemented logic for
+In general, it is recommended to use the [specialized `NodeCollection`-implementations](examples/cad-styling) for best performance. However,
+it is possible to use `TreeIndexNodeCollection` as a migration step and simple use cases. This allows the use of previously implemented logic for
 populating the set based on some application specific logic.
 
 As an example, consider an application that has some logic for only showing objects that are part of the 'EA'-function. In previous versions
@@ -261,7 +261,7 @@ const revisionId = 5688854005909501;
 const sdk = new CogniteClient({
   appId: 'cognite.reveal.docs.IsModelCompatible',
 });
-await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }}); // With Cognite authentication flow
+await sdk.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }}); // With Cognite authentication flow
 await sdk.authenticate();
 
 // Request a list of formats

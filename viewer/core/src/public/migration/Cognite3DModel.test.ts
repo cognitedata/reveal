@@ -4,12 +4,10 @@
 
 import { Cognite3DModel } from './Cognite3DModel';
 
-import { NodesLocalClient } from '@reveal/nodes-api';
-import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
-import { CadModelMetadata } from '@reveal/cad-parsers';
+import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+
 import { MetricsLogger } from '@reveal/metrics';
-import { createCadModelMetadata, generateSectorTree } from '../../../../test-utilities';
+import { createCadModel } from '../../../../test-utilities';
 
 describe(Cognite3DModel.name, () => {
   let model: Cognite3DModel;
@@ -19,15 +17,7 @@ describe(Cognite3DModel.name, () => {
   });
 
   beforeEach(() => {
-    const materialManager = new CadMaterialManager();
-    const cadRoot = generateSectorTree(3, 3);
-    const cadMetadata: CadModelMetadata = createCadModelMetadata(cadRoot);
-    materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
-
-    const cadNode = new CadNode(cadMetadata, materialManager);
-    const apiClient = new NodesLocalClient();
-
-    model = new Cognite3DModel(1, 2, cadNode, apiClient);
+    model = createCadModel(1, 2, 3, 3);
   });
 
   test('(un)assignStyledNodeCollection maintains list of collections correctly', () => {
@@ -48,22 +38,13 @@ describe(Cognite3DModel.name, () => {
     expect(model.styledNodeCollections).toBeEmpty();
   });
 
-  test('assignStyledNodeCollection same collection twice throws', () => {
+  test('assignStyledNodeCollection updates style if called twice with same collection', () => {
+    const originalAppearance: NodeAppearance = { renderGhosted: true };
+    const updatedAppearance: NodeAppearance = { renderInFront: true, renderGhosted: false };
     const collection = new TreeIndexNodeCollection();
-    model.assignStyledNodeCollection(collection, { renderGhosted: true });
-    expect(() => model.assignStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
-  });
-
-  test('updateStyledNodeCollection throw is collection has not been added', () => {
-    const collection = new TreeIndexNodeCollection();
-
-    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
-
-    model.assignStyledNodeCollection(collection, { renderGhosted: true });
-    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).not.toThrowError();
-
-    model.unassignStyledNodeCollection(collection);
-    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
+    model.assignStyledNodeCollection(collection, originalAppearance);
+    model.assignStyledNodeCollection(collection, updatedAppearance);
+    expect(model.styledNodeCollections).toEqual([{ nodeCollection: collection, appearance: updatedAppearance }]);
   });
 
   test('removeAllStyledNodeCollections removes all styled node collections', () => {

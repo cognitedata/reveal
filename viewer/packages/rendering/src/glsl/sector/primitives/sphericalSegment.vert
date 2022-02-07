@@ -4,29 +4,29 @@
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
 
-attribute float a_treeIndex;
-attribute vec3 a_color;
-attribute vec3 a_center;
-attribute vec3 a_normal;
-attribute float a_horizontalRadius;
-attribute float a_verticalRadius;
-attribute float a_height;
+in float a_treeIndex;
+in vec3 a_color;
+in vec3 a_center;
+in vec3 a_normal;
+in float a_horizontalRadius;
+in float a_verticalRadius;
+in float a_height;
 
-varying float v_treeIndex;
+out float v_treeIndex;
 // We pack vRadius as w-component of center
-varying vec4 center;
-varying float hRadius;
-varying float height;
+out vec4 center;
+out float hRadius;
+out float height;
 
 // U, V, axis represent the 3x3 sphere basis.
 // They are vec4 to pack extra data into the w-component
-// since Safari on iOS only supports 8 varying vec4 registers.
-varying vec4 U;
-varying vec4 V;
-varying vec4 sphereNormal;
+// since Safari on iOS only supports 8 out vec4 registers.
+out vec4 U;
+out vec4 V;
+out vec4 sphereNormal;
 
-varying vec3 v_color;
-varying vec3 v_normal;
+out vec3 v_color;
+out vec3 v_normal;
 
 void main() {
     v_treeIndex = a_treeIndex;
@@ -55,10 +55,7 @@ void main() {
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
     vec3 up = normalize(cross(left, lDir));
 
-#ifndef GL_EXT_frag_depth
-    // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
     newPosition.x *= 1.0 - (a_verticalRadius * (position.x + 1.0) * 0.0025 / a_height);
-#endif
 
     // Negative angle means height larger than radius,
     // so we should have full size so we can render the largest part of the ellipsoid segment

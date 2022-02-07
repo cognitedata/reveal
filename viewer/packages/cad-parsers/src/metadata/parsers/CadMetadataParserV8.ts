@@ -4,75 +4,19 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata, SectorMetadataFacesFileSection } from '../types';
+import { SectorMetadataFacesFileSection, V8SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
+import { CadSceneRootMetadata, V8SceneSectorMetadata } from './types';
 
-export interface CadSectorMetadataV8 {
-  readonly id: number;
-  readonly parentId: number;
-  readonly path: string;
-  readonly depth: number;
-  readonly estimatedDrawCallCount: number;
-  readonly estimatedTriangleCount: number;
-
-  readonly boundingBox: {
-    readonly min: {
-      x: number;
-      y: number;
-      z: number;
-    };
-    readonly max: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
-  readonly indexFile: {
-    readonly fileName: string;
-    readonly peripheralFiles: string[];
-    readonly downloadSize: number;
-  };
-  readonly facesFile: {
-    readonly quadSize: number;
-    readonly coverageFactors: {
-      xy: number;
-      yz: number;
-      xz: number;
-    };
-    readonly recursiveCoverageFactors:
-      | {
-          xy: number;
-          yz: number;
-          xz: number;
-        }
-      | undefined;
-    readonly fileName: string | null;
-    readonly downloadSize: number;
-  } | null;
-}
-
-export interface CadMetadataV8 {
-  readonly version: 8;
-  readonly maxTreeIndex: number;
-  readonly sectors: CadSectorMetadataV8[];
-  readonly unit: string | null;
-
-  // Available, but unused:
-  // readonly projectId: number;
-  // readonly modelId: number;
-  // readonly revisionId: number;
-  // readonly subRevisionId: number;
-}
-
-export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
+export function parseCadMetadataV8(metadata: CadSceneRootMetadata): SectorScene {
   // Create list of sectors and a map of child -> parent
-  const sectorsById = new Map<number, SectorMetadata>();
+  const sectorsById = new Map<number, V8SectorMetadata>();
   const parentIds: number[] = [];
   metadata.sectors.forEach(s => {
-    const sector = createSectorMetadata(s);
+    const sector = createSectorMetadata(s as V8SceneSectorMetadata);
     sectorsById.set(s.id, sector);
-    parentIds[s.id] = s.parentId;
+    parentIds[s.id] = s.parentId ?? -1;
   });
 
   // Establish relationships between sectors
@@ -97,7 +41,7 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
   return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
-function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
+function createSectorMetadata(metadata: V8SceneSectorMetadata): V8SectorMetadata {
   const facesFile = determineFacesFile(metadata);
 
   const bb = metadata.boundingBox;
@@ -112,7 +56,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     path: metadata.path,
     depth: metadata.depth,
     bounds: new THREE.Box3(new THREE.Vector3(min_x, min_y, min_z), new THREE.Vector3(max_x, max_y, max_z)),
-    estimatedDrawCallCount: metadata.estimatedDrawCallCount,
+    estimatedDrawCallCount: metadata.estimatedDrawCallCount || 0,
     estimatedRenderCost: metadata.estimatedTriangleCount || 0,
 
     // I3D
@@ -125,7 +69,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
   };
 }
 
-function determineFacesFile(metadata: CadSectorMetadataV8): SectorMetadataFacesFileSection {
+function determineFacesFile(metadata: V8SceneSectorMetadata): SectorMetadataFacesFileSection {
   if (!metadata.facesFile) {
     return {
       quadSize: -1.0,
@@ -140,7 +84,7 @@ function determineFacesFile(metadata: CadSectorMetadataV8): SectorMetadataFacesF
         xz: -1.0
       },
       fileName: null,
-      downloadSize: metadata.indexFile.downloadSize
+      downloadSize: metadata.indexFile!.downloadSize
     };
   }
   const facesFile = {
@@ -150,12 +94,12 @@ function determineFacesFile(metadata: CadSectorMetadataV8): SectorMetadataFacesF
   return facesFile;
 }
 
-function hasDummyFacesFileSection(metadata: SectorMetadata): boolean {
+function hasDummyFacesFileSection(metadata: V8SectorMetadata): boolean {
   return metadata.facesFile.coverageFactors.xy === -1.0;
 }
 
 function populateCoverageFactorsFromAnchestors(
-  sector: SectorMetadata,
+  sector: V8SectorMetadata,
   validFacesFileSection: SectorMetadataFacesFileSection
 ) {
   if (hasDummyFacesFileSection(sector)) {
@@ -165,8 +109,12 @@ function populateCoverageFactorsFromAnchestors(
     sector.facesFile.recursiveCoverageFactors.xy = validFacesFileSection.recursiveCoverageFactors.xy;
     sector.facesFile.recursiveCoverageFactors.yz = validFacesFileSection.recursiveCoverageFactors.yz;
     sector.facesFile.recursiveCoverageFactors.xz = validFacesFileSection.recursiveCoverageFactors.xz;
-    sector.children.forEach(child => populateCoverageFactorsFromAnchestors(child, validFacesFileSection));
+    sector.children.forEach(child =>
+      populateCoverageFactorsFromAnchestors(child as V8SectorMetadata, validFacesFileSection)
+    );
   } else {
-    sector.children.forEach(child => populateCoverageFactorsFromAnchestors(child, sector.facesFile));
+    sector.children.forEach(child =>
+      populateCoverageFactorsFromAnchestors(child as V8SectorMetadata, sector.facesFile)
+    );
   }
 }

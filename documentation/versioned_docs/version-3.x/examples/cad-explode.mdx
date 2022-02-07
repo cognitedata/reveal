@@ -1,0 +1,59 @@
+---
+id: cad-explode
+title: Exploded view tool
+description: Demo use the exploded view tool to explode and inspect a given node subtree.
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+This section describes the exploded view tool, which contains helper functions and logic for inspecting and exploding a given asset.
+The constructor of this tool needs to be supplied with a [tree index](../concepts.md) which is the tree index of the root of the asset, and an instance of the `Cognite3DModel` that the asset belongs to.
+
+:::note
+For performance reasons, the root tree index must have a subtree size of less than 1000, else it will throw an error.
+:::
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+`ExplodedViewTool` contains two instance methods: `expand` and `reset`.
+`expand` takes a float describing how far the individual nodes should be expanded (this will vary based on the initial vector between the node and root).
+`reset` resets the tool and any transform that has been applied to any nodes.
+
+:::note
+`ExplodedViewTool` contains a promise: `readyPromise`, which indicates when the tool is ready to be used.
+This indicates if the tool has cached necessary data from the Cognite Fusion API to determine the individual locations of the nodes in the subtree.
+:::
+
+Below is an example that expands a given pipe asset (that has a tree index of `570730`) which is animated by a sine function.
+Another good usecase would be to bind the `expand` function to a slider which the user can manipulate to expand the asset.
+
+
+```jsx runnable-3x
+// import { ExplodedViewTool } from '@cognite/reveal/tools';
+async function animate() {
+  const rootTreeIndex = 570730;
+
+  const explodeTool = new ExplodedViewTool(rootTreeIndex, model);
+
+  model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
+  const explodedIndices = new TreeIndexNodeCollection(
+    await model.getSubtreeTreeIndices(rootTreeIndex)
+  );
+  model.assignStyledNodeCollection(explodedIndices, DefaultNodeAppearance.Default);
+
+  const rootBoundingBox = await model.getBoundingBoxByTreeIndex(rootTreeIndex);
+  viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
+  await explodeTool.readyPromise;
+
+  const clock = new THREE.Clock(true);
+  clock.start();
+
+  setInterval(() =>{
+    const elapsedTime = clock.getElapsedTime();
+    const expandRadius = Math.sin(elapsedTime) * 0.5 + 0.5;
+    explodeTool.expand(expandRadius);
+  }, 20);
+}
+animate();
+```

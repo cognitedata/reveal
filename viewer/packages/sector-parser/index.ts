@@ -1,4 +1,5 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { default as GltfSectorParser, RevealGeometryCollectionType } from './src/GltfSectorParser';
+export { GltfSectorParser } from './src/GltfSectorParser';
+export { RevealGeometryCollectionType, ParsedGeometry } from './src/types';

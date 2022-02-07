@@ -3,9 +3,11 @@
  */
 
 import { NodeAppearance } from './NodeAppearance';
-import { NodeCollectionBase } from './NodeCollectionBase';
+import { NodeCollection } from './NodeCollection';
+import { PrioritizedArea } from './prioritized/types';
 
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
+
 import debounce from 'lodash/debounce';
 
 /**
@@ -16,7 +18,7 @@ import debounce from 'lodash/debounce';
 export type ApplyStyleDelegate = (treeIndices: IndexSet, appearance: NodeAppearance) => void;
 
 type StyledNodeCollection = {
-  nodeCollection: NodeCollectionBase;
+  nodeCollection: NodeCollection;
   appearance: NodeAppearance;
   handleNodeCollectionChangedListener: () => void;
 };
@@ -24,21 +26,30 @@ type StyledNodeCollection = {
 export class NodeAppearanceProvider {
   private readonly _styledCollections = new Array<StyledNodeCollection>();
   private _lastFiredLoadingState?: boolean;
+  private _cachedPrioritizedAreas?: PrioritizedArea[] = undefined;
 
   private readonly _events = {
     changed: new EventTrigger<() => void>(),
-    loadingStateChanged: new EventTrigger<(isLoading: boolean) => void>()
+    loadingStateChanged: new EventTrigger<(isLoading: boolean) => void>(),
+    prioritizedAreasChanged: new EventTrigger<() => void>()
   };
 
   on(event: 'changed', listener: () => void): void;
   on(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
-  on(event: 'changed' | 'loadingStateChanged', listener: (() => void) | ((isLoading: boolean) => void)): void {
+  on(event: 'prioritizedAreasChanged', listener: () => void): void;
+  on(
+    event: 'changed' | 'loadingStateChanged' | 'prioritizedAreasChanged',
+    listener: (() => void) | ((isLoading: boolean) => void)
+  ): void {
     switch (event) {
       case 'changed':
         this._events.changed.subscribe(listener as () => void);
         break;
       case 'loadingStateChanged':
         this._events.loadingStateChanged.subscribe(listener as (isLoading: boolean) => void);
+        break;
+      case 'prioritizedAreasChanged':
+        this._events.prioritizedAreasChanged.subscribe(listener as () => void);
         break;
 
       default:
@@ -48,7 +59,10 @@ export class NodeAppearanceProvider {
 
   off(event: 'changed', listener: () => void): void;
   off(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
-  off(event: 'changed' | 'loadingStateChanged', listener: (() => void) | ((isLoading: boolean) => void)): void {
+  off(
+    event: 'changed' | 'loadingStateChanged' | 'prioritizedAreasChanged',
+    listener: (() => void) | ((isLoading: boolean) => void)
+  ): void {
     switch (event) {
       case 'changed':
         this._events.changed.unsubscribe(listener as () => void);
@@ -56,13 +70,16 @@ export class NodeAppearanceProvider {
       case 'loadingStateChanged':
         this._events.loadingStateChanged.unsubscribe(listener as (isLoading: boolean) => void);
         break;
+      case 'prioritizedAreasChanged':
+        this._events.prioritizedAreasChanged.unsubscribe(listener as () => void);
+        break;
 
       default:
         assertNever(event, `Unsupported event: '${event}'`);
     }
   }
 
-  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance): void {
+  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void {
     const existingCollection = this._styledCollections.find(x => x.nodeCollection === nodeCollection);
     if (existingCollection !== undefined) {
       existingCollection.appearance = appearance;
@@ -80,9 +97,13 @@ export class NodeAppearanceProvider {
       nodeCollection.on('changed', styledCollection.handleNodeCollectionChangedListener);
       this.scheduleNotifyChanged();
     }
+
+    if (appearance.prioritizedForLoadingHint) {
+      this.notifyPrioritizedAreasChanged();
+    }
   }
 
-  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase): void {
+  unassignStyledNodeCollection(nodeCollection: NodeCollection): void {
     const index = this._styledCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('NodeCollection not added');
@@ -101,6 +122,27 @@ export class NodeAppearanceProvider {
     });
   }
 
+  getPrioritizedAreas(): PrioritizedArea[] {
+    if (this._cachedPrioritizedAreas) {
+      return this._cachedPrioritizedAreas;
+    }
+
+    const prioritizedCollections = this._styledCollections.filter(
+      collection => collection.appearance.prioritizedForLoadingHint
+    );
+
+    const prioritizedAreas = prioritizedCollections.flatMap(collection => {
+      const prioritizedAreaList: PrioritizedArea[] = [];
+      for (const area of collection.nodeCollection.getAreas().areas()) {
+        prioritizedAreaList.push({ area, extraPriority: collection.appearance.prioritizedForLoadingHint! });
+      }
+      return prioritizedAreaList;
+    });
+
+    this._cachedPrioritizedAreas = prioritizedAreas;
+    return this._cachedPrioritizedAreas;
+  }
+
   clear(): void {
     for (const styledSet of this._styledCollections) {
       const nodeCollection = styledSet.nodeCollection;
@@ -115,6 +157,7 @@ export class NodeAppearanceProvider {
   }
 
   private notifyChanged() {
+    this._cachedPrioritizedAreas = undefined;
     this._events.changed.fire();
   }
 
@@ -132,5 +175,9 @@ export class NodeAppearanceProvider {
   private handleNodeCollectionChanged(_styledSet: StyledNodeCollection) {
     this.scheduleNotifyChanged();
     this.notifyLoadingStateChanged();
+  }
+
+  private notifyPrioritizedAreasChanged() {
+    this._events.prioritizedAreasChanged.fire();
   }
 }

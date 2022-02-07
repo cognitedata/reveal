@@ -15,7 +15,7 @@ import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
 import { GeometryFilter } from '..';
 
-import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import { CadModelBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
@@ -120,11 +120,11 @@ export class RevealManager {
     }
   }
 
-  public get cadBudget(): CadModelSectorBudget {
+  public get cadBudget(): CadModelBudget {
     return this._cadManager.budget;
   }
 
-  public set cadBudget(budget: CadModelSectorBudget) {
+  public set cadBudget(budget: CadModelBudget) {
     this._cadManager.budget = budget;
   }
 
@@ -201,13 +201,6 @@ export class RevealManager {
     modelIdentifier: ModelIdentifier,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
-    MetricsLogger.trackLoadModel(
-      {
-        type
-      },
-      modelIdentifier
-    );
-
     switch (type) {
       case 'cad': {
         return this._cadManager.addModel(modelIdentifier, options?.geometryFilter);
