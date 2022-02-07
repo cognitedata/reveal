@@ -309,19 +309,19 @@ export class GltfSectorParser {
         console.log(dracoMesh.num_points());
         module._free(ptr);
 
-        // Object.keys(primitive.attributes).forEach(p => {
-        //   const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[p]);
-        //   const componentType = json.accessors[primitive.attributes[p]].componentType;
-        //   const dracoType = draco_data_type.get(componentType)!;
-        //   const jsType = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
-        //   const decodedAttribute = decodeAttribute(decoder, dracoMesh, dracoAttribute, dracoType, jsType, module);
-        //   if (p === 'POSITION') {
-        //     bufferGeometry.setAttribute('position', new THREE.BufferAttribute(decodedAttribute, 3));
-        //   }
-        //   if (p === 'COLOR_0') {
-        //     bufferGeometry.setAttribute('color', new THREE.BufferAttribute(decodedAttribute, 4));
-        //   }
-        // });
+        Object.keys(primitive.attributes).forEach(p => {
+          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[p]);
+          const componentType = json.accessors[primitive.attributes[p]].componentType;
+          const dracoType = draco_data_type.get(componentType)!;
+          const jsType = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
+          const decodedAttribute = decodeAttribute(decoder, dracoMesh, dracoAttribute, dracoType, jsType, module);
+          if (p === 'POSITION') {
+            bufferGeometry.setAttribute('position', new THREE.BufferAttribute(decodedAttribute, 3));
+          }
+          if (p === 'COLOR_0') {
+            bufferGeometry.setAttribute('color', new THREE.BufferAttribute(decodedAttribute, 4));
+          }
+        });
       }
     } else {
       this.setIndexBuffer(payload, primitive, data, bufferGeometry);

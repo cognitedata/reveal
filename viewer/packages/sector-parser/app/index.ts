@@ -48,6 +48,7 @@ async function init() {
 
   const cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
   const group = new THREE.Group();
+  group.frustumCulled = false;
   group.applyMatrix4(cadFromCdfToThreeMatrix);
   scene.add(group);
 
@@ -113,6 +114,8 @@ async function init() {
       })
     );
   });
+
+  console.log(scene);
 
   const controls = new OrbitControls(camera, renderer.domElement);
 
