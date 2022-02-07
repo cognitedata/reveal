@@ -16,10 +16,15 @@ export { packFloatInto } from './src/packFloat';
 export { DynamicDefragmentedBuffer } from './src/datastructures/DynamicDefragmentedBuffer';
 export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { BoundingBoxLOD } from './src/three/BoundingBoxLOD';
-export { getBox3CornerPoints } from './src/three/getBox3CornerPoints';
+export { toThreeBox3 } from './src/three/toThreeBox3';
+
+export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfPlane';
+export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
 export { isMobileOrTablet } from './src/isMobileOrTablet';
 export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
 export { WorkerPool } from './src/workers/WorkerPool';
+
+export { TypedArray, TypedArrayConstructor } from './src/types';
 
 export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
@@ -27,3 +32,5 @@ export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 
 export { revealEnv } from './src/revealEnv';
+
+export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';

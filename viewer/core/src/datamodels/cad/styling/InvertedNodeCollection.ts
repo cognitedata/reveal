@@ -4,19 +4,19 @@
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange, IndexSet } from '@reveal/utilities';
 
-import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+import { AreaCollection, NodeCollection, SerializedNodeCollection } from '@reveal/cad-styling';
 
 /**
  * Node collection that inverts the result from another node collection.
  */
-export class InvertedNodeCollection extends NodeCollectionBase {
+export class InvertedNodeCollection extends NodeCollection {
   public static readonly classToken = 'InvertedNodeCollection';
 
   private readonly _allTreeIndicesRange: NumericRange;
-  private readonly _innerCollection: NodeCollectionBase;
+  private readonly _innerCollection: NodeCollection;
   private _cachedIndexSet?: IndexSet;
 
-  constructor(model: Cognite3DModel, innerSet: NodeCollectionBase) {
+  constructor(model: Cognite3DModel, innerSet: NodeCollection) {
     super(InvertedNodeCollection.classToken);
     this._innerCollection = innerSet;
     this._innerCollection.on('changed', () => {
@@ -40,6 +40,10 @@ export class InvertedNodeCollection extends NodeCollectionBase {
       this._cachedIndexSet = invertedIndices;
     }
     return this._cachedIndexSet;
+  }
+
+  getAreas(): AreaCollection {
+    throw new Error(`${this.getAreas.name} is not supported for ${InvertedNodeCollection.name}`);
   }
 
   serialize(): SerializedNodeCollection {

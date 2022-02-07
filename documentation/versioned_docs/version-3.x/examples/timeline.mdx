@@ -1,0 +1,204 @@
+---
+id: timelinetool
+title: Timeline tool
+describe: Applying styles to nodes based on date with Play & Stop
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWrapper';
+
+Reveal allows for applying styles to nodes based on date property and can be viewed as a playable entity
+where node styles are applied to different nodes which can be used to showcase progress of the model construction.
+The API is influenced by the [node styling API](cad-styling) and it's recommended to read up on this documentation before reading this document.
+
+:::note
+The test data used in the documentation site is for testing and to show the capabilities of the tool.
+The examples shown is therefore might not be a ideal model construction progression.
+:::
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Timeline
+
+The timeline tool provides ability to apply styles by date. It works by creating a set of "keyframes"  for provided dates.
+Each keyframe has a set of associated styled node collections.
+
+### Creating keyframes
+To create a `Keyframe`, use `createKeyframe(date: Date)`
+- `date` - Date reference for the keyframe
+
+```jsx
+const keyframe = timeline.createKeyframe(new Date('2021-10-05'));
+```
+
+### Add styled node collections to keyframes
+Tool provides feature to add nodes & styles to a Keyframe or number of Keyframes or to all of the Keyframes.
+For more information on assigning styles please refer [CAD Styling](cad-styling).
+
+```jsx
+const nodes = new AssetNodeCollection(sdk, model);
+keyframe.assignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] });
+```
+
+### Remove styled node collections from keyframes
+
+Styled node collections can be removed from keyframes.
+`unassignStyledNodeCollection(nodeCollection: NodeCollectionBase)`
+- `nodeCollection` - Node set to be removed from keyframes.
+
+```jsx
+keyframe.unassignStyledNodeCollection(nodes);
+```
+
+### Play timelines
+We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
+- `startDate` - Keyframe date to start the playback of the timeline keyframes.
+- `endDate` - Keyframe date to stop the playback of the timeline keyframes.
+- `durationInMilliSeconds` - Number of milli-seconds for the full playback of keyframes.
+
+Note that the dates doesn't need to match the keyframe dates - the playback will be performed on a "virtual" timeline that is linear in time and update the styling whenever a new keyframe is activated. Only one keyframe will be active at any given time, i.e. the model will only have styling from one keyframe active at any time.
+
+```js runnable-3x
+// import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
+// import { TimelineTool, Keyframe } from '@cognite/reveal/tools';
+
+function createProgressBarContainer() {
+  const container = document.createElement('div');
+  container.style.cssText = `
+    background: #333;
+    border-radius: 13px;
+    width: 500px;
+    height: 25px;
+    padding: 3px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    bottom: 20px;
+  `;
+  return container;
+}
+
+function createProgressBar() {
+  const progress = document.createElement('div');
+  progress.style.cssText = `
+    /* Progress after moving to next Keyframe */
+    content: '';
+    display: block;
+    background: DodgerBlue;
+    width: 0%;
+    height: 20px;
+    border-radius: 9px;
+    position: relative;
+  `;
+  return progress;
+}
+
+model.setDefaultNodeAppearance({color: [200, 20, 0]});
+
+const timeline = new TimelineTool(model);
+
+for (let i = 0; i < 20; i++) {
+  const indexSet = new IndexSet();
+  indexSet.addRange(new NumericRange(0, (i+1)*60000));
+  const nodes = new TreeIndexNodeCollection(indexSet);
+  const keyframe = timeline.createKeyframe(new Date(`2020-01-${i+1}`));
+  keyframe.assignStyledNodeCollection(nodes, { color: [20, 200, 0] });
+}
+
+// div element Cognite3DViewer to insert into the canvas
+const domElement = document.getElementById('demo-wrapper');
+const container = createProgressBarContainer();
+const progressBar = createProgressBar();
+container.appendChild(progressBar);
+domElement.appendChild(container);
+
+const durationMs = 20000;
+const startDate = new Date('2020-01-01');
+const endDate = new Date('2020-01-20');
+timeline.subscribe('dateChanged', (data) => {
+  const progress = ((data.date.getTime() - data.startDate.getTime()) / (data.endDate.getTime() - data.startDate.getTime()) * 100);
+  progressBar.style.width = `${progress}%`;
+  });
+  
+timeline.play(startDate, endDate, durationMs);
+```
+
+### Stop timeline playback
+
+```jsx
+timeline.stop();
+```
+
+### Pause timeline
+
+```jsx
+timeline.pause();
+```
+
+### Resume timeline
+
+```jsx
+timeline.resume();
+```
+
+### Get Keyframe by Date
+`getKeyframeByDate(date: Date)`
+- `date` - Date of the Keyframe which needs retrived.
+
+```jsx
+const keyframe = timeline.getKeyframeByDate(new Date('2021-10-06'));
+```
+
+### Reacting to date changes while in playback mode
+While in the play state, the tool emits events which will be helpful for the users to calculate the progression of the playback of the timeline.
+The tool provides a `TimelineDateUpdateDelegate` event which can be subscribed to received below data.
+- `date` - Virtual date which can be used to calculate progression.
+- `activeKeyframe` - Current active `Keyframe` in the playback.
+- `startDate` - Virtual date to start the playback of the timeline.
+- `endDate` - Virtual date to stop the playback of the timeline.
+
+:::note
+If we have subscribed to `dateChanged` event and if there are no active Keyframe during Timeline playback, than `activeKeyframe` data will be `undefined` value.
+:::
+
+```jsx
+// import { TimelineDateUpdateDelegate } from '@cognite/reveal/tools';
+
+timeline.subscribe('dateChanged', (data) => {
+  const date = data.date;
+  const keyframe = data.activeKeyframe;
+  const startDate = data.startDate;
+  const endDate = data.endDate;
+});
+```
+
+To unsubscribe from `TimelineDateUpdateDelegate` event
+
+```jsx
+timeline.unsubscribe('dateChanged', (data) => {});
+```
+
+### Removing Keyframe
+#### By Date
+To remove any Keyframe, use `removeKeyframeByDate(date: Date)`
+- `date` - Date of the Keyframe which needs to be removed from the Timeline.
+
+```jsx
+timeline.removeKeyframeByDate(new Date('2021-10-07'));
+```
+
+#### By Keyframe
+To remove any Keyframe, use `removeKeyframe(keyframe: Keyframe)`
+- `keyframe` - Keyframe to be removed from the Timeline.
+
+```jsx
+timeline.removeKeyframe(keyframeMechNodes);
+```
+
+### Keyframes in Timeline
+Gets all Keyframes in the Timeline
+
+```jsx
+const allKeyframes = timeline.getAllKeyframes();
+```

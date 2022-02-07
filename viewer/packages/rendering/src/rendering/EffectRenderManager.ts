@@ -232,11 +232,11 @@ export class EffectRenderManager {
         edgeStrengthMultiplier: { value: 2.5 },
         edgeGrayScaleIntensity: { value: 0.1 }
       },
-      extensions: { fragDepth: true },
       defines: {
         EDGES:
           this._renderOptions.edgeDetectionParameters?.enabled ?? defaultRenderOptions.edgeDetectionParameters.enabled
-      }
+      },
+      glslVersion: THREE.GLSL3
     });
 
     const ssaoParameters = this.ssaoParameters(this._renderOptions);
@@ -261,7 +261,8 @@ export class EffectRenderManager {
         MAX_KERNEL_SIZE: numberOfSamples
       },
       vertexShader: ssaoShaders.vertex,
-      fragmentShader: ssaoShaders.fragment
+      fragmentShader: ssaoShaders.fragment,
+      glslVersion: THREE.GLSL3
     });
 
     this._ssaoBlurCombineMaterial = new THREE.ShaderMaterial({
@@ -271,7 +272,8 @@ export class EffectRenderManager {
         resolution: { value: new THREE.Vector2() }
       },
       vertexShader: ssaoBlurCombineShaders.vertex,
-      fragmentShader: ssaoBlurCombineShaders.fragment
+      fragmentShader: ssaoBlurCombineShaders.fragment,
+      glslVersion: THREE.GLSL3
     });
 
     const diffuseTexture = this.supportsSsao(ssaoParameters)
@@ -287,7 +289,7 @@ export class EffectRenderManager {
       },
       vertexShader: fxaaShaders.vertex,
       fragmentShader: fxaaShaders.fragment,
-      extensions: { fragDepth: true }
+      glslVersion: THREE.GLSL3
     });
 
     this.setupCompositionScene();
@@ -555,7 +557,7 @@ export class EffectRenderManager {
       const objectStack: THREE.Object3D[] = [rootSectorNodeData[0]];
       while (objectStack.length > 0) {
         const element = objectStack.pop()!;
-        const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
+        const objectTreeIndices = element.userData.treeIndices as Map<number, number> | undefined;
 
         if (objectTreeIndices) {
           if (hasInFrontElements && infrontSet.hasIntersectionWith(objectTreeIndices)) {
@@ -781,6 +783,7 @@ export class EffectRenderManager {
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Green, RevealColors.Green);
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Red, RevealColors.Red);
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Orange, CogniteColors.Orange);
+    outlineColorTexture.needsUpdate = true;
     return outlineColorTexture;
   }
 
@@ -923,7 +926,7 @@ function createRenderTarget(
   options?: THREE.WebGLRenderTargetOptions
 ): THREE.WebGLRenderTarget {
   if (isWebGL2 && multiSampleCountHint > 1) {
-    const rt = new THREE.WebGLMultisampleRenderTarget(0, 0, options);
+    const rt = new THREE.WebGLMultisampleRenderTarget(0, 0, { ...options, ignoreDepth: false } as any);
     rt.samples = multiSampleCountHint;
     return rt;
   }

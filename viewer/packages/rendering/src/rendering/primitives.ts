@@ -22,7 +22,7 @@ import {
   filterPrimitivesOutsideClipBoxByVertices
 } from '@reveal/cad-parsers';
 
-import { BoundingBoxLOD, disposeAttributeArrayOnUpload } from '@reveal/utilities';
+import { BoundingBoxLOD, disposeAttributeArrayOnUpload, incrementOrInsertIndex } from '@reveal/utilities';
 
 import { Materials } from './materials';
 
@@ -124,27 +124,6 @@ function hasAny(collection: Uint8Array) {
   return collection.length > 0;
 }
 
-function splitMatrix(attributes: Map<string, ParsePrimitiveAttribute>) {
-  const matrixColumns = 4;
-
-  const matrixAttribute = attributes.get('instanceMatrix');
-
-  if (!matrixAttribute) {
-    return;
-  }
-
-  const size = matrixAttribute.size / matrixColumns;
-  for (let i = 0; i < matrixColumns; i++) {
-    const columnAttribute: ParsePrimitiveAttribute = {
-      size,
-      offset: matrixAttribute.offset + size * i
-    };
-    attributes.set('instanceMatrix_column_' + i, columnAttribute);
-  }
-
-  attributes.delete('instanceMatrix');
-}
-
 function setAttributes(
   geometry: THREE.InstancedBufferGeometry,
   collection: Uint8Array,
@@ -152,8 +131,6 @@ function setAttributes(
   mesh: THREE.Mesh
 ) {
   const attributesByteSize = Array.from(attributes.values()).reduce((a, b) => a + b.size, 0);
-
-  splitMatrix(attributes);
 
   const interleavedBuffer8 = new THREE.InstancedInterleavedBuffer(collection, attributesByteSize);
   const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(
@@ -188,10 +165,13 @@ function setAttributes(
     const treeIndexAttribute = attributes.get('treeIndex')!;
     const treeIndexAttributeOffset = treeIndexAttribute.offset;
 
-    const treeIndices = new Set();
+    const treeIndices = new Map<number, number>();
 
     for (let i = 0; i < geometry.instanceCount; i++) {
-      treeIndices.add(collectionView.getFloat32(i * attributesByteSize + treeIndexAttributeOffset, true));
+      incrementOrInsertIndex(
+        treeIndices,
+        collectionView.getFloat32(i * attributesByteSize + treeIndexAttributeOffset, true)
+      );
     }
     mesh.userData.treeIndices = treeIndices;
   }
@@ -273,6 +253,7 @@ function createCones(
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, filteredCollection, coneAttributes, mesh);
+
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -357,8 +338,13 @@ function createGeneralCylinders(
   setAttributes(geometry, filteredCollection, generalCylinderAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
+
   mesh.name = `Primitives (GeneralCylinders)`;
+
   return mesh;
 }
 
@@ -383,8 +369,13 @@ function createGeneralRings(
   setAttributes(geometry, filteredCollection, generalRingAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
+
   mesh.name = `Primitives (GeneralRings)`;
+
   return mesh;
 }
 
@@ -588,6 +579,14 @@ function updateMaterialInverseModelMatrix(
   inverseModelMatrix.copy(matrixWorld).invert();
 }
 
+function updateMaterialUniforms(material: THREE.ShaderMaterial, mesh: THREE.Mesh, camera: THREE.Camera) {
+  (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
+  (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
+  (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
+  (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
+  (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+}
+
 function setBoundsFromBox(geometry: THREE.InstancedBufferGeometry, bounds: THREE.Box3) {
   geometry.boundingSphere = geometry.boundingSphere || new THREE.Sphere();
   bounds.getBoundingSphere(geometry.boundingSphere);
@@ -616,25 +615,27 @@ export function determineBoundsFromInstanceMatrices(geometry: THREE.InstancedBuf
   }
 
   // Apply instance matrix to bounds to compute real bounds
-  const matCol0Attribute = geometry.getAttribute('a_instanceMatrix_column_0');
-  const matCol1Attribute = geometry.getAttribute('a_instanceMatrix_column_1');
-  const matCol2Attribute = geometry.getAttribute('a_instanceMatrix_column_2');
-  const matCol3Attribute = geometry.getAttribute('a_instanceMatrix_column_3');
-  assert(
-    matCol0Attribute !== undefined &&
-      matCol1Attribute !== undefined &&
-      matCol2Attribute !== undefined &&
-      matCol3Attribute !== undefined
-  );
+  const instanceMatrixAttribute = geometry.getAttribute('a_instanceMatrix') as THREE.InterleavedBufferAttribute;
 
-  for (let i = 0; i < matCol0Attribute.count; ++i) {
+  assert(instanceMatrixAttribute !== undefined);
+
+  const attributeOffset = instanceMatrixAttribute.offset;
+  const count = instanceMatrixAttribute.data.count;
+  const stride = instanceMatrixAttribute.data.stride;
+
+  const view = new Float32Array(instanceMatrixAttribute.array);
+
+  for (let i = 0; i < count; ++i) {
     /* eslint-disable */
+    const offset = attributeOffset + i * stride;
+
     instanceMatrix.set(
-      matCol0Attribute.getX(i), matCol1Attribute.getX(i), matCol2Attribute.getX(i), matCol3Attribute.getX(i),
-      matCol0Attribute.getY(i), matCol1Attribute.getY(i), matCol2Attribute.getY(i), matCol3Attribute.getY(i),
-      matCol0Attribute.getZ(i), matCol1Attribute.getZ(i), matCol2Attribute.getZ(i), matCol3Attribute.getZ(i),
-      matCol0Attribute.getW(i), matCol1Attribute.getW(i), matCol2Attribute.getW(i), matCol3Attribute.getW(i),
+      view[offset], view[offset + 4], view[offset + 8], view[offset + 12], 
+      view[offset + 1], view[offset + 5], view[offset + 9], view[offset + 13],
+      view[offset + 2], view[offset + 6], view[offset + 10], view[offset + 14],
+      view[offset + 3], view[offset + 7], view[offset + 11], view[offset + 15]
     );
+
     /* eslint-enable */
     instanceBoundingBox.copy(baseBoundingBox).applyMatrix4(instanceMatrix);
     bbox.expandByPoint(instanceBoundingBox.min);

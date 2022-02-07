@@ -1,0 +1,45 @@
+{
+  "version": 8,
+  "projectId": 123,
+  "modelId": 456,
+  "revisionId": 789,
+  "subRevisionId": -1,
+  "maxTreeIndex": 76,
+  "unit": null,
+  "sectors": [
+    {
+      "id": 0,
+      "parentId": -1,
+      "path": "0/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": -1.3934096876224187,
+          "y": -1.0,
+          "z": -1.3934096876224187
+        },
+        "max": {
+          "x": 28.293235443136439,
+          "y": 25.458996612973937,
+          "z": 28.293235443136439
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [],
+        "estimatedDrawCallCount": 16,
+        "fileName": "sector_0.i3d",
+        "downloadSize": 1847
+      },
+      "facesFile": {
+        "quadSize": 0.28804602503943366,
+        "coverageFactors": {
+          "xy": 0.34244791666666669,
+          "yz": 0.41261574074074076,
+          "xz": 0.34244791666666669
+        },
+        "fileName": "sector_0.f3d",
+        "downloadSize": 61563
+      }
+    }
+  ]
+}

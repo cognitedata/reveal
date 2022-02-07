@@ -13,7 +13,7 @@ export type DebugLoadedSectorsToolOptions = {
   showSimpleSectors?: boolean;
   showDetailedSectors?: boolean;
   showDiscardedSectors?: boolean;
-  colorBy?: 'depth' | 'lod' | 'loadedTimestamp' | 'random';
+  colorBy?: 'depth' | 'lod' | 'loadedTimestamp' | 'drawcalls' | 'random';
   leafsOnly?: boolean;
   sectorPathFilterRegex?: string;
 };
@@ -95,6 +95,8 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
 
   private createBboxNodeFor(node: SectorNode, allSelectedNodes: SectorNode[]) {
     const options = this._options;
+    const sectorScene = this._model!.cadNode.sectorScene;
+
     function determineColor() {
       switch (options.colorBy) {
         case 'depth': {
@@ -113,17 +115,29 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
               assertNever(node.levelOfDetail);
           }
         }
+        case 'random':
+          return new THREE.Color().setHSL(Math.random(), 1.0, 0.5);
+
+        // Note! The two next modes are horribly slow since we do this for every sector,
+        // but since this is a debug tool we consider it OK
         case 'loadedTimestamp': {
-          // Note! Horribly slow since we do this for every sector, but since this is a debug tool
-          // we consider it OK
           const nodesByTimestamp = [...allSelectedNodes].sort((a, b) => a.updatedTimestamp - b.updatedTimestamp);
           const indexOfNode = nodesByTimestamp.findIndex(x => x === node);
           const s = (nodesByTimestamp.length - 1 - indexOfNode) / Math.max(nodesByTimestamp.length - 1, 1);
           return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
         }
-
-        case 'random':
-          return new THREE.Color().setHSL(Math.random(), 1.0, 0.5);
+        case 'drawcalls': {
+          const [minDrawCalls, maxDrawCalls] = allSelectedNodes.reduce(
+            ([min, max], x) => {
+              const sector = sectorScene.getSectorById(x.sectorId)!;
+              return [Math.min(min, sector.estimatedDrawCallCount), Math.max(max, sector.estimatedDrawCallCount)];
+            },
+            [Infinity, -Infinity]
+          );
+          const sector = sectorScene.getSectorById(node.sectorId)!;
+          const s = (sector.estimatedDrawCallCount - minDrawCalls) / (maxDrawCalls - minDrawCalls);
+          return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
+        }
 
         default:
           assertNever(options.colorBy);
