@@ -16,7 +16,7 @@ import {
   CognitePointCloudModel,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, HtmlOverlayTool, ToolbarTool, GeomapTool, MapConfig, MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, ToolbarTool, GeomapTool, MapConfig, MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
