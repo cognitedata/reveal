@@ -45,3 +45,6 @@ export {
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';
 export { THREE };
+
+const REVEAL_VERSION = process.env.VERSION;
+export { REVEAL_VERSION };
