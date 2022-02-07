@@ -6,6 +6,7 @@ import {
   WaterDepthLimits as WaterDepthLimitsV2,
   SpudDateLimits as SpudDateLimitsV2,
   Well as WellV2,
+  WellFilter as WellFilterV2,
   WellItems as WellItemsV2,
   PolygonFilter as PolygonFilterV2,
   Wellbore as WellboreV2,
@@ -41,6 +42,7 @@ import {
   AngleUnitEnum,
 } from '@cognite/sdk-wells-v3';
 
+import { EMPTY_ARRAY } from '../../../constants/empty';
 import { CommonWellFilter } from '../types';
 
 export const DEFAULT_DOUBLE_WITH_UNIT: DoubleWithUnit = {
@@ -136,6 +138,22 @@ export const mapV2toV3PolygonFilter = (
   };
 };
 
+export const mapV2ToV3DepthMeasurementFilter = (
+  depthMeasurementFilter?: WellFilterV2['hasMeasurements']
+): WellFilterV3['depthMeasurements'] => {
+  const containsAny = depthMeasurementFilter?.containsAny || EMPTY_ARRAY;
+  if (!isEmpty(containsAny)) {
+    return {
+      measurementTypes: {
+        containsAny: containsAny.map(
+          ({ measurementType }) => measurementType || ''
+        ),
+      },
+    };
+  }
+  return undefined;
+};
+
 const undefinedIfAllKeysUndefined = (object: object) => {
   const allKeysUndefined = Object.values(object).every(isUndefined);
   return allKeysUndefined ? undefined : object;
@@ -171,7 +189,9 @@ export const mapV2toV3WellFilter = (
         : undefined,
     }),
     datum: wellFilter.datum,
-    depthMeasurements: wellFilter.hasMeasurements,
+    depthMeasurements: mapV2ToV3DepthMeasurementFilter(
+      wellFilter.hasMeasurements
+    ),
   } as WellFilterV3;
 
   if (wellFilter.npt && !isEmpty(wellFilter.npt)) {
