@@ -9,13 +9,14 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 Reveal supports flexible styling of individual nodes (objects) in the 3D model. Styles can
 be compromised of several attributes to customize the visualization through the `NodeAppearance`-type:
 
-| Field           | Field type                  | Description                                           |
-| --------------- | --------------------------- | ----------------------------------------------------- |
-| `color`         | `[number, number, number]?` | Override color by setting RGB values in range [0,255], e.g `[255, 0, 0]` (red). `[0, 0, 0]` means no override. |
-| `visible`       | `boolean?`                  | When false, the node(s) will be invisible             |
-| `renderInFront` | `boolean?`                  | When true, the node(s) are rendered in front of other geometry |
-| `renderGhosted` | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
-| `outlineColor`  | `NodeOutlineColor?`         | Adds an outline to the objects from a set of predefined colors |
+| Field                       | Field type                  | Description                                           |
+| --------------------------- | --------------------------- | ----------------------------------------------------- |
+| `color`                     | `[number, number, number]?` | Override color by setting RGB values in range [0,255], e.g `[255, 0, 0]` (red). `[0, 0, 0]` means no override.  |
+| `visible`                   | `boolean?`                  | When false, the node(s) will be invisible             |
+| `renderInFront`             | `boolean?`                  | When true, the node(s) are rendered in front of other geometry |
+| `renderGhosted`             | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
+| `outlineColor`              | `NodeOutlineColor?`         | Adds an outline to the objects from a set of predefined colors |
+| `prioritizedForLoadingHint` | `number?`                   | Assigns a prioritization weight to this node collection, influencing load priority. See [Prioritize nodes for loading](cad-prioritized-nodes).
 
 These attributes can be combined to customize the look of nodes. For convinience, a set of default appearances are
 provided in the `DefaultNodeAppearance`-constant:
@@ -29,8 +30,8 @@ provided in the `DefaultNodeAppearance`-constant:
 | `InFront`           | Render node(s) in front of all other nodes                                       |
 | `Highlighted`       | Highlight the node(s). Combination of `InFront`, `Outlined` and a custom color   |
 
-These "appearance profiles"/styles are assigned to one or more nodes defined by a `NodeCollectionBase`-object. A `NodeCollectionBase`
-identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCollectionBase`:
+These "appearance profiles"/styles are assigned to one or more nodes defined by a `NodeCollection`-instance. A `NodeCollection`
+identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCollection`:
 
 | Class                          |                                                                                  |
 | ------------------------------ | -------------------------------------------------------------------------------- |
@@ -41,7 +42,7 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCo
 | `InvertedNodeCollection`       | Inverts the result of a node collection to match the opposite nodes (i.e. a NOT-operator). |
 | `UnionNodeCollection`          | Combines nodes from several node colletions by finding the [set union](https://en.wikipedia.org/wiki/Union_(set_theory)"). |
 | `InersectionNodeCollection`    | Combines nodes from several node colletions by finding the [set intersection](https://en.wikipedia.org/wiki/Intersection_(set_theory)). |
-| `NodeCollectionBase`           | Abstract base class for node collections. Extend to [implement custom node collections](cad-styling-custom). |
+| `NodeCollection`               | Abstract base class for node collections. Extend to [implement custom node collections](cad-styling-custom). |
 
 It's also possible [implement custom node collections](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.

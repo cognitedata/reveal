@@ -14,10 +14,10 @@ import { InvertedNodeCollection } from './InvertedNodeCollection';
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 
 import {
-  NodeCollectionBase,
   TreeIndexNodeCollection,
   IntersectionNodeCollection,
-  UnionNodeCollection
+  UnionNodeCollection,
+  NodeCollection
 } from '@reveal/cad-styling';
 
 export type TypeName = string;
@@ -32,7 +32,7 @@ export class NodeCollectionDeserializer {
       deserializer: (
         state: NodeCollectionDescriptor,
         context: NodeCollectionSerializationContext
-      ) => Promise<NodeCollectionBase>;
+      ) => Promise<NodeCollection>;
     }
   >();
 
@@ -41,7 +41,7 @@ export class NodeCollectionDeserializer {
     this.registerWellKnownNodeCollectionTypes();
   }
 
-  registerNodeCollectionType<T extends NodeCollectionBase>(
+  registerNodeCollectionType<T extends NodeCollection>(
     nodeCollectionType: TypeName,
     deserializer: (descriptor: NodeCollectionDescriptor, context: NodeCollectionSerializationContext) => Promise<T>
   ): void {
@@ -57,7 +57,7 @@ export class NodeCollectionDeserializer {
     client: CogniteClient,
     model: Cognite3DModel,
     descriptor: NodeCollectionDescriptor
-  ): Promise<NodeCollectionBase> {
+  ): Promise<NodeCollection> {
     const context: NodeCollectionSerializationContext = { client, model };
     const deserializer = this.getDeserializer(descriptor.token);
     return deserializer(descriptor, context);
@@ -106,13 +106,17 @@ export class NodeCollectionDeserializer {
       const indexSet = new IndexSet();
       descriptor.state.forEach((range: NumericRange) => indexSet.addRange(new NumericRange(range.from, range.count)));
       const nodeCollection = new TreeIndexNodeCollection(indexSet);
+      if (descriptor.options?.areas !== undefined) {
+        nodeCollection.addAreas(descriptor.options.areas);
+      }
+
       return Promise.resolve(nodeCollection);
     });
 
     this.registerNodeCollectionType<IntersectionNodeCollection>(
       IntersectionNodeCollection.classToken,
       async (descriptor, context) => {
-        const subCollections: NodeCollectionBase[] = await Promise.all(
+        const subCollections: NodeCollection[] = await Promise.all(
           descriptor.state.subCollections.map((subSet: any) => {
             return this.deserialize(context.client, context.model, subSet);
           })
@@ -124,7 +128,7 @@ export class NodeCollectionDeserializer {
     this.registerNodeCollectionType<UnionNodeCollection>(
       UnionNodeCollection.classToken,
       async (descriptor, context) => {
-        const subCollections: NodeCollectionBase[] = await Promise.all(
+        const subCollections: NodeCollection[] = await Promise.all(
           descriptor.state.subCollections.map((subSet: any) => {
             return this.deserialize(context.client, context.model, subSet);
           })
@@ -143,7 +147,7 @@ export class NodeCollectionDeserializer {
   }
 }
 
-export function registerCustomNodeCollectionType<T extends NodeCollectionBase>(
+export function registerCustomNodeCollectionType<T extends NodeCollection>(
   nodeCollectionType: TypeName,
   deserializer: (descriptor: NodeCollectionDescriptor, context: NodeCollectionSerializationContext) => Promise<T>
 ): void {

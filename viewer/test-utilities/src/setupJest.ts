@@ -4,6 +4,7 @@
 
 // fetch() polyfill
 import 'whatwg-fetch';
+import { TextDecoder } from 'util';
 
 // Create document.currentScript required by potree-core
 Object.defineProperty(document, 'currentScript', {
@@ -29,6 +30,18 @@ const consoleWarn = console.warn.bind(console);
     consoleWarn(message, ...optionalParams);
   }
 };
+
+// Filter error generated from Unit test refering to WebGL1 shaders in ThreeJS.
+// "THREE.WebGLProgram: Shader Error XXXX - VALIDATE_STATUS false"
+const consoleError = console.error.bind(console);
+(console as any).error = (message?: any, ...optionalParams: any[]) => {
+  const messageStr = message + '';
+  if (!messageStr.match(/THREE\.WebGLProgram: Shader Error ([0-9]+) - VALIDATE_STATUS false/)) {
+    consoleError(message, ...optionalParams);
+  }
+};
+
+(window as any).TextDecoder = TextDecoder;
 
 Object.assign(process.env, {
   VERSION: require('../../package.json').version,

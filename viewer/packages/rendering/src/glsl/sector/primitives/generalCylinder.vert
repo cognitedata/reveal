@@ -1,41 +1,55 @@
+#define texture2D texture
+
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+uniform vec3 cameraPosition;
 
-attribute float a_treeIndex;
-attribute vec3 a_centerA;
-attribute vec3 a_centerB;
-attribute float a_radius;
-attribute vec3 a_color;
+in vec3 position;
+in vec3 normal;
+
+in float a_treeIndex;
+
+in vec3 a_centerA;
+in vec3 a_centerB;
+
+in float a_radius;
+
+in vec3 a_color;
 // slicing plane attributes
-attribute vec4 a_planeA;
-attribute vec4 a_planeB;
+in vec4 a_planeA;
+in vec4 a_planeB;
 // segment attributes
-attribute vec3 a_localXAxis;
-attribute float a_angle;
-attribute float a_arcAngle;
+in vec3 a_localXAxis;
+in float a_angle;
+in float a_arcAngle;
 
-varying float v_treeIndex;
+out float v_treeIndex;
 // We pack the radii into w-components
-varying vec4 v_centerB;
+out vec4 v_centerB;
 
 // U, V, axis represent the 3x3 cone basis.
 // They are vec4 to pack extra data into the w-component
 // since Safari on iOS only supports 8 varying vec4 registers.
-varying vec4 v_U;
-varying vec4 v_W;
+out vec4 v_U;
+out vec4 v_W;
 
-varying vec4 v_planeA;
-varying vec4 v_planeB;
+out vec4 v_planeA;
+out vec4 v_planeB;
 
-varying float v_surfacePointY;
+out float v_surfacePointY;
 
-varying float v_angle;
-varying float v_arcAngle;
+out float v_angle;
+out float v_arcAngle;
 
-varying vec3 v_color;
-varying vec3 v_normal;
+out vec3 v_color;
+
+out vec3 v_normal;
 
 uniform vec2 treeIndexTextureSize;
 
@@ -45,6 +59,8 @@ uniform vec2 transformOverrideTextureSize;
 uniform sampler2D transformOverrideTexture;
 
 void main() {
+
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 
@@ -77,10 +93,8 @@ void main() {
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
     vec3 up = normalize(cross(left, lDir));
 
-#ifndef GL_EXT_frag_depth
     // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
     newPosition.x *= 1.0 - (a_radius * (position.x + 1.0) * 0.0025 / halfHeight);
-#endif
 
     vec3 surfacePoint = center + mat3(halfHeight*lDir, leftUpScale*left, leftUpScale*up) * newPosition;
     vec3 transformed = surfacePoint;

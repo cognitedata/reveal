@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
-import dat from 'dat.gui'; 
+import dat from 'dat.gui';
 import {
   AddModelOptions,
   Cognite3DViewer,
@@ -14,18 +14,18 @@ import {
   Cognite3DModel,
   CameraControlsOptions,
   CognitePointCloudModel,
-  PotreePointColorType,
-  PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { InspectNodeUI } from '../utils/InspectNodeUi';
+import { CameraUI } from '../utils/CameraUI';
+import { PointCloudUi } from '../utils/PointCloudUi';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -70,9 +70,9 @@ export function Migration() {
         onLoading: progress,
         logMetrics: false,
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
-        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
+        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any,
+        continuousModelStreaming: true
       };
-      
       if (project && environmentParam) {
         await authenticateSDKWithEnvironment(client, project, environmentParam);
       } else if (modelUrl !== null) {
@@ -86,7 +86,7 @@ export function Migration() {
           '"modelId" and "revisionId" to load model from CDF ' +
           '"or "modelUrl" to load model from URL.');
       }
-      
+
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
@@ -99,21 +99,6 @@ export function Migration() {
       viewer.setCameraControlsOptions(controlsOptions);
 
       const totalBounds = new THREE.Box3();
-
-      const pointCloudParams = {
-        pointSize: 1.0,
-        budget: 2_000_000,
-        pointColorType: PotreePointColorType.Rgb,
-        pointShape: PotreePointShape.Circle,
-        apply: () => {
-          viewer.pointCloudBudget = { numberOfPoints: pointCloudParams.budget };
-          pointCloudModels.forEach(model => {
-            model.pointSize = pointCloudParams.pointSize;
-            model.pointColorType = pointCloudParams.pointColorType;
-            model.pointShape = pointCloudParams.pointShape;
-          });
-        }
-      };
 
       async function addModel(options: AddModelOptions) {
         try {
@@ -130,7 +115,6 @@ export function Migration() {
             cadModels.push(model);
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
-            pointCloudParams.apply();
           }
           if (createGeometryFilterFromState(guiState.geometryFilter) === undefined) {
             createGeometryFilterStateFromBounds(bounds, guiState.geometryFilter);
@@ -311,10 +295,10 @@ export function Migration() {
 
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'random']).name('Color by');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'drawcalls', 'random']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');      
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'sectorPathFilterRegex').name('Sectors path filter');
       debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
@@ -375,30 +359,9 @@ export function Migration() {
         cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
       });
 
-      const clippingUi = new ClippingUI(gui.addFolder('Slicing'), planes => viewer.setSlicingPlanes(planes));
-
-
-      const pcSettings = gui.addFolder('Point clouds');
-      pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
-      pcSettings.add(pointCloudParams, 'pointSize', 0, 20, 0.25).onFinishChange(() => pointCloudParams.apply());
-      pcSettings.add(pointCloudParams, 'pointColorType', {
-        Rgb: PotreePointColorType.Rgb,
-        Depth: PotreePointColorType.Depth,
-        Height: PotreePointColorType.Height,
-        PointIndex: PotreePointColorType.PointIndex,
-        LevelOfDetail: PotreePointColorType.LevelOfDetail,
-        Classification: PotreePointColorType.Classification,
-      }).onFinishChange(valueStr => {
-        pointCloudParams.pointColorType = parseInt(valueStr, 10);
-        pointCloudParams.apply()
-      });
-      pcSettings.add(pointCloudParams, 'pointShape', {
-        Circle: PotreePointShape.Circle,
-        Square: PotreePointShape.Square
-      }).onFinishChange(valueStr => {
-        pointCloudParams.pointShape = parseInt(valueStr, 10);
-        pointCloudParams.apply()
-      });
+      const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => viewer.setClippingPlanes(planes));
+      new CameraUI(viewer, gui.addFolder('Camera'));
+      new PointCloudUi(viewer, gui.addFolder('Point clouds'));
 
       // Load model if provided by URL
       const modelIdStr = urlParams.get('modelId');
@@ -410,8 +373,6 @@ export function Migration() {
       } else if (modelUrl) {
         await addModel({ modelId: -1, revisionId: -1, localPath: modelUrl, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) })
       }
-
-      const selectedSet = new TreeIndexNodeCollection([]);
 
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
@@ -471,18 +432,8 @@ export function Migration() {
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
-  
-      const overlayTool = new HtmlOverlayTool(viewer,
-        { 
-          clusteringOptions: { 
-            mode: 'overlapInScreenSpace', 
-            createClusterElementCallback: cluster => {
-              return createOverlay(`${cluster.length}`);
-            }
-          }
-        });
 
-      new AxisViewTool(viewer);
+      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
@@ -493,15 +444,10 @@ export function Migration() {
           switch (intersection.type) {
             case 'cad':
               {
-                const { treeIndex, point} = intersection;
+                const { treeIndex, point } = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                const overlayHtml = createOverlay(`Node ${treeIndex}`);
 
-                overlayTool.add(overlayHtml, point);
-  
-                // highlight the object
-                selectedSet.updateSet(new IndexSet([treeIndex]));
-
+                inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }
               break;
             case 'pointcloud':
@@ -516,6 +462,8 @@ export function Migration() {
           }
         }
       });
+
+      new AxisViewTool(viewer);
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
@@ -562,21 +510,4 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
     return undefined;
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
-}
-
-function createOverlay(text: string): HTMLElement {
-  const overlayHtml = document.createElement('div');
-  overlayHtml.innerText = text;
-  overlayHtml.style.cssText = `
-    position: absolute; 
-    translate(-50%, -50%);
-
-    background: white; 
-    border-radius: 5px; 
-    border-color: black; 
-
-    pointer-events: none; 
-    touch-action: none;`;
-
-  return overlayHtml;
 }

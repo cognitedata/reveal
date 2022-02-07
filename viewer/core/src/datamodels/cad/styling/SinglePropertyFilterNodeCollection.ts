@@ -2,12 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
-import { IndexSet, NumericRange } from '@reveal/utilities';
-import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
+import { AreaCollection, EmptyAreaCollection, NodeCollection, SerializedNodeCollection } from '@reveal/cad-styling';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
@@ -20,13 +22,15 @@ import cloneDeep from 'lodash/cloneDeep';
  * nodes within a set of areas or systems. The node set is optimized for matching with properties with
  * a large number of values (i.e. thousands).
  */
-export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
+export class SinglePropertyFilterNodeCollection extends NodeCollection {
   public static readonly classToken = 'SinglePropertyNodeCollection';
 
   private readonly _client: CogniteClient;
+  private readonly _model: Cognite3DModel;
+
   private _indexSet = new IndexSet();
-  private readonly _modelId: number;
-  private readonly _revisionId: number;
+  private _areas: AreaCollection = EmptyAreaCollection.instance();
+
   private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
   private readonly _filter = {
@@ -43,8 +47,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   constructor(client: CogniteClient, model: Cognite3DModel, options: PropertyFilterNodeCollectionOptions = {}) {
     super(SinglePropertyFilterNodeCollection.classToken);
     this._client = client;
-    this._modelId = model.modelId;
-    this._revisionId = model.revisionId;
+    this._model = model;
     this._options = { requestPartitions: 1, ...options };
   }
 
@@ -63,7 +66,6 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
    * @param propertyValues Lookup values, e.g. `["AR100APG539","AP500INF534","AP400INF553", ...]`
    */
   async executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
-    const indexSet = new IndexSet();
     const { requestPartitions } = this._options;
 
     if (this._fetchResultHelper !== undefined) {
@@ -71,13 +73,25 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
-      node => new NumericRange(node.treeIndex, node.subtreeSize),
+      nodes => nodes.map(node => new NumericRange(node.treeIndex, node.subtreeSize)),
+      async nodes => {
+        return nodes.map(node => {
+          const box = new THREE.Box3();
+          if (node.boundingBox !== undefined) {
+            toThreeBox3(node.boundingBox, box);
+            this._model.mapBoxFromCdfToModelCoordinates(box, box);
+          }
+          return box;
+        });
+      },
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
-    this._indexSet = indexSet;
+    this._indexSet = fetchResultHelper.indexSet;
+    this._areas = fetchResultHelper.areas;
     const outputsUrl = this.buildUrl();
     const batches = Array.from(splitQueryToBatches(propertyValues));
+
     const requests = batches.flatMap(batch => {
       const filter = { properties: { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } } };
       const batchRequests = range(1, requestPartitions + 1).map(async p => {
@@ -89,7 +103,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
           }
         });
 
-        return fetchResultHelper.pageResults(indexSet, response);
+        return fetchResultHelper.pageResults(response);
       });
       return batchRequests;
     });
@@ -113,10 +127,14 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
     return this._indexSet;
   }
 
+  getAreas(): AreaCollection {
+    return this._areas;
+  }
+
   private buildUrl(): string {
-    return `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/3d/models/${this._modelId}/revisions/${
-      this._revisionId
-    }/nodes/list`;
+    return `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/3d/models/${
+      this._model.modelId
+    }/revisions/${this._model.revisionId}/nodes/list`;
   }
 
   serialize(): SerializedNodeCollection {

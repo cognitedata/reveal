@@ -1,0 +1,77 @@
+---
+id: cad-styling-assets
+title: Filtering nodes by assets
+describe: Applying styles to assets and assosciated asset mappings from Cognite Fusion
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWrapper';
+
+In Cognite Data Fusion, assets and asset hierarchies are digital representations of objects
+or groups of objects from the physical world. Assets can be assosciated with different data 
+types, such as documents, time series and events and serves as a "hub" to look up data for
+physical equipment. See [Cognite Data Fusion documentation](https://docs.cognite.com/dev/concepts/resource_types/assets.html)
+for more information about assets.
+
+3D nodes can be ["asset mapped"](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) to
+assets in Cognite Data Fusion. Reveal supports styling nodes mapped to an asset by using 
+`AssetNodeCollection`.
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+# Style all asset mapped nodes
+
+If no options are provided, `AssetNodeCollection` includes all asset mapped nodes
+for the model:
+
+```js runnable-3x
+const allAssetMappedNodes = new AssetNodeCollection(sdk, model);
+// When no asset ID is provided, all nodes mapped to assets are included
+allAssetMappedNodes.executeFilter({});
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(allAssetMappedNodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
+```
+
+# Style a given asset
+
+It is also possible to only style nodes mapped to a single asset. Assets are identified by their 
+'ID':
+
+```js runnable-3x
+const assetNodes = new AssetNodeCollection(sdk, model);
+assetNodes.executeFilter({ assetId: 4222791488928479 });
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(assetNodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
+```
+
+Note that there is no way to list multiple assets directly with `AssetNodeCollection`, but This
+can be achieved by using `UnionNodeCollection` in combination with several `AssetNodeCollection`s.
+
+# Style assets within an area
+
+To support proximity lookups, Reveal supports styling assets within a certain area defined by a bounding box. It's
+sufficient for an asset to intersect the provided bounds, it doesn't need to be fully inside.
+
+:::note
+The bounding box is defined in "Reveal coordinates" - 
+[a right handed, Y up coordinate system](https://www.youtube.com/watch?v=TGbMzoJqV7c) - which might differ 
+from the "native model coordinates" stored in Cognite Fusion. `AssetNodeCollection` will automatically map from 
+"Reveal coordinates" to "native model coordinates" using `Cognite3DModel.mapBoxFromModelToCdfCoordinates`.
+:::
+
+```js runnable-3x
+const areaOfInterest = new THREE.Box3().setFromCenterAndSize(
+  new THREE.Vector3(140, 67, -110),
+  new THREE.Vector3(10, 5, 10)
+);
+const assetsWithinAreaNodes = new AssetNodeCollection(sdk, model);
+assetsWithinAreaNodes.executeFilter({ boundingBox: areaOfInterest });
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
+model.assignStyledNodeCollection(assetsWithinAreaNodes, { visible: true } );
+
+// Simple helper to show the area of interest
+const boxMaterial = new THREE.MeshBasicMaterial({wireframe: true, color: 0xffff00 });
+const boxMesh = new THREE.Mesh(new THREE.BoxGeometry(), boxMaterial);
+areaOfInterest.getCenter(boxMesh.position);
+areaOfInterest.getSize(boxMesh.scale);
+viewer.addObject3D(boxMesh);
+```

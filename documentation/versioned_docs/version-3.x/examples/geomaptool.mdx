@@ -1,0 +1,176 @@
+---
+id: geomaptool
+title: Geomap tool
+description: Geomap tool for geolocation of the model.
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+The `GeomapTool` is a geolocation for the models and allow the user to place them on the maps. This will help in visulaize the model
+on top of map at specific geo location.
+
+The tool provides list of options to set and choose:
+- Several map providers namely, Bing maps, Mapbox, Here maps and OpenStreet map.
+- We support planar mode and support terrain can be considered if needed.
+- Models can be placed on specific geolocation using latitude and longitude values.
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Supported map providers
+
+In Geomap tool, you can select from several different map providers:
+- Bing Maps
+- Mapbox
+- Here Maps
+- OpenStreet Maps
+
+## APIKeys
+Each map providers needs respective API keys (Access Token) to be assigned. To get access token follow the below procedure.
+- Bing map
+  - Basic Bing Maps key to authenticate your application can be used for less than 125,000 billable transactions per calendar year.
+  Create a Bing Maps account from http://www.bingmapsportal.com/.
+  - Please check your application usage licensing at https://www.microsoft.com/en-us/maps/licensing/licensing-options/.
+- Here map
+  - Freemium account of Here map will support 250k transactions per month. You can create account from https://developer.here.com/sign-up?create=Freemium-Basic&keepState=true&step=account.
+  - Please check licensing options at https://developer.here.com/pricing.
+- Mapbox
+  - Free up to 50000 web map loads. Create Mapbox account from https://account.mapbox.com/auth/signup/ and generate Access token to use them in your application.
+  - Licensing details can be found at https://www.mapbox.com/pricing/.
+- OpenStreet map
+  - It does not require any keys to access its tile map images.
+  - Please check lincensing details at https://wiki.osmfoundation.org/wiki/Licence.
+
+### Mapbox Maps
+Configuration of the Mapbox are listed below which can be used to set different option for the maps.
+- 'mode': Map tile access mode.
+  - MapboxMode.Style - These are pre-defined styles using map/tileset id, created in Mapbox Studio style editor. For more details see https://docs.mapbox.com/api/maps/styles/
+    - MapboxStyle.Streets
+    - MapboxStyle.Outdoor
+    - MapboxStyle.Light
+    - MapboxStyle.Dark
+    - MapboxStyle.Satellite
+    - MapboxStyle.Satellite_Streets
+    - MapboxStyle.Navigation_Day
+    - MapboxStyle.Navigation_Night
+    - MapboxStyle.Navigation_Guide_Day
+    - MapboxStyle.Navigation_Guide_Night
+  - MapboxMode.Map_Id - A map/tileset ID is a unique identifier given to every tileset. For more details see https://docs.mapbox.com/help/glossary/tileset-id/
+    - MapboxId.Streets
+    - MapboxId.Satellite
+    - MapboxId.Terrain
+    - MapboxId.Traffic
+    - MapboxId.TerrainRGB
+- 'APIKey': API access token of Mapbox.
+- 'id': Map style/Map Id to be used.
+  - If MapboxMode.Style is choosen, than style value should passed such as MapboxStyle.Streets.
+  - If MapboxMode.Map_Id is choosen, than Id value should passed such as MapboxId.Satellite.
+- 'tileFormat': Map image tile format.
+  - MapboxImageFormat.PNG
+  - MapboxImageFormat.PNG32
+  - MapboxImageFormat.PNG64
+  - MapboxImageFormat.PNG128
+  - MapboxImageFormat.PNG256
+  - MapboxImageFormat.JPG70
+  - MapboxImageFormat.JPG80
+  - MapboxImageFormat.JPG90
+  - MapboxImageFormat.PNGRAW
+- 'latlong': Latitude & Longitude location where the model will be placed on the map.
+
+```jsx runnable-3x
+// import { GeomapTool, MapProviders, MapboxMode, MapboxStyle, MapboxImageFormat } from '@cognite/reveal/tools';
+
+const mapConfig = {
+  provider: MapProviders.MapboxMap,
+  mode: MapboxMode.Style,
+  APIKey: APIKeys.MapboxAPI,
+  id: MapboxStyle.Satellite_Streets,
+  tileFormat: MapboxImageFormat.JPG70,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
+  }
+}
+new GeomapTool(viewer, mapConfig);;
+```
+### Bing Maps
+Configuration of the Bing Maps are listed below
+- 'APIKey': API access token of Bing Map.
+- 'type': The type of the map used.
+  - BingMapType.Aerial
+  - BingMapType.Road
+  - BingMapType.Aerial_Labels
+  - BingMapType.Oblique
+  - BingMapType.Oblique_Labels
+- 'latlong': Latitude & Longitude location where the model will be placed on the map.
+
+```jsx runnable-3x
+// import { GeomapTool, MapProviders, BingMapType } from '@cognite/reveal/tools';
+
+const mapConfig = {
+  provider: MapProviders.BingMap,
+  APIKey: APIKeys.BingMapAPI,
+  type: BingMapType.Aerial,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
+  }
+}
+
+new GeomapTool(viewer, mapConfig);
+```
+
+### Here Maps
+Configuration of the Here Maps are listed below
+- 'APIKey': API access token of Here Map.
+- 'appCode': Application code token of Here Map.
+- 'style': The type of maps to be used.
+  - HereMapType.Aerial
+  - HereMapType.Base
+  - HereMapType.Pano
+  - HereMapType.Traffic
+- 'scheme': Specifies the view scheme. Be aware that invalid combinations of schemes and tiles are rejected. For all satellite,
+ hybrid and terrain schemes, you need to use the Aerial Tiles base URL instead of the normal one.
+  - HereMapScheme.Day
+  - HereMapScheme.Night
+  - HereMapScheme.Terrain
+  - HereMapScheme.Satellite.
+- 'imageFormat': Map image format.
+  - HereMapImageFormat.PNG
+  - HereMapImageFormat.PNG8
+  - HereMapImageFormat.JPG
+- 'latlong': Latitude & Longitude location where the model will be placed on the map.
+
+```jsx runnable-3x
+// import { GeomapTool, MapProviders, HereMapType, HereMapScheme, HereMapImageFormat } from '@cognite/reveal/tools';
+
+const mapConfig = {
+  provider: MapProviders.HereMap,
+  APIKey: APIKeys.HereMapAPI,
+  appCode: APIKeys.HereMapAppCode,
+  style: HereMapType.Aerial,
+  scheme: HereMapScheme.Terrain,
+  imageFormat: HereMapImageFormat.PNG,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
+  }
+}
+new GeomapTool(viewer, mapConfig);
+```
+### OpenStreet Maps
+- Only latitude & longitude configuration is needed for OpenStreet Maps.
+- 'latlong': Latitude & Longitude location where the model will be placed on the map.
+
+```jsx runnable-3x
+// import { GeomapTool, MapProviders } from '@cognite/reveal/tools';
+
+const mapConfig = {
+  provider: MapProviders.OpenStreetMap,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
+  }
+}
+new GeomapTool(viewer, mapConfig);
+```

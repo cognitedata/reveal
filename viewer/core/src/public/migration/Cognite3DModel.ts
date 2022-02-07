@@ -17,7 +17,7 @@ import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@re
 import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
-import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
+import { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -38,7 +38,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Returns the unit the coordinates for the model is stored. Returns an empty string
    * if no unit has been stored.
    * Note that coordinates in Reveal always are converted to meters using {@see modelUnitToMetersFactor}.
-   * @version New since 2.1
    */
   get modelUnit(): WellKnownUnit | '' {
     // Note! Returns union type, because we expect it to be a value in WellKnownUnit, but we
@@ -49,7 +48,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Returns the conversion factor that converts from model coordinates to meters. Note that this can
    * return undefined if the model has been stored in an unsupported unit.
-   * @version New since 2.1
    */
   get modelUnitToMetersFactor(): number | undefined {
     return WellKnownDistanceToMeterConversionFactors.get(this.modelUnit);
@@ -69,7 +67,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly cadModel: CadModelMetadata;
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
-  private readonly _styledNodeCollections: { nodeCollection: NodeCollectionBase; appearance: NodeAppearance }[] = [];
+  private readonly _styledNodeCollections: { nodeCollection: NodeCollection; appearance: NodeAppearance }[] = [];
 
   /**
    * @param modelId
@@ -124,7 +122,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Returns all currently registered node collections and associated appearance.
    */
-  get styledNodeCollections(): { nodeCollection: NodeCollectionBase; appearance: NodeAppearance }[] {
+  get styledNodeCollections(): { nodeCollection: NodeCollection; appearance: NodeAppearance }[] {
     return [...this._styledNodeCollections];
   }
 
@@ -135,7 +133,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * color code the 3D model based on information (e.g. coloring the 3D model
    * by construction status).
    *
-   * The {@link NodeCollectionBase} can be updated dynamically and the rendered nodes will be
+   * The {@link NodeCollection} can be updated dynamically and the rendered nodes will be
    * updated automatically as the styling changes. The appearance of the style nodes
    * cannot be changed.
    *
@@ -154,36 +152,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * const visibleNodes = new TreeIndexNodeCollection(someTreeIndices);
    * model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
-   * @throws Error if node collection already has been assigned to the model.
    */
-  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance): void {
+  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void {
     MetricsLogger.trackCadModelStyled(nodeCollection.classToken, appearance);
 
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index !== -1) {
-      throw new Error(
-        'Node collection as already been assigned, use updateStyledNodeCollection() to update the appearance'
-      );
+      this._styledNodeCollections[index].appearance = appearance;
+    } else {
+      this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance });
     }
-
-    this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance });
     this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
-  }
-
-  /**
-   * Updates styled node collections with a new appearance.
-   * @param nodeCollection    A node collection previously assigned using {@link assignStyledNodeCollection}.
-   * @param newAppearance     New appearance for the nodes in the collection.
-   * @throws Error if node collection hasn't previously been assigned using {@link assignStyledNodeCollection}.
-   */
-  updateStyledNodeCollection(nodeCollection: NodeCollectionBase, newAppearance: NodeAppearance): void {
-    const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
-    if (index === -1) {
-      throw new Error('The node collection provide has not been assigned previously');
-    }
-
-    this._styledNodeCollections[index].appearance = newAppearance;
-    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, newAppearance);
   }
 
   /**
@@ -192,7 +171,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    * @throws Error if node collection isn't assigned to the model.
    */
-  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase): void {
+  unassignStyledNodeCollection(nodeCollection: NodeCollection): void {
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('Node collection has not been assigned to model');
@@ -273,7 +252,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * uses a right-hand Y-up coordinate system. This function also accounts for transformation
    * applied to the model.
    * @param box     The box in ThreeJS/model coordinates.
-   * @param out     Optional preallocated buffer for storing the result. May be `box`.
+   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
    * @returns       Transformed box.
    */
   mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
@@ -282,6 +261,24 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       out.copy(box);
     }
     out.applyMatrix4(this.cadModel.inverseModelMatrix);
+    return out;
+  }
+
+  /**
+   * Maps from a 3D position in "CDF space" to coordinates in "ThreeJS model space".
+   * This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
+   * uses a right-hand Y-up coordinate system. This function also accounts for transformation
+   * applied to the model.
+   * @param box     The box in CDF model coordinates.
+   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
+   * @returns       Transformed box.
+   */
+  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
+    out = out ?? new THREE.Box3();
+    if (out !== box) {
+      out.copy(box);
+    }
+    out.applyMatrix4(this.cadModel.modelMatrix);
     return out;
   }
 
@@ -397,7 +394,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
     try {
-      box = await this.nodesApiClient.getBoundingBoxByNodeId(this.modelId, this.revisionId, nodeId, box);
+      const boxesResponse = await this.nodesApiClient.getBoundingBoxesByNodeIds(this.modelId, this.revisionId, [
+        nodeId
+      ]);
+      box = boxesResponse[0];
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {
