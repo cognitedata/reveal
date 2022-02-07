@@ -11,7 +11,7 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
+import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
@@ -114,6 +114,7 @@ export class Cognite3DViewer {
     sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
     disposed: new EventTrigger<DisposedDelegate>()
   };
+  private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModelBase[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
@@ -222,7 +223,14 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
 
-    this._cameraManager = new CameraManager(this.camera, this.canvas, this.modelIntersectionCallback.bind(this));
+    this._mouseHandler = new InputHandler(this.canvas);
+
+    this._cameraManager = new CameraManager(
+      this.camera,
+      this.canvas,
+      this._mouseHandler,
+      this.modelIntersectionCallback.bind(this)
+    );
     this._cameraManager.automaticControlsSensitivity = this._automaticControlsSensitivity;
     this._cameraManager.automaticNearFarPlane = this._automaticNearFarPlane;
 
@@ -255,8 +263,8 @@ export class Cognite3DViewer {
         options.sdk
       );
     }
-    this.renderController = new RenderController(this.camera);
 
+    this.renderController = new RenderController(this.camera);
     this.startPointerEventListeners();
 
     this.revealManager.setRenderTarget(
@@ -350,6 +358,8 @@ export class Cognite3DViewer {
     this.spinner.dispose();
 
     this._events.disposed.fire();
+    disposeOfAllEventListeners(this._events);
+    this._mouseHandler.dispose();
   }
 
   /**
@@ -599,29 +609,31 @@ export class Cognite3DViewer {
    * .
    * @param model
    */
-  removeModel(model: Cognite3DModel | CognitePointCloudModel): void {
+  removeModel(model: CogniteModelBase): void {
     const modelIdx = this._models.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this.scene.remove(model);
-    this.renderController.redraw();
 
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
+        this.scene.remove(cadModel);
         this.revealManager.removeModel(model.type, cadModel.cadNode);
-        return;
+        break;
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
+        this.scene.remove(pcModel);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
-        return;
+        break;
 
       default:
         assertNever(model.type, `Model type ${model.type} cannot be removed`);
     }
+
+    this.renderController.redraw();
   }
 
   /**
@@ -1318,13 +1330,11 @@ export class Cognite3DViewer {
   }
 
   private readonly startPointerEventListeners = () => {
-    const mouseHandler = new InputHandler(this.domElement);
-
-    mouseHandler.on('click', e => {
+    this._mouseHandler.on('click', e => {
       this._events.click.fire(e);
     });
 
-    mouseHandler.on('hover', e => {
+    this._mouseHandler.on('hover', e => {
       this._events.hover.fire(e);
     });
   };

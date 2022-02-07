@@ -12,9 +12,8 @@ import {
   PointerEventDelegate,
   ControlsState
 } from './types';
-import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
+import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import range from 'lodash/range';
-
 export class CameraManager {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeData>()
@@ -74,11 +73,12 @@ export class CameraManager {
   constructor(
     camera: THREE.PerspectiveCamera,
     domElement: HTMLElement,
+    inputHandler: InputHandler,
     raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>
   ) {
     this._camera = camera;
     this._domElement = domElement;
-    this._inputHandler = new InputHandler(domElement);
+    this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
@@ -360,6 +360,8 @@ export class CameraManager {
     this.isDisposed = true;
     this._controls.dispose();
     this.teardownControls();
+    disposeOfAllEventListeners(this._events);
+    this._inputHandler.dispose();
   }
 
   private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
