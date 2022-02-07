@@ -158,17 +158,11 @@ export class CadNode extends THREE.Object3D {
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
-    const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root);
-
     const modelMatrix = this.getModelTransformation();
-    const threePos = position.clone();
-    const threeTarget = target.clone();
-    threePos.applyMatrix4(modelMatrix);
-    threeTarget.applyMatrix4(modelMatrix);
-
+    const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root, modelMatrix);
     return {
-      position: threePos,
-      target: threeTarget,
+      position,
+      target,
       near,
       far
     };
