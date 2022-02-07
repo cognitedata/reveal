@@ -72,16 +72,6 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
 
-    const takenDetailedPercent = (
-      (100.0 * (spentBudget.loadedSectorCount - spentBudget.loadedSectorCount)) /
-      spentBudget.totalSectorCount
-    ).toPrecision(3);
-    const takenPercent = ((100.0 * spentBudget.loadedSectorCount) / spentBudget.totalSectorCount).toPrecision(3);
-
-    this.log(
-      `Scene: ${spentBudget.loadedSectorCount} (${spentBudget.forcedDetailedSectorCount} required, ${spentBudget.totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
-    );
-
     return { spentBudget, wantedSectors: wanted };
   }
 
