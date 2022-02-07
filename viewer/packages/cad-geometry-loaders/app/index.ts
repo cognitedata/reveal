@@ -62,14 +62,7 @@ async function init() {
 
   const model = await cadManager.addModel(modelIdentifier);
 
-  const cameraConfig = model.suggestCameraConfig();
-
-  const camera = new THREE.PerspectiveCamera(
-    70,
-    window.innerWidth / window.innerHeight,
-    cameraConfig.near,
-    cameraConfig.far
-  );
+  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 3, 1000);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -81,8 +74,8 @@ async function init() {
   scene.add(model);
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  camera.position.copy(cameraConfig.position);
-  controls.target.copy(cameraConfig.target);
+  camera.position.copy(new THREE.Vector3(10, 10, 10));
+  controls.target.copy(new THREE.Vector3(10, 0, -10));
   controls.update();
 
   cadModelUpdateHandler.updateCamera(camera);

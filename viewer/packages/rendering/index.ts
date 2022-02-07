@@ -14,7 +14,7 @@ export { NodeTransformProvider } from './src/transform/NodeTransformProvider';
 
 export { CogniteColors, RevealColors } from './src/utilities/types';
 
-export { CadNode, SuggestedCameraConfig } from './src/sector/CadNode';
+export { CadNode } from './src/sector/CadNode';
 export {
   RenderOptions,
   defaultRenderOptions,
