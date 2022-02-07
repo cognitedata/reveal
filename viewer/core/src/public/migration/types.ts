@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { SectorCuller } from '@reveal/cad-geometry-loaders';
+import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 
@@ -159,6 +159,15 @@ export interface Cognite3DViewerOptions {
   customDataSource?: DataSource;
 
   /**
+   * Allows for controlling if geometry streaming should be halted when
+   * the camera is moving. Note that this option should left to false on
+   * low-end devices as more loading can cause frame drops.
+   *
+   * Default value is set to false.
+   */
+  continuousModelStreaming?: boolean;
+
+  /**
    * Utility used to determine what parts of the model will be visible on screen and loaded.
    * This is only meant for unit testing.
    * @internal
@@ -189,31 +198,6 @@ export interface AddModelOptions {
   localPath?: string;
   geometryFilter?: GeometryFilter;
 }
-
-export type CameraControlsOptions = {
-  /**
-   * Sets mouse wheel initiated action.
-   *
-   * Modes:
-   *
-   * 'zoomToTarget' - zooms just to the current target (center of the screen) of the camera.
-   *
-   * 'zoomPastCursor' - zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects.
-   *
-   * 'zoomToCursor' - mouse wheel scroll zooms towards the point on the model where cursor is hovering over, doesn't allow going through objects.
-   *
-   * Default is 'zoomPastCursor'.
-   *
-   */
-  mouseWheelAction?: 'zoomToTarget' | 'zoomPastCursor' | 'zoomToCursor';
-  /**
-   * Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.
-   *
-   * Default is false.
-   *
-   */
-  onClickTargetChange?: boolean;
-};
 
 export type CadIntersection = {
   /**
@@ -306,34 +290,7 @@ export type SceneRenderedDelegate = (event: {
 export * from './NotSupportedInMigrationWrapperError';
 export { CogniteModelBase } from './CogniteModelBase';
 
-/**
- * Represents a measurement of how much geometry can be loaded.
- */
-export type CadModelBudget = {
-  // TODO 2020-11-04 larsmoa: Merge this type with CadModelSectorBudget.
-
-  /**
-   * Sectors within this distance from the camera will always be loaded in high details.
-   */
-  readonly highDetailProximityThreshold: number;
-
-  /**
-   * Number of bytes of the geometry that must be downloaded.
-   */
-  readonly geometryDownloadSizeBytes: number;
-
-  /**
-   * Estimated maximum number of WebGL draw calls to download geometry for. Draw calls
-   * are very important for the framerate.
-   */
-  readonly maximumNumberOfDrawCalls: number;
-
-  /**
-   * Maximum render cost. This number can be thought of as triangle count, although the number
-   * doesn't match this directly.
-   */
-  readonly maximumRenderCost: number;
-};
+export { CadModelBudget };
 
 /**
  * Represents a budget of how many point from point clouds can be

@@ -12,34 +12,34 @@ const computeBoundingBoxFromCenterAndRadiusAttributesVars = {
 };
 
 export function computeBoundingBoxFromCenterAndRadiusAttributes(
-  centerAattribute: ParsePrimitiveAttribute,
-  centerBattribute: ParsePrimitiveAttribute,
-  radiusAattribute: ParsePrimitiveAttribute,
-  radiusBattribute: ParsePrimitiveAttribute,
   attributeFloatValues: Float32Array,
+  centerAByteOffset: number,
+  centerBByteOffset: number,
+  radiusAByteOffset: number,
+  radiusBByteOffset: number,
   elementSize: number,
   elementIndex: number,
   out: THREE.Box3
 ): THREE.Box3 {
   const { centerA, centerB, sphere, box } = computeBoundingBoxFromCenterAndRadiusAttributesVars;
 
-  function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
-    const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+  function readAttribute(byteOffset: number, idx: number = 0): number {
+    const offset = (elementIndex * elementSize + byteOffset) / attributeFloatValues.BYTES_PER_ELEMENT;
     return attributeFloatValues[offset + idx];
   }
 
   centerA.set(
-    readAttribute(centerAattribute, 0),
-    readAttribute(centerAattribute, 1),
-    readAttribute(centerAattribute, 2)
+    readAttribute(centerAByteOffset, 0),
+    readAttribute(centerAByteOffset, 1),
+    readAttribute(centerAByteOffset, 2)
   );
   centerB.set(
-    readAttribute(centerBattribute, 0),
-    readAttribute(centerBattribute, 1),
-    readAttribute(centerBattribute, 2)
+    readAttribute(centerBByteOffset, 0),
+    readAttribute(centerBByteOffset, 1),
+    readAttribute(centerBByteOffset, 2)
   );
-  const radiusA = readAttribute(radiusAattribute);
-  const radiusB = readAttribute(radiusBattribute);
+  const radiusA = readAttribute(radiusAByteOffset);
+  const radiusB = readAttribute(radiusBByteOffset);
 
   // Note! Not the tighest fit we could make, works ok for now but could be improved by
   // using normal of each cap to determine exact end points of the top/bottom
@@ -60,10 +60,10 @@ const computeBoundingBoxFromVertexAttributesVars = {
 };
 
 export function computeBoundingBoxFromVertexAttributes(
-  vertex1Attribute: ParsePrimitiveAttribute,
-  vertex2Attribute: ParsePrimitiveAttribute,
-  vertex3Attribute: ParsePrimitiveAttribute,
-  vertex4Attribute: ParsePrimitiveAttribute,
+  vertex1AttributeByteOffset: number,
+  vertex2AttributeByteOffset: number,
+  vertex3AttributeByteOffset: number,
+  vertex4AttributeByteOffset: number,
   attributeFloatValues: Float32Array,
   elementSize: number,
   elementIndex: number,
@@ -71,30 +71,30 @@ export function computeBoundingBoxFromVertexAttributes(
 ): THREE.Box3 {
   const { vertex1, vertex2, vertex3, vertex4 } = computeBoundingBoxFromVertexAttributesVars;
 
-  function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
-    const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+  function readAttribute(attributeByteOffset: number, idx: number = 0): number {
+    const offset = (elementIndex * elementSize + attributeByteOffset) / attributeFloatValues.BYTES_PER_ELEMENT;
     return attributeFloatValues[offset + idx];
   }
 
   vertex1.set(
-    readAttribute(vertex1Attribute, 0),
-    readAttribute(vertex1Attribute, 1),
-    readAttribute(vertex1Attribute, 2)
+    readAttribute(vertex1AttributeByteOffset, 0),
+    readAttribute(vertex1AttributeByteOffset, 1),
+    readAttribute(vertex1AttributeByteOffset, 2)
   );
   vertex2.set(
-    readAttribute(vertex2Attribute, 0),
-    readAttribute(vertex2Attribute, 1),
-    readAttribute(vertex2Attribute, 2)
+    readAttribute(vertex2AttributeByteOffset, 0),
+    readAttribute(vertex2AttributeByteOffset, 1),
+    readAttribute(vertex2AttributeByteOffset, 2)
   );
   vertex3.set(
-    readAttribute(vertex3Attribute, 0),
-    readAttribute(vertex3Attribute, 1),
-    readAttribute(vertex3Attribute, 2)
+    readAttribute(vertex3AttributeByteOffset, 0),
+    readAttribute(vertex3AttributeByteOffset, 1),
+    readAttribute(vertex3AttributeByteOffset, 2)
   );
   vertex4.set(
-    readAttribute(vertex4Attribute, 0),
-    readAttribute(vertex4Attribute, 1),
-    readAttribute(vertex4Attribute, 2)
+    readAttribute(vertex4AttributeByteOffset, 0),
+    readAttribute(vertex4AttributeByteOffset, 1),
+    readAttribute(vertex4AttributeByteOffset, 2)
   );
 
   out.setFromPoints([vertex1, vertex2, vertex3, vertex4]);
@@ -106,8 +106,8 @@ const computeBoundingBoxFromInstanceMatrixAttributesVars = {
 };
 
 export function computeBoundingBoxFromInstanceMatrixAttributes(
-  instanceMatrixAttribute: ParsePrimitiveAttribute,
   attributeFloatValues: Float32Array,
+  byteOffset: number,
   elementSize: number,
   elementIndex: number,
   baseBoundingBox: THREE.Box3,
@@ -115,7 +115,7 @@ export function computeBoundingBoxFromInstanceMatrixAttributes(
 ): THREE.Box3 {
   const { instanceMatrix } = computeBoundingBoxFromInstanceMatrixAttributesVars;
 
-  const offset = (elementIndex * elementSize + instanceMatrixAttribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+  const offset = (elementIndex * elementSize + byteOffset) / attributeFloatValues.BYTES_PER_ELEMENT;
   // Note! set() accepts row-major, stored column-major
   instanceMatrix.set(
     attributeFloatValues[offset + 0],
@@ -147,6 +147,21 @@ const computeBoundingBoxFromEllipseAttributesVars = {
   size: new THREE.Vector3()
 };
 
+export function computeBoundingBoxFromEllipseValues(
+  radius1: number,
+  radius2: number,
+  height: number,
+  center: THREE.Vector3,
+  out: THREE.Box3
+): THREE.Box3 {
+  const { size } = computeBoundingBoxFromEllipseAttributesVars;
+
+  const extent = 2 * Math.max(radius1, radius2, height);
+  size.set(extent, extent, extent);
+  out.setFromCenterAndSize(center, size);
+  return out;
+}
+
 export function computeBoundingBoxFromEllipseAttributes(
   centerAttribute: ParsePrimitiveAttribute,
   radius1Attribute: ParsePrimitiveAttribute,
@@ -157,19 +172,18 @@ export function computeBoundingBoxFromEllipseAttributes(
   elementIndex: number,
   out: THREE.Box3
 ): THREE.Box3 {
-  const { center, size } = computeBoundingBoxFromEllipseAttributesVars;
+  const { center } = computeBoundingBoxFromEllipseAttributesVars;
 
   function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
     const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
     return attributeFloatValues[offset + idx];
   }
 
-  center.set(readAttribute(centerAttribute, 0), readAttribute(centerAttribute, 1), readAttribute(centerAttribute, 2));
   const radius1 = readAttribute(radius1Attribute);
   const radius2 = readAttribute(radius2Attribute);
   const height = readAttribute(heightAttribute);
-  const extent = 2.0 * Math.max(radius1, radius2, height);
-  size.set(extent, extent, extent);
-  out.setFromCenterAndSize(center, size);
-  return out;
+
+  center.set(readAttribute(centerAttribute, 0), readAttribute(centerAttribute, 1), readAttribute(centerAttribute, 2));
+
+  return computeBoundingBoxFromEllipseValues(radius1, radius2, height, center, out);
 }

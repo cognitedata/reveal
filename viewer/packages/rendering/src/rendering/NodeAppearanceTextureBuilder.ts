@@ -234,10 +234,7 @@ function fillRGBA(rgbaBuffer: Uint8ClampedArray, style: NodeAppearance) {
 function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style: NodeAppearance) {
   const [r, g, b, a] = appearanceToColorOverride(style);
   // Create a bit mask for updating color (update if style contains color, don't update if it doesn't)
-  const updateRgbBitmask =
-    style.color !== undefined && !(style.color[0] === 0 && style.color[1] === 0 && style.color[2] === 0)
-      ? 0b11111111
-      : 0;
+  const updateRgbBitmask = style.color !== undefined && !style.color.every(value => value === 0) ? 0b11111111 : 0;
   const keepRgbBitmask = ~updateRgbBitmask;
   const updateR = r & updateRgbBitmask;
   const updateG = g & updateRgbBitmask;

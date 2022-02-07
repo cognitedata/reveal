@@ -2,10 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { SectorMetadata, CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+
+import { PrioritizedArea } from '@reveal/cad-styling';
+import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 
 import { CadLoadingHints } from '../../CadLoadingHints';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { CadModelBudget } from '../../CadModelBudget';
+import { CadNode } from '@reveal/rendering';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
@@ -13,8 +16,19 @@ export interface DetermineSectorsInput {
   cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
-  budget: CadModelSectorBudget;
+  budget: CadModelBudget;
+  prioritizedAreas: PrioritizedArea[];
 }
+
+export type DetermineSectorsPayload = {
+  camera: THREE.PerspectiveCamera;
+  clippingPlanes: THREE.Plane[];
+  models: CadNode[];
+  loadingHints: CadLoadingHints;
+  cameraInMotion: boolean;
+  budget: CadModelBudget;
+  prioritizedAreas: PrioritizedArea[];
+};
 
 /**
  * Statistics for how much data is required to load set of sectors.
@@ -83,4 +97,7 @@ export type PrioritizedWantedSector = WantedSector & { priority: number };
 /**
  * Delegates that computes 'cost' of loading/visualizing a given sector.
  */
-export type DetermineSectorCostDelegate = (sector: SectorMetadata, levelOfDetail: LevelOfDetail) => SectorCost;
+export type DetermineSectorCostDelegate<TSectorMetadata> = (
+  sector: TSectorMetadata,
+  levelOfDetail: LevelOfDetail
+) => SectorCost;

@@ -16,11 +16,11 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     return this._numFilled;
   }
 
-  public get buffer(): T {
-    return this._buffer;
+  public get bufferView(): T {
+    return this._bufferView;
   }
 
-  private _buffer: T;
+  private _bufferView: T;
   private _numFilled: number;
   private readonly _type: new (length: number) => T;
 
@@ -37,36 +37,53 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     this._type = type;
 
     const minimalPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(initialSize)));
-    this._buffer = new type(minimalPowerOfTwo);
+    this._bufferView = new type(minimalPowerOfTwo);
   }
 
-  public add(array: T): { batchId: number; bufferIsReallocated: boolean } {
+  public add(array: T): {
+    batchId: number;
+    bufferIsReallocated: boolean;
+    updateRange: {
+      byteOffset: number;
+      byteCount: number;
+    };
+  } {
     let isReallocated = false;
-    if (this._numFilled + array.length > this._buffer.length) {
+    if (this._numFilled + array.length > this._bufferView.length) {
       const newSize = Math.pow(2, Math.ceil(Math.log2(this._numFilled + array.length)));
       this.allocateNewBuffer(newSize);
       isReallocated = true;
     }
 
-    this._buffer.set(array, this._numFilled);
+    this._bufferView.set(array, this._numFilled);
 
     const batchId = this.createBatch(array);
 
+    const byteOffset = this._numFilled;
+
     this._numFilled += array.length;
 
-    return { batchId: batchId, bufferIsReallocated: isReallocated };
+    const byteCount = array.length;
+
+    return { batchId: batchId, bufferIsReallocated: isReallocated, updateRange: { byteOffset, byteCount } };
   }
 
-  public remove(batchId: number): void {
+  public remove(batchId: number): {
+    byteOffset: number;
+    byteCount: number;
+  } {
     const batch = this._batchMap.get(batchId);
 
     if (!batch) {
       throw new Error('batch does not exist in buffer');
     }
 
-    this._buffer.copyWithin(batch.from, batch.from + batch.count, this.buffer.length);
+    this._bufferView.copyWithin(batch.from, batch.from + batch.count, this._numFilled);
 
     this._numFilled -= batch.count;
+
+    const byteOffset = batch.from;
+    const byteCount = this._numFilled - batch.from;
 
     if (this._currentTail === batch) {
       this._currentTail = batch.prev;
@@ -91,6 +108,18 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     }
 
     this._batchMap.delete(batchId);
+
+    return { byteOffset, byteCount };
+  }
+
+  public getRangeForBatchId(batchId: number): { byteOffset: number; byteCount: number } {
+    const batch = this._batchMap.get(batchId);
+
+    if (!batch) {
+      throw new Error('batch does not exist in buffer');
+    }
+
+    return { byteOffset: batch.from, byteCount: batch.count };
   }
 
   private createBatch(array: T) {
@@ -116,8 +145,8 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
   private allocateNewBuffer(newSize: number): void {
     const newBuffer = new this._type(newSize);
-    newBuffer.set(this._buffer);
+    newBuffer.set(this._bufferView);
 
-    this._buffer = newBuffer;
+    this._bufferView = newBuffer;
   }
 }

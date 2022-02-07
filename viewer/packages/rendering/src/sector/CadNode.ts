@@ -11,8 +11,19 @@ import { suggestCameraConfig } from '../cameraconfig';
 import { InstancedMeshManager } from '../InstancedMeshManager';
 import { RenderMode } from '../rendering/RenderMode';
 
-import { NodeAppearanceProvider, NodeAppearance } from '@reveal/cad-styling';
-import { SectorScene, CadModelMetadata, SectorGeometry, InstancedMeshFile, RootSectorNode } from '@reveal/cad-parsers';
+import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
+import {
+  SectorScene,
+  CadModelMetadata,
+  SectorGeometry,
+  InstancedMeshFile,
+  RootSectorNode,
+  WantedSector,
+  ConsumedSector
+} from '@reveal/cad-parsers';
+import { SectorRepository } from '@reveal/sector-loader';
+import { GeometryBatchingManager } from '../GeometryBatchingManager';
+import { ParsedGeometry } from '@reveal/sector-parser';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -28,30 +39,37 @@ export class CadNode extends THREE.Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
   private readonly _sectorScene: SectorScene;
-  private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _instancedMeshManager: InstancedMeshManager;
+  private readonly _sectorRepository: SectorRepository;
+  private readonly _geometryBatchingManager: GeometryBatchingManager;
 
-  constructor(model: CadModelMetadata, materialManager: CadMaterialManager) {
+  constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
     this._materialManager = materialManager;
+    this._sectorRepository = sectorRepository;
 
     const instancedMeshGroup = new THREE.Group();
     instancedMeshGroup.name = 'InstancedMeshes';
 
+    const batchedGeometryMeshGroup = new THREE.Group();
+    batchedGeometryMeshGroup.name = 'Batched Geometry';
+
     this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
+
+    const materials = materialManager.getModelMaterials(model.modelIdentifier);
+    this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
 
     const rootSector = new RootSectorNode(model);
 
     rootSector.add(instancedMeshGroup);
+    rootSector.add(batchedGeometryMeshGroup);
 
     this._cadModelMetadata = model;
     const { scene } = model;
 
     this._sectorScene = scene;
-    // Ensure camera matrix is unequal on first frame
-    this._previousCameraMatrix.elements[0] = Infinity;
 
     // Prepare renderables
     this._rootSector = rootSector;
@@ -90,6 +108,10 @@ export class CadNode extends THREE.Object3D {
     return this._cadModelMetadata;
   }
 
+  get cadModelIdentifier(): string {
+    return this._cadModelMetadata.modelIdentifier;
+  }
+
   get sectorScene(): SectorScene {
     return this._sectorScene;
   }
@@ -110,6 +132,10 @@ export class CadNode extends THREE.Object3D {
     return this._materialManager.getRenderMode();
   }
 
+  public loadSector(sector: WantedSector): Promise<ConsumedSector> {
+    return this._sectorRepository.loadSector(sector);
+  }
+
   /**
    * Sets transformation matrix of the model. This overrides the current transformation.
    * @param matrix Transformation matrix.
@@ -127,18 +153,16 @@ export class CadNode extends THREE.Object3D {
     return this._rootSector.getModelTransformation(out);
   }
 
+  get prioritizedAreas(): PrioritizedArea[] {
+    return this.nodeAppearanceProvider.getPrioritizedAreas();
+  }
+
   public suggestCameraConfig(): SuggestedCameraConfig {
-    const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root);
-
     const modelMatrix = this.getModelTransformation();
-    const threePos = position.clone();
-    const threeTarget = target.clone();
-    threePos.applyMatrix4(modelMatrix);
-    threeTarget.applyMatrix4(modelMatrix);
-
+    const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root, modelMatrix);
     return {
-      position: threePos,
-      target: threeTarget,
+      position,
+      target,
       near,
       far
     };
@@ -156,5 +180,17 @@ export class CadNode extends THREE.Object3D {
 
   public discardInstancedMeshes(sectorId: number): void {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
+  }
+
+  public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
+    this._geometryBatchingManager.batchGeometries(geometryBatchingQueue, sectorId);
+  }
+
+  public removeBatchedSectorGeometries(sectorId: number): void {
+    this._geometryBatchingManager.removeSectorBatches(sectorId);
+  }
+
+  public clearCache(): void {
+    this._sectorRepository.clear();
   }
 }

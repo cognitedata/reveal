@@ -11,7 +11,7 @@ describe('DynamicDefragmentedBuffer', () => {
     const result = new DynamicDefragmentedBuffer(initialSize, Float32Array);
 
     expect(result.length).toBe(0);
-    expect(result.buffer.length).toBe(initialSize);
+    expect(result.bufferView.length).toBe(initialSize);
   });
 
   test('adding should increment length', () => {
@@ -22,20 +22,25 @@ describe('DynamicDefragmentedBuffer', () => {
 
     expect(result.length).toBe(adds.length);
     expect(addResult.batchId).toBe(0);
+    expect(addResult.updateRange.byteOffset).toBe(0);
+    expect(addResult.updateRange.byteCount).toBe(2);
   });
 
   test('adding over initial size should increment buffer size', () => {
     const result = new DynamicDefragmentedBuffer(4, Float32Array);
     const adds = new Float32Array([0, 1, 2, 3, 4]);
 
-    result.add(adds);
+    const addResult = result.add(adds);
 
     expect(result.length).toBe(adds.length);
-    expect(result.buffer.length).toBe(8);
+    expect(result.bufferView.length).toBe(8);
 
     for (let i = 0; i < adds.length; i++) {
-      expect(adds[i]).toBe(result.buffer[i]);
+      expect(adds[i]).toBe(result.bufferView[i]);
     }
+
+    expect(addResult.updateRange.byteOffset).toBe(0);
+    expect(addResult.updateRange.byteCount).toBe(5);
   });
 
   test('adding two batches should populate buffer', () => {
@@ -47,8 +52,8 @@ describe('DynamicDefragmentedBuffer', () => {
     const addResultTwo = result.add(addsTwo);
 
     for (let i = 0; i < adds.length; i++) {
-      expect(adds[i]).toBe(result.buffer[i]);
-      expect(addsTwo[i]).toBe(result.buffer[i + adds.length]);
+      expect(adds[i]).toBe(result.bufferView[i]);
+      expect(addsTwo[i]).toBe(result.bufferView[i + adds.length]);
     }
 
     expect(addResultOne.batchId).toBe(0);
@@ -56,6 +61,12 @@ describe('DynamicDefragmentedBuffer', () => {
 
     expect(addResultTwo.batchId).toBe(1);
     expect(addResultTwo.bufferIsReallocated).toBeTrue();
+
+    expect(addResultOne.updateRange.byteOffset).toBe(0);
+    expect(addResultOne.updateRange.byteCount).toBe(2);
+
+    expect(addResultTwo.updateRange.byteOffset).toBe(2);
+    expect(addResultTwo.updateRange.byteCount).toBe(3);
   });
 
   test('deleting non-existing batch should throw error', () => {
@@ -70,9 +81,12 @@ describe('DynamicDefragmentedBuffer', () => {
     const adds = new Float32Array([0, 1]);
     const addResult = result.add(adds);
 
-    result.remove(addResult.batchId);
+    const removeResult = result.remove(addResult.batchId);
 
     expect(result.length).toBe(0);
+
+    expect(removeResult.byteOffset).toBe(0);
+    expect(removeResult.byteCount).toBe(0);
   });
 
   test('deleting middle batch should correctly defragment the buffer', () => {
@@ -81,21 +95,33 @@ describe('DynamicDefragmentedBuffer', () => {
     const addsTwo = new Float32Array([2, 3, 4]);
     const addsThree = new Float32Array([5, 6, 7, 8]);
 
-    result.add(addsOne);
+    const addResultOne = result.add(addsOne);
     const addResultTwo = result.add(addsTwo);
-    result.add(addsThree);
+    const addResultThree = result.add(addsThree);
 
-    result.remove(addResultTwo.batchId);
+    expect(addResultOne.updateRange.byteOffset).toBe(0);
+    expect(addResultOne.updateRange.byteCount).toBe(2);
+
+    expect(addResultTwo.updateRange.byteOffset).toBe(2);
+    expect(addResultTwo.updateRange.byteCount).toBe(3);
+
+    expect(addResultThree.updateRange.byteOffset).toBe(5);
+    expect(addResultThree.updateRange.byteCount).toBe(4);
+
+    const removeResult = result.remove(addResultTwo.batchId);
 
     expect(result.length).toBe(addsOne.length + addsThree.length);
 
     for (let i = 0; i < addsOne.length; i++) {
-      expect(result.buffer[i]).toBe(addsOne[i]);
+      expect(result.bufferView[i]).toBe(addsOne[i]);
     }
 
     for (let i = 0; i < addsThree.length; i++) {
-      expect(result.buffer[i + addsOne.length]).toBe(addsThree[i]);
+      expect(result.bufferView[i + addsOne.length]).toBe(addsThree[i]);
     }
+
+    expect(removeResult.byteOffset).toBe(2);
+    expect(removeResult.byteCount).toBe(4);
   });
 
   test('deleting first batch then adding should correctly defragment the buffer', () => {
@@ -104,22 +130,34 @@ describe('DynamicDefragmentedBuffer', () => {
     const addsTwo = new Float32Array([2, 3, 4]);
     const addsThree = new Float32Array([5, 6, 7, 8]);
 
-    const addResult = result.add(addsOne);
-    result.add(addsTwo);
+    const addResultOne = result.add(addsOne);
+    const addResultTwo = result.add(addsTwo);
 
-    result.remove(addResult.batchId);
+    const removeResult = result.remove(addResultOne.batchId);
 
-    result.add(addsThree);
+    const addResultThree = result.add(addsThree);
 
     expect(result.length).toBe(addsTwo.length + addsThree.length);
 
     for (let i = 0; i < addsOne.length; i++) {
-      expect(result.buffer[i]).toBe(addsTwo[i]);
+      expect(result.bufferView[i]).toBe(addsTwo[i]);
     }
 
     for (let i = 0; i < addsThree.length; i++) {
-      expect(result.buffer[i + addsTwo.length]).toBe(addsThree[i]);
+      expect(result.bufferView[i + addsTwo.length]).toBe(addsThree[i]);
     }
+
+    expect(addResultOne.updateRange.byteOffset).toBe(0);
+    expect(addResultOne.updateRange.byteCount).toBe(2);
+
+    expect(addResultTwo.updateRange.byteOffset).toBe(2);
+    expect(addResultTwo.updateRange.byteCount).toBe(3);
+
+    expect(removeResult.byteOffset).toBe(0);
+    expect(removeResult.byteCount).toBe(3);
+
+    expect(addResultThree.updateRange.byteOffset).toBe(3);
+    expect(addResultThree.updateRange.byteCount).toBe(4);
   });
 
   test('deleting last batch then adding should correctly defragment the buffer', () => {
@@ -128,22 +166,34 @@ describe('DynamicDefragmentedBuffer', () => {
     const addsTwo = new Float32Array([2, 3, 4]);
     const addsThree = new Float32Array([5, 6, 7, 8]);
 
-    result.add(addsOne);
-    const addResult = result.add(addsTwo);
+    const addResultOne = result.add(addsOne);
+    const addResultTwo = result.add(addsTwo);
 
-    result.remove(addResult.batchId);
+    const removeResult = result.remove(addResultTwo.batchId);
 
-    result.add(addsThree);
+    const addResultThree = result.add(addsThree);
 
     expect(result.length).toBe(addsOne.length + addsThree.length);
 
     for (let i = 0; i < addsOne.length; i++) {
-      expect(result.buffer[i]).toBe(addsOne[i]);
+      expect(result.bufferView[i]).toBe(addsOne[i]);
     }
 
     for (let i = 0; i < addsThree.length; i++) {
-      expect(result.buffer[i + addsOne.length]).toBe(addsThree[i]);
+      expect(result.bufferView[i + addsOne.length]).toBe(addsThree[i]);
     }
+
+    expect(addResultOne.updateRange.byteOffset).toBe(0);
+    expect(addResultOne.updateRange.byteCount).toBe(2);
+
+    expect(addResultTwo.updateRange.byteOffset).toBe(2);
+    expect(addResultTwo.updateRange.byteCount).toBe(3);
+
+    expect(removeResult.byteOffset).toBe(2);
+    expect(removeResult.byteCount).toBe(0);
+
+    expect(addResultThree.updateRange.byteOffset).toBe(2);
+    expect(addResultThree.updateRange.byteCount).toBe(4);
   });
 
   test('Adding more than double of current size should correctly allocate new buffer', () => {
@@ -151,10 +201,16 @@ describe('DynamicDefragmentedBuffer', () => {
     const addsOne = new Float32Array([0, 1]);
     const addsTwo = new Float32Array([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
 
-    result.add(addsOne);
-    result.add(addsTwo);
+    const addResultOne = result.add(addsOne);
+    const addResultTwo = result.add(addsTwo);
 
-    expect(result.buffer.length).toBe(32);
+    expect(result.bufferView.length).toBe(32);
+
+    expect(addResultOne.updateRange.byteOffset).toBe(0);
+    expect(addResultOne.updateRange.byteCount).toBe(2);
+
+    expect(addResultTwo.updateRange.byteOffset).toBe(2);
+    expect(addResultTwo.updateRange.byteCount).toBe(15);
   });
 
   test('deleting two middle batches should correctly defragment the buffer', () => {
@@ -164,22 +220,40 @@ describe('DynamicDefragmentedBuffer', () => {
     const addsThree = new Float32Array([5, 6, 7, 8]);
     const addsFour = new Float32Array([9, 10, 11, 12]);
 
-    result.add(addsOne);
+    const addResultOne = result.add(addsOne);
     const addResultTwo = result.add(addsTwo);
     const addResultThree = result.add(addsThree);
-    result.add(addsFour);
+    const addResultFour = result.add(addsFour);
 
-    result.remove(addResultTwo.batchId);
-    result.remove(addResultThree.batchId);
+    const removeResultOne = result.remove(addResultTwo.batchId);
+    const removeResultTwo = result.remove(addResultThree.batchId);
 
     expect(result.length).toBe(addsOne.length + addsFour.length);
 
     for (let i = 0; i < addsOne.length; i++) {
-      expect(result.buffer[i]).toBe(addsOne[i]);
+      expect(result.bufferView[i]).toBe(addsOne[i]);
     }
 
     for (let i = 0; i < addsFour.length; i++) {
-      expect(result.buffer[i + addsOne.length]).toBe(addsFour[i]);
+      expect(result.bufferView[i + addsOne.length]).toBe(addsFour[i]);
     }
+
+    expect(addResultOne.updateRange.byteOffset).toBe(0);
+    expect(addResultOne.updateRange.byteCount).toBe(2);
+
+    expect(addResultTwo.updateRange.byteOffset).toBe(2);
+    expect(addResultTwo.updateRange.byteCount).toBe(3);
+
+    expect(addResultThree.updateRange.byteOffset).toBe(5);
+    expect(addResultThree.updateRange.byteCount).toBe(4);
+
+    expect(addResultFour.updateRange.byteOffset).toBe(9);
+    expect(addResultFour.updateRange.byteCount).toBe(4);
+
+    expect(removeResultOne.byteOffset).toBe(2);
+    expect(removeResultOne.byteCount).toBe(8);
+
+    expect(removeResultTwo.byteOffset).toBe(2);
+    expect(removeResultTwo.byteCount).toBe(4);
   });
 });

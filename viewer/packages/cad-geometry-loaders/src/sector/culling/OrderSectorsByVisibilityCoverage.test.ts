@@ -8,7 +8,8 @@ import { SectorScene, CadModelMetadata, SectorSceneFactory } from '@reveal/cad-p
 
 import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
-import { createSectorMetadata, SectorTree, createGlContext } from '../../../../../test-utilities';
+import { createV8SectorMetadata, SectorTree, createGlContext } from '../../../../../test-utilities';
+import { File3dFormat } from '@reveal/modeldata-api';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext = createGlContext(64, 64);
@@ -126,7 +127,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 });
 
 function createStubScene(tree: SectorTree): SectorScene {
-  const root = createSectorMetadata(tree);
+  const root = createV8SectorMetadata(tree);
   const sceneFactory = new SectorSceneFactory();
   return sceneFactory.createSectorScene(8, 1, 'Meters', root);
 }
@@ -135,6 +136,8 @@ function createStubModel(modelIdentifier: string, scene: SectorScene, modelMatri
   const cadModel: CadModelMetadata = {
     modelIdentifier,
     modelBaseUrl: `https://localhost/${modelIdentifier}/`,
+    format: File3dFormat.RevealCadModel,
+    formatVersion: 8,
     modelMatrix,
     inverseModelMatrix: new THREE.Matrix4().copy(modelMatrix).invert(),
     scene,

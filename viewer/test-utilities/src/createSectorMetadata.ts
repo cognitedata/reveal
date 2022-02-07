@@ -3,18 +3,18 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
+import { SectorMetadata, V8SectorMetadata, V9SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
 
-export type SectorTree = [number, SectorTree[], THREE.Box3?];
+export type SectorTree = [id: number, subtree: SectorTree[], bounds?: THREE.Box3];
 
 const unitBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
-export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): SectorMetadata {
+export function createV8SectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): V8SectorMetadata {
   const id = tree[0];
   const childIds = tree[1];
   const bounds = tree[2] || unitBox;
   const children = childIds.map((x, i) => {
-    return createSectorMetadata(x, depth + 1, `${path}${i}/`);
+    return createV8SectorMetadata(x, depth + 1, `${path}${i}/`);
   });
 
   const root: SectorMetadata = {
@@ -49,13 +49,46 @@ export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: 
   return root;
 }
 
-export function generateSectorTree(depth: number, childrenPerLevel: number = 4): SectorMetadata {
+export function generateV8SectorTree(depth: number, childrenPerLevel: number = 4): V8SectorMetadata {
   const bounds = unitBox.clone(); // Bounds doesnt matter for this test
 
   const firstChildren = generateSectorTreeChildren(depth - 1, bounds, childrenPerLevel, 1);
   const root: SectorTree = [0, firstChildren.children, bounds];
 
-  return createSectorMetadata(root, depth);
+  return createV8SectorMetadata(root, depth);
+}
+
+export function createV9SectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): V9SectorMetadata {
+  const id = tree[0];
+  const childIds = tree[1];
+  const bounds = tree[2] || unitBox;
+  const children = childIds.map((x, i) => {
+    return createV9SectorMetadata(x, depth + 1, `${path}${i}/`);
+  });
+
+  const root: SectorMetadata = {
+    id,
+    path,
+    depth,
+    bounds,
+    estimatedDrawCallCount: 100,
+    estimatedRenderCost: 1000,
+    downloadSize: 1024 * 1024,
+    maxDiagonalLength: 1.0,
+    minDiagonalLength: 0.5,
+    sectorFileName: `${id}.glb`,
+    children
+  };
+  return root;
+}
+
+export function generateV9SectorTree(depth: number, childrenPerLevel: number = 4): V9SectorMetadata {
+  const bounds = unitBox.clone(); // Bounds doesnt matter for this test
+
+  const firstChildren = generateSectorTreeChildren(depth - 1, bounds, childrenPerLevel, 1);
+  const root: SectorTree = [0, firstChildren.children, bounds];
+
+  return createV9SectorMetadata(root, depth);
 }
 
 function generateSectorTreeChildren(

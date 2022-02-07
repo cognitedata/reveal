@@ -1,0 +1,113 @@
+---
+id: cad-basic
+title: Loading CAD models
+description: Demo shows how to load 3d models from CDF with Cognite3DViewer.
+---
+
+`Cognite3DViewer` is a component that eases the migration from [@cognite/3d-viewer](https://www.npmjs.com/package/@cognite/3d-viewer).
+It has mostly the same API and could be used when you don't need to control the scene or render loop,
+i.e., just want to view some 3d models from CDF.
+
+import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWrapper';
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+```jsx
+import { CogniteClient } from '@cognite/sdk';
+import { Cognite3DViewer } from '@cognite/reveal';
+
+const client = new CogniteClient({
+  appId: 'cognite.reveal.docs.Cognite3DViewer',
+});
+
+// to view models from CDF authentication is required
+await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project: 'publicdata' }}); // With Cognite authentication flow
+
+// some div in your html page for Cognite3DViewer to insert a canvas
+const domElement = document.getElementById('canvas-wrapper');
+
+async function main() {
+  const viewer = new Cognite3DViewer({ sdk: client, domElement });
+
+  // load a model and add it on 3d scene
+  // https://console.cognitedata.com/publicdata/3d-models/4715379429968321/revisions/5688854005909501
+  const model = await viewer.addModel({
+    modelId: 3356984403684032,
+    revisionId: 6664823881595566,
+  });
+  viewer.loadCameraFromModel(model);
+
+  // call viewer.dispose() when you don't need the viewer anymore
+}
+main();
+```
+
+Models can be temporarily hidden using `Cognite3DModel.visible`. Note that 
+the viewer must be explicitly re-rendered after setting the visibility flag:
+
+```js runnable-3x
+model.visible = false;
+viewer.requestRedraw();
+
+setTimeout(() => {
+  model.visible = true;
+  viewer.requestRedraw();
+}, 5000);
+```
+
+Hiding models doesn't free any memory occupied by the model and should only be used
+to temporarily hide a model when it's expected that it will shortly be shown again.
+
+To also reclaim memory and permanently unloading the model, use 
+`Cognite3DViewer.removeModel()`:
+
+```js runnable-3x
+viewer.removeModel(model)
+```
+
+## Only loading a part of the model
+
+In some cases, it might be useful to restrict the area for which geometry is loaded to only show a partial
+view. This can be done using a `geometryFilter` which allows only loading geometry within a provided box:
+
+```js runnable-3x
+viewer.models.forEach(x => viewer.removeModel(x));
+
+async function addFilteredModel() {
+  const model = await viewer.addModel({
+    modelId: 3356984403684032,
+    revisionId: 6664823881595566,
+    geometryFilter: {
+      // Only load geometry inside a box around origin with 50x50 horizontal extent and 10 vertical extent.
+      boundingBox: new THREE.Box3(new THREE.Vector3(75, 50, 49), new THREE.Vector3(125, 100, 59))
+    }
+  });
+  viewer.fitCameraToModel(model);
+}
+addFilteredModel();
+```
+
+By default, the bounds provided must be in "CDF coordinates". This is e.g. suitable if you are retrieving coordinates
+directly from the [Nodes API](https://docs.cognite.com/api/v1/#operation/get3DNodes) to for instance show the area
+around a given node. If the coordinates are in "Reveal coordinates" (i.e. in
+[the WebGL coordinate system](https://www.tutorialspoint.com/webgl/webgl_basics.htm)) the `geometryFilter` can be
+set up using `isBoundingBoxInModelCoordinates`:
+
+```js runnable-3x
+viewer.models.forEach(x => viewer.removeModel(x));
+
+async function addFilteredModel() {
+  const model = await viewer.addModel({
+    modelId: 3356984403684032,
+    revisionId: 6664823881595566,
+    geometryFilter: {
+      // Only load geometry inside a box around origin with 50x50 horizontal extent and 10 vertical extent.
+      boundingBox: new THREE.Box3(new THREE.Vector3(75, 49, -100), new THREE.Vector3(125, 59, -50)),
+      // Instruct Reveal that the coordinates already are relative to the coordinates of the model
+      isBoundingBoxInModelCoordinates: true
+    }
+  });
+  viewer.fitCameraToModel(model);
+}
+addFilteredModel();
+```
