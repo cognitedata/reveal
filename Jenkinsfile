@@ -415,6 +415,26 @@ pods {
     }
 
     if (isProduction) {
+      stageWithNotify("Spinnaker pipelines", CONTEXTS.spinnaker_pipeline) {
+        container('bazel') {
+          def changedApps = sh(label: "Which spinnaker apps were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(spinnaker_pipeline, //...)'", returnStdout: true)
+          print(changedApps)
+          if (changedApps) {
+            def tobeDeployedApp = []
+            changedApps.split('\n').each {
+              def file = sh(script: "bazel run ${it}", returnStdout: true)
+              print(file)
+              tobeDeployedApp.add(file)
+            }
+            deploySpinnakerPipelineConfigs.upload(
+              tobeDeployedApp: tobeDeployedApp // ['spinnaker-config/<app>/app-config.yaml']
+            )
+          }
+        }
+      }
+    }
+
+    if (isProduction) {
       stageWithNotify("Spinnaker deployments", CONTEXTS.spinnaker_deployments) {
         container('bazel') {
           def getReleases = sh(
@@ -459,26 +479,6 @@ pods {
 
               slackMessages.add("- `${params.name}` (<https://spinnaker.cognite.ai/#/applications/${params.name}/executions|pipeline>)")
             }
-          }
-        }
-      }
-    }
-
-    if (isProduction) {
-      stageWithNotify("Spinnaker pipelines", CONTEXTS.spinnaker_pipeline) {
-        container('bazel') {
-          def changedApps = sh(label: "Which spinnaker apps were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(spinnaker_pipeline, //...)'", returnStdout: true)
-          print(changedApps)
-          if (changedApps) {
-            def tobeDeployedApp = []
-            changedApps.split('\n').each {
-              def file = sh(script: "bazel run ${it}", returnStdout: true)
-              print(file)
-              tobeDeployedApp.add(file)
-            }
-            deploySpinnakerPipelineConfigs.upload(
-              tobeDeployedApp: tobeDeployedApp // ['spinnaker-config/<app>/app-config.yaml']
-            )
           }
         }
       }
