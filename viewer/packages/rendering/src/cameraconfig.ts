@@ -16,20 +16,21 @@ export interface SuggestedCameraConfig {
 const MAX_VERTICAL_ANGLE = (30 / 180) * Math.PI;
 
 function ensureYAngleBelowThresholdForNormalizedVector(direction: THREE.Vector3): void {
-  if (direction.y >= Math.sin(MAX_VERTICAL_ANGLE)) {
-    const xzProjection = new THREE.Vector2(direction.x, direction.z);
-    const xzLength = xzProjection.length();
-    if (xzLength <= 1e-4) {
-      xzProjection.x = 1.0;
-      xzProjection.y = 1.0;
-    }
-
-    xzProjection.normalize().multiplyScalar(Math.cos(MAX_VERTICAL_ANGLE));
-    direction.x = xzProjection.x;
-    direction.z = xzProjection.y;
-
-    direction.y = Math.sin(MAX_VERTICAL_ANGLE);
+  if (direction.y < Math.sin(MAX_VERTICAL_ANGLE)) {
+    return;
   }
+
+  let xzProjection = new THREE.Vector2(direction.x, direction.z);
+  const xzLength = xzProjection.length();
+
+  xzProjection = xzLength > 1e-4 ? xzProjection : new THREE.Vector2(1.0, 1.0);
+
+  xzProjection.normalize().multiplyScalar(Math.cos(MAX_VERTICAL_ANGLE));
+
+  direction.x = xzProjection.x;
+  direction.z = xzProjection.y;
+
+  direction.y = Math.sin(MAX_VERTICAL_ANGLE);
 }
 
 export function suggestCameraConfig(rootSector: SectorMetadata, modelMatrix: THREE.Matrix4): SuggestedCameraConfig {
