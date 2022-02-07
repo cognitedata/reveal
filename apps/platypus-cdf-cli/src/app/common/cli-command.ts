@@ -1,6 +1,6 @@
 import { Arguments, Argv, CommandModule } from 'yargs';
 
-import { CommandArgument } from '@cognite/platypus-cdf-cli/app/types';
+import { BaseArgs, CommandArgument } from '@cognite/platypus-cdf-cli/app/types';
 import { promptQuestions } from '../utils/enquirer-utils';
 import { CONSTANTS } from '@cognite/platypus-cdf-cli/app/constants';
 import Response from '../utils/logger';
@@ -43,8 +43,13 @@ export abstract class CLICommand implements CommandModule {
       });
   }
 
-  async handler<T>(args: Arguments<T>) {
+  async handler<T>(args: Arguments<BaseArgs & T>) {
     const validationResult = this.commandBuilder.validateArgs(args, this._args);
+
+    if (!args.interactive && !validationResult.valid) {
+      Response.error(JSON.stringify(validationResult.errors));
+      throw new Error('Invalid arguments');
+    }
 
     if (!validationResult.valid) {
       const prompts = this.commandBuilder.generatePromptsFromErrors(

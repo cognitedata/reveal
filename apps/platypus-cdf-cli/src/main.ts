@@ -25,8 +25,14 @@ scriptName('platypus')
   .command(status)
   .option('verbose', {
     type: 'boolean',
+    alias: 'v',
     default: false,
     describe: 'Show debug messages',
+  })
+  .option('interactive', {
+    type: 'boolean',
+    default: true,
+    describe: 'Show prompts and ask for user inputs',
   })
   .version()
   .help(true)
