@@ -1,3 +1,4 @@
+
 function getNumber(arg: string | undefined): number | undefined {
   return typeof arg === 'string' ? parseInt(arg, 10) : arg
 }
