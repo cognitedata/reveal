@@ -17,7 +17,7 @@ type Group = {
   files: FileInfo[];
 };
 
-const reduceToGroups = (
+export const reduceToGroups = (
   acc: Record<string, Group>,
   file: FileInfo,
   fieldKey: string

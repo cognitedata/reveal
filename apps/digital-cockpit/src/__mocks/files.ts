@@ -7,16 +7,17 @@ export class MockFiles {
 
   static single = (overwrites?: Partial<FileInfo>, i?: number): FileInfo => {
     const id = randomId();
+    const type = this.documentTypes[(i || 0) % this.documentTypes.length] || '';
     return {
       id,
-      name: `MyFile_${id}`,
+      name: `${type}_${id}`,
       uploaded: true,
       uploadedTime: new Date(),
       lastUpdatedTime: new Date(),
       createdTime: new Date(),
       metadata: {
-        documentType:
-          this.documentTypes[(i || 0) % this.documentTypes.length] || '',
+        documentType: type,
+        documentDescription: `[${type}] Schematic document of asset`,
       },
       ...overwrites,
     };

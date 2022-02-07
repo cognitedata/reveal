@@ -24,6 +24,7 @@ export const rootAssets: Asset[] = [
     description: '',
     metadata: {
       model_id: '455529105706499',
+      a_really_long_field: 'with a really very long field value',
     },
     id: 5937867326653296,
   },
@@ -299,3 +300,9 @@ export const getAggregates = (
       }
     : undefined;
 };
+
+export class MockAssets {
+  static single = () => rootAssets[0];
+
+  static multiple = () => rootAssets;
+}
