@@ -12,8 +12,6 @@ import { createGlContext } from '../../../../test-utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { EffectRenderManager } from './EffectRenderManager';
 
-// type Mutable<T> = { -readonly [P in keyof T]: T[P] };
-
 describe('EffectRenderManager', () => {
   const materialManager = new CadMaterialManager();
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
