@@ -26,7 +26,6 @@ out vec4 V;
 out vec4 sphereNormal;
 
 out vec3 v_color;
-out vec3 v_normal;
 
 void main() {
     v_treeIndex = a_treeIndex;

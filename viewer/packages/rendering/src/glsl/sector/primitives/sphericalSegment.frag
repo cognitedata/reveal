@@ -24,7 +24,6 @@ in vec4 sphereNormal;
 
 in float v_treeIndex;
 in vec3 v_color;
-in vec3 v_normal;
 
 uniform int renderMode;
 
