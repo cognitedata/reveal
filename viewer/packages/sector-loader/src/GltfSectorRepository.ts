@@ -15,7 +15,9 @@ export class GltfSectorRepository implements SectorRepository {
 
   constructor(sectorFileProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
     this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider, materialManager);
-    this._gltfCache = new MemoryRequestCache(300, async consumedSector => consumedSector.group?.dereference());
+    this._gltfCache = new MemoryRequestCache(300,
+                                             async consumedSector => consumedSector.group?.dereference(),
+                                             50);
   }
 
   private async getEmptySectorWithLod(
