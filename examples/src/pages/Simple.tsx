@@ -13,6 +13,7 @@ import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -52,7 +53,8 @@ export function Simple() {
 
       scene.add(model);
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                                                  model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(75, 2, near, far);
       const controls = new CameraControls(camera, renderer.domElement);
       controls.setLookAt(

@@ -21,6 +21,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -191,7 +192,9 @@ export function SectorWithPointcloud() {
         handleSettingsChanged
       );
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } =
+        suggestCameraConfig(model.cadModelMetadata.scene.root,
+                            model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,

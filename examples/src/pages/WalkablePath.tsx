@@ -12,6 +12,7 @@ import { GUI, GUIController } from 'dat.gui';
 import { authenticateSDKWithEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -66,7 +67,7 @@ export function WalkablePath() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      
+
       const client = new CogniteClient({
         appId: 'reveal.example.walkable-path',
       });
@@ -84,7 +85,8 @@ export function WalkablePath() {
       const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
       scene.add(model);
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                                                  model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,

@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import { registerVisualTest } from '../../../visual_tests';
+import { suggestCameraConfig } from '../../../utils/cameraConfig';
 
 function RotationTestPage() {
   return (
@@ -19,7 +20,8 @@ function RotationTestPage() {
         model.setModelTransformation(newMatrix);
 
         return {
-          cameraConfig: model.suggestCameraConfig(),
+          cameraConfig: suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                            model.getModelTransformation())
         };
       }}
     />
