@@ -45,7 +45,7 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { CameraManager, CameraManagerInterface } from '@reveal/camera-manager';
+import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
@@ -99,7 +99,7 @@ export class Cognite3DViewer {
 
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
-  private readonly _cameraManager: CameraManagerInterface;
+  private readonly _cameraManager: CameraManager;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
@@ -117,9 +117,6 @@ export class Cognite3DViewer {
 
   private readonly _models: CogniteModelBase[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
-
-  private readonly _automaticNearFarPlane: boolean;
-  private readonly _automaticControlsSensitivity: boolean;
 
   private isDisposed = false;
 
@@ -196,9 +193,6 @@ export class Cognite3DViewer {
     this._renderer = options.renderer ?? new THREE.WebGLRenderer();
     this._renderer.localClippingEnabled = true;
 
-    this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
-    this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? true;
-
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
@@ -212,20 +206,12 @@ export class Cognite3DViewer {
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
     this.spinner.opacity = Math.max(0.2, options.loadingIndicatorStyle?.opacity ?? 1.0);
 
-    this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-    // TODO savokr 28-10-2021: Consider removing default camera position initialization
-    this.camera.position.x = 30;
-    this.camera.position.y = 10;
-    this.camera.position.z = 50;
-    this.camera.lookAt(new THREE.Vector3());
-
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
 
-    this._cameraManager = new CameraManager(this.camera, this.canvas, this.modelIntersectionCallback.bind(this));
-    this._cameraManager.automaticControlsSensitivity = this._automaticControlsSensitivity;
-    this._cameraManager.automaticNearFarPlane = this._automaticNearFarPlane;
-
+    this._cameraManager = options.cameraManager ?? new DefaultCameraManager(this.canvas, this.modelIntersectionCallback.bind(this));
+    this.camera = this._cameraManager.getCamera();
+    
     this._cameraManager.on('cameraChange', (event: any) => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -461,7 +447,7 @@ export class Cognite3DViewer {
     }
   }
 
-  get cameraManager(): CameraManagerInterface {
+  get cameraManager(): CameraManager {
     return this._cameraManager;
   }
 
@@ -679,7 +665,7 @@ export class Cognite3DViewer {
     object.updateMatrixWorld(true);
     this._extraObjects.push(object);
     this.renderController.redraw();
-    this.recalculateBoundingBox(this.camera);
+    this.recalculateBoundingBox();
   }
 
   /**
@@ -702,7 +688,7 @@ export class Cognite3DViewer {
       this._extraObjects.splice(index, 1);
     }
     this.renderController.redraw();
-    this.recalculateBoundingBox(this.camera);
+    this.recalculateBoundingBox();
   }
 
   /**
@@ -1103,7 +1089,7 @@ export class Cognite3DViewer {
       if (didResize) {
         this.requestRedraw();
       }
-      this.recalculateBoundingBox(this.camera);
+      this.recalculateBoundingBox();
       this._cameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       renderController.update();
       this.revealManager.update(this.camera);
@@ -1130,12 +1116,9 @@ export class Cognite3DViewer {
   }
 
   /** @private */
-  private recalculateBoundingBox(camera: THREE.PerspectiveCamera) {
+  private recalculateBoundingBox() {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
-      return;
-    }
-    if (!this._automaticControlsSensitivity && !this._automaticNearFarPlane) {
       return;
     }
 

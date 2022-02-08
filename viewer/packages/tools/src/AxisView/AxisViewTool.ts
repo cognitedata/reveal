@@ -16,7 +16,6 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import { CameraManagerInterface } from '@reveal/camera-manager';
 import { Cognite3DViewer } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
 
@@ -196,7 +195,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const targetPosition = intersects[0].object.position.clone().normalize();
     const targetUp = (intersects[0].object.userData.upVector as THREE.Vector3).clone();
 
-    this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraManager, targetPosition, targetUp);
+    this.moveCameraTo(targetPosition, targetUp);
 
     return true;
   }
@@ -341,12 +340,12 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   }
 
   private moveCameraTo(
-    camera: THREE.PerspectiveCamera,
-    cameraManager: CameraManagerInterface,
     targetAxis: THREE.Vector3,
     targetUpAxis: THREE.Vector3
   ) {
-    const currentCameraPosition = camera.position.clone();
+    const cameraManager = this._viewer.cameraManager;
+
+    const currentCameraPosition = cameraManager.getCameraPosition();
     const cameraTarget = cameraManager.getCameraTarget();
 
     const targetRelativeStartPosition = currentCameraPosition.clone().sub(cameraTarget);
@@ -363,7 +362,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const forward = targetAxis.clone();
 
-    const fromRotation = camera.quaternion.clone();
+    const fromRotation = cameraManager.getCameraRotation();
     const toRotation = new THREE.Quaternion().setFromRotationMatrix(
       new THREE.Matrix4().makeBasis(targetUpAxis.clone().cross(forward), targetUpAxis, forward)
     );
@@ -376,7 +375,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const tmpPosition = new THREE.Vector3();
     const tmpRotation = new THREE.Quaternion();
-    let cachedCameraControlsEnabled: boolean;
+    
     const tween = animation
       .to(to, this._layoutConfig.animationSpeed)
       .onUpdate(() => {
@@ -390,19 +389,15 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
         tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
 
-        camera.position.copy(tmpPosition);
-        camera.setRotationFromQuaternion(tmpRotation);
-      })
-      .start(TWEEN.now())
-      .onStart(() => {
-        cachedCameraControlsEnabled = cameraManager.cameraManipulationEnabled;
-        cameraManager.cameraManipulationEnabled = false;
+        cameraManager.setCameraPosition(tmpPosition);
+        cameraManager.setCameraRotation(tmpRotation);
       })
       .onComplete(() => {
-        cameraManager.setCameraPosition(camera.position);
-        cameraManager.setCameraTarget(cameraTarget);
-        cameraManager.cameraManipulationEnabled = cachedCameraControlsEnabled;
-      });
+        //cameraManager.setCameraPosition(tmpPosition);
+        //cameraManager.setCameraTarget(cameraTarget);
+      })
+      .start(TWEEN.now());
+
     tween.update(TWEEN.now());
   }
 }
