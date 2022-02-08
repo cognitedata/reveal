@@ -20,16 +20,37 @@ describe('EffectRenderManager', () => {
   // Emulate WebGL2
   (context as WebGL2RenderingContext).createVertexArray = jest.fn();
   (context as WebGL2RenderingContext).bindVertexArray = jest.fn();
+
   const renderer = new THREE.WebGLRenderer({ context });
+  const setRenderTargetSpy = jest.spyOn(renderer, 'setRenderTarget');
+  const getRenderTargetSpy = jest.spyOn(renderer, 'getRenderTarget');
+
   const camera = new THREE.PerspectiveCamera();
   const scene = new THREE.Scene();
   const options: RenderOptions = {};
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+    setRenderTargetSpy.mockImplementation(jest.fn());
+    getRenderTargetSpy.mockImplementation(jest.fn());
+  });
 
   test('construct', () => {
     expect(() => new EffectRenderManager(renderer, scene, materialManager, options)).not.toThrow();
   });
 
   test('render() resets settings after completed', () => {
+    // Prepare mocks
+    let threeInternalTarget: THREE.WebGLRenderTarget | null;
+
+    setRenderTargetSpy.mockImplementation(
+      jest.fn(target => {
+        threeInternalTarget = target as THREE.WebGLRenderTarget | null;
+      })
+    );
+
+    getRenderTargetSpy.mockImplementation(jest.fn(() => threeInternalTarget));
+
     // Arrange
     const target = new THREE.WebGLRenderTarget(64, 64);
     renderer.setRenderTarget(target);
@@ -42,7 +63,9 @@ describe('EffectRenderManager', () => {
     effectManager.render(camera);
 
     // Assert
-    expect(renderer.getRenderTarget()).toBe(target);
+    const setRenderTargetCalls = setRenderTargetSpy.mock.calls;
+    expect(setRenderTargetCalls.length).toBeGreaterThan(1);
+    expect(setRenderTargetCalls[setRenderTargetCalls.length - 1][0]).toBe(target);
     expect(renderer.getClearAlpha()).toBe(0.77);
     expect(materialManager.getRenderMode()).toBe(RenderMode.PackColorAndNormal);
   });
@@ -85,6 +108,7 @@ describe('EffectRenderManager', () => {
     };
     const effectManager = new EffectRenderManager(webgl2Renderer, scene, materialManager, options);
     const setRenderTargetSpy = jest.spyOn(webgl2Renderer, 'setRenderTarget');
+    setRenderTargetSpy.mockImplementation(jest.fn());
 
     // Act
     effectManager.render(camera);

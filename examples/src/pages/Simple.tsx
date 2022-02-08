@@ -77,7 +77,7 @@ export function Simple() {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           revealManager.resetRedraw();
         }
       });

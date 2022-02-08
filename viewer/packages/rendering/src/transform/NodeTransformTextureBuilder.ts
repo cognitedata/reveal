@@ -16,8 +16,7 @@ export class NodeTransformTextureBuilder {
   private readonly _handleTransformChangedBound = this.handleTransformChanged.bind(this);
 
   constructor(treeIndexCount: number, transformProvider: NodeTransformProvider) {
-    const textures = allocateTextures(treeIndexCount);
-    this._transformOverrideIndexTexture = textures.transformOverrideIndexTexture;
+    this._transformOverrideIndexTexture = allocateTransformOverrideTexture(treeIndexCount);
     this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
     this._transformProvider = transformProvider;
 
@@ -60,9 +59,9 @@ export class NodeTransformTextureBuilder {
 
   private setOverrideIndex(treeIndex: number, transformIndex: number) {
     const data = this._transformOverrideIndexTexture.image.data;
-    data[treeIndex * 3 + 0] = (transformIndex + 1) >> 16;
-    data[treeIndex * 3 + 1] = (transformIndex + 1) >> 8;
-    data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
+    data[treeIndex * 4 + 0] = (transformIndex + 1) >> 16;
+    data[treeIndex * 4 + 1] = (transformIndex + 1) >> 8;
+    data[treeIndex * 4 + 2] = (transformIndex + 1) >> 0;
     this._transformOverrideIndexTexture.needsUpdate = true;
   }
 
@@ -84,18 +83,18 @@ export class NodeTransformTextureBuilder {
   }
 }
 
-function allocateTextures(treeIndexCount: number): { transformOverrideIndexTexture: THREE.DataTexture } {
+function allocateTransformOverrideTexture(treeIndexCount: number): THREE.DataTexture {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
 
   // Texture for holding node transforms (translation, scale, rotation)
-  const transformOverrideIndexBuffer = new Uint8ClampedArray(3 * textureElementCount);
+  const transformOverrideIndexBuffer = new Uint8ClampedArray(4 * textureElementCount);
   const transformOverrideIndexTexture = new THREE.DataTexture(
     transformOverrideIndexBuffer,
     width,
     height,
-    THREE.RGBFormat
+    THREE.RGBAFormat
   );
 
-  return { transformOverrideIndexTexture };
+  return transformOverrideIndexTexture;
 }
