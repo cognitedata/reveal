@@ -6,8 +6,10 @@ import { Asset } from '@cognite/sdk';
 import EmptyState from 'components/emptyState';
 import { Modal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
+import { useWellInspectWellboreExternalAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { DIGITAL_ROCK_SAMPLES_ACCESSORS } from 'modules/wellSearch/constants';
 import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/asset/digitalRocks';
+import { getWellboreExternalAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 import { FlexRow } from 'styles/layout';
 
 import { DigitalRocksSampleWrapper } from './elements';
@@ -18,6 +20,9 @@ export type Props = {
 };
 
 const DigitalRockSamples: React.FC<Props> = ({ digitalRock }) => {
+  const wellboreAssetIdMap = useWellInspectWellboreExternalAssetIdMap();
+  const wellboreAssetIdReverseMap =
+    getWellboreExternalAssetIdReverseMap(wellboreAssetIdMap);
   const { isLoading, digitalRockSamples } = useDigitalRocksSamples([
     digitalRock,
   ]);
@@ -80,7 +85,8 @@ const DigitalRockSamples: React.FC<Props> = ({ digitalRock }) => {
       ...asset,
       metadata: {
         ...asset.metadata,
-        wellboreId: digitalRock.parentId?.toString(),
+        wellboreId:
+          wellboreAssetIdReverseMap[digitalRock.parentExternalId || 0],
       },
     };
     setViewGrainAnalysis(digitalRockSample as Asset);

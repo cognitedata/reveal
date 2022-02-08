@@ -22,7 +22,7 @@ const getDigitalRocksGrainPartitioningFetchFunction = (
 ) => {
   if (metadata) {
     return (extraPayload: Record<string, unknown>) => {
-      return getCogniteSDKClient().assets.search({
+      return getCogniteSDKClient().sequences.search({
         ...metadata,
         filter: merge(metadata.filter, extraPayload),
       });
@@ -39,20 +39,22 @@ export const useGrainPartionings = (digitalRockSample: Asset) => {
   return useMemo(() => {
     const wbId = get(digitalRockSample, 'metadata.wellboreId');
     let grainPartionings: SequenceData[] | undefined;
-    (wellboreData[wbId].digitalRocks as AssetData[]).forEach((digitalRock) => {
-      if (digitalRock.asset.id === digitalRockSample.parentId) {
-        (digitalRock.digitalRockSamples as DigitalRockSampleData[]).forEach(
-          (digitalRockSampleRow) => {
-            if (
-              digitalRockSampleRow.asset.id === digitalRockSample.id &&
-              digitalRockSampleRow.gpart
-            ) {
-              grainPartionings = digitalRockSampleRow.gpart;
+    (wellboreData[wbId]?.digitalRocks || ([] as AssetData[])).forEach(
+      (digitalRock) => {
+        if (digitalRock.asset.id === digitalRockSample.parentId) {
+          (digitalRock.digitalRockSamples as DigitalRockSampleData[]).forEach(
+            (digitalRockSampleRow) => {
+              if (
+                digitalRockSampleRow.asset.id === digitalRockSample.id &&
+                digitalRockSampleRow.gpart
+              ) {
+                grainPartionings = digitalRockSampleRow.gpart;
+              }
             }
-          }
-        );
+          );
+        }
       }
-    });
+    );
 
     if (isLoading && grainPartionings) {
       setIsLoading(false);

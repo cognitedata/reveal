@@ -4,6 +4,8 @@ import { log } from 'utils/log';
 
 import { Sequence } from '@cognite/sdk';
 
+import { showErrorMessage } from '../../../../components/toast';
+
 export interface SequenceFilter {
   exclude?: string;
   filter?: any;
@@ -52,17 +54,14 @@ export const getChunkNumberList = (list: number[], size: number) => {
 
 export async function getSequencesByAssetIds(
   wellboreIds: number[],
-  filter: any = {}
+  fetcher: any
 ) {
-  if (filter) {
+  if (fetcher) {
     const idChunkList = getChunkNumberList(wellboreIds, 100);
     const responses = await Promise.all(
       idChunkList.map((idChunk: number[]) =>
-        getCogniteSDKClient().sequences.search({
-          filter: {
-            ...filter,
-            assetIds: idChunk,
-          },
+        fetcher({
+          assetIds: idChunk,
         })
       )
     );
@@ -71,6 +70,7 @@ export async function getSequencesByAssetIds(
   log(
     'fetcher configurations not found while fetching sequences by wellbore id'
   );
+  showErrorMessage('Digital Rocks not configured');
   return Promise.resolve([]);
 }
 

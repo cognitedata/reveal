@@ -3,6 +3,8 @@ import get from 'lodash/get';
 import { useDeepMemo } from 'hooks/useDeep';
 import { WellboreIdMap } from 'modules/wellSearch/types';
 
+import { WellboreExternalAssetIdMap } from '../../wellSearch/types';
+
 import { useWellInspectSelectedWellbores } from './useWellInspect';
 
 export const useWellInspectWellboreAssetIdMap = () => {
@@ -20,6 +22,27 @@ export const useWellInspectWellboreAssetIdMap = () => {
         [wellbore.id]: wellboreAssetId,
       };
     }, {});
+  }, [wellbores]);
+};
+
+export const useWellInspectWellboreExternalAssetIdMap = () => {
+  const wellbores = useWellInspectSelectedWellbores();
+
+  return useDeepMemo(() => {
+    return (wellbores || []).reduce<WellboreExternalAssetIdMap>(
+      (assetIdMap, wellbore) => {
+        const wellboreAssetId = get(
+          wellbore,
+          'sourceWellbores[0].externalId',
+          wellbore?.externalId
+        );
+        return {
+          ...assetIdMap,
+          [wellbore.id]: wellboreAssetId,
+        };
+      },
+      {}
+    );
   }, [wellbores]);
 };
 

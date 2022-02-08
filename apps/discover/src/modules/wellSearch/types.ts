@@ -84,7 +84,7 @@ export interface TrajectoryRows {
 }
 
 export interface WellboreDigitalRockSamples {
-  wellboreId: number;
+  wellboreId: string;
   digitalRockId: number;
   digitalRockSamples: Asset[];
 }
@@ -118,7 +118,7 @@ interface SetGrainAnalysisData {
 
 interface SetWellboreAssets {
   type: typeof SET_WELLBORE_ASSETS;
-  data: { [key: number]: Asset[] };
+  data: { [key: string]: Asset[] };
   assetType: AssetTypes;
 }
 
@@ -236,7 +236,7 @@ export interface AssetData {
 }
 
 export interface WellboreData {
-  [key: number]: {
+  [key: string]: {
     fit?: SequenceData[];
     lot?: SequenceData[];
     documents?: DocumentType[];
@@ -331,6 +331,10 @@ export type WellboreIdMap = {
 
 export type WellboreAssetIdMap = {
   [key: number]: number;
+};
+
+export type WellboreExternalAssetIdMap = {
+  [key: string]: string;
 };
 
 export type WellboreExternalIdMap = {

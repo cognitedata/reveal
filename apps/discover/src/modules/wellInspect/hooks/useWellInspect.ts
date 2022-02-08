@@ -63,12 +63,13 @@ export const useWellInspectSelectedWellbores = (filterByIds?: WellboreId[]) => {
     if (filterByIds) {
       return wellbores.filter(
         (wellbore) =>
-          selectedWellboreIds[wellbore.id] && filterByIds.includes(wellbore.id)
+          selectedWellboreIds[wellbore.id] &&
+          filterByIds.includes(String(wellbore.id))
       );
     }
 
     return wellbores.filter((wellbore) => selectedWellboreIds[wellbore.id]);
-  }, [wells, selectedWellboreIds]);
+  }, [wells, selectedWellboreIds, filterByIds]);
 };
 
 export const useWellInspectSelectedWellboreIds = () => {

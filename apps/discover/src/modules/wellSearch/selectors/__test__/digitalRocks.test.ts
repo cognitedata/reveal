@@ -25,6 +25,9 @@ jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
   useWellInspectSelectedWells: jest.fn(),
   useWellInspectSelectedWellbores: jest.fn(),
   useWellInspectSelectedWellboreIds: jest.fn(),
+  useWellInspectWellboreExternalAssetIdMap: () => ({
+    parentExternalId: 7591554,
+  }),
 }));
 
 describe('useSelectedWellBoresDigitalRocks', () => {
@@ -67,6 +70,7 @@ describe('useDigitalRocksSamples', () => {
           getMockDigitalRockAsset({
             id: 1123123,
             parentId: 7591554,
+            parentExternalId: 'parentExternalId',
           }),
         ]),
       {
@@ -81,6 +85,6 @@ describe('useDigitalRocksSamples', () => {
     const store = getMockedStore(mockedWellStateWithSelectedWells);
     const view = await renderHookWithStore(store);
 
-    expect(view).toEqual({ isLoading: true, digitalRockSamples: [] });
+    expect(view).toEqual({ isLoading: false, digitalRockSamples: [] });
   });
 });

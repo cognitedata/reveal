@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Row } from 'react-table';
 
 import get from 'lodash/get';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
-import uniq from 'lodash/uniq';
 import { shortDateTime } from 'utils/date';
 
 import { Asset } from '@cognite/sdk';
@@ -12,11 +11,14 @@ import { Asset } from '@cognite/sdk';
 import EmptyState from 'components/emptyState';
 import { Loading } from 'components/loading/Loading';
 import { Table } from 'components/tablev3';
+import { useDeepEffect } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectWellboreExternalAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
 import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/asset/digitalRocks';
 import { Wellbore } from 'modules/wellSearch/types';
+import { getWellboreExternalAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 
 import { WellboreSelectionWrapper } from '../../elements';
 import WellboreSelectionDropdown from '../common/WellboreSelectionDropdown';
@@ -76,27 +78,49 @@ const tableOptions = {
 };
 
 type SelectedMap = {
-  [key: number]: boolean;
+  [key: string]: boolean;
 };
 
 export const DigitalRocks: React.FC = () => {
   const { isLoading, digitalRocks } = useSelectedWellBoresDigitalRocks();
-
   const userPrefferedUnit = useUserPreferencesMeasurement();
+  const wellboreAssetIdMap = useWellInspectWellboreExternalAssetIdMap();
+  const wellboreAssetIdReverseMap =
+    getWellboreExternalAssetIdReverseMap(wellboreAssetIdMap);
 
-  const wellboreIdsWithDigitalRocks = uniq(
-    digitalRocks.map((row) => row.parentId)
-  ) as number[];
+  const [selectedWellbores, setSelectedWellbores] = useState<Wellbore[]>([]);
+  const [wellboreIdsWithDigitalRocks, setWellboreIdsWithDigitalRocks] =
+    useState<string[]>([]);
+
+  useDeepEffect(() => {
+    setWellboreIdsWithDigitalRocks(
+      digitalRocks.reduce((previous, current) => {
+        if (
+          current.parentExternalId &&
+          !previous.includes(
+            wellboreAssetIdReverseMap[current.parentExternalId]
+          )
+        ) {
+          return [
+            ...previous,
+            wellboreAssetIdReverseMap[current.parentExternalId],
+          ];
+        }
+
+        return previous;
+      }, [] as string[])
+    );
+  }, [digitalRocks]);
 
   const wellboresWithDigitalRocks = useWellInspectSelectedWellbores(
     wellboreIdsWithDigitalRocks
   );
 
-  const [selectedWellbores, setSelectedWellbores] = useState<Wellbore[]>([]);
-
-  if (!selectedWellbores.length && wellboresWithDigitalRocks.length) {
-    setSelectedWellbores([wellboresWithDigitalRocks[0]]);
-  }
+  useEffect(() => {
+    if (!selectedWellbores.length && wellboresWithDigitalRocks.length) {
+      setSelectedWellbores([wellboresWithDigitalRocks[0]]);
+    }
+  }, [wellboresWithDigitalRocks]);
 
   const [expandedIds, setExpandedIds] = useState<SelectedMap>({});
 
@@ -108,10 +132,15 @@ export const DigitalRocks: React.FC = () => {
       ),
     [selectedWellbores]
   );
+
   const filteredDigitalRocks = useMemo(
     () =>
-      digitalRocks.filter(
-        (row) => selectedWellboreIdsMap[row.parentId as number]
+      digitalRocks.filter((row) =>
+        row.parentExternalId
+          ? selectedWellboreIdsMap[
+              wellboreAssetIdReverseMap[row.parentExternalId]
+            ]
+          : false
       ),
     [digitalRocks, selectedWellboreIdsMap]
   );
@@ -140,7 +169,6 @@ export const DigitalRocks: React.FC = () => {
   }, []);
 
   const renderRowSubComponent = useCallback(
-    // ({ row }: { row: { original: Asset } }) => (
     ({ row }) => (
       <DigitalRockSamplesTable digitalRock={row.original as Asset} />
     ),

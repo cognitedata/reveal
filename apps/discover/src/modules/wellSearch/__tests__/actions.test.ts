@@ -143,21 +143,31 @@ describe('Well search Actions', () => {
     it(`should fetch digital rock samples for the given digital rock list`, async () => {
       const { store } = getDefaultTestValues();
       const wellboreId = 123;
-      const digitalRocks = [{ id: 123, parentId: wellboreId }] as Asset[];
+      const wellboreAssetIdMap = {
+        'wellbore:123': '123',
+      };
+
+      const digitalRocks = [
+        { id: 123, parentExternalId: 'wellbore:123', parentId: wellboreId },
+      ] as Asset[];
       const fetcher: any = () =>
         new Promise((resolve) => {
           resolve([]);
         });
 
       await store.dispatch(
-        wellSearchActions.getDigitalRockSamples(digitalRocks, fetcher) as any
+        wellSearchActions.getDigitalRockSamples(
+          digitalRocks,
+          wellboreAssetIdMap,
+          fetcher
+        ) as any
       );
       expect(store.getActions()).toEqual([
         {
           type: SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
           data: [
             {
-              wellboreId,
+              wellboreId: String(wellboreId),
               digitalRockId: digitalRocks[0].id,
               digitalRockSamples: [],
             },

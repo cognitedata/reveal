@@ -25,6 +25,7 @@ import {
   WELL_SET_SELECTED_COLUMN,
   WELL_REMOVE_SELECTED_COLUMN,
   WellboreAssetIdMap,
+  WellboreExternalAssetIdMap,
 } from './types';
 import { getWellboreAssetIdReverseMap } from './utils/common';
 
@@ -150,8 +151,44 @@ function getWellboreAssets(
   };
 }
 
+function getWellboreAssetsByExternalParentIds(
+  wellboreIds: number[],
+  wellboreAssetIdMap: WellboreExternalAssetIdMap,
+  assetType: AssetTypes,
+  fetcher: any
+): ThunkResult<void> {
+  return (dispatch) => {
+    return wellSearchService
+      .getAssetsByExternalParentIds(
+        wellboreIds.map((id) => wellboreAssetIdMap[id]),
+        fetcher
+      )
+      .then((data: Asset[]) => {
+        const wellboreAssets = groupBy(data, 'parentExternalId') as {
+          [x: string]: any;
+        };
+
+        wellboreIds.forEach((wellboreId) => {
+          if (!wellboreAssets[wellboreId]) {
+            wellboreAssets[wellboreId] = [];
+          }
+        });
+
+        dispatch({
+          type: SET_WELLBORE_ASSETS,
+          data: wellboreIds.reduce((previousValue, currentValue) => {
+            const data = wellboreAssets[wellboreAssetIdMap[currentValue]];
+            return { ...previousValue, [currentValue]: data || [] };
+          }, {}),
+          assetType,
+        });
+      });
+  };
+}
+
 function getDigitalRockSamples(
   digitalRocks: Asset[],
+  wellboreAssetIdReverseMap: { [key: string]: string },
   fetcher: any
 ): ThunkResult<void> {
   return (dispatch) => {
@@ -165,7 +202,8 @@ function getDigitalRockSamples(
             return [
               ...prev,
               {
-                wellboreId: current.parentId as number,
+                wellboreId:
+                  wellboreAssetIdReverseMap[current.parentExternalId || ''],
                 digitalRockId: current.id,
                 digitalRockSamples: groupedSamples[current.id] || [],
               },
@@ -248,4 +286,5 @@ export const wellSearchActions = {
   removeSelectedColumn,
   setSelectedColumns,
   initialize,
+  getWellboreAssetsByExternalParentIds,
 };

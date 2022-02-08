@@ -1,4 +1,7 @@
-import { getAssetsByParentIds } from './asset/common';
+import {
+  getAssetsByParentIds,
+  getAssetsByExternalParentIds,
+} from './asset/common';
 import {
   getSequenceByWellboreIds,
   getSequencesByAssetIds,
@@ -18,4 +21,5 @@ export const wellSearchService = {
   getSequencesByAssetIds,
   getAssetsByParentIds,
   getSequenceRowData,
+  getAssetsByExternalParentIds,
 };

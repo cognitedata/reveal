@@ -138,6 +138,8 @@ export const mockedWellStateFixture = {
   },
 };
 
+// TODO(PP-2544): Remove all ts-ignore and fix tests properly
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 export const mockedWellStateWithSelectedWells: StoreState = {
   wellSearch: {
     ...mockedWellStateFixture.wellSearch,
@@ -145,12 +147,11 @@ export const mockedWellStateWithSelectedWells: StoreState = {
       1234: true,
     },
     selectedWellboreIds: {
-      759155409324993: true,
+      '759155409324993': true,
     },
     // this will be gone soon, transferred to react-query
     wellboreData: {
-      759155409324993: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      '759155409324993': {
         // @ts-ignore
         logType: [],
         ppfg: [],
@@ -160,7 +161,6 @@ export const mockedWellStateWithSelectedWells: StoreState = {
         ppfg: [],
         digitalRocks: [
           {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             asset: {
               id: 1123123,
@@ -173,11 +173,13 @@ export const mockedWellStateWithSelectedWells: StoreState = {
         ppfg: [],
         digitalRocks: [
           {
+            // @ts-ignore
             asset: {
               id: 1123123,
             },
             digitalRockSamples: [
               {
+                // @ts-ignore
                 asset: {
                   id: 122342,
                 },
@@ -191,14 +193,17 @@ export const mockedWellStateWithSelectedWells: StoreState = {
         ppfg: [],
         digitalRocks: [
           {
+            // @ts-ignore
             asset: {
               id: 1123123,
             },
             digitalRockSamples: [
               {
+                // @ts-ignore
                 asset: {
                   id: 122342,
                 },
+                // @ts-ignore
                 gpart: [{ id: 32134 }],
               },
             ],
@@ -210,11 +215,13 @@ export const mockedWellStateWithSelectedWells: StoreState = {
         ppfg: [],
         digitalRocks: [
           {
+            // @ts-ignore
             asset: {
               id: 1123123,
             },
             digitalRockSamples: [
               {
+                // @ts-ignore
                 asset: {
                   id: 122342,
                 },
@@ -223,12 +230,15 @@ export const mockedWellStateWithSelectedWells: StoreState = {
                     sequence: {
                       id: 32134,
                       columns: [
+                        // @ts-ignore
                         {
                           name: 'ColumnA',
                         },
+                        // @ts-ignore
                         {
                           name: 'ColumnB',
                         },
+                        // @ts-ignore
                         {
                           name: 'ColumnY',
                         },

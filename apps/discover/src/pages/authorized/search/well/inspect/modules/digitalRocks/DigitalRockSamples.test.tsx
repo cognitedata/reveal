@@ -5,6 +5,8 @@ import { testRenderer } from '__test-utils/renderer';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/asset/digitalRocks';
 
+import { getMockedStore } from '../../../../../../../__test-utils/store.utils';
+
 import { DigitalRockSamplesTable, Props } from './DigitalRockSamples';
 
 const defaultProps: Props = {
@@ -22,8 +24,10 @@ jest.mock('modules/wellSearch/selectors/asset/digitalRocks.ts', () => ({
 }));
 
 describe('DigitalRockSamples', () => {
+  const store = getMockedStore();
+
   const testInit = async (props: Props) =>
-    testRenderer(DigitalRockSamplesTable, undefined, props);
+    testRenderer(DigitalRockSamplesTable, store, props);
 
   it('should display loader on digital rock samples loading', async () => {
     (useDigitalRocksSamples as jest.Mock).mockImplementation(() => ({

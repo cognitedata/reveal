@@ -110,19 +110,18 @@ export function wellReducer(
     }
 
     case SET_WELLBORE_ASSETS: {
-      const updatedWellboreData = { ...state.wellboreData };
-      Object.keys(action.data).forEach((wellboreId) => {
-        const wbId = Number(wellboreId);
-        if (action.data[wbId]) {
-          if (updatedWellboreData[wbId]) {
-            updatedWellboreData[wbId][action.assetType] = action.data[wbId].map(
-              (asset) => ({
-                asset,
-              })
-            );
+      const updatedWellboreData = cloneDeep(state.wellboreData);
+      Object.keys(action.data).forEach((wellboreId: string) => {
+        if (action.data[wellboreId]) {
+          if (updatedWellboreData[wellboreId]) {
+            updatedWellboreData[wellboreId][action.assetType] = action.data[
+              wellboreId
+            ].map((asset) => ({
+              asset,
+            }));
           } else {
-            updatedWellboreData[wbId] = {
-              [action.assetType]: action.data[wbId].map((asset) => ({
+            updatedWellboreData[wellboreId] = {
+              [action.assetType]: action.data[wellboreId].map((asset) => ({
                 asset,
               })),
             };
@@ -136,9 +135,9 @@ export function wellReducer(
     }
 
     case SET_WELLBORE_DIGITAL_ROCK_SAMPLES: {
-      const updatedWellboreData = { ...state.wellboreData };
+      const updatedWellboreData = cloneDeep(state.wellboreData);
       action.data.forEach((row) => {
-        const wbId = Number(row.wellboreId);
+        const wbId = row.wellboreId;
 
         if (updatedWellboreData[wbId].digitalRocks) {
           const digitalRocks = updatedWellboreData[wbId]
@@ -163,7 +162,7 @@ export function wellReducer(
     }
 
     case SET_GRAIN_ANALYSIS_DATA: {
-      const updatedWellboreData = { ...state.wellboreData };
+      const updatedWellboreData = cloneDeep(state.wellboreData);
       const wbId = Number(get(action, 'digitalRockSample.metadata.wellboreId'));
       const digitalRockId = action.digitalRockSample.parentId;
       const digitalRockSampleId = action.digitalRockSample.id;

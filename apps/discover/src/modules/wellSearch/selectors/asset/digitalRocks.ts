@@ -17,18 +17,19 @@ import {
 import { TimeLogStages, useMetricLogger } from 'hooks/useTimeLog';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { AssetData, DigitalRockSampleData } from 'modules/wellSearch/types';
+import { AssetData } from 'modules/wellSearch/types';
 import { convertObject } from 'modules/wellSearch/utils';
+import { getWellboreExternalAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 import {
   normalize,
   normalizeSamples,
 } from 'modules/wellSearch/utils/digitalRocks';
 
 import { getCogniteSDKClient } from '../../../../utils/getCogniteSDKClient';
+import { useWellInspectWellboreExternalAssetIdMap } from '../../../wellInspect/hooks/useWellInspectIdMap';
 import { useWellboreData } from '../asset/wellbore';
 import { usePristineIds } from '../common';
 
@@ -64,22 +65,20 @@ const getDigitalRocksFetchFunction = (
 const getDigitalRocksSampleFetchFunction = (
   metadata: Record<string, unknown> | undefined
 ) => {
-  if (metadata) {
-    return (extraPayload: Record<string, unknown>) => {
-      return getCogniteSDKClient().assets.search({
-        ...metadata,
-        filter: merge(metadata.filter, extraPayload),
-      });
-    };
-  }
-  return undefined;
+  return (extraPayload: Record<string, unknown>) => {
+    return getCogniteSDKClient().assets.search({
+      ...metadata,
+      // No extra fetchers are needed to samples right now. Cannot delete this in project config so commented this line
+      filter: merge(/* metadata?.filter || */ {}, extraPayload),
+    });
+  };
 };
 
 export const useSelectedWellBoresDigitalRocks = () => {
   const dispatch = useDispatch();
   const { data: config } = useWellConfig();
   const { digitalRocksPristineIds } = usePristineIds();
-  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
+  const wellboreAssetIdMap = useWellInspectWellboreExternalAssetIdMap();
   const wells = useWellInspectSelectedWells();
   const wellboreData = useWellboreData();
   const [isLoading, setIsLoading] = useState<boolean>();
@@ -110,7 +109,7 @@ export const useSelectedWellBoresDigitalRocks = () => {
       startNetworkTimer();
 
       dispatch(
-        wellSearchActions.getWellboreAssets(
+        wellSearchActions.getWellboreAssetsByExternalParentIds(
           digitalRocksPristineIds,
           wellboreAssetIdMap,
           'digitalRocks',
@@ -152,6 +151,11 @@ export const useSelectedWellBoresDigitalRocks = () => {
 export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
   const wellboreData = useWellboreData();
   const dispatch = useDispatch();
+
+  const wellboreAssetIdMap = useWellInspectWellboreExternalAssetIdMap();
+  const wellboreAssetIdReverseMap =
+    getWellboreExternalAssetIdReverseMap(wellboreAssetIdMap);
+
   const { data: config } = useWellConfig();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [startNetworkTimer, stopNetworkTimer] = useMetricLogger(
@@ -168,10 +172,20 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
   return useMemo(() => {
     const digitalRocksToFetch = digitalRocks.filter(
       (digitalRock) =>
-        get(wellboreData, `${digitalRock.parentId}.digitalRocks`, []).filter(
-          (row: AssetData) =>
-            row.asset.id === digitalRock.id && !row.digitalRockSamples
-        ).length
+        get(
+          wellboreData,
+          `${
+            wellboreAssetIdReverseMap[digitalRock.parentExternalId || '']
+          }.digitalRocks`,
+          []
+        )
+          // TODO(PP-2544): This whole hooks is fishy. Needs to be refactored and data extracted to react-query
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          .filter(
+            (row: AssetData) =>
+              row.asset.id === digitalRock.id && !row.digitalRockSamples
+          ).length
     );
 
     if (isLoading && !digitalRocksToFetch.length) {
@@ -188,6 +202,7 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
       dispatch(
         wellSearchActions.getDigitalRockSamples(
           digitalRocksToFetch,
+          wellboreAssetIdReverseMap,
           getDigitalRocksSampleFetchFunction(
             config?.digitalRocks?.sampleFetchMetadata
           )
@@ -201,19 +216,26 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
 
     // Get Digital Rock samples from wellbore data sate filtered by requested digital rocks
     const digitalRockSamples = flatten(
-      digitalRocks.reduce(
-        (prev, current) => [
-          ...prev,
-          ...get(wellboreData, `${current.parentId}.digitalRocks`, [])
-            .filter((row: AssetData) => row.asset.id === current.id)
-            .map((row: AssetData) =>
-              (row.digitalRockSamples as DigitalRockSampleData[]).map(
-                (digitalRockSampleData) => digitalRockSampleData.asset
-              )
-            ),
-        ],
-        [] as Asset[]
-      )
+      digitalRocks.reduce((prev, current) => {
+        const digitalRocks =
+          wellboreData[wellboreAssetIdReverseMap[current.parentExternalId || 0]]
+            ?.digitalRocks;
+
+        const asset = digitalRocks?.find(
+          (digiRock) => digiRock.asset.id === current.id
+        );
+
+        if (asset?.digitalRockSamples) {
+          return [
+            ...prev,
+            ...(asset
+              ? asset.digitalRockSamples.map((sample) => sample.asset)
+              : []),
+          ];
+        }
+
+        return prev;
+      }, [] as Asset[])
     );
 
     stopPreparationTimer();
