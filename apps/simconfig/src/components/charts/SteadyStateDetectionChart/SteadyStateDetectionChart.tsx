@@ -14,10 +14,7 @@ import { format } from 'date-fns';
 import styled from 'styled-components/macro';
 
 import { Colors } from '@cognite/cogs.js';
-import type {
-  AggregateType,
-  LogicalCheck,
-} from '@cognite/simconfig-api-sdk/rtk';
+import type { LogicalCheck } from '@cognite/simconfig-api-sdk/rtk';
 
 import { edPelt, logicalCheck, steadyStateDetection } from 'utils/ssd';
 import { Timeseries } from 'utils/ssd/timeseries';
@@ -27,7 +24,6 @@ import type Color from 'color';
 import type { CurveFactory } from 'd3';
 
 interface SteadyStateDetectionChartProps {
-  aggregation: AggregateType;
   threshold: number;
   check: Required<LogicalCheck>['check'];
   data: Datapoint[];
@@ -50,7 +46,6 @@ const getY = (d: Partial<Datapoint>) =>
   d.value !== undefined ? Number(d.value) : undefined;
 
 export function SteadyStateDetectionChart({
-  aggregation,
   threshold,
   check,
   data,
@@ -68,8 +63,9 @@ export function SteadyStateDetectionChart({
   yAxisLabel = 'Value',
 }: SteadyStateDetectionChartProps) {
   // FIXME(SIM-209): Avoid converting back and forth between date/epoch
+  // TODO(SIM-000): Ideally here we need to pass the granularity and isStep (aggregation === 'stepInterpolation') when initializing the Timeseries
   const timeseries = useMemo(
-    () => Timeseries.fromDatapoints(data).getEquallySpacedResampled(false),
+    () => Timeseries.fromDatapoints(data).getEquallySpacedResampled(),
     [data]
   );
   const timestamps = useMemo(
@@ -86,8 +82,8 @@ export function SteadyStateDetectionChart({
   );
 
   const logicalCheckTimeseries = useMemo(
-    () => logicalCheck(timeseries, aggregation, threshold, check),
-    [timeseries, aggregation, threshold, check]
+    () => logicalCheck(timeseries, threshold, check),
+    [timeseries, threshold, check]
   );
   const logicalCheckData = useMemo(
     () =>

@@ -1,7 +1,4 @@
-import type {
-  AggregateType,
-  LogicalCheck,
-} from '@cognite/simconfig-api-sdk/rtk';
+import type { LogicalCheck } from '@cognite/simconfig-api-sdk/rtk';
 
 import { constrain, getLineSlope, mean, standardDeviation } from './mathUtils';
 import { Timeseries } from './timeseries';
@@ -102,7 +99,6 @@ const logicalChecks: Record<
 /**
  * Executes a logical check for the given time series.
  * @param {Timeseries} ts The Timeseries to evaluate.
- * @param {string} aggregation The aggregation used to retrieve the Timeseriess data.
  * @param {number} threshold The threshold to use for the logical check.
  * @param {string} check The logical check to use.
  * @returns {Timeseries} Timeseries with the logical check status (0: conditions not met, 1: conditions met) for all
@@ -111,14 +107,11 @@ const logicalChecks: Record<
  */
 export function logicalCheck(
   ts: Timeseries,
-  aggregation: AggregateType,
   threshold: number,
   check: Required<LogicalCheck>['check']
 ): Timeseries {
   // resamples the given Timeseries so that it contains equally spaced elements
-  const resampledTs = ts.getEquallySpacedResampled(
-    aggregation === 'stepInterpolation'
-  );
+  const resampledTs = ts.getEquallySpacedResampled();
 
   // store locally the x and y arrays
   const x = resampledTs.time;
@@ -131,7 +124,7 @@ export function logicalCheck(
     return +logicalChecks[check](value, threshold);
   });
 
-  return new Timeseries(x, yResult);
+  return new Timeseries(x, yResult, ts.granularity, false);
 }
 
 /**
@@ -158,7 +151,7 @@ export function steadyStateDetection(
   slopeThreshold: number
 ): Timeseries {
   // resamples the given Timeseries so that it contains equally spaced elements
-  const resampledTs = ts.getEquallySpacedResampled(false);
+  const resampledTs = ts.getEquallySpacedResampled();
 
   // store locally the x and y arrays
   const [x, y] = [resampledTs.time, resampledTs.data];
@@ -215,7 +208,7 @@ export function steadyStateDetection(
       ssMap[j] = ssRegion;
     }
   }
-  return new Timeseries(x, ssMap);
+  return new Timeseries(x, ssMap, ts.granularity, false);
 }
 
 /**

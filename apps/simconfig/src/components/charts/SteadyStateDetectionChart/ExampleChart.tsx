@@ -8,10 +8,7 @@ import styled from 'styled-components/macro';
 import { SegmentedControl, Slider } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import type { DatapointAggregate } from '@cognite/sdk';
-import type {
-  AggregateType,
-  LogicalCheck,
-} from '@cognite/simconfig-api-sdk/rtk';
+import type { LogicalCheck } from '@cognite/simconfig-api-sdk/rtk';
 
 import { SteadyStateDetectionChart } from 'components/charts/SteadyStateDetectionChart/SteadyStateDetectionChart';
 import type { Datapoint } from 'utils/ssd/timeseries';
@@ -23,7 +20,6 @@ export function ExampleChart() {
   const [varianceThreshold, setVarianceThreshold] = useState(5);
   const [slopeThreshold, setSlopeThreshold] = useState(-3.5);
   const [check, setCheck] = useState('eq');
-  const [aggregation, setAggregation] = useState('average');
 
   const [cdfData, setCdfData] = useState<Datapoint[]>([]);
   const [range, setRange] = useState({ min: 0, max: 1 });
@@ -43,7 +39,7 @@ export function ExampleChart() {
             externalIdPrefix: 'UK_PI_CFAW.003-PI011.PV',
           },
         });
-        setAxisLabel(`${description.substr(0, 20)} (${unit ?? 'n/a'})`);
+        setAxisLabel(`${description.substring(0, 20)} (${unit ?? 'n/a'})`);
       } catch (e) {
         console.error('Error while reading time series (missing permissions?)');
         return;
@@ -89,7 +85,6 @@ export function ExampleChart() {
         <ParentSize>
           {({ width, height }) => (
             <SteadyStateDetectionChart
-              aggregation={aggregation as AggregateType}
               check={check as Required<LogicalCheck>['check']}
               data={cdfData}
               height={height}
@@ -104,22 +99,6 @@ export function ExampleChart() {
         </ParentSize>
       </ChartContainer>
       <ChartControlContainer>
-        <ChartControl>
-          <div className="label">Aggregation</div>
-          <div className="control">
-            <SegmentedControl size="small" onButtonClicked={setAggregation}>
-              <SegmentedControl.Button key="average">
-                Average
-              </SegmentedControl.Button>
-              <SegmentedControl.Button key="stepInterpolation">
-                Step interpolation
-              </SegmentedControl.Button>
-              <SegmentedControl.Button key="interpolation">
-                Interpolation
-              </SegmentedControl.Button>
-            </SegmentedControl>
-          </div>
-        </ChartControl>
         <ChartControl>
           <div className="label">Logical check</div>
           <div className="control">

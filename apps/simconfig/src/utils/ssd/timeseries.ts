@@ -10,17 +10,22 @@ export interface Datapoint {
  * a numeric array of data point values.
  * @param {number[]} time The time array of milliseconds since epoch.
  * @param {number[]} data The data array of data point values.
+ * @param {number} granularity The granularity of the time series. If not provided, it will be computed from the data.
+ * @param {boolean} isStep Wether the time series should be considered a step time series. Defaults to false.
  */
 export class Timeseries {
   time: number[];
   data: number[];
   count: number;
+  isStep: boolean;
+  granularity: number;
   deltaTime: number[] = [];
   minDeltaTime = 0;
   maxDeltaTime = 0;
   minTime: number;
   maxTime: number;
 
+  // TODO(SIM-000) evaluate if granularity and isStep can be read from Datapoints
   static fromDatapoints(datapoints: Datapoint[]) {
     // FIXME(SIM-209): Refactor to use Datapoint[] internally
     const time = datapoints.map((d) => d.timestamp.getTime());
@@ -28,7 +33,12 @@ export class Timeseries {
     return new Timeseries(time, data);
   }
 
-  constructor(time: number[], data: number[]) {
+  constructor(
+    time: number[],
+    data: number[],
+    granularity?: number,
+    isStep = false
+  ) {
     if (time.length !== data.length) {
       throw new Error('time and data must have the same length');
     }
@@ -39,6 +49,8 @@ export class Timeseries {
     this.time = time;
     this.data = data;
     this.count = time.length;
+    this.isStep = isStep;
+    this.granularity = granularity ?? this.minDeltaTime;
 
     // sort the time and data arrays based on time
     this.sortByTime();
@@ -142,26 +154,50 @@ export class Timeseries {
       throw new Error('the provided times do not exist');
     } else {
       i1 += 1; // include the endTime
-      return new Timeseries(this.time.slice(i0, i1), this.data.slice(i0, i1));
+      return new Timeseries(
+        this.time.slice(i0, i1),
+        this.data.slice(i0, i1),
+        this.granularity,
+        this.isStep
+      );
     }
   }
 
   /**
    * Resamples a Timeseries into an equally spaced Timeseries.
-   * @param {boolean} isStep If true, the resampling is done using forward filling. If false, the resampling is done
-   * using linear interpolation.
+   * @param {number} startTime Defines the start time of the resampled Timeseries (optional).
+   * @param {number} endTime Defines the end time of the resampled Timeseries (optional).
+   * @param {number} granularity Defines the granularity (in milliseconds) of the resampled Timeseries (optional).
    * @returns {Timeseries} The resampled Timeseries.
    */
-  getEquallySpacedResampled(isStep: boolean): Timeseries {
+  getEquallySpacedResampled(
+    startTime: number = this.minTime,
+    endTime: number = this.maxTime,
+    granularity: number = this.granularity
+  ): Timeseries {
     let timeResampled;
     let dataResampled;
 
-    if (this.minDeltaTime === this.maxDeltaTime) {
-      // if there are no gaps in the time array, we don't need to perform resampling
+    // it is only possible to extrapolate beyond the last data point for step timeseries
+    if (!this.isStep && endTime > this.maxTime) {
+      throw new Error(
+        'The given endTime would result in extrapolation which is only allowed for step timeseries.'
+      );
+    }
+    // It is not possible to extrapolate beyond the first data point for any timeseries
+    if (startTime < this.minTime) {
+      throw new Error('The given startTime is smaller than the minimum time.');
+    }
+    // if there are no gaps in the time array and no change in the start/end, we don't need to perform resampling
+    if (
+      this.minDeltaTime === this.maxDeltaTime &&
+      endTime === this.maxTime &&
+      startTime === this.minTime
+    ) {
       timeResampled = this.time;
       dataResampled = this.data;
     } else {
-      timeResampled = linspace(this.minTime, this.maxTime, this.minDeltaTime);
+      timeResampled = linspace(startTime, endTime, granularity);
       dataResampled = new Array<number>(timeResampled.length);
 
       // counter for original array index
@@ -169,29 +205,48 @@ export class Timeseries {
       // counter for resampled array index
       let j = 0;
       do {
-        // Try to find the current time in the original array
-        const idx = this.time.indexOf(timeResampled[j]);
-
-        if (idx !== -1) {
-          dataResampled[j] = this.data[idx];
-          i += 1;
-        } else if (isStep) {
-          // forward fill the last available value
-          dataResampled[j] = this.data[i - 1];
-        } else {
-          // calculate the missing data point using linear interpolation
-          dataResampled[j] = linearInterpolation(
-            this.time[i - 1],
-            this.data[i - 1],
-            this.time[i],
-            this.data[i],
-            timeResampled[j]
-          );
+        if (timeResampled[j] > this.time[i]) {
+          // the new point is positioned after the current point in the original array
+          dataResampled[j] = this.resample(i, timeResampled[j]);
+          // we cannot increase i past the end of the original array
+          i = Math.min(i + 1, this.time.length - 1);
+        } else if (timeResampled[j] === this.time[i]) {
+          // the new point is positioned exactly on top of the current point in the original array
+          dataResampled[j] = this.data[i];
+          // we cannot increase i past the end of the original array
+          i = Math.min(i + 1, this.time.length - 1);
+        } else if (timeResampled[j] < this.time[i]) {
+          // the new point is positioned before the current point in the original array
+          dataResampled[j] = this.resample(i - 1, timeResampled[j]);
         }
         j += 1;
       } while (j < timeResampled.length);
     }
-    return new Timeseries(timeResampled, dataResampled);
+    return new Timeseries(
+      timeResampled,
+      dataResampled,
+      granularity,
+      this.isStep
+    );
+  }
+
+  /**
+   * Resamples the data at the given time.
+   * @param {number} idx The index of the data point in the original array.
+   * @param {number} xp The time of the new point.
+   * @returns {number} The resampled value.
+   */
+  private resample(idx: number, xp: number): number {
+    if (this.isStep) {
+      return this.data[idx];
+    }
+    return linearInterpolation(
+      this.time[idx],
+      this.data[idx],
+      this.time[idx + 1],
+      this.data[idx + 1],
+      xp
+    );
   }
 
   /**
@@ -199,7 +254,7 @@ export class Timeseries {
    * @returns {number} The mean value.
    */
   getTimeseriesAverage(): number {
-    const resampled = this.getEquallySpacedResampled(false);
+    const resampled = this.getEquallySpacedResampled();
     return mean(resampled.data);
   }
 }
