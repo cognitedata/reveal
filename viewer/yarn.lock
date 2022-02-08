@@ -534,6 +534,7 @@ __metadata:
     ts-loader: 8.0.7
     tsc-alias: ^1.3.10
     typescript: ^4.3.2
+    url-loader: ^4.1.1
     webpack: ^4.44.2
     webpack-cli: ^3.3.12
     webpack-dev-server: ^3.11.0
@@ -8896,12 +8897,28 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"mime-db@npm:1.51.0":
+  version: 1.51.0
+  resolution: "mime-db@npm:1.51.0"
+  checksum: 613b1ac9d6e725cc24444600b124a7f1ce6c60b1baa654f39a3e260d0995a6dffc5693190217e271af7e2a5612dae19f2a73f3e316707d797a7391165f7ef423
+  languageName: node
+  linkType: hard
+
 "mime-types@npm:^2.1.12, mime-types@npm:~2.1.17, mime-types@npm:~2.1.19, mime-types@npm:~2.1.24":
   version: 2.1.32
   resolution: "mime-types@npm:2.1.32"
   dependencies:
     mime-db: 1.49.0
   checksum: 4487dfd2f872126d2c219ec731ad47a6169a438d5a4cce6ecef7594ce08eaefaf0d85429485a76ec005f095016c7ec488a24cf8bfcc0ea06de0355e23395746f
+  languageName: node
+  linkType: hard
+
+"mime-types@npm:^2.1.27":
+  version: 2.1.34
+  resolution: "mime-types@npm:2.1.34"
+  dependencies:
+    mime-db: 1.51.0
+  checksum: 67013de9e9d6799bde6d669d18785b7e18bcd212e710d3e04a4727f92f67a8ad4e74aee24be28b685adb794944814bde649119b58ee3282ffdbee58f9278d9f3
   languageName: node
   linkType: hard
 
@@ -12634,6 +12651,23 @@ typescript@^4.3.2:
   version: 0.1.0
   resolution: "urix@npm:0.1.0"
   checksum: 4c076ecfbf3411e888547fe844e52378ab5ada2d2f27625139011eada79925e77f7fbf0e4016d45e6a9e9adb6b7e64981bd49b22700c7c401c5fc15f423303b3
+  languageName: node
+  linkType: hard
+
+"url-loader@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "url-loader@npm:4.1.1"
+  dependencies:
+    loader-utils: ^2.0.0
+    mime-types: ^2.1.27
+    schema-utils: ^3.0.0
+  peerDependencies:
+    file-loader: "*"
+    webpack: ^4.0.0 || ^5.0.0
+  peerDependenciesMeta:
+    file-loader:
+      optional: true
+  checksum: c1122a992c6cff70a7e56dfc2b7474534d48eb40b2cc75467cde0c6972e7597faf8e43acb4f45f93c2473645dfd803bcbc20960b57544dd1e4c96e77f72ba6fd
   languageName: node
   linkType: hard
 
