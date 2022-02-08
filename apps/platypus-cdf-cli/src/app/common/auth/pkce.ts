@@ -74,20 +74,22 @@ export const getAccessTokenForPKCE = async (request: PKAccessTokenRequest) => {
   request.logger.log(authCodeUrl);
   await open(authCodeUrl);
 
-  // get `code` for user and complete authentication
-  const authCode = await listenForAuthCode(app);
-  authResult = await pca.acquireTokenByCode({
-    redirectUri: redirectURI,
-    scopes,
-    code: authCode,
-    codeVerifier: verifier, // PKCE Code Verifier
-  });
+  try {
+    // get `code` for user and complete authentication
+    const authCode = await listenForAuthCode(app);
+    authResult = await pca.acquireTokenByCode({
+      redirectUri: redirectURI,
+      scopes,
+      code: authCode,
+      codeVerifier: verifier, // PKCE Code Verifier
+    });
 
-  // close the server we opened
-  server.close();
-
-  if (authResult) {
-    return handleResponse(authResult);
+    if (authResult) {
+      return handleResponse(authResult);
+    }
+    throw new Error('Failed to authenticate');
+  } finally {
+    // close the server we opened
+    server.close();
   }
-  throw new Error('Failed to authenticate');
 };
