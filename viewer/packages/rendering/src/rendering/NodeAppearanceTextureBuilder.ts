@@ -26,8 +26,7 @@ export class NodeAppearanceTextureBuilder {
     this._styleProvider = styleProvider;
     this._styleProvider.on('changed', this._handleStylesChangedListener);
 
-    const textures = allocateTextures(treeIndexCount);
-    this._overrideColorPerTreeIndexTexture = textures.overrideColorPerTreeIndexTexture;
+    this._overrideColorPerTreeIndexTexture = allocateOverrideColorPerTreeIndexTexture(treeIndexCount);
     this._overrideColorDefaultAppearanceRgba = new Uint8ClampedArray(
       this._overrideColorPerTreeIndexTexture.image.data.length
     );
@@ -179,10 +178,7 @@ export class NodeAppearanceTextureBuilder {
   }
 }
 
-function allocateTextures(treeIndexCount: number): {
-  overrideColorPerTreeIndexTexture: THREE.DataTexture;
-  transformOverrideIndexTexture: THREE.DataTexture;
-} {
+function allocateOverrideColorPerTreeIndexTexture(treeIndexCount: number): THREE.DataTexture {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
 
@@ -193,16 +189,7 @@ function allocateTextures(treeIndexCount: number): {
     height
   );
 
-  // Texture for holding node transforms (translation, scale, rotation)
-  const transformOverrideIndexBuffer = new Uint8ClampedArray(3 * textureElementCount);
-  const transformOverrideIndexTexture = new THREE.DataTexture(
-    transformOverrideIndexBuffer,
-    width,
-    height,
-    THREE.RGBFormat
-  );
-
-  return { overrideColorPerTreeIndexTexture, transformOverrideIndexTexture };
+  return overrideColorPerTreeIndexTexture;
 }
 
 function appearanceToColorOverride(appearance: NodeAppearance): [number, number, number, number] {
