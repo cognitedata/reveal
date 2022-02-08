@@ -111,4 +111,44 @@ export class MockedCogniteClient {
     }
     return data;
   };
+
+  get = async (url: RequestInfo) => {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    function getJsonOrText(text: string) {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        return text;
+      }
+    }
+
+    const response = await fetch(url, requestOptions);
+    const text = await response.text();
+    const data = getJsonOrText(text);
+
+    if (!response.ok) {
+      if (data && data.error) {
+        return Promise.reject(new Error({ ...data.error }));
+      }
+
+      if (data && data.Message) {
+        data.message = data.Message;
+      }
+
+      const error = data
+        ? { ...data, statusText: response.statusText }
+        : response.statusText;
+      return Promise.reject(error);
+    }
+
+    return data;
+  };
+
+  getBaseUrl = () => 'test-url';
 }

@@ -14,7 +14,7 @@ export const postAnnotationJob = createAsyncThunk<
   { modelType: VisionAPIType; fileIds: number[] },
   ThunkConfig
 >(
-  'process/postAnnotationJobs',
+  'postAnnotationJob',
   async ({ modelType, fileIds }, { dispatch, getState }) => {
     const params = getDetectionModelParameters(
       getState().processSlice,

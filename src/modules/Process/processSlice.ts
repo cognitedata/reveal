@@ -244,7 +244,7 @@ const processSlice = createGenericTabularDataSlice({
       );
     });
 
-    /* postAnnotationJobs */
+    /* postAnnotationJob */
 
     builder.addCase(postAnnotationJob.pending, (state, { meta }) => {
       const { fileIds, modelType } = meta.arg;

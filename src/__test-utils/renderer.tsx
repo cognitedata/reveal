@@ -11,6 +11,7 @@ import { ToastContainer } from '@cognite/cogs.js';
 
 import { render } from 'src/__test-utils/custom-render';
 import { getMockedStore } from 'src/__test-utils/store.utils';
+import { ids } from 'src/cogs-variables';
 
 type Props<T> = {
   store?: Store;
@@ -38,6 +39,12 @@ export const WrappedWithProviders = <T extends unknown>({
   );
 };
 
+const StyleWrapper = ({ props, children }: any) => (
+  <div className={ids.styleScope}>
+    {React.cloneElement(children as ReactElement, { ...(props as {}) })}
+  </div>
+);
+
 export const testRenderer = <T extends unknown>(
   component: React.FC<any>,
   store?: Store,
@@ -47,6 +54,23 @@ export const testRenderer = <T extends unknown>(
   return render(
     <WrappedWithProviders store={store} props={props}>
       <Component />
+    </WrappedWithProviders>
+  );
+};
+
+// Use this function to render components with cogs.js Modals
+// as they need additional style wrapping
+export const testRendererModals = <T extends unknown>(
+  component: React.FC<any>,
+  store?: Store,
+  props?: T
+): RenderResult => {
+  const Component = component;
+  return render(
+    <WrappedWithProviders store={store}>
+      <StyleWrapper props={props}>
+        <Component />
+      </StyleWrapper>
     </WrappedWithProviders>
   );
 };
