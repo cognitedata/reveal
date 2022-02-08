@@ -6,6 +6,7 @@ import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/internals';
+import { SuggestedCameraConfig, suggestCameraConfig } from '../../utils/cameraConfig';
 
 import { defaultRenderOptions, RenderOptions } from '@cognite/reveal/internals';
 
@@ -30,7 +31,7 @@ export type TestEnvCad = TestEnv & CadModelEnv;
 export type TestEnvPointCloud = TestEnv & PointCloudModelEnv;
 
 type TestEnvModified<T> = Partial<Omit<T, 'cameraConfig'>> & {
-  cameraConfig?: Partial<reveal.SuggestedCameraConfig>;
+  cameraConfig?: Partial<SuggestedCameraConfig>;
   postRender?: () => void;
 };
 
@@ -85,9 +86,11 @@ export function TestViewer(props: Props) {
 
   const getCameraConfig = (
     model: reveal.CadNode | reveal.PointCloudNode
-  ): reveal.SuggestedCameraConfig => {
-    if ('suggestCameraConfig' in model) {
-      return model.suggestCameraConfig();
+  ): SuggestedCameraConfig => {
+
+    if ( model instanceof reveal.CadNode) {
+      return suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                 model.getModelTransformation());
     }
 
     const near = 0.1;
@@ -121,7 +124,7 @@ export function TestViewer(props: Props) {
       let scene = new THREE.Scene();
 
       const renderOptions: RenderOptions = {
-        ...defaultRenderOptions, 
+        ...defaultRenderOptions,
         ssaoRenderParameters: {
           depthCheckBias: 0.0,
           sampleRadius: 0.0,
