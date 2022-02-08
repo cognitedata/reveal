@@ -9,6 +9,7 @@ import {
   setObjectFeedbackSensitivityByAdmin,
   useFeedbackUpdateMutate,
 } from 'modules/api/feedback';
+import { useDocumentFilename } from 'modules/documentSearch/hooks/useDocumentFilename';
 import { ASSESS } from 'modules/feedback/constants';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
 import { MarginBottomNormalContainer } from 'styles/layout';
@@ -41,6 +42,7 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
   const { mutateAsync: updateObjectFeedbackSensitive } =
     useFeedbackUpdateMutate('sensitive');
   const { feedback, action } = props;
+  const filename = useDocumentFilename(Number(feedback.documentId));
 
   const initialAssessment = feedback?.isSensitiveByAdmin
     ? ASSESS.Approve
@@ -96,7 +98,7 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
       <DocumentFeedbackDetailsWrapper>
         <MetadataItem
           label={t('Original path')}
-          value={feedback.fileLocation}
+          value={feedback.fileLocation || filename}
           type="path"
         />
         <MetadataTable

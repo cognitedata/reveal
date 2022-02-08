@@ -44,6 +44,7 @@ export const getLabels = () => {
   });
 };
 
+// @deprecated, use documentsByIds instead
 export const getDocument = (query: string, documentId: string) => {
   return doSearch(
     { query, highlight: true },
