@@ -1,4 +1,10 @@
-## 0.5.0 August 25 2021
+## 0.6.0 - February 7 2022
+
+### Features
+
+- Add `extraConfigs` option to the `configureI18n` function in order to allow any other arbitrary i18next option (#1876) (@rhuanbarreto)
+
+## 0.5.0 - August 25 2021
 
 - Bump deps
 

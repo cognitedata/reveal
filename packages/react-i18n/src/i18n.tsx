@@ -75,6 +75,7 @@ export type ConfigureI18nOptions = {
   disabled?: boolean;
   saveMissing?: boolean;
   updateMissing?: boolean;
+  extraConfigs?: InitOptions;
 };
 
 const configureI18n = async ({
@@ -88,6 +89,7 @@ const configureI18n = async ({
   keySeparator,
   saveMissing,
   updateMissing,
+  extraConfigs,
   ...rest
 }: ConfigureI18nOptions = {}) => {
   if (disabled) {
@@ -122,20 +124,6 @@ const configureI18n = async ({
     }
   }
 
-  const initOptions: InitOptions = {
-    debug,
-    interpolation: { escapeValue: false },
-    lng:
-      lng || storage.getFromLocalStorage<string>(localStorageLanguageKey, 'en'),
-    load: 'currentOnly',
-    keySeparator,
-    fallbackNS: ['global'],
-    postProcess: [],
-    saveMissing: saveMissing ?? isDevEnv,
-    saveMissingTo: 'current',
-    updateMissing: updateMissing ?? isDevEnv,
-  };
-
   // useful for debugging:
   // console.log('Locize options:', initOptions);
   // console.log('Other values:', {
@@ -143,13 +131,6 @@ const configureI18n = async ({
   //   locizeApiKey,
   //   locizeProjectId,
   // });
-
-  if (pseudo) {
-    i18next.use(new Pseudo({ enabled: true }));
-    if (Array.isArray(initOptions.postProcess)) {
-      initOptions.postProcess.push('pseudo');
-    }
-  }
 
   const backends: unknown[] = [];
   const backendOptions: unknown[] = [];
@@ -179,13 +160,34 @@ const configureI18n = async ({
 
   i18next.use(ChainedBackend);
   i18next.use(initReactI18next);
-  await i18next.init({
-    ...initOptions,
+
+  const initOptions: InitOptions = {
+    debug,
+    interpolation: { escapeValue: false },
+    lng:
+      lng || storage.getFromLocalStorage<string>(localStorageLanguageKey, 'en'),
+    load: 'currentOnly',
+    keySeparator,
+    fallbackNS: ['global'],
+    postProcess: [],
+    saveMissing: saveMissing ?? isDevEnv,
+    saveMissingTo: 'current',
+    updateMissing: updateMissing ?? isDevEnv,
     backend: {
       backends,
       backendOptions,
     },
-  });
+    ...extraConfigs,
+  };
+
+  if (pseudo) {
+    i18next.use(new Pseudo({ enabled: true }));
+    if (Array.isArray(initOptions.postProcess)) {
+      initOptions.postProcess.push('pseudo');
+    }
+  }
+
+  await i18next.init(initOptions);
 
   return i18next;
 };
