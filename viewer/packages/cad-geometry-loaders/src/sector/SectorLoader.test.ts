@@ -162,6 +162,7 @@ class StubRepository implements SectorRepository {
     return Promise.resolve(this.loadSectorCallback(sector));
   }
   clearCache(): void {}
+  setCacheSize(_sectorCount: number): void {}
 }
 
 class StubSectorCuller implements SectorCuller {

@@ -62,6 +62,10 @@ export class GltfSectorRepository implements SectorRepository {
     return consumedSector;
   }
 
+  setCacheSize(sectorCount: number): void {
+    this._gltfCache.resize(sectorCount);
+  }
+
   clearCache(): void {
     this._gltfCache.clear();
   }
