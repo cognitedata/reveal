@@ -45,7 +45,7 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { CameraManager, CameraManagerInterface, ComboControls, CameraControlsOptions } from '@reveal/camera-manager';
+import { CameraManager, CameraManagerInterface } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
@@ -193,7 +193,7 @@ export class Cognite3DViewer {
   }
 
   constructor(options: Cognite3DViewerOptions) {
-    this._renderer = options.renderer || new THREE.WebGLRenderer();
+    this._renderer = options.renderer ?? new THREE.WebGLRenderer();
     this._renderer.localClippingEnabled = true;
 
     this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
@@ -205,7 +205,7 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
-    this._domElement = options.domElement || createCanvasWrapper();
+    this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
 
     this.spinner = new Spinner(this.domElement);

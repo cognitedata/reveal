@@ -65,6 +65,8 @@ export interface RevealCameraControls extends THREE.EventDispatcher {
  * Camera manager interface.
  * */
 export interface CameraManagerInterface {
+  cameraManipulationEnabled: boolean;
+
   setCameraTarget: (target: THREE.Vector3) => void;
   getCameraTarget: () => THREE.Vector3;
 
