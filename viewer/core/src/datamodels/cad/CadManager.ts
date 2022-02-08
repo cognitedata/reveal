@@ -44,7 +44,7 @@ export class CadManager {
     const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 300 / defaultCadModelBudget.maximumRenderCost;
 
     for (const model of this._cadModelMap.values()) {
-      model.setCacheSize(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost);
+      model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
     }
   }
 
