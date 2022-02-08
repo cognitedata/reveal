@@ -49,7 +49,7 @@ export class V8SectorRepository implements SectorRepository {
   }
 
   setCacheSize(sectorCount: number): void {
-    this._consumedSectorCache.resize(sectorCount);;
+    this._consumedSectorCache.resize(sectorCount);
   }
 
   clearCache(): void {

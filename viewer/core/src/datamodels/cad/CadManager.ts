@@ -11,11 +11,15 @@ import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { GeometryFilter } from '../../public/types';
 
 import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler, CadModelBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import {
+  CadModelUpdateHandler,
+  CadModelBudget,
+  LoadingState,
+  defaultCadModelBudget
+} from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
-import { defaultCadModelBudget } from '@reveal/cad-geometry-loaders/src/CadModelBudget';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
