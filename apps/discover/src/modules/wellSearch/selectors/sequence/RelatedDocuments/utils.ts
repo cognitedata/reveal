@@ -1,3 +1,4 @@
+import chunk from 'lodash/chunk';
 import isEmpty from 'lodash/isEmpty';
 
 import { DocumentsFilter } from '@cognite/sdk-playground';
@@ -23,9 +24,10 @@ export const getSelectedWellboreIds = (
 };
 
 export const formatAssetIdsFilter = (
-  selectedWellboreIds: number[],
-  v3Enabled: boolean
-): { filters: DocumentsFilter } => {
+  selectedWellboreIds: string[] | number[],
+  v3Enabled: boolean,
+  limit = 100
+): { filters: DocumentsFilter }[] => {
   let key = 'assetExternalIds';
 
   if (!v3Enabled) {
@@ -33,16 +35,23 @@ export const formatAssetIdsFilter = (
   }
 
   if (isEmpty(selectedWellboreIds)) {
-    return { filters: {} };
+    return [];
   }
 
-  return {
-    filters: {
-      [key]: {
-        containsAny: selectedWellboreIds,
+  const batchSelectedWellboreIds = chunk<string | number>(
+    selectedWellboreIds,
+    limit
+  );
+
+  return batchSelectedWellboreIds.map((wellboreIds) => {
+    return {
+      filters: {
+        [key]: {
+          containsAny: wellboreIds,
+        },
       },
-    },
-  };
+    };
+  });
 };
 
 export const filterBySelectedWellboreIds = (

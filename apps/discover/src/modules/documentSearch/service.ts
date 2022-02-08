@@ -1,6 +1,5 @@
-import isArray from 'lodash/isArray';
-import mergeWith from 'lodash/mergeWith';
 import { getCogniteSDKClient, doReAuth } from 'utils/getCogniteSDKClient';
+import { mergeUniqueArray } from 'utils/merge';
 
 import { reportException } from '@cognite/react-errors';
 import {
@@ -66,13 +65,7 @@ const search = (
   const queryInfo = getSearchQuery(query);
   return doSearch(
     queryInfo.query,
-    mergeWith(queryInfo.filter, options.filters, (objValue, srcValue) => {
-      if (isArray(objValue)) {
-        return Array.from(new Set(objValue.concat(srcValue)));
-      }
-
-      return undefined;
-    }),
+    mergeUniqueArray(queryInfo.filter, options.filters),
     options.sort,
     limit
   )
@@ -146,13 +139,7 @@ const getCategoriesByQuery = (
   const searchBody: ExternalDocumentsSearch = {
     limit: 0,
     search: queryInfo.query,
-    filter: mergeWith(queryInfo.filter, filters, (objValue, srcValue) => {
-      if (isArray(objValue)) {
-        return objValue.concat(srcValue);
-      }
-
-      return undefined;
-    }),
+    filter: mergeUniqueArray(queryInfo.filter, filters),
   };
 
   const filteredAggregates = aggregates.filter(

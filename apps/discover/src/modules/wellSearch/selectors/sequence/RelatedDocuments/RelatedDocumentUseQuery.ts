@@ -6,6 +6,7 @@ import {
 } from 'react-query';
 
 import isEmpty from 'lodash/isEmpty';
+import { mergeUniqueArray } from 'utils/merge';
 
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
@@ -56,25 +57,40 @@ const useWellboresRelatedDocumentsCategories =
   (): UseQueryResult<DocumentResultFacets> => {
     const selectedWellbores = useWellInspectSelectedWellbores();
     const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
+
     const wellboreAssetIds = selectedWellbores.map(
       (row) => wellboreAssetIdMap[row.id]
     );
     const isV3Enabled = useEnabledWellSdkV3();
 
-    const { filters } = formatAssetIdsFilter(wellboreAssetIds, isV3Enabled);
+    const batchedFilters = formatAssetIdsFilter(wellboreAssetIds, isV3Enabled);
 
     return useQuery<DocumentResultFacets>(
-      [SELECTED_WELLBORES_RELATED_DOCUMENTS, wellboreAssetIds],
-      () => documentSearchService.getCategoriesByAssetIds(filters),
+      [
+        SELECTED_WELLBORES_RELATED_DOCUMENTS,
+        wellboreAssetIds,
+        ...batchedFilters,
+      ],
+      async () => {
+        const results = await Promise.all(
+          batchedFilters.map(async ({ filters }) =>
+            documentSearchService.getCategoriesByAssetIds(filters)
+          )
+        );
+
+        return results.reduce((acc, item) => {
+          return mergeUniqueArray(acc, item);
+        }, {} as DocumentResultFacets);
+      },
       {
-        enabled: isV3Enabled !== undefined && !isEmpty(filters),
+        enabled: isV3Enabled !== undefined && !isEmpty(batchedFilters),
       }
     );
   };
 
 const useRelatedDocumentsCategories = (
   filterQuery: SearchQueryFull,
-  filters: DocumentsFilter,
+  batchedFilters: { filters: DocumentsFilter }[],
   category: AggregateNames
 ): UseQueryResult<CategoryResponse> => {
   const query = {
@@ -82,12 +98,26 @@ const useRelatedDocumentsCategories = (
     facets: { ...filterQuery.facets, [category]: [] },
   };
   return useQuery<CategoryResponse>(
-    [RELATED_DOCUMENTS_AGGREGATES[category], query, filters],
-    () => documentSearchService.getCategoriesByQuery(query, filters, category),
+    [RELATED_DOCUMENTS_AGGREGATES[category], query, ...batchedFilters],
+    async () => {
+      const results = await Promise.all(
+        batchedFilters.map(({ filters }) => {
+          return documentSearchService.getCategoriesByQuery(
+            query,
+            filters,
+            category
+          );
+        })
+      );
+
+      return results.reduce((acc, item) => {
+        return mergeUniqueArray(acc, item);
+      }, {} as CategoryResponse);
+    },
     {
       enabled:
         filterQuery.facets[category as DocumentFacet].length > 0 &&
-        !isEmpty(filters),
+        !isEmpty(batchedFilters),
     }
   );
 };
@@ -105,7 +135,7 @@ export const useQuerySavedRelatedDocuments = (
   const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const isV3Enabled = useEnabledWellSdkV3();
 
-  const { filters } = formatAssetIdsFilter(
+  const batchedFilters = formatAssetIdsFilter(
     wellboreIds.map((id) => wellboreAssetIdMap[id]),
     isV3Enabled
   );
@@ -114,42 +144,51 @@ export const useQuerySavedRelatedDocuments = (
 
   /** **************** Get master response applying all filters ***************** */
   const mainResponse = useQuery<DocumentResult>(
-    [SAVED_RELATED_DOCUMENTS, filterQuery, filters],
-    () => {
+    [SAVED_RELATED_DOCUMENTS, filterQuery, ...batchedFilters],
+    async () => {
       startNetworkTimer();
-      const filterOptions = {
-        filters,
-        sort: [],
-      };
-      return documentSearchService
-        .search(filterQuery, filterOptions, limit)
-        .finally(() => {
-          stopNetworkTimer();
-        });
+
+      const results = await Promise.all(
+        batchedFilters.map(({ filters }) => {
+          const filterOptions = {
+            filters,
+            sort: [],
+          };
+          return documentSearchService
+            .search(filterQuery, filterOptions, limit)
+            .finally(() => {
+              stopNetworkTimer();
+            });
+        })
+      );
+
+      return results.reduce((acc, item) => {
+        return mergeUniqueArray(acc, item);
+      }, {} as DocumentResult);
     },
     {
-      enabled: !isEmpty(filters),
+      enabled: !isEmpty(batchedFilters),
     }
   );
 
   /** **************** Get aggregates for labels if any selected ***************** */
   const { data: labelResponse } = useRelatedDocumentsCategories(
     filterQuery,
-    filters,
+    batchedFilters,
     'labels'
   );
 
   /** **************** Get aggregates for filetype if any selected ***************** */
   const { data: filetypeResponse } = useRelatedDocumentsCategories(
     filterQuery,
-    filters,
+    batchedFilters,
     'filetype'
   );
 
   /** **************** Get aggregates for location if any selected ***************** */
   const { data: locationResponse } = useRelatedDocumentsCategories(
     filterQuery,
-    filters,
+    batchedFilters,
     'location'
   );
 

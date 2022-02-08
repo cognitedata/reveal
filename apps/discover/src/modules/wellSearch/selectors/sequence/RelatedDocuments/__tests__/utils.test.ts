@@ -15,38 +15,79 @@ import {
 } from '../utils';
 
 describe('related document util', () => {
-  it('should return wellbore ids', async () => {
-    const ids = getSelectedWellboreIds({ 1234: true, 5678: false });
-    expect(ids).toEqual([1234]);
+  describe('getSelectedWellboreIds', () => {
+    it('should return wellbore ids', async () => {
+      const ids = getSelectedWellboreIds({ 1234: true, 5678: false });
+      expect(ids).toEqual([1234]);
+    });
   });
 
-  it('should return document config', async () => {
-    const ids = [1234];
-    const config = formatAssetIdsFilter(ids, false);
-    expect(config.filters.assetIds.containsAny).toEqual(ids);
+  describe('formatAssetIdsFilter', () => {
+    it('returns the empty list', () => {
+      const results = formatAssetIdsFilter([], false);
+      expect(results).toEqual([]);
+    });
+
+    it('should return formatted asset ids for documents filter (v2)', async () => {
+      const ids = [1234];
+      const result = formatAssetIdsFilter(ids, false);
+
+      expect(result.length).toBe(1);
+      const [{ filters }] = result;
+
+      expect(filters!.assetIds).toMatchObject({ containsAny: [1234] });
+    });
+
+    it('should return formatted asset ids for document filter (v3)', async () => {
+      const ids = ['1234'];
+      const result = formatAssetIdsFilter(ids, true);
+
+      expect(result.length).toBe(1);
+      const [{ filters }] = result;
+
+      // TODO(PP-2452): fix types
+      expect((filters as any).assetExternalIds).toMatchObject({
+        containsAny: ['1234'],
+      });
+    });
+
+    it('batches/chunks the filters in two arrays', () => {
+      const ids = [1, 2, 3, 4, 5];
+      const result = formatAssetIdsFilter(ids, false, 4);
+
+      expect(result.length).toBe(2);
+      const [batch1, batch2] = result;
+
+      expect(batch1.filters!.assetIds).toMatchObject({
+        containsAny: [1, 2, 3, 4],
+      });
+      expect(batch2.filters!.assetIds).toMatchObject({ containsAny: [5] });
+    });
   });
 
-  it('should return filtered wellbore ids', async () => {
-    const documents = filterBySelectedWellboreIds(
-      [1234],
-      [
-        getMockDocument({
-          id: '1234',
-          doc: {
-            ...getMockDocumentMetadata({ id: '1234', assetIds: [1234] }),
-          },
-        }),
-        getMockDocument({
-          id: '5555',
-          doc: {
-            ...getMockDocumentMetadata({ id: '5555', assetIds: [5555] }),
-          },
-        }),
-      ]
-    );
+  describe('filterBySelectedWellboreIds', () => {
+    it('should return filtered wellbore ids', async () => {
+      const documents = filterBySelectedWellboreIds(
+        [1234],
+        [
+          getMockDocument({
+            id: '1234',
+            doc: {
+              ...getMockDocumentMetadata({ id: '1234', assetIds: [1234] }),
+            },
+          }),
+          getMockDocument({
+            id: '5555',
+            doc: {
+              ...getMockDocumentMetadata({ id: '5555', assetIds: [5555] }),
+            },
+          }),
+        ]
+      );
 
-    expect(documents.length).toEqual(1);
-    expect(documents[0].id).toEqual('1234');
+      expect(documents.length).toEqual(1);
+      expect(documents[0].id).toEqual('1234');
+    });
   });
 
   describe('getFilterQuery', () => {

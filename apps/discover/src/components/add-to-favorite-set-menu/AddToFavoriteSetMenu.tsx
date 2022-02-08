@@ -2,9 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch } from 'react-redux';
 
-import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
-import mergeWith from 'lodash/mergeWith';
+import { mergeUniqueArray } from 'utils/merge';
 
 import { Icon, Menu } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
@@ -84,17 +83,7 @@ export const AddToFavoriteSetMenu: React.FC<Props> = ({
     favoriteContent: FavoriteContent
   ) => {
     const wellsFinal = wellsRef.current
-      ? mergeWith(
-          { ...favoriteContent.wells },
-          { ...wellsRef.current },
-          (objValue, srcValue) => {
-            if (isArray(objValue)) {
-              return [...new Set(objValue.concat(srcValue))];
-            }
-
-            return undefined;
-          }
-        )
+      ? mergeUniqueArray({ ...favoriteContent.wells }, { ...wellsRef.current })
       : undefined;
 
     handleFavoriteUpdate(
