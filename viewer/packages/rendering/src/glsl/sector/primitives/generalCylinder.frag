@@ -22,6 +22,8 @@ precision highp float;
 // the same shader in the old code. Consider de-duplicating
 // parts of this code
 
+// uniform int renderMode;
+
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
@@ -50,11 +52,10 @@ in float v_treeIndex;
 in vec3 v_color;
 
 in vec3 v_normal;
-
-uniform int renderMode;
-
+in float v_renderMode;
 
 void main() {
+    int renderMode = int(v_renderMode + 0.5);
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;
@@ -146,5 +147,5 @@ void main() {
 #endif
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
+    updateFragmentColor(int(renderMode), color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
 }

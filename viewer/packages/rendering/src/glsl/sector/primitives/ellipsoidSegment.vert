@@ -27,7 +27,6 @@ out vec4 V;
 out vec4 sphereNormal;
 
 out vec3 v_color;
-out vec3 v_normal;
 
 uniform vec2 treeIndexTextureSize;
 
@@ -36,8 +35,11 @@ uniform sampler2D transformOverrideIndexTexture;
 uniform vec2 transformOverrideTextureSize; 
 uniform sampler2D transformOverrideTexture;
 
-void main() {
+uniform int renderMode;
+out float v_renderMode;
 
+void main() {
+    v_renderMode = float(renderMode); // REV-287
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 
       treeIndexTextureSize, 

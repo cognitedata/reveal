@@ -40,7 +40,11 @@ uniform sampler2D transformOverrideIndexTexture;
 uniform vec2 transformOverrideTextureSize; 
 uniform sampler2D transformOverrideTexture;
 
+uniform int renderMode;
+out float v_renderMode;
+
 void main() {
+  v_renderMode = float(renderMode); // REV-287
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 
       treeIndexTextureSize, 

@@ -32,9 +32,10 @@ in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 
-uniform int renderMode;
+in float v_renderMode;
 
 void main() {
+    int renderMode = int(v_renderMode + 0.5); // REV-287
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;
