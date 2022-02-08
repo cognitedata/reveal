@@ -11,16 +11,26 @@ import { SectorMetadata } from '../metadata/types';
  */
 export const WellKnownDistanceToMeterConversionFactors = new Map<string, number>([
   ['Meters', 1.0],
+  ['Meter', 1.0],
   ['Centimeters', 0.01],
+  ['Centimeter', 0.01],
   ['Millimeters', 0.001],
+  ['Millimeter', 0.001],
   ['Micrometers', 1e-6],
+  ['Micrometer', 1e-6],
   ['Kilometers', 1000],
+  ['Kilometer', 1000],
   ['Feet', 0.3048],
   ['Inches', 0.0254],
+  ['Inch', 0.0254],
   ['Yards', 0.9144],
+  ['Yard', 0.9144],
   ['Miles', 1609.34],
+  ['Mile', 1609.34],
   ['Mils', 0.0254 * 1e-3],
-  ['Microinches', 0.0254 * 1e-6]
+  ['Mil', 0.0254 * 1e-3],
+  ['Microinches', 0.0254 * 1e-6],
+  ['Microinch', 0.0254 * 1e-6]
 ]);
 
 export interface SectorScene {
