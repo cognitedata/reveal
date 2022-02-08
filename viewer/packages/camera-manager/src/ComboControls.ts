@@ -236,9 +236,16 @@ export class ComboControls extends EventDispatcher {
     this._target.copy(this._targetEnd);
     this._scrollTarget.copy(target);
     this._spherical.copy(this._sphericalEnd);
+    this._temporarilyDisableDamping = true;
     this.update(1000 / this._targetFPS);
     this.triggerCameraChangeEvent();
   };
+
+  public setCameraTarget(target: Vector3) {
+    this._targetEnd.copy(target);
+    this._target.copy(target);
+    this.update(1000 / this._targetFPS);
+  }
 
   public setViewTarget = (target: Vector3) => {
     this._viewTarget.copy(target);

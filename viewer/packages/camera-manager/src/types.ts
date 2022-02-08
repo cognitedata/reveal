@@ -64,13 +64,53 @@ export interface RevealCameraControls extends THREE.EventDispatcher {
 /**
  * Camera manager interface.
  * */
-export interface CameraManagerInterface {
-  cameraManipulationEnabled: boolean;
+export interface CameraManager {
+  getCamera(): THREE.PerspectiveCamera;
 
+  setCameraRotation(rotation:THREE.Quaternion): void;
+
+  getCameraRotation(): THREE.Quaternion;
+
+  /**
+   * Set camera's target.
+   * @public
+   * @param target Target in world space.
+   * @param animated Whether change of target should be animated or not (default is false).
+   * @example
+   * ```js
+   * // store position, target
+   * const position = cameraManager.getCameraPosition();
+   * const target = cameraManager.getCameraTarget();
+   * // restore position, target
+   * cameraManager.setCameraPosition(position);
+   * cameraManager.setCameraTarget(target);
+   * ```
+   */
   setCameraTarget: (target: THREE.Vector3) => void;
+  /**
+     * @obvious
+     * @returns Camera's target in world space.
+     */
   getCameraTarget: () => THREE.Vector3;
-
+  
+  /**
+   * @obvious
+   * @param position Position in world space.
+   * @example
+   * ```js
+   * // store position, target
+   * const position = viewer.getCameraPosition();
+   * const target = viewer.getCameraTarget();
+   * // restore position, target
+   * viewer.setCameraPosition(position);
+   * viewer.setCameraTarget(target);
+   * ```
+   */
   setCameraPosition: (position: THREE.Vector3) => void;
+  /**
+   * @obvious
+   * @returns Camera's position in world space.
+   */
   getCameraPosition: () => THREE.Vector3;
   /**
    * Required for understadning of `cameraChanged` definition for other parts of Reveal
@@ -78,12 +118,23 @@ export interface CameraManagerInterface {
    * @param callback 
    */
   on(event: 'cameraChange', callback: CameraChangeData): void;
+  /**
+   * Required for understadning of `cameraChanged` definition for other parts of Reveal
+   * @param event 
+   * @param callback 
+   */
   off(event: 'cameraChange', callback: CameraChangeData): void;
 
   fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
-
+  /**
+   * Updates internal state of camera manager.
+   * @param deltaTime 
+   * @param boundingBox 
+   */
   update(deltaTime: number, boundingBox: THREE.Box3): void;
-
+  /**
+   * @obvious
+   */
   dispose(): void;
 
  }

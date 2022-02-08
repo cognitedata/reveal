@@ -11,12 +11,12 @@ import {
   CameraChangeData,
   PointerEventDelegate,
   ControlsState,
-  CameraManagerInterface
+  CameraManager
 } from './types';
 import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import range from 'lodash/range';
 
-export class CameraManager implements CameraManagerInterface {
+export class DefaultCameraManager implements CameraManager {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeData>()
   };
@@ -44,9 +44,30 @@ export class CameraManager implements CameraManagerInterface {
     changeCameraTargetOnClick: false
   };
 
-  private _cameraControlsOptions: Required<CameraControlsOptions> = { ...CameraManager.DefaultCameraControlsOptions };
-
+  private _cameraControlsOptions: Required<CameraControlsOptions> = { ...DefaultCameraManager.DefaultCameraControlsOptions };
+  
+  /**
+   * When false, camera near and far planes will not be updated automatically (defaults to true).
+   * This can be useful when you have custom content in the 3D view and need to better
+   * control the view frustum.
+   *
+   * When automatic camera near/far planes are disabled, you are responsible for setting
+   * this on your own.
+   * @example
+   * ```
+   * viewer.camera.near = 0.1;
+   * viewer.camera.far = 1000.0;
+   * viewer.camera.updateProjectionMatrix();
+   * ```
+   */
   public automaticNearFarPlane = true;
+  /**
+   * When false, the sensitivity of the camera controls will not be updated automatically.
+   * This can be useful to better control the sensitivity of the 3D navigation.
+   *
+   * When not set, control the sensitivity of the camera using `viewer.cameraManager.cameraControls.minDistance`
+   * and `viewer.cameraManager.cameraControls.maxDistance`.
+   */
   public automaticControlsSensitivity = true;
 
   /**
@@ -73,34 +94,30 @@ export class CameraManager implements CameraManagerInterface {
   };
 
   constructor(
-    camera: THREE.PerspectiveCamera,
     domElement: HTMLElement,
     inputHandler: InputHandler,
-    raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>
+    raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>,
+    camera?: THREE.PerspectiveCamera,
   ) {
-    this._camera = camera;
+    this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
+    // TODO savokr 28-10-2021: Consider removing default camera position initialization
+    this._camera.position.x = 30;
+    this._camera.position.y = 10;
+    this._camera.position.z = 50;
+    this._camera.lookAt(new THREE.Vector3());
+
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
-    this._controls = new ComboControls(camera, domElement);
-    this._controls.minZoomDistance = CameraManager.DefaultMinZoomDistance;
+    this._controls = new ComboControls(this._camera, domElement);
+    this._controls.minZoomDistance = DefaultCameraManager.DefaultMinZoomDistance;
 
     this._controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire({ camera: { position: position.clone(), target: target.clone() } });
     });
-
-    if (!camera) {
-      this._camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-
-      // TODO savokr 28-10-2021: Consider removing default camera position initialization
-      this._camera.position.x = 30;
-      this._camera.position.y = 10;
-      this._camera.position.z = 50;
-      this._camera.lookAt(new THREE.Vector3());
-    }
   }
 
   on(event: 'cameraChange', callback: CameraChangeData): void {
@@ -161,14 +178,6 @@ export class CameraManager implements CameraManagerInterface {
     return this._controls.enableKeyboardNavigation;
   }
 
-  set cameraManipulationEnabled(value: boolean) {
-    this._controls.enabled = value;
-  }
-
-  get cameraManipulationEnabled(): boolean {
-    return this._controls.enabled;
-  }
-
   /**
    * Allows to move camera with WASD or arrows keys.
    */
@@ -192,10 +201,28 @@ export class CameraManager implements CameraManagerInterface {
     return this._controls;
   }
 
-  /**
-     * @obvious
-     * @returns Camera's target in world space.
-     */
+  getCamera(): THREE.PerspectiveCamera {
+    return this._camera;
+  }
+
+  getCameraRotation(): THREE.Quaternion {
+    return this._camera.quaternion;
+  }
+
+  setCameraRotation(rotation: THREE.Quaternion): void {
+    this._controls.enableDamping = false;
+    this._controls.enabled = false;
+    const distToTarget = this.getCameraTarget().sub(this._camera.position);
+    const tempCam = this._camera;
+    tempCam.setRotationFromQuaternion(rotation);
+
+    const newTarget = tempCam.getWorldDirection(new THREE.Vector3()).normalize()
+      .multiplyScalar(distToTarget.length()).add(tempCam.position);
+    this._controls.setCameraTarget(newTarget);
+    this._controls.enabled = true;
+    console.log(this._camera.quaternion.clone().angleTo(rotation));
+  }
+
   getCameraTarget(): THREE.Vector3 {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
@@ -203,27 +230,13 @@ export class CameraManager implements CameraManagerInterface {
     return this._controls.getState().target.clone();
   }
 
-  /**
-   * Set camera's target.
-   * @public
-   * @param target Target in world space.
-   * @param animated Whether change of target should be animated or not (default is false).
-   * @example
-   * ```js
-   * // store position, target
-   * const position = cameraManager.getCameraPosition();
-   * const target = cameraManager.getCameraTarget();
-   * // restore position, target
-   * cameraManager.setCameraPosition(position);
-   * cameraManager.setCameraTarget(target);
-   * ```
-   */
   setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
     if (this.isDisposed) {
       return;
     }
+    //this._controls.enabled = true;
 
-    const animationTime = animated ? CameraManager.DefaultAnimationDuration : 0;
+    const animationTime = animated ? DefaultCameraManager.DefaultAnimationDuration : 0;
     this.moveCameraTargetTo(target, animationTime);
   }
 
@@ -242,19 +255,6 @@ export class CameraManager implements CameraManagerInterface {
     return this._camera.position.clone();
   }
 
-  /**
-   * @obvious
-   * @param position Position in world space.
-   * @example
-   * ```js
-   * // store position, target
-   * const position = viewer.getCameraPosition();
-   * const target = viewer.getCameraTarget();
-   * // restore position, target
-   * viewer.setCameraPosition(position);
-   * viewer.setCameraTarget(target);
-   * ```
-   */
   setCameraPosition(position: THREE.Vector3): void {
     if (this.isDisposed) {
       return;
@@ -279,7 +279,7 @@ export class CameraManager implements CameraManagerInterface {
    * @param controlsOptions JSON object with camera controls options.
    */
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
-    this._cameraControlsOptions = { ...CameraManager.DefaultCameraControlsOptions, ...controlsOptions };
+    this._cameraControlsOptions = { ...DefaultCameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
     this.teardownControls(false);
     this.setupControls();
@@ -450,7 +450,7 @@ export class CameraManager implements CameraManagerInterface {
       // This is also used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside
-      this._controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), CameraManager.DefaultMinDistance);
+      this._controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), DefaultCameraManager.DefaultMinDistance);
     }
   }
 
@@ -644,7 +644,7 @@ export class CameraManager implements CameraManagerInterface {
     const onWheel = async (e: any) => {
       const timeDelta = wheelClock.getDelta();
 
-      if (timeDelta > CameraManager.DefaultMinimalTimeBetweenRaycasts) scrollStarted = false;
+      if (timeDelta > DefaultCameraManager.DefaultMinimalTimeBetweenRaycasts) scrollStarted = false;
 
       const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
       const isZoomToCursor = this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor';
@@ -683,8 +683,8 @@ export class CameraManager implements CameraManagerInterface {
   private calculateDefaultDuration(distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(
-      Math.max(duration, CameraManager.DefaultMinAnimationDuration),
-      CameraManager.DefaultMaxAnimationDuration
+      Math.max(duration, DefaultCameraManager.DefaultMinAnimationDuration),
+      DefaultCameraManager.DefaultMaxAnimationDuration
     );
 
     return duration;
