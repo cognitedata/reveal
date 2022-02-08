@@ -12,15 +12,26 @@ const Wrapper = styled.div`
   padding: 4px;
 `;
 
-export type SpecialIconType = 'App.Charts' | 'App.Blueprint' | 'App.BestDay';
+export type SpecialIconType =
+  | 'App.Charts'
+  | 'App.Blueprint'
+  | 'App.BestDay'
+  | 'App.Maintain'
+  | 'App.InField'
+  | 'App.Discover'
+  | 'Cognite';
 
 export const specialIcons: Record<
   SpecialIconType,
   { icon: React.ReactNode; background?: string; color?: string }
 > = {
+  Cognite: {
+    icon: <Graphic type="Cognite" />,
+    background: 'transparent',
+  },
   'App.Charts': {
     icon: <Icon type="LineChart" />,
-    background: 'linear-gradient(225.51deg, #FF6917 0.61%, #FB2474 99.13%)',
+    background: 'linear-gradient(225deg, #FF6917 0%, #FB2474 100%)',
     color: 'white',
   },
   'App.Blueprint': {
@@ -28,9 +39,20 @@ export const specialIcons: Record<
     background: 'linear-gradient(45.51deg, #23D8ED 0.87%, #4967FB 100%)',
     color: 'white',
   },
-
   'App.BestDay': {
     icon: <Graphic type="BestDay" />,
+    background: 'transparent',
+  },
+  'App.Maintain': {
+    icon: <Graphic type="Maintain" />,
+    background: 'transparent',
+  },
+  'App.InField': {
+    icon: <Graphic type="InField" />,
+    background: 'transparent',
+  },
+  'App.Discover': {
+    icon: <Graphic type="Discover" />,
     background: 'transparent',
   },
 };

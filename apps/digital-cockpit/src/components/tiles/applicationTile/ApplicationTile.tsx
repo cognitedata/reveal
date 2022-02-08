@@ -1,14 +1,15 @@
 import React from 'react';
-import { Flex, Graphic, Icon } from '@cognite/cogs.js';
+import { Flex, IconType, Icon } from '@cognite/cogs.js';
 import {
   ApplicationTileContainer,
   TileDescription,
   StyledTitle,
   ApplicationTileHeader,
-  IconContainer,
+  IconContainer as IconContainerWrapper,
 } from 'components/tiles/elements';
 import { ApplicationItem } from 'store/config/types';
 import { useLastVisited } from 'hooks';
+import IconContainer from 'components/icons';
 
 interface Props {
   item: ApplicationItem;
@@ -21,14 +22,17 @@ const ApplicationTile: React.FC<Props> = ({ item }: Props) => {
     <ApplicationTileContainer onClick={setAsLastvisited}>
       <ApplicationTileHeader>
         <Flex alignItems="center">
-          <Graphic type={item.iconKey} style={{ width: '32px' }} />
+          <IconContainer
+            type={item.iconKey as IconType}
+            style={{ width: 32, height: 32 }}
+          />
           <TileDescription>
             <StyledTitle level={6}>{item.title}</StyledTitle>
           </TileDescription>
         </Flex>
-        <IconContainer>
+        <IconContainerWrapper>
           {item.rightIconKey && <Icon type={item.rightIconKey} />}
-        </IconContainer>
+        </IconContainerWrapper>
       </ApplicationTileHeader>
     </ApplicationTileContainer>
   );

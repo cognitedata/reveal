@@ -39,10 +39,12 @@ import SuiteNavigationItem from './SuiteNavigationItem';
 type SuiteItemProps = {
   item: Suite;
   handleClick: () => void;
+  isOpen?: boolean;
 };
 const SortableSuiteNavigationItem: React.FC<SuiteItemProps> = ({
   item,
   handleClick,
+  isOpen,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: item.key });
@@ -54,7 +56,7 @@ const SortableSuiteNavigationItem: React.FC<SuiteItemProps> = ({
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <NavLink to={`/suites/${item.key}`} key={item.key} onClick={handleClick}>
-        <SuiteNavigationItem dataItem={item} />
+        <SuiteNavigationItem dataItem={item} isOpen={isOpen} />
       </NavLink>
     </div>
   );
@@ -123,7 +125,7 @@ const LeftSidebar: React.FC = () => {
         })
       }
     >
-      <ApplicationNavigationItem item={item} />
+      <ApplicationNavigationItem item={item} isOpen={isOpen} />
     </A>
   );
 
@@ -146,6 +148,7 @@ const LeftSidebar: React.FC = () => {
                 key={item.key}
                 item={item}
                 handleClick={handleSuiteItemClick(item)}
+                isOpen={isOpen}
               />
             ))}
           </SortableContext>
@@ -158,7 +161,7 @@ const LeftSidebar: React.FC = () => {
         key={item.key}
         onClick={handleSuiteItemClick(item)}
       >
-        <SuiteNavigationItem dataItem={item} />
+        <SuiteNavigationItem dataItem={item} isOpen={isOpen} />
       </NavLink>
     ));
   };
@@ -194,6 +197,7 @@ const LeftSidebar: React.FC = () => {
               title: 'Explorer',
               url: '/explore',
             }}
+            isOpen={isOpen}
           />
         </NavLink>
       </ItemsContainer>
