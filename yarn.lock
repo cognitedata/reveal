@@ -4346,12 +4346,29 @@
     "@microsoft/applicationinsights-shims" "2.0.0"
     "@microsoft/dynamicproto-js" "^1.1.4"
 
+"@microsoft/applicationinsights-common@2.7.3":
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/@microsoft/applicationinsights-common/-/applicationinsights-common-2.7.3.tgz#af18443d3006b92280715e1b01d5c103ea3ba8ca"
+  integrity sha512-gbEbxCnpEJlFQeVG9DLpHYOgY2AYxczUSccaDicVMu/f8ci2NHxZylvBEfjPM3cVc+Ra2V/Bj4mqLH5fqSRW9A==
+  dependencies:
+    "@microsoft/applicationinsights-core-js" "2.7.3"
+    "@microsoft/applicationinsights-shims" "2.0.1"
+    "@microsoft/dynamicproto-js" "^1.1.4"
+
 "@microsoft/applicationinsights-core-js@2.7.2":
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/@microsoft/applicationinsights-core-js/-/applicationinsights-core-js-2.7.2.tgz#b829998d7a11d46d61110125223db1253a3a1fa8"
   integrity sha512-XV0ibH3RJRcKJiu50BS9EZ7izkx4nP13AKksd9kwbIifibaBFFofZ2RjuNO65e9pcPxuJVy6VwCeyCgW1i9zyw==
   dependencies:
     "@microsoft/applicationinsights-shims" "2.0.0"
+    "@microsoft/dynamicproto-js" "^1.1.4"
+
+"@microsoft/applicationinsights-core-js@2.7.3":
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/@microsoft/applicationinsights-core-js/-/applicationinsights-core-js-2.7.3.tgz#6af5b66bf43f17f958bc0024994ac2da3515e508"
+  integrity sha512-mJ2n86rwjVPiOoKDt7YcxKKSlg4S5ZCQSGMv2KNl5glL66mhMFxgZbYUakO39ZEkEXCsqk7Yi5jSfr7LMvQwtA==
+  dependencies:
+    "@microsoft/applicationinsights-shims" "2.0.1"
     "@microsoft/dynamicproto-js" "^1.1.4"
 
 "@microsoft/applicationinsights-dependencies-js@2.7.2":
@@ -4374,20 +4391,25 @@
     "@microsoft/applicationinsights-shims" "2.0.0"
     "@microsoft/dynamicproto-js" "^1.1.4"
 
-"@microsoft/applicationinsights-react-js@3.2.2":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@microsoft/applicationinsights-react-js/-/applicationinsights-react-js-3.2.2.tgz#21abbcaca334016af901d227bd164221ee054405"
-  integrity sha512-m6ehv3dp6R0onWiO1EZKlhkpJxGlAuTAflTY9mOQYPXRhT1zDWoCxVEI4MzClseyC5jlW6sLkbT+3FQltNi8Dg==
+"@microsoft/applicationinsights-react-js@3.2.3":
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/@microsoft/applicationinsights-react-js/-/applicationinsights-react-js-3.2.3.tgz#768b79732ad7734af02c057b6f2228939030ad76"
+  integrity sha512-sfrt9Zl6bLt2Va8kqs2m7BD//0xPGKgp/Ai+paKNIlV63kKgyFy82W45zGCqtqrD5Cfg3gQN4mlZX1P2HUMdvA==
   dependencies:
-    "@microsoft/applicationinsights-common" "2.7.2"
-    "@microsoft/applicationinsights-core-js" "2.7.2"
-    "@microsoft/applicationinsights-shims" "2.0.0"
+    "@microsoft/applicationinsights-common" "2.7.3"
+    "@microsoft/applicationinsights-core-js" "2.7.3"
+    "@microsoft/applicationinsights-shims" "2.0.1"
     "@microsoft/dynamicproto-js" "^1.1.4"
 
 "@microsoft/applicationinsights-shims@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@microsoft/applicationinsights-shims/-/applicationinsights-shims-2.0.0.tgz#ee622588f14e58ae3c055b12431da8ed55d71991"
   integrity sha512-OaKew7f7acuNFgKYjMSPrRTRQi93xUyONWeeCeBlJSx7oRNJaL0TqbTvW6j5GHnSr3mhinPtAQ+rCQWASBnOrg==
+
+"@microsoft/applicationinsights-shims@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@microsoft/applicationinsights-shims/-/applicationinsights-shims-2.0.1.tgz#5d72fb7aaf4056c4fda54f9d7c93ccf8ca9bcbfd"
+  integrity sha512-G0MXf6R6HndRbDy9BbEj0zrLeuhwt2nsXk2zKtF0TnYo39KgYqhYC2ayIzKPTm2KAE+xzD7rgyLdZnrcRvt9WQ==
 
 "@microsoft/applicationinsights-web@2.7.2":
   version "2.7.2"

@@ -46,7 +46,7 @@
     "@material-ui/icons": "4.9.1",
     "@material-ui/lab": "4.0.0-alpha.57",
     "@material-ui/pickers": "3.2.10",
-    "@microsoft/applicationinsights-react-js": "3.2.2",
+    "@microsoft/applicationinsights-react-js": "3.2.3",
     "@microsoft/applicationinsights-web": "2.7.2",
     "@reduxjs/toolkit": "^1.6.1",
     "@sentry/browser": "^6.13.0",
