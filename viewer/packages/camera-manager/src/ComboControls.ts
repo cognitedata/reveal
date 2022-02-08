@@ -248,6 +248,10 @@ export class ComboControls extends EventDispatcher {
     this._scrollTarget.copy(target);
   };
 
+  public getScrollTarget = () => {
+    return this._scrollTarget.clone();
+  };
+
   public triggerCameraChangeEvent = () => {
     const { _camera, _target } = this;
     this.dispatchEvent({
@@ -724,8 +728,10 @@ export class ComboControls extends EventDispatcher {
       minDeltaDownscaleCoefficient
     );
 
-    deltaDistance *= deltaDownscaleCoefficient;
-    deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
+    if (Math.abs(deltaDistance) > this.minDistance || Math.abs(deltaTargetOffsetDistance) > this.minDistance) {
+      deltaDistance *= deltaDownscaleCoefficient;
+      deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
+    }
 
     let radius = distToTarget + deltaDistance;
 
@@ -734,9 +740,20 @@ export class ComboControls extends EventDispatcher {
       this._temporarilyDisableDamping = true;
 
       // stops camera from moving forward only if target became close to scroll target
-      if (_scrollTarget.distanceTo(_target) < minZoomDistance || radius <= 0) {
+      if (_scrollTarget.distanceTo(_target) < minZoomDistance) {
         deltaTargetOffsetDistance = 0;
         radius = distToTarget;
+      }
+
+      if (radius <= 0) {
+        deltaTargetOffsetDistance = 0;
+
+        if (_scrollTarget.distanceTo(_target) > minZoomDistance) {
+          radius = minZoomDistance;
+          this._targetEnd.add(cameraDirection.normalize().multiplyScalar(-(minZoomDistance - distToTarget)));
+        } else {
+          radius = distToTarget;
+        }
       }
     }
 
