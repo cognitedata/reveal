@@ -13,6 +13,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { defaultRenderOptions } from '@cognite/reveal/internals';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -59,7 +60,8 @@ export function SSAO() {
 
       scene.add(model);
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                                                  model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,

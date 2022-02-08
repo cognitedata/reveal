@@ -12,6 +12,6 @@ export {
   ByVisibilityGpuSectorCuller
 } from './packages/cad-geometry-loaders';
 
-export { CadNode, SuggestedCameraConfig, RenderOptions, defaultRenderOptions } from './packages/rendering';
+export { CadNode, RenderOptions, defaultRenderOptions } from './packages/rendering';
 export { NodeAppearanceProvider } from './packages/cad-styling';
 export { revealEnv } from './packages/utilities';
