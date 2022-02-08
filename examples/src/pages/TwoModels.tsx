@@ -12,6 +12,7 @@ import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -37,7 +38,7 @@ export function TwoModels() {
         modelUrl: 'primitives',
       });
       const { modelUrl: modelUrl2, modelRevision: modelRevision2 } = getModel2Params();
-      
+
       const client = new CogniteClient({ appId: 'reveal.example.two-models' });
       if (project && environmentParam) {
         await authenticateSDKWithEnvironment(client, project, environmentParam);
@@ -66,10 +67,11 @@ export function TwoModels() {
         throw new Error(
           'Need to provide either project & modelId2/revisionId2 OR modelUrl2 as query parameters'
         );
-      }      
+      }
       scene.add(model2);
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                                                  model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
