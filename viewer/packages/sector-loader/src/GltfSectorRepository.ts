@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import { MemoryRequestCache } from '@reveal/utilities';
 import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
@@ -10,9 +11,11 @@ import { GltfSectorLoader } from './GltfSectorLoader';
 
 export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorLoader: GltfSectorLoader;
+  private readonly _gltfCache: MemoryRequestCache<string, ConsumedSector>;
 
   constructor(sectorFileProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
     this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider, materialManager);
+    this._gltfCache = new MemoryRequestCache(150, async consumedSector => consumedSector.group?.dereference());
   }
 
   private async getEmptySectorWithLod(
@@ -48,8 +51,22 @@ export class GltfSectorRepository implements SectorRepository {
       return this.getEmptyDiscardedSector(sector.modelIdentifier, metadata);
     }
 
-    return this._gltfSectorLoader.loadSector(sector);
+    const cacheKey = this.wantedSectorCacheKey(sector);
+    if (this._gltfCache.has(cacheKey)) {
+      return this._gltfCache.get(cacheKey);
+    }
+    const consumedSector = await this._gltfSectorLoader.loadSector(sector);
+    consumedSector.group?.reference();
+    this._gltfCache.forceInsert(cacheKey, consumedSector);
+
+    return consumedSector;
   }
 
-  clear(): void {}
+  clear(): void {
+    this._gltfCache.clear();
+  }
+
+  private wantedSectorCacheKey(wantedSector: WantedSector) {
+    return wantedSector.modelIdentifier + '.' + wantedSector.metadata.id;
+  }
 }
