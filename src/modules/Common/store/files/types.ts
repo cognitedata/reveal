@@ -19,14 +19,16 @@ export type VisionFile = Omit<
   sourceCreatedTime?: number;
 }; // TODO: use Date objects
 
+export type Files = {
+  byId: Record<number, VisionFile>;
+  allIds: number[];
+  selectedIds: number[];
+};
+
 export type FileState = {
   dataSetIds?: number[];
   extractExif?: boolean;
-  files: {
-    byId: Record<number, VisionFile>;
-    allIds: number[];
-    selectedIds: number[];
-  };
+  files: Files;
 };
 
 // TODO remove this

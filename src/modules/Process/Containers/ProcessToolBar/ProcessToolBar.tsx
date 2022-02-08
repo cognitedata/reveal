@@ -88,7 +88,7 @@ export const ProcessToolBar = () => {
 
   const detectionModelConfiguration = () => {
     return (
-      <ConfiguratioModelFooter>
+      <ConfigurationModelFooter>
         <Button
           type="tertiary"
           onClick={() => {
@@ -106,7 +106,7 @@ export const ProcessToolBar = () => {
         >
           Save & close
         </Button>
-      </ConfiguratioModelFooter>
+      </ConfigurationModelFooter>
     );
   };
 
@@ -195,8 +195,9 @@ export const ProcessToolBar = () => {
                 />
               </ModelSelector>
               <Button
+                data-testid="Detect Button"
                 type="primary"
-                disabled={!isPollingFinished}
+                disabled={!isPollingFinished || processFiles.length === 0}
                 onClick={onDetectClick}
               >
                 Detect
@@ -282,7 +283,7 @@ const ModelOptions = styled.div`
   align-items: flex-end;
 `;
 
-const ConfiguratioModelFooter = styled.div`
+const ConfigurationModelFooter = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
