@@ -2235,11 +2235,6 @@
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.137.0.tgz#6047e0658262b4de7c464a40288f9071ddd9a6d5"
   integrity sha512-Xc5EAlfYmgrCLI/VlSVqiRJAtzhWF0Rw2jSq48nqJy+Hcb5sfDOXyfZn1+RNcHyi9l8CeCAXCZygO8IyeOJVEA==
 
-"@types/three@0.136.0":
-  version "0.136.0"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.136.0.tgz#6ffd7487563fd3d4f1c794be0ab45f58197f3275"
-  integrity sha512-yNBe5U3B+eSZU+pmiDxeq3hDyF+ftYghFkY3y0ayZrF8SjoUMVIRXqEfJX39wTSDsiY4/+tkmKgNxhhIKbnxeQ==
-
 "@types/uglify-js@*":
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/@types/uglify-js/-/uglify-js-3.13.1.tgz#5e889e9e81e94245c75b6450600e1c5ea2878aea"
@@ -12185,11 +12180,6 @@ three@0.137.0:
   version "0.137.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.137.0.tgz#0ebd6ba66637a332c31f234bcdd35aeec071a6e3"
   integrity sha512-rzSDhia6cU35UCy6y+zEEws6vSgytfHqFMSaBvUcySgzwvDO6vETyswtSNi/+aVqJw8WLMwyT1mlQQ1T/dxxOA==
-
-three@0.136.0:
-  version "0.136.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.136.0.tgz#b1504db021b46398ef468aa7849f3dcabb814f50"
-  integrity sha512-+fEMX7nYLz2ZesVP/dyifli5Jf8gR3XPAnFJveQ80aMhibFduzrADnjMbARXh8+W9qLK7rshJCjAIL/6cDxC+A==
 
 throat@^5.0.0:
   version "5.0.0"
