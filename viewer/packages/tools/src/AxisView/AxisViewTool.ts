@@ -16,7 +16,7 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import { RevealCameraControls } from '@reveal/camera-manager';
+import { CameraManagerInterface } from '@reveal/camera-manager';
 import { Cognite3DViewer } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
 
@@ -196,7 +196,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const targetPosition = intersects[0].object.position.clone().normalize();
     const targetUp = (intersects[0].object.userData.upVector as THREE.Vector3).clone();
 
-    this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraManager.cameraControls, targetPosition, targetUp);
+    this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraManager, targetPosition, targetUp);
 
     return true;
   }
@@ -342,12 +342,12 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   private moveCameraTo(
     camera: THREE.PerspectiveCamera,
-    cameraControls: RevealCameraControls,
+    cameraManager: CameraManagerInterface,
     targetAxis: THREE.Vector3,
     targetUpAxis: THREE.Vector3
   ) {
     const currentCameraPosition = camera.position.clone();
-    const cameraTarget = cameraControls.getState().target;
+    const cameraTarget = cameraManager.getCameraTarget();
 
     const targetRelativeStartPosition = currentCameraPosition.clone().sub(cameraTarget);
     const radius = targetRelativeStartPosition.length();
@@ -395,12 +395,13 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       })
       .start(TWEEN.now())
       .onStart(() => {
-        cachedCameraControlsEnabled = cameraControls.enabled;
-        cameraControls.enabled = false;
+        cachedCameraControlsEnabled = cameraManager.cameraManipulationEnabled;
+        cameraManager.cameraManipulationEnabled = false;
       })
       .onComplete(() => {
-        cameraControls.setState(camera.position, cameraTarget);
-        cameraControls.enabled = cachedCameraControlsEnabled;
+        cameraManager.setCameraPosition(camera.position);
+        cameraManager.setCameraTarget(cameraTarget);
+        cameraManager.cameraManipulationEnabled = cachedCameraControlsEnabled;
       });
     tween.update(TWEEN.now());
   }

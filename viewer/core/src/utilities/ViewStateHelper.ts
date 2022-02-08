@@ -7,7 +7,7 @@ import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
-import { RevealCameraControls } from '@reveal/camera-manager';
+import { CameraManagerInterface} from '@reveal/camera-manager';
 import { NodeAppearance } from '@reveal/cad-styling';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -36,25 +36,26 @@ export type ModelState = {
 };
 
 export class ViewStateHelper {
-  private readonly _cameraControls: RevealCameraControls;
+  private readonly _cameraManager: CameraManagerInterface;
   private readonly _viewer: Cognite3DViewer;
   private readonly _cdfClient: CogniteClient;
 
   constructor(viewer: Cognite3DViewer, cdfClient: CogniteClient) {
     this._viewer = viewer;
     this._cdfClient = cdfClient;
-    this._cameraControls = viewer.cameraManager.cameraControls;
+    this._cameraManager = viewer.cameraManager;
   }
 
   public getCurrentState(): ViewerState {
-    const cameraState = this._cameraControls.getState();
+    const cameraPosition = this._cameraManager.getCameraPosition(),
+      cameraTarget = this._cameraManager.getCameraTarget();
     const modelStates = this.getModelsState();
     const clippingPlanesState = this.getClippingPlanesState();
 
     return {
       camera: {
-        position: cameraState.position,
-        target: cameraState.target
+        position: cameraPosition,
+        target: cameraTarget
       },
       models: modelStates,
       clippingPlanes: clippingPlanesState
@@ -105,12 +106,11 @@ export class ViewStateHelper {
   private setCameraFromState(cameraState: Exclude<ViewerState['camera'], undefined>) {
     const camPos = cameraState.position;
     const camTarget = cameraState.target;
-    this._cameraControls.setState(
-      new THREE.Vector3(camPos.x, camPos.y, camPos.z),
-      new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
-    );
+    
+    this._cameraManager.setCameraPosition(new THREE.Vector3(camPos.x, camPos.y, camPos.z));
+    this._cameraManager.setCameraTarget(new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z));
   }
-
+  
   private async setModelState(modelsState: ModelState[]) {
     const cadModels = this._viewer.models
       .filter(model => model instanceof Cognite3DModel)

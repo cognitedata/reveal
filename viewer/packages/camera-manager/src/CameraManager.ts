@@ -152,13 +152,21 @@ export class CameraManager implements CameraManagerInterface {
   get cameraControlsEnabled(): boolean {
     return this._controls.enabled;
   }
-
+  
   set keyboardNavigationEnabled(enabled: boolean) {
     this._controls.enableKeyboardNavigation = enabled;
   }
 
   get keyboardNavigationEnabled(): boolean {
     return this._controls.enableKeyboardNavigation;
+  }
+
+  set cameraManipulationEnabled(value: boolean) {
+    this._controls.enabled = value;
+  }
+
+  get cameraManipulationEnabled(): boolean {
+    return this._controls.enabled;
   }
 
   /**
@@ -168,7 +176,7 @@ export class CameraManager implements CameraManagerInterface {
     this.keyboardNavigationEnabled = true;
   }
 
-  /**
+  /**z
    * Disables camera movement by pressing WASD or arrows keys.
    */
    disableKeyboardNavigation(): void {
