@@ -168,45 +168,44 @@ export class EffectRenderManager {
     this._emptyScene = new THREE.Scene();
     this._emptyScene.autoUpdate = false;
 
-    const isWebGL2 = renderer.capabilities.isWebGL2;
     const outlineColorTexture = this.createOutlineColorTexture();
 
-    this._inFrontRenderedCadModelTarget = createRenderTarget(isWebGL2, this.multiSampleCountHint, {
+    this._inFrontRenderedCadModelTarget = createRenderTarget(this.multiSampleCountHint, {
       stencilBuffer: false
     });
-    this._inFrontRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._inFrontRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(1, 1);
     this._inFrontRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
     this._inFrontRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._normalRenderedCadModelTarget = createRenderTarget(isWebGL2, this.multiSampleCountHint, {
+    this._normalRenderedCadModelTarget = createRenderTarget(this.multiSampleCountHint, {
       stencilBuffer: false
     });
-    this._normalRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._normalRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(1, 1);
     this._normalRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
     this._normalRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._ghostObjectRenderTarget = createRenderTarget(isWebGL2, this.multiSampleCountHint, { stencilBuffer: false });
-    this._ghostObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._ghostObjectRenderTarget = createRenderTarget(this.multiSampleCountHint, { stencilBuffer: false });
+    this._ghostObjectRenderTarget.depthTexture = new THREE.DepthTexture(1, 1);
     this._ghostObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._ghostObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._customObjectRenderTarget = createRenderTarget(isWebGL2, this.multiSampleCountHint, { stencilBuffer: false });
-    this._customObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._customObjectRenderTarget = createRenderTarget(this.multiSampleCountHint, { stencilBuffer: false });
+    this._customObjectRenderTarget.depthTexture = new THREE.DepthTexture(1, 1);
     this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._compositionTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._compositionTarget = new THREE.WebGLRenderTarget(1, 1, { stencilBuffer: false });
+    this._compositionTarget.depthTexture = new THREE.DepthTexture(1, 1);
     this._compositionTarget.depthTexture.format = THREE.DepthFormat;
     this._compositionTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._ssaoTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._ssaoTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._ssaoTarget = new THREE.WebGLRenderTarget(1, 1, { stencilBuffer: false });
+    this._ssaoTarget.depthTexture = new THREE.DepthTexture(1, 1);
     this._ssaoTarget.depthTexture.format = THREE.DepthFormat;
     this._ssaoTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._ssaoBlurCombineTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._ssaoBlurCombineTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._ssaoBlurCombineTarget = new THREE.WebGLRenderTarget(1, 1, { stencilBuffer: false });
+    this._ssaoBlurCombineTarget.depthTexture = new THREE.DepthTexture(1, 1);
     this._ssaoBlurCombineTarget.depthTexture.format = THREE.DepthFormat;
     this._ssaoBlurCombineTarget.depthTexture.type = THREE.UnsignedIntType;
 
@@ -300,11 +299,7 @@ export class EffectRenderManager {
   }
 
   private supportsSsao(ssaoParameters: SsaoParameters) {
-    return (
-      !isMobileOrTablet() &&
-      (this._renderer.capabilities.isWebGL2 || this._renderer.extensions.has('EXT_frag_depth')) &&
-      ssaoParameters.sampleSize !== SsaoSampleQuality.None
-    );
+    return !isMobileOrTablet() && ssaoParameters.sampleSize !== SsaoSampleQuality.None;
   }
 
   public renderDetailedToDepthOnly(camera: THREE.PerspectiveCamera): void {
@@ -405,21 +400,19 @@ export class EffectRenderManager {
         this.renderCustomObjects(scene, camera);
       }
 
-      if (renderer.capabilities.isWebGL2) {
-        // Due to how WebGL2 works and how ThreeJS applies changes from 'clear', we need to
-        // render something for the clear to have effect
-        if (!hasBackElements && lastFrameSceneState.hasBackElements) {
-          this.explicitFlushRender(camera, this._normalRenderedCadModelTarget);
-        }
-        if (!hasGhostElements && lastFrameSceneState.hasGhostElements) {
-          this.explicitFlushRender(camera, this._ghostObjectRenderTarget);
-        }
-        if (!hasInFrontElements && lastFrameSceneState.hasInFrontElements) {
-          this.explicitFlushRender(camera, this._inFrontRenderedCadModelTarget);
-        }
-        if (!hasCustomObjects && lastFrameSceneState.hasInFrontElements) {
-          this.explicitFlushRender(camera, this._customObjectRenderTarget);
-        }
+      // Due to how WebGL2 works and how ThreeJS applies changes from 'clear', we need to
+      // render something for the clear to have effect
+      if (!hasBackElements && lastFrameSceneState.hasBackElements) {
+        this.explicitFlushRender(camera, this._normalRenderedCadModelTarget);
+      }
+      if (!hasGhostElements && lastFrameSceneState.hasGhostElements) {
+        this.explicitFlushRender(camera, this._ghostObjectRenderTarget);
+      }
+      if (!hasInFrontElements && lastFrameSceneState.hasInFrontElements) {
+        this.explicitFlushRender(camera, this._inFrontRenderedCadModelTarget);
+      }
+      if (!hasCustomObjects && lastFrameSceneState.hasInFrontElements) {
+        this.explicitFlushRender(camera, this._customObjectRenderTarget);
       }
 
       const supportsSsao = this.supportsSsao(this.ssaoParameters(this._renderOptions));
@@ -916,16 +909,15 @@ export class EffectRenderManager {
 }
 
 function createRenderTarget(
-  isWebGL2: boolean,
   multiSampleCountHint: number,
   options?: THREE.WebGLRenderTargetOptions
 ): THREE.WebGLRenderTarget {
-  if (isWebGL2 && multiSampleCountHint > 1) {
-    const rt = new THREE.WebGLMultisampleRenderTarget(0, 0, { ...options, ignoreDepth: false } as any);
+  if (multiSampleCountHint > 1) {
+    const rt = new THREE.WebGLMultisampleRenderTarget(1, 1, { ...options, ignoreDepth: false } as any);
     rt.samples = multiSampleCountHint;
     return rt;
   }
-  return new THREE.WebGLRenderTarget(0, 0, options);
+  return new THREE.WebGLRenderTarget(1, 1, options);
 }
 
 function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: number, color: THREE.Color) {
