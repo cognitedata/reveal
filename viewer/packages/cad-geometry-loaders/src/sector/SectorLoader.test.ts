@@ -161,7 +161,7 @@ class StubRepository implements SectorRepository {
   loadSector(sector: WantedSector): Promise<ConsumedSector> {
     return Promise.resolve(this.loadSectorCallback(sector));
   }
-  clear(): void {}
+  clearCache(): void {}
 }
 
 class StubSectorCuller implements SectorCuller {

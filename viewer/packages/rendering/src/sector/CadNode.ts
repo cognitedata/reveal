@@ -172,6 +172,6 @@ export class CadNode extends THREE.Object3D {
   }
 
   public clearCache(): void {
-    this._sectorRepository.clear();
+    this._sectorRepository.clearCache();
   }
 }
