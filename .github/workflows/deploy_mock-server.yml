@@ -1,0 +1,52 @@
+name: Release & Deploy Mock Server
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'apps/mock-server/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Set NPMKEY variable
+        run: |
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          echo "::set-output name=NPMKEY::$NPMKEY"
+        id: npm_auth_key
+
+      - name: Create .npmrc
+        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+
+      - name: Install Dependency & Build
+        run: |
+          yarn install --frozen-lockfile
+          rm .npmrc
+          yarn build production mock-server
+
+      - name: Deploy Mock Server to npm 🚀
+        id: publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          tag: alpha
+          access: restricted
+          check-version: true
+          package: ./dist/apps/mock-server/package.json
+
+      - name: Create Release
+        if: steps.publish.outputs.type != 'none'
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: ${{ steps.publish.outputs.version }}
+          title: Mock Server Release ${{ steps.publish.outputs.version }}
+          files: |
+            ./dist/apps/mock-server/*.js*
+            ./dist/apps/mock-server/static/*.*
+            ./dist/apps/mock-server/README.md
