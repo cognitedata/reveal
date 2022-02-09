@@ -32,7 +32,6 @@ export class CadModelFactory {
 
   async createModel(externalModelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(externalModelIdentifier);
-    console.log(metadata);
 
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
     const modelMetadata = createClippedModel(metadata, geometryClipBox);
