@@ -1,4 +1,5 @@
 import {
+  adaptLocalEpochToUTC,
   CHART_AXIS_LABEL_DATE_FORMAT,
   dateToEpoch,
   DOCUMENT_DATE_FORMAT,
@@ -11,7 +12,6 @@ import {
   getTimeDuration,
   getYear,
   getYearFromNumber,
-  ifRangeIsSameTimeModifyToDayRange,
   isValidDate,
   LONG_DATE_FORMAT,
   longDate,
@@ -172,27 +172,13 @@ describe('date helpers', () => {
     });
 
     describe('date time helpers', () => {
-      describe('ifRangeIsSameTimeModifyToDayRange', () => {
-        test('Should return same range since range is not same time', () => {
-          const range = {
-            startDate: new Date(2021, 2, 17, 11, 30, 30),
-            endDate: new Date(2021, 2, 18, 11, 30, 30),
-          };
-          const [start, end] = ifRangeIsSameTimeModifyToDayRange(range);
-          expect(start).toEqual(range.startDate);
-          expect(end).toEqual(range.endDate);
-        });
-        test('Should manipulate range since range is same time', () => {
-          const range = {
-            startDate: new Date(2021, 2, 17, 11, 30, 30),
-            endDate: new Date(2021, 2, 17, 11, 30, 30),
-          };
-          const [start, end] = ifRangeIsSameTimeModifyToDayRange(range);
-          expect(start).toEqual(new Date(2021, 2, 17, 0, 0, 0));
-          expect(end).toEqual(new Date(2021, 2, 17, 23, 59, 59, 999));
+      describe('adaptLocalEpochToUTC', () => {
+        test('should adapt local epoch to local utc', () => {
+          const utc = adaptLocalEpochToUTC(0);
+          const offset = new Date().getTimezoneOffset();
+          expect(utc).toEqual(0 - offset * 60 * 1000);
         });
       });
-
       describe('isValidDate', () => {
         test('should return correct boolean', () => {
           expect(isValidDate(new Date())).toBeTruthy();

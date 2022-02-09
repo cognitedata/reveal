@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
-import { dateToEpoch, ifRangeIsSameTimeModifyToDayRange } from 'utils/date';
+import { dateToEpoch } from 'utils/date';
 
 import { Dropdown, Menu, Range } from '@cognite/cogs.js';
 
@@ -41,10 +41,12 @@ export const RelatedDocumentDateRange: React.FC = () => {
   };
 
   const search = (newRanges: Range) => {
-    const [startDate, endDate] = ifRangeIsSameTimeModifyToDayRange(newRanges);
     const facets: DocumentsFacets = {
       ...filters,
-      [activeKey]: [`${dateToEpoch(startDate)}`, `${dateToEpoch(endDate)}`],
+      [activeKey]: [
+        String(dateToEpoch(newRanges.startDate as Date)),
+        String(dateToEpoch(newRanges.endDate as Date)),
+      ],
     };
     setRelatedDocumentFilters(facets, query);
   };

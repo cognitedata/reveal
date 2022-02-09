@@ -1,6 +1,7 @@
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
+import { adaptLocalEpochToUTC } from 'utils/date';
 
 import {
   DocumentsFilter,
@@ -115,8 +116,8 @@ export const getSearchQuery = (query: SearchQueryFull) => {
 
   if (!isEmpty(lastmodifiedFacets)) {
     const timeFilters: DateRange = {
-      min: Number(lastmodifiedFacets[0]),
-      max: Number(lastmodifiedFacets[1]),
+      min: adaptLocalEpochToUTC(Number(lastmodifiedFacets[0])),
+      max: adaptLocalEpochToUTC(Number(lastmodifiedFacets[1])),
     };
     if (timeFilters.min && timeFilters.max) {
       set(queryFilters, LAST_UPDATED_KEY, timeFilters);
@@ -125,8 +126,8 @@ export const getSearchQuery = (query: SearchQueryFull) => {
 
   if (!isEmpty(lastcreatedFacets)) {
     const timeFilters: DateRange = {
-      min: Number(lastcreatedFacets[0]),
-      max: Number(lastcreatedFacets[1]),
+      min: adaptLocalEpochToUTC(Number(lastcreatedFacets[0])),
+      max: adaptLocalEpochToUTC(Number(lastcreatedFacets[1])),
     };
     if (timeFilters.min && timeFilters.max) {
       set(queryFilters, LAST_CREATED_KEY, timeFilters);

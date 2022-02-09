@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
 import styled from 'styled-components/macro';
-import { dateToEpoch, ifRangeIsSameTimeModifyToDayRange } from 'utils/date';
+import { dateToEpoch } from 'utils/date';
 
 import { Button, Range } from '@cognite/cogs.js';
 
@@ -27,8 +27,8 @@ const DateRangeFooterWrapper = styled(FlexAlignItems)`
 
 export const DateRangeFilter: React.FC = React.memo((props) => {
   const initialDateState: Range = {
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: undefined,
+    endDate: undefined,
   };
   const setDocumentFilters = useSetDocumentFilters();
   const metrics = useGlobalMetrics('search');
@@ -48,23 +48,11 @@ export const DateRangeFilter: React.FC = React.memo((props) => {
     );
   }, [filters?.lastcreated, filters?.lastmodified, activeKey]);
 
-  const renderDateTabs = () => (
-    <DateRangeTabs activeKey={activeKey} setActiveKey={setActiveKey} />
-  );
-
-  const renderClearButton = () => (
-    <DateRangeFooterWrapper>
-      <ClearButton
-        activeKey={activeKey}
-        filters={filters}
-        handleClearDate={handleClearDate}
-      />
-
-      <Button type="primary" onClick={handleApplyFilters}>
-        Apply
-      </Button>
-    </DateRangeFooterWrapper>
-  );
+  const handleApplyFilters = async () => {
+    metrics.track('click-apply-date-range-filter');
+    setShowApplyButton(false);
+    search();
+  };
 
   const handleClearDate = () => {
     setDocumentFilters({
@@ -80,30 +68,31 @@ export const DateRangeFilter: React.FC = React.memo((props) => {
     }
   };
 
-  const rangePicker = useMemo(
-    () => (
-      <CommonDateRange
-        range={dateState}
-        prependComponent={renderDateTabs}
-        appendComponent={renderClearButton}
-        onChange={handleChangeDateRange}
+  const renderDateTabs = () => (
+    <DateRangeTabs activeKey={activeKey} setActiveKey={setActiveKey} />
+  );
+
+  const renderClearButton = () => (
+    <DateRangeFooterWrapper>
+      <ClearButton
+        activeKey={activeKey}
+        filters={filters}
+        handleClearDate={handleClearDate}
       />
-    ),
-    [dateState, renderDateTabs, renderClearButton, handleChangeDateRange]
+      <Button type="primary" onClick={handleApplyFilters}>
+        Apply
+      </Button>
+    </DateRangeFooterWrapper>
   );
 
   const search = () => {
-    const [startDate, endDate] = ifRangeIsSameTimeModifyToDayRange(dateState);
     setDocumentFilters({
       ...filters,
-      [activeKey]: [`${dateToEpoch(startDate)}`, `${dateToEpoch(endDate)}`],
+      [activeKey]: [
+        String(dateToEpoch(dateState.startDate as Date)),
+        String(dateToEpoch(dateState.endDate as Date)),
+      ],
     });
-  };
-
-  const handleApplyFilters = async () => {
-    metrics.track('click-apply-date-range-filter');
-    setShowApplyButton(false);
-    search();
   };
 
   return (
@@ -113,7 +102,14 @@ export const DateRangeFilter: React.FC = React.memo((props) => {
       handleApplyClick={handleApplyFilters}
       {...props}
     >
-      <Content>{rangePicker}</Content>
+      <Content>
+        <CommonDateRange
+          range={dateState}
+          prependComponent={renderDateTabs}
+          appendComponent={renderClearButton}
+          onChange={handleChangeDateRange}
+        />
+      </Content>
     </FilterCollapse.Panel>
   );
 });

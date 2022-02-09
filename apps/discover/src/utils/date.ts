@@ -7,8 +7,6 @@ import moment, {
   unitOfTime,
 } from 'moment';
 
-import { Range } from '@cognite/cogs.js';
-
 //
 // this should be the only file that imports moment
 //
@@ -23,6 +21,8 @@ export const DATE_NOT_AVAILABLE = 'N/A';
 
 // NUMERIC TIME FORMATS
 export const HOURS_IN_A_DAY = 24;
+export const SECONDS_IN_MINUTE = 60;
+export const MILLISECONDS_IN_SECOND = 1000;
 
 export type DateFormat =
   | typeof SHORT_DATE_FORMAT
@@ -150,15 +150,6 @@ export const dateToEpoch = (
   currentFormat?: MomentFormatSpecification
 ) => toEpoch(isString(date) ? toDate(date, currentFormat) : date);
 
-export const ifRangeIsSameTimeModifyToDayRange = (range: Range) => {
-  return range!.startDate?.getTime() !== range!.endDate?.getTime()
-    ? [range!.startDate as Date, range!.endDate as Date]
-    : [
-        startOf(range!.startDate as Date, 'day'),
-        endOf(range!.endDate as Date, 'day'),
-      ];
-};
-
 export const isValidDate = (
   date: Date | string,
   currentFormat?: string
@@ -197,4 +188,11 @@ export const getTimeDuration = (
   if (seconds) timeDuration += `${seconds}s `;
 
   return timeDuration.trim();
+};
+
+export const adaptLocalEpochToUTC = (dateInEpoch: number) => {
+  const offsetInMinutes = new Date().getTimezoneOffset();
+  return (
+    dateInEpoch - offsetInMinutes * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND
+  );
 };

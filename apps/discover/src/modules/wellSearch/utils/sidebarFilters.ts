@@ -1,6 +1,5 @@
 import head from 'lodash/head';
 import last from 'lodash/last';
-import { endOf, startOf } from 'utils/date';
 
 import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discover-api-types';
 import { MeasurementType, WellFilter } from '@cognite/sdk-wells-v2';
@@ -262,8 +261,8 @@ export const filterConfigs = (
     fetcher: () => getWellsSpudDateLimits()?.then(processSpudDateLimits),
     filterParameters: (values): WellFilter => ({
       spudDate: {
-        min: startOf(values[0] as Date, 'day'),
-        max: endOf(values[1] as Date, 'day'),
+        min: values[0] as Date,
+        max: values[1] as Date,
       },
     }),
   },
