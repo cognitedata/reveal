@@ -18,6 +18,7 @@ const url = 'https://api.cognitedata.com';
 Object.defineProperty(window, 'location', {
   value: {
     href: url,
+    origin: url,
     protocol: 'https:'
   }
 });
