@@ -11,7 +11,7 @@ import {
   isProcessingFile,
   makeSelectJobStatusForFile,
 } from 'src/modules/Process/processSlice';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
+import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { selectExplorerSelectedIds } from 'src/modules/Explorer/store/selectors';
 import { FileInfo } from '@cognite/sdk';

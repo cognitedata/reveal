@@ -10,11 +10,11 @@ import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMet
 import { FileInfo } from '@cognite/sdk';
 import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import {
-  fileInfoEdit,
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from 'src/modules/FileDetails/fileDetailsSlice';
+} from 'src/modules/FileDetails/selectors';
+import { fileInfoEdit } from 'src/modules/FileDetails/slice';
 
 const Container = styled.div`
   width: 100%;

@@ -30,7 +30,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';
-import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
+import { resetEditHistory } from 'src/modules/FileDetails/slice';
 import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
 import { Prompt, useHistory } from 'react-router-dom';

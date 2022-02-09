@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
+import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
 import {
   isProcessingFile,
   makeSelectJobStatusForFile,

@@ -1,4 +1,4 @@
-import { fileMetaDataEdit } from 'src/modules/FileDetails/fileDetailsSlice';
+import { fileMetaDataEdit } from 'src/modules/FileDetails/slice';
 import styled from 'styled-components';
 import { Input, Title } from '@cognite/cogs.js';
 import React, { ReactText, useEffect } from 'react';

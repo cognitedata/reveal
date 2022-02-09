@@ -2,7 +2,7 @@ import React from 'react';
 import {
   fileMetaDataAddRow,
   toggleMetaDataTableEditMode,
-} from 'src/modules/FileDetails/fileDetailsSlice';
+} from 'src/modules/FileDetails/slice';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';

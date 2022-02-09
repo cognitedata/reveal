@@ -1,24 +1,13 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Label } from '@cognite/sdk';
-import { selectFileById } from 'src/modules/Common/store/files/selectors';
-import { RootState } from 'src/store/rootReducer';
-import {
-  MetadataItem,
-  VisionFileDetails,
-} from 'src/modules/FileDetails/Components/FileMetadata/Types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
-import { generateKeyValueArray } from 'src/utils/FormatUtils';
+import {
+  FileDetailsState,
+  FileInfoValueState,
+} from 'src/modules/FileDetails/types';
+import { resetEditHistoryState } from 'src/modules/FileDetails/utils';
 
-export type FileInfoValueState = string | Label[] | number[] | null;
-
-export type State = {
-  metadataEdit: boolean;
-  fileDetails: Record<string, FileInfoValueState>;
-  fileMetaData: Record<number, MetadataItem>;
-  loadingField: string | null;
-};
-
-export const initialState: State = {
+export const initialState: FileDetailsState = {
   metadataEdit: false,
   fileDetails: {},
   fileMetaData: {},
@@ -123,48 +112,3 @@ export const {
 } = fileDetailsSlice.actions;
 
 export default fileDetailsSlice.reducer;
-
-export const metadataEditMode = (state: State): boolean => state.metadataEdit;
-
-export const editedFileDetails = (
-  state: State
-): Record<string, FileInfoValueState> => state.fileDetails;
-
-export const editedFileMeta = (state: State): Record<number, MetadataItem> =>
-  state.fileMetaData;
-
-export const selectUpdatedFileDetails = createSelector(
-  (state: RootState) => editedFileDetails(state.fileDetailsSlice),
-  (state: RootState, id: number) => selectFileById(state.fileReducer, id),
-  (editedInfo, fileInfo) => {
-    if (fileInfo) {
-      const mergedInfo: VisionFileDetails = {
-        ...fileInfo,
-        ...editedInfo,
-      };
-      return mergedInfo;
-    }
-    return null;
-  }
-);
-
-export const selectUpdatedFileMeta = createSelector(
-  (state: RootState) => editedFileMeta(state.fileDetailsSlice),
-  (state: RootState, id: number) => selectFileById(state.fileReducer, id),
-  (editedMeta, fileInfo) => {
-    let metadata: MetadataItem[] = generateKeyValueArray(fileInfo?.metadata);
-
-    if (Object.keys(editedMeta).length > 0) {
-      metadata = Object.values(editedMeta);
-    }
-    return metadata;
-  }
-);
-
-// state helper functions
-
-const resetEditHistoryState = (state: State) => {
-  state.metadataEdit = false;
-  state.fileMetaData = {};
-  state.fileDetails = {};
-};
