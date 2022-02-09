@@ -5,14 +5,17 @@ import {
   DiagramEquipmentTagOutputFormat,
   DiagramInstanceWithPathsOutputFormat,
 } from '../types';
+import { isLineConnection } from '../utils';
 
 import {
   ParsedDocument,
   ParsedDocumentsForLine,
   Annotation,
   DocumentText,
+  DocumentLink,
 } from './types';
 import { symbolTypeMap } from './constants';
+import { findIsoLink } from './links';
 
 const diagramInstanceToAnnotation = (
   instance:
@@ -42,18 +45,26 @@ const symbolTagToAnnotation = (
 
 const parseDocument = (
   graph: GraphDocument,
-  version: string
+  version: string,
+  allDocuments: GraphDocument[]
 ): ParsedDocument => {
   const { equipmentTags, lines, symbolInstances, labels } = graph;
 
   const annotations: Annotation[] = [];
   const text: { [id: string]: DocumentText } = {};
+  const linking: DocumentLink[] = [];
 
   lines?.forEach((line) => {
     annotations.push(diagramInstanceToAnnotation(line));
   });
 
   symbolInstances?.forEach((symbol) => {
+    if (isLineConnection(symbol)) {
+      const link = findIsoLink(symbol, graph, allDocuments);
+      if (link !== undefined) {
+        linking.push(link);
+      }
+    }
     annotations.push(diagramInstanceToAnnotation(symbol));
   });
 
@@ -71,7 +82,7 @@ const parseDocument = (
     pdfExternalId: graph.documentMetadata.name,
     type: graph.documentMetadata.type === DocumentType.pid ? 'p&id' : 'iso',
     potentialDiscrepancies: [],
-    linking: [],
+    linking,
     annotations,
     text,
   };
@@ -97,7 +108,7 @@ export const computeLines = async (
   const graphsPerLine = new Map<string, string[]>();
 
   documents.forEach((graph) => {
-    const document = parseDocument(graph, version);
+    const document = parseDocument(graph, version, documents);
     if (storeDocumentCallback) {
       storeDocumentCallback(document);
     } else {
