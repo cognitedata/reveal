@@ -53,6 +53,11 @@ const DocumentsCard = ({
         />
       );
     }
+
+    if ((fileList || []).length === 0) {
+      return <StatusMessage type="Missing.Documents" />;
+    }
+
     return fileList?.map(renderLink);
   };
 

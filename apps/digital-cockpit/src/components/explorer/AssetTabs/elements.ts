@@ -17,6 +17,9 @@ export const AssetTabsWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  .rc-tabs {
+    height: 100%;
+  }
   & .cogs-tabs {
     .rc-tabs-nav-wrap {
       border-bottom: 2px solid var(--cogs-greyscale-grey2);
@@ -28,7 +31,6 @@ export const AssetTabsWrapper = styled.div`
     }
     .rc-tabs-content-holder {
       height: 100%;
-      padding-bottom: 64px;
     }
   }
 `;

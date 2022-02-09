@@ -7,20 +7,23 @@ export const AssetDetailsTabWrapper = styled.div`
   > main {
     display: grid;
     flex-grow: 1;
-    height: 500px;
+    height: 100%;
     grid-template-columns: 50% 50%;
-    grid-row: auto auto;
+    grid-template-rows: 50% 50%;
     grid-column-gap: 16px;
     grid-row-gap: 16px;
     padding-right: 36px;
+    padding-bottom: 16px;
   }
 
   > aside {
     width: 256px;
+    display: grid;
+    grid-template-rows: auto 100%;
   }
 
   .slim-card {
-    height: auto;
+    height: 56px;
     margin-bottom: 16px;
   }
 `;

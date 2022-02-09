@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 export const WrapperTable = styled.div`
+  height: 100%;
+  overflow: auto;
   .row {
     padding: 12px 16px;
     &:nth-child(2n) {

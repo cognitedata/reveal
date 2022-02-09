@@ -11,6 +11,7 @@ import { NavLink } from 'react-router-dom';
 
 import EventTab from '../EventTab';
 import TimeSeriesTab from '../TimeSeriesTab';
+import AssetDetailsTab from '../AssetDetailsTab';
 
 import { AssetTabKey } from './types';
 import {
@@ -61,7 +62,7 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
     {
       title: 'Detail',
       key: 'detail',
-      content: null,
+      content: <AssetDetailsTab assetId={currentAsset.id} />,
     },
     {
       title: 'Documents',
@@ -127,7 +128,7 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
         <AssetTitle>{currentAsset?.name}</AssetTitle>
         {renderBreadcrumbs()}
         <Tabs
-          activeKey={activeTabKey}
+          activeKey={activeTabKey || tabs[0].key}
           onChange={(next) => onTabChange && onTabChange(next as AssetTabKey)}
         >
           {tabs.map((tab) => (

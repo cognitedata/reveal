@@ -12,7 +12,7 @@ const Explorer = () => {
     useParams<{ assetId: string; tab: string }>();
 
   const onAssetSelect = (asset: Asset) => {
-    history.push(`/explore/${asset.id}/${activeTab}`);
+    history.push(`/explore/${asset.id}/${activeTab || 'detail'}`);
   };
   const onTabChange = (nextTab: AssetTabKey) => {
     history.push(`/explore/${assetId}/${nextTab}`);

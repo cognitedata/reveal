@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const ExplorerWrapper = styled.div`
   display: flex;
   height: 100%;
-  aside {
+  > aside {
     padding: 16px;
     width: 256px;
     background: var(--cogs-greyscale-grey2);
@@ -14,7 +14,7 @@ export const ExplorerWrapper = styled.div`
       margin-bottom: 16px;
     }
   }
-  main {
+  > main {
     flex-grow: 1;
     height: 100%;
     background: white;
