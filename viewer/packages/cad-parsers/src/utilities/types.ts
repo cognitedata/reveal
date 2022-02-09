@@ -39,7 +39,8 @@ const WellKnownDistanceToMeterConversionFactors = new Map<string, number>([
   ['microinch', 0.0254 * 1e-6]
 ]);
 
-export function getDistanceToMeterConversionFactor(unit: string): number | undefined {
+export function getDistanceToMeterConversionFactor(unit: string | undefined): number | undefined {
+  unit = unit ?? 'meters';
   return WellKnownDistanceToMeterConversionFactors.get(unit.toLowerCase());
 }
 
