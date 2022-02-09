@@ -230,6 +230,7 @@
               "apps/mock-server/src/assets",
               "apps/mock-server/src/static"
             ],
+            "generatePackageJson": true,
             "webpackConfig": "tools/custom-webpack-configurations/mock-server-webpack-config.js"
           },
           "configurations": {

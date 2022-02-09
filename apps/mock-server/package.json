@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-mock-server",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "description": "Cdf Mock server",
   "repository": "https://github.com/cognitedata/platypus/apps/mock-server",
   "author": "Cognite",

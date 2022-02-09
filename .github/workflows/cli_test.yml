@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - "apps/platypus-cdf-cli/**"
+      - 'apps/platypus-cdf-cli/**'
 jobs:
   E2ETests:
     runs-on: ubuntu-latest
