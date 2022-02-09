@@ -28,7 +28,7 @@
     "ag-grid-react": "^26.1.0",
     "chalk": "4.1.2",
     "conf": "^10.0.3",
-    "configstore": "^6.0.0",
+    "configstore": "5.0.0",
     "copy-webpack-plugin": "^10.0.0",
     "core-js": "^3.6.5",
     "d3": "^7.1.1",

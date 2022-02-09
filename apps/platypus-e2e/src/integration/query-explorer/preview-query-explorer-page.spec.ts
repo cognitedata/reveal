@@ -4,6 +4,9 @@ describe('Platypus Query Explorer Page - Preview', () => {
   );
 
   it('should be able to query', () => {
+    // eslint-disable-next-line
+    cy.wait(300);
+
     const query = `{
   personQuery(limit: 1) {
     items {

@@ -284,4 +284,14 @@ export const mockDataSample = {
       },
     },
   ],
+  dataProduct: [
+    {
+      externalId: 'quickstartSchema',
+      name: 'quickstartSchema',
+      description: 'quickstartSchema',
+      metadata: {},
+      createdTime: 1639476522639,
+      lastUpdatedTime: 1639476522639,
+    },
+  ],
 } as MockData;

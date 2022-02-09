@@ -1,5 +1,7 @@
 describe('Data Model Page - Publish new schema', () => {
-  beforeEach(() => cy.visit('/platypus/solutions/new-schema/latest/data'));
+  beforeEach(() =>
+    cy.visit('/platypus/solutions/schema-versions-test/latest/data')
+  );
 
   it('should edit and publish new schema', () => {
     // This should come imported from the mock package

@@ -6,6 +6,7 @@ import {
 } from '../types';
 import createCdfRestRouter from './cdf-rest-middleware';
 import templatesMiddleware from './templates';
+import schemaServiceMiddleware from './schema/schema-service-middleware';
 import { router as jsonServerRouter, rewriter } from 'json-server';
 import { createConfigDefaults, createDefaultMockApiEndpoints } from '../utils';
 import path = require('path');
@@ -31,6 +32,10 @@ export default function (
   const serverConfig = createConfigDefaults(config || ({} as CdfApiConfig));
 
   const templatesApiRouter = templatesMiddleware(jsonServerDb, serverConfig);
+  const schemaServiceApiRouter = schemaServiceMiddleware(
+    jsonServerDb,
+    serverConfig
+  );
 
   const cdfDb = jsonServerDb;
 
@@ -48,6 +53,7 @@ export default function (
   }
 
   cdfRouter.use(templatesApiRouter);
+  cdfRouter.use(schemaServiceApiRouter);
   cdfRouter.use(jsonServerApiRouter);
 
   cdfRouter.db = cdfDb;

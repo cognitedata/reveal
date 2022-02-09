@@ -14,5 +14,6 @@ export const config = {
     '/templategroups/upsert',
     '/templategroups/.*/versions/upsert',
     '/templategroups/.*/versions/.*/graphql',
+    '/schema/graphql',
   ],
 };
