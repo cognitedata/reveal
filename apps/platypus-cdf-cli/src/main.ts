@@ -8,6 +8,9 @@ import * as templates from './app/cmds/templates';
 import { init } from './app/middlewares/init';
 import status from './app/cmds/status';
 import logout from './app/cmds/logout';
+import { DEBUG as _DEBUG } from './app/utils/logger';
+
+const DEBUG = _DEBUG.extend('main');
 
 const config = {
   appId: 'platypus-cli',
@@ -37,6 +40,7 @@ scriptName('platypus')
   .version()
   .help(true)
   .fail((msg, err, args) => {
+    DEBUG(`Error occurred and caught by main handler: ${msg}, ${err}, ${args}`);
     // if (err) throw err; // do something with stack report to sentry (maybe)
     console.error(
       chalk.red(
