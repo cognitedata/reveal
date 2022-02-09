@@ -6,6 +6,9 @@
   "author": "Cognite",
   "license": "Apache-2.0",
   "main": "./main.js",
+  "engines": {
+    "node": ">=14.18.2"
+  },
   "bin": {
     "platypus": "./main.js"
   },
