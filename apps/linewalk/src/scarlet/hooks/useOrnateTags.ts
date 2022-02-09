@@ -12,12 +12,23 @@ export const useOrnateTags = (): {
 
   const dataElements = useMemo(
     () =>
-      equipment.data?.equipmentElements.filter(
-        (item) =>
-          item.state !== DataElementState.OMITTED &&
-          item.detections?.length &&
-          (!visibleDataElement || item.key === visibleDataElement.key)
-      ),
+      [
+        ...(equipment.data?.equipmentElements || []),
+        ...(equipment.data?.components
+          .filter(
+            (component) =>
+              !visibleDataElement ||
+              visibleDataElement?.componentId === component.id
+          )
+          .map((component) => component.componentElements) || []),
+      ]
+        .flat()
+        .filter(
+          (item) =>
+            item.state !== DataElementState.OMITTED &&
+            item.detections?.length &&
+            (!visibleDataElement || item.key === visibleDataElement.key)
+        ),
     [equipment.data, visibleDataElement]
   );
 

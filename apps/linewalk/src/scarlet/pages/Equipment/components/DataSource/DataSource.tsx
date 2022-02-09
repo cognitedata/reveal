@@ -3,11 +3,13 @@ import { Input } from '@cognite/cogs.js';
 import {
   AppActionType,
   DataElement,
+  DataElementOrigin,
   DataPanelActionType,
   Detection,
 } from 'scarlet/types';
 import {
   useAppContext,
+  useDataElementConfig,
   useDataPanelDispatch,
   useUpdateEquipmentPCMS,
 } from 'scarlet/hooks';
@@ -37,6 +39,8 @@ export const DataSource = ({
   const { appState, appDispatch } = useAppContext();
   const updatePCMS = useUpdateEquipmentPCMS(dataElement.key);
   const dataPanelDispatch = useDataPanelDispatch();
+  const dataElementConfig = useDataElementConfig(dataElement);
+
   const inputId = `data-source-${id}`;
 
   useEffect(() => {
@@ -59,7 +63,9 @@ export const DataSource = ({
   const approveDetection = async () => {
     setApproving(true);
 
-    await updatePCMS(value!);
+    if (dataElement.origin === DataElementOrigin.EQUIPMENT) {
+      await updatePCMS(value!);
+    }
 
     appDispatch({
       type: AppActionType.APPROVE_DETECTION,
@@ -101,7 +107,7 @@ export const DataSource = ({
         variant="titleAsPlaceholder"
         fullWidth
         style={{ height: '48px' }}
-        postfix={dataElement.unit}
+        postfix={dataElementConfig?.unit}
         onChange={(e) => setValue(e.target.value)}
         onFocus={onFocus}
       />

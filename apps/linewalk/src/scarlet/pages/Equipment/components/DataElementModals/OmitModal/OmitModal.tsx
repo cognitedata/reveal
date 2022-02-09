@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast, Textarea } from '@cognite/cogs.js';
-import { useAppContext } from 'scarlet/hooks';
+import { useAppContext, useDataElementConfig } from 'scarlet/hooks';
 import { AppActionType, DataElement, DataElementState } from 'scarlet/types';
 
 import { Modal } from '../..';
@@ -19,14 +19,15 @@ export const OmitModal = ({
   const { appState, appDispatch } = useAppContext();
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
+  const dataElementConfig = useDataElementConfig(dataElement);
 
   useEffect(() => {
     if (!visible) return;
 
     if (appState.saveState.error) {
-      toast.error(`Failed to omit "${dataElement?.label}"`);
+      toast.error(`Failed to omit "${dataElementConfig?.label}"`);
       console.error(
-        `Failed to omit "${dataElement?.label}"`,
+        `Failed to omit "${dataElementConfig?.label}"`,
         appState.saveState.error
       );
     }
@@ -34,7 +35,7 @@ export const OmitModal = ({
     if (loading && !appState.saveState.loading) {
       setLoading(false);
       if (!appState.saveState.error) {
-        toast.success(`"${dataElement?.label}" is omitted`);
+        toast.success(`"${dataElementConfig?.label}" is omitted`);
         onClose();
       }
     }

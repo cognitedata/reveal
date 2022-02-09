@@ -30,11 +30,9 @@ export enum DataElementState {
 export type DataElement = {
   key: string;
   origin: DataElementOrigin;
-  label: string;
-  type?: DataElementType;
-  unit?: DataElementUnit;
   detections: Detection[];
   state: DataElementState;
   stateReason?: string;
   pcmsValue?: string;
+  componentId?: string;
 };

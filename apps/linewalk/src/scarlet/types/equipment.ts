@@ -1,6 +1,7 @@
-import { DataElement } from '.';
+import { EquipmentComponent, DataElement, EquipmentType } from '.';
 
 export type EquipmentData = {
-  type: string;
+  type: EquipmentType;
   equipmentElements: DataElement[];
+  components: EquipmentComponent[];
 };

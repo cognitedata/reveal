@@ -1,5 +1,9 @@
 import { Icon } from '@cognite/cogs.js';
-import { useAppDispatch, useDataPanelDispatch } from 'scarlet/hooks';
+import {
+  useAppDispatch,
+  useDataElementConfig,
+  useDataPanelDispatch,
+} from 'scarlet/hooks';
 import {
   AppActionType,
   DataElement as DataElementType,
@@ -15,10 +19,11 @@ type DataElementProps = {
 };
 
 export const DataElement = ({ dataElement }: DataElementProps) => {
-  const { label, state } = dataElement;
+  const { state } = dataElement;
   const appDispatch = useAppDispatch();
   const dataPanelDispatch = useDataPanelDispatch();
   const value = getDataElementValue(dataElement);
+  const dataElementConfig = useDataElementConfig(dataElement);
 
   const hasValue = value !== null && value !== undefined && value !== '';
   const isApproved = state === DataElementState.APPROVED;
@@ -39,7 +44,9 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
   return (
     <Styled.Container hasValue={hasValue} state={state}>
       <Styled.Content>
-        <Styled.Label className="cogs-detail">{label}</Styled.Label>
+        <Styled.Label className="cogs-detail">
+          {dataElementConfig?.label}
+        </Styled.Label>
         <Styled.Value className="cogs-body-3 strong">
           {hasValue ? value : 'No value'}
         </Styled.Value>

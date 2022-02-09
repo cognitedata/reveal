@@ -1,6 +1,10 @@
 import { Icon } from '@cognite/cogs.js';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useDataPanelDispatch } from 'scarlet/hooks';
+import {
+  useAppDispatch,
+  useDataElementConfig,
+  useDataPanelDispatch,
+} from 'scarlet/hooks';
 import {
   AppActionType,
   DataElement,
@@ -18,6 +22,7 @@ export const CardHeader = ({ dataElement }: CardHeaderProps) => {
   const dataPanelDispatch = useDataPanelDispatch();
   const appDispatch = useAppDispatch();
   const [isMenuActive, setMenuActive] = useState(false);
+  const dataElementConfig = useDataElementConfig(dataElement);
 
   const onBackButton = () =>
     dataPanelDispatch({
@@ -44,7 +49,7 @@ export const CardHeader = ({ dataElement }: CardHeaderProps) => {
   return (
     <Styled.Container>
       <Styled.BackButton icon="ArrowLeft" type="ghost" onClick={onBackButton}>
-        <Styled.Label>{dataElement.label}</Styled.Label>
+        <Styled.Label>{dataElementConfig?.label}</Styled.Label>
       </Styled.BackButton>
       <Styled.MenuWrapper>
         <Styled.MenuButton

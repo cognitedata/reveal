@@ -31,7 +31,7 @@ export const getScannerDetections = async (
 
   const data = await fetch(url)
     .then((response) => response.json())
-    .then((response) => response.detections.shift() || []);
+    .then((response) => response.detections.flat() || []);
 
   return data.map(transformScannerDetection);
 };

@@ -1,4 +1,4 @@
-import { DataElementType, DataElementUnit } from '.';
+import { DataElementType, DataElementUnit, EquipmentComponentType } from '.';
 
 export enum EquipmentType {
   AIR_COOLER = 'air_cooler',
@@ -23,7 +23,7 @@ export type EquipmentConfig = {
       equipmentElementKeys: string[];
       componentTypes: {
         [key: string]: {
-          type: string;
+          type: EquipmentComponentType;
           label: string;
           componentElementKeys: string[];
         };

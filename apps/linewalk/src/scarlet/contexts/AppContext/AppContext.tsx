@@ -3,6 +3,7 @@ import { useSaveEquipment } from 'scarlet/hooks';
 
 import { AppAction, AppActionType, AppState } from '.';
 import {
+  addComponent,
   addDetection,
   approveDetection,
   removeDetection,
@@ -152,6 +153,20 @@ function reducer(state: AppState, action: AppAction) {
           equipments: action.equipments,
         },
       };
+    case AppActionType.ADD_COMPONENT: {
+      const equipmentToSave = addComponent(
+        state.equipment.data!,
+        action.component
+      );
+
+      return {
+        ...state,
+        saveState: {
+          loading: true,
+          data: equipmentToSave,
+        },
+      };
+    }
   }
 
   return state;

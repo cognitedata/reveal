@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { DataElementOrigin } from 'scarlet/types';
 
 import { DataPanelAction, DataPanelActionType, DataPanelState } from './types';
@@ -13,6 +13,10 @@ const getInitialState = (): DataPanelState => ({
       getAppName('currentOrigin')
     ) as DataElementOrigin) || DataElementOrigin.EQUIPMENT,
 });
+
+const saveCurrentOrigin = (origin: DataElementOrigin) => {
+  sessionStorage?.setItem(getAppName('currentOrigin'), origin);
+};
 
 export const DataPanelDispatchContext = React.createContext<
   React.Dispatch<DataPanelAction>
@@ -33,8 +37,6 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
     }
 
     case DataPanelActionType.SET_CURRENT_ORIGIN: {
-      sessionStorage?.setItem(getAppName('currentOrigin'), action.origin);
-
       return {
         ...state,
         currentOrigin: action.origin,
@@ -47,6 +49,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
         isVisible: true,
         visibleDataElement: action.dataElement,
         activeDetection: action.detection,
+        currentOrigin: action.dataElement.origin,
       };
 
     case DataPanelActionType.CLOSE_DATA_ELEMENT:
@@ -70,6 +73,10 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
 
 export const DataPanelProvider: React.FC = (props) => {
   const [state, dispatch] = useReducer(reducer, getInitialState());
+
+  useEffect(() => {
+    saveCurrentOrigin(state.currentOrigin);
+  }, [state.currentOrigin]);
 
   return (
     <DataPanelContext.Provider value={state}>

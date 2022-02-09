@@ -1,4 +1,4 @@
-import { EquipmentConfig } from 'scarlet/types';
+import { EquipmentComponentType, EquipmentConfig } from 'scarlet/types';
 
 export const transformEquipmentConfig = (data: any): EquipmentConfig => ({
   equipmentElements: data.equipment_properties.reduce(
@@ -17,14 +17,19 @@ export const transformEquipmentConfig = (data: any): EquipmentConfig => ({
         label: equipmentType.label,
         equipmentElementKeys: equipmentType.properties,
         componentTypes: equipmentType.components.reduce(
-          (componentResult: any, componentType: any) => ({
-            ...componentResult,
-            [componentType.component_type]: {
-              type: componentType.component_type,
-              label: componentType.label,
-              componentElementKeys: equipmentType.properties,
-            },
-          }),
+          (componentResult: any, item: any) => {
+            const componentType = getType(item.component_type);
+            if (!componentType) return componentResult;
+
+            return {
+              ...componentResult,
+              [componentType]: {
+                type: componentType,
+                label: item.label,
+                componentElementKeys: item.properties,
+              },
+            };
+          },
           {}
         ),
       },
@@ -32,3 +37,19 @@ export const transformEquipmentConfig = (data: any): EquipmentConfig => ({
     {}
   ),
 });
+
+const getType = (configType: string): EquipmentComponentType | undefined => {
+  const type = configType.split('_').pop()?.toLowerCase();
+
+  switch (type) {
+    case 'bundle':
+      return EquipmentComponentType.BUNDLE;
+    case 'head':
+      return EquipmentComponentType.HEAD;
+    case 'nozzle':
+      return EquipmentComponentType.NOZZLE;
+    case 'shell':
+      return EquipmentComponentType.SHELL;
+  }
+  return undefined;
+};

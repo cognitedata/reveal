@@ -9,6 +9,7 @@ import {
   DataElementState,
   Detection,
   Annotation,
+  EquipmentComponent,
 } from 'scarlet/types';
 
 export type AppState = {
@@ -92,6 +93,10 @@ export type AppAction =
     }
   | {
       type: AppActionType.HIDE_DATA_ELEMENT_STATE_MODAL;
+    }
+  | {
+      type: AppActionType.ADD_COMPONENT;
+      component: EquipmentComponent;
     };
 
 export enum AppActionType {
@@ -109,6 +114,7 @@ export enum AppActionType {
   SHOW_DATA_ELEMENT_STATE_MODAL = 'show-data-element-state-modal',
   HIDE_DATA_ELEMENT_STATE_MODAL = 'hide-data-element-state-modal',
   CLEANUP_EQUIPMENT_DATA = 'cleanup-equipment-data',
+  ADD_COMPONENT = 'add-component',
 
   // equipment-list
   SET_EQUIPMENT_LIST = 'set-equipment-list',

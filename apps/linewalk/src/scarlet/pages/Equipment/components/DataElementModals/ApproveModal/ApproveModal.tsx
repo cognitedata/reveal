@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from '@cognite/cogs.js';
-import { useAppContext } from 'scarlet/hooks';
+import { useAppContext, useDataElementConfig } from 'scarlet/hooks';
 import { AppActionType, DataElement, DataElementState } from 'scarlet/types';
 
 import { Modal } from '../..';
@@ -18,14 +18,15 @@ export const ApproveModal = ({
 }: ApproveModalProps) => {
   const { appState, appDispatch } = useAppContext();
   const [loading, setLoading] = useState(false);
+  const dataElementConfig = useDataElementConfig(dataElement);
 
   useEffect(() => {
     if (!visible) return;
 
     if (appState.saveState.error) {
-      toast.error(`Failed to approve "${dataElement?.label}"`);
+      toast.error(`Failed to approve "${dataElementConfig?.label}"`);
       console.error(
-        `Failed to approve "${dataElement?.label}"`,
+        `Failed to approve "${dataElementConfig?.label}"`,
         appState.saveState.error
       );
     }
@@ -33,7 +34,7 @@ export const ApproveModal = ({
     if (loading && !appState.saveState.loading) {
       setLoading(false);
       if (!appState.saveState.error) {
-        toast.success(`"${dataElement?.label}" is approved`);
+        toast.success(`"${dataElementConfig?.label}" is approved`);
         onClose();
       }
     }

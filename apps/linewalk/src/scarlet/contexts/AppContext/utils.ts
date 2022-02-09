@@ -7,6 +7,7 @@ import {
   Detection,
   DetectionState,
   DetectionType,
+  EquipmentComponent,
   EquipmentData,
 } from 'scarlet/types';
 
@@ -19,40 +20,40 @@ export const updateDataElementState = (
   stateReason?: string
 ): EquipmentData => {
   const equipment: EquipmentData = deepCopy(equipmentOrigin);
-  if (dataElement.origin === DataElementOrigin.EQUIPMENT) {
-    const index = equipment.equipmentElements.findIndex(
-      (item) => item.key === dataElement.key
-    );
-    equipment.equipmentElements[index] = {
-      ...dataElement,
-      state,
-      stateReason,
-    };
-  }
+  const dataElementList = getDataElementList(equipment, dataElement);
+
+  const index = dataElementList.findIndex(
+    (item) => item.key === dataElement.key
+  );
+  dataElementList[index] = {
+    ...dataElement,
+    state,
+    stateReason,
+  };
   return equipment;
 };
 
 export const addDetection = (
   equipmentOrigin: EquipmentData,
-  { origin, key }: DataElement,
+  dataElementOrigin: DataElement,
   annotation: Annotation
 ): EquipmentData => {
   const equipment: EquipmentData = deepCopy(equipmentOrigin);
 
-  if (origin === DataElementOrigin.EQUIPMENT) {
-    const dataElement = equipment.equipmentElements.find(
-      (item) => item.key === key
-    );
+  const dataElementList = getDataElementList(equipment, dataElementOrigin);
 
-    const detection: Detection = {
-      id: uuid(),
-      key,
-      type: DetectionType.MANUAL,
-      ...annotation,
-    };
+  const dataElement = dataElementList.find(
+    (item) => item.key === dataElementOrigin.key
+  )!;
 
-    dataElement?.detections.push(detection);
-  }
+  const detection: Detection = {
+    id: uuid(),
+    key: dataElement.key,
+    type: DetectionType.MANUAL,
+    ...annotation,
+  };
+
+  dataElement.detections.push(detection);
   return equipment;
 };
 
@@ -63,73 +64,120 @@ export const removeDetection = (
 ): EquipmentData => {
   const equipment: EquipmentData = deepCopy(equipmentOrigin);
   const dataElement: DataElement = deepCopy(dataElementOrigin);
+  const dataElementList = getDataElementList(equipment, dataElementOrigin);
 
-  if (dataElement.origin === DataElementOrigin.EQUIPMENT) {
-    const dataElementIndex = equipment.equipmentElements.findIndex(
-      (item) => item.key === dataElement.key
-    );
-    const detectionIndex = dataElement.detections!.findIndex(
-      (item) => item.id === detection.id
-    );
-    dataElement.detections![detectionIndex!] = {
-      ...detection,
-      isModified: true,
-      state: DetectionState.OMITTED,
-    };
+  const dataElementIndex = dataElementList.findIndex(
+    (item) => item.key === dataElement.key
+  );
+  const detectionIndex = dataElement.detections!.findIndex(
+    (item) => item.id === detection.id
+  );
+  dataElement.detections![detectionIndex!] = {
+    ...detection,
+    isModified: true,
+    state: DetectionState.OMITTED,
+  };
 
-    dataElement.detections = dataElement.detections.filter(
-      (detection) =>
-        !(
-          detection.state === DetectionState.OMITTED &&
-          detection.type === DetectionType.MANUAL
-        )
-    );
+  dataElement.detections = dataElement.detections.filter(
+    (detection) =>
+      !(
+        detection.state === DetectionState.OMITTED &&
+        detection.type === DetectionType.MANUAL
+      )
+  );
 
-    const isApproved = dataElement.detections.some(
-      (item) => item.state === DetectionState.APPROVED
-    );
+  const isApproved = dataElement.detections.some(
+    (item) => item.state === DetectionState.APPROVED
+  );
 
-    dataElement.state = isApproved
-      ? DataElementState.APPROVED
-      : DataElementState.PENDING;
+  dataElement.state = isApproved
+    ? DataElementState.APPROVED
+    : DataElementState.PENDING;
 
-    equipment.equipmentElements[dataElementIndex] = dataElement;
-  }
+  dataElementList[dataElementIndex] = dataElement;
+
   return equipment;
 };
 
 export const approveDetection = (
   equipmentOrigin: EquipmentData,
-  { origin, key }: DataElement,
+  dataElementOrigin: DataElement,
   detection: Detection,
   value: string
 ): EquipmentData => {
   const equipment: EquipmentData = deepCopy(equipmentOrigin);
 
-  if (origin === DataElementOrigin.EQUIPMENT) {
-    const dataElementIndex = equipment.equipmentElements.findIndex(
-      (item) => item.key === key
-    );
-    const dataElement = equipment.equipmentElements[dataElementIndex];
-    const detectionIndex = dataElement.detections!.findIndex(
-      (item) => item.id === detection.id
-    );
+  const dataElementList = getDataElementList(equipment, dataElementOrigin);
 
-    dataElement.detections.forEach((detection, i) => {
-      if (detection.state === DetectionState.APPROVED) {
-        dataElement.detections[i].state = undefined;
-      }
+  const dataElementIndex = dataElementList.findIndex(
+    (item) => item.key === dataElementOrigin.key
+  );
+  const dataElement = dataElementList[dataElementIndex];
+  const detectionIndex = dataElement.detections!.findIndex(
+    (item) => item.id === detection.id
+  );
+
+  dataElement.detections.forEach((detection, i) => {
+    if (detection.state === DetectionState.APPROVED) {
+      dataElement.detections[i].state = undefined;
+    }
+  });
+
+  dataElement.detections![detectionIndex!] = {
+    ...detection,
+    isModified: true,
+    state: DetectionState.APPROVED,
+    value,
+  };
+  dataElement.state = DataElementState.APPROVED;
+  dataElement.pcmsValue = value;
+  dataElementList[dataElementIndex] = dataElement;
+  updateComponentScannerDetectionsOnApproval(equipment, dataElement);
+
+  return equipment;
+};
+
+const getDataElementList = (
+  equipment: EquipmentData,
+  dataElement: DataElement
+) =>
+  dataElement.origin === DataElementOrigin.EQUIPMENT
+    ? equipment.equipmentElements
+    : equipment.components.find(
+        (component) => component.id === dataElement.componentId
+      )?.componentElements || [];
+
+const updateComponentScannerDetectionsOnApproval = (
+  equipment: EquipmentData,
+  dataElement: DataElement
+) => {
+  if (dataElement.origin !== DataElementOrigin.COMPONENT) return;
+  const approveDetection = dataElement.detections.find(
+    (d) => d.state === DetectionState.APPROVED
+  );
+  const approveDetectionScannerId = approveDetection?.scannerComponent?.id;
+  if (approveDetectionScannerId) {
+    equipment.components.forEach((component) => {
+      component?.componentElements.forEach((dataElementItem) => {
+        // eslint-disable-next-line no-param-reassign
+        dataElementItem.detections = dataElementItem.detections.filter(
+          (detection) =>
+            !detection.scannerComponent?.id ||
+            (component.id === dataElement.componentId &&
+              detection.scannerComponent.id === approveDetectionScannerId) ||
+            (component.id !== dataElement.componentId &&
+              detection.scannerComponent.id !== approveDetectionScannerId)
+        );
+      });
     });
-
-    dataElement.detections![detectionIndex!] = {
-      ...detection,
-      isModified: true,
-      state: DetectionState.APPROVED,
-      value,
-    };
-    dataElement.state = DataElementState.APPROVED;
-    dataElement.pcmsValue = value;
-    equipment.equipmentElements[dataElementIndex] = dataElement;
   }
+};
+
+export const addComponent = (
+  equipmentOrigin: EquipmentData,
+  component: EquipmentComponent
+) => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  equipment.components.push(component);
   return equipment;
 };

@@ -1,4 +1,4 @@
-import { Annotation } from '.';
+import { Annotation, EquipmentComponentType } from '.';
 
 export enum DetectionType {
   SCANNER = 'scanner',
@@ -17,4 +17,8 @@ export type Detection = Annotation & {
   value?: string;
   state?: DetectionState;
   isModified?: boolean;
+  scannerComponent?: {
+    id: string;
+    type: EquipmentComponentType;
+  };
 };

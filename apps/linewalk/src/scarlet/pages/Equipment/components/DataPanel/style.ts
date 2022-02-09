@@ -22,6 +22,7 @@ export const ListWrapper = styled.div<{ inactive: boolean }>`
 
 export const List = styled.div`
   padding: 18px;
+  height: 100%;
 `;
 
 export const Item = styled.div`
