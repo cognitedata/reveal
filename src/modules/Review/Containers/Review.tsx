@@ -13,7 +13,7 @@ import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { resetPreview } from 'src/modules/Review/store/reviewSlice';
 import ReviewBody from 'src/modules/Review/Containers/ReviewBody';
-import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
+import { resetEditHistory } from 'src/modules/FileDetails/slice';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { pushMetric } from 'src/utils/pushMetric';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';

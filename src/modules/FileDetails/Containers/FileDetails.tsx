@@ -11,11 +11,11 @@ import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField'
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
 import {
-  fileInfoEdit,
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from 'src/modules/FileDetails/fileDetailsSlice';
+} from 'src/modules/FileDetails/selectors';
+import { fileInfoEdit } from 'src/modules/FileDetails/slice';
 import { Tabs } from '@cognite/data-exploration';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 

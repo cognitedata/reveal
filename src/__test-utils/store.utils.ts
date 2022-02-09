@@ -12,7 +12,7 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { initialState as fileState } from 'src/modules/Common/store/files/slice';
-import { initialState as fileDetailsState } from 'src/modules/FileDetails/fileDetailsSlice';
+import { initialState as fileDetailsState } from 'src/modules/FileDetails/slice';
 import { initialState as processState } from 'src/modules/Process/processSlice';
 import rootReducer, { RootState } from 'src/store/rootReducer';
 import { initialState as annotationState } from 'src/modules/Common/store/annotation/slice';
