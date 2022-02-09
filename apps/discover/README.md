@@ -15,22 +15,23 @@ git clone https://github.com/cognitedata/applications.git
 Move to the right folder and get ready to start:
 
 ```sh
-cd applications/apps/discover && yarn
+cd applications && yarn
 ```
 
 # Development
 
-Starting the app locally on azure-dev cluster
+Make sure you are in the right directory
 
 ```sh
-yarn start:a
+cd apps/discover
 ```
 
-Starting the app locally on bluefield cluster
-
-```sh
-yarn start:b
-```
+| command        | Description                                           |
+| -------------- | ----------------------------------------------------- |
+| `yarn start:a` | Run on **azure-dev** cluster                          |
+| `yarn start:b` | Run on **bluefield** cluster (discover-e2e-bluefield) |
+| `yarn start:c` | Run on **bluefield** cluster (discover-dev-bluefield) |
+| `yarn start:d` | Run on **bp-northeurope** cluster                     |
 
 Starting with a different cluster
 

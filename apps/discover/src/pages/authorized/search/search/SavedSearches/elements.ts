@@ -24,7 +24,7 @@ export const SavedSearchInputWrapper = styled(Flex)`
 `;
 
 export const SavedSearchWrapper = styled(FlexAlignItems)`
-  margin-right: ${sizes.normal};
+  margin-right: ${sizes.small};
   margin-left: ${sizes.small};
 `;
 

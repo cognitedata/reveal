@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { isEnterPressed } from 'utils/general.helper';
 import { log } from 'utils/log';
 
-import { Dropdown, Input, Menu, Tooltip, Icon } from '@cognite/cogs.js';
+import { Dropdown, Input, Menu, Tooltip, Button } from '@cognite/cogs.js';
 
 import Divider from 'components/divider';
 import OverwriteSearchModal from 'components/modals/overwrite-search-modal';
@@ -180,16 +180,6 @@ export const SavedSearches: React.FC = React.memo(() => {
     setDropdownVisible(!dropdownVisible);
   };
 
-  const renderSaveIcon = () => (
-    <Tooltip content={t('Save')} placement="bottom">
-      <Icon
-        type="Save"
-        onClick={handleSave}
-        data-testid="save-new-search-button"
-      />
-    </Tooltip>
-  );
-
   const MenuContent = (
     <Menu>
       <SavedSearchTitle>
@@ -208,11 +198,17 @@ export const SavedSearches: React.FC = React.memo(() => {
             onChange={handleChange}
             value={currentName}
             clearable={clearable}
-            subComponentPlacement="right"
-            customSubComponent={renderSaveIcon}
             onKeyPress={handleKeyPress}
             data-testid="saved-search-input"
           />
+          <Tooltip content={t('Save')} placement="bottom">
+            <Button
+              style={{ marginLeft: '8px' }}
+              icon="Save"
+              onClick={handleSave}
+              data-testid="save-new-search-button"
+            />
+          </Tooltip>
         </SavedSearchInputWrapper>
       </SavedSearchWrapper>
       <ExistingSavedSearches handleLoad={hideDropdown} />
