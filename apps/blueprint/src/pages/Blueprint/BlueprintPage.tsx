@@ -231,12 +231,14 @@ const BlueprintPage: React.FC = () => {
         >
           {isMinimized ? 'Maximize all' : 'Minimize all'}
         </Button>
-        <Button
-          onClick={() => onSave()}
-          disabled={saveBlueprintMutation.isLoading}
-        >
-          Save
-        </Button>
+        {blueprint && blueprintService?.getAccessRights(blueprint) === 'WRITE' && (
+          <Button
+            onClick={() => onSave()}
+            disabled={saveBlueprintMutation.isLoading}
+          >
+            Save
+          </Button>
+        )}
         <Dropdown
           content={
             <Menu>

@@ -4,6 +4,8 @@ import { v4 as uuid } from 'uuid';
 
 const DATASET_EXTERNAL_ID = 'BLUEPRINT_APP_DATASET';
 
+export type AccessRights = 'NONE' | 'READ' | 'WRITE';
+
 class BlueprintService {
   client: CogniteClient;
   user: User;
@@ -28,6 +30,15 @@ class BlueprintService {
 
   isValidBlueprint(_: BlueprintDefinition): boolean {
     return true;
+  }
+
+  getAccessRights(
+    blueprintReference: BlueprintReference | BlueprintDefinition
+  ): AccessRights {
+    if (blueprintReference.createdBy.uid === this.user.uid) {
+      return 'WRITE';
+    }
+    return 'READ';
   }
 
   async list(): Promise<BlueprintReference[]> {
@@ -60,8 +71,14 @@ class BlueprintService {
       .then((res) =>
         this.client.get(res[0].downloadUrl).then((res) => res.data)
       );
+    if (!definition) {
+      throw new Error('This blueprint does not exist');
+    }
     if (!this.isValidBlueprint(definition)) {
-      throw new Error('Blueprint file is corrupt.');
+      throw new Error('Blueprint file is not valid.');
+    }
+    if (this.getAccessRights(definition) === 'NONE') {
+      throw new Error('You do not have access to view this blueprint');
     }
 
     return definition as BlueprintDefinition;

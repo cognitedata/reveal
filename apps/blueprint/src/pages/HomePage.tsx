@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import TopBar from 'components/TopBar';
 import useListBlueprintsQuery from 'hooks/useQuery/useListBlueprintsQuery';
 import { Button, Popconfirm } from '@cognite/cogs.js';
@@ -9,10 +9,12 @@ import useDeleteBlueprintMutation from 'hooks/useMutation/useDeleteBlueprintMuta
 import useCreateBlueprintMutation from 'hooks/useMutation/useCreateBlueprintMutation';
 import { useQueryClient } from 'react-query';
 import { useFetchBlueprintDefinitionName } from 'hooks/useQuery/useFetchBlueprintDefinitionQuery';
+import { AuthContext } from 'providers/AuthProvider';
 
 import { BlueprintTable, PageWrapper } from './elements';
 
 const HomePage: React.FC = () => {
+  const { blueprintService } = useContext(AuthContext);
   const { data: blueprints, isLoading } = useListBlueprintsQuery();
   const queryClient = useQueryClient();
   const history = useHistory();
@@ -79,21 +81,23 @@ const HomePage: React.FC = () => {
 
                 <td>{dayjs(blueprint.lastOpened).format('LLL')}</td>
                 <td>
-                  <Button unstyled onClick={(e) => e.stopPropagation()}>
-                    <Popconfirm
-                      content={
-                        <span>
-                          Are you sure you want to delete this blueprint?
-                          <br /> This is <strong>IRREVERSABLE</strong>.
-                        </span>
-                      }
-                      onConfirm={() => {
-                        onDelete(blueprint.externalId);
-                      }}
-                    >
-                      <Button type="ghost-danger" icon="Delete" />
-                    </Popconfirm>
-                  </Button>
+                  {blueprintService?.getAccessRights(blueprint) === 'WRITE' && (
+                    <Button unstyled onClick={(e) => e.stopPropagation()}>
+                      <Popconfirm
+                        content={
+                          <span>
+                            Are you sure you want to delete this blueprint?
+                            <br /> This is <strong>IRREVERSABLE</strong>.
+                          </span>
+                        }
+                        onConfirm={() => {
+                          onDelete(blueprint.externalId);
+                        }}
+                      >
+                        <Button type="ghost-danger" icon="Delete" />
+                      </Popconfirm>
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -107,7 +111,7 @@ const HomePage: React.FC = () => {
       <TopBar />
       <header>
         <main>
-          <h2>Your Blueprints</h2>
+          <h2>All Blueprints</h2>
           <Button
             icon={createBlueprintMutation.isLoading ? 'Loader' : 'Add'}
             disabled={createBlueprintMutation.isLoading}
