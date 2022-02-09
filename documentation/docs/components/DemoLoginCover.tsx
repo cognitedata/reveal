@@ -8,6 +8,7 @@ import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styled from 'styled-components';
 import useThemeContext from '@theme/hooks/useThemeContext';
+import { REVEAL_VERSION } from '@cognite/reveal';
 
 const Root = styled.div`
   padding: 16px;
@@ -54,7 +55,7 @@ export default function DemoLoginCover(props: Props): ReactElement {
   const { isDarkTheme } = useThemeContext();
 
   const client = new CogniteClient({
-    appId: 'cognite.reveal.docs.Cognite3DViewer',
+    appId: 'reveal-docs-' + REVEAL_VERSION,
     project: loginManager.project,
     getToken: async () => loginManager.getToken()
   });
