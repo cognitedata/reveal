@@ -1,15 +1,14 @@
 import { Arguments, CommandModule } from 'yargs';
-import { ROOT_CONFIG_KEY } from '../constants';
+import logout from '../common/auth/logout';
 import { BaseArgs } from '../types';
-import { setProjectConfigItem } from '../utils/config';
 
 class LogoutCommand implements CommandModule {
   public readonly command = 'logout';
   public readonly describe = 'Logout CDF User (globally)';
 
   handler(arg: Arguments<BaseArgs>) {
-    setProjectConfigItem(ROOT_CONFIG_KEY.AUTH, undefined);
-    arg.logger.success('You have been logout successfully!');
+    logout();
+    arg.logger.success('You have been logged-out successfully!');
   }
 }
 

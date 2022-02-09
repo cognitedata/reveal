@@ -14,6 +14,8 @@ import {
 import { AUTH_CONFIG, LOGIN_STATUS, ROOT_CONFIG_KEY } from '../constants';
 import { getCommandName } from '../utils/yargs-utils';
 import { skipMiddleware } from './util';
+import logout from '../common/auth/logout';
+import logger from '../utils/logger';
 
 export async function authenticate(arg: Arguments<BaseArgs>) {
   try {
@@ -21,17 +23,19 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
     if (skipMiddleware(arg)) {
       return;
     }
+    // for `login` command, rerunning should retrigger signin, hence we should clear cached tokens and config
+    if (getCommandName(arg) === 'login') {
+      logger.info(
+        'Logging out the current user and clearing the config (if exists)'
+      );
+      logout();
+    }
+
     // get stored accessToken, authType and try to login and initialize SDK
     const storedProjectConfig = getProjectConfig();
 
     const projectConfig = { ...storedProjectConfig, ...arg } as ProjectConfig &
       BaseArgs;
-
-    // for `login` command, rerunning should retrigger signin, hence we should clear cache
-    if (getCommandName(arg) === 'login') {
-      delete projectConfig[AUTH_CONFIG.MSAL_AUTH_CACHE];
-      delete projectConfig[AUTH_CONFIG.ACCOUNT_INFO];
-    }
 
     let client = getCogniteSDKClient();
     if (!client) {
