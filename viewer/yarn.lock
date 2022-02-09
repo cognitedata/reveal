@@ -562,12 +562,12 @@ __metadata:
   linkType: hard
 
 "@cognite/sdk@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@cognite/sdk@npm:7.0.0"
+  version: 7.1.0
+  resolution: "@cognite/sdk@npm:7.1.0"
   dependencies:
     "@cognite/sdk-core": ^4.1.0
     lodash: ^4.17.11
-  checksum: 0020e7eb4fe58577f3923a68df7f3b0ae56d4f281579e31c838795a9ad57c0b7a598974b15212df87f4d053c057c4adb3100b8d0d81dbb5dcff5c8f720791a34
+  checksum: 5a462946f4ca2bef498bdefe71520f60a2c5b2e536626696f9bff359197f1bf027aa574001b855dba0c3b636b626a8bc525b99cb5cec86b3dcb16332e13b2198
   languageName: node
   linkType: hard
 
