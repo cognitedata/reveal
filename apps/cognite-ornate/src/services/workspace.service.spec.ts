@@ -1,3 +1,5 @@
+import { CogniteClient } from '@cognite/sdk';
+
 import { WorkspaceService } from './workspace.service';
 
 jest.mock('./storage-provider');
@@ -8,7 +10,7 @@ describe('ProjectExecutionService Test', () => {
   });
 
   function createService() {
-    return new WorkspaceService();
+    return new WorkspaceService({} as CogniteClient);
   }
 
   it('shall create an instance', async () => {
