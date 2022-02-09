@@ -12,17 +12,19 @@ import EmptyState from 'components/emptyState';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import { Options, Table, RowProps } from 'components/tablev3';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';
 import { Well, WellboreId, WellId } from 'modules/wellSearch/types';
-import { wellColumns, WellResultTableOptions } from 'pages/authorized/constant';
+import { WellResultTableOptions } from 'pages/authorized/constant';
 import {
   FAVORITE_SET_NO_WELLS,
   REMOVE_FROM_SET_TEXT,
 } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
+import { generateWellColumns } from 'pages/authorized/search/well/utils';
 import { FlexRow } from 'styles/layout';
 
 import { FavoriteWellWrapper, RemoveFavoriteLabel } from './elements';
@@ -49,6 +51,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const [selectedWellIds, setSelectedWellIds] = useState<SelectedMap>({});
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
   const [hoveredWell, setHoveredWell] = useState<Well>();
+  const userPreferredUnit = useUserPreferencesMeasurement();
 
   const [selectedWellboreIdsWithWellId, setSelectedWellboreIdsWithWellId] =
     useState<FavoriteContentWells>({});
@@ -56,8 +59,8 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   useDeepEffect(() => setWellIds(wells ? Object.keys(wells) : []), [wells]);
 
   const columns = useDeepMemo(
-    () => Object.values(wellColumns || []),
-    [wellColumns]
+    () => Object.values(generateWellColumns(userPreferredUnit) || []),
+    [userPreferredUnit]
   );
 
   const handleRowClick = useCallback(

@@ -30,7 +30,7 @@ export const generateWellColumns = (
     Header: SOURCE,
     accessor: (value: Well) => (value.sources ? value.sources.join(', ') : ''),
     width: '150px',
-    order: 1,
+    order: 6,
   },
   operator: {
     Header: OPERATOR,
@@ -64,6 +64,6 @@ export const generateWellColumns = (
     Header: FIELD_NAME,
     accessor: 'field',
     width: '150px',
-    order: 6,
+    order: 1,
   },
 });

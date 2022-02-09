@@ -220,7 +220,10 @@ export const WellResultTable: React.FC = () => {
           <SearchBreadcrumb stats={wellsStats} />
           <WellAppliedFilters showClearTag />
         </div>
-        <WellOptionPanel />
+        <WellOptionPanel
+          userPreferredUnit={userPreferredUnit}
+          selectedColumns={selectedColumns}
+        />
       </SearchTableResultActionContainer>
       <Table<Well>
         scrollTable
