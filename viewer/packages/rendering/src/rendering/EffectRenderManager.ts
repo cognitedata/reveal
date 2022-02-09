@@ -357,13 +357,8 @@ export class EffectRenderManager {
     renderStateHelper.autoClear = false;
 
     try {
-      console.log(this._renderTarget);
-      this.clearTarget(this._renderTarget);
       renderStateHelper.setRenderTarget(this._renderTarget);
       this.updateRenderSize(renderer);
-      this.renderStep('test', this._originalScene, camera);
-
-      return;
 
       renderer.info.autoReset = false;
       renderer.info.reset();

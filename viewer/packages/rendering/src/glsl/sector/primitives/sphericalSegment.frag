@@ -25,6 +25,8 @@ in vec4 sphereNormal;
 in float v_treeIndex;
 in vec3 v_color;
 
+in vec2 v_ZW;
+
 uniform int renderMode;
 
 void main() {
@@ -105,6 +107,7 @@ void main() {
     }
 #endif
 
-  float fragDepth = updateFragmentDepth(p, projectionMatrix);
-  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
+  // Higher precision equivalent of gl_FragCoord.z. This assumes depthRange has been left to its default values.
+  float fragCoordZ = 0.5 * v_ZW[0] / v_ZW[1] + 0.5; // REV-287
+  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragCoordZ, matCapTexture, GeometryType.Primitive);
 }

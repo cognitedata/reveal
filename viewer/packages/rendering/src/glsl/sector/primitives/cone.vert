@@ -33,6 +33,8 @@ out float v_arcAngle;
 out vec3 v_color;
 out vec3 v_normal;
 
+out vec2 v_ZW;
+
 uniform vec2 treeIndexTextureSize;
 
 uniform sampler2D transformOverrideIndexTexture;
@@ -77,9 +79,6 @@ void main() {
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
     vec3 up = normalize(cross(left, lDir));
 
-    // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
-    newPosition.x *= 1.0 - (maxRadius * (position.x + 1.0) * 0.0025 / halfHeight);
-
     vec3 surfacePoint = center + mat3(halfHeight*lDir, leftUpScale*left, leftUpScale*up) * newPosition;
     vec3 transformed = surfacePoint;
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
@@ -119,4 +118,5 @@ void main() {
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
 
     gl_Position = projectionMatrix * mvPosition;
+    v_ZW = gl_Position.zw;
 }

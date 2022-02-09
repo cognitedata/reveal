@@ -27,6 +27,8 @@ out float height;
 out vec3 v_color;
 out vec3 v_normal;
 
+out vec2 v_ZW;
+
 uniform vec2 treeIndexTextureSize;
 
 uniform sampler2D transformOverrideIndexTexture;
@@ -91,9 +93,6 @@ void main() {
     U.xyz = normalize(normalMatrix * U.xyz);
     V.xyz = normalize(normalMatrix * V.xyz);
 
-    // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
-    newPosition.x *= 1.0 - (a_radiusA * (position.x + 1.0) * 0.0025 / height);
-
     v_centerA.xyz = mul3(viewMatrix, mul3(modelMatrix, centerA));
     v_centerB.xyz = mul3(viewMatrix, mul3(modelMatrix, centerB));
 
@@ -121,4 +120,5 @@ void main() {
 
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
     gl_Position = projectionMatrix * mvPosition;
+    v_ZW = gl_Position.zw;
 }

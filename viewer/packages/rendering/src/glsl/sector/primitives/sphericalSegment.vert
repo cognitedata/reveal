@@ -27,6 +27,8 @@ out vec4 sphereNormal;
 
 out vec3 v_color;
 
+out vec2 v_ZW;
+
 void main() {
     v_treeIndex = a_treeIndex;
     v_color = a_color;
@@ -85,4 +87,5 @@ void main() {
     // TODO should perhaps be a different normal?
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
     gl_Position = projectionMatrix * mvPosition;
+    v_ZW = gl_Position.zw;
 }

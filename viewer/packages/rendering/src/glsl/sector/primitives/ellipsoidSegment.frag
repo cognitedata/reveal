@@ -27,6 +27,8 @@ in vec3 v_color;
 
 in float v_renderMode;
 
+in vec2 v_ZW;
+
 void main() {
     int renderMode = int(v_renderMode + 0.5); // REV-287
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -108,6 +110,7 @@ void main() {
     }
 #endif
 
-  float fragDepth = updateFragmentDepth(p, projectionMatrix);
-  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
+  // Higher precision equivalent of gl_FragCoord.z. This assumes depthRange has been left to its default values.
+  float fragCoordZ = 0.5 * v_ZW[0] / v_ZW[1] + 0.5; // REV-287
+  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragCoordZ, matCapTexture, GeometryType.Primitive);
 }
