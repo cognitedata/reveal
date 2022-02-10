@@ -78,7 +78,11 @@ export type OfflineState = {
   >;
   processSlice: Pick<
     ProcessReducerState,
-    'fileIds' | 'jobs' | 'files' | 'selectedDetectionModels'
+    | 'fileIds'
+    | 'jobs'
+    | 'files'
+    | 'selectedDetectionModels'
+    | 'availableDetectionModels'
   >;
 };
 
@@ -101,6 +105,7 @@ const getOfflineState = (state: RootState): OfflineState => {
       jobs: state.processSlice.jobs,
       files: state.processSlice.files,
       selectedDetectionModels: state.processSlice.selectedDetectionModels,
+      availableDetectionModels: state.processSlice.availableDetectionModels,
     },
   };
   return offState;
