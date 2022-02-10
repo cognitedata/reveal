@@ -13,7 +13,7 @@ import { WellKnownUnit } from './types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 
 import { NodesApiClient } from '@reveal/nodes-api';
-import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
+import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
 import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
@@ -50,7 +50,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * return undefined if the model has been stored in an unsupported unit.
    */
   get modelUnitToMetersFactor(): number | undefined {
-    return WellKnownDistanceToMeterConversionFactors.get(this.modelUnit);
+    return getDistanceToMeterConversionFactor(this.modelUnit);
   }
 
   /**
