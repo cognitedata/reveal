@@ -26,7 +26,7 @@ export const ProvideMixpanelSetup: React.FC = ({ children }) => {
   // Will run twice: Before the user loads, and after.
   // The first time we don't want to initialise Mixpanel
   const {
-    REACT_APP_RELEASE: release = 'release',
+    REACT_APP_RELEASE_ID: release = 'release',
     REACT_APP_VERSION_NAME: versionName = '0.0.0',
     REACT_APP_VERSION_SHA: build = 'development',
   } = process.env;

@@ -197,7 +197,7 @@ react_scripts(
         # Specify your Sentry DSN is the URL used to report runtime issues
         "REACT_APP_SENTRY_DSN": "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732",
         # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "1cc1cdc82fb93ec9a20a690216de41e4",
+        "REACT_APP_MIXPANEL_TOKEN": "d3414318aa26007ae7017efbc5d921c2",
         # Specify your locize.io project ID used for localization
         "REACT_APP_LOCIZE_PROJECT_ID": "1ee63b21-27c7-44ad-891f-4bd9af378b72",
 
