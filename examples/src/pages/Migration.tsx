@@ -45,10 +45,7 @@ export function Migration() {
 
     async function main() {
       const project = urlParams.get('project');
-      const geometryFilterInput = urlParams.get('geometryFilter');
       const modelUrl = urlParams.get('modelUrl');
-
-      const geometryFilter = createGeometryFilter(geometryFilterInput);
 
       if (!modelUrl && !(environmentParam && project)) {
         throw Error('Must specify URL parameters "project" and "env", or "modelUrl"');
@@ -105,12 +102,6 @@ export function Migration() {
 
       // Add GUI for loading models and such
       const guiState = {
-        modelId: 0,
-        revisionId: 0,
-        geometryFilter:
-          geometryFilter !== undefined
-            ? { ...geometryFilter, enabled: true }
-            : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
