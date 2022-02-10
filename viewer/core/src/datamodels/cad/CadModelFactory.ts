@@ -15,9 +15,10 @@ import { MetricsLogger } from '@reveal/metrics';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
+  private readonly _modelDataProvider: ModelDataProvider;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository;
-  private readonly _v8SectorRepository: V8SectorRepository;
-  private readonly _gltfSectorRepository: GltfSectorRepository;
+  private _v8SectorRepository: V8SectorRepository | undefined;
+  private _gltfSectorRepository: GltfSectorRepository | undefined;
 
   constructor(
     materialManager: CadMaterialManager,
@@ -25,9 +26,8 @@ export class CadModelFactory {
     modelDataProvider: ModelDataProvider
   ) {
     this._materialManager = materialManager;
+    this._modelDataProvider = modelDataProvider;
     this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
-    this._v8SectorRepository = new V8SectorRepository(modelDataProvider, materialManager);
-    this._gltfSectorRepository = new GltfSectorRepository(modelDataProvider, materialManager);
   }
 
   async createModel(externalModelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
@@ -61,8 +61,14 @@ export class CadModelFactory {
 
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
     if (format === File3dFormat.RevealCadModel && formatVersion === 8) {
+      this._v8SectorRepository =
+        this._v8SectorRepository ?? new V8SectorRepository(this._modelDataProvider, this._materialManager);
+
       return this._v8SectorRepository;
     } else if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
+      this._gltfSectorRepository =
+        this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider, this._materialManager);
+
       return this._gltfSectorRepository;
     } else {
       throw new Error(
@@ -72,8 +78,8 @@ export class CadModelFactory {
   }
 
   dispose(): void {
-    this._v8SectorRepository.clear();
-    this._gltfSectorRepository.clear();
+    this._v8SectorRepository?.clear();
+    this._gltfSectorRepository?.clear();
   }
 }
 
