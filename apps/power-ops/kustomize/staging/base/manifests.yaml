@@ -1,0 +1,48 @@
+---
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  annotations:
+    external-dns.ambassador-service: ambassador-apps.apps
+  labels:
+    app: power-ops
+    team: apps
+  name: power-ops
+spec:
+  acmeProvider:
+    authority: none
+  ambassador_id: ambassador-apps
+  hostname: power-ops.app.staging.${account}.cogniteapp.com
+  tlsSecret:
+    name: apps-certificate-cogniteapp-com-secret
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  labels:
+    app: power-ops
+    team: apps
+  name: power-ops
+spec:
+  add_response_headers:
+    Strict-Transport-Security: max-age=31536000
+  ambassador_id: ambassador-apps
+  host: power-ops.app.staging.${account}.cogniteapp.com
+  prefix: /
+  rewrite: ''
+  service: power-ops
+  timeout_ms: 30000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: power-ops
+spec:
+  template:
+    spec:
+      containers:
+        - image: eu.gcr.io/cognitedata/apps/power-ops
+          name: power-ops
+          env:
+            - name: URL_PREFIX
+              value: power-ops.app.staging.${account}
