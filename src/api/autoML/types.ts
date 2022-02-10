@@ -2,6 +2,10 @@ import { CDFResourceId, JobStatus } from 'src/api/types';
 
 export type AutoMLModelType = 'classification' | 'objectdetection';
 
+export interface AutoMLDownload {
+  modelUrl: string;
+}
+
 export interface AutoMLMetrics {
   confidenceThreshold: number;
   precision: number;

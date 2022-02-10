@@ -3,6 +3,7 @@ import { CDFResourceId } from 'src/api/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
 
 import {
+  AutoMLDownload,
   AutoMLModel,
   AutoMLModelType,
   AutoMLTrainingJob,
@@ -28,6 +29,18 @@ export class AutoMLAPI {
         sdk.project
       }/context/vision/automl/${id}`
     );
+    return response.data || {};
+  };
+
+  public static downloadAutoMLModel = async (
+    id: number
+  ): Promise<AutoMLDownload> => {
+    const response = await sdk.get(
+      `${sdk.getBaseUrl()}/api/playground/projects/${
+        sdk.project
+      }/context/vision/automl/${id}/download`
+    );
+
     return response.data || {};
   };
 
