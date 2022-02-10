@@ -153,3 +153,33 @@ describe('AutoML start training job', () => {
     expect(consoleSpy).toHaveBeenCalled();
   });
 });
+
+describe('AutoML delete job', () => {
+  test('should delete automl model', async () => {
+    const mockedData = {
+      data: {},
+      status: 200,
+      headers: {},
+    };
+
+    sdk.post = async (): Promise<HttpResponse<any>> =>
+      Promise.resolve(mockedData);
+    const json = await AutoMLAPI.deleteAutoMLJob(1);
+
+    expect(json).toMatchObject({});
+  });
+
+  test('should log error and return undefined when job deletion fails', async () => {
+    sdk.post = async () => {
+      throw Error();
+    };
+
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    const json = await AutoMLAPI.deleteAutoMLJob(0);
+    expect(json).toBe(undefined);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+});

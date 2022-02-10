@@ -77,4 +77,34 @@ export class AutoMLAPI {
     }
     return undefined;
   };
+
+  public static deleteAutoMLJob = async (
+    id: number
+  ): Promise<{} | undefined> => {
+    const data = {
+      data: {
+        modelJobId: id,
+      },
+    };
+
+    try {
+      const response = await sdk.post(
+        `${sdk.getBaseUrl()}/api/playground/projects/${
+          sdk.project
+        }/context/vision/automl/delete`,
+        data
+      );
+
+      return response.data;
+    } catch (error) {
+      const formatedError = `Could not delete model: ${JSON.stringify(
+        error,
+        null,
+        4
+      )}`;
+      ToastUtils.onFailure(formatedError);
+      console.error(formatedError);
+    }
+    return undefined;
+  };
 }
