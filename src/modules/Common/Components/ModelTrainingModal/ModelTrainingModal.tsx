@@ -2,15 +2,15 @@ import React from 'react';
 import { Modal } from 'antd';
 import { getContainer } from 'src/utils';
 import {
-  // ModelTrainingModalContent,
+  ModelTrainingModalContent,
   ModelTrainingModalContentProps,
-} from './ModelTrainingMenuModalContent';
+} from './ModelTrainingModalContent';
 
 export const ModelTrainingModal = ({
   showModal,
   onCancel,
-}: // ...props
-{
+  ...props
+}: {
   showModal: boolean;
 } & ModelTrainingModalContentProps) => {
   return (
@@ -30,7 +30,7 @@ export const ModelTrainingModal = ({
         maxHeight: '665px',
       }}
     >
-      {/* <ModelTrainingModalContent onCancel={onCancel} {...props} /> */}
+      <ModelTrainingModalContent onCancel={onCancel} {...props} />
     </Modal>
   );
 };

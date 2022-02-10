@@ -52,7 +52,7 @@ export class AutoMLAPI {
     const data = {
       data: {
         items: fileIds,
-        // name,
+        name,
         modelType,
       },
     };
