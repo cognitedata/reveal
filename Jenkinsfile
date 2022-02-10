@@ -106,7 +106,7 @@ pods {
             print "No PR previews for release builds"
             return;
           }
-          def package_name = "@cognite/cdf-functions-ui";
+          def package_name = "@cognite/cdf-vision-subapp";
           def prefix = jenkinsHelpersUtil.determineRepoName();
           def domain = "fusion-preview";
           previewServer(
@@ -118,7 +118,6 @@ pods {
           deleteComments("[FUSION_PREVIEW_URL]")
           def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
           pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
-        }
         },
         'Storybook': {
           if(!isPullRequest) {
