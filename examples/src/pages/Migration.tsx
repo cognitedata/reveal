@@ -176,7 +176,7 @@ export function Migration() {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);
         }
       }
-      const modelUi = new ModelUi(gui.addFolder('Models'), viewer, msalInstance, handleModelAdded);
+      const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
 
       const renderGui = gui.addFolder('Rendering');
       const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];

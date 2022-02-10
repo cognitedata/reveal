@@ -12,7 +12,6 @@ export class ModelUi {
   private readonly _cadModels = new Array<Cognite3DModel>();
   private readonly _pointCloudModels = new Array<CognitePointCloudModel>();
 
-  private readonly _msalInstance: IPublicClientApplication | undefined;
 
   private readonly _guiState: {
     modelId: number,
@@ -23,10 +22,8 @@ export class ModelUi {
   private readonly _geometryFilterGui: dat.GUI;
 
   constructor(modelGui: dat.GUI, viewer: Cognite3DViewer,
-              msalInstance: IPublicClientApplication | undefined,
               onModelAdded: (model: CogniteModelBase) => void) {
     this._viewer = viewer;
-    this._msalInstance = msalInstance;
     this._onModelAdded = onModelAdded;
 
     const url = new URL(window.location.href);
