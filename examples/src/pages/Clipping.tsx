@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/internals';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
-import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { CanvasWrapper } from '../components/styled';
@@ -30,9 +30,13 @@ export function Clipping() {
         modelUrl: 'primitives',
       });
 
-      const client = new CogniteClient({ appId: 'reveal.example.simple' });
+      let client;
       if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.clipping', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.clipping',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const scene = new THREE.Scene();

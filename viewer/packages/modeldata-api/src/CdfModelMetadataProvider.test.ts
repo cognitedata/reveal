@@ -18,12 +18,6 @@ describe(CdfModelMetadataProvider.name, () => {
     modelIdentifier = new CdfModelIdentifier(1337, 42);
     apiPath = /\/api\/v1\/projects\/unittest\/3d\/.*/;
 
-    const client = new CogniteClient({
-      appId: 'reveal-CdfModelDataClient-test',
-      baseUrl: 'http://localhost'
-    });
-    await client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
-
     const mockedClient = new Mock<CogniteClient>();
 
     provider = new CdfModelMetadataProvider(mockedClient.object());
