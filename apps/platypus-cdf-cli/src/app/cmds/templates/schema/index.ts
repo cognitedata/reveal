@@ -7,7 +7,7 @@ export const command = 'schema <command>';
 export const desc = 'Manages templates schemas';
 
 export const builder = (yargs: Argv) =>
-  yargs.command(versionsCmd).command(publishCmd).command(pull).demandCommand();
+  yargs.command(versionsCmd).command(publishCmd).command(pull).demandCommand(1);
 
 export const handler = () => {
   return;

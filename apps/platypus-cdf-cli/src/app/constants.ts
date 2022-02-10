@@ -27,6 +27,7 @@ export enum AUTH_CONFIG {
 }
 
 export const CONSTANTS = {
+  APP_ID: 'platypus-cli',
   PROJECT_CONFIG_FILE_NAME: 'cdfrc.json',
   PROJECT_CONFIG_DEFAULT_SCHEMA_FILE_NAME: 'schema.graphql',
   MANUAL_WEBSITE: 'https://github.com/cognitedata/platypus',

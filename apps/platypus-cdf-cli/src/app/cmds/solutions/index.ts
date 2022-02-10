@@ -20,7 +20,7 @@ export const builder = (yargs: Argv) => {
       .command(storageCmds);
   }
 
-  cmds.demandCommand(1, 'You need at least one command before moving on');
+  cmds.demandCommand(1);
   return cmds;
 };
 

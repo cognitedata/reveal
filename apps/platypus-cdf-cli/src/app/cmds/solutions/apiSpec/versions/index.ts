@@ -6,10 +6,7 @@ export const command = 'versions <command>';
 export const desc = 'Manage ApiSpec schema versions';
 
 export const builder = (yargs: Argv) =>
-  yargs
-    .command(versionsListCmd)
-    .command(createCmd)
-    .demandCommand(1, 'You need at least one command before moving on');
+  yargs.command(versionsListCmd).command(createCmd).demandCommand(1);
 
 export const handler = () => {
   return;

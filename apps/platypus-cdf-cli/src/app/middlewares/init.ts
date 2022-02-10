@@ -4,7 +4,7 @@ import updateNotifier from 'update-notifier';
 
 import { LoginArgs } from '../types';
 import { setConfig } from '../utils/config';
-import { AUTH_TYPE } from '../constants';
+import { AUTH_TYPE, CONSTANTS } from '../constants';
 import { Log } from '../utils/logger';
 
 import { enable } from 'debug';
@@ -30,7 +30,7 @@ export async function init(args: Arguments<LoginArgs>) {
 
   // set config object
   setConfig(
-    new Conf({ projectName: args.appId, configName: 'cdf-credentials' })
+    new Conf({ projectName: CONSTANTS.APP_ID, configName: 'cdf-credentials' })
   );
   // set logger
   args.logger = new Log();

@@ -9,7 +9,7 @@ export const builder = (yargs: Argv) => {
   const cmds = yargs
     .command(publishApiCmd)
     .command(ingestDataCmd)
-    .demandCommand(1, 'You need at least one command before moving on');
+    .demandCommand(1);
   return cmds;
 };
 

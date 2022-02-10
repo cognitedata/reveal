@@ -17,7 +17,8 @@ export const builder = (yargs: Argv) =>
     .command(deleteCmd)
     .command(schemaCmds)
     .command(init)
-    .command(generate);
+    .command(generate)
+    .demandCommand(1, 'need one valid sub command');
 
 export const handler = () => {
   return;

@@ -12,13 +12,9 @@ import { DEBUG as _DEBUG } from './app/utils/logger';
 
 const DEBUG = _DEBUG.extend('main');
 
-const config = {
-  appId: 'platypus-cli',
-};
-
 // commands
 scriptName('platypus')
-  .config(config)
+  .strict()
   .middleware([init, authenticate])
   .demandCommand(1)
   .command(login)

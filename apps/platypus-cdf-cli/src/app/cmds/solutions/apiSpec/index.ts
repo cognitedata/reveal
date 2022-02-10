@@ -11,7 +11,7 @@ export const builder = (yargs: Argv) => {
     .command(listAPiSpecs)
     .command(createApiSpecCmd)
     .command(apiSpecVersionsCmds)
-    .demandCommand(1, 'You need at least one command before moving on');
+    .demandCommand(1);
   return cmds;
 };
 
