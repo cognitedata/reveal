@@ -106,7 +106,7 @@ pods {
             print "No PR previews for release builds"
             return;
           }
-          def package_name = "@cognite/cdf-function-ui";
+          def package_name = "@cognite/cdf-functions-ui";
           def prefix = jenkinsHelpersUtil.determineRepoName();
           def domain = "fusion-preview";
           previewServer(
