@@ -4,6 +4,8 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
+import { EventType, PublicClientApplication } from '@azure/msal-browser';
+
 export function withBasePath(path: string) {
   let basePath = (process.env.PUBLIC_URL || '').trim();
   console.log({ basePath, PUBLIC_URL: process.env.PUBLIC_URL });
@@ -84,19 +86,96 @@ type CredentialEnvironmentList = {
   environments: { [key:string]: CredentialEnvironment; };
 }
 
-export async function authenticateSDKWithEnvironment(client: CogniteClient, project: string, environmentParam: string) {
-  
-    const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
-    const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
-    
-    await client.loginWithOAuth({
-      type: 'AAD_OAUTH',
-      options: {
-        clientId: credentialEnvironment.clientId,
-        cluster: credentialEnvironment.cluster,
-        tenantId: credentialEnvironment.tenantId,
-      }
+export function getCredentialEnvironment(): CredentialEnvironment | undefined {
+  const url = new URL(window.location.href);
+  const urlParams = url.searchParams;
+  const environmentParam = urlParams.get('env');
+
+  if (!environmentParam) {
+    return undefined;
+  }
+
+  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+
+  return credentialEnvironmentList.environments[environmentParam];
+}
+
+export async function createSDKFromEnvironment(
+  appId: string,
+  project: string,
+  environmentParam: string): Promise<CogniteClient> {
+
+  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+  const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
+
+  const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
+  const cdfScopes = [
+    `${baseUrl}/user_impersonation`,
+    `${baseUrl}/IDENTITY`
+  ];
+
+  const userScopes = ['User.Read'];
+
+  const config = {
+    auth: {
+      clientId: credentialEnvironment.clientId,
+      authority: `https://login.microsoftonline.com/${credentialEnvironment.tenantId}`,
+      redirectUri: `${window.location.origin}`,
+      navigateToLoginRequestUrl: true,
+    },
+    cache: {
+      cacheLocation: 'localStorage',
+      storeAuthStateInCookie: false
+    },
+  };
+
+  const redirectRequest = {
+    scopes: userScopes,
+    extraScopesToConsent: cdfScopes,
+    redirectStartPage: window.location.href
+  };
+
+  const msalObj = new PublicClientApplication(config);
+
+  const accountList = msalObj.getAllAccounts();
+  if (accountList.length > 0) {
+    msalObj.setActiveAccount(accountList[0]);
+  }
+
+  msalObj.addEventCallback((event) => {
+    if (event && event.eventType === EventType.LOGIN_SUCCESS && (event.payload as any).account) {
+      const account = (event.payload as any).account;
+      msalObj.setActiveAccount(account);
+    }
+  });
+
+  await msalObj.handleRedirectPromise();
+
+  const account = msalObj.getActiveAccount();
+
+  if (!account) {
+    msalObj.loginRedirect(redirectRequest);
+  }
+
+  const getToken = async () => {
+    const account = msalObj.getActiveAccount();
+
+    if (!account) {
+      throw Error("No local account found");
+    }
+
+    const { accessToken } = await msalObj.acquireTokenSilent({
+      account,
+      scopes: cdfScopes
     });
-  client.setProject(project);
+
+    return accessToken;
+  }
+
+  const client = new CogniteClient({ appId,
+                                     project,
+                                     getToken,
+                                     baseUrl});
   await client.authenticate();
+  return client;
 }

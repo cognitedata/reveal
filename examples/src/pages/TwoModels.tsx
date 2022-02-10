@@ -7,7 +7,7 @@ import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 
 import CameraControls from 'camera-controls';
-import { authenticateSDKWithEnvironment, getParamsFromURL } from '../utils/example-helpers';
+import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
@@ -39,11 +39,14 @@ export function TwoModels() {
       });
       const { modelUrl: modelUrl2, modelRevision: modelRevision2 } = getModel2Params();
 
-      const client = new CogniteClient({ appId: 'reveal.example.two-models' });
+      let client;
       if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.twomodels', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.twomodels',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
-
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -67,7 +70,7 @@ export function TwoModels() {
         throw new Error(
           'Need to provide either project & modelId2/revisionId2 OR modelUrl2 as query parameters'
         );
-      }
+      }      
       scene.add(model2);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
