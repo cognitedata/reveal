@@ -272,17 +272,17 @@ export const DocumentResultTable: React.FC = () => {
     metrics.track('click-close-document-preview-button');
   };
 
-  const handlePreviewClick = async (row: DocumentRowType) => {
-    setDocumentToPreview(row.original);
+  const handlePreviewClick = async (doc: DocumentTypeDataModel) => {
+    setDocumentToPreview(doc);
     metrics.track('click-open-document-preview-button');
   };
 
-  const onExtractParentFolder = (row: DocumentRowType) => {
-    extractParentFolder(row.original);
+  const onExtractParentFolder = (doc: DocumentTypeDataModel) => {
+    extractParentFolder(doc);
   };
 
-  const onOpenFeedback = (row: DocumentRowType) => {
-    const document = row.original;
+  const onOpenFeedback = (doc: DocumentTypeDataModel) => {
+    const document = doc;
     dispatch(setObjectFeedbackModalDocumentId(document.doc.id));
     metrics.track('click-provide-document-feedback-button');
   };
@@ -290,7 +290,7 @@ export const DocumentResultTable: React.FC = () => {
   const renderRowHoverComponent = useCallback(
     ({ row }) => (
       <DocumentResultTableHoverComponent
-        row={row}
+        doc={row.original}
         onPreviewHandle={handlePreviewClick}
         onExtractParentFolderHandle={onExtractParentFolder}
         onOpenFeedbackHandle={onOpenFeedback}
@@ -335,12 +335,14 @@ export const DocumentResultTable: React.FC = () => {
         renderRowHoverComponent={renderRowHoverComponent}
         renderRowSubComponent={renderRowSubComponent}
       />
-      <DocumentViewModal
-        documentId={documentToPreview?.doc.id || ''}
-        fileName={documentToPreview?.filename}
-        onModalClose={handleModalClose}
-        modalOpen={!!documentToPreview}
-      />
+      {documentToPreview?.doc.id && (
+        <DocumentViewModal
+          documentId={documentToPreview?.doc.id}
+          fileName={documentToPreview?.filename}
+          onModalClose={handleModalClose}
+          modalOpen={!!documentToPreview}
+        />
+      )}
     </>
   );
 };

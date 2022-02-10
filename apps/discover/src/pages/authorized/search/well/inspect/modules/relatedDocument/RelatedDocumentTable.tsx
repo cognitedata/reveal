@@ -24,6 +24,7 @@ import {
   DocumentResult,
   DocumentRowType,
   DocumentType,
+  DocumentTypeDataModel,
 } from 'modules/documentSearch/types';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import {
@@ -81,8 +82,8 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
     [selectedIds]
   );
 
-  const onOpenFeedback = (row: DocumentRowType) => {
-    dispatch(setObjectFeedbackModalDocumentId(row.original.id));
+  const onOpenFeedback = (doc: DocumentTypeDataModel) => {
+    dispatch(setObjectFeedbackModalDocumentId(doc.id));
     metrics.track('click-provide-document-feedback-button');
   };
 
@@ -95,8 +96,8 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
     }));
   }, []);
 
-  const handlePreviewDocument = useCallback((row: DocumentRowType) => {
-    setDocument(row.original);
+  const handlePreviewDocument = useCallback((doc: DocumentTypeDataModel) => {
+    setDocument(doc);
     setShowModal(true);
     metrics.track('click-open-document-preview-button');
   }, []);
@@ -131,7 +132,7 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
   const renderRowHoverComponent = useCallback(
     ({ row }) => (
       <DocumentResultTableHoverComponent
-        row={row}
+        doc={row.original}
         onPreviewHandle={handlePreviewDocument}
         onOpenFeedbackHandle={onOpenFeedback}
       />

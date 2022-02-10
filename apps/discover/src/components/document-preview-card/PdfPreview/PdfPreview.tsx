@@ -53,15 +53,15 @@ export const PdfPreview: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    startTimer();
-  }, []);
-
-  useEffect(() => {
     const loadPdf = async () => {
-      const url = await getPdfPreview(documentId);
-      setDocumentUrl(url);
+      startTimer();
+      getPdfPreview(documentId)
+        .then((url) => setDocumentUrl(url))
+        .catch(onError);
     };
-    loadPdf();
+    if (documentId) {
+      loadPdf();
+    }
   }, [documentId]);
 
   return (

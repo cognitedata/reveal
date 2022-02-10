@@ -11,7 +11,7 @@ import {
 } from 'components/buttons';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { openDocumentPreviewInNewTab } from 'modules/documentPreview/utils';
-import { DocumentRowType } from 'modules/documentSearch/types';
+import { DocumentTypeDataModel } from 'modules/documentSearch/types';
 import { FlexRow } from 'styles/layout';
 
 import {
@@ -20,41 +20,51 @@ import {
   OPEN_PARENT_FOLDER_OPTION_TEXT,
 } from '../constants';
 
-type SelectionHandle = (row: DocumentRowType) => void;
+type SelectionHandle = (row: DocumentTypeDataModel) => void;
 
 export type Props = {
-  row: DocumentRowType;
+  doc: DocumentTypeDataModel;
   onPreviewHandle: SelectionHandle;
   onExtractParentFolderHandle?: SelectionHandle;
   onOpenFeedbackHandle: SelectionHandle;
 };
 
 export const DocumentResultTableHoverComponent = ({
-  row,
+  doc,
   onPreviewHandle,
   onExtractParentFolderHandle,
   onOpenFeedbackHandle,
 }: Props) => {
   const { t } = useTranslation();
 
-  const onViewHandle = async (row: DocumentRowType) => {
+  const onViewHandle = async (doc: DocumentTypeDataModel) => {
     showSuccessMessage(t('Retrieving document'));
-    openDocumentPreviewInNewTab(row.original.doc.id).catch((error) => {
+    openDocumentPreviewInNewTab(doc.doc.id).catch((error) => {
       showErrorMessage(t('Oops, something went wrong'));
       reportException(error);
     });
+  };
+
+  // TODO(PP-2573): check if this can be removed after upgrading the pdf viewer lib
+  const getPreviewButton = (doc: DocumentTypeDataModel) => {
+    if (doc.doc.filetype === 'Compressed') {
+      return null;
+    }
+    return (
+      <PreviewButton
+        data-testid="button-preview-document"
+        onClick={() => onPreviewHandle(doc)}
+      />
+    );
   };
 
   return (
     <FlexRow>
       <ViewButton
         data-testid="button-view-document"
-        onClick={() => onViewHandle(row)}
+        onClick={() => onViewHandle(doc)}
       />
-      <PreviewButton
-        data-testid="button-preview-document"
-        onClick={() => onPreviewHandle(row)}
-      />
+      {getPreviewButton(doc)}
       <Dropdown
         openOnHover
         appendTo={document.body}
@@ -63,22 +73,20 @@ export const DocumentResultTableHoverComponent = ({
             {onExtractParentFolderHandle && (
               <Menu.Item
                 data-testid="menu-item-extract-parent-folder"
-                onClick={() => onExtractParentFolderHandle(row)}
+                onClick={() => onExtractParentFolderHandle(doc)}
               >
                 {OPEN_PARENT_FOLDER_OPTION_TEXT}
               </Menu.Item>
             )}
             <Menu.Item
               data-testid="menu-item-open-feedback"
-              onClick={() => onOpenFeedbackHandle(row)}
+              onClick={() => onOpenFeedbackHandle(doc)}
             >
               {LEAVE_FEEDBACK_OPTION_TEXT}
             </Menu.Item>
             <Menu.Submenu
               content={
-                <AddToFavoriteSetMenu
-                  documentIds={[Number(row.original.doc.id)]}
-                />
+                <AddToFavoriteSetMenu documentIds={[Number(doc.doc.id)]} />
               }
             >
               <span>{ADD_TO_FAVORITES_OPTION_TEXT}</span>

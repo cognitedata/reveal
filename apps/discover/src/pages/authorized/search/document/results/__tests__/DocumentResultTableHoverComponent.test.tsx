@@ -20,9 +20,7 @@ describe('DocumentResultTableHoverComponent', () => {
 
   const getDefaultProps = () => {
     return {
-      row: {
-        original: getMockDocument(),
-      },
+      doc: getMockDocument(),
       onPreviewHandle,
       onOpenFeedbackHandle,
       onExtractParentFolderHandle,
