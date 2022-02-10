@@ -1,5 +1,7 @@
 import { Well } from '@cognite/sdk-wells-v3';
 
+import { getMockWellbore } from './wellbore';
+
 export const getMockWell = (extras?: Partial<Well>): Well => {
   return {
     matchingId: 'test-well-1',
@@ -17,7 +19,7 @@ export const getMockWell = (extras?: Partial<Well>): Well => {
       unit: 'meter',
     },
     sources: [],
-    wellbores: [],
+    wellbores: [getMockWellbore()],
     ...extras,
   };
 };

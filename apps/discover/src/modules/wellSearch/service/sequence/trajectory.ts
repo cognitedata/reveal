@@ -12,6 +12,7 @@ import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import {
+  Trajectory,
   TrajectoryData as TrajectoryDataV3,
   TrajectoryDataRow,
   TrajectoryItems,
@@ -71,19 +72,12 @@ export async function getTrajectoriesByWellboreIds(
   return trajectoryData;
 }
 
-export const fetchTrajectoriesUsingWellsSDK = async (
-  wellboreIds: WellboreId[],
-  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
-  columns: ProjectConfigWellsTrajectoryColumns[] = []
-) => {
+export const listTrajectoriesUsingWellsSDK = async (
+  wellboreIds: WellboreId[]
+): Promise<Trajectory[]> => {
   const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
 
-  const availableColumnNames = Object.keys(TRAJECTORY_COLUMN_NAME_MAP);
-  const existColumns = columns.filter((column) =>
-    column.name ? availableColumnNames.includes(column.name) : false
-  );
-
-  const trajectories = flatten(
+  return flatten(
     await Promise.all(
       idChunkList.map((wellboreIdChunk) =>
         getWellSDKClient()
@@ -95,6 +89,19 @@ export const fetchTrajectoriesUsingWellsSDK = async (
       )
     )
   );
+};
+
+export const fetchTrajectoriesUsingWellsSDK = async (
+  wellboreIds: WellboreId[],
+  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
+  columns: ProjectConfigWellsTrajectoryColumns[] = []
+) => {
+  const availableColumnNames = Object.keys(TRAJECTORY_COLUMN_NAME_MAP);
+  const existColumns = columns.filter((column) =>
+    column.name ? availableColumnNames.includes(column.name) : false
+  );
+
+  const trajectories = await listTrajectoriesUsingWellsSDK(wellboreIds);
 
   const trajectoryData = await Promise.all(
     trajectories.map((trajectory) =>

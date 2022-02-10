@@ -61,7 +61,7 @@ export const getIndeterminateWells = (
   }, {});
 };
 
-export const getWellsOfWellIds = (wells: Well[], wellIds: WellId[]) => {
+export const getWellsOfWellIds = (wells: Well[], wellIds: WellId[]): Well[] => {
   const wellsById = keyBy<WellMap>(wells, 'id');
 
   return wellIds.reduce<Well[]>((wells, wellId) => {

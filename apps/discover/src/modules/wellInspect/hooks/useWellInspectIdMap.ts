@@ -76,7 +76,7 @@ export const useWellInspectWellboreExternalIdMap = () => {
   return useDeepMemo(
     () =>
       wellbores.reduce<WellboreIdMap>((externalIdMap, wellbore) => {
-        const sourceExternalIdMap = wellbore.sourceWellbores
+        const sourceExternalIdMap = (wellbore.sourceWellbores || [])
           .map((sourceWellbore) => sourceWellbore.externalId)
           .reduce((map, sourceExternalId) => {
             return { ...map, [sourceExternalId]: wellbore.id };

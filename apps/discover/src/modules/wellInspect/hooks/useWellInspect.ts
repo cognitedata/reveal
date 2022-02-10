@@ -14,8 +14,8 @@ import {
 import { useMapToColoredWellbore } from './useMapToColoredWellbore';
 
 export const useWellInspectWells = () => {
-  const inspectWellIds = useWellInspectWellIds();
   const inspectWellboreIds = useWellInspectWellboreIds();
+  const inspectWellIds = useWellInspectWellIds();
   const wells = useWellsByIds(inspectWellIds);
   const toColoredWellbore = useMapToColoredWellbore();
 

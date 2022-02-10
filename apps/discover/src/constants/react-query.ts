@@ -84,6 +84,7 @@ export const WELL_QUERY_KEY = {
   CASINGS: [WELLS, 'casings'],
   CASINGS_CACHE: [WELLS, 'casings', 'cache'],
   TRAJECTORIES: [WELLS, 'trajectories'],
+  TRAJECTORIES_LIST: [WELLS, 'trajectories', 'list'],
   TRAJECTORIES_CACHE: [WELLS, 'trajectories', 'cache'],
   NDS_EVENTS: [WELLS, 'nds', 'old'],
   NDS_EVENTS_CACHE: [WELLS, 'nds', 'cache'],

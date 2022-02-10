@@ -20,7 +20,10 @@ import {
   useWellInspectWellboreExternalIdMap,
 } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
-import { getTrajectoriesByWellboreIds as service } from '../service';
+import {
+  getTrajectoriesByWellboreIds,
+  listTrajectoriesUsingWellsSDK,
+} from '../service';
 import { TrajectoryData, TrajectoryRows } from '../types';
 import { trimCachedData } from '../utils/common';
 import { mapWellInfo } from '../utils/trajectory';
@@ -28,21 +31,32 @@ import { mapWellInfo } from '../utils/trajectory';
 import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
-// NOTE: ignoreEmptyRows seems to always be true everywhere, perhaps we should remove this option
-export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
-  const enabledWellSDKV3 = useEnabledWellSdkV3();
+export const useTrajectoriesMetadataQuery = (enabledWellSDKV3?: boolean) => {
   const wellboreIds = useWellInspectSelectedWellboreIds();
-  const wells = useWellInspectSelectedWells();
-  const { data: config } = useWellConfig();
-  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
-  const wellboresSourceExternalIdMap = useWellInspectWellboreExternalIdMap();
+
+  // V2
+  const { trajectories, isLoading } = useTrajectoriesQuery(!enabledWellSDKV3);
+
+  // V3
+  const trajectoriesMetadata = useQuery(
+    [WELL_QUERY_KEY.TRAJECTORIES_LIST, wellboreIds],
+    async () => {
+      return listTrajectoriesUsingWellsSDK(wellboreIds);
+    },
+    { enabled: !!enabledWellSDKV3 }
+  );
+
+  if (enabledWellSDKV3) {
+    return trajectoriesMetadata;
+  }
+
+  return { data: trajectories, isLoading };
+};
+
+// NOTE: ignoreEmptyRows seems to always be true everywhere, perhaps we should remove this option
+export const useTrajectoriesQuery = (enabled = true) => {
   const queryClient = useQueryClient();
-  const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
-  const query = (config?.trajectory?.queries || [])[0];
-  const columns = config?.trajectory?.columns;
-  const trajectories: Sequence[] = [];
-  const trajectoryRows: TrajectoryRows[] = [];
-  const isTrajectoriesDisabled = config?.trajectory?.enabled === false; // checking false because we want to fetch for undefined
+
   const metricLogger = useMetricLogger(
     LOG_TRAJECTORY,
     TimeLogStages.Network,
@@ -54,11 +68,26 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
     LOG_WELLS_TRAJECTORY_NAMESPACE
   );
 
+  const enabledWellSDKV3 = useEnabledWellSdkV3();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+  const wells = useWellInspectSelectedWells();
+  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
+  const wellboresSourceExternalIdMap = useWellInspectWellboreExternalIdMap();
+  const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
+
+  const { data: config } = useWellConfig();
+  const query = (config?.trajectory?.queries || [])[0];
+  const columns = config?.trajectory?.columns;
+  const isTrajectoriesDisabled = config?.trajectory?.enabled === false; // checking false because we want to fetch for undefined
+
+  const trajectories: Sequence[] = [];
+  const trajectoryRows: TrajectoryRows[] = [];
+
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(
     WELL_QUERY_KEY.TRAJECTORIES,
     () =>
-      service(
+      getTrajectoriesByWellboreIds(
         wellboreIds,
         wellboreAssetIdMap,
         wellboresSourceExternalIdMap,
@@ -67,11 +96,11 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
         metricLogger,
         enabledWellSDKV3
       ),
-    { enabled: !isTrajectoriesDisabled }
+    { enabled: !isTrajectoriesDisabled && enabled }
   );
 
   return useMemo(() => {
-    if (isLoading || !data) {
+    if (isLoading || !data || !enabled) {
       return { isLoading, trajectories, trajectoryRows };
     }
 
@@ -82,10 +111,7 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
       Object.keys(trimmedData).forEach((wellboresId) => {
         (trimmedData[wellboresId] as TrajectoryData[]).forEach(
           (trajectoryData) => {
-            if (
-              !ignoreEmptyRows ||
-              (trajectoryData.rowData && trajectoryData.rowData.rows.length)
-            ) {
+            if (trajectoryData.rowData && trajectoryData.rowData.rows.length) {
               trajectories.push(trajectoryData.sequence);
               if (trajectoryData.rowData) {
                 trajectoryRows.push(trajectoryData.rowData);
@@ -105,7 +131,7 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
     // If there are ids not in the cached data, do a search for new ids and update the cache
     if (newIds.length && !fetchingNewData) {
       setFetchingNewData(true);
-      service(
+      getTrajectoriesByWellboreIds(
         newIds,
         wellboreAssetIdMap,
         wellboresSourceExternalIdMap,
@@ -123,5 +149,12 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
     }
 
     return { isLoading: true, trajectories, trajectoryRows };
-  }, [wellboreIds, isLoading, data, wellboreAssetIdMap, enabledWellSDKV3]);
+  }, [
+    wellboreIds,
+    isLoading,
+    data,
+    wellboreAssetIdMap,
+    enabledWellSDKV3,
+    enabled,
+  ]);
 };
