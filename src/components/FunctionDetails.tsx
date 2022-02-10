@@ -42,7 +42,7 @@ export default function FunctionDetails({ id, name }: Props) {
       </Item>
       <Item label="Runtime" span={3}>
         {currentFunction?.runtime
-          ? `${getRuntimeLabel(currentFunction?.runtime)}`
+          ? getRuntimeLabel(currentFunction?.runtime)
           : notSet}
       </Item>
 
