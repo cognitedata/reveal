@@ -84,6 +84,35 @@ describe('AutoML API /automl/jobid', () => {
   });
 });
 
+describe('AutoML API download model', () => {
+  test('should return specified model', async () => {
+    const data = { modelUrl: 'https://download.com' };
+    const mockedData = {
+      data,
+      status: 200,
+      headers: {},
+    };
+    sdk.get = async (): Promise<HttpResponse<any>> =>
+      Promise.resolve(mockedData);
+    const json = await AutoMLAPI.downloadAutoMLModel(0);
+
+    expect(json).toMatchObject(data);
+  });
+
+  test('should return empty object when model not found', async () => {
+    const mockedData = {
+      data: undefined,
+      status: 400,
+      headers: {},
+    };
+    sdk.get = async (): Promise<HttpResponse<any>> =>
+      Promise.resolve(mockedData);
+    const json = await AutoMLAPI.getAutoMLModel(2);
+
+    expect(json).toMatchObject({});
+  });
+});
+
 describe('AutoML start training job', () => {
   test('should return training job data', async () => {
     const mockedData = {
