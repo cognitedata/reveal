@@ -144,7 +144,7 @@ void main() {
     normal = normalize(cross(A, B));
 #endif
 
-    // Higher precision equivalent of gl_FragCoord.z. This assumes depthRange has been left to its default values.
-    float fragCoordZ = 0.5 * v_ZW[0] / v_ZW[1] + 0.5; // REV-287
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragCoordZ, matCapTexture, GeometryType.Primitive);
+  // Higher precision equivalent of gl_FragCoord.z. This assumes depthRange has been left to its default values.
+  gl_FragDepth = 0.5 * v_ZW[0] / v_ZW[1] + 0.5; // REV-287
+  updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragDepth, matCapTexture, GeometryType.Primitive);
 }
