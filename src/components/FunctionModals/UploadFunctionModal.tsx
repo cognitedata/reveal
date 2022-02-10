@@ -12,7 +12,7 @@ import {
   Col,
   notification,
 } from 'antd';
-import { Button, Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Dropdown, Tooltip, Menu } from '@cognite/cogs.js';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 import Link from 'components/Link';
@@ -33,6 +33,7 @@ import {
 } from 'utils/formValidations';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { allFunctionsKey } from 'utils/queryKeys';
+import { Runtime } from 'types';
 
 export interface Secret {
   key: string;
@@ -58,6 +59,15 @@ const StyledForm = styled(Form)`
     height: 350px;
   }
 `;
+
+export type RuntimeOption = { label: string; value: Runtime };
+
+const runtimes: RuntimeOption[] = [
+  { label: 'Python 3.7', value: 'py37' },
+  { label: 'Python 3.8', value: 'py38' },
+  { label: 'Python 3.9', value: 'py39' },
+  { label: 'Javascript', value: 'js' },
+];
 
 export default function UploadFunctionModal({ onCancel }: Props) {
   const queryCache = useQueryCache();
@@ -91,6 +101,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [secrets, setSecrets] = useState([] as Secret[]);
   const [cpu, setCpu] = useState('0.25');
   const [memory, setMemory] = useState('1');
+  const [runtime, setRuntime] = useState<RuntimeOption>(runtimes[1]);
 
   const addSecret = () => {
     setSecrets(prevSecrets => [
@@ -159,6 +170,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
             {}
           ),
           description,
+          runtime: runtime.value,
         },
         file: file!,
       });
@@ -396,6 +408,23 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 onChange={handleMemoryChange}
                 allowClear
               />
+            </Form.Item>
+            <Form.Item label="Runtime">
+              <Dropdown
+                content={
+                  <Menu>
+                    {runtimes.map(rt => (
+                      <Menu.Item onClick={() => setRuntime(rt)}>
+                        {rt.label}
+                      </Menu.Item>
+                    ))}
+                  </Menu>
+                }
+              >
+                <Button icon="ChevronDownCompact" iconPlacement="right">
+                  {runtime.label}
+                </Button>
+              </Dropdown>
             </Form.Item>
             <Form.Item label="Secrets">
               {secrets.map((s: Secret, index) => (
