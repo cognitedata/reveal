@@ -61,15 +61,13 @@ export class CadModelFactory {
 
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
     if (format === File3dFormat.RevealCadModel && formatVersion === 8) {
-      if (!this._v8SectorRepository) {
-        this._v8SectorRepository = new V8SectorRepository(this._modelDataProvider, this._materialManager);
-      }
+      this._v8SectorRepository =
+        this._v8SectorRepository ?? new V8SectorRepository(this._modelDataProvider, this._materialManager);
 
       return this._v8SectorRepository;
     } else if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
-      if (!this._gltfSectorRepository) {
-        this._gltfSectorRepository = new GltfSectorRepository(this._modelDataProvider, this._materialManager);
-      }
+      this._gltfSectorRepository =
+        this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider, this._materialManager);
 
       return this._gltfSectorRepository;
     } else {
