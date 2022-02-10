@@ -192,6 +192,7 @@ export const ProcessToolBar = () => {
                   value={selectedDetectionModels}
                   onChange={onChange}
                   handleCustomModelCreate={handleCustomModelCreate}
+                  isDisabled={disableModelSelection}
                 />
               </ModelSelector>
               <Button
