@@ -2975,10 +2975,10 @@
     jwt-decode "3.1.2"
     lodash "4.17.21"
 
-"@cognite/cdf-hub-tenant-selector@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-hub-tenant-selector/-/cdf-hub-tenant-selector-0.14.0.tgz#6a143a6488c08f5b05118cb11bb9b9cdf3247540"
-  integrity sha512-etIB8TmLmnvDJppGkXudmZH8IeXclVYPEEC2eAbaVlHv49eWOsEPOlzMUdQM2iLaZ8QV21q+KV4OLHptTTrUvg==
+"@cognite/cdf-hub-tenant-selector@^0.14.1":
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-hub-tenant-selector/-/cdf-hub-tenant-selector-0.14.1.tgz#012b36de5083fcd8c9590c0b28cef4cb37712245"
+  integrity sha512-5xQjRn/hR1ZnuQVPpaC35Ep8Yx0tRYDzAEAzT4f/1Qi6T3g2ffi8728Lb9kXQM/QKYN/3cM2RqS8/X+HWAfm2w==
   dependencies:
     "@cognite/auth-utils" "^2.1.0"
     "@cognite/cdf-ui-cli" "^1.0.0"
@@ -3076,9 +3076,11 @@
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
+  uid ""
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
   version "0.0.0"
+  uid ""
 
 "@cognite/fas-tools@^1.3.3":
   version "1.3.3"

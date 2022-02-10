@@ -1,3 +1,7 @@
+## 4.0.5 Feb 10 2022
+
+- Bump version of tenant-selector to 0.14.1 to fix an issue with page scroll on mobile.
+
 ## 4.0.4 Feb 4 2022
 
 - Fixed path for local auth-utils package that broke after the tenant selector was changed
