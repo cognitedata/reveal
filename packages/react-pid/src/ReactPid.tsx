@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   DiagramSymbol,
   DiagramLineInstance,
@@ -88,6 +88,28 @@ export const ReactPid: React.FC = () => {
   const setPidDocument = (arg: PidDocumentWithDom) => {
     pidDocument = arg;
   };
+
+  const [uploadSvgInput, setUploadSvgInput] = useState<HTMLInputElement | null>(
+    null
+  );
+
+  const svgInputRef = useCallback((node: HTMLInputElement | null) => {
+    setUploadSvgInput(node);
+  }, []);
+
+  const [uploadJsonInput, setUploadJsonInput] =
+    useState<HTMLInputElement | null>(null);
+
+  const jsonInputRef = useCallback((node: HTMLInputElement | null) => {
+    setUploadJsonInput(node);
+  }, []);
+
+  const onUploadJsonClick = () => {
+    if (uploadJsonInput) {
+      uploadJsonInput.click();
+    }
+  };
+
   const getPidDocument = () => pidDocument;
 
   const setDocumentType = (documentType: DocumentType) => {
@@ -124,6 +146,36 @@ export const ReactPid: React.FC = () => {
     });
     setPathReplacements([...pathReplacements, ...newPathReplacement]);
   };
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.metaKey) {
+        switch (e.code) {
+          case 'KeyA': {
+            autoAnalysis();
+            return;
+          }
+          case 'KeyF': {
+            onUploadJsonClick();
+            return;
+          }
+        }
+      }
+
+      switch (e.code) {
+        case 'Space': {
+          if (uploadSvgInput) {
+            uploadSvgInput.click();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  });
 
   useEffect(() => {
     if (
@@ -378,10 +430,13 @@ export const ReactPid: React.FC = () => {
           setActiveTagName={setActiveTagName}
           getPidDocument={getPidDocument}
           splitLines={splitPathsWithManySegments}
+          jsonInputRef={jsonInputRef}
+          onUploadJsonClick={onUploadJsonClick}
         />
         <Viewport>
           {fileUrl === '' ? (
             <input
+              ref={svgInputRef}
               type="file"
               accept=".svg"
               style={{

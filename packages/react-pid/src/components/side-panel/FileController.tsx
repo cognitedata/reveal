@@ -26,6 +26,8 @@ interface FileControllerProps {
   loadSymbolsAsJson: (json: GraphDocument) => void;
   saveGraphAsJson: () => void;
   getPidDocument: () => PidDocumentWithDom | undefined;
+  jsonInputRef: (node: HTMLInputElement | null) => void;
+  onUploadJsonClick: () => void;
 }
 
 export const FileController: React.FC<FileControllerProps> = ({
@@ -36,9 +38,9 @@ export const FileController: React.FC<FileControllerProps> = ({
   saveGraphAsJson,
   lineInstances,
   getPidDocument,
+  jsonInputRef,
+  onUploadJsonClick,
 }) => {
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-
   const handleSymbolFileChange = ({ target }: any) => {
     if (target && target.files.length > 0) {
       fetch(URL.createObjectURL(target.files[0]))
@@ -54,20 +56,13 @@ export const FileController: React.FC<FileControllerProps> = ({
     }
   };
 
-  const onUploadButtonClick = () => {
-    if (fileInputRef !== null && fileInputRef.current !== null) {
-      const currentInputFile = fileInputRef.current as any;
-      currentInputFile.click();
-    }
-  };
-
   return (
     <div>
       <DropDownWrapper>
         <Dropdown
           content={
             <Menu>
-              <Menu.Item onClick={onUploadButtonClick}>Upload</Menu.Item>
+              <Menu.Item onClick={onUploadJsonClick}>Upload</Menu.Item>
               <Menu.Item
                 onClick={saveGraphAsJson}
                 disabled={
@@ -93,7 +88,7 @@ export const FileController: React.FC<FileControllerProps> = ({
 
       <input
         type="file"
-        ref={fileInputRef}
+        ref={jsonInputRef}
         style={{ display: 'none' }}
         accept="application/JSON"
         onChange={handleSymbolFileChange}

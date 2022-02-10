@@ -65,6 +65,8 @@ interface SidePanelProps {
   activeTagName: string | undefined;
   setActiveTagName: (arg: string | undefined) => void;
   splitLines: () => void;
+  jsonInputRef: (node: HTMLInputElement | null) => void;
+  onUploadJsonClick: () => void;
 }
 
 export const SidePanel = ({
@@ -94,6 +96,8 @@ export const SidePanel = ({
   activeTagName,
   setActiveTagName,
   splitLines,
+  jsonInputRef,
+  onUploadJsonClick,
 }: SidePanelProps) => {
   const toolBarButtonGroups: ToolBarButton[][] = [
     [
@@ -167,6 +171,8 @@ export const SidePanel = ({
           loadSymbolsAsJson={loadSymbolsAsJson}
           saveGraphAsJson={saveGraphAsJson}
           getPidDocument={getPidDocument}
+          jsonInputRef={jsonInputRef}
+          onUploadJsonClick={onUploadJsonClick}
         />
       </FileControllerWrapper>
       <DocumentInfo documentMetadata={documentMetadata} />
