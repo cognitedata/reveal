@@ -414,7 +414,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 content={
                   <Menu>
                     {runtimes.map(rt => (
-                      <Menu.Item onClick={() => setRuntime(rt)}>
+                      <Menu.Item key={rt.value} onClick={() => setRuntime(rt)}>
                         {rt.label}
                       </Menu.Item>
                     ))}
