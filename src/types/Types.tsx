@@ -23,7 +23,7 @@ export interface Relationship {
   relationshipType: RelationshipType;
 }
 
-export type Runtime = 'py37' | 'py38' | 'py39' | 'js';
+export type Runtime = 'py37' | 'py38' | 'py39';
 
 export interface CogFunctionUpload {
   name: string;

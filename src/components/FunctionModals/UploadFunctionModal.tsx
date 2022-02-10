@@ -66,7 +66,6 @@ const runtimes: RuntimeOption[] = [
   { label: 'Python 3.7', value: 'py37' },
   { label: 'Python 3.8', value: 'py38' },
   { label: 'Python 3.9', value: 'py39' },
-  { label: 'Javascript', value: 'js' },
 ];
 
 export default function UploadFunctionModal({ onCancel }: Props) {
