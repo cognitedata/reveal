@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
-import { IPublicClientApplication } from '@azure/msal-browser';
-
 import * as dat from 'dat.gui';
 
 export class ModelUi {
