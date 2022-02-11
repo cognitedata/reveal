@@ -10,7 +10,7 @@ import {
   getPrecisionAndRecall,
 } from 'src/modules/AutoML/Components/AutoMLPage/AutoMLMetricsOverview';
 import { mockCogniteAutoMLModel } from 'src/__test-utils/fixtures/automlModels';
-import { dateformat } from 'src/utils/DateUtils';
+import { dateformat, getDateDiff } from 'src/utils/DateUtils';
 import { AutoMLModelType } from 'src/api/autoML/types';
 
 describe('AutoMLMetricsOverview', () => {
@@ -41,7 +41,10 @@ describe('AutoMLMetricsOverview', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        dateformat(new Date(mockCogniteAutoMLModel[0].startTime))
+        getDateDiff(
+          new Date(mockCogniteAutoMLModel[0].startTime),
+          new Date(mockCogniteAutoMLModel[0].statusTime)
+        )
       )
     ).toBeInTheDocument();
   });
