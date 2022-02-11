@@ -1,3 +1,7 @@
+## 4.0.6 Feb 11 2022
+
+No changes. Prev version couldn't make it to the NPM.
+
 ## 4.0.5 Feb 10 2022
 
 - Bump version of tenant-selector to 0.14.1 to fix an issue with page scroll on mobile.

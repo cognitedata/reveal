@@ -1,3 +1,8 @@
+## 2.2.2 Feb 10 2022
+
+No changes.
+Prev version wansn't published to NPM so bump it again.
+
 ## 2.2.1 Feb 2 2022
 
 - Add `reauth` prop to `loginAndAuthIfNeeded` to allow for new client creation
