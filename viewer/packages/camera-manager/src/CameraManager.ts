@@ -28,6 +28,7 @@ export class DefaultCameraManager implements CameraManager {
   private readonly _raycaster = new THREE.Raycaster();
 
   private isDisposed = false;
+  private _nearAndFarNeedsUpdate = false;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
@@ -45,7 +46,7 @@ export class DefaultCameraManager implements CameraManager {
   };
 
   private _cameraControlsOptions: Required<CameraControlsOptions> = { ...DefaultCameraManager.DefaultCameraControlsOptions };
-  
+  private _currentBoundingBox: THREE.Box3 = new THREE.Box3();
   /**
    * When false, camera near and far planes will not be updated automatically (defaults to true).
    * This can be useful when you have custom content in the 3D view and need to better
@@ -116,6 +117,7 @@ export class DefaultCameraManager implements CameraManager {
     this._controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire({ camera: { position: position.clone(), target: target.clone() } });
+      this._nearAndFarNeedsUpdate = true;
     });
   }
 
@@ -209,17 +211,16 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   setCameraRotation(rotation: THREE.Quaternion): void {
-    this._controls.enableDamping = false;
-    this._controls.enabled = false;
+    
     const distToTarget = this.getCameraTarget().sub(this._camera.position);
-    const tempCam = this._camera;
+    const tempCam = this._camera.clone();
+    
     tempCam.setRotationFromQuaternion(rotation);
-
+    
     const newTarget = tempCam.getWorldDirection(new THREE.Vector3()).normalize()
-      .multiplyScalar(distToTarget.length()).add(tempCam.position);
-    this._controls.setCameraTarget(newTarget);
-    this._controls.enabled = true;
-    console.log(this._camera.quaternion.clone().angleTo(rotation));
+    .multiplyScalar(distToTarget.length()).add(tempCam.position);
+    this.setCameraTarget(newTarget);
+    
   }
 
   getCameraTarget(): THREE.Vector3 {
@@ -233,8 +234,7 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isDisposed) {
       return;
     }
-    //this._controls.enabled = true;
-
+    this._controls.rollRotation.z = 0;
     const animationTime = animated ? DefaultCameraManager.DefaultAnimationDuration : 0;
     this.moveCameraTargetTo(target, animationTime);
   }
@@ -349,7 +349,7 @@ export class DefaultCameraManager implements CameraManager {
     }
 
     if (duration === 0) {
-      this._controls.setState(this._camera.position, target);
+      this._controls.setState(this._controls.getState().position, target);
       return;
     }
 
@@ -458,7 +458,12 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   update(deltaTime: number, boundingBox: THREE.Box3) {
-    this.updateCameraNearAndFar(this._camera, boundingBox);
+    if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
+      this.updateCameraNearAndFar(this._camera, boundingBox);
+      this._nearAndFarNeedsUpdate = false;
+      this._currentBoundingBox.copy(boundingBox);
+    }
+    
     this._controls.update(deltaTime);
   }
 

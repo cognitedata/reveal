@@ -388,12 +388,18 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
         tmpPosition.add(cameraTarget);
 
         tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
-
+        
+        //cameraManager.setCameraControlsState({ position: tmpPosition, target: newTarget });
+        
         cameraManager.setCameraPosition(tmpPosition);
         cameraManager.setCameraRotation(tmpRotation);
+        //cameraManager.setCameraTarget(newTarget);
+      }).onStart(() => {
+        //cameraManager.cameraControlsEnabled = false;
       })
       .onComplete(() => {
-        //cameraManager.setCameraPosition(tmpPosition);
+        cameraManager.setCameraTarget(cameraTarget);
+        //cameraManager.setCameraPosition(tmpPosition); 
         //cameraManager.setCameraTarget(cameraTarget);
       })
       .start(TWEEN.now());
