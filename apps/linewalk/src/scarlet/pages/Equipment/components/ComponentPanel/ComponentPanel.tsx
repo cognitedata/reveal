@@ -2,20 +2,24 @@ import { useEffect, useState } from 'react';
 import { Icon, toast } from '@cognite/cogs.js';
 import {
   useAddComponent,
+  useAppDispatch,
   useAppState,
   useEquipmentComponentsByType,
 } from 'scarlet/hooks';
-import { EquipmentComponentGroup } from 'scarlet/types';
+import { AppActionType, EquipmentComponentGroup } from 'scarlet/types';
 
-import { ComponentGroups, ComponentList } from '..';
+import { ComponentGroups, ComponentList, ComponentsDeletion } from '..';
 
 import * as Styled from './style';
 
 export const ComponentPanel = () => {
+  const appDispatch = useAppDispatch();
   const appState = useAppState();
   const [currentGroup, setCurrentGroup] = useState<EquipmentComponentGroup>();
   const [isMenuActive, setMenuActive] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteView, setIsDeleteView] = useState(false);
   const { components, loading } = useEquipmentComponentsByType(
     currentGroup?.type
   );
@@ -24,13 +28,23 @@ export const ComponentPanel = () => {
 
   const groupLabel = currentGroup?.label.toLocaleLowerCase();
 
-  useEffect(() => setMenuActive(false), [currentGroup]);
+  useEffect(() => {
+    setMenuActive(false);
+    setIsDeleteView(false);
+  }, [currentGroup]);
 
   useEffect(() => {
     if (isAdding && !appState.saveState.loading) {
       setIsAdding(false);
       if (appState.saveState.error) {
         toast.error(`Failed to add ${groupLabel}`);
+      }
+    }
+
+    if (isDeleting && !appState.saveState.loading) {
+      setIsDeleting(false);
+      if (appState.saveState.error) {
+        toast.error(`Failed to delete ${groupLabel}s`);
       }
     }
   }, [appState.saveState.loading]);
@@ -46,12 +60,20 @@ export const ComponentPanel = () => {
     }
   };
 
+  const onDeleteComponents = (componentIds: string[]) => {
+    setIsDeleting(true);
+    appDispatch({
+      type: AppActionType.DELETE_COMPONENTS,
+      componentIds,
+    });
+  };
+
   return (
     <Styled.Container>
       <Styled.Header>
         <ComponentGroups group={currentGroup} onChange={setCurrentGroup} />
 
-        {currentGroup && (
+        {currentGroup && !isDeleteView && (
           <Styled.TopBar>
             <Styled.TopBarContent className="cogs-body-2">
               {`${components.length} unique ${groupLabel}${
@@ -64,12 +86,19 @@ export const ComponentPanel = () => {
                 icon="EllipsisHorizontal"
                 type="ghost"
                 onClick={toggleMenu}
+                area-label={
+                  isMenuActive ? 'Close component menu' : 'Open component menu'
+                }
               />
               {isMenuActive && (
                 <Styled.Menu>
                   <Styled.MenuItem
                     remove
-                    onClick={() => console.log('clicked delete')}
+                    disabled={!components.length}
+                    onClick={() => {
+                      setIsDeleteView(true);
+                      toggleMenu();
+                    }}
                   >
                     <Icon type="Delete" /> Delete {groupLabel}
                   </Styled.MenuItem>
@@ -82,20 +111,32 @@ export const ComponentPanel = () => {
           </Styled.TopBar>
         )}
       </Styled.Header>
-      <Styled.ContentWrapper>
-        <Styled.Content>
-          <ComponentList
-            key={currentGroup?.type}
-            components={components}
-            loading={loading || !currentGroup}
-          />
-        </Styled.Content>
-      </Styled.ContentWrapper>
-      {isAdding && (
+      {isDeleteView ? (
+        <ComponentsDeletion
+          group={currentGroup!}
+          components={components}
+          loading={isDeleting}
+          onClose={() => setIsDeleteView(false)}
+          onDelete={onDeleteComponents}
+        />
+      ) : (
+        <Styled.ContentWrapper>
+          <Styled.Content>
+            <ComponentList
+              key={currentGroup?.type}
+              components={components}
+              loading={loading || !currentGroup}
+            />
+          </Styled.Content>
+        </Styled.ContentWrapper>
+      )}
+
+      {(isAdding || isDeleting) && (
         <Styled.LoaderContainer>
           <Icon type="Loader" size={32} />
           <Styled.LoaderContent className="cogs-body-2 strong">
             {isAdding && 'Creating component...'}
+            {isDeleting && 'Deleting components...'}
           </Styled.LoaderContent>
         </Styled.LoaderContainer>
       )}

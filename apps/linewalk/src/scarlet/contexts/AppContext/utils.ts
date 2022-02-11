@@ -181,3 +181,14 @@ export const addComponent = (
   equipment.components.push(component);
   return equipment;
 };
+
+export const deleteComponents = (
+  equipmentOrigin: EquipmentData,
+  componentIds: string[]
+) => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  equipment.components = equipment.components.filter(
+    (c) => !componentIds.includes(c.id)
+  );
+  return equipment;
+};

@@ -97,6 +97,10 @@ export type AppAction =
   | {
       type: AppActionType.ADD_COMPONENT;
       component: EquipmentComponent;
+    }
+  | {
+      type: AppActionType.DELETE_COMPONENTS;
+      componentIds: string[];
     };
 
 export enum AppActionType {
@@ -115,6 +119,7 @@ export enum AppActionType {
   HIDE_DATA_ELEMENT_STATE_MODAL = 'hide-data-element-state-modal',
   CLEANUP_EQUIPMENT_DATA = 'cleanup-equipment-data',
   ADD_COMPONENT = 'add-component',
+  DELETE_COMPONENTS = 'delete-components',
 
   // equipment-list
   SET_EQUIPMENT_LIST = 'set-equipment-list',

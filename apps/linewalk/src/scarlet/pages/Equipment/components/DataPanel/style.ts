@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import z from 'utils/z';
 
 export const Container = styled.div`
   height: calc(100vh - 175px);
@@ -32,4 +33,5 @@ export const Item = styled.div`
   bottom: 0;
   right: 0;
   background: var(--cogs-white);
+  z-index: ${z.LIST_TOOL_OVERLAY};
 `;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EquipmentComponent } from 'scarlet/types';
 import { CollapsePanelProps, Icon } from '@cognite/cogs.js';
-import { useAppState, useDataPanelState } from 'scarlet/hooks';
+import { useComponentName, useDataPanelState } from 'scarlet/hooks';
 
 import { DataElementList } from '..';
 
@@ -13,9 +13,9 @@ type ComponentListProps = {
 };
 
 export const ComponentList = ({ components, loading }: ComponentListProps) => {
-  const { equipmentName } = useAppState();
   const { visibleDataElement } = useDataPanelState();
   const [activeComponentIds, setActiveComponentIds] = useState<string[]>();
+  const getComponentName = useComponentName();
 
   const isEmptyList = components.length === 0;
 
@@ -35,11 +35,11 @@ export const ComponentList = ({ components, loading }: ComponentListProps) => {
           activeKey={activeComponentIds || components[0].id}
           onChange={setActiveComponentIds as any}
         >
-          {components.map((component, i) => (
+          {components.map((component) => (
             <Styled.Panel
               header={
                 <Styled.PanelHeader className="cogs-body-2">
-                  {equipmentName}-{i + 1}
+                  {getComponentName(component)}
                 </Styled.PanelHeader>
               }
               key={component.id}

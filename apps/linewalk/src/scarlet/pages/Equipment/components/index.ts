@@ -3,6 +3,7 @@ export * from 'scarlet/components';
 export * from './DataElement';
 export * from './Card';
 export * from './CardHeader';
+export * from './ComponentsDeletion';
 export * from './ComponentGroups';
 export * from './ComponentList';
 export * from './ComponentPanel';

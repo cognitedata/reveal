@@ -11,8 +11,8 @@ export const useDataElementConfig = (dataElement?: DataElement) => {
 
     const configElements =
       dataElement.origin === DataElementOrigin.COMPONENT
-        ? equipmentConfig.data?.equipmentElements
-        : equipmentConfig.data?.componentElements;
+        ? equipmentConfig.data?.componentElements
+        : equipmentConfig.data?.equipmentElements;
 
     return (
       (configElements && configElements[dataElement.key]) || {
