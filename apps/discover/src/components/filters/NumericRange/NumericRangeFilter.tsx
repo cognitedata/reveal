@@ -1,12 +1,11 @@
 import React, { ChangeEvent, useState } from 'react';
 
-import debounce from 'lodash/debounce';
-import isNumber from 'lodash/isNumber';
 import toNumber from 'lodash/toNumber';
 import { toId } from 'utils/toId';
 
 import { Input, RangeSlider } from '@cognite/cogs.js';
 
+import { useDebounce } from 'hooks/useDebounce';
 import { FlexGrow } from 'styles/layout';
 
 import {
@@ -18,8 +17,9 @@ import {
 
 interface Props {
   onValueChange: (selectedRange: number[]) => void;
-  selectedValues: number[];
-  values: number[];
+  selectedValues: number[] | undefined;
+  min: number;
+  max: number;
   config?: Config;
 }
 
@@ -30,43 +30,46 @@ interface Config {
 }
 
 export const NumericRangeFilter: React.FC<Props> = ({
-  values,
   selectedValues,
   onValueChange,
   config,
+  min = 0,
+  max = 0,
 }) => {
-  const minMaxValues =
-    isNumber(values[0]) && isNumber(values[1]) ? values : [0, 0];
-  const [selectedMin, selectedMax] = selectedValues || minMaxValues;
+  const [[selectedMin, selectedMax], setSelectedRange] = useState(
+    selectedValues || [min, max]
+  );
   const [fastMinMax, setFastMinMax] = useState<[number, number]>([
     selectedMin,
     selectedMax,
   ]);
-  const [min, max] = minMaxValues;
+
   let [fastMin, fastMax] = fastMinMax;
+
+  React.useEffect(() => {
+    setSelectedRange([min, max]);
+    setFastMinMax([min, max]);
+  }, [min, max]);
 
   // Set range values in initial render.
   React.useEffect(() => {
     if (selectedValues && selectedValues.length === 2) {
       setFastMinMax([selectedValues[0], selectedValues[1]]);
+    } else {
+      setFastMinMax([selectedMin, selectedMax]);
     }
   }, [selectedValues]);
 
-  const debouncedSearch = React.useCallback(
-    debounce((from, to) => {
-      onValueChange([from, to]);
-    }, 300),
-    []
-  );
+  const debouncedSearch = useDebounce((from: number, to: number) => {
+    onValueChange([from, to]);
+  }, 300);
 
   const handleRangeSliderChange = (range: number[]) => {
     const from = range[0];
     const to = range[1];
 
-    if (from !== selectedMin || to !== selectedMax) {
-      setFastMinMax([from, to]);
-      debouncedSearch(from, to);
-    }
+    setFastMinMax([from, to]);
+    debouncedSearch(from, to);
   };
 
   const handleMinChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +89,7 @@ export const NumericRangeFilter: React.FC<Props> = ({
       fastMin = fastMax;
     }
     if (fastMin !== selectedMin) {
-      onValueChange([fastMin, selectedMax]);
+      onValueChange([fastMin, fastMax]);
     } else {
       setFastMinMax((values) => [selectedMin, values[1]]);
     }
@@ -99,7 +102,7 @@ export const NumericRangeFilter: React.FC<Props> = ({
       fastMax = fastMin;
     }
     if (fastMax !== selectedMax) {
-      onValueChange([selectedMin, fastMax]);
+      onValueChange([fastMin, fastMax]);
     } else {
       setFastMinMax((values) => [values[0], selectedMax]);
     }
@@ -119,9 +122,9 @@ export const NumericRangeFilter: React.FC<Props> = ({
       {config?.title && <RangeFilterTitle>{config.title}</RangeFilterTitle>}
       <RangeSliderWrapper>
         <RangeSlider
-          min={min}
-          max={max}
-          value={[fastMin, fastMax]}
+          min={selectedMin}
+          max={selectedMax}
+          value={fastMinMax}
           setValue={handleRangeSliderChange}
         />
       </RangeSliderWrapper>
@@ -130,7 +133,7 @@ export const NumericRangeFilter: React.FC<Props> = ({
           id={`From-${toId(config?.title || '')}`}
           data-testid={`From-${toId(config?.title || '')}`}
           title="From"
-          value={toNumber(fastMinMax[0])}
+          value={toNumber(fastMinMax[0]) || min}
           onChange={handleMinChange}
           onBlur={handleMinBlur}
           onKeyDown={(event) => {
@@ -147,7 +150,7 @@ export const NumericRangeFilter: React.FC<Props> = ({
           id={`To-${toId(config?.title || '')}`}
           data-testid={`To-${toId(config?.title || '')}`}
           title="To"
-          value={toNumber(fastMinMax[1])}
+          value={toNumber(fastMinMax[1]) || max}
           onBlur={handleMaxBlur}
           onChange={handleMaxChange}
           onKeyDown={(event) => {

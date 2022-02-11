@@ -53,9 +53,9 @@ describe('NumericRangeFilter tests', () => {
           category="documents"
           resultFacets={[]}
           categoryData={[
-            { name: '1', count: 1 },
-            { name: '2', count: 5 },
-            { name: '3', count: 4 },
+            { name: 1, count: 1 },
+            { name: 2, count: 5 },
+            { name: 3, count: 4 },
           ]}
           {...props}
         />

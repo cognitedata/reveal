@@ -286,7 +286,7 @@ describe('Wells sidebar filters', () => {
       .siblings()
       .last()
       .findByTestId('From-WaterDepthft')
-      .type('{backspace}{backspace}{backspace}950{enter}');
+      .type('{selectAll}9500{enter}');
 
     checkRequestContainsFilter({
       waterDepth: {

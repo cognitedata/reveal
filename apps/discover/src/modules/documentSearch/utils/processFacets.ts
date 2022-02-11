@@ -126,9 +126,7 @@ export const processFacets = (
   });
 
   const pageCount = findResult('pageCount').map((item) => {
-    const name = (item.group as { [PAGE_COUNT_KEY]: string }[])
-      .map((group) => group[PAGE_COUNT_KEY])
-      .join(' ');
+    const name = item.group[0][PAGE_COUNT_KEY];
     return {
       name,
       key: name,

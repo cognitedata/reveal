@@ -396,6 +396,7 @@ react_scripts(
         "--node_options=--require=./$(rootpath chdir-workspace.js)",
         "test",
         "--watchAll",
+        "--no-watchman",
     ],
     data = _RUNTIME_DEPS + [
         "chdir-workspace.js",

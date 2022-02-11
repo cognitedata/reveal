@@ -3,6 +3,7 @@ import { DocumentsCountAggregate } from '@cognite/sdk-playground';
 import {
   FILE_TYPE_KEY,
   LABELS_KEY,
+  PAGE_COUNT_KEY,
   SOURCE_KEY,
   TOTAL_COUNT_KEY,
 } from './constants';
@@ -39,8 +40,8 @@ export const aggregates: DocumentsCountAggregate[] = [
     aggregate: 'count',
   },
   {
-    name: 'pageCount',
+    name: PAGE_COUNT_KEY,
     aggregate: 'count',
-    groupBy: [SOURCE_KEY],
+    groupBy: [PAGE_COUNT_KEY],
   },
 ];

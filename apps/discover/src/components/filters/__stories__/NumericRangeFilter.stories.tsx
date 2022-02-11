@@ -7,7 +7,8 @@ export const Basic = () => {
 
   return (
     <NumericRangeFilter
-      values={[0, 10]}
+      min={0}
+      max={10}
       selectedValues={selected}
       onValueChange={(selectedVals: number[]) => setSelected(selectedVals)}
       config={{ title: 'Numeric Range Filter Example' }}

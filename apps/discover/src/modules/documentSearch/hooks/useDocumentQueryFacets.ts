@@ -56,10 +56,7 @@ export const useDocumentQueryFacets = () => {
         data.location,
         aggregateResponse.location || data.location
       ),
-      pageCount: patchDocumentPayloadCount(
-        data.pageCount,
-        aggregateResponse.pageCount || data.pageCount
-      ),
+      pageCount: aggregateResponse.pageCount || data.pageCount,
     };
 
     return { isLoading, error, data: documentCategoryData };

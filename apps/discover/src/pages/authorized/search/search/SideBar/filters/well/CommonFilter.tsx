@@ -104,7 +104,8 @@ export const CommonFilter = ({
   const createNumericRangeFilter = () => {
     return (
       <NumericRangeFilter
-        values={map(options, 'value')}
+        min={map(options, 'value')[0]}
+        max={map(options, 'value')[1]}
         selectedValues={selectedOptions as number[]}
         onValueChange={(vals: any) => onValueChange(filterId, vals)}
         config={{

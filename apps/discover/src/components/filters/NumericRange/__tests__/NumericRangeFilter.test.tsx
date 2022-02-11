@@ -1,4 +1,5 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { testRenderer } from '__test-utils/renderer';
 
@@ -20,7 +21,8 @@ describe('Numeric Range Filter', () => {
   };
 
   const defaultProps = {
-    values,
+    min: values[0],
+    max: values[1],
     selectedValues: undefined,
     onValueChange,
     config: {
@@ -34,6 +36,28 @@ describe('Numeric Range Filter', () => {
     const row = screen.queryByTestId('empty-range-slider');
 
     expect(row).not.toBeInTheDocument();
+  });
+
+  it(`should not trigger change event on prop changes`, async () => {
+    const { rerender } = render(
+      <NumericRangeFilter
+        min={0}
+        max={0}
+        selectedValues={[0, 0]}
+        onValueChange={onValueChange}
+      />
+    );
+
+    rerender(
+      <NumericRangeFilter
+        min={1}
+        max={3}
+        selectedValues={[1, 2]}
+        onValueChange={onValueChange}
+      />
+    );
+
+    expect(onValueChange).not.toHaveBeenCalled();
   });
 
   it(`should show min max values if no value is selected`, async () => {
@@ -96,22 +120,29 @@ describe('Numeric Range Filter', () => {
     expect(screen.getByTestId(toId)).toHaveValue(maxValue);
   });
 
-  it(`Should fire callback on valid input for ${fromId}`, async () => {
+  it(`Should fire correct callback values on input changes`, async () => {
     await defaultTestInit(defaultProps);
+    const fromInput = screen.getByTestId(fromId);
+    fromInput.focus();
+    await userEvent.keyboard('5');
+    fireEvent.blur(fromInput);
+    expect(onValueChange).toBeCalledWith([5, 100]);
 
-    fireEvent.change(screen.getByTestId(fromId), { target: { value: 50 } });
-    fireEvent.blur(screen.getByTestId(fromId));
-    expect(onValueChange).toBeCalledWith([50, 100]);
+    const toInput = screen.getByTestId(toId);
+    toInput.focus();
+    await userEvent.type(toInput, '{backspace}{backspace}5');
+    fireEvent.blur(toInput);
+    expect(onValueChange).toBeCalledWith([5, 15]);
   });
 
-  it(`Should fire callback on valid input for ${toId}`, async () => {
+  it('should fire correct callback values on slider', async () => {
     await defaultTestInit(defaultProps);
+    const sliders = await screen.findAllByRole('slider');
 
-    fireEvent.change(screen.getByTestId(toId), { target: { value: 50 } });
-    fireEvent.blur(screen.getByTestId(toId));
-    expect(onValueChange).toBeCalledWith([0, 50]);
+    userEvent.type(sliders[0], '{arrowright}{arrowright}');
+
+    await waitFor(() => expect(onValueChange).toBeCalledWith([2, 100]));
   });
-
   it('should render with correct selectedValues on initial render', async () => {
     const props = {
       ...defaultProps,
