@@ -20,6 +20,10 @@ export interface SvgRepresentation {
   boundingBox: BoundingBox;
 }
 
+interface EquipmentTagInfo {
+  equipmentTag: string;
+}
+
 export type SymbolType = typeof symbolTypes[number];
 
 export interface DiagramSymbol {
@@ -33,16 +37,11 @@ export interface DiagramSymbol {
 export type DiagramType = SymbolType | 'Line' | 'EquipmentTag';
 
 export interface DiagramInstance {
+  id: string;
   type: DiagramType;
   labelIds: string[];
   assetExternalId?: string;
   lineNumbers: string[];
-}
-
-export interface DiagramEquipmentTagInstance extends DiagramInstance {
-  description: string[];
-  name: string;
-  type: 'EquipmentTag';
 }
 
 export interface DiagramInstanceWithPaths extends DiagramInstance {
@@ -79,6 +78,18 @@ export interface LineConnectionInstance extends DiagramSymbolInstance {
   pointsToFileName?: string; // point to IsoDocumentMetadata.lineNumber or 'SAME' if on the same document
 }
 
+export interface DiagramEquipmentInstance
+  extends DiagramSymbolInstance,
+    EquipmentTagInfo {
+  type: 'Equipment';
+}
+
+export interface DiagramEquipmentTagInstance
+  extends DiagramInstance,
+    EquipmentTagInfo {
+  type: 'EquipmentTag';
+}
+
 export interface PathReplacement {
   pathId: string;
   replacementPaths: SvgPathWithId[];
@@ -92,29 +103,27 @@ export interface DiagramConnection {
   direction: 'directed' | 'unknown';
 }
 
-export interface DiagramInstanceWithPathsOutputFormat
-  extends DiagramInstanceWithPaths {
+interface DiagramInstanceOutputFields {
   svgRepresentation: SvgRepresentation;
   labels: DiagramLabelOutputFormat[];
 }
 
-export interface DiagramSymbolInstanceOutputFormat
-  extends DiagramSymbolInstance {
-  id: string;
-  svgRepresentation: SvgRepresentation;
-  labels: DiagramLabelOutputFormat[];
-}
+export type DiagramSymbolInstanceOutputFormat = DiagramSymbolInstance &
+  DiagramInstanceOutputFields;
+
+export type DiagramLineInstanceOutputFormat = DiagramLineInstance &
+  DiagramInstanceOutputFields;
+
+export type DiagramEquipmentInstanceOutputFormat = DiagramEquipmentInstance &
+  DiagramInstanceOutputFields;
+
+export type DiagramEquipmentTagInstanceOutputFormat =
+  DiagramEquipmentTagInstance & DiagramInstanceOutputFields;
 
 export interface DiagramLabelOutputFormat {
   id: string;
   text: string;
   boundingBox: BoundingBox;
-}
-
-export interface DiagramEquipmentTagOutputFormat extends DiagramInstance {
-  name: string;
-  boundingBox: BoundingBox;
-  labels: DiagramLabelOutputFormat[];
 }
 
 export enum DocumentType {
@@ -128,11 +137,11 @@ export interface GraphDocument {
   viewBox: BoundingBox;
   symbols: DiagramSymbol[];
   symbolInstances: DiagramSymbolInstanceOutputFormat[];
-  lines: DiagramInstanceWithPathsOutputFormat[];
+  lines: DiagramLineInstanceOutputFormat[];
   connections: DiagramConnection[];
   pathReplacements: PathReplacement[];
   lineNumbers: string[];
-  equipmentTags: DiagramEquipmentTagOutputFormat[];
+  equipmentTags: DiagramEquipmentTagInstanceOutputFormat[];
   labels: DiagramLabelOutputFormat[];
 }
 

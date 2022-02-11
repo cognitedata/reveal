@@ -33,7 +33,7 @@ export const isDiagramLine = (
 
 export const isSymbolInstance = (
   node: SVGElement,
-  symbolInstances: DiagramInstanceWithPaths[]
+  symbolInstances: DiagramSymbolInstance[]
 ) => {
   return symbolInstances.some((symbolInst) =>
     symbolInst.pathIds.includes(node.id)
@@ -62,7 +62,7 @@ export const isInLabelSelection = (
 };
 
 export const isLabelInInstance = (
-  instance: DiagramInstanceWithPaths,
+  instance: DiagramInstance,
   id: DiagramInstanceId
 ): boolean => {
   return instance.labelIds.includes(id);
@@ -70,7 +70,7 @@ export const isLabelInInstance = (
 
 export const isLabelInInstances = (
   node: SVGElement,
-  instances: DiagramInstanceWithPaths[]
+  instances: DiagramInstance[]
 ) => {
   return instances.some((instance) => isLabelInInstance(instance, node.id));
 };
@@ -131,12 +131,12 @@ const colorNode = (
 
 export const isInActiveEquipmentTag = (
   node: SVGElement,
-  activeTagName: string | undefined,
+  activeTagId: string | null,
   equipmentTags: DiagramEquipmentTagInstance[]
 ) => {
-  if (activeTagName === undefined) return false;
+  if (activeTagId === null) return false;
 
-  const activeTag = equipmentTags.find((tag) => tag.name === activeTagName);
+  const activeTag = equipmentTags.find((tag) => tag.id === activeTagId);
 
   if (activeTag === undefined) return false;
 
@@ -164,7 +164,7 @@ export interface ApplyStyleArgs {
   active: ToolType;
   activeLineNumber: string | null;
   equipmentTags: DiagramEquipmentTagInstance[];
-  activeTagName: string | undefined;
+  activeTagId: string | null;
   splitSelection: string | null;
 }
 
@@ -180,7 +180,7 @@ export const applyStyleToNode = ({
   active,
   activeLineNumber,
   equipmentTags,
-  activeTagName,
+  activeTagId,
   splitSelection,
 }: ApplyStyleArgs) => {
   let color: string | undefined;
@@ -211,7 +211,7 @@ export const applyStyleToNode = ({
   if (isInGraphSelection(node, graphSelection)) {
     color = COLORS.connectionSelection;
   }
-  if (isInActiveEquipmentTag(node, activeTagName, equipmentTags)) {
+  if (isInActiveEquipmentTag(node, activeTagId, equipmentTags)) {
     color = COLORS.activeLabel;
   } else if (isInEquipmentTags(node, equipmentTags)) {
     color = COLORS.labelSelection;
@@ -374,7 +374,7 @@ export const visualizeConnections = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
   connections: DiagramConnection[],
-  symbolInstances: DiagramInstanceWithPaths[],
+  symbolInstances: DiagramSymbolInstance[],
   lines: DiagramLineInstance[]
 ) => {
   const offset = 2;
@@ -470,7 +470,7 @@ export const visualizeConnections = (
 export const visualizeLabels = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
-  symbolInstances: DiagramInstanceWithPaths[]
+  symbolInstances: DiagramSymbolInstance[]
 ) => {
   symbolInstances.forEach((symbolInstance) => {
     const symbolMidPoint = pidDocument.getMidPointToPaths(

@@ -10,6 +10,7 @@ export const createLines = (pathIds: string[]) => {
     (pathId) =>
       ({
         type: 'Line',
+        id: 'something1',
         pathIds: [pathId],
         labelIds: [],
         lineNumbers: [],
@@ -23,6 +24,7 @@ export const createSymbols = (pathIds: string[]) => {
       ({
         type: 'Instrument',
         symbolId: 'symbolId',
+        id: 'something1',
         pathIds: [pathId],
         labelIds: [],
         lineNumbers: [],

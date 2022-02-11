@@ -4,6 +4,7 @@ import { LineWalkSymbolType } from './types';
 
 export const lineWalkSymbolTypes = [
   'line',
+  'equipment',
   'equipmentType',
   'fileConnection',
   'instrument',
@@ -20,6 +21,7 @@ export const symbolTypeMap: {
   [key in DiagramType]: LineWalkSymbolType;
 } = {
   Line: 'line',
+  Equipment: 'equipment',
   EquipmentTag: 'equipmentType',
   'File connection': 'fileConnection',
   'Line connection': 'fileConnection',

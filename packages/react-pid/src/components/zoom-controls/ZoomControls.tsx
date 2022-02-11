@@ -4,7 +4,7 @@ import { ToolBar, ToolBarButton } from '@cognite/cogs.js';
 
 export const ZoomButtonsWrapper = styled.div`
   position: absolute;
-  bottom: 1rem;
+  bottom: 22px;
   transform: translate(-50%, 0);
   left: 50%;
 `;

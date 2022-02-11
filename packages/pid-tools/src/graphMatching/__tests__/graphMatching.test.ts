@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import {
   DiagramConnection,
-  DiagramInstanceWithPathsOutputFormat,
+  DiagramLineInstanceOutputFormat,
   DiagramSymbolInstanceOutputFormat,
   DiagramLineInstance,
   DiagramSymbolInstance,
@@ -293,7 +293,7 @@ describe('test getEditDistanceBetweenPaths and getOptimalEditDistanceMapping', (
 
 const readTestData = (jsonData: any) => {
   const newLinesOutputFormat =
-    jsonData.lines as DiagramInstanceWithPathsOutputFormat[];
+    jsonData.lines as DiagramLineInstanceOutputFormat[];
 
   const newLines = newLinesOutputFormat.map((newLineOutputFormat) => {
     return {

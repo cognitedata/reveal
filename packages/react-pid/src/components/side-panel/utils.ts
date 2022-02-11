@@ -4,14 +4,14 @@ export const getInstanceCount = (
   symbolInstances: DiagramSymbolInstance[],
   symbol: DiagramSymbol
 ) => {
-  return getInstancesBySymbol(symbolInstances, symbol).length;
+  return getInstancesBySymbolId(symbolInstances, symbol.id).length;
 };
 
-export const getInstancesBySymbol = (
+export const getInstancesBySymbolId = (
   symbolInstances: DiagramSymbolInstance[],
-  symbol: DiagramSymbol
+  symbolId: string
 ) => {
   return symbolInstances.filter((instance) => {
-    return instance.symbolId === symbol.id;
+    return instance.symbolId === symbolId;
   });
 };

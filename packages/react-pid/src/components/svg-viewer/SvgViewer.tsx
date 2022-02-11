@@ -10,7 +10,7 @@ import {
   getInstanceByDiagramInstanceId,
   createEquipmentTagInstance,
   DiagramEquipmentTagInstance,
-  getDiagramEquipmentTagInstanceByName,
+  getDiagramEquipmentTagInstanceByTagId,
   PathReplacement,
   applyPathReplacementInSvg,
   PidDocumentWithDom,
@@ -19,6 +19,7 @@ import {
   getDiagramEquipmentTagInstanceByLabelId,
   addOrRemoveLabelToEquipmentTag,
   isLine,
+  getDiagramInstanceIdFromPathIds,
 } from '@cognite/pid-tools';
 import { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
@@ -65,8 +66,8 @@ interface SvgViewerProps {
   activeLineNumber: string | null;
   equipmentTags: DiagramEquipmentTagInstance[];
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
-  activeTagName: string | undefined;
-  setActiveTagName: (arg: string | undefined) => void;
+  activeTagId: string | null;
+  setActiveTagId: (arg: string | null) => void;
 }
 
 export const SvgViewer: React.FC<SvgViewerProps> = ({
@@ -93,8 +94,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   activeLineNumber,
   equipmentTags,
   setEquipmentTags,
-  activeTagName,
-  setActiveTagName,
+  activeTagId,
+  setActiveTagId,
 }) => {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [graphSelection, setGraphSelection] =
@@ -252,6 +253,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           {
             type: 'Line',
             pathIds: [node.id],
+            id: getDiagramInstanceIdFromPathIds([node.id]),
             labelIds: [],
             lineNumbers: [],
           } as DiagramLineInstance,
@@ -414,17 +416,22 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       active === 'addEquipmentTag' &&
       node instanceof SVGTSpanElement
     ) {
-      if (activeTagName) {
-        const tag = getDiagramEquipmentTagInstanceByName(
-          activeTagName,
+      if (activeTagId) {
+        const tag = getDiagramEquipmentTagInstanceByTagId(
+          activeTagId,
           equipmentTags
         );
         if (tag === undefined) return;
         addOrRemoveLabelToEquipmentTag(node, tag);
-        setActiveTagName(tag.name);
-        setEquipmentTags(
-          equipmentTags.filter((tag) => tag.labelIds.length > 0)
-        );
+        if (tag.labelIds.length < 1) {
+          setActiveTagId(null);
+          setEquipmentTags(
+            equipmentTags.filter((tag) => tag.labelIds.length > 0)
+          );
+        } else {
+          setActiveTagId(tag.id);
+          setEquipmentTags([...equipmentTags]);
+        }
       } else {
         const tag = getDiagramEquipmentTagInstanceByLabelId(
           node.id,
@@ -433,9 +440,9 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (tag === undefined) {
           const newTag = createEquipmentTagInstance(node);
           setEquipmentTags([...equipmentTags, newTag]);
-          setActiveTagName(newTag.name);
+          setActiveTagId(newTag.id);
         } else {
-          setActiveTagName(tag.name);
+          setActiveTagId(tag.id);
         }
       }
     }
@@ -471,7 +478,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         active,
         activeLineNumber,
         equipmentTags,
-        activeTagName,
+        activeTagId,
       });
 
       node.addEventListener('mouseenter', () => onMouseEnter(node, svg));
@@ -514,7 +521,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       graphInstance.mergeEdge(connections[i].end, connections[i].start);
     }
     setGraph(graphInstance);
-    setActiveTagName(undefined);
+    setActiveTagId(null);
   }, [active]);
 
   return (

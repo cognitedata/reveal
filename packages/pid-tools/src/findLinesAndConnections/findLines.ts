@@ -5,7 +5,11 @@ import {
   DiagramInstanceId,
   DiagramSymbolInstance,
 } from '../types';
-import { getDiagramInstanceId, isDiagramInstanceInList } from '../utils';
+import {
+  getDiagramInstanceId,
+  getDiagramInstanceIdFromPathIds,
+  isDiagramInstanceInList,
+} from '../utils';
 
 const getConnectedByInstanceId = (
   instanceId: DiagramInstanceId,
@@ -55,6 +59,7 @@ export const detectLines = (
           (newLine) =>
             ({
               type: 'Line',
+              id: getDiagramInstanceIdFromPathIds([newLine]),
               pathIds: [newLine],
               labelIds: [],
               lineNumbers: [],

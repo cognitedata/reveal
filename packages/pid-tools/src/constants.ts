@@ -7,8 +7,15 @@ export const AUTO_ANALYSIS_DISTANCE_THRESHOLD = 1;
 export const AUTO_ANALYSIS_LABEL_THRESHOLD_PID = 10;
 export const AUTO_ANALYSIS_LABEL_THRESHOLD_ISO = 40;
 
-export const symbolTypes = [
+export const pidSymbolTypes = [
   'File connection', // this is only in P&IDs
+] as const;
+
+export const isoSymbolTypes = [
+  'Line connection', // This is only in ISOs
+] as const;
+
+export const bothSymbolTypes = [
   'Instrument',
   'Valve',
   'Reducer',
@@ -17,7 +24,13 @@ export const symbolTypes = [
   'Insolation',
   'Arrow',
   'Custom',
-  'Line connection', // This is only in ISOs
+  'Equipment',
+] as const;
+
+export const symbolTypes = [
+  ...isoSymbolTypes,
+  ...pidSymbolTypes,
+  ...bothSymbolTypes,
 ] as const;
 
 export const orientations = [
@@ -28,3 +41,5 @@ export const orientations = [
   'Left & Right',
   'Up & Down',
 ] as const;
+
+export const EQUIPMENT_TAG_REGEX = /^[0-9]{2}-[A-Z0-9]{4,5}$/;

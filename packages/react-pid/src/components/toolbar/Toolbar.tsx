@@ -6,14 +6,26 @@ import { ToolType } from '../../types';
 
 const ToolBarWrapper = styled.div`
   position: absolute;
-  bottom: 25px;
-  left: 10px;
+  bottom: 22px;
+  left: 6px;
+  .active,
+  :hover {
+    background-color: var(--cogs-bg-control--disabled);
+  }
   .active {
-    background-color: var(--cogs-btn-color-primary);
-    color: white;
-    &:hover {
-      background-color: var(--cogs-btn-color-primary);
-      color: white;
+    opacity: 0.8ss;
+    pointer-events: none;
+  }
+  .toolbar {
+    background-color: rgba(255, 255, 255, 0.95);
+
+    span {
+      padding: 2px;
+    }
+
+    button {
+      padding: 5px 10px;
+      height: 30px;
     }
   }
 `;
@@ -63,12 +75,6 @@ export const Toolbar = ({ active, setActive, documentType }: ToolbarProps) => {
         className: `${active === 'setLineNumber' && 'active'}`,
         description: 'Set line number',
       },
-      {
-        icon: 'String',
-        onClick: () => setActive('addEquipmentTag'),
-        className: `${active === 'addEquipmentTag' && 'active'}`,
-        description: 'Add equipment tag',
-      },
     ],
   ];
 
@@ -79,11 +85,22 @@ export const Toolbar = ({ active, setActive, documentType }: ToolbarProps) => {
       className: `${active === 'splitLine' && 'active'}`,
       description: 'Split line',
     });
+  } else if (documentType === DocumentType.isometric) {
+    toolBarButtonGroups[0].push({
+      icon: 'String',
+      onClick: () => setActive('addEquipmentTag'),
+      className: `${active === 'addEquipmentTag' && 'active'}`,
+      description: 'Add equipment tag',
+    });
   }
 
   return (
     <ToolBarWrapper>
-      <ToolBar direction="vertical" buttonGroups={toolBarButtonGroups} />
+      <ToolBar
+        direction="vertical"
+        buttonGroups={toolBarButtonGroups}
+        className="toolbar"
+      />
     </ToolBarWrapper>
   );
 };

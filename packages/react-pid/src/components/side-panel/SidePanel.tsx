@@ -62,8 +62,8 @@ interface SidePanelProps {
   setActiveLineNumber: (arg: string | null) => void;
   equipmentTags: DiagramEquipmentTagInstance[];
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
-  activeTagName: string | undefined;
-  setActiveTagName: (arg: string | undefined) => void;
+  activeTagId: string | null;
+  setActiveTagId: (arg: string | null) => void;
   splitLines: () => void;
   jsonInputRef: (node: HTMLInputElement | null) => void;
   onUploadJsonClick: () => void;
@@ -93,8 +93,8 @@ export const SidePanel = ({
   setActiveLineNumber,
   equipmentTags,
   setEquipmentTags,
-  activeTagName,
-  setActiveTagName,
+  activeTagId,
+  setActiveTagId,
   splitLines,
   jsonInputRef,
   onUploadJsonClick,
@@ -155,9 +155,9 @@ export const SidePanel = ({
     });
   }
 
-  const setActiveTagWrapper = (arg: string | undefined) => {
+  const setActiveTagWrapper = (arg: string | null) => {
     setActive('addEquipmentTag');
-    setActiveTagName(arg);
+    setActiveTagId(arg);
   };
 
   return (
@@ -185,8 +185,9 @@ export const SidePanel = ({
         connections={connections}
         equipmentTags={equipmentTags}
         setEquipmentTags={setEquipmentTags}
-        activeTagName={activeTagName}
-        setActiveTagName={setActiveTagWrapper}
+        activeTagId={activeTagId}
+        setActiveTagId={setActiveTagWrapper}
+        documentType={documentMetadata.type}
       />
 
       {documentMetadata.type === DocumentType.pid && (
@@ -197,7 +198,11 @@ export const SidePanel = ({
 
       <div>
         {active === 'addSymbol' && (
-          <AddSymbolController selection={selection} saveSymbol={saveSymbol} />
+          <AddSymbolController
+            selection={selection}
+            saveSymbol={saveSymbol}
+            documentType={documentMetadata.type}
+          />
         )}
         {active === 'setLineNumber' && (
           <AddLineNumberController

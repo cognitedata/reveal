@@ -3,6 +3,8 @@ import { DiagramEquipmentTagInstance } from '@cognite/pid-tools';
 import { Button, Collapse, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
+import { Pre } from './elements';
+
 interface EquipmentTagPanelHeaderProps {
   equipmentTag: DiagramEquipmentTagInstance;
   deleteTag: (tagName: string) => void;
@@ -20,19 +22,15 @@ const NextButton = styled(Button)`
 `;
 
 const EquipmentTagPanelHeader = ({
-  equipmentTag,
+  equipmentTag: tag,
   deleteTag,
 }: EquipmentTagPanelHeaderProps) => {
-  const { name } = equipmentTag;
+  const { equipmentTag } = tag;
 
   return (
     <CollapseHeader>
-      <span>
-        {equipmentTag.name}
-        {equipmentTag.description.length &&
-          `, ${equipmentTag.description.join(', ')}`}
-      </span>
-      <Icon onClick={() => deleteTag(name)} type="Close" size={12} />
+      <span>{equipmentTag}</span>
+      <Icon onClick={() => deleteTag(equipmentTag)} type="Close" size={12} />
     </CollapseHeader>
   );
 };
@@ -40,18 +38,20 @@ const EquipmentTagPanelHeader = ({
 interface EquipmentTagPanelProps {
   equipmentTags: DiagramEquipmentTagInstance[];
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
-  activeTagName: string | undefined;
-  setActiveTagName: (arg: string | undefined) => void;
+  activeTagId: string | null;
+  setActiveTagId: (arg: string | null) => void;
 }
 
 export const EquipmentTagPanel: React.FC<EquipmentTagPanelProps> = ({
   equipmentTags,
   setEquipmentTags,
-  activeTagName,
-  setActiveTagName,
+  activeTagId,
+  setActiveTagId,
 }) => {
-  const deleteTag = (name: string) => {
-    setEquipmentTags(equipmentTags.filter((tag) => tag.name !== name));
+  const deleteTag = (equipmentTag: string) => {
+    setEquipmentTags(
+      equipmentTags.filter((tag) => tag.equipmentTag !== equipmentTag)
+    );
   };
 
   return (
@@ -59,8 +59,8 @@ export const EquipmentTagPanel: React.FC<EquipmentTagPanelProps> = ({
       <Collapse
         accordion
         ghost
-        activeKey={activeTagName}
-        onChange={(key) => setActiveTagName(key)}
+        activeKey={activeTagId || undefined}
+        onChange={(key) => setActiveTagId(key)}
       >
         {equipmentTags.map((tag) => (
           <Collapse.Panel
@@ -70,19 +70,14 @@ export const EquipmentTagPanel: React.FC<EquipmentTagPanelProps> = ({
                 deleteTag={deleteTag}
               />
             }
-            key={tag.name}
+            key={tag.id}
           >
-            <p>
-              {`{
-                labelIds: [${tag.labelIds.join(', ')}],
-                lineNumbers: [${tag.lineNumbers.join(', ')}]
-              }`}
-            </p>
+            <Pre>{JSON.stringify(tag, null, 2)}</Pre>
           </Collapse.Panel>
         ))}
       </Collapse>
-      {activeTagName && (
-        <NextButton onClick={() => setActiveTagName('')}>Next tag</NextButton>
+      {activeTagId && (
+        <NextButton onClick={() => setActiveTagId(null)}>Next tag</NextButton>
       )}
     </>
   );

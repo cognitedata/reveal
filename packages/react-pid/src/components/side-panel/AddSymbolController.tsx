@@ -1,22 +1,18 @@
 import * as React from 'react';
 import { Button, Select, OptionType } from '@cognite/cogs.js';
 import {
-  symbolTypes,
   SymbolType,
   Orientation,
   orientations,
+  DocumentType,
+  bothSymbolTypes,
+  pidSymbolTypes,
+  isoSymbolTypes,
 } from '@cognite/pid-tools';
 
 import { SaveSymbolData } from '../../ReactPid';
 
 import { StyledInput } from './elements';
-
-const symbolTypeOptions: OptionType<SymbolType>[] = symbolTypes.map(
-  (symbolType) => ({
-    label: symbolType,
-    value: symbolType,
-  })
-);
 
 const directionOptions: OptionType<Orientation>[] = orientations.map(
   (direction) => ({
@@ -28,12 +24,37 @@ const directionOptions: OptionType<Orientation>[] = orientations.map(
 interface AddSymbolControllerProps {
   selection: SVGElement[];
   saveSymbol: (options: SaveSymbolData, selection: SVGElement[]) => void;
+  documentType: DocumentType;
 }
 
 export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   selection,
   saveSymbol,
+  documentType,
 }) => {
+  let symbolTypeOptions: OptionType<SymbolType>[];
+
+  if (documentType === DocumentType.pid) {
+    symbolTypeOptions = [...bothSymbolTypes, ...pidSymbolTypes]
+      .sort()
+      .map((symbolType) => ({
+        label: symbolType,
+        value: symbolType,
+      }));
+  } else if (documentType === DocumentType.isometric) {
+    symbolTypeOptions = [...bothSymbolTypes, ...isoSymbolTypes]
+      .sort()
+      .map((symbolType) => ({
+        label: symbolType,
+        value: symbolType,
+      }));
+  } else {
+    symbolTypeOptions = [...bothSymbolTypes].sort().map((symbolType) => ({
+      label: symbolType,
+      value: symbolType,
+    }));
+  }
+
   const [description, setDescription] = React.useState<string>('');
 
   const [selectedSymbolTypeOption, setSelectedSymbolTypeOption] =

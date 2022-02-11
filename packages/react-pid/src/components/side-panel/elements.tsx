@@ -9,3 +9,7 @@ export const StyledInput = styled(Input)`
     width: 100%;
   }
 `;
+
+export const Pre = styled.pre`
+  font-size: 0.75rem;
+`;

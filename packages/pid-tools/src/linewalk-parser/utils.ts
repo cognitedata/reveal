@@ -2,8 +2,8 @@ import {
   DocumentType,
   GraphDocument,
   DiagramSymbolInstanceOutputFormat,
-  DiagramEquipmentTagOutputFormat,
-  DiagramInstanceWithPathsOutputFormat,
+  DiagramLineInstanceOutputFormat,
+  DiagramEquipmentTagInstanceOutputFormat,
 } from '../types';
 import { isLineConnection } from '../utils';
 
@@ -18,11 +18,9 @@ import { symbolTypeMap } from './constants';
 import { findIsoLink } from './links';
 
 const diagramInstanceToAnnotation = (
-  instance:
-    | DiagramSymbolInstanceOutputFormat
-    | DiagramInstanceWithPathsOutputFormat
+  instance: DiagramSymbolInstanceOutputFormat | DiagramLineInstanceOutputFormat
 ): Annotation => ({
-  id: 'id' in instance ? instance.id : 'none',
+  id: instance.id,
   type: symbolTypeMap[instance.type],
   svgPaths: instance.svgRepresentation.svgPaths,
   boundingBox: instance.svgRepresentation.boundingBox,
@@ -32,12 +30,12 @@ const diagramInstanceToAnnotation = (
 });
 
 const symbolTagToAnnotation = (
-  tag: DiagramEquipmentTagOutputFormat
+  tag: DiagramEquipmentTagInstanceOutputFormat
 ): Annotation => ({
-  id: tag.name,
+  id: tag.id,
   type: symbolTypeMap[tag.type],
   svgPaths: [],
-  boundingBox: tag.boundingBox,
+  boundingBox: tag.svgRepresentation.boundingBox,
   nearestAssetExternalIds: [],
   labelIds: tag.labels.map((label) => label.id),
   lineNumbers: tag.lineNumbers,

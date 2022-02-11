@@ -1,5 +1,5 @@
 /* eslint-disable no-continue */
-import { isFileConnection } from '../utils';
+import { getDiagramInstanceIdFromPathIds, isFileConnection } from '../utils';
 import { PidDocument, PidPath } from '../pid';
 import {
   DiagramSymbol,
@@ -31,6 +31,7 @@ export const findAllInstancesOfSymbol = (
       if (symbol.symbolType === 'File connection') {
         symbolInstances.push({
           type: symbol.symbolType,
+          id: getDiagramInstanceIdFromPathIds(match.pathIds),
           symbolId: symbol.id,
           pathIds: match.pathIds,
           scale: match.scale,
@@ -41,6 +42,7 @@ export const findAllInstancesOfSymbol = (
       } else {
         symbolInstances.push({
           type: symbol.symbolType,
+          id: getDiagramInstanceIdFromPathIds(match.pathIds),
           symbolId: symbol.id,
           pathIds: match.pathIds,
           scale: match.scale,

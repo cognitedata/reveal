@@ -5,6 +5,7 @@ const getDiagramInstance = (type: string) => {
   return {
     pathIds: ['something'],
     symbolId: 'something1',
+    id: 'something1',
     type,
     labelIds: [],
     lineNumbers: [],
@@ -16,6 +17,7 @@ const getDiagramAssetInstance = (assetExternalId: string) => {
     pathIds: ['something'],
     type: 'Instrument',
     symbolId: 'something1',
+    id: 'something1',
     assetExternalId,
     labelIds: [],
     lineNumbers: [],

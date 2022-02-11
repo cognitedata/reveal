@@ -5,13 +5,15 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DiagramEquipmentTagInstance,
+  DocumentType,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
 import { Collapse, Icon } from '@cognite/cogs.js';
 
-import { getInstancesBySymbol, getInstanceCount } from './utils';
+import { getInstancesBySymbolId, getInstanceCount } from './utils';
 import { CollapsableSymbolHeader } from './CollapsableSymbolHeader';
 import { EquipmentTagPanel } from './EquipmentTagPanel';
+import { Pre } from './elements';
 
 const ScrollWrapper = styled.div`
   height: 100%;
@@ -30,10 +32,6 @@ const ConnectionItem = styled.div`
   grid-template-columns: auto max-content;
 `;
 
-const Pre = styled.pre`
-  font-size: 0.75rem;
-`;
-
 interface CollapsableInstanceListProps {
   symbols: DiagramSymbol[];
   symbolInstances: DiagramSymbolInstance[];
@@ -43,8 +41,9 @@ interface CollapsableInstanceListProps {
   deleteConnection: (connection: DiagramConnection) => void;
   equipmentTags: DiagramEquipmentTagInstance[];
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
-  activeTagName: string | undefined;
-  setActiveTagName: (arg: string | undefined) => void;
+  activeTagId: string | null;
+  setActiveTagId: (arg: string | null) => void;
+  documentType: DocumentType;
 }
 
 export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
@@ -57,8 +56,9 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
     deleteConnection,
     equipmentTags,
     setEquipmentTags,
-    activeTagName,
-    setActiveTagName,
+    activeTagId,
+    setActiveTagId,
+    documentType,
   }) => {
     const renderSymbolInstances = (
       symbolInstances: DiagramSymbolInstance[],
@@ -66,11 +66,13 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
     ) => {
       return (
         <div>
-          {getInstancesBySymbol(symbolInstances, symbol).map((instance) => (
-            <Pre key={instance.pathIds.join('')}>
-              {JSON.stringify(instance, undefined, 2)}
-            </Pre>
-          ))}
+          {getInstancesBySymbolId(symbolInstances, symbol.id).map(
+            (instance) => (
+              <Pre key={instance.id}>
+                {JSON.stringify(instance, undefined, 2)}
+              </Pre>
+            )
+          )}
         </div>
       );
     };
@@ -87,9 +89,7 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
               symbolInstanceCount: getInstanceCount(symbolInstances, symbol),
               deleteSymbol,
             })}
-            key={symbol.svgRepresentations[0].svgPaths
-              .map((svgPath) => svgPath.svgCommands)
-              .join()}
+            key={symbol.id}
           >
             {renderSymbolInstances(symbolInstances, symbol)}
           </Collapse.Panel>
@@ -103,9 +103,7 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
         <Collapse accordion ghost>
           <Collapse.Panel header={`Flowlines (${lineInstances?.length || 0})`}>
             {lineInstances?.map((line) => (
-              <p key={line.pathIds.join('')}>
-                {`{pathIds: [${line.pathIds.join(', ')}]}`}
-              </p>
+              <Pre key={line.id}>{JSON.stringify(line, null, 2)}</Pre>
             ))}
           </Collapse.Panel>
         </Collapse>
@@ -134,14 +132,17 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
             ))}
           </Collapse.Panel>
         </Collapse>
-
-        <CollapseSeperator>Equipment tags</CollapseSeperator>
-        <EquipmentTagPanel
-          equipmentTags={equipmentTags}
-          setEquipmentTags={setEquipmentTags}
-          activeTagName={activeTagName}
-          setActiveTagName={setActiveTagName}
-        />
+        {documentType === DocumentType.isometric && (
+          <div>
+            <CollapseSeperator>Equipment tags</CollapseSeperator>
+            <EquipmentTagPanel
+              equipmentTags={equipmentTags}
+              setEquipmentTags={setEquipmentTags}
+              activeTagId={activeTagId}
+              setActiveTagId={setActiveTagId}
+            />
+          </div>
+        )}
       </ScrollWrapper>
     );
   };

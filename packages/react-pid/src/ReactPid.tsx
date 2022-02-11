@@ -67,7 +67,7 @@ export const ReactPid: React.FC = () => {
   const [equipmentTags, setEquipmentTags] = useState<
     DiagramEquipmentTagInstance[]
   >([]);
-  const [activeTagName, setActiveTagName] = useState<string>();
+  const [activeTagId, setActiveTagId] = useState<string | null>(null);
   const [symbolInstances, setSymbolInstances] = useState<
     DiagramSymbolInstance[]
   >([]);
@@ -187,10 +187,15 @@ export const ReactPid: React.FC = () => {
   }, [documentMetadata]);
 
   const setToolBarMode = (mode: ToolType) => {
+    // If this is changed to useEffect((), [active]) the first load of the SVG will be much slower
     setSelection([]);
     setSplitSelection(null);
     setConnectionSelection(null);
     setLabelSelection(null);
+
+    if (active !== 'addEquipmentTag' && activeTagId !== null) {
+      setActiveTagId(null);
+    }
     setActive(mode);
   };
 
@@ -394,12 +399,6 @@ export const ReactPid: React.FC = () => {
     setFileUrl('');
   };
 
-  useEffect(() => {
-    if (active !== 'addEquipmentTag' && activeTagName !== undefined) {
-      setActiveTagName(undefined);
-    }
-  }, [active]);
-
   return (
     <ReactPidWrapper>
       <ReactPidLayout>
@@ -426,8 +425,8 @@ export const ReactPid: React.FC = () => {
           setActiveLineNumber={setActiveLineNumber}
           equipmentTags={equipmentTags}
           setEquipmentTags={setEquipmentTags}
-          activeTagName={activeTagName}
-          setActiveTagName={setActiveTagName}
+          activeTagId={activeTagId}
+          setActiveTagId={setActiveTagId}
           getPidDocument={getPidDocument}
           splitLines={splitPathsWithManySegments}
           jsonInputRef={jsonInputRef}
@@ -472,8 +471,8 @@ export const ReactPid: React.FC = () => {
               activeLineNumber={activeLineNumber}
               equipmentTags={equipmentTags}
               setEquipmentTags={setEquipmentTags}
-              activeTagName={activeTagName}
-              setActiveTagName={setActiveTagName}
+              activeTagId={activeTagId}
+              setActiveTagId={setActiveTagId}
             />
           )}
           <Toolbar

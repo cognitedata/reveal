@@ -2,24 +2,24 @@ import {
   PidDocument,
   getDiagramInstanceId,
   DiagramEquipmentTagInstance,
-  DiagramEquipmentTagOutputFormat,
+  DiagramEquipmentTagInstanceOutputFormat,
   getEncolosingBoundingBox,
   DiagramSymbolInstanceOutputFormat,
   DiagramSymbolInstance,
-  DiagramInstanceWithPaths,
-  DiagramInstanceWithPathsOutputFormat,
+  DiagramLineInstance,
+  DiagramLineInstanceOutputFormat,
 } from '@cognite/pid-tools';
 
-export const getDiagramInstancesOutputFormat = (
+export const getDiagramLineInstancesOutputFormat = (
   pidDocument: PidDocument,
-  diagramInstances: DiagramInstanceWithPaths[]
-): DiagramInstanceWithPathsOutputFormat[] => {
+  diagramInstances: DiagramLineInstance[]
+): DiagramLineInstanceOutputFormat[] => {
   return diagramInstances.map((diagramInstance) => {
     const labels = diagramInstance.labelIds.map((labelId) =>
       pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
     );
 
-    return {
+    return <DiagramLineInstanceOutputFormat>{
       ...diagramInstance,
       id: getDiagramInstanceId(diagramInstance),
       svgRepresentation: pidDocument.createSvgRepresentation(
@@ -41,7 +41,7 @@ export const getDiagramSymbolInstancesOutputFormat = (
       pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
     );
 
-    return {
+    return <DiagramSymbolInstanceOutputFormat>{
       ...diagramInstance,
       id: getDiagramInstanceId(diagramInstance),
       svgRepresentation: pidDocument.createSvgRepresentation(
@@ -57,20 +57,20 @@ export const getDiagramSymbolInstancesOutputFormat = (
 export const getEquipmentTagOutputFormat = (
   pidDocument: PidDocument,
   equipmentTags: DiagramEquipmentTagInstance[]
-): DiagramEquipmentTagOutputFormat[] => {
-  return equipmentTags.map((equipmentTag) => {
-    const labels = equipmentTag.labelIds.map((labelId) =>
+): DiagramEquipmentTagInstanceOutputFormat[] => {
+  return equipmentTags.map((tag) => {
+    const labels = tag.labelIds.map((labelId) =>
       pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
     );
     return {
-      name: equipmentTag.name,
+      ...tag,
       labels,
-      labelIds: equipmentTag.labelIds,
-      type: equipmentTag.type,
-      lineNumbers: equipmentTag.lineNumbers,
-      boundingBox: getEncolosingBoundingBox(
-        labels.map((label) => label.boundingBox)
-      ),
+      svgRepresentation: {
+        boundingBox: getEncolosingBoundingBox(
+          labels.map((label) => label.boundingBox)
+        ),
+        svgPaths: [],
+      },
     };
   });
 };

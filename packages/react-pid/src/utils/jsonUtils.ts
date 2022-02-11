@@ -6,18 +6,17 @@ import {
   DiagramConnection,
   PidDocument,
   getNoneOverlappingSymbolInstances,
-  DiagramInstanceWithPathsOutputFormat,
   PathReplacement,
   PidDocumentWithDom,
   DiagramEquipmentTagInstance,
-  DiagramEquipmentTagOutputFormat,
+  DiagramEquipmentTagInstanceOutputFormat,
   GraphDocument,
   DocumentMetadata,
 } from '@cognite/pid-tools';
 
 import {
   getEquipmentTagOutputFormat,
-  getDiagramInstancesOutputFormat,
+  getDiagramLineInstancesOutputFormat,
   getDiagramSymbolInstancesOutputFormat,
 } from './saveGraph';
 
@@ -42,7 +41,10 @@ const getGraphFormat = (
   lineNumbers: string[],
   equipmentTags: DiagramEquipmentTagInstance[]
 ): GraphDocument => {
-  const linesOutputFormat = getDiagramInstancesOutputFormat(pidDocument, lines);
+  const linesOutputFormat = getDiagramLineInstancesOutputFormat(
+    pidDocument,
+    lines
+  );
   const symbolInstancesOutputFormat = getDiagramSymbolInstancesOutputFormat(
     pidDocument,
     symbolInstances
@@ -145,15 +147,14 @@ export const isValidSymbolFileSchema = (
   }
 
   if ('equipmentTags' in jsonData) {
-    (jsonData.equipmentTags as DiagramEquipmentTagOutputFormat[]).forEach(
-      (tag: DiagramEquipmentTagOutputFormat) => {
-        tag.labels.forEach((label) => {
-          trackMissingId(label.id);
-        });
-      }
-    );
+    (
+      jsonData.equipmentTags as DiagramEquipmentTagInstanceOutputFormat[]
+    ).forEach((tag: DiagramEquipmentTagInstanceOutputFormat) => {
+      tag.labels.forEach((label) => {
+        trackMissingId(label.id);
+      });
+    });
   }
-
   if (missingIds.length !== 0) {
     // eslint-disable-next-line no-console
     console.log(
@@ -204,18 +205,7 @@ export const loadSymbolsFromJson = (
     }
   }
   if ('lines' in jsonData) {
-    const newLinesOutputFormat =
-      jsonData.lines as DiagramInstanceWithPathsOutputFormat[];
-
-    const newLines = newLinesOutputFormat.map((newLineOutputFormat) => {
-      return {
-        type: 'Line',
-        pathIds: newLineOutputFormat.pathIds,
-        labelIds: newLineOutputFormat.labelIds,
-        lineNumbers: newLineOutputFormat.lineNumbers,
-      } as DiagramLineInstance;
-    });
-    setLines([...lines, ...newLines]);
+    setLines([...lines, ...jsonData.lines]);
   }
   if ('symbolInstances' in jsonData) {
     setSymbolInstances([...symbolInstances, ...jsonData.symbolInstances]);
@@ -229,23 +219,18 @@ export const loadSymbolsFromJson = (
   if ('lineNumbers' in jsonData) {
     setLineNumbers([...lineNumbers, ...jsonData.lineNumbers]);
   }
-
   if ('equipmentTags' in jsonData) {
     const newEquipmentTags = (
-      jsonData.equipmentTags as DiagramEquipmentTagOutputFormat[]
+      jsonData.equipmentTags as DiagramEquipmentTagInstanceOutputFormat[]
     ).map((tag) =>
       tag.labels.reduce<DiagramEquipmentTagInstance>(
         (prev, curr) => ({
           ...prev,
-          description:
-            curr.text === tag.name
-              ? prev.description
-              : [...prev.description, curr.text],
           labelIds: [...prev.labelIds, curr.id],
         }),
         {
-          name: tag.name,
-          description: [],
+          id: tag.id,
+          equipmentTag: tag.equipmentTag,
           labelIds: [],
           type: 'EquipmentTag',
           lineNumbers: tag.lineNumbers,

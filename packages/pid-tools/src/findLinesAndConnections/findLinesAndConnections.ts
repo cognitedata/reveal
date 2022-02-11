@@ -10,6 +10,7 @@ import {
 import {
   connectionExists,
   getDiagramInstanceId,
+  getDiagramInstanceIdFromPathIds,
   isDiagramInstanceInList,
   isPathIdInInstance,
 } from '../utils';
@@ -61,6 +62,7 @@ export const getPotentialLines = (
   const potentialLines: DiagramLineInstance[] = matches.map(
     (pidPath) =>
       ({
+        id: getDiagramInstanceIdFromPathIds([pidPath.pathId]),
         type: 'Line',
         pathIds: [pidPath.pathId],
         labelIds: [],

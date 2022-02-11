@@ -1,3 +1,4 @@
+import { EQUIPMENT_TAG_REGEX } from '../constants';
 import { PidDocument } from '../pid/PidDocument';
 import {
   DiagramConnection,
@@ -9,7 +10,7 @@ import {
   DiagramEquipmentTagInstance,
 } from '../types';
 
-import { isFileConnection, isLineConnection } from './type';
+import { isFileConnection, isLineConnection, isEquipment } from './type';
 
 export const getDiagramInstanceId = (
   diagramInstance: DiagramInstanceWithPaths
@@ -173,9 +174,11 @@ export const pruneSymbolOverlappingPathsFromLines = (
 };
 
 /* eslint-disable no-param-reassign */
-export function addOrRemoveLabelToInstance<
-  Type extends DiagramInstanceWithPaths
->(labelId: string, labelText: string, instance: Type): void {
+export function addOrRemoveLabelToInstance(
+  labelId: string,
+  labelText: string,
+  instance: DiagramInstanceWithPaths
+): void {
   if (instance.labelIds.includes(labelId)) {
     instance.labelIds = instance.labelIds.filter((li) => li !== labelId);
   } else {
@@ -198,6 +201,10 @@ export function addOrRemoveLabelToInstance<
       if (unit) {
         [instance.unit] = unit;
       }
+    } else if (isEquipment(instance)) {
+      if (EQUIPMENT_TAG_REGEX.test(labelText)) {
+        instance.equipmentTag = labelText;
+      }
     }
     if (isLineConnection(instance)) {
       const character = labelText.match(/'[A-Z]'/);
@@ -210,7 +217,7 @@ export function addOrRemoveLabelToInstance<
         instance.pointsToFileName = 'SAME';
       }
 
-      const fileName = labelText.match(/L[0-9]{1,}-[0-9]{1,}/);
+      const fileName = labelText.match(EQUIPMENT_TAG_REGEX);
       if (fileName) {
         [instance.pointsToFileName] = fileName;
       }
@@ -224,22 +231,14 @@ export function addOrRemoveLabelToEquipmentTag(
   label: SVGTSpanElement,
   tag: DiagramEquipmentTagInstance
 ): void {
+  const isTag = EQUIPMENT_TAG_REGEX.test(label.innerHTML);
+
+  tag.equipmentTag = isTag ? label.innerHTML : tag.equipmentTag;
+
   if (tag.labelIds.includes(label.id)) {
     tag.labelIds = tag.labelIds.filter((li) => li !== label.id);
-    if (label.innerHTML === tag.name) {
-      const { 0: firstDesc, ...rest } = tag.description;
-      tag.name = firstDesc;
-      tag.description = Object.values(rest);
-    } else {
-      tag.description = tag.description.filter((li) => li !== label.innerHTML);
-    }
   } else {
     tag.labelIds = [...tag.labelIds, label.id];
-    if (tag.name) {
-      tag.description = [...tag.description, label.innerHTML];
-    } else {
-      tag.name = label.innerHTML;
-    }
   }
 }
 /* eslint-enable no-param-reassign */
@@ -266,19 +265,19 @@ export const createEquipmentTagInstance = (
   node: SVGTSpanElement
 ): DiagramEquipmentTagInstance => {
   return {
-    name: node.innerHTML,
-    description: [],
+    id: node.id,
+    equipmentTag: node.innerHTML,
     labelIds: [node.id],
     type: 'EquipmentTag',
     lineNumbers: [],
   };
 };
 
-export const getDiagramEquipmentTagInstanceByName = (
-  name: string,
+export const getDiagramEquipmentTagInstanceByTagId = (
+  id: string,
   equipmentTags: DiagramEquipmentTagInstance[]
 ) => {
-  return equipmentTags.find((tag) => tag.name === name);
+  return equipmentTags.find((tag) => tag.id === id);
 };
 
 export const getDiagramEquipmentTagInstanceByLabelId = (
