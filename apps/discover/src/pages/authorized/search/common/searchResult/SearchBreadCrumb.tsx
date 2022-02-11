@@ -4,7 +4,7 @@ import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components/macro';
 import { withThousandSeparator } from 'utils/number';
 
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Body, Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
 import { GreyBadge } from 'components/badge';
@@ -26,13 +26,32 @@ const BreadCrumbMenu = styled(Menu)`
 `;
 
 const BreadCrumbHeader = styled(Menu.Header)`
-  font-weight: 500;
-  line-height: 20px;
   font-size: 12px;
+  font-weight: 400;
+  margin-top: 0;
+`;
+
+const Title = styled(Body).attrs({ level: 2 })`
+  color: var(--cogs-greyscale-grey7);
+  font-weight: 500;
+`;
+
+const Badge = styled(GreyBadge).attrs({
+  color: 'greyscale-grey3',
+  borderRadius: '4px',
+  padding: '1px 6px',
+})``;
+
+const DividerWrapper = styled.span`
+  .cogs-menu-divider {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
 `;
 
 const BreadCrumbItem = styled(Menu.Item)`
   cursor: default !important;
+  min-height: 32px;
   &:hover {
     background-color: transparent !important;
   }
@@ -52,9 +71,9 @@ export const SearchBreadcrumb: React.FC<Props> = React.memo(
           {(facets || []).map((facet) => {
             return (
               <BreadCrumbItem key={facet.name}>
-                {facet.name}
+                <Title>{facet.name}</Title>
                 <FlexGrow />
-                <GreyBadge text={`${withThousandSeparator(facet.count)}`} />
+                <Badge text={`${withThousandSeparator(facet.count)}`} />
               </BreadCrumbItem>
             );
           })}
@@ -68,7 +87,11 @@ export const SearchBreadcrumb: React.FC<Props> = React.memo(
           <Fragment key={item.name}>
             <BreadCrumbHeader>{item.name}</BreadCrumbHeader>
             {renderFacetAndCount(item.content)}
-            {index !== (content || []).length - 1 && <Menu.Divider />}
+            {index !== (content || []).length - 1 && (
+              <DividerWrapper>
+                <Menu.Divider />
+              </DividerWrapper>
+            )}
           </Fragment>
         ))}
       </BreadCrumbMenu>

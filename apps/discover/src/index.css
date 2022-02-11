@@ -360,9 +360,16 @@ input.reset:focus {
   overflow: hidden;
 }
 
-/* TEMPORARY FIX */
+/* ~TEMPORARY FIX~
+ This was commented as temp. fix but never "fixed".  (global css is scary)
+ 
+ I removed this as it messed up the "SearchBreadCrumb" badge.
+ 
+ If it's cascading onto other components, please resolve them
+ accordingly to the css below.
+
 .cogs-menu button.cogs-menu-item span {
   display: inline-block;
   white-space: nowrap;
   margin-right: 8px;
-}
+} */
