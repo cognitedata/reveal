@@ -384,6 +384,9 @@ react_scripts_test(
         "@npm//@storybook/react",
         "copy_test_files",
     ],
+    tags = [
+        "ignore_test_in_cd",
+    ],
 )
 
 ### react-scripts test Dev ###
@@ -474,6 +477,9 @@ testcafe_batch_test(
     ],
     serve_script = "./scripts/testcafe/testcafe-bazel-serve.sh",
     starting_port = 11211,
+    tags = [
+        "ignore_test_in_cd",
+    ],
     testcafe_files = [
         glob([
             "testcafe/tests/admin/*.testcafe.ts",
@@ -711,6 +717,9 @@ cypress_web_test(
     },
     # Your cypress plugin used to configure cypress and boot your server
     plugin_file = ":plugin_file",
+    tags = [
+        "ignore_test_in_cd",
+    ],
     templated_args = [
         "--config supportFile=./apps/discover/cypress/support,integrationFolder=./apps/discover/cypress/integration,pluginsFile=./apps/discover/cypress/plugin.js" +
         ",videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video" +

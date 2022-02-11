@@ -221,7 +221,11 @@ pods {
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
         sh(label: 'lint bazel files', script: "bazel --bazelrc=.ci.bazelrc run //:buildifier_check")
-        sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //...")
+        if (isProduction) {
+          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-ignore_test_in_cd")
+        } else {
+          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //...")
+        }
 
         // Bazel stores test outputs as zip files
         sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo")

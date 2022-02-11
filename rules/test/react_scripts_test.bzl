@@ -5,7 +5,7 @@ Test rules
 load("@npm//react-scripts:index.bzl", _react_scripts = "react_scripts")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 
-def react_scripts_test(name, app_name, data, timeout = "long", args = []):
+def react_scripts_test(name, app_name, data, timeout = "long", args = [], tags = []):
     """Creates a react-scripts test wrapper
 
     Args:
@@ -14,6 +14,7 @@ def react_scripts_test(name, app_name, data, timeout = "long", args = []):
         data: source files (tests and non-test files)
         timeout: How long the test is expected to run before returning.
         args: extra arguments to pass
+        tags: list of tags to give to the targets
     """
     chdir_name = "_chdir_%s" % name
     file_name = chdir_name + ".js"
@@ -60,6 +61,6 @@ def react_scripts_test(name, app_name, data, timeout = "long", args = []):
         # Need to set the pwd to avoid jest needing a runfiles helper
         # Windows users with permissions can use --enable_runfiles
         # to make this test work
-        tags = ["no-bazelci-windows"],
+        tags = tags + ["no-bazelci-windows"],
         timeout = timeout,
     )

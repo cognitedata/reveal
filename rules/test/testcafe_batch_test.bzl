@@ -67,6 +67,7 @@ def testcafe_batch_test(name, app_name, data, serve_script, starting_port = 1111
                 ":%s_base_%s" % (name, test_num),
             ],
             timeout = timeout,
+            **kwargs
         )
 
         test_num = test_num + 1

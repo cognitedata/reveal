@@ -339,6 +339,9 @@ cypress_batch_test(
     cypress_folder = "cypress",
     global_cypress_files = TESTS_CYPRESS,
     starting_port = 12111,
+    tags = [
+        "ignore_test_in_cd",
+    ],
 )
 
 # You can write your cypress tests a javascript files or in typescript.
