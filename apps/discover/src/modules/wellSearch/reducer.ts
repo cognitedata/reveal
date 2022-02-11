@@ -163,7 +163,7 @@ export function wellReducer(
 
     case SET_GRAIN_ANALYSIS_DATA: {
       const updatedWellboreData = cloneDeep(state.wellboreData);
-      const wbId = Number(get(action, 'digitalRockSample.metadata.wellboreId'));
+      const wbId = get(action, 'digitalRockSample.metadata.wellboreId');
       const digitalRockId = action.digitalRockSample.parentId;
       const digitalRockSampleId = action.digitalRockSample.id;
 
