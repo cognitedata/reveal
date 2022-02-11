@@ -27,7 +27,7 @@ out vec4 sphereNormal;
 
 out vec3 v_color;
 
-out vec2 v_ZW;
+out mat4 v_projectionMatrix; //fix for uniform not working in iOS
 
 void main() {
     v_treeIndex = a_treeIndex;
@@ -87,5 +87,5 @@ void main() {
     // TODO should perhaps be a different normal?
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
     gl_Position = projectionMatrix * mvPosition;
-    v_ZW = gl_Position.zw;
+    v_projectionMatrix = projectionMatrix;
 }

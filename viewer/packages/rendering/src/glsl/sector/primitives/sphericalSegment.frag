@@ -25,7 +25,7 @@ in vec4 sphereNormal;
 in float v_treeIndex;
 in vec3 v_color;
 
-in vec2 v_ZW;
+in mat4 v_projectionMatrix; //fix for uniform not working in iOS
 
 uniform int renderMode;
 
@@ -107,7 +107,6 @@ void main() {
     }
 #endif
 
-  // Higher precision equivalent of gl_FragCoord.z. This assumes depthRange has been left to its default values.
-  gl_FragDepth = 0.5 * v_ZW[0] / v_ZW[1] + 0.5; // REV-287
-  updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragDepth, matCapTexture, GeometryType.Primitive);
+  updateFragmentDepth(p, v_projectionMatrix);
+  updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);
 }

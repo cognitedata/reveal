@@ -51,8 +51,6 @@ out vec3 v_color;
 
 out vec3 v_normal;
 
-out vec2 v_ZW;
-
 uniform vec2 treeIndexTextureSize;
 
 uniform sampler2D transformOverrideIndexTexture;
@@ -62,6 +60,8 @@ uniform sampler2D transformOverrideTexture;
 
 uniform int renderMode;
 out float v_renderMode;
+
+out mat4 v_projectionMatrix; //fix for uniform not working in iOS
 
 void main() {
     v_renderMode = float(renderMode); // REV-287
@@ -140,5 +140,5 @@ void main() {
 
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
     gl_Position = projectionMatrix * mvPosition;
-    v_ZW = gl_Position.zw;
+    v_projectionMatrix = projectionMatrix;
 }
