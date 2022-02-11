@@ -13,7 +13,8 @@ import {
   Raycaster,
   PerspectiveCamera,
   OrthographicCamera,
-  MathUtils
+  MathUtils,
+  Euler
 } from 'three';
 import Keyboard from './Keyboard';
 
@@ -94,6 +95,7 @@ export class ComboControls extends EventDispatcher {
   private readonly _spherical: Spherical = new Spherical();
   private _sphericalEnd: Spherical = new Spherical();
   private readonly _deltaTarget: Vector3 = new Vector3();
+  private readonly _rollRotation: THREE.Euler = new Euler();
   private _keyboard: Keyboard = new Keyboard();
 
   private readonly _offsetVector: Vector3 = new Vector3();
@@ -171,17 +173,17 @@ export class ComboControls extends EventDispatcher {
     }
 
     let deltaTheta = 0;
-
+    
     if (this._firstPersonMode) {
       deltaTheta += this.calculateShortestDeltaTheta(_sphericalEnd.theta, _spherical.theta);
     } else {
       deltaTheta = _sphericalEnd.theta - _spherical.theta;
     }
-
+    
     const deltaPhi = _sphericalEnd.phi - _spherical.phi;
     const deltaRadius = _sphericalEnd.radius - _spherical.radius;
     _deltaTarget.subVectors(_targetEnd, _target);
-
+    
     let changed = false;
 
     const wantDamping = enableDamping && !this._temporarilyDisableDamping;
@@ -212,7 +214,8 @@ export class ComboControls extends EventDispatcher {
     _spherical.makeSafe();
     _camera.position.setFromSpherical(_spherical).add(_target);
     _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
-
+    _camera.rotateZ(this._rollRotation.z);
+    
     if (changed) {
       this.triggerCameraChangeEvent();
     }
@@ -231,20 +234,18 @@ export class ComboControls extends EventDispatcher {
 
   public setState = (position: Vector3, target: Vector3) => {
     const offset = position.clone().sub(target);
+    console.log('r:', offset.length(), 'dt:', target.clone().sub(this._target).length());
     this._targetEnd.copy(target);
     this._sphericalEnd.setFromVector3(offset);
     this._target.copy(this._targetEnd);
     this._scrollTarget.copy(target);
     this._spherical.copy(this._sphericalEnd);
-    this._temporarilyDisableDamping = true;
     this.update(1000 / this._targetFPS);
     this.triggerCameraChangeEvent();
   };
 
-  public setCameraTarget(target: Vector3) {
-    this._targetEnd.copy(target);
-    this._target.copy(target);
-    this.update(1000 / this._targetFPS);
+  get rollRotation(): Euler {
+    return this._rollRotation;
   }
 
   public setViewTarget = (target: Vector3) => {
