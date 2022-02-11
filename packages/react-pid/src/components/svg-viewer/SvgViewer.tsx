@@ -68,6 +68,7 @@ interface SvgViewerProps {
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
   activeTagId: string | null;
   setActiveTagId: (arg: string | null) => void;
+  hideSelection: boolean;
 }
 
 export const SvgViewer: React.FC<SvgViewerProps> = ({
@@ -96,6 +97,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   setEquipmentTags,
   activeTagId,
   setActiveTagId,
+  hideSelection,
 }) => {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [graphSelection, setGraphSelection] =
@@ -103,7 +105,20 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   const [graphPaths, setGraphPaths] = useState<DiagramInstanceId[][]>([]);
 
   /* eslint-disable no-param-reassign */
-  const onMouseEnter = (node: SVGElement, mainSvg: SVGSVGElement) => {
+  const onMouseEnter = (
+    e: MouseEvent,
+    node: SVGElement,
+    mainSvg: SVGSVGElement
+  ) => {
+    if (active === 'addSymbol' && !(node instanceof SVGTSpanElement)) {
+      if (e.altKey) {
+        setSelection(selection.filter((select) => select.id !== node.id));
+      }
+      if (e.shiftKey && !selection.some((select) => select.id === node.id)) {
+        setSelection([...selection, node]);
+      }
+    }
+
     const boldStrokeWidth = (
       1.5 * parseInt(node.style.strokeWidth, 10)
     ).toString();
@@ -479,9 +494,10 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         activeLineNumber,
         equipmentTags,
         activeTagId,
+        hideSelection,
       });
 
-      node.addEventListener('mouseenter', () => onMouseEnter(node, svg));
+      node.addEventListener('mouseenter', (e) => onMouseEnter(e, node, svg));
 
       const originalStrokeWidth = node.style.strokeWidth;
       node.addEventListener('mouseleave', () => {

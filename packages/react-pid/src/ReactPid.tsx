@@ -84,6 +84,8 @@ export const ReactPid: React.FC = () => {
   const [connectionSelection, setConnectionSelection] =
     useState<DiagramInstanceId | null>(null);
 
+  const [hideSelection, setHideSelection] = useState<boolean>(false);
+
   let pidDocument: PidDocumentWithDom | undefined;
   const setPidDocument = (arg: PidDocumentWithDom) => {
     pidDocument = arg;
@@ -157,6 +159,10 @@ export const ReactPid: React.FC = () => {
           }
           case 'KeyF': {
             onUploadJsonClick();
+            return;
+          }
+          case 'KeyS': {
+            setHideSelection(!hideSelection);
             return;
           }
         }
@@ -429,6 +435,9 @@ export const ReactPid: React.FC = () => {
           setActiveTagId={setActiveTagId}
           getPidDocument={getPidDocument}
           splitLines={splitPathsWithManySegments}
+          hideSelection={hideSelection}
+          setHideSelection={setHideSelection}
+          setSelection={setSelection}
           jsonInputRef={jsonInputRef}
           onUploadJsonClick={onUploadJsonClick}
         />
@@ -473,6 +482,7 @@ export const ReactPid: React.FC = () => {
               setEquipmentTags={setEquipmentTags}
               activeTagId={activeTagId}
               setActiveTagId={setActiveTagId}
+              hideSelection={hideSelection}
             />
           )}
           <Toolbar

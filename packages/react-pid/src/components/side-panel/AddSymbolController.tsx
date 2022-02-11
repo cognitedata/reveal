@@ -9,10 +9,15 @@ import {
   pidSymbolTypes,
   isoSymbolTypes,
 } from '@cognite/pid-tools';
+import styled from 'styled-components';
 
 import { SaveSymbolData } from '../../ReactPid';
 
 import { StyledInput } from './elements';
+
+const SelectionWrapper = styled.div`
+  padding: 1em 0;
+`;
 
 const directionOptions: OptionType<Orientation>[] = orientations.map(
   (direction) => ({
@@ -24,12 +29,18 @@ const directionOptions: OptionType<Orientation>[] = orientations.map(
 interface AddSymbolControllerProps {
   selection: SVGElement[];
   saveSymbol: (options: SaveSymbolData, selection: SVGElement[]) => void;
+  hideSelection: boolean;
+  toggleHideSelection: () => void;
+  clearSelection: () => void;
   documentType: DocumentType;
 }
 
 export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   selection,
   saveSymbol,
+  hideSelection,
+  toggleHideSelection,
+  clearSelection,
   documentType,
 }) => {
   let symbolTypeOptions: OptionType<SymbolType>[];
@@ -89,6 +100,21 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
 
   return (
     <>
+      <SelectionWrapper>
+        <span>{`${selection.length} selected`}</span>
+        <div>
+          <Button
+            type={hideSelection ? 'danger' : 'secondary'}
+            onClick={toggleHideSelection}
+          >
+            {hideSelection ? 'Show Selection' : 'Hide Selection'}
+          </Button>
+          <Button disabled={selection.length === 0} onClick={clearSelection}>
+            Clear Selection
+          </Button>
+        </div>
+      </SelectionWrapper>
+
       <Select
         closeMenuOnSelect
         title="Symbol type"
@@ -129,9 +155,7 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
           postfix={
             <Button
               type="primary"
-              onClick={() => {
-                saveSymbolWrapper();
-              }}
+              onClick={saveSymbolWrapper}
               disabled={isDisabled()}
             >
               Add

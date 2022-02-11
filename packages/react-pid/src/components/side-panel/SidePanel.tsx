@@ -65,6 +65,9 @@ interface SidePanelProps {
   activeTagId: string | null;
   setActiveTagId: (arg: string | null) => void;
   splitLines: () => void;
+  hideSelection: boolean;
+  setHideSelection: (arg: boolean) => void;
+  setSelection: (arg: SVGElement[]) => void;
   jsonInputRef: (node: HTMLInputElement | null) => void;
   onUploadJsonClick: () => void;
 }
@@ -96,6 +99,9 @@ export const SidePanel = ({
   activeTagId,
   setActiveTagId,
   splitLines,
+  hideSelection,
+  setHideSelection,
+  setSelection,
   jsonInputRef,
   onUploadJsonClick,
 }: SidePanelProps) => {
@@ -201,6 +207,9 @@ export const SidePanel = ({
           <AddSymbolController
             selection={selection}
             saveSymbol={saveSymbol}
+            hideSelection={hideSelection}
+            toggleHideSelection={() => setHideSelection(!hideSelection)}
+            clearSelection={() => setSelection([])}
             documentType={documentMetadata.type}
           />
         )}

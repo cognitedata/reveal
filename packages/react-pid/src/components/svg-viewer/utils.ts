@@ -166,6 +166,7 @@ export interface ApplyStyleArgs {
   equipmentTags: DiagramEquipmentTagInstance[];
   activeTagId: string | null;
   splitSelection: string | null;
+  hideSelection: boolean;
 }
 
 export const applyStyleToNode = ({
@@ -182,6 +183,7 @@ export const applyStyleToNode = ({
   equipmentTags,
   activeTagId,
   splitSelection,
+  hideSelection,
 }: ApplyStyleArgs) => {
   let color: string | undefined;
   let opacity = 1;
@@ -234,6 +236,10 @@ export const applyStyleToNode = ({
     }
   }
   colorNode(node, color, opacity);
+
+  if (hideSelection && selection.some((select) => select.id === node.id)) {
+    node.style.visibility = 'hidden';
+  }
 
   applyPointerCursorStyleToNode({
     node,
