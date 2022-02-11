@@ -16,8 +16,8 @@ import {
   ParsedGeometry
 } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
-import { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
-import type { Attribute, DataType, Decoder, DecoderModule, Mesh } from 'draco3dgltf';
+import { TypedArrayConstructor } from '@reveal/utilities';
+import type { DataType, Decoder, DecoderModule, Mesh } from 'draco3dgltf';
 import DracoDecoderModule from './draco_decoder_gltf.js';
 
 export class GltfSectorParser {
@@ -105,11 +105,13 @@ export class GltfSectorParser {
     switch (geometryType) {
       case RevealGeometryCollectionType.InstanceMesh:
         assert(payload.instancingExtension !== undefined);
-        return this.processInstancedTriangleMesh(payload);
+        // return this.processInstancedTriangleMesh(payload);
+        return undefined;
       case RevealGeometryCollectionType.TriangleMesh:
         assert(payload.instancingExtension === undefined);
         await this.processTriangleMesh(payload);
         break;
+      // return undefined;
       default:
         assert(payload.instancingExtension !== undefined);
         this.processPrimitiveCollection(payload);
@@ -238,20 +240,17 @@ export class GltfSectorParser {
           0
         );
 
-        const stride = attributesBufferLength
-          .map(p => {
-            const { attributeName, componentType } = p;
-            const dracoAttribute = decoder.GetAttributeByUniqueId(
-              dracoMesh,
-              dracoCompression.attributes[attributeName]
-            );
+        const strides = attributesBufferLength.map(p => {
+          const { attributeName, componentType } = p;
+          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[attributeName]);
 
-            return (
-              dracoAttribute.num_components() *
-              GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!.BYTES_PER_ELEMENT
-            );
-          })
-          .reduce((partialSum, element) => partialSum + element, 0);
+          return (
+            dracoAttribute.num_components() *
+            GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!.BYTES_PER_ELEMENT
+          );
+        });
+
+        const stride = strides.reduce((partialSum, element) => partialSum + element, 0);
 
         const ptr = module._malloc(cummulativeLength);
 
@@ -275,52 +274,43 @@ export class GltfSectorParser {
 
         const dracoDataView = new Uint8Array(module.HEAP8.buffer, ptr, cummulativeLength);
 
-        const interleavedBuffer = new Uint8Array(new ArrayBuffer(cummulativeLength));
+        const copyBuffer = new Uint8Array(new ArrayBuffer(cummulativeLength));
 
-        {
-          let offset = 0;
-          attributesBufferLength.forEach((p, n) => {
-            console.log(p.attributeName);
-            const { attributeName, componentType } = p;
-            const dracoAttribute = decoder.GetAttributeByUniqueId(
-              dracoMesh,
-              dracoCompression.attributes[attributeName]
-            );
-            const attrSize =
-              dracoAttribute.num_components() *
-              GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!.BYTES_PER_ELEMENT;
-            for (let i = 0; i < dracoMesh.num_points(); i++) {
-              const attr = dracoDataView.subarray(
-                i * attrSize + n * dracoMesh.num_points() * offset,
-                i * attrSize + n * dracoMesh.num_points() * offset + attrSize
-              );
-              interleavedBuffer.set(attr, i * stride + offset);
-            }
-            offset += attrSize;
-            console.log(offset);
-          });
-        }
-
-        const threeInterleaved = new THREE.InterleavedBuffer(interleavedBuffer, stride);
-
-        // console.log(stride);
-        console.log(dracoDataView);
-        console.log(interleavedBuffer);
-        console.log(dracoMesh.num_points());
+        this.copyLinearToInterleaved(
+          {
+            buffer: dracoDataView,
+            attributeByteLengths: strides,
+            numPoints: dracoMesh.num_points()
+          },
+          copyBuffer
+        );
         module._free(ptr);
 
-        Object.keys(primitive.attributes).forEach(p => {
-          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[p]);
-          const componentType = json.accessors[primitive.attributes[p]].componentType;
-          const dracoType = draco_data_type.get(componentType)!;
-          const jsType = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
-          const decodedAttribute = decodeAttribute(decoder, dracoMesh, dracoAttribute, dracoType, jsType, module);
-          if (p === 'POSITION') {
-            bufferGeometry.setAttribute('position', new THREE.BufferAttribute(decodedAttribute, 3));
-          }
-          if (p === 'COLOR_0') {
-            bufferGeometry.setAttribute('color', new THREE.BufferAttribute(decodedAttribute, 4));
-          }
+        let acc = 0;
+        Object.keys(primitive.attributes).forEach((p, n) => {
+          const accessor = json.accessors[primitive.attributes[p]];
+          const componentType = accessor.componentType;
+          const TypedArrayConstructor = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
+
+          const attributeTypedArray = new TypedArrayConstructor(
+            copyBuffer.buffer,
+            copyBuffer.byteOffset,
+            copyBuffer.byteLength / TypedArrayConstructor.BYTES_PER_ELEMENT
+          );
+
+          const interleavedBuffer = new THREE.InterleavedBuffer(
+            attributeTypedArray,
+            stride / TypedArrayConstructor.BYTES_PER_ELEMENT
+          );
+
+          const size = GltfSectorParser.COLLECTION_TYPE_SIZES.get(accessor.type)!;
+          const off = acc / TypedArrayConstructor.BYTES_PER_ELEMENT;
+
+          bufferGeometry.setAttribute(
+            attributeNameTransformer(p),
+            new THREE.InterleavedBufferAttribute(interleavedBuffer, size, off)
+          );
+          acc += strides[n];
         });
       }
     } else {
@@ -349,28 +339,6 @@ export class GltfSectorParser {
       }
     }
 
-    function decodeAttribute(
-      decoder: Decoder,
-      mesh: Mesh,
-      attribute: Attribute,
-      dracoDataType: DataType,
-      jsType: TypedArrayConstructor,
-      decoderModule: DecoderModule
-    ): TypedArray {
-      const dataType = dracoDataType;
-      const ArrayViewConstructor = jsType;
-      const numComponents = attribute.num_components();
-      const numPoints = mesh.num_points();
-      const numValues = numPoints * numComponents;
-      const byteLength: number = numValues * ArrayViewConstructor.BYTES_PER_ELEMENT;
-
-      const ptr = decoderModule._malloc(byteLength);
-      decoder.GetAttributeDataArrayForAllPoints(mesh, attribute, dataType, byteLength, ptr);
-      const array: TypedArray = new ArrayViewConstructor(decoderModule.HEAP8.buffer, ptr, numValues).slice();
-      decoderModule._free(ptr);
-      return array;
-    }
-
     function decodeIndex(decoder: Decoder, mesh: Mesh, decoderModule: DecoderModule): Uint16Array | Uint32Array {
       const numFaces = mesh.num_faces();
       const numIndices = numFaces * 3;
@@ -394,6 +362,30 @@ export class GltfSectorParser {
 
       return indices;
     }
+  }
+
+  private copyLinearToInterleaved(
+    input: { buffer: Uint8Array; attributeByteLengths: number[]; numPoints: number },
+    output: Uint8Array
+  ) {
+    assert(input.buffer.byteLength <= output.byteLength);
+
+    const stride = input.attributeByteLengths.reduce((partialSum, element) => partialSum + element, 0);
+
+    let subStride = 0;
+    input.attributeByteLengths.forEach(attrByteLength => {
+      for (let i = 0; i < input.numPoints; i++) {
+        output.set(
+          input.buffer.subarray(
+            subStride * input.numPoints + i * attrByteLength,
+            subStride * input.numPoints + i * attrByteLength + attrByteLength
+          ),
+          i * stride + subStride
+        );
+      }
+
+      subStride += attrByteLength;
+    });
   }
 
   private setIndexBuffer(

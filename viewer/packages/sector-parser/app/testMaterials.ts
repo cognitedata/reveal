@@ -172,7 +172,7 @@ export function createEccentricConeMaterial(): THREE.ShaderMaterial {
 }
 
 export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
-  return new THREE.RawShaderMaterial({
+  const asd = new THREE.RawShaderMaterial({
     name: 'Primitives (General rings)',
     clipping: false,
     uniforms: {
@@ -194,13 +194,16 @@ export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
       renderMode: { value: 1 },
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
-      colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
+      colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 0]), 1, 1) }
     },
     vertexShader: sectorShaders.generalRingPrimitive.vertex,
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
+  asd.needsUpdate = true;
+  console.log(THREE.PixelFormat[asd.uniforms.colorDataTexture.value.format]);
+  return asd;
 }
 
 export function createEllipsoidSegmentMaterial(): THREE.ShaderMaterial {
