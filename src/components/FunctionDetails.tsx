@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Descriptions, Alert } from 'antd';
 import LoadingIcon from 'components/LoadingIcon';
 import { useFunction } from 'utils/hooks';
+import { getRuntimeLabel } from 'helpers';
 
 const { Item } = Descriptions;
 
@@ -38,6 +39,11 @@ export default function FunctionDetails({ id, name }: Props) {
       </Item>
       <Item label="Memory" span={3}>
         {currentFunction?.memory ? `${currentFunction?.memory} GB` : notSet}
+      </Item>
+      <Item label="Runtime" span={3}>
+        {currentFunction?.runtime
+          ? getRuntimeLabel(currentFunction?.runtime)
+          : notSet}
       </Item>
 
       <Item label="Created by" span={3}>
