@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { Body, Icon, Input, PrimaryTooltip, Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import {
@@ -34,7 +35,11 @@ export const getPrecisionAndRecall = (
 };
 
 export const formatModelType = (modelType: AutoMLModelType) => {
-  return modelType === 'classification' ? 'Classification' : 'Object detection';
+  return modelType === 'classification'
+    ? 'Classification'
+    : modelType === 'objectdetection'
+    ? 'Object detection'
+    : 'Unknown';
 };
 
 export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
