@@ -1,15 +1,8 @@
-export function createLayers<Layer extends string>(
-  layers: readonly string[],
+export function createLayers<LayerName extends string>(
+  layers: readonly LayerName[],
   options: { base?: number; delta?: number } = {}
-): {
-  [key in Layer]: number;
-} {
+): Record<LayerName, number> {
   const { base = 100, delta = 10 } = options;
-
-  type LayerLookup = {
-    [key in Layer]: number;
-  };
-
   const max = layers.length - 1;
 
   return layers.reduce(
@@ -17,6 +10,6 @@ export function createLayers<Layer extends string>(
       ...acc,
       [layer]: (max - i) * delta + base,
     }),
-    {} as Partial<LayerLookup>
-  ) as LayerLookup;
+    {} as Record<LayerName, number>
+  );
 }

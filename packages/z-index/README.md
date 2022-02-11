@@ -26,7 +26,7 @@ const LAYERS = [
   'MINIMUM',
 ] as const;
 
-export default createLayers<typeof LAYERS[number]>(LAYERS);
+export default createLayers(LAYERS);
 ```
 
 Then, when setting a component's z-index ordering, utilize it like so:
@@ -55,5 +55,3 @@ export default DemoComponent;
 
 Note that you should probably never use `MAXIMUM` or `MINIMUM` in your code.
 If you find yourself tempted to use `MAXIMUM`, just create a new constant and put it directly below `MAXIMUM`.
-
-If you know TypeScript well enough to get rid of that `<typeof LAYERS[number]>` generic, please submit a PR! :grinning:

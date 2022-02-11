@@ -16,4 +16,4 @@ const LAYERS = [
   'MINIMUM',
 ] as const;
 
-export default createLayers<typeof LAYERS[number]>(LAYERS);
+export default createLayers(LAYERS);
