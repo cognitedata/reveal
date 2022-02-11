@@ -3,6 +3,7 @@ import { setupServer } from 'msw/node';
 
 import { getMockConfigGet } from '__mocks/getMockConfigGet';
 import { getMockWellById } from '__mocks/getMockWellById';
+import { getMockUserMe } from '__mocks/mockUmsMe';
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
@@ -14,7 +15,11 @@ import {
 
 import { FavoriteWellsTable, Props } from '../FavoriteWellTable';
 
-const mockServer = setupServer(getMockWellById(), getMockConfigGet());
+const mockServer = setupServer(
+  getMockUserMe(),
+  getMockWellById(),
+  getMockConfigGet()
+);
 
 describe('Favorite Wellbore table', () => {
   const defaultTestInit = (viewProps?: Props, store = getMockedStore()) =>

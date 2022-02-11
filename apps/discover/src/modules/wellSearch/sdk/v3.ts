@@ -17,7 +17,6 @@ export const authenticateWellSDK = (
   accessToken?: string
 ) => {
   client = createWellsClient(appId, baseUrl);
-
   return client.loginWithToken({
     project,
     accessToken,

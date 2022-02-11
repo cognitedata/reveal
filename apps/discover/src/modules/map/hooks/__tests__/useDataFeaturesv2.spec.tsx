@@ -4,15 +4,18 @@ import { setupServer } from 'msw/node';
 
 import { getMockConfigGet } from '__mocks/getMockConfigGet';
 import { getMockDocumentSearch } from '__mocks/getMockDocumentSearch';
+import { getMockUserMe } from '__mocks/mockUmsMe';
 import { getMockWellsGeometry } from '__mocks/mockWellsGeometry';
 import { getMockPointGeo } from '__test-utils/fixtures/geometry';
-import { getMockWellGeometry } from '__test-utils/fixtures/wellGeometryCollection';
+import { getMockWell } from '__test-utils/fixtures/well/well';
 import { getWrapper, testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import {
   ExternalWellsFeature,
   useDataFeatures,
-} from 'modules/map/hooks/useDataFeatures';
+} from 'modules/map/hooks/useDataFeaturesv2';
+import { getMockWellsById } from 'modules/wellSearch/__mocks/getMockWellsById';
+import { getMockWellsList } from 'modules/wellSearch/__mocks/getMockWellsList';
 import {
   DOCUMENT_LAYER_ID,
   WELL_HEADS_LAYER_ID,
@@ -21,10 +24,15 @@ import {
 const selectedLayers = [WELL_HEADS_LAYER_ID, DOCUMENT_LAYER_ID];
 
 const mockServer = setupServer(
+  getMockUserMe(),
   getMockWellsGeometry(),
   getMockDocumentSearch(),
+  getMockWellsList(),
+  getMockWellsById(),
   getMockConfigGet()
 );
+
+const mockWell = getMockWell();
 
 describe('useDataFeatures', () => {
   beforeAll(() => mockServer.listen());
@@ -122,7 +130,7 @@ describe('useDataFeatures', () => {
       await screen.findByRole('button', { name: /123/i })
     ).toBeInTheDocument();
     expect(
-      await screen.findByRole('button', { name: /well-collection-1/ })
+      await screen.findByRole('button', { name: mockWell.matchingId })
     ).toBeInTheDocument();
     expect(
       await screen.findByRole('button', { name: /Empty/i })
@@ -140,7 +148,7 @@ describe('useDataFeatures', () => {
           geometries: [getMockPointGeo()],
         },
         properties: {
-          id: 124,
+          id: mockWell.matchingId,
         },
       },
     ];
@@ -175,7 +183,7 @@ describe('useDataFeatures', () => {
           geometries: [getMockPointGeo()],
         },
         properties: {
-          id: 123,
+          id: mockWell.matchingId,
         },
       },
     ];
@@ -224,9 +232,10 @@ describe('useDataFeatures', () => {
     ).toBeInTheDocument();
 
     // remote well heads are cannot be selected and they are blurred if any document or well is selected
+    const name = `${mockWell.matchingId}:false:true`;
     expect(
       await screen.findByRole('button', {
-        name: /well-collection-1:false:true/,
+        name,
       })
     ).toBeInTheDocument();
   });
@@ -259,11 +268,7 @@ describe('useDataFeatures', () => {
 
     const store = getMockedStore({
       wellSearch: {
-        selectedWellIds: {
-          111: true, // this is the duplicate
-          222: true,
-          444: true, // this is NOT the duplicate, since the main ID does not match it
-        },
+        selectedWellIds: {},
       },
     });
 
@@ -285,7 +290,7 @@ describe('useDataFeatures', () => {
 
     expect(
       await screen.findByRole('button', {
-        name: getMockWellGeometry().properties.id,
+        name: mockWell.matchingId,
       })
     ).toBeInTheDocument();
 

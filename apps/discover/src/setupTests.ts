@@ -23,7 +23,7 @@ authenticateDocumentSDK(
   'test-token'
 );
 
-setEnableWellSDKV3();
+setEnableWellSDKV3(true);
 authenticateWellSDK(
   SIDECAR.applicationId,
   SIDECAR.cdfApiBaseUrl,

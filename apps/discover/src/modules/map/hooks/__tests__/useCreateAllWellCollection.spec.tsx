@@ -1,13 +1,14 @@
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
+import { getMockConfigGet } from '__mocks/getMockConfigGet';
 import { getMockWellsGeometry } from '__mocks/mockWellsGeometry';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
 import { useCreateAllWellCollection } from '../useCreateAllWellCollection';
 
-const mockServer = setupServer(getMockWellsGeometry());
+const mockServer = setupServer(getMockWellsGeometry(), getMockConfigGet());
 
 describe('useCreateAllWellCollection', () => {
   beforeAll(() => mockServer.listen());

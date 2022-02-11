@@ -85,7 +85,7 @@ export const useWellsCacheQuery = (
       return updatedCache;
     },
     {
-      enabled: !wellConfig?.disabled && enabledWellSdkV3 !== undefined,
+      enabled: wellConfig?.disabled !== true && enabledWellSdkV3 !== undefined,
       select: React.useCallback(
         (wells) => {
           return wells.filter((well: Well) =>

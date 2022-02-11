@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { setActivePanel } from 'modules/resultPanel/actions';
 import {
   useFilterBarIsOpen,
   useFilterCategory,
 } from 'modules/sidebar/selectors';
-
-import { setActivePanel } from '../../../../../modules/resultPanel/actions';
+import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import { PrefetchFilterOptions } from './components/PrefetchFilterOptions';
 import { MS_TRANSITION_TIME } from './constants';
@@ -22,6 +22,7 @@ export const FilterBar: React.FC = () => {
   const isOpen = useFilterBarIsOpen();
   const category = useFilterCategory();
   const dispatch = useDispatch();
+  const { data: wellConfig } = useWellConfig();
 
   useEffect(() => {
     setTimeout(() => {
@@ -51,7 +52,7 @@ export const FilterBar: React.FC = () => {
 
   return (
     <FilterBarContainer isOpen={isOpen}>
-      <PrefetchFilterOptions />
+      {wellConfig?.disabled !== true && <PrefetchFilterOptions />}
       {renderCategoryPage()}
     </FilterBarContainer>
   );

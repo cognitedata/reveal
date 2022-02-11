@@ -25,7 +25,7 @@ import { useCreateAllWellCollectionV2 } from './useCreateAllWellCollectionv2';
 
 export type ExternalWellsFeature = Feature<
   Geometry | GeometryCollection,
-  { id: number }
+  { id: number | string }
 >;
 
 export const useWellQueryGeometryResultWells = () => {

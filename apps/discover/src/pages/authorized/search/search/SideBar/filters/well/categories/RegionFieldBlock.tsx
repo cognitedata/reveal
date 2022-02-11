@@ -243,7 +243,7 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
           options={Array.from(regionOptionsToDisplay)}
           selectedOptions={selectedRegions}
           displayFilterTitle
-          footer={FooterRegion}
+          footer={isEmpty(selectedFields) ? undefined : FooterRegion}
         />
       )}
 
@@ -275,7 +275,7 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
           options={fieldOptionsToDisplay}
           selectedOptions={selectedFields}
           displayFilterTitle={!showSegmentControl}
-          footer={!isEmpty(selectedRegions) ? FooterField : undefined}
+          footer={isEmpty(selectedRegions) ? undefined : FooterField}
         />
       )}
 

@@ -51,7 +51,7 @@ export const useWellLogsQuery = (
     WELL_QUERY_KEY.LOGS,
     updateWellLogsForPrestineWellboreIds,
     {
-      enabled: !wellConfig?.disabled,
+      enabled: wellConfig?.disabled !== true,
       select: React.useCallback(
         (wellLogs) => {
           return filterWellSequenceDataByWellboreIds(

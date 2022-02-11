@@ -43,7 +43,7 @@ export const getLabels = () => {
   });
 };
 
-// @deprecated, use documentsByIds instead
+// @deprecated, use documentsByIds instead (this is only used in components/Highlight.tsx)
 export const getDocument = (query: string, documentId: string) => {
   return doSearch(
     { query, highlight: true },

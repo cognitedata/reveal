@@ -37,7 +37,7 @@ export const useAllWellSearchResultQuery = (): UseQueryResult<Well[]> => {
       return getAllByFilters(wellFilter, { signal });
     },
     {
-      enabled: !wellConfig?.disabled,
+      enabled: wellConfig?.disabled !== true,
     }
   );
 };
@@ -68,7 +68,7 @@ export const useWellSearchResultQuery = (): UseQueryResult<Well[]> => {
         .finally(() => timer.stop());
     },
     {
-      enabled: !wellConfig?.disabled,
+      enabled: wellConfig?.disabled !== true,
     }
   );
 };

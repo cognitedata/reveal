@@ -52,7 +52,7 @@ export const useWellFormationTopsQuery = (
     WELL_QUERY_KEY.FORMATION_TOPS,
     updateWellFormationTopsForPrestineWellboreIds,
     {
-      enabled: !wellConfig?.disabled,
+      enabled: wellConfig?.disabled !== true,
       select: React.useCallback(
         (wellFormationTops) => {
           return filterWellSequenceDataByWellboreIds(
