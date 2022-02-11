@@ -11,12 +11,7 @@ import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { GeometryFilter } from '../../public/types';
 
 import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
-import {
-  CadModelUpdateHandler,
-  CadModelBudget,
-  LoadingState,
-  defaultCadModelBudget
-} from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler, CadModelBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
@@ -45,7 +40,9 @@ export class CadManager {
   set budget(budget: CadModelBudget) {
     this._cadModelUpdateHandler.budget = budget;
 
-    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 300 / defaultCadModelBudget.maximumRenderCost;
+    // 15_000_000 is the default rendering budget on desktop.
+    // This gives cache size of 200 on desktop on default budget
+    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / 15_000_000;
 
     for (const model of this._cadModelMap.values()) {
       model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
