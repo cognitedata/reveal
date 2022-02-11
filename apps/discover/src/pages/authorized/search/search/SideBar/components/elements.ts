@@ -65,6 +65,10 @@ export const CategoryItem = styled(Menu.Item)`
     props.selected ? 'color: var(--cogs-primary);' : ''};
 `;
 
+export const CategoryMenu = styled(Menu)`
+  min-width: 156px;
+`;
+
 export const ForwardIcon = styled(Icon)`
   margin: ${sizes.small};
   cursor: pointer;
@@ -116,6 +120,9 @@ export const Panel = styled(DefaultPanel)`
     border-bottom: none !important;
     background: transparent !important;
     padding: 12px 16px !important;
+  }
+  & > .rc-collapse-header > i {
+    order: 1;
   }
   & > .rc-collapse-anim {
     overflow: hidden !important;

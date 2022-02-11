@@ -50,7 +50,7 @@ export const SearchHistoryContainer = styled(FlexAlignJustifyContent)`
   }
 
   & > .cogs-select {
-    margin-left: ${sizes.normal};
+    margin-left: ${sizes.small};
     width: 100%;
     max-width: 246px;
     height: 36px;

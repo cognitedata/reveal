@@ -37,11 +37,11 @@ export const useResponsive = () => {
     return {
       LARGE: {
         MIN_SIZE: 400,
-        MAX_SIZE: screenWidth - 385,
+        MAX_SIZE: screenWidth - 412,
       },
       MEDIUM: {
         MIN_SIZE: 400,
-        MAX_SIZE: screenWidth - 385,
+        MAX_SIZE: screenWidth - 412,
       },
     }[screenSize];
   }, [screenWidth]);
@@ -50,11 +50,11 @@ export const useResponsive = () => {
     return {
       LARGE: {
         MIN_SIZE: 740,
-        MAX_SIZE: screenWidth - 385,
+        MAX_SIZE: screenWidth - 412,
       },
       MEDIUM: {
         MIN_SIZE: 740,
-        MAX_SIZE: screenWidth - 385,
+        MAX_SIZE: screenWidth - 412,
       },
     }[screenSize];
   }, [screenWidth]);

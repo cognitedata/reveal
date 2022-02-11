@@ -15,7 +15,7 @@ import { useFilterCategory } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';
 import { FlexGrow } from 'styles/layout';
 
-import { CategoryItem } from './elements';
+import { CategoryItem, CategoryMenu } from './elements';
 
 export const CategorySwitch: React.FC = React.memo(() => {
   const metrics = useGlobalMetrics('filters');
@@ -35,7 +35,9 @@ export const CategorySwitch: React.FC = React.memo(() => {
 
   const categoryMenu = useMemo(
     () => (
-      <Menu>
+      <CategoryMenu>
+        <Menu.Header>Jump to</Menu.Header>
+
         {FILTER_CATEGORIES.filter(
           (row) => !get(projectConfig, `${row.module}.disabled`)
         ).map((row) => (
@@ -56,7 +58,7 @@ export const CategorySwitch: React.FC = React.memo(() => {
             )}
           </CategoryItem>
         ))}
-      </Menu>
+      </CategoryMenu>
     ),
     [projectConfig, category]
   );

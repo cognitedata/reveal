@@ -8,6 +8,8 @@ export const SearchMenuContainer = styled(FlexRow)`
   border-bottom: 1px solid var(--cogs-color-strokes-default);
   height: 68px;
   width: 100%;
+  padding-right: 8px;
+  padding-left: 8px;
 `;
 
 export const SearchTypesContainer = styled(FlexAlignJustifyContent)`

@@ -1,7 +1,7 @@
 export const MS_TRANSITION_TIME = 300;
 
 const FILTER_SIZE = {
-  open: 325, // px
+  open: 352, // px
   closed: 62, // px
 };
 export const getFilterSizeStateInPX = (isOpen: boolean) => {
