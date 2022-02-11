@@ -27,15 +27,17 @@ export const AutoMLModelNameBadge = (props: {
         }}
         disabled={props.disabled}
       >
-        <TitleContainer>{props?.name || 'Untitled model'}</TitleContainer>
+        <TitleContainer small={props.small}>
+          {props?.name || 'Untitled model'}
+        </TitleContainer>
       </Button>
     </Tooltip>
   );
 };
 
-const TitleContainer = styled.div`
+const TitleContainer = styled.div<{ small: undefined | boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 80px;
+  width: ${(props) => (props.small ? '80px' : '100%')};
 `;

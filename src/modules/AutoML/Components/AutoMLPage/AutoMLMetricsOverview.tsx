@@ -6,7 +6,7 @@ import {
   AutoMLModelType,
   AutoMLTrainingJob,
 } from 'src/api/autoML/types';
-import { dateformat } from 'src/utils/DateUtils';
+import { dateformat, getDateDiff } from 'src/utils/DateUtils';
 import styled from 'styled-components';
 import { AutoMLStatusBadge } from 'src/modules/AutoML/Components/AutoMLStatusBadge';
 
@@ -172,13 +172,15 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
               {dateformat(new Date(model.createdTime))}
             </Body>
           </ModelDataContainer>
-
           <ModelDataContainer>
             <Body strong level={2}>
-              Start time
+              Elapsed training time
             </Body>
             <Body strong level={2}>
-              {dateformat(new Date(model.startTime))}
+              {getDateDiff(
+                new Date(model.startTime),
+                new Date(model.statusTime) // model.statusTime corresponds to training completed time if job is completed, else time when the request was made
+              )}
             </Body>
           </ModelDataContainer>
         </>

@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import moment from 'moment';
 
 export const dateformat = (date: Date): string => {
   let dateString = `____-__-__ __:__`;
@@ -9,4 +10,9 @@ export const dateformat = (date: Date): string => {
     console.error('Error occured parsing date', date);
   }
   return dateString;
+};
+
+export const getDateDiff = (start: Date, end: Date): string => {
+  const diffInMilliSeconds = end.getTime() - start.getTime();
+  return moment.utc(diffInMilliSeconds).format('H [h] m [min] s [sec]');
 };
