@@ -14,12 +14,11 @@ describe(CdfModelDataProvider.name, () => {
   const baseUrl = 'http://localhost';
   const client = new CogniteClient({
     appId,
-    baseUrl
+    project: 'dummy',
+    getToken: async () => 'dummy'
   });
 
-  let authenticationSpy: jest.MockInstance<Promise<boolean>, []> = mockClientAuthentication(client);
-
-  client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
+  let authenticationSpy = mockClientAuthentication(client);
 
   const clientExt = new CdfModelDataProvider(client);
 

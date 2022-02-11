@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { CogniteClient } from '@cognite/sdk';
 import { CadModelFactory } from '../../../core/src/datamodels/cad/CadModelFactory';
 import { CadMaterialManager } from '@reveal/rendering';
 import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
@@ -13,6 +12,7 @@ import { ByScreenSizeSectorCuller } from '..';
 import { CadManager } from '../../../core/src/datamodels/cad/CadManager';
 import { revealEnv } from '@reveal/utilities';
 import dat from 'dat.gui';
+import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -26,17 +26,12 @@ async function init() {
   const guiData = { drawCalls: 0 };
   gui.add(guiData, 'drawCalls').listen();
 
-  const client = new CogniteClient({ appId: 'reveal.example.simple' });
-  await client.loginWithOAuth({
-    type: 'AAD_OAUTH',
-    options: {
-      clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-      cluster: 'greenfield',
-      tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
-    }
+  const client = await createApplicationSDK('reveal.example.simple', {
+    project: '3d-test',
+    cluster: 'greenfield',
+    clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
+    tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
   });
-  client.setProject('3d-test');
-  await client.authenticate();
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);

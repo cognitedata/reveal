@@ -12,6 +12,17 @@ Object.defineProperty(document, 'currentScript', {
 });
 (document.currentScript as any).src = 'http://localhost/iamdummy.html';
 
+// To avoid warnings from CogniteClient that checks whether we use SSL
+global.window = Object.create(window);
+const url = 'https://api.cognitedata.com';
+Object.defineProperty(window, 'location', {
+  value: {
+    href: url,
+    origin: url,
+    protocol: 'https:'
+  }
+});
+
 window.URL.createObjectURL = jest.fn();
 
 // Mock Worker for web workers

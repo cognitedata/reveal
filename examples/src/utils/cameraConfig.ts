@@ -59,8 +59,6 @@ export function suggestCameraConfig(rootSector: BaseSectorMetadata, modelMatrix:
     return true;
   });
 
-  console.log("Count = ", count);
-
   averageMin.divideScalar(count);
   averageMax.divideScalar(count);
 
