@@ -25,11 +25,9 @@ const DateRangeFooterWrapper = styled(FlexAlignItems)`
   padding-top: 4px;
 `;
 
+const initialDateState: Range = {};
+
 export const DateRangeFilter: React.FC = React.memo((props) => {
-  const initialDateState: Range = {
-    startDate: undefined,
-    endDate: undefined,
-  };
   const setDocumentFilters = useSetDocumentFilters();
   const metrics = useGlobalMetrics('search');
   const appliedFilters = useFilterAppliedFilters();
@@ -55,6 +53,7 @@ export const DateRangeFilter: React.FC = React.memo((props) => {
   };
 
   const handleClearDate = () => {
+    setDateState(initialDateState);
     setDocumentFilters({
       ...filters,
       [activeKey]: [],

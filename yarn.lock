@@ -3008,10 +3008,10 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cogs.js@5.10.2":
-  version "5.10.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.10.2.tgz#05a2be80eef67f655593506c1f46746cb34b907f"
-  integrity sha512-2sEZi3H8SHmtDr/qL52NQ81oCDiHvS71lhjZtqsq2CMb4SDl/H2M9bYBRWrDGOP9sGX0H5P/JQWFMUAwRDv2Kw==
+"@cognite/cogs.js@5.11.0":
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.11.0.tgz#69def765c8e7d8a7dd81e37b7d036c23dd1cd3bd"
+  integrity sha512-HIinocgfvlClak9KV/eqbvR9YVo+H8UxdnPutSZL0I2lmeFA8yb+5A372DgcDz2nfUNIfzwDDAdSoOahNKx+TA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
