@@ -133,8 +133,9 @@ def handleError = { err ->
     // We execute the find command in a subcommand to actually preserve directory structure
     sh("CURRENTDIR=\$(pwd) && (cd `readlink dist/testlogs` && find -type f -wholename '*testcafe_test*/*.log' | xargs cp --parents -t \$CURRENTDIR/artifacts)")
     sh("CURRENTDIR=\$(pwd) && (cd `readlink dist/testlogs` && find -type f -wholename '*cypress_test*/*.log' | xargs cp --parents -t \$CURRENTDIR/artifacts)")
+    sh("CURRENTDIR=\$(pwd) && (cd `readlink dist/testlogs` && find -type f -wholename '*unit_test*/*.log' | xargs cp --parents -t \$CURRENTDIR/artifacts)")
 
-    def artifactPaths = "artifacts/**/screenshots/**/*.png,artifacts/**/video/**/*.mp4,artifacts/**/cypress/**/*.mp4,artifacts/**/*testcafe_test*/**/*.log,artifacts/**/*cypress_test*/**/*.log"
+    def artifactPaths = "artifacts/**/screenshots/**/*.png,artifacts/**/video/**/*.mp4,artifacts/**/cypress/**/*.mp4,artifacts/**/*testcafe_test*/**/*.log,artifacts/**/*unit_test*/**/*.log,artifacts/**/*cypress_test*/**/*.log"
 
     archiveArtifacts allowEmptyArchive: true, artifacts: artifactPaths
   }
