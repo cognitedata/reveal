@@ -25,7 +25,7 @@
     "@cognite/annotations": "^1.1.0",
     "@cognite/auth-utils": "^1.0.15",
     "@cognite/calculation-backend": "^2.0.0-alpha.15",
-    "@cognite/cdf-hub-tenant-selector": "^0.10.0",
+    "@cognite/cdf-hub-tenant-selector": "^0.14.1",
     "@cognite/cogs.js": "^5.6.4",
     "@cognite/connect": "^0.0.8",
     "@cognite/data-exploration": "^1.7.7",

@@ -1258,6 +1258,18 @@
     jwt-decode "3.1.2"
     lodash "4.17.21"
 
+"@cognite/auth-utils@^2.1.0":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-2.2.2.tgz#6dad867fbef36096d0f77fc205b100e27aeb8fb1"
+  integrity sha512-sRifjAmxLw2gnuHPEgY/r9NxArF4xD2eyz81TfomdG2cdCE8LZSl/eZJkcHsayjBmgV3IT8NOxv/YXWJWTU69A==
+  dependencies:
+    "@cognite/metrics" "1.2.1"
+    "@cognite/sdk" "5.6.2"
+    "@cognite/storage" "0.1.2"
+    axios "0.25.0"
+    jwt-decode "3.1.2"
+    lodash "4.17.21"
+
 "@cognite/calculation-backend@^2.0.0-alpha.15":
   version "2.0.0-alpha.15"
   resolved "https://registry.yarnpkg.com/@cognite/calculation-backend/-/calculation-backend-2.0.0-alpha.15.tgz#15380e32b8a3556c77a572f1c6b529dadebf1e96"
@@ -1265,15 +1277,15 @@
   dependencies:
     axios "^0.21.1"
 
-"@cognite/cdf-hub-tenant-selector@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-hub-tenant-selector/-/cdf-hub-tenant-selector-0.10.0.tgz#a8420bf8f26a0368fba4707ae55982e579a833c6"
-  integrity sha512-Cot1RPjAQPEwkKc0rG1tIiVWTMkgfTDa++PxtriR616rc/+mmpqAL+P4S0EnPyw3/rKHEofm7OhvYfU/IdYkQw==
+"@cognite/cdf-hub-tenant-selector@^0.14.1":
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-hub-tenant-selector/-/cdf-hub-tenant-selector-0.14.1.tgz#012b36de5083fcd8c9590c0b28cef4cb37712245"
+  integrity sha512-5xQjRn/hR1ZnuQVPpaC35Ep8Yx0tRYDzAEAzT4f/1Qi6T3g2ffi8728Lb9kXQM/QKYN/3cM2RqS8/X+HWAfm2w==
   dependencies:
-    "@cognite/auth-utils" "^1.0.15"
+    "@cognite/auth-utils" "^2.1.0"
     "@cognite/cdf-ui-cli" "^1.0.0"
-    "@cognite/cogs.js" "3.33.1"
-    "@cognite/sdk" "^5.3.2"
+    "@cognite/cogs.js" "^5.3.1"
+    "@cognite/sdk" "5.6.2"
     "@tippyjs/react" "^4.2.5"
     axios "^0.21.2"
     lodash "^4.17.21"
@@ -1297,33 +1309,6 @@
     commander "^6.2.1"
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
-
-"@cognite/cogs.js@3.33.1":
-  version "3.33.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.33.1.tgz#6b759cb06127b3417e689d6b974069267b652975"
-  integrity sha512-aLMRhbexvyVq29Pu7HJQoFvJkI2NcAChIV3fX65zZjOlAjA0tfNN4jfbswVOodxV/qTeQWp55WeInFIO8F2bGw==
-  dependencies:
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
-    classnames "^2.3.1"
-    color "^3.1.2"
-    dayjs "^1.9.7"
-    eslint-config-stylelint "^13.1.1"
-    focus-visible "^5.1.0"
-    lorem-ipsum "^2.0.3"
-    match-sorter "^6.3.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.6.2"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    stylelint "^13.13.1"
-    tippy.js "6.2.0"
-    ts-dedent "^2.2.0"
 
 "@cognite/cogs.js@^3.13.0", "@cognite/cogs.js@^3.42.5":
   version "3.44.1"
@@ -1353,7 +1338,7 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^5.6.4":
+"@cognite/cogs.js@^5.3.1", "@cognite/cogs.js@^5.6.4":
   version "5.11.0"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.11.0.tgz#69def765c8e7d8a7dd81e37b7d036c23dd1cd3bd"
   integrity sha512-HIinocgfvlClak9KV/eqbvR9YVo+H8UxdnPutSZL0I2lmeFA8yb+5A372DgcDz2nfUNIfzwDDAdSoOahNKx+TA==
@@ -1470,7 +1455,7 @@
     mixpanel-browser "2.41.0"
     react "17.0.2"
 
-"@cognite/metrics@^1.1.0":
+"@cognite/metrics@1.2.1", "@cognite/metrics@^1.1.0":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.2.1.tgz#bd747c7332e74e44fedf775d076bf78210164430"
   integrity sha512-P3hmEqsmqD+bvzJR2WY/Kh2Q7rGg9LB5ZQO6QOXdqjrV6R0hjP1WQOHSzCqJJiJXSOG5eiu5h7V75bA+n/6WDg==
@@ -1623,6 +1608,14 @@
     "@cognite/sdk-core" "^2.1.2"
     lodash "^4.17.11"
 
+"@cognite/sdk@5.6.2":
+  version "5.6.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-5.6.2.tgz#122c0d306c02aa39793b80584c17707b775f32f1"
+  integrity sha512-AOi+sFiQoCcRFrb3v4s/GuLGyAlVTxFtug3743g8IJwBUyxUoka3D72pkI6wlBp8JFrijwfJ2gfsk6FfmvDr9Q==
+  dependencies:
+    "@cognite/sdk-core" "^3.4.1"
+    lodash "^4.17.11"
+
 "@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.6":
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.5.2.tgz#4a1f154c0b8ca29e2231d202ec1a279810328844"
@@ -1637,14 +1630,6 @@
   integrity sha512-exvaoa5oLZN8wfuAO0Jo0anLPz5GAvR6gWFSq7+xlwpbt73r5FpNiHJt7fTQw6EZPDfa2d6Zj27fnhynHGqFqg==
   dependencies:
     "@cognite/sdk-core" "^2.2.0"
-    lodash "^4.17.11"
-
-"@cognite/sdk@^5.3.2":
-  version "5.6.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-5.6.2.tgz#122c0d306c02aa39793b80584c17707b775f32f1"
-  integrity sha512-AOi+sFiQoCcRFrb3v4s/GuLGyAlVTxFtug3743g8IJwBUyxUoka3D72pkI6wlBp8JFrijwfJ2gfsk6FfmvDr9Q==
-  dependencies:
-    "@cognite/sdk-core" "^3.4.1"
     lodash "^4.17.11"
 
 "@cognite/storage@0.1.2":
@@ -5504,6 +5489,13 @@ axe-core@^4.3.5:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.4.1.tgz#7dbdc25989298f9ad006645cd396782443757413"
   integrity sha512-gd1kmb21kwNuWr6BQz8fv6GNECPBnUasepcoLbekws23NVBLODdsClRZ+bQ8+9Uomf3Sm3+Vwn0oYG9NvwnJCw==
 
+axios@0.25.0:
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.25.0.tgz#349cfbb31331a9b4453190791760a8d35b093e0a"
+  integrity sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==
+  dependencies:
+    follow-redirects "^1.14.7"
+
 axios@^0.21.1, axios@^0.21.2:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
@@ -6680,7 +6672,7 @@ comma-separated-tokens@^2.0.0:
   resolved "https://registry.yarnpkg.com/comma-separated-tokens/-/comma-separated-tokens-2.0.2.tgz#d4c25abb679b7751c880be623c1179780fe1dd98"
   integrity sha512-G5yTt3KQN4Yn7Yk4ed73hlZ1evrFKXeUW3086p3PRFNp7m2vIjI6Pg+Kgb+oyzhd9F2qdcoj67+y3SdxL5XWsg==
 
-commander@^2.17.1, commander@^2.19.0, commander@^2.20.0:
+commander@^2.19.0, commander@^2.20.0:
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
@@ -9194,7 +9186,7 @@ focus-visible@^5.1.0:
   resolved "https://registry.yarnpkg.com/focus-visible/-/focus-visible-5.2.0.tgz#3a9e41fccf587bd25dcc2ef045508284f0a4d6b3"
   integrity sha512-Rwix9pBtC1Nuy5wysTmKy+UjbDJpIfg8eHjw0rjZ1mX4GNLz1Bmd16uDpI3Gk1i70Fgcs8Csg2lPm8HULFg9DQ==
 
-follow-redirects@^1.0.0, follow-redirects@^1.14.0, follow-redirects@^1.14.4:
+follow-redirects@^1.0.0, follow-redirects@^1.14.0, follow-redirects@^1.14.4, follow-redirects@^1.14.7:
   version "1.14.8"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.8.tgz#016996fb9a11a100566398b1c6839337d7bfa8fc"
   integrity sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA==
@@ -12059,13 +12051,6 @@ loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
-
-lorem-ipsum@^2.0.3:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/lorem-ipsum/-/lorem-ipsum-2.0.4.tgz#5feedb37a14e9cb96c3e994d4a2edd4cb0c299db"
-  integrity sha512-TD+ERYfxjYiUfOyaKU6OH4euumNVeKoo3BxIhokb7bGmoCULsME48onF9NVxYK3CU1z9L5ALnkDkW8lIkHvMNQ==
-  dependencies:
-    commander "^2.17.1"
 
 lower-case@^2.0.2:
   version "2.0.2"
