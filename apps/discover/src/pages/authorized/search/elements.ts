@@ -17,8 +17,6 @@ export const MapOverlayPadding = styled.div`
 export const SearchResultContainer = styled.div`
   margin-right: auto;
   margin-left: auto;
-  padding-top: ${sizes.normal};
-  margin-top: ${sizes.small};
   height: 100%;
   width: 100%;
 `;
