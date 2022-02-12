@@ -339,10 +339,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     return face;
   }
 
-  private moveCameraTo(
-    targetAxis: THREE.Vector3,
-    targetUpAxis: THREE.Vector3
-  ) {
+  private moveCameraTo(targetAxis: THREE.Vector3, targetUpAxis: THREE.Vector3) {
     const cameraManager = this._viewer.cameraManager;
 
     const currentCameraPosition = cameraManager.getCameraPosition();
@@ -375,9 +372,9 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const tmpPosition = new THREE.Vector3();
     const tmpRotation = new THREE.Quaternion();
-    
+
     const tween = animation
-      .to(to, this._layoutConfig.animationSpeed)
+      .to(to, 5000)
       .onUpdate(() => {
         tmpPosition
           .copy(normalizedFrom)
@@ -388,22 +385,68 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
         tmpPosition.add(cameraTarget);
 
         tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
-        
+
         //cameraManager.setCameraControlsState({ position: tmpPosition, target: newTarget });
-        
+
+        // const camera = cameraManager.getCamera();
+        // camera.position.copy(tmpPosition);
+        // camera.rotation.setFromQuaternion(tmpRotation);
+        // camera.matrixWorldNeedsUpdate = true;
+
         cameraManager.setCameraPosition(tmpPosition);
         cameraManager.setCameraRotation(tmpRotation);
-        //cameraManager.setCameraTarget(newTarget);
-      }).onStart(() => {
-        //cameraManager.cameraControlsEnabled = false;
+        addCameraDirectionHelpers(this._viewer, tmpPosition, cameraManager.getCameraTarget(), tmpRotation);
+        addCameraDirectionHelpers(
+          this._viewer,
+          cameraManager.getCamera().position.clone(),
+          cameraManager.getCameraTarget(),
+          new THREE.Quaternion().setFromEuler(cameraManager.getCamera().rotation),
+          'red'
+        );
+      })
+      .onStart(() => {
+        // (cameraManager as any).cameraControlsEnabled = false;
       })
       .onComplete(() => {
-        cameraManager.setCameraTarget(cameraTarget);
-        //cameraManager.setCameraPosition(tmpPosition); 
+        // (cameraManager as any).cameraControlsEnabled = true;
+        // cameraManager.setCameraTarget(cameraTarget);
+        addCameraDirectionHelpers(this._viewer, tmpPosition, cameraTarget, tmpRotation, 'magenta');
+        //cameraManager.setCameraPosition(tmpPosition);
         //cameraManager.setCameraTarget(cameraTarget);
       })
       .start(TWEEN.now());
 
     tween.update(TWEEN.now());
   }
+}
+
+const sphereGeometry = new THREE.SphereBufferGeometry(0.2);
+const positionMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
+const targetMaterial = new THREE.MeshBasicMaterial({ color: 'green' });
+
+function addCameraDirectionHelpers(
+  viewer: Cognite3DViewer,
+  camPos: THREE.Vector3,
+  camTarget: THREE.Vector3,
+  camRotation: THREE.Quaternion,
+  arrowColor: string = 'yellow'
+) {
+  const posSphere = new THREE.Mesh(sphereGeometry, positionMaterial);
+  posSphere.position.copy(camPos);
+  const targetSphere = new THREE.Mesh(sphereGeometry, targetMaterial);
+  targetSphere.position.copy(camTarget);
+
+  const arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, -1).applyQuaternion(camRotation));
+  arrow.setColor(arrowColor);
+  arrow.scale.set(10, 10, 10);
+  arrow.position.copy(camPos);
+  const arrow2 = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0).applyQuaternion(camRotation));
+  arrow2.scale.set(3, 3, 3);
+  arrow2.position.copy(camPos);
+  arrow2.setColor(arrowColor);
+
+  viewer.addObject3D(targetSphere);
+  viewer.addObject3D(posSphere);
+  viewer.addObject3D(arrow);
+  viewer.addObject3D(arrow2);
 }
