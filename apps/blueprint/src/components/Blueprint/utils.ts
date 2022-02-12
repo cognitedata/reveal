@@ -1,11 +1,11 @@
+// zIndexes here must be set to 999 for konva to work
 import { Timeseries } from '@cognite/sdk';
 import Konva from 'konva';
 import { TimeSeriesTag } from 'typings';
 import { CogniteOrnate } from '@cognite/ornate';
-import z from 'utils/z';
 
 const LINE_TAG_POS_PADDING = 48;
-
+const ZINDEX = 999;
 export const makeKonvaTimeSeries = (
   timeSeriesDetails: TimeSeriesTag,
   timeSeries: Timeseries,
@@ -23,7 +23,7 @@ export const makeKonvaTimeSeries = (
       pointerPosition.x,
       pointerPosition.y,
     ],
-    zIndex: z.MAXIMUM,
+    zIndex: ZINDEX,
   });
 
   const tag = new Konva.Shape({
@@ -36,6 +36,7 @@ export const makeKonvaTimeSeries = (
     id: `ts-${timeSeries.externalId}`,
     draggable: true,
     unselectable: true,
+    zIndex: ZINDEX,
     sceneFunc: (context, shape) => {
       context.beginPath();
       context.rect(0, 0, 64, 64);
@@ -65,7 +66,7 @@ export const makeKonvaTimeSeries = (
     draggable: true,
     unselectable: true,
     opacity: 0.6,
-    zIndex: z.MAXIMUM,
+    zIndex: ZINDEX,
   });
   point.on('dragmove', (e) => {
     const prevPoints = line.points();
