@@ -9,6 +9,7 @@ import {
 import Loading from 'components/utils/Loading';
 import { NavLink } from 'react-router-dom';
 
+import ThreeDPreview from '../ThreeDPreview';
 import EventTab from '../EventTab';
 import TimeSeriesTab from '../TimeSeriesTab';
 import AssetDetailsTab from '../AssetDetailsTab';
@@ -74,7 +75,15 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
       key: 'events',
       content: <EventTab assetId={currentAsset.id} />,
     },
-    { title: '3D', key: '3d', content: null },
+    {
+      title: '3D',
+      key: '3d',
+      content: (
+        <div style={{ height: '100%' }}>
+          <ThreeDPreview assetId={currentAsset.id} />
+        </div>
+      ),
+    },
     {
       title: 'Time Series',
       key: 'timeseries',

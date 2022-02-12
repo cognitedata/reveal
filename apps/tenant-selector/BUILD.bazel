@@ -284,6 +284,7 @@ build_storybook(
     ],
     chdir = "$(RULEDIR)",
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "@npm//@babel/preset-env",
         "copy_storybook_files",
         "@npm//tsconfig-paths-webpack-plugin",
         "@npm//@storybook/manager-webpack5",

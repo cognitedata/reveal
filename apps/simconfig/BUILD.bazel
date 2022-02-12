@@ -115,6 +115,8 @@ TYPE_DEPENDENCIES = [
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
+    "@npm//@babel/preset-env",
+    "@npm//assert",
     "@npm//babel-eslint",
     "@npm//eslint-config-react-app",
     "@npm//eslint-plugin-jsx-a11y",

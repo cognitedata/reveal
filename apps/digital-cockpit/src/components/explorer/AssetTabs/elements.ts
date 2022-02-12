@@ -21,6 +21,7 @@ export const AssetTabsWrapper = styled.div`
     height: 100%;
   }
   & .cogs-tabs {
+    height: 100%;
     .rc-tabs-nav-wrap {
       border-bottom: 2px solid var(--cogs-greyscale-grey2);
     }

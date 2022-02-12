@@ -2,6 +2,7 @@ import { allApplications } from 'constants/applications';
 
 import DocumentsCard from 'components/cards/DocumentsCard';
 import Card from 'components/cards/Card';
+import ThreeDCard from 'components/cards/ThreeDCard';
 import EventsCard from 'components/cards/EventsCard';
 import { useAssetRetrieveQuery } from 'hooks/useQuery/useAssetQuery';
 import StatusMessage from 'components/utils/StatusMessage';
@@ -70,7 +71,7 @@ const AssetDetailsTab = ({ assetId }: AssetDetailsTabProps) => {
   return (
     <AssetDetailsTabWrapper>
       <main>
-        <Card header={{ title: '3D', icon: 'Cube' }}>3D</Card>
+        <ThreeDCard assetId={assetId} />
         <Card header={{ title: 'Time Series', icon: 'LineChart' }}>
           Time series
         </Card>

@@ -1,4 +1,9 @@
-import { IdEither, InternalId } from '@cognite/sdk';
+import {
+  CogniteAsyncIterator,
+  IdEither,
+  InternalId,
+  Model3D,
+} from '@cognite/sdk';
 import sinon from 'sinon';
 import configureStory from 'storybook/configureStory';
 import { CdfClient } from 'utils';
@@ -19,6 +24,17 @@ const mockSearch = () => {
       return Promise.resolve(MockFiles.multiple(4));
     }
     return Promise.resolve(MockFiles.multiple(8));
+  });
+  return stub;
+};
+
+const mockModelsList = () => {
+  const stub = sinon.stub();
+  stub.callsFake((args) => {
+    if (args.search?.name) {
+      return Promise.resolve([]);
+    }
+    return Promise.resolve([]);
   });
   return stub;
 };
@@ -64,6 +80,8 @@ AssetTabs.story = configureStory({
         headers: {},
       } as any);
     client.cogniteClient.files.search = mockSearch();
+    client.cogniteClient.models3D.list = mockModelsList();
+    client.cogniteClient.authenticate = async () => true;
 
     return client;
   },

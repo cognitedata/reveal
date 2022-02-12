@@ -40,6 +40,8 @@ import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
 import { TenantContext } from 'providers/TenantProvider';
 import { useLink } from 'hooks';
+import ThreeDCard from 'components/cards/ThreeDCard';
+import ThreeDTab from 'components/explorer/ThreeDTab';
 
 const Home = () => {
   const itemsToDisplay = 6;
