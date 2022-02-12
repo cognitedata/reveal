@@ -3,10 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import EmptyState from 'components/emptyState';
-import {
-  NO_RESULTS_SUB_TEXT,
-  NO_RESULTS_TEXT,
-} from 'components/emptyState/constants';
+import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
 import FeedbackPanel from 'components/modals/entity-feedback';
 import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
@@ -45,13 +42,7 @@ export const RelatedDocumentTable: React.FC = () => {
   const { isLoading, data } = useRelatedDocumentData();
 
   if (isLoading || data.length === 0) {
-    return (
-      <EmptyState
-        isLoading={isLoading}
-        emptyTitle={NO_RESULTS_TEXT}
-        emptySubtitle={NO_RESULTS_SUB_TEXT}
-      />
-    );
+    return <EmptyState isLoading={isLoading} emptyTitle={NO_RESULTS_TEXT} />;
   }
 
   return <RelatedDocumentTableComponent />;
