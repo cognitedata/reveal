@@ -229,12 +229,12 @@ export class DefaultCameraManager implements CameraManager {
     tempCam.lookAt(newTarget);
     this.setCameraTarget(newTarget);
     const upVec2 = new THREE.Vector3(0,1,0).applyQuaternion(tempCam.quaternion);
-    //const appliedQuaternion = this._camera.quaternion.clone();
-    //this._controls.cameraAdditionalRotation.copy(appliedQuaternion.clone().multiply(rotation.invert()));
+    const appliedQuaternion = tempCam.quaternion.clone();
+    this._controls.cameraAdditionalRotation.copy(rotation.clone().multiply(appliedQuaternion.invert()));
   
-    const roll = -Math.acos(upVec1.dot(upVec2));
-    this._controls.cameraRoll = roll;
-    console.log('roll:', THREE.MathUtils.radToDeg(roll));
+    // const roll = upVec1.angleTo(upVec2);
+    // this._controls.cameraRoll = roll;
+    // console.log('roll:', THREE.MathUtils.radToDeg(roll));
     
   }
 
