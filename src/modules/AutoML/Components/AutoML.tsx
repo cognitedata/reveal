@@ -3,11 +3,32 @@ import { Divider } from '@cognite/data-exploration';
 import React, { useState } from 'react';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import styled from 'styled-components';
+import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
 import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';
 import { AutoMLModelList } from './AutoMLModelList';
 
 const AutoML = () => {
   const [selectedModelId, setSelectedModelId] = useState<number>();
+  const [downloadingModel, setDownloadingModel] = useState<boolean>(false);
+
+  const handleDownload = async () => {
+    if (selectedModelId) {
+      setDownloadingModel(true);
+      const data = await AutoMLAPI.downloadAutoMLModel(selectedModelId);
+      if (data?.modelUrl) {
+        const res = await fetch(data.modelUrl, {
+          method: 'GET',
+        });
+        const blob = await res.blob();
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.setAttribute('download', `${selectedModelId}.tflite`);
+        document.body.appendChild(link);
+        link.click();
+      }
+      setDownloadingModel(false);
+    }
+  };
 
   const onRowClick = (id: number) => {
     setSelectedModelId(id);
@@ -24,7 +45,11 @@ const AutoML = () => {
           <Divider.Vertical style={{ height: '100%', width: '1px' }} />
         </Left>
         <Right>
-          <AutoMLModelPage selectedModelId={selectedModelId} />
+          <AutoMLModelPage
+            selectedModelId={selectedModelId}
+            handleDownload={handleDownload}
+            downloadingModel={downloadingModel}
+          />
         </Right>
       </Container>
     </>

@@ -34,14 +34,25 @@ export class AutoMLAPI {
 
   public static downloadAutoMLModel = async (
     id: number
-  ): Promise<AutoMLDownload> => {
-    const response = await sdk.get(
-      `${sdk.getBaseUrl()}/api/playground/projects/${
-        sdk.project
-      }/context/vision/automl/${id}/download`
-    );
+  ): Promise<AutoMLDownload | undefined> => {
+    try {
+      const response = await sdk.get(
+        `${sdk.getBaseUrl()}/api/playground/projects/${
+          sdk.project
+        }/context/vision/automl/${id}/download`
+      );
 
-    return response.data || {};
+      return response.data;
+    } catch (error) {
+      const formatedError = `Could not download model: ${JSON.stringify(
+        error,
+        null,
+        4
+      )}`;
+      ToastUtils.onFailure(formatedError);
+      console.error(formatedError);
+    }
+    return undefined;
   };
 
   public static startAutoMLJob = async (
