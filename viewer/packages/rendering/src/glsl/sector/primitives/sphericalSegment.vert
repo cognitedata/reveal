@@ -27,9 +27,12 @@ out vec4 sphereNormal;
 
 out vec3 v_color;
 
-out mat4 v_projectionMatrix; //fix for uniform not working in iOS
+//fix: Uniform not assigning values in iOS - JiraId: REV-287
+flat out int v_renderMode;
+out mat4 v_projectionMatrix;
 
 void main() {
+  v_renderMode = renderMode; // REV-287
     v_treeIndex = a_treeIndex;
     v_color = a_color;
 
@@ -87,5 +90,5 @@ void main() {
     // TODO should perhaps be a different normal?
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
     gl_Position = projectionMatrix * mvPosition;
-    v_projectionMatrix = projectionMatrix;
+    v_projectionMatrix = projectionMatrix; // REV-287
 }

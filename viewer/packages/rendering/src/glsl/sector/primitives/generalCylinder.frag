@@ -52,14 +52,14 @@ in float v_treeIndex;
 in vec3 v_color;
 
 in vec3 v_normal;
-in float v_renderMode;
 
-in mat4 v_projectionMatrix; //fix for uniform not working in iOS
+//fix: Uniform not assigning values in iOS - JiraId: REV-287
+flat in int v_renderMode;
+in mat4 v_projectionMatrix;
 
 void main() {
-    int renderMode = int(v_renderMode + 0.5);
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
-    if (!determineVisibility(appearance, renderMode)) {
+    if (!determineVisibility(appearance, v_renderMode)) {
         discard;
     }
 
@@ -149,5 +149,5 @@ void main() {
 #endif
 
   updateFragmentDepth(p, v_projectionMatrix);
-  updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);
+  updateFragmentColor(v_renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);
 }

@@ -59,12 +59,13 @@ uniform vec2 transformOverrideTextureSize;
 uniform sampler2D transformOverrideTexture;
 
 uniform int renderMode;
-out float v_renderMode;
 
-out mat4 v_projectionMatrix; //fix for uniform not working in iOS
+//fix: Uniform not assigning values in iOS - JiraId: REV-287
+flat out int v_renderMode;
+out mat4 v_projectionMatrix;
 
 void main() {
-    v_renderMode = float(renderMode); // REV-287
+    v_renderMode = renderMode; // REV-287
     mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
@@ -140,5 +141,5 @@ void main() {
 
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
     gl_Position = projectionMatrix * mvPosition;
-    v_projectionMatrix = projectionMatrix;
+    v_projectionMatrix = projectionMatrix; // REV-287
 }
