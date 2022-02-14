@@ -4,9 +4,7 @@ import {
   NDS_RISKS,
   WELL_CHARACTERISTICS,
   NPT_EVENTS,
-  // FIELD,
   OPERATOR,
-  WELL_TYPE,
   SPUD_DATE,
   MAXIMUM_INCLINATION_ANGLE,
   NDS_RISKS_TYPE,
@@ -21,10 +19,14 @@ import {
   DATA_SOURCE,
   NDS_PROBABILITY,
   NPT_DURATION,
+  NDS_SEVERITY,
 } from '../../../src/modules/wellSearch/constantsSidebarFilters';
 import { ISODateRegex } from '../../../src/utils/isISODateRegex';
 
 const SELECT_TEXT = 'Select...';
+const MEASUREMENT_SELECT = 'salinity';
+const NPT_CODE_SELECT = 'TESTC';
+const NPT_DETAILS_CODE_SELECT = 'BARR';
 
 const checkRequestContainsFilter = (expectedFilter: unknown) => {
   cy.wait('@searchWells')
@@ -357,30 +359,31 @@ describe('Wells sidebar filters', () => {
     cy.clickOnFilterCategory(WELL_CHARACTERISTICS);
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip(`Should display wells sidebar filters: ${MEASUREMENTS}`, () => {
+  it(`Should display wells sidebar filters: ${MEASUREMENTS}`, () => {
     cy.clickOnFilterCategory(MEASUREMENTS);
 
     cy.log('Check visibility of last value in measurement drop-down');
-    cy.findByTestId('Measurements').findByText(SELECT_TEXT).click();
-    cy.contains('salinity').scrollIntoView().should('be.visible').click();
+    cy.findByText(SELECT_TEXT).click();
+    cy.contains(MEASUREMENT_SELECT)
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
     checkRequestContainsFilter({
       depthMeasurements: {
-        containsAny: [
-          {
-            measurementType: 'salinity',
-          },
-        ],
+        measurementTypes: {
+          containsAny: [MEASUREMENT_SELECT],
+        },
       },
     });
     cy.log(`Minimize ${MEASUREMENTS} filter`);
     cy.clickOnFilterCategory(MEASUREMENTS);
+  });
 
+  it(`should display wells sidebar filter: ${NDS_RISKS}`, () => {
     cy.clickOnFilterCategory(NDS_RISKS);
 
     cy.log(`Check visibility and expand ${NDS_RISKS_TYPE}`);
-    cy.findByTestId(NDS_RISKS)
-      .findAllByTestId('filter-item-wrapper')
+    cy.findAllByTestId('filter-item-wrapper')
       .as('ndsFilters')
       .first()
       .as('nds-risk')
@@ -397,12 +400,12 @@ describe('Wells sidebar filters', () => {
       },
     });
 
-    cy.log(`Check visibility and expand ${NPT_CODE} filter`);
-    cy.findAllByTestId('filter-item-wrapper')
-      .as('npt-code')
-      .contains(NPT_CODE)
-      .should('be.visible');
-    cy.get('@npt-code').contains(SELECT_TEXT).click();
+    cy.get('@ndsFilters').eq(1).contains(NDS_SEVERITY);
+    cy.get('@ndsFilters')
+      .eq(1)
+      .findAllByTestId('filter-checkbox-label')
+      .eq(2)
+      .click();
 
     cy.log('Scrolldown main sidebar container');
     checkRequestContainsFilter({
@@ -440,17 +443,17 @@ describe('Wells sidebar filters', () => {
     });
 
     cy.clickOnFilterCategory(NDS_RISKS);
+  });
 
+  it(`should display wells sidebar filter: ${NPT_EVENTS}`, () => {
     cy.clickOnFilterCategory(NPT_EVENTS);
-
-    cy.findByTestId(NPT_EVENTS)
-      .findAllByTestId('filter-item-wrapper')
-      .as('nptFilters');
+    cy.findAllByTestId('filter-item-wrapper').as('nptFilters');
 
     cy.get('@nptFilters')
       .first()
       .as('nptDurationFilter')
       .contains(NPT_DURATION);
+
     cy.get('@nptDurationFilter')
       .findAllByRole('slider')
       .first()
@@ -468,10 +471,13 @@ describe('Wells sidebar filters', () => {
     });
 
     cy.log(`Check visibility and expand ${NPT_CODE} filter`);
-    cy.get('@nptFilters').eq(1).as('nptCode');
+    cy.findAllByTestId('filter-item-wrapper')
+      .eq(1)
+      .should('exist')
+      .as('nptCode');
     cy.get('@nptCode').contains(NPT_CODE);
-    cy.get('@nptCode').contains(SELECT_TEXT).click();
-    cy.findByText('TESTC').click();
+    cy.get('@nptCode').contains(SELECT_TEXT).should('be.visible').click();
+    cy.findByText(NPT_CODE_SELECT).click();
     checkRequestContainsFilter({
       npt: {
         duration: {
@@ -480,7 +486,7 @@ describe('Wells sidebar filters', () => {
           unit: 'hour',
         },
         nptCodes: {
-          containsAll: ['TESTC'],
+          containsAll: [NPT_CODE_SELECT],
         },
         exists: true,
       },
@@ -488,14 +494,14 @@ describe('Wells sidebar filters', () => {
 
     cy.log(`Check visibility and expand ${NPT_DETAIL_CODE} filter`);
 
-    cy.get('@nptFilters').eq(2).as('nptDetailCode');
+    cy.findAllByTestId('filter-item-wrapper').eq(2).as('nptDetailCode');
     cy.get('@nptDetailCode').contains(NPT_DETAIL_CODE);
     cy.get('@nptDetailCode').contains(SELECT_TEXT).click();
-    cy.findByText('BARR').click();
+    cy.findByText(NPT_DETAILS_CODE_SELECT).click();
     checkRequestContainsFilter({
       npt: {
         nptCodeDetails: {
-          containsAll: ['BARR'],
+          containsAll: [NPT_DETAILS_CODE_SELECT],
         },
         duration: {
           min: 4,
@@ -503,7 +509,7 @@ describe('Wells sidebar filters', () => {
           unit: 'hour',
         },
         nptCodes: {
-          containsAll: ['TESTC'],
+          containsAll: [NPT_CODE_SELECT],
         },
         exists: true,
       },
@@ -513,7 +519,5 @@ describe('Wells sidebar filters', () => {
 
     cy.log('Clear all selected filters');
     cy.findByTestId('clear-all-btn').click();
-
-    cy.clearAllFilters(false);
   });
 });

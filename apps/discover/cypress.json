@@ -11,6 +11,5 @@
   },
   "animationDistanceThreshold": 3,
   "numTestsKeptInMemory": 0,
-  "retries": 2,
   "chromeWebSecurity": false
 }
