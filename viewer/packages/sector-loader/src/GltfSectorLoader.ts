@@ -94,7 +94,7 @@ export class GltfSectorLoader {
         geometryBatchingQueue: geometryBatchingQueue
       };
     } catch (error) {
-      MetricsLogger.trackError(error as Error, { moduleName: 'GltfSectorRepository', methodName: 'loadSector' });
+      MetricsLogger.trackError(error as Error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
       throw error;
     }
   }
