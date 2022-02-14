@@ -21,14 +21,16 @@ export type CadModelBudget = {
   readonly maximumRenderCost: number;
 };
 
+export const defaultDesktopCadModelBudget: CadModelBudget = {
+  highDetailProximityThreshold: 10,
+  maximumRenderCost: 15_000_000
+};
+
+export const defaultMobileCadModelBudget: CadModelBudget = {
+  highDetailProximityThreshold: 5,
+  maximumRenderCost: 7_000_000
+};
+
 export const defaultCadModelBudget: CadModelBudget = isMobileOrTablet()
-  ? // Mobile/tablet
-    {
-      highDetailProximityThreshold: 5,
-      maximumRenderCost: 7_000_000
-    }
-  : // Desktop
-    {
-      highDetailProximityThreshold: 10,
-      maximumRenderCost: 15_000_000
-    };
+  ? defaultMobileCadModelBudget
+  : defaultDesktopCadModelBudget;
