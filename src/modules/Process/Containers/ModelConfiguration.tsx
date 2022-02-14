@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';
 import { useSelector } from 'react-redux';
 import { VisionAPIType } from 'src/api/types';
+import { AutoMLModel } from 'src/api/autoML/types';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
@@ -16,19 +17,26 @@ import * as customModelDetails from './ModelDetails/customModelDetails';
 
 const queryClient = new QueryClient();
 
-export const ModelConfiguration = () => {
+export const ModelConfiguration = (props: {
+  disabledModelTypes: VisionAPIType[];
+  customModels?: AutoMLModel[];
+}) => {
   const availableDetectionModels = useSelector(
     (state: RootState) => state.processSlice.availableDetectionModels
   );
 
   const [currentModelSettings, setCurrentModelSettings] = useState(
-    // show custom model settings if custom model added
-    availableDetectionModels.length > 3
+    // show custom model settings if custom model added and automl is enabled
+    availableDetectionModels.length > 3 &&
+      !props.disabledModelTypes.includes(VisionAPIType.CustomModel)
       ? availableDetectionModels.length - 1
       : 0
   );
 
-  const modelSelectOptions = availableDetectionModels.map((item, index) => {
+  const enabledDetectionModels = availableDetectionModels.filter(
+    (item) => !props.disabledModelTypes.includes(item.type)
+  );
+  const modelSelectOptions = enabledDetectionModels.map((item, index) => {
     const content =
       item.type === VisionAPIType.OCR
         ? ocrModelDetails.content(index)
@@ -37,7 +45,7 @@ export const ModelConfiguration = () => {
         : item.type === VisionAPIType.ObjectDetection
         ? objectDetectionModelDetails.content(index)
         : item.type === VisionAPIType.CustomModel
-        ? customModelDetails.content(index)
+        ? customModelDetails.content(index, props.customModels)
         : undefined;
 
     return {

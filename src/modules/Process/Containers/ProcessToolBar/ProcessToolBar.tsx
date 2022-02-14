@@ -16,16 +16,26 @@ import {
   addToAvailableDetectionModels,
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { VisionAPIType } from 'src/api/types';
 import { getContainer } from 'src/utils';
 import { AppDispatch } from 'src/store';
+import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
+import { AutoMLModel } from 'src/api/autoML/types';
+import { useFlag } from '@cognite/react-feature-flags';
 import ProgressStatus from './ProgressStatus';
 
 export const ProcessToolBar = () => {
+  const visionAutoMLEnabled = useFlag('VISION_AutoML', {
+    fallback: false,
+    forceRerender: true,
+  });
+  const disabledModelTypes: VisionAPIType[] = [];
+  if (!visionAutoMLEnabled) disabledModelTypes.push(VisionAPIType.CustomModel);
+
   const dispatch: AppDispatch = useDispatch();
 
   const processFiles = useSelector((state: RootState) =>
@@ -110,6 +120,16 @@ export const ProcessToolBar = () => {
     );
   };
 
+  const [customModels, setCustomModels] = useState<AutoMLModel[] | undefined>();
+  useEffect(() => {
+    const getModels = async () => {
+      let items = await AutoMLAPI.listAutoMLModels();
+      items = items.filter((item) => item.status === 'Completed');
+      setCustomModels(items);
+    };
+    if (visionAutoMLEnabled) getModels();
+  }, []);
+
   return (
     <Container>
       <StyledModal
@@ -135,7 +155,10 @@ export const ProcessToolBar = () => {
           borderRadius: '10px',
         }}
       >
-        <ModelConfiguration />
+        <ModelConfiguration
+          disabledModelTypes={disabledModelTypes}
+          customModels={customModels}
+        />
       </StyledModal>
       <ToolContainer>
         <ProcessToolBarElement
@@ -192,6 +215,7 @@ export const ProcessToolBar = () => {
                   value={selectedDetectionModels}
                   onChange={onChange}
                   handleCustomModelCreate={handleCustomModelCreate}
+                  disabledModelTypes={disabledModelTypes}
                   isDisabled={disableModelSelection}
                 />
               </ModelSelector>
