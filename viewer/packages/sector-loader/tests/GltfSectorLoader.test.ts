@@ -16,9 +16,8 @@ describe(GltfSectorLoader.name, () => {
   let wantedSectorMock: IMock<WantedSector>;
 
   beforeEach(() => {
-
     const binMock = createBinaryFileProviderMock();
-    wantedSectorMock = createWantedSectorMock()
+    wantedSectorMock = createWantedSectorMock();
 
     const materialManager = new CadMaterialManager();
     materialManager.addModelMaterials(modelIdentifier, 1);

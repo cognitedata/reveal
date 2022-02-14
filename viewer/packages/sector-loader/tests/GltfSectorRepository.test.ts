@@ -12,7 +12,6 @@ import { CadMaterialManager } from '@reveal/rendering';
 import { WantedSector } from '@reveal/cad-parsers';
 
 describe(GltfSectorRepository.name, () => {
-
   let binaryFileProvider: IMock<BinaryFileProvider>;
   let sectorRepository: GltfSectorRepository;
   let wantedSectorMock: IMock<WantedSector>;

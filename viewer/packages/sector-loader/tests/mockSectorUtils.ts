@@ -1,4 +1,7 @@
-import { WantedSector, V9SectorMetadata } from "@reveal/cad-parsers";
+/*!
+ * Copyright 2022 Cognite AS
+ */
+import { WantedSector, V9SectorMetadata } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { IMock, Mock, It } from 'moq.ts';
 
@@ -10,12 +13,11 @@ const modelIdentifier = 'some_model_identifier';
 export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
   const wantedFile = 'wanted_file.glb';
 
-  const mockedSectorMetadata =
-    new Mock<V9SectorMetadata>()
-      .setup(p => p.sectorFileName)
-      .returns(wantedFile)
-      .setup(p => p.id)
-      .returns(id);
+  const mockedSectorMetadata = new Mock<V9SectorMetadata>()
+    .setup(p => p.sectorFileName)
+    .returns(wantedFile)
+    .setup(p => p.id)
+    .returns(id);
 
   return new Mock<WantedSector>()
     .setup(p => p.modelBaseUrl)
@@ -27,7 +29,6 @@ export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
 }
 
 export function createBinaryFileProviderMock(): IMock<BinaryFileProvider> {
-
   const fileBuffer = fs.readFileSync(__dirname + '/test.glb');
   return new Mock<BinaryFileProvider>()
     .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny()))
