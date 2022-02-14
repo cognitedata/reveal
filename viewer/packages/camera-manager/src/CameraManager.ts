@@ -225,6 +225,8 @@ export class DefaultCameraManager implements CameraManager {
       .multiplyScalar(distToTarget.length())
       .add(tempCam.position);
     this.setCameraTarget(newTarget);
+    const appliedQuaternion = this._camera.quaternion.clone();
+    this._controls.cameraAdditionalRotation.copy(appliedQuaternion.clone().multiply(rotation.invert()));
   }
 
   getCameraTarget(): THREE.Vector3 {
@@ -238,7 +240,7 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isDisposed) {
       return;
     }
-    this._controls.rollRotation.z = 0;
+
     const animationTime = animated ? DefaultCameraManager.DefaultAnimationDuration : 0;
     this.moveCameraTargetTo(target, animationTime);
   }

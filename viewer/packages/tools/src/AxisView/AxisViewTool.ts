@@ -374,7 +374,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const tmpRotation = new THREE.Quaternion();
 
     const tween = animation
-      .to(to, 5000)
+      .to(to, 2000)
       .onUpdate(() => {
         tmpPosition
           .copy(normalizedFrom)

@@ -14,7 +14,7 @@ import {
   PerspectiveCamera,
   OrthographicCamera,
   MathUtils,
-  Euler
+  Quaternion
 } from 'three';
 import Keyboard from './Keyboard';
 
@@ -95,7 +95,7 @@ export class ComboControls extends EventDispatcher {
   private readonly _spherical: Spherical = new Spherical();
   private _sphericalEnd: Spherical = new Spherical();
   private readonly _deltaTarget: Vector3 = new Vector3();
-  private readonly _rollRotation: THREE.Euler = new Euler();
+  private readonly _rollRotation: THREE.Quaternion = new Quaternion();
   private _keyboard: Keyboard = new Keyboard();
 
   private readonly _offsetVector: Vector3 = new Vector3();
@@ -214,7 +214,7 @@ export class ComboControls extends EventDispatcher {
     _spherical.makeSafe();
     _camera.position.setFromSpherical(_spherical).add(_target);
     _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
-    _camera.rotateZ(this._rollRotation.z);
+    //_camera.applyQuaternion(this._rollRotation.invert());
     
     if (changed) {
       this.triggerCameraChangeEvent();
@@ -244,7 +244,7 @@ export class ComboControls extends EventDispatcher {
     this.triggerCameraChangeEvent();
   };
 
-  get rollRotation(): Euler {
+  get cameraAdditionalRotation(): Quaternion {
     return this._rollRotation;
   }
 
