@@ -1,4 +1,4 @@
-import { SOURCE_CALLISTO } from '../../../support/selectors/wells.selectors';
+import { SOURCE_FILTER } from '../../../support/selectors/wells.selectors';
 
 describe('Wells: NPT Events', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('Wells: NPT Events', () => {
           {
             category: 'Source',
             value: {
-              name: SOURCE_CALLISTO,
+              name: SOURCE_FILTER,
               type: 'checkbox',
             },
           },

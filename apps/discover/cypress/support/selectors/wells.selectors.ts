@@ -1,1 +1,1 @@
-export const SOURCE_CALLISTO = 'callisto';
+export const SOURCE_FILTER = 'sol';
