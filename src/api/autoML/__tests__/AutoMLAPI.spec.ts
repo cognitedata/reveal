@@ -107,9 +107,9 @@ describe('AutoML API download model', () => {
     };
     sdk.get = async (): Promise<HttpResponse<any>> =>
       Promise.resolve(mockedData);
-    const json = await AutoMLAPI.getAutoMLModel(2);
+    const json = await AutoMLAPI.downloadAutoMLModel(2);
 
-    expect(json).toMatchObject({});
+    expect(json).toBe(undefined);
   });
 });
 

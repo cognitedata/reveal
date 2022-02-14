@@ -8,7 +8,11 @@ import { AutoMLTrainingJob } from 'src/api/autoML/types';
 import { AutoMLModelNameBadge } from 'src/modules/AutoML/Components/AutoMLModelNameBadge';
 import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';
 
-export const AutoMLModelPage = (props: { selectedModelId?: number }) => {
+export const AutoMLModelPage = (props: {
+  selectedModelId?: number;
+  downloadingModel?: boolean;
+  handleDownload: () => void;
+}) => {
   const [model, setModel] = useState<AutoMLTrainingJob>();
 
   const getModel = async () => {
@@ -27,13 +31,18 @@ export const AutoMLModelPage = (props: { selectedModelId?: number }) => {
       {model && props.selectedModelId === model?.jobId ? ( // TODO: use id
         <Container>
           <Header>
-            <>
-              <AutoMLModelNameBadge name={model.name} disabled />
-              <Button type="primary" icon="Download" disabled>
-                {/* TODO: handle model download once API is ready */}
-                Collect model
+            <AutoMLModelNameBadge name={model.name} disabled />
+            <ActionContainer>
+              <Button
+                type="primary"
+                icon="Download"
+                onClick={props.handleDownload}
+                loading={props.downloadingModel}
+                disabled={model.status !== 'Completed'}
+              >
+                Download model
               </Button>
-            </>
+            </ActionContainer>
           </Header>
           <AutoMLMetricsOverview model={model} />
           {/* TODO: add metric graphs */}
@@ -62,6 +71,13 @@ const Header = styled.div`
   width: 100%;
   justify-content: space-between;
   padding-bottom: 16px;
+`;
+
+const ActionContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  gap: 5px;
 `;
 
 const StyledTitle = styled(Title)`
