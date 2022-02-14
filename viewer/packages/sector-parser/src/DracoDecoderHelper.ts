@@ -243,12 +243,11 @@ export class DracoDecoderHelper {
     let cummulativeAttributeOffset = 0;
     input.attributeByteLengths.forEach(attributeByteLength => {
       for (let i = 0; i < input.numPoints; i++) {
+        const sourceBufferOffset = cummulativeAttributeOffset * input.numPoints + i * attributeByteLength;
+        const targetBufferOffset = i * stride + cummulativeAttributeOffset;
         output.set(
-          input.buffer.subarray(
-            cummulativeAttributeOffset * input.numPoints + i * attributeByteLength,
-            cummulativeAttributeOffset * input.numPoints + i * attributeByteLength + attributeByteLength
-          ),
-          i * stride + cummulativeAttributeOffset
+          input.buffer.subarray(sourceBufferOffset, sourceBufferOffset + attributeByteLength),
+          targetBufferOffset
         );
       }
 

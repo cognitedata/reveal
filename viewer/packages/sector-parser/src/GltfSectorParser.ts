@@ -152,7 +152,7 @@ export class GltfSectorParser {
       payload.glbHeaderData.json,
       payload.instancingExtension!.attributes!
     );
-    const byteOffset = payload.glbHeaderData.byteOffsetToBinContent + sharedBufferView.byteOffset ?? 0;
+    const byteOffset = payload.glbHeaderData.byteOffsetToBinContent + (sharedBufferView.byteOffset ?? 0);
     const { byteLength, byteStride } = sharedBufferView;
 
     this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
@@ -357,16 +357,6 @@ export class GltfSectorParser {
     bufferGeometry: THREE.BufferGeometry | THREE.InstancedBufferGeometry,
     bufferType: { new (array: ArrayLike<number>, stride: number): T }
   ) {
-    const bufferViewIds = Object.values(attributes).map(accessorId => json.accessors[accessorId].bufferView);
-
-    assert(bufferViewIds.length > 0);
-
-    const bufferViewId = bufferViewIds[0];
-
-    for (let i = 1; i < bufferViewIds.length; i++) {
-      assert(bufferViewIds[i] === bufferViewId, 'Unexpected number of unique buffer views');
-    }
-
     const componentTypes = Object.values(attributes).map(accessorId => json.accessors[accessorId].componentType);
 
     const typedArrayMap: { [key: string]: T } = this.getUniqueComponentViews<T>(
