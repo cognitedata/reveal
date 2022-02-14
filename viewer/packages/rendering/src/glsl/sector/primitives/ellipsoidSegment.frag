@@ -109,6 +109,6 @@ void main() {
     }
 #endif
 
-  updateFragmentDepth(p, v_projectionMatrix);
-  updateFragmentColor(v_renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);
+  float fragDepth = updateFragmentDepth(p, v_projectionMatrix);
+  updateFragmentColor(v_renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
 }
