@@ -251,7 +251,7 @@ export function Migration() {
         let maxInsideDepth = -1;
         let maxDepth = -1;
         const cameraPosition = viewer.cameraManager.getCameraPosition();
-        cadModels.forEach(m => {
+        modelUi.cadModels.forEach(m => {
           m.traverse(x => {
             // Hacky way to access internals of SectorNode
             const depth = (x.hasOwnProperty('depth') && typeof (x as any).depth === 'number') ? (x as any).depth as number : 0;
