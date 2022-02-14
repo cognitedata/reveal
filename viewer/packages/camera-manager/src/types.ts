@@ -69,11 +69,11 @@ export interface CameraManager {
 
   /**
    * Sets camera rotation.
-   * @param rotation 
+   * @param rotation
    */
-  setCameraRotation(rotation:THREE.Quaternion): void;
+  setCameraRotation(rotation: THREE.Quaternion): void;
   /**
-   * @obvious 
+   * @obvious
    * @returns camera rotation as a quaternion
    * */
   getCameraRotation(): THREE.Quaternion;
@@ -95,11 +95,11 @@ export interface CameraManager {
    */
   setCameraTarget: (target: THREE.Vector3) => void;
   /**
-  * @obvious
-  * @returns Camera's target in world space.
-  */
+   * @obvious
+   * @returns Camera's target in world space.
+   */
   getCameraTarget: () => THREE.Vector3;
-  
+
   /**
    * @obvious
    * @param position Position in world space.
@@ -121,30 +121,29 @@ export interface CameraManager {
   getCameraPosition: () => THREE.Vector3;
   /**
    * Required for understadning of `cameraChanged` definition for other parts of Reveal
-   * @param event 
-   * @param callback 
+   * @param event
+   * @param callback
    */
   on(event: 'cameraChange', callback: CameraChangeData): void;
   /**
    * Required for understadning of `cameraChanged` definition for other parts of Reveal
-   * @param event 
-   * @param callback 
+   * @param event
+   * @param callback
    */
   off(event: 'cameraChange', callback: CameraChangeData): void;
 
   fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
   /**
    * Updates internal state of camera manager.
-   * @param deltaTime 
-   * @param boundingBox 
+   * @param deltaTime
+   * @param boundingBox
    */
   update(deltaTime: number, boundingBox: THREE.Box3): void;
   /**
    * @obvious
    */
   dispose(): void;
-
- }
+}
 export type CameraManagerCallbackData = {
   intersection: {
     /**

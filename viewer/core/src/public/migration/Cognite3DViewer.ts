@@ -212,9 +212,11 @@ export class Cognite3DViewer {
 
     this._mouseHandler = new InputHandler(this.canvas);
 
-    this._cameraManager = options.cameraManager ?? new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
+    this._cameraManager =
+      options.cameraManager ??
+      new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
     this.camera = this._cameraManager.getCamera();
-    
+
     this._cameraManager.on('cameraChange', (event: any) => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());

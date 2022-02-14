@@ -80,7 +80,7 @@ export interface Cognite3DViewerOptions {
   /**
    * Camera manager instance that is used for controlling the camera.
    */
-  cameraManager?: CameraManager
+  cameraManager?: CameraManager;
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 

@@ -82,7 +82,6 @@ export class ComboControls extends EventDispatcher {
   public maxDeltaDownscaleCoefficient = 1;
 
   private _temporarilyDisableDamping: boolean = false;
-  private _cameraRoll: number = 0;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
   private _firstPersonMode: boolean = false;
   private readonly _reusableCamera: PerspectiveCamera | OrthographicCamera;
@@ -174,17 +173,17 @@ export class ComboControls extends EventDispatcher {
     }
 
     let deltaTheta = 0;
-    
+
     if (this._firstPersonMode) {
       deltaTheta += this.calculateShortestDeltaTheta(_sphericalEnd.theta, _spherical.theta);
     } else {
       deltaTheta = _sphericalEnd.theta - _spherical.theta;
     }
-    
+
     const deltaPhi = _sphericalEnd.phi - _spherical.phi;
     const deltaRadius = _sphericalEnd.radius - _spherical.radius;
     _deltaTarget.subVectors(_targetEnd, _target);
-    
+
     let changed = false;
 
     const wantDamping = enableDamping && !this._temporarilyDisableDamping;
@@ -216,7 +215,7 @@ export class ComboControls extends EventDispatcher {
     _camera.position.setFromSpherical(_spherical).add(_target);
     _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
     _camera.applyQuaternion(this._additionalRotation);
-    
+
     if (changed) {
       this.triggerCameraChangeEvent();
     }

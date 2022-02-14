@@ -7,7 +7,7 @@ import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
-import { CameraManager} from '@reveal/camera-manager';
+import { CameraManager } from '@reveal/camera-manager';
 import { NodeAppearance } from '@reveal/cad-styling';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -106,11 +106,11 @@ export class ViewStateHelper {
   private setCameraFromState(cameraState: Exclude<ViewerState['camera'], undefined>) {
     const camPos = cameraState.position;
     const camTarget = cameraState.target;
-    
+
     this._cameraManager.setCameraPosition(new THREE.Vector3(camPos.x, camPos.y, camPos.z));
     this._cameraManager.setCameraTarget(new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z));
   }
-  
+
   private async setModelState(modelsState: ModelState[]) {
     const cadModels = this._viewer.models
       .filter(model => model instanceof Cognite3DModel)

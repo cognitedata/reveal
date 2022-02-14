@@ -221,15 +221,15 @@ export class DefaultCameraManager implements CameraManager {
     tempCam.updateMatrix();
 
     const newTarget = tempCam
-    .getWorldDirection(new THREE.Vector3())
-    .normalize()
-    .multiplyScalar(distToTarget.length())
-    .add(tempCam.position);
-    
+      .getWorldDirection(new THREE.Vector3())
+      .normalize()
+      .multiplyScalar(distToTarget.length())
+      .add(tempCam.position);
+
     this._controls.setState(tempCam.position, newTarget);
     tempCam.position.copy(this._camera.position);
     tempCam.lookAt(newTarget);
-    
+
     const appliedQuaternion = tempCam.quaternion.clone();
     this._controls.cameraAdditionalRotation.copy(rotation.clone().multiply(appliedQuaternion.invert()));
   }
@@ -472,7 +472,7 @@ export class DefaultCameraManager implements CameraManager {
     this._controls.update(deltaTime);
   }
 
-  update(deltaTime: number, boundingBox: THREE.Box3) {
+  update(deltaTime: number, boundingBox: THREE.Box3): void {
     if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
       this.updateCameraNearAndFar(this._camera, boundingBox);
       this._nearAndFarNeedsUpdate = false;
