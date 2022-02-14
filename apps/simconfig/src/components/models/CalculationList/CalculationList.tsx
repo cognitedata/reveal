@@ -15,6 +15,8 @@ import {
 } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import type {
+  CalculationRun,
+  CalculationTemplate,
   CalculationType,
   Simulator,
 } from '@cognite/simconfig-api-sdk/rtk';
@@ -42,7 +44,11 @@ interface CalculationListProps {
   modelName: string;
   showConfigured?: boolean;
 }
-
+interface ModelCalculation {
+  externalId: string;
+  configuration: CalculationTemplate;
+  latestRun?: CalculationRun;
+}
 export function CalculationList({
   simulator,
   modelName,
@@ -171,13 +177,21 @@ export function CalculationList({
     };
 
   if (showConfigured) {
-    return !modelCalculations.modelCalculationList.length ? (
+    const configuredCalculations = modelCalculations.modelCalculationList
+      .slice()
+      .sort(
+        (
+          { configuration: { calculationName: a } }: ModelCalculation,
+          { configuration: { calculationName: b } }: ModelCalculation
+        ) => a.localeCompare(b)
+      );
+    return !configuredCalculations.length ? (
       <GraphicContainer>
         <Graphic type="RuleMonitoring" /> No configured calculations
       </GraphicContainer>
     ) : (
       <ConfiguredCalculationList>
-        {modelCalculations.modelCalculationList.map((calculation) => (
+        {configuredCalculations.map((calculation) => (
           <React.Fragment key={calculation.externalId}>
             <Button
               className="run-calculation"
@@ -302,32 +316,34 @@ export function CalculationList({
     </GraphicContainer>
   ) : (
     <NonConfiguredCalculationList>
-      {nonConfiguredCalculations.map((calculationType) => (
-        <React.Fragment key={calculationType}>
-          <Link
-            to={`${encodeURIComponent(calculationType)}/configuration`}
-            onClick={() => {
-              trackUsage(TRACKING_EVENTS.MODEL_CACL_CONFIG, {
-                modelName: decodeURI(modelName),
-                simulator,
-                calculationType,
-              });
-            }}
-          >
-            <Button
-              className="configure-calculation"
-              icon="Settings"
-              size="small"
-              type="tertiary"
+      {nonConfiguredCalculations
+        .sort((a: CalculationType, b: CalculationType) => a.localeCompare(b))
+        .map((calculationType) => (
+          <React.Fragment key={calculationType}>
+            <Link
+              to={`${encodeURIComponent(calculationType)}/configuration`}
+              onClick={() => {
+                trackUsage(TRACKING_EVENTS.MODEL_CACL_CONFIG, {
+                  modelName: decodeURI(modelName),
+                  simulator,
+                  calculationType,
+                });
+              }}
             >
-              Configure
-            </Button>
-          </Link>
-          <span className="name">
-            {definitions.type.calculation[calculationType]}
-          </span>
-        </React.Fragment>
-      ))}
+              <Button
+                className="configure-calculation"
+                icon="Settings"
+                size="small"
+                type="tertiary"
+              >
+                Configure
+              </Button>
+            </Link>
+            <span className="name">
+              {definitions.type.calculation[calculationType]}
+            </span>
+          </React.Fragment>
+        ))}
     </NonConfiguredCalculationList>
   );
 }
