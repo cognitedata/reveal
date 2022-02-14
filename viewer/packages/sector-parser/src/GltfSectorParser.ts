@@ -11,44 +11,20 @@ import {
   GlbHeaderData,
   GeometryProcessingPayload,
   Primitive,
-  BufferView,
   GltfJson,
   ParsedGeometry
 } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
-import { TypedArrayConstructor } from '@reveal/utilities';
-import type { DataType, Decoder, DecoderModule, Mesh } from 'draco3dgltf';
-import DracoDecoderModule from './draco_decoder_gltf.js';
+import { COLLECTION_TYPE_SIZES, DATA_TYPE_BYTE_SIZES } from './constants';
+import { DracoDecoderHelper } from './DracoDecoderHelper';
 
 export class GltfSectorParser {
   private readonly _glbMetadataParser: GlbMetadataParser;
-
-  // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessortype-white_check_mark
-  private static readonly COLLECTION_TYPE_SIZES = new Map<string, number>([
-    ['SCALAR', 1],
-    ['VEC2', 2],
-    ['VEC3', 3],
-    ['VEC4', 4],
-    ['MAT2', 4],
-    ['MAT3', 9],
-    ['MAT4', 16]
-  ]);
-
-  // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessorcomponenttype-white_check_mark
-  private static readonly DATA_TYPE_BYTE_SIZES = new Map<number, TypedArrayConstructor>([
-    [5120, Int8Array],
-    [5121, Uint8Array],
-    [5122, Int16Array],
-    [5123, Uint16Array],
-    [5125, Uint32Array],
-    [5126, Float32Array]
-  ]);
-
-  private readonly _dracoDecoderModule: Promise<DecoderModule>;
+  private readonly _dracoDecoderHelper: DracoDecoderHelper;
 
   constructor() {
     this._glbMetadataParser = new GlbMetadataParser();
-    this._dracoDecoderModule = DracoDecoderModule();
+    this._dracoDecoderHelper = new DracoDecoderHelper();
   }
 
   public async parseSector(data: ArrayBuffer): Promise<ParsedGeometry[]> {
@@ -105,13 +81,11 @@ export class GltfSectorParser {
     switch (geometryType) {
       case RevealGeometryCollectionType.InstanceMesh:
         assert(payload.instancingExtension !== undefined);
-        // return this.processInstancedTriangleMesh(payload);
-        return undefined;
+        return this.processInstancedTriangleMesh(payload);
       case RevealGeometryCollectionType.TriangleMesh:
         assert(payload.instancingExtension === undefined);
         await this.processTriangleMesh(payload);
         break;
-      // return undefined;
       default:
         assert(payload.instancingExtension !== undefined);
         this.processPrimitiveCollection(payload);
@@ -135,15 +109,25 @@ export class GltfSectorParser {
 
     const primitive = mesh.primitives[0];
 
-    this.setIndexBuffer(payload, primitive, data, bufferGeometry);
+    this.setIndexBuffer(glbHeaderData, primitive, data, bufferGeometry);
     this.setPositionBuffer(payload, primitive, data, bufferGeometry);
 
     const primitivesAttributeNameTransformer = (attributeName: string) => `a${attributeName}`;
 
+    const sharedBufferView = this.getSharedBufferView(
+      payload.glbHeaderData.json,
+      payload.instancingExtension!.attributes!
+    );
+    const byteOffset = payload.glbHeaderData.byteOffsetToBinContent + sharedBufferView.byteOffset ?? 0;
+    const { byteLength, byteStride } = sharedBufferView;
+
     this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
-      payload.glbHeaderData,
+      payload.glbHeaderData.json,
       payload.instancingExtension!.attributes,
       payload.data,
+      byteOffset,
+      byteLength,
+      byteStride,
       primitivesAttributeNameTransformer,
       payload.bufferGeometry,
       THREE.InstancedInterleavedBuffer
@@ -164,10 +148,20 @@ export class GltfSectorParser {
     // Our shaders use an 'a' prefix for attribute names
     const primitivesAttributeNameTransformer = (attributeName: string) => `a${attributeName}`;
 
+    const sharedBufferView = this.getSharedBufferView(
+      payload.glbHeaderData.json,
+      payload.instancingExtension!.attributes!
+    );
+    const byteOffset = payload.glbHeaderData.byteOffsetToBinContent + sharedBufferView.byteOffset ?? 0;
+    const { byteLength, byteStride } = sharedBufferView;
+
     this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
-      payload.glbHeaderData,
+      payload.glbHeaderData.json,
       payload.instancingExtension!.attributes!,
       payload.data,
+      byteOffset,
+      byteLength,
+      byteStride,
       primitivesAttributeNameTransformer,
       payload.bufferGeometry,
       THREE.InstancedInterleavedBuffer
@@ -186,145 +180,26 @@ export class GltfSectorParser {
     assert(mesh.primitives.length === 1);
 
     const primitive = mesh.primitives[0];
-    const dracoCompression = primitive.extensions?.KHR_draco_mesh_compression;
 
-    if (dracoCompression !== undefined) {
-      const dracoBufferView = json.bufferViews[dracoCompression.bufferView];
+    const { vertexBuffer, byteOffset, byteLength, byteStride } = await this.getVertexBuffer(
+      json,
+      glbHeaderData,
+      data,
+      primitive,
+      bufferGeometry
+    );
 
-      const offsetToBinChunk = payload.glbHeaderData.byteOffsetToBinContent;
-
-      const asd = new Int8Array(data, offsetToBinChunk + dracoBufferView.byteOffset, dracoBufferView.byteLength);
-
-      const module = await this._dracoDecoderModule;
-
-      const buffer = new module.DecoderBuffer();
-      buffer.Init(asd, asd.length);
-
-      const decoder = new module.Decoder();
-      const geometryType = decoder.GetEncodedGeometryType(buffer);
-      if (geometryType === module.TRIANGULAR_MESH) {
-        const dracoMesh = new module.Mesh();
-        const status = decoder.DecodeBufferToMesh(buffer, dracoMesh);
-
-        if (!status.ok() || dracoMesh.ptr === 0) {
-          throw new Error(`Failed to decode draco mesh. Error: ${status.error_msg()}`);
-        }
-
-        const indices = decodeIndex(decoder, dracoMesh, module);
-        bufferGeometry.setIndex(new THREE.BufferAttribute(indices, 1));
-        const draco_data_type = new Map<number, DataType>([
-          [5120, module.DT_INT8],
-          [5121, module.DT_UINT8],
-          [5122, module.DT_INT16],
-          [5123, module.DT_UINT16],
-          [5125, module.DT_UINT32],
-          [5126, module.DT_FLOAT32]
-        ]);
-
-        const attributesBufferLength = Object.keys(primitive.attributes).map(attributeName => {
-          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[attributeName]);
-          const componentType = json.accessors[primitive.attributes[attributeName]].componentType;
-
-          return {
-            attributeName,
-            numberOfValues: dracoMesh.num_points() * dracoAttribute.num_components(),
-            componentType
-          };
-        });
-
-        const cummulativeLength = attributesBufferLength.reduce(
-          (parialSum, element) =>
-            parialSum +
-            element.numberOfValues *
-              GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(element.componentType)!.BYTES_PER_ELEMENT,
-          0
-        );
-
-        const strides = attributesBufferLength.map(p => {
-          const { attributeName, componentType } = p;
-          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[attributeName]);
-
-          return (
-            dracoAttribute.num_components() *
-            GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!.BYTES_PER_ELEMENT
-          );
-        });
-
-        const stride = strides.reduce((partialSum, element) => partialSum + element, 0);
-
-        const ptr = module._malloc(cummulativeLength);
-
-        let cummulative = 0;
-
-        attributesBufferLength.forEach(attrData => {
-          const { attributeName, numberOfValues, componentType } = attrData;
-          const dracoType = draco_data_type.get(componentType)!;
-          const dracoAttribute = decoder.GetAttributeByUniqueId(dracoMesh, dracoCompression.attributes[attributeName]);
-          const byteLength =
-            numberOfValues * GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!.BYTES_PER_ELEMENT;
-          decoder.GetAttributeDataArrayForAllPoints(
-            dracoMesh,
-            dracoAttribute,
-            dracoType,
-            byteLength,
-            ptr + cummulative
-          );
-          cummulative += byteLength;
-        });
-
-        const dracoDataView = new Uint8Array(module.HEAP8.buffer, ptr, cummulativeLength);
-
-        const copyBuffer = new Uint8Array(new ArrayBuffer(cummulativeLength));
-
-        this.copyLinearToInterleaved(
-          {
-            buffer: dracoDataView,
-            attributeByteLengths: strides,
-            numPoints: dracoMesh.num_points()
-          },
-          copyBuffer
-        );
-        module._free(ptr);
-
-        let acc = 0;
-        Object.keys(primitive.attributes).forEach((p, n) => {
-          const accessor = json.accessors[primitive.attributes[p]];
-          const componentType = accessor.componentType;
-          const TypedArrayConstructor = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
-
-          const attributeTypedArray = new TypedArrayConstructor(
-            copyBuffer.buffer,
-            copyBuffer.byteOffset,
-            copyBuffer.byteLength / TypedArrayConstructor.BYTES_PER_ELEMENT
-          );
-
-          const interleavedBuffer = new THREE.InterleavedBuffer(
-            attributeTypedArray,
-            stride / TypedArrayConstructor.BYTES_PER_ELEMENT
-          );
-
-          const size = GltfSectorParser.COLLECTION_TYPE_SIZES.get(accessor.type)!;
-          const off = acc / TypedArrayConstructor.BYTES_PER_ELEMENT;
-
-          bufferGeometry.setAttribute(
-            attributeNameTransformer(p),
-            new THREE.InterleavedBufferAttribute(interleavedBuffer, size, off)
-          );
-          acc += strides[n];
-        });
-      }
-    } else {
-      this.setIndexBuffer(payload, primitive, data, bufferGeometry);
-
-      this.setInterleavedBufferAttributes<THREE.InterleavedBuffer>(
-        payload.glbHeaderData,
-        primitive.attributes,
-        payload.data,
-        attributeNameTransformer,
-        payload.bufferGeometry,
-        THREE.InterleavedBuffer
-      );
-    }
+    this.setInterleavedBufferAttributes<THREE.InterleavedBuffer>(
+      json,
+      primitive.attributes,
+      vertexBuffer,
+      byteOffset,
+      byteLength,
+      byteStride,
+      attributeNameTransformer,
+      bufferGeometry,
+      THREE.InterleavedBuffer
+    );
 
     function attributeNameTransformer(attributeName: string) {
       switch (attributeName) {
@@ -338,71 +213,79 @@ export class GltfSectorParser {
           throw new Error();
       }
     }
-
-    function decodeIndex(decoder: Decoder, mesh: Mesh, decoderModule: DecoderModule): Uint16Array | Uint32Array {
-      const numFaces = mesh.num_faces();
-      const numIndices = numFaces * 3;
-
-      let ptr: number;
-      let indices: Uint16Array | Uint32Array;
-
-      if (mesh.num_points() <= 2 ** 16) {
-        const byteLength = numIndices * Uint16Array.BYTES_PER_ELEMENT;
-        ptr = decoderModule._malloc(byteLength);
-        decoder.GetTrianglesUInt16Array(mesh, byteLength, ptr);
-        indices = new Uint16Array(decoderModule.HEAPU16.buffer, ptr, numIndices).slice();
-      } else {
-        const byteLength = numIndices * Uint32Array.BYTES_PER_ELEMENT;
-        ptr = decoderModule._malloc(byteLength);
-        decoder.GetTrianglesUInt32Array(mesh, byteLength, ptr);
-        indices = new Uint32Array(decoderModule.HEAPU32.buffer, ptr, numIndices).slice();
-      }
-
-      decoderModule._free(ptr);
-
-      return indices;
-    }
   }
 
-  private copyLinearToInterleaved(
-    input: { buffer: Uint8Array; attributeByteLengths: number[]; numPoints: number },
-    output: Uint8Array
+  private async getVertexBuffer(
+    json: GltfJson,
+    glbHeaderData: GlbHeaderData,
+    data: ArrayBuffer,
+    primitive: Primitive,
+    bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
   ) {
-    assert(input.buffer.byteLength <= output.byteLength);
+    let vertexBuffer: ArrayBuffer;
+    let byteOffset: number;
+    let byteLength: number;
+    let byteStride: number;
 
-    const stride = input.attributeByteLengths.reduce((partialSum, element) => partialSum + element, 0);
+    const offsetToBinChunk = glbHeaderData.byteOffsetToBinContent;
+    const dracoCompression = primitive.extensions?.KHR_draco_mesh_compression;
 
-    let subStride = 0;
-    input.attributeByteLengths.forEach(attrByteLength => {
-      for (let i = 0; i < input.numPoints; i++) {
-        output.set(
-          input.buffer.subarray(
-            subStride * input.numPoints + i * attrByteLength,
-            subStride * input.numPoints + i * attrByteLength + attrByteLength
-          ),
-          i * stride + subStride
+    if (dracoCompression !== undefined) {
+      const dracoBufferView = json.bufferViews[dracoCompression.bufferView];
+
+      const dracoMeshOffset = offsetToBinChunk + dracoBufferView.byteOffset;
+
+      const dracoMeshLength = dracoBufferView.byteLength;
+
+      const dracoMeshBufferView = new Int8Array(data, dracoMeshOffset, dracoMeshLength);
+
+      const dracoMesh = await this._dracoDecoderHelper.decodeDracoBufferToDracoMesh(dracoMeshBufferView);
+
+      const { indexBufferView, vertexBufferView, vertexBufferDescriptor } =
+        await this._dracoDecoderHelper.decodeDracoMeshToGeometryBuffers(
+          json,
+          dracoMesh,
+          dracoCompression.attributes,
+          primitive.attributes
         );
-      }
 
-      subStride += attrByteLength;
-    });
+      bufferGeometry.setIndex(new THREE.BufferAttribute(indexBufferView, 1));
+
+      vertexBuffer = vertexBufferView.buffer;
+      byteOffset = vertexBufferView.byteOffset;
+      byteLength = vertexBufferView.byteLength;
+
+      byteStride = Object.values(vertexBufferDescriptor).reduce((sum, descriptor) => {
+        sum += descriptor.byteStride;
+        return sum;
+      }, 0);
+    } else {
+      this.setIndexBuffer(glbHeaderData, primitive, data, bufferGeometry);
+
+      const sharedBufferView = this.getSharedBufferView(json, primitive.attributes);
+
+      vertexBuffer = data;
+      byteOffset = offsetToBinChunk + sharedBufferView.byteOffset ?? 0;
+      byteLength = sharedBufferView.byteLength;
+      byteStride = sharedBufferView.byteStride;
+    }
+    return { vertexBuffer, byteOffset, byteLength, byteStride };
   }
 
   private setIndexBuffer(
-    payload: GeometryProcessingPayload,
+    glbHeaderData: GlbHeaderData,
     primitive: Primitive,
     data: ArrayBuffer,
     bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
   ) {
-    const json = payload.glbHeaderData.json;
-
-    const offsetToBinChunk = payload.glbHeaderData.byteOffsetToBinContent;
+    const json = glbHeaderData.json;
+    const offsetToBinChunk = glbHeaderData.byteOffsetToBinContent;
 
     const indicesAccessor = json.accessors[primitive.indices];
     const indicesBufferView = json.bufferViews[indicesAccessor.bufferView];
     indicesBufferView.byteOffset = indicesBufferView.byteOffset ?? 0;
 
-    const IndicesTypedArrayConstructor = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(indicesAccessor.componentType)!;
+    const IndicesTypedArrayConstructor = DATA_TYPE_BYTE_SIZES.get(indicesAccessor.componentType)!;
 
     const indicesTypedArray = new IndicesTypedArrayConstructor(
       data,
@@ -410,7 +293,7 @@ export class GltfSectorParser {
       indicesBufferView.byteLength / IndicesTypedArrayConstructor.BYTES_PER_ELEMENT
     );
 
-    const elementSize = GltfSectorParser.COLLECTION_TYPE_SIZES.get(indicesAccessor.type)!;
+    const elementSize = COLLECTION_TYPE_SIZES.get(indicesAccessor.type)!;
 
     bufferGeometry.setIndex(new THREE.BufferAttribute(indicesTypedArray, elementSize));
   }
@@ -429,7 +312,7 @@ export class GltfSectorParser {
     const positionBufferView = json.bufferViews[positionAccessor.bufferView];
     positionBufferView.byteOffset = positionBufferView.byteOffset ?? 0;
 
-    const PositionTypedArrayConstructor = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(positionAccessor.componentType)!;
+    const PositionTypedArrayConstructor = DATA_TYPE_BYTE_SIZES.get(positionAccessor.componentType)!;
 
     const positionTypedArray = new PositionTypedArrayConstructor(
       data,
@@ -437,23 +320,17 @@ export class GltfSectorParser {
       positionBufferView.byteLength / PositionTypedArrayConstructor.BYTES_PER_ELEMENT
     );
 
-    const elementSize = GltfSectorParser.COLLECTION_TYPE_SIZES.get(positionAccessor.type)!;
+    const elementSize = COLLECTION_TYPE_SIZES.get(positionAccessor.type)!;
 
     bufferGeometry.setAttribute('position', new THREE.BufferAttribute(positionTypedArray, elementSize));
   }
 
-  private setInterleavedBufferAttributes<T extends THREE.InterleavedBuffer>(
-    glbHeaderData: GlbHeaderData,
+  private getSharedBufferView(
+    json: GltfJson,
     attributes: {
       [key: string]: number;
-    },
-    data: ArrayBuffer,
-    transformAttributeName: (attributeName: string) => string,
-    bufferGeometry: THREE.BufferGeometry | THREE.InstancedBufferGeometry,
-    bufferType: { new (array: ArrayLike<number>, stride: number): T }
+    }
   ) {
-    const json = glbHeaderData.json;
-
     const bufferViewIds = Object.values(attributes).map(accessorId => json.accessors[accessorId].bufferView);
 
     assert(bufferViewIds.length > 0);
@@ -464,18 +341,40 @@ export class GltfSectorParser {
       assert(bufferViewIds[i] === bufferViewId, 'Unexpected number of unique buffer views');
     }
 
-    const bufferView = json.bufferViews[bufferViewId];
-    bufferView.byteOffset = bufferView.byteOffset ?? 0;
+    return json.bufferViews[bufferViewId];
+  }
 
-    const offsetToBinChunk = glbHeaderData.byteOffsetToBinContent;
+  private setInterleavedBufferAttributes<T extends THREE.InterleavedBuffer>(
+    json: GltfJson,
+    attributes: {
+      [key: string]: number;
+    },
+    dataBuffer: ArrayBuffer,
+    byteOffset: number,
+    byteLength: number,
+    stride: number,
+    transformAttributeName: (attributeName: string) => string,
+    bufferGeometry: THREE.BufferGeometry | THREE.InstancedBufferGeometry,
+    bufferType: { new (array: ArrayLike<number>, stride: number): T }
+  ) {
+    const bufferViewIds = Object.values(attributes).map(accessorId => json.accessors[accessorId].bufferView);
+
+    assert(bufferViewIds.length > 0);
+
+    const bufferViewId = bufferViewIds[0];
+
+    for (let i = 1; i < bufferViewIds.length; i++) {
+      assert(bufferViewIds[i] === bufferViewId, 'Unexpected number of unique buffer views');
+    }
 
     const componentTypes = Object.values(attributes).map(accessorId => json.accessors[accessorId].componentType);
 
     const typedArrayMap: { [key: string]: T } = this.getUniqueComponentViews<T>(
       componentTypes,
-      data,
-      offsetToBinChunk,
-      bufferView,
+      dataBuffer,
+      byteOffset,
+      byteLength,
+      stride,
       bufferType
     );
 
@@ -495,11 +394,11 @@ export class GltfSectorParser {
       const byteOffset = accessor.byteOffset ?? 0;
 
       const interleavedBuffer = typedArrayMap[accessor.componentType];
-      const size = GltfSectorParser.COLLECTION_TYPE_SIZES.get(accessor.type);
+      const size = COLLECTION_TYPE_SIZES.get(accessor.type);
 
       assert(size !== undefined);
 
-      const elementType = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(accessor.componentType);
+      const elementType = DATA_TYPE_BYTE_SIZES.get(accessor.componentType);
 
       assert(elementType !== undefined);
 
@@ -520,20 +419,15 @@ export class GltfSectorParser {
   private getUniqueComponentViews<T extends THREE.InterleavedBuffer>(
     componentTypes: number[],
     data: ArrayBuffer,
-    offsetToBinChunk: number,
-    bufferView: BufferView,
+    byteOffset: number,
+    byteLength: number,
+    byteStride: number,
     bufferType: new (array: ArrayLike<number>, stride: number) => T
   ) {
-    const byteOffset = bufferView.byteOffset ?? 0;
-
     const typedArrays = [...new Set(componentTypes)].map(componentType => {
-      const TypedArray = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
-      const typedBuffer = new TypedArray(
-        data,
-        offsetToBinChunk + byteOffset,
-        bufferView.byteLength / TypedArray.BYTES_PER_ELEMENT
-      );
-      const interleavedBuffer = new bufferType(typedBuffer, bufferView.byteStride / TypedArray.BYTES_PER_ELEMENT);
+      const TypedArray = DATA_TYPE_BYTE_SIZES.get(componentType)!;
+      const typedBuffer = new TypedArray(data, byteOffset, byteLength / TypedArray.BYTES_PER_ELEMENT);
+      const interleavedBuffer = new bufferType(typedBuffer, byteStride / TypedArray.BYTES_PER_ELEMENT);
       return { componentType: componentType, interleavedBuffer: interleavedBuffer };
     });
 
