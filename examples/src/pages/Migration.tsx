@@ -99,7 +99,7 @@ export function Migration() {
         changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
       };
-      cameraManager = viewer.cameraManager;
+      cameraManager = viewer.cameraManager as DefaultCameraManager;
 
       cameraManager.setCameraControlsOptions(controlsOptions);
 
