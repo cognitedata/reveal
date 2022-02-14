@@ -31,20 +31,20 @@ describe(ViewStateHelper.name, () => {
       cameraTarget: new THREE.Vector3(1, 2, 3),
       clippingPlanes: [new THREE.Plane().setComponents(1, 2, 3, 4), new THREE.Plane().setComponents(-1, -2, -3, -4)]
     };
-    viewer.setCameraPosition(original.cameraPosition);
-    viewer.setCameraTarget(original.cameraTarget);
+    viewer.cameraManager.setCameraPosition(original.cameraPosition);
+    viewer.cameraManager.setCameraTarget(original.cameraTarget);
     viewer.setClippingPlanes(original.clippingPlanes);
 
     // Act
     const state = viewer.getViewState();
-    viewer.setCameraPosition(new THREE.Vector3(-10, -10, -10));
-    viewer.setCameraTarget(new THREE.Vector3(10, 10, 10));
+    viewer.cameraManager.setCameraPosition(new THREE.Vector3(-10, -10, -10));
+    viewer.cameraManager.setCameraTarget(new THREE.Vector3(10, 10, 10));
     viewer.setClippingPlanes([]);
     viewer.setViewState(state);
 
     // Assert
-    expect(viewer.getCameraPosition().distanceTo(original.cameraPosition)).toBeLessThan(1e-5);
-    expect(viewer.getCameraTarget().distanceTo(original.cameraTarget)).toBeLessThan(1e-5);
+    expect(viewer.cameraManager.getCameraPosition().distanceTo(original.cameraPosition)).toBeLessThan(1e-5);
+    expect(viewer.cameraManager.getCameraTarget().distanceTo(original.cameraTarget)).toBeLessThan(1e-5);
     expect(viewer.getClippingPlanes()).toEqual(original.clippingPlanes);
   });
 });
