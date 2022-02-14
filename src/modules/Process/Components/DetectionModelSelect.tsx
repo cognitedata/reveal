@@ -37,10 +37,18 @@ export function DetectionModelSelect({
   value,
   onChange,
   handleCustomModelCreate,
+  disabledModelTypes,
   ...props
 }: Props) {
+  // Remove the selected model(s) that are disabled.
+  // For example; it could be that a custom model is selected but after page
+  // refresh, custom models are disabled. This filter will make sure that the
+  // disabled model type is unselected.
+  const enabledSelectedModels = value.filter(
+    (modelType) => !disabledModelTypes.includes(modelType)
+  );
   const [selectedOptionsCount, setSelectedOptionsCount] = useState<number>(
-    value.length
+    enabledSelectedModels.length
   );
   const maxFill = 90;
   const colorStyles = {
@@ -61,8 +69,12 @@ export function DetectionModelSelect({
   const availableDetectionModels = useSelector(
     (state: RootState) => state.processSlice.availableDetectionModels
   );
-
-  const detectionModelOptions: SelectOption[] = availableDetectionModels.map(
+  // Same as before, but here we make sure that the disabled model type(s) are
+  // not shown as option(s) to the user.
+  const enabledDetectionModels = availableDetectionModels.filter(
+    (item) => !disabledModelTypes.includes(item.type)
+  );
+  const detectionModelOptions: SelectOption[] = enabledDetectionModels.map(
     // eslint-disable-next-line consistent-return
     (item) => {
       switch (item.type) {
@@ -111,7 +123,9 @@ export function DetectionModelSelect({
   };
 
   const options =
-    detectionModelOptions.length > 3 // Show create if custom model not already added
+    // Show create if custom model not already added and if it is enabled
+    detectionModelOptions.length > 3 ||
+    disabledModelTypes.includes(VisionAPIType.CustomModel)
       ? detectionModelOptions
       : [...detectionModelOptions, addCustomModelOption];
 
@@ -132,7 +146,7 @@ export function DetectionModelSelect({
   return (
     <Select
       isMulti
-      value={value.map(toOption)}
+      value={enabledSelectedModels.map(toOption)}
       onChange={(selectedOptions?: Array<SelectOption>) => {
         setSelectedOptionsCount(selectedOptions?.length || 1);
         onChange(selectedOptions?.map(fromOption) || []);

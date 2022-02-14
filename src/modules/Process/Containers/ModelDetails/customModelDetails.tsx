@@ -18,7 +18,8 @@ import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIllustration.svg';
 
-import { FileSelectFilter } from 'src/modules/Common/Components/FileSelectFilter/FileSelectFilter';
+import { AutoMLModelSelectFilter } from 'src/modules/Process/Components/AutoMLModelSelectFilter';
+import { AutoMLModel } from 'src/api/autoML/types';
 import {
   ColorBox,
   NameContainer,
@@ -30,8 +31,8 @@ import {
 export const description = () => {
   return (
     <Detail>
-      Upload pre-trained model file to CDF and use this model to run predictions
-      on images in CDF.
+      Use the generated computer vision models to run predictions on images in
+      CDF.
     </Detail>
   );
 };
@@ -50,12 +51,8 @@ export const badge = (modelName: string, hideText: boolean = false) => {
   );
 };
 
-export const content = (modelIndex: number) => {
+export const content = (modelIndex: number, customModels?: AutoMLModel[]) => {
   const dispatch = useDispatch();
-  const modelName = useSelector(
-    ({ processSlice }: RootState) =>
-      processSlice.availableDetectionModels[modelIndex].modelName
-  );
   const params: ParamsCustomModel = useSelector(
     ({ processSlice }: RootState) =>
       processSlice.availableDetectionModels[modelIndex]
@@ -67,22 +64,19 @@ export const content = (modelIndex: number) => {
     params.threshold >= 0.4 && params.threshold <= 1.0
   );
 
-  // Model configuration handlers
-  const onModelNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setCustomModelName({ modelIndex, modelName: e.target.value }));
-  };
-
-  const onModelFileIdChange = async (fileIds?: number[]) => {
-    if (fileIds) {
-      const modeFile = { fileId: fileIds[0] }; // isMulti is false, so use first and only element
+  const onModelJobChange = async (jobId?: number, name?: string) => {
+    if (jobId) {
       const newParams = {
         modelIndex,
         params: {
-          modelFile: modeFile,
+          modelJobId: jobId,
           threshold: params.threshold,
         },
       };
       dispatch(setUnsavedDetectionModelSettings(newParams));
+    }
+    if (name) {
+      dispatch(setCustomModelName({ modelIndex, modelName: name }));
     }
   };
 
@@ -91,7 +85,7 @@ export const content = (modelIndex: number) => {
       const newParams = {
         modelIndex,
         params: {
-          modelFile: params.modelFile,
+          modelJobId: params.modelJobId,
           threshold: value,
         },
       };
@@ -116,43 +110,22 @@ export const content = (modelIndex: number) => {
                 </tr>
                 <tr>
                   <td>
-                    <Detail>Model name</Detail>
+                    <Detail>Model</Detail>
                     <PrimaryTooltip
                       tooltipTitle=""
-                      tooltipText="Custom model name"
+                      tooltipText="Select which model to perform prediction with"
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
                     </PrimaryTooltip>
                   </td>
                   <th>
-                    <Input
-                      type="text"
-                      placeholder="Enter custom model name"
-                      style={{ width: '100%' }}
-                      onChange={onModelNameChange}
-                      value={modelName}
-                    />
-                  </th>
-                </tr>
-                <tr>
-                  <td>
-                    <Detail>Model file*</Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="Model filename (.tflite)"
-                    >
-                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
-                  </td>
-                  <th>
-                    <FileSelectFilter
+                    <AutoMLModelSelectFilter
                       closeMenuOnSelect
-                      fileExtension=".tflite"
-                      placeholder="Search model file"
-                      onFileSelected={onModelFileIdChange}
-                      selectedFiles={
-                        params.modelFile ? [params.modelFile.fileId] : []
-                      }
+                      isMulti={false}
+                      placeholder="Search model job"
+                      onJobSelected={onModelJobChange}
+                      models={customModels}
+                      selectedModelId={params.modelJobId}
                     />
                   </th>
                 </tr>

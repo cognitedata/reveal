@@ -151,9 +151,7 @@ export interface ParamsObjectDetection {
 }
 
 export interface ParamsCustomModel {
-  modelFile?: {
-    fileId: number;
-  };
+  modelJobId?: number;
   threshold: number;
 }
 

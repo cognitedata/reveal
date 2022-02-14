@@ -71,7 +71,7 @@ const initialDetectionModelParameters = {
     threshold: 0.8,
   },
   customModel: {
-    modelFile: undefined,
+    modelJobId: undefined,
     threshold: 0.8,
   },
 };
