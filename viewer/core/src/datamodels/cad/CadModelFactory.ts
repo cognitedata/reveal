@@ -78,8 +78,8 @@ export class CadModelFactory {
   }
 
   dispose(): void {
-    this._v8SectorRepository?.clear();
-    this._gltfSectorRepository?.clear();
+    this._v8SectorRepository?.clearCache();
+    this._gltfSectorRepository?.clearCache();
   }
 }
 

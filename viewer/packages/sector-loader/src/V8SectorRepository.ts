@@ -48,7 +48,11 @@ export class V8SectorRepository implements SectorRepository {
     this._ctmFileCache = new MostFrequentlyUsedCache(10);
   }
 
-  clear(): void {
+  setCacheSize(sectorCount: number): void {
+    this._consumedSectorCache.resize(sectorCount);
+  }
+
+  clearCache(): void {
     this._consumedSectorCache.clear();
     this._ctmFileCache.clear();
   }
