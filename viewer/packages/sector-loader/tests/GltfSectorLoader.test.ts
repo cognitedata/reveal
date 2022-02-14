@@ -26,10 +26,11 @@ describe(GltfSectorLoader.name, () => {
     loader = new GltfSectorLoader(binMock.object(), materialManager);
   });
 
-  test('loadSector returns consumed sector with right modelIdentifier', async () => {
+  test('loadSector returns consumed sector with right id and modelIdentifier', async () => {
     const consumedSector = await loader.loadSector(wantedSectorMock.object());
 
     expect(consumedSector.modelIdentifier).toBe(modelIdentifier);
+    expect(consumedSector.metadata.id).toBe(wantedSectorMock.object().metadata.id);
   });
 
   test('loadSector returns sector with geometryBatchingQueue that contains all geometry types', async () => {
