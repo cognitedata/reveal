@@ -67,8 +67,15 @@ export interface RevealCameraControls extends THREE.EventDispatcher {
 export interface CameraManager {
   getCamera(): THREE.PerspectiveCamera;
 
+  /**
+   * Sets camera rotation.
+   * @param rotation 
+   */
   setCameraRotation(rotation:THREE.Quaternion): void;
-
+  /**
+   * @obvious 
+   * @returns camera rotation as a quaternion
+   * */
   getCameraRotation(): THREE.Quaternion;
 
   /**
@@ -88,9 +95,9 @@ export interface CameraManager {
    */
   setCameraTarget: (target: THREE.Vector3) => void;
   /**
-     * @obvious
-     * @returns Camera's target in world space.
-     */
+  * @obvious
+  * @returns Camera's target in world space.
+  */
   getCameraTarget: () => THREE.Vector3;
   
   /**

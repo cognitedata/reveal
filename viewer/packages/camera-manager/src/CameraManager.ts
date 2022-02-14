@@ -219,23 +219,19 @@ export class DefaultCameraManager implements CameraManager {
 
     tempCam.setRotationFromQuaternion(rotation);
     tempCam.updateMatrix();
-    const upVec1 = new THREE.Vector3(0,1,0).applyQuaternion(rotation)
-    
+
     const newTarget = tempCam
     .getWorldDirection(new THREE.Vector3())
     .normalize()
     .multiplyScalar(distToTarget.length())
     .add(tempCam.position);
+    
+    this._controls.setState(tempCam.position, newTarget);
+    tempCam.position.copy(this._camera.position);
     tempCam.lookAt(newTarget);
-    this.setCameraTarget(newTarget);
-    const upVec2 = new THREE.Vector3(0,1,0).applyQuaternion(tempCam.quaternion);
+    
     const appliedQuaternion = tempCam.quaternion.clone();
     this._controls.cameraAdditionalRotation.copy(rotation.clone().multiply(appliedQuaternion.invert()));
-  
-    // const roll = upVec1.angleTo(upVec2);
-    // this._controls.cameraRoll = roll;
-    // console.log('roll:', THREE.MathUtils.radToDeg(roll));
-    
   }
 
   getCameraTarget(): THREE.Vector3 {
@@ -249,6 +245,7 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isDisposed) {
       return;
     }
+    this._controls.cameraAdditionalRotation.copy(new THREE.Quaternion());
 
     const animationTime = animated ? DefaultCameraManager.DefaultAnimationDuration : 0;
     this.moveCameraTargetTo(target, animationTime);

@@ -235,7 +235,6 @@ export class ComboControls extends EventDispatcher {
 
   public setState = (position: Vector3, target: Vector3) => {
     const offset = position.clone().sub(target);
-    console.log('r:', offset.length(), 'dt:', target.clone().sub(this._target).length());
     this._targetEnd.copy(target);
     this._sphericalEnd.setFromVector3(offset);
     this._target.copy(this._targetEnd);
@@ -243,15 +242,10 @@ export class ComboControls extends EventDispatcher {
     this._spherical.copy(this._sphericalEnd);
     this.update(1000 / this._targetFPS);
     this.triggerCameraChangeEvent();
-    console.log('posDelta:', position.distanceTo(this._camera.position));
   };
 
   get cameraAdditionalRotation(): Quaternion {
     return this._additionalRotation;
-  }
-
-  set cameraRoll(roll: number) {
-    this._cameraRoll = roll;
   }
 
   public setViewTarget = (target: Vector3) => {
