@@ -32,10 +32,12 @@ export interface MemoryRequestCacheOptions {
 }
 
 export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
-  private readonly _maxElementsInCache: number;
+  private _maxElementsInCache: number;
   private readonly _data: Map<Key, TimestampedContainer<Data>>;
-  private readonly _defaultCleanupCount: number;
+  private _defaultCleanupCount: number;
   private readonly _removeCallback: ((value: Data) => void) | undefined;
+
+  private static readonly CLEANUP_COUNT_TO_CAPACITY_RATIO = 1.0 / 5.0;
 
   constructor(
     maxElementsInCache: number = 50,
@@ -103,6 +105,15 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
       } else {
         return;
       }
+    }
+  }
+
+  resize(cacheSize: number): void {
+    this._maxElementsInCache = cacheSize;
+    this._defaultCleanupCount = Math.floor(cacheSize * MemoryRequestCache.CLEANUP_COUNT_TO_CAPACITY_RATIO);
+
+    if (this.isFull()) {
+      this.cleanCache(this._data.size - this._maxElementsInCache);
     }
   }
 
