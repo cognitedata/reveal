@@ -21,9 +21,10 @@ describe('CdfModelOutputsProvider', () => {
 
     const client = new CogniteClient({
       appId: 'reveal-CdfModelDataClient-test',
-      baseUrl: 'http://localhost'
+      baseUrl: 'https://localhost',
+      project: 'unittest',
+      getToken: async () => 'dummy'
     });
-    await client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
 
     provider = new CdfModelOutputsProvider(client);
   });

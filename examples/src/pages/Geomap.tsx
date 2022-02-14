@@ -4,7 +4,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { createSDKFromEnvironment } from '../utils/example-helpers';
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
@@ -65,10 +65,13 @@ export function Geomap() {
         }
       };
 
-      // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+      let client;
       if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.geomap', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.geomap',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
