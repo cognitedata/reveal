@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "bazel build :pid-tools",
-    "test": "../../node_modules/.bin/jest",
+    "test": "../../node_modules/.bin/jest --no-watchman",
     "test:watch": "yarn test --watchAll",
     "test:bazel": "bazel test :jest_test",
     "test:bazel-run": "ibazel run :jest --",

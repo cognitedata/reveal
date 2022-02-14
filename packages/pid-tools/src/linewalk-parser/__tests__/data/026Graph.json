@@ -1,0 +1,76 @@
+{
+  "documentMetadata": {
+    "type": "P&ID",
+    "name": "026.pdf",
+    "unit": "G1",
+    "documentNumber": 26
+  },
+  "viewBox": {
+    "x": 0,
+    "y": 0,
+    "width": 1632,
+    "height": 1056
+  },
+  "symbols": [
+    {
+      "id": "f1",
+      "symbolType": "File connection",
+      "description": "right",
+      "svgRepresentations": [
+        {
+          "boundingBox": {
+            "x": 1475.0400390625,
+            "y": 727.6799926757812,
+            "width": 95.0399169921875,
+            "height": 17.9200439453125
+          },
+          "svgPaths": []
+        }
+      ],
+      "orientation": "Right"
+    }
+  ],
+  "lines": [],
+  "symbolInstances": [
+    {
+      "type": "File connection",
+      "symbolId": "f1",
+      "pathIds": ["path1"],
+      "scale": 1,
+      "labelIds": ["tspan1"],
+      "lineNumbers": ["L1"],
+      "orientation": "Right",
+      "position": "A1",
+      "fileDirection": "In",
+      "documentNumber": 25,
+      "toPosition": "A1",
+      "id": "path1",
+      "svgRepresentation": {
+        "boundingBox": {
+          "x": 40.32003402709961,
+          "y": 400.8000183105469,
+          "width": 91.84000015258789,
+          "height": 17.1199951171875
+        },
+        "svgPaths": []
+      },
+      "labels": [
+        {
+          "id": "tspan15104",
+          "text": "1",
+          "boundingBox": {
+            "x": 17.440034866333008,
+            "y": 405.4674072265625,
+            "width": 7.134757995605469,
+            "height": 7.12701416015625
+          }
+        }
+      ]
+    }
+  ],
+  "connections": [],
+  "pathReplacements": [],
+  "lineNumbers": [],
+  "equipmentTags": [],
+  "labels": []
+}

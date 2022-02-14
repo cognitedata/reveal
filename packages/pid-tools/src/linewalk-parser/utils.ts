@@ -5,7 +5,7 @@ import {
   DiagramLineInstanceOutputFormat,
   DiagramEquipmentTagInstanceOutputFormat,
 } from '../types';
-import { isLineConnection } from '../utils';
+import { isFileConnection, isLineConnection } from '../utils/type';
 
 import {
   ParsedDocument,
@@ -15,7 +15,7 @@ import {
   DocumentLink,
 } from './types';
 import { symbolTypeMap } from './constants';
-import { findIsoLink } from './links';
+import { findPidLink, findIsoLink } from './links';
 
 const diagramInstanceToAnnotation = (
   instance: DiagramSymbolInstanceOutputFormat | DiagramLineInstanceOutputFormat
@@ -57,7 +57,12 @@ const parseDocument = (
   });
 
   symbolInstances?.forEach((symbol) => {
-    if (isLineConnection(symbol)) {
+    if (isFileConnection(symbol)) {
+      const link = findPidLink(symbol, graph, allDocuments);
+      if (link !== undefined) {
+        linking.push(link);
+      }
+    } else if (isLineConnection(symbol)) {
       const link = findIsoLink(symbol, graph, allDocuments);
       if (link !== undefined) {
         linking.push(link);
@@ -123,7 +128,7 @@ export const computeLines = async (
   });
 
   lineNumbers.forEach((lineNumber) => {
-    const parsedDocumentsForLine: ParsedDocumentsForLine = {
+    const parsedDocumentsForLine = {
       externalId: `DOCUMENTS_FOR_LINE_V${version}_L${lineNumber}.json`,
       line: lineNumber,
       parsedDocuments: graphsPerLine.get(lineNumber) || [],

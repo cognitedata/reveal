@@ -20,6 +20,13 @@ SOURCES = glob(
 
 TESTS = glob(["src/**/*.spec.ts"])
 
+TEST_DEPENDENCIES = glob([
+    "src/*.json",
+    "src/**/*.json",
+    "src/*.svg",
+    "src/**/*.svg",
+])
+
 # Generates the below helpers.
 #
 # Usage:
@@ -37,12 +44,14 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//lodash",
     "@npm//svg-parser",
     "@npm//svg-path-parser",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/lodash",
     "@npm//@types/svg-parser",
     "@npm//@types/svg-path-parser",
 ]
@@ -51,22 +60,17 @@ TYPE_DEPENDENCIES = [
 DEV_DEPENDENCIES = [
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
-    "@npm//typescript",
 ]
-
-TEST_DEPENDENCIES = glob([
-    "src/*.json",
-    "src/**/*.json",
-    "src/*.svg",
-    "src/**/*.svg",
-])
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "constants": "dist/constants",
     "findLinesAndConnections": "dist/findLinesAndConnections",
     "geometry": "dist/geometry",
+    "graph": "dist/graph",
+    "graphMatching": "dist/graphMatching",
     "index": "dist/index",
+    "linewalk-parser": "dist/linewalk-parser",
     "matcher": "dist/matcher",
     "pid": "dist/pid",
     "types": "dist/types",

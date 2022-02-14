@@ -4,6 +4,7 @@
   "compilerOptions": {
     "rootDirs": ["src"],
     "baseUrl": "src",
+    "esModuleInterop": true,
     "lib": ["ES2019.Array", "DOM", "DOM.Iterable"]
   }
 }
