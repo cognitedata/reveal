@@ -9,5 +9,6 @@ export type SectorId = number;
 
 export interface SectorRepository {
   loadSector(sector: WantedSector): Promise<ConsumedSector>;
-  clear(): void;
+  setCacheSize(sectorCount: number): void;
+  clearCache(): void;
 }
