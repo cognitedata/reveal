@@ -21,7 +21,9 @@ export default function Actions({ id, name }: { id: number; name: string }) {
           width: 300,
           content: (
             <div style={{ border: '1px solid grey', margin: 5, padding: 5 }}>
-              <Text copyable={{ text: `${data[0].value || ''}` }}>
+              <Text
+                copyable={{ text: `${data[0].value || ''}`, tooltips: false }}
+              >
                 {data[0].value}
               </Text>
             </div>
