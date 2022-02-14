@@ -359,7 +359,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const forward = targetAxis.clone();
 
-    const fromRotation = cameraManager.getCameraRotation();
+    const fromRotation = cameraManager.getCameraRotation().clone();
     const toRotation = new THREE.Quaternion().setFromRotationMatrix(
       new THREE.Matrix4().makeBasis(targetUpAxis.clone().cross(forward), targetUpAxis, forward)
     );
