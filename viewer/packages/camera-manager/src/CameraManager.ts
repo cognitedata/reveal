@@ -45,8 +45,10 @@ export class DefaultCameraManager implements CameraManager {
     changeCameraTargetOnClick: false
   };
 
-  private _cameraControlsOptions: Required<CameraControlsOptions> = { ...DefaultCameraManager.DefaultCameraControlsOptions };
-  private _currentBoundingBox: THREE.Box3 = new THREE.Box3();
+  private _cameraControlsOptions: Required<CameraControlsOptions> = {
+    ...DefaultCameraManager.DefaultCameraControlsOptions
+  };
+  private readonly _currentBoundingBox: THREE.Box3 = new THREE.Box3();
   /**
    * When false, camera near and far planes will not be updated automatically (defaults to true).
    * This can be useful when you have custom content in the 3D view and need to better
@@ -97,7 +99,7 @@ export class DefaultCameraManager implements CameraManager {
   constructor(
     domElement: HTMLElement,
     raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>,
-    camera?: THREE.PerspectiveCamera,
+    camera?: THREE.PerspectiveCamera
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     // TODO savokr 28-10-2021: Consider removing default camera position initialization
@@ -155,7 +157,7 @@ export class DefaultCameraManager implements CameraManager {
     this.moveCameraTo(position, target, duration);
   }
 
-   /**
+  /**
    * Sets whether camera controls through mouse, touch and keyboard are enabled.
    * This can be useful to e.g. temporarily disable navigation when manipulating other
    * objects in the scene or when implementing a "cinematic" viewer.
@@ -170,7 +172,7 @@ export class DefaultCameraManager implements CameraManager {
   get cameraControlsEnabled(): boolean {
     return this._controls.enabled;
   }
-  
+
   set keyboardNavigationEnabled(enabled: boolean) {
     this._controls.enableKeyboardNavigation = enabled;
   }
@@ -182,14 +184,14 @@ export class DefaultCameraManager implements CameraManager {
   /**
    * Allows to move camera with WASD or arrows keys.
    */
-   enableKeyboardNavigation(): void {
+  enableKeyboardNavigation(): void {
     this.keyboardNavigationEnabled = true;
   }
 
   /**z
    * Disables camera movement by pressing WASD or arrows keys.
    */
-   disableKeyboardNavigation(): void {
+  disableKeyboardNavigation(): void {
     this.keyboardNavigationEnabled = false;
   }
 
@@ -211,16 +213,17 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   setCameraRotation(rotation: THREE.Quaternion): void {
-    
     const distToTarget = this.getCameraTarget().sub(this._camera.position);
     const tempCam = this._camera.clone();
-    
+
     tempCam.setRotationFromQuaternion(rotation);
-    
-    const newTarget = tempCam.getWorldDirection(new THREE.Vector3()).normalize()
-    .multiplyScalar(distToTarget.length()).add(tempCam.position);
+
+    const newTarget = tempCam
+      .getWorldDirection(new THREE.Vector3())
+      .normalize()
+      .multiplyScalar(distToTarget.length())
+      .add(tempCam.position);
     this.setCameraTarget(newTarget);
-    
   }
 
   getCameraTarget(): THREE.Vector3 {
@@ -260,7 +263,6 @@ export class DefaultCameraManager implements CameraManager {
     }
     this._controls.setState(position, this._controls.getState().target);
   }
- 
 
   getCameraControlsState(): ControlsState {
     return this._controls.getState();
@@ -449,7 +451,10 @@ export class DefaultCameraManager implements CameraManager {
       // This is also used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside
-      this._controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), DefaultCameraManager.DefaultMinDistance);
+      this._controls.minDistance = Math.min(
+        Math.max(diagonal * 0.02, 0.1 * near),
+        DefaultCameraManager.DefaultMinDistance
+      );
     }
   }
 
@@ -463,7 +468,7 @@ export class DefaultCameraManager implements CameraManager {
       this._nearAndFarNeedsUpdate = false;
       this._currentBoundingBox.copy(boundingBox);
     }
-    
+
     this._controls.update(deltaTime);
   }
 
