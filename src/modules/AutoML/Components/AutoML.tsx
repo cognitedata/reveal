@@ -1,15 +1,23 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { Divider } from '@cognite/data-exploration';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import styled from 'styled-components';
 import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
+import { AutoMLModel } from 'src/api/autoML/types';
 import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';
 import { AutoMLModelList } from './AutoMLModelList';
 
 const AutoML = () => {
   const [selectedModelId, setSelectedModelId] = useState<number>();
   const [downloadingModel, setDownloadingModel] = useState<boolean>(false);
+
+  const [models, setModels] = useState<AutoMLModel[] | undefined>();
+
+  const getModels = async () => {
+    const items = await AutoMLAPI.listAutoMLModels();
+    setModels(items);
+  };
 
   const handleDownload = async () => {
     if (selectedModelId) {
@@ -30,15 +38,34 @@ const AutoML = () => {
     }
   };
 
+  const handleOnDelete = async () => {
+    if (selectedModelId) {
+      setSelectedModelId(undefined);
+      setModels(models?.filter((item) => item.jobId !== selectedModelId));
+      const res = await AutoMLAPI.deleteAutoMLJob(selectedModelId);
+      // revert, if request fails
+      if (res === undefined) {
+        setSelectedModelId(selectedModelId);
+        getModels();
+      }
+    }
+  };
+
   const onRowClick = (id: number) => {
     setSelectedModelId(id);
   };
+
+  useEffect(() => {
+    getModels();
+  }, []);
+
   return (
     <>
       <StatusToolBar current="Computer Vision Models" />
       <Container>
         <Left>
           <AutoMLModelList
+            models={models}
             onRowClick={onRowClick}
             selectedModelId={selectedModelId}
           />
@@ -49,6 +76,7 @@ const AutoML = () => {
             selectedModelId={selectedModelId}
             handleDownload={handleDownload}
             downloadingModel={downloadingModel}
+            handleOnDelete={handleOnDelete}
           />
         </Right>
       </Container>

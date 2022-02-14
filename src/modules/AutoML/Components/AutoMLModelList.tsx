@@ -1,26 +1,17 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @cognite/no-number-z-index */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
 import { AutoMLModel } from 'src/api/autoML/types';
 import { AutoMLModelListItem } from './AutoMLModelListItem';
 
 export const AutoMLModelList = (props: {
+  models?: AutoMLModel[];
   onRowClick: (id: number) => void;
   selectedModelId?: number;
 }) => {
-  const [models, setModels] = useState<AutoMLModel[] | undefined>();
-
-  const getModels = async () => {
-    const items = await AutoMLAPI.listAutoMLModels();
-    setModels(items);
-  };
-
-  useEffect(() => {
-    getModels();
-  }, []);
+  const { models } = props;
 
   return (
     <Container>

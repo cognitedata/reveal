@@ -1,17 +1,19 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @cognite/no-number-z-index */
 import React, { useEffect, useState } from 'react';
-import { Button, Icon, Title } from '@cognite/cogs.js';
+import { Button, Icon, Popconfirm, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
 import { AutoMLTrainingJob } from 'src/api/autoML/types';
 import { AutoMLModelNameBadge } from 'src/modules/AutoML/Components/AutoMLModelNameBadge';
+import { useUserCapabilities } from 'src/hooks/useUserCapabilities';
 import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';
 
 export const AutoMLModelPage = (props: {
   selectedModelId?: number;
   downloadingModel?: boolean;
   handleDownload: () => void;
+  handleOnDelete: () => void;
 }) => {
   const [model, setModel] = useState<AutoMLTrainingJob>();
 
@@ -25,6 +27,14 @@ export const AutoMLModelPage = (props: {
   useEffect(() => {
     getModel();
   }, [props.selectedModelId]);
+
+  const { data: hasCapabilities, isFetched } = useUserCapabilities([
+    {
+      acl: 'visionModelAcl',
+      actions: ['WRITE'],
+    },
+  ]);
+  const deleteDisabled = props.downloadingModel || !hasCapabilities;
 
   return (
     <>
@@ -42,6 +52,21 @@ export const AutoMLModelPage = (props: {
               >
                 Download model
               </Button>
+              <Popconfirm
+                icon="WarningFilled"
+                placement="bottom-end"
+                onConfirm={props.handleOnDelete}
+                content="Are you sure you want to permanently delete this model?"
+              >
+                <Button
+                  type="ghost-danger"
+                  icon="Trash"
+                  disabled={deleteDisabled}
+                  loading={!isFetched}
+                >
+                  Delete model
+                </Button>
+              </Popconfirm>
             </ActionContainer>
           </Header>
           <AutoMLMetricsOverview model={model} />

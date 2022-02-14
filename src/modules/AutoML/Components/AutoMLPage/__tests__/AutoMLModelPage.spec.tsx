@@ -13,6 +13,12 @@ jest.mock('src/api/autoML/AutoMLAPI', () => ({
   },
 }));
 
+jest.mock('src/hooks/useUserCapabilities', () => ({
+  useUserCapabilities: () => {
+    return { data: true, isFetched: true };
+  },
+}));
+
 describe('AutoMLModelPage', () => {
   const TestComponent = (props: any) => {
     return <AutoMLModelPage {...props} />;
