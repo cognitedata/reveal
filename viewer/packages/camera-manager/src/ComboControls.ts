@@ -82,6 +82,7 @@ export class ComboControls extends EventDispatcher {
   public maxDeltaDownscaleCoefficient = 1;
 
   private _temporarilyDisableDamping: boolean = false;
+  private _cameraRoll: number = 0;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
   private _firstPersonMode: boolean = false;
   private readonly _reusableCamera: PerspectiveCamera | OrthographicCamera;
@@ -214,6 +215,7 @@ export class ComboControls extends EventDispatcher {
     _spherical.makeSafe();
     _camera.position.setFromSpherical(_spherical).add(_target);
     _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
+    _camera.rotateZ(this._cameraRoll);
     //_camera.applyQuaternion(this._rollRotation.invert());
     
     if (changed) {
@@ -242,10 +244,15 @@ export class ComboControls extends EventDispatcher {
     this._spherical.copy(this._sphericalEnd);
     this.update(1000 / this._targetFPS);
     this.triggerCameraChangeEvent();
+    console.log('posDelta:', position.distanceTo(this._camera.position));
   };
 
   get cameraAdditionalRotation(): Quaternion {
     return this._rollRotation;
+  }
+
+  set cameraRoll(roll: number) {
+    this._cameraRoll = roll;
   }
 
   public setViewTarget = (target: Vector3) => {

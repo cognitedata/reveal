@@ -218,15 +218,24 @@ export class DefaultCameraManager implements CameraManager {
     const tempCam = this._camera.clone();
 
     tempCam.setRotationFromQuaternion(rotation);
-
+    tempCam.updateMatrix();
+    const upVec1 = new THREE.Vector3(0,1,0).applyQuaternion(rotation)
+    
     const newTarget = tempCam
-      .getWorldDirection(new THREE.Vector3())
-      .normalize()
-      .multiplyScalar(distToTarget.length())
-      .add(tempCam.position);
+    .getWorldDirection(new THREE.Vector3())
+    .normalize()
+    .multiplyScalar(distToTarget.length())
+    .add(tempCam.position);
+    tempCam.lookAt(newTarget);
     this.setCameraTarget(newTarget);
-    const appliedQuaternion = this._camera.quaternion.clone();
-    this._controls.cameraAdditionalRotation.copy(appliedQuaternion.clone().multiply(rotation.invert()));
+    const upVec2 = new THREE.Vector3(0,1,0).applyQuaternion(tempCam.quaternion);
+    //const appliedQuaternion = this._camera.quaternion.clone();
+    //this._controls.cameraAdditionalRotation.copy(appliedQuaternion.clone().multiply(rotation.invert()));
+  
+    const roll = -Math.acos(upVec1.dot(upVec2));
+    this._controls.cameraRoll = roll;
+    console.log('roll:', THREE.MathUtils.radToDeg(roll));
+    
   }
 
   getCameraTarget(): THREE.Vector3 {
@@ -264,6 +273,7 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isDisposed) {
       return;
     }
+
     this._controls.setState(position, this._controls.getState().target);
   }
 
