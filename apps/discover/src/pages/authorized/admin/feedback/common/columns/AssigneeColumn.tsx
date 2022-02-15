@@ -1,11 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useUserProfileQuery } from 'services/user/useUserQuery';
+
 import { Dropdown, Menu, Label } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 
 import { NoPropagationWrapper } from 'components/buttons/NoPropagationWrapper';
-import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 
 interface Props {

@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import isUndefined from 'lodash/isUndefined';
 import sortBy from 'lodash/sortBy';
+import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
@@ -12,7 +13,6 @@ import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';

@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import { FeatureCollection } from '@turf/helpers';
 import isUndefined from 'lodash/isUndefined';
+import { geospatialV1 } from 'services/geospatial/geospatialV1';
+import { useJsonHeaders } from 'services/service';
 import {
   CancellablePromise,
   convertToCancellablePromise,
@@ -14,8 +16,6 @@ import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
 
-import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
-import { useJsonHeaders } from 'modules/api/service';
 import { setSources, setAssets } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
 import { mapService } from 'modules/map/service';

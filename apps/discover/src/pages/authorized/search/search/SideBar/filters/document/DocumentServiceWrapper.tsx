@@ -1,5 +1,10 @@
 import React from 'react';
 
+import {
+  DocumentCategoriesFacets,
+  DocumentError,
+} from 'services/documents/types';
+import { useDocumentCategoryQuery } from 'services/documents/useDocumentQuery';
 import styled from 'styled-components/macro';
 
 import { DocumentCategories } from '@cognite/discover-api-types';
@@ -7,11 +12,6 @@ import { reportException } from '@cognite/react-errors';
 
 import Skeleton from 'components/skeleton';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import {
-  DocumentCategoriesFacets,
-  DocumentError,
-} from 'modules/api/documents/types';
-import { useDocumentCategoryQuery } from 'modules/api/documents/useDocumentQuery';
 import { useDocumentQueryFacets } from 'modules/documentSearch/hooks/useDocumentQueryFacets';
 import { sizes } from 'styles/layout';
 

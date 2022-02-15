@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import html2canvas from 'html2canvas';
+import {
+  sendGeneralFeedback,
+  useFeedbackCreateMutate,
+} from 'services/feedback';
 import { getElementById } from 'utils/general.helper';
 
 import { Modal } from 'components/modal';
 import { showErrorMessage, UndoToast } from 'components/toast';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import {
-  sendGeneralFeedback,
-  useFeedbackCreateMutate,
-} from 'modules/api/feedback';
 
 import { GeneralFeedbackContent } from './GeneralFeedbackContent';
 

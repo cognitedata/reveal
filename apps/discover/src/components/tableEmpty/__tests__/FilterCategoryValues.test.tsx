@@ -1,16 +1,16 @@
 import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
+import { useSetWellsFilters } from 'services/savedSearches/hooks/useClearWellsFilters';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { useSetWellsFilters } from 'modules/api/savedSearches/hooks/useClearWellsFilters';
 import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';
 import { defaultWellsConfig } from 'tenants/config';
 
 import { FilterCategoryValues } from '../FilterCategoryValues';
 
-jest.mock('modules/api/savedSearches/hooks/useClearWellsFilters', () => ({
+jest.mock('services/savedSearches/hooks/useClearWellsFilters', () => ({
   useSetWellsFilters: jest.fn(),
 }));
 

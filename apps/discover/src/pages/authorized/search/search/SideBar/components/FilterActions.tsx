@@ -1,9 +1,9 @@
 import React from 'react';
 
+import { useStatsGetQuery } from 'services/stats/useStatsQuery';
 import styled from 'styled-components/macro';
 import { formatBigNumbersWithSuffix } from 'utils/number';
 
-import { useStatsGetQuery } from 'modules/api/stats/useStatsQuery';
 import { CategoryTypes } from 'modules/sidebar/types';
 import { FlexAlignItems } from 'styles/layout';
 

@@ -4,6 +4,11 @@ import { batch, useDispatch } from 'react-redux';
 import compact from 'lodash/compact';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
+import {
+  useSavedSearchSort,
+  useSavedSearchSortClear,
+} from 'services/savedSearches/hooks/useSavedSearchSort';
+import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearchQuery';
 import { getDateOrDefaultText } from 'utils/date';
 
 import { Icon, AllIconTypes } from '@cognite/cogs.js';
@@ -17,11 +22,6 @@ import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
 import { useDocumentsForTable } from 'hooks/useDocumentsForTable';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import {
-  useSavedSearchSort,
-  useSavedSearchSortClear,
-} from 'modules/api/savedSearches/hooks/useSavedSearchSort';
-import { useQuerySavedSearchCurrent } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';

@@ -6,13 +6,13 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pickBy from 'lodash/pickBy';
+import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
 
 import { Button } from '@cognite/cogs.js';
 
 import { CloseButton, ViewButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
 import { useDeepMemo } from 'hooks/useDeep';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';

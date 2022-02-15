@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
+import { useQueryDocumentLabels } from 'services/documents/useDocumentQuery';
+
 import { EMPTY_ARRAY } from 'constants/empty';
-import { useQueryDocumentLabels } from 'modules/api/documents/useDocumentQuery';
 import { DocumentLabel } from 'modules/documentSearch/types';
 
 import { getFilteredLabels } from './utils/getFilteredLabels';

@@ -49,47 +49,6 @@ const layers: Layers = {
       },
     ],
   },
-  fields: {
-    local: `fields.json`,
-    name: 'Fields',
-    color: 'rgba(0, 172, 79, 0.8)',
-    defaultOn: true,
-    asset: {
-      filter: ['Operator', 'Aker BP ASA'],
-      displayField: 'Field',
-    },
-    searchable: 'Field',
-
-    mapLayers: [
-      {
-        id: 'fields',
-        source: 'fields',
-        type: 'fill',
-        layout: {},
-        paint: {
-          'fill-outline-color': '#000',
-          'fill-color': [
-            'match',
-            ['get', 'Operator'],
-            'Aker BP ASA',
-            'rgba(0, 172, 79, 0.8)',
-            'rgba(180, 183, 121, 0.8)',
-          ],
-        },
-      },
-      {
-        id: 'fieldsLabel',
-        source: 'fields',
-        type: 'symbol',
-        minzoom: 6,
-        layout: {
-          'text-field': '{Field}',
-          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-          'text-size': 12,
-        },
-      },
-    ],
-  },
 };
 
 export default layers;

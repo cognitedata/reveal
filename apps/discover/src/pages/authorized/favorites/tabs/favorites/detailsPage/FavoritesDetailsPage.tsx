@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { zipAndDownloadDocumentsByIds } from 'services/documentPreview/utils';
+import { useFavoritesGetOneQuery } from 'services/favorites/useFavoritesQuery';
 import styled from 'styled-components/macro';
 
 import { SetCommentTarget } from '@cognite/react-comments';
 
 import FeedbackPanel from 'components/modals/entity-feedback';
 import { COMMENT_NAMESPACE } from 'constants/comments';
-import { useFavoritesGetOneQuery } from 'modules/api/favorites/useFavoritesQuery';
-import { zipAndDownloadDocumentsByIds } from 'modules/documentPreview/utils';
 import { FavoriteDetailsContent } from 'pages/authorized/favorites/tabs/favorites/detailsPage/FavoriteDetailsContent';
 import { FlexColumn, PageBottomPaddingWrapper } from 'styles/layout';
 

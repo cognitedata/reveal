@@ -31,8 +31,8 @@ import {
 } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 
 import { useProjectConfigByKey } from '../../../../../hooks/useProjectConfig';
-import { useSavedSearch } from '../../../../../modules/api/savedSearches/hooks';
 import { useMapDrawMode } from '../../../../../modules/map/selectors';
+import { useSavedSearch } from '../../../../../services/savedSearches/hooks';
 import {
   DOCUMENT_MARKER,
   GROUPED_CLUSTER_LAYER_ID,

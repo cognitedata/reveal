@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-
-import { useSearchHistoryListQuery } from 'modules/api/searchHistory/useSearchHistoryQuery';
+import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
 
 import { SearchHistoryOptionType } from '../SearchHistory';
 

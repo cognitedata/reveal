@@ -2,11 +2,10 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import debounce from 'lodash/debounce';
+import { useJsonHeaders } from 'services/service';
+import { userManagement } from 'services/userManagementService/endpoints';
 
 import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
-
-import { useJsonHeaders } from 'modules/api/service';
-import { userManagement } from 'modules/userManagementService/endpoints';
 
 import { showErrorMessage } from '../toast';
 

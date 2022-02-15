@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { Switch, Redirect, Route } from 'react-router-dom';
 
+import { useUserSyncQuery } from 'services/user/useUserQuery';
+
 import { ToastContainer } from '@cognite/cogs.js';
 import { Logout } from '@cognite/react-container';
 
 import { Page } from 'components/page';
 import navigation from 'constants/navigation';
 import { usePageSettings } from 'hooks/usePageSettings';
-import { useUserSyncQuery } from 'modules/api/user/useUserQuery';
 import AdminPageContainer from 'pages/authorized/admin';
 import { ProjectConfig } from 'pages/authorized/admin/projectConfig';
 import { AppFrame } from 'pages/authorized/elements';

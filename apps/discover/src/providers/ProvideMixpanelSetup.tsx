@@ -1,12 +1,13 @@
 import * as React from 'react';
 
+import { useMetricsUser } from 'services/user/useMetricsUser';
+
 import { Metrics } from '@cognite/metrics';
 import { getTenantInfo, isProduction } from '@cognite/react-container';
 
 import { SIDECAR } from 'constants/app';
 import { APP_NAME } from 'constants/general';
 import reportWebVitals from 'core/reportWebVitals';
-import { useMetricsUser } from 'modules/api/user/useMetricsUser';
 
 export const ProvideMixpanelSetup: React.FC = ({ children }) => {
   const { userId, mixpanelUser } = useMetricsUser();

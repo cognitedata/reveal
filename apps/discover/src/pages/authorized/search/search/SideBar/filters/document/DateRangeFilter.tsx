@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
+import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
 import styled from 'styled-components/macro';
 import { dateToEpoch } from 'utils/date';
 
 import { Button, Range } from '@cognite/cogs.js';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
 import { useFilterAppliedFilters } from 'modules/sidebar/selectors';
 import { FlexAlignItems, sizes } from 'styles/layout';
 

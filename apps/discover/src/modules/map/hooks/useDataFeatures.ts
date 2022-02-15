@@ -6,9 +6,9 @@ import {
   GeometryCollection,
 } from '@turf/helpers';
 import includes from 'lodash/includes';
+import { useWellAllGeometryQuery } from 'services/well/useWellQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { useWellAllGeometryQuery } from 'modules/api/well/useWellQuery';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import { useSelectedDocumentIds } from 'modules/documentSearch/selectors';
 import { getDocumentGeoPoint } from 'modules/documentSearch/utils/getGeoPoint';

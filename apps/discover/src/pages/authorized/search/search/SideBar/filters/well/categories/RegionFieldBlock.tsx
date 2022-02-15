@@ -2,10 +2,10 @@ import React from 'react';
 
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
+import { useWellGroupsQuery } from 'services/well/useWellQuery';
 
 import { SegmentedControl } from '@cognite/cogs.js';
 
-import { useWellGroupsQuery } from 'modules/api/well/useWellQuery';
 import { FilterIDs } from 'modules/wellSearch/constants';
 import {
   BLOCK,

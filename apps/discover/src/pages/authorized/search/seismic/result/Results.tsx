@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 
+import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearchQuery';
+
 import EmptyState from 'components/emptyState';
 import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
 import { SAVED_SEARCHES_QUERY_KEY } from 'constants/react-query';
-import { useQuerySavedSearchCurrent } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { useSurveys } from 'modules/seismicSearch/hooks';
 
 import { ResultTable } from './ResultTable';

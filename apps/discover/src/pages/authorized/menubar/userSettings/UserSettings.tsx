@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useUpdateMyPreferences } from 'services/userManagementService/query';
+
 import { Dropdown, Title, Menu, TopBar, Icon } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
-
-import { useUpdateMyPreferences } from 'modules/userManagementService/query';
 
 import { Content, SettingsContent, SettingsHeader } from './elements';
 import { MeasurementSetting } from './settings';

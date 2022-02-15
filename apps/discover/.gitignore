@@ -48,6 +48,7 @@ cypress/videos
 .eslintcache
 
 # local test env.
+.env
 .yalc
 yalc.lock
 

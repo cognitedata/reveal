@@ -9,7 +9,6 @@ import { Icon, Menu } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
 
 import { useDeepCallback } from '../../hooks/useDeep';
-import { useFavoritesSortedByName } from '../../modules/api/favorites/useFavoritesQuery';
 import {
   setItemsToAddOnFavoriteCreation,
   showCreateFavoriteModal,
@@ -18,6 +17,7 @@ import {
   FavoriteContentWells,
   FavoriteSummary,
 } from '../../modules/favorite/types';
+import { useFavoritesSortedByName } from '../../services/favorites/useFavoritesQuery';
 import { showSuccessMessage } from '../toast';
 
 import { CREATE_NEW_SET, NOTIFICATION_MESSAGE } from './constants';

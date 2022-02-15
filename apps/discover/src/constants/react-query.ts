@@ -4,8 +4,8 @@
 
 import { CommonWellFilter } from 'modules/wellSearch/types';
 
-import { FeedbackType } from '../modules/api/feedback/types';
-import { SAVED_SEARCHES_CURRENT_KEY } from '../modules/api/savedSearches/constants';
+import { FeedbackType } from '../services/feedback/types';
+import { SAVED_SEARCHES_CURRENT_KEY } from '../services/savedSearches/constants';
 
 export const DOCUMENT_LABELS_QUERY_KEY = 'labels';
 

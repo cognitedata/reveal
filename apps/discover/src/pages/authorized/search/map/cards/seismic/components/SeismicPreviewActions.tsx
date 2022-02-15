@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { SeismicFile } from 'services/types';
+
 import { Button } from '@cognite/cogs.js';
 
-import { SeismicFile } from 'modules/api/types';
 import { useSeismicConfig } from 'modules/seismicSearch/hooks/useSeismicConfig';
 import {
   Flex,

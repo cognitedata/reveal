@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSavedSearch } from 'services/savedSearches/hooks/useSavedSearch';
+import { SavedSearchItem } from 'services/savedSearches/types';
+import {
+  useSavedSearchAddShareMutate,
+  useSavedSearchDeleteMutate,
+} from 'services/savedSearches/useSavedSearchesMutate';
+import { useQuerySavedSearchesList } from 'services/savedSearches/useSavedSearchQuery';
+import { useUserProfileQuery } from 'services/user/useUserQuery';
 import { shortDate } from 'utils/date';
 import { log } from 'utils/log';
 import { sortDates } from 'utils/sortDates';
@@ -18,14 +26,6 @@ import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 import navigation from 'constants/navigation';
 import { useSavedSearchNavigation } from 'hooks/useSavedSearchNavigation';
-import { useSavedSearch } from 'modules/api/savedSearches/hooks/useSavedSearch';
-import { SavedSearchItem } from 'modules/api/savedSearches/types';
-import {
-  useSavedSearchAddShareMutate,
-  useSavedSearchDeleteMutate,
-} from 'modules/api/savedSearches/useSavedSearchesMutate';
-import { useQuerySavedSearchesList } from 'modules/api/savedSearches/useSavedSearchQuery';
-import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
 import { FlexRow } from 'styles/layout';

@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { SavedSearchContent } from 'services/savedSearches';
+import { adaptSaveSearchContentToSchemaBody } from 'services/savedSearches/adaptSavedSearch';
+import { useSavedSearch } from 'services/savedSearches/hooks';
+import {
+  useSavedSearchCreateMutate,
+  useSavedSearchDeleteMutate,
+} from 'services/savedSearches/useSavedSearchesMutate';
+import { useQuerySavedSearchesList } from 'services/savedSearches/useSavedSearchQuery';
+import { GenericApiError } from 'services/types';
 import { isEnterPressed } from 'utils/general.helper';
 import { log } from 'utils/log';
 
@@ -12,15 +21,6 @@ import Skeleton from 'components/skeleton';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
 import { useSavedSearchNavigation } from 'hooks/useSavedSearchNavigation';
-import { SavedSearchContent } from 'modules/api/savedSearches';
-import { adaptSaveSearchContentToSchemaBody } from 'modules/api/savedSearches/adaptSavedSearch';
-import { useSavedSearch } from 'modules/api/savedSearches/hooks';
-import {
-  useSavedSearchCreateMutate,
-  useSavedSearchDeleteMutate,
-} from 'modules/api/savedSearches/useSavedSearchesMutate';
-import { useQuerySavedSearchesList } from 'modules/api/savedSearches/useSavedSearchQuery';
-import { GenericApiError } from 'modules/api/types';
 
 import {
   SAVED_SEARCHES_MENU_CREATE_NEW_TEXT,

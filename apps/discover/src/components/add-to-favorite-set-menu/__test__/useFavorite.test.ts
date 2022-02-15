@@ -17,7 +17,7 @@ jest.mock('react-query', () => ({
   useQuery: () => ({ isLoading: false, error: {}, data: [] }),
 }));
 
-jest.mock('../../../modules/api/favorites/useFavoritesMutate', () => ({
+jest.mock('../../../services/favorites/useFavoritesMutate', () => ({
   useFavoriteUpdateContent: () => ({
     mutateAsync: () => Promise.resolve(true),
   }),

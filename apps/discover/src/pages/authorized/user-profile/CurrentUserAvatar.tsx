@@ -1,7 +1,8 @@
 import React from 'react';
 
+import { useUserProfileQuery } from 'services/user/useUserQuery';
+
 import { UserAvatar } from 'components/user-avatar/UserAvatar';
-import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 
 interface Props {
   size?: number;

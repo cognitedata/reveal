@@ -1,18 +1,18 @@
 import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import { useDocumentAppliedFilterEntries } from 'services/documents/hooks/useDocumentAppliedFilters';
+import { useDocumentFormatFilter } from 'services/documents/hooks/useDocumentFormatFilter';
+import { useClearAllDocumentFilters } from 'services/savedSearches/hooks/useClearAllDocumentFilters';
+import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
+import { useClearPolygon } from 'services/savedSearches/hooks/useClearPolygon';
+import { useClearQuery } from 'services/savedSearches/hooks/useClearQuery';
 
 import { GeoJsonGeometryTypes } from '@cognite/seismic-sdk-js';
 
 import { FilterClearAllButton } from 'components/buttons/FilterClearAllButton';
 import { SelectedFilterLabel } from 'components/labels/SelectedFilterLabel';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useDocumentAppliedFilterEntries } from 'modules/api/documents/hooks/useDocumentAppliedFilters';
-import { useDocumentFormatFilter } from 'modules/api/documents/hooks/useDocumentFormatFilter';
-import { useClearAllDocumentFilters } from 'modules/api/savedSearches/hooks/useClearAllDocumentFilters';
-import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
-import { useClearPolygon } from 'modules/api/savedSearches/hooks/useClearPolygon';
-import { useClearQuery } from 'modules/api/savedSearches/hooks/useClearQuery';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { useGetTypeFromGeometry, useMap } from 'modules/map/selectors';
 import {
@@ -24,9 +24,9 @@ import {
   isRangeFacet,
 } from 'modules/sidebar/utils';
 
-import { useSavedSearch } from '../../../../../modules/api/savedSearches/hooks';
 import { useAppliedMapGeoJsonFilters } from '../../../../../modules/sidebar/selectors';
 import { MapLayerGeoJsonFilter } from '../../../../../modules/sidebar/types';
+import { useSavedSearch } from '../../../../../services/savedSearches/hooks';
 
 import { TagRow, TagWrapper } from './elements';
 

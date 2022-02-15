@@ -1,4 +1,4 @@
-import { useClearWellsFilters } from 'modules/api/savedSearches/hooks/useClearWellsFilters';
+import { useClearWellsFilters } from 'services/savedSearches/hooks/useClearWellsFilters';
 
 import CommonTitle from '../common/Title';
 import { WellIconWrapper, WellIcon } from '../elements';

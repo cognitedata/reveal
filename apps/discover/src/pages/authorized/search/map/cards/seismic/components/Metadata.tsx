@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
+import { SeismicFile } from 'services/types';
 
 import { Typography } from 'components/typography';
-import { SeismicFile } from 'modules/api/types';
 import { mapMetadata, getSafeMetadataName } from 'modules/seismicSearch/utils';
 import { SeismicConfig } from 'tenants/types';
 

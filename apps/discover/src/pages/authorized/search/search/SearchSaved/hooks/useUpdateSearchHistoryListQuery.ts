@@ -1,8 +1,9 @@
 import { useQueryClient } from 'react-query';
 
+import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
+
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
-import { useSearchHistoryListQuery } from 'modules/api/searchHistory/useSearchHistoryQuery';
 
 export const useUpdateSearchHistoryListQuery = () => {
   const queryClient = useQueryClient();

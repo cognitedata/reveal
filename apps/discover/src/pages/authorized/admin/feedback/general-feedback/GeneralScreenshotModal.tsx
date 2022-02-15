@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useFeedbackGetOneQuery } from 'services/feedback';
 import styled from 'styled-components/macro';
 
 import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 
 import { BlankModal } from 'components/modal';
-import { useFeedbackGetOneQuery } from 'modules/api/feedback';
 
 const ImagePreview = styled.img`
   max-width: 100%;

@@ -1,12 +1,12 @@
 import { renderHook } from '@testing-library/react-hooks';
+import { useFavoritesGetAllQuery } from 'services/favorites/useFavoritesQuery';
 
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
-import { useFavoritesGetAllQuery } from 'modules/api/favorites/useFavoritesQuery';
 import { FavoriteSummary } from 'modules/favorite/types';
 
 import { useFavoriteDocumentIds } from '../useFavoriteDocumentIds';
 
-jest.mock('modules/api/favorites/useFavoritesQuery', () => ({
+jest.mock('services/favorites/useFavoritesQuery', () => ({
   useFavoritesGetAllQuery: jest.fn(),
 }));
 

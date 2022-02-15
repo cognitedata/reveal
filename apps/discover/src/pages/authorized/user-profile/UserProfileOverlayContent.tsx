@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
 import noop from 'lodash/noop';
+import { UserProfileUpdateQueryData } from 'services/user/types';
+import { useUserProfileQuery } from 'services/user/useUserQuery';
 import { convertToCancellablePromise } from 'utils/cancellablePromise';
 
 import { Button, Input } from '@cognite/cogs.js';
 import { LogoutButton } from '@cognite/react-container';
 
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { UserProfileUpdateQueryData } from 'modules/api/user/types';
-import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import {
   AvatarAndEmailContainer,
   CompanyInfoContainer,

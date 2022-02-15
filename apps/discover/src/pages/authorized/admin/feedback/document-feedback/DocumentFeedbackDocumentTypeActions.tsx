@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 
+import { useFeedbackDocumentStatus } from 'services/documentFeedback/hooks';
+import { useDocumentFeedbackMutate } from 'services/documentFeedback/mutate';
+import { DocumentFeedbackType } from 'services/documentFeedback/types';
 import styled from 'styled-components/macro';
 
 import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';
 
 import { ModalConfirm } from 'components/modals/confirm/ModalConfirm';
 import { usePermissions } from 'hooks/usePermissions';
-import { useFeedbackDocumentStatus } from 'modules/documentFeedback/hooks';
-import { useDocumentFeedbackMutate } from 'modules/documentFeedback/mutate';
-import { DocumentFeedbackType } from 'modules/documentFeedback/types';
 
 import { SmallGreyLabel } from '../elements';
 

@@ -4,12 +4,12 @@ import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
+import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
 
 import { DocumentPayload } from '@cognite/discover-api-types';
 
 import { NumericRangeFilter } from 'components/filters';
 import { useDeepEffect } from 'hooks/useDeep';
-import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
 import {
   DocumentQueryFacet,
   DocumentQueryFacets,

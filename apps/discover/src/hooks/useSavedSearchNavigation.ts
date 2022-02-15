@@ -1,7 +1,8 @@
 import { useHistory } from 'react-router-dom';
 
+import { SavedSearchItem } from 'services/savedSearches/types';
+
 import navigation from 'constants/navigation';
-import { SavedSearchItem } from 'modules/api/savedSearches/types';
 
 import { isAnyFilterApplied } from './useSearchHasAnyAppliedFilters';
 

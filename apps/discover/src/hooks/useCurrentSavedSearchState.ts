@@ -1,4 +1,5 @@
-import { SavedSearchState } from 'modules/api/savedSearches';
+import { SavedSearchState } from 'services/savedSearches';
+
 import { useGeoFilter } from 'modules/map/selectors';
 import { useSortByOptions } from 'modules/resultPanel/selectors';
 import {

@@ -12,7 +12,6 @@
     "testcafe:linux": "ibazel run :testcafe_linux --",
     "eslint:bazel": "bazel test :eslint_test",
     "eslint:bazel-fix": "bazel run :eslint_test -- --fix",
-    "lint:fix": "scripts/lint-fix.sh",
     "lint": "scripts/lint.sh",
     "lint:fast": "pretty-quick --staged",
     "lint:bazel": "bazel test :eslint_test :prettier_test",

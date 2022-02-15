@@ -2,8 +2,8 @@ import { useDispatch } from 'react-redux';
 
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
+import { SavedSearchQuery } from 'services/savedSearches/types';
 
-import { SavedSearchQuery } from 'modules/api/savedSearches/types';
 import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
 
 export const useWellsSearch = () => {

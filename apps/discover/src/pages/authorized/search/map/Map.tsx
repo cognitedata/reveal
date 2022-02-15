@@ -13,6 +13,10 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import mapboxgl from 'maplibre-gl';
+import {
+  useClearPolygon,
+  useSetPolygon,
+} from 'services/savedSearches/hooks/useClearPolygon';
 import { v1 } from 'uuid';
 
 import { useTranslation } from '@cognite/react-i18n';
@@ -25,10 +29,6 @@ import { BlockExpander } from 'components/block-expander/BlockExpander';
 import { showErrorMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useKeyPressListener } from 'hooks/useKeyPressListener';
-import {
-  useClearPolygon,
-  useSetPolygon,
-} from 'modules/api/savedSearches/hooks/useClearPolygon';
 import {
   addArbitraryLine,
   clearSelectedFeature,

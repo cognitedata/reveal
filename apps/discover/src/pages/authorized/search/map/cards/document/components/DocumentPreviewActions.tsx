@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import includes from 'lodash/includes';
+import { downloadFileFromUrl } from 'services/documentPreview/utils';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { getTenantInfo } from '@cognite/react-container';
@@ -16,7 +17,6 @@ import {
 } from 'components/buttons';
 import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { downloadFileFromUrl } from 'modules/documentPreview/utils';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';
 import { DocumentType } from 'modules/documentSearch/types';

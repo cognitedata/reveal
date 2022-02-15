@@ -5,6 +5,7 @@ import compact from 'lodash/compact';
 import head from 'lodash/head';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
+import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
 import { getDateOrDefaultText } from 'utils/date';
 import { changeUnits } from 'utils/units';
 
@@ -17,7 +18,6 @@ import { Table, RowProps } from 'components/tablev3';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import { useFavoriteWellIds } from 'modules/api/favorites/hooks/useFavoriteWellIds';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';

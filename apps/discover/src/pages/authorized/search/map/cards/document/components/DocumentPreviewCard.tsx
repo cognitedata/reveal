@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { openDocumentPreviewInNewTab } from 'services/documentPreview/utils';
 import { getPathsFromDoc } from 'utils/getPathsFromDocument';
 
 import { reportException } from '@cognite/react-errors';
@@ -11,7 +12,6 @@ import { FilePath } from 'components/document-info-panel/FilePath';
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import { showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { openDocumentPreviewInNewTab } from 'modules/documentPreview/utils';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import { clearSelectedDocument } from 'modules/map/actions';
 import { MarginBottomNormalContainer } from 'styles/layout';

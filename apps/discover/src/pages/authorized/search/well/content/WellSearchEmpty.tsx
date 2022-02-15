@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { useClearAllFilters } from 'services/savedSearches/hooks/useClearAllFilters';
+import { useClearPolygon } from 'services/savedSearches/hooks/useClearPolygon';
+import { useClearQuery } from 'services/savedSearches/hooks/useClearQuery';
+
 import { TableEmpty } from 'components/tableEmpty';
-import { useClearAllFilters } from 'modules/api/savedSearches/hooks/useClearAllFilters';
-import { useClearPolygon } from 'modules/api/savedSearches/hooks/useClearPolygon';
-import { useClearQuery } from 'modules/api/savedSearches/hooks/useClearQuery';
 
 export const WellSearchEmpty: React.FC = () => {
   const clearAllFilters = useClearAllFilters();

@@ -1,4 +1,4 @@
-import { SavedSearchItem } from 'modules/api/savedSearches/types';
+import { SavedSearchItem } from 'services/savedSearches/types';
 
 import { getMockDocumentFilter, getMockWellFilter } from './sidebar';
 

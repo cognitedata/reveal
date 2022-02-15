@@ -1,15 +1,15 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { Store } from 'redux';
+import { useUserRoles } from 'services/user/useUserQuery';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { useUserRoles } from 'modules/api/user/useUserQuery';
 
 import { AdminSettings } from '../AdminSettings';
 import { PATHNAMES } from '../Topbar';
 
-jest.mock('modules/api/user/useUserQuery', () => ({
+jest.mock('services/user/useUserQuery', () => ({
   useUserRoles: jest.fn(),
 }));
 

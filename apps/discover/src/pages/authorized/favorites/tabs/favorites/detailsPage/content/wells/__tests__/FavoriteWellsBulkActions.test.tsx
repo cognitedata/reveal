@@ -12,7 +12,7 @@ jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
   useWellsByIds: jest.fn(),
 }));
 
-jest.mock('modules/api/favorites/useFavoritesQuery', () => ({
+jest.mock('services/favorites/useFavoritesQuery', () => ({
   useFavoriteUpdateContent: () => ({
     mutateAsync: () => 'Update favorite',
   }),

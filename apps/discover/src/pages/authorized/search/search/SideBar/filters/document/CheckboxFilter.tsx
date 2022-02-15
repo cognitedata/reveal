@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
+import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
 import styled from 'styled-components/macro';
 
 import { Body, Icon } from '@cognite/cogs.js';
@@ -9,7 +10,6 @@ import { DocumentPayload } from '@cognite/discover-api-types';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
 import { DocumentQueryFacets } from 'modules/documentSearch/types';
 import { useFilterAppliedFilters } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';

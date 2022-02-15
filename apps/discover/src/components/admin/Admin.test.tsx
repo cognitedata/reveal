@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/react';
+import { useUserRoles } from 'services/user/useUserQuery';
 
 import { testRenderer } from '__test-utils/renderer';
-import { useUserRoles } from 'modules/api/user/useUserQuery';
 
 import { Admin } from './Admin';
 
-jest.mock('modules/api/user/useUserQuery', () => ({
+jest.mock('services/user/useUserQuery', () => ({
   useUserRoles: jest.fn(),
 }));
 

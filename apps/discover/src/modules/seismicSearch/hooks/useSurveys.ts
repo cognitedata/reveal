@@ -1,13 +1,13 @@
 import { useQuery, QueryClient } from 'react-query';
 
+import { SeismicError } from 'services/seismic';
+import { discoverAPI, useJsonHeaders } from 'services/service';
+import { SeismicGetData } from 'services/types';
 import { FetchHeaders } from 'utils/fetch';
 
 import { getTenantInfo } from '@cognite/react-container';
 
 import { SURVEYS_QUERY_KEY } from 'constants/react-query';
-import { SeismicError } from 'modules/api/seismic';
-import { discoverAPI, useJsonHeaders } from 'modules/api/service';
-import { SeismicGetData } from 'modules/api/types';
 
 import { SeismicSurveyContainer } from '../types';
 

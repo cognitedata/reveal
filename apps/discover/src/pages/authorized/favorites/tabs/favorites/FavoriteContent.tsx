@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
-
-import navigation from 'constants/navigation';
 import {
   useFavoriteDuplicateMutate,
   useFavoritesDeleteMutate,
-} from 'modules/api/favorites/useFavoritesMutate';
-import { useFavoritesGetAllQuery } from 'modules/api/favorites/useFavoritesQuery';
-import { useIsOwner } from 'modules/api/user/utils';
+} from 'services/favorites/useFavoritesMutate';
+import { useFavoritesGetAllQuery } from 'services/favorites/useFavoritesQuery';
+import { useIsOwner } from 'services/user/utils';
+
+import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
+
+import navigation from 'constants/navigation';
 import { useViewMode } from 'modules/favorite/selectors';
 import { FavoriteSummary, ViewModeType } from 'modules/favorite/types';
 

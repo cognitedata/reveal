@@ -1,8 +1,7 @@
 import get from 'lodash/get';
+import { useProjectConfigGetQuery } from 'services/projectConfig/useProjectConfigQuery';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
-
-import { useProjectConfigGetQuery } from 'modules/api/projectConfig/useProjectConfigQuery';
 
 export const useProjectConfig = useProjectConfigGetQuery;
 

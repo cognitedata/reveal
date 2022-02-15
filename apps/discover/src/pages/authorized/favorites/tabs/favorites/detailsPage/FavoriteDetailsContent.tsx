@@ -3,6 +3,12 @@ import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 
 import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
+import {
+  downloadFileFromUrl,
+  zipFavoritesAndDownload,
+} from 'services/documentPreview/utils';
+import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
+import { useIsOwner } from 'services/user/utils';
 
 import { Badge, Icon, Tabs } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
@@ -14,12 +20,6 @@ import { LoadMoreButton } from 'components/tablev3/elements';
 import { showInfoMessageWithTitle } from 'components/toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
-import { useIsOwner } from 'modules/api/user/utils';
-import {
-  downloadFileFromUrl,
-  zipFavoritesAndDownload,
-} from 'modules/documentPreview/utils';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
 import { FavoriteDocumentData } from 'modules/favorite/types';
 import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
+import { getPdfPreview } from 'services/documentPreview/service';
 import styled from 'styled-components/macro';
 
 import { getAuthHeaders } from '@cognite/react-container';
@@ -10,7 +11,6 @@ import {
   LOG_DOCUMENT_PREVIEW_NAMESPACE,
 } from 'constants/logging';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
-import { getPdfPreview } from 'modules/documentPreview/service';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://storage.googleapis.com/discover-pdfjs-2/pdf.worker.js`;
 

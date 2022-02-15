@@ -1,6 +1,6 @@
-import { Modal } from '@cognite/cogs.js';
+import { geospatialV1 } from 'services/geospatial/geospatialV1';
 
-import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
+import { Modal } from '@cognite/cogs.js';
 
 import { CustomDeleteComponent } from '../projectConfig';
 

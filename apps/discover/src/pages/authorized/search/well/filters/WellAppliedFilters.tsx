@@ -1,17 +1,17 @@
 import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import { useClearPolygon } from 'services/savedSearches/hooks/useClearPolygon';
+import { useClearQuery } from 'services/savedSearches/hooks/useClearQuery';
+import {
+  useClearWellsFilters,
+  useSetWellsFilters,
+} from 'services/savedSearches/hooks/useClearWellsFilters';
 import styled from 'styled-components/macro';
 
 import { FilterClearAllButton } from 'components/buttons/FilterClearAllButton';
 import { SelectedFilterLabel } from 'components/labels/SelectedFilterLabel';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useClearPolygon } from 'modules/api/savedSearches/hooks/useClearPolygon';
-import { useClearQuery } from 'modules/api/savedSearches/hooks/useClearQuery';
-import {
-  useClearWellsFilters,
-  useSetWellsFilters,
-} from 'modules/api/savedSearches/hooks/useClearWellsFilters';
 import { useGetTypeFromGeometry, useMap } from 'modules/map/selectors';
 import {
   useAppliedWellFilters,

@@ -4,13 +4,13 @@ import { getMockFavoritesList } from '__test-utils/fixtures/favorite';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
-import { useFavoritesSortedByName } from '../../../modules/api/favorites/useFavoritesQuery';
+import { useFavoritesSortedByName } from '../../../services/favorites/useFavoritesQuery';
 import { AddToFavoriteSetMenu, Props } from '../AddToFavoriteSetMenu';
 import { useHandleSelectFavourite } from '../useFavorite';
 
 const mockFavorites = getMockFavoritesList(2);
 
-jest.mock('modules/api/favorites/useFavoritesQuery.ts', () => ({
+jest.mock('services/favorites/useFavoritesQuery.ts', () => ({
   useFavoritesSortedByName: jest.fn(),
   useFavoriteUpdateContent: () => ({
     mutateAsync: () => Promise.resolve(true),

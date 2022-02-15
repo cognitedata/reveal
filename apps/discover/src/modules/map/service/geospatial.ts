@@ -1,13 +1,13 @@
 import { Geometry } from '@turf/helpers';
 import head from 'lodash/head';
 import isArray from 'lodash/isArray';
+import { discoverAPI } from 'services/service';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { API_PLAYGROUND_DOMAIN } from 'constants/app';
 import { NPDLayerItemResponse } from 'modules/map/types';
 
 import { FetchHeaders } from '../../../utils/fetch';
-import { discoverAPI } from '../../api/service';
 import { getGeospatialSDKClient } from '../sdk';
 
 export interface SpatialSearchItemResponse {

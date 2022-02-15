@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 import noop from 'lodash/noop';
 // import { SeismicFile } from 'modules/seismicSearch/types';
+import { SeismicGetData, SeismicFile } from 'services/types';
 import { log } from 'utils/log';
 
 import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
 import { showErrorMessage } from 'components/toast';
-import { SeismicGetData, SeismicFile } from 'modules/api/types';
 import { seismicService, SeismicHeader } from 'modules/seismicSearch/service';
 import { FlexGrow } from 'styles/layout';
 

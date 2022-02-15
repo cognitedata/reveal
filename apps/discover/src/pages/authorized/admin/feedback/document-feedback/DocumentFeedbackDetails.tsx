@@ -1,14 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import {
+  setObjectFeedbackSensitivityByAdmin,
+  useFeedbackUpdateMutate,
+} from 'services/feedback';
+
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 
 import MetadataTable, { MetadataItem } from 'components/metadataTable';
-import {
-  setObjectFeedbackSensitivityByAdmin,
-  useFeedbackUpdateMutate,
-} from 'modules/api/feedback';
 import { useDocumentFilename } from 'modules/documentSearch/hooks/useDocumentFilename';
 import { ASSESS } from 'modules/feedback/constants';
 import { generateReplyToUserContent } from 'modules/feedback/helper';

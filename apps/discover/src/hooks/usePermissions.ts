@@ -1,7 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import xor from 'lodash/xor';
-
-import { useCapabilitiesQuery } from 'modules/capabilities/query';
+import { useCapabilitiesQuery } from 'services/capabilities/query';
 
 /**
  * Check if user has the correct permission ACLs and corresponding actions rights.

@@ -1,6 +1,6 @@
+import { useQueryDocumentLabels } from 'services/documents/useDocumentQuery';
 import { documentDateToDate } from 'utils/dateConversion';
 
-import { useQueryDocumentLabels } from 'modules/api/documents/useDocumentQuery';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 
 import { useDeepMemo } from './useDeep';

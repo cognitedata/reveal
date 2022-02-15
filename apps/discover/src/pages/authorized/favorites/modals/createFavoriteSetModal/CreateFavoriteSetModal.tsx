@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import { useFavoritesCreateMutate } from 'services/favorites/useFavoritesMutate';
+
 import { reportException } from '@cognite/react-errors';
 
 import { NOTIFICATION_MESSAGE } from 'components/add-to-favorite-set-menu/constants';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useFavoritesCreateMutate } from 'modules/api/favorites/useFavoritesMutate';
 import { hideCreateFavoriteModal } from 'modules/favorite/reducer';
 
 import { setItemsToAddOnFavoriteCreation } from '../../../../../modules/favorite/reducer';

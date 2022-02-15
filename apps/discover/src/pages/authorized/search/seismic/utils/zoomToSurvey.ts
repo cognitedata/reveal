@@ -1,8 +1,9 @@
 import { useDispatch } from 'react-redux';
 
+import { SeismicSurvey } from 'services/types';
+
 import { Geometry } from '@cognite/seismic-sdk-js';
 
-import { SeismicSurvey } from 'modules/api/types';
 import { zoomToFeature } from 'modules/map/actions';
 import { SeismicSurveyContainer } from 'modules/seismicSearch/types';
 

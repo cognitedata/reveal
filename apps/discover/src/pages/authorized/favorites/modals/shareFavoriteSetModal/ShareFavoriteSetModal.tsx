@@ -1,17 +1,18 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import {
+  useFavoriteShareMutate,
+  useFavoriteRemoveShareMutate,
+} from 'services/favorites/useFavoritesMutate';
+import { useFavoritesGetOneQuery } from 'services/favorites/useFavoritesQuery';
+
 import { reportException } from '@cognite/react-errors';
 
 import { BasicShareModal } from 'components/basic-share-modal';
 import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
 import { UserOption } from 'components/search-users/SearchUsers';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
-import {
-  useFavoriteShareMutate,
-  useFavoriteRemoveShareMutate,
-} from 'modules/api/favorites/useFavoritesMutate';
-import { useFavoritesGetOneQuery } from 'modules/api/favorites/useFavoritesQuery';
 import {
   REMOVE_SHARE_SUCCESS_TOAST,
   SHARE_FAVORITE_MODAL_TITLE,

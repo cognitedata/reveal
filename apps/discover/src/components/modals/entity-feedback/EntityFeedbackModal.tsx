@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { StoreState } from 'core';
+import { useQueryDocumentLabels } from 'services/documents/useDocumentQuery';
+import { sendObjectFeedback, useFeedbackCreateMutate } from 'services/feedback';
 
 import { ObjectFeedback } from '@cognite/discover-api-types';
 
@@ -11,11 +13,6 @@ import { UndoToast } from 'components/toast';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
 import { useDocument } from 'hooks/useDocument';
 import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
-import { useQueryDocumentLabels } from 'modules/api/documents/useDocumentQuery';
-import {
-  sendObjectFeedback,
-  useFeedbackCreateMutate,
-} from 'modules/api/feedback';
 import { clearObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import { useRemoveSensitiveDocument } from 'modules/feedback/hooks/useRemoveSensitiveDocument';
 import { FeedbackState } from 'modules/feedback/types';

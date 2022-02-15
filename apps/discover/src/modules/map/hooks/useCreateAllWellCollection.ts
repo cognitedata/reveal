@@ -5,9 +5,9 @@ import {
   Geometry,
 } from '@turf/helpers';
 import reduce from 'lodash/reduce';
+import { useWellAllGeometryQuery } from 'services/well/useWellQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { useWellAllGeometryQuery } from 'modules/api/well/useWellQuery';
 import { WELL_MARKER } from 'pages/authorized/search/map/constants';
 
 /**

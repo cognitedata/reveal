@@ -1,11 +1,12 @@
 import * as React from 'react';
 
+import { UserProfileUpdateQueryData } from 'services/user/types';
+import { useUserUpdateMutate } from 'services/user/useUserQuery';
+
 import { Drawer } from '@cognite/cogs.js';
 
 import { showSuccessMessage } from 'components/toast';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { UserProfileUpdateQueryData } from 'modules/api/user/types';
-import { useUserUpdateMutate } from 'modules/api/user/useUserQuery';
 
 import { UserProfileOverlayFooter } from './UserProfileOvelayFooter';
 import { UserProfileOverlayContent } from './UserProfileOverlayContent';

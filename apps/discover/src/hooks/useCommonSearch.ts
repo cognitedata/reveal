@@ -2,10 +2,10 @@ import { QueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import isUndefined from 'lodash/isUndefined';
+import { convertGeometryToGeoJson } from 'services/savedSearches/normalizeSavedSearch';
+import { SavedSearchContent } from 'services/savedSearches/types';
 import { FetchHeaders } from 'utils/fetch';
 
-import { convertGeometryToGeoJson } from 'modules/api/savedSearches/normalizeSavedSearch';
-import { SavedSearchContent } from 'modules/api/savedSearches/types';
 import { setGeo } from 'modules/map/actions';
 import { showResults, startSearching } from 'modules/search/actions';
 import { setSearchPhrase } from 'modules/sidebar/actions';

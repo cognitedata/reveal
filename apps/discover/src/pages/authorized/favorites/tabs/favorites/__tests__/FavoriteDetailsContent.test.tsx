@@ -1,5 +1,7 @@
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
+import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
+import { getMockUserGet } from 'services/user/__mocks/getMockUserGet';
 
 import { getMockConfigGet } from '__mocks/getMockConfigGet';
 import { getMockDocumentSearch } from '__mocks/getMockDocumentSearch';
@@ -11,8 +13,6 @@ import { getMockedStore } from '__test-utils/store.utils';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import navigation from 'constants/navigation';
-import { getMockDocumentCategoriesGet } from 'modules/api/documents/__mocks/getMockDocumentCategoriesGet';
-import { getMockUserGet } from 'modules/api/user/__mocks/getMockUserGet';
 import {
   FAVORITE_SET_NO_DOCUMENTS,
   FAVORITE_SET_NO_WELLS,

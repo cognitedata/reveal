@@ -1,10 +1,10 @@
 import chunk from 'lodash/chunk';
 import isEmpty from 'lodash/isEmpty';
+import { SavedSearchContent } from 'services/savedSearches';
 
 import { DocumentsFilter } from '@cognite/sdk-playground';
 
 import { TableResults } from 'components/tablev3';
-import { SavedSearchContent } from 'modules/api/savedSearches';
 import {
   AggregateNames,
   DocumentResultFacets,

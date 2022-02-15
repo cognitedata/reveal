@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
+import { useIsOwner } from 'services/user/utils';
+
 import {
   ShareButton,
   CommentButton,
@@ -14,7 +16,6 @@ import { showInfoMessageWithTitle } from 'components/toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { useIsOwner } from 'modules/api/user/utils';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
   DOWNLOAD_MESSAGE,

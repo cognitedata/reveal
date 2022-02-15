@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSavedSearchRemoveShareMutate } from 'services/savedSearches/useSavedSearchesMutate';
+import { useQuerySavedSearcheGetOne } from 'services/savedSearches/useSavedSearchQuery';
+
 import { reportException } from '@cognite/react-errors';
 
 import { BasicShareModal } from 'components/basic-share-modal';
 import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
 import { UserOption } from 'components/search-users/SearchUsers';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
-import { useSavedSearchRemoveShareMutate } from 'modules/api/savedSearches/useSavedSearchesMutate';
-import { useQuerySavedSearcheGetOne } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { REMOVE_SHARE_SUCCESS_TOAST } from 'pages/authorized/favorites/modals/constants';
 
 interface Props {

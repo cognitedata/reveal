@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
-
-import Skeleton from 'components/skeleton';
-import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
   useClearWellsFilters,
   useSetWellsFiltersAsync,
-} from 'modules/api/savedSearches/hooks/useClearWellsFilters';
+} from 'services/savedSearches/hooks/useClearWellsFilters';
+
+import Skeleton from 'components/skeleton';
+import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { Modules } from 'modules/sidebar/types';
 import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';

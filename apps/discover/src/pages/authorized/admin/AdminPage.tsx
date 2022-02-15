@@ -3,7 +3,7 @@ import { Switch } from 'react-router-dom';
 import navigation from 'constants/navigation';
 
 import { ProtectedRoute } from '../../../core';
-import { useUserRoles } from '../../../modules/api/user/useUserQuery';
+import { useUserRoles } from '../../../services/user/useUserQuery';
 
 import FeedbackPage from './feedback';
 import LayerPage from './layers';

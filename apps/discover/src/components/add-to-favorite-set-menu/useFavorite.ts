@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesMutate';
 import { FavoriteContentWells, FavoriteSummary } from 'modules/favorite/types';
 import {
   getDocumentExistInFavorite,

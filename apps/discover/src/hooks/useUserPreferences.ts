@@ -1,7 +1,8 @@
+import { useUserPreferencesQuery } from 'services/userManagementService/query';
+
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 
 import { UserPrefferedUnit } from 'constants/units';
-import { useUserPreferencesQuery } from 'modules/userManagementService/query';
 
 export const useUserPreferencesMeasurement = () => {
   const { data } = useUserPreferencesQuery();

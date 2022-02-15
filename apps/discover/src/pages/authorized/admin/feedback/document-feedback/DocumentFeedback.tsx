@@ -1,10 +1,11 @@
 import React from 'react';
 
+import { useFeedbackGetAllQuery } from 'services/feedback/useFeedbackQuery';
+
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import EmptyState from 'components/emptyState';
-import { useFeedbackGetAllQuery } from 'modules/api/feedback/useFeedbackQuery';
 
 import { DocumentFeedbackTable } from './DocumentFeedbackTable';
 

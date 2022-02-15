@@ -1,16 +1,16 @@
 import { screen } from '@testing-library/react';
+import { useUserProfileQuery } from 'services/user/useUserQuery';
 
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { testRenderer } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { FavoriteDetailsHeader } from 'pages/authorized/favorites/tabs/favorites/detailsPage/header';
 import { Props } from 'pages/authorized/favorites/tabs/favorites/detailsPage/header/FavoriteDetailsHeader';
 
 const mockUser = defaultTestUser;
 
-jest.mock('modules/api/user/useUserQuery.ts', () => ({
+jest.mock('services/user/useUserQuery.ts', () => ({
   useUserProfileQuery: jest.fn(),
 }));
 

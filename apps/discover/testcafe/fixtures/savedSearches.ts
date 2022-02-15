@@ -1,11 +1,9 @@
-// import { documentFacetsStructure as emptyFacets } from '../../src/modules/api/documents/structure';
-
 import {
   normalizeSavedSearch,
   SavedSearchContent,
   savedSearches,
-} from '../../src/modules/api/savedSearches';
-import { adaptSaveSearchContentToSchemaBody } from '../../src/modules/api/savedSearches/adaptSavedSearch';
+} from '../../src/services/savedSearches';
+import { adaptSaveSearchContentToSchemaBody } from '../../src/services/savedSearches/adaptSavedSearch';
 import App from '../__pages__/App';
 import { getTokenHeaders, progress } from '../utils';
 

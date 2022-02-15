@@ -4,6 +4,7 @@ import { batch, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import compact from 'lodash/compact';
+import { useClearAllFilters } from 'services/savedSearches/hooks/useClearAllFilters';
 import styled from 'styled-components/macro';
 
 import { Graphic, TopBar } from '@cognite/cogs.js';
@@ -11,7 +12,6 @@ import { useTranslation } from '@cognite/react-i18n';
 
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useClearAllFilters } from 'modules/api/savedSearches/hooks/useClearAllFilters';
 import { useActivePanel } from 'modules/resultPanel/selectors';
 import { hideResults } from 'modules/search/actions';
 import { sizes } from 'styles/layout';

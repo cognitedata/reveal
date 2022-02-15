@@ -1,9 +1,8 @@
 import { QueryClient } from 'react-query';
 import { batch } from 'react-redux';
 
+import { SavedSearchContent } from 'services/savedSearches';
 import { FetchHeaders } from 'utils/fetch';
-
-import { SavedSearchContent } from 'modules/api/savedSearches';
 
 import { useCommonSearch } from './useCommonSearch';
 

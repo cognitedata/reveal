@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import {
+  downloadFileFromUrl,
+  openDocumentPreviewInNewTab,
+} from 'services/documentPreview/utils';
+
 import { Menu, Dropdown } from '@cognite/cogs.js';
 import { reportException } from '@cognite/react-errors';
 
@@ -17,10 +22,6 @@ import {
   showSuccessMessage,
 } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import {
-  downloadFileFromUrl,
-  openDocumentPreviewInNewTab,
-} from 'modules/documentPreview/utils';
 import { FavoriteDocumentData, FavouriteRowType } from 'modules/favorite/types';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import { DeleteDocumentFromSetModal } from 'pages/authorized/favorites/modals';

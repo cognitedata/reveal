@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 
 import uniq from 'lodash/uniq';
-
-import { useFavoritesGetAllQuery } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoritesGetAllQuery } from 'services/favorites/useFavoritesQuery';
 
 export const useFavoriteDocumentIds = (): number[] => {
   const { data: favoriteSets } = useFavoritesGetAllQuery();

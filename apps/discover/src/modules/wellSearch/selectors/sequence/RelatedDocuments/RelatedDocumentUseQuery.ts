@@ -6,6 +6,9 @@ import {
 } from 'react-query';
 
 import isEmpty from 'lodash/isEmpty';
+import { adaptSaveSearchContentToSchemaBody } from 'services/savedSearches/adaptSavedSearch';
+import { SavedSearchContent } from 'services/savedSearches/types';
+import { discoverAPI, useJsonHeaders } from 'services/service';
 import { mergeUniqueArray } from 'utils/merge';
 
 import { getTenantInfo } from '@cognite/react-container';
@@ -18,9 +21,6 @@ import {
 } from 'constants/logging';
 import { RELATED_DOCUMENT_KEY } from 'constants/react-query';
 import { TimeLogStages, useMetricLogger } from 'hooks/useTimeLog';
-import { adaptSaveSearchContentToSchemaBody } from 'modules/api/savedSearches/adaptSavedSearch';
-import { SavedSearchContent } from 'modules/api/savedSearches/types';
-import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import { documentSearchService } from 'modules/documentSearch/service';
 import {
   AggregateNames,

@@ -3,6 +3,15 @@ import React, { useCallback, useState } from 'react';
 import compact from 'lodash/compact';
 import isString from 'lodash/isString';
 import sortBy from 'lodash/sortBy';
+import {
+  useFeedbackUpdateMutate,
+  updateFeedbackStatus,
+  assignGeneralFeedback,
+  deleteGeneralFeedback,
+  recoverGeneralFeedback,
+  useFeedbackGetAllQuery,
+} from 'services/feedback';
+import { useUserProfileQuery } from 'services/user/useUserQuery';
 import { shortDate } from 'utils/date';
 import { sortDates } from 'utils/sortDates';
 
@@ -12,15 +21,6 @@ import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import EmptyState from 'components/emptyState';
 import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
-import {
-  useFeedbackUpdateMutate,
-  updateFeedbackStatus,
-  assignGeneralFeedback,
-  deleteGeneralFeedback,
-  recoverGeneralFeedback,
-  useFeedbackGetAllQuery,
-} from 'modules/api/feedback';
-import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { FIELDS } from 'modules/feedback/constants';
 import { feedbackHelper } from 'modules/feedback/helper';

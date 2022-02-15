@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useUserRoles } from 'modules/api/user/useUserQuery';
+import { useUserRoles } from 'services/user/useUserQuery';
 
 export const Admin: React.FC = ({ children }) => {
   const { data: roles } = useUserRoles();

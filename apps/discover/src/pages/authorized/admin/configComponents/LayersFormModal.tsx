@@ -2,11 +2,11 @@ import { useTranslation } from 'react-i18next';
 
 import { useFormik } from 'formik';
 import omit from 'lodash/omit';
+import { geospatialV1 } from 'services/geospatial/geospatialV1';
 
 import { FileReaderComp } from 'components/file-reader';
 import { Modal } from 'components/modal';
 import { showErrorMessage } from 'components/toast';
-import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
 
 import { CustomComponent, ConfigFormFields } from '../projectConfig';
 

@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 
 import { Map } from 'immutable';
 import merge from 'lodash/merge';
+import {
+  useProjectConfigGetQuery,
+  useProjectConfigUpdateMutate,
+  useProjectConfigMetadataGetQuery,
+} from 'services/projectConfig/useProjectConfigQuery';
 
 import { ProjectConfig as ProjectConfigTypes } from '@cognite/discover-api-types';
 
 import EmptyState from 'components/emptyState';
 import { showErrorMessage } from 'components/toast';
-import {
-  useProjectConfigGetQuery,
-  useProjectConfigUpdateMutate,
-  useProjectConfigMetadataGetQuery,
-} from 'modules/api/projectConfig/useProjectConfigQuery';
 
 import {
   customConfigComponent,

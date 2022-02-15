@@ -6,6 +6,7 @@ import { Row } from 'react-table';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import sortBy from 'lodash/sortBy';
+import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
 import styled from 'styled-components/macro';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
@@ -16,7 +17,6 @@ import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/tablev3';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useFavoriteWellIds } from 'modules/api/favorites/hooks/useFavoriteWellIds';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellQueryResultWellbores } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';

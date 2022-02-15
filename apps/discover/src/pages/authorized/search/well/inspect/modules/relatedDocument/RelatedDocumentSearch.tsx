@@ -2,12 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
+import { documentFacetsStructure } from 'services/documents/structure';
+import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 import { isEnterPressed } from 'utils/general.helper';
 
 import { Input } from '@cognite/cogs.js';
 
-import { documentFacetsStructure } from 'modules/api/documents/structure';
-import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useSavedSearchQuery';
 import { useSetRelatedDocumentFilters } from 'modules/filterData/hooks/useSetRelatedDocumentFilters';
 
 import { InputContainer } from './elements';

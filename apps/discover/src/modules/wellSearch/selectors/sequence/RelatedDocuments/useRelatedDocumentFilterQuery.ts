@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useQuerySavedSearchRelatedDocuments } from 'modules/api/savedSearches/useSavedSearchQuery';
+import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 
 import { getFilterQuery } from './utils';
 

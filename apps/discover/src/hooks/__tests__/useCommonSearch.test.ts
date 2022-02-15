@@ -2,12 +2,12 @@ import { QueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import { renderHook } from '@testing-library/react-hooks';
+import { convertGeometryToGeoJson } from 'services/savedSearches/normalizeSavedSearch';
 import { FetchHeaders } from 'utils/fetch';
 
 import { Geometry } from '@cognite/seismic-sdk-js';
 
 import { useProjectConfig } from 'hooks/useProjectConfig';
-import { convertGeometryToGeoJson } from 'modules/api/savedSearches/normalizeSavedSearch';
 import { setGeo } from 'modules/map/actions';
 import { SET_SEARCH_PHRASE } from 'modules/sidebar/constants';
 
@@ -24,7 +24,7 @@ jest.mock('hooks/useProjectConfig', () => ({
   useProjectConfig: jest.fn(),
 }));
 
-jest.mock('modules/api/savedSearches/normalizeSavedSearch', () => ({
+jest.mock('services/savedSearches/normalizeSavedSearch', () => ({
   convertGeometryToGeoJson: jest.fn(),
 }));
 

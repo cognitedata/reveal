@@ -4,6 +4,13 @@ import { Cell } from 'react-table';
 
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
+import {
+  useFeedbackUpdateMutate,
+  updateFeedbackStatus,
+  deleteObjectFeedback,
+  recoverObjectFeedback,
+} from 'services/feedback';
+import { useUserProfileQuery } from 'services/user/useUserQuery';
 import { shortDate } from 'utils/date';
 import { sortDates } from 'utils/sortDates';
 
@@ -15,13 +22,6 @@ import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
-import {
-  useFeedbackUpdateMutate,
-  updateFeedbackStatus,
-  deleteObjectFeedback,
-  recoverObjectFeedback,
-} from 'modules/api/feedback';
-import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { FIELDS } from 'modules/feedback/constants';
 import { feedbackHelper } from 'modules/feedback/helper';

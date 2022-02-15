@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
 import get from 'lodash/get';
+import { useFormatDocumentFilters } from 'services/documents/hooks/useDocumentFormatFilter';
+import { useSavedSearch } from 'services/savedSearches/hooks';
+import { useSetQuery } from 'services/savedSearches/hooks/useClearQuery';
+import { SavedSearchContent } from 'services/savedSearches/types';
 
 import { AutoComplete, OptionType, Icon } from '@cognite/cogs.js';
 
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
-import { useFormatDocumentFilters } from 'modules/api/documents/hooks/useDocumentFormatFilter';
-import { useSavedSearch } from 'modules/api/savedSearches/hooks';
-import { useSetQuery } from 'modules/api/savedSearches/hooks/useClearQuery';
-import { SavedSearchContent } from 'modules/api/savedSearches/types';
 import { useSearchState } from 'modules/search/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
 import { AppliedFilterEntries } from 'modules/sidebar/types';

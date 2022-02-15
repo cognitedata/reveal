@@ -1,26 +1,26 @@
 import { screen } from '@testing-library/react';
 import { Store } from 'redux';
+import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
 
 import { getEmptyAppliedFilterType } from '__test-utils/fixtures/sidebar';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useSearchHistoryListQuery } from 'modules/api/searchHistory/useSearchHistoryQuery';
 
 import { SearchHistory } from '../SearchHistory';
 
-jest.mock('modules/api/searchHistory/useSearchHistoryQuery', () => ({
+jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
   useSearchHistoryListQuery: jest.fn(),
 }));
 
-jest.mock('modules/api/savedSearches/hooks/useClearQuery', () => ({
+jest.mock('services/savedSearches/hooks/useClearQuery', () => ({
   useSetQuery: jest.fn(),
 }));
 
-jest.mock('modules/api/savedSearches/hooks', () => ({
+jest.mock('services/savedSearches/hooks', () => ({
   useSavedSearch: jest.fn(),
 }));
 
-jest.mock('modules/api/searchHistory/useSearchHistoryQuery', () => ({
+jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
   useSearchHistoryListQuery: jest.fn(),
 }));
 

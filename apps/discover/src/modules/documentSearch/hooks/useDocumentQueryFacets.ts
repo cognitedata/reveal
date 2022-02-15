@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
-
-import { DocumentCategoriesFacets } from 'modules/api/documents/types';
-import { useDocumentCategoryQuery } from 'modules/api/documents/useDocumentQuery';
+import { DocumentCategoriesFacets } from 'services/documents/types';
+import { useDocumentCategoryQuery } from 'services/documents/useDocumentQuery';
 
 import { patchDocumentPayloadCount } from '../utils/availableDocumentResultsCount';
 

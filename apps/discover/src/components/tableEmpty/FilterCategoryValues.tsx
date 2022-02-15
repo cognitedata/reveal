@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSetWellsFilters } from 'services/savedSearches/hooks/useClearWellsFilters';
+
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useSetWellsFilters } from 'modules/api/savedSearches/hooks/useClearWellsFilters';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { useGetAppliedFilterGroupedByCategory } from 'modules/wellSearch/hooks/useAppliedFilters';
 import { reomveAppliedFilterValue } from 'modules/wellSearch/utils/filters';

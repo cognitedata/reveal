@@ -3,6 +3,7 @@ import React from 'react';
 import isFunction from 'lodash/isFunction';
 import startCase from 'lodash/startCase';
 import without from 'lodash/without';
+import { useJsonHeaders } from 'services/service';
 import styled from 'styled-components/macro';
 import { fetchGet } from 'utils/fetch';
 
@@ -19,7 +20,6 @@ import {
 } from '@cognite/sdk';
 
 import { SIDECAR } from 'constants/app';
-import { useJsonHeaders } from 'modules/api/service';
 
 type ThingsToCheckAccessFor =
   // ACL's

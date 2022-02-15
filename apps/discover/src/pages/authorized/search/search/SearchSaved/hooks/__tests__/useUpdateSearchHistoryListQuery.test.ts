@@ -1,11 +1,11 @@
 import { useQueryClient } from 'react-query';
 
 import { renderHook } from '@testing-library/react-hooks';
+import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
 
 import { getMockedSavedSearchWithFilters } from '__test-utils/fixtures/savedSearch';
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
-import { useSearchHistoryListQuery } from 'modules/api/searchHistory/useSearchHistoryQuery';
 
 import { useUpdateSearchHistoryListQuery } from '../useUpdateSearchHistoryListQuery';
 
@@ -17,7 +17,7 @@ jest.mock('hooks/useCurrentSavedSearchState', () => ({
   useCurrentSavedSearchState: jest.fn(),
 }));
 
-jest.mock('modules/api/searchHistory/useSearchHistoryQuery', () => ({
+jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
   useSearchHistoryListQuery: jest.fn(),
 }));
 

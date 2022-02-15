@@ -1,4 +1,5 @@
-import { useClearDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
+import { useClearDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
+
 import { DocumentFilterCategoryTitles } from 'modules/documentSearch/types';
 
 import { BaseFilter } from '../components/BaseFilter';
