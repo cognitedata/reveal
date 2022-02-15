@@ -23,31 +23,35 @@ export const SettingsSection = (props: ISettingsSectionProps) => {
       <>
         {elements && (
           <div>
-            {elements.map(
-              (element: ISettingsElement) =>
-                element && (
-                  <SettingsElement
-                    key={`${element.id}-input-`}
-                    sectionId={id}
-                    config={element}
-                    onPropertyValueChange={props.onPropertyValueChange}
-                    onPropertyUseChange={props.onPropertyUseChange}
-                  />
-                )
-            )}
+            {elements.map((element: ISettingsElement) => {
+              if (!element) {
+                return null;
+              }
+              return (
+                <SettingsElement
+                  key={`${id}-${element.id}-input-`}
+                  sectionId={id}
+                  config={element}
+                  onPropertyValueChange={props.onPropertyValueChange}
+                  onPropertyUseChange={props.onPropertyUseChange}
+                />
+              );
+            })}
           </div>
         )}
         {subSections && subSections.length ? (
           <div>
-            {subSections.map((subSection: ISettingsSection) => (
-              <SettingsSection
-                key={`${subSection.id}-sub-section`}
-                section={subSection}
-                onExpand={props.onExpand}
-                onPropertyValueChange={props.onPropertyValueChange}
-                onPropertyUseChange={props.onPropertyUseChange}
-              />
-            ))}
+            {subSections.map((subSection: ISettingsSection) => {
+              return (
+                <SettingsSection
+                  key={`${subSection.id}-sub-section`}
+                  section={subSection}
+                  onExpand={props.onExpand}
+                  onPropertyValueChange={props.onPropertyValueChange}
+                  onPropertyUseChange={props.onPropertyUseChange}
+                />
+              );
+            })}
           </div>
         ) : null}
       </>

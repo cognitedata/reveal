@@ -115,9 +115,11 @@ const ThreeDee: React.FC<Props> = ({
   }, [fileId, wells]);
 
   return (
-    <ThemeProvider theme={ThreeDeeTheme}>
-      {root && <NodeVisualizerProvider root={root} toolbar={Toolbar} />}
-    </ThemeProvider>
+    <React.StrictMode>
+      <ThemeProvider theme={ThreeDeeTheme}>
+        {root && <NodeVisualizerProvider root={root} toolbar={Toolbar} />}
+      </ThemeProvider>
+    </React.StrictMode>
   );
 };
 

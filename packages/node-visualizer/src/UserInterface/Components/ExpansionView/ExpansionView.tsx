@@ -1,5 +1,3 @@
-import React from 'react';
-
 import styled from 'styled-components';
 
 import { Icon } from '@cognite/cogs.js';
@@ -27,14 +25,18 @@ export const ExpansionView = (props: ExpansionViewProps) => {
         tabIndex={0}
       >
         {title}
-        <StyledIcon type="ChevronDownLarge" expanded={!!isExpanded} />
+        {isExpanded ? (
+          <Icon type="ChevronDownLarge" />
+        ) : (
+          <Icon type="ChevronUpLarge" />
+        )}
       </CollapseHeader>
-      {isExpanded ? (
+      {isExpanded && (
         <CollapsePanel>
           <ToolBar toolBar={toolBar} sectionId={id} />
           {children}
         </CollapsePanel>
-      ) : null}
+      )}
     </Collapse>
   );
 };
@@ -62,8 +64,4 @@ const CollapseHeader = styled.div`
 const CollapsePanel = styled.div`
   overflow: auto;
   padding: 10px;
-`;
-const StyledIcon = styled(Icon)`
-  transform: ${(props: { expanded: boolean }) =>
-    props.expanded ? 'rotate(180deg)' : 'rotate(0)'};
 `;

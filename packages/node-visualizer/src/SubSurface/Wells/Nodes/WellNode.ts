@@ -74,6 +74,6 @@ export class WellNode extends BaseNode {
   ): void {
     super.populateStatisticsCore(folder);
     folder.addReadOnlyVector2('Wellhead', this.wellHead, 2);
-    folder.addReadOnlyInteger('# Trajectories', this.children.length);
+    folder.addReadOnlyInteger('Trajectories', this.children.length);
   }
 }

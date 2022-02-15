@@ -61,6 +61,7 @@ export const SettingsElement = (props: ISettingsElementProps) => {
         element = (
           <Input
             fullWidth
+            key={keyExtractor(null, type, name).key}
             type={type === ElementTypes.Number ? 'number' : 'text'}
             disabled={disabled}
             name={name}
@@ -109,7 +110,7 @@ export const SettingsElement = (props: ISettingsElementProps) => {
         const selectValue = options?.find((el) => el.value === value);
         element = (
           <CommonSelectBase
-            key={keyExtractor(null, type, name).key}
+            key={keyExtractor(`${options?.length}`, type, name).key}
             options={options}
             value={selectValue}
             disabled={disabled}
@@ -132,9 +133,8 @@ export const SettingsElement = (props: ISettingsElementProps) => {
     }
 
     return (
-      <InputFieldWrapper>
+      <InputFieldWrapper key={`settings-element-${elmConfig.id}`}>
         <ToolbarToolTip
-          key={elmConfig.id}
           name={elmConfig.name}
           tooltip={
             elmConfig.toolTip ? { text: `\n${elmConfig.toolTip}` } : undefined

@@ -10,12 +10,7 @@ import { Sequence, CogniteEvent } from '@cognite/sdk';
 import { ThreeDee } from 'components/3d';
 import EmptyState from 'components/emptyState';
 import { LOADING_SUB_TEXT } from 'components/emptyState/constants';
-import { LOG_THREE_DEE_PREVIEW, LOG_WELLS_THREE_DEE } from 'constants/logging';
 import { StoreState } from 'core/types';
-import {
-  useCreateMetricAndStartTimeLogger,
-  TimeLogStages,
-} from 'hooks/useTimeLog';
 import { useFetchWellFormationTopsRowData } from 'modules/wellInspect/hooks/useFetchWellFormationTopsRowData';
 import { useFetchWellLogsRowData } from 'modules/wellInspect/hooks/useFetchWellLogsRowData';
 import { useWellFormationTopsQuery } from 'modules/wellInspect/hooks/useWellFormationTopsQuery';
@@ -40,12 +35,6 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
     isWellFormationTopsRowDataFetching,
     setWellFormationTopsRowDataFetching,
   ] = useState<boolean>(false);
-
-  const renderTimer = useCreateMetricAndStartTimeLogger(
-    TimeLogStages.Render,
-    LOG_THREE_DEE_PREVIEW,
-    LOG_WELLS_THREE_DEE
-  );
 
   const { data: config } = useWellConfig();
   const wells = useWellInspectSelectedWells();
@@ -125,8 +114,6 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   useEffect(() => {
     fetchRowDataForFormationTops();
   }, [wellFormationTops, isWellFormationTopsLoading]);
-
-  useEffect(() => renderTimer?.stop(), [renderTimer]);
 
   if (
     !config ||
