@@ -10,6 +10,8 @@ import { SIDEBAR_SIZE } from './constants';
 export const SidebarContainer = styled(FlexColumn)`
   height: 100%;
   ${(props: { hidden: boolean }) => (props.hidden ? 'display:none;' : '')};
+  width: ${(props: { isOpen: boolean }) => (props.isOpen ? '100%' : '62px')};
+  min-width: 62px;
 `;
 
 export const SidebarHeader = styled(FlexRow)`

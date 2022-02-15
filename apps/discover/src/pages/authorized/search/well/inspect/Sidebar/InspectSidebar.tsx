@@ -36,8 +36,12 @@ export const InspectSidebar: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
-  const sidebarContent = (
-    <SidebarContainer hidden={hidden} data-testid="inspect-sidebar">
+  const sidebarContent = () => (
+    <SidebarContainer
+      isOpen={isOpen}
+      hidden={hidden}
+      data-testid="inspect-sidebar"
+    >
       <Header isOpen={isOpen} />
       <SidebarContentWrapper isOpen={isOpen}>
         {isOpen && (
@@ -59,7 +63,7 @@ export const InspectSidebar: React.FC<Props> = ({
   );
 
   if (!isOpen) {
-    return sidebarContent;
+    return sidebarContent();
   }
 
   return (
@@ -69,7 +73,7 @@ export const InspectSidebar: React.FC<Props> = ({
       maxWidth={SIDEBAR_SIZE.max}
       onResize={onResize}
     >
-      {sidebarContent}
+      {sidebarContent()}
     </HorizontalResizableBox>
   );
 };

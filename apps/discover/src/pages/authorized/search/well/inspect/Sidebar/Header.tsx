@@ -33,6 +33,7 @@ export const Header: React.FC<Props> = ({ isOpen }) => {
   return (
     <SidebarHeader isOpen={isOpen}>
       <BackButton
+        margin={isOpen}
         onClick={handleBackClick}
         data-testid="well-inspect-back-btn"
       />
