@@ -14,6 +14,7 @@ import {
   CameraControlsOptions,
   TreeIndexNodeCollection,
   CogniteModelBase,
+  DefaultCameraManager
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -26,7 +27,6 @@ import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
-import { DefaultCameraManager } from '@cognite/reveal/packages/camera-manager';
 
 
 window.THREE = THREE;
