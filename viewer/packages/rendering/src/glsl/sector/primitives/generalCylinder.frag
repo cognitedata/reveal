@@ -56,6 +56,9 @@ in vec3 v_normal;
 //fix: Uniform not assigning values in iOS - JiraId: REV-287
 flat in int v_renderMode;
 in mat4 v_projectionMatrix;
+#if NUM_CLIPPING_PLANES > 0
+  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -123,8 +126,7 @@ void main() {
 
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-        theta > v_arcAngle + v_angle ||
-        isClipped(appearance, p)
+        theta > v_arcAngle + v_angle
        ) {
         // Missed the first point, check the other point
         isInner = true;
@@ -135,12 +137,17 @@ void main() {
         if (theta < v_angle) theta += 2.0 * PI;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_arcAngle + v_angle || isClipped(appearance, p)
+            theta > v_arcAngle + v_angle
            ) {
             // Missed the other point too
             discard;
         }
     }
+    #if NUM_CLIPPING_PLANES > 0
+      if (isClipped(p, v_clippingPlanes)) {
+        discard;
+      }
+    #endif
 
 #if !defined(COGNITE_RENDER_COLOR_ID) && !defined(COGNITE_RENDER_DEPTH)
     // Regular cylinder has simpler normal vector in camera space

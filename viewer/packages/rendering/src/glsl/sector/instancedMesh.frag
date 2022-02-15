@@ -18,15 +18,21 @@ in vec3 v_viewPosition;
 
 uniform int renderMode;
 
+#if NUM_CLIPPING_PLANES > 0
+  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
+
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
 
-    if (isClipped(appearance, v_viewPosition)) {
+    #if NUM_CLIPPING_PLANES > 0
+      if (isClipped(vViewPosition, v_clippingPlanes)) {
         discard;
-    }
+      }
+    #endif
 
     vec4 color = determineColor(v_color, appearance);
     vec3 normal = derivateNormal(v_viewPosition);

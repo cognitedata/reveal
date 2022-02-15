@@ -16,6 +16,11 @@ uniform sampler2D transformOverrideIndexTexture;
 uniform vec2 transformOverrideTextureSize; 
 uniform sampler2D transformOverrideTexture;
 
+#if NUM_CLIPPING_PLANES > 0
+  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
+  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
+
 void main()
 {
     mat4 treeIndexWorldTransform = determineMatrixOverride(
@@ -25,6 +30,10 @@ void main()
       transformOverrideTextureSize, 
       transformOverrideTexture
     );
+
+    #if NUM_CLIPPING_PLANES > 0
+      v_clippingPlanes = clippingPlanes;
+    #endif
 
     v_color = a_color;
 

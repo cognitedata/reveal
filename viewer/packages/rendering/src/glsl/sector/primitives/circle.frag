@@ -21,6 +21,10 @@ uniform int renderMode;
 
 in vec3 vViewPosition;
 
+#if NUM_CLIPPING_PLANES > 0
+  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
+
 void main() {
     float dist = dot(v_xy, v_xy);
     vec3 normal = normalize( v_normal );
@@ -31,9 +35,11 @@ void main() {
     if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
-    if (isClipped(appearance, vViewPosition)) {
+    #if NUM_CLIPPING_PLANES > 0
+      if (isClipped(vViewPosition, v_clippingPlanes)) {
         discard;
-    }
+      }
+    #endif
 
     vec4 color = determineColor(v_color, appearance);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);

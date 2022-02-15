@@ -39,6 +39,9 @@ in vec3 v_normal;
 //fix: Uniform not assigning values in iOS - JiraId: REV-287
 in mat4 v_projectionMatrix;
 flat in int v_renderMode;
+#if NUM_CLIPPING_PLANES > 0
+  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
 
 void main() {  
   NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -115,8 +118,7 @@ void main() {
 
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
-      theta > v_angle + v_arcAngle ||
-      isClipped(appearance, p)
+      theta > v_angle + v_arcAngle
     ) {
       // Missed the first point, check the other point
       isInner = true;
@@ -127,13 +129,17 @@ void main() {
       if (theta < v_angle) theta += 2.0 * PI;
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
-        theta > v_angle + v_arcAngle ||
-        isClipped(appearance, p)
+        theta > v_angle + v_arcAngle
       ) {
         // Missed the other point too
         discard;
       }
     }
+    #if NUM_CLIPPING_PLANES > 0
+      if (isClipped(p, v_clippingPlanes)) {
+        discard;
+      }
+    #endif
 
   #if !defined(COGNITE_RENDER_COLOR_ID) && !defined(COGNITE_RENDER_DEPTH)
       if (R1 != R2)

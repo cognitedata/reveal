@@ -35,6 +35,9 @@ in vec3 v_normal;
 //fix: Uniform not assigning values in iOS - JiraId: REV-287
 flat in int v_renderMode;
 in mat4 v_projectionMatrix;
+#if NUM_CLIPPING_PLANES > 0
+  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -110,8 +113,7 @@ void main() {
     bool isInner = false;
 
     if (intersectionPointZ <= 0.0 ||
-      intersectionPointZ >= L ||
-      isClipped(appearance, p)
+      intersectionPointZ >= L
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
       // or the intersection point is outside the end caps. This is not a valid solution.
@@ -121,13 +123,17 @@ void main() {
       p = rayTarget + dist*rayDirection;
 
       if (intersectionPointZ <= 0.0 ||
-        intersectionPointZ >= L ||
-        isClipped(appearance, p)
+        intersectionPointZ >= L
       ) {
         // Missed the other point too
         discard;
       }
     }
+    #if NUM_CLIPPING_PLANES > 0
+      if (isClipped(p, v_clippingPlanes)) {
+        discard;
+      }
+    #endif
 
 #if !defined(COGNITE_RENDER_COLOR_ID) && !defined(COGNITE_RENDER_DEPTH)
     // Find normal vector

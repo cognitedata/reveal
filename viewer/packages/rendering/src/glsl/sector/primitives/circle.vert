@@ -22,9 +22,17 @@ uniform sampler2D transformOverrideIndexTexture;
 uniform vec2 transformOverrideTextureSize; 
 uniform sampler2D transformOverrideTexture;
 
+#if NUM_CLIPPING_PLANES > 0
+  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
+  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
+
 void main() {
     v_xy = vec2(position.x, position.y);
     v_treeIndex = a_treeIndex;
+    #if NUM_CLIPPING_PLANES > 0
+      v_clippingPlanes = clippingPlanes;
+    #endif
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 

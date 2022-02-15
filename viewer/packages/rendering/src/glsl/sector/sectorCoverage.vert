@@ -11,8 +11,17 @@ out lowp float v_visible;
 
 out vec3 v_viewPosition;
 
+#if NUM_CLIPPING_PLANES > 0
+  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
+  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
+
 void main()
 {
+    #if NUM_CLIPPING_PLANES > 0
+      v_clippingPlanes = clippingPlanes;
+    #endif
+
     v_visible = a_visible;
     v_color = packIntToColor(a_sectorId);
     v_coverageFactor = abs(dot(a_coverageFactor, normal));

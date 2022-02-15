@@ -39,9 +39,16 @@ uniform int renderMode;
 //fix: Uniform not assigning values in iOS - JiraId: REV-287
 flat out int v_renderMode;
 out mat4 v_projectionMatrix;
+#if NUM_CLIPPING_PLANES > 0
+  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
+  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
 
 void main() {
   v_renderMode = renderMode; // REV-287
+  #if NUM_CLIPPING_PLANES > 0
+    v_clippingPlanes = clippingPlanes;
+  #endif
   mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 
       treeIndexTextureSize, 

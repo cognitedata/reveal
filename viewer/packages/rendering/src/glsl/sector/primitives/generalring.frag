@@ -31,6 +31,9 @@ uniform vec2 treeIndexTextureSize;
 uniform int renderMode;
 
 in vec3 vViewPosition;
+#if NUM_CLIPPING_PLANES > 0
+  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -38,9 +41,11 @@ void main() {
         discard;
     }
 
-    if (isClipped(appearance, vViewPosition)) {
+    #if NUM_CLIPPING_PLANES > 0
+      if (isClipped(vViewPosition, v_clippingPlanes)) {
         discard;
-    }
+      }
+    #endif
 
     vec4 color = determineColor(v_color, appearance);
     float dist = dot(v_xy, v_xy);

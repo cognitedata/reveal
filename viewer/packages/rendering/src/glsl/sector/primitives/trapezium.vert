@@ -22,7 +22,15 @@ uniform sampler2D transformOverrideIndexTexture;
 uniform vec2 transformOverrideTextureSize; 
 uniform sampler2D transformOverrideTexture;
 
+#if NUM_CLIPPING_PLANES > 0
+  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
+  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
+
 void main() {
+  #if NUM_CLIPPING_PLANES > 0
+    v_clippingPlanes = clippingPlanes;
+  #endif
     vec3 transformed;
     // reduce the avarage branchings
     if (position.x < 1.5) {
