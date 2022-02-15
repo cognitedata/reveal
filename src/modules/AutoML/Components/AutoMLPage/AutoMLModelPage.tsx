@@ -8,6 +8,7 @@ import { AutoMLTrainingJob } from 'src/api/autoML/types';
 import { AutoMLModelNameBadge } from 'src/modules/AutoML/Components/AutoMLModelNameBadge';
 import { useUserCapabilities } from 'src/hooks/useUserCapabilities';
 import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';
+import { AutoMLCharts } from './AutoMLCharts';
 
 export const AutoMLModelPage = (props: {
   selectedModelId?: number;
@@ -70,7 +71,7 @@ export const AutoMLModelPage = (props: {
             </ActionContainer>
           </Header>
           <AutoMLMetricsOverview model={model} />
-          {/* TODO: add metric graphs */}
+          <AutoMLCharts model={model} />
         </Container>
       ) : props.selectedModelId ? (
         <StyledIcon data-testid="model-page-loading" type="Loading" />

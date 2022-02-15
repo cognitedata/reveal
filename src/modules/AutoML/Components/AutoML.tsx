@@ -92,7 +92,6 @@ const Container = styled.div`
   width: 100%;
   height: calc(100% - 40px);
   background: #fff;
-  overflow: hidden;
 `;
 
 const Left = styled.div`
