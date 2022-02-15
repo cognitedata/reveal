@@ -2,6 +2,10 @@ import { BoundingBox, DiagramLabelOutputFormat } from '../types';
 import { translatePointWithDom } from '../matcher/svgPathParser';
 import { Point } from '../geometry';
 
+// The text exported to PDF can vary slightly then the one in SVG.
+// This scaling should make sure that the bounding box never will be too short.
+const textWidthScale = 1.2;
+
 export class PidTspan {
   id: string;
   boundingBox: BoundingBox;
@@ -16,13 +20,24 @@ export class PidTspan {
   static fromSVGTSpan(tSpan: SVGTSpanElement, svg: SVGSVGElement) {
     const bBox = (tSpan.parentElement as unknown as SVGTextElement).getBBox();
 
-    const bBoxTopLeft = translatePointWithDom(bBox.x, bBox.y, {
+    const textWidth = textWidthScale * bBox.width;
+
+    const topLeftUnrotated = translatePointWithDom(bBox.x, bBox.y, {
       svg,
       currentElem: tSpan,
     });
 
-    const bBoxBottomRight = translatePointWithDom(
-      bBox.x + bBox.width,
+    const topRightUnrotated = translatePointWithDom(
+      bBox.x + textWidth,
+      bBox.y,
+      {
+        svg,
+        currentElem: tSpan,
+      }
+    );
+
+    const bottomLeftUnrotated = translatePointWithDom(
+      bBox.x,
       bBox.y + bBox.height,
       {
         svg,
@@ -30,14 +45,46 @@ export class PidTspan {
       }
     );
 
-    const x = Math.min(bBoxTopLeft.x, bBoxBottomRight.x);
-    const y = Math.min(bBoxTopLeft.y, bBoxBottomRight.y);
-    const width = Math.abs(bBoxTopLeft.x - bBoxBottomRight.x);
-    const height = Math.abs(bBoxTopLeft.y - bBoxBottomRight.y);
+    const bottomRightUnrotated = translatePointWithDom(
+      bBox.x + textWidth,
+      bBox.y + bBox.height,
+      {
+        svg,
+        currentElem: tSpan,
+      }
+    );
+
+    const xMin = Math.min(
+      topLeftUnrotated.x,
+      topRightUnrotated.x,
+      bottomLeftUnrotated.x,
+      bottomRightUnrotated.x
+    );
+    const xMax = Math.max(
+      topLeftUnrotated.x,
+      topRightUnrotated.x,
+      bottomLeftUnrotated.x,
+      bottomRightUnrotated.x
+    );
+    const yMin = Math.min(
+      topLeftUnrotated.y,
+      topRightUnrotated.y,
+      bottomLeftUnrotated.y,
+      bottomRightUnrotated.y
+    );
+    const yMax = Math.max(
+      topLeftUnrotated.y,
+      topRightUnrotated.y,
+      bottomLeftUnrotated.y,
+      bottomRightUnrotated.y
+    );
+
+    const width = xMax - xMin;
+    const height = yMax - yMin;
 
     const boundingBox = {
-      x,
-      y,
+      x: xMin,
+      y: yMin,
       width,
       height,
     };
