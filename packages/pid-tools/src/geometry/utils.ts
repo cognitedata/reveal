@@ -1,5 +1,5 @@
 /* eslint-disable no-continue */
-import { BoundingBox } from '../types';
+import { Rect } from '../types';
 
 import { Point } from './Point';
 import { PathSegment } from './PathSegment';
@@ -14,10 +14,7 @@ export const approxeqrel = (v1: number, v2: number, epsilon = 0.2) => {
   return Math.abs(1 - v1 / v2) <= epsilon;
 };
 
-export const getBoundingBox = (
-  startPoint: Point,
-  stopPoint: Point
-): BoundingBox => {
+export const getBoundingBox = (startPoint: Point, stopPoint: Point): Rect => {
   const minX = Math.min(startPoint.x, stopPoint.x);
   const minY = Math.min(startPoint.y, stopPoint.y);
   const maxX = Math.max(startPoint.x, stopPoint.x);
@@ -31,9 +28,7 @@ export const getBoundingBox = (
   };
 };
 
-export const getEncolosingBoundingBox = (
-  boundingBoxes: BoundingBox[]
-): BoundingBox => {
+export const getEncolosingBoundingBox = (boundingBoxes: Rect[]): Rect => {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;

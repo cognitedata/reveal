@@ -2,8 +2,9 @@ import {
   DocumentType,
   GraphDocument,
   DiagramSymbolInstanceOutputFormat,
-  DiagramLineInstanceOutputFormat,
   DiagramEquipmentTagInstanceOutputFormat,
+  DiagramLabelOutputFormat,
+  DiagramLineInstanceOutputFormat,
 } from '../types';
 import { isFileConnection, isLineConnection } from '../utils/type';
 
@@ -11,7 +12,8 @@ import {
   ParsedDocument,
   ParsedDocumentsForLine,
   Annotation,
-  DocumentText,
+  SymbolAnnotation,
+  TextAnnotation,
   DocumentLink,
 } from './types';
 import { symbolTypeMap } from './constants';
@@ -19,7 +21,7 @@ import { findPidLink, findIsoLink } from './links';
 
 const diagramInstanceToAnnotation = (
   instance: DiagramSymbolInstanceOutputFormat | DiagramLineInstanceOutputFormat
-): Annotation => ({
+): SymbolAnnotation => ({
   id: instance.id,
   type: symbolTypeMap[instance.type],
   svgPaths: instance.svgRepresentation.svgPaths,
@@ -31,7 +33,7 @@ const diagramInstanceToAnnotation = (
 
 const symbolTagToAnnotation = (
   tag: DiagramEquipmentTagInstanceOutputFormat
-): Annotation => ({
+): SymbolAnnotation => ({
   id: tag.id,
   type: symbolTypeMap[tag.type],
   svgPaths: [],
@@ -39,6 +41,18 @@ const symbolTagToAnnotation = (
   nearestAssetExternalIds: [],
   labelIds: tag.labels.map((label) => label.id),
   lineNumbers: tag.lineNumbers,
+});
+
+const labelToAnnotation = (
+  label: DiagramLabelOutputFormat
+): TextAnnotation => ({
+  id: label.id,
+  type: 'text',
+  text: label.text,
+  svgPaths: [],
+  boundingBox: label.boundingBox,
+  nearestAssetExternalIds: [],
+  lineNumbers: [],
 });
 
 const parseDocument = (
@@ -49,7 +63,12 @@ const parseDocument = (
   const { equipmentTags, lines, symbolInstances, labels } = graph;
 
   const annotations: Annotation[] = [];
-  const text: { [id: string]: DocumentText } = {};
+
+  const fileNameWithoutExtension = graph.documentMetadata.name.replace(
+    '.svg',
+    ''
+  );
+  const pdfName = `${fileNameWithoutExtension}.pdf`;
   const linking: DocumentLink[] = [];
 
   lines?.forEach((line) => {
@@ -76,18 +95,17 @@ const parseDocument = (
   });
 
   labels?.forEach((label) => {
-    const { id, ...rest } = label;
-    text[id] = rest;
+    annotations.push(labelToAnnotation(label));
   });
 
   return {
-    externalId: `PARSED_DIAGRAM_V${version}_${graph.documentMetadata.name}.json`,
-    pdfExternalId: graph.documentMetadata.name,
-    type: graph.documentMetadata.type === DocumentType.pid ? 'p&id' : 'iso',
-    potentialDiscrepancies: [],
-    linking,
     annotations,
-    text,
+    externalId: `PARSED_DIAGRAM_V${version}_${fileNameWithoutExtension}.json`,
+    linking,
+    pdfExternalId: pdfName,
+    potentialDiscrepancies: [],
+    type: graph.documentMetadata.type === DocumentType.pid ? 'p&id' : 'iso',
+    viewBox: graph.viewBox,
   };
 };
 
@@ -129,7 +147,7 @@ export const computeLines = async (
 
   lineNumbers.forEach((lineNumber) => {
     const parsedDocumentsForLine = {
-      externalId: `DOCUMENTS_FOR_LINE_V${version}_L${lineNumber}.json`,
+      externalId: `DOCUMENTS_FOR_LINE_V${version}_${lineNumber}.json`,
       line: lineNumber,
       parsedDocuments: graphsPerLine.get(lineNumber) || [],
     };

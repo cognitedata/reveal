@@ -1,4 +1,4 @@
-import { BoundingBox, DiagramLabelOutputFormat } from '../types';
+import { Rect, DiagramLabelOutputFormat } from '../types';
 import { translatePointWithDom } from '../matcher/svgPathParser';
 import { Point } from '../geometry';
 
@@ -8,10 +8,10 @@ const textWidthScale = 1.2;
 
 export class PidTspan {
   id: string;
-  boundingBox: BoundingBox;
+  boundingBox: Rect;
   text: string;
 
-  constructor(id: string, text: string, boundingBox: BoundingBox) {
+  constructor(id: string, text: string, boundingBox: Rect) {
     this.id = id;
     this.boundingBox = boundingBox;
     this.text = text;

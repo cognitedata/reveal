@@ -1,10 +1,8 @@
 import { getEncolosingBoundingBox, Point } from '../geometry';
-import { BoundingBox, SvgPath, SvgRepresentation } from '../types';
+import { Rect, SvgPath, SvgRepresentation } from '../types';
 import { PidPath } from '../pid';
 
-export const calculatePidPathsBoundingBox = (
-  pidPaths: PidPath[]
-): BoundingBox => {
+export const calculatePidPathsBoundingBox = (pidPaths: PidPath[]): Rect => {
   const boundingBoxes = pidPaths.flatMap((pidPath) =>
     pidPath.segmentList.map((pathSegment) => pathSegment.boundingBox)
   );

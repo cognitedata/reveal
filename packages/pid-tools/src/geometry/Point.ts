@@ -1,4 +1,4 @@
-import { BoundingBox } from '../types';
+import { Rect } from '../types';
 
 export class Point {
   x: number;
@@ -59,13 +59,13 @@ export class Point {
     return new Point(newX, newY);
   }
 
-  normalize(boundingBox: BoundingBox) {
+  normalize(boundingBox: Rect) {
     const newX = (this.x - boundingBox.x) / boundingBox.width;
     const newY = (this.y - boundingBox.y) / boundingBox.height;
     return new Point(newX, newY);
   }
 
-  static midPointFromBoundingBox(boundingBox: BoundingBox): Point {
+  static midPointFromBoundingBox(boundingBox: Rect): Point {
     return new Point(
       boundingBox.x + boundingBox.width / 2,
       boundingBox.y + boundingBox.height / 2

@@ -1,4 +1,4 @@
-import { BoundingBox } from '../types';
+import { Rect } from '../types';
 
 import { Point } from './Point';
 import { approxeq, getBoundingBox, getPointTowardOtherPoint } from './utils';
@@ -36,7 +36,7 @@ export abstract class PathSegment {
   abstract isEqual(other: PathSegment): boolean;
   abstract get midPoint(): Point;
   abstract get length(): number;
-  abstract get boundingBox(): BoundingBox;
+  abstract get boundingBox(): Rect;
   abstract translateAndScale(
     translatePoint: Point,
     scale: number | Point

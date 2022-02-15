@@ -8,7 +8,7 @@ export interface SvgPathWithId extends SvgPath {
   id: string;
 }
 
-export interface BoundingBox {
+export interface Rect {
   x: number;
   y: number;
   width: number;
@@ -17,7 +17,7 @@ export interface BoundingBox {
 
 export interface SvgRepresentation {
   svgPaths: SvgPath[];
-  boundingBox: BoundingBox;
+  boundingBox: Rect;
 }
 
 interface EquipmentTagInfo {
@@ -124,7 +124,7 @@ export type DiagramEquipmentTagInstanceOutputFormat =
 export interface DiagramLabelOutputFormat {
   id: string;
   text: string;
-  boundingBox: BoundingBox;
+  boundingBox: Rect;
 }
 
 export enum DocumentType {
@@ -135,7 +135,7 @@ export enum DocumentType {
 
 export interface GraphDocument {
   documentMetadata: DocumentMetadata;
-  viewBox: BoundingBox;
+  viewBox: Rect;
   symbols: DiagramSymbol[];
   symbolInstances: DiagramSymbolInstanceOutputFormat[];
   lines: DiagramLineInstanceOutputFormat[];

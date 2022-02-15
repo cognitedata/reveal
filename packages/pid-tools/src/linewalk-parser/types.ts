@@ -1,4 +1,4 @@
-import { BoundingBox, SvgPath } from '../types';
+import { Rect, SvgPath } from '../types';
 
 import { lineWalkSymbolTypes } from './constants';
 
@@ -9,11 +9,6 @@ export interface ParsedDocumentsForLine {
   parsedDocuments: string[]; // external id to CDF files with format of `ParsedDocument` (should be the same as `ParsedDocument.externalId`)
 }
 
-export interface DocumentText {
-  text: string;
-  boundingBox: BoundingBox;
-}
-
 export interface ParsedDocument {
   externalId: string; // external id of this document (probably redundant since it would be same as the file name)
   pdfExternalId: string; // external id of the PDF in CDF
@@ -21,7 +16,7 @@ export interface ParsedDocument {
   annotations: Annotation[];
   potentialDiscrepancies: PotentialDiscrepancies[];
   linking: DocumentLink[];
-  text: { [id: string]: DocumentText };
+  viewBox: Rect;
 }
 
 export interface PotentialDiscrepancies {
@@ -42,12 +37,23 @@ export interface AnnotationId {
 
 export type LineWalkSymbolType = typeof lineWalkSymbolTypes[number];
 
-export interface Annotation {
+export type LineWalkAnnotaionType = LineWalkSymbolType | 'text';
+
+interface AnnotationBase {
   id: string; // Unique per parsed document (not globally unique)
-  type: LineWalkSymbolType;
+  type: LineWalkAnnotaionType;
+  boundingBox: Rect;
   svgPaths: SvgPath[];
-  boundingBox: BoundingBox;
   nearestAssetExternalIds: string[];
-  labelIds: string[]; // not used by LineWalk current but might be used for CMD+F or auto complete discrepancies messages
   lineNumbers: string[];
 }
+
+export interface TextAnnotation extends AnnotationBase {
+  text: string;
+}
+
+export interface SymbolAnnotation extends AnnotationBase {
+  labelIds: string[]; // not used by LineWalk current but might be used for CMD+F or auto complete discrepancies messages
+}
+
+export type Annotation = TextAnnotation | SymbolAnnotation;

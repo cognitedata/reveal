@@ -1,5 +1,5 @@
 import { Point } from '../geometry';
-import { FileConnectionInstance, BoundingBox, FileDirection } from '../types';
+import { FileConnectionInstance, Rect, FileDirection } from '../types';
 
 import { PidDocument } from './PidDocument';
 import { PidTspan } from './PidTspan';
@@ -12,7 +12,7 @@ interface NormalizedLabel {
 
 const normalizeLabels = (
   pidLabels: PidTspan[],
-  viewBox: BoundingBox
+  viewBox: Rect
 ): NormalizedLabel[] => {
   return pidLabels.map((pidLabel) => {
     const normalizedMidPoint = Point.midPointFromBoundingBox(

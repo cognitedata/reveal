@@ -4,7 +4,7 @@ import {
   DiagramConnection,
   DiagramLineInstance,
   DiagramSymbol,
-  BoundingBox,
+  Rect,
   SvgRepresentation,
   DiagramSymbolInstance,
   DocumentType,
@@ -36,8 +36,8 @@ export type LabelSymbolInstanceConnection = {
 export class PidDocument {
   pidPaths: PidPath[];
   pidLabels: PidTspan[];
-  viewBox: BoundingBox;
-  constructor(paths: PidPath[], labels: PidTspan[], viewBox: BoundingBox) {
+  viewBox: Rect;
+  constructor(paths: PidPath[], labels: PidTspan[], viewBox: Rect) {
     this.pidPaths = paths;
     this.pidLabels = labels;
     this.viewBox = viewBox;
@@ -128,7 +128,7 @@ export class PidDocument {
       }
     });
 
-    const viewBox: BoundingBox = { x: 0, y: 0, width: 10, height: 10 }; // Fix: Retrieve from svgString
+    const viewBox: Rect = { x: 0, y: 0, width: 10, height: 10 }; // Fix: Retrieve from svgString
     return new PidDocument(pidPaths, [], viewBox);
   }
 
@@ -257,7 +257,7 @@ export class PidDocument {
     return { newSymbolInstances: symbolInstances, newLines: lines };
   }
 
-  getBoundingBoxToPaths(pathIds: string[]): BoundingBox {
+  getBoundingBoxToPaths(pathIds: string[]): Rect {
     const pidPaths = pathIds.map(
       (pathId: string) => this.getPidPathById(pathId)!
     );
@@ -296,7 +296,7 @@ export class PidDocumentWithDom extends PidDocument {
     svg: SVGSVGElement,
     paths: PidPath[],
     labels: PidTspan[],
-    viewBox: BoundingBox
+    viewBox: Rect
   ) {
     super(paths, labels, viewBox);
     this.svg = svg;

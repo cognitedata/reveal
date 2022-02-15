@@ -1,5 +1,5 @@
 import { getDiagramInstanceIdFromPathIds } from '../utils';
-import { BoundingBox, DiagramInstanceWithPaths } from '../types';
+import { Rect, DiagramInstanceWithPaths } from '../types';
 import { PidDocument, PidPath } from '../pid';
 import {
   getClosestPointOnSegments,
@@ -12,7 +12,7 @@ import { calculatePidPathsBoundingBox } from './utils';
 
 export class PidGroup {
   pidPaths: PidPath[];
-  boundingBox: BoundingBox;
+  boundingBox: Rect;
   midPoint: Point;
   isLine: boolean;
   constructor(pidPaths: PidPath[], isLine: boolean) {
