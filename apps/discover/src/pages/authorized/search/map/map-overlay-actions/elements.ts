@@ -10,6 +10,12 @@ const InlineBlock = styled.div`
   display: inline-block;
 `;
 
+export const AssetMenu = styled(Menu)`
+  display: block;
+  max-height: 60vh;
+  overflow-y: auto;
+`;
+
 const BaseContainer = styled(Flex)`
   height: 40px;
   border-radius: ${sizes.small};

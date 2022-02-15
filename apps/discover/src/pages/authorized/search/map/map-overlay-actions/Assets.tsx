@@ -1,5 +1,6 @@
 import React from 'react';
 
+import isEmpty from 'lodash/isEmpty';
 import { openInNewTab } from 'utils/openInNewTab';
 
 import { Body, Button, Menu } from '@cognite/cogs.js';
@@ -8,7 +9,7 @@ import { useExternalLinksConfig } from 'hooks/useExternalLinksConfig';
 import { Asset } from 'modules/map/types';
 import { WELL_FIELDS_WITH_PRODUCTION_DATA } from 'modules/wellSearch/constants';
 
-import { AssetListItem, AssetListItemContainer } from './elements';
+import { AssetListItem, AssetListItemContainer, AssetMenu } from './elements';
 
 interface Props {
   assets: Asset[];
@@ -58,8 +59,16 @@ export const QuickAssetNavigation: React.FC<Props> = ({
   assets,
   zoomToAsset,
 }) => {
+  if (isEmpty(assets)) {
+    return (
+      <AssetMenu>
+        <Menu.Item disabled>No options</Menu.Item>
+      </AssetMenu>
+    );
+  }
+
   return (
-    <Menu>
+    <AssetMenu>
       {assets.map((asset) => {
         return (
           <Menu.Item key={`asset-${asset.name}`}>
@@ -71,7 +80,7 @@ export const QuickAssetNavigation: React.FC<Props> = ({
           </Menu.Item>
         );
       })}
-    </Menu>
+    </AssetMenu>
   );
 };
 
