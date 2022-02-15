@@ -62,14 +62,10 @@ const getDigitalRocksFetchFunction = (
   return undefined;
 };
 
-const getDigitalRocksSampleFetchFunction = (
-  metadata: Record<string, unknown> | undefined
-) => {
+const getDigitalRocksSampleFetchFunction = () => {
   return (extraPayload: Record<string, unknown>) => {
     return getCogniteSDKClient().assets.search({
-      ...metadata,
-      // No extra fetchers are needed to samples right now. Cannot delete this in project config so commented this line
-      filter: merge(/* metadata?.filter || */ {}, extraPayload),
+      filter: extraPayload,
     });
   };
 };
@@ -156,7 +152,6 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
   const wellboreAssetIdReverseMap =
     getWellboreExternalAssetIdReverseMap(wellboreAssetIdMap);
 
-  const { data: config } = useWellConfig();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [startNetworkTimer, stopNetworkTimer] = useMetricLogger(
     LOG_WELL_DIGITAL_ROCKS,
@@ -203,9 +198,7 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
         wellSearchActions.getDigitalRockSamples(
           digitalRocksToFetch,
           wellboreAssetIdReverseMap,
-          getDigitalRocksSampleFetchFunction(
-            config?.digitalRocks?.sampleFetchMetadata
-          )
+          getDigitalRocksSampleFetchFunction()
         )
       );
       return { isLoading: true, digitalRockSamples: [] };

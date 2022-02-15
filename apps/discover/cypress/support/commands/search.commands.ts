@@ -5,6 +5,17 @@ Cypress.Commands.add('goToTab', (tab: 'Documents' | 'Wells' | 'Seismic') => {
   cy.findByRole('tab', { name: tab }).should('be.visible').click();
 });
 
+Cypress.Commands.add(
+  'selectCategory',
+  (category: 'Documents' | 'Wells' | 'Seismic') => {
+    cy.log(`Open ${category} category`);
+    cy.findByTestId('side-bar')
+      .findByText(category)
+      .should('be.visible')
+      .click();
+  }
+);
+
 Cypress.Commands.add('clearAllFilters', (expectEmptyResults = true) => {
   if (expectEmptyResults) {
     cy.log(`Searching for 'no results'`);
@@ -126,4 +137,5 @@ export interface SearchCommands {
   clearAllFilters(expectEmptyResults?: boolean): void;
   performWellsSearch(search: WellSearch): void;
   goToTab(tab: 'Documents' | 'Wells' | 'Seismic'): void;
+  selectCategory(category: 'Documents' | 'Wells' | 'Seismic'): void;
 }

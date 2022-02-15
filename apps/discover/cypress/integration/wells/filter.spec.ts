@@ -293,7 +293,7 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       waterDepth: {
         min: 9500,
-        max: 9738,
+        max: 9735,
         unit: 'foot',
       },
     });
@@ -359,7 +359,7 @@ describe('Wells sidebar filters', () => {
     cy.clickOnFilterCategory(WELL_CHARACTERISTICS);
   });
 
-  it.skip(`Should display wells sidebar filters: ${MEASUREMENTS}`, () => {
+  it(`Should display wells sidebar filters: ${MEASUREMENTS}`, () => {
     cy.clickOnFilterCategory(MEASUREMENTS);
 
     cy.log('Check visibility of last value in measurement drop-down');

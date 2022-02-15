@@ -13,11 +13,3 @@ export const SelectorWrapper = styled.div`
   padding: 5px;
   border-radius: 5px;
 `;
-
-export const ChartHolder = styled.div`
-  height: calc(100% - 50px);
-  & > .js-plotly-plot {
-    height: 100%;
-    width: 100%;
-  }
-`;

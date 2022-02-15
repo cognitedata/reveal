@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import { Data } from 'plotly.js';
 
 import { Asset } from '@cognite/sdk';
@@ -20,7 +21,7 @@ import { Chart } from '../../common/Chart';
 import { MessageWrapper } from '../../common/elements';
 import ValueSelector from '../../common/ValueSelector';
 
-import { ChartHolder, SelectorRow } from './elements';
+import { SelectorRow } from './elements';
 
 export type Props = {
   digitalRockSample: Asset;
@@ -70,10 +71,12 @@ export const GrainAnalysis: React.FC<Props> = ({ digitalRockSample }) => {
   const { isLoading, grainPartionings } =
     useGrainPartionings(digitalRockSample);
 
-  const title = `Grain Analysis - ${get(
+  // INFO: this will be refactored in another PR
+  const sampleVolumeId = get(
     digitalRockSample,
     DIGITAL_ROCK_SAMPLES_ACCESSORS.VOLUME_ID
-  )}`;
+  );
+  const title = `Grain Analysis${sampleVolumeId ? ` - ${sampleVolumeId}` : ''}`;
 
   const onTypeChange = (value: string) => {
     setType(value);
@@ -103,34 +106,35 @@ export const GrainAnalysis: React.FC<Props> = ({ digitalRockSample }) => {
 
   if (curve !== 'GPART') {
     ChartContent = <MessageWrapper>{t(DEVELOPMENT_INPROGRESS)}</MessageWrapper>;
-  } else if (grainAnalysisData.chartData.length) {
+  } else if (isEmpty(grainAnalysisData.chartData)) {
     ChartContent = (
-      <Chart
-        data={grainAnalysisData.chartData}
-        axisNames={{
-          x: xAxisName,
-          y: ' ',
-        }}
-        axisTicksuffixes={{ y: typeSufixMap[type] }}
-        title={title}
-        autosize
-      />
+      <MessageWrapper>{t(EMPTY_CHART_DATA_MESSAGE)}</MessageWrapper>
     );
   } else {
     ChartContent = (
-      <MessageWrapper>{t(EMPTY_CHART_DATA_MESSAGE)}</MessageWrapper>
+      <div data-testid="grain-partition-chart">
+        <Chart
+          data={grainAnalysisData.chartData}
+          axisNames={{
+            x: xAxisName,
+            y: ' ',
+          }}
+          axisTicksuffixes={{ y: typeSufixMap[type] }}
+          title={title}
+        />
+      </div>
     );
   }
 
   return (
-    <>
+    <div data-testid="grain-parition-modal">
       <SelectorRow>
         <ValueSelector selections={typeSelections} onChange={onTypeChange} />
         <FlexGrow />
         <ValueSelector selections={curveSelections} onChange={onCurveChange} />
       </SelectorRow>
-      <ChartHolder>{ChartContent}</ChartHolder>
-    </>
+      {ChartContent}
+    </div>
   );
 };
 
