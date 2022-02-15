@@ -4,7 +4,7 @@ import { Store } from 'redux';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
-import { Content } from '../Content';
+import { SidebarContent } from '../SidebarContent';
 
 jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
   useWellInspectWells: () => [
@@ -23,7 +23,7 @@ jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
 }));
 
 describe('Well Inspect Sidebar Content', () => {
-  const page = (viewStore: Store) => testRenderer(Content, viewStore);
+  const page = (viewStore: Store) => testRenderer(SidebarContent, viewStore);
 
   const defaultTestInit = async () => {
     const store = getMockedStore();

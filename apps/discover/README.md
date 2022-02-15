@@ -438,39 +438,3 @@ REACT_APP_ENABLE_RENDER_LOGGING # log react re-renders in the console
 REACT_APP_ENABLE_REDUX_LOGGER   #
 BROWSER                         # true or false to open browser on `yarn start`
 ```
-
-# Structure
-
-    .
-    ├── .storybook                          # Storybook configuration files.
-    ├── documentation                       # Documentation files.
-    ├── public                              # Public files which is included in the build (e.g favicon).
-    │    ├── sidecar.js                     # App config, auto populated by the server when hosted
-    ├── src                                 ## Source files
-    │    ├── components                     ## All reusable / common components are placed here.
-    │    ├── icons                          ## Icons used in the app.
-    │    ├── images                         ## Images used in the app.
-    │    ├── pages
-    |    |     ├── unauthorized             ### (OLD - deprecated) Entry point for Unauthorized users.
-    |    |     └── authorized               ### Entry point for Authorized users.
-    |    |     |     ├── admin              #### All pages and components that are specific to the admin panel.
-
-    |    ├── modules                        ### Ducks modules
-    |    |     ├── MODULE NAME
-    |    |     |     ├── reducer.ts         #### Reducer for this module
-    |    |     |     ├── types.ts           #### Model of the state and the action types
-    |    |     |     ├── selector.ts        #### Access the state of this module
-    |    |     |     ├── actions.ts         #### Connects services and dispatches
-    |    |     |     ├── service.ts         #### API calls
-    |    |     |     ├── helpers.ts         #### Other generic logic for this module
-    │    ├── utils                          ## All services are put here.
-    │    ├── App.js                         ## App main page
-    │    ├── Content.js                     ## Main layout file for Authorized app.
-    │    ├── index.css                      ## General css style for the app, generally do NOT use this
-    │    ├── index.js                       ## Entry point.
-    │    ├── serviceWorker.js               ## Service worker setup file.
-    │    └── setupTests.js                  ## Jest Setup file.
-    │
-    ├── testcafe                            # E2E testing
-    ├── Dockerfile                          # E2E testing container
-    └── README.md

@@ -11,13 +11,13 @@ import {
   COLLAPSE_TEXT,
   SIDEBAR_SIZE,
 } from './constants';
-import { Content } from './Content';
 import {
   SidebarContainer,
   SidebarContentWrapper,
   HideButtonContainer,
 } from './elements';
 import { Header } from './Header';
+import { SidebarContent } from './SidebarContent';
 
 export interface Props {
   isOpen: boolean;
@@ -46,7 +46,7 @@ export const InspectSidebar: React.FC<Props> = ({
       <SidebarContentWrapper isOpen={isOpen}>
         {isOpen && (
           <>
-            <Content />
+            <SidebarContent />
             <HideButtonContainer>
               <HideButton
                 text={t(HIDE_TEXT)}

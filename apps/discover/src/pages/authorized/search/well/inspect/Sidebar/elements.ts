@@ -67,7 +67,7 @@ export const SidebarContentWrapper = styled(FlexColumn)`
   transition: ${MS_TRANSITION_TIME}ms;
   border-right: 1px solid var(--cogs-color-strokes-default);
 `;
-export const SidebarContent = styled(FlexColumn)`
+export const Content = styled(FlexColumn)`
   width: 100%;
   height: calc(100% - ${TOP_BAR_HEIGHT}px);
   padding: ${sizes.normal};

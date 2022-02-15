@@ -14,18 +14,19 @@ import {
 import { Well } from 'modules/wellSearch/types';
 
 import { DEFAULT_WELLBORE_COLOR } from './constants';
+import { wellboreAdapter } from './domain';
 import {
   BlockContent,
   BlockContentItem,
   BlockHeader,
   CheckboxContent,
-  SidebarContent,
+  Content,
   SidebarContentBlock,
   WellLabel,
   WellLabelValue,
 } from './elements';
 
-export const Content: React.FC = () => {
+export const SidebarContent: React.FC = () => {
   const wells = useWellInspectWells();
   const isColoredWellbores = useColoredWellbores();
   const { selectedWellIds, selectedWellboreIds } = useWellInspectSelection();
@@ -51,7 +52,7 @@ export const Content: React.FC = () => {
   );
 
   return (
-    <SidebarContent>
+    <Content>
       {wells.map((well) => (
         <SidebarContentBlock key={well.id}>
           <BlockHeader>
@@ -71,33 +72,24 @@ export const Content: React.FC = () => {
 
           <BlockContent>
             {well.wellbores.map((wellbore) => {
-              const wellboreTitle =
-                wellbore.description === wellbore.name
-                  ? wellbore.name
-                  : `${wellbore.description} ${wellbore.name}`;
+              const { title, color, id } = wellboreAdapter(
+                wellbore,
+                isColoredWellbores
+              );
 
               return (
-                <BlockContentItem
-                  key={wellbore.id}
-                  overlay={
-                    isColoredWellbores && wellbore.metadata?.color.endsWith('_')
-                  }
-                >
+                <BlockContentItem key={id} overlay={color}>
                   <Checkbox
-                    color={
-                      isColoredWellbores
-                        ? wellbore.metadata?.color.replace('_', '')
-                        : DEFAULT_WELLBORE_COLOR
-                    }
-                    checked={selectedWellboreIds[wellbore.id]}
+                    color={color}
+                    checked={selectedWellboreIds[id]}
                     onChange={(isSelected) =>
-                      handleClickWellbore(well, wellbore.id, isSelected)
+                      handleClickWellbore(well, id, isSelected)
                     }
-                    name={`sidebar-wellbore-${wellbore.id}`}
+                    name={`sidebar-wellbore-${id}`}
                     style={{ width: '100%' }}
                   >
                     <CheckboxContent>
-                      <MiddleEllipsis value={wellboreTitle} />
+                      <MiddleEllipsis value={title} />
                     </CheckboxContent>
                   </Checkbox>
                 </BlockContentItem>
@@ -106,6 +98,6 @@ export const Content: React.FC = () => {
           </BlockContent>
         </SidebarContentBlock>
       ))}
-    </SidebarContent>
+    </Content>
   );
 };
