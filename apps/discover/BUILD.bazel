@@ -188,6 +188,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/styled-components",
     "@npm//@types/url-parse",
     "@npm//@types/uuid",
+    "@npm//@types/react-select",
 ]
 
 # Dev dependencies from package.json

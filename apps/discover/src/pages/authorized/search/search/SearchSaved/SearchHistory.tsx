@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
+import { components } from 'react-select';
 
 import get from 'lodash/get';
 import { useFormatDocumentFilters } from 'services/documents/hooks/useDocumentFormatFilter';
@@ -10,12 +11,12 @@ import { SavedSearchContent } from 'services/savedSearches/types';
 
 import { AutoComplete, OptionType, Icon } from '@cognite/cogs.js';
 
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
 import { useSearchState } from 'modules/search/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
 import { AppliedFilterEntries } from 'modules/sidebar/types';
 import { useFormatWellFilters } from 'modules/wellSearch/hooks/useAppliedFilters';
-import { FlexColumn, FlexGrow } from 'styles/layout';
 
 import { SearchQueryInfoPanel } from '../SearchQueryInfoPanel';
 
@@ -26,6 +27,10 @@ import {
   SearchPhrase,
   IconWrapper,
   SearchHistoryContainer,
+  SearchContainer,
+  SearchBarTextWrapper,
+  SearchBarIconWrapper,
+  customStyles,
 } from './elements';
 import { useSearchHistoryOptionData } from './hooks/useSearchHistoryOptionData';
 import { useUpdateSearchHistoryListQuery } from './hooks/useUpdateSearchHistoryListQuery';
@@ -35,6 +40,17 @@ export interface SearchHistoryOptionType<ValueType>
   extends OptionType<ValueType> {
   data: SavedSearchContent;
 }
+
+const ValueContainer = ({ children, ...props }: any) => {
+  return (
+    components.ValueContainer && (
+      <components.ValueContainer {...props}>
+        <SearchBarIconWrapper type="Search" />
+        <SearchBarTextWrapper>{children}</SearchBarTextWrapper>
+      </components.ValueContainer>
+    )
+  );
+};
 
 export const SearchHistory: React.FC = () => {
   const { t } = useTranslation('Search');
@@ -145,15 +161,17 @@ export const SearchHistory: React.FC = () => {
 
     return (
       <SearchHistoryRow>
-        <FlexColumn>
-          <SearchPhrase>{option.data?.query}</SearchPhrase>
+        <SearchContainer>
+          <SearchPhrase>
+            <MiddleEllipsis value={option.data?.query || ''} />
+          </SearchPhrase>
           <Filters>
             {option.data?.filters
               ? getFilterText(option.data)
               : 'No filters were applied'}
           </Filters>
-        </FlexColumn>
-        <FlexGrow />
+        </SearchContainer>
+
         <IconWrapper>
           <Icon type="History" />
         </IconWrapper>
@@ -186,6 +204,7 @@ export const SearchHistory: React.FC = () => {
       onChange={handleEnterPressOrSelect}
       components={{
         DropdownIndicator: () => null,
+        ValueContainer,
       }}
       onFocus={() => {
         setFastValue(value?.value);
@@ -196,6 +215,7 @@ export const SearchHistory: React.FC = () => {
       theme="grey"
       loadOptions={loadOptions}
       defaultOptions={defaultOptions}
+      styles={customStyles}
     />
   );
   return (

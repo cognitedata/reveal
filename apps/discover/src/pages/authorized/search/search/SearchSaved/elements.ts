@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
+import { Icon } from '@cognite/cogs.js';
+
 import {
   FlexRow,
   FlexColumn,
@@ -10,6 +12,7 @@ import {
 
 export const SearchHistoryRow = styled(FlexRow)`
   width: 100%;
+  max-width: 280px;
   border-radius: 6px;
   cursor: pointer;
   &:hover {
@@ -20,6 +23,20 @@ export const SearchHistoryRow = styled(FlexRow)`
   }
 `;
 
+export const customStyles = {
+  option: (styles: any) => {
+    return {
+      ...styles,
+      backgroundColor: 'white',
+      color: '#595959',
+      ':hover': {
+        ...styles[':hover'],
+        backgroundColor: '#f5f5f5',
+      },
+    };
+  },
+};
+
 export const SearchPhrase = styled.div`
   color: var(--cogs-text-color-secondary);
   font-style: normal;
@@ -27,15 +44,30 @@ export const SearchPhrase = styled.div`
   font-size: 14px;
 `;
 
+export const SearchContainer = styled.div`
+  width: 90%;
+`;
+
 export const Filters = styled.div`
   color: var(--cogs-greyscale-grey6);
   font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
+export const SearchBarTextWrapper = styled.div`
+  margin-left: 24px;
+`;
+
+export const SearchBarIconWrapper = styled(Icon).attrs({
+  style: { position: 'absolute', left: '8px' },
+})``;
+
 export const IconWrapper = styled(FlexColumn)`
+  align-items: flex-end;
   justify-content: center;
-  align-items: center;
   color: var(--cogs-greyscale-grey4);
+
   .cogs-icon-History {
     margin-right: 0px !important;
   }
@@ -52,7 +84,7 @@ export const SearchHistoryContainer = styled(FlexAlignJustifyContent)`
   & > .cogs-select {
     margin-left: ${sizes.small};
     width: 100%;
-    max-width: 246px;
+    max-width: 230px;
     height: 36px;
     cursor: pointer;
     & > * .cogs-select__placeholder {
