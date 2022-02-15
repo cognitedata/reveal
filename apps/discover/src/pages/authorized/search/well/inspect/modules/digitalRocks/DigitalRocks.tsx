@@ -20,9 +20,6 @@ import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/a
 import { Wellbore } from 'modules/wellSearch/types';
 import { getWellboreExternalAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 
-import { WellboreSelectionWrapper } from '../../elements';
-import WellboreSelectionDropdown from '../common/WellboreSelectionDropdown';
-
 import { DigitalRockSamplesTable } from './DigitalRockSamples';
 
 const columns = (depthUnit = '', dimensionUnit = '') =>
@@ -156,10 +153,6 @@ export const DigitalRocks: React.FC = () => {
     [userPrefferedUnit, dimensionUnit]
   );
 
-  const onSelectWellbore = (selectedWellboreList: Wellbore[]) => {
-    setSelectedWellbores(selectedWellboreList);
-  };
-
   const handleRowClick = useCallback((row: Row & { isSelected: boolean }) => {
     const digitalRock = row.original as Asset;
     setExpandedIds((state) => ({
@@ -184,25 +177,16 @@ export const DigitalRocks: React.FC = () => {
   }
 
   return (
-    <>
-      <WellboreSelectionWrapper>
-        <WellboreSelectionDropdown
-          onSelectWellbore={onSelectWellbore}
-          allWellbores={wellboresWithDigitalRocks}
-          selectedWellbores={selectedWellbores}
-        />
-      </WellboreSelectionWrapper>
-      <Table<Asset>
-        scrollTable
-        id="digital-rocks-result-table"
-        data={filteredDigitalRocks}
-        columns={columnsWithUserPrefferedUnits}
-        options={tableOptions}
-        expandedIds={expandedIds}
-        handleRowClick={handleRowClick}
-        renderRowSubComponent={renderRowSubComponent}
-      />
-    </>
+    <Table<Asset>
+      scrollTable
+      id="digital-rocks-result-table"
+      data={filteredDigitalRocks}
+      columns={columnsWithUserPrefferedUnits}
+      options={tableOptions}
+      expandedIds={expandedIds}
+      handleRowClick={handleRowClick}
+      renderRowSubComponent={renderRowSubComponent}
+    />
   );
 };
 

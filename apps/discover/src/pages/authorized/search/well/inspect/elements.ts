@@ -12,11 +12,6 @@ export const SelectionWrapper = styled.div`
   justify-content: center;
 `;
 
-export const WellboreSelectionWrapper = styled.div`
-  width: 100%;
-  padding-bottom: ${sizes.normal};
-`;
-
 export const DropDownWrapper = styled.div`
   padding-left: 10px;
   padding-top: 15px;
