@@ -187,6 +187,7 @@ const CasingView: FC<CasingViewType> = ({
         <SelectedWellboreView
           events={validEvents}
           selectedWellbore={selectedWellbore}
+          disableWellboreNavigation
           setSelectedWellbore={(selected) => {
             if (!selected) {
               setSelectedWellbore(undefined);

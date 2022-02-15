@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
@@ -8,6 +8,8 @@ import isUndefined from 'lodash/isUndefined';
 
 import { WhiteLoaderOverlay } from 'components/loading';
 import { OverlayNavigation } from 'components/overlay-navigation';
+import { EMPTY_ARRAY } from 'constants/empty';
+import { useDeepMemo } from 'hooks/useDeep';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../../constants';
@@ -23,81 +25,74 @@ interface Props {
   events: NPTEvent[];
   selectedWellbore?: SelectedWellbore;
   setSelectedWellbore?: (selectedWellbore?: SelectedWellbore) => void;
+  disableWellboreNavigation?: boolean;
 }
 
+const getSelectedWellboreName = (selectedWellbore?: SelectedWellbore) => {
+  if (isUndefined(selectedWellbore)) return undefined;
+  if (isString(selectedWellbore)) return selectedWellbore;
+  return selectedWellbore.wellboreName;
+};
+
 export const SelectedWellboreView: React.FC<Props> = React.memo(
-  ({ events, selectedWellbore, setSelectedWellbore }) => {
-    const [selectedWellboreViewMounted, setSelectedWellboreViewMounted] =
-      useState<boolean>(false);
+  ({
+    events,
+    selectedWellbore,
+    setSelectedWellbore,
+    disableWellboreNavigation,
+  }) => {
     const [chartRendering, setChartRendering] = useState<boolean>(false);
-    const [chartData, setChartData] = useState<NPTEvent[]>([]);
+    const chartData = useRef<NPTEvent[]>(EMPTY_ARRAY);
 
-    const getSelectedWellboreName = (selectedWellbore?: SelectedWellbore) => {
-      if (isUndefined(selectedWellbore)) return undefined;
-      if (isString(selectedWellbore)) return selectedWellbore;
-      return selectedWellbore.wellboreName;
-    };
-
-    const updateChartData = (selectedWellbore: SelectedWellbore) => {
-      const wellboreName = getSelectedWellboreName(selectedWellbore)!;
-      const selectedWellboreEvents = get(
-        groupedEvents,
-        wellboreName,
-        [] as NPTEvent[]
-      );
-      setChartData(selectedWellboreEvents);
-    };
-
-    const handleChangeSelectedWellbore = useCallback(
-      (selectedWellbore: SelectedWellbore) => {
-        setChartRendering(true);
-        setTimeout(() => {
-          updateChartData(selectedWellbore);
-          if (setSelectedWellbore) setSelectedWellbore(selectedWellbore);
-          setTimeout(() => setChartRendering(false));
-        });
-      },
-      []
+    const groupedEvents = useDeepMemo(
+      () => groupBy(events, accessors.WELLBORE_NAME),
+      [events]
     );
 
-    const handleCloseSelectedWellboreView = useCallback(() => {
-      setSelectedWellboreViewMounted(false);
-      if (setSelectedWellbore) setTimeout(() => setSelectedWellbore(undefined));
-    }, []);
-
     const wellboreName = getSelectedWellboreName(selectedWellbore);
-    const wellName = get(head(chartData), accessors.WELL_NAME) as string;
-    const index = get(selectedWellbore, 'index', -1);
 
+    useEffect(() => {
+      setChartRendering(true);
+
+      chartData.current = get(
+        groupedEvents,
+        wellboreName!,
+        EMPTY_ARRAY as NPTEvent[]
+      );
+
+      setTimeout(() => {
+        setChartRendering(false);
+      });
+    }, [wellboreName, groupedEvents]);
+
+    const index = get(selectedWellbore, 'index', -1);
+    const wellName = get(
+      head(chartData.current),
+      accessors.WELL_NAME
+    ) as string;
     const navigationPanelData = {
       wellboreName,
       wellName,
       index,
     } as NavigationPanelData;
 
-    const disableWellboreNavigation = useMemo(
-      () => isString(selectedWellbore),
-      [wellboreName]
+    const handleChangeSelectedWellbore = useCallback(
+      (selectedWellbore: SelectedWellbore) => {
+        setSelectedWellbore?.(selectedWellbore);
+      },
+      []
     );
 
-    const groupedEvents = useMemo(
-      () => groupBy(events, accessors.WELLBORE_NAME),
-      [JSON.stringify(events)]
-    );
-
-    useEffect(() => {
-      if (!selectedWellboreViewMounted && selectedWellbore) {
-        setSelectedWellboreViewMounted(true);
-        updateChartData(selectedWellbore);
-        if (setSelectedWellbore) setSelectedWellbore(selectedWellbore);
-      }
-    }, [wellboreName]);
+    const handleCloseSelectedWellboreView = useCallback(() => {
+      chartData.current = EMPTY_ARRAY;
+      setSelectedWellbore?.(undefined);
+    }, []);
 
     return (
       <>
         <OverlayNavigation
           backgroundInvisibleMount
-          mount={selectedWellboreViewMounted}
+          mount={Boolean(selectedWellbore)}
         >
           <NavigationPanel
             data={navigationPanelData}
@@ -105,10 +100,10 @@ export const SelectedWellboreView: React.FC<Props> = React.memo(
             onCloseSelectedWellboreView={handleCloseSelectedWellboreView}
             disableNavigation={disableWellboreNavigation}
           />
-          <NPTDurationGraph events={chartData} />
+          <NPTDurationGraph events={chartData.current} />
           <Separator />
-          <NPTEventsGraph events={chartData} />
-          <NPTEventsTable events={chartData} />
+          <NPTEventsGraph events={chartData.current} />
+          <NPTEventsTable events={chartData.current} />
         </OverlayNavigation>
 
         {chartRendering && <WhiteLoaderOverlay />}
