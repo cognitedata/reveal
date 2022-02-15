@@ -6,7 +6,7 @@ import { Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/processSlice';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export function NameAndAnnotationRenderer({

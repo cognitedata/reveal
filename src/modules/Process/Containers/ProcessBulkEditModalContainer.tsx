@@ -9,7 +9,7 @@ import {
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { RootState } from 'src/store/rootReducer';
 import { updateBulk } from 'src/store/thunks/Files/updateBulk';
-import { selectProcessAllSelectedFilesInSortedOrder } from 'src/modules/Process/processSlice';
+import { selectProcessAllSelectedFilesInSortedOrder } from 'src/modules/Process/store/selectors';
 
 export const ProcessBulkEditModalContainer = () => {
   const dispatch = useDispatch();

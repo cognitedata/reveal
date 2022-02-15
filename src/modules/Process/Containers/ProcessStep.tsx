@@ -11,7 +11,7 @@ import {
   hideFileMetadata,
   setCurrentView,
   setFocusedFileId,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProcessToolBar } from 'src/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
 import { ProcessFooter } from 'src/modules/Process/Containers/ProcessFooter';

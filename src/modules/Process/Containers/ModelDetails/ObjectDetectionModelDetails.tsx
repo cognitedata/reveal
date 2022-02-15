@@ -10,7 +10,7 @@ import {
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsObjectDetection } from 'src/api/types';
-import { setUnsavedDetectionModelSettings } from 'src/modules/Process/processSlice';
+import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import ObjectDetectionIllustration from 'src/assets/visualDescriptions/ObjectDetectionIllustration.svg';

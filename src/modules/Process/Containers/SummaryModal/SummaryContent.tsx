@@ -11,7 +11,7 @@ import FileWithExifIcon from 'src/assets/FileWithExifIcon.svg';
 import FileWithAnnotations from 'src/assets/FileWithAnnotations.svg';
 import FileUnresolvedPerson from 'src/assets/FileUnresolvedPerson.svg';
 import FileWasReviewed from 'src/assets/FileWasReviewed.svg';
-import { selectAllProcessFiles } from 'src/modules/Process/processSlice';
+import { selectAllProcessFiles } from 'src/modules/Process/store/selectors';
 
 const queryClient = new QueryClient();
 

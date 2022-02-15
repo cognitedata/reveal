@@ -1,10 +1,10 @@
 import React from 'react';
 import { ExploreModal } from 'src/modules/Common/Components/ExploreModal/ExploreModal';
 import {
-  selectAllProcessFiles,
   setProcessFileIds,
   setSelectFromExploreModalVisibility,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/slice';
+import { selectAllProcessFiles } from 'src/modules/Process/store/selectors';
 import {
   setExplorerFileSelectState,
   setExplorerModalFocusedFileId,

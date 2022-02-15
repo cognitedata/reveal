@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchJobById } from 'src/api/annotationJob';
 import { AnnotationJob } from 'src/api/types';
-import { JobState, removeJobById } from 'src/modules/Process/processSlice';
+import { removeJobById } from 'src/modules/Process/store/slice';
+import { JobState } from 'src/modules/Process/store/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { fetchUntilComplete } from 'src/utils';
 import { ToastUtils } from 'src/utils/ToastUtils';

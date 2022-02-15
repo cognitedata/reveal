@@ -5,16 +5,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   setDetectionModelParameters,
-  selectIsPollingComplete,
   setProcessViewFileUploadModalVisibility,
   setSelectedDetectionModels,
   setSelectFromExploreModalVisibility,
   revertDetectionModelParameters,
   resetDetectionModelParameters,
-  selectAllProcessFiles,
-  selectIsProcessingStarted,
   addToAvailableDetectionModels,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/slice';
+import {
+  selectAllProcessFiles,
+  selectIsPollingComplete,
+  selectIsProcessingStarted,
+} from 'src/modules/Process/store/selectors';
 import { message, notification } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { Button, Title, Modal } from '@cognite/cogs.js';

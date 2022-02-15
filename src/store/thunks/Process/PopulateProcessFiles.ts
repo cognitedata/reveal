@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { setProcessFileIds } from 'src/modules/Process/processSlice';
+import { setProcessFileIds } from 'src/modules/Process/store/slice';
 import { clearFileState } from 'src/store/commonActions';
 
 export const PopulateProcessFiles = createAsyncThunk<

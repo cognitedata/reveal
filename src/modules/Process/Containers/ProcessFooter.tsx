@@ -8,11 +8,11 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
-  selectAllProcessFiles,
   selectIsPollingComplete,
   selectIsProcessingStarted,
-  setSummaryModalVisibility,
-} from 'src/modules/Process/processSlice';
+  selectAllProcessFiles,
+} from 'src/modules/Process/store/selectors';
+import { setSummaryModalVisibility } from 'src/modules/Process/store/slice';
 import { createLink } from '@cognite/cdf-utilities';
 import { AppDispatch } from 'src/store';
 import { SummaryModal } from './SummaryModal/SummaryModal';

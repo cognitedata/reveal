@@ -11,8 +11,8 @@ import {
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE,
 } from 'src/api/constants';
 
-jest.mock('src/modules/Process/processSlice', () => ({
-  ...jest.requireActual('src/modules/Process/processSlice'),
+jest.mock('src/modules/Process/store/slice', () => ({
+  ...jest.requireActual('src/modules/Process/store/slice'),
   makeSelectAnnotationStatuses: () => {
     return () => {
       return {

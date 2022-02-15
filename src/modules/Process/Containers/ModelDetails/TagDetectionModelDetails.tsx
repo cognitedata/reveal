@@ -8,7 +8,7 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import React from 'react';
-import { setUnsavedDetectionModelSettings } from 'src/modules/Process/processSlice';
+import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsTagDetection } from 'src/api/types';

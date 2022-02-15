@@ -3,7 +3,7 @@ import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/processSlice';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export function AnnotationRenderer({ rowData: { id } }: CellRenderer) {

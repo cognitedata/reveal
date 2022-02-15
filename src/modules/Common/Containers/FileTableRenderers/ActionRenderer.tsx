@@ -7,10 +7,8 @@ import { RootState } from 'src/store/rootReducer';
 import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import styled from 'styled-components';
-import {
-  isProcessingFile,
-  makeSelectJobStatusForFile,
-} from 'src/modules/Process/processSlice';
+import { isProcessingFile } from 'src/modules/Process/store/utils';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { selectExplorerSelectedIds } from 'src/modules/Explorer/store/selectors';

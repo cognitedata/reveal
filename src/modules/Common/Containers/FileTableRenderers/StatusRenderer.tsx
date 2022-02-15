@@ -3,7 +3,7 @@ import {
   CellRenderer,
 } from 'src/modules/Common/types';
 import React, { useMemo } from 'react';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/processSlice';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { TimeDisplay } from '@cognite/data-exploration';

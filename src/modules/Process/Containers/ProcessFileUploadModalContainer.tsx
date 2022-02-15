@@ -5,10 +5,10 @@ import { RootState } from 'src/store/rootReducer';
 import {
   addProcessUploadedFileId,
   clearUploadedFiles,
-  selectAllProcessFiles,
   setProcessFileIds,
   setProcessViewFileUploadModalVisibility,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/slice';
+import { selectAllProcessFiles } from 'src/modules/Process/store/selectors';
 
 export const ProcessFileUploadModalContainer = () => {
   const dispatch = useDispatch();

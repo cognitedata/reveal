@@ -11,7 +11,7 @@ import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsOCR } from 'src/api/types';
-import { setUnsavedDetectionModelSettings } from 'src/modules/Process/processSlice';
+import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsOCR } from 'src/constants/Colors';
 import OcrIllustration from 'src/assets/visualDescriptions/OcrIllustration.svg';

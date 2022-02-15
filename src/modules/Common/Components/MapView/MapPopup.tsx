@@ -5,10 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
-import {
-  isProcessingFile,
-  makeSelectJobStatusForFile,
-} from 'src/modules/Process/processSlice';
+import { isProcessingFile } from 'src/modules/Process/store/utils';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/sdk';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';

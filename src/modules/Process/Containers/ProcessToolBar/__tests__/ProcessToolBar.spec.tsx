@@ -6,10 +6,8 @@ import { ProcessToolBar } from 'src/modules/Process/Containers/ProcessToolBar/Pr
 import { getRealStore } from 'src/__test-utils/store.utils';
 import { testRendererModals } from 'src/__test-utils/renderer';
 import { fireEvent, screen, within } from '@testing-library/react';
-import {
-  processReducerInitialState,
-  State as ProcessState,
-} from 'src/modules/Process/processSlice';
+import { processReducerInitialState } from 'src/modules/Process/store/slice';
+import { ProcessState } from 'src/modules/Process/store/types';
 import { initialState as fileState } from 'src/modules/Common/store/files/slice';
 import { FileState } from 'src/modules/Common/store/files/types';
 import { mockFileInfo } from 'src/__test-utils/data/mockFileInfo';

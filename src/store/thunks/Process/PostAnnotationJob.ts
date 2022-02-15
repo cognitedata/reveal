@@ -6,8 +6,8 @@ import {
 } from 'src/api/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { createAnnotationJob } from 'src/api/annotationJob';
-import { State } from 'src/modules/Process/processSlice';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
+import { ProcessState } from 'src/modules/Process/store/types';
 
 export const postAnnotationJob = createAsyncThunk<
   AnnotationJob,
@@ -29,7 +29,7 @@ export const postAnnotationJob = createAsyncThunk<
 );
 
 const getDetectionModelParameters = (
-  state: State,
+  state: ProcessState,
   modelType: VisionAPIType
 ): DetectionModelParams | undefined => {
   return state.availableDetectionModels.find((item) => item.type === modelType)

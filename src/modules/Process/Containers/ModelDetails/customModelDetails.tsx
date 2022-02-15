@@ -13,7 +13,7 @@ import { ParamsCustomModel } from 'src/api/types';
 import {
   setCustomModelName,
   setUnsavedDetectionModelSettings,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/slice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIllustration.svg';

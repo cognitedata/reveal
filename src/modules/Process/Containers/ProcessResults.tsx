@@ -13,20 +13,24 @@ import {
   ViewMode,
 } from 'src/modules/Common/types';
 import {
-  selectIsPollingComplete,
   setMapTableTabKey,
   setFocusedFileId,
-  selectProcessSortedFiles,
-  selectProcessSelectedFileIdsInSortedOrder,
   showFileMetadata,
   setSortKey,
   setReverse,
   setCurrentPage,
   setPageSize,
+} from 'src/modules/Process/store/slice';
+import {
+  selectIsPollingComplete,
+  selectProcessSortedFiles,
+  selectUnfinishedJobs,
+  selectProcessSelectedFileIdsInSortedOrder,
+} from 'src/modules/Process/store/selectors';
+import {
   useIsSelectedInProcess,
   useProcessFilesSelected,
-  selectUnfinishedJobs,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';

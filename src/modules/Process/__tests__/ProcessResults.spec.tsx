@@ -5,7 +5,7 @@ import React from 'react';
 import { ProcessResults } from 'src/modules/Process/Containers/ProcessResults';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
 import { initialState as fileState } from 'src/modules/Common/store/files/slice';
-import { initialState as processState } from 'src/modules/Process/processSlice';
+import { initialState as processState } from 'src/modules/Process/store/slice';
 import { createFileState } from 'src/store/util/StateUtils';
 import styled from 'styled-components';
 

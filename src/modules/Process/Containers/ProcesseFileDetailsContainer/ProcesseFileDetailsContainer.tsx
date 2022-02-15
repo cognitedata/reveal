@@ -7,7 +7,7 @@ import React from 'react';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { hideFileMetadata } from 'src/modules/Process/processSlice';
+import { hideFileMetadata } from 'src/modules/Process/store/slice';
 
 export const ProcessFileDetailsContainer = () => {
   const queryClient = new QueryClient();

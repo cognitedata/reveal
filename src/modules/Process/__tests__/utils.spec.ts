@@ -2,7 +2,7 @@ import {
   AnnotationsBadgeStatuses,
   AnnotationStatuses,
 } from 'src/modules/Common/types';
-import { hasJobsFailedForFile } from 'src/modules/Process/processSlice';
+import { hasJobsFailedForFile } from 'src/modules/Process/store/utils';
 import { JobStatus } from 'src/api/types';
 
 describe('Test util hasJobsFailedForFile', () => {

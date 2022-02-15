@@ -9,13 +9,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeSelectTotalAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
 import { RootState } from 'src/store/rootReducer';
 import {
-  selectAllJobs,
-  selectAllJobsForAllFilesDict,
+  selectPageCount,
   selectIsPollingComplete,
   selectIsProcessingStarted,
-  selectPageCount,
-  setSummaryModalVisibility,
-} from 'src/modules/Process/processSlice';
+  selectAllJobs,
+  selectAllJobsForAllFilesDict,
+} from 'src/modules/Process/store/selectors';
+import { setSummaryModalVisibility } from 'src/modules/Process/store/slice';
 import { VisionAPIType } from 'src/api/types';
 import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 

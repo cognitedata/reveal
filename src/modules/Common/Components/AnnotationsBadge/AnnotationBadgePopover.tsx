@@ -3,7 +3,7 @@ import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge
 import {
   hasJobsFailedForFile,
   isProcessingFile,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/utils';
 import { Popover } from 'src/modules/Common/Components/Popover';
 import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
 import {

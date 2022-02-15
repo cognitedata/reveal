@@ -14,7 +14,7 @@ import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/Bul
 import {
   selectAllProcessFiles,
   selectIsPollingComplete,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/selectors';
 
 export const FileToolbar = ({
   onViewChange,

@@ -3,7 +3,7 @@ import { explorerReducerInitialState } from 'src/modules/Explorer/store/slice';
 import {
   processReducerInitialState,
   ProcessReducerState,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/slice';
 import {
   annotationLabelReducerInitialState,
   AnnotationLabelReducerState,

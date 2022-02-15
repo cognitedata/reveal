@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setProcessViewFileUploadModalVisibility,
   setSummaryModalVisibility,
-} from 'src/modules/Process/processSlice';
+} from 'src/modules/Process/store/slice';
 import { pushMetric } from 'src/utils/pushMetric';
 import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'src/utils';
