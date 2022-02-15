@@ -45,14 +45,20 @@ const ChevronCollapseUpDownIcon = styled(Icon)<{
   margin-right: ${sizes.small};
 `;
 
+const ViewMoreContainer = styled(FlexAlignItems)`
+  cursor: pointer;
+  margin-left: -8px;
+  margin-bottom: 8px;
+`;
+
 const ViewMore: React.FC<{
   expanded: boolean;
   onShowMoreClick: () => void;
 }> = ({ expanded, onShowMoreClick }) => (
-  <FlexAlignItems style={{ cursor: 'pointer' }} onClick={onShowMoreClick}>
+  <ViewMoreContainer onClick={onShowMoreClick}>
     <ChevronCollapseUpDownIcon expanded={expanded ? 1 : 0} type="ChevronDown" />
     <Body level={2}>{expanded ? 'View less' : 'View more'}</Body>
-  </FlexAlignItems>
+  </ViewMoreContainer>
 );
 
 interface Props {
