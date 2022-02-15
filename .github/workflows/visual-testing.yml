@@ -4,6 +4,7 @@ on: push
 
 jobs:
   visual-testing:
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     name: Visual Testing
     steps:
