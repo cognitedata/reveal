@@ -13,12 +13,9 @@ import {
   Wellbore,
 } from 'modules/wellSearch/types';
 import { getDataPointInPreferredUnit } from 'modules/wellSearch/utils/trajectory';
-import { FlexGrow } from 'styles/layout';
 import { ChartDataConfig } from 'tenants/types';
 
-import { WellboreSelectionWrapper } from '../../../elements';
 import { Chart } from '../../common/Chart';
-import WellboreSelectionDropdown from '../../common/WellboreSelectionDropdown';
 import { TrajectoryChildGrid, TrajectoryGrid } from '../elements';
 import { getWellboreNameForTrajectory } from '../utils';
 
@@ -26,17 +23,11 @@ export interface Props {
   selectedTrajectoryData: (TrajectoryRows | undefined)[];
   selectedTrajectories: Sequence[];
   selectedWellbores: Wellbore[];
-  showWellWellboreDropdown?: boolean;
-  wellbores?: Wellbore[];
-  onSelectWellbore?: (selectedWellboreList: Wellbore[]) => void;
 }
 export const Trajectory2D: React.FC<Props> = ({
   selectedTrajectoryData,
   selectedTrajectories,
   selectedWellbores,
-  showWellWellboreDropdown,
-  wellbores,
-  onSelectWellbore,
 }) => {
   const { data: config } = useWellConfig();
   const userPreferredUnit = useUserPreferencesMeasurement();
@@ -223,10 +214,6 @@ export const Trajectory2D: React.FC<Props> = ({
     }
   };
 
-  const handleOnSelectWellbore = (items: Wellbore[]) => {
-    if (onSelectWellbore) onSelectWellbore(items);
-  };
-
   const isLegend = (index: number) => chartConfigs[index].type === 'legend';
 
   const getChartVizDataConfig = (
@@ -254,17 +241,6 @@ export const Trajectory2D: React.FC<Props> = ({
 
   return (
     <>
-      {showWellWellboreDropdown && (
-        <WellboreSelectionWrapper data-testid="wellbore-dropdown">
-          <WellboreSelectionDropdown
-            onSelectWellbore={handleOnSelectWellbore}
-            allWellbores={wellbores || []}
-            selectedWellbores={selectedWellbores}
-          />
-          <FlexGrow />
-        </WellboreSelectionWrapper>
-      )}
-
       <TrajectoryGrid>
         {charts
           .map((chart, index) => ({ chart, id: `chart_${index}` }))

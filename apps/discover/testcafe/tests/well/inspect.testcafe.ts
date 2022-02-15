@@ -23,7 +23,7 @@ fixture('Well inspect')
 startTest('Assessing inspect navigation tab', async () => {
   await App.wellInspectPage.inspectNthWell(0);
   await App.wellInspectPage.checkIfWellCountIsDisplayed(1);
-  await App.wellInspectPage.checkIfWellboreCountIsDisplayed(1);
+  await App.wellInspectPage.checkIfWellboreCountIsDisplayed(2);
   await App.wellInspectPage.clickHideSidebarButton();
   await App.wellInspectPage.clickExpandSidebarButton();
 });
@@ -47,7 +47,7 @@ startTest('Resize sidebar', async () => {
   await App.wellInspectPage.checkIfSidebarWidthEqualsTo('minimum');
 });
 
-startTest('Trajectory wellbore select dropdown', async () => {
+startTest.skip('Trajectory wellbore select dropdown', async () => {
   await App.resultTable.selectAllRows();
   await App.wellSearchPage.clickWellInspectButton();
   await App.wellInspectPage.checkIfWellInspectPageIsAvailable();
@@ -81,7 +81,7 @@ startTest('Trajectory wellbore select dropdown', async () => {
     .contains('0');
 });
 
-startTest('Trajectory wellbore search from dropdown', async () => {
+startTest.skip('Trajectory wellbore search from dropdown', async () => {
   await App.resultTable.selectAllRows();
   await App.wellSearchPage.clickWellInspectButton();
   await App.wellInspectPage.checkIfWellInspectPageIsAvailable();
@@ -105,7 +105,7 @@ startTest('Trajectory wellbore search from dropdown', async () => {
   await t.expect(App.wellInspectPage.wellboreDropdownMenuItems.count).gt(0); // including select all
 });
 
-startTest('Trajectory wellbore select all indeterminate', async () => {
+startTest.skip('Trajectory wellbore select all indeterminate', async () => {
   await App.resultTable.selectAllRows();
   await App.wellSearchPage.clickWellInspectButton();
   await App.wellInspectPage.checkIfWellInspectPageIsAvailable();

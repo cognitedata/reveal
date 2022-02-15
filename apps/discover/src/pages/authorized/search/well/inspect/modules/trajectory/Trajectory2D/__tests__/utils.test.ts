@@ -1,13 +1,6 @@
-import {
-  mockedSequencesResultFixture,
-  mockedWellboreResultFixture,
-  mockedWellStateWithSelectedWells,
-} from '__test-utils/fixtures/well';
+import { mockedSequencesResultFixture } from '__test-utils/fixtures/well';
 
-import {
-  getWellboreNameForTrajectory,
-  mapSelectedWellbores,
-} from '../../utils';
+import { getWellboreNameForTrajectory } from '../../utils';
 
 describe('Trajectory2D util', () => {
   it('getWellboreNameForTrajectory', () => {
@@ -17,17 +10,5 @@ describe('Trajectory2D util', () => {
     );
 
     expect(result).toEqual('wellbore a');
-  });
-
-  it('mapSelectedWellbores', () => {
-    const result = mapSelectedWellbores(
-      mockedWellboreResultFixture,
-      mockedWellStateWithSelectedWells.wellSearch.selectedWellboreIds
-    );
-
-    expect(result).toEqual({
-      '759155409324883': true,
-      '759155409324993': true,
-    });
   });
 });

@@ -16,12 +16,14 @@ describe('Trajectory2D', () => {
   const defaultTestInit = async (props?: Props) =>
     testRenderer(Trajectory2D, undefined, props);
 
-  it(`should render default view`, async () => {
+  // SKIPPED: Test is checking for results in dropdown; however, the wellbore dropdown is removed from the trajectory page
+  // (since we are using the sidebar for wellbores now).
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip(`should render default view`, async () => {
     await defaultTestInit({
       selectedTrajectoryData: getMockedTrajectoryData(),
       selectedTrajectories: [],
       selectedWellbores: [],
-      showWellWellboreDropdown: true,
     });
 
     const results = await screen.findAllByTestId('wellbore-dropdown');

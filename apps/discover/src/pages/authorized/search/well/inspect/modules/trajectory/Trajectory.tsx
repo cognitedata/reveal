@@ -11,13 +11,8 @@ import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataTrajectory } from 'modules/filterData/selectors';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
-import { Wellbore } from 'modules/wellSearch/types';
-
-import { WellboreSelectionWrapper } from '../../elements';
-import WellboreSelectionDropdown from '../common/WellboreSelectionDropdown';
 
 import { Trajectory2D } from './Trajectory2D/Trajectory2D';
-import { mapSelectedWellbores } from './utils';
 
 const tableOptions = {
   checkable: true,
@@ -110,17 +105,6 @@ export const Trajectory: React.FC = () => {
     }
   }, [trajectories, selectedIds]);
 
-  const onSelectWellbore = (selectedWellboreList: Wellbore[]) => {
-    // Create wellbore Ids map with selected wellbore ids as true and others as false;
-    const selectedWellboreIdsMap = mapSelectedWellbores(
-      selectedWellboreList,
-      selectedWellboreIds
-    );
-    dispatch(
-      filterDataActions.setSelectedTrajectoryWellboreIds(selectedWellboreIdsMap)
-    );
-  };
-
   const handleRowSelect = (traj: RowProps<Sequence>, value: boolean) => {
     dispatch(
       filterDataActions.setSelectedTrajIds({ [traj.original.id]: value })
@@ -135,7 +119,6 @@ export const Trajectory: React.FC = () => {
     dispatch(filterDataActions.setSelectedTrajIds(selectedTrajectoriesIdsMap));
   };
 
-  const showWellWellboreDropdown = false;
   const showTrajectoryTable = false;
 
   if (isLoading) {
@@ -143,14 +126,6 @@ export const Trajectory: React.FC = () => {
   }
   return (
     <>
-      <WellboreSelectionWrapper>
-        <WellboreSelectionDropdown
-          onSelectWellbore={onSelectWellbore}
-          allWellbores={wellbores}
-          selectedWellbores={selectedWellbores}
-        />
-      </WellboreSelectionWrapper>
-
       {showTrajectoryTable && (
         <Table<Sequence>
           scrollTable
@@ -169,9 +144,6 @@ export const Trajectory: React.FC = () => {
         selectedTrajectoryData={selectedTrajectoryRows}
         selectedTrajectories={selectedTrajectories}
         selectedWellbores={selectedWellbores}
-        showWellWellboreDropdown={showWellWellboreDropdown}
-        onSelectWellbore={onSelectWellbore}
-        wellbores={wellbores}
       />
     </>
   );

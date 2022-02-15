@@ -29,6 +29,9 @@ interface Props {
   selectedWellbores: Wellbore[];
 }
 
+/**
+ * @deprecated we don't need this now (I think) since we have the left sidebar to toggle between well(bore)s
+ */
 const WellboreSelectionDropdown: React.FC<Props> = (props: Props) => {
   const { onSelectWellbore, selectedWellbores, allWellbores } = props;
   const { t } = useTranslation();

@@ -19,10 +19,14 @@ class WellInspectPage {
     .withAttribute('data-testid', 'table-row');
 
   public readonly wellCount = (count: number) =>
-    Selector('div').withText(`${count} well${count > 1 ? 's' : ''}`);
+    Selector('div').withText(
+      `${count} / ${count} well${count > 1 ? 's' : ''} selected`
+    );
 
   public readonly wellboreCount = (count: number) =>
-    Selector('div').withText(`${count} wellbore${count > 1 ? 's' : ''}`);
+    Selector('div').withText(
+      `${count} / ${count} wellbore${count > 1 ? 's' : ''} selected`
+    );
 
   public readonly resizeHandle = Selector(
     '[data-testid="resize-handle-horizontal"]'
