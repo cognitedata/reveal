@@ -18,9 +18,9 @@ export const builder = (yargs: Argv<LoginArgs>) =>
     })
     .option('client-id', {
       type: 'string',
-      default: '4770c0f1-7bb6-43b5-8c37-94f2a9306757', //todo: read from app config
       description: "AAD Application's Client ID",
     })
+    .check(validateClientId)
     .option('client-secret', {
       type: 'string',
       description:
@@ -96,4 +96,15 @@ export const validateApiKey = ({
 }): boolean | string =>
   authType === AUTH_TYPE.APIKEY && (!apiKey || apiKey === '')
     ? 'api-key must be provided for legacy auth'
+    : true;
+
+export const validateClientId = ({
+  clientId,
+  authType,
+}: {
+  clientId: string;
+  authType: AUTH_TYPE;
+}): boolean | string =>
+  authType === AUTH_TYPE.CLIENT_SECRET && (!clientId || clientId === '')
+    ? 'client-id must be provided for clientSecret auth'
     : true;
