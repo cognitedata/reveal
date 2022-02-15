@@ -4,6 +4,7 @@ import {
   DiagramConnection,
   DiagramLineInstance,
   DiagramSymbolInstance,
+  DocumentType,
 } from '../types';
 
 import { getOverlappingPidGroups } from './findLinesAndConnections';
@@ -11,7 +12,8 @@ import { getOverlappingPidGroups } from './findLinesAndConnections';
 export const findConnections = (
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
-  pidDocument: PidDocument
+  pidDocument: PidDocument,
+  documentType: DocumentType
 ) => {
   const newConnections: DiagramConnection[] = [];
 
@@ -38,7 +40,8 @@ export const findConnections = (
 
     const overlappingPidGroups = getOverlappingPidGroups(
       linesToVisit,
-      potentialInstance
+      potentialInstance,
+      documentType
     );
 
     overlappingPidGroups.forEach((overlappingPidGroup) => {

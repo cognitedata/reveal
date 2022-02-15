@@ -63,6 +63,7 @@ export const detectLines = (
               pathIds: [newLine],
               labelIds: [],
               lineNumbers: [],
+              inferedLineNumbers: [],
             } as DiagramLineInstance)
         )
       );

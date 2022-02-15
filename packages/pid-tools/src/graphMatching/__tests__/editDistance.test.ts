@@ -9,6 +9,7 @@ const getDiagramInstance = (type: string) => {
     type,
     labelIds: [],
     lineNumbers: [],
+    inferedLineNumbers: [],
   } as DiagramSymbolInstance;
 };
 
@@ -21,6 +22,7 @@ const getDiagramAssetInstance = (assetExternalId: string) => {
     assetExternalId,
     labelIds: [],
     lineNumbers: [],
+    inferedLineNumbers: [],
   } as DiagramSymbolInstance;
 };
 

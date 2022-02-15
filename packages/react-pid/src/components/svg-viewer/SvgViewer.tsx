@@ -39,12 +39,14 @@ import {
   isSymbolInstance,
   setStrokeWidth,
   visualizeConnections,
-  visualizeLabels,
+  visualizeLabelsToSymbolInstances,
+  visualizePidTspan,
 } from './utils';
 
 interface SvgViewerProps {
   fileUrl: string;
   active: ToolType;
+  setActive: (tool: ToolType) => void;
   symbolInstances: DiagramSymbolInstance[];
   setSymbolInstances: (arg: DiagramSymbolInstance[]) => void;
   lines: DiagramLineInstance[];
@@ -63,17 +65,25 @@ interface SvgViewerProps {
   setLabelSelection: (arg: DiagramInstanceId | null) => void;
   setPidDocument: (arg: PidDocumentWithDom) => void;
   getPidDocument: () => PidDocumentWithDom | undefined;
+  lineNumbers: string[];
+  setLineNumbers: (lineNumber: string[]) => void;
   activeLineNumber: string | null;
+  setActiveLineNumber: (lineNumber: string | null) => void;
   equipmentTags: DiagramEquipmentTagInstance[];
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
   activeTagId: string | null;
   setActiveTagId: (arg: string | null) => void;
+  inferLineNumbers: (
+    symbolInstances: DiagramSymbolInstance[],
+    lines: DiagramLineInstance[]
+  ) => void;
   hideSelection: boolean;
 }
 
 export const SvgViewer: React.FC<SvgViewerProps> = ({
   fileUrl,
   active,
+  setActive,
   symbolInstances,
   setSymbolInstances,
   lines,
@@ -92,11 +102,15 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   getPidDocument,
   labelSelection,
   setLabelSelection,
+  lineNumbers,
+  setLineNumbers,
   activeLineNumber,
+  setActiveLineNumber,
   equipmentTags,
   setEquipmentTags,
   activeTagId,
   setActiveTagId,
+  inferLineNumbers,
   hideSelection,
 }) => {
   const [graph, setGraph] = useState<Graph | null>(null);
@@ -240,6 +254,21 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
     const pidDocument = getPidDocument();
     if (pidDocument === undefined) return;
 
+    if (active !== 'connectLabels') {
+      if (node instanceof SVGTSpanElement) {
+        const regexMatch = node.innerHTML.match(/L[0-9]{3}/);
+        if (regexMatch) {
+          const [lineNumber] = regexMatch;
+          if (!lineNumbers.includes(lineNumber)) {
+            setLineNumbers([...lineNumbers, lineNumber]);
+          }
+          setActiveLineNumber(lineNumber);
+          setActive('setLineNumber');
+        }
+        return;
+      }
+    }
+
     if (active === 'addSymbol') {
       if (!(node instanceof SVGTSpanElement)) {
         const alreadySelected = isInAddSymbolSelection(node, selection);
@@ -271,6 +300,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
             id: getDiagramInstanceIdFromPathIds([node.id]),
             labelIds: [],
             lineNumbers: [],
+            inferedLineNumbers: [],
           } as DiagramLineInstance,
         ]);
       }
@@ -406,27 +436,18 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
     } else if (active === 'setLineNumber') {
       if (activeLineNumber === null) return;
 
-      const diagramInstance = getDiagramInstanceByPathId(
-        [...symbolInstances, ...lines],
-        node.id
-      );
+      const instances = [...symbolInstances, ...lines];
+      const diagramInstance = getDiagramInstanceByPathId(instances, node.id);
       if (diagramInstance === null) return;
 
-      if (diagramInstance.type === 'Line') {
-        addOrRemoveLineNumberToInstance(
-          activeLineNumber,
-          diagramInstance as DiagramLineInstance,
-          lines,
-          setLines
-        );
+      if (isLine(diagramInstance)) {
+        addOrRemoveLineNumberToInstance(activeLineNumber, diagramInstance);
       } else {
-        addOrRemoveLineNumberToInstance(
-          activeLineNumber,
-          diagramInstance as DiagramSymbolInstance,
-          symbolInstances,
-          setSymbolInstances
-        );
+        addOrRemoveLineNumberToInstance(activeLineNumber, diagramInstance);
       }
+
+      // `diagramInstance` is indirectly set to state with this function
+      inferLineNumbers(symbolInstances, lines);
     } else if (
       active === 'addEquipmentTag' &&
       node instanceof SVGTSpanElement
@@ -520,8 +541,23 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         symbolInstances,
         lines
       );
-    } else if (active === 'connectLabels') {
-      visualizeLabels(svg, pidDocument, symbolInstances);
+    }
+
+    if (active === 'connectLabels') {
+      visualizeLabelsToSymbolInstances(svg, pidDocument, symbolInstances);
+    } else {
+      pidDocument.pidLabels
+        .filter((pidLabel) => {
+          return pidLabel.text.match(/L[0-9]{3}/);
+        })
+        .forEach((pidTspan) => {
+          visualizePidTspan(
+            svg,
+            pidTspan,
+            'blue',
+            pidTspan.text === activeLineNumber ? 0.4 : 0.2
+          );
+        });
     }
   };
 

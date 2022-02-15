@@ -37,6 +37,7 @@ export const findAllInstancesOfSymbol = (
           scale: match.scale,
           labelIds: [],
           lineNumbers: [],
+          inferedLineNumbers: [],
           orientation: symbol.orientation!,
         } as FileConnectionInstance);
       } else {
@@ -48,6 +49,7 @@ export const findAllInstancesOfSymbol = (
           scale: match.scale,
           labelIds: [],
           lineNumbers: [],
+          inferedLineNumbers: [],
         });
       }
     });

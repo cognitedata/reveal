@@ -19,6 +19,7 @@ import {
   getClosestPointsOnSegments,
   getClosestPointOnSegments,
   T_JUNCTION,
+  PidTspan,
 } from '@cognite/pid-tools';
 
 import { ToolType } from '../../types';
@@ -83,23 +84,38 @@ export const isNodeInLineNumber = (
   if (lineNumber === null) return false;
 
   if (node instanceof SVGTSpanElement) {
-    let isInLine = false;
-    diagramInstances
-      .filter((instance) => {
-        return instance.labelIds.includes(node.id);
-      })
-      .forEach((instance) => {
-        if (instance.lineNumbers.includes(lineNumber)) {
-          isInLine = true;
-        }
-      });
-    return isInLine;
+    return diagramInstances.some(
+      (instance) =>
+        instance.labelIds.includes(node.id) &&
+        instance.lineNumbers.includes(lineNumber)
+    );
   }
   const diagramInstnace = getDiagramInstanceByPathId(diagramInstances, node.id);
 
   if (diagramInstnace === null) return false;
 
   return diagramInstnace.lineNumbers.includes(lineNumber);
+};
+
+export const isNodeInInferedLineNumber = (
+  node: SVGElement,
+  lineNumber: string | null,
+  diagramInstances: DiagramInstanceWithPaths[]
+) => {
+  if (lineNumber === null) return false;
+
+  if (node instanceof SVGTSpanElement) {
+    return diagramInstances.some(
+      (instance) =>
+        instance.labelIds.includes(node.id) &&
+        instance.inferedLineNumbers.includes(lineNumber)
+    );
+  }
+  const diagramInstnace = getDiagramInstanceByPathId(diagramInstances, node.id);
+
+  if (diagramInstnace === null) return false;
+
+  return diagramInstnace.inferedLineNumbers.includes(lineNumber);
 };
 
 export const isInGraphSelection = (
@@ -224,15 +240,39 @@ export const applyStyleToNode = ({
   }
 
   if (active === 'setLineNumber') {
-    if (
-      !isNodeInLineNumber(node, activeLineNumber, [
-        ...symbolInstances,
-        ...lines,
-      ])
+    if (node instanceof SVGTSpanElement) {
+      if (activeLineNumber && node.innerHTML.includes(activeLineNumber)) {
+        node.style.fontWeight = '600';
+        return;
+      }
+    }
+
+    const instances = [...symbolInstances, ...lines];
+    const diagramInstnace = getDiagramInstanceByPathId(instances, node.id);
+    if (isNodeInLineNumber(node, activeLineNumber, instances)) {
+      node.style.strokeWidth = `${2.5 * parseFloat(node.style.strokeWidth)}`;
+      color = 'green';
+    } else if (isNodeInInferedLineNumber(node, activeLineNumber, instances)) {
+      node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+    } else if (diagramInstnace && diagramInstnace.lineNumbers.length > 0) {
+      node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+      opacity = 0.3;
+      color = 'green';
+    } else if (
+      diagramInstnace &&
+      diagramInstnace.type !== 'Equipment' &&
+      diagramInstnace.inferedLineNumbers.length > 1
     ) {
-      opacity = 0.23;
+      node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+      color = 'darkOrange';
+    } else if (
+      diagramInstnace &&
+      diagramInstnace.inferedLineNumbers.length === 1
+    ) {
+      node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+      opacity = 0.1;
     } else {
-      opacity = 1;
+      opacity = 0.45;
     }
   }
   colorNode(node, color, opacity);
@@ -473,7 +513,29 @@ export const visualizeConnections = (
   });
 };
 
-export const visualizeLabels = (
+export const visualizePidTspan = (
+  svg: SVGSVGElement,
+  pidTspan: PidTspan,
+  color: string,
+  opacity: number
+) => {
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+  rect.setAttribute('style', `stroke:${color};opacity:${opacity}`);
+
+  const { x, y, width, height } = pidTspan.boundingBox;
+
+  rect.setAttribute('x', `${x}`);
+  rect.setAttribute('y', `${y}`);
+  rect.setAttribute('width', `${width}`);
+  rect.setAttribute('height', `${height}`);
+
+  rect.id = `${pidTspan.id}_rect`;
+
+  svg.insertBefore(rect, svg.children[0]);
+};
+
+export const visualizeLabelsToSymbolInstances = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
   symbolInstances: DiagramSymbolInstance[]
@@ -506,26 +568,7 @@ export const visualizeLabels = (
       );
       svg.insertBefore(path, svg.children[0]);
 
-      const rect = document.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'rect'
-      );
-
-      rect.setAttribute(
-        'style',
-        `stroke:${COLORS.connection.color};opacity:${0.1}`
-      );
-
-      const { x, y, width, height } = pidTspan.boundingBox;
-
-      rect.setAttribute('x', `${x}`);
-      rect.setAttribute('y', `${y}`);
-      rect.setAttribute('width', `${width}`);
-      rect.setAttribute('height', `${height}`);
-
-      rect.id = `${pidTspan.id}_rect`;
-
-      svg.insertBefore(rect, svg.children[0]);
+      visualizePidTspan(svg, pidTspan, COLORS.connection.color, 0.1);
     });
   });
 };

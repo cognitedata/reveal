@@ -39,6 +39,7 @@
       "scale": 1,
       "labelIds": ["tspan1"],
       "lineNumbers": ["L1"],
+      "inferedLineNumbers": ["L1"],
       "orientation": "Right",
       "position": "A1",
       "fileDirection": "In",

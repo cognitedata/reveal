@@ -198,7 +198,9 @@ export const ReactPid: React.FC = () => {
     setSplitSelection(null);
     setConnectionSelection(null);
     setLabelSelection(null);
-
+    if (mode === 'setLineNumber') {
+      inferLineNumbers(symbolInstances, lines);
+    }
     if (active !== 'addEquipmentTag' && activeTagId !== null) {
       setActiveTagId(null);
     }
@@ -247,6 +249,8 @@ export const ReactPid: React.FC = () => {
 
   const autoAnalysis = () => {
     if (pidDocument === undefined) return;
+
+    // FIX: This function should also call `inferLineNumbers` does state management does that somewhat tricky
 
     // find lines and connections
     const { newLines, newConnections } = pidDocument.findLinesAndConnection(
@@ -405,6 +409,17 @@ export const ReactPid: React.FC = () => {
     setFileUrl('');
   };
 
+  const inferLineNumbers = (
+    symbolInstances: DiagramSymbolInstance[],
+    lines: DiagramLineInstance[]
+  ) => {
+    const { newSymbolInstances, newLines } =
+      PidDocumentWithDom.inferLineNumbers(symbolInstances, lines, connections);
+
+    setSymbolInstances([...newSymbolInstances]);
+    setLines([...newLines]);
+  };
+
   return (
     <ReactPidWrapper>
       <ReactPidLayout>
@@ -459,6 +474,7 @@ export const ReactPid: React.FC = () => {
             <SvgViewer
               fileUrl={fileUrl}
               active={active}
+              setActive={setToolBarMode}
               symbolInstances={symbolInstances}
               setSymbolInstances={setSymbolInstances}
               lines={lines}
@@ -477,9 +493,13 @@ export const ReactPid: React.FC = () => {
               getPidDocument={getPidDocument}
               labelSelection={labelSelection}
               setLabelSelection={setLabelSelection}
+              lineNumbers={lineNumbers}
+              setLineNumbers={setLineNumbers}
               activeLineNumber={activeLineNumber}
+              setActiveLineNumber={setActiveLineNumber}
               equipmentTags={equipmentTags}
               setEquipmentTags={setEquipmentTags}
+              inferLineNumbers={inferLineNumbers}
               activeTagId={activeTagId}
               setActiveTagId={setActiveTagId}
               hideSelection={hideSelection}

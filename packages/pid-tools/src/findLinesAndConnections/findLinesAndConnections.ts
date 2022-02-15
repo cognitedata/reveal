@@ -1,5 +1,8 @@
 /* eslint-disable no-continue */
-import { AUTO_ANALYSIS_DISTANCE_THRESHOLD } from '../constants';
+import {
+  AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO,
+  AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID,
+} from '../constants';
 import {
   DiagramConnection,
   DiagramInstanceWithPaths,
@@ -21,11 +24,14 @@ import { detectLines } from './findLines';
 
 export const getOverlappingPidGroups = (
   pidGroups: PidGroup[],
-  instance: PidGroup
+  instance: PidGroup,
+  documentType: DocumentType
 ) => {
-  return pidGroups.filter((pidGroup) =>
-    instance.isClose(pidGroup, AUTO_ANALYSIS_DISTANCE_THRESHOLD)
-  );
+  const threshold =
+    documentType === DocumentType.pid
+      ? AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID
+      : AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO;
+  return pidGroups.filter((pidGroup) => instance.isClose(pidGroup, threshold));
 };
 
 export const getPotentialLines = (
@@ -67,6 +73,7 @@ export const getPotentialLines = (
         pathIds: [pidPath.pathId],
         labelIds: [],
         lineNumbers: [],
+        inferedLineNumbers: [],
       } as DiagramLineInstance)
   );
   return potentialLines;
@@ -98,7 +105,8 @@ export const findLinesAndConnections = (
   const connections: DiagramConnection[] = findConnections(
     relevantSymbolInstances,
     [...lineInstances, ...potentialLineInstanceList],
-    pidDocument
+    pidDocument,
+    documentType
   );
 
   const newLines = detectLines(

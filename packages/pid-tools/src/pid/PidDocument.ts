@@ -19,6 +19,7 @@ import {
   AUTO_ANALYSIS_LABEL_THRESHOLD_ISO,
   AUTO_ANALYSIS_LABEL_THRESHOLD_PID,
 } from '../constants';
+import { traverse } from '../graph/traversal';
 
 import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
@@ -202,6 +203,58 @@ export class PidDocument {
     });
 
     return labelSymbolInstanceConnections;
+  }
+
+  static inferLineNumbers(
+    symbolInstances: DiagramSymbolInstance[],
+    lines: DiagramLineInstance[],
+    connections: DiagramConnection[]
+  ) {
+    const instances = [...symbolInstances, ...lines];
+
+    // Reset infered line numbers
+    instances.forEach((instance) => {
+      // eslint-disable-next-line no-param-reassign
+      instance.inferedLineNumbers = [];
+    });
+
+    // Infer line numbers
+    instances
+      .filter((instance) => instance.lineNumbers.length > 0)
+      .forEach((startInstance) => {
+        const relevantLineNumber = startInstance.lineNumbers[0];
+        traverse({
+          startInstance,
+          graph: {
+            diagramConnections: connections,
+            diagramLineInstances: lines,
+            diagramSymbolInstances: symbolInstances,
+          },
+          processInstance: (instance) => {
+            if (!instance.inferedLineNumbers.includes(relevantLineNumber)) {
+              instance.inferedLineNumbers.push(relevantLineNumber);
+            }
+          },
+          addNeighbour: (instance, potNeibour) => {
+            if (instance.type === 'Equipment') return false;
+            if (instance.lineNumbers.length > 1) return false;
+
+            if (
+              instance.lineNumbers.includes(relevantLineNumber) &&
+              potNeibour.lineNumbers.length > 0
+            ) {
+              return potNeibour.type !== 'Line';
+            }
+
+            return (
+              instance.lineNumbers.length === 0 ||
+              instance.lineNumbers.includes(relevantLineNumber)
+            );
+          },
+        });
+      });
+
+    return { newSymbolInstances: symbolInstances, newLines: lines };
   }
 
   getBoundingBoxToPaths(pathIds: string[]): BoundingBox {

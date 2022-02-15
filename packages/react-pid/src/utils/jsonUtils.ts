@@ -234,6 +234,7 @@ export const loadSymbolsFromJson = (
           labelIds: [],
           type: 'EquipmentTag',
           lineNumbers: tag.lineNumbers,
+          inferedLineNumbers: tag.inferedLineNumbers,
         }
       )
     );

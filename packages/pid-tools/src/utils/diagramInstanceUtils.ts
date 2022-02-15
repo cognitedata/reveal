@@ -246,9 +246,7 @@ export function addOrRemoveLabelToEquipmentTag(
 /* eslint-disable no-param-reassign */
 export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
   lineNumber: string,
-  instance: Type,
-  instances: Type[],
-  setter: (arg: Type[]) => void
+  instance: Type
 ) {
   if (instance.lineNumbers.includes(lineNumber)) {
     instance.lineNumbers = instance.lineNumbers.filter(
@@ -257,7 +255,6 @@ export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
   } else {
     instance.lineNumbers = [...instance.lineNumbers, lineNumber];
   }
-  setter([...instances]);
 }
 /* eslint-enable no-param-reassign */
 
@@ -270,6 +267,7 @@ export const createEquipmentTagInstance = (
     labelIds: [node.id],
     type: 'EquipmentTag',
     lineNumbers: [],
+    inferedLineNumbers: [],
   };
 };
 

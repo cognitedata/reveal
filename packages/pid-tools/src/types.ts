@@ -42,6 +42,7 @@ export interface DiagramInstance {
   labelIds: string[];
   assetExternalId?: string;
   lineNumbers: string[];
+  inferedLineNumbers: string[];
 }
 
 export interface DiagramInstanceWithPaths extends DiagramInstance {

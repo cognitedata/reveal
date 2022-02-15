@@ -1,4 +1,5 @@
 import { PidDocument } from '../../pid';
+import { DocumentType } from '../../types';
 import { findConnections } from '../findConnections';
 
 import { createLines, createSymbols } from './findLines.test';
@@ -21,7 +22,8 @@ describe('findConnections', () => {
     const connections = findConnections(
       symbolInstances,
       lineInstances,
-      pidDocument
+      pidDocument,
+      DocumentType.pid
     );
     expect(connections.length).toBe(2);
   });
@@ -43,7 +45,8 @@ describe('findConnections', () => {
     const connections = findConnections(
       symbolInstances,
       lineInstances,
-      pidDocument
+      pidDocument,
+      DocumentType.pid
     );
     expect(connections.length).toBe(1);
   });
