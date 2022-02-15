@@ -5,29 +5,41 @@
 import * as THREE from 'three';
 
 import { AutoDisposeGroup } from '@reveal/utilities';
-import { generateSectorTree, asyncIteratorToArray, createCadModelMetadata } from '../../../../test-utilities';
+import { asyncIteratorToArray, createCadModelMetadata, generateV8SectorTree } from '../../../../test-utilities';
 import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
 
 import { SectorCuller } from './culling/SectorCuller';
-import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
+import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 
 import { ModelStateHandler } from './ModelStateHandler';
-import { Repository } from './Repository';
+import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
+import { CadNode } from '@reveal/rendering';
+import { IMock, Mock } from 'moq.ts';
+import Log from '@reveal/logger';
+import { LogLevelNumbers } from 'loglevel';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
-  let repository: Repository;
+  let repository: SectorRepository;
   let stateHandler: ModelStateHandler;
   let loader: SectorLoader;
   let collectStatisticsCallback: () => void;
   let progressCallback: () => void;
   let model: CadModelMetadata;
-  let input: DetermineSectorsInput;
+  let input: DetermineSectorsPayload;
+  let cadNodeMock: IMock<CadNode>;
+  let currentLogLevel: LogLevelNumbers;
 
   beforeAll(() => {
-    const sectorRoot = generateSectorTree(2, 2);
-    model = createCadModelMetadata(sectorRoot);
+    const sectorRoot = generateV8SectorTree(2, 2);
+    model = createCadModelMetadata(8, sectorRoot);
+    currentLogLevel = Log.getLevel();
+    Log.setLevel('silent');
+  });
+
+  afterAll(() => {
+    Log.setLevel(currentLogLevel);
   });
 
   beforeEach(() => {
@@ -37,26 +49,32 @@ describe('SectorLoader', () => {
     collectStatisticsCallback = jest.fn();
     progressCallback = jest.fn();
 
+    cadNodeMock = new Mock<CadNode>()
+      .setup(p => p.cadModelMetadata)
+      .returns(model)
+      .setup(p => p.visible)
+      .returns(true)
+      .setup(p => p.loadSector)
+      .returns(value => repository.loadSector(value));
+
     input = {
       camera: new THREE.PerspectiveCamera(),
       budget: {
-        geometryDownloadSizeBytes: 0,
         highDetailProximityThreshold: 0,
-        maximumNumberOfDrawCalls: 0,
         maximumRenderCost: 0
       },
       cameraInMotion: false,
-      cadModelsMetadata: [model],
+      models: [cadNodeMock.object()],
       clippingPlanes: [],
+      prioritizedAreas: [],
       loadingHints: {}
     };
     stateHandler.addModel(model.modelIdentifier);
-
-    loader = new SectorLoader(repository, culler, stateHandler, collectStatisticsCallback, progressCallback);
+    loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback, false);
   });
 
   test('loadSectors with no models, completes with no sectors', async () => {
-    input.cadModelsMetadata = [];
+    input.models = [];
     const result = await asyncIteratorToArray(loader.loadSectors(input));
     expect(result).toBeEmpty();
   });
@@ -90,7 +108,11 @@ describe('SectorLoader', () => {
   test('loadSectors only updates changed sectors', async () => {
     // Arrange
     const alreadyLoadedSector = createConsumedSector(createWantedSector(model, model.scene.root));
-    stateHandler.updateState(alreadyLoadedSector);
+    stateHandler.updateState(
+      alreadyLoadedSector.modelIdentifier,
+      alreadyLoadedSector.metadata.id,
+      alreadyLoadedSector.levelOfDetail
+    );
     const updateStateFn = jest.spyOn(stateHandler, 'updateState');
 
     // Act
@@ -103,7 +125,22 @@ describe('SectorLoader', () => {
 
   test('loadSectors marks sectors with errors as discarded', async () => {
     // Arrange
-    jest.spyOn(repository, 'loadSector').mockRejectedValueOnce(new Error('error'));
+    let first = true;
+
+    const cadNodeMock = new Mock<CadNode>()
+      .setup(p => p.cadModelMetadata)
+      .returns(model)
+      .setup(p => p.visible)
+      .returns(true)
+      .setup(p => p.loadSector)
+      .returns(value => {
+        if (first) {
+          first = false;
+          return Promise.reject('Could not load sector');
+        } else return repository.loadSector(value);
+      });
+
+    input.models = [cadNodeMock.object()];
 
     // Act
     const result = await asyncIteratorToArray(loader.loadSectors(input));
@@ -114,7 +151,7 @@ describe('SectorLoader', () => {
   });
 });
 
-class StubRepository implements Repository {
+class StubRepository implements SectorRepository {
   loadSectorCallback: (sector: WantedSector) => ConsumedSector;
 
   constructor() {
@@ -124,7 +161,8 @@ class StubRepository implements Repository {
   loadSector(sector: WantedSector): Promise<ConsumedSector> {
     return Promise.resolve(this.loadSectorCallback(sector));
   }
-  clear(): void {}
+  clearCache(): void {}
+  setCacheSize(_sectorCount: number): void {}
 }
 
 class StubSectorCuller implements SectorCuller {

@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -31,15 +32,21 @@ export function Simple() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      const client = new CogniteClient({ appId: 'reveal.example.simple' });
 
+      let client;
       if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.simple', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.simple',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvas.current,
       });
+
+      renderer.localClippingEnabled = true;
       renderer.setClearColor('#444');
       renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -50,7 +57,8 @@ export function Simple() {
 
       scene.add(model);
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                                                  model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(75, 2, near, far);
       const controls = new CameraControls(camera, renderer.domElement);
       controls.setLookAt(
@@ -73,7 +81,7 @@ export function Simple() {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           revealManager.resetRedraw();
         }
       });

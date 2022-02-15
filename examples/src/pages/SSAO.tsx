@@ -8,11 +8,12 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/internals';
 import dat from 'dat.gui';
-import { authenticateSDKWithEnvironment, getParamsFromURL } from '../utils/example-helpers';
+import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { defaultRenderOptions } from '@cognite/reveal/internals';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -28,9 +29,14 @@ export function SSAO() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      const client = new CogniteClient({ appId: 'reveal.example.ssao' });
+
+      let client;
       if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.ssao', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.ssao',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const scene = new THREE.Scene();
@@ -44,7 +50,7 @@ export function SSAO() {
 
       let model: reveal.CadNode;
       if (modelRevision) {
-        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId, reveal.File3dFormat.RevealCadModel);
+        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId);
         revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelIdentifier);
       } else if (modelUrl) {
@@ -59,7 +65,8 @@ export function SSAO() {
 
       scene.add(model);
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                                                  model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,

@@ -10,7 +10,7 @@ import { ModelDataProvider } from './types';
  */
 export class CdfModelDataProvider implements ModelDataProvider {
   private readonly client: CogniteClient;
-  private authenticationPromise: Promise<boolean>;
+  private authenticationPromise: Promise<string | undefined>;
 
   constructor(client: CogniteClient) {
     this.client = client;
@@ -28,12 +28,16 @@ export class CdfModelDataProvider implements ModelDataProvider {
       Accept: '*/*'
     };
 
-    const response = await this.fetchWithRetry(url, { headers, method: 'GET' });
+    const response = await this.fetchWithRetry(url, { headers, method: 'GET' }).catch(_err => {
+      throw Error('Could not download binary file');
+    });
     return response.arrayBuffer();
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
-    const response = await this.client.get(`${baseUrl}/${fileName}`);
+    const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
+      throw Error('Could not download Json file');
+    });
     return response.data;
   }
 

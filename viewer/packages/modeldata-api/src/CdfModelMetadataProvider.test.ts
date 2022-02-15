@@ -5,9 +5,9 @@
 import nock from 'nock';
 
 import { CogniteClient } from '@cognite/sdk';
-import { File3dFormat } from './types';
 import { CdfModelIdentifier } from './CdfModelIdentifier';
 import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
+import { Mock } from 'moq.ts';
 
 describe(CdfModelMetadataProvider.name, () => {
   let modelIdentifier: CdfModelIdentifier;
@@ -15,16 +15,12 @@ describe(CdfModelMetadataProvider.name, () => {
   let apiPath: RegExp;
 
   beforeEach(async () => {
-    modelIdentifier = new CdfModelIdentifier(1337, 42, File3dFormat.AnyFormat);
+    modelIdentifier = new CdfModelIdentifier(1337, 42);
     apiPath = /\/api\/v1\/projects\/unittest\/3d\/.*/;
 
-    const client = new CogniteClient({
-      appId: 'reveal-CdfModelDataClient-test',
-      baseUrl: 'http://localhost'
-    });
-    await client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
+    const mockedClient = new Mock<CogniteClient>();
 
-    provider = new CdfModelMetadataProvider(client);
+    provider = new CdfModelMetadataProvider(mockedClient.object());
   });
 
   test('getModelUri throw error if no compatible output is found', async () => {
@@ -41,6 +37,6 @@ describe(CdfModelMetadataProvider.name, () => {
     nock(/.*/).post(apiPath).reply(200, response);
 
     // Act & Assert
-    expect(provider.getModelUri(modelIdentifier)).rejects.toThrowError();
+    expect(provider.getModelUri(modelIdentifier, response.items[0])).rejects.toThrowError();
   });
 });

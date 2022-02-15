@@ -113,7 +113,7 @@ export class ComboControls extends EventDispatcher {
 
     this._spherical.setFromVector3(camera.position);
     this._sphericalEnd.copy(this._spherical);
-    domElement.addEventListener('mousedown', this.onMouseDown);
+    domElement.addEventListener('pointerdown', this.onPointerDown);
     domElement.addEventListener('touchstart', this.onTouchStart);
     domElement.addEventListener('wheel', this.onMouseWheel);
     domElement.addEventListener('contextmenu', this.onContextMenu);
@@ -123,12 +123,11 @@ export class ComboControls extends EventDispatcher {
     domElement.addEventListener('focus', this.onFocusChanged);
     domElement.addEventListener('blur', this.onFocusChanged);
 
-    window.addEventListener('mouseup', this.onMouseUp);
-    window.addEventListener('mousedown', this.onFocusChanged);
-    window.addEventListener('touchstart', this.onFocusChanged);
+    window.addEventListener('pointerup', this.onMouseUp);
+    window.addEventListener('pointerdown', this.onFocusChanged);
 
     this.dispose = () => {
-      domElement.removeEventListener('mousedown', this.onMouseDown);
+      domElement.removeEventListener('pointerdown', this.onMouseDown);
       domElement.removeEventListener('wheel', this.onMouseWheel);
       domElement.removeEventListener('touchstart', this.onTouchStart);
       domElement.removeEventListener('contextmenu', this.onContextMenu);
@@ -136,8 +135,7 @@ export class ComboControls extends EventDispatcher {
       domElement.removeEventListener('blur', this.onFocusChanged);
 
       window.removeEventListener('mouseup', this.onMouseUp);
-      window.removeEventListener('mousedown', this.onFocusChanged);
-      window.removeEventListener('touchstart', this.onFocusChanged);
+      window.removeEventListener('pointerdown', this.onFocusChanged);
     };
   }
 
@@ -250,6 +248,10 @@ export class ComboControls extends EventDispatcher {
     this._scrollTarget.copy(target);
   };
 
+  public getScrollTarget = () => {
+    return this._scrollTarget.clone();
+  };
+
   public triggerCameraChangeEvent = () => {
     const { _camera, _target } = this;
     this.dispatchEvent({
@@ -278,6 +280,10 @@ export class ComboControls extends EventDispatcher {
     return { x, y };
   };
 
+  private readonly onPointerDown = (event: PointerEvent) => {
+    if (event.pointerType === 'mouse') this.onMouseDown(event);
+  };
+
   private readonly onMouseDown = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
@@ -285,7 +291,6 @@ export class ComboControls extends EventDispatcher {
 
     this._firstPersonMode = false;
     this._sphericalEnd.copy(this._spherical);
-
     switch (event.button) {
       case MOUSE.LEFT: {
         this.startMouseRotation(event);
@@ -418,12 +423,12 @@ export class ComboControls extends EventDispatcher {
     };
 
     const onMouseUp = () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('pointermove', onMouseMove);
+      window.removeEventListener('pointerup', onMouseUp);
     };
 
-    window.addEventListener('mousemove', onMouseMove, { passive: false });
-    window.addEventListener('mouseup', onMouseUp, { passive: false });
+    window.addEventListener('pointermove', onMouseMove, { passive: false });
+    window.addEventListener('pointerup', onMouseUp, { passive: false });
   };
 
   private readonly startMousePan = (initialEvent: MouseEvent) => {
@@ -438,12 +443,12 @@ export class ComboControls extends EventDispatcher {
     };
 
     const onMouseUp = () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('pointermove', onMouseMove);
+      window.removeEventListener('pointereup', onMouseUp);
     };
 
-    window.addEventListener('mousemove', onMouseMove, { passive: false });
-    window.addEventListener('mouseup', onMouseUp, { passive: false });
+    window.addEventListener('pointermove', onMouseMove, { passive: false });
+    window.addEventListener('pointerup', onMouseUp, { passive: false });
   };
 
   private readonly startTouchRotation = (initialEvent: TouchEvent) => {
@@ -723,8 +728,10 @@ export class ComboControls extends EventDispatcher {
       minDeltaDownscaleCoefficient
     );
 
-    deltaDistance *= deltaDownscaleCoefficient;
-    deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
+    if (Math.abs(deltaDistance) > this.minDistance || Math.abs(deltaTargetOffsetDistance) > this.minDistance) {
+      deltaDistance *= deltaDownscaleCoefficient;
+      deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
+    }
 
     let radius = distToTarget + deltaDistance;
 
@@ -733,9 +740,20 @@ export class ComboControls extends EventDispatcher {
       this._temporarilyDisableDamping = true;
 
       // stops camera from moving forward only if target became close to scroll target
-      if (_scrollTarget.distanceTo(_target) < minZoomDistance || radius <= 0) {
+      if (_scrollTarget.distanceTo(_target) < minZoomDistance) {
         deltaTargetOffsetDistance = 0;
         radius = distToTarget;
+      }
+
+      if (radius <= 0) {
+        deltaTargetOffsetDistance = 0;
+
+        if (_scrollTarget.distanceTo(_target) > minZoomDistance) {
+          radius = minZoomDistance;
+          this._targetEnd.add(cameraDirection.normalize().multiplyScalar(-(minZoomDistance - distToTarget)));
+        } else {
+          radius = distToTarget;
+        }
       }
     }
 

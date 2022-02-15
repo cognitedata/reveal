@@ -6,12 +6,18 @@ import * as THREE from 'three';
 
 import { CadMetadataParser } from './CadMetadataParser';
 
-import { SectorScene, WellKnownDistanceToMeterConversionFactors } from '../utilities/types';
+import { getDistanceToMeterConversionFactor, SectorScene } from '../utilities/types';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from './MetadataRepository';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
+import {
+  ModelDataProvider,
+  ModelMetadataProvider,
+  ModelIdentifier,
+  File3dFormat,
+  BlobOutputMetadata
+} from '@reveal/modeldata-api';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -23,18 +29,18 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   constructor(
     modelMetadataProvider: ModelMetadataProvider,
     modelDataProvider: ModelDataProvider,
-    cadMetadataParser: CadMetadataParser,
     blobFileName: string = 'scene.json'
   ) {
+    this._cadSceneParser = new CadMetadataParser();
     this._modelMetadataProvider = modelMetadataProvider;
     this._modelDataProvider = modelDataProvider;
-    this._cadSceneParser = cadMetadataParser;
     this._blobFileName = blobFileName;
   }
 
   async loadData(modelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
-    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier);
-    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier);
+    const cadOutput = await this.getSupportedOutput(modelIdentifier);
+    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
+    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const blobBaseUrl = await blobBaseUrlPromise;
@@ -49,20 +55,46 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       modelBaseUrl: blobBaseUrl,
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,
+      format: cadOutput.format as File3dFormat,
+      formatVersion: cadOutput.version,
       modelMatrix,
       inverseModelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
   }
+
+  private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
+    const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
+    // Supported output formats in order of preference (first format is most preferred)
+    const preferredOutputs = [
+      { format: File3dFormat.GltfCadModel, version: 9 },
+      { format: File3dFormat.RevealCadModel, version: 8 }
+    ];
+
+    const supportedModelOutputs = outputs.filter(modelOutput => {
+      return preferredOutputs.some(supportedOutput => {
+        return supportedOutput.format === modelOutput.format && supportedOutput.version === modelOutput.version;
+      });
+    });
+
+    if (supportedModelOutputs.length === 0) {
+      const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
+      const supportedOutputsString = preferredOutputs.map(output => `${output.format} v${output.version}`).join(', ');
+      throw new Error(
+        `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
+      );
+    }
+
+    return supportedModelOutputs[0];
+  }
 }
 
 function createScaleToMetersModelMatrix(unit: string, modelMatrix: THREE.Matrix4): THREE.Matrix4 {
-  const conversionFactor = WellKnownDistanceToMeterConversionFactors.get(unit);
+  const conversionFactor = getDistanceToMeterConversionFactor(unit) ?? 1;
   if (conversionFactor === undefined) {
     throw new Error(`Unknown model unit '${unit}'`);
   }
-
   const scaledModelMatrix = new THREE.Matrix4().makeScale(conversionFactor, conversionFactor, conversionFactor);
   return scaledModelMatrix.multiply(modelMatrix);
 }

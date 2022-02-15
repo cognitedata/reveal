@@ -9,9 +9,10 @@ import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import { GUI, GUIController } from 'dat.gui';
-import { authenticateSDKWithEnvironment, getParamsFromURL } from '../utils/example-helpers';
+import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -66,12 +67,14 @@ export function WalkablePath() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      
-      const client = new CogniteClient({
-        appId: 'reveal.example.walkable-path',
-      });
+
+      let client;
       if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.walkable-path', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.walkable-path',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const scene = new THREE.Scene();
@@ -84,7 +87,8 @@ export function WalkablePath() {
       const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
       scene.add(model);
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                                                  model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -149,7 +153,7 @@ export function WalkablePath() {
           walkablePathUpdated
         ) {
           updated = false;
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           revealManager.resetRedraw();
         }
       });

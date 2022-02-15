@@ -9,7 +9,13 @@ import { MetadataRepository } from '../base';
 
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
+import {
+  ModelDataProvider,
+  ModelMetadataProvider,
+  ModelIdentifier,
+  File3dFormat,
+  BlobOutputMetadata
+} from '@reveal/modeldata-api';
 
 const identityMatrix = new THREE.Matrix4().identity();
 
@@ -29,19 +35,31 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   }
 
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
-    const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier);
-    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier);
+    const output = await this.getSupportedOutput(modelIdentifier);
+    const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
+    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, output.format);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
-
     const modelBaseUrl = await baseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
     const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
+      format: output.format as File3dFormat,
+      formatVersion: output.version,
       modelBaseUrl,
       modelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, identityMatrix),
       scene
     };
+  }
+
+  private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
+    const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
+    const pointCloudOutput = outputs.find(output => output.format === File3dFormat.EptPointCloud);
+
+    if (!pointCloudOutput)
+      throw new Error(`Model does not contain supported point cloud output [${File3dFormat.EptPointCloud}]`);
+
+    return pointCloudOutput;
   }
 }

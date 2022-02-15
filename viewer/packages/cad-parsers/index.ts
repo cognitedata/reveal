@@ -11,7 +11,7 @@ export { SectorSceneFactory } from './src/utilities/SectorSceneFactory';
 
 export { SectorScene } from './src/utilities/types';
 
-export { SectorMetadataIndexFileSection, SectorMetadataFacesFileSection, SectorMetadata } from './src/metadata/types';
+export { SectorMetadata, V8SectorMetadata, V9SectorMetadata } from './src/metadata/types';
 
 export { SectorNode } from './src/sector/SectorNode';
 export { RootSectorNode } from './src/sector/RootSectorNode';
@@ -25,7 +25,7 @@ export {
   filterPrimitivesOutsideClipBoxByCenterAndRadius,
   filterPrimitivesOutsideClipBoxByEllipse,
   filterPrimitivesOutsideClipBoxByVertices
-} from './src/cad/filterPrimitives';
+} from './src/cad/filterPrimitivesV8';
 
 export { filterInstanceMesh } from './src/cad/filterInstanceMesh';
 
@@ -51,6 +51,6 @@ export {
   ConsumedSector
 } from './src/cad/types';
 
-export { WellKnownDistanceToMeterConversionFactors } from './src/utilities/types';
+export { getDistanceToMeterConversionFactor } from './src/utilities/types';
 
 export { createTriangleMeshes } from './src/cad/triangleMeshes';

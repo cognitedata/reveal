@@ -1,21 +1,18 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { Cognite3DModel } from '@reveal/core';
-import { CogniteClient } from '@cognite/sdk';
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
-import { CadModelMetadata } from '@reveal/cad-parsers';
-import { createCadModelMetadata, generateSectorTree } from '../../../../test-utilities';
-import { NodesLocalClient } from '@reveal/nodes-api';
-import { MetricsLogger } from '@reveal/metrics';
-
-import { IndexSet } from '../../../../packages/utilities';
-import { TreeIndexNodeCollection, NodeAppearance } from '../../../../packages/cad-styling';
-import { TimelineTool } from './TimelineTool';
 import TWEEN from '@tweenjs/tween.js';
 
+import { Cognite3DModel } from '@reveal/core';
+
+import { createCadModel } from '../../../../test-utilities';
+import { TimelineTool } from './TimelineTool';
+
+import { MetricsLogger } from '@reveal/metrics';
+import { IndexSet } from '@reveal/utilities';
+import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+
 describe('TimelineTool', () => {
-  let client: CogniteClient;
   let model: Cognite3DModel;
   let timelineTool: TimelineTool;
   let kf1Collection: TreeIndexNodeCollection;
@@ -30,18 +27,7 @@ describe('TimelineTool', () => {
   });
 
   beforeEach(() => {
-    client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
-    client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
-
-    const materialManager = new CadMaterialManager();
-    const cadRoot = generateSectorTree(3, 3);
-    const cadMetadata: CadModelMetadata = createCadModelMetadata(cadRoot);
-    materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
-
-    const cadNode = new CadNode(cadMetadata, materialManager);
-    const apiClient = new NodesLocalClient();
-
-    model = new Cognite3DModel(1, 2, cadNode, apiClient);
+    model = createCadModel(1, 2, 3, 3);
 
     timelineTool = new TimelineTool(model);
 

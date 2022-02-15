@@ -16,7 +16,7 @@ import { createGlContext, mockClientAuthentication } from '../../../../test-util
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 
 describe('Cognite3DViewer', () => {
-  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest', project: 'dummy', getToken: async () => 'dummy' });
   mockClientAuthentication(sdk);
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
 
@@ -42,8 +42,6 @@ describe('Cognite3DViewer', () => {
       .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .post(/.*/)
       .reply(200);
-
-    sdk.loginWithApiKey({ project: 'none', apiKey: 'dummy' });
 
     // Mock function for retriving model metadata, such as transformation
     jest.spyOn(sdk.revisions3D, 'retrieve').mockImplementation(async (_modelId, revisionId) => ({

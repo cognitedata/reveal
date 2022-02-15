@@ -16,12 +16,14 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 
+const loginManager = new LoginManager('publicdata', 'api');
 const client = new CogniteClient({
-  appId: 'cognite.reveal.docs.Cognite3DViewer',
+  appId: 'myCadAppId',
+  project: loginManager.project,
+  getToken: async () => loginManager.getToken()
 });
 
-// to view models from CDF authentication is required
-await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project: 'publicdata' }}); // With Cognite authentication flow
+await client.authenticate();
 
 // some div in your html page for Cognite3DViewer to insert a canvas
 const domElement = document.getElementById('canvas-wrapper');
@@ -42,7 +44,13 @@ async function main() {
 main();
 ```
 
-Models can be temporarily hidden using `Cognite3DModel.visible`. Note that 
+`CogniteClient` version 6 and later requires a `getToken` function for authentication.
+In this documentation we have made a class called `LoginManager` that handles this. To
+access the `publicdata` project you can use the [class yourself](insert link!), but
+accessing data in other projects may require different authentication flows.
+You can read more about different types of authentication flow in [the CogniteClient documentation](https://docs.cognite.com/dev/guides/sdk/js/authentication/).
+
+Models can be temporarily hidden using `Cognite3DModel.visible`. Note that
 the viewer must be explicitly re-rendered after setting the visibility flag:
 
 ```js runnable
@@ -58,7 +66,7 @@ setTimeout(() => {
 Hiding models doesn't free any memory occupied by the model and should only be used
 to temporarily hide a model when it's expected that it will shortly be shown again.
 
-To also reclaim memory and permanently unloading the model, use 
+To also reclaim memory and permanently unloading the model, use
 `Cognite3DViewer.removeModel()`:
 
 ```js runnable

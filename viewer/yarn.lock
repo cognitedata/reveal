@@ -5,21 +5,21 @@ __metadata:
   version: 4
   cacheKey: 8
 
-"@azure/msal-browser@npm:^2.11.0":
-  version: 2.16.1
-  resolution: "@azure/msal-browser@npm:2.16.1"
+"@azure/msal-browser@npm:^2.21.0":
+  version: 2.21.0
+  resolution: "@azure/msal-browser@npm:2.21.0"
   dependencies:
-    "@azure/msal-common": ^4.5.1
-  checksum: 28a0ef1299ef80bfb0379f941280a61268880ee1ed14c718545db4f626cbe6a4459ea32a9a5f63c5a7e0537af94eaa2748a08b8676282be3a8d3a564a9985e2d
+    "@azure/msal-common": ^6.0.0
+  checksum: 5c6633d253cd94f5582d08654557af9cef6843565a4e219853120cc568680eab6a6f69352b2d6281781f160cdcb3f3fbdb705b1065e5a831f5adbc170ada6d49
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:^4.5.1":
-  version: 4.5.1
-  resolution: "@azure/msal-common@npm:4.5.1"
+"@azure/msal-common@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@azure/msal-common@npm:6.0.0"
   dependencies:
     debug: ^4.1.1
-  checksum: 9d335771ea65e08d7610253cce68ac29839c01985bc078e2c5bdd53e76f787b2aab6a4bcc0b548ffdc005490032836ab359d2c8e661f386c8c6c4995fc9cfdfa
+  checksum: b9f5230ea44d2d6a03c3bbc09845ca44cc298c353ecac70c8e549caa0a5aa24aa391a42d781741f9b7782905e4689fe6034e9befe3987a38863700875c037ee6
   languageName: node
   linkType: hard
 
@@ -472,13 +472,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@workspace:."
   dependencies:
+    "@azure/msal-browser": ^2.21.0
     "@cognite/potree-core": ^1.5.1
     "@cognite/reveal-parser-worker": 1.3.0
-    "@cognite/sdk": ^5.0.0
-    "@cognite/sdk-core": ^3.0.0
-    "@gltf-transform/core": ^0.12.11
-    "@gltf-transform/extensions": ^0.12.11
+    "@cognite/sdk": ^7.0.0
+    "@cognite/sdk-core": ^4.1.0
     "@tweenjs/tween.js": ^18.6.4
+    "@types/dat.gui": ^0.7.7
     "@types/jest": ^26.0.15
     "@types/jsdom": ^16.2.10
     "@types/lodash": ^4.14.170
@@ -486,7 +486,7 @@ __metadata:
     "@types/node": ^14.14.5
     "@types/random-seed": ^0.3.3
     "@types/skmeans": ^0.11.1
-    "@types/three": 0.133.0
+    "@types/three": 0.137.0
     "@types/tween.js": ^18.5.1
     "@typescript-eslint/eslint-plugin": ^4.29.1
     "@typescript-eslint/parser": ^4.29.1
@@ -496,6 +496,7 @@ __metadata:
     copy-webpack-plugin: ^6.2.1
     core-js: ^3.6.5
     cross-var: ^1.1.0
+    dat.gui: ^0.7.7
     eslint: ^7.12.1
     eslint-config-prettier: ^6.14.0
     eslint-plugin-header: ^3.1.0
@@ -529,7 +530,7 @@ __metadata:
     rxjs: ^7.1.0
     shx: ^0.3.3
     skmeans: ^0.11.3
-    three: 0.133.0
+    three: 0.137.0
     ts-jest: ^26.4.3
     ts-loader: 8.0.7
     tsc-alias: ^1.3.10
@@ -547,28 +548,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/sdk-core@npm:^3.0.0, @cognite/sdk-core@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "@cognite/sdk-core@npm:3.2.0"
+"@cognite/sdk-core@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@cognite/sdk-core@npm:4.1.0"
   dependencies:
-    "@azure/msal-browser": ^2.11.0
     cross-fetch: ^3.0.4
     is-buffer: ^2.0.5
     lodash: ^4.17.11
-    oidc-client: ^1.11.5
     query-string: ^5.1.1
     url: ^0.11.0
-  checksum: 95200fb429dd662a9d25238dbfdccae8bf295a3ca68bdfd65f330452d507749d1b22211348e9295297ce65f25574660edaa0195d535442d971934d1d8261492d
+  checksum: 48672d00ba4feabcfa88ea5ae42be709a3f07304e318c234df7207d18274ef81ce0a68e3a808c684a36a87187237214cc3d745d3fd2ae1074d6490e11fa5ef82
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:^5.0.0":
-  version: 5.1.3
-  resolution: "@cognite/sdk@npm:5.1.3"
+"@cognite/sdk@npm:^7.0.0":
+  version: 7.1.0
+  resolution: "@cognite/sdk@npm:7.1.0"
   dependencies:
-    "@cognite/sdk-core": ^3.2.0
+    "@cognite/sdk-core": ^4.1.0
     lodash: ^4.17.11
-  checksum: dbf0de753a1c47151d6463212dd83429591ba65955a8347a1b50cf1fb73606cfdfeada04d7a47fe143e47e6a9ba97af6143ba88c4e0b53651c56e904c3f71d6a
+  checksum: 5a462946f4ca2bef498bdefe71520f60a2c5b2e536626696f9bff359197f1bf027aa574001b855dba0c3b636b626a8bc525b99cb5cec86b3dcb16332e13b2198
   languageName: node
   linkType: hard
 
@@ -586,25 +585,6 @@ __metadata:
     minimatch: ^3.0.4
     strip-json-comments: ^3.1.1
   checksum: 03a7704150b868c318aab6a94d87a33d30dc2ec579d27374575014f06237ba1370ae11178db772f985ef680d469dc237e7b16a1c5d8edaaeb8c3733e7a95a6d3
-  languageName: node
-  linkType: hard
-
-"@gltf-transform/core@npm:^0.12.11":
-  version: 0.12.11
-  resolution: "@gltf-transform/core@npm:0.12.11"
-  dependencies:
-    gl-matrix: ^3.3.0
-  checksum: cfad73edd7bc67c8e3785b569a19b7108a96399738adb9018adca5db63261e678dd01d6268a98ffa25909af913fffc9478647bf813768cbaad68b85fde20df52
-  languageName: node
-  linkType: hard
-
-"@gltf-transform/extensions@npm:^0.12.11":
-  version: 0.12.11
-  resolution: "@gltf-transform/extensions@npm:0.12.11"
-  dependencies:
-    "@gltf-transform/core": ^0.12.11
-    ktx-parse: ^0.2.1
-  checksum: ac9c4bccbbab79be45682d2f27333ed09f9c6d5dc0b58532c19da3984bb77b416ff4d15bc75216a280212f55ed467ea419f634a36b3b81fb817587672f69fa31
   languageName: node
   linkType: hard
 
@@ -952,6 +932,7 @@ __metadata:
     "@reveal/metrics": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
+    "@reveal/sector-loader": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -961,6 +942,7 @@ __metadata:
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
   dependencies:
     "@reveal/modeldata-api": "workspace:*"
+    "@reveal/sector-parser": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -995,6 +977,7 @@ __metadata:
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
+    "@reveal/sector-loader": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1031,6 +1014,8 @@ __metadata:
 "@reveal/nodes-api@workspace:*, @reveal/nodes-api@workspace:packages/nodes-api":
   version: 0.0.0-use.local
   resolution: "@reveal/nodes-api@workspace:packages/nodes-api"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1041,13 +1026,30 @@ __metadata:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/sector-loader": "workspace:*"
+    "@reveal/sector-parser": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@reveal/sector-parser@workspace:packages/sector-parser":
+"@reveal/sector-loader@workspace:*, @reveal/sector-loader@workspace:packages/sector-loader":
+  version: 0.0.0-use.local
+  resolution: "@reveal/sector-loader@workspace:packages/sector-loader"
+  dependencies:
+    "@reveal/cad-parsers": "workspace:*"
+    "@reveal/metrics": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
+    "@reveal/rendering": "workspace:*"
+    "@reveal/sector-parser": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/sector-parser@workspace:*, @reveal/sector-parser@workspace:packages/sector-parser":
   version: 0.0.0-use.local
   resolution: "@reveal/sector-parser@workspace:packages/sector-parser"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1056,6 +1058,7 @@ __metadata:
   resolution: "@reveal/tools@workspace:packages/tools"
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
+    "@reveal/cad-styling": "workspace:*"
     "@reveal/camera-manager": "workspace:*"
     "@reveal/core": "workspace:*"
     "@reveal/logger": "workspace:*"
@@ -1144,6 +1147,13 @@ __metadata:
   dependencies:
     "@babel/types": ^7.3.0
   checksum: a797ea09c72307569e3ee08aa3900ca744ce3091114084f2dc59b67a45ee7d01df7865252790dbfa787a7915ce892cdc820c9b920f3683292765fc656b08dc63
+  languageName: node
+  linkType: hard
+
+"@types/dat.gui@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "@types/dat.gui@npm:0.7.7"
+  checksum: 0a20c10013c5d8595593b9d258f48c070a09601382e9cb0a4d03b98821a8373430747b31935f73434bf0c59122c43276c6763ca1e493eaeb05a9d74bf37a7b81
   languageName: node
   linkType: hard
 
@@ -1350,10 +1360,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.133.0":
-  version: 0.133.0
-  resolution: "@types/three@npm:0.133.0"
-  checksum: e74e797d64f2525d1572f93bdafca481a59ea70804ca60d5d093e2c39a387ce5546472026b05e41851654d653a44c145d491ea1f746fb05ee085192e93db252e
+"@types/three@npm:0.137.0":
+  version: 0.137.0
+  resolution: "@types/three@npm:0.137.0"
+  checksum: 32674dd002b0f249b995167b52e0e4d21af314260339ab09cf6898ae7d1bf000442d1da76673a0fcb5f8164878ba62b61202a1e2175afe2d76de8119d9821e04
   languageName: node
   linkType: hard
 
@@ -1790,7 +1800,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^7.1.1, acorn@npm:^7.4.0, acorn@npm:^7.4.1":
+"acorn@npm:^7.1.1, acorn@npm:^7.4.0":
   version: 7.4.1
   resolution: "acorn@npm:7.4.1"
   bin:
@@ -3124,7 +3134,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-js@npm:^1.0.2, base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
+"base64-js@npm:^1.0.2, base64-js@npm:^1.3.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
@@ -4149,7 +4159,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.6.5, core-js@npm:^3.8.3":
+"core-js@npm:^3.6.5":
   version: 3.16.0
   resolution: "core-js@npm:3.16.0"
   checksum: e215cf057fadd86e5386d8042c1bd0ddab1c7811d8f66d272c356ba9bae34c0897c3f5a80d19f93fd74cff832652354a0feb0c817234a066ae9177e28c6d865a
@@ -4298,13 +4308,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-js@npm:^4.0.0":
-  version: 4.1.1
-  resolution: "crypto-js@npm:4.1.1"
-  checksum: b3747c12ee3a7632fab3b3e171ea50f78b182545f0714f6d3e7e2858385f0f4101a15f2517e033802ce9d12ba50a391575ff4638c9de3dd9b2c4bc47768d5425
-  languageName: node
-  linkType: hard
-
 "css-select@npm:^4.1.3":
   version: 4.1.3
   resolution: "css-select@npm:4.1.3"
@@ -4368,6 +4371,13 @@ __metadata:
   dependencies:
     assert-plus: ^1.0.0
   checksum: 3634c249570f7f34e3d34f866c93f866c5b417f0dd616275decae08147dcdf8fccfaa5947380ccfb0473998ea3a8057c0b4cd90c875740ee685d0624b2983598
+  languageName: node
+  linkType: hard
+
+"dat.gui@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "dat.gui@npm:0.7.7"
+  checksum: 0686df06c8cdb0ecb8d78653cbbce83081bfc19f833d659f2a64b6d9422fa3d9d35f05f5ea69adc269e723fce3449e4c0ced6f70da8e30e25bcb33c1e7cfd898
   languageName: node
   linkType: hard
 
@@ -6087,13 +6097,6 @@ fsevents@^1.2.7:
   version: 0.0.0
   resolution: "github-from-package@npm:0.0.0"
   checksum: 14e448192a35c1e42efee94c9d01a10f42fe790375891a24b25261246ce9336ab9df5d274585aedd4568f7922246c2a78b8a8cd2571bfe99c693a9718e7dd0e3
-  languageName: node
-  linkType: hard
-
-"gl-matrix@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "gl-matrix@npm:3.3.0"
-  checksum: 4a1b475d2f726ccb6ad1727e8553d391fba613cfc9eded2fc9d2c2d9dc44e457b4f04a0a640ca18d949927c4444df67ff8498997d25f7cf542a84125cfc9c87a
   languageName: node
   linkType: hard
 
@@ -8427,13 +8430,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"ktx-parse@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "ktx-parse@npm:0.2.1"
-  checksum: 81090476947fcb94b3d91d83858d89cd6ab0f9ae31c13cef283ab7047f86f96d80bae7401ae1f737298addd7d9eadc8842efa58f44af8cb8a80d864ffe092476
-  languageName: node
-  linkType: hard
-
 "leven@npm:^3.1.0":
   version: 3.1.0
   resolution: "leven@npm:3.1.0"
@@ -9604,19 +9600,6 @@ fsevents@^1.2.7:
   version: 1.1.2
   resolution: "obuf@npm:1.1.2"
   checksum: 41a2ba310e7b6f6c3b905af82c275bf8854896e2e4c5752966d64cbcd2f599cfffd5932006bcf3b8b419dfdacebb3a3912d5d94e10f1d0acab59876c8757f27f
-  languageName: node
-  linkType: hard
-
-"oidc-client@npm:^1.11.5":
-  version: 1.11.5
-  resolution: "oidc-client@npm:1.11.5"
-  dependencies:
-    acorn: ^7.4.1
-    base64-js: ^1.5.1
-    core-js: ^3.8.3
-    crypto-js: ^4.0.0
-    serialize-javascript: ^4.0.0
-  checksum: 3d0a84667de96936d7bab1a57c80389e333f2883c4f20e9d6366bdbacde7e4d56bda3625b5df8bd44420df093d4cebe591e6dba3ef6d214bc70c5f86ef41452c
   languageName: node
   linkType: hard
 
@@ -12166,10 +12149,10 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"three@npm:0.133.0":
-  version: 0.133.0
-  resolution: "three@npm:0.133.0"
-  checksum: 9a1d03ac702a65423e984fe9c9944585d24df82fc42b1bc44206d4ada06607f49ca6bbaf140739e48d8046db4a72bc33292a89b236b7d829107dcd3c9ba4b8d1
+"three@npm:0.137.0":
+  version: 0.137.0
+  resolution: "three@npm:0.137.0"
+  checksum: c3d005a73818a8023d014af4803c12e34ab5b095f50ac58c994173d6f433a480ad4547543b106f95ee240c827272b1de2eca48dcafd2b65cdcd0a0f3e5bf128b
   languageName: node
   linkType: hard
 

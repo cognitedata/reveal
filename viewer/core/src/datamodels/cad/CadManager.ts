@@ -8,18 +8,17 @@ import { Subscription, Observable } from 'rxjs';
 
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
-import { GeometryFilter } from '../..';
-import { CadModelClipper } from './sector/CadModelClipper';
+import { GeometryFilter } from '../../public/types';
 
-import { CadModelMetadataRepository, CadModelMetadata, LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
+import { CadModelUpdateHandler, CadModelBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { MetricsLogger } from '@reveal/metrics';
 import { ModelIdentifier } from '@reveal/modeldata-api';
+import { MetricsLogger } from '@reveal/metrics';
+import { defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders/src/CadModelBudget';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
-  private readonly _cadModelMetadataRepository: CadModelMetadataRepository;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
@@ -35,12 +34,19 @@ export class CadManager {
     return this._materialManager;
   }
 
-  get budget(): CadModelSectorBudget {
+  get budget(): CadModelBudget {
     return this._cadModelUpdateHandler.budget;
   }
 
-  set budget(budget: CadModelSectorBudget) {
+  set budget(budget: CadModelBudget) {
     this._cadModelUpdateHandler.budget = budget;
+
+    // This gives cache size of 200 on desktop on default budget
+    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
+
+    for (const model of this._cadModelMap.values()) {
+      model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
+    }
   }
 
   /**
@@ -52,12 +58,10 @@ export class CadManager {
 
   constructor(
     materialManger: CadMaterialManager,
-    cadModelMetadataRepository: CadModelMetadataRepository,
     cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler
   ) {
     this._materialManager = materialManger;
-    this._cadModelMetadataRepository = cadModelMetadataRepository;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
     this._materialManager.on('materialsChanged', this._materialsChangedListener);
@@ -73,6 +77,15 @@ export class CadManager {
         cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.modelIdentifier, sector.metadata.id);
       } else if (sector.levelOfDetail === LevelOfDetail.Simple || sector.levelOfDetail === LevelOfDetail.Discarded) {
         cadModel.discardInstancedMeshes(sector.metadata.id);
+        cadModel.removeBatchedSectorGeometries(sector.metadata.id);
+      }
+
+      if (
+        sector.geometryBatchingQueue &&
+        sector.geometryBatchingQueue.length > 0 &&
+        sector.levelOfDetail === LevelOfDetail.Detailed
+      ) {
+        cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;
@@ -102,6 +115,7 @@ export class CadManager {
 
   dispose(): void {
     this._cadModelUpdateHandler.dispose();
+    this._cadModelFactory.dispose();
     this._subscription.unsubscribe();
     this._materialManager.off('materialsChanged', this._materialsChangedListener);
   }
@@ -142,27 +156,19 @@ export class CadManager {
   }
 
   async addModel(modelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
-    const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
-    if (this._cadModelMap.has(metadata.modelIdentifier)) {
-      throw new Error(`Model ${modelIdentifier} has already been added`);
-    }
-    // Apply clipping box
-    const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
-    const clippedMetadata = createClippedModel(metadata, geometryClipBox);
-
-    const model = this._cadModelFactory.createModel(clippedMetadata);
+    const model = await this._cadModelFactory.createModel(modelIdentifier, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
-    this._cadModelMap.set(metadata.modelIdentifier, model);
+    this._cadModelMap.set(model.cadModelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
     return model;
   }
 
   removeModel(model: CadNode): void {
-    const metadata = model.cadModelMetadata;
-    if (!this._cadModelMap.delete(metadata.modelIdentifier)) {
-      throw new Error(`Could not remove model ${metadata.modelIdentifier} because it's not added`);
+    if (!this._cadModelMap.delete(model.cadModelIdentifier)) {
+      throw new Error(`Could not remove model ${model.cadModelIdentifier} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
+    model.clearCache();
     this._cadModelUpdateHandler.removeModel(model);
   }
 
@@ -177,29 +183,4 @@ export class CadManager {
   private handleMaterialsChanged() {
     this.requestRedraw();
   }
-}
-
-function determineGeometryClipBox(
-  geometryFilter: GeometryFilter | undefined,
-  cadModel: CadModelMetadata
-): THREE.Box3 | null {
-  if (geometryFilter === undefined || geometryFilter.boundingBox === undefined) {
-    return null;
-  }
-  if (!geometryFilter.isBoundingBoxInModelCoordinates) {
-    return geometryFilter.boundingBox;
-  }
-
-  const bbox = geometryFilter.boundingBox.clone();
-  bbox.applyMatrix4(cadModel.inverseModelMatrix);
-  return bbox;
-}
-
-function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: THREE.Box3 | null): CadModelMetadata {
-  if (geometryClipBox === null) {
-    return cadModel;
-  }
-
-  const clipper = new CadModelClipper(geometryClipBox);
-  return clipper.createClippedModel(cadModel);
 }

@@ -46,8 +46,7 @@ describe('NodesCdfClient', () => {
         return { items: requestBody.items.map(stubNodeIdToTreeIndex) };
       });
 
-    const client = new CogniteClient({ appId: 'reveal.test' });
-    client.loginWithApiKey({ project: 'test', apiKey: 'test' });
+    const client = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
 
     nodesClient = new NodesCdfClient(client);
   });

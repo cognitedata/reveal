@@ -18,9 +18,10 @@ import {
   createDefaultRenderOptions,
 } from '../utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -129,11 +130,13 @@ export function SectorWithPointcloud() {
         modelUrl: pointCloudUrl,
       } = getPointCloudParams();
 
-      const client = new CogniteClient({
-        appId: 'reveal.example.hybrid-cad-pointcloud',
-      });
-      if ((modelRevision || pointCloudModelRevision) && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+      let client;
+      if (project && environmentParam) {
+        client = await createSDKFromEnvironment('reveal.example.hybrid-cad-pointcloud', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.hybrid-cad-pointcloud',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const scene = new THREE.Scene();
@@ -154,7 +157,7 @@ export function SectorWithPointcloud() {
 
       let pointCloud
       if (pointCloudModelRevision) {
-        const modelIdentifier = new reveal.CdfModelIdentifier(pointCloudModelRevision.modelId, pointCloudModelRevision.revisionId, reveal.File3dFormat.EptPointCloud);
+        const modelIdentifier = new reveal.CdfModelIdentifier(pointCloudModelRevision.modelId, pointCloudModelRevision.revisionId);
         pointCloud = await revealManager.addModel('pointcloud', modelIdentifier);
       } else if (pointCloudUrl) {
         const modelIdentifier = new reveal.LocalModelIdentifier(pointCloudUrl.fileName!);
@@ -191,7 +194,9 @@ export function SectorWithPointcloud() {
         handleSettingsChanged
       );
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } =
+        suggestCameraConfig(model.cadModelMetadata.scene.root,
+                            model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -225,7 +230,7 @@ export function SectorWithPointcloud() {
 
         if (needsUpdate) {
           applyRenderingFilters(scene, renderOptions.renderFilter);
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           settingsChanged = false;
           revealManager.resetRedraw();
         }

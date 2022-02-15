@@ -5,7 +5,6 @@ import * as THREE from 'three';
 
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
 import { RevealCameraControls } from '@reveal/camera-manager';
@@ -14,11 +13,19 @@ import { NodeAppearance } from '@reveal/cad-styling';
 import { CogniteClient } from '@cognite/sdk';
 
 export type ViewerState = {
-  camera: {
-    position: THREE.Vector3;
-    target: THREE.Vector3;
+  camera?: {
+    position: { x: number; y: number; z: number };
+    target: { x: number; y: number; z: number };
   };
-  models: ModelState[];
+  models?: ModelState[];
+  clippingPlanes?: ClippingPlanesState[];
+};
+
+export type ClippingPlanesState = {
+  nx: number;
+  ny: number;
+  nz: number;
+  constant: number;
 };
 
 export type ModelState = {
@@ -41,8 +48,33 @@ export class ViewStateHelper {
 
   public getCurrentState(): ViewerState {
     const cameraState = this._cameraControls.getState();
+    const modelStates = this.getModelsState();
+    const clippingPlanesState = this.getClippingPlanesState();
 
-    const modelStates = this._viewer.models
+    return {
+      camera: {
+        position: cameraState.position,
+        target: cameraState.target
+      },
+      models: modelStates,
+      clippingPlanes: clippingPlanesState
+    };
+  }
+
+  public async setState(viewerState: ViewerState): Promise<void> {
+    if (viewerState.camera !== undefined) {
+      this.setCameraFromState(viewerState.camera);
+    }
+    if (viewerState.models !== undefined) {
+      this.setModelState(viewerState.models);
+    }
+    if (viewerState.clippingPlanes !== undefined) {
+      this.setClippingPlanesState(viewerState.clippingPlanes);
+    }
+  }
+
+  private getModelsState(): ModelState[] {
+    return this._viewer.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
       .map(model => {
@@ -62,30 +94,30 @@ export class ViewStateHelper {
           styledSets: styledCollections
         } as ModelState;
       });
-
-    return {
-      camera: {
-        position: cameraState.position,
-        target: cameraState.target
-      },
-      models: modelStates
-    };
   }
 
-  public async setState(viewerState: ViewerState): Promise<void> {
-    const camPos = viewerState.camera.position;
-    const camTarget = viewerState.camera.target;
+  private getClippingPlanesState(): ClippingPlanesState[] {
+    return this._viewer
+      .getClippingPlanes()
+      .map(p => ({ nx: p.normal.x, ny: p.normal.y, nz: p.normal.z, constant: p.constant }));
+  }
+
+  private setCameraFromState(cameraState: Exclude<ViewerState['camera'], undefined>) {
+    const camPos = cameraState.position;
+    const camTarget = cameraState.target;
     this._cameraControls.setState(
       new THREE.Vector3(camPos.x, camPos.y, camPos.z),
       new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
     );
+  }
 
+  private async setModelState(modelsState: ModelState[]) {
     const cadModels = this._viewer.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel);
 
     await Promise.all(
-      viewerState.models
+      modelsState
         .map(state => {
           const model = cadModels.find(model => model.modelId == state.modelId && model.revisionId == state.revisionId);
           if (model === undefined) {
@@ -113,5 +145,10 @@ export class ViewStateHelper {
           );
         })
     );
+  }
+
+  private setClippingPlanesState(clippingPlanes: ClippingPlanesState[]) {
+    const planes = clippingPlanes.map(p => new THREE.Plane().setComponents(p.nx, p.ny, p.nz, p.constant));
+    this._viewer.setClippingPlanes(planes);
   }
 }

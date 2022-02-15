@@ -37,8 +37,6 @@ export function createEmptyPrimitive(): ParsedPrimitives {
 
 export function createEmptySector(): SectorGeometry {
   return {
-    nodeIdToTreeIndexMap: new Map(),
-    treeIndexToNodeIdMap: new Map(),
     primitives: createEmptyPrimitive(),
     instanceMeshes: [],
     triangleMeshes: []
