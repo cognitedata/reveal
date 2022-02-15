@@ -14,8 +14,6 @@ in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
-// uniform mat4 projectionMatrix;
-
 out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
