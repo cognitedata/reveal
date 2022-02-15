@@ -65,10 +65,7 @@ const commonSlice = createSlice({
         RetrieveAnnotations,
         DeleteAnnotations,
         UpdateAnnotations,
-        UpdateFiles,
-        SaveAnnotationTemplates,
-        PollJobs,
-        postAnnotationJob
+        SaveAnnotationTemplates
       ),
       (state, { error }) => {
         if (error && error.message) {
@@ -76,6 +73,25 @@ const commonSlice = createSlice({
           state.saveState.time = new Date().getTime();
           ToastUtils.onFailure(
             `Failed to update Annotations, ${error?.message}`
+          );
+        }
+      }
+    );
+    builder.addMatcher(isRejected(UpdateFiles), (state, { error }) => {
+      if (error && error.message) {
+        state.saveState.mode = 'error';
+        state.saveState.time = new Date().getTime();
+        ToastUtils.onFailure(`Failed to update files, ${error?.message}`);
+      }
+    });
+    builder.addMatcher(
+      isRejected(PollJobs, postAnnotationJob),
+      (state, { error }) => {
+        if (error && error.message) {
+          state.saveState.mode = 'error';
+          state.saveState.time = new Date().getTime();
+          ToastUtils.onFailure(
+            `Failed to update some detection jobs, ${error?.message}`
           );
         }
       }

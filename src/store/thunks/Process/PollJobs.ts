@@ -10,68 +10,50 @@ import { AnnotationDetectionJobUpdate } from './AnnotationDetectionJobUpdate';
 export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
   'process/pollJobs',
   async (jobs, { dispatch, getState }) => {
-    jobs.forEach(async (job) => {
-      const {
-        jobId,
-        fileIds,
-        type: modelType,
-        completedFileIds: completedFileIdsFromState,
-        failedFileIds: failedFileIdsFromState,
-      } = job;
-      const completedFileIds: number[] = completedFileIdsFromState || [];
-      const failedFileIds: number[] = failedFileIdsFromState || [];
-      let annotationsSavedFileIds: number[] = [];
-      const addToAnnotationsSavedFileIds = (ids: number[]) => {
-        annotationsSavedFileIds = [...annotationsSavedFileIds, ...ids];
-      };
+    // eslint-disable-next-line no-restricted-syntax
+    for (const job of jobs) {
+      const { jobId, fileIds, type: modelType } = job;
 
       const doesFileExist = (fileId: number) =>
-        getState().fileReducer.files.byId[fileId];
+        getState().processSlice.fileIds.includes(fileId);
 
-      await fetchUntilComplete<AnnotationJob>(
-        () => fetchJobById(modelType, jobId),
-        {
-          isCompleted: (latestJobVersion) =>
-            latestJobVersion.status === 'Completed' ||
-            latestJobVersion.status === 'Failed' ||
-            !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
+      fetchUntilComplete<AnnotationJob>(() => fetchJobById(modelType, jobId), {
+        isCompleted: (latestJobVersion) =>
+          latestJobVersion.status === 'Completed' ||
+          latestJobVersion.status === 'Failed' ||
+          !fileIds.some(doesFileExist),
 
-          onTick: async (latestJobVersion) => {
-            if (
-              latestJobVersion.status === 'Running' ||
-              latestJobVersion.status === 'Completed'
-            ) {
-              await dispatch(
-                AnnotationDetectionJobUpdate({
-                  job: latestJobVersion,
-                  fileIds,
-                  modelType,
-                  completedFileIds,
-                  failedFileIds,
-                  annotationsSavedFileIds,
-                  addToAnnotationsSavedFileIds,
-                })
-              ).unwrap();
-            }
-          },
+        onTick: async (latestJobVersion) => {
+          if (
+            latestJobVersion.status === 'Running' ||
+            latestJobVersion.status === 'Completed'
+          ) {
+            await dispatch(
+              AnnotationDetectionJobUpdate({
+                job: latestJobVersion,
+                fileIds,
+                modelType,
+              })
+            ).unwrap();
+          }
+        },
 
-          onError: (error: Error) => {
-            const formatedError = `Error occurred while fetching jobs: ${JSON.stringify(
-              error.message,
-              null,
-              4
-            )}`;
-            ToastUtils.onFailure(formatedError);
+        onError: (error: Error) => {
+          const formattedError = `Error occurred while fetching jobs: ${JSON.stringify(
+            error.message,
+            null,
+            4
+          )}`;
+          ToastUtils.onFailure(formattedError);
 
-            if (job.status === 'Queued' && job.jobId < 0) {
-              dispatch(removeJobById(job.jobId));
-            }
+          if (job.status === 'Queued' && job.jobId < 0) {
+            dispatch(removeJobById(job.jobId));
+          }
 
-            // eslint-disable-next-line no-console
-            console.error(error);
-          },
-        }
-      );
-    });
+          // eslint-disable-next-line no-console
+          console.error(error);
+        },
+      });
+    }
   }
 );
