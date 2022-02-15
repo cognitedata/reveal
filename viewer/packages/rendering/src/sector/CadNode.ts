@@ -171,7 +171,11 @@ export class CadNode extends THREE.Object3D {
     this._geometryBatchingManager.removeSectorBatches(sectorId);
   }
 
+  public setCacheSize(sectorCount: number): void {
+    this._sectorRepository.setCacheSize(sectorCount);
+  }
+
   public clearCache(): void {
-    this._sectorRepository.clear();
+    this._sectorRepository.clearCache();
   }
 }
