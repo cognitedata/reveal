@@ -72,22 +72,24 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       { format: File3dFormat.RevealCadModel, version: 8 }
     ];
 
-    for (const preferredOutput of preferredOutputs) {
-      const acceptableOutput = outputs.find(
-        supportedOutput =>
-          supportedOutput.format === preferredOutput.format && supportedOutput.version === preferredOutput.version
-      );
+    const supportedOutputs = preferredOutputs
+      .map(preferredOutput =>
+        outputs.find(
+          supportedOutput =>
+            supportedOutput.format === preferredOutput.format && supportedOutput.version === preferredOutput.version
+        )
+      )
+      .filter(supportedOutput => supportedOutput !== undefined);
 
-      if (acceptableOutput) {
-        return acceptableOutput;
-      }
+    if (supportedOutputs.length === 0) {
+      const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
+      const supportedOutputsString = preferredOutputs.map(output => `${output.format} v${output.version}`).join(', ');
+      throw new Error(
+        `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
+      );
     }
 
-    const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
-    const supportedOutputsString = preferredOutputs.map(output => `${output.format} v${output.version}`).join(', ');
-    throw new Error(
-      `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
-    );
+    return supportedOutputs[0]!;
   }
 }
 
