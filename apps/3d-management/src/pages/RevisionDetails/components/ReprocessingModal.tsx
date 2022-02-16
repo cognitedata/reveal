@@ -5,12 +5,13 @@ import { ModalProps } from 'antd/lib/modal/Modal';
 
 import * as Sentry from '@sentry/browser';
 import { requestReprocessing } from 'src/utils/sdk/3dApiUtils';
-import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { HttpError, CogniteMultiError, Revision3D } from '@cognite/sdk';
 import { useHistory } from 'react-router-dom';
 
 type Props = Omit<ModalProps, 'onOk' | 'onCancel'> & {
   modelId: number;
-  revision: v3.Revision3D;
+  revision: Revision3D;
   onSuccess: Function;
   onClose: () => void;
 };
@@ -38,7 +39,7 @@ export const ReprocessingModal = ({
     try {
       if (!isReprocessable) {
         const createdRevision = (
-          await v3Client.revisions3D.create(modelId, [
+          await sdk.revisions3D.create(modelId, [
             {
               camera: revision.camera,
               fileId: revision.fileId,
@@ -74,7 +75,7 @@ export const ReprocessingModal = ({
       const isDeprecatedFileFormat = (err: Error) => {
         return err.message.includes('Unsupported file extension');
       };
-      const error = e as v3.HttpError | v3.CogniteMultiError<any, any> | Error;
+      const error = e as HttpError | CogniteMultiError<any, any> | Error;
 
       if (
         isDeprecatedFileFormat(error) ||
