@@ -12,7 +12,6 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 import nock from 'nock';
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
-import { DefaultCameraManager } from '@reveal/camera-manager';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 
@@ -217,23 +216,4 @@ describe('Cognite3DViewer', () => {
     expect(viewer.cameraManager.getCameraTarget()).not.toEqual(originalCameraTarget);
   });
 
-  test('setCameraControlsOptions changes internal state of camera controls options', () => {
-    // Arrange
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
-    const cameraManager = viewer.cameraManager as DefaultCameraManager;
-    const originalCameraControlsOptions = cameraManager.getCameraControlsOptions();
-    // Act
-    cameraManager.setCameraControlsOptions({
-      changeCameraTargetOnClick: !originalCameraControlsOptions.changeCameraTargetOnClick,
-      mouseWheelAction: 'zoomToTarget'
-    });
-
-    // Assert
-    const newCameraControlsOptions = cameraManager.getCameraControlsOptions();
-
-    expect(newCameraControlsOptions.changeCameraTargetOnClick).not.toEqual(
-      originalCameraControlsOptions.changeCameraTargetOnClick
-    );
-    expect(newCameraControlsOptions.mouseWheelAction).toEqual('zoomToTarget');
-  });
 });

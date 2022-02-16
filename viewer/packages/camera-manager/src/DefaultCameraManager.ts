@@ -11,8 +11,8 @@ import {
   CameraChangeData,
   PointerEventDelegate,
   ControlsState,
-  CameraManager
-} from './types';
+} from './types'
+import { CameraManager } from './CameraManager';
 import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import range from 'lodash/range';
 
@@ -103,12 +103,7 @@ export class DefaultCameraManager implements CameraManager {
     camera?: THREE.PerspectiveCamera
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-    // TODO savokr 28-10-2021: Consider removing default camera position initialization
-    this._camera.position.x = 30;
-    this._camera.position.y = 10;
-    this._camera.position.z = 50;
-    this._camera.lookAt(new THREE.Vector3());
-
+    
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;

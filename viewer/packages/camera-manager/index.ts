@@ -3,5 +3,6 @@
  */
 export { ComboControls } from './src/ComboControls';
 export { DefaultCameraManager } from './src/DefaultCameraManager';
+export { CameraManager } from './src/CameraManager';
 
 export * from './src/types';
