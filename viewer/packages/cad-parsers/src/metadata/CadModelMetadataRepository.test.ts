@@ -14,6 +14,39 @@ export interface ModelId {
   readonly revealInternalId: symbol;
 }
 
+describe(CadModelMetadataRepository.name, () => {
+  test('output v8 is returned if v9 is not available', async () => {
+    // Arrange
+
+    /* Only return v8 from model metadata provider */
+    const availableOutputs = [v8BlobOutputMetadata];
+    const mockedMetadataProvider = createMockedMetadataProvider(availableOutputs);
+
+    const mockedModelDataProvider = createMockedModelDataProvider();
+
+    const cadModelMetadataRepository = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
+
+    // Act
+    const cadModelMetadata = await cadModelMetadataRepository.loadData({ revealInternalId: Symbol('some_model_id') });
+
+    // Assert
+    expect(cadModelMetadata.formatVersion).toBe(8);
+  });
+
+  test('output v9 is returned even if not first in output list', async () => {
+    const availableOutputs = [v8BlobOutputMetadata, v9BlobOutputMetadata];
+    const mockedMetadataProvider = createMockedMetadataProvider(availableOutputs);
+
+    const mockedModelDataProvider = createMockedModelDataProvider();
+
+    const cadModelMetadataRepository = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
+
+    const cadModelMetadata = await cadModelMetadataRepository.loadData({ revealInternalId: Symbol('some_model_id') });
+
+    expect(cadModelMetadata.formatVersion).toBe(9);
+  });
+});
+
 function urlFromBlobId(blobId: number) {
   return `some_url/${blobId}`;
 }
@@ -77,36 +110,3 @@ function createMockedModelDataProvider(): ModelDataProvider {
     headers: {}
   };
 }
-
-describe(CadModelMetadataRepository.name, () => {
-  test('output v8 is returned if v9 is not available', async () => {
-    // Arrange
-
-    /* Only return v8 from model metadata provider */
-    const availableOutputs = [v8BlobOutputMetadata];
-    const mockedMetadataProvider = createMockedMetadataProvider(availableOutputs);
-
-    const mockedModelDataProvider = createMockedModelDataProvider();
-
-    const cadModelMetadataRepository = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
-
-    // Act
-    const cadModelMetadata = await cadModelMetadataRepository.loadData({ revealInternalId: Symbol('some_model_id') });
-
-    // Assert
-    expect(cadModelMetadata.formatVersion).toBe(8);
-  });
-
-  test('output v9 is returned even if not first in output list', async () => {
-    const availableOutputs = [v8BlobOutputMetadata, v9BlobOutputMetadata];
-    const mockedMetadataProvider = createMockedMetadataProvider(availableOutputs);
-
-    const mockedModelDataProvider = createMockedModelDataProvider();
-
-    const cadModelMetadataRepository = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
-
-    const cadModelMetadata = await cadModelMetadataRepository.loadData({ revealInternalId: Symbol('some_model_id') });
-
-    expect(cadModelMetadata.formatVersion).toBe(9);
-  });
-});
