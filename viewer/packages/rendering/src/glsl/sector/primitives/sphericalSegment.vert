@@ -1,5 +1,4 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;

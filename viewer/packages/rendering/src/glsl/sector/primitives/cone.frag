@@ -1,5 +1,3 @@
-#pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
@@ -17,10 +15,10 @@ uniform vec2 treeIndexTextureSize;
 in vec4 v_centerB;
 in vec4 v_W;
 in vec4 v_U;
+in vec4 v_V;
 in float v_angle;
 in float v_arcAngle;
 in vec4 v_centerA;
-in vec4 v_V;
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
