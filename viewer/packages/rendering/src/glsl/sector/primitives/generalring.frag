@@ -1,7 +1,6 @@
 precision highp float;
 
 #define texture2D texture
-// #define gl_FragDepthEXT gl_FragDepth
 
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
@@ -13,26 +12,21 @@ precision highp float;
 #pragma glslify: import('../../math/constants.glsl')
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
+uniform sampler2D colorDataTexture;
+uniform sampler2D matCapTexture;
+uniform vec2 treeIndexTextureSize;
+uniform int renderMode;
+
 in float v_oneMinusThicknessSqr;
 in vec2 v_xy;
 in float v_angle;
 in float v_arcAngle;
-
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
-
-uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
-uniform sampler2D matCapTexture;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform int renderMode;
-
 in vec3 vViewPosition;
 #if NUM_CLIPPING_PLANES > 0
-  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+  flat in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
 void main() {

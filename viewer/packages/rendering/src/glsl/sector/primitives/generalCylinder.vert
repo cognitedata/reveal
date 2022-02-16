@@ -9,17 +9,18 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
+uniform int renderMode;
 
 in vec3 position;
 in vec3 normal;
-
 in float a_treeIndex;
-
 in vec3 a_centerA;
 in vec3 a_centerB;
-
 in float a_radius;
-
 in vec3 a_color;
 // slicing plane attributes
 in vec4 a_planeA;
@@ -32,40 +33,24 @@ in float a_arcAngle;
 out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
-
 // U, V, axis represent the 3x3 cone basis.
 // They are vec4 to pack extra data into the w-component
 // since Safari on iOS only supports 8 varying vec4 registers.
 out vec4 v_U;
 out vec4 v_W;
-
 out vec4 v_planeA;
 out vec4 v_planeB;
-
 out float v_surfacePointY;
-
 out float v_angle;
 out float v_arcAngle;
-
 out vec3 v_color;
-
 out vec3 v_normal;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
-
-uniform int renderMode;
-
 //fix: Uniform not assigning values in iOS - JiraId: REV-287
 flat out int v_renderMode;
-out mat4 v_projectionMatrix;
+flat out mat4 v_projectionMatrix;
 #if NUM_CLIPPING_PLANES > 0
   uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
-  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+  flat out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
 void main() {

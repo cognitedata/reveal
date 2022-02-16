@@ -2,6 +2,11 @@
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl');
 
 uniform mat4 inverseModelMatrix;
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
+uniform int renderMode;
 
 in float a_treeIndex;
 in vec3 a_centerA;
@@ -10,6 +15,13 @@ in float a_radiusA;
 in float a_radiusB;
 in vec3 a_normal;
 in vec3 a_color;
+//fix: Uniform not assigning values in iOS - JiraId: REV-287
+flat out int v_renderMode;
+flat out mat4 v_projectionMatrix;
+#if NUM_CLIPPING_PLANES > 0
+  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
+  flat out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
 
 out float v_treeIndex;
 // We pack the radii into w-components
@@ -26,23 +38,6 @@ out float height;
 
 out vec3 v_color;
 out vec3 v_normal;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
-
-uniform int renderMode;
-
-//fix: Uniform not assigning values in iOS - JiraId: REV-287
-flat out int v_renderMode;
-out mat4 v_projectionMatrix;
-#if NUM_CLIPPING_PLANES > 0
-  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
-  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
-#endif
 
 void main() {
   v_renderMode = renderMode; // REV-287

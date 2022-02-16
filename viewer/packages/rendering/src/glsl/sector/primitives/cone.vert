@@ -1,7 +1,12 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
 uniform mat4 inverseModelMatrix;
+uniform int renderMode;
 
 in float a_treeIndex;
 in vec3 a_centerA;
@@ -14,40 +19,27 @@ in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
+//fix: Uniform not assigning values in iOS - JiraId: REV-287
+flat out int v_renderMode;
+flat out mat4 v_projectionMatrix;
+#if NUM_CLIPPING_PLANES > 0
+  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
+  flat out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
 out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
-
 // U, V, axis represent the 3x3 cone basis.
 // They are vec4 to pack extra data into the w-component
 // since Safari on iOS only supports 8 out vec4 registers.
 out vec4 v_U;
 out vec4 v_W;
-
 out vec4 v_centerA;
 out vec4 v_V;
-
 out float v_angle;
 out float v_arcAngle;
-
 out vec3 v_color;
 out vec3 v_normal;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
-
-uniform int renderMode;
-//fix: Uniform not assigning values in iOS - JiraId: REV-287
-flat out int v_renderMode;
-out mat4 v_projectionMatrix;
-#if NUM_CLIPPING_PLANES > 0
-  uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
-  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
-#endif
 
 void main() {
   v_renderMode = renderMode; // REV-287

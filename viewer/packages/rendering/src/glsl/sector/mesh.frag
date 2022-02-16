@@ -8,19 +8,15 @@
 #pragma glslify: GeometryType = require('../base/geometryTypes.glsl');
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
+uniform int renderMode;
 
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_viewPosition;
-
-uniform int renderMode;
-
 #if NUM_CLIPPING_PLANES > 0
-  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+  flat in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
 void main()

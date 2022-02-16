@@ -8,12 +8,10 @@ out mediump vec3 v_color;
 out lowp float v_coverageFactor;
 out lowp vec2 v_seed;
 out lowp float v_visible;
-
 out vec3 v_viewPosition;
-
 #if NUM_CLIPPING_PLANES > 0
   uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
-  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+  flat out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
 void main()

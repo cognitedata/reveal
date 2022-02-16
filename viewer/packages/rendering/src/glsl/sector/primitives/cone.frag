@@ -8,39 +8,27 @@
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
-
-#define PI 3.14159265359
-#define PI2 6.28318530718
-#define PI_HALF 1.5707963267949
+#pragma glslify: import('../../math/constants.glsl')
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
 
-uniform mat4 projectionMatrix;
-
 in vec4 v_centerB;
-
 in vec4 v_W;
 in vec4 v_U;
-
 in float v_angle;
 in float v_arcAngle;
-
 in vec4 v_centerA;
 in vec4 v_V;
-
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
-
 //fix: Uniform not assigning values in iOS - JiraId: REV-287
-in mat4 v_projectionMatrix;
+flat in mat4 v_projectionMatrix;
 flat in int v_renderMode;
 #if NUM_CLIPPING_PLANES > 0
-  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+  flat in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
 void main() {  

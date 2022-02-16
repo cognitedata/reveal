@@ -8,28 +8,22 @@
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
 
-uniform mat4 projectionMatrix;
 in vec4 center;
 in float hRadius;
 in float height;
-
 in vec4 U;
 in vec4 V;
 in vec4 sphereNormal;
-
 in float v_treeIndex;
 in vec3 v_color;
-
 //fix: Uniform not assigning values in iOS - JiraId: REV-287
 flat in int v_renderMode;
-in mat4 v_projectionMatrix;
+flat in mat4 v_projectionMatrix;
 #if NUM_CLIPPING_PLANES > 0
-  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+  flat in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
 void main() {

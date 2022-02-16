@@ -5,15 +5,12 @@ in mediump vec3 v_color;
 in lowp float v_coverageFactor;
 in lowp float v_visible;
 in lowp vec2 v_seed;
-
-
 in vec3 v_viewPosition;
+#if NUM_CLIPPING_PLANES > 0
+  flat in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+#endif
 
 out vec4 outputColor;
-    
-#if NUM_CLIPPING_PLANES > 0
-  in vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
-#endif
 
 void main() {
     if(v_visible != 1.0){

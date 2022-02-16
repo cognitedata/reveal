@@ -1,6 +1,10 @@
 #pragma glslify: determineMatrixOverride = require('../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
+uniform vec2 transformOverrideTextureSize;
+uniform vec2 treeIndexTextureSize;
 
 in vec3 color;
 in float treeIndex;
@@ -12,19 +16,10 @@ in vec4 matrix3;
 out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
-
 out vec3 vViewPosition;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
-
 #if NUM_CLIPPING_PLANES > 0
   uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
-  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+  flat out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
 void main() {

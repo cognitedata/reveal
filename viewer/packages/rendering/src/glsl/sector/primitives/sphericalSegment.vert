@@ -17,22 +17,19 @@ out float v_treeIndex;
 out vec4 center;
 out float hRadius;
 out float height;
-
 // U, V, axis represent the 3x3 sphere basis.
 // They are vec4 to pack extra data into the w-component
 // since Safari on iOS only supports 8 out vec4 registers.
 out vec4 U;
 out vec4 V;
 out vec4 sphereNormal;
-
 out vec3 v_color;
-
 //fix: Uniform not assigning values in iOS - JiraId: REV-287
 flat out int v_renderMode;
-out mat4 v_projectionMatrix;
+flat out mat4 v_projectionMatrix;
 #if NUM_CLIPPING_PLANES > 0
   uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
-  out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
+  flat out vec4 v_clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
 void main() {
