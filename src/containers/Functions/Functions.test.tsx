@@ -12,6 +12,7 @@ import Functions from './Functions';
 
 jest.mock('@cognite/cdf-utilities', () => ({
   PageTitle: () => null,
+  getProject: jest.fn().mockReturnValue('mockProject'),
 }));
 
 const wrap = (node: React.ReactNode) =>
