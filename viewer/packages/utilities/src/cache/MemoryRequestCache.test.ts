@@ -31,5 +31,15 @@ describe('MemoryRequestCache', () => {
     jest.resetAllMocks();
   });
 
+  test('cache is correctly cleaned up on forceInsert after resize with small size', () => {
+    const cache = new MemoryRequestCache<number, string>(10);
+    cache.resize(2);
+
+    cache.insert(2, 'test');
+    cache.insert(3, 'test');
+
+    expect(() => cache.forceInsert(4, 'test')).not.toThrow();
+  });
+
   // TODO add test that requires data
 });
