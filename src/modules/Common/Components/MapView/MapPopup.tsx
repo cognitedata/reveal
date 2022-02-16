@@ -10,7 +10,7 @@ import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors'
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/sdk';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
@@ -47,9 +47,12 @@ export const MapPopup = ({
     dispatch(DeleteFilesById([item.id]));
   };
 
-  const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
+  const selectTotalAnnotationCountForFileIds = useMemo(
+    makeSelectTotalAnnotationCountForFileIds,
+    []
+  );
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
-    getAnnotationCounts(annotationReducer, item.id)
+    selectTotalAnnotationCountForFileIds(annotationReducer, [item.id])
   );
 
   const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);

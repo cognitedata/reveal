@@ -1,12 +1,10 @@
 import { initialState } from 'src/modules/Common/store/annotation/slice';
 import {
   filesAnnotationCounts,
-  makeSelectAnnotationCounts,
   makeSelectAnnotationsForFileIds,
   makeSelectFileAnnotations,
   makeSelectFileAnnotationsByType,
-  makeSelectTotalAnnotationCounts,
-  selectAllAnnotations,
+  makeSelectTotalAnnotationCountForFileIds,
 } from 'src/modules/Common/store/annotation/selectors';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
@@ -69,31 +67,9 @@ describe('Test annotation selectors', () => {
     });
   });
 
-  describe('Test selectAllAnnotations', () => {
-    test('should return empty list if no annotations available', () => {
-      expect(selectAllAnnotations(initialState)).toEqual([]);
-    });
-
-    test('should return all available annotations', () => {
-      const previousState = {
-        ...initialState,
-        annotations: {
-          byId: {
-            '1': getDummyAnnotation(1),
-            '2': getDummyAnnotation(2),
-          },
-        },
-      };
-      expect(selectAllAnnotations(previousState)).toEqual([
-        getDummyAnnotation(1),
-        getDummyAnnotation(2),
-      ]);
-    });
-  });
-
   describe('Test makeSelectAnnotationsForFileIds', () => {
     const selectAnnotationsForFileIds = makeSelectAnnotationsForFileIds();
-    test('should return all annotations for all files', () => {
+    test('should return all annotations for provided file ids', () => {
       const previousState = {
         files: {
           byId: {
@@ -178,30 +154,17 @@ describe('Test annotation selectors', () => {
       },
     };
 
-    describe('Test makeSelectAnnotationCounts', () => {
-      test('should return annotation counts for each file', () => {
-        const selectAnnotationCountsForFile = makeSelectAnnotationCounts();
+    describe('Test makeSelectTotalAnnotationCountForFileIds', () => {
+      test('should return annotation counts for all annotations of provided file ids', () => {
+        const selectTotalAnnotationCounts =
+          makeSelectTotalAnnotationCountForFileIds();
 
-        expect(selectAnnotationCountsForFile(previousState, 10)).toEqual({
+        expect(selectTotalAnnotationCounts(previousState, [10])).toEqual({
           objects: 1,
           assets: 1,
           text: 1,
           gdpr: 1,
           mostFrequentObject: ['pump', 1],
-        });
-      });
-    });
-
-    describe('Test makeSelectTotalAnnotationCounts', () => {
-      test('should return annotation counts for all annotations of all files', () => {
-        const selectTotalAnnotationCounts = makeSelectTotalAnnotationCounts();
-
-        expect(selectTotalAnnotationCounts(previousState)).toEqual({
-          objects: 2,
-          assets: 1,
-          text: 1,
-          gdpr: 1,
-          mostFrequentObject: ['hose', 1],
         });
       });
     });

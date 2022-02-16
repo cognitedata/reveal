@@ -13,7 +13,7 @@ import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors'
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/sdk';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export const FileGridPreview = ({
@@ -50,9 +50,12 @@ export const FileGridPreview = ({
     if (menuActions.onFileDelete) menuActions.onFileDelete(item.id);
   };
 
-  const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
+  const selectTotalAnnotationCountForFileIds = useMemo(
+    makeSelectTotalAnnotationCountForFileIds,
+    []
+  );
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
-    getAnnotationCounts(annotationReducer, item.id)
+    selectTotalAnnotationCountForFileIds(annotationReducer, [item.id])
   );
 
   const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);

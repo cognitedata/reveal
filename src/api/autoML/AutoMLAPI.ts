@@ -78,13 +78,13 @@ export class AutoMLAPI {
 
       return response.data;
     } catch (error) {
-      const formatedError = `Could not start the training job, error: ${JSON.stringify(
+      const formattedError = `Could not start the training job, error: ${JSON.stringify(
         error,
         null,
         4
       )}`;
-      ToastUtils.onFailure(formatedError);
-      console.error(formatedError);
+      ToastUtils.onFailure(formattedError);
+      console.error(formattedError);
     }
     return undefined;
   };

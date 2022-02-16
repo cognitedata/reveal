@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeSelectTotalAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import { RootState } from 'src/store/rootReducer';
 import {
   selectPageCount,
@@ -21,14 +21,21 @@ import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 
 export default function ProgressStatus() {
   const dispatch = useDispatch();
-  const selectAnnotationCounts = useMemo(makeSelectTotalAnnotationCounts, []);
-  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
-    selectAnnotationCounts(annotationReducer)
+
+  const processFileIds = useSelector(
+    (state: RootState) => state.processSlice.fileIds
   );
 
-  const fileCount = useSelector(
-    ({ processSlice }: RootState) => processSlice.fileIds.length
+  const selectTotalAnnotationCountForFileIds = useMemo(
+    makeSelectTotalAnnotationCountForFileIds,
+    []
   );
+  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
+    selectTotalAnnotationCountForFileIds(annotationReducer, processFileIds)
+  );
+
+  const fileCount = processFileIds.length;
+
   const pageCount = useSelector((state: RootState) => {
     return selectPageCount(state.processSlice);
   });

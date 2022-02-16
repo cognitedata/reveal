@@ -1,4 +1,4 @@
-import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -12,9 +12,12 @@ import { AnnotationsBadgePopover } from 'src/modules/Common/Components/Annotatio
 export function NameAndAnnotationRenderer({
   rowData: { name, id, geoLocation },
 }: CellRenderer) {
-  const selectAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
+  const selectTotalAnnotationCountForFileIds = useMemo(
+    makeSelectTotalAnnotationCountForFileIds,
+    []
+  );
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
-    selectAnnotationCounts(annotationReducer, id)
+    selectTotalAnnotationCountForFileIds(annotationReducer, [id])
   );
 
   const selectAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);

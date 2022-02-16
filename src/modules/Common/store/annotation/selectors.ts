@@ -29,19 +29,6 @@ export const makeSelectFileAnnotations = () =>
     }
   );
 
-export const selectAllAnnotations = createDeepEqualSelector(
-  annotationsById,
-  (annotations: Record<number, VisionAnnotation>) => {
-    const allAnnotations = Object.entries(annotations).map(
-      ([_, annotation]) => {
-        return annotation;
-      }
-    );
-
-    return allAnnotations;
-  }
-);
-
 export const makeSelectAnnotationsForFileIds = () =>
   createDeepEqualSelector(
     (state: AnnotationState, fileIds: number[]) => fileIds,
@@ -101,7 +88,14 @@ export const makeSelectAnnotationCounts = () => {
   });
 };
 
-export const makeSelectTotalAnnotationCounts = () =>
-  createDeepEqualSelector(selectAllAnnotations, (annotations) => {
-    return getAnnotationsBadgeCounts(annotations);
-  });
+export const makeSelectTotalAnnotationCountForFileIds = () => {
+  const selectAnnotationsForFiles = makeSelectAnnotationsForFileIds();
+
+  return createDeepEqualSelector(
+    selectAnnotationsForFiles,
+    (annotationsForFiles) => {
+      const annotations = Object.values(annotationsForFiles).flat();
+      return getAnnotationsBadgeCounts(annotations);
+    }
+  );
+};
