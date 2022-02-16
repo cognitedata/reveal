@@ -1,4 +1,4 @@
-import sdk from '@cognite/cdf-sdk-singleton';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { QueryKey } from 'react-query';
 import {
   CogFunctionUpload,
@@ -12,6 +12,7 @@ import {
 import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
+import { getProject } from '@cognite/cdf-utilities';
 import { sleep } from 'helpers';
 import { newestCall } from './sorting';
 
@@ -25,7 +26,7 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
   const filter = scheduleId ? { scheduleId } : {};
   return sdk
     .post(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/list`,
+      `/api/playground/projects/${getProject()}/functions/${id}/calls/list`,
       {
         data: { filter },
       }
@@ -58,7 +59,7 @@ export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
   }
   return sdk
     .get(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}`
+      `/api/playground/projects/${getProject()}/functions/${id}/calls/${callId}`
     )
     .then(response => response.data);
 };
@@ -76,7 +77,7 @@ export const getResponse = (_: QueryKey, { id, callId }: GetResponseArgs) => {
   }
   return sdk
     .get(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/response`
+      `/api/playground/projects/${getProject()}/functions/${id}/calls/${callId}/response`
     )
     .then(response => response?.data?.response);
 };
@@ -90,7 +91,7 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
   }
   return sdk
     .get(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/logs`
+      `/api/playground/projects/${getProject()}/functions/${id}/calls/${callId}/logs`
     )
     .then(response => response?.data?.items);
 };
@@ -110,7 +111,7 @@ export const createFunctionCall = async ({
 
   const { nonce } = isOIDC && (await createSession());
   return sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
+    .post(`/api/playground/projects/${getProject()}/functions/${id}/call`, {
       data: { data: data || {}, nonce },
     })
     .then(response => response?.data);
@@ -123,7 +124,7 @@ export const createSchedule = async ({
   const { nonce } =
     !!clientCredentials && (await createSession(clientCredentials));
   return sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/schedules`, {
+    .post(`/api/playground/projects/${getProject()}/functions/schedules`, {
       data: { items: [{ ...schedule, nonce }] },
     })
     .then(response => response?.data);
@@ -132,7 +133,7 @@ export const createSchedule = async ({
 export const deleteSchedule = (id: number) =>
   sdk
     .post(
-      `/api/playground/projects/${sdk.project}/functions/schedules/delete`,
+      `/api/playground/projects/${getProject()}/functions/schedules/delete`,
       {
         data: { items: [{ id }] },
       }
@@ -143,7 +144,7 @@ const createFunction = (
   cogfunction: CogFunctionUpload
 ): Promise<CogFunction> => {
   return sdk
-    .post(`/api/playground/projects/${sdk.project}/functions`, {
+    .post(`/api/playground/projects/${getProject()}/functions`, {
       data: { items: [cogfunction] },
     })
     .then(response => response?.data);
@@ -159,7 +160,7 @@ export const deleteFunction = async ({
     throw new Error('id missing');
   }
   const deleteResponse = await sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/delete`, {
+    .post(`/api/playground/projects/${getProject()}/functions/delete`, {
       data: { items: [{ id }] },
     })
     .then(response => response?.data);
@@ -250,7 +251,7 @@ export const createSession = (clientCredentials?: {
   clientSecret: string;
 }) => {
   return sdk
-    .post(`/api/v1/projects/${sdk.project}/sessions`, {
+    .post(`/api/v1/projects/${getProject()}/sessions`, {
       data: {
         items: [clientCredentials || { tokenExchange: true }],
       },
@@ -259,6 +260,6 @@ export const createSession = (clientCredentials?: {
 };
 
 export const isOIDCFlow = () => {
-  // TODO(CDFUX-1188): fix TODOs when sdk-singleton starts using sdk v6
-  return (sdk as any).getOAuthFlowType() === 'AAD_OAUTH';
+  const { flow } = getFlow();
+  return flow !== 'COGNITE_AUTH';
 };
