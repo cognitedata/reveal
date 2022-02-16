@@ -1,17 +1,18 @@
+import { Job } from './Job';
 import { DataSource } from './DataSource';
 import { Schedule } from './Schedule';
-import { JobDetails } from './JobDetails';
 
-export type TransformBlockedInfo = { reason: string; time: string };
+export type TransformBlockedInfo = { reason: string; createdTime: number };
 
-type TransformConfig = {
+export type Transformation = {
   id?: number;
+  externalId?: string;
   name: string;
-  destination?: DataSource & { apiKey: string };
+  destination?: DataSource;
   conflictMode?: string;
   query?: string;
-  created?: string;
-  updated?: string;
+  createdTime?: number;
+  lastUpdatedTime?: number;
   isPublic?: boolean;
   ignoreNullFields?: boolean;
   owner?: TransformConfigOwner;
@@ -20,12 +21,10 @@ type TransformConfig = {
   hasDestinationApiKey?: boolean;
   hasSourceOidcCredentials?: boolean;
   hasDestinationOidcCredentials?: boolean;
-  lastFinishedJob?: JobDetails | null;
+  lastFinishedJob?: Job | null;
   blocked?: TransformBlockedInfo | null;
-  runningJob?: JobDetails | null;
+  runningJob?: Job | null;
   schedule?: Schedule | null;
 };
 
 export type TransformConfigOwner = { user: string };
-
-export default TransformConfig;
