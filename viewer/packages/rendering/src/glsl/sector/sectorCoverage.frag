@@ -17,7 +17,7 @@ void main() {
       discard;
     }
     #if NUM_CLIPPING_PLANES > 0
-      if (isClipped(vViewPosition, v_clippingPlanes)) {
+      if (isClipped(v_viewPosition, v_clippingPlanes)) {
         discard;
       }
     #endif
