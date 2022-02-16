@@ -97,6 +97,7 @@ async function init() {
       const geometries = loader.parseSector(element);
       geometries.forEach(result => {
         const material = materialMap.get(result.type)!;
+
         const mesh = new THREE.Mesh(result.geometryBuffer, material);
         mesh.frustumCulled = false;
         mesh.onBeforeRender = () => {
@@ -115,6 +116,8 @@ async function init() {
   controls.update();
 
   document.body.appendChild(renderer.domElement);
+
+  renderer.domElement.style.backgroundColor = '#000000';
 
   renderer.setAnimationLoop(_ => {
     controls.update();
