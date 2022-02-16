@@ -10,6 +10,8 @@ export {
   SectorTree
 } from './src/createSectorMetadata';
 
+export { createV8SceneSectorMetadata, createV9SceneSectorMetadata } from './src/createSceneSectorMetadata';
+
 export { createCadModelMetadata } from './src/createCadModelMetadata';
 export { createCadModel } from './src/createCadModel';
 export { createDetermineSectorInput } from './src/createDetermineSectorInput';

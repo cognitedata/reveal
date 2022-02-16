@@ -72,13 +72,16 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       { format: File3dFormat.RevealCadModel, version: 8 }
     ];
 
-    const supportedModelOutputs = outputs.filter(modelOutput => {
-      return preferredOutputs.some(supportedOutput => {
-        return supportedOutput.format === modelOutput.format && supportedOutput.version === modelOutput.version;
-      });
-    });
+    const supportedOutputs = preferredOutputs
+      .map(preferredOutput =>
+        outputs.find(
+          supportedOutput =>
+            supportedOutput.format === preferredOutput.format && supportedOutput.version === preferredOutput.version
+        )
+      )
+      .filter(supportedOutput => supportedOutput !== undefined);
 
-    if (supportedModelOutputs.length === 0) {
+    if (supportedOutputs.length === 0) {
       const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
       const supportedOutputsString = preferredOutputs.map(output => `${output.format} v${output.version}`).join(', ');
       throw new Error(
@@ -86,7 +89,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       );
     }
 
-    return supportedModelOutputs[0];
+    return supportedOutputs[0]!;
   }
 }
 
