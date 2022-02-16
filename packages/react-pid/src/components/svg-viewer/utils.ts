@@ -78,7 +78,7 @@ export const isLabelInInstances = (
 
 export const isNodeInLineNumber = (
   node: SVGElement,
-  lineNumber: string | null,
+  lineNumber: number | null,
   diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   if (lineNumber === null) return false;
@@ -99,7 +99,7 @@ export const isNodeInLineNumber = (
 
 export const isNodeInInferedLineNumber = (
   node: SVGElement,
-  lineNumber: string | null,
+  lineNumber: number | null,
   diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   if (lineNumber === null) return false;
@@ -178,7 +178,7 @@ export interface ApplyStyleArgs {
   graphPaths: DiagramInstanceId[][];
   graphSelection: DiagramInstanceId | null;
   active: ToolType;
-  activeLineNumber: string | null;
+  activeLineNumber: number | null;
   equipmentTags: DiagramEquipmentTagInstance[];
   activeTagId: string | null;
   splitSelection: string | null;
@@ -241,7 +241,10 @@ export const applyStyleToNode = ({
 
   if (active === 'setLineNumber') {
     if (node instanceof SVGTSpanElement) {
-      if (activeLineNumber && node.innerHTML.includes(activeLineNumber)) {
+      if (
+        activeLineNumber &&
+        node.innerHTML.includes(activeLineNumber.toString())
+      ) {
         node.style.fontWeight = '600';
         return;
       }
@@ -368,22 +371,6 @@ const applyPointerCursorStyleToNode = ({
     }
   }
 };
-
-export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
-  lineNumber: string,
-  instance: Type,
-  instances: Type[],
-  setter: (arg: Type[]) => void
-) {
-  if (instance.lineNumbers.includes(lineNumber)) {
-    instance.lineNumbers = instance.lineNumbers.filter(
-      (ln) => ln !== lineNumber
-    );
-  } else {
-    instance.lineNumbers = [...instance.lineNumbers, lineNumber];
-  }
-  setter([...instances]);
-}
 
 export const colorSymbol = (
   diagramInstanceId: DiagramInstanceId,

@@ -125,8 +125,8 @@ export const computeLines = async (
     | undefined
     | ((document: ParsedDocument | ParsedDocumentsForLine) => void) = undefined
 ) => {
-  const lineNumbers: string[] = [];
-  const graphsPerLine = new Map<string, string[]>();
+  const lineNumbers: number[] = [];
+  const graphsPerLine = new Map<number, string[]>();
 
   documents.forEach((graph) => {
     const document = parseDocument(graph, version, documents);
@@ -147,8 +147,8 @@ export const computeLines = async (
 
   lineNumbers.forEach((lineNumber) => {
     const parsedDocumentsForLine = {
-      externalId: `DOCUMENTS_FOR_LINE_V${version}_${lineNumber}.json`,
-      line: lineNumber,
+      externalId: `DOCUMENTS_FOR_LINE_V${version}_L${lineNumber}.json`,
+      line: lineNumber.toString(),
       parsedDocuments: graphsPerLine.get(lineNumber) || [],
     };
 

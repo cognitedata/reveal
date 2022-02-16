@@ -38,7 +38,7 @@ const getGraphFormat = (
   connections: DiagramConnection[],
   pathReplacements: PathReplacement[],
   documentMetadata: DocumentMetadata,
-  lineNumbers: string[],
+  lineNumbers: number[],
   equipmentTags: DiagramEquipmentTagInstance[]
 ): GraphDocument => {
   const linesOutputFormat = getDiagramLineInstancesOutputFormat(
@@ -80,7 +80,7 @@ export const saveGraphAsJson = (
   connections: DiagramConnection[],
   pathReplacements: PathReplacement[],
   documentMetadata: DocumentMetadata,
-  lineNumbers: string[],
+  lineNumbers: number[],
   equipmentTags: DiagramEquipmentTagInstance[]
 ) => {
   const graphJson = getGraphFormat(
@@ -180,8 +180,8 @@ export const loadSymbolsFromJson = (
   connections: DiagramConnection[],
   pathReplacements: PathReplacement[],
   setPathReplacements: (args: PathReplacement[]) => void,
-  lineNumbers: string[],
-  setLineNumbers: (arg: string[]) => void,
+  lineNumbers: number[],
+  setLineNumbers: (arg: number[]) => void,
   equipmentTags: DiagramEquipmentTagInstance[],
   setEquipmentTags: (tags: DiagramEquipmentTagInstance[]) => void
 ) => {

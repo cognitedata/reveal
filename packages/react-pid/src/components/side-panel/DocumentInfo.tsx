@@ -51,7 +51,8 @@ export const DocumentInfo: React.FC<DocumentInfoProps> = ({
             </Row>
             <Row cols={1}>
               <Title level={6}>#</Title>
-              {isIso(documentMetadata) && documentMetadata.lineNumber}
+              {isIso(documentMetadata) &&
+                `${documentMetadata.lineNumber}-${documentMetadata.pageNumber}`}
               {isPid(documentMetadata) && documentMetadata.documentNumber}
             </Row>
           </Row>

@@ -45,7 +45,7 @@ interface AnnotationBase {
   boundingBox: Rect;
   svgPaths: SvgPath[];
   nearestAssetExternalIds: string[];
-  lineNumbers: string[];
+  lineNumbers: number[];
 }
 
 export interface TextAnnotation extends AnnotationBase {

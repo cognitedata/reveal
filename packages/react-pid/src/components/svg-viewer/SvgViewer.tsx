@@ -65,10 +65,10 @@ interface SvgViewerProps {
   setLabelSelection: (arg: DiagramInstanceId | null) => void;
   setPidDocument: (arg: PidDocumentWithDom) => void;
   getPidDocument: () => PidDocumentWithDom | undefined;
-  lineNumbers: string[];
-  setLineNumbers: (lineNumber: string[]) => void;
-  activeLineNumber: string | null;
-  setActiveLineNumber: (lineNumber: string | null) => void;
+  lineNumbers: number[];
+  setLineNumbers: (lineNumber: number[]) => void;
+  activeLineNumber: number | null;
+  setActiveLineNumber: (lineNumber: number | null) => void;
   equipmentTags: DiagramEquipmentTagInstance[];
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
   activeTagId: string | null;
@@ -258,7 +258,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       if (node instanceof SVGTSpanElement) {
         const regexMatch = node.innerHTML.match(/L[0-9]{3}/);
         if (regexMatch) {
-          const [lineNumber] = regexMatch;
+          const numberPart = regexMatch[0].match(/\d+/);
+          const lineNumber = parseInt(numberPart![0], 10);
           if (!lineNumbers.includes(lineNumber)) {
             setLineNumbers([...lineNumbers, lineNumber]);
           }
@@ -555,7 +556,10 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
             svg,
             pidTspan,
             'blue',
-            pidTspan.text === activeLineNumber ? 0.4 : 0.2
+            activeLineNumber &&
+              pidTspan.text.includes(activeLineNumber.toString())
+              ? 0.4
+              : 0.2
           );
         });
     }

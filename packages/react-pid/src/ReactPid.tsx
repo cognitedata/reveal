@@ -17,9 +17,9 @@ import {
   SymbolType,
   getDiagramInstanceId,
   addOrRemoveLabelToInstance,
-  DocumentMetadata,
   PidDocumentMetadata,
   IsoDocumentMetadata,
+  DocumentMetadata,
   getDiagramInstanceByPathId,
   GraphDocument,
   Orientation,
@@ -61,8 +61,8 @@ export const ReactPid: React.FC = () => {
     []
   );
 
-  const [lineNumbers, setLineNumbers] = useState<string[]>([]);
-  const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
+  const [lineNumbers, setLineNumbers] = useState<number[]>([]);
+  const [activeLineNumber, setActiveLineNumber] = useState<number | null>(null);
   const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
   const [equipmentTags, setEquipmentTags] = useState<
     DiagramEquipmentTagInstance[]
@@ -117,15 +117,18 @@ export const ReactPid: React.FC = () => {
   const setDocumentType = (documentType: DocumentType) => {
     if (documentType === DocumentType.pid) {
       setDocumentMetadata({
+        name: 'Unknown',
         type: DocumentType.pid,
         documentNumber: -1,
         unit: 'Unknown',
       } as PidDocumentMetadata);
     } else if (documentType === DocumentType.isometric) {
       setDocumentMetadata({
+        name: 'Unknown',
         type: DocumentType.isometric,
-        lineNumber: 'Unknown',
         unit: 'Unknown',
+        lineNumber: -1,
+        pageNumber: -1,
       } as IsoDocumentMetadata);
     }
   };
@@ -387,12 +390,16 @@ export const ReactPid: React.FC = () => {
         documentNumber,
       } as PidDocumentMetadata);
     } else if (looksLikeIso && !looksLikePid) {
-      const lineNumber = looksLikeIso[0];
+      const lineParts = looksLikeIso[0].split('-');
+      const lineNumber = parseInt(lineParts[0].match(/\d+/)?.[0] || '-1', 10);
+      const pageNumber = parseInt(lineParts[1], 10);
+      setLineNumbers([lineNumber]);
       setDocumentMetadata({
         type: DocumentType.isometric,
         name,
         unit: unit ? unit[0] : 'Unknown',
         lineNumber,
+        pageNumber,
       } as IsoDocumentMetadata);
     }
   };
