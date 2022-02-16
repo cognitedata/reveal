@@ -8,7 +8,7 @@
   "sectors": [
     {
       "id": 0,
-      "sectorFileName": "0.glb",
+      "sectorFileName": "anders-test-scene.glb",
       "path": "0/",
       "depth": 0,
       "boundingBox": {

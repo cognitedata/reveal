@@ -69,8 +69,9 @@ async function init() {
   ]);
 
   const loader = new GltfSectorParser();
+  const sceneJsonUrl = 'test-models/anders-test-draco/';
 
-  const sceneJson = await (await fetch('test-models/scene.json')).json();
+  const sceneJson = await (await fetch(sceneJsonUrl + 'scene.json')).json();
 
   const sectors = sceneJson.sectors as [
     {
@@ -89,7 +90,7 @@ async function init() {
 
   await Promise.all(
     fileNames.map(fileName =>
-      fetch(`test-models/primitives-gltf/` + fileName)
+      fetch(sceneJsonUrl + fileName)
         .then(file => file.blob())
         .then(blob => blob.arrayBuffer())
     )
