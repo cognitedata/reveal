@@ -342,8 +342,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private moveCameraTo(targetAxis: THREE.Vector3, targetUpAxis: THREE.Vector3) {
     const cameraManager = this._viewer.cameraManager;
 
-    const currentCameraPosition = cameraManager.getCameraPosition();
-    const cameraTarget = cameraManager.getCameraTarget();
+    const {position: currentCameraPosition, target: cameraTarget, rotation } = cameraManager.getCameraState();
 
     const targetRelativeStartPosition = currentCameraPosition.clone().sub(cameraTarget);
     const radius = targetRelativeStartPosition.length();
@@ -359,7 +358,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const forward = targetAxis.clone();
 
-    const fromRotation = cameraManager.getCameraRotation().clone();
+    const fromRotation = rotation.clone();
     const toRotation = new THREE.Quaternion().setFromRotationMatrix(
       new THREE.Matrix4().makeBasis(targetUpAxis.clone().cross(forward), targetUpAxis, forward)
     );
@@ -386,13 +385,10 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
         tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
 
-        cameraManager.setCameraPosition(tmpPosition);
-        cameraManager.setCameraRotation(tmpRotation);
+        cameraManager.setCameraState({position: tmpPosition, rotation: tmpRotation});
       })
       .onComplete(() => {
-        cameraManager.setCameraTarget(cameraTarget);
-        cameraManager.setCameraPosition(tmpPosition);
-        cameraManager.setCameraRotation(cameraManager.getCameraRotation());
+        cameraManager.setCameraState({position: tmpPosition, target: cameraTarget});
       })
       .start(TWEEN.now());
 

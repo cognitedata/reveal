@@ -2,23 +2,44 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CameraChangeData } from "./types";
+import { CameraChangeData, CameraState } from "./types";
 /**
  * Camera manager interface.
  * */
  export interface CameraManager {
+    /**
+     * Get THREE.PerspectiveCamera object for special cases. All manipulations of the camera should be done
+     * through other CameraManager methods.
+     * **/
     getCamera(): THREE.PerspectiveCamera;
-  
+     /**
+     * Set camera's state
+     * 
+     * @param state Camera state, all fields are optional.
+     * @example
+     * ```js
+     * // store position, target
+     * const { position, target } = cameraManager.getCameraState();
+     * // restore position, target
+     * cameraManager.setCameraState({ position, target });
+     * ```
+     */
+    setCameraState(state: CameraState): void;
+    
+    /**
+     * Get camera's state
+     */
+    getCameraState(): Required<CameraState>;
     /**
      * Sets camera rotation.
      * @param rotation
      */
-    setCameraRotation(rotation: THREE.Quaternion): void;
+    //setCameraRotation(rotation: THREE.Quaternion): void;
     /**
      * @obvious
      * @returns camera rotation as a quaternion
      * */
-    getCameraRotation(): THREE.Quaternion;
+    //getCameraRotation(): THREE.Quaternion;
   
     /**
      * Set camera's target.
@@ -35,12 +56,12 @@ import { CameraChangeData } from "./types";
      * cameraManager.setCameraTarget(target);
      * ```
      */
-    setCameraTarget: (target: THREE.Vector3) => void;
+    //setCameraTarget: (target: THREE.Vector3) => void;
     /**
      * @obvious
      * @returns Camera's target in world space.
      */
-    getCameraTarget: () => THREE.Vector3;
+    //getCameraTarget: () => THREE.Vector3;
   
     /**
      * @obvious
@@ -55,12 +76,12 @@ import { CameraChangeData } from "./types";
      * viewer.setCameraTarget(target);
      * ```
      */
-    setCameraPosition: (position: THREE.Vector3) => void;
+    //setCameraPosition: (position: THREE.Vector3) => void;
     /**
      * @obvious
      * @returns Camera's position in world space.
      */
-    getCameraPosition: () => THREE.Vector3;
+    //getCameraPosition: () => THREE.Vector3;
     /**
      * Required for understadning of `cameraChanged` definition for other parts of Reveal
      * @param event

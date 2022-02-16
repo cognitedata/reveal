@@ -806,8 +806,7 @@ export class Cognite3DViewer {
   loadCameraFromModel(model: CogniteModelBase): void {
     const config = model.getCameraConfiguration();
     if (config) {
-      this._cameraManager.setCameraPosition(config.position);
-      this._cameraManager.setCameraTarget(config.target);
+      this._cameraManager.setCameraState({position: config.position, target: config.target});
     } else {
       this.fitCameraToModel(model, 0);
     }

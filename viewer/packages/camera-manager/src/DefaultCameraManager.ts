@@ -11,6 +11,7 @@ import {
   CameraChangeData,
   PointerEventDelegate,
   ControlsState,
+  CameraState
 } from './types'
 import { CameraManager } from './CameraManager';
 import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
@@ -103,7 +104,7 @@ export class DefaultCameraManager implements CameraManager {
     camera?: THREE.PerspectiveCamera
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-    
+
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
@@ -207,6 +208,30 @@ export class DefaultCameraManager implements CameraManager {
   getCameraRotation(): THREE.Quaternion {
     return this._camera.quaternion;
   }
+  /**
+   * Sets camera state. All parameters are optional. When setting rotation and target simultaneously, 
+   * target will have priority over rotation. Set rotation is preserved until next call of setCameraState with 
+   * empty rotation field. 
+   * @param state Camera state.
+   * **/
+  setCameraState(state: CameraState): void {
+      const newPosition = state.position ?? this._camera.position;
+      const newRotation = (state.target ? new THREE.Quaternion() : state.rotation ) ?? new THREE.Quaternion();
+      const newTarget = state.target ?? (state.rotation ? this.calculateNewTargetFromRotation(state.rotation) 
+        : this._controls.getState().target);
+          
+      this._controls.cameraRawRotation.copy(newRotation);
+      
+      this._controls.setState(newPosition, newTarget);
+  }
+
+  getCameraState(): Required<CameraState>{
+    return {
+      position: this._camera.position.clone(),
+      rotation: this._camera.quaternion.clone(),
+      target: this._controls.getState().target.clone()
+    };
+  }
 
   setCameraRotation(rotation: THREE.Quaternion): void {
     const distToTarget = this.getCameraTarget().sub(this._camera.position);
@@ -226,7 +251,7 @@ export class DefaultCameraManager implements CameraManager {
     tempCam.lookAt(newTarget);
 
     const appliedQuaternion = tempCam.quaternion.clone();
-    this._controls.cameraAdditionalRotation.copy(rotation.clone().multiply(appliedQuaternion.invert()));
+    this._controls.cameraRawRotation.copy(rotation.clone().multiply(appliedQuaternion.invert()));
   }
 
   getCameraTarget(): THREE.Vector3 {
@@ -240,7 +265,7 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isDisposed) {
       return;
     }
-    this._controls.cameraAdditionalRotation.copy(new THREE.Quaternion());
+    this._controls.cameraRawRotation.identity();
 
     const animationTime = animated ? DefaultCameraManager.DefaultAnimationDuration : 0;
     this.moveCameraTargetTo(target, animationTime);
@@ -483,6 +508,22 @@ export class DefaultCameraManager implements CameraManager {
     this.teardownControls();
     disposeOfAllEventListeners(this._events);
     this._inputHandler.dispose();
+  }
+
+  private calculateNewTargetFromRotation(rotation: THREE.Quaternion) {
+    const distToTarget = this.getCameraTarget().sub(this._camera.position);
+    const tempCam = this._camera.clone();
+
+    tempCam.setRotationFromQuaternion(rotation);
+    tempCam.updateMatrix();
+
+    const newTarget = tempCam
+      .getWorldDirection(new THREE.Vector3())
+      .normalize()
+      .multiplyScalar(distToTarget.length())
+      .add(tempCam.position);
+
+    return newTarget;
   }
 
   private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
