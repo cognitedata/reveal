@@ -7,7 +7,6 @@ import * as THREE from 'three';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { SectorQuads } from '../rendering/types';
 import { NodeTransformProvider } from '../transform/NodeTransformProvider';
-import { suggestCameraConfig } from '../cameraconfig';
 import { InstancedMeshManager } from '../InstancedMeshManager';
 import { RenderMode } from '../rendering/RenderMode';
 
@@ -26,13 +25,6 @@ import { GeometryBatchingManager } from '../GeometryBatchingManager';
 import { ParsedGeometry } from '@reveal/sector-parser';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
-
-export interface SuggestedCameraConfig {
-  position: THREE.Vector3;
-  target: THREE.Vector3;
-  near: number;
-  far: number;
-}
 
 export class CadNode extends THREE.Object3D {
   private readonly _rootSector: RootSectorNode;
@@ -157,17 +149,6 @@ export class CadNode extends THREE.Object3D {
     return this.nodeAppearanceProvider.getPrioritizedAreas();
   }
 
-  public suggestCameraConfig(): SuggestedCameraConfig {
-    const modelMatrix = this.getModelTransformation();
-    const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root, modelMatrix);
-    return {
-      position,
-      target,
-      near,
-      far
-    };
-  }
-
   public updateInstancedMeshes(
     instanceMeshFiles: InstancedMeshFile[],
     modelIdentifier: string,
@@ -190,7 +171,11 @@ export class CadNode extends THREE.Object3D {
     this._geometryBatchingManager.removeSectorBatches(sectorId);
   }
 
+  public setCacheSize(sectorCount: number): void {
+    this._sectorRepository.setCacheSize(sectorCount);
+  }
+
   public clearCache(): void {
-    this._sectorRepository.clear();
+    this._sectorRepository.clearCache();
   }
 }

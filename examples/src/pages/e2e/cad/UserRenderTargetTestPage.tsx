@@ -12,7 +12,7 @@ function UserRenderTargetTestPage() {
     <TestViewer
       modifyTestEnv={({ renderer, revealManager }: TestEnvCad) => {
         const renderTarget = new THREE.WebGLRenderTarget(300, 300);
-        renderTarget.depthTexture = new THREE.DepthTexture(0, 0);
+        renderTarget.depthTexture = new THREE.DepthTexture(1, 1);
         renderTarget.depthTexture.format = THREE.DepthFormat;
         renderTarget.depthTexture.type = THREE.UnsignedIntType;
 

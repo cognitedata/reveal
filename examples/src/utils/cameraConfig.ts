@@ -3,9 +3,6 @@
  */
 import * as THREE from 'three';
 
-import { SectorMetadata } from '@reveal/cad-parsers';
-import { traverseDepthFirst } from '@reveal/utilities';
-
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
   target: THREE.Vector3;
@@ -33,10 +30,27 @@ function ensureYAngleBelowThresholdForNormalizedVector(direction: THREE.Vector3)
   direction.y = Math.sin(MAX_VERTICAL_ANGLE);
 }
 
-export function suggestCameraConfig(rootSector: SectorMetadata, modelMatrix: THREE.Matrix4): SuggestedCameraConfig {
+export type BaseSectorMetadata = {
+  readonly id: number;
+  readonly path: string;
+  readonly depth: number;
+  readonly bounds: THREE.Box3;
+  readonly children: BaseSectorMetadata[];
+  readonly estimatedDrawCallCount: number;
+  readonly estimatedRenderCost: number;
+};
+
+export function suggestCameraConfig(rootSector: BaseSectorMetadata, modelMatrix: THREE.Matrix4): SuggestedCameraConfig {
   const averageMin = new THREE.Vector3();
   const averageMax = new THREE.Vector3();
   let count = 0;
+
+  function traverseDepthFirst(sector: BaseSectorMetadata, func: (v: BaseSectorMetadata) => void) {
+    func(sector);
+    for (const child of sector.children) {
+      traverseDepthFirst(child, func);
+    }
+  }
 
   traverseDepthFirst(rootSector, node => {
     averageMin.add(node.bounds.min);

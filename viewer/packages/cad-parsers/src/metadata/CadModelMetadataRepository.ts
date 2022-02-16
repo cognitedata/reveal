@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { CadMetadataParser } from './CadMetadataParser';
 
-import { SectorScene, WellKnownDistanceToMeterConversionFactors } from '../utilities/types';
+import { getDistanceToMeterConversionFactor, SectorScene } from '../utilities/types';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from './MetadataRepository';
 import { transformCameraConfiguration } from '@reveal/utilities';
@@ -91,11 +91,10 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
 }
 
 function createScaleToMetersModelMatrix(unit: string, modelMatrix: THREE.Matrix4): THREE.Matrix4 {
-  const conversionFactor = WellKnownDistanceToMeterConversionFactors.get(unit) ?? 1;
+  const conversionFactor = getDistanceToMeterConversionFactor(unit) ?? 1;
   if (conversionFactor === undefined) {
     throw new Error(`Unknown model unit '${unit}'`);
   }
-
   const scaledModelMatrix = new THREE.Matrix4().makeScale(conversionFactor, conversionFactor, conversionFactor);
   return scaledModelMatrix.multiply(modelMatrix);
 }

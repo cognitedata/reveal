@@ -8,13 +8,12 @@ import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
-  AddModelOptions,
   Cognite3DViewer,
   Cognite3DViewerOptions,
   Cognite3DModel,
   CameraControlsOptions,
-  CognitePointCloudModel,
   TreeIndexNodeCollection,
+  CogniteModelBase,
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -22,35 +21,32 @@ import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
-import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
+import { ModelUi } from '../utils/ModelUi';
+import { createSDKFromEnvironment } from '../utils/example-helpers';
+
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
 
 export function Migration() {
+
+  const url = new URL(window.location.href);
+  const urlParams = url.searchParams;
+  const environmentParam = urlParams.get('env');
+
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
 
-    function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined {
-      if (input === null) return undefined;
-      const parsed = JSON.parse(input) as { center: THREE.Vector3, size: THREE.Vector3 };
-      return { center: new THREE.Vector3().copy(parsed.center), size: new THREE.Vector3().copy(parsed.size) };
-    }
-
     async function main() {
-      const url = new URL(window.location.href);
-      const urlParams = url.searchParams;
       const project = urlParams.get('project');
-      const geometryFilterInput = urlParams.get('geometryFilter');
-      const geometryFilter = createGeometryFilter(geometryFilterInput);
       const modelUrl = urlParams.get('modelUrl');
 
-      const environmentParam = urlParams.get('env');
       if (!modelUrl && !(environmentParam && project)) {
         throw Error('Must specify URL parameters "project" and "env", or "modelUrl"');
       }
@@ -62,8 +58,15 @@ export function Migration() {
         }
       };
 
-      // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+      let client: CogniteClient;;
+      if (project && environmentParam) {
+        client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.example',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
+      }
+
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -73,18 +76,17 @@ export function Migration() {
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any,
         continuousModelStreaming: true
       };
-      if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
-      } else if (modelUrl !== null) {
+
+      if (modelUrl !== null) {
         viewerOptions = {
           ...viewerOptions,
           // @ts-expect-error
           _localModels: true
         };
-      } else {
+      } else if (!(project && environmentParam)) {
         throw new Error('Must either provide URL parameters "env", "project", ' +
-          '"modelId" and "revisionId" to load model from CDF ' +
-          '"or "modelUrl" to load model from URL.');
+                        '"modelId" and "revisionId" to load model from CDF ' +
+                        '"or "modelUrl" to load model from URL.');
       }
 
       // Prepare viewer
@@ -98,44 +100,8 @@ export function Migration() {
 
       viewer.setCameraControlsOptions(controlsOptions);
 
-      const totalBounds = new THREE.Box3();
-
-      async function addModel(options: AddModelOptions) {
-        try {
-          const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
-
-          const bounds = model.getModelBoundingBox();
-          totalBounds.expandByPoint(bounds.min);
-          totalBounds.expandByPoint(bounds.max);
-          clippingUi.updateWorldBounds(totalBounds);
-
-          viewer.loadCameraFromModel(model);
-          if (model instanceof Cognite3DModel) {
-            new NodeStylingUI(gui.addFolder(`Node styling #${cadModels.length + 1}`), client, model);
-            cadModels.push(model);
-          } else if (model instanceof CognitePointCloudModel) {
-            pointCloudModels.push(model);
-          }
-          if (createGeometryFilterFromState(guiState.geometryFilter) === undefined) {
-            createGeometryFilterStateFromBounds(bounds, guiState.geometryFilter);
-            geometryFilterGui.updateDisplay();
-          }
-        } catch (e) {
-          console.error(e);
-          alert(`Model ID is invalid or is not supported`);
-        }
-      }
-
       // Add GUI for loading models and such
-      const cadModels: Cognite3DModel[] = [];
-      const pointCloudModels: CognitePointCloudModel[] = [];
       const guiState = {
-        modelId: 0,
-        revisionId: 0,
-        geometryFilter:
-          geometryFilter !== undefined
-            ? { ...geometryFilter, enabled: true }
-            : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
@@ -181,73 +147,42 @@ export function Migration() {
         debugRenderStageTimings: false
       };
       const guiActions = {
-        addModel: () =>
-          addModel({
-            modelId: guiState.modelId,
-            revisionId: guiState.revisionId,
-            geometryFilter: guiState.geometryFilter.enabled ? createGeometryFilterFromState(guiState.geometryFilter) : undefined
-          }),
-        fitToModel: () => {
-          const model = cadModels[0] || pointCloudModels[0];
-          viewer.fitCameraToModel(model);
-        },
         showSectorBoundingBoxes: () => {
           const { tool, options } = guiState.debug.loadedSectors;
           tool.setOptions(options);
-          if (cadModels.length > 0) {
-            tool.showSectorBoundingBoxes(cadModels[0]);
+          if (modelUi.cadModels.length > 0) {
+            tool.showSectorBoundingBoxes(modelUi.cadModels[0]);
           }
         },
         showCameraHelper: () => {
           guiState.showCameraTool.showCameraHelper();
         },
         showBoundsForAllGeometries: () => {
-          cadModels.forEach(m => showBoundsForAllGeometries(m));
-        },
-        applyGeometryFilter: () => {
-          urlParams.set('geometryFilter', JSON.stringify(guiState.geometryFilter));
-          window.location.href = url.toString();
-        },
-        resetGeometryFilter: () => {
-          urlParams.delete('geometryFilter');
-          window.location.href = url.toString();
+          modelUi.cadModels.forEach(m => showBoundsForAllGeometries(m));
         }
       };
-
-      const modelGui = gui.addFolder('Model');
-      modelGui.add(guiState, 'modelId').name('Model ID');
-      modelGui.add(guiState, 'revisionId').name('Revision ID');
-      modelGui.add(guiActions, 'addModel').name('Load model');
-      modelGui.add(guiActions, 'fitToModel').name('Fit camera');
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
-      const geometryFilterGui = modelGui.addFolder('Geometry Filter');
-      let geometryFilterPreview: THREE.Object3D | undefined = undefined;
-      function updateGeometryFilterPreview() {
-        if (geometryFilterPreview) {
-          viewer.removeObject3D(geometryFilterPreview);
-        }
-        const geometryFilter = createGeometryFilterFromState(guiState.geometryFilter);
-        if (geometryFilter) {
-          geometryFilterPreview = new THREE.Box3Helper(geometryFilter.boundingBox, new THREE.Color('cyan'));
-          viewer.addObject3D(geometryFilterPreview);
+
+      const totalBounds = new THREE.Box3();
+      function handleModelAdded(model: CogniteModelBase) {
+        const bounds = model.getModelBoundingBox();
+        totalBounds.expandByPoint(bounds.min);
+        totalBounds.expandByPoint(bounds.max);
+        clippingUi.updateWorldBounds(totalBounds);
+
+        viewer.loadCameraFromModel(model);
+        if (model instanceof Cognite3DModel) {
+          new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);
         }
       }
-      geometryFilterGui.add(guiState.geometryFilter.center, 'x', -1000, 1000, 1).name('CenterX').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.center, 'y', -1000, 1000, 1).name('CenterY').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.center, 'z', -1000, 1000, 1).name('CenterZ').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.size, 'x', 0, 100, 1).name('SizeX').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.size, 'y', 0, 100, 1).name('SizeY').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.size, 'z', 0, 100, 1).name('SizeZ').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter, 'enabled').name('Apply to new models?');
-      geometryFilterGui.add(guiActions, 'applyGeometryFilter').name('Apply and reload');
-      geometryFilterGui.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
+      const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
 
       const renderGui = gui.addFolder('Rendering');
       const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];
       renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
         const renderMode = renderModes.indexOf(value) + 1;
-        cadModels.forEach(m => {
+        modelUi.cadModels.forEach(m => {
           const cadNode: CadNode = (m as any).cadNode;
           cadNode.renderMode = renderMode;
         });
@@ -316,7 +251,7 @@ export function Migration() {
         let maxInsideDepth = -1;
         let maxDepth = -1;
         const cameraPosition = viewer.getCameraPosition();
-        cadModels.forEach(m => {
+        modelUi.cadModels.forEach(m => {
           m.traverse(x => {
             // Hacky way to access internals of SectorNode
             const depth = (x.hasOwnProperty('depth') && typeof (x as any).depth === 'number') ? (x as any).depth as number : 0;
@@ -353,26 +288,16 @@ export function Migration() {
         }
       });
       debugGui.add(guiState.debug, 'ghostAllNodes').name('Ghost all nodes').onFinishChange(ghost => {
-        cadModels.forEach(m => m.setDefaultNodeAppearance({ renderGhosted: ghost }));
+        modelUi.cadModels.forEach(m => m.setDefaultNodeAppearance({ renderGhosted: ghost }));
       });
       debugGui.add(guiState.debug, 'hideAllNodes').name('Hide all nodes').onFinishChange(hide => {
-        cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
+        modelUi.cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
       });
 
       const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => viewer.setClippingPlanes(planes));
       new CameraUI(viewer, gui.addFolder('Camera'));
       new PointCloudUi(viewer, gui.addFolder('Point clouds'));
-
-      // Load model if provided by URL
-      const modelIdStr = urlParams.get('modelId');
-      const revisionIdStr = urlParams.get('revisionId');
-      if (modelIdStr && revisionIdStr) {
-        const modelId = Number.parseInt(modelIdStr, 10);
-        const revisionId = Number.parseInt(revisionIdStr, 10);
-        await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
-      } else if (modelUrl) {
-        await addModel({ modelId: -1, revisionId: -1, localPath: modelUrl, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) })
-      }
+      await modelUi.restoreModelsFromUrl();
 
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
@@ -387,15 +312,15 @@ export function Migration() {
           }
 
           const rootTreeIndex = explodeParams.rootTreeIndex;
-          const treeIndices = await cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
-          cadModels[0].setDefaultNodeAppearance({ visible: false });
+          const treeIndices = await modelUi.cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
+          modelUi.cadModels[0].setDefaultNodeAppearance({ visible: false });
           const explodeSet = new TreeIndexNodeCollection(treeIndices);
-          cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
+          modelUi.cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
 
-          const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
+          const rootBoundingBox = await modelUi.cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
           viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
 
-          expandTool = new ExplodedViewTool(rootTreeIndex, cadModels[0]);
+          expandTool = new ExplodedViewTool(rootTreeIndex, modelUi.cadModels[0]);
 
           await expandTool.readyPromise;
 
@@ -409,8 +334,8 @@ export function Migration() {
         },
         reset: () => {
           expandTool?.reset();
-          cadModels[0].setDefaultNodeAppearance({ visible: true });
-          cadModels[0].removeAllStyledNodeCollections();
+          modelUi.cadModels[0].setDefaultNodeAppearance({ visible: true });
+          modelUi.cadModels[0].removeAllStyledNodeCollections();
           explodeParams.explodeFactor = 0;
           expandTool = null;
           if (explodeSlider) {
@@ -496,18 +421,4 @@ export function Migration() {
     };
   });
   return <CanvasWrapper ref={canvasWrapperRef} />;
-}
-
-function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3, size: THREE.Vector3 }) {
-  bounds.getCenter(out.center);
-  bounds.getSize(out.size);
-  return out;
-}
-
-function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }): { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
-  state.size.clamp(new THREE.Vector3(), new THREE.Vector3(Infinity, Infinity, Infinity));
-  if (state.size.equals(new THREE.Vector3())) {
-    return undefined;
-  }
-  return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
 }

@@ -4,7 +4,6 @@
 import TWEEN from '@tweenjs/tween.js';
 
 import { Cognite3DModel } from '@reveal/core';
-import { CogniteClient } from '@cognite/sdk';
 
 import { createCadModel } from '../../../../test-utilities';
 import { TimelineTool } from './TimelineTool';
@@ -14,7 +13,6 @@ import { IndexSet } from '@reveal/utilities';
 import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 describe('TimelineTool', () => {
-  let client: CogniteClient;
   let model: Cognite3DModel;
   let timelineTool: TimelineTool;
   let kf1Collection: TreeIndexNodeCollection;
@@ -29,9 +27,6 @@ describe('TimelineTool', () => {
   });
 
   beforeEach(() => {
-    client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
-    client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
-
     model = createCadModel(1, 2, 3, 3);
 
     timelineTool = new TimelineTool(model);

@@ -6,12 +6,13 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/internals';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
-import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { CanvasWrapper } from '../components/styled';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { suggestCameraConfig } from '../utils/cameraConfig';
 
 CameraControls.install({ THREE });
 
@@ -29,9 +30,13 @@ export function Clipping() {
         modelUrl: 'primitives',
       });
 
-      const client = new CogniteClient({ appId: 'reveal.example.simple' });
+      let client;
       if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.clipping', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.clipping',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const scene = new THREE.Scene();
@@ -45,7 +50,8 @@ export function Clipping() {
       const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
       scene.add(model);
 
-      const { position, target, near, far } = model.suggestCameraConfig();
+      const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
+                                                                  model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -126,7 +132,7 @@ export function Clipping() {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || guiNeedsUpdate) {
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           guiNeedsUpdate = false;
           revealManager.resetRedraw();
         }

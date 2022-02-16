@@ -16,8 +16,12 @@ describe('PropertyFilterNodeCollection', () => {
   const listNodesEndpointPath: RegExp = /.*\/nodes/;
 
   beforeEach(() => {
-    client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
-    client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
+    client = new CogniteClient({
+      appId: 'test',
+      project: 'dummy',
+      getToken: async () => 'dummy'
+    });
+
     model = { modelId: 112, revisionId: 113 } as Cognite3DModel;
     set = new PropertyFilterNodeCollection(client, model);
   });
