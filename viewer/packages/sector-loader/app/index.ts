@@ -33,8 +33,8 @@ async function init() {
   const gui = new dat.GUI();
   const guiData = { formatVersion: 9 };
   const formatGuiController = gui.add(guiData, 'formatVersion', {
-    v8CadModel: 8,
-    gltfCadModel: 9
+    gltfCadModel: 9,
+    v8CadModel: 8
   });
 
   const client = await createApplicationSDK('reveal.example.simple', {
