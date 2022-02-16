@@ -7,7 +7,9 @@ import * as THREE from 'three';
 import { traverseDepthFirst } from '@reveal/utilities';
 import { V9SectorMetadata } from '../types';
 import { parseCadMetadataGltf } from './CadMetadataParserGltf';
-import { CadSceneRootMetadata, V9SceneSectorMetadata } from './types';
+import { CadSceneRootMetadata } from './types';
+
+import { createV9SceneSectorMetadata } from '../../../../../test-utilities';
 
 describe('CadMetadataParserGltf', () => {
   test('Metadata without sectors, throws', () => {
@@ -25,14 +27,14 @@ describe('CadMetadataParserGltf', () => {
       version: 9,
       maxTreeIndex: 103350,
       unit: 'Meters',
-      sectors: [createSectorMetadata(1)]
+      sectors: [createV9SceneSectorMetadata(1)]
     };
     expect(() => parseCadMetadataGltf(metadata)).toThrow();
   });
 
   test('Metadata with single root, return valid scene', () => {
     // Arrange
-    const sectorRoot = createSectorMetadata(0);
+    const sectorRoot = createV9SceneSectorMetadata(0);
     const metadata: CadSceneRootMetadata = {
       version: 9,
       maxTreeIndex: 8000,
@@ -73,11 +75,11 @@ describe('CadMetadataParserGltf', () => {
       maxTreeIndex: 8000,
       unit: 'Meters',
       sectors: [
-        createSectorMetadata(0),
-        createSectorMetadata(1, 0),
-        createSectorMetadata(2, 0),
-        createSectorMetadata(3, 1),
-        createSectorMetadata(4, 3)
+        createV9SceneSectorMetadata(0),
+        createV9SceneSectorMetadata(1, 0),
+        createV9SceneSectorMetadata(2, 0),
+        createV9SceneSectorMetadata(3, 1),
+        createV9SceneSectorMetadata(4, 3)
       ]
     };
 
@@ -107,10 +109,10 @@ describe('CadMetadataParserGltf', () => {
           /
          3
          */
-        createSectorMetadata(2, 0),
-        createSectorMetadata(0),
-        createSectorMetadata(3, 1),
-        createSectorMetadata(1, 0)
+        createV9SceneSectorMetadata(2, 0),
+        createV9SceneSectorMetadata(0),
+        createV9SceneSectorMetadata(3, 1),
+        createV9SceneSectorMetadata(1, 0)
       ]
     };
 
@@ -142,7 +144,7 @@ describe('CadMetadataParserGltf', () => {
       version: 9,
       maxTreeIndex: 4,
       unit: 'AU',
-      sectors: [createSectorMetadata(0)]
+      sectors: [createV9SceneSectorMetadata(0)]
     };
 
     // Act
@@ -152,31 +154,3 @@ describe('CadMetadataParserGltf', () => {
     expect(result.unit).toBe('AU');
   });
 });
-
-function createSectorMetadata(id: number, parentId: number = -1): V9SceneSectorMetadata {
-  const metadata: V9SceneSectorMetadata = {
-    id,
-    parentId,
-    path: '0/',
-    depth: 0,
-    estimatedDrawCallCount: 10,
-    estimatedTriangleCount: 10,
-    boundingBox: {
-      min: {
-        x: 0.0,
-        y: 0.0,
-        z: 0.0
-      },
-      max: {
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-      }
-    },
-    downloadSize: 1000,
-    maxDiagonalLength: 10,
-    minDiagonalLength: 5,
-    sectorFileName: `${id}.glb`
-  };
-  return metadata;
-}
