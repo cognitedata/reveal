@@ -89,30 +89,29 @@ async function init() {
 
   await Promise.all(
     fileNames.map(fileName =>
-      fetch(`test-models/` + fileName)
+      fetch(`test-models/primitives-gltf/` + fileName)
         .then(file => file.blob())
         .then(blob => blob.arrayBuffer())
     )
-  ).then(async buffers => {
-    await Promise.all(
-      buffers.map(async element => {
-        const geometries = await loader.parseSector(element);
-        geometries.forEach(result => {
-          const material = materialMap.get(result.type)!;
-          const mesh = new THREE.Mesh(result.geometryBuffer, material);
-          mesh.frustumCulled = false;
-          mesh.onBeforeRender = () => {
-            (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
-            (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-            (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-            (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
-            (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
-            (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
-          };
-          group.add(mesh);
-        });
-      })
-    );
+  ).then(buffers => {
+    buffers.forEach(async element => {
+      const geometries = await loader.parseSector(element);
+      geometries.forEach(result => {
+        const material = materialMap.get(result.type)!;
+
+        const mesh = new THREE.Mesh(result.geometryBuffer, material);
+        mesh.frustumCulled = false;
+        mesh.onBeforeRender = () => {
+          (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
+          (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
+          (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
+          (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
+          (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
+          (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+        };
+        group.add(mesh);
+      });
+    });
   });
 
   console.log(scene);
@@ -124,6 +123,8 @@ async function init() {
   controls.update();
 
   document.body.appendChild(renderer.domElement);
+
+  renderer.domElement.style.backgroundColor = '#000000';
 
   renderer.setAnimationLoop(_ => {
     controls.update();

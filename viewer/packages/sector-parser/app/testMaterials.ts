@@ -33,8 +33,8 @@ export function createInstancedMeshMaterial(): THREE.ShaderMaterial {
   });
 }
 
-export function createGeneralCylinderMaterial(): THREE.RawShaderMaterial {
-  return new THREE.RawShaderMaterial({
+export function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (General cylinder)',
     clipping: false,
     uniforms: {
@@ -66,10 +66,14 @@ export function createGeneralCylinderMaterial(): THREE.RawShaderMaterial {
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createTriangleMeshMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Triangle meshes',
     clipping: false,
     uniforms: {
@@ -89,10 +93,14 @@ export function createTriangleMeshMaterial(): THREE.ShaderMaterial {
     vertexShader: sectorShaders.detailedMesh.vertex,
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createBoxMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
     clipping: false,
     vertexShader: sectorShaders.boxPrimitive.vertex,
@@ -109,10 +117,14 @@ export function createBoxMaterial(): THREE.ShaderMaterial {
     },
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createCircleMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Circle)',
     clipping: false,
     vertexShader: sectorShaders.circlePrimitive.vertex,
@@ -129,10 +141,14 @@ export function createCircleMaterial(): THREE.ShaderMaterial {
     },
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createConeMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Cone)',
     clipping: false,
     vertexShader: sectorShaders.conePrimitive.vertex,
@@ -149,10 +165,14 @@ export function createConeMaterial(): THREE.ShaderMaterial {
     },
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createEccentricConeMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Eccentric cone)',
     clipping: false,
     uniforms: {
@@ -169,10 +189,14 @@ export function createEccentricConeMaterial(): THREE.ShaderMaterial {
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
-  const asd = new THREE.RawShaderMaterial({
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (General rings)',
     clipping: false,
     uniforms: {
@@ -194,20 +218,21 @@ export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
       renderMode: { value: 1 },
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
-      colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 0]), 1, 1) }
+      colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
     vertexShader: sectorShaders.generalRingPrimitive.vertex,
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
-  asd.needsUpdate = true;
-  console.log(THREE.PixelFormat[asd.uniforms.colorDataTexture.value.format]);
-  return asd;
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createEllipsoidSegmentMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Ellipsoid segments)',
     clipping: false,
     uniforms: {
@@ -224,10 +249,14 @@ export function createEllipsoidSegmentMaterial(): THREE.ShaderMaterial {
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createNutMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Nuts)',
     clipping: false,
     uniforms: {
@@ -244,10 +273,14 @@ export function createNutMaterial(): THREE.ShaderMaterial {
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createQuadMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Quads)',
     clipping: false,
     uniforms: {
@@ -264,10 +297,14 @@ export function createQuadMaterial(): THREE.ShaderMaterial {
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createTrapeziumMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Trapezium)',
     clipping: false,
     uniforms: {
@@ -284,10 +321,14 @@ export function createTrapeziumMaterial(): THREE.ShaderMaterial {
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createTorusSegmentMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Torus segment)',
     clipping: false,
     uniforms: {
@@ -307,4 +348,8 @@ export function createTorusSegmentMaterial(): THREE.ShaderMaterial {
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
