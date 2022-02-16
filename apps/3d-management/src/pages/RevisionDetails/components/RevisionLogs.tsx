@@ -65,7 +65,8 @@ export function RevisionLogs({ logs, isLoading }: Props) {
 
   // make sure they are uniq and visible
   const visibleLogs = {};
-  const isInternalUser = user.username?.includes('@cognite.com');
+  const userEmail = user?.email ?? user?.mail;
+  const isInternalUser = userEmail?.includes('@cognite.com');
   Object.keys(organizedLogs).forEach((process) => {
     if (isInternalUser) {
       visibleLogs[process] = uniqBy(
