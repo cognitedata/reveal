@@ -17,10 +17,10 @@ export type AnnotationStatuses = {
 };
 
 export interface AnnotationsBadgeCounts {
-  gdpr?: number;
-  assets?: number;
-  text?: number;
-  objects?: number;
+  gdpr: number;
+  assets: number;
+  text: number;
+  objects: number;
   mostFrequentObject?: [string, number];
 }
 export interface AnnotationsBadgeStatuses {

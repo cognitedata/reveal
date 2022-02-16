@@ -30,6 +30,7 @@ export const SummaryModal = () => {
   };
 
   const clearOnFinishProcessing = () => {
+    dispatch(setSummaryModalVisibility(false));
     dispatch(PopulateProcessFiles([]));
   };
 

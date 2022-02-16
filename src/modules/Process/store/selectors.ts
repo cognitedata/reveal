@@ -12,6 +12,14 @@ import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 import { GenericSort, SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import { RootState } from 'src/store/rootReducer';
 import { createFileInfo } from 'src/store/util/StateUtils';
+import {
+  annotatedFilesById,
+  annotationsById,
+} from 'src/modules/Common/store/annotation/selectors';
+import {
+  AnnotationStatus,
+  getAnnotationsBadgeCounts,
+} from 'src/utils/AnnotationUtils';
 import { ProcessState, JobState } from './types';
 
 export const selectAllFilesDict = (
@@ -189,5 +197,92 @@ export const selectProcessAllSelectedFilesInSortedOrder = createSelector(
   (rootState: RootState) => rootState.fileReducer.files.byId,
   (sortedSelectedFileIds, allFiles) => {
     return sortedSelectedFileIds.map((id) => allFiles[id]);
+  }
+);
+
+export const selectProcessSummary = createSelector(
+  selectAllProcessFiles,
+  (state: RootState) => annotatedFilesById(state.annotationReducer),
+  (state: RootState) => annotationsById(state.annotationReducer),
+  (processFiles, allAnnotatedFiles, allAnnotations) => {
+    // all files with exif
+    const totalFilesWithExif = processFiles.filter(
+      (file) => !!file?.geoLocation
+    );
+
+    // get annotations of all processed files
+    const annotationsForFile = processFiles.map((file) => ({
+      file,
+      annotations:
+        allAnnotatedFiles[file.id]?.map(
+          (annotationId) => allAnnotations[annotationId]
+        ) || [],
+    }));
+
+    // get user reviewed files - select files where at least one annotation is not unhandled
+    const totalUserReviewedFiles = annotationsForFile.filter(
+      ({ annotations }) =>
+        !!annotations.some(
+          (annotation) => annotation.status !== AnnotationStatus.Unhandled
+        )
+    );
+
+    // files with unresolved person detections
+    const totalFilesWithUnresolvedGDPR = annotationsForFile.filter(
+      ({ annotations }) =>
+        !!annotations.filter(
+          (annotation) =>
+            annotation.modelType === VisionAPIType.ObjectDetection &&
+            annotation.label === 'person' &&
+            annotation.status === AnnotationStatus.Unhandled
+        ).length
+    );
+
+    const annotationCountsForFile = annotationsForFile.map(
+      ({ file, annotations }) => ({
+        file,
+        annotationCounts: getAnnotationsBadgeCounts(annotations),
+      })
+    );
+
+    // files with tag, text or object - select files where annotation count for tag, text or object is > 0
+    const totalFilesWithTagsTextOrObject = annotationCountsForFile.filter(
+      ({ annotationCounts }) =>
+        annotationCounts.text > 0 ||
+        annotationCounts.assets > 0 ||
+        annotationCounts.objects > 0 ||
+        annotationCounts.gdpr > 0
+    );
+
+    const totalFileCountsByAnnotationTypes = annotationCountsForFile.reduce(
+      (acc, next) => {
+        if (next.annotationCounts) {
+          return {
+            gdpr: next.annotationCounts.gdpr > 0 ? acc.gdpr + 1 : acc.gdpr,
+            text: next.annotationCounts.text > 0 ? acc.text + 1 : acc.text,
+            assets:
+              next.annotationCounts.assets > 0 ? acc.assets + 1 : acc.assets,
+            objects:
+              next.annotationCounts.objects > 0 ? acc.objects + 1 : acc.objects,
+          };
+        }
+        return acc;
+      },
+      {
+        gdpr: 0,
+        assets: 0,
+        text: 0,
+        objects: 0,
+      }
+    );
+
+    return {
+      totalProcessed: processFiles.length,
+      totalWithExif: totalFilesWithExif.length,
+      totalUserReviewedFiles: totalUserReviewedFiles.length,
+      totalModelDetected: totalFilesWithTagsTextOrObject.length,
+      totalUnresolvedGDPR: totalFilesWithUnresolvedGDPR.length,
+      fileCountsByAnnotationType: totalFileCountsByAnnotationTypes,
+    };
   }
 );

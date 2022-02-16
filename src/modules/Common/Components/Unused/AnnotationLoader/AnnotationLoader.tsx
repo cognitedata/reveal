@@ -4,6 +4,12 @@ import { ResultData } from 'src/modules/Common/types';
 import { setLoadingAnnotations } from 'src/modules/Explorer/store/slice';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
+// todo: remove if not needed
+/**
+ * Unused component
+ * @param props
+ * @constructor
+ */
 export function AnnotationLoader(props: {
   children: ReactElement<{ data: ResultData[] }>;
   data: ResultData[];

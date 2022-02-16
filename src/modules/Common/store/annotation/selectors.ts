@@ -13,7 +13,7 @@ export const annotationsById = (state: AnnotationState) => {
   return state.annotations.byId;
 };
 
-export const filesById = (state: AnnotationState) => {
+export const annotatedFilesById = (state: AnnotationState) => {
   return state.files.byId;
 };
 
@@ -46,7 +46,7 @@ export const makeSelectAnnotationsForFileIds = () =>
   createDeepEqualSelector(
     (state: AnnotationState, fileIds: number[]) => fileIds,
     annotationsById,
-    filesById,
+    annotatedFilesById,
     (fileIds, allAnnotations, allFiles) => {
       // file id existence checked in selectFileAnnotations
       const data: Record<number, VisionAnnotation[]> = {};

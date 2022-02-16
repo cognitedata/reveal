@@ -33,6 +33,7 @@ export const ProcessFooter = () => {
   );
 
   const clearOnFinishProcessing = () => {
+    dispatch(setSummaryModalVisibility(false));
     dispatch(PopulateProcessFiles([]));
   };
 

@@ -8,7 +8,6 @@ import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/N
 import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
 import { ActionRendererProcess } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
-import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
 import { NoData } from 'src/modules/Common/Components/NoData/NoData';
 import { FileListTableProps } from './types';
@@ -91,17 +90,15 @@ export function FileTable(props: FileListTableProps<TableDataItem>) {
   const emptyRenderer = () => (props.isLoading ? <></> : <NoData />);
 
   return (
-    <AnnotationLoader data={props.data}>
-      <SelectableTable
-        {...props}
-        columns={columns}
-        rendererMap={rendererMap}
-        selectable
-        rowClassNames={rowClassNames}
-        rowEventHandlers={rowEventHandlers}
-        overlayRenderer={overlayRenderer}
-        emptyRenderer={emptyRenderer}
-      />
-    </AnnotationLoader>
+    <SelectableTable
+      {...props}
+      columns={columns}
+      rendererMap={rendererMap}
+      selectable
+      rowClassNames={rowClassNames}
+      rowEventHandlers={rowEventHandlers}
+      overlayRenderer={overlayRenderer}
+      emptyRenderer={emptyRenderer}
+    />
   );
 }

@@ -50,6 +50,7 @@ import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginatio
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -128,7 +129,12 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   useEffect(() => {
-    if (processFileIds.length) dispatch(FetchFilesById(processFileIds));
+    if (processFileIds.length) {
+      dispatch(FetchFilesById(processFileIds));
+      dispatch(
+        RetrieveAnnotations({ fileIds: processFileIds, clearCache: true })
+      );
+    }
   }, [processFileIds]);
 
   const handleItemClick = useCallback(

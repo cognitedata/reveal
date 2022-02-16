@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
-import { annotationsById } from 'src/modules/Common/store/annotation/selectors';
 import { RootState } from 'src/store/rootReducer';
 import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -11,86 +10,57 @@ import FileWithExifIcon from 'src/assets/FileWithExifIcon.svg';
 import FileWithAnnotations from 'src/assets/FileWithAnnotations.svg';
 import FileUnresolvedPerson from 'src/assets/FileUnresolvedPerson.svg';
 import FileWasReviewed from 'src/assets/FileWasReviewed.svg';
-import { selectAllProcessFiles } from 'src/modules/Process/store/selectors';
+import { selectProcessSummary } from 'src/modules/Process/store/selectors';
 
 const queryClient = new QueryClient();
 
 export default function SummaryContent() {
-  const processFiles = useSelector((state: RootState) =>
-    selectAllProcessFiles(state)
+  const [statView, setStatView] = useState('totalFilesProcessed');
+
+  const processSummary = useSelector((rootState: RootState) =>
+    selectProcessSummary(rootState)
   );
 
-  const [statView, setStatView] = useState('totalFilesUploaded');
+  const totalProcessedFileCount = processSummary.totalProcessed;
 
-  const annotations = useSelector(({ annotationReducer }: RootState) => {
-    return annotationsById(annotationReducer);
-  });
+  const filesWithTextAnnotationsCount =
+    processSummary.fileCountsByAnnotationType.text;
+  const filesWithObjectAnnotationsCount =
+    processSummary.fileCountsByAnnotationType.gdpr +
+    processSummary.fileCountsByAnnotationType.objects;
+  const filesWithAssetAnnotationsCount =
+    processSummary.fileCountsByAnnotationType.assets;
 
-  const personFiles: number[] = [];
-  const reviewStats: number[] = [];
-  const textNumber: number[] = [];
-  const objectNumber: number[] = [];
-  const tagNumber: number[] = [];
-
-  // eslint-disable-next-line array-callback-return
-  Object.entries(annotations).map((arr) => {
-    const aID = arr[1].annotatedResourceId;
-    if (arr[1].status !== 'unhandled' && !reviewStats.includes(aID)) {
-      reviewStats.push(aID);
-    }
-    if (arr[1].label === 'person' && !personFiles.includes(aID)) {
-      personFiles.push(aID);
-    }
-    if (arr[1].annotationType === 'vision/ocr' && !textNumber.includes(aID)) {
-      textNumber.push(aID);
-    }
-    if (
-      arr[1].annotationType === 'vision/objectdetection' &&
-      !objectNumber.includes(aID)
-    ) {
-      objectNumber.push(aID);
-    }
-    if (
-      arr[1].annotationType === 'vision/tagdetection' &&
-      !tagNumber.includes(aID)
-    ) {
-      tagNumber.push(aID);
-    }
-  });
-
-  const NotReviewedPersonFiles = personFiles.filter(
-    (file) => !reviewStats.includes(file)
+  const tagPercent = Math.round(
+    (filesWithAssetAnnotationsCount / totalProcessedFileCount) * 100
   );
-  let filesWithExif = 0;
-  // eslint-disable-next-line array-callback-return
-  Object.entries(processFiles).map((file) => {
-    if (file[1]?.metadata || file[1]?.geoLocation) {
-      filesWithExif += 1;
-    }
-  });
-  const totalAnnotations =
-    tagNumber.length + textNumber.length + objectNumber.length;
-  const tagPercent = Math.round((tagNumber.length / totalAnnotations) * 100);
-  const textPercent = Math.round((textNumber.length / totalAnnotations) * 100);
-  const objectPercent = 100 - textPercent - tagPercent;
+  const textPercent = Math.round(
+    (filesWithTextAnnotationsCount / totalProcessedFileCount) * 100
+  );
+  const objectPercent = Math.round(
+    (filesWithObjectAnnotationsCount / totalProcessedFileCount) * 100
+  );
 
   const stats = {
-    totalFilesUploaded: {
+    totalFilesProcessed: {
       text: 'total files processed',
-      value: processFiles?.length,
+      value: processSummary.totalProcessed,
     },
-    filesWithExif: { text: 'files with exif', value: filesWithExif },
+    filesWithExif: {
+      text: 'files with exif',
+      value: processSummary.totalWithExif,
+    },
     userReviewedFiles: {
       text: 'user-reviewed files',
-      value: reviewStats.length,
+      value: processSummary.totalUserReviewedFiles,
     },
     modelDetections: {
       text: 'files with tags, texts or objects ',
-      value: totalAnnotations,
+      value: processSummary.totalModelDetected,
     },
     personCases: {
       text: 'unresolved person detections',
-      value: NotReviewedPersonFiles.length,
+      value: processSummary.totalUnresolvedGDPR,
     },
   };
 
@@ -165,95 +135,90 @@ export default function SummaryContent() {
                 ))}
               </StatsCarouselLeft>
 
-              {statView === 'totalFilesUploaded' && (
+              {statView === 'totalFilesProcessed' && (
                 <StatsCarouselRight key={statView}>
-                  {Array.from(
-                    { length: stats[statView].value },
-                    (_, i: number) => (
-                      <FileIconContainer key={`${statView}_${i}`}>
-                        <img src={FileUploadedIcon} alt="FileIcon" />
-                      </FileIconContainer>
-                    )
-                  )}
+                  <RenderFileIcons
+                    length={stats[statView].value}
+                    icon={FileUploadedIcon}
+                    iconAlt="FileIcon"
+                    keyString={statView}
+                  />
                 </StatsCarouselRight>
               )}
 
               {statView === 'filesWithExif' && (
                 <StatsCarouselRight key={statView}>
-                  {stats[statView].value < stats.totalFilesUploaded.value &&
-                    Array.from(
-                      {
-                        length:
-                          stats.totalFilesUploaded.value -
-                          stats[statView].value,
-                      },
-                      (_, i: number) => (
-                        <FileIconContainer key={`filesWithoutExif_${i}`}>
-                          <img src={FileBland} alt="FileBland" />
-                        </FileIconContainer>
-                      )
-                    )}
-                  {Array.from(
-                    { length: stats[statView].value },
-                    (_, i: number) => (
-                      <FileIconContainer key={`${statView}_${i}`}>
-                        <img src={FileWithExifIcon} alt="FileWithExifIcon" />
-                      </FileIconContainer>
-                    )
+                  <RenderFileIcons
+                    length={stats[statView].value}
+                    icon={FileWithExifIcon}
+                    iconAlt="FileWithExifIcon"
+                    keyString={statView}
+                  />
+                  {stats[statView].value < stats.totalFilesProcessed.value && (
+                    <RenderFileIcons
+                      length={
+                        stats.totalFilesProcessed.value - stats[statView].value
+                      }
+                      icon={FileBland}
+                      iconAlt="FileBland"
+                      keyString="filesWithoutExif"
+                    />
                   )}
                 </StatsCarouselRight>
               )}
 
               {statView === 'userReviewedFiles' && (
                 <StatsCarouselRight key={statView}>
-                  {Array.from(
-                    { length: stats[statView].value },
-                    (_, i: number) => (
-                      <FileIconContainer key={`${statView}_${i}`}>
-                        <img src={FileWasReviewed} alt="FileWasReviewed" />
-                      </FileIconContainer>
-                    )
+                  <RenderFileIcons
+                    length={stats[statView].value}
+                    icon={FileWasReviewed}
+                    iconAlt="FileWasReviewed"
+                    keyString={statView}
+                  />
+                  {stats[statView].value < stats.totalFilesProcessed.value && (
+                    <RenderFileIcons
+                      length={
+                        stats.totalFilesProcessed.value - stats[statView].value
+                      }
+                      icon={FileBland}
+                      iconAlt="FileBland"
+                      keyString="notUserReviewedFiles"
+                    />
                   )}
-                  {stats[statView].value < stats.totalFilesUploaded.value &&
-                    Array.from(
-                      {
-                        length:
-                          stats.totalFilesUploaded.value -
-                          stats[statView].value,
-                      },
-                      (_, i: number) => (
-                        <FileIconContainer key={`notUserReviewedFiles_${i}`}>
-                          <img src={FileBland} alt="FileBland" />
-                        </FileIconContainer>
-                      )
-                    )}
                 </StatsCarouselRight>
               )}
 
               {statView === 'modelDetections' && (
                 <StatsCarouselRightDivider>
                   <StatsCarouselRight key={statView}>
-                    {Array.from(
-                      { length: stats[statView].value },
-                      (_, i: number) => (
-                        <FileIconContainer key={`${statView}_${i}`}>
-                          <img
-                            src={FileWithAnnotations}
-                            alt="FileWithAnnotations"
-                          />
-                        </FileIconContainer>
-                      )
+                    <RenderFileIcons
+                      length={stats[statView].value}
+                      icon={FileWithAnnotations}
+                      iconAlt="FileWithAnnotations"
+                      keyString={statView}
+                    />
+                    {stats[statView].value <
+                      stats.totalFilesProcessed.value && (
+                      <RenderFileIcons
+                        length={
+                          stats.totalFilesProcessed.value -
+                          stats[statView].value
+                        }
+                        icon={FileBland}
+                        iconAlt="FileBland"
+                        keyString="filesWithoutModelDetections"
+                      />
                     )}
                   </StatsCarouselRight>
-                  {totalAnnotations > 0 && (
+                  {totalProcessedFileCount > 0 && (
                     <DetectionStats>
                       <PercentBar
                         tagPercentage={tagPercent}
                         textPercentage={textPercent}
                         objectPercentage={objectPercent}
-                        tagCount={tagNumber.length}
-                        textCount={textNumber.length}
-                        objectCount={objectNumber.length}
+                        tagCount={filesWithAssetAnnotationsCount}
+                        textCount={filesWithTextAnnotationsCount}
+                        objectCount={filesWithObjectAnnotationsCount}
                       />
                     </DetectionStats>
                   )}
@@ -261,28 +226,22 @@ export default function SummaryContent() {
               )}
               {statView === 'personCases' && (
                 <StatsCarouselRight key={statView}>
-                  {Array.from(
-                    { length: stats[statView].value },
-                    (_, i: number) => (
-                      <FileIconContainer key={`${statView}_${i}`}>
-                        <img
-                          src={FileUnresolvedPerson}
-                          alt="FileUnresolvedPerson"
-                        />
-                      </FileIconContainer>
-                    )
+                  <RenderFileIcons
+                    length={stats[statView].value}
+                    icon={FileUnresolvedPerson}
+                    iconAlt="FileUnresolvedPerson"
+                    keyString={statView}
+                  />
+                  {stats[statView].value < stats.totalFilesProcessed.value && (
+                    <RenderFileIcons
+                      length={
+                        stats.totalFilesProcessed.value - stats[statView].value
+                      }
+                      icon={FileBland}
+                      iconAlt="FileBland"
+                      keyString="notPersonCases"
+                    />
                   )}
-                  {stats[statView].value < personFiles.length &&
-                    Array.from(
-                      {
-                        length: personFiles.length - stats[statView].value,
-                      },
-                      (_, i: number) => (
-                        <FileIconContainer key={`notPersonCases__${i}`}>
-                          <img src={FileBland} alt="FileBland" />
-                        </FileIconContainer>
-                      )
-                    )}
                 </StatsCarouselRight>
               )}
             </StatsCarouselContainer>
@@ -292,6 +251,28 @@ export default function SummaryContent() {
     </>
   );
 }
+
+export const RenderFileIcons = ({
+  length,
+  icon,
+  iconAlt,
+  keyString,
+}: {
+  length: number;
+  icon: string;
+  iconAlt: string;
+  keyString: string;
+}) => {
+  return (
+    <>
+      {Array.from({ length }, (_, i: number) => (
+        <FileIconContainer key={`${keyString}_${i}`}>
+          <img src={icon} alt={iconAlt} />
+        </FileIconContainer>
+      ))}
+    </>
+  );
+};
 
 export const PercentBar = (props: {
   tagPercentage: number;
