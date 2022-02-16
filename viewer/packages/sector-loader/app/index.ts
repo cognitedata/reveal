@@ -15,10 +15,12 @@ import {
   File3dFormat
 } from '@reveal/modeldata-api';
 import { V8SectorRepository } from '../src/V8SectorRepository';
-import { CadMaterialManager } from '@reveal/rendering';
+import { CadMaterialManager, Materials } from '@reveal/rendering';
 import { GltfSectorRepository, SectorRepository } from '..';
-import { revealEnv } from '../../utilities';
+import { revealEnv, assertNever } from '../../utilities';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
+import { ConsumedSector } from '@reveal/cad-parsers';
+import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -75,7 +77,11 @@ async function init() {
 
   formatGuiController.onChange(async _ => {
     group.remove(consumedModel);
-    consumedModel = await loadSectors(outputs, guiData.formatVersion, modelDataClient, cadMaterialManager, client);
+    let fv = guiData.formatVersion;
+    if (typeof fv === 'string') {
+      fv = parseInt(fv);
+    }
+    consumedModel = await loadSectors(outputs, fv, modelDataClient, cadMaterialManager, client);
     group.add(consumedModel);
   });
 
@@ -86,6 +92,7 @@ async function init() {
   controls.update();
 
   document.body.appendChild(renderer.domElement);
+  renderer.domElement.style.backgroundColor = '#000000';
 
   renderer.setAnimationLoop(_ => {
     controls.update();
@@ -100,9 +107,10 @@ async function loadSectors(
   cadMaterialManager: CadMaterialManager,
   client: CogniteClient
 ) {
-  const output = outputs.find(
-    output => output.format === File3dFormat.GltfCadModel && output.version === formatVersion
-  );
+  const wantedFormat = formatVersion == 8 ? File3dFormat.RevealCadModel : File3dFormat.GltfCadModel;
+
+  const output = outputs.find(output => output.format === wantedFormat && output.version === formatVersion);
+
   const sceneJson = await modelDataClient.getJsonFile(
     `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
     'scene.json'
@@ -120,20 +128,93 @@ async function loadSectors(
 
   const model = new THREE.Group();
 
+  const modelIdentifier = output!.blobId.toString();
+
   await Promise.all(
     sceneJson.sectors.map(async (sector: any) => {
       sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
       const consumedSector = await sectorRepository.loadSector({
         modelBaseUrl: `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
-        modelIdentifier: output!.blobId.toString(),
+        modelIdentifier,
         metadata: sector,
         levelOfDetail: 2,
         geometryClipBox: null
       });
 
-      model.add(consumedSector.group!);
+      if (consumedSector.group) {
+        model.add(consumedSector.group);
+      }
+
+      if (formatVersion === 9) {
+        const group = createGltfSectorGroup(consumedSector, cadMaterialManager.getModelMaterials(modelIdentifier));
+        model.add(group);
+      }
     })
   );
 
   return model;
+}
+
+function createGltfSectorGroup(consumedSector: ConsumedSector, materials: Materials) {
+  const geometryGroup = new THREE.Group();
+
+  for (const parsedGeometry of consumedSector.geometryBatchingQueue!) {
+    const material = getShaderMaterial(parsedGeometry.type, materials);
+
+    const count = parsedGeometry.geometryBuffer.getAttribute('a_treeIndex').count;
+
+    const mesh = new THREE.InstancedMesh(parsedGeometry.geometryBuffer, material, count);
+
+    mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+      if (material.uniforms.renderMode) {
+        material.uniforms.renderMode.value = 1;
+      }
+      (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
+      (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
+      (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
+      (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
+      (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
+      (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+      material.needsUpdate = true;
+    };
+
+    mesh.updateMatrixWorld(true);
+
+    geometryGroup.add(mesh);
+  }
+
+  return geometryGroup;
+}
+
+function getShaderMaterial(type: RevealGeometryCollectionType, materials: Materials): THREE.ShaderMaterial {
+  switch (type) {
+    case RevealGeometryCollectionType.BoxCollection:
+      return materials.box;
+    case RevealGeometryCollectionType.CircleCollection:
+      return materials.circle;
+    case RevealGeometryCollectionType.ConeCollection:
+      return materials.cone;
+    case RevealGeometryCollectionType.EccentricConeCollection:
+      return materials.eccentricCone;
+    case RevealGeometryCollectionType.EllipsoidSegmentCollection:
+      return materials.ellipsoidSegment;
+    case RevealGeometryCollectionType.GeneralCylinderCollection:
+      return materials.generalCylinder;
+    case RevealGeometryCollectionType.GeneralRingCollection:
+      return materials.generalRing;
+    case RevealGeometryCollectionType.QuadCollection:
+      return materials.quad;
+    case RevealGeometryCollectionType.TorusSegmentCollection:
+      return materials.torusSegment;
+    case RevealGeometryCollectionType.TrapeziumCollection:
+      return materials.trapezium;
+    case RevealGeometryCollectionType.NutCollection:
+      return materials.nut;
+    case RevealGeometryCollectionType.TriangleMesh:
+      return materials.triangleMesh;
+    case RevealGeometryCollectionType.InstanceMesh:
+      return materials.instancedMesh;
+    default:
+      assertNever(type);
+  }
 }
