@@ -1,4 +1,5 @@
-import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { HttpError } from '@cognite/sdk';
 
 export interface RevisionLog3D {
   timestamp: number;
@@ -19,8 +20,8 @@ export type RevisionOutputsRequestBody = {
   formats: Array<OutputFormats>;
 };
 export async function isReprocessingRequired(modelId: number) {
-  const url = `${v3Client.getBaseUrl()}/api/playground/projects/${
-    v3Client.project
+  const url = `${sdk.getBaseUrl()}/api/playground/projects/${
+    sdk.project
   }/3d/v2/outputs`;
 
   // fixme: create SDK methods
@@ -28,11 +29,11 @@ export async function isReprocessingRequired(modelId: number) {
     models: [{ id: modelId }],
     formats: ['ept-pointcloud', 'reveal-directory'],
   };
-  const response = await v3Client.post(url, {
+  const response = await sdk.post(url, {
     data: requestBody,
   });
   if (response.status !== 200) {
-    throw new v3.HttpError(response.status, response.data, response.headers);
+    throw new HttpError(response.status, response.data, response.headers);
   }
   const { outputs } = response.data.items[0];
   return !outputs.length;
@@ -49,8 +50,8 @@ export async function requestReprocessing({
   modelId,
   revisionId,
 }: RequestReprocessingArgs): Promise<void> {
-  const url = `${v3Client.getBaseUrl()}/api/playground/projects/${project}/3d/v2/models/reprocess`;
-  const response = await v3Client.post(url, {
+  const url = `${sdk.getBaseUrl()}/api/playground/projects/${project}/3d/v2/models/reprocess`;
+  const response = await sdk.post(url, {
     data: {
       items: [
         {
@@ -62,6 +63,6 @@ export async function requestReprocessing({
   });
 
   if (response.status !== 200) {
-    throw new v3.HttpError(response.status, response.data, response.headers);
+    throw new HttpError(response.status, response.data, response.headers);
   }
 }

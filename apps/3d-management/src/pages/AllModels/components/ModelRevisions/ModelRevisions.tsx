@@ -1,10 +1,9 @@
 import { RouteComponentProps } from 'react-router';
-import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import styled from 'styled-components';
 import { useMetrics } from 'src/hooks/useMetrics';
 import React, { useState } from 'react';
-import { v3 } from '@cognite/cdf-sdk-singleton';
-import { DEFAULT_MARGIN_V, getContainer, userHasCapabilities } from 'src/utils';
+import { Model3D } from '@cognite/sdk';
+import { DEFAULT_MARGIN_V, getContainer } from 'src/utils';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
 import { message, Card, Modal } from 'antd';
 import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
@@ -19,6 +18,8 @@ import {
 } from 'src/hooks/models';
 import { useCreateRevisionMutation, useRevisions } from 'src/hooks/revisions';
 
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { RevisionsTable } from './RevisionsTable';
 
 const RevisionWrapper = styled.div`
@@ -46,8 +47,7 @@ const ButtonRow = styled.div`
 `;
 
 type Props = RouteComponentProps & {
-  model: v3.Model3D;
-  user: AuthenticatedUserWithGroups;
+  model: Model3D;
 };
 
 export default function ModelRevisions(props: Props) {
@@ -58,13 +58,35 @@ export default function ModelRevisions(props: Props) {
   const [renameModalVisible, setRenameModalVisible] = useState(false);
   const [newName, setNewName] = useState('');
 
-  const [deleteModelMutation] = useDeleteModelMutation();
-  const [updateModelMutation] = useUpdateModelMutation();
+  const { mutate: deleteModelMutation } = useDeleteModelMutation();
+  const { mutate: updateModelMutation } = useUpdateModelMutation();
 
-  const [createRevision] = useCreateRevisionMutation();
+  const { mutate: createRevision } = useCreateRevisionMutation();
   const revisionsQuery = useRevisions(props.model.id);
 
-  if (revisionsQuery.isLoading) {
+  const { flow } = getFlow();
+  const {
+    data: hasThreedDeleteCapability,
+    isFetched: isFetchedThreedDelete,
+  } = usePermissions(flow, 'threedAcl', 'DELETE');
+  const {
+    data: hasThreedCreateCapability,
+    isFetched: isFetchedThreedCreate,
+  } = usePermissions(flow, 'threedAcl', 'CREATE');
+  const {
+    data: hasFilesWriteCapability,
+    isFetched: isFetchedFilesWrite,
+  } = usePermissions(flow, 'filesAcl', 'WRITE');
+
+  const showDeleteModelButton = hasThreedDeleteCapability;
+  const showButtons = hasThreedCreateCapability && hasFilesWriteCapability;
+
+  if (
+    revisionsQuery.isLoading ||
+    !isFetchedThreedCreate ||
+    !isFetchedThreedDelete ||
+    !isFetchedFilesWrite
+  ) {
     return (
       <Flex
         alignItems="center"
@@ -108,14 +130,6 @@ export default function ModelRevisions(props: Props) {
   const refresh = () => {
     revisionsQuery.refetch();
   };
-
-  const showDeleteModelButton = userHasCapabilities(props.user, [
-    { acl: 'threedAcl', actions: ['DELETE'] },
-  ]);
-  const showButtons = userHasCapabilities(props.user, [
-    { acl: 'threedAcl', actions: ['CREATE'] },
-    { acl: 'filesAcl', actions: ['WRITE'] },
-  ]);
 
   return (
     <RevisionWrapper>

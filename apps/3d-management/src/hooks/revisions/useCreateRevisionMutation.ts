@@ -1,28 +1,26 @@
-import { v3, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { useMutation, useQueryCache } from 'react-query';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { CreateRevision3D, HttpError, Revision3D } from '@cognite/sdk';
+import { useMutation, useQueryClient } from 'react-query';
 import { fireErrorNotification, QUERY_KEY } from 'src/utils';
 
-type CreateRevisionArgs = { modelId: number } & v3.CreateRevision3D;
+type CreateRevisionArgs = { modelId: number } & CreateRevision3D;
 
 const createRevision = async ({
   modelId,
   ...revision
-}: CreateRevisionArgs): Promise<v3.Revision3D> => {
+}: CreateRevisionArgs): Promise<Revision3D> => {
   const items = await sdk.revisions3D.create(modelId, [revision]);
   return items[0];
 };
 
 export function useCreateRevisionMutation() {
-  const queryCache = useQueryCache();
-  return useMutation<v3.Revision3D, v3.HttpError, CreateRevisionArgs>(
+  const queryClient = useQueryClient();
+  return useMutation<Revision3D, HttpError, CreateRevisionArgs>(
     createRevision,
     {
-      onSuccess: (
-        newRevision: v3.Revision3D,
-        { modelId }: CreateRevisionArgs
-      ) => {
+      onSuccess: (newRevision: Revision3D, { modelId }: CreateRevisionArgs) => {
         const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
-        queryCache.setQueryData<v3.Revision3D[]>(queryKey, (old) => {
+        queryClient.setQueryData<Revision3D[]>(queryKey, (old) => {
           return [newRevision].concat(old || []);
         });
       },

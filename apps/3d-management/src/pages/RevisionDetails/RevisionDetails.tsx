@@ -6,15 +6,13 @@ import {
   isReprocessingRequired,
   APP_TITLE,
   getContainer,
-  userHasCapabilities,
   logToSentry,
   DEFAULT_MARGIN_V,
 } from 'src/utils';
-import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import { useMetrics } from 'src/hooks/useMetrics';
 import React, { useEffect, useState } from 'react';
 
-import { createLink, useUserContext } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 import dayjs from 'dayjs';
 import Status from 'src/components/Status';
 import NotFound from 'src/pages/NotFound';
@@ -35,7 +33,9 @@ import {
 } from 'src/hooks/revisions';
 import { useModels } from 'src/hooks/models/useModels';
 
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { Revision3D } from '@cognite/sdk';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of
@@ -89,8 +89,18 @@ type Props = RouteComponentProps<{
 }>;
 
 export default function RevisionDetails(props: Props) {
-  const user: AuthenticatedUserWithGroups = useUserContext();
   const metrics = useMetrics('3D.Revisions');
+
+  const { flow } = getFlow();
+
+  const {
+    data: hasUpdateCapabilities,
+    isFetched: isFetchedUpdateCapabilities,
+  } = usePermissions(flow, 'threedAcl', 'UPDATE');
+  const {
+    data: hasDeleteCapabilities,
+    isFetched: isFetchedDeleteCapabilities,
+  } = usePermissions(flow, 'threedAcl', 'DELETE');
 
   const revisionId: number = Number(props.match.params.revisionId);
   const modelId: number = Number(props.match.params.modelId);
@@ -110,15 +120,15 @@ export default function RevisionDetails(props: Props) {
     revisionId,
   });
 
-  const [
-    updateRevisionMutation,
-    { isLoading: updateInProgress },
-  ] = useUpdateRevisionMutation();
+  const {
+    mutate: updateRevisionMutation,
+    isLoading: updateInProgress,
+  } = useUpdateRevisionMutation();
 
-  const [
-    deleteRevisionMutation,
-    { isLoading: deletionInProgress },
-  ] = useDeleteRevisionMutation();
+  const {
+    mutate: deleteRevisionMutation,
+    isLoading: deletionInProgress,
+  } = useDeleteRevisionMutation();
 
   const revision = (revisionsQuery.data || []).find(
     (el) => el.id === revisionId
@@ -148,7 +158,9 @@ export default function RevisionDetails(props: Props) {
   if (
     revisionsQuery.isLoading ||
     modelsQuery.isLoading ||
-    revisionLogsQuery.isLoading
+    revisionLogsQuery.isLoading ||
+    !isFetchedUpdateCapabilities ||
+    !isFetchedDeleteCapabilities
   ) {
     return <Spinner />;
   }
@@ -173,7 +185,7 @@ export default function RevisionDetails(props: Props) {
         published: !revision.published,
       },
       {
-        onSuccess: (updatedRevision: v3.Revision3D) => {
+        onSuccess: (updatedRevision: Revision3D) => {
           if (originalPublication !== updatedRevision.published) {
             message.success(
               `Revision successfully ${
@@ -201,14 +213,6 @@ export default function RevisionDetails(props: Props) {
   const onReprocessingRequestSent = () => {
     setReprocessingRequired(false);
   };
-
-  const hasUpdateCapabilities = userHasCapabilities(user, [
-    { acl: 'threedAcl', actions: ['UPDATE'] },
-  ]);
-
-  const hasDeleteCapabilities = userHasCapabilities(user, [
-    { acl: 'threedAcl', actions: ['DELETE'] },
-  ]);
 
   const canBeViewed =
     revision.status === 'Done' ||

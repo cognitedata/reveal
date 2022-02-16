@@ -1,6 +1,12 @@
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import { AuthWrapper, PageTitle, SubAppWrapper } from '@cognite/cdf-utilities';
+import {
+  AuthWrapper,
+  getEnv,
+  getProject,
+  PageTitle,
+  SubAppWrapper,
+} from '@cognite/cdf-utilities';
 import GlobalStyles from 'src/styles/GlobalStyles';
 import { Provider } from 'react-redux';
 import configureStore from 'src/store';
@@ -12,45 +18,57 @@ import { createBrowserHistory } from 'history';
 import { APP_TITLE, projectName } from 'src/utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { ReactQueryDevtools } from 'react-query-devtools';
-import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import { SDKProvider } from '@cognite/sdk-provider';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export const App = () => {
   const history = createBrowserHistory();
   const store = configureStore(history);
   const subAppName = 'cdf-3d-management';
-  const queryCache = new QueryCache();
+  const project = getProject();
+  const env = getEnv();
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 10 * 60 * 1000, // Pretty long
+      },
+    },
+  });
 
   return (
     <GlobalStyles>
-      <AuthWrapper
-        subAppName={subAppName}
-        showLoader
-        includeGroups
-        loadingScreen={<Loader />}
-      >
-        <Provider store={store}>
-          <ThemeProvider theme={theme}>
-            <ConnectedRouter history={history}>
-              <FlagProvider
-                appName={subAppName}
-                apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                projectName={projectName}
-              >
-                <SubAppWrapper>
-                  <ErrorBoundary>
-                    <PageTitle title={APP_TITLE} />
-                    <ReactQueryCacheProvider queryCache={queryCache}>
-                      <ReactQueryDevtools initialIsOpen={false} />
-                      <Routes />
-                    </ReactQueryCacheProvider>
-                  </ErrorBoundary>
-                </SubAppWrapper>
-              </FlagProvider>
-            </ConnectedRouter>
-          </ThemeProvider>
-        </Provider>
-      </AuthWrapper>
+      <QueryClientProvider client={queryClient}>
+        <AuthWrapper
+          loadingScreen={<Loader />}
+          login={() => loginAndAuthIfNeeded(project, env)}
+        >
+          <SDKProvider sdk={sdk}>
+            <Provider store={store}>
+              <ThemeProvider theme={theme}>
+                <ConnectedRouter history={history}>
+                  <FlagProvider
+                    appName={subAppName}
+                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                    projectName={projectName}
+                  >
+                    <SubAppWrapper>
+                      <ErrorBoundary>
+                        <PageTitle title={APP_TITLE} />
+                        <ReactQueryDevtools initialIsOpen={false} />
+                        <Routes />
+                      </ErrorBoundary>
+                    </SubAppWrapper>
+                  </FlagProvider>
+                </ConnectedRouter>
+              </ThemeProvider>
+            </Provider>
+          </SDKProvider>
+        </AuthWrapper>
+      </QueryClientProvider>
     </GlobalStyles>
   );
 };

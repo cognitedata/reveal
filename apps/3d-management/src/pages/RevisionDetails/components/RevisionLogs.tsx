@@ -3,11 +3,10 @@ import { Timeline } from 'antd';
 import { mapStatusToColor } from 'src/components/Status';
 import React from 'react';
 import { RevisionLog3D } from 'src/utils/sdk/3dApiUtils';
-import { useUserContext } from '@cognite/cdf-utilities';
-import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { DEFAULT_MARGIN_V } from 'src/utils';
+import { useUserInformation } from 'src/hooks/useUserInformation';
 
 const EXTERNAL_LOG_NAME = {
   'reveal-optimizer': 'Web-Optimizer',
@@ -39,7 +38,7 @@ type Props = {
 };
 
 export function RevisionLogs({ logs, isLoading }: Props) {
-  const user: AuthenticatedUserWithGroups = useUserContext();
+  const { data: user } = useUserInformation();
 
   if (isLoading) {
     return <div style={{ marginTop: DEFAULT_MARGIN_V }}>Loading logs...</div>;

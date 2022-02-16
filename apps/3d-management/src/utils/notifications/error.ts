@@ -1,12 +1,12 @@
 import * as Sentry from '@sentry/browser';
 import { notification } from 'antd';
 import { getContainer } from 'src/utils';
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { HttpError } from '@cognite/sdk';
 
 interface ErrorNotificationProps {
   message?: string;
   description?: string;
-  error?: v3.HttpError; // Not always the case...
+  error?: HttpError; // Not always the case...
   duration?: number;
 }
 
