@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import assert from 'assert';
 import fs from 'fs';
 
 import 'jest-extended';
@@ -188,40 +187,4 @@ describe(GltfSectorParser.name, () => {
     // Quad geometry
     expect(trapeziums.attributes['position'].count).toBe(4);
   });
-
-  test('asdasdad', () => {
-    const input = {
-      buffer: new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-      attributeByteLengths: [1, 2, 2],
-      numPoints: 2
-    };
-    const output = new Uint8Array(10);
-    copyLinearToInterleaved(input, output);
-
-    expect(output.toString()).toBe([0, 2, 3, 6, 7, 1, 4, 5, 8, 9].toString());
-  });
 });
-
-function copyLinearToInterleaved(
-  input: { buffer: Uint8Array; attributeByteLengths: number[]; numPoints: number },
-  output: Uint8Array
-) {
-  assert(input.buffer.byteLength <= output.byteLength);
-
-  const stride = input.attributeByteLengths.reduce((partialSum, element) => partialSum + element, 0);
-
-  let subStride = 0;
-  input.attributeByteLengths.forEach(attrByteLength => {
-    for (let i = 0; i < input.numPoints; i++) {
-      output.set(
-        input.buffer.subarray(
-          subStride * input.numPoints + i * attrByteLength,
-          subStride * input.numPoints + i * attrByteLength + attrByteLength
-        ),
-        i * stride + subStride
-      );
-    }
-
-    subStride += attrByteLength;
-  });
-}
