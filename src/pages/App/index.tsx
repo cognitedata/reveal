@@ -14,7 +14,7 @@ import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
 } from '@cognite/data-exploration';
-import sdk from '@cognite/cdf-sdk-singleton';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
@@ -28,6 +28,7 @@ import { staticRoot } from 'routes/paths';
 
 import { setItemInStorage } from 'hooks/useLocalStorage';
 import { useUserId } from 'hooks';
+import { useUserInformation } from 'hooks/useUserInformation';
 
 const Routes = React.lazy(() => import('routes'));
 
@@ -46,6 +47,9 @@ export default function App() {
   const { username } = useUserId();
 
   const cdfEnvFromUrl = queryString.parse(window.location.search).env as string;
+
+  const { flow } = getFlow();
+  const { data: userInfo } = useUserInformation();
 
   useEffect(() => {
     setTenant(tenantFromUrl);
@@ -78,8 +82,15 @@ export default function App() {
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
-            {/* @ts-ignore */}
-            <DataExplorationProvider sdk={sdk}>
+            <DataExplorationProvider
+              flow={flow}
+              userInfo={userInfo}
+              sdk={sdk}
+              overrideURLMap={{
+                pdfjsWorkerSrc:
+                  '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+              }}
+            >
               <Switch>
                 <Redirect
                   from="/:url*(/+)"

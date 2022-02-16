@@ -69,20 +69,6 @@
     lodash "^4.17.21"
     resize-observer-polyfill "^1.5.0"
 
-"@azure/msal-browser@^2.11.0":
-  version "2.21.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.21.0.tgz#2ebe4b0874a61d64009419d4cfef1f6bb5e226b3"
-  integrity sha512-y+oAUJJ0m7gRUT505iGT4SDXktrRzOE3HZC0+nQyHDI+3O7BKK5NjQUwD/4V8FNNyrhxEtLk99iwJEo61epinQ==
-  dependencies:
-    "@azure/msal-common" "^6.0.0"
-
-"@azure/msal-common@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-6.0.0.tgz#9a60c27967ae6f6678015eb6dfb0ea7cc999eb3b"
-  integrity sha512-Vva3snqmWPHJNDCBb4lz3D0rvZsi/0QikAxHvVFNwtNg5pP4NZE4U34tNiXN+m9KhlQFrZBPkE5rk7dIEOGcWw==
-  dependencies:
-    debug "^4.1.1"
-
 "@babel/code-frame@7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
@@ -1320,7 +1306,7 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@^3.13.0", "@cognite/cogs.js@^3.38.4", "@cognite/cogs.js@^3.42.5":
+"@cognite/cogs.js@^3.38.4", "@cognite/cogs.js@^3.42.5":
   version "3.44.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
   integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
@@ -1376,20 +1362,20 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^1.6.4":
-  version "1.7.7"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.7.7.tgz#46753d5861924b811b8a286d051366056404b75d"
-  integrity sha512-PnE9yuSNJi7TBvJ3xb1nCj6D+8AAovfuUkMzfJwCeJI1ISRfmVT4svo3KBJCCxS+Eza5MrpPJH+U93dpDEnVZQ==
+"@cognite/data-exploration@1.8.0-beta.1":
+  version "1.8.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.8.0-beta.1.tgz#bced2ef8f99c8a0a54967d5fc206fa72caa3533d"
+  integrity sha512-xE1GIVqLR5RFKDQGOs7o8qpU6n0YYm4CXNvRTNU8YVQwsJAnMGvmGwSl5m/7Zf6wY9nWbrVQtYIrQ1JIfQrs7Q==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cogs.js" "^3.42.5"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^2.0.3"
-    "@cognite/sdk" "^3.3.6"
+    "@cognite/react-picture-annotation" "^2.1.0-beta.1"
+    "@cognite/sdk" "^6.3.1"
     "@cognite/sdk-provider" "^1.0.0"
-    "@cognite/sdk-react-query-hooks" "^5.0.1"
+    "@cognite/sdk-react-query-hooks" "^6.0.2"
     "@visx/axis" "^1.8.0"
     "@visx/event" "^1.7.0"
     "@visx/gradient" "^1.7.0"
@@ -1477,7 +1463,7 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-picture-annotation@2.1.0-beta.2":
+"@cognite/react-picture-annotation@2.1.0-beta.2", "@cognite/react-picture-annotation@^2.1.0-beta.1":
   version "2.1.0-beta.2"
   resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.1.0-beta.2.tgz#2b7278ce36794e8b953cce98afe01effd2d02c39"
   integrity sha512-TAYZBMx2+4Kj2jkpi/WVLU4Q4qLxGNyVhAgumjhpUrEpM7rPDT7EzaZh28KVNnuNRX3VnTTpt+2W/+mboLX2Jg==
@@ -1507,49 +1493,6 @@
     typescript "^4.1.2"
     uuid "^8.3.0"
 
-"@cognite/react-picture-annotation@^2.0.3":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.0.4.tgz#38d00e59daeb6d91255188c9c843d14b234c284b"
-  integrity sha512-GdY4fQfJPadVnwgu1NM9aAzYJE2wiWNOe/8rJ4bY6o6whSEK0Q+iVCA1Ta0qy24mTguRsuj7saUEMtXQKSsPyA==
-  dependencies:
-    "@cognite/annotations" "^1.1.0"
-    "@cognite/cogs.js" "^3.13.0"
-    "@cognite/sdk" "^3.3.0"
-    "@storybook/addon-knobs" "^6.1.10"
-    "@types/lodash" "^4.14.165"
-    "@types/lz-string" "^1.3.34"
-    "@types/react-canvas-draw" "^1.1.0"
-    "@types/react-splitter-layout" "^3.0.0"
-    lz-string "^1.4.4"
-    parse-color "^1.0.0"
-    pdf-lib "^1.12.0"
-    pdfjs-dist "2.6.347"
-    react-archer "^3.0.0"
-    react-canvas-draw "^1.1.1"
-    react-color "^2.19.3"
-    react-color-palette "^4.1.0"
-    react-draggable "^4.4.3"
-    react-is "^17.0.1"
-    react-splitter-layout "^4.0.0"
-    react-tiny-popover "^6.0.5"
-    reselect "^4.0.0"
-    simplify-js "^1.2.4"
-    styled-components "^5.2.0"
-    typescript "^4.1.2"
-    uuid "^8.3.0"
-
-"@cognite/sdk-core@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.2.tgz#be6378ffee45c5da6d0186ce97246eb19a9d9dd4"
-  integrity sha512-ePu4q1UGa4mIKDz0cxR2WzBjImtLlLQRwWY7R38IHfBXOFMJuFUxgHcKgoSP5bonGPGLHWP7UaTW+41+IsyGOw==
-  dependencies:
-    "@azure/msal-browser" "^2.11.0"
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
 "@cognite/sdk-core@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.0.tgz#50a2a56c9eec35b0af1a235ec34474d848a3c519"
@@ -1568,14 +1511,6 @@
   dependencies:
     react "^16.14.0"
 
-"@cognite/sdk-react-query-hooks@^5.0.1":
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-5.2.1.tgz#f19174144f9a2a30bf44091e99d1a41d7cf0c939"
-  integrity sha512-1vwlcBExJkVOxORGXrJ9cluhzvcaVrPA+7YIDTQ4NJrYYTmGzhhIndbxRCDPFa+fgeTpgaMwTExHESXG2Rq+ug==
-  dependencies:
-    "@types/deep-equal" "^1.0.1"
-    deep-equal "^2.0.5"
-
 "@cognite/sdk-react-query-hooks@^6.0.2":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-6.0.2.tgz#3e67d595ada940b1464e49e5f51cb9c4a1798e3a"
@@ -1583,14 +1518,6 @@
   dependencies:
     "@types/deep-equal" "^1.0.1"
     deep-equal "^2.0.5"
-
-"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.6":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.5.2.tgz#4a1f154c0b8ca29e2231d202ec1a279810328844"
-  integrity sha512-rK7IajwtSEg1DkuqZ88F7hvvZG8cG7bwQx8eN0uMJilNJNnWGqjnLyOJHsIlB/K0bkhbccur4GrPDPu3Fe1fjg==
-  dependencies:
-    "@cognite/sdk-core" "^1.2.2"
-    lodash "^4.17.11"
 
 "@cognite/sdk@^6.3.1", "@cognite/sdk@^6.3.3":
   version "6.3.3"
