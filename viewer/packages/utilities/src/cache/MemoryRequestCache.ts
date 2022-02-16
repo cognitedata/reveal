@@ -90,7 +90,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   isFull(): boolean {
-    return !(this._data.size < this._maxElementsInCache);
+    return this._data.size >= this._maxElementsInCache;
   }
 
   cleanCache(count: number): void {
