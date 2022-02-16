@@ -67,7 +67,6 @@ DEPENDENCIES = [
     "@npm//@dnd-kit/core",
     "@npm//@dnd-kit/sortable",
     "@npm//@sentry/browser",
-    "@npm//path-browserify",
     "@npm//assert",
     "@npm//buffer",
     "@npm//eslint-config-react-app",
