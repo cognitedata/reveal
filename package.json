@@ -27,7 +27,7 @@
     "@cognite/annotations": "^1.1.0",
     "@cognite/cdf-utilities": "^0.11.1",
     "@cognite/cogs.js": "^5.6.0",
-    "@cognite/data-exploration": "^1.6.4",
+    "@cognite/data-exploration": "1.8.0-beta.1",
     "@cognite/gcs-browser-upload": "^1.1.1",
     "@cognite/griff-react": "~0.4.2",
     "@cognite/react-feature-flags": "^0.2.1",
