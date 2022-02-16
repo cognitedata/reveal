@@ -72,21 +72,22 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       { format: File3dFormat.RevealCadModel, version: 8 }
     ];
 
-    const supportedModelOutputs = outputs.filter(modelOutput => {
-      return preferredOutputs.some(supportedOutput => {
-        return supportedOutput.format === modelOutput.format && supportedOutput.version === modelOutput.version;
-      });
-    });
-
-    if (supportedModelOutputs.length === 0) {
-      const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
-      const supportedOutputsString = preferredOutputs.map(output => `${output.format} v${output.version}`).join(', ');
-      throw new Error(
-        `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
+    for (const preferredOutput of preferredOutputs) {
+      const acceptableOutput = outputs.find(
+        supportedOutput =>
+          supportedOutput.format === preferredOutput.format && supportedOutput.version === preferredOutput.version
       );
+
+      if (acceptableOutput) {
+        return acceptableOutput;
+      }
     }
 
-    return supportedModelOutputs[0];
+    const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
+    const supportedOutputsString = preferredOutputs.map(output => `${output.format} v${output.version}`).join(', ');
+    throw new Error(
+      `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
+    );
   }
 }
 
