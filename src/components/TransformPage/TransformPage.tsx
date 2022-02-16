@@ -1,4 +1,4 @@
-import { Button, Input, Icon } from '@cognite/cogs.js';
+import { Button, Input } from '@cognite/cogs.js';
 import Col from 'antd/lib/col';
 
 import message from 'antd/lib/message';
@@ -45,32 +45,15 @@ const columns = [
     key: 'created',
     title: 'Created',
     render: (_text: string, transform: any) => (
-      <p>{moment(transform.created).toString()}</p>
+      <p>{moment(transform.createdTime).toString()}</p>
     ),
   },
   {
     key: 'updated',
     title: 'Updated',
     render: (_text: string, transform: any) => (
-      <p>{moment(transform.updated).toString()}</p>
+      <p>{moment(transform.lastUpdatedTime).toString()}</p>
     ),
-  },
-  {
-    key: 'owner',
-    title: 'Owner',
-    render(_text: string, transform: any) {
-      if (transform.ownerIsCurrentUser) {
-        return (
-          <>
-            <Icon type="User" /> me
-          </>
-        );
-      }
-      if (transform.owner) {
-        return transform.owner.user;
-      }
-      return '';
-    },
   },
 ];
 
