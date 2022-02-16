@@ -2,6 +2,7 @@ import Konva from 'konva';
 import { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { Shape, ShapeConfig } from 'konva/lib/Shape';
 import throttle from 'lodash/throttle';
+import debounce from 'lodash/debounce';
 import { v4 as uuid } from 'uuid';
 import { Vector2d } from 'konva/lib/types';
 import { PDFDocument } from 'pdf-lib';
@@ -26,7 +27,9 @@ import bgImage from './assets/bg.png';
 import { downloadURL, pdfToImage, ConnectedLine } from './utils';
 import getInputDeviceFromWheelEvent from './utils/getInputDeviceFromWheelEvent';
 import InputDevice from './utils/InputDevice';
+import isNodeInView from './utils/isNodeInView';
 
+const OUT_OF_VIEW_DETECTION_DEBOUNCE_MS = 250;
 const RIGHT_MOUSE_BUTTON = 2;
 
 const defaultShapeSettings = {
@@ -465,6 +468,7 @@ export class CogniteOrnate {
 
     this.stage.x(x);
     this.stage.y(y);
+    this.onViewportChange();
   };
 
   onStageContextMenu = (e: KonvaEventObject<MouseEvent>) => {
@@ -529,16 +533,7 @@ export class CogniteOrnate {
     };
 
     this.stage.position(newPos);
-
-    // Show / Hide rectangles based on scale
-    const shouldShowRects = newScale.x > 0.1 || newScale.y > 0.1;
-    this.documents.forEach((doc) => {
-      if (!shouldShowRects) {
-        doc.kImage.hide();
-      } else {
-        doc.kImage.show();
-      }
-    });
+    this.onViewportChange();
   };
 
   connectDocuments(
@@ -629,10 +624,12 @@ export class CogniteOrnate {
       x,
       y,
     });
-    tween.onFinish = () => tween.destroy();
+    tween.onFinish = () => {
+      tween.destroy();
+      this.onViewportChange();
+    };
 
     tween.play();
-    this.stage.batchDraw();
   }
 
   zoomToGroup(group: Konva.Group, zoomToGroupOptions?: ZoomToGroupOptions) {
@@ -872,4 +869,16 @@ export class CogniteOrnate {
   setCursor = (cursor: string): void => {
     this.stage.container().style.cursor = cursor;
   };
+
+  onViewportChange = debounce(() => {
+    this.documents.forEach((doc) => {
+      const shouldShowImagesAtScale =
+        this.stage.scaleX() > 0.1 || this.stage.scaleY() > 0.1;
+      if (shouldShowImagesAtScale && isNodeInView(doc.group, this.stage)) {
+        doc.kImage.show();
+      } else {
+        doc.kImage.hide();
+      }
+    });
+  }, OUT_OF_VIEW_DETECTION_DEBOUNCE_MS);
 }
