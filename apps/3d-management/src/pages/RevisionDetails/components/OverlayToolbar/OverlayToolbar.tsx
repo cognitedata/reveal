@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ToolBarButton, ToolBar, Slider } from '@cognite/cogs.js';
 import {
   Cognite3DModel,
