@@ -95,7 +95,7 @@ export class GltfSectorParser {
     return { type: geometryType, geometryBuffer: bufferGeometry };
   }
 
-  processInstancedTriangleMesh(payload: GeometryProcessingPayload): ParsedGeometry {
+  private async processInstancedTriangleMesh(payload: GeometryProcessingPayload): Promise<ParsedGeometry> {
     const { bufferGeometry, glbHeaderData, meshId, data } = payload;
 
     const json = glbHeaderData.json;
@@ -109,8 +109,15 @@ export class GltfSectorParser {
 
     const primitive = mesh.primitives[0];
 
-    this.setIndexBuffer(glbHeaderData, primitive, data, bufferGeometry);
-    this.setPositionBuffer(payload, primitive, data, bufferGeometry);
+    const { vertexBuffer, byteOffset, byteLength } = await this.getVertexBuffer(
+      json,
+      glbHeaderData,
+      data,
+      primitive,
+      bufferGeometry
+    );
+
+    this.setPositionBuffer(vertexBuffer, byteOffset, byteLength, bufferGeometry);
 
     const primitivesAttributeNameTransformer = (attributeName: string) => `a${attributeName}`;
 
@@ -118,16 +125,16 @@ export class GltfSectorParser {
       payload.glbHeaderData.json,
       payload.instancingExtension!.attributes!
     );
-    const byteOffset = payload.glbHeaderData.byteOffsetToBinContent + (sharedBufferView.byteOffset ?? 0);
-    const { byteLength, byteStride } = sharedBufferView;
+    const instanceBufferByteOffset = payload.glbHeaderData.byteOffsetToBinContent + (sharedBufferView.byteOffset ?? 0);
+    const { byteLength: instanceBufferByteLength, byteStride: instanceBufferByteStride } = sharedBufferView;
 
     this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
       payload.glbHeaderData.json,
       payload.instancingExtension!.attributes,
       payload.data,
-      byteOffset,
-      byteLength,
-      byteStride,
+      instanceBufferByteOffset,
+      instanceBufferByteLength,
+      instanceBufferByteStride,
       primitivesAttributeNameTransformer,
       payload.bufferGeometry,
       THREE.InstancedInterleavedBuffer
@@ -299,28 +306,15 @@ export class GltfSectorParser {
   }
 
   private setPositionBuffer(
-    payload: GeometryProcessingPayload,
-    primitive: Primitive,
     data: ArrayBuffer,
+    byteOffset: number,
+    byteLength: number,
     bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
   ) {
-    const json = payload.glbHeaderData.json;
+    const positionBytesPerElement = Float32Array.BYTES_PER_ELEMENT;
+    const elementSize = 3;
 
-    const offsetToBinChunk = payload.glbHeaderData.byteOffsetToBinContent;
-
-    const positionAccessor = json.accessors[primitive.attributes.POSITION];
-    const positionBufferView = json.bufferViews[positionAccessor.bufferView];
-    positionBufferView.byteOffset = positionBufferView.byteOffset ?? 0;
-
-    const PositionTypedArrayConstructor = DATA_TYPE_BYTE_SIZES.get(positionAccessor.componentType)!;
-
-    const positionTypedArray = new PositionTypedArrayConstructor(
-      data,
-      offsetToBinChunk + positionBufferView.byteOffset,
-      positionBufferView.byteLength / PositionTypedArrayConstructor.BYTES_PER_ELEMENT
-    );
-
-    const elementSize = COLLECTION_TYPE_SIZES.get(positionAccessor.type)!;
+    const positionTypedArray = new Float32Array(data, byteOffset, byteLength / positionBytesPerElement);
 
     bufferGeometry.setAttribute('position', new THREE.BufferAttribute(positionTypedArray, elementSize));
   }
