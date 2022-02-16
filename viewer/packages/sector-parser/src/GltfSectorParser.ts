@@ -118,7 +118,7 @@ export class GltfSectorParser {
       payload.glbHeaderData.json,
       payload.instancingExtension!.attributes!
     );
-    const byteOffset = payload.glbHeaderData.byteOffsetToBinContent + sharedBufferView.byteOffset ?? 0;
+    const byteOffset = payload.glbHeaderData.byteOffsetToBinContent + (sharedBufferView.byteOffset ?? 0);
     const { byteLength, byteStride } = sharedBufferView;
 
     this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
@@ -265,7 +265,7 @@ export class GltfSectorParser {
       const sharedBufferView = this.getSharedBufferView(json, primitive.attributes);
 
       vertexBuffer = data;
-      byteOffset = offsetToBinChunk + sharedBufferView.byteOffset ?? 0;
+      byteOffset = offsetToBinChunk + (sharedBufferView.byteOffset ?? 0);
       byteLength = sharedBufferView.byteLength;
       byteStride = sharedBufferView.byteStride;
     }
