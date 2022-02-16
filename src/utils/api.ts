@@ -1,4 +1,4 @@
-import sdk from '@cognite/cdf-sdk-singleton';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { QueryKey } from 'react-query';
 import {
   CogFunctionUpload,
@@ -259,6 +259,6 @@ export const createSession = (clientCredentials?: {
 };
 
 export const isOIDCFlow = () => {
-  // TODO(CDFUX-1188): fix TODOs when sdk-singleton starts using sdk v6
-  return (sdk as any).getOAuthFlowType() === 'AAD_OAUTH';
+  const { flow } = getFlow();
+  return flow !== 'COGNITE_AUTH';
 };
