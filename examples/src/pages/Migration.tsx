@@ -253,7 +253,7 @@ export function Migration() {
         let insideSectors = 0;
         let maxInsideDepth = -1;
         let maxDepth = -1;
-        const cameraPosition = viewer.cameraManager.getCameraPosition();
+        const cameraPosition = cameraManager.getCameraState().position;
         modelUi.cadModels.forEach(m => {
           m.traverse(x => {
             // Hacky way to access internals of SectorNode
