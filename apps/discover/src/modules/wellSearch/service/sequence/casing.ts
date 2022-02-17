@@ -74,7 +74,7 @@ export const fetchCasingsUsingWellsSDK = async (
     )
   );
 
-  return getGroupedSequenceData(casings, wellboreIds);
+  return groupBy(casings, 'assetId');
 };
 
 export const mapCasingItemsToSequences = (
