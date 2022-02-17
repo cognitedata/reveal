@@ -202,7 +202,7 @@ export const WellResultTable: React.FC = () => {
       <SearchTableResultActionContainer>
         <div>
           <SearchBreadcrumb stats={wellsStats} />
-          <WellAppliedFilters showClearTag />
+          <WellAppliedFilters showClearTag showSearchPhraseTag />
         </div>
         <WellOptionPanel />
       </SearchTableResultActionContainer>

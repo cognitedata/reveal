@@ -28,6 +28,7 @@ const SELECT_TEXT = 'Select...';
 const MEASUREMENT_SELECT = 'salinity';
 const NPT_CODE_SELECT = 'TESTC';
 const NPT_DETAILS_CODE_SELECT = 'BARR';
+const SEARCH_QUERY = 'Discover';
 
 const checkRequestContainsFilter = (expectedFilter: unknown) => {
   cy.wait('@searchWells')
@@ -519,5 +520,13 @@ describe('Wells sidebar filters', () => {
 
     cy.log('Clear all selected filters');
     cy.findByTestId('clear-all-btn').click();
+
+    cy.log('search result on search');
+    cy.performSearch(SEARCH_QUERY);
+
+    cy.log('check search query filter tag');
+    cy.findAllByTestId('filter-tag')
+      .contains(SEARCH_QUERY)
+      .should('be.visible');
   });
 });
