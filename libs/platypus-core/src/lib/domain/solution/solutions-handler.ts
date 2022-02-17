@@ -1,3 +1,4 @@
+import { PlatypusError } from '@platypus-core/boundaries/types';
 import { Result } from '../../boundaries/types/result';
 import { Validator } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
@@ -10,13 +11,13 @@ export class SolutionsHandler {
 
   list(): Promise<Result<Solution[]>> {
     return this.solutionsService
-      .listTemplateGroups()
+      .listSolutions()
       .then((solutions) => Result.ok(solutions));
   }
 
   fetch(dto: FetchSolutionDTO): Promise<Result<Solution>> {
     return this.solutionsService
-      .fetchTemplateGroup(dto)
+      .fetchSolution(dto)
       .then((solutions) => Result.ok(solutions));
   }
 
@@ -30,10 +31,10 @@ export class SolutionsHandler {
       return Promise.resolve(Result.fail(validationResult.errors));
     }
     return this.solutionsService
-      .createTemplateGroup(dto)
-      .then((solution) => Result.ok(solution))
-      .catch((err) => {
-        if (err.status === 409) {
+      .createSolution(dto)
+      .then((solution: Solution) => Result.ok(solution))
+      .catch((err: PlatypusError) => {
+        if (err.code === 409) {
           return Result.fail({
             name: 'Solution name already exists.',
           });
@@ -45,10 +46,10 @@ export class SolutionsHandler {
 
   delete(dto: DeleteSolutionDTO): Promise<Result<unknown>> {
     return this.solutionsService
-      .deleteTemplateGroup(dto)
+      .deleteSolution(dto)
       .then((res) => Result.ok(res))
-      .catch((err) => {
-        if (err.status === 403) {
+      .catch((err: PlatypusError) => {
+        if (err.code === 403) {
           return Result.fail({
             name: 'Failed to delete the solution, insufficient access rights.',
           });

@@ -6,38 +6,39 @@ import Response, {
 
 import { getCogniteSDKClient } from '@cognite/platypus-cdf-cli/app/utils/cogniteSdk';
 import { CommandArgumentType } from '@cognite/platypus-cdf-cli/app/types';
+import { getSolutionSchemaHandler } from '../../utils';
 
 export const commandArgs = [
   {
     name: 'externalId',
-    description: 'ApiSpec ExternalId',
-    prompt: 'Enter the ApiSpec ExternalId',
+    description: 'Api ExternalId',
+    prompt: 'Enter the Api ExternalId',
     type: CommandArgumentType.STRING,
     required: true,
-    example: '$0 solutions apiSpec versions list --externalId=test-id',
+    example: '$0 solutions api versions list --externalId=test-id',
   },
 ];
-const DEBUG = _DEBUG.extend('platypus-cdf-cli:solutions:apiSpec:versions:list');
+const DEBUG = _DEBUG.extend('solutions:api:versions:list');
 export class SolutionsApiSpecVersionsListCommand extends CLICommand {
   async execute(args) {
-    const client = getCogniteSDKClient();
-    DEBUG('CDF Clint initialized');
-
-    const solutionSchemaApi = new SolutionsApiService(client);
+    const solutionsSchemaHandler = getSolutionSchemaHandler();
     DEBUG('SolutionsApiService initialized');
 
-    const apiSpecVersionsList = await solutionSchemaApi.getApiSpecsByIds(
-      args.externalId,
-      true
-    );
+    const apiVersionsResult = await solutionsSchemaHandler.versions({
+      solutionId: args.externalId,
+    });
+
+    if (!apiVersionsResult.isSuccess) {
+      throw apiVersionsResult.error;
+    }
+
+    const apiVersionsList = apiVersionsResult.getValue();
     DEBUG(
-      'List of api specs retrieved successfully, %o',
-      JSON.stringify(apiSpecVersionsList, null, 2)
+      'List of api versions retrieved successfully, %o',
+      JSON.stringify(apiVersionsList, null, 2)
     );
 
-    Response.success(
-      apiSpecVersionsList[0].versions.map((api) => api.version).join('\n')
-    );
+    Response.success(apiVersionsList.map((api) => api.version).join('\n'));
   }
 }
 

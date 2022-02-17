@@ -2,6 +2,9 @@ export interface CreateSolutionDTO {
   name: string;
   description?: string;
   owner?: string;
+  metadata?: {
+    [key: string]: string | number | boolean;
+  };
 }
 
 export interface DeleteSolutionDTO {
@@ -29,6 +32,8 @@ export interface CreateSchemaDTO {
   /** GraphQL schema as string */
   schema: string;
   version?: string;
+  // eslint-disable-next-line
+  bindings?: any;
 }
 
 export interface GraphQlQueryParams {
@@ -66,43 +71,37 @@ export interface SolutionApiBinding {
   };
 }
 
-export interface SolutionApiTableDTO {
-  externalId: string;
-  name: string;
-  columns: {
-    [name: string]: string;
-  };
-}
-export interface SolutionApiDTO {
-  externalId: string;
-  name?: string;
-  apiSpecReference?: {
-    externalId: string;
-    version: number;
-  };
-  bindings: SolutionApiBinding[];
+export interface ApiVersionDataModel {
+  types: [any];
+  graphqlRepresentation: string;
 }
 
-export interface SolutionApiSpecVersion {
+export interface ApiVersionBindings {
+  targetName: string;
+  dataSource: {
+    externalId: string;
+  };
+}
+export interface ApiVersion {
   version: number;
   createdTime: number;
-  graphqlRepresentation: string;
+  dataModel: ApiVersionDataModel;
+  bindings?: [ApiVersionBindings];
+}
+
+export interface ApiVersionFromGraphQl {
+  version?: number;
+  apiExternalId: string;
+  graphQl: string;
+  bindings?: ApiVersionBindings[];
+  metadata?: {
+    [key: string]: unknown;
+  };
 }
 export interface SolutionApiOutputDTO {
   externalId: string;
   name: string;
   description: string;
   createdTime: number;
-  versions?: SolutionApiSpecVersion[];
-}
-
-export interface IngestDataRowDTO {
-  externalId: string;
-  values: {
-    [name: string]: string;
-  };
-}
-export interface IngestTableDataDTO {
-  externalId: string;
-  data: IngestDataRowDTO[];
+  versions?: ApiVersion[];
 }

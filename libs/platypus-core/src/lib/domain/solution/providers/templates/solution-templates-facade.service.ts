@@ -27,7 +27,7 @@ export class SolutionTemplatesFacadeService
     this.templateSchemaDataMapper = new TemplateSchemaDataMapper();
   }
 
-  createTemplateGroup(dto: CreateSolutionDTO): Promise<Solution> {
+  createSolution(dto: CreateSolutionDTO): Promise<Solution> {
     return this.templatesApiService
       .createTemplateGroup(dto)
       .then((templateGroup) =>
@@ -35,11 +35,11 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  deleteTemplateGroup(dto: DeleteSolutionDTO): Promise<unknown> {
+  deleteSolution(dto: DeleteSolutionDTO): Promise<unknown> {
     return this.templatesApiService.deleteTemplateGroup(dto);
   }
 
-  listTemplateGroups(): Promise<Solution[]> {
+  listSolutions(): Promise<Solution[]> {
     return this.templatesApiService
       .listTemplateGroups()
       .then((templateGroups) =>
@@ -49,7 +49,7 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  fetchTemplateGroup(dto: FetchSolutionDTO): Promise<Solution> {
+  fetchSolution(dto: FetchSolutionDTO): Promise<Solution> {
     return this.templatesApiService
       .fetchTemplateGroup({ solutionId: dto.solutionId })
       .then((templateGroup) =>

@@ -52,7 +52,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
 
   it('should load template groups as solutions', async () => {
     const service = createInstance();
-    const solutions = await service.listTemplateGroups();
+    const solutions = await service.listSolutions();
     expect(templatesApiServiceMock.listTemplateGroups).toBeCalled();
 
     expect(solutions).toEqual([expectedMock]);
@@ -60,7 +60,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
 
   it('should create template group as solution', async () => {
     const service = createInstance();
-    const solutions = await service.createTemplateGroup({
+    const solutions = await service.createSolution({
       name: templateGroupMock.externalId,
       description: templateGroupMock.description,
       owner: 'test-user@cognite.com',
@@ -72,7 +72,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
 
   it('should delete template group', async () => {
     const service = createInstance();
-    await service.deleteTemplateGroup({
+    await service.deleteSolution({
       id: templateGroupMock.externalId,
     });
     expect(templatesApiServiceMock.deleteTemplateGroup).toBeCalled();

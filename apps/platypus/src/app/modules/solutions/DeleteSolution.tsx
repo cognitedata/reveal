@@ -6,7 +6,7 @@ import { Solution } from '@platypus/platypus-core';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 
 import { useTranslation } from '../../hooks/useTranslation';
-import services from './di';
+import services from '@platypus-app/di';
 import { StyledModalDialog } from './elements';
 
 export const DeleteSolution = ({
@@ -22,7 +22,7 @@ export const DeleteSolution = ({
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
 
-  const solutionsHandler = services().solutionsHandler;
+  const solutionsHandler = services().solutionHandler;
 
   const onDeleteSolution = (solutionId: string) => {
     setDeleting(true);

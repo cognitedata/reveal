@@ -10,10 +10,10 @@ import {
 import { SolutionSchema, Solution } from '../types';
 
 export interface ISolutionsApiService {
-  createTemplateGroup(dto: CreateSolutionDTO): Promise<Solution>;
-  deleteTemplateGroup(dto: DeleteSolutionDTO): Promise<unknown>;
-  listTemplateGroups(): Promise<Solution[]>;
-  fetchTemplateGroup(dto: FetchSolutionDTO): Promise<Solution>;
+  createSolution(dto: CreateSolutionDTO): Promise<Solution>;
+  deleteSolution(dto: DeleteSolutionDTO): Promise<unknown>;
+  listSolutions(): Promise<Solution[]>;
+  fetchSolution(dto: FetchSolutionDTO): Promise<Solution>;
 }
 
 export interface ISolutionSchemaApiService {

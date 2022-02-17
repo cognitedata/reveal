@@ -5,7 +5,7 @@ import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
-import services from './di';
+import services from '@platypus-app/di';
 import { CreateSolutionModalContent } from './elements';
 
 export const CreateSolution = ({
@@ -22,7 +22,7 @@ export const CreateSolution = ({
   const history = useHistory();
   const { t } = useTranslation('solutions');
 
-  const solutionsHandler = services().solutionsHandler;
+  const solutionsHandler = services().solutionHandler;
 
   const onCreateSolution = () => {
     setCreating(true);

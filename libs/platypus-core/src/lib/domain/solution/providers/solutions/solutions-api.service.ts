@@ -1,15 +1,14 @@
 import { CogniteClient } from '@cognite/sdk';
-import { PlatypusError } from '@platypus/platypus-core';
+import { PlatypusError } from '@platypus-core/boundaries/types';
 
 import {
   ApiSpecDTO,
   GraphQlQueryParams,
   GraphQLQueryResponse,
-  IngestTableDataDTO,
   RunQueryDTO,
-  SolutionApiDTO,
   SolutionApiOutputDTO,
-  SolutionApiTableDTO,
+  ApiVersion,
+  ApiVersionFromGraphQl,
 } from '../../dto';
 
 export class SolutionsApiService {
@@ -18,34 +17,7 @@ export class SolutionsApiService {
     this.schemaServiceBaseUrl = `/api/v1/projects/${this.cdfClient.project}/schema/graphql`;
   }
 
-  listApiSpecs(): Promise<SolutionApiOutputDTO[]> {
-    const listVersionsQuery = `
-    query {
-      listApiSpecs {
-        edges {
-          node {
-            externalId
-            name
-            description
-            createdTime
-          }
-        }
-      }
-    }
-    `;
-
-    const reqDto = {
-      query: listVersionsQuery,
-    } as GraphQlQueryParams;
-
-    return this.runGraphQlQuery(this.schemaServiceBaseUrl, reqDto)
-      .then((response) => {
-        return this.transformData(response, 'listApiSpecs');
-      })
-      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
-  }
-
-  getApiSpecsByIds(
+  getApisByIds(
     externalId: string,
     includeVersions = true
   ): Promise<SolutionApiOutputDTO[]> {
@@ -53,11 +25,13 @@ export class SolutionsApiService {
     versions {
       version
       createdTime
-      graphqlRepresentation
+      dataModel {
+        graphqlRepresentation
+      }
     }`;
     const listVersionsQuery = `
     query {
-      getApiSpecsByIds(externalIds: ["${externalId}"] ) {
+      getApisByIds(externalIds: ["${externalId}"] ) {
         externalId
         name
         description
@@ -73,7 +47,7 @@ export class SolutionsApiService {
 
     return this.runGraphQlQuery(this.schemaServiceBaseUrl, reqDto)
       .then((response) => {
-        return response.data.data.getApiSpecsByIds;
+        return response.data.data.getApisByIds;
       })
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
@@ -103,62 +77,20 @@ export class SolutionsApiService {
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  updateApis(apiDto: SolutionApiDTO[]) {
-    const reqDto = {
-      query: `
-        mutation upsertApi($apis: [ApiCreate!]!) {
-          upsertApis(apis: $apis) {
-            externalId
-            apiSpecReference {
-              externalId
-              version
-            }
-            bindings {
-              targetName
-            }
-          }
-        }
-      `,
-      variables: {
-        apis: apiDto.map((api) => {
-          if (!api.name) {
-            return { ...api, name: api.externalId };
-          } else {
-            return api;
-          }
-        }),
-      },
-    } as GraphQlQueryParams;
-    return this.runGraphQlQuery(this.schemaServiceBaseUrl, reqDto).catch(
-      (err) => Promise.reject(PlatypusError.fromSdkError(err))
-    );
-  }
-
-  async updateTables(tables: SolutionApiTableDTO[]) {
-    const url = `/api/v1/projects/${this.cdfClient.project}/schema/tables`;
-    const promises = tables.map((table) => {
-      return this.cdfClient.post(url, {
-        data: table,
-      });
-    });
-
-    return await Promise.all(promises)
-      .then((res) => console.log(res))
-      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
-  }
-
   /**
-   * Creates API Spec (solution)
+   * Creates or Update API (solution)
    */
-  updateApiSpec(apiSpec: ApiSpecDTO) {
+  upsertApi(apiSpec: ApiSpecDTO) {
     const reqDto = {
       query: `
-        mutation createApiSpec($apiCreate: ApiSpecCreate!) {
-          upsertApiSpecs(apiSpecs: [$apiCreate]) {
+        mutation createUpdateApi($apiCreate: ApiCreate!) {
+          upsertApis(apis: [$apiCreate]) {
             externalId
             versions {
               version
-              graphqlRepresentation
+              dataModel {
+                graphqlRepresentation
+              }
             }
           }
         }
@@ -168,61 +100,69 @@ export class SolutionsApiService {
           externalId: apiSpec.externalId,
           name: apiSpec.name ? apiSpec.name : apiSpec.externalId,
           description: apiSpec.description,
-          metadata: apiSpec.metadata,
+          // metadata: apiSpec.metadata,
         },
       },
     } as GraphQlQueryParams;
     return this.runGraphQlQuery(this.schemaServiceBaseUrl, reqDto)
       .then((response) => {
-        return response.data.data.upsertApiSpecs[0];
+        return response.data.data.upsertApis[0];
       })
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  addApiSpecVersion(externalId: string, graphQl: string) {
+  /** Publish new API version */
+  publishVersion(dto: ApiVersionFromGraphQl): Promise<ApiVersion> {
+    return this.upsertApiVersion(dto, 'NEW_VERSION');
+  }
+
+  /** Tried to patch the version or throws confict error */
+  updateVersion(dto: ApiVersionFromGraphQl): Promise<ApiVersion> {
+    return this.upsertApiVersion(dto, 'PATCH');
+  }
+
+  private upsertApiVersion(
+    dto: ApiVersionFromGraphQl,
+    conflictMode: string
+  ): Promise<ApiVersion> {
+    const createApiVersionDTO = {
+      apiExternalId: dto.apiExternalId,
+      graphQl: dto.graphQl,
+      bindings: dto.bindings ? dto.bindings : [],
+    } as ApiVersionFromGraphQl;
+
+    if (dto.version) {
+      createApiVersionDTO.version = +dto.version;
+    }
+
     const reqDto = {
       query: `
-      mutation addApiSpecVersion($externalId: ID!, $graphQl: String!) {
-        addApiSpecRevisionFromGraphQl(
-          externalId: $externalId
-          graphQl: $graphQl
+      mutation upsertApiVersion($apiVersion: ApiVersionFromGraphQl!) {
+        upsertApiVersionFromGraphQl(
+          apiVersion: $apiVersion
         ) {
           version
+          createdTime
+          dataModel {
+            graphqlRepresentation
+          }
         }
       }
       `,
       variables: {
-        externalId,
-        graphQl,
+        apiVersion: createApiVersionDTO,
+        conflictMode: conflictMode,
       },
     } as GraphQlQueryParams;
     return this.runGraphQlQuery(this.schemaServiceBaseUrl, reqDto)
       .then((response) => {
-        return response.data.data.addApiSpecRevisionFromGraphQl;
+        return response.data.data.upsertApiVersionFromGraphQl;
       })
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  ingestData(dto: IngestTableDataDTO) {
-    const url = `/api/v1/projects/${this.cdfClient.project}/schema/tables/${dto.externalId}`;
-
-    console.log(`ingesting data for`, JSON.stringify(dto, null, 2));
-    return this.cdfClient
-      .post(url, {
-        data: dto.data,
-      })
-      .then((res) => {
-        console.log(res);
-        return res;
-      })
-      .catch((err) => {
-        console.error(err);
-        return Promise.reject(PlatypusError.fromSdkError(err));
-      });
-  }
-
   async runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
-    const url = `/api/v1/projects/${dto.solutionId}/schema/api/${dto.extras?.apiName}/graphql`;
+    const url = `/api/v1/projects/${this.cdfClient.project}/schema/api/${dto.solutionId}/${dto.schemaVersion}/graphql`;
     return (await this.runGraphQlQuery(url, dto.graphQlParams)).data;
   }
 
