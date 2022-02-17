@@ -104,7 +104,7 @@ export class DefaultCameraManager implements CameraManager {
     camera?: THREE.PerspectiveCamera
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-
+    
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
@@ -205,9 +205,6 @@ export class DefaultCameraManager implements CameraManager {
     return this._camera;
   }
 
-  getCameraRotation(): THREE.Quaternion {
-    return this._camera.quaternion;
-  }
   /**
    * Sets camera state. All parameters are optional. When setting rotation and target simultaneously, 
    * target will have priority over rotation. Set rotation is preserved until next call of setCameraState with 
@@ -232,26 +229,17 @@ export class DefaultCameraManager implements CameraManager {
       target: this._controls.getState().target.clone()
     };
   }
+  
+  getCameraRotation(): THREE.Quaternion {
+    return this._camera.quaternion;
+  }
 
   setCameraRotation(rotation: THREE.Quaternion): void {
-    const distToTarget = this.getCameraTarget().sub(this._camera.position);
-    const tempCam = this._camera.clone();
+   const newTarget = this.calculateNewTargetFromRotation(rotation);
 
-    tempCam.setRotationFromQuaternion(rotation);
-    tempCam.updateMatrix();
-
-    const newTarget = tempCam
-      .getWorldDirection(new THREE.Vector3())
-      .normalize()
-      .multiplyScalar(distToTarget.length())
-      .add(tempCam.position);
-
-    this._controls.setState(tempCam.position, newTarget);
-    tempCam.position.copy(this._camera.position);
-    tempCam.lookAt(newTarget);
-
-    const appliedQuaternion = tempCam.quaternion.clone();
-    this._controls.cameraRawRotation.copy(rotation.clone().multiply(appliedQuaternion.invert()));
+    this._controls.cameraRawRotation.copy(rotation);
+    this._controls.setState(this._camera.position, newTarget);
+    
   }
 
   getCameraTarget(): THREE.Vector3 {
@@ -271,14 +259,6 @@ export class DefaultCameraManager implements CameraManager {
     this.moveCameraTargetTo(target, animationTime);
   }
 
-  setCameraControlsState(controlsState: ControlsState): void {
-    this._controls.setState(controlsState.position, controlsState.target);
-  }
-
-  /**
-   * @obvious
-   * @returns Camera's position in world space.
-   */
   getCameraPosition(): THREE.Vector3 {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
@@ -290,12 +270,9 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isDisposed) {
       return;
     }
+    this._controls.cameraRawRotation.identity();
 
     this._controls.setState(position, this._controls.getState().target);
-  }
-
-  getCameraControlsState(): ControlsState {
-    return this._controls.getState();
   }
 
   /**

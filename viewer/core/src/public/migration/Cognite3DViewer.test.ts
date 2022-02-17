@@ -12,6 +12,7 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 import nock from 'nock';
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
+import { DefaultCameraManager } from '@reveal/camera-manager';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 
@@ -83,7 +84,8 @@ describe('Cognite3DViewer', () => {
     viewer.on('cameraChange', onCameraChange);
 
     // Act
-    viewer.cameraManager.setCameraState({position: new THREE.Vector3(123, 456, 789), target: new THREE.Vector3(1, 2, 3)});
+    viewer.cameraManager.setCameraState({ position: new THREE.Vector3(123, 456, 789) });
+    viewer.cameraManager.setCameraState({ target: new THREE.Vector3(1, 2, 3) });
    
     // Assert
     expect(onCameraChange).toBeCalledTimes(2);
@@ -143,6 +145,8 @@ describe('Cognite3DViewer', () => {
   test('fitCameraToBoundingBox with 1000 duration, moves camera over time', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const cameraManager = viewer.cameraManager;
+    cameraManager.setCameraState({ position: new THREE.Vector3(30, 10, 50), target: new THREE.Vector3() });
     const bbox = new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(2, 2, 2));
     const bSphere = bbox.getBoundingSphere(new THREE.Sphere());
     bSphere.radius *= 3;
