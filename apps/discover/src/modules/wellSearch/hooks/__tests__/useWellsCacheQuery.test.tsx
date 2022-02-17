@@ -2,16 +2,16 @@ import { QueryClient } from 'react-query';
 
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
 
-import { getMockConfigGet } from '__mocks/getMockConfigGet';
-import { getMockWellById } from '__mocks/getMockWellById';
 import { testRendererForHooks } from '__test-utils/renderer';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { setEnableWellSDKV3 } from 'modules/wellSearch/sdk';
 
 import { useWellsCacheQuery } from '../useWellsCacheQuery';
 
-const mockServer = setupServer(getMockWellById(), getMockConfigGet());
+const mockServer = setupServer(getMockWellsById(), getMockConfigGet());
 
 describe('useWellsCacheQuery', () => {
   beforeAll(() => mockServer.listen());

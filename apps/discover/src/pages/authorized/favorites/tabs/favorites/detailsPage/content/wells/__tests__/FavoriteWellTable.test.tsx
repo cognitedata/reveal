@@ -1,9 +1,9 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
+import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
 
-import { getMockConfigGet } from '__mocks/getMockConfigGet';
-import { getMockWellById } from '__mocks/getMockWellById';
-import { getMockUserMe } from '__mocks/mockUmsMe';
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
@@ -18,7 +18,7 @@ import { FavoriteWellsTable, Props } from '../FavoriteWellTable';
 
 const mockServer = setupServer(
   getMockUserMe(),
-  getMockWellById(),
+  getMockWellsById(),
   getMockConfigGet()
 );
 

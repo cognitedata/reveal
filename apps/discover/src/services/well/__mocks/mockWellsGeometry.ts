@@ -5,8 +5,7 @@ import { WellGeometryListResponse } from '@cognite/discover-api-types';
 
 import { getMockWellGeometryCollection } from '__test-utils/fixtures/wellGeometryCollection';
 import { MSWRequest } from '__test-utils/types';
-
-import { SIDECAR } from '../constants/app';
+import { SIDECAR } from 'constants/app';
 
 const responseData: WellGeometryListResponse = getMockWellGeometryCollection();
 

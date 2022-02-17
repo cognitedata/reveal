@@ -1,21 +1,21 @@
 import { screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
+import { getMockWellsList } from 'services/well/__mocks/getMockWellsList';
+import { getMockWellsGeometry } from 'services/well/__mocks/mockWellsGeometry';
+import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
 
-import { getMockConfigGet } from '__mocks/getMockConfigGet';
-import { getMockDocumentSearch } from '__mocks/getMockDocumentSearch';
-import { getMockUserMe } from '__mocks/mockUmsMe';
-import { getMockWellsGeometry } from '__mocks/mockWellsGeometry';
 import { getMockPointGeo } from '__test-utils/fixtures/geometry';
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { getWrapper, testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
+import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 import {
   ExternalWellsFeature,
   useDataFeatures,
 } from 'modules/map/hooks/useDataFeaturesv2';
-import { getMockWellsById } from 'modules/wellSearch/__mocks/getMockWellsById';
-import { getMockWellsList } from 'modules/wellSearch/__mocks/getMockWellsList';
 import {
   DOCUMENT_LAYER_ID,
   WELL_HEADS_LAYER_ID,

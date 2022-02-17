@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
+import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
+import { getMockTrajectoriesList } from 'services/well/__mocks/getMockWellTrajectories';
+import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
 
-import { getMockWellById } from '__mocks/getMockWellById';
-import { getMockUserMe } from '__mocks/mockUmsMe';
-import { getMockTrajectoriesList } from '__mocks/mockWellTrajectories';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
@@ -17,7 +17,7 @@ jest.mock('modules/wellSearch/hooks/useEnabledWellSdkV3', () => ({
 const mockServer = setupServer(
   getMockUserMe(),
   getMockTrajectoriesList(),
-  getMockWellById()
+  getMockWellsById()
 );
 
 describe('Overview hook', () => {

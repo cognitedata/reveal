@@ -1,7 +1,7 @@
 import { setupServer } from 'msw/node';
 
-import { getMockDocumentSearch } from '__mocks/getMockDocumentSearch';
 import { getMockDocumentEmptyFacets } from '__test-utils/fixtures/document';
+import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 
 import { documentSearchService } from '../service';
 

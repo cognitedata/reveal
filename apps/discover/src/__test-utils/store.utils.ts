@@ -32,6 +32,8 @@ const mockStore = configureMockStore<
   ThunkDispatch<StoreState, undefined, StoreAction>
 >(middlewares);
 
+export type MockStore = ReturnType<typeof createMockStore>;
+
 export const getMockedStore = (extraState: PartialStoreState = {}) => {
   return createMockStore({
     ...getInitialStore(),

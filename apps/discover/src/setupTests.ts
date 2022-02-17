@@ -16,6 +16,8 @@ import { authenticateWellSDK } from 'modules/wellSearch/sdk/v3';
 
 export const TEST_PROJECT = 'testProject';
 
+// console.warn = jest.fn();
+
 authenticateDocumentSDK(
   'discover-test',
   `https://${SIDECAR.cdfCluster}.cognitedata.com`,

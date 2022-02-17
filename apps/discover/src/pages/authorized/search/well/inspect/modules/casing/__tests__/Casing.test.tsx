@@ -1,8 +1,8 @@
 import { screen, fireEvent } from '@testing-library/react';
 import { PartialStoreState } from 'core';
 import { setupServer } from 'msw/node';
+import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
 
-import { getMockUserMe } from '__mocks/mockUmsMe';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT } from 'components/emptyState/constants';

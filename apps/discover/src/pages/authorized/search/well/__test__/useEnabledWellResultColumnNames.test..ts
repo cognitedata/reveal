@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
-import { getMockConfigGet } from '__mocks/getMockConfigGet';
 import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
 
 import { useEnabledWellResultColumnNames } from '../useEnabledWellResultColumnNames';

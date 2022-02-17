@@ -3,8 +3,7 @@ import { rest } from 'msw';
 import { UMSUser } from '@cognite/user-management-service-types';
 
 import { MSWRequest } from '__test-utils/types';
-
-import { SIDECAR } from '../constants/app';
+import { SIDECAR } from 'constants/app';
 
 const responseData: UMSUser[] = [
   {

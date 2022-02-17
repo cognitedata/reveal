@@ -11,7 +11,7 @@ import {
 import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearchQuery';
 import { getDateOrDefaultText } from 'utils/date';
 
-import { Icon, AllIconTypes } from '@cognite/cogs.js';
+import { Icon, IconType } from '@cognite/cogs.js';
 
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
@@ -82,7 +82,7 @@ export const columnMap: ColumnMap<DocumentTypeDataModel> = {
   },
   filetype: {
     title: DocumentFilterCategoryTitles.filetype,
-    Header: <Icon type={'Document' as AllIconTypes} />,
+    Header: <Icon type={'Document' as IconType} />,
     accessor: 'doc.filetype',
     width: '110px',
     order: 4,

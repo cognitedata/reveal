@@ -1,12 +1,11 @@
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserGet } from 'services/user/__mocks/getMockUserGet';
+import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
+import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
 
-import { getMockConfigGet } from '__mocks/getMockConfigGet';
-import { getMockDocumentSearch } from '__mocks/getMockDocumentSearch';
-import { getMockWellById } from '__mocks/getMockWellById';
-import { getMockUserMe } from '__mocks/mockUmsMe';
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
@@ -14,6 +13,7 @@ import { getMockedStore } from '__test-utils/store.utils';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import navigation from 'constants/navigation';
+import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 import {
   FAVORITE_SET_NO_DOCUMENTS,
   FAVORITE_SET_NO_WELLS,
@@ -24,10 +24,11 @@ import {
 } from 'pages/authorized/favorites/tabs/favorites/detailsPage/FavoriteDetailsContent';
 
 const mockServer = setupServer(
+  getMockWellsById(),
   getMockUserMe(),
-  getMockWellById(),
   getMockConfigGet(),
   getMockDocumentCategoriesGet(),
+  getMockUserMe(),
   getMockUserGet(),
   getMockDocumentSearch()
 );

@@ -1,14 +1,14 @@
 import { screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockWellsGeometry } from 'services/well/__mocks/mockWellsGeometry';
 
-import { getMockConfigGet } from '__mocks/getMockConfigGet';
-import { getMockDocumentSearch } from '__mocks/getMockDocumentSearch';
-import { getMockWellsGeometry } from '__mocks/mockWellsGeometry';
 import { getMockPointGeo } from '__test-utils/fixtures/geometry';
 import { getMockWellGeometry } from '__test-utils/fixtures/wellGeometryCollection';
 import { getWrapper, testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
+import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 import {
   ExternalWellsFeature,
   useDataFeatures,

@@ -5,8 +5,7 @@ import { ProjectConfig } from '@cognite/discover-api-types';
 
 import { getMockConfig } from '__test-utils/fixtures/projectConfig';
 import { MSWRequest } from '__test-utils/types';
-
-import { SIDECAR } from '../constants/app';
+import { SIDECAR } from 'constants/app';
 
 const responseData: ProjectConfig = getMockConfig();
 

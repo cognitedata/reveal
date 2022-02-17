@@ -6,8 +6,8 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { setupServer } from 'msw/node';
+import { getMockUserSearch } from 'services/well/__mocks/userManagementService/__mocks/mockUmsSearch';
 
-import { getMockUserSearch } from '__mocks/mockUmsSearch';
 import { testRenderer } from '__test-utils/renderer';
 
 import {
