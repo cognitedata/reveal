@@ -7,17 +7,17 @@ import {
   PageTitle,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import GlobalStyles from 'src/styles/GlobalStyles';
+import GlobalStyles from 'styles/GlobalStyles';
 import { Provider } from 'react-redux';
-import configureStore from 'src/store';
+import configureStore from 'store';
 import { ConnectedRouter } from 'connected-react-router';
-import theme from 'src/styles/theme';
-import { Routes } from 'src/Routes';
+import theme from 'styles/theme';
+import { Routes } from 'Routes';
 import { Loader } from '@cognite/cogs.js';
 import { createBrowserHistory } from 'history';
-import { APP_TITLE, projectName } from 'src/utils';
+import { APP_TITLE, projectName } from 'utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { ReactQueryDevtools } from 'react-query-devtools';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';

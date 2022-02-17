@@ -1,9 +1,9 @@
 import { LocationState } from 'history';
-import { AppState } from 'src/store/modules/App';
-import { TreeViewState } from 'src/store/modules/TreeView';
+import { AppState } from 'store/modules/App';
+import { TreeViewState } from 'store/modules/TreeView';
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { ToolbarState } from 'src/store/modules/toolbar';
+import { ToolbarState } from 'store/modules/toolbar';
 
 export type RootState = {
   router: LocationState;

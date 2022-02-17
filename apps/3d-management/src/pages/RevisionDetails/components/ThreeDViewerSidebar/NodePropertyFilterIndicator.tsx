@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store';
-import { setNodePropertyFilter } from 'src/store/modules/toolbar';
+import { RootState } from 'store';
+import { setNodePropertyFilter } from 'store/modules/toolbar';
 import { Tag, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 

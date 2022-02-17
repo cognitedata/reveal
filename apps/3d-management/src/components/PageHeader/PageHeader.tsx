@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Breadcrumbs from 'src/components/Breadcrumbs';
-import theme from 'src/styles/theme';
+import Breadcrumbs from 'components/Breadcrumbs';
+import theme from 'styles/theme';
 import { Tooltip } from 'antd';
-import { projectName, getContainer } from 'src/utils';
+import { projectName, getContainer } from 'utils';
 import Iframe from 'react-iframe';
-import { useMetrics } from 'src/hooks/useMetrics';
+import { useMetrics } from 'hooks/useMetrics';
 import { Drawer, Button } from '@cognite/cogs.js';
 
 const Title = styled.h5`

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import zIndex from 'src/utils/zIndex';
+import zIndex from 'utils/zIndex';
 import { Revision3DStatus, Revision3D } from '@cognite/sdk';
-import { LazyWrapper } from 'src/components/LazyWrapper';
-import Thumbnail from 'src/components/Thumbnail';
+import { LazyWrapper } from 'components/LazyWrapper';
+import Thumbnail from 'components/Thumbnail';
 
-import { isModelFormatDeprecated } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/isModelFormatDeprecated';
-import { DeprecatedModelMessage } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/DeprecatedModelMessage';
+import { isModelFormatDeprecated } from 'pages/RevisionDetails/components/ThreeDViewerWrapper/isModelFormatDeprecated';
+import { DeprecatedModelMessage } from 'pages/RevisionDetails/components/ThreeDViewerWrapper/DeprecatedModelMessage';
 import { CloseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
 import { ThreeDViewerProps } from '../ThreeDViewer/ThreeDViewer.d';
 

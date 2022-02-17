@@ -1,10 +1,10 @@
-import antdTableStyles from 'src/styles/antd/antdTableStyles';
-import antdGlobalStyles from 'src/styles/antd/antdGlobalStyles';
+import antdTableStyles from 'styles/antd/antdTableStyles';
+import antdGlobalStyles from 'styles/antd/antdGlobalStyles';
 import React from 'react';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import { getContainer } from 'src/utils';
-import { styleScope } from 'src/utils/styleScope';
+import { getContainer } from 'utils';
+import { styleScope } from 'utils/styleScope';
 import { Tooltip, DateRange } from '@cognite/cogs.js';
 import { ConfigProvider } from 'antd';
 import appGlobalStyles from './global.css';

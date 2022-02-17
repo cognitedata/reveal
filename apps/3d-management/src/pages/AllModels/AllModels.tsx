@@ -1,22 +1,22 @@
 import { Model3D } from '@cognite/sdk';
-import { useMetrics } from 'src/hooks/useMetrics';
+import { useMetrics } from 'hooks/useMetrics';
 import React, { ChangeEvent, useState } from 'react';
-import ModelRevisions from 'src/pages/AllModels/components/ModelRevisions/ModelRevisions';
-import { APP_TITLE, DEFAULT_MARGIN_V, getContainer } from 'src/utils';
+import ModelRevisions from 'pages/AllModels/components/ModelRevisions/ModelRevisions';
+import { APP_TITLE, DEFAULT_MARGIN_V, getContainer } from 'utils';
 import { Modal, Steps, message } from 'antd';
 
 import { Button, Flex, Input } from '@cognite/cogs.js';
-import FileUploader from 'src/pages/AllModels/components/FileUploader';
-import Spinner from 'src/components/Spinner';
-import { PageHeader } from 'src/components/PageHeader';
-import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
-import ModelsTable from 'src/pages/AllModels/components/ModelsTable/ModelsTable';
+import FileUploader from 'pages/AllModels/components/FileUploader';
+import Spinner from 'components/Spinner';
+import { PageHeader } from 'components/PageHeader';
+import PermissioningHintWrapper from 'components/PermissioningHintWrapper';
+import ModelsTable from 'pages/AllModels/components/ModelsTable/ModelsTable';
 
 import styled from 'styled-components';
 import { RouteComponentProps } from 'react-router';
-import { useCreateModelMutation } from 'src/hooks/models';
-import { useModels } from 'src/hooks/models/useModels';
-import { useCreateRevisionMutation } from 'src/hooks/revisions';
+import { useCreateModelMutation } from 'hooks/models';
+import { useModels } from 'hooks/models/useModels';
+import { useCreateRevisionMutation } from 'hooks/revisions';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 

@@ -3,17 +3,17 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import NodesTreeView, {
   NodesTreeViewProps,
-} from 'src/pages/RevisionDetails/components/TreeView/NodesTreeView';
+} from 'pages/RevisionDetails/components/TreeView/NodesTreeView';
 import {
   TreeDataNode,
   TreeLoadMoreNode,
-} from 'src/pages/RevisionDetails/components/TreeView/types';
-import { node3dToTreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
+} from 'pages/RevisionDetails/components/TreeView/types';
+import { node3dToTreeDataNode } from 'pages/RevisionDetails/components/TreeView/utils/converters';
 import userEvent from '@testing-library/user-event';
-import { SelectedNode } from 'src/store/modules/TreeView';
-import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
-import { convertKeysToSelectedNodes } from 'src/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
-import { TrackedKeys } from 'src/pages/RevisionDetails/components/TreeView/hooks/useKeyboardHandler';
+import { SelectedNode } from 'store/modules/TreeView';
+import { treeViewFocusContainerId } from 'pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
+import { convertKeysToSelectedNodes } from 'pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
+import { TrackedKeys } from 'pages/RevisionDetails/components/TreeView/hooks/useKeyboardHandler';
 
 const LOAD_MORE = 'Load more...';
 type ShortTreeNodeRecord = {

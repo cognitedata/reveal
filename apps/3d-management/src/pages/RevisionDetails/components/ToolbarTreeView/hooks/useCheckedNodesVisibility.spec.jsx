@@ -1,4 +1,4 @@
-import { useCheckedNodesVisibility } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useCheckedNodesVisibility';
+import { useCheckedNodesVisibility } from 'pages/RevisionDetails/components/ToolbarTreeView/hooks/useCheckedNodesVisibility';
 import { render } from '@testing-library/react';
 import React from 'react';
 

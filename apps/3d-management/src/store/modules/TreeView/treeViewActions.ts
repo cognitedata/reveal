@@ -1,4 +1,4 @@
-import { ReduxThunk } from 'src/store';
+import { ReduxThunk } from 'store';
 import {
   Actions,
   InitialFetch,
@@ -16,26 +16,26 @@ import {
   NodeExpanded,
   NodeSelected,
   TreeIndex,
-} from 'src/store/modules/TreeView/types';
+} from 'store/modules/TreeView/types';
 import {
   CustomDataNode,
   TreeDataNode,
-} from 'src/pages/RevisionDetails/components/TreeView/types';
+} from 'pages/RevisionDetails/components/TreeView/types';
 import {
   fetchAncestors,
   FetchNodesArgs,
   fetchRootTreeNodes,
   fetchTreeNodes,
-} from 'src/store/modules/TreeView/treeViewDataProvider';
+} from 'store/modules/TreeView/treeViewDataProvider';
 import {
   hasBranch,
   updateNodeById,
-} from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { node3dToTreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
+} from 'pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+import { node3dToTreeDataNode } from 'pages/RevisionDetails/components/TreeView/utils/converters';
 import {
   getCheckedNodesAndStateOfUnknownChildren,
   getSafeDispatch,
-} from 'src/store/modules/TreeView/treeViewUtils';
+} from 'store/modules/TreeView/treeViewUtils';
 
 export const fetchInitialNodes = (
   modelId: number,

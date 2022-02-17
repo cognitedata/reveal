@@ -2,9 +2,9 @@ import { DataNode } from 'antd/lib/tree';
 import {
   CustomDataNode,
   TreeDataNode,
-} from 'src/pages/RevisionDetails/components/TreeView/types';
-import { ArrayElement } from 'src/utils/types';
-import { sortNaturally } from 'src/utils';
+} from 'pages/RevisionDetails/components/TreeView/types';
+import { ArrayElement } from 'utils/types';
+import { sortNaturally } from 'utils';
 
 /*
   what we do here is moving down one level for each item of branch and list

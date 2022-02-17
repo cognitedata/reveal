@@ -3,10 +3,10 @@ import {
   GhostModeUpdated,
   SetNodePropertyFilter,
   SetNodePropertyLoadingState,
-} from 'src/store/modules/toolbar/types';
-import { RootState } from 'src/store';
+} from 'store/modules/toolbar/types';
+import { RootState } from 'store';
 
-import { NodePropertyFilterType } from 'src/utils';
+import { NodePropertyFilterType } from 'utils';
 
 export const toggleGhostMode = (isEnabled?: boolean) => (
   dispatch: Dispatch<GhostModeUpdated>,

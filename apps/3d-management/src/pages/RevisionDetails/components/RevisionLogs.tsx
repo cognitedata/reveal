@@ -1,12 +1,12 @@
 import uniqBy from 'lodash/uniqBy';
 import { Timeline } from 'antd';
-import { mapStatusToColor } from 'src/components/Status';
+import { mapStatusToColor } from 'components/Status';
 import React from 'react';
-import { RevisionLog3D } from 'src/utils/sdk/3dApiUtils';
+import { RevisionLog3D } from 'utils/sdk/3dApiUtils';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import { DEFAULT_MARGIN_V } from 'src/utils';
-import { useUserInformation } from 'src/hooks/useUserInformation';
+import { DEFAULT_MARGIN_V } from 'utils';
+import { useUserInformation } from 'hooks/useUserInformation';
 
 const EXTERNAL_LOG_NAME = {
   'reveal-optimizer': 'Web-Optimizer',

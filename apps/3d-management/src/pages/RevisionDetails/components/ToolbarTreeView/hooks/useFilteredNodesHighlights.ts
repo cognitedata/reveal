@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store';
+import { RootState } from 'store';
 import React, { useEffect } from 'react';
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
@@ -10,7 +10,7 @@ import {
 import {
   setNodeFilterLoadingState,
   setNodePropertyFilter,
-} from 'src/store/modules/toolbar/toolbarActions';
+} from 'store/modules/toolbar/toolbarActions';
 
 export function useFilteredNodesHighlights({
   model,

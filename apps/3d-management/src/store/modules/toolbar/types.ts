@@ -1,4 +1,4 @@
-import { NodePropertyFilterType } from 'src/utils';
+import { NodePropertyFilterType } from 'utils';
 
 export type ToolbarState = {
   ghostModeEnabled: boolean;

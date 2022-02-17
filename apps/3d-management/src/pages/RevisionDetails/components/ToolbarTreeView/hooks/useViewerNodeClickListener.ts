@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
-import { NodesTreeViewRefType } from 'src/pages/RevisionDetails/components/TreeView/NodesTreeView';
+import { NodesTreeViewRefType } from 'pages/RevisionDetails/components/TreeView/NodesTreeView';
 import { useDispatch } from 'react-redux';
-import { expandArbitraryNode, selectNodes } from 'src/store/modules/TreeView';
-import { fireErrorNotification } from 'src/utils';
+import { expandArbitraryNode, selectNodes } from 'store/modules/TreeView';
+import { fireErrorNotification } from 'utils';
 import {
   Cognite3DModel,
   Cognite3DViewer,

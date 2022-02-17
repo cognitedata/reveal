@@ -11,19 +11,19 @@ import styled from 'styled-components';
 import {
   Legacy3DModel,
   Legacy3DViewer,
-} from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
-import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
-import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'src/utils';
+} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+import { ToolbarTreeView } from 'pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
+import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'utils';
 import { useFlag } from '@cognite/react-feature-flags';
 import { isProduction } from '@cognite/cdf-utilities';
 import { Switch } from '@cognite/cogs.js';
-import { useUpdateRevisionMutation } from 'src/hooks/revisions';
-import { toggleGhostMode } from 'src/store/modules/toolbar';
+import { useUpdateRevisionMutation } from 'hooks/revisions';
+import { toggleGhostMode } from 'store/modules/toolbar';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store';
+import { RootState } from 'store';
 import { Resizable } from 're-resizable';
 import { Divider } from 'antd';
-import { NodePropertyFilterIndicator } from 'src/pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
+import { NodePropertyFilterIndicator } from 'pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';

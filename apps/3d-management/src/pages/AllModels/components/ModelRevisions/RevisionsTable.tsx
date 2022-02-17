@@ -6,13 +6,13 @@ import { Button } from '@cognite/cogs.js';
 
 import dayjs from 'dayjs';
 
-import EmptyState from 'src/pages/AllModels/components/EmptyState/index';
-import { getContainer } from 'src/utils';
-import { TableOperations } from 'src/pages/AllModels/components/TableOperations';
-import Status from 'src/components/Status/index';
-import Thumbnail from 'src/components/Thumbnail';
+import EmptyState from 'pages/AllModels/components/EmptyState/index';
+import { getContainer } from 'utils';
+import { TableOperations } from 'pages/AllModels/components/TableOperations';
+import Status from 'components/Status/index';
+import Thumbnail from 'components/Thumbnail';
 import { Revision3D } from '@cognite/sdk';
-import { ThumbnailPreviewIcon } from 'src/components/ThumbnailPreviewIcon';
+import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
 
 type Props = {
   revisions: Array<Revision3D>;

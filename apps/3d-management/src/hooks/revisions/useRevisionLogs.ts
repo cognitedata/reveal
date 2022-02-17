@@ -1,8 +1,8 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { useQuery } from 'react-query';
-import { RevisionLog3D } from 'src/utils/sdk/3dApiUtils';
-import { fireErrorNotification, QUERY_KEY } from 'src/utils';
-import { RevisionIds } from 'src/utils/types';
+import { RevisionLog3D } from 'utils/sdk/3dApiUtils';
+import { fireErrorNotification, QUERY_KEY } from 'utils';
+import { RevisionIds } from 'utils/types';
 import { HttpError } from '@cognite/sdk';
 
 const fetchLogs = ({ modelId, revisionId }: RevisionIds) => async (): Promise<

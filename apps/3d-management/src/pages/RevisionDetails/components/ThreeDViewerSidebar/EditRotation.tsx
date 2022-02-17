@@ -15,7 +15,7 @@ import * as Sentry from '@sentry/browser';
 import {
   Legacy3DModel,
   Legacy3DViewer,
-} from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
 import antdRadioStyles from 'antd/es/radio/style/index.less';
 import { useGlobalStyles } from '@cognite/cdf-utilities';

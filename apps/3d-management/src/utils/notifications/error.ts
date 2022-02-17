@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import { notification } from 'antd';
-import { getContainer } from 'src/utils';
+import { getContainer } from 'utils';
 import { HttpError } from '@cognite/sdk';
 
 interface ErrorNotificationProps {

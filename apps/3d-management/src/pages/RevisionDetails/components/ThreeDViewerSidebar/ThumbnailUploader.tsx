@@ -4,7 +4,7 @@ import { Modal, message } from 'antd';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { FileUploadResponse } from '@cognite/sdk';
-import { fireErrorNotification } from 'src/utils/notifications';
+import { fireErrorNotification } from 'utils/notifications';
 import {
   Cognite3DModel,
   Cognite3DViewer,
@@ -13,7 +13,7 @@ import {
 import {
   Legacy3DModel,
   Legacy3DViewer,
-} from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 
 type Props = {
   viewer: Cognite3DViewer | Legacy3DViewer;

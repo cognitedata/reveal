@@ -1,7 +1,7 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { CreateModel3D, HttpError, Model3D } from '@cognite/sdk';
 import { useMutation, useQueryClient } from 'react-query';
-import { fireErrorNotification, QUERY_KEY } from 'src/utils';
+import { fireErrorNotification, QUERY_KEY } from 'utils';
 
 const addModel = async ({ name }: CreateModel3D): Promise<Model3D> => {
   const items = await sdk.models3D.create([{ name }]);

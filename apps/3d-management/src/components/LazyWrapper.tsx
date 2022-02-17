@@ -1,6 +1,6 @@
 import React, { ComponentType, lazy, ReactNode, Suspense } from 'react';
 
-import Spinner from 'src/components/Spinner';
+import Spinner from 'components/Spinner';
 
 export function LazyWrapper<P>(
   props: P,

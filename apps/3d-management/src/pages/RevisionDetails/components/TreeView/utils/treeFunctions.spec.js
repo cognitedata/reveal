@@ -6,7 +6,7 @@ import {
   removeNodeFromTree,
   traverseTree,
   updateNodeById,
-} from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+} from 'pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 
 describe('treeFunctions test cases', () => {
   describe('hasBranch', () => {

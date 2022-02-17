@@ -1,9 +1,9 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { useMutation, useQueryClient } from 'react-query';
-import { fireErrorNotification, QUERY_KEY } from 'src/utils';
+import { fireErrorNotification, QUERY_KEY } from 'utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'src/store/modules/App/types';
-import { setSelectedModels } from 'src/store/modules/App';
+import { AppState } from 'store/modules/App/types';
+import { setSelectedModels } from 'store/modules/App';
 import { HttpError, InternalId } from '@cognite/sdk-core/dist/src';
 import { Model3D } from '@cognite/sdk';
 

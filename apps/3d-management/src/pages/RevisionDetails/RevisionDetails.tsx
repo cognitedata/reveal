@@ -8,30 +8,30 @@ import {
   getContainer,
   logToSentry,
   DEFAULT_MARGIN_V,
-} from 'src/utils';
-import { useMetrics } from 'src/hooks/useMetrics';
+} from 'utils';
+import { useMetrics } from 'hooks/useMetrics';
 import React, { useEffect, useState } from 'react';
 
 import { createLink } from '@cognite/cdf-utilities';
 import dayjs from 'dayjs';
-import Status from 'src/components/Status';
-import NotFound from 'src/pages/NotFound';
-import Spinner from 'src/components/Spinner';
-import { PageHeader } from 'src/components/PageHeader';
+import Status from 'components/Status';
+import NotFound from 'pages/NotFound';
+import Spinner from 'components/Spinner';
+import { PageHeader } from 'components/PageHeader';
 
-import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
-import ErrorBoundary from 'src/components/ErrorBoundary';
-import ThreeDViewerWrapper from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper';
+import PermissioningHintWrapper from 'components/PermissioningHintWrapper';
+import ErrorBoundary from 'components/ErrorBoundary';
+import ThreeDViewerWrapper from 'pages/RevisionDetails/components/ThreeDViewerWrapper';
 
-import { ReprocessingModal } from 'src/pages/RevisionDetails/components/ReprocessingModal';
-import { RevisionLogs } from 'src/pages/RevisionDetails/components/RevisionLogs';
+import { ReprocessingModal } from 'pages/RevisionDetails/components/ReprocessingModal';
+import { RevisionLogs } from 'pages/RevisionDetails/components/RevisionLogs';
 import {
   useRevisions,
   useRevisionLogs,
   useUpdateRevisionMutation,
   useDeleteRevisionMutation,
-} from 'src/hooks/revisions';
-import { useModels } from 'src/hooks/models/useModels';
+} from 'hooks/revisions';
+import { useModels } from 'hooks/models/useModels';
 
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';

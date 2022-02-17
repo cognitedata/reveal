@@ -3,19 +3,19 @@ import {
   getAncestors,
   getNodeByTreeIndex,
   traverseTree,
-} from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+} from 'pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import {
   calcRangeKeys,
   convertKeysToSelectedNodes,
-} from 'src/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
-import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
-import { treeDataNodeToSelectedNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
+} from 'pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
+import { TreeDataNode } from 'pages/RevisionDetails/components/TreeView/types';
+import { treeDataNodeToSelectedNode } from 'pages/RevisionDetails/components/TreeView/utils/converters';
 import {
   NodesTreeViewProps,
   NodesTreeViewRefType,
-} from 'src/pages/RevisionDetails/components/TreeView/NodesTreeView';
-import { TreeIndex } from 'src/store/modules/TreeView';
-import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
+} from 'pages/RevisionDetails/components/TreeView/NodesTreeView';
+import { TreeIndex } from 'store/modules/TreeView';
+import { treeViewFocusContainerId } from 'pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
 
 export enum TrackedKeys {
   ' ' = ' ',

@@ -1,5 +1,5 @@
-import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
-import { SelectedNode, TreeIndex } from 'src/store/modules/TreeView';
+import { TreeDataNode } from 'pages/RevisionDetails/components/TreeView/types';
+import { SelectedNode, TreeIndex } from 'store/modules/TreeView';
 import { traverseTree } from './treeFunctions';
 
 enum Record {

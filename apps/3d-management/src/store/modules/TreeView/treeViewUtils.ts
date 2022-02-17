@@ -1,8 +1,8 @@
-import { RootState } from 'src/store';
+import { RootState } from 'store';
 import {
   CustomDataNode,
   TreeDataNode,
-} from 'src/pages/RevisionDetails/components/TreeView/types';
+} from 'pages/RevisionDetails/components/TreeView/types';
 
 // make sure we update state for the currently viewed tree, not some that was open before it
 export function getSafeDispatch(

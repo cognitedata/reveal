@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
-import NotFound from 'src/pages/NotFound';
-import { LazyWrapper } from 'src/components/LazyWrapper';
+import NotFound from 'pages/NotFound';
+import { LazyWrapper } from 'components/LazyWrapper';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Loader } from '@cognite/cogs.js';
@@ -22,7 +22,7 @@ const routes = [
     component: (props) =>
       LazyWrapper(
         props,
-        () => import('src/pages/AllModels' /* webpackChunkName: "3d_models"  */)
+        () => import('pages/AllModels' /* webpackChunkName: "3d_models"  */)
       ),
   },
   {
@@ -33,7 +33,7 @@ const routes = [
         props,
         () =>
           import(
-            'src/pages/RevisionDetails' /* webpackChunkName: "3d_revisions"  */
+            'pages/RevisionDetails' /* webpackChunkName: "3d_revisions"  */
           )
       ),
   },

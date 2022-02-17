@@ -7,9 +7,9 @@ import {
   IndexSet,
   NumericRange,
 } from '@cognite/reveal';
-import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
-import { traverseTree } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { subtreeHasTreeIndex } from 'src/store/modules/TreeView/treeViewUtils';
+import { TreeDataNode } from 'pages/RevisionDetails/components/TreeView/types';
+import { traverseTree } from 'pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+import { subtreeHasTreeIndex } from 'store/modules/TreeView/treeViewUtils';
 
 type Args = {
   model: Cognite3DModel;

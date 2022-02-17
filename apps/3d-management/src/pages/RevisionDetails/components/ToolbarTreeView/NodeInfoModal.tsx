@@ -1,17 +1,17 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store';
-import { getNodeByTreeIndex } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
+import { RootState } from 'store';
+import { getNodeByTreeIndex } from 'pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+import { TreeDataNode } from 'pages/RevisionDetails/components/TreeView/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ModalProps } from 'antd/lib/modal';
 import { Modal, Table, Tabs } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import { Button, Tooltip } from '@cognite/cogs.js';
 
-import { getContainer } from 'src/utils';
+import { getContainer } from 'utils';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
-import { setNodePropertyFilter } from 'src/store/modules/toolbar';
+import { setNodePropertyFilter } from 'store/modules/toolbar';
 
 type DataSource = {
   key: string;

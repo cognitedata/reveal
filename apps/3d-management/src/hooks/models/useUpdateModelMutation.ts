@@ -1,7 +1,7 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Model3D } from '@cognite/sdk';
 import { useMutation, useQueryClient } from 'react-query';
-import { fireErrorNotification, QUERY_KEY } from 'src/utils';
+import { fireErrorNotification, QUERY_KEY } from 'utils';
 
 type UpdateArgs = { id: number; name: string };
 

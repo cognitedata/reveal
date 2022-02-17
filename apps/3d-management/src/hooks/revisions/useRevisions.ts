@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from 'react-query';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Revision3D, HttpError } from '@cognite/sdk';
-import { fireErrorNotification, QUERY_KEY } from 'src/utils';
+import { fireErrorNotification, QUERY_KEY } from 'utils';
 
 type Args = { modelId: number };
 

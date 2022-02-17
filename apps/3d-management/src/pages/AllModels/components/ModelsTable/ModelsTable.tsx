@@ -7,15 +7,15 @@ import dayjs from 'dayjs';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import EmptyState from 'src/pages/AllModels/components/EmptyState';
-import { TableOperations } from 'src/pages/AllModels/components/TableOperations';
-import Thumbnail from 'src/components/Thumbnail';
+import EmptyState from 'pages/AllModels/components/EmptyState';
+import { TableOperations } from 'pages/AllModels/components/TableOperations';
+import Thumbnail from 'components/Thumbnail';
 
-import { setSelectedModels, setModelTableState } from 'src/store/modules/App';
+import { setSelectedModels, setModelTableState } from 'store/modules/App';
 import { Model3D } from '@cognite/sdk';
-import { DEFAULT_MARGIN_V } from 'src/utils';
-import { AppState } from 'src/store/modules/App/types';
-import { ThumbnailPreviewIcon } from 'src/components/ThumbnailPreviewIcon';
+import { DEFAULT_MARGIN_V } from 'utils';
+import { AppState } from 'store/modules/App/types';
+import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
 import { ColumnType } from 'antd/lib/table/interface';
 
 const NestedTable = styled(Table)`

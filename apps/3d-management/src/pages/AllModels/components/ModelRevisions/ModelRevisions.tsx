@@ -1,22 +1,19 @@
 import { RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
-import { useMetrics } from 'src/hooks/useMetrics';
+import { useMetrics } from 'hooks/useMetrics';
 import React, { useState } from 'react';
 import { Model3D } from '@cognite/sdk';
-import { DEFAULT_MARGIN_V, getContainer } from 'src/utils';
-import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
+import { DEFAULT_MARGIN_V, getContainer } from 'utils';
+import PermissioningHintWrapper from 'components/PermissioningHintWrapper';
 import { message, Card, Modal } from 'antd';
 import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
-import Thumbnail from 'src/components/Thumbnail/Thumbnail';
+import Thumbnail from 'components/Thumbnail/Thumbnail';
 import { createLink } from '@cognite/cdf-utilities';
 
-import FileUploader from 'src/pages/AllModels/components/FileUploader';
+import FileUploader from 'pages/AllModels/components/FileUploader';
 
-import {
-  useDeleteModelMutation,
-  useUpdateModelMutation,
-} from 'src/hooks/models';
-import { useCreateRevisionMutation, useRevisions } from 'src/hooks/revisions';
+import { useDeleteModelMutation, useUpdateModelMutation } from 'hooks/models';
+import { useCreateRevisionMutation, useRevisions } from 'hooks/revisions';
 
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';

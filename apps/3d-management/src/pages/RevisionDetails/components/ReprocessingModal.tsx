@@ -1,10 +1,10 @@
-import { getContainer, projectName } from 'src/utils';
+import { getContainer, projectName } from 'utils';
 import { Modal, message } from 'antd';
 import React from 'react';
 import { ModalProps } from 'antd/lib/modal/Modal';
 
 import * as Sentry from '@sentry/browser';
-import { requestReprocessing } from 'src/utils/sdk/3dApiUtils';
+import { requestReprocessing } from 'utils/sdk/3dApiUtils';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, CogniteMultiError, Revision3D } from '@cognite/sdk';
 import { useHistory } from 'react-router-dom';

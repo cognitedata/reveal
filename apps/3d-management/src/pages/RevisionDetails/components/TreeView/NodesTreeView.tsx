@@ -1,14 +1,14 @@
 import React, { MutableRefObject } from 'react';
 import { Tree, TreeProps } from 'antd';
-import { SelectedNode, TreeIndex } from 'src/store/modules/TreeView';
+import { SelectedNode, TreeIndex } from 'store/modules/TreeView';
 import {
   INFO_BTN_CLASSNAME,
   TREE_NODE_CLASSNAME,
-} from 'src/pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
+} from 'pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
 import {
   calcRangeKeys,
   convertKeysToSelectedNodes,
-} from 'src/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
+} from 'pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
 import styled from 'styled-components';
 import {
   CustomDataNode,

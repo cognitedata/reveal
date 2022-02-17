@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "start": "BROWSER=none WDS_SOCKET_PORT=3033 WDS_SOCKET_HOST=localhost PORT=3033 HTTPS=true SKIP_PREFLIGHT_CHECK=true rescripts start",
+    "start": "cross-env BROWSER=none WDS_SOCKET_PORT=3033 WDS_SOCKET_HOST=localhost PORT=3033 HTTPS=true SKIP_PREFLIGHT_CHECK=true rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
     "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-3d-management --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
@@ -80,6 +80,7 @@
     "@types/sinon": "^9.0.11",
     "@types/styled-components": "^5.1.7",
     "concurrently": "^6.0.0",
+    "cross-env": "^7.0.3",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "eslint-config-airbnb": "^18.2.1",

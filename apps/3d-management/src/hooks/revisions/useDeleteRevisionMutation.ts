@@ -1,8 +1,8 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Revision3D } from '@cognite/sdk';
 import { useMutation, useQueryClient } from 'react-query';
-import { fireErrorNotification, QUERY_KEY } from 'src/utils';
-import { RevisionIds } from 'src/utils/types';
+import { fireErrorNotification, QUERY_KEY } from 'utils';
+import { RevisionIds } from 'utils/types';
 
 const deleteRevision = async ({
   modelId,

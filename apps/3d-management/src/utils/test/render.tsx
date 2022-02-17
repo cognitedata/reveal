@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { styleScope } from 'src/utils';
+import { styleScope } from 'utils';
 import { createMemoryHistory } from 'history';
-import configureStore from 'src/store';
+import configureStore from 'store';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from 'react-query';

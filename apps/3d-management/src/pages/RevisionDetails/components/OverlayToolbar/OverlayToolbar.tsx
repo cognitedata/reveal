@@ -8,7 +8,7 @@ import {
 import {
   Legacy3DModel,
   Legacy3DViewer,
-} from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 
 type Props = {
   viewer: Cognite3DViewer | Legacy3DViewer;

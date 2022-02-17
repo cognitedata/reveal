@@ -3,13 +3,13 @@ import {
   CustomDataNode,
   TreeDataNode,
   TreeLoadMoreNode,
-} from 'src/pages/RevisionDetails/components/TreeView/types';
-import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore';
+} from 'pages/RevisionDetails/components/TreeView/types';
+import { LoadMore } from 'pages/RevisionDetails/components/TreeView/LoadMore';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { List3DNodesQuery, Node3D } from '@cognite/sdk';
-import { node3dToTreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
+import { node3dToTreeDataNode } from 'pages/RevisionDetails/components/TreeView/utils/converters';
 import { getProject } from '@cognite/cdf-utilities';
-import { sortNaturally } from 'src/utils';
+import { sortNaturally } from 'utils';
 
 export const FETCH_PARAMS: List3DNodesQuery = {
   depth: 1,
