@@ -14,11 +14,10 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
-import { NumericRange } from '@reveal/utilities';
+import { NumericRange, unionBoxes } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
-import { computeSceneBoundingBox } from '@reveal/utilities/src/computeSceneBoundingBox';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -90,7 +89,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
     this.add(this.cadNode);
 
-    this._fullBoundingBox = computeSceneBoundingBox(this.cadNode.cadModelMetadata.scene.getAllSectors());
+    this._fullBoundingBox = unionBoxes(
+      this.cadNode.cadModelMetadata.scene.getAllSectors().map(sector => sector.bounds)
+    );
 
     // Note! As this is defined in ThreeJS we cannot override this using
     // regular TypeScript getters and setters.

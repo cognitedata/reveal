@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 
 export function unionBoxes(boxes: THREE.Box3[], out?: THREE.Box3): THREE.Box3 {
-
   out = out ?? new THREE.Box3();
   out.makeEmpty();
 
