@@ -1,5 +1,5 @@
 import { Arguments, Argv } from 'yargs';
-import { BaseArgs, LoginArgs } from '../../types';
+import { LoginArgs } from '../../types';
 import { AUTH_TYPE, SETTINGS } from '../../constants';
 import { promiseWithTimeout } from '../../utils/general';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
@@ -55,11 +55,28 @@ export const builder = (yargs: Argv<LoginArgs>) =>
       AUTH_TYPE.APIKEY,
     ]);
 
-export const handler = async (arg: Arguments<BaseArgs>) => {
+export const handler = async (arg: Arguments<LoginArgs>) => {
   const client = getCogniteSDKClient();
   await promiseWithTimeout(
     SETTINGS.TIMEOUT,
-    () => client.assets.list({ limit: 1 }),
+    // perform and validate for access to CDF by checking token
+    async () => {
+      switch (arg.authType) {
+        case AUTH_TYPE.APIKEY: {
+          await client.assets.list({ limit: 1 });
+          break;
+        }
+        case AUTH_TYPE.CLIENT_SECRET:
+        case AUTH_TYPE.PKCE: {
+          const info = (await client.get('/api/v1/token/inspect')).data;
+          if (!info.projects.some((el) => el.projectUrlName === arg.project)) {
+            throw new Error(
+              `failed to authenticate against CDF project: ${arg.project}`
+            );
+          }
+        }
+      }
+    },
     'Timeout while authenticating user, please make sure you have entered valid parameters like cluster, project etc.'
   );
   arg.logger.success('Login Success');

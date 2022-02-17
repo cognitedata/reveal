@@ -1,6 +1,6 @@
 {
   "name": "@cognite/platypus-cli",
-  "version": "0.0.1-alpha.14",
+  "version": "0.0.1-alpha.15",
   "description": "A CLI for Platypus",
   "repository": "https://github.com/cognitedata/platypus/apps/platypus-cdf-cli",
   "author": "Cognite",

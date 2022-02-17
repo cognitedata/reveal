@@ -11,7 +11,12 @@ import {
   setProjectConfig,
   setProjectConfigItem,
 } from '../utils/config';
-import { AUTH_CONFIG, LOGIN_STATUS, ROOT_CONFIG_KEY } from '../constants';
+import {
+  AUTH_CONFIG,
+  AUTH_TYPE,
+  LOGIN_STATUS,
+  ROOT_CONFIG_KEY,
+} from '../constants';
 import { getCommandName } from '../utils/yargs-utils';
 import { skipMiddleware } from './util';
 import logout from '../common/auth/logout';
@@ -24,11 +29,16 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
       return;
     }
     // for `login` command, rerunning should retrigger signin, hence we should clear cached tokens and config
+    // as well, inject a default clientId
     if (getCommandName(arg) === 'login') {
       logger.info(
         'Logging out the current user and clearing the config (if exists)'
       );
       logout();
+
+      if (arg.authType === AUTH_TYPE.PKCE && !arg.clientId) {
+        arg.clientId = getDefaultClientIdForPKCE(arg.cluster as string);
+      }
     }
 
     // get stored accessToken, authType and try to login and initialize SDK
@@ -42,7 +52,11 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
       client = createSdkClient(projectConfig);
     }
 
-    await (client as unknown as CogniteClient).authenticate();
+    const token = await (client as unknown as CogniteClient).authenticate();
+
+    if (token === undefined) {
+      throw new Error('Failed to authenticate against CDF.');
+    }
 
     setProjectConfig({
       [AUTH_CONFIG.LOGIN_STATUS]: LOGIN_STATUS.SUCCESS,
@@ -63,3 +77,15 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
     );
   }
 }
+
+export const getDefaultClientIdForPKCE = (cluster: string) => {
+  switch (cluster) {
+    case 'greenfield':
+      return '4770c0f1-7bb6-43b5-8c37-94f2a9306757';
+    case 'bluefield':
+      return 'a7869455-32f2-4a07-b568-8485b9b887f0';
+    case 'api':
+    case 'europe-west1-1':
+      return '6890be09-b7c9-4500-b020-c3cb762d14cc';
+  }
+};

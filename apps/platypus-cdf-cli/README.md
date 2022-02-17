@@ -65,24 +65,7 @@ These global `--options` are supported for helping with the executions
 
 ## Login
 
-- Regular login (**default**) - via browser
-  `yarn login` will take you through login flow with a browser popup. This is ideal for users on any computer (non-machines). For machine oriented login flow, take a look at the next option - Client Credentials.
-
-- [Client Credential](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) mode is designed for long lasting token where you will need to provide `client_id` and `client_secret` for your application, this kind of token are long lasting and meant for machine interactions like CI/CD.
-
-  `platypus login --client-secret=<code>`
-
-> You can obtain your personal `client_secret` by visiting [Azure > App registrations > Platypus: greenfield (staging)](https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Credentials/appId/4770c0f1-7bb6-43b5-8c37-94f2a9306757/isMSAApp/) and then go to certificate and secrets and generate your new `client_secret`.
-
-- **Legacy Auth** is supported (but not-recomended), to use legacy auth with `API_KEY` please use the following command
-
-  `platypus login [project_name] --api-key=<api_key>`
-
-  alternatively you can also use
-
-  `API_KEY=<api_key> platypus login [project_name]`
-
-  > by default `[project_name]` is set to `platypus`
+See the login section for [more details](./LOGIN.md)
 
 ## Logout
 

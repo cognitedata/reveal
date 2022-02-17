@@ -1,8 +1,6 @@
 # Platypus (codename)
 
 [![Confluence](https://img.shields.io/badge/Confluence-blue)](https://cog.link/devx)
-[![API/CLI Docs](https://img.shields.io/badge/API/CLI-Docs-green)](https://cognitedata.github.io/platypus/)
-[![Platypus CLI npm](https://badgen.net/npm/v/@cognite/platypus-cli)](https://www.npmjs.com/package/@cognite/platypus-cli)
 
 Our aim is to make it easier for application developer to develop app by reducing cost, friction and learning curve for them. Codename Platypus will help us achieve the same.
 
@@ -24,11 +22,15 @@ yarn
 
 ## Authentication
 
-To be able to login and start using Platypus you will need to authenticate yourself first, we support Azure Active Directory enabled OIDC Login as the latest auth from CDF.
+### UI (quick-start)
 
-### UI
+Make sure you have access to the `cogniteappdev.onmicrosoft.com` tenant. If not, as #topic-appdev` and someone can add you.
 
-Visit the staging [URL](http://platypus.staging.cogniteapp.com) and click `Advance Azure options` and enter `cogniteappdev.onmicrosoft.com` as Azure Tenant ID and press **Login with Microsoft Azure** button, after that you will be taken to a page where you need to select **Platypus** as the project and login
+After, visit the staging [URL](http://platypus.staging.cogniteapp.com) and click `Advance Azure options` and enter `cogniteappdev.onmicrosoft.com` as Azure Tenant ID and press **Login with Microsoft Azure** button, after that you will be taken to a page where you need to select **Platypus** as the project and login.
+
+### CLI
+
+See the detailed section for authentication for [more info](./apps/platypus-cdf-cli/LOGIN.md)
 
 ## NX CLI
 
