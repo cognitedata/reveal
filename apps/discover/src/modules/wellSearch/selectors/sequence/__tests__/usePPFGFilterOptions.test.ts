@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from 'react-dom/test-utils';
 
-import { usePPFGFilterOptions } from '../measurements/usePPFGFilterOptions';
+import { usePPFGFilterOptions } from '../measurements/v2/usePPFGFilterOptions';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),

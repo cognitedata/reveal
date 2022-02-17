@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { OptionType } from '@cognite/cogs.js';
+import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import { useGeomechanicsFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/useGeomechanicsFilterOptions';
+import { useDeepEffect } from 'hooks/useDeep';
+import { useGeomechanicsFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/v3/useGeomechanicsFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';
 
 interface Props {
-  selectedCurves: string[];
-  onChange: (curves: string[]) => void;
+  selectedCurves: DepthMeasurementColumn[];
+  onChange: (curves: DepthMeasurementColumn[]) => void;
 }
 
 export const GeomechanicsCurveFilter: React.FC<Props> = ({
@@ -18,16 +20,16 @@ export const GeomechanicsCurveFilter: React.FC<Props> = ({
 }) => {
   const { curves } = useGeomechanicsFilterOptions();
 
-  const groupOptions: OptionType<string>[] = [
+  const groupOptions: OptionType<DepthMeasurementColumn>[] = [
     {
       label: 'Curves',
       options: mapCurvesToOptions(curves),
     },
   ];
 
-  useEffect(() => {
+  useDeepEffect(() => {
     onChange(curves);
-  }, [JSON.stringify(curves)]);
+  }, [curves]);
 
   return (
     <CommonCurveFilter
@@ -35,6 +37,7 @@ export const GeomechanicsCurveFilter: React.FC<Props> = ({
       options={groupOptions}
       selected={selectedCurves}
       onChange={onChange}
+      grouped
     />
   );
 };

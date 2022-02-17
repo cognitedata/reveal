@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 
+import head from 'lodash/head';
+
 import { BaseButton } from 'components/buttons';
 import {
-  MeasurementChartData,
-  MeasurementType,
+  MeasurementChartDataV3 as MeasurementChartData,
+  MeasurementTypeV3 as MeasurementType,
 } from 'modules/wellSearch/types';
+import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
+import CurveColorCode from 'pages/authorized/search/well/inspect/modules/common/ChartV2/CurveColorCode';
 import { FlexColumn, FlexRow } from 'styles/layout';
 
-import { ChartV2 } from '../../../common/ChartV2';
-import CurveColorCode from '../../../common/ChartV2/CurveColorCode';
 import { filterByChartType, filterByMainChartType } from '../../utils';
 
 import {
@@ -42,8 +44,25 @@ export const CompareViewCard: React.FC<Props> = ({
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
   const displayShowAll =
     (legendsHolderRef?.current?.scrollHeight || 0) > FOOTER_MIN_HEIGHT;
-  const fitChart = filterByChartType(chartData, [MeasurementType.fit])[0];
-  const lotChart = filterByChartType(chartData, [MeasurementType.lot])[0];
+  const fitChart = head(filterByChartType(chartData, [MeasurementType.FIT]));
+  const lotChart = head(filterByChartType(chartData, [MeasurementType.LOT]));
+
+  const renderfitOrLotChart = (
+    curveName: string,
+    fitChart: MeasurementChartData
+  ) => {
+    if (!fitChart || !fitChart.customdata) return null;
+    const [, wellboreName] = fitChart.customdata as string[];
+    return (
+      <FlexRow key={`${curveName.toLowerCase()}-${wellboreName}`}>
+        <CurveColorCode line={fitChart.line} marker={fitChart.marker} />
+        <FlexColumn>
+          <CurveName>{curveName}</CurveName>
+          <WellboreName>{wellboreName}</WellboreName>
+        </FlexColumn>
+      </FlexRow>
+    );
+  };
 
   return (
     <CardWrapper>
@@ -60,36 +79,21 @@ export const CompareViewCard: React.FC<Props> = ({
         <LegendsHolder expanded={showAll} ref={legendsHolderRef}>
           {filterByMainChartType(chartData).map((row) => {
             const customdata = row.customdata as string[];
+            const [curveName, wellboreName] = customdata as string[];
             return (
-              <FlexRow key={`${customdata[0]}-${customdata[1]}`}>
+              <FlexRow key={`${curveName}-${wellboreName}`}>
                 <CurveColorCode line={row.line} marker={row.marker} />
                 <FlexColumn>
-                  <CurveName>{customdata[0]}</CurveName>
-                  <WellboreName>{customdata[1]}</WellboreName>
+                  <CurveName>{curveName}</CurveName>
+                  <WellboreName>{wellboreName}</WellboreName>
                 </FlexColumn>
               </FlexRow>
             );
           })}
 
-          {fitChart && fitChart.customdata && (
-            <FlexRow key={`FIT-${fitChart.customdata[1]}`}>
-              <CurveColorCode line={fitChart.line} marker={fitChart.marker} />
-              <FlexColumn>
-                <CurveName>FIT</CurveName>
-                <WellboreName>{fitChart.customdata[1]}</WellboreName>
-              </FlexColumn>
-            </FlexRow>
-          )}
+          {fitChart && renderfitOrLotChart('FIT', fitChart)}
 
-          {lotChart && lotChart.customdata && (
-            <FlexRow key={`LOT-${lotChart.customdata[1]}`}>
-              <CurveColorCode line={lotChart.line} marker={lotChart.marker} />
-              <FlexColumn>
-                <CurveName>LOT</CurveName>
-                <WellboreName>{lotChart.customdata[1]}</WellboreName>
-              </FlexColumn>
-            </FlexRow>
-          )}
+          {lotChart && renderfitOrLotChart('LOT', lotChart)}
         </LegendsHolder>
 
         <BaseButton

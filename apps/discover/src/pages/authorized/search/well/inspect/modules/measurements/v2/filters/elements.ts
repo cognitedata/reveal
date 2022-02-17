@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 
+import { Menu } from '@cognite/cogs.js';
+
 import {
   ChildrenContainer,
   SubtitleContainer,
@@ -46,17 +48,19 @@ export const UnitSelectorWrapper = styled(Flex)`
   > * .cogs-menu {
     padding: ${sizes.small};
   }
-  > * #mainMenu {
-    width: 220px;
-  }
-  > * #subMenu {
-    width: 156px;
-  }
   div {
     div {
       margin-right: 0 !important;
     }
   }
+`;
+
+export const UnitSelectorMainMenu = styled(Menu)`
+  width: 220px;
+`;
+
+export const UnitSelectorSubMenu = styled(Menu)`
+  width: 156px;
 `;
 
 export const UnitCategoryBody = styled(FlexColumn)`

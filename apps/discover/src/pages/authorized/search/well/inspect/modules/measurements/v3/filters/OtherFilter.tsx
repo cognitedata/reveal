@@ -1,21 +1,24 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { useOtherFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/useOtherFilterOptions';
+import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
+
+import { useDeepEffect } from 'hooks/useDeep';
+import { useOtherFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/v3/useOtherFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';
 
 interface Props {
-  selectedCurves: string[];
-  onChange: (curves: string[]) => void;
+  selectedCurves: DepthMeasurementColumn[];
+  onChange: (curves: DepthMeasurementColumn[]) => void;
 }
 
 export const OtherFilter: React.FC<Props> = ({ selectedCurves, onChange }) => {
   const { types } = useOtherFilterOptions();
 
-  useEffect(() => {
+  useDeepEffect(() => {
     onChange(types);
-  }, [JSON.stringify(types)]);
+  }, [types]);
 
   return (
     <CommonCurveFilter

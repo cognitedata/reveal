@@ -11,6 +11,8 @@ import {
   UnitCategoryHeader,
   UnitCategoryValue,
   UnitSelectorWrapper,
+  UnitSelectorMainMenu,
+  UnitSelectorSubMenu,
 } from './elements';
 
 export interface Props {
@@ -33,7 +35,7 @@ export const UnitSelector: React.FC<Props> = ({
           <Menu id="mainMenu">
             <Menu.Submenu
               content={
-                <Menu id="subMenu">
+                <UnitSelectorMainMenu>
                   {PRESSURE_UNITS.map((row) => (
                     <Menu.Item
                       key={row}
@@ -44,7 +46,7 @@ export const UnitSelector: React.FC<Props> = ({
                       {row}
                     </Menu.Item>
                   ))}
-                </Menu>
+                </UnitSelectorMainMenu>
               }
             >
               <UnitCategoryBody>
@@ -54,7 +56,7 @@ export const UnitSelector: React.FC<Props> = ({
             </Menu.Submenu>
             <Menu.Submenu
               content={
-                <Menu id="subMenu">
+                <UnitSelectorSubMenu>
                   {MEASUREMENTS_REFERENCES.map((row) => (
                     <Menu.Item
                       key={row}
@@ -65,7 +67,7 @@ export const UnitSelector: React.FC<Props> = ({
                       {row}
                     </Menu.Item>
                   ))}
-                </Menu>
+                </UnitSelectorSubMenu>
               }
             >
               <UnitCategoryBody>

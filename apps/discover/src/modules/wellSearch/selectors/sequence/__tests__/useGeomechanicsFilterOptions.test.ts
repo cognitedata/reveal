@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from 'react-dom/test-utils';
 
-import { useGeomechanicsFilterOptions } from '../measurements/useGeomechanicsFilterOptions';
+import { useGeomechanicsFilterOptions } from '../measurements/v2/useGeomechanicsFilterOptions';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),

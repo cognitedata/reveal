@@ -1,85 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
+import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 
-import EmptyState from 'components/emptyState';
-import { Loading } from 'components/loading';
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
-import { FlexGrow } from 'styles/layout';
-
-import {
-  DEFAULT_MEASUREMENTS_REFERENCE,
-  DEFAULT_PRESSURE_UNIT,
-} from './constants';
-import CurveCentricView from './curveCentricView/CurveCentricView';
-import { MeasurementsTopBar, MeasurementsWrapper } from './elements';
-import { GeomechanicsCurveFilter } from './filters/GeomechanicsCurveFilter';
-import { OtherFilter } from './filters/OtherFilter';
-import { PPFGCurveFilter } from './filters/PPFGCurveFilter';
-import { UnitSelector } from './filters/UnitSelector';
-import { ViewModeSelector } from './filters/ViewModeSelector';
-import WellCentricView from './wellCentricView/WellCentricView';
+import { Measurements as MeasurementsV2 } from './v2/Measurements';
+import { Measurements as MeasurementsV3 } from './v3/Measurements';
 
 export const Measurements: React.FC = () => {
-  const [viewMode, setViewMode] = useState<string>('Wells');
-  const [geomechanicsCurves, setGeomechanicsCurves] = useState<string[]>([]);
-  const [ppfgCurves, setPPFGCurves] = useState<string[]>([]);
-  const [otherTypes, setOtherTypes] = useState<string[]>([]);
-  const [pressureUnit, setPressureUnit] = useState<string>(
-    DEFAULT_PRESSURE_UNIT
-  );
-  const [measurementReference, setMeasurementReference] = useState<string>(
-    DEFAULT_MEASUREMENTS_REFERENCE
-  );
+  const wellSdkV3Enabled = useEnabledWellSdkV3();
 
-  const { isLoading, data } = useMeasurementsQuery();
-
-  if (isLoading) {
-    return <Loading />;
+  if (wellSdkV3Enabled) {
+    return (
+      <>
+        <MeasurementsV3 />
+      </>
+    );
   }
 
-  if (data && areAllSetValuesEmpty(data)) {
-    return <EmptyState />;
-  }
-
-  return (
-    <MeasurementsWrapper>
-      <MeasurementsTopBar>
-        <ViewModeSelector onChange={setViewMode} activeViewMode={viewMode} />
-        <FlexGrow />
-        <GeomechanicsCurveFilter
-          selectedCurves={geomechanicsCurves}
-          onChange={setGeomechanicsCurves}
-        />
-        <PPFGCurveFilter selectedCurves={ppfgCurves} onChange={setPPFGCurves} />
-        <OtherFilter selectedCurves={otherTypes} onChange={setOtherTypes} />
-        <UnitSelector
-          unit={pressureUnit}
-          reference={measurementReference}
-          onUnitChange={setPressureUnit}
-          onReferenceChange={setMeasurementReference}
-        />
-      </MeasurementsTopBar>
-
-      {viewMode === 'Wells' ? (
-        <WellCentricView
-          geomechanicsCurves={geomechanicsCurves}
-          ppfgCurves={ppfgCurves}
-          otherTypes={otherTypes}
-          pressureUnit={pressureUnit}
-          measurementReference={measurementReference}
-        />
-      ) : (
-        <CurveCentricView
-          geomechanicsCurves={geomechanicsCurves}
-          ppfgCurves={ppfgCurves}
-          otherTypes={otherTypes}
-          pressureUnit={pressureUnit}
-          measurementReference={measurementReference}
-        />
-      )}
-    </MeasurementsWrapper>
-  );
+  return <MeasurementsV2 />;
 };
 
 export default Measurements;

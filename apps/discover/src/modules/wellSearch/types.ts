@@ -17,6 +17,8 @@ import {
 import {
   Wellbore as WellboreV3,
   WellFilter as WellFilterV3,
+  DepthMeasurement,
+  DepthMeasurementData,
 } from '@cognite/sdk-wells-v3';
 import { Point } from '@cognite/seismic-sdk-js';
 
@@ -376,12 +378,59 @@ export enum MeasurementType {
   lot,
 }
 
+export enum MeasurementTypeV3 {
+  GEOMECHANNICS = 'geomechanics',
+  PPFG = 'ppfg',
+  FIT = 'fit',
+  LOT = 'lot',
+}
+
+export enum GeoPpfgFilterTypes {
+  GEOMECHANNICS,
+  PPFG,
+  OTHER,
+}
+
+export enum WdlMeasurementType {
+  GEOMECHANNICS = 'geomechanics',
+  GEOMECHANNICS_PRE_DRILL = 'geomechanics pre drill',
+  GEOMECHANNICS_POST_DRILL = 'geomechanics post drill',
+  PRESSURE = 'pressure',
+  PORE_PRESSURE = 'pore pressure',
+  PORE_PRESSURE_PRE_DRILL = 'pore pressure pre drill',
+  PORE_PRESSURE_PRE_DRILL_HIGH = 'pore pressure pre drill high',
+  PORE_PRESSURE_PRE_DRILL_LOW = 'pore pressure pre drill low',
+  PORE_PRESSURE_PRE_DRILL_MEAN = 'pore pressure pre drill mean',
+  PORE_PRESSURE_POST_DRILL = 'pore pressure post drill',
+  PORE_PRESSURE_POST_DRILL_MEAN = 'pore pressure post drill mean',
+  FRACTURE_PRESSURE = 'fracture pressure',
+  FRACTURE_PRESSURE_PRE_DRILL = 'fracture pressure pre drill',
+  FRACTURE_PRESSURE_PRE_DRILL_HIGH = 'fracture pressure pre drill high',
+  FRACTURE_PRESSURE_PRE_DRILL_LOW = 'fracture pressure pre drill low',
+  FRACTURE_PRESSURE_PRE_DRILL_MEAN = 'fracture pressure pre drill mean',
+  FRACTURE_PRESSURE_POST_DRILL = 'fracture pressure post drill',
+  FRACTURE_PRESSURE_POST_DRILL_MEAN = 'fracture pressure post drill mean',
+  LOT = 'fit equivalent mud weight',
+  FIT = 'lot equivalent mud weight',
+}
+
 export interface Measurement extends Sequence {
   rows?: SequenceRow[];
 }
 
+/**
+ * Combine Sequence and Row data for processing purpose
+ */
+export interface MeasurementV3 extends DepthMeasurement {
+  data?: DepthMeasurementData;
+}
+
 export type WellboreMeasurementsMap = {
   [key: string]: Measurement[];
+};
+
+export type WellboreMeasurementsMapV3 = {
+  [key: string]: MeasurementV3[];
 };
 
 export type MeasurementCurveConfig = {
@@ -389,6 +438,17 @@ export type MeasurementCurveConfig = {
     [key: string]: Partial<PlotData>;
   };
 };
+
+export type MeasurementCurveConfigV3 = {
+  [key: string]: {
+    [key: string]: Partial<PlotData>;
+  };
+};
+
 export type MeasurementChartData = Partial<PlotData> & {
   measurementType: MeasurementType;
+};
+
+export type MeasurementChartDataV3 = Partial<PlotData> & {
+  measurementType: MeasurementTypeV3;
 };

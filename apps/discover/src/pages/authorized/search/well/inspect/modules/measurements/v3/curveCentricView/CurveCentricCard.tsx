@@ -1,11 +1,14 @@
 import React from 'react';
 
-import {
-  MeasurementChartData,
-  MeasurementType,
-} from 'modules/wellSearch/types';
+import head from 'lodash/head';
+import isUndefined from 'lodash/isUndefined';
 
-import { ChartV2 } from '../../common/ChartV2';
+import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
+import {
+  MeasurementChartDataV3 as MeasurementChartData,
+  MeasurementTypeV3 as MeasurementType,
+} from 'modules/wellSearch/types';
+import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
 
 import { SubHeader, Wrapper } from './elements';
 
@@ -21,17 +24,18 @@ type Props = {
 };
 
 export const CurveCentricCard: React.FC<Props> = ({ chartData, axisNames }) => {
+  const chartDataItem = head(chartData);
+  if (isUndefined(chartDataItem)) return <NoDataAvailable />;
   const { measurementType } = chartData[0];
-  const measurementTypeValue = MeasurementType[measurementType];
   const isOtherType =
-    measurementType === MeasurementType.fit ||
-    measurementType === MeasurementType.lot;
+    measurementType === MeasurementType.FIT ||
+    measurementType === MeasurementType.LOT;
 
   return (
     <Wrapper>
       {!isOtherType && (
         <SubHeader>
-          {measurementType === MeasurementType.geomechanic
+          {measurementType === MeasurementType.GEOMECHANNICS
             ? 'Geomechanics'
             : 'PPFG'}
         </SubHeader>
@@ -43,9 +47,7 @@ export const CurveCentricCard: React.FC<Props> = ({ chartData, axisNames }) => {
           y: 'reversed',
         }}
         title={
-          isOtherType
-            ? measurementTypeValue.toUpperCase()
-            : chartData[0].name || ''
+          isOtherType ? measurementType.toUpperCase() : chartData[0].name || ''
         }
         autosize
       />

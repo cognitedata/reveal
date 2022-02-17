@@ -1,6 +1,8 @@
 export const UNITS_TO_STANDARD = {
   ftUS: 'ft-us',
   meter: 'm',
+  feet: 'ft',
+  foot: 'ft',
 };
 
 // match to one of the listed unit-symbol if the given symble is different

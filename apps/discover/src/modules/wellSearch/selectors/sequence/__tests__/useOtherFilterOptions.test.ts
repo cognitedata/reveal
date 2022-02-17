@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from 'react-dom/test-utils';
 
-import { useOtherFilterOptions } from '../measurements/useOtherFilterOptions';
+import { useOtherFilterOptions } from '../measurements/v2/useOtherFilterOptions';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),

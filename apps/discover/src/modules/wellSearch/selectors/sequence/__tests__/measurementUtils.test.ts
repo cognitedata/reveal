@@ -1,6 +1,6 @@
 import { mockedMeasurementsResultFixture } from '__test-utils/fixtures/well';
 
-import { getUniqCurves } from '../measurements/utils';
+import { getUniqCurves } from '../measurements/v2/utils';
 
 describe('Measurement utils', () => {
   test('Should return unique measurement curves', () => {

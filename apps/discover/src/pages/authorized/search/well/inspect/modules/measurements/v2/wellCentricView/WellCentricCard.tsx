@@ -12,9 +12,9 @@ import {
   Wellbore,
   WellboreId,
 } from 'modules/wellSearch/types';
+import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
+import CurveColorCode from 'pages/authorized/search/well/inspect/modules/common/ChartV2/CurveColorCode';
 
-import { ChartV2 } from '../../common/ChartV2';
-import CurveColorCode from '../../common/ChartV2/CurveColorCode';
 import { filterByChartType, filterByMainChartType } from '../utils';
 
 import {
