@@ -1,7 +1,7 @@
 import { storage } from '@cognite/react-container';
 
 import { ThunkResult } from 'core/types';
-import { Column, ViewMode } from 'modules/documentSearch/types';
+import { ViewMode } from 'modules/documentSearch/types';
 import {
   ADD_SELECTED_COLUMN,
   REMOVE_SELECTED_COLUMN,
@@ -17,6 +17,7 @@ import {
   CLEAR_EXTRACT_PARENT_FOLDER_PATH,
   ClearExtractParentFolderPath,
 } from 'modules/documentSearch/types.actions';
+import { Column } from 'pages/authorized/search/common/types';
 
 export const selectDocumentIds = (ids: string[]): SelectDocumentIds => ({
   type: SELECT_DOCUMENT_IDS,

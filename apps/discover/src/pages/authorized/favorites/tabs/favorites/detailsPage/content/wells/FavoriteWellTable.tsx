@@ -11,8 +11,7 @@ import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import { Options, Table, RowProps } from 'components/tablev3';
-import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useDeepCallback, useDeepEffect } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
@@ -24,7 +23,7 @@ import {
   REMOVE_FROM_SET_TEXT,
 } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
-import { generateWellColumns } from 'pages/authorized/search/well/utils';
+import { useDataForTable } from 'pages/authorized/search/well/content/result/useDataForTable';
 import { FlexRow } from 'styles/layout';
 
 import { FavoriteWellWrapper, RemoveFavoriteLabel } from './elements';
@@ -51,17 +50,13 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const [selectedWellIds, setSelectedWellIds] = useState<SelectedMap>({});
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
   const [hoveredWell, setHoveredWell] = useState<Well>();
-  const userPreferredUnit = useUserPreferencesMeasurement();
 
   const [selectedWellboreIdsWithWellId, setSelectedWellboreIdsWithWellId] =
     useState<FavoriteContentWells>({});
 
   useDeepEffect(() => setWellIds(wells ? Object.keys(wells) : []), [wells]);
 
-  const columns = useDeepMemo(
-    () => Object.values(generateWellColumns(userPreferredUnit) || []),
-    [userPreferredUnit]
-  );
+  const { columns } = useDataForTable();
 
   const handleRowClick = useCallback(
     (row: RowProps<Well> & { isSelected: boolean }) => {

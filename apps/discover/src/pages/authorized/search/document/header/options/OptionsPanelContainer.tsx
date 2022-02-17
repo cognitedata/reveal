@@ -5,12 +5,9 @@ import { StoreState, TS_FIX_ME } from 'core';
 import sortBy from 'lodash/sortBy';
 
 import { documentSearchActions } from 'modules/documentSearch/actions';
-import {
-  Column,
-  ViewMode,
-  AvailableColumn,
-} from 'modules/documentSearch/types';
+import { ViewMode } from 'modules/documentSearch/types';
 import { getAvailableColumns } from 'modules/documentSearch/utils/columns';
+import { Column, AvailableColumn } from 'pages/authorized/search/common/types';
 
 import { columnMap } from '../../results/DocumentResultTable';
 

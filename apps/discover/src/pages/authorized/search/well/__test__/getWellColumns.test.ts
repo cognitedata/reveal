@@ -1,10 +1,10 @@
 import { FEET } from 'constants/units';
 
-import { generateWellColumns } from '../utils';
+import { getWellColumns } from '../getWellColumns';
 
-describe('Test utils.ts', () => {
+describe('getWellColumns', () => {
   it('Well column should contain passed unit', async () => {
-    const result = generateWellColumns(FEET);
+    const result = getWellColumns(FEET);
     expect(result.waterDepth.Header).toContain(FEET);
   });
 });

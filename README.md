@@ -1,6 +1,6 @@
 # Applications
 
-[![codecov](https://codecov.io/gh/cognitedata/react-demo-app/branch/master/graph/badge.svg?token=uzusBZyM8s)](https://codecov.io/gh/cognitedata/react-demo-app)
+[![codecov](https://codecov.io/gh/cognitedata/applications/branch/master/graph/badge.svg?token=uzusBZyM8s)](https://codecov.io/gh/cognitedata/applications)
 
 This monorepository provides centralized management of Cognite's applications and reusable packages.
 

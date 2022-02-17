@@ -144,16 +144,6 @@ export interface SearchQueryFull {
 
 export type ViewMode = 'card' | 'table';
 
-export interface Column {
-  field: string;
-  name: string;
-}
-
-export interface AvailableColumn extends Column {
-  selected?: boolean;
-  disabled?: boolean;
-}
-
 /**
  * Document filters
  */

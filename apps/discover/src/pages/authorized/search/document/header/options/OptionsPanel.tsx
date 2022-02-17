@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components/macro';
 
 import ManageColumnsPanel from 'components/manage-columns-panel';
-import { AvailableColumn } from 'modules/documentSearch/types';
+import { AvailableColumn } from 'pages/authorized/search/common/types';
 
 const Root = styled.div`
   display: flex;

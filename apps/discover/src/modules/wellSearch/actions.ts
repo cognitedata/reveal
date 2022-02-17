@@ -4,11 +4,11 @@ import { storage } from '@cognite/react-container';
 import { Sequence, Asset } from '@cognite/sdk';
 
 import { ThunkResult } from 'core/types';
-import { Column } from 'modules/documentSearch/types';
 import {
   TOGGLE_SELECTED_WELLBORE_OF_WELL,
   WellboreId,
 } from 'modules/wellSearch/types';
+import { Column } from 'pages/authorized/search/common/types';
 
 import { wellSearchService } from './service';
 import {

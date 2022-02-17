@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
-import compact from 'lodash/compact';
 import head from 'lodash/head';
 import map from 'lodash/map';
-import sortBy from 'lodash/sortBy';
 import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
 import { getDateOrDefaultText } from 'utils/date';
 import { changeUnits } from 'utils/units';
@@ -29,45 +27,31 @@ import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
 import { SearchTableResultActionContainer } from 'pages/authorized/search/elements';
-import { generateWellColumns } from 'pages/authorized/search/well/utils';
 import { FlexRow } from 'styles/layout';
 
 import { WellAppliedFilters } from '../../filters/WellAppliedFilters';
 import { WellOptionPanel } from '../WellOptionPanel';
 
 import { WellsContainer } from './elements';
+import { useDataForTable } from './useDataForTable';
 import { WellboreResultTable } from './WellBoreResultTable';
 import { WellsBulkActions } from './WellsBulkActions';
 
 export const WellResultTable: React.FC = () => {
   const wells = useWellQueryResultWells();
-
-  const { selectedWellIds, expandedWellIds, selectedColumns } = useWells();
-
+  const { selectedWellIds, expandedWellIds } = useWells();
   const indeterminateWellIds = useIndeterminateWells();
   const favoriteWellIds = useFavoriteWellIds();
   const metrics = useGlobalMetrics('wells');
   const userPreferredUnit = useUserPreferencesMeasurement();
   const dispatch = useDispatch();
   const navigateToWellInspect = useNavigateToWellInspect();
+  const { columns } = useDataForTable();
   const wellsRef = useRef(wells);
 
   useEffect(() => {
     wellsRef.current = wells;
   }, [wells]);
-
-  const columns = useDeepMemo(
-    () =>
-      sortBy(
-        compact(
-          selectedColumns.map(
-            (column) => generateWellColumns(userPreferredUnit)[column]
-          )
-        ),
-        'order'
-      ),
-    [selectedColumns, userPreferredUnit]
-  );
 
   const unitChangeAcceessors = useMemo(
     () => [
@@ -220,10 +204,7 @@ export const WellResultTable: React.FC = () => {
           <SearchBreadcrumb stats={wellsStats} />
           <WellAppliedFilters showClearTag />
         </div>
-        <WellOptionPanel
-          userPreferredUnit={userPreferredUnit}
-          selectedColumns={selectedColumns}
-        />
+        <WellOptionPanel />
       </SearchTableResultActionContainer>
       <Table<Well>
         scrollTable

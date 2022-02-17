@@ -9,6 +9,20 @@ export const getMockConfig = (
     },
     wells: {
       disabled: false,
+      field_block_operator_filter: {
+        operator: {
+          enabled: true,
+        },
+        field: {
+          enabled: true,
+        },
+        region: {
+          enabled: true,
+        },
+        block: {
+          enabled: false,
+        },
+      },
     },
     ...extras,
   };

@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
 
-import { AvailableColumn } from 'modules/documentSearch/types';
 import { getAvailableColumns } from 'modules/documentSearch/utils/columns';
 import { wellInspectActions } from 'modules/wellInspect/actions';
 import { useWellInspect } from 'modules/wellInspect/selectors';
+import { AvailableColumn } from 'pages/authorized/search/common/types';
 // import { toBooleanMap } from 'modules/wellSearch/utils';
 import OptionsPanel from 'pages/authorized/search/document/header/options/OptionsPanel';
 

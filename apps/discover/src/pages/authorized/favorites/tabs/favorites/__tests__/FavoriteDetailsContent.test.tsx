@@ -6,6 +6,7 @@ import { getMockUserGet } from 'services/user/__mocks/getMockUserGet';
 import { getMockConfigGet } from '__mocks/getMockConfigGet';
 import { getMockDocumentSearch } from '__mocks/getMockDocumentSearch';
 import { getMockWellById } from '__mocks/getMockWellById';
+import { getMockUserMe } from '__mocks/mockUmsMe';
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
@@ -23,6 +24,7 @@ import {
 } from 'pages/authorized/favorites/tabs/favorites/detailsPage/FavoriteDetailsContent';
 
 const mockServer = setupServer(
+  getMockUserMe(),
   getMockWellById(),
   getMockConfigGet(),
   getMockDocumentCategoriesGet(),
@@ -32,18 +34,20 @@ const mockServer = setupServer(
 
 describe('Favorite Details Content', () => {
   const mockFavorite = getMockFavoriteSummary();
-  const store = getMockedStore();
 
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
 
-  const page = (props?: Partial<Props>) =>
-    testRenderer(FavoriteDetailsContent, store, {
+  const page = (props?: Partial<Props>) => {
+    const store = getMockedStore();
+
+    return testRenderer(FavoriteDetailsContent, store, {
       content: mockFavorite.content,
       favoriteId: mockFavorite.id,
       ownerId: defaultTestUser,
       ...props,
     });
+  };
 
   // set location url correctly so child elements get rendered
   beforeEach(() => {
@@ -96,8 +100,10 @@ describe('Favorite Details Content', () => {
     const wellTab = screen.getByRole('tab', { name: /Wells/ });
     wellTab.click();
 
-    // await screen.findByTestId('favorite-wells-table');
-    expect(await screen.findByText(getMockWell().name)).toBeInTheDocument();
+    // there are lots of hooks firing, so it's safer to use this instead of findBy
+    await waitFor(() => {
+      expect(screen.getByText(getMockWell().name)).toBeInTheDocument();
+    });
 
     // check if delete modal dialog and action are called
 

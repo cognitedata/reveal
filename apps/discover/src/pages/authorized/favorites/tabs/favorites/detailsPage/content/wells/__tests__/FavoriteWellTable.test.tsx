@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { getMockConfigGet } from '__mocks/getMockConfigGet';
@@ -8,6 +8,7 @@ import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT } from 'components/emptyState/constants';
+import { initialState } from 'modules/wellSearch/reducer';
 import {
   FAVORITE_SET_NO_WELLS,
   REMOVE_FROM_SET_TEXT,
@@ -22,8 +23,15 @@ const mockServer = setupServer(
 );
 
 describe('Favorite Wellbore table', () => {
-  const defaultTestInit = (viewProps?: Props, store = getMockedStore()) =>
-    testRenderer(FavoriteWellsTable, store, viewProps);
+  const defaultTestInit = (
+    viewProps?: Props,
+    store = getMockedStore({
+      wellSearch: {
+        ...initialState,
+        selectedColumns: initialState.selectedColumns.concat(['fieldname']),
+      },
+    })
+  ) => testRenderer(FavoriteWellsTable, store, viewProps);
 
   afterEach(async () => jest.clearAllMocks());
   beforeAll(() => mockServer.listen());
@@ -41,9 +49,12 @@ describe('Favorite Wellbore table', () => {
 
     expect(screen.getAllByText(LOADING_TEXT).length).toEqual(2);
     // wait for everything to finish loading
-    expect(await screen.findByText(well.name)).toBeInTheDocument();
-    expect(screen.queryAllByText(LOADING_TEXT).length).toEqual(0);
+    // there are lots of hooks firing, so it's safer to use this instead of findBy
+    await waitFor(() => {
+      expect(screen.getByText(well.name)).toBeInTheDocument();
+    });
 
+    expect(screen.queryAllByText(LOADING_TEXT).length).toEqual(0);
     expect(screen.getByText(well.operator || '-error-')).toBeInTheDocument();
     expect(screen.getByText(well.field || '-error-')).toBeInTheDocument();
     expect(screen.getByText('View')).toBeInTheDocument();
@@ -80,7 +91,10 @@ describe('Favorite Wellbore table', () => {
     });
 
     // wait for everything to finish loading
-    expect(await screen.findByText(getMockWell().name)).toBeInTheDocument();
+    // there are lots of hooks firing, so it's safer to use this instead of findBy
+    await waitFor(() => {
+      expect(screen.getByText(getMockWell().name)).toBeInTheDocument();
+    });
 
     fireEvent.mouseEnter(screen.getByTestId('menu-button'), {
       bubbles: true,
