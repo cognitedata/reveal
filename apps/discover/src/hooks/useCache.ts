@@ -70,7 +70,7 @@ export const useCache = <T>({ key, items, fetchAction }: CacheProps<T>) => {
       // ✅ memoizes with useCallback
       // https://tkdodo.eu/blog/react-query-data-transformations#3-using-the-select-option
       select: React.useCallback(
-        (data) => {
+        (data: Record<string, T[]>) => {
           return pick(data, Array.from(items.keys()));
         },
         [items.keys()]

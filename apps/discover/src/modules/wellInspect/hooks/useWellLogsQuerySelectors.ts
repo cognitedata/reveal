@@ -1,16 +1,14 @@
-import flatten from 'lodash/flatten';
+import compact from 'lodash/compact';
 import get from 'lodash/get';
 import { getDateOrDefaultText } from 'utils/date';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { PETREL_LOG_TYPE } from 'modules/wellSearch/constants';
-import { Sequence, SequenceData, WellboreId } from 'modules/wellSearch/types';
-import { LogTypeData } from 'pages/authorized/search/well/inspect/modules/logType/interfaces';
-
 import {
   useWellInspectSelectedWellboreIds,
   useWellInspectSelectedWells,
-} from './useWellInspect';
+} from 'modules/wellInspect/hooks/useWellInspect';
+import { WellLog } from 'pages/authorized/search/well/inspect/modules/logType/v3/types';
+
 import { useWellLogsQuery } from './useWellLogsQuery';
 
 export const useSelectedWellboreLogs = () => {
@@ -20,47 +18,27 @@ export const useSelectedWellboreLogs = () => {
 
   return useDeepMemo(() => {
     if (!data) {
-      return { data: [], isLoading: true };
+      return { data: [], isLoading };
     }
 
-    const logTypeData: LogTypeData[] = wells.flatMap((well) =>
-      well.wellbores.flatMap((wellbore) => {
-        return get(data, wellbore.id, [] as SequenceData[]).map(
-          (sequenceData) => {
-            const { sequence } = sequenceData;
-            return {
-              ...sequence,
-              wellName: well.name,
-              wellboreName: wellbore.description || '',
-              wellboreId: wellbore.id,
-              logType: PETREL_LOG_TYPE,
-              modified: getDateOrDefaultText(sequence.lastUpdatedTime),
-            };
-          }
-        );
-      })
+    const wellLogsData: WellLog[] = compact(
+      wells.flatMap((well) =>
+        well.wellbores.map((wellbore) => {
+          const depthMeasurement = get(data, wellbore.id);
+
+          if (!depthMeasurement) return null;
+
+          return {
+            ...depthMeasurement,
+            id: depthMeasurement.source.sequenceExternalId,
+            wellName: well.name,
+            wellboreName: wellbore.description || '',
+            modified: getDateOrDefaultText(new Date()),
+          };
+        })
+      )
     );
 
-    return { data: logTypeData, isLoading };
-  }, [wellboreIds, data, isLoading]);
-};
-
-export const useWellboreLogSequenceIdMap = (
-  wellboreIds?: WellboreId[]
-): Record<Sequence['id'], SequenceData> => {
-  const { data, isLoading } = useWellLogsQuery(wellboreIds);
-
-  return useDeepMemo(() => {
-    if (!data) {
-      return {};
-    }
-
-    return flatten(Object.values(data)).reduce(
-      (sequenceIdMap, sequenceData) => ({
-        ...sequenceIdMap,
-        [sequenceData.sequence.id]: sequenceData,
-      }),
-      {} as Record<Sequence['id'], SequenceData>
-    );
+    return { data: wellLogsData, isLoading };
   }, [wellboreIds, data, isLoading]);
 };

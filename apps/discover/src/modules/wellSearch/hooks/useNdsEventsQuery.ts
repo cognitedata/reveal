@@ -91,7 +91,7 @@ export const useNdsEventsQuery = () => {
     wellboreIds
   );
   if (newIds.length === 0) {
-    return { data: trimmedData as WellboreEventsMap };
+    return { data: trimmedData as WellboreEventsMap, isLoading: false };
   }
 
   // If there are ids not in the cached data, do a search for new ids and update the cache

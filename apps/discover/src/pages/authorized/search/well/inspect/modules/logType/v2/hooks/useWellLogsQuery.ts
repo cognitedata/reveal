@@ -6,59 +6,54 @@ import isEmpty from 'lodash/isEmpty';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
+import { useTrajectoryQueriesFiltersByKey } from 'modules/wellInspect/hooks/useTrajectoryQueriesFiltersByKey';
+import { WellSequenceData } from 'modules/wellInspect/types';
+import { selectObjectsByKey } from 'modules/wellInspect/utils';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { WellboreId } from 'modules/wellSearch/types';
 
-import { WellSequenceData } from '../types';
-import { filterWellSequenceDataByWellboreIds } from '../utils';
-
 import { useFetchSequenceData } from './useFetchSequenceData';
-import { useTrajectoryQueriesFiltersByKey } from './useTrajectoryQueriesFiltersByKey';
 
-export const useWellFormationTopsQuery = (
+export const useWellLogsQuery = (
   requiredWellboreIds: WellboreId[] = []
 ): UseQueryResult<WellSequenceData> => {
   const queryClient = useQueryClient();
   const { data: wellConfig } = useWellConfig();
-  const filters = useTrajectoryQueriesFiltersByKey('logsFrmTops');
+  const filters = useTrajectoryQueriesFiltersByKey('logs');
   const fetchSequenceData = useFetchSequenceData();
 
-  const wellFormationTops =
-    queryClient.getQueryData<WellSequenceData>(WELL_QUERY_KEY.FORMATION_TOPS) ||
-    {};
+  const wellLogs =
+    queryClient.getQueryData<WellSequenceData>(WELL_QUERY_KEY.LOGS) || {};
 
   const prestineWellboreIds = useDeepMemo(() => {
-    const wellFormationTopsFetchedWellboreIds = Object.keys(wellFormationTops);
-    return difference(requiredWellboreIds, wellFormationTopsFetchedWellboreIds);
+    const wellLogsFetchedWellboreIds = Object.keys(wellLogs);
+    return difference(requiredWellboreIds, wellLogsFetchedWellboreIds);
   }, [requiredWellboreIds]);
 
-  const updateWellFormationTopsForPrestineWellboreIds = async () => {
+  const updateWellLogsForPrestineWellboreIds = async () => {
     if (isEmpty(prestineWellboreIds)) {
-      return wellFormationTops;
+      return wellLogs;
     }
     const updatedWellLogs: WellSequenceData = {
-      ...wellFormationTops,
+      ...wellLogs,
       ...(await fetchSequenceData(prestineWellboreIds, filters)),
     };
-    queryClient.setQueryData(WELL_QUERY_KEY.FORMATION_TOPS, updatedWellLogs);
+    queryClient.setQueryData(WELL_QUERY_KEY.LOGS, updatedWellLogs);
     return updatedWellLogs;
   };
 
   useDeepEffect(() => {
-    updateWellFormationTopsForPrestineWellboreIds();
+    updateWellLogsForPrestineWellboreIds();
   }, [prestineWellboreIds]);
 
   return useQuery<WellSequenceData>(
-    WELL_QUERY_KEY.FORMATION_TOPS,
-    updateWellFormationTopsForPrestineWellboreIds,
+    WELL_QUERY_KEY.LOGS,
+    updateWellLogsForPrestineWellboreIds,
     {
       enabled: wellConfig?.disabled !== true,
       select: React.useCallback(
-        (wellFormationTops) => {
-          return filterWellSequenceDataByWellboreIds(
-            wellFormationTops,
-            requiredWellboreIds
-          );
+        (wellLogs) => {
+          return selectObjectsByKey(wellLogs, requiredWellboreIds);
         },
         [requiredWellboreIds]
       ),

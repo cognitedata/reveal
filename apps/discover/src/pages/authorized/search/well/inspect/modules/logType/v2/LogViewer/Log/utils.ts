@@ -4,7 +4,7 @@ import head from 'lodash/head';
 
 import { LogViewer, Track } from '@cognite/videx-wellog';
 
-import { NO_LOGS_LEGEND_MESSAGE } from '../../../../constants';
+import { NO_LOGS_LEGEND_MESSAGE } from 'pages/authorized/search/well/inspect/constants';
 
 import { LogData } from './interfaces';
 

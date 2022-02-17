@@ -11,17 +11,18 @@ import { ThreeDee } from 'components/3d';
 import EmptyState from 'components/emptyState';
 import { LOADING_SUB_TEXT } from 'components/emptyState/constants';
 import { StoreState } from 'core/types';
-import { useFetchWellFormationTopsRowData } from 'modules/wellInspect/hooks/useFetchWellFormationTopsRowData';
-import { useFetchWellLogsRowData } from 'modules/wellInspect/hooks/useFetchWellLogsRowData';
-import { useWellFormationTopsQuery } from 'modules/wellInspect/hooks/useWellFormationTopsQuery';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellLogsQuery } from 'modules/wellInspect/hooks/useWellLogsQuery';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { useNptEventsFor3D } from 'modules/wellSearch/selectors';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
+
+import { useFetchWellFormationTopsRowData } from '../modules/logType/v2/hooks/useFetchWellFormationTopsRowData';
+import { useFetchWellLogsRowData } from '../modules/logType/v2/hooks/useFetchWellLogsRowData';
+import { useWellFormationTopsQuery } from '../modules/logType/v2/hooks/useWellFormationTopsQuery';
+import { useWellLogsQuery } from '../modules/logType/v2/hooks/useWellLogsQuery';
 
 const ThreeDeeEmptyStateLoader: React.FC = () => {
   return <EmptyState isLoading loadingSubtitle={LOADING_SUB_TEXT} />;

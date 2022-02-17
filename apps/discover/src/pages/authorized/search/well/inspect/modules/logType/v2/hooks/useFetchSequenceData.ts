@@ -5,12 +5,10 @@ import set from 'lodash/set';
 
 import { ProjectConfigWellsTrajectoryQueries } from '@cognite/discover-api-types';
 
+import { useWellInspectWellboreAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
+import { WellSequenceData } from 'modules/wellInspect/types';
 import { wellSearchService } from 'modules/wellSearch/service';
 import { WellboreId } from 'modules/wellSearch/types';
-
-import { WellSequenceData } from '../types';
-
-import { useWellInspectWellboreAssetIdMap } from './useWellInspectIdMap';
 
 export const useFetchSequenceData = () => {
   const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();

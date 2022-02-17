@@ -17,19 +17,19 @@ import { ExpandButton } from 'components/buttons';
 import { Loading } from 'components/loading';
 import ManageColumnsPanel from 'components/manage-columns-panel';
 import { useDeepMemo } from 'hooks/useDeep';
-import { useFetchWellFormationTopsRowData } from 'modules/wellInspect/hooks/useFetchWellFormationTopsRowData';
-import { useFetchWellLogsRowData } from 'modules/wellInspect/hooks/useFetchWellLogsRowData';
-import {
-  useWellFormationTops,
-  useWellFormationTopsWellboreIdMap,
-} from 'modules/wellInspect/hooks/useWellFormationTopsQuerySelectors';
-import { useWellboreLogSequenceIdMap } from 'modules/wellInspect/hooks/useWellLogsQuerySelectors';
 import { PETREL_LOG_TYPE, TRACK_CONFIG } from 'modules/wellSearch/constants';
 import { useLogsPPFGQuery } from 'modules/wellSearch/hooks/useLogsPPFGQuery';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 
-import { ModuleFilterDropdownWrapper } from '../common/elements';
+import { ModuleFilterDropdownWrapper } from '../../common/elements';
 
+import { useFetchWellFormationTopsRowData } from './hooks/useFetchWellFormationTopsRowData';
+import { useFetchWellLogsRowData } from './hooks/useFetchWellLogsRowData';
+import {
+  useWellFormationTops,
+  useWellFormationTopsWellboreIdMap,
+} from './hooks/useWellFormationTopsQuerySelectors';
+import { useWellboreLogSequenceIdMap } from './hooks/useWellLogsQuerySelectors';
 import { LogTypeData } from './interfaces';
 import { LogViewer } from './LogViewer';
 import { Domain, DomainMap, DomainConfig } from './LogViewer/DomainConfig';

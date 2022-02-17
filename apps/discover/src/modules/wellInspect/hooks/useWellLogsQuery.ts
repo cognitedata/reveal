@@ -1,66 +1,32 @@
-import React from 'react';
-import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
+import { DepthMeasurement } from '@cognite/sdk-wells-v3';
 
-import difference from 'lodash/difference';
-import isEmpty from 'lodash/isEmpty';
-
+import { EMPTY_OBJECT } from 'constants/empty';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
+import { useArrayCache } from 'hooks/useArrayCache';
+import { fetchAllSequences } from 'modules/wellSearch/service/measurements/wellLogs';
 import { WellboreId } from 'modules/wellSearch/types';
+import {
+  groupByWellbore,
+  keyByWellbore,
+} from 'modules/wellSearch/utils/groupByWellbore';
 
-import { WellSequenceData } from '../types';
-import { filterWellSequenceDataByWellboreIds } from '../utils';
+export const useWellLogsQuery = (wellboreIds: WellboreId[] = []) => {
+  const { data, ...rest } = useArrayCache<DepthMeasurement>({
+    /**
+     * This key should not use wellboreIds.
+     * There is some issue which does not sends the request to fetch the well logs when new wellboreIds are passed.
+     * TODO: use WELL_QUERY_KEY.LOGS only
+     */
+    key: JSON.stringify([WELL_QUERY_KEY.LOGS, wellboreIds]),
+    items: new Set(wellboreIds),
+    fetchAction: (items: Set<string>, options) =>
+      fetchAllSequences({ wellboreIds: items, options }).then(groupByWellbore),
+  });
 
-import { useFetchSequenceData } from './useFetchSequenceData';
-import { useTrajectoryQueriesFiltersByKey } from './useTrajectoryQueriesFiltersByKey';
-
-export const useWellLogsQuery = (
-  requiredWellboreIds: WellboreId[] = []
-): UseQueryResult<WellSequenceData> => {
-  const queryClient = useQueryClient();
-  const { data: wellConfig } = useWellConfig();
-  const filters = useTrajectoryQueriesFiltersByKey('logs');
-  const fetchSequenceData = useFetchSequenceData();
-
-  const wellLogs =
-    queryClient.getQueryData<WellSequenceData>(WELL_QUERY_KEY.LOGS) || {};
-
-  const prestineWellboreIds = useDeepMemo(() => {
-    const wellLogsFetchedWellboreIds = Object.keys(wellLogs);
-    return difference(requiredWellboreIds, wellLogsFetchedWellboreIds);
-  }, [requiredWellboreIds]);
-
-  const updateWellLogsForPrestineWellboreIds = async () => {
-    if (isEmpty(prestineWellboreIds)) {
-      return wellLogs;
-    }
-    const updatedWellLogs: WellSequenceData = {
-      ...wellLogs,
-      ...(await fetchSequenceData(prestineWellboreIds, filters)),
-    };
-    queryClient.setQueryData(WELL_QUERY_KEY.LOGS, updatedWellLogs);
-    return updatedWellLogs;
+  return {
+    ...rest,
+    data: data
+      ? keyByWellbore(data)
+      : (EMPTY_OBJECT as Record<WellboreId, DepthMeasurement>),
   };
-
-  useDeepEffect(() => {
-    updateWellLogsForPrestineWellboreIds();
-  }, [prestineWellboreIds]);
-
-  return useQuery<WellSequenceData>(
-    WELL_QUERY_KEY.LOGS,
-    updateWellLogsForPrestineWellboreIds,
-    {
-      enabled: wellConfig?.disabled !== true,
-      select: React.useCallback(
-        (wellLogs) => {
-          return filterWellSequenceDataByWellboreIds(
-            wellLogs,
-            requiredWellboreIds
-          );
-        },
-        [requiredWellboreIds]
-      ),
-    }
-  );
 };

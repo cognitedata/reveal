@@ -1,8 +1,8 @@
 import { CreatedAndLastUpdatedTime, Sequence } from '@cognite/sdk';
 
 import { SequenceData, SequenceRow } from 'modules/wellSearch/types';
-import { SequenceLogType } from 'pages/authorized/search/well/inspect/modules/logType/interfaces';
-import { LogData } from 'pages/authorized/search/well/inspect/modules/logType/LogViewer/Log/interfaces';
+import { SequenceLogType } from 'pages/authorized/search/well/inspect/modules/logType/v2/interfaces';
+import { LogData } from 'pages/authorized/search/well/inspect/modules/logType/v2/LogViewer/Log/interfaces';
 
 export const mdValues = [0, 5];
 export const mockLogDataMD: LogData = {
