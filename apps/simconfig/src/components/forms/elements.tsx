@@ -6,6 +6,8 @@ import { Input, TextInput } from '@cognite/cogs.js';
 import { getNodeFromPath } from 'utils/formUtils';
 
 import { SegmentedControl } from './controls/SegmentedControl';
+import type { Option } from './controls/TImeSeriesSelector';
+import TimeSeriesSelector from './controls/TImeSeriesSelector/TimeSeriesSelector';
 
 export const FormHeader = styled.h3`
   display: flex;
@@ -191,7 +193,7 @@ export function TimeSeriesField({
   return (
     <>
       <Field
-        as={StyledInput}
+        as={TimeSeriesSelector}
         disabled={externalIdDisabled}
         error={externalIdErrorText}
         name={externalIdField}
@@ -202,8 +204,8 @@ export function TimeSeriesField({
         type="text"
         value={externalIdValue}
         width={400}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-          setFieldValue(externalIdField, event.currentTarget.value);
+        onChange={(option: Option) => {
+          setFieldValue(externalIdField, option.value);
         }}
       />
 
