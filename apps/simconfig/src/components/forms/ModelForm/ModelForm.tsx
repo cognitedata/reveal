@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react';
 import { useRef } from 'react';
+import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import { Field, Form, Formik } from 'formik';
@@ -9,6 +10,7 @@ import { Button, Input, Select, toast } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import type {
   CreateMetadata,
+  DefinitionMap,
   FileInfo,
   UpdateMetadata,
 } from '@cognite/simconfig-api-sdk/rtk';
@@ -31,7 +33,6 @@ import {
 import { isSuccessResponse } from 'utils/responseUtils';
 
 import {
-  BoundaryCondition,
   DEFAULT_MODEL_SOURCE,
   DEFAULT_UNIT_SYSTEM,
   FileExtensionToSimulator,
@@ -40,8 +41,12 @@ import {
 import { InputRow } from './elements';
 import type { ModelFormState } from './types';
 
-const getInitialModelFormState = (): ModelFormState => ({
-  boundaryConditions: getSelectEntriesFromMap(BoundaryCondition),
+import type { AppLocationGenerics } from 'routes';
+
+const getInitialModelFormState = (
+  boundaryConditionsData: DefinitionMap['type']['boundaryCondition'] | undefined
+): ModelFormState => ({
+  boundaryConditions: getSelectEntriesFromMap(boundaryConditionsData),
   file: undefined,
   metadata: {
     modelName: '',
@@ -76,6 +81,10 @@ export function ModelForm({
   const inputFile = useRef<HTMLInputElement>(null);
   const { authState } = useAuthContext();
 
+  const {
+    data: { definitions },
+  } = useMatch<AppLocationGenerics>();
+
   const project = useSelector(selectProject);
   const { data: simulatorsList } = useGetSimulatorsListQuery(
     { project },
@@ -84,7 +93,7 @@ export function ModelForm({
 
   const isNewModel = !initialModelFormState;
   const modelFormState = !initialModelFormState
-    ? getInitialModelFormState()
+    ? getInitialModelFormState(definitions?.type.boundaryCondition)
     : initialModelFormState;
 
   const onButtonClick = () => {
@@ -296,7 +305,9 @@ export function ModelForm({
                 <Field
                   as={Select}
                   name="boundaryConditions"
-                  options={getSelectEntriesFromMap(BoundaryCondition)}
+                  options={getSelectEntriesFromMap(
+                    definitions?.type.boundaryCondition
+                  )}
                   title="Boundary conditions"
                   isMulti
                   required
