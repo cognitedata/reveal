@@ -10,9 +10,8 @@ import {
   CameraControlsOptions,
   CameraChangeData,
   PointerEventDelegate,
-  ControlsState,
   CameraState
-} from './types'
+} from './types';
 import { CameraManager } from './CameraManager';
 import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import range from 'lodash/range';
@@ -104,7 +103,7 @@ export class DefaultCameraManager implements CameraManager {
     camera?: THREE.PerspectiveCamera
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-    
+
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
@@ -206,40 +205,40 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   /**
-   * Sets camera state. All parameters are optional. When setting rotation and target simultaneously, 
-   * target will have priority over rotation. Set rotation is preserved until next call of setCameraState with 
-   * empty rotation field. 
+   * Sets camera state. All parameters are optional. When setting rotation and target simultaneously,
+   * target will have priority over rotation. Set rotation is preserved until next call of setCameraState with
+   * empty rotation field.
    * @param state Camera state.
    * **/
   setCameraState(state: CameraState): void {
-      const newPosition = state.position ?? this._camera.position;
-      const newRotation = (state.target ? new THREE.Quaternion() : state.rotation ) ?? new THREE.Quaternion();
-      const newTarget = state.target ?? (state.rotation ? this.calculateNewTargetFromRotation(state.rotation) 
-        : this._controls.getState().target);
-          
-      this._controls.cameraRawRotation.copy(newRotation);
-      
-      this._controls.setState(newPosition, newTarget);
+    const newPosition = state.position ?? this._camera.position;
+    const newRotation = (state.target ? new THREE.Quaternion() : state.rotation) ?? new THREE.Quaternion();
+    const newTarget =
+      state.target ??
+      (state.rotation ? this.calculateNewTargetFromRotation(state.rotation) : this._controls.getState().target);
+
+    this._controls.cameraRawRotation.copy(newRotation);
+
+    this._controls.setState(newPosition, newTarget);
   }
 
-  getCameraState(): Required<CameraState>{
+  getCameraState(): Required<CameraState> {
     return {
       position: this._camera.position.clone(),
       rotation: this._camera.quaternion.clone(),
       target: this._controls.getState().target.clone()
     };
   }
-  
+
   getCameraRotation(): THREE.Quaternion {
     return this._camera.quaternion;
   }
 
   setCameraRotation(rotation: THREE.Quaternion): void {
-   const newTarget = this.calculateNewTargetFromRotation(rotation);
+    const newTarget = this.calculateNewTargetFromRotation(rotation);
 
     this._controls.cameraRawRotation.copy(rotation);
     this._controls.setState(this._camera.position, newTarget);
-    
   }
 
   getCameraTarget(): THREE.Vector3 {

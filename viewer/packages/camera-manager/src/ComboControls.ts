@@ -213,8 +213,8 @@ export class ComboControls extends EventDispatcher {
 
     _spherical.makeSafe();
     _camera.position.setFromSpherical(_spherical).add(_target);
-    
-    if (this._rawCameraRotation.equals(new Quaternion())) 
+
+    if (this._rawCameraRotation.equals(new Quaternion()))
       _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
     else _camera.setRotationFromQuaternion(this._rawCameraRotation);
 

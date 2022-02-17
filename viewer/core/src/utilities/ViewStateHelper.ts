@@ -47,7 +47,7 @@ export class ViewStateHelper {
   }
 
   public getCurrentState(): ViewerState {
-    const {position: cameraPosition, target: cameraTarget } = this._cameraManager.getCameraState();
+    const { position: cameraPosition, target: cameraTarget } = this._cameraManager.getCameraState();
     const modelStates = this.getModelsState();
     const clippingPlanesState = this.getClippingPlanesState();
 
@@ -106,8 +106,10 @@ export class ViewStateHelper {
     const camPos = cameraState.position;
     const camTarget = cameraState.target;
 
-    this._cameraManager.setCameraState({position: new THREE.Vector3(camPos.x, camPos.y, camPos.z), 
-      target: new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)});
+    this._cameraManager.setCameraState({
+      position: new THREE.Vector3(camPos.x, camPos.y, camPos.z),
+      target: new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
+    });
   }
 
   private async setModelState(modelsState: ModelState[]) {

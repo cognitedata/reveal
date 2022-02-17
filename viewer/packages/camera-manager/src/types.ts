@@ -71,10 +71,10 @@ export type CameraState = {
    * **/
   target?: THREE.Vector3;
   /**
-   * Camera local rotation in quaternion form. 
+   * Camera local rotation in quaternion form.
    */
   rotation?: THREE.Quaternion;
-}
+};
 
 export type CameraManagerCallbackData = {
   intersection: {

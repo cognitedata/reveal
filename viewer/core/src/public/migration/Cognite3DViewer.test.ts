@@ -12,7 +12,6 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 import nock from 'nock';
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
-import { DefaultCameraManager } from '@reveal/camera-manager';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 
@@ -86,7 +85,7 @@ describe('Cognite3DViewer', () => {
     // Act
     viewer.cameraManager.setCameraState({ position: new THREE.Vector3(123, 456, 789) });
     viewer.cameraManager.setCameraState({ target: new THREE.Vector3(1, 2, 3) });
-   
+
     // Assert
     expect(onCameraChange).toBeCalledTimes(2);
   });
@@ -211,7 +210,7 @@ describe('Cognite3DViewer', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     const box = new THREE.Box3(new THREE.Vector3(-1001, -1001, -1001), new THREE.Vector3(-1000, -1000, -1000));
-    const { position: originalCameraPosition, target: originalCameraTarget }= viewer.cameraManager.getCameraState();
+    const { position: originalCameraPosition, target: originalCameraTarget } = viewer.cameraManager.getCameraState();
 
     // Act
     viewer.fitCameraToBoundingBox(box, 0);
@@ -221,5 +220,4 @@ describe('Cognite3DViewer', () => {
     expect(cameraState.position).not.toEqual(originalCameraPosition);
     expect(cameraState.target).not.toEqual(originalCameraTarget);
   });
-
 });

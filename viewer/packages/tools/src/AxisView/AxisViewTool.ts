@@ -342,7 +342,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private moveCameraTo(targetAxis: THREE.Vector3, targetUpAxis: THREE.Vector3) {
     const cameraManager = this._viewer.cameraManager;
 
-    const {position: currentCameraPosition, target: cameraTarget, rotation } = cameraManager.getCameraState();
+    const { position: currentCameraPosition, target: cameraTarget, rotation } = cameraManager.getCameraState();
 
     const targetRelativeStartPosition = currentCameraPosition.clone().sub(cameraTarget);
     const radius = targetRelativeStartPosition.length();
@@ -385,10 +385,10 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
         tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
 
-        cameraManager.setCameraState({position: tmpPosition, rotation: tmpRotation});
+        cameraManager.setCameraState({ position: tmpPosition, rotation: tmpRotation });
       })
       .onComplete(() => {
-        cameraManager.setCameraState({position: tmpPosition, target: cameraTarget});
+        cameraManager.setCameraState({ position: tmpPosition, target: cameraTarget });
       })
       .start(TWEEN.now());
 
