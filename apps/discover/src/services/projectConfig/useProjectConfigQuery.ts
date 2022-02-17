@@ -6,6 +6,7 @@ import {
   UseQueryResult,
 } from 'react-query';
 
+import isObject from 'lodash/isObject';
 import noop from 'lodash/noop';
 import { discoverAPI, useJsonHeaders } from 'services/service';
 
@@ -39,7 +40,16 @@ export function useProjectConfigUpdateMutate({
     },
 
     {
-      onSuccess: () => {
+      onSuccess: (_config, data) => {
+        const existing = queryClient.getQueryData(
+          PROJECT_CONFIG_QUERY_KEY.CONFIG
+        );
+        if (isObject(existing)) {
+          queryClient.setQueryData(PROJECT_CONFIG_QUERY_KEY.CONFIG, {
+            ...existing,
+            ...data,
+          });
+        }
         queryClient.invalidateQueries(PROJECT_CONFIG_QUERY_KEY.CONFIG);
         queryClient.invalidateQueries(LAYERS_QUERY_KEY.ALL); // reset the layers
         onSuccess();

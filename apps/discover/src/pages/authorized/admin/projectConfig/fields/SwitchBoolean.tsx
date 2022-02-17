@@ -7,8 +7,8 @@ import { SubtitlePlain } from 'components/typography/SubtitlePlain';
 export interface Props {
   name: string;
   handleChange: (value: boolean) => void;
-  value: boolean;
-  label: string;
+  value?: boolean;
+  label?: string;
   helpText?: string;
 }
 export const SwitchBoolean: React.FC<Props> = ({
@@ -18,27 +18,15 @@ export const SwitchBoolean: React.FC<Props> = ({
   label,
   helpText,
 }) => {
-  let helpfullLabel = label;
-  let helpfullValue = value;
-  let helpfullOnChange = handleChange;
-
-  if (helpfullLabel.toLowerCase() === 'disabled') {
-    if (value) {
-      helpfullLabel = 'Disabled';
-    } else {
-      helpfullLabel = 'Enabled';
-    }
-
-    helpfullValue = !value;
-
-    helpfullOnChange = (value) => handleChange(!value);
+  if (value === undefined || label === undefined) {
+    return null;
   }
 
   return (
     <div>
-      <Switch name={name} value={helpfullValue} onChange={helpfullOnChange}>
+      <Switch name={name} value={Boolean(value)} onChange={handleChange}>
         <Body level={3} strong>
-          {helpfullLabel}
+          {label}
         </Body>
       </Switch>
       <SubtitlePlain>{helpText}</SubtitlePlain>

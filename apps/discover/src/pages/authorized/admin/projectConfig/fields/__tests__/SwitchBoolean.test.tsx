@@ -6,7 +6,7 @@ import { SwitchBoolean, Props } from '../SwitchBoolean';
 
 const getDefaultProps = (extras: Partial<Props> = {}) => ({
   name: 'Test name',
-  label: 'Disabled',
+  label: 'test-label',
   value: false,
   handleChange: jest.fn(),
   ...extras,
@@ -16,23 +16,22 @@ describe('SwitchBoolean', () => {
   const defaultTestInit = (props = {}) =>
     testRenderer(SwitchBoolean, undefined, getDefaultProps(props));
 
-  it('should check the custom enabled value', () => {
+  it('should check the enabled value', () => {
     defaultTestInit({ value: true });
-    expect(screen.getByText('Disabled')).toBeInTheDocument();
+    expect(screen.getByText('test-label')).toBeInTheDocument();
   });
 
-  it('should check the custom disabled value', () => {
+  it('should check the disabled value', () => {
     defaultTestInit({ value: false });
-    expect(screen.getByText('Enabled')).toBeInTheDocument();
+    expect(screen.getByText('test-label')).toBeInTheDocument();
   });
 
-  it('should check the disabled value - when not using the special inverse type', () => {
-    defaultTestInit({ label: 'Normal mode' });
-    expect(screen.getByText('Normal mode')).toBeInTheDocument();
-  });
-
-  it('should check the enabled value - when not using the special inverse type', () => {
-    defaultTestInit({ label: 'Normal mode', value: true });
-    expect(screen.getByText('Normal mode')).toBeInTheDocument();
+  it('should not show when value is loading', () => {
+    testRenderer(SwitchBoolean, undefined, {
+      name: 'Test name',
+      label: 'test-label',
+      handleChange: jest.fn(),
+    });
+    expect(screen.queryByText('test-label')).not.toBeInTheDocument();
   });
 });

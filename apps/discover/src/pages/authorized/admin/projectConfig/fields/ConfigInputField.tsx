@@ -9,7 +9,7 @@ import { showErrorMessage } from 'components/toast';
 
 import { HandleConfigChange, MetadataValue } from '../types';
 
-import { SwitchBoolean } from './SwitchBoolean';
+import { Switch } from './Switch';
 
 export const ConfigInputField: React.FC<{
   changeKey: string;
@@ -105,7 +105,7 @@ export const ConfigInputField: React.FC<{
       );
     case 'boolean':
       return (
-        <SwitchBoolean
+        <Switch
           name={changeKey}
           handleChange={handleSwitchChange}
           value={Boolean(value)}
