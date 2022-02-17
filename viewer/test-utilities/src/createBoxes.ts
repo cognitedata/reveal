@@ -14,19 +14,22 @@ export function scrambleBoxes(boxes: Box3[], rand: SeededRandom.RandomSeed): voi
   }
 }
 
+export function createRandomBox(maxDim: number, maxPos: number, rand: SeededRandom.RandomSeed): Box3 {
+  const sx = rand.random() * maxPos;
+  const sy = rand.random() * maxPos;
+  const sz = rand.random() * maxPos;
+
+  const dx = rand.random() * maxDim;
+  const dy = rand.random() * maxDim;
+  const dz = rand.random() * maxDim;
+
+  return new Box3(new Vector3(sx, sy, sz), new Vector3(sx + dx, sy + dy, sz + dz));
+}
+
 export function createRandomBoxes(n: number, maxDim: number, maxPos: number, rand: SeededRandom.RandomSeed): Box3[] {
-  const boxes: Box3[] = [];
+  const boxes: Box3[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    const sx = rand.random() * maxPos;
-    const sy = rand.random() * maxPos;
-    const sz = rand.random() * maxPos;
-
-    const dx = rand.random() * maxDim;
-    const dy = rand.random() * maxDim;
-    const dz = rand.random() * maxDim;
-
-    const box = new Box3(new Vector3(sx, sy, sz), new Vector3(sx + dx, sy + dy, sz + dz));
-    boxes.push(box);
+    boxes[i] = createRandomBox(maxDim, maxPos, rand);
   }
 
   return boxes;
