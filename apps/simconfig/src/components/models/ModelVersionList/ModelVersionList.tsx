@@ -14,6 +14,8 @@ import { useGetModelFileVersionListQuery } from '@cognite/simconfig-api-sdk/rtk'
 import { ModelVersionDetails } from 'components/models';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 
+import type { AppLocationGenerics } from 'routes';
+
 interface ModelVersionListProps {
   simulator: Simulator;
   modelName: string;
@@ -25,6 +27,10 @@ export function ModelVersionList({
 }: ModelVersionListProps) {
   const project = useSelector(selectProject);
   const { search } = useMatch();
+
+  const {
+    data: { definitions },
+  } = useMatch<AppLocationGenerics>();
 
   const { data, isFetching } = useGetModelFileVersionListQuery({
     project,
@@ -81,6 +87,11 @@ export function ModelVersionList({
                 {modelFile.metadata.errorMessage && (
                   <Label size="small" variant="danger">
                     Error
+                  </Label>
+                )}
+                {modelFile.metadata.modelType && (
+                  <Label size="small" variant="default">
+                    {definitions?.type.model[modelFile.metadata.modelType]}
                   </Label>
                 )}
                 {!index && <Label size="small">latest version</Label>}
