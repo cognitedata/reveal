@@ -72,9 +72,9 @@ export const FloatingActionsWrapper = styled.div`
   margin-top: ${sizes.small};
 
   top: ${(props: { buttonX: number; buttonY: number }) =>
-    props.buttonY >= 100 ? props.buttonY : 100}px;
+    props.buttonY >= 100 ? props.buttonY - 50 : 100}px;
   left: ${(props: { buttonX: number; buttonY: number }) =>
-    props.buttonX >= 0 ? props.buttonX : 0}px;
+    props.buttonX >= 0 ? props.buttonX - 50 : 50}px;
 
   z-index: ${layers.MAP_TOP_BUTTONS};
   .cogs-btn-primary {
