@@ -18,6 +18,7 @@ import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
+import { computeSceneBoundingBox } from '@reveal/utilities/src/computeSceneBoundingBox';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -68,6 +69,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
   private readonly _styledNodeCollections: { nodeCollection: NodeCollection; appearance: NodeAppearance }[] = [];
+  private readonly _fullBoundingBox: THREE.Box3;
 
   /**
    * @param modelId
@@ -87,6 +89,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode = cadNode;
 
     this.add(this.cadNode);
+
+    this._fullBoundingBox = computeSceneBoundingBox(this.cadNode.cadModelMetadata.scene.getAllSectors());
 
     // Note! As this is defined in ThreeJS we cannot override this using
     // regular TypeScript getters and setters.
@@ -341,9 +345,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```
    */
   getModelBoundingBox(outBbox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
-    const bounds = restrictToMostGeometry
-      ? this.cadModel.scene.getBoundsOfMostGeometry()
-      : this.cadModel.scene.root.bounds;
+    const bounds = restrictToMostGeometry ? this.cadModel.scene.getBoundsOfMostGeometry() : this._fullBoundingBox;
 
     outBbox = outBbox || new THREE.Box3();
     outBbox.copy(bounds);
