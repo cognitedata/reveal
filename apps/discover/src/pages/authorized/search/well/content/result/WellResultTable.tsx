@@ -13,6 +13,7 @@ import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/tablev3';
+import { UserPreferredUnit } from 'constants/units';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -43,7 +44,7 @@ export const WellResultTable: React.FC = () => {
   const indeterminateWellIds = useIndeterminateWells();
   const favoriteWellIds = useFavoriteWellIds();
   const metrics = useGlobalMetrics('wells');
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const dispatch = useDispatch();
   const navigateToWellInspect = useNavigateToWellInspect();
   const { columns } = useDataForTable();
@@ -58,7 +59,7 @@ export const WellResultTable: React.FC = () => {
       {
         accessor: 'waterDepth.value',
         fromAccessor: 'waterDepth.unit',
-        to: userPreferredUnit,
+        to: userPreferredUnit || UserPreferredUnit.FEET,
       },
     ],
     [userPreferredUnit]

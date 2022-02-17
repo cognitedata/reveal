@@ -7,7 +7,7 @@ import {
   widths,
 } from 'pages/authorized/search/well/inspect/modules/events/constants';
 
-export const getNdsEventTableColumns = (unit: string) => [
+export const getNdsEventTableColumns = (unit?: string) => [
   {
     Header: 'Well',
     accessor: COMMON_COLUMN_ACCESSORS.WELL_NAME,
@@ -46,22 +46,22 @@ export const getNdsEventTableColumns = (unit: string) => [
     width: '140px',
   },
   {
-    Header: `MD Hole Start (${unit})`,
+    Header: `MD Hole Start${unit ? ` (${unit})` : ''}`,
     accessor: accessors.MD_HOLE_START,
     width: '140px',
   },
   {
-    Header: `MD Hole End (${unit})`,
+    Header: `MD Hole End${unit ? ` (${unit})` : ''}`,
     accessor: accessors.MD_HOLE_END,
     width: '140px',
   },
   {
-    Header: `TVD Offset Hole Start (${unit})`,
+    Header: `TVD Offset Hole Start${unit ? ` (${unit})` : ''}`,
     accessor: accessors.TVD_OFFSET_HOLE_START,
     width: '140px',
   },
   {
-    Header: `TVD Offset Hole End (${unit})`,
+    Header: `TVD Offset Hole End${unit ? ` (${unit})` : ''}`,
     accessor: accessors.TVD_OFFSET_HOLE_END,
     width: '140px',
   },

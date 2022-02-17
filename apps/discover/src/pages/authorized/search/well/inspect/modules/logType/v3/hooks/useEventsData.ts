@@ -14,7 +14,7 @@ import { convertObject } from 'modules/wellSearch/utils';
 import { isEventsOverlap } from '../LogViewer/utils';
 
 export const useEventsData = (events: CogniteEvent[]) => {
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
     const nonOverlappingEvents = events.filter((parentEvent) => {

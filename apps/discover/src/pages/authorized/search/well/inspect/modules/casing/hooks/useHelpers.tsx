@@ -3,9 +3,8 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { getCasingColumnsWithPrefferedUnit } from '../helper';
 
 export const useGetCasingTableColumns = () => {
-  const wellsTableColumns = getCasingColumnsWithPrefferedUnit(
-    useUserPreferencesMeasurement()
-  );
+  const { data: unit } = useUserPreferencesMeasurement();
+  const wellsTableColumns = unit ? getCasingColumnsWithPrefferedUnit(unit) : [];
   const casingsTableColumn = [
     {
       Header: '',

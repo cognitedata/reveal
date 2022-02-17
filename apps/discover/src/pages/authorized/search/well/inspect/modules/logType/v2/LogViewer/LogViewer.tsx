@@ -58,7 +58,7 @@ export const LogViewer: React.FC<Props> = ({
     {}
   );
 
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const tracks = useMemo(() => {
     return get(config, 'logs.tracks', [])
@@ -93,7 +93,7 @@ export const LogViewer: React.FC<Props> = ({
 
         const dataIndex = columnsIndexMap[track.column];
         const unit = log ? getTrackUnit(log, track.column) : '';
-        if (track.name === 'MD') {
+        if (track.name === 'MD' && userPreferredUnit) {
           // if the track name is 'MD', set the values as number list
           logData[track.name] = {
             values: data
@@ -112,7 +112,7 @@ export const LogViewer: React.FC<Props> = ({
               valuesExist = true;
             }
             return [
-              unit !== ''
+              unit !== '' && userPreferredUnit
                 ? changeUnitTo(
                     row[mdColIndex] as number,
                     mdUnit,
@@ -134,7 +134,7 @@ export const LogViewer: React.FC<Props> = ({
       });
     }
 
-    if (isEmpty(Object.keys(logData))) {
+    if (isEmpty(Object.keys(logData)) && userPreferredUnit) {
       const unit = getTrackUnit(log, MD_COL_NAME);
       const startDepth =
         changeUnitTo(
@@ -237,19 +237,21 @@ export const LogViewer: React.FC<Props> = ({
     if (mdColIndex === undefined) return;
 
     const mdUnit = log.columns[mdColIndex].metadata?.unit || FEET;
-    const topDepth = firstRow
+    const topDepth =
+      firstRow && userPreferredUnit
+        ? changeUnitTo(
+            firstRow[mdColIndex] as number,
+            mdUnit,
+            userPreferredUnit
+          ) || 0
+        : null;
+    const baseDepth = userPreferredUnit
       ? changeUnitTo(
-          firstRow[mdColIndex] as number,
+          data[data.length - 1][mdColIndex] as number,
           mdUnit,
           userPreferredUnit
         ) || 0
-      : null;
-    const baseDepth =
-      changeUnitTo(
-        data[data.length - 1][mdColIndex] as number,
-        mdUnit,
-        userPreferredUnit
-      ) || 0;
+      : 0;
 
     const ppfgData: LogViewerData = {};
     // Get only the configured columns
@@ -278,7 +280,7 @@ export const LogViewer: React.FC<Props> = ({
             );
           }
           return [
-            unit !== ''
+            unit !== '' && userPreferredUnit
               ? changeUnitTo(
                   row[mdColIndex] as number,
                   'ft', // TODO(CM-6) problem

@@ -1,3 +1,4 @@
+import { UserPreferredUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { getVisibleWellColumns } from './getVisibleWellColumns';
@@ -5,9 +6,9 @@ import { useEnabledWellResultColumnNames } from './useEnabledWellResultColumnNam
 
 export const useEnabledWellResultColumns = () => {
   const enabledWellColumnNames = useEnabledWellResultColumnNames();
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const visibleWellColumns = getVisibleWellColumns({
-    unit: userPreferredUnit,
+    unit: userPreferredUnit || UserPreferredUnit.FEET,
     enabled: enabledWellColumnNames,
   });
 

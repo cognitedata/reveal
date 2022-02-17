@@ -11,7 +11,7 @@ import {
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 import { TrajectoryData as TrajectoryDataV3 } from '@cognite/sdk-wells-v3';
 
-import { FEET } from 'constants/units';
+import { FEET, UserPreferredUnit } from 'constants/units';
 
 import { TRAJECTORY_COLUMN_NAME_MAP } from '../service/sequence/constants';
 import { SequenceRow, TrajectoryRow, TrajectoryRows, Well } from '../types';
@@ -90,7 +90,7 @@ export const getDataPointInPreferredUnit = (
   row: TrajectoryRow,
   accessor: string,
   selectedTrajectoryData: (TrajectoryRows | undefined)[],
-  prefferedUnit: string,
+  preferredUnit?: UserPreferredUnit,
   columnData?: SequenceColumn[],
   config?: ProjectConfigWells
 ) => {
@@ -109,7 +109,7 @@ export const getDataPointInPreferredUnit = (
     .from(
       columnMetaData ? get(UNITS_TO_STANDARD, columnMetaData.unit, FEET) : FEET
     )
-    .to(prefferedUnit as any);
+    .to(preferredUnit || FEET);
 };
 
 export const mapMetadataUnit = (

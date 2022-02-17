@@ -17,7 +17,7 @@ export const useFilterConfigByCategory = () => {
 
   const enabledWellSDKV3 = useEnabledWellSdkV3();
 
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useMemo(() => {
     const filteredConfigData = filterConfigs(

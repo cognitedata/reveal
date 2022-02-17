@@ -38,8 +38,6 @@ export const useWellsCacheQuery = (
   const { data: wellConfig } = useWellConfig();
   const enabledWellSdkV3 = useEnabledWellSdkV3();
 
-  // console.log('Requested wells', requiredWellIds);
-
   const cachedWells =
     queryClient.getQueryData<Well[]>(WELL_QUERY_KEY.WELLS_CACHE) || [];
 

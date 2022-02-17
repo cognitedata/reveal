@@ -26,7 +26,7 @@ import { useGetConvertFunctionForEvents } from './helper';
 
 export const useNdsEventsForTable = () => {
   const wells = useWellInspectSelectedWells();
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const { data, isLoading } = useNdsEventsQuery();
   const getConvertFunctionsForEvents =
     useGetConvertFunctionForEvents(userPreferredUnit);
@@ -50,7 +50,7 @@ export const useNdsEventsForTable = () => {
 
 export const useNptEvents = () => {
   const wells = useWellInspectSelectedWells();
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const { data, isLoading } = useNptEventsQuery();
 
   return useDeepMemo(() => {

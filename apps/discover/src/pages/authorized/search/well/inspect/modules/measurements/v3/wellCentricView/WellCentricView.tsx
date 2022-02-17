@@ -52,7 +52,7 @@ export const WellCentricView: React.FC<Props> = ({
 
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const [wellboreChartData, setWellboreChartData] = useState<
     WellboreChartData[]
@@ -78,7 +78,7 @@ export const WellCentricView: React.FC<Props> = ({
   };
 
   const updateChartData = useCallback(() => {
-    if (isUndefined(data)) return;
+    if (isUndefined(data) || !userPreferredUnit) return;
     const filteredChartData = selectedInspectWellbores
       .map((wellbore) => ({
         wellbore,

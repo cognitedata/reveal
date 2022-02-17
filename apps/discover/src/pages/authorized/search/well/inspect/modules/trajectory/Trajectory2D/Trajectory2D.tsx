@@ -30,7 +30,7 @@ export const Trajectory2D: React.FC<Props> = ({
   selectedWellbores,
 }) => {
   const { data: config } = useWellConfig();
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const getWellboreNameForTraj = (trajId = '') =>
     getWellboreNameForTrajectory(trajId, selectedTrajectories);

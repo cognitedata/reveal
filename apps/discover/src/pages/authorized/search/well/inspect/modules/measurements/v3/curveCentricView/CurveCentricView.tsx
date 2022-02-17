@@ -48,14 +48,14 @@ export const CurveCentricView: React.FC<Props> = ({
 
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const [charts, setCharts] = useState<MeasurementChartData[]>([]);
 
   const [chartRendering, setChartRendering] = useState<boolean>(false);
 
   const updateChartData = useCallback(() => {
-    if (isUndefined(data)) return;
+    if (isUndefined(data) || !userPreferredUnit) return;
     const wellboreChartData = selectedInspectWellbores.map((wellbore) => {
       const chartData = formatChartData(
         data[wellbore.id],

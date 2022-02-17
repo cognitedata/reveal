@@ -82,7 +82,7 @@ describe('Favorite Wellbore table', () => {
   });
 
   it('should render remove button when hovering over the more options button', async () => {
-    await defaultTestInit({
+    const { getByText } = await defaultTestInit({
       wells: {
         'test-well-1': [],
       },
@@ -91,10 +91,14 @@ describe('Favorite Wellbore table', () => {
     });
 
     // wait for everything to finish loading
-    // there are lots of hooks firing, so it's safer to use this instead of findBy
-    await waitFor(() => {
-      expect(screen.getByText(getMockWell().name)).toBeInTheDocument();
-    });
+    /* eslint-disable*/
+    /**
+     * The reason we use the waitFor here explicitly is because of the high number of re-rendering
+     * causing sporadic unit-test fails. Generally we should use screen.findBy....
+     * */
+    await waitFor(() =>
+      expect(getByText(getMockWell().name)).toBeInTheDocument()
+    );
 
     fireEvent.mouseEnter(screen.getByTestId('menu-button'), {
       bubbles: true,

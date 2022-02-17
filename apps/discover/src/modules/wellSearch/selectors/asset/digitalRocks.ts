@@ -88,7 +88,7 @@ export const useSelectedWellBoresDigitalRocks = () => {
     TimeLogStages.Preperation,
     LOG_WELL_DIGITAL_ROCKS_NAMESPACE
   );
-  const userPrefferedUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   return useMemo(() => {
     const digitalRocks: Asset[] = [];
 
@@ -119,14 +119,14 @@ export const useSelectedWellBoresDigitalRocks = () => {
     startPreparationTimer();
 
     wells.forEach((well) => {
-      if (well.wellbores) {
+      if (well.wellbores && userPreferredUnit) {
         well.wellbores.forEach((wellbore) => {
           (get(wellboreData[wellbore.id], 'digitalRocks') as AssetData[])
             .map(({ asset }) => asset)
             .map((asset) => {
               const newObj = convertObject(asset)
                 .changeUnits(
-                  getDigitalRockUnitChangeAccessors(userPrefferedUnit)
+                  getDigitalRockUnitChangeAccessors(userPreferredUnit)
                 )
                 .toFixedDecimals(digitalRockAccessorsToFixedDecimal)
                 .get();
@@ -140,7 +140,7 @@ export const useSelectedWellBoresDigitalRocks = () => {
     });
     stopPreparationTimer();
     return { isLoading: false, digitalRocks: normalize(digitalRocks) };
-  }, [wells, wellboreData, digitalRocksPristineIds, userPrefferedUnit]);
+  }, [wells, wellboreData, digitalRocksPristineIds, userPreferredUnit]);
 };
 
 // This returns digital rocks samples for given digital rocks list

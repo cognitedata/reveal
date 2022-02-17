@@ -17,14 +17,14 @@ export const useCommonWellFilter = () => {
   const wellFilters = useAppliedWellFilters();
   const geoFilter = useGeoFilter();
   const searchPhrase = useSearchPhrase();
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
     const commonWellFilter: CommonWellFilter = Object.keys(wellFilters).reduce(
       (prev, current) => {
         const id = Number(current);
         const { filterParameters } = filterConfigsById[id];
-        return filterParameters && wellFilters[id].length
+        return filterParameters && wellFilters[id].length && userPreferredUnit
           ? merge(prev, {
               ...filterParameters(
                 wellFilters[id] as string[],

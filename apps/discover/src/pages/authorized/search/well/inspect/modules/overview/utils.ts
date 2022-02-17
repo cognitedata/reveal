@@ -8,7 +8,7 @@ import { WATER_DEPTH } from 'pages/authorized/search/well/content/constants';
 import { OverviewModel } from './types';
 
 export const generateOverviewColumns = (
-  userPrefferedUnit: string
+  preferredUnit?: string
 ): ColumnType<OverviewModel>[] => {
   const columns: ColumnType<OverviewModel>[] = [
     {
@@ -48,19 +48,19 @@ export const generateOverviewColumns = (
       width: '100px',
     },
     {
-      Header: `${WATER_DEPTH} (${userPrefferedUnit})`,
+      Header: `${WATER_DEPTH}${preferredUnit ? ` (${preferredUnit})` : ''}`,
       accessor: 'waterDepth.value',
       maxWidth: '0.15fr',
       width: '100px',
     },
     {
-      Header: `TVD (${userPrefferedUnit})`,
+      Header: `TVD${preferredUnit ? ` (${preferredUnit})` : ''}`,
       accessor: (row) => row.tvd || '',
       maxWidth: '0.15fr',
       width: '100px',
     },
     {
-      Header: `MD (${userPrefferedUnit})`,
+      Header: `MD${preferredUnit ? ` (${preferredUnit})` : ''}`,
       accessor: (row) => row.md || '',
       maxWidth: '0.15fr',
       width: '100px',

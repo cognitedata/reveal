@@ -13,8 +13,10 @@ import {
   renderNPTCodeWithColor,
 } from '../utils';
 
-export const useNptTableCommonHeaders = () =>
-  getCommonColumns(useUserPreferencesMeasurement());
+export const useNptTableCommonHeaders = () => {
+  const { data: preferredUnit } = useUserPreferencesMeasurement();
+  return getCommonColumns(preferredUnit);
+};
 
 export const useNptWellsTableColumns = () => {
   return [

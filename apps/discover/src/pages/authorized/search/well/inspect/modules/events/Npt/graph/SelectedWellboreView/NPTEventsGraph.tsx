@@ -54,7 +54,7 @@ export const Card = ({
 
 export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
   ({ events }) => {
-    const unit = useUserPreferencesMeasurement();
+    const { data: unit } = useUserPreferencesMeasurement();
 
     const options: ScatterPlotOptions<NPTEvent> = useMemo(
       () => ({
@@ -101,7 +101,7 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
                 value={longDate(get(nptEvent, accessors.START_TIME))}
               />
               <Card
-                title={`NPT MD (${unit})`}
+                title={`NPT MD${unit ? ` (${unit})` : ''}`}
                 value={get(nptEvent, accessors.MEASURED_DEPTH).toFixed(2)}
               />
               <Card

@@ -11,9 +11,9 @@ jest.mock('hooks/useUserPreferences', () => ({
 
 describe('useWellResultColumns hook', () => {
   beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(
-      () => METER
-    );
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
+      data: METER,
+    }));
   });
 
   const getHookResult = async () => {

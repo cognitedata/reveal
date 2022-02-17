@@ -13,29 +13,32 @@ import { useTrajectoriesMetadataQuery } from 'modules/wellSearch/hooks/useTrajec
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { OverviewModel } from 'pages/authorized/search/well/inspect/modules/overview/types';
 
-const getUnitChangeAccessors = (unit: string) => [
-  {
-    accessor: 'waterDepth.value',
-    fromAccessor: 'waterDepth.unit',
-    to: unit,
-  },
-  {
-    accessor: 'md',
-    fromAccessor: 'mdUnit',
-    to: unit,
-  },
-  {
-    accessor: 'tvd',
-    fromAccessor: 'tvdUnit',
-    to: unit,
-  },
-];
+const getUnitChangeAccessors = (unit?: string) =>
+  unit
+    ? [
+        {
+          accessor: 'waterDepth.value',
+          fromAccessor: 'waterDepth.unit',
+          to: unit,
+        },
+        {
+          accessor: 'md',
+          fromAccessor: 'mdUnit',
+          to: unit,
+        },
+        {
+          accessor: 'tvd',
+          fromAccessor: 'tvdUnit',
+          to: unit,
+        },
+      ]
+    : [];
 
 const accessorsToFixedDecimal = ['waterDepth.value', 'tvd', 'md'];
 
 export const useOverviewData = () => {
   const wells = useWellInspectSelectedWells();
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const enabledWellSDKV3 = useEnabledWellSdkV3();
 

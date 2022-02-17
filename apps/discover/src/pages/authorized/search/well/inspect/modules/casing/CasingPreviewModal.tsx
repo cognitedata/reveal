@@ -15,7 +15,7 @@ type Props = {
 
 export const CasingPreviewModal: React.FC<Props> = ({ onClose, casing }) => {
   const { isLoading: isEventsLoading, events } = useNptEventsForCasings();
-  const prefferedUnit = useUserPreferencesMeasurement();
+  const { data: preferredUnit } = useUserPreferencesMeasurement();
 
   const footer = (
     <CasingPreviewFooter>
@@ -35,15 +35,17 @@ export const CasingPreviewModal: React.FC<Props> = ({ onClose, casing }) => {
       onCancel={onClose}
       footer={footer}
     >
-      <CasingView
-        key={`${casing.key}-casing-key`}
-        wellName={casing.wellName}
-        wellboreName={casing.wellboreName}
-        casings={casing.casings}
-        unit={prefferedUnit}
-        events={events[casing.key]}
-        isEventsLoading={isEventsLoading}
-      />
+      {preferredUnit && (
+        <CasingView
+          key={`${casing.key}-casing-key`}
+          wellName={casing.wellName}
+          wellboreName={casing.wellboreName}
+          casings={casing.casings}
+          unit={preferredUnit}
+          events={events[casing.key]}
+          isEventsLoading={isEventsLoading}
+        />
+      )}
     </CasingPreviewModalWrapper>
   );
 };

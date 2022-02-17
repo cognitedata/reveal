@@ -7,7 +7,7 @@ import { accessors } from '../constants';
 
 import { processAccessor } from './utils';
 
-export const getCommonColumns = (unit: string) => {
+export const getCommonColumns = (unit?: string) => {
   return [
     {
       id: accessors.START_TIME,
@@ -31,7 +31,7 @@ export const getCommonColumns = (unit: string) => {
     },
     {
       id: accessors.MEASURED_DEPTH,
-      Header: `NPT MD (${unit})`,
+      Header: `NPT MD${unit ? ` (${unit})` : ''}`,
       width: '150px',
       accessor: (row: NPTEvent) => {
         const depth = get(row, accessors.MEASURED_DEPTH);

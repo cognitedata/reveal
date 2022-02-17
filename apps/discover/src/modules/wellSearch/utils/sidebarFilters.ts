@@ -4,7 +4,7 @@ import last from 'lodash/last';
 import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discover-api-types';
 import { MeasurementType, WellFilter } from '@cognite/sdk-wells-v2';
 
-import { FEET, UserPrefferedUnit } from 'constants/units';
+import { FEET, UserPreferredUnit } from 'constants/units';
 import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
 
 import { FilterIDs } from '../constants';
@@ -61,7 +61,7 @@ const DEFAULT_MAX_LIMIT = 0;
 
 const getLimitRangeInUserPreferredUnit = (
   limitRange: number[],
-  unit: UserPrefferedUnit
+  unit: UserPreferredUnit
 ) =>
   getRangeLimitInUnit(
     head(limitRange) || DEFAULT_MIN_LIMIT,
@@ -70,7 +70,7 @@ const getLimitRangeInUserPreferredUnit = (
   );
 
 export const filterConfigs = (
-  unit = UserPrefferedUnit.FEET,
+  unit = UserPreferredUnit.FEET,
   wellCharacteristicsDls?: ProjectConfigWellsWellCharacteristicsFilterDls
 ): FilterConfig[] => [
   {

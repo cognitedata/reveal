@@ -13,7 +13,7 @@ export const SG_TO_PPG_CONVERSION_FACTOR_FT = 8.33;
 export const PSI_TO_SG_CONVERSION_FACTOR_FT = 0.433;
 export const METER_TO_FEET_FACTOR = 3.281;
 
-export enum UserPrefferedUnit {
+export enum UserPreferredUnit {
   FEET = 'ft',
   METER = 'm',
 }

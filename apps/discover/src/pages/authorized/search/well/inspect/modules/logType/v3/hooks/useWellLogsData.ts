@@ -4,13 +4,14 @@ import { getConvertibleUnit } from 'utils/units/getConvertibleUnit';
 
 import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
 
+import { UserPreferredUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { LogData, Tuplet } from '../LogViewer/Log/interfaces';
 
 export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
     if (isEmpty(wellLogRowData?.rows)) return {};
@@ -18,7 +19,12 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
     const { depthColumn, columns, rows, depthUnit } = wellLogRowData;
     const { unit } = depthUnit;
     const depthValues = rows.map(
-      (row) => changeUnitTo(row.depth, unit, userPreferredUnit) || row.depth
+      (row) =>
+        changeUnitTo(
+          row.depth,
+          unit,
+          userPreferredUnit || UserPreferredUnit.FEET
+        ) || row.depth
     );
     const minDepthValue = Math.min(...depthValues);
     const maxDepthValue = Math.max(...depthValues);
@@ -27,7 +33,7 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
       [depthColumn.columnExternalId]: {
         measurementType: depthColumn.type,
         values: depthValues,
-        unit: userPreferredUnit,
+        unit: userPreferredUnit || UserPreferredUnit.FEET,
         domain: [Math.floor(minDepthValue), Math.ceil(maxDepthValue)],
       },
     };
@@ -38,7 +44,11 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
 
       const values: Tuplet[] = rows.map((row) => {
         const depthValue =
-          changeUnitTo(row.depth, unit, userPreferredUnit) || row.depth;
+          changeUnitTo(
+            row.depth,
+            unit,
+            userPreferredUnit || UserPreferredUnit.FEET
+          ) || row.depth;
         const rowValue = row.values[columnIndex];
 
         if (rowValue < rowsMinValue) rowsMinValue = rowValue;
@@ -52,7 +62,10 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
         [column.externalId]: {
           measurementType: column.measurementType,
           values,
-          unit: getConvertibleUnit(column.unit, userPreferredUnit),
+          unit: getConvertibleUnit(
+            column.unit,
+            userPreferredUnit || UserPreferredUnit.FEET
+          ),
           domain: [Math.floor(rowsMinValue), Math.ceil(rowsMaxValue)],
         },
       };

@@ -16,9 +16,9 @@ jest.mock('hooks/useUserPreferences', () => ({
 
 describe('useNptTableCommonHeaders hook', () => {
   beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(
-      () => METER
-    );
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
+      data: METER,
+    }));
   });
 
   const getHookResult = async () => {
@@ -41,9 +41,9 @@ describe('useNptTableCommonHeaders hook', () => {
 
 describe('useNptWellboresTableColumns hook', () => {
   beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(
-      () => METER
-    );
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
+      data: METER,
+    }));
   });
 
   const getHookResult = async () => {
@@ -66,9 +66,9 @@ describe('useNptWellboresTableColumns hook', () => {
 
 describe('useNptEventsTableColumns hook', () => {
   beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(
-      () => METER
-    );
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
+      data: METER,
+    }));
   });
 
   const getHookResult = async () => {
@@ -91,9 +91,9 @@ describe('useNptEventsTableColumns hook', () => {
 
 describe('useSelectedWellboreNptEventsTableColumns hook', () => {
   beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(
-      () => METER
-    );
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
+      data: METER,
+    }));
   });
 
   const getHookResult = async () => {

@@ -19,7 +19,7 @@ import {
 import { Asset, Sequence } from '@cognite/sdk';
 import { SpudDateLimits, WaterDepthLimits } from '@cognite/sdk-wells-v2';
 
-import { FEET, UserPrefferedUnit } from 'constants/units';
+import { FEET, UserPreferredUnit } from 'constants/units';
 import { proj4Defs } from 'modules/map/proj4Defs';
 import { convertToClosestInteger } from 'pages/authorized/search/well/inspect/modules/events/common';
 
@@ -171,7 +171,7 @@ export const getWaterDepthLimitsInUnit = (
 export const getRangeLimitInUnit = (
   limitMin: number,
   limitMax: number,
-  preferredUnit: UserPrefferedUnit
+  preferredUnit: UserPreferredUnit
 ) => {
   if (preferredUnit === FEET) return [limitMin, limitMax];
   return [

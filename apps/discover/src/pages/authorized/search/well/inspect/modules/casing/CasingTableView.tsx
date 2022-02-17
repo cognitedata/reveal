@@ -45,7 +45,7 @@ export const CasingTableView: React.FC<Props> = ({ searchPhrase, onReset }) => {
     []
   );
 
-  const prefferedUnit = useUserPreferencesMeasurement();
+  const { data: preferredUnit } = useUserPreferencesMeasurement();
   const { wellsTableColumns, casingsTableColumn } = useGetCasingTableColumns();
 
   const { casings, isLoading } = useCasingsForTable();
@@ -58,7 +58,7 @@ export const CasingTableView: React.FC<Props> = ({ searchPhrase, onReset }) => {
   );
 
   const onPreview = (casing: CasingData) => {
-    setFormattedCasings(getFortmattedCasingData([casing], prefferedUnit));
+    setFormattedCasings(getFortmattedCasingData([casing], preferredUnit));
   };
 
   const handleDialogClosed = () => {

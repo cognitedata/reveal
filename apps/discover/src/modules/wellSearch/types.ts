@@ -23,7 +23,7 @@ import {
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { TableResults } from '../../components/tablev3/resultTypes';
-import { UserPrefferedUnit } from '../../constants/units';
+import { UserPreferredUnit } from '../../constants/units';
 import { PossibleDateRangeDate } from '../../utils/date';
 import { DocumentType } from '../documentSearch/types';
 
@@ -289,7 +289,7 @@ export type FilterConfig = {
     | undefined;
   filterParameters?: (
     filters: string[] | Date[] | number[],
-    userPreferredUnit: UserPrefferedUnit
+    userPreferredUnit: UserPreferredUnit
   ) => CommonWellFilter;
   isTextCapitalized?: boolean;
   enableOnlySdkV3?: boolean;

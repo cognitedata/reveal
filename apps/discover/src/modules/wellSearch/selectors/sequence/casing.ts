@@ -124,31 +124,34 @@ export const useSelectedWellboresCasingsData = () => {
 
 export const useCasingsForTable = () => {
   const { casings, isLoading } = useSelectedWellboresCasingsData();
-  const prefferedUnit = useUserPreferencesMeasurement();
+  const { data: preferredUnit } = useUserPreferencesMeasurement();
   return useMemo(() => {
     const casingList = casings.map((casingdata) =>
       convertObject(casingdata)
-        .changeUnits(getCasingUnitChangeAccessors(prefferedUnit))
+        .changeUnits(getCasingUnitChangeAccessors(preferredUnit))
         .toFixedDecimals(casingAccessorsToFixedDecimal)
         .get()
     );
     return { casings: casingList, isLoading };
-  }, [casings, isLoading, prefferedUnit]);
+  }, [casings, isLoading, preferredUnit]);
 };
 
 export const getCasingUnitChangeAccessors = (
-  toUnit: string
-): UnitConverterItem[] => [
-  {
-    id: 'id',
-    accessor: 'topMD',
-    fromAccessor: 'mdUnit',
-    to: toUnit,
-  },
-  {
-    id: 'id',
-    accessor: 'bottomMD',
-    fromAccessor: 'mdUnit',
-    to: toUnit,
-  },
-];
+  toUnit?: string
+): UnitConverterItem[] =>
+  toUnit
+    ? [
+        {
+          id: 'id',
+          accessor: 'topMD',
+          fromAccessor: 'mdUnit',
+          to: toUnit,
+        },
+        {
+          id: 'id',
+          accessor: 'bottomMD',
+          fromAccessor: 'mdUnit',
+          to: toUnit,
+        },
+      ]
+    : [];

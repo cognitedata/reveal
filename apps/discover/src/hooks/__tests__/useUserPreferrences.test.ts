@@ -5,7 +5,7 @@ import { getMockUserMe } from 'services/well/__mocks/userManagementService/__moc
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 
 import { testWrapper } from '__test-utils/renderer';
-import { UserPrefferedUnit } from 'constants/units';
+import { UserPreferredUnit } from 'constants/units';
 
 import {
   useUserPreferencesMeasurement,
@@ -27,18 +27,18 @@ describe('useUserPreferencesMeasurement hook', () => {
       }
     );
     await waitForNextUpdate();
-    return result.current;
+    return result.current.data;
   };
 
   it('Get defaulted to ft when not response from react query', async () => {
     const closeServer = startServer({ measurement: undefined });
-    expect(await renderHookWithStore()).toBe(UserPrefferedUnit.FEET);
+    expect(await renderHookWithStore()).toBe(UserPreferredUnit.FEET);
     closeServer();
   });
 
   it('Return respective unit for unit returned from react query', async () => {
     const closeServer = startServer({ measurement: 'meter' });
-    expect(await renderHookWithStore()).toBe(UserPrefferedUnit.METER);
+    expect(await renderHookWithStore()).toBe(UserPreferredUnit.METER);
     closeServer();
   });
 

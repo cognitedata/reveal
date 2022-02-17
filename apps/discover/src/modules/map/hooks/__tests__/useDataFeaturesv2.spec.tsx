@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
@@ -217,7 +217,7 @@ describe('useDataFeatures', () => {
       );
     };
 
-    testRenderer(TestComponent, store);
+    await testRenderer(TestComponent, store);
 
     // documents is selected so isblurred is false
     expect(
@@ -233,11 +233,14 @@ describe('useDataFeatures', () => {
 
     // remote well heads are cannot be selected and they are blurred if any document or well is selected
     const name = `${mockWell.matchingId}:false:true`;
-    expect(
-      await screen.findByRole('button', {
-        name,
-      })
-    ).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', {
+          name,
+        })
+      ).toBeInTheDocument();
+    });
   });
 
   it('should remove external wells that have same id as wells from results', async () => {
@@ -286,16 +289,24 @@ describe('useDataFeatures', () => {
       );
     };
 
-    testRenderer(TestComponent, store);
+    await testRenderer(TestComponent, store);
 
-    expect(
-      await screen.findByRole('button', {
-        name: mockWell.matchingId,
-      })
-    ).toBeInTheDocument();
+    /**
+     * The reason we use the waitFor here explicitly is because of the high number of re-rendering
+     * causing sporadic unit-test fails. Generally we should use screen.findBy....
+     * */
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', {
+          name: mockWell.matchingId,
+        })
+      ).toBeInTheDocument();
+    });
 
-    // NOTE: i suspect there is something wrong here
-    // this is not showing 444 but i think it should
-    expect((await screen.findAllByRole('button')).length).toEqual(4);
+    await waitFor(() => {
+      // NOTE: i suspect there is something wrong here
+      // this is not showing 444 but i think it should
+      expect(screen.getAllByRole('button').length).toEqual(4);
+    });
   });
 });

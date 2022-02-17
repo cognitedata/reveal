@@ -61,10 +61,10 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
 
   const { data: config } = useWellConfig();
 
-  const userPreferredUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const graphCards = useMemo(() => {
-    if (!data) return [];
+    if (!data || !userPreferredUnit) return [];
     const wellboreCharts = wellbores
       .map((wellbore) => ({
         wellbore,

@@ -114,6 +114,9 @@ describe('casing selectors (useCasingsForTable)', () => {
       isLoading: true,
       data: {},
     }));
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
+      data: FEET,
+    }));
     const store = getMockedStore();
     const view = await renderHookWithStore(store);
     expect(view).toEqual({ casings: [], isLoading: true });
@@ -129,7 +132,9 @@ describe('casing selectors (useCasingsForTable)', () => {
       },
     }));
 
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => FEET);
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
+      data: FEET,
+    }));
 
     const store = getMockedStore(mockedWellStateWithSelectedWells);
     const view = await renderHookWithStore(store);
@@ -166,9 +171,9 @@ describe('casing selectors (useCasingsForTable)', () => {
       },
     }));
 
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(
-      () => METER
-    );
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
+      data: METER,
+    }));
 
     const store = getMockedStore(mockedWellStateWithSelectedWells);
     const view = await renderHookWithStore(store);

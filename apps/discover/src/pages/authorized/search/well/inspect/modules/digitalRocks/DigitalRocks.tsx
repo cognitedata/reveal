@@ -80,7 +80,7 @@ type SelectedMap = {
 
 export const DigitalRocks: React.FC = () => {
   const { isLoading, digitalRocks } = useSelectedWellBoresDigitalRocks();
-  const userPrefferedUnit = useUserPreferencesMeasurement();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const wellboreAssetIdMap = useWellInspectWellboreExternalAssetIdMap();
   const wellboreAssetIdReverseMap =
     getWellboreExternalAssetIdReverseMap(wellboreAssetIdMap);
@@ -149,8 +149,8 @@ export const DigitalRocks: React.FC = () => {
   );
 
   const columnsWithUserPrefferedUnits = useMemo(
-    () => columns(userPrefferedUnit, dimensionUnit),
-    [userPrefferedUnit, dimensionUnit]
+    () => columns(userPreferredUnit, dimensionUnit),
+    [userPreferredUnit, dimensionUnit]
   );
 
   const handleRowClick = useCallback((row: Row & { isSelected: boolean }) => {

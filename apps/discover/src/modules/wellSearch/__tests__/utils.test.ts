@@ -17,7 +17,7 @@ import {
   PPG,
   PSI,
   SG,
-  UserPrefferedUnit,
+  UserPreferredUnit,
 } from 'constants/units';
 
 import { TrajectoryColumnR, Well } from '../types';
@@ -248,13 +248,13 @@ describe('Common Utils', () => {
 
 describe('getRangeLimitInUnit', () => {
   it('should convert ft ranges into m', () => {
-    expect(getRangeLimitInUnit(100, 1000, UserPrefferedUnit.METER)).toEqual([
+    expect(getRangeLimitInUnit(100, 1000, UserPreferredUnit.METER)).toEqual([
       30, 305,
     ]);
   });
 
   it('should return same range back since no chagne of unit', () => {
-    expect(getRangeLimitInUnit(100, 1000, UserPrefferedUnit.FEET)).toEqual([
+    expect(getRangeLimitInUnit(100, 1000, UserPreferredUnit.FEET)).toEqual([
       100, 1000,
     ]);
   });
