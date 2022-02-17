@@ -115,8 +115,6 @@ async function init() {
     });
   });
 
-  console.log(scene);
-
   const controls = new OrbitControls(camera, renderer.domElement);
 
   fitCameraToBoundingBox(boundingBox, camera, controls, 2);
