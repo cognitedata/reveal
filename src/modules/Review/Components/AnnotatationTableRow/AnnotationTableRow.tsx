@@ -11,6 +11,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { AnnotationTableRowProps } from 'src/modules/Review/types';
 import { pushMetric } from 'src/utils/pushMetric';
+import { createLink } from '@cognite/cdf-utilities';
+import { Link } from 'react-router-dom';
 
 type RowProps = {
   icon?: boolean;
@@ -26,6 +28,30 @@ export const AnnotationTableRow = ({
   iconComponent,
   borderColor,
 }: AnnotationTableRowProps) => {
+  const annotationLabelContent = () => {
+    return annotation.linkedResourceId ? (
+      <TooltipContainer>
+        <div className="text">
+          <Tooltip className="lbl-tooltip" content={annotation.text}>
+            <>{annotation.text}</>
+          </Tooltip>
+        </div>
+        <Link
+          to={createLink(`/explore/asset/${annotation.linkedResourceId}`)}
+          target="_blank"
+        >
+          <Icon
+            type="ExternalLink"
+            style={{
+              color: annotation.color,
+            }}
+          />
+        </Link>
+      </TooltipContainer>
+    ) : (
+      <div className="text">{annotation.text}</div>
+    );
+  };
   return (
     <StyledRow
       key={annotation.id}
@@ -84,51 +110,51 @@ export const AnnotationTableRow = ({
         }}
       />
       <AnnotationLabelContainer>
-        <Tooltip className="lbl-tooltip" content={annotation.text}>
-          {annotation.linkedResourceId ? (
-            <StyledCollapse
-              accordion
-              expandIcon={({ isActive }) =>
-                isActive ? (
-                  <Icon type="ChevronDownCompact" />
-                ) : (
-                  <Icon type="ChevronUpCompact" />
-                )
+        {annotation.linkedResourceId ? (
+          <StyledCollapse
+            accordion
+            expandIcon={({ isActive }) =>
+              isActive ? (
+                <Icon type="ChevronDownCompact" />
+              ) : (
+                <Icon type="ChevronUpCompact" />
+              )
+            }
+          >
+            <StyledCollapsePanel
+              header={
+                <AnnotationLbl
+                  color={annotation.color}
+                  style={{ paddingLeft: '8px' }}
+                >
+                  {annotationLabelContent()}
+                </AnnotationLbl>
               }
+              key={1}
             >
-              <StyledCollapsePanel
-                header={
-                  <AnnotationLbl
-                    color={annotation.color}
-                    style={{ paddingLeft: '8px' }}
-                  >
-                    {annotation.text}
-                  </AnnotationLbl>
-                }
-                key={1}
-              >
-                <>
+              <>
+                <AnnotationLbl color={annotation.color}>
+                  <Detail style={{ color: 'inherit' }}>
+                    {`ID: ${annotation.linkedResourceId}`}
+                  </Detail>
+                </AnnotationLbl>
+                {annotation.linkedResourceExternalId && (
                   <AnnotationLbl color={annotation.color}>
                     <Detail style={{ color: 'inherit' }}>
-                      {`ID: ${annotation.linkedResourceId}`}
+                      {`External ID: ${annotation.linkedResourceExternalId}`}
                     </Detail>
                   </AnnotationLbl>
-                  {annotation.linkedResourceExternalId && (
-                    <AnnotationLbl color={annotation.color}>
-                      <Detail style={{ color: 'inherit' }}>
-                        {`External ID: ${annotation.linkedResourceExternalId}`}
-                      </Detail>
-                    </AnnotationLbl>
-                  )}
-                </>
-              </StyledCollapsePanel>
-            </StyledCollapse>
-          ) : (
-            <AnnotationLbl color={annotation.color}>
-              {`${annotation.text}`}
-            </AnnotationLbl>
-          )}
-        </Tooltip>
+                )}
+              </>
+            </StyledCollapsePanel>
+          </StyledCollapse>
+        ) : (
+          <AnnotationLbl color={annotation.color}>
+            <Tooltip className="lbl-tooltip" content={annotation.text}>
+              <> {`${annotation.text}`}</>
+            </Tooltip>
+          </AnnotationLbl>
+        )}
       </AnnotationLabelContainer>
       <ShowHideIconContainer>
         {!annotation.show ? (
@@ -256,4 +282,19 @@ const StyledCollapsePanel = styled(Collapse.Panel)`
 
 const StyledCollapse = styled(Collapse)`
   background: transparent;
+`;
+
+const TooltipContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  gap: 5px;
+
+  .text {
+    overflow-x: hidden;
+    width: 100px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 `;
