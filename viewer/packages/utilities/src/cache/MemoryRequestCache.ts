@@ -46,7 +46,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   ) {
     this._data = new Map();
     this._maxElementsInCache = maxElementsInCache;
-    this._defaultCleanupCount = defaultCleanupCount;
+    this._defaultCleanupCount = Math.max(defaultCleanupCount, 1);
     this._removeCallback = removeCallback;
   }
 
@@ -64,7 +64,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   insert(id: Key, data: Data): void {
     if (this._data.size < this._maxElementsInCache) {
       this._data.set(id, new TimestampedContainer(data));
-    } else {
+    } else if (this._maxElementsInCache > 0) {
       throw new Error('Cache full, please clean Cache and retry adding data');
     }
   }

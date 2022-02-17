@@ -41,5 +41,21 @@ describe('MemoryRequestCache', () => {
     expect(() => cache.forceInsert(4, 'test')).not.toThrow();
   });
 
+  test('cache does not fail on insertion when initialized to size 0', () => {
+    const cache = new MemoryRequestCache<number, string>(0);
+
+    expect(() => cache.insert(1, 'test')).not.toThrow();
+    expect(() => cache.forceInsert(2, 'test')).not.toThrow();
+  });
+
+  test('cache does not fail on insertion when given cleanup count 0', () => {
+    const cache = new MemoryRequestCache<number, string>(2, () => {}, 0);
+
+    cache.insert(1, 'test');
+    cache.insert(2, 'test');
+
+    expect(() => cache.forceInsert(3, 'test')).not.toThrow();
+  });
+
   // TODO add test that requires data
 });
