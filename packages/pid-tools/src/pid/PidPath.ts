@@ -77,7 +77,7 @@ export class PidPath {
 
   getTJunctionByIntersectionWith(
     splitGuide: PidPath
-  ): [PathReplacement, PathReplacement] | null {
+  ): PathReplacement[] | null {
     // `this` is the top of the 'T' while `spliteGuide` is the base (doens't need to have that orientation)
     const closestPoints = getClosestPointsOnSegments(
       this.segmentList,
@@ -86,65 +86,71 @@ export class PidPath {
 
     if (closestPoints === undefined) return null;
 
+    const outputPathReplacements: PathReplacement[] = [];
+
     const {
       index1: thisIndex,
       point1: intersection,
       percentAlongPath1,
       index2: splitGuideIndex,
-      percentAlongPath2,
-      distance,
     } = closestPoints;
 
+    const distanceToClosestEndPoint =
+      percentAlongPath1 <= 0.5
+        ? intersection.distance(this.segmentList[thisIndex].start)
+        : intersection.distance(this.segmentList[thisIndex].stop);
+
+    // T junction would be too close to one of the endpoints of `this`
+    if (distanceToClosestEndPoint <= T_JUNCTION_SIZE) return null;
+
+    // The split guide must be closest to one of the ends
     if (
-      !(
-        percentAlongPath1 > 0.1 &&
-        percentAlongPath1 < 0.9 &&
-        (percentAlongPath2 < 0.1 || percentAlongPath2 > 0.9)
-      )
+      splitGuideIndex !== 0 &&
+      splitGuideIndex !== splitGuide.segmentList.length - 1
     )
       return null;
 
-    // we do not want to create a 'T' junction if the the distance between the base and top is too big
-    if (distance > T_JUNCTION_SIZE / 2) return null;
-
-    // calculate the new shorten path for the base and the point at where the buttom of the T should start
-    let splitGuideTPoint: Point;
-    let splitGuideSvgPathWithId: SvgPathWithId;
     const splitGuideSegment = splitGuide.segmentList[splitGuideIndex];
-    const splitGuideNewId = `${splitGuide.pathId}_1`;
+
+    // extend or shorten the split guide so it touches the T junction point
+    let bottomOfTPoint: Point;
+    let newSplitGuideSegments: PathSegment[] | undefined;
     if (
-      splitGuideIndex === 0 &&
       splitGuideSegment.start.distance(intersection) <
-        splitGuideSegment.stop.distance(intersection)
+      splitGuideSegment.stop.distance(intersection)
     ) {
-      splitGuideTPoint = getPointTowardOtherPoint(
-        splitGuideSegment.start,
+      bottomOfTPoint = getPointTowardOtherPoint(
+        intersection,
         splitGuideSegment.stop,
         T_JUNCTION_SIZE
       );
-      splitGuideSvgPathWithId = {
-        svgCommands: segmentsToSvgCommands([
-          new LineSegment(splitGuideTPoint, splitGuideSegment.stop),
-          ...splitGuide.segmentList.slice(splitGuideIndex + 1),
-        ]),
-        id: splitGuideNewId,
-      };
+      newSplitGuideSegments = [
+        new LineSegment(bottomOfTPoint, splitGuideSegment.stop),
+        ...splitGuide.segmentList.slice(splitGuideIndex + 1),
+      ];
     } else {
-      splitGuideTPoint = getPointTowardOtherPoint(
-        splitGuideSegment.stop,
+      bottomOfTPoint = getPointTowardOtherPoint(
+        intersection,
         splitGuideSegment.start,
         T_JUNCTION_SIZE
       );
-      splitGuideSvgPathWithId = {
-        svgCommands: segmentsToSvgCommands([
-          ...splitGuide.segmentList.slice(0, splitGuideIndex),
-          new LineSegment(splitGuideSegment.start, splitGuideTPoint),
-        ]),
-        id: splitGuideNewId,
-      };
+      newSplitGuideSegments = [
+        ...splitGuide.segmentList.slice(0, splitGuideIndex),
+        new LineSegment(splitGuideSegment.start, bottomOfTPoint),
+      ];
     }
 
-    // calculate the two new paths that the top of the 'T' consisted of and top left and top right point of the 'T'
+    outputPathReplacements.push({
+      pathId: splitGuide.pathId,
+      replacementPaths: [
+        {
+          svgCommands: segmentsToSvgCommands(newSplitGuideSegments),
+          id: `${splitGuide.pathId}_1`,
+        },
+      ],
+    });
+
+    // calculate the two new paths that the top of the 'T' consisted of, and top left and top right point of the 'T'
     const { start, stop } = this.segmentList[thisIndex];
     const line1StopPoint = getPointTowardOtherPoint(
       intersection,
@@ -174,22 +180,18 @@ export class PidPath {
       {
         svgCommands: segmentsToSvgCommands([
           new LineSegment(line1StopPoint, line2StartPoint),
-          new LineSegment(intersection, splitGuideTPoint),
+          new LineSegment(intersection, bottomOfTPoint),
         ]),
         id: `${this.pathId}_${T_JUNCTION}`,
       },
     ];
 
-    return [
-      {
-        pathId: this.pathId,
-        replacementPaths: lineSegmentReplacementCommands,
-      },
-      {
-        pathId: splitGuide.pathId,
-        replacementPaths: [splitGuideSvgPathWithId],
-      },
-    ];
+    outputPathReplacements.push({
+      pathId: this.pathId,
+      replacementPaths: lineSegmentReplacementCommands,
+    });
+
+    return outputPathReplacements;
   }
 
   getPathReplacementIfManySegments(): PathReplacement | null {
