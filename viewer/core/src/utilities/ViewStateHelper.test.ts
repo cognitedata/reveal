@@ -31,13 +31,15 @@ describe(ViewStateHelper.name, () => {
       cameraTarget: new THREE.Vector3(1, 2, 3),
       clippingPlanes: [new THREE.Plane().setComponents(1, 2, 3, 4), new THREE.Plane().setComponents(-1, -2, -3, -4)]
     };
-    viewer.cameraManager.setCameraState({position: original.cameraPosition, target: original.cameraTarget});
+    viewer.cameraManager.setCameraState({ position: original.cameraPosition, target: original.cameraTarget });
     viewer.setClippingPlanes(original.clippingPlanes);
 
     // Act
     const state = viewer.getViewState();
-    viewer.cameraManager.setCameraState({position: new THREE.Vector3(-10, -10, -10),
-      target: new THREE.Vector3(10, 10, 10)});
+    viewer.cameraManager.setCameraState({
+      position: new THREE.Vector3(-10, -10, -10),
+      target: new THREE.Vector3(10, 10, 10)
+    });
     viewer.setClippingPlanes([]);
     viewer.setViewState(state);
 

@@ -30,7 +30,7 @@ export interface CameraManager {
    * Get camera's state
    */
   getCameraState(): Required<CameraState>;
-  
+
   /**
    * Required for understadning of `cameraChanged` definition for other parts of Reveal
    * @param event
