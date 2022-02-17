@@ -84,7 +84,7 @@ export default function DetailsSidebar({
         <TopContainerAside>
           <SegmentedControl
             currentKey={selectedMenu}
-            onButtonClicked={(keyCode) => handleMenuClick(keyCode)}
+            onButtonClicked={(keyCode: string) => handleMenuClick(keyCode)}
           >
             {menuOptions.map(({ value, label }) => (
               <SegmentedControl.Button key={value}>

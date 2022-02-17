@@ -267,7 +267,7 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
         <Checkbox
           name="rawDatapoints"
           value={isRawDownload}
-          onChange={(checked) => setIsRawDownload(checked)}
+          onChange={(checked: boolean) => setIsRawDownload(checked)}
         />
         <Label>
           <Tooltip
@@ -286,7 +286,7 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
           </Tooltip>
         </Label>
         <SegmentedControl
-          onButtonClicked={(id) => {
+          onButtonClicked={(id: string) => {
             setSelectedDelimiterId(id);
           }}
           currentKey={selectedDelimiterId}
@@ -304,7 +304,7 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
         <Checkbox
           name="humanReadableDates"
           value={isHumanReadableDates}
-          onChange={(checked) => setIsHumanReadableDates(checked)}
+          onChange={(checked: boolean) => setIsHumanReadableDates(checked)}
         />
         <Label>
           <Tooltip

@@ -32,7 +32,13 @@ const DateRangeSelector = () => {
         startDate: new Date(chart.dateFrom || new Date()),
         endDate: new Date(chart.dateTo || new Date()),
       }}
-      onChange={({ startDate, endDate }) => {
+      onChange={({
+        startDate,
+        endDate,
+      }: {
+        startDate?: Date | undefined;
+        endDate?: Date | undefined;
+      }) => {
         const currentStart = new Date(chart.dateFrom);
         const currentEnd = new Date(chart.dateTo);
 

@@ -85,6 +85,26 @@ How to open the Storybook locally for development? As simply as it is:
 $ yarn storybook
 ```
 
+## Running Tests
+
+In order to execute unit tests you should run:
+
+```
+yarn test
+```
+
+For E2E tests using cypress you use the folliwng command to open cypress
+
+```
+yarn cy
+```
+
+In order to only execute the tests without a GUI (Like in a CI), the you run:
+
+```
+yarn cy:ci
+```
+
 ## Storage
 
 The data stored in Charts is currently on Firebase and can be accessed for administration purposes on the following clusters:

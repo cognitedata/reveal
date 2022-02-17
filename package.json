@@ -12,21 +12,17 @@
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' 'public/index.html'",
     "lint:fix": "yarn lint --fix",
     "storybook": "start-storybook -p 6006 -s public",
-    "testcafe:run": "BASE_URL=http://localhost:11111 testcafe 'chromium:headless --no-sandbox' 'testcafe/desktop' --stop-on-first-fail",
-    "testcafe:run-live": "BASE_URL=http://localhost:11111 testcafe 'chrome' 'testcafe/desktop' --live",
-    "testcafe:start": "./scripts/testcafe-serve-run.sh",
-    "testcafe:start-live": "./scripts/testcafe-start.sh",
-    "testcafe:build": "./scripts/testcafe-build.sh",
-    "testcafe:serve": "serve -s build -l 11111",
     "build-storybook": "build-storybook -s public",
-    "chromatic": "chromatic --exit-zero-on-changes"
+    "chromatic": "chromatic --exit-zero-on-changes",
+    "cy": "cypress open",
+    "cy:ci": "cypress run"
   },
   "dependencies": {
     "@cognite/annotations": "^1.1.0",
     "@cognite/auth-utils": "^1.0.15",
     "@cognite/calculation-backend": "^2.0.0-alpha.15",
     "@cognite/cdf-hub-tenant-selector": "^0.14.1",
-    "@cognite/cogs.js": "^5.6.4",
+    "@cognite/cogs.js": "5.11.2",
     "@cognite/connect": "^0.0.8",
     "@cognite/data-exploration": "^1.7.7",
     "@cognite/metrics": "^1.1.0",
@@ -87,7 +83,6 @@
     "@storybook/react": "^6.4.7",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
-    "@testing-library/testcafe": "^4.3.1",
     "@types/file-saver": "^2.0.5",
     "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.165",
@@ -106,6 +101,8 @@
     "@types/uuid": "^8.3.3",
     "babel-loader": "8.1.0",
     "chromatic": "^6.0.6",
+    "cypress": "^9.4.1",
+    "cypress-cucumber-preprocessor": "^4.3.1",
     "eslint": "^7.27.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^6.15.0",
@@ -114,7 +111,6 @@
     "eslint-plugin-lodash": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.0",
     "eslint-plugin-storybook": "^0.5.3",
-    "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^5.0.0",
     "husky": "^7.0.4",
     "jest-environment-jsdom-sixteen": "^2.0.0",
@@ -150,5 +146,8 @@
     "transformIgnorePatterns": [
       "node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
     ]
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true
   }
 }
