@@ -5,9 +5,10 @@ import { Button } from '@cognite/cogs.js';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import mime from 'mime-types';
 import styled from 'styled-components';
-import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
-import { fireErrorNotification, logToSentry } from 'src/utils/notifications';
-import { DEFAULT_MARGIN_V, getContainer, sleep } from 'src/utils';
+import { FileInfo, FileUploadResponse } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { fireErrorNotification, logToSentry } from 'utils/notifications';
+import { DEFAULT_MARGIN_V, getContainer, sleep } from 'utils';
 import { FileAddOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
@@ -104,8 +105,8 @@ class FileUploader extends React.Component<Props, State> {
     const supportedExtensions: Array<string> = [];
 
     // This end point is hidden and not in the SDK.
-    const response = await v3Client.get(
-      `api/v1/projects/${v3Client.project}/3d/supportedfileformats`
+    const response = await sdk.get(
+      `api/v1/projects/${sdk.project}/3d/supportedfileformats`
     );
     response.data.items.forEach((fileFormat) => {
       fileFormat.extensions.forEach((extension) => {
@@ -133,11 +134,11 @@ class FileUploader extends React.Component<Props, State> {
     const file = this.state.fileList![0];
     const mimeType = this.getMIMEType(file.name);
 
-    const { uploadUrl, id } = (await v3Client.files.upload({
+    const { uploadUrl, id } = (await sdk.files.upload({
       name: file.name,
       mimeType,
       source: '3d-models',
-    })) as v3.FileUploadResponse;
+    })) as FileUploadResponse;
 
     if (!uploadUrl || !id) {
       this.props.onUploadFailure();
@@ -182,8 +183,8 @@ class FileUploader extends React.Component<Props, State> {
 
       // Files are not available through the files API immediately after upload
       // so we making sure that they are available to avoid revisions endpoint to fail
-      const getFileInfo = (): Promise<v3.FileInfo> =>
-        v3Client.files.retrieve([{ id }]).then((r) => r[0]);
+      const getFileInfo = (): Promise<FileInfo> =>
+        sdk.files.retrieve([{ id }]).then((r) => r[0]);
 
       let fileInfo = await getFileInfo();
       let retries = 0;

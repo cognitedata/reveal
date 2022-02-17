@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Button } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
-import { projectName } from 'src/utils';
-import worker13 from 'src/assets/worker13.svg';
+import { projectName } from 'utils';
+import worker13 from 'assets/worker13.svg';
 
 const Background = styled.div`
   background: white;

@@ -4,8 +4,8 @@ import { isProduction } from '@cognite/cdf-utilities';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import ReduxThunk from 'redux-thunk';
 
-import AppReducer from 'src/store/modules/App';
-import toolbarReducer from 'src/store/modules/toolbar';
+import AppReducer from 'store/modules/App';
+import toolbarReducer from 'store/modules/toolbar';
 import TreeViewReducer from './modules/TreeView';
 
 export * from './types';

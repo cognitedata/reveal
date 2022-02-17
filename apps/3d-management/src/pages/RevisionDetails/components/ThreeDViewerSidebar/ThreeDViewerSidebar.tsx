@@ -6,24 +6,24 @@ import {
   THREE,
 } from '@cognite/reveal';
 import React from 'react';
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { Tuple3, RevisionCameraProperties } from '@cognite/sdk';
 import styled from 'styled-components';
 import {
   Legacy3DModel,
   Legacy3DViewer,
-} from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
-import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
-import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'src/utils';
+} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+import { ToolbarTreeView } from 'pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
+import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'utils';
 import { useFlag } from '@cognite/react-feature-flags';
 import { isProduction } from '@cognite/cdf-utilities';
 import { Switch } from '@cognite/cogs.js';
-import { useUpdateRevisionMutation } from 'src/hooks/revisions';
-import { toggleGhostMode } from 'src/store/modules/toolbar';
+import { useUpdateRevisionMutation } from 'hooks/revisions';
+import { toggleGhostMode } from 'store/modules/toolbar';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store';
+import { RootState } from 'store';
 import { Resizable } from 're-resizable';
 import { Divider } from 'antd';
-import { NodePropertyFilterIndicator } from 'src/pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
+import { NodePropertyFilterIndicator } from 'pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
@@ -33,8 +33,8 @@ type RevisionUpdatePayload = {
   modelId: number;
   revisionId: number;
   published?: boolean;
-  rotation?: v3.Tuple3<number>;
-  camera?: v3.RevisionCameraProperties;
+  rotation?: Tuple3<number>;
+  camera?: RevisionCameraProperties;
 };
 
 type Props = {
@@ -57,7 +57,7 @@ export default function ThreeDViewerSidebar(props: Props) {
     (window as any).viewer = props.viewer;
   }, [props.model, props.viewer]);
 
-  const [updateRevisionMutation] = useUpdateRevisionMutation();
+  const { mutate: updateRevisionMutation } = useUpdateRevisionMutation();
 
   const treeViewFeatureFlagIsEnabled =
     useFlag('3DM_tree-view') || !isProduction();

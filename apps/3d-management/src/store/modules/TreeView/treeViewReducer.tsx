@@ -1,17 +1,17 @@
 import React from 'react';
-import { Actions, TreeViewState } from 'src/store/modules/TreeView/types';
+import { Actions, TreeViewState } from 'store/modules/TreeView/types';
 import {
   addChildrenIntoTree,
   getNodeByTreeIndex,
   traverseTree,
   updateNodeById,
-} from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
-import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore';
+} from 'pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+import { TreeDataNode } from 'pages/RevisionDetails/components/TreeView/types';
+import { LoadMore } from 'pages/RevisionDetails/components/TreeView/LoadMore';
 import {
   getCheckedNodesAndStateOfUnknownChildren,
   subtreeHasTreeIndex,
-} from 'src/store/modules/TreeView/treeViewUtils';
+} from 'store/modules/TreeView/treeViewUtils';
 
 export function getInitialState(): TreeViewState {
   return {

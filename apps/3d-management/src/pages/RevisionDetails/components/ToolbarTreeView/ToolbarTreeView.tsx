@@ -1,14 +1,14 @@
 import TreeView, {
   NodesTreeViewRefType,
-} from 'src/pages/RevisionDetails/components/TreeView/NodesTreeView';
+} from 'pages/RevisionDetails/components/TreeView/NodesTreeView';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   TreeDataNode,
   TreeLoadMoreNode,
-} from 'src/pages/RevisionDetails/components/TreeView/types';
+} from 'pages/RevisionDetails/components/TreeView/types';
 import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store';
+import { RootState } from 'store';
 import {
   checkNodes,
   expandNodes,
@@ -20,14 +20,14 @@ import {
   selectNodes,
   TreeIndex,
   TreeViewState,
-} from 'src/store/modules/TreeView';
-import Spinner from 'src/components/Spinner';
+} from 'store/modules/TreeView';
+import Spinner from 'components/Spinner';
 import styled from 'styled-components';
-import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
-import ErrorBoundary from 'src/components/ErrorBoundary';
+import { treeViewFocusContainerId } from 'pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
+import ErrorBoundary from 'components/ErrorBoundary';
 import { Button, Title } from '@cognite/cogs.js';
-import { useViewerNodeClickListener } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
-import { useFilteredNodesHighlights } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
+import { useViewerNodeClickListener } from 'pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
+import { useFilteredNodesHighlights } from 'pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
 import { NodeInfoModal } from './NodeInfoModal';
 
 import { useResizeHandler } from './hooks/useResizeHander';

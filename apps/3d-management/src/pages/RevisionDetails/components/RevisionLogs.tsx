@@ -1,13 +1,12 @@
 import uniqBy from 'lodash/uniqBy';
 import { Timeline } from 'antd';
-import { mapStatusToColor } from 'src/components/Status';
+import { mapStatusToColor } from 'components/Status';
 import React from 'react';
-import { RevisionLog3D } from 'src/utils/sdk/3dApiUtils';
-import { useUserContext } from '@cognite/cdf-utilities';
-import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
+import { RevisionLog3D } from 'utils/sdk/3dApiUtils';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import { DEFAULT_MARGIN_V } from 'src/utils';
+import { DEFAULT_MARGIN_V } from 'utils';
+import { useUserInformation } from 'hooks/useUserInformation';
 
 const EXTERNAL_LOG_NAME = {
   'reveal-optimizer': 'Web-Optimizer',
@@ -39,7 +38,7 @@ type Props = {
 };
 
 export function RevisionLogs({ logs, isLoading }: Props) {
-  const user: AuthenticatedUserWithGroups = useUserContext();
+  const { data: user } = useUserInformation();
 
   if (isLoading) {
     return <div style={{ marginTop: DEFAULT_MARGIN_V }}>Loading logs...</div>;
@@ -66,7 +65,8 @@ export function RevisionLogs({ logs, isLoading }: Props) {
 
   // make sure they are uniq and visible
   const visibleLogs = {};
-  const isInternalUser = user.username?.includes('@cognite.com');
+  const userEmail = user?.email ?? user?.mail;
+  const isInternalUser = userEmail?.includes('@cognite.com');
   Object.keys(organizedLogs).forEach((process) => {
     if (isInternalUser) {
       visibleLogs[process] = uniqBy(

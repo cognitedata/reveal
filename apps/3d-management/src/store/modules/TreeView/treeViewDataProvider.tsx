@@ -3,14 +3,15 @@ import {
   CustomDataNode,
   TreeDataNode,
   TreeLoadMoreNode,
-} from 'src/pages/RevisionDetails/components/TreeView/types';
-import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore';
-import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
-import { node3dToTreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
+} from 'pages/RevisionDetails/components/TreeView/types';
+import { LoadMore } from 'pages/RevisionDetails/components/TreeView/LoadMore';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { List3DNodesQuery, Node3D } from '@cognite/sdk';
+import { node3dToTreeDataNode } from 'pages/RevisionDetails/components/TreeView/utils/converters';
 import { getProject } from '@cognite/cdf-utilities';
-import { sortNaturally } from 'src/utils';
+import { sortNaturally } from 'utils';
 
-export const FETCH_PARAMS: v3.List3DNodesQuery = {
+export const FETCH_PARAMS: List3DNodesQuery = {
   depth: 1,
   limit: 50,
 } as const;
@@ -22,10 +23,10 @@ export type RevisionId = {
 export type FetchNodesArgs = {
   cursor?: string;
   parent: TreeLoadMoreNode['parent'];
-  params?: Pick<v3.List3DNodesQuery, 'depth' | 'limit'>;
+  params?: Pick<List3DNodesQuery, 'depth' | 'limit'>;
 };
 
-async function fetchRootNode(modelId, revisionId): Promise<v3.Node3D> {
+async function fetchRootNode(modelId, revisionId): Promise<Node3D> {
   // having this function separated from first request is not a performance optimisation
   // we just need to know rootId to fetch its children
   // because it's not guaranteed that API will give you rootNode in the first response
@@ -34,13 +35,10 @@ async function fetchRootNode(modelId, revisionId): Promise<v3.Node3D> {
   // when model has LOTS of nodes with depth=1 i.e. direct children of root node
 
   // /nodes endpoint doesn't have treeIndex filter, so here we go...
-  const outputsUrl = `${v3Client.getBaseUrl()}/api/v1/projects/${getProject()}/3d/models/${modelId}/revisions/${revisionId}/nodes/internalids/bytreeindices`;
-  const rootNodeIdResponse = await v3Client.post<{ items: number[] }>(
-    outputsUrl,
-    {
-      data: { items: [0] },
-    }
-  );
+  const outputsUrl = `${sdk.getBaseUrl()}/api/v1/projects/${getProject()}/3d/models/${modelId}/revisions/${revisionId}/nodes/internalids/bytreeindices`;
+  const rootNodeIdResponse = await sdk.post<{ items: number[] }>(outputsUrl, {
+    data: { items: [0] },
+  });
   if (rootNodeIdResponse.status !== 200) {
     throw new Error(
       rootNodeIdResponse.data
@@ -50,7 +48,7 @@ async function fetchRootNode(modelId, revisionId): Promise<v3.Node3D> {
   }
   const rootNodeId = rootNodeIdResponse.data.items[0];
 
-  const rootNodeObjResponse = await v3Client.revisions3D.retrieve3DNodes(
+  const rootNodeObjResponse = await sdk.revisions3D.retrieve3DNodes(
     modelId,
     revisionId,
     [{ id: rootNodeId }]
@@ -82,7 +80,7 @@ export async function fetchTreeNodes({
   parent,
   params,
 }: RevisionId & FetchNodesArgs): Promise<CustomDataNode[]> {
-  const data = await v3Client.revisions3D.list3DNodes(modelId, revisionId, {
+  const data = await sdk.revisions3D.list3DNodes(modelId, revisionId, {
     ...FETCH_PARAMS,
     ...params,
     cursor,
@@ -114,8 +112,8 @@ export async function fetchAncestors({
   modelId,
   revisionId,
   nodeId,
-}: RevisionId & { nodeId: number }): Promise<v3.Node3D[]> {
-  const data = await v3Client.revisions3D.list3DNodeAncestors(
+}: RevisionId & { nodeId: number }): Promise<Node3D[]> {
+  const data = await sdk.revisions3D.list3DNodeAncestors(
     modelId,
     revisionId,
     nodeId

@@ -1,9 +1,9 @@
 import React, { ImgHTMLAttributes } from 'react';
-import Spinner from 'src/components/Spinner';
+import Spinner from 'components/Spinner';
 import { Tooltip, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useRevisions } from 'src/hooks/revisions';
-import { useThumbnailFileQuery } from 'src/components/Thumbnail/useThumbnailFile';
+import { useRevisions } from 'hooks/revisions';
+import { useThumbnailFileQuery } from 'components/Thumbnail/useThumbnailFile';
 
 const ThumbnailHint = styled.div`
   display: flex;

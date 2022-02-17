@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import { Tooltip } from 'antd';
-import { getContainer } from 'src/utils';
+import { getContainer } from 'utils';
 
 export default ({
   children,

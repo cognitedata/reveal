@@ -7,10 +7,10 @@ import {
   IndexSet,
   NumericRange,
 } from '@cognite/reveal';
-import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
-import { traverseTree } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { subtreeHasTreeIndex } from 'src/store/modules/TreeView/treeViewUtils';
-import { assignOrUpdateStyledNodeCollection } from 'src/utils/sdk/3dNodeStylingUtils';
+import { TreeDataNode } from 'pages/RevisionDetails/components/TreeView/types';
+import { traverseTree } from 'pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+import { subtreeHasTreeIndex } from 'store/modules/TreeView/treeViewUtils';
+import { assignOrUpdateStyledNodeCollection } from 'utils/sdk/3dNodeStylingUtils';
 
 type Args = {
   model: Cognite3DModel;

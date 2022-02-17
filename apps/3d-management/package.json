@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-3d-management",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "cross-env BROWSER=none WDS_SOCKET_PORT=3033 WDS_SOCKET_HOST=localhost PORT=3033 HTTPS=true SKIP_PREFLIGHT_CHECK=true rescripts start",
@@ -18,12 +18,14 @@
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "@cognite/3d-viewer": "6.1.4",
-    "@cognite/cdf-sdk-singleton": "^0.7.0",
-    "@cognite/cdf-utilities": "^0.7.3",
+    "@cognite/cdf-utilities": "^0.10.1",
     "@cognite/cogs.js": "^3.24.3",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-feature-flags": "^0.0.2",
     "@cognite/reveal": "^2.2.2",
+    "@cognite/sdk": "^6.3.1",
+    "@cognite/sdk-provider": "^1.0.0",
+    "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@cognite/z-index": "^0.1.0",
     "@google-cloud/storage": "^5.7.2",
     "@sentry/browser": "^5.30.0",
@@ -39,7 +41,7 @@
     "react-dom": "^16.14.0",
     "react-error-boundary": "^3.1.1",
     "react-iframe": "^1.8.0",
-    "react-query": "^2.26.2",
+    "react-query": "^3.18.0",
     "react-redux": "^7.2.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",

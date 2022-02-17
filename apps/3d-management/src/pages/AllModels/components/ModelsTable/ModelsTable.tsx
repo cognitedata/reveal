@@ -7,15 +7,15 @@ import dayjs from 'dayjs';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import EmptyState from 'src/pages/AllModels/components/EmptyState';
-import { TableOperations } from 'src/pages/AllModels/components/TableOperations';
-import Thumbnail from 'src/components/Thumbnail';
+import EmptyState from 'pages/AllModels/components/EmptyState';
+import { TableOperations } from 'pages/AllModels/components/TableOperations';
+import Thumbnail from 'components/Thumbnail';
 
-import { setSelectedModels, setModelTableState } from 'src/store/modules/App';
-import { v3 } from '@cognite/cdf-sdk-singleton';
-import { DEFAULT_MARGIN_V } from 'src/utils';
-import { AppState } from 'src/store/modules/App/types';
-import { ThumbnailPreviewIcon } from 'src/components/ThumbnailPreviewIcon';
+import { setSelectedModels, setModelTableState } from 'store/modules/App';
+import { Model3D } from '@cognite/sdk';
+import { DEFAULT_MARGIN_V } from 'utils';
+import { AppState } from 'store/modules/App/types';
+import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
 import { ColumnType } from 'antd/lib/table/interface';
 
 const NestedTable = styled(Table)`
@@ -49,7 +49,7 @@ const NestedTable = styled(Table)`
 `;
 
 type Props = {
-  models: Array<v3.Model3D>;
+  models: Array<Model3D>;
   app: AppState;
   expandedRowRender: (...args: any) => any;
   setModelTableState: (...args: any) => any;
@@ -71,7 +71,7 @@ class ModelsTable extends React.Component<Props> {
     return this.props.app.modelTableState.filters.modelNameFilter;
   }
 
-  get columns(): Array<ColumnType<v3.Model3D>> {
+  get columns(): Array<ColumnType<Model3D>> {
     const sortObj = this.props.app.modelTableState.sorter;
     return [
       {
@@ -168,7 +168,7 @@ class ModelsTable extends React.Component<Props> {
           htmlSize={31}
           containerStyle={{ marginBottom: DEFAULT_MARGIN_V }}
         />
-        <NestedTable<FC<TableProps<v3.Model3D>>>
+        <NestedTable<FC<TableProps<Model3D>>>
           rowKey={(i: any) => i.id}
           columns={this.columns}
           dataSource={this.tableDataSource}

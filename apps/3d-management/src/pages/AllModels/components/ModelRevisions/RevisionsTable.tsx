@@ -6,16 +6,16 @@ import { Button } from '@cognite/cogs.js';
 
 import dayjs from 'dayjs';
 
-import EmptyState from 'src/pages/AllModels/components/EmptyState/index';
-import { getContainer } from 'src/utils';
-import { TableOperations } from 'src/pages/AllModels/components/TableOperations';
-import Status from 'src/components/Status/index';
-import Thumbnail from 'src/components/Thumbnail';
-import { v3 } from '@cognite/cdf-sdk-singleton';
-import { ThumbnailPreviewIcon } from 'src/components/ThumbnailPreviewIcon';
+import EmptyState from 'pages/AllModels/components/EmptyState/index';
+import { getContainer } from 'utils';
+import { TableOperations } from 'pages/AllModels/components/TableOperations';
+import Status from 'components/Status/index';
+import Thumbnail from 'components/Thumbnail';
+import { Revision3D } from '@cognite/sdk';
+import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
 
 type Props = {
-  revisions: Array<v3.Revision3D>;
+  revisions: Array<Revision3D>;
   onRowClick: (revisionId: number) => void;
   refresh: () => void;
 };
@@ -31,7 +31,7 @@ export function RevisionsTable(props: Props) {
     filteredInfo: {},
   });
   const { sortedInfo, filteredInfo } = state;
-  const columns: ColumnProps<v3.Revision3D>[] = [
+  const columns: ColumnProps<Revision3D>[] = [
     {
       title: '',
       width: '50px',
@@ -108,7 +108,7 @@ export function RevisionsTable(props: Props) {
       pagination={false}
       rowKey={(item) => item.id}
       onChange={handleChange}
-      onRow={(record: v3.Revision3D) => ({
+      onRow={(record: Revision3D) => ({
         onClick: () => {
           props.onRowClick(record.id);
         },

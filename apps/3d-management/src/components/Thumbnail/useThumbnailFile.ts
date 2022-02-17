@@ -1,9 +1,10 @@
-import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
-import { fireErrorNotification } from 'src/utils';
-import { useQuery, useQueryCache } from 'react-query';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { fireErrorNotification } from 'utils';
+import { useQuery, useQueryClient } from 'react-query';
+import { HttpError } from '@cognite/sdk';
 
-async function fetchFile(_key, fileId: number): Promise<string> {
-  const arraybuffers = await v3Client.files3D.retrieve(fileId);
+async function fetchFile(fileId: number): Promise<string> {
+  const arraybuffers = await sdk.files3D.retrieve(fileId);
   const arrayBufferView = new Uint8Array(arraybuffers);
   const blob = new Blob([arrayBufferView]);
   return window.URL.createObjectURL(blob);
@@ -11,16 +12,12 @@ async function fetchFile(_key, fileId: number): Promise<string> {
 
 export function useThumbnailFileQuery(fileId: number) {
   const queryKey = ['file', fileId];
-  const queryCache = useQueryCache();
-  return useQuery<string, v3.HttpError>({
-    queryKey,
-    queryFn: fetchFile,
-    config: {
-      staleTime: Infinity,
-      initialData: () => queryCache.getQueryData(queryKey),
-      refetchOnMount: false,
-      onError: (error) =>
-        fireErrorNotification({ error, message: 'Could not fetch thumbnail' }),
-    },
+  const queryClient = useQueryClient();
+  return useQuery<string, HttpError>(queryKey, () => fetchFile(fileId), {
+    staleTime: Infinity,
+    initialData: () => queryClient.getQueryData(queryKey),
+    refetchOnMount: false,
+    onError: (error) =>
+      fireErrorNotification({ error, message: 'Could not fetch thumbnail' }),
   });
 }

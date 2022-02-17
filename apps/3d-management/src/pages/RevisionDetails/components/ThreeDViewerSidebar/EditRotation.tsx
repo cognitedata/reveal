@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { Tuple3 } from '@cognite/sdk';
 import { Button as ButtonAnt, message } from 'antd';
 
 import { Button, Dropdown, SegmentedControl } from '@cognite/cogs.js';
@@ -15,7 +15,7 @@ import * as Sentry from '@sentry/browser';
 import {
   Legacy3DModel,
   Legacy3DViewer,
-} from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
 import antdRadioStyles from 'antd/es/radio/style/index.less';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
@@ -25,7 +25,7 @@ const ButtonGroup = ButtonAnt.Group;
 type RotationAxis = 'x' | 'y' | 'z';
 
 type Props = {
-  saveModelRotation: (rotation: v3.Tuple3<number>) => Promise<void>;
+  saveModelRotation: (rotation: Tuple3<number>) => Promise<void>;
   viewer: Cognite3DViewer | Legacy3DViewer;
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
 };
@@ -59,7 +59,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   const [rotationAxis, setRotationAxis] = useState<RotationAxis>('x');
   const [initialRotation, setInitialRotation] = useState<THREE.Matrix4>();
   const [rotationAnglePiMultiplier, setRotationAnglePiMultiplier] = useState<
-    v3.Tuple3<number>
+    Tuple3<number>
   >([0, 0, 0]);
 
   const getModelTransformation = React.useCallback(() => {
@@ -101,7 +101,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     changeModelRotation(newRot);
   };
 
-  const changeModelRotation = (newRotationDelta: v3.Tuple3<number>) => {
+  const changeModelRotation = (newRotationDelta: Tuple3<number>) => {
     setRotationAnglePiMultiplier(
       rotationAnglePiMultiplier.map((rot, index) => {
         const result = rot + newRotationDelta[index];

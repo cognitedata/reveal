@@ -1,11 +1,11 @@
 import { rest } from 'msw';
 
-import { rootNodeObjRes } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/rootNodeObjRes';
-import { rootNodeChildrenRes } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/rootNodeChildrenRes';
-import { cubeNodeChildrenRes } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/cubeNodeChildreRes';
-import { fakeFirstLevelSiblingsRes } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fakeFirstLevelSiblingsRes';
-import { cubeNodeFirstChildAncestorsRes } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/cubeNodeFirstChildAncestorsRes';
-import { onUnhandledRequest } from 'src/utils/test/mswUtils';
+import { rootNodeObjRes } from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/rootNodeObjRes';
+import { rootNodeChildrenRes } from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/rootNodeChildrenRes';
+import { cubeNodeChildrenRes } from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/cubeNodeChildreRes';
+import { fakeFirstLevelSiblingsRes } from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fakeFirstLevelSiblingsRes';
+import { cubeNodeFirstChildAncestorsRes } from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/cubeNodeFirstChildAncestorsRes';
+import { onUnhandledRequest } from 'utils/test/mswUtils';
 import rootNodeIdRes from './fixtures/rootNodeIdRes';
 import {
   fixtureCubeNodeFirstChildId,

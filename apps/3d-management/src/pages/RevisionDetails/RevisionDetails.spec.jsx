@@ -1,9 +1,9 @@
 import { setupServer } from 'msw/node';
-import { renderWithProviders } from 'src/utils/test';
+import { renderWithProviders } from 'utils/test';
 import React from 'react';
 import { createMemoryHistory } from 'history';
 import { screen } from '@testing-library/react';
-import { isReprocessingRequired } from 'src/utils/sdk/3dApiUtils';
+import { isReprocessingRequired } from 'utils/sdk/3dApiUtils';
 import RevisionDetails from './RevisionDetails';
 import {
   fixtureModelId,
@@ -16,7 +16,7 @@ jest.mock('@cognite/reveal', () => {
     Cognite3DViewer: jest.fn(),
   };
 });
-jest.mock('src/utils/sdk/3dApiUtils');
+jest.mock('utils/sdk/3dApiUtils');
 
 const server = setupServer(...revisionDetailsMswHandlers);
 

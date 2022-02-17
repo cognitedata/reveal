@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { IconProps } from '@cognite/cogs.js/dist/Atoms/Icon/Icon';
-import { Optional } from 'src/utils/types';
+import { Optional } from 'utils/types';
 
 const EyeIcon = styled(Icon)`
   line-height: 0;
