@@ -27,6 +27,7 @@ export const CommonSelectBase = (props: CommonSelectBaseProps) => {
       value={value}
       disabled={disabled}
       onChange={onChange}
+      menuPlacement="auto"
     />
   );
 };

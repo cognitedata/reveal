@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { SettingPanelProps } from '../../../UserInterface/Components/Settings/Types';
-import { SettingsSection } from '../../../UserInterface/Components/Settings/SettingsSection/SettingsSection';
-import { PanelTitleBar } from '../../../UserInterface/Components/PanelTitleBar/PanelTitleBar';
-import { NodeUtils } from '../../../UserInterface/utils/NodeUtils';
+
 import styled from 'styled-components';
+
+import { PanelTitleBar } from '../../../UserInterface/Components/PanelTitleBar/PanelTitleBar';
+import { SettingsSection } from '../../../UserInterface/Components/Settings/SettingsSection/SettingsSection';
+import { SettingPanelProps } from '../../../UserInterface/Components/Settings/Types';
+import { NodeUtils } from '../../../UserInterface/utils/NodeUtils';
 
 //= =================================================
 // Main Settings Panel Component

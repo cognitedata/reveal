@@ -166,10 +166,9 @@ const StyledLabel = styled.label`
   margin-right: 5px;
 `;
 const InputFieldWrapper = styled.div`
-  flex: 3;
+  flex: 1;
   display: flex;
-  flex-direction: row;
-  justify-content: stretch;
+  justify-content: flex-end;
 
   > span {
     width: 100%;

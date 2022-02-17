@@ -13,13 +13,13 @@
 
 import cloneDeep from 'lodash/cloneDeep';
 
-import { TargetId } from '../../../Core/Primitives/TargetId';
-import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
 import { ColorType } from '../../../Core/Enums/ColorType';
-import { BaseStyle } from '../../../Core/Styles/BaseStyle';
+import { TargetId } from '../../../Core/Primitives/TargetId';
 import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
-import { NumberProperty } from '../../../Core/Property/Concrete/Property/NumberProperty';
 import { ColorTypeProperty } from '../../../Core/Property/Concrete/Property/ColorTypeProperty';
+import { NumberProperty } from '../../../Core/Property/Concrete/Property/NumberProperty';
+import { BaseRenderStyle } from '../../../Core/Styles/BaseRenderStyle';
+import { BaseStyle } from '../../../Core/Styles/BaseStyle';
 
 export class PointLogStyle extends BaseRenderStyle {
   //= =================================================
@@ -33,8 +33,8 @@ export class PointLogStyle extends BaseRenderStyle {
 
   public radius = new NumberProperty({
     name: 'Radius',
-    value: 20,
-    options: [10, 20, 25, 30, 50, 75, 100, 200],
+    value: 40,
+    options: [10, 20, 30, 40, 50, 75, 100, 200],
   });
 
   public fontSize = new NumberProperty({

@@ -42,7 +42,6 @@ export const ExpansionView = (props: ExpansionViewProps) => {
 };
 
 const Collapse = styled.div`
-  max-height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: stretch;
@@ -62,6 +61,5 @@ const CollapseHeader = styled.div`
   align-items: center;
 `;
 const CollapsePanel = styled.div`
-  overflow: auto;
   padding: 10px;
 `;

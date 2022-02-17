@@ -31,7 +31,7 @@ export class Appearance {
   static toolbarCommandsPerLine = 19; // Commands per line in toolbar
 
   // Panel sizes
-  static leftPanelDefaultSize = 290; // Default size of left panel
+  static leftPanelDefaultSize = 350; // Default size of left panel
 
   static leftPanelMaxSize = 1000; // Maximum size of left panel
 
