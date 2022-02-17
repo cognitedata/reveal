@@ -9,12 +9,5 @@ export function assignOrUpdateStyledNodeCollection(
   nodeCollection: NodeCollectionBase,
   appearance: NodeAppearance
 ): void {
-  const hasCollection = model.styledNodeCollections
-    .map((x) => x.nodeCollection)
-    .includes(nodeCollection);
-  if (hasCollection) {
-    model.updateStyledNodeCollection(nodeCollection, appearance);
-  } else {
-    model.assignStyledNodeCollection(nodeCollection, appearance);
-  }
+  model.assignStyledNodeCollection(nodeCollection, appearance);
 }
