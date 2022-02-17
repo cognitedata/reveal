@@ -6,7 +6,7 @@ export const promiseWithTimeout = async (
   let timeoutHandle: NodeJS.Timeout;
 
   const timeoutPromise = new Promise((_, reject) => {
-    timeoutHandle = setTimeout(() => reject(errMessage), timeoutMs);
+    timeoutHandle = setTimeout(() => reject(new Error(errMessage)), timeoutMs);
   });
 
   return Promise.race([promise(), timeoutPromise]).then((result) => {
