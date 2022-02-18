@@ -23,7 +23,7 @@ import {
 import {
   keypointSelectStatusChange,
   setSelectedTool,
-} from 'src/modules/Review/store/annotationLabelSlice';
+} from 'src/modules/Review/store/annotationLabel/slice';
 import { selectAnnotation } from 'src/modules/Review/store/reviewSlice';
 import { AppDispatch } from 'src/store';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';

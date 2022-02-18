@@ -9,15 +9,17 @@ import { AnnotationSettingsModal } from 'src/modules/Review/Components/Annotatio
 import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardShortcutModal/KeyboardShortcutModal';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import {
-  currentCollection,
-  nextCollection,
-  nextKeypoint,
-  nextShape,
   setKeepUnsavedRegion,
   setLastCollectionName,
   setLastShape,
   setSelectedTool,
-} from 'src/modules/Review/store/annotationLabelSlice';
+} from 'src/modules/Review/store/annotationLabel/slice';
+import {
+  currentCollection,
+  nextCollection,
+  nextKeypoint,
+  nextShape,
+} from 'src/modules/Review/store/annotationLabel/selectors';
 import {
   selectAnnotationSettingsState,
   showAnnotationSettingsModel,

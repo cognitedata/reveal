@@ -1,10 +1,5 @@
-import {
-  createSelector,
-  createSlice,
-  isAnyOf,
-  PayloadAction,
-} from '@reduxjs/toolkit';
-import { AnnotationCollection, Tool } from 'src/modules/Review/types';
+import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
+import { Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
@@ -17,48 +12,13 @@ import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-to
 import {
   AnnotationStatus,
   createUniqueId,
-  KeypointItem,
   KeypointVertex,
 } from 'src/utils/AnnotationUtils';
 import { ReactText } from 'react';
-import { RootState } from 'src/store/rootReducer';
+import { AnnotationLabelState, KeyPointState } from './types';
+import { deleteCollection } from './utils';
 
-type KeyPointState = {
-  id: string;
-  caption: string;
-  order: string;
-  color: string;
-  defaultPosition?: [number, number];
-};
-type KeypointCollectionState = {
-  id: string;
-  keypointIds: string[];
-  name: string;
-  show: boolean;
-  status: AnnotationStatus;
-};
-
-type State = {
-  predefinedAnnotations: AnnotationCollection;
-  collections: {
-    byId: Record<string, KeypointCollectionState>;
-    allIds: string[];
-    selectedIds: string[];
-  };
-  lastCollectionId: string | undefined;
-  lastCollectionName: string | undefined;
-  lastShape: string | undefined;
-  lastKeyPoint: string | undefined;
-  currentTool: Tool;
-  keypointMap: {
-    byId: Record<string, KeyPointState>;
-    allIds: string[];
-    selectedIds: string[];
-  };
-  keepUnsavedRegion: boolean;
-};
-
-const initialState: State = {
+const initialState: AnnotationLabelState = {
   predefinedAnnotations: {
     predefinedKeypoints: [],
     predefinedShapes: [],
@@ -296,7 +256,7 @@ const annotationLabelSlice = createSlice({
   },
 });
 
-export type { State as AnnotationLabelReducerState };
+export type { AnnotationLabelState as AnnotationLabelReducerState };
 export { initialState as annotationLabelReducerInitialState };
 
 export const {
@@ -316,176 +276,3 @@ export const {
 } = annotationLabelSlice.actions;
 
 export default annotationLabelSlice.reducer;
-
-// selectors
-
-export const nextKeypoint = createSelector(
-  (state: State) => state.predefinedAnnotations.predefinedKeypoints,
-  (state: State) => state.collections.byId,
-  (state: State) => state.keypointMap.byId,
-  (state: State) => state.lastCollectionName,
-  (state: State) => state.lastKeyPoint,
-  (
-    keyPointCollectionTemplates,
-    allCollections,
-    allKeypoints,
-    lastCollectionName,
-    lastKeyPointId
-  ) => {
-    const lastKeyPoint = lastKeyPointId ? allKeypoints[lastKeyPointId] : null;
-    const template =
-      keyPointCollectionTemplates.find(
-        (tmp) => tmp.collectionName === lastCollectionName
-      ) || keyPointCollectionTemplates[0];
-
-    if (template && template.keypoints && template.keypoints.length) {
-      let nextPoint;
-      if (lastKeyPoint) {
-        const lastKeypointIndex = template.keypoints.findIndex(
-          (keyPoint) =>
-            keyPoint.order === lastKeyPoint.order &&
-            keyPoint.caption === lastKeyPoint.caption &&
-            keyPoint.color === lastKeyPoint.color
-        );
-        const nextIndex = lastKeypointIndex >= 0 ? lastKeypointIndex + 1 : 0;
-        if (nextIndex === template.keypoints.length) {
-          // eslint-disable-next-line prefer-destructuring
-          nextPoint = template.keypoints[0];
-        } else {
-          nextPoint = template.keypoints[nextIndex];
-        }
-      } else {
-        // eslint-disable-next-line prefer-destructuring
-        nextPoint = template.keypoints[0];
-      }
-
-      return nextPoint;
-    }
-    return null;
-  }
-);
-
-export const nextShape = createSelector(
-  (state: RootState) => state.reviewSlice.annotationSettings.createNew,
-  (state: RootState) =>
-    state.annotationLabelReducer.predefinedAnnotations.predefinedShapes,
-  (state: RootState) => state.annotationLabelReducer.lastShape,
-  (annotationSettingsNewLabel, predefinedShapes, lastShape) => {
-    if (annotationSettingsNewLabel.text) {
-      return annotationSettingsNewLabel.text;
-    }
-    if (lastShape) {
-      return lastShape;
-    }
-    return predefinedShapes[0]?.shapeName || '';
-  }
-);
-
-export const nextCollection = createSelector(
-  (state: RootState) => state.reviewSlice.annotationSettings.createNew,
-  (state: RootState) =>
-    state.annotationLabelReducer.predefinedAnnotations.predefinedKeypoints,
-  (state: RootState) => state.annotationLabelReducer.lastCollectionName,
-  (
-    annotationSettingsNewLabel,
-    predefinedKeypointCollections,
-    lastCollectionName
-  ) => {
-    let collection = predefinedKeypointCollections[0];
-    if (annotationSettingsNewLabel.text || lastCollectionName) {
-      const collectionLabel =
-        annotationSettingsNewLabel.text || lastCollectionName;
-      const template = predefinedKeypointCollections.find(
-        (c) => c.collectionName === collectionLabel
-      );
-      if (template) {
-        collection = template;
-      }
-    }
-    return collection;
-  }
-);
-
-export const currentCollection = createSelector(
-  (state: State) => state.lastCollectionId,
-  (state: State) => state.collections.byId,
-  (state: State) => state.collections.selectedIds,
-  (state: State) => state.keypointMap.byId,
-  (state: State) => state.keypointMap.selectedIds,
-  (state: State) => state.predefinedAnnotations.predefinedKeypoints,
-  (
-    lastCollectionId,
-    allCollections,
-    selectedCollectionIds,
-    allKeypoints,
-    selectedKeypointIds,
-    collectionTemplate
-  ) => {
-    if (lastCollectionId) {
-      const collection = allCollections[lastCollectionId];
-      const keypoints = collection.keypointIds.map(
-        (id) =>
-          ({
-            ...allKeypoints[id],
-            selected: selectedKeypointIds.includes(id),
-          } as KeypointItem)
-      );
-      const predefinedKeypoints = collectionTemplate.find(
-        (template) => template.collectionName === collection.name
-      )?.keypoints as KeypointItem[];
-      const remainingKeypoints = predefinedKeypoints?.filter(
-        (point) => !keypoints.some((k) => k.caption === point.caption)
-      );
-
-      return {
-        ...collection,
-        selected: selectedCollectionIds.includes(collection.id),
-        keypoints,
-        remainingKeypoints,
-      };
-    }
-    return null;
-  }
-);
-
-export const keypointsCompleteInCollection = createSelector(
-  (state: State) => state.lastCollectionId,
-  (state: State) => state.collections.byId,
-  (state: State) => state.keypointMap.byId,
-  (state: State) => state.predefinedAnnotations.predefinedKeypoints,
-  (lastCollectionId, allCollections, allKeyPoints, collectionTemplate) => {
-    if (lastCollectionId) {
-      const collection = allCollections[lastCollectionId];
-      const predefinedCollection = collectionTemplate.find(
-        (template) => template.collectionName === collection.name
-      );
-      const templateKeypoints = predefinedCollection!.keypoints;
-      const createdKeyPointOrderNumbers = collection.keypointIds.map(
-        (id) => allKeyPoints[id].order
-      );
-      const completedKeypoints = templateKeypoints!.filter((kpoint) =>
-        createdKeyPointOrderNumbers.includes(kpoint.order)
-      );
-      return [completedKeypoints.length, templateKeypoints?.length];
-    }
-    return null;
-  }
-);
-
-// state utils
-
-const deleteCollection = (state: State, collectionId: string) => {
-  const collection = state.collections.byId[collectionId];
-  if (collection) {
-    delete state.collections.byId[collection.id];
-    state.collections.allIds = Object.keys(state.collections.byId);
-
-    if (collection.keypointIds.length) {
-      collection.keypointIds.forEach((id) => delete state.keypointMap.byId[id]);
-      state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
-    }
-  }
-  if (state.lastCollectionId === collectionId) {
-    state.lastCollectionId = undefined;
-  }
-};

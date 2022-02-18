@@ -1,6 +1,6 @@
 import React, { ReactText } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
-import { keypointSelectStatusChange } from 'src/modules/Review/store/annotationLabelSlice';
+import { keypointSelectStatusChange } from 'src/modules/Review/store/annotationLabel/slice';
 import {
   selectAnnotation,
   toggleAnnotationVisibility,

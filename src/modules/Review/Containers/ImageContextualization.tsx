@@ -1,13 +1,14 @@
 import React, { ReactText } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import {
-  currentCollection,
   deleteCollectionById,
   keypointSelectStatusChange,
   selectCollection,
   setCollectionStatus,
   toggleCollectionVisibility,
-} from 'src/modules/Review/store/annotationLabelSlice';
+} from 'src/modules/Review/store/annotationLabel/slice';
+
+import { currentCollection } from 'src/modules/Review/store/annotationLabel/selectors';
 import {
   selectAnnotation,
   toggleAnnotationVisibility,

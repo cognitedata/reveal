@@ -3,7 +3,7 @@ import './commonActions';
 import fileReducer from 'src/modules/Common/store/files/slice';
 import commonReducer from 'src/modules/Common/store/common/slice';
 import annotationReducer from 'src/modules/Common/store/annotation/slice';
-import annotationLabelReducer from 'src/modules/Review/store/annotationLabelSlice';
+import annotationLabelReducer from 'src/modules/Review/store/annotationLabel/slice';
 import fileDetailsSlice from 'src/modules/FileDetails/slice';
 import explorerReducer from 'src/modules/Explorer/store/slice';
 import processSlice from 'src/modules/Process/store/slice';

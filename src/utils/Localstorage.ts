@@ -7,7 +7,7 @@ import {
 import {
   annotationLabelReducerInitialState,
   AnnotationLabelReducerState,
-} from 'src/modules/Review/store/annotationLabelSlice';
+} from 'src/modules/Review/store/annotationLabel/slice';
 import {
   reviewReducerInitialState,
   ReviewReducerState,
