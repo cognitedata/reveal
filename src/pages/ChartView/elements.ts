@@ -172,7 +172,6 @@ export const TypeLabel = styled.td`
 export const SourceRow = styled.tr`
   background: ${(props) =>
     props['aria-selected'] ? 'var(--cogs-midblue-7)' : '#ffffff'};
-  opacity: ${(props) => (props['aria-hidden'] ? '0.4' : '1')};
   &&:hover {
     background: var(--cogs-greyscale-grey3);
   }
@@ -208,8 +207,8 @@ export const SourceItem = styled.div`
   text-overflow: ellipsis;
   cursor: pointer;
 
-  opacity: ${(props: { isActive?: boolean; isDisabled?: boolean }) =>
-    props.isDisabled ? 0.35 : 1};
+  opacity: ${(props: { isActive?: boolean; disabled?: boolean }) =>
+    props.disabled ? 0.4 : 1};
 
   &:hover {
     & > :last-child {

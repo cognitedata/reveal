@@ -300,6 +300,7 @@ export default function TimeSeriesRow({
           }
         >
           <StyleButton
+            disabled={!enabled}
             styleType="Timeseries"
             styleColor={color}
             label="Timeseries"
@@ -307,7 +308,7 @@ export default function TimeSeriesRow({
         </Dropdown>
       </td>
       <td>
-        <SourceItem isDisabled={disabled} key={id}>
+        <SourceItem disabled={!enabled} key={id}>
           {!isFileViewerMode && (
             <SourceStatus onClick={handleStatusIconClick}>
               <StyledStatusIcon
@@ -337,12 +338,12 @@ export default function TimeSeriesRow({
       {(isWorkspaceMode || isFileViewerMode) && (
         <>
           <td className="bordered">
-            <SourceItem>
+            <SourceItem disabled={!enabled}>
               <SourceTag>{linkedAsset?.name}</SourceTag>
             </SourceItem>
           </td>
           <td className="bordered">
-            <SourceItem>
+            <SourceItem disabled={!enabled}>
               <SourceDescription>
                 <Tooltip content={description}>
                   <>{description}</>
@@ -355,17 +356,22 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <>
           <td className="bordered">
-            {formatValueForDisplay(convertUnit(summary?.min))}
+            <SourceItem disabled={!enabled}>
+              {formatValueForDisplay(convertUnit(summary?.min))}
+            </SourceItem>
           </td>
           <td className="bordered">
-            {formatValueForDisplay(convertUnit(summary?.max))}
+            <SourceItem disabled={!enabled}>
+              {formatValueForDisplay(convertUnit(summary?.max))}
+            </SourceItem>
           </td>
           <td className="bordered">
-            {formatValueForDisplay(convertUnit(summary?.mean))}
+            <SourceItem disabled={!enabled}>
+              {formatValueForDisplay(convertUnit(summary?.mean))}
+            </SourceItem>
           </td>
           <td className="col-unit">
             <UnitDropdown
-              disabled={!enabled}
               unit={unit}
               originalUnit={originalUnit}
               preferredUnit={preferredUnit}
@@ -430,19 +436,7 @@ export default function TimeSeriesRow({
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
             className="downloadChartHide col-action"
-          >
-            {!isFileViewerMode && (
-              // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
-              <Button
-                type="ghost"
-                icon="EllipsisHorizontal"
-                style={{ height: 28 }}
-                disabled
-                aria-label="more"
-              />
-              // </Dropdown>
-            )}
-          </td>
+          />
         </>
       )}
     </SourceRow>

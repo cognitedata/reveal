@@ -368,6 +368,7 @@ export default function WorkflowRow({
           }
         >
           <StyleButton
+            disabled={!enabled}
             styleType="Function"
             styleColor={color}
             label="Workflow Function"
@@ -375,7 +376,7 @@ export default function WorkflowRow({
         </Dropdown>
       </td>
       <td>
-        <SourceItem key={id}>
+        <SourceItem disabled={!enabled} key={id}>
           <SourceStatus
             onClick={handleStatusIconClick}
             onDoubleClick={(event) => event.stopPropagation()}
@@ -432,20 +433,21 @@ export default function WorkflowRow({
         <>
           <td className="bordered" />
           <td className="bordered">
-            <SourceName>
-              <SourceDescription>
-                <Tooltip content={name || 'noname'}>
-                  <>{name || 'noname'}</>
-                </Tooltip>
-              </SourceDescription>
-            </SourceName>
+            <SourceItem disabled={!enabled}>
+              <SourceName>
+                <SourceDescription>
+                  <Tooltip content={name || 'noname'}>
+                    <>{name || 'noname'}</>
+                  </Tooltip>
+                </SourceDescription>
+              </SourceName>
+            </SourceItem>
           </td>
           <td className="bordered" />
           <td className="bordered" />
           <td className="bordered" />
           <td className="col-unit">
             <UnitDropdown
-              disabled={!enabled}
               unit={unit}
               preferredUnit={preferredUnit}
               onOverrideUnitClick={updateUnit}
