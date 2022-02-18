@@ -274,9 +274,11 @@ export default function TimeSeriesRow({
     [enabled, id, update]
   );
 
+  const isVisible = enabled || isFileViewerMode;
+
   return (
     <SourceRow
-      aria-hidden={!enabled}
+      aria-hidden={!isVisible}
       aria-selected={isSelected}
       key={id}
       onClick={() => !disabled && onRowClick(id)}
@@ -289,7 +291,7 @@ export default function TimeSeriesRow({
         className="downloadChartHide"
       >
         <Dropdown
-          disabled={!enabled}
+          disabled={!isVisible}
           content={
             <AppearanceDropdown
               selectedColor={color}
