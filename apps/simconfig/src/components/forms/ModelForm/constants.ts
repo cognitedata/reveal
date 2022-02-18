@@ -6,6 +6,7 @@ export const FileExtensionToSimulator: Record<
   keyof DefinitionMap['type']['simulator']
 > = {
   '.out': 'PROSPER',
+  '.yml': 'ProcessSim',
 };
 
 // TODO(SIM-209) Use definitions endpoint
@@ -15,6 +16,7 @@ export const Simulator: Record<
 > = {
   UNKNOWN: 'Unknown',
   PROSPER: 'PROSPER',
+  ProcessSim: 'ProcessSim',
 };
 
 // TODO(SIM-209) Use definitions endpoint
