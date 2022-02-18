@@ -9,14 +9,14 @@ import { MouseEventHandler } from 'react';
 
 export interface SourceTableHeaderProps {
   mode: Modes;
-  onShowHideButtonClick: MouseEventHandler<HTMLDivElement>;
-  showHideIconState: boolean;
+  onShowHideButtonClick?: MouseEventHandler<HTMLDivElement>;
+  showHideIconState?: boolean;
 }
 
 export const SourceTableHeader = ({
   mode,
-  onShowHideButtonClick,
-  showHideIconState,
+  onShowHideButtonClick = () => {},
+  showHideIconState = false,
 }: SourceTableHeaderProps) => {
   return (
     <thead>
@@ -32,10 +32,12 @@ export const SourceTableHeader = ({
         <th>
           <SourceItem>
             <SourceName>
-              <ShowHideButton
-                enabled={showHideIconState}
-                onClick={onShowHideButtonClick}
-              />
+              {mode !== 'file' && (
+                <ShowHideButton
+                  enabled={showHideIconState}
+                  onClick={onShowHideButtonClick}
+                />
+              )}
               Name
             </SourceName>
           </SourceItem>

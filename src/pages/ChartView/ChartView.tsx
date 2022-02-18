@@ -21,7 +21,6 @@ import Search from 'components/Search';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  Chart,
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
@@ -37,8 +36,8 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import {
   addWorkflow,
-  updateAllRowsVisibility,
   updateSourceCollectionOrder,
+  updateVisibilityForAllSources,
 } from 'models/chart/updates';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
@@ -77,7 +76,6 @@ const CHART_SETTINGS_KEYS = {
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
-  const [showAllChartRows, setShowAllChartRows] = useState(true);
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: login } = useUserInfo();
@@ -181,17 +179,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   }, [query, showSearch]);
 
-  /**
-   * Show Hide All Rows from Table Header icon click
-   */
-  useEffect(() => {
-    setChart((oldChart?: Chart): Chart | undefined => {
-      if (!oldChart) return undefined;
-
-      return updateAllRowsVisibility(oldChart, showAllChartRows);
-    });
-  }, [showAllChartRows, setChart]);
-
   const openNodeEditor = useCallback(() => {
     setWorkspaceMode('editor');
     if (!editorTimer && shouldTrackMetrics) {
@@ -291,11 +278,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, [setQuery]);
 
-  const handleShowHideButtonClick = useCallback(
-    () => setShowAllChartRows((prevState) => !prevState),
-    []
-  );
-
   const handleSettingsToggle = useCallback(
     (key: string, value: boolean) => {
       setChart((oldChart) => ({
@@ -348,6 +330,14 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     ],
     [chart?.timeSeriesCollection, chart?.workflowCollection]
   );
+
+  const isEveryRowHidden = sources.every(({ enabled }) => !enabled);
+
+  const handleShowHideButtonClick = useCallback(() => {
+    setChart((oldChart) =>
+      updateVisibilityForAllSources(oldChart!, isEveryRowHidden)
+    );
+  }, [setChart, isEveryRowHidden]);
 
   if (!isFetched || (isFetched && originalChart && !chart)) {
     return <Icon type="Loader" />;
@@ -522,7 +512,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           <SourceTableHeader
                             mode={workspaceMode}
                             onShowHideButtonClick={handleShowHideButtonClick}
-                            showHideIconState={showAllChartRows}
+                            showHideIconState={!isEveryRowHidden}
                           />
                           <tbody>
                             <SourceRows

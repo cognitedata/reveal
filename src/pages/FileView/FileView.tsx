@@ -17,8 +17,6 @@ import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
-import { Chart } from 'models/chart/types';
-import { updateAllRowsVisibility } from 'models/chart/updates';
 
 export const FileView = () => {
   const [chart, setChart] = useRecoilState(chartAtom);
@@ -30,7 +28,6 @@ export const FileView = () => {
 
   const [selectedFile, setSelectedFile] = useState<File>();
   const [showLinkedAssets, setShowLinkedAssets] = useState(false);
-  const [showAllChartRows, setShowAllChartRows] = useState(true);
   const move = useNavigate();
 
   const { data: asset, isFetched: isAssetFetched } = useAsset(Number(assetId));
@@ -44,23 +41,10 @@ export const FileView = () => {
         selectedFile?.assetIds?.length > 0,
     }
   );
-  const handleShowHideButtonClick = () => {
-    setShowAllChartRows((prevState) => !prevState);
-  };
 
   useEffect(() => {
     trackUsage('PageView.FileView');
   }, []);
-
-  /**
-   * Show Hide All Rows from Table Header icon click
-   */
-  useEffect(() => {
-    setChart((oldChart?: Chart): Chart | undefined => {
-      if (!oldChart) return undefined;
-      return updateAllRowsVisibility(oldChart, showAllChartRows);
-    });
-  }, [showAllChartRows, setChart]);
 
   if (!isAssetFetched) {
     return <Icon type="Loader" />;
@@ -117,11 +101,7 @@ export const FileView = () => {
           <div style={{ width: '100%' }}>
             <SourceTableWrapper>
               <SourceTable>
-                <SourceTableHeader
-                  mode="file"
-                  onShowHideButtonClick={handleShowHideButtonClick}
-                  showHideIconState={showAllChartRows}
-                />
+                <SourceTableHeader mode="file" />
                 <tbody>
                   <TimeSeriesRows
                     chart={chart}

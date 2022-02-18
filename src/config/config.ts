@@ -76,7 +76,7 @@ export const getBackendServiceBaseUrl = (
   return `https://calculation-backend.${cluster}cognite.ai/v2`;
 };
 
-export default {
+const config = {
   appId: getAppId(),
   appName: getAppName(),
   apiKey,
@@ -87,3 +87,5 @@ export default {
     release,
   },
 };
+
+export default config;

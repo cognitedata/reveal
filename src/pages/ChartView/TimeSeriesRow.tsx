@@ -308,12 +308,14 @@ export default function TimeSeriesRow({
       </td>
       <td>
         <SourceItem isDisabled={disabled} key={id}>
-          <SourceStatus onClick={handleStatusIconClick}>
-            <StyledStatusIcon
-              type={enabled ? 'EyeShow' : 'EyeHide'}
-              title="Toggle visibility"
-            />
-          </SourceStatus>
+          {!isFileViewerMode && (
+            <SourceStatus onClick={handleStatusIconClick}>
+              <StyledStatusIcon
+                type={enabled ? 'EyeShow' : 'EyeHide'}
+                title="Toggle visibility"
+              />
+            </SourceStatus>
+          )}
           <SourceName title={name}>
             {!isFileViewerMode && (
               <EditableText

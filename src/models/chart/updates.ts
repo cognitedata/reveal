@@ -239,24 +239,24 @@ export const updateChartSettings = (
 };
 
 /**
- * function updateAllRowsVisibility
+ * function updateVisibilityForAllSources
  * @param chart Charts object
- * @param showAllChartRows Boolean value to maintain charts rows visibility
+ * @param enabled Boolean value to maintain charts rows visibility
  * @returns Updated charts object with all rows of both collection [Timeseries/Workflow] enable status to be uniform.
  */
-export const updateAllRowsVisibility = (
+export const updateVisibilityForAllSources = (
   chart: Chart,
-  showAllChartRows: boolean
+  enabled: boolean
 ) => {
   return {
     ...chart,
     timeSeriesCollection: chart.timeSeriesCollection?.map((ts) => ({
       ...ts,
-      enabled: showAllChartRows,
+      enabled,
     })),
     workflowCollection: chart.workflowCollection?.map((ts) => ({
       ...ts,
-      enabled: showAllChartRows,
+      enabled,
     })),
   };
 };
