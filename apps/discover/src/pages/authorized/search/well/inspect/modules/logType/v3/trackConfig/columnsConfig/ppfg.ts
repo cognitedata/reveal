@@ -20,12 +20,6 @@ export const PPFG_COLUMNS_CONFIG: TrackConfig[] = [
     width: 2.2,
   },
   {
-    measurementType: 'property',
-    color: 'magenta',
-    dash: [4, 4],
-    width: 2.2,
-  },
-  {
     measurementType: 'pore pressure post drill high',
     color: 'green',
     dash: [4, 4],

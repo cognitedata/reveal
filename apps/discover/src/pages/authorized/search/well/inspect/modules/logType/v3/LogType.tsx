@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
@@ -6,6 +6,7 @@ import { Loading } from 'components/loading/Loading';
 import { Modal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
+import { useDeepMemo } from 'hooks/useDeep';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataLog } from 'modules/filterData/selectors';
 import { useSelectedWellboreLogs } from 'modules/wellInspect/hooks/useWellLogsQuerySelectors';
@@ -66,7 +67,7 @@ export const LogType: React.FC = () => {
 
   const { data, isLoading } = useSelectedWellboreLogs();
 
-  const customSelectedIds = useMemo(() => {
+  const customSelectedIds = useDeepMemo(() => {
     const tempSelectedIds = { ...selectedIds };
     /**
      * Set undefined id mappings to true to set checked newly selected wells logs.
@@ -80,7 +81,7 @@ export const LogType: React.FC = () => {
     return tempSelectedIds;
   }, [data, selectedIds]);
 
-  const selectedData = useMemo(
+  const selectedData = useDeepMemo(
     () => data.filter((row) => customSelectedIds[row.id]),
     [data, customSelectedIds]
   );

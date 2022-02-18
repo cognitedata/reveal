@@ -92,7 +92,7 @@ export const fetchAllCursorsItem = async <T extends Record<string, any>>({
       ...item,
       [concatAccessor]: [
         ...get(item, concatAccessor, []),
-        ...get(item, concatAccessor, []),
+        ...get(response, concatAccessor, []),
       ],
     };
 

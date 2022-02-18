@@ -40,7 +40,7 @@ const Log: React.FC<Props> = ({
     )
       return;
 
-    const { scaleHandler, domain } = getTrackScale({
+    const { domain, scaleHandler } = getTrackScale({
       logData,
       depthIndexType,
       depthIndexColumnExternalId,
@@ -49,8 +49,8 @@ const Log: React.FC<Props> = ({
     const logViewer = new LogViewer({
       showLegend: true,
       horizontal: false,
-      scaleHandler,
       domain,
+      scaleHandler,
     });
 
     const tracks = getTrackList(displayTracks, logData, {}, eventsData);

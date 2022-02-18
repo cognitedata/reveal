@@ -1,14 +1,15 @@
 import compact from 'lodash/compact';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
 import {
   InterpolatedScaleHandler,
+  ScaleHandler,
   ScaleInterpolator,
 } from '@cognite/videx-wellog';
-import { Domain } from '@cognite/videx-wellog/dist/common/interfaces';
 
-import { LogData, Tuplet } from '../interfaces';
+import { Domain, LogData, Tuplet } from '../interfaces';
 
 export const getTrackScale = ({
   logData,
@@ -16,10 +17,11 @@ export const getTrackScale = ({
   depthIndexColumnExternalId,
 }: {
   logData: LogData;
-  depthIndexColumnExternalId: string;
   depthIndexType: DepthIndexTypeEnum;
+  depthIndexColumnExternalId: string;
 }) => {
   const { domain } = logData[depthIndexColumnExternalId];
+  const defaultScaleHandler = getDefaultScaleHandler(domain);
 
   const mdColumnData = Object.values(logData).find(
     (data) => data.measurementType === DepthIndexTypeEnum.MeasuredDepth
@@ -30,8 +32,8 @@ export const getTrackScale = ({
 
   if (!mdColumnData || !tvdColumnData) {
     return {
-      scaleHandler: getDefaultScaleHandler(domain),
       domain,
+      scaleHandler: defaultScaleHandler,
     };
   }
 
@@ -43,6 +45,13 @@ export const getTrackScale = ({
 
   const forwardValues = compact(tuplets.map((tuplet) => tuplet[0]));
   const reverseValues = compact(tuplets.map((tuplet) => tuplet[1]));
+
+  if (isEmpty(forwardValues) || isEmpty(reverseValues)) {
+    return {
+      domain,
+      scaleHandler: defaultScaleHandler,
+    };
+  }
 
   const forwardValueMapping: Record<number, number> = {};
   const reverseValueMapping: Record<number, number> = {};
@@ -76,7 +85,10 @@ export const getTrackScale = ({
     domain
   );
 
-  return { scaleHandler, domain };
+  return {
+    domain,
+    scaleHandler,
+  };
 };
 
 export const getClosestValue = (values: number[], targetValue: number) => {
@@ -88,7 +100,7 @@ export const getClosestValue = (values: number[], targetValue: number) => {
   }, 0);
 };
 
-export const getDefaultScaleHandler = (domain: Domain) => {
+export const getDefaultScaleHandler = (domain: Domain): ScaleHandler => {
   const forward = (value: number) => value;
   const reverse = (value: number) => value;
 

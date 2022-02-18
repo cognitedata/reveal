@@ -1,7 +1,7 @@
 import groupBy from 'lodash/groupBy';
 import keyBy from 'lodash/keyBy';
 
-export const WELLBORE_MATCHING_ID_ACCESSOR = 'wellboreMatchingId';
+const WELLBORE_MATCHING_ID_ACCESSOR = 'wellboreMatchingId';
 
 export const groupByWellbore = <T extends { wellboreMatchingId: string }>(
   items: T[]

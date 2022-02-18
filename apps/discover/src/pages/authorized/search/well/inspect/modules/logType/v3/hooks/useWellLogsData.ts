@@ -1,3 +1,4 @@
+import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
 import { changeUnitTo } from 'utils/units';
 import { getConvertibleUnit } from 'utils/units/getConvertibleUnit';
@@ -9,6 +10,9 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { LogData, Tuplet } from '../LogViewer/Log/interfaces';
+
+const CURVE_DEFAULT_INVALID_VALUE = -9999;
+const CURVE_BREAK_POINTS = [0, CURVE_DEFAULT_INVALID_VALUE];
 
 export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
@@ -39,34 +43,61 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
     };
 
     return columns.reduce<LogData>((logViewerData, column, columnIndex) => {
-      let rowsMinValue = Number(rows[0].values[columnIndex]);
-      let rowsMaxValue = Number(rows[0].values[columnIndex]);
+      const values: Tuplet[] = rows.map((row, rowIndex) => {
+        const depthValueOriginal = row.depth;
+        const columnValueOriginal = row.values[columnIndex];
 
-      const values: Tuplet[] = rows.map((row) => {
+        /**
+         * This condition breaks the curve if an invalid value is detected.
+         *
+         * `0` or `-9999` in the middle of the values - invalid
+         * `0` as the first value -> valid
+         * `-9999` as the first value -> invalid
+         */
+        if (
+          (rowIndex > 0 && CURVE_BREAK_POINTS.includes(columnValueOriginal)) ||
+          (rowIndex === 0 &&
+            columnValueOriginal === CURVE_DEFAULT_INVALID_VALUE)
+        ) {
+          /**
+           * Returning a `null` value to break the curve.
+           * No need to worry about the first value of the tuple (0).
+           */
+          return [0, null];
+        }
+
         const depthValue =
           changeUnitTo(
-            row.depth,
+            depthValueOriginal,
             unit,
             userPreferredUnit || UserPreferredUnit.FEET
-          ) || row.depth;
-        const rowValue = row.values[columnIndex];
+          ) || depthValueOriginal;
 
-        if (rowValue < rowsMinValue) rowsMinValue = rowValue;
-        if (rowValue > rowsMaxValue) rowsMaxValue = rowValue;
+        const columnValue =
+          changeUnitTo(
+            columnValueOriginal,
+            column.unit,
+            userPreferredUnit || UserPreferredUnit.FEET
+          ) || columnValueOriginal;
 
-        return [depthValue, rowValue];
+        return [depthValue, columnValue];
       });
+
+      const columnValues = compact(values.map((value) => value[1]));
+      const columnsMinValue = Math.min(...columnValues);
+      const columnsMaxValue = Math.max(...columnValues);
 
       return {
         ...logViewerData,
         [column.externalId]: {
           measurementType: column.measurementType,
           values,
+
           unit: getConvertibleUnit(
             column.unit,
             userPreferredUnit || UserPreferredUnit.FEET
           ),
-          domain: [Math.floor(rowsMinValue), Math.ceil(rowsMaxValue)],
+          domain: [Math.floor(columnsMinValue), Math.ceil(columnsMaxValue)],
         },
       };
     }, depthColumnData);

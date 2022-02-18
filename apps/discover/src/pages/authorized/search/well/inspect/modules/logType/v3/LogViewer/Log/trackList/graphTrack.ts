@@ -1,8 +1,8 @@
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
+import { isMeasurementUnit } from 'utils/units/isMeasurementUnit';
 
-import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
 import { GraphTrack, graphLegendConfig } from '@cognite/videx-wellog';
 import { PlotConfig } from '@cognite/videx-wellog/dist/tracks/graph/interfaces';
 
@@ -24,12 +24,13 @@ const GraphTrackConfig = (
 ) => {
   const plots = Object.keys(logData)
     .filter((columnExternalId) => {
-      const { measurementType } = logData[columnExternalId];
-      const isDepthColumnType = Object.values(DepthIndexTypeEnum).includes(
-        measurementType as DepthIndexTypeEnum
-      );
+      const { measurementType, unit } = logData[columnExternalId];
 
-      if (trackName === TrackNameEnum.PPFG && !isDepthColumnType) {
+      /**
+       * All the other curves which doesn't have preset config is taken into PPFG track.
+       * This condition prevents measurement types being taken as a PPFG related curve.
+       */
+      if (trackName === TrackNameEnum.PPFG && !isMeasurementUnit(unit)) {
         return true;
       }
 

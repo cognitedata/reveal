@@ -1,3 +1,4 @@
+export type Domain = [number, number];
 export type Tuplet = [number, number];
 
 export type LogData = {
@@ -5,7 +6,7 @@ export type LogData = {
     measurementType: string;
     values: Tuplet[] | number[];
     unit: string;
-    domain: number[];
+    domain: Domain;
   };
 };
 
