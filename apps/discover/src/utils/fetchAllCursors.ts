@@ -3,16 +3,25 @@ import get from 'lodash/get';
 type CursorActionResult<T> = { items: T[]; nextCursor: string };
 type ActionProps = Record<string, unknown>;
 export type FetchOptions = { signal?: AbortSignal };
+
+/**
+ * firstActionProps - useful when passing 'count' aggregate into only the first request (eg: we don't need it when we search the cursors)
+ */
 export const fetchAllCursors = async <T>({
-  signal,
   action,
   actionProps,
+  firstActionProps,
+  signal,
 }: {
-  signal?: AbortSignal;
-  actionProps: ActionProps;
   action: (props: ActionProps) => Promise<CursorActionResult<T>>;
+  actionProps: ActionProps;
+  firstActionProps?: ActionProps;
+  signal?: AbortSignal;
 }) => {
-  let { items, nextCursor } = await action(actionProps);
+  let { items, nextCursor } = await action({
+    ...actionProps,
+    ...firstActionProps,
+  });
 
   let shouldCancel = false;
 
@@ -23,6 +32,9 @@ export const fetchAllCursors = async <T>({
   signal?.addEventListener('abort', markCancel);
 
   while (nextCursor) {
+    // this eslint rule is made because generally we should do things in parrallel
+    // but this is a good exception case
+    // as these are sequential cursors, so they are ok to block
     // eslint-disable-next-line no-await-in-loop
     const response = await action({
       ...actionProps,

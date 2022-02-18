@@ -33,3 +33,4 @@ yalc.lock
 junit.xml
 
 .idea
+.env

@@ -385,9 +385,6 @@ react_scripts_test(
         "@npm//@storybook/react",
         "copy_test_files",
     ],
-    tags = [
-        "ignore_test_in_cd",
-    ],
 )
 
 ### react-scripts test Dev ###

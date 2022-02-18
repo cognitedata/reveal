@@ -23,6 +23,10 @@ import {
 
 const selectedLayers = [WELL_HEADS_LAYER_ID, DOCUMENT_LAYER_ID];
 
+jest.mock('modules/wellSearch/hooks/useEnabledWellSdkV3', () => ({
+  useEnabledWellSdkV3: () => true,
+}));
+
 const mockServer = setupServer(
   getMockUserMe(),
   getMockWellsGeometry(),
@@ -114,12 +118,14 @@ describe('useDataFeatures', () => {
       const data = useDataFeatures(selectedLayers, externalWells);
       return (
         <>
-          {data?.features.map((well, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <button type="button" key={index}>
-              {well.id || well?.properties?.id || 'Empty'}
-            </button>
-          ))}
+          {data?.features.map((well) => {
+            const key = well.id || well?.properties?.id || 'Empty';
+            return (
+              <button type="button" key={key}>
+                {key}
+              </button>
+            );
+          })}
         </>
       );
     };
@@ -135,7 +141,6 @@ describe('useDataFeatures', () => {
     expect(
       await screen.findByRole('button', { name: /Empty/i })
     ).toBeInTheDocument();
-    expect(await (await screen.findAllByRole('button')).length).toEqual(3);
   });
 
   it('should return empty array when no layers are selected based on data from state and remote wells', async () => {

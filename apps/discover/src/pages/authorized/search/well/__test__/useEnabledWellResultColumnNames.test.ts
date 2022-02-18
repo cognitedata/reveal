@@ -27,6 +27,7 @@ describe('useEnabledWellResultColumnNames hook', () => {
       'operator',
       'spudDate',
       'waterDepth',
+      'fieldname',
     ]);
   });
 });

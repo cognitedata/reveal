@@ -1,16 +1,13 @@
-import React from 'react';
 import { Router } from 'react-router-dom';
 
 import { renderHook } from '@testing-library/react-hooks';
 import { createBrowserHistory, createLocation } from 'history';
 
+import { testWrapper as wrapper } from '__test-utils/renderer';
+
 import { useSelectedPath } from '../useSelectedPath';
 
 describe('useSelectedPath', () => {
-  const wrapper: React.FC = ({ children }) => (
-    <Router history={createBrowserHistory()}>{children}</Router>
-  );
-
   it('should return selectedPath from first key in metadata', () => {
     const { result } = renderHook(
       () => useSelectedPath({ hide: { label: 'Hide', type: 'boolean' } }),

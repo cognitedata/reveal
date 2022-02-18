@@ -9,7 +9,9 @@ import { WellResultTable } from './result';
 import { WellSearchFrontPage } from './WellSearchFrontPage';
 
 export const WellContent: React.FC = () => {
-  const { data: wells, isLoading } = useWellSearchResultQuery();
+  const { data, isLoading } = useWellSearchResultQuery();
+
+  const wells = data ? data.wells : [];
 
   if (!wells || isEmpty(wells) || isLoading) {
     return (

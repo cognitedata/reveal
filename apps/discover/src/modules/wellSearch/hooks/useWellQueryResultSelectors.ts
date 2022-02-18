@@ -8,9 +8,10 @@ import { WellId, WellMap } from '../types';
 
 import { useWellSearchResultQuery } from './useWellSearchResultQuery';
 
+// can we deprecate this?
 export const useWellQueryResultWells = () => {
-  const { data: wells } = useWellSearchResultQuery();
-  return wells || [];
+  const { data } = useWellSearchResultQuery();
+  return data ? data.wells : [];
 };
 
 export const useWellQueryResultWellbores = (wellIds: WellId[]) => {

@@ -6,12 +6,11 @@ import { getMockUserMe } from 'services/well/__mocks/userManagementService/__moc
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 
 import { useOverviewData } from '../useOverviewData';
 
 jest.mock('modules/wellSearch/hooks/useEnabledWellSdkV3', () => ({
-  useEnabledWellSdkV3: jest.fn(),
+  useEnabledWellSdkV3: () => true,
 }));
 
 const mockServer = setupServer(
@@ -23,10 +22,6 @@ const mockServer = setupServer(
 describe('Overview hook', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
-
-  beforeEach(() => {
-    (useEnabledWellSdkV3 as jest.Mock).mockImplementation(() => true);
-  });
 
   test('load overview data', async () => {
     const store = getMockedStore({

@@ -21,7 +21,7 @@ jest.mock('../useWellSearchResultQuery', () => ({
 describe('useWellQueryResultSelectors', () => {
   beforeEach(() => {
     (useWellSearchResultQuery as jest.Mock).mockImplementation(() => ({
-      data: mockedWellsFixture,
+      data: { wells: mockedWellsFixture },
     }));
   });
 

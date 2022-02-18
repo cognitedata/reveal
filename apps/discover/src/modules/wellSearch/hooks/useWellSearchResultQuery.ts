@@ -1,5 +1,7 @@
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
+import { getListWells } from 'services/well/well/service';
+
 import { Metrics } from '@cognite/metrics';
 
 import { LOG_WELL_SEARCH, LOG_WELL_SEARCH_NAMESPACE } from 'constants/logging';
@@ -42,33 +44,49 @@ export const useAllWellSearchResultQuery = (): UseQueryResult<Well[]> => {
   );
 };
 
-export const useWellSearchResultQuery = (): UseQueryResult<Well[]> => {
-  const wellFilter = useCommonWellFilter();
-  const { data: wellConfig } = useWellConfig();
-  const enabledWellSdkV3 = useEnabledWellSdkV3();
-  const addToWellsCache = useAddToWellsCache();
-
-  return useQuery(
-    WELL_QUERY_KEY.SEARCH(wellFilter),
-    () => {
-      const timer = wellSearchMetric.start(LOG_WELL_SEARCH_NAMESPACE, {
-        stage: TimeLogStages.Network,
-      });
-
-      return getByFilters(wellFilter)
-        .then((wells) => {
-          if (enabledWellSdkV3) return wells;
-          return getWellsWithWellbores(wells);
-        })
-        .then((wells) => {
-          addToWellsCache(wells);
-          return wells;
-        })
-        .catch(handleWellSearchError)
-        .finally(() => timer.stop());
-    },
-    {
-      enabled: wellConfig?.disabled !== true,
-    }
-  );
+export type WellSearchResult = {
+  wells: Well[];
+  totalWells?: number;
+  totalWellbores?: number;
 };
+export const useWellSearchResultQuery =
+  (): UseQueryResult<WellSearchResult> => {
+    const wellFilter = useCommonWellFilter();
+    const { data: wellConfig } = useWellConfig();
+    const enabledWellSdkV3 = useEnabledWellSdkV3();
+    const addToWellsCache = useAddToWellsCache();
+
+    return useQuery(
+      WELL_QUERY_KEY.SEARCH(wellFilter),
+      () => {
+        const timer = wellSearchMetric.start(LOG_WELL_SEARCH_NAMESPACE, {
+          stage: TimeLogStages.Network,
+        });
+
+        if (enabledWellSdkV3) {
+          return getListWells(wellFilter)
+            .then(({ wells, ...rest }) => {
+              addToWellsCache(wells);
+              return { wells, ...rest };
+            })
+            .catch(handleWellSearchError)
+            .finally(() => timer.stop());
+        }
+
+        // v2
+        return getByFilters(wellFilter)
+          .then((wells) => {
+            return getWellsWithWellbores(wells);
+          })
+          .then((wells) => {
+            addToWellsCache(wells);
+            return { wells, totalWells: wells.length };
+          })
+          .catch(handleWellSearchError)
+          .finally(() => timer.stop());
+      },
+      {
+        enabled: wellConfig?.disabled !== true,
+      }
+    );
+  };

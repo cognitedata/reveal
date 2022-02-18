@@ -25,7 +25,6 @@ import {
 
 const mockServer = setupServer(
   getMockWellsById(),
-  getMockUserMe(),
   getMockConfigGet(),
   getMockDocumentCategoriesGet(),
   getMockUserMe(),

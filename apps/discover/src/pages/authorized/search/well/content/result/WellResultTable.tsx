@@ -20,7 +20,7 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
+import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
 import { Well } from 'modules/wellSearch/types';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
@@ -39,7 +39,7 @@ import { WellboreResultTable } from './WellBoreResultTable';
 import { WellsBulkActions } from './WellsBulkActions';
 
 export const WellResultTable: React.FC = () => {
-  const wells = useWellQueryResultWells();
+  const { data } = useWellSearchResultQuery();
   const { selectedWellIds, expandedWellIds } = useWells();
   const indeterminateWellIds = useIndeterminateWells();
   const favoriteWellIds = useFavoriteWellIds();
@@ -48,6 +48,7 @@ export const WellResultTable: React.FC = () => {
   const dispatch = useDispatch();
   const navigateToWellInspect = useNavigateToWellInspect();
   const { columns } = useDataForTable();
+  const { wells } = data || {};
   const wellsRef = useRef(wells);
 
   useEffect(() => {
@@ -65,22 +66,23 @@ export const WellResultTable: React.FC = () => {
     [userPreferredUnit]
   );
 
-  const data = useDeepMemo(
-    () =>
-      wells.map((well) => {
-        const item = convertToFixedDecimal(
-          changeUnits(well, unitChangeAcceessors),
-          ['waterDepth.value']
-        );
+  const processedWells = useDeepMemo(() => {
+    if (!wells) {
+      return [];
+    }
+    return wells.map((well) => {
+      const item = convertToFixedDecimal(
+        changeUnits(well, unitChangeAcceessors),
+        ['waterDepth.value']
+      );
 
-        // format the date according to the default format
-        if (item.spudDate) {
-          item.spudDate = getDateOrDefaultText(item.spudDate);
-        }
-        return item;
-      }),
-    [wells, unitChangeAcceessors]
-  );
+      // format the date according to the default format
+      if (item.spudDate) {
+        item.spudDate = getDateOrDefaultText(item.spudDate);
+      }
+      return item;
+    });
+  }, [wells, unitChangeAcceessors]);
 
   useDeepEffect(() => {
     const firstWell = head(wells);
@@ -124,9 +126,13 @@ export const WellResultTable: React.FC = () => {
 
   const handleRowsSelect = useDeepCallback(
     (isSelected: boolean) => {
-      dispatch(
-        wellSearchActions.toggleSelectedWells(wellsRef.current, { isSelected })
-      );
+      if (wellsRef.current) {
+        dispatch(
+          wellSearchActions.toggleSelectedWells(wellsRef.current, {
+            isSelected,
+          })
+        );
+      }
     },
     [wellsRef.current]
   );
@@ -136,8 +142,8 @@ export const WellResultTable: React.FC = () => {
   }, []);
 
   const wellsStats = {
-    totalResults: (data || []).length, // This number is incorrect (need to get the total current result)
-    currentHits: (data || []).length,
+    totalResults: data?.totalWells,
+    currentHits: (processedWells || []).length,
   };
 
   const renderRowOverlayComponent = useCallback(
@@ -210,7 +216,7 @@ export const WellResultTable: React.FC = () => {
       <Table<Well>
         scrollTable
         id="well-result-table"
-        data={data}
+        data={processedWells}
         columns={columns}
         handleRowClick={handleRowClick}
         handleDoubleClick={handleDoubleClick}

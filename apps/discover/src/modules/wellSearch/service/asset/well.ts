@@ -16,6 +16,7 @@ import { normalizeWells } from 'modules/wellSearch/utils/wells';
 
 import { getGroupedWellboresByWellIds } from './wellbore';
 
+// v2 only
 export function getByFilters(wellFilter: CommonWellFilter) {
   return getWellItemsByFilter(wellFilter).then((response) =>
     normalizeWells(get(response, 'items', []))

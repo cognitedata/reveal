@@ -15,7 +15,6 @@ import {
   mapV3ToV2SpudDateLimits,
   mapV3ToV2Well,
   mapV3ToV2Wellbore,
-  mapV3ToV2WellItems,
   mapV3ToV2WellsWaterDepthLimits,
   mapWellFilterToWellFilterRequest,
   toIdentifier,
@@ -190,12 +189,9 @@ export const getWellById = (wellId: number) => {
     : getWellSDKClientV2().wells.getById(wellId);
 };
 
+// v2 only
 export const getWellItemsByFilter = (wellFilter: CommonWellFilter) => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .wells.list(mapWellFilterToWellFilterRequest(wellFilter))
-        .then(mapV3ToV2WellItems)
-    : getWellSDKClientV2().wells.filter(wellFilter);
+  return getWellSDKClientV2().wells.filter(wellFilter);
 };
 
 export const getAllWellItemsByFilter = (
