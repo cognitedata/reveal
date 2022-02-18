@@ -39,7 +39,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const cameraWorldInverseMatrix = camera.matrixWorldInverse;
     const cameraProjectionMatrix = camera.projectionMatrix;
     const weightFunctions = new WeightFunctionsHelper(camera);
-    const transformedBounds = new THREE.Box3();
 
     // Determine potential candidates per model
     const modelsAndCandidateSectors = determineCandidateSectorsByModel(
@@ -56,7 +55,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const prioritizedSectors = sortSectorsByPriority(
       modelsAndCandidateSectors,
       weightFunctions,
-      transformedBounds,
       input.prioritizedAreas
     );
     const takenSectorCount = takeSectorsWithinBudget(takenSectors, input, prioritizedSectors);
@@ -91,12 +89,17 @@ function takeSectorsWithinBudget(
   return takenSectorCount;
 }
 
+const _sortSectorsByPriorityVars = {
+  transformedBounds: new THREE.Box3()
+};
+
 function sortSectorsByPriority(
   modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
   weightFunctions: WeightFunctionsHelper,
-  transformedBounds: THREE.Box3,
   prioritizedAreas: PrioritizedArea[]
 ): { model: CadModelMetadata; sectorId: number; priority: number }[] {
+  const { transformedBounds } = _sortSectorsByPriorityVars;
+
   const candidateSectors = new Array<{
     model: CadModelMetadata;
     sectorId: number;
