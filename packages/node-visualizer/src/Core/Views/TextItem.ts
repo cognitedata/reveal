@@ -30,6 +30,8 @@ export class TextItem {
 
   public isBold = false;
 
+  public paddingTop = 0;
+
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
@@ -42,9 +44,15 @@ export class TextItem {
   // CONSTRUCTOR
   //= =================================================
 
-  constructor(key: string, isBold: boolean, value?: string) {
+  constructor(
+    key: string,
+    isBold: boolean,
+    value?: string,
+    paddingTop?: number
+  ) {
     this.key = key;
     this.isBold = isBold;
     this.value = value;
+    this.paddingTop = paddingTop || 0;
   }
 }

@@ -55,7 +55,7 @@ export class ViewInfo {
   }
 
   public addPickedNode(node: BaseNode) {
-    this.items.push(new TextItem(`Picked ${node.displayName}:`, true));
+    this.items.push(new TextItem(`${node.displayName}:`, true, '', 14));
   }
 
   // Add text only
@@ -68,8 +68,9 @@ export class ViewInfo {
     this.items.push(new TextItem(key, true, value));
   }
 
+  // This was used to add values with TAB spacing in the frond. removed for now.
   public addTabbedValue(key: string, value: string) {
-    this.items.push(new TextItem(`   ${key}`, true, value));
+    this.items.push(new TextItem(`${key}`, true, value));
   }
 
   public addNumber(key: string, value: number, fractionDigits: number) {

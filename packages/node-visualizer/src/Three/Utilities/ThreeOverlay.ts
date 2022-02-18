@@ -225,7 +225,7 @@ export class ThreeOverlay {
       context.font = item.isBold
         ? Canvas.getBolderFont(fontSize)
         : Canvas.getNormalFont(fontSize);
-      context.fillText(item.key, x, y);
+      context.fillText(item.key, x, y + item.paddingTop);
       y += item.dy;
     }
     context.fillStyle = Canvas.getColor(
@@ -239,7 +239,7 @@ export class ThreeOverlay {
       if (item.value !== undefined) {
         if (item.isMultiLine)
           Canvas.fillText(context, item.value, x, y, maxKeyDx + margin, lineDy);
-        else context.fillText(item.value, x, y);
+        else context.fillText(item.value, x, y + item.paddingTop);
       }
       y += item.dy;
     }
@@ -254,7 +254,7 @@ export class ThreeOverlay {
     if (item.dy > 0) return; // Already done
 
     item.isMultiLine = false;
-    item.dy = lineHeight;
+    item.dy = lineHeight + item.paddingTop;
     item.dx = 0;
 
     if (item.value === undefined) return;
