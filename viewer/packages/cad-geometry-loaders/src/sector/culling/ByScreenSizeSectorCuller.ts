@@ -93,6 +93,10 @@ const _sortSectorsByPriorityVars = {
   transformedBounds: new THREE.Box3()
 };
 
+function getGeometryBounds(sectorMetadata: V9SectorMetadata): THREE.Box3 {
+  return sectorMetadata.geometryBounds ?? sectorMetadata.bounds;
+}
+
 function sortSectorsByPriority(
   modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
   weightFunctions: WeightFunctionsHelper,
@@ -105,10 +109,13 @@ function sortSectorsByPriority(
     sectorId: number;
     priority: number;
   }>();
+
   for (const [model, sectors] of modelsAndCandidateSectors) {
     sectors.forEach(sectorMetadata => {
       const sector = sectorMetadata;
-      weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
+      const sectorGeometryBounds = getGeometryBounds(sector);
+
+      weightFunctions.computeTransformedSectorBounds(sectorGeometryBounds, model.modelMatrix, transformedBounds);
       const priority = determineSectorPriority(weightFunctions, sector, transformedBounds, prioritizedAreas);
       candidateSectors.push({
         model,

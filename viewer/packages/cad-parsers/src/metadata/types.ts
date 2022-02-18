@@ -37,6 +37,7 @@ export type BaseSectorMetadata = {
   readonly path: string;
   readonly depth: number;
   readonly bounds: THREE.Box3;
+  readonly geometryBounds?: THREE.Box3;
   readonly children: SectorMetadata[];
   readonly estimatedDrawCallCount: number;
   readonly estimatedRenderCost: number;
