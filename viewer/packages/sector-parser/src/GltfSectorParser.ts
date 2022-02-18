@@ -262,10 +262,7 @@ export class GltfSectorParser {
       byteOffset = vertexBufferView.byteOffset;
       byteLength = vertexBufferView.byteLength;
 
-      byteStride = Object.values(vertexBufferDescriptor).reduce((sum, descriptor) => {
-        sum += descriptor.byteStride;
-        return sum;
-      }, 0);
+      byteStride = Object.values(vertexBufferDescriptor).reduce((sum, descriptor) => sum + descriptor.byteStride, 0);
     } else {
       this.setIndexBuffer(glbHeaderData, primitive, data, bufferGeometry);
 
