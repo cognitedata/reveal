@@ -265,8 +265,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           }
           setActiveLineNumber(lineNumber);
           setActive('setLineNumber');
+          return;
         }
-        return;
       }
     }
 
