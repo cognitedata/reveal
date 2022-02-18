@@ -5,16 +5,17 @@
 import fs from 'fs';
 
 import 'jest-extended';
-import { TypedArray } from '@reveal/utilities';
+import { calculateVolumeOfMesh, TypedArray } from '@reveal/utilities';
 import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
 
 describe(GltfSectorParser.name, () => {
   let parsedPrimitivesResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
   let parsedDracoResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
+  let parser: GltfSectorParser;
 
   beforeAll(async () => {
-    const parser = new GltfSectorParser();
+    parser = new GltfSectorParser();
     const primitivesByteBuffer = fs.readFileSync(__dirname + '/test-all-primitives.glb');
     const dracoTestByteBuffer = fs.readFileSync(__dirname + '/anders-test-scene-draco.glb');
 
@@ -227,5 +228,45 @@ describe(GltfSectorParser.name, () => {
     expect(attributes.position.count).toBe(triangleMeshNumberOfVertices);
     expect(attributes.treeIndex.count).toBe(triangleMeshNumberOfVertices);
     expect(attributes.color.count).toBe(triangleMeshNumberOfVertices);
+  });
+
+  test('Draco mesh and un-encoded mesh should have approximatly same volume', async () => {
+    const dracoTriangleMeshes = parsedDracoResult.filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
+    expect(dracoTriangleMeshes.length).toBe(1);
+
+    const { geometryBuffer: dracoGeometryBuffer } = dracoTriangleMeshes[0];
+
+    const dracoPositionAttribute = dracoGeometryBuffer.getAttribute('position') as THREE.InterleavedBufferAttribute;
+    const dracoPositionOffset = dracoPositionAttribute.offset;
+    const dracoStride = dracoPositionAttribute.data.stride;
+
+    const dracoVertexBuffer = Float32Array.from(dracoGeometryBuffer.getAttribute('position').array).filter((_, n) => {
+      return n % dracoStride >= dracoPositionOffset;
+    });
+
+    const dracoMeshVolume = calculateVolumeOfMesh(
+      dracoVertexBuffer,
+      Uint16Array.from(dracoGeometryBuffer.getIndex().array)
+    );
+
+    const testFileByteBuffer = fs.readFileSync(__dirname + '/anders-test-scene.glb');
+    const parsedResult = await parser.parseSector(testFileByteBuffer.buffer);
+
+    const triangleMeshes = parsedResult.filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
+    expect(triangleMeshes.length).toBe(1);
+
+    const { geometryBuffer } = triangleMeshes[0];
+
+    const positionAttribute = geometryBuffer.getAttribute('position') as THREE.InterleavedBufferAttribute;
+    const positionOffset = positionAttribute.offset;
+    const stride = positionAttribute.data.stride;
+
+    const vertexBuffer = Float32Array.from(geometryBuffer.getAttribute('position').array).filter((_, n) => {
+      return n % stride >= positionOffset;
+    });
+
+    const meshVolume = calculateVolumeOfMesh(vertexBuffer, Uint16Array.from(geometryBuffer.getIndex().array));
+
+    expect(Math.abs(1 - dracoMeshVolume / meshVolume)).toBeLessThan(1e-4);
   });
 });
