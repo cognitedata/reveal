@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { Store } from 'redux';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
+import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

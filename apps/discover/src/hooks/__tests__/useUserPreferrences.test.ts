@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
+import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 

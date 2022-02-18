@@ -1,4 +1,4 @@
-import { useUserPreferencesQuery } from 'services/well/__mocks/userManagementService/query';
+import { useUserPreferencesQuery } from 'services/userManagementService/query';
 
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 

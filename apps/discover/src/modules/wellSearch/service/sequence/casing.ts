@@ -2,6 +2,7 @@ import chunk from 'lodash/chunk';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
+import isEmpty from 'lodash/isEmpty';
 import max from 'lodash/max';
 import min from 'lodash/min';
 import noop from 'lodash/noop';
@@ -81,19 +82,28 @@ export const mapCasingItemsToSequences = (
   casingItems: CasingItems,
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
 ) => {
-  return casingItems.items.map((casingSchematic) => {
-    return {
-      id: Number(uniqueId()),
-      columns: getCasingsColumns(casingSchematic.casingAssemblies[0]),
-      assetId:
-        wellboreSourceExternalIdMap[casingSchematic.wellboreAssetExternalId],
-      name: casingSchematic.source.sourceName,
-      externalId: casingSchematic.wellboreAssetExternalId,
-      metadata: getSequenceMetadata(casingSchematic.casingAssemblies),
-      createdTime: new Date(),
-      lastUpdatedTime: new Date(),
-    } as Sequence;
-  });
+  return casingItems.items.reduce((goodSequences, casingSchematic) => {
+    // drop empty casingAssemblies sequences
+    if (isEmpty(casingSchematic.casingAssemblies)) {
+      // console.log('Dropping schematic for:', casingSchematic);
+      return goodSequences;
+    }
+
+    return [
+      ...goodSequences,
+      {
+        id: Number(uniqueId()),
+        columns: getCasingsColumns(casingSchematic.casingAssemblies[0]),
+        assetId:
+          wellboreSourceExternalIdMap[casingSchematic.wellboreAssetExternalId],
+        name: casingSchematic.source.sourceName,
+        externalId: casingSchematic.wellboreAssetExternalId,
+        metadata: getSequenceMetadata(casingSchematic.casingAssemblies),
+        createdTime: new Date(),
+        lastUpdatedTime: new Date(),
+      },
+    ];
+  }, [] as Sequence[]);
 };
 
 export const getCasingsColumns = (casingAssembly: CasingAssembly) => {
@@ -104,6 +114,7 @@ export const getCasingsColumns = (casingAssembly: CasingAssembly) => {
       CASINGS_COLUMN_NAME_MAP,
       columnName
     ) as keyof CasingAssembly;
+
     const casingAssemblyData = casingAssembly[casingAssemblyKey];
 
     return {
@@ -119,7 +130,6 @@ export const getSequenceMetadata = (casingAssemblies: CasingAssembly[]) => {
   const maxOutsideDiameters: number[] = [];
   const minInsideDiameters: number[] = [];
   const casingTypes: string[] = [];
-
   casingAssemblies.forEach((casingAssembly) => {
     mdBases.push(casingAssembly.originalMeasuredDepthBase.value);
     mdTops.push(casingAssembly.originalMeasuredDepthTop.value);

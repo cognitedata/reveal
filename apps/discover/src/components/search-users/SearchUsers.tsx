@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import debounce from 'lodash/debounce';
 import { useJsonHeaders } from 'services/service';
-import { userManagement } from 'services/well/__mocks/userManagementService/endpoints';
+import { userManagement } from 'services/userManagementService/endpoints';
 
 import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
 

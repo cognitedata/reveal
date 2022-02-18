@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useUpdateMyPreferences } from 'services/well/__mocks/userManagementService/query';
+import { useUpdateMyPreferences } from 'services/userManagementService/query';
 
 import { Dropdown, Title, Menu, TopBar, Icon } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';

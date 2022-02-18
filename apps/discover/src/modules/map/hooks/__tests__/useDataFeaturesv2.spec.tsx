@@ -2,10 +2,10 @@ import { screen, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
 import { getMockWellsList } from 'services/well/__mocks/getMockWellsList';
 import { getMockWellsGeometry } from 'services/well/__mocks/mockWellsGeometry';
-import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
 
 import { getMockPointGeo } from '__test-utils/fixtures/geometry';
 import { getMockWell } from '__test-utils/fixtures/well/well';

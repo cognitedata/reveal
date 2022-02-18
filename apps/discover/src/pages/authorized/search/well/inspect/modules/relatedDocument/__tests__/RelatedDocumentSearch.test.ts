@@ -1,10 +1,17 @@
 import { screen, fireEvent } from '@testing-library/react';
+import { setupServer } from 'msw/node';
+import { getMockSavedSearchRelatedGet } from 'services/savedSearches/__mocks/getMockSavedSearchRelatedGet';
 
 import { testRenderer } from '__test-utils/renderer';
 
 import { RelatedDocumentSearch } from '../RelatedDocumentSearch';
 
+const mockServer = setupServer(getMockSavedSearchRelatedGet());
+
 describe('Related Document search', () => {
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
   const defaultTestInit = async () =>
     testRenderer(RelatedDocumentSearch, undefined, null);
 

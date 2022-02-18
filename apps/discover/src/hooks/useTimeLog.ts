@@ -88,7 +88,7 @@ export const useMetricLogger = (
     if (metric && !timer.current) {
       timer.current = metric.start(key, { ...eventParams, stage });
     } else {
-      log('Either timer or metric is missing');
+      log(`Either timer or metric is missing: ${key}`, undefined, 2);
     }
   };
 
@@ -97,7 +97,7 @@ export const useMetricLogger = (
       timer.current.stop(params);
       timer.current = undefined;
     } else {
-      log('Timer not found.');
+      log(`Timer not found: ${key}`, undefined, 2);
     }
   };
 

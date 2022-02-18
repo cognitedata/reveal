@@ -3,8 +3,8 @@ import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserGet } from 'services/user/__mocks/getMockUserGet';
+import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
-import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
 
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { getMockWell } from '__test-utils/fixtures/well/well';

@@ -1,8 +1,9 @@
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
 import { getMockTrajectoriesList } from 'services/well/__mocks/getMockWellTrajectories';
-import { getMockUserMe } from 'services/well/__mocks/userManagementService/__mocks/mockUmsMe';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
@@ -14,6 +15,7 @@ jest.mock('modules/wellSearch/hooks/useEnabledWellSdkV3', () => ({
 }));
 
 const mockServer = setupServer(
+  getMockConfigGet(),
   getMockUserMe(),
   getMockTrajectoriesList(),
   getMockWellsById()
