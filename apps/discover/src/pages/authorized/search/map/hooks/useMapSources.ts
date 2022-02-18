@@ -1,6 +1,7 @@
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useDataFeatures } from 'modules/map/hooks/useDataFeatures';
 import { useDataFeatures as useDataFeaturesv2 } from 'modules/map/hooks/useDataFeaturesv2';
+import { useMapConfig } from 'modules/map/hooks/useMapConfig';
 import { useMap } from 'modules/map/selectors';
 import { useSeismicMapFeatures } from 'modules/seismicSearch/hooks/useSeismicMapFeatures';
 import { WELL_HEADS_LAYER_ID } from 'pages/authorized/search/map/constants';
@@ -14,6 +15,7 @@ export const useMapSources = () => {
   const seismicCollection = useSeismicMapFeatures();
   const { selectedLayers } = useMap();
   const { data: generalConfig } = useProjectConfigByKey('general');
+  const { data: mapConfig } = useMapConfig();
 
   const externalWells = useDeepMemo(() => {
     return sources?.find((source) => source.id === WELL_HEADS_LAYER_ID);
@@ -30,13 +32,25 @@ export const useMapSources = () => {
 
   const resultSources = useDeepMemo(
     // this creates the sources and set's up the clustering layer
-    () => createSources(seismicCollection, features),
-    [features, seismicCollection]
+    () =>
+      createSources(
+        seismicCollection,
+        features,
+        mapConfig?.cluster,
+        mapConfig?.zoom
+      ),
+    [features, seismicCollection, mapConfig?.cluster, mapConfig?.zoom]
   );
 
   const resultSourcesv2 = useDeepMemo(
-    () => createSources(seismicCollection, featuresv2),
-    [featuresv2, seismicCollection]
+    () =>
+      createSources(
+        seismicCollection,
+        featuresv2,
+        mapConfig?.cluster,
+        mapConfig?.zoom
+      ),
+    [featuresv2, seismicCollection, mapConfig?.cluster, mapConfig?.zoom]
   );
 
   const combinedSources = useDeepMemo(

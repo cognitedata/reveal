@@ -21,8 +21,6 @@ import { MapLayerGeoJsonFilter } from '../../../../../modules/sidebar/types';
 import { MapLayerFilters } from '../../../../../tenants/types';
 
 export const clusterConfig = {
-  cluster: true,
-  clusterMaxZoom: DEFAULT_CLUSTER_ZOOM_LEVEL,
   clusterRadius: DEFAULT_CLUSTER_RADIUS,
   clusterProperties: {
     documentsCount: [
@@ -44,7 +42,9 @@ export const clusterConfig = {
 
 const createSources = (
   seismicImages: FeatureCollection,
-  features: FeatureCollection
+  features: FeatureCollection,
+  cluster = true,
+  zoom: number = DEFAULT_CLUSTER_ZOOM_LEVEL
 ): MapDataSource[] => {
   const sources = [
     { id: SEISMIC_LAYER_ID, data: seismicImages },
@@ -54,7 +54,11 @@ const createSources = (
         type: 'FeatureCollection',
         features: features.features,
       },
-      clusterProps: { ...clusterConfig /* , cluster */ },
+      clusterProps: {
+        ...clusterConfig,
+        cluster,
+        clusterMaxZoom: zoom,
+      },
     },
   ];
   return sources;
