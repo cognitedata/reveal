@@ -110,7 +110,7 @@ function sortSectorsByPriority(
     sectors.forEach(sectorMetadata => {
       const sector = sectorMetadata;
 
-      weightFunctions.computeTransformedSectorBounds(sector.geometryBounds, model.modelMatrix, transformedBounds);
+      weightFunctions.computeTransformedSectorBounds(sector.geometryBoundingBox, model.modelMatrix, transformedBounds);
       const priority = determineSectorPriority(weightFunctions, sector, transformedBounds, prioritizedAreas);
       candidateSectors.push({
         model,

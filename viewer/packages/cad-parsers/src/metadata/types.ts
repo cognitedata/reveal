@@ -56,5 +56,5 @@ export type GltfSectorMetadata = {
   readonly maxDiagonalLength: number;
   readonly minDiagonalLength: number;
   readonly downloadSize: number;
-  readonly geometryBounds: THREE.Box3;
+  readonly geometryBoundingBox: THREE.Box3;
 };
