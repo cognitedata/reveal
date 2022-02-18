@@ -10,7 +10,6 @@ import { SectorSceneImpl } from '../../utilities/SectorScene';
 import { BoundingBox, CadSceneRootMetadata, V9SceneSectorMetadata } from './types';
 
 export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScene {
-
   if (!metadata.sectors || metadata.sectors.length === 0) {
     throw new Error('No sectors found in scene JSON file');
   }
@@ -55,8 +54,10 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
 }
 
 function toThreeBoundingBox(box: BoundingBox): THREE.Box3 {
-  return new THREE.Box3(new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-                        new THREE.Vector3(box.max.x, box.max.y, box.max.z));
+  return new THREE.Box3(
+    new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+    new THREE.Vector3(box.max.x, box.max.y, box.max.z)
+  );
 }
 
 function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata {
