@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# when using this script locally, you need to get the private key (from last pass)
-# and put it into this file in the root:
-PRIVATE_KEY=$(cat "./private-keys/$REACT_APP_PROJECT.jwk-key.json")
+
+# When using this script locally, you need to get the private key(s) (from last pass)
+# and put it into a .json file in the private-keys directory
+# the filename should be {project-name}.jwk-key.json, for example: discover-dev-bluefield.jwk-key.json
 
 # Check if we have and existing container
 COUNT=$(docker ps -a | grep "fakeIdp" | wc -l)
@@ -11,8 +12,8 @@ if (($COUNT > 0)); then
     docker rm -f fakeIdp
 fi
 
-echo "Starting fake IDP for $REACT_APP_PROJECT..."
+echo "Starting fake IDP ..."
 
 # Run the final command
 docker pull eu.gcr.io/cognitedata/fake-idp:latest
-docker run --name fakeIdp -e IDP_CLUSTER=$REACT_APP_CLUSTER -p 8200:8200 -e PORT=8200 -e PRIVATE_KEY="$PRIVATE_KEY" eu.gcr.io/cognitedata/fake-idp:latest
+docker run -v $(pwd)/private-keys:/private-keys --name fakeIdp -p 8200:8200 -e PORT=8200 eu.gcr.io/cognitedata/fake-idp:latest
