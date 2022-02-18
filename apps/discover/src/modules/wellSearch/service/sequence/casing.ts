@@ -13,6 +13,7 @@ import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import { CasingAssembly, CasingItems } from '@cognite/sdk-wells-v3';
 
+import { EMPTY_ARRAY } from 'constants/empty';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
@@ -68,14 +69,23 @@ export const fetchCasingsUsingWellsSDK = async (
             filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
             limit: CHUNK_LIMIT,
           })
-          .then((casingItems) =>
-            mapCasingItemsToSequences(casingItems, wellboreSourceExternalIdMap)
-          )
+          .then((casingItems) => {
+            return mapCasingItemsToSequences(
+              casingItems,
+              wellboreSourceExternalIdMap
+            );
+          })
       )
     )
   );
 
-  return groupBy(casings, 'assetId');
+  const groupedData = groupBy(casings, 'assetId');
+
+  wellboreIds.forEach((wellboreId) => {
+    groupedData[wellboreId] = groupedData[wellboreId] || EMPTY_ARRAY;
+  });
+
+  return groupedData;
 };
 
 export const mapCasingItemsToSequences = (
