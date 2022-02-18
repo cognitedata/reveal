@@ -1,3 +1,3 @@
-export const CLUSTER = 'bluefield';
-// export const CLUSTER = 'azure-dev'; // for local development only
-export const PROJECT = `discover-e2e-${CLUSTER}`;
+export const CLUSTER = Cypress.env('CLUSTER') || 'bluefield';
+export const PROJECT = Cypress.env('PROJECT') || `discover-dev-${CLUSTER}`;
+export const USER_PREFIX = Cypress.env('USER_PREFIX') || 'dev';

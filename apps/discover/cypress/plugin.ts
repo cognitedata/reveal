@@ -51,6 +51,8 @@ module.exports = (on, config) => {
     env: {
       BASE_URL: `http://localhost:${port}`,
       REACT_APP_E2E_USER: uniqueId,
+      PROJECT: 'discover-e2e-bluefield',
+      USER_PREFIX: 'e2e',
     },
   };
 };

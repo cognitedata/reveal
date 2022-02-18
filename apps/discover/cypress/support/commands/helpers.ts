@@ -1,6 +1,6 @@
-import { CLUSTER, PROJECT } from '../constants';
+import { CLUSTER, PROJECT, USER_PREFIX } from '../constants';
 
-const TOKEN_PREFIX = 'discover-e2e';
+const TOKEN_PREFIX = `discover-${USER_PREFIX}`;
 const rawHeaders = {
   'Content-Type': 'application/json',
   Accept: 'application/json',

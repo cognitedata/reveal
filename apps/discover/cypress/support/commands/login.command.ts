@@ -1,12 +1,14 @@
 import capitalize from 'lodash/capitalize';
 
-import { CLUSTER } from '../constants';
+import { CLUSTER, USER_PREFIX } from '../constants';
 
 Cypress.Commands.add('login', () => {
   cy.log('Login as Normal user');
   cy.log('Logged in User ID', Cypress.env('REACT_APP_E2E_USER'));
   cy.findByRole('button', {
-    name: `Login with Fake IDP (${capitalize(CLUSTER)} User)`,
+    name: `Login with Fake IDP (${capitalize(
+      CLUSTER
+    )} ${USER_PREFIX.toUpperCase()} User)`,
   })
     // .should('exist')
     .should('be.visible')
@@ -17,7 +19,9 @@ Cypress.Commands.add('loginAsAdmin', () => {
   cy.log('Login as Admin user');
   cy.log('Logged in User ID', Cypress.env('REACT_APP_E2E_USER'));
   cy.findByRole('button', {
-    name: `Login with Fake IDP (${capitalize(CLUSTER)} Admin)`,
+    name: `Login with Fake IDP (${capitalize(
+      CLUSTER
+    )} ${USER_PREFIX.toUpperCase()} Admin)`,
   })
     .should('exist')
     .should('be.visible')

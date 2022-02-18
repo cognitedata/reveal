@@ -12,7 +12,7 @@ export const regularUser = Role(
   async (t) => {
     progress('Attempting to perform fake IDP login');
     const loginButton = screen.getByText(
-      `Login with Fake IDP (${capitalize(App.cluster)} User)`
+      `Login with Fake IDP (${capitalize(App.cluster)} E2E User)`
     );
     await t.click(loginButton);
     await t.click(screen.getByText('Accept'));
@@ -25,7 +25,7 @@ export const adminUser = Role(
   async (t) => {
     progress('Attempting to perform fake IDP login');
     const loginButton = screen.getByText(
-      `Login with Fake IDP (${capitalize(App.cluster)} Admin)`
+      `Login with Fake IDP (${capitalize(App.cluster)} E2E Admin)`
     );
     await t.click(loginButton);
     await t.click(screen.getByText('Accept'));

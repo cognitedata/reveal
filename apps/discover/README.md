@@ -104,16 +104,19 @@ NOTE: to run on different clusters, change this file:
 yarn cypress:open
 ```
 
+<mark>By default this will run tests on discover-dev-bluefield, change in cpyress.json if you need it otherwise</mark>
+
 #### Run live Cypress tests through bazel (dev mode)
 
-```shell
-yarn cypress
-```
+| Command                | Project (fakeIdp)      | Cluster   |
+| ---------------------- | ---------------------- | --------- |
+| `yarn cypress:run:dev` | discover-dev-bluefield | bluefield |
+| `yarn cypress:run:e2e` | discover-e2e-bluefield | bluefield |
 
-Run specific tests:
+Run specific tests in run mode:
 
-- `yarn cypress --spec "**/documents/name-of-the-file.js"` to run one specific file
-- `yarn cypress --spec "**/documents/**"` to run all files inside a directory
+- `{command from table above} --spec "**/documents/name-of-the-file.js"` to run one specific file
+- `{command from table above} --spec "**/documents/**"` to run all files inside a directory
 
 To stop the Cypress window from closing after a finished test, use the `--no-exit` flag.
 Cypress has many other run options, they can be found here: https://docs.cypress.io/guides/guides/command-line#Options

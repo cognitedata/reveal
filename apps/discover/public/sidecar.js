@@ -10,7 +10,7 @@ window.__cogniteSidecar = {
       cluster: 'azure-dev',
       fakeApplicationId: '808c3e2e-7bc1-4211-8d9e-66b4a7a37d48',
       groups: ['defaultGroup', 'writeGroup'],
-      name: 'Azure-dev User',
+      name: 'Azure-dev E2E User',
       otherAccessTokenFields: {
         given_name: 'Normal',
         family_name: 'User',
@@ -28,7 +28,7 @@ window.__cogniteSidecar = {
       cluster: 'azure-dev',
       fakeApplicationId: '808c3e2e-7bc1-4211-8d9e-66b4a7a37d48',
       groups: ['defaultGroup'],
-      name: 'Azure-dev Admin',
+      name: 'Azure-dev E2E Admin',
       otherAccessTokenFields: {
         given_name: 'Admin',
         family_name: 'User',
@@ -46,7 +46,7 @@ window.__cogniteSidecar = {
       cluster: 'bluefield',
       fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
       groups: ['defaultGroup', 'readGroup', 'writeGroup'],
-      name: 'Bluefield User',
+      name: 'Bluefield E2E User',
       otherAccessTokenFields: {
         given_name: 'Normal',
         family_name: 'User',
@@ -66,7 +66,7 @@ window.__cogniteSidecar = {
       cluster: 'bluefield',
       fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
       groups: ['defaultGroup', 'readGroup', 'writeGroup'],
-      name: 'Bluefield Admin',
+      name: 'Bluefield E2E Admin',
       otherAccessTokenFields: {
         given_name: 'Admin',
         family_name: 'User',
@@ -84,7 +84,7 @@ window.__cogniteSidecar = {
       cluster: 'bluefield',
       fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
       groups: ['readGroup'],
-      name: 'Bluefield Dev',
+      name: 'Bluefield DEV User',
       otherAccessTokenFields: {
         given_name: 'Normal',
         family_name: 'Dev',
@@ -102,7 +102,7 @@ window.__cogniteSidecar = {
       cluster: 'bluefield',
       fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
       groups: ['writeGroup'],
-      name: 'Bluefield Dev Admin',
+      name: 'Bluefield DEV Admin',
       otherAccessTokenFields: {
         given_name: 'Admin',
         family_name: 'Dev',

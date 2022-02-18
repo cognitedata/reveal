@@ -7,7 +7,10 @@
   "pageLoadTimeout": 120000,
   "responseTimeout": 120000,
   "env": {
-    "BASE_URL": "https://localhost:3000"
+    "BASE_URL": "https://localhost:3000",
+    "CLUSTER": "bluefield",
+    "PROJECT": "discover-dev-bluefield",
+    "USER_PREFIX": "dev"
   },
   "animationDistanceThreshold": 3,
   "numTestsKeptInMemory": 0,
