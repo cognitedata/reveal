@@ -1,14 +1,14 @@
-export type AnnotationFileCount = {
+export type FileAnnotationStats = {
   text: number;
   assets: number;
-  gdpr: number;
   objects: number;
 };
 export type ProcessSummary = {
   totalProcessed: number;
   totalWithExif: number;
   totalUserReviewedFiles: number;
-  totalModalDetected: number;
+  totalModelDetected: number;
   totalUnresolvedGDPR: number;
-  fileCountsByAnnotationType: AnnotationFileCount;
+  fileCountsByAnnotationType: FileAnnotationStats;
+  filePercentagesByAnnotationType: FileAnnotationStats;
 };

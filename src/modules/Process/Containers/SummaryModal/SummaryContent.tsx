@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -11,58 +11,21 @@ import FileWithAnnotations from 'src/assets/FileWithAnnotations.svg';
 import FileUnresolvedPerson from 'src/assets/FileUnresolvedPerson.svg';
 import FileWasReviewed from 'src/assets/FileWasReviewed.svg';
 import { selectProcessSummary } from 'src/modules/Process/store/selectors';
+import { calculateSummaryStats } from 'src/modules/Process/utils';
 
 const queryClient = new QueryClient();
 
 export default function SummaryContent() {
-  const [statView, setStatView] = useState('totalFilesProcessed');
+  const [statView, setStatView] = useState('totalFiles');
 
   const processSummary = useSelector((rootState: RootState) =>
     selectProcessSummary(rootState)
   );
 
-  const totalProcessedFileCount = processSummary.totalProcessed;
-
-  const filesWithTextAnnotationsCount =
-    processSummary.fileCountsByAnnotationType.text;
-  const filesWithObjectAnnotationsCount =
-    processSummary.fileCountsByAnnotationType.gdpr +
-    processSummary.fileCountsByAnnotationType.objects;
-  const filesWithAssetAnnotationsCount =
-    processSummary.fileCountsByAnnotationType.assets;
-
-  const tagPercent = Math.round(
-    (filesWithAssetAnnotationsCount / totalProcessedFileCount) * 100
+  const stats = useMemo(
+    () => calculateSummaryStats(processSummary),
+    [processSummary]
   );
-  const textPercent = Math.round(
-    (filesWithTextAnnotationsCount / totalProcessedFileCount) * 100
-  );
-  const objectPercent = Math.round(
-    (filesWithObjectAnnotationsCount / totalProcessedFileCount) * 100
-  );
-
-  const stats = {
-    totalFilesProcessed: {
-      text: 'total files processed',
-      value: processSummary.totalProcessed,
-    },
-    filesWithExif: {
-      text: 'files with exif',
-      value: processSummary.totalWithExif,
-    },
-    userReviewedFiles: {
-      text: 'user-reviewed files',
-      value: processSummary.totalUserReviewedFiles,
-    },
-    modelDetections: {
-      text: 'files with tags, texts or objects ',
-      value: processSummary.totalModelDetected,
-    },
-    personCases: {
-      text: 'unresolved person detections',
-      value: processSummary.totalUnresolvedGDPR,
-    },
-  };
 
   return (
     <>
@@ -135,7 +98,7 @@ export default function SummaryContent() {
                 ))}
               </StatsCarouselLeft>
 
-              {statView === 'totalFilesProcessed' && (
+              {statView === 'totalFiles' && (
                 <StatsCarouselRight key={statView}>
                   <RenderFileIcons
                     length={stats[statView].value}
@@ -154,11 +117,9 @@ export default function SummaryContent() {
                     iconAlt="FileWithExifIcon"
                     keyString={statView}
                   />
-                  {stats[statView].value < stats.totalFilesProcessed.value && (
+                  {stats[statView].value < stats.totalFiles.value && (
                     <RenderFileIcons
-                      length={
-                        stats.totalFilesProcessed.value - stats[statView].value
-                      }
+                      length={stats.totalFiles.value - stats[statView].value}
                       icon={FileBland}
                       iconAlt="FileBland"
                       keyString="filesWithoutExif"
@@ -167,7 +128,7 @@ export default function SummaryContent() {
                 </StatsCarouselRight>
               )}
 
-              {statView === 'userReviewedFiles' && (
+              {statView === 'filesUserReviewed' && (
                 <StatsCarouselRight key={statView}>
                   <RenderFileIcons
                     length={stats[statView].value}
@@ -175,11 +136,9 @@ export default function SummaryContent() {
                     iconAlt="FileWasReviewed"
                     keyString={statView}
                   />
-                  {stats[statView].value < stats.totalFilesProcessed.value && (
+                  {stats[statView].value < stats.totalFiles.value && (
                     <RenderFileIcons
-                      length={
-                        stats.totalFilesProcessed.value - stats[statView].value
-                      }
+                      length={stats.totalFiles.value - stats[statView].value}
                       icon={FileBland}
                       iconAlt="FileBland"
                       keyString="notUserReviewedFiles"
@@ -188,7 +147,7 @@ export default function SummaryContent() {
                 </StatsCarouselRight>
               )}
 
-              {statView === 'modelDetections' && (
+              {statView === 'filesWithModelDetections' && (
                 <StatsCarouselRightDivider>
                   <StatsCarouselRight key={statView}>
                     <RenderFileIcons
@@ -197,34 +156,36 @@ export default function SummaryContent() {
                       iconAlt="FileWithAnnotations"
                       keyString={statView}
                     />
-                    {stats[statView].value <
-                      stats.totalFilesProcessed.value && (
+                    {stats[statView].value < stats.totalFiles.value && (
                       <RenderFileIcons
-                        length={
-                          stats.totalFilesProcessed.value -
-                          stats[statView].value
-                        }
+                        length={stats.totalFiles.value - stats[statView].value}
                         icon={FileBland}
                         iconAlt="FileBland"
                         keyString="filesWithoutModelDetections"
                       />
                     )}
                   </StatsCarouselRight>
-                  {totalProcessedFileCount > 0 && (
+                  {stats.totalFiles.value > 0 && (
                     <DetectionStats>
                       <PercentBar
-                        tagPercentage={tagPercent}
-                        textPercentage={textPercent}
-                        objectPercentage={objectPercent}
-                        tagCount={filesWithAssetAnnotationsCount}
-                        textCount={filesWithTextAnnotationsCount}
-                        objectCount={filesWithObjectAnnotationsCount}
+                        tagPercentage={
+                          stats[statView].filesWithAssets.percentage
+                        }
+                        textPercentage={
+                          stats[statView].filesWithText.percentage
+                        }
+                        objectPercentage={
+                          stats[statView].filesWithObjects.percentage
+                        }
+                        tagCount={stats[statView].filesWithAssets.count}
+                        textCount={stats[statView].filesWithText.count}
+                        objectCount={stats[statView].filesWithObjects.count}
                       />
                     </DetectionStats>
                   )}
                 </StatsCarouselRightDivider>
               )}
-              {statView === 'personCases' && (
+              {statView === 'filesWithUnresolvedPersonCases' && (
                 <StatsCarouselRight key={statView}>
                   <RenderFileIcons
                     length={stats[statView].value}
@@ -232,11 +193,9 @@ export default function SummaryContent() {
                     iconAlt="FileUnresolvedPerson"
                     keyString={statView}
                   />
-                  {stats[statView].value < stats.totalFilesProcessed.value && (
+                  {stats[statView].value < stats.totalFiles.value && (
                     <RenderFileIcons
-                      length={
-                        stats.totalFilesProcessed.value - stats[statView].value
-                      }
+                      length={stats.totalFiles.value - stats[statView].value}
                       icon={FileBland}
                       iconAlt="FileBland"
                       keyString="notPersonCases"

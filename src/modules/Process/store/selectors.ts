@@ -258,23 +258,39 @@ export const selectProcessSummary = createSelector(
       (acc, next) => {
         if (next.annotationCounts) {
           return {
-            gdpr: next.annotationCounts.gdpr > 0 ? acc.gdpr + 1 : acc.gdpr,
             text: next.annotationCounts.text > 0 ? acc.text + 1 : acc.text,
             assets:
               next.annotationCounts.assets > 0 ? acc.assets + 1 : acc.assets,
             objects:
-              next.annotationCounts.objects > 0 ? acc.objects + 1 : acc.objects,
+              next.annotationCounts.gdpr > 0 ||
+              next.annotationCounts.objects > 0
+                ? acc.objects + 1
+                : acc.objects,
           };
         }
         return acc;
       },
       {
-        gdpr: 0,
         assets: 0,
         text: 0,
         objects: 0,
       }
     );
+
+    const totalPercentagesByAnnotationTypes = {
+      assets:
+        Math.round(
+          (totalFileCountsByAnnotationTypes.assets / processFiles.length) * 100
+        ) || 0,
+      text:
+        Math.round(
+          (totalFileCountsByAnnotationTypes.text / processFiles.length) * 100
+        ) || 0,
+      objects:
+        Math.round(
+          (totalFileCountsByAnnotationTypes.objects / processFiles.length) * 100
+        ) || 0,
+    };
 
     return {
       totalProcessed: processFiles.length,
@@ -283,6 +299,7 @@ export const selectProcessSummary = createSelector(
       totalModelDetected: totalFilesWithTagsTextOrObject.length,
       totalUnresolvedGDPR: totalFilesWithUnresolvedGDPR.length,
       fileCountsByAnnotationType: totalFileCountsByAnnotationTypes,
+      filePercentagesByAnnotationType: totalPercentagesByAnnotationTypes,
     };
   }
 );
