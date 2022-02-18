@@ -18,6 +18,19 @@ export type SceneSectorMetadata = BaseSceneSectorMetadata & (GltfSceneSectorMeta
 export type V8SceneSectorMetadata = BaseSceneSectorMetadata & I3dF3dSceneSectorMetadata;
 export type V9SceneSectorMetadata = BaseSceneSectorMetadata & GltfSceneSectorMetadata;
 
+export type BoundingBox = {
+  readonly min: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  readonly max: {
+    x: number;
+    y: number;
+    z: number;
+  };
+};
+
 export type BaseSceneSectorMetadata = {
   readonly id: number;
   readonly parentId: number | null;
@@ -26,31 +39,8 @@ export type BaseSceneSectorMetadata = {
   readonly estimatedDrawCallCount: number;
   readonly estimatedTriangleCount: number;
 
-  readonly boundingBox: {
-    readonly min: {
-      x: number;
-      y: number;
-      z: number;
-    };
-    readonly max: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
-
-  readonly geometryBoundingBox?: {
-    readonly min: {
-      x: number;
-      y: number;
-      z: number;
-    };
-    readonly max: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
+  readonly boundingBox: BoundingBox;
+  readonly geometryBoundingBox?: BoundingBox;
 };
 
 export type GltfSceneSectorMetadata = {

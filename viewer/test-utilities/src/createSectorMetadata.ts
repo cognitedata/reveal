@@ -12,7 +12,7 @@ const unitBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 
 export function createV8SectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): V8SectorMetadata {
   const id = tree[0];
   const childIds = tree[1];
-  const bounds = tree[2] || unitBox;
+  const subtreeBoundingBox = tree[2] || unitBox;
   const children = childIds.map((x, i) => {
     return createV8SectorMetadata(x, depth + 1, `${path}${i}/`);
   });
@@ -21,7 +21,7 @@ export function createV8SectorMetadata(tree: SectorTree, depth: number = 0, path
     id,
     path,
     depth,
-    bounds,
+    subtreeBoundingBox,
     estimatedDrawCallCount: 100,
     estimatedRenderCost: 1000,
     indexFile: {
@@ -61,7 +61,7 @@ export function generateV8SectorTree(depth: number, childrenPerLevel: number = 4
 export function createV9SectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): V9SectorMetadata {
   const id = tree[0];
   const childIds = tree[1];
-  const bounds = tree[2] || unitBox;
+  const subtreeBoundingBox = tree[2] || unitBox;
   const children = childIds.map((x, i) => {
     return createV9SectorMetadata(x, depth + 1, `${path}${i}/`);
   });
@@ -70,7 +70,7 @@ export function createV9SectorMetadata(tree: SectorTree, depth: number = 0, path
     id,
     path,
     depth,
-    bounds,
+    subtreeBoundingBox,
     estimatedDrawCallCount: 100,
     estimatedRenderCost: 1000,
     downloadSize: 1024 * 1024,

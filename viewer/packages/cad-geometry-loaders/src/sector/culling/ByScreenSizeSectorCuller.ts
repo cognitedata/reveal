@@ -187,7 +187,7 @@ function determineCandidateSectors(
 
   const bounds = new THREE.Box3();
   return sectors.filter(sector => {
-    bounds.copy(sector.bounds);
+    bounds.copy(sector.subtreeBoundingBox);
     bounds.applyMatrix4(modelMatrix);
 
     const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));

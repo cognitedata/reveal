@@ -39,6 +39,11 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
   return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
+function toThreeBoundingBox(box: BoundingBox): THREE.Box3 {
+  return new THREE.Box3(new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+                        new THREE.Vector3(box.max.x, box.max.y, box.max.z));
+}
+
 function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata {
   const bb = metadata.boundingBox;
   const minX = bb.min.x;
@@ -60,8 +65,8 @@ function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata
     id: metadata.id,
     path: metadata.path,
     depth: metadata.depth,
-    bounds: new THREE.Box3(new THREE.Vector3(minX, minY, minZ), new THREE.Vector3(maxX, maxY, maxZ)),
-    geometryBounds: new THREE.Box3(new THREE.Vector3(gMinX, gMinY, gMinZ), new THREE.Vector3(gMaxX, gMaxY, gMaxZ)),
+    subtreeBoundingBox,
+    geometryBoundingBox,
     estimatedDrawCallCount: metadata.estimatedDrawCallCount,
     estimatedRenderCost: metadata.estimatedTriangleCount || 0,
     downloadSize: metadata.downloadSize || 0,

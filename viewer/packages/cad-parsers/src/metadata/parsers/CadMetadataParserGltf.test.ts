@@ -42,7 +42,7 @@ describe('CadMetadataParserGltf', () => {
       sectors: [sectorRoot]
     };
 
-    const bounds = new THREE.Box3(
+    const subtreeBoundingBox = new THREE.Box3(
       new THREE.Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
       new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
     );
@@ -50,8 +50,8 @@ describe('CadMetadataParserGltf', () => {
     const expectedRoot: V9SectorMetadata = {
       id: sectorRoot.id,
       path: sectorRoot.path,
-      bounds,
-      geometryBounds: bounds,
+      subtreeBoundingBox,
+      geometryBoundingBox: subtreeBoundingBox,
       depth: sectorRoot.depth,
       children: [],
       estimatedDrawCallCount: 10,
