@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Title } from '@cognite/cogs.js';
 
 import { BaseCommand } from '../../../Core/Commands/BaseCommand';
 import { ToolBar } from '../../../UserInterface/Components/ToolBar/ToolBar';
@@ -24,7 +24,9 @@ export const ExpansionView = (props: ExpansionViewProps) => {
         role="button"
         tabIndex={0}
       >
-        {title}
+        <Title level={6} as="h6">
+          {title}
+        </Title>
         {isExpanded ? (
           <Icon type="ChevronDownLarge" />
         ) : (
@@ -52,13 +54,14 @@ const Collapse = styled.div`
   }
 `;
 const CollapseHeader = styled.div`
-  padding: 10px;
-  background: #dedede;
+  padding: 14px;
+  background: #fafafa;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: 'Inter', sans-serif;
 `;
 const CollapsePanel = styled.div`
   padding: 10px;

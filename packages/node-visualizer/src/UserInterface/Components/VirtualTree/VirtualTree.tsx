@@ -1,15 +1,19 @@
 import React, { KeyboardEvent } from 'react';
+
+import styled from 'styled-components';
+
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { List as VirtualList } from 'react-virtualized/dist/es/List';
-import { readCssVariablePixelNumber } from '../../../UserInterface/Foundation/Utils/cssUtils';
-import { HTMLUtils } from '../../../UserInterface/Foundation/Utils/HTMLUtils';
-import { TreeItemButton } from '../../../UserInterface/Components/VirtualTree/TreeItemControl';
+
+import { Detail, Icon } from '@cognite/cogs.js';
+
 import { ChromaIcon } from '../../../UserInterface/Components/ChromaIcon/ChromaIcon';
 import { ExpandButton } from '../../../UserInterface/Components/VirtualTree/ExpandButton';
-import { VirtualTreeProps } from '../../../UserInterface/Components/VirtualTree/VirtualTreeProps';
 import { ITreeNode } from '../../../UserInterface/Components/VirtualTree/ITreeNode';
-import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
+import { TreeItemButton } from '../../../UserInterface/Components/VirtualTree/TreeItemControl';
+import { VirtualTreeProps } from '../../../UserInterface/Components/VirtualTree/VirtualTreeProps';
+import { readCssVariablePixelNumber } from '../../../UserInterface/Foundation/Utils/cssUtils';
+import { HTMLUtils } from '../../../UserInterface/Foundation/Utils/HTMLUtils';
 
 const DEFAULT_ROW_HEIGHT = 22;
 
@@ -118,7 +122,9 @@ export const VirtualTree = (props: VirtualTreeProps) => {
                 outline: 'none',
               }}
             >
-              {item.isLoading ? '(Loading...)' : null} {itemText}
+              <Detail>
+                {item.isLoading ? '(Loading...)' : null} {itemText}
+              </Detail>
             </span>
           </TreeItemLabelContainer>
         </TreeItem>

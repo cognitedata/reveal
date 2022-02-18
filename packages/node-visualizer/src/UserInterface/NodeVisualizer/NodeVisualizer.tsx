@@ -12,25 +12,21 @@ import { Appearance } from '../../Core/States/Appearance';
 import { VirtualUserInterface } from '../../Core/States/VirtualUserInterface';
 import { NotificationsToActionsAdaptor } from '../Adapters/NotificationToAction';
 import { UserInterfaceListener } from '../Adapters/UserInterfaceListener';
+import { Explorer } from '../Components/Explorer/Explorer';
+import { ExplorerPropType } from '../Components/Explorer/ExplorerTypes';
 import { Viewer } from '../Components/Viewers/Viewer';
-
-import { State } from '../Redux/State/State';
-import { LeftPanel } from './Panels/LeftPanel';
-import { RightPanel } from './Panels/RightPanel';
-
-import { Toolbar } from './ToolBar/Toolbar';
-
 import { generateNodeTree } from '../Redux/reducers/ExplorerReducer';
 import { initializeToolbarStatus } from '../Redux/reducers/VisualizersReducer';
+import { State } from '../Redux/State/State';
 
+import { LeftPanel } from './Panels/LeftPanel';
+import { RightPanel } from './Panels/RightPanel';
+import { Toolbar } from './ToolBar/Toolbar';
 import {
   VisualizerToolbar,
   VisualizerToolbarProps,
 } from './ToolBar/VisualizerToolbar';
 import { ViewerUtils } from './Viewers/ViewerUtils';
-
-import { ExplorerPropType } from '../Components/Explorer/ExplorerTypes';
-import { Explorer } from '../Components/Explorer/Explorer';
 
 export interface NodeVisualizerProps {
   /**

@@ -59,13 +59,15 @@ export class Appearance {
 
   static viewerSmallestCameraDeltaAngle = Math.PI / 100;
 
-  static viewerFontType = 'sans-serif'; // "Helvetica" Use brush instead here?
+  static viewerFontType = '"Inter", sans-serif'; // "Helvetica" Use brush instead here?
 
-  static viewerOverlayFontSize = 15;
+  static viewerOverlayFontSize = 14;
 
   static viewerFooterFontSize = 16;
 
-  static viewerOverlayFgColor: Color = Colors.black;
+  static viewerOverlayFgColor: Color = Color.rgb([38, 38, 38]);
 
-  static viewerOverlayBgColor: Color = Colors.white.alpha(0.65);
+  static viewerOverlayFgSecondaryColor: Color = Color.rgb([89, 89, 89]);
+
+  static viewerOverlayBgColor: Color = Colors.white;
 }

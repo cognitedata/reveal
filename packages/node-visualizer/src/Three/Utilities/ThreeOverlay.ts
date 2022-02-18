@@ -167,7 +167,7 @@ export class ThreeOverlay {
   ): void {
     if (!items || !items.length) return;
 
-    const margin = fontSize * 0.33;
+    const margin = fontSize * 0.714;
     const spacing = fontSize;
     const lineDy = 1.5 * fontSize;
 
@@ -210,20 +210,11 @@ export class ThreeOverlay {
     let y = ymin;
 
     // Fill the rectangle with shadow
-    context.shadowColor = Canvas.getColor(fgColor.alpha(0.5));
-    context.shadowBlur = 3;
-    context.shadowOffsetX = 6;
-    context.shadowOffsetY = 6;
     context.fillStyle = Canvas.getColor(bgColor);
     context.fillRect(x, y, dx, dy);
     context.shadowBlur = 0;
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
-
-    // Draw a border around the rectangle
-    context.strokeStyle = Canvas.getColor(fgColor);
-    context.lineWidth = 1;
-    context.strokeRect(x, y, dx, dy);
 
     context.fillStyle = Canvas.getColor(fgColor);
 
@@ -232,12 +223,14 @@ export class ThreeOverlay {
     y += margin;
     for (const item of items) {
       context.font = item.isBold
-        ? Canvas.getBoldFont(fontSize)
+        ? Canvas.getBolderFont(fontSize)
         : Canvas.getNormalFont(fontSize);
       context.fillText(item.key, x, y);
       y += item.dy;
     }
-
+    context.fillStyle = Canvas.getColor(
+      Appearance.viewerOverlayFgSecondaryColor
+    );
     // Draw the values
     x += keyDx + spacing;
     y = ymin + margin;

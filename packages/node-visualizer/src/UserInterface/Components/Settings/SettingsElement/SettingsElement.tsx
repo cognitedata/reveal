@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Color from 'color';
 
-import { Checkbox, Input } from '@cognite/cogs.js';
+import { Checkbox, Body, Input } from '@cognite/cogs.js';
 
 import { CompactColorPicker } from '../../../../UserInterface/Components/CompactColorPicker/CompactColorPicker';
 import { CommonSelectBase } from '../../../../UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
@@ -25,7 +25,9 @@ export const SettingsElement = (props: ISettingsElementProps) => {
   const { config, onPropertyValueChange: onChange, sectionId } = props;
 
   const labelElement = config.name ? (
-    <StyledLabel htmlFor={`chBox-${sectionId}`}>{`${config.name}`}</StyledLabel>
+    <LabelWrapper>
+      <Body level={2}>{`${config.name}`}</Body>{' '}
+    </LabelWrapper>
   ) : null;
 
   // Generate keys for mapped components
@@ -68,6 +70,7 @@ export const SettingsElement = (props: ISettingsElementProps) => {
             onChange={(event) => onChange(id, event.target.value)}
             value={value}
             style={{ padding: '0 5px' }}
+            variant="noBorder"
           />
         );
         break;
@@ -161,7 +164,7 @@ const StyledSection = styled.section`
   margin-bottom: 5px;
 `;
 
-const StyledLabel = styled.label`
+const LabelWrapper = styled.div`
   flex: 1;
   margin-right: 5px;
 `;
