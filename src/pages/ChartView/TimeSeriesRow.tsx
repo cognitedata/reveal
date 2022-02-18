@@ -302,7 +302,7 @@ export default function TimeSeriesRow({
           }
         >
           <StyleButton
-            disabled={!enabled}
+            disabled={!isVisible}
             styleType="Timeseries"
             styleColor={color}
             label="Timeseries"
@@ -310,11 +310,11 @@ export default function TimeSeriesRow({
         </Dropdown>
       </td>
       <td>
-        <SourceItem disabled={!enabled} key={id}>
+        <SourceItem disabled={!isVisible} key={id}>
           {!isFileViewerMode && (
             <SourceStatus onClick={handleStatusIconClick}>
               <StyledStatusIcon
-                type={enabled ? 'EyeShow' : 'EyeHide'}
+                type={isVisible ? 'EyeShow' : 'EyeHide'}
                 title="Toggle visibility"
               />
             </SourceStatus>
@@ -340,12 +340,12 @@ export default function TimeSeriesRow({
       {(isWorkspaceMode || isFileViewerMode) && (
         <>
           <td className="bordered">
-            <SourceItem disabled={!enabled}>
+            <SourceItem disabled={!isVisible}>
               <SourceTag>{linkedAsset?.name}</SourceTag>
             </SourceItem>
           </td>
           <td className="bordered">
-            <SourceItem disabled={!enabled}>
+            <SourceItem disabled={!isVisible}>
               <SourceDescription>
                 <Tooltip content={description}>
                   <>{description}</>
@@ -358,17 +358,17 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <>
           <td className="bordered">
-            <SourceItem disabled={!enabled}>
+            <SourceItem disabled={!isVisible}>
               {formatValueForDisplay(convertUnit(summary?.min))}
             </SourceItem>
           </td>
           <td className="bordered">
-            <SourceItem disabled={!enabled}>
+            <SourceItem disabled={!isVisible}>
               {formatValueForDisplay(convertUnit(summary?.max))}
             </SourceItem>
           </td>
           <td className="bordered">
-            <SourceItem disabled={!enabled}>
+            <SourceItem disabled={!isVisible}>
               {formatValueForDisplay(convertUnit(summary?.mean))}
             </SourceItem>
           </td>
