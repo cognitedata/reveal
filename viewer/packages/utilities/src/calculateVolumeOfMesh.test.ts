@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { calculateVolumeOfMesh } from './calculateVolumeOfMesh';
 
-describe('calculateVolumeOfMesh', () => {
+describe(calculateVolumeOfMesh.name, () => {
   test('Volume of unit box should be 1', () => {
     const testBox = new THREE.BoxGeometry(1, 1, 1, 1, 1, 1);
     const volume = calculateVolumeOfMesh(
