@@ -16,8 +16,8 @@ export const getSortedUniqCurves = (
 ): DepthMeasurementColumn[] => {
   const measurements = flatten(Object.values(data));
   const allColumns = measurements.flatMap((measurement) => measurement.columns);
-  const uniqueColumns = uniqBy(allColumns, (column) => column.measurementType);
-  return sortBy(uniqueColumns, 'measurementType');
+  const uniqueColumns = uniqBy(allColumns, (column) => column.columnExternalId);
+  return sortBy(uniqueColumns, 'column.columnExternalId');
 };
 
 export const filterCurvesByMeasurementTypes = (

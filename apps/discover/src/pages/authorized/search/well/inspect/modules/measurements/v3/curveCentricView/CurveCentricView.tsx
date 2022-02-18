@@ -8,6 +8,7 @@ import isUndefined from 'lodash/isUndefined';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
+import { Loading } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
@@ -167,10 +168,10 @@ export const CurveCentricView: React.FC<Props> = ({
   }, [charts, pressureUnit, measurementReference, userPreferredUnit]);
 
   if (chartRendering) {
-    return <NoDataAvailable />;
+    return <Loading />;
   }
 
-  if (!chartRendering && isEmpty(data)) return <NoDataAvailable />;
+  if (!chartRendering && isEmpty(wellCards)) return <NoDataAvailable />;
 
   return (
     <>

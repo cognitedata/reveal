@@ -49,6 +49,7 @@ describe('Measurement filter utils', () => {
     expect(result).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ columnExternalId: 'SVERTICAL_PRE' }),
+        expect.objectContaining({ columnExternalId: 'SHMIN_SAND_ML_PRE' }),
       ])
     );
     expect(result).not.toEqual(

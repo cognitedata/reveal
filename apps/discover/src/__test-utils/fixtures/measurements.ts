@@ -616,6 +616,11 @@ export const getMockGeomechanicsColumns = (): DepthMeasurementColumn[] => {
       columnExternalId: 'SVERTICAL_PRE',
       unit: 'psi',
     },
+    {
+      measurementType: 'geomechanics pre drill',
+      columnExternalId: 'SHMIN_SAND_ML_PRE',
+      unit: 'psi',
+    },
   ];
 };
 

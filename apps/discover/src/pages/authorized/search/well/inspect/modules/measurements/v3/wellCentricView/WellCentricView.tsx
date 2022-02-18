@@ -155,7 +155,7 @@ export const WellCentricView: React.FC<Props> = ({
     return <Loading />;
   }
 
-  if (!chartRendering && isEmpty(data)) return <NoDataAvailable />;
+  if (!chartRendering && isEmpty(wellboreChartData)) return <NoDataAvailable />;
 
   return (
     <>
