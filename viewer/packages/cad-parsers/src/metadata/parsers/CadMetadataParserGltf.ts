@@ -41,17 +41,27 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
 
 function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata {
   const bb = metadata.boundingBox;
-  const min_x = bb.min.x;
-  const min_y = bb.min.y;
-  const min_z = bb.min.z;
-  const max_x = bb.max.x;
-  const max_y = bb.max.y;
-  const max_z = bb.max.z;
+  const minX = bb.min.x;
+  const minY = bb.min.y;
+  const minZ = bb.min.z;
+  const maxX = bb.max.x;
+  const maxY = bb.max.y;
+  const maxZ = bb.max.z;
+
+  const gbb = metadata.geometryBoundingBox ?? metadata.boundingBox;
+  const gMinX = gbb.min.x;
+  const gMinY = gbb.min.y;
+  const gMinZ = gbb.min.z;
+  const gMaxX = gbb.max.x;
+  const gMaxY = gbb.max.y;
+  const gMaxZ = gbb.max.z;
+
   return {
     id: metadata.id,
     path: metadata.path,
     depth: metadata.depth,
-    bounds: new THREE.Box3(new THREE.Vector3(min_x, min_y, min_z), new THREE.Vector3(max_x, max_y, max_z)),
+    bounds: new THREE.Box3(new THREE.Vector3(minX, minY, minZ), new THREE.Vector3(maxX, maxY, maxZ)),
+    geometryBounds: new THREE.Box3(new THREE.Vector3(gMinX, gMinY, gMinZ), new THREE.Vector3(gMaxX, gMaxY, gMaxZ)),
     estimatedDrawCallCount: metadata.estimatedDrawCallCount,
     estimatedRenderCost: metadata.estimatedTriangleCount || 0,
     downloadSize: metadata.downloadSize || 0,

@@ -38,6 +38,19 @@ export type BaseSceneSectorMetadata = {
       z: number;
     };
   };
+
+  readonly geometryBoundingBox?: {
+    readonly min: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    readonly max: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
 };
 
 export type GltfSceneSectorMetadata = {
