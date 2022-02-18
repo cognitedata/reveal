@@ -4,7 +4,7 @@ import { SchemaVisualizer } from './SchemaVisualizer';
 import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 
 export default {
-  title: 'Components/Schema Visualizer',
+  title: 'Schema/Schema Visualizer',
   component: SchemaVisualizer,
   decorators: [
     (storyFn: () => React.ReactNode) => (

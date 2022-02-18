@@ -4,7 +4,7 @@ import { SchemaList } from './SchemaList';
 import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 
 export default {
-  title: 'Components/Schema List',
+  title: 'Schema/Schema List',
   component: SchemaList,
   decorators: [
     (storyFn: () => React.ReactNode) => (

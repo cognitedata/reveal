@@ -5,7 +5,7 @@ import {
 import { SplitPanelLayout } from './SplitPanelLayout';
 
 export default {
-  title: 'Layouts / SplitPanelLayout',
+  title: 'Basic components/SplitPanelLayout',
   component: SplitPanelLayout,
 };
 

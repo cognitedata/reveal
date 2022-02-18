@@ -4,7 +4,7 @@ import { GraphqlCodeEditor } from './GraphqlCodeEditor';
 import { mockComplexGraphqlModel } from '@platypus-app/mocks/graphqlModels';
 
 export default {
-  title: 'Components/Graphql Code Editor',
+  title: 'Schema/Graphql Code Editor',
   component: GraphqlCodeEditor,
   decorators: [
     (storyFn: () => React.ReactNode) => (

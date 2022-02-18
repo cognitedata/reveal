@@ -6,7 +6,7 @@ import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 import { getObjectTypes } from '../../utils/graphql-utils';
 
 export default {
-  title: 'Components/Schema Type Preview',
+  title: 'Schema/Schema Type Preview',
   component: SchemaTypePreview,
   decorators: [
     (storyFn: () => React.ReactNode) => (

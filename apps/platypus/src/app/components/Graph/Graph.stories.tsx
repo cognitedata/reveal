@@ -22,7 +22,7 @@ const links = [
 ];
 
 export default {
-  title: 'Components/Graph',
+  title: 'Basic Components/Graph',
   component: Graph,
   decorators: [
     (storyFn: () => React.ReactNode) => (

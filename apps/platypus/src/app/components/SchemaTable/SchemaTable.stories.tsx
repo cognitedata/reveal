@@ -6,7 +6,7 @@ import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 import { getObjectTypes } from '../../utils/graphql-utils';
 
 export default {
-  title: 'Components/Schema Table',
+  title: 'Schema/Schema Table',
   component: SchemaTable,
   decorators: [
     (storyFn: () => React.ReactNode) => (

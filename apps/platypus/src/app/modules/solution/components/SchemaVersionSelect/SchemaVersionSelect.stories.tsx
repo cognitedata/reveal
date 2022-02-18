@@ -11,7 +11,7 @@ import { SchemaVersionSelect } from './SchemaVersionSelect';
 import { StyledSelectContainer } from './elements';
 
 export default {
-  title: 'Platypus / SchemaVersionSelect',
+  title: 'Schema/SchemaVersionSelect',
   component: SchemaVersionSelect,
 };
 

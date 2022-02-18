@@ -11,7 +11,7 @@ import {
 import { ModalDialog } from './ModalDialog';
 
 export default {
-  title: 'Platypus / ModalDialog',
+  title: 'Basic components/ModalDialog',
   component: ModalDialog,
 };
 

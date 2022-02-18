@@ -20,7 +20,7 @@ const BasicPlaceholderTemplate: Story<typeof BasicPlaceholder> = (
 );
 
 export default {
-  title: 'Platypus',
+  title: 'Basic components/BasicPlaceholder',
   component: BasicPlaceholder,
   decorators: [
     (storyFn: () => React.ReactNode) => <Wrapper>{storyFn()}</Wrapper>,

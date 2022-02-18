@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 `;
 
 export default {
-  title: 'Platypus / Solutions /SolutionsList',
+  title: 'Solutions/SolutionsList',
 };
 
 export const Base = () => {

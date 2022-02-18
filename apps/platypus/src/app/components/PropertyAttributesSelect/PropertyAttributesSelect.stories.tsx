@@ -6,7 +6,7 @@ import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 import { getObjectTypes } from '../../utils/graphql-utils';
 
 export default {
-  title: 'Components/Property Attribute Select',
+  title: 'Schema/Property Attribute Select',
   component: PropertyAttributesSelect,
   decorators: [
     (storyFn: () => React.ReactNode) => (

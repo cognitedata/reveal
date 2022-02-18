@@ -17,7 +17,7 @@ const mockFetcher = createGraphiQLFetcher({
 });
 
 export default {
-  title: 'Platypus / QueryExplorer',
+  title: 'Schema/QueryExplorer',
   component: QueryExplorer,
 };
 

@@ -4,7 +4,7 @@ import { SchemaPreview } from './SchemaPreview';
 import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 
 export default {
-  title: 'Components/Schema Preview',
+  title: 'Schema/Schema Preview',
   component: SchemaPreview,
   decorators: [
     (storyFn: () => React.ReactNode) => (

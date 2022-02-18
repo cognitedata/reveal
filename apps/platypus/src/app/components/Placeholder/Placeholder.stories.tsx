@@ -3,7 +3,7 @@ import { Story } from '@storybook/react';
 import { Placeholder } from './Placeholder';
 
 export default {
-  title: 'Platypus/Placeholder',
+  title: 'Basic components/Placeholder',
   component: Placeholder,
   decorators: [
     (storyFn: () => React.ReactNode) => (

@@ -3,7 +3,7 @@ import { Wrapper } from '@platypus-app/components/Styles/storybook';
 import { action } from '@storybook/addon-actions';
 
 export default {
-  title: 'Components / BreakingChangesModal',
+  title: 'Basic Components/BreakingChangesModal',
   component: BreakingChangesModal,
 };
 

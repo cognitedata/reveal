@@ -5,7 +5,7 @@ import { Button } from '@cognite/cogs.js';
 // import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 
 export default {
-  title: 'Platypus/PageToolbar',
+  title: 'Basic components/PageToolbar',
   component: PageToolbar,
   decorators: [(storyFn: () => React.ReactNode) => <div>{storyFn()}</div>],
 };

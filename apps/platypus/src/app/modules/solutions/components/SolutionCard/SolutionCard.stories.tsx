@@ -11,7 +11,7 @@ import { Solutions } from './solutions.mock';
 import { SolutionCard } from './SolutionCard';
 
 export default {
-  title: 'Platypus / SolutionCard',
+  title: 'Solutions/SolutionCard',
   component: SolutionCard,
 };
 
