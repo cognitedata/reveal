@@ -1,7 +1,9 @@
-import { base64Decode, flattenNestedObjArray } from '.';
+import { base64Decode } from '.';
+import { Collection } from '../common/collection';
 import {
   CdfApiConfig,
   CdfApiEndpointConfig,
+  CdfResourceObject,
   FilterMode,
   MockData,
 } from '../types';
@@ -144,4 +146,36 @@ export const mapRequestBodyToQueryParams = (
   }
 
   return filters;
+};
+
+export const findChildrenFromTreeHierarchy = (
+  collection: Collection<CdfResourceObject>,
+  idsToFind: string[],
+  parentNodeIdProperty = 'externalId',
+  childNodeProperty = 'parentExternalId'
+): Collection<CdfResourceObject> => {
+  let filteredCollection = Collection.from<CdfResourceObject>([]);
+
+  const filteredNodes = collection.where((x) =>
+    idsToFind.includes(x[childNodeProperty] as string)
+  );
+
+  if (filteredNodes.count()) {
+    filteredCollection = filteredCollection.concat(filteredNodes);
+
+    const filteredParentIds = filteredCollection
+      .select((x) => x[parentNodeIdProperty].toString())
+      .toArray();
+
+    filteredCollection = filteredCollection.concat(
+      findChildrenFromTreeHierarchy(
+        collection,
+        filteredParentIds,
+        parentNodeIdProperty,
+        childNodeProperty
+      )
+    );
+  }
+
+  return filteredCollection;
 };

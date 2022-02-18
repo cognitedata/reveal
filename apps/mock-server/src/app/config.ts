@@ -8,12 +8,17 @@ export const config = {
     'templategroups',
     'templates',
   ],
-  builtInTypes: ['Asset'],
+  builtInTypes: {
+    Asset: 'assets',
+    TimeSeries: 'timeseries',
+    SyntheticTimeSeries: 'timeseries',
+  },
   whitelistedEndpointEndings: ['/list', '/search', '/byids'],
   ignoreUrlPatterns: [
     '/templategroups/upsert',
     '/templategroups/.*/versions/upsert',
     '/templategroups/.*/versions/.*/graphql',
     '/schema/graphql',
+    '/timeseries/data/list',
   ],
 };

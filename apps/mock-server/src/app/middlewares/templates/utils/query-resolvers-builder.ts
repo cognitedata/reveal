@@ -1,9 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
 import { CdfDatabaseService } from '../../../common/cdf-database.service';
 import { config } from '../../../config';
-import { CdfMockDatabase } from '../../../types';
-import { filterCollection, getType } from '../../../utils';
+import { CdfMockDatabase, CdfResourceObject } from '../../../types';
+import {
+  filterCollection,
+  flattenNestedObjArray,
+  getType,
+  objToFilter,
+} from '../../../utils';
 import { camelize } from '../../../utils/text-utils';
+import {
+  assetFieldsResolver,
+  synteticTimeSeriesFieldsResolver,
+  timeSeriesFieldsResolver,
+} from './built-in-types-resolvers';
 
 export interface BuildQueryResolversParams {
   version: number;
@@ -15,36 +26,29 @@ export interface BuildQueryResolversParams {
 export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
   const resolvers = {
     Query: {},
+    Asset: assetFieldsResolver(params.db),
+    TimeSeries: timeSeriesFieldsResolver(params.db),
+    SyntheticTimeSeries: synteticTimeSeriesFieldsResolver(params.db),
   };
+
+  const store = CdfDatabaseService.from(params.db, 'templates');
+
+  const templateDb = store.find({
+    templategroups_id: params.templategroups_id,
+    version: params.version,
+  });
 
   params.tablesList.forEach((table) => {
     resolvers.Query[`${camelize(table)}Query`] = (prm, filterParams) => {
-      const store = CdfDatabaseService.from(params.db, 'templates');
-
-      const template = store.find({
-        templategroups_id: params.templategroups_id,
-        version: params.version,
+      const items = fetchAndQueryData({
+        globalDb: params.db,
+        templateDb,
+        isBuiltInType: false,
+        schemaType: table,
+        isFetchingObject: false,
+        filterParams: filterParams,
+        parsedSchema: params.parsedSchema,
       });
-      const data = template.db[table];
-
-      if (!data) {
-        console.warn(
-          'No data found for',
-          params.templategroups_id,
-          params.version,
-          data
-        );
-        return { items: [] };
-      }
-
-      const filters =
-        filterParams && filterParams.filter ? filterParams.filter : {};
-
-      let items = filterCollection(data, filters, params.parsedSchema);
-
-      if (filterParams.limit) {
-        items = (items as any[]).slice(0, filterParams.limit);
-      }
 
       return {
         items,
@@ -54,13 +58,13 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
     const tableResolver = {};
 
-    const builtInTypes = config.builtInTypes;
+    const builtInTypes = Object.keys(config.builtInTypes);
 
     (
       params.parsedSchema['__schema'].types.find(
         (type) => type.name === table
       ) as IntrospectionObjectType
-    ).fields.map((field) => {
+    ).fields.forEach((field) => {
       const mutedKind =
         field.type.kind === 'NON_NULL' ? field.type.ofType : field.type;
       const mutedType = field.type as any;
@@ -69,28 +73,38 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
         ? getType(mutedType.ofType)
         : (field.type as any).name;
 
-      if (fieldKind === 'OBJECT' && builtInTypes.includes(fieldSchemaType)) {
-        tableResolver[field.name] = (ref, prms) => {
-          const storeKey = fieldSchemaType.toLowerCase() + 's';
-          const builtInTypeStore = CdfDatabaseService.from(params.db, storeKey);
-          return builtInTypeStore.getState()[0];
+      const fieldName = field.name;
+      const isBuiltInType = builtInTypes.includes(fieldSchemaType);
+
+      if (fieldKind === 'OBJECT') {
+        tableResolver[fieldName] = (ref) => {
+          const results = fetchAndQueryData({
+            globalDb: params.db,
+            templateDb,
+            isBuiltInType,
+            refObj: ref,
+            schemaType: fieldSchemaType,
+            schemaFieldName: fieldName,
+            isFetchingObject: true,
+          });
+          return results[0];
         };
       }
-      if (fieldKind === 'LIST' && builtInTypes.includes(fieldSchemaType)) {
+
+      if (fieldKind === 'LIST') {
         tableResolver[field.name] = (ref, prms) => {
-          const storeKey = fieldSchemaType.toLowerCase() + 's';
-          const builtInTypeStore = CdfDatabaseService.from(params.db, storeKey);
-          return builtInTypeStore.getState();
+          return fetchAndQueryData({
+            globalDb: params.db,
+            templateDb,
+            isBuiltInType,
+            refObj: ref,
+            schemaType: fieldSchemaType,
+            schemaFieldName: fieldName,
+            isFetchingObject: false,
+            filterParams: prms,
+          });
         };
       }
-      // if (
-      //   field.type.kind === 'LIST' &&
-      //   builtInTypes.includes(field.type.ofType))
-      // ) {
-      //   return `${field.name}: _ConditionalOpNumber`;
-      // } else if (field.type.kind === 'SCALAR') {
-      //   return `${field.name}: ${field.type.name}`;
-      // }
     });
 
     resolvers[table] = tableResolver;
@@ -98,3 +112,61 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
   return resolvers;
 };
+
+interface FetchAndQueryDataProps {
+  globalDb: CdfMockDatabase;
+  templateDb: CdfResourceObject;
+  schemaType: string;
+  schemaFieldName?: string;
+  refObj?: unknown;
+  isBuiltInType: boolean;
+  isFetchingObject: boolean;
+  filterParams?: any;
+  parsedSchema?: IntrospectionQuery;
+}
+function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
+  const {
+    globalDb,
+    templateDb,
+    isBuiltInType,
+    schemaType,
+    refObj,
+    schemaFieldName,
+    isFetchingObject,
+    filterParams,
+    parsedSchema,
+  } = props;
+  const storeKey = isBuiltInType ? config.builtInTypes[schemaType] : schemaType;
+
+  const dataStore = isBuiltInType
+    ? CdfDatabaseService.from(globalDb, storeKey).getState()
+    : templateDb.db[storeKey];
+
+  let data = dataStore;
+
+  if (refObj) {
+    const relation = refObj[schemaFieldName];
+    const relationParams = isFetchingObject
+      ? objToFilter(relation)
+      : objToFilter(flattenNestedObjArray(relation, false));
+
+    data = filterCollection(data, relationParams) as CdfResourceObject[];
+  }
+
+  if (filterParams) {
+    const filters =
+      filterParams && filterParams.filter ? filterParams.filter : {};
+
+    data = filterCollection(
+      data,
+      filters as any,
+      parsedSchema
+    ) as CdfResourceObject[];
+
+    if (filterParams.limit) {
+      data = data.slice(0, filterParams.limit);
+    }
+  }
+
+  return data;
+}

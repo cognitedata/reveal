@@ -8,18 +8,38 @@ It is based on `json-server`, but customized to mock the cdf API's and keeps the
 
 `This is a highly experimental mock server and is meant to enable devs to be able to run the app locally without waiting for cdf to be 'ready'. Please use it with care, as we issue no guarantees that it won't break. Have fun!`
 
+# Supported features
+
+- Custom mock data - support for loading mock data from external files.
+  - Loading data from JS file
+  * `Note: Loading custom mock data is supported only if absolute path is provided because the package is installed globally`
+
+* Basic CDF resources - support for fetching data for basic CDF resources like assets, events, datasets..etc.
+  - Basic filtering and pagination is supported
+  - Creating and deleting resources has limited support (only basic cases are covered)
+  - Files are not supported yet
+  - Timeseries have limited support - only basic filtering is supported at the moment, aggregation and more advanced features should come soon
+* Templates - support for loading custom templates schema and data
+  - Adding new schema via API is supported
+  - Querying template groups is supported
+  - Quering GraphQL endpoints for template group is supported
+    - Pagination is not yet supported
+    - Files quering is not supported
+    - Timeseries have limited support - only basic queries
+  - Relations between custom types and built in types are supported
+
 # Getting started
 
 Install the package
 
 ```
-npm install @cognite/cdf-mock-server
+npm install -g @cognite/cdf-mock-server
 ```
 
 Or
 
 ```
-yarn add @cognite/cdf-mock-server
+yarn global add @cognite/cdf-mock-server
 ```
 
 Create a `db.json` with some data.
@@ -112,7 +132,7 @@ Create a `db.json` with some data.
     ],
     "templategroups": [
         {
-            "externalId": "mock-schema",
+            "externalId": "posts-examble",
             "description": "",
             "owners": [],
             "createdTime": 1638531613197,
@@ -121,39 +141,70 @@ Create a `db.json` with some data.
     ],
     "templates": [
         {
-            "version": 1,
-            "schema": "type Person @template {\\n  firstName: String\\n  lastName: String\\n  email: String\\n  age: Long\\n}\\n\\ntype Product @template {\\n  name: String\\n  price: Float\\n  image: String\\n  description: String\\n}\\n\\ntype Category @template {\\n  name: String\\n  products: [Product]\\n}\\n",
-            "createdTime": 1639476522639,
-            "lastUpdatedTime": 1639477614908,
-            "templategroups_id": "mock-schema",
-            "db": {
-                "Person": [
-                    {
-                        "id": 1,
-                        "firstName": "John",
-                        "lastName": "Doe",
-                        "email": "john.doe@email.com",
-                        "age": 30
-                    }
-                ],
-                "Product": [
-                    {
-                        "id": 1,
-                        "name": "iPhone",
-                        "description": "The iPhone is a line of smartphones designed and marketed by Apple Inc.",
-                        "price": 999,
-                        "image": "https://picsum.photos/200/300",
-                        "category_id": 1
-                    }
-                ],
-                "Category": [
-                    {
-                        "id": 1,
-                        "name": "Electronics"
-                    }
-                ]
+        "version": 1,
+        "createdTime": 1639476522639,
+        "lastUpdatedTime": 1639477614908,
+        "templategroups_id": "posts-examble",
+        "externalId": "posts-examble",
+        "schema": "type Post @template {\n    id: Int!\n    title: String!\n    views: Int!\n    user: User\n    comments: [Comment]\n}\n\ntype User @template {\n    id: Int!\n    name: String!\n}\n\ntype Comment @template {\n    id: Int!\n    body: String!\n    date: Int!\n    post: Post\n}",
+        "db": {
+          "Post": [
+            {
+              "id": 1,
+              "title": "Lorem Ipsum",
+              "views": 254,
+              "user": {
+                "id": 123
+              },
+              "comments": [
+                {
+                  "id": 1
+                },
+                {
+                  "id": 2
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "title": "Sic Dolor amet",
+              "views": 65,
+              "user": {
+                "id": 456
+              },
+              "comments": []
             }
+          ],
+          "User": [
+            {
+              "id": 123,
+              "name": "John Doe"
+            },
+            {
+              "id": 456,
+              "name": "Jane Doe"
+            }
+          ],
+          "Comment": [
+            {
+              "id": 987,
+              "post": {
+                "id": 1
+              },
+              "body": "Consectetur adipiscing elit",
+              "date": 1639477614908
+            },
+            {
+              "id": 995,
+              "post": {
+                "id": 1
+              },
+              "body": "Nam molestie pellentesque dui",
+              "date": 1639477614908
+            }
+          ]
         }
+      }
     ]
 }
 ```
@@ -163,7 +214,7 @@ Create a `db.json` with some data.
 Start the server
 
 ```
-cdf-mock-server db.json
+cdf-mock-server /absolute/path/to/db.json
 ```
 
 Open `http://localhost:4002` and you should see that the server is up and running.
@@ -294,11 +345,22 @@ Example graphql query
 
 ```
 {
-  personQuery {
+  postQuery(filter: { title: { eq: "Sic Dolor amet"} }) {
     items {
-      firstName
-      lastName
-      email
+      id
+      title
+      views
+      user {
+        id
+        name
+      }
+      comments {
+       	body
+        post {
+          title
+          id
+        }
+      }
     }
   }
 }

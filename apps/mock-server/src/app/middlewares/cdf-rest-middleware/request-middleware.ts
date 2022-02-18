@@ -1,6 +1,10 @@
 import { Request } from 'express';
 import { CdfApiConfig, CdfMockDatabase } from '../../types';
-import { getConfigForUrl, getEndpointEnding } from '../../utils';
+import {
+  getConfigForUrl,
+  getEndpointEnding,
+  shouldUrlBeIgnored,
+} from '../../utils';
 import {
   isCdfCreateRequest,
   isCdfDeleteRequest,
@@ -32,15 +36,17 @@ export const requestMiddleware = (
     ) {
       // if we have handler, allow the handler to do the job
       endpointConfig.handler(db, req, res);
-    } else {
+    } else if (!shouldUrlBeIgnored(req.url)) {
       // CDF SDK sends almost all requests as POST
       if (isCdfFetchRequest(req, endpointEnding)) {
-        transformFetchRequest(req, config, endpointEnding);
+        transformFetchRequest(req, db, config, endpointEnding);
       } else if (isCdfDeleteRequest(req)) {
         transformDeleteRequest(req, db);
       } else if (isCdfCreateRequest(req)) {
         transformPostCreateRequest(req);
       }
+      next();
+    } else {
       next();
     }
   };

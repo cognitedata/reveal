@@ -1,4 +1,5 @@
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
+import { getType } from '../../../utils';
 import { camelize } from '../../../utils/text-utils';
 
 export class TemplatesSchemaBuilder {
@@ -154,18 +155,26 @@ type File {
         ) as IntrospectionObjectType
       ).fields
         .map((field) => {
-          if (field.type.kind === 'SCALAR' && field.type.name === 'String') {
+          const mutedKind =
+            field.type.kind === 'NON_NULL' ? field.type.ofType : field.type;
+          const mutedType = field.type as any;
+          const fieldKind = mutedKind.kind;
+          const fieldSchemaType = mutedType.ofType
+            ? getType(mutedType.ofType)
+            : (field.type as any).name;
+
+          if (fieldKind === 'SCALAR' && fieldSchemaType === 'String') {
             return `${field.name}: _ConditionalOpString`;
           }
           if (
-            field.type.kind === 'SCALAR' &&
-            (field.type.name === 'Float' ||
-              field.type.name === 'Int' ||
-              field.type.name === 'Float')
+            fieldKind === 'SCALAR' &&
+            (fieldSchemaType === 'Float' ||
+              fieldSchemaType === 'Int' ||
+              fieldSchemaType === 'Float')
           ) {
             return `${field.name}: _ConditionalOpNumber`;
-          } else if (field.type.kind === 'SCALAR') {
-            return `${field.name}: ${field.type.name}`;
+          } else if (fieldKind === 'SCALAR') {
+            return `${field.name}: ${fieldSchemaType}`;
           }
           return '';
         })

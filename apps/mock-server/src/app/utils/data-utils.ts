@@ -28,7 +28,7 @@ export const base64Decode = (input: string) =>
  * Input: [ { id: '1'}, {'id': '2'}]
  * Output: { 'id': ['1','2']}
  */
-export const flattenNestedObjArray = (reqBody: MockData[]) => {
+export const flattenNestedObjArray = (reqBody: MockData[], asString = true) => {
   const body = {};
   reqBody.forEach((item) => {
     const objKey = Object.keys(item)[0];
@@ -36,7 +36,7 @@ export const flattenNestedObjArray = (reqBody: MockData[]) => {
     if (!body.hasOwnProperty(objKey)) {
       body[objKey] = [];
     }
-    body[objKey].push(item[objKey].toString());
+    body[objKey].push(asString ? item[objKey].toString() : item[objKey]);
   });
 
   return body;
@@ -60,7 +60,7 @@ export const flattenObjAsArray = (reqBody: MockData[]) => {
 export function filterCollection(
   data: CdfResourceObject[],
   reqFilter: KeyValuePair,
-  parsedSchema: IntrospectionQuery,
+  parsedSchema?: IntrospectionQuery,
   asList = false
 ) {
   const dataReq = data;
@@ -76,13 +76,15 @@ export function filterCollection(
       );
     });
 
-  // eslint-disable-next-line no-prototype-builtins
-  if (filterKeys.includes('_or')) {
-    (filters['_or'] as any).forEach((orFilter) => {
-      collection = collection.concat(
-        filterCollection(dataReq, orFilter, parsedSchema, true) as any
-      );
-    });
+  if (parsedSchema) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (filterKeys.includes('_or')) {
+      (filters['_or'] as any).forEach((orFilter) => {
+        collection = collection.concat(
+          filterCollection(dataReq, orFilter, parsedSchema, true) as any
+        );
+      });
+    }
   }
 
   return asList ? collection.toCollection() : collection.toArray();
@@ -140,4 +142,15 @@ const filterFunction = (dbValue, filter) => {
 
   // eslint-disable-next-line eqeqeq
   return filterValue == dbValue.toString();
+};
+
+export const objToFilter = (obj) => {
+  const filters = {};
+  Object.keys(obj).forEach((key) => {
+    filters[key] = {
+      eq: obj[key],
+    };
+  });
+
+  return filters;
 };
