@@ -367,10 +367,10 @@ const getCalculationTemplateSchema = ({
             .defined()
             .test(
               'less-than-validation-window',
-              `Schedule interval must be less than validation window (${validationWindow} minutes)`,
+              `Schedule interval must be greater than or equal to validation window (${validationWindow} minutes)`,
               (value) =>
                 !!(
-                  value && getScheduleRepeat(value).minutes <= validationWindow
+                  value && getScheduleRepeat(value).minutes >= validationWindow
                 )
             )
             .test(
