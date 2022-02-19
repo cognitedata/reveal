@@ -196,3 +196,9 @@ export const adaptLocalEpochToUTC = (dateInEpoch: number) => {
     dateInEpoch - offsetInMinutes * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND
   );
 };
+
+export const adaptLocalDateToISOString = (date: Date) => {
+  return moment(adaptLocalEpochToUTC(dateToEpoch(date)))
+    .toDate()
+    .toISOString();
+};

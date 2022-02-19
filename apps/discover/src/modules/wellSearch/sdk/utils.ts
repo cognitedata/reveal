@@ -43,6 +43,7 @@ import {
 } from '@cognite/sdk-wells-v3';
 
 import { EMPTY_ARRAY } from '../../../constants/empty';
+import { adaptLocalDateToISOString } from '../../../utils/date';
 import { CommonWellFilter } from '../types';
 
 export const DEFAULT_DOUBLE_WITH_UNIT: DoubleWithUnit = {
@@ -173,8 +174,12 @@ export const mapV2toV3WellFilter = (
     sources: wellFilter.sources,
     waterDepth: wellFilter.waterDepth,
     spudDate: undefinedIfAllKeysUndefined({
-      min: wellFilter.spudDate?.min?.toISOString(),
-      max: wellFilter.spudDate?.max?.toISOString(),
+      min:
+        wellFilter.spudDate?.min &&
+        adaptLocalDateToISOString(wellFilter.spudDate.min),
+      max:
+        wellFilter.spudDate?.max &&
+        adaptLocalDateToISOString(wellFilter.spudDate.max),
     }),
     polygon: mapV2toV3PolygonFilter(wellFilter.polygon),
     trajectories: undefinedIfAllKeysUndefined({

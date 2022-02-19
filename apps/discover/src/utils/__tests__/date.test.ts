@@ -1,5 +1,6 @@
 import {
   adaptLocalEpochToUTC,
+  adaptLocalDateToISOString,
   CHART_AXIS_LABEL_DATE_FORMAT,
   dateToEpoch,
   DOCUMENT_DATE_FORMAT,
@@ -177,6 +178,19 @@ describe('date helpers', () => {
           const utc = adaptLocalEpochToUTC(0);
           const offset = new Date().getTimezoneOffset();
           expect(utc).toEqual(0 - offset * 60 * 1000);
+        });
+      });
+      describe('adaptLocalDateToISOString', () => {
+        test('should adapt local date to iso string', () => {
+          const currentDate = new Date();
+          const isoString = adaptLocalDateToISOString(currentDate);
+          const offset = currentDate.getTimezoneOffset();
+
+          expect(
+            new Date(
+              dateToEpoch(currentDate) - offset * 60 * 1000
+            ).toISOString()
+          ).toEqual(isoString);
         });
       });
       describe('isValidDate', () => {
