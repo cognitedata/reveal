@@ -6,9 +6,9 @@ export const calculateSummaryStats = (summary: ProcessSummary) => {
       text: 'total files processed',
       value: summary.totalProcessed,
     },
-    filesWithExif: {
-      text: 'files with exif',
-      value: summary.totalWithExif,
+    filesGeolocated: {
+      text: 'geolocated files',
+      value: summary.totalGeolocated,
     },
     filesUserReviewed: {
       text: 'user-reviewed files',

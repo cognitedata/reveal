@@ -5,7 +5,7 @@ export type FileAnnotationStats = {
 };
 export type ProcessSummary = {
   totalProcessed: number;
-  totalWithExif: number;
+  totalGeolocated: number;
   totalUserReviewedFiles: number;
   totalModelDetected: number;
   totalUnresolvedGDPR: number;

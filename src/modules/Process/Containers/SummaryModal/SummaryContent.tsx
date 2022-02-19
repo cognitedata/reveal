@@ -109,12 +109,12 @@ export default function SummaryContent() {
                 </StatsCarouselRight>
               )}
 
-              {statView === 'filesWithExif' && (
+              {statView === 'filesGeolocated' && (
                 <StatsCarouselRight key={statView}>
                   <RenderFileIcons
                     length={stats[statView].value}
                     icon={FileWithExifIcon}
-                    iconAlt="FileWithExifIcon"
+                    iconAlt="FileWithGeolocation"
                     keyString={statView}
                   />
                   {stats[statView].value < stats.totalFiles.value && (
@@ -122,7 +122,7 @@ export default function SummaryContent() {
                       length={stats.totalFiles.value - stats[statView].value}
                       icon={FileBland}
                       iconAlt="FileBland"
-                      keyString="filesWithoutExif"
+                      keyString="fileWithoutGeolocation"
                     />
                   )}
                 </StatsCarouselRight>

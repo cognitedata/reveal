@@ -205,8 +205,8 @@ export const selectProcessSummary = createSelector(
   (state: RootState) => annotatedFilesById(state.annotationReducer),
   (state: RootState) => annotationsById(state.annotationReducer),
   (processFiles, allAnnotatedFiles, allAnnotations) => {
-    // all files with exif
-    const totalFilesWithExif = processFiles.filter(
+    // all files with geolocation
+    const totalFilesWithGeolocation = processFiles.filter(
       (file) => !!file?.geoLocation
     );
 
@@ -294,7 +294,7 @@ export const selectProcessSummary = createSelector(
 
     return {
       totalProcessed: processFiles.length,
-      totalWithExif: totalFilesWithExif.length,
+      totalGeolocated: totalFilesWithGeolocation.length,
       totalUserReviewedFiles: totalUserReviewedFiles.length,
       totalModelDetected: totalFilesWithTagsTextOrObject.length,
       totalUnresolvedGDPR: totalFilesWithUnresolvedGDPR.length,

@@ -81,7 +81,7 @@ describe('Test selectProcessSummary', () => {
       }
     );
     expect(selectProcessSummary(rootState).totalProcessed).toEqual(4);
-    expect(selectProcessSummary(rootState).totalWithExif).toEqual(2);
+    expect(selectProcessSummary(rootState).totalGeolocated).toEqual(2);
     expect(selectProcessSummary(rootState).totalUserReviewedFiles).toEqual(3);
     expect(selectProcessSummary(rootState).totalModelDetected).toEqual(3);
     expect(selectProcessSummary(rootState).fileCountsByAnnotationType).toEqual({
@@ -113,7 +113,7 @@ describe('Test selectProcessSummary', () => {
       }
     );
     expect(selectProcessSummary(rootState).totalProcessed).toEqual(2);
-    expect(selectProcessSummary(rootState).totalWithExif).toEqual(2);
+    expect(selectProcessSummary(rootState).totalGeolocated).toEqual(2);
     expect(selectProcessSummary(rootState).totalUserReviewedFiles).toEqual(0);
     expect(selectProcessSummary(rootState).totalModelDetected).toEqual(1);
     expect(selectProcessSummary(rootState).fileCountsByAnnotationType).toEqual({
@@ -160,7 +160,7 @@ describe('Test selectProcessSummary', () => {
       }
     );
     expect(selectProcessSummary(rootState).totalProcessed).toEqual(5);
-    expect(selectProcessSummary(rootState).totalWithExif).toEqual(2);
+    expect(selectProcessSummary(rootState).totalGeolocated).toEqual(2);
     expect(selectProcessSummary(rootState).totalUserReviewedFiles).toEqual(3);
     expect(selectProcessSummary(rootState).totalModelDetected).toEqual(4);
     expect(selectProcessSummary(rootState).fileCountsByAnnotationType).toEqual({
@@ -197,7 +197,7 @@ describe('Test selectProcessSummary', () => {
       }
     );
     expect(selectProcessSummary(rootState).totalProcessed).toEqual(3);
-    expect(selectProcessSummary(rootState).totalWithExif).toEqual(2);
+    expect(selectProcessSummary(rootState).totalGeolocated).toEqual(2);
     expect(selectProcessSummary(rootState).totalUserReviewedFiles).toEqual(1);
     expect(selectProcessSummary(rootState).totalModelDetected).toEqual(3);
     expect(selectProcessSummary(rootState).fileCountsByAnnotationType).toEqual({
@@ -217,7 +217,7 @@ describe('Test selectProcessSummary', () => {
     const fileIds: number[] = [];
     const rootState = getRootState(fileIds, {}, {});
     expect(selectProcessSummary(rootState).totalProcessed).toEqual(0);
-    expect(selectProcessSummary(rootState).totalWithExif).toEqual(0);
+    expect(selectProcessSummary(rootState).totalGeolocated).toEqual(0);
     expect(selectProcessSummary(rootState).totalUserReviewedFiles).toEqual(0);
     expect(selectProcessSummary(rootState).totalModelDetected).toEqual(0);
     expect(selectProcessSummary(rootState).fileCountsByAnnotationType).toEqual({
@@ -238,7 +238,7 @@ describe('Test selectProcessSummary', () => {
     const fileIds = [1, 2, 3];
     const rootState = getRootState(fileIds, {}, {});
     expect(selectProcessSummary(rootState).totalProcessed).toEqual(3);
-    expect(selectProcessSummary(rootState).totalWithExif).toEqual(2);
+    expect(selectProcessSummary(rootState).totalGeolocated).toEqual(2);
     expect(selectProcessSummary(rootState).totalUserReviewedFiles).toEqual(0);
     expect(selectProcessSummary(rootState).totalModelDetected).toEqual(0);
     expect(

@@ -61,7 +61,7 @@ describe('Test calculateSummaryStats', () => {
   it('should return counts correctly when available', () => {
     const dummyStateSummary: ProcessSummary = {
       totalProcessed: 3,
-      totalWithExif: 1,
+      totalGeolocated: 1,
       totalUserReviewedFiles: 1,
       totalModelDetected: 3,
       totalUnresolvedGDPR: 1,
@@ -82,9 +82,9 @@ describe('Test calculateSummaryStats', () => {
         text: 'total files processed',
         value: dummyStateSummary.totalProcessed,
       },
-      filesWithExif: {
-        text: 'files with exif',
-        value: dummyStateSummary.totalWithExif,
+      filesGeolocated: {
+        text: 'geolocated files',
+        value: dummyStateSummary.totalGeolocated,
       },
       filesUserReviewed: {
         text: 'user-reviewed files',
@@ -119,7 +119,7 @@ describe('Test calculateSummaryStats', () => {
   it('should return counts correctly when all counts are 0', () => {
     const dummyStateSummary: ProcessSummary = {
       totalProcessed: 0,
-      totalWithExif: 0,
+      totalGeolocated: 0,
       totalUserReviewedFiles: 0,
       totalModelDetected: 0,
       totalUnresolvedGDPR: 0,
@@ -140,8 +140,8 @@ describe('Test calculateSummaryStats', () => {
         text: 'total files processed',
         value: 0,
       },
-      filesWithExif: {
-        text: 'files with exif',
+      filesGeolocated: {
+        text: 'geolocated files',
         value: 0,
       },
       filesUserReviewed: {
