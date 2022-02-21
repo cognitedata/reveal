@@ -1,6 +1,5 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
-#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
@@ -14,7 +13,6 @@
 #define PI_HALF 1.5707963267949
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
 uniform vec2 treeIndexTextureSize;
@@ -37,6 +35,14 @@ in vec3 v_color;
 in vec3 v_normal;
 
 uniform int renderMode;
+
+//Fix for iOS primitives not getting depth value
+float updateFragmentDepth(vec3 p, mat4 projectionMatrix) {
+  float projected_intersection_z = projectionMatrix[0][2] * p.x + projectionMatrix[1][2] * p.y + projectionMatrix[2][2] * p.z + projectionMatrix[3][2];
+  float projected_intersection_w = projectionMatrix[0][3] * p.x + projectionMatrix[1][3] * p.y + projectionMatrix[2][3] * p.z + projectionMatrix[3][3];
+  gl_FragDepth = ((gl_DepthRange.diff * (projected_intersection_z / projected_intersection_w)) + gl_DepthRange.near + gl_DepthRange.far) * .5;
+  return gl_FragDepth;
+}
 
 void main() {
   NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -155,7 +161,6 @@ void main() {
         normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
       }
   #endif
-
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);

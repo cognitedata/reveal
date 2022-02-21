@@ -1,9 +1,5 @@
-precision highp float;
-
 #define texture2D texture
-// #define gl_FragDepthEXT gl_FragDepth
 
-#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
@@ -23,7 +19,6 @@ in vec3 v_color;
 in vec3 v_normal;
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
 uniform vec2 treeIndexTextureSize;

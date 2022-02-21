@@ -4,7 +4,6 @@ precision highp float;
 
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
-#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
@@ -12,7 +11,6 @@ precision highp float;
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
-
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
@@ -23,7 +21,6 @@ precision highp float;
 // parts of this code
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
 uniform vec2 treeIndexTextureSize;
@@ -53,6 +50,13 @@ in vec3 v_normal;
 
 uniform int renderMode;
 
+//Fix for iOS primitives not getting depth value
+float updateFragmentDepth(vec3 p, mat4 projectionMatrix) {
+  float projected_intersection_z = projectionMatrix[0][2] * p.x + projectionMatrix[1][2] * p.y + projectionMatrix[2][2] * p.z + projectionMatrix[3][2];
+  float projected_intersection_w = projectionMatrix[0][3] * p.x + projectionMatrix[1][3] * p.y + projectionMatrix[2][3] * p.z + projectionMatrix[3][3];
+  gl_FragDepth = ((gl_DepthRange.diff * (projected_intersection_z / projected_intersection_w)) + gl_DepthRange.near + gl_DepthRange.far) * .5;
+  return gl_FragDepth;
+}
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
