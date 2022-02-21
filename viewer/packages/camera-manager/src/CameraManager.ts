@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CameraChangeData, CameraState } from './types';
+import { CameraChangedEvent, CameraState } from './types';
+
 /**
  * Interface for manager responsible for all manipulations to the camera,
  * including animations and modification of state. Implementations are responsible for
@@ -46,13 +47,13 @@ export interface CameraManager {
    * @param event Name of the event.
    * @param callback Callback to be called when the event is fired.
    */
-  on(event: 'cameraChange', callback: CameraChangeData): void;
+  on(event: 'cameraChange', callback: CameraChangedEvent): void;
   /**
    * Unsubscribes from changes of the camera event.
    * @param event Name of the event.
    * @param callback Callback function to be unsubscribed.
    */
-  off(event: 'cameraChange', callback: CameraChangeData): void;
+  off(event: 'cameraChange', callback: CameraChangedEvent): void;
 
   /**
    * Moves camera to a place where the content of a bounding box is visible to the camera.

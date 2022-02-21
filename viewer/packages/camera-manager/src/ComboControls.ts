@@ -214,10 +214,11 @@ export class ComboControls extends EventDispatcher {
     _spherical.makeSafe();
     _camera.position.setFromSpherical(_spherical).add(_target);
 
-    if (this._rawCameraRotation.equals(new Quaternion()))
+    if (this.isIdentityQuaternion(this._rawCameraRotation)) {
       _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
-    else _camera.setRotationFromQuaternion(this._rawCameraRotation);
-
+    } else {
+      _camera.setRotationFromQuaternion(this._rawCameraRotation);
+    }
     if (changed) {
       this.triggerCameraChangeEvent();
     }
@@ -878,4 +879,8 @@ export class ComboControls extends EventDispatcher {
     _panVector.multiplyScalar(distance);
     _targetEnd.add(_panVector);
   };
+
+  private isIdentityQuaternion(q: THREE.Quaternion) {
+    return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
+  }
 }
