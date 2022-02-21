@@ -16,6 +16,10 @@ import { CameraManager } from './CameraManager';
 import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import range from 'lodash/range';
 
+/**
+ * Default implementation of {@link CameraManager}. Uses {@link ComboControls} to control the camera.
+ * Supports automatic update of camera near and far planes and animated change of camera position and target.
+ */
 export class DefaultCameraManager implements CameraManager {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeData>()
@@ -448,10 +452,6 @@ export class DefaultCameraManager implements CameraManager {
         DefaultCameraManager.DefaultMinDistance
       );
     }
-  }
-
-  updateCameraControlsState(deltaTime: number): void {
-    this._controls.update(deltaTime);
   }
 
   update(deltaTime: number, boundingBox: THREE.Box3): void {

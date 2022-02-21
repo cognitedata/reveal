@@ -55,7 +55,8 @@ export interface CameraManager {
 
   fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
   /**
-   * Updates internal state of camera manager.
+   * Updates internal state of camera manager. Expected to update visual state of the camera
+   * as well as it's near and far planes if needed. Called every time screen is refreshed.
    * @param deltaTime Delta time since last update in seconds.
    * @param boundingBox Global bounding box of the model(s) and any custom objects added to the scene.
    */
