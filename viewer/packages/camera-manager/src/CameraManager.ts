@@ -55,7 +55,7 @@ export interface CameraManager {
   off(event: 'cameraChange', callback: CameraChangeData): void;
 
   /**
-  * Moves camera to a place where the content of a bounding box is visible to the camera.
+   * Moves camera to a place where the content of a bounding box is visible to the camera.
    * @param box The bounding box in world space.
    * @param duration The duration of the animation moving the camera.
    * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.

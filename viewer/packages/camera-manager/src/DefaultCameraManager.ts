@@ -175,7 +175,7 @@ export class DefaultCameraManager implements CameraManager {
   get cameraControlsEnabled(): boolean {
     return this._controls.enabled;
   }
-  
+
   /**
    * Sets whether keyboard control of the camera is enabled/disabled.
    */
@@ -321,7 +321,7 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isDisposed) {
       return;
     }
-    
+
     if (duration === 0) {
       this._controls.setState(this._controls.getState().position, target);
       return;
