@@ -479,6 +479,7 @@ __metadata:
     "@cognite/sdk-core": ^4.1.0
     "@tweenjs/tween.js": ^18.6.4
     "@types/dat.gui": ^0.7.7
+    "@types/draco3dgltf": ^1.4.0
     "@types/jest": ^26.0.15
     "@types/jsdom": ^16.2.10
     "@types/lodash": ^4.14.170
@@ -1154,6 +1155,22 @@ __metadata:
   version: 0.7.7
   resolution: "@types/dat.gui@npm:0.7.7"
   checksum: 0a20c10013c5d8595593b9d258f48c070a09601382e9cb0a4d03b98821a8373430747b31935f73434bf0c59122c43276c6763ca1e493eaeb05a9d74bf37a7b81
+  languageName: node
+  linkType: hard
+
+"@types/draco3d@npm:*":
+  version: 1.4.1
+  resolution: "@types/draco3d@npm:1.4.1"
+  checksum: b281933d44cfecf0361b46a9431b0d4d9f26eb75e7f96d3a218c6bd512f949436c03426def3ef24c398deb99705ebe4d76473d44225fef8aaa832868641adab4
+  languageName: node
+  linkType: hard
+
+"@types/draco3dgltf@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@types/draco3dgltf@npm:1.4.0"
+  dependencies:
+    "@types/draco3d": "*"
+  checksum: f55ee53425d2f00d29788c73b41a35ccf523af1582c10205d30ca581515d888a1dbb9a72f00254878640cf69d6a1959a7894818673492edfa5f86a96f906c7cd
   languageName: node
   linkType: hard
 
