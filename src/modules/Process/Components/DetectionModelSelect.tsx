@@ -134,7 +134,7 @@ export function DetectionModelSelect({
       (item) => item.value === modelType
     );
     if (!option) {
-      throw new Error(`${modelType} is unknown ML detection model`);
+      throw new Error(`${modelType} is an unknown ML detection model`);
     }
     return option;
   };
@@ -146,7 +146,12 @@ export function DetectionModelSelect({
   return (
     <Select
       isMulti
-      value={enabledSelectedModels.map(toOption)}
+      value={enabledSelectedModels
+        .filter(
+          (modelType) =>
+            !!detectionModelOptions.find((item) => item.value === modelType)
+        )
+        .map(toOption)}
       onChange={(selectedOptions?: Array<SelectOption>) => {
         setSelectedOptionsCount(selectedOptions?.length || 1);
         onChange(selectedOptions?.map(fromOption) || []);
