@@ -85,6 +85,10 @@ export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
             hideSearch
             annotations={annotations[file.id]}
             pagination="small"
+            overrideURLMap={{
+              pdfjsWorkerSrc:
+                '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+            }}
           />
         </Preview>
       </InfoCell>
