@@ -8,7 +8,7 @@
       "automerge": true
     },
     {
-      "matchPackageNames": ["@cognite/sdk-*", "@cognite/reveal-*"],
+      "matchPackageNames": ["@cognite/sdk-.*", "@cognite/reveal-.*"],
       "enabled": false
     },
     {
