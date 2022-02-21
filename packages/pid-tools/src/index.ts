@@ -6,4 +6,5 @@ export * from './findLinesAndConnections';
 export * from './pid';
 export * from './geometry';
 export * from './linewalk-parser';
+export * from './cognite-pid';
 export * from './graph';

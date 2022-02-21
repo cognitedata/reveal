@@ -1,19 +1,19 @@
 import { saveAs } from 'file-saver';
+
+import { PidDocument, PidDocumentWithDom } from '../pid';
 import {
-  DiagramSymbol,
-  DiagramSymbolInstance,
-  DiagramLineInstance,
   DiagramConnection,
-  PidDocument,
-  getNoneOverlappingSymbolInstances,
-  PathReplacement,
-  PidDocumentWithDom,
   DiagramEquipmentTagInstance,
   DiagramEquipmentTagInstanceOutputFormat,
-  GraphDocument,
+  DiagramLineInstance,
+  DiagramSymbol,
+  DiagramSymbolInstance,
   DocumentMetadata,
-} from '@cognite/pid-tools';
+  GraphDocument,
+  PathReplacement,
+} from '../types';
 
+import { getNoneOverlappingSymbolInstances } from './diagramInstanceUtils';
 import {
   getEquipmentTagOutputFormat,
   getDiagramLineInstancesOutputFormat,

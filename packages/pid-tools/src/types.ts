@@ -178,3 +178,13 @@ export type DocumentMetadata =
   | PidDocumentMetadata
   | IsoDocumentMetadata
   | UnknownDocumentMetadata;
+
+export type ToolType =
+  | 'addSymbol'
+  | 'addLine'
+  | 'splitLine'
+  | 'connectInstances'
+  | 'connectLabels'
+  | 'selectDocumentType'
+  | 'setLineNumber'
+  | 'addEquipmentTag';

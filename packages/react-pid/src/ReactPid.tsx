@@ -1,156 +1,151 @@
 /* eslint-disable no-param-reassign */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import {
   DiagramSymbol,
   DiagramLineInstance,
-  SvgRepresentation,
   DiagramConnection,
-  DiagramInstanceId,
-  getNoneOverlappingSymbolInstances,
-  PathReplacement,
   DiagramSymbolInstance,
-  pruneSymbolOverlappingPathsFromLines,
   DiagramEquipmentTagInstance,
   DocumentType,
   PidDocumentWithDom,
-  SymbolType,
-  getDiagramInstanceId,
-  addOrRemoveLabelToInstance,
+  DocumentMetadata,
   PidDocumentMetadata,
   IsoDocumentMetadata,
-  DocumentMetadata,
-  getDiagramInstanceByPathId,
   GraphDocument,
-  Orientation,
-  T_JUNCTION,
+  CognitePid,
+  ToolType,
+  SaveSymbolData,
+  saveGraphAsJson,
 } from '@cognite/pid-tools';
-import { v4 as uuid } from 'uuid';
 
-import { loadSymbolsFromJson, saveGraphAsJson } from './utils/jsonUtils';
-import { ToolType } from './types';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
-import { SvgViewer } from './components/svg-viewer/SvgViewer';
 import { Viewport } from './components/viewport/Viewport';
-import {
-  deleteConnectionFromState,
-  deleteConnectionsUsingDeletedLinesFromState,
-  deleteSymbolFromState,
-  getSymbolByTypeAndDescription,
-} from './utils/symbolUtils';
 import { Toolbar } from './components/toolbar/Toolbar';
 
-export interface SaveSymbolData {
-  symbolType: SymbolType;
-  description: string;
-  direction?: Orientation;
-}
-
 export const ReactPid: React.FC = () => {
+  const pidViewer = useRef<CognitePid>();
+
+  const [activeTool, setActiveTool] = useState<ToolType>('selectDocumentType');
   const [fileUrl, setFileUrl] = useState<string>('');
-  const [active, setActive] = useState<ToolType>('selectDocumentType');
-
-  const [selection, setSelection] = useState<SVGElement[]>([]);
-  const [lines, setLines] = useState<DiagramLineInstance[]>([]);
-
-  const [splitSelection, setSplitSelection] = React.useState<string | null>(
-    null
-  );
-  const [pathReplacements, setPathReplacements] = useState<PathReplacement[]>(
-    []
-  );
-
-  const [lineNumbers, setLineNumbers] = useState<number[]>([]);
-  const [activeLineNumber, setActiveLineNumber] = useState<number | null>(null);
-  const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
-  const [equipmentTags, setEquipmentTags] = useState<
-    DiagramEquipmentTagInstance[]
-  >([]);
-  const [activeTagId, setActiveTagId] = useState<string | null>(null);
-  const [symbolInstances, setSymbolInstances] = useState<
-    DiagramSymbolInstance[]
-  >([]);
   const [documentMetadata, setDocumentMetadata] = useState<DocumentMetadata>({
     type: DocumentType.unknown,
     name: 'Unknown',
     unit: 'Unknown',
   });
-
-  const [labelSelection, setLabelSelection] =
-    useState<DiagramInstanceId | null>(null);
-
+  const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
+  const [symbolInstances, setSymbolInstances] = useState<
+    DiagramSymbolInstance[]
+  >([]);
+  const [lines, setLines] = useState<DiagramLineInstance[]>([]);
   const [connections, setConnections] = useState<DiagramConnection[]>([]);
-  const [connectionSelection, setConnectionSelection] =
-    useState<DiagramInstanceId | null>(null);
-
+  const [equipmentTags, setEquipmentTags] = useState<
+    DiagramEquipmentTagInstance[]
+  >([]);
+  const [symbolSelection, setSymbolSelection] = useState<string[]>([]);
   const [hideSelection, setHideSelection] = useState<boolean>(false);
-
-  let pidDocument: PidDocumentWithDom | undefined;
-  const setPidDocument = (arg: PidDocumentWithDom) => {
-    pidDocument = arg;
-  };
+  const [lineNumbers, setLineNumbers] = useState<number[]>([]);
+  const [activeLineNumber, setActiveLineNumber] = useState<number | null>(null);
+  const [activeTagId, setActiveTagId] = useState<string | null>(null);
 
   const [uploadSvgInput, setUploadSvgInput] = useState<HTMLInputElement | null>(
     null
   );
-
   const svgInputRef = useCallback((node: HTMLInputElement | null) => {
     setUploadSvgInput(node);
   }, []);
 
   const [uploadJsonInput, setUploadJsonInput] =
     useState<HTMLInputElement | null>(null);
-
   const jsonInputRef = useCallback((node: HTMLInputElement | null) => {
     setUploadJsonInput(node);
   }, []);
-
   const onUploadJsonClick = () => {
     if (uploadJsonInput) {
       uploadJsonInput.click();
     }
   };
 
-  const getPidDocument = () => pidDocument;
+  useEffect(() => {
+    if (pidViewer.current) return;
 
-  const setDocumentType = (documentType: DocumentType) => {
-    if (documentType === DocumentType.pid) {
-      setDocumentMetadata({
-        name: 'Unknown',
-        type: DocumentType.pid,
-        documentNumber: -1,
-        unit: 'Unknown',
-      } as PidDocumentMetadata);
-    } else if (documentType === DocumentType.isometric) {
-      setDocumentMetadata({
-        name: 'Unknown',
-        type: DocumentType.isometric,
-        unit: 'Unknown',
-        lineNumber: -1,
-        pageNumber: -1,
-      } as IsoDocumentMetadata);
+    initPid(
+      new CognitePid({
+        container: '#container',
+      })
+    );
+  }, []);
+
+  const initPid = (instance: CognitePid) => {
+    pidViewer.current = instance;
+  };
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeActiveTool(setActiveTool);
     }
-  };
+  }, [setActiveTool]);
 
-  const splitPathsWithManySegments = () => {
-    const newPathReplacement: PathReplacement[] = [];
-    const diagramInstances = [...lines, ...symbolInstances];
-    pidDocument?.pidPaths.forEach((pidPath) => {
-      if (
-        getDiagramInstanceByPathId(diagramInstances, pidPath.pathId) === null &&
-        !pidPath.pathId.includes(T_JUNCTION)
-      ) {
-        const possiblePathReplacement =
-          pidPath?.getPathReplacementIfManySegments();
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeSymbolSelection(setSymbolSelection);
+    }
+  }, [setSymbolSelection]);
 
-        if (possiblePathReplacement) {
-          newPathReplacement.push(possiblePathReplacement);
-        }
-      }
-    });
-    setPathReplacements([...pathReplacements, ...newPathReplacement]);
-  };
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeHideSelection(setHideSelection);
+    }
+  }, [setHideSelection]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeSymbols(setSymbols);
+    }
+  }, [setSymbols]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeSymbolInstances(setSymbolInstances);
+    }
+  }, [setSymbolInstances]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeLines(setLines);
+    }
+  }, [setLines]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeConnections(setConnections);
+    }
+  }, [setConnections]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeActiveLineNumber(setActiveLineNumber);
+    }
+  }, [setActiveLineNumber]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeActiveTagId(setActiveTagId);
+    }
+  }, [setActiveTagId]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeEquipmentTags(setEquipmentTags);
+    }
+  }, [setEquipmentTags]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeLineNumbers(setLineNumbers);
+    }
+  }, [lineNumbers]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -165,7 +160,7 @@ export const ReactPid: React.FC = () => {
             return;
           }
           case 'KeyS': {
-            setHideSelection(!hideSelection);
+            toggleHideSelection();
             return;
           }
         }
@@ -189,189 +184,99 @@ export const ReactPid: React.FC = () => {
   useEffect(() => {
     if (
       documentMetadata.type !== DocumentType.unknown &&
-      active === 'selectDocumentType'
+      activeTool === 'selectDocumentType'
     ) {
-      setActive('addSymbol');
+      setActiveToolWrapper('addSymbol');
     }
   }, [documentMetadata]);
 
-  const setToolBarMode = (mode: ToolType) => {
-    // If this is changed to useEffect((), [active]) the first load of the SVG will be much slower
-    setSelection([]);
-    setSplitSelection(null);
-    setConnectionSelection(null);
-    setLabelSelection(null);
-    if (mode === 'setLineNumber') {
-      inferLineNumbers(symbolInstances, lines);
+  useEffect(() => {
+    if (activeTool !== 'addEquipmentTag' && activeTagId !== null) {
+      pidViewer.current?.setActiveTagId(null);
     }
-    if (active !== 'addEquipmentTag' && activeTagId !== null) {
-      setActiveTagId(null);
-    }
-    setActive(mode);
+  }, [activeTool]);
+
+  const getPidDocument = (): PidDocumentWithDom | undefined => {
+    return pidViewer.current?.pidDocument;
   };
 
-  const loadSymbolsAsJson = (jsonData: GraphDocument) => {
-    if (pidDocument === undefined) {
-      return;
-    }
+  const setActiveToolWrapper = (tool: ToolType) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.setActiveTool(tool);
+  };
 
-    loadSymbolsFromJson(
-      jsonData,
-      setSymbols,
-      symbols,
-      pidDocument,
-      setSymbolInstances,
-      symbolInstances,
-      setLines,
-      lines,
-      setConnections,
-      connections,
-      pathReplacements,
-      setPathReplacements,
-      lineNumbers,
-      setLineNumbers,
-      equipmentTags,
-      setEquipmentTags
-    );
+  const clearSymbolSelection = () => {
+    if (!pidViewer.current) return;
+    pidViewer.current.clearSymbolSelection();
+  };
+
+  const toggleHideSelection = () => {
+    if (!pidViewer.current) return;
+    pidViewer.current.setHideSelection(!hideSelection);
+  };
+
+  const setActiveLineNumberWrapper = (lineNumber: number | null) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.setActiveLineNumber(lineNumber);
+  };
+
+  const setActiveTagIdWrapper = (activeTagId: string | null) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.setActiveTagId(activeTagId);
+  };
+
+  const setLineNumbersWrapper = (lineNumbers: number[]) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.setLineNumbers(lineNumbers);
+  };
+
+  const loadSymbolsAsJson = (graphDocument: GraphDocument) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.addGraphDocument(graphDocument);
   };
 
   const saveGraphAsJsonWrapper = () => {
+    if (!pidViewer.current) return;
+
+    const pidDocument = getPidDocument();
     if (pidDocument === undefined) return;
+
     saveGraphAsJson(
       pidDocument,
       symbols,
       lines,
       symbolInstances,
       connections,
-      pathReplacements,
+      pidViewer.current.pathReplacements,
       documentMetadata,
       lineNumbers,
       equipmentTags
     );
   };
 
-  const autoAnalysis = () => {
-    if (pidDocument === undefined) return;
-
-    // FIX: This function should also call `inferLineNumbers` does state management does that somewhat tricky
-
-    // find lines and connections
-    const { newLines, newConnections } = pidDocument.findLinesAndConnection(
-      documentMetadata.type,
-      symbolInstances,
-      lines,
-      connections
-    );
-
-    setLines([...lines, ...newLines]);
-    setConnections(newConnections);
-
-    // connect labels to symbol instances
-    const pidLabelSymbolInstanceConnection =
-      pidDocument.connectLabelsToSymbolInstances(
-        documentMetadata.type,
-        symbolInstances
-      );
-    if (pidLabelSymbolInstanceConnection.length > 0) {
-      setSymbolInstances(
-        symbolInstances.map((symbolInstance) => {
-          pidLabelSymbolInstanceConnection.forEach((labelSymbolConnection) => {
-            if (
-              getDiagramInstanceId(symbolInstance) ===
-              labelSymbolConnection.instanceId
-            ) {
-              addOrRemoveLabelToInstance(
-                labelSymbolConnection.labelId,
-                labelSymbolConnection.labelText,
-                symbolInstance
-              );
-            }
-          });
-          return symbolInstance;
-        })
-      );
-    }
+  const splitPathsWithManySegments = () => {
+    if (!pidViewer.current) return;
+    pidViewer.current.splitPathsWithManySegments();
   };
 
-  const setOrUpdateSymbol = (
-    symbolData: SaveSymbolData,
-    svgRepresentation: SvgRepresentation
-  ) => {
-    const { symbolType, description, direction } = symbolData;
-
-    let diagramSymbol = getSymbolByTypeAndDescription(
-      symbols,
-      symbolType,
-      description
-    );
-
-    if (diagramSymbol === undefined) {
-      diagramSymbol = {
-        id: uuid(),
-        symbolType,
-        description,
-        svgRepresentations: [svgRepresentation],
-        orientation: direction,
-      } as DiagramSymbol;
-
-      setSymbols([...symbols, diagramSymbol]);
-    } else {
-      diagramSymbol.svgRepresentations.push(svgRepresentation);
-    }
-    return diagramSymbol;
+  const autoAnalysis = () => {
+    if (!pidViewer.current) return;
+    pidViewer.current.autoAnalysis(documentMetadata);
   };
 
   const deleteSymbol = (diagramSymbol: DiagramSymbol) => {
-    deleteSymbolFromState(
-      diagramSymbol,
-      symbolInstances,
-      connections,
-      setConnections,
-      setSymbolInstances,
-      setSymbols,
-      symbols
-    );
+    if (!pidViewer.current) return;
+    pidViewer.current.deleteSymbol(diagramSymbol);
   };
 
-  const deleteConnection = (diagramConnection: DiagramConnection) => {
-    deleteConnectionFromState(diagramConnection, connections, setConnections);
+  const deleteConnection = (connection: DiagramConnection) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.deleteConnection(connection);
   };
 
-  const saveSymbol = (symbolData: SaveSymbolData, selection: SVGElement[]) => {
-    if (pidDocument === undefined) {
-      return;
-    }
-
-    const pathIds = selection.map((svgElement) => svgElement.id);
-    const newSvgRepresentation = pidDocument.createSvgRepresentation(
-      pathIds,
-      false
-    );
-    const newSymbol = setOrUpdateSymbol(symbolData, newSvgRepresentation);
-
-    setSelection([]);
-
-    const newSymbolInstances = pidDocument.findAllInstancesOfSymbol(newSymbol);
-    const prunedInstances = getNoneOverlappingSymbolInstances(
-      pidDocument,
-      symbolInstances,
-      newSymbolInstances
-    );
-
-    const { prunedLines, linesToDelete } = pruneSymbolOverlappingPathsFromLines(
-      lines,
-      newSymbolInstances
-    );
-
-    deleteConnectionsUsingDeletedLinesFromState(
-      linesToDelete,
-      connections,
-      setConnections
-    );
-
-    setLines(prunedLines);
-
-    setSymbolInstances(prunedInstances);
+  const saveSymbol = (symbolData: SaveSymbolData) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.saveSymbol(symbolData);
   };
 
   const evalFileName = (file: File) => {
@@ -411,32 +316,44 @@ export const ReactPid: React.FC = () => {
       const file = target.files[0];
       setFileUrl(URL.createObjectURL(file));
       evalFileName(file);
+      if (pidViewer.current && pidViewer.current.document === undefined) {
+        pidViewer.current.addSvgDocument(file);
+      } else {
+        throw new Error('Failed to add SVG document to pidViewer');
+      }
       return;
     }
     setFileUrl('');
   };
 
-  const inferLineNumbers = (
-    symbolInstances: DiagramSymbolInstance[],
-    lines: DiagramLineInstance[]
-  ) => {
-    const { newSymbolInstances, newLines } =
-      PidDocumentWithDom.inferLineNumbers(symbolInstances, lines, connections);
-
-    setSymbolInstances([...newSymbolInstances]);
-    setLines([...newLines]);
+  const setDocumentType = (documentType: DocumentType) => {
+    if (documentType === DocumentType.pid) {
+      setDocumentMetadata({
+        type: DocumentType.pid,
+        documentNumber: -1,
+        unit: 'Unknown',
+      } as PidDocumentMetadata);
+    } else if (documentType === DocumentType.isometric) {
+      setDocumentMetadata({
+        name: 'Unknown',
+        type: DocumentType.isometric,
+        unit: 'Unknown',
+        lineNumber: -1,
+        pageNumber: -1,
+      } as IsoDocumentMetadata);
+    }
   };
 
   return (
     <ReactPidWrapper>
       <ReactPidLayout>
         <SidePanel
-          active={active}
+          activeTool={activeTool}
+          setActiveTool={setActiveToolWrapper}
           symbols={symbols}
           lines={lines}
           symbolInstances={symbolInstances}
-          selection={selection}
-          setActive={setToolBarMode}
+          symbolSelection={symbolSelection}
           loadSymbolsAsJson={loadSymbolsAsJson}
           saveSymbol={saveSymbol}
           connections={connections}
@@ -448,23 +365,24 @@ export const ReactPid: React.FC = () => {
           documentMetadata={documentMetadata}
           setDocumentType={setDocumentType}
           lineNumbers={lineNumbers}
-          setLineNumbers={setLineNumbers}
+          setLineNumbers={setLineNumbersWrapper}
           activeLineNumber={activeLineNumber}
-          setActiveLineNumber={setActiveLineNumber}
+          setActiveLineNumber={setActiveLineNumberWrapper}
           equipmentTags={equipmentTags}
           setEquipmentTags={setEquipmentTags}
           activeTagId={activeTagId}
-          setActiveTagId={setActiveTagId}
+          setActiveTagId={setActiveTagIdWrapper}
           getPidDocument={getPidDocument}
           splitLines={splitPathsWithManySegments}
           hideSelection={hideSelection}
-          setHideSelection={setHideSelection}
-          setSelection={setSelection}
+          toggleHideSelection={toggleHideSelection}
+          clearSymbolSelection={clearSymbolSelection}
           jsonInputRef={jsonInputRef}
           onUploadJsonClick={onUploadJsonClick}
         />
         <Viewport>
-          {fileUrl === '' ? (
+          <div id="container" />
+          {fileUrl === '' && (
             <input
               ref={svgInputRef}
               type="file"
@@ -477,44 +395,10 @@ export const ReactPid: React.FC = () => {
               }}
               onChange={handleFileChange}
             />
-          ) : (
-            <SvgViewer
-              fileUrl={fileUrl}
-              active={active}
-              setActive={setToolBarMode}
-              symbolInstances={symbolInstances}
-              setSymbolInstances={setSymbolInstances}
-              lines={lines}
-              setLines={setLines}
-              selection={selection}
-              setSelection={setSelection}
-              splitSelection={splitSelection}
-              setSplitSelection={setSplitSelection}
-              pathReplacements={pathReplacements}
-              setPathReplacements={setPathReplacements}
-              connectionSelection={connectionSelection}
-              setConnectionSelection={setConnectionSelection}
-              connections={connections}
-              setConnections={setConnections}
-              setPidDocument={setPidDocument}
-              getPidDocument={getPidDocument}
-              labelSelection={labelSelection}
-              setLabelSelection={setLabelSelection}
-              lineNumbers={lineNumbers}
-              setLineNumbers={setLineNumbers}
-              activeLineNumber={activeLineNumber}
-              setActiveLineNumber={setActiveLineNumber}
-              equipmentTags={equipmentTags}
-              setEquipmentTags={setEquipmentTags}
-              inferLineNumbers={inferLineNumbers}
-              activeTagId={activeTagId}
-              setActiveTagId={setActiveTagId}
-              hideSelection={hideSelection}
-            />
           )}
           <Toolbar
-            active={active}
-            setActive={setToolBarMode}
+            activeTool={activeTool}
+            setActiveTool={setActiveToolWrapper}
             documentType={documentMetadata.type}
           />
         </Viewport>

@@ -44,26 +44,32 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//file-saver",
     "@npm//lodash",
     "@npm//svg-parser",
     "@npm//svg-path-parser",
+    "@npm//uuid",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/file-saver",
     "@npm//@types/lodash",
     "@npm//@types/svg-parser",
     "@npm//@types/svg-path-parser",
+    "@npm//@types/uuid",
 ]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
+    "@npm//typescript",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
+    "cognite-pid": "dist/cognite-pid",
     "constants": "dist/constants",
     "findLinesAndConnections": "dist/findLinesAndConnections",
     "geometry": "dist/geometry",

@@ -51,24 +51,17 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//file-saver",
-    "@npm//graphology",
-    "@npm//graphology-simple-path",
     "@npm//lodash",
     "@npm//react",
-    "@npm//react-svg",
     "@npm//styled-components",
-    "@npm//uuid",
     "//packages/pid-tools",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
-    "@npm//@types/file-saver",
     "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/styled-components",
-    "@npm//@types/uuid",
 ]
 
 # Dev dependencies from package.json
@@ -82,10 +75,8 @@ DEV_DEPENDENCIES = [
 mappings_dict = {
     "ReactPid": "dist/ReactPid",
     "components": "dist/components",
-    "constants": "dist/constants",
     "elements": "dist/elements",
     "index": "dist/index",
-    "types": "dist/types",
     "utils": "dist/utils",
 }
 

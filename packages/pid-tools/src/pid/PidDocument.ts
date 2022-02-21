@@ -10,6 +10,7 @@ import {
   DocumentType,
   FileConnectionInstance,
   DiagramInstanceId,
+  PathReplacement,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
 import { svgCommandsToSegments } from '../matcher/svgPathParser';
@@ -61,6 +62,25 @@ export class PidDocument {
       }
     }
     return null;
+  }
+
+  applyPathReplacement(pathReplacement: PathReplacement) {
+    const oldPidPath = this.getPidPathById(pathReplacement.pathId);
+    if (!oldPidPath) {
+      throw new Error(
+        `Tried to get pidPath with ID ${pathReplacement.pathId} which does not exist in pidDocument`
+      );
+    }
+    const newPidPaths = pathReplacement.replacementPaths.map(
+      (svgPathWithId) => {
+        const pathSegments = svgCommandsToSegments(svgPathWithId.svgCommands);
+        return new PidPath(pathSegments, svgPathWithId.id, oldPidPath?.style);
+      }
+    );
+    this.pidPaths = this.pidPaths.filter(
+      (pidPath) => pidPath.pathId !== oldPidPath.pathId
+    );
+    this.pidPaths.push(...newPidPaths);
   }
 
   toSvgString(

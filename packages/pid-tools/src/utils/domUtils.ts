@@ -1,4 +1,7 @@
 /* eslint-disable no-param-reassign */
+
+import { DiagramInstance, ToolType } from '../types';
+import { COLORS } from '../constants';
 import {
   DiagramInstanceId,
   DiagramLineInstance,
@@ -15,15 +18,13 @@ import {
   DiagramInstanceWithPaths,
   DiagramSymbolInstance,
   DiagramEquipmentTagInstance,
-  DiagramInstance,
   getClosestPointsOnSegments,
   getClosestPointOnSegments,
-  T_JUNCTION,
   PidTspan,
-} from '@cognite/pid-tools';
+} from '../index';
 
-import { ToolType } from '../../types';
-import { COLORS } from '../../constants';
+const zeroPad = (num: number, places: number): string =>
+  String(num).padStart(places, '0');
 
 export const isDiagramLine = (
   node: SVGElement,
@@ -46,13 +47,6 @@ export const isInConnectionSelection = (
   connectionSelection: DiagramInstanceId | null
 ) => {
   return isPathIdInInstance(node.id, connectionSelection);
-};
-
-export const isInAddSymbolSelection = (
-  node: SVGElement,
-  selection: SVGElement[]
-) => {
-  return selection.some((svgPath) => svgPath.id === node.id);
 };
 
 export const isInLabelSelection = (
@@ -169,14 +163,12 @@ export const isInEquipmentTags = (
 
 export interface ApplyStyleArgs {
   node: SVGElement;
-  selection: SVGElement[];
+  symbolSelection: string[];
   connectionSelection: DiagramInstanceId | null;
   labelSelection: DiagramInstanceId | null;
   symbolInstances: DiagramSymbolInstance[];
   lines: DiagramLineInstance[];
   connections: DiagramConnection[];
-  graphPaths: DiagramInstanceId[][];
-  graphSelection: DiagramInstanceId | null;
   active: ToolType;
   activeLineNumber: number | null;
   equipmentTags: DiagramEquipmentTagInstance[];
@@ -187,13 +179,12 @@ export interface ApplyStyleArgs {
 
 export const applyStyleToNode = ({
   node,
-  selection,
+  symbolSelection,
   connectionSelection,
   labelSelection,
   symbolInstances,
   lines,
   connections,
-  graphSelection,
   active,
   activeLineNumber,
   equipmentTags,
@@ -202,7 +193,7 @@ export const applyStyleToNode = ({
   hideSelection,
 }: ApplyStyleArgs) => {
   let color: string | undefined;
-  let opacity = 1;
+  let opacity: number | undefined;
 
   if (isDiagramLine(node, lines) || isLabelInInstances(node, lines)) {
     ({ color, opacity } = COLORS.diagramLine);
@@ -223,11 +214,8 @@ export const applyStyleToNode = ({
   if (node.id === splitSelection) {
     color = COLORS.splitLine;
   }
-  if (isInAddSymbolSelection(node, selection)) {
+  if (symbolSelection.includes(node.id)) {
     ({ color, opacity } = COLORS.symbolSelection);
-  }
-  if (isInGraphSelection(node, graphSelection)) {
-    color = COLORS.connectionSelection;
   }
   if (isInActiveEquipmentTag(node, activeTagId, equipmentTags)) {
     color = COLORS.activeLabel;
@@ -235,15 +223,11 @@ export const applyStyleToNode = ({
     color = COLORS.labelSelection;
   }
 
-  if (node.id.includes(T_JUNCTION)) {
-    node.style.strokeWidth = '2';
-  }
-
   if (active === 'setLineNumber') {
     if (node instanceof SVGTSpanElement) {
       if (
         activeLineNumber &&
-        node.innerHTML.includes(activeLineNumber.toString())
+        node.innerHTML.includes(`L${zeroPad(activeLineNumber, 3)}`)
       ) {
         node.style.fontWeight = '600';
         return;
@@ -280,7 +264,7 @@ export const applyStyleToNode = ({
   }
   colorNode(node, color, opacity);
 
-  if (hideSelection && selection.some((select) => select.id === node.id)) {
+  if (hideSelection && symbolSelection.some((select) => select === node.id)) {
     node.style.visibility = 'hidden';
   }
 
@@ -393,13 +377,21 @@ export const colorSymbol = (
   }
 };
 
-export const setStrokeWidth = (
+export const scaleStrokeWidthPath = (scale: number, node: SVGElement) => {
+  node.style.strokeWidth = `${scale * parseFloat(node.style.strokeWidth)}`;
+};
+
+export const scaleStrokeWidthInstance = (
+  scale: number,
   diagramInstance: DiagramInstanceWithPaths,
-  strokeWidth: string,
-  svg: SVGSVGElement
+  nodeMap: Map<string, { node: SVGElement; originalStyle: string }>
 ) => {
   diagramInstance.pathIds.forEach((pathId) => {
-    (svg.getElementById(pathId) as SVGElement).style.strokeWidth = strokeWidth;
+    const nodeMapData = nodeMap.get(pathId);
+    if (!nodeMapData) return;
+
+    const { node } = nodeMapData;
+    scaleStrokeWidthPath(scale, node);
   });
 };
 
@@ -409,9 +401,10 @@ export const visualizeConnections = (
   connections: DiagramConnection[],
   symbolInstances: DiagramSymbolInstance[],
   lines: DiagramLineInstance[]
-) => {
+): string[] => {
   const offset = 2;
   const instances = [...symbolInstances, ...lines];
+  const visualizationPathIds: string[] = [];
   connections.forEach((connection) => {
     const startInstance = getInstanceByDiagramInstanceId(
       instances,
@@ -492,12 +485,17 @@ export const visualizeConnections = (
       `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`
     );
 
+    path.id = `convis-${connection.start}-${connection.end}`;
+    visualizationPathIds.push(path.id);
+
     path.setAttribute(
       'style',
       `stroke:${COLORS.connection.color};stroke-width:${COLORS.connection.strokeWidth};opacity:${COLORS.connection.opacity};stroke-linecap:round`
     );
     svg.insertBefore(path, svg.children[0]);
   });
+
+  return visualizationPathIds;
 };
 
 export const visualizePidTspan = (
@@ -520,13 +518,17 @@ export const visualizePidTspan = (
   rect.id = `${pidTspan.id}_rect`;
 
   svg.insertBefore(rect, svg.children[0]);
+
+  return rect;
 };
 
 export const visualizeLabelsToSymbolInstances = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
-  symbolInstances: DiagramSymbolInstance[]
-) => {
+  symbolInstances: DiagramInstanceWithPaths[]
+): string[] => {
+  const labelVisualizationIds: string[] = [];
+
   symbolInstances.forEach((symbolInstance) => {
     const symbolMidPoint = pidDocument.getMidPointToPaths(
       symbolInstance.pathIds
@@ -547,6 +549,11 @@ export const visualizeLabelsToSymbolInstances = (
         `M ${symbolMidPoint.x} ${symbolMidPoint.y} L ${labelPoint.x} ${labelPoint.y}`
       );
 
+      path.id = `labelConnection-${labelId}-${getDiagramInstanceId(
+        symbolInstance
+      )}`;
+      labelVisualizationIds.push(path.id);
+
       path.setAttribute(
         'style',
         `stroke:${COLORS.connection.color};stroke-width:${
@@ -555,7 +562,38 @@ export const visualizeLabelsToSymbolInstances = (
       );
       svg.insertBefore(path, svg.children[0]);
 
-      visualizePidTspan(svg, pidTspan, COLORS.connection.color, 0.1);
+      const rect = visualizePidTspan(
+        svg,
+        pidTspan,
+        COLORS.connection.color,
+        0.1
+      );
+      labelVisualizationIds.push(rect.id);
     });
   });
+
+  return labelVisualizationIds;
+};
+
+export const applyToLeafSVGElements = (
+  svg: SVGSVGElement,
+  callback: (node: SVGElement) => void
+): void => {
+  const traverse = (node: SVGElement) => {
+    if (node.children.length === 0) {
+      if (node instanceof SVGElement) {
+        callback(node);
+      }
+      return;
+    }
+    if (node instanceof SVGClipPathElement) {
+      return;
+    }
+
+    for (let i = 0; i < node.children.length; i++) {
+      traverse(node.children[i] as SVGElement);
+    }
+  };
+
+  traverse(svg);
 };

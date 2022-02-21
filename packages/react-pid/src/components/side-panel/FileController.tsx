@@ -7,12 +7,9 @@ import {
   DiagramSymbolInstance,
   GraphDocument,
   PidDocumentWithDom,
-} from '@cognite/pid-tools';
-
-import {
   saveSymbolsAsJson,
   isValidSymbolFileSchema,
-} from '../../utils/jsonUtils';
+} from '@cognite/pid-tools';
 
 const DropDownWrapper = styled.div`
   text-align: left;

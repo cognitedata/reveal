@@ -10,10 +10,9 @@ import {
   DocumentType,
   GraphDocument,
   PidDocumentWithDom,
+  ToolType,
+  SaveSymbolData,
 } from '@cognite/pid-tools';
-
-import { ToolType } from '../../types';
-import { SaveSymbolData } from '../../ReactPid';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
 import { FileController } from './FileController';
@@ -40,18 +39,18 @@ const FileControllerWrapper = styled.div`
 
 interface SidePanelProps {
   getPidDocument: () => PidDocumentWithDom | undefined;
-  active: ToolType;
+  activeTool: ToolType;
+  setActiveTool: (arg0: ToolType) => void;
   symbols: DiagramSymbol[];
   lines: DiagramLineInstance[];
   symbolInstances: DiagramSymbolInstance[];
-  selection: SVGElement[];
-  setActive: (arg0: ToolType) => void;
+  symbolSelection: string[];
   loadSymbolsAsJson: (json: GraphDocument) => void;
-  saveSymbol: (options: SaveSymbolData, selection: SVGElement[]) => void;
+  saveSymbol: (options: SaveSymbolData) => void;
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
   connections: DiagramConnection[];
-  fileUrl?: string;
+  fileUrl: string;
   autoAnalysis: () => void;
   saveGraphAsJson: () => void;
   documentMetadata: DocumentMetadata;
@@ -66,20 +65,20 @@ interface SidePanelProps {
   setActiveTagId: (arg: string | null) => void;
   splitLines: () => void;
   hideSelection: boolean;
-  setHideSelection: (arg: boolean) => void;
-  setSelection: (arg: SVGElement[]) => void;
+  toggleHideSelection: () => void;
+  clearSymbolSelection: () => void;
   jsonInputRef: (node: HTMLInputElement | null) => void;
   onUploadJsonClick: () => void;
 }
 
 export const SidePanel = ({
   getPidDocument,
-  active,
+  activeTool,
+  setActiveTool,
   symbols,
   lines,
   symbolInstances,
-  selection,
-  setActive,
+  symbolSelection,
   loadSymbolsAsJson,
   saveSymbol,
   deleteSymbol,
@@ -100,8 +99,8 @@ export const SidePanel = ({
   setActiveTagId,
   splitLines,
   hideSelection,
-  setHideSelection,
-  setSelection,
+  toggleHideSelection,
+  clearSymbolSelection,
   jsonInputRef,
   onUploadJsonClick,
 }: SidePanelProps) => {
@@ -109,44 +108,38 @@ export const SidePanel = ({
     [
       {
         icon: 'Add',
-        onClick: () => setActive('addSymbol'),
-        className: `${active === 'addSymbol' && 'active'}`,
+        onClick: () => setActiveTool('addSymbol'),
+        className: `${activeTool === 'addSymbol' && 'active'}`,
         description: 'Add symbol',
       },
       {
         icon: 'VectorLine',
-        onClick: () => setActive('addLine'),
-        className: `${active === 'addLine' && 'active'}`,
+        onClick: () => setActiveTool('addLine'),
+        className: `${activeTool === 'addLine' && 'active'}`,
         description: 'Add line',
       },
       {
         icon: 'Split',
-        onClick: () => setActive('connectInstances'),
-        className: `${active === 'connectInstances' && 'active'}`,
+        onClick: () => setActiveTool('connectInstances'),
+        className: `${activeTool === 'connectInstances' && 'active'}`,
         description: 'Connect instances',
       },
       {
         icon: 'Flag',
-        onClick: () => setActive('connectLabels'),
-        className: `${active === 'connectLabels' && 'active'}`,
+        onClick: () => setActiveTool('connectLabels'),
+        className: `${activeTool === 'connectLabels' && 'active'}`,
         description: 'Connect labels',
       },
       {
-        icon: 'GraphTree',
-        onClick: () => setActive('graphExplorer'),
-        className: `${active === 'graphExplorer' && 'active'}`,
-        description: 'Explore the wast graph universe',
-      },
-      {
         icon: 'Number',
-        onClick: () => setActive('setLineNumber'),
-        className: `${active === 'setLineNumber' && 'active'}`,
+        onClick: () => setActiveTool('setLineNumber'),
+        className: `${activeTool === 'setLineNumber' && 'active'}`,
         description: 'Set line number',
       },
       {
         icon: 'String',
-        onClick: () => setActive('addEquipmentTag'),
-        className: `${active === 'addEquipmentTag' && 'active'}`,
+        onClick: () => setActiveTool('addEquipmentTag'),
+        className: `${activeTool === 'addEquipmentTag' && 'active'}`,
         description: 'Add equipment tag',
       },
     ],
@@ -155,14 +148,14 @@ export const SidePanel = ({
   if (documentMetadata.type === DocumentType.pid) {
     toolBarButtonGroups[0].push({
       icon: 'Slice',
-      onClick: () => setActive('splitLine'),
-      className: `${active === 'splitLine' && 'active'}`,
+      onClick: () => setActiveTool('splitLine'),
+      className: `${activeTool === 'splitLine' && 'active'}`,
       description: 'Split line',
     });
   }
 
   const setActiveTagWrapper = (arg: string | null) => {
-    setActive('addEquipmentTag');
+    setActiveTool('addEquipmentTag');
     setActiveTagId(arg);
   };
 
@@ -203,17 +196,17 @@ export const SidePanel = ({
       <Button onClick={autoAnalysis}>Auto Analysis</Button>
 
       <div>
-        {active === 'addSymbol' && (
+        {activeTool === 'addSymbol' && (
           <AddSymbolController
-            selection={selection}
+            symbolSelection={symbolSelection}
+            clearSymbolSelection={clearSymbolSelection}
             saveSymbol={saveSymbol}
             hideSelection={hideSelection}
-            toggleHideSelection={() => setHideSelection(!hideSelection)}
-            clearSelection={() => setSelection([])}
+            toggleHideSelection={toggleHideSelection}
             documentType={documentMetadata.type}
           />
         )}
-        {active === 'setLineNumber' && (
+        {activeTool === 'setLineNumber' && (
           <AddLineNumberController
             lineNumbers={lineNumbers}
             setLineNumbers={setLineNumbers}
@@ -222,7 +215,7 @@ export const SidePanel = ({
           />
         )}
       </div>
-      {active === 'selectDocumentType' && fileUrl !== '' && (
+      {activeTool === 'selectDocumentType' && fileUrl !== '' && (
         <DocumentTypeSelector setDocumentType={setDocumentType} />
       )}
     </SidePanelWrapper>

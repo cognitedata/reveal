@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 import { ToolBar, ToolBarButton } from '@cognite/cogs.js';
-import { DocumentType } from '@cognite/pid-tools';
-
-import { ToolType } from '../../types';
+import { ToolType, DocumentType } from '@cognite/pid-tools';
 
 const ToolBarWrapper = styled.div`
   position: absolute;
@@ -31,48 +29,46 @@ const ToolBarWrapper = styled.div`
 `;
 
 interface ToolbarProps {
-  active: ToolType;
-  setActive: (arg0: ToolType) => void;
+  activeTool: ToolType;
+  setActiveTool: (tool: ToolType) => void;
   documentType: DocumentType;
 }
 
-export const Toolbar = ({ active, setActive, documentType }: ToolbarProps) => {
+export const Toolbar = ({
+  activeTool,
+  setActiveTool,
+  documentType,
+}: ToolbarProps) => {
   const toolBarButtonGroups: ToolBarButton[][] = [
     [
       {
         icon: 'Add',
-        onClick: () => setActive('addSymbol'),
-        className: `${active === 'addSymbol' && 'active'}`,
+        onClick: () => setActiveTool('addSymbol'),
+        className: `${activeTool === 'addSymbol' && 'active'}`,
         description: 'Add symbol',
       },
       {
         icon: 'VectorLine',
-        onClick: () => setActive('addLine'),
-        className: `${active === 'addLine' && 'active'}`,
+        onClick: () => setActiveTool('addLine'),
+        className: `${activeTool === 'addLine' && 'active'}`,
         description: 'Add line',
       },
       {
         icon: 'Split',
-        onClick: () => setActive('connectInstances'),
-        className: `${active === 'connectInstances' && 'active'}`,
+        onClick: () => setActiveTool('connectInstances'),
+        className: `${activeTool === 'connectInstances' && 'active'}`,
         description: 'Connect instances',
       },
       {
         icon: 'Flag',
-        onClick: () => setActive('connectLabels'),
-        className: `${active === 'connectLabels' && 'active'}`,
+        onClick: () => setActiveTool('connectLabels'),
+        className: `${activeTool === 'connectLabels' && 'active'}`,
         description: 'Connect labels',
       },
       {
-        icon: 'GraphTree',
-        onClick: () => setActive('graphExplorer'),
-        className: `${active === 'graphExplorer' && 'active'}`,
-        description: 'Explore the wast graph universe',
-      },
-      {
         icon: 'Number',
-        onClick: () => setActive('setLineNumber'),
-        className: `${active === 'setLineNumber' && 'active'}`,
+        onClick: () => setActiveTool('setLineNumber'),
+        className: `${activeTool === 'setLineNumber' && 'active'}`,
         description: 'Set line number',
       },
     ],
@@ -81,15 +77,15 @@ export const Toolbar = ({ active, setActive, documentType }: ToolbarProps) => {
   if (documentType === DocumentType.pid) {
     toolBarButtonGroups[0].push({
       icon: 'Slice',
-      onClick: () => setActive('splitLine'),
-      className: `${active === 'splitLine' && 'active'}`,
+      onClick: () => setActiveTool('splitLine'),
+      className: `${activeTool === 'splitLine' && 'active'}`,
       description: 'Split line',
     });
   } else if (documentType === DocumentType.isometric) {
     toolBarButtonGroups[0].push({
       icon: 'String',
-      onClick: () => setActive('addEquipmentTag'),
-      className: `${active === 'addEquipmentTag' && 'active'}`,
+      onClick: () => setActiveTool('addEquipmentTag'),
+      className: `${activeTool === 'addEquipmentTag' && 'active'}`,
       description: 'Add equipment tag',
     });
   }

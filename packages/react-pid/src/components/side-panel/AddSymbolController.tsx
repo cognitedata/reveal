@@ -8,10 +8,9 @@ import {
   bothSymbolTypes,
   pidSymbolTypes,
   isoSymbolTypes,
+  SaveSymbolData,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
-
-import { SaveSymbolData } from '../../ReactPid';
 
 import { StyledInput } from './elements';
 
@@ -27,20 +26,20 @@ const directionOptions: OptionType<Orientation>[] = orientations.map(
 );
 
 interface AddSymbolControllerProps {
-  selection: SVGElement[];
-  saveSymbol: (options: SaveSymbolData, selection: SVGElement[]) => void;
+  symbolSelection: string[];
+  saveSymbol: (options: SaveSymbolData) => void;
   hideSelection: boolean;
   toggleHideSelection: () => void;
-  clearSelection: () => void;
+  clearSymbolSelection: () => void;
   documentType: DocumentType;
 }
 
 export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
-  selection,
+  symbolSelection,
   saveSymbol,
   hideSelection,
   toggleHideSelection,
-  clearSelection,
+  clearSymbolSelection,
   documentType,
 }) => {
   let symbolTypeOptions: OptionType<SymbolType>[];
@@ -78,30 +77,24 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   const saveSymbolWrapper = () => {
     setDescription('');
     if (selectedSymbolTypeOption.value === 'File connection') {
-      saveSymbol(
-        {
-          symbolType: selectedSymbolTypeOption.value!,
-          description,
-          direction: direction.value,
-        },
-        selection
-      );
+      saveSymbol({
+        symbolType: selectedSymbolTypeOption.value!,
+        description,
+        direction: direction.value,
+      });
     } else {
-      saveSymbol(
-        { symbolType: selectedSymbolTypeOption.value!, description },
-        selection
-      );
+      saveSymbol({ symbolType: selectedSymbolTypeOption.value!, description });
     }
   };
 
   const isDisabled = () => {
-    return selection.length === 0 || description === '';
+    return symbolSelection.length === 0 || description === '';
   };
 
   return (
     <>
       <SelectionWrapper>
-        <span>{`${selection.length} selected`}</span>
+        <span>{`${symbolSelection.length} selected`}</span>
         <div>
           <Button
             type={hideSelection ? 'danger' : 'secondary'}
@@ -109,7 +102,10 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
           >
             {hideSelection ? 'Show Selection' : 'Hide Selection'}
           </Button>
-          <Button disabled={selection.length === 0} onClick={clearSelection}>
+          <Button
+            disabled={symbolSelection.length === 0}
+            onClick={clearSymbolSelection}
+          >
             Clear Selection
           </Button>
         </div>

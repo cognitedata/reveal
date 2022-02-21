@@ -1,14 +1,15 @@
+import { getEncolosingBoundingBox } from '../geometry';
+import { PidDocument } from '../pid';
 import {
-  PidDocument,
-  getDiagramInstanceId,
   DiagramEquipmentTagInstance,
   DiagramEquipmentTagInstanceOutputFormat,
-  getEncolosingBoundingBox,
-  DiagramSymbolInstanceOutputFormat,
-  DiagramSymbolInstance,
   DiagramLineInstance,
   DiagramLineInstanceOutputFormat,
-} from '@cognite/pid-tools';
+  DiagramSymbolInstance,
+  DiagramSymbolInstanceOutputFormat,
+} from '../types';
+
+import { getDiagramInstanceId } from './diagramInstanceUtils';
 
 export const getDiagramLineInstancesOutputFormat = (
   pidDocument: PidDocument,
