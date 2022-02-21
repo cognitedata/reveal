@@ -6,14 +6,14 @@ import { CameraChangeData, CameraState } from './types';
 /**
  * Camera manager interface. It is responsible for all manipulations that are done with the camera,
  * including animations and modification of state. Also, gives ability
- * to provide custom `THREE.PerspectiveCamera` instance to {@link Cognite3DViewer}. 
- * For working implementation required to fire `cameraChange`-event when camera is changed. 
+ * to provide custom `THREE.PerspectiveCamera` instance to {@link Cognite3DViewer}.
+ * For working implementation required to fire `cameraChange`-event when camera is changed.
  * Default implementation is {@link DefaultCameraManager}.
  */
 export interface CameraManager {
   /**
-   * Returns the camera used for rendering in {@link Cognite3DViewer}. 
-   * Note that the camera will not be modified directly by Reveal. 
+   * Returns the camera used for rendering in {@link Cognite3DViewer}.
+   * Note that the camera will not be modified directly by Reveal.
    * Implementations must trigger the `cameraChange`-event whenever the
    * camera changes.
    */
@@ -47,7 +47,7 @@ export interface CameraManager {
    */
   on(event: 'cameraChange', callback: CameraChangeData): void;
   /**
-   * Unsubscribes from changes of the camera event. 
+   * Unsubscribes from changes of the camera event.
    * @param event Name of the event.
    * @param callback Callback function to be unsubscribed.
    */
