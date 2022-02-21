@@ -56,6 +56,7 @@ export type Mesh = {
 export type Primitive = {
   attributes: { [key: string]: number };
   indices: number;
+  extensions: { KHR_draco_mesh_compression: { attributes: { [key: string]: number }; bufferView: number } | undefined };
 };
 
 export enum RevealGeometryCollectionType {
