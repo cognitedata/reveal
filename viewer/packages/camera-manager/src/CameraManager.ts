@@ -37,6 +37,7 @@ export interface CameraManager {
 
   /**
    * Get camera's state
+   * @returns Camera state: position, target and rotation.
    */
   getCameraState(): Required<CameraState>;
 
@@ -53,6 +54,12 @@ export interface CameraManager {
    */
   off(event: 'cameraChange', callback: CameraChangeData): void;
 
+  /**
+  * Moves camera to a place where the content of a bounding box is visible to the camera.
+   * @param box The bounding box in world space.
+   * @param duration The duration of the animation moving the camera.
+   * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
+   */
   fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
   /**
    * Updates internal state of camera manager. Expected to update visual state of the camera

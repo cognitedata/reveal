@@ -175,22 +175,19 @@ export class DefaultCameraManager implements CameraManager {
   get cameraControlsEnabled(): boolean {
     return this._controls.enabled;
   }
-
+  
+  /**
+   * Sets whether keyboard control of the camera is enabled/disabled.
+   */
   set keyboardNavigationEnabled(enabled: boolean) {
     this._controls.enableKeyboardNavigation = enabled;
   }
 
+  /**
+   * Whether keyboard control of the camera is enabled/disabled.
+   */
   get keyboardNavigationEnabled(): boolean {
     return this._controls.enableKeyboardNavigation;
-  }
-
-  /**
-   * Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
-   * for documentation. Note that by default the `minDistance` setting of the controls will
-   * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
-   */
-  get cameraControls(): ComboControls {
-    return this._controls;
   }
 
   getCamera(): THREE.PerspectiveCamera {
@@ -225,59 +222,15 @@ export class DefaultCameraManager implements CameraManager {
     };
   }
 
-  getCameraRotation(): THREE.Quaternion {
-    return this._camera.quaternion;
-  }
-
-  setCameraRotation(rotation: THREE.Quaternion): void {
-    const newTarget = this.calculateNewTargetFromRotation(rotation);
-
-    this._controls.cameraRawRotation.copy(rotation);
-    this._controls.setState(this._camera.position, newTarget);
-  }
-
-  getCameraTarget(): THREE.Vector3 {
-    if (this.isDisposed) {
-      return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
-    }
-    return this._controls.getState().target.clone();
-  }
-
-  setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
-    if (this.isDisposed) {
-      return;
-    }
-    this._controls.cameraRawRotation.identity();
-
-    const animationTime = animated ? DefaultCameraManager.DefaultAnimationDuration : 0;
-    this.moveCameraTargetTo(target, animationTime);
-  }
-
-  getCameraPosition(): THREE.Vector3 {
-    if (this.isDisposed) {
-      return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
-    }
-    return this._camera.position.clone();
-  }
-
-  setCameraPosition(position: THREE.Vector3): void {
-    if (this.isDisposed) {
-      return;
-    }
-    this._controls.cameraRawRotation.identity();
-
-    this._controls.setState(position, this._controls.getState().target);
-  }
-
   /**
-   * Gets camera controls options.
+   * Gets current camera controls options.
    */
   getCameraControlsOptions(): CameraControlsOptions {
     return this._cameraControlsOptions;
   }
 
   /**
-   * Sets camera control options. See {@link CameraControlsOptions}.
+   * Sets camera controls options to customize camera controls modes. See {@link CameraControlsOptions}.
    * @param controlsOptions JSON object with camera controls options.
    */
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
@@ -287,7 +240,25 @@ export class DefaultCameraManager implements CameraManager {
     this.setupControls();
   }
 
-  moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
+  update(deltaTime: number, boundingBox: THREE.Box3): void {
+    if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
+      this.updateCameraNearAndFar(this._camera, boundingBox);
+      this._nearAndFarNeedsUpdate = false;
+      this._currentBoundingBox.copy(boundingBox);
+    }
+
+    this._controls.update(deltaTime);
+  }
+
+  dispose(): void {
+    this.isDisposed = true;
+    this._controls.dispose();
+    this.teardownControls();
+    disposeOfAllEventListeners(this._events);
+    this._inputHandler.dispose();
+  }
+
+  private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
     if (this.isDisposed) {
       return;
     }
@@ -346,11 +317,11 @@ export class DefaultCameraManager implements CameraManager {
     tween.update(TWEEN.now());
   }
 
-  moveCameraTargetTo(target: THREE.Vector3, duration?: number): void {
+  private moveCameraTargetTo(target: THREE.Vector3, duration?: number): void {
     if (this.isDisposed) {
       return;
     }
-
+    
     if (duration === 0) {
       this._controls.setState(this._controls.getState().position, target);
       return;
@@ -412,7 +383,7 @@ export class DefaultCameraManager implements CameraManager {
     tween.update(TWEEN.now());
   }
 
-  updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
+  private updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
       return;
@@ -459,26 +430,8 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  update(deltaTime: number, boundingBox: THREE.Box3): void {
-    if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
-      this.updateCameraNearAndFar(this._camera, boundingBox);
-      this._nearAndFarNeedsUpdate = false;
-      this._currentBoundingBox.copy(boundingBox);
-    }
-
-    this._controls.update(deltaTime);
-  }
-
-  dispose(): void {
-    this.isDisposed = true;
-    this._controls.dispose();
-    this.teardownControls();
-    disposeOfAllEventListeners(this._events);
-    this._inputHandler.dispose();
-  }
-
   private calculateNewTargetFromRotation(rotation: THREE.Quaternion) {
-    const distToTarget = this.getCameraTarget().sub(this._camera.position);
+    const distToTarget = this._controls.getState().target.sub(this._camera.position);
     const tempCam = this._camera.clone();
 
     tempCam.setRotationFromQuaternion(rotation);
@@ -578,10 +531,10 @@ export class DefaultCameraManager implements CameraManager {
   ): THREE.Vector3 {
     const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
 
-    const lastScrollTargetDistance = this.cameraControls.getScrollTarget().distanceTo(this._camera.position);
+    const lastScrollTargetDistance = this._controls.getScrollTarget().distanceTo(this._camera.position);
 
     const newTargetDistance =
-      lastScrollTargetDistance <= this.cameraControls.minDistance
+      lastScrollTargetDistance <= this._controls.minDistance
         ? Math.min(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize) / 2
         : lastScrollTargetDistance;
 
@@ -660,7 +613,7 @@ export class DefaultCameraManager implements CameraManager {
     const onClick = async (e: any) => {
       this._controls.enableKeyboardNavigation = false;
       const newTarget = await this.calculateNewTarget(e);
-      this.setCameraTarget(newTarget, true);
+      this.moveCameraTargetTo(newTarget, DefaultCameraManager.DefaultAnimationDuration);
     };
 
     const onWheel = async (e: any) => {
