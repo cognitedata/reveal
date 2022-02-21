@@ -55,6 +55,15 @@ const labelToAnnotation = (
   lineNumbers: [],
 });
 
+const mergeUnique = <T>(current: T[], additions: T[]) => {
+  return additions.reduce((combined, newValue) => {
+    if (!combined.includes(newValue)) {
+      combined.push(newValue);
+    }
+    return combined;
+  }, current);
+};
+
 const parseDocument = (
   graph: GraphDocument,
   version: string,
@@ -68,11 +77,34 @@ const parseDocument = (
     '.svg',
     ''
   );
-  const pdfName = `${fileNameWithoutExtension}.pdf`;
+  const pdfExternalId = `${fileNameWithoutExtension}.pdf`;
   const linking: DocumentLink[] = [];
+  const textAnnotationMap = new Map<string, TextAnnotation>();
+
+  const inferLineNumbersToLabels = (symbol: SymbolAnnotation) => {
+    if (symbol.lineNumbers.length && symbol.labelIds.length) {
+      symbol.labelIds.forEach((labelId) => {
+        const textRef = textAnnotationMap.get(labelId);
+        if (textRef) {
+          textRef.lineNumbers = mergeUnique(
+            textRef.lineNumbers,
+            symbol.lineNumbers
+          );
+        }
+      });
+    }
+  };
+
+  labels?.forEach((label) => {
+    const textAnnotation = labelToAnnotation(label);
+    annotations.push(textAnnotation);
+    textAnnotationMap.set(label.id, textAnnotation);
+  });
 
   lines?.forEach((line) => {
-    annotations.push(diagramInstanceToAnnotation(line));
+    const annotation = diagramInstanceToAnnotation(line);
+    annotations.push(annotation);
+    inferLineNumbersToLabels(annotation);
   });
 
   symbolInstances?.forEach((symbol) => {
@@ -87,22 +119,22 @@ const parseDocument = (
         linking.push(link);
       }
     }
-    annotations.push(diagramInstanceToAnnotation(symbol));
+    const annotation = diagramInstanceToAnnotation(symbol);
+    annotations.push(annotation);
+    inferLineNumbersToLabels(annotation);
   });
 
   equipmentTags?.forEach((tag) => {
-    annotations.push(symbolTagToAnnotation(tag));
-  });
-
-  labels?.forEach((label) => {
-    annotations.push(labelToAnnotation(label));
+    const annotation = symbolTagToAnnotation(tag);
+    annotations.push(annotation);
+    inferLineNumbersToLabels(annotation);
   });
 
   return {
     annotations,
     externalId: `PARSED_DIAGRAM_V${version}_${fileNameWithoutExtension}.json`,
     linking,
-    pdfExternalId: pdfName,
+    pdfExternalId,
     potentialDiscrepancies: [],
     type: graph.documentMetadata.type === DocumentType.pid ? 'p&id' : 'iso',
     viewBox: graph.viewBox,
