@@ -4,11 +4,11 @@
 
 import { CameraChangeData, CameraState } from './types';
 /**
- * Camera manager interface. It is responsible for all manipulations that are done with the camera,
- * including animations and modification of state. Also, gives ability
- * to provide custom `THREE.PerspectiveCamera` instance to {@link Cognite3DViewer}.
- * For working implementation required to fire `cameraChange`-event when camera is changed.
- * Default implementation is {@link DefaultCameraManager}.
+ * Interface for manager responsible for all manipulations to the camera,
+ * including animations and modification of state. Implementations are responsible for
+ * providing a `THREE.PerspectiveCamera` instance to {@link Cognite3DViewer}. Implementations
+ * must trigger the `cameraChange`-event when camera is changed.
+ * The default implementation is {@link DefaultCameraManager}.
  */
 export interface CameraManager {
   /**
