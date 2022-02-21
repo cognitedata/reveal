@@ -16,7 +16,12 @@
       "enabled": false
     },
     {
-      "stabilityDays": 7
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "stabilityDays": 4
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "stabilityDays": 10
     }
   ]
 }
