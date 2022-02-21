@@ -15,6 +15,7 @@ import {
 } from '@cognite/simconfig-api-sdk/rtk';
 import type {
   CalculationRun,
+  CalculationRunMetadata,
   GetCalculationRunListApiArg,
 } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -27,8 +28,12 @@ import type { OptionGroupValues } from './types';
 
 import type { AppLocationGenerics } from 'routes';
 
+const POLLING_INTERVAL = 2000;
+
 export function CalculationRuns() {
   const [calculationRuns, setCalculationRuns] = useState<CalculationRun[]>([]);
+  const [shouldPollCalculations, setShouldPollCalculations] =
+    useState<boolean>(false);
   const [cursors, setCursors] = useState(['']);
   const project = useSelector(selectProject);
   const simulator = 'PROSPER';
@@ -53,7 +58,10 @@ export function CalculationRuns() {
       ...(nextCursor !== '' && { nextCursor }),
       ...searchFilters,
     },
-    { refetchOnMountOrArgChange: true }
+    {
+      refetchOnMountOrArgChange: true,
+      pollingInterval: shouldPollCalculations ? POLLING_INTERVAL : undefined,
+    }
   );
 
   const { data: modelFileList } = useGetModelFileListQuery({ project });
@@ -89,6 +97,20 @@ export function CalculationRuns() {
       return cursors;
     });
   }, [calculationsRunList]);
+
+  useEffect(() => {
+    const calculationStates = new Set(
+      calculationRuns.map((calculation) => calculation.metadata.status)
+    );
+    const pollingStates: Partial<CalculationRunMetadata['status']>[] = [
+      'ready',
+      'running',
+    ];
+    const shouldPoll = pollingStates.some((state) =>
+      calculationStates.has(state)
+    );
+    setShouldPollCalculations(shouldPoll);
+  }, [calculationRuns]);
 
   const setSearchParams = (
     params: Record<string, number | string | undefined>
@@ -185,7 +207,9 @@ export function CalculationRuns() {
 
       {isLoadingCalculationsRunList ? <Skeleton.List lines={5} /> : null}
 
-      {isFetchingCalculationsRunList && cursors.length === 1 ? (
+      {isFetchingCalculationsRunList &&
+      !shouldPollCalculations &&
+      cursors.length === 1 ? (
         <Skeleton.List lines={5} />
       ) : (
         <CalculationRunList

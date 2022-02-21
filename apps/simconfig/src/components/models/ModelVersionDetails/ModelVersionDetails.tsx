@@ -130,6 +130,10 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
               <Icon type="Clock" />
               {formatISO9075(parseISO(modelFile.createdTime))}
             </div>
+            <div className="file-name">
+              <Icon type="Document" />
+              {modelFile.metadata.fileName}
+            </div>
           </div>
           <div className="actions">
             <div className="charts-link">
@@ -181,6 +185,7 @@ const ModelVersionProperties = styled.main`
       overflow: hidden;
       gap: 12px;
       .user-email,
+      .file-name,
       .time {
         overflow: hidden;
         flex: 0 0 auto;
