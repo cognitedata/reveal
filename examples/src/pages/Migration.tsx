@@ -375,8 +375,6 @@ export function Migration() {
                 const { treeIndex, point } = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
 
-                viewer.fitCameraToBoundingBox(await modelUi.cadModels[0].getBoundingBoxByTreeIndex(treeIndex), 1000, 3);
-
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }
               break;

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DModel, DefaultNodeAppearance } from '@cognite/reveal';
+import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
 
@@ -24,7 +24,11 @@ function TwoModelsOneGhostedPage() {
   return (
     <Cognite3DTestViewer 
       modelUrls={['primitives', 'primitives']}
-      modelAddedCallback={handleModelAdded} />
+      modelAddedCallback={handleModelAdded}
+      initializeCallback={(viewer:Cognite3DViewer) => {
+        viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50), 
+          target: new THREE.Vector3()});
+      }} />
   );
 }
 registerVisualTest('cad', 'two-models-one-ghosted', 'Two models, one is ghosted', <TwoModelsOneGhostedPage />)
