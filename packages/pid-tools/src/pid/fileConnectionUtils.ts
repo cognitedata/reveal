@@ -1,4 +1,5 @@
-import { Point } from '../geometry';
+import { isHorizontalOrientaiton, isVerticalOrientaiton } from '../utils/type';
+import { approxeq, BoundingBox, LineSegment, Point } from '../geometry';
 import { FileConnectionInstance, Rect, FileDirection } from '../types';
 
 import { PidDocument } from './PidDocument';
@@ -26,15 +27,38 @@ const normalizeLabels = (
   });
 };
 
-const getClosestNormalizedLabel = (
-  point: Point,
-  normalizedLabel: NormalizedLabel[]
-) => {
-  let closestLabel = normalizedLabel[0];
+const directionAngles = {
+  Left: 180,
+  Up: -90, // note that positive Y direction is downwards
+  Right: 0,
+};
+
+const getBestFitLabel = (
+  boundingBox: BoundingBox,
+  normalizedLabels: NormalizedLabel[],
+  expectedDirection: 'Left' | 'Up' | 'Right'
+): NormalizedLabel | null => {
+  let closestLabel: NormalizedLabel | null = null;
   let minDistance = Infinity;
-  normalizedLabel.forEach((label) => {
-    const distance = point.distance(label.normalizedMidPoint);
-    if (distance < minDistance) {
+
+  const midPoint = boundingBox.midPoint();
+  normalizedLabels.forEach((label) => {
+    // Inside a file connection there can be numbers or letters that should
+    // not be used to infer position
+    if (boundingBox.encloses(label.normalizedMidPoint)) return;
+
+    const distance = boundingBox.midPoint().distance(label.normalizedMidPoint);
+    let { angle } = new LineSegment(midPoint, label.normalizedMidPoint);
+
+    if (expectedDirection === 'Left') {
+      // If the angle is left/up it will be near -180 and left/down near 180, hence aboslute value
+      angle = Math.abs(angle);
+    }
+
+    if (
+      distance < minDistance &&
+      approxeq(angle, directionAngles[expectedDirection], 10)
+    ) {
       closestLabel = label;
       minDistance = distance;
     }
@@ -47,11 +71,11 @@ export const getFileConnectionsWithPosition = (
   pidDocument: PidDocument,
   fileConnections: FileConnectionInstance[]
 ): FileConnectionInstance[] => {
-  const leftColumnThreshold = 0.08;
-  const leftFileConnectionThreshold = 0.15;
-  const rightColumnThreshold = 0.92;
-  const rightFileConnectionThreshold = 0.85;
-  const topColumnThreshold = 0.05;
+  const leftColumnThreshold = 0.1;
+  const leftFileConnectionThreshold = 0.2;
+  const rightColumnThreshold = 0.9;
+  const rightFileConnectionThreshold = 0.8;
+  const topColumnThreshold = 0.1;
   const topFileConnectionThreshold = 0.2;
 
   const oneOrTwoDigitNumberRegex = /^[0-9]{1,2}$/;
@@ -61,38 +85,43 @@ export const getFileConnectionsWithPosition = (
     pidDocument.viewBox
   );
 
-  const leftColumnLabels = normalizedLabels.filter((label) => {
-    return (
+  const leftColumnLabels = normalizedLabels.filter(
+    (label) =>
       label.normalizedMidPoint.x < leftColumnThreshold &&
       label.text.match(oneOrTwoDigitNumberRegex)
-    );
-  });
+  );
 
-  const rightColumnLabels = normalizedLabels.filter((label) => {
-    return (
+  const rightColumnLabels = normalizedLabels.filter(
+    (label) =>
       label.normalizedMidPoint.x > rightColumnThreshold &&
       label.text.match(oneOrTwoDigitNumberRegex)
-    );
-  });
+  );
 
-  const topColumnLabels = normalizedLabels.filter((label) => {
-    return (
+  const topColumnLabels = normalizedLabels.filter(
+    (label) =>
       label.normalizedMidPoint.y < topColumnThreshold &&
       label.text.match(/^[A-Z]$/)
-    );
-  });
+  );
 
   return fileConnections.map((fileConnection) => {
-    const normalizedMidPoint = pidDocument
-      .getMidPointToPaths(fileConnection.pathIds)
-      .normalize(pidDocument.viewBox);
+    const normalizedBoundingBox = BoundingBox.fromPidPaths(
+      fileConnection.pathIds.map((id) => pidDocument.getPidPathById(id)!)
+    ).normalize(pidDocument.viewBox);
 
-    const isOnLeftSide = normalizedMidPoint.x < leftFileConnectionThreshold;
-    if (isOnLeftSide && leftColumnLabels.length > 0) {
-      const closestLeftLabel = getClosestNormalizedLabel(
-        normalizedMidPoint,
-        leftColumnLabels
+    const isOnLeftSide = normalizedBoundingBox.x < leftFileConnectionThreshold;
+    if (
+      isOnLeftSide &&
+      leftColumnLabels.length > 0 &&
+      isHorizontalOrientaiton(fileConnection.orientation)
+    ) {
+      const closestLeftLabel = getBestFitLabel(
+        normalizedBoundingBox,
+        leftColumnLabels,
+        'Left'
       );
+      if (closestLeftLabel === null)
+        return { ...fileConnection, fileDirection: 'Unknown' };
+
       let fileDirection: FileDirection;
       switch (fileConnection.orientation) {
         case 'Left':
@@ -104,8 +133,6 @@ export const getFileConnectionsWithPosition = (
         case 'Left & Right':
           fileDirection = 'Unidirectional';
           break;
-        default:
-          fileDirection = 'Unknown';
       }
       return {
         ...fileConnection,
@@ -115,12 +142,20 @@ export const getFileConnectionsWithPosition = (
       };
     }
 
-    const isOnRightSide = normalizedMidPoint.x > rightFileConnectionThreshold;
-    if (isOnRightSide && rightColumnLabels.length > 0) {
-      const closestRightLabel = getClosestNormalizedLabel(
-        normalizedMidPoint,
-        rightColumnLabels
+    const isOnRightSide =
+      normalizedBoundingBox.x > rightFileConnectionThreshold;
+    if (
+      isOnRightSide &&
+      rightColumnLabels.length > 0 &&
+      isHorizontalOrientaiton(fileConnection.orientation)
+    ) {
+      const closestRightLabel = getBestFitLabel(
+        normalizedBoundingBox,
+        rightColumnLabels,
+        'Right'
       );
+      if (closestRightLabel === null)
+        return { ...fileConnection, fileDirection: 'Unknown' };
 
       let fileDirection: FileDirection;
       switch (fileConnection.orientation) {
@@ -133,8 +168,6 @@ export const getFileConnectionsWithPosition = (
         case 'Left & Right':
           fileDirection = 'Unidirectional';
           break;
-        default:
-          fileDirection = 'Unknown';
       }
 
       return {
@@ -145,12 +178,19 @@ export const getFileConnectionsWithPosition = (
       };
     }
 
-    const isAtTop = normalizedMidPoint.y < topFileConnectionThreshold;
-    if (isAtTop && topColumnLabels.length > 0) {
-      const closestTopLabel = getClosestNormalizedLabel(
-        normalizedMidPoint,
-        topColumnLabels
+    const isAtTop = normalizedBoundingBox.y < topFileConnectionThreshold;
+    if (
+      isAtTop &&
+      topColumnLabels.length > 0 &&
+      isVerticalOrientaiton(fileConnection.orientation)
+    ) {
+      const closestTopLabel = getBestFitLabel(
+        normalizedBoundingBox,
+        topColumnLabels,
+        'Up'
       );
+      if (closestTopLabel === null)
+        return { ...fileConnection, fileDirection: 'Unknown' };
 
       let fileDirection: FileDirection;
       switch (fileConnection.orientation) {
@@ -163,8 +203,6 @@ export const getFileConnectionsWithPosition = (
         case 'Up & Down':
           fileDirection = 'Unidirectional';
           break;
-        default:
-          fileDirection = 'Unknown';
       }
 
       return {

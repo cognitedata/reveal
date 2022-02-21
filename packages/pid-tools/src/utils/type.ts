@@ -1,3 +1,4 @@
+import { verticalOrientations, horizontalOrientations } from '../constants';
 import {
   DiagramLineInstance,
   DiagramType,
@@ -9,6 +10,9 @@ import {
   DiagramEquipmentInstance,
   DiagramInstanceWithPaths,
   LineConnectionInstance,
+  HorizontalOrientation,
+  VerticalOrientation,
+  Orientation,
 } from '../types';
 
 export const isFileConnection = (
@@ -47,4 +51,16 @@ export const isIso = (
   documentMetadata: DocumentMetadata
 ): documentMetadata is IsoDocumentMetadata => {
   return documentMetadata.type === DocumentType.isometric;
+};
+
+export const isHorizontalOrientaiton = (
+  orientation: Orientation
+): orientation is HorizontalOrientation => {
+  return horizontalOrientations.some((horOr) => horOr === orientation);
+};
+
+export const isVerticalOrientaiton = (
+  orientation: Orientation
+): orientation is VerticalOrientation => {
+  return verticalOrientations.some((verOr) => verOr === orientation);
 };

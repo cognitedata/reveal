@@ -34,13 +34,16 @@ export const symbolTypes = [
   ...bothSymbolTypes,
 ] as const;
 
-export const orientations = [
+export const horizontalOrientations = [
   'Left',
   'Right',
-  'Up',
-  'Down',
   'Left & Right',
-  'Up & Down',
+] as const;
+export const verticalOrientations = ['Up', 'Down', 'Up & Down'] as const;
+
+export const orientations = [
+  ...horizontalOrientations,
+  ...verticalOrientations,
 ] as const;
 
 export const EQUIPMENT_TAG_REGEX = /^[0-9]{2}-[A-Z0-9]{4,5}$/;

@@ -4,7 +4,24 @@ import { Point } from '../Point';
 const precision = 5;
 
 describe('LineSegment', () => {
-  test('isSimilarWithTranslationAndScale', () => {
+  test('angle', async () => {
+    const lineSegmentRight = new LineSegment(new Point(0, 0), new Point(10, 0));
+    const lineSegmentUp = new LineSegment(new Point(0, 0), new Point(0, 10));
+    const lineSegmentLeft = new LineSegment(new Point(0, 0), new Point(-10, 0));
+    const lineSegmentLeftDown = new LineSegment(
+      new Point(0, 0),
+      new Point(-10, -0.0000001)
+    );
+    const lineSegmentDown = new LineSegment(new Point(0, 0), new Point(0, -10));
+
+    expect(lineSegmentRight.angle).toBeCloseTo(0, precision);
+    expect(lineSegmentUp.angle).toBeCloseTo(90, precision);
+    expect(lineSegmentLeft.angle).toBeCloseTo(180, precision);
+    expect(lineSegmentLeftDown.angle).toBeCloseTo(-180, precision);
+    expect(lineSegmentDown.angle).toBeCloseTo(-90, precision);
+  });
+
+  test('isSimilarWithTranslationAndScale', async () => {
     const lineSegment1 = new LineSegment(new Point(0, 0), new Point(40, 0));
     const lineSegment2 = new LineSegment(new Point(10, 0), new Point(50, 0));
     const lineSegment3 = new LineSegment(new Point(50, 0), new Point(10, 0));
@@ -30,7 +47,7 @@ describe('LineSegment', () => {
     ).toBe(0);
   });
 
-  test('getIntersection', () => {
+  test('getIntersection', async () => {
     const lineSegment1 = new LineSegment(new Point(-10, 0), new Point(10, 0));
     const lineSegment2 = new LineSegment(new Point(0, -10), new Point(0, 10));
     const lineSegment3 = new LineSegment(new Point(5, 0), new Point(5, 10));
@@ -59,7 +76,7 @@ describe('LineSegment', () => {
     expect(intersectionData23).toBeUndefined();
   });
 
-  test('getClosestPointOnSegment', () => {
+  test('getClosestPointOnSegment', async () => {
     const lineSegment = new LineSegment(new Point(0, 0), new Point(0, 10));
 
     const point1 = new Point(1, 0);
@@ -84,7 +101,7 @@ describe('LineSegment', () => {
     expect(closestPoint3.distance).toBeCloseTo(10, precision);
   });
 
-  test('getPointOnSegment', () => {
+  test('getPointOnSegment', async () => {
     const lineSegment = new LineSegment(new Point(0, 0), new Point(10, 10));
 
     const point1 = lineSegment.getPointOnSegment(0);
@@ -104,7 +121,7 @@ describe('LineSegment', () => {
     expect(point4.y).toBeCloseTo(20, precision);
   });
 
-  test('getClosestPointsOnSegments parallel after each other', () => {
+  test('getClosestPointsOnSegments parallel after each other', async () => {
     const lineSegment1 = new LineSegment(new Point(20, 0), new Point(30, 0));
     const lineSegment2 = new LineSegment(new Point(0, 0), new Point(10, 0));
 
@@ -124,7 +141,7 @@ describe('LineSegment', () => {
     expect(distance).toBeCloseTo(10, precision);
   });
 
-  test('getClosestPointsOnSegments 90 degree not touching', () => {
+  test('getClosestPointsOnSegments 90 degree not touching', async () => {
     const lineSegment1 = new LineSegment(new Point(0, 0), new Point(0, 10));
     const lineSegment2 = new LineSegment(new Point(5, 15), new Point(15, 15));
 
@@ -144,7 +161,7 @@ describe('LineSegment', () => {
     expect(distance).toBeCloseTo(Math.sqrt(5 * 5 + 5 * 5), precision);
   });
 
-  test('getClosestPointsOnSegments intersecting', () => {
+  test('getClosestPointsOnSegments intersecting', async () => {
     const lineSegment1 = new LineSegment(new Point(0, 0), new Point(10, 0));
     const lineSegment2 = new LineSegment(new Point(2, -5), new Point(2, 5));
 

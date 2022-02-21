@@ -1,4 +1,9 @@
-import { orientations, symbolTypes } from './constants';
+import {
+  horizontalOrientations,
+  orientations,
+  symbolTypes,
+  verticalOrientations,
+} from './constants';
 
 export interface SvgPath {
   svgCommands: string;
@@ -59,6 +64,8 @@ export interface DiagramSymbolInstance extends DiagramInstanceWithPaths {
   scale?: number;
 }
 
+export type HorizontalOrientation = typeof horizontalOrientations[number];
+export type VerticalOrientation = typeof verticalOrientations[number];
 export type Orientation = typeof orientations[number];
 
 export type FileDirection = 'In' | 'Out' | 'Unidirectional' | 'Unknown';
