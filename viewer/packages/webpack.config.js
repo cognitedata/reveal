@@ -30,6 +30,10 @@ module.exports = env => {
       }
     },
 
+    node: {
+      fs: 'empty'
+    },
+
     module: {
       rules: [
         {

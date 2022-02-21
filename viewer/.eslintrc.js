@@ -25,7 +25,7 @@ module.exports = {
     // This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
     'plugin:prettier/recommended'
   ],
-  ignorePatterns: ['.eslintrc.js', '**/dist/**/*'],
+  ignorePatterns: ['.eslintrc.js', '**/dist/**/*', '**/*/draco_decoder_gltf.js'],
   rules: {
     // notice that we use TSdoc syntax, not jsdoc, but tsdoc eslint plugin is mostly useless
     // so we use some of the jsdoc rules here
