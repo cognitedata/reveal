@@ -28,5 +28,5 @@
       "stabilityDays": 10
     }
   ],
-  "schedule": ["between 7am and 18pm weekdays"]
+  "schedule": ["after 7am and before 18pm every weekday"]
 }
