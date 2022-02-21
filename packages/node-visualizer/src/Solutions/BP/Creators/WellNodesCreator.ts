@@ -78,7 +78,7 @@ export class WellNodesCreator {
         const events = wellBoreToNDSEventsMap.get(wellBoreId);
         const logNode = WellLogCreator.createRiskLogNode(events);
         if (logNode) {
-          logNode.name = 'NDS Risk Events';
+          logNode.name = 'NDS Risk Event';
           trajectoryNode.addChild(logNode);
         }
       }

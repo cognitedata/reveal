@@ -49,7 +49,7 @@ export class WellTrajectoryStyle extends BaseRenderStyle {
   });
 
   public trajectoryColorType = new ColorTypeProperty({
-    name: 'trajectory Color',
+    name: 'Trajectory Color',
     value: ColorType.White,
   });
 
