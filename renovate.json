@@ -8,12 +8,8 @@
       "automerge": true
     },
     {
-      "matchPackagePatterns": ["eslint"],
+      "matchPackagePatterns": [""],
       "groupName": "eslint"
-    },
-    {
-      "matchPackagePatterns": ["serde"],
-      "groupName": "serde"
     }
   ]
 }
