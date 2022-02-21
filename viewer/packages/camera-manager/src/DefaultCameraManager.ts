@@ -178,20 +178,6 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   /**
-   * Allows to move camera with WASD or arrows keys.
-   */
-  enableKeyboardNavigation(): void {
-    this.keyboardNavigationEnabled = true;
-  }
-
-  /**z
-   * Disables camera movement by pressing WASD or arrows keys.
-   */
-  disableKeyboardNavigation(): void {
-    this.keyboardNavigationEnabled = false;
-  }
-
-  /**
    * Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
    * for documentation. Note that by default the `minDistance` setting of the controls will
    * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.

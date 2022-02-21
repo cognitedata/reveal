@@ -81,7 +81,7 @@ export interface Cognite3DViewerOptions {
    * Camera manager instance that is used for controlling the camera.
    * It is responsible for all manipulations that are done with the camera,
    * including animations and modification of state. Also, gives ability
-   * to provide custom THREE.PerspectiveCamera instance to Cognite3DViewer.
+   * to provide custom `THREE.PerspectiveCamera` instance to {@link Cognite3DViewer}.
    * Default implementation is {@link DefaultCameraManager}.
    */
   cameraManager?: CameraManager;
