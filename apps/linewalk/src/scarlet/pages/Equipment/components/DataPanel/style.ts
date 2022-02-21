@@ -21,9 +21,14 @@ export const ListWrapper = styled.div<{ inactive: boolean }>`
     `}
 `;
 
-export const List = styled.div`
+export const List = styled.div<{ fullHeight: boolean }>`
   padding: 18px;
-  height: 100%;
+
+  ${({ fullHeight }) =>
+    fullHeight &&
+    css`
+      height: 100%;
+    `}
 `;
 
 export const Item = styled.div`

@@ -33,5 +33,7 @@ export const getScannerDetections = async (
     .then((response) => response.json())
     .then((response) => response.detections.flat() || []);
 
-  return data.map(transformScannerDetection);
+  return data
+    .map(transformScannerDetection)
+    .filter((item: Detection) => item.value);
 };

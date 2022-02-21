@@ -1,4 +1,4 @@
 export type EquipmentListItem = {
   id: string;
-  group?: string;
+  type?: string;
 };

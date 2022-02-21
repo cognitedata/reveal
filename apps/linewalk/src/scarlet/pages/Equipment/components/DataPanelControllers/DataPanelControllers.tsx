@@ -15,7 +15,7 @@ export const DataPanelControllers = () => {
       <Styled.ToggleButton
         type="tertiary"
         icon={dataPanelState.isVisible ? 'PanelRight' : 'PanelLeft'}
-        area-label={
+        aria-label={
           dataPanelState.isVisible
             ? 'Close panel with data elements'
             : 'Open panel with data elements'

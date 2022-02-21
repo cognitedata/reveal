@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { v5 as uuid } from 'uuid';
 import { DataElementState, DetectionState, OrnateTag } from 'scarlet/types';
 
 import { useAppState, useDataPanelState } from '.';
@@ -52,21 +53,28 @@ export const useOrnateTags = (): {
           // ) {
           //   return;
           // }
+          const isActive =
+            (activeDetection && activeDetection.id === detection.id) || false;
+
+          const id = uuid(
+            detection.id + detection.state + detection.value + isActive,
+            '00000000-0000-0000-0000-000000000000'
+          );
 
           result.push({
-            id: detection.id + detection.state,
+            id,
             detection,
             dataElement,
+            isActive,
           });
         });
     });
 
     return result;
-  }, [dataElements]);
+  }, [dataElements, activeDetection]);
 
   const activeTag = useMemo(() => {
-    if (!activeDetection) return undefined;
-    const tag = tags.find((tag) => tag.detection.id === activeDetection.id);
+    const tag = tags.find((tag) => tag.isActive);
     return tag && (JSON.parse(JSON.stringify(tag)) as OrnateTag);
   }, [tags, activeDetection]);
 

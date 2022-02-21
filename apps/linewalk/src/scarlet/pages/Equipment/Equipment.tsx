@@ -1,10 +1,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import { toast, ToastContainer } from '@cognite/cogs.js';
-import {
-  transformEquipmentData,
-  transformEquipmentType,
-} from 'scarlet/transformations';
+import { transformEquipmentData } from 'scarlet/transformations';
 import { AppActionType } from 'scarlet/types';
 import { useApi, useAppContext } from 'scarlet/hooks';
 import { DataPanelProvider } from 'scarlet/contexts';
@@ -15,6 +12,7 @@ import {
   getEquipmentState,
   getScannerDetections,
 } from 'scarlet/api';
+import { getEquipmentType, getEquipmentTypeLabel } from 'scarlet/utils';
 
 import { BreadcrumbBar, PageBody, TopBar } from './components';
 import * as Styled from './style';
@@ -77,7 +75,7 @@ export const Equipment = () => {
           scannerDetections: scannerDetectionsQuery.data,
           equipmentState: equipmentStateQuery.data,
           pcms: pcmsQuery.data,
-          type: transformEquipmentType(pcmsQuery.data?.equipment?.equip_group),
+          type: getEquipmentType(equipmentName),
           documents: documentsQuery.data,
         });
 
@@ -140,8 +138,7 @@ export const Equipment = () => {
     <Styled.Container>
       <BreadcrumbBar
         unitName={unitName}
-        equipmentName={equipmentName}
-        pcms={pcmsQuery}
+        equipmentType={getEquipmentTypeLabel(getEquipmentType(equipmentName))}
       />
       <TopBar unitName={unitName} equipmentName={equipmentName} />
 

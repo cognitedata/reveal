@@ -79,12 +79,18 @@ export type AppAction =
       type: AppActionType.APPROVE_DETECTION;
       dataElement: DataElement;
       detection: Detection;
-      value: string;
+      isApproved: boolean;
     }
   | {
       type: AppActionType.REMOVE_DETECTION;
       dataElement: DataElement;
       detection: Detection;
+    }
+  | {
+      type: AppActionType.SAVE_DETECTION;
+      dataElement: DataElement;
+      detection: Detection;
+      value: string;
     }
   | {
       type: AppActionType.SHOW_DATA_ELEMENT_STATE_MODAL;
@@ -115,6 +121,7 @@ export enum AppActionType {
   ADD_DETECTION = 'add-detection',
   APPROVE_DETECTION = 'approve-detection',
   REMOVE_DETECTION = 'remove-detection',
+  SAVE_DETECTION = 'save-detection',
   SHOW_DATA_ELEMENT_STATE_MODAL = 'show-data-element-state-modal',
   HIDE_DATA_ELEMENT_STATE_MODAL = 'hide-data-element-state-modal',
   CLEANUP_EQUIPMENT_DATA = 'cleanup-equipment-data',

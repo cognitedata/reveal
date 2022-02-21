@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Table, Loader, Input, Graphic } from '@cognite/cogs.js';
 import debounce from 'lodash/debounce';
 import { useHistory, useParams, generatePath } from 'react-router-dom';
@@ -15,6 +15,7 @@ export const EquipmentList = () => {
   const { unitName } = useParams<{ unitName: string }>();
   const history = useHistory();
   const { appState, appDispatch } = useAppContext();
+  const TableContainerRef = useRef<HTMLDivElement>(null);
 
   const isDataAvailableInApp = appState.equipmentList?.unitName === unitName;
 
@@ -48,6 +49,21 @@ export const EquipmentList = () => {
     if (!search) return data;
     return data?.filter((item) => item.id.includes(filter.search));
   }, [data, filter]);
+
+  const pageSize = useMemo(() => {
+    const tableContainer = TableContainerRef.current;
+    if (tableContainer) {
+      const height = tableContainer.offsetHeight;
+      const pagination = 60;
+      const rowHeight = 54;
+      let pageSize = Math.floor((height - pagination - rowHeight) / rowHeight);
+      if (pageSize < 5) {
+        pageSize = 5;
+      }
+      return pageSize;
+    }
+    return undefined;
+  }, [TableContainerRef.current]);
 
   return (
     <Styled.Container>
@@ -87,36 +103,41 @@ export const EquipmentList = () => {
                   />
                 </Styled.Filters>
               )}
-              <Table<EquipmentListItem>
-                dataSource={equipmentList || []}
-                columns={[
-                  {
-                    Header: 'Equipment ID',
-                    accessor: ColumnAccessor.ID,
-                    maxWidth: 150,
-                    Cell: getCellValue,
-                  },
-                  {
-                    Header: 'Equipment type',
-                    accessor: ColumnAccessor.GROUP,
-                    Cell: getCellValue,
-                  },
-                ]}
-                onRowClick={({ original: { id } }) => {
-                  history.push(
-                    generatePath(RoutePath.EQUIPMENT, {
-                      unitName,
-                      equipmentName: id,
-                    })
-                  );
-                }}
-                rowKey={({ id }) => id}
-                flexLayout={{
-                  minWidth: 100,
-                  width: 300,
-                  maxWidth: 500,
-                }}
-              />
+              <Styled.TableContainer ref={TableContainerRef}>
+                {pageSize && (
+                  <Table<EquipmentListItem>
+                    dataSource={equipmentList || []}
+                    pageSize={pageSize}
+                    columns={[
+                      {
+                        Header: 'Equipment ID',
+                        accessor: ColumnAccessor.ID,
+                        maxWidth: 150,
+                        Cell: getCellValue,
+                      },
+                      {
+                        Header: 'Equipment type',
+                        accessor: ColumnAccessor.TYPE,
+                        Cell: getCellValue,
+                      },
+                    ]}
+                    onRowClick={({ original: { id } }) => {
+                      history.push(
+                        generatePath(RoutePath.EQUIPMENT, {
+                          unitName,
+                          equipmentName: id,
+                        })
+                      );
+                    }}
+                    rowKey={({ id }) => id}
+                    flexLayout={{
+                      minWidth: 100,
+                      width: 300,
+                      maxWidth: 500,
+                    }}
+                  />
+                )}
+              </Styled.TableContainer>
             </>
           )}
         </Styled.ContentWrapper>

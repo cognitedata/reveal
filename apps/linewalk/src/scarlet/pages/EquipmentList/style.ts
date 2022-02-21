@@ -38,3 +38,7 @@ export const LoaderContainer = styled.div`
 export const Row = styled.div`
   background: red;
 `;
+
+export const TableContainer = styled.div`
+  flex-grow: 1;
+`;

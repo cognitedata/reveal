@@ -14,8 +14,8 @@ export const CategoryWrapper = styled.div`
 `;
 
 export const Delimiter = styled.div`
-  height: ;
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
+  margin-bottom: 14px;
 
   &:after {
     content: '';

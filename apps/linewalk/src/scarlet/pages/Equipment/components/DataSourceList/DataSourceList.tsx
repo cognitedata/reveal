@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CollapsePanelProps, Icon } from '@cognite/cogs.js';
-import { useAppState, useDataPanelState } from 'scarlet/hooks';
-import { DataElement, DetectionState } from 'scarlet/types';
+import { useDataPanelState } from 'scarlet/hooks';
+import { DataElement, DetectionState, DetectionType } from 'scarlet/types';
 import usePrevious from 'hooks/usePrevious';
 
 import { DataSource, DataSourceHeader, NewDataSource } from '..';
@@ -13,16 +13,30 @@ type DataSourceListProps = {
 };
 
 export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
-  const { pcms } = useAppState();
-  const isPCMSAvailable = Boolean(pcms.data);
-  const [activeDetectionIds, setActiveDetectionIds] = useState<string[]>([]);
+  const [activeDetectionId, setActiveDetectionId] = useState<string>();
   const [sortingIds, setSortingIds] = useState<string[]>([]);
   const { activeDetection } = useDataPanelState();
+
+  const PCMSDetection = useMemo(
+    () =>
+      dataElement.detections.find(
+        (d) =>
+          d.type === DetectionType.PCMS && !['', 'N/A'].includes(d.value || '')
+      ),
+    [dataElement]
+  );
+
+  const isPCMSDetectionApproved =
+    PCMSDetection?.state === DetectionState.APPROVED;
 
   const detections = useMemo(
     () =>
       dataElement.detections
-        ?.filter((detection) => detection.state !== DetectionState.OMITTED)
+        ?.filter(
+          (detection) =>
+            detection.state !== DetectionState.OMITTED &&
+            detection.type !== DetectionType.PCMS
+        )
         .sort((a, b) => {
           const aRank = sortingIds.includes(a.id)
             ? sortingIds.indexOf(a.id)
@@ -47,13 +61,13 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
 
   // set initial active detection
   useEffect(() => {
-    if (!detections.length) {
-      setActiveDetectionIds(['PCMS']);
-      return;
-    }
+    // if (!detections.length) {
+    //   setActiveDetectionIds(['PCMS']);
+    //   return;
+    // }
 
     if (activeDetection) {
-      setActiveDetectionIds([activeDetection.id]);
+      setActiveDetectionId(activeDetection.id);
       return;
     }
 
@@ -61,7 +75,13 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
       (item) => item.state === DetectionState.APPROVED
     )?.id;
 
-    setActiveDetectionIds([approvedDetectionId || detections[0].id]);
+    let activeDetectionId = approvedDetectionId;
+
+    if (!isPCMSDetectionApproved && !activeDetectionId) {
+      activeDetectionId = detections.length ? detections[0].id : undefined;
+    }
+
+    setActiveDetectionId(activeDetectionId || undefined);
   }, []);
 
   // open new detection
@@ -73,75 +93,78 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
         (detection) => !prevDetectionsIds.includes(detection.id)
       );
       if (newDetection) {
-        setActiveDetectionIds((prev) => [...prev, newDetection.id]);
+        setActiveDetectionId(newDetection.id);
       }
     }
   }, [detections]);
 
-  let amount = detections.length;
-  if (isPCMSAvailable) amount += 1;
-
-  // zoom to new detection if panel was opened
-  const prevActiveDetectionIds = usePrevious(activeDetectionIds);
-  const newActiveDetectionId = useMemo(() => {
-    if (!prevActiveDetectionIds) return undefined;
-
-    const newDetectionId = activeDetectionIds.find(
-      (id) => !prevActiveDetectionIds?.includes(id)
-    );
-
-    return newDetectionId;
-  }, [activeDetectionIds]);
-
   return (
     <>
-      <Styled.Header className="cogs-detail">
-        <Icon type="DataSource" />
-        <span className="strong">Data sources ({amount})</span>
-      </Styled.Header>
-
-      <Styled.Collapse
-        expandIcon={expandIcon}
-        activeKey={activeDetectionIds}
-        onChange={setActiveDetectionIds as any}
-      >
-        {isPCMSAvailable && (
-          <Styled.Panel
-            header={<DataSourceHeader label="PCMS" disabled />}
-            isActive={!detections.length}
-            key="PCMS"
-          >
-            <DataSource
-              id="PCMS"
-              dataElement={dataElement}
-              value={dataElement.pcmsValue}
-              disabled
-            />
-          </Styled.Panel>
-        )}
-
-        {detections.map((detection) => (
+      <NewDataSource />
+      {PCMSDetection ? (
+        <Styled.Collapse
+          expandIcon={expandIcon}
+          defaultActiveKey={
+            !detections.length || isPCMSDetectionApproved
+              ? PCMSDetection.id
+              : undefined
+          }
+        >
           <Styled.Panel
             header={
               <DataSourceHeader
-                label={detection.documentExternalId!}
-                approved={detection.state === DetectionState.APPROVED}
+                label="PCMS"
+                isApproved={isPCMSDetectionApproved}
               />
             }
-            key={detection.id}
+            key={PCMSDetection.id}
             isActive
           >
             <DataSource
-              id={detection.id}
+              id={PCMSDetection.id}
               dataElement={dataElement}
-              detection={detection}
-              value={detection.value}
-              focused={detection.id === newActiveDetectionId}
+              detection={PCMSDetection}
+              value={PCMSDetection.value}
             />
           </Styled.Panel>
-        ))}
-      </Styled.Collapse>
-      <NewDataSource isActive={!detections.length} />
+        </Styled.Collapse>
+      ) : (
+        <Styled.EmptySource>
+          <Styled.EmptySourceHead>
+            <DataSourceHeader label="PCMS" disabled />
+          </Styled.EmptySourceHead>
+          <Styled.EmptySourceBody>Not available</Styled.EmptySourceBody>
+        </Styled.EmptySource>
+      )}
+      {!!detections.length && (
+        <Styled.Collapse
+          expandIcon={expandIcon}
+          activeKey={activeDetectionId}
+          onChange={setActiveDetectionId}
+          accordion
+        >
+          {detections.map((detection) => (
+            <Styled.Panel
+              header={
+                <DataSourceHeader
+                  label={detection.documentExternalId!}
+                  isApproved={detection.state === DetectionState.APPROVED}
+                />
+              }
+              key={detection.id}
+              isActive
+            >
+              <DataSource
+                id={detection.id}
+                dataElement={dataElement}
+                detection={detection}
+                value={detection.value}
+                focused={detection.id === activeDetectionId}
+              />
+            </Styled.Panel>
+          ))}
+        </Styled.Collapse>
+      )}
     </>
   );
 };
@@ -150,6 +173,7 @@ const expandIcon = ({ isActive }: CollapsePanelProps) => {
   return (
     <Icon
       type="ChevronDownLarge"
+      aria-label="Toggle data source"
       style={{
         marginRight: 0,
         width: '10px',

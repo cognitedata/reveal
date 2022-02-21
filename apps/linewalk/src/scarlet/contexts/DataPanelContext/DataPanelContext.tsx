@@ -12,6 +12,7 @@ const getInitialState = (): DataPanelState => ({
     (sessionStorage?.getItem(
       getAppName('currentOrigin')
     ) as DataElementOrigin) || DataElementOrigin.EQUIPMENT,
+  isActiveNewDataSource: false,
 });
 
 const saveCurrentOrigin = (origin: DataElementOrigin) => {
@@ -57,12 +58,21 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
         ...state,
         visibleDataElement: undefined,
         activeDetection: undefined,
+        activeNewDataSource: false,
       };
 
     case DataPanelActionType.SET_ACTIVE_DETECTION:
       return {
         ...state,
         activeDetection: action.detection,
+      };
+
+    case DataPanelActionType.TOGGLE_NEW_DATA_SOURCE:
+      if (state.isActiveNewDataSource === action.isActive) return state;
+
+      return {
+        ...state,
+        isActiveNewDataSource: action.isActive,
       };
 
     default: {

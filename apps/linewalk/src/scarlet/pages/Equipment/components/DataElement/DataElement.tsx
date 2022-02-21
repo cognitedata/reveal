@@ -52,21 +52,6 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
         </Styled.Value>
       </Styled.Content>
       <Styled.Actions>
-        {isApproved && (
-          <Styled.Button aria-label="Approve" disabled>
-            <Icon type="Checkmark" />
-          </Styled.Button>
-        )}
-
-        {/* {!isApproved && hasValue && (
-          <Styled.Button
-            aria-label="Approve"
-            onClick={() => showModal(DataElementState.APPROVED)}
-          >
-            <Icon type="Checkmark" />
-          </Styled.Button>
-        )} */}
-
         <Styled.Button
           aria-label={isApproved ? 'View' : 'Edit'}
           onClick={() => openDataElementCard(dataElement)}

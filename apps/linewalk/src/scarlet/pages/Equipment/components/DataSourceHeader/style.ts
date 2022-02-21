@@ -22,6 +22,7 @@ export const Label = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--cogs-text-color);
 `;
 
 export const Icon = styled(CogsIcon)<

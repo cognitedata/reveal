@@ -2,6 +2,16 @@ import styled from 'styled-components';
 import { Collapse as CogsCollapse } from '@cognite/cogs.js';
 
 export const Container = styled.div`
+  position: absolute;
+  top: 0;
+  right: -18px;
+  bottom: -18px;
+  left: -18px;
+  overflow-x: hidden;
+  padding: 8px 18px 18px;
+`;
+
+export const ListContainer = styled.div`
   margin: -12px 0;
 `;
 

@@ -21,9 +21,9 @@ export const addTags = ({
       id: tag.id,
       type: 'pct',
       ...tag.detection.boundingBox!,
-      ...getColorsByTag(tag),
       strokeWidth: 6,
       cornerRadius: 8,
+      ...getStylesByTag(tag),
       onClick: () => {
         onClick(tag);
       },
@@ -43,16 +43,36 @@ export const removeTags = ({
   nodes.forEach((node) => node.remove());
 };
 
-const getColorsByTag = (tag: OrnateTag) =>
-  tag.detection.state === DetectionState.APPROVED
-    ? {
-        stroke: '#18AF8E',
-        fill: `rgba(7, 141, 121, 0.1)`,
-      }
-    : {
-        stroke: '#FF8746',
-        fill: 'rgba(255, 135, 70, 0.2)',
-      };
+const getStylesByTag = (tag: OrnateTag) => {
+  if (tag.isActive) {
+    return {
+      stroke: '#4255BB',
+      fill: 'rgba(66, 85, 187, 0.1)',
+      cornerRadius: 0,
+      strokeWidth: 3,
+      dash: [6, 3],
+    };
+  }
+
+  if (tag.detection.state === DetectionState.APPROVED) {
+    return {
+      stroke: '#18AF8E',
+      fill: `rgba(7, 141, 121, 0.1)`,
+    };
+  }
+
+  if (tag.detection.value) {
+    return {
+      stroke: '#FF8746',
+      fill: 'rgba(255, 135, 70, 0.2)',
+    };
+  }
+
+  return {
+    stroke: '#D51A46',
+    fill: 'rgba(244, 113, 139, 0.2)',
+  };
+};
 
 export const zoomToTag = (
   ornateViewer: CogniteOrnate,

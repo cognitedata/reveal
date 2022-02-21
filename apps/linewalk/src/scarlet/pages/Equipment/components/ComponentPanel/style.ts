@@ -49,16 +49,6 @@ export const ContentWrapper = styled.div`
   }
 `;
 
-export const Content = styled.div`
-  position: absolute;
-  top: 0;
-  right: -18px;
-  bottom: -18px;
-  left: -18px;
-  overflow-x: hidden;
-  padding: 8px 18px 18px;
-`;
-
 export const MenuWrapper = styled.div`
   flex-shrink: 0;
   position: relative;
@@ -100,4 +90,8 @@ export const LoaderContainer = styled.div`
 
 export const LoaderContent = styled.div`
   margin-top: 16px;
+`;
+
+export const AddButtonContainer = styled.div`
+  padding: 16px 0;
 `;

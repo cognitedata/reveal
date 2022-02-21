@@ -63,7 +63,7 @@ export const Container = styled.div<{
   border-width: 1px;
   border-style: solid;
   padding: 10px;
-  margin: 8px;
+  margin: 8px 0;
   display: flex;
   align-items: center;
 

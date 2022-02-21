@@ -25,6 +25,7 @@ export type OrnateAnnotation = {
   metadata?: Record<string, string>;
   fill?: string;
   cornerRadius?: number;
+  dash?: number[];
 };
 export type OrnateAnnotationInstance = {
   annotation: OrnateAnnotation;

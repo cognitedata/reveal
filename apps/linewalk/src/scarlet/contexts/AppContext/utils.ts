@@ -103,7 +103,7 @@ export const approveDetection = (
   equipmentOrigin: EquipmentData,
   dataElementOrigin: DataElement,
   detection: Detection,
-  value: string
+  isApproved: boolean
 ): EquipmentData => {
   const equipment: EquipmentData = deepCopy(equipmentOrigin);
 
@@ -126,13 +126,40 @@ export const approveDetection = (
   dataElement.detections![detectionIndex!] = {
     ...detection,
     isModified: true,
-    state: DetectionState.APPROVED,
-    value,
+    state: isApproved ? DetectionState.APPROVED : undefined,
   };
-  dataElement.state = DataElementState.APPROVED;
-  dataElement.pcmsValue = value;
+  dataElement.state = isApproved
+    ? DataElementState.APPROVED
+    : DataElementState.PENDING;
   dataElementList[dataElementIndex] = dataElement;
   updateComponentScannerDetectionsOnApproval(equipment, dataElement);
+
+  return equipment;
+};
+
+export const saveDetection = (
+  equipmentOrigin: EquipmentData,
+  dataElementOrigin: DataElement,
+  originalDetection: Detection,
+  value: string
+): EquipmentData => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+
+  const dataElementList = getDataElementList(equipment, dataElementOrigin);
+
+  const dataElement = dataElementList.find(
+    (item) => item.key === dataElementOrigin.key
+  );
+  const detection: Detection = dataElement!.detections!.find(
+    (item) => item.id === originalDetection.id
+  )!;
+
+  detection.value = value;
+  const isApproved = detection.state === DetectionState.APPROVED;
+  if (isApproved) {
+    detection.state = undefined;
+    dataElement!.state = DataElementState.PENDING;
+  }
 
   return equipment;
 };

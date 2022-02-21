@@ -1,17 +1,24 @@
 import { Icon } from '@cognite/cogs.js';
+import { useDataPanelContext } from 'scarlet/hooks';
+import { DataPanelActionType } from 'scarlet/types';
 
 import { BoundingBoxGraphic } from './BoundingBoxGraphic';
 import * as Styled from './style';
 
-type NewDataSourceProps = {
-  isActive: boolean;
-};
+export const NewDataSource = () => {
+  const { dataPanelState, dataPanelDispatch } = useDataPanelContext();
 
-export const NewDataSource = ({ isActive }: NewDataSourceProps) => {
   return (
     <Styled.Collapse
       expandIcon={expandIcon}
-      defaultActiveKey={isActive ? 'new' : undefined}
+      activeKey={dataPanelState.isActiveNewDataSource ? 'new' : undefined}
+      onChange={(value) => {
+        dataPanelDispatch({
+          type: DataPanelActionType.TOGGLE_NEW_DATA_SOURCE,
+          isActive: Boolean(value),
+        });
+      }}
+      accordion
     >
       <Styled.Panel
         key="new"
@@ -39,6 +46,7 @@ const expandIcon = () => {
   return (
     <Icon
       type="AddLarge"
+      aria-label="Toggle new data source"
       style={{
         marginRight: '8px',
         flexShrink: 0,

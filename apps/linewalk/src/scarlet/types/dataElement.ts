@@ -33,6 +33,5 @@ export type DataElement = {
   detections: Detection[];
   state: DataElementState;
   stateReason?: string;
-  pcmsValue?: string;
   componentId?: string;
 };

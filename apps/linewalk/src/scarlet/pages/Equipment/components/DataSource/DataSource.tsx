@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Input } from '@cognite/cogs.js';
+import { Checkbox, Icon, Input, toast } from '@cognite/cogs.js';
 import {
   AppActionType,
   DataElement,
-  DataElementOrigin,
   DataPanelActionType,
   Detection,
+  DetectionState,
+  DetectionType,
 } from 'scarlet/types';
 import {
   useAppContext,
   useDataElementConfig,
   useDataPanelDispatch,
-  useUpdateEquipmentPCMS,
 } from 'scarlet/hooks';
+import usePrevious from 'hooks/usePrevious';
 
 import * as Styled from './style';
 
@@ -34,12 +35,17 @@ export const DataSource = ({
   focused,
 }: DataSourceProps) => {
   const [value, setValue] = useState(originalValue ?? '');
+  const [isApproved, setIsApproved] = useState(
+    detection?.state === DetectionState.APPROVED
+  );
   const [isRemoving, setRemoving] = useState(false);
   const [isApproving, setApproving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { appState, appDispatch } = useAppContext();
-  const updatePCMS = useUpdateEquipmentPCMS(dataElement.key);
   const dataPanelDispatch = useDataPanelDispatch();
   const dataElementConfig = useDataElementConfig(dataElement);
+  const isPCMS = detection?.type === DetectionType.PCMS;
+  const disabledActions = isApproving || isRemoving || isSaving;
 
   const inputId = `data-source-${id}`;
 
@@ -60,15 +66,23 @@ export const DataSource = ({
     });
   };
 
-  const approveDetection = async () => {
+  const approveDetection = (isApproved: boolean) => {
     setApproving(true);
-
-    if (dataElement.origin === DataElementOrigin.EQUIPMENT) {
-      await updatePCMS(value!);
-    }
+    setIsApproved(isApproved);
 
     appDispatch({
       type: AppActionType.APPROVE_DETECTION,
+      dataElement,
+      detection: detection!,
+      isApproved,
+    });
+  };
+
+  const saveDetection = () => {
+    setIsSaving(true);
+
+    appDispatch({
+      type: AppActionType.SAVE_DETECTION,
       dataElement,
       detection: detection!,
       value: value || '',
@@ -79,8 +93,15 @@ export const DataSource = ({
     if (!appState.saveState.loading) {
       if (isRemoving) setRemoving(false);
       else if (isApproving) setApproving(false);
+      else if (isSaving) setIsSaving(false);
     }
   }, [appState]);
+
+  useEffect(() => {
+    if (detection?.state !== DetectionState.APPROVED && isApproved) {
+      setIsApproved(false);
+    }
+  }, [detection?.state]);
 
   const onFocus = () => {
     if (detection) {
@@ -97,12 +118,29 @@ export const DataSource = ({
     }
   }, [focused]);
 
+  const prevDetectionState = usePrevious(detection?.state || 'no-state');
+  useEffect(() => {
+    if (
+      prevDetectionState === 'no-state' &&
+      detection?.state === DetectionState.APPROVED
+    ) {
+      toast.success(
+        `"${dataElementConfig?.label || dataElement.key}" has been set to ${
+          detection.value
+        }${dataElementConfig?.unit}`
+      );
+      dataPanelDispatch({
+        type: DataPanelActionType.CLOSE_DATA_ELEMENT,
+      });
+    }
+  }, [detection?.state]);
+
   return (
     <>
       <Input
         id={inputId}
         value={value}
-        disabled={disabled}
+        disabled={isPCMS}
         title="Field value"
         variant="titleAsPlaceholder"
         fullWidth
@@ -111,30 +149,50 @@ export const DataSource = ({
         onChange={(e) => setValue(e.target.value)}
         onFocus={onFocus}
       />
-      {!disabled && (
+      {!isPCMS && (
         <Styled.ButtonContainer>
           <Styled.Button
             type="primary"
             iconPlacement="left"
             icon="Checkmark"
-            loading={isApproving}
-            disabled={isRemoving || !value}
-            onClick={approveDetection}
+            loading={isSaving}
+            disabled={
+              disabledActions || value === '' || value === originalValue
+            }
+            onClick={saveDetection}
           >
-            Approve
+            {originalValue === undefined ? 'Add as data source' : 'Save'}
           </Styled.Button>
           <Styled.Button
             type="tertiary"
             iconPlacement="left"
-            icon="Delete"
-            loading={isRemoving}
-            disabled={isApproving}
+            icon={isRemoving ? 'Loader' : 'Delete'}
+            disabled={disabledActions}
             onClick={removeDetection}
-          >
-            Remove
-          </Styled.Button>
+            aria-label="Remove data source"
+          />
         </Styled.ButtonContainer>
       )}
+
+      <Styled.Delimiter />
+
+      <Checkbox
+        name={`detection-${detection?.id}`}
+        onChange={approveDetection}
+        checked={isApproved}
+        disabled={
+          disabledActions ||
+          originalValue === undefined ||
+          value !== originalValue
+        }
+      >
+        <div className="cogs-detail">Set as primary value</div>
+        {isApproving && (
+          <Styled.LoaderContainer>
+            <Icon type="Loader" />
+          </Styled.LoaderContainer>
+        )}
+      </Checkbox>
     </>
   );
 };

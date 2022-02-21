@@ -1,4 +1,4 @@
-import { DataElement, DetectionState } from 'scarlet/types';
+import { DataElement, DetectionState, DetectionType } from 'scarlet/types';
 
 export const getDataElementValue = (
   dataElement: DataElement
@@ -10,7 +10,9 @@ export const getDataElementValue = (
 
   return (
     dataElement.detections.filter(
-      (item) => item.state !== DetectionState.OMITTED
+      (item) =>
+        item.state !== DetectionState.OMITTED &&
+        item.type !== DetectionType.PCMS
     )[0]?.value ?? undefined
   );
 };

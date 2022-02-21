@@ -67,6 +67,16 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
     ornateViewer.current = new CogniteOrnate({
       container: `#${componentContainerId}`,
     });
+
+    ornateViewer.current.shapeSettings = {
+      ...ornateViewer.current.shapeSettings,
+      rect: {
+        stroke: '#4255BB',
+        fill: 'rgba(66, 85, 187, 0.1)',
+        strokeWidth: 3,
+        dash: [6, 3],
+      },
+    };
   }, []);
 
   useEffect(() => {

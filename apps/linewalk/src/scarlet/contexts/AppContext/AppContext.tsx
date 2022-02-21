@@ -8,6 +8,7 @@ import {
   approveDetection,
   deleteComponents,
   removeDetection,
+  saveDetection,
   updateDataElementState,
 } from './utils';
 
@@ -69,7 +70,7 @@ function reducer(state: AppState, action: AppAction) {
         state.equipment.data!,
         action.dataElement,
         action.detection,
-        action.value
+        action.isApproved
       );
 
       return {
@@ -100,6 +101,22 @@ function reducer(state: AppState, action: AppAction) {
         state.equipment.data!,
         action.dataElement,
         action.detection
+      );
+
+      return {
+        ...state,
+        saveState: {
+          loading: true,
+          data: equipmentToSave,
+        },
+      };
+    }
+    case AppActionType.SAVE_DETECTION: {
+      const equipmentToSave = saveDetection(
+        state.equipment.data!,
+        action.dataElement,
+        action.detection,
+        action.value
       );
 
       return {

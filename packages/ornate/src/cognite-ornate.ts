@@ -719,6 +719,7 @@ export class CogniteOrnate {
       strokeWidth: annotation.strokeWidth,
       fill: annotation.fill,
       cornerRadius: annotation.cornerRadius,
+      dash: annotation.dash,
       unselectable: true,
       metadata: annotation.metadata,
       attachedToGroup: groupId,

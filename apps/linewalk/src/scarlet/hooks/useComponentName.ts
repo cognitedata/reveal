@@ -10,7 +10,7 @@ export const useComponentName = () => {
   // for example based on component type and a diameter
   const getComponentName = useCallback(
     (component: EquipmentComponent) =>
-      `${equipmentName}-${component.id.substring(0, 7)}`,
+      component.pcmsName || `${equipmentName}-${component.id.substring(0, 7)}`,
     [equipmentName]
   );
 

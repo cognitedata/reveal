@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CogniteOrnate, MoveTool, RectTool, ToolType } from '@cognite/ornate';
 import { Button } from '@cognite/cogs.js';
-import { Annotation, WorkspaceTool } from 'scarlet/types';
-import { useWorkspaceTools } from 'scarlet/hooks';
+import { Annotation, DataPanelActionType, WorkspaceTool } from 'scarlet/types';
+import { useDataPanelContext, useWorkspaceTools } from 'scarlet/hooks';
 
 import * as Styled from './style';
 
@@ -13,6 +13,7 @@ type WorkspaceToolsProps = {
 export const WorkspaceTools = ({ ornateRef }: WorkspaceToolsProps) => {
   const [activeTool, setActiveTool] = useState<ToolType>('move');
   const { enabledTools, onNewDetection } = useWorkspaceTools();
+  const { dataPanelDispatch, dataPanelState } = useDataPanelContext();
 
   useEffect(() => {
     if (ornateRef) {
@@ -25,7 +26,7 @@ export const WorkspaceTools = ({ ornateRef }: WorkspaceToolsProps) => {
         rect: rectTool,
         default: moveTool,
       };
-      onToolChange('move');
+      onToolChange('default');
     }
   }, [ornateRef]);
 
@@ -42,9 +43,22 @@ export const WorkspaceTools = ({ ornateRef }: WorkspaceToolsProps) => {
     }
   }, [enabledTools]);
 
+  useEffect(() => {
+    if (dataPanelState.isActiveNewDataSource && activeTool !== 'rect') {
+      setActiveTool('rect');
+    } else if (!dataPanelState.isActiveNewDataSource && activeTool === 'rect') {
+      setActiveTool('default');
+    }
+  }, [dataPanelState.isActiveNewDataSource]);
+
   const onToolChange = (tool: ToolType) => {
     if (tool !== activeTool) {
       setActiveTool(tool);
+
+      dataPanelDispatch({
+        type: DataPanelActionType.TOGGLE_NEW_DATA_SOURCE,
+        isActive: Boolean(tool === 'rect'),
+      });
     }
   };
 
@@ -89,7 +103,7 @@ export const WorkspaceTools = ({ ornateRef }: WorkspaceToolsProps) => {
         onNewDetection(annotation);
       }
     }
-    setActiveTool('move');
+    onToolChange('move');
     rect?.remove();
   }, [ornateRef, onNewDetection]);
 
@@ -110,9 +124,10 @@ export const WorkspaceTools = ({ ornateRef }: WorkspaceToolsProps) => {
           type="ghost"
           size="small"
           title="Move M"
+          aria-label="Move"
           icon="Grab"
           onClick={() => onToolChange('move')}
-          disabled={activeTool === 'move'}
+          disabled={activeTool === 'move' || activeTool === 'default'}
         />
       )}
       {enabledTools.includes(WorkspaceTool.RECTANGLE) && (
@@ -120,6 +135,7 @@ export const WorkspaceTools = ({ ornateRef }: WorkspaceToolsProps) => {
           type="ghost"
           size="small"
           title="Add rect"
+          aria-label="Add rect"
           icon="FrameTool"
           onClick={() => onToolChange('rect')}
           disabled={activeTool === 'rect'}

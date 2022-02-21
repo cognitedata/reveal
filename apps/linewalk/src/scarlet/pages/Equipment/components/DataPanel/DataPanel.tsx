@@ -26,7 +26,7 @@ export const DataPanel = () => {
   return (
     <Styled.Container>
       <Styled.ListWrapper inactive={!!dataElement}>
-        <Styled.List>
+        <Styled.List fullHeight={currentOrigin === DataElementOrigin.COMPONENT}>
           {currentOrigin === DataElementOrigin.EQUIPMENT && <EquipmentPanel />}
           {currentOrigin === DataElementOrigin.COMPONENT && <ComponentPanel />}
         </Styled.List>

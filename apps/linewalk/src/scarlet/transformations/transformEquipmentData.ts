@@ -13,6 +13,8 @@ import {
   DocumentType,
   DetectionType,
   EquipmentComponent,
+  EquipmentComponentType,
+  DetectionState,
 } from 'scarlet/types';
 import { isSameDetection } from 'scarlet/utils';
 
@@ -82,30 +84,20 @@ const getEquipmentElements = (
 
       const savedElement = savedElements.find((item) => item.key === key);
 
-      // do not update omitted or approved data-elements
-      // only label, unit and type could be updated from config file
-      if (savedElement && savedElement.state !== DataElementState.PENDING) {
-        return {
-          ...savedElement,
-          ...config.equipmentElements[key],
-        };
-      }
-
-      const { value } = itemScannerDetections[0] || {};
+      const pcmsDetection = getPCMSDetection(key, pcms);
 
       const detections = mergeDetections(
         savedElement?.detections,
-        itemScannerDetections
+        itemScannerDetections,
+        pcmsDetection
       );
 
       return {
         ...savedElement,
         ...config.equipmentElements[key], // -TODO: remove it later. it's here so prod may work as it uses the same equipment-state-json as staging.
         origin: DataElementOrigin.EQUIPMENT,
-        value,
         detections,
-        state: DataElementState.PENDING,
-        pcmsValue: pcms[key],
+        state: savedElement?.state || DataElementState.PENDING,
       } as DataElement;
     })
     .filter((item) => item);
@@ -121,7 +113,7 @@ const transformScannerDetections = (
   documentExternalId?: string
 ) =>
   documentExternalId
-    ? detections?.map((item) => ({
+    ? detections.map((item) => ({
         ...item,
         documentExternalId,
       }))
@@ -129,70 +121,205 @@ const transformScannerDetections = (
 
 const mergeDetections = (
   detections: Detection[] = [],
-  scannerDetections: Detection[] = []
+  scannerDetections: Detection[] = [],
+  pcmsDetection?: Detection
 ) => {
   const lockedDetections = detections.filter(
-    (d) => d.type === DetectionType.MANUAL || d.isModified
+    (d) =>
+      d.type === DetectionType.MANUAL ||
+      d.type === DetectionType.PCMS ||
+      d.isModified
   );
   const newScannerDetections = scannerDetections.filter((sd) =>
     lockedDetections.every((d) => !isSameDetection(sd, d))
   );
 
-  return [...lockedDetections, ...newScannerDetections];
+  const mergedDetections = [...lockedDetections, ...newScannerDetections];
+
+  if (pcmsDetection) {
+    const prevPCMSDetection = mergedDetections.find(
+      (d) => d.type === DetectionType.PCMS
+    );
+    if (prevPCMSDetection) {
+      if (prevPCMSDetection.state !== DetectionState.APPROVED) {
+        prevPCMSDetection.value = pcmsDetection.value;
+      }
+    } else {
+      mergedDetections.unshift(pcmsDetection);
+    }
+  }
+
+  return mergedDetections;
 };
 
 const getInitializedEquipmentComponents = (
   equipmentType: EquipmentType,
   config: EquipmentConfig,
   scannerDetections: Detection[] = [],
-  pcmsComponents: Metadata[] = []
+  pcmsComponents?: Metadata[]
 ): EquipmentComponent[] => {
-  const resultComponents: EquipmentComponent[] = [];
+  // if pcms components are not available
+  if (!pcmsComponents) {
+    return getInitializedEquipmentComponentsByScannerDetections(
+      equipmentType,
+      config,
+      scannerDetections
+    );
+  }
 
-  const componentTypes = Object.values(
-    config.equipmentTypes[equipmentType].componentTypes
+  return getInitializedEquipmentComponentsByPCMS(
+    equipmentType,
+    config,
+    scannerDetections,
+    pcmsComponents
+  );
+};
+
+const getInitializedEquipmentComponentsByScannerDetections = (
+  equipmentType: EquipmentType,
+  config: EquipmentConfig,
+  scannerDetections: Detection[] = []
+): EquipmentComponent[] => {
+  const components: EquipmentComponent[] = [];
+
+  const groupedDetections = scannerDetections.reduce(
+    (result, detection) => {
+      if (!detection.scannerComponent) return result;
+      const id =
+        detection.scannerComponent.type + detection.scannerComponent.id;
+      if (!result[id]) {
+        // eslint-disable-next-line no-param-reassign
+        result[id] = {
+          ...detection.scannerComponent,
+          componentDetections: [],
+        };
+      }
+      result[id].componentDetections.push(detection);
+      return result;
+    },
+    {} as {
+      [key: string]: {
+        id: string;
+        type: EquipmentComponentType;
+        componentDetections: Detection[];
+      };
+    }
   );
 
+  Object.values(groupedDetections).forEach(({ type, componentDetections }) => {
+    pushComponent({
+      components,
+      equipmentType,
+      componentType: type,
+      config,
+      componentDetections,
+    });
+  });
+
+  return components;
+};
+
+const getInitializedEquipmentComponentsByPCMS = (
+  equipmentType: EquipmentType,
+  config: EquipmentConfig,
+  scannerDetections: Detection[] = [],
+  pcmsComponents: Metadata[] = []
+): EquipmentComponent[] => {
+  const components: EquipmentComponent[] = [];
+
   pcmsComponents.forEach((pcmsComponent) => {
-    const componentId = uuid();
-    const type = pcmsComponent.component_master.toLowerCase();
-    const componentConfig = componentTypes.find(
-      (componentType) => componentType.type === type
+    const pcmsType = pcmsComponent.component_master.toLowerCase();
+
+    const componentType = Object.values(EquipmentComponentType).find(
+      (item: EquipmentComponentType) => pcmsType.includes(item)
     );
+    if (!componentType) return;
 
     const componentDetections = scannerDetections.filter(
       (detection) =>
         detection.scannerComponent &&
-        detection.scannerComponent?.type === componentConfig?.type
+        detection.scannerComponent?.type === componentType
     );
 
-    if (!componentConfig) return;
-
-    const componentElements = componentConfig.componentElementKeys.map(
-      (dataElementKey): DataElement | undefined => {
-        const detections = componentDetections.filter(
-          (detection) => detection.key === dataElementKey
-        );
-        const dataElement: DataElement = {
-          key: dataElementKey,
-          origin: DataElementOrigin.COMPONENT,
-          state: DataElementState.PENDING,
-          pcmsValue: pcmsComponent[dataElementKey],
-          detections,
-          componentId,
-        };
-
-        // eslint-disable-next-line consistent-return
-        return dataElement;
-      }
-    ) as DataElement[];
-
-    resultComponents.push({
-      id: componentId,
-      type: componentConfig.type,
-      componentElements,
+    pushComponent({
+      components,
+      equipmentType,
+      componentType,
+      config,
+      pcmsComponent,
+      componentDetections,
     });
   });
 
-  return resultComponents;
+  return components;
+};
+
+const pushComponent = ({
+  components,
+  equipmentType,
+  componentType,
+  config,
+  pcmsComponent,
+  componentDetections,
+}: {
+  components: EquipmentComponent[];
+  equipmentType: EquipmentType;
+  componentType: EquipmentComponentType;
+  config: EquipmentConfig;
+  pcmsComponent?: Metadata;
+  componentDetections: Detection[];
+}) => {
+  const configComponentTypes = Object.values(
+    config.equipmentTypes[equipmentType].componentTypes
+  );
+
+  const componentConfig = configComponentTypes.find(
+    (item) => item.type === componentType
+  );
+
+  if (!componentConfig) return;
+
+  const componentId = uuid();
+
+  const componentElements = componentConfig.componentElementKeys.map(
+    (dataElementKey): DataElement | undefined => {
+      const detections = componentDetections.filter(
+        (detection) => detection.key === dataElementKey
+      );
+
+      const pcmsDetection = getPCMSDetection(dataElementKey, pcmsComponent);
+      if (pcmsDetection) {
+        detections.unshift(pcmsDetection);
+      }
+
+      const dataElement: DataElement = {
+        key: dataElementKey,
+        origin: DataElementOrigin.COMPONENT,
+        state: DataElementState.PENDING,
+        detections,
+        componentId,
+      };
+
+      // eslint-disable-next-line consistent-return
+      return dataElement;
+    }
+  ) as DataElement[];
+
+  components.push({
+    id: componentId,
+    pcmsName: pcmsComponent?.name,
+    type: componentConfig.type,
+    componentElements,
+  });
+};
+
+const getPCMSDetection = (key: string, pcms?: { [key: string]: string }) => {
+  if (!pcms || pcms[key] === undefined) return undefined;
+
+  return {
+    id: uuid(),
+    key,
+    type: DetectionType.PCMS,
+    value: pcms[key],
+  };
 };

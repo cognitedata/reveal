@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Icon, toast } from '@cognite/cogs.js';
+import { Button, Icon, toast } from '@cognite/cogs.js';
 import {
   useAddComponent,
   useAppDispatch,
@@ -51,7 +51,7 @@ export const ComponentPanel = () => {
 
   const onAddComponent = () => {
     setIsAdding(true);
-    toggleMenu();
+    setMenuActive(false);
     try {
       addComponent(currentGroup!.type);
     } catch (e: any) {
@@ -76,9 +76,11 @@ export const ComponentPanel = () => {
         {currentGroup && !isDeleteView && (
           <Styled.TopBar>
             <Styled.TopBarContent className="cogs-body-2">
-              {`${components.length} unique ${groupLabel}${
-                components.length !== 1 ? 's' : ''
-              }`}
+              {components.length
+                ? `${components.length} unique ${groupLabel}${
+                    components.length !== 1 ? 's' : ''
+                  }`
+                : `No ${groupLabel}s`}
             </Styled.TopBarContent>
 
             <Styled.MenuWrapper>
@@ -86,7 +88,7 @@ export const ComponentPanel = () => {
                 icon="EllipsisHorizontal"
                 type="ghost"
                 onClick={toggleMenu}
-                area-label={
+                aria-label={
                   isMenuActive ? 'Close component menu' : 'Open component menu'
                 }
               />
@@ -111,7 +113,7 @@ export const ComponentPanel = () => {
           </Styled.TopBar>
         )}
       </Styled.Header>
-      {isDeleteView ? (
+      {isDeleteView && (
         <ComponentsDeletion
           group={currentGroup!}
           components={components}
@@ -119,16 +121,29 @@ export const ComponentPanel = () => {
           onClose={() => setIsDeleteView(false)}
           onDelete={onDeleteComponents}
         />
-      ) : (
+      )}
+
+      {!isDeleteView && components.length > 0 && (
         <Styled.ContentWrapper>
-          <Styled.Content>
-            <ComponentList
-              key={currentGroup?.type}
-              components={components}
-              loading={loading || !currentGroup}
-            />
-          </Styled.Content>
+          <ComponentList
+            key={currentGroup?.type}
+            components={components}
+            loading={loading || !currentGroup}
+          />
         </Styled.ContentWrapper>
+      )}
+      {!isDeleteView && !components.length && !loading && (
+        <Styled.AddButtonContainer>
+          <Button
+            type="tertiary"
+            icon="Add"
+            iconPlacement="left"
+            onClick={onAddComponent}
+            block
+          >
+            Add new {groupLabel}
+          </Button>
+        </Styled.AddButtonContainer>
       )}
 
       {(isAdding || isDeleting) && (

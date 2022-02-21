@@ -9,7 +9,7 @@ export const getCellValue = ({
 }: CellProps<EquipmentListItem, string>) => {
   if (value !== undefined) return value;
   switch (cell.column.id) {
-    case ColumnAccessor.GROUP:
+    case ColumnAccessor.TYPE:
       return '—';
     default:
       return '';
