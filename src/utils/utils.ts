@@ -52,10 +52,9 @@ export const parseDataSetsList = (dataSets: APIDataSet[]): Array<DataSet> => {
 };
 
 export const getJetfireUrl = () => {
-  if (getStringCdfEnv()) {
-    return `https://jetfire.${getStringCdfEnv()}.cogniteapp.com/api`;
-  }
-  return `https://jetfire.europe-west1-1.cogniteapp.com/api`;
+  return `https://${
+    getStringCdfEnv() || 'api'
+  }.cognitedata.com/api/v1/projects/${sdk.project}/transformations`;
 };
 
 const hasDataSetWriteAction = (group: { capabilities: any }) => {

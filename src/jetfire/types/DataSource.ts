@@ -13,6 +13,7 @@ export enum DataSourceType {
   StringDatapoints = 'string_datapoints',
   Labels = 'labels',
   Relationships = 'relationships',
+  DataSets = 'data_sets',
 }
 
 export enum ConflictMode {
@@ -53,6 +54,9 @@ export const Labels = { type: DataSourceType.Labels as DataSourceType.Labels };
 export const Relationships = {
   type: DataSourceType.Relationships as DataSourceType.Relationships,
 };
+export const DataSets = {
+  type: DataSourceType.DataSets as DataSourceType.DataSets,
+};
 
 export type DataSource =
   | Raw
@@ -65,7 +69,8 @@ export type DataSource =
   | typeof Datapoints
   | typeof StringDatapoints
   | typeof Labels
-  | typeof Relationships;
+  | typeof Relationships
+  | typeof DataSets;
 
 export const conflictModeToHumanDescription = (c: ConflictMode) => {
   const lookup = {
@@ -90,6 +95,7 @@ export const dataSourceTypeHumanDescription = (d: DataSourceType) => {
     [DataSourceType.StringDatapoints]: 'string datapoints',
     [DataSourceType.Labels]: 'labels',
     [DataSourceType.Relationships]: 'relationships',
+    [DataSourceType.DataSets]: 'datasets',
   };
   return lookup[d];
 };
@@ -102,7 +108,7 @@ const relationModeSupport: { [key in DataSourceType]: ConflictMode[] } = {
     ConflictMode.Update,
     ConflictMode.Delete,
   ],
-  [DataSourceType.AssetHierarchy]: [ConflictMode.Upsert],
+  [DataSourceType.AssetHierarchy]: [ConflictMode.Upsert, ConflictMode.Delete],
   [DataSourceType.Events]: [
     ConflictMode.Upsert,
     ConflictMode.Abort,
@@ -129,7 +135,17 @@ const relationModeSupport: { [key in DataSourceType]: ConflictMode[] } = {
   [DataSourceType.Datapoints]: [ConflictMode.Upsert, ConflictMode.Delete],
   [DataSourceType.StringDatapoints]: [ConflictMode.Upsert, ConflictMode.Delete],
   [DataSourceType.Labels]: [ConflictMode.Abort, ConflictMode.Delete],
-  [DataSourceType.Relationships]: [ConflictMode.Abort, ConflictMode.Delete],
+  [DataSourceType.Relationships]: [
+    ConflictMode.Abort,
+    ConflictMode.Delete,
+    ConflictMode.Update,
+    ConflictMode.Upsert,
+  ],
+  [DataSourceType.DataSets]: [
+    ConflictMode.Abort,
+    ConflictMode.Update,
+    ConflictMode.Upsert,
+  ],
 };
 
 export class DataSourceUtil {

@@ -3,5 +3,3 @@ export type ColumnSchema = {
   sqlType: string;
   nullable: boolean;
 };
-
-export type RowSchema = ColumnSchema[];
