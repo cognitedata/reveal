@@ -1,3 +1,5 @@
+precision highp float;
+
 #define texture2D texture
 
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
