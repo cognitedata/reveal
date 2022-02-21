@@ -203,12 +203,12 @@ export class JetfireApi {
   }
 
   filterEmptyStr(creds: OidcCredentials): OidcCredentials {
-    return Object.keys(creds)
-      .filter((key) => (creds as any)[key] !== '')
+    return (Object.keys(creds) as Array<keyof OidcCredentials>)
+      .filter((key) => creds[key] !== '')
       .reduce((newObject, current) => {
-        newObject[current] = (creds as any)[current]; // eslint-disable-line no-param-reassign
+        newObject[current] = creds[current];
         return newObject;
-      }, {} as any);
+      }, {} as OidcCredentials);
   }
   setTransformConfigSourceOidcCredentials(
     id: number,
