@@ -1,3 +1,4 @@
+import 'services/documents/__mocks/setupDocumentsMockSDK';
 import { waitFor, screen, fireEvent, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';

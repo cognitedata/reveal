@@ -1,3 +1,4 @@
+import 'services/well/__mocks/setupWellsMockSDK';
 import { setupServer } from 'msw/node';
 
 import {

@@ -1,3 +1,4 @@
+import '__mocks/mockCogniteSDK';
 import { saveAs } from 'file-saver';
 
 import { InternalId, ExternalId, FileLink } from '@cognite/sdk';

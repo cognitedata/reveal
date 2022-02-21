@@ -1,3 +1,4 @@
+import '__mocks/mockContainerAuth'; // should be first
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';

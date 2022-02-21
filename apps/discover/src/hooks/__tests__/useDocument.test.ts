@@ -1,3 +1,4 @@
+import 'services/documents/__mocks/setupDocumentsMockSDK';
 import { renderHook } from '@testing-library/react-hooks';
 import uniqueId from 'lodash/uniqueId';
 

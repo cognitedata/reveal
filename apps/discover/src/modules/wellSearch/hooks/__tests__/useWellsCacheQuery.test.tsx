@@ -1,3 +1,4 @@
+import 'services/well/__mocks/setupWellsMockSDK';
 import { QueryClient } from 'react-query';
 
 import { screen } from '@testing-library/react';

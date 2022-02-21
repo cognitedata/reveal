@@ -1,3 +1,4 @@
+import 'services/documents/__mocks/setupDocumentsMockSDK';
 import { setupServer } from 'msw/node';
 
 import { getMockDocumentEmptyFacets } from '__test-utils/fixtures/document';

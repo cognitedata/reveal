@@ -1,3 +1,4 @@
+import '__mocks/mockContainerAuth'; // should be first
 import { renderHook } from '@testing-library/react-hooks';
 
 import { QueryClientWrapper } from '__test-utils/queryClientWrapper';

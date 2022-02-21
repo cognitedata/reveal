@@ -1,3 +1,4 @@
+import 'services/well/__mocks/setupWellsMockSDK';
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';

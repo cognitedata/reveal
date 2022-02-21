@@ -1,3 +1,4 @@
+import 'modules/seismicSearch/__mocks/mockSeismicSdk';
 import { now } from 'utils/date';
 
 import { GeoJson } from '@cognite/seismic-sdk-js';

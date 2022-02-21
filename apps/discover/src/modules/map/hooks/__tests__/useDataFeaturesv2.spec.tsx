@@ -1,3 +1,5 @@
+import 'services/well/__mocks/setupWellsMockSDK';
+import 'services/documents/__mocks/setupDocumentsMockSDK';
 import { screen, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';

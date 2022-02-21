@@ -1,3 +1,4 @@
+import '__mocks/mockCogniteSDK';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { testWrapper } from '__test-utils/renderer';
