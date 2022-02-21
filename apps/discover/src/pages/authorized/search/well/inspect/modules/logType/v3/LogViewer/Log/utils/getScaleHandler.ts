@@ -11,16 +11,15 @@ import {
 
 import { Domain, LogData, Tuplet } from '../interfaces';
 
-export const getTrackScale = ({
+export const getScaleHandler = ({
   logData,
+  domain,
   depthIndexType,
-  depthIndexColumnExternalId,
 }: {
   logData: LogData;
+  domain: Domain;
   depthIndexType: DepthIndexTypeEnum;
-  depthIndexColumnExternalId: string;
 }) => {
-  const { domain } = logData[depthIndexColumnExternalId];
   const defaultScaleHandler = getDefaultScaleHandler(domain);
 
   const mdColumnData = Object.values(logData).find(
@@ -31,10 +30,7 @@ export const getTrackScale = ({
   );
 
   if (!mdColumnData || !tvdColumnData) {
-    return {
-      domain,
-      scaleHandler: defaultScaleHandler,
-    };
+    return defaultScaleHandler;
   }
 
   const tuplets = (
@@ -47,10 +43,7 @@ export const getTrackScale = ({
   const reverseValues = compact(tuplets.map((tuplet) => tuplet[1]));
 
   if (isEmpty(forwardValues) || isEmpty(reverseValues)) {
-    return {
-      domain,
-      scaleHandler: defaultScaleHandler,
-    };
+    return defaultScaleHandler;
   }
 
   const forwardValueMapping: Record<number, number> = {};
@@ -85,10 +78,7 @@ export const getTrackScale = ({
     domain
   );
 
-  return {
-    domain,
-    scaleHandler,
-  };
+  return scaleHandler;
 };
 
 export const getClosestValue = (values: number[], targetValue: number) => {

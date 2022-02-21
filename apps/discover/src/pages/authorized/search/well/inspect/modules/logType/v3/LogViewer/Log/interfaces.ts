@@ -10,4 +10,8 @@ export type LogData = {
   };
 };
 
-export type EventData = (string | number)[] | (number | null)[];
+export type EventData = {
+  holeStartValue: number;
+  holeEndValue: number;
+  riskType?: string;
+};

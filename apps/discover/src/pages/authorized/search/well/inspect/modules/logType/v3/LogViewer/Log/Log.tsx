@@ -1,19 +1,17 @@
 import React, { useRef, useState } from 'react';
 
 import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
-import { LogViewer } from '@cognite/videx-wellog';
+import { LogViewer, Track } from '@cognite/videx-wellog';
 
 import { useDeepEffect } from 'hooks/useDeep';
-import { TrackType } from 'modules/wellSearch/types';
 
 import { LogControllerWrapper } from './elements';
 import { LogData, EventData } from './interfaces';
-import { getTrackList } from './trackList/trackList';
-import { getTrackScale } from './utils/getTrackScale';
+import { getLogViewerTracks } from './Tracks';
+import { getScaleHandler } from './utils/getScaleHandler';
 import { updateRanges } from './utils/updateRanges';
 
 export type Props = {
-  displayTracks: TrackType[];
   logData: LogData;
   eventsData: EventData[];
   depthIndexColumnExternalId: string;
@@ -21,7 +19,6 @@ export type Props = {
 };
 
 const Log: React.FC<Props> = ({
-  displayTracks,
   logData,
   eventsData,
   depthIndexType,
@@ -29,7 +26,7 @@ const Log: React.FC<Props> = ({
 }) => {
   const logViewerRef = useRef<HTMLDivElement>(null);
 
-  const [tracksState, setTracksState] = useState<any[]>([]);
+  const [tracksState, setTracksState] = useState<Track[]>([]);
 
   const updateLogViewer = () => {
     const logViewerContainer = logViewerRef.current;
@@ -40,10 +37,12 @@ const Log: React.FC<Props> = ({
     )
       return;
 
-    const { domain, scaleHandler } = getTrackScale({
+    const { domain, unit: depthUnit } = logData[depthIndexColumnExternalId];
+
+    const scaleHandler = getScaleHandler({
       logData,
+      domain,
       depthIndexType,
-      depthIndexColumnExternalId,
     });
 
     const logViewer = new LogViewer({
@@ -53,7 +52,7 @@ const Log: React.FC<Props> = ({
       scaleHandler,
     });
 
-    const tracks = getTrackList(displayTracks, logData, {}, eventsData);
+    const tracks = getLogViewerTracks({ logData, eventsData, depthUnit });
 
     setTracksState(tracks);
     logViewer.init(logViewerContainer).setTracks(tracks).zoomTo(domain);

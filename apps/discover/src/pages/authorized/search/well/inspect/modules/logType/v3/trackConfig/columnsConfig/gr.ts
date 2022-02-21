@@ -1,6 +1,6 @@
 import { TrackConfig } from '../types';
 
-export const MD_COLUMNS_CONFIG: TrackConfig[] = [
+export const GR_COLUMNS_CONFIG: TrackConfig[] = [
   {
     measurementType: 'gamma ray',
     name: 'GR',

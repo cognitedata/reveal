@@ -10,7 +10,6 @@ import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { LogsMessageWrapper } from '../elements';
 import { useEventsData } from '../hooks/useEventsData';
-import { useTracks } from '../hooks/useTracks';
 import { useWellLogsData } from '../hooks/useWellLogsData';
 import { WellLog } from '../types';
 
@@ -38,7 +37,6 @@ export const LogViewer: React.FC<Props> = ({
   domainMap,
   setDomains,
 }) => {
-  const tracks = useTracks();
   const wellLogsData = useWellLogsData(wellLogRowData);
   const eventsData = useEventsData(events);
 
@@ -70,14 +68,6 @@ export const LogViewer: React.FC<Props> = ({
     );
   }, [wellLogsData, domainMap]);
 
-  if (!tracks.length) {
-    return (
-      <LogsMessageWrapper>
-        <EmptyState emptyTitle="Track Configurations Not Found" />
-      </LogsMessageWrapper>
-    );
-  }
-
   if (isEmpty(logViewerData)) {
     return (
       <LogsMessageWrapper>
@@ -89,7 +79,6 @@ export const LogViewer: React.FC<Props> = ({
   return (
     <LogHolder key={wellLog.id}>
       <Log
-        displayTracks={tracks}
         logData={logViewerData}
         depthIndexColumnExternalId={wellLogRowData.depthColumn.columnExternalId}
         depthIndexType={wellLogRowData.depthColumn.type}

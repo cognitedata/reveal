@@ -11,9 +11,10 @@ import { ndsAccessorsToFixedDecimal } from 'modules/wellSearch/selectors/event/c
 import { getNdsUnitChangeAccessors } from 'modules/wellSearch/selectors/event/helper';
 import { convertObject } from 'modules/wellSearch/utils';
 
+import { EventData } from '../LogViewer/Log/interfaces';
 import { isEventsOverlap } from '../LogViewer/utils';
 
-export const useEventsData = (events: CogniteEvent[]) => {
+export const useEventsData = (events: CogniteEvent[]): EventData[] => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
@@ -32,12 +33,11 @@ export const useEventsData = (events: CogniteEvent[]) => {
         .toClosestInteger(ndsAccessorsToFixedDecimal)
         .get();
 
-      return [
-        Number(get(convertedEvent, 'metadata.md_hole_start')),
-        get(convertedEvent, 'metadata.name'),
-        Number(get(convertedEvent, 'metadata.md_hole_end')),
-        null,
-      ];
+      return {
+        holeStartValue: Number(get(convertedEvent, 'metadata.md_hole_start')),
+        holeEndValue: Number(get(convertedEvent, 'metadata.md_hole_start')),
+        riskType: get(convertedEvent, 'metadata.name'),
+      };
     });
   }, [events, userPreferredUnit]);
 };

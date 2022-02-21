@@ -149,6 +149,7 @@ export const mapNdsItemsToCogniteEvents = async (
       description: event.description,
       source: event.source.sourceName,
       metadata: {
+        name: event.riskType,
         parentExternalId: event.wellboreAssetExternalId,
         diameter_hole: event.holeDiameter?.value,
         diameter_hole_unit: event.holeDiameter?.unit,
