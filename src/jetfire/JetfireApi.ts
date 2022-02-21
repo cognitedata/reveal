@@ -76,7 +76,7 @@ export class JetfireApi {
     do {
       const params: HttpQueryParams = {
         transformationId: configId,
-        limit: '1000',
+        limit: 1000,
       };
       if (cursor) params.cursor = cursor;
 
@@ -141,7 +141,7 @@ export class JetfireApi {
     do {
       const params: HttpQueryParams = {
         includePublic: includePublic.toString(),
-        limit: '1000',
+        limit: 1000,
       };
       if (cursor) params.cursor = cursor;
 
