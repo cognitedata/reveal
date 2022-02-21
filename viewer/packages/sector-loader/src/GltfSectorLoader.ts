@@ -35,7 +35,7 @@ export class GltfSectorLoader {
 
       const group = new AutoDisposeGroup();
 
-      const parsedSectorGeometry = this._gltfSectorParser.parseSector(sectorByteBuffer);
+      const parsedSectorGeometry = await this._gltfSectorParser.parseSector(sectorByteBuffer);
 
       const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
 
