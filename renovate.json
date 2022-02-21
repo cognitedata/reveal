@@ -27,6 +27,5 @@
       "matchUpdateTypes": ["major"],
       "stabilityDays": 10
     }
-  ],
-  "schedule": ["after 7am and before 18pm"]
+  ]
 }
