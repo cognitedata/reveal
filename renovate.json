@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "matchPackagePrefixes": ["@cognite/sdk-", "@cognite/reveal-"],
+      "enabled": false
+    },
+    {
+      "matchPackagePrefixes": [""],
+      "addLabels": ["dependencies"]
+    },
+    {
+      "matchLanguages": ["rust"],
+      "enabled": false
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "stabilityDays": 4
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "stabilityDays": 10
+    }
+  ]
+}
