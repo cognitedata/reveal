@@ -8,7 +8,7 @@
       "automerge": true
     },
     {
-      "matchPackageNames": ["@cognite/sdk-.*", "@cognite/reveal-.*"],
+      "matchPackagePrefixes": ["@cognite/sdk-", "@cognite/reveal-"],
       "enabled": false
     },
     {
@@ -23,5 +23,6 @@
       "matchUpdateTypes": ["major"],
       "stabilityDays": 10
     }
-  ]
+  ],
+  "schedule": "between 7am and 18pm weekdays"
 }
