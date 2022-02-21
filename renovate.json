@@ -8,6 +8,10 @@
       "automerge": true
     },
     {
+      "matchLanguages": ["rust"],
+      "enabled": false
+    },
+    {
       "stabilityDays": 7
     }
   ]
