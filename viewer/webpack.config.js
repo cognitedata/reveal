@@ -105,6 +105,9 @@ module.exports = env => {
     optimization: {
       usedExports: true
     },
+    node: {
+      fs: 'empty'
+    },
     plugins: [
       new copyPkgJsonPlugin({
         remove: development
