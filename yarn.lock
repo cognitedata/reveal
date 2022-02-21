@@ -1495,6 +1495,33 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
+"@cognite/cogs.js@3.42.5":
+  version "3.42.5"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.5.tgz#6806a2f57ed920c7fd457e5ade8fd1fe444168db"
+  integrity sha512-QNZBEuJJ8BT/iYl/5xQnOLmJXqfcAhK0rLhDmAxSMrrfqMsK9nVP68nrwL+Am6mI7/yNKEZP7041KXk10ErWuQ==
+  dependencies:
+    "@tippyjs/react" "4.2.3"
+    "@types/react-date-range" "^1.1.2"
+    classnames "^2.3.1"
+    color "^3.1.2"
+    dayjs "^1.9.7"
+    eslint-config-stylelint "^13.1.1"
+    focus-visible "^5.1.0"
+    match-sorter "^6.3.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    resize-observer "^1.0.3"
+    stylelint "^13.13.1"
+    tippy.js "6.2.0"
+    ts-dedent "^2.2.0"
+
 "@cognite/cogs.js@^3.36.0":
   version "3.38.0"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.38.0.tgz#d50c704980dd336e7443eec0701ec424964e90f6"
@@ -1550,44 +1577,17 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^3.42.5":
-  version "3.42.6"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.6.tgz#4ff179e7708f927abde0fd1ed99c4c5937703ddd"
-  integrity sha512-vdGI6XSdUTnI69Y2DZIKn+P7eTNazQbYQuhbxxXQKXBhGU2Bh2MZvwuKxpZ6Zo5e3g09ucSaOpRNtwxgmd0u1Q==
-  dependencies:
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
-    classnames "^2.3.1"
-    color "^3.1.2"
-    dayjs "^1.9.7"
-    eslint-config-stylelint "^13.1.1"
-    focus-visible "^5.1.0"
-    match-sorter "^6.3.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.6.2"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    resize-observer-polyfill "^1.5.1"
-    stylelint "^13.13.1"
-    tippy.js "6.2.0"
-    ts-dedent "^2.2.0"
-
-"@cognite/data-exploration@1.8.0-beta.1":
-  version "1.8.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.8.0-beta.1.tgz#bced2ef8f99c8a0a54967d5fc206fa72caa3533d"
-  integrity sha512-xE1GIVqLR5RFKDQGOs7o8qpU6n0YYm4CXNvRTNU8YVQwsJAnMGvmGwSl5m/7Zf6wY9nWbrVQtYIrQ1JIfQrs7Q==
+"@cognite/data-exploration@1.8.0-beta.2":
+  version "1.8.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.8.0-beta.2.tgz#c752f10f937e32809909635a0451aa49aac8119f"
+  integrity sha512-YCI4ZXTovxA3No9BPSAL9PIgbAGac4XJ0NNgN+KgszWxvx6ojU+UwBWRbswPyBC08o4DqQNebETqTTIRUFPeyA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
-    "@cognite/cogs.js" "^3.42.5"
+    "@cognite/cogs.js" "3.42.5"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^2.1.0-beta.1"
+    "@cognite/react-picture-annotation" "2.1.0-beta.4"
     "@cognite/sdk" "^6.3.1"
     "@cognite/sdk-provider" "^1.0.0"
     "@cognite/sdk-react-query-hooks" "^6.0.2"
@@ -1670,10 +1670,10 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-picture-annotation@^2.1.0-beta.1":
-  version "2.1.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.1.0-beta.1.tgz#d13be3fad78afd598c076fc643f8b7c1aff816be"
-  integrity sha512-bOC28WGiLwpJgGNoVGTGu966F6DLudRhZk4rHVU0OoWfUcU9OVmTJP8CjB8eghLGn1zIjULkhrO21QyK4x02nA==
+"@cognite/react-picture-annotation@2.1.0-beta.4", "@cognite/react-picture-annotation@^2.1.0-beta.4":
+  version "2.1.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.1.0-beta.4.tgz#1f9d6584c3d0dd9800e02035ab88a4247bbfb7b1"
+  integrity sha512-vZY4ErPXyta+9Xv9usMdsTk65l3tFGPvIgCX9Kx5ymwuQGtCyIfjWZOBe+/fOBKXHAD4t2VCw0y0dVUH9pmZDg==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/sdk" "^6.3.1"
@@ -14071,6 +14071,11 @@ resize-observer-polyfill@^1.5.0, resize-observer-polyfill@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
   integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
+
+resize-observer@^1.0.3:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/resize-observer/-/resize-observer-1.0.4.tgz#48beb64602ce408ebd1a433784d64ef76f38d321"
+  integrity sha512-AQ2MdkWTng9d6JtjHvljiQR949qdae91pjSNugGGeOFzKIuLHvoZIYhUTjePla5hCFDwQHrnkciAIzjzdsTZew==
 
 resolve-cwd@^2.0.0:
   version "2.0.0"
