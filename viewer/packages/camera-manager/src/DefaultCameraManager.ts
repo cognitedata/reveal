@@ -100,6 +100,9 @@ export class DefaultCameraManager implements CameraManager {
     nearPlane: new THREE.Plane()
   };
 
+  /**
+   * @internal
+   */
   constructor(
     domElement: HTMLElement,
     inputHandler: InputHandler,
@@ -195,12 +198,14 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   /**
-   * Sets camera state. All parameters are optional. When setting rotation and target simultaneously,
-   * target will have priority over rotation. Set rotation is preserved until next call of setCameraState with
+   * Sets camera state. All parameters are optional. Rotation and target can't be set at the same time,
+   * if so, error will be thrown. Set rotation is preserved until next call of setCameraState with
    * empty rotation field.
    * @param state Camera state.
    * **/
   setCameraState(state: CameraState): void {
+    if (state.rotation && state.target) throw new Error(`Rotation and target can't be set at the same time`);
+
     const newPosition = state.position ?? this._camera.position;
     const newRotation = (state.target ? new THREE.Quaternion() : state.rotation) ?? new THREE.Quaternion();
     const newTarget =
