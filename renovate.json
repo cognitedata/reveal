@@ -8,8 +8,7 @@
       "automerge": true
     },
     {
-      "matchPackagePatterns": [""],
-      "groupName": "all dependencies"
+      "stabilityDays": 7
     }
   ]
 }
