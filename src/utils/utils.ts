@@ -1,4 +1,4 @@
-import sdk from '@cognite/cdf-sdk-singleton';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 import { updateGroup } from 'utils/updateGroup';
 import queryString from 'query-string';
@@ -321,9 +321,8 @@ export const azureClusters: string[] = [
 
 export const isOidcEnv = () => {
   if (isAizeEnv()) return true;
-  // @ts-ignore need due to sdk version in cognite-sdk-v3 being different from @cognite/sdk, the latter cannot be update due to Gearbox/DataExploration
-  const auth = sdk?.getOAuthFlowType ? sdk.getOAuthFlowType() : 'CDF_OAUTH';
-  return auth !== 'CDF_OAUTH';
+  const { flow } = getFlow();
+  return flow !== 'COGNITE_AUTH';
 };
 
 export const isNextRelease = () => {
