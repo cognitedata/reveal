@@ -8,6 +8,7 @@ import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styled from 'styled-components';
 import useThemeContext from '@theme/hooks/useThemeContext';
+import { REVEAL_VERSION } from '@cognite/reveal-3.x';
 
 const Root = styled.div`
   padding: 16px;
@@ -52,15 +53,23 @@ type Props = {
 
 export default function DemoLoginCover(props: Props): ReactElement {
   const { isDarkTheme } = useThemeContext();
-  const [isLoggedIn, setIsLoggedIn] = React.useState(loginManager.isLoggedIn);
-  useEffect(() => {
-    return loginManager.onIsLoggedInChanged(setIsLoggedIn);
-  }, []);
+
+  const client = new CogniteClient({
+    appId: 'reveal-docs-' + REVEAL_VERSION,
+    project: loginManager.project,
+    getToken: async () => loginManager.getToken()
+  });
+
+  if (loginManager.isLoggedIn) {
+    client.authenticate();
+  }
+
+  window.sdk = client;
 
   const coverUrl = useBaseUrl('/img/login_cover.png');
   const visualInstructionUrl = useBaseUrl('img/publicdata_register.png')
 
-  if (!isLoggedIn) {
+  if (!loginManager.isLoggedIn) {
     return (
       <Root theme={{ isDarkTheme }}>
         <ImageOverlay coverUrl={coverUrl} />
@@ -82,7 +91,7 @@ export default function DemoLoginCover(props: Props): ReactElement {
           <Section style={{ margin: '48px 0' }}>
             <button
               className="button button--primary button--lg"
-              onClick={() => loginManager.authenticate()}
+              onClick={() => loginManager.loginWithRedirect()}
               type="button"
             >
               Sign in
@@ -110,5 +119,5 @@ export default function DemoLoginCover(props: Props): ReactElement {
     );
   }
 
-  return props.children(loginManager.client);
+  return props.children(client);
 }

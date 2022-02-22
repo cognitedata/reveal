@@ -4,7 +4,6 @@ precision highp float;
 
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
-#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
@@ -12,7 +11,6 @@ precision highp float;
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
-
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
@@ -23,7 +21,6 @@ precision highp float;
 // parts of this code
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
 uniform vec2 treeIndexTextureSize;
@@ -31,6 +28,10 @@ uniform vec2 treeIndexTextureSize;
 uniform float dataTextureWidth;
 uniform float dataTextureHeight;
 uniform mat4 projectionMatrix;
+uniform int renderMode;
+
+// Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
+#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 
 in vec4 v_centerB;
 
@@ -50,9 +51,6 @@ in float v_treeIndex;
 in vec3 v_color;
 
 in vec3 v_normal;
-
-uniform int renderMode;
-
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);

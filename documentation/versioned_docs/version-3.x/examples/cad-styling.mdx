@@ -30,8 +30,8 @@ provided in the `DefaultNodeAppearance`-constant:
 | `InFront`           | Render node(s) in front of all other nodes                                       |
 | `Highlighted`       | Highlight the node(s). Combination of `InFront`, `Outlined` and a custom color   |
 
-These "appearance profiles"/styles are assigned to one or more nodes defined by a `NodeCollectionBase`-object. A `NodeCollectionBase`
-identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCollectionBase`:
+These "appearance profiles"/styles are assigned to one or more nodes defined by a `NodeCollection`-instance. A `NodeCollection`
+identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCollection`:
 
 | Class                          |                                                                                  |
 | ------------------------------ | -------------------------------------------------------------------------------- |
@@ -42,7 +42,7 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCo
 | `InvertedNodeCollection`       | Inverts the result of a node collection to match the opposite nodes (i.e. a NOT-operator). |
 | `UnionNodeCollection`          | Combines nodes from several node colletions by finding the [set union](https://en.wikipedia.org/wiki/Union_(set_theory)"). |
 | `InersectionNodeCollection`    | Combines nodes from several node colletions by finding the [set intersection](https://en.wikipedia.org/wiki/Intersection_(set_theory)). |
-| `NodeCollectionBase`           | Abstract base class for node collections. Extend to [implement custom node collections](cad-styling-custom). |
+| `NodeCollection`               | Abstract base class for node collections. Extend to [implement custom node collections](cad-styling-custom). |
 
 It's also possible [implement custom node collections](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.

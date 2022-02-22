@@ -1,4 +1,3 @@
-#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
@@ -8,12 +7,16 @@
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
 uniform vec2 treeIndexTextureSize;
 
 uniform mat4 projectionMatrix;
+uniform int renderMode;
+
+// Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
+#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
+
 in vec4 center;
 in float hRadius;
 in float height;
@@ -25,8 +28,6 @@ in vec4 sphereNormal;
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
-
-uniform int renderMode;
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
