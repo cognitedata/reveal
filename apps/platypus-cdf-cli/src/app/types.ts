@@ -92,7 +92,7 @@ export interface CommandArgument {
   /** The default value for this arg */
   initial?: string | boolean | number;
   /** Is required */
-  required: boolean;
+  required?: boolean;
   /** Argument type.
    * This will be used to convert the value to expected format,
    * validate the value and show the appropriate prompt message */
@@ -115,6 +115,7 @@ export type SolutionConfigType = {
     templateVersion: number;
     project: string;
     cluster: string;
+    backend: string;
     schema?: string;
   };
 };

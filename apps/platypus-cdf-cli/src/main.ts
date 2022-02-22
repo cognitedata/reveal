@@ -8,6 +8,7 @@ import * as templates from './app/cmds/templates';
 import { init } from './app/middlewares/init';
 import status from './app/cmds/status';
 import logout from './app/cmds/logout';
+import initCmd from './app/cmds/init';
 import { DEBUG as _DEBUG } from './app/utils/logger';
 
 const DEBUG = _DEBUG.extend('main');
@@ -22,6 +23,7 @@ scriptName('platypus')
   .command(templates)
   .command(logout)
   .command(status)
+  .command(initCmd)
   .option('verbose', {
     type: 'boolean',
     alias: 'v',

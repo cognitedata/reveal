@@ -2,7 +2,7 @@ import { prompt } from 'enquirer';
 export type Req<T> = {
   name: keyof T;
   message: string;
-  type: 'autocomplete' | 'input';
+  type: 'autocomplete' | 'input' | 'confirm';
   required: boolean;
   choices?: Array<unknown> | (() => Array<unknown>);
   validate?: (

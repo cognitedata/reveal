@@ -1,12 +1,23 @@
 import { TemplatesApiService } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
-import { CommandArgument, CommandArgumentType } from '../../types';
+import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
 import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
-import Response from '@cognite/platypus-cdf-cli/app/utils/logger';
+import Response, {
+  DEBUG as _DEBUG,
+} from '@cognite/platypus-cdf-cli/app/utils/logger';
+import { Arguments } from 'yargs';
 
-export const commandArgs = [
+const DEBUG = _DEBUG.extend('cmds:templates:create');
+
+export type TemplateInitCommandArgs = BaseArgs & {
+  ['external-id']: string;
+  ['description']?: string;
+  ['owner']?: string;
+};
+
+export const commandArgs: CommandArgument[] = [
   {
-    name: 'externalId',
+    name: 'external-id',
     description: 'Template group external id',
     prompt: 'Enter unique name for the template group',
     type: CommandArgumentType.STRING,
@@ -26,19 +37,23 @@ export const commandArgs = [
     prompt: "Enter template group owner's email address",
     type: CommandArgumentType.STRING,
   },
-] as CommandArgument[];
+];
 
 export class CreateTemplateGroupCommand extends CLICommand {
-  async execute(args) {
+  async execute(args: Arguments<TemplateInitCommandArgs>) {
     const client = getCogniteSDKClient();
+    DEBUG('CDF Client initialized');
     const templatesApi = new TemplatesApiService(client);
-
+    DEBUG('Templates API service initialized');
     await templatesApi.createTemplateGroup({
-      name: args.externalId,
+      name: args['external-id'],
       description: args.description,
       owner: args.owner,
     });
-    Response.log(`Template group "${args.externalId}" is created successfully`);
+    DEBUG('Template group created');
+    Response.success(
+      `Template group "${args.externalId}" is created successfully`
+    );
   }
 }
 

@@ -1,5 +1,5 @@
 import { promises } from 'fs';
-const { stat } = promises;
+const { stat, writeFile } = promises;
 import { join } from 'path';
 import { Arguments, CommandModule } from 'yargs';
 import ConfigStore from 'configstore';
@@ -7,6 +7,10 @@ import { CONSTANTS } from '../constants';
 import { BaseArgs, CLIConfigManager } from '../types';
 import { CLICommand } from './cli-command';
 import { cwd } from 'process';
+import { DEBUG as _DEBUG } from '../utils/logger';
+import { getProjectConfig } from '../utils/config';
+
+const DEBUG = _DEBUG.extend('common:config');
 
 export function injectRCFile() {
   return function (
@@ -33,6 +37,43 @@ export function injectRCFile() {
     return descriptor;
   };
 }
+
+export const makeCDFRCFile = async (
+  externalId: string,
+  backend: string,
+  projectVersion: string
+) => {
+  DEBUG('Fetching global app/login config');
+  const projectConfig = getProjectConfig();
+  if (!projectConfig) {
+    throw new Error('Failed to load global config');
+  }
+
+  DEBUG('App/login config loaded %o', projectConfig);
+
+  const { cluster, project } = projectConfig;
+
+  DEBUG('Creating project config file');
+
+  await writeFile(
+    join(cwd(), CONSTANTS.PROJECT_CONFIG_FILE_NAME),
+    JSON.stringify(
+      {
+        version: 1,
+        name: externalId,
+        config: {
+          backend,
+          cluster,
+          project,
+          templateId: externalId,
+          templateVersion: parseInt(projectVersion || '0'),
+        },
+      },
+      undefined,
+      2
+    )
+  );
+};
 class SolutionConfigManager<T> implements CLIConfigManager<T> {
   private readonly store: ConfigStore;
   all: T;

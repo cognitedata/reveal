@@ -46,9 +46,11 @@ export class TemplatesSchemaPullCommand extends CLICommand {
     DEBUG`TemplatesApiService initialized`;
     DEBUG`Retrieving list of versions for template group`;
 
+    const version = args.solutionConfig.all.config.templateVersion;
+
     const schema = await templatesApi.listSchemaVersions({
       solutionId: args.solutionConfig.all.config.templateId,
-      version: args.solutionConfig.all.config.templateVersion.toString(),
+      version: version === 0 ? undefined : version.toString(),
     });
     DEBUG`Got the schema, ${JSON.stringify(schema)}`;
 
