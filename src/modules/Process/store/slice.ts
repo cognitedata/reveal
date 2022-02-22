@@ -13,6 +13,8 @@ import { createGenericTabularDataSlice } from 'src/store/genericTabularDataSlice
 import { getFakeQueuedJob } from 'src/api/detectionUtils';
 import { ProcessState } from 'src/modules/Process/store/types';
 
+export const BUILT_IN_MODEL_COUNT = 3; // ocr, tag & objectdetection
+
 const initialDetectionModelParameters = {
   ocr: {
     useCache: true,
@@ -135,10 +137,9 @@ const processSlice = createGenericTabularDataSlice({
     },
     addToAvailableDetectionModels(state) {
       const modelCount = state.availableDetectionModels.length;
-      const builtinModelCount = 3; // ocr, tag & objectdetection
       const modelName =
-        modelCount - builtinModelCount
-          ? `Custom model (${modelCount - builtinModelCount})`
+        modelCount - BUILT_IN_MODEL_COUNT
+          ? `Custom model (${modelCount - BUILT_IN_MODEL_COUNT})`
           : 'Custom model';
       state.availableDetectionModels.push({
         modelName,

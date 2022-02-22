@@ -1,7 +1,15 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @cognite/no-number-z-index */
 import React, { useEffect, useState } from 'react';
-import { Button, Icon, Popconfirm, Title } from '@cognite/cogs.js';
+import {
+  Button,
+  Detail,
+  Dropdown,
+  Icon,
+  Menu,
+  Popconfirm,
+  Title,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
 import { AutoMLTrainingJob } from 'src/api/autoML/types';
@@ -15,7 +23,9 @@ export const AutoMLModelPage = (props: {
   downloadingModel?: boolean;
   handleDownload: () => void;
   handleOnDelete: () => void;
+  handleOnContextualize: (model: AutoMLTrainingJob | undefined) => void;
 }) => {
+  const [hideDropDown, setHideDropDown] = useState<boolean>(true);
   const [model, setModel] = useState<AutoMLTrainingJob>();
 
   const getModel = async () => {
@@ -37,6 +47,39 @@ export const AutoMLModelPage = (props: {
   ]);
   const deleteDisabled = props.downloadingModel || !hasCapabilities;
 
+  const MenuContent = (
+    <Menu
+      style={{
+        color: 'black' /* typpy styles make color to be white here ... */,
+      }}
+    >
+      <Menu.Item
+        onClick={() => {
+          props.handleOnContextualize(model);
+          setHideDropDown(true);
+        }}
+      >
+        <div style={{ display: 'flex' }}>
+          <Icon type="Scan" style={{ marginRight: 17 }} />
+          <Detail strong style={{ color: 'inherit' }}>
+            Quick test
+          </Detail>
+        </div>
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          props.handleDownload();
+          setHideDropDown(true);
+        }}
+      >
+        <Icon type="Download" style={{ marginRight: 17 }} />
+        <Detail strong style={{ color: 'inherit' }}>
+          Download model
+        </Detail>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
       {model && props.selectedModelId === model?.jobId ? ( // TODO: use id
@@ -44,15 +87,22 @@ export const AutoMLModelPage = (props: {
           <Header>
             <AutoMLModelNameBadge name={model.name} disabled />
             <ActionContainer>
-              <Button
-                type="primary"
-                icon="Download"
-                onClick={props.handleDownload}
-                loading={props.downloadingModel}
-                disabled={model.status !== 'Completed'}
-              >
-                Download model
-              </Button>
+              <Dropdown visible={!hideDropDown} content={MenuContent}>
+                <Button
+                  type="primary"
+                  icon="ChevronDownCompact"
+                  aria-label="dropdown button"
+                  disabled={
+                    model.status !== 'Completed' || props.downloadingModel
+                  }
+                  loading={props.downloadingModel}
+                  iconPlacement="right"
+                  onClick={() => setHideDropDown(!hideDropDown)}
+                >
+                  Try model
+                </Button>
+              </Dropdown>
+
               <Popconfirm
                 icon="WarningFilled"
                 placement="bottom-end"

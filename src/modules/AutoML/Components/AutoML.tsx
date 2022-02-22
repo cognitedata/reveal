@@ -1,14 +1,20 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { Divider } from '@cognite/data-exploration';
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import styled from 'styled-components';
 import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
-import { AutoMLModel } from 'src/api/autoML/types';
+import { AutoMLModel, AutoMLTrainingJob } from 'src/api/autoML/types';
+import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
+import { PopulateCustomModel } from 'src/store/thunks/Process/PopulateCustomModel';
 import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';
 import { AutoMLModelList } from './AutoMLModelList';
 
 const AutoML = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const [selectedModelId, setSelectedModelId] = useState<number>();
   const [downloadingModel, setDownloadingModel] = useState<boolean>(false);
 
@@ -51,6 +57,13 @@ const AutoML = () => {
     }
   };
 
+  const handleOnContextualize = (model: AutoMLTrainingJob | undefined) => {
+    if (model) {
+      dispatch(PopulateCustomModel(model));
+      history.push(getLink(workflowRoutes.process));
+    }
+  };
+
   const onRowClick = (id: number) => {
     setSelectedModelId(id);
   };
@@ -77,6 +90,7 @@ const AutoML = () => {
             handleDownload={handleDownload}
             downloadingModel={downloadingModel}
             handleOnDelete={handleOnDelete}
+            handleOnContextualize={handleOnContextualize}
           />
         </Right>
       </Container>
