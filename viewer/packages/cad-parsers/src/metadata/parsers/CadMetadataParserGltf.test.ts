@@ -184,7 +184,8 @@ describe('CadMetadataParserGltf', () => {
 
     // Assert
 
-    const expectedBoundingBox = toThreeBoundingBox(metadata.sectors[0].boundingBox).clone()
+    const expectedBoundingBox = toThreeBoundingBox(metadata.sectors[0].boundingBox)
+      .clone()
       .union(toThreeBoundingBox(metadata.sectors[2].boundingBox));
 
     const rootBoundingBox = result.root.subtreeBoundingBox;

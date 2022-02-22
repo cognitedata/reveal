@@ -14,10 +14,6 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
     throw new Error('No sectors found in scene JSON file');
   }
 
-  // In earlier v9-models, the geometryBoundingBox did not exist and boundingBox
-  // did not contain all geometry of the sector's children and must thus be computed here
-  const mustComputeFullBoundingBox = metadata.sectors[0].geometryBoundingBox === undefined;
-
   // Create list of sectors and a map of child -> parent
   const sectorsById = new Map<number, V9SectorMetadata>();
   const parentIds: number[] = [];
@@ -37,15 +33,19 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
     parent.children.push(sector);
   }
 
+  const rootSector = sectorsById.get(0);
+  if (!rootSector) {
+    throw new Error('Root sector not found, must have ID 0');
+  }
+
+  // In earlier v9-models, the geometryBoundingBox did not exist and boundingBox
+  // did not contain all geometry of the sector's children and must thus be computed here
+  const mustComputeFullBoundingBox = rootSector.subtreeBoundingBox.isEmpty();
+
   if (mustComputeFullBoundingBox) {
     for (const sector of sectorsById.values()) {
       computeSubtreeBoundingBoxRecursive(sector);
     }
-  }
-
-  const rootSector = sectorsById.get(0);
-  if (!rootSector) {
-    throw new Error('Root sector not found, must have ID 0');
   }
 
   const unit = metadata.unit !== null ? metadata.unit : 'Meters';
@@ -53,7 +53,7 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
   return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
-function toThreeBoundingBox(box: BoundingBox): THREE.Box3 {
+export function toThreeBoundingBox(box: BoundingBox): THREE.Box3 {
   return new THREE.Box3(
     new THREE.Vector3(box.min.x, box.min.y, box.min.z),
     new THREE.Vector3(box.max.x, box.max.y, box.max.z)
@@ -67,7 +67,7 @@ function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata
   let subtreeBoundingBox: THREE.Box3;
 
   // In earlier v9 models, geometryBoundingBox does not exist, and boundingBox
-  // only encapsulates geometry in the current sector. These cases must be treated differently
+  // only encapsulates geometry in the current sector. This case must be treated differently
   if (metadata.geometryBoundingBox) {
     geometryBoundingBox = toThreeBoundingBox(metadata.geometryBoundingBox);
     subtreeBoundingBox = metadataBoundingBox;
@@ -109,7 +109,6 @@ function computeSubtreeBoundingBoxRecursive(sector: SectorMetadata): void {
   for (const child of sector.children) {
     computeSubtreeBoundingBoxRecursive(child);
 
-    sector.subtreeBoundingBox.expandByPoint(child.subtreeBoundingBox.max);
-    sector.subtreeBoundingBox.expandByPoint(child.subtreeBoundingBox.min);
+    sector.subtreeBoundingBox.union(child.subtreeBoundingBox);
   }
 }
