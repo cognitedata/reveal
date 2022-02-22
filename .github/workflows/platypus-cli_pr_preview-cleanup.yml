@@ -1,0 +1,24 @@
+name: Clean up preview Platypus CLI
+on:
+  pull_request:
+    types: [ closed ]
+    paths:
+      - "apps/platypus-cdf-cli/**"
+jobs:
+  preview-deploy-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      - uses: rlespinasse/github-slug-action@v3.x
+      
+      - name: Cleanup 
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: 35.195.114.37
+          username: david_liu_cognite_com
+          key: ${{ secrets.CLI_VM }}
+          script: cd /home/david_liu_cognite_com/ && rm -rf ${{ env.GITHUB_REF_SLUG }}
+

@@ -1,4 +1,4 @@
-# Authentication
+# Authentication with CLI
 
 We rely on CDF Auth flow to authenticate user to the Platypus app namely (UI and CLI) so this document aims to make the journey for the end user easy.
 

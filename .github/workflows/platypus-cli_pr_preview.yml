@@ -1,0 +1,84 @@
+name: Preview Platypus CLI
+on:
+  pull_request:
+    paths:
+      - "apps/platypus-cdf-cli/**"
+jobs:
+  preview-deploy-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      - uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Set NPMKEY variable
+        run: |
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          echo "::set-output name=NPMKEY::$NPMKEY"
+        id: npm_auth_key
+
+      - name: Create .npmrc
+        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+
+      - name: Install Dependency & Build
+        run: |
+          yarn install --frozen-lockfile
+          rm .npmrc
+          yarn build production platypus-cdf-cli
+
+      - name: Copy files to Preview VM
+        uses: appleboy/scp-action@master
+        with:
+          host: 35.195.114.37
+          username: david_liu_cognite_com
+          key: ${{ secrets.CLI_VM }}
+          source: ./dist/apps/platypus-cdf-cli
+          target: /home/david_liu_cognite_com/${{ env.GITHUB_REF_SLUG }}
+          strip_components: 4
+          overwrite: true
+      
+      - name: Install on VM and chmod
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: 35.195.114.37
+          username: david_liu_cognite_com
+          key: ${{ secrets.CLI_VM }}
+          script: cd /home/david_liu_cognite_com/${{ env.GITHUB_REF_SLUG }} && bash -ic yarn && chmod +x main.js
+
+      - name: Comment on PR
+        uses: mshick/add-pr-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: |
+            ## <kbd>CMD</kbd>/<kbd>CTRL</kbd> CLICK <a href="https://ssh.cloud.google.com/projects/cognitedata-development/zones/europe-west1-b/instances/platypus-cli-pr-preview?authuser=0&hl=en_US&projectNumber=854566616747&useAdminProxy=true&troubleshoot4005Enabled=true&troubleshoot255Enabled=true" target="_blank">View CLI Preview</a>
+
+            ### Using the preview
+            To use the preview, first run 
+            ```bash
+            cd /home/david_liu_cognite_com/${{ env.GITHUB_REF_SLUG }}
+            ```
+            then
+            ```bash
+            ./main.js --help
+            ```
+            ### For the first time (i.e. error - Node not found.)
+            <details>
+              <summary>Click to expand</summary>
+              
+              run
+              ```bash
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+              ```
+              and then restart bash
+              ```bash
+              bash
+              ```
+              lastly install node v14
+              ```bash
+              nvm install v14
+              ```
+            </details>
+          allow-repeats: false
