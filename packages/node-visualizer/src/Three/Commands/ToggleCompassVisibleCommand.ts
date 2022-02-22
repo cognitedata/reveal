@@ -17,7 +17,7 @@ export class ToggleCompassVisibleCommand extends ThreeRenderTargetCommand {
   //= =================================================
 
   public /* override */ getName(): string {
-    return 'Hide or show axis';
+    return 'Hide or show North Arrow';
   }
 
   public /* override */ getIcon(): string {

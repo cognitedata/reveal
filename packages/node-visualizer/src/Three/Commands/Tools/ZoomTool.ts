@@ -2,6 +2,7 @@ import ZoomBaseToolIcon from '../../../images/Commands/ZoomTool.png';
 import { BaseTool } from '../../Commands/Tools/BaseTool';
 import { ThreeRenderTargetNode } from '../../Nodes/ThreeRenderTargetNode';
 
+// TODO(PP-2548): need to be implemented
 export class ZoomTool extends BaseTool {
   //= =================================================
   // CONSTRUCTOR

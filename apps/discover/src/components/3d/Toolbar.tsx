@@ -34,9 +34,9 @@ const getIcon = (id: string): JSX.Element => {
   const mapping: { [id: string]: JSX.Element } = {
     tools0: <Icon type="Grab" />,
     tools1: <Icon type="Edit" />,
-    tools2: <Icon type="ResizeWidth" />,
-    tools3: <Icon type="ZoomIn" />,
-    tools4: <Icon type="Ruler" />,
+    // tools2: <Icon type="ResizeWidth" />, TODO(PP-2548)
+    tools2: <Icon type="ZoomIn" />,
+    tools3: <Icon type="Ruler" />,
 
     actions0: <Icon type="Image" />,
     actions1: <Icon type="Axis3D" />,

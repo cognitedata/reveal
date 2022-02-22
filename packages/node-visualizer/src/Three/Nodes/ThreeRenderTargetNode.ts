@@ -37,7 +37,6 @@ import { BaseTool } from '../Commands/Tools/BaseTool';
 import { EditTool } from '../Commands/Tools/EditTool';
 import { MeasureDistanceTool } from '../Commands/Tools/MeasureDistanceTool';
 import { NavigationTool } from '../Commands/Tools/NavigationTool';
-import { ZoomTool } from '../Commands/Tools/ZoomTool';
 import { ZoomToTargetTool } from '../Commands/Tools/ZoomToTargetTool';
 import { ViewAllCommand } from '../Commands/ViewAllCommand';
 import { ViewFromCommand } from '../Commands/ViewFromCommand';
@@ -270,7 +269,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
 
     this.addTool(toolbar, ToolbarGroupIds.Tools, navigationTool);
     this.addTool(toolbar, ToolbarGroupIds.Tools, new EditTool(this));
-    this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomTool(this));
+    // this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomTool(this)); TODO(PP-2548)
     this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomToTargetTool(this));
     this.addTool(toolbar, ToolbarGroupIds.Tools, new MeasureDistanceTool(this));
 
