@@ -65,7 +65,7 @@
     "three": "0.125.2"
   },
   "devDependencies": {
-    "@types/react": "16.14.11",
+    "@types/react": "16.14.23",
     "@types/styled-components": "5.1.12",
     "@types/three": "0.135.0",
     "concat-md": "0.3.5",
