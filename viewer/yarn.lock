@@ -480,7 +480,7 @@ __metadata:
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
     "@types/draco3dgltf": 1.4.0
-    "@types/jest": ^26.0.15
+    "@types/jest": 26.0.24
     "@types/jsdom": 16.2.13
     "@types/lodash": 4.14.172
     "@types/mixpanel-browser": 2.35.7
@@ -1235,7 +1235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^26.0.15":
+"@types/jest@npm:26.0.24":
   version: 26.0.24
   resolution: "@types/jest@npm:26.0.24"
   dependencies:
