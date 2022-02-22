@@ -11,7 +11,6 @@ in vec3 v_color;
 in vec3 v_normal;
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
 uniform vec2 treeIndexTextureSize;
