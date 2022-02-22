@@ -5,7 +5,7 @@ import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import * as viewerUtils from '../utils/viewerUtilities';
 
 const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal-3.x');
-const revealTools = typeof window === 'undefined' ? {} : require('@cognite/reveal-3.x/tools');
+const revealTools = typeof window === 'undefined' ? {} : require('@cognite/reveal/tools');
 
 export const customScope: Record<string, any> = {
   ...viewerUtils,

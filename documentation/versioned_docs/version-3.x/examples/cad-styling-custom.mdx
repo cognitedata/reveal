@@ -7,7 +7,7 @@ describe: Create custom node collections to filter based on custom data sources 
 import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWrapper';
 
 In many cases applications will need to filter 3D nodes by some custom data source or mechanism. This
-is done by extending the `NodeCollectionBase`-class. This class generates an `IndexSet` and
+is done by extending the `NodeCollection`-class. This class generates an `IndexSet` and
 provides notification when the set has changed. Implementations should
 be non-blocking - slow operations should be executed async and the set should
 be incrementally updated to avoid blocking the viewer.
@@ -17,9 +17,9 @@ be incrementally updated to avoid blocking the viewer.
 # Simple, static node collection
 
 ```js runnable-3x
-// import { NodeCollectionBase, DefaultNodeAppearance, ClusteredAreaCollection } from '@cognite/reveal';
+// import { NodeCollection, DefaultNodeAppearance, ClusteredAreaCollection } from '@cognite/reveal';
 
-class MyNodeCollection extends NodeCollectionBase {
+class MyNodeCollection extends NodeCollection {
   isLoading = false;
 
   constructor(model) {
@@ -75,7 +75,7 @@ subtree will have the same styling applied.
 Although `IndexSet` supports adding and removing individual elements using `add()` and `remove()`, the best
 performance is achieved by using `addRange()` and `removeRange()` whenever possible.
 
-Also note that changes to the underlying `IndexSet` held by a `NodeCollectionBase` isn't automatically propagated
+Also note that changes to the underlying `IndexSet` held by a `NodeCollection` isn't automatically propagated
 to be visible in the rendered result. In order to trigger an update after changing the underlying `IndexSet`,
-use `NodeCollectionBase.notifyChanged()` (protected function). Note that this function should not be triggered too often
+use `NodeCollection.notifyChanged()` (protected function). Note that this function should not be triggered too often
 as it might take some time to apply the changes.
