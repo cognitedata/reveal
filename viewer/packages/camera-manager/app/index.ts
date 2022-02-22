@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { ComboControls } from '../';
+import { ComboControls } from '../src/ComboControls';
 import Keyboard from '../src/Keyboard';
 
 let renderer: THREE.WebGLRenderer;
