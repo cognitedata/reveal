@@ -22,7 +22,8 @@
     },    
     {
       "matchPackagePrefixes": [""],
-      "addLabels": ["dependencies", "auto-update"]
+      "addLabels": ["dependencies", "auto-update"],
+      "prConcurrentLimit": 5
     },
     {
       "matchLanguages": ["rust"],
