@@ -20,7 +20,7 @@ uniform vec2 treeIndexTextureSize;
 uniform mat4 projectionMatrix;
 uniform int renderMode;
 
-//Fix for iOS primitives not getting depth value
+//Fix for iOS primitives not getting depth value if included before all uniform are declared
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 
 in vec4 v_centerB;
