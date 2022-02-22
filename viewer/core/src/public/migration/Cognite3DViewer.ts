@@ -45,7 +45,7 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { CameraManager, ComboControls, CameraControlsOptions } from '@reveal/camera-manager';
+import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
@@ -119,9 +119,6 @@ export class Cognite3DViewer {
   private readonly _models: CogniteModelBase[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
 
-  private readonly _automaticNearFarPlane: boolean;
-  private readonly _automaticControlsSensitivity: boolean;
-
   private isDisposed = false;
 
   private readonly renderController: RenderController;
@@ -194,11 +191,8 @@ export class Cognite3DViewer {
   }
 
   constructor(options: Cognite3DViewerOptions) {
-    this._renderer = options.renderer || new THREE.WebGLRenderer();
+    this._renderer = options.renderer ?? new THREE.WebGLRenderer();
     this._renderer.localClippingEnabled = true;
-
-    this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
-    this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? true;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -206,33 +200,22 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
-    this._domElement = options.domElement || createCanvasWrapper();
+    this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
 
     this.spinner = new Spinner(this.domElement);
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
     this.spinner.opacity = Math.max(0.2, options.loadingIndicatorStyle?.opacity ?? 1.0);
 
-    this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-    // TODO savokr 28-10-2021: Consider removing default camera position initialization
-    this.camera.position.x = 30;
-    this.camera.position.y = 10;
-    this.camera.position.z = 50;
-    this.camera.lookAt(new THREE.Vector3());
-
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
 
     this._mouseHandler = new InputHandler(this.canvas);
 
-    this._cameraManager = new CameraManager(
-      this.camera,
-      this.canvas,
-      this._mouseHandler,
-      this.modelIntersectionCallback.bind(this)
-    );
-    this._cameraManager.automaticControlsSensitivity = this._automaticControlsSensitivity;
-    this._cameraManager.automaticNearFarPlane = this._automaticNearFarPlane;
+    this._cameraManager =
+      options.cameraManager ??
+      new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
+    this.camera = this._cameraManager.getCamera();
 
     this._cameraManager.on('cameraChange', (event: any) => {
       const { position, target } = event.camera;
@@ -471,19 +454,8 @@ export class Cognite3DViewer {
     }
   }
 
-  /**
-   * Sets camera control options. See {@link CameraControlsOptions}.
-   * @param controlsOptions JSON object with camera controls options.
-   */
-  setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
-    this._cameraManager.setCameraControlsOptions(controlsOptions);
-  }
-
-  /**
-   * Gets camera controls mode.
-   */
-  getCameraControlsOptions(): CameraControlsOptions {
-    return this._cameraManager.getCameraControlsOptions();
+  get cameraManager(): CameraManager {
+    return this._cameraManager;
   }
 
   /**
@@ -702,7 +674,7 @@ export class Cognite3DViewer {
     object.updateMatrixWorld(true);
     this._extraObjects.push(object);
     this.renderController.redraw();
-    this.updateCameraNearAndFar(this.camera);
+    this.recalculateBoundingBox();
   }
 
   /**
@@ -725,7 +697,7 @@ export class Cognite3DViewer {
       this._extraObjects.splice(index, 1);
     }
     this.renderController.redraw();
-    this.updateCameraNearAndFar(this.camera);
+    this.recalculateBoundingBox();
   }
 
   /**
@@ -822,96 +794,6 @@ export class Cognite3DViewer {
   }
 
   /**
-   * @obvious
-   * @returns Camera's position in world space.
-   */
-  getCameraPosition(): THREE.Vector3 {
-    if (this.isDisposed) {
-      return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
-    }
-    return this.camera.position.clone();
-  }
-
-  /**
-   * @obvious
-   * @returns Camera's target in world space.
-   */
-  getCameraTarget(): THREE.Vector3 {
-    if (this.isDisposed) {
-      return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
-    }
-    return this._cameraManager.getCameraControlsState().target.clone();
-  }
-
-  /**
-   * @obvious
-   * @param position Position in world space.
-   * @example
-   * ```js
-   * // store position, target
-   * const position = viewer.getCameraPosition();
-   * const target = viewer.getCameraTarget();
-   * // restore position, target
-   * viewer.setCameraPosition(position);
-   * viewer.setCameraTarget(target);
-   * ```
-   */
-  setCameraPosition(position: THREE.Vector3): void {
-    if (this.isDisposed) {
-      return;
-    }
-    this._cameraManager.setCameraControlsState({ position, target: this.getCameraTarget() });
-  }
-
-  /**
-   * Set camera's target.
-   * @public
-   * @param target Target in world space.
-   * @param animated Whether change of target should be animated or not (default is false).
-   * @example
-   * ```js
-   * // store position, target
-   * const position = viewer.getCameraPosition();
-   * const target = viewer.getCameraTarget();
-   * // restore position, target
-   * viewer.setCameraPosition(position);
-   * viewer.setCameraTarget(target);
-   * ```
-   */
-  setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
-    if (this.isDisposed) {
-      return;
-    }
-
-    this._cameraManager.setCameraTarget(target, animated);
-  }
-
-  /**
-   * Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
-   * for documentation. Note that by default the `minDistance` setting of the controls will
-   * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
-   */
-  get cameraControls(): ComboControls {
-    return this._cameraManager.cameraControls;
-  }
-
-  /**
-   * Gets whether camera controls through mouse, touch and keyboard are enabled.
-   */
-  get cameraControlsEnabled(): boolean {
-    return this._cameraManager.cameraControlsEnabled;
-  }
-
-  /**
-   * Sets whether camera controls through mouse, touch and keyboard are enabled.
-   * This can be useful to e.g. temporarily disable navigation when manipulating other
-   * objects in the scene or when implementing a "cinematic" viewer.
-   */
-  set cameraControlsEnabled(enabled: boolean) {
-    this._cameraManager.cameraControlsEnabled = enabled;
-  }
-
-  /**
    * Attempts to load the camera settings from the settings stored for the
    * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
    * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
@@ -924,7 +806,7 @@ export class Cognite3DViewer {
   loadCameraFromModel(model: CogniteModelBase): void {
     const config = model.getCameraConfiguration();
     if (config) {
-      this._cameraManager.setCameraControlsState({ position: config.position, target: config.target });
+      this._cameraManager.setCameraState({ position: config.position, target: config.target });
     } else {
       this.fitCameraToModel(model, 0);
     }
@@ -982,20 +864,6 @@ export class Cognite3DViewer {
    */
   requestRedraw(): void {
     this.revealManager.requestRedraw();
-  }
-
-  /**
-   * Allows to move camera with WASD or arrows keys.
-   */
-  enableKeyboardNavigation(): void {
-    this._cameraManager.keyboardNavigationEnabled = true;
-  }
-
-  /**
-   * Disables camera movement by pressing WASD or arrows keys.
-   */
-  disableKeyboardNavigation(): void {
-    this._cameraManager.keyboardNavigationEnabled = false;
   }
 
   /**
@@ -1229,14 +1097,14 @@ export class Cognite3DViewer {
       if (didResize) {
         this.requestRedraw();
       }
-      this._cameraManager.updateCameraControlsState(this.clock.getDelta());
+      this.recalculateBoundingBox();
+      this._cameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       renderController.update();
       this.revealManager.update(this.camera);
 
       if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        this.updateCameraNearAndFar(this.camera);
         this.revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
@@ -1256,12 +1124,9 @@ export class Cognite3DViewer {
   }
 
   /** @private */
-  private updateCameraNearAndFar(camera: THREE.PerspectiveCamera) {
+  private recalculateBoundingBox() {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
-      return;
-    }
-    if (!this._automaticControlsSensitivity && !this._automaticNearFarPlane) {
       return;
     }
 
@@ -1280,8 +1145,6 @@ export class Cognite3DViewer {
         combinedBbox.union(bbox);
       }
     });
-
-    this._cameraManager.updateCameraNearAndFar(camera, combinedBbox);
   }
 
   /** @private */
