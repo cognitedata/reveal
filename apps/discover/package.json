@@ -17,7 +17,7 @@
     "lint:bazel": "bazel test :eslint_test :prettier_test",
     "prettier:bazel": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
-    "start": "REACT_APP_CLUSTER=bluefield ./scripts/start.sh",
+    "start": "./scripts/start.sh",
     "start:bp": "REACT_APP_CLUSTER=bp-northeurope ./scripts/start.sh",
     "start:idp": "./scripts/startIdP.sh",
     "storybook": "../../node_modules/.bin/start-storybook -p 6006",
