@@ -42,7 +42,7 @@ export function consumeSectorDetailed(
   materials: Materials,
   geometryClipBox: THREE.Box3 | null
 ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
-  const bounds = metadata.bounds;
+  const bounds = metadata.subtreeBoundingBox;
 
   if (geometryClipBox !== null && isSectorBoundsFullyInsideClipBox(geometryClipBox, bounds)) {
     // If sector bounds is fully inside clip Box, nothing will be clipped so don't go the extra mile
