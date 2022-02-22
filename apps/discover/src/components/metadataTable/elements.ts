@@ -43,7 +43,8 @@ export const OriginalPathValue = styled(Value)``;
 
 export const MetadataContainer = styled(FlexColumn)`
   width: 100%;
-  margin-bottom: ${sizes.normal};
+  margin-bottom: ${({ spacing }: { spacing: keyof typeof sizes }) =>
+    sizes[spacing || 'normal']};
 
   span {
     line-height: ${sizes.normal};

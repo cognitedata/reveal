@@ -40,7 +40,7 @@ describe('FilePath', () => {
       paths: getPathsFromDoc({ ...mockDocument, duplicates: [mockDocument] }),
     });
 
-    expect(screen.getByText('Original path')).toBeInTheDocument();
+    expect(screen.getByText('Original paths')).toBeInTheDocument();
     expect(screen.getAllByTestId('document-parent-path').length).toEqual(2);
   });
 });

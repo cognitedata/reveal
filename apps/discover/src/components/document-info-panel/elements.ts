@@ -39,6 +39,7 @@ export const FilePathContainer = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-bottom: ${sizes.small};
 `;
 
 export const CopyIcon = styled(Icon)`

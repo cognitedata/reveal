@@ -38,6 +38,10 @@ import { useDataForTable } from './useDataForTable';
 import { WellboreResultTable } from './WellBoreResultTable';
 import { WellsBulkActions } from './WellsBulkActions';
 
+const renderRowSubComponent = ({ row }: { row: { original: Well } }) => {
+  return <WellboreResultTable well={row.original} />;
+};
+
 export const WellResultTable: React.FC = () => {
   const { data } = useWellSearchResultQuery();
   const { selectedWellIds, expandedWellIds } = useWells();
@@ -116,10 +120,7 @@ export const WellResultTable: React.FC = () => {
   const handleRowSelect = useCallback(
     (row: RowProps<Well>, isSelected: boolean) => {
       const well = row.original;
-      batch(() => {
-        dispatch(wellSearchActions.toggleSelectedWells([well], { isSelected }));
-        dispatch(wellSearchActions.toggleExpandedWell(well));
-      });
+      dispatch(wellSearchActions.toggleSelectedWells([well], { isSelected }));
     },
     []
   );
@@ -136,10 +137,6 @@ export const WellResultTable: React.FC = () => {
     },
     [wellsRef.current]
   );
-
-  const renderRowSubComponent = useCallback(({ row }) => {
-    return <WellboreResultTable well={row.original as Well} />;
-  }, []);
 
   const wellsStats = {
     totalResults: data?.totalWells,

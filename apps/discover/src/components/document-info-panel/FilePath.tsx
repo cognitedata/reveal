@@ -61,10 +61,12 @@ export const FilePath: React.FC<FilePathProps> = ({ paths, documentId }) => {
   return (
     <FilePathContainer>
       <FlexColumn>
-        <PathHeader>{t('Original path')}</PathHeader>
+        <PathHeader>
+          {`${t('Original path')}${paths.length === 1 ? '' : 's'}`}
+        </PathHeader>
         {paths.map((path) => (
           <span key={`${path}`} data-testid="document-parent-path">
-            <MetadataItem value={path} type="path" />
+            <MetadataItem value={path} type="path" spacing="small" />
           </span>
         ))}
       </FlexColumn>

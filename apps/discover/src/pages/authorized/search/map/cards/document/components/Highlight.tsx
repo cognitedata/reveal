@@ -17,12 +17,12 @@ const HighlightedBody = styled(SanitizedHTML)`
   em {
     font-weight: 650;
   }
-  margin-top: 15px;
 `;
 
 const HighlightView: React.FC<{ content: string }> = React.memo(
   ({ content }) => (
     <Body level={3} as="div">
+      <PreviewHeader>Highlight</PreviewHeader>
       <HighlightedBody allowedTags={['em']} html={`${content}...`} />
     </Body>
   )
