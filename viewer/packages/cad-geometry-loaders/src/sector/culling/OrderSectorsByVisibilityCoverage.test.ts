@@ -27,10 +27,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
-    renderManager = new EffectRenderManager(renderer,
-                                            new THREE.Scene(),
-                                            new CadMaterialManager(),
-                                            {});
+    renderManager = new EffectRenderManager(renderer, new THREE.Scene(), new CadMaterialManager(), {});
   });
 
   afterEach(() => {

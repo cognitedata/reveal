@@ -4,7 +4,7 @@
 
 import { EffectRenderManager } from '@reveal/rendering';
 
-export class RenderAlreadyLoadedGeometryProvider{
+export class RenderAlreadyLoadedGeometryProvider {
   private readonly _renderManager: EffectRenderManager;
 
   constructor(renderManager: EffectRenderManager) {
