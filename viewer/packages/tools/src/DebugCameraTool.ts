@@ -14,7 +14,7 @@ export class DebugCameraTool extends Cognite3DViewerToolBase {
   private _cameraHelper?: THREE.CameraHelper;
 
   private get viewerCamera(): THREE.PerspectiveCamera {
-    return this._viewer.cameraManager.getCamera();
+    return this._viewer.getCamera();
   }
 
   constructor(viewer: Cognite3DViewer) {

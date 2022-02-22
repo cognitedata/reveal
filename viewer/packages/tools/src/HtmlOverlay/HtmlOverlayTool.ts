@@ -154,7 +154,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   private get viewerCamera(): THREE.PerspectiveCamera {
-    return this._viewer.cameraManager.getCamera();
+    return this._viewer.getCamera();
   }
 
   private get viewerRenderer(): THREE.WebGLRenderer {
