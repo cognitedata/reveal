@@ -1,88 +1,50 @@
-/*
+/*!
  * Copyright 2021 Cognite AS
  */
+import { extractTokensFromUrl,
+         generateLoginUrl } from './loginUtils';
 
-import { CogniteClient, REDIRECT } from '@cognite/sdk-3.x';
 import { env } from './env';
-
-const tokenCacheKey = 'cachedAT';
-const accessToken = sessionStorage.getItem(tokenCacheKey);
 
 // login manager is merely global state, stored outside of react state,
 // because react state is not preserved between mdx examples
-class LoginManager {
-  isLoggedIn: boolean;
-  client: CogniteClient;
-  listeners: Array<(isLoggedIn: boolean) => void>;
+export class LoginManager {
+  private token: string | undefined;
 
-  constructor() {
-    this.listeners = [];
-    // might be expired so it's not a guarantee, but good default state
-    this.isLoggedIn = !!accessToken;
+  readonly isLoggedIn: boolean;
+  readonly project: string;
+  readonly cluster: string;
 
-    this.client = new CogniteClient({
-      appId: 'cognite.reveal.docs.Cognite3DViewer',
-    });
+  constructor(project: string, cluster: string) {
+    this.token = this.handleLoginFromRedirect();
 
-    // to make it available in examples
-    window.sdk = this.client;
-
-    this.client.login.status().then((s) => {
-      // id_token in url means we already redirected from auth api
-      // so it's safe to mark as logged in, when API call will happen
-      // inside demo component - it will be authenticated automatically
-      if (!s || s.project !== env.project) {
-        sessionStorage.removeItem(tokenCacheKey);
-        this.isLoggedIn = false;
-      } else {
-        let params = new URL(document.location.toString()).searchParams;
-        this.isLoggedIn = !!params.get('id_token') || !!s;
-      }
-      this.notifyListeners();
-    });
+    this.isLoggedIn = !!this.token;
+    this.project = project;
+    this.cluster = cluster;
   }
 
-  notifyListeners() {
-    this.listeners.forEach((fn) => fn(this.isLoggedIn));
+  private handleLoginFromRedirect() {
+    const tokens = extractTokensFromUrl();
+    return tokens?.accessToken;
   }
 
-  /**
-   * @param {Function} fn listener
-   * @returns {Function} unsubscribe
-   */
-  onIsLoggedInChanged(fn: (isLoggedIn: boolean) => void): () => void {
-    this.listeners.push(fn);
-    return () => {
-      this.listeners = this.listeners.filter((f) => f !== fn);
-    };
+  async getToken(): Promise<string> {
+    if (!this.token) {
+      await this.loginWithRedirect();
+    }
+
+    return this.token!;
   }
 
-  async authenticate() {
-    await this.client.loginWithOAuth({
-      type: 'CDF_OAUTH',
-      options: {
-        project: env.project,
-        accessToken,
-        onAuthenticate: REDIRECT,
-        onTokens: (tokens) => {
-          sessionStorage.setItem(tokenCacheKey, tokens.accessToken);
-        },
-      }
+  loginWithRedirect(): Promise<void> {
+    return new Promise<void>(() => {
+      const url = generateLoginUrl({ project: this.project,
+                                     baseUrl: `https://${this.cluster}.cognitedata.com`,
+                                     redirectUrl: window.location.href });
+
+      window.location.assign(url);
     });
-
-    await this.client
-      .authenticate()
-      .then(() => {
-        this.isLoggedIn = true;
-      })
-      .catch((e: Error) => {
-        this.isLoggedIn = false;
-        console.error(e);
-      })
-      .finally(() => {
-        this.notifyListeners();
-      });
   }
 }
 
-export const loginManager = new LoginManager();
+export const loginManager = new LoginManager(env.project, env.cluster);
