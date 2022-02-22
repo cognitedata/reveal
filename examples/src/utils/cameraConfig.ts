@@ -34,7 +34,7 @@ export type BaseSectorMetadata = {
   readonly id: number;
   readonly path: string;
   readonly depth: number;
-  readonly bounds: THREE.Box3;
+  readonly subtreeBoundingBox: THREE.Box3;
   readonly children: BaseSectorMetadata[];
   readonly estimatedDrawCallCount: number;
   readonly estimatedRenderCost: number;
@@ -53,8 +53,8 @@ export function suggestCameraConfig(rootSector: BaseSectorMetadata, modelMatrix:
   }
 
   traverseDepthFirst(rootSector, node => {
-    averageMin.add(node.bounds.min);
-    averageMax.add(node.bounds.max);
+    averageMin.add(node.subtreeBoundingBox.min);
+    averageMax.add(node.subtreeBoundingBox.max);
     count += 1;
     return true;
   });

@@ -82,7 +82,7 @@ function mockWantedSectors(id: number): {
     id,
     path: '0/',
     depth: 0,
-    bounds: new THREE.Box3(),
+    subtreeBoundingBox: new THREE.Box3(),
     estimatedDrawCallCount: 0,
     estimatedRenderCost: 0,
     indexFile: {

@@ -43,7 +43,7 @@ describe('CadModelClipper', () => {
 
     expect(result.scene.sectorCount).toBe(2);
     sectors.forEach(s => {
-      expect(box.intersectsBox(s.bounds)).toBeTrue();
+      expect(box.intersectsBox(s.subtreeBoundingBox)).toBeTrue();
     });
   });
 
@@ -64,5 +64,5 @@ describe('CadModelClipper', () => {
 
 function setBounds(sector: SectorMetadata, min: [number, number, number], max: [number, number, number]) {
   const mutable: Mutable<SectorMetadata> = sector;
-  mutable.bounds = new THREE.Box3().setFromArray([...min, ...max]);
+  mutable.subtreeBoundingBox = new THREE.Box3().setFromArray([...min, ...max]);
 }

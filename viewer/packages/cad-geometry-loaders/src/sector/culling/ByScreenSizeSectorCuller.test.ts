@@ -82,7 +82,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
     const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
 
     expect(scheduledSectors).toSatisfyAll((x: WantedSector) => {
-      const bounds = x.metadata.bounds;
+      const bounds = x.metadata.subtreeBoundingBox;
       return clipPlane.intersectsBox(bounds);
     });
   });
@@ -99,7 +99,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
     const topPrioritySectors = scheduledSectors.slice(0, expectedTopPrioritySectors.length);
 
     expect(topPrioritySectors).toSatisfyAll((x: WantedSector) => {
-      const bounds = x.metadata.bounds;
+      const bounds = x.metadata.subtreeBoundingBox;
       return prioritizedAreaBounds.intersectsBox(bounds);
     });
   });
