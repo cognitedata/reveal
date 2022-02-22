@@ -1,4 +1,5 @@
 import { ElementNode, parse } from 'svg-parser';
+import minBy from 'lodash/minBy';
 
 import {
   DiagramConnection,
@@ -11,6 +12,7 @@ import {
   FileConnectionInstance,
   DiagramInstanceId,
   PathReplacement,
+  DiagramInstanceWithPaths,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
 import { svgCommandsToSegments } from '../matcher/svgPathParser';
@@ -28,7 +30,7 @@ import { PidPath } from './PidPath';
 import { PidGroup } from './PidGroup';
 import { getFileConnectionsWithPosition } from './fileConnectionUtils';
 
-export type LabelSymbolInstanceConnection = {
+export type LabelInstanceConnection = {
   labelId: string;
   labelText: string;
   instanceId: DiagramInstanceId;
@@ -177,15 +179,15 @@ export class PidDocument {
     );
   }
 
-  connectLabelsToSymbolInstances(
+  connectLabelsToInstances(
     documentType: DocumentType,
-    symbolInstances: DiagramSymbolInstance[]
-  ): LabelSymbolInstanceConnection[] {
+    instances: DiagramInstanceWithPaths[]
+  ): LabelInstanceConnection[] {
     const pidLabelIdsAlreadyConnected = new Set<string>();
-    if (symbolInstances.length === 0) return [];
+    if (instances.length === 0) return [];
 
-    symbolInstances.forEach((symbolInstance) => {
-      symbolInstance.labelIds.forEach((labelId) => {
+    instances.forEach((instance) => {
+      instance.labelIds.forEach((labelId) => {
         pidLabelIdsAlreadyConnected.add(labelId);
       });
     });
@@ -194,27 +196,28 @@ export class PidDocument {
       return !pidLabelIdsAlreadyConnected.has(pidLabel.id);
     });
 
-    const labelSymbolInstanceConnections: LabelSymbolInstanceConnection[] = [];
+    const labelInstanceConnections: LabelInstanceConnection[] = [];
 
-    const symbolGroups = symbolInstances.map((symbolInstance) =>
-      PidGroup.fromDiagramInstance(this, symbolInstance)
+    const instanceGroups = instances.map((instance) =>
+      PidGroup.fromDiagramInstance(this, instance)
     );
 
     pidLabelsToConnect.forEach((pidLabel) => {
       const labelMidPoint = pidLabel.getMidPoint();
 
-      symbolGroups.sort((a, b) => {
-        return a.distance(labelMidPoint) - b.distance(labelMidPoint);
-      });
+      const closestSymbolGroup = minBy(instanceGroups, (instanceGroup) =>
+        instanceGroup.distance(labelMidPoint)
+      );
+
+      if (!closestSymbolGroup) return;
 
       const labelTreshold =
         documentType === DocumentType.isometric
           ? AUTO_ANALYSIS_LABEL_THRESHOLD_ISO
           : AUTO_ANALYSIS_LABEL_THRESHOLD_PID;
 
-      const closestSymbolGroup = symbolGroups[0];
       if (closestSymbolGroup.distance(labelMidPoint) < labelTreshold) {
-        labelSymbolInstanceConnections.push({
+        labelInstanceConnections.push({
           labelId: pidLabel.id,
           labelText: pidLabel.text,
           instanceId: closestSymbolGroup.diagramInstanceId,
@@ -222,7 +225,7 @@ export class PidDocument {
       }
     });
 
-    return labelSymbolInstanceConnections;
+    return labelInstanceConnections;
   }
 
   static inferLineNumbers(

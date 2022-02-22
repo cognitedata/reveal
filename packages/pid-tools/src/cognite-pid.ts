@@ -584,7 +584,7 @@ export class CognitePid {
       this.labelVisualizationIds = visualizeLabelsToSymbolInstances(
         this.svg,
         this.pidDocument,
-        this.symbolInstances
+        [...this.symbolInstances, ...this.lines]
       );
     } else {
       this.lineNumberVisualizationIds = this.pidDocument.pidLabels
@@ -930,27 +930,39 @@ export class CognitePid {
     this.setConnections(newConnections);
 
     // connect labels to symbol instances
-    const pidLabelSymbolInstanceConnection =
-      this.pidDocument.connectLabelsToSymbolInstances(
-        documentMetadata.type,
-        this.symbolInstances
-      );
-    if (pidLabelSymbolInstanceConnection.length > 0) {
+    const pidLabelInstanceConnection =
+      this.pidDocument.connectLabelsToInstances(documentMetadata.type, [
+        ...this.symbolInstances,
+        ...this.lines,
+      ]);
+    if (pidLabelInstanceConnection.length > 0) {
       this.setSymbolInstances(
         this.symbolInstances.map((symbolInstance) => {
-          pidLabelSymbolInstanceConnection.forEach((labelSymbolConnection) => {
-            if (
-              getDiagramInstanceId(symbolInstance) ===
-              labelSymbolConnection.instanceId
-            ) {
+          pidLabelInstanceConnection.forEach((labelInstanceConnection) => {
+            if (symbolInstance.id === labelInstanceConnection.instanceId) {
               addOrRemoveLabelToInstance(
-                labelSymbolConnection.labelId,
-                labelSymbolConnection.labelText,
+                labelInstanceConnection.labelId,
+                labelInstanceConnection.labelText,
                 symbolInstance
               );
             }
           });
           return symbolInstance;
+        })
+      );
+
+      this.setLines(
+        this.lines.map((line) => {
+          pidLabelInstanceConnection.forEach((labelInstanceConnection) => {
+            if (line.id === labelInstanceConnection.instanceId) {
+              addOrRemoveLabelToInstance(
+                labelInstanceConnection.labelId,
+                labelInstanceConnection.labelText,
+                line
+              );
+            }
+          });
+          return line;
         })
       );
     }
