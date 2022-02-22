@@ -7,7 +7,6 @@
 #pragma glslify: GeometryType = require('../base/geometryTypes.glsl');
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
 uniform vec2 treeIndexTextureSize;
