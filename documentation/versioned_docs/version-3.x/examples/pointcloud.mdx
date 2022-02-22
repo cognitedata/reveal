@@ -18,8 +18,11 @@ import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWra
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 
+const loginManager = new LoginManager('publicdata', 'api');
 const client = new CogniteClient({
-  appId: 'cognite.reveal.docs.Cognite3DViewer',
+  appId: 'myPointCloudAppId',
+  project: loginManager.project,
+  getToken: async () => loginManager.getToken()
 });
 
 // some div in your html page for Cognite3DViewer to insert a canvas
@@ -27,7 +30,7 @@ const domElement = document.getElementById('canvas-wrapper');
 
 async function main() {
   // to view models from CDF authentication is required
-  await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project: 'publicdata' }});
+
   await client.authenticate();
 
   const viewer = new Cognite3DViewer({ sdk: client, domElement });
@@ -57,7 +60,7 @@ model.pointSize = 10;
 
 The point budget limits the number of points loaded and rendered at any given time,
 which helps to adapt performance requirements to the capabilities of different hardware.
-Recommended values are between 500.000 and 10.000.000. The budget is shared among all 
+Recommended values are between 500.000 and 10.000.000. The budget is shared among all
 loaded point clouds.
 
 ```js runnable-3x
