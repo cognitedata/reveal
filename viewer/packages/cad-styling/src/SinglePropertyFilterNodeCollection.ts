@@ -12,12 +12,12 @@ import { AreaCollection } from './prioritized/AreaCollection';
 import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
 import { NodeCollection } from './NodeCollection';
 import { SerializedNodeCollection } from './SerializedNodeCollection';
+import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
 import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
-import { CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling/src/CdfModelNodeCollectionDataProvider';
 
 /**
  * Node collection that filters nodes based on a node property from a list of values, similarly to how
