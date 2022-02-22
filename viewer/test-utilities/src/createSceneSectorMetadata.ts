@@ -4,7 +4,25 @@
 
 import { V9SceneSectorMetadata, V8SceneSectorMetadata } from '../../packages/cad-parsers/src/metadata/parsers/types';
 
-export function createV9SceneSectorMetadata(id: number, parentId: number = -1): V9SceneSectorMetadata {
+export type BoundingBox = {
+  min: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  max: {
+    x: number;
+    y: number;
+    z: number;
+  };
+};
+
+export function createV9SceneSectorMetadata(
+  id: number,
+  parentId: number = -1,
+  boundingBox?: BoundingBox,
+  geometryBoundingBox?: BoundingBox
+): V9SceneSectorMetadata {
   const metadata: V9SceneSectorMetadata = {
     id,
     parentId,
@@ -12,7 +30,7 @@ export function createV9SceneSectorMetadata(id: number, parentId: number = -1): 
     depth: 0,
     estimatedDrawCallCount: 10,
     estimatedTriangleCount: 10,
-    boundingBox: {
+    boundingBox: boundingBox ?? {
       min: {
         x: 0.0,
         y: 0.0,
@@ -24,6 +42,7 @@ export function createV9SceneSectorMetadata(id: number, parentId: number = -1): 
         z: 1.0
       }
     },
+    geometryBoundingBox,
     downloadSize: 1000,
     maxDiagonalLength: 10,
     minDiagonalLength: 5,
