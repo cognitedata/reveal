@@ -15,7 +15,8 @@ export {
   registerCustomNodeCollectionType,
   TypeName,
   NodeCollectionDescriptor,
-  NodeCollectionSerializationContext
+  NodeCollectionSerializationContext,
+  NodeCollectionDeserializer
 } from './src/NodeCollectionDeserializer';
 
 export { NodeAppearance, DefaultNodeAppearance, NodeOutlineColor } from './src/NodeAppearance';
