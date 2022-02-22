@@ -1,6 +1,6 @@
-import { TrackConfig } from '../types';
+import { PlotConfig } from '../types';
 
-export const GR_COLUMNS_CONFIG: TrackConfig[] = [
+export const GAMMA_RAY_AND_CALIPER_PLOTS: PlotConfig[] = [
   {
     measurementType: 'gamma ray',
     name: 'GR',

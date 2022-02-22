@@ -1,11 +1,10 @@
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
-import pickBy from 'lodash/pickBy';
-import { isMeasurementUnit } from 'utils/units/isMeasurementUnit';
 
 import { Track } from '@cognite/videx-wellog';
 
-import { TrackNameEnum } from '../../../trackConfig/constants';
+import { GraphTrackEnum } from 'modules/wellSearch/service/measurements/constants';
+
 import { EventData, LogData } from '../interfaces';
 
 import { getGraphTrack } from './GraphTrack';
@@ -14,7 +13,7 @@ import {
   getNDSScaleTrack,
   getTVDScaleTrack,
 } from './ScaleTracks';
-import { getTrackLogData } from './utils';
+import { getCategorizedLogData } from './utils';
 
 export const getLogViewerTracks = ({
   logData,
@@ -25,40 +24,33 @@ export const getLogViewerTracks = ({
   eventsData: EventData[];
   depthUnit: string;
 }): Track[] => {
-  const grTrackLogData = getTrackLogData(logData, TrackNameEnum.GR);
-  const rdeepTrackLogData = getTrackLogData(logData, TrackNameEnum.RDEEP);
-  const dnTrackLogData = getTrackLogData(logData, TrackNameEnum.DN);
+  const {
+    gammaRayAndCaliperData,
+    resistivityData,
+    densityAndNeutronData,
+    geomechanicsAndPPFGData,
+  } = getCategorizedLogData(logData);
 
-  const ppfgIgnoreColumnExternalIds = Object.keys({
-    ...grTrackLogData,
-    ...rdeepTrackLogData,
-    ...dnTrackLogData,
-  });
-
-  const ppfgLogData = pickBy(
-    logData,
-    (data, columnExternalId) =>
-      !isMeasurementUnit(data.unit) &&
-      !ppfgIgnoreColumnExternalIds.includes(columnExternalId)
-  );
-
-  const hasMdData = !isEmpty(grTrackLogData);
+  const hasMdData = !isEmpty(gammaRayAndCaliperData);
   const hasTvdData =
-    !isEmpty(rdeepTrackLogData) ||
-    !isEmpty(dnTrackLogData) ||
-    !isEmpty(ppfgLogData);
+    !isEmpty(resistivityData) ||
+    !isEmpty(densityAndNeutronData) ||
+    !isEmpty(geomechanicsAndPPFGData);
   const hasNdsData = hasTvdData && !isEmpty(eventsData);
 
   const tracks = [
-    getGraphTrack(grTrackLogData, TrackNameEnum.GR),
+    getGraphTrack(gammaRayAndCaliperData, GraphTrackEnum.GAMMA_RAY_AND_CALIPER),
 
     hasMdData && getMDScaleTrack(depthUnit),
     hasTvdData && getTVDScaleTrack(depthUnit),
     hasNdsData && getNDSScaleTrack(eventsData, depthUnit),
 
-    getGraphTrack(rdeepTrackLogData, TrackNameEnum.RDEEP),
-    getGraphTrack(dnTrackLogData, TrackNameEnum.DN),
-    getGraphTrack(ppfgLogData, TrackNameEnum.PPFG),
+    getGraphTrack(resistivityData, GraphTrackEnum.RESISTIVITY),
+    getGraphTrack(densityAndNeutronData, GraphTrackEnum.DENSITY_AND_NEUTRON),
+    getGraphTrack(
+      geomechanicsAndPPFGData,
+      GraphTrackEnum.GEOMECHANICS_AND_PPFG
+    ),
   ];
 
   return compact(tracks);

@@ -1,3 +1,4 @@
+import flatten from 'lodash/flatten';
 import {
   fetchAllCursors,
   fetchAllCursorsItem,
@@ -10,10 +11,16 @@ import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import { WellboreId } from 'modules/wellSearch/types';
 
+import { WELL_LOGS_MEASUREMENT_TYPES } from './constants';
+
 const SEQUENCES_PER_PAGE = 100;
 const SEQUENCE_ROWS_PER_PAGE = 100;
 
-export const fetchAllSequences = async ({
+const MEASUREMENT_TYPES_FILTER = flatten(
+  Object.values(WELL_LOGS_MEASUREMENT_TYPES)
+);
+
+export const fetchAllWellLogs = async ({
   wellboreIds,
   options,
 }: {
@@ -24,7 +31,10 @@ export const fetchAllSequences = async ({
     signal: options?.signal,
     action: getWellSDKClient().measurements.list,
     actionProps: {
-      filter: { wellboreIds: Array.from(wellboreIds).map(toIdentifier) },
+      filter: {
+        wellboreIds: Array.from(wellboreIds).map(toIdentifier),
+        measurementTypes: MEASUREMENT_TYPES_FILTER,
+      },
       limit: SEQUENCES_PER_PAGE,
     },
   });
@@ -44,6 +54,7 @@ export const fetchAllWellLogsRowData = async ({
         action: getWellSDKClient().measurements.listData,
         actionProps: {
           sequenceExternalId,
+          measurementTypes: MEASUREMENT_TYPES_FILTER,
           limit: SEQUENCE_ROWS_PER_PAGE,
         },
         concatAccessor: 'rows',

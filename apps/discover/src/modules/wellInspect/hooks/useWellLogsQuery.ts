@@ -3,7 +3,7 @@ import { DepthMeasurement } from '@cognite/sdk-wells-v3';
 import { EMPTY_OBJECT } from 'constants/empty';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';
-import { fetchAllSequences } from 'modules/wellSearch/service/measurements/wellLogs';
+import { fetchAllWellLogs } from 'modules/wellSearch/service/measurements/wellLogs';
 import { WellboreId } from 'modules/wellSearch/types';
 import {
   groupByWellbore,
@@ -20,7 +20,7 @@ export const useWellLogsQuery = (wellboreIds: WellboreId[] = []) => {
     key: JSON.stringify([WELL_QUERY_KEY.LOGS, wellboreIds]),
     items: new Set(wellboreIds),
     fetchAction: (items: Set<string>, options) =>
-      fetchAllSequences({ wellboreIds: items, options }).then(groupByWellbore),
+      fetchAllWellLogs({ wellboreIds: items, options }).then(groupByWellbore),
   });
 
   return {

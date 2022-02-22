@@ -1,6 +1,6 @@
-import { TrackConfig } from '../types';
+import { PlotConfig } from '../types';
 
-export const DN_COLUMNS_CONFIG: TrackConfig[] = [
+export const DENSITY_AND_NEUTRON_PLOTS: PlotConfig[] = [
   {
     measurementType: 'density',
     name: 'Density',

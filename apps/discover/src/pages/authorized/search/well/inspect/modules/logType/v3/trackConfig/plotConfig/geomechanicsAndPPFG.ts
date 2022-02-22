@@ -1,6 +1,6 @@
-import { TrackConfig } from '../types';
+import { PlotConfig } from '../types';
 
-export const PPFG_COLUMNS_CONFIG: TrackConfig[] = [
+export const GEOMECHANICS_AND_PPFG_PLOTS: PlotConfig[] = [
   {
     measurementType: 'fracture pressure post drill high',
     color: 'blue',

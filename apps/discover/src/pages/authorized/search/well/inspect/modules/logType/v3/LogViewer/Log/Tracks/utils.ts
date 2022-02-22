@@ -1,14 +1,13 @@
 import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
-import pickBy from 'lodash/pickBy';
+import set from 'lodash/set';
 
 import { BlockScaleTrack, GraphTrack } from '@cognite/videx-wellog';
 
+import { GraphTrackEnum } from 'modules/wellSearch/service/measurements/constants';
+
+import { MEASUREMENT_TYPE_MAPPING } from '../../../measurementTypeMapping';
 import { TRACK_CONFIG } from '../../../trackConfig';
-import {
-  TrackNameEnum,
-  TRACK_POSSIBLE_MEASURMENT_TYPES,
-} from '../../../trackConfig/constants';
 import { EventData, LogData } from '../interfaces';
 
 import {
@@ -36,11 +35,41 @@ export const getTrackConfig = (requiredMeasurementType: string) => {
     : undefined;
 };
 
-export const getTrackLogData = (logData: LogData, trackName: TrackNameEnum) => {
-  return pickBy(logData, (data) => {
-    const matchers = TRACK_POSSIBLE_MEASURMENT_TYPES[trackName];
-    return new RegExp(matchers.join('|')).test(data.measurementType);
+export const getCategorizedLogData = (logData: LogData) => {
+  const gammaRayAndCaliperData: LogData = {};
+  const resistivityData: LogData = {};
+  const densityAndNeutronData: LogData = {};
+  const geomechanicsAndPPFGData: LogData = {};
+
+  const gammaRayAndCaliperTypes =
+    MEASUREMENT_TYPE_MAPPING[GraphTrackEnum.GAMMA_RAY_AND_CALIPER];
+  const resistivityTypes = MEASUREMENT_TYPE_MAPPING[GraphTrackEnum.RESISTIVITY];
+  const densityAndNeutronTypes =
+    MEASUREMENT_TYPE_MAPPING[GraphTrackEnum.DENSITY_AND_NEUTRON];
+  const geomechanicsAndPPFGTypes =
+    MEASUREMENT_TYPE_MAPPING[GraphTrackEnum.GEOMECHANICS_AND_PPFG];
+
+  Object.keys(logData).forEach((columnExternalId) => {
+    const data = logData[columnExternalId];
+    const { measurementType } = data;
+
+    if (gammaRayAndCaliperTypes.includes(measurementType)) {
+      set(gammaRayAndCaliperData, columnExternalId, data);
+    } else if (resistivityTypes.includes(measurementType)) {
+      set(resistivityData, columnExternalId, data);
+    } else if (densityAndNeutronTypes.includes(measurementType)) {
+      set(densityAndNeutronData, columnExternalId, data);
+    } else if (geomechanicsAndPPFGTypes.includes(measurementType)) {
+      set(geomechanicsAndPPFGData, columnExternalId, data);
+    }
   });
+
+  return {
+    gammaRayAndCaliperData,
+    resistivityData,
+    densityAndNeutronData,
+    geomechanicsAndPPFGData,
+  };
 };
 
 export const convertEventsDataToArray = (data: EventData[]) => {
@@ -80,14 +109,16 @@ export const disableGraphTrack = (graphTrack: GraphTrack) => {
   if (!graphTrack.elm) return;
 
   const trackContainer = graphTrack.elm;
-  const trackTitle =
-    graphTrack.elm.parentElement?.getElementsByClassName('track-title')[0];
+  const track = graphTrack.elm.parentElement;
+  const trackTitle = track?.getElementsByClassName('track-title')[0];
+  const trackLegend = track?.getElementsByClassName('track-legend')[0];
 
-  trackContainer.style.opacity = `${DISABLED_OPACITY}`;
+  trackContainer.style.opacity = DISABLED_OPACITY;
   trackTitle?.setAttribute(
     'style',
     `pointer-events: none;opacity: ${DISABLED_OPACITY};`
   );
+  (trackLegend as HTMLElement).style.opacity = DISABLED_OPACITY;
 };
 
 export const setupElementsAppenderOnTrack = (

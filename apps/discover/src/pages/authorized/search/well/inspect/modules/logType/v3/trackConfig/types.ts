@@ -1,6 +1,6 @@
-import { TrackNameEnum } from './constants';
+import { GraphTrackEnum } from 'modules/wellSearch/service/measurements/constants';
 
-export interface TrackConfig {
+export interface PlotConfig {
   measurementType: string;
   color: string;
   scale?: 'linear' | 'log'; // Default: 'linear'
@@ -9,6 +9,6 @@ export interface TrackConfig {
   width?: number;
 }
 
-export interface TrackName {
-  trackName: TrackNameEnum;
+export interface TrackConfig extends PlotConfig {
+  trackName: GraphTrackEnum;
 }

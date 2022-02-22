@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import { graphLegendConfig, GraphTrack } from '@cognite/videx-wellog';
 import { PlotConfig } from '@cognite/videx-wellog/dist/tracks/graph/interfaces';
 
+import { GraphTrackEnum } from 'modules/wellSearch/service/measurements/constants';
 import { NO_LOGS_LEGEND_MESSAGE } from 'pages/authorized/search/well/inspect/constants';
 
 import { LogData } from '../interfaces';
@@ -15,7 +16,10 @@ import {
   setupElementsAppenderOnTrack,
 } from './utils';
 
-export const getGraphTrack = (trackLogData: LogData, trackName: string) => {
+export const getGraphTrack = (
+  trackLogData: LogData,
+  trackName: GraphTrackEnum
+) => {
   const plots = Object.keys(trackLogData).map<PlotConfig>(
     (columnExternalId) => {
       const { measurementType, domain } = trackLogData[columnExternalId];

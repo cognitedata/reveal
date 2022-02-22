@@ -1,25 +1,26 @@
-import { DN_COLUMNS_CONFIG } from './columnsConfig/dn';
-import { GR_COLUMNS_CONFIG } from './columnsConfig/gr';
-import { PPFG_COLUMNS_CONFIG } from './columnsConfig/ppfg';
-import { RDEEP_COLUMNS_CONFIG } from './columnsConfig/rdeep';
-import { TrackNameEnum } from './constants';
-import { TrackConfig, TrackName } from './types';
+import { GraphTrackEnum } from 'modules/wellSearch/service/measurements/constants';
 
-export const TRACK_CONFIG: (TrackConfig & TrackName)[] = [
-  ...GR_COLUMNS_CONFIG.map((config) => ({
+import { DENSITY_AND_NEUTRON_PLOTS } from './plotConfig/densityAndNeutron';
+import { GAMMA_RAY_AND_CALIPER_PLOTS } from './plotConfig/gammaRayAndCaliper';
+import { GEOMECHANICS_AND_PPFG_PLOTS } from './plotConfig/geomechanicsAndPPFG';
+import { RESISTIVITY_PLOTS } from './plotConfig/resistivity';
+import { TrackConfig } from './types';
+
+export const TRACK_CONFIG: TrackConfig[] = [
+  ...GAMMA_RAY_AND_CALIPER_PLOTS.map((config) => ({
     ...config,
-    trackName: TrackNameEnum.GR,
+    trackName: GraphTrackEnum.GAMMA_RAY_AND_CALIPER,
   })),
-  ...RDEEP_COLUMNS_CONFIG.map((config) => ({
+  ...RESISTIVITY_PLOTS.map((config) => ({
     ...config,
-    trackName: TrackNameEnum.RDEEP,
+    trackName: GraphTrackEnum.RESISTIVITY,
   })),
-  ...DN_COLUMNS_CONFIG.map((config) => ({
+  ...DENSITY_AND_NEUTRON_PLOTS.map((config) => ({
     ...config,
-    trackName: TrackNameEnum.DN,
+    trackName: GraphTrackEnum.DENSITY_AND_NEUTRON,
   })),
-  ...PPFG_COLUMNS_CONFIG.map((config) => ({
+  ...GEOMECHANICS_AND_PPFG_PLOTS.map((config) => ({
     ...config,
-    trackName: TrackNameEnum.PPFG,
+    trackName: GraphTrackEnum.GEOMECHANICS_AND_PPFG,
   })),
 ];
