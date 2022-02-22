@@ -30,7 +30,7 @@ uniform float dataTextureHeight;
 uniform mat4 projectionMatrix;
 uniform int renderMode;
 
-//Fix for iOS primitives not getting depth value if included before all uniform are declared
+// Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 
 in vec4 v_centerB;
