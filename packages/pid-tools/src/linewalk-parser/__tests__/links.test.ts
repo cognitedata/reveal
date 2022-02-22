@@ -16,18 +16,21 @@ test('should find the matching file connection in pid26', async () => {
 
   const expectedLink: DocumentLink = {
     from: {
-      documentId: pid25.documentMetadata.name,
+      documentId: 'PARSED_DIAGRAM_V1_025Graph.json',
       annotationId: 'path1',
     },
     to: {
-      documentId: pid26.documentMetadata.name,
+      documentId: 'PARSED_DIAGRAM_V1_026Graph.json',
       annotationId: 'path1',
     },
   };
 
-  const link = findPidLink(fileConnection, pid25 as GraphDocument, [
-    pid26 as GraphDocument,
-  ]);
+  const link = findPidLink(
+    fileConnection,
+    pid25 as GraphDocument,
+    [pid26 as GraphDocument],
+    '1'
+  );
 
   expect(link).toEqual(expectedLink);
 });
@@ -41,9 +44,12 @@ test('should not find file connection with document number 27 in pid26', async (
     pathIds: ['path1'],
   } as unknown as FileConnectionInstance;
 
-  const link = findPidLink(fileConnection, pid25 as GraphDocument, [
-    pid26 as GraphDocument,
-  ]);
+  const link = findPidLink(
+    fileConnection,
+    pid25 as GraphDocument,
+    [pid26 as GraphDocument],
+    '1'
+  );
 
   expect(link).toEqual(undefined);
 });

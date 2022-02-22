@@ -11,23 +11,34 @@ import {
 
 import { version } from './package.json';
 
+const args = process.argv;
+
+const preferConnectionsFromFile = args.includes(
+  '--prefer-connections-from-file'
+);
+
 const graphDir = path.resolve('graphs');
 const outDir = path.resolve('documents');
+
+const connectionsPath = path.resolve('connections/connections.json');
 
 const store = (document: ParsedDocument | ParsedDocumentsForLine) => {
   fs.writeFile(
     path.resolve(outDir, document.externalId),
     JSON.stringify(document, undefined, 2),
     (error) => {
-      // eslint-disable-next-line no-console
       console.log(error);
     }
   );
 };
 
+const connectionsFileExists = fs.existsSync(connectionsPath);
+const connectionsFile = connectionsFileExists
+  ? fs.readFileSync(connectionsPath)
+  : undefined;
+
 fs.readdir(graphDir, (error, files) => {
   if (error) {
-    // eslint-disable-next-line no-console
     console.log(error);
   }
   const graphs = files?.reduce<GraphDocument[]>((result, file) => {
@@ -41,7 +52,12 @@ fs.readdir(graphDir, (error, files) => {
     return result;
   }, []);
 
+  const connections =
+    connectionsFile && preferConnectionsFromFile
+      ? JSON.parse(connectionsFile.toString()).connections
+      : []; // insert matchGraphs(graphs) here
+
   if (graphs?.length) {
-    computeLines(graphs, version, store);
+    computeLines(graphs, connections, version, store);
   }
 });

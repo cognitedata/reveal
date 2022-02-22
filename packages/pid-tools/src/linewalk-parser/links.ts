@@ -10,11 +10,13 @@ import { isFileConnection, isLineConnection } from '../utils/type';
 import { getDiagramInstanceIdFromPathIds } from '../utils/diagramInstanceUtils';
 
 import { DocumentLink, AnnotationId } from './types';
+import { getExtId } from './utils';
 
 export const findPidLink = (
   fileConnection: FileConnectionInstance,
-  currentGraph: GraphDocument,
-  documents: GraphDocument[]
+  document: GraphDocument,
+  documents: GraphDocument[],
+  version: string
 ): DocumentLink | undefined => {
   // Currently only supports single direction connections
   if (
@@ -28,7 +30,7 @@ export const findPidLink = (
     isMatch(document.documentMetadata, {
       type: DocumentType.pid,
       documentNumber: fileConnection.documentNumber,
-      unit: fileConnection.unit || currentGraph.documentMetadata.unit, // either the explicit unit or the same as current
+      unit: fileConnection.unit || document.documentMetadata.unit, // either the explicit unit or the same as current
     })
   );
 
@@ -42,12 +44,12 @@ export const findPidLink = (
   if (connectedInstance === undefined) return undefined;
 
   const ownAnnotation: AnnotationId = {
-    documentId: currentGraph.documentMetadata.name,
+    documentId: getExtId(document.documentMetadata.name, version),
     annotationId: getDiagramInstanceIdFromPathIds(fileConnection.pathIds),
   };
 
   const connectedAnnotation: AnnotationId = {
-    documentId: connectedDoc.documentMetadata.name,
+    documentId: getExtId(connectedDoc.documentMetadata.name, version),
     annotationId: getDiagramInstanceIdFromPathIds(connectedInstance.pathIds),
   };
 
@@ -67,7 +69,8 @@ export const findPidLink = (
 export const findIsoLink = (
   lineConnection: LineConnectionInstance,
   document: GraphDocument,
-  allDocuments: GraphDocument[]
+  allDocuments: GraphDocument[],
+  version: string
 ): DocumentLink | undefined => {
   const linkedDocument =
     lineConnection.pointsToFileName === 'SAME'
@@ -81,19 +84,20 @@ export const findIsoLink = (
   const linkedConnection = linkedDocument.symbolInstances.find(
     (symbol) =>
       isLineConnection(symbol) &&
-      symbol.letterIndex === lineConnection.letterIndex
+      symbol.letterIndex === lineConnection.letterIndex &&
+      symbol.id !== lineConnection.id
   );
 
   if (linkedConnection === undefined) return undefined;
 
   return {
     from: {
-      documentId: document.documentMetadata.name,
-      annotationId: getDiagramInstanceIdFromPathIds(lineConnection.pathIds),
+      documentId: getExtId(document.documentMetadata.name, version),
+      annotationId: lineConnection.id,
     },
     to: {
-      documentId: linkedDocument.documentMetadata.name,
-      annotationId: getDiagramInstanceIdFromPathIds(linkedConnection.pathIds),
+      documentId: getExtId(linkedDocument.documentMetadata.name, version),
+      annotationId: linkedConnection.id,
     },
   };
 };

@@ -1,25 +1,20 @@
 import {
-  DocumentType,
-  GraphDocument,
   DiagramSymbolInstanceOutputFormat,
   DiagramEquipmentTagInstanceOutputFormat,
   DiagramLabelOutputFormat,
   DiagramLineInstanceOutputFormat,
 } from '../types';
-import { isFileConnection, isLineConnection } from '../utils/type';
+import { SymbolConnection } from '../graphMatching/types';
 
 import {
-  ParsedDocument,
-  ParsedDocumentsForLine,
   Annotation,
   SymbolAnnotation,
   TextAnnotation,
   DocumentLink,
 } from './types';
 import { symbolTypeMap } from './constants';
-import { findPidLink, findIsoLink } from './links';
 
-const diagramInstanceToAnnotation = (
+export const diagramInstanceToAnnotation = (
   instance: DiagramSymbolInstanceOutputFormat | DiagramLineInstanceOutputFormat
 ): SymbolAnnotation => ({
   id: instance.id,
@@ -31,7 +26,7 @@ const diagramInstanceToAnnotation = (
   lineNumbers: instance.lineNumbers,
 });
 
-const symbolTagToAnnotation = (
+export const symbolTagToAnnotation = (
   tag: DiagramEquipmentTagInstanceOutputFormat
 ): SymbolAnnotation => ({
   id: tag.id,
@@ -43,7 +38,7 @@ const symbolTagToAnnotation = (
   lineNumbers: tag.lineNumbers,
 });
 
-const labelToAnnotation = (
+export const labelToAnnotation = (
   label: DiagramLabelOutputFormat
 ): TextAnnotation => ({
   id: label.id,
@@ -55,7 +50,15 @@ const labelToAnnotation = (
   lineNumbers: [],
 });
 
-const mergeUnique = <T>(current: T[], additions: T[]) => {
+export const getFileNameWithoutExtension = (name: string) =>
+  name.substring(0, name.lastIndexOf('.')) || name;
+
+export const getExtId = (name: string, version: string) => {
+  const fileNameWithoutExtension = getFileNameWithoutExtension(name);
+  return `PARSED_DIAGRAM_V${version}_${fileNameWithoutExtension}.json`;
+};
+
+export const mergeUnique = <T>(current: T[], additions: T[]) => {
   return additions.reduce((combined, newValue) => {
     if (!combined.includes(newValue)) {
       combined.push(newValue);
@@ -64,130 +67,37 @@ const mergeUnique = <T>(current: T[], additions: T[]) => {
   }, current);
 };
 
-const parseDocument = (
-  graph: GraphDocument,
-  version: string,
-  allDocuments: GraphDocument[]
-): ParsedDocument => {
-  const { equipmentTags, lines, symbolInstances, labels } = graph;
+export const inferIsoLineNumberToAnnotations = (
+  lineNumber: number,
+  annotations: Annotation[]
+) => {
+  annotations.forEach((annotation) => {
+    // eslint-disable-next-line no-param-reassign
+    annotation.lineNumbers = [...annotation.lineNumbers, lineNumber];
+  });
+};
 
-  const annotations: Annotation[] = [];
-
-  const fileNameWithoutExtension = graph.documentMetadata.name.replace(
-    '.svg',
-    ''
-  );
-  const pdfExternalId = `${fileNameWithoutExtension}.pdf`;
-  const linking: DocumentLink[] = [];
-  const textAnnotationMap = new Map<string, TextAnnotation>();
-
-  const inferLineNumbersToLabels = (symbol: SymbolAnnotation) => {
-    if (symbol.lineNumbers.length && symbol.labelIds.length) {
-      symbol.labelIds.forEach((labelId) => {
-        const textRef = textAnnotationMap.get(labelId);
-        if (textRef) {
-          textRef.lineNumbers = mergeUnique(
-            textRef.lineNumbers,
-            symbol.lineNumbers
-          );
-        }
+export const connectionsToLinks = (
+  connections: SymbolConnection[],
+  pdfExternalId: string,
+  version: string
+) => {
+  return connections.reduce((links, connection) => {
+    if (
+      connection.from.fileName === pdfExternalId ||
+      connection.to.fileName === pdfExternalId
+    ) {
+      links.push({
+        from: {
+          documentId: getExtId(connection.from.fileName, version),
+          annotationId: connection.from.instanceId,
+        },
+        to: {
+          documentId: getExtId(connection.to.fileName, version),
+          annotationId: connection.to.instanceId,
+        },
       });
     }
-  };
-
-  labels?.forEach((label) => {
-    const textAnnotation = labelToAnnotation(label);
-    annotations.push(textAnnotation);
-    textAnnotationMap.set(label.id, textAnnotation);
-  });
-
-  lines?.forEach((line) => {
-    const annotation = diagramInstanceToAnnotation(line);
-    annotations.push(annotation);
-    inferLineNumbersToLabels(annotation);
-  });
-
-  symbolInstances?.forEach((symbol) => {
-    if (isFileConnection(symbol)) {
-      const link = findPidLink(symbol, graph, allDocuments);
-      if (link !== undefined) {
-        linking.push(link);
-      }
-    } else if (isLineConnection(symbol)) {
-      const link = findIsoLink(symbol, graph, allDocuments);
-      if (link !== undefined) {
-        linking.push(link);
-      }
-    }
-    const annotation = diagramInstanceToAnnotation(symbol);
-    annotations.push(annotation);
-    inferLineNumbersToLabels(annotation);
-  });
-
-  equipmentTags?.forEach((tag) => {
-    const annotation = symbolTagToAnnotation(tag);
-    annotations.push(annotation);
-    inferLineNumbersToLabels(annotation);
-  });
-
-  return {
-    annotations,
-    externalId: `PARSED_DIAGRAM_V${version}_${fileNameWithoutExtension}.json`,
-    linking,
-    pdfExternalId,
-    potentialDiscrepancies: [],
-    type: graph.documentMetadata.type === DocumentType.pid ? 'p&id' : 'iso',
-    viewBox: graph.viewBox,
-  };
-};
-
-const uploadToCDF = async (
-  document: ParsedDocument | ParsedDocumentsForLine
-) => {
-  fetch(`cdf/somDir/${document.externalId}`, {
-    method: 'PUT',
-    body: JSON.stringify(document),
-  });
-};
-
-export const computeLines = async (
-  documents: GraphDocument[],
-  version: string,
-  storeDocumentCallback:
-    | undefined
-    | ((document: ParsedDocument | ParsedDocumentsForLine) => void) = undefined
-) => {
-  const lineNumbers: number[] = [];
-  const graphsPerLine = new Map<number, string[]>();
-
-  documents.forEach((graph) => {
-    const document = parseDocument(graph, version, documents);
-    if (storeDocumentCallback) {
-      storeDocumentCallback(document);
-    } else {
-      uploadToCDF(document);
-    }
-
-    graph.lineNumbers?.forEach((number) => {
-      if (!lineNumbers.includes(number)) {
-        lineNumbers.push(number);
-      }
-      const prevGraphs = graphsPerLine.get(number) || [];
-      graphsPerLine.set(number, [...prevGraphs, document.externalId]);
-    });
-  });
-
-  lineNumbers.forEach((lineNumber) => {
-    const parsedDocumentsForLine = {
-      externalId: `DOCUMENTS_FOR_LINE_V${version}_L${lineNumber}.json`,
-      line: lineNumber.toString(),
-      parsedDocuments: graphsPerLine.get(lineNumber) || [],
-    };
-
-    if (storeDocumentCallback) {
-      storeDocumentCallback(parsedDocumentsForLine);
-    } else {
-      uploadToCDF(parsedDocumentsForLine);
-    }
-  });
+    return links;
+  }, <DocumentLink[]>[]);
 };
