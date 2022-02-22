@@ -14,6 +14,7 @@ import {
   CameraControlsOptions,
   TreeIndexNodeCollection,
   CogniteModelBase,
+  CameraManager,
   DefaultCameraManager
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
@@ -27,6 +28,7 @@ import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
+import { CustomCameraManager } from '../utils/CustomCameraManager';
 
 
 window.THREE = THREE;
@@ -43,7 +45,7 @@ export function Migration() {
   useEffect(() => {
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
-    let cameraManager: DefaultCameraManager;
+    let cameraManager: CameraManager;
 
     async function main() {
       const project = urlParams.get('project');
@@ -99,9 +101,9 @@ export function Migration() {
         changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
       };
-      cameraManager = viewer.cameraManager as DefaultCameraManager;
+      cameraManager = viewer.cameraManager;// as DefaultCameraManager;
 
-      cameraManager.setCameraControlsOptions(controlsOptions);
+      //cameraManager.setCameraControlsOptions(controlsOptions);
 
       // Add GUI for loading models and such
       const guiState = {
@@ -354,12 +356,12 @@ export function Migration() {
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
-      controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
-        cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
-      });
-      controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
-        cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
-      });
+      // controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
+      //   cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
+      // });
+      // controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
+      //   cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
+      // });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
