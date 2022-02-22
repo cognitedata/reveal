@@ -16,7 +16,6 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import { RevealCameraControls } from '@reveal/camera-manager';
 import { Cognite3DViewer } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
 
@@ -196,7 +195,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const targetPosition = intersects[0].object.position.clone().normalize();
     const targetUp = (intersects[0].object.userData.upVector as THREE.Vector3).clone();
 
-    this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraControls, targetPosition, targetUp);
+    this.moveCameraTo(targetPosition, targetUp);
 
     return true;
   }
@@ -340,14 +339,10 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     return face;
   }
 
-  private moveCameraTo(
-    camera: THREE.PerspectiveCamera,
-    cameraControls: RevealCameraControls,
-    targetAxis: THREE.Vector3,
-    targetUpAxis: THREE.Vector3
-  ) {
-    const currentCameraPosition = camera.position.clone();
-    const cameraTarget = cameraControls.getState().target;
+  private moveCameraTo(targetAxis: THREE.Vector3, targetUpAxis: THREE.Vector3) {
+    const cameraManager = this._viewer.cameraManager;
+
+    const { position: currentCameraPosition, target: cameraTarget, rotation } = cameraManager.getCameraState();
 
     const targetRelativeStartPosition = currentCameraPosition.clone().sub(cameraTarget);
     const radius = targetRelativeStartPosition.length();
@@ -363,7 +358,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const forward = targetAxis.clone();
 
-    const fromRotation = camera.quaternion.clone();
+    const fromRotation = rotation.clone();
     const toRotation = new THREE.Quaternion().setFromRotationMatrix(
       new THREE.Matrix4().makeBasis(targetUpAxis.clone().cross(forward), targetUpAxis, forward)
     );
@@ -376,7 +371,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const tmpPosition = new THREE.Vector3();
     const tmpRotation = new THREE.Quaternion();
-    let cachedCameraControlsEnabled: boolean;
+
     const tween = animation
       .to(to, this._layoutConfig.animationSpeed)
       .onUpdate(() => {
@@ -390,18 +385,13 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
         tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
 
-        camera.position.copy(tmpPosition);
-        camera.setRotationFromQuaternion(tmpRotation);
-      })
-      .start(TWEEN.now())
-      .onStart(() => {
-        cachedCameraControlsEnabled = cameraControls.enabled;
-        cameraControls.enabled = false;
+        cameraManager.setCameraState({ position: tmpPosition, rotation: tmpRotation });
       })
       .onComplete(() => {
-        cameraControls.setState(camera.position, cameraTarget);
-        cameraControls.enabled = cachedCameraControlsEnabled;
-      });
+        cameraManager.setCameraState({ position: tmpPosition, target: cameraTarget });
+      })
+      .start(TWEEN.now());
+
     tween.update(TWEEN.now());
   }
 }
