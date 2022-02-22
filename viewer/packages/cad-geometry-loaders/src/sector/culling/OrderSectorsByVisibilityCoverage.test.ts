@@ -7,9 +7,10 @@ import * as THREE from 'three';
 import { SectorScene, CadModelMetadata, SectorSceneFactory } from '@reveal/cad-parsers';
 
 import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
-import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 import { createV8SectorMetadata, SectorTree, createGlContext } from '../../../../../test-utilities';
 import { File3dFormat } from '@reveal/modeldata-api';
+
+import { CadMaterialManager, EffectRenderManager } from '@reveal/rendering';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext = createGlContext(64, 64);
@@ -21,12 +22,15 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1))
   ]);
   const cadModel = createStubModel('model', singleSectorScene, identityMatrix);
-  const occludingGeometryProvider: OccludingGeometryProvider = {
-    renderOccludingGeometry: jest.fn()
-  };
+
+  let renderManager: EffectRenderManager;
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
+    renderManager = new EffectRenderManager(renderer,
+                                            new THREE.Scene(),
+                                            new CadMaterialManager(),
+                                            {});
   });
 
   afterEach(() => {
@@ -36,7 +40,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
   test('orderSectorsByVisibility() returns empty array when there are no models', () => {
     // Arrange
     const camera = new THREE.PerspectiveCamera();
-    const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
+    const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
 
     // Act
     glContext.clearColor(1, 1, 1, 1);
@@ -53,7 +57,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   test('rendered result has no sectors, returns empty array', () => {
     // Arrange
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
+    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
     util.setModels([cadModel]);
     const camera = new THREE.PerspectiveCamera();
 
@@ -71,7 +75,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   test('rendered result has one sector, returns array with priority 1', () => {
     // Arrange
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
+    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
     util.setModels([cadModel]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
@@ -99,7 +103,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     const scene2 = createStubScene([1, [], new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1))]);
     const model1 = createStubModel('model1', singleSectorScene, identityMatrix);
     const model2 = createStubModel('model2', scene2, identityMatrix);
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
+    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
     util.setModels([model1, model2]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);

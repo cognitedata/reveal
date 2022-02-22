@@ -6,10 +6,10 @@ import * as THREE from 'three';
 
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadModelMetadata, V8SectorMetadata, WantedSector } from '@reveal/cad-parsers';
-import { coverageShaders } from '@reveal/rendering';
+import { coverageShaders, EffectRenderManager } from '@reveal/rendering';
 
-import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 import assert from 'assert';
+import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -50,10 +50,9 @@ export interface OrderSectorsByVisibleCoverageOptions {
   renderer: THREE.WebGLRenderer;
 
   /**
-   * Initializes a render target with already loaded geometry for pre-load
-   * occlusion.
+   * EffectRenderManager used to initialize the RenderAlreadyLoadedGeometryProvider
    */
-  occludingGeometryProvider: OccludingGeometryProvider;
+  renderManager: EffectRenderManager;
 }
 
 export type PrioritizedSectorIdentifier = {
@@ -120,7 +119,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
   private readonly _renderer: THREE.WebGLRenderer;
-  private readonly _alreadyLoadedProvider: OccludingGeometryProvider;
+  private readonly _alreadyLoadedProvider: RenderAlreadyLoadedGeometryProvider;
   // private debugRenderer?: THREE.WebGLRenderer;
   private _debugImageElement?: HTMLImageElement;
   private readonly renderTarget: THREE.WebGLRenderTarget;
@@ -141,7 +140,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   constructor(options: OrderSectorsByVisibleCoverageOptions) {
     this._renderer = options.renderer;
-    this._alreadyLoadedProvider = options.occludingGeometryProvider;
+    this._alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(options.renderManager);
 
     // Note! Rener target will be resize before actual use
     this.renderTarget = new THREE.WebGLRenderTarget(1, 1, {

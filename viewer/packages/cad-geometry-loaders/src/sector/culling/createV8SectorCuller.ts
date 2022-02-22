@@ -4,15 +4,14 @@
 import * as THREE from 'three';
 
 import { SectorCuller } from './SectorCuller';
-import { OccludingGeometryProvider } from './OccludingGeometryProvider';
-
 import { ByVisibilityGpuSectorCuller } from '@reveal/cad-geometry-loaders';
+import { EffectRenderManager } from '@reveal/rendering';
 import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 
 export function createV8SectorCuller(
   renderer: THREE.WebGLRenderer,
-  occludingGeometryProvider: OccludingGeometryProvider
+  renderManager: EffectRenderManager
 ): SectorCuller {
-  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
+  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
   return new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 }
