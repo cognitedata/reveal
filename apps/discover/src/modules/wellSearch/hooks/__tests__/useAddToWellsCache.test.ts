@@ -1,6 +1,7 @@
 import { useQueryClient } from 'react-query';
 
 import { renderHook } from '@testing-library/react-hooks';
+import concat from 'lodash/concat';
 
 import { getMockWell } from '__test-utils/fixtures/well';
 import { WELL_QUERY_KEY } from 'constants/react-query';
@@ -44,20 +45,28 @@ describe('useAddToWellsCache', () => {
   });
 
   it('should add only the uncached wells to the cache', () => {
-    const cachedWell1 = getMockWell({ id: 'cachedWell1' });
-    const cachedWell2 = getMockWell({ id: 'cachedWell2' });
+    const cachedWells = Array.from({ length: 10 }, (_, count) => count + 1).map(
+      (id) => getMockWell({ id })
+    );
+
+    // This case happens when the filter results return the same wells we had before and some other ones
+    const uncachedWells = Array.from(
+      { length: 10 },
+      (_, count) => count + 1
+    ).map((id) => getMockWell({ id }));
+
     const uncachedWell1 = getMockWell({ id: 'uncachedWell1' });
     const uncachedWell2 = getMockWell({ id: 'uncachedWell2' });
+    uncachedWells.push(uncachedWell1);
+    uncachedWells.push(uncachedWell2);
 
-    mockQueryClientWithData([cachedWell1, cachedWell2]);
+    mockQueryClientWithData(cachedWells);
     const addToWellsCache = getHookResult();
 
-    addToWellsCache([cachedWell1, uncachedWell1, uncachedWell2]);
-    expect(setQueryData).toHaveBeenLastCalledWith(WELL_QUERY_KEY.WELLS_CACHE, [
-      cachedWell1,
-      cachedWell2,
-      uncachedWell1,
-      uncachedWell2,
-    ]);
+    addToWellsCache(uncachedWells);
+    expect(setQueryData).toHaveBeenLastCalledWith(
+      WELL_QUERY_KEY.WELLS_CACHE,
+      concat(cachedWells, [uncachedWell1, uncachedWell2])
+    );
   });
 });
