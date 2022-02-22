@@ -7,8 +7,21 @@ export { NodeCollection } from './src/NodeCollection';
 export { SerializedNodeCollection } from './src/SerializedNodeCollection';
 export { TreeIndexNodeCollection } from './src/TreeIndexNodeCollection';
 export { UnionNodeCollection } from './src/UnionNodeCollection';
+export { PropertyFilterNodeCollection } from './src/PropertyFilterNodeCollection';
+export { SinglePropertyFilterNodeCollection } from './src/SinglePropertyFilterNodeCollection';
+export { AssetNodeCollection } from './src/AssetNodeCollection';
+export { InvertedNodeCollection } from './src/InvertedNodeCollection';
+export {
+  registerCustomNodeCollectionType,
+  TypeName,
+  NodeCollectionDescriptor,
+  NodeCollectionSerializationContext
+} from './src/NodeCollectionDeserializer';
+
 export { NodeAppearance, DefaultNodeAppearance, NodeOutlineColor } from './src/NodeAppearance';
 export { NodeAppearanceProvider } from './src/NodeAppearanceProvider';
+
+export { CdfModelNodeCollectionDataProvider } from './src/CdfModelNodeCollectionDataProvider';
 
 export { AreaCollection } from './src/prioritized/AreaCollection';
 export { EmptyAreaCollection } from './src/prioritized/EmptyAreaCollection';

@@ -17,7 +17,15 @@ export {
   TreeIndexNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
-  SerializedNodeCollection
+  SerializedNodeCollection,
+  PropertyFilterNodeCollection,
+  SinglePropertyFilterNodeCollection,
+  AssetNodeCollection,
+  InvertedNodeCollection,
+  registerCustomNodeCollectionType,
+  TypeName,
+  NodeCollectionDescriptor,
+  NodeCollectionSerializationContext
 } from '@reveal/cad-styling';
 
 export { revealEnv, IndexSet, NumericRange } from '@reveal/utilities';
@@ -31,16 +39,6 @@ export { CognitePointCloudModel } from './public/migration/CognitePointCloudMode
 export { ViewerState, ModelState } from './utilities/ViewStateHelper';
 
 export * from './public/types';
-export {
-  PropertyFilterNodeCollection,
-  SinglePropertyFilterNodeCollection,
-  AssetNodeCollection,
-  InvertedNodeCollection,
-  registerCustomNodeCollectionType,
-  TypeName,
-  NodeCollectionDescriptor,
-  NodeCollectionSerializationContext
-} from './datamodels/cad/styling';
 
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';

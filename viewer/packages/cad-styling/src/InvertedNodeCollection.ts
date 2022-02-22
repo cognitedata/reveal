@@ -1,10 +1,12 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange, IndexSet } from '@reveal/utilities';
 
-import { AreaCollection, NodeCollection, SerializedNodeCollection } from '@reveal/cad-styling';
+import { AreaCollection } from './prioritized/AreaCollection';
+import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import { NodeCollection } from './NodeCollection';
+import { SerializedNodeCollection } from './SerializedNodeCollection';
 
 /**
  * Node collection that inverts the result from another node collection.
@@ -16,7 +18,7 @@ export class InvertedNodeCollection extends NodeCollection {
   private readonly _innerCollection: NodeCollection;
   private _cachedIndexSet?: IndexSet;
 
-  constructor(model: Cognite3DModel, innerSet: NodeCollection) {
+  constructor(model: CdfModelNodeCollectionDataProvider, innerSet: NodeCollection) {
     super(InvertedNodeCollection.classToken);
     this._innerCollection = innerSet;
     this._innerCollection.on('changed', () => {

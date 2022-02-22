@@ -4,17 +4,20 @@
 
 import * as THREE from 'three';
 
-import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
 import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
-import { AreaCollection, EmptyAreaCollection, NodeCollection, SerializedNodeCollection } from '@reveal/cad-styling';
+import { AreaCollection } from './prioritized/AreaCollection';
+import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
+import { NodeCollection } from './NodeCollection';
+import { SerializedNodeCollection } from './SerializedNodeCollection';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
 import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
+import { CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling/src/CdfModelNodeCollectionDataProvider';
 
 /**
  * Node collection that filters nodes based on a node property from a list of values, similarly to how
@@ -26,7 +29,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollection {
   public static readonly classToken = 'SinglePropertyNodeCollection';
 
   private readonly _client: CogniteClient;
-  private readonly _model: Cognite3DModel;
+  private readonly _model: CdfModelNodeCollectionDataProvider;
 
   private _indexSet = new IndexSet();
   private _areas: AreaCollection = EmptyAreaCollection.instance();
@@ -44,7 +47,11 @@ export class SinglePropertyFilterNodeCollection extends NodeCollection {
    * @param model    CAD model.
    * @param options
    */
-  constructor(client: CogniteClient, model: Cognite3DModel, options: PropertyFilterNodeCollectionOptions = {}) {
+  constructor(
+    client: CogniteClient,
+    model: CdfModelNodeCollectionDataProvider,
+    options: PropertyFilterNodeCollectionOptions = {}
+  ) {
     super(SinglePropertyFilterNodeCollection.classToken);
     this._client = client;
     this._model = model;
