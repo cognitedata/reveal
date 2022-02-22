@@ -20,5 +20,5 @@ jobs:
           host: 35.195.114.37
           username: david_liu_cognite_com
           key: ${{ secrets.CLI_VM }}
-          script: cd /home/david_liu_cognite_com/ && rm -rf ${{ env.GITHUB_REF_SLUG }}
+          script: cd /home/david_liu_cognite_com/ && rm -rf ${{ env.GITHUB_REF_NAME_SLUG_URL }}
 

@@ -35,7 +35,7 @@ jobs:
           username: david_liu_cognite_com
           key: ${{ secrets.CLI_VM }}
           source: ./dist/apps/platypus-cdf-cli
-          target: /home/david_liu_cognite_com/${{ env.GITHUB_REF_SLUG }}
+          target: /home/david_liu_cognite_com/${{ env.GITHUB_REF_NAME_SLUG_URL }}
           strip_components: 4
           overwrite: true
       
@@ -45,7 +45,7 @@ jobs:
           host: 35.195.114.37
           username: david_liu_cognite_com
           key: ${{ secrets.CLI_VM }}
-          script: cd /home/david_liu_cognite_com/${{ env.GITHUB_REF_SLUG }} && bash -ic yarn && chmod +x main.js
+          script: cd /home/david_liu_cognite_com/${{ env.GITHUB_REF_NAME_SLUG_URL }} && bash -ic yarn && chmod +x main.js
 
       - name: Comment on PR
         uses: mshick/add-pr-comment@v1
@@ -58,7 +58,7 @@ jobs:
             ### Using the preview
             To use the preview, first run 
             ```bash
-            cd /home/david_liu_cognite_com/${{ env.GITHUB_REF_SLUG }}
+            cd /home/david_liu_cognite_com/${{ env.GITHUB_REF_NAME_SLUG_URL }}
             ```
             then
             ```bash

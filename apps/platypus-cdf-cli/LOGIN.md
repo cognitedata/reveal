@@ -6,17 +6,27 @@ We rely on CDF Auth flow to authenticate user to the Platypus app namely (UI and
 
 We namely support these login methods:
 
-- [PKCE or interactive login flow (for normal users)](#pkce)
-- [Client Id and Secret (for CI/CD)]()
+- Interactive Login - PKCE (for normal users)
+- Device Code (for normal users on machines without browsers)
+- Client Secret / Machine Tokens (for Machines)
 - API-KEY or Legacy (_not recommended_)
 
 ## Interactive Login - PKCE
 
-`yarn login` will take you through login flow with a browser popup. This is ideal for users on any computer (non-machines). For machine oriented login flow, take a look at the next option - Client Credentials.
+`yarn login` will take you through login flow with a browser popup. This is ideal for users logging in on a normal device with a internet browser (like Chrome, Edge, Safari, Firefox etc.).
+
+- For users on devices without a internet browser who wants to log in as themselves (non-machine), check out the Device Code flow.
+- For machine oriented login flow, take a look at the Client Credentials flow.
 
 This would work automatically if an admin has already consented for the CLI to access your Azure AD tenant. More on this in the next section.
 
-### Enabling the CLI for your Azure AD tenant
+## Device Code (Interactive login on clients without browser)
+
+`yarn login --authType=deviceCode` will take you through login flow like the normal interactive PKCE login, but without the popup. This is ideal for users on devices without a internet browser and if the user would like to still log in with their own credentials. For logging in as a machine (non-user), take a look at the next option - Client Credentials.
+
+This would work automatically if an admin has already consented for the CLI to access your Azure AD tenant, just like the previous interactive PKCE option
+
+### Enabling the CLI for your Azure AD tenant for PKCE or Device Code flow.
 
 An admin would need to first approve the application. If you are an admin, and is trying to this, be sure to click the "Consent on behalf of your organisation" when you log in for the first time
 
@@ -33,7 +43,7 @@ Or, use the UI in Azure AD Portal.
 
 <img src="./static/admin-grant-2.png" alt="drawing"  style="width:100%;max-width:400px"/>
 
-#### FAQ
+#### FAQ for PKCE or Device Code flow
 
 > Something went wrong: invalid_client, description: AADSTS650052: The app needs access to a service ('api://XXXXXX') that your organization 'XXXXX' has not subscribed to or enabled. Contact your IT Admin to review the configuration of your service subscriptions.
 
@@ -41,7 +51,7 @@ This would mean that the CLI is aiming to access CDF (api://XXXXXX) which your t
 
 This could be done if you are the Azure AD tenant's admin and visiting: `https://login.microsoftonline.com/<tenant like xxx.onmicrosoft.com>/adminconsent?client_id=https://<cluster>.cognitedata.com`. More details in the [official CDF documentation](https://docs.cognite.com/cdf/access/guides/configure_cdf_azure_oidc.html#step-1-1-permit-the-cognite-api-to-access-user-profiles-in-azure-ad).
 
-## Client Credential
+## Client Credential / Machine Token
 
 [This](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) mode is designed for long lasting token where you will need to provide `client_id` and `client_secret` for your application, this kind of token are long lasting and meant for machine interactions like CI/CD. In this case, the machine token is granted via an app registration, and the app would have to be granted access
 
@@ -80,7 +90,7 @@ In here we will see how can we create our own app registration to get a Client S
 
    <img src="./static/group.png" alt="drawing"  style="width:100%;max-width:400px"/>
 
-#### FAQ
+#### FAQ for Client Secret flow
 
 > I am getting `code: 401` errors
 

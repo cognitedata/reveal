@@ -2,6 +2,7 @@ export enum AUTH_TYPE {
   PKCE = 'interactive',
   CLIENT_SECRET = 'clientSecret',
   APIKEY = 'legacy',
+  DEVICE_CODE = 'deviceCode',
 }
 
 export enum LOGIN_STATUS {

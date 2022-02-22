@@ -36,7 +36,11 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
       );
       logout();
 
-      if (arg.authType === AUTH_TYPE.PKCE && !arg.clientId) {
+      if (
+        (arg.authType === AUTH_TYPE.PKCE ||
+          arg.authType === AUTH_TYPE.DEVICE_CODE) &&
+        !arg.clientId
+      ) {
         arg.clientId = getDefaultClientIdForPKCE(arg.cluster as string);
       }
     }

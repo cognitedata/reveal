@@ -53,6 +53,7 @@ export const builder = (yargs: Argv<LoginArgs>) =>
       AUTH_TYPE.PKCE,
       AUTH_TYPE.CLIENT_SECRET,
       AUTH_TYPE.APIKEY,
+      AUTH_TYPE.DEVICE_CODE,
     ]);
 
 export const handler = async (arg: Arguments<LoginArgs>) => {
@@ -66,6 +67,7 @@ export const handler = async (arg: Arguments<LoginArgs>) => {
           await client.assets.list({ limit: 1 });
           break;
         }
+        case AUTH_TYPE.DEVICE_CODE:
         case AUTH_TYPE.CLIENT_SECRET:
         case AUTH_TYPE.PKCE: {
           const info = (await client.get('/api/v1/token/inspect')).data;
