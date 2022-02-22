@@ -36,7 +36,7 @@ export type BaseSectorMetadata = {
   readonly id: number;
   readonly path: string;
   readonly depth: number;
-  readonly bounds: THREE.Box3;
+  readonly subtreeBoundingBox: THREE.Box3;
   readonly children: SectorMetadata[];
   readonly estimatedDrawCallCount: number;
   readonly estimatedRenderCost: number;
@@ -56,4 +56,5 @@ export type GltfSectorMetadata = {
   readonly maxDiagonalLength: number;
   readonly minDiagonalLength: number;
   readonly downloadSize: number;
+  readonly geometryBoundingBox: THREE.Box3;
 };

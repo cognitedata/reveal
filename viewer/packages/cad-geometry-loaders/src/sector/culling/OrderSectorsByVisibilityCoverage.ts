@@ -484,7 +484,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       // runtime (either before rendering or in shader), but not sure how to solve this. -lars 2020-04-22
       const { xy, xz, yz } = sector.facesFile!.coverageFactors;
       coverageFactors.set(yz, xz, xy);
-      addSector(sector.bounds, sectorIndex, sector.id, coverageFactors);
+      addSector(sector.subtreeBoundingBox, sectorIndex, sector.id, coverageFactors);
     });
 
     const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 5);
@@ -502,7 +502,7 @@ const isCameraInsideSectorVars = {
 
 function isWithinSectorBounds(model: CadModelMetadata, metadata: V8SectorMetadata, point: THREE.Vector3) {
   const { sectorBounds } = isCameraInsideSectorVars;
-  sectorBounds.copy(metadata.bounds);
+  sectorBounds.copy(metadata.subtreeBoundingBox);
   sectorBounds.applyMatrix4(model.modelMatrix);
   return sectorBounds.containsPoint(point);
 }
