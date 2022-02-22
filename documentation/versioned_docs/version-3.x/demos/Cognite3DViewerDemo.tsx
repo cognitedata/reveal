@@ -11,7 +11,6 @@ import {
 
 import { CanvasWrapper } from '@site/versioned_docs/version-3.x/components/styled';
 import { DemoProps } from '@site/versioned_docs/version-3.x/components/DemoProps';
-import { CogniteClient } from '@cognite/sdk-3.x/dist/src';
 
 type OwnProps = {
   modelType?: SupportedModelTypes;
@@ -31,8 +30,7 @@ export default function Cognite3DViewerDemo({
 
     // Prepare viewer
     const viewer = new Cognite3DViewer({
-      //@ts-ignore
-      sdk: client as CogniteClient,
+      sdk: client,
       domElement: canvasWrapperRef.current,
       antiAliasingHint: 'msaa4+fxaa'
     });
