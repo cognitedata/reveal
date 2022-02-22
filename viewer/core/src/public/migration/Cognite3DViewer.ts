@@ -778,6 +778,7 @@ export class Cognite3DViewer {
   }
 
   /**
+   * @deprecated Use `viewer.cameraManager.getCamera()` instead.
    * @obvious
    * @returns The THREE.Camera used for rendering.
    */
