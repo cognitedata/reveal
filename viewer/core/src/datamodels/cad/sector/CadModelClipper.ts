@@ -46,11 +46,11 @@ export class CadModelClipper {
 }
 
 function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): SectorMetadata | undefined {
-  const originalBounds = sector.bounds;
-  const bounds = sector.bounds.clone();
-  bounds.intersect(geometryClipBox);
+  const originalBounds = sector.subtreeBoundingBox;
+  const subtreeBoundingBox = sector.subtreeBoundingBox.clone();
+  subtreeBoundingBox.intersect(geometryClipBox);
 
-  if (!bounds.isEmpty()) {
+  if (!subtreeBoundingBox.isEmpty()) {
     const intersectingChildren: SectorMetadata[] = [];
     for (let i = 0; i < sector.children.length; i++) {
       const child = clipSector(sector.children[i] as V8SectorMetadata, geometryClipBox);
@@ -59,7 +59,7 @@ function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): Sector
       }
     }
     // Determine how much of the sector is kept
-    const keptVolumeRatio = determineVolume(bounds) / determineVolume(originalBounds);
+    const keptVolumeRatio = determineVolume(subtreeBoundingBox) / determineVolume(originalBounds);
     const keptDrawCallsRatio = Math.min(1.0, 1 - 1.0 / (1 + 10 * keptVolumeRatio));
 
     // Keep
@@ -68,7 +68,7 @@ function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): Sector
       children: intersectingChildren,
       estimatedDrawCallCount: Math.ceil(keptDrawCallsRatio * sector.estimatedDrawCallCount),
       estimatedRenderCost: Math.ceil(keptDrawCallsRatio * sector.estimatedRenderCost),
-      bounds
+      subtreeBoundingBox
     };
     return clippedSector;
   } else {

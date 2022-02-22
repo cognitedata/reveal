@@ -39,7 +39,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const cameraWorldInverseMatrix = camera.matrixWorldInverse;
     const cameraProjectionMatrix = camera.projectionMatrix;
     const weightFunctions = new WeightFunctionsHelper(camera);
-    const transformedBounds = new THREE.Box3();
 
     // Determine potential candidates per model
     const modelsAndCandidateSectors = determineCandidateSectorsByModel(
@@ -56,7 +55,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const prioritizedSectors = sortSectorsByPriority(
       modelsAndCandidateSectors,
       weightFunctions,
-      transformedBounds,
       input.prioritizedAreas
     );
     const takenSectorCount = takeSectorsWithinBudget(takenSectors, input, prioritizedSectors);
@@ -91,21 +89,28 @@ function takeSectorsWithinBudget(
   return takenSectorCount;
 }
 
+const sortSectorsByPriorityVars = {
+  transformedBounds: new THREE.Box3()
+};
+
 function sortSectorsByPriority(
   modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
   weightFunctions: WeightFunctionsHelper,
-  transformedBounds: THREE.Box3,
   prioritizedAreas: PrioritizedArea[]
 ): { model: CadModelMetadata; sectorId: number; priority: number }[] {
+  const { transformedBounds } = sortSectorsByPriorityVars;
+
   const candidateSectors = new Array<{
     model: CadModelMetadata;
     sectorId: number;
     priority: number;
   }>();
+
   for (const [model, sectors] of modelsAndCandidateSectors) {
     sectors.forEach(sectorMetadata => {
       const sector = sectorMetadata;
-      weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
+
+      weightFunctions.computeTransformedSectorBounds(sector.geometryBoundingBox, model.modelMatrix, transformedBounds);
       const priority = determineSectorPriority(weightFunctions, sector, transformedBounds, prioritizedAreas);
       candidateSectors.push({
         model,
@@ -182,7 +187,7 @@ function determineCandidateSectors(
 
   const bounds = new THREE.Box3();
   return sectors.filter(sector => {
-    bounds.copy(sector.bounds);
+    bounds.copy(sector.subtreeBoundingBox);
     bounds.applyMatrix4(modelMatrix);
 
     const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));

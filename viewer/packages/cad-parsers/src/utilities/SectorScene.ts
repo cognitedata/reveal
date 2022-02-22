@@ -44,7 +44,7 @@ export class SectorSceneImpl implements SectorScene {
   getSectorsContainingPoint(p: THREE.Vector3): SectorMetadata[] {
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
-      if (x.bounds.containsPoint(p)) {
+      if (x.subtreeBoundingBox.containsPoint(p)) {
         accepted.push(x);
         return true;
       }
@@ -56,7 +56,7 @@ export class SectorSceneImpl implements SectorScene {
   getSectorsIntersectingBox(b: THREE.Box3): SectorMetadata[] {
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
-      if (x.bounds.intersectsBox(b)) {
+      if (x.subtreeBoundingBox.intersectsBox(b)) {
         accepted.push(x);
         return true;
       }
@@ -67,7 +67,7 @@ export class SectorSceneImpl implements SectorScene {
 
   getBoundsOfMostGeometry(): THREE.Box3 {
     if (this.root.children.length === 0) {
-      return this.root.bounds;
+      return this.root.subtreeBoundingBox;
     }
 
     // Determine all corners of the bboxes
@@ -75,8 +75,8 @@ export class SectorSceneImpl implements SectorScene {
     const corners: number[][] = [];
     traverseDepthFirst(this.root, x => {
       if (x.children.length === 0) {
-        corners.push(x.bounds.min.toArray(), x.bounds.max.toArray());
-        allBounds.push(x.bounds, x.bounds);
+        corners.push(x.subtreeBoundingBox.min.toArray(), x.subtreeBoundingBox.max.toArray());
+        allBounds.push(x.subtreeBoundingBox, x.subtreeBoundingBox);
       }
       return true;
     });
@@ -130,7 +130,7 @@ export class SectorSceneImpl implements SectorScene {
     const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
-      if (frustum.intersectsBox(x.bounds)) {
+      if (frustum.intersectsBox(x.subtreeBoundingBox)) {
         accepted.push(x);
         return true;
       }

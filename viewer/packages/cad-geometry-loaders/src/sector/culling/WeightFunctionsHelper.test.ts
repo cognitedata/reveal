@@ -65,7 +65,7 @@ describe('WeightFunctionsHelper', () => {
   test('computeDistanceToCameraWeight returns values in range [0,1]', () => {
     helper.addCandidateSectors(sectors, identityMatrix);
 
-    const weights = sectors.map(x => helper.computeDistanceToCameraWeight(x.bounds));
+    const weights = sectors.map(x => helper.computeDistanceToCameraWeight(x.subtreeBoundingBox));
     weights.sort();
 
     expect(weights[0]).toBe(0.0);
