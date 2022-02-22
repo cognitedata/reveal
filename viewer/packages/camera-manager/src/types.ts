@@ -61,6 +61,20 @@ export interface RevealCameraControls extends THREE.EventDispatcher {
    */
   setScrollTarget: (target: THREE.Vector3) => void;
 }
+export type CameraState = {
+  /**
+   * Camera position in world space.
+   */
+  position?: THREE.Vector3;
+  /**
+   * Camera target in world space.
+   * **/
+  target?: THREE.Vector3;
+  /**
+   * Camera local rotation in quaternion form.
+   */
+  rotation?: THREE.Quaternion;
+};
 
 export type CameraManagerCallbackData = {
   intersection: {
@@ -88,4 +102,4 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
 /**
  * Type defining camera change event data.
  */
-export type CameraChangeData = (event: { camera: { position: THREE.Vector3; target: THREE.Vector3 } }) => void;
+export type CameraChangedEvent = (event: { camera: { position: THREE.Vector3; target: THREE.Vector3 } }) => void;

@@ -13,7 +13,8 @@ import {
   Raycaster,
   PerspectiveCamera,
   OrthographicCamera,
-  MathUtils
+  MathUtils,
+  Quaternion
 } from 'three';
 import Keyboard from './Keyboard';
 
@@ -94,6 +95,7 @@ export class ComboControls extends EventDispatcher {
   private readonly _spherical: Spherical = new Spherical();
   private _sphericalEnd: Spherical = new Spherical();
   private readonly _deltaTarget: Vector3 = new Vector3();
+  private readonly _rawCameraRotation = new Quaternion();
   private _keyboard: Keyboard = new Keyboard();
 
   private readonly _offsetVector: Vector3 = new Vector3();
@@ -211,8 +213,12 @@ export class ComboControls extends EventDispatcher {
 
     _spherical.makeSafe();
     _camera.position.setFromSpherical(_spherical).add(_target);
-    _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
 
+    if (this.isIdentityQuaternion(this._rawCameraRotation)) {
+      _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
+    } else {
+      _camera.setRotationFromQuaternion(this._rawCameraRotation);
+    }
     if (changed) {
       this.triggerCameraChangeEvent();
     }
@@ -239,6 +245,16 @@ export class ComboControls extends EventDispatcher {
     this.update(1000 / this._targetFPS);
     this.triggerCameraChangeEvent();
   };
+
+  /**
+   * Camera rotation to be used by the camera instead of target-based rotation.
+   * This rotation is used only when set to non-default quaternion value (not identity rotation quaternion).
+   * Externally, value is updated by `CameraManager` when `setState` method with non-zero rotation is called. Automatically
+   * resets to default value when `setState` method is called with no rotation value.
+   */
+  get cameraRawRotation(): Quaternion {
+    return this._rawCameraRotation;
+  }
 
   public setViewTarget = (target: Vector3) => {
     this._viewTarget.copy(target);
@@ -863,4 +879,8 @@ export class ComboControls extends EventDispatcher {
     _panVector.multiplyScalar(distance);
     _targetEnd.add(_panVector);
   };
+
+  private isIdentityQuaternion(q: THREE.Quaternion) {
+    return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
+  }
 }
