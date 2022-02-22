@@ -8,9 +8,7 @@
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
-
 uniform mat4 projectionMatrix;
 uniform int renderMode;
 
@@ -20,11 +18,9 @@ uniform int renderMode;
 in vec4 center;
 in float hRadius;
 in float height;
-
 in vec4 U;
 in vec4 V;
 in vec4 sphereNormal;
-
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;

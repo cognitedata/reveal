@@ -1,9 +1,12 @@
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
 
 in mat4 a_instanceMatrix;
-
 in float a_treeIndex;
 in vec3 a_color;
 in float a_arcAngle;
@@ -13,15 +16,7 @@ in float a_tubeRadius;
 out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
-
 out vec3 vViewPosition;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
 
 void main() {
     // normalized theta and phi are packed into positions

@@ -4,12 +4,11 @@
 // http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
 // generalized for two dimensions
 
-in vec2 vUv;
-
 uniform sampler2D tDiffuse;
 uniform sampler2D tAmbientOcclusion;
-
 uniform vec2 resolution;
+
+in vec2 vUv;
 
 out vec4 outputColor;
 

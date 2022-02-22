@@ -2,8 +2,6 @@ precision highp float;
 
 #define texture2D texture
 
-#pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
@@ -11,10 +9,7 @@ precision highp float;
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
-
-#define PI 3.14159265359
-#define PI2 6.28318530718
-#define PI_HALF 1.5707963267949
+#pragma glslify: import('../../math/constants.glsl')
 
 // TODO general cylinder and cone are very similar and used
 // the same shader in the old code. Consider de-duplicating
@@ -22,9 +17,7 @@ precision highp float;
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
-
 uniform float dataTextureWidth;
 uniform float dataTextureHeight;
 uniform mat4 projectionMatrix;
@@ -34,22 +27,15 @@ uniform int renderMode;
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 
 in vec4 v_centerB;
-
 in vec4 v_W;
 in vec4 v_U;
-
 in float v_angle;
 in float v_arcAngle;
-
 in float v_surfacePointY;
-
 in vec4 v_planeA;
 in vec4 v_planeB;
-
 in float v_treeIndex;
-
 in vec3 v_color;
-
 in vec3 v_normal;
 
 void main() {

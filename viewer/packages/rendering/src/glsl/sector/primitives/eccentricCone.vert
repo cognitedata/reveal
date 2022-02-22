@@ -2,6 +2,10 @@
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl');
 
 uniform mat4 inverseModelMatrix;
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
 
 in float a_treeIndex;
 in vec3 a_centerA;
@@ -15,7 +19,6 @@ out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerA;
 out vec4 v_centerB;
-
 // U, V, axis represent the 3x3 cone basis.
 // They are vec4 to pack extra data into the w-component
 // since Safari on iOS only supports 8 out vec4 registers.
@@ -23,16 +26,8 @@ out vec4 U;
 out vec4 V;
 out vec4 axis;
 out float height;
-
 out vec3 v_color;
 out vec3 v_normal;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
 
 void main() {
 
