@@ -22,7 +22,7 @@
     },    
     {
       "matchPackagePrefixes": [""],
-      "addLabels": ["dependencies"]
+      "addLabels": ["dependencies", "auto-update"]
     },
     {
       "matchLanguages": ["rust"],
