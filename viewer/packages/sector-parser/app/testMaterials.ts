@@ -42,6 +42,21 @@ export function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      modelViewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
+      },
+      cameraPosition: {
+        value: new THREE.Vector3()
+      },
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
@@ -85,7 +100,7 @@ export function createTriangleMeshMaterial(): THREE.ShaderMaterial {
 }
 
 export function createBoxMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
     clipping: false,
     vertexShader: sectorShaders.boxPrimitive.vertex,
@@ -102,6 +117,10 @@ export function createBoxMaterial(): THREE.ShaderMaterial {
     },
     glslVersion: THREE.GLSL3
   });
+
+  material.uniforms.colorDataTexture.value.needsUpdate = true;
+
+  return material;
 }
 
 export function createCircleMaterial(): THREE.ShaderMaterial {
@@ -181,10 +200,22 @@ export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
     name: 'Primitives (General rings)',
     clipping: false,
     uniforms: {
-      renderMode: { value: 1 },
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
+      },
+      renderMode: { value: 1 },
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }

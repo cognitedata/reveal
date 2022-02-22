@@ -1,0 +1,40 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "matchPaths": ["parser-worker", "i3df", "f3df", "openctm"],
+      "groupName": "parser-worker",
+      "enabled": false
+    },
+    {
+      "matchPackagePrefixes": ["@cognite/sdk-", "@cognite/reveal-"],
+      "enabled": false
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },    
+    {
+      "matchPackagePrefixes": [""],
+      "addLabels": ["dependencies"]
+    },
+    {
+      "matchLanguages": ["rust"],
+      "enabled": false
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "stabilityDays": 4
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "stabilityDays": 10
+    }
+  ]
+}
