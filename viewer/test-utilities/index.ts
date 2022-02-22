@@ -25,4 +25,6 @@ export { createEmptySector } from './src/emptySector';
 export { expectContainsSectorsWithLevelOfDetail } from './src/expects';
 export { yieldProcessing } from './src/wait';
 
+export { createRandomBox } from './src/createBoxes';
+
 export { Mutable } from './src/reflection';

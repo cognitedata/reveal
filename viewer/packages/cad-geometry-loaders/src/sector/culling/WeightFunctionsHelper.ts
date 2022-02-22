@@ -166,7 +166,7 @@ export class WeightFunctionsHelper {
 
   private distanceToCamera(sector: SectorMetadata, modelMatrix: THREE.Matrix4) {
     const { transformedBounds } = preallocated;
-    transformedBounds.copy(sector.bounds);
+    transformedBounds.copy(sector.subtreeBoundingBox);
     transformedBounds.applyMatrix4(modelMatrix);
     return transformedBounds.distanceToPoint(this._camera.position);
   }

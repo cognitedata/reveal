@@ -85,7 +85,7 @@ describe('SectorSceneImpl', () => {
   test('getBoundsOfMostGeometry of simple scene returns full bounds', () => {
     const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
     const bounds = scene.getBoundsOfMostGeometry();
-    expect(bounds).toEqual(scene.root.bounds);
+    expect(bounds).toEqual(scene.root.subtreeBoundingBox);
   });
 
   test('getBoundsOfMostGeometry of scene with junk geometry, returns filtered bounds', () => {
@@ -110,9 +110,9 @@ describe('SectorSceneImpl', () => {
     const bounds = scene.getBoundsOfMostGeometry();
 
     // Assert - sector 3 is excluded because it's so far way from the other geometry
-    expect(bounds).not.toEqual(scene.root.bounds);
-    expect(scene.root.bounds.containsPoint(bounds.min)).toBeTrue();
-    expect(scene.root.bounds.containsPoint(bounds.max)).toBeTrue();
+    expect(bounds).not.toEqual(scene.root.subtreeBoundingBox);
+    expect(scene.root.subtreeBoundingBox.containsPoint(bounds.min)).toBeTrue();
+    expect(scene.root.subtreeBoundingBox.containsPoint(bounds.max)).toBeTrue();
   });
 
   test('getBoundsOfMostGeometry with root with only one child, result is child bounds', () => {
