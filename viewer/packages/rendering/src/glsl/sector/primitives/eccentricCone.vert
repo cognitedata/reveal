@@ -96,8 +96,8 @@ void main() {
     v_centerA.w = radiusA;
     v_centerB.w = radiusB;
 
-    float radiusIncludedDisplacement = 0.5*(2.0*max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
-    vec3 surfacePoint = center + mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement*left, radiusIncludedDisplacement*up) * newPosition;
+    float radiusIncludedDisplacement = 0.5 * (2.0 * max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
+    vec3 surfacePoint = center + mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement * left, radiusIncludedDisplacement * up) * newPosition;
     vec3 transformed = surfacePoint;
 
     surfacePoint = mul3(modelViewMatrix, surfacePoint);

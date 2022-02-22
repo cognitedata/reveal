@@ -78,8 +78,8 @@ void main() {
         discard;
 
     float sqrtd = sqrt(d);
-    float dist1 = (-b - sqrtd)/a;
-    float dist2 = (-b + sqrtd)/a;
+    float dist1 = (-b - sqrtd) / a;
+    float dist2 = (-b + sqrtd) / a;
 
     // Make sure dist1 is the smaller one
     if (dist2 < dist1) {
@@ -94,7 +94,7 @@ void main() {
     if (theta < v_angle) theta += 2.0 * PI;
 
     // Intersection point in camera space
-    vec3 p = rayTarget + dist*rayDirection;
+    vec3 p = rayTarget + dist * rayDirection;
 
     vec3 planeACenter = vec3(0.0, 0.0, v_planeA.w);
     vec3 planeANormal = v_planeA.xyz;

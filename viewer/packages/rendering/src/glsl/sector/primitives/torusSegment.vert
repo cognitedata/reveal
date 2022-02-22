@@ -26,9 +26,9 @@ void main() {
     float sinTheta = sin(theta);
     vec3 pos3 = vec3(0);
 
-    pos3.x = (a_radius + a_tubeRadius*cos(phi)) * cosTheta;
-    pos3.y = (a_radius + a_tubeRadius*cos(phi)) * sinTheta;
-    pos3.z = a_tubeRadius*sin(phi);
+    pos3.x = (a_radius + a_tubeRadius * cos(phi)) * cosTheta;
+    pos3.y = (a_radius + a_tubeRadius * cos(phi)) * sinTheta;
+    pos3.z = a_tubeRadius * sin(phi);
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 

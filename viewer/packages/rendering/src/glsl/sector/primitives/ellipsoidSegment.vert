@@ -78,7 +78,7 @@ void main() {
     // maxRadiusOfSegment is the radius of the circle (projected ellipsoid) when ellipsoid segment is seen from above
     float maxRadiusOfSegment = a_horizontalRadius * sqrt(1.0 - ratio * ratio);
 
-    vec3 displacement = vec3(newPosition.x*a_height*0.5, maxRadiusOfSegment*newPosition.y, maxRadiusOfSegment*newPosition.z);
+    vec3 displacement = vec3(newPosition.x * a_height * 0.5, maxRadiusOfSegment * newPosition.y, maxRadiusOfSegment * newPosition.z);
     vec3 surfacePoint = centerOfSegment + mat3(lDir, left, up) * displacement;
     vec3 transformed = surfacePoint;
 

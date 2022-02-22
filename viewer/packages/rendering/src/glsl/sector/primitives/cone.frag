@@ -80,8 +80,8 @@ void main() {
   }
 
   float sqrtd = sqrt(d);
-  float dist1 = (-b - sqrtd)/a;
-  float dist2 = (-b + sqrtd)/a;
+  float dist1 = (-b - sqrtd) / a;
+  float dist2 = (-b + sqrtd) / a;
 
   // Make sure dist1 is the smaller one
   if (dist2 < dist1) {
