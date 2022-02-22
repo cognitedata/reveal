@@ -12,9 +12,10 @@ import {
   scaleStrokeWidthInstance,
   applyToLeafSVGElements,
   visualizeConnections,
-  visualizeLabelsToSymbolInstances,
+  visualizeLabelsToInstances,
   scaleStrokeWidthPath,
-  visualizePidTspan,
+  visualizeBoundingBoxBehind,
+  visualizeSymbolInstanceBoundingBoxes,
 } from './utils/domUtils';
 import {
   connectionHasInstanceId,
@@ -132,9 +133,10 @@ export class CognitePid {
     string,
     { node: SVGElement; originalStyle: string }
   >();
-  private connectionVisualizationPathIds: string[] = [];
+  private connectionVisualizationsIds: string[] = [];
   private labelVisualizationIds: string[] = [];
   private lineNumberVisualizationIds: string[] = [];
+  private symbolInstanceBoundingBoxesIds: string[] = [];
 
   constructor(options: CognitePidOptions) {
     const host = document.querySelector(options.container) as HTMLDivElement;
@@ -543,66 +545,34 @@ export class CognitePid {
   }
 
   refresh() {
-    if (this.svg === undefined) return;
-
-    this.nodeMap.forEach(({ node, originalStyle }) => {
-      node.setAttribute('style', originalStyle);
-      applyStyleToNode({
-        node,
-        symbolSelection: this.symbolSelection,
-        connectionSelection: this.connectionSelection,
-        labelSelection: this.labelSelection,
-        symbolInstances: this.symbolInstances,
-        lines: this.lines,
-        connections: this.connections,
-        active: this.activeTool,
-        activeLineNumber: this.activeLineNumber,
-        equipmentTags: this.equipmentTags,
-        activeTagId: this.activeTagId,
-        splitSelection: this.splitSelection,
-        hideSelection: this.hideSelection,
-      });
-    });
-
-    if (this.pidDocument === undefined) return;
-
-    this.removeVisualizationConnections();
-    this.removeLabelVisualization();
-    this.removeLineVisualizationIds();
-
-    if (this.activeTool === 'connectInstances') {
-      this.connectionVisualizationPathIds = visualizeConnections(
-        this.svg,
-        this.pidDocument,
-        this.connections,
-        this.symbolInstances,
-        this.lines
-      );
+    if (!this.svg) {
+      throw Error('Calling refresh without SVG');
+    }
+    if (!this.pidDocument) {
+      throw Error('Calling refresh pidDocument');
     }
 
+    this.nodeMap.forEach(({ node }) => {
+      this.applyStyleToNodeId(node.id);
+    });
+
+    // Clean up all the visualizations
+    this.removeConnectionVisualizations();
+    this.removeSymbolInstanceBoundingBoxes();
+    this.removeLabelVisualizations();
+    this.removeLineVisualizations();
+
+    // Add appropriate visualization based on the active tool
+    if (this.activeTool === 'connectInstances') {
+      this.drawConnectionVisualizations();
+    }
+    if (this.activeTool === 'addSymbol') {
+      this.drawSymbolInstanceBoundingBoxes();
+    }
     if (this.activeTool === 'connectLabels') {
-      this.labelVisualizationIds = visualizeLabelsToSymbolInstances(
-        this.svg,
-        this.pidDocument,
-        [...this.symbolInstances, ...this.lines]
-      );
+      this.drawLabelVisualizations();
     } else {
-      this.lineNumberVisualizationIds = this.pidDocument.pidLabels
-        .filter((pidLabel) => {
-          return pidLabel.text.match(/L[0-9]{3}/);
-        })
-        .map(
-          (pidTspan) =>
-            visualizePidTspan(
-              this.svg!,
-              pidTspan,
-              'blue',
-              this.activeLineNumber &&
-                pidTspan.text.includes(this.activeLineNumber.toString())
-                ? 0.4
-                : 0.2
-            ).id
-        );
+      this.drawLineVisualizations();
     }
   }
 
@@ -1057,10 +1027,27 @@ export class CognitePid {
     this.refresh();
   }
 
-  private removeVisualizationConnections() {
+  private drawConnectionVisualizations() {
+    if (!this.svg) {
+      throw Error('Calling drawConnectionVisualizations without SVG');
+    }
+    if (!this.pidDocument) {
+      throw Error('Calling drawConnectionVisualizations without pidDocument');
+    }
+
+    this.connectionVisualizationsIds = visualizeConnections(
+      this.svg,
+      this.pidDocument,
+      this.connections,
+      this.symbolInstances,
+      this.lines
+    );
+  }
+
+  private removeConnectionVisualizations() {
     if (this.svg === undefined) return;
-    for (let i = 0; i < this.connectionVisualizationPathIds.length; i++) {
-      const id = this.connectionVisualizationPathIds[i];
+    for (let i = 0; i < this.connectionVisualizationsIds.length; i++) {
+      const id = this.connectionVisualizationsIds[i];
       const pathToRemove = this.svg.getElementById(id);
       if (!pathToRemove) {
         throw Error(
@@ -1070,10 +1057,25 @@ export class CognitePid {
         pathToRemove.parentElement?.removeChild(pathToRemove);
       }
     }
-    this.connectionVisualizationPathIds = [];
+    this.connectionVisualizationsIds = [];
   }
 
-  private removeLabelVisualization() {
+  private drawLabelVisualizations() {
+    if (!this.svg) {
+      throw Error('Calling drawLabelVisualizations without SVG');
+    }
+    if (!this.pidDocument) {
+      throw Error('Calling drawLabelVisualizations without pidDocument');
+    }
+
+    this.labelVisualizationIds = visualizeLabelsToInstances(
+      this.svg,
+      this.pidDocument,
+      [...this.symbolInstances, ...this.lines]
+    );
+  }
+
+  private removeLabelVisualizations() {
     if (this.svg === undefined) return;
     for (let i = 0; i < this.labelVisualizationIds.length; i++) {
       const id = this.labelVisualizationIds[i];
@@ -1089,19 +1091,81 @@ export class CognitePid {
     this.labelVisualizationIds = [];
   }
 
-  private removeLineVisualizationIds() {
+  private drawLineVisualizations() {
+    if (!this.svg) {
+      throw Error('Calling drawLineVisualizations without SVG');
+    }
+    if (!this.pidDocument) {
+      throw Error('Calling drawLineVisualizations without pidDocument');
+    }
+
+    this.lineNumberVisualizationIds = this.pidDocument.pidLabels
+      .filter((pidLabel) => {
+        return pidLabel.text.match(/L[0-9]{3}/);
+      })
+      .map(
+        (pidTspan) =>
+          visualizeBoundingBoxBehind({
+            svg: this.svg!,
+            boundignBox: pidTspan.boundingBox,
+            id: `linenumberrect_${pidTspan.id}`,
+            color: 'black',
+            opacity:
+              this.activeLineNumber &&
+              pidTspan.text.includes(this.activeLineNumber.toString())
+                ? 0.3
+                : 0.2,
+            strokeColor: 'blue',
+          }).id
+      );
+  }
+
+  private removeLineVisualizations() {
     if (this.svg === undefined) return;
     for (let i = 0; i < this.lineNumberVisualizationIds.length; i++) {
       const id = this.lineNumberVisualizationIds[i];
       const pathToRemove = this.svg.getElementById(id);
       if (!pathToRemove) {
         throw Error(
-          `Trying to remove label visualization with id ${id} that does not exist`
+          `Trying to remove line visualization with id ${id} that does not exist`
         );
       } else {
         pathToRemove.parentElement?.removeChild(pathToRemove);
       }
     }
     this.lineNumberVisualizationIds = [];
+  }
+
+  private drawSymbolInstanceBoundingBoxes() {
+    if (!this.svg) {
+      throw Error('Calling drawSymbolInstanceBoundingBoxes without SVG');
+    }
+    if (!this.pidDocument) {
+      throw Error(
+        'Calling drawSymbolInstanceBoundingBoxes without pidDocument'
+      );
+    }
+
+    this.symbolInstanceBoundingBoxesIds = visualizeSymbolInstanceBoundingBoxes(
+      this.svg,
+      this.pidDocument,
+      this.symbolInstances
+    );
+  }
+
+  private removeSymbolInstanceBoundingBoxes() {
+    if (this.svg === undefined) return;
+    for (let i = 0; i < this.symbolInstanceBoundingBoxesIds.length; i++) {
+      const id = this.symbolInstanceBoundingBoxesIds[i];
+      const pathToRemove = this.svg.getElementById(id);
+      if (!pathToRemove) {
+        throw Error(
+          `Trying to remove symbol instance bounding box with id ${id} that does not exist`
+        );
+      } else {
+        pathToRemove.parentElement?.removeChild(pathToRemove);
+      }
+    }
+    this.symbolInstanceBoundingBoxesIds = [];
   }
 }

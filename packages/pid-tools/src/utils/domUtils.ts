@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { DiagramInstance, ToolType } from '../types';
+import { DiagramInstance, Rect, ToolType } from '../types';
 import { COLORS } from '../constants';
 import {
   DiagramInstanceId,
@@ -20,7 +20,6 @@ import {
   DiagramEquipmentTagInstance,
   getClosestPointsOnSegments,
   getClosestPointOnSegments,
-  PidTspan,
 } from '../index';
 
 const zeroPad = (num: number, places: number): string =>
@@ -498,42 +497,62 @@ export const visualizeConnections = (
   return visualizationPathIds;
 };
 
-export const visualizePidTspan = (
-  svg: SVGSVGElement,
-  pidTspan: PidTspan,
-  color: string,
-  opacity: number
-) => {
+export interface VisualizeBoundingBoxPros {
+  svg: SVGSVGElement;
+  boundignBox: Rect;
+  id: string;
+  color: string;
+  opacity: number;
+  strokeColor?: string;
+  strokeOpacity?: number;
+  strokeWidth?: number;
+}
+
+export const visualizeBoundingBoxBehind = ({
+  svg,
+  boundignBox,
+  id,
+  color,
+  opacity,
+  strokeColor,
+  strokeOpacity,
+  strokeWidth,
+}: VisualizeBoundingBoxPros) => {
   const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 
-  rect.setAttribute('style', `stroke:${color};opacity:${opacity}`);
+  const usedStrokeColor = strokeColor ?? color;
+  const usedStrokeOpacity = strokeOpacity ?? opacity;
+  const usedStrokeWidth = strokeWidth ?? 0.5;
 
-  const { x, y, width, height } = pidTspan.boundingBox;
+  rect.setAttribute(
+    'style',
+    `stroke:${usedStrokeColor};stroke-width:${usedStrokeWidth};fill:${color};stroke-opacity:${usedStrokeOpacity};fill-opacity:${opacity}`
+  );
+
+  const { x, y, width, height } = boundignBox;
 
   rect.setAttribute('x', `${x}`);
   rect.setAttribute('y', `${y}`);
   rect.setAttribute('width', `${width}`);
   rect.setAttribute('height', `${height}`);
 
-  rect.id = `${pidTspan.id}_rect`;
+  rect.id = id;
 
   svg.insertBefore(rect, svg.children[0]);
 
   return rect;
 };
 
-export const visualizeLabelsToSymbolInstances = (
+export const visualizeLabelsToInstances = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
-  symbolInstances: DiagramInstanceWithPaths[]
+  instances: DiagramInstanceWithPaths[]
 ): string[] => {
   const labelVisualizationIds: string[] = [];
 
-  symbolInstances.forEach((symbolInstance) => {
-    const symbolMidPoint = pidDocument.getMidPointToPaths(
-      symbolInstance.pathIds
-    );
-    symbolInstance.labelIds.forEach((labelId) => {
+  instances.forEach((instance) => {
+    const instanceMidPoint = pidDocument.getMidPointToPaths(instance.pathIds);
+    instance.labelIds.forEach((labelId) => {
       const pidTspan = pidDocument.getPidTspanById(labelId);
       if (pidTspan === null) return;
 
@@ -546,12 +565,10 @@ export const visualizeLabelsToSymbolInstances = (
 
       path.setAttribute(
         'd',
-        `M ${symbolMidPoint.x} ${symbolMidPoint.y} L ${labelPoint.x} ${labelPoint.y}`
+        `M ${instanceMidPoint.x} ${instanceMidPoint.y} L ${labelPoint.x} ${labelPoint.y}`
       );
 
-      path.id = `labelConnection-${labelId}-${getDiagramInstanceId(
-        symbolInstance
-      )}`;
+      path.id = `labelConnection-${labelId}-${getDiagramInstanceId(instance)}`;
       labelVisualizationIds.push(path.id);
 
       path.setAttribute(
@@ -562,17 +579,46 @@ export const visualizeLabelsToSymbolInstances = (
       );
       svg.insertBefore(path, svg.children[0]);
 
-      const rect = visualizePidTspan(
+      const rect = visualizeBoundingBoxBehind({
         svg,
-        pidTspan,
-        COLORS.connection.color,
-        0.1
-      );
+        boundignBox: pidTspan.boundingBox,
+        id: `tspanrect_${pidTspan.id}`,
+        color: COLORS.connection.color,
+        opacity: 0.1,
+      });
       labelVisualizationIds.push(rect.id);
     });
   });
 
   return labelVisualizationIds;
+};
+
+export const visualizeSymbolInstanceBoundingBoxes = (
+  svg: SVGSVGElement,
+  pidDocument: PidDocument,
+  symbolInstances: DiagramSymbolInstance[],
+  padding = 1
+): string[] => {
+  return symbolInstances.map((symbolInstance) => {
+    const bBox = pidDocument.getBoundingBoxToPaths(symbolInstance.pathIds);
+    const paddedBoundingBox = {
+      x: bBox.x - padding,
+      y: bBox.y - padding,
+      width: bBox.width + 2 * padding,
+      height: bBox.height + 2 * padding,
+    };
+    const rect = visualizeBoundingBoxBehind({
+      svg,
+      boundignBox: paddedBoundingBox,
+      id: `symbolinstancerect_${symbolInstance.id}`,
+      color: COLORS.symbolBoundingBox.color,
+      opacity: COLORS.symbolBoundingBox.opacity,
+      strokeColor: COLORS.symbolBoundingBox.strokeColor,
+      strokeOpacity: COLORS.symbolBoundingBox.strokeOpacity,
+      strokeWidth: COLORS.symbolBoundingBox.strokeWidth,
+    });
+    return rect.id;
+  });
 };
 
 export const applyToLeafSVGElements = (

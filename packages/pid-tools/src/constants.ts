@@ -51,6 +51,13 @@ export const COLORS = {
     color: 'Crimson',
     opacity: 0.9,
   },
+  symbolBoundingBox: {
+    color: 'DarkRed',
+    opacity: 0.05,
+    strokeColor: 'black',
+    strokeOpacity: 0.3,
+    strokeWidth: 0.2,
+  },
   diagramLine: {
     color: 'DodgerBlue',
     opacity: 0.9,
