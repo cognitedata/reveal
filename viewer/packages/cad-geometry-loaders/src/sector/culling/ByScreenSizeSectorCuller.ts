@@ -89,7 +89,7 @@ function takeSectorsWithinBudget(
   return takenSectorCount;
 }
 
-const _sortSectorsByPriorityVars = {
+const sortSectorsByPriorityVars = {
   transformedBounds: new THREE.Box3()
 };
 
@@ -98,7 +98,7 @@ function sortSectorsByPriority(
   weightFunctions: WeightFunctionsHelper,
   prioritizedAreas: PrioritizedArea[]
 ): { model: CadModelMetadata; sectorId: number; priority: number }[] {
-  const { transformedBounds } = _sortSectorsByPriorityVars;
+  const { transformedBounds } = sortSectorsByPriorityVars;
 
   const candidateSectors = new Array<{
     model: CadModelMetadata;
