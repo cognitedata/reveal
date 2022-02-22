@@ -5,25 +5,30 @@
 import fs from 'fs';
 
 import 'jest-extended';
+import { calculateVolumeOfMesh, TypedArray } from '@reveal/utilities';
 import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
 
 describe(GltfSectorParser.name, () => {
-  let parsedResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
+  let parsedPrimitivesResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
+  let parsedDracoResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
+  let parser: GltfSectorParser;
 
-  beforeAll(() => {
-    const parser = new GltfSectorParser();
-    const buffer = fs.readFileSync(__dirname + '/test.glb');
+  beforeAll(async () => {
+    parser = new GltfSectorParser();
+    const primitivesByteBuffer = fs.readFileSync(__dirname + '/test-all-primitives.glb');
+    const dracoTestByteBuffer = fs.readFileSync(__dirname + '/anders-test-scene-draco.glb');
 
-    parsedResult = parser.parseSector(buffer.buffer);
+    parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
+    parsedDracoResult = await parser.parseSector(dracoTestByteBuffer.buffer);
   });
 
   test('Parsing test.glb should have 11 output primitive types', () => {
-    expect(parsedResult.length).toBe(11);
+    expect(parsedPrimitivesResult.length).toBe(11);
   });
 
   test('Parsing test.glb should contain 1 box result with 2 instances', () => {
-    const boxResult = parsedResult.filter(x => x.type === RevealGeometryCollectionType.BoxCollection);
+    const boxResult = parsedPrimitivesResult.filter(x => x.type === RevealGeometryCollectionType.BoxCollection);
 
     expect(boxResult.length).toBe(1);
 
@@ -39,7 +44,7 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 circle result with 10 instances', () => {
     //Assert
-    const circleResult = parsedResult.filter(x => x.type === RevealGeometryCollectionType.CircleCollection);
+    const circleResult = parsedPrimitivesResult.filter(x => x.type === RevealGeometryCollectionType.CircleCollection);
 
     expect(circleResult.length).toBe(1);
 
@@ -56,7 +61,7 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 cone result with 20 instances', () => {
     //Assert
-    const coneResult = parsedResult.filter(x => x.type === RevealGeometryCollectionType.ConeCollection);
+    const coneResult = parsedPrimitivesResult.filter(x => x.type === RevealGeometryCollectionType.ConeCollection);
 
     expect(coneResult.length).toBe(1);
 
@@ -72,7 +77,7 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 eccentricCone result with 2 instances', () => {
     //Assert
-    const eccentricConeResult = parsedResult.filter(
+    const eccentricConeResult = parsedPrimitivesResult.filter(
       x => x.type === RevealGeometryCollectionType.EccentricConeCollection
     );
 
@@ -90,7 +95,7 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 ellipsoidSegment result with 8 instances', () => {
     //Assert
-    const ellipsoidSegmentResult = parsedResult.filter(
+    const ellipsoidSegmentResult = parsedPrimitivesResult.filter(
       x => x.type === RevealGeometryCollectionType.EllipsoidSegmentCollection
     );
 
@@ -108,7 +113,7 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 generalCylinder result with 10 instances', () => {
     //Assert
-    const generalCylinderResult = parsedResult.filter(
+    const generalCylinderResult = parsedPrimitivesResult.filter(
       x => x.type === RevealGeometryCollectionType.GeneralCylinderCollection
     );
 
@@ -126,7 +131,9 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 generalRing result with 20 instances', () => {
     //Assert
-    const generalRingResult = parsedResult.filter(x => x.type === RevealGeometryCollectionType.GeneralRingCollection);
+    const generalRingResult = parsedPrimitivesResult.filter(
+      x => x.type === RevealGeometryCollectionType.GeneralRingCollection
+    );
 
     expect(generalRingResult.length).toBe(1);
 
@@ -142,7 +149,7 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 quad result with 4 instances', () => {
     //Assert
-    const quadResult = parsedResult.filter(x => x.type === RevealGeometryCollectionType.QuadCollection);
+    const quadResult = parsedPrimitivesResult.filter(x => x.type === RevealGeometryCollectionType.QuadCollection);
 
     expect(quadResult.length).toBe(1);
 
@@ -158,7 +165,9 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 torus result with 4 instances', () => {
     //Assert
-    const torusResult = parsedResult.filter(x => x.type === RevealGeometryCollectionType.TorusSegmentCollection);
+    const torusResult = parsedPrimitivesResult.filter(
+      x => x.type === RevealGeometryCollectionType.TorusSegmentCollection
+    );
 
     expect(torusResult.length).toBe(1);
 
@@ -174,7 +183,9 @@ describe(GltfSectorParser.name, () => {
 
   test('Parsing test.glb should contain 1 trapezium result with 8 instances', () => {
     //Assert
-    const trapeziumResult = parsedResult.filter(x => x.type === RevealGeometryCollectionType.TrapeziumCollection);
+    const trapeziumResult = parsedPrimitivesResult.filter(
+      x => x.type === RevealGeometryCollectionType.TrapeziumCollection
+    );
 
     expect(trapeziumResult.length).toBe(1);
 
@@ -186,5 +197,76 @@ describe(GltfSectorParser.name, () => {
 
     // Quad geometry
     expect(trapeziums.attributes['position'].count).toBe(4);
+  });
+
+  test('Parsing draco encoded sector should return proper triangle mesh', () => {
+    const triangleMeshes = parsedDracoResult.filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
+    expect(triangleMeshes.length).toBe(1);
+
+    const { geometryBuffer } = triangleMeshes[0];
+
+    const attributes = geometryBuffer.attributes;
+
+    const attributeNames = Object.keys(attributes);
+
+    expect(attributeNames.length).toBe(3);
+
+    expect(attributeNames.includes('position')).toBeTrue();
+    expect(attributeNames.includes('treeIndex')).toBeTrue();
+    expect(attributeNames.includes('color')).toBeTrue();
+
+    // Test if all attributes point to the same underlying buffer
+    const underlyingBuffers = Object.values(attributes).map(p => (p.array as TypedArray).buffer);
+    const bufferInstance = underlyingBuffers[0];
+
+    for (let i = 1; i < underlyingBuffers.length; i++) {
+      const buffer = underlyingBuffers[i];
+      expect(buffer).toEqual(bufferInstance);
+    }
+
+    const triangleMeshNumberOfVertices = 13751;
+    expect(attributes.position.count).toBe(triangleMeshNumberOfVertices);
+    expect(attributes.treeIndex.count).toBe(triangleMeshNumberOfVertices);
+    expect(attributes.color.count).toBe(triangleMeshNumberOfVertices);
+  });
+
+  test('Draco mesh and un-encoded mesh should have approximatly same volume', async () => {
+    const dracoTriangleMeshes = parsedDracoResult.filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
+    expect(dracoTriangleMeshes.length).toBe(1);
+
+    const { geometryBuffer: dracoGeometryBuffer } = dracoTriangleMeshes[0];
+
+    const dracoPositionAttribute = dracoGeometryBuffer.getAttribute('position') as THREE.InterleavedBufferAttribute;
+    const dracoPositionOffset = dracoPositionAttribute.offset;
+    const dracoStride = dracoPositionAttribute.data.stride;
+
+    const dracoVertexBuffer = Float32Array.from(dracoGeometryBuffer.getAttribute('position').array).filter((_, n) => {
+      return n % dracoStride >= dracoPositionOffset;
+    });
+
+    const dracoMeshVolume = calculateVolumeOfMesh(
+      dracoVertexBuffer,
+      Uint16Array.from(dracoGeometryBuffer.getIndex().array)
+    );
+
+    const testFileByteBuffer = fs.readFileSync(__dirname + '/anders-test-scene.glb');
+    const parsedResult = await parser.parseSector(testFileByteBuffer.buffer);
+
+    const triangleMeshes = parsedResult.filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
+    expect(triangleMeshes.length).toBe(1);
+
+    const { geometryBuffer } = triangleMeshes[0];
+
+    const positionAttribute = geometryBuffer.getAttribute('position') as THREE.InterleavedBufferAttribute;
+    const positionOffset = positionAttribute.offset;
+    const stride = positionAttribute.data.stride;
+
+    const vertexBuffer = Float32Array.from(geometryBuffer.getAttribute('position').array).filter((_, n) => {
+      return n % stride >= positionOffset;
+    });
+
+    const meshVolume = calculateVolumeOfMesh(vertexBuffer, Uint16Array.from(geometryBuffer.getIndex().array));
+
+    expect(Math.abs(1 - dracoMeshVolume / meshVolume)).toBeLessThan(1e-4);
   });
 });
