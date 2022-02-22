@@ -1,9 +1,6 @@
 name: preview-documentation
 
-on:
-  pull_request:
-    branches-ignore:
-      - 'dependabot/**'
+
 jobs:
   build:
     name: Build preview documentation
@@ -60,6 +57,7 @@ jobs:
     concurrency: deploy-preview-documentation
     runs-on: ubuntu-latest
     needs: build
+    if: not contains(github.event.pull_request.labels.*.name, 'dependencies')
     steps:
       - name: Initialize variables
         run: |
@@ -70,6 +68,7 @@ jobs:
         with:
           name: preview-docs
           path: documentation/
+
 
       - name: Deploy documentation preview 🚀
         uses: peaceiris/actions-gh-pages@v3
