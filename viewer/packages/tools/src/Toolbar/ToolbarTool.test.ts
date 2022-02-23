@@ -19,7 +19,11 @@ describe(ToolbarTool.name, () => {
   };
 
   beforeEach(() => {
-    const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+    const sdk = new CogniteClient({
+      appId: 'cognite.reveal.unittest',
+      project: 'dummy',
+      getToken: async () => 'dummy'
+    });
     mockClientAuthentication(sdk);
 
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
