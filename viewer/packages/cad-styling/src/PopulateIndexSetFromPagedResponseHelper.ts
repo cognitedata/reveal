@@ -6,7 +6,8 @@ import * as THREE from 'three';
 
 import { ListResponse } from '@cognite/sdk';
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { AreaCollection, ClusteredAreaCollection } from '@reveal/cad-styling';
+import { AreaCollection } from './prioritized/AreaCollection';
+import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 
 /**
  * Helper class that populates an IndexSet based on a paged results from the Cognite SDK.
