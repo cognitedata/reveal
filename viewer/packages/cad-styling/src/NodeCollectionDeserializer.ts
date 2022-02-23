@@ -6,12 +6,12 @@ import assert from 'assert';
 import { CogniteClient } from '@cognite/sdk';
 import { NumericRange, IndexSet } from '@reveal/utilities';
 
-import { Cognite3DModel } from '../../../migration';
 import { AssetNodeCollection } from './AssetNodeCollection';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
-
 import { InvertedNodeCollection } from './InvertedNodeCollection';
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
+
+import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
 import {
   TreeIndexNodeCollection,
@@ -21,7 +21,7 @@ import {
 } from '@reveal/cad-styling';
 
 export type TypeName = string;
-export type NodeCollectionSerializationContext = { client: CogniteClient; model: Cognite3DModel };
+export type NodeCollectionSerializationContext = { client: CogniteClient; model: CdfModelNodeCollectionDataProvider };
 export type NodeCollectionDescriptor = { token: TypeName; state: any; options?: any };
 
 export class NodeCollectionDeserializer {
@@ -55,7 +55,7 @@ export class NodeCollectionDeserializer {
     // TODO 2021-10-01 larsmoa: Avoid forcing node collections to rely on CogniteClient
     // to support more generic deployment scenarios.
     client: CogniteClient,
-    model: Cognite3DModel,
+    model: CdfModelNodeCollectionDataProvider,
     descriptor: NodeCollectionDescriptor
   ): Promise<NodeCollection> {
     const context: NodeCollectionSerializationContext = { client, model };
