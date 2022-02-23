@@ -10,7 +10,9 @@ import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityC
 import { createV8SectorMetadata, SectorTree, createGlContext } from '../../../../../test-utilities';
 import { File3dFormat } from '@reveal/modeldata-api';
 
-import { CadMaterialManager, EffectRenderManager } from '@reveal/rendering';
+import { EffectRenderManager } from '@reveal/rendering';
+
+import { Mock, It } from 'moq.ts';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext = createGlContext(64, 64);
@@ -27,7 +29,18 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
-    renderManager = new EffectRenderManager(renderer, new THREE.Scene(), new CadMaterialManager(), {});
+    renderManager = new Mock<EffectRenderManager>()
+      .setup(e => e.getRenderTarget)
+      .returns(renderer.getRenderTarget)
+      .setup(e => e.getRenderTargetAutoSize())
+      .returns(true)
+      .setup(e => e.setRenderTarget(It.IsAny()))
+      .returns()
+      .setup(e => e.setRenderTargetAutoSize(It.IsAny()))
+      .returns()
+      .setup(e => e.renderDetailedToDepthOnly(It.IsAny()))
+      .returns()
+      .object();
   });
 
   afterEach(() => {
