@@ -486,7 +486,7 @@ __metadata:
     "@types/mixpanel-browser": 2.35.7
     "@types/node": 14.17.9
     "@types/random-seed": 0.3.3
-    "@types/skmeans": 0.11.2
+    "@types/skmeans": 0.11.3
     "@types/three": 0.137.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 4.29.1
@@ -503,7 +503,7 @@ __metadata:
     eslint-plugin-header: 3.1.1
     eslint-plugin-jsdoc: 30.7.13
     eslint-plugin-lodash: 7.2.0
-    eslint-plugin-prettier: 3.4.0
+    eslint-plugin-prettier: 3.4.1
     eslint-plugin-unused-imports: 1.1.3
     file-loader: 6.2.0
     geo-three: 0.0.15
@@ -529,9 +529,9 @@ __metadata:
     rimraf: 3.0.2
     run-script-os: 1.1.6
     rxjs: 7.3.0
-    shx: 0.3.3
+    shx: 0.3.4
     skmeans: 0.11.3
-    three: 0.137.0
+    three: 0.137.5
     ts-jest: 26.5.6
     ts-loader: 8.0.7
     tsc-alias: 1.3.10
@@ -1342,10 +1342,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/skmeans@npm:0.11.2":
-  version: 0.11.2
-  resolution: "@types/skmeans@npm:0.11.2"
-  checksum: 1142ffd7c194b0b036a6048b03e870e256bbb41b573dd7b1c5a0d86491a9b463a4ba07a2c5e7e574c77079af6615e5959cb6003702295f1d219d5a7f946d3b0e
+"@types/skmeans@npm:0.11.3":
+  version: 0.11.3
+  resolution: "@types/skmeans@npm:0.11.3"
+  checksum: 5dcaeabce7420bdc4e8fa0abecc0382512d3be2160f30d87ea6e3b7edede88264cf9977e8b584651482a7f3839ef9df387a29a81778e6ff95178a26f52150879
   languageName: node
   linkType: hard
 
@@ -5123,9 +5123,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:3.4.0":
-  version: 3.4.0
-  resolution: "eslint-plugin-prettier@npm:3.4.0"
+"eslint-plugin-prettier@npm:3.4.1":
+  version: 3.4.1
+  resolution: "eslint-plugin-prettier@npm:3.4.1"
   dependencies:
     prettier-linter-helpers: ^1.0.0
   peerDependencies:
@@ -5134,7 +5134,7 @@ __metadata:
   peerDependenciesMeta:
     eslint-config-prettier:
       optional: true
-  checksum: 30a07e8d12637d2988e371f6a20ff4c86fd7fdc3596d1d18d62c0367804f38e06a65052d0281234aeb2552e4d1908dcb2de20543413e038251a2717a46400a9d
+  checksum: fa6a89f0d7cba1cc87064352f5a4a68dc3739448dd279bec2bced1bfa3b704467e603d13b69dcec853f8fa30b286b8b715912898e9da776e1b016cf0ee48bd99
   languageName: node
   linkType: hard
 
@@ -11313,16 +11313,16 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"shelljs@npm:^0.8.4":
-  version: 0.8.4
-  resolution: "shelljs@npm:0.8.4"
+"shelljs@npm:^0.8.5":
+  version: 0.8.5
+  resolution: "shelljs@npm:0.8.5"
   dependencies:
     glob: ^7.0.0
     interpret: ^1.0.0
     rechoir: ^0.6.2
   bin:
     shjs: bin/shjs
-  checksum: 27f83206ef6a4f5b74a493726c3e6b4c3e07a9c2aac94c5e692d800a61353c18a8234967bd8523b1346abe718beb563843687fb57f466529ba06db3cae6f0bb3
+  checksum: 7babc46f732a98f4c054ec1f048b55b9149b98aa2da32f6cf9844c434b43c6251efebd6eec120937bd0999e13811ebd45efe17410edb3ca938f82f9381302748
   languageName: node
   linkType: hard
 
@@ -11333,15 +11333,15 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"shx@npm:0.3.3":
-  version: 0.3.3
-  resolution: "shx@npm:0.3.3"
+"shx@npm:0.3.4":
+  version: 0.3.4
+  resolution: "shx@npm:0.3.4"
   dependencies:
     minimist: ^1.2.3
-    shelljs: ^0.8.4
+    shelljs: ^0.8.5
   bin:
     shx: lib/cli.js
-  checksum: 2e408a79c680cef4d719a56563217031ef20d5c2c18fdfe28933e22d833adabd995ad6fa6be087a141832cb17010facfc0288e90a6743c0276b478759fd393e0
+  checksum: 0aa168bfddc11e3fe8943cce2e0d2d8514a560bd58cf2b835b4351ba03f46068f7d88286c2627f4b85604e81952154c43746369fb3f0d60df0e3b511f465e5b8
   languageName: node
   linkType: hard
 
@@ -12166,10 +12166,10 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"three@npm:0.137.0":
-  version: 0.137.0
-  resolution: "three@npm:0.137.0"
-  checksum: c3d005a73818a8023d014af4803c12e34ab5b095f50ac58c994173d6f433a480ad4547543b106f95ee240c827272b1de2eca48dcafd2b65cdcd0a0f3e5bf128b
+"three@npm:0.137.5":
+  version: 0.137.5
+  resolution: "three@npm:0.137.5"
+  checksum: e9fa478f54b50dae2ea745fd97fdec46cea9770292053a80c937ce9549670f4a3dfe238943bd42e535e2d57a10dacb531a51ae12aef42347303270f7f66da8c8
   languageName: node
   linkType: hard
 
