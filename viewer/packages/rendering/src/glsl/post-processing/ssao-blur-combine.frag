@@ -8,12 +8,11 @@ precision highp float;
 
 #define texture2D texture
 
-in vec2 vUv;
-
 uniform sampler2D tDiffuse;
 uniform sampler2D tAmbientOcclusion;
-
 uniform vec2 resolution;
+
+in vec2 vUv;
 
 out vec4 outputColor;
 

@@ -12,9 +12,7 @@ precision highp float;
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
-
 uniform mat4 projectionMatrix;
 uniform int renderMode;
 
@@ -24,11 +22,9 @@ uniform int renderMode;
 in vec4 center;
 in float hRadius;
 in float height;
-
 in vec4 U;
 in vec4 V;
 in vec4 sphereNormal;
-
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
@@ -61,7 +57,7 @@ void main() {
 
     float a = dot(D, D);
     float b = dot(E, D);
-    float c = dot(E, E) - vRadius*vRadius;
+    float c = dot(E, E) - vRadius * vRadius;
 
     // discriminant of sphere equation (factor 2 removed from b above)
     float d = b*b - a*c;
@@ -69,8 +65,8 @@ void main() {
         discard;
 
     float sqrtd = sqrt(d);
-    float dist1 = (-b - sqrtd)/a;
-    float dist2 = (-b + sqrtd)/a;
+    float dist1 = (-b - sqrtd) / a;
+    float dist2 = (-b + sqrtd) / a;
 
     // Make sure dist1 is the smaller one
     if (dist2 < dist1) {
@@ -80,9 +76,9 @@ void main() {
     }
 
     float dist = dist1;
-    float intersectionPointZ = E.z + dist*D.z;
+    float intersectionPointZ = E.z + dist * D.z;
     // Intersection point in camera space
-    vec3 p = rayTarget + dist*rayDirection;
+    vec3 p = rayTarget + dist * rayDirection;
 
     if (intersectionPointZ <= vRadius - height ||
         intersectionPointZ > vRadius ||
@@ -91,8 +87,8 @@ void main() {
         // Missed the first point, check the other point
 
         dist = dist2;
-        intersectionPointZ = E.z + dist*D.z;
-        p = rayTarget + dist*rayDirection;
+        intersectionPointZ = E.z + dist * D.z;
+        p = rayTarget + dist * rayDirection;
         if (intersectionPointZ <= vRadius - height ||
             intersectionPointZ > vRadius ||
             isClipped(appearance, p)

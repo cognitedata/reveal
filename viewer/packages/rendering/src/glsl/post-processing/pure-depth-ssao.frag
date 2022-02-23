@@ -4,19 +4,15 @@ precision highp float;
 
 #pragma glslify: rand2d = require('../math/rand2d.glsl')
 
-in vec2 vUv;
-
 uniform mat4 projMatrix;
 uniform mat4 inverseProjectionMatrix;
-
 uniform vec3 kernel[MAX_KERNEL_SIZE];
-
 uniform sampler2D tDepth;
-
 uniform vec2 resolution;
-
 uniform float sampleRadius;
 uniform float bias;
+
+in vec2 vUv;
 
 out vec4 outputColor;
 

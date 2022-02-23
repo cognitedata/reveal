@@ -9,6 +9,10 @@
 precision highp float;
 
 #define texture2D texture
+uniform vec2 inverseResolution;
+uniform vec2 resolution;
+uniform sampler2D tDiffuse;
+uniform sampler2D tDepth;
 
 in vec2 v_uv;
 in vec2 v_fragCoord;
@@ -17,11 +21,6 @@ in vec2 v_rgbNE;
 in vec2 v_rgbSW;
 in vec2 v_rgbSE;
 in vec2 v_rgbM;
-
-uniform vec2 inverseResolution;
-uniform vec2 resolution;
-uniform sampler2D tDiffuse;
-uniform sampler2D tDepth;
 
 out vec4 outputColor;
 

@@ -9,6 +9,10 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
 
 in vec3 position;
 in vec3 normal;
@@ -24,7 +28,6 @@ out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerA;
 out vec4 v_centerB;
-
 // U, V, axis represent the 3x3 cone basis.
 // They are vec4 to pack extra data into the w-component
 // since Safari on iOS only supports 8 out vec4 registers.
@@ -32,16 +35,8 @@ out vec4 U;
 out vec4 V;
 out vec4 axis;
 out float height;
-
 out vec3 v_color;
 out vec3 v_normal;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
 
 void main() {
 
@@ -112,8 +107,8 @@ void main() {
     v_centerA.w = radiusA;
     v_centerB.w = radiusB;
 
-    float radiusIncludedDisplacement = 0.5*(2.0*max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
-    vec3 surfacePoint = center + mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement*left, radiusIncludedDisplacement*up) * newPosition;
+    float radiusIncludedDisplacement = 0.5 * (2.0 * max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
+    vec3 surfacePoint = center + mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement * left, radiusIncludedDisplacement * up) * newPosition;
     vec3 transformed = surfacePoint;
 
     surfacePoint = mul3(modelViewMatrix, surfacePoint);

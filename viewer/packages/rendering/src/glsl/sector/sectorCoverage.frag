@@ -10,8 +10,6 @@ in mediump vec3 v_color;
 in lowp float v_coverageFactor;
 in lowp float v_visible;
 in lowp vec2 v_seed;
-
-
 in vec3 v_viewPosition;
 
 out vec4 outputColor;

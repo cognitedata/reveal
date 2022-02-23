@@ -7,34 +7,26 @@ precision highp float;
 
 #include <packing>
 
-in vec2 vUv;
+uniform sampler2D tFront;
+uniform sampler2D tFrontDepth;
+uniform sampler2D tBack;
+uniform sampler2D tBackDepth;
+uniform sampler2D tCustom;
+uniform sampler2D tCustomDepth;
+uniform sampler2D tGhost;
+uniform sampler2D tGhostDepth;
+uniform sampler2D tOutlineColors;
+uniform float cameraNear;
+uniform float cameraFar;
+uniform vec2 resolution;
+uniform float edgeStrengthMultiplier;
+uniform float edgeGrayScaleIntensity;
 
+in vec2 vUv;
 in vec2 vUv0;
 in vec2 vUv1;
 in vec2 vUv2;
 in vec2 vUv3;
-
-uniform sampler2D tFront;
-uniform sampler2D tFrontDepth;
-
-uniform sampler2D tBack;
-uniform sampler2D tBackDepth;
-
-uniform sampler2D tCustom;
-uniform sampler2D tCustomDepth;
-
-uniform sampler2D tGhost;
-uniform sampler2D tGhostDepth;
-
-uniform sampler2D tOutlineColors;
-
-uniform float cameraNear;
-uniform float cameraFar;
-
-uniform vec2 resolution;
-
-uniform float edgeStrengthMultiplier;
-uniform float edgeGrayScaleIntensity;
 
 out vec4 outputColor;
 
