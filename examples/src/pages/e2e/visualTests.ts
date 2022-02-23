@@ -85,5 +85,9 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'outlines',
     category: 'cad'
+  },
+  {
+    testKey: 'highlight-with-default-ghosting',
+    category: 'cad'
   }
 ];
