@@ -15,6 +15,7 @@ export const SearchHistoryRow = styled(FlexRow)`
   max-width: 280px;
   border-radius: 6px;
   cursor: pointer;
+  padding: 8px;
   &:hover {
     background-color: var(--cogs-greyscale-grey2);
     .cogs-icon-History {
@@ -33,6 +34,7 @@ export const customStyles = {
         ...styles[':hover'],
         backgroundColor: '#f5f5f5',
       },
+      padding: 0,
     };
   },
 };
@@ -147,10 +149,6 @@ export const SearchHistoryContainer = styled(FlexAlignJustifyContent)`
           & > div {
             margin-left: ${sizes.small}!important;
             margin-right: ${sizes.small}!important;
-            & > .cogs-select__option {
-              padding-left: ${sizes.small}!important;
-              padding-right: ${sizes.small}!important;
-            }
           }
         }
       }
