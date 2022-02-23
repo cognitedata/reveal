@@ -12,4 +12,24 @@ export * from './core/src/index';
 
 export { CameraControlsOptions, DefaultCameraManager, CameraManager } from './packages/camera-manager';
 
-export { NodeAppearance, DefaultNodeAppearance, AreaCollection, ClusteredAreaCollection } from './packages/cad-styling';
+export {
+  AreaCollection,
+  ClusteredAreaCollection,
+  NodeAppearanceProvider,
+  NodeAppearance,
+  NodeOutlineColor,
+  DefaultNodeAppearance,
+  NodeCollection,
+  TreeIndexNodeCollection,
+  IntersectionNodeCollection,
+  UnionNodeCollection,
+  SerializedNodeCollection,
+  PropertyFilterNodeCollection,
+  SinglePropertyFilterNodeCollection,
+  AssetNodeCollection,
+  InvertedNodeCollection,
+  registerCustomNodeCollectionType,
+  TypeName,
+  NodeCollectionDescriptor,
+  NodeCollectionSerializationContext
+} from '@reveal/cad-styling';

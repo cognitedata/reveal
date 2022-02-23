@@ -10,24 +10,6 @@
  * @module @cognite/reveal
  */
 
-export { NodeAppearanceProvider, NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from '@reveal/cad-styling';
-
-export {
-  NodeCollection,
-  TreeIndexNodeCollection,
-  IntersectionNodeCollection,
-  UnionNodeCollection,
-  SerializedNodeCollection,
-  PropertyFilterNodeCollection,
-  SinglePropertyFilterNodeCollection,
-  AssetNodeCollection,
-  InvertedNodeCollection,
-  registerCustomNodeCollectionType,
-  TypeName,
-  NodeCollectionDescriptor,
-  NodeCollectionSerializationContext
-} from '@reveal/cad-styling';
-
 export { revealEnv, IndexSet, NumericRange } from '@reveal/utilities';
 
 export * from './public/migration/Cognite3DViewer';
