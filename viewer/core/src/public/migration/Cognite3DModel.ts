@@ -17,14 +17,14 @@ import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/ca
 import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
-import { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
+import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
+export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, CdfModelNodeCollectionDataProvider {
   public readonly type: SupportedModelTypes = 'cad';
 
   /**

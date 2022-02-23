@@ -3,10 +3,11 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { IndexSet } from '@reveal/utilities';
-import { createCadModel } from '../../../../../test-utilities/src/createCadModel';
+
+import { createCadModel } from '../../../test-utilities/src/createCadModel';
 import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
+import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 describe('NodeCollectionDeserializer', () => {
   test('deserialize TreeIndexSet without option parameter', async () => {
