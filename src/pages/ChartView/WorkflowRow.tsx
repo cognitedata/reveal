@@ -436,7 +436,7 @@ export default function WorkflowRow({
             <SourceItem disabled={!enabled}>
               <SourceName>
                 <SourceDescription>
-                  <Tooltip content={name || 'noname'}>
+                  <Tooltip content={name || 'noname'} maxWidth={350}>
                     <>{name || 'noname'}</>
                   </Tooltip>
                 </SourceDescription>

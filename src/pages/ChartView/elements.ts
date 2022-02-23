@@ -235,6 +235,15 @@ export const SourceDescription = styled.div`
   overflow: hidden;
   white-space: nowrap;
   max-width: 240px;
+
+  > .cogs-tooltip__content {
+    width: 100%;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: top;
+  }
 `;
 
 export const SourceTag = styled.div`

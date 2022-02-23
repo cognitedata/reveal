@@ -347,7 +347,7 @@ export default function TimeSeriesRow({
           <td className="bordered">
             <SourceItem disabled={!isVisible}>
               <SourceDescription>
-                <Tooltip content={description}>
+                <Tooltip content={description} maxWidth={350}>
                   <>{description}</>
                 </Tooltip>
               </SourceDescription>
