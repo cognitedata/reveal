@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 #pragma glslify: rand2d = require('../math/rand2d.glsl')
 #pragma glslify: isClipped = require('../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: NodeAppearance = require('../base/nodeAppearance.glsl')

@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 #pragma glslify: unpackVec4ToFloat = require('../color/unpackVec4ToFloat.glsl')
 
 float unpackFloatFromRGBATexel(vec4 texel){

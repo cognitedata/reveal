@@ -1,3 +1,12 @@
+#define texture2D texture
+
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
+in vec3 position;
+in vec2 uv;
+
 out vec2 vUv;
 
 // selection outline
@@ -15,6 +24,8 @@ void main() {
   vUv1 = vec2(uv.x - texelSize.x, uv.y);
   vUv2 = vec2(uv.x, uv.y + texelSize.y);
   vUv3 = vec2(uv.x, uv.y - texelSize.y);
+
+  mat4 modelViewMatrix = modelMatrix * viewMatrix;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }

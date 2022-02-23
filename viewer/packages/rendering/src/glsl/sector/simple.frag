@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 #pragma glslify: updateFragmentColor = require('../base/updateFragmentColor.glsl')
 #pragma glslify: NodeAppearance = require('../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../base/determineNodeAppearance.glsl');

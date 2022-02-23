@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 float computeFragmentDepth(vec3 p, mat4 projectionMatrix) {
   // Anders Hafreager comments:
   // Depth value can be calculated by transforming the z-component of the intersection point to projection space.

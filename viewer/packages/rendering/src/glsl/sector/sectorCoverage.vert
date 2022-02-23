@@ -1,5 +1,15 @@
 #pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')
 
+#define texture2D texture
+
+uniform mat4 inverseModelMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+
+in vec3 position;
+in vec3 normal;
 in mediump float a_sectorId;
 in lowp vec3 a_coverageFactor;
 in lowp float a_visible;

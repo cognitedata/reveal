@@ -129,7 +129,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     sectorVisibilityBuffer: [] as SectorVisibility[]
   };
 
-  private readonly coverageMaterial = new THREE.ShaderMaterial({
+  private readonly coverageMaterial = new THREE.RawShaderMaterial({
     vertexShader: coverageShaders.vertex,
     fragmentShader: coverageShaders.fragment,
     clipping: true,

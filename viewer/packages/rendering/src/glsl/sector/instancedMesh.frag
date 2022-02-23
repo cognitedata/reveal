@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 #pragma glslify: derivateNormal = require('../math/derivateNormal.glsl')
 #pragma glslify: updateFragmentColor = require('../base/updateFragmentColor.glsl')
 #pragma glslify: NodeAppearance = require('../base/nodeAppearance.glsl')

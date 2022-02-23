@@ -180,7 +180,7 @@ function setAttributes(
 function createBoxes(
   boxCollection: Uint8Array,
   boxAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   geometryClipBox: THREE.Box3 | null
 ) {
   const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
@@ -209,7 +209,7 @@ function createBoxes(
 function createCircles(
   circleCollection: Uint8Array,
   circleAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   geometryClipBox: THREE.Box3 | null
 ) {
   const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
@@ -237,7 +237,7 @@ function createCircles(
 function createCones(
   coneCollection: Uint8Array,
   coneAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   bounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null
 ) {
@@ -264,7 +264,7 @@ function createCones(
 function createEccentricCones(
   eccentericConeCollection: Uint8Array,
   eccentericConeAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   bounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null
 ) {
@@ -290,7 +290,7 @@ function createEccentricCones(
 function createEllipsoidSegments(
   ellipsoidSegmentCollection: Uint8Array,
   ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   bounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null
 ) {
@@ -315,7 +315,7 @@ function createEllipsoidSegments(
 function createGeneralCylinders(
   generalCylinderCollection: Uint8Array,
   generalCylinderAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   bounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null
 ): THREE.Mesh | null {
@@ -351,7 +351,7 @@ function createGeneralCylinders(
 function createGeneralRings(
   generalRingCollection: Uint8Array,
   generalRingAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   geometryClipBox: THREE.Box3 | null
 ) {
   const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
@@ -382,7 +382,7 @@ function createGeneralRings(
 function createSphericalSegments(
   sphericalSegmentCollection: Uint8Array,
   sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   bounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null
 ) {
@@ -419,7 +419,7 @@ function createSphericalSegments(
 function createQuads(
   quadCollection: Uint8Array,
   quadAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   geometryClipBox: THREE.Box3 | null
 ) {
   const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
@@ -445,7 +445,7 @@ function createQuads(
 function createTrapeziums(
   trapeziumCollection: Uint8Array,
   trapeziumAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   geometryClipBox: THREE.Box3 | null
 ) {
   const filteredCollection = filterPrimitivesOutsideClipBoxByVertices(
@@ -500,7 +500,7 @@ function calcLODDistance(size: number, lodLevel: number): number {
 function createTorusSegments(
   torusSegmentCollection: Uint8Array,
   torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   _geometryClipBox: THREE.Box3 | null
 ) {
   // Torus filtering is disabled due to currently faulty bounding box definition
@@ -548,7 +548,7 @@ function createTorusSegments(
 function createNuts(
   nutCollection: Uint8Array,
   nutAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   geometryClipBox: THREE.Box3 | null
 ) {
   const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
@@ -572,14 +572,14 @@ function createNuts(
 }
 
 function updateMaterialInverseModelMatrix(
-  material: THREE.ShaderMaterial | THREE.RawShaderMaterial,
+  material: THREE.RawShaderMaterial | THREE.RawShaderMaterial,
   matrixWorld: THREE.Matrix4
 ) {
   const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
   inverseModelMatrix.copy(matrixWorld).invert();
 }
 
-function updateMaterialUniforms(material: THREE.ShaderMaterial, mesh: THREE.Mesh, camera: THREE.Camera) {
+function updateMaterialUniforms(material: THREE.RawShaderMaterial, mesh: THREE.Mesh, camera: THREE.Camera) {
   (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
   (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
   (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);

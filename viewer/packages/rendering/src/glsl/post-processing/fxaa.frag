@@ -6,6 +6,10 @@
  *
  */
 
+precision highp float;
+
+#define texture2D texture
+
 in vec2 v_uv;
 in vec2 v_fragCoord;
 in vec2 v_rgbNW;

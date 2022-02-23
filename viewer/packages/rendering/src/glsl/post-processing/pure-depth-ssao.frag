@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 #pragma glslify: rand2d = require('../math/rand2d.glsl')
 
 in vec2 vUv;

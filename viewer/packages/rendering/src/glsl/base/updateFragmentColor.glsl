@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 #pragma glslify: rgb2hsv = require('../color/rgb2hsv.glsl')
 #pragma glslify: hsv2rgb = require('../color/hsv2rgb.glsl')
 #pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')

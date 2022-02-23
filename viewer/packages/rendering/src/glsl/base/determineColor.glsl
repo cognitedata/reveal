@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 #pragma glslify: NodeAppearance = require('./nodeAppearance.glsl')
 
 vec4 determineColor(vec3 originalColor, NodeAppearance nodeAppearance) {

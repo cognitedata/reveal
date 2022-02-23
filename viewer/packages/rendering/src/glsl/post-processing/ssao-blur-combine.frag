@@ -4,6 +4,10 @@
 // http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
 // generalized for two dimensions
 
+precision highp float;
+
+#define texture2D texture
+
 in vec2 vUv;
 
 uniform sampler2D tDiffuse;

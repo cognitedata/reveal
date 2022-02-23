@@ -240,7 +240,7 @@ export class CadMaterialManager {
     return wrapper;
   }
 
-  private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
+  private applyToAllMaterials(callback: (material: THREE.RawShaderMaterial) => void) {
     for (const materialWrapper of this.materialsMap.values()) {
       const materials = materialWrapper.materials;
       applyToModelMaterials(materials, callback);
@@ -252,7 +252,7 @@ export class CadMaterialManager {
   }
 }
 
-function applyToModelMaterials(materials: Materials, callback: (material: THREE.ShaderMaterial) => void) {
+function applyToModelMaterials(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void) {
   callback(materials.box);
   callback(materials.circle);
   callback(materials.generalRing);
@@ -275,7 +275,7 @@ function isRawShaderMaterial(material: THREE.Material): material is THREE.RawSha
 }
 
 function applyClippingPlanesToRawShaderMaterial(
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   clippingPlanesAsUniform: THREE.Vector4[]
 ) {
   material.defines = {

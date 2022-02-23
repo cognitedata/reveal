@@ -1,3 +1,7 @@
+precision highp float;
+
+#define texture2D texture
+
 #pragma glslify: floatBitsSubset = require('../math/floatBitsSubset.glsl')
 #pragma glslify: NodeAppearance = require('./nodeAppearance.glsl')
 
