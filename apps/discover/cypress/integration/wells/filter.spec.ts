@@ -294,7 +294,7 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       waterDepth: {
         min: 9500,
-        max: 9735,
+        max: 9813,
         unit: 'foot',
       },
     });
