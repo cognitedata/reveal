@@ -33,4 +33,4 @@ export {
   NodeCollectionDescriptor,
   NodeCollectionSerializationContext,
   CdfModelNodeCollectionDataProvider
-} from '@reveal/cad-styling';
+} from './packages/cad-styling';
