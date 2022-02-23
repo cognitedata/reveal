@@ -6,10 +6,13 @@ import * as THREE from 'three';
 
 import { CogniteClient, Node3D } from '@cognite/sdk';
 
-import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
+import { AreaCollection } from './prioritized/AreaCollection';
+import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
+import { NodeCollection } from './NodeCollection';
+import { SerializedNodeCollection } from './SerializedNodeCollection';
+import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
-import { AreaCollection, EmptyAreaCollection, NodeCollection, SerializedNodeCollection } from '@reveal/cad-styling';
 import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
 
 import range from 'lodash/range';
@@ -38,7 +41,7 @@ export class PropertyFilterNodeCollection extends NodeCollection {
   private _indexSet = new IndexSet();
   private _areas: AreaCollection = EmptyAreaCollection.instance();
 
-  private readonly _model: Cognite3DModel;
+  private readonly _model: CdfModelNodeCollectionDataProvider;
   private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
   private _filter: {
@@ -47,7 +50,11 @@ export class PropertyFilterNodeCollection extends NodeCollection {
     };
   } = {};
 
-  constructor(client: CogniteClient, model: Cognite3DModel, options: PropertyFilterNodeCollectionOptions = {}) {
+  constructor(
+    client: CogniteClient,
+    model: CdfModelNodeCollectionDataProvider,
+    options: PropertyFilterNodeCollectionOptions = {}
+  ) {
     super(PropertyFilterNodeCollection.classToken);
     this._client = client;
     this._model = model;

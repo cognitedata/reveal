@@ -6,10 +6,9 @@ import * as THREE from 'three';
 
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
-import { sleep } from '../../../../../test-utilities';
+import { sleep } from '../../../test-utilities';
 
 import { NumericRange } from '@reveal/utilities';
-
 import { ListResponse } from '@cognite/sdk-core';
 
 describe('PopulateIndexSetFromPagedResponseHelper', () => {
