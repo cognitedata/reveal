@@ -1,10 +1,19 @@
 name: Visual Testing
 
-on: push
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 jobs:
   visual-testing:
-    if: github.actor != 'dependabot[bot]'
+    if: github.actor != 'dependabot[bot]' && github.event_name == 'push' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     name: Visual Testing
     steps:
@@ -22,8 +31,20 @@ jobs:
         run: yarn install --ignore-scripts --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
-      - name: Publish to Chromatic
+      
+      # 👇 Checks if the branch is master and accepts all changes in Chromatic
+      - name: Publish to Chromatic and auto accept changes
+        if: github.ref == 'refs/heads/master'
         uses: chromaui/action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          autoAcceptChanges: true
+
+      - name: Publish to Chromatic
+        if: github.ref != 'refs/heads/master'
+        uses: chromaui/action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          onlyChanged: true
