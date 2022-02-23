@@ -486,7 +486,7 @@ __metadata:
     "@types/mixpanel-browser": 2.35.7
     "@types/node": 14.17.9
     "@types/random-seed": 0.3.3
-    "@types/skmeans": 0.11.2
+    "@types/skmeans": 0.11.3
     "@types/three": 0.137.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 4.29.1
@@ -1342,10 +1342,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/skmeans@npm:0.11.2":
-  version: 0.11.2
-  resolution: "@types/skmeans@npm:0.11.2"
-  checksum: 1142ffd7c194b0b036a6048b03e870e256bbb41b573dd7b1c5a0d86491a9b463a4ba07a2c5e7e574c77079af6615e5959cb6003702295f1d219d5a7f946d3b0e
+"@types/skmeans@npm:0.11.3":
+  version: 0.11.3
+  resolution: "@types/skmeans@npm:0.11.3"
+  checksum: 5dcaeabce7420bdc4e8fa0abecc0382512d3be2160f30d87ea6e3b7edede88264cf9977e8b584651482a7f3839ef9df387a29a81778e6ff95178a26f52150879
   languageName: node
   linkType: hard
 
