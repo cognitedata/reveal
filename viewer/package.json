@@ -79,7 +79,7 @@
     "copy-webpack-plugin": "6.4.1",
     "core-js": "3.16.0",
     "cross-var": "1.1.0",
-    "dat.gui": "0.7.7",
+    "dat.gui": "0.7.9",
     "eslint": "7.32.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-header": "3.1.1",
