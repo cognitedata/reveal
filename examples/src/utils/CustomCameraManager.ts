@@ -55,7 +55,9 @@ export class CustomCameraManager implements CameraManager {
         this._controls.update();
 
         const cameraState = this.getCameraState();
-        if (cameraState.position.distanceTo(this._lastCameraState.position) > 0.001 || cameraState.target.distanceTo(this._lastCameraState.target) > 0.001) {
+        if (cameraState.position.distanceTo(this._lastCameraState.position) > 0.001 || 
+            cameraState.target.distanceTo(this._lastCameraState.target) > 0.001) {
+                
             this._cameraChangedListener.forEach( cb => cb({ camera: { position: cameraState.position, target: cameraState.target } }));
         }
         this._lastCameraState = cameraState;

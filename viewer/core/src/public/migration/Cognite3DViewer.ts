@@ -1183,9 +1183,9 @@ export class Cognite3DViewer {
       return false;
     }
 
+    adjustCamera(this.camera, width, height);
     this.renderer.setSize(width, height);
 
-    adjustCamera(this.camera, width, height);
 
     return true;
   }
@@ -1201,16 +1201,9 @@ export class Cognite3DViewer {
   };
 }
 
-function adjustCamera(camera: THREE.Camera, width: number, height: number) {
-  if (camera instanceof THREE.PerspectiveCamera) {
+function adjustCamera(camera: THREE.PerspectiveCamera, width: number, height: number) {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-  } else if (camera instanceof THREE.OrthographicCamera) {
-    camera.left = -width;
-    camera.right = width;
-    camera.top = height;
-    camera.bottom = -height;
-  }
 }
 
 function createCanvasWrapper(): HTMLElement {
