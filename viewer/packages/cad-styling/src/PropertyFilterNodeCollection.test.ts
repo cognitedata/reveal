@@ -4,14 +4,14 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 
 import nock from 'nock';
+import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
 describe('PropertyFilterNodeCollection', () => {
   let client: CogniteClient;
-  let model: Cognite3DModel;
+  let model: CdfModelNodeCollectionDataProvider;
   let set: PropertyFilterNodeCollection;
   const listNodesEndpointPath: RegExp = /.*\/nodes/;
 
@@ -22,7 +22,7 @@ describe('PropertyFilterNodeCollection', () => {
       getToken: async () => 'dummy'
     });
 
-    model = { modelId: 112, revisionId: 113 } as Cognite3DModel;
+    model = { modelId: 112, revisionId: 113 } as CdfModelNodeCollectionDataProvider;
     set = new PropertyFilterNodeCollection(client, model);
   });
 
