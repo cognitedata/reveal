@@ -85,6 +85,7 @@ const InFrontAppearance: NodeAppearance = {
 
 const HighlightedColorAppearance: NodeAppearance = {
   visible: true,
+  renderGhosted: false,
   color: [100, 100, 255]
 };
 
