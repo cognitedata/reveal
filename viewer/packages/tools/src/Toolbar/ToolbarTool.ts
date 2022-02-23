@@ -3,6 +3,7 @@
  */
 
 import { Cognite3DViewer } from '@reveal/core';
+import { DefaultCameraManager } from '@reveal/camera-manager';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Toolbar, ToolbarPosition } from './Toolbar';
 import { AxisViewTool } from '../AxisView/AxisViewTool';
@@ -133,22 +134,24 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Toggle enabling/disabling the Camera target on mouse click
    */
   private changeCameraTargetOnClick(): void {
-    const cameraControlOption = this._viewer.getCameraControlsOptions();
+    const cameraManager = this._viewer.cameraManager as DefaultCameraManager;
+    const cameraControlOption = cameraManager.getCameraControlsOptions();
     cameraControlOption.changeCameraTargetOnClick = !cameraControlOption.changeCameraTargetOnClick;
-    this._viewer.setCameraControlsOptions(cameraControlOption);
+    cameraManager.setCameraControlsOptions(cameraControlOption);
   }
 
   /**
    * Toggle camera for "Zoom Past Cursor" and "Zoom To Cursor"
    */
   private toggleCameraZoomPastToCursor(): void {
-    const cameraControlOption = this._viewer.getCameraControlsOptions();
+    const cameraManager = this._viewer.cameraManager as DefaultCameraManager;
+    const cameraControlOption = cameraManager.getCameraControlsOptions();
     if (cameraControlOption.mouseWheelAction === 'zoomPastCursor') {
       cameraControlOption.mouseWheelAction = 'zoomToCursor';
     } else {
       cameraControlOption.mouseWheelAction = 'zoomPastCursor';
     }
-    this._viewer.setCameraControlsOptions(cameraControlOption);
+    cameraManager.setCameraControlsOptions(cameraControlOption);
   }
 
   /**
