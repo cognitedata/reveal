@@ -18,7 +18,7 @@ import { ReactText } from 'react';
 import { AnnotationLabelState, KeyPointState } from './types';
 import { deleteCollection } from './utils';
 
-const initialState: AnnotationLabelState = {
+export const initialState: AnnotationLabelState = {
   predefinedAnnotations: {
     predefinedKeypoints: [],
     predefinedShapes: [],
@@ -257,7 +257,6 @@ const annotationLabelSlice = createSlice({
 });
 
 export type { AnnotationLabelState as AnnotationLabelReducerState };
-export { initialState as annotationLabelReducerInitialState };
 
 export const {
   selectCollection,
