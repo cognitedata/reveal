@@ -90,7 +90,7 @@
     "file-loader": "6.2.0",
     "gl": "4.9.2",
     "glslify-loader": "2.0.0",
-    "html-webpack-plugin": "4.5.0",
+    "html-webpack-plugin": "4.5.2",
     "husky": "4.3.8",
     "jest": "26.6.3",
     "jest-canvas-mock": "2.3.1",
