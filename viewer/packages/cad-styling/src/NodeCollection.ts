@@ -3,8 +3,10 @@
  */
 
 import assert from 'assert';
+
 import { AreaCollection } from './prioritized/AreaCollection';
 import { SerializedNodeCollection } from './SerializedNodeCollection';
+
 import { EventTrigger, IndexSet } from '@reveal/utilities';
 
 /**
