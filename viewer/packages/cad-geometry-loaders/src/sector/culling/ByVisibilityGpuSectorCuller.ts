@@ -157,7 +157,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const passingSectors = [];
     const bounds = new THREE.Box3();
     for (let i = 0; i < intersectingSectors.length; i++) {
-      bounds.copy(intersectingSectors[i].bounds);
+      bounds.copy(intersectingSectors[i].subtreeBoundingBox);
       bounds.applyMatrix4(modelMatrix);
 
       const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));

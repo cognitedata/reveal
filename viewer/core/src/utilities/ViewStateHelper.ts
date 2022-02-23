@@ -7,7 +7,7 @@ import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
-import { RevealCameraControls } from '@reveal/camera-manager';
+import { CameraManager } from '@reveal/camera-manager';
 import { NodeAppearance } from '@reveal/cad-styling';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -36,25 +36,25 @@ export type ModelState = {
 };
 
 export class ViewStateHelper {
-  private readonly _cameraControls: RevealCameraControls;
+  private readonly _cameraManager: CameraManager;
   private readonly _viewer: Cognite3DViewer;
   private readonly _cdfClient: CogniteClient;
 
   constructor(viewer: Cognite3DViewer, cdfClient: CogniteClient) {
     this._viewer = viewer;
     this._cdfClient = cdfClient;
-    this._cameraControls = viewer.cameraControls;
+    this._cameraManager = viewer.cameraManager;
   }
 
   public getCurrentState(): ViewerState {
-    const cameraState = this._cameraControls.getState();
+    const { position: cameraPosition, target: cameraTarget } = this._cameraManager.getCameraState();
     const modelStates = this.getModelsState();
     const clippingPlanesState = this.getClippingPlanesState();
 
     return {
       camera: {
-        position: cameraState.position,
-        target: cameraState.target
+        position: cameraPosition,
+        target: cameraTarget
       },
       models: modelStates,
       clippingPlanes: clippingPlanesState
@@ -105,10 +105,11 @@ export class ViewStateHelper {
   private setCameraFromState(cameraState: Exclude<ViewerState['camera'], undefined>) {
     const camPos = cameraState.position;
     const camTarget = cameraState.target;
-    this._cameraControls.setState(
-      new THREE.Vector3(camPos.x, camPos.y, camPos.z),
-      new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
-    );
+
+    this._cameraManager.setCameraState({
+      position: new THREE.Vector3(camPos.x, camPos.y, camPos.z),
+      target: new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
+    });
   }
 
   private async setModelState(modelsState: ModelState[]) {

@@ -9,19 +9,40 @@ import { SectorMetadata } from '../metadata/types';
 /**
  * Conversion factors from a given unit to meters.
  */
-export const WellKnownDistanceToMeterConversionFactors = new Map<string, number>([
-  ['Meters', 1.0],
-  ['Centimeters', 0.01],
-  ['Millimeters', 0.001],
-  ['Micrometers', 1e-6],
-  ['Kilometers', 1000],
-  ['Feet', 0.3048],
-  ['Inches', 0.0254],
-  ['Yards', 0.9144],
-  ['Miles', 1609.34],
-  ['Mils', 0.0254 * 1e-3],
-  ['Microinches', 0.0254 * 1e-6]
+const WellKnownDistanceToMeterConversionFactors = new Map<string, number>([
+  ['meters', 1.0],
+  ['meter', 1.0],
+  ['m', 1.0],
+  ['centimeters', 0.01],
+  ['centimeter', 0.01],
+  ['cm', 0.01],
+  ['millimeters', 0.001],
+  ['millimeter', 0.001],
+  ['mm', 0.001],
+  ['micrometers', 1e-6],
+  ['micrometer', 1e-6],
+  ['kilometers', 1000],
+  ['kilometer', 1000],
+  ['km', 1000],
+  ['feet', 0.3048],
+  ['ft', 0.3048],
+  ['inches', 0.0254],
+  ['inch', 0.0254],
+  ['yards', 0.9144],
+  ['yard', 0.9144],
+  ['miles', 1609.34],
+  ['miles', 1609.34],
+  ['mile', 1609.34],
+  ['mils', 0.0254 * 1e-3],
+  ['mil', 0.0254 * 1e-3],
+  ['microinches', 0.0254 * 1e-6],
+  ['microinch', 0.0254 * 1e-6]
 ]);
+
+export function getDistanceToMeterConversionFactor(unit: string | undefined): number | undefined {
+  unit = unit ?? 'meters';
+  return WellKnownDistanceToMeterConversionFactors.get(unit.toLowerCase());
+}
 
 export interface SectorScene {
   readonly version: number;

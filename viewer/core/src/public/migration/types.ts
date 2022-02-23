@@ -7,6 +7,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
+import { CameraManager } from '@reveal/camera-manager';
 
 /**
  * @module @cognite/reveal
@@ -76,31 +77,14 @@ export interface Cognite3DViewerOptions {
      */
     opacity: number;
   };
-
   /**
-   * When false, camera near and far planes will not be updated automatically (defaults to true).
-   * This can be useful when you have custom content in the 3D view and need to better
-   * control the view frustum.
-   *
-   * When automatic camera near/far planes are disabled, you are responsible for setting
-   * this on your own.
-   * @example
-   * ```
-   * viewer.camera.near = 0.1;
-   * viewer.camera.far = 1000.0;
-   * viewer.camera.updateProjectionMatrix();
-   * ```
+   * Camera manager instance that is used for controlling the camera.
+   * It is responsible for all manipulations that are done with the camera,
+   * including animations and modification of state. Also, gives ability
+   * to provide custom `THREE.PerspectiveCamera` instance to {@link Cognite3DViewer}.
+   * Default implementation is {@link DefaultCameraManager}.
    */
-  automaticCameraNearFar?: boolean;
-
-  /**
-   * When false, the sensitivity of the camera controls will not be updated automatically.
-   * This can be useful to better control the sensitivity of the 3D navigation.
-   *
-   * When not set, control the sensitivity of the camera using `viewer.cameraControls.minDistance`
-   * and `viewer.cameraControls.maxDistance`.
-   */
-  automaticControlsSensitivity?: boolean;
+  cameraManager?: CameraManager;
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 

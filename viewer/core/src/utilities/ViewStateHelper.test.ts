@@ -15,7 +15,7 @@ describe(ViewStateHelper.name, () => {
   let helper: ViewStateHelper;
 
   beforeEach(() => {
-    const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+    const sdk = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
     mockClientAuthentication(sdk);
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const renderer = new THREE.WebGLRenderer({ context });
@@ -31,20 +31,22 @@ describe(ViewStateHelper.name, () => {
       cameraTarget: new THREE.Vector3(1, 2, 3),
       clippingPlanes: [new THREE.Plane().setComponents(1, 2, 3, 4), new THREE.Plane().setComponents(-1, -2, -3, -4)]
     };
-    viewer.setCameraPosition(original.cameraPosition);
-    viewer.setCameraTarget(original.cameraTarget);
+    viewer.cameraManager.setCameraState({ position: original.cameraPosition, target: original.cameraTarget });
     viewer.setClippingPlanes(original.clippingPlanes);
 
     // Act
     const state = viewer.getViewState();
-    viewer.setCameraPosition(new THREE.Vector3(-10, -10, -10));
-    viewer.setCameraTarget(new THREE.Vector3(10, 10, 10));
+    viewer.cameraManager.setCameraState({
+      position: new THREE.Vector3(-10, -10, -10),
+      target: new THREE.Vector3(10, 10, 10)
+    });
     viewer.setClippingPlanes([]);
     viewer.setViewState(state);
 
     // Assert
-    expect(viewer.getCameraPosition().distanceTo(original.cameraPosition)).toBeLessThan(1e-5);
-    expect(viewer.getCameraTarget().distanceTo(original.cameraTarget)).toBeLessThan(1e-5);
+    const cameraState = viewer.cameraManager.getCameraState();
+    expect(cameraState.position.distanceTo(original.cameraPosition)).toBeLessThan(1e-5);
+    expect(cameraState.target.distanceTo(original.cameraTarget)).toBeLessThan(1e-5);
     expect(viewer.getClippingPlanes()).toEqual(original.clippingPlanes);
   });
 });

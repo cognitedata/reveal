@@ -1,8 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
-import { Cognite3DModel, DefaultNodeAppearance, IndexSet, TreeIndexNodeCollection } from '@cognite/reveal';
+import * as THREE from 'three';
+import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, TreeIndexNodeCollection } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
 
@@ -58,7 +58,11 @@ function ReassignNodeStyle() {
   return (
     <Cognite3DTestViewer 
       modelUrls={['primitives']}
-      modelAddedCallback={handleModelAdded} />
+      modelAddedCallback={handleModelAdded} 
+      initializeCallback={(viewer: Cognite3DViewer) => {
+        viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50), 
+          target: new THREE.Vector3()});
+      }}/>
   );
 }
 

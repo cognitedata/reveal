@@ -12,7 +12,7 @@ export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;
 
   constructor(modelMetadata: CadModelMetadata) {
-    const modelBounds = modelMetadata.scene.root.bounds.clone();
+    const modelBounds = modelMetadata.scene.root.subtreeBoundingBox.clone();
     modelBounds.applyMatrix4(modelMetadata.modelMatrix);
     super(0, '/', modelBounds);
 
@@ -43,7 +43,7 @@ function buildScene(
   sectorNodeMap: Map<number, SectorNode>,
   modelMatrix: THREE.Matrix4
 ) {
-  const bounds = sector.bounds.clone();
+  const bounds = sector.subtreeBoundingBox.clone();
   bounds.applyMatrix4(modelMatrix);
   const sectorGroup = new SectorNode(sector.id, sector.path, bounds);
   sectorGroup.name = `Sector ${sector.id}`;

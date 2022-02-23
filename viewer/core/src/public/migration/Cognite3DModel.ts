@@ -13,7 +13,7 @@ import { WellKnownUnit } from './types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 
 import { NodesApiClient } from '@reveal/nodes-api';
-import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
+import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
 import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
@@ -50,7 +50,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * return undefined if the model has been stored in an unsupported unit.
    */
   get modelUnitToMetersFactor(): number | undefined {
-    return WellKnownDistanceToMeterConversionFactors.get(this.modelUnit);
+    return getDistanceToMeterConversionFactor(this.modelUnit);
   }
 
   /**
@@ -343,7 +343,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   getModelBoundingBox(outBbox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
     const bounds = restrictToMostGeometry
       ? this.cadModel.scene.getBoundsOfMostGeometry()
-      : this.cadModel.scene.root.bounds;
+      : this.cadModel.scene.root.subtreeBoundingBox;
 
     outBbox = outBbox || new THREE.Box3();
     outBbox.copy(bounds);

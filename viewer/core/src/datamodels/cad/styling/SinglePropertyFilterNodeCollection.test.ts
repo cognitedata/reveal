@@ -24,8 +24,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
   const filterNodesEndpointPath = /.*\/nodes\/list/;
 
   beforeEach(() => {
-    client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
-    client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
+    client = new CogniteClient({ appId: 'test', project: 'dummy', getToken: async () => 'dummy' });
 
     const mockV8SectorRepository = new Mock<V8SectorRepository>();
     const materialManager = new CadMaterialManager();

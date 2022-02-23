@@ -6,8 +6,12 @@ import * as THREE from 'three';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 import { V9SectorMetadata } from '../types';
-import { parseCadMetadataGltf } from './CadMetadataParserGltf';
-import { CadSceneRootMetadata, V9SceneSectorMetadata } from './types';
+import { parseCadMetadataGltf, toThreeBoundingBox } from './CadMetadataParserGltf';
+import { CadSceneRootMetadata } from './types';
+
+import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../test-utilities';
+
+import * as SeededRandom from 'random-seed';
 
 describe('CadMetadataParserGltf', () => {
   test('Metadata without sectors, throws', () => {
@@ -25,27 +29,31 @@ describe('CadMetadataParserGltf', () => {
       version: 9,
       maxTreeIndex: 103350,
       unit: 'Meters',
-      sectors: [createSectorMetadata(1)]
+      sectors: [createV9SceneSectorMetadata(1)]
     };
     expect(() => parseCadMetadataGltf(metadata)).toThrow();
   });
 
   test('Metadata with single root, return valid scene', () => {
     // Arrange
-    const sectorRoot = createSectorMetadata(0);
+    const sectorRoot = createV9SceneSectorMetadata(0);
     const metadata: CadSceneRootMetadata = {
       version: 9,
       maxTreeIndex: 8000,
       unit: 'Meters',
       sectors: [sectorRoot]
     };
+
+    const subtreeBoundingBox = new THREE.Box3(
+      new THREE.Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
+      new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
+    );
+
     const expectedRoot: V9SectorMetadata = {
       id: sectorRoot.id,
       path: sectorRoot.path,
-      bounds: new THREE.Box3(
-        new THREE.Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
-        new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
-      ),
+      subtreeBoundingBox,
+      geometryBoundingBox: subtreeBoundingBox,
       depth: sectorRoot.depth,
       children: [],
       estimatedDrawCallCount: 10,
@@ -73,11 +81,11 @@ describe('CadMetadataParserGltf', () => {
       maxTreeIndex: 8000,
       unit: 'Meters',
       sectors: [
-        createSectorMetadata(0),
-        createSectorMetadata(1, 0),
-        createSectorMetadata(2, 0),
-        createSectorMetadata(3, 1),
-        createSectorMetadata(4, 3)
+        createV9SceneSectorMetadata(0),
+        createV9SceneSectorMetadata(1, 0),
+        createV9SceneSectorMetadata(2, 0),
+        createV9SceneSectorMetadata(3, 1),
+        createV9SceneSectorMetadata(4, 3)
       ]
     };
 
@@ -107,10 +115,10 @@ describe('CadMetadataParserGltf', () => {
           /
          3
          */
-        createSectorMetadata(2, 0),
-        createSectorMetadata(0),
-        createSectorMetadata(3, 1),
-        createSectorMetadata(1, 0)
+        createV9SceneSectorMetadata(2, 0),
+        createV9SceneSectorMetadata(0),
+        createV9SceneSectorMetadata(3, 1),
+        createV9SceneSectorMetadata(1, 0)
       ]
     };
 
@@ -142,7 +150,7 @@ describe('CadMetadataParserGltf', () => {
       version: 9,
       maxTreeIndex: 4,
       unit: 'AU',
-      sectors: [createSectorMetadata(0)]
+      sectors: [createV9SceneSectorMetadata(0)]
     };
 
     // Act
@@ -151,32 +159,48 @@ describe('CadMetadataParserGltf', () => {
     // Assert
     expect(result.unit).toBe('AU');
   });
-});
 
-function createSectorMetadata(id: number, parentId: number = -1): V9SceneSectorMetadata {
-  const metadata: V9SceneSectorMetadata = {
-    id,
-    parentId,
-    path: '0/',
-    depth: 0,
-    estimatedDrawCallCount: 10,
-    estimatedTriangleCount: 10,
-    boundingBox: {
-      min: {
-        x: 0.0,
-        y: 0.0,
-        z: 0.0
-      },
-      max: {
-        x: 1.0,
-        y: 1.0,
-        z: 1.0
-      }
-    },
-    downloadSize: 1000,
-    maxDiagonalLength: 10,
-    minDiagonalLength: 5,
-    sectorFileName: `${id}.glb`
-  };
-  return metadata;
-}
+  test('If geometry bounds is not set, root bounding box is union of all nodes', () => {
+    const rand = SeededRandom.create('some_seed');
+
+    const boxSector0 = createRandomBox(10, 20, rand);
+    const boxSector1 = createRandomBox(10, 20, rand);
+    const boxSector2 = createRandomBox(10, 20, rand);
+
+    // Arrange
+    const metadata: CadSceneRootMetadata = {
+      version: 8,
+      maxTreeIndex: 4,
+      unit: 'Meters',
+      sectors: [
+        createV9SceneSectorMetadata(2, 0, boxSector0),
+        createV9SceneSectorMetadata(0, -1, boxSector2),
+        createV9SceneSectorMetadata(1, 0, boxSector1)
+      ]
+    };
+
+    // Act
+    const result = parseCadMetadataGltf(metadata);
+
+    // Assert
+
+    const expectedBoundingBox = toThreeBoundingBox(metadata.sectors[0].boundingBox)
+      .clone()
+      .union(toThreeBoundingBox(metadata.sectors[2].boundingBox));
+
+    const rootBoundingBox = result.root.subtreeBoundingBox;
+
+    expectBoxesEqual(rootBoundingBox, expectedBoundingBox);
+  });
+
+  function expectBoxesEqual(box0: THREE.Box3, box1: THREE.Box3) {
+    expectVectorsEqual(box0.min, box1.min);
+    expectVectorsEqual(box0.max, box1.max);
+  }
+
+  function expectVectorsEqual(vec0: THREE.Vector3, vec1: THREE.Vector3) {
+    expect(vec0.x).toBe(vec1.x);
+    expect(vec0.y).toBe(vec1.y);
+    expect(vec0.z).toBe(vec1.z);
+  }
+});

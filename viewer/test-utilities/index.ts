@@ -10,6 +10,8 @@ export {
   SectorTree
 } from './src/createSectorMetadata';
 
+export { createV8SceneSectorMetadata, createV9SceneSectorMetadata } from './src/createSceneSectorMetadata';
+
 export { createCadModelMetadata } from './src/createCadModelMetadata';
 export { createCadModel } from './src/createCadModel';
 export { createDetermineSectorInput } from './src/createDetermineSectorInput';
@@ -22,5 +24,7 @@ export { asyncIteratorToArray } from './src/asyncIteratorToArray';
 export { createEmptySector } from './src/emptySector';
 export { expectContainsSectorsWithLevelOfDetail } from './src/expects';
 export { yieldProcessing } from './src/wait';
+
+export { createRandomBox } from './src/createBoxes';
 
 export { Mutable } from './src/reflection';

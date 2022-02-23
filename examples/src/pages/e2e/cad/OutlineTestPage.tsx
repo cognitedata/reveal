@@ -13,8 +13,8 @@ function OutlineTestPage() {
 
   function initializeViewer(viewer: Cognite3DViewer) {
     viewer.setBackgroundColor(new THREE.Color('lightGray'));
-    viewer.setCameraPosition(new THREE.Vector3(31.63, 6.50, -12.18));
-    viewer.setCameraTarget(new THREE.Vector3(21.04, 0.53, -11.88));
+    viewer.cameraManager.setCameraState({position: new THREE.Vector3(31.63, 6.50, -12.18), 
+      target: new THREE.Vector3(21.04, 0.53, -11.88)});
   }
 
   function styleModel(model: Cognite3DModel) {

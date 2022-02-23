@@ -32,10 +32,12 @@ export interface MemoryRequestCacheOptions {
 }
 
 export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
-  private readonly _maxElementsInCache: number;
+  private _maxElementsInCache: number;
   private readonly _data: Map<Key, TimestampedContainer<Data>>;
-  private readonly _defaultCleanupCount: number;
+  private _defaultCleanupCount: number;
   private readonly _removeCallback: ((value: Data) => void) | undefined;
+
+  private static readonly CLEANUP_COUNT_TO_CAPACITY_RATIO = 1.0 / 5.0;
 
   constructor(
     maxElementsInCache: number = 50,
@@ -44,7 +46,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   ) {
     this._data = new Map();
     this._maxElementsInCache = maxElementsInCache;
-    this._defaultCleanupCount = defaultCleanupCount;
+    this._defaultCleanupCount = Math.max(defaultCleanupCount, 1);
     this._removeCallback = removeCallback;
   }
 
@@ -62,7 +64,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   insert(id: Key, data: Data): void {
     if (this._data.size < this._maxElementsInCache) {
       this._data.set(id, new TimestampedContainer(data));
-    } else {
+    } else if (this._maxElementsInCache > 0) {
       throw new Error('Cache full, please clean Cache and retry adding data');
     }
   }
@@ -88,7 +90,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   isFull(): boolean {
-    return !(this._data.size < this._maxElementsInCache);
+    return this._data.size >= this._maxElementsInCache;
   }
 
   cleanCache(count: number): void {
@@ -103,6 +105,15 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
       } else {
         return;
       }
+    }
+  }
+
+  resize(cacheSize: number): void {
+    this._maxElementsInCache = cacheSize;
+    this._defaultCleanupCount = Math.max(cacheSize * MemoryRequestCache.CLEANUP_COUNT_TO_CAPACITY_RATIO, 1);
+
+    if (this.isFull()) {
+      this.cleanCache(this._data.size - this._maxElementsInCache);
     }
   }
 

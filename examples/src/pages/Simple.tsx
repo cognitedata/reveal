@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
+import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import React, { useEffect, useRef, useState } from 'react';
@@ -32,10 +32,14 @@ export function Simple() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      const client = new CogniteClient({ appId: 'reveal.example.simple' });
 
+      let client;
       if (project && environmentParam) {
-        await authenticateSDKWithEnvironment(client, project, environmentParam);
+        client = await createSDKFromEnvironment('reveal.example.simple', project, environmentParam);
+      } else {
+        client = new CogniteClient({ appId: 'reveal.example.simple',
+                                     project: 'dummy',
+                                     getToken: async () => 'dummy' });
       }
 
       const renderer = new THREE.WebGLRenderer({
