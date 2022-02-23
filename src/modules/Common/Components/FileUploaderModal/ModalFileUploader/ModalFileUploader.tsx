@@ -205,7 +205,7 @@ export const ModalFileUploader = ({
 
   const startUpload = async () => {
     message.info('Starting Upload...');
-    pushMetric('Vision.Upload');
+    pushMetric('Vision.Upload', { count: fileList.length });
 
     try {
       beforeUploadStart(fileList);

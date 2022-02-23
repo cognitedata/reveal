@@ -30,7 +30,6 @@ const TitleContainer = styled.div`
   padding: 5px 0;
 `;
 
-pushMetric('Vision.Process');
 const queryClient = new QueryClient();
 
 export default function ProcessStep() {
@@ -41,6 +40,7 @@ export default function ProcessStep() {
   );
 
   useEffect(() => {
+    pushMetric('Vision.Process');
     return () => {
       dispatch(hideFileMetadata());
     };

@@ -18,8 +18,6 @@ import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { pushMetric } from 'src/utils/pushMetric';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 
-pushMetric('Vision.Review');
-
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <div style={{ minWidth: '120px' }}>
     <Popconfirm
@@ -99,6 +97,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   }, [reviewFileIds]);
 
   useEffect(() => {
+    pushMetric('Vision.Review');
     dispatch(PopulateAnnotationTemplates());
   }, []);
 

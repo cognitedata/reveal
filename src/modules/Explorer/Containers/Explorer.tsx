@@ -32,8 +32,6 @@ import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterTog
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 
-pushMetric('Vision.Explorer');
-
 const Explorer = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -71,6 +69,7 @@ const Explorer = () => {
   );
 
   useEffect(() => {
+    pushMetric('Vision.Explorer');
     return () => {
       dispatch(ClearExplorerStateOnTransition());
     };
