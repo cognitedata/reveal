@@ -65,21 +65,37 @@ export default function ThreeDViewerSidebar(props: Props) {
   const updateInitialLocation = async (
     otherUpdates?: Partial<RevisionUpdatePayload>
   ) => {
+    const { viewer } = props;
+
+    let position: THREE.Vector3;
+    let target: THREE.Vector3;
+
+    if (viewer instanceof Cognite3DViewer) {
+      const state = viewer.cameraManager.getCameraState();
+      position = state.position;
+      target = state.target;
+    } else {
+      const legacyPosition = viewer.getCameraPosition();
+      position = new THREE.Vector3(
+        legacyPosition.x,
+        legacyPosition.y,
+        legacyPosition.z
+      );
+      const legacyTarget = viewer.getCameraTarget();
+      target = new THREE.Vector3(
+        legacyTarget.x,
+        legacyTarget.y,
+        legacyTarget.z
+      );
+    }
+
     // Get camera position and target for upload
-    const position = props.viewer.getCameraPosition();
-    const target = props.viewer.getCameraTarget();
 
     // Convert camera position and target to model space
     const inverseModelMatrix = new THREE.Matrix4();
     if (props.model instanceof Cognite3DModel) {
-      props.model.mapPositionFromModelToCdfCoordinates(
-        position as THREE.Vector3,
-        position as THREE.Vector3
-      );
-      props.model.mapPositionFromModelToCdfCoordinates(
-        target as THREE.Vector3,
-        target as THREE.Vector3
-      );
+      props.model.mapPositionFromModelToCdfCoordinates(position, position);
+      props.model.mapPositionFromModelToCdfCoordinates(target, target);
     } else {
       // Get inverse transformation matrix to compute camera position and target in model space
       inverseModelMatrix.copy(props.model.matrix as any).invert();
