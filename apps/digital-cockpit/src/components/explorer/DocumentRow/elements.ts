@@ -18,11 +18,6 @@ export const DocumentRowWrapper = styled.div`
     align-items: center;
     justify-content: center;
     overflow: hidden;
-
-    img {
-      object-fit: cover;
-      width: 100%;
-    }
   }
 
   .document-row--meta {

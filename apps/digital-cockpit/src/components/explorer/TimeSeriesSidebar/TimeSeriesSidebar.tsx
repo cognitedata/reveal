@@ -1,13 +1,5 @@
 import { useContext, useMemo, useState } from 'react';
-import {
-  Body,
-  Button,
-  Flex,
-  Icon,
-  Overline,
-  Title,
-  toast,
-} from '@cognite/cogs.js';
+import { Body, Button, Flex, Icon, Overline, Title } from '@cognite/cogs.js';
 import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
 import ResourceIcon from 'components/utils/ResourceIcon';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
@@ -16,6 +8,7 @@ import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
 import Loading from 'components/utils/Loading';
 
 import TimeSeriesPreview from '../TimeSeriesPreview';
+import ShareButton from '../ShareButton';
 
 import {
   Actions,
@@ -71,8 +64,6 @@ const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
     { latestOnly: true }
   );
 
-  const [isCopied, setIsCopied] = useState<boolean>(false);
-
   const latestDatapoint = useMemo(
     () => datapoints?.[0]?.datapoints[0] as DoubleDatapoint,
     [datapoints]
@@ -83,13 +74,6 @@ const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
     const startTime = moment(endTime).subtract(1, 'month').valueOf();
     const url = `https://charts.cogniteapp.com/${client.project}?timeserieIds=${timeSeries.id}&startTime=${startTime}&endTime=${endTime}`;
     window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast.success('Link copied to clipboard');
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 3000);
   };
 
   return (
@@ -122,11 +106,7 @@ const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
         >
           Open in Charts
         </Button>
-        <Button
-          icon={isCopied ? 'Checkmark' : 'Share'}
-          size="small"
-          onClick={handleShare}
-        />
+        <ShareButton />
         <TimeSeriesDownloadButton timeSeries={timeSeries} />
       </Actions>
       <MetadataList>

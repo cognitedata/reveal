@@ -37,15 +37,4 @@ const Template: ExtendedStory<DocumentRowProps> = (args) => (
 );
 
 export const NormalRow = Template.bind({});
-NormalRow.story = configureStory({
-  mockCdfClient: (client: CdfClient) => {
-    client.cogniteClient.get = () => {
-      return Promise.resolve({
-        data: exampleImage,
-        status: 200,
-        headers: {},
-      } as any);
-    };
-    return client;
-  },
-});
+NormalRow.story = configureStory({});
