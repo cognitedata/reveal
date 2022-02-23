@@ -7,7 +7,6 @@ import { createCadManager } from '../datamodels/cad/createCadManager';
 import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
 import { RevealOptions } from './types';
-import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering/RenderAlreadyLoadedGeometryProvider';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
@@ -101,13 +100,12 @@ export function createRevealManager(
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
   const materialManager = new CadMaterialManager();
   const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
-  const alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(renderManager);
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,
     renderer,
     materialManager,
-    alreadyLoadedProvider,
+    renderManager,
     revealOptions
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
