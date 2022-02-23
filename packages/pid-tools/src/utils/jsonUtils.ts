@@ -167,10 +167,27 @@ export const isValidSymbolFileSchema = (
   return true;
 };
 
+export const computeSymbolInstances = (
+  symbols: DiagramSymbol[],
+  pidDocument: PidDocument
+): DiagramSymbolInstance[] => {
+  let allNewSymbolInstances: DiagramSymbolInstance[] = [];
+  symbols.forEach((symbol) => {
+    const newSymbolInstances = (
+      pidDocument as PidDocument
+    ).findAllInstancesOfSymbol(symbol);
+    allNewSymbolInstances = getNoneOverlappingSymbolInstances(
+      pidDocument,
+      allNewSymbolInstances,
+      newSymbolInstances
+    );
+  });
+  return allNewSymbolInstances;
+};
+
 export const loadSymbolsFromJson = (
   jsonData: GraphDocument,
   setSymbols: (diagramSymbols: DiagramSymbol[]) => void,
-  symbols: DiagramSymbol[],
   pidDocument: PidDocument,
   setSymbolInstances: (diagramSymbolInstances: DiagramSymbolInstance[]) => void,
   symbolInstances: DiagramSymbolInstance[],
@@ -187,21 +204,13 @@ export const loadSymbolsFromJson = (
 ) => {
   if ('symbols' in jsonData) {
     const newSymbols = jsonData.symbols as DiagramSymbol[];
-    setSymbols([...symbols, ...newSymbols]);
+    setSymbols([...newSymbols]);
 
     if (!('symbolInstances' in jsonData)) {
-      let allNewSymbolInstances: DiagramSymbolInstance[] = [];
-      newSymbols.forEach((newSymbol) => {
-        const newSymbolInstances = (
-          pidDocument as PidDocument
-        ).findAllInstancesOfSymbol(newSymbol);
-        allNewSymbolInstances = getNoneOverlappingSymbolInstances(
-          pidDocument,
-          allNewSymbolInstances,
-          newSymbolInstances
-        );
-      });
-      setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
+      setSymbolInstances([
+        ...symbolInstances,
+        ...computeSymbolInstances(newSymbols, pidDocument),
+      ]);
     }
   }
   if ('lines' in jsonData) {

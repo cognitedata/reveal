@@ -83,12 +83,20 @@ export interface SaveSymbolData {
   direction?: Orientation;
 }
 
+export enum EventType {
+  LOAD = 'onLoad',
+}
+
+type EventListener = (ref: CognitePid) => void;
+
 export class CognitePid {
   host: HTMLDivElement;
   document: string | undefined;
   pidDocument: PidDocumentWithDom | undefined;
   svg: SVGSVGElement | undefined;
   isDrawing = false;
+
+  private eventListenersByEventType = new Map<EventType, EventListener[]>();
 
   private activeTool: ToolType = 'addSymbol';
   private activeToolSubscriber: ActiveToolCallback | undefined;
@@ -145,6 +153,37 @@ export class CognitePid {
     }
     this.host = host;
   }
+
+  addEventListener = (eventType: EventType, listenerFn: EventListener) => {
+    const eventListeners = this.eventListenersByEventType.get(eventType) ?? [];
+    this.eventListenersByEventType.set(eventType, [
+      ...eventListeners,
+      listenerFn,
+    ]);
+  };
+
+  removeEventListener = (eventType: EventType, listenerFn: EventListener) => {
+    const eventListeners = this.eventListenersByEventType.get(eventType);
+    if (eventListeners === undefined) {
+      return;
+    }
+
+    this.eventListenersByEventType.set(
+      eventType,
+      eventListeners.filter(
+        (existingListenerFn) => existingListenerFn !== listenerFn
+      )
+    );
+  };
+
+  emit = (eventType: EventType) => {
+    const eventListeners = this.eventListenersByEventType.get(eventType);
+    if (eventListeners === undefined) {
+      return;
+    }
+
+    eventListeners.forEach((listener) => listener(this));
+  };
 
   addSvgDocument(svgDocument: File) {
     svgDocument
@@ -459,7 +498,6 @@ export class CognitePid {
     loadSymbolsFromJson(
       graphDocument,
       setSymbols,
-      this.symbols,
       this.pidDocument,
       setSymbolInstances,
       this.symbolInstances,
@@ -514,6 +552,7 @@ export class CognitePid {
     this.host.appendChild(svg);
 
     this.pidDocument = PidDocumentWithDom.fromSVG(svg, allSvgElements);
+    this.emit(EventType.LOAD);
 
     this.refresh();
   }

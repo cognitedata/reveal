@@ -1,31 +1,37 @@
 /* eslint-disable no-param-reassign */
 
-import React, { useEffect, useCallback, useRef, useState } from 'react';
 import {
-  DiagramSymbol,
-  DiagramLineInstance,
-  DiagramConnection,
-  DiagramSymbolInstance,
-  DiagramEquipmentTagInstance,
-  DocumentType,
-  PidDocumentWithDom,
-  DocumentMetadata,
-  PidDocumentMetadata,
-  IsoDocumentMetadata,
-  GraphDocument,
   CognitePid,
-  ToolType,
+  DiagramConnection,
+  DiagramEquipmentTagInstance,
+  DiagramLineInstance,
+  DiagramSymbol,
+  DocumentMetadata,
+  DocumentType,
+  EventType,
+  GraphDocument,
+  IsoDocumentMetadata,
+  PidDocumentMetadata,
+  PidDocumentWithDom,
   SaveSymbolData,
+  ToolType,
   saveGraphAsJson,
 } from '@cognite/pid-tools';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
-import { Viewport } from './components/viewport/Viewport';
+import useSymbolState from './components/side-panel/useSymbolState';
 import { Toolbar } from './components/toolbar/Toolbar';
+import { Viewport } from './components/viewport/Viewport';
+import { ReactPidLayout, ReactPidWrapper } from './elements';
 
 export const ReactPid: React.FC = () => {
+  const [, setHasPidViewerLoadedDocument] = useState(false);
   const pidViewer = useRef<CognitePid>();
+
+  const getPidDocument = (): PidDocumentWithDom | undefined => {
+    return pidViewer.current?.pidDocument;
+  };
 
   const [activeTool, setActiveTool] = useState<ToolType>('selectDocumentType');
   const [fileUrl, setFileUrl] = useState<string>('');
@@ -34,10 +40,8 @@ export const ReactPid: React.FC = () => {
     name: 'Unknown',
     unit: 'Unknown',
   });
-  const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
-  const [symbolInstances, setSymbolInstances] = useState<
-    DiagramSymbolInstance[]
-  >([]);
+  const { symbols, setSymbols, symbolInstances, setSymbolInstances } =
+    useSymbolState(documentMetadata.type, getPidDocument());
   const [lines, setLines] = useState<DiagramLineInstance[]>([]);
   const [connections, setConnections] = useState<DiagramConnection[]>([]);
   const [equipmentTags, setEquipmentTags] = useState<
@@ -79,7 +83,16 @@ export const ReactPid: React.FC = () => {
 
   const initPid = (instance: CognitePid) => {
     pidViewer.current = instance;
+    instance.addEventListener(EventType.LOAD, () =>
+      setHasPidViewerLoadedDocument(true)
+    );
   };
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current?.setSymbolInstances(symbolInstances);
+    }
+  }, [symbolInstances]);
 
   useEffect(() => {
     if (pidViewer.current) {
@@ -195,10 +208,6 @@ export const ReactPid: React.FC = () => {
       pidViewer.current?.setActiveTagId(null);
     }
   }, [activeTool]);
-
-  const getPidDocument = (): PidDocumentWithDom | undefined => {
-    return pidViewer.current?.pidDocument;
-  };
 
   const setActiveToolWrapper = (tool: ToolType) => {
     if (!pidViewer.current) return;
