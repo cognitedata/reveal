@@ -1,5 +1,3 @@
-#pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
@@ -7,16 +5,11 @@
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
-
-#define PI 3.14159265359
-#define PI2 6.28318530718
-#define PI_HALF 1.5707963267949
+#pragma glslify: import('../../math/constants.glsl')
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
-
 uniform mat4 projectionMatrix;
 uniform int renderMode;
 
@@ -24,16 +17,12 @@ uniform int renderMode;
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 
 in vec4 v_centerB;
-
 in vec4 v_W;
 in vec4 v_U;
-
 in float v_angle;
 in float v_arcAngle;
-
 in vec4 v_centerA;
 in vec4 v_V;
-
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
@@ -91,8 +80,8 @@ void main() {
   }
 
   float sqrtd = sqrt(d);
-  float dist1 = (-b - sqrtd)/a;
-  float dist2 = (-b + sqrtd)/a;
+  float dist1 = (-b - sqrtd) / a;
+  float dist2 = (-b + sqrtd) / a;
 
   // Make sure dist1 is the smaller one
   if (dist2 < dist1) {
@@ -107,7 +96,7 @@ void main() {
   if (theta < v_angle) theta += 2.0 * PI;
 
   // Intersection point in camera space
-  vec3 p = rayTarget + dist*rayDirection;
+  vec3 p = rayTarget + dist * rayDirection;
 
   bool isInner = false;
 
