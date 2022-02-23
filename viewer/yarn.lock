@@ -497,7 +497,7 @@ __metadata:
     copy-webpack-plugin: 6.4.1
     core-js: 3.16.0
     cross-var: 1.1.0
-    dat.gui: 0.7.7
+    dat.gui: 0.7.9
     eslint: 7.32.0
     eslint-config-prettier: 6.15.0
     eslint-plugin-header: 3.1.1
@@ -4391,10 +4391,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dat.gui@npm:0.7.7":
-  version: 0.7.7
-  resolution: "dat.gui@npm:0.7.7"
-  checksum: 0686df06c8cdb0ecb8d78653cbbce83081bfc19f833d659f2a64b6d9422fa3d9d35f05f5ea69adc269e723fce3449e4c0ced6f70da8e30e25bcb33c1e7cfd898
+"dat.gui@npm:0.7.9":
+  version: 0.7.9
+  resolution: "dat.gui@npm:0.7.9"
+  checksum: b5b70160657224eacdb8e0a8d76376e6e59adcc654db577531c7bebce854c4f774d1511df6f064e8246a88cf9a3abe489e4d647cf9e53d26a26141a1b5d31e68
   languageName: node
   linkType: hard
 
