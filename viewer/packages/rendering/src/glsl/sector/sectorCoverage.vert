@@ -8,7 +8,6 @@ out mediump vec3 v_color;
 out lowp float v_coverageFactor;
 out lowp vec2 v_seed;
 out lowp float v_visible;
-
 out vec3 v_viewPosition;
 
 void main()
