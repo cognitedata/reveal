@@ -57,13 +57,13 @@ export const DocumentSearchContent: React.FC = () => {
   const renderResults = () => (
     <>
       <SearchTableResultActionContainer>
-        <FlexColumn>
+        <SearchResults>
           <SearchBreadcrumb
             content={documentInformation}
             stats={documentStats}
           />
           <DocumentContentAppliedFilters />
-        </FlexColumn>
+        </SearchResults>
 
         <SearchDisplayOptionPanel />
       </SearchTableResultActionContainer>

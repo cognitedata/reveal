@@ -17,3 +17,8 @@ export const WelboreResultsTableWrapper = styled.div`
     width: 60px;
   }
 `;
+
+export const SearchResultsContainer = styled.div`
+  height: 100%;
+  width: 100%;
+`;

@@ -33,7 +33,7 @@ import { FlexRow } from 'styles/layout';
 import { WellAppliedFilters } from '../../filters/WellAppliedFilters';
 import { WellOptionPanel } from '../WellOptionPanel';
 
-import { WellsContainer } from './elements';
+import { SearchResultsContainer, WellsContainer } from './elements';
 import { useDataForTable } from './useDataForTable';
 import { WellboreResultTable } from './WellBoreResultTable';
 import { WellsBulkActions } from './WellsBulkActions';
@@ -204,10 +204,10 @@ export const WellResultTable: React.FC = () => {
   return (
     <WellsContainer>
       <SearchTableResultActionContainer>
-        <div>
+        <SearchResultsContainer>
           <SearchBreadcrumb stats={wellsStats} />
           <WellAppliedFilters showClearTag showSearchPhraseTag />
-        </div>
+        </SearchResultsContainer>
         <WellOptionPanel />
       </SearchTableResultActionContainer>
       <Table<Well>

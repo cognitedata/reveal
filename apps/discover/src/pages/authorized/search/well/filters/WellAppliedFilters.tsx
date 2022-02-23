@@ -25,7 +25,7 @@ import { sizes } from 'styles/layout';
 import { TagWrapper } from '../../document/header/elements';
 
 const Container = styled.div`
-  margin-top: ${sizes.small};
+  margin-top: ${sizes.normal};
   display: flex;
   flex-wrap: wrap;
 `;
