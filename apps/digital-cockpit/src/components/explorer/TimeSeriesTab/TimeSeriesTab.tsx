@@ -11,6 +11,7 @@ import useTimeSeriesAggregateQuery from 'hooks/useQuery/useTimeSeriesAggregateQu
 
 import TimeSeriesRow from '../TimeSeriesRow';
 import { RowWrapper } from '../TimeSeriesRow/RowWrapper';
+import TimeSeriesSidebar from '../TimeSeriesSidebar';
 
 import { TabWrapper } from './elements';
 
@@ -24,6 +25,7 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
   // The field we pass to the query (so we can debounce)
   const [query, setQuery] = useState('');
   const { renderPagination, getPageData, resetPages } = usePagination();
+  const [selectedTimeSeries, setSelectedTimeSeries] = useState();
   const debouncedSetQuery = useMemo(() => debounce(setQuery, 300), []);
 
   const { data: totalTimeSeriesOnAsset } = useTimeSeriesAggregateQuery({
@@ -74,14 +76,20 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
     return (
       <RowWrapper>
         {getPageData(data, name).map((timeSeries) => (
-          <TimeSeriesRow key={timeSeries.id} timeSeries={timeSeries} />
+          <TimeSeriesRow
+            key={timeSeries.id}
+            timeSeries={timeSeries}
+            onClick={() => {
+              setSelectedTimeSeries(timeSeries);
+            }}
+          />
         ))}
         {renderPagination({ name, total: data.length })}
       </RowWrapper>
     );
   };
   return (
-    <TabWrapper>
+    <TabWrapper style={{ paddingRight: selectedTimeSeries ? 280 : 0 }}>
       <Input
         className="search-input"
         placeholder="Search"
@@ -115,6 +123,11 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
         </h3>
         {renderSection(relatedQuery, 'relatedAssets')}
       </section>
+      {selectedTimeSeries && (
+        <div className="sidebar">
+          <TimeSeriesSidebar timeSeries={selectedTimeSeries} />
+        </div>
+      )}
     </TabWrapper>
   );
 };

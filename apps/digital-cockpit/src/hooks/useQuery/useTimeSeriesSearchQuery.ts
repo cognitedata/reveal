@@ -7,7 +7,7 @@ const useTimeSeriesSearchQuery = (searchQuery: TimeseriesSearchFilter) => {
   const { client } = useContext(CogniteSDKContext);
 
   const query = useQuery<Timeseries[]>(
-    ['datapointsQuery', searchQuery],
+    ['timeSeriesSearch', searchQuery],
     () => client.timeseries.search(searchQuery),
     {
       enabled: Boolean(searchQuery),

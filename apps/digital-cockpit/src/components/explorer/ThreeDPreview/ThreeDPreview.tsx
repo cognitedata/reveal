@@ -36,7 +36,8 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--cogs-text-color);
+    background: var(--cogs-white);
   }
 `;
 
@@ -146,7 +147,7 @@ const ThreeDPreview = ({
       return (
         <div className="overlay">
           <StatusMessage
-            type="Error"
+            type="Missing.3D"
             message="We could not find a 3D model link to this asset"
           />
         </div>

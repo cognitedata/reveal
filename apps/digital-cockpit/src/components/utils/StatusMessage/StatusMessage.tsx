@@ -10,6 +10,7 @@ type StatusMessageProps = {
     | 'Missing.Datapoints'
     | 'Missing.TimeSeries'
     | 'Missing.Events'
+    | 'Missing.3D'
     | 'Error';
   message?: string;
 };
@@ -22,13 +23,15 @@ const StatusMessage = ({ type, message }: StatusMessageProps) => {
         return <Graphic type="Documents" />;
 
       case 'Missing.TimeSeries':
-        return <Graphic type="TimeSeries" />;
+        return <Graphic type="Timeseries" />;
 
       case 'Missing.Events':
         return <Graphic type="Events" />;
 
       case 'Missing.Datapoints':
         return <Icon type="ExclamationMark" />;
+      case 'Missing.3D':
+        return <Icon type="Cube" />;
       case 'Loading':
         return <Icon type="Loader" />;
       case 'Error':

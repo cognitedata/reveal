@@ -4,6 +4,7 @@ export const AssetBreadcrumbsWrapper = styled.div`
   color: var(--cogs-greyscale-grey6);
   font-weight: 600;
   margin-bottom: 15px;
+  padding: 0 24px;
 
   .breadcrumb-item {
     text-transform: uppercase;
@@ -24,9 +25,10 @@ export const AssetTabsWrapper = styled.div`
     height: 100%;
     .rc-tabs-nav-wrap {
       border-bottom: 2px solid var(--cogs-greyscale-grey2);
+      padding: 0 24px;
     }
     .rc-tabs-content {
-      padding: 24px 16px;
+      padding: 24px;
       height: 100%;
       overflow: auto;
     }
@@ -39,4 +41,5 @@ export const AssetTitle = styled.h2`
   font-family: Inter;
   font-size: 18px;
   line-height: 24px;
+  padding: 24px 24px 0;
 `;

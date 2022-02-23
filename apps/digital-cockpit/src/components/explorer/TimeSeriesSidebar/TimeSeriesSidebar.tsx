@@ -80,7 +80,7 @@ const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
     <Container>
       <Header>
         <ResourceIcon type="Timeseries" />
-        <Title level={5} className="timeseries-sidebar--title">
+        <Title level={6} className="timeseries-sidebar--title">
           {timeSeries.name}
         </Title>
       </Header>

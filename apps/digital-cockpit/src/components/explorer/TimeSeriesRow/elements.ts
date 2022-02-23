@@ -10,7 +10,8 @@ export const RowWrapper = styled.div`
     background: var(--cogs-midblue-8) !important;
   }
   .row--image {
-    width: 256px;
+    min-width: 256px;
+    max-width: 256px;
     height: 64px;
     margin-right: 16px;
     display: flex;

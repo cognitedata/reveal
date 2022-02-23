@@ -18,4 +18,13 @@ export const TabWrapper = styled.div`
     margin-bottom: 12px;
     margin-left: 2px;
   }
+
+  .sidebar {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: white;
+    height: calc(100% - 48px);
+    border-left: 1px solid var(--cogs-greyscale-grey2);
+  }
 `;

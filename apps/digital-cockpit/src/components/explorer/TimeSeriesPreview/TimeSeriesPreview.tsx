@@ -4,6 +4,7 @@ import { VictoryAxis, VictoryChart, VictoryLine } from 'victory';
 import Loading from 'components/utils/Loading';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
 import { Colors } from '@cognite/cogs.js';
+import useElementSize from 'hooks/useElementSize';
 
 export type TimeSeriesPreviewProps = {
   timeSeries: Timeseries;
@@ -19,7 +20,7 @@ const TimeSeriesPreview = ({
     isLoading,
     error,
   } = useDatapointsQuery([{ id: timeSeries.id }]);
-
+  const [containerRef, { width, height }] = useElementSize();
   const data = useMemo(
     () =>
       (datapoints?.[0]?.datapoints || []).map((dp) => ({
@@ -28,19 +29,6 @@ const TimeSeriesPreview = ({
       })),
     [datapoints]
   );
-
-  const [width, setWidth] = useState(window.innerWidth);
-  const updateWidth = (e: any) => {
-    setWidth(e.target.innerWidth);
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', updateWidth);
-
-    return () => {
-      window.removeEventListener('resize', updateWidth);
-    };
-  }, []);
 
   if (isLoading) {
     return <Loading />;
@@ -57,18 +45,23 @@ const TimeSeriesPreview = ({
   const lineChart = (
     <VictoryLine
       style={{
-        data: { stroke: '#4A67FB', strokeWidth: 6 },
+        data: { stroke: '#4A67FB', strokeWidth: 1 },
       }}
       standalone={false}
       data={data}
       width={width}
-      height={350}
+      height={height}
     />
   );
 
   const renderSimplePreview = () => {
     return (
-      <svg viewBox={`0 0 ${width} 350`} preserveAspectRatio="none" width="100%">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="none"
+        width="100%"
+        height="100%"
+      >
         {lineChart}
       </svg>
     );
@@ -96,7 +89,11 @@ const TimeSeriesPreview = ({
     );
   };
 
-  return showYAxis ? renderPreviewWithYAxis() : renderSimplePreview();
+  return (
+    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+      {showYAxis ? renderPreviewWithYAxis() : renderSimplePreview()}
+    </div>
+  );
 };
 
 export default TimeSeriesPreview;

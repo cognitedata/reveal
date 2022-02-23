@@ -8,6 +8,7 @@ import { useAssetRetrieveQuery } from 'hooks/useQuery/useAssetQuery';
 import StatusMessage from 'components/utils/StatusMessage';
 import { useContext } from 'react';
 import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import TimeSeriesCard from 'components/cards/TimeSeriesCard';
 
 import MetadataTable from '../MetadataTable';
 
@@ -72,9 +73,7 @@ const AssetDetailsTab = ({ assetId }: AssetDetailsTabProps) => {
     <AssetDetailsTabWrapper>
       <main>
         <ThreeDCard assetId={assetId} />
-        <Card header={{ title: 'Time Series', icon: 'LineChart' }}>
-          Time series
-        </Card>
+        <TimeSeriesCard assetId={assetId} />
         <EventsCard assetId={assetId} />
         <DocumentsCard
           assetId={assetId}

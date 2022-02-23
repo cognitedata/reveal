@@ -16,8 +16,8 @@ export const ExplorerWrapper = styled.div`
   }
   > main {
     flex-grow: 1;
+
     height: 100%;
     background: white;
-    padding: 24px 24px 0;
   }
 `;
