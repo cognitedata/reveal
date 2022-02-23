@@ -31,5 +31,6 @@ export {
   registerCustomNodeCollectionType,
   TypeName,
   NodeCollectionDescriptor,
-  NodeCollectionSerializationContext
+  NodeCollectionSerializationContext,
+  CdfModelNodeCollectionDataProvider
 } from '@reveal/cad-styling';
