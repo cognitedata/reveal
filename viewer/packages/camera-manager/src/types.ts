@@ -100,6 +100,8 @@ export type CameraManagerCallbackData = {
 export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
 /**
- * Type defining camera change event data.
+ * Delegate for camera update events.
+ * @module @cognite/reveal
+ * @see {@link CameraManager.on}.
  */
-export type CameraChangedEvent = (event: { camera: { position: THREE.Vector3; target: THREE.Vector3 } }) => void;
+ export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;

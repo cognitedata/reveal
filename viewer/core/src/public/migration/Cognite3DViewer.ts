@@ -217,8 +217,7 @@ export class Cognite3DViewer {
       new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
     this.camera = this._cameraManager.getCamera();
 
-    this._cameraManager.on('cameraChange', (event: any) => {
-      const { position, target } = event.camera;
+    this._cameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
@@ -1201,16 +1200,9 @@ export class Cognite3DViewer {
   };
 }
 
-function adjustCamera(camera: THREE.Camera, width: number, height: number) {
-  if (camera instanceof THREE.PerspectiveCamera) {
+function adjustCamera(camera: THREE.PerspectiveCamera, width: number, height: number) {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-  } else if (camera instanceof THREE.OrthographicCamera) {
-    camera.left = -width;
-    camera.right = width;
-    camera.top = height;
-    camera.bottom = -height;
-  }
 }
 
 function createCanvasWrapper(): HTMLElement {
