@@ -2,27 +2,29 @@
  * Copyright 2021 Cognite AS
  */
 
-import { TestEnvCad, TestViewer } from '../TestViewer';
 import * as THREE from 'three';
-import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
+import { DefaultNodeAppearance, TreeIndexNodeCollection, Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 
-function HighlightWithDefaultGhostingTestPage() {
-  return (
-    <TestViewer
-      modifyTestEnv={({ model }: TestEnvCad) => {
-        const nodeAppearanceProvider = model.nodeAppearanceProvider;
-        model.defaultNodeAppearance = DefaultNodeAppearance.Ghosted;
-        const nodes = new TreeIndexNodeCollection([...Array(15).keys()]);
-        nodeAppearanceProvider.assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);
+import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
 
-        return {
-          camera: new THREE.PerspectiveCamera(),
-          cameraConfig: {
-            position: new THREE.Vector3(12, -4, -45),
-          },
-      }}}
-    />
+function HighlightWithDefaultGhostingTestPage() {
+
+  function handleModelAdded(model: Cognite3DModel) {
+    model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+
+    const nodes = new TreeIndexNodeCollection([...Array(15).keys()]);
+    model.assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);
+  }
+
+  return (
+    <Cognite3DTestViewer
+      modelUrls={['primitives']}
+      modelAddedCallback={handleModelAdded}
+      initializeCallback={(viewer: Cognite3DViewer) => {
+          viewer.cameraManager.setCameraState({ position: new THREE.Vector3(12, -4, -45) });
+
+        }}/>
   );
 }
 
