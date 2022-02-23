@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 
-import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
@@ -13,6 +12,7 @@ import { NodeCollection, SerializedNodeCollection, EmptyAreaCollection, AreaColl
 import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
 import cloneDeep from 'lodash/cloneDeep';
+import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
 /**
  * Represents a set of nodes associated with an [asset in Cognite Fusion]{@link https://docs.cognite.com/api/v1/#tag/Assets}
@@ -26,14 +26,14 @@ export class AssetNodeCollection extends NodeCollection {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private _areas: AreaCollection = EmptyAreaCollection.instance();
-  private readonly _model: Cognite3DModel;
+  private readonly _modelMetadataProvider: CdfModelNodeCollectionDataProvider;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
   private _filter: { assetId?: number; boundingBox?: THREE.Box3 } | undefined;
 
-  constructor(client: CogniteClient, model: Cognite3DModel) {
+  constructor(client: CogniteClient, modelMetadataProvider: CdfModelNodeCollectionDataProvider) {
     super(AssetNodeCollection.classToken);
     this._client = client;
-    this._model = model;
+    this._modelMetadataProvider = modelMetadataProvider;
     this._fetchResultHelper = undefined;
   }
 
@@ -49,7 +49,7 @@ export class AssetNodeCollection extends NodeCollection {
    * @param filter.boundingBox  When provided, only assets within the provided bounds will be included in the filter.
    */
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
-    const model = this._model;
+    const model = this._modelMetadataProvider;
 
     if (this._fetchResultHelper !== undefined) {
       // Interrupt any ongoing operation to avoid fetching results unnecessary
@@ -94,8 +94,8 @@ export class AssetNodeCollection extends NodeCollection {
 
   private async fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
     const nodeList = await this._client.revisions3D.retrieve3DNodes(
-      this._model.modelId,
-      this._model.revisionId,
+      this._modelMetadataProvider.modelId,
+      this._modelMetadataProvider.revisionId,
       assetMappings.map(mapping => {
         return { id: mapping.nodeId };
       })
