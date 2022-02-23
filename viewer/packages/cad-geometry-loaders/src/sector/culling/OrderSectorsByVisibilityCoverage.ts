@@ -120,7 +120,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   private readonly scene = new THREE.Scene();
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _alreadyLoadedProvider: RenderAlreadyLoadedGeometryProvider;
-  // private debugRenderer?: THREE.WebGLRenderer;
   private _debugImageElement?: HTMLImageElement;
   private readonly renderTarget: THREE.WebGLRenderTarget;
   private readonly containers: Map<string, SectorContainer> = new Map();
