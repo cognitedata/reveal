@@ -81,6 +81,8 @@ export const getWellFilterFetchers = () => {
       tvdLimits,
       kbLimits,
       dogLegSeverityLimts,
+      welltypes: () =>
+        Promise.resolve(['exploration', 'development', 'abandoned', 'shallow']),
     };
   }
 
@@ -98,6 +100,10 @@ export const getWellFilterFetchers = () => {
     operators: () =>
       getWellSDKClientV3()
         .summaries.operators()
+        .then(mapSummaryCountsToStringArray),
+    welltypes: () =>
+      getWellSDKClientV3()
+        .summaries.welltypes()
         .then(mapSummaryCountsToStringArray),
     measurements: () =>
       getWellSDKClientV3()

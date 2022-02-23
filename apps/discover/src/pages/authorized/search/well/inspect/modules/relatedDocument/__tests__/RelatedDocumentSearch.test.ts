@@ -1,3 +1,5 @@
+import 'services/documents/__mocks/setupDocumentsMockSDK';
+
 import { screen, fireEvent } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockSavedSearchRelatedGet } from 'services/savedSearches/__mocks/getMockSavedSearchRelatedGet';

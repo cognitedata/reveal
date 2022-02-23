@@ -247,6 +247,7 @@ describe('Wells sidebar filters', () => {
           unit: {
             angleUnit: 'degree',
             distanceUnit: 'foot',
+            distanceInterval: 30,
           },
         },
       },
@@ -276,6 +277,7 @@ describe('Wells sidebar filters', () => {
           unit: {
             angleUnit: 'degree',
             distanceUnit: 'foot',
+            distanceInterval: 30,
           },
         },
       },
@@ -294,7 +296,7 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       waterDepth: {
         min: 9500,
-        max: 9813,
+        max: 9813, // this value is from demo data
         unit: 'foot',
       },
     });
@@ -347,6 +349,7 @@ describe('Wells sidebar filters', () => {
           unit: {
             angleUnit: 'degree',
             distanceUnit: 'foot',
+            distanceInterval: 30,
           },
         },
         maxInclination: {

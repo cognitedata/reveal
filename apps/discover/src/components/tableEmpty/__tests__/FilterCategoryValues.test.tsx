@@ -2,6 +2,7 @@ import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
 import { useSetWellsFilters } from 'services/savedSearches/hooks/useClearWellsFilters';
 
+import { getMockSidebarState } from '__test-utils/fixtures/sidebar';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
@@ -87,7 +88,13 @@ describe('FilterCategoryValues', () => {
     (useSetWellsFilters as jest.Mock).mockClear();
   });
   const testInit = async (viewProps?: any) =>
-    testRenderer(FilterCategoryValues, getMockedStore(), viewProps);
+    testRenderer(
+      FilterCategoryValues,
+      getMockedStore({
+        sidebar: getMockSidebarState(),
+      }),
+      viewProps
+    );
 
   it('should render category', async () => {
     await testInit();

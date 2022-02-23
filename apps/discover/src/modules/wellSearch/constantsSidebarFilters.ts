@@ -10,6 +10,7 @@ export const MEASUREMENTS = 'Measurements';
 export const DATA_SOURCE = 'Source';
 export const FIELD = 'Field';
 export const WELL_TYPE = 'Well Type';
+export const DATA_AVAILABILITY = 'Data Availability';
 
 export const SPUD_DATE = 'Spud Date';
 export const MAXIMUM_INCLINATION_ANGLE = 'Maximum Inclination Angle (o)';

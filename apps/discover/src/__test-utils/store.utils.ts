@@ -10,7 +10,6 @@
 import configureMockStore from 'redux-mock-store';
 import thunk, { ThunkMiddleware, ThunkDispatch } from 'redux-thunk';
 
-import { getMockSidebarState } from '__test-utils/fixtures/sidebar';
 import { PartialStoreState, StoreState, StoreAction } from 'core/types';
 import { initialState as documentSearchState } from 'modules/documentSearch/reducer';
 import { initialState as favoriteState } from 'modules/favorite/reducer';
@@ -19,6 +18,7 @@ import { initialState as filterDataState } from 'modules/filterData/reducer';
 import { initialState as mapState } from 'modules/map/reducer';
 import { initialState as searchState } from 'modules/search/reducer';
 import { initialState as seismicState } from 'modules/seismicSearch/reducer';
+import { initialState as sidebarState } from 'modules/sidebar/reducer';
 import { initialState as userState } from 'modules/user/reducer';
 import { initialState as wellInspectState } from 'modules/wellInspect/reducer';
 import { initialState as wellSearchState } from 'modules/wellSearch/reducer';
@@ -59,7 +59,7 @@ export const getInitialStore: () => PartialStoreState = () => {
     search: { ...searchState },
     wellSearch: { ...wellSearchState },
     user: { ...userState, user: { id: '1' } },
-    sidebar: getMockSidebarState(),
+    sidebar: { ...sidebarState },
     resultPanel: {
       sortBy: {},
     },

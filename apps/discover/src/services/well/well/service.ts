@@ -1,19 +1,21 @@
 import get from 'lodash/get';
 
+import { WellFilter } from '@cognite/sdk-wells-v3';
+
 import { WellSearchResult } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
-import {
-  mapV3ToV2WellItems,
-  mapWellFilterToWellFilterRequest,
-} from 'modules/wellSearch/sdk/utils';
+import { mapV3ToV2WellItems } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient as getWellSDKClientV3 } from 'modules/wellSearch/sdk/v3';
-import { CommonWellFilter } from 'modules/wellSearch/types';
 import { normalizeWells } from 'modules/wellSearch/utils/wells';
 
 export const getListWells = async (
-  wellFilter: CommonWellFilter
+  wellFilter: WellFilter,
+  query: string
 ): Promise<WellSearchResult> => {
   const fetching = getWellSDKClientV3().wells.list({
-    ...mapWellFilterToWellFilterRequest(wellFilter),
+    filter: wellFilter,
+    search: { query },
+    outputCrs: undefined,
+    limit: undefined,
     aggregates: ['count'],
   });
 

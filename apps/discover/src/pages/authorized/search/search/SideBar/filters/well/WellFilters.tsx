@@ -12,7 +12,10 @@ import Skeleton from 'components/skeleton';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { Modules } from 'modules/sidebar/types';
-import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';
+import {
+  FIELD_BLOCK_OPERATOR,
+  DATA_AVAILABILITY,
+} from 'modules/wellSearch/constantsSidebarFilters';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 import { useFilterConfigByCategory } from 'modules/wellSearch/hooks/useFilterConfigByCategory';
 import { useWellFilterOptions } from 'modules/wellSearch/hooks/useWellFilterOptionsQuery';
@@ -30,6 +33,7 @@ import { Operator } from './categories/Operator';
 import { RegionFieldBlock } from './categories/RegionFieldBlock';
 import { CommonFilter } from './CommonFilter';
 import { TITLE, CATEGORY } from './constants';
+import { DataAvailability } from './DataAvailability';
 import { Title } from './Title';
 
 const loader = <Skeleton.List lines={6} borders />;
@@ -132,8 +136,12 @@ export const WellsFilter = () => {
     return (
       <>
         {filterConfigsByCategory.map((category, index) => {
-          const hasCustomRegion =
+          const isRegionFieldBlock =
             enabledWellSDKV3 && category.title === FIELD_BLOCK_OPERATOR;
+          const isDataAvailbility =
+            enabledWellSDKV3 && category.title === DATA_AVAILABILITY;
+
+          const hasCustom = isDataAvailbility || isRegionFieldBlock;
 
           return (
             <FilterCollapse.Panel
@@ -143,13 +151,21 @@ export const WellsFilter = () => {
               key={category.title}
               headerTestId={category.title}
             >
+              {isDataAvailbility && (
+                <DataAvailability
+                  key={`filter-${category.title}`}
+                  onValueChange={onValueChange}
+                  selectedOptions={selectedOptions}
+                />
+              )}
+
               {/* 
               something pretty strange is going on with FilterCollapse.Panel
               had some trouble getting this to render properly when using it in a different place...
               using this index overwride for now, but if you can work it out, it would be better to just 
               render RegionFieldBlock in it's owner FilterCollapse above this
                */}
-              {hasCustomRegion && (
+              {isRegionFieldBlock && (
                 <>
                   <RegionFieldBlock
                     key="filter-category-RegionFieldBlock"
@@ -168,7 +184,7 @@ export const WellsFilter = () => {
               )}
 
               {/* Filter Elements */}
-              {!hasCustomRegion && (
+              {!hasCustom && (
                 <WellFilters
                   filterConfigs={category.filterConfigs}
                   index={index}

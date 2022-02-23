@@ -8,8 +8,6 @@ import {
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { CLEAR_ALL_TEXT } from 'components/tableEmpty/constants';
-import { BlueFilterTag } from 'components/tag/BlueFilterTag';
-import { ClearTag } from 'components/tag/ClearTag';
 import { PartialStoreState } from 'core/types';
 
 import {
@@ -20,17 +18,14 @@ import {
 describe('DocumentsBulkActions show all filters', () => {
   const DocumentAppliedFiltersComponent = () => {
     return (
-      <DocumentAppliedFilters
-        filterTagComponent={BlueFilterTag}
-        clearTagComponent={ClearTag}
-        showClearTag
-        showSearchPhraseTag
-        showGeoFilters
-      />
+      <DocumentAppliedFilters showClearTag showSearchPhraseTag showGeoFilters />
     );
   };
   const defaultTestInit = async (extraState: PartialStoreState = {}) => {
-    const store = getMockedStore(extraState);
+    const store = getMockedStore({
+      sidebar: getMockSidebarState(),
+      ...extraState,
+    });
     return testRenderer(DocumentAppliedFiltersComponent, store);
   };
 
@@ -71,15 +66,13 @@ describe('DocumentsBulkActions show all filters', () => {
 
 describe('DocumentsBulkActions do not show clear tag and search phrase', () => {
   const DocumentAppliedFiltersComponent = () => {
-    return (
-      <DocumentAppliedFilters
-        filterTagComponent={BlueFilterTag}
-        clearTagComponent={ClearTag}
-      />
-    );
+    return <DocumentAppliedFilters />;
   };
   const defaultTestInit = async (extraState: PartialStoreState = {}) => {
-    const store = getMockedStore(extraState);
+    const store = getMockedStore({
+      sidebar: getMockSidebarState(),
+      ...extraState,
+    });
     return testRenderer(DocumentAppliedFiltersComponent, store);
   };
 
@@ -96,8 +89,6 @@ describe('DocumentsBulkActions show clear all for filters only', () => {
   const DocumentAppliedFiltersComponent = () => {
     return (
       <DocumentAppliedFilters
-        filterTagComponent={BlueFilterTag}
-        clearTagComponent={ClearTag}
         showClearTag
         showClearTagForScenarios={ClearAllScenarios.FILTERS}
       />

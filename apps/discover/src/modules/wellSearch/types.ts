@@ -274,7 +274,7 @@ export type FiltersOnlySupportSdkV3 = Pick<
 >;
 
 /**
- * Type compbiled sdk v2 and picked fitlers from sdk v3
+ * Type compiled sdk v2 and picked fitlers from sdk v3
  */
 export type CommonWellFilter = WellFilter & FiltersOnlySupportSdkV3;
 

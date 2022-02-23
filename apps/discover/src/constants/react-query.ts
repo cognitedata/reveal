@@ -2,8 +2,6 @@
 // is that it will make it easier to keep the
 // format in sync
 
-import { CommonWellFilter } from 'modules/wellSearch/types';
-
 import { FeedbackType } from '../services/feedback/types';
 import { SAVED_SEARCHES_CURRENT_KEY } from '../services/savedSearches/constants';
 
@@ -74,7 +72,7 @@ export const WELLS_DISCOVER_QUERY_KEY = {
 
 const WELLS = 'wells';
 export const WELL_QUERY_KEY = {
-  SEARCH: (filter: CommonWellFilter) => [WELLS, 'search', filter],
+  SEARCH: (filter: unknown) => [WELLS, 'search', filter],
   WELLBORES: [WELLS, 'wellbores'],
   FAVORITE: [WELLS, 'favoriteWells'],
   FILTER_OPTIONS: [WELLS, 'filterOptions'],

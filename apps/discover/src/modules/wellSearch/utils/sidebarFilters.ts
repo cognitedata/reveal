@@ -31,6 +31,7 @@ import {
   NDS_SEVERITY,
   NDS_PROBABILITY,
   NPT_DURATION,
+  DATA_AVAILABILITY,
 } from '../constantsSidebarFilters';
 import {
   getNDSRiskTypes,
@@ -130,14 +131,19 @@ export const filterConfigs = (
     isTextCapitalized: false,
   },
   {
+    id: FilterIDs.DATA_AVAILABILITY,
+    name: DATA_AVAILABILITY,
+    key: 'data_availabilty',
+    category: DATA_AVAILABILITY,
+    type: FilterTypes.MULTISELECT,
+  },
+  {
     id: FilterIDs.WELL_TYPE,
     name: WELL_TYPE,
     key: 'well_characteristics_filter.well_type',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.MULTISELECT,
-    fetcher: () =>
-      // Later these will be taken from the sdk
-      Promise.resolve(['exploration', 'development', 'abandoned', 'shallow']),
+    fetcher: () => wellFilterFetchers?.welltypes(),
     filterParameters: (values): WellFilter => ({
       wellTypes: values as string[],
     }),
@@ -292,6 +298,7 @@ export const filterConfigs = (
     type: FilterTypes.MULTISELECT,
     isTextCapitalized: false,
     fetcher: wellFilterFetchers?.measurements,
+    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       hasMeasurements: {
         containsAny: (values as MeasurementType[]).map((measurementType) => ({
@@ -307,6 +314,7 @@ export const filterConfigs = (
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
     fetcher: getNDSRiskTypes,
+    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       nds: {
         riskTypes: values as string[],
@@ -320,6 +328,7 @@ export const filterConfigs = (
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
     fetcher: () => Promise.resolve([0, 1, 2, 3, 4]),
+    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       nds: {
         severities: values as number[],
@@ -333,6 +342,7 @@ export const filterConfigs = (
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
     fetcher: () => Promise.resolve([0, 1, 2, 3, 4, 5]),
+    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       nds: {
         probabilities: values as number[],
@@ -346,6 +356,7 @@ export const filterConfigs = (
     category: NPT_EVENTS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: getNPTDurationLimits,
+    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       npt: {
         duration: {
@@ -362,6 +373,7 @@ export const filterConfigs = (
     category: NPT_EVENTS,
     type: FilterTypes.CHECKBOXES,
     fetcher: getNPTCodes,
+    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       npt: {
         nptCodes: {
@@ -377,6 +389,7 @@ export const filterConfigs = (
     category: NPT_EVENTS,
     type: FilterTypes.CHECKBOXES,
     fetcher: getNPTDetailCodes,
+    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       npt: {
         nptCodeDetails: {

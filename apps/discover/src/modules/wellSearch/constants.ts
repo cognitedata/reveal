@@ -243,6 +243,7 @@ export enum FilterIDs {
   REGION = 20,
   MD = 30,
   DOG_LEG_SEVERITY = 31,
+  DATA_AVAILABILITY = 40,
 }
 
 export const PETREL_LOG_TYPE = 'logType';

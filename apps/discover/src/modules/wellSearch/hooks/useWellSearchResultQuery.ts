@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
+import { useWellFilters } from 'services/well/well/filters/useWellFilters';
 import { getListWells } from 'services/well/well/service';
 
 import { Metrics } from '@cognite/metrics';
@@ -8,6 +9,7 @@ import { LOG_WELL_SEARCH, LOG_WELL_SEARCH_NAMESPACE } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepEffect } from 'hooks/useDeep';
 import { TimeLogStages } from 'hooks/useTimeLog';
+import { useSearchPhrase } from 'modules/sidebar/selectors';
 
 import {
   getAllByFilters,
@@ -52,19 +54,24 @@ export type WellSearchResult = {
 export const useWellSearchResultQuery =
   (): UseQueryResult<WellSearchResult> => {
     const wellFilter = useCommonWellFilter();
+    const wellFilterV3 = useWellFilters();
     const { data: wellConfig } = useWellConfig();
     const enabledWellSdkV3 = useEnabledWellSdkV3();
     const addToWellsCache = useAddToWellsCache();
+    const searchPhrase = useSearchPhrase();
 
     return useQuery(
-      WELL_QUERY_KEY.SEARCH(wellFilter),
+      WELL_QUERY_KEY.SEARCH([
+        enabledWellSdkV3 ? wellFilterV3 : wellFilter,
+        searchPhrase,
+      ]),
       () => {
         const timer = wellSearchMetric.start(LOG_WELL_SEARCH_NAMESPACE, {
           stage: TimeLogStages.Network,
         });
 
         if (enabledWellSdkV3) {
-          return getListWells(wellFilter)
+          return getListWells(wellFilterV3, searchPhrase)
             .then(({ wells, ...rest }) => {
               addToWellsCache(wells);
               return { wells, ...rest };

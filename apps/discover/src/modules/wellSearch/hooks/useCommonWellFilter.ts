@@ -24,6 +24,7 @@ export const useCommonWellFilter = () => {
       (prev, current) => {
         const id = Number(current);
         const { filterParameters } = filterConfigsById[id];
+
         return filterParameters && wellFilters[id].length && userPreferredUnit
           ? merge(prev, {
               ...filterParameters(
