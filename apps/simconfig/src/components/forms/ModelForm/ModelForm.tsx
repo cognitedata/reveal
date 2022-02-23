@@ -251,6 +251,14 @@ export function ModelForm({
                 onFileSelected={(file?: File) => {
                   setFieldValue('file', file);
                   setFieldValue('metadata.fileName', file?.name);
+                  setFieldValue(
+                    'metadata.simulator',
+                    FileExtensionToSimulator[
+                      file?.name
+                        ? getFileExtensionFromFileName(file.name)
+                        : 'UNKNOWN'
+                    ]
+                  );
                   validateField('metadata.fileName');
                 }}
               />

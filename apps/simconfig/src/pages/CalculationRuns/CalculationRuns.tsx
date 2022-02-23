@@ -21,6 +21,7 @@ import type {
 
 import { GraphicContainer } from 'components/shared/elements';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { excludeUnknownSimulator } from 'utils/simulatorUtils';
 
 import { CalculationRunList } from './CalculationRunList';
 import { generateOptions } from './options';
@@ -36,7 +37,6 @@ export function CalculationRuns() {
     useState<boolean>(false);
   const [cursors, setCursors] = useState(['']);
   const project = useSelector(selectProject);
-  const simulator = 'PROSPER';
   const nextCursor = cursors[cursors.length - 1];
   const searchFilters: Partial<GetCalculationRunListApiArg> =
     useSearch<AppLocationGenerics>();
@@ -54,7 +54,7 @@ export function CalculationRuns() {
     {
       ...initialDateRange,
       project,
-      simulator,
+      simulator: searchFilters.simulator ?? 'PROSPER',
       ...(nextCursor !== '' && { nextCursor }),
       ...searchFilters,
     },
@@ -156,6 +156,19 @@ export function CalculationRuns() {
         </div>
 
         <Filter
+          currentValue={searchFilters.simulator ?? 'PROSPER'}
+          filterKey="simulator"
+          isClearable={false}
+          label="Simulator"
+          options={generateOptions(
+            'simulator',
+            'Simulator',
+            excludeUnknownSimulator(definitions?.type.simulator)
+          )}
+          setSearchParams={setSearchParams}
+        />
+
+        <Filter
           currentValue={searchFilters.modelName}
           filterKey="modelName"
           label="Model Name"
@@ -170,6 +183,7 @@ export function CalculationRuns() {
           ]}
           setSearchParams={setSearchParams}
         />
+
         <Filter
           currentValue={searchFilters.calculationType}
           filterKey="calculationType"
@@ -266,6 +280,7 @@ interface FilterProps {
   label: string;
   options: OptionType<OptionGroupValues>[];
   currentValue?: string;
+  isClearable?: boolean | false;
   setSearchParams: (
     params: Record<string, number | string | undefined>
   ) => void;
@@ -277,18 +292,19 @@ function Filter({
   options,
   currentValue,
   setSearchParams,
+  isClearable,
 }: FilterProps) {
   return (
     <div className="cogs-input-container">
       <label className="title">{label}</label>
       <AutoComplete
+        isClearable={isClearable}
         options={options}
         title={label}
         value={options[0].options?.find(
           ({ value }) =>
             value?.key === filterKey && value.value === currentValue
         )}
-        isClearable
         onChange={(option: OptionType<OptionGroupValues> | null) => {
           setSearchParams({ [filterKey]: option?.value?.value });
         }}
