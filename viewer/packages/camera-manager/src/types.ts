@@ -104,4 +104,4 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
  * @module @cognite/reveal
  * @see {@link CameraManager.on}.
  */
- export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;

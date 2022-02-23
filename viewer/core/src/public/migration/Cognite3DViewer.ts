@@ -1201,8 +1201,8 @@ export class Cognite3DViewer {
 }
 
 function adjustCamera(camera: THREE.PerspectiveCamera, width: number, height: number) {
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
 }
 
 function createCanvasWrapper(): HTMLElement {
