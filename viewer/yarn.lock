@@ -531,7 +531,7 @@ __metadata:
     rxjs: 7.3.0
     shx: 0.3.3
     skmeans: 0.11.3
-    three: 0.137.0
+    three: 0.137.5
     ts-jest: 26.5.6
     ts-loader: 8.0.7
     tsc-alias: 1.3.10
@@ -12166,10 +12166,10 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"three@npm:0.137.0":
-  version: 0.137.0
-  resolution: "three@npm:0.137.0"
-  checksum: c3d005a73818a8023d014af4803c12e34ab5b095f50ac58c994173d6f433a480ad4547543b106f95ee240c827272b1de2eca48dcafd2b65cdcd0a0f3e5bf128b
+"three@npm:0.137.5":
+  version: 0.137.5
+  resolution: "three@npm:0.137.5"
+  checksum: e9fa478f54b50dae2ea745fd97fdec46cea9770292053a80c937ce9549670f4a3dfe238943bd42e535e2d57a10dacb531a51ae12aef42347303270f7f66da8c8
   languageName: node
   linkType: hard
 
