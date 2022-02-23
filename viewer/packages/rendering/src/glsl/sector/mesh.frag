@@ -9,14 +9,12 @@
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
+uniform int renderMode;
 
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_viewPosition;
-
-uniform int renderMode;
 
 void main()
 {

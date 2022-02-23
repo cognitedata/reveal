@@ -2,6 +2,10 @@
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
 
 in float a_treeIndex;
 in vec3 a_centerA;
@@ -17,28 +21,17 @@ in float a_arcAngle;
 out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
-
 // U, V, axis represent the 3x3 cone basis.
 // They are vec4 to pack extra data into the w-component
 // since Safari on iOS only supports 8 out vec4 registers.
 out vec4 v_U;
 out vec4 v_W;
-
 out vec4 v_centerA;
 out vec4 v_V;
-
 out float v_angle;
 out float v_arcAngle;
-
 out vec3 v_color;
 out vec3 v_normal;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
 
 void main() {
     mat4 treeIndexWorldTransform = determineMatrixOverride(
@@ -76,7 +69,7 @@ void main() {
     // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
     newPosition.x *= 1.0 - (maxRadius * (position.x + 1.0) * 0.0025 / halfHeight);
 
-    vec3 surfacePoint = center + mat3(halfHeight*lDir, leftUpScale*left, leftUpScale*up) * newPosition;
+    vec3 surfacePoint = center + mat3(halfHeight * lDir, leftUpScale * left, leftUpScale * up) * newPosition;
     vec3 transformed = surfacePoint;
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
 
