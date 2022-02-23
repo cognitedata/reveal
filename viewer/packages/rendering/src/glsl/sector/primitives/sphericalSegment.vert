@@ -1,5 +1,4 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
@@ -24,7 +23,6 @@ out float height;
 out vec4 U;
 out vec4 V;
 out vec4 sphereNormal;
-
 out vec3 v_color;
 out vec3 v_normal;
 
@@ -33,11 +31,11 @@ void main() {
     v_color = a_color;
 
     vec3 lDir;
-    float distanceToCenterOfSegment = a_verticalRadius - a_height*0.5;
-    vec3 centerOfSegment = a_center + a_normal*distanceToCenterOfSegment;
+    float distanceToCenterOfSegment = a_verticalRadius - a_height * 0.5;
+    vec3 centerOfSegment = a_center + a_normal * distanceToCenterOfSegment;
 
 #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
-      vec3 objectToCameraModelSpace = inverseNormalMatrix*vec3(0.0, 0.0, 1.0);
+      vec3 objectToCameraModelSpace = inverseNormalMatrix * vec3(0.0, 0.0, 1.0);
 #else
       vec3 rayOrigin = (inverseModelMatrix * vec4(cameraPosition, 1.0)).xyz;
       vec3 objectToCameraModelSpace = rayOrigin - centerOfSegment;
@@ -63,7 +61,7 @@ void main() {
     // maxRadiusOfSegment is the radius of the circle (projected ellipsoid) when ellipsoid segment is seen from above
     float maxRadiusOfSegment = a_horizontalRadius * sqrt(1.0 - ratio * ratio);
 
-    vec3 displacement = vec3(newPosition.x*a_height*0.5, maxRadiusOfSegment*newPosition.y, maxRadiusOfSegment*newPosition.z);
+    vec3 displacement = vec3(newPosition.x*a_height * 0.5, maxRadiusOfSegment * newPosition.y, maxRadiusOfSegment * newPosition.z);
     vec3 surfacePoint = centerOfSegment + mat3(lDir, left, up) * displacement;
     vec3 transformed = surfacePoint;
 
