@@ -12,6 +12,7 @@ import useFileAggregateQuery from 'hooks/useQuery/useFileAggregateQuery';
 import DocumentGrouper from '../DocumentGrouper';
 import DocumentRow from '../DocumentRow';
 import { DocumentRowWrapper } from '../DocumentRow/DocumentRowWrapper';
+import DocumentSidebar from '../DocumentSidebar';
 
 import { DocumentTabWrapper } from './elements';
 
@@ -28,6 +29,9 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
   // The field we pass to the query (so we can debounce)
   const [query, setQuery] = useState('');
   const debouncedSetQuery = useMemo(() => debounce(setQuery, 300), []);
+  const [selectedDocument, setSelectedDocument] = useState<
+    FileInfo | undefined
+  >();
   const { renderPagination, getPageData, resetPages } = usePagination();
 
   const { data: totalFilesOnAsset } = useFileAggregateQuery({
@@ -81,7 +85,13 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
             <DocumentRowWrapper>
               {getPageData(documents, `${paginationName}-${type}`).map(
                 (document, i) => (
-                  <DocumentRow key={document.id} document={document} />
+                  <DocumentRow
+                    key={document.id}
+                    document={document}
+                    onClick={() => {
+                      setSelectedDocument(document);
+                    }}
+                  />
                 )
               )}
               {renderPagination({
@@ -97,7 +107,13 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
     return (
       <DocumentRowWrapper>
         {getPageData(data, paginationName).map((document) => (
-          <DocumentRow key={document.id} document={document} />
+          <DocumentRow
+            key={document.id}
+            document={document}
+            onClick={() => {
+              setSelectedDocument(document);
+            }}
+          />
         ))}
         {renderPagination({
           name: paginationName,
@@ -106,8 +122,9 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
       </DocumentRowWrapper>
     );
   };
+
   return (
-    <DocumentTabWrapper>
+    <DocumentTabWrapper style={{ paddingRight: selectedDocument ? 280 : 0 }}>
       <Input
         className="search-input"
         placeholder="Search"
@@ -140,6 +157,11 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
         </h3>
         {renderSection(relatedQuery, 'relatedAssets')}
       </section>
+      {selectedDocument && (
+        <div className="document-tab--sidebar">
+          <DocumentSidebar document={selectedDocument} />
+        </div>
+      )}
     </DocumentTabWrapper>
   );
 };
