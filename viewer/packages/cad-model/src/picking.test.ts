@@ -5,9 +5,9 @@
 import * as THREE from 'three';
 
 import { CadNode } from '@reveal/rendering';
+import { IntersectInput } from '@reveal/model-base';
 
 import { intersectCadNodes } from './picking';
-import { IntersectInput } from '../../model-base/src/types';
 import { createGlContext } from '../../../test-utilities';
 
 describe('intersectCadNodes', () => {

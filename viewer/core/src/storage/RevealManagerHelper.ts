@@ -4,7 +4,6 @@
 import * as THREE from 'three';
 
 import { AddModelOptions } from '../public/migration/types';
-import { RevealOptions } from '../public/types';
 import { createRevealManager } from '../public/createRevealManager';
 
 import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, RevealManager } from '../internals';
@@ -13,6 +12,7 @@ import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api'
 import { DataSource } from '@reveal/data-source';
 import { assertNever } from '@reveal/utilities';
 import { CadNode } from '@reveal/rendering';
+import { RevealOptions } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
 

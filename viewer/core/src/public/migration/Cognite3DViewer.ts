@@ -13,9 +13,9 @@ import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMo
 
 import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
+import { intersectCadNodes, CadModelSectorLoadStatistics } from '@reveal/cad-model';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
-import { intersectCadNodes } from '../../../../packages/cad-model/src/picking';
 
 import {
   AddModelOptions,
@@ -37,16 +37,15 @@ import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 import { Spinner } from '../../utilities/Spinner';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 
-import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection, RevealOptions } from '../..';
+import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection } from '../..';
 import { PropType } from '../../utilities/reflection';
-import { CadModelSectorLoadStatistics } from '../../../../packages/cad-model/src/CadModelSectorLoadStatistics';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
-import { IntersectInput, SupportedModelTypes } from '@reveal/model-base';
+import { IntersectInput, SupportedModelTypes, RevealOptions } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';

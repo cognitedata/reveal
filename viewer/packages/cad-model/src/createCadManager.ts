@@ -6,11 +6,8 @@ import { CadManager } from './CadManager';
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadModelUpdateHandler, createV8SectorCuller } from '@reveal/cad-geometry-loaders';
-
 import { CadMaterialManager, EffectRenderManager } from '@reveal/rendering';
-
-import { RevealOptions } from '../../../core/src/public/types';
-
+import { RevealOptions } from '@reveal/model-base';
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 export function createCadManager(

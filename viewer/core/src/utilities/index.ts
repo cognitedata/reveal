@@ -3,7 +3,7 @@
  */
 
 export { worldToViewportCoordinates, worldToNormalizedViewportCoordinates } from './worldToViewport';
-export { BoundingBoxClipper } from './BoundingBoxClipper';
+export { BoundingBoxClipper } from '../../../packages/cad-model/src/BoundingBoxClipper';
 
 export { assertNever, EventTrigger } from '@reveal/utilities';
 

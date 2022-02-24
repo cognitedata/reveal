@@ -3,10 +3,10 @@
  */
 import * as THREE from 'three';
 
-import { createCadManager } from '../../../packages/cad-model/src/createCadManager';
+import { createCadManager } from '@reveal/cad-model';
+import { RevealOptions } from '@reveal/model-base';
 import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
-import { RevealOptions } from './types';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
