@@ -6,7 +6,7 @@ import {
   ActiveKeysType,
 } from 'modules/sidebar/types';
 import {
-  FIELD_BLOCK_OPERATOR,
+  REGION_FIELD_BLOCK,
   WELL_CHARACTERISTICS,
 } from 'modules/wellSearch/constantsSidebarFilters';
 import { FilterValues, WellFilterMap } from 'modules/wellSearch/types';
@@ -15,7 +15,7 @@ import { Modules } from '../../modules/sidebar/types';
 
 export const DEFAULT_SEARCH_PHRASE = 'Well A';
 export const DEFAULT_OPEN_CATEGORY = Modules.WELLS;
-export const DEFAULT_CATEGORIES = [FIELD_BLOCK_OPERATOR, WELL_CHARACTERISTICS];
+export const DEFAULT_CATEGORIES = [REGION_FIELD_BLOCK, WELL_CHARACTERISTICS];
 
 export const getMockState: (extras?: Partial<SidebarState>) => SidebarState = (
   extras = {}
@@ -86,7 +86,7 @@ export const getMockActiveKeys: (
   return {
     documents: ['0', '1'],
     seismic: [],
-    wells: [FIELD_BLOCK_OPERATOR, 'Well Characteristics'],
+    wells: [REGION_FIELD_BLOCK, 'Well Characteristics'],
     landing: [],
     ...extras,
   };

@@ -11,7 +11,7 @@ import { FilterIDs } from '../constants';
 import {
   NDS_RISKS,
   NPT_EVENTS,
-  FIELD_BLOCK_OPERATOR,
+  REGION_FIELD_BLOCK,
   WELL_CHARACTERISTICS,
   MEASUREMENTS,
   DATA_SOURCE,
@@ -32,6 +32,7 @@ import {
   NDS_PROBABILITY,
   NPT_DURATION,
   DATA_AVAILABILITY,
+  OPERATOR,
 } from '../constantsSidebarFilters';
 import {
   getNDSRiskTypes,
@@ -87,7 +88,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.REGION,
-    category: FIELD_BLOCK_OPERATOR,
+    category: REGION_FIELD_BLOCK,
     key: 'field_block_operator_filter.region',
     name: REGION,
     type: FilterTypes.MULTISELECT,
@@ -100,7 +101,7 @@ export const filterConfigs = (
     id: FilterIDs.FIELD,
     name: FIELD,
     key: 'field_block_operator_filter.field',
-    category: FIELD_BLOCK_OPERATOR,
+    category: REGION_FIELD_BLOCK,
     type: FilterTypes.CHECKBOXES,
     fetcher: wellFilterFetchers?.fields,
     filterParameters: (values): WellFilter => ({
@@ -109,7 +110,7 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.BLOCK,
-    category: FIELD_BLOCK_OPERATOR,
+    category: REGION_FIELD_BLOCK,
     key: 'field_block_operator_filter.block',
     name: 'Block',
     type: FilterTypes.CHECKBOXES,
@@ -120,10 +121,10 @@ export const filterConfigs = (
   },
   {
     id: FilterIDs.OPERATOR,
-    category: FIELD_BLOCK_OPERATOR,
+    category: OPERATOR,
     key: 'field_block_operator_filter.operator',
     name: 'Operator',
-    type: FilterTypes.CHECKBOXES,
+    type: FilterTypes.MULTISELECT,
     fetcher: wellFilterFetchers?.operators,
     filterParameters: (values): WellFilter => ({
       operators: values as string[],

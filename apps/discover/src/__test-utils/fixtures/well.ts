@@ -14,7 +14,7 @@ import {
 } from 'modules/wellSearch/types';
 import { toWellSequence } from 'modules/wellSearch/utils';
 
-import { FIELD_BLOCK_OPERATOR } from '../../../src/modules/wellSearch/constantsSidebarFilters';
+import { REGION_FIELD_BLOCK } from '../../../src/modules/wellSearch/constantsSidebarFilters';
 import { StoreState } from '../../core';
 
 import { createdAndLastUpdatedTime } from './log';
@@ -355,18 +355,18 @@ export const getMockFilterConfig = (extras?: any): FilterConfig => ({
 
 export const getMockFilterConfigByCategory = (): FilterCategoricalData[] => [
   {
-    title: FIELD_BLOCK_OPERATOR,
+    title: REGION_FIELD_BLOCK,
     filterConfigs: [
       {
         id: 2,
         name: 'Field',
         key: 'field_block_operator_filter.field',
-        category: FIELD_BLOCK_OPERATOR,
+        category: REGION_FIELD_BLOCK,
         type: 0,
       },
       {
         id: 4,
-        category: FIELD_BLOCK_OPERATOR,
+        category: REGION_FIELD_BLOCK,
         key: 'field_block_operator_filter.operator',
         name: 'Operator',
         type: 0,

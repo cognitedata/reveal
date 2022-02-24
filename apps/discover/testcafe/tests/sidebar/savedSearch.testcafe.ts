@@ -1,6 +1,6 @@
 import { t } from 'testcafe';
 
-import { FIELD_BLOCK_OPERATOR } from '../../../src/modules/wellSearch/constantsSidebarFilters';
+import { REGION_FIELD_BLOCK } from '../../../src/modules/wellSearch/constantsSidebarFilters';
 import App from '../../__pages__/App';
 import { deleteSavedSearches } from '../../fixtures/savedSearches';
 import {
@@ -101,7 +101,7 @@ startTest('Update saved search', async () => {
 
 startTest('Add wells to saved search', async () => {
   await App.sidebar.clickFilterCategory('Wells');
-  await App.sidebar.clickFilterSubCategory(FIELD_BLOCK_OPERATOR);
+  await App.sidebar.clickFilterSubCategory(REGION_FIELD_BLOCK);
   await App.sidebar.clickFilterOption('SLEIPNER');
 
   await App.savedSearchesPage.clickSavedSearchesButton();
@@ -131,7 +131,7 @@ startTest('Load wells saved search to Wells tab', async () => {
   await App.navigateToResultsPageAndClearAllFilters('Wells');
 
   await App.sidebar.clickFilterCategory('Wells');
-  await App.sidebar.clickFilterSubCategory(FIELD_BLOCK_OPERATOR);
+  await App.sidebar.clickFilterSubCategory(REGION_FIELD_BLOCK);
   await App.sidebar.clickFilterOption('SLEIPNER');
   await App.savedSearchesPage.saveCurrentSearchToSavedSearch(
     savedSearchNameWellsOnly

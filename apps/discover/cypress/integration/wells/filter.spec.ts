@@ -1,5 +1,5 @@
 import {
-  FIELD_BLOCK_OPERATOR,
+  REGION_FIELD_BLOCK,
   MEASUREMENTS,
   NDS_RISKS,
   WELL_CHARACTERISTICS,
@@ -74,7 +74,7 @@ describe('Wells sidebar filters', () => {
     }).as('searchWells');
   });
 
-  it(`Should display wells sidebar filters: ${FIELD_BLOCK_OPERATOR}`, () => {
+  it(`Should display wells sidebar filters: ${REGION_FIELD_BLOCK}`, () => {
     cy.clickOnFilterCategory(DATA_SOURCE);
 
     cy.log('Checking source values');
@@ -90,13 +90,16 @@ describe('Wells sidebar filters', () => {
     cy.log('Minimize source section');
     cy.clickOnFilterCategory(DATA_SOURCE);
 
-    cy.log('Open FIELD_BLOCK_OPERATOR');
-    cy.clickOnFilterCategory(FIELD_BLOCK_OPERATOR);
+    cy.log('Open REGION_FIELD_BLOCK');
+    cy.clickOnFilterCategory(REGION_FIELD_BLOCK);
 
     cy.validateSelect(REGION, ['Discover', 'Jovian System'], 'Jovian System');
     // these are temp changed, so disabling till the new design is in place:
     // cy.validateSelect(FIELD, ['Carme', 'Erinome'], 'Erinome');
     // cy.validateSelect(BLOCK, ['', ''], '');
+    cy.log('Open OPERATOR');
+    cy.clickOnFilterCategory(OPERATOR);
+
     cy.validateSelect(OPERATOR, ['Pretty Polly ASA']);
 
     // cleanup:

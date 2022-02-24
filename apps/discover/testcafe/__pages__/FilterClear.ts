@@ -8,12 +8,12 @@ import {
 } from '../../src/components/tableEmpty/constants';
 import {
   DATA_SOURCE,
-  FIELD_BLOCK_OPERATOR,
+  REGION_FIELD_BLOCK,
 } from '../../src/modules/wellSearch/constantsSidebarFilters';
 import { progress } from '../utils';
 
 class FilterClearPage {
-  public readonly fieldBlockOperatorCaption = FIELD_BLOCK_OPERATOR;
+  public readonly fieldBlockOperatorCaption = REGION_FIELD_BLOCK;
 
   public readonly dataSourceCaption = 'Source';
 
@@ -31,7 +31,7 @@ class FilterClearPage {
     this.noResult().find('span').withText(DATA_SOURCE).nth(0);
 
   public readonly fieldContainer = () =>
-    this.noResult().find('span').withText(FIELD_BLOCK_OPERATOR).nth(0);
+    this.noResult().find('span').withText(REGION_FIELD_BLOCK).nth(0);
 
   public readonly searchInputValue = (value: string) =>
     this.searchInputContainer().parent().find('span').withText(value).nth(0);

@@ -13,7 +13,7 @@ import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { Modules } from 'modules/sidebar/types';
 import {
-  FIELD_BLOCK_OPERATOR,
+  REGION_FIELD_BLOCK,
   DATA_AVAILABILITY,
 } from 'modules/wellSearch/constantsSidebarFilters';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
@@ -29,7 +29,6 @@ import { BaseFilter } from '../../components/BaseFilter';
 import { FilterCollapse } from '../../components/FilterCollapse';
 import Header from '../common/Header';
 
-import { Operator } from './categories/Operator';
 import { RegionFieldBlock } from './categories/RegionFieldBlock';
 import { CommonFilter } from './CommonFilter';
 import { TITLE, CATEGORY } from './constants';
@@ -118,7 +117,7 @@ export const WellsFilter = () => {
                 ) => onValueChange(index, id, selectedVals, filterConfig.name)}
                 options={get(filterOptions, filterConfig.id, [])}
                 selectedOptions={selectedOptions[filterConfig.id]}
-                displayFilterTitle={filterConfigs.length > 1}
+                displayFilterTitle
               />
             );
           })}
@@ -137,11 +136,11 @@ export const WellsFilter = () => {
       <>
         {filterConfigsByCategory.map((category, index) => {
           const isRegionFieldBlock =
-            enabledWellSDKV3 && category.title === FIELD_BLOCK_OPERATOR;
-          const isDataAvailbility =
+            enabledWellSDKV3 && category.title === REGION_FIELD_BLOCK;
+          const isDataAvailability =
             enabledWellSDKV3 && category.title === DATA_AVAILABILITY;
 
-          const hasCustom = isDataAvailbility || isRegionFieldBlock;
+          const hasCustom = isDataAvailability || isRegionFieldBlock;
 
           return (
             <FilterCollapse.Panel
@@ -151,7 +150,7 @@ export const WellsFilter = () => {
               key={category.title}
               headerTestId={category.title}
             >
-              {isDataAvailbility && (
+              {isDataAvailability && (
                 <DataAvailability
                   key={`filter-${category.title}`}
                   onValueChange={onValueChange}
@@ -174,12 +173,14 @@ export const WellsFilter = () => {
                     selectedOptions={selectedOptions}
                     handleClear={handleClear}
                   />
+                  {/*
+                    Keeping Operator here as it might be used in the future as a relation with the region/field/block
                   <Operator
                     key="filter-category-Operator"
                     allConfig={category.filterConfigs}
                     onValueChange={onValueChange}
                     selectedOptions={selectedOptions}
-                  />
+                  /> */}
                 </>
               )}
 

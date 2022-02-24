@@ -6,7 +6,7 @@ import { getMockSidebarState } from '__test-utils/fixtures/sidebar';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';
+import { REGION_FIELD_BLOCK } from 'modules/wellSearch/constantsSidebarFilters';
 import { defaultWellsConfig } from 'tenants/config';
 
 import { FilterCategoryValues } from '../FilterCategoryValues';
@@ -98,7 +98,7 @@ describe('FilterCategoryValues', () => {
 
   it('should render category', async () => {
     await testInit();
-    expect(await screen.findByText(FIELD_BLOCK_OPERATOR)).toBeInTheDocument();
+    expect(await screen.findByText(REGION_FIELD_BLOCK)).toBeInTheDocument();
   });
 
   it('should render category values', async () => {
