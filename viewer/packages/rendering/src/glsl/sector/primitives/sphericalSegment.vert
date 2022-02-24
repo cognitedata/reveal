@@ -38,7 +38,7 @@ void main() {
     v_treeIndex = a_treeIndex;
     v_color = a_color;
 
-    mat4 modelViewMatrix = modelMatrix * viewMatrix;
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     vec3 lDir;
     float distanceToCenterOfSegment = a_verticalRadius - a_height * 0.5;

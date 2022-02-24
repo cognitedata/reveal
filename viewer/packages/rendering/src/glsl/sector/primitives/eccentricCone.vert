@@ -48,7 +48,7 @@ void main() {
       transformOverrideTexture
     );
 
-    mat4 modelViewMatrix = modelMatrix * viewMatrix;
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
     mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
