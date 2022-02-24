@@ -1520,10 +1520,10 @@
     skmeans "^0.11.3"
     three "0.133.0"
 
-"@cognite/reveal-3.x@npm:@cognite/reveal@3.0.0-beta.0":
-  version "3.0.0-beta.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.0.0-beta.0.tgz#8f79ef258283bec273a14b25f47aad976293c59c"
-  integrity sha512-2FTLHv0uuTMZ4k0S1wiYMwVKQlxvXjH/XXwVqjv0gBltgJ6iY0qnGY8hRBSBKLm+Y4YO4Ywfh8gpB3JYKC1rCA==
+"@cognite/reveal-3.x@npm:@cognite/reveal@3.0.0-beta.1":
+  version "3.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.0.0-beta.1.tgz#36fed5f0998f5f31b6c51c6cf7895149f8fcc981"
+  integrity sha512-2NRaeZjycP4vDckpd8DK4PdE3UW4iageQa1Yebr9tB/n6iY9tYzFxwhrlZg0XyFa4ZAGmYeVxJ5CkhHToisxhA==
   dependencies:
     "@cognite/potree-core" "1.5.1"
     "@cognite/reveal-parser-worker" "1.3.0"
@@ -1532,7 +1532,7 @@
     "@types/three" "0.137.0"
     assert "2.0.0"
     comlink "4.3.1"
-    geo-three "0.0.15"
+    geo-three "0.0.16"
     glslify "7.1.1"
     glslify-import "3.1.0"
     lodash "4.17.21"
@@ -1540,7 +1540,7 @@
     mixpanel-browser "2.41.0"
     rxjs "7.3.0"
     skmeans "0.11.3"
-    three "0.137.0"
+    three "0.137.5"
 
 "@cognite/reveal-parser-worker@1.1.1":
   version "1.1.1"
@@ -6337,17 +6337,17 @@ gentle-fs@^2.3.0, gentle-fs@^2.3.1:
     read-cmd-shim "^1.0.1"
     slide "^1.1.6"
 
-geo-three@0.0.15, geo-three@^0.0.15:
+geo-three@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.16.tgz#0a8a1fd8e5ee7c66766cc1d44b9af4d9151f6ffd"
+  integrity sha512-HktRGmOBlTZP8AukSSXwVxFVIwylccKoNq1H/LRMi2DKRpteTZKw0Mh42+wLTPLVymz9WqJTdG4RImS7OCAozw==
+
+geo-three@^0.0.15:
   version "0.0.15"
   resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.15.tgz#ea52193c104a6b4a3c1dc797218936894ea41c7c"
   integrity sha512-jCzOgKvkK59ilPz3Ndn9QGhBui4X0eppn3tPw4+n8QmmyaKGDgbATr3uu5xUHR8dguoV37P0yr2Yr20UxEHogg==
   dependencies:
     "@types/offscreencanvas" "^2019.6.3"
-
-geo-three@0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.16.tgz#0a8a1fd8e5ee7c66766cc1d44b9af4d9151f6ffd"
-  integrity sha512-HktRGmOBlTZP8AukSSXwVxFVIwylccKoNq1H/LRMi2DKRpteTZKw0Mh42+wLTPLVymz9WqJTdG4RImS7OCAozw==
 
 get-caller-file@^1.0.1:
   version "1.0.3"
@@ -13246,11 +13246,6 @@ three@0.133.0:
   version "0.133.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.133.0.tgz#41427306c731a89407221b7be48c7a63580400e7"
   integrity sha512-1p8xTXnJD4hMM2Ktm7+FqOOBoImBoftKnKtAZT/b9AQeL3LhRkVu/HnIJhWA69qIMvUYpjfnunNsO4WdObw1ZQ==
-
-three@0.137.0:
-  version "0.137.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.137.0.tgz#0ebd6ba66637a332c31f234bcdd35aeec071a6e3"
-  integrity sha512-rzSDhia6cU35UCy6y+zEEws6vSgytfHqFMSaBvUcySgzwvDO6vETyswtSNi/+aVqJw8WLMwyT1mlQQ1T/dxxOA==
 
 three@0.137.5:
   version "0.137.5"
