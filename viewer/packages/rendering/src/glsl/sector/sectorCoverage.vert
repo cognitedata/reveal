@@ -2,11 +2,10 @@
 
 #define texture2D texture
 
-uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform mat3 normalMatrix;
+uniform mat4 instanceMatrix;
 
 in vec3 position;
 in vec3 normal;
@@ -28,6 +27,8 @@ void main()
     // A seed to ensure that two overlapping sectors A and B 
     // doesn't produce the same noise pattern
     v_seed = vec2(a_sectorId / 255.0, a_sectorId / 65025.0);
+
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     vec4 mvPosition = modelViewMatrix * instanceMatrix * vec4( position, 1.0 );
 
