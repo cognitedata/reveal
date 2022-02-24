@@ -95,7 +95,14 @@ export const FilePreview = ({
 
   return (
     <>
-      <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
+      <CogniteFileViewer.Provider
+        sdk={sdk}
+        disableAutoFetch
+        overrideURLMap={{
+          pdfjsWorkerSrc:
+            '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+        }}
+      >
         <ResourceTitleRow
           item={{ id: fileId!, type: 'file' }}
           beforeDefaultActions={
