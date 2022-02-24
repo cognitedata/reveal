@@ -3008,10 +3008,10 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cogs.js@5.11.2":
-  version "5.11.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.11.2.tgz#d1d15ee2b892cd67c6d7a7883aa8fb114608a735"
-  integrity sha512-Il/seK63Wqjzwb8YwpxYPc+uf+OPYHw4MVwzfkP7kGgN/fQOuYIN/SixFW858zX0c6pgxrBkJYHnh09zgRxHPg==
+"@cognite/cogs.js@5.13.1":
+  version "5.13.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.13.1.tgz#23cd08f5c623ea550fd08cd214ecf71191488f45"
+  integrity sha512-FN36JLMuDXV+CgClDZ4smffalUB17AVTHJVhDy1e+U0BAz7KMrF1tc1216E2svtBXTWeuQEt0NigSFGCdxeTXQ==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -3076,9 +3076,11 @@
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
+  uid ""
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
   version "0.0.0"
+  uid ""
 
 "@cognite/fas-tools@^1.3.3":
   version "1.3.3"

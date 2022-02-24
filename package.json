@@ -17,7 +17,7 @@
   "dependencies": {
     "@babel/runtime": "^7.16.7",
     "@cognite/cdf-hub-tenant-selector": "^0.14.1",
-    "@cognite/cogs.js": "5.11.2",
+    "@cognite/cogs.js": "5.13.1",
     "@cognite/comment-service-types": "^0.0.7",
     "@cognite/discover-api-types": "0.2.51",
     "@cognite/eslint-config": "link:packages/eslint-config",
