@@ -199,7 +199,10 @@ function createBoxes(
   setAttributes(geometry, filteredCollection, boxAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
 
   mesh.name = `Primitives (Boxes)`;
 
@@ -228,7 +231,10 @@ function createCircles(
   setAttributes(geometry, filteredCollection, circleAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
 
   mesh.name = `Primitives (Circles)`;
   return mesh;
@@ -240,12 +246,15 @@ function createCones(
   material: THREE.RawShaderMaterial,
   bounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null
-) {
+): THREE.Mesh | null {
   const filteredCollection = filterPrimitivesOutsideClipBoxByCenterAndRadius(
     coneCollection,
     coneAttributes,
     geometryClipBox
   );
+  if (filteredCollection.length === 0) {
+    return null;
+  }
 
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -256,7 +265,10 @@ function createCones(
 
   setBoundsFromBox(geometry, bounds);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
   mesh.name = `Primitives (Cones)`;
   return mesh;
 }
@@ -282,7 +294,10 @@ function createEccentricCones(
   setAttributes(geometry, filteredCollection, eccentericConeAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
   mesh.name = `Primitives (EccentricCones)`;
   return mesh;
 }
@@ -307,7 +322,10 @@ function createEllipsoidSegments(
   setAttributes(geometry, filteredCollection, ellipsoidSegmentAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
   mesh.name = `Primitives (EllipsoidSegments)`;
   return mesh;
 }
@@ -411,7 +429,10 @@ function createSphericalSegments(
   geometry.setAttribute(`a_horizontalRadius`, geometry.getAttribute('a_radius'));
   geometry.setAttribute(`a_verticalRadius`, geometry.getAttribute('a_radius'));
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
   mesh.name = `Primitives (EllipsoidSegments)`;
   return mesh;
 }
@@ -462,7 +483,10 @@ function createTrapeziums(
   setAttributes(geometry, filteredCollection, trapeziumAttributes, mesh);
   setBoundsFromVertexAttributes(geometry);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
   mesh.name = `Primitives (Trapeziums)`;
   return mesh;
 }
@@ -539,7 +563,10 @@ function createTorusSegments(
     mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
     lod.addLevel(mesh, calcLODDistance(biggestTorus, level));
 
-    mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+    updateMaterialUniforms(material, mesh, camera);
+  };
   }
 
   return lod;
