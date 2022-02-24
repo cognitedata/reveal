@@ -4,10 +4,11 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { SupportedModelTypes } from '../types';
 import { CameraConfiguration } from './types';
 import { PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from '../..';
 import { PointCloudNode } from '../../datamodels/pointcloud/PointCloudNode';
+
+import { SupportedModelTypes } from '@reveal/model-base';
 
 /**
  * Represents a point clouds model loaded from CDF.

@@ -7,7 +7,6 @@ import { CogniteInternalId } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
-import { SupportedModelTypes } from '../types';
 import { WellKnownUnit } from './types';
 
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
@@ -18,6 +17,7 @@ import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
+import { SupportedModelTypes } from '@reveal/model-base';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.

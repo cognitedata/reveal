@@ -9,6 +9,9 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { CameraManager } from '@reveal/camera-manager';
 
+import { GeometryFilter } from '@reveal/cad-model';
+import { DataSource } from '@reveal/data-source';
+
 /**
  * @module @cognite/reveal
  */
@@ -167,10 +170,6 @@ export interface Cognite3DViewerOptions {
    */
   _localModels?: boolean;
 }
-
-import { GeometryFilter } from '../../public/types';
-import { DataSource } from '@reveal/data-source';
-export { GeometryFilter };
 
 /**
  * @module @cognite/reveal

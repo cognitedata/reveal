@@ -9,7 +9,7 @@ import { CadModelUpdateHandler, createV8SectorCuller } from '@reveal/cad-geometr
 
 import { CadMaterialManager, EffectRenderManager } from '@reveal/rendering';
 
-import { RevealOptions } from '../../public/types';
+import { RevealOptions } from '../../../core/src/public/types';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 

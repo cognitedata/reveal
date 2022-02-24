@@ -1,0 +1,20 @@
+{
+  "name": "@reveal/cad-model",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "yarn ws:start",
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/cad-geometry-loaders": "workspace:*",
+    "@reveal/cad-parsers": "workspace:*",
+    "@reveal/logger": "workspace:*",
+    "@reveal/metrics": "workspace:*",
+    "@reveal/modeldata-api": "workspace:*",
+    "@reveal/rendering": "workspace:*",
+    "@reveal/sector-loader": "workspace:*",
+    "@reveal/utilities": "workspace:*"
+  }
+}

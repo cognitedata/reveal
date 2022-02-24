@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { createCadManager } from '../datamodels/cad/createCadManager';
+import { createCadManager } from '../../../packages/cad-model/src/createCadManager';
 import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
 import { RevealOptions } from './types';
