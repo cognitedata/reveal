@@ -21,6 +21,7 @@ import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
+import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
@@ -177,6 +178,7 @@ export function Migration() {
         viewer.loadCameraFromModel(model);
         if (model instanceof Cognite3DModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);
+          new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
