@@ -1,8 +1,10 @@
-import { useState } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from '@cognite/react-i18n';
+import { useTranslation } from 'react-i18next';
 import { Button, Flex, Icon, Select } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
+import { useEffect, useState } from 'react';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -52,31 +54,58 @@ const LangAreaWrap = styled(Flex)`
   }
 `;
 
-type LangOption = 'en' | 'en-US' | 'ja-JP' | 'ja' | 'jp';
-type SelectLangOption = { value: LangOption; label: string };
+const fallbackOptions = [
+  { value: 'en', label: 'English' },
+  { value: 'ja', label: '日本' },
+];
+
+type LocizeLanguages = Record<
+  string,
+  {
+    name: string;
+    nativeName: string;
+    isReferenceLanguage: boolean;
+    translated: {
+      latest: number;
+    };
+  }
+>;
+
+const defaultTranslations = makeDefaultTranslations(
+  'Charts User settings',
+  'Logout',
+  'Cognite Charts Version',
+  'Select Language',
+  'Select the preferred language of the application.',
+  'Language'
+);
 
 const UserProfile = () => {
-  const { t, i18n } = useTranslation('global');
+  const [availableLanguages, setAvailableLanguages] = useState(fallbackOptions);
+
+  const { i18n, ready } = useTranslation(undefined, { useSuspense: false });
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'UserProfile').t,
+  };
   const { data: user } = useUserInfo();
 
-  const langOptions: SelectLangOption[] = [
-    { value: 'en', label: 'English' },
-    { value: 'ja-JP', label: 'Japanese' },
-  ];
-
-  const detectedLanguage = langOptions.find(
-    (obj) => obj.value === localStorage.getItem('chartsCurrentLanguage')
-  );
-
-  const [selectedLang, setSelectedLang] = useState<SelectLangOption>(
-    detectedLanguage || langOptions[0]
-  );
-
-  const changeLanguage = (targetLang: SelectLangOption) => {
-    localStorage.setItem('chartsCurrentLanguage', targetLang.value);
-    setSelectedLang(targetLang);
-    i18n.changeLanguage(targetLang.value);
-  };
+  useEffect(() => {
+    if (ready) {
+      i18n.services.backendConnector.backend.backends[1].getLanguages(
+        (err: any, languages: LocizeLanguages) => {
+          if (err) return;
+          setAvailableLanguages(
+            Object.keys(languages).map((key) => ({
+              value: key,
+              label: languages[key].nativeName,
+            }))
+          );
+        }
+      );
+    }
+    return () => {};
+  }, [ready, i18n.services.backendConnector.backend.backends]);
 
   return (
     <div id="user-settings" style={{ padding: 16, width: '100%' }}>
@@ -85,37 +114,38 @@ const UserProfile = () => {
           <Icon type="Cognite" size={128} />
         </article>
         <article className="col-user">
-          <h3 className="cogs-title-3">
-            {t('userProfileView.pageTitle', 'Charts User settings')}
-          </h3>
+          <h3 className="cogs-title-3">{t['Charts User settings']}</h3>
           <p className="tags">{user?.displayName}</p>
         </article>
         <article className="last-col">
-          <Button type="tertiary">
-            {t('userProfileView.logout', 'Logout')}
-          </Button>
+          <Button type="tertiary">{t.Logout}</Button>
           <p className="tags">
-            {t('userProfileView.appVersion', 'Cognite Charts Version')}{' '}
+            {t['Cognite Charts Version']}{' '}
             {process.env.REACT_APP_VERSION_NAME || 'local'}
           </p>
         </article>
       </UserProfileWrap>
       <LangAreaWrap>
         <article>
-          <h3>{t('userProfileView.selectLanguage', 'Select Language')}</h3>
-          <p>
-            {t(
-              'userProfileView.selectLanguageDesc',
-              'Select the preferred language of the application.'
-            )}
-          </p>
+          <h3>{t['Select Language']}</h3>
+          <p>{t['Select the preferred language of the application.']}</p>
         </article>
         <article className="lang-col">
-          <p>{t('userProfileView.langDropdownTitle', 'Language')}</p>
+          <p>{t.Language}</p>
           <Select
-            value={[selectedLang]}
-            onChange={(option: SelectLangOption) => changeLanguage(option)}
-            options={langOptions}
+            disabled={!ready}
+            value={
+              ready
+                ? availableLanguages.find(
+                    (option) => option.value === i18n.language
+                  )
+                : availableLanguages[0]
+            }
+            icon={ready ? '' : 'Loader'}
+            onChange={(option: typeof availableLanguages[0]) =>
+              i18n.changeLanguage(option.value)
+            }
+            options={availableLanguages}
           />
         </article>
       </LangAreaWrap>

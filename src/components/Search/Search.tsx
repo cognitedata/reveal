@@ -7,6 +7,17 @@ import { useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { SEARCH_KEY } from 'utils/constants';
 import { useDebounce } from 'use-debounce';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
+import { defaultTranslations as infoBoxDefaultTranslation } from 'components/InfoBox/InfoBox';
+
+export const defaultTranslations = makeDefaultTranslations(
+  'Find time series',
+  'Clear text',
+  'Hide',
+  'Equipment tag',
+  'Time series'
+);
 
 type SearchProps = {
   query: string;
@@ -26,6 +37,19 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
     setQuery(value);
   };
 
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'TimeseriesSearch').t,
+  };
+
+  const infoBoxTranslations = {
+    ...infoBoxDefaultTranslation,
+    ...useTranslations(
+      Object.keys(infoBoxDefaultTranslation),
+      'TimeseriesSearch'
+    ).t,
+  };
+
   return (
     <>
       <SearchBar>
@@ -33,12 +57,12 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
           <Input
             fullWidth
             icon="Search"
-            placeholder="Find time series"
+            placeholder={t['Find time series']}
             value={query}
             onChange={handleSearchInputChange}
             size="large"
             clearable={{
-              labelText: 'Clear text',
+              labelText: t['Clear text'],
               callback: () => {
                 setQuery('');
               },
@@ -46,7 +70,7 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
             autoFocus
           />
         </div>
-        <Tooltip content="Hide">
+        <Tooltip content={t.Hide}>
           <Button
             icon="PanelLeft"
             type="ghost"
@@ -64,23 +88,31 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
           }
         >
           <SegmentedControl.Button key="assets">
-            Equipment tag
+            {t['Equipment tag']}
           </SegmentedControl.Button>
           <SegmentedControl.Button key="timeseries">
-            Time series
+            {t['Time series']}
           </SegmentedControl.Button>
         </SegmentedControl>
       </div>
       <SearchResultsContainer>
         {searchType === 'assets' && (
           <>
-            <InfoBox infoType="TagHelpBox" query={debouncedUrlQuery} />
+            <InfoBox
+              translations={infoBoxTranslations}
+              infoType="TagHelpBox"
+              query={debouncedUrlQuery}
+            />
             <SearchResultList query={debouncedUrlQuery} />
           </>
         )}
         {searchType === 'timeseries' && (
           <>
-            <InfoBox infoType="TimeSeriesHelpBox" query={debouncedUrlQuery} />
+            <InfoBox
+              translations={infoBoxTranslations}
+              infoType="TimeSeriesHelpBox"
+              query={debouncedUrlQuery}
+            />
             <SearchTimeseries query={debouncedUrlQuery} />
           </>
         )}

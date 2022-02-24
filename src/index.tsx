@@ -1,20 +1,13 @@
 import ReactDOM from 'react-dom';
 import config from 'config/config';
 import { Metrics } from '@cognite/metrics';
-import { configureI18n } from '@cognite/react-i18n';
 import { shouldTrackMetrics } from 'services/metrics';
-import App from './App';
-
 import '@cognite/cogs.js/dist/cogs.css';
 import 'antd/dist/antd.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import './i18n';
 
-configureI18n({
-  localStorageLanguageKey: 'chartsCurrentLanguage',
-  lng: localStorage.getItem('chartsCurrentLanguage') || 'en',
-  updateMissing: false,
-  saveMissing: true,
-});
+import App from './App';
 
 if (shouldTrackMetrics) {
   Metrics.init({

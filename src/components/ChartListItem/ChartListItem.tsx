@@ -6,6 +6,7 @@ import { useNavigate } from 'hooks/navigation';
 import { duplicate } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useIsChartOwner } from 'hooks/user';
+import { makeDefaultTranslations } from 'utils/translations';
 import { ListViewItem } from './ListViewItem';
 import { GridViewItem } from './GridViewItem';
 
@@ -14,10 +15,20 @@ export type ViewOption = 'list' | 'grid';
 interface ChartListItemProps {
   chart: Chart;
   view: ViewOption;
+  translations?: typeof defaultTranslations;
 }
 
-const ChartListItem = ({ chart, view }: ChartListItemProps) => {
+const defaultTranslations = makeDefaultTranslations(
+  'Unable to rename chart - Try again!',
+  'Unable to delete chart - Try again!',
+  'Rename',
+  'Delete',
+  'Duplicate'
+);
+
+const ChartListItem = ({ chart, view, translations }: ChartListItemProps) => {
   const move = useNavigate();
+  const t = { ...defaultTranslations, ...translations };
 
   const { data: login } = useUserInfo();
   const { mutateAsync: updateChart, isError: renameError } = useUpdateChart();
@@ -31,13 +42,16 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
     setIsEditingName(false);
   };
 
+  const translatedRenameError = t['Unable to rename chart - Try again!'];
+  const translatedDeleteError = t['Unable to delete chart - Try again!'];
+
   useEffect(() => {
     if (renameError) {
-      toast.error('Unable to rename chart - Try again!', {
+      toast.error(translatedRenameError, {
         toastId: 'rename-chart',
       });
     }
-  }, [renameError]);
+  }, [renameError, translatedRenameError]);
 
   const handleDeleteChart = () => {
     deleteChart(chart.id);
@@ -45,11 +59,11 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
 
   useEffect(() => {
     if (deleteError) {
-      toast.error('Unable to delete chart - Try again!', {
+      toast.error(translatedDeleteError, {
         toastId: 'delete-chart',
       });
     }
-  }, [deleteError]);
+  }, [deleteError, translatedDeleteError]);
 
   const handleDuplicateChart = () => {
     if (login?.id) {
@@ -75,13 +89,13 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
                 onClick={() => setIsEditingName(true)}
                 appendIcon="Edit"
               >
-                <span>Rename</span>
+                <span>{t.Rename}</span>
               </Menu.Item>
               <Menu.Item
                 onClick={() => handleDeleteChart()}
                 appendIcon="Delete"
               >
-                <span>Delete</span>
+                <span>{t.Delete}</span>
               </Menu.Item>
             </>
           )}
@@ -89,7 +103,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
             onClick={() => handleDuplicateChart()}
             appendIcon="Duplicate"
           >
-            <span>Duplicate</span>
+            <span>{t.Duplicate}</span>
           </Menu.Item>
         </Menu>
       }
@@ -125,5 +139,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
     />
   );
 };
+
+ChartListItem.translationKeys = Object.keys(defaultTranslations);
 
 export default ChartListItem;

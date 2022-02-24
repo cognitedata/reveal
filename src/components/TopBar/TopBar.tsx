@@ -2,42 +2,51 @@ import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useNavigate } from 'hooks/navigation';
-import { useProject } from 'hooks/config';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
-import { useTranslation } from '@cognite/react-i18n';
 import { ChartActions } from 'components/TopBar';
-import EditableText from 'components/EditableText';
 import { useChat } from 'hooks/intercom';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
-import { Link } from 'react-router-dom';
+import { useTranslations } from 'hooks/translations';
+import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 
 const TopBarWrapper = () => {
   const { data: user } = useUserInfo();
   const move = useNavigate();
   const chat = useChat();
   const [chart, setChart] = useRecoilState(chartAtom);
-  const project = useProject();
-  const { t } = useTranslation('global');
+  const { t } = useTranslations(
+    [
+      'Cognite Charts',
+      'All charts',
+      'Feedback',
+      'Help',
+      'Privacy policy',
+      'Account',
+      'Profile',
+      'Logout',
+    ],
+    'TopBar'
+  );
 
   return (
     <TopBarWrap>
       <TopBar>
         <TopBar.Left>
           <TopBar.Logo
-            title={t('topBar.logo', 'Cognite Charts')}
+            title={t['Cognite Charts']}
             onLogoClick={() => move('')}
           />
           {!chart && <TopBar.Navigation links={[]} />}
           {!!chart && (
             <>
               <AllCharts className="downloadChartHide" onClick={() => move('')}>
-                ← {t('topBar.allCharts', 'All charts')}
+                ← {t['All charts']}
               </AllCharts>
-              <TopBar.Item>
+              <div className="cogs-topbar--item">
                 <Title level={4} style={{ marginLeft: 17 }}>
-                  <EditableText
+                  <TranslatedEditableText
                     value={chart?.name || ''}
                     onChange={(value) => {
                       setChart((oldChart) => ({
@@ -47,22 +56,20 @@ const TopBarWrapper = () => {
                     }}
                   />
                 </Title>
-              </TopBar.Item>
+              </div>
             </>
           )}
         </TopBar.Left>
         <TopBar.Right>
           {!!chart && (
-            <>
-              <TopBar.Item style={{ borderLeft: 'none' }}>
-                <ChartDetails>
-                  {dayjs(chart?.updatedAt).format('MMM D, YYYY')} ·{' '}
-                  {chart.userInfo?.displayName ||
-                    chart.userInfo?.email ||
-                    chart.user}
-                </ChartDetails>
-              </TopBar.Item>
-            </>
+            <div className="cogs-topbar--item" style={{ borderLeft: 'none' }}>
+              <ChartDetails>
+                {dayjs(chart?.updatedAt).format('MMM D, YYYY')} ·{' '}
+                {chart.userInfo?.displayName ||
+                  chart.userInfo?.email ||
+                  chart.user}
+              </ChartDetails>
+            </div>
           )}
           {/** Need to keep the actions component in DOM even if chart does not exist
            * to ensure update/delete callbacks are working properly */}
@@ -71,7 +78,7 @@ const TopBarWrapper = () => {
             actions={[
               {
                 key: 'chat',
-                name: t('topBar.feedback'),
+                name: t.Feedback,
                 component: (
                   <span className="downloadChartHide">
                     <Icon type="Comment" />
@@ -81,7 +88,7 @@ const TopBarWrapper = () => {
               },
               {
                 key: 'help',
-                name: t('topBar.help'),
+                name: t.Help,
                 component: (
                   <span className="downloadChartHide">
                     <Icon type="Help" />
@@ -92,7 +99,7 @@ const TopBarWrapper = () => {
                     <Menu.Item
                       onClick={() => window.open(sidecar.privacyPolicyUrl)}
                     >
-                      {t('topBar.privacyPolicy', 'Privacy policy')}
+                      {t['Privacy policy']}
                     </Menu.Item>
                     <Menu.Footer>
                       v. {process.env.REACT_APP_VERSION_NAME || 'local'}
@@ -109,18 +116,14 @@ const TopBarWrapper = () => {
                 ),
                 menu: (
                   <Menu style={{ minWidth: '140px' }}>
-                    <Menu.Header>
-                      {t('topBar.userDropdownHeader', 'ACCOUNT')}
-                    </Menu.Header>
-                    <Menu.Item>
-                      <Link
-                        to={`/${project}/user`}
-                        style={{ color: 'var(--cogs-text-color)' }}
-                      >
-                        {t('topBar.dropdpwnProfile', 'Profile')}
-                      </Link>
+                    <Menu.Header>{t.Account}</Menu.Header>
+                    <Menu.Item
+                      style={{ color: 'var(--cogs-text-color)' }}
+                      onClick={() => move('/user')}
+                    >
+                      {t.Profile}
                     </Menu.Item>
-                    <Menu.Item>{t('topBar.logout', 'Logout')}</Menu.Item>
+                    <Menu.Item>{t.Logout}</Menu.Item>
                   </Menu>
                 ),
               },
@@ -135,6 +138,7 @@ const TopBarWrapper = () => {
 const ChartDetails = styled.span`
   color: var(--cogs-greyscale-grey6);
   margin: 0 17px;
+  white-space: nowrap;
 `;
 
 const TopBarWrap = styled.div`

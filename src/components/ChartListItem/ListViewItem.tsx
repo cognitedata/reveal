@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
-import EditableText from 'components/EditableText';
+import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import PlotlyChart from 'components/PlotlyChart';
 import { Chart } from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
@@ -45,7 +45,7 @@ const ListViewItem = ({
           <PlotlyChart chart={chart} isPreview />
         </ImageColumn>
         <NameColumn>
-          <EditableText
+          <TranslatedEditableText
             value={chart.name}
             onChange={handleRenameChart}
             editing={isEditingName}

@@ -9,8 +9,12 @@ import { useRecoilState } from 'recoil';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import chartAtom from 'models/chart/atom';
 import { trackUsage } from 'services/metrics';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
 import AssetSearchHit from './AssetSearchHit';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
+
+const defaultTranslation = makeDefaultTranslations('Recently viewed');
 
 type Props = {
   viewType: 'assets' | 'timeseries';
@@ -22,10 +26,14 @@ const RecentViewSources = ({ viewType }: Props) => {
   // Takes alot of time to load data
   const { data: rvResults } = useRecentViewLocalStorage(viewType, []);
   const handleTimeSeriesClick = useAddRemoveTimeseries();
+  const t = {
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'SearchResults').t,
+  };
 
   const cached = useQueryClient();
   const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
-    ?.map((t) => t.tsExternalId || '')
+    ?.map((tsc) => tsc.tsExternalId || '')
     .filter(Boolean);
 
   useEffect(() => {
@@ -47,7 +55,9 @@ const RecentViewSources = ({ viewType }: Props) => {
     <Container>
       <TitleWrapper>
         <Icon type="History" size={20} />
-        <Title level={4}> Recently viewed {title}</Title>
+        <Title level={4}>
+          {t['Recently viewed']} {title}
+        </Title>
       </TitleWrapper>
 
       <div>

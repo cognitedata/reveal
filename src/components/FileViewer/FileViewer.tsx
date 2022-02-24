@@ -2,24 +2,38 @@ import * as pdfjs from 'pdfjs-dist';
 import { FileInfo as File } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
-import { AnnotationPopover } from 'components/FileViewer';
+import { AnnotationPopover } from 'components/FileViewer/AnnotationPopover';
 import {
   isFilePreviewable,
   readablePreviewableFileTypes,
   useAssetAnnotations,
 } from 'components/FileList';
 import styled from 'styled-components/macro';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
+
+const defaultTranslations = makeDefaultTranslations(
+  'Select a file to preview it',
+  'No preview',
+  'File types that can be previewed are',
+  'Time series',
+  'Asset not found'
+);
 
 export const FileViewer = ({ file }: { file?: File }) => {
   const sdk = useSDK();
   const { data: assetAnnotations } = useAssetAnnotations(file);
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'FileViewer').t,
+  };
 
   if (!file) {
     return (
       <ErrorWrapper>
-        <h2>Select a file to preview it</h2>
+        <h2>{t['Select a file to preview it']}</h2>
       </ErrorWrapper>
     );
   }
@@ -27,9 +41,10 @@ export const FileViewer = ({ file }: { file?: File }) => {
   if (!isFilePreviewable(file)) {
     return (
       <ErrorWrapper>
-        <h2>No preview</h2>
+        <h2>{t['No preview']}</h2>
         <p>
-          File types that can be previewed are: {readablePreviewableFileTypes()}
+          {`${t['File types that can be previewed are']}:`}
+          {readablePreviewableFileTypes()}
         </p>
       </ErrorWrapper>
     );
@@ -42,7 +57,13 @@ export const FileViewer = ({ file }: { file?: File }) => {
       file={file}
       annotations={assetAnnotations}
       renderItemPreview={(annotations) => {
-        return <AnnotationPopover annotations={annotations} />;
+        return (
+          <AnnotationPopover
+            annotations={annotations}
+            annotationTitle={t['Time series']}
+            fallbackText={t['Asset not found']}
+          />
+        );
       }}
       disableAutoFetch
     />

@@ -1,18 +1,27 @@
 import { Graphic } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { useRecentViewLocalStorage } from 'hooks/recently-used';
+import { makeDefaultTranslations } from 'utils/translations';
+
+export const defaultTranslations = makeDefaultTranslations(
+  'Search for tag numbers or asset names',
+  'Search for Time series ID',
+  'they may look like this'
+);
 
 interface InfoBoxProps {
   infoType: 'TagHelpBox' | 'TimeSeriesHelpBox';
   query: string;
+  translations?: typeof defaultTranslations;
 }
 
-const InfoBox = ({ infoType, query }: InfoBoxProps) => {
+const InfoBox = ({ infoType, query, translations }: InfoBoxProps) => {
   const { data: rvResults } = useRecentViewLocalStorage(
     infoType === 'TagHelpBox' ? 'assets' : 'timeseries',
     []
   );
   const recentViewExists = !!rvResults && rvResults.length > 0;
+  const t = { ...defaultTranslations, ...translations };
   return (
     <InfoBoxContainer
       style={query === '' && !recentViewExists ? { height: '100%' } : {}}
@@ -25,10 +34,10 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
             />
             <div style={{ marginTop: 20 }}>
               {infoType === 'TagHelpBox'
-                ? 'Search for tag numbers or asset names'
-                : 'Search for Time series ID'}
+                ? t['Search for tag numbers or asset names']
+                : t['Search for Time series ID']}
             </div>
-            <div> - they may look like this:</div>
+            <div> - {t['they may look like this']}:</div>
             <EmptyResultsExample>
               {infoType === 'TagHelpBox' ? '21PT1019' : 'IA_21PT1019.PV'}
             </EmptyResultsExample>

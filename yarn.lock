@@ -1182,7 +1182,7 @@
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.14.0", "@babel/runtime@^7.14.5", "@babel/runtime@^7.14.8", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.0", "@babel/runtime@^7.16.3", "@babel/runtime@^7.16.7", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.14.0", "@babel/runtime@^7.14.5", "@babel/runtime@^7.14.6", "@babel/runtime@^7.14.8", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.0", "@babel/runtime@^7.16.3", "@babel/runtime@^7.16.7", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.17.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.2.tgz#66f68591605e59da47523c631416b18508779941"
   integrity sha512-hzeyJyMA1YGdJTuWU0e/j4wKXrU4OMFvY2MSlaI9B7VQb0r5cxTE3EAIS2Q7Tn2RIcDkRvTA/v2JsAEhxe99uw==
@@ -1496,19 +1496,6 @@
   integrity sha512-RUjJUpfGClgnb42FqFegM6k8WIVAOjs80U1xiEvf0pfPQ0Q000Cksu00jXNhwc2M4KWruhHomSvvTgv7w6szIw==
   dependencies:
     unleash-proxy-client "^1.0.1"
-
-"@cognite/react-i18n@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.5.0.tgz#5a13b99de93f66972883b2968af115fd552577d8"
-  integrity sha512-dINtozdAl7IOQKxDN7H4BUJjx1AOw98P/73eYppMnCQSmlSzKhwlwWPJBpaYIMuHEv/XsVOQmflzmccr2uz7ng==
-  dependencies:
-    "@cognite/metrics" "1.1.1"
-    "@cognite/storage" "0.1.2"
-    i18next "20.3.2"
-    i18next-chained-backend "3.0.2"
-    i18next-localstorage-backend "3.1.2"
-    i18next-locize-backend "4.2.3"
-    i18next-pseudo "2.2.1"
 
 "@cognite/react-picture-annotation@^1.12.0":
   version "1.16.3"
@@ -3934,6 +3921,17 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
+"@testing-library/react-hooks@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@testing-library/react-hooks/-/react-hooks-7.0.2.tgz#3388d07f562d91e7f2431a4a21b5186062ecfee0"
+  integrity sha512-dYxpz8u9m4q1TuzfcUApqi8iFfR6R0FaMbr2hjZJy1uC8z+bO/K4v8Gs9eogGKYQop7QsrBTFkv/BCF7MzD2Cg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@types/react" ">=16.9.0"
+    "@types/react-dom" ">=16.9.0"
+    "@types/react-test-renderer" ">=16.9.0"
+    react-error-boundary "^3.1.0"
+
 "@testing-library/react@^11.2.2":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-11.2.7.tgz#b29e2e95c6765c815786c0bc1d5aed9cb2bf7818"
@@ -4360,7 +4358,7 @@
     date-fns "^2.0.1"
     react-popper "^2.2.5"
 
-"@types/react-dom@*", "@types/react-dom@^17.0.1":
+"@types/react-dom@*", "@types/react-dom@>=16.9.0", "@types/react-dom@^17.0.1":
   version "17.0.11"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.11.tgz#e1eadc3c5e86bdb5f7684e00274ae228e7bcc466"
   integrity sha512-f96K3k+24RaLGVu/Y2Ng3e1EbZ8/cVJvypZWd7cy0ofCBaf2lcM46xNhycMZ2xGwbBjRql7hOlZ+e2WlJ5MH3Q==
@@ -4423,7 +4421,14 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^17.0.37":
+"@types/react-test-renderer@>=16.9.0":
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-17.0.1.tgz#3120f7d1c157fba9df0118dae20cb0297ee0e06b"
+  integrity sha512-3Fi2O6Zzq/f3QR9dRnlnHso9bMl7weKCviFmfF6B4LS1Uat6Hkm15k0ZAQuDz+UBq6B3+g+NM6IT2nr5QgPzCw==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react@*", "@types/react@>=16.9.0", "@types/react@^17.0.37":
   version "17.0.39"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.39.tgz#d0f4cde092502a6db00a1cded6e6bf2abb7633ce"
   integrity sha512-UVavlfAxDd/AgAacMa60Azl7ygyQNRwC/DsHZmKgNvPmRR5p70AJ5Q9EAmL2NWOJmeV+vVUI4IAP7GZrN8h8Ug==
@@ -7473,14 +7478,7 @@ create-react-context@0.3.0:
     gud "^1.0.0"
     warning "^4.0.3"
 
-cross-fetch@3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.4.tgz#9723f3a3a247bf8b89039f3a380a9244e8fa2f39"
-  integrity sha512-1eAtFWdIubi6T4XPy6ei9iUFoKpUkIF971QLN8lIvvvwueI65+Nw5haMNKUwfJxabqlIIDODJKGrQ66gxC0PbQ==
-  dependencies:
-    node-fetch "2.6.1"
-
-cross-fetch@^3.0.4:
+cross-fetch@3.1.5, cross-fetch@^3.0.4:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
   integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
@@ -10986,45 +10984,38 @@ hyphenate-style-name@^1.0.2:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.4.tgz#691879af8e220aea5750e8827db4ef62a54e361d"
   integrity sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==
 
-i18next-chained-backend@3.0.2:
+i18next-browser-languagedetector@^6.1.3:
+  version "6.1.3"
+  resolved "https://registry.yarnpkg.com/i18next-browser-languagedetector/-/i18next-browser-languagedetector-6.1.3.tgz#9bc47fb4a5db86d567318895df343d2d1b9692f3"
+  integrity sha512-T+oGXHXtrur14CGnZZ7qQ07X38XJQEI00b/4ILrtO6xPbwTlQ1wtMZC2H+tBULixHuVUXv8LKbxfjyITJkezUg==
+  dependencies:
+    "@babel/runtime" "^7.14.6"
+
+i18next-chained-backend@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/i18next-chained-backend/-/i18next-chained-backend-3.0.2.tgz#8968c9e12412d24fd23eec109f0340386154384a"
   integrity sha512-0dd/7oVtPHJnCDMuDvjzlXmWxwfbLOGBFXd1+cgcZ54QlMwv6/ofQ9xhrBIhCFjNh97WQ5pytEeTdcAGwLQ/QA==
   dependencies:
     "@babel/runtime" "^7.14.0"
 
-i18next-localstorage-backend@3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/i18next-localstorage-backend/-/i18next-localstorage-backend-3.1.2.tgz#415fcac42d6d66ff8bc878d269c5b5719fdedc2c"
-  integrity sha512-J81qf9atTAc9iMdHUNKJeAWgUsFvqbxfHIIztmF62tOaINA2AJk0kewJjm8LQDuArkiuW9RhQPbhqbyeZut35g==
+i18next-localstorage-backend@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/i18next-localstorage-backend/-/i18next-localstorage-backend-3.1.3.tgz#5eaad25a515bdadebeb13e1486acfa6fa1686cbe"
+  integrity sha512-tx8dxQTEsTnRC654IrXPFr94c3NH7bIVHGKHnGvbgefpLz13/uFT5ITsmhqhg/gOza0TIj8e5jTsGnQytIhh+A==
   dependencies:
-    "@babel/runtime" "^7.4.5"
+    "@babel/runtime" "^7.14.6"
 
-i18next-locize-backend@4.2.3:
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-4.2.3.tgz#18c86fa4c04b10c61c017853f25f86c3b5c3f98a"
-  integrity sha512-eo689GoMMqtMbtPqWkdLtMI26Ze/2RNkv9FKMjZh5p/N9AYXY07s4VDx4fwR/jXNIUEwUieANoGO/iPoVbGCUA==
+i18next-locize-backend@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-5.0.0.tgz#4489adc7c3c82671b4353c571c4d70a9236c7dad"
+  integrity sha512-SrI9hoxBy4xEmpp+y5mNbAB5irgDFRV19e+QyDNZC5U1vwp0OLxyoRc1s+kWs+wyV6WBzZuBEUCgu0QsTBNh9A==
   dependencies:
-    cross-fetch "3.1.4"
+    cross-fetch "3.1.5"
 
-i18next-pseudo@2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/i18next-pseudo/-/i18next-pseudo-2.2.1.tgz#f926587a10e37b0ab525fc3330133dbf134ead76"
-  integrity sha512-wGybHZl+D7GXZLxLAWN5AhyrmVBxPd5kPpHgcgPw1yOoJcEEvxRk5+ZpbaAc8R59JHeyXLl99rWIXdg/zCvKFQ==
-  dependencies:
-    i18next "^19.1.0"
-
-i18next@20.3.2:
-  version "20.3.2"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-20.3.2.tgz#5195e76b9e0848a1c198001bf6c7fc72995a55f1"
-  integrity sha512-e8CML2R9Ng2sSQOM80wb/PrM2j8mDm84o/T4Amzn9ArVyNX5/ENWxxAXkRpZdTQNDaxKImF93Wep4mAoozFrKw==
-  dependencies:
-    "@babel/runtime" "^7.12.0"
-
-i18next@^19.1.0:
-  version "19.9.2"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.9.2.tgz#ea5a124416e3c5ab85fddca2c8e3c3669a8da397"
-  integrity sha512-0i6cuo6ER6usEOtKajUUDj92zlG+KArFia0857xxiEHAQcUwh/RtOQocui1LPJwunSYT574Pk64aNva1kwtxZg==
+i18next@^21.6.11:
+  version "21.6.11"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-21.6.11.tgz#de6d649221e02474cc701d152606bf3e61e37bcd"
+  integrity sha512-tJ2+o0lVO+fhi8bPkCpBAeY1SgkqmQm5NzgPWCQssBrywJw98/o+Kombhty5nxQOpHtvMmsxcOopczUiH6bJxQ==
   dependencies:
     "@babel/runtime" "^7.12.0"
 
@@ -12892,6 +12883,18 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+locize-lastused@^3.0.13:
+  version "3.0.13"
+  resolved "https://registry.yarnpkg.com/locize-lastused/-/locize-lastused-3.0.13.tgz#3d87840abc406bcbc433a39653c80891cd5cbc28"
+  integrity sha512-379gfVJ16b3/Jmo/64AzKlHl0xC88/CT91/0qrKbZpKzBDjaC2FKP7ukEr0FFig7I+NTynEDpffDR5zz5dZXdA==
+  dependencies:
+    cross-fetch "3.1.5"
+
+locize@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/locize/-/locize-2.2.4.tgz#d498f02fe97e7475236853708c755847f907fd81"
+  integrity sha512-JgPcuP6NUDN9WTPJZ94+ehwlQ0Z9OZqnkWoR6xnzrb/OaCTGL/K/ACFve7szKH7cWf+UbKkA2ra6i5t0ZFiGWw==
+
 lodash-es@^4.17.15:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
@@ -14009,11 +14012,6 @@ node-dir@^0.1.10:
   integrity sha1-X1Zl2TNRM1yqvvjxxVRRbPXx5OU=
   dependencies:
     minimatch "^3.0.2"
-
-node-fetch@2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
-  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
 node-fetch@2.6.7, node-fetch@^2.6.1:
   version "2.6.7"
@@ -16649,6 +16647,13 @@ react-element-to-jsx-string@^14.3.4:
     is-plain-object "5.0.0"
     react-is "17.0.2"
 
+react-error-boundary@^3.1.0:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.4.tgz#255db92b23197108757a888b01e5b729919abde0"
+  integrity sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 react-error-overlay@6.0.9, react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
@@ -16698,10 +16703,10 @@ react-highlight-words@^0.17.0:
     memoize-one "^4.0.0"
     prop-types "^15.5.8"
 
-react-i18next@^11.15.1:
-  version "11.15.4"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.15.4.tgz#fe0c792ea93f038548e838cecae3ed4173822937"
-  integrity sha512-jKJNAcVcbPGK+yrTcXhLblgPY16n6NbpZZL3Mk8nswj1v3ayIiUBVDU09SgqnT+DluyQBS97hwSvPU5yVFG0yg==
+react-i18next@^11.15.5:
+  version "11.15.5"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.15.5.tgz#3de940a1c5a27956d8265663ca67494881f385e8"
+  integrity sha512-vBWuVEQgrhZrGKpyv8FmJ7Zs5jRQWl794Tte7yzJ0okZqqi3jd6j2pLYNg441WcREsbIOvWdiDXbY7W6E93p1A==
   dependencies:
     "@babel/runtime" "^7.14.5"
     html-escaper "^2.0.2"

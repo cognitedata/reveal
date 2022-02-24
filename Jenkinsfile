@@ -55,7 +55,7 @@ static final String SLACK_CHANNEL = 'devflow-charts'
 //
 // No other options are supported at this time.
 static final String VERSIONING_STRATEGY = 'multi-branch'
-
+environment = versioning.getEnv(versioningStrategy: VERSIONING_STRATEGY)
 // == End of customization. Everything below here is common. == \\
 
 static final String NODE_VERSION = 'node:12'
@@ -86,12 +86,19 @@ static final String[] DIRS = [
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
+      locizeApiKey = secretEnvVar(
+        key: 'REACT_APP_LOCIZE_API_KEY',
+        secretName: 'charts-frontend',
+        secretKey: 'CHARTS_LOCIZE_API_KEY',
+        optional: !environment.isPullRequest
+      )
       fas.pod(
         nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
         sentryDsn: SENTRY_DSN,
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
+        envVars: [locizeApiKey]
       ) {
         codecov.pod {
           properties([

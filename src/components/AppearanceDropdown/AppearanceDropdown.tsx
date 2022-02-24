@@ -2,6 +2,7 @@ import { Menu } from '@cognite/cogs.js';
 import { availableColors } from 'utils/colors';
 import { trackUsage } from 'services/metrics';
 
+import { makeDefaultTranslations } from 'utils/translations';
 import {
   DropdownWrapper,
   MenuWrapper,
@@ -13,23 +14,29 @@ import {
 
 export type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
 
-export type AppearanceDropdownProps = {
+type AppearanceDropdownProps = {
   selectedColor: string;
   selectedLineStyle: string;
   selectedLineWeight: number;
   onUpdate: (diff: any) => void;
+  translations: typeof defaultTranslation;
 };
 
-export const AppearanceDropdown = ({
+const defaultTranslation = makeDefaultTranslations('Color', 'Weight', 'Type');
+
+const AppearanceDropdown = ({
   selectedColor,
   selectedLineStyle,
   selectedLineWeight,
+  translations,
   onUpdate,
 }: AppearanceDropdownProps) => {
+  const t = { ...defaultTranslation, ...translations };
   return (
     <Menu style={{ maxWidth: 330 }}>
       <DropdownWrapper>
         <ColorDropdown
+          label={t.Color}
           selectedColor={selectedColor}
           onColorSelected={(newColor) => {
             onUpdate({
@@ -39,6 +46,7 @@ export const AppearanceDropdown = ({
           }}
         />
         <WeightDropdown
+          label={t.Weight}
           selectedWeight={selectedLineWeight}
           onWeightSelected={(newWeight) => {
             onUpdate({
@@ -48,6 +56,7 @@ export const AppearanceDropdown = ({
           }}
         />
         <TypeDropdown
+          label={t.Type}
           selectedType={selectedLineStyle}
           onStyleSelected={(newStyle) => {
             onUpdate({
@@ -62,16 +71,32 @@ export const AppearanceDropdown = ({
   );
 };
 
+AppearanceDropdown.translationKeys = Object.keys(defaultTranslation);
+
+const WeightPreview = ({ weight }: { weight: number }) => (
+  <PreviewContainer>
+    <WeightLine weight={weight} />
+  </PreviewContainer>
+);
+
+const TypePreview = ({ type }: { type: string }) => (
+  <PreviewContainer style={{ marginRight: 15 }}>
+    <TypeLine type={type} />
+  </PreviewContainer>
+);
+
 export const ColorDropdown = ({
   selectedColor,
   onColorSelected,
+  label = 'Color',
 }: {
   selectedColor: string;
   onColorSelected: (color: string) => void;
+  label: string;
 }) => {
   return (
     <MenuWrapper>
-      <Menu.Header>Color</Menu.Header>
+      <Menu.Header>{label}</Menu.Header>
       {availableColors.map((color) => (
         <Menu.Item
           key={color}
@@ -96,15 +121,17 @@ export const ColorDropdown = ({
 export const WeightDropdown = ({
   selectedWeight,
   onWeightSelected,
+  label = 'Weight',
 }: {
   selectedWeight: number;
   onWeightSelected: (weight: number) => void;
+  label: string;
 }) => {
   const weightOptions = [1, 2, 3, 4, 5];
 
   return (
     <MenuWrapper>
-      <Menu.Header>Weight</Menu.Header>
+      <Menu.Header>{label}</Menu.Header>
       {weightOptions.map((weight) => (
         <Menu.Item
           key={weight.toString()}
@@ -129,15 +156,17 @@ export const WeightDropdown = ({
 export const TypeDropdown = ({
   selectedType,
   onStyleSelected,
+  label = 'Type',
 }: {
   selectedType: string;
   onStyleSelected: (style: LineStyle) => void;
+  label: string;
 }) => {
   const styleOptions: LineStyle[] = ['solid', 'dashed', 'dotted', 'none'];
 
   return (
     <MenuWrapper>
-      <Menu.Header>Type</Menu.Header>
+      <Menu.Header>{label}</Menu.Header>
       {styleOptions.map((style) => (
         <Menu.Item
           key={style}
@@ -159,14 +188,4 @@ export const TypeDropdown = ({
   );
 };
 
-const WeightPreview = ({ weight }: { weight: number }) => (
-  <PreviewContainer>
-    <WeightLine weight={weight} />
-  </PreviewContainer>
-);
-
-const TypePreview = ({ type }: { type: string }) => (
-  <PreviewContainer style={{ marginRight: 15 }}>
-    <TypeLine type={type} />
-  </PreviewContainer>
-);
+export default AppearanceDropdown;

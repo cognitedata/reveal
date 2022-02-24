@@ -49,6 +49,8 @@ import {
   NodeTypes,
 } from 'components/NodeEditor/V2/types';
 import TimePeriodSelector from 'components/TimePeriodSelector';
+import { useTranslations } from 'hooks/translations';
+import { makeDefaultTranslations } from 'utils/translations';
 import SourceRows from './SourceRows';
 
 import {
@@ -73,6 +75,25 @@ const CHART_SETTINGS_KEYS = {
   SHOW_GRIDLINES: 'showGridlines',
   MERGE_UNITS: 'mergeUnits',
 };
+
+const defaultTranslations = makeDefaultTranslations(
+  'Chart could not be saved!',
+  'Could not load chart',
+  'This chart does not seem to exist. You might not have access',
+  'Add time series',
+  'Add calculation',
+  'View only. Duplicate to edit.',
+  'Hide gridlines',
+  'Show gridlines',
+  'Hide min/max',
+  'Show min/max',
+  'Y axes',
+  'Y axis',
+  'Show Y axes',
+  'Merge units',
+  'Disable stacking',
+  'Enable stacking'
+);
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -128,6 +149,23 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   }, [chart, updateChart]);
 
+  /**
+   * Translations for ChartView
+   */
+
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'ChartView').t,
+  };
+
+  /**
+   * Translations for Source Table
+   */
+  const { t: sourceTableTranslation } = useTranslations(
+    SourceTableHeader.translationKeys,
+    'SourceTableHeader'
+  );
+
   const [selectedSourceId, setSelectedSourceId] = useState<
     string | undefined
   >();
@@ -159,16 +197,17 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const translatedChartNotSavedError = t['Chart could not be saved!'];
   useEffect(() => {
     if (updateError) {
-      toast.error('Chart could not be saved!', { toastId: 'chart-update' });
+      toast.error(translatedChartNotSavedError, { toastId: 'chart-update' });
     }
     if (updateError && updateErrorMsg) {
       toast.error(JSON.stringify(updateErrorMsg, null, 2), {
         toastId: 'chart-update-body',
       });
     }
-  }, [updateError, updateErrorMsg]);
+  }, [updateError, updateErrorMsg, translatedChartNotSavedError]);
 
   /**
    * Open search drawer if query is present in the url
@@ -346,14 +385,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   if (isError) {
     return (
       <div>
-        <p>Could not load chart</p>
+        <p>{t['Could not load chart']}</p>
       </div>
     );
   }
 
   if (!chart) {
     return (
-      <div>This chart does not seem to exist. You might not have access</div>
+      <div>
+        {t['This chart does not seem to exist. You might not have access']}
+      </div>
     );
   }
 
@@ -369,14 +410,14 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           {!showSearch && (
             <section className="actions">
               <Button icon="Add" type="primary" onClick={handleOpenSearch}>
-                Add time series
+                {t['Add time series']}
               </Button>
               <Button
                 icon="Function"
                 type="ghost"
                 onClick={handleClickNewWorkflow}
               >
-                Add calculation
+                {t['Add calculation']}
               </Button>
             </section>
           )}
@@ -384,14 +425,18 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <section>
               <WarningAlert
                 type="warning"
-                message="View only. Duplicate to edit."
+                message={t['View only. Duplicate to edit.']}
                 icon={<Icon type="Info" />}
                 showIcon
               />
             </section>
           )}
           <section className="daterange">
-            <Tooltip content={`${showGridlines ? 'Hide' : 'Show'} gridlines`}>
+            <Tooltip
+              content={`${
+                showGridlines ? t['Hide gridlines'] : t['Show gridlines']
+              }`}
+            >
               <Button
                 icon="GridLines"
                 type={showGridlines ? 'link' : 'ghost'}
@@ -405,7 +450,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 style={{ marginLeft: 4 }}
               />
             </Tooltip>
-            <Tooltip content={`${showMinMax ? 'Hide' : 'Show'} min/max`}>
+            <Tooltip
+              content={`${showMinMax ? ['Hide min/max'] : t['Show min/max']}`}
+            >
               <Button
                 icon="Timeseries"
                 type={showMinMax ? 'link' : 'ghost'}
@@ -419,12 +466,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 style={{ marginLeft: 4 }}
               />
             </Tooltip>
-            <Tooltip content="Y axes">
+            <Tooltip content={t['Y axes']}>
               <Dropdown
                 content={
                   <Menu>
                     <DropdownWrapper>
-                      <DropdownTitle>Y axis</DropdownTitle>
+                      <DropdownTitle>{t['Y axis']}</DropdownTitle>
                       <Switch
                         name="toggleYAxis"
                         value={showYAxis}
@@ -436,7 +483,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         }
                         style={{ marginBottom: 15 }}
                       >
-                        Show Y axes
+                        {t['Show Y axes']}
                       </Switch>
                       <Switch
                         name="toggleUnitMerging"
@@ -448,7 +495,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           )
                         }
                       >
-                        Merge units
+                        {t['Merge units']}
                       </Switch>
                     </DropdownWrapper>
                   </Menu>
@@ -466,7 +513,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 </>
               </Dropdown>
             </Tooltip>
-            <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
+            <Tooltip
+              content={`${
+                stackedMode ? t['Disable stacking'] : t['Enable stacking']
+              }`}
+            >
               <Button
                 icon="StackedChart"
                 type={stackedMode ? 'link' : 'ghost'}
@@ -512,6 +563,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           <SourceTableHeader
                             mode={workspaceMode}
                             onShowHideButtonClick={handleShowHideButtonClick}
+                            translations={sourceTableTranslation}
                             showHideIconState={!isEveryRowHidden}
                           />
                           <tbody>

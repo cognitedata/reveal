@@ -12,8 +12,12 @@ import { useAddRemoveTimeseries } from 'components/Search/hooks';
 
 export const AnnotationPopover = ({
   annotations,
+  annotationTitle = 'Time series',
+  fallbackText = 'Asset not found!',
 }: {
   annotations: (CogniteAnnotation | ProposedCogniteAnnotation)[];
+  annotationTitle: string;
+  fallbackText: string;
 }) => {
   const annotation = annotations[0];
   const selectedAssetId =
@@ -30,7 +34,7 @@ export const AnnotationPopover = ({
   }
 
   if (!asset) {
-    return <>Asset not found!</>;
+    return <>{fallbackText}</>;
   }
 
   return (
@@ -46,7 +50,7 @@ export const AnnotationPopover = ({
       </TitleContainer>
       <TimeseriesTitle>
         <Overline level={2} style={{ color: 'var(--cogs-greyscale-grey6)' }}>
-          Time series:
+          {`${annotationTitle}:`}
         </Overline>
       </TimeseriesTitle>
       <TimeseriesList assetId={selectedAssetId} />

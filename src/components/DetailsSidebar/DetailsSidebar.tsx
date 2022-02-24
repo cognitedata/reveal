@@ -22,6 +22,8 @@ import { useState } from 'react';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { formatValueForDisplay } from 'utils/numbers';
 import { getUnitConverter } from 'utils/units';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
 import {
   Container,
   ContentOverflowWrapper,
@@ -55,6 +57,34 @@ type Props = {
   visible?: boolean;
 };
 
+const defaultTranslation = makeDefaultTranslations(
+  'Details',
+  'Hide',
+  'currently unavailable for calculations',
+  'Statistics',
+  'Metadata',
+  'Time series',
+  'Calculation'
+);
+
+const statsDefaultTranslations = makeDefaultTranslations(
+  'Statistics',
+  'Percentiles',
+  'Shape',
+  'Histogram',
+  'No histogram data available',
+  'Mean',
+  'Median',
+  'Standard Deviation',
+  'Max',
+  'Min',
+  '25th Percentile',
+  '50th Percentile',
+  '75th Percentile',
+  'Skewness',
+  'Kurtosis'
+);
+
 const menuOptions = [
   {
     value: 'statistics',
@@ -73,6 +103,17 @@ export default function DetailsSidebar({
 }: Props) {
   const [selectedMenu, setSelectedMenu] = useState<string>('statistics');
 
+  const t = {
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'DetailsSidebar').t,
+  };
+
+  const statsTranslations = {
+    ...statsDefaultTranslations,
+    ...useTranslations(Object.keys(statsDefaultTranslations), 'DetailsSidebar')
+      .t,
+  };
+
   const handleMenuClick = (value: string) => {
     setSelectedMenu(value);
   };
@@ -80,19 +121,19 @@ export default function DetailsSidebar({
   return (
     <Sidebar visible={visible}>
       <TopContainer>
-        <TopContainerTitle>Details</TopContainerTitle>
+        <TopContainerTitle>{t.Details}</TopContainerTitle>
         <TopContainerAside>
           <SegmentedControl
             currentKey={selectedMenu}
             onButtonClicked={(keyCode: string) => handleMenuClick(keyCode)}
           >
-            {menuOptions.map(({ value, label }) => (
+            {menuOptions.map(({ value }) => (
               <SegmentedControl.Button key={value}>
-                {label}
+                {value === 'statistics' ? t.Statistics : t.Metadata}
               </SegmentedControl.Button>
             ))}
           </SegmentedControl>
-          <Tooltip content="Hide">
+          <Tooltip content={t.Hide}>
             <Button
               icon="Close"
               type="ghost"
@@ -104,10 +145,22 @@ export default function DetailsSidebar({
       </TopContainer>
       <ContentOverflowWrapper>
         <Container>
-          <SourceHeader sourceItem={sourceItem} />
-          {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
+          <SourceHeader
+            sourceItem={sourceItem}
+            timeSeriesTitle={t['Time series']}
+            calculationTitle={t.Calculation}
+          />
+          {selectedMenu === 'metadata' && (
+            <Metadata
+              sourceItem={sourceItem}
+              noMetaText={t['currently unavailable for calculations']}
+            />
+          )}
           {selectedMenu === 'statistics' && visible && (
-            <Statistics sourceItem={sourceItem} />
+            <Statistics
+              sourceItem={sourceItem}
+              translations={statsTranslations}
+            />
           )}
         </Container>
       </ContentOverflowWrapper>
@@ -117,15 +170,17 @@ export default function DetailsSidebar({
 
 const Metadata = ({
   sourceItem,
+  noMetaText = 'currently unavailable for calculations',
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  noMetaText?: string;
 }) => {
   return (
     <>
       {sourceItem?.type === 'timeseries' ? (
         <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
       ) : (
-        <p>(currently unavailable for calculations)</p>
+        <p>({noMetaText})</p>
       )}
     </>
   );
@@ -133,8 +188,10 @@ const Metadata = ({
 
 const Statistics = ({
   sourceItem,
+  translations = statsDefaultTranslations,
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  translations?: typeof statsDefaultTranslations;
 }) => {
   const statisticsCall = (sourceItem?.statisticsCalls || [])[0];
   const { results: statistics } = useStatistics(sourceItem);
@@ -142,6 +199,11 @@ const Statistics = ({
   const preferredUnit = sourceItem?.preferredUnit;
   const displayUnit = getDisplayUnit(preferredUnit);
   const convertUnit = getUnitConverter(unit, preferredUnit);
+
+  const t = {
+    ...statsDefaultTranslations,
+    ...translations,
+  };
 
   return (
     <>
@@ -154,17 +216,17 @@ const Statistics = ({
           renderStatus={({ status }) => renderStatusIcon(status)}
         />
       </div>
-      <DetailsBlock title="Statistics">
+      <DetailsBlock title={t.Statistics}>
         <List
           dataSource={[
-            { label: 'Mean', value: statistics?.mean },
-            { label: 'Median', value: statistics?.median },
+            { label: t.Mean, value: statistics?.mean },
+            { label: t.Median, value: statistics?.median },
             {
-              label: 'Standard Deviation',
+              label: t['Standard Deviation'],
               value: statistics?.std,
             },
-            { label: 'Max', value: statistics?.max },
-            { label: 'Min', value: statistics?.min },
+            { label: t.Max, value: statistics?.max },
+            { label: t.Min, value: statistics?.min },
           ]}
           size="small"
           renderItem={({ label, value }) => (
@@ -177,12 +239,12 @@ const Statistics = ({
           )}
         />
       </DetailsBlock>
-      <DetailsBlock title="Percentiles">
+      <DetailsBlock title={t.Percentiles}>
         <List
           dataSource={[
-            { label: '25th Percentile', value: statistics?.q25 },
-            { label: '50th Percentile', value: statistics?.q50 },
-            { label: '75th Percentile', value: statistics?.q75 },
+            { label: t['25th Percentile'], value: statistics?.q25 },
+            { label: t['50th Percentile'], value: statistics?.q50 },
+            { label: t['75th Percentile'], value: statistics?.q75 },
           ]}
           size="small"
           renderItem={({ label, value }) => (
@@ -195,11 +257,11 @@ const Statistics = ({
           )}
         />
       </DetailsBlock>
-      <DetailsBlock title="Shape">
+      <DetailsBlock title={t.Shape}>
         <List
           dataSource={[
-            { label: 'Skewness', value: statistics?.skewness },
-            { label: 'Kurtosis', value: statistics?.kurtosis },
+            { label: t.Skewness, value: statistics?.skewness },
+            { label: t.Kurtosis, value: statistics?.kurtosis },
           ]}
           size="small"
           renderItem={({ label, value }) => (
@@ -212,12 +274,13 @@ const Statistics = ({
           )}
         />
       </DetailsBlock>
-      <DetailsBlock title="Histogram">
+      <DetailsBlock title={t.Histogram}>
         <HistogramWrapper>
           <Histogram
             data={statistics?.histogram}
             unit={unit}
             preferredUnit={preferredUnit}
+            noDataText={t['No histogram data available']}
           />
         </HistogramWrapper>
       </DetailsBlock>
@@ -227,13 +290,19 @@ const Statistics = ({
 
 const SourceHeader = ({
   sourceItem,
+  timeSeriesTitle = 'Time series',
+  calculationTitle = 'Calculation',
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  timeSeriesTitle?: string;
+  calculationTitle?: string;
 }) => {
   const isTimeSeries = sourceItem?.type === 'timeseries';
   return (
     <div style={{ wordBreak: 'break-word' }}>
-      <Title level={6}>{isTimeSeries ? 'Time Series' : 'Calculation'}</Title>
+      <Title level={6}>
+        {isTimeSeries ? timeSeriesTitle : calculationTitle}
+      </Title>
       <SourceItemWrapper>
         {isTimeSeries ? (
           <SourceCircle color={sourceItem?.color} fade={false} />

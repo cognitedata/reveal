@@ -6,13 +6,29 @@ import { useScreenshot } from 'use-screenshot-hook';
 import { downloadImage, toggleDownloadChartElements } from 'utils/charts';
 import { Chart } from 'models/chart/types';
 import { useCallback, useState } from 'react';
-import CSVModal from './CSVModal';
+import { makeDefaultTranslations } from 'utils/translations';
+import CSVModal, {
+  defaultTranslations as CSVModalDefaultTranslations,
+} from './CSVModal';
+
+const defaultTranslations = makeDefaultTranslations(
+  'PNG',
+  'CSV (Time series only)',
+  'Download'
+);
 
 interface SharingDropdownProps {
   chart: Chart;
+  translations?: typeof defaultTranslations;
+  csvModalTranslations?: typeof CSVModalDefaultTranslations;
 }
 
-const DownloadDropdown = ({ chart }: SharingDropdownProps) => {
+const DownloadDropdown = ({
+  chart,
+  translations,
+  csvModalTranslations,
+}: SharingDropdownProps) => {
+  const t = { ...defaultTranslations, ...translations };
   const { takeScreenshot } = useScreenshot();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isCSVModalVisible, setIsCSVModalVisible] = useState(false);
@@ -27,7 +43,7 @@ const DownloadDropdown = ({ chart }: SharingDropdownProps) => {
         visible={isMenuOpen}
         content={
           <Menu onClick={handleToggleMenu}>
-            <Menu.Header>Download</Menu.Header>
+            <Menu.Header>{t.Download}</Menu.Header>
             <Menu.Item
               onClick={() => {
                 const height = toggleDownloadChartElements(true);
@@ -37,7 +53,7 @@ const DownloadDropdown = ({ chart }: SharingDropdownProps) => {
                 });
               }}
             >
-              <Icon type="Image" /> PNG
+              <Icon type="Image" /> {t.PNG}
             </Menu.Item>
             <Menu.Item
               onClick={() => {
@@ -45,7 +61,7 @@ const DownloadDropdown = ({ chart }: SharingDropdownProps) => {
               }}
             >
               <Icon type="DataTable" />
-              CSV (Time series only)
+              {t['CSV (Time series only)']}
             </Menu.Item>
           </Menu>
         }
@@ -54,15 +70,21 @@ const DownloadDropdown = ({ chart }: SharingDropdownProps) => {
           onClick={handleToggleMenu}
           icon="Download"
           type="ghost"
-          aria-label="Download"
+          aria-label={t.Download}
         />
       </Dropdown>
       <CSVModal
         isOpen={isCSVModalVisible}
         onClose={() => setIsCSVModalVisible(false)}
+        translations={csvModalTranslations}
       />
     </>
   );
 };
+
+DownloadDropdown.translationKeys = Object.keys(defaultTranslations);
+DownloadDropdown.csvModalTranslationKeys = Object.keys(
+  CSVModalDefaultTranslations
+);
 
 export default DownloadDropdown;

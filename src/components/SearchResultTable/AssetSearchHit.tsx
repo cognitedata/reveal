@@ -12,7 +12,14 @@ import { ASSET_KEY } from 'utils/constants';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { removeIllegalCharacters } from 'utils/text';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
+
+const defaultTranslation = makeDefaultTranslations(
+  'Exact match on external id',
+  'View all'
+);
 
 const TIMESERIES_COUNT = 5;
 
@@ -26,7 +33,10 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
   const [__, setUrlAssetId] = useSearchParam(ASSET_KEY, false);
   const [chart] = useRecoilState(chartAtom);
   const handleTimeSeriesClick = useAddRemoveTimeseries();
-
+  const t = {
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'SearchResults').t,
+  };
   const { data: timeseries = [] } = useList<Timeseries>('timeseries', {
     filter: { assetIds: [asset.id] },
     limit: TIMESERIES_COUNT,
@@ -37,7 +47,7 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
   });
 
   const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
-    ?.map((t) => t.tsExternalId || '')
+    ?.map((tsc) => tsc.tsExternalId || '')
     .filter(Boolean);
 
   const handleSelectAsset = (assetId: number) => {
@@ -104,7 +114,7 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
       <Row>
         {isExact && (
           <div>
-            <ExactMatchLabel>Exact match on external id</ExactMatchLabel>
+            <ExactMatchLabel>{t['Exact match on external id']}</ExactMatchLabel>
           </div>
         )}
       </Row>
@@ -114,7 +124,7 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
           {dataAmount && dataAmount.count > TIMESERIES_COUNT && (
             <TSItem>
               <Button type="link" onClick={() => handleSelectAsset(asset.id)}>
-                View all ({dataAmount.count})
+                {t['View all']} ({dataAmount.count})
               </Button>
             </TSItem>
           )}

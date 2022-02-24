@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components/macro';
 import { Menu, Button, Dropdown } from '@cognite/cogs.js';
 import { units, UnitTypes } from 'utils/units';
+import { makeDefaultTranslations } from 'utils/translations';
 
 type UnitDropdownProps = {
   disabled?: boolean;
@@ -11,9 +12,12 @@ type UnitDropdownProps = {
   onOverrideUnitClick: (_: any) => void;
   onConversionUnitClick: (_: any) => void;
   onResetUnitClick: () => void;
+  translations: typeof defaultTranslations;
 };
 
-export const UnitDropdown = ({
+const defaultTranslations = makeDefaultTranslations('Type', 'Input', 'Output');
+
+const UnitDropdown = ({
   disabled,
   unit,
   originalUnit,
@@ -21,7 +25,10 @@ export const UnitDropdown = ({
   onOverrideUnitClick,
   onConversionUnitClick,
   onResetUnitClick,
+  translations,
 }: UnitDropdownProps) => {
+  const t = { ...defaultTranslations, ...translations };
+
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
   );
@@ -118,19 +125,19 @@ export const UnitDropdown = ({
           <MenuContainer>
             <UnitTypeContainer>
               <Menu.Header>
-                <UnitMenuHeader>Type</UnitMenuHeader>
+                <UnitMenuHeader>{t.Type}</UnitMenuHeader>
               </Menu.Header>
               {unitTypeMenuItems}
             </UnitTypeContainer>
             <UnitContainer>
               <Menu.Header>
-                <UnitMenuHeader>Input</UnitMenuHeader>
+                <UnitMenuHeader>{t.Input}</UnitMenuHeader>
               </Menu.Header>
               {unitOverrideMenuItems}
             </UnitContainer>
             <UnitContainer>
               <Menu.Header>
-                <UnitMenuHeader>Output</UnitMenuHeader>
+                <UnitMenuHeader>{t.Output}</UnitMenuHeader>
               </Menu.Header>
               {unitConversionMenuItems}
             </UnitContainer>
@@ -141,8 +148,7 @@ export const UnitDropdown = ({
       <Button
         disabled={disabled}
         icon="ChevronDown"
-        type="ghost"
-        variant="outline"
+        type="tertiary"
         iconPlacement="right"
         style={{ height: 28 }}
       >
@@ -152,6 +158,8 @@ export const UnitDropdown = ({
     </Dropdown>
   );
 };
+
+UnitDropdown.translationKeys = Object.keys(defaultTranslations);
 
 const MenuContainer = styled.div`
   display: flex;
@@ -180,3 +188,5 @@ const UnitContainer = styled.div`
   border-left: 1px solid var(--cogs-greyscale-grey3);
   overflow-y: scroll;
 `;
+
+export default UnitDropdown;

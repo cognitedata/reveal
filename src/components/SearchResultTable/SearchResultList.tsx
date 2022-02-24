@@ -3,13 +3,20 @@ import { Icon, Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useCdfItems, useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
-
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
 import AssetSearchHit from './AssetSearchHit';
 import RecentViewSources from './RecentViewSources';
 
 type Props = {
   query: string;
 };
+const defaultTranslation = makeDefaultTranslations(
+  'Load more',
+  'View all',
+  'Exact match on external id'
+);
+
 export default function SearchResultList({ query }: Props) {
   const {
     data: resourcesBySearch,
@@ -40,6 +47,15 @@ export default function SearchResultList({ query }: Props) {
         .filter(({ externalId }) => externalId !== query),
     [resourcesBySearch, query]
   );
+
+  /**
+   * Translations
+   */
+
+  const t = {
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'SearchResults').t,
+  };
 
   if (isError) {
     return <Icon type="CloseLarge" />;
@@ -75,7 +91,7 @@ export default function SearchResultList({ query }: Props) {
           onClick={() => fetchNextPage()}
           style={{ marginBottom: '20px' }}
         >
-          Load more
+          {t['Load more']}
         </Button>
       )}
     </AssetList>

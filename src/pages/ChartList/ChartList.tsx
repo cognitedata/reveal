@@ -16,14 +16,31 @@ import { subDays } from 'date-fns';
 import { useNavigate } from 'hooks/navigation';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
 import { OpenInCharts } from 'components/OpenInCharts';
-import { CHART_VERSION } from 'config/';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useResetRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
-import { useTranslation } from '@cognite/react-i18n';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
+import { CHART_VERSION } from '../../config/config';
+
+const defaultTranslations = makeDefaultTranslations(
+  'Name',
+  'Owner',
+  'Updated',
+  'Could not load charts',
+  'Failed to load Operations',
+  'Please reload the page',
+  'New charts',
+  'Filter charts',
+  'My charts',
+  'Public charts',
+  'Sort by',
+  'Preview',
+  'New chart'
+);
 
 type ActiveTabOption = 'mine' | 'public';
 type SortOption = 'name' | 'owner' | 'updatedAt';
@@ -52,7 +69,14 @@ const ChartList = () => {
   const resetChart = useResetRecoilState(chartAtom);
   const [_isLoadingOperations, operationsError, _operations] =
     useAvailableOps();
-  const { t } = useTranslation('global');
+  const [loading, setLoading] = useState(true);
+
+  const { t, translationReady } = useTranslations(
+    Object.keys(defaultTranslations),
+    'ChartList'
+  );
+  const { t: listItemTranslations, translationReady: translationReady2 } =
+    useTranslations(ChartListItem.translationKeys, 'ChartListItem');
 
   useEffect(() => {
     resetChart();
@@ -65,9 +89,6 @@ const ChartList = () => {
     return pub.concat(mine.filter((c) => !pub.find((pc) => c.id === pc.id)));
   }, [myCharts.data, pubCharts.data]);
 
-  const loading =
-    (myCharts.isFetching && !myCharts.isFetched) ||
-    (pubCharts.isFetching && !pubCharts.isFetched);
   const error = myCharts.isError || pubCharts.isError;
 
   const [filterText, setFilterText] = useState<string>('');
@@ -76,9 +97,9 @@ const ChartList = () => {
   const [viewOption, setViewOption] = useState<ViewOption>('list');
 
   const sortOptions: SelectSortOption[] = [
-    { value: 'name', label: t('chartList.sortOptionName', 'Name') },
-    { value: 'owner', label: t('chartList.sortOptionOwner', 'Owner') },
-    { value: 'updatedAt', label: t('chartList.sortOptionUpdated', 'Updated') },
+    { value: 'name', label: t.Name },
+    { value: 'owner', label: t.Owner },
+    { value: 'updatedAt', label: t.Updated },
   ];
 
   useEffect(() => {
@@ -88,6 +109,22 @@ const ChartList = () => {
   useEffect(() => {
     trackUsage('ChartList.TabChange', { tab: activeTab });
   }, [activeTab]);
+
+  useEffect(() => {
+    setLoading(
+      (myCharts.isFetching && !myCharts.isFetched) ||
+        (pubCharts.isFetching && !pubCharts.isFetched) ||
+        !translationReady ||
+        !translationReady2
+    );
+  }, [
+    myCharts.isFetched,
+    myCharts.isFetching,
+    pubCharts.isFetched,
+    pubCharts.isFetching,
+    translationReady,
+    translationReady2,
+  ]);
 
   const { mutateAsync: updateChart } = useUpdateChart();
 
@@ -155,14 +192,19 @@ const ChartList = () => {
     }
 
     return chartsToRender.map((chart) => (
-      <ChartListItem key={chart.id} chart={chart} view={viewOption} />
+      <ChartListItem
+        key={chart.id}
+        chart={chart}
+        view={viewOption}
+        translations={listItemTranslations}
+      />
     ));
   };
 
   const renderError = () => {
     return (
       <div>
-        <p>Could not load charts</p>
+        <p>{t['Could not load charts']}</p>
         <pre>{`${myCharts.error || pubCharts.error}`}</pre>
       </div>
     );
@@ -171,8 +213,8 @@ const ChartList = () => {
   if (operationsError instanceof Error) {
     toast.error(
       <ErrorToast
-        title={t('chartList.operationErrorTitle', 'Failed to load Operations')}
-        text={t('chartList.operationErrorDesc', 'Please reload the page')}
+        title={t['Failed to load Operations']}
+        text={t['Please reload the page']}
       />,
       {
         autoClose: false,
@@ -185,13 +227,13 @@ const ChartList = () => {
     <div id="chart-list" style={{ padding: 16, width: '100%' }}>
       <div style={{ margin: 20 }}>
         <Button type="primary" icon="Add" onClick={handleNewChart}>
-          {t('chartList.newChartBtn', 'New chart')}
+          {t['New chart']}
         </Button>
       </div>
       <div style={{ margin: 20 }}>
         <Input
           size="large"
-          placeholder={t('chartList.filterPlaceholder', 'Filter charts')}
+          placeholder={t['Filter charts']}
           icon="Search"
           fullWidth
           value={filterText}
@@ -205,24 +247,14 @@ const ChartList = () => {
           activeKey={activeTab}
           onChange={(activeKey) => setActiveTab(activeKey as ActiveTabOption)}
         >
-          <Tabs.TabPane
-            key="mine"
-            tab={<span>{t('chartList.myChartsTabTitle', 'My charts')}</span>}
-          />
-          <Tabs.TabPane
-            key="public"
-            tab={
-              <span>
-                {t('chartList.publicChartsTabTitle', 'Public charts')}
-              </span>
-            }
-          />
+          <Tabs.TabPane key="mine" tab={<span>{t['My charts']}</span>} />
+          <Tabs.TabPane key="public" tab={<span>{t['Public charts']}</span>} />
         </Tabs>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 200 }}>
             {/* @ts-ignore next line */}
             <Select
-              title={`${t('chartList.sortByTitle', 'Sort by')}:`}
+              title={`${t['Sort by']}:`}
               icon="ArrowDown"
               /*
                 Hack below: Cogs.js has a bug where passing the value makes it
@@ -232,7 +264,7 @@ const ChartList = () => {
                 latest version of Cogs yet.
               */
               // value={sortOption}
-              placeholder={t('chartList.sortDropdownPlaceholder', 'Updated')}
+              placeholder={t.Updated}
               onChange={(option: SelectSortOption) =>
                 setSortOption(option.value)
               }
@@ -259,14 +291,15 @@ const ChartList = () => {
       </div>
       {viewOption === 'list' && (
         <ListHeader>
-          <div style={{ width: 120 }}>Preview</div>
-          <div style={{ width: '40%', marginLeft: 16 }}>Name</div>
-          <div style={{ flexGrow: 1 }}>Owner</div>
-          <div style={{ width: 127 }}>Updated</div>
+          <div style={{ width: 120 }}>{t.Preview}</div>
+          <div style={{ width: '40%', marginLeft: 16 }}>{t.Name}</div>
+          <div style={{ flexGrow: 1 }}>{t.Owner}</div>
+          <div style={{ width: 127 }}>{t.Updated}</div>
         </ListHeader>
       )}
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {error ? renderError() : renderList()}
+        {error && renderError()}
+        {!error && !loading && renderList()}
       </div>
       <OpenInCharts />
     </div>

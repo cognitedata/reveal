@@ -14,18 +14,36 @@ import { Chart } from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import { makeDefaultTranslations } from 'utils/translations';
 
 interface SharingDropdownProps {
   chart: Chart;
   disabled?: boolean;
+  translations?: typeof defaultTranslations;
 }
 
-const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
+const defaultTranslations = makeDefaultTranslations(
+  'This is a public chart. Copy the link to share it. Viewers will have to duplicate the chart in order to make changes.',
+  'This is a private chart. Make it public if you want to share it.',
+  'Sharing on',
+  'Sharing off',
+  'Copy link'
+);
+
+const SharingDropdown = ({
+  chart,
+  disabled = false,
+  translations,
+}: SharingDropdownProps) => {
   const [, setChart] = useRecoilState(chartAtom);
   const [shareIconType, setShareIconType] = useState<
     'Copy' | 'Checkmark' | 'Error'
   >('Copy');
   const shareableLink = window.location.href;
+  const t = {
+    ...defaultTranslations,
+    ...translations,
+  };
 
   const handleToggleChartAccess = async () => {
     setChart((oldChart) => ({
@@ -59,8 +77,12 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
             <Title level={3}>{chart.name}</Title>
             <SharingMenuBody level={1}>
               {chart.public
-                ? 'This is a public chart. Copy the link to share it. Viewers will have to duplicate the chart in order to make changes.'
-                : 'This is a private chart. Make it public if you want to share it.'}
+                ? t[
+                    'This is a public chart. Copy the link to share it. Viewers will have to duplicate the chart in order to make changes.'
+                  ]
+                : t[
+                    'This is a private chart. Make it public if you want to share it.'
+                  ]}
             </SharingMenuBody>
             <SharingSwitchContainer>
               <Switch
@@ -68,11 +90,11 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
                 value={chart.public}
                 onChange={handleToggleChartAccess}
               >
-                {chart.public ? 'Sharing on' : 'Sharing off'}
+                {chart.public ? t['Sharing on'] : t['Sharing off']}
               </Switch>
             </SharingSwitchContainer>
             <ShareLinkContainer>
-              <Input
+              <ShareLink
                 variant="default"
                 value={shareableLink}
                 disabled={!chart.public}
@@ -85,7 +107,7 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
                 iconPlacement="right"
                 disabled={!chart.public}
               >
-                Copy link
+                {t['Copy link']}
               </Button>
             </ShareLinkContainer>
           </SharingMenuContent>
@@ -116,7 +138,8 @@ export const SharingMenuContent = styled.div`
 
 export const SharingMenuBody = styled(Body)`
   margin: 8px 0 0;
-  height: 40px;
+  min-height: 40px;
+  white-space: normal;
 `;
 
 export const ShareLinkContainer = styled.div`
@@ -125,11 +148,19 @@ export const ShareLinkContainer = styled.div`
   gap: 1em;
 `;
 
+const ShareLink = styled(Input)`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
 const StyledDropdown = styled(Dropdown)`
   top: 0;
   position: absolute;
   right: 1px;
   transform: translate(50%);
 `;
+
+SharingDropdown.translationKeys = Object.keys(defaultTranslations);
 
 export default SharingDropdown;

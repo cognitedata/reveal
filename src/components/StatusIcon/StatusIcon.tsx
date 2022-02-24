@@ -3,7 +3,7 @@
  */
 
 import { CalculationStatusStatusEnum } from '@cognite/calculation-backend';
-import { AllIconTypes, Icon } from '@cognite/cogs.js';
+import { IconType, Icon } from '@cognite/cogs.js';
 
 export type StatusIconProps = {
   status: CalculationStatusStatusEnum;
@@ -30,7 +30,7 @@ export const StatusIcon = ({ status }: StatusIconProps) => {
 
 export function getIconTypeFromStatus(
   status: CalculationStatusStatusEnum
-): AllIconTypes {
+): IconType {
   switch (status) {
     case CalculationStatusStatusEnum.Pending:
     case CalculationStatusStatusEnum.Running:

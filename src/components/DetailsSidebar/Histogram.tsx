@@ -12,11 +12,17 @@ type HistogramProps = {
   data?: StatisticsResultResults['histogram'];
   unit?: string;
   preferredUnit?: string;
+  noDataText?: string;
 };
 
-export const Histogram = ({ data, unit, preferredUnit }: HistogramProps) => {
+export const Histogram = ({
+  data,
+  unit,
+  preferredUnit,
+  noDataText = 'No histogram data available',
+}: HistogramProps) => {
   if (!data || !data.length) {
-    return <span>No histogram data available</span>;
+    return <span>{noDataText}</span>;
   }
 
   const convertUnit = getUnitConverter(unit, preferredUnit);

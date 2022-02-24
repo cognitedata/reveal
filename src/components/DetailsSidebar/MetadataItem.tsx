@@ -10,6 +10,7 @@ type MetadataItemProps = {
   value?: any;
   copyable?: boolean;
   link?: string;
+  fallbackText: string;
 };
 
 export const MetadataItem = ({
@@ -17,6 +18,7 @@ export const MetadataItem = ({
   value,
   copyable = false,
   link,
+  fallbackText = 'Not set',
 }: MetadataItemProps) => {
   const [iconType, setIconType] = useState<'Copy' | 'Checkmark'>('Copy');
 
@@ -43,13 +45,21 @@ export const MetadataItem = ({
           )}
         </Value>
       ) : (
-        <em>Not set</em>
+        <em>{fallbackText}</em>
       )}
     </MetadataItemContainer>
   );
 };
 
-export const DataSetItem = ({ timeseries }: { timeseries?: Timeseries }) => {
+export const DataSetItem = ({
+  timeseries,
+  label = 'Data set',
+  fallbackText = 'Not set',
+}: {
+  timeseries?: Timeseries;
+  label: string;
+  fallbackText: string;
+}) => {
   const { data: dataSet } = useCdfItem<DataSet>(
     'datasets',
     { id: timeseries?.dataSetId! },
@@ -59,13 +69,24 @@ export const DataSetItem = ({ timeseries }: { timeseries?: Timeseries }) => {
   );
   const link = useFusionLink(`/data-sets/data-set/${timeseries?.dataSetId}`);
 
-  return <MetadataItem label="Data set" value={dataSet?.name} link={link} />;
+  return (
+    <MetadataItem
+      fallbackText={fallbackText}
+      label={label}
+      value={dataSet?.name}
+      link={link}
+    />
+  );
 };
 
 export const LinkedAssetItem = ({
   timeseries,
+  label = 'Equipment Tag',
+  fallbackText = 'Not set',
 }: {
   timeseries?: Timeseries;
+  label: string;
+  fallbackText: string;
 }) => {
   const { data: asset } = useCdfItem<Asset>(
     'assets',
@@ -76,7 +97,14 @@ export const LinkedAssetItem = ({
   );
   const link = useFusionLink(`/explore/asset/${timeseries?.assetId}`);
 
-  return <MetadataItem label="Equipment Tag" value={asset?.name} link={link} />;
+  return (
+    <MetadataItem
+      fallbackText={fallbackText}
+      label={label}
+      value={asset?.name}
+      link={link}
+    />
+  );
 };
 
 const MetadataItemContainer = styled.div`

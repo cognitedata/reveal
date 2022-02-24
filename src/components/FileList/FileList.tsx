@@ -1,22 +1,26 @@
 import { useEffect, useMemo } from 'react';
 import { Body, DocumentIcon, Icon, Overline } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
+import styled from 'styled-components/macro';
 import {
   isFilePreviewable,
   useFileIcon,
   useFilesAssetAppearsIn,
 } from 'components/FileList';
-import styled from 'styled-components/macro';
 import DelayedComponent from 'components/DelayedComponent';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
 
 const FileListItem = ({
   file,
   isActive = false,
   onFileClick,
+  errorText = 'Unable to preview file.',
 }: {
   file: File;
   isActive: boolean;
   onFileClick: () => void;
+  errorText: string;
 }) => {
   const { data: imageUrl, isLoading, isError } = useFileIcon(file);
 
@@ -32,10 +36,10 @@ const FileListItem = ({
     return (
       <>
         <DocumentIcon file={file.name} style={{ height: 36, width: 36 }} />
-        {isError && <Body level={3}>Unable to preview file.</Body>}
+        {isError && <Body level={3}>{errorText}</Body>}
       </>
     );
-  }, [imageUrl, file, isError, isLoading]);
+  }, [imageUrl, file, isError, isLoading, errorText]);
 
   return (
     <PreviewContainer onClick={() => onFileClick()} isActive={isActive}>
@@ -44,6 +48,11 @@ const FileListItem = ({
     </PreviewContainer>
   );
 };
+
+const defaultTranslations = makeDefaultTranslations(
+  'Unable to preview file',
+  'No files found'
+);
 
 export const FileList = ({
   asset,
@@ -55,7 +64,10 @@ export const FileList = ({
   onFileClick: (file: File) => void;
 }) => {
   const { data = [], isLoading } = useFilesAssetAppearsIn(asset);
-
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'FileList').t,
+  };
   // Select first file on default
   useEffect(() => {
     if (!selectedFileId && data.length > 0) {
@@ -68,7 +80,7 @@ export const FileList = ({
   }
 
   if (data.length === 0) {
-    return <ErrorFeedback>No files found</ErrorFeedback>;
+    return <ErrorFeedback>{t['No files found']}</ErrorFeedback>;
   }
 
   return (
@@ -79,6 +91,7 @@ export const FileList = ({
             file={file}
             isActive={selectedFileId === file.id}
             onFileClick={() => onFileClick(file)}
+            errorText={t['Unable to preview file']}
           />
         </DelayedComponent>
       ))}

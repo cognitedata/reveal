@@ -7,6 +7,12 @@ import { Timeseries } from '@cognite/sdk';
 import Highlighter from 'react-highlight-words';
 import { removeIllegalCharacters } from 'utils/text';
 import { useContainerQuery } from 'react-container-query';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
+
+const defaultTranslation = makeDefaultTranslations(
+  'Exact match on external id'
+);
 
 export default function TimeseriesSearchResultItem({
   timeseries,
@@ -45,7 +51,10 @@ export default function TimeseriesSearchResultItem({
   });
 
   const { shouldBreakIntoRows } = params;
-
+  const t = {
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'SearchResults').t,
+  };
   return (
     <TSItem ref={containerRef} outline={isExact}>
       <Row>
@@ -75,7 +84,9 @@ export default function TimeseriesSearchResultItem({
               </Description>
               <div>
                 {isExact && (
-                  <ExactMatchLabel>Exact match on external id</ExactMatchLabel>
+                  <ExactMatchLabel>
+                    {t['Exact match on external id']}
+                  </ExactMatchLabel>
                 )}
               </div>
             </InfoContainer>

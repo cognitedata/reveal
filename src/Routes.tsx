@@ -11,11 +11,11 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { Loader, toast } from '@cognite/cogs.js';
-import ChartList from 'pages/ChartList';
+import ChartList from 'pages/ChartList/ChartList';
 import ChartView from 'pages/ChartView';
 import UserProfile from 'pages/UserProfile/UserProfile';
 import TenantSelectorView from 'pages/TenantSelector';
-import { FileView } from 'pages/FileView';
+import { FileView } from 'pages/FileView/FileView';
 import TopBar from 'components/TopBar';
 import PageLayout from 'components/Layout/PageLayout';
 import { useFirebaseInit } from 'hooks/firebase';

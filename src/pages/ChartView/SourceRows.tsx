@@ -2,6 +2,7 @@ import { useEffect, useMemo, memo } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { initializeSourceCollection } from 'models/chart/updates';
+import { useTranslations } from 'hooks/translations';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 
@@ -36,6 +37,11 @@ const SourceRows = memo(
         updateChart((oldChart) => initializeSourceCollection(oldChart!));
       }
     }, [chart, updateChart]);
+
+    const { t: translations } = useTranslations(
+      [...TimeSeriesRow.translationKeys, ...WorkflowRow.translationKeys],
+      'SourceTableRow'
+    );
 
     const mapSourceCollection = useMemo(() => {
       return (chart.sourceCollection ?? [])
@@ -78,6 +84,7 @@ const SourceRows = memo(
                     isFileViewerMode={isFileViewerMode}
                     dateFrom={chart.dateFrom}
                     dateTo={chart.dateTo}
+                    translations={translations}
                   />
                 ) : (
                   <WorkflowRow
@@ -92,6 +99,7 @@ const SourceRows = memo(
                     onInfoClick={onInfoClick}
                     mode={mode}
                     openNodeEditor={openNodeEditor}
+                    translations={translations}
                   />
                 )
               }

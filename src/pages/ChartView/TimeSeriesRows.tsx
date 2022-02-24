@@ -1,3 +1,4 @@
+import { useTranslations } from 'hooks/translations';
 import { Chart } from 'models/chart/types';
 import { Modes } from 'pages/types';
 import TimeSeriesRow from './TimeSeriesRow';
@@ -26,6 +27,11 @@ export default function TimeSeriesRows({
   const isEditorMode = mode === 'editor';
   const isFileViewerMode = mode === 'file';
 
+  const { t: translations } = useTranslations(
+    TimeSeriesRow.translationKeys,
+    'SourceTableRow'
+  );
+
   return (
     <>
       {chart?.timeSeriesCollection?.map((t) => (
@@ -41,6 +47,7 @@ export default function TimeSeriesRows({
           isFileViewerMode={isFileViewerMode}
           dateFrom={dateFrom}
           dateTo={dateTo}
+          translations={translations}
         />
       ))}
     </>

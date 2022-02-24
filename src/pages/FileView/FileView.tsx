@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Body, Button, Icon, Title } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
-import { FileViewer } from 'components/FileViewer';
-import { FileList } from 'components/FileList';
+import { FileViewer } from 'components/FileViewer/FileViewer';
+import { FileList } from 'components/FileList/FileList';
 import { useNavigate } from 'hooks/navigation';
 import { useAsset } from 'hooks/cdf-assets';
 import { useParams } from 'react-router-dom';
@@ -17,6 +17,7 @@ import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
+import { useTranslations } from 'hooks/translations';
 
 export const FileView = () => {
   const [chart, setChart] = useRecoilState(chartAtom);
@@ -42,20 +43,49 @@ export const FileView = () => {
     }
   );
 
+  const { t } = useTranslations(
+    [
+      'Asset not found!',
+      'Chart not found!',
+      'Error while loading file viewer',
+      'Back to chart',
+      'Show',
+      'Hide',
+      'linked assets',
+      'Linked assets',
+    ],
+    'FileView'
+  );
+
   useEffect(() => {
     trackUsage('PageView.FileView');
   }, []);
+
+  /**
+   * Source Table Header translations
+   */
+  const { t: sourceTableHeaderTranslations } = useTranslations(
+    SourceTableHeader.translationKeys,
+    'SourceTableHeader'
+  );
 
   if (!isAssetFetched) {
     return <Icon type="Loader" />;
   }
 
   if (!asset) {
-    return <>Asset not found!</>;
+    return <>{t['Asset not found!']}</>;
   }
 
   if (!chart) {
-    return <>Chart not found!</>;
+    return (
+      <NoChartBox>
+        <h2>{t['Error while loading file viewer']}</h2>
+        <Button icon="ArrowLeft" onClick={() => move(`/${chartId}`)}>
+          {t['Back to chart']}
+        </Button>
+      </NoChartBox>
+    );
   }
 
   return (
@@ -67,7 +97,7 @@ export const FileView = () => {
             style={{ marginBottom: 20 }}
             onClick={() => move(`/${chartId}`)}
           >
-            Back to chart
+            {t['Back to chart']}
           </Button>
           <Title level={4}>{asset.name}</Title>
           <Body level={2}>{asset.description}</Body>
@@ -92,16 +122,19 @@ export const FileView = () => {
                 }}
                 onClick={() => setShowLinkedAssets(!showLinkedAssets)}
               >
-                {`${showLinkedAssets ? 'Hide' : 'Show'} linked assets (${
-                  linkedAssets.length
-                })`}
+                {`${showLinkedAssets ? t.Hide : t.Show} ${
+                  t['linked assets']
+                } (${linkedAssets.length})`}
               </Button>
             )}
           </div>
           <div style={{ width: '100%' }}>
             <SourceTableWrapper>
               <SourceTable>
-                <SourceTableHeader mode="file" />
+                <SourceTableHeader
+                  translations={sourceTableHeaderTranslations}
+                  mode="file"
+                />
                 <tbody>
                   <TimeSeriesRows
                     chart={chart}
@@ -126,7 +159,7 @@ export const FileView = () => {
                 alignItems: 'center',
               }}
             >
-              <Title level={4}>Linked assets</Title>
+              <Title level={4}>{t['Linked assets']}</Title>
               <Button
                 type="ghost"
                 icon="Close"
@@ -136,7 +169,7 @@ export const FileView = () => {
           </Header>
           <LinkedAssetList>
             {linkedAssets.map((linkedAsset) => (
-              <AssetSearchHit asset={linkedAsset} />
+              <AssetSearchHit key={linkedAsset.id} asset={linkedAsset} />
             ))}
           </LinkedAssetList>
         </FileSidebar>
@@ -176,6 +209,18 @@ const FileViewerContainer = styled.div`
 `;
 
 const Header = styled.div`
-  padding: 20px;
+  padding: 1rem;
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
+`;
+
+const NoChartBox = styled.div`
+  border: 1px solid var(--cogs-greyscale-grey3);
+  padding: 1.5rem 1rem;
+  width: calc(100% - 2rem);
+  margin: 1rem 1rem auto;
+  text-align: center;
+
+  > h2 {
+    margin: 0 0 2rem;
+  }
 `;

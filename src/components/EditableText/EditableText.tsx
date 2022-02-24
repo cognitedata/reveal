@@ -2,9 +2,10 @@ import { useState } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
 import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
+import { makeDefaultTranslations } from 'utils/translations';
 import ClickBoundary from './ClickBoundary';
 
-interface EditableTextProps {
+export interface EditableTextProps {
   value: string;
   onChange: (value: string) => void;
   onCancel?: () => void;
@@ -12,7 +13,14 @@ interface EditableTextProps {
   hideButtons?: boolean;
   hideEdit?: boolean;
   isError?: boolean;
+  translations?: typeof defaultTranslations;
 }
+
+export const defaultTranslations = makeDefaultTranslations(
+  'Ok',
+  'Cancel',
+  'Rename'
+);
 
 const EditableText = ({
   isError = false,
@@ -22,9 +30,11 @@ const EditableText = ({
   editing,
   hideButtons,
   hideEdit,
+  translations,
 }: EditableTextProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(value);
+  const t = { ...defaultTranslations, ...translations };
 
   const finishEditing = () => {
     onChange(inputValue);
@@ -73,10 +83,10 @@ const EditableText = ({
                 onClick={finishEditing}
                 style={{ marginLeft: 8 }}
               >
-                Ok
+                {t.Ok}
               </Button>
               <Button onClick={cancelEditing} style={{ marginLeft: 8 }}>
-                Cancel
+                {t.Cancel}
               </Button>
             </>
           )}
@@ -89,6 +99,10 @@ const EditableText = ({
       <div
         style={{
           color: isError ? 'var(--cogs-red)' : 'var(--cogs-text-color)',
+          whiteSpace: 'nowrap',
+          width: '100%',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
         }}
       >
         {value}
@@ -96,7 +110,7 @@ const EditableText = ({
       {!hideEdit && (
         <div className="edit-button" style={{ marginLeft: 4 }}>
           <ClickBoundary>
-            <Tooltip content="Rename">
+            <Tooltip content={t.Rename}>
               <Button type="ghost" onClick={startEditing}>
                 <Icon type="Edit" />
               </Button>
@@ -123,5 +137,7 @@ const EditingWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
+
+EditableText.translationKeys = Object.keys(defaultTranslations);
 
 export default EditableText;

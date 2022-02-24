@@ -27,6 +27,8 @@ import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { addTimeseries, covertTSToChartTS } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
 
 const TIMESERIE_IDS_KEY = 'timeserieIds';
 const TIMESERIE_EXTERNAL_IDS_KEY = 'timeserieExternalIds';
@@ -34,6 +36,16 @@ const START_TIME_KEY = 'startTime';
 const END_TIME_KEY = 'endTime';
 const CHART_NAME_KEY = 'chartName';
 const options = ['New chart', 'Add to chart'];
+
+const defaultTranslations = makeDefaultTranslations(
+  'Add Time series to chart',
+  'Confirm',
+  'Cancel',
+  'Select all/none',
+  'Chart',
+  'New chart',
+  'Add to chart'
+);
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -43,6 +55,10 @@ export const OpenInCharts: FC = () => {
   const move = useNavigate();
   const { data: login } = useUserInfo();
   const { mutate: updateChart } = useUpdateChart();
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'OpenInCharts').t,
+  };
 
   const [initiated, setInitiated] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -250,8 +266,9 @@ export const OpenInCharts: FC = () => {
       compact(timeserieExternalIds.split(',')).length;
   return (
     <Modal
-      title="Add Timeseries to Chart"
-      okText="Confirm"
+      title={t['Add Time series to chart']}
+      okText={t.Confirm}
+      cancelText={t.Cancel}
       visible={visible}
       onOk={handleSubmit}
       onCancel={() => {
@@ -281,28 +298,28 @@ export const OpenInCharts: FC = () => {
               name="selectAllNone"
               value={isAllSelected}
             >
-              Select all/none
+              {t['Select all/none']}
             </Checkbox>
 
             <TSList>
-              {ts?.map((t, i) => (
-                <TSItem key={t.id}>
+              {ts?.map((tItem, i) => (
+                <TSItem key={tItem.id}>
                   <Row>
                     <Left>
                       <Checkbox
                         onClick={(e) => {
                           e.preventDefault();
-                          handleTimeSeriesClick(t);
+                          handleTimeSeriesClick(tItem);
                         }}
-                        name={`${t.id}`}
-                        value={selectedIds.includes(t.id)}
+                        name={`${tItem.id}`}
+                        value={selectedIds.includes(tItem.id)}
                       />
                       <InfoContainer>
                         <ResourceNameWrapper>
                           <Icon type="Timeseries" style={{ minWidth: 14 }} />
-                          <span style={{ marginLeft: 5 }}>{t.name}</span>
+                          <span style={{ marginLeft: 5 }}>{tItem.name}</span>
                         </ResourceNameWrapper>
-                        <Description>{t.description}</Description>
+                        <Description>{tItem.description}</Description>
                       </InfoContainer>
                     </Left>
                     <Right>
@@ -311,7 +328,7 @@ export const OpenInCharts: FC = () => {
                           <TimeseriesChart
                             height={55}
                             showSmallerTicks
-                            timeseriesId={t.id}
+                            timeseriesId={tItem.id}
                             numberOfPoints={25}
                             showAxis="horizontal"
                             timeOptions={[]}
@@ -331,7 +348,7 @@ export const OpenInCharts: FC = () => {
             </TSList>
           </div>
           <div style={{ marginTop: 16 }}>
-            <strong>Chart</strong>
+            <strong>{t.Chart}</strong>
             <div style={{ marginTop: 8, marginBottom: 4 }}>
               <label className="cogs-radio" htmlFor={options[0]}>
                 <input
@@ -344,7 +361,7 @@ export const OpenInCharts: FC = () => {
                   onChange={handleOnChange}
                 />
                 <div className="radio-ui" />
-                {options[0]}
+                {t['New chart']}
               </label>
             </div>
             <Input
@@ -363,7 +380,7 @@ export const OpenInCharts: FC = () => {
                   onChange={handleOnChange}
                 />
                 <div className="radio-ui" />
-                {options[1]}
+                {t['Add to chart']}
               </label>
             </div>
             <Select
@@ -387,9 +404,9 @@ export const OpenInCharts: FC = () => {
 };
 
 const TSList = styled.ul`
-  width: 100%;
+  width: calc(100% + 1rem);
   padding: 0;
-  margin: 10px 0 10px 0;
+  margin: 10px -0.5rem;
   list-style: none;
   max-height: calc(100vh - 500px);
   overflow-y: auto;
@@ -397,6 +414,7 @@ const TSList = styled.ul`
 
 const TSItem = styled.li`
   border-radius: 5px;
+  padding: 0 0.5rem;
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);
   }

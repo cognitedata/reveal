@@ -1,29 +1,57 @@
-import {
-  Button,
-  Checkbox,
-  Icon,
-  Input,
-  Modal,
-  SegmentedControl,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import DateRangeSelector from 'components/DateRangeSelector';
 import chartAtom from 'models/chart/atom';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import styled from 'styled-components/macro';
 import { datapointsToCSV, Delimiters, downloadCSV } from 'utils/csv';
 import { wait } from 'utils/helpers';
 import { format as formatDate } from 'date-fns';
 import { DatapointAggregates } from '@cognite/sdk';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { makeDefaultTranslations } from 'utils/translations';
 import { fetchDataPoints, fetchRawDatapoints } from './utils';
+import {
+  ModalWrapper,
+  ExampleText,
+  FullWidthInput,
+  Label,
+  FieldContainer,
+  ButtonGroup,
+  BottomContainer,
+  StatusContainer,
+  StatusText,
+  StatusIcon,
+} from './elements';
+
+export const defaultTranslations = makeDefaultTranslations(
+  'Export to CSV',
+  'Only the time series currently visible in your chart will be a part of the downloaded data. If applicable - adjust which time series are visible by using the eye icon for each time series.',
+  'Calculation results are not included',
+  'Time span of data to export',
+  'Time span',
+  'Granularity of the data to export (defaults to 1 day (1d))',
+  'Granularity',
+  '1d (default)',
+  'Examples - 30s, 45m, 2h, 3d',
+  'Download raw data points from the source - without aggregation, limited to 100,000 points per time series',
+  'Download raw data (separate file per time series)',
+  'Choose which CSV delimiter format you prefer',
+  'Delimiter',
+  "Set the date format to 'yyyy-mm-dd HH-mm-ss' - otherwise it will be a timestamp",
+  'Human readable dates',
+  'Export failed',
+  'Exporting - please wait',
+  'Export successful',
+  'Cancel',
+  'Export'
+);
 
 type Props = {
   isOpen?: boolean;
   onClose?: () => void;
+  translations?: typeof defaultTranslations;
 };
 
 const delimiterOptions: { id: string; value: Delimiters; label: string }[] = [
@@ -32,7 +60,12 @@ const delimiterOptions: { id: string; value: Delimiters; label: string }[] = [
   { id: '3', value: Delimiters.Tab, label: 'tab' },
 ];
 
-const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
+const CSVModal = ({
+  isOpen = false,
+  onClose = () => {},
+  translations,
+}: Props) => {
+  const t = { ...defaultTranslations, ...translations };
   const [chart] = useRecoilState(chartAtom);
   const [isModalVisible, setIsModalVisible] = useState(isOpen);
   const [selectedDelimiterId, setSelectedDelimiterId] = useState(
@@ -224,24 +257,26 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
   return (
     <ModalWrapper
       appElement={document.getElementsByTagName('body')}
-      title="Export to CSV"
+      title={t['Export to CSV']}
       visible={isModalVisible}
       footer={null}
       onCancel={handleCloseModal}
       width={750}
     >
       <p>
-        Only the time series currently visible in your chart will be a part of
-        the downloaded data. If applicable - adjust which time series are
-        visible by using the eye icon for each time series.
+        {
+          t[
+            'Only the time series currently visible in your chart will be a part of the downloaded data. If applicable - adjust which time series are visible by using the eye icon for each time series.'
+          ]
+        }
       </p>
 
-      <p>NOTE: Calculation results are not included</p>
+      <p>{t['Calculation results are not included']}</p>
 
       <FieldContainer>
         <Label>
-          <Tooltip content="Time span of data to export">
-            <>Time span</>
+          <Tooltip content={t['Time span of data to export']}>
+            <>{t['Time span']}</>
           </Tooltip>
         </Label>
         <DateRangeSelector />
@@ -249,18 +284,22 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
 
       <FieldContainer>
         <Label>
-          <Tooltip content="Granularity of the data to export (defaults to 1 day (1d)')">
-            <>Granularity</>
+          <Tooltip
+            content={
+              t['Granularity of the data to export (defaults to 1 day (1d))']
+            }
+          >
+            <>{t.Granularity}</>
           </Tooltip>
         </Label>
         <FullWidthInput
           disabled={isRawDownload}
           onChange={(event) => setSelectedGranularity(event.target.value)}
           value={selectedGranularity}
-          placeholder="1d (default)"
+          placeholder={t['1d (default)']}
           type="text"
         />
-        <ExampleText>Examples: 30s, 45m, 2h, 3d</ExampleText>
+        <ExampleText>{t['Examples - 30s, 45m, 2h, 3d']}</ExampleText>
       </FieldContainer>
 
       <FieldContainer>
@@ -272,17 +311,21 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
         <Label>
           <Tooltip
             maxWidth={350}
-            content="Download raw data points from the source - without aggregation, limited to 100,000 points per time series"
+            content={
+              t[
+                'Download raw data points from the source - without aggregation, limited to 100,000 points per time series'
+              ]
+            }
           >
-            <>Download raw data (separate file per time series)</>
+            <>{t['Download raw data (separate file per time series)']}</>
           </Tooltip>
         </Label>
       </FieldContainer>
 
       <FieldContainer>
         <Label>
-          <Tooltip content="Choose which CSV delimiter format you prefer">
-            <>Delimiter</>
+          <Tooltip content={t['Choose which CSV delimiter format you prefer']}>
+            <>{t.Delimiter}</>
           </Tooltip>
         </Label>
         <SegmentedControl
@@ -309,9 +352,13 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
         <Label>
           <Tooltip
             maxWidth={350}
-            content="Set the date format to 'yyyy-mm-dd HH:mm:ss' - otherwise it will be a timestamp"
+            content={
+              t[
+                "Set the date format to 'yyyy-mm-dd HH-mm-ss' - otherwise it will be a timestamp"
+              ]
+            }
           >
-            <>Human readable dates</>
+            <>{t['Human readable dates']}</>
           </Tooltip>
         </Label>
       </FieldContainer>
@@ -322,13 +369,13 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
             <Tooltip maxWidth={350} content={error.message}>
               <StatusText>
                 <StatusIcon style={{ color: 'var(--cogs-red)' }} type="Error" />{' '}
-                Export failed
+                {t['Export failed']}
               </StatusText>
             </Tooltip>
           )}
           {!error && isExporting && (
             <StatusText>
-              <StatusIcon type="Loader" /> Exporting - please wait
+              <StatusIcon type="Loader" /> {t['Exporting - please wait']}
             </StatusText>
           )}
           {!error && isDoneExporting && (
@@ -337,7 +384,7 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
                 style={{ color: 'var(--cogs-green)' }}
                 type="Checkmark"
               />{' '}
-              Export successful
+              {t['Export successful']}
             </StatusText>
           )}
         </StatusContainer>
@@ -347,10 +394,10 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
             style={{ marginRight: 5 }}
             type="secondary"
           >
-            Cancel
+            {t.Cancel}
           </Button>
           <Button disabled={isExporting} onClick={handleExport} type="primary">
-            Export
+            {t.Export}
           </Button>
         </ButtonGroup>
       </BottomContainer>
@@ -358,52 +405,6 @@ const CSVModal = ({ isOpen = false, onClose = () => {} }: Props) => {
   );
 };
 
+CSVModal.translationKeys = Object.keys(defaultTranslations);
+
 export default CSVModal;
-
-const ModalWrapper = styled(Modal)`
-  max-width: 450px;
-  .cogs-modal-header {
-    border-bottom: none;
-    font-size: var(--cogs-t3-font-size);
-  }
-`;
-
-const ExampleText = styled.p`
-  font-size: 10px;
-  color: #555;
-`;
-
-const FullWidthInput = styled(Input)`
-  width: 100%;
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-`;
-
-const FieldContainer = styled.div`
-  margin-top: 20px;
-`;
-
-const ButtonGroup = styled.div``;
-
-const BottomContainer = styled.div`
-  margin-top: 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const StatusContainer = styled.div`
-  display: flex;
-  align-items: center; ;
-`;
-
-const StatusText = styled.div`
-  display: flex;
-  align-items: center; ;
-`;
-
-const StatusIcon = styled(Icon)`
-  margin-right: 5px;
-`;

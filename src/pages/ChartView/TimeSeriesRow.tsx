@@ -3,10 +3,9 @@ import { Chart, ChartTimeSeries } from 'models/chart/types';
 import { Button, Dropdown, Tooltip, Popconfirm } from '@cognite/cogs.js';
 import { removeTimeseries, updateTimeseries } from 'models/chart/updates';
 import { useLinkedAsset } from 'hooks/cdf-assets';
-import EditableText from 'components/EditableText';
-import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
-import { UnitDropdown } from 'components/UnitDropdown';
+import UnitDropdown from 'components/UnitDropdown/UnitDropdown';
 import { trackUsage } from 'services/metrics';
 import { formatValueForDisplay } from 'utils/numbers';
 import { getUnitConverter } from 'utils/units';
@@ -29,6 +28,9 @@ import {
 import { useSDK } from '@cognite/sdk-provider';
 import { timeseriesAtom } from 'models/timeseries/atom';
 import { StyleButton } from 'components/StyleButton/StyleButton';
+import { useTranslations } from 'hooks/translations';
+import { makeDefaultTranslations } from 'utils/translations';
+import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import {
   SourceItem,
   SourceName,
@@ -52,9 +54,19 @@ type Props = {
   draggable?: boolean;
   dateFrom?: string;
   dateTo?: string;
+  translations: typeof defaultTranslations;
 };
 
-export default function TimeSeriesRow({
+/**
+ * Timeseries translations
+ */
+const defaultTranslations = makeDefaultTranslations(
+  'Remove',
+  'Cancel',
+  'Remove this time series?'
+);
+
+function TimeSeriesRow({
   mutate,
   timeseries,
   onRowClick = () => {},
@@ -67,6 +79,7 @@ export default function TimeSeriesRow({
   provided = undefined,
   dateFrom,
   dateTo,
+  translations,
 }: Props) {
   const {
     id,
@@ -93,13 +106,13 @@ export default function TimeSeriesRow({
     (_tsId: string, diff: Partial<ChartTimeSeries>) =>
       mutate((oldChart) => ({
         ...oldChart!,
-        timeSeriesCollection: oldChart!.timeSeriesCollection?.map((t) =>
-          t.id === _tsId
+        timeSeriesCollection: oldChart!.timeSeriesCollection?.map((ts) =>
+          ts.id === _tsId
             ? {
-                ...t,
+                ...ts,
                 ...diff,
               }
-            : t
+            : ts
         ),
       })),
     [mutate]
@@ -260,6 +273,21 @@ export default function TimeSeriesRow({
     timeseries.tsExternalId,
   ]);
 
+  /**
+   * Unit Dropdown translations
+   */
+  const { t: unitDropdownTranslations } = useTranslations(
+    UnitDropdown.translationKeys,
+    'UnitDropdown'
+  );
+  /**
+   * Apperance Dropdown translations
+   */
+  const { t: appearanceDropdownTranslations } = useTranslations(
+    AppearanceDropdown.translationKeys,
+    'AppearanceDropdown'
+  );
+
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
   const summary = useRecoilValue(timeseriesSummaryById(tsExternalId));
   const convertUnit = getUnitConverter(unit, preferredUnit);
@@ -298,6 +326,7 @@ export default function TimeSeriesRow({
               selectedLineStyle={lineStyle}
               selectedLineWeight={lineWeight}
               onUpdate={handleUpdateAppearance}
+              translations={appearanceDropdownTranslations}
             />
           }
         >
@@ -321,7 +350,7 @@ export default function TimeSeriesRow({
           )}
           <SourceName title={name}>
             {!isFileViewerMode && (
-              <EditableText
+              <TranslatedEditableText
                 value={name || 'noname'}
                 onChange={(value) => {
                   update(id, { name: value });
@@ -380,6 +409,7 @@ export default function TimeSeriesRow({
               onOverrideUnitClick={updateUnit}
               onConversionUnitClick={updatePrefferedUnit}
               onResetUnitClick={resetUnit}
+              translations={unitDropdownTranslations}
             />
           </td>
         </>
@@ -402,9 +432,12 @@ export default function TimeSeriesRow({
         >
           <Popconfirm
             onConfirm={remove}
-            okText="Remove"
+            okText={translations.Remove}
+            cancelText={translations.Cancel}
             content={
-              <div style={{ textAlign: 'left' }}>Remove this time series?</div>
+              <div style={{ textAlign: 'left' }}>
+                {translations['Remove this time series?']}
+              </div>
             }
           >
             <Button
@@ -444,3 +477,7 @@ export default function TimeSeriesRow({
     </SourceRow>
   );
 }
+
+TimeSeriesRow.translationKeys = Object.keys(defaultTranslations);
+
+export default TimeSeriesRow;

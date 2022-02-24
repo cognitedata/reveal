@@ -6,18 +6,38 @@ import { ShowHideButton } from 'components/ShowHideButton/ShowHideButton';
 import { SourceItem, SourceName } from 'pages/ChartView/elements';
 import { Modes } from 'pages/types';
 import { MouseEventHandler } from 'react';
+import { makeDefaultTranslations } from 'utils/translations';
 
 export interface SourceTableHeaderProps {
   mode: Modes;
   onShowHideButtonClick?: MouseEventHandler<HTMLDivElement>;
   showHideIconState?: boolean;
+  translations: typeof defaultTranslation;
 }
 
-export const SourceTableHeader = ({
+const defaultTranslation = makeDefaultTranslations(
+  'Style',
+  'Name',
+  'Tag',
+  'Description',
+  'Min',
+  'Max',
+  'Mean',
+  'Unit',
+  'P&IDs',
+  'Remove',
+  'Info',
+  'More'
+);
+
+const SourceTableHeader = ({
   mode,
   onShowHideButtonClick = () => {},
   showHideIconState = false,
+  translations,
 }: SourceTableHeaderProps) => {
+  const t = { ...defaultTranslation, ...translations };
+
   return (
     <thead>
       <tr>
@@ -26,7 +46,7 @@ export const SourceTableHeader = ({
           className="downloadChartHide"
         >
           <SourceItem style={{ justifyContent: 'center' }}>
-            <SourceName>Style</SourceName>
+            <SourceName>{t.Style}</SourceName>
           </SourceItem>
         </th>
         <th>
@@ -38,7 +58,7 @@ export const SourceTableHeader = ({
                   onClick={onShowHideButtonClick}
                 />
               )}
-              Name
+              {t.Name}
             </SourceName>
           </SourceItem>
         </th>
@@ -46,12 +66,12 @@ export const SourceTableHeader = ({
           <>
             <th style={{ width: 210 }} className="bordered">
               <SourceItem>
-                <SourceName>Tag</SourceName>
+                <SourceName>{t.Tag}</SourceName>
               </SourceItem>
             </th>
             <th style={{ width: 250 }} className="bordered">
               <SourceItem>
-                <SourceName>Description</SourceName>
+                <SourceName>{t.Description}</SourceName>
               </SourceItem>
             </th>
           </>
@@ -60,22 +80,22 @@ export const SourceTableHeader = ({
           <>
             <th style={{ width: 60 }} className="bordered">
               <SourceItem>
-                <SourceName>Min</SourceName>
+                <SourceName>{t.Min}</SourceName>
               </SourceItem>
             </th>
             <th style={{ width: 60 }} className="bordered">
               <SourceItem>
-                <SourceName>Max</SourceName>
+                <SourceName>{t.Max}</SourceName>
               </SourceItem>
             </th>
             <th style={{ width: 60 }} className="bordered">
               <SourceItem>
-                <SourceName>Mean</SourceName>
+                <SourceName>{t.Mean}</SourceName>
               </SourceItem>
             </th>
             <th style={{ width: 180, paddingRight: 8 }}>
               <SourceItem>
-                <SourceName>Unit</SourceName>
+                <SourceName>{t.Unit}</SourceName>
               </SourceItem>
             </th>
           </>
@@ -87,7 +107,7 @@ export const SourceTableHeader = ({
               className="downloadChartHide"
             >
               <SourceItem style={{ justifyContent: 'center' }}>
-                <SourceName>P&amp;IDs</SourceName>
+                <SourceName>{t['P&IDs']}</SourceName>
               </SourceItem>
             </th>
             <th
@@ -95,7 +115,7 @@ export const SourceTableHeader = ({
               className="downloadChartHide"
             >
               <SourceItem style={{ justifyContent: 'center' }}>
-                <SourceName>Remove</SourceName>
+                <SourceName>{t.Remove}</SourceName>
               </SourceItem>
             </th>
           </>
@@ -107,7 +127,7 @@ export const SourceTableHeader = ({
               className="downloadChartHide"
             >
               <SourceItem style={{ justifyContent: 'center' }}>
-                <SourceName>Info</SourceName>
+                <SourceName>{t.Info}</SourceName>
               </SourceItem>
             </th>
             <th
@@ -115,7 +135,7 @@ export const SourceTableHeader = ({
               className="downloadChartHide"
             >
               <SourceItem style={{ justifyContent: 'center' }}>
-                <SourceName>More</SourceName>
+                <SourceName>{t.More}</SourceName>
               </SourceItem>
             </th>
           </>
@@ -124,3 +144,6 @@ export const SourceTableHeader = ({
     </thead>
   );
 };
+
+SourceTableHeader.translationKeys = Object.keys(defaultTranslation);
+export { SourceTableHeader };

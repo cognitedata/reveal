@@ -4,11 +4,10 @@ import {
 } from '@cognite/calculation-backend';
 import { Button, Dropdown, Menu, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { workflowsAtom } from 'models/workflows/atom';
-import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
 import CalculationCallStatus from 'components/CalculationCallStatus';
-import EditableText from 'components/EditableText';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
-import { UnitDropdown } from 'components/UnitDropdown';
+import UnitDropdown from 'components/UnitDropdown/UnitDropdown';
 import { flow, isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
@@ -30,6 +29,9 @@ import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
 import { validateSteps } from 'components/NodeEditor/V2/calculations';
 import { StyleButton } from 'components/StyleButton/StyleButton';
+import { useTranslations } from 'hooks/translations';
+import { makeDefaultTranslations } from 'utils/translations';
+import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import {
   SourceDescription,
   SourceItem,
@@ -51,9 +53,21 @@ type Props = {
   mutate: (update: (c: Chart | undefined) => Chart) => void;
   draggable?: boolean;
   provided?: DraggableProvided | undefined;
+  translations: typeof defaultTranslations;
 };
 
-export default function WorkflowRow({
+/**
+ * Workflow translations
+ */
+const defaultTranslations = makeDefaultTranslations(
+  'Remove',
+  'Cancel',
+  'Remove this calculation?',
+  'Edit calculation',
+  'Duplicate'
+);
+
+function WorkflowRow({
   chart,
   workflow,
   onRowClick = () => {},
@@ -64,6 +78,7 @@ export default function WorkflowRow({
   mutate,
   draggable = false,
   provided = undefined,
+  translations,
 }: Props) {
   const [, setWorkflowState] = useRecoilState(workflowsAtom);
   const { mutate: createCalculation, isLoading: isCallLoading } =
@@ -84,6 +99,9 @@ export default function WorkflowRow({
   const isWorkspaceMode = mode === 'workspace';
 
   const [, , operations] = useAvailableOps();
+
+  const t = { ...defaultTranslations, ...translations };
+  const { Duplicate } = t;
 
   const update = useCallback(
     (wfId: string, diff: Partial<ChartWorkflow>) => {
@@ -243,6 +261,14 @@ export default function WorkflowRow({
     }));
   }, [id, calculationResult, setWorkflowState, currentCallStatus.data?.status]);
 
+  /**
+   * Unit Dropdown translations
+   */
+  const { t: unitDropdownTranslations } = useTranslations(
+    UnitDropdown.translationKeys,
+    'UnitDropdown'
+  );
+
   const remove = () => mutate((oldChart) => removeWorkflow(oldChart!, id));
 
   const updateUnit = (unitOption: any) => {
@@ -364,6 +390,12 @@ export default function WorkflowRow({
               selectedLineStyle={lineStyle}
               selectedLineWeight={lineWeight}
               onUpdate={handleUpdateAppearance}
+              translations={
+                useTranslations(
+                  AppearanceDropdown.translationKeys,
+                  'AppearanceDropdown'
+                ).t
+              }
             />
           }
         >
@@ -382,10 +414,7 @@ export default function WorkflowRow({
             onDoubleClick={(event) => event.stopPropagation()}
           >
             {!call && (
-              <StyledStatusIcon
-                type={enabled ? 'EyeShow' : 'EyeHide'}
-                title="Toggle visibility"
-              />
+              <StyledStatusIcon type={enabled ? 'EyeShow' : 'EyeHide'} />
             )}
             {call && (
               <CalculationCallStatus
@@ -395,14 +424,10 @@ export default function WorkflowRow({
                     type={getIconTypeFromStatus(
                       CalculationStatusStatusEnum.Running
                     )}
-                    title="Toggle visibility"
                   />
                 )}
                 renderStatus={({ status }) => (
-                  <StyledStatusIcon
-                    type={getIconTypeFromStatus(status)}
-                    title="Toggle visibility"
-                  />
+                  <StyledStatusIcon type={getIconTypeFromStatus(status)} />
                 )}
               />
             )}
@@ -415,7 +440,7 @@ export default function WorkflowRow({
             </SourceName>
           )}
           <SourceName>
-            <EditableText
+            <TranslatedEditableText
               isError={currentCallStatus.isError}
               value={name || 'noname'}
               onChange={(value) => {
@@ -453,19 +478,21 @@ export default function WorkflowRow({
               onOverrideUnitClick={updateUnit}
               onConversionUnitClick={updatePrefferedUnit}
               onResetUnitClick={resetUnit}
+              translations={unitDropdownTranslations}
             />
           </td>
-          <td className="downloadChartHide col-action" title="P&amp;IDS" />
+          <td className="downloadChartHide col-action" />
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
             className="downloadChartHide col-action"
           >
             <Popconfirm
               onConfirm={remove}
-              okText="Remove"
+              okText={t.Remove}
+              cancelText={t.Cancel}
               content={
                 <div style={{ textAlign: 'left' }}>
-                  Remove this calculation?
+                  {t['Remove this calculation?']}
                 </div>
               }
             >
@@ -500,9 +527,13 @@ export default function WorkflowRow({
           >
             <Dropdown
               content={
-                <WorkflowMenu chart={chart} id={id}>
+                <WorkflowMenu
+                  chart={chart}
+                  id={id}
+                  translations={{ Duplicate }}
+                >
                   <Menu.Item onClick={openNodeEditor} appendIcon="Function">
-                    <span>Edit calculation</span>
+                    <span>{t['Edit calculation']}</span>
                   </Menu.Item>
                 </WorkflowMenu>
               }
@@ -520,3 +551,7 @@ export default function WorkflowRow({
     </SourceRow>
   );
 }
+
+WorkflowRow.translationKeys = Object.keys(defaultTranslations);
+
+export default WorkflowRow;
