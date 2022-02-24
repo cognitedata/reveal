@@ -6342,6 +6342,11 @@ geo-three@0.0.15, geo-three@^0.0.15:
   dependencies:
     "@types/offscreencanvas" "^2019.6.3"
 
+geo-three@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.16.tgz#0a8a1fd8e5ee7c66766cc1d44b9af4d9151f6ffd"
+  integrity sha512-HktRGmOBlTZP8AukSSXwVxFVIwylccKoNq1H/LRMi2DKRpteTZKw0Mh42+wLTPLVymz9WqJTdG4RImS7OCAozw==
+
 get-caller-file@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"
