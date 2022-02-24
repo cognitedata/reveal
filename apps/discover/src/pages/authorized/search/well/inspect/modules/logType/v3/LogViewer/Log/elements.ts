@@ -5,7 +5,7 @@ import mainPalette from 'styles/default.palette';
 const borderColor = '#333';
 const titleColor = '#555';
 
-export const LogControllerWrapper = styled.div`
+export const LogViewerWrapper = styled.div`
   height: 100%;
   position: relative;
   flex: 1 1 0%;

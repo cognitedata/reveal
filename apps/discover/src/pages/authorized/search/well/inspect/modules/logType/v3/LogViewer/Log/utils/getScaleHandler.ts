@@ -1,4 +1,5 @@
 import compact from 'lodash/compact';
+import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -87,9 +88,15 @@ export const getClosestValue = (values: number[], targetValue: number) => {
       Math.abs(previousValue - targetValue)
       ? currentValue
       : previousValue;
-  }, 0);
+  }, head(values) || 0);
 };
 
+/**
+ * Should return a scale handler which doesn't have any changes in scale mapping.
+ * Both `forward` and `reverse` should return the same value which is passed into.
+ *
+ * ie: `0` should be mapped to `0` itself. `10` should be mapped to `10` itself.
+ */
 export const getDefaultScaleHandler = (domain: Domain): ScaleHandler => {
   const forward = (value: number) => value;
   const reverse = (value: number) => value;

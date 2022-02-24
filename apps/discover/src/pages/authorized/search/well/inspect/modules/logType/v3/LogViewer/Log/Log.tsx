@@ -5,7 +5,7 @@ import { LogViewer, Track } from '@cognite/videx-wellog';
 
 import { useDeepEffect } from 'hooks/useDeep';
 
-import { LogControllerWrapper } from './elements';
+import { LogViewerWrapper } from './elements';
 import { LogData, EventData } from './interfaces';
 import { getLogViewerTracks } from './Tracks';
 import { getScaleHandler } from './utils/getScaleHandler';
@@ -64,10 +64,7 @@ const Log: React.FC<Props> = ({
   }, [logData]);
 
   return (
-    <LogControllerWrapper
-      data-testid="log-controller-wrapper"
-      ref={logViewerRef}
-    />
+    <LogViewerWrapper data-testid="log-viewer-wrapper" ref={logViewerRef} />
   );
 };
 

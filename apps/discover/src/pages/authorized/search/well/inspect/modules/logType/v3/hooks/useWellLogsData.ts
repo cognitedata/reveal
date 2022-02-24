@@ -5,6 +5,7 @@ import { getConvertibleUnit } from 'utils/units/getConvertibleUnit';
 
 import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
 
+import { EMPTY_OBJECT } from 'constants/empty';
 import { UserPreferredUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -18,7 +19,9 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
-    if (isEmpty(wellLogRowData?.rows)) return {};
+    if (isEmpty(wellLogRowData.rows)) {
+      return EMPTY_OBJECT as LogData;
+    }
 
     const { depthColumn, columns, rows, depthUnit } = wellLogRowData;
     const { unit } = depthUnit;
@@ -50,7 +53,7 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
         /**
          * This condition breaks the curve if an invalid value is detected.
          *
-         * `0` or `-9999` in the middle of the values - invalid
+         * `0` or `-9999` in the middle of the values -> invalid
          * `0` as the first value -> valid
          * `-9999` as the first value -> invalid
          */
@@ -92,7 +95,6 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
         [column.externalId]: {
           measurementType: column.measurementType,
           values,
-
           unit: getConvertibleUnit(
             column.unit,
             userPreferredUnit || UserPreferredUnit.FEET
