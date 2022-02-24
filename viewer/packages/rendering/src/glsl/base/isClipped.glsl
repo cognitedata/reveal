@@ -1,9 +1,3 @@
-precision highp float;
-
-#define texture2D texture
-
-#pragma glslify: NodeAppearance = require('./nodeAppearance.glsl')
-
 #if NUM_CLIPPING_PLANES > 0
 uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
@@ -28,5 +22,3 @@ bool isClipped(NodeAppearance nodeAppearance, vec3 point) {
 #endif
   return false;
 }
-
-#pragma glslify: export(isClipped)

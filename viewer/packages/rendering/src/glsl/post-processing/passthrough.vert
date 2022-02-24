@@ -1,4 +1,5 @@
-#define texture2D texture
+precision highp float;
+precision highp int;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;

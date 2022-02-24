@@ -1,8 +1,7 @@
 precision highp float;
+precision highp int;
 
-#define texture2D texture
-
-#pragma glslify: rand2d = require('../math/rand2d.glsl')
+#pragma glslify: import('../math/rand2d.glsl')
 
 uniform mat4 projMatrix;
 uniform mat4 inverseProjectionMatrix;
@@ -35,16 +34,16 @@ vec3 computeWorldNormalFromDepth(sampler2D depthTexture, vec2 resolution, vec2 u
   float dy = 1.0 / resolution.y;
 
   vec2 uv1 = uv + vec2(dx, 0.0); // right
-  float d1 = texture2D(depthTexture, uv1).r; 
+  float d1 = texture(depthTexture, uv1).r; 
 
   vec2 uv2 = uv + vec2(0.0, dy);  // up
-  float d2 = texture2D(depthTexture, uv2).r;
+  float d2 = texture(depthTexture, uv2).r;
 
   vec2 uv3 = uv + vec2(-dx, 0.0); // left
-  float d3 = texture2D(depthTexture, uv3).r;
+  float d3 = texture(depthTexture, uv3).r;
 
   vec2 uv4 = uv + vec2(0.0, -dy);  // down
-  float d4 = texture2D(depthTexture, uv4).r;
+  float d4 = texture(depthTexture, uv4).r;
 
   bool horizontalSampleCondition = abs(d1 - sampleDepth) < abs(d3 - sampleDepth);
 
@@ -65,7 +64,7 @@ vec3 computeWorldNormalFromDepth(sampler2D depthTexture, vec2 resolution, vec2 u
 }
 
 void main(){
-  float d = texture2D(tDepth, vUv).r;
+  float d = texture(tDepth, vUv).r;
 
   vec3 viewNormal = computeWorldNormalFromDepth(tDepth, resolution, vUv, d);
 
@@ -90,7 +89,7 @@ void main(){
     offset.xyz /= offset.w;
     offset.xyz = offset.xyz * 0.5 + 0.5;
 
-    float realDepth = texture2D(tDepth, offset.xy).r;
+    float realDepth = texture(tDepth, offset.xy).r;
     vec3 realPos = viewPosFromDepth(realDepth, offset.xy);
 
     float rangeCheck = smoothstep(0.0, 1.0, sampleRadius / length(viewPosition - realPos));

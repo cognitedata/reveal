@@ -1,7 +1,3 @@
-precision highp float;
-
-#define texture2D texture
-
 float computeFragmentDepth(vec3 p, mat4 projectionMatrix) {
   // Anders Hafreager comments:
   // Depth value can be calculated by transforming the z-component of the intersection point to projection space.
@@ -19,5 +15,3 @@ float updateFragmentDepth(vec3 p, mat4 projectionMatrix) {
   gl_FragDepth = computeFragmentDepth(p, projectionMatrix);
   return gl_FragDepth;
 }
-
-#pragma glslify:export(updateFragmentDepth)

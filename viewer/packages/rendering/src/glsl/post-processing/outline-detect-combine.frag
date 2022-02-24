@@ -1,9 +1,8 @@
 precision highp float;
+precision highp int;
 
-#define texture2D texture
-
-#pragma glslify: floatBitsSubset = require('../math/floatBitsSubset.glsl')
-#pragma glslify: edgeDetectionFilter = require('../post-processing/edge-detect.glsl')
+#pragma glslify: import('../math/floatBitsSubset.glsl')
+#pragma glslify: import('../post-processing/edge-detect.glsl')
 
 #include <packing>
 
@@ -37,10 +36,10 @@ float computeFloatEncodedOutlineIndex(float bitEncodedFloat){
 }
 
 vec4 computeNeighborOutlineIndices(sampler2D colorTexture){
-  float outlineIndex0 = computeFloatEncodedOutlineIndex(texture2D(colorTexture, vUv0).a);
-  float outlineIndex1 = computeFloatEncodedOutlineIndex(texture2D(colorTexture, vUv1).a);
-  float outlineIndex2 = computeFloatEncodedOutlineIndex(texture2D(colorTexture, vUv2).a);
-  float outlineIndex3 = computeFloatEncodedOutlineIndex(texture2D(colorTexture, vUv3).a);
+  float outlineIndex0 = computeFloatEncodedOutlineIndex(texture(colorTexture, vUv0).a);
+  float outlineIndex1 = computeFloatEncodedOutlineIndex(texture(colorTexture, vUv1).a);
+  float outlineIndex2 = computeFloatEncodedOutlineIndex(texture(colorTexture, vUv2).a);
+  float outlineIndex3 = computeFloatEncodedOutlineIndex(texture(colorTexture, vUv3).a);
 
   return vec4(outlineIndex0, outlineIndex1, outlineIndex2, outlineIndex3);
 }
@@ -51,24 +50,24 @@ float toViewZ(float depth, float near, float far){
 }
 
 vec4 computeNeighborAlphas(sampler2D colorTexture){
-  float alpha0 = texture2D(colorTexture, vUv0).a;
-  float alpha1 = texture2D(colorTexture, vUv1).a;
-  float alpha2 = texture2D(colorTexture, vUv2).a;
-  float alpha3 = texture2D(colorTexture, vUv3).a;
+  float alpha0 = texture(colorTexture, vUv0).a;
+  float alpha1 = texture(colorTexture, vUv1).a;
+  float alpha2 = texture(colorTexture, vUv2).a;
+  float alpha3 = texture(colorTexture, vUv3).a;
 
   return vec4(alpha0, alpha1, alpha2, alpha3);
 }
 
 void main() {
-  vec4 frontAlbedo = texture2D(tFront, vUv);
-  vec4 backAlbedo = texture2D(tBack, vUv);
-  vec4 customAlbedo = texture2D(tCustom, vUv);
-  vec4 ghostAlbedo = texture2D(tGhost, vUv);
+  vec4 frontAlbedo = texture(tFront, vUv);
+  vec4 backAlbedo = texture(tBack, vUv);
+  vec4 customAlbedo = texture(tCustom, vUv);
+  vec4 ghostAlbedo = texture(tGhost, vUv);
 
-  float frontDepth = texture2D(tFrontDepth, vUv).r;
-  float backDepth = texture2D(tBackDepth, vUv).r;  
-  float customDepth = texture2D(tCustomDepth, vUv).r;
-  float ghostDepth = texture2D(tGhostDepth, vUv).r;
+  float frontDepth = texture(tFrontDepth, vUv).r;
+  float backDepth = texture(tBackDepth, vUv).r;  
+  float customDepth = texture(tCustomDepth, vUv).r;
+  float ghostDepth = texture(tGhostDepth, vUv).r;
 
   // This is a hack to make sure that all textures are initialized
   // If a texture is unused, it will have a clear value of 0.0.
@@ -93,7 +92,7 @@ void main() {
   if(any(equal(frontNeighborIndices, vec4(0.0))) && frontOutlineIndex > 0.0) 
   { 
     float borderColorIndex = max(max(frontNeighborIndices.x, frontNeighborIndices.y), max(frontNeighborIndices.z, frontNeighborIndices.w));
-    outputColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+    outputColor = texture(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
     gl_FragDepth = frontDepth;
     return;
   }
@@ -105,7 +104,7 @@ void main() {
     float a = customDepthTest > 0.0 ? ceil(customAlbedo.a) * 0.5 : ceil(backAlbedo.a) * 0.5;
 
     outputColor = vec4(frontAlbedo.rgb, 1.0) * (1.0 - a) + (vec4(backAlbedo.rgb, 1.0) * (1.0 - customDepthTest) + vec4(customAlbedo.rgb, 1.0) * customDepthTest) * a;
-    gl_FragDepth = texture2D(tFrontDepth, vUv).r;
+    gl_FragDepth = texture(tFrontDepth, vUv).r;
     return;
   }
 
@@ -116,8 +115,8 @@ void main() {
     if( any(equal(backNeighborIndices, vec4(0.0))) && backOutlineIndex > 0.0) 
     { 
       float borderColorIndex = max(max(backNeighborIndices.x, backNeighborIndices.y), max(backNeighborIndices.z, backNeighborIndices.w));
-      outputColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
-      gl_FragDepth = texture2D(tBackDepth, vUv).r;
+      outputColor = texture(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+      gl_FragDepth = texture(tBackDepth, vUv).r;
       return;
     }
   }

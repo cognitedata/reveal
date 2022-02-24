@@ -1,6 +1,7 @@
-#pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')
+precision highp float;
+precision highp int;
 
-#define texture2D texture
+#pragma glslify: import('../color/packIntToColor.glsl')
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;

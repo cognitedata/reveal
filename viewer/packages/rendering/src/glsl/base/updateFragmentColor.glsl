@@ -1,11 +1,8 @@
 precision highp float;
-
-#define texture2D texture
-
-#pragma glslify: rgb2hsv = require('../color/rgb2hsv.glsl')
-#pragma glslify: hsv2rgb = require('../color/hsv2rgb.glsl')
-#pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')
-#pragma glslify: GeometryType = require('./geometryTypes.glsl')
+#pragma glslify: import('../color/rgb2hsv.glsl')
+#pragma glslify: import('../color/hsv2rgb.glsl')
+#pragma glslify: import('../color/packIntToColor.glsl')
+#pragma glslify: import('./geometryTypes.glsl')
 
 const int RenderTypeColor = 1;
 const int RenderTypeNormal = 2;
@@ -37,7 +34,7 @@ void updateFragmentColor(
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
         vec4 albedo = vec4(colorRGB * (0.4 + 0.6 * amplitude), 1.0);
         vec2 cap = normal.xy * 0.5 + 0.5;
-        vec4 mc = vec4(texture2D(matCapTexture, cap).rgb, 1.0);
+        vec4 mc = vec4(texture(matCapTexture, cap).rgb, 1.0);
         
         outputColor = vec4(albedo.rgb * mc.rgb * 1.7, color.a);
     } else if (renderMode == RenderTypeGhost) {
@@ -71,11 +68,11 @@ void updateFragmentColor(
     } else if (renderMode == RenderTypeLOD) {
         bool isHighDetail = geometryType != GeometryType.Quad;
         vec2 cap = normal.xy * 0.5 + 0.5;
-        vec3 mc = texture2D(matCapTexture, cap).rgb * 1.5;
+        vec3 mc = texture(matCapTexture, cap).rgb * 1.5;
         outputColor = isHighDetail ? vec4(vec3(0.0, 1.0, 0.0) * mc, color.a) : vec4(vec3(1.0, 1.0, 0.0) * mc, color.a);
     } else if (renderMode == RenderTypeGeometryType) {
         vec2 cap = normal.xy * 0.5 + 0.5;
-        vec3 mc = texture2D(matCapTexture, cap).rgb * 1.5;
+        vec3 mc = texture(matCapTexture, cap).rgb * 1.5;
         vec3 geometryColor = 
             float(geometryType == 1) * vec3(1.0, 0.0, 0.0) + // Quads
             float(geometryType == 2) * vec3(0.0, 1.0, 0.0) + // Primitives
@@ -87,5 +84,3 @@ void updateFragmentColor(
         outputColor = vec4(1.0, 0.0, 1.0, 1.0);
     }
 }
-
-#pragma glslify: export(updateFragmentColor)

@@ -1,7 +1,3 @@
-precision highp float;
-
-#define texture2D texture
-
 mat3 G[9];
 // hard coded matrix values!!!! as suggested in https://github.com/neilmendoza/ofxPostProcessing/blob/master/src/EdgePass.cpp#L45
 const mat3 g0 = mat3( 0.3535533845424652, 0, -0.3535533845424652, 0.5, 0, -0.5, 0.3535533845424652, 0, -0.3535533845424652 );
@@ -35,7 +31,7 @@ float edgeDetectionFilter(sampler2D baseTexture, vec2 uv, vec2 resolution) {
 	/* fetch the 3x3 neighbourhood and use the RGB vector's length as intensity value */
 	for (int i=0; i<3; i++) {
 		for (int j=0; j<3; j++) {
-			neighbour = texture2D(baseTexture, uv + texel * vec2(float(i)-1.0,float(j)-1.0) ).rgb;
+			neighbour = texture(baseTexture, uv + texel * vec2(float(i)-1.0,float(j)-1.0) ).rgb;
 			I[i][j] = length(neighbour);
 		}
 	}
@@ -53,5 +49,3 @@ float edgeDetectionFilter(sampler2D baseTexture, vec2 uv, vec2 resolution) {
 
   return edgeStrength;
 }
-
-#pragma glslify: export(edgeDetectionFilter)

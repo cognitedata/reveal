@@ -1,6 +1,7 @@
-#pragma glslify: mul3 = require('../../math/mul3.glsl')
+precision highp float;
+precision highp int;
 
-#define texture2D texture
+#pragma glslify: import('../../math/mul3.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;

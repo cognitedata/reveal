@@ -1,9 +1,5 @@
 precision highp float;
-
-#define texture2D texture
-
-#pragma glslify: floatBitsSubset = require('../math/floatBitsSubset.glsl')
-#pragma glslify: NodeAppearance = require('./nodeAppearance.glsl')
+#pragma glslify: import('../math/floatBitsSubset.glsl')
 
 NodeAppearance determineNodeAppearance(sampler2D nodeAppearanceTexture, vec2 textureSize, float treeIndex) {
   treeIndex = floor(treeIndex + 0.5);
@@ -16,7 +12,7 @@ NodeAppearance determineNodeAppearance(sampler2D nodeAppearanceTexture, vec2 tex
   float vCoord = (v + 0.5) / dataTextureHeight;
   vec2 treeIndexUv = vec2(uCoord, vCoord);
   
-  vec4 texel = texture2D(nodeAppearanceTexture, treeIndexUv);
+  vec4 texel = texture(nodeAppearanceTexture, treeIndexUv);
   float alphaUnwrapped = floor((texel.a * 255.0) + 0.5);
 
   bool isVisible = floatBitsSubset(alphaUnwrapped, 0, 1) == 1.0;
@@ -25,5 +21,3 @@ NodeAppearance determineNodeAppearance(sampler2D nodeAppearanceTexture, vec2 tex
 
   return NodeAppearance(texel, isVisible, renderInFront, renderGhosted);
 }
-
-#pragma glslify: export(determineNodeAppearance)

@@ -1,8 +1,5 @@
 precision highp float;
-
-#define texture2D texture
-
-#pragma glslify: unpackVec4ToFloat = require('../color/unpackVec4ToFloat.glsl')
+#pragma glslify: import('../color/unpackVec4ToFloat.glsl')
 
 float unpackFloatFromRGBATexel(vec4 texel){
     float byteValueR = floor((texel.r * 255.0) + 0.5);
@@ -30,7 +27,7 @@ mat4 determineMatrixOverride(
 
     vec2 indexUV = vec2((xTreeIndexTextureCoord + 0.5) / dataTextureWidth, (yTreeIndexTextureCoord + 0.5) / dataTextureHeight);
 
-    vec3 indexTexel = texture2D(transformOverrideIndexTexture, indexUV).rgb;
+    vec3 indexTexel = texture(transformOverrideIndexTexture, indexUV).rgb;
 
     float index = floor(indexTexel.r * 256.0) * 65536.0  + floor(indexTexel.g * 256.0) * 256.0 + floor(indexTexel.b * 256.0);
     
@@ -61,7 +58,7 @@ mat4 determineMatrixOverride(
     float matrixElements[12];
 
     for(int i = 0; i < 12; i++){
-      matrixElements[i] = unpackFloatFromRGBATexel(texture2D(transformOverrideTexture, overrideUV + vec2(float(i) * cellWidth, 0.0)));
+      matrixElements[i] = unpackFloatFromRGBATexel(texture(transformOverrideTexture, overrideUV + vec2(float(i) * cellWidth, 0.0)));
     }
     
     return mat4(
@@ -71,5 +68,3 @@ mat4 determineMatrixOverride(
       matrixElements[3], matrixElements[7], matrixElements[11], 1
     );
 }
-
-#pragma glslify: export(determineMatrixOverride)

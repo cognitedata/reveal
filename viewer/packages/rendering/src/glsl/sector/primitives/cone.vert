@@ -1,7 +1,8 @@
-#pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+precision highp float;
+precision highp int;
 
-#define texture2D texture
+#pragma glslify: import('../../math/mul3.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
