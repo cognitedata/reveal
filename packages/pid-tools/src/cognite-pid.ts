@@ -222,7 +222,7 @@ export class CognitePid {
     this.activeToolSubscriber = callback;
   }
 
-  private setSymbols(symbols: DiagramSymbol[]) {
+  setSymbols(symbols: DiagramSymbol[]) {
     this.symbols = symbols;
     if (this.symbolsSubscriber) {
       this.symbolsSubscriber(symbols);

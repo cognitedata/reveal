@@ -1,69 +1,46 @@
-import { useEffect, useState } from 'react';
 import {
+  CognitePid,
   computeSymbolInstances,
   DiagramSymbol,
   DiagramSymbolInstance,
   DocumentType,
-  PidDocumentWithDom,
 } from '@cognite/pid-tools';
-
-import usePrevious from '../../utils/usePrevious';
+import { useEffect, useState } from 'react';
 
 import ParserStorage from './ParserStorage';
 
-const shouldLoadFromStorage = (
-  previousDocumentType: DocumentType,
-  documentType: DocumentType
-) => {
-  return documentType !== DocumentType.unknown;
-};
-
-const shouldSaveToStorage = (
-  previousDocumentType: DocumentType,
-  documentType: DocumentType
-) => {
-  // Skip saving if document type just changed, otherwise we would immediately
-  // overwrite save empty symbols.
-  const didDocumentTypeChangeOnLastRender =
-    previousDocumentType !== documentType;
-
-  return (
-    documentType !== DocumentType.unknown && !didDocumentTypeChangeOnLastRender
-  );
-};
-
 const useSymbolState = (
+  pidRef: CognitePid | undefined,
   documentType: DocumentType,
-  pidDocument: PidDocumentWithDom | undefined
+  hasDocumentLoaded: boolean
 ) => {
-  const previousDocumentType = usePrevious<DocumentType>(
-    documentType ?? DocumentType.unknown
-  );
+  const [hasLegendBeenLoaded, setHasLegendBeenLoaded] = useState(false);
 
   const [symbolInstances, setSymbolInstances] = useState<
     DiagramSymbolInstance[]
   >([]);
-  const [symbols, setSymbols] = useState<DiagramSymbol[]>(
-    ParserStorage.symbols.load(documentType)
-  );
+
+  const [symbols, setSymbols] = useState<DiagramSymbol[]>([]);
 
   useEffect(() => {
-    if (shouldLoadFromStorage(previousDocumentType, documentType)) {
-      setSymbols(ParserStorage.symbols.load(documentType));
+    const pidDocument = pidRef?.pidDocument;
+    const shouldLoadFromStorage =
+      hasDocumentLoaded && pidDocument !== undefined;
+    if (shouldLoadFromStorage) {
+      const loadedSymbols = ParserStorage.symbols.load(documentType);
+      pidRef?.setSymbols(loadedSymbols);
+      pidRef?.setSymbolInstances(
+        computeSymbolInstances(loadedSymbols, pidDocument)
+      );
+      setHasLegendBeenLoaded(true);
     }
-  }, [documentType, previousDocumentType]);
+  }, [hasDocumentLoaded]);
 
   useEffect(() => {
-    if (shouldSaveToStorage(previousDocumentType, documentType)) {
+    if (hasDocumentLoaded && hasLegendBeenLoaded) {
       ParserStorage.symbols.save(documentType, symbols);
     }
-  }, [documentType, symbols, previousDocumentType]);
-
-  useEffect(() => {
-    if (pidDocument !== undefined) {
-      setSymbolInstances(computeSymbolInstances(symbols, pidDocument));
-    }
-  }, [symbols, pidDocument]);
+  }, [documentType, symbols, hasDocumentLoaded, hasLegendBeenLoaded]);
 
   return {
     symbols,

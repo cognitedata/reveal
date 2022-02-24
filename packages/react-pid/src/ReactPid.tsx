@@ -26,7 +26,7 @@ import { Viewport } from './components/viewport/Viewport';
 import { ReactPidLayout, ReactPidWrapper } from './elements';
 
 export const ReactPid: React.FC = () => {
-  const [, setHasPidViewerLoadedDocument] = useState(false);
+  const [hasDocumentLoaded, setHasDocumentLoaded] = useState(false);
   const pidViewer = useRef<CognitePid>();
 
   const getPidDocument = (): PidDocumentWithDom | undefined => {
@@ -41,7 +41,7 @@ export const ReactPid: React.FC = () => {
     unit: 'Unknown',
   });
   const { symbols, setSymbols, symbolInstances, setSymbolInstances } =
-    useSymbolState(documentMetadata.type, getPidDocument());
+    useSymbolState(pidViewer.current, documentMetadata.type, hasDocumentLoaded);
   const [lines, setLines] = useState<DiagramLineInstance[]>([]);
   const [connections, setConnections] = useState<DiagramConnection[]>([]);
   const [equipmentTags, setEquipmentTags] = useState<
@@ -83,16 +83,8 @@ export const ReactPid: React.FC = () => {
 
   const initPid = (instance: CognitePid) => {
     pidViewer.current = instance;
-    instance.addEventListener(EventType.LOAD, () =>
-      setHasPidViewerLoadedDocument(true)
-    );
+    instance.addEventListener(EventType.LOAD, () => setHasDocumentLoaded(true));
   };
-
-  useEffect(() => {
-    if (pidViewer.current) {
-      pidViewer.current?.setSymbolInstances(symbolInstances);
-    }
-  }, [symbolInstances]);
 
   useEffect(() => {
     if (pidViewer.current) {
