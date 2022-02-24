@@ -1,15 +1,13 @@
-const baseConfig = require('../../.eslintrc');
-
 module.exports = {
-  ...baseConfig,
-  ignorePatterns: ['!.eslintrc.js', '!.eslintrc.production.js', 'packages/**'],
-  parserOptions: {
-    tsconfigRootDir: __dirname,
-  },
+  ignorePatterns: ['!.eslintrc.js', '!.eslintrc.production.js'],
   extends: [
-    ...baseConfig.extends,
+    '../../.eslintrc',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
+  parserOptions: {
+    tsconfigRootDir: __dirname,
+    project: ['./tsconfig.json'],
+  },
   rules: {
     '@typescript-eslint/array-type': 'error',
     '@typescript-eslint/consistent-indexed-object-style': 'error',
@@ -23,6 +21,7 @@ module.exports = {
     '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
     '@typescript-eslint/consistent-type-exports': 'error',
     '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-base-to-string': 'warn',
     '@typescript-eslint/no-confusing-void-expression': 'error',
     '@typescript-eslint/no-meaningless-void-operator': 'error',

@@ -160,6 +160,12 @@ ts_project(
     ],
 )
 
+filegroup(
+    name = "types",
+    srcs = [":compile_ts"],
+    output_group = "types",
+)
+
 _mappings = module_mappings(
     name = "mappings",
     mappings = mappings_dict,
@@ -170,7 +176,10 @@ js_library(
     package_name = "@cognite/sidecar",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
-    deps = DEPENDENCIES + [":compile_ts"],
+    deps = DEPENDENCIES + [
+        ":compile_ts",
+        ":types",
+    ],
 )
 
 append_deps(
