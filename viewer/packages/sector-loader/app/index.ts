@@ -124,7 +124,7 @@ async function loadSectors(
       : new V8SectorRepository(modelDataClient, cadMaterialManager);
 
   const sector = sceneJson.sectors[0];
-  sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
+  sector.subtreeBoundingBox = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
 
   const model = new THREE.Group();
 
@@ -132,7 +132,7 @@ async function loadSectors(
 
   await Promise.all(
     sceneJson.sectors.map(async (sector: any) => {
-      sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
+      sector.subtreeBoundingBox = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
       const consumedSector = await sectorRepository.loadSector({
         modelBaseUrl: `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
         modelIdentifier,
