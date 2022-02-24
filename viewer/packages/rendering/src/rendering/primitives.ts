@@ -200,7 +200,6 @@ function createBoxes(
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
 
@@ -232,7 +231,6 @@ function createCircles(
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
 
@@ -266,7 +264,6 @@ function createCones(
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
   mesh.name = `Primitives (Cones)`;
@@ -295,7 +292,6 @@ function createEccentricCones(
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
   mesh.name = `Primitives (EccentricCones)`;
@@ -323,7 +319,6 @@ function createEllipsoidSegments(
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
   mesh.name = `Primitives (EllipsoidSegments)`;
@@ -357,7 +352,6 @@ function createGeneralCylinders(
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
 
@@ -388,7 +382,6 @@ function createGeneralRings(
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
 
@@ -430,7 +423,6 @@ function createSphericalSegments(
   geometry.setAttribute(`a_verticalRadius`, geometry.getAttribute('a_radius'));
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
   mesh.name = `Primitives (EllipsoidSegments)`;
@@ -484,7 +476,6 @@ function createTrapeziums(
   setBoundsFromVertexAttributes(geometry);
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     updateMaterialUniforms(material, mesh, camera);
   };
   mesh.name = `Primitives (Trapeziums)`;
@@ -564,9 +555,8 @@ function createTorusSegments(
     lod.addLevel(mesh, calcLODDistance(biggestTorus, level));
 
     mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-    updateMaterialUniforms(material, mesh, camera);
-  };
+      updateMaterialUniforms(material, mesh, camera);
+    };
   }
 
   return lod;
@@ -598,20 +588,15 @@ function createNuts(
   return mesh;
 }
 
-function updateMaterialInverseModelMatrix(
-  material: THREE.RawShaderMaterial | THREE.RawShaderMaterial,
-  matrixWorld: THREE.Matrix4
-) {
-  const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
-  inverseModelMatrix.copy(matrixWorld).invert();
-}
-
 function updateMaterialUniforms(material: THREE.RawShaderMaterial, mesh: THREE.Mesh, camera: THREE.Camera) {
   (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
   (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
   (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
   (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
   (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+
+  const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
+  inverseModelMatrix.copy(matrixWorld).invert();
 }
 
 function setBoundsFromBox(geometry: THREE.InstancedBufferGeometry, bounds: THREE.Box3) {

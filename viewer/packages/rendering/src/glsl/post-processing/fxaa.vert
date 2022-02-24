@@ -9,7 +9,6 @@
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-
 uniform vec2 resolution;
 uniform vec2 inverseResolution;
 

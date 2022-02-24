@@ -164,9 +164,12 @@ export class CadMaterialManager {
       m.clipping = clippingPlanes.length > 0;
       m.clipIntersection = false;
       m.clippingPlanes = clippingPlanes;
-      if (isRawShaderMaterial(m)) {
-        applyClippingPlanesToRawShaderMaterial(m, clippingPlanesAsUniform);
-      }
+      m.defines = {
+        ...m.defines,
+        NUM_CLIPPING_PLANES: clippingPlanesAsUniform.length,
+        UNION_CLIPPING_PLANES: 0
+      };
+      m.needsUpdate = true;
     });
   }
 
@@ -268,20 +271,4 @@ function applyToModelMaterials(materials: Materials, callback: (material: THREE.
   callback(materials.instancedMesh);
   callback(materials.triangleMesh);
   callback(materials.simple);
-}
-
-function isRawShaderMaterial(material: THREE.Material): material is THREE.RawShaderMaterial {
-  return (material as any).isRawShaderMaterial === true;
-}
-
-function applyClippingPlanesToRawShaderMaterial(
-  material: THREE.RawShaderMaterial,
-  clippingPlanesAsUniform: THREE.Vector4[]
-) {
-  material.defines = {
-    ...material.defines,
-    NUM_CLIPPING_PLANES: clippingPlanesAsUniform.length,
-    UNION_CLIPPING_PLANES: 0
-  };
-  material.needsUpdate = true;
 }
