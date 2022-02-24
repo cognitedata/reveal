@@ -596,7 +596,7 @@ function updateMaterialUniforms(material: THREE.RawShaderMaterial, mesh: THREE.M
   (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
 
   const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
-  inverseModelMatrix.copy(matrixWorld).invert();
+  inverseModelMatrix.copy(mesh.matrixWorld).invert();
 }
 
 function setBoundsFromBox(geometry: THREE.InstancedBufferGeometry, bounds: THREE.Box3) {
