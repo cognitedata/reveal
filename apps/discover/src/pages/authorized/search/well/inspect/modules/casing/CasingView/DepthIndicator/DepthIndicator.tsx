@@ -53,7 +53,11 @@ const DepthIndicator: FC<Props> = ({
   };
 
   return (
-    <DepthIndicatorWrapper transform={indicatorTransform} zIndex={zIndex}>
+    <DepthIndicatorWrapper
+      transform={indicatorTransform}
+      zIndex={zIndex}
+      data-testid="depth-indicator"
+    >
       <Tooltip content={description} followCursor plugins={[followCursor]}>
         <Start height={startHeight} onMouseOver={onMouseOver} />
       </Tooltip>
