@@ -10,7 +10,13 @@
 
 export * from './core/src/index';
 
-export { CameraControlsOptions, DefaultCameraManager, CameraManager } from './packages/camera-manager';
+export {
+  CameraControlsOptions,
+  DefaultCameraManager,
+  CameraManager,
+  CameraChangeDelegate,
+  CameraState
+} from './packages/camera-manager';
 
 export {
   AreaCollection,
