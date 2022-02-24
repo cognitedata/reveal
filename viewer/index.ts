@@ -40,3 +40,5 @@ export {
   NodeCollectionSerializationContext,
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
+
+export { GeometryFilter } from './packages/cad-model';
