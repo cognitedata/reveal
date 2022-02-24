@@ -4,7 +4,7 @@ import * as dat from 'dat.gui';
 export class PointCloudUi {
   constructor(viewer: Cognite3DViewer, uiFolder: dat.GUI) {
       const pointCloudParams = {
-        pointSize: 1.0,
+        pointSize: 0.2,
         budget: 2_000_000,
         pointColorType: PotreePointColorType.Rgb,
         pointShape: PotreePointShape.Circle,
@@ -21,7 +21,7 @@ export class PointCloudUi {
       
     const pcSettings = uiFolder.addFolder('Point clouds');
       pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
-      pcSettings.add(pointCloudParams, 'pointSize', 0, 20, 0.25).onFinishChange(() => pointCloudParams.apply());
+      pcSettings.add(pointCloudParams, 'pointSize', 0, 5, 0.05).onFinishChange(() => pointCloudParams.apply());
       pcSettings.add(pointCloudParams, 'pointColorType', {
         Rgb: PotreePointColorType.Rgb,
         Depth: PotreePointColorType.Depth,
