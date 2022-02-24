@@ -534,7 +534,7 @@ __metadata:
     three: 0.137.5
     ts-jest: 26.5.6
     ts-loader: 8.0.7
-    tsc-alias: 1.6.2
+    tsc-alias: 1.6.3
     typescript: 4.3.5
     webpack: 4.46.0
     webpack-cli: 3.3.12
@@ -12338,9 +12338,9 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"tsc-alias@npm:1.6.2":
-  version: 1.6.2
-  resolution: "tsc-alias@npm:1.6.2"
+"tsc-alias@npm:1.6.3":
+  version: 1.6.3
+  resolution: "tsc-alias@npm:1.6.3"
   dependencies:
     chokidar: ^3.5.3
     commander: ^9.0.0
@@ -12349,7 +12349,7 @@ resolve@^0.6.1:
     normalize-path: ^3.0.0
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: 25bb199d01ca5f31b7ce5f19060ec59140e261054062f5074107a88238f6d7cb2aa5ceb5c5d946cf0dee5f128f422cae37b347f6269eceabe0fcce0142ee18b3
+  checksum: bbcb7387836fdafca6574b2265691b5cfd3dead8cd86137cce66f583ee2875067545a5bccf9605854e82b49a18dd209735ca8dc7897104ddb61f684eedb7aa44
   languageName: node
   linkType: hard
 
