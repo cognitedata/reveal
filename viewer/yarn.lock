@@ -938,6 +938,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@reveal/cad-model@workspace:*, @reveal/cad-model@workspace:packages/cad-model":
+  version: 0.0.0-use.local
+  resolution: "@reveal/cad-model@workspace:packages/cad-model"
+  dependencies:
+    "@reveal/cad-geometry-loaders": "workspace:*"
+    "@reveal/cad-parsers": "workspace:*"
+    "@reveal/metrics": "workspace:*"
+    "@reveal/model-base": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
+    "@reveal/rendering": "workspace:*"
+    "@reveal/sector-loader": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@reveal/cad-parsers@workspace:*, @reveal/cad-parsers@workspace:packages/cad-parsers":
   version: 0.0.0-use.local
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
@@ -969,12 +984,14 @@ __metadata:
   resolution: "@reveal/core@workspace:core"
   dependencies:
     "@reveal/cad-geometry-loaders": "workspace:*"
+    "@reveal/cad-model": "workspace:*"
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/camera-manager": "workspace:*"
     "@reveal/data-source": "workspace:*"
     "@reveal/logger": "workspace:*"
     "@reveal/metrics": "workspace:*"
+    "@reveal/model-base": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
@@ -1003,6 +1020,12 @@ __metadata:
   resolution: "@reveal/metrics@workspace:packages/metrics"
   dependencies:
     "@reveal/logger": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/model-base@workspace:*, @reveal/model-base@workspace:packages/model-base":
+  version: 0.0.0-use.local
+  resolution: "@reveal/model-base@workspace:packages/model-base"
   languageName: unknown
   linkType: soft
 
