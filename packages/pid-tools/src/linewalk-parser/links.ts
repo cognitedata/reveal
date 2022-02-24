@@ -10,7 +10,7 @@ import { isFileConnection, isLineConnection } from '../utils/type';
 import { getDiagramInstanceIdFromPathIds } from '../utils/diagramInstanceUtils';
 
 import { DocumentLink, AnnotationId } from './types';
-import { getExtId } from './utils';
+import { getExtId, getFileNameWithoutExtension } from './utils';
 
 export const findPidLink = (
   fileConnection: FileConnectionInstance,
@@ -76,16 +76,29 @@ export const findIsoLink = (
     lineConnection.pointsToFileName === 'SAME'
       ? document
       : allDocuments.find(
-          (doc) => doc.documentMetadata.name === lineConnection.pointsToFileName
+          (doc) =>
+            getFileNameWithoutExtension(doc.documentMetadata.name) ===
+            lineConnection.pointsToFileName
         );
 
   if (linkedDocument === undefined) return undefined;
+
+  const symbolIsNotCurrentConnection = (symbol: LineConnectionInstance) =>
+    linkedDocument.documentMetadata.name !== document.documentMetadata.name ||
+    symbol.id !== lineConnection.id;
+
+  const symbolPointsToCurrentDocument = (symbol: LineConnectionInstance) =>
+    symbol.pointsToFileName ===
+    (lineConnection.pointsToFileName === 'SAME'
+      ? 'SAME'
+      : getFileNameWithoutExtension(document.documentMetadata.name));
 
   const linkedConnection = linkedDocument.symbolInstances.find(
     (symbol) =>
       isLineConnection(symbol) &&
       symbol.letterIndex === lineConnection.letterIndex &&
-      symbol.id !== lineConnection.id
+      symbolIsNotCurrentConnection(symbol) &&
+      symbolPointsToCurrentDocument(symbol)
   );
 
   if (linkedConnection === undefined) return undefined;

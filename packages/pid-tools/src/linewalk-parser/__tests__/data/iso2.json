@@ -1,0 +1,87 @@
+{
+  "documentMetadata": {
+    "type": "P&ID",
+    "name": "L1-2.svg",
+    "lineNumber": 1,
+    "pageNumber": 2,
+    "unit": "G1"
+  },
+  "symbols": [],
+  "viewBox": {
+    "x": 0,
+    "y": 0,
+    "width": 1632,
+    "height": 1056
+  },
+  "lines": [],
+  "symbolInstances": [
+    {
+      "type": "Line connection",
+      "symbolId": "s1",
+      "letterIndex": "A",
+      "pointsToFileName": "SAME",
+      "pathIds": ["path1"],
+      "id": "path1",
+      "labelIds": [],
+      "lineNumbers": [],
+      "inferedLineNumbers": [],
+      "svgRepresentation": {
+        "boundingBox": {
+          "x": 40.32003402709961,
+          "y": 400.8000183105469,
+          "width": 91.84000015258789,
+          "height": 17.1199951171875
+        },
+        "svgPaths": []
+      },
+      "labels": []
+    },
+    {
+      "type": "Line connection",
+      "symbolId": "s1",
+      "letterIndex": "A",
+      "pointsToFileName": "SAME",
+      "pathIds": ["path2"],
+      "id": "path2",
+      "labelIds": [],
+      "lineNumbers": [],
+      "inferedLineNumbers": [],
+      "svgRepresentation": {
+        "boundingBox": {
+          "x": 40.32003402709961,
+          "y": 400.8000183105469,
+          "width": 91.84000015258789,
+          "height": 17.1199951171875
+        },
+        "svgPaths": []
+      },
+      "labels": []
+    },
+    {
+      "type": "Line connection",
+      "symbolId": "s1",
+      "letterIndex": "A",
+      "pointsToFileName": "L1-1",
+      "pathIds": ["path3"],
+      "id": "path3",
+      "labelIds": [],
+      "lineNumbers": [],
+      "inferedLineNumbers": [],
+      "svgRepresentation": {
+        "boundingBox": {
+          "x": 40.32003402709961,
+          "y": 400.8000183105469,
+          "width": 91.84000015258789,
+          "height": 17.1199951171875
+        },
+        "svgPaths": []
+      },
+      "labels": []
+    }
+  ],
+  "connections": [],
+  "pathReplacements": [],
+  "lineNumbers": [],
+  "equipmentTags": [],
+  "labels": []
+}
