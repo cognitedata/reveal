@@ -41,5 +41,5 @@ export const useWellboresOfWellById = (
         filterWellboresByIds.includes(wellbore.id)
       ) || []
     );
-  }, []);
+  }, [well, filterWellboresByIds]);
 };
