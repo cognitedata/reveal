@@ -20,8 +20,8 @@ export class PointCloudUi {
       };
       
     const pcSettings = uiFolder.addFolder('Point clouds');
-      pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
-      pcSettings.add(pointCloudParams, 'pointSize', 0, 5, 0.05).onFinishChange(() => pointCloudParams.apply());
+      pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onChange(() => pointCloudParams.apply());
+      pcSettings.add(pointCloudParams, 'pointSize', 0, 5, 0.05).onChange(() => pointCloudParams.apply());
       pcSettings.add(pointCloudParams, 'pointColorType', {
         Rgb: PotreePointColorType.Rgb,
         Depth: PotreePointColorType.Depth,
