@@ -2,8 +2,8 @@ precision highp float;
 precision highp int;
 
 #pragma glslify: import('../math/rand2d.glsl')
-#pragma glslify: import('../base/isClipped.glsl')
 #pragma glslify: import('../base/nodeAppearance.glsl')
+#pragma glslify: import('../base/isClipped.glsl')
 
 in mediump vec3 v_color;
 in lowp float v_coverageFactor;
