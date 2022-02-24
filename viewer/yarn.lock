@@ -481,7 +481,7 @@ __metadata:
     "@types/dat.gui": 0.7.7
     "@types/draco3dgltf": 1.4.0
     "@types/jest": 26.0.24
-    "@types/jsdom": 16.2.13
+    "@types/jsdom": 16.2.14
     "@types/lodash": 4.14.178
     "@types/mixpanel-browser": 2.35.7
     "@types/node": 14.17.9
@@ -1225,14 +1225,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsdom@npm:16.2.13":
-  version: 16.2.13
-  resolution: "@types/jsdom@npm:16.2.13"
+"@types/jsdom@npm:16.2.14":
+  version: 16.2.14
+  resolution: "@types/jsdom@npm:16.2.14"
   dependencies:
     "@types/node": "*"
     "@types/parse5": "*"
     "@types/tough-cookie": "*"
-  checksum: 2575d020e345f556a28208dad4d495e317e7364f1de222322c100841f49a815c73c0aa32d32d7a72a05fd7cd33551f4c0effc108fbaaf194ec42ed0f04d877b9
+  checksum: 12bb926fa74ea07c0ba0bfd5bf185ac0fd771b28666a5e8784b9af4bb96bb0c51fc5f494eff7da1d3cd804e4757f640a23c344c1cd5d188f95ab0ab51770d88b
   languageName: node
   linkType: hard
 
