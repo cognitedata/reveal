@@ -6,7 +6,7 @@ import { CogniteInternalId } from '@cognite/sdk';
 
 import { WellKnownUnit } from './WellKnownUnit';
 
-import { callActionWithIndicesAsync } from '../../../core/src/utilities/callActionWithIndicesAsync';
+import { callActionWithIndicesAsync } from './callActionWithIndicesAsync';
 
 import { NodeIdAndTreeIndexMaps } from '@reveal/model-base';
 import { NodesApiClient } from '@reveal/nodes-api';
