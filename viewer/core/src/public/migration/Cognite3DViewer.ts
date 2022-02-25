@@ -330,6 +330,7 @@ export class Cognite3DViewer {
 
     this.stopPointerEventListeners();
 
+    this.renderController.dispose();
     this._subscription.unsubscribe();
     this._cameraManager.dispose();
     this.revealManager.dispose();
