@@ -17,7 +17,7 @@ export type RevealOptions = {
   continuousModelStreaming?: boolean;
   internal?: {
     cad?: InternalRevealCadOptions;
-  }
+  };
 };
 
 /**
