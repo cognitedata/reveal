@@ -118,7 +118,7 @@
     "worker-plugin": "5.0.1"
   },
   "peerDependencies": {
-    "@cognite/sdk": "^5.0.0",
+    "@cognite/sdk": "^5.0.0 || ^6.0.0",
     "@cognite/sdk-core": "^3.0.0"
   },
   "glslify": {
