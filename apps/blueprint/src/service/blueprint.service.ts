@@ -2,10 +2,16 @@ import { CogniteClient, ExternalFileInfo } from '@cognite/sdk';
 import { BlueprintDefinition, BlueprintReference, User } from 'typings';
 import { v4 as uuid } from 'uuid';
 
-const DATASET_EXTERNAL_ID = 'BLUEPRINT_APP_DATASET';
+export const DATASET_EXTERNAL_ID = 'BLUEPRINT_APP_DATASET';
 
 export type AccessRights = 'NONE' | 'READ' | 'WRITE';
-
+export type ErrorCode = 'DS-404' | 'BP-403';
+export type SetupValidation = {
+  errorCode?: ErrorCode;
+  dataSetId?: number;
+  datasetAccess: AccessRights;
+  filesAccess: AccessRights;
+};
 class BlueprintService {
   client: CogniteClient;
   user: User;
@@ -14,18 +20,43 @@ class BlueprintService {
     this.user = user;
   }
 
-  async validateSetup() {
+  async validateSetup(): Promise<SetupValidation> {
+    let errorCode;
     // Check that dataset exists
-    const dataset = await this.client.datasets
+    const dataSetId = await this.client.datasets
       .retrieve([{ externalId: DATASET_EXTERNAL_ID }])
       .then((res) => res[0].id)
       .catch(() => {
-        throw new Error(
-          'Setup has not been completed, or you do not have permissions to use the Blueprint solution. [ERRCODE: DS-404]'
-        );
+        errorCode = 'DS-404';
+        return undefined;
       });
 
-    return dataset;
+    const capabilities = await this.client
+      .get(`/api/v1/token/inspect`)
+      .then((res) => res.data.capabilities as any);
+    console.log(capabilities);
+    const datasetAccess = capabilities.some(
+      (x: any) => x.datasetsAcl && x.datasetsAcl.actions.includes('WRITE')
+    )
+      ? 'WRITE'
+      : 'NONE';
+
+    const filesAccess = await this.client.files
+      .list({
+        filter: { dataSetIds: [{ id: dataSetId || 0 }] },
+      })
+      .then(() => 'READ' as AccessRights)
+      .catch(() => {
+        errorCode = 'BP-403';
+        return 'NONE' as AccessRights;
+      });
+
+    return {
+      dataSetId,
+      errorCode,
+      datasetAccess,
+      filesAccess,
+    };
   }
 
   isValidBlueprint(_: BlueprintDefinition): boolean {
@@ -92,7 +123,7 @@ class BlueprintService {
   async save(rawBlueprint?: BlueprintDefinition): Promise<BlueprintReference> {
     const blueprint: BlueprintDefinition =
       rawBlueprint || this.makeEmptyBlueprint(uuid());
-    const dataSetId = await this.validateSetup();
+    const { dataSetId } = await this.validateSetup();
     if (!dataSetId) {
       throw new Error(
         'Could not create new blueprint - insufficient permissions [ERRCODE: DS-400]'
@@ -152,7 +183,7 @@ class BlueprintService {
   ) => {
     const imageExternalId = uuid();
     const name = `BLUEPRINT_${blueprintExternalId}_IMAGE_${imageExternalId}`;
-    const dataSetId = await this.validateSetup();
+    const { dataSetId } = await this.validateSetup();
     const newFile = await this.client.files.upload(
       {
         externalId: imageExternalId,

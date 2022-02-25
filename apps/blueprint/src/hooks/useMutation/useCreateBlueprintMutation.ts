@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useListBlueprintsName } from 'hooks/useQuery/useListBlueprintsQuery';
 import { BlueprintReference } from 'typings';
 import { useFetchBlueprintDefinitionName } from 'hooks/useQuery/useFetchBlueprintDefinitionQuery';
+import { toast } from '@cognite/cogs.js';
 
 const useCreateBlueprintMutation = () => {
   const { blueprintService } = useContext(AuthContext);
@@ -40,6 +41,9 @@ const useCreateBlueprintMutation = () => {
         );
 
         return previousBlueprints;
+      },
+      onError: () => {
+        toast.error('You do not have permission to create blueprints.');
       },
     }
   );

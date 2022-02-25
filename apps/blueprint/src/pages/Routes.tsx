@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { AuthContext } from 'providers/AuthProvider';
 import StatusMessage from 'components/StatusMessage';
+import { SetupValidation } from 'service/blueprint.service';
 
 import HomePage from './HomePage';
 import BlueprintPage from './Blueprint';
@@ -17,7 +18,7 @@ const ROUTES = {
 const Routes = () => {
   const { blueprintService } = useContext(AuthContext);
 
-  const { error, isLoading } = useQuery<number, Error>(
+  const { data: setupValidation, isLoading } = useQuery<SetupValidation, Error>(
     ['validateSetup'],
     () => blueprintService!.validateSetup(),
     {
@@ -30,8 +31,8 @@ const Routes = () => {
     return <StatusMessage type="Loading" />;
   }
 
-  if (error) {
-    return <RestrictedAccessPage message={error.message} />;
+  if (setupValidation?.errorCode) {
+    return <RestrictedAccessPage setup={setupValidation} />;
   }
 
   return (

@@ -33,10 +33,8 @@ const CLUSTER = 'ew1';
 
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
-    bluefield: '245a8a64-4142-4226-86fa-63d590de14c9',
-    'azure-dev': '5a262178-942b-4c8f-ac15-f96642b73b56',
-    ew1: 'f2c8ab5d-f405-4c8d-9434-d2db5c0d14c2',
-    'az-eastus-1': '685cada6-524c-49f1-95c6-4b96eebe4b5b',
+    ew1: 'e83b0114-b3b3-4c5e-951e-5d7d8ec42e9c',
+    'az-eastus-1': 'c4e85ddf-8480-4a6f-bdf4-aecc5fc51c33',
   };
 
   const aadApplicationId = ids[cluster] || '';

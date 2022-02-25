@@ -15,6 +15,9 @@ const useSaveBlueprintMutation = () => {
       onSuccess: async () => {
         toast.success('Saved blueprint.');
       },
+      onError: () => {
+        toast.error('You do not have permission to save blueprints.');
+      },
     }
   );
 };

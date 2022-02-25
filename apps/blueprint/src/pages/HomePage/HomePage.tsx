@@ -11,7 +11,7 @@ import { useQueryClient } from 'react-query';
 import { useFetchBlueprintDefinitionName } from 'hooks/useQuery/useFetchBlueprintDefinitionQuery';
 import { AuthContext } from 'providers/AuthProvider';
 
-import { BlueprintTable, PageWrapper } from './elements';
+import { BlueprintTable, PageWrapper } from '../elements';
 
 const HomePage: React.FC = () => {
   const { blueprintService } = useContext(AuthContext);
