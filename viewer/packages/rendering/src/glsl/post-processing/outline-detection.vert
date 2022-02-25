@@ -1,7 +1,7 @@
-out vec2 vUv;
-
 // selection outline
 uniform vec2 texelSize;
+
+out vec2 vUv;
 out vec2 vUv0;
 out vec2 vUv1;
 out vec2 vUv2;

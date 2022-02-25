@@ -8,7 +8,7 @@ import { ComboControls } from './ComboControls';
 import {
   CameraManagerCallbackData,
   CameraControlsOptions,
-  CameraChangedEvent,
+  CameraChangeDelegate,
   PointerEventDelegate,
   CameraState
 } from './types';
@@ -23,7 +23,7 @@ import range from 'lodash/range';
  */
 export class DefaultCameraManager implements CameraManager {
   private readonly _events = {
-    cameraChange: new EventTrigger<CameraChangedEvent>()
+    cameraChange: new EventTrigger<CameraChangeDelegate>()
   };
 
   private readonly _controls: ComboControls;
@@ -122,25 +122,25 @@ export class DefaultCameraManager implements CameraManager {
 
     this._controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
-      this._events.cameraChange.fire({ camera: { position: position.clone(), target: target.clone() } });
+      this._events.cameraChange.fire(position.clone(), target.clone());
       this._nearAndFarNeedsUpdate = true;
     });
   }
 
-  on(event: 'cameraChange', callback: CameraChangedEvent): void {
+  on(event: 'cameraChange', callback: CameraChangeDelegate): void {
     switch (event) {
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangedEvent);
+        this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
         break;
       default:
         assertNever(event);
     }
   }
 
-  off(event: 'cameraChange', callback: CameraChangedEvent): void {
+  off(event: 'cameraChange', callback: CameraChangeDelegate): void {
     switch (event) {
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangedEvent);
+        this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
         break;
       default:
         assertNever(event);
