@@ -107,7 +107,7 @@ export function createRevealManager(
     materialManager,
     renderManager,
     {
-      ...revealOptions.internal.cad,
+      ...revealOptions.internal?.cad,
       continuousModelStreaming: revealOptions.continuousModelStreaming
     }
   );
