@@ -5,6 +5,7 @@ import {
   DiagramLineInstanceOutputFormat,
 } from '../types';
 import { SymbolConnection } from '../graphMatching/types';
+import getFileNameWithoutExtension from '../utils/getFileNameWithoutExtension';
 
 import {
   Annotation,
@@ -49,9 +50,6 @@ export const labelToAnnotation = (
   nearestAssetExternalIds: [],
   lineNumbers: [],
 });
-
-export const getFileNameWithoutExtension = (name: string) =>
-  name.substring(0, name.lastIndexOf('.')) || name;
 
 export const getExtId = (name: string, version: string) => {
   const fileNameWithoutExtension = getFileNameWithoutExtension(name);

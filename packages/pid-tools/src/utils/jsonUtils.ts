@@ -81,7 +81,8 @@ export const saveGraphAsJson = (
   pathReplacements: PathReplacement[],
   documentMetadata: DocumentMetadata,
   lineNumbers: number[],
-  equipmentTags: DiagramEquipmentTagInstance[]
+  equipmentTags: DiagramEquipmentTagInstance[],
+  fileName = 'Graph.json'
 ) => {
   const graphJson = getGraphFormat(
     pidDocument,
@@ -98,7 +99,7 @@ export const saveGraphAsJson = (
   const fileToSave = new Blob([JSON.stringify(graphJson, undefined, 2)], {
     type: 'application/json',
   });
-  saveAs(fileToSave, 'Graph.json');
+  saveAs(fileToSave, fileName);
 };
 
 export const isValidSymbolFileSchema = (

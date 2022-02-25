@@ -1,3 +1,4 @@
+import { getFileNameWithoutExtension } from '@cognite/pid-tools';
 import isMatch from 'lodash/isMatch';
 
 import {
@@ -10,7 +11,7 @@ import { isFileConnection, isLineConnection } from '../utils/type';
 import { getDiagramInstanceIdFromPathIds } from '../utils/diagramInstanceUtils';
 
 import { DocumentLink, AnnotationId } from './types';
-import { getExtId, getFileNameWithoutExtension } from './utils';
+import { getExtId } from './utils';
 
 export const findPidLink = (
   fileConnection: FileConnectionInstance,

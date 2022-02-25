@@ -16,6 +16,7 @@ import {
   SaveSymbolData,
   ToolType,
   saveGraphAsJson,
+  getFileNameWithoutExtension,
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -257,7 +258,8 @@ export const ReactPid: React.FC = () => {
       pidViewer.current.pathReplacements,
       documentMetadata,
       lineNumbers,
-      equipmentTags
+      equipmentTags,
+      `${getFileNameWithoutExtension(documentMetadata.name)}.json`
     );
   };
 

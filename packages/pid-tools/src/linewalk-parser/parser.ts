@@ -1,12 +1,15 @@
 import { GraphDocument, DocumentType } from '../types';
-import { isFileConnection, isLineConnection } from '../utils';
+import {
+  getFileNameWithoutExtension,
+  isFileConnection,
+  isLineConnection,
+} from '../utils';
 import { SymbolConnection } from '../graphMatching/types';
 
 import {
   connectionsToLinks,
   diagramInstanceToAnnotation,
   getExtId,
-  getFileNameWithoutExtension,
   inferIsoLineNumberToAnnotations,
   labelToAnnotation,
   mergeUnique,
