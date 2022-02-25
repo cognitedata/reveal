@@ -34,7 +34,7 @@ import {
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
-import { Cognite3DModel } from './Cognite3DModel';
+import { Cognite3DModel } from '@reveal/cad-model';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { DisposedDelegate, SceneRenderedDelegate, RevealOptions } from '../types';

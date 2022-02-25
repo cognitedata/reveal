@@ -5,11 +5,10 @@
 import { CogniteClient } from '@cognite/sdk';
 
 import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
-import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { CameraManager } from '@reveal/camera-manager';
 
-import { GeometryFilter } from '@reveal/cad-model';
+import { GeometryFilter, Cognite3DModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
 
 /**
@@ -20,22 +19,6 @@ export type Color = {
   g: number;
   b: number;
 };
-
-/**
- * Units supported by {@link Cognite3DModel}.
- */
-export type WellKnownUnit =
-  | 'Meters'
-  | 'Centimeters'
-  | 'Millimeters'
-  | 'Micrometers'
-  | 'Kilometers'
-  | 'Feet'
-  | 'Inches'
-  | 'Yards'
-  | 'Miles'
-  | 'Mils'
-  | 'Microinches';
 
 /**
  * Callback to monitor loaded requests and progress.

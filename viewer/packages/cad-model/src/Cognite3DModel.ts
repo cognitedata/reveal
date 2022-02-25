@@ -4,15 +4,14 @@
 import * as THREE from 'three';
 import { CogniteInternalId } from '@cognite/sdk';
 
-import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
-import { CameraConfiguration } from './types';
-import { WellKnownUnit } from './types';
+import { WellKnownUnit } from './WellKnownUnit';
 
-import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
+import { callActionWithIndicesAsync } from '../../../core/src/utilities/callActionWithIndicesAsync';
 
+import { NodeIdAndTreeIndexMaps } from '@reveal/model-base';
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
-import { NumericRange } from '@reveal/utilities';
+import { NumericRange, CameraConfiguration } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
