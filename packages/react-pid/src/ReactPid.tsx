@@ -87,6 +87,12 @@ export const ReactPid: React.FC = () => {
   };
 
   useEffect(() => {
+    if (hasDocumentLoaded && documentMetadata.type === DocumentType.pid) {
+      pidViewer.current?.splitPathsWithManySegments();
+    }
+  }, [hasDocumentLoaded, documentMetadata]);
+
+  useEffect(() => {
     if (pidViewer.current) {
       pidViewer.current.onChangeActiveTool(setActiveTool);
     }
@@ -255,11 +261,6 @@ export const ReactPid: React.FC = () => {
     );
   };
 
-  const splitPathsWithManySegments = () => {
-    if (!pidViewer.current) return;
-    pidViewer.current.splitPathsWithManySegments();
-  };
-
   const autoAnalysis = () => {
     if (!pidViewer.current) return;
     pidViewer.current.autoAnalysis(documentMetadata);
@@ -374,7 +375,6 @@ export const ReactPid: React.FC = () => {
           activeTagId={activeTagId}
           setActiveTagId={setActiveTagIdWrapper}
           getPidDocument={getPidDocument}
-          splitLines={splitPathsWithManySegments}
           hideSelection={hideSelection}
           toggleHideSelection={toggleHideSelection}
           clearSymbolSelection={clearSymbolSelection}

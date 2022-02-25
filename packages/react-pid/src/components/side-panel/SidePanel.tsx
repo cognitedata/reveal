@@ -63,7 +63,6 @@ interface SidePanelProps {
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
   activeTagId: string | null;
   setActiveTagId: (arg: string | null) => void;
-  splitLines: () => void;
   hideSelection: boolean;
   toggleHideSelection: () => void;
   clearSymbolSelection: () => void;
@@ -97,7 +96,6 @@ export const SidePanel = ({
   setEquipmentTags,
   activeTagId,
   setActiveTagId,
-  splitLines,
   hideSelection,
   toggleHideSelection,
   clearSymbolSelection,
@@ -188,10 +186,6 @@ export const SidePanel = ({
         setActiveTagId={setActiveTagWrapper}
         documentType={documentMetadata.type}
       />
-
-      {documentMetadata.type === DocumentType.pid && (
-        <Button onClick={splitLines}>Split Lines</Button>
-      )}
 
       <Button onClick={autoAnalysis}>Auto Analysis</Button>
 
