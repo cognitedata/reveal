@@ -85,10 +85,13 @@ export const CogniteFileViewerWrapper: React.FC<FilePreviewProps> = ({
     setSelectedAnnotation(annotation);
   };
 
-  // TODO(CDFUX-1190): fix type problem when sdk singleton starts consuming sdk v6
   return (
     <CogniteFileViewer
-      sdk={sdk as any}
+      overrideURLMap={{
+        pdfjsWorkerSrc:
+          '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+      }}
+      sdk={sdk}
       file={fileInfo}
       disableAutoFetch
       hideDownload
