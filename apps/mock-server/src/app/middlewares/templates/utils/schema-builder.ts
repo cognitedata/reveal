@@ -6,9 +6,7 @@ export class TemplatesSchemaBuilder {
   sanitizeSchema(sourceSchema: string): string {
     const regexp = new RegExp('@template', 'g');
 
-    const modifiedSchema = (sourceSchema as string)
-      .replace(regexp, '')
-      .replace(/Long/gim, 'Float');
+    const modifiedSchema = (sourceSchema as string).replace(regexp, '');
 
     return modifiedSchema;
   }
@@ -20,7 +18,7 @@ export class TemplatesSchemaBuilder {
   ): string {
     return `
     ${this.getBuiltInTypes()}
-    ${sourceSchema}
+    ${this.extendSourceSchema(sourceSchema, parsedSchema, tablesList)}
     ${this.generateFiltersInputs(tablesList, parsedSchema)}
     ${this.generateTablesPages(tablesList)}
     ${this.generateQueries(tablesList)}
@@ -29,25 +27,26 @@ export class TemplatesSchemaBuilder {
 
   getBuiltInTypes() {
     return `
+scalar Long
 
 interface Datapoint {
-  timestamp: Float!
+  timestamp: Long!
   value: Float
 }
 
 type DatapointString implements Datapoint {
-    timestamp: Float!
+    timestamp: Long!
     value: Float
     stringValue: String
 }
 
 type DatapointFloat implements Datapoint {
-    timestamp: Float!
+    timestamp: Long!
     value: Float
 }
 
 type DatapointInt {
-    timestamp: Float!
+    timestamp: Long!
     value: Int
 }
 
@@ -70,7 +69,7 @@ type AggregationResult {
 }
 
 type TimeSeries {
-    id: Float
+    id: Long
     name: String
     metadata: [MetadataItem]
     description: String
@@ -78,8 +77,8 @@ type TimeSeries {
     isString: Boolean
     isStep: Boolean
     unit: String
-    datapoints(start: Float, end: Float, limit: Int! = 100): [Datapoint]
-    aggregatedDatapoints(start: Float, end: Float, limit: Int! = 100, granularity: String!): AggregationResult
+    datapoints(start: Long, end: Long, limit: Int! = 100): [Datapoint]
+    aggregatedDatapoints(start: Long, end: Long, limit: Int! = 100, granularity: String!): AggregationResult
     latestDatapoint: Datapoint
 }
 
@@ -89,12 +88,12 @@ type SyntheticTimeSeries {
     description: String
     isStep: Boolean
     unit: String
-    datapointsWithGranularity(start: Float, end: Float, limit: Int! = 100, granularity: String): [Datapoint]
-    datapoints(start: Float, end: Float, limit: Int! = 100): [Datapoint]
+    datapointsWithGranularity(start: Long, end: Long, limit: Int! = 100, granularity: String): [Datapoint]
+    datapoints(start: Long, end: Long, limit: Int! = 100): [Datapoint]
 }
 
 type Asset {
-    id: Float!
+    id: Long!
     externalId: String
     name: String!
     description: String
@@ -105,21 +104,21 @@ type Asset {
 }
 
 type File {
-    id: Float!
+    id: Long!
     externalId: String
     name: String!
     directory: String
     mimeType: String
     source: String
     metadata: [MetadataItem]
-    dataSetId: Float
+    dataSetId: Long
     assets: [Asset]
-    sourceCreatedTime: Float
-    sourceModifiedTime: Float
+    sourceCreatedTime: Long
+    sourceModifiedTime: Long
     uploaded: Boolean!
-    uploadedTime: Float
-    createdTime: Float!
-    lastUpdatedTime: Float!
+    uploadedTime: Long
+    createdTime: Long!
+    lastUpdatedTime: Long!
     downloadUrl: String
 }
 
@@ -141,6 +140,55 @@ type File {
     `;
   }
 
+  private extendSourceSchema(
+    sourceSchema: string,
+    parsedSchema: IntrospectionQuery,
+    tablesList: string[]
+  ): string {
+    let extendedSchema = sourceSchema;
+    tablesList.forEach((table) => {
+      (
+        parsedSchema['__schema'].types.find(
+          (type) => type.name === table
+        ) as IntrospectionObjectType
+      ).fields.forEach((field) => {
+        const mutedType = field.type as any;
+        const fieldSchemaType = mutedType.ofType
+          ? getType(mutedType.ofType)
+          : (field.type as any).name;
+
+        if (tablesList.includes(fieldSchemaType)) {
+          const typeDeclarations = `(${fieldSchemaType}|${fieldSchemaType}!|\\[${fieldSchemaType}\\]|\\[${fieldSchemaType}\\]!|\\[${fieldSchemaType}!\\]!|\\[${fieldSchemaType}!\\]!)`;
+          const regexp = new RegExp(`${field.name}: ${typeDeclarations}`, 'g');
+
+          const matches = extendedSchema.match(regexp);
+
+          if (matches) {
+            matches.forEach((match) => {
+              extendedSchema = extendedSchema.replace(
+                match,
+                `${
+                  field.name
+                }(_filter: _${fieldSchemaType}Filter): ${match.replace(
+                  `${field.name}:`,
+                  ''
+                )}`
+              );
+            });
+          }
+        }
+      });
+
+      extendedSchema = extendedSchema.replace(
+        new RegExp('type ' + table + '\\s{1,}\\{', 'gmi'),
+        `type ${table} {
+        _externalId: String
+        _dataSetId: Long`
+      );
+    });
+
+    return extendedSchema;
+  }
   private generateFiltersInputs(
     tablesList: string[],
     parsedSchema: IntrospectionQuery
@@ -170,7 +218,7 @@ type File {
             fieldKind === 'SCALAR' &&
             (fieldSchemaType === 'Float' ||
               fieldSchemaType === 'Int' ||
-              fieldSchemaType === 'Float')
+              fieldSchemaType === 'Long')
           ) {
             return `${field.name}: _ConditionalOpNumber`;
           } else if (fieldKind === 'SCALAR') {
@@ -179,6 +227,8 @@ type File {
           return '';
         })
         .join('\n')}
+        _externalId: _ConditionalOpString
+        _dataSetId: _ConditionalOpIds
         _or: [_${table}Filter!]
         _and: [_${table}Filter!]
     }`

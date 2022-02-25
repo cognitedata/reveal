@@ -77,3 +77,15 @@ export interface ExtendedRouter extends Router {
 export interface CdfServerRouter extends Router {
   db: CdfMockDatabase;
 }
+
+export interface DatapointGroup {
+  timestamp: number;
+  datapoints: Datapoint[];
+}
+
+export interface Datapoint {
+  timestamp: number;
+  value: number;
+  stringValue?: string;
+  __typename?: string;
+}

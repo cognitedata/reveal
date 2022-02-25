@@ -19,7 +19,7 @@ export const assetFieldsResolver = (db: CdfMockDatabase) => {
   };
 };
 
-export const timeSeriesFieldsResolver = (db: CdfMockDatabase) => {
+export const baseTimeSeriesFieldsResolver = (db: CdfMockDatabase) => {
   return {
     metadata: (ref) => {
       return Object.keys(ref.metadata).map((key) => ({
@@ -33,9 +33,18 @@ export const timeSeriesFieldsResolver = (db: CdfMockDatabase) => {
   };
 };
 
+export const timeSeriesFieldsResolver = (db: CdfMockDatabase) => {
+  return {
+    ...baseTimeSeriesFieldsResolver(db),
+    aggregatedDatapoints: (ref, prms) => {
+      return filterTimeseriesDatapoints(ref.externalId, db, ref.isString, prms);
+    },
+  };
+};
+
 export const synteticTimeSeriesFieldsResolver = (db: CdfMockDatabase) => {
   return {
-    ...timeSeriesFieldsResolver(db),
+    ...baseTimeSeriesFieldsResolver(db),
     datapointsWithGranularity: (ref, prms) => {
       return filterTimeseriesDatapoints(ref.externalId, db, ref.isString, prms);
     },

@@ -77,6 +77,7 @@ export const bestDayTemplateMockData = {
     System: [
       {
         id: 100,
+        externalId: '100',
         asset: { id: 2113091281838299 },
         wells: [{ id: 200 }],
         subSystems: [{ id: 101 }],
@@ -85,6 +86,7 @@ export const bestDayTemplateMockData = {
       },
       {
         id: 101,
+        externalId: '101',
         asset: { id: 1024089787197873 },
         wells: [{ id: 200 }],
         subSystems: [],

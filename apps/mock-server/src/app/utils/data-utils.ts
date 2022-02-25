@@ -65,6 +65,16 @@ export function filterCollection(
 ) {
   const dataReq = data;
   const filters = reqFilter;
+
+  if (filters['_externalId']) {
+    filters['externalId'] = filters['_externalId'];
+    delete filters['_externalId'];
+  }
+  if (filters['_dataSetId']) {
+    filters['dataSetId'] = filters['_dataSetId'];
+    delete filters['_dataSetId'];
+  }
+
   let collection = Collection.from<CdfResourceObject>(data);
   const filterKeys = Object.keys(filters);
 

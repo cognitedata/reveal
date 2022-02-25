@@ -15,6 +15,8 @@ import {
   synteticTimeSeriesFieldsResolver,
   timeSeriesFieldsResolver,
 } from './built-in-types-resolvers';
+import { longScalar } from './custom-scalars';
+import { aggregateDatapoints } from './timeseries-utils';
 
 export interface BuildQueryResolversParams {
   version: number;
@@ -25,10 +27,48 @@ export interface BuildQueryResolversParams {
 }
 export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
   const resolvers = {
+    Long: longScalar,
     Query: {},
     Asset: assetFieldsResolver(params.db),
     TimeSeries: timeSeriesFieldsResolver(params.db),
     SyntheticTimeSeries: synteticTimeSeriesFieldsResolver(params.db),
+    AggregationResult: {
+      sum: (values) => {
+        return aggregateDatapoints(values, (prev, cur) => ({
+          ...prev,
+          value: prev.value + cur.value,
+        }));
+      },
+      count: (values) => {
+        return aggregateDatapoints(values, (prev) => ({
+          ...prev,
+          value: prev.value + 1,
+        }));
+      },
+      max: (values) => {
+        return aggregateDatapoints(values, (prev, cur) =>
+          prev.value > cur.value ? prev : cur
+        );
+      },
+      min: (values) => {
+        return aggregateDatapoints(values, (prev, cur) =>
+          prev.value !== 0 && prev.value < cur.value ? prev : cur
+        );
+      },
+      average: (values) => {
+        return aggregateDatapoints(
+          values,
+          (prev, cur) => ({
+            ...prev,
+            value: prev.value + cur.value,
+          }),
+          (aggregatedDatapoint, datapointsList) => ({
+            ...aggregatedDatapoint,
+            value: aggregatedDatapoint.value / datapointsList.length,
+          })
+        );
+      },
+    },
   };
 
   const store = CdfDatabaseService.from(params.db, 'templates');
@@ -57,6 +97,13 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
     };
 
     const tableResolver = {};
+
+    tableResolver['_externalId'] = (refObj) => {
+      return refObj['externalId'] || '';
+    };
+    tableResolver['_dataSetId'] = (refObj) => {
+      return refObj['dataSetId'] || 0;
+    };
 
     const builtInTypes = Object.keys(config.builtInTypes);
 
@@ -154,6 +201,10 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
   }
 
   if (filterParams) {
+    if (filterParams._filter) {
+      filterParams.filter = filterParams._filter;
+      delete filterParams._filter;
+    }
     const filters =
       filterParams && filterParams.filter ? filterParams.filter : {};
 
