@@ -28,7 +28,6 @@ import {
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
-import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
@@ -45,7 +44,7 @@ import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
-import { IntersectInput, SupportedModelTypes, RevealOptions } from '@reveal/model-base';
+import { IntersectInput, SupportedModelTypes, RevealOptions, CogniteModelBase } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';

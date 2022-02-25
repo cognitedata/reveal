@@ -271,7 +271,6 @@ export type SceneRenderedDelegate = (event: {
 }) => void;
 
 export * from './NotSupportedInMigrationWrapperError';
-export { CogniteModelBase } from './CogniteModelBase';
 
 export { CadModelBudget };
 
