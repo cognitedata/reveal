@@ -11,11 +11,17 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
+import {
+  assertNever,
+  EventTrigger,
+  InputHandler,
+  disposeOfAllEventListeners,
+  worldToNormalizedViewportCoordinates,
+  worldToViewportCoordinates
+} from '@reveal/utilities';
+
 import { MetricsLogger } from '@reveal/metrics';
 import { intersectCadNodes, CadModelSectorLoadStatistics } from '@reveal/cad-model';
-
-import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 
 import {
   AddModelOptions,
