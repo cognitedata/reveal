@@ -292,7 +292,7 @@ function Filter({
   options,
   currentValue,
   setSearchParams,
-  isClearable,
+  isClearable = true,
 }: FilterProps) {
   return (
     <div className="cogs-input-container">
