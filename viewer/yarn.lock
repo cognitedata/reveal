@@ -528,7 +528,7 @@ __metadata:
     raw-loader: 4.0.2
     rimraf: 3.0.2
     run-script-os: 1.1.6
-    rxjs: 7.3.0
+    rxjs: 7.5.4
     shx: 0.3.4
     skmeans: 0.11.3
     three: 0.137.5
@@ -10972,12 +10972,12 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.3.0":
-  version: 7.3.0
-  resolution: "rxjs@npm:7.3.0"
+"rxjs@npm:7.5.4":
+  version: 7.5.4
+  resolution: "rxjs@npm:7.5.4"
   dependencies:
-    tslib: ~2.1.0
-  checksum: e63adb8808ea6c299a020d56d2af92bcf71efe641adf838499932e29b8f5fd5ff00873653ad48ba3ecf6c9fc11c3c595acf995e8d456f9d8cb85c7d37a1fd72e
+    tslib: ^2.1.0
+  checksum: 6f55f835f2543bc8214900f9e28b6320e6adc95875011fbca63e80a66eb18c9ff7cfdccb23b2180cbb6412762b98ed158c89fd51cb020799d127c66ea38c3c0e
   languageName: node
   linkType: hard
 
@@ -12362,7 +12362,7 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.1.0, tslib@npm:~2.1.0":
+"tslib@npm:2.1.0":
   version: 2.1.0
   resolution: "tslib@npm:2.1.0"
   checksum: aa189c8179de0427b0906da30926fd53c59d96ec239dff87d6e6bc831f608df0cbd6f77c61dabc074408bd0aa0b9ae4ec35cb2c15f729e32f37274db5730cb78
@@ -12380,6 +12380,13 @@ resolve@^0.6.1:
   version: 2.3.0
   resolution: "tslib@npm:2.3.0"
   checksum: 8869694c26e4a7b56d449662fd54a4f9ba872c889d991202c74462bd99f10e61d5bd63199566c4284c0f742277736292a969642cc7b590f98727a7cae9529122
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.1.0":
+  version: 2.3.1
+  resolution: "tslib@npm:2.3.1"
+  checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
   languageName: node
   linkType: hard
 
