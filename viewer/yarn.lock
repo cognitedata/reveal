@@ -519,7 +519,7 @@ __metadata:
     jsdom: 16.7.0
     lint-staged: 10.5.4
     lodash: 4.17.21
-    loglevel: 1.7.1
+    loglevel: 1.8.0
     mixpanel-browser: 2.41.0
     moq.ts: 7.4.1
     nock: 13.2.4
@@ -8603,7 +8603,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"loglevel@npm:1.7.1, loglevel@npm:^1.6.8":
+"loglevel@npm:1.8.0":
+  version: 1.8.0
+  resolution: "loglevel@npm:1.8.0"
+  checksum: 41aeea17de24aba8dba68084a31fe9189648bce4f39c1277e021bb276c3c53a75b0d337395919cf271068ad40ecefabad0e4fdeb4a8f11908beee532b898f4a7
+  languageName: node
+  linkType: hard
+
+"loglevel@npm:^1.6.8":
   version: 1.7.1
   resolution: "loglevel@npm:1.7.1"
   checksum: 715a4ae69ad75d4d3bd04e4f6e9edbc4cae4db34d1e7f54f426d8cebe2dd9fef891ca3789e839d927cdbc5fad73d789e998db0af2f11f4c40219c272bc923823

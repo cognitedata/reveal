@@ -54,7 +54,7 @@
     "glslify": "7.1.1",
     "glslify-import": "3.1.0",
     "lodash": "4.17.21",
-    "loglevel": "1.7.1",
+    "loglevel": "1.8.0",
     "mixpanel-browser": "2.41.0",
     "rxjs": "7.3.0",
     "skmeans": "0.11.3",
