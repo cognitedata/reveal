@@ -55,7 +55,7 @@
     "glslify-import": "3.1.0",
     "lodash": "4.17.21",
     "loglevel": "1.8.0",
-    "mixpanel-browser": "2.41.0",
+    "mixpanel-browser": "2.45.0",
     "rxjs": "7.3.0",
     "skmeans": "0.11.3",
     "three": "0.137.5"
@@ -68,7 +68,7 @@
     "@types/jest": "26.0.24",
     "@types/jsdom": "16.2.13",
     "@types/lodash": "4.14.178",
-    "@types/mixpanel-browser": "2.35.7",
+    "@types/mixpanel-browser": "2.38.0",
     "@types/node": "14.18.12",
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.3",
