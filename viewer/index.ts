@@ -43,4 +43,4 @@ export {
 
 export { GeometryFilter } from './packages/cad-model';
 
-export { CogniteModelBase } from './packages/model-base';
+export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
