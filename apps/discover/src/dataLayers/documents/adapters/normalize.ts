@@ -9,6 +9,14 @@ import { Document } from '@cognite/sdk-playground';
 import { DocumentType } from 'modules/documentSearch/types';
 import { getFilepath } from 'modules/documentSearch/utils/getFilepath';
 
+/*
+ * Normalize document type
+ *
+ * From a document search API type -> discover internal legacy document type
+ *
+ * This is also useful to make some fields safe
+ *
+ */
 export const normalize = (rawAPIDoc: Document): DocumentType => {
   const possiblePath = getFilepath(rawAPIDoc);
   const splitPath = possiblePath ? possiblePath.split('/') : [];

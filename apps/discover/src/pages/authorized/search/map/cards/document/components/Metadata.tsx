@@ -1,15 +1,22 @@
 import React from 'react';
 
 import MetadataTable from 'components/metadataTable';
+import { EMPTY_ARRAY } from 'constants/empty';
 import { useDocumentAssetNames } from 'hooks/useDocumentAssetNames';
 import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { DocumentType } from 'modules/documentSearch/types';
 
+type HideableFields = 'assets';
 interface Props {
   doc: DocumentType;
   numberOfColumns?: number;
+  hidelist?: HideableFields[];
 }
-export const Metadata: React.FC<Props> = ({ doc, numberOfColumns = 2 }) => {
+export const Metadata: React.FC<Props> = ({
+  doc,
+  numberOfColumns = 2,
+  hidelist = EMPTY_ARRAY,
+}) => {
   const filteredLabels = useDocumentLabelsByExternalIds(doc.doc.labels);
   const { data: assetNames = [] } = useDocumentAssetNames(
     doc.doc.assetIds || []
@@ -42,16 +49,18 @@ export const Metadata: React.FC<Props> = ({ doc, numberOfColumns = 2 }) => {
           },
         ]}
       />
-      <MetadataTable
-        columns={1}
-        metadata={[
-          {
-            label: 'Assets',
-            value: assetNames,
-            type: 'date',
-          },
-        ]}
-      />
+      {!hidelist.includes('assets') && (
+        <MetadataTable
+          columns={1}
+          metadata={[
+            {
+              label: 'Assets',
+              value: assetNames,
+              type: 'date',
+            },
+          ]}
+        />
+      )}
     </>
   );
 };

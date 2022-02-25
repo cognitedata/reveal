@@ -8,24 +8,25 @@ import EmptyState from 'components/emptyState';
 import TableBulkActions from 'components/table-bulk-actions';
 import { Table, TableResults, RowProps } from 'components/tablev3';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { FavoriteDocumentData, FavouriteRowType } from 'modules/favorite/types';
+import { DocumentType } from 'modules/documentSearch/types';
+import { FavouriteRowType } from 'modules/favorite/types';
 import { FAVORITE_SET_NO_DOCUMENTS } from 'pages/authorized/favorites/constants';
 import { TableBulkActionsWrapper } from 'pages/authorized/favorites/elements';
+import { Metadata } from 'pages/authorized/search/map/cards/document/components/Metadata';
 
 import { Actions } from './Actions';
-import { Metadata } from './Metadata';
 import { Summary } from './Summary';
 
 interface Props {
-  removeDocument: (doc: FavoriteDocumentData) => void;
-  handleDocumentPreview: (doc: FavoriteDocumentData) => void;
-  documentData: FavoriteDocumentData[];
-  handleDocumentsDownload: (documents: FavoriteDocumentData[]) => void;
+  removeDocument: (doc: DocumentType) => void;
+  handleDocumentPreview: (doc: DocumentType) => void;
+  documentData: DocumentType[];
+  handleDocumentsDownload: (documents: DocumentType[]) => void;
   isFavoriteSetOwner: boolean;
   isLoading: boolean;
 }
 
-type FavoriteRowData = FavouriteRowType<FavoriteDocumentData>;
+type FavoriteRowData = FavouriteRowType<DocumentType>;
 
 export const FavoriteDocumentsTable: React.FC<Props> = ({
   handleDocumentPreview,
@@ -56,11 +57,11 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
         Header: t('File Details'),
         disableSortBy: true,
         // eslint-disable-next-line react/no-unstable-nested-components
-        Cell: ({ row }: FavouriteRowType<FavoriteDocumentData>) => (
+        Cell: ({ row }: FavouriteRowType<DocumentType>) => (
           <Summary
-            filename={row.original.name}
-            filepath={row.original.path}
-            truncatedContent={row.original.truncatedContent}
+            filename={row.original.doc.filename}
+            filepath={row.original.doc.filepath}
+            truncatedContent={row.original.doc.truncatedContent}
             openPreview={() => {
               handleDocumentPreview(row.original);
             }}
@@ -73,7 +74,13 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
         Header: t('Metadata'),
         disableSortBy: true,
         // eslint-disable-next-line react/no-unstable-nested-components
-        Cell: (row: FavoriteRowData) => <Metadata data={row.row.original} />,
+        Cell: (row: FavoriteRowData) => (
+          <Metadata
+            doc={row.row.original}
+            numberOfColumns={4}
+            hidelist={['assets']}
+          />
+        ),
         width: '400px',
         maxWidth: '0.5fr',
       },
@@ -81,9 +88,7 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
     []
   );
 
-  const renderRowHoverComponent = (
-    row: FavouriteRowType<FavoriteDocumentData>
-  ) => (
+  const renderRowHoverComponent = (row: FavouriteRowType<DocumentType>) => (
     <Actions
       removeDocument={removeDocument}
       row={row}
@@ -122,10 +127,7 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
     );
   };
 
-  const handleSelection = (
-    row: RowProps<FavoriteDocumentData>,
-    value: boolean
-  ) => {
+  const handleSelection = (row: RowProps<DocumentType>, value: boolean) => {
     setSelectedIds((prevState) => {
       return {
         ...prevState,
@@ -159,7 +161,7 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
   }
   return (
     <>
-      <Table<FavoriteDocumentData>
+      <Table<DocumentType>
         key={tableKey}
         id="favorite-documents-table"
         columns={columns}

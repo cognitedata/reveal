@@ -21,7 +21,7 @@ import { showInfoMessageWithTitle } from 'components/toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
-import { FavoriteDocumentData } from 'modules/favorite/types';
+import { DocumentType } from 'modules/documentSearch/types';
 import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';
 import {
   DOWNLOAD_MESSAGE,
@@ -73,7 +73,7 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
   const metrics = useGlobalMetrics('favorites');
   const { t } = useTranslation('Favorites');
   const { isOwner } = useIsOwner();
-  const [documents, setDocuments] = useState<FavoriteDocumentData[]>([]);
+  const [documents, setDocuments] = useState<DocumentType[]>([]);
 
   const navigationTabItems: NavigationTab[] = [
     {
@@ -110,7 +110,7 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
     if (tabItem) history.push(tabItem.path);
   };
 
-  const handleDocumentPreview = (document: FavoriteDocumentData) => {
+  const handleDocumentPreview = (document: DocumentType) => {
     if (document) {
       metrics.track('click-open-document-preview-button');
       setDocumentId(document.id.toString());
@@ -122,16 +122,14 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
     setDocumentId('');
   };
 
-  const removeDocument = (document: FavoriteDocumentData) => {
+  const removeDocument = (document: DocumentType) => {
     mutateFavoriteContent({
       id: favoriteId,
-      updateData: { removeDocumentIds: [document.id] },
+      updateData: { removeDocumentIds: [Number(document.id)] },
     });
   };
 
-  const handleDocumentsDownload = async (
-    selectedDocuments: FavoriteDocumentData[]
-  ) => {
+  const handleDocumentsDownload = async (selectedDocuments: DocumentType[]) => {
     showInfoMessageWithTitle(t(DOWNLOADING), t(DOWNLOAD_MESSAGE));
     if (selectedDocuments && selectedDocuments.length) {
       if (selectedDocuments.length === 1) {

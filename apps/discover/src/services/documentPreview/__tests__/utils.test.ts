@@ -8,7 +8,6 @@ import {
   getMockFileLinkWithInternalId,
   getMockFileLinkWithExternalId,
 } from '__test-utils/fixtures/document';
-import { getMockFavoriteDocumentData } from '__test-utils/fixtures/favorite';
 
 import * as service from '../service';
 import {
@@ -90,13 +89,13 @@ describe('documentPreview -> utils', () => {
     });
 
     it('should return a not null result', () => {
-      const documents = [getMockFavoriteDocumentData()];
+      const documents = [getMockDocument()];
       expect(getFavoriteContentForZipping(documents)).toBeTruthy();
     });
 
     it('should return result as expected', async () => {
       const filename = 'document.pdf';
-      const documents = [getMockFavoriteDocumentData({ name: filename })];
+      const documents = [getMockDocument({}, { filename })];
       const favoriteContentForZipping = await getFavoriteContentForZipping(
         documents
       );

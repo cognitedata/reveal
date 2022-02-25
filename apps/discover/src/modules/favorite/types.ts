@@ -6,10 +6,7 @@ import {
   FavoriteContent,
   FavoriteSummary as FavoriteSummaryApi,
 } from '@cognite/discover-api-types';
-import { Document } from '@cognite/sdk-playground';
 
-import { DocumentLabel } from '../documentSearch/types';
-import { getFilepath } from '../documentSearch/utils/getFilepath';
 import { Well } from '../wellSearch/types';
 
 export enum ViewModeType {
@@ -74,48 +71,10 @@ export interface UpdateFavoriteContentData {
   updateData: FavoritePatchContentSchema;
 }
 
-export interface FavoriteDocumentData {
-  id: number;
-  externalId?: string;
-  name: string;
-  author?: string;
-  created?: Date;
-  lastUpdated?: Date;
-  path?: string;
-  truncatedContent?: string;
-  location?: string;
-  labels?: DocumentLabel[];
-  filesize?: number;
-  type?: string;
-  topfolder?: string;
-}
-
 export interface FavoriteWellData {
   id: number;
   name: string;
 }
-
-export const mapAPIResultDocumentSearchItemToFavoriteDocumentData = (
-  item: Document
-): FavoriteDocumentData => {
-  return {
-    id: item.id,
-    externalId: item.externalId,
-    author: item.author || 'Unknown',
-    created: item.sourceFile.createdTime,
-    lastUpdated: item.sourceFile.lastUpdatedTime,
-    name: item.sourceFile.name,
-    truncatedContent: item.truncatedContent,
-    path: getFilepath(item),
-    location: item.sourceFile.source,
-    labels: item.labels,
-    filesize: item.sourceFile.size,
-    type: item.type,
-    topfolder: item.sourceFile.directory
-      ? item.sourceFile.directory.split('/')[1]
-      : undefined,
-  };
-};
 
 export const mapWellToFavoriteWellData = (well: Well): FavoriteWellData => ({
   id: well.id,

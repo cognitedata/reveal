@@ -6,8 +6,6 @@ import { InternalId, ExternalId, IdEither, FileLink } from '@cognite/sdk';
 
 import { DocumentType } from 'modules/documentSearch/types';
 
-import { FavoriteDocumentData } from '../../modules/favorite/types';
-
 import {
   getSignedUrls,
   getSignedUrl,
@@ -82,9 +80,7 @@ export async function zipAndDownloadDocumentsByIds(documentIds: number[]) {
   return makeZip(documentsWithFetchingContent).then(downloadFile);
 }
 
-export async function zipFavoritesAndDownload(
-  documents: FavoriteDocumentData[]
-) {
+export async function zipFavoritesAndDownload(documents: DocumentType[]) {
   return getFavoriteContentForZipping(documents)
     .then(makeZip)
     .then(downloadFile);
@@ -95,7 +91,7 @@ const getIdListForInspect = (docs: DocumentType[]) => {
 };
 
 export const getFavoriteContentForZipping = async (
-  documents: FavoriteDocumentData[]
+  documents: DocumentType[]
 ) => {
   const resultList = await getSignedUrls(documents.map((d) => d.id.toString()));
   if (resultList.length === 0) {
@@ -107,14 +103,14 @@ export const getFavoriteContentForZipping = async (
       resultList,
       content.id.toString()
     );
-    if (signedUrlInfo?.downloadUrl && content?.name) {
+    if (signedUrlInfo?.downloadUrl && content?.doc.filename) {
       return [
         ...results,
         {
           blob: fetch(signedUrlInfo?.downloadUrl).then((docContent) =>
             docContent.blob()
           ),
-          filename: content.name,
+          filename: content.doc.filename,
         },
       ];
     }

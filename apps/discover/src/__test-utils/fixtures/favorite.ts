@@ -1,7 +1,7 @@
 import uniqueId from 'lodash/uniqueId';
 
 import { defaultTestUser } from '__test-utils/testdata.utils';
-import { FavoriteSummary, FavoriteDocumentData } from 'modules/favorite/types';
+import { FavoriteSummary } from 'modules/favorite/types';
 
 export const getMockFavoriteSummary = (
   extras?: Partial<FavoriteSummary>
@@ -27,14 +27,6 @@ export const getMockFavoriteSummary = (
   ],
   assetCount: 0,
   sharedWith: [],
-  ...extras,
-});
-
-export const getMockFavoriteDocumentData = (
-  extras?: Partial<FavoriteDocumentData>
-): FavoriteDocumentData => ({
-  id: 12345,
-  name: '',
   ...extras,
 });
 

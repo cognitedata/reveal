@@ -22,7 +22,8 @@ import {
   showSuccessMessage,
 } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { FavoriteDocumentData, FavouriteRowType } from 'modules/favorite/types';
+import { DocumentType } from 'modules/documentSearch/types';
+import { FavouriteRowType } from 'modules/favorite/types';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import { DeleteDocumentFromSetModal } from 'pages/authorized/favorites/modals';
 import {
@@ -34,8 +35,8 @@ import { FlexRow } from 'styles/layout';
 
 interface Props {
   showRemoveOption: boolean;
-  row: FavouriteRowType<FavoriteDocumentData>;
-  removeDocument: (item: FavoriteDocumentData) => void;
+  row: FavouriteRowType<DocumentType>;
+  removeDocument: (item: DocumentType) => void;
 }
 export const Actions: React.FC<Props> = ({
   showRemoveOption,
@@ -49,7 +50,7 @@ export const Actions: React.FC<Props> = ({
   const metrics = useGlobalMetrics('favorites');
 
   const [documentToPreview, setDocumentToPreview] = useState<
-    FavoriteDocumentData | undefined
+    DocumentType | undefined
   >(undefined);
 
   const downloadDocument = () => {
@@ -79,7 +80,7 @@ export const Actions: React.FC<Props> = ({
     metrics.track('click-close-document-preview-button');
   };
 
-  const handlePreviewClick = async (document: FavoriteDocumentData) => {
+  const handlePreviewClick = async (document: DocumentType) => {
     setDocumentToPreview(document);
     metrics.track('click-open-document-preview-button');
   };
@@ -143,7 +144,7 @@ export const Actions: React.FC<Props> = ({
     return null;
   }
 
-  const title = row.row.original?.name || '';
+  const title = row.row.original?.filename || '';
 
   return (
     <>
@@ -151,7 +152,7 @@ export const Actions: React.FC<Props> = ({
 
       <DocumentViewModal
         documentId={documentToPreview?.id?.toString() || ''}
-        fileName={documentToPreview?.name}
+        fileName={documentToPreview?.filename}
         onModalClose={handleModalClose}
         modalOpen={!!documentToPreview}
       />

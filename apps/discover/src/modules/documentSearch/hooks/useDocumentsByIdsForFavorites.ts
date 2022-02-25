@@ -1,11 +1,11 @@
 import { useInfiniteQuery } from 'react-query';
 
+import { normalize } from 'dataLayers/documents/adapters/normalize';
 import chunk from 'lodash/chunk';
 
 import { MAX_FILTER_ITEMS_COUNT } from 'constants/app';
 import { DOCUMENTS_BY_IDS_QUERY_KEY } from 'constants/react-query';
 import { documentSearchService } from 'modules/documentSearch/service';
-import { mapAPIResultDocumentSearchItemToFavoriteDocumentData } from 'modules/favorite/types';
 
 export const useDocumentsByIdForFavoritesQuery = (
   documentIds: number[] | undefined
@@ -20,7 +20,7 @@ export const useDocumentsByIdForFavoritesQuery = (
           .documentsByIds(chunkedIds[pageParam])
           .then((result) => {
             return result.items.map(({ item }) => {
-              return mapAPIResultDocumentSearchItemToFavoriteDocumentData(item);
+              return normalize(item);
             });
           });
       }
