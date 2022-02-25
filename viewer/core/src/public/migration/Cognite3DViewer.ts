@@ -31,7 +31,7 @@ import RenderController from './RenderController';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import { DisposedDelegate, SceneRenderedDelegate } from '../types';
+import { DisposedDelegate, SceneRenderedDelegate, RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
@@ -44,7 +44,7 @@ import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
-import { IntersectInput, SupportedModelTypes, RevealOptions, CogniteModelBase } from '@reveal/model-base';
+import { IntersectInput, SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
@@ -1214,7 +1214,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     internal: {}
   };
-  revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
+  revealOptions.internal.cad = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
   const edgeDetectionParameters = {

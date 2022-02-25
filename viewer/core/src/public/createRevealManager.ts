@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { createCadManager } from '@reveal/cad-model';
-import { RevealOptions } from '@reveal/model-base';
+import { RevealOptions } from './types';
 import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
 
@@ -106,7 +106,10 @@ export function createRevealManager(
     renderer,
     materialManager,
     renderManager,
-    revealOptions
+    {
+      ...revealOptions.internal.cad,
+      continuousModelStreaming: revealOptions.continuousModelStreaming
+    }
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
   return new RevealManager(cadManager, renderManager, pointCloudManager);

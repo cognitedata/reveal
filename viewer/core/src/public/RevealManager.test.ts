@@ -32,7 +32,7 @@ describe('RevealManager', () => {
       renderer,
       new THREE.Scene(),
       {
-        internal: { sectorCuller }
+        internal: { cad: { sectorCuller } }
       }
     );
   });
@@ -102,7 +102,7 @@ describe('RevealManager', () => {
       renderer,
       new THREE.Scene(),
       {
-        internal: { sectorCuller }
+        internal: { cad: { sectorCuller } }
       }
     );
     expect(manager).not.toBeUndefined();
