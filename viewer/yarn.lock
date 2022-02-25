@@ -1026,6 +1026,8 @@ __metadata:
 "@reveal/model-base@workspace:*, @reveal/model-base@workspace:packages/model-base":
   version: 0.0.0-use.local
   resolution: "@reveal/model-base@workspace:packages/model-base"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 
