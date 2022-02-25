@@ -61,6 +61,8 @@ export type CognitePidOptions = {
   container: string;
 };
 
+const PRIMARY_MOUSE_BUTTON = 1;
+
 type ActiveToolCallback = (tool: ToolType) => void;
 type PathIdsCallback = (pathIds: string[]) => void;
 type HideSelectionCallback = (hideSelection: boolean) => void;
@@ -90,7 +92,7 @@ export enum EventType {
 type EventListener = (ref: CognitePid) => void;
 
 export class CognitePid {
-  host: HTMLDivElement;
+  host: SVGElement;
   document: string | undefined;
   pidDocument: PidDocumentWithDom | undefined;
   svg: SVGSVGElement | undefined;
@@ -147,7 +149,7 @@ export class CognitePid {
   private symbolInstanceBoundingBoxesIds: string[] = [];
 
   constructor(options: CognitePidOptions) {
-    const host = document.querySelector(options.container) as HTMLDivElement;
+    const host = document.querySelector(options.container) as SVGElement;
     if (!host) {
       console.error('PID: Failed to get HTML element to attach to');
     }
@@ -546,7 +548,9 @@ export class CognitePid {
         this.onMouseLeave(node);
       });
 
-      node.addEventListener('mousedown', () => this.onMouseClick(node));
+      node.addEventListener('mousedown', (event) =>
+        this.onMouseClick(event, node)
+      );
     });
 
     this.host.appendChild(svg);
@@ -556,6 +560,10 @@ export class CognitePid {
 
     this.refresh();
   }
+
+  getDocumentWidth = () => this.pidDocument?.viewBox.width ?? 0;
+
+  getDocumentHeight = () => this.pidDocument?.viewBox.height ?? 0;
 
   private applyStyleToNodeId(nodeId: string) {
     const nodeData = this.nodeMap.get(nodeId);
@@ -675,7 +683,11 @@ export class CognitePid {
     }
   };
 
-  private onMouseClick = (node: SVGElement) => {
+  private onMouseClick = (event: MouseEvent, node: SVGElement) => {
+    if (event.buttons !== PRIMARY_MOUSE_BUTTON) {
+      return;
+    }
+
     if (this.activeTool !== 'connectLabels') {
       if (node instanceof SVGTSpanElement) {
         const regexMatch = node.innerHTML.match(/L[0-9]{3}/);
@@ -1039,7 +1051,9 @@ export class CognitePid {
           this.onMouseLeave(newPath);
         });
 
-        newPath.addEventListener('mousedown', () => this.onMouseClick(newPath));
+        newPath.addEventListener('mousedown', (event) =>
+          this.onMouseClick(event, newPath)
+        );
 
         this.nodeMap.set(newPath.id, {
           node: newPath,

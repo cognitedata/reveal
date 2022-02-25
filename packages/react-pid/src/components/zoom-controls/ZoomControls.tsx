@@ -22,9 +22,9 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({
   const zoomButtonGroups: ToolBarButton[][] = [
     [
       {
-        icon: 'ZoomIn',
-        onClick: () => onZoomIn(),
-        description: 'Zoom in',
+        icon: 'ZoomOut',
+        onClick: () => onZoomOut(),
+        description: 'Zoom out',
       },
       {
         icon: 'Refresh',
@@ -32,9 +32,9 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({
         description: 'Reset zoom',
       },
       {
-        icon: 'ZoomOut',
-        onClick: () => onZoomOut(),
-        description: 'Zoom out',
+        icon: 'ZoomIn',
+        onClick: () => onZoomIn(),
+        description: 'Zoom in',
       },
     ],
   ];

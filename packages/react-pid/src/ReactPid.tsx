@@ -20,11 +20,12 @@ import {
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import SvgContainer, { CONTAINER_ID } from './components/viewport/SvgContainer';
+import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
 import useSymbolState from './components/side-panel/useSymbolState';
 import { Toolbar } from './components/toolbar/Toolbar';
 import { Viewport } from './components/viewport/Viewport';
-import { ReactPidLayout, ReactPidWrapper } from './elements';
 
 export const ReactPid: React.FC = () => {
   const [hasDocumentLoaded, setHasDocumentLoaded] = useState(false);
@@ -77,7 +78,7 @@ export const ReactPid: React.FC = () => {
 
     initPid(
       new CognitePid({
-        container: '#container',
+        container: `#${CONTAINER_ID}`,
       })
     );
   }, []);
@@ -384,7 +385,11 @@ export const ReactPid: React.FC = () => {
           onUploadJsonClick={onUploadJsonClick}
         />
         <Viewport>
-          <div id="container" />
+          <SvgContainer
+            hasDocumentLoaded={hasDocumentLoaded}
+            documentWidth={pidViewer.current?.getDocumentWidth() ?? 0}
+            documentHeight={pidViewer.current?.getDocumentHeight() ?? 0}
+          />
           {fileUrl === '' && (
             <input
               ref={svgInputRef}
