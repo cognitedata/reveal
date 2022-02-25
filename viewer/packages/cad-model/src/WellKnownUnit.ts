@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-
 /**
  * Units supported by {@link Cognite3DModel}.
  */
