@@ -1565,6 +1565,7 @@
 
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
+  uid ""
 
 "@cognite/sdk-1.x@npm:@cognite/sdk@^3.4.0":
   version "3.5.2"
@@ -1628,6 +1629,7 @@
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
+  uid ""
 
 "@cognite/three-combo-controls@^1.4.3":
   version "1.4.3"
@@ -6320,17 +6322,17 @@ gentle-fs@^2.3.0, gentle-fs@^2.3.1:
     read-cmd-shim "^1.0.1"
     slide "^1.1.6"
 
-geo-three@0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.16.tgz#0a8a1fd8e5ee7c66766cc1d44b9af4d9151f6ffd"
-  integrity sha512-HktRGmOBlTZP8AukSSXwVxFVIwylccKoNq1H/LRMi2DKRpteTZKw0Mh42+wLTPLVymz9WqJTdG4RImS7OCAozw==
-
-geo-three@^0.0.15:
+geo-three@0.0.15, geo-three@^0.0.15:
   version "0.0.15"
   resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.15.tgz#ea52193c104a6b4a3c1dc797218936894ea41c7c"
   integrity sha512-jCzOgKvkK59ilPz3Ndn9QGhBui4X0eppn3tPw4+n8QmmyaKGDgbATr3uu5xUHR8dguoV37P0yr2Yr20UxEHogg==
   dependencies:
     "@types/offscreencanvas" "^2019.6.3"
+
+geo-three@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.16.tgz#0a8a1fd8e5ee7c66766cc1d44b9af4d9151f6ffd"
+  integrity sha512-HktRGmOBlTZP8AukSSXwVxFVIwylccKoNq1H/LRMi2DKRpteTZKw0Mh42+wLTPLVymz9WqJTdG4RImS7OCAozw==
 
 get-caller-file@^1.0.1:
   version "1.0.3"
@@ -13228,6 +13230,11 @@ three@0.133.0:
   resolved "https://registry.yarnpkg.com/three/-/three-0.133.0.tgz#41427306c731a89407221b7be48c7a63580400e7"
   integrity sha512-1p8xTXnJD4hMM2Ktm7+FqOOBoImBoftKnKtAZT/b9AQeL3LhRkVu/HnIJhWA69qIMvUYpjfnunNsO4WdObw1ZQ==
 
+three@0.137.0:
+  version "0.137.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.137.0.tgz#0ebd6ba66637a332c31f234bcdd35aeec071a6e3"
+  integrity sha512-rzSDhia6cU35UCy6y+zEEws6vSgytfHqFMSaBvUcySgzwvDO6vETyswtSNi/+aVqJw8WLMwyT1mlQQ1T/dxxOA==
+
 three@0.137.5:
   version "0.137.5"
   resolved "https://registry.yarnpkg.com/three/-/three-0.137.5.tgz#a1e34bedd0412f2d8797112973dfadac78022ce6"
@@ -13517,7 +13524,7 @@ typedoc@0.22.12:
     minimatch "^3.0.4"
     shiki "^0.10.0"
 
-typescript@4.2.4:
+typescript@4.2:
   version "4.2.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.4.tgz#8610b59747de028fda898a8aef0e103f156d0961"
   integrity sha512-V+evlYHZnQkaz8TRBuxTA92yZBPotr5H+WhQ7bD3hZUndx5tGOa1fuCgeSjxAzM1RiN5IzvadIXTVefuuwZCRg==
