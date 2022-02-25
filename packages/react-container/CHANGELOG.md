@@ -1,3 +1,7 @@
+## 4.0.7 Feb 25 2022
+
+- Bump to update auth-utils version@2.2.3 which fixes an issue where users are unable to login with `COGNITE_AUTH` if capital letters are used in a project name.
+
 ## 4.0.6 Feb 11 2022
 
 No changes. Prev version couldn't make it to the NPM.

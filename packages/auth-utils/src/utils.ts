@@ -9,7 +9,7 @@ import { AuthFlow, FlowStorage } from './types';
 
 export const getFlowKey = (project?: string, env?: string): string => {
   const environment = env ? `_env_${env}` : '';
-  return project ? `flow_${project}${environment}` : `flow`;
+  return project ? `flow_${project}${environment}`.toLowerCase() : `flow`;
 };
 
 export function saveFlow(

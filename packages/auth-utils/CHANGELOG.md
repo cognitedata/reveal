@@ -1,3 +1,8 @@
+## 2.2.3 Feb 25 2022
+
+Fix: saveFlow/getFlowKey always use lowercased keys to store data in localstorage.
+It caused users not being able to login when they start project name with a capitilized letter.
+
 ## 2.2.2 Feb 10 2022
 
 No changes.
