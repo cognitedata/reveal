@@ -1,45 +1,32 @@
 import styled from 'styled-components';
+import layers from 'utils/zindex';
 
-export const TreeNodeWrapper = styled.div`
-  font-size: 14px;
-
-  .loading-asset {
-    position: relative;
-  }
-  & .loading-icon {
-    position: absolute;
-    left: 10px;
-    top: 9px;
-  }
-  .rc-collapse {
+export const AssetNodeWrapper = styled.div`
+  .node-item {
     background: transparent;
   }
-  .rc-collapse-content {
-    background: transparent;
-  }
-  & .rc-collapse-item,
-  & .rc-collapse-header {
-    border: none !important;
-  }
-  & .rc-collapse-content-box {
-    margin: 0;
-  }
-  & .rc-collapse-item > .rc-collapse-header {
-    padding: 6px 16px;
-    background: transparent;
-  }
-  & .leaf-item {
+  & .node-name {
     padding: 6px 16px 6px 28px;
     margin: 0;
     color: #666666;
     cursor: pointer;
     line-height: 22px;
   }
-  & .selected > .rc-collapse-header,
-  & .selected.leaf-item {
-    font-weight: bold;
+  & .node-item-header {
+    position: relative;
+    & .node-icon {
+      z-index: ${layers.COLLAPSE_EXPAND_ICON};
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      cursor: pointer;
+    }
+    & .node-icon.loading-icon {
+      cursor: auto;
+    }
   }
-  .onAssetSelect {
-    background: transparent;
+  & .selected,
+  & .selected.node-name {
+    font-weight: bold;
   }
 `;

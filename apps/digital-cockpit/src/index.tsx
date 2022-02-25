@@ -11,6 +11,8 @@ import * as serviceWorker from './serviceWorker';
 import '@cognite/cogs.js/dist/cogs.css';
 import 'gridstack/dist/gridstack.min.css';
 import 'gridstack/dist/h5/gridstack-dd-native';
+import 'react-virtualized/styles.css';
+import 'react-virtualized-tree/lib/main.css';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({

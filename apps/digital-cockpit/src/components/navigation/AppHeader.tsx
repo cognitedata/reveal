@@ -109,10 +109,11 @@ const AppHeader: React.FC = () => {
         <Menu className="app-header-groups-list-menu">
           <Menu.Header>Select Group Access to View</Menu.Header>
           <GroupItemWrapper>
-            {allGroupNames.map((groupName) => (
+            {allGroupNames.map((groupName, index) => (
               <Menu.Item
                 selected={groupsFilter.includes(groupName)}
-                key={groupName}
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${groupName}-${index}`}
               >
                 <CustomMenuItem
                   onClick={() => setFilter(groupName)}
@@ -228,14 +229,14 @@ const AppHeader: React.FC = () => {
         </TopBar.Left>
         <TopBar.Right>
           {!isNoc() && (
-            <TopBar.Item className="topbar-logo-wrapper">
+            <div className="topbar-logo-wrapper">
               <LogoWrapper>
                 <TopBar.Logo
                   onLogoClick={goHome}
                   logo={<CustomerLogo imgUrl={customerLogoUrl} />}
                 />
               </LogoWrapper>
-            </TopBar.Item>
+            </div>
           )}
           <TopBar.Actions actions={filteredActions} />
         </TopBar.Right>

@@ -11,7 +11,7 @@ export default {
   title: 'CDF Explorer/AssetHierarchy',
 };
 const Template: ExtendedStory<any> = () => (
-  <div style={{ height: '100%' }}>
+  <div style={{ height: '500px' }}>
     <AssetHierarchy onSelect={action('onSelect')} />
   </div>
 );

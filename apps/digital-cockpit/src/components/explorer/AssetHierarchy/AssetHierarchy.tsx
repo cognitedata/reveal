@@ -1,35 +1,45 @@
 import {
   Asset,
   AssetIdEither,
-  CogniteExternalId,
   CogniteInternalId,
+  InternalId,
   ListResponse,
 } from '@cognite/sdk';
-import React, { useContext, useEffect, useState } from 'react';
-import { A, Collapse, Icon } from '@cognite/cogs.js';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import React, { useCallback, useEffect, useState } from 'react';
 import Loading from 'components/utils/Loading';
 import {
+  useAssetBreadcrumbsQuery,
   useAssetListQuery,
   useAssetRetrieveQuery,
 } from 'hooks/useQuery/useAssetQuery';
 import { UseQueryResult } from 'react-query';
+import union from 'lodash/union';
+import Tree, { Node } from 'react-virtualized-tree';
+import noop from 'lodash/noop';
 
-import { TreeNodeWrapper } from './elements';
-import { AssetNode } from './types';
+import { AssetNodeWrapper } from './elements';
+import { AssetNodeState, ViewMoreNodeState, TREE_UPDATE_TYPE } from './types';
+import AssetNodeRenderer from './AssetNodeRenderer';
 
-type AssetNodesById = Record<string | number, AssetNode>;
-const mapAssetsById = (assets: Asset[] = []): AssetNodesById =>
-  assets.reduce(
-    (acc: AssetNodesById, asset: Asset) => ({
+type AssetNodesById = Record<string | number, AssetNodeState>;
+
+const mapAssetsById = (
+  assets: Asset[] = [],
+  knownIds: string[] = []
+): AssetNodesById =>
+  assets.reduce((acc: AssetNodesById, asset: Asset) => {
+    // make sure the asset is not already in the list
+    if (knownIds.includes(`${asset.id}`)) {
+      return acc;
+    }
+    return {
       ...acc,
       [asset.id]: {
         asset,
         isLeaf: asset.aggregates ? !asset.aggregates.childCount : false,
       },
-    }),
-    {} as AssetNodesById
-  );
+    };
+  }, {} as AssetNodesById);
 
 type AssetHierarchyProps = {
   rootNodes?: AssetIdEither[];
@@ -42,13 +52,26 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
   selectedAssetId: selectedAssetIdProp,
   onSelect,
 }) => {
-  const { client } = useContext(CogniteSDKContext);
   const [isLoadingRootAssets, setIsLoadingRootAssets] = useState(false);
   const [rootIds, setRootIds] = useState<CogniteInternalId[]>([]);
   const [assetNodesById, setAssetNodesById] = useState<AssetNodesById>({});
+
   const [selectedAssetId, setSelectedAssetId] = useState<
     AssetIdEither | undefined
   >(selectedAssetIdProp);
+
+  const [scrollToId, setScrollToId] = useState<number | undefined>();
+
+  // get asset hierarchy only if asset has not been fetched before
+  const selectedAssetHierarchyQuery = useAssetBreadcrumbsQuery(
+    selectedAssetIdProp &&
+      !assetNodesById[(selectedAssetIdProp as InternalId).id]
+      ? selectedAssetIdProp
+      : undefined,
+    {
+      aggregatedProperties: ['childCount'],
+    }
+  );
 
   // enabled when rootNodes is provided in props
   const retrieveRootAssetsQuery = useAssetRetrieveQuery(rootNodes, {
@@ -94,6 +117,81 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       : undefined
   );
 
+  // save & expand selected asset after fetching selected asset hierarchy
+  useEffect(() => {
+    if (
+      selectedAssetHierarchyQuery.isSuccess &&
+      rootIds.length > 0 &&
+      selectedAssetHierarchyQuery.data?.length
+    ) {
+      // first element is selected asset, last element is root asset
+      const hierarchy = selectedAssetHierarchyQuery.data;
+
+      const expandedAssetNodes = hierarchy.reduce(
+        (acc, asset, index, srcArr) => {
+          let childrenIds;
+          let expanded: boolean | undefined;
+          let isLeaf: boolean | undefined;
+          // skip last child
+          if (index > 0) {
+            const childAsset = srcArr[index - 1];
+            // remember child assets
+            childrenIds = [childAsset.id];
+            expanded = true;
+          } else {
+            // check if last child is a leaf
+            isLeaf = asset.aggregates ? !asset.aggregates.childCount : false;
+          }
+          // add new asset node
+          return {
+            ...acc,
+            [asset.id]: {
+              asset,
+              childrenIds,
+              childrenExpanded: false,
+              expanded,
+              isLeaf,
+            },
+          };
+        },
+        {} as AssetNodesById
+      );
+
+      setAssetNodesById((prev) => ({
+        ...prev,
+        ...expandedAssetNodes,
+      }));
+    }
+  }, [selectedAssetHierarchyQuery.isSuccess, rootIds.length]);
+
+  // expand to selected asset
+  useEffect(() => {
+    if (selectedAssetIdProp) {
+      setSelectedAssetId({
+        ...selectedAssetIdProp,
+      });
+      const { id } = selectedAssetIdProp as InternalId;
+      const selectedNode = id && assetNodesById[id];
+      if (selectedNode) {
+        let nextParentToExpand: AssetNodeState | undefined = selectedNode.asset
+          .parentId
+          ? assetNodesById[selectedNode.asset.parentId]
+          : undefined;
+        while (nextParentToExpand) {
+          nextParentToExpand.expanded = true;
+          nextParentToExpand = nextParentToExpand.asset.parentId
+            ? assetNodesById[nextParentToExpand.asset.parentId]
+            : undefined;
+        }
+
+        // scroll to the asset
+        setScrollToId(id);
+        // and clear the property to avoid side effects
+        setTimeout(() => setScrollToId(undefined), 200);
+      }
+    }
+  }, [selectedAssetIdProp]);
+
   // handle root assets query
   useEffect(() => {
     const { data, isLoading, isError, error } = !retrieveRootAssetsQuery.isIdle
@@ -116,7 +214,12 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       ? (data as ListResponse<Asset[]>).items
       : (data as Asset[]);
 
-    setRootIds(rootAssets?.map((rootAsset) => rootAsset.id));
+    setRootIds(
+      rootAssets
+        ?.slice()
+        .sort((ast1, ast2) => ast1.name.localeCompare(ast2.name))
+        .map((rootAsset) => rootAsset.id)
+    );
     setAssetNodesById((prevState) => ({
       ...prevState,
       ...mapAssetsById(rootAssets),
@@ -156,17 +259,29 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
     const { items: childAssets, nextCursor } = data as ListResponse<Asset[]>;
 
     setAssetNodesById((prevState) => {
-      const nextChildren = (prevState[assetId].children || []).concat(
+      const knownAssetIds = Object.keys(prevState);
+      const newChildAssetNodes = mapAssetsById(childAssets, knownAssetIds);
+
+      const nextChildren = union(
+        prevState[assetId].childrenIds || [],
         childAssets?.map((asset) => asset.id) || []
+      ).sort((id1, id2) =>
+        (
+          newChildAssetNodes[id1] || assetNodesById[id1]
+        )?.asset.name.localeCompare(
+          (newChildAssetNodes[id2] || assetNodesById[id2])?.asset.name
+        )
       );
+
       return {
         ...prevState,
         // add new assets
-        ...mapAssetsById(childAssets),
+        ...newChildAssetNodes,
         // update parent asset
         [assetId]: {
           ...prevState[assetId],
-          children: nextChildren,
+          childrenIds: nextChildren,
+          childrenExpanded: true, // needed when expanding selected asset from props
           isLeaf: !nextChildren?.length,
           nextCursor,
           isLoadingChildren: false,
@@ -192,145 +307,192 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
     handleAssetChildrenQueryResult(fetchNextAssetChilrenQuery, id);
   }, [nextChildrenToFetch, fetchNextAssetChilrenQuery.status]);
 
-  const isSelectedAsset = (asset: Asset): boolean => {
-    const { id, externalId } = selectedAssetId || ({} as any);
-    return (
-      (externalId && externalId === asset.externalId) || (id && id === asset.id)
-    );
-  };
+  const onItemSelect = useCallback(
+    async (assetInternalId: number) => {
+      const assetNode = assetNodesById[assetInternalId];
+      if (!assetNode) {
+        return;
+      }
+      setSelectedAssetId({
+        externalId: assetNode.asset.externalId,
+        id: assetNode.asset.id,
+      });
+      onSelect(assetNode.asset);
+    },
+    [assetNodesById, setSelectedAssetId, onSelect]
+  );
 
-  const onItemSelect = async (assetInternalId: number) => {
-    const assetNode = assetNodesById[assetInternalId];
-    if (!assetNode) {
-      return;
-    }
-    setSelectedAssetId({
-      externalId: assetNode.asset.externalId,
-      id: assetNode.asset.id,
+  const onItemExpand = useCallback(
+    async (assetInternalId: CogniteInternalId) => {
+      const assetNode = assetNodesById[assetInternalId];
+      if (!assetNode) {
+        return;
+      }
+      if (!assetNode.isLeaf && !assetNode.childrenExpanded) {
+        // load asset children at first time
+        setAssetIdToFetch(+assetInternalId);
+      }
+    },
+    [assetNodesById, setAssetIdToFetch]
+  );
+
+  const loadMoreAssets = useCallback(
+    async (parentNodeId: CogniteInternalId) => {
+      const parentNode = assetNodesById[parentNodeId];
+      const {
+        asset: { id: assetInternalId },
+        nextCursor,
+      } = parentNode;
+
+      // load more asset children
+      setNextChildrenToFetch({ id: assetInternalId, cursor: nextCursor });
+    },
+    [assetNodesById, setNextChildrenToFetch]
+  );
+
+  const updateAssetNode = useCallback(
+    (updatedNode?: AssetNodeState) => {
+      if (!updatedNode) {
+        return;
+      }
+      setAssetNodesById((prevState) => ({
+        ...prevState,
+        [updatedNode.asset.id]: {
+          ...updatedNode,
+        },
+      }));
+    },
+    [setAssetNodesById]
+  );
+
+  const treeSelectHandler = useCallback(
+    (nodes: Node[], updatedNode: Node): Node[] => {
+      onItemSelect(updatedNode.state?.asset.id);
+      return nodes.map((node) => {
+        if (node.id === updatedNode.id) {
+          return {
+            ...updatedNode,
+            state: {
+              ...updatedNode.state,
+              selected: true,
+            },
+          };
+        }
+        return {
+          ...node,
+          state: {
+            ...node.state,
+            selected: false,
+          },
+        };
+      });
+    },
+    [onItemSelect]
+  );
+
+  const treeExpandCollapseHandler = useCallback(
+    (nodes: Node[], updatedNode: Node): Node[] => {
+      if (updatedNode.state?.expanded) {
+        onItemExpand(updatedNode.state!.asset.id);
+      }
+
+      updateAssetNode(updatedNode.state as AssetNodeState);
+      return nodes.map((node) => {
+        if (node.id === updatedNode.id) {
+          return {
+            ...node,
+            state: { ...updatedNode.state },
+          };
+        }
+        return { ...node };
+      });
+    },
+    [onItemExpand, updateAssetNode]
+  );
+
+  const treeLoadMoreHandler = useCallback(
+    (nodes: Node[], updatedNode: Node): Node[] => {
+      const { parentId } = updatedNode.state || {};
+      parentId && loadMoreAssets(Number(parentId));
+      return nodes;
+    },
+    [loadMoreAssets]
+  );
+
+  const mapAssetNodeToTreeNode = (ids: number[], parent?: number): Node[] => {
+    const treeNodes = ids.map((id) => {
+      const node = assetNodesById[id];
+      const children = node.childrenIds
+        ? (mapAssetNodeToTreeNode(node.childrenIds, id) as Node[])
+        : [];
+      return {
+        id,
+        name: node.asset.name,
+        state: { ...node } as AssetNodeState | ViewMoreNodeState,
+        children,
+      };
     });
-    onSelect(assetNode.asset);
 
-    if (!assetNode.isLeaf && !assetNode.children) {
-      // load asset children
-      setAssetIdToFetch(+assetInternalId);
+    // add view more elements
+    const parentNode = parent ? assetNodesById[parent] : null;
+    if (
+      parentNode &&
+      ((parentNode.childrenExpanded && parentNode.nextCursor) ||
+        !parentNode.childrenExpanded)
+    ) {
+      // "view more" is just another node element in the end of the array with child elements
+      treeNodes.push({
+        id: Math.trunc(Math.random() * 1000000),
+        name: 'View More',
+        state: {
+          viewMoreNode: true,
+          parentId: parentNode.asset.id,
+          isLoadingChildren: parentNode.isLoadingChildren,
+        } as ViewMoreNodeState,
+        children: [],
+      });
     }
+    return treeNodes;
   };
 
-  const loadMoreAssets = async (parentNode: AssetNode) => {
-    const {
-      asset: { id: assetInternalId },
-      nextCursor,
-    } = parentNode;
-
-    // load more asset children
-    setNextChildrenToFetch({ id: assetInternalId, cursor: nextCursor });
-  };
-
-  const renderLeaf = (asset: Asset, tabIndex = 0) => (
-    <div
-      className={`leaf-item ${isSelectedAsset(asset) ? 'selected' : ''}`}
-      key={asset.id}
-      onClick={() => onItemSelect(asset.id)}
-      onKeyDown={(e) => {
-        e.key === 'Enter' && onItemSelect(asset.id);
-      }}
-      role="button"
-      tabIndex={tabIndex}
-    >
-      {asset.name}
-    </div>
-  );
-
-  const renderAssetLoading = (asset: Asset) => (
-    <div
-      className={`leaf-item loading-asset ${
-        isSelectedAsset(asset) ? 'selected' : ''
-      }`}
-      key={asset.id}
-    >
-      <Icon type="Loader" className="loading-icon" size={14} />
-      {asset.name}
-    </div>
-  );
-
-  const renderViewMore = (node: AssetNode | undefined) => {
-    if (!node || !node.nextCursor) {
-      return null;
-    }
-    if (node.isLoadingChildren) {
-      return (
-        <p className="leaf-item">
-          <Icon type="Loader" size={14} />
-        </p>
-      );
-    }
-    return (
-      <p className="leaf-item">
-        <A
-          type="link"
-          onClick={() => {
-            loadMoreAssets(node);
-          }}
-        >
-          View More
-        </A>
-      </p>
-    );
-  };
-
-  const renderTreeNode = (nodeIds: number[], parentNode?: AssetNode) =>
-    !nodeIds || nodeIds.length === 0 ? null : (
-      <Collapse
-        accordion
-        ghost
-        onChange={(assetId) => onItemSelect(Number(assetId))}
-      >
-        <>
-          {nodeIds.map((assetId, index) => {
-            const node = assetNodesById[assetId];
-            if (!node) {
-              // eslint-disable-next-line no-console
-              console.error(
-                `TreeNode not found for assetId=${assetId}` // should not get here!
-              );
-              return null;
-            }
-            const { children, asset, isLeaf, isLoadingChildren } = node;
-            if (isLeaf) {
-              // render as a leaf
-              return renderLeaf(asset, index);
-            }
-            if (isLoadingChildren && !children?.length) {
-              // asset is loading
-              return renderAssetLoading(asset);
-            }
-            return (
-              // render as expandable item
-              <Collapse.Panel
-                header={asset.name}
-                key={asset.id}
-                className={isSelectedAsset(asset) ? 'selected' : ''}
-              >
-                {children ? renderTreeNode(children, node) : null}
-              </Collapse.Panel>
-            );
-          })}
-          {renderViewMore(parentNode)}
-        </>
-      </Collapse>
-    );
-
-  const renderRootAssets = () => {
+  const renderTree = () => {
     if (isLoadingRootAssets) {
       return <Loading />;
     }
     if (rootIds.length === 0) {
       return <p>No assets found</p>;
     }
-    return <TreeNodeWrapper>{renderTreeNode(rootIds)}</TreeNodeWrapper>;
+
+    const rootNodes = mapAssetNodeToTreeNode(rootIds);
+
+    return (
+      <div style={{ height: '100%' }}>
+        <Tree
+          nodes={rootNodes}
+          onChange={noop}
+          nodeMarginLeft={12}
+          scrollToId={scrollToId}
+          extensions={{
+            updateTypeHandlers: {
+              [TREE_UPDATE_TYPE.SELECT]: treeSelectHandler,
+              [TREE_UPDATE_TYPE.EXPAND_COLLAPSE]: treeExpandCollapseHandler,
+              [TREE_UPDATE_TYPE.LOAD_MORE]: treeLoadMoreHandler,
+            },
+          }}
+        >
+          {(props) => (
+            <div style={props.style}>
+              <AssetNodeWrapper key={`node-${props.index}`}>
+                <AssetNodeRenderer {...props} selectedId={selectedAssetId} />
+              </AssetNodeWrapper>
+            </div>
+          )}
+        </Tree>
+      </div>
+    );
   };
 
-  return renderRootAssets();
+  return renderTree();
 };
 
 export default React.memo(AssetHierarchy);

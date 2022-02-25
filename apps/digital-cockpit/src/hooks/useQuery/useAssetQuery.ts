@@ -26,31 +26,41 @@ export const useAssetSearchQuery = (assetQuery?: AssetSearchFilter) => {
 
 const retrieveParentAssets = async (
   client: CogniteClient,
-  assetId?: IdEither
+  assetId?: IdEither,
+  assetRetrieveParams?: AssetRetrieveParams
 ) => {
   if (!assetId) return null;
   const hierarchy = [];
   // fetch current asset
-  let [nextAsset] = await client.assets.retrieve([assetId]);
+  let [nextAsset] = await client.assets.retrieve(
+    [assetId],
+    assetRetrieveParams
+  );
   hierarchy.push(nextAsset);
   let { parentId: nextParentId } = nextAsset;
 
   while (nextParentId) {
     // fetch next parent asset
     // eslint-disable-next-line no-await-in-loop
-    [nextAsset] = await client.assets.retrieve([{ id: nextParentId }]);
+    [nextAsset] = await client.assets.retrieve(
+      [{ id: nextParentId }],
+      assetRetrieveParams
+    );
     hierarchy.push(nextAsset);
     ({ parentId: nextParentId } = nextAsset);
   }
   return hierarchy;
 };
 
-export const useAssetBreadcrumbsQuery = (assetId?: IdEither) => {
+export const useAssetBreadcrumbsQuery = (
+  assetId?: IdEither,
+  assetRetrieveParams?: AssetRetrieveParams
+) => {
   const { client } = useContext(CogniteSDKContext);
 
   const query = useQuery<Asset[] | null>(
     ['assetBreadcrumbQuery', assetId],
-    () => retrieveParentAssets(client, assetId),
+    () => retrieveParentAssets(client, assetId, assetRetrieveParams),
     {
       enabled: Boolean(assetId),
     }

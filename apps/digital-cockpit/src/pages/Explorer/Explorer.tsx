@@ -41,7 +41,12 @@ const Explorer = () => {
         <h3>Asset Hierarchy</h3>
         <AssetSearch
           onSelect={onAssetSelect}
-          cleanStateComponent={<AssetHierarchy onSelect={onAssetSelect} />}
+          cleanStateComponent={
+            <AssetHierarchy
+              onSelect={onAssetSelect}
+              selectedAssetId={assetId ? { id: Number(assetId) } : undefined}
+            />
+          }
         />
       </aside>
       <main>{renderMain()}</main>
