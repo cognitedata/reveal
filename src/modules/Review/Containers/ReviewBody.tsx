@@ -1,5 +1,5 @@
 import { FileInfo } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Title } from '@cognite/cogs.js';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Spin } from 'antd';
@@ -22,6 +22,7 @@ import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPreview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
+import { useUserInformation } from 'src/hooks/useUserInformation';
 import { ImageContextualization } from './ImageContextualization';
 
 const queryClient = new QueryClient();
@@ -34,6 +35,9 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const loadingState = useRef<boolean>(false);
   const [currentTab, tabChange] = useState('context');
   const contextElement = useRef<HTMLElement>(null);
+
+  const { flow } = getFlow();
+  const { data: userInfo } = useUserInformation();
 
   const reviewFiles = useSelector((state: RootState) =>
     selectAllReviewFiles(state)
@@ -161,8 +165,15 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                 >
                   {file && (
-                    // TODO(CDFUX-1190): fix type problem when sdk singleton starts consuming sdk v6
-                    <DataExplorationProvider sdk={sdk as any}>
+                    <DataExplorationProvider
+                      flow={flow}
+                      sdk={sdk}
+                      userInfo={userInfo}
+                      overrideURLMap={{
+                        pdfjsWorkerSrc:
+                          '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+                      }}
+                    >
                       <QueryClientProvider client={queryClient}>
                         <FileDetailsReview fileObj={file} />
                       </QueryClientProvider>

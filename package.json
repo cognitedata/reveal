@@ -17,11 +17,11 @@
   "dependencies": {
     "@cognite/cdf-utilities": "^0.11.1",
     "@cognite/cogs.js": "^3.42.6",
-    "@cognite/data-exploration": "^1.7.3",
+    "@cognite/data-exploration": "1.8.0-beta.2",
     "@cognite/react-feature-flags": "^0.2.2-rc.0",
     "@cognite/react-image-annotate": "^1.8.0-v3-3",
     "@cognite/react-picture-annotation": "^1.15.1",
-    "@cognite/sdk": "^6.3.2",
+    "@cognite/sdk": "6.3.4",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@reduxjs/toolkit": "^1.6.2",
     "@sentry/browser": "^6.2.3",
