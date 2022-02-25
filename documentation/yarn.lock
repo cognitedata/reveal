@@ -2029,10 +2029,10 @@
     "@gltf-transform/core" "^0.12.16"
     ktx-parse "^0.2.1"
 
-"@google/model-viewer@1.7.2":
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/@google/model-viewer/-/model-viewer-1.7.2.tgz#f8a5a2215616dc51d4e6b70861a6de16b4599322"
-  integrity sha512-SoUTpYYlWPxIknfTM3gYQ240Q7eUqZuEHDH/YD2oMxuG7pWQB4DfW67O0EvgIh3vJ0rNG6eenXm0luqzK1i4Cw==
+"@google/model-viewer@1.10.1":
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/@google/model-viewer/-/model-viewer-1.10.1.tgz#521d6112685f629514a7fbd1be1dcc476f58c9b1"
+  integrity sha512-mQ7FhALWLj1rc4P7NXUNVG4glfgIeKK18X5UlQ0C+InkTsaLvfdTkOz5ixTwDWaw3ba8j6DMyGcN0mzMqc/OyA==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -11475,7 +11475,21 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-live@2.3.0, react-live@^2.2.1:
+react-live@2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/react-live/-/react-live-2.4.1.tgz#65e674ff9ca9a9a95f83117acc21ffd968aca619"
+  integrity sha512-r+32f7oV/kBs3QZBRvaT+9vOkQW47UZrDpgwUe5FiIMOl7sdo5pmISgb7Zpj5PGHgY6XQaiXs3FEh+IWw3KbRg==
+  dependencies:
+    "@types/buble" "^0.20.0"
+    buble "0.19.6"
+    core-js "^3.14.0"
+    dom-iterator "^1.0.0"
+    prism-react-renderer "^1.2.1"
+    prop-types "^15.7.2"
+    react-simple-code-editor "^0.11.0"
+    unescape "^1.0.1"
+
+react-live@^2.2.1:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/react-live/-/react-live-2.3.0.tgz#09fbac361903970e7cf51cee60729eeb164a5d87"
   integrity sha512-b+Nc7x/bLu2sPX/If1uncrmUvYtXTqxY8QpzBw/X76SA3QJ1ggU0Ld6X5phLXZ469+XWO5lOU7OpAt0JoTyZPQ==

@@ -56,7 +56,7 @@
     "lodash": "4.17.21",
     "loglevel": "1.8.0",
     "mixpanel-browser": "2.45.0",
-    "rxjs": "7.3.0",
+    "rxjs": "7.5.4",
     "skmeans": "0.11.3",
     "three": "0.137.5"
   },
@@ -66,7 +66,7 @@
     "@cognite/sdk-core": "^4.1.0",
     "@types/dat.gui": "0.7.7",
     "@types/jest": "26.0.24",
-    "@types/jsdom": "16.2.13",
+    "@types/jsdom": "16.2.14",
     "@types/lodash": "4.14.178",
     "@types/mixpanel-browser": "2.38.0",
     "@types/node": "14.18.12",
