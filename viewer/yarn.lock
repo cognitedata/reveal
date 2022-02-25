@@ -483,7 +483,7 @@ __metadata:
     "@types/jest": 26.0.24
     "@types/jsdom": 16.2.14
     "@types/lodash": 4.14.178
-    "@types/mixpanel-browser": 2.35.7
+    "@types/mixpanel-browser": 2.38.0
     "@types/node": 14.18.12
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
@@ -520,7 +520,7 @@ __metadata:
     lint-staged: 10.5.4
     lodash: 4.17.21
     loglevel: 1.8.0
-    mixpanel-browser: 2.41.0
+    mixpanel-browser: 2.45.0
     moq.ts: 7.4.1
     nock: 13.2.4
     prettier: 2.5.1
@@ -1257,10 +1257,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mixpanel-browser@npm:2.35.7":
-  version: 2.35.7
-  resolution: "@types/mixpanel-browser@npm:2.35.7"
-  checksum: 9b4b247859428a62b282cec266d334ede4bd0061de03c6fc9894313614d2af59265618dce4d0ad4177078d261a18d6ed5e6ff34bf662c5fe8c99400d29afad21
+"@types/mixpanel-browser@npm:2.38.0":
+  version: 2.38.0
+  resolution: "@types/mixpanel-browser@npm:2.38.0"
+  checksum: 1ade271188446005644cf10b65af554a9a75bd2008b827db4cdcfb2eedf858e2426a4d3d21ccf5b0a25a8590f8c3095da25549cfb7765077002e03e64afa9f0a
   languageName: node
   linkType: hard
 
@@ -9040,10 +9040,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"mixpanel-browser@npm:2.41.0":
-  version: 2.41.0
-  resolution: "mixpanel-browser@npm:2.41.0"
-  checksum: f4ad17419697df28073603c4631b2d23a2b545fcca9c75a067f641bee94aa0e298a1b9498d71ad6cd8b29c0b35292ba447b6dfecad49bc16457cafc1a585e829
+"mixpanel-browser@npm:2.45.0":
+  version: 2.45.0
+  resolution: "mixpanel-browser@npm:2.45.0"
+  checksum: 43722dd5019ece65302e933f3d5812ea015aff8525b3ba5347da9cd8694871ed85179047bf2bc7f47cd58c050158ea4ce84cc2810e128988c151fe4457f52f55
   languageName: node
   linkType: hard
 
