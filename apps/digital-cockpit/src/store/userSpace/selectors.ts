@@ -1,7 +1,6 @@
 import { StoreState } from 'store/types';
 import { createSelector } from 'reselect';
 import { getSuites } from 'store/suites/selectors';
-import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
 import { Suite } from 'store/suites/types';
 import { findLastVisitedTimeByKey } from 'utils/userSpace';
@@ -15,13 +14,12 @@ export const getUserSpace = (state: StoreState): UserSpaceState =>
 export const getLastVisited = (state: StoreState): LastVisited[] | undefined =>
   state.userSpace?.lastVisited;
 
-export const getLastVisitedItems = (tenantName: string) =>
+export const getLastVisitedItems = (applications: ApplicationItem[]) =>
   createSelector(
-    [getLastVisited, getSuites, getApplications(tenantName)],
+    [getLastVisited, getSuites],
     (
       lastVisited: LastVisited[] | undefined = [],
-      suites: Suite[] | null = [],
-      applications: ApplicationItem[] = []
+      suites: Suite[] | null = []
     ): any[] => {
       const boardItems: LastVisitedItem[] = [];
       const keys: string[] = lastVisited.map((item: LastVisited) => item.key);

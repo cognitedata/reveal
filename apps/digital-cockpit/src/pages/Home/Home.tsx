@@ -36,12 +36,10 @@ import { fetchUserSpace } from 'store/userSpace/thunks';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 import { useMetrics } from 'utils/metrics';
-import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
 import { TenantContext } from 'providers/TenantProvider';
 import { useLink } from 'hooks';
-import ThreeDCard from 'components/cards/ThreeDCard';
-import ThreeDTab from 'components/explorer/ThreeDTab';
+import useCogniteApplications from 'hooks/useCogniteApplications';
 
 const Home = () => {
   const itemsToDisplay = 6;
@@ -60,12 +58,11 @@ const Home = () => {
     useSelector(getUserSpace);
   const [userSpaceLoadDispatched, setUserSpaceLoadDispatched] = useState(false);
 
-  const tenant = useContext(TenantContext);
-  const lastVisitedItems = useSelector(getLastVisitedItems(tenant)).slice(
+  const { activeApplications: applications } = useCogniteApplications();
+  const lastVisitedItems = useSelector(getLastVisitedItems(applications)).slice(
     0,
     itemsToDisplay
   );
-  const applications = useSelector(getApplications(tenant));
 
   const metrics = useMetrics('Home');
 

@@ -22,6 +22,7 @@ export type ApplicationItem = {
   iconKey: string;
   title: string;
   url: string;
+  urlTemplate?: string;
   rightIconKey?: AllIconTypes;
 };
 

@@ -1,7 +1,5 @@
-import { allApplications } from 'constants/applications';
-
 import React, { useContext, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { modalClose } from 'store/modals/actions';
 import { Button, Switch, Title } from '@cognite/cogs.js';
@@ -13,19 +11,17 @@ import {
   SwitchContainer,
 } from 'components/modals/elements';
 import { useMetrics } from 'utils/metrics';
-import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
 import { saveApplicationsList } from 'store/config/thunks';
-import { TenantContext } from 'providers/TenantProvider';
+import useCogniteApplications from 'hooks/useCogniteApplications';
 
 const SelectApplications: React.FC = () => {
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const metrics = useMetrics('EditSuite');
-  const tenant = useContext(TenantContext);
-  const selectedApplications = useSelector(getApplications(tenant));
+  const { activeApplications, allApplications } = useCogniteApplications();
   const [apps, setApps] = useState<string[]>(
-    selectedApplications.map((app) => app.key) || []
+    activeApplications.map((app) => app.key) || []
   );
 
   const handleClose = () => {

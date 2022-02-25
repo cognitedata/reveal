@@ -6,8 +6,7 @@ import { getRootSuites } from 'store/suites/selectors';
 import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
 import { ApplicationItem } from 'store/config/types';
-import { getApplications } from 'store/config/selectors';
-import { TenantContext } from 'providers/TenantProvider';
+import useCogniteApplications from 'hooks/useCogniteApplications';
 import {
   DndContext,
   DragEndEvent,
@@ -66,8 +65,7 @@ const LeftSidebar: React.FC = () => {
   const dispatch = useDispatch();
   const apiClient = useContext(ApiClientContext);
   const suites = useSelector(getRootSuites);
-  const tenant = useContext(TenantContext);
-  const applications = useSelector(getApplications(tenant));
+  const { activeApplications: applications } = useCogniteApplications();
   const metrics = useMetrics('LeftSidebar');
   const admin = useSelector(isAdmin);
 

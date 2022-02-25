@@ -1,40 +1,47 @@
 import { ApplicationItem } from 'store/config/types';
 
+export const clusterPlaceholder = '__CLUSTER__';
+
 export const allApplications: ApplicationItem[] = [
   {
     key: 'infield',
     iconKey: 'App.InField',
     title: 'InField',
-    url: 'https://infield.cogniteapp.com',
+    url: '',
+    urlTemplate: `https://infield${clusterPlaceholder}.cogniteapp.com`,
   },
   {
     key: 'bestday',
     iconKey: 'App.BestDay',
     title: 'Best Day',
-    url: 'http://bestday.cogniteapp.com',
+    url: '',
+    urlTemplate: `http://bestday${clusterPlaceholder}.cogniteapp.com`,
   },
   {
     key: 'discover',
     iconKey: 'App.Discover',
     title: 'Discover',
-    url: 'http://discover.cogniteapp.com',
+    url: '',
+    urlTemplate: `http://discover${clusterPlaceholder}.cogniteapp.com`,
   },
   {
     key: 'maintain',
     iconKey: 'App.Maintain',
     title: 'Maintain',
-    url: 'https://mp.cogniteapp.com',
+    url: `https://mp.cogniteapp.com`,
   },
   {
     key: 'charts',
     iconKey: 'App.Charts',
     title: 'Charts',
-    url: 'https://charts.cogniteapp.com',
+    url: '',
+    urlTemplate: `https://charts${clusterPlaceholder}.cogniteapp.com`,
   },
   {
     key: 'blueprint',
     iconKey: 'App.Blueprint',
     title: 'Blueprint',
-    url: 'https://blueprint.cogniteapp.com',
+    url: '',
+    urlTemplate: `https://blueprint${clusterPlaceholder}.cogniteapp.com`,
   },
 ];
