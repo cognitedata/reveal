@@ -1,5 +1,5 @@
-import { Badge, Input } from '@cognite/cogs.js';
-import { CogniteEvent } from '@cognite/sdk';
+import { Badge } from '@cognite/cogs.js';
+import { CogniteEvent, EventSearchRequest } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { UseQueryResult } from 'react-query';
@@ -8,12 +8,16 @@ import Loading from 'components/utils/Loading';
 import useEventSearchQuery from 'hooks/useQuery/useEventSearchQuery';
 import usePagination from 'hooks/usePagination';
 import useEventAggregateQuery from 'hooks/useQuery/useEventAggregateQuery';
+import { mapFiltersToCDF } from 'components/search/utils';
+import { InternalFilterSettings } from 'components/search/types';
+import SearchBar from 'components/search/SearchBar';
 
 import EventRow from '../EventRow';
 import { TableWrapper } from '../EventRow/TableWrapper';
 import EventRowHeader from '../EventRow/EventRowHeader';
 
 import { TabWrapper } from './elements';
+import { EVENT_FILTER_SELECTORS } from './consts';
 
 export type EventTabProps = {
   assetId: number;
@@ -21,11 +25,20 @@ export type EventTabProps = {
 
 const EventTab = ({ assetId }: EventTabProps) => {
   // The actual value of the input field
-  const [value, setValue] = useState('');
+  const [filterValue, setFilterValue] = useState<InternalFilterSettings>({
+    query: '',
+    filters: [],
+  });
   // The field we pass to the query (so we can debounce)
-  const [query, setQuery] = useState('');
+  const [filterQuery, setFilterQuery] = useState<EventSearchRequest>();
+  const debouncedSetFilterQuery = useMemo(
+    () =>
+      debounce((query: InternalFilterSettings) => {
+        setFilterQuery(mapFiltersToCDF(query, 'description'));
+      }, 300),
+    []
+  );
   const { getPageData, renderPagination, resetPages } = usePagination();
-  const debouncedSetQuery = useMemo(() => debounce(setQuery, 300), []);
 
   const { data: eventsOnAsset } = useEventAggregateQuery({
     filter: {
@@ -39,20 +52,18 @@ const EventTab = ({ assetId }: EventTabProps) => {
   });
 
   const assetQuery = useEventSearchQuery({
+    ...filterQuery,
     filter: {
+      ...filterQuery?.filter,
       assetIds: [assetId],
-    },
-    search: {
-      description: query,
     },
     limit: 500,
   });
   const relatedQuery = useEventSearchQuery({
+    ...filterQuery,
     filter: {
+      ...filterQuery?.filter,
       assetSubtreeIds: [{ id: assetId }],
-    },
-    search: {
-      description: query,
     },
     limit: 500,
   });
@@ -86,22 +97,20 @@ const EventTab = ({ assetId }: EventTabProps) => {
   };
   return (
     <TabWrapper>
-      <Input
-        className="search-input"
-        placeholder="Search"
-        icon="Search"
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          debouncedSetQuery(e.target.value);
+      <SearchBar
+        value={filterValue}
+        onChange={(next) => {
+          setFilterValue(next);
+          debouncedSetFilterQuery(next);
         }}
+        selectors={EVENT_FILTER_SELECTORS}
       />
       <section>
         <h3>
           On this asset{' '}
           <Badge
             text={String(
-              (query ? assetQuery.data?.length : eventsOnAsset) || 0
+              (filterQuery ? assetQuery.data?.length : eventsOnAsset) || 0
             )}
           />
         </h3>
@@ -112,7 +121,7 @@ const EventTab = ({ assetId }: EventTabProps) => {
           Related events{' '}
           <Badge
             text={String(
-              (query ? relatedQuery.data?.length : eventsUnderAsset) || 0
+              (filterQuery ? relatedQuery.data?.length : eventsUnderAsset) || 0
             )}
           />
         </h3>

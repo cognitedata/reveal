@@ -1,5 +1,5 @@
-import { Badge, Input } from '@cognite/cogs.js';
-import { Timeseries } from '@cognite/sdk';
+import { Badge } from '@cognite/cogs.js';
+import { Timeseries, TimeseriesSearchFilter } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { UseQueryResult } from 'react-query';
@@ -8,12 +8,16 @@ import Loading from 'components/utils/Loading';
 import useTimeSeriesSearchQuery from 'hooks/useQuery/useTimeSeriesSearchQuery';
 import usePagination from 'hooks/usePagination';
 import useTimeSeriesAggregateQuery from 'hooks/useQuery/useTimeSeriesAggregateQuery';
+import { InternalFilterSettings } from 'components/search/types';
+import { mapFiltersToCDF } from 'components/search/utils';
+import SearchBar from 'components/search/SearchBar';
 
 import TimeSeriesRow from '../TimeSeriesRow';
 import { RowWrapper } from '../TimeSeriesRow/RowWrapper';
 import TimeSeriesSidebar from '../TimeSeriesSidebar';
 
 import { TabWrapper } from './elements';
+import { TIMESERIES_FILTER_SELECTORS } from './consts';
 
 export type TimeSeriesTabProps = {
   assetId: number;
@@ -21,12 +25,21 @@ export type TimeSeriesTabProps = {
 
 const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
   // The actual value of the input field
-  const [value, setValue] = useState('');
+  const [filterValue, setFilterValue] = useState<InternalFilterSettings>({
+    query: '',
+    filters: [],
+  });
   // The field we pass to the query (so we can debounce)
-  const [query, setQuery] = useState('');
+  const [filterQuery, setFilterQuery] = useState<TimeseriesSearchFilter>();
+  const debouncedSetFilterQuery = useMemo(
+    () =>
+      debounce((query: InternalFilterSettings) => {
+        setFilterQuery(mapFiltersToCDF(query, 'query'));
+      }, 300),
+    []
+  );
   const { renderPagination, getPageData, resetPages } = usePagination();
   const [selectedTimeSeries, setSelectedTimeSeries] = useState();
-  const debouncedSetQuery = useMemo(() => debounce(setQuery, 300), []);
 
   const { data: totalTimeSeriesOnAsset } = useTimeSeriesAggregateQuery({
     filter: {
@@ -40,20 +53,18 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
   });
 
   const assetQuery = useTimeSeriesSearchQuery({
+    ...filterQuery,
     filter: {
+      ...filterQuery?.filter,
       assetIds: [assetId],
-    },
-    search: {
-      name: query || undefined,
     },
     limit: 500,
   });
   const relatedQuery = useTimeSeriesSearchQuery({
+    ...filterQuery,
     filter: {
+      ...filterQuery?.filter,
       assetSubtreeIds: [{ id: assetId }],
-    },
-    search: {
-      name: query || undefined,
     },
     limit: 500,
   });
@@ -90,22 +101,22 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
   };
   return (
     <TabWrapper style={{ paddingRight: selectedTimeSeries ? 280 : 0 }}>
-      <Input
-        className="search-input"
-        placeholder="Search"
-        icon="Search"
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          debouncedSetQuery(e.target.value);
+      <SearchBar
+        value={filterValue}
+        onChange={(next) => {
+          setFilterValue(next);
+          debouncedSetFilterQuery(next);
         }}
+        selectors={TIMESERIES_FILTER_SELECTORS}
       />
       <section>
         <h3>
           On this asset{' '}
           <Badge
             text={String(
-              (query ? assetQuery.data?.length : totalTimeSeriesOnAsset) || 0
+              (filterQuery
+                ? assetQuery.data?.length
+                : totalTimeSeriesOnAsset) || 0
             )}
           />
         </h3>
@@ -116,8 +127,9 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
           Related time series{' '}
           <Badge
             text={String(
-              (query ? relatedQuery.data?.length : totalTimeSeriesUnderAsset) ||
-                0
+              (filterQuery
+                ? relatedQuery.data?.length
+                : totalTimeSeriesUnderAsset) || 0
             )}
           />
         </h3>

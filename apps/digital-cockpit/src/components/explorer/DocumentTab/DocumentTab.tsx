@@ -1,5 +1,5 @@
-import { Badge, Input } from '@cognite/cogs.js';
-import { CogniteInternalId, FileInfo } from '@cognite/sdk';
+import { Badge } from '@cognite/cogs.js';
+import { CogniteInternalId, FileInfo, FilesSearchFilter } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { UseQueryResult } from 'react-query';
@@ -8,6 +8,9 @@ import NoData from 'components/utils/NoData';
 import Loading from 'components/utils/Loading';
 import usePagination from 'hooks/usePagination';
 import useFileAggregateQuery from 'hooks/useQuery/useFileAggregateQuery';
+import SearchBar from 'components/search/SearchBar';
+import { InternalFilterSettings } from 'components/search/types';
+import { mapFiltersToCDF } from 'components/search/utils';
 
 import DocumentGrouper from '../DocumentGrouper';
 import DocumentRow from '../DocumentRow';
@@ -15,6 +18,7 @@ import { DocumentRowWrapper } from '../DocumentRow/DocumentRowWrapper';
 import DocumentSidebar from '../DocumentSidebar';
 
 import { DocumentTabWrapper } from './elements';
+import { FILE_FILTER_SELECTORS } from './consts';
 
 export type DocumentTabProps = {
   // current version of @cognite/sdk v5.6.2 doesn't support parameter assetExternalIds
@@ -25,13 +29,24 @@ export type DocumentTabProps = {
 
 const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
   // The actual value of the input field
-  const [value, setValue] = useState('');
+  const [filterValue, setFilterValue] = useState<InternalFilterSettings>({
+    query: '',
+    filters: [],
+  });
   // The field we pass to the query (so we can debounce)
-  const [query, setQuery] = useState('');
-  const debouncedSetQuery = useMemo(() => debounce(setQuery, 300), []);
+  const [filterQuery, setFilterQuery] = useState<FilesSearchFilter>();
+  const debouncedSetFilterQuery = useMemo(
+    () =>
+      debounce((query: InternalFilterSettings) => {
+        setFilterQuery(mapFiltersToCDF(query));
+      }, 300),
+    []
+  );
+
   const [selectedDocument, setSelectedDocument] = useState<
     FileInfo | undefined
   >();
+
   const { renderPagination, getPageData, resetPages } = usePagination();
 
   const { data: totalFilesOnAsset } = useFileAggregateQuery({
@@ -45,21 +60,19 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
     },
   });
   const assetQuery = useFileSearchQuery({
+    ...filterQuery,
     filter: {
+      ...filterQuery?.filter,
       assetIds: [assetId],
-    },
-    search: {
-      name: query,
     },
     limit: 500,
   });
 
   const relatedQuery = useFileSearchQuery({
+    ...filterQuery,
     filter: {
+      ...filterQuery?.filter,
       assetSubtreeIds: [{ id: assetId }],
-    },
-    search: {
-      name: query,
     },
     limit: 500,
   });
@@ -125,22 +138,21 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
 
   return (
     <DocumentTabWrapper style={{ paddingRight: selectedDocument ? 280 : 0 }}>
-      <Input
-        className="search-input"
-        placeholder="Search"
-        icon="Search"
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          debouncedSetQuery(e.target.value);
+      <SearchBar
+        value={filterValue}
+        onChange={(next) => {
+          setFilterValue(next);
+          debouncedSetFilterQuery(next);
         }}
+        selectors={FILE_FILTER_SELECTORS}
       />
+
       <section>
         <h3>
           On this asset{' '}
           <Badge
             text={String(
-              (query ? assetQuery.data?.length : totalFilesOnAsset) || 0
+              (filterValue ? assetQuery.data?.length : totalFilesOnAsset) || 0
             )}
           />
         </h3>
@@ -151,7 +163,9 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
           Related documents{' '}
           <Badge
             text={String(
-              (query ? relatedQuery.data?.length : totalFilesUnderAsset) || 0
+              (filterValue
+                ? relatedQuery.data?.length
+                : totalFilesUnderAsset) || 0
             )}
           />
         </h3>

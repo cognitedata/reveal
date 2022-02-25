@@ -77,6 +77,7 @@ DEPENDENCIES = [
     "@npm//lodash",
     "@npm//moment",
     "@npm//react",
+    "@npm//react-date-range",
     "@npm//react-dom",
     "@npm//react-glider",
     "@npm//react-modal",
@@ -104,6 +105,7 @@ DEPENDENCIES = [
 TYPE_DEPENDENCIES = [
     "@npm//@types/lodash",
     "@npm//@types/react",
+    "@npm//@types/react-date-range",
     "@npm//@types/react-dom",
     "@npm//@types/react-modal",
     "@npm//@types/react-redux",

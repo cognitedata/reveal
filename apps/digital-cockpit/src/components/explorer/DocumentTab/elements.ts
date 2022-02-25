@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 
 export const DocumentTabWrapper = styled.div`
-  .cogs-input-container {
-    margin-bottom: 24px;
-  }
   .search-input {
     .input-wrapper,
     input {
