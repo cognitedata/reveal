@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Button, Detail } from '@cognite/cogs.js';
+import { Button, Detail, Menu } from '@cognite/cogs.js';
 
 import { Flex, FlexAlignItems, sizes } from 'styles/layout';
 
@@ -34,6 +34,7 @@ export const SavedSearchListContent = styled.div`
   margin-top: ${sizes.small};
   max-height: 60vh;
   overflow-y: auto;
+  width: 100%;
 `;
 export const SavedSearchTitle = styled(Detail)`
   padding: ${sizes.small};
@@ -44,4 +45,8 @@ export const SavedSearchDivider = styled.div`
   margin-top: ${sizes.small};
   margin-right: -4px; // need to ignore parent padding of the "Menu" component
   margin-left: -4px;
+`;
+
+export const MenuItemWrapper = styled(Menu.Item)`
+  text-align: left;
 `;

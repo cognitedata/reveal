@@ -42,7 +42,7 @@ describe('Favorite Details Header', () => {
 
     page();
 
-    const title = screen.getByText(mockFavorite.name);
+    const title = screen.getByTitle(mockFavorite.name);
     const description = screen.getByText(mockFavorite.description);
     expect(title).toBeInTheDocument();
     expect(description).toBeInTheDocument();

@@ -224,8 +224,7 @@ startTest(
       .expect(App.resultTable.getBulkActionText(wellBoreCount).exists)
       .ok();
 
-    await App.resultTable.clickRowWithText('F-10');
-    await App.resultTable.clickCheckboxOfRowWithText('Wellbore F-10');
+    await App.resultTable.clickCheckboxOfRowWithText('F-10');
 
     const wellBoreCountFinal = 'With 4 wellbores inside';
     progress(

@@ -2,6 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components/macro';
 
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import Skeleton from 'components/skeleton';
 import {
   FlexColumn,
@@ -24,6 +25,7 @@ const HeaderTitle = styled.div`
   font-weight: bold;
   line-height: 36px;
   margin-bottom: 12px;
+  max-width: 98%;
 `;
 
 const HeaderDescriptionText = styled(FlexRow)`
@@ -68,7 +70,11 @@ const Header: React.FC<Props> = ({
         )}
         <FlexGrow as={FlexColumn}>
           <HeaderTitle>
-            {isLoading ? <Skeleton.Text isLastLine /> : title}
+            {isLoading ? (
+              <Skeleton.Text isLastLine />
+            ) : (
+              <MiddleEllipsis value={title} />
+            )}
           </HeaderTitle>
           <FlexRow>
             <FlexGrow as={FlexRow}>

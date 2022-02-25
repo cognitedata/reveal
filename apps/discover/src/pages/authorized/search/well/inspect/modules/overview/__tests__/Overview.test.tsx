@@ -20,7 +20,7 @@ describe('Module Preview Selector', () => {
     await defaultTestInit();
     expect(screen.getByText('Well')).toBeInTheDocument();
     expect(screen.getByText('Field')).toBeInTheDocument();
-    expect(screen.getByText('test-source')).toBeInTheDocument();
-    expect(screen.getByText('15.Apr.2021')).toBeInTheDocument();
+    expect(screen.getByTitle('test-source')).toBeInTheDocument();
+    expect(screen.getByTitle('15.Apr.2021')).toBeInTheDocument();
   });
 });

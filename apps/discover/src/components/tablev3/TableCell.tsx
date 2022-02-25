@@ -5,10 +5,9 @@ import isNil from 'lodash/isNil';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 
-import { Tooltip } from 'components/tooltip';
-import { useElementOverflowing } from 'hooks/useElementOverflowing';
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 
-import { CellContentWrapper, CellValueWrapper } from './elements';
+import { CellContentWrapper } from './elements';
 
 interface Props {
   cell: Cell<any>;
@@ -22,9 +21,6 @@ export const TableCell: React.FC<Props> = React.memo(({ cell }) => {
 });
 
 const CellText = ({ children }: any) => {
-  const elementRef = React.useRef<HTMLElement>(null);
-  const overflowing = useElementOverflowing(elementRef?.current);
-
   const isCellValueEmpty = (value: string | number): boolean => {
     return !(
       value &&
@@ -40,9 +36,7 @@ const CellText = ({ children }: any) => {
     <CellContentWrapper
       whiteSpace={children.props.column.displayFullText ? 'normal' : 'nowrap'}
     >
-      <Tooltip title={children} enabled={overflowing}>
-        <CellValueWrapper ref={elementRef}> {children} </CellValueWrapper>
-      </Tooltip>
+      <MiddleEllipsis value={value} />
     </CellContentWrapper>
   );
 };

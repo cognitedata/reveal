@@ -84,7 +84,7 @@ describe('CheckboxTableResult', () => {
     testRenderer(DocumentResultTable, store);
 
     // confirm page is loaded before moving on
-    await screen.findByText('FIRST-DOC-AUTHOR');
+    await screen.findByTitle('FIRST-DOC-AUTHOR');
     return { store };
   };
 
@@ -94,7 +94,7 @@ describe('CheckboxTableResult', () => {
   it('should render a document result', async () => {
     await renderPage(getMockedStore());
 
-    expect(await screen.findByText('FIRST-DOC-AUTHOR')).toBeInTheDocument();
+    expect(await screen.findByTitle('FIRST-DOC-AUTHOR')).toBeInTheDocument();
   });
 
   it('should render cell elements', async () => {
@@ -118,10 +118,10 @@ describe('CheckboxTableResult', () => {
   it('should not dispatch action with hover', async () => {
     const { store } = await renderPage(getMockedStore());
 
-    fireEvent.mouseOver(screen.getByText('FIRST-DOC-AUTHOR'), {
+    fireEvent.mouseOver(screen.getByTitle('FIRST-DOC-AUTHOR'), {
       bubbles: true,
     });
-    fireEvent.mouseOver(screen.getByText('TEST-AUTHOR-2'), { bubbles: true });
+    fireEvent.mouseOver(screen.getByTitle('TEST-AUTHOR-2'), { bubbles: true });
 
     await waitFor(() => expect(store.getActions().length).toEqual(0), {
       timeout: 300,
@@ -131,7 +131,7 @@ describe('CheckboxTableResult', () => {
   it('should dispatch `mapProvider/zoomToCoords` action when click on a row and geo location exists', async () => {
     const { store } = await renderPage(getMockedStore());
 
-    fireEvent.click(screen.getByText('TEST-AUTHOR-2'));
+    fireEvent.click(screen.getByTitle('TEST-AUTHOR-2'));
     await waitFor(() => expect(store.getActions().length).toEqual(1));
     expect(store.getActions()[0].type).toEqual(ZOOM_TO_COORDS);
   });
@@ -139,14 +139,14 @@ describe('CheckboxTableResult', () => {
   it('should not dispatch `mapProvider/zoomToCoords` action when click on a row and geo location is `undefined`', async () => {
     const { store } = await renderPage(getMockedStore());
 
-    fireEvent.click(screen.getByText('TEST-AUTHOR-2'));
+    fireEvent.click(screen.getByLabelText('TEST-AUTHOR-2'));
     await waitFor(() => expect(store.getActions().length).toEqual(0));
   });
 
   it('should dispatch `mapProvider/zoomToCoords` action when double click on a row and geo location exists', async () => {
     const { store } = await renderPage(getMockedStore());
 
-    fireEvent.doubleClick(screen.getByText('TEST-AUTHOR-2'));
+    fireEvent.doubleClick(screen.getByTitle('TEST-AUTHOR-2'));
     await waitFor(() => expect(store.getActions().length).toEqual(1));
     expect(store.getActions()[0].type).toEqual(ZOOM_TO_COORDS);
   });
@@ -164,7 +164,7 @@ describe('CheckboxTableResult', () => {
     const { store } = await renderPage(getMockedStore());
 
     // confirm page is loaded before moving on
-    await screen.findByText('FIRST-DOC-AUTHOR');
+    await screen.findByTitle('FIRST-DOC-AUTHOR');
 
     const checkboxes = screen.getAllByRole('checkbox', {
       name: 'Toggle Row Selected',

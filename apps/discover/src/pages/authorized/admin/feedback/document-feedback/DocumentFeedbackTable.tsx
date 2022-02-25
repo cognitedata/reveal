@@ -11,7 +11,7 @@ import {
   recoverObjectFeedback,
 } from 'services/feedback';
 import { useUserProfileQuery } from 'services/user/useUserQuery';
-import { shortDate } from 'utils/date';
+import { getDateOrDefaultText } from 'utils/date';
 import { sortDates } from 'utils/sortDates';
 
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
@@ -143,11 +143,9 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     },
     createdOn: {
       Header: FIELDS.date.display,
-      accessor: 'createdTime',
+      accessor: (row) => getDateOrDefaultText(row.createdTime),
       width: '140px',
       order: 1,
-      // eslint-disable-next-line react/no-unstable-nested-components
-      Cell: (cell) => <span>{shortDate(cell.row.original.createdTime)}</span>,
       sortType: (row1, row2) =>
         sortDates(
           new Date(row1.original.createdTime),

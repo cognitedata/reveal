@@ -16,6 +16,7 @@ import { log } from 'utils/log';
 import { Dropdown, Input, Menu, Tooltip, Button } from '@cognite/cogs.js';
 
 import Divider from 'components/divider';
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import OverwriteSearchModal from 'components/modals/overwrite-search-modal';
 import Skeleton from 'components/skeleton';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
@@ -35,6 +36,7 @@ import {
   SavedSearchListContent,
   SavedSearchTitle,
   SavedSearchDivider,
+  MenuItemWrapper,
 } from './elements';
 
 export const ExistingSavedSearches: React.FC<{
@@ -74,12 +76,12 @@ export const ExistingSavedSearches: React.FC<{
 
         {(data || []).map((search) => {
           return (
-            <Menu.Item
+            <MenuItemWrapper
               key={search.value.id}
               onClick={handleLoadSavedSearch(search.name)}
             >
-              {search.name}
-            </Menu.Item>
+              <MiddleEllipsis value={search.name} fixedLength={25} />
+            </MenuItemWrapper>
           );
         })}
       </SavedSearchListContent>

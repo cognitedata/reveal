@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react';
 
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+
 import {
   AvatarWrapper,
   CardContent,
@@ -12,7 +14,7 @@ import {
 } from './element';
 
 interface Props {
-  title?: string;
+  title: string;
   text?: string;
   loading?: boolean;
   children?: ReactNode;
@@ -37,7 +39,9 @@ export const Card: React.FC<Props> = ({
           <AvatarWrapper>
             <IconWrapper type="Folder" />
           </AvatarWrapper>
-          <Title>{title}</Title>
+          <Title>
+            <MiddleEllipsis value={title} fixedLength={30} />
+          </Title>
         </HeaderLeft>
         <HeaderRight>{settings}</HeaderRight>
       </CardHeader>

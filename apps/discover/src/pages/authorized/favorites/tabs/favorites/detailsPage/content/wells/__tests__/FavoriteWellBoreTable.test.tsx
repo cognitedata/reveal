@@ -66,7 +66,7 @@ describe('Favorite Wellbore table', () => {
       favoriteId: '',
     });
 
-    expect(screen.getByText('test wellbore')).toBeInTheDocument();
+    expect(screen.getByTitle('test wellbore')).toBeInTheDocument();
     expect(screen.getByText('View')).toBeInTheDocument();
     expect(screen.getByTestId('menu-button')).toBeInTheDocument();
   });

@@ -22,12 +22,12 @@ describe('Creating Favorites', () => {
   const checkFavoriteIsCreated = (name) => {
     cy.log('Check if favorite is created');
     cy.findByText('Favorite set created').should('be.visible');
-    cy.findByText(name).should('be.visible');
+    cy.findByTitle(name).should('be.visible');
   };
 
   const checkFavoriteContainsDocument = (favoriteName) => {
     cy.log('Check if favorite is created with the document');
-    cy.findByText(favoriteName).should('be.visible').click();
+    cy.findByTitle(favoriteName).should('be.visible').click();
     cy.findByTestId('favorite-documents-table')
       .findAllByTestId('table-row')
       .should('have.length', 1);
@@ -35,7 +35,7 @@ describe('Creating Favorites', () => {
 
   const checkFavoriteContainsWell = (favoriteName) => {
     cy.log('Check if favorite is created with the well');
-    cy.findByText(favoriteName).should('be.visible').click();
+    cy.findByTitle(favoriteName).should('be.visible').click();
     cy.findByTestId('favorite-details-content-navigation')
       .findAllByRole('tab')
       .eq(1)

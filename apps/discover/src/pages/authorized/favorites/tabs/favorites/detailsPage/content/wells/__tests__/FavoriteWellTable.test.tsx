@@ -56,7 +56,7 @@ describe('Favorite Wellbore table', () => {
     });
 
     expect(screen.queryAllByText(LOADING_TEXT).length).toEqual(0);
-    expect(screen.getByText(well.operator || '-error-')).toBeInTheDocument();
+    expect(screen.getByTitle(well.operator || '-error-')).toBeInTheDocument();
     expect(screen.getByText(well.field || '-error-')).toBeInTheDocument();
     expect(screen.getByText('View')).toBeInTheDocument();
     expect(screen.getByTestId('menu-button')).toBeInTheDocument();

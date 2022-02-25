@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Menu } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
 
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { FAVORITE_ON_ICON } from 'pages/authorized/search/map/constants';
+import { MenuItemWrapper } from 'pages/authorized/search/search/SavedSearches/elements';
 
 export interface Props {
   favoriteName: string;
@@ -27,7 +28,7 @@ export const FavoriteMenuItem: React.FC<Props> = ({
 
   return useMemo(() => {
     return (
-      <Menu.Item
+      <MenuItemWrapper
         onClick={() => {
           onItemClicked(favoriteContent);
           setLoading(true);
@@ -37,8 +38,8 @@ export const FavoriteMenuItem: React.FC<Props> = ({
           loading ? 'Loader' : (isFavored && FAVORITE_ON_ICON) || undefined
         }
       >
-        {favoriteName}
-      </Menu.Item>
+        <MiddleEllipsis value={favoriteName} fixedLength={25} />
+      </MenuItemWrapper>
     );
   }, [isFavored, loading, favoriteContent]);
 };
