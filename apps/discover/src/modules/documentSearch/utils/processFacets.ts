@@ -1,10 +1,10 @@
+import { LAST_CREATED_KEY } from 'dataLayers/documents/keys';
 import compact from 'lodash/compact';
 import { getYear } from 'utils/date';
 
 import {
   FILE_TYPE_KEY,
   LABELS_KEY,
-  LAST_CREATED_KEY,
   PAGE_COUNT_KEY,
   SOURCE_KEY,
   TOTAL_COUNT_KEY,

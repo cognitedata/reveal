@@ -1,9 +1,10 @@
+import { normalize } from 'dataLayers/documents/adapters/normalize';
+import { LAST_CREATED_KEY } from 'dataLayers/documents/keys';
 import uniqueId from 'lodash/uniqueId';
 
 import { FileInfo, FileLink, InternalId, ExternalId } from '@cognite/sdk';
-import { Document, DocumentsAggregatesResponse } from '@cognite/sdk-playground';
+import { DocumentsAggregatesResponse } from '@cognite/sdk-playground';
 
-import { LAST_CREATED_KEY } from 'modules/documentSearch/constants';
 import {
   DocumentType,
   DocumentMetadata,
@@ -12,7 +13,7 @@ import {
   DocumentApiResponseItems,
 } from 'modules/documentSearch/types';
 
-import { getMockGeometry } from './geometry';
+import { getDocumentFixture } from './documents/getDocumentFixture';
 import { createdAndLastUpdatedTime } from './log';
 
 // this is the internal structure used for documents in Discover
@@ -24,13 +25,12 @@ export const getMockDocument: (
   const id = String(parseInt(uniqueId(), 10));
 
   return {
+    ...normalize(getDocumentFixture()),
     id,
     externalId,
     doc: {
       ...getMockDocumentMetadata({ id, ...extraMeta }),
     },
-    highlight: { content: [] },
-    geolocation: null,
     directory: '/folder1/folder2/file.txt',
     filename: '',
     ...extras,
@@ -51,44 +51,14 @@ export const getMockDocumentMetadata: (
     location: '',
     author: '',
     title: '',
-    creationdate: '',
-    lastmodified: '',
+    created: '',
+    modified: '',
     filesize: 1230000,
     topfolder: '',
     truncatedContent: '',
     ...extraMeta,
   };
 };
-
-export const getMockApiResultItem = (
-  extras = {},
-  derivedExtras = {}
-): Document => ({
-  id: 123,
-  externalId: 'aa123aa',
-  createdTime: 1592472506240,
-  language: 'en',
-  type: 'PDF',
-  title: 'Chapter 5 pressure tests.xlsx',
-  geoLocation: getMockGeometry() as any, // Remove any once its fixed in sdk
-  labels: [{ externalId: 'Unknown' }, { externalId: 'Label-1-ID' }],
-  ...extras,
-
-  sourceFile: {
-    name: 'Pressure tests.pdf',
-    assetIds: [1, 2, 3],
-    directory: '/folder1/folder2',
-    sourceCreatedTime: new Date(1396357617000),
-    sourceModifiedTime: new Date(1396357617334),
-    lastUpdatedTime: new Date(1396357617334),
-    metadata: {
-      parentPath: '/folder1/folder2',
-      path: '/folder1/folder2/Pressure tests.pdf',
-      fileName: 'Pressure tests.pdf',
-    },
-    ...derivedExtras,
-  },
-});
 
 export const getMockFileLinkWithInternalId = (
   extras?: Partial<FileLink & InternalId>

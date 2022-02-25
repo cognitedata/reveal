@@ -6,10 +6,8 @@ import { getMockFavoritesList } from 'services/favorites/__mocks/getMockFavorite
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockSavedSearchCurrentGet } from 'services/savedSearches/__mocks/getMockSavedSearchCurrentGet';
 
-import {
-  getMockAPIResponse,
-  getMockApiResultItem,
-} from '__test-utils/fixtures/document';
+import { getMockAPIResponse } from '__test-utils/fixtures/document';
+import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
 import { testRenderer } from '__test-utils/renderer';
 import { MockStore, getMockedStore } from '__test-utils/store.utils';
 import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
@@ -28,7 +26,7 @@ const mockServer = setupServer(
   getMockDocumentSearch(
     getMockAPIResponse([
       {
-        item: getMockApiResultItem(
+        item: getDocumentFixture(
           {
             id: 1,
             externalId: 1,
@@ -43,7 +41,7 @@ const mockServer = setupServer(
         ),
       },
       {
-        item: getMockApiResultItem(
+        item: getDocumentFixture(
           {
             id: 2,
             externalId: 2,
@@ -58,7 +56,7 @@ const mockServer = setupServer(
         ),
       },
       {
-        item: getMockApiResultItem(
+        item: getDocumentFixture(
           {
             id: 3,
             externalId: 3,

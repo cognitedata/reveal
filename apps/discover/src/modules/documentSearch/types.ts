@@ -1,5 +1,3 @@
-import { Row } from 'react-table';
-
 import {
   Document,
   DocumentsAggregate,
@@ -61,10 +59,12 @@ export interface DocumentMetadata {
   labels: DocumentLabel[];
   location: string;
   author: string;
-  title?: string;
-  creationdate: string;
-  lastmodified: string;
+  title: string;
+  // raw size
   filesize?: number;
+  // size for display
+  size?: string;
+  pageCount?: number;
   topfolder: string;
   truncatedContent?: string;
   assetIds?: number[];
@@ -83,22 +83,20 @@ export interface DocumentType {
   doc: DocumentMetadata;
   highlight: DocumentHighlight;
   filepath?: string;
-  title?: string;
+  title: string;
   labels?: string[];
   filename?: string;
   geolocation: Geometry | null;
+
+  modified?: Date;
+  modifiedDisplay: string;
+  created?: Date;
+  createdDisplay: string;
 
   // ui state
   selected?: boolean;
   duplicates?: DocumentType[];
   truncatedContent?: string;
-}
-
-export interface DocumentTypeDataModel extends DocumentType {
-  // holds short format dates
-  created: Date;
-  modified: Date;
-  size: string;
 }
 
 export interface QueryFacet {
@@ -176,8 +174,6 @@ export interface FormattedFacet {
 export type DocumentsAggregatesResponse = DocumentsAggregatesSDKResponse<
   DocumentsSearchWrapper[]
 >;
-
-export type DocumentRowType = Row<DocumentTypeDataModel>;
 
 export type CategoryResponse = {
   facets: DocumentQueryFacet[];

@@ -12,7 +12,7 @@ import {
   ViewButton,
 } from 'components/buttons';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
-import { DocumentTypeDataModel } from 'modules/documentSearch/types';
+import { DocumentType } from 'modules/documentSearch/types';
 import { FlexRow } from 'styles/layout';
 
 import {
@@ -21,10 +21,10 @@ import {
   OPEN_PARENT_FOLDER_OPTION_TEXT,
 } from '../constants';
 
-type SelectionHandle = (row: DocumentTypeDataModel) => void;
+type SelectionHandle = (row: DocumentType) => void;
 
 export type Props = {
-  doc: DocumentTypeDataModel;
+  doc: DocumentType;
   onPreviewHandle: SelectionHandle;
   onExtractParentFolderHandle?: SelectionHandle;
   onOpenFeedbackHandle: SelectionHandle;
@@ -38,7 +38,7 @@ export const DocumentResultTableHoverComponent = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  const onViewHandle = async (doc: DocumentTypeDataModel) => {
+  const onViewHandle = async (doc: DocumentType) => {
     showSuccessMessage(t('Retrieving document'));
     openDocumentPreviewInNewTab(doc.doc.id).catch((error) => {
       showErrorMessage(t('Oops, something went wrong'));
@@ -47,7 +47,7 @@ export const DocumentResultTableHoverComponent = ({
   };
 
   // TODO(PP-2573): check if this can be removed after upgrading the pdf viewer lib
-  const getPreviewButton = (doc: DocumentTypeDataModel) => {
+  const getPreviewButton = (doc: DocumentType) => {
     if (doc.doc.filetype === 'Compressed') {
       return null;
     }

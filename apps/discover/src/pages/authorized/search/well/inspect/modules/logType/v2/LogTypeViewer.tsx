@@ -9,7 +9,7 @@ import sortBy from 'lodash/sortBy';
 import uniq from 'lodash/uniq';
 import uniqueId from 'lodash/uniqueId';
 import styled from 'styled-components/macro';
-import { DATE_NOT_AVAILABLE } from 'utils/date';
+import { DATE_NOT_AVAILABLE } from 'utils/date/constants';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 

@@ -1,5 +1,5 @@
 import { getDateOrDefaultText } from 'utils/date';
-import { sortDates } from 'utils/sortDates';
+import { sortByDate } from 'utils/sort/sortByDate';
 
 import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
@@ -47,7 +47,7 @@ export const getWellColumns = (userPreferredUnit = ''): ColumnMap<Well> => {
       Header: SPUD_DATE,
       accessor: (row) => getDateOrDefaultText(row.spudDate),
       sortType: (rowA, rowB) => {
-        return sortDates(rowA.original.spudDate, rowB.original.spudDate);
+        return sortByDate(rowA.original.spudDate, rowB.original.spudDate);
       },
       width: '140px',
       order: 3,

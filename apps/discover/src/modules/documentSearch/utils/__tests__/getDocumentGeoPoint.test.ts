@@ -4,7 +4,8 @@ import { getDocumentGeoPoint } from '../getGeoPoint';
 
 describe('getDocumentGeoPoint', () => {
   it('should be ok for docs without geo points', () => {
-    const doc = getMockDocument();
+    // @ts-expect-error - this is ok, testing when geolocation is bad
+    const doc = getMockDocument({ geolocation: false });
     expect(getDocumentGeoPoint(doc)).toEqual(undefined);
   });
 

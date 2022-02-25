@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { endOf, currentDate, SHORT_DATE_FORMAT } from 'utils/date';
+import { endOf, currentDate } from 'utils/date';
+import { SHORT_DATE_FORMAT } from 'utils/date/constants';
 
 import { DateRange, Range } from '@cognite/cogs.js';
 

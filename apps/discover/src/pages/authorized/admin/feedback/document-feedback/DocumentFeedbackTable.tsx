@@ -12,7 +12,7 @@ import {
 } from 'services/feedback';
 import { useUserProfileQuery } from 'services/user/useUserQuery';
 import { getDateOrDefaultText } from 'utils/date';
-import { sortDates } from 'utils/sortDates';
+import { sortByDate } from 'utils/sort/sortByDate';
 
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
@@ -147,7 +147,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       width: '140px',
       order: 1,
       sortType: (row1, row2) =>
-        sortDates(
+        sortByDate(
           new Date(row1.original.createdTime),
           new Date(row2.original.createdTime)
         ),

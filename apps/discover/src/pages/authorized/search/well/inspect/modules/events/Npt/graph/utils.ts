@@ -1,5 +1,6 @@
 import get from 'lodash/get';
-import { getTimeDuration, HOURS_IN_A_DAY } from 'utils/date';
+import { getTimeDuration } from 'utils/date';
+import { HOURS_IN_A_DAY } from 'utils/date/constants';
 import { caseInsensitiveSort } from 'utils/sort';
 
 import { LegendCheckboxState } from 'components/charts/common/Legend';

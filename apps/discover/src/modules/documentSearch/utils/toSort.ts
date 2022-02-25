@@ -1,6 +1,6 @@
-import { SortBy } from 'pages/types';
+import { LAST_CREATED_KEY, LAST_UPDATED_KEY } from 'dataLayers/documents/keys';
 
-import { LAST_CREATED_KEY_VALUE, LAST_UPDATED_KEY_VALUE } from '../constants';
+import { SortBy } from 'pages/types';
 
 // This mapping is derived from toDocument util
 export const sortByMap: { [key: string]: string } = {
@@ -11,8 +11,8 @@ export const sortByMap: { [key: string]: string } = {
   'doc.title': 'title',
   // 'doc.topfolder': 'metadata.path', Not supported yet
   // size: 'metadata.size', Not supported yet
-  created: `sourceFile.${LAST_CREATED_KEY_VALUE}`,
-  modified: `sourceFile.${LAST_UPDATED_KEY_VALUE}`,
+  created: LAST_CREATED_KEY,
+  modified: LAST_UPDATED_KEY,
 };
 
 export const toSort = ({ id, desc }: SortBy) =>

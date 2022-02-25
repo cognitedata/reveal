@@ -1,12 +1,11 @@
-import { DOCUMENT_DATE_FORMAT, getDateOrDefaultText } from 'utils/date';
-import { sortDates } from 'utils/sortDates';
+import { sortByDate } from 'utils/sort/sortByDate';
 
-import { AllIconTypes, Icon } from '@cognite/cogs.js';
+import { IconType, Icon } from '@cognite/cogs.js';
 
-import { DocumentTypeDataModel } from 'modules/documentSearch/types';
+import { DocumentType } from 'modules/documentSearch/types';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 
-export const columns: ColumnMap<DocumentTypeDataModel> = {
+export const columns: ColumnMap<DocumentType> = {
   fileName: {
     Header: 'File Name',
     accessor: 'doc.filename',
@@ -20,7 +19,7 @@ export const columns: ColumnMap<DocumentTypeDataModel> = {
   },
   fileType: {
     title: 'File type',
-    Header: <Icon type={'Document' as AllIconTypes} />,
+    Header: <Icon type={'Document' as IconType} />,
     accessor: 'doc.filetype',
     width: '250px',
     maxWidth: '0.5fr',
@@ -42,18 +41,16 @@ export const columns: ColumnMap<DocumentTypeDataModel> = {
   },
   created: {
     Header: 'Created',
-    accessor: (row) =>
-      getDateOrDefaultText(row.doc.creationdate, DOCUMENT_DATE_FORMAT),
+    accessor: (doc) => doc.createdDisplay,
     sortType: (rowA, rowB) =>
-      sortDates(rowA.original.created, rowB.original.created),
+      sortByDate(rowA.original.created, rowB.original.created),
     width: '140px',
   },
   modified: {
     Header: 'Modified',
-    accessor: (row) =>
-      getDateOrDefaultText(row.doc.lastmodified, DOCUMENT_DATE_FORMAT),
+    accessor: (doc) => doc.modifiedDisplay,
     sortType: (rowA, rowB) =>
-      sortDates(rowA.original.modified, rowB.original.modified),
+      sortByDate(rowA.original.modified, rowB.original.modified),
     width: '140px',
   },
 };

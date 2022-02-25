@@ -11,8 +11,6 @@ const input: DocumentType[] = [
     },
     {
       filename: 'possible_duplicate.pdf',
-      creationdate: '23.08.2020',
-      lastmodified: '23.08.2020',
       filesize: 100,
     }
   ),
@@ -23,8 +21,6 @@ const input: DocumentType[] = [
     },
     {
       filename: 'not_a_duplicate.xlsx',
-      creationdate: '23.08.2020',
-      lastmodified: '23.08.2020',
       filesize: 100,
     }
   ),
@@ -35,8 +31,6 @@ const input: DocumentType[] = [
     },
     {
       filename: 'possible_duplicate.pdf',
-      creationdate: '23.08.2020',
-      lastmodified: '23.08.2020',
       filesize: 100,
     }
   ),

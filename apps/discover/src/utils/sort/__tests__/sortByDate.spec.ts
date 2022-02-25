@@ -1,4 +1,4 @@
-import { sortDates } from '../sortDates';
+import { sortByDate } from '../sortByDate';
 
 describe('sort dates', () => {
   it('sort short format dates', () => {
@@ -17,7 +17,7 @@ describe('sort dates', () => {
 
     // default sort by ascending order
     expect(dates).not.toMatchObject(sortedDates);
-    dates.sort(sortDates);
+    dates.sort(sortByDate);
     expect(dates).toMatchObject(sortedDates);
   });
 
@@ -32,35 +32,40 @@ describe('sort dates', () => {
 
     // default sort by ascending order
     expect(dates).not.toMatchObject(sortedDates);
-    dates.sort(sortDates);
+    dates.sort(sortByDate);
     expect(dates).toMatchObject(sortedDates);
   });
 
   it('sort both invalid dates', () => {
     const dates = ['2003.22', '423193', '0193297'];
 
-    dates.sort(sortDates);
+    dates.sort(sortByDate);
     expect(dates).toMatchObject(dates);
+  });
+
+  it('sort unix dates', () => {
+    expect([2, 1].sort(sortByDate)).toMatchObject([1, 2]);
+    expect([1, 2].sort(sortByDate)).toMatchObject([1, 2]);
   });
 
   it('sort one invalid dates', () => {
     const firstDateInvalid = ['14.14.20302', '05.12.1993', '09.12.1997'];
     const expectedFirstDateInvalid = firstDateInvalid;
 
-    firstDateInvalid.sort(sortDates);
+    firstDateInvalid.sort(sortByDate);
     expect(firstDateInvalid).toMatchObject(expectedFirstDateInvalid);
 
     const secondDateInvalid = ['12.04.2002', '05.14.193293', '09.12.1997'];
     const expectedSecondDateInvalid = secondDateInvalid;
 
-    secondDateInvalid.sort(sortDates);
+    secondDateInvalid.sort(sortByDate);
     expect(secondDateInvalid).toMatchObject(expectedSecondDateInvalid);
 
     const valid = ['12.04.2002', '05.12.1993', '09.12.1997'];
     const expectedValid = ['05.12.1993', '09.12.1997', '12.04.2002'];
 
     expect(valid).not.toMatchObject(expectedValid);
-    valid.sort(sortDates);
+    valid.sort(sortByDate);
     expect(valid).toMatchObject(expectedValid);
   });
 });

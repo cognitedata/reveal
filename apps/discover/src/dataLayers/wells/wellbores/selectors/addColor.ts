@@ -1,4 +1,4 @@
-import { Wellbore } from '@cognite/sdk-wells-v2/dist/src';
+import { Wellbore } from '@cognite/sdk-wells-v2';
 
 import { DEFAULT_WELLBORE_COLOR } from 'pages/authorized/search/well/inspect/Sidebar/constants';
 

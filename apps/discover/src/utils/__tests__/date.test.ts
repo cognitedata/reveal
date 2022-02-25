@@ -1,31 +1,31 @@
 import {
-  adaptLocalEpochToUTC,
   adaptLocalDateToISOString,
-  CHART_AXIS_LABEL_DATE_FORMAT,
   dateToEpoch,
-  DOCUMENT_DATE_FORMAT,
   endOf,
   formatDate,
   fromNow,
   getDateByMatchingRegex,
   getDateOrDefaultText,
-  getDocumentFormatFromDate,
   getTimeDuration,
   getYear,
   getYearFromNumber,
   isValidDate,
-  LONG_DATE_FORMAT,
   longDate,
   now,
-  SHORT_DATE_FORMAT,
   shortDate,
   shortDateTime,
   shortDateToDate,
   startOf,
   subtract,
-  TIME_AND_DATE_FORMAT,
   toDate,
 } from '../date';
+import {
+  CHART_AXIS_LABEL_DATE_FORMAT,
+  DOCUMENT_DATE_FORMAT,
+  LONG_DATE_FORMAT,
+  SHORT_DATE_FORMAT,
+  TIME_AND_DATE_FORMAT,
+} from '../date/constants';
 import { ISODateRegex } from '../isISODateRegex';
 
 describe('date helpers', () => {
@@ -70,6 +70,8 @@ describe('date helpers', () => {
     test('should return date or default text', () => {
       expect(getDateOrDefaultText()).toEqual('N/A');
       expect(getDateOrDefaultText('')).toEqual('N/A');
+      expect(getDateOrDefaultText(1572698222600)).toEqual('02.Nov.2019');
+      expect(getDateOrDefaultText('abc')).toEqual('N/A');
       expect(getDateOrDefaultText(new Date('2000'))).toEqual('01.Jan.2000');
       expect(getDateOrDefaultText('2021-04-15T13:31:27.767Z')).toEqual(
         '15.Apr.2021'
@@ -139,16 +141,6 @@ describe('date helpers', () => {
       expect(getYear('20200105')).toEqual(2020);
     });
 
-    test('should return empty when date is unavailable', () => {
-      expect(getDocumentFormatFromDate()).toEqual('');
-    });
-
-    test('should return Document format', () => {
-      expect(getDocumentFormatFromDate(new Date('2020-01-05'))).toContain(
-        '2020-01-05'
-      );
-    });
-
     test('Should return start of the day', () => {
       const date = new Date(2021, 2, 17, 11, 30, 30);
       expect(startOf(date, 'day')).toEqual(new Date(2021, 2, 17, 0, 0, 0));
@@ -173,13 +165,6 @@ describe('date helpers', () => {
     });
 
     describe('date time helpers', () => {
-      describe('adaptLocalEpochToUTC', () => {
-        test('should adapt local epoch to local utc', () => {
-          const utc = adaptLocalEpochToUTC(0);
-          const offset = new Date().getTimezoneOffset();
-          expect(utc).toEqual(0 - offset * 60 * 1000);
-        });
-      });
       describe('adaptLocalDateToISOString', () => {
         test('should adapt local date to iso string', () => {
           const currentDate = new Date();
@@ -194,6 +179,9 @@ describe('date helpers', () => {
         });
       });
       describe('isValidDate', () => {
+        test('unix date', () => {
+          expect(isValidDate(1572698222600)).toBeTruthy();
+        });
         test('should return correct boolean', () => {
           expect(isValidDate(new Date())).toBeTruthy();
           expect(isValidDate(shortDate(new Date(2020, 11, 21)))).toBeTruthy();

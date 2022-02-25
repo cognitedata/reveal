@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
 import { shortDate } from 'utils/date';
-import { sortDates } from 'utils/sortDates';
+import { sortByDate } from 'utils/sort/sortByDate';
 
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
@@ -88,7 +88,7 @@ const ListView: React.FC<Props> = ({
         width: '170px',
         accessor: (row: FavoriteSummary) => shortDate(row.createdTime),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
-          sortDates(rowA.original.createdTime, rowB.original.createdTime),
+          sortByDate(rowA.original.createdTime, rowB.original.createdTime),
       },
       {
         Header: t('Last update by'),
@@ -102,7 +102,7 @@ const ListView: React.FC<Props> = ({
         accessor: (row: FavoriteSummary) =>
           shortDate(getFavoriteLastUpdatedByDateTime(row.lastUpdatedBy)),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
-          sortDates(
+          sortByDate(
             new Date(
               getFavoriteLastUpdatedByDateTime(rowB.original.lastUpdatedBy)
             ),

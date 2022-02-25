@@ -11,7 +11,7 @@ import { useQuerySavedSearchesList } from 'services/savedSearches/useSavedSearch
 import { useUserProfileQuery } from 'services/user/useUserQuery';
 import { shortDate } from 'utils/date';
 import { log } from 'utils/log';
-import { sortDates } from 'utils/sortDates';
+import { sortByDate } from 'utils/sort/sortByDate';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
@@ -138,7 +138,7 @@ export const SavedSearches: React.FC<{
           rowA: RowProps<SavedSearchItem>,
           rowB: RowProps<SavedSearchItem>
         ) =>
-          sortDates(
+          sortByDate(
             shortDate(rowA.original.value.createdTime),
             shortDate(rowB.original.value.createdTime)
           ),

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import isEmpty from 'lodash/isEmpty';
 import uniqueId from 'lodash/uniqueId';
-import { DATE_NOT_AVAILABLE } from 'utils/date';
+import { DATE_NOT_AVAILABLE } from 'utils/date/constants';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 

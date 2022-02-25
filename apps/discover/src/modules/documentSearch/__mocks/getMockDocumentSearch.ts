@@ -3,13 +3,11 @@ import { TEST_PROJECT } from 'setupTests';
 
 import { DocumentsAggregatesResponse } from '@cognite/sdk-playground';
 
+import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
 import { MSWRequest } from '__test-utils/types';
 import { DocumentApiResponseItems } from 'modules/documentSearch/types';
 
-import {
-  getMockAPIResponse,
-  getMockApiResultItem,
-} from '../../../__test-utils/fixtures/document';
+import { getMockAPIResponse } from '../../../__test-utils/fixtures/document';
 import { SIDECAR } from '../../../constants/app';
 
 export const getMockDocumentSearch = (
@@ -22,7 +20,7 @@ export const getMockDocumentSearch = (
   return rest.post<Request>(url, (_req, res, ctx) => {
     return res(
       ctx.json(
-        customResponse || getMockAPIResponse([{ item: getMockApiResultItem() }])
+        customResponse || getMockAPIResponse([{ item: getDocumentFixture() }])
       )
     );
   });

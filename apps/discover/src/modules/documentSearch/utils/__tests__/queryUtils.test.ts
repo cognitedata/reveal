@@ -1,9 +1,9 @@
 import {
   LAST_CREATED_KEY_VALUE,
   LAST_UPDATED_KEY_VALUE,
-} from 'modules/documentSearch/constants';
+} from 'dataLayers/documents/keys';
+import { adaptLocalEpochToUTC } from 'utils/date/adaptLocalEpochToUTC';
 
-import { adaptLocalEpochToUTC } from '../../../../utils/date';
 import { getMockSearchQueryWithFacets } from '../../__tests__/utils';
 import { getSearchQuery } from '../queryUtil';
 

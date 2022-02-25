@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import { getDateOrDefaultText } from 'utils/date';
-import { sortDates } from 'utils/sortDates';
+import { sortByDate } from 'utils/sort/sortByDate';
 
 import { ColumnType } from 'components/tablev3';
 import { WATER_DEPTH } from 'pages/authorized/search/well/content/constants';
@@ -42,7 +42,7 @@ export const generateOverviewColumns = (
         const date1 = get(rowA, 'original.spudDate', '');
         const date2 = get(rowB, 'original.spudDate', '');
 
-        return sortDates(date1, date2);
+        return sortByDate(date1, date2);
       },
       maxWidth: '0.15fr',
       width: '100px',

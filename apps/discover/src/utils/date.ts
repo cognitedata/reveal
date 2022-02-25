@@ -1,4 +1,5 @@
 import isDate from 'lodash/isDate';
+import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 import moment, {
   Moment,
@@ -7,22 +8,28 @@ import moment, {
   unitOfTime,
 } from 'moment';
 
-//
-// this should be the only file that imports moment
-//
+import { adaptLocalEpochToUTC } from './date/adaptLocalEpochToUTC';
+import {
+  CHART_AXIS_LABEL_DATE_FORMAT,
+  DATE_NOT_AVAILABLE,
+  DOCUMENT_DATE_FORMAT,
+  LONG_DATE_FORMAT,
+  SHORT_DATE_FORMAT,
+  TIME_AND_DATE_FORMAT,
+} from './date/constants';
 
-// DATE FORMATS
-export const SHORT_DATE_FORMAT = 'DD.MMM.YYYY';
-export const LONG_DATE_FORMAT = 'DD MMMM, YYYY';
-export const TIME_AND_DATE_FORMAT = 'DD.MMM.YY hh:mm:ss';
-export const DOCUMENT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
-export const CHART_AXIS_LABEL_DATE_FORMAT = 'MMM YYYY';
-export const DATE_NOT_AVAILABLE = 'N/A';
-
-// NUMERIC TIME FORMATS
-export const HOURS_IN_A_DAY = 24;
-export const SECONDS_IN_MINUTE = 60;
-export const MILLISECONDS_IN_SECOND = 1000;
+// #######
+// #######
+// #######
+// this should be the only file that imports moment!
+// this should be the only file that imports moment!
+// this should be the only file that imports moment!
+//
+// AND everything in here is deprecated!
+//
+// #######
+// #######
+// #######
 
 export type DateFormat =
   | typeof SHORT_DATE_FORMAT
@@ -73,18 +80,19 @@ export const shortDateToDate = (shortDate: string): Date =>
 export const currentDate = (): Date => moment().toDate();
 
 export const getDateOrDefaultText = (
-  possibleDate?: string | Date,
-  targetFormat: DateFormat = SHORT_DATE_FORMAT
+  possibleDate?: string | number | Date,
+  targetFormat: DateFormat = SHORT_DATE_FORMAT,
+  currentFormat?: MomentFormatSpecification
 ) => {
   if (
     possibleDate === undefined ||
     possibleDate === '' ||
-    !isValidDate(possibleDate)
+    !isValidDate(possibleDate, currentFormat)
   ) {
     return DATE_NOT_AVAILABLE;
   }
 
-  return formatDate(possibleDate, targetFormat);
+  return formatDate(possibleDate, targetFormat, currentFormat);
 };
 
 export const now = () => moment.now();
@@ -126,9 +134,6 @@ const toEpoch = (time: Date) => {
 
 export const getYear = (date?: string) => moment(date).year();
 
-export const getDocumentFormatFromDate = (value?: Date) =>
-  value ? moment(value).format(DOCUMENT_DATE_FORMAT) : '';
-
 export const startOf = (value: Date, unitOfTime: unitOfTime.StartOf) => {
   return moment(value).startOf(unitOfTime).toDate();
 };
@@ -151,11 +156,14 @@ export const dateToEpoch = (
 ) => toEpoch(isString(date) ? toDate(date, currentFormat) : date);
 
 export const isValidDate = (
-  date: Date | string,
-  currentFormat?: string
+  date: Date | string | number,
+  currentFormat?: MomentFormatSpecification
 ): boolean => {
   let checkingDate;
-  if (isString(date) && moment(date, currentFormat).isValid()) {
+  if (
+    (isString(date) || isNumber(date)) &&
+    moment(date, currentFormat).isValid()
+  ) {
     checkingDate = toDate(date, currentFormat);
   } else {
     checkingDate = date;
@@ -188,13 +196,6 @@ export const getTimeDuration = (
   if (seconds) timeDuration += `${seconds}s `;
 
   return timeDuration.trim();
-};
-
-export const adaptLocalEpochToUTC = (dateInEpoch: number) => {
-  const offsetInMinutes = new Date().getTimezoneOffset();
-  return (
-    dateInEpoch - offsetInMinutes * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND
-  );
 };
 
 export const adaptLocalDateToISOString = (date: Date) => {

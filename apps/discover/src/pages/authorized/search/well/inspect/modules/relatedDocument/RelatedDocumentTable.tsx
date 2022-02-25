@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Row } from 'react-table';
 
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import EmptyState from 'components/emptyState';
@@ -17,12 +18,7 @@ import {
   useStopTimeLogger,
   TimeLogStages,
 } from 'hooks/useTimeLog';
-import {
-  DocumentResult,
-  DocumentRowType,
-  DocumentType,
-  DocumentTypeDataModel,
-} from 'modules/documentSearch/types';
+import { DocumentResult, DocumentType } from 'modules/documentSearch/types';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import {
   useRelatedDocumentData,
@@ -73,12 +69,12 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
     [selectedIds]
   );
 
-  const onOpenFeedback = (doc: DocumentTypeDataModel) => {
+  const onOpenFeedback = (doc: DocumentType) => {
     dispatch(setObjectFeedbackModalDocumentId(doc.id));
     metrics.track('click-provide-document-feedback-button');
   };
 
-  const handleRowClick = useCallback((row: DocumentRowType) => {
+  const handleRowClick = useCallback((row: Row<DocumentType>) => {
     const { id } = row.original;
 
     setExpandedIds((state) => ({
@@ -87,7 +83,7 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
     }));
   }, []);
 
-  const handlePreviewDocument = useCallback((doc: DocumentTypeDataModel) => {
+  const handlePreviewDocument = useCallback((doc: DocumentType) => {
     setDocument(doc);
     setShowModal(true);
     metrics.track('click-open-document-preview-button');

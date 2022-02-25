@@ -9,13 +9,10 @@ interface Props {
   doc: DocumentType;
   numberOfColumns?: number;
 }
-export const Metadata: React.FC<Props> = ({
-  doc: { doc: defaultMetadata },
-  numberOfColumns = 2,
-}) => {
-  const filteredLabels = useDocumentLabelsByExternalIds(defaultMetadata.labels);
+export const Metadata: React.FC<Props> = ({ doc, numberOfColumns = 2 }) => {
+  const filteredLabels = useDocumentLabelsByExternalIds(doc.doc.labels);
   const { data: assetNames = [] } = useDocumentAssetNames(
-    defaultMetadata.assetIds || []
+    doc.doc.assetIds || []
   );
 
   return (
@@ -23,24 +20,24 @@ export const Metadata: React.FC<Props> = ({
       <MetadataTable
         columns={numberOfColumns}
         metadata={[
-          { label: 'Author', value: defaultMetadata.author },
-          { label: 'Location', value: defaultMetadata.location },
+          { label: 'Author', value: doc.doc.author },
+          { label: 'Location', value: doc.doc.location },
           { label: 'Categories', value: filteredLabels },
-          { label: 'Top folder', value: defaultMetadata.topfolder },
+          { label: 'Top folder', value: doc.doc.topfolder },
           {
             label: 'File size',
-            value: defaultMetadata.filesize,
+            value: doc.doc.filesize,
             type: 'filesize',
           },
-          { label: 'File type', value: defaultMetadata.filetype },
+          { label: 'File type', value: doc.doc.filetype },
           {
             label: 'Creation date',
-            value: defaultMetadata.creationdate,
+            value: doc.createdDisplay,
             type: 'date',
           },
           {
             label: 'Last modified',
-            value: defaultMetadata.lastmodified,
+            value: doc.modifiedDisplay,
             type: 'date',
           },
         ]}

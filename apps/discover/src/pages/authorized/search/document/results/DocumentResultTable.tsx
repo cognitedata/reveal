@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
+import { Row } from 'react-table';
 
 import compact from 'lodash/compact';
 import get from 'lodash/get';
@@ -9,7 +10,6 @@ import {
   useSavedSearchSortClear,
 } from 'services/savedSearches/hooks/useSavedSearchSort';
 import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearchQuery';
-import { getDateOrDefaultText } from 'utils/date';
 
 import { Icon, IconType } from '@cognite/cogs.js';
 
@@ -20,7 +20,6 @@ import { Table, RowProps } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
-import { useDocumentsForTable } from 'hooks/useDocumentsForTable';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
@@ -31,9 +30,7 @@ import {
   useSelectedDocumentIds,
 } from 'modules/documentSearch/selectors';
 import {
-  DocumentRowType,
   DocumentType,
-  DocumentTypeDataModel,
   DocumentFilterCategoryTitles,
 } from 'modules/documentSearch/types';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
@@ -49,9 +46,10 @@ import { SortBy } from 'pages/types';
 
 import { DocumentResultTableHoverComponent } from './DocumentResultTableHoverComponent';
 import { DocumentResultTableSubRow } from './DocumentResultTableSubRow';
+import { useData } from './useData';
 
 // this list is used as the PRIMARY list for which columns to display and make available.
-export const columnMap: ColumnMap<DocumentTypeDataModel> = {
+export const columnMap: ColumnMap<DocumentType> = {
   filename: {
     Header: 'File Name',
     accessor: 'doc.filename',
@@ -63,14 +61,14 @@ export const columnMap: ColumnMap<DocumentTypeDataModel> = {
   creationdate: {
     id: 'created',
     Header: 'Created',
-    accessor: (row) => getDateOrDefaultText(row.created),
+    accessor: 'createdDisplay',
     width: '140px',
     order: 1,
   },
   lastmodified: {
     id: 'modified',
     Header: 'Modified',
-    accessor: (row) => getDateOrDefaultText(row.modified),
+    accessor: 'modifiedDisplay',
     width: '140px',
     order: 2,
   },
@@ -106,7 +104,7 @@ export const columnMap: ColumnMap<DocumentTypeDataModel> = {
     id: 'doc.title',
     Header: 'Title',
     width: '150px',
-    accessor: (row) => row.doc?.title || 'N/A',
+    accessor: 'doc.title',
     order: 7,
   },
   topfolder: {
@@ -134,7 +132,7 @@ export const columnMap: ColumnMap<DocumentTypeDataModel> = {
 export const DocumentResultTable: React.FC = () => {
   const { selectedColumns } = useDocuments();
 
-  const data = useDocumentsForTable();
+  const data = useData();
   const dispatch = useDispatch();
   const { data: savedSearch } = useQuerySavedSearchCurrent();
   const initialSortBy = get(savedSearch, 'sortBy.documents');
@@ -147,7 +145,7 @@ export const DocumentResultTable: React.FC = () => {
   const extractParentFolder = useExtractParentFolder();
 
   const [documentToPreview, setDocumentToPreview] = useState<
-    DocumentTypeDataModel | undefined
+    DocumentType | undefined
   >(undefined);
 
   const [expandedDocumentIds, setExpandedDocumentIds] = useState<{
@@ -183,7 +181,7 @@ export const DocumentResultTable: React.FC = () => {
     );
   }, [selectedDocumentIds]);
 
-  const handleDoubleClick = React.useCallback((row: DocumentRowType) => {
+  const handleDoubleClick = React.useCallback((row: Row<DocumentType>) => {
     const doc = row.original;
     const geo = getDocumentGeoPoint(doc);
     if (geo) {
@@ -192,7 +190,7 @@ export const DocumentResultTable: React.FC = () => {
     }
   }, []);
 
-  const handleRowClick = React.useCallback((row: DocumentRowType) => {
+  const handleRowClick = React.useCallback((row: Row<DocumentType>) => {
     const doc = row.original;
 
     setExpandedDocumentIds((state) => ({
@@ -272,16 +270,16 @@ export const DocumentResultTable: React.FC = () => {
     metrics.track('click-close-document-preview-button');
   };
 
-  const handlePreviewClick = async (doc: DocumentTypeDataModel) => {
+  const handlePreviewClick = async (doc: DocumentType) => {
     setDocumentToPreview(doc);
     metrics.track('click-open-document-preview-button');
   };
 
-  const onExtractParentFolder = (doc: DocumentTypeDataModel) => {
+  const onExtractParentFolder = (doc: DocumentType) => {
     extractParentFolder(doc);
   };
 
-  const onOpenFeedback = (doc: DocumentTypeDataModel) => {
+  const onOpenFeedback = (doc: DocumentType) => {
     const document = doc;
     dispatch(setObjectFeedbackModalDocumentId(document.doc.id));
     metrics.track('click-provide-document-feedback-button');

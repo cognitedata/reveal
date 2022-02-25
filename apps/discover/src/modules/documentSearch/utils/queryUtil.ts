@@ -1,7 +1,8 @@
+import { LAST_CREATED_KEY, LAST_UPDATED_KEY } from 'dataLayers/documents/keys';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
-import { adaptLocalEpochToUTC } from 'utils/date';
+import { adaptLocalEpochToUTC } from 'utils/date/adaptLocalEpochToUTC';
 
 import {
   DocumentsFilter,
@@ -13,8 +14,6 @@ import { GeoJson, GeoJsonObject } from '@cognite/seismic-sdk-js';
 import {
   LABELS_KEY,
   FILE_TYPE_KEY,
-  LAST_UPDATED_KEY,
-  LAST_CREATED_KEY,
   SOURCE_KEY,
   PAGE_COUNT_KEY,
 } from 'modules/documentSearch/constants';
