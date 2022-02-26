@@ -9,7 +9,6 @@ import { BackButton } from 'components/buttons';
 import { OverlayNavigation } from 'components/overlay-navigation';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
-// import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { Wellbore } from 'modules/wellSearch/types';
 import { FlexColumn } from 'styles/layout';
 
@@ -64,8 +63,6 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
 
   const { data } = useMeasurementsQuery();
 
-  // const { data: config } = useWellConfig();
-
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const graphCards = useMemo(() => {
@@ -78,10 +75,8 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
           geomechanicsCurves,
           ppfgCurves,
           otherTypes,
-          // measurementReference,
           pressureUnit.toLowerCase(),
           userPreferredUnit
-          // config
         ),
       }))
       .filter((row) => !isEmpty(row.chartData));

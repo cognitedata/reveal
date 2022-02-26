@@ -23,6 +23,9 @@ export const getMockConfig = (
           enabled: false,
         },
       },
+      measurements: {
+        enabled: true,
+      },
     },
     ...extras,
   };

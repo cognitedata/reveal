@@ -9,12 +9,14 @@ import { SIDECAR } from 'constants/app';
 
 const responseData: ProjectConfig = getMockConfig();
 
-export const getMockConfigGet = (): MSWRequest => {
+export const getMockConfigGet = (
+  customProjectConfig?: ProjectConfig
+): MSWRequest => {
   const url = `https://discover-api.staging.${SIDECAR.cdfCluster}.cognite.ai/${TEST_PROJECT}/config`;
 
   // console.log('STARTING MOCK', url);
 
   return rest.get<Request>(url, (_req, res, ctx) => {
-    return res(ctx.json(responseData));
+    return res(ctx.json(customProjectConfig || responseData));
   });
 };

@@ -8,8 +8,7 @@ import { MediumTitle } from 'components/typography/MediumTitle';
 import { StyledTypography } from 'components/typography/StyledTypography';
 import { sizes } from 'styles/layout';
 
-export const LOADING_TEXT = 'Loading results...';
-export const NO_RESULTS_TEXT = 'No results available';
+import { LOADING_TEXT } from './constants';
 
 const SubTitleText = styled.span`
   transition: opacity 0.1s;

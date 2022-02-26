@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 
 import {
   LOG_MEASUREMENTS,
@@ -34,8 +35,14 @@ export const useMeasurementsQuery = () => {
   );
 
   // Do the initial search with react-query
-  const { data, isLoading } = useQuery(WELL_QUERY_KEY.MEASUREMENTS, () =>
-    getMeasurementsByWellboreIds(wellboreMatchingIds, config, metricLogger)
+  const { data, isLoading } = useQuery(
+    WELL_QUERY_KEY.MEASUREMENTS,
+    () =>
+      getMeasurementsByWellboreIds(wellboreMatchingIds, config, metricLogger),
+    {
+      // wait till config is loaded
+      enabled: !isUndefined(config),
+    }
   );
 
   if (isLoading || !data) {

@@ -1,17 +1,20 @@
-import chunk from 'lodash/chunk';
 import groupBy from 'lodash/groupBy';
 import noop from 'lodash/noop';
 import set from 'lodash/set';
+import {
+  getDepthMeasurements,
+  getDepthMeasurementData,
+} from 'services/well/measurements/service';
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
-import { DepthMeasurementItems, DepthMeasurement } from '@cognite/sdk-wells-v3';
+import { reportException } from '@cognite/react-errors';
+import { DepthMeasurement } from '@cognite/sdk-wells-v3';
 
 import { MetricLogger } from 'hooks/useTimeLog';
-import { toIdentifier } from 'modules/wellSearch/sdk/utils';
-import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
-import { MeasurementV3, WdlMeasurementType } from 'modules/wellSearch/types';
-
-const CHUNK_LIMIT = 100;
+import {
+  MeasurementV3 as Measurement,
+  WdlMeasurementType,
+} from 'modules/wellSearch/types';
 
 // refactor to use generic log fetcher.
 export const getMeasurementsByWellboreIds = async (
@@ -25,33 +28,12 @@ export const getMeasurementsByWellboreIds = async (
 
   startNetworkTimer();
 
-  const idChunkList = chunk(wellboreMatchingIds, CHUNK_LIMIT);
-
-  /**
-   * Fetch sequences for geomechanics, ppfg, lot and fit measurement types
-   */
-  const depthMeasurementPromises: Promise<DepthMeasurement[]>[] = [];
-  idChunkList.forEach((idChunk) => {
-    depthMeasurementPromises.push(
-      getWellSDKClient()
-        .measurements.list({
-          filter: {
-            measurementTypes: [
-              WdlMeasurementType.GEOMECHANNICS,
-              WdlMeasurementType.PRESSURE,
-              WdlMeasurementType.FIT,
-              WdlMeasurementType.LOT,
-            ],
-            wellboreIds: idChunk.map(toIdentifier),
-          },
-          limit: CHUNK_LIMIT,
-        })
-        .then(
-          (depthMeasurementItem: DepthMeasurementItems) =>
-            depthMeasurementItem.items
-        )
-    );
-  });
+  const depthMeasurementPromises = getDepthMeasurements(wellboreMatchingIds, [
+    WdlMeasurementType.GEOMECHANNICS,
+    WdlMeasurementType.PRESSURE,
+    WdlMeasurementType.FIT,
+    WdlMeasurementType.LOT,
+  ]);
 
   const promiseSettledResults = await Promise.allSettled(
     depthMeasurementPromises
@@ -61,41 +43,61 @@ export const getMeasurementsByWellboreIds = async (
    * Ignore the failed results and move on with fullfilled ones
    */
   const depthMeasurements = promiseSettledResults
+    .map((promiseResult) => {
+      if (promiseResult.status === 'rejected') {
+        reportException(promiseResult.reason);
+        console.error('Error fetching sequence: ', promiseResult.reason);
+      }
+      return promiseResult;
+    })
     .filter((promiseResult) => promiseResult.status === 'fulfilled')
     .map((result) => <PromiseFulfilledResult<DepthMeasurement[]>>result)
     .map((result) => result.value);
 
-  const results = ([] as MeasurementV3[]).concat(...depthMeasurements);
+  const results = ([] as Measurement[]).concat(...depthMeasurements);
 
   /**
    * Fetch row data for previously fetched sequences
    */
-  const rowsPromises: Promise<void>[] = [];
+  const promiseMeasurements: Promise<Measurement>[] = [];
   results.forEach((measurement) => {
-    rowsPromises.push(
-      getWellSDKClient()
-        .measurements.listData({
-          sequenceExternalId: measurement.source.sequenceExternalId,
-        })
-        .then((response) => {
-          // eslint-disable-next-line no-param-reassign
-          measurement.data = response;
-        })
+    promiseMeasurements.push(
+      getDepthMeasurementData(measurement.source.sequenceExternalId).then(
+        (depthMeasurementData) => {
+          return {
+            ...measurement,
+            data: depthMeasurementData,
+          };
+        }
+      )
     );
   });
 
-  await Promise.allSettled(rowsPromises);
+  const promiseMeasurementSettledResults = await Promise.allSettled(
+    promiseMeasurements
+  );
 
-  // console.log(results);
+  const measurements = promiseMeasurementSettledResults
+    .map((promiseResult) => {
+      if (promiseResult.status === 'rejected') {
+        reportException(promiseResult.reason);
+        console.error(
+          'Error fetching sequence row data: ',
+          promiseResult.reason
+        );
+      }
+      return promiseResult;
+    })
+    .filter((promiseResult) => promiseResult.status === 'fulfilled')
+    .map((result) => <PromiseFulfilledResult<Measurement>>result)
+    .map((result) => result.value);
 
-  const groupedData = groupBy(results, 'wellboreMatchingId');
+  const groupedData = groupBy(measurements, 'wellboreMatchingId');
   wellboreMatchingIds.forEach((wellboreId) => {
     if (!groupedData[wellboreId]) {
       set(groupedData, wellboreId, []);
     }
   });
-
-  // console.log(groupedData);
 
   stopNetworkTimer({
     noOfWellbores: wellboreMatchingIds.length,

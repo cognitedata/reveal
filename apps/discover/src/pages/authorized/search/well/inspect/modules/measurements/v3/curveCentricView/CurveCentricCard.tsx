@@ -10,6 +10,7 @@ import {
 } from 'modules/wellSearch/types';
 import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
 
+import { GEOMECHANICS_CRUVES_TITLE, PPFG_CURVES_TITLE } from './constants';
 import { SubHeader, Wrapper } from './elements';
 
 type AxisNames = {
@@ -18,15 +19,19 @@ type AxisNames = {
   x2?: string;
 };
 
-type Props = {
+export type Props = {
   chartData: MeasurementChartData[];
   axisNames: AxisNames;
+  measurementType: MeasurementType;
 };
 
-export const CurveCentricCard: React.FC<Props> = ({ chartData, axisNames }) => {
+export const CurveCentricCard: React.FC<Props> = ({
+  chartData,
+  axisNames,
+  measurementType,
+}) => {
   const chartDataItem = head(chartData);
   if (isUndefined(chartDataItem)) return <NoDataAvailable />;
-  const { measurementType } = chartData[0];
   const isOtherType =
     measurementType === MeasurementType.FIT ||
     measurementType === MeasurementType.LOT;
@@ -36,8 +41,8 @@ export const CurveCentricCard: React.FC<Props> = ({ chartData, axisNames }) => {
       {!isOtherType && (
         <SubHeader>
           {measurementType === MeasurementType.GEOMECHANNICS
-            ? 'Geomechanics'
-            : 'PPFG'}
+            ? GEOMECHANICS_CRUVES_TITLE
+            : PPFG_CURVES_TITLE}
         </SubHeader>
       )}
       <ChartV2

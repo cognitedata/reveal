@@ -36,7 +36,31 @@ describe('useWellLogsData', () => {
   });
 
   it(`should return log data correctly`, () => {
-    const wellLogRowData = getMockDepthMeasurementData();
+    const wellLogRowData = getMockDepthMeasurementData({
+      columns: [
+        {
+          externalId: 'TVDSS',
+          measurementType: 'subsea vertical depth',
+          unit: 'm',
+          valueType: 'double',
+          name: 'TVDSS',
+        },
+        {
+          externalId: 'MD',
+          measurementType: 'measured depth',
+          unit: 'm',
+          valueType: 'double',
+          name: 'MD',
+        },
+        {
+          externalId: 'FP_CARBONATE_ML',
+          measurementType: 'fracture pressure pre drill mean',
+          unit: 'psi',
+          valueType: 'double',
+          name: 'FP_CARBONATE_ML_MEAN',
+        },
+      ],
+    });
     const wellLogsData = getHookResult(wellLogRowData);
     const expectedWellLogsData = getMockLogData();
 
@@ -45,6 +69,29 @@ describe('useWellLogsData', () => {
 
   it(`should break the curve for invalid values`, () => {
     const wellLogRowData = getMockDepthMeasurementData({
+      columns: [
+        {
+          externalId: 'TVDSS',
+          measurementType: 'subsea vertical depth',
+          unit: 'm',
+          valueType: 'double',
+          name: 'TVDSS',
+        },
+        {
+          externalId: 'MD',
+          measurementType: 'measured depth',
+          unit: 'm',
+          valueType: 'double',
+          name: 'MD',
+        },
+        {
+          externalId: 'FP_CARBONATE_ML',
+          measurementType: 'fracture pressure pre drill mean',
+          unit: 'psi',
+          valueType: 'double',
+          name: 'FP_CARBONATE_ML_MEAN',
+        },
+      ],
       rows: [
         {
           rowNumber: 1,

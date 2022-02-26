@@ -6,8 +6,11 @@ import {
   getDepthMeasurementRowsWithBreakingValues,
   getMockDepthMeasurementDataColumns,
   getMockPpfgsColumns,
+  getMockGeomechanicsColumns,
+  getMockMeasurement,
 } from '__test-utils/fixtures/measurements';
 import { mockedWellboreResultFixture } from '__test-utils/fixtures/well';
+import { PPG, FEET } from 'constants/units';
 import {
   MeasurementTypeV3 as MeasurementType,
   GeoPpfgFilterTypes,
@@ -24,6 +27,7 @@ import {
   pushCurveToChart,
   mapCurveToPlotly,
   mapMeasurementToPlotly,
+  formatChartData,
 } from '../utils';
 
 describe('Measurement filter utils', () => {
@@ -208,18 +212,47 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
 });
 
 describe('mapMeasurementToPlotly test', () => {
-  test('Should return a chart', () => {
+  test('Should return a chart (  ppfg )', () => {
     const result = mapMeasurementToPlotly(
       getMockDepthMeasurementDataColumns()[2],
       getMockDepthMeasurementData(),
-      [],
+      getMockGeomechanicsColumns(),
       getMockPpfgsColumns(),
       [],
       DistanceUnitEnum.Foot,
-      'ppa',
-      'ft',
+      PPG,
+      FEET,
       []
     );
     expect(result.length).toBe(1);
+  });
+
+  test('Should return a chart ( geomechanics )', () => {
+    const result = mapMeasurementToPlotly(
+      getMockDepthMeasurementDataColumns()[3],
+      getMockDepthMeasurementData(),
+      getMockGeomechanicsColumns(),
+      getMockPpfgsColumns(),
+      [],
+      DistanceUnitEnum.Foot,
+      PPG,
+      FEET,
+      []
+    );
+    expect(result.length).toBe(1);
+  });
+});
+
+describe('formatChartData test', () => {
+  test('Should return a chart (  ppfg )', () => {
+    const result = formatChartData(
+      [getMockMeasurement()],
+      getMockGeomechanicsColumns(),
+      getMockPpfgsColumns(),
+      [],
+      PPG,
+      FEET
+    );
+    expect(result.length).toBe(2);
   });
 });

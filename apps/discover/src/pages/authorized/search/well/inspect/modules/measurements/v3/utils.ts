@@ -5,7 +5,6 @@ import isUndefined from 'lodash/isUndefined';
 import { PlotData } from 'plotly.js';
 import { convertPressure, changeUnitTo } from 'utils/units';
 
-// import { ProjectConfigWells } from '@cognite/discover-api-types';
 import {
   DepthMeasurementColumn,
   DepthMeasurementData,
@@ -34,10 +33,8 @@ export const formatChartData = (
   geomechanicsCurves: DepthMeasurementColumn[], // currently enabled geomechanics curves from filters
   ppfgCurves: DepthMeasurementColumn[], // currently enabled ppfg curves from filters
   otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
-  // reference: string,
-  pressureUnit: string,
-  referenceUnit: string
-  // config?: ProjectConfigWells
+  userPreferedPressureUnit: string,
+  userPreferedDepthMeasurementUnit: string
 ) => {
   const processedCurves: string[] = [];
 
@@ -60,8 +57,8 @@ export const formatChartData = (
           ppfgCurves,
           otherTypes,
           tvdUnit,
-          pressureUnit,
-          referenceUnit,
+          userPreferedPressureUnit,
+          userPreferedDepthMeasurementUnit,
           processedCurves
         );
         return [...chartData, ...chartsOfCurrentColumn];
@@ -79,8 +76,8 @@ export const mapMeasurementToPlotly = (
   ppfgCurves: DepthMeasurementColumn[], // currently enabled ppfg curves from filters
   otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
   tvdUnit: DistanceUnitEnum,
-  pressureUnit: string,
-  referenceUnit: string,
+  userPreferedPressureUnit: string,
+  userPreferedDepthMeasurementUnit: string,
   processedCurves: string[] = []
 ): MeasurementChartData[] => {
   const measurementType = resolveMeasurementType(column.measurementType);
@@ -107,8 +104,8 @@ export const mapMeasurementToPlotly = (
       detailCardTitle,
       data,
       tvdUnit,
-      referenceUnit,
-      pressureUnit,
+      userPreferedDepthMeasurementUnit,
+      userPreferedPressureUnit,
       measurementType
     );
 
@@ -156,8 +153,8 @@ const getEnabledCurvesAndCardTitleForFilterType = (
  * @param detailCardTitle
  * @param depthMeasurementData Object with curve(column) data
  * @param tvdUnit y axis unit ( a depth unit )
- * @param depthValueUnit Depth unit to which data value should be converted to
- * @param pressureValueUnit Pressure unit to which data value should be converted to
+ * @param userPreferedDepthMeasurementUnit Depth unit to which data value should be converted to
+ * @param userPreferedPressureUnit Pressure unit to which data value should be converted to
  * @param measurementType Measurement type Geo, Ppfg, lot or fit
  * @returns
  */
@@ -167,8 +164,8 @@ export const mapCurveToPlotly = (
   detailCardTitle: string,
   depthMeasurementData: DepthMeasurementData,
   tvdUnit: DistanceUnitEnum,
-  depthValueUnit: string,
-  pressureValueUnit: string,
+  userPreferedDepthMeasurementUnit: string,
+  userPreferedPressureUnit: string,
   measurementType: MeasurementType
 ): MeasurementChartData[] => {
   const chartData: MeasurementChartData[] = [];
@@ -244,12 +241,20 @@ export const mapCurveToPlotly = (
       return;
     }
 
-    y.push(changeUnitTo(yValue, tvdUnit, depthValueUnit) || yValue);
+    y.push(
+      changeUnitTo(yValue, tvdUnit, userPreferedDepthMeasurementUnit) || yValue
+    );
     if (isAngleCurve) {
       x.push(xValue);
     } else {
       x.push(
-        convertPressure(xValue, xUnit, yValue, tvdUnit, pressureValueUnit)
+        convertPressure(
+          xValue,
+          xUnit,
+          yValue,
+          tvdUnit,
+          userPreferedPressureUnit
+        )
       );
     }
   });
@@ -267,49 +272,6 @@ export const mapCurveToPlotly = (
 
   return chartData;
 };
-
-// This is used to format sequence data according to the plotly chart data patten
-// export const convertOtherDataToPlotly = (
-//   sequence: Measurement,
-//   type: OtherDataType,
-//   config: ProjectConfigWells,
-//   pressureUnit: string,
-//   referenceUnit: string
-// ): Partial<PlotData> | null => {
-//   const requiredFields = ['pressure', 'tvd', 'tvdUnit', 'pressureUnit'];
-
-//   const fieldInfo = config[type]?.fieldInfo || {};
-
-//   const isRequiredFieldsAvailable =
-//     requiredFields.filter((requiredField) =>
-//       Object.keys(fieldInfo).includes(requiredField)
-//     ).length !== requiredFields.length;
-
-//   if (isRequiredFieldsAvailable) {
-//     return null;
-//   }
-
-//   const xVal = Number(get(sequence, fieldInfo.pressure, 0));
-//   const yVal = Number(get(sequence, fieldInfo.tvd, 0));
-//   const tvdUnit = get(sequence, fieldInfo.tvdUnit);
-//   const currentPressureUnit = get(sequence, fieldInfo.pressureUnit);
-
-//   const name = `${type.toUpperCase()} - ${sequence.name} ${
-//     sequence.description
-//   }`;
-
-//   return {
-//     ...MEASUREMENT_CURVE_CONFIG[MeasurementType[type]].default,
-//     x: [
-//       convertPressure(xVal, currentPressureUnit, yVal, tvdUnit, pressureUnit),
-//     ],
-//     y: [changeUnitTo(yVal, tvdUnit, referenceUnit) || yVal],
-//     type: 'scatter',
-//     mode: 'markers',
-//     name,
-//     customdata: [name],
-//   };
-// };
 
 export const pushCurveToChart = (
   chartData: MeasurementChartData[],

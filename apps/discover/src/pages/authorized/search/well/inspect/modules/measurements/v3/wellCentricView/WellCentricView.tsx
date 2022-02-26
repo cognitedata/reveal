@@ -12,7 +12,6 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { BooleanSelection } from 'modules/wellInspect/types';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
-// import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import {
   MeasurementChartDataV3 as MeasurementChartData,
   Wellbore,
@@ -26,7 +25,7 @@ import { BulkActionsWrapper, WellCentricViewWrapper } from './elements';
 import { WellCentricBulkActions } from './WellCentricBulkActions';
 import WellCentricCard from './WellCentricCard';
 
-type Props = {
+export type Props = {
   geomechanicsCurves: DepthMeasurementColumn[];
   ppfgCurves: DepthMeasurementColumn[];
   otherTypes: DepthMeasurementColumn[];
@@ -47,8 +46,6 @@ export const WellCentricView: React.FC<Props> = ({
   measurementReference,
 }) => {
   const { data, isLoading } = useMeasurementsQuery();
-
-  // const { data: config } = useWellConfig();
 
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
@@ -87,10 +84,8 @@ export const WellCentricView: React.FC<Props> = ({
           geomechanicsCurves,
           ppfgCurves,
           otherTypes,
-          // measurementReference,
           pressureUnit.toLowerCase(),
           userPreferredUnit
-          // config
         ),
       }))
       .filter((row) => !isEmpty(row.chartData));
@@ -110,13 +105,15 @@ export const WellCentricView: React.FC<Props> = ({
   useEffect(() => {
     setChartRendering(true);
     // Use timeout to display loader before app get freezed with chart rendering
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       updateChartData();
       setTimeout(() => {
         // Use timeout to avoid hiding loader before chart renders
         setChartRendering(false);
       }, 100);
     }, 1000);
+
+    return () => clearTimeout(timer);
   }, [updateChartData]);
 
   const wellCards = useMemo(

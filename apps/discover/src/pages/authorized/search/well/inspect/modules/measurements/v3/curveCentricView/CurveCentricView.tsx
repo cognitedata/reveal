@@ -12,7 +12,6 @@ import { Loading } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
-// import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import {
   MeasurementChartDataV3 as MeasurementChartData,
   MeasurementTypeV3 as MeasurementType,
@@ -28,7 +27,7 @@ import {
 import CurveCentricCard from './CurveCentricCard';
 import { CurveCentricViewWrapper } from './elements';
 
-type Props = {
+export type Props = {
   geomechanicsCurves: DepthMeasurementColumn[];
   ppfgCurves: DepthMeasurementColumn[];
   otherTypes: DepthMeasurementColumn[];
@@ -44,8 +43,6 @@ export const CurveCentricView: React.FC<Props> = ({
   measurementReference,
 }) => {
   const { data, isLoading } = useMeasurementsQuery();
-
-  // const { data: config } = useWellConfig();
 
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
@@ -63,10 +60,8 @@ export const CurveCentricView: React.FC<Props> = ({
         geomechanicsCurves,
         ppfgCurves,
         otherTypes,
-        // measurementReference,
         pressureUnit.toLowerCase(),
         userPreferredUnit
-        // config
       );
       return mapToCurveCentric(chartData, wellbore);
     });
@@ -86,13 +81,14 @@ export const CurveCentricView: React.FC<Props> = ({
   useEffect(() => {
     setChartRendering(true);
     // Use timeout to display loader before app get freezed with chart rendering
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       updateChartData();
       setTimeout(() => {
         // Use timeout to avoid hiding loader before chart renders
         setChartRendering(false);
       }, 100);
     }, 1000);
+    return () => clearTimeout(timer);
   }, [updateChartData]);
 
   const wellCards = useMemo(() => {
@@ -118,6 +114,7 @@ export const CurveCentricView: React.FC<Props> = ({
         key={key}
         chartData={groupedGeomechanicsData[key]}
         axisNames={axisNames}
+        measurementType={MeasurementType.GEOMECHANNICS}
       />,
     ]);
 
@@ -128,6 +125,7 @@ export const CurveCentricView: React.FC<Props> = ({
             key={key}
             chartData={groupedPPFGData[key]}
             axisNames={axisNames}
+            measurementType={MeasurementType.PPFG}
           />
         );
       } else {
@@ -136,6 +134,7 @@ export const CurveCentricView: React.FC<Props> = ({
             key={key}
             chartData={groupedPPFGData[key]}
             axisNames={axisNames}
+            measurementType={MeasurementType.PPFG}
           />,
         ]);
       }
@@ -150,6 +149,7 @@ export const CurveCentricView: React.FC<Props> = ({
           key="FIT"
           chartData={fitCharts}
           axisNames={axisNames}
+          measurementType={MeasurementType.FIT}
         />
       );
     }
@@ -161,6 +161,7 @@ export const CurveCentricView: React.FC<Props> = ({
           key="LOT"
           chartData={lotCharts}
           axisNames={axisNames}
+          measurementType={MeasurementType.LOT}
         />
       );
     }

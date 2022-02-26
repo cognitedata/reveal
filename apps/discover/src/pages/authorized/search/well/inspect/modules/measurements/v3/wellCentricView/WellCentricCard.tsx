@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import head from 'lodash/head';
 import uniqueBy from 'lodash/uniqBy';
 import { v4 as uuid } from 'uuid';
 
@@ -34,7 +35,7 @@ type AxisNames = {
   x2?: string;
 };
 
-type Props = {
+export type Props = {
   wellbore: Wellbore;
   chartData: MeasurementChartData[];
   axisNames: AxisNames;
@@ -55,8 +56,8 @@ export const WellCentricCard: React.FC<Props> = ({
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
   const [displayShowAllButton, setDisplayShowAllButton] =
     useState<boolean>(false);
-  const fitChart = filterByChartType(chartData, [MeasurementTypeV3.FIT])[0];
-  const lotChart = filterByChartType(chartData, [MeasurementTypeV3.LOT])[0];
+  const fitChart = head(filterByChartType(chartData, [MeasurementTypeV3.FIT]));
+  const lotChart = head(filterByChartType(chartData, [MeasurementTypeV3.LOT]));
 
   useEffect(() => {
     setDisplayShowAllButton(

@@ -1,10 +1,9 @@
 import 'services/well/__mocks/setupWellsMockSDK';
 import { setupServer } from 'msw/node';
-
 import {
   getMockDepthMeasurements,
   getMockDepthMeasurementData,
-} from '__mocks/mockMeasurements';
+} from 'services/well/measurements/__mocks/mockMeasurements';
 
 import { getMeasurementsByWellboreIds } from '../measurementsV3';
 
