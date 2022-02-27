@@ -14,7 +14,7 @@ export const useUserPreferencesMeasurement = () => {
           queryResult?.data?.preferences?.measurement ||
             UMSUserProfilePreferences.MeasurementEnum.Feet
         )
-      : undefined,
+      : UserPreferredUnit.FEET,
   };
 };
 

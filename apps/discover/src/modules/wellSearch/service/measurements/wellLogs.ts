@@ -13,8 +13,8 @@ import { WellboreId } from 'modules/wellSearch/types';
 
 import { WELL_LOGS_MEASUREMENT_TYPES } from './constants';
 
-const SEQUENCES_PER_PAGE = 100;
-const SEQUENCE_ROWS_PER_PAGE = 100;
+const SEQUENCES_PER_PAGE = 1000;
+const SEQUENCE_ROWS_PER_PAGE = 10000;
 
 const MEASUREMENT_TYPES_FILTER = flatten(
   Object.values(WELL_LOGS_MEASUREMENT_TYPES)

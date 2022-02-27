@@ -1,11 +1,14 @@
 import get from 'lodash/get';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { WellboreIdMap } from 'modules/wellSearch/types';
+import { WellboreId, WellboreIdMap, WellId } from 'modules/wellSearch/types';
 
 import { WellboreExternalAssetIdMap } from '../../wellSearch/types';
 
-import { useWellInspectSelectedWellbores } from './useWellInspect';
+import {
+  useWellInspectSelectedWellbores,
+  useWellInspectSelectedWells,
+} from './useWellInspect';
 
 export const useWellInspectWellboreAssetIdMap = () => {
   const wellbores = useWellInspectSelectedWellbores();
@@ -84,6 +87,64 @@ export const useWellInspectWellboreExternalIdMap = () => {
 
         return { ...externalIdMap, ...sourceExternalIdMap };
       }, {}),
+    [wellbores]
+  );
+};
+
+export const useWellInspectWellboreWellIdMap = () => {
+  const wells = useWellInspectSelectedWells();
+
+  return useDeepMemo(() => {
+    return wells.reduce<Record<WellboreId, WellId>>(
+      (wellboreWellIdMap, well) => {
+        const wellboreWellIdMapOfWell = well.wellbores.reduce<
+          Record<WellboreId, WellId>
+        >(
+          (idMap, wellbore) => ({
+            ...idMap,
+            [wellbore.id]: well.id,
+          }),
+          {}
+        );
+
+        return {
+          ...wellboreWellIdMap,
+          ...wellboreWellIdMapOfWell,
+        };
+      },
+      {}
+    );
+  }, [wells]);
+};
+
+export const useWellInspectWellIdNameMap = () => {
+  const wells = useWellInspectSelectedWells();
+
+  return useDeepMemo(
+    () =>
+      wells.reduce<Record<WellboreId, string>>(
+        (idNameMap, well) => ({
+          ...idNameMap,
+          [well.id]: well.name,
+        }),
+        {}
+      ),
+    [wells]
+  );
+};
+
+export const useWellInspectWellboreIdNameMap = () => {
+  const wellbores = useWellInspectSelectedWellbores();
+
+  return useDeepMemo(
+    () =>
+      wellbores.reduce<Record<WellboreId, string>>(
+        (idNameMap, wellbore) => ({
+          ...idNameMap,
+          [wellbore.id]: wellbore.name,
+        }),
+        {}
+      ),
     [wellbores]
   );
 };

@@ -1,44 +1,44 @@
-import compact from 'lodash/compact';
 import get from 'lodash/get';
 import { getDateOrDefaultText } from 'utils/date';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import {
-  useWellInspectSelectedWellboreIds,
-  useWellInspectSelectedWells,
-} from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
 import { WellLog } from 'pages/authorized/search/well/inspect/modules/logType/v3/types';
 
+import {
+  useWellInspectWellboreIdNameMap,
+  useWellInspectWellboreWellIdMap,
+  useWellInspectWellIdNameMap,
+} from './useWellInspectIdMap';
 import { useWellLogsQuery } from './useWellLogsQuery';
 
 export const useSelectedWellboreLogs = () => {
-  const wells = useWellInspectSelectedWells();
   const wellboreIds = useWellInspectSelectedWellboreIds();
-  const { data, isLoading } = useWellLogsQuery(wellboreIds);
+  const wellboreWellIdMap = useWellInspectWellboreWellIdMap();
+  const wellIdNameMap = useWellInspectWellIdNameMap();
+  const wellboreIdNameMap = useWellInspectWellboreIdNameMap();
+  const { data: depthMeasurements, isLoading } = useWellLogsQuery(wellboreIds);
 
   return useDeepMemo(() => {
-    if (!data) {
+    if (!depthMeasurements) {
       return { data: [], isLoading };
     }
 
-    const wellLogsData: WellLog[] = compact(
-      wells.flatMap((well) =>
-        well.wellbores.map((wellbore) => {
-          const depthMeasurement = get(data, wellbore.id);
+    const wellLogsData: WellLog[] = depthMeasurements.map(
+      (depthMeasurement) => {
+        const { source, wellboreMatchingId } = depthMeasurement;
+        const wellId = get(wellboreWellIdMap, wellboreMatchingId, '');
 
-          if (!depthMeasurement) return null;
-
-          return {
-            ...depthMeasurement,
-            id: depthMeasurement.source.sequenceExternalId,
-            wellName: well.name,
-            wellboreName: wellbore.description || '',
-            modified: getDateOrDefaultText(new Date()),
-          };
-        })
-      )
+        return {
+          ...depthMeasurement,
+          id: source.sequenceExternalId,
+          wellName: get(wellIdNameMap, wellId, ''),
+          wellboreName: get(wellboreIdNameMap, wellboreMatchingId, ''),
+          modified: getDateOrDefaultText(new Date()),
+        };
+      }
     );
 
     return { data: wellLogsData, isLoading };
-  }, [wellboreIds, data, isLoading]);
+  }, [depthMeasurements, isLoading]);
 };

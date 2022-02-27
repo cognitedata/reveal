@@ -13,11 +13,7 @@ import { useEventsData } from '../hooks/useEventsData';
 import { useWellLogsData } from '../hooks/useWellLogsData';
 import { WellLog } from '../types';
 
-import {
-  Domain,
-  // Domain,
-  DomainMap,
-} from './DomainConfig/DomainConfig';
+import { Domain, DomainMap } from './DomainConfig/DomainConfig';
 import { LogHolder } from './elements';
 import { LogData as LogViewerData } from './Log/interfaces';
 import Log from './Log/Log';
@@ -68,7 +64,7 @@ export const LogViewer: React.FC<Props> = ({
     );
   }, [wellLogsData, domainMap]);
 
-  if (isEmpty(logViewerData)) {
+  if (isEmpty(wellLogRowData.columns)) {
     return (
       <LogsMessageWrapper>
         <EmptyState emptyTitle="Logs Not Found" />

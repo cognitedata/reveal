@@ -106,14 +106,16 @@ export const LogTypeViewer: React.FC<{ wellLogs: WellLog[] }> = ({
                   key={uniqueId()}
                   onClick={() => handleSelectWellLog(wellLog)}
                 >
-                  {wellLog.wellboreName}
+                  {wellLog.source.sequenceExternalId}
                 </Menu.Item>
               ))}
             </CustomMenu>
           }
         >
           <ExpandButton
-            text={selectedWellLog?.wellboreName || DATE_NOT_AVAILABLE}
+            text={
+              selectedWellLog?.source.sequenceExternalId || DATE_NOT_AVAILABLE
+            }
           />
         </Dropdown>
 

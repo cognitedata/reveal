@@ -6,7 +6,6 @@ import { getConvertibleUnit } from 'utils/units/getConvertibleUnit';
 import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
 
 import { EMPTY_OBJECT } from 'constants/empty';
-import { UserPreferredUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
@@ -25,13 +24,8 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
 
     const { depthColumn, columns, rows, depthUnit } = wellLogRowData;
     const { unit } = depthUnit;
-    const depthValues = rows.map(
-      (row) =>
-        changeUnitTo(
-          row.depth,
-          unit,
-          userPreferredUnit || UserPreferredUnit.FEET
-        ) || row.depth
+    const depthValues = rows.map((row) =>
+      changeUnitTo(row.depth, unit, userPreferredUnit)
     );
     const minDepthValue = Math.min(...depthValues);
     const maxDepthValue = Math.max(...depthValues);
@@ -40,7 +34,7 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
       [depthColumn.columnExternalId]: {
         measurementType: depthColumn.type,
         values: depthValues,
-        unit: userPreferredUnit || UserPreferredUnit.FEET,
+        unit: userPreferredUnit,
         domain: [Math.floor(minDepthValue), Math.ceil(maxDepthValue)],
       },
     };
@@ -66,22 +60,20 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
            * Returning a `null` value to break the curve.
            * No need to worry about the first value of the tuple (0).
            */
-          return [0, null];
+          return [0, null] as unknown as Tuplet;
         }
 
-        const depthValue =
-          changeUnitTo(
-            depthValueOriginal,
-            unit,
-            userPreferredUnit || UserPreferredUnit.FEET
-          ) || depthValueOriginal;
+        const depthValue = changeUnitTo(
+          depthValueOriginal,
+          unit,
+          userPreferredUnit
+        );
 
-        const columnValue =
-          changeUnitTo(
-            columnValueOriginal,
-            column.unit,
-            userPreferredUnit || UserPreferredUnit.FEET
-          ) || columnValueOriginal;
+        const columnValue = changeUnitTo(
+          columnValueOriginal,
+          column.unit,
+          userPreferredUnit
+        );
 
         return [depthValue, columnValue];
       });
@@ -95,10 +87,7 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
         [column.externalId]: {
           measurementType: column.measurementType,
           values,
-          unit: getConvertibleUnit(
-            column.unit,
-            userPreferredUnit || UserPreferredUnit.FEET
-          ),
+          unit: getConvertibleUnit(column.unit, userPreferredUnit),
           domain: [Math.floor(columnsMinValue), Math.ceil(columnsMaxValue)],
         },
       };
