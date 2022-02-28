@@ -1,6 +1,7 @@
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import {
   addExplorerUploadedFileId,
+  clearExplorerUploadedFileIds,
   setExplorerFileUploadModalVisibility,
 } from 'src/modules/Explorer/store/slice';
 import React from 'react';
@@ -28,6 +29,7 @@ export const ExplorerFileUploadModalContainer = () => {
 
   const onFinishUploadAndProcess = () => {
     dispatch(PopulateProcessFiles(uploadedFileIds));
+    dispatch(clearExplorerUploadedFileIds());
     history.push(getLink(workflowRoutes.process));
   };
 
