@@ -40,7 +40,7 @@ export const Plots = <T extends DataObject<T>>({
             <PlotTooltip
               content={tooltipContent}
               placement={renderPlotHoverComponent ? 'auto' : 'top'}
-              theme={renderPlotHoverComponent ? 'cogs-light' : 'cogs'}
+              theme="dark"
             >
               {PlotElement}
             </PlotTooltip>

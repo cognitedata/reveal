@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 
+import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
+import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
 import get from 'lodash/get';
-import { formatDate, getTimeDuration, longDate } from 'utils/date';
+import { formatDate, getTimeDuration } from 'utils/date';
 import { CHART_AXIS_LABEL_DATE_FORMAT } from 'utils/date/constants';
 
 import { ScatterPlot } from 'components/charts';
@@ -92,10 +94,7 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
 
           <FlexRow>
             <QuarterColumn>
-              <Card
-                title="Start date"
-                value={longDate(get(nptEvent, accessors.START_TIME))}
-              />
+              <Card title="Start date" value={getStartTimeDisplay(nptEvent)} />
               <Card
                 title={`NPT MD${unit ? ` (${unit})` : ''}`}
                 value={get(nptEvent, accessors.MEASURED_DEPTH).toFixed(2)}
@@ -112,10 +111,7 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
             </QuarterColumn>
 
             <QuarterColumn>
-              <Card
-                title="End date"
-                value={longDate(get(nptEvent, accessors.END_TIME))}
-              />
+              <Card title="End date" value={getEndTimeDisplay(nptEvent)} />
               <Card
                 title="Duration"
                 value={getTimeDuration(
@@ -124,7 +120,7 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
                 )}
               />
               <Card
-                title="Failre location"
+                title="Failure location"
                 value={get(nptEvent, accessors.LOCATION)}
               />
               <Card title="Subtype" value={get(nptEvent, accessors.SUBTYPE)} />

@@ -23,5 +23,6 @@ export const Plot = styled.div`
 `;
 
 export const PlotTooltip = styled(Tooltip)`
+  border: ${PLOT_BORDER_SIZE}px solid var(--cogs-border-default);
   transform: translateY(${PLOT_BORDER_SIZE}px);
 `;

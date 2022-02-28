@@ -1,11 +1,13 @@
+import { Row } from 'react-table';
+
+import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
+import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
 import get from 'lodash/get';
-import { shortDate } from 'utils/date';
+import { processAccessor } from 'utils/table/processAccessor';
 
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
-
-import { processAccessor } from './utils';
 
 export const getCommonColumns = (unit?: string) => {
   return [
@@ -13,21 +15,19 @@ export const getCommonColumns = (unit?: string) => {
       id: accessors.START_TIME,
       Header: 'Start Date',
       width: '150px',
-      accessor: (row: NPTEvent) => {
-        const startDate = processAccessor(row, accessors.START_TIME);
-        if (startDate) return shortDate(startDate);
-        return null;
-      },
+      accessor: getStartTimeDisplay,
+      sortType: (rowA: Row<NPTEvent>, rowB: Row<NPTEvent>) =>
+        processAccessor(rowA.original, accessors.START_TIME) -
+        processAccessor(rowB.original, accessors.START_TIME),
     },
     {
       id: accessors.END_TIME,
       Header: 'End Date',
       width: '150px',
-      accessor: (row: NPTEvent) => {
-        const endDate = processAccessor(row, accessors.END_TIME);
-        if (endDate) return shortDate(endDate);
-        return null;
-      },
+      accessor: getEndTimeDisplay,
+      sortType: (rowA: Row<NPTEvent>, rowB: Row<NPTEvent>) =>
+        processAccessor(rowA.original, accessors.END_TIME) -
+        processAccessor(rowB.original, accessors.END_TIME),
     },
     {
       id: accessors.MEASURED_DEPTH,

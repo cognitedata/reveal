@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import { getTimeDuration } from 'utils/date';
+import { processAccessor } from 'utils/table/processAccessor';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { NPTEvent } from 'modules/wellSearch/types';
@@ -8,7 +9,6 @@ import { COMMON_COLUMN_WIDTHS } from '../../../../../constants';
 import { accessors } from '../../constants';
 import { getCommonColumns } from '../columns';
 import {
-  processAccessor,
   renderAsBody2DefaultStrongText,
   renderNPTCodeWithColor,
 } from '../utils';
