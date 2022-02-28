@@ -129,12 +129,19 @@ export const FileDownloaderModalContent = ({
           .then((response) => response.data.items as (FileLink & IdEither)[]);
 
         const uniqueFilenames = renameDuplicates(files.map((f) => f.name));
-
+        let i = 0;
         await Promise.all(
           data.map((item, index) => {
             return fetch(item.downloadUrl, {
               method: 'GET',
             }).then((value) => {
+              i += 1; // index values are not ordered, thus use another counter variable
+              const currentFileCount = batchId + i;
+              setDownloadedMessage(
+                `${Math.round(
+                  (currentFileCount / fileIds.length) * 100
+                ).toString()}%`
+              );
               zip.file(uniqueFilenames[index + batchId], value.blob());
             });
           })
@@ -146,11 +153,6 @@ export const FileDownloaderModalContent = ({
         try {
           // eslint-disable-next-line no-await-in-loop
           await getBlobs(batch, batchId);
-          setDownloadedMessage(
-            (i + 1) / batchFileIdsList.length !== 1
-              ? `${Math.round((i / batchFileIdsList.length) * 100).toString()}%`
-              : 'zipping files...'
-          );
         } catch (error) {
           ToastUtils.onFailure(`Failed to download files ${error?.message}`);
           console.error(`Failed to download files ${error?.message}`);
@@ -159,7 +161,8 @@ export const FileDownloaderModalContent = ({
         }
       }
     }
-
+    // Files are fetched and downloaded, now zip the file
+    setDownloadedMessage('zipping files...');
     try {
       await zip.generateAsync({ type: 'blob' }).then(
         (content: Blob | string) => {
