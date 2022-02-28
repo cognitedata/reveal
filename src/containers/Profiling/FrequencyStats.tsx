@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Colors, Tooltip } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { TOOLTIP_DELAY_IN_MS } from 'utils/constants';
+import Tooltip from 'components/Tooltip/Tooltip';
 
 export type Count = {
   value: string;

@@ -1,8 +1,10 @@
 import React from 'react';
 
-import { Body, Colors, Icon, Tooltip } from '@cognite/cogs.js';
+import { Body, Colors, Icon } from '@cognite/cogs.js';
 import moment from 'moment';
 import styled from 'styled-components';
+
+import Tooltip from 'components/Tooltip/Tooltip';
 
 type TableLastUpdatedTimeProps = {
   isTableLastUpdatedTimeFetched?: boolean;
@@ -24,6 +26,7 @@ const TableLastUpdatedTime = ({
   return (
     <Tooltip
       content={moment(tableLastUpdatedTime).format('DD/MM/YYYY hh:mm:ss A (Z)')}
+      delay={[300, 0]}
     >
       <StyledLastUpdatedTimeBody
         level={2}

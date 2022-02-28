@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Body, Button, Colors, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Colors } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import SidePanelLevelWrapper from 'components/SidePanel/SidePanelLevelWrapper';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { RawExplorerContext } from 'contexts';
 
 import SidePanelTableListContent from './SidePanelTableListContent';

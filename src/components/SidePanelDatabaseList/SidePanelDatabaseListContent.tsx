@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Button, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk/';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
@@ -12,6 +12,7 @@ import {
   StyledNoItemsDetail,
   StyledNoItemsWrapper,
 } from 'components/SidePanel/SidePanelLevelWrapper';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { stringCompare } from 'utils/utils';
 
 import SidePanelDatabaseListItem from './SidePanelDatabaseListItem';

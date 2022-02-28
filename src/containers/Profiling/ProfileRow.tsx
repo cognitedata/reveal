@@ -1,18 +1,11 @@
 import React, { useMemo, useState } from 'react';
 
-import {
-  Body,
-  Button,
-  Colors,
-  Flex,
-  Icon,
-  Label,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Body, Button, Colors, Flex, Icon, Label } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import ColumnIcon from 'components/ColumnIcon';
 import { CustomIcon } from 'components/CustomIcon';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { useActiveTableContext } from 'contexts';
 import { ColumnProfile, useColumnType } from 'hooks/profiling-service';
 

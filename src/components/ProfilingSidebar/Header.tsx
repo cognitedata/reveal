@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { Body, Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Colors, Title } from '@cognite/cogs.js';
 
 import { useActiveTableContext, useProfilingSidebar } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
@@ -13,6 +13,7 @@ import {
   SIDEBAR_PROFILING_CLOSE_BUTTON_SPACE,
 } from 'utils/constants';
 import ColumnIcon from 'components/ColumnIcon';
+import Tooltip from 'components/Tooltip/Tooltip';
 
 type Props = { selectedColumn: ColumnType | undefined };
 

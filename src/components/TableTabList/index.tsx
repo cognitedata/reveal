@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { Colors, Icon, Button, Tooltip } from '@cognite/cogs.js';
+import { Colors, Icon, Button } from '@cognite/cogs.js';
 
 import {
   useActiveTable,
@@ -9,6 +9,7 @@ import {
 } from 'hooks/table-tabs';
 import { TAB_HEIGHT } from 'utils/constants';
 import { RawExplorerContext } from 'contexts';
+import Tooltip from 'components/Tooltip/Tooltip';
 
 export default function TableTabList() {
   const list = useTableTabList() || [];
