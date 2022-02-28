@@ -1,6 +1,3 @@
-precision highp float;
-precision highp int;
-
 #pragma glslify: import('../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;

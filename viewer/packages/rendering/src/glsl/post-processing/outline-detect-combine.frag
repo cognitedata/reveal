@@ -1,6 +1,3 @@
-precision highp float;
-precision highp int;
-
 #pragma glslify: import('../math/floatBitsSubset.glsl')
 #pragma glslify: import('../post-processing/edge-detect.glsl')
 

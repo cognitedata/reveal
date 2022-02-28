@@ -6,7 +6,6 @@
  *
  */
 precision highp float;
-precision highp int;
 
 uniform vec2 inverseResolution;
 uniform vec2 resolution;

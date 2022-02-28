@@ -1,6 +1,3 @@
-precision highp float;
-precision highp int;
-
 #pragma glslify: import('../color/packIntToColor.glsl')
 
 uniform mat4 modelMatrix;

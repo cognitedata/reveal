@@ -1,4 +1,3 @@
-precision highp float;
 #pragma glslify: import('../color/unpackVec4ToFloat.glsl')
 
 float unpackFloatFromRGBATexel(vec4 texel){

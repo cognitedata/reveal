@@ -5,8 +5,6 @@
  * MIT License (MIT) Copyright (c) 2014 Matt DesLauriers
  *
  */
-precision highp float;
-precision highp int;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;

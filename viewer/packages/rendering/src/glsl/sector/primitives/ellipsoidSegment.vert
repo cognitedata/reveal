@@ -1,6 +1,3 @@
-precision highp float;
-precision highp int;
-
 #pragma glslify: import('../../math/mul3.glsl')
 #pragma glslify: import('../../base/determineMatrixOverride.glsl')
 

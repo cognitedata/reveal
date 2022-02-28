@@ -1,6 +1,3 @@
-precision highp float;
-precision highp int;
-
 #pragma glslify: import('../math/rand2d.glsl')
 #pragma glslify: import('../base/nodeAppearance.glsl')
 #pragma glslify: import('../base/isClipped.glsl')
