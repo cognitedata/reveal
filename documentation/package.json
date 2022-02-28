@@ -52,23 +52,23 @@
     "@docusaurus/module-type-aliases": "2.0.0-alpha.64",
     "@docusaurus/preset-classic": "2.0.0-alpha.64",
     "@docusaurus/theme-live-codeblock": "2.0.0-alpha.64",
-    "@google/model-viewer": "1.7.2",
+    "@google/model-viewer": "1.10.1",
     "clsx": "1.1.1",
     "cross-env": "7.0.3",
     "geo-three": "0.0.16",
     "npm-to-yarn": "1.0.1",
-    "query-string": "7.1.0",
+    "query-string": "7.1.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "react-live": "2.3.0",
-    "styled-components": "5.3.0",
+    "react-live": "2.4.1",
+    "styled-components": "5.3.3",
     "three": "0.137.5"
   },
   "devDependencies": {
     "@types/react": "16.14.23",
-    "@types/styled-components": "5.1.12",
+    "@types/styled-components": "5.1.23",
     "@types/three": "0.137.0",
-    "concat-md": "0.3.5",
+    "concat-md": "0.3.8",
     "docusaurus2-dotenv": "1.4.0",
     "jsdoc-babel": "0.5.0",
     "replace": "1.2.1",
@@ -76,7 +76,7 @@
     "typedoc": "0.20.37",
     "typedoc-plugin-markdown": "3.9.0",
     "typedoc-plugin-no-inherit": "1.3.0",
-    "typescript": "4.2.4"
+    "typescript": "4.2"
   },
   "browserslist": {
     "production": [
