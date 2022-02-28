@@ -4,7 +4,7 @@ import {
   DocumentResultFacets,
   Labels,
 } from 'modules/documentSearch/types';
-import { BreadCrumbContent } from 'pages/authorized/search/common/searchResult/types';
+import { BreadCrumbStatInfo } from 'pages/authorized/search/common/searchResult/types';
 
 const transformFacets = (facet: DocumentQueryFacet[], labels?: Labels) => {
   const format = (name: string) => (labels ? labels[name] || name : name);
@@ -18,8 +18,8 @@ const transformFacets = (facet: DocumentQueryFacet[], labels?: Labels) => {
 export const getDocumentsFacetsInfo = (
   facets: DocumentResultFacets,
   labels: Labels
-): BreadCrumbContent[] => {
-  const documentInformation: BreadCrumbContent[] = [
+): BreadCrumbStatInfo[] => {
+  const documentInformation: BreadCrumbStatInfo[] = [
     {
       name: DocumentFilterCategoryTitles.filetype,
       content: transformFacets(facets.filetype),

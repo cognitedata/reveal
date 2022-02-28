@@ -70,22 +70,30 @@ export const WellResultTable: React.FC = () => {
     [userPreferredUnit]
   );
 
-  const processedWells = useDeepMemo(() => {
+  const wellsData = useDeepMemo(() => {
     if (!wells) {
-      return [];
+      return { processedWells: [], wellboresCount: 0 };
     }
-    return wells.map((well) => {
-      const item = convertToFixedDecimal(
-        changeUnits(well, unitChangeAcceessors),
-        ['waterDepth.value']
-      );
+    return wells.reduce<{ processedWells: Well[]; wellboresCount: number }>(
+      (acc, well) => {
+        const item = convertToFixedDecimal(
+          changeUnits(well, unitChangeAcceessors),
+          ['waterDepth.value']
+        );
+        const wellboresCount: number = well?.wellbores?.length || 0;
 
-      // format the date according to the default format
-      if (item.spudDate) {
-        item.spudDate = getDateOrDefaultText(item.spudDate);
-      }
-      return item;
-    });
+        // format the date according to the default format
+        if (item.spudDate) {
+          item.spudDate = getDateOrDefaultText(item.spudDate);
+        }
+        acc.processedWells.push(item);
+        return {
+          ...acc,
+          wellboresCount: acc.wellboresCount + wellboresCount,
+        };
+      },
+      { processedWells: [], wellboresCount: 0 }
+    );
   }, [wells, unitChangeAcceessors]);
 
   useDeepEffect(() => {
@@ -138,10 +146,18 @@ export const WellResultTable: React.FC = () => {
     [wellsRef.current]
   );
 
-  const wellsStats = {
-    totalResults: data?.totalWells,
-    currentHits: (processedWells || []).length,
-  };
+  const wellsStats = [
+    {
+      label: 'Wells',
+      totalResults: data?.totalWells,
+      currentHits: (wellsData.processedWells || []).length,
+    },
+    {
+      label: 'Wellbores',
+      totalResults: data?.totalWellbores,
+      currentHits: wellsData.wellboresCount,
+    },
+  ];
 
   const renderRowOverlayComponent = useCallback(
     ({ row }) => {
@@ -213,7 +229,7 @@ export const WellResultTable: React.FC = () => {
       <Table<Well>
         scrollTable
         id="well-result-table"
-        data={processedWells}
+        data={wellsData.processedWells}
         columns={columns}
         handleRowClick={handleRowClick}
         handleDoubleClick={handleDoubleClick}

@@ -3,9 +3,6 @@ import styled from 'styled-components/macro';
 import { Body, Button, Menu } from '@cognite/cogs.js';
 
 import { GreyBadge } from 'components/badge';
-import { FlexRow } from 'styles/layout';
-
-export const Wrapper = styled(FlexRow)``;
 
 export const BreadCrumbButton = styled(Button)`
   background-color: #ebf2fc;
@@ -27,8 +24,6 @@ export const BreadCrumbHeader = styled(Menu.Header)`
 export const Title = styled(Body).attrs({ level: 2 })`
   color: var(--cogs-greyscale-grey7);
   font-weight: 500;
-  max-width: 250px;
-  text-align: left;
 `;
 
 export const Badge = styled(GreyBadge).attrs({

@@ -1,4 +1,4 @@
-export interface BreadCrumbContent {
+export interface BreadCrumbStatInfo {
   name: string;
   content: {
     name: string;
@@ -9,4 +9,6 @@ export interface BreadCrumbContent {
 export interface BreadCrumbStats {
   totalResults?: number;
   currentHits: number;
+  label?: string;
+  info?: BreadCrumbStatInfo[];
 }

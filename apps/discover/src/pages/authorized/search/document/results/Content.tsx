@@ -49,19 +49,20 @@ export const DocumentSearchContent: React.FC = () => {
   const searchHasFoundResults = !isEmpty(hits) && !isLoading;
 
   // To memo, or not to memo, thats the question...
-  const documentStats: BreadCrumbStats = {
-    totalResults: documentResultCount,
-    currentHits: hits.length,
-  };
+  const documentStats: BreadCrumbStats[] = [
+    {
+      label: 'Documents',
+      totalResults: documentResultCount,
+      currentHits: hits.length,
+      info: documentInformation,
+    },
+  ];
 
   const renderResults = () => (
     <>
       <SearchTableResultActionContainer>
         <SearchResults>
-          <SearchBreadcrumb
-            content={documentInformation}
-            stats={documentStats}
-          />
+          <SearchBreadcrumb stats={documentStats} />
           <DocumentContentAppliedFilters />
         </SearchResults>
 

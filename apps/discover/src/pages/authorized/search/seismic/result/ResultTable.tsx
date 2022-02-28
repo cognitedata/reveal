@@ -97,7 +97,7 @@ export const ResultTable: React.FC<Props> = ({ result }) => {
   return (
     <>
       <SearchTableResultActionContainer>
-        <SearchBreadcrumb stats={seismicStats} />
+        <SearchBreadcrumb stats={[seismicStats]} />
       </SearchTableResultActionContainer>
       <Table<SeismicSurveyContainer>
         scrollTable

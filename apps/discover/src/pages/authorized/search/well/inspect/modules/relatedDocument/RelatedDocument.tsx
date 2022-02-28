@@ -38,10 +38,12 @@ export const RelatedDocument: React.FC = () => {
         <Header>
           <FlexRow>
             <SearchBreadcrumb
-              content={documentInformation}
-              stats={{
-                currentHits: total,
-              }}
+              stats={[
+                {
+                  currentHits: total,
+                  info: documentInformation,
+                },
+              ]}
             />
             <FlexGrow />
             <RelatedDocumentOptionPanel />
