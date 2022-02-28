@@ -18,6 +18,7 @@ import { useNdsEventsForTable } from 'modules/wellSearch/selectors';
 
 import { NdsFilterContent, NdsFilterWrapper, ResizeHandle } from '../elements';
 
+import { getDataLayer } from './dataLayer';
 import FilterContainer from './FilterContainer';
 import { useGetNdsTableColumns } from './hooks/useHelpers';
 
@@ -40,9 +41,12 @@ export const EventsNds: React.FC = () => {
     LOG_EVENTS_NDS,
     LOG_WELLS_EVENTS_NDS_NAMESPACE
   );
-  const [filteredEvents, setFilteredEvents] = useState<CogniteEvent[]>([]);
-  const { events: ndsEvents, isLoading } = useNdsEventsForTable();
   const columns = useGetNdsTableColumns();
+
+  const { events, isLoading } = useNdsEventsForTable();
+  const ndsEvents = getDataLayer(events);
+
+  const [filteredEvents, setFilteredEvents] = useState<CogniteEvent[]>([]);
 
   useStopTimeLogger(renderTimer);
   if (isLoading) return <Loading />;

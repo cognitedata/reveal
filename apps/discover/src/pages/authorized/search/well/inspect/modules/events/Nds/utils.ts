@@ -1,3 +1,5 @@
+import { getDiameterHole } from 'dataLayers/wells/nds/decorators/getDiameterHole';
+
 import {
   COMMON_COLUMN_ACCESSORS,
   COMMON_COLUMN_WIDTHS,
@@ -42,7 +44,7 @@ export const getNdsEventTableColumns = (unit?: string) => [
   },
   {
     Header: 'Diameter Hole (in)',
-    accessor: accessors.DIAMETER_HOLE,
+    accessor: getDiameterHole,
     width: '140px',
   },
   {
