@@ -185,15 +185,6 @@ export interface Wellbore
   description?: string;
 }
 
-export type ThreeDNPTEvents = {
-  assetIds: any[];
-  subType: string | undefined;
-  description: string | undefined;
-  metadata: {
-    npt_md: number | undefined;
-  };
-};
-
 export interface WellSequence {
   name: string;
   id: number;
@@ -350,9 +341,7 @@ export type WellboreSourceExternalIdMap = {
   [key: string]: number;
 };
 
-export type IdWellboreMap = {
-  [key: number]: Wellbore;
-};
+export type IdWellboreMap = Record<string | number, Wellbore>;
 
 export interface NPTEvent extends NPT {
   wellboreId: number;

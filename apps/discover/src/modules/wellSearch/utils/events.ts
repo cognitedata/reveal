@@ -10,7 +10,6 @@ import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
 import { CogniteEvent } from '@cognite/sdk';
 
-import { FEET } from 'constants/units';
 import { FilterDataState } from 'modules/filterData/types';
 import {
   UNKNOWN_NPT_CODE,
@@ -20,7 +19,6 @@ import {
 import {
   IdWellboreMap,
   NPTEvent,
-  ThreeDNPTEvents,
   Well,
   Wellbore,
   WellboreNPTEventsMap,
@@ -70,7 +68,7 @@ export const getWellbore = (
   return head(wellbores[eventWellboreId]);
 };
 
-const getIdWellboreMap = (wells: Well[]): IdWellboreMap => {
+export const getIdWellboreMap = (wells: Well[]): IdWellboreMap => {
   return flatten(
     wells.map((well) =>
       (well.wellbores || []).map((wellbore) => ({
@@ -124,36 +122,6 @@ export const mapWellInfoToNPTEvents = (
         wellboreId,
         wellName: wellbores[wellboreId]?.metadata?.wellName,
         wellboreName: wellbores[wellboreId]?.description,
-      }));
-    })
-  );
-};
-
-export const convertTo3DNPTEvents = (
-  eventsMap: WellboreNPTEventsMap,
-  wells: Well[]
-): ThreeDNPTEvents[] => {
-  const wellbores = getIdWellboreMap(wells);
-  return flatten(
-    Object.keys(eventsMap).map((key) => {
-      const wellboreId = Number(key);
-      return (eventsMap[wellboreId] || []).map((event) => ({
-        assetIds: [wellbores[wellboreId]?.id],
-        subType: event.subtype,
-        description: event.description,
-        metadata: {
-          npt_md: event.measuredDepth
-            ? convert(event.measuredDepth.value)
-                .from(
-                  get(
-                    UNITS_TO_STANDARD,
-                    event.measuredDepth.unit,
-                    event.measuredDepth.unit
-                  )
-                )
-                .to(FEET)
-            : undefined,
-        },
       }));
     })
   );

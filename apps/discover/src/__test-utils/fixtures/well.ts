@@ -554,7 +554,7 @@ export const mockedMeasurementsResultFixture: Measurement[] = [
     metadata: {
       fileType: 'MUDLOG',
       source: 'unknown',
-      subType: 'Exploration',
+      subtype: 'Exploration',
       type: 'unknown',
       wellboreName: 'wellbore b',
     },

@@ -17,7 +17,6 @@ import {
   getWellbore,
   mapWellInfo,
   mapWellInfoToNPTEvents,
-  convertTo3DNPTEvents,
   getNPTFilterOptions,
   getFilteredNPTEvents,
 } from '../events';
@@ -85,35 +84,6 @@ describe('Events utils', () => {
           wellName: '16/1',
           wellboreId: '759155409324993',
           wellboreName: 'wellbore A desc',
-        },
-      },
-    ]);
-  });
-
-  it(`should convert npt events to 3d events format`, () => {
-    const events: WellboreNPTEventsMap = {
-      759155409324993: [
-        {
-          ...mockNpt,
-          ...{
-            measuredDepth: {
-              unit: 'meter',
-              value: 100,
-            },
-          },
-        },
-      ],
-    };
-
-    const results = convertTo3DNPTEvents(
-      events,
-      mockedWellStateFixture.wellSearch.wells
-    );
-    expect(results).toEqual([
-      {
-        assetIds: [759155409324993],
-        metadata: {
-          npt_md: 328.084,
         },
       },
     ]);

@@ -13,10 +13,11 @@ import { LOADING_SUB_TEXT } from 'components/emptyState/constants';
 import { StoreState } from 'core/types';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
+import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { useNptEventsFor3D } from 'modules/wellSearch/selectors';
+import { SequenceData } from 'modules/wellSearch/types';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
 
 import { useFetchWellFormationTopsRowData } from '../modules/logType/v2/hooks/useFetchWellFormationTopsRowData';
@@ -43,19 +44,17 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   const { data: casingData, isLoading: casingLoading } =
     useSelectedWellboresCasingsQuery();
   const { data: ndsData, isLoading: ndsLoading } = useNdsEventsQuery();
-  const { events: nptEvents, isLoading: nptLoading } = useNptEventsFor3D();
-
+  const { data: nptEvents, isLoading: nptLoading } = useNptEventsQuery();
   const {
     trajectories,
     trajectoryRows,
     isLoading: trajectoriesLoading,
   } = useTrajectoriesQuery();
-
   const fetchWellLogsRowData = useFetchWellLogsRowData();
   const fetchWellFormationTopsRowData = useFetchWellFormationTopsRowData();
 
   const casings: Sequence[] = [];
-  const logs: any = {};
+  const logs: Record<string, SequenceData[]> = {};
   const logsFrmTops: any = {};
   const ndsEvents: CogniteEvent[] = [];
 
@@ -134,13 +133,9 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
       ndsEvents.push(...ndsData[wbid]);
     }
 
-    logs[wbid] = get(wellLogs, wbid, []).map((logData) => ({
-      assetId: logData.sequence.wellboreId,
-      name: logData.sequence.name,
-      items: logData.rows,
-      state: 'LOADED',
-    }));
+    logs[wbid] = get(wellLogs, wbid, []) || [];
 
+    // move this into the normalize functions like the other types:
     logsFrmTops[wbid] = get(wellFormationTops, wbid, []).map((logData) => ({
       assetId: logData.sequence.wellboreId,
       name: logData.sequence.name,
@@ -149,25 +144,11 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
     }));
   });
 
-  const safeTrajectoryRows = trajectoryRows.map((row) => {
-    return {
-      ...row,
-      columns: row.columns.map((column) => {
-        return {
-          ...column,
-          // these should not be optional from project config!
-          name: column.name || '',
-          valueType: column.valueType || '',
-        };
-      }),
-    };
-  });
-
   return (
     <ThreeDee
       wells={wells}
       trajectories={trajectories}
-      trajectoryData={safeTrajectoryRows}
+      trajectoryData={trajectoryRows}
       casings={casings}
       logs={logs}
       logsFrmTops={logsFrmTops}

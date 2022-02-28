@@ -6,7 +6,6 @@ import { ThemeProvider } from 'styled-components/macro';
 import {
   NodeVisualizerProvider,
   SubSurfaceModule,
-  ITrajectoryRows,
   Modules,
   ThreeModule,
   BPDataOptions,
@@ -15,12 +14,19 @@ import {
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 
 import { getSeismicSDKClient } from 'modules/seismicSearch/service';
-import { ThreeDNPTEvents, Well } from 'modules/wellSearch/types';
 import {
-  mapWellboresToThreeD,
-  mapWellsToThreeD,
-  mapCasingsToThreeD,
-} from 'modules/wellSearch/utils/threed';
+  TrajectoryRows,
+  Well,
+  WellboreNPTEventsMap,
+} from 'modules/wellSearch/types';
+import { mapCasingsTo3D } from 'modules/wellSearch/utils/3d/casings';
+import { mapLogsTo3D } from 'modules/wellSearch/utils/3d/logs';
+import { mapTrajectoriesTo3D } from 'modules/wellSearch/utils/3d/mapTrajectoriesTo3D';
+import { mapTrajectoryDataTo3D } from 'modules/wellSearch/utils/3d/mapTrajectoryDataTo3D';
+import { mapNDSTo3D } from 'modules/wellSearch/utils/3d/nds';
+import { mapNPTTo3D } from 'modules/wellSearch/utils/3d/npt';
+import { mapWellboresTo3D } from 'modules/wellSearch/utils/3d/wellbores';
+import { mapWellsTo3D } from 'modules/wellSearch/utils/3d/wells';
 import { ThreeDeeTheme } from 'styles/ThreeDeeTheme';
 
 import { Toolbar } from './Toolbar';
@@ -32,10 +38,10 @@ export interface Props extends WellsData {
 interface WellsData {
   wells?: Well[];
   trajectories?: Sequence[];
-  trajectoryData?: ITrajectoryRows[];
+  trajectoryData?: TrajectoryRows[];
   casings?: Sequence[];
   ndsEvents?: CogniteEvent[];
-  nptEvents?: ThreeDNPTEvents[];
+  nptEvents?: WellboreNPTEventsMap;
   logs?: any;
   logsFrmTops?: any;
 }
@@ -47,22 +53,25 @@ const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
     trajectoryData = [],
     casings = [],
     ndsEvents = [],
-    nptEvents = [],
+    nptEvents = {},
     logs = {},
     // logsFrmTops = {},
   } = wellsData;
 
   const result: BPDataOptions = {
-    wells: mapWellsToThreeD(wells),
-    wellBores: mapWellboresToThreeD(wells),
-    trajectories,
-    trajectoryData,
-    casings: mapCasingsToThreeD(casings),
-    ndsEvents,
-    nptEvents,
-    logs,
+    wells: mapWellsTo3D(wells),
+    wellBores: mapWellboresTo3D(wells),
+
+    trajectories: mapTrajectoriesTo3D(trajectories),
+    trajectoryData: mapTrajectoryDataTo3D(trajectoryData),
+    casings: mapCasingsTo3D(casings),
+    ndsEvents: mapNDSTo3D(ndsEvents),
+    nptEvents: mapNPTTo3D(nptEvents, wells),
+    logs: mapLogsTo3D(logs),
     // logsFrmTops,
   };
+
+  // console.log('Normalize 3D result:', result);
 
   return result;
 };

@@ -214,7 +214,7 @@ export class BPData {
 
   private generateWellBoreToCasingDataMap(casings?: ICasing[]) {
     if (!casings || !casings.length) {
-      console.warn('casings are empty!');
+      // console.warn('casings are empty!');
       return;
     }
     for (const casing of casings) {
@@ -258,11 +258,9 @@ export class BPData {
       return true;
     }
 
-    console.warn(
-      'Orphan WellBore, Parent Well not found!',
-      { wellBore },
-      { wellMap: this.wellMap }
-    );
+    console.warn('Orphan Wellbore, Parent Well not found!', {
+      parent: wellBore.parentId,
+    });
     return false;
   }
 
@@ -285,12 +283,9 @@ export class BPData {
       return true;
     }
 
-    console.log('this.trajectoryMap', this.trajectoryMap);
-
-    console.warn(
-      'Orphan Trajectory Data Item, Parent Trajectory not found!',
-      trajectoryData
-    );
+    console.warn('Orphan Trajectory Data Item, Parent Trajectory not found!', {
+      id: trajectoryData,
+    });
     return false;
   }
 

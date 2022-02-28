@@ -37,7 +37,7 @@ export interface ITrajectoryColumnIndices {
 // note: the size of the TrajectoryRows "columns" array is identical to the size of the TrajectoryRow "values" array
 
 export interface ITrajectoryRows {
-  id: number;
+  id: string;
   externalId: string;
   columns: ITrajectoryColumnR[];
   rows: ITrajectoryRow[];

@@ -5,11 +5,6 @@ import { convertPressure } from 'utils/units';
 import { Sequence } from '@cognite/sdk';
 
 import {
-  getMockWell,
-  mockedWellboreResultFixture,
-  mockWellboreOptions,
-} from '__test-utils/fixtures/well';
-import {
   CENTIMETER,
   FEET,
   MILLIMETER,
@@ -20,9 +15,8 @@ import {
   UserPreferredUnit,
 } from 'constants/units';
 
-import { TrajectoryColumnR, Well } from '../types';
+import { TrajectoryColumnR } from '../types';
 import { convertObject, toBooleanMap, getRangeLimitInUnit } from '../utils';
-import { mapWellboresToThreeD } from '../utils/threed';
 import { getExistColumns } from '../utils/trajectory';
 
 const cmToftFactor = 30.48;
@@ -182,56 +176,6 @@ describe('Trajectory Utils', () => {
       { name: 'azimuth' },
       { name: 'inclination' },
       { name: 'tvd' },
-    ]);
-  });
-});
-
-describe('3D Component Utils', () => {
-  it('should return wells in 3d format', () => {
-    const wells: Well[] = [
-      { ...getMockWell(), wellbores: mockedWellboreResultFixture },
-    ];
-    const results = mapWellboresToThreeD(wells);
-    expect(results).toEqual([
-      {
-        description: 'wellbore B desc',
-        id: 759155409324883,
-        metadata: {
-          bh_x_coordinate: '',
-          bh_y_coordinate: '',
-          elevation_type: 'KB',
-          elevation_value: '',
-          elevation_value_unit: '',
-        },
-        name: 'wellbore B',
-        parentId: 1234,
-        sourceWellbores: [],
-        wellId: 1234,
-        ...mockWellboreOptions,
-      },
-      {
-        metadata: {
-          bh_x_coordinate: '',
-          bh_y_coordinate: '',
-          elevation_type: 'KB',
-          elevation_value: '',
-          elevation_value_unit: '',
-        },
-        name: 'wellbore A',
-        id: 759155409324993,
-        externalId: 'Wellbore A:759155409324993',
-        wellId: 1234,
-        description: 'wellbore A desc',
-        sourceWellbores: [
-          {
-            externalId: 'Wellbore A:759155409324993',
-            id: 759155409324993,
-            source: 'Source A',
-          },
-        ],
-        parentId: 1234,
-        ...mockWellboreOptions,
-      },
     ]);
   });
 });

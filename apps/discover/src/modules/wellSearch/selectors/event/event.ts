@@ -19,7 +19,6 @@ import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import {
   mapWellInfo,
   mapWellInfoToNPTEvents,
-  convertTo3DNPTEvents,
 } from 'modules/wellSearch/utils/events';
 
 import { useGetConvertFunctionForEvents } from './helper';
@@ -94,18 +93,6 @@ export const useSelectedSecondaryWellboresWithoutNptData = () => {
       wellboreIdsWithoutNptData.includes(String(wellbore.id))
     );
   }, [isLoading, events]);
-};
-
-export const useNptEventsFor3D = () => {
-  const wells = useWellInspectSelectedWells();
-  const { data, isLoading } = useNptEventsQuery();
-  return useMemo(() => {
-    if (isLoading || !data) {
-      return { isLoading, events: [] };
-    }
-    const events = convertTo3DNPTEvents(data, wells);
-    return { isLoading: false, events };
-  }, [data]);
 };
 
 export const useSelectedSecondaryWellboreNamesWithoutNptData = () => {

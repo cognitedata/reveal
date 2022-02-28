@@ -197,13 +197,23 @@ export class WellLogCreator {
         metadata as INptMetaData;
 
       let topMd = Number.NaN;
-      if (mdHoleStart !== undefined)
+      if (mdHoleStart !== undefined && mdHoleStartUnit) {
         topMd = Util.getNumberWithUnit(mdHoleStart, mdHoleStartUnit);
-      else if (nptMd !== undefined) topMd = Util.getNumber(nptMd);
+      } else if (nptMd !== undefined) {
+        topMd = Util.getNumber(nptMd);
+      }
+      if (Number.isNaN(topMd)) {
+        continue;
+      }
 
-      if (Number.isNaN(topMd)) continue;
+      let baseMd = Number.NaN;
+      if (mdHoleEnd && mdHoleEndUnit) {
+        baseMd = Util.getNumberWithUnit(mdHoleEnd, mdHoleEndUnit);
+      }
+      if (Number.isNaN(baseMd)) {
+        continue;
+      }
 
-      const baseMd = Util.getNumberWithUnit(mdHoleEnd, mdHoleEndUnit);
       const { subtype, description } = event;
       const sample = new PointLogSample(description, topMd, nptMdUnit, baseMd);
       sample.subtype = subtype;

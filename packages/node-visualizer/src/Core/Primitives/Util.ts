@@ -37,7 +37,7 @@ export class Util {
   public static getNumber(text: string): number {
     const value = Number(text);
     if (Number.isNaN(value)) {
-      console.warn('not a number');
+      // console.warn('not a number');
       return value;
     }
     return value;

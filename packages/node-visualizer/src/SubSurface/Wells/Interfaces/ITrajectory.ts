@@ -7,7 +7,7 @@
  * This is the interface for the Trajectory object
  */
 
-export type TrajectoryId = number;
+export type TrajectoryId = string;
 
 export interface ITrajectoryMeta {
   type: string;
@@ -75,13 +75,15 @@ export interface ITrajectoryColumn {
 
 export interface ITrajectory {
   id: TrajectoryId;
-  assetId: string;
+  assetId: TrajectoryId;
   externalId: string;
   name: string; // Name is "" in some cases
   description: string;
   dataSetId: number;
-  createdTime: string;
-  lastUpdatedTime: string;
-  metadata: ITrajectoryMeta;
-  columns: ITrajectoryColumn[];
+  // not used anywhere, and just causing trouble
+  // disabling these but leaving for reference:
+  // createdTime: string;
+  // lastUpdatedTime: string;
+  // metadata: ITrajectoryMeta;
+  // columns: ITrajectoryColumn[];
 }
