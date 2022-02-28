@@ -11,7 +11,6 @@ import {
   getMockDepthMeasurementData,
 } from 'services/well/measurements/__mocks/mockMeasurements';
 
-import { getMockConfig } from '__test-utils/fixtures/projectConfig';
 import { getMockWellbore } from '__test-utils/fixtures/well/wellbore';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
@@ -25,15 +24,7 @@ describe('WellCentricView Tests api return empty sequence list', () => {
     getMockDepthMeasurements(0, []),
     getMockDepthMeasurementData(0),
     getMockUserMe(),
-    getMockConfigGet(
-      getMockConfig({
-        wells: {
-          measurements: {
-            enabled: true,
-          },
-        },
-      })
-    ),
+    getMockConfigGet(),
     getMockWellsById()
   );
 
@@ -90,19 +81,7 @@ describe('WellCentricView Tests api return data sequence list', () => {
     getMockDepthMeasurements(),
     getMockDepthMeasurementData(),
     getMockUserMe(),
-    getMockConfigGet(
-      getMockConfig({
-        wells: {
-          measurements: {
-            enabled: true,
-          },
-          disabled: false,
-        },
-        general: {
-          enableWellSDKV3: true,
-        },
-      })
-    ),
+    getMockConfigGet(),
     getMockWellsById()
   );
 

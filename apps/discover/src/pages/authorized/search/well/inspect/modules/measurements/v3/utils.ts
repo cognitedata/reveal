@@ -12,6 +12,7 @@ import {
   DistanceUnitEnum,
 } from '@cognite/sdk-wells-v3';
 
+import { PressureUnit } from 'constants/units';
 import {
   MEASUREMENT_CURVE_CONFIG_V3 as MEASUREMENT_CURVE_CONFIG,
   MEASUREMENT_EXTERNAL_ID_CONFIG,
@@ -33,7 +34,7 @@ export const formatChartData = (
   geomechanicsCurves: DepthMeasurementColumn[], // currently enabled geomechanics curves from filters
   ppfgCurves: DepthMeasurementColumn[], // currently enabled ppfg curves from filters
   otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
-  userPreferedPressureUnit: string,
+  userPreferedPressureUnit: PressureUnit,
   userPreferedDepthMeasurementUnit: string
 ) => {
   const processedCurves: string[] = [];
@@ -76,7 +77,7 @@ export const mapMeasurementToPlotly = (
   ppfgCurves: DepthMeasurementColumn[], // currently enabled ppfg curves from filters
   otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
   tvdUnit: DistanceUnitEnum,
-  userPreferedPressureUnit: string,
+  userPreferedPressureUnit: PressureUnit,
   userPreferedDepthMeasurementUnit: string,
   processedCurves: string[] = []
 ): MeasurementChartData[] => {
@@ -165,7 +166,7 @@ export const mapCurveToPlotly = (
   depthMeasurementData: DepthMeasurementData,
   tvdUnit: DistanceUnitEnum,
   userPreferedDepthMeasurementUnit: string,
-  userPreferedPressureUnit: string,
+  userPreferedPressureUnit: PressureUnit,
   measurementType: MeasurementType
 ): MeasurementChartData[] => {
   const chartData: MeasurementChartData[] = [];

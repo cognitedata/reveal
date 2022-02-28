@@ -2,31 +2,35 @@ import React from 'react';
 
 import { OptionType, Select } from '@cognite/cogs.js';
 
-import { DropdownWrapper } from './elements';
-import { mapStringCurvesToOptions } from './utils';
+import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 
-interface Props {
+import { DropdownWrapper } from './elements';
+import { mapCollectionToOptions } from './utils';
+
+interface Props<T> {
   title: string;
-  selected: string;
-  options: string[];
-  onChange: (value: string) => void;
+  selected: T;
+  options: T[];
+  onChange: (value: T) => void;
 }
 
-export const UnitFilter: React.FC<Props> = ({
+export const UnitFilter = <T extends PressureUnit | DepthMeasurementUnit>({
   title,
   selected,
   options,
   onChange,
-}) => {
-  const optionsMap = mapStringCurvesToOptions(options);
+}: Props<T>) => {
+  const optionsMap = mapCollectionToOptions(options);
   return (
     <DropdownWrapper>
       <Select
         theme="grey"
         title={title}
         value={optionsMap.filter((option) => option.value === selected)}
-        onChange={(option: OptionType<string>) => {
-          onChange(option.value || '');
+        onChange={(option: OptionType<T>) => {
+          if (option.value) {
+            onChange(option.value);
+          }
         }}
         options={optionsMap}
         placeholderSelectElement={selected}

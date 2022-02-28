@@ -4,8 +4,9 @@ import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
 
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import EmptyState from 'components/emptyState';
+import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
 import { Loading } from 'components/loading';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
 import { FlexGrow } from 'styles/layout';
 
@@ -29,12 +30,11 @@ export const Measurements: React.FC = () => {
   >([]);
   const [ppfgCurves, setPPFGCurves] = useState<DepthMeasurementColumn[]>([]);
   const [otherTypes, setOtherTypes] = useState<DepthMeasurementColumn[]>([]);
-  const [pressureUnit, setPressureUnit] = useState<string>(
+  const [pressureUnit, setPressureUnit] = useState<PressureUnit>(
     DEFAULT_PRESSURE_UNIT
   );
-  const [measurementReference, setMeasurementReference] = useState<string>(
-    DEFAULT_MEASUREMENTS_REFERENCE
-  );
+  const [measurementReference, setMeasurementReference] =
+    useState<DepthMeasurementUnit>(DEFAULT_MEASUREMENTS_REFERENCE);
 
   const { isLoading, data } = useMeasurementsQuery();
 
@@ -43,7 +43,7 @@ export const Measurements: React.FC = () => {
   }
 
   if (data && areAllSetValuesEmpty(data)) {
-    return <EmptyState />;
+    return <NoDataAvailable />;
   }
 
   return (

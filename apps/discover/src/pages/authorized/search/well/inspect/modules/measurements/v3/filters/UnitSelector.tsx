@@ -3,6 +3,7 @@ import React from 'react';
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
 import { MoreOptionsButton } from 'components/buttons';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 
 import { MEASUREMENTS_REFERENCES, PRESSURE_UNITS } from '../constants';
 
@@ -18,8 +19,8 @@ import {
 export interface Props {
   unit: string;
   reference: string;
-  onUnitChange: (value: string) => void;
-  onReferenceChange: (value: string) => void;
+  onUnitChange: (value: PressureUnit) => void;
+  onReferenceChange: (value: DepthMeasurementUnit) => void;
 }
 export const UnitSelector: React.FC<Props> = ({
   unit,

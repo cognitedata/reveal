@@ -17,3 +17,25 @@ export enum UserPreferredUnit {
   FEET = 'ft',
   METER = 'm',
 }
+
+export enum DistanceUnit {
+  FEET = 'ft',
+  METER = 'm',
+  MILLIMETER = 'mm',
+  CENTIMETER = 'cm',
+}
+
+export enum PressureUnit {
+  PSI = 'psi',
+  LBM_OVER_BBL = 'lbm/bbl',
+  PPG = 'ppg',
+  SG = 'sg',
+}
+
+/**
+ * Measurment unit for trajectory, depth measurements
+ */
+export enum DepthMeasurementUnit {
+  TVD = 'TVD',
+  MD = 'MD',
+}

@@ -7,6 +7,7 @@ import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { BackButton } from 'components/buttons';
 import { OverlayNavigation } from 'components/overlay-navigation';
+import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
 import { Wellbore } from 'modules/wellSearch/types';
@@ -54,12 +55,11 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
   >([]);
   const [ppfgCurves, setPPFGCurves] = useState<DepthMeasurementColumn[]>([]);
   const [otherTypes, setOtherTypes] = useState<DepthMeasurementColumn[]>([]);
-  const [pressureUnit, setPressureUnit] = useState<string>(
+  const [pressureUnit, setPressureUnit] = useState<PressureUnit>(
     DEFAULT_PRESSURE_UNIT
   );
-  const [measurementReference, setMeasurementReference] = useState<string>(
-    DEFAULT_MEASUREMENTS_REFERENCE
-  );
+  const [measurementReference, setMeasurementReference] =
+    useState<DepthMeasurementUnit>(DEFAULT_MEASUREMENTS_REFERENCE);
 
   const { data } = useMeasurementsQuery();
 
@@ -75,7 +75,7 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
           geomechanicsCurves,
           ppfgCurves,
           otherTypes,
-          pressureUnit.toLowerCase(),
+          pressureUnit,
           userPreferredUnit
         ),
       }))
@@ -142,13 +142,13 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
         />
         <PPFGCurveFilter selectedCurves={ppfgCurves} onChange={setPPFGCurves} />
         <OtherFilter selectedCurves={otherTypes} onChange={setOtherTypes} />
-        <UnitFilter
+        <UnitFilter<PressureUnit>
           title="Pressure Unit:"
           selected={pressureUnit}
           options={PRESSURE_UNITS}
           onChange={setPressureUnit}
         />
-        <UnitFilter
+        <UnitFilter<DepthMeasurementUnit>
           title="Measurement reference:"
           selected={measurementReference}
           options={MEASUREMENTS_REFERENCES}

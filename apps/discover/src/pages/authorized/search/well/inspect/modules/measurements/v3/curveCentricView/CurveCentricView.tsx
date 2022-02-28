@@ -9,6 +9,7 @@ import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
 import { Loading } from 'components/loading';
+import { PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
@@ -31,7 +32,7 @@ export type Props = {
   geomechanicsCurves: DepthMeasurementColumn[];
   ppfgCurves: DepthMeasurementColumn[];
   otherTypes: DepthMeasurementColumn[];
-  pressureUnit: string;
+  pressureUnit: PressureUnit;
   measurementReference: string;
 };
 
@@ -60,7 +61,7 @@ export const CurveCentricView: React.FC<Props> = ({
         geomechanicsCurves,
         ppfgCurves,
         otherTypes,
-        pressureUnit.toLowerCase(),
+        pressureUnit,
         userPreferredUnit
       );
       return mapToCurveCentric(chartData, wellbore);

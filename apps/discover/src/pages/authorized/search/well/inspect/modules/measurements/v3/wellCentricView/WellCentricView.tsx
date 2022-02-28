@@ -8,6 +8,7 @@ import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
 import { Loading } from 'components/loading';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { BooleanSelection } from 'modules/wellInspect/types';
@@ -29,8 +30,8 @@ export type Props = {
   geomechanicsCurves: DepthMeasurementColumn[];
   ppfgCurves: DepthMeasurementColumn[];
   otherTypes: DepthMeasurementColumn[];
-  pressureUnit: string;
-  measurementReference: string;
+  pressureUnit: PressureUnit;
+  measurementReference: DepthMeasurementUnit;
 };
 
 type WellboreChartData = {
@@ -84,7 +85,7 @@ export const WellCentricView: React.FC<Props> = ({
           geomechanicsCurves,
           ppfgCurves,
           otherTypes,
-          pressureUnit.toLowerCase(),
+          pressureUnit,
           userPreferredUnit
         ),
       }))

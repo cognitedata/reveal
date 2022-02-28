@@ -50,7 +50,7 @@ export const getMockDepthMeasurementData = (
           },
         });
       if (delay && delay > 0) {
-        return res(ctx.delay(delay), ctx.json({}));
+        return res(ctx.delay(delay), ctx.json(response));
       }
       return res(ctx.json(response));
     }
