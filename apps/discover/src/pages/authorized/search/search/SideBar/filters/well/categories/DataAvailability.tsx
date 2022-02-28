@@ -4,23 +4,13 @@ import { DataAvailabilityOptions } from 'services/well/well/filters/getDataAvail
 
 import { FilterIDs } from 'modules/wellSearch/constants';
 import { DATA_AVAILABILITY } from 'modules/wellSearch/constantsSidebarFilters';
-import {
-  FilterTypes,
-  WellFilterMap,
-  WellFilterOptionValue,
-} from 'modules/wellSearch/types';
+import { FilterTypes, WellFilterOptionValue } from 'modules/wellSearch/types';
 
-import { CommonFilter } from './CommonFilter';
+import { CommonFilter } from '../CommonFilter';
 
-interface Props {
-  onValueChange: (
-    _filterCategory: number,
-    id: number,
-    selectedVals: WellFilterOptionValue[],
-    filterGroupName: string
-  ) => void;
-  selectedOptions: WellFilterMap;
-}
+import { CustomFilterBaseProps } from './types';
+
+type Props = CustomFilterBaseProps;
 export const DataAvailability: React.FC<Props> = ({
   onValueChange,
   selectedOptions,

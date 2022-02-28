@@ -12,6 +12,7 @@ import Skeleton from 'components/skeleton';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { Modules } from 'modules/sidebar/types';
+import { FilterIDs } from 'modules/wellSearch/constants';
 import {
   REGION_FIELD_BLOCK,
   DATA_AVAILABILITY,
@@ -29,10 +30,11 @@ import { BaseFilter } from '../../components/BaseFilter';
 import { FilterCollapse } from '../../components/FilterCollapse';
 import Header from '../common/Header';
 
+import { DataAvailability } from './categories/DataAvailability';
+import { Measurements } from './categories/Measurements';
 import { RegionFieldBlock } from './categories/RegionFieldBlock';
 import { CommonFilter } from './CommonFilter';
 import { TITLE, CATEGORY } from './constants';
-import { DataAvailability } from './DataAvailability';
 import { Title } from './Title';
 
 const loader = <Skeleton.List lines={6} borders />;
@@ -141,11 +143,19 @@ export const WellsFilter = () => {
               headerTestId={category.title}
             >
               {isDataAvailability && (
-                <DataAvailability
-                  key={`filter-${category.title}`}
-                  onValueChange={onValueChange}
-                  selectedOptions={selectedOptions}
-                />
+                <>
+                  <DataAvailability
+                    key={`filter-${category.title}-DataAvailability`}
+                    onValueChange={onValueChange}
+                    selectedOptions={selectedOptions}
+                  />
+                  <Measurements
+                    key={`filter-${category.title}-Measurements`}
+                    onValueChange={onValueChange}
+                    selectedOptions={selectedOptions}
+                    options={filterOptions[FilterIDs.MEASUREMENTS]}
+                  />
+                </>
               )}
 
               {/* 

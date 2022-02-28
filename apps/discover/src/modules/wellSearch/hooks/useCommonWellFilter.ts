@@ -10,8 +10,8 @@ import {
   useSearchPhrase,
 } from 'modules/sidebar/selectors';
 
+import { filterConfigsById } from '../../../pages/authorized/search/search/SideBar/filters/well/filters';
 import { CommonWellFilter } from '../types';
-import { filterConfigsById } from '../utils/sidebarFilters';
 
 export const useCommonWellFilter = () => {
   const wellFilters = useAppliedWellFilters();

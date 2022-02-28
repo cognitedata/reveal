@@ -14,23 +14,16 @@ import { useRegionsFieldsBlocksRelationship } from 'modules/wellSearch/hooks/use
 import {
   FilterConfig,
   FilterTypes,
-  WellFilterMap,
   WellFilterMapValue,
   WellFilterOptionValue,
 } from 'modules/wellSearch/types';
 
 import { CommonFilter } from '../CommonFilter';
 
+import { CustomFilterBaseProps } from './types';
 import { restFilters } from './utils';
 
-interface RegionFieldBlockProps {
-  onValueChange: (
-    _filterCategory: number,
-    id: number,
-    selectedVals: WellFilterOptionValue[],
-    filterGroupName: string
-  ) => void;
-  selectedOptions: WellFilterMap;
+interface RegionFieldBlockProps extends CustomFilterBaseProps {
   regionFieldBlockConfig: FilterConfig[];
 }
 

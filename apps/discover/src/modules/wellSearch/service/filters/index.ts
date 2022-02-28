@@ -1,5 +1,5 @@
 import { UserPreferredUnit } from 'constants/units';
-import { filterConfigs } from 'modules/wellSearch/utils/sidebarFilters';
+import { filterConfigs } from 'pages/authorized/search/search/SideBar/filters/well/filters';
 
 export function getFilterOptions(
   prefferedUnit: UserPreferredUnit | undefined

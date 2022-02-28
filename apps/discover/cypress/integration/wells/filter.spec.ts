@@ -1,5 +1,6 @@
 import {
   REGION_FIELD_BLOCK,
+  DATA_AVAILABILITY,
   MEASUREMENTS,
   NDS_RISKS,
   WELL_CHARACTERISTICS,
@@ -25,6 +26,7 @@ import { ISODateRegex } from '../../../src/utils/isISODateRegex';
 import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
 
 const SELECT_TEXT = 'Select...';
+const DATA_AVAILABILITY_SELECT = 'Trajectories';
 const MEASUREMENT_SELECT = 'salinity';
 const NPT_CODE_SELECT = 'TESTC';
 const NPT_DETAILS_CODE_SELECT = 'BARR';
@@ -108,6 +110,29 @@ describe('Wells sidebar filters', () => {
     cy.get(`@filter-tag:source-${SOURCE_FILTER}`).should('not.exist');
 
     cy.clearAllFilters(false);
+  });
+
+  it(`Should display wells sidebar filters: ${DATA_AVAILABILITY}`, () => {
+    cy.clickOnFilterCategory(DATA_AVAILABILITY);
+
+    cy.validateSelect(
+      DATA_AVAILABILITY,
+      [DATA_AVAILABILITY_SELECT],
+      DATA_AVAILABILITY_SELECT
+    );
+    checkRequestContainsFilter({
+      trajectories: {},
+    });
+    cy.validateSelect(MEASUREMENTS, [MEASUREMENT_SELECT], MEASUREMENT_SELECT);
+    checkRequestContainsFilter({
+      depthMeasurements: {
+        measurementTypes: {
+          containsAny: [MEASUREMENT_SELECT],
+        },
+      },
+    });
+    cy.log(`Minimize ${DATA_AVAILABILITY} filter`);
+    cy.clickOnFilterCategory(DATA_AVAILABILITY);
   });
 
   it(`Should display wells sidebar filters: ${WELL_CHARACTERISTICS}`, () => {
@@ -364,26 +389,6 @@ describe('Wells sidebar filters', () => {
     });
 
     cy.clickOnFilterCategory(WELL_CHARACTERISTICS);
-  });
-
-  it(`Should display wells sidebar filters: ${MEASUREMENTS}`, () => {
-    cy.clickOnFilterCategory(MEASUREMENTS);
-
-    cy.log('Check visibility of last value in measurement drop-down');
-    cy.findByText(SELECT_TEXT).click();
-    cy.contains(MEASUREMENT_SELECT)
-      .scrollIntoView()
-      .should('be.visible')
-      .click();
-    checkRequestContainsFilter({
-      depthMeasurements: {
-        measurementTypes: {
-          containsAny: [MEASUREMENT_SELECT],
-        },
-      },
-    });
-    cy.log(`Minimize ${MEASUREMENTS} filter`);
-    cy.clickOnFilterCategory(MEASUREMENTS);
   });
 
   it(`should display wells sidebar filter: ${NDS_RISKS}`, () => {

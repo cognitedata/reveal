@@ -12,7 +12,7 @@ import {
   FilterValues,
   FilterCategoricalData,
 } from 'modules/wellSearch/types';
-import { filterConfigsById } from 'modules/wellSearch/utils/sidebarFilters';
+import { filterConfigsById } from 'pages/authorized/search/search/SideBar/filters/well/filters';
 
 import { RegionFieldBlock } from '../types';
 

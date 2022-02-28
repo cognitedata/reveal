@@ -5,15 +5,12 @@ import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discove
 import { MeasurementType, WellFilter } from '@cognite/sdk-wells-v2';
 
 import { FEET, UserPreferredUnit } from 'constants/units';
-import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
-
-import { FilterIDs } from '../constants';
+import { FilterIDs } from 'modules/wellSearch/constants';
 import {
   NDS_RISKS,
   NPT_EVENTS,
   REGION_FIELD_BLOCK,
   WELL_CHARACTERISTICS,
-  MEASUREMENTS,
   DATA_SOURCE,
   FIELD,
   WELL_TYPE,
@@ -33,7 +30,7 @@ import {
   NPT_DURATION,
   DATA_AVAILABILITY,
   OPERATOR,
-} from '../constantsSidebarFilters';
+} from 'modules/wellSearch/constantsSidebarFilters';
 import {
   getNDSRiskTypes,
   getNPTCodes,
@@ -43,18 +40,19 @@ import {
   getWellFilterFetchers,
   getWellsSpudDateLimits,
   getWellsWaterDepthLimits,
-} from '../sdk';
+} from 'modules/wellSearch/sdk';
+import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
 import {
   FiltersOnlySupportSdkV3,
   FilterConfig,
   FilterConfigMap,
   FilterTypes,
-} from '../types';
+} from 'modules/wellSearch/types';
 import {
   getWaterDepthLimitsInUnit,
   processSpudDateLimits,
   getRangeLimitInUnit,
-} from '../utils';
+} from 'modules/wellSearch/utils';
 
 const wellFilterFetchers = getWellFilterFetchers();
 
@@ -137,6 +135,23 @@ export const filterConfigs = (
     key: 'data_availabilty',
     category: DATA_AVAILABILITY,
     type: FilterTypes.MULTISELECT,
+  },
+  {
+    id: FilterIDs.MEASUREMENTS,
+    name: 'Measurements',
+    key: 'measurements_filter',
+    category: DATA_AVAILABILITY,
+    type: FilterTypes.MULTISELECT,
+    isTextCapitalized: false,
+    fetcher: wellFilterFetchers?.measurements,
+    // this is just v2 now
+    filterParameters: (values): WellFilter => ({
+      hasMeasurements: {
+        containsAny: (values as MeasurementType[]).map((measurementType) => ({
+          measurementType,
+        })),
+      },
+    }),
   },
   {
     id: FilterIDs.WELL_TYPE,
@@ -288,23 +303,6 @@ export const filterConfigs = (
           min: values[0] as number,
           max: values[1] as number,
         },
-      },
-    }),
-  },
-  {
-    id: FilterIDs.MEASUREMENTS,
-    name: '',
-    key: 'measurements_filter',
-    category: MEASUREMENTS,
-    type: FilterTypes.MULTISELECT,
-    isTextCapitalized: false,
-    fetcher: wellFilterFetchers?.measurements,
-    // this is just v2 now
-    filterParameters: (values): WellFilter => ({
-      hasMeasurements: {
-        containsAny: (values as MeasurementType[]).map((measurementType) => ({
-          measurementType,
-        })),
       },
     }),
   },

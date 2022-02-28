@@ -3,24 +3,13 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockFilterConfig } from '__test-utils/fixtures/well';
 import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
-import { FilterConfig } from 'modules/wellSearch/types';
 
 import {
   useFilterConfigByCategory,
   filterCategoricalData,
 } from '../useFilterConfigByCategory';
 
-const mockFilterConfigs = jest.fn();
-jest.mock('modules/wellSearch/utils/sidebarFilters', () => ({
-  filterConfigs: () => {
-    return mockFilterConfigs();
-  },
-}));
-
 describe('useFilterConfigByCategory', () => {
-  const mockFilterConfigsValue = async (filterConfigs: FilterConfig[]) =>
-    mockFilterConfigs.mockReturnValue(filterConfigs);
-
   const getFilterConfigByCategory = () => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFilterConfigByCategory(),
@@ -31,10 +20,6 @@ describe('useFilterConfigByCategory', () => {
   };
 
   it('should return result as expected', async () => {
-    const filterConfigWithKey = getMockFilterConfig({ key: 'overview' });
-    const filterConfigWithoutKey = getMockFilterConfig({ key: undefined });
-    await mockFilterConfigsValue([filterConfigWithKey, filterConfigWithoutKey]);
-
     await waitFor(() => {
       const filterConfigByCategory = getFilterConfigByCategory();
       expect(filterConfigByCategory.length).toEqual(1);

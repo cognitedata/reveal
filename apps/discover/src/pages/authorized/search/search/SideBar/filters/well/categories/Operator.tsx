@@ -6,20 +6,14 @@ import { useWellFilterOptions } from 'modules/wellSearch/hooks/useWellFilterOpti
 import {
   FilterConfig,
   FilterTypes,
-  WellFilterMap,
   WellFilterOptionValue,
 } from 'modules/wellSearch/types';
 
 import { CommonFilter } from '../CommonFilter';
 
-interface Props {
-  onValueChange: (
-    _filterCategory: number,
-    id: number,
-    selectedVals: WellFilterOptionValue[],
-    filterGroupName: string
-  ) => void;
-  selectedOptions: WellFilterMap;
+import { CustomFilterBaseProps } from './types';
+
+interface Props extends CustomFilterBaseProps {
   allConfig: FilterConfig[];
 }
 export const Operator: React.FC<Props> = ({
