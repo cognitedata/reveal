@@ -114,6 +114,19 @@ export const AppHeaderWrapper = styled.div`
     max-height: calc(100vh - 65px);
     overflow-y: scroll;
   }
+
+  .topbar-left > span {
+    flex-grow: 1;
+    max-width: 550px;
+  }
+
+  .topbar-search {
+    flex-grow: 1;
+
+    input.cogs-input {
+      flex-grow: 1;
+    }
+  }
 `;
 
 export const GroupPreview = styled.div`

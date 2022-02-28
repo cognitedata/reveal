@@ -304,5 +304,5 @@ export const getAggregates = (
 export class MockAssets {
   static single = () => rootAssets[0];
 
-  static multiple = () => rootAssets;
+  static multiple = (amount?: number) => rootAssets.slice(0, amount);
 }

@@ -1,5 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Avatar, Icon, TopBar, Menu, Tooltip, Graphic } from '@cognite/cogs.js';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import {
+  Avatar,
+  Icon,
+  TopBar,
+  Menu,
+  Tooltip,
+  Graphic,
+  Dropdown,
+} from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthProvider } from '@cognite/react-container';
 import {
@@ -17,6 +25,8 @@ import { modalOpen } from 'store/modals/actions';
 import { getConfigState } from 'store/config/selectors';
 import { addConfigItems } from 'store/config/actions';
 import useHelpCenter from 'hooks/useHelpCenter';
+import GlobalSearch from 'components/explorer/GlobalSearchDropdown';
+import useDebounce from 'hooks/useDebounce';
 
 import { fetchCustomerLogoUrl } from '../../store/thunks';
 
@@ -46,6 +56,10 @@ const AppHeader: React.FC = () => {
   const { toggleHelpCenter } = useHelpCenter();
 
   const { documentTitle, accessManageLink } = useLink();
+
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const isNoc = () => {
     return (
@@ -206,7 +220,7 @@ const AppHeader: React.FC = () => {
         </GroupPreview>
       )}
       <TopBar>
-        <TopBar.Left>
+        <TopBar.Left className="topbar-left">
           <TopBar.Logo
             title={`Cognite ${documentTitle}`}
             logo={
@@ -226,6 +240,25 @@ const AppHeader: React.FC = () => {
             }
             onLogoClick={goHome}
           />
+          <Dropdown
+            content={
+              <GlobalSearch
+                query={debouncedSearchQuery}
+                onResultSelected={() => setIsSearchVisible(false)}
+              />
+            }
+            visible={isSearchVisible}
+            onClickOutside={() => setIsSearchVisible(false)}
+          >
+            <TopBar.Search
+              className="topbar-search"
+              placeholder="Search for resources"
+              onChange={(e) =>
+                setSearchQuery((e.target as HTMLInputElement).value)
+              }
+              onClick={() => setIsSearchVisible(!isSearchVisible)}
+            />
+          </Dropdown>
         </TopBar.Left>
         <TopBar.Right>
           {!isNoc() && (
