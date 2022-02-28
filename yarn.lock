@@ -36,20 +36,6 @@
     lodash "^4.17.21"
     resize-observer-polyfill "^1.5.0"
 
-"@azure/msal-browser@^2.11.0":
-  version "2.14.2"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.14.2.tgz#4efa031ad16d5a3a527eddb6222e15dd6e2ea3e8"
-  integrity sha512-JKHE9Rer41CI8tweiyE91M8ZbGvQV9P+jOPB4ZtPxyxCi2f7ED3jNfdzyUJ1eGB+hCRnvO56M1Xc61T1R+JfYg==
-  dependencies:
-    "@azure/msal-common" "^4.3.0"
-
-"@azure/msal-common@^4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.3.0.tgz#b540e92748656724088bf77192e59943a93135bc"
-  integrity sha512-jFqUWe83wVb6O8cNGGBFg2QlKvqM1ezUgJTEV7kIsAPX0RXhGFE4B1DLNt6hCnkTXDbw+KGW0zgxOEr4MJQwLw==
-  dependencies:
-    debug "^4.1.1"
-
 "@babel/code-frame@7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
@@ -3756,7 +3742,34 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@^3.38.4", "@cognite/cogs.js@^3.42.5":
+"@cognite/cogs.js@3.42.5":
+  version "3.42.5"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.5.tgz#6806a2f57ed920c7fd457e5ade8fd1fe444168db"
+  integrity sha512-QNZBEuJJ8BT/iYl/5xQnOLmJXqfcAhK0rLhDmAxSMrrfqMsK9nVP68nrwL+Am6mI7/yNKEZP7041KXk10ErWuQ==
+  dependencies:
+    "@tippyjs/react" "4.2.3"
+    "@types/react-date-range" "^1.1.2"
+    classnames "^2.3.1"
+    color "^3.1.2"
+    dayjs "^1.9.7"
+    eslint-config-stylelint "^13.1.1"
+    focus-visible "^5.1.0"
+    match-sorter "^6.3.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    resize-observer "^1.0.3"
+    stylelint "^13.13.1"
+    tippy.js "6.2.0"
+    ts-dedent "^2.2.0"
+
+"@cognite/cogs.js@^3.38.4":
   version "3.44.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
   integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
@@ -3811,20 +3824,20 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^1.7.3":
-  version "1.7.4"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.7.4.tgz#6e9fcc2403e5f9c0f3bdf28ed34f993b10abb51b"
-  integrity sha512-YbTMwJZu7An4NKrE/Xoyl5QFAU2onjwLox4Xz5srIM48uhUvsR+632Fz66EDGV7OcXZFCiAg1osuZqvyL2jnTQ==
+"@cognite/data-exploration@1.8.0-beta.2":
+  version "1.8.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.8.0-beta.2.tgz#c752f10f937e32809909635a0451aa49aac8119f"
+  integrity sha512-YCI4ZXTovxA3No9BPSAL9PIgbAGac4XJ0NNgN+KgszWxvx6ojU+UwBWRbswPyBC08o4DqQNebETqTTIRUFPeyA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
-    "@cognite/cogs.js" "^3.42.5"
+    "@cognite/cogs.js" "3.42.5"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^2.0.1"
-    "@cognite/sdk" "^3.3.6"
+    "@cognite/react-picture-annotation" "2.1.0-beta.4"
+    "@cognite/sdk" "^6.3.1"
     "@cognite/sdk-provider" "^1.0.0"
-    "@cognite/sdk-react-query-hooks" "^5.0.1"
+    "@cognite/sdk-react-query-hooks" "^6.0.2"
     "@visx/axis" "^1.8.0"
     "@visx/event" "^1.7.0"
     "@visx/gradient" "^1.7.0"
@@ -3941,29 +3954,13 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/react-picture-annotation@^1.15.1":
-  version "1.15.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.15.1.tgz#874206cfd4ede8ab899d4cd651b980c33543ab47"
-  integrity sha512-gg9vZTZSTO4RJLcTnsdvJxh67c5OD+AT/q3JS9L+CQQ54YCWBqoMHafw31qR8TbYToIVSJE2mxqeiF05AVZCJA==
+"@cognite/react-picture-annotation@2.1.0-beta.4":
+  version "2.1.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.1.0-beta.4.tgz#1f9d6584c3d0dd9800e02035ab88a4247bbfb7b1"
+  integrity sha512-vZY4ErPXyta+9Xv9usMdsTk65l3tFGPvIgCX9Kx5ymwuQGtCyIfjWZOBe+/fOBKXHAD4t2VCw0y0dVUH9pmZDg==
   dependencies:
     "@cognite/annotations" "^1.1.0"
-    "@cognite/sdk" "^3.3.0"
-    lodash "^4.17.21"
-    parse-color "^1.0.0"
-    pdf-lib "^1.12.0"
-    pdfjs-dist "2.6.347"
-    react-archer "^3.0.0"
-    react-is "^17.0.1"
-    react-splitter-layout "^4.0.0"
-    styled-components "^5.2.0"
-
-"@cognite/react-picture-annotation@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.0.1.tgz#9790303ab204f7b2c27f16c6c87b67e0b73f0f5f"
-  integrity sha512-+gn+RudIhOY9BFzOZ1eJe+ypxc0XAFkL4Rxx1xrYJbZywPKOZ76RVTdXuCmqsLh56Aq4MnGhtrcBR3bbbDnAYQ==
-  dependencies:
-    "@cognite/annotations" "^1.1.0"
-    "@cognite/sdk" "^3.3.0"
+    "@cognite/sdk" "^6.3.1"
     "@storybook/addon-knobs" "^6.1.10"
     "@types/lodash" "^4.14.165"
     "@types/lz-string" "^1.3.34"
@@ -3987,18 +3984,6 @@
     typescript "^4.1.2"
     uuid "^8.3.0"
 
-"@cognite/sdk-core@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.2.tgz#be6378ffee45c5da6d0186ce97246eb19a9d9dd4"
-  integrity sha512-ePu4q1UGa4mIKDz0cxR2WzBjImtLlLQRwWY7R38IHfBXOFMJuFUxgHcKgoSP5bonGPGLHWP7UaTW+41+IsyGOw==
-  dependencies:
-    "@azure/msal-browser" "^2.11.0"
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
 "@cognite/sdk-core@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.0.tgz#50a2a56c9eec35b0af1a235ec34474d848a3c519"
@@ -4017,11 +4002,6 @@
   dependencies:
     react "^16.14.0"
 
-"@cognite/sdk-react-query-hooks@^5.0.1":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-5.0.2.tgz#e71da24019ced7ac05ab4485b3a4bb358e67a6b5"
-  integrity sha512-22jQXi4p6+o5+kjBqOrHe3WJX6Uk6O5j7VkHniT3/e+t6N2dPh3n01TK2gLl5og1rJNNk5GXxXuecNIUk0JFFg==
-
 "@cognite/sdk-react-query-hooks@^6.0.2":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-6.0.2.tgz#3e67d595ada940b1464e49e5f51cb9c4a1798e3a"
@@ -4030,18 +4010,10 @@
     "@types/deep-equal" "^1.0.1"
     deep-equal "^2.0.5"
 
-"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.6":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.5.2.tgz#4a1f154c0b8ca29e2231d202ec1a279810328844"
-  integrity sha512-rK7IajwtSEg1DkuqZ88F7hvvZG8cG7bwQx8eN0uMJilNJNnWGqjnLyOJHsIlB/K0bkhbccur4GrPDPu3Fe1fjg==
-  dependencies:
-    "@cognite/sdk-core" "^1.2.2"
-    lodash "^4.17.11"
-
-"@cognite/sdk@^6.3.2":
-  version "6.3.3"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-6.3.3.tgz#fea669560c75514880f46be510fe28a13acec009"
-  integrity sha512-4qUOx/vw41dZ2suBxyYTaWfICms3RsdjOMthu5OgSVe7FuCLpn8I7dZOl/afZJs3JM+/BAtNYFmrWRQEWqi47w==
+"@cognite/sdk@6.3.4", "@cognite/sdk@^6.3.1":
+  version "6.3.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-6.3.4.tgz#ffeec9475fb08d43be25306ded05114261f3802c"
+  integrity sha512-hBqiWZwRov9BPVLNBUChNvHlRy5CYWv/rkGQLPmNMdabwTTA1vbF346AOpVUcLH5vX2NZ7fMIPjPBZG4PHsRCw==
   dependencies:
     "@cognite/sdk-core" "^4.1.0"
     lodash "^4.17.11"
@@ -19360,6 +19332,11 @@ resize-observer-polyfill@^1.5.0, resize-observer-polyfill@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
   integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
+
+resize-observer@^1.0.3:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/resize-observer/-/resize-observer-1.0.4.tgz#48beb64602ce408ebd1a433784d64ef76f38d321"
+  integrity sha512-AQ2MdkWTng9d6JtjHvljiQR949qdae91pjSNugGGeOFzKIuLHvoZIYhUTjePla5hCFDwQHrnkciAIzjzdsTZew==
 
 resolve-cwd@^2.0.0:
   version "2.0.0"
