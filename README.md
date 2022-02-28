@@ -7,8 +7,6 @@
 [![Build Status](https://github.com/cognitedata/reveal/actions/workflows/ci.yml/badge.svg
 )](https://github.com/cognitedata/reveal/actions/workflows/ci.yml)
 
-TEST
-
 Documentation with interactive examples for the latest version is available at [https://cognitedata.github.io/reveal/docs/](https://cognitedata.github.io/reveal/docs/)
 
 ---
