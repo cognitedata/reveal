@@ -1,5 +1,5 @@
 /* eslint-disable no-continue */
-import { approxeq } from '../geometry';
+import { angleDifference, approxeq } from '../geometry';
 import { PidPath } from '../pid/PidPath';
 import { PathSegment } from '../geometry/PathSegment';
 
@@ -13,10 +13,6 @@ export enum MatchResult {
   SubMatch,
   NotMatch,
 }
-
-const mod = (n: number, m: number): number => {
-  return ((n % m) + m) % m;
-};
 
 const getMaxLengthIndex = (pathSegments: PathSegment[]): number => {
   let maxLength = 0;
@@ -53,7 +49,13 @@ const getScaleIfSimilar = (
 ): number | undefined => {
   if (pathSegment1.pathType !== pathSegment2.pathType) return undefined;
 
-  if (!approxeq(mod(pathSegment1.angle, 180), mod(pathSegment2.angle, 180), 10))
+  if (
+    !approxeq(
+      angleDifference(pathSegment1.angle, pathSegment2.angle, 'uniDirected'),
+      0,
+      10
+    )
+  )
     return undefined;
 
   return pathSegment1.length / pathSegment2.length;

@@ -220,7 +220,7 @@ export class PidDocument {
         labelInstanceConnections.push({
           labelId: pidLabel.id,
           labelText: pidLabel.text,
-          instanceId: closestSymbolGroup.diagramInstanceId,
+          instanceId: closestSymbolGroup.id,
         });
       }
     });

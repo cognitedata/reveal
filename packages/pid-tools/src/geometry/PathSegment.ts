@@ -1,7 +1,12 @@
 import { Rect } from '../types';
 
 import { Point } from './Point';
-import { approxeq, getBoundingBox, getPointTowardOtherPoint } from './utils';
+import {
+  angleDifference,
+  approxeq,
+  getBoundingBox,
+  getPointTowardOtherPoint,
+} from './utils';
 
 export type IntersectionData = {
   intersection: Point;
@@ -64,10 +69,14 @@ export abstract class PathSegment {
   }
 
   get angle() {
+    // Returns angle in degrees between 0 and 360. Follows unit circle: 0 - right, 90 - up, 180 - left and 270 - down.
     const dy = this.stop.y - this.start.y;
     const dx = this.stop.x - this.start.x;
     let theta = Math.atan2(dy, dx);
     theta *= 180 / Math.PI; // rads to degs
+    if (theta < 0) {
+      theta = 360 + theta;
+    }
     return theta;
   }
 
@@ -188,6 +197,19 @@ export abstract class PathSegment {
   }
 }
 
+export enum EdgePoint {
+  Start,
+  Stop,
+  Other,
+}
+
+export interface DistanceWithLineJump {
+  distance: number;
+  isLineJump: boolean;
+  thisClosestPoint: EdgePoint;
+  otherClosestPoint: EdgePoint;
+}
+
 export class LineSegment extends PathSegment {
   constructor(start: Point, stop: Point) {
     super(start, stop);
@@ -230,6 +252,57 @@ export class LineSegment extends PathSegment {
       this.start.translateAndScale(translatePoint, scale),
       this.stop.translateAndScale(translatePoint, scale)
     );
+  }
+
+  distanceWithLineJump(
+    other: LineSegment,
+    edgeThreshold = 0.05,
+    angleThreshold = 5
+  ): DistanceWithLineJump {
+    const isCloseToEdge = (percentAlongPath: number) =>
+      percentAlongPath < edgeThreshold || percentAlongPath > 1 - edgeThreshold;
+
+    const {
+      thisPercentAlongPath,
+      thisPoint,
+      otherPercentAlongPath,
+      otherPoint,
+      distance,
+    } = this.getClosestPointsOnSegments(other);
+
+    const angle1 = this.angle;
+    const angle2 = other.angle;
+    const angle3 = new LineSegment(thisPoint, otherPoint).angle;
+
+    let thisClosestPoint = EdgePoint.Other;
+    if (isCloseToEdge(thisPercentAlongPath)) {
+      thisClosestPoint =
+        thisPercentAlongPath < edgeThreshold ? EdgePoint.Start : EdgePoint.Stop;
+    }
+
+    let otherClosestPoint = EdgePoint.Other;
+    if (isCloseToEdge(otherPercentAlongPath)) {
+      otherClosestPoint =
+        otherPercentAlongPath < edgeThreshold
+          ? EdgePoint.Start
+          : EdgePoint.Stop;
+    }
+
+    const isLineJump =
+      isCloseToEdge(thisPercentAlongPath) &&
+      isCloseToEdge(otherPercentAlongPath) &&
+      approxeq(
+        angleDifference(angle1, angle2, 'uniDirected'),
+        0,
+        angleThreshold
+      ) &&
+      approxeq(
+        angleDifference(angle1, angle3, 'uniDirected'),
+        0,
+        angleThreshold
+      );
+
+    return { distance, isLineJump, thisClosestPoint, otherClosestPoint };
   }
 }
 

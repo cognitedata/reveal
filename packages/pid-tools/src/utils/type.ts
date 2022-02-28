@@ -1,3 +1,5 @@
+import { LineSegment, PathSegment } from 'geometry';
+
 import { verticalOrientations, horizontalOrientations } from '../constants';
 import {
   DiagramLineInstance,
@@ -63,4 +65,10 @@ export const isVerticalOrientaiton = (
   orientation: Orientation
 ): orientation is VerticalOrientation => {
   return verticalOrientations.some((verOr) => verOr === orientation);
+};
+
+export const isLineSegment = (
+  pathSegment: PathSegment
+): pathSegment is LineSegment => {
+  return pathSegment.pathType === 'LineSegment';
 };

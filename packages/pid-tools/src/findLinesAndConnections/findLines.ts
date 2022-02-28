@@ -6,7 +6,6 @@ import {
   DiagramSymbolInstance,
 } from '../types';
 import {
-  getDiagramInstanceId,
   getDiagramInstanceIdFromPathIds,
   isDiagramInstanceInList,
 } from '../utils';
@@ -30,11 +29,7 @@ export const detectLines = (
 
   const potLineSegmentsWithConnections = potentialLineInstanceList.filter(
     (line) =>
-      connections.some(
-        (con) =>
-          getDiagramInstanceId(line) === con.end ||
-          getDiagramInstanceId(line) === con.start
-      )
+      connections.some((con) => line.id === con.end || line.id === con.start)
   );
 
   potLineSegmentsWithConnections.forEach((newPotLine) => {
@@ -79,7 +74,7 @@ const dfsCountConnectionsToSymbolsOrLines = (
   connections: DiagramConnection[],
   potentialLine: DiagramLineInstance
 ) => {
-  const instanceId = getDiagramInstanceId(potentialLine);
+  const instanceId = potentialLine.id;
 
   const visited = [instanceId];
   const newLinesFound: string[] = [];

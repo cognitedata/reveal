@@ -1,8 +1,5 @@
 /* eslint-disable no-continue */
-import {
-  AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO,
-  AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID,
-} from '../constants';
+
 import {
   DiagramConnection,
   DiagramInstanceWithPaths,
@@ -12,27 +9,13 @@ import {
 } from '../types';
 import {
   connectionExists,
-  getDiagramInstanceId,
   getDiagramInstanceIdFromPathIds,
   isDiagramInstanceInList,
-  isPathIdInInstance,
 } from '../utils';
-import { PidDocument, PidGroup, PidPath } from '../pid';
+import { PidDocument, PidPath } from '../pid';
 
-import { findConnections } from './findConnections';
+import { findConnectionsByTraversal } from './findConnections';
 import { detectLines } from './findLines';
-
-export const getOverlappingPidGroups = (
-  pidGroups: PidGroup[],
-  instance: PidGroup,
-  documentType: DocumentType
-) => {
-  const threshold =
-    documentType === DocumentType.pid
-      ? AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID
-      : AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO;
-  return pidGroups.filter((pidGroup) => instance.isClose(pidGroup, threshold));
-};
 
 export const getPotentialLines = (
   symbolInstances: DiagramSymbolInstance[],
@@ -42,10 +25,11 @@ export const getPotentialLines = (
 ) => {
   const allInstances = [...symbolInstances, ...lineInstances];
 
+  const pathIdsInInstances = new Set(
+    allInstances.flatMap((instance) => instance.pathIds)
+  );
   const isPathInAnyInstance = (path: PidPath) =>
-    !allInstances.some((diagramInstance) =>
-      isPathIdInInstance(path.pathId, getDiagramInstanceId(diagramInstance))
-    );
+    pathIdsInInstances.has(path.pathId);
 
   const isPathValidForDocumentType = (path: PidPath) =>
     documentType !== DocumentType.isometric ||
@@ -61,7 +45,7 @@ export const getPotentialLines = (
   const matches = pidDocument.pidPaths.filter(
     (path) =>
       isPathValidForDocumentType(path) &&
-      isPathInAnyInstance(path) &&
+      !isPathInAnyInstance(path) &&
       isPathStrokeValid(path)
   );
 
@@ -102,7 +86,7 @@ export const findLinesAndConnections = (
     (symbolInstance) => symbolInstance.type !== 'Arrow'
   );
 
-  const connections: DiagramConnection[] = findConnections(
+  const potentialConnections: DiagramConnection[] = findConnectionsByTraversal(
     relevantSymbolInstances,
     [...lineInstances, ...potentialLineInstanceList],
     pidDocument,
@@ -111,7 +95,7 @@ export const findLinesAndConnections = (
 
   const newLines = detectLines(
     potentialLineInstanceList,
-    connections,
+    potentialConnections,
     lineInstances,
     relevantSymbolInstances
   );
@@ -121,7 +105,7 @@ export const findLinesAndConnections = (
     ...lineInstances,
     ...newLines,
   ];
-  const prunedConnections = connections.filter((con) =>
+  const prunedConnections = potentialConnections.filter((con) =>
     connectsToKnownInstances(con, knownInstances)
   );
 

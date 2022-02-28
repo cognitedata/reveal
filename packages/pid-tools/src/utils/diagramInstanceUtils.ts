@@ -41,11 +41,7 @@ export const isDiagramInstanceInList = (
   diagramId: DiagramInstanceId,
   diagramInstances: DiagramInstanceWithPaths[]
 ) => {
-  return (
-    diagramInstances.find(
-      (instance) => diagramId === getDiagramInstanceId(instance)
-    ) !== undefined
-  );
+  return diagramInstances.some((instance) => diagramId === instance.id);
 };
 
 export const getInstanceByDiagramInstanceId = (

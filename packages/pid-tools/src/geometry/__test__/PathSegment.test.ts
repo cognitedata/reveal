@@ -1,3 +1,4 @@
+import { EdgePoint } from '..';
 import { LineSegment } from '../PathSegment';
 import { Point } from '../Point';
 
@@ -17,8 +18,8 @@ describe('LineSegment', () => {
     expect(lineSegmentRight.angle).toBeCloseTo(0, precision);
     expect(lineSegmentUp.angle).toBeCloseTo(90, precision);
     expect(lineSegmentLeft.angle).toBeCloseTo(180, precision);
-    expect(lineSegmentLeftDown.angle).toBeCloseTo(-180, precision);
-    expect(lineSegmentDown.angle).toBeCloseTo(-90, precision);
+    expect(lineSegmentLeftDown.angle).toBeCloseTo(180, precision);
+    expect(lineSegmentDown.angle).toBeCloseTo(270, precision);
   });
 
   test('isSimilarWithTranslationAndScale', async () => {
@@ -176,5 +177,32 @@ describe('LineSegment', () => {
     expect(thisPercentAlongPath).toBeCloseTo(0.2, precision);
     expect(otherPercentAlongPath).toBeCloseTo(0.5, precision);
     expect(distance).toBeCloseTo(0, precision);
+  });
+
+  test('distanceWithLineJump', async () => {
+    const lineSegment1 = new LineSegment(new Point(0, 0), new Point(10, 0));
+    const lineSegment2 = new LineSegment(new Point(15, 0), new Point(20, 0));
+    const lineSegment3 = new LineSegment(new Point(5, 0), new Point(5, 10));
+
+    const distanceWithLineJump12 =
+      lineSegment1.distanceWithLineJump(lineSegment2);
+    expect(distanceWithLineJump12.isLineJump).toBeTruthy();
+    expect(distanceWithLineJump12.distance).toBeCloseTo(5);
+    expect(distanceWithLineJump12.thisClosestPoint).toBe(EdgePoint.Stop);
+    expect(distanceWithLineJump12.otherClosestPoint).toBe(EdgePoint.Start);
+
+    const distanceWithLineJump13 =
+      lineSegment1.distanceWithLineJump(lineSegment3);
+    expect(distanceWithLineJump13.isLineJump).toBeFalsy();
+    expect(distanceWithLineJump13.distance).toBeCloseTo(0);
+    expect(distanceWithLineJump13.thisClosestPoint).toBe(EdgePoint.Other);
+    expect(distanceWithLineJump13.otherClosestPoint).toBe(EdgePoint.Start);
+
+    const distanceWithLineJump21 =
+      lineSegment2.distanceWithLineJump(lineSegment1);
+    expect(distanceWithLineJump21.isLineJump).toBeTruthy();
+    expect(distanceWithLineJump21.distance).toBeCloseTo(5);
+    expect(distanceWithLineJump21.thisClosestPoint).toBe(EdgePoint.Start);
+    expect(distanceWithLineJump21.otherClosestPoint).toBe(EdgePoint.Stop);
   });
 });

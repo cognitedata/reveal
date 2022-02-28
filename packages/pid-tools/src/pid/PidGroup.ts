@@ -1,4 +1,3 @@
-import { getDiagramInstanceIdFromPathIds } from '../utils';
 import { Rect, DiagramInstanceWithPaths } from '../types';
 import { PidDocument, PidPath } from '../pid';
 import {
@@ -15,11 +14,13 @@ export class PidGroup {
   boundingBox: Rect;
   midPoint: Point;
   isLine: boolean;
-  constructor(pidPaths: PidPath[], isLine: boolean) {
+  id: string;
+  constructor(pidPaths: PidPath[], isLine: boolean, id: string) {
     this.pidPaths = pidPaths;
     this.isLine = isLine;
     this.boundingBox = calculatePidPathsBoundingBox(pidPaths);
     this.midPoint = Point.midPointFromBoundingBox(this.boundingBox);
+    this.id = id;
   }
 
   static fromDiagramInstance(
@@ -29,7 +30,11 @@ export class PidGroup {
     const pidPaths = diagramInstance.pathIds.map(
       (pathId) => pidDocument.getPidPathById(pathId)!
     );
-    return new PidGroup(pidPaths, diagramInstance.type === 'Line');
+    return new PidGroup(
+      pidPaths,
+      diagramInstance.type === 'Line',
+      diagramInstance.id
+    );
   }
 
   getPathSegments(): PathSegment[] {
@@ -80,10 +85,5 @@ export class PidGroup {
     if (efficientIsTooFarAway()) return false;
 
     return this.distance(other) < threshold;
-  }
-
-  get diagramInstanceId() {
-    const pathIds = this.pidPaths.map((path) => path.pathId);
-    return getDiagramInstanceIdFromPathIds(pathIds);
   }
 }

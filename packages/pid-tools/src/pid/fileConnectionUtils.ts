@@ -1,5 +1,11 @@
 import { isHorizontalOrientaiton, isVerticalOrientaiton } from '../utils/type';
-import { approxeq, BoundingBox, LineSegment, Point } from '../geometry';
+import {
+  angleDifference,
+  approxeq,
+  BoundingBox,
+  LineSegment,
+  Point,
+} from '../geometry';
 import { FileConnectionInstance, Rect, FileDirection } from '../types';
 
 import { PidDocument } from './PidDocument';
@@ -29,7 +35,7 @@ const normalizeLabels = (
 
 const directionAngles = {
   Left: 180,
-  Up: -90, // note that positive Y direction is downwards
+  Up: 270, // note that positive Y direction is downwards
   Right: 0,
 };
 
@@ -48,16 +54,15 @@ const getBestFitLabel = (
     if (boundingBox.encloses(label.normalizedMidPoint)) return;
 
     const distance = boundingBox.midPoint().distance(label.normalizedMidPoint);
-    let { angle } = new LineSegment(midPoint, label.normalizedMidPoint);
-
-    if (expectedDirection === 'Left') {
-      // If the angle is left/up it will be near -180 and left/down near 180, hence aboslute value
-      angle = Math.abs(angle);
-    }
+    const { angle } = new LineSegment(midPoint, label.normalizedMidPoint);
 
     if (
       distance < minDistance &&
-      approxeq(angle, directionAngles[expectedDirection], 10)
+      approxeq(
+        angleDifference(angle, directionAngles[expectedDirection], 'directed'),
+        0,
+        10
+      )
     ) {
       closestLabel = label;
       minDistance = distance;

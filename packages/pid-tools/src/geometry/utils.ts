@@ -14,6 +14,37 @@ export const approxeqrel = (v1: number, v2: number, epsilon = 0.2) => {
   return Math.abs(1 - v1 / v2) <= epsilon;
 };
 
+export const angleDifference = (
+  angle1: number,
+  angle2: number,
+  type: 'directed' | 'uniDirected'
+): number => {
+  if (angle1 < 0 || angle1 >= 360 || angle2 < 0 || angle2 >= 360) {
+    throw new Error(
+      `Angles should be between 0 and 360, it was ${angle1} and ${angle2}`
+    );
+  }
+  // If the returned angle is positive `angle2` is left for `angle1`, negative to the right of `angle1`.
+  // Returned angle will be in (-180, 180) when `type` is 'normal and (-90, 90) when `type` is 'dirIndependent'
+  if (type === 'directed') {
+    const diff = angle2 - angle1;
+    if (Math.abs(diff) <= 180) return diff;
+
+    if (diff > 180) {
+      return diff - 360;
+    }
+    return diff + 360;
+  }
+
+  const diff = (angle2 % 180) - (angle1 % 180);
+  if (Math.abs(diff) <= 90) return diff;
+
+  if (diff > 90) {
+    return diff - 180;
+  }
+  return diff + 180;
+};
+
 export const getBoundingBox = (startPoint: Point, stopPoint: Point): Rect => {
   const minX = Math.min(startPoint.x, stopPoint.x);
   const minY = Math.min(startPoint.y, stopPoint.y);
@@ -112,7 +143,7 @@ export const getClosestPathSegments = (
   return [closestPathSegment1, closestPathSegment2];
 };
 
-type ClosestPointsWithIndecies = {
+export type ClosestPointsWithIndecies = {
   point1: Point;
   index1: number;
   percentAlongPath1: number;

@@ -1,3 +1,4 @@
+import { getDiagramInstanceIdFromPathIds } from '../..';
 import {
   DiagramConnection,
   DiagramLineInstance,
@@ -10,7 +11,7 @@ export const createLines = (pathIds: string[]) => {
     (pathId) =>
       ({
         type: 'Line',
-        id: 'something1',
+        id: getDiagramInstanceIdFromPathIds([pathId]),
         pathIds: [pathId],
         labelIds: [],
         lineNumbers: [],
@@ -25,7 +26,7 @@ export const createSymbols = (pathIds: string[]) => {
       ({
         type: 'Instrument',
         symbolId: 'symbolId',
-        id: 'something1',
+        id: getDiagramInstanceIdFromPathIds([pathId]),
         pathIds: [pathId],
         labelIds: [],
         lineNumbers: [],
