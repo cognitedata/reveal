@@ -14,11 +14,12 @@ import {
   renderPlaceholderSelectElement,
   renderTitleAboveSelectComponent,
 } from './commonMultiSelectComponents';
+import { MULTISELECT_NO_RESULTS } from './constants';
 import { MultiSelectContainer } from './elements';
-import { MultiSelectProps, MultiSelectOptionType } from './types';
+import { MultiSelectOptionType, MultiSelectGroupProps } from './types';
 
-export const MultiSelect: React.FC<MultiSelectProps> = ({
-  options: data = [],
+export const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
+  groupedOptions: groupedData = [],
   selectedOptions,
   onValueChange,
   isTextCapitalized = false,
@@ -34,27 +35,35 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   styles,
   ...rest
 }) => {
-  const options: OptionType<MultiSelectOptionType>[] = useDeepMemo(() => {
-    const processedOptions = data.map((option) => ({
-      label: get(option, 'value', option),
-      value: option,
-    }));
+  const groupedOptions = useDeepMemo(() => {
+    return groupedData.map((item) => {
+      const processedOptions = item.options.map((option) => ({
+        label: get(option, 'value', option),
+        value: option,
+      }));
 
-    return isOptionsSorted
-      ? processedOptions.sort((a, b) => caseInsensitiveSort(a.label, b.label))
-      : processedOptions;
-  }, [data, isOptionsSorted]);
+      return {
+        ...item,
+        options: isOptionsSorted
+          ? processedOptions.sort((a, b) =>
+              caseInsensitiveSort(a.label, b.label)
+            )
+          : processedOptions,
+      };
+    });
+  }, [groupedData]);
 
   const [value, setValue] = useState<OptionType<MultiSelectOptionType>[]>([]);
 
   useDeepEffect(() => {
     if (isUndefined(selectedOptions)) return;
 
-    const value = options.filter((option) =>
-      selectedOptions.includes(option.label)
-    );
+    const value = groupedOptions
+      .flatMap((item) => [...item.options])
+      .filter((option) => selectedOptions.includes(option.label));
+
     setValue(value);
-  }, [options, selectedOptions]);
+  }, [groupedOptions, selectedOptions]);
 
   const onChange = (values: OptionType<MultiSelectOptionType>[]) => {
     if (isUndefined(selectedOptions)) {
@@ -67,16 +76,23 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     <MultiSelectContainer
       outlined={isUndefined(theme)}
       hideClearIndicator={hideClearIndicator}
-      data-testid="multi-select-container"
+      data-testid="multi-select-group-container"
       aria-label={`${title} list`}
     >
       {renderTitleAboveSelectComponent(title, titlePlacement)}
       <Select
         isMulti
-        options={options}
+        options={groupedOptions}
         // aria-labelledby={title}
         value={value}
         onChange={onChange}
+        isOptionDisabled={(option: { value: string }) => {
+          // Since data structure to the component is of just an array of string,
+          // it is a bit cumbersome to specify which options should be disabled
+          // higher up in the component hierarchy. For now, just make the string
+          // "No options available" the default fallback for no options.
+          return option.value === MULTISELECT_NO_RESULTS;
+        }}
         formatOptionLabel={
           formatOptionLabel || formatOptionLabelDefault(isTextCapitalized)
         }

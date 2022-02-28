@@ -88,16 +88,6 @@ export const WellsFilter = () => {
     setWellsFilters(filtersToApply);
   };
 
-  const handleClear = (changes: Record<number, WellFilterOptionValue[]>) => {
-    setSelectedOptions({
-      ...selectedOptions,
-      ...changes,
-    });
-
-    const filtersToApply = { ...filters, ...changes };
-    setWellsFilters(filtersToApply);
-  };
-
   // eg: "Well Characteristics"
   const WellFilters: React.FC<{
     filterConfigs: FilterConfig[];
@@ -171,7 +161,6 @@ export const WellsFilter = () => {
                     regionFieldBlockConfig={category.filterConfigs}
                     onValueChange={onValueChange}
                     selectedOptions={selectedOptions}
-                    handleClear={handleClear}
                   />
                   {/*
                     Keeping Operator here as it might be used in the future as a relation with the region/field/block

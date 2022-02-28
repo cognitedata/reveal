@@ -1,6 +1,9 @@
 import { fetchGet, FetchHeaders } from 'utils/fetch';
 
-import { WellGeometryListResponse } from '@cognite/discover-api-types';
+import {
+  WellGeometryListResponse,
+  WellGroupsResponse,
+} from '@cognite/discover-api-types';
 
 import { SIDECAR } from 'constants/app';
 
@@ -29,13 +32,8 @@ export const well = {
     project: string;
   }) => {
     // type tmp_type = Record<string, Record<string, string[]>>;
-    type tmp_type = {
-      regions: Record<string, unknown>;
-      fields: Record<string, { region?: string }>;
-      blocks: Record<string, { region?: string; field?: string }>;
-    };
 
-    return fetchGet<tmp_type>(
+    return fetchGet<WellGroupsResponse>(
       `${SIDECAR.discoverApiBaseUrl}/${project}/${URL}/groups`,
       {
         headers,

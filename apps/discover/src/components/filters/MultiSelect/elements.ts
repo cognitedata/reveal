@@ -31,6 +31,14 @@ export const MultiSelectContainer = styled.div`
       border: var(--cogs-input-hover-border) !important;
     }
   }
+  .cogs-select__option--is-disabled {
+    color: var(--cogs-greyscale-grey6) !important;
+    background-color: white !important;
+    &:hover {
+      background-color: inherit;
+      cursor: default !important;
+    }
+  }
   .cogs-select__option {
     color: var(--cogs-text-primary);
   }

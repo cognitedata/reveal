@@ -27,6 +27,8 @@ import { UserPreferredUnit } from '../../constants/units';
 import { PossibleDateRangeDate } from '../../utils/date';
 import { DocumentType } from '../documentSearch/types';
 
+import { FilterIDs } from './constants';
+
 export const TOGGLE_SELECTED_WELLS = 'WELL_TOGGLE_SELECTED_WELLS';
 export const TOGGLE_SELECTED_WELLBORE_OF_WELL =
   'WELL_TOGGLE_SELECTED_WELLBORE_OF_WELL';
@@ -261,6 +263,7 @@ export type TrackType =
 export enum FilterTypes {
   CHECKBOXES,
   MULTISELECT,
+  MULTISELECT_GROUP,
   NUMERIC_RANGE,
   DATE_RANGE,
 }
@@ -452,3 +455,18 @@ export type MeasurementChartData = Partial<PlotData> & {
 export type MeasurementChartDataV3 = Partial<PlotData> & {
   measurementType: MeasurementTypeV3;
 };
+
+export type RegionFieldBlock =
+  | FilterIDs.REGION
+  | FilterIDs.FIELD
+  | FilterIDs.BLOCK;
+
+export type RegionFieldBlockHierarchy = {
+  [key in RegionFieldBlock]: {
+    parents: RegionFieldBlock[];
+    children: RegionFieldBlock[];
+    revalidate: { reference: RegionFieldBlock; filterId: RegionFieldBlock }[];
+  };
+};
+
+export type RegionFieldBlockResult = { [key in RegionFieldBlock]: string[] };

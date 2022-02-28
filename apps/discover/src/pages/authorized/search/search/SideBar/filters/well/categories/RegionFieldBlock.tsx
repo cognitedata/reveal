@@ -1,17 +1,16 @@
 import React from 'react';
 
-import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import { useWellGroupsQuery } from 'services/well/useWellQuery';
 
-import { SegmentedControl } from '@cognite/cogs.js';
-
+import { MULTISELECT_NO_RESULTS } from 'components/filters/MultiSelect/constants';
 import { FilterIDs } from 'modules/wellSearch/constants';
 import {
   BLOCK,
   REGION,
   FIELD,
 } from 'modules/wellSearch/constantsSidebarFilters';
+import { useRegionsFieldsBlocksRelationship } from 'modules/wellSearch/hooks/useRegionsFieldsBlocksRelationship';
 import {
   FilterConfig,
   FilterTypes,
@@ -22,8 +21,7 @@ import {
 
 import { CommonFilter } from '../CommonFilter';
 
-import { ChangeWarningModal } from './RegionFieldBlock.modal';
-import { FooterRegion, FooterField } from './RegionFieldBlockFooters';
+import { restFilters } from './utils';
 
 interface RegionFieldBlockProps {
   onValueChange: (
@@ -34,35 +32,38 @@ interface RegionFieldBlockProps {
   ) => void;
   selectedOptions: WellFilterMap;
   regionFieldBlockConfig: FilterConfig[];
-  handleClear: (changes: Record<number, WellFilterOptionValue[]>) => void;
 }
-// type Tabs = 'field' | 'block';
+
 export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
   onValueChange,
   selectedOptions,
   regionFieldBlockConfig,
-  handleClear,
 }) => {
-  const [currentTab, setCurrentTab] = React.useState<string>('field');
   const { data: wellGroups } = useWellGroupsQuery();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  const allRegions = new Set(Object.keys(wellGroups?.regions || []));
+  const getRelationship = useRegionsFieldsBlocksRelationship(
+    wellGroups,
+    selectedOptions
+  );
+
+  const selectedRegions: WellFilterMapValue = selectedOptions[FilterIDs.REGION];
+  const selectedFields: WellFilterMapValue = selectedOptions[FilterIDs.FIELD];
+  const selectedBlocks: WellFilterMapValue = selectedOptions[FilterIDs.BLOCK];
+
+  const allRegions = Object.keys(wellGroups?.regions || []);
   const allFields = Object.keys(wellGroups?.fields || []);
   const allBlocks = Object.keys(wellGroups?.blocks || []);
 
-  const regionOptionsToDisplay: Set<WellFilterOptionValue> = allRegions;
-  let fieldOptionsToDisplay: WellFilterOptionValue[] = [];
-  let blockOptionsToDisplay: WellFilterOptionValue[] = [];
+  const [regionOptionsToDisplay, setRegion] = React.useState<string[]>([]);
+  const [fieldOptionsToDisplay, setField] = React.useState<string[]>([]);
+  const [blockOptionsToDisplay, setBlock] = React.useState<string[]>([]);
 
-  if (!wellGroups) {
-    return null;
-  }
-
-  //   console.log('RegionFieldBlock filterOptions', filterOptions);
-  //   console.log('RegionFieldBlock selectedOptions', selectedOptions);
-  //   console.log('RegionFieldBlock regionFieldBlock', regionFieldBlockConfig);
-  //   console.log('groups', wellGroups);
+  const hasRegionOrFieldApplied =
+    selectedRegions?.length > 0 || selectedFields?.length > 0;
+  const hasRegionOrBlockApplied =
+    selectedRegions?.length > 0 || selectedBlocks?.length > 0;
+  const hasFieldOrBlockApplied =
+    selectedFields?.length > 0 || selectedBlocks?.length > 0;
 
   const regionConfig = regionFieldBlockConfig.find(
     (category) => category.name === REGION
@@ -74,144 +75,47 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
     (category) => category.name === BLOCK
   );
 
-  // **
-  // structure ONE
-  // **
-  //   const allRegions = Object.keys(wellGroups);
-  //   const allFields = Object.keys(wellGroups).flatMap((region) => {
-  //     return Object.keys(wellGroups[region]);
-  //   });
-  //   const allBlocks = Object.keys(wellGroups).flatMap((region) => {
-  //     return Object.values(wellGroups[region]).flatMap((blocks) => blocks);
-  //   });
-  //   const regionOptionsToDisplay: WellFilterOptionValue[] = allRegions;
-  //   let fieldOptionsToDisplay: WellFilterOptionValue[] = [];
-  //   let blockOptionsToDisplay: WellFilterOptionValue[] = [];
+  React.useEffect(() => {
+    if (!regionConfig) return;
 
-  //   if (!regionConfig || !fieldConfig) {
-  //     console.error('Broken well filter configs');
-  //     return null;
-  //   }
+    const {
+      [FilterIDs.FIELD]: updatingField,
+      [FilterIDs.BLOCK]: updatingBlock,
+    } = getRelationship(FilterIDs.REGION);
 
-  //   const selectedRegions: WellFilterMapValue = selectedOptions[regionConfig?.id];
-  //   const selectedFields: WellFilterMapValue = selectedOptions[fieldConfig?.id];
-  //   console.log('selectedRegions', selectedRegions);
+    setField(updatingField);
+    setBlock(updatingBlock);
 
-  //   // check to see if we need to filter the FIELD list
-  //   if (isArray(selectedRegions) && selectedRegions.length > 0) {
-  //     fieldOptionsToDisplay = selectedRegions.flatMap((region) => {
-  //       //   console.log('selectedRegion', region);
-  //       if (isString(region)) {
-  //         return Object.keys(wellGroups[region]);
-  //       }
+    // Triggered on 'regions'-field updates
+  }, [selectedRegions, regionConfig]);
 
-  //       return [];
-  //     });
-  //     // console.log('fields', fields);
-  //   } else {
-  //     fieldOptionsToDisplay = allFields;
-  //   }
+  React.useEffect(() => {
+    if (!fieldConfig) return;
 
-  //   // check to see if we need to filter the BLOCK list
-  //   if (isArray(selectedFields) && selectedFields.length > 0) {
-  //     blockOptionsToDisplay = selectedFields.flatMap((field) => {
-  //     //   console.log('selectedFields', field);
-  //       if (isString(field)) {
-  //           const blocksInField = Object.values(wellGroups[field])
-  //         return Object.values(wellGroups[field]).flatMap((blocks) => blocks);
-  //       }
-  //       return [];
-  //     });
-  //   } else {
-  //     blockOptionsToDisplay = allBlocks;
-  //   }
+    const {
+      [FilterIDs.REGION]: updatingRegion,
+      [FilterIDs.BLOCK]: updatingBlock,
+    } = getRelationship(FilterIDs.FIELD);
 
-  // **
-  // structure TWO
-  // **
+    setRegion(updatingRegion);
+    setBlock(updatingBlock);
 
-  const selectedRegions: WellFilterMapValue = selectedOptions[FilterIDs.REGION];
-  const selectedFields: WellFilterMapValue = selectedOptions[FilterIDs.FIELD];
-  //   console.log('selectedRegions', selectedRegions);
+    // Triggered on 'fields'-field updates
+  }, [selectedFields, fieldConfig]);
 
-  // check to see if we need to filter the FIELD list
-  if (isArray(selectedRegions) && selectedRegions.length > 0) {
-    fieldOptionsToDisplay = selectedRegions.flatMap((region) => {
-      //   console.log('selectedRegion', region);
-      return allFields.filter((field) => {
-        return wellGroups.fields[field].region === region;
-      });
-    });
-    // console.log('fields', fields);
-  } else {
-    fieldOptionsToDisplay = allFields;
-  }
+  React.useEffect(() => {
+    if (!blockConfig) return;
 
-  // check to see if we need to filter the BLOCK list
-  if (isArray(selectedFields) && selectedFields.length > 0) {
-    blockOptionsToDisplay = selectedFields.flatMap((field) => {
-      // console.log('selectedFields', field);
-      return allBlocks.filter((block) => {
-        const matchingField = wellGroups.blocks[block].field === field;
+    const {
+      [FilterIDs.REGION]: updatingRegion,
+      [FilterIDs.FIELD]: updatingField,
+    } = getRelationship(FilterIDs.BLOCK);
 
-        // also add the matching regions to the selection
-        if (matchingField) {
-          const possibleRegion = wellGroups.blocks[block].region;
-          if (possibleRegion) {
-            // regionOptionsToDisplay.add(possibleRegion);
-          }
-        }
-        return matchingField;
-      });
-    });
-  } else {
-    blockOptionsToDisplay = allBlocks;
-  }
+    setRegion(updatingRegion);
+    setField(updatingField);
 
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const toggleTab = () => {
-    setCurrentTab(currentTab === 'field' ? 'block' : 'field');
-  };
-
-  const clearSettingsAndChangeTab = () => {
-    toggleTab();
-
-    // unset all filters on tab change
-    handleClear({
-      [FilterIDs.FIELD]: [],
-      [FilterIDs.BLOCK]: [],
-    });
-  };
-
-  const handleAccept = () => {
-    setIsModalOpen(false);
-    clearSettingsAndChangeTab();
-  };
-
-  const onTabClick = (tab: string) => {
-    if (tab === currentTab) {
-      return;
-    }
-
-    // we don't need the modal if there are no current selections
-    if (currentTab === 'field') {
-      if (isEmpty(selectedFields)) {
-        toggleTab();
-        return;
-      }
-    }
-    if (currentTab === 'block') {
-      if (isEmpty(selectedOptions[FilterIDs.BLOCK])) {
-        toggleTab();
-        return;
-      }
-    }
-
-    setIsModalOpen(true);
-  };
+    // Triggered on 'blocks'-field updates
+  }, [selectedBlocks, blockConfig]);
 
   const updateRegionSelection = (selectedVals: WellFilterOptionValue[]) => {
     onValueChange(FilterIDs.REGION, FilterIDs.REGION, selectedVals, REGION);
@@ -221,11 +125,16 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
     onValueChange(FilterIDs.FIELD, FilterIDs.FIELD, selectedVals, FIELD);
   };
 
-  // we don't need to segment if both types are not enabled
-  const showSegmentControl = fieldConfig && blockConfig;
+  const updateBlockSelection = (
+    selectedVals: WellFilterOptionValue[],
+    id: number
+  ) => {
+    onValueChange(FilterIDs.BLOCK, id, selectedVals, BLOCK);
+  };
 
-  const showFieldFilter = currentTab === 'field' && fieldConfig;
-  const showBlockFilter = currentTab === 'block' && blockConfig;
+  if (!wellGroups) {
+    return null;
+  }
 
   return (
     <>
@@ -235,36 +144,39 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
           filterConfig={{
             id: FilterIDs.REGION,
             name: REGION,
-            type: FilterTypes.MULTISELECT,
+            type: FilterTypes.MULTISELECT_GROUP,
           }}
           onValueChange={(_id: number, selectedVals: WellFilterOptionValue[]) =>
             updateRegionSelection(selectedVals)
           }
           options={Array.from(regionOptionsToDisplay)}
+          groupedOptions={[
+            {
+              label: 'Related regions to your previous selections',
+              options:
+                regionOptionsToDisplay.length === 0 && hasFieldOrBlockApplied
+                  ? [MULTISELECT_NO_RESULTS]
+                  : regionOptionsToDisplay,
+            },
+            {
+              label: isEmpty(regionOptionsToDisplay)
+                ? 'All regions'
+                : 'Remaining regions',
+              options: restFilters(allRegions, regionOptionsToDisplay),
+            },
+          ]}
           selectedOptions={selectedRegions}
           displayFilterTitle
-          footer={isEmpty(selectedFields) ? undefined : FooterRegion}
         />
       )}
 
-      {showSegmentControl && (
-        <SegmentedControl
-          currentKey={currentTab}
-          onButtonClicked={onTabClick}
-          fullWidth
-        >
-          <SegmentedControl.Button key="field">Field</SegmentedControl.Button>
-          <SegmentedControl.Button key="block">Block</SegmentedControl.Button>
-        </SegmentedControl>
-      )}
-
-      {showFieldFilter && (
+      {fieldConfig && (
         <CommonFilter
           key={`filter-${FilterIDs.FIELD}`}
           filterConfig={{
             id: FilterIDs.FIELD,
             name: FIELD,
-            type: FilterTypes.MULTISELECT,
+            type: FilterTypes.MULTISELECT_GROUP,
           }}
           onValueChange={(
             _id: number,
@@ -273,36 +185,56 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
             updateFieldSelection(selectedVals);
           }}
           options={fieldOptionsToDisplay}
+          groupedOptions={[
+            {
+              label: 'Related fields to your previous selections',
+              options:
+                fieldOptionsToDisplay.length === 0 && hasRegionOrBlockApplied
+                  ? [MULTISELECT_NO_RESULTS]
+                  : fieldOptionsToDisplay,
+            },
+            {
+              label: isEmpty(fieldOptionsToDisplay)
+                ? 'All fields'
+                : 'Remaining fields',
+              options: restFilters(allFields, fieldOptionsToDisplay),
+            },
+          ]}
           selectedOptions={selectedFields}
-          displayFilterTitle={!showSegmentControl}
-          footer={isEmpty(selectedRegions) ? undefined : FooterField}
         />
       )}
 
-      {showBlockFilter && (
+      {blockConfig && (
         <CommonFilter
           key={`filter-${FilterIDs.BLOCK}`}
           filterConfig={{
             id: FilterIDs.BLOCK,
             name: BLOCK,
-            type: FilterTypes.MULTISELECT,
+            type: FilterTypes.MULTISELECT_GROUP,
           }}
           onValueChange={(
             id: number,
             selectedVals: WellFilterOptionValue[]
           ) => {
-            onValueChange(FilterIDs.BLOCK, id, selectedVals, BLOCK);
+            updateBlockSelection(selectedVals, id);
           }}
+          groupedOptions={[
+            {
+              label: 'Related blocks to your previous selections',
+              options:
+                blockOptionsToDisplay.length === 0 && hasRegionOrFieldApplied
+                  ? [MULTISELECT_NO_RESULTS]
+                  : blockOptionsToDisplay,
+            },
+            {
+              label: isEmpty(blockOptionsToDisplay)
+                ? 'All blocks'
+                : 'Remaining blocks',
+              options: restFilters(allBlocks, blockOptionsToDisplay),
+            },
+          ]}
           options={blockOptionsToDisplay}
-          selectedOptions={selectedOptions[FilterIDs.BLOCK]}
-          displayFilterTitle={!showSegmentControl}
-        />
-      )}
-
-      {isModalOpen && (
-        <ChangeWarningModal
-          handleClose={handleClose}
-          handleAccept={handleAccept}
+          selectedOptions={selectedBlocks}
         />
       )}
     </>

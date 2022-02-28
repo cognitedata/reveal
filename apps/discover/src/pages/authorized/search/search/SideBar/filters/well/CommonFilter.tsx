@@ -3,8 +3,10 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
+import layers from 'utils/zindex';
 
 import { NumericRangeFilter, MultiSelect } from 'components/filters';
+import { MultiSelectGroup } from 'components/filters/MultiSelect/MultiSelectGroup';
 import {
   FilterConfig,
   FilterTypes,
@@ -23,6 +25,10 @@ export type Props = {
     'type' | 'id' | 'name' | 'isTextCapitalized'
   >;
   onValueChange: (filterId: number, value: any) => void;
+  groupedOptions?: {
+    label: string;
+    options: (WellFilterOption | WellFilterOptionValue)[];
+  }[];
   options: (WellFilterOption | WellFilterOptionValue)[];
   selectedOptions: string | WellFilterOptionValue[];
   displayFilterTitle?: boolean;
@@ -33,6 +39,7 @@ export const CommonFilter = ({
   filterConfig,
   onValueChange,
   selectedOptions,
+  groupedOptions,
   options: originalOptions,
   displayFilterTitle = true,
   footer,
@@ -73,6 +80,7 @@ export const CommonFilter = ({
     <MultiSelectWrapper>
       <MultiSelect
         options={options}
+        groupedOptions={groupedOptions}
         selectedOptions={
           isArray(selectedOptions) ? selectedOptions : [selectedOptions]
         }
@@ -81,6 +89,32 @@ export const CommonFilter = ({
         onValueChange={(values: string[]) => onValueChange(filterId, values)}
         isTextCapitalized={isTextCapitalized}
         footer={footer}
+      />
+    </MultiSelectWrapper>
+  );
+
+  const createMultiSelectGroupElement = () => (
+    <MultiSelectWrapper>
+      <MultiSelectGroup
+        groupedOptions={groupedOptions}
+        selectedOptions={
+          isArray(selectedOptions) ? selectedOptions : [selectedOptions]
+        }
+        title={title}
+        titlePlacement="top"
+        onValueChange={(values: string[]) => onValueChange(filterId, values)}
+        isTextCapitalized={isTextCapitalized}
+        footer={footer}
+        styles={{
+          groupHeading: (base: any) => ({
+            ...base,
+            textTransform: 'inherit',
+            position: 'sticky',
+            top: 0,
+            background: 'white',
+            zIndex: layers.FILTER_HEADER,
+          }),
+        }}
       />
     </MultiSelectWrapper>
   );
@@ -123,6 +157,8 @@ export const CommonFilter = ({
   ) {
     // console.log('Multiselect:', title || 'unknown');
     returnElement = createMultiSelectElement();
+  } else if (filterType === FilterTypes.MULTISELECT_GROUP) {
+    returnElement = createMultiSelectGroupElement();
   } else if (filterType === FilterTypes.CHECKBOXES) {
     // console.log('Checkbox:', title || 'unknown');
     returnElement = createCheckboxElement();
