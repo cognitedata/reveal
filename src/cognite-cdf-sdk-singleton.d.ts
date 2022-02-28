@@ -9,8 +9,6 @@ declare module '@cognite/cdf-sdk-singleton' {
     | 'FAKE_IDP'
     | 'UNKNOWN';
 
-  export declare function getFlow(): { flow: Flow };
-
   export declare function loginAndAuthIfNeeded(
     project: string,
     env?: string
