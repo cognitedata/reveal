@@ -1,5 +1,8 @@
 import React from 'react';
-import { Tooltip, Icon, Colors } from '@cognite/cogs.js';
+
+import { Icon, Colors } from '@cognite/cogs.js';
+
+import Tooltip from 'components/Tooltip/Tooltip';
 import { useActiveTableContext } from 'contexts';
 import { FULL_PROFILE_LIMIT, useFullProfile } from 'hooks/profiling-service';
 

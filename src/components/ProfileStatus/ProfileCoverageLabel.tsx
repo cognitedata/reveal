@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import styled, { keyframes } from 'styled-components';
 
 import {
   ProfileCoverageType,
   ProfileResultType,
 } from 'hooks/profiling-service';
+import Tooltip from 'components/Tooltip/Tooltip';
 
 type ProfileCoverageLabelProps = {
   coverageType: ProfileCoverageType;

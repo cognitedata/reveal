@@ -1,12 +1,13 @@
 import React, { MouseEvent, useState } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Body, Button, Colors, Icon, Menu, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Colors, Icon, Menu } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 import Dropdown from 'components/Dropdown/Dropdown';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { useActiveTable } from 'hooks/table-tabs';
 
 type SidePanelTableListItemProps = {

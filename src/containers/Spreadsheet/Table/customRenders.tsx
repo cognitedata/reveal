@@ -1,15 +1,8 @@
 import React, { useContext, useState } from 'react';
+
+import { Body, Button, Colors, Flex, Icon, Title } from '@cognite/cogs.js';
 import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
-import {
-  Body,
-  Button,
-  Colors,
-  Flex,
-  Icon,
-  Title,
-  Tooltip,
-} from '@cognite/cogs.js';
 
 import {
   RawExplorerContext,
@@ -18,6 +11,7 @@ import {
 } from 'contexts';
 
 import ColumnIcon, { COLUMN_ICON_WIDTH } from 'components/ColumnIcon';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { CustomIcon } from 'components/CustomIcon';
 import UploadCSV from 'components/UploadCSV';
 import { useQueryClient } from 'react-query';
