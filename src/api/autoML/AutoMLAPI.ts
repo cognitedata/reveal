@@ -108,13 +108,13 @@ export class AutoMLAPI {
 
       return response.data;
     } catch (error) {
-      const formatedError = `Could not delete model: ${JSON.stringify(
+      const formattedError = `Could not delete model: ${JSON.stringify(
         error,
         null,
         4
       )}`;
-      ToastUtils.onFailure(formatedError);
-      console.error(formatedError);
+      ToastUtils.onFailure(formattedError);
+      console.error(formattedError);
     }
     return undefined;
   };

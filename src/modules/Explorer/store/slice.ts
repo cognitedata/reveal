@@ -124,6 +124,9 @@ const explorerSlice = createGenericTabularDataSlice({
     addExplorerUploadedFileId(state, action: PayloadAction<number>) {
       state.uploadedFileIds.push(action.payload);
     },
+    clearExplorerUploadedFileIds(state) {
+      state.uploadedFileIds = [];
+    },
     resetExplorerTemporaryState(state) {
       state.uploadedFileIds = [];
       state.showFileUploadModal = false;
@@ -216,6 +219,7 @@ export const {
   setMapTableTabKey,
   setLoadingAnnotations,
   addExplorerUploadedFileId,
+  clearExplorerUploadedFileIds,
   resetExplorerTemporaryState,
   setIsLoading,
   setPercentageScanned,
