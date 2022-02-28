@@ -67,7 +67,7 @@
     "@types/dat.gui": "0.7.7",
     "@types/jest": "26.0.24",
     "@types/jsdom": "16.2.14",
-    "@types/lodash": "4.14.178",
+    "@types/lodash": "4.14.179",
     "@types/mixpanel-browser": "2.38.0",
     "@types/node": "14.18.12",
     "@types/offscreencanvas": "^2019.6.4",
@@ -77,7 +77,7 @@
     "@typescript-eslint/eslint-plugin": "4.33.0",
     "@typescript-eslint/parser": "4.33.0",
     "copy-pkg-json-webpack-plugin": "0.0.40",
-    "copy-webpack-plugin": "6.4.1",
+    "copy-webpack-plugin": "10.2.4",
     "core-js": "3.21.1",
     "cross-var": "1.1.0",
     "dat.gui": "0.7.9",
@@ -119,7 +119,7 @@
     "worker-plugin": "5.0.1"
   },
   "peerDependencies": {
-    "@cognite/sdk": "^5.0.0",
+    "@cognite/sdk": "^5.0.0 || ^6.0.0 || ^7.0.0",
     "@cognite/sdk-core": "^3.0.0"
   },
   "glslify": {
