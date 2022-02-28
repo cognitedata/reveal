@@ -78,7 +78,7 @@ const StyledSideBarMenu = styled.div`
   height: 100%;
   flex-direction: column;
   justify-content: space-between;
-  width: 57px; // fit to the navbar's 56px + 1px of border
+  width: 56px; // fit to the navbar's 56px + 1px of border
   padding: 0 1rem;
   border-right: solid 1px var(--cogs-greyscale-grey3);
 `;
@@ -114,4 +114,5 @@ const StyledItem = styled.div<StyledIconProps>`
 const StyledSplitter = styled.div`
   border-top: solid 1px var(--cogs-greyscale-grey4);
   height: 4px;
+  margin-top: 20px;
 `;

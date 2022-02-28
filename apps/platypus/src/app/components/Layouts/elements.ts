@@ -73,7 +73,6 @@ export const SplitPanel = styled.div`
     align-self: stretch;
     display: flex;
     align-items: center;
-    padding-right: 5px;
   }
 
   .divider {
