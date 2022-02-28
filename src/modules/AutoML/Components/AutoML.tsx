@@ -11,12 +11,14 @@ import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { PopulateCustomModel } from 'src/store/thunks/Process/PopulateCustomModel';
 import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';
 import { AutoMLModelList } from './AutoMLModelList';
+import { AutoMLPredictionDocModal } from './AutoMLPredictionDocModal';
 
 const AutoML = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [selectedModelId, setSelectedModelId] = useState<number>();
   const [downloadingModel, setDownloadingModel] = useState<boolean>(false);
+  const [showApiDocModal, setShowApiDocModal] = useState<boolean>(false);
 
   const [models, setModels] = useState<AutoMLModel[] | undefined>();
 
@@ -64,6 +66,10 @@ const AutoML = () => {
     }
   };
 
+  const handleOnGetPredictionURL = () => {
+    setShowApiDocModal(true);
+  };
+
   const onRowClick = (id: number) => {
     setSelectedModelId(id);
   };
@@ -91,8 +97,18 @@ const AutoML = () => {
             downloadingModel={downloadingModel}
             handleOnDelete={handleOnDelete}
             handleOnContextualize={handleOnContextualize}
+            handleOnGetPredictionURL={handleOnGetPredictionURL}
           />
         </Right>
+        {showApiDocModal && (
+          <AutoMLPredictionDocModal
+            selectedModelId={selectedModelId}
+            showModal={showApiDocModal}
+            onCancel={() => {
+              setShowApiDocModal(false);
+            }}
+          />
+        )}
       </Container>
     </>
   );

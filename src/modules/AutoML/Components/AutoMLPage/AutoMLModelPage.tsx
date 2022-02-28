@@ -24,6 +24,7 @@ export const AutoMLModelPage = (props: {
   handleDownload: () => void;
   handleOnDelete: () => void;
   handleOnContextualize: (model: AutoMLTrainingJob | undefined) => void;
+  handleOnGetPredictionURL: () => void;
 }) => {
   const [hideDropDown, setHideDropDown] = useState<boolean>(true);
   const [model, setModel] = useState<AutoMLTrainingJob>();
@@ -75,6 +76,17 @@ export const AutoMLModelPage = (props: {
         <Icon type="Download" style={{ marginRight: 17 }} />
         <Detail strong style={{ color: 'inherit' }}>
           Download model
+        </Detail>
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          props.handleOnGetPredictionURL();
+          setHideDropDown(true);
+        }}
+      >
+        <Icon type="World" style={{ marginRight: 17 }} />
+        <Detail strong style={{ color: 'inherit' }}>
+          Prediction URL
         </Detail>
       </Menu.Item>
     </Menu>
