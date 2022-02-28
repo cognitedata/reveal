@@ -9,6 +9,7 @@ import {
   deleteComponents,
   removeDetection,
   saveDetection,
+  updateComponents,
   updateDataElementState,
 } from './utils';
 
@@ -189,6 +190,20 @@ function reducer(state: AppState, action: AppAction) {
       const equipmentToSave = deleteComponents(
         state.equipment.data!,
         action.componentIds
+      );
+
+      return {
+        ...state,
+        saveState: {
+          loading: true,
+          data: equipmentToSave,
+        },
+      };
+    }
+    case AppActionType.UPDATE_COMPONENTS: {
+      const equipmentToSave = updateComponents(
+        state.equipment.data!,
+        action.components
       );
 
       return {

@@ -186,7 +186,7 @@ export const DataSource = ({
           value !== originalValue
         }
       >
-        <div className="cogs-detail">Set as primary value</div>
+        <span className="cogs-detail">Set as primary value</span>
         {isApproving && (
           <Styled.LoaderContainer>
             <Icon type="Loader" />

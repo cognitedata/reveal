@@ -8,7 +8,12 @@ import {
 } from 'scarlet/hooks';
 import { AppActionType, EquipmentComponentGroup } from 'scarlet/types';
 
-import { ComponentGroups, ComponentList, ComponentsDeletion } from '..';
+import {
+  ComponentGroups,
+  ComponentList,
+  ComponentsDeletion,
+  ComponentsRenaming,
+} from '..';
 
 import * as Styled from './style';
 
@@ -19,7 +24,9 @@ export const ComponentPanel = () => {
   const [isMenuActive, setMenuActive] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
   const [isDeleteView, setIsDeleteView] = useState(false);
+  const [isRenameView, setIsRenameView] = useState(false);
   const { components, loading } = useEquipmentComponentsByType(
     currentGroup?.type
   );
@@ -31,6 +38,7 @@ export const ComponentPanel = () => {
   useEffect(() => {
     setMenuActive(false);
     setIsDeleteView(false);
+    setIsRenameView(false);
   }, [currentGroup]);
 
   useEffect(() => {
@@ -43,8 +51,21 @@ export const ComponentPanel = () => {
 
     if (isDeleting && !appState.saveState.loading) {
       setIsDeleting(false);
+      setIsDeleteView(false);
       if (appState.saveState.error) {
         toast.error(`Failed to delete ${groupLabel}s`);
+      } else {
+        toast.success(`Successfully deleted ${groupLabel}s`);
+      }
+    }
+
+    if (isRenaming && !appState.saveState.loading) {
+      setIsRenaming(false);
+      setIsRenameView(false);
+      if (appState.saveState.error) {
+        toast.error(`Failed to rename ${groupLabel}s`);
+      } else {
+        toast.success(`Successfully renamed ${groupLabel}s`);
       }
     }
   }, [appState.saveState.loading]);
@@ -68,12 +89,24 @@ export const ComponentPanel = () => {
     });
   };
 
+  const onRenameComponents = (names: { [componentId: string]: string }) => {
+    const components = Object.keys(names).map((id) => ({
+      id,
+      name: names[id],
+    }));
+    setIsRenaming(true);
+    appDispatch({
+      type: AppActionType.UPDATE_COMPONENTS,
+      components,
+    });
+  };
+
   return (
     <Styled.Container>
       <Styled.Header>
         <ComponentGroups group={currentGroup} onChange={setCurrentGroup} />
 
-        {currentGroup && !isDeleteView && (
+        {currentGroup && !isDeleteView && !isRenameView && (
           <Styled.TopBar>
             <Styled.TopBarContent className="cogs-body-2">
               {components.length
@@ -107,6 +140,15 @@ export const ComponentPanel = () => {
                   <Styled.MenuItem onClick={onAddComponent}>
                     <Icon type="Add" /> Add new {groupLabel}
                   </Styled.MenuItem>
+                  <Styled.MenuItem
+                    disabled={!components?.length}
+                    onClick={() => {
+                      setIsRenameView(true);
+                      toggleMenu();
+                    }}
+                  >
+                    <Icon type="Edit" /> Edit {groupLabel} names
+                  </Styled.MenuItem>
                 </Styled.Menu>
               )}
             </Styled.MenuWrapper>
@@ -123,7 +165,17 @@ export const ComponentPanel = () => {
         />
       )}
 
-      {!isDeleteView && components.length > 0 && (
+      {isRenameView && (
+        <ComponentsRenaming
+          group={currentGroup!}
+          components={components}
+          loading={isDeleting}
+          onClose={() => setIsRenameView(false)}
+          onRename={onRenameComponents}
+        />
+      )}
+
+      {!isDeleteView && !isRenameView && components.length > 0 && (
         <Styled.ContentWrapper>
           <ComponentList
             key={currentGroup?.type}
@@ -132,7 +184,7 @@ export const ComponentPanel = () => {
           />
         </Styled.ContentWrapper>
       )}
-      {!isDeleteView && !components.length && !loading && (
+      {!isDeleteView && !isRenameView && !components.length && !loading && (
         <Styled.AddButtonContainer>
           <Button
             type="tertiary"
@@ -146,12 +198,13 @@ export const ComponentPanel = () => {
         </Styled.AddButtonContainer>
       )}
 
-      {(isAdding || isDeleting) && (
+      {(isAdding || isDeleting || isRenaming) && (
         <Styled.LoaderContainer>
           <Icon type="Loader" size={32} />
           <Styled.LoaderContent className="cogs-body-2 strong">
             {isAdding && 'Creating component...'}
             {isDeleting && 'Deleting components...'}
+            {isRenaming && 'Renaming components...'}
           </Styled.LoaderContent>
         </Styled.LoaderContainer>
       )}

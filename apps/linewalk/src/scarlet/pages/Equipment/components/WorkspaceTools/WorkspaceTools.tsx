@@ -110,10 +110,12 @@ export const WorkspaceTools = ({ ornateRef }: WorkspaceToolsProps) => {
   useEffect(() => {
     if (activeTool === 'rect') {
       ornateRef?.stage.on('mouseup', onDrawingFinished);
-    } else {
-      ornateRef?.stage.off('mouseup', onDrawingFinished);
     }
-  }, [activeTool]);
+
+    return () => {
+      ornateRef?.stage.off('mouseup', onDrawingFinished);
+    };
+  }, [activeTool, onDrawingFinished]);
 
   if (enabledTools.length === 1) return null;
 

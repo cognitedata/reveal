@@ -4,6 +4,7 @@ export * from './DataElement';
 export * from './Card';
 export * from './CardHeader';
 export * from './ComponentsDeletion';
+export * from './ComponentsRenaming';
 export * from './ComponentGroups';
 export * from './ComponentList';
 export * from './ComponentPanel';

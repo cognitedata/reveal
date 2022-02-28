@@ -219,3 +219,21 @@ export const deleteComponents = (
   );
   return equipment;
 };
+export const updateComponents = (
+  equipmentOrigin: EquipmentData,
+  componentsWithUpdates: Partial<EquipmentComponent>[]
+) => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  equipment.components = equipment.components.map((component) => {
+    const update = componentsWithUpdates.find(
+      (item) => item.id === component.id
+    );
+    return !update
+      ? component
+      : {
+          ...component,
+          ...update,
+        };
+  });
+  return equipment;
+};

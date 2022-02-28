@@ -7,7 +7,7 @@ const getAppName = (value: string) => ['scarlet', 'dataPanel', value].join('_');
 
 const getInitialState = (): DataPanelState => ({
   isVisible:
-    sessionStorage?.getItem(getAppName('isVisible')) === 'true' || false,
+    sessionStorage?.getItem(getAppName('isVisible')) === 'true' || true,
   currentOrigin:
     (sessionStorage?.getItem(
       getAppName('currentOrigin')
@@ -38,9 +38,14 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
     }
 
     case DataPanelActionType.SET_CURRENT_ORIGIN: {
+      if (action.origin === state.currentOrigin) return state;
+
       return {
         ...state,
         currentOrigin: action.origin,
+        visibleDataElement: undefined,
+        activeDetection: undefined,
+        activeNewDataSource: false,
       };
     }
 

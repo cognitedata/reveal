@@ -28,4 +28,6 @@ export const Delimiter = styled.div`
 export const LoaderContainer = styled.div`
   margin-left: 12px;
   line-height: 0;
+  display: inline-block;
+  vertical-align: middle;
 `;

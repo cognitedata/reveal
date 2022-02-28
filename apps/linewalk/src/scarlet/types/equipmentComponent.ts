@@ -2,6 +2,7 @@ import { DataElement } from '.';
 
 export type EquipmentComponent = {
   id: string;
+  name?: string;
   pcmsName?: string;
   scannerId?: string;
   type: EquipmentComponentType;

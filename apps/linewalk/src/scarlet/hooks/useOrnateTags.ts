@@ -24,12 +24,30 @@ export const useOrnateTags = (): {
           .map((component) => component.componentElements) || []),
       ]
         .flat()
-        .filter(
-          (item) =>
-            item.state !== DataElementState.OMITTED &&
-            item.detections?.length &&
-            (!visibleDataElement || item.key === visibleDataElement.key)
-        ),
+        .filter((item) => {
+          // filter by state and amount of detections
+          if (
+            item.state === DataElementState.OMITTED &&
+            !item.detections?.length
+          ) {
+            return false;
+          }
+
+          // filter by data-element key
+          if (visibleDataElement && item.key !== visibleDataElement.key) {
+            return false;
+          }
+
+          // filter by component id
+          if (
+            visibleDataElement?.componentId &&
+            visibleDataElement.componentId !== item.componentId
+          ) {
+            return false;
+          }
+
+          return true;
+        }),
     [equipment.data, visibleDataElement]
   );
 

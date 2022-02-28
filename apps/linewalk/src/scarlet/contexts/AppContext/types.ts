@@ -107,6 +107,10 @@ export type AppAction =
   | {
       type: AppActionType.DELETE_COMPONENTS;
       componentIds: string[];
+    }
+  | {
+      type: AppActionType.UPDATE_COMPONENTS;
+      components: Partial<EquipmentComponent>[];
     };
 
 export enum AppActionType {
@@ -127,6 +131,7 @@ export enum AppActionType {
   CLEANUP_EQUIPMENT_DATA = 'cleanup-equipment-data',
   ADD_COMPONENT = 'add-component',
   DELETE_COMPONENTS = 'delete-components',
+  UPDATE_COMPONENTS = 'update-components',
 
   // equipment-list
   SET_EQUIPMENT_LIST = 'set-equipment-list',

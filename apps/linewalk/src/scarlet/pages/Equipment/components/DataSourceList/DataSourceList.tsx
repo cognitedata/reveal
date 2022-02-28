@@ -104,11 +104,7 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
       {PCMSDetection ? (
         <Styled.Collapse
           expandIcon={expandIcon}
-          defaultActiveKey={
-            !detections.length || isPCMSDetectionApproved
-              ? PCMSDetection.id
-              : undefined
-          }
+          defaultActiveKey={PCMSDetection.id}
         >
           <Styled.Panel
             header={
