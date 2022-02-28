@@ -52,7 +52,6 @@ jobs:
           name: preview-docs
           path: documentation/build/
 
-
   deploy:
     name: Publish documentation preview
     # Ensures that there only will be executed one "instance" of this operation
@@ -60,6 +59,7 @@ jobs:
     concurrency: deploy-preview-documentation
     runs-on: ubuntu-latest
     needs: build
+    if: "!contains(github.event.pull_request.labels.*.name, 'dependencies')"
     steps:
       - name: Initialize variables
         run: |
@@ -70,6 +70,7 @@ jobs:
         with:
           name: preview-docs
           path: documentation/
+
 
       - name: Deploy documentation preview 🚀
         uses: peaceiris/actions-gh-pages@v3
@@ -82,7 +83,7 @@ jobs:
           keep_files: false
 
       - name: Add comment about preview URL
-        uses: unsplash/comment-on-pr@v1.2.0
+        uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

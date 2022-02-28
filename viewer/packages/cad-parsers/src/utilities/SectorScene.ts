@@ -14,6 +14,7 @@ export class SectorSceneImpl implements SectorScene {
   readonly root: SectorMetadata;
   readonly unit: string;
   private readonly sectors: Map<number, SectorMetadata>;
+  private _cachedBoundsOfMostGeometry: THREE.Box3 | undefined;
 
   constructor(
     version: number,
@@ -66,6 +67,28 @@ export class SectorSceneImpl implements SectorScene {
   }
 
   getBoundsOfMostGeometry(): THREE.Box3 {
+    this._cachedBoundsOfMostGeometry = this._cachedBoundsOfMostGeometry ?? this.computeBoundsOfMostGeometry();
+    return this._cachedBoundsOfMostGeometry;
+  }
+
+  getSectorsIntersectingFrustum(
+    projectionMatrix: THREE.Matrix4,
+    inverseCameraModelMatrix: THREE.Matrix4
+  ): SectorMetadata[] {
+    const frustumMatrix = new THREE.Matrix4().multiplyMatrices(projectionMatrix, inverseCameraModelMatrix);
+    const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
+    const accepted: SectorMetadata[] = [];
+    traverseDepthFirst(this.root, x => {
+      if (frustum.intersectsBox(x.subtreeBoundingBox)) {
+        accepted.push(x);
+        return true;
+      }
+      return false;
+    });
+    return accepted;
+  }
+
+  private computeBoundsOfMostGeometry(): THREE.Box3 {
     if (this.root.children.length === 0) {
       return this.root.subtreeBoundingBox;
     }
@@ -120,22 +143,5 @@ export class SectorSceneImpl implements SectorScene {
       // Create bounds of the biggest cluster - assume the smallest one is junk geometry
       return clusterBounds[biggestCluster];
     }
-  }
-
-  getSectorsIntersectingFrustum(
-    projectionMatrix: THREE.Matrix4,
-    inverseCameraModelMatrix: THREE.Matrix4
-  ): SectorMetadata[] {
-    const frustumMatrix = new THREE.Matrix4().multiplyMatrices(projectionMatrix, inverseCameraModelMatrix);
-    const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
-    const accepted: SectorMetadata[] = [];
-    traverseDepthFirst(this.root, x => {
-      if (frustum.intersectsBox(x.subtreeBoundingBox)) {
-        accepted.push(x);
-        return true;
-      }
-      return false;
-    });
-    return accepted;
   }
 }
