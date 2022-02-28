@@ -5,8 +5,6 @@ import { DataGridPage } from './pages/dataGrid/DataGridPage';
 import { GraphPage } from './pages/graph/GraphPage';
 
 import '@cognite/cogs.js/dist/cogs.css';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 import { Navigation } from './Navigation';
 import { Home } from './pages/Home';

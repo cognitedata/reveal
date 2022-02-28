@@ -1,41 +1,57 @@
 import './cog-data-grid.module.css';
-import { GridConfig, KeyValueMap } from './core/types';
+import { ColumnTypes, GridConfig, KeyValueMap, TableType } from './core/types';
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import { useEffect, useState } from 'react';
-import { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
-import { GridConfigService } from './core/services/grid-config.service';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
+import {
+  CellValueChangedEvent,
+  ColDef,
+  ColGroupDef,
+  GridOptions,
+  GridReadyEvent,
+} from 'ag-grid-community';
+import { gridConfigService } from './core/services/grid-config.service';
+import { Icon } from '@cognite/cogs.js';
 
-const gridConfigService = new GridConfigService();
+import { CogDataGridStyled } from './cog-data-grid-styled';
+import ReactDOM from 'react-dom';
 
 export interface CogDataGridProps {
   data: KeyValueMap[];
   config: GridConfig;
+  tableType?: TableType;
+  /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
+  columnTypes?: ColumnTypes;
   children?: any;
+  onCellValueChanged?: (e: CellValueChangedEvent) => void;
+  onGridReady?: (e: GridReadyEvent) => void;
 }
 
 export function CogDataGrid(props: CogDataGridProps) {
   const [isGridInit, setIsGridInit] = useState(false);
   const [colDefs, setColDefs] = useState<(ColDef | ColGroupDef)[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOptions>({});
+  // JS and React components, only need register if looking up by name
+  // const [components, setComponents] = useState({});
+  const tableType = props.tableType || 'default';
   console.log(props);
-
-  const onCellValueChanged = (e: any) => {
-    console.log(e);
-  };
+  console.log(tableType);
 
   useEffect(() => {
     if (!isGridInit) {
-      const tmpGridOptions = Object.assign(gridConfigService.getGridConfig(), {
-        stopEditingWhenGridLosesFocus: false,
-        onCellValueChanged: onCellValueChanged,
-        rowHeight: 96,
-      });
+      const agGridOptions = gridConfigService.getGridConfig(
+        tableType,
+        props.columnTypes
+      );
+
+      if (props.onCellValueChanged) {
+        agGridOptions.onCellValueChanged = props.onCellValueChanged;
+      }
+      if (props.onGridReady) {
+        agGridOptions.onGridReady = props.onGridReady;
+      }
 
       const generatedColDefs = gridConfigService.buildColDefs(props.config);
-
-      setGridOptions(tmpGridOptions);
+      setGridOptions(agGridOptions);
       setColDefs(generatedColDefs as any);
       setIsGridInit(true);
     }
@@ -46,14 +62,29 @@ export function CogDataGrid(props: CogDataGridProps) {
   }
 
   return (
-    <AgGridReact
-      rowData={props.data}
-      columnDefs={colDefs}
-      gridOptions={gridOptions}
-      className="ag-theme-alpine"
-    >
-      {props.children}
-    </AgGridReact>
+    <CogDataGridStyled tableType={tableType}>
+      <AgGridReact
+        // components={components}
+        columnDefs={colDefs}
+        gridOptions={gridOptions}
+        icons={{
+          sortAscending: () => {
+            const domNode = document.createElement('div');
+            ReactDOM.render(<Icon type="ReorderAscending" />, domNode);
+            return domNode;
+          },
+          sortDescending: () => {
+            const domNode = document.createElement('div');
+            ReactDOM.render(<Icon type="ReorderDescending" />, domNode);
+            return domNode;
+          },
+        }}
+        rowData={props.data}
+        className="ag-theme-alpine"
+      >
+        {props.children}
+      </AgGridReact>
+    </CogDataGridStyled>
   );
 }
 

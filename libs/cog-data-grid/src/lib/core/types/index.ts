@@ -1,3 +1,5 @@
+import { ColDef } from 'ag-grid-community';
+
 export interface KeyValueMap {
   [key: string]: string | number | unknown;
 }
@@ -42,17 +44,25 @@ export enum DataSourceType {
 export interface ColumnConfig {
   property: string;
   label: string;
-  optional: boolean;
-  data_type: ColumnDataType | string;
-  default_value: unknown;
-  exec_order: number;
-  attribute_metadata: KeyValueMap;
-  attribute_rules: KeyValueMap[];
-  display_order: number;
+  optional?: boolean;
+  dataType: ColumnDataType | string;
+  defaultValue?: unknown;
+  execOrder?: number;
+  metadata?: KeyValueMap;
+  rules?: KeyValueMap[];
+  displayOrder?: number;
+  columnType?: string;
+  colDef?: ColDef;
 }
 
 export interface GridConfig {
   columns: ColumnConfig[];
-  custom_functions: any[];
-  data_sources: any[];
+  customFunctions: any[];
+  dataSources: any[];
 }
+
+export interface ColumnTypes {
+  [key: string]: ColDef;
+}
+
+export type TableType = 'default' | 'large';

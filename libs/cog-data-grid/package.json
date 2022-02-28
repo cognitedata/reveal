@@ -1,4 +1,7 @@
 {
   "name": "@cognite/cog-data-grid",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@cognite/cogs.js": "^5.5.2"
+  }
 }

@@ -1,40 +1,58 @@
-import { ColDef, GridOptions } from 'ag-grid-community';
+import {
+  NumberCellEditor,
+  BoolCellRenderer,
+  TextCellEditor,
+  CustomHeader,
+} from '../../components';
+import { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
   GridConfig,
   ColumnDataType,
-  ColumnValueType,
   ColumnConfig,
+  ColumnTypes,
+  TableType,
 } from '../types';
 
 const cellClassRules = {
-  'platypus-cell-empty': (params: any) => !params.value,
+  'cog-table-cell-cell-empty': (params: any) =>
+    params.value === undefined || params.value === null || params.value === '',
 };
 export class GridConfigService {
+  private customColTypes = [] as string[];
+
   /**
    * Loads default ag-grid gridOptions needed for grid to work
    */
-  getGridConfig(): GridOptions {
+  getGridConfig(tableType: TableType, columnTypes?: ColumnTypes): GridOptions {
     const virtualizationDisabled = this.isVirtualizationModeDisabled();
+
+    if (columnTypes) {
+      this.customColTypes = Object.keys(columnTypes);
+    }
+
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return <GridOptions>{
-      enableRangeSelection: true,
+      enableRangeSelection: false,
       immutableData: true,
       floatingFilter: false,
-      stopEditingWhenGridLosesFocus: true,
+      stopEditingWhenCellsLoseFocus: false,
       autoSizePadding: 0,
-      singleClickEdit: false,
+      singleClickEdit: true,
       multiSortKey: 'ctrl',
       domLayout: virtualizationDisabled ? 'autoHeight' : 'normal',
       suppressColumnVirtualisation: virtualizationDisabled ? true : false,
       enableCellChangeFlash: true,
       // groupUseEntireRow: true,
       suppressCellSelection: false,
-      suppressMenuHide: true,
+      suppressMenuHide: false,
       enableCellExpressions: true,
       suppressAggFuncInHeader: true,
       getRowNodeId: (data) => data.id,
+      rowHeight: tableType === 'large' ? 96 : 44,
+      headerHeight: tableType === 'large' ? 56 : 48,
       // a default column definition with properties that get applied to every column
       defaultColDef: {
+        ...this.getColTypeProps(tableType, 'String'),
         // make every column editable
         editable: false,
 
@@ -43,6 +61,7 @@ export class GridConfigService {
         sortable: true,
         filter: true,
         menuTabs: ['filterMenuTab'],
+        cellEditor: 'textCellEditor',
         comparator(a, b) {
           // eslint-disable-next-line lodash/prefer-lodash-typecheck
           if (typeof a === 'string') {
@@ -52,12 +71,43 @@ export class GridConfigService {
           }
         },
       },
-      columnTypes: {
-        booleanColType: {
-          cellStyle: { 'text-align': 'center' },
-          cellRenderer: 'checkboxRendererComponent',
-        },
+      frameworkComponents: {
+        checkboxRendererComponent: BoolCellRenderer,
+        numberCellEditor: NumberCellEditor,
+        decimalColType: NumberCellEditor,
+        textCellEditor: TextCellEditor,
+        cogCustomHeader: CustomHeader,
       },
+      columnTypes: Object.assign(
+        {
+          booleanColType: {
+            cellRenderer: 'checkboxRendererComponent',
+            ...this.getColTypeProps(tableType, 'Boolean'),
+          },
+          largeTextColType: {
+            cellEditor: 'textCellEditor',
+            ...this.getColTypeProps(tableType, 'String'),
+          },
+          numberColType: {
+            cellEditor: 'numberCellEditor',
+            ...this.getColTypeProps(tableType, 'Number'),
+            cellClass: 'ag-right-aligned-cell',
+          },
+          decimalColType: {
+            cellEditor: 'decimalColType',
+            ...this.getColTypeProps(tableType, 'Number'),
+            cellClass: 'ag-right-aligned-cell',
+            cellEditorParams: {
+              allowDecimals: true,
+            },
+            valueFormatter: (params: ValueFormatterParams) =>
+              params.value.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+              }),
+          },
+        },
+        columnTypes || {}
+      ),
       context: {
         sum: (...args: any[]) => args.reduce((sum, x) => +sum + +x),
         round: (value: number) => Math.round(value),
@@ -67,6 +117,9 @@ export class GridConfigService {
         floor: (value: any) => Math.floor(value),
         min: (...args: any) => Math.min(...args),
         max: (...args: any) => Math.max(...args),
+        gridConfig: {
+          multiSortKey: 'ctrl',
+        },
       },
     };
   }
@@ -75,7 +128,7 @@ export class GridConfigService {
     const columns = tableConfig.columns;
     return columns
       .map((columnConfig) => {
-        if (columnConfig.data_type === ColumnDataType.Dynamic) {
+        if (columnConfig.dataType === ColumnDataType.Dynamic) {
           return null;
         }
         // hide: this.isNotVisibleIfVisibilityRule(attr, context),
@@ -89,15 +142,21 @@ export class GridConfigService {
         //   optional: attr.optional || true,
         const isEditable =
           this.isNotEditableIfExpressionOrEditRule(columnConfig);
-        const colDef = {
-          field: `attributes.${columnConfig.property}`,
-          headerName: `${columnConfig.label}`,
-          type: this.getColumnType(columnConfig.data_type),
-          editable: isEditable,
-          resizable: true,
-          cellClassRules: cellClassRules,
-          ...columnConfig,
-        } as ColDef;
+
+        const userProvidedColDef = columnConfig.colDef || {};
+        const colDef = Object.assign(
+          {
+            field: `${columnConfig.property}`,
+            headerName: `${columnConfig.label}`,
+            type: columnConfig.columnType
+              ? columnConfig.columnType
+              : this.getColumnType(columnConfig.dataType),
+            editable: isEditable,
+            resizable: true,
+            cellClassRules: cellClassRules,
+          },
+          userProvidedColDef
+        ) as ColDef;
         return colDef;
       })
       .filter((col) => col);
@@ -107,16 +166,27 @@ export class GridConfigService {
     //Handle here for now, untill we migrate all column types
     let dataTypeName = this.normalizeName(dataType);
 
+    if (this.customColTypes.includes(dataType)) {
+      return [dataType];
+    }
+
     if (dataType === ColumnDataType.Text) {
       return [];
     }
 
     if (dataType === ColumnDataType.Boolean) {
       dataTypeName = 'boolean';
+      return ['booleanColType'];
+    }
+
+    if (dataType === ColumnDataType.Number) {
+      dataTypeName = 'number';
+      return [`${dataTypeName}ColType`];
     }
 
     if (dataType === ColumnDataType.Decimal) {
-      dataTypeName = 'number';
+      dataTypeName = 'decimal';
+      return [`${dataTypeName}ColType`];
     }
 
     if (dataType === ColumnDataType.DateTime) {
@@ -135,11 +205,11 @@ export class GridConfigService {
   private isNotEditableIfExpressionOrEditRule(column: ColumnConfig): boolean {
     let isEditable = true;
 
-    const isExpression = (column.default_value as string)
+    const isExpression = (column.defaultValue as string)
       .toString()
       .startsWith('=');
 
-    if (isExpression || column.data_type === ColumnDataType.Boolean) {
+    if (isExpression || column.dataType === ColumnDataType.Boolean) {
       isEditable = false;
     }
 
@@ -178,4 +248,19 @@ export class GridConfigService {
       return index === 0 ? match.toLowerCase() : match.toUpperCase();
     });
   }
+
+  private getColTypeProps(tableType: TableType, iconName: string): ColDef {
+    if (tableType === 'default') {
+      return {} as ColDef;
+    }
+
+    return {
+      headerComponent: 'cogCustomHeader',
+      headerComponentParams: {
+        headerIcon: iconName,
+      },
+    } as ColDef;
+  }
 }
+
+export const gridConfigService = new GridConfigService();
