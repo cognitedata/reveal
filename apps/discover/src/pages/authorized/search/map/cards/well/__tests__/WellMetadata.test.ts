@@ -1,5 +1,4 @@
 import { cleanup, within, screen } from '@testing-library/react';
-import { shortDate } from 'utils/date';
 
 import { getMockWell } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
@@ -7,7 +6,6 @@ import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 
 import { WellMetadata } from '../WellMetadata';
 
-const SPUD_DATE = new Date();
 const TEST_ID_PREFIX = 'metadata-label-';
 
 describe('Well metadata', () => {
@@ -21,13 +19,13 @@ describe('Well metadata', () => {
       well: getMockWell({
         sources: ['test-sources'],
         operator: 'test-operator',
-        spudDate: SPUD_DATE,
+        spudDate: new Date(163321123233),
       }),
     });
 
     expect(screen.getByText('test-sources')).toBeInTheDocument();
     expect(screen.getByText('test-operator')).toBeInTheDocument();
-    expect(screen.getByText(shortDate(SPUD_DATE))).toBeInTheDocument();
+    expect(screen.getByText('06.Mar.1975')).toBeInTheDocument();
   });
 
   it("should render placeholders when well isn't provided", async () => {

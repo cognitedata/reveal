@@ -4,7 +4,6 @@ import { batch, useDispatch } from 'react-redux';
 import head from 'lodash/head';
 import map from 'lodash/map';
 import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
-import { getDateOrDefaultText } from 'utils/date';
 import { changeUnits } from 'utils/units';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
@@ -82,10 +81,6 @@ export const WellResultTable: React.FC = () => {
         );
         const wellboresCount: number = well?.wellbores?.length || 0;
 
-        // format the date according to the default format
-        if (item.spudDate) {
-          item.spudDate = getDateOrDefaultText(item.spudDate);
-        }
         acc.processedWells.push(item);
         return {
           ...acc,

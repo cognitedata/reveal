@@ -1,6 +1,6 @@
-import get from 'lodash/get';
-import { getDateOrDefaultText } from 'utils/date';
-import { sortByDate } from 'utils/sort/sortByDate';
+import { getSpudDateDisplay } from 'dataLayers/wells/wells/selectors/getSpudDateDisplay';
+import { getSpudDateTableSort } from 'dataLayers/wells/wells/selectors/getSpudDateSort';
+import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
 
 import { ColumnType } from 'components/tablev3';
 import { WATER_DEPTH } from 'pages/authorized/search/well/content/constants';
@@ -36,14 +36,9 @@ export const generateOverviewColumns = (
       maxWidth: '0.2fr',
     },
     {
-      Header: 'Spud Date',
-      accessor: (row) => getDateOrDefaultText(row.spudDate),
-      sortType: (rowA, rowB) => {
-        const date1 = get(rowA, 'original.spudDate', '');
-        const date2 = get(rowB, 'original.spudDate', '');
-
-        return sortByDate(date1, date2);
-      },
+      Header: wellFieldTitles.spudDate,
+      accessor: getSpudDateDisplay,
+      sortType: getSpudDateTableSort,
       maxWidth: '0.15fr',
       width: '100px',
     },

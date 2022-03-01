@@ -1,5 +1,6 @@
-import { getDateOrDefaultText } from 'utils/date';
-import { sortByDate } from 'utils/sort/sortByDate';
+import { getSpudDateDisplay } from 'dataLayers/wells/wells/selectors/getSpudDateDisplay';
+import { getSpudDateTableSort } from 'dataLayers/wells/wells/selectors/getSpudDateSort';
+import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
 
 import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
@@ -10,7 +11,6 @@ import {
   FIELD_NAME,
   OPERATOR,
   SOURCE,
-  SPUD_DATE,
   WATER_DEPTH,
   WELL,
 } from './content/constants';
@@ -44,11 +44,9 @@ export const getWellColumns = (userPreferredUnit = ''): ColumnMap<Well> => {
       order: 2,
     },
     spudDate: {
-      Header: SPUD_DATE,
-      accessor: (row) => getDateOrDefaultText(row.spudDate),
-      sortType: (rowA, rowB) => {
-        return sortByDate(rowA.original.spudDate, rowB.original.spudDate);
-      },
+      Header: wellFieldTitles.spudDate,
+      accessor: getSpudDateDisplay,
+      sortType: getSpudDateTableSort,
       width: '140px',
       order: 3,
     },

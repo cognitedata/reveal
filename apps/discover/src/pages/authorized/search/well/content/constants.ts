@@ -4,12 +4,11 @@ export const NO_WELLBORES_FOUND = 'No wellbores found.';
 export const WELLBORE = 'Wellbore';
 export const CURRENT_SUPPORTING_CRS_LIST = ['WGS84'];
 export const WELL = 'Well';
-export const SOURCE = 'Source';
-export const OPERATOR = 'Operator';
-export const SPUD_DATE = 'Spud date';
-export const WATER_DEPTH = 'Water depth';
-export const BLOCK_NAME = 'Block name';
-export const FIELD_NAME = 'Field name';
+export const SOURCE = 'Source'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
+export const OPERATOR = 'Operator'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
+export const WATER_DEPTH = 'Water depth'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
+export const BLOCK_NAME = 'Block name'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
+export const FIELD_NAME = 'Field name'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
 export const NO_WELLS_AND_WELLBORE_ERROR_MESSAGE = `No wellbores are selected with wells. At least one wellbore has to be selected with a well.`;
 export const FETCHING_SELECTED_WELBORE_MESSAGE =
   'Fetching selected wellbores...';

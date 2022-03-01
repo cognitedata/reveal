@@ -7,13 +7,14 @@ import { SHORT_DATE_FORMAT } from '../date/constants';
 
 export const sortByDate = (
   val1?: Date | string | number,
-  val2?: Date | string | number
+  val2?: Date | string | number,
+  format = SHORT_DATE_FORMAT
 ): number => {
   if (val1 === undefined) return 0;
   if (val2 === undefined) return 0;
-  if (!isValidDate(val1) && !isValidDate(val2)) return 0;
-  if (!isValidDate(val1)) return -1;
-  if (!isValidDate(val2)) return 1;
+  if (!isValidDate(val1, format) && !isValidDate(val2, format)) return 0;
+  if (!isValidDate(val1, format)) return -1;
+  if (!isValidDate(val2, format)) return 1;
 
   if (isNumber(val1) && isNumber(val2)) {
     return val1 - val2;
