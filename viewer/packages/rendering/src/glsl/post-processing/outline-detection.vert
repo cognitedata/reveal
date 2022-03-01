@@ -22,7 +22,5 @@ void main() {
   vUv2 = vec2(uv.x, uv.y + texelSize.y);
   vUv3 = vec2(uv.x, uv.y - texelSize.y);
 
-  mat4 modelViewMatrix = modelMatrix * viewMatrix;
-
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 }
