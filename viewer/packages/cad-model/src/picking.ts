@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { CadNode, RenderMode } from '@reveal/rendering';
-import { IntersectInput } from '../base/types';
+import { IntersectInput } from '@reveal/model-base';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 
 export interface PickingInput {

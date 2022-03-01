@@ -4,9 +4,10 @@
 
 import * as THREE from 'three';
 import { CadModelClipper } from './CadModelClipper';
-import { Mutable, generateV8SectorTree, createCadModelMetadata } from '../../../../../test-utilities';
+import { Mutable, generateV8SectorTree, createCadModelMetadata } from '../../../../test-utilities';
 
-import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata } from './types';
+import { CadModelMetadata } from './CadModelMetadata';
 
 describe('CadModelClipper', () => {
   // Model with depth 2 where root has 8 children. Bounds is <[0,0,0], [2,2,2]>
