@@ -1,3 +1,4 @@
+import 'modules/map/__mocks/mockMapbox';
 import { screen, fireEvent } from '@testing-library/react';
 
 import { getMockMeasurementChartData } from '__test-utils/fixtures/measurements';

@@ -1,3 +1,4 @@
+import 'modules/map/__mocks/mockMapbox';
 import { screen } from '@testing-library/react';
 
 import { createdAndLastUpdatedTime } from '__test-utils/fixtures/log';

@@ -1,3 +1,4 @@
+import '__mocks/mockContainerAuth'; // should be first
 import 'services/documents/__mocks/setupDocumentsMockSDK';
 import { setupServer } from 'msw/node';
 
