@@ -3,10 +3,7 @@ import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
-import max from 'lodash/max';
-import min from 'lodash/min';
 import noop from 'lodash/noop';
-import uniq from 'lodash/uniq';
 import uniqueId from 'lodash/uniqueId';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
@@ -99,20 +96,25 @@ export const mapCasingItemsToSequences = (
       return goodSequences;
     }
 
-    return [
-      ...goodSequences,
-      {
-        id: Number(uniqueId()),
-        columns: getCasingsColumns(casingSchematic.casingAssemblies[0]),
-        assetId:
-          wellboreSourceExternalIdMap[casingSchematic.wellboreAssetExternalId],
-        name: casingSchematic.source.sourceName,
-        externalId: casingSchematic.wellboreAssetExternalId,
-        metadata: getSequenceMetadata(casingSchematic.casingAssemblies),
-        createdTime: new Date(),
-        lastUpdatedTime: new Date(),
-      },
-    ];
+    const sequenceOfWellbore = casingSchematic.casingAssemblies.map(
+      (casingAssembly) => {
+        return {
+          id: Number(uniqueId()),
+          columns: getCasingsColumns(casingAssembly),
+          assetId:
+            wellboreSourceExternalIdMap[
+              casingSchematic.wellboreAssetExternalId
+            ],
+          name: casingSchematic.source.sourceName,
+          externalId: casingSchematic.wellboreAssetExternalId,
+          metadata: getSequenceMetadata(casingAssembly),
+          createdTime: new Date(),
+          lastUpdatedTime: new Date(),
+        } as Sequence;
+      }
+    );
+
+    return [...goodSequences, ...sequenceOfWellbore];
   }, [] as Sequence[]);
 };
 
@@ -134,29 +136,15 @@ export const getCasingsColumns = (casingAssembly: CasingAssembly) => {
   });
 };
 
-export const getSequenceMetadata = (casingAssemblies: CasingAssembly[]) => {
-  const mdBases: number[] = [];
-  const mdTops: number[] = [];
-  const maxOutsideDiameters: number[] = [];
-  const minInsideDiameters: number[] = [];
-  const casingTypes: string[] = [];
-  casingAssemblies.forEach((casingAssembly) => {
-    mdBases.push(casingAssembly.originalMeasuredDepthBase.value);
-    mdTops.push(casingAssembly.originalMeasuredDepthTop.value);
-    maxOutsideDiameters.push(casingAssembly.maxOutsideDiameter.value);
-    minInsideDiameters.push(casingAssembly.minInsideDiameter.value);
-
-    if (casingAssembly.type) {
-      casingTypes.push(casingAssembly.type);
-    }
-  });
-
+export const getSequenceMetadata = (casingAssembly: CasingAssembly) => {
   return {
-    assy_original_md_base: String(max(mdBases)),
-    assy_name: uniq(casingTypes).join(', '),
-    assy_original_md_top: String(max(mdTops)),
-    assy_size: String(max(maxOutsideDiameters)),
-    assy_min_inside_diameter: String(min(minInsideDiameters)),
+    assy_original_md_base: String(
+      casingAssembly.originalMeasuredDepthBase.value
+    ),
+    assy_name: casingAssembly.type,
+    assy_original_md_top: String(casingAssembly.originalMeasuredDepthTop.value),
+    assy_size: String(casingAssembly.maxOutsideDiameter.value),
+    assy_min_inside_diameter: String(casingAssembly.minInsideDiameter.value),
   };
 };
 
