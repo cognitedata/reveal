@@ -3076,9 +3076,11 @@
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
+  uid ""
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
   version "0.0.0"
+  uid ""
 
 "@cognite/fas-tools@^1.3.3":
   version "1.3.3"
@@ -3286,10 +3288,10 @@
     typedoc-plugin-markdown "^2.3.1"
     xhr2 "^0.2.0"
 
-"@cognite/simconfig-api-sdk@1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.0.2.tgz#897adaabc99c38fa283536fcf3009102840373ca"
-  integrity sha512-odKQxNpbVgKWvwnN7Ztd+1rz14YoxyS4bhFsebYqZX6DGqIT+YRL0b/ynnrQceZBBTQ/yS+IpqVdfyha2KPxNQ==
+"@cognite/simconfig-api-sdk@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.1.0.tgz#68a6573d04b8ff648e939a431cde0c8285f5b152"
+  integrity sha512-EzbVEZvuxR/cixEYns66NVrUfjcnOPLrhDuYme4KjclnJ3DZet1MzeRL7YD1QGgwzaSGaU286VNJmn1eBPIfTg==
 
 "@cognite/storage@0.1.2":
   version "0.1.2"

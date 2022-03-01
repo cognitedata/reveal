@@ -8,6 +8,7 @@ import { Label } from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationScheduleIndicator } from 'components/models/CalculationList/CalculationScheduleIndicator';
+import { getScheduleRepeat } from 'pages/CalculationConfiguration/utils';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -55,6 +56,17 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
           <div className="entry">
             <div>Granularity</div>
             <div>{configuration.dataSampling.granularity} min</div>
+          </div>
+          <div className="entry">
+            <div>Validation offset</div>
+            <div>
+              {
+                getScheduleRepeat(
+                  configuration.dataSampling.validationEndOffset ?? '0m'
+                ).minutes
+              }{' '}
+              min
+            </div>
           </div>
         </div>
       </ConfigurationSection>

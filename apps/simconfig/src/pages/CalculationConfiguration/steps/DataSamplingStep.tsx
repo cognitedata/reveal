@@ -1,6 +1,10 @@
-import { Field, useFormikContext } from 'formik';
+import { useMemo } from 'react';
 
-import { Switch } from '@cognite/cogs.js';
+import { Field, useFormikContext } from 'formik';
+import styled from 'styled-components/macro';
+
+import type { OptionType } from '@cognite/cogs.js';
+import { Select, Switch } from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { SegmentedControl } from 'components/forms/controls/SegmentedControl';
@@ -13,6 +17,9 @@ import {
   TimeSeriesField,
 } from 'components/forms/elements';
 
+import type { ScheduleRepeat } from '../types';
+import { INTERVAL_OPTIONS, getScheduleRepeat } from '../utils';
+
 import { DataSamplingInfoDrawer } from './infoDrawers/DataSamplingInfoDrawer';
 import { LogicalCheckInfoDrawer } from './infoDrawers/LogicalCheckInfoDrawer';
 import { SteadyStateDetectionInfoDrawer } from './infoDrawers/SteadyStateDetectionInfoDrawer';
@@ -20,6 +27,18 @@ import { SteadyStateDetectionInfoDrawer } from './infoDrawers/SteadyStateDetecti
 export function DataSamplingStep() {
   const { errors, values, setFieldValue } =
     useFormikContext<CalculationTemplate>();
+
+  const validationOffset = useMemo(
+    () => getScheduleRepeat(values.dataSampling.validationEndOffset ?? '0m'),
+    [values.dataSampling.validationEndOffset]
+  );
+
+  const setValidationOffset = ({
+    count = validationOffset.count,
+    interval = validationOffset.interval,
+  }: Partial<ScheduleRepeat>) => {
+    setFieldValue('dataSampling.validationEndOffset', `${count}${interval}`);
+  };
 
   return (
     <FormContainer>
@@ -54,6 +73,38 @@ export function DataSamplingStep() {
           title="Granularity"
           width={180}
         />
+        <SelectContainer>
+          <label className="title" htmlFor="validation-offset">
+            Validation Offset
+          </label>
+          <FormRow>
+            <NumberField
+              id="dataSampling-validationEndOffset"
+              min={0}
+              name="dataSampling.validationEndOffset"
+              setValue={(count: string) => {
+                setValidationOffset({ count: +count });
+              }}
+              step={1}
+              value={parseInt(
+                values.dataSampling.validationEndOffset ?? '0m',
+                10
+              )}
+              width={80}
+            />
+            <Field
+              as={Select}
+              options={INTERVAL_OPTIONS}
+              value={validationOffset.intervalOption}
+              closeMenuOnSelect
+              onChange={({
+                value: interval = INTERVAL_OPTIONS[0].value,
+              }: OptionType<string>) => {
+                setValidationOffset({ interval });
+              }}
+            />
+          </FormRow>
+        </SelectContainer>
       </FormRowStacked>
 
       <FormHeader>
@@ -148,3 +199,17 @@ export function DataSamplingStep() {
     </FormContainer>
   );
 }
+
+const SelectContainer = styled.div`
+  .title {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--cogs-greyscale-grey8);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  .cogs-select {
+    min-width: 120px;
+  }
+`;

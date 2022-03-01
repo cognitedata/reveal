@@ -393,7 +393,8 @@ const getCalculationTemplateSchema = ({
           'Sampling window must be less than validation window'
         )
         .min(0),
-      granularity: Yup.number().defined().label('Granularity').min(1),
+      granularity: Yup.number().defined().label('Granularity').min(0),
+      validationEndOffset: Yup.string().defined().label('Validation offset'),
     }).defined(),
     logicalCheck: Yup.object({
       enabled: Yup.boolean().defined(),
