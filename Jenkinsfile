@@ -100,24 +100,19 @@ def pods = { body ->
         mixpanelToken: MIXPANEL_TOKEN,
         envVars: [locizeApiKey]
       ) {
-        codecov.pod {
-          properties([
-            buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
-          ])
-          node(POD_LABEL) {
-            dir('main') {
-              stageWithNotify('Checkout code', CONTEXTS.checkout) {
-                checkout(scm)
-              }
-              stageWithNotify('Install dependencies', CONTEXTS.setup) {
-                yarn.setup()
-              }
-              yarn.copy(
-                dirs: DIRS
-              )
+        node(POD_LABEL) {
+          dir('main') {
+            stageWithNotify('Checkout code', CONTEXTS.checkout) {
+              checkout(scm)
             }
-            body()
+            stageWithNotify('Install dependencies', CONTEXTS.setup) {
+              yarn.setup()
+            }
+            yarn.copy(
+              dirs: DIRS
+            )
           }
+          body()
         }
       }
     }
@@ -134,33 +129,6 @@ pods {
   ) {
     threadPool(
       tasks: [
-        'Lint': {
-          stageWithNotify('Check linting', CONTEXTS.lint) {
-            dir('lint') {
-              container('fas') {
-                sh('yarn lint')
-              }
-            }
-          }
-        },
-
-        'Unit tests': {
-          stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
-            dir('unit-tests') {
-              container('fas') {
-                sh('yarn test:ci')
-                junit(allowEmptyResults: true, testResults: '**/junit.xml')
-                if (isPullRequest) {
-                  summarizeTestResults()
-                }
-                stage('Upload coverage reports') {
-                  codecov.uploadCoverageReport()
-                }
-              }
-            }
-          }
-        },
-
         'Preview': {
           dir('preview') {
             stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
