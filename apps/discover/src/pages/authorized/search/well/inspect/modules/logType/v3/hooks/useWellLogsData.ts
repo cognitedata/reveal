@@ -1,5 +1,6 @@
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
+import { minMax } from 'utils/minMax';
 import { changeUnitTo } from 'utils/units';
 import { getConvertibleUnit } from 'utils/units/getConvertibleUnit';
 
@@ -27,8 +28,7 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
     const depthValues = rows.map((row) =>
       changeUnitTo(row.depth, unit, userPreferredUnit)
     );
-    const minDepthValue = Math.min(...depthValues);
-    const maxDepthValue = Math.max(...depthValues);
+    const [minDepthValue, maxDepthValue] = minMax(depthValues);
 
     const depthColumnData: LogData = {
       [depthColumn.columnExternalId]: {
@@ -79,8 +79,7 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
       });
 
       const columnValues = compact(values.map((value) => value[1]));
-      const columnsMinValue = Math.min(...columnValues);
-      const columnsMaxValue = Math.max(...columnValues);
+      const [columnsMinValue, columnsMaxValue] = minMax(columnValues);
 
       return {
         ...logViewerData,
