@@ -28,11 +28,12 @@ export const CheckboxTitle = styled(FlexColumn)`
 export const CheckboxItemContainer = styled(FlexAlignItems)`
   justify-content: space-between;
   flex: 1;
+  width: 230px;
 `;
 
 export const CheckboxFacetText = styled(Body)`
   word-wrap: break-word;
-  width: 180px;
+  max-width: 180px;
   overflow: hidden;
   text-transform: capitalize;
   text-align: left;
