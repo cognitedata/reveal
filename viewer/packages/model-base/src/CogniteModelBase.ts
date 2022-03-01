@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CameraConfiguration } from './types';
-import { SupportedModelTypes } from '../../datamodels/base';
+import { CameraConfiguration } from '@reveal/utilities';
+import { SupportedModelTypes } from './SupportedModelTypes';
 
 /**
  * Base class for 3D models supported by {@link Cognite3DViewer}.

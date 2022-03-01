@@ -7,7 +7,7 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { createCadModel } from '../../../../test-utilities';
+import { createCadModel } from '../../../test-utilities';
 
 describe(Cognite3DModel.name, () => {
   let model: Cognite3DModel;
