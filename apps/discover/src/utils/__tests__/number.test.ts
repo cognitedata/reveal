@@ -1,7 +1,10 @@
+import { ERROR_INVALID_DATA } from 'constants/error';
+
 import {
   withThousandSeparator,
   formatBigNumbersWithSuffix,
   getHumanReadableFileSize,
+  toFixedNumber,
 } from '../number';
 
 describe('number', () => {
@@ -36,6 +39,26 @@ describe('number', () => {
       expect(withThousandSeparator(12345678998765432, ',')).toEqual(
         '12,345,678,998,765,432'
       );
+    });
+  });
+
+  describe('toFixedNumber', () => {
+    it('converts the string (number) to 3 digit points', () => {
+      const result = toFixedNumber('0.523423423');
+
+      expect(result).toBe('0.523');
+    });
+
+    it('converts the string (number) to 2 digit points', () => {
+      const result = toFixedNumber('0.523423423', 2);
+
+      expect(result).toBe('0.52');
+    });
+
+    it(`returns '${ERROR_INVALID_DATA}' on random string`, () => {
+      const result = toFixedNumber('random string');
+
+      expect(result).toBe(ERROR_INVALID_DATA);
     });
   });
 

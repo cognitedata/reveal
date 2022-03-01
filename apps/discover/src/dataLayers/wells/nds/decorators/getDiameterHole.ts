@@ -1,3 +1,5 @@
+import { toFixedNumber } from 'utils/number';
+
 import { CogniteEvent } from '@cognite/sdk';
 
 export const getDiameterHole = (event: CogniteEvent) => {
@@ -7,5 +9,5 @@ export const getDiameterHole = (event: CogniteEvent) => {
     return undefined;
   }
 
-  return Number(diameterHole).toFixed(3);
+  return toFixedNumber(diameterHole);
 };

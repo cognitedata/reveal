@@ -3,10 +3,20 @@ import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 
+import { ERROR_INVALID_DATA } from 'constants/error';
+
 export const withThousandSeparator = (value: number, separator = ' ') => {
   if (value)
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
   return '0';
+};
+
+export const toFixedNumber = (value: string, fractionDigits = 3) => {
+  const number = Number(value);
+
+  return Number.isNaN(number)
+    ? ERROR_INVALID_DATA
+    : number.toFixed(fractionDigits);
 };
 
 export const formatBigNumbersWithSuffix = (value: number) => {
