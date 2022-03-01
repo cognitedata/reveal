@@ -34,6 +34,8 @@ export type ChartSettings = {
   autoAlign?: boolean;
 };
 
+export type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
+
 export type ChartTimeSeries = {
   type?: string;
   id: string;
@@ -42,7 +44,7 @@ export type ChartTimeSeries = {
   tsId: number;
   tsExternalId?: string;
   lineWeight?: number;
-  lineStyle?: 'solid' | 'dashed' | 'dotted';
+  lineStyle?: LineStyle;
   displayMode?: 'lines' | 'markers';
   enabled: boolean;
   unit?: string;
@@ -59,7 +61,7 @@ type ChartWorkflowBase = {
   id: string;
   name: string;
   lineWeight?: number;
-  lineStyle?: 'solid' | 'dashed' | 'dotted';
+  lineStyle?: LineStyle;
   displayMode?: 'lines' | 'markers';
   unit?: string;
   preferredUnit?: string;

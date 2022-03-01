@@ -3,6 +3,7 @@ import { availableColors } from 'utils/colors';
 import { trackUsage } from 'services/metrics';
 
 import { makeDefaultTranslations } from 'utils/translations';
+import { LineStyle } from 'models/chart/types';
 import {
   DropdownWrapper,
   MenuWrapper,
@@ -11,8 +12,6 @@ import {
   WeightLine,
   TypeLine,
 } from './elements';
-
-export type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
 
 type AppearanceDropdownProps = {
   selectedColor: string;

@@ -87,7 +87,7 @@ function TimeSeriesRow({
     name,
     unit,
     color = '',
-    lineStyle = 'solid',
+    lineStyle = 'none',
     lineWeight = 1,
     preferredUnit,
     originalUnit,

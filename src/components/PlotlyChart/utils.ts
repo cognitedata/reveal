@@ -8,7 +8,7 @@ import {
 } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { ChartTimeSeries, ChartWorkflow, LineStyle } from 'models/chart/types';
 import { roundToSignificantDigits } from 'utils/numbers';
 import { hexToRGBA } from 'utils/colors';
 import { convertUnits, units } from 'utils/units';
@@ -32,6 +32,7 @@ export type SeriesInfo = {
   datapoints: (Datapoints | DatapointAggregate)[];
   outdatedData?: boolean;
   range?: number[];
+  shape?: string;
 };
 
 export type SeriesData = {
@@ -62,39 +63,50 @@ export function calculateSeriesData(
 ): SeriesData[] {
   const seriesData: SeriesData[] = [
     ...timeSeriesCollection
-      .map((t) => ({
-        enabled: t.enabled,
-        range: t.range,
-        unit:
+      .map((t) => {
+        const unitLabel =
           units.find(
             (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
-          )?.label || t.preferredUnit,
-        series: [
-          {
-            ...t,
-            type: 'timeseries',
-            width: t.lineWeight,
-            name: t.name,
-            outdatedData: timeseries.find(
-              (ts) => ts.externalId === t.tsExternalId
-            )?.loading,
-            datapoints: convertUnits(
-              timeseries.find((ts) => ts.externalId === t.tsExternalId)?.series
-                ?.datapoints || [],
-              t.unit,
-              t.preferredUnit
-            ),
-            dash: convertLineStyle(t.lineStyle),
-            mode: getMode(
-              t.displayMode,
-              hasRawPoints(
+          )?.label || t.preferredUnit;
+
+        const isStep = (
+          timeseries.find((ts) => ts.externalId === t.tsExternalId)
+            ?.series as DatapointAggregates
+        )?.isStep;
+
+        const mode = getMode(
+          t.displayMode,
+          hasRawPoints(
+            timeseries.find((ts) => ts.externalId === t.tsExternalId)?.series
+          )
+        );
+
+        return {
+          enabled: t.enabled,
+          range: t.range,
+          unit: unitLabel,
+          series: [
+            {
+              ...t,
+              type: 'timeseries',
+              width: t.lineWeight,
+              name: t.name,
+              outdatedData: timeseries.find(
+                (ts) => ts.externalId === t.tsExternalId
+              )?.loading,
+              datapoints: convertUnits(
                 timeseries.find((ts) => ts.externalId === t.tsExternalId)
-                  ?.series
-              )
-            ),
-          },
-        ],
-      }))
+                  ?.series?.datapoints || [],
+                t.unit,
+                t.preferredUnit
+              ),
+              dash: convertLineStyle(t.lineStyle),
+              mode,
+              shape: isStep ? 'hv' : undefined,
+            },
+          ],
+        };
+      })
       .filter((t) => t.enabled),
     ...workflowCollection
       .map((workflow) => ({
@@ -203,7 +215,7 @@ export function formatPlotlyData(
 ): Plotly.Data[] {
   const groupedAggregateTraces = seriesData.map(({ series, unit }, index) =>
     series.map(
-      ({ name, color, mode, width, dash, datapoints, outdatedData }) => {
+      ({ name, color, mode, shape, width, dash, datapoints, outdatedData }) => {
         /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
     In addition, should min value be less than avg value? */
         const firstDatapoint = (
@@ -255,7 +267,12 @@ export function formatPlotlyData(
             color,
           },
           fill: 'none',
-          line: { color, width: width || 1, dash: dash || 'solid' },
+          line: {
+            shape,
+            color,
+            width: width || 1,
+            dash: dash || 'solid',
+          },
           yaxis: `y${index !== 0 ? index + 1 : ''}`,
           x: (datapoints as (Datapoints | DatapointAggregate)[]).map(
             (datapoint) =>
@@ -378,7 +395,7 @@ export function calculateStackedYRange(
   return [lower, upper];
 }
 
-export function convertLineStyle(lineStyle?: 'solid' | 'dashed' | 'dotted') {
+export function convertLineStyle(lineStyle?: LineStyle) {
   switch (lineStyle) {
     case 'solid':
       return 'solid';
@@ -387,7 +404,7 @@ export function convertLineStyle(lineStyle?: 'solid' | 'dashed' | 'dotted') {
     case 'dotted':
       return 'dot';
     default:
-      return 'solid';
+      return 'none';
   }
 }
 
