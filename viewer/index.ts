@@ -40,3 +40,7 @@ export {
   NodeCollectionSerializationContext,
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
+
+export { GeometryFilter, WellKnownUnit } from './packages/cad-model';
+
+export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
