@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
-import { SupportedModelTypes } from '@reveal/core';
+import { SupportedModelTypes } from '@reveal/model-base';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
