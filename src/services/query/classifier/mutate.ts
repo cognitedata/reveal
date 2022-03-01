@@ -13,7 +13,8 @@ export const useClassifierCreateMutate = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    (classifierName: string) => createDocumentClassifier(sdk, classifierName),
+    (classifierName: string) =>
+      createDocumentClassifier(sdk, { name: classifierName }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(CLASSIFIER_KEYS.trainingSets());

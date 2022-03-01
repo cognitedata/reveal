@@ -9,7 +9,10 @@ import {
   Menu,
   Tooltip,
 } from '@cognite/cogs.js';
-import { Classifier, Document } from '@cognite/sdk-playground';
+import {
+  DocumentsClassifier as Classifier,
+  Document,
+} from '@cognite/sdk-playground';
 import { LabelDefinition } from '@cognite/sdk';
 import { Tag, TagColor } from 'components/Tag';
 import { globalConfig } from 'configs/global.config';

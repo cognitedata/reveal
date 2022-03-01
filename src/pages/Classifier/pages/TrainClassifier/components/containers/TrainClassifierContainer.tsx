@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { PageHeader } from 'components/page';
 import { isClassifierDone, isClassifierTraining } from 'utils/classifier';
-import { Classifier } from '@cognite/sdk-playground';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import TrainClassifierLabel from 'pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
 import { Flex, Body, Tag } from '@cognite/cogs.js';
 import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';

@@ -1,5 +1,5 @@
 import { Loader, Table } from '@cognite/cogs.js';
-import { Classifier } from '@cognite/sdk-playground';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { Empty } from 'components/states/Empty';
 import { homeConfig } from 'configs/global.config';
 import React from 'react';

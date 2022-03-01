@@ -1,4 +1,4 @@
-import { Classifier } from '@cognite/sdk-playground';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { Modal } from 'components/modal/Modal';
 import { ModalProps } from 'components/modal/types';
 import { MatrixTable } from 'pages/Classifier/pages/ReviewModel/components';

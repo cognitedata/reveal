@@ -26,7 +26,7 @@ const ClassifierList: React.FC<{ pipeline?: DocumentsPipelineClassifier }> = ({
         <Body level={2} strong>
           {pipeline?.name}
         </Body>
-        <Detail>{pipeline?.trainingLabels.length} training labels</Detail>
+        <Detail>{pipeline?.trainingLabels?.length} training labels</Detail>
       </Wrapper>
     </Container>
   );

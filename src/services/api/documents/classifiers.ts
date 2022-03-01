@@ -1,13 +1,21 @@
-import { Classifier } from '@cognite/sdk-playground';
+import {
+  DocumentsClassifierCreate,
+  DocumentsClassifier as Classifier,
+  DocumentsClassifierListByIds,
+  DocumentsClassifierListByIdsRequest,
+} from '@cognite/sdk-playground';
 import { CogniteClient, ListResponse } from '@cognite/sdk';
 
-export const createDocumentClassifier = (sdk: CogniteClient, name: string) => {
+export const createDocumentClassifier = (
+  sdk: CogniteClient,
+  create: DocumentsClassifierCreate
+) => {
   return sdk
     .post<ListResponse<Classifier[]>>(
       `/api/playground/projects/${sdk.project}/documents/classifiers`,
       {
         data: {
-          items: [{ name }],
+          items: [create],
         },
       }
     )
@@ -33,13 +41,21 @@ export const fetchDocumentClassifiers = (sdk: CogniteClient) => {
 };
 
 export const fetchDocumentClassifierById = (sdk: CogniteClient, id: number) => {
+  return fetchDocumentClassifierByIds(sdk, [{ id }]);
+};
+
+export const fetchDocumentClassifierByIds = (
+  sdk: CogniteClient,
+  ids: DocumentsClassifierListByIds[]
+) => {
+  const request: DocumentsClassifierListByIdsRequest = {
+    items: ids,
+  };
   return sdk
     .post<ListResponse<Classifier[]>>(
       `/api/playground/projects/${sdk.project}/documents/classifiers/byids`,
       {
-        data: {
-          items: [{ id }],
-        },
+        data: request,
       }
     )
     .then((result) => {

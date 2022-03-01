@@ -1,14 +1,14 @@
-import { ExternalDocumentsSearch } from '@cognite/sdk-playground';
+import { DocumentsSearchRequest } from '@cognite/sdk-playground';
 import merge from 'lodash/merge';
 import { DocumentSearchQuery } from 'services/types';
 
 export const documentBuilder = (
   query?: DocumentSearchQuery
-): ExternalDocumentsSearch => {
-  let filterBuilder = {} as ExternalDocumentsSearch;
+): DocumentsSearchRequest => {
+  let filterBuilder = {} as DocumentsSearchRequest;
 
   if (query?.searchQuery) {
-    filterBuilder = merge<ExternalDocumentsSearch, ExternalDocumentsSearch>(
+    filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
       filterBuilder,
       {
         search: {
@@ -19,7 +19,7 @@ export const documentBuilder = (
   }
 
   if (query?.source) {
-    filterBuilder = merge<ExternalDocumentsSearch, ExternalDocumentsSearch>(
+    filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
       filterBuilder,
       {
         filter: {
@@ -34,7 +34,7 @@ export const documentBuilder = (
   }
 
   if (query?.fileType) {
-    filterBuilder = merge<ExternalDocumentsSearch, ExternalDocumentsSearch>(
+    filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
       filterBuilder,
       {
         filter: {
@@ -48,7 +48,7 @@ export const documentBuilder = (
 
   if (query?.documentType) {
     // 'labels' is incorrectly typed in the SDK.. Removing type check.
-    filterBuilder = merge<ExternalDocumentsSearch, ExternalDocumentsSearch>(
+    filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
       filterBuilder,
       {
         filter: {

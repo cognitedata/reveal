@@ -1,5 +1,5 @@
 import { ListResponse } from '@cognite/sdk';
-import { Classifier } from '@cognite/sdk-playground';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 
 export const fixtureClassifier = {
   list: () => {

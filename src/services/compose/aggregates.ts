@@ -15,8 +15,13 @@ export const composeAggregates = async (
       );
 
       const flattenedAggregateResult = aggregate?.groups.flatMap(
-        ({ group, value }) =>
-          group.map((item) => ({ name: item[constants.group], value }))
+        ({ group, value }) => {
+          return group?.map((item) => ({
+            // FIX_ME: Figure out the type.
+            name: (item as any)[constants.group],
+            value,
+          }));
+        }
       );
 
       return { ...accumulator, [key]: flattenedAggregateResult };

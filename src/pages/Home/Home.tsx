@@ -5,7 +5,7 @@ import { homeConfig } from 'configs/global.config';
 import { Button, Loader } from '@cognite/cogs.js';
 import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
 import { useNavigation } from 'hooks/useNavigation';
-import { Classifier } from '@cognite/sdk-playground';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { useClassifierDeleteMutate } from 'services/query/classifier/mutate';
 import { useActiveClassifier } from 'hooks/useActiveClassifier';
 import { useDocumentsActiveClassifierPipelineMutate } from 'services/query/pipelines/mutate';
@@ -73,13 +73,15 @@ const HomePage = () => {
   return (
     <Page Widget={<ClassifierWidget />}>
       <PageHeader
-        title={`Trained models for ${pipeline?.classifier.name}`}
+        title={`Trained models for ${pipeline?.classifier?.name}`}
         description={homeConfig.DESCRIPTION}
         Action={
           <Button
             icon="AddLarge"
             type="primary"
-            onClick={() => toClassifier(pipeline?.classifier.name || 'No name')}
+            onClick={() =>
+              toClassifier(pipeline?.classifier?.name || 'No name')
+            }
           >
             Train new model
           </Button>

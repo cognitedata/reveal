@@ -1,5 +1,5 @@
 import { Body, Button, Flex, Label, Title } from '@cognite/cogs.js';
-import { Classifier } from '@cognite/sdk-playground';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { motion } from 'framer-motion';
 import React from 'react';
 import styled from 'styled-components';

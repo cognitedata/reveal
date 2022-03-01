@@ -1,7 +1,7 @@
 import {
-  Classifier,
+  DocumentsClassifier,
   DocumentsPipeline,
-  UpdateDocumentsPipeline,
+  DocumentsPipelineUpdate,
 } from '@cognite/sdk-playground';
 import { CogniteClient, Label, ListResponse } from '@cognite/sdk';
 
@@ -20,7 +20,7 @@ export const createDocumentPipeline = (
                 name: classifierName,
                 trainingLabels: [],
               },
-            },
+            } as DocumentsPipeline,
           ],
         },
       }
@@ -48,19 +48,23 @@ export const updateDocumentPipelinesActiveClassifier = (
   classifierId: number
 ) => {
   return sdk
-    .post<ListResponse<Classifier[]>>(
+    .post<ListResponse<DocumentsClassifier[]>>(
       `/api/playground/projects/${sdk.project}/documents/pipelines/update`,
       {
         data: {
           items: [
             {
               externalId: 'default',
-              classifier: {
-                activeClassifierId: {
-                  set: classifierId,
+              update: {
+                classifier: {
+                  modify: {
+                    activeClassifierId: {
+                      set: classifierId,
+                    },
+                  },
                 },
               },
-            },
+            } as DocumentsPipelineUpdate,
           ],
         },
       }
@@ -79,18 +83,23 @@ export const updateDocumentPipelinesTrainingLabels = (
   trainingLabels: Label[]
 ) => {
   return sdk
-    .post<{ items: UpdateDocumentsPipeline[] }>(
+    .post<{ items: DocumentsPipeline[] }>(
       `/api/playground/projects/${sdk.project}/documents/pipelines/update`,
       {
         data: {
           items: [
             {
-              classifier: {
-                trainingLabels: {
-                  [action]: trainingLabels,
+              externalId: 'default',
+              update: {
+                classifier: {
+                  modify: {
+                    trainingLabels: {
+                      [action]: trainingLabels,
+                    },
+                  },
                 },
               },
-            },
+            } as DocumentsPipelineUpdate,
           ],
         },
       }

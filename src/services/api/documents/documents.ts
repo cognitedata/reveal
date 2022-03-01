@@ -1,9 +1,8 @@
 import { CogniteClient, ListResponse } from '@cognite/sdk';
 import {
-  DocumentsAggregate,
   Document,
-  DocumentsSearchWrapper,
-  ExternalDocumentsSearch,
+  DocumentsSearchRequest,
+  DocumentsSearchResponse,
 } from '@cognite/sdk-playground';
 import { DOCUMENTS_AGGREGATES } from 'services/constants';
 import { DocumentSearchQuery } from 'services/types';
@@ -12,7 +11,7 @@ import { parseArrayBufferToBase64 } from 'utils/parser';
 
 export const fetchDocumentAggregates = (sdk: CogniteClient) => {
   return sdk
-    .post<{ aggregates?: DocumentsAggregate[] }>(
+    .post<DocumentsSearchResponse>(
       `/api/playground/projects/${sdk.project}/documents/search`,
       {
         data: {
@@ -57,12 +56,12 @@ export const doDocumentSearch = (
   const filterBuilder = documentBuilder(query);
 
   return sdk
-    .post<ListResponse<DocumentsSearchWrapper[]>>(
+    .post<DocumentsSearchResponse>(
       `/api/playground/projects/${sdk.project}/documents/search`,
       {
         data: {
           ...filterBuilder,
-        } as ExternalDocumentsSearch,
+        } as DocumentsSearchRequest,
       }
     )
     .then((result) => {

@@ -1,5 +1,5 @@
 import { Body, Button } from '@cognite/cogs.js';
-import { Classifier } from '@cognite/sdk-playground';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { InfoBar } from 'components/InfoBar';
 import { useNavigation } from 'hooks/useNavigation';
 import React from 'react';

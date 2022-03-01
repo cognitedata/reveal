@@ -1,5 +1,5 @@
 import { Flex, Table, Detail, Icon } from '@cognite/cogs.js';
-import { Classifier } from '@cognite/sdk-playground';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { TableWrapper } from 'components/table/TableWrapper';
 import React from 'react';
 import styled from 'styled-components';
