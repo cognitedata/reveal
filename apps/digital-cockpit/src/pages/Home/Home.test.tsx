@@ -25,7 +25,7 @@ describe('<Home />', () => {
       </Provider>
     );
     expect(
-      await screen.findByText(/You don’t have any suites yet./i)
+      await screen.findByText(/No suites created yet!/i)
     ).toBeInTheDocument();
   });
 });

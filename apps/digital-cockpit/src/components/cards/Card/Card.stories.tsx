@@ -27,6 +27,17 @@ const Template: ExtendedStory<CardProps> = (args) => (
   <div>
     <div style={{ width: 256, marginBottom: 16 }}>
       <Card
+        isMini
+        header={{
+          title: args.header.title,
+          icon: args.header.icon,
+          appendIcon: 'ChevronRight',
+          onClick: action('onClick'),
+        }}
+      />
+    </div>
+    <div style={{ width: 256, marginBottom: 16 }}>
+      <Card
         header={{
           title: args.header.title,
           icon: args.header.icon,

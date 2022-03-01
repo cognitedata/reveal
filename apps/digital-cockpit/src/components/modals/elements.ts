@@ -2,9 +2,77 @@ import styled from 'styled-components/macro';
 import { SpaceBetween } from 'styles/common';
 
 export const ModalContainer = styled.div`
-  & .cogs-input-container,
-  & .cogs-title-4 {
-    margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 20% 80%;
+  height: 100%;
+  overflow: auto;
+  hr {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+  aside {
+    width: 256px;
+    button {
+      width: 100%;
+      display: block;
+      outline: none;
+      border: none;
+      text-align: left;
+      background: white;
+      padding: 8px;
+      &:hover {
+        background: var(--cogs-bg-control--secondary);
+        cursor: pointer;
+      }
+      &.active {
+        background: #fafafa;
+      }
+    }
+  }
+
+  main {
+    background: #fafafa;
+    flex-grow: 1;
+    height: 100%;
+    padding: 24px;
+  }
+
+  .app-grid {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-gap: 16px;
+  }
+`;
+
+export const AppDetailCard = styled.div<{ isFeatured: boolean }>`
+  background: white;
+  box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.04),
+    0px 3px 8px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  margin: 0 16px 16px 0;
+  display: flex;
+  flex-direction: column;
+  border: ${(props) =>
+    props.isFeatured ? '1px solid var(--cogs-primary)' : 'none'};
+  img {
+    padding: 16px 16px 0;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    .icon-container {
+      margin-right: 8px;
+    }
+  }
+  p {
+    padding: 0 16px 16px;
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding: 0 16px 16px;
   }
 `;
 

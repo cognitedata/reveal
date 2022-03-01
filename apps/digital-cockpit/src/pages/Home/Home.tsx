@@ -1,25 +1,7 @@
-import { ADMIN_GROUP_NAME } from 'constants/cdf';
-
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Loader,
-  Title,
-  Button,
-  Icon,
-  Graphic,
-  Body,
-  A,
-} from '@cognite/cogs.js';
+import { Loader, Title, Icon } from '@cognite/cogs.js';
 import Glider from 'react-glider';
-import Suitebar from 'components/suitebar/Suitebar';
-import { LastVisitedTile, ApplicationTile, Tile } from 'components/tiles';
-import { SuiteMenu } from 'components/menus';
-import {
-  TilesContainer,
-  OverviewContainer,
-  NoItemsContainer,
-} from 'styles/common';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { Suite, Board } from 'store/suites/types';
@@ -37,9 +19,14 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 import { useMetrics } from 'utils/metrics';
 import { ApplicationItem } from 'store/config/types';
-import { TenantContext } from 'providers/TenantProvider';
 import { useLink } from 'hooks';
 import useCogniteApplications from 'hooks/useCogniteApplications';
+import { useAuthContext } from '@cognite/react-container';
+import Card from 'components/cards/Card';
+import { SpecialIconType } from 'components/icons/IconContainer';
+import SuiteAvatar from 'components/suiteAvatar';
+
+import { CardGrid, HomeWrapper } from './elements';
 
 const Home = () => {
   const itemsToDisplay = 6;
@@ -47,6 +34,8 @@ const Home = () => {
   const dispatch = useDispatch<RootDispatcher>();
   const { loading: suitesLoading, loaded: suitesLoaded } =
     useSelector(getSuitesTableState);
+  const { authState } = useAuthContext();
+
   const suites = useSelector(getRootSuites);
   const isAdmin = useSelector(isAdminSelector);
   const { filter: groupsFilter } = useSelector(getGroupsState);
@@ -57,14 +46,19 @@ const Home = () => {
   const { loaded: userSpaceLoaded, loading: userSpaceLoading }: UserSpaceState =
     useSelector(getUserSpace);
   const [userSpaceLoadDispatched, setUserSpaceLoadDispatched] = useState(false);
-
-  const { activeApplications: applications } = useCogniteApplications();
+  const [installedApps, setInstalledApps] = useState<ApplicationItem[]>();
+  const { activeApplications: applications, getInstalledApplications } =
+    useCogniteApplications();
   const lastVisitedItems = useSelector(getLastVisitedItems(applications)).slice(
     0,
     itemsToDisplay
   );
 
   const metrics = useMetrics('Home');
+
+  useEffect(() => {
+    getInstalledApplications().then(setInstalledApps);
+  }, []);
 
   useEffect(() => {
     if (!userSpaceLoaded && !userSpaceLoading && !userSpaceLoadDispatched) {
@@ -84,7 +78,7 @@ const Home = () => {
   }
 
   const handleOpenModal = (modalType: ModalType) => {
-    metrics.track('NewSuite_Click');
+    metrics.track('NewSuite_Click', { modalType });
     dispatch(modalOpen({ modalType }));
   };
 
@@ -105,151 +99,205 @@ const Home = () => {
     },
   ];
 
-  return (
-    <>
-      <Suitebar
-        headerText="Executive overview"
-        actionsPanel={
-          canEdit && (
-            <>
-              <Button
-                type="tertiary"
-                icon="Add"
-                iconPlacement="left"
-                onClick={() => handleOpenModal('SelectApplications')}
-              >
-                Add application
-              </Button>
-              <Button
-                type="tertiary"
-                icon="Add"
-                iconPlacement="left"
-                onClick={() => handleOpenModal('EditSuite')}
-              >
-                New suite
-              </Button>
-            </>
-          )
-        }
-      />
-      {!suitesLoaded || !suites?.length ? (
-        <NoItemsContainer>
-          <Graphic type="DataSets" />
-          <Title level={5}>You don’t have any suites yet.</Title>
-          <Body>
-            {canEdit ? (
-              <Button
-                type="tertiary"
-                icon="Add"
-                iconPlacement="left"
-                onClick={() => handleOpenModal('EditSuite')}
-                style={{ marginTop: 8 }}
-              >
-                New suite
-              </Button>
-            ) : (
-              `You must have the user group ${ADMIN_GROUP_NAME} to setup this area`
-            )}
-          </Body>
-        </NoItemsContainer>
-      ) : (
-        <OverviewContainer>
-          {lastVisitedItems.length > 0 && (
-            <TilesContainer>
-              <Glider
-                hasArrows
-                itemWidth={glideItemWidth}
-                exactWidth={glideItemWidth}
-                slidesToShow="auto"
-                iconLeft={<Icon type="ChevronLeftLarge" />}
-                iconRight={<Icon type="ChevronRightLarge" />}
-                skipTrack
-              >
-                <div className="glider-track">
-                  {lastVisitedItems?.map((board: Board) => (
-                    <a
-                      onClick={() =>
-                        metrics.track('QuickAccess_Board_Click', {
-                          boardKey: board.key,
-                          board: board.title,
-                        })
-                      }
-                      key={board.key}
-                      href={board.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <LastVisitedTile dataItem={board} />
-                    </a>
-                  ))}
-                </div>
-              </Glider>
-            </TilesContainer>
-          )}
-          {applications.length > 0 && (
-            <TilesContainer>
-              <Title level={6}>Applications deployed for you</Title>
-              {applications?.map((item: ApplicationItem) => (
-                <A
-                  key={item.key}
-                  href={item.url}
-                  target="_blank"
-                  onClick={() =>
-                    metrics.track('Application_Click', {
-                      key: item.key,
-                      application: item.title,
-                    })
-                  }
-                >
-                  <ApplicationTile item={item} />
-                </A>
-              ))}
-            </TilesContainer>
-          )}
-          <TilesContainer>
-            <Title level={6}>All suites</Title>
-            {suites?.map((suite: Suite) => (
-              <Link
-                to={`/suites/${suite.key}`}
-                key={suite.key}
-                onClick={() =>
-                  metrics.track('Suite_Click', {
-                    suiteKey: suite.key,
-                    suite: suite.title,
-                  })
-                }
-              >
-                <Tile
-                  key={suite.key}
-                  dataItem={suite}
-                  menu={<SuiteMenu suiteItem={suite} />}
-                  avatar
-                  color={suite.color}
-                />
-              </Link>
-            ))}
-          </TilesContainer>
-          <TilesContainer>
-            <Title level={6}>Useful links</Title>
-            {usefulLinks.map((item: ApplicationItem) => (
-              <A
-                key={item.key}
-                href={item.url}
-                target="_blank"
-                onClick={() =>
+  const renderRecents = () => {
+    return (
+      <Glider
+        hasArrows
+        itemWidth={glideItemWidth}
+        exactWidth={glideItemWidth}
+        slidesToShow="auto"
+        iconLeft={<Icon type="ChevronLeftLarge" />}
+        iconRight={<Icon type="ChevronRightLarge" />}
+        skipTrack
+      >
+        <div className="glider-track">
+          {lastVisitedItems?.map((board: any) => (
+            <Card
+              lastVistedKey={board.key}
+              key={board.key}
+              url={board.url}
+              header={{
+                title: board.title,
+                icon: board.iconKey || (
+                  <SuiteAvatar title={board.title} color={board.color} />
+                ),
+                appendIcon: 'ChevronRight',
+                onClick: () => {
+                  metrics.track('QuickAccess_Board_Click', {
+                    boardKey: board.key,
+                    board: board.title,
+                  });
+                },
+              }}
+            />
+          ))}
+        </div>
+      </Glider>
+    );
+  };
+
+  const renderSolutions = () => {
+    return (
+      <>
+        <Link to="/explore">
+          <Card
+            isMini
+            header={{
+              title: 'Explorer',
+              icon: 'Cognite',
+              onClick: () => {
+                metrics.track('Explorer_Click');
+              },
+            }}
+          />
+        </Link>
+        {[...(installedApps || []), ...(applications || [])].map(
+          (item: ApplicationItem) => (
+            <Card
+              lastVistedKey={item.key}
+              key={item.key}
+              url={item.url}
+              isMini
+              header={{
+                title: item.title,
+                icon: item.iconKey as SpecialIconType,
+                onClick: () => {
                   metrics.track('Application_Click', {
                     key: item.key,
                     application: item.title,
-                  })
-                }
-              >
-                <ApplicationTile item={item} />
-              </A>
-            ))}
-          </TilesContainer>
-        </OverviewContainer>
+                  });
+                },
+              }}
+            />
+          )
+        )}
+      </>
+    );
+  };
+
+  const renderCollections = () => {
+    if (!suites || suites.length === 0) {
+      return (
+        <div>
+          <p>No suites created yet!</p>
+          {canEdit && (
+            <button
+              type="button"
+              className="browse-solutions"
+              onClick={() => handleOpenModal('EditSuite')}
+            >
+              <Icon type="Add" />
+              <div>Create your first suite</div>
+            </button>
+          )}
+        </div>
+      );
+    }
+    return (
+      <CardGrid>
+        {suites?.map((suite: Suite) => (
+          <Link to={`/suites/${suite.key}`} key={suite.key}>
+            <Card
+              lastVistedKey={suite.key}
+              header={{
+                title: suite.title,
+                icon: <SuiteAvatar title={suite.title} color={suite.color} />,
+                onClick: () => {
+                  metrics.track('Suite_Click', {
+                    suiteKey: suite.key,
+                    suite: suite.title,
+                  });
+                },
+              }}
+            />
+          </Link>
+        ))}
+        {canEdit && (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button
+              type="button"
+              className="browse-solutions"
+              onClick={() => handleOpenModal('EditSuite')}
+            >
+              <Icon type="Add" />
+              <div>New Suite</div>
+            </button>
+          </div>
+        )}
+      </CardGrid>
+    );
+  };
+
+  const renderUsefulLinks = () => {
+    return (
+      <CardGrid>
+        {usefulLinks.map((item: ApplicationItem) => (
+          <Card
+            key={item.key}
+            url={item.url}
+            header={{
+              title: item.title,
+              icon: item.iconKey as SpecialIconType,
+              onClick: () => {
+                metrics.track('Application_Click', {
+                  key: item.key,
+                  application: item.title,
+                });
+              },
+            }}
+          />
+        ))}
+      </CardGrid>
+    );
+  };
+
+  return (
+    <HomeWrapper>
+      <header>
+        <Title level={3}>
+          Welcome, {authState?.username || authState?.email?.split('@')[0]}
+        </Title>
+        <p>
+          This is your Portal to solutions built on top of Cognite Data Fusion.
+        </p>
+      </header>
+      {lastVisitedItems && lastVisitedItems.length > 0 && (
+        <section>
+          <Title level={5}>Continue where you left of</Title>
+          <div className="section-content">{renderRecents()}</div>
+        </section>
       )}
-    </>
+      <section>
+        <Title level={5}>Your CDF Solutions</Title>
+        <p>
+          Find the perfect tool for the job with one of your installed
+          solutions.
+        </p>
+        <div className="section-content">
+          {renderSolutions()}
+          <button
+            type="button"
+            className="browse-solutions"
+            onClick={() => handleOpenModal('SelectApplications')}
+          >
+            <Icon type="ArrowRight" />
+            <div>Browse Solutions</div>
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <Title level={5}>Company Suites</Title>
+        <p>A group of resources for your ongoing project work.</p>
+        <div className="section-content">{renderCollections()}</div>
+      </section>
+
+      <section>
+        <Title level={5}>Useful Links</Title>
+        <p>Explore the CDF Ecosystem</p>
+        <div className="section-content">{renderUsefulLinks()}</div>
+      </section>
+    </HomeWrapper>
   );
 };
 

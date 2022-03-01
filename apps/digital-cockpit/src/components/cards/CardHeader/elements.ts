@@ -5,6 +5,7 @@ export const CardHeaderWrapper = styled.div`
   display: flex;
   align-items: center;
 
+  .icon-container,
   .card-header--icon-container {
     background: var(--cogs-greyscale-grey2);
     width: 24px;
@@ -37,6 +38,10 @@ export const CardHeaderWrapper = styled.div`
 
   .card-header--appended-icon {
     margin-left: auto;
+  }
+
+  .suite-avatar {
+    margin-right: 8px;
   }
 `;
 

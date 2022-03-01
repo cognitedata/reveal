@@ -37,6 +37,7 @@ interface Props {
   cancelText?: string;
   visible?: boolean;
   underlineColor?: string;
+  height?: string | number;
 }
 
 const CloseIconDefault = <Icon type="CloseLarge" />;
@@ -54,6 +55,7 @@ const CustomModal: React.FC<Props> = ({
   cancelText = 'Cancel',
   visible,
   underlineColor = '#A4B2FC',
+  height = 'auto',
 }: Props) => {
   const FooterDefault = (
     <>
@@ -73,6 +75,7 @@ const CustomModal: React.FC<Props> = ({
           content: {
             ...customStyles.content,
             width,
+            height: '100%',
           },
         }}
         onRequestClose={onCancel}

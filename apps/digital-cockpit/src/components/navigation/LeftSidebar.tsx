@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { A, Icon, Overline } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRootSuites } from 'store/suites/selectors';
@@ -68,7 +68,7 @@ const LeftSidebar: React.FC = () => {
   const { activeApplications: applications } = useCogniteApplications();
   const metrics = useMetrics('LeftSidebar');
   const admin = useSelector(isAdmin);
-
+  const location = useLocation();
   const sideBarState = JSON.parse(
     localStorage.getItem('sideBarState') || 'true' // TODO(DTC-215) store in state
   );
@@ -105,11 +105,6 @@ const LeftSidebar: React.FC = () => {
     },
     [suites, suitesOrder]
   );
-
-  if (!suites || suites.length === 0) {
-    // No suites? Lets remove this sidebar until we add some.
-    return null;
-  }
 
   const renderApplicationItem = (item: ApplicationItem) => (
     <A

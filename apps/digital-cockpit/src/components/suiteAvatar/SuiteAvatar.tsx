@@ -33,14 +33,24 @@ const SuiteAvatar: React.FC<Props> = ({
   const getLogoComponent = () => {
     if (logo && types[logo]) {
       return (
-        <SuiteAvatarContainer as={avatarSize} color={color} disabled={disabled}>
+        <SuiteAvatarContainer
+          className="suite-avatar"
+          as={avatarSize}
+          color={color}
+          disabled={disabled}
+        >
           <img width={24} height={24} src={types[logo]} alt={logo} />
         </SuiteAvatarContainer>
       );
     }
 
     return (
-      <SuiteAvatarContainer as={avatarSize} color={color} disabled={disabled}>
+      <SuiteAvatarContainer
+        className="suite-avatar"
+        as={avatarSize}
+        color={color}
+        disabled={disabled}
+      >
         {title && acronym(title)}
       </SuiteAvatarContainer>
     );

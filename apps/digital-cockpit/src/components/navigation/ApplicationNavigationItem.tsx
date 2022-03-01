@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body, Graphic, IconType, Tooltip } from '@cognite/cogs.js';
+import { Body, IconType, Tooltip } from '@cognite/cogs.js';
 import { ApplicationItem } from 'store/config/types';
 import { useLastVisited } from 'hooks';
 import IconContainer from 'components/icons';

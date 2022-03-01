@@ -1,80 +1,88 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { modalClose } from 'store/modals/actions';
-import { Button, Switch, Title } from '@cognite/cogs.js';
-import { ApiClientContext } from 'providers/ApiClientProvider';
+import { Title } from '@cognite/cogs.js';
 import Modal from 'components/modals/simpleModal/Modal';
-import {
-  ModalContainer,
-  ModalFooter,
-  SwitchContainer,
-} from 'components/modals/elements';
-import { useMetrics } from 'utils/metrics';
-import { ApplicationItem } from 'store/config/types';
-import { saveApplicationsList } from 'store/config/thunks';
+import { ModalContainer } from 'components/modals/elements';
 import useCogniteApplications from 'hooks/useCogniteApplications';
+import { useMetrics } from 'utils/metrics';
+
+import ApplicationCard from './ApplicationCard';
 
 const SelectApplications: React.FC = () => {
-  const apiClient = useContext(ApiClientContext);
+  const metrics = useMetrics('SelectApplicationsModal');
   const dispatch = useDispatch<RootDispatcher>();
-  const metrics = useMetrics('EditSuite');
-  const { activeApplications, allApplications } = useCogniteApplications();
-  const [apps, setApps] = useState<string[]>(
-    activeApplications.map((app) => app.key) || []
-  );
+  const [selectedCategory, setSelectedCategory] = useState<string>();
+  const { allApplications, allCategories } = useCogniteApplications();
 
   const handleClose = () => {
+    metrics.track('CloseModal');
     dispatch(modalClose());
   };
 
-  const save = async () => {
-    metrics.track('SelectApplications', apps);
-    handleClose();
-    await dispatch(saveApplicationsList(apiClient, apps));
+  const renderCategory = (category: string) => {
+    const applicationsForCategory = allApplications.filter((app) =>
+      app.categories?.includes(category)
+    );
+    return (
+      <div>
+        <Title level={5} style={{ marginBottom: 16, marginTop: 32 }}>
+          {category}
+        </Title>
+        <div className="app-grid">
+          {applicationsForCategory
+            .sort((app) => (app.featured ? -1 : 1))
+            .map((app) => (
+              <ApplicationCard app={app} key={app.key} />
+            ))}
+        </div>
+      </div>
+    );
   };
-
-  const handleOnChange = (appKey: string) => {
-    if (apps.includes(appKey)) {
-      setApps(apps.filter((key) => key !== appKey));
-    } else {
-      setApps((prevState) => [appKey, ...prevState]);
-    }
-  };
-
-  const footer = (
-    <ModalFooter>
-      <Button onClick={handleClose}>Cancel</Button>
-      <Button type="primary" iconPlacement="left" onClick={save}>
-        Save
-      </Button>
-    </ModalFooter>
-  );
 
   return (
     <Modal
       visible
       onCancel={handleClose}
-      headerText="Select Applications"
-      footer={footer}
-      width={400}
-      underlineColor="#db0657"
+      headerText="Browse Applications"
+      hasFooter={false}
+      width={window.innerWidth * 0.9}
+      height={window.innerHeight * 0.9}
     >
       <ModalContainer>
-        <Title level={5}>Select deployed applications</Title>
-        <SwitchContainer>
-          {allApplications.map((app: ApplicationItem) => (
-            <Switch
-              key={app.key}
-              name={app.key}
-              value={apps.includes(app.key)}
-              size="small"
-              onChange={() => handleOnChange(app.key)}
+        <aside>
+          <button
+            type="button"
+            onClick={() => {
+              metrics.track('SelectCategory', { category: 'all' });
+              setSelectedCategory('');
+            }}
+          >
+            All
+          </button>
+          <hr />
+          {allCategories.map((category) => (
+            <button
+              type="button"
+              className={selectedCategory === category ? 'active' : ''}
+              key={category}
+              onClick={() => {
+                metrics.track('SelectCategory', { category });
+                setSelectedCategory(category);
+              }}
             >
-              {app.title}
-            </Switch>
+              {category}
+            </button>
           ))}
-        </SwitchContainer>
+        </aside>
+        <main>
+          {allCategories
+            .filter((category) =>
+              selectedCategory ? category === selectedCategory : true
+            )
+            .map(renderCategory)}
+        </main>
       </ModalContainer>
     </Modal>
   );

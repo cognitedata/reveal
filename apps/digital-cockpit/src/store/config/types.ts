@@ -1,4 +1,5 @@
 import { AllIconTypes } from '@cognite/cogs.js';
+import { CogniteClient } from '@cognite/sdk';
 import { ActionType } from 'typesafe-actions';
 
 import * as actions from './actions';
@@ -24,6 +25,13 @@ export type ApplicationItem = {
   url: string;
   urlTemplate?: string;
   rightIconKey?: AllIconTypes;
+  description?: string;
+  imageUrl?: string;
+  viewLink?: string;
+  installable?: () => void;
+  installedCheckFunc?: (sdk: CogniteClient) => Promise<boolean>;
+  categories?: string[];
+  featured?: boolean;
 };
 
 export type AppConfigItemResponse = {
