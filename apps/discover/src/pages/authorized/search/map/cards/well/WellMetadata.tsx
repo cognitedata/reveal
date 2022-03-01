@@ -1,30 +1,18 @@
 import React, { useMemo } from 'react';
 
-import { changeUnits } from 'utils/units';
+import { waterDepthAdapter } from 'dataLayers/wells/wells/adapters/waterDepthAdapter';
 
 import MetadataTable from 'components/metadataTable';
 import { FEET } from 'constants/units';
 import { Well } from 'modules/wellSearch/types';
-import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 
 interface Props {
   well: Well | null;
 }
 
-const unitChangeAccessors = [
-  {
-    accessor: 'waterDepth.value',
-    fromAccessor: 'waterDepth.unit',
-    to: FEET,
-  },
-];
-
 export const WellMetadata: React.FC<Props> = ({ well }) => {
   const adaptedWell = useMemo(
-    () =>
-      convertToFixedDecimal(changeUnits(well, unitChangeAccessors), [
-        'waterDepth.value',
-      ]),
+    () => (well ? waterDepthAdapter(well) : well),
     [well]
   );
 

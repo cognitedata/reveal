@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
+import { processedWellsAdapter } from 'dataLayers/wells/wells/adapters';
 import head from 'lodash/head';
 import map from 'lodash/map';
 import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
-import { changeUnits } from 'utils/units';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
@@ -12,7 +12,7 @@ import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/tablev3';
-import { UserPreferredUnit } from 'constants/units';
+import { EMPTY_ARRAY } from 'constants/empty';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -22,7 +22,6 @@ import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
 import { Well } from 'modules/wellSearch/types';
-import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
@@ -58,38 +57,10 @@ export const WellResultTable: React.FC = () => {
     wellsRef.current = wells;
   }, [wells]);
 
-  const unitChangeAcceessors = useMemo(
-    () => [
-      {
-        accessor: 'waterDepth.value',
-        fromAccessor: 'waterDepth.unit',
-        to: userPreferredUnit || UserPreferredUnit.FEET,
-      },
-    ],
-    [userPreferredUnit]
+  const wellsData = useDeepMemo(
+    () => processedWellsAdapter(wells || EMPTY_ARRAY, userPreferredUnit),
+    [wells, userPreferredUnit]
   );
-
-  const wellsData = useDeepMemo(() => {
-    if (!wells) {
-      return { processedWells: [], wellboresCount: 0 };
-    }
-    return wells.reduce<{ processedWells: Well[]; wellboresCount: number }>(
-      (acc, well) => {
-        const item = convertToFixedDecimal(
-          changeUnits(well, unitChangeAcceessors),
-          ['waterDepth.value']
-        );
-        const wellboresCount: number = well?.wellbores?.length || 0;
-
-        acc.processedWells.push(item);
-        return {
-          ...acc,
-          wellboresCount: acc.wellboresCount + wellboresCount,
-        };
-      },
-      { processedWells: [], wellboresCount: 0 }
-    );
-  }, [wells, unitChangeAcceessors]);
 
   useDeepEffect(() => {
     const firstWell = head(wells);
@@ -145,7 +116,7 @@ export const WellResultTable: React.FC = () => {
     {
       label: 'Wells',
       totalResults: data?.totalWells,
-      currentHits: (wellsData.processedWells || []).length,
+      currentHits: wellsData.wellsCount,
     },
     {
       label: 'Wellbores',

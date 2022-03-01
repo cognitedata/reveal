@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch } from 'react-redux';
 import {
@@ -31,6 +31,7 @@ import { setCategoryPage } from 'modules/sidebar/actions';
 import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { Modules, CategoryTypes } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
+import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 
 import {
   DOCUMENT_TAB_TITLE_KEY,
@@ -90,6 +91,7 @@ export const Search: React.FC = () => {
   const resultPanelWidth = useResultPanelWidth();
 
   const documentResultCount = useDocumentResultCount();
+  const { data: wellsData } = useWellSearchResultQuery();
 
   const wellInspectMode = location.pathname.includes(
     navigation.SEARCH_WELLS_INSPECT
@@ -121,7 +123,7 @@ export const Search: React.FC = () => {
     : responsive.ResultPanel.MAX_SIZE;
 
   let mapContainer: any = null;
-  let searchContainer: any = null;
+  const searchContainer = useRef<any>(null);
 
   const items: TabItem[] = useMemo(
     () =>
@@ -191,16 +193,19 @@ export const Search: React.FC = () => {
     }
   }, [showDashboard]); */
 
-  const handleNavigation = (tabKey: string) => {
-    const tabItem = items.find((item) => item.projectConfigKey === tabKey);
-    if (tabKey && tabItem) {
-      metrics.track(`click-${tabKey.toLowerCase()}-tab`);
-      history.push(tabItem.path);
+  const handleNavigation = useCallback(
+    (tabKey: string) => {
+      const tabItem = items.find((item) => item.projectConfigKey === tabKey);
+      if (tabKey && tabItem) {
+        metrics.track(`click-${tabKey.toLowerCase()}-tab`);
+        history.push(tabItem.path);
 
-      // INFO: Remove this to switch back to old behaviour
-      dispatch(setCategoryPage(tabKey as CategoryTypes));
-    }
-  };
+        // INFO: Remove this to switch back to old behaviour
+        dispatch(setCategoryPage(tabKey as CategoryTypes));
+      }
+    },
+    [items, metrics, history]
+  );
 
   /**
    * Change the map container width on resize of inspect tables
@@ -220,7 +225,7 @@ export const Search: React.FC = () => {
     mapContainer = el;
     if (mapContainer) {
       mapContainer.style.width = `calc(100% - ${get(
-        searchContainer,
+        searchContainer.current,
         'parentElement.style.width'
       )})`;
     }
@@ -254,7 +259,7 @@ export const Search: React.FC = () => {
       <OuterSearchWrapper
         expandedMode={showSearchResults}
         ref={(el: HTMLDivElement | null) => {
-          searchContainer = el;
+          searchContainer.current = el;
         }}
       >
         {/* {anythingHasSearched && !inspectMode && <SearchReset />} */}
@@ -269,10 +274,7 @@ export const Search: React.FC = () => {
                       <SearchTab
                         text={t(DOCUMENT_TAB_TITLE_KEY)}
                         count={documentResultCount}
-                        displayCount={
-                          projectConfig &&
-                          !projectConfig?.general?.hideFilterCount
-                        }
+                        displayCount={!projectConfig?.general?.hideFilterCount}
                       />
                     }
                   />
@@ -293,7 +295,13 @@ export const Search: React.FC = () => {
                 {!projectConfig[Modules.WELLS]?.disabled && (
                   <Tabs.TabPane
                     key={Modules.WELLS}
-                    tab={<SearchTab text={t(WELLS_TAB_TITLE_KEY)} />}
+                    tab={
+                      <SearchTab
+                        text={t(WELLS_TAB_TITLE_KEY)}
+                        count={wellsData?.totalWells}
+                        displayCount
+                      />
+                    }
                   />
                 )}
               </Tabs>
@@ -317,7 +325,18 @@ export const Search: React.FC = () => {
         </Switch>
       </OuterSearchWrapper>
     ),
-    [items, showSearchResults, selectedItem, documentResultCount, inspectMode]
+    [
+      documentResultCount,
+      handleNavigation,
+      inspectMode,
+      projectConfig?.[Modules.DOCUMENTS]?.disabled,
+      projectConfig?.[Modules.SEISMIC]?.disabled,
+      projectConfig?.[Modules.WELLS]?.disabled,
+      projectConfig?.general?.hideFilterCount,
+      selectedItem,
+      showSearchResults,
+      wellsData?.totalWells,
+    ]
   );
 
   // we need the config to be setup before we proceed

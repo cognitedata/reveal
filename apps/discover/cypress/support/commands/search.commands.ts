@@ -2,7 +2,10 @@ import { NO_RESULTS_TEXT } from '../../../src/components/emptyState/constants';
 
 Cypress.Commands.add('goToTab', (tab: 'Documents' | 'Wells' | 'Seismic') => {
   cy.log(`Go to ${tab} tab`);
-  cy.findByRole('tab', { name: tab }).should('be.visible').click();
+  // reg exp because tab name might have number of entries with them
+  cy.findByRole('tab', { name: new RegExp(tab) })
+    .should('be.visible')
+    .click();
 });
 
 Cypress.Commands.add(
