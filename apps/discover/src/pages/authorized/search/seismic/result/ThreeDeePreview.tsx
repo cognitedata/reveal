@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { ThreeDee } from 'components/3d';
+import { ThreeDee } from 'components/3d-old';
 import { BlankModal } from 'components/modal';
 import { useSelectedFiles } from 'modules/seismicSearch/selectors';
 

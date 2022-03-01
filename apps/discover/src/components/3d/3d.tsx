@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import { ThemeProvider } from 'styled-components/macro';
@@ -8,88 +8,31 @@ import {
   SubSurfaceModule,
   Modules,
   ThreeModule,
-  BPDataOptions,
   BaseRootNode,
 } from '@cognite/node-visualizer';
-import { Sequence, CogniteEvent } from '@cognite/sdk';
 
+import { useDeepEffect } from 'hooks/useDeep';
 import { getSeismicSDKClient } from 'modules/seismicSearch/service';
-import {
-  TrajectoryRows,
-  Well,
-  WellboreNPTEventsMap,
-} from 'modules/wellSearch/types';
-import { mapCasingsTo3D } from 'modules/wellSearch/utils/3d/casings';
-import { mapLogsTo3D } from 'modules/wellSearch/utils/3d/logs';
-import { mapTrajectoriesTo3D } from 'modules/wellSearch/utils/3d/mapTrajectoriesTo3D';
-import { mapTrajectoryDataTo3D } from 'modules/wellSearch/utils/3d/mapTrajectoryDataTo3D';
-import { mapNDSTo3D } from 'modules/wellSearch/utils/3d/nds';
-import { mapNPTTo3D } from 'modules/wellSearch/utils/3d/npt';
-import { mapWellboresTo3D } from 'modules/wellSearch/utils/3d/wellbores';
-import { mapWellsTo3D } from 'modules/wellSearch/utils/3d/wells';
 import { ThreeDeeTheme } from 'styles/ThreeDeeTheme';
 
 import { Toolbar } from './Toolbar';
+import { ThreeDeeProps } from './types';
+import { normalizeWellsData } from './utils/normalizeWellsData';
 
-export interface Props extends WellsData {
-  fileId?: string;
-}
-
-interface WellsData {
-  wells?: Well[];
-  trajectories?: Sequence[];
-  trajectoryData?: TrajectoryRows[];
-  casings?: Sequence[];
-  ndsEvents?: CogniteEvent[];
-  nptEvents?: WellboreNPTEventsMap;
-  logs?: any;
-  logsFrmTops?: any;
-}
-
-const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
-  const {
-    wells = [],
-    trajectories = [],
-    trajectoryData = [],
-    casings = [],
-    ndsEvents = [],
-    nptEvents = {},
-    logs = {},
-    // logsFrmTops = {},
-  } = wellsData;
-
-  const result: BPDataOptions = {
-    wells: mapWellsTo3D(wells),
-    wellBores: mapWellboresTo3D(wells),
-
-    trajectories: mapTrajectoriesTo3D(trajectories),
-    trajectoryData: mapTrajectoryDataTo3D(trajectoryData),
-    casings: mapCasingsTo3D(casings),
-    ndsEvents: mapNDSTo3D(ndsEvents),
-    nptEvents: mapNPTTo3D(nptEvents, wells),
-    logs: mapLogsTo3D(logs),
-    // logsFrmTops,
-  };
-
-  // console.log('Normalize 3D result:', result);
-
-  return result;
-};
-
-const ThreeDee: React.FC<Props> = ({
+const ThreeDee: React.FC<ThreeDeeProps> = ({
   wells,
   trajectories,
   trajectoryData,
   ndsEvents,
   nptEvents,
   casings,
-  logs,
-  logsFrmTops,
+  wellLogs,
+  wellLogsRowData,
   fileId,
 }) => {
   const [root, setRoot] = useState<BaseRootNode>();
 
-  useEffect(() => {
+  useDeepEffect(() => {
     Modules.instance.clearModules();
 
     const modules = Modules.instance;
@@ -108,8 +51,8 @@ const ThreeDee: React.FC<Props> = ({
           trajectories,
           trajectoryData,
           casings,
-          logs,
-          logsFrmTops,
+          wellLogs,
+          wellLogsRowData,
           ndsEvents,
           nptEvents,
         })

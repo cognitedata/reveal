@@ -1,6 +1,7 @@
 import React from 'react';
 
-import get from 'lodash/get';
+import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Icon, Flex, Tooltip, Button, Dropdown, Menu } from '@cognite/cogs.js';
 import {
@@ -10,8 +11,19 @@ import {
   ToolbarSelectChangeHandler,
 } from '@cognite/node-visualizer';
 
-import { TOOLBAR_ICONS } from './constants';
-import { ToolbarContainer, ToolbarItem } from './elements';
+const Container = styled(Flex)`
+  background-color: #fff;
+  padding: 10px;
+  position: absolute;
+  width: 100%;
+  z-index: ${layers.MAIN_LAYER};
+  gap: 18px;
+`;
+
+const Item = styled.div`
+  margin: 0;
+  box-sizing: border-box;
+`;
 
 interface Handlers {
   onToolbarButtonClick: ToolbarButtonClickHandler;
@@ -19,8 +31,31 @@ interface Handlers {
 }
 
 const getIcon = (id: string): JSX.Element => {
+  const mapping: { [id: string]: JSX.Element } = {
+    tools0: <Icon type="Grab" />,
+    tools1: <Icon type="Edit" />,
+    // tools2: <Icon type="ResizeWidth" />, TODO(PP-2548)
+    tools2: <Icon type="ZoomIn" />,
+    tools3: <Icon type="Ruler" />,
+
+    actions0: <Icon type="Image" />,
+    actions1: <Icon type="Axis3D" />,
+    actions2: <Icon type="XAxis3D" />,
+    actions3: <Icon type="Copy" />,
+    actions4: <Icon type="Sun" />,
+    actions5: <Icon type="FullScreen" />,
+    actions6: <Icon type="Axis" />,
+
+    viewfrom0: <Icon type="CubeTop" />,
+    viewfrom1: <Icon type="CubeBottom" />,
+    viewfrom2: <Icon type="CubeBackLeft" />,
+    viewfrom3: <Icon type="CubeBackRight" />,
+    viewfrom4: <Icon type="CubeFrontLeft" />,
+    viewfrom5: <Icon type="CubeFrontRight" />,
+  };
   const key = id.toLowerCase();
-  return <Icon type={get(TOOLBAR_ICONS, key, 'HelpFilled')} />;
+
+  return mapping[key] || <Icon type="HelpFilled" />;
 };
 const getIconId = (groupId: string, index: number): string =>
   `${groupId}${index}`;
@@ -43,13 +78,13 @@ const renderGroup = (
       if (!isVisible) return null;
 
       return (
-        <ToolbarItem key={key}>
+        <Item key={key}>
           <Tooltip content={tooltip}>
             {isDropdown
               ? renderDropdown(button, selectHandler)
               : renderIcon(key, button, buttonHandler)}
           </Tooltip>
-        </ToolbarItem>
+        </Item>
       );
     })
     .filter(Boolean);
@@ -97,7 +132,7 @@ export const Toolbar: React.FC<VisualizerToolbarProps> = ({
   onToolbarSelectionChange,
 }: VisualizerToolbarProps) => {
   return (
-    <ToolbarContainer>
+    <Container>
       {config &&
         Object.keys(config).map((groupId) => (
           <Flex key={groupId} wrap="wrap" gap={4} style={{ width: '25%' }}>
@@ -107,6 +142,6 @@ export const Toolbar: React.FC<VisualizerToolbarProps> = ({
             })}
           </Flex>
         ))}
-    </ToolbarContainer>
+    </Container>
   );
 };

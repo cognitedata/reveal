@@ -9,7 +9,7 @@ import { Dropdown, Menu } from '@cognite/cogs.js';
 
 import { ExpandButton } from 'components/buttons';
 import { Loading } from 'components/loading';
-import { useWellLogsRowDataQuery } from 'modules/wellInspect/hooks/useWellLogsRowDataQuery';
+import { useWellLogsRowDataKeyBySource } from 'modules/wellInspect/hooks/useWellLogsRowDataSelectors';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 
 import { ModuleFilterDropdownWrapper } from '../../common/elements';
@@ -31,7 +31,7 @@ export const LogTypeViewer: React.FC<{ wellLogs: WellLog[] }> = ({
   const { t } = useTranslation();
 
   const { data: wellLogsRowData, isLoading: isWellLogsRowDataLoading } =
-    useWellLogsRowDataQuery(
+    useWellLogsRowDataKeyBySource(
       selectedWellLog ? [selectedWellLog.source.sequenceExternalId] : []
     );
 

@@ -7,7 +7,7 @@ import isArray from 'lodash/isArray';
 
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 
-import { ThreeDee } from 'components/3d';
+import { ThreeDee } from 'components/3d-old';
 import EmptyState from 'components/emptyState';
 import { LOADING_SUB_TEXT } from 'components/emptyState/constants';
 import { StoreState } from 'core/types';
@@ -20,10 +20,10 @@ import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { SequenceData } from 'modules/wellSearch/types';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
 
-import { useFetchWellFormationTopsRowData } from '../modules/logType/v2/hooks/useFetchWellFormationTopsRowData';
-import { useFetchWellLogsRowData } from '../modules/logType/v2/hooks/useFetchWellLogsRowData';
-import { useWellFormationTopsQuery } from '../modules/logType/v2/hooks/useWellFormationTopsQuery';
-import { useWellLogsQuery } from '../modules/logType/v2/hooks/useWellLogsQuery';
+import { useFetchWellFormationTopsRowData } from '../../logType/v2/hooks/useFetchWellFormationTopsRowData';
+import { useFetchWellLogsRowData } from '../../logType/v2/hooks/useFetchWellLogsRowData';
+import { useWellFormationTopsQuery } from '../../logType/v2/hooks/useWellFormationTopsQuery';
+import { useWellLogsQuery } from '../../logType/v2/hooks/useWellLogsQuery';
 
 const ThreeDeeEmptyStateLoader: React.FC = () => {
   return <EmptyState isLoading loadingSubtitle={LOADING_SUB_TEXT} />;
