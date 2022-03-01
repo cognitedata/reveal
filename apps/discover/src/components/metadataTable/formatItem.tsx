@@ -3,7 +3,7 @@ import compact from 'lodash/compact';
 import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
-import { shortDate } from 'utils/date';
+import { getDateOrDefaultText } from 'utils/date';
 import { getHumanReadableFileSize } from 'utils/number';
 
 import { Flex, Label, Tooltip } from '@cognite/cogs.js';
@@ -116,7 +116,7 @@ export const formatItem = ({ value, type, actions }: FormatItemProps) => {
   // If it's a datestring, format it
   if (type === 'date') {
     return value ? (
-      <>{shortDate(value)}</>
+      <>{getDateOrDefaultText(value)}</>
     ) : (
       <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
     );

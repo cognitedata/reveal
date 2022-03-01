@@ -1,39 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 
-import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
-import {
-  downloadFileFromUrl,
-  zipFavoritesAndDownload,
-} from 'services/documentPreview/utils';
 import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
-import { useIsOwner } from 'services/user/utils';
 
 import { Badge, Icon, Tabs } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
-import { useTranslation } from '@cognite/react-i18n';
 
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import EmptyState from 'components/emptyState';
-import { LoadMoreButton } from 'components/tablev3/elements';
-import { showInfoMessageWithTitle } from 'components/toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
-import { DocumentType } from 'modules/documentSearch/types';
 import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';
-import {
-  DOWNLOAD_MESSAGE,
-  DOWNLOADING,
-} from 'pages/authorized/search/constants';
 import { NavigationTab } from 'pages/types';
-import { FlexAlignJustifyContent } from 'styles/layout';
 
 import { PageContainer } from '../../../elements';
 import { TabBar } from '../elements';
 
-import { DocumentsTable, WellsTable } from './content';
+import { WellsTable } from './content';
+import { FavoriteDocumentsList } from './FavoriteDocumentsList';
 
 export interface Props {
   favoriteId: string;
@@ -51,29 +37,19 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
   favoriteId,
   ownerId,
 }) => {
-  const {
-    data,
-    isLoading: isDocumentsLoading,
-    isIdle: isDocumentsIdle,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useDocumentsByIdForFavoritesQuery(content?.documentIds);
-
-  const [currentFetchPage, setCurrentFetchPage] = useState(0);
+  const { isLoading: isDocumentsLoading, isIdle: isDocumentsIdle } =
+    useDocumentsByIdForFavoritesQuery(content?.documentIds);
 
   const { isLoading: isWellsLoading, isIdle: isWellsIdle } = useWellsCacheQuery(
     content?.wells ? Object.keys(content.wells) : []
   );
-
-  const [documentId, setDocumentId] = useState<string | undefined>(undefined);
+  const [showingDocumentPreviewId, setShowingDocumentPreviewId] =
+    React.useState<string | undefined>(undefined);
   const { mutateAsync: mutateFavoriteContent } = useFavoriteUpdateContent();
 
   const { pathname } = useLocation();
   const history = useHistory();
   const metrics = useGlobalMetrics('favorites');
-  const { t } = useTranslation('Favorites');
-  const { isOwner } = useIsOwner();
-  const [documents, setDocuments] = useState<DocumentType[]>([]);
 
   const navigationTabItems: NavigationTab[] = [
     {
@@ -88,16 +64,6 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
     },
   ];
 
-  useEffect(() => {
-    if (data) {
-      setDocuments(flatten(data.pages));
-    }
-  }, [data]);
-
-  useEffect(() => {
-    setCurrentFetchPage(0);
-  }, [content]);
-
   const activeTab = React.useMemo(
     () => navigationTabItems.find((y) => y.path === pathname)?.key,
     [pathname]
@@ -110,33 +76,9 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
     if (tabItem) history.push(tabItem.path);
   };
 
-  const handleDocumentPreview = (document: DocumentType) => {
-    if (document) {
-      metrics.track('click-open-document-preview-button');
-      setDocumentId(document.id.toString());
-    }
-  };
-
   const handleModalClose = () => {
     metrics.track('click-close-document-preview-button');
-    setDocumentId('');
-  };
-
-  const removeDocument = (document: DocumentType) => {
-    mutateFavoriteContent({
-      id: favoriteId,
-      updateData: { removeDocumentIds: [Number(document.id)] },
-    });
-  };
-
-  const handleDocumentsDownload = async (selectedDocuments: DocumentType[]) => {
-    showInfoMessageWithTitle(t(DOWNLOADING), t(DOWNLOAD_MESSAGE));
-    if (selectedDocuments && selectedDocuments.length) {
-      if (selectedDocuments.length === 1) {
-        await downloadFileFromUrl(selectedDocuments[0].id.toString());
-      }
-      await zipFavoritesAndDownload(selectedDocuments);
-    }
+    setShowingDocumentPreviewId('');
   };
 
   const removeWell = (wellId: number) => {
@@ -147,11 +89,6 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
       },
     });
   };
-
-  const showLoadMore =
-    !(isDocumentsLoading || isDocumentsIdle) &&
-    content &&
-    documents.length < content.documentIds.length;
 
   return (
     <>
@@ -196,28 +133,12 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
             <Route
               path={navigation.FAVORITE_TAB_DOCUMENTS(favoriteId)}
               render={() => (
-                <>
-                  <DocumentsTable
-                    isFavoriteSetOwner={isOwner(ownerId || '')}
-                    removeDocument={removeDocument}
-                    handleDocumentPreview={handleDocumentPreview}
-                    documentData={documents}
-                    handleDocumentsDownload={handleDocumentsDownload}
-                    isLoading={isDocumentsIdle || isDocumentsLoading}
-                  />
-
-                  {showLoadMore && (
-                    <FlexAlignJustifyContent>
-                      <LoadMoreButton
-                        loading={isFetchingNextPage}
-                        onClick={() => {
-                          fetchNextPage({ pageParam: currentFetchPage + 1 });
-                          setCurrentFetchPage((prevState) => prevState + 1);
-                        }}
-                      />
-                    </FlexAlignJustifyContent>
-                  )}
-                </>
+                <FavoriteDocumentsList
+                  favoriteId={favoriteId}
+                  ownerId={ownerId}
+                  documentIds={content?.documentIds}
+                  previewDocument={setShowingDocumentPreviewId}
+                />
               )}
             />
             <Route
@@ -235,9 +156,9 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
       </PageContainer>
 
       <DocumentViewModal
-        documentId={documentId || ''}
+        documentId={showingDocumentPreviewId || ''}
         onModalClose={handleModalClose}
-        modalOpen={!!documentId}
+        modalOpen={!!showingDocumentPreviewId}
       />
     </>
   );

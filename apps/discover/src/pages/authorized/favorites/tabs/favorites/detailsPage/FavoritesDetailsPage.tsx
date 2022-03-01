@@ -57,7 +57,7 @@ export const FavoriteDetails: React.FC<{
         }}
       />
     ),
-    [favorite?.id, favorite?.name, favorite?.description]
+    [favorite?.id, favorite?.name, favorite?.description, isFetching]
   );
 
   return (
