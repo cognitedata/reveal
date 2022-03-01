@@ -8,14 +8,14 @@ import { Subscription, Observable } from 'rxjs';
 
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
-import { GeometryFilter } from '../../public/types';
+import { GeometryFilter } from './GeometryFilter';
 
 import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
-import { defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders/src/CadModelBudget';
+import { defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;

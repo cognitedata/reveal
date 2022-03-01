@@ -4,8 +4,8 @@
 import * as THREE from 'three';
 
 import { AddModelOptions } from '../public/migration/types';
-import { RevealOptions } from '../public/types';
 import { createRevealManager } from '../public/createRevealManager';
+import { RevealOptions } from '../public/types';
 
 import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, RevealManager } from '../internals';
 
