@@ -16,7 +16,7 @@ import {
   CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, ToolbarTool, GeomapTool, MapConfig, MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
@@ -26,10 +26,8 @@ import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
+import { ToolbarUi } from '../utils/ToolbarUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
-
-
-import geoMapIcon from './icons/Map.svg';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -395,43 +393,7 @@ export function Migration() {
       });
 
       //Toobar
-      let map: GeomapTool | undefined;
-      const mapConfig: MapConfig = {
-        provider: MapProviders.MapboxMap,
-        APIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
-        mode: MapboxMode.Style,
-        id: MapboxStyle.Satellite_Streets,
-        tileFormat: MapboxImageFormat.JPG70,
-        latlong: {
-          latitude: 59.9016426931744,
-          longitude: 10.607235872426175
-        }
-      };
-      const geomapToggle = () : void => {
-        if(map === undefined) {
-        map = new GeomapTool(viewer, mapConfig);
-        }
-        else {
-          map.dispose();
-          map = undefined;
-        }
-      }
-
-      const toolbar = new ToolbarTool(viewer);
-
-      toolbar.addAxisToolToggle();
-      toolbar.addTakeScreenshotTool();
-      toolbar.addCameraTargetOnClickToggle();
-      toolbar.addZoomPastToCursorToggle();
-      toolbar.addFitCameraToModel();
-
-      toolbar.addToolbarToogleButton(geoMapIcon, geomapToggle, 'Maps');
-
-      const toolbarGui = gui.addFolder('Toolbar Options');
-      const toolbarPosition = ['top', 'bottom', 'left', 'right'];
-      toolbarGui.add(guiState, 'toolbarPosition', toolbarPosition).name('toolbarPosition').onFinishChange(value => {
-        toolbar.setPosition(value);
-      });
+      new ToolbarUi(viewer, gui.addFolder('ToolbarOptions'));
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
