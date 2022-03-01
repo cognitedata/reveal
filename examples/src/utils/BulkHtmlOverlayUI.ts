@@ -67,8 +67,8 @@ export class BulkHtmlOverlayUI {
 
     for (let i = 0; i < matchedNodes.length; ++i) {
       const { id, depth } = matchedNodes[i];
-      const nodesToTag = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { depth: depth + levelBelowToTag, nodeId: id, limit: 1000 }).autoPagingToArray();
-      for (const nodeToTag of nodesToTag.filter(node => node.depth === depth + levelBelowToTag)) {
+      const nodesToTag = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { depth: 1, nodeId: id, limit: 1000 }).autoPagingToArray();
+      for (const nodeToTag of nodesToTag) {
         if (nodeToTag.boundingBox === undefined) {
           continue;
         }
