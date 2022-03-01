@@ -8,6 +8,7 @@ export { CadModelMetadataRepository } from './src/metadata/CadModelMetadataRepos
 export { CadModelMetadata } from './src/metadata/CadModelMetadata';
 export { SectorSceneImpl } from './src/utilities/SectorScene';
 export { SectorSceneFactory } from './src/utilities/SectorSceneFactory';
+export { CadModelClipper } from './src/metadata/CadModelClipper';
 
 export { SectorScene } from './src/utilities/types';
 
