@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { LoadingState } from '@reveal/cad-geometry-loaders';
+import { LoadingState } from '@reveal/model-base';
 import { RenderOptions } from '@reveal/rendering';
 import { InternalRevealCadOptions } from '@reveal/cad-model';
 
@@ -25,5 +25,11 @@ export type RevealOptions = {
  */
 export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 
-export * from '../datamodels/pointcloud/types';
+export {
+  PotreePointShape,
+  PotreePointColorType,
+  PotreePointSizeType,
+  WellKnownAsprsPointClassCodes
+} from '@reveal/pointclouds';
+
 export * from './migration/types';
