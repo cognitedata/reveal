@@ -8,9 +8,10 @@ import {
 export const fetchLabels = async (
   sdk: CogniteClient
 ): Promise<LabelDefinition[]> => {
-  const result = await sdk.labels.list();
+  const response = sdk.labels.list();
+  const result = await response.autoPagingToArray();
 
-  return result.items;
+  return result;
 };
 
 export const createLabel = async (
