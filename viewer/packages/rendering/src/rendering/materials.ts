@@ -10,21 +10,21 @@ import matCapTextureImage from './matCapTextureData';
 
 export interface Materials {
   // Materials
-  box: THREE.ShaderMaterial;
-  circle: THREE.ShaderMaterial;
-  generalRing: THREE.ShaderMaterial;
-  nut: THREE.ShaderMaterial;
-  quad: THREE.ShaderMaterial;
-  cone: THREE.ShaderMaterial;
-  eccentricCone: THREE.ShaderMaterial;
-  sphericalSegment: THREE.ShaderMaterial;
-  torusSegment: THREE.ShaderMaterial;
-  generalCylinder: THREE.ShaderMaterial;
-  trapezium: THREE.ShaderMaterial;
-  ellipsoidSegment: THREE.ShaderMaterial;
-  instancedMesh: THREE.ShaderMaterial;
-  triangleMesh: THREE.ShaderMaterial;
-  simple: THREE.ShaderMaterial;
+  box: THREE.RawShaderMaterial;
+  circle: THREE.RawShaderMaterial;
+  generalRing: THREE.RawShaderMaterial;
+  nut: THREE.RawShaderMaterial;
+  quad: THREE.RawShaderMaterial;
+  cone: THREE.RawShaderMaterial;
+  eccentricCone: THREE.RawShaderMaterial;
+  sphericalSegment: THREE.RawShaderMaterial;
+  torusSegment: THREE.RawShaderMaterial;
+  generalCylinder: THREE.RawShaderMaterial;
+  trapezium: THREE.RawShaderMaterial;
+  ellipsoidSegment: THREE.RawShaderMaterial;
+  instancedMesh: THREE.RawShaderMaterial;
+  triangleMesh: THREE.RawShaderMaterial;
+  simple: THREE.RawShaderMaterial;
 }
 
 export function createMaterials(
@@ -37,7 +37,7 @@ export function createMaterials(
   const matCapTexture = new THREE.Texture(matCapTextureImage);
   matCapTexture.needsUpdate = true;
 
-  const boxMaterial = new THREE.ShaderMaterial({
+  const boxMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Box)',
     clipping: true,
     clippingPlanes,
@@ -47,12 +47,24 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     glslVersion: THREE.GLSL3
   });
 
-  const circleMaterial = new THREE.ShaderMaterial({
+  const circleMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Circle)',
     clipping: true,
     clippingPlanes,
@@ -64,12 +76,24 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     glslVersion: THREE.GLSL3
   });
 
-  const nutMaterial = new THREE.ShaderMaterial({
+  const nutMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Nuts)',
     clipping: true,
     clippingPlanes,
@@ -79,7 +103,7 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const quadMaterial = new THREE.ShaderMaterial({
+  const quadMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Quads)',
     clipping: true,
     clippingPlanes,
@@ -118,13 +142,25 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const coneMaterial = new THREE.ShaderMaterial({
+  const coneMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Cone)',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.conePrimitive.vertex,
@@ -133,13 +169,25 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const eccentricConeMaterial = new THREE.ShaderMaterial({
+  const eccentricConeMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Eccentric cone)',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
@@ -148,13 +196,25 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const ellipsoidSegmentMaterial = new THREE.ShaderMaterial({
+  const ellipsoidSegmentMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Ellipsoid segments)',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
 
@@ -194,13 +254,25 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const trapeziumMaterial = new THREE.ShaderMaterial({
+  const trapeziumMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Trapezium)',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
@@ -209,13 +281,25 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const torusSegmentMaterial = new THREE.ShaderMaterial({
+  const torusSegmentMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Torus segment)',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     extensions: {
@@ -227,13 +311,25 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const sphericalSegmentMaterial = new THREE.ShaderMaterial({
+  const sphericalSegmentMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Spherical segment)',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
@@ -242,7 +338,7 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const triangleMeshMaterial = new THREE.ShaderMaterial({
+  const triangleMeshMaterial = new THREE.RawShaderMaterial({
     name: 'Triangle meshes',
     clipping: true,
     clippingPlanes,
@@ -255,7 +351,7 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const instancedMeshMaterial = new THREE.ShaderMaterial({
+  const instancedMeshMaterial = new THREE.RawShaderMaterial({
     name: 'Instanced meshes',
     clipping: true,
     clippingPlanes,
@@ -268,13 +364,25 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const simpleMaterial = new THREE.ShaderMaterial({
+  const simpleMaterial = new THREE.RawShaderMaterial({
     name: 'Low detail material',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     side: THREE.FrontSide,
@@ -318,7 +426,7 @@ export function createMaterials(
 }
 
 function updateDefinesAndUniforms(
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   overrideColorPerTreeIndex: THREE.DataTexture,
   transformOverrideIndexTexture: THREE.DataTexture,
   transformOverrideTexture: THREE.DataTexture,

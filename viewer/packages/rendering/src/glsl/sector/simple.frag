@@ -1,10 +1,11 @@
-#pragma glslify: updateFragmentColor = require('../base/updateFragmentColor.glsl')
-#pragma glslify: NodeAppearance = require('../base/nodeAppearance.glsl')
-#pragma glslify: determineNodeAppearance = require('../base/determineNodeAppearance.glsl');
-#pragma glslify: determineVisibility = require('../base/determineVisibility.glsl');
-#pragma glslify: determineColor = require('../base/determineColor.glsl');
-#pragma glslify: isClipped = require('../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
-#pragma glslify: GeometryType = require('../base/geometryTypes.glsl');
+precision highp float;
+
+#pragma glslify: import('../base/updateFragmentColor.glsl')
+#pragma glslify: import('../base/nodeAppearance.glsl')
+#pragma glslify: import('../base/determineNodeAppearance.glsl');
+#pragma glslify: import('../base/determineVisibility.glsl');
+#pragma glslify: import('../base/determineColor.glsl');
+#pragma glslify: import('../base/isClipped.glsl')
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
