@@ -3,6 +3,7 @@ import { Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem } from '@cognite/data-exploration';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 export const EditFileButton = ({
   item: { id, type },
@@ -13,8 +14,9 @@ export const EditFileButton = ({
   onClick: () => void;
   isActive: boolean;
 }) => {
-  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
-  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+  const { flow } = getFlow();
+  const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
   if (type !== 'file') {

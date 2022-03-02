@@ -5,8 +5,6 @@ import {
   configure,
   RenderOptions,
 } from '@testing-library/react';
-import { SDKProvider } from '@cognite/sdk-provider';
-import { CogniteClient } from '@cognite/sdk';
 import { QueryClientProvider, QueryClient } from 'react-query';
 
 import { ids } from 'cogs-variables';
@@ -31,11 +29,9 @@ const render = (
 
   return rtlRender(
     <div className={ids.styleScope}>
-      <SDKProvider sdk={new CogniteClient({ appId: 'invalid' })}>
-        <QueryClientProvider client={client}>
-          <MemoryRouter>{component}</MemoryRouter>
-        </QueryClientProvider>
-      </SDKProvider>
+      <QueryClientProvider client={client}>
+        <MemoryRouter>{component}</MemoryRouter>
+      </QueryClientProvider>
     </div>,
     options
   );

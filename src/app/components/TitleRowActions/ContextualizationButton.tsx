@@ -10,14 +10,16 @@ import {
   useFindObjects,
   useJob,
 } from '@cognite/data-exploration';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 export const ContextualizationButton = ({
   item: { id, type },
 }: {
   item: ResourceItem;
 }) => {
-  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
-  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+  const { flow } = getFlow();
+  const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
   const cancel = useDeleteFindObjectsJob();
