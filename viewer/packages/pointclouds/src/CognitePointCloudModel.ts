@@ -3,9 +3,9 @@
  */
 
 import * as THREE from 'three';
-import { CameraConfiguration } from './types';
-import { PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from '../..';
-import { PointCloudNode } from '../../datamodels/pointcloud/PointCloudNode';
+import { CameraConfiguration } from '@reveal/utilities';
+import { PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from './types';
+import { PointCloudNode } from './PointCloudNode';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 

@@ -5,7 +5,7 @@
 import { CogniteClient } from '@cognite/sdk';
 
 import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
-import { CognitePointCloudModel } from './CognitePointCloudModel';
+import { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
 import { CameraManager } from '@reveal/camera-manager';
 
 import { GeometryFilter, Cognite3DModel } from '@reveal/cad-model';
@@ -188,29 +188,6 @@ export type CadIntersection = {
   distanceToCamera: number;
 };
 
-export type PointCloudIntersection = {
-  /**
-   * The intersection type.
-   */
-  type: 'pointcloud';
-  /**
-   * The model that was intersected.
-   */
-  model: CognitePointCloudModel;
-  /**
-   * Tree index of the intersected 3D node.
-   */
-  point: THREE.Vector3;
-  /**
-   * The index of the point that was intersected.
-   */
-  pointIndex: number;
-  /**
-   * Distance from the camera to the intersection.
-   */
-  distanceToCamera: number;
-};
-
 /**
  * Represents the result from {@link Cognite3DViewer.getIntersectionFromPixel}.
  * @module @cognite/reveal
@@ -255,19 +232,7 @@ export type SceneRenderedDelegate = (event: {
 
 export * from './NotSupportedInMigrationWrapperError';
 
-export { CadModelBudget };
-
-/**
- * Represents a budget of how many point from point clouds can be
- * loaded at the same time.
- */
-export type PointCloudBudget = {
-  /**
-   * Total number of points that can be loaded for all point clouds models
-   * accumulated.
-   */
-  readonly numberOfPoints: number;
-};
+export { CadModelBudget, PointCloudBudget };
 
 /**
  * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
