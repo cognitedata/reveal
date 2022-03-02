@@ -20,6 +20,7 @@ import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useResponsive } from 'hooks/useResponsive';
 import { documentSearchActions } from 'modules/documentSearch/actions';
+import { useIsDocumentConfigEnabled } from 'modules/documentSearch/hooks';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
 import {
   setResultPanelWidth,
@@ -27,10 +28,12 @@ import {
 } from 'modules/resultPanel/actions';
 import { useResultPanelWidth } from 'modules/resultPanel/selectors';
 import { useSearchState } from 'modules/search/selectors';
+import { useIsSeismicConfigEnabled } from 'modules/seismicSearch/hooks';
 import { setCategoryPage } from 'modules/sidebar/actions';
 import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { Modules, CategoryTypes } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
+import { useIsWellConfigEnabled } from 'modules/wellSearch/hooks/useWellConfig';
 import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 
 import {
@@ -87,6 +90,9 @@ export const Search: React.FC = () => {
   // const showDashboard = useFlag(DASHBOARD_TOTALS);
 
   const { data: projectConfig } = useProjectConfig();
+  const isWellConfigEnabled = useIsWellConfigEnabled();
+  const isDocumentConfigEnabled = useIsDocumentConfigEnabled();
+  const isSeismicConfigEnabled = useIsSeismicConfigEnabled();
   const { showSearchResults } = useSearchState();
   const resultPanelWidth = useResultPanelWidth();
 
@@ -267,7 +273,7 @@ export const Search: React.FC = () => {
           <TabsWrapper data-testid="result-panel-tabs">
             {projectConfig && (
               <Tabs activeKey={selectedItem} onChange={handleNavigation}>
-                {!projectConfig[Modules.DOCUMENTS]?.disabled && (
+                {isDocumentConfigEnabled && (
                   <Tabs.TabPane
                     key={Modules.DOCUMENTS}
                     tab={
@@ -280,7 +286,7 @@ export const Search: React.FC = () => {
                   />
                 )}
 
-                {!projectConfig[Modules.SEISMIC]?.disabled && (
+                {isSeismicConfigEnabled && (
                   <Tabs.TabPane
                     key={Modules.SEISMIC}
                     tab={
@@ -292,7 +298,7 @@ export const Search: React.FC = () => {
                   />
                 )}
 
-                {!projectConfig[Modules.WELLS]?.disabled && (
+                {isWellConfigEnabled && (
                   <Tabs.TabPane
                     key={Modules.WELLS}
                     tab={
@@ -329,9 +335,9 @@ export const Search: React.FC = () => {
       documentResultCount,
       handleNavigation,
       inspectMode,
-      projectConfig?.[Modules.DOCUMENTS]?.disabled,
-      projectConfig?.[Modules.SEISMIC]?.disabled,
-      projectConfig?.[Modules.WELLS]?.disabled,
+      isDocumentConfigEnabled,
+      isWellConfigEnabled,
+      isSeismicConfigEnabled,
       projectConfig?.general?.hideFilterCount,
       selectedItem,
       showSearchResults,
