@@ -52,6 +52,7 @@ export type ApiBaseUrls = {
   infieldCacheApiBaseUrl: string;
   userManagementServiceBaseUrl: string;
   simconfigApiBaseUrl: string;
+  snifferServiceBaseUrl: string;
 };
 
 export type SidecarConfig = ApiBaseUrls & {

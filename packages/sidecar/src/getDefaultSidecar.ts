@@ -9,7 +9,8 @@ export type Service =
   | 'infield-api'
   | 'infield-cache-api'
   | 'simconfig-api'
-  | 'power-ops-api';
+  | 'power-ops-api'
+  | 'sniffer-service';
 
 type LocalServices = Omit<ApiBaseUrls, 'appsApiBaseUrl' | 'cdfApiBaseUrl'>;
 
@@ -28,6 +29,7 @@ export const services: Record<
   8015: { name: 'infield-cache-api', key: 'infieldCacheApiBaseUrl' },
   8800: { name: 'simconfig-api', key: 'simconfigApiBaseUrl' },
   8805: { name: 'power-ops-api', key: 'powerOpsApiBaseUrl' },
+  8810: { name: 'sniffer-service', key: 'snifferServiceBaseUrl' },
 };
 
 const getPort = (name: Service) => {

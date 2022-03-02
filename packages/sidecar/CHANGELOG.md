@@ -1,3 +1,7 @@
+## 0.4.0 Feb 23 2022
+
+- add Sniffer Service URL
+
 ## 0.3.0 Jan 7 2022
 
 - add CDFClusterSet types for Tenant Selector config
