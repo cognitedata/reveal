@@ -96,7 +96,12 @@ export function LogicalCheckChart({
   const yScale = linearScale({
     datapoints: timeseries?.data ?? [],
     padding: 0.025,
-    boundary: isBoolean ? { min: 0, max: 1 } : undefined,
+    boundary: isBoolean
+      ? { min: 0, max: 1 }
+      : {
+          min: Math.min(minValue, threshold),
+          max: Math.max(maxValue, threshold),
+        },
     axis: 'y',
   });
 

@@ -65,6 +65,10 @@ export function DataSamplingStep() {
     values.dataSampling.validationWindow,
     DATA_SAMPLING_VALUE_THROTTLE
   );
+  const endOffset = useThrottle(
+    validationOffset.minutes,
+    DATA_SAMPLING_VALUE_THROTTLE
+  );
   const minSectionSize = useThrottle(
     values.steadyStateDetection.minSectionSize,
     SSD_VALUE_THROTTLE
@@ -85,6 +89,7 @@ export function DataSamplingStep() {
     aggregateType: ssdAggregateType,
     granularity,
     window,
+    endOffset,
   });
 
   const lcAggregateType =
@@ -94,6 +99,7 @@ export function DataSamplingStep() {
     aggregateType: lcAggregateType,
     granularity,
     window,
+    endOffset,
   });
 
   const minSectionSizeMax =
@@ -404,12 +410,14 @@ function useTimeseries({
   window,
   aggregateType,
   limit = 5000,
+  endOffset = 0,
 }: {
   timeseries: string;
   granularity: number;
   window: number;
   aggregateType: AggregateType;
   limit?: number;
+  endOffset?: number;
 }) {
   const { client } = useAuthContext();
   const [data, setData] = useState<TemporalDatum[]>([]);
@@ -445,8 +453,8 @@ function useTimeseries({
           items: [
             {
               externalId: timeseries,
-              start: sub(new Date(), { minutes: window }).getTime(),
-              end: new Date(),
+              start: sub(new Date(), { minutes: window + endOffset }).getTime(),
+              end: sub(new Date(), { minutes: endOffset }),
               aggregates: [aggregateType],
               granularity: `${granularity}m`,
               limit,
@@ -480,6 +488,7 @@ function useTimeseries({
     window,
     aggregateType,
     limit,
+    endOffset,
   ]);
 
   return {
