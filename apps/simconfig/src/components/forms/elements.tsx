@@ -1,13 +1,13 @@
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Input, TextInput } from '@cognite/cogs.js';
+import { Input, Slider, TextInput } from '@cognite/cogs.js';
 
 import { getNodeFromPath } from 'utils/formUtils';
 
 import { SegmentedControl } from './controls/SegmentedControl';
-import type { Option } from './controls/TImeSeriesSelector';
-import TimeSeriesSelector from './controls/TImeSeriesSelector/TimeSeriesSelector';
+import type { Option } from './controls/TimeSeriesSelector';
+import TimeSeriesSelector from './controls/TimeSeriesSelector/TimeSeriesSelector';
 
 export const FormHeader = styled.h3`
   display: flex;
@@ -60,6 +60,10 @@ export const FormRow = styled.div`
   }
   .cogs-select {
     min-width: 120px;
+  }
+  .rc-slider {
+    align-self: center;
+    margin: 0 12px;
   }
 `;
 
@@ -114,7 +118,6 @@ export function NumberField({
 }: React.InputHTMLAttributes<unknown> & {
   label?: (value: number) => JSX.Element | string;
   setValue?: (value: string) => void;
-  error?: string;
 }) {
   const { errors, values, setFieldValue } =
     useFormikContext<Record<string, unknown>>();
@@ -163,6 +166,74 @@ export function NumberField({
     />
   );
 }
+
+export function SliderNumberField({
+  name,
+  min,
+  max,
+  step,
+  sliderMin = +(min ?? 0),
+  sliderMax = +(max ?? 1),
+  sliderStep = +(step ?? 1),
+  setValue,
+  ...inputProps
+}: React.InputHTMLAttributes<unknown> & {
+  sliderMin?: number;
+  sliderMax?: number;
+  sliderStep?: number;
+  label?: (value: number) => JSX.Element | string;
+  setValue?: (value: string) => void;
+}) {
+  const { values, setFieldValue } = useFormikContext<Record<string, unknown>>();
+
+  if (!name) {
+    return null;
+  }
+
+  const value = getNodeFromPath(values, name);
+  if (typeof value !== 'number' && typeof value !== 'string') {
+    return null;
+  }
+
+  return (
+    <>
+      <NumberField
+        max={max}
+        min={min}
+        name={name}
+        setValue={setValue}
+        step={step}
+        value={value}
+        {...inputProps}
+      />
+      <Slider
+        marks={getMarks([sliderMin, sliderMax])}
+        max={sliderMax}
+        min={sliderMin}
+        step={sliderStep}
+        value={+value}
+        onChange={(value: number) => {
+          if (setValue) {
+            setValue(value.toString());
+          } else {
+            setFieldValue(name, value);
+          }
+        }}
+      />
+    </>
+  );
+}
+
+const getMarks = (values: number[], suffix = '') =>
+  values.reduce<
+    Record<
+      number,
+      React.ReactNode | { style?: React.CSSProperties; label?: string }
+    >
+  >(
+    (marks, value) => ({ ...marks, [value]: { label: `${value}${suffix}` } }),
+    {}
+  );
 
 export function TimeSeriesField({
   externalIdField,

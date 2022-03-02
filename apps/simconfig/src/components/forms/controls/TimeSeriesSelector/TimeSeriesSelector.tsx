@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { ActionMeta, InputActionMeta } from 'react-select';
 
 import debounce from 'lodash/debounce';
@@ -20,8 +20,6 @@ import {
   searchForTimeSeriesOptions,
 } from './utils';
 
-type TimeSeriesSelectorProps = AutoCompleteProps;
-
 export type DataObject = Timeseries & {
   datapoint?: DoubleDatapoint;
   timestamp?: Date;
@@ -33,13 +31,22 @@ export type Option = OptionType<string> & {
   data?: DataObject;
 };
 
+interface TimeSeriesSelectorProps extends AutoCompleteProps {
+  disabled?: boolean;
+  name?: string;
+  onChange: (option: Partial<Option>) => void;
+  title?: string;
+  value: string;
+  width?: number;
+}
+
 function TimeSeriesSelector({
   disabled,
   name,
-  value,
-  width,
   onChange,
   title,
+  value,
+  width,
 }: TimeSeriesSelectorProps) {
   const [selectedValue, setSelectedValue] = useState<Option>();
   const [internalInputValue, setInternalInputValue] = useState('');
@@ -70,7 +77,7 @@ function TimeSeriesSelector({
     query: string,
     callback: (options: Option[]) => void
   ) => {
-    searchForTimeSeriesOptions(query, client).then((resp) => {
+    void searchForTimeSeriesOptions(query, client).then((resp) => {
       callback(resp);
     });
   };

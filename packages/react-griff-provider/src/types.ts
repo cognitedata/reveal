@@ -51,7 +51,7 @@ export interface Datapoint {
 export type AccessorFunction = (
   d: Datapoint,
   i?: number,
-  arr?: ArrayLike<Datapoint>
+  arr?: Iterable<Datapoint>
 ) => number;
 
 export interface Item {

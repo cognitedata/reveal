@@ -18,6 +18,7 @@ export function FileInput({
   extensions,
   onFileSelected,
 }: React.PropsWithoutRef<ComponentProps>) {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     onFileSelected(event.currentTarget.files?.[0]);
   };

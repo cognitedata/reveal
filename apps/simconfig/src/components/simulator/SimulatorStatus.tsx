@@ -44,7 +44,14 @@ export function SimulatorStatus() {
       {simulators.map((simulator) => (
         <div key={simulator.connectorName}>
           <SimulatorTooltip
-            content={<SimulatorList simulators={[simulator]} />}
+            content={
+              <SimulatorList
+                key={`${
+                  simulator.connectorName ?? Math.random()
+                }-simulator-tooltip-list`}
+                simulators={[simulator]}
+              />
+            }
           >
             <SimulatorStatusLabel
               simulator={simulator}
@@ -91,8 +98,9 @@ const SimulatorStatusContainer = styled.div`
 
 const SimulatorTooltip = styled(Tooltip).attrs(() => ({
   placement: 'bottom-end',
-  theme: 'cogs-light',
+  theme: 'dark',
   trigger: 'click',
+  elevated: true,
   interactive: true,
 }))`
   .tippy-content {

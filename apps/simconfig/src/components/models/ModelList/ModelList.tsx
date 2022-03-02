@@ -25,7 +25,7 @@ export function ModelList({ modelFiles, className }: ModelListProps) {
           >
             <div className="model">
               <SimulatorIcon
-                content={modelFile.metadata.simulator.substr(0, 2)}
+                content={modelFile.metadata.simulator.substring(0, 2)}
                 gradientOffset={hashCode(modelFile.metadata.modelName) % 360}
                 role="none"
               />

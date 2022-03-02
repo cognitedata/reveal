@@ -1,3 +1,5 @@
+import React from 'react';
+
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
@@ -7,6 +9,7 @@ import type {
   ModelFile,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { CopyValue } from 'components/molecules/CopyValue';
 import { formatBcValue } from 'utils/numberUtils';
 
 interface BoundaryConditionTableProps {
@@ -54,6 +57,14 @@ export function BoundaryConditionTable({
                   <span className="lower">▾</span>
                 </Tooltip>
               ) : null}
+              <CopyValue
+                tooltip={
+                  <React.Fragment key={`${variableName}-copy-value`}>
+                    Copy raw value to clipboard: <code>{current}</code>
+                  </React.Fragment>
+                }
+                value={current}
+              />
             </div>
             <div
               className={classNames('value', {
@@ -120,17 +131,15 @@ const getFormattedSciNumber = (input: number) => {
   const { base, exponent } = formatBcValue(input);
 
   return (
-    <Tooltip content={`Raw value: ${input}`}>
-      <span className="number">
-        {base}
-        {exponent !== 0 && (
-          <span>
-            {' '}
-            × 10<sup>{exponent}</sup>
-          </span>
-        )}
-      </span>
-    </Tooltip>
+    <span className="number">
+      {base}
+      {exponent !== 0 && (
+        <span>
+          {' '}
+          × 10<sup>{exponent}</sup>
+        </span>
+      )}
+    </span>
   );
 };
 

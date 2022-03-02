@@ -384,7 +384,8 @@ const getCalculationTemplateSchema = ({
       validationWindow: Yup.number()
         .defined()
         .label('Validation window')
-        .min(15),
+        .min(15)
+        .default(15),
       samplingWindow: Yup.number()
         .defined()
         .label('Sampling window')
@@ -392,8 +393,13 @@ const getCalculationTemplateSchema = ({
           Yup.ref('validationWindow'),
           'Sampling window must be less than validation window'
         )
-        .min(0),
-      granularity: Yup.number().defined().label('Granularity').min(0),
+        .min(1)
+        .default(1),
+      granularity: Yup.number()
+        .defined()
+        .label('Granularity')
+        .min(0)
+        .default(1),
       validationEndOffset: Yup.string().defined().label('Validation offset'),
     }).defined(),
     logicalCheck: Yup.object({
@@ -435,7 +441,7 @@ const getCalculationTemplateSchema = ({
         .when('enabled', { is: true, then: (schema) => schema.required() })
         .defined()
         .label('Min. section size')
-        .moreThan(0),
+        .min(1),
       varThreshold: Yup.number()
         .when('enabled', { is: true, then: (schema) => schema.required() })
         .defined()

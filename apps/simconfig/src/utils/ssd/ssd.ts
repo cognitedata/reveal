@@ -158,7 +158,7 @@ export function steadyStateDetection(
 
   // the maximum allowable distance is half the number of datapoints so we override the minDistance value if
   // the current value is not valid
-  const maxDistance = x.length / 2;
+  const maxDistance = Math.floor(x.length / 2);
   const minDistanceConstrained =
     minDistance > maxDistance ? maxDistance : minDistance;
 

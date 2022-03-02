@@ -2,8 +2,16 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "src",
-    "module": "esnext"
+    "module": "esnext",
+    "types": ["jest"],
+    "incremental": true,
+    "noErrorTruncation": true
   },
-  "include": ["src", ".eslintrc.js", ".eslintrc.production.js"],
-  "exclude": ["node_modules", "build"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".eslintrc.js",
+    ".eslintrc.production.js"
+  ],
+  "exclude": ["**/node_modules", "**/.*/*", "**/build", "**/dist"]
 }

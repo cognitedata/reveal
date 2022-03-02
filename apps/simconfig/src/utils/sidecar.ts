@@ -35,27 +35,23 @@ const getAadApplicationId = (cluster: string) => {
   };
 };
 
-type WindowType = typeof window & {
-  __cogniteSidecar?: Partial<SidecarConfig> & Record<string, unknown>;
-};
+declare global {
+  interface Window {
+    __cogniteSidecar: Record<string, unknown> & SidecarConfig;
+  }
+}
 
 // we are overwriting the window.__cogniteSidecar object because the tenant-selector
 // reads from this variable, so when you test on localhost, it (TSA) will not access via this file
 // but via the window.__cogniteSidecar global
 // now that this var is updated, all should work as expected.
-(window as WindowType).__cogniteSidecar = {
+window.__cogniteSidecar = {
   ...getAadApplicationId(CLUSTER),
   ...getDefaultSidecar({
     prod: PROD,
     cluster: CLUSTER,
     localServices: LOCAL_SERVICE ? ['simconfig-api'] : [],
   }),
-  __sidecarFormatVersion: 1,
-  // to be used only locally as a sidecar placeholder
-  // when deployed with FAS the values below are partly overriden
-  applicationId: 'simconfig',
-  applicationName: 'Simulator Configuration App (staging)',
-  docsSiteBaseUrl: 'https://docs.cognite.com',
   nomaApiBaseUrl: 'https://noma.development.cognite.ai',
   locize: {
     keySeparator: false,
@@ -67,7 +63,15 @@ type WindowType = typeof window & {
     hide_default_launcher: true,
   },
   disableIntercom: true,
-  ...(window as WindowType).__cogniteSidecar,
+
+  ...window.__cogniteSidecar,
+
+  __sidecarFormatVersion: 1,
+  // to be used only locally as a sidecar placeholder
+  // when deployed with FAS the values below are partly overriden
+  applicationId: 'simconfig',
+  applicationName: 'Simulator Configuration App (staging)',
+  docsSiteBaseUrl: 'https://docs.cognite.com',
 };
 
-export default (window as WindowType).__cogniteSidecar as SidecarConfig;
+export default window.__cogniteSidecar;

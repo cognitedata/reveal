@@ -38,7 +38,9 @@ export function SimulatorList({
                 <SimulatorStatusLabel simulator={simulator} />
               </div>
             }
-            key={simulator.connectorName}
+            key={`${
+              simulator.connectorName ?? Math.random()
+            }-simulator-list-entry-collapse`}
           >
             <SimulatorInformation simulatorInstance={simulator} />
           </Collapse.Panel>

@@ -2,13 +2,13 @@ import { curveMonotoneX } from '@visx/curve';
 import type { LinePathProps } from '@visx/shape/lib/shapes/LinePath';
 import { LineSeries, XYChart, buildChartTheme } from '@visx/xychart';
 
-import type { Datum } from './types';
+import type { OrdinalDatum } from './types';
 
 interface SparklineProps {
-  data: Datum[];
+  data: OrdinalDatum[];
   width?: number;
   height?: number;
-  curve?: LinePathProps<Datum>['curve'];
+  curve?: LinePathProps<OrdinalDatum>['curve'];
   strokeWidth?: number;
 }
 
@@ -48,5 +48,5 @@ const customTheme = buildChartTheme({
   tickLength: 2,
 });
 
-const xAccessor = (d: Datum) => d.x;
-const yAccessor = (d: Datum) => d.y;
+const xAccessor = (d: OrdinalDatum) => d.x;
+const yAccessor = (d: OrdinalDatum) => d.y;

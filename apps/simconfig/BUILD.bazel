@@ -94,6 +94,8 @@ DEPENDENCIES = [
     "@npm//react-location",
     "@npm//react-redux",
     "@npm//react-spring",
+    "@npm//react-table",
+    "@npm//react-use",
     "@npm//redux",
     "@npm//styled-components",
     "@npm//uuid",
@@ -115,6 +117,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/uuid",
     "@npm//@types/react-dom",
     "@npm//@types/react-redux",
+    "@npm//@types/react-table",
     "@npm//@types/styled-components",
 ]
 
@@ -320,6 +323,7 @@ react_scripts(
     ],
     env = {
         "DISABLE_ESLINT_PLUGIN": "true",
+        "BROWSER": "false",
         "HTTPS": "true",
         "REACT_APP_I18N_DEBUG": "true",
         "REACT_APP_I18N_PSEUDO": "false",

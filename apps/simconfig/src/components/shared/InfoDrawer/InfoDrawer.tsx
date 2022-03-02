@@ -13,6 +13,7 @@ export function InfoDrawer({
   return (
     <>
       <Button
+        aria-label="Display information"
         icon="Info"
         type="ghost"
         onClick={() => {

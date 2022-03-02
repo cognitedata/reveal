@@ -1,17 +1,32 @@
+import React, { useMemo, useState } from 'react';
 import { useMatch } from 'react-location';
+import type { CellProps } from 'react-table';
+
+import { ParentSizeModern } from '@visx/responsive';
 
 import { Field, useFormikContext } from 'formik';
+import styled from 'styled-components/macro';
 
-import type { OptionType } from '@cognite/cogs.js';
-import { Label, Select, Switch } from '@cognite/cogs.js';
+import type { ButtonProps, OptionType } from '@cognite/cogs.js';
+import {
+  Button,
+  Input,
+  Select,
+  Switch,
+  Table,
+  Tooltip,
+  toast,
+} from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
+import { ChokeCurveChart } from 'components/charts/ChokeCurveChart';
 import {
   FormContainer,
   FormHeader,
   FormRowStacked,
   NumberField,
 } from 'components/forms/elements';
+import { Alert } from 'components/molecules/Alert';
 
 import type { StepProps } from '../types';
 
@@ -22,6 +37,29 @@ export function AdvancedStep({ isEditing }: StepProps) {
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
+
+  const chokeCurveColumns = useMemo(
+    () => [
+      {
+        Header: 'Valve opening',
+        accessor: (d: ChokeCurveData) => d.opening,
+        Cell: inputCell('chokeCurve.opening', setFieldValue, 0, 100, 1),
+        width: 200,
+      },
+      {
+        Header: 'Choke setting',
+        accessor: (d: ChokeCurveData) => d.setting,
+        Cell: inputCell(
+          'chokeCurve.setting',
+          setFieldValue,
+          undefined,
+          undefined,
+          0.01
+        ),
+      },
+    ],
+    [setFieldValue]
+  );
 
   if (!definitions) {
     return null;
@@ -47,87 +85,159 @@ export function AdvancedStep({ isEditing }: StepProps) {
     definitions.type.rootFindingSolution
   ).map(([value, label]) => ({ value, label }));
 
+  const chokeCurveData =
+    values.calculationType === 'ChokeDp'
+      ? values.chokeCurve.opening.map((opening, index) => ({
+          id: Math.random(),
+          opening,
+          setting: values.chokeCurve.setting[index],
+        }))
+      : [];
+
+  const resetChokeCurve = () => {
+    setFieldValue(
+      'chokeCurve.opening',
+      [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    );
+    setFieldValue('chokeCurve.setting', [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  };
+
   return (
     <FormContainer>
       {values.calculationType === 'ChokeDp' ? (
         <>
-          <FormHeader>Choke curve</FormHeader>
-          <div className="cogs-input-container">
-            <div className="title">Unit</div>
-            <Field
-              as={Select}
-              name="chokeCurve.unit"
-              options={lengthUnitOptions}
-              value={lengthUnitOptions.find(
-                (option) => option.value === values.chokeCurve.unit
-              )}
-              closeMenuOnSelect
-              onChange={({ value }: OptionType<string>) => {
-                setFieldValue('chokeCurve.unit', value);
+          <FormHeader>
+            Choke curve
+            <Button onClick={resetChokeCurve}>Reset choke curve</Button>
+          </FormHeader>
+          <ChokeCurveContainer>
+            <ChokeCurveSidebar>
+              <div className="cogs-input-container">
+                <div className="title">Unit</div>
+                <Field
+                  as={Select}
+                  name="chokeCurve.unit"
+                  options={lengthUnitOptions}
+                  value={lengthUnitOptions.find(
+                    (option) => option.value === values.chokeCurve.unit
+                  )}
+                  closeMenuOnSelect
+                  onChange={({ value }: OptionType<string>) => {
+                    setFieldValue('chokeCurve.unit', value);
+                  }}
+                />
+              </div>
+
+              <div className="chart-container">
+                <ParentSizeModern>
+                  {({ width, height }) => (
+                    <ChokeCurveChart
+                      data={values.chokeCurve.opening.map((x, index) => ({
+                        x,
+                        y: values.chokeCurve.setting[index],
+                      }))}
+                      height={height}
+                      width={width}
+                      xAxisLabel="Valve opening (%)"
+                      yAxisLabel={`Choke setting (${values.chokeCurve.unit})`}
+                    />
+                  )}
+                </ParentSizeModern>
+              </div>
+
+              <ClipboardContainer>
+                <Alert color="primary" icon="Info">
+                  <p>
+                    Tabular choke curve data may be copied and pasted from
+                    Excel, Google Sheets, etc. below.
+                  </p>
+                  <ul>
+                    <li>
+                      Column A must contain valve opening values in the ranges
+                      [0, 100] or [0, 1].
+                    </li>
+                    <li>Column B must contain choke setting values.</li>
+                  </ul>
+                </Alert>
+                <div className="actions">
+                  <PasteButton
+                    block
+                    onPasteSuccess={(text) => {
+                      try {
+                        const curve = text
+                          .split(/[\r?\n]/)
+                          .reduce<{ opening: number[]; setting: number[] }>(
+                            (entries, entry) => {
+                              const [opening, setting] = entry.split(/[\t; ]/);
+                              if (
+                                typeof opening !== 'string' ||
+                                typeof setting !== 'string'
+                              ) {
+                                return entries;
+                              }
+                              entries.opening.push(+opening);
+                              entries.setting.push(+setting);
+                              return entries;
+                            },
+                            { opening: [], setting: [] }
+                          );
+
+                        if (
+                          curve.opening.length < 2 ||
+                          curve.setting.length < 2 ||
+                          curve.opening.length !== curve.setting.length
+                        ) {
+                          throw new Error('Invalid choke curve array length');
+                        }
+
+                        setFieldValue(`chokeCurve.opening`, curve.opening);
+                        setFieldValue(`chokeCurve.setting`, curve.setting);
+
+                        toast.info(
+                          `Choke curve with ${curve.opening.length} entries pasted from clipboard.`,
+                          {
+                            autoClose: 3000,
+                          }
+                        );
+                      } catch (e) {
+                        const message =
+                          e instanceof Error ? e.message : 'Unknown error';
+                        toast.error(
+                          `Could not parse choke curve from clipboard: ${message}`
+                        );
+                      }
+                    }}
+                  />
+                  <Button
+                    icon="Copy"
+                    onClick={async () => {
+                      const curveTabSeparated = values.chokeCurve.opening
+                        .map((opening, index) =>
+                          [opening, values.chokeCurve.setting[index]].join('\t')
+                        )
+                        .join('\n');
+
+                      await navigator.clipboard.writeText(curveTabSeparated);
+
+                      toast.info('Choke curve copied to clipboard');
+                    }}
+                  >
+                    Copy to clipboard
+                  </Button>
+                </div>
+              </ClipboardContainer>
+            </ChokeCurveSidebar>
+            <Table<ChokeCurveData>
+              columns={chokeCurveColumns}
+              dataSource={chokeCurveData}
+              flexLayout={{
+                minWidth: 50,
+                width: 500,
+                maxWidth: 500,
               }}
+              pagination={false}
             />
-          </div>
-          {values.chokeCurve.opening.map((opening, index) => (
-            <div
-              key={opening}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                columnGap: '6px',
-              }}
-            >
-              <FormRowStacked>
-                <NumberField
-                  max={100}
-                  min={0}
-                  name={`chokeCurve.opening.${index}`}
-                  step={1}
-                  title="Opening"
-                  width={120}
-                />
-                <NumberField
-                  name={`chokeCurve.setting.${index}`}
-                  title="Value"
-                  width={120}
-                />
-              </FormRowStacked>
-              <Label
-                icon="AddLarge"
-                size="small"
-                onClick={() => {
-                  const opening = [...values.chokeCurve.opening];
-                  opening.splice(
-                    index,
-                    0,
-                    values.chokeCurve.opening[index] ?? 0
-                  );
-                  setFieldValue('chokeCurve.opening', opening);
-
-                  const setting = [...values.chokeCurve.setting];
-                  setting.splice(
-                    index,
-                    0,
-                    values.chokeCurve.setting[index] ?? 0
-                  );
-                  setFieldValue('chokeCurve.setting', setting);
-                }}
-              />
-              <Label
-                icon="Delete"
-                size="small"
-                variant="danger"
-                onClick={() => {
-                  const opening = [...values.chokeCurve.opening];
-                  opening.splice(index, 1);
-                  setFieldValue('chokeCurve.opening', opening);
-
-                  const setting = [...values.chokeCurve.setting];
-                  setting.splice(index, 1);
-                  setFieldValue('chokeCurve.setting', setting);
-                }}
-              />
-            </div>
-          ))}
+          </ChokeCurveContainer>
         </>
       ) : (
         <>
@@ -230,5 +340,121 @@ export function AdvancedStep({ isEditing }: StepProps) {
         </>
       )}
     </FormContainer>
+  );
+}
+
+const ChokeCurveContainer = styled.div`
+  display: flex;
+  column-gap: 24px;
+  table {
+    td {
+      padding: 2px;
+    }
+    input {
+      width: 100%;
+      appearance: auto !important;
+      background: transparent;
+      border-color: transparent;
+    }
+  }
+  .chart-container {
+    height: 300px;
+  }
+`;
+
+const ChokeCurveSidebar = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 24px;
+  max-width: 400px;
+`;
+
+interface ChokeCurveData {
+  id: number;
+  opening: number;
+  setting: number;
+}
+
+const inputCell =
+  (
+    field: string,
+    setFieldValue: (field: string, value: number | string) => void,
+    min?: number,
+    max?: number,
+    step?: number
+  ) =>
+  ({
+    value,
+    row,
+  }: React.PropsWithChildren<CellProps<ChokeCurveData, number>>) =>
+    (
+      <Input
+        max={max}
+        min={min}
+        step={step}
+        type="number"
+        value={value}
+        onChange={(ev) => {
+          setFieldValue(`${field}[${row.index}]`, ev.target.value);
+        }}
+      />
+    );
+
+const ClipboardContainer = styled.div`
+  .actions {
+    display: flex;
+    align-items: stretch;
+    column-gap: 12px;
+    & > * {
+      flex: 1 0 auto;
+    }
+  }
+`;
+
+interface PasteButtonProps extends ButtonProps {
+  onPasteSuccess: (pastedText: string) => void;
+}
+
+function PasteButton({ onPasteSuccess, ...props }: PasteButtonProps) {
+  const [text, setText] = useState('');
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  return (
+    <div>
+      <Tooltip
+        content={
+          <Input
+            placeholder="Paste curve from clipboard"
+            rows={1}
+            value={text}
+            onBlur={() => {
+              setIsTooltipVisible(false);
+            }}
+            onPaste={(ev) => {
+              ev.preventDefault();
+              onPasteSuccess(ev.clipboardData.getData('text/plain'));
+              setText('');
+              setIsTooltipVisible(false);
+              return false;
+            }}
+          />
+        }
+        placement="top-start"
+        theme="dark"
+        visible={isTooltipVisible}
+        elevated
+        interactive
+      >
+        <Button
+          icon="InputData"
+          onClick={() => {
+            setIsTooltipVisible(!isTooltipVisible);
+          }}
+          {...props}
+        >
+          Paste from clipboard
+        </Button>
+      </Tooltip>
+    </div>
   );
 }

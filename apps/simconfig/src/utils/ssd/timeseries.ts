@@ -1,9 +1,6 @@
-import { linearInterpolation, linspace, mean } from './mathUtils';
+import type { TemporalDatum } from 'components/charts/types';
 
-export interface Datapoint {
-  timestamp: Date;
-  value: number;
-}
+import { linearInterpolation, linspace, mean } from './mathUtils';
 
 /**
  * Models a time series with `time` represented by a numeric array of milliseconds since epoch and `data` represented by
@@ -20,17 +17,22 @@ export class Timeseries {
   isStep: boolean;
   granularity: number;
   deltaTime: number[] = [];
-  minDeltaTime = 0;
+  minDeltaTime = 1;
   maxDeltaTime = 0;
   minTime: number;
   maxTime: number;
 
-  // TODO(SIM-000) evaluate if granularity and isStep can be read from Datapoints
-  static fromDatapoints(datapoints: Datapoint[]) {
+  // TODO(SIM-000) evaluate if isStep can be read from Datapoints
+  static fromDatapoints(datapoints: TemporalDatum[]) {
     // FIXME(SIM-209): Refactor to use Datapoint[] internally
+    if (datapoints.length < 2) {
+      throw new Error('timeseries require at least two data points');
+    }
     const time = datapoints.map((d) => d.timestamp.getTime());
     const data = datapoints.map((d) => d.value);
-    return new Timeseries(time, data);
+    const granularity =
+      datapoints[1].timestamp.getTime() - datapoints[0].timestamp.getTime();
+    return new Timeseries(time, data, granularity);
   }
 
   constructor(
