@@ -9,6 +9,6 @@ export {
   worldToNormalizedViewportCoordinates
 } from '@reveal/utilities';
 
-export { LoadingState } from '@reveal/cad-geometry-loaders';
+export { LoadingState } from '@reveal/model-base';
 
 export { LocalModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';

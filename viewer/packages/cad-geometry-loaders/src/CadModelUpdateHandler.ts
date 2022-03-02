@@ -13,7 +13,7 @@ import { scan, share, startWith, auditTime, filter, map, observeOn, mergeMap } f
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
 
-import { LoadingState } from './utilities/types';
+import { LoadingState } from '@reveal/model-base';
 import { emissionLastMillis } from './utilities/rxOperations';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
