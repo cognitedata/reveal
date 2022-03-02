@@ -3,7 +3,7 @@ import useAssetLinkWarning, {
 } from 'src/store/hooks/useAssetLinkWarning';
 import { act, renderHook } from '@testing-library/react-hooks';
 import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { waitFor } from '@testing-library/react';
 import { WrappedWithProviders } from 'src/__test-utils/renderer';
 import { AnnotationTableItem } from 'src/modules/Review/types';
@@ -61,17 +61,17 @@ describe('tests useAssetLinkWarningHook', () => {
   const annotationSiblingAssetId = 2;
   const tagAnnotation = getDummyAnnotation(
     1,
-    VisionAPIType.TagDetection,
+    VisionDetectionModelType.TagDetection,
     annotationAssetId
   );
   const tagAnnotationSibling = getDummyAnnotation(
     2,
-    VisionAPIType.TagDetection,
+    VisionDetectionModelType.TagDetection,
     annotationSiblingAssetId
   );
   const tagAnnotationWithSameAsset = getDummyAnnotation(
     3,
-    VisionAPIType.TagDetection,
+    VisionDetectionModelType.TagDetection,
     annotationAssetId
   );
 

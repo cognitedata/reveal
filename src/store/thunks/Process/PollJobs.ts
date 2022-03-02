@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchJobById } from 'src/api/vision/detectionModels/annotationJob';
-import { AnnotationJob } from 'src/api/vision/detectionModels/types';
+import { VisionJob } from 'src/api/vision/detectionModels/types';
 import { removeJobById } from 'src/modules/Process/store/slice';
 import { JobState } from 'src/modules/Process/store/types';
 import { ThunkConfig } from 'src/store/rootReducer';
@@ -18,7 +18,7 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
       const doesFileExist = (fileId: number) =>
         getState().processSlice.fileIds.includes(fileId);
 
-      fetchUntilComplete<AnnotationJob>(() => fetchJobById(modelType, jobId), {
+      fetchUntilComplete<VisionJob>(() => fetchJobById(modelType, jobId), {
         isCompleted: (latestJobVersion) =>
           latestJobVersion.status === 'Completed' ||
           latestJobVersion.status === 'Failed' ||

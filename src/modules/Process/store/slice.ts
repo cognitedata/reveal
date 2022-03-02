@@ -2,7 +2,7 @@
 import { isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import {
   DetectionModelParams,
-  VisionAPIType,
+  VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 import {
   removeJobFromFiles,
@@ -60,23 +60,23 @@ export const initialState: ProcessState = {
     allIds: [],
   },
   error: undefined,
-  selectedDetectionModels: [VisionAPIType.OCR],
+  selectedDetectionModels: [VisionDetectionModelType.OCR],
   availableDetectionModels: [
     {
       modelName: 'Text detection',
-      type: VisionAPIType.OCR,
+      type: VisionDetectionModelType.OCR,
       settings: initialDetectionModelParameters.ocr,
       unsavedSettings: initialDetectionModelParameters.ocr,
     },
     {
       modelName: 'Asset tag detection',
-      type: VisionAPIType.TagDetection,
+      type: VisionDetectionModelType.TagDetection,
       settings: initialDetectionModelParameters.tagDetection,
       unsavedSettings: initialDetectionModelParameters.tagDetection,
     },
     {
       modelName: 'Object detection',
-      type: VisionAPIType.ObjectDetection,
+      type: VisionDetectionModelType.ObjectDetection,
       settings: initialDetectionModelParameters.objectDetection,
       unsavedSettings: initialDetectionModelParameters.objectDetection,
     },
@@ -94,7 +94,7 @@ const processSlice = createGenericTabularDataSlice({
     },
     setSelectedDetectionModels(
       state,
-      action: PayloadAction<Array<VisionAPIType>>
+      action: PayloadAction<Array<VisionDetectionModelType>>
     ) {
       state.selectedDetectionModels = action.payload;
     },
@@ -122,17 +122,17 @@ const processSlice = createGenericTabularDataSlice({
     resetDetectionModelParameters(state) {
       state.availableDetectionModels.forEach((item) => {
         switch (item.type) {
-          case VisionAPIType.OCR:
+          case VisionDetectionModelType.OCR:
             item.unsavedSettings = initialDetectionModelParameters.ocr;
             break;
-          case VisionAPIType.TagDetection:
+          case VisionDetectionModelType.TagDetection:
             item.unsavedSettings = initialDetectionModelParameters.tagDetection;
             break;
-          case VisionAPIType.ObjectDetection:
+          case VisionDetectionModelType.ObjectDetection:
             item.unsavedSettings =
               initialDetectionModelParameters.objectDetection;
             break;
-          case VisionAPIType.CustomModel:
+          case VisionDetectionModelType.CustomModel:
             item.unsavedSettings = initialDetectionModelParameters.customModel;
             break;
         }
@@ -146,7 +146,7 @@ const processSlice = createGenericTabularDataSlice({
           : 'Custom model';
       state.availableDetectionModels.push({
         modelName,
-        type: VisionAPIType.CustomModel,
+        type: VisionDetectionModelType.CustomModel,
         settings: initialDetectionModelParameters.customModel,
         unsavedSettings: initialDetectionModelParameters.customModel,
       });

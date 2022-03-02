@@ -2,8 +2,8 @@ import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import {
-  AnnotationJob,
-  VisionAPIType,
+  VisionJob,
+  VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 import {
   enforceRegionValidity,
@@ -24,9 +24,9 @@ import { ToastUtils } from 'src/utils/ToastUtils';
 export const AnnotationDetectionJobUpdate = createAsyncThunk<
   VisionAnnotation[],
   {
-    job: AnnotationJob;
+    job: VisionJob;
     fileIds: number[];
-    modelType: VisionAPIType;
+    modelType: VisionDetectionModelType;
   },
   ThunkConfig
 >(
@@ -75,7 +75,7 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
 
       // fetch assets if tag detection
       if (
-        job.type === VisionAPIType.TagDetection &&
+        job.type === VisionDetectionModelType.TagDetection &&
         newAnnotationJobResults.length
       ) {
         const jobFilesWithDetectedAnnotations = newAnnotationJobResults.filter(

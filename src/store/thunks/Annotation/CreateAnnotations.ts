@@ -6,7 +6,7 @@ import {
   AnnotationUtils,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { getUnsavedAnnotation } from 'src/api/annotation/utils';
 
@@ -19,7 +19,7 @@ export const CreateAnnotations = createAsyncThunk<
   const unsavedAnnotations: UnsavedAnnotation[] = [
     getUnsavedAnnotation(
       annotation.text,
-      VisionAPIType.ObjectDetection,
+      VisionDetectionModelType.ObjectDetection,
       fileId,
       'user',
       annotation.region,

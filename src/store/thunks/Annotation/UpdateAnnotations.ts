@@ -6,7 +6,7 @@ import {
   validateAnnotation,
 } from 'src/api/annotation/utils';
 import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
-import { Annotation } from 'src/api/vision/detectionModels/types';
+import { Annotation } from 'src/api/annotation/types';
 
 export const UpdateAnnotations = createAsyncThunk<
   VisionAnnotation[],

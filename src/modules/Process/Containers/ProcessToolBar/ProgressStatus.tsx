@@ -16,7 +16,7 @@ import {
   selectAllJobsForAllFilesDict,
 } from 'src/modules/Process/store/selectors';
 import { setSummaryModalVisibility } from 'src/modules/Process/store/slice';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 
 export default function ProgressStatus() {
@@ -78,16 +78,17 @@ export default function ProgressStatus() {
     Object.entries(jobs).forEach(([_, job]) => {
       if (job.jobId > 0) {
         // HACK due to getFakeQueuedJob(), postAnnotationJob.Pending in processSlice
-        if (job.type === VisionAPIType.OCR) {
+        if (job.type === VisionDetectionModelType.OCR) {
           text.push(job.status);
         }
-        if (job.type === VisionAPIType.TagDetection) {
+        if (job.type === VisionDetectionModelType.TagDetection) {
           tag.push(job.status);
         }
         if (
-          [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
-            job.type
-          )
+          [
+            VisionDetectionModelType.ObjectDetection,
+            VisionDetectionModelType.CustomModel,
+          ].includes(job.type)
         ) {
           objects.push(job.status);
           gdpr.push(job.status);

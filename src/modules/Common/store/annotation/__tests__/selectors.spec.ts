@@ -7,7 +7,7 @@ import {
   makeSelectTotalAnnotationCountForFileIds,
 } from 'src/modules/Common/store/annotation/selectors';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 describe('Test annotation selectors', () => {
   const getDummyAnnotation = (
@@ -145,11 +145,19 @@ describe('Test annotation selectors', () => {
       },
       annotations: {
         byId: {
-          '1': getDummyAnnotation(1, VisionAPIType.OCR),
-          '2': getDummyAnnotation(2, VisionAPIType.TagDetection),
-          '3': getDummyAnnotation(3, VisionAPIType.ObjectDetection),
-          '4': getDummyAnnotation(4, VisionAPIType.ObjectDetection, 'hose'),
-          '5': getDummyAnnotation(5, VisionAPIType.ObjectDetection, 'person'),
+          '1': getDummyAnnotation(1, VisionDetectionModelType.OCR),
+          '2': getDummyAnnotation(2, VisionDetectionModelType.TagDetection),
+          '3': getDummyAnnotation(3, VisionDetectionModelType.ObjectDetection),
+          '4': getDummyAnnotation(
+            4,
+            VisionDetectionModelType.ObjectDetection,
+            'hose'
+          ),
+          '5': getDummyAnnotation(
+            5,
+            VisionDetectionModelType.ObjectDetection,
+            'person'
+          ),
         },
       },
     };

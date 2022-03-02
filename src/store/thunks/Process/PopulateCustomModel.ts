@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import {
   addToAvailableDetectionModels,
   BUILT_IN_MODEL_COUNT,
@@ -27,7 +27,7 @@ export const PopulateCustomModel = createAsyncThunk<
 
   // Set (currently unsaved) configuration
   const modelIndex = availableModelsUpdated.findIndex(
-    (item) => item.type === VisionAPIType.CustomModel
+    (item) => item.type === VisionDetectionModelType.CustomModel
   );
   const newParams = {
     modelIndex,
@@ -45,5 +45,5 @@ export const PopulateCustomModel = createAsyncThunk<
   );
   // Save configuration and set model selection
   dispatch(setDetectionModelParameters());
-  dispatch(setSelectedDetectionModels([VisionAPIType.CustomModel]));
+  dispatch(setSelectedDetectionModels([VisionDetectionModelType.CustomModel]));
 });

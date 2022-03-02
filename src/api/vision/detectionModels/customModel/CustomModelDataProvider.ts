@@ -1,9 +1,9 @@
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { singleton } from '@keenondrums/singleton';
 import { BaseDetectionModelDataProvider } from 'src/api/vision/detectionModels/BaseDetectionModelDataProvider';
 import { getDetectionModelEndpoint } from 'src/api/vision/detectionModels/detectionUtils';
 
 @singleton
 export class CustomModelDataProvider extends BaseDetectionModelDataProvider {
-  url = getDetectionModelEndpoint(VisionAPIType.CustomModel);
+  url = getDetectionModelEndpoint(VisionDetectionModelType.CustomModel);
 }

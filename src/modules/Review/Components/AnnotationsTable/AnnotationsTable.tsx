@@ -2,7 +2,7 @@ import { Title } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
 import styled from 'styled-components';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { FileInfo } from '@cognite/sdk';
 import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationsTable/AssetLinkWarning';
 import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/CollapsibleAnnotationTableRow/CollapsibleAnnotationTableRow';
@@ -43,7 +43,7 @@ export const AnnotationsTable = ({
       <Body>
         {annotationsAvailable &&
           annotations.map((annotation) => {
-            if (mode === VisionAPIType.TagDetection) {
+            if (mode === VisionDetectionModelType.TagDetection) {
               return (
                 <AssetLinkWarning
                   file={file}
@@ -79,7 +79,7 @@ export const AnnotationsTable = ({
         {!annotationsAvailable && (
           <EmptyPlaceHolderContainer>
             <span>
-              {mode === VisionAPIType.TagDetection
+              {mode === VisionDetectionModelType.TagDetection
                 ? 'No assets detected or manually added'
                 : 'No text or objects detected or manually added'}
             </span>

@@ -1,6 +1,6 @@
 import { AutoComplete, Button, OptionType } from '@cognite/cogs.js';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { OptionProps } from 'react-select';
 import { VisionOptionType } from 'src/modules/Review/types';
 import React from 'react';
@@ -43,12 +43,12 @@ export const VisionAutoComplete = ({
                       props.selectProps.inputValue !== ''
                         ? AnnotationUtils.getIconType({
                             text: props.selectProps.inputValue,
-                            modelType: VisionAPIType.ObjectDetection,
+                            modelType: VisionDetectionModelType.ObjectDetection,
                           })
                         : null,
                     color: AnnotationUtils.getAnnotationColor(
                       props.selectProps.inputValue || '',
-                      VisionAPIType.ObjectDetection,
+                      VisionDetectionModelType.ObjectDetection,
                       { keypoint: true }
                     ),
                   }}

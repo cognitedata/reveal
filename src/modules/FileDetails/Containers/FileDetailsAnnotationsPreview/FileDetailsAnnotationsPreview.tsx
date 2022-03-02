@@ -6,7 +6,7 @@ import { AnnotationsListPreview } from 'src/modules/FileDetails/Containers/FileD
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { isProcessingFile } from 'src/modules/Process/store/utils';
 import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
@@ -33,14 +33,14 @@ export const FileDetailsAnnotationsPreview = ({
   const textAndObjectAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
       selectFileAnnotationsByOcrObjectTypes(annotationReducer, fileInfo.id, [
-        VisionAPIType.OCR,
-        VisionAPIType.ObjectDetection,
+        VisionDetectionModelType.OCR,
+        VisionDetectionModelType.ObjectDetection,
       ])
   );
 
   const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
     selectFileAnnotationsByTagDetectionType(annotationReducer, fileInfo.id, [
-      VisionAPIType.TagDetection,
+      VisionDetectionModelType.TagDetection,
     ])
   );
 

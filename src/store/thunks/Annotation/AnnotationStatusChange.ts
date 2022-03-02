@@ -5,7 +5,7 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
 
 export const AnnotationStatusChange = createAsyncThunk<
@@ -90,7 +90,7 @@ export const AnnotationStatusChange = createAsyncThunk<
 
   dispatch(UpdateAnnotations([unSavedAnnotation]));
 
-  if (unSavedAnnotation.modelType === VisionAPIType.TagDetection) {
+  if (unSavedAnnotation.modelType === VisionDetectionModelType.TagDetection) {
     await updateTagAnnotationAndFileAssetLinks(file, unSavedAnnotation); // update tag annotations and asset links in file
   }
 });

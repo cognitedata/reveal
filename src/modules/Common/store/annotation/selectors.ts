@@ -1,4 +1,4 @@
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import {
   getAnnotationsBadgeCounts,
@@ -56,7 +56,11 @@ export const makeSelectFileAnnotationsByType = () => {
   const fileAnnotationSelector = makeSelectFileAnnotations();
 
   return createDeepEqualSelector(
-    (state: AnnotationState, fileId: number, types: VisionAPIType[]) => types,
+    (
+      state: AnnotationState,
+      fileId: number,
+      types: VisionDetectionModelType[]
+    ) => types,
     fileAnnotationSelector,
     (types, fileAnnotations) => {
       if (fileAnnotations.length) {

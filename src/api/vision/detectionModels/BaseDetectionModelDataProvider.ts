@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
-  AnnotationJobResponse,
+  VisionJobResponse,
   DetectionModelDataProvider,
   DetectionModelParams,
 } from 'src/api/vision/detectionModels/types';
@@ -15,7 +15,7 @@ export abstract class BaseDetectionModelDataProvider
 
   postJob(fileIds: number[], parameters?: DetectionModelParams) {
     return sdk
-      .post<AnnotationJobResponse>(this.url, {
+      .post<VisionJobResponse>(this.url, {
         data: {
           items: fileIds.map((id) => {
             return {
@@ -36,9 +36,9 @@ export abstract class BaseDetectionModelDataProvider
       });
   }
 
-  fetchJobById(jobId: number): Promise<AnnotationJobResponse> {
+  fetchJobById(jobId: number): Promise<VisionJobResponse> {
     return sdk
-      .get<AnnotationJobResponse>(`${this.url}/${jobId}`)
+      .get<VisionJobResponse>(`${this.url}/${jobId}`)
       .then((response) => {
         if (response.status === 200) {
           return response.data;
