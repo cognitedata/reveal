@@ -1,4 +1,9 @@
+import { ExternalLabelDefinition } from '@cognite/sdk';
 import { mapConfusionMatrix } from '../matrix';
+
+const label = (externalId: string): ExternalLabelDefinition => {
+  return { name: externalId, externalId };
+};
 
 describe('Matrix', () => {
   describe('mapConfusionMatrix', () => {
@@ -9,7 +14,7 @@ describe('Matrix', () => {
           [1, 2],
           [0, 2],
         ],
-        ['a', 'b'],
+        [label('a'), label('b')],
         [
           {
             id: 0,
@@ -35,7 +40,7 @@ describe('Matrix', () => {
           [1, 2, 0],
           [0, 2, 1],
         ],
-        ['a', 'b'],
+        [label('a'), label('b')],
         [
           {
             id: 0,

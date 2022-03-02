@@ -1,3 +1,5 @@
+import { ExternalLabelDefinition } from '@cognite/sdk';
+
 export interface ConfusionMatrix {
   id: number;
   name: string;
@@ -21,7 +23,7 @@ export interface ConfusionMatrix {
  */
 export const mapConfusionMatrix = (
   confusionMatrix: number[][],
-  labels: string[]
+  labels: ExternalLabelDefinition[]
 ): ConfusionMatrix[] => {
   return confusionMatrix.map((row, rowIndex) => {
     const matrix = row.reduce((accumulator, value, columnIndex) => {
@@ -29,12 +31,12 @@ export const mapConfusionMatrix = (
 
       return {
         ...accumulator,
-        [labels[columnIndex] || '?']: {
+        [labels[columnIndex]?.externalId || '?']: {
           value,
           outlier: isValueOutlier,
         },
       };
     }, {} as ConfusionMatrix['matrix']);
-    return { id: rowIndex, name: labels[rowIndex] || '?', matrix };
+    return { id: rowIndex, name: labels[rowIndex]?.name || '?', matrix };
   });
 };

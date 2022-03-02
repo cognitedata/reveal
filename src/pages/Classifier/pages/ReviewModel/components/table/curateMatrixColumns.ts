@@ -1,16 +1,17 @@
+import { ExternalLabelDefinition } from '@cognite/sdk';
 import { TableCell } from 'components/table/TableCell';
 import { Column } from 'react-table';
 
-export const curateColumns = (labels: string[]) => {
+export const curateColumns = (labels: ExternalLabelDefinition[]) => {
   return labels.reduce(
     (accumulator, label) => {
       return [
         ...accumulator,
         {
-          Header: label,
-          accessor: `matrix.${label}.value`,
+          Header: label.name,
+          accessor: `matrix.${label.externalId}.value`,
           disableSortBy: true,
-          Cell: TableCell.MatrixLabel(label),
+          Cell: TableCell.MatrixLabel(label.externalId),
         },
       ];
     },

@@ -4,6 +4,7 @@ import { TableWrapper } from 'components/table/TableWrapper';
 import React from 'react';
 import styled from 'styled-components';
 import { ConfusionMatrix, mapConfusionMatrix } from 'utils/matrix';
+import { useLabels } from 'hooks/useLabels';
 import { curateColumns } from './curateMatrixColumns';
 
 const Container = styled.div`
@@ -28,7 +29,9 @@ interface Props {
 }
 
 export const MatrixTable: React.FC<Props> = ({ classifier }) => {
-  const { labels = [], confusionMatrix = [] } = classifier?.metrics || {};
+  const confusionMatrix = classifier?.metrics?.confusionMatrix || [];
+  const externalIdsOfLabels = classifier?.metrics?.labels || [];
+  const { labels } = useLabels(externalIdsOfLabels);
   const columns = React.useMemo(() => curateColumns(labels), [labels]);
 
   const matrix = mapConfusionMatrix(confusionMatrix, labels);
