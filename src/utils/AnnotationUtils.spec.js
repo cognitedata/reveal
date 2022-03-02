@@ -3,7 +3,7 @@ import {
   getAnnotationsBadgeCounts,
 } from 'src/utils/AnnotationUtils';
 
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 
 describe('annotationCounts', () => {
   it('should return unique annotation texts and number of occurences', () => {

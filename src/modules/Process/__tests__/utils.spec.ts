@@ -3,7 +3,7 @@ import {
   AnnotationStatuses,
 } from 'src/modules/Common/types';
 import { hasJobsFailedForFile } from 'src/modules/Process/store/utils';
-import { JobStatus } from 'src/api/types';
+import { JobStatus } from 'src/api/vision/detectionModels/types';
 import { ProcessSummary } from 'src/modules/Process/types';
 import { calculateSummaryStats } from 'src/modules/Process/utils';
 

@@ -1,6 +1,6 @@
 import { AutoComplete, Button, OptionType } from '@cognite/cogs.js';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import { OptionProps } from 'react-select';
 import { VisionOptionType } from 'src/modules/Review/types';
 import React from 'react';

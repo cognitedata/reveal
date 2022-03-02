@@ -11,7 +11,7 @@ import React from 'react';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
 import { useDispatch, useSelector } from 'react-redux';
-import { ParamsTagDetection } from 'src/api/types';
+import { ParamsTagDetection } from 'src/api/vision/detectionModels/types';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsTagDetection } from 'src/constants/Colors';
 import TagdetectionIllustration from 'src/assets/visualDescriptions/TagdetectionIllustration.svg';

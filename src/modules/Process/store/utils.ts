@@ -6,7 +6,7 @@ import {
   AnnotationJobCompleted,
   AnnotationJobRunning,
   VisionAPIType,
-} from 'src/api/types';
+} from 'src/api/vision/detectionModels/types';
 
 import {
   AnnotationsBadgeStatuses,

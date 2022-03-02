@@ -1,6 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { isAnyOf, PayloadAction } from '@reduxjs/toolkit';
-import { DetectionModelParams, VisionAPIType } from 'src/api/types';
+import {
+  DetectionModelParams,
+  VisionAPIType,
+} from 'src/api/vision/detectionModels/types';
 import {
   removeJobFromFiles,
   addJobToState,
@@ -10,7 +13,7 @@ import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { createGenericTabularDataSlice } from 'src/store/genericTabularDataSlice';
-import { getFakeQueuedJob } from 'src/api/detectionUtils';
+import { getFakeQueuedJob } from 'src/api/vision/detectionModels/detectionUtils';
 import { ProcessState } from 'src/modules/Process/store/types';
 
 export const BUILT_IN_MODEL_COUNT = 3; // ocr, tag & objectdetection

@@ -16,7 +16,7 @@ import {
   selectAllJobsForAllFilesDict,
 } from 'src/modules/Process/store/selectors';
 import { setSummaryModalVisibility } from 'src/modules/Process/store/slice';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 
 export default function ProgressStatus() {

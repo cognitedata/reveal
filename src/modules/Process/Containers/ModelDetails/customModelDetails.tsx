@@ -9,7 +9,7 @@ import {
 } from '@cognite/cogs.js';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ParamsCustomModel } from 'src/api/types';
+import { ParamsCustomModel } from 'src/api/vision/detectionModels/types';
 import {
   setCustomModelName,
   setUnsavedDetectionModelSettings,
@@ -19,7 +19,7 @@ import { ColorsObjectDetection } from 'src/constants/Colors';
 import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIllustration.svg';
 
 import { AutoMLModelSelectFilter } from 'src/modules/Process/Components/AutoMLModelSelectFilter';
-import { AutoMLModel } from 'src/api/autoML/types';
+import { AutoMLModel } from 'src/api/vision/autoML/types';
 import {
   ColorBox,
   NameContainer,

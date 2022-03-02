@@ -1,4 +1,4 @@
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import {
   getAnnotationsBadgeCounts,

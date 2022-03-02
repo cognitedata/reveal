@@ -3,9 +3,9 @@ import {
   AnnotationJob,
   DetectionModelParams,
   VisionAPIType,
-} from 'src/api/types';
+} from 'src/api/vision/detectionModels/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { createAnnotationJob } from 'src/api/annotationJob';
+import { createAnnotationJob } from 'src/api/vision/detectionModels/annotationJob';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 import { ProcessState } from 'src/modules/Process/store/types';
 

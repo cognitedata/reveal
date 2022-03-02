@@ -1,4 +1,4 @@
-import { CDFResourceId, JobStatus } from 'src/api/types';
+import { FileIdEither, JobStatus } from 'src/api/vision/detectionModels/types';
 
 export type AutoMLModelType = 'classification' | 'objectdetection';
 
@@ -34,5 +34,5 @@ export interface AutoMLTrainingJob extends AutoMLModel {
 }
 
 export interface AutoMLTrainingJobPostRequest extends AutoMLTrainingJob {
-  items: CDFResourceId[];
+  items: FileIdEither[];
 }

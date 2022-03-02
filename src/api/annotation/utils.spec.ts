@@ -1,4 +1,4 @@
-import { AnnotationRegion } from 'src/api/types';
+import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { enforceRegionValidity, validateAnnotation } from './utils';
 

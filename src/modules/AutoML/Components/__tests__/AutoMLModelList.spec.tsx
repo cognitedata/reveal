@@ -7,7 +7,7 @@ import { testRenderer } from 'src/__test-utils/renderer';
 import { AutoMLModelList } from 'src/modules/AutoML/Components/AutoMLModelList';
 
 import { mockCogniteAutoMLModelList } from 'src/__test-utils/fixtures/automlModels';
-import { AutoMLModel } from 'src/api/autoML/types';
+import { AutoMLModel } from 'src/api/vision/autoML/types';
 
 describe('AutoMLModelList', () => {
   const TestComponent = (props: any) => {

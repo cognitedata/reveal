@@ -1,4 +1,4 @@
-import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
+import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
 import {
   mockCogniteAutoMLModelList,
   mockCogniteAutoMLModel,
@@ -6,8 +6,8 @@ import {
 } from 'src/__test-utils/fixtures/automlModels';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpResponse } from '@cognite/sdk';
-import { AutoMLModelType } from 'src/api/autoML/types';
-import { CDFResourceId } from 'src/api/types';
+import { AutoMLModelType } from 'src/api/vision/autoML/types';
+import { FileIdEither } from 'src/api/vision/detectionModels/types';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => ({
   get: jest.fn(),
@@ -128,7 +128,7 @@ describe('AutoML start training job', () => {
     const json = await AutoMLAPI.startAutoMLJob(
       name,
       modelType as AutoMLModelType,
-      items as CDFResourceId[]
+      items as FileIdEither[]
     );
 
     expect(json).toBe(mockCogniteAutoMLTrainingJob[0]);
@@ -147,7 +147,7 @@ describe('AutoML start training job', () => {
     const json = await AutoMLAPI.startAutoMLJob(
       name,
       modelType as AutoMLModelType,
-      items as CDFResourceId[]
+      items as FileIdEither[]
     );
     expect(json).toBe(undefined);
     expect(consoleSpy).toHaveBeenCalled();

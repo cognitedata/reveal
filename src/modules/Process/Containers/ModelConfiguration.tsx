@@ -8,8 +8,8 @@ import styled from 'styled-components';
 
 import { RootState } from 'src/store/rootReducer';
 import { useSelector } from 'react-redux';
-import { VisionAPIType } from 'src/api/types';
-import { AutoMLModel } from 'src/api/autoML/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { AutoMLModel } from 'src/api/vision/autoML/types';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';

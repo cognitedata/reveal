@@ -2,7 +2,7 @@ import React from 'react';
 import { Col, Row, Icon, Micro, Colors } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { AutoMLModel } from 'src/api/autoML/types';
+import { AutoMLModel } from 'src/api/vision/autoML/types';
 import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
 import { AutoMLModelNameBadge } from './AutoMLModelNameBadge';
 import { AutoMLStatusBadge } from './AutoMLStatusBadge';

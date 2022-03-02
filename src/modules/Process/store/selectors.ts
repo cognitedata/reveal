@@ -6,7 +6,7 @@ import {
   defaultMemoize,
 } from 'reselect';
 
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 import { GenericSort, SortKeys } from 'src/modules/Common/Utils/SortUtils';

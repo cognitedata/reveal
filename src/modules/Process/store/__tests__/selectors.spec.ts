@@ -9,7 +9,7 @@ import { FileState } from 'src/modules/Common/store/files/types';
 import { ProcessState } from 'src/modules/Process/store/types';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
 
 const getRootState = (

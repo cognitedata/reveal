@@ -2,7 +2,7 @@ import { Title } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
 import styled from 'styled-components';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import { FileInfo } from '@cognite/sdk';
 import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationsTable/AssetLinkWarning';
 import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/CollapsibleAnnotationTableRow/CollapsibleAnnotationTableRow';

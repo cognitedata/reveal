@@ -7,8 +7,8 @@ import {
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
 
-jest.mock('src/api/constants', () => ({
-  ...jest.requireActual('src/api/constants'),
+jest.mock('src/api/vision/autoML/constants', () => ({
+  ...jest.requireActual('src/api/vision/autoML/constants'),
   MIN_AUTOML_DATASET_SIZE: 2,
   MAX_AUTOML_ANNOTATIONS_TYPE: 2,
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE: 2,

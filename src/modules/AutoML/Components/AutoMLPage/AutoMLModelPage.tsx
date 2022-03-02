@@ -11,8 +11,8 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
-import { AutoMLTrainingJob } from 'src/api/autoML/types';
+import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
+import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
 import { AutoMLModelNameBadge } from 'src/modules/AutoML/Components/AutoMLModelNameBadge';
 import { useUserCapabilities } from 'src/hooks/useUserCapabilities';
 import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';

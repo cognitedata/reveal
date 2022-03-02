@@ -2,7 +2,7 @@ import { VisionFile } from 'src/modules/Common/store/files/types';
 import {
   MAX_AUTOML_ANNOTATIONS_TYPE,
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE,
-} from 'src/api/constants';
+} from 'src/api/vision/autoML/constants';
 import { VisionAnnotation } from 'src/utils/AnnotationUtils';
 
 import mime from 'mime-types';

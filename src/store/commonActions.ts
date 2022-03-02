@@ -1,5 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
-import { AnnotationJob, VisionAPIType } from 'src/api/types';
+import {
+  AnnotationJob,
+  VisionAPIType,
+} from 'src/api/vision/detectionModels/types';
 
 export const fileProcessUpdate =
   createAction<{

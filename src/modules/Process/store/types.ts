@@ -2,7 +2,7 @@ import {
   AnnotationJob,
   VisionAPIType,
   DetectionModelParams,
-} from 'src/api/types';
+} from 'src/api/vision/detectionModels/types';
 import { GenericTabularState } from 'src/store/genericTabularDataSlice';
 
 export type JobState = AnnotationJob & {

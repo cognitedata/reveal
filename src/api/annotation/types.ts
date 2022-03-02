@@ -4,7 +4,7 @@ import {
   AnnotationMetadata,
   AnnotationRegion,
   LinkedAnnotation,
-} from 'src/api/types';
+} from 'src/api/vision/detectionModels/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 export interface AnnotationListRequest {
