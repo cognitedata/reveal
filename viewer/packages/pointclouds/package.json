@@ -1,0 +1,16 @@
+{
+  "name": "@reveal/pointclouds",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "yarn ws:start",
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/metrics": "workspace:*",
+    "@reveal/model-base": "workspace:*",
+    "@reveal/modeldata-api": "workspace:*",
+    "@reveal/utilities": "workspace:*"
+  }
+}

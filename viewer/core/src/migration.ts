@@ -3,7 +3,7 @@
  */
 
 export { Cognite3DModel } from '@reveal/cad-model';
-export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
+export { CognitePointCloudModel } from '@reveal/pointclouds';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
 export {
   Color,
