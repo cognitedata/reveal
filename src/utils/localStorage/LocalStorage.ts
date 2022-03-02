@@ -13,30 +13,42 @@ import {
   ReviewReducerState,
 } from 'src/modules/Review/store/reviewSlice';
 import { RootState } from 'src/store/rootReducer';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { validatePersistedState } from 'src/utils/localStorage/validatePersistedState';
+
+// To invalidate stored state when braking changes are added to the state
+// bump up the version
+export const APP_STATE_VERSION = 1;
 
 export const loadState = (): Partial<RootState> | undefined => {
   try {
     const serializedState = localStorage.getItem('state');
     if (serializedState) {
-      const persistedState = JSON.parse(serializedState) as OfflineState;
-      return {
-        annotationLabelReducer: {
-          ...annotationLabelReducerInitialState,
-          ...persistedState.annotationLabelReducer,
-        },
-        reviewSlice: {
-          ...reviewReducerInitialState,
-          ...persistedState.reviewSlice,
-        },
-        explorerReducer: {
-          ...explorerReducerInitialState,
-          ...persistedState.explorerSlice,
-        },
-        processSlice: {
-          ...processReducerInitialState,
-          ...persistedState.processSlice,
-        },
-      };
+      const { stateMeta, ...persistedState } = JSON.parse(
+        serializedState
+      ) as OfflineState;
+      if (
+        validatePersistedState(stateMeta.project, stateMeta.appStateVersion)
+      ) {
+        return {
+          annotationLabelReducer: {
+            ...annotationLabelReducerInitialState,
+            ...persistedState.annotationLabelReducer,
+          },
+          reviewSlice: {
+            ...reviewReducerInitialState,
+            ...persistedState.reviewSlice,
+          },
+          explorerReducer: {
+            ...explorerReducerInitialState,
+            ...persistedState.explorerSlice,
+          },
+          processSlice: {
+            ...processReducerInitialState,
+            ...persistedState.processSlice,
+          },
+        };
+      }
     }
     return {
       annotationLabelReducer: {
@@ -84,6 +96,10 @@ export type OfflineState = {
     | 'selectedDetectionModels'
     | 'availableDetectionModels'
   >;
+  stateMeta: {
+    project: string;
+    appStateVersion: number;
+  };
 };
 
 const getOfflineState = (state: RootState): OfflineState => {
@@ -106,6 +122,10 @@ const getOfflineState = (state: RootState): OfflineState => {
       files: state.processSlice.files,
       selectedDetectionModels: state.processSlice.selectedDetectionModels,
       availableDetectionModels: state.processSlice.availableDetectionModels,
+    },
+    stateMeta: {
+      project: sdk.project,
+      appStateVersion: APP_STATE_VERSION,
     },
   };
   return offState;
