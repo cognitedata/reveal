@@ -4,8 +4,8 @@ import { Store } from 'redux';
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
+import { Metadata } from 'components/document-preview';
 import { DocumentMetadata } from 'modules/documentSearch/types';
-import { Metadata } from 'pages/authorized/search/map/cards/document/components/Metadata';
 
 jest.mock('hooks/useDocumentLabels', () => ({
   useDocumentLabelsByExternalIds: () => ['unclassified'],

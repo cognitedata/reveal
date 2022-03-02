@@ -44,6 +44,7 @@ export const normalize = (rawAPIDoc: Document): DocumentType => {
       filesize: rawAPIDoc.sourceFile.size,
       size: getFilesize(rawAPIDoc),
       filepath: possiblePath || '',
+      url: rawAPIDoc.sourceFile.metadata?.url,
       topfolder: splitPath[1] || 'Unknown',
       truncatedContent: rawAPIDoc.truncatedContent || '',
       pageCount: rawAPIDoc.pageCount,

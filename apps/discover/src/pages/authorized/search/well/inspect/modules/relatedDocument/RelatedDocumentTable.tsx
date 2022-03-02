@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
 
-import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
+import DocumentViewModal from 'components/document-preview/DocumentViewModal';
 import EmptyState from 'components/emptyState';
 import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
 import FeedbackPanel from 'components/modals/entity-feedback';

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import includes from 'lodash/includes';
 import { downloadFileFromUrl } from 'services/documentPreview/utils';
+import { openExternalPage } from 'utils/url';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { getTenantInfo } from '@cognite/react-container';
@@ -67,8 +68,9 @@ const DocumentPreviewActionsComponent: React.FC<Props> = ({
 
   const contextualize = () => canContextualize(filteredLabels);
 
-  const goToSchematic = () =>
-    window.open(getContextualizePath(doc.doc.id, project));
+  const goToSchematic = () => {
+    openExternalPage(getContextualizePath(doc.doc.id, project));
+  };
 
   const supportedFileTypes = config?.wellboreSchematics?.supportedFileTypes;
 

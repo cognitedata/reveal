@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useTranslation } from '@cognite/react-i18n';
 
-import { PathHeader } from 'components/document-info-panel/elements';
+import { PathHeader } from 'components/document-preview/elements';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { FlexColumn } from 'styles/layout';

@@ -67,7 +67,7 @@ const StyledTypography = styled(Typography)`
   display: block !important;
 `;
 
-const DocumentViewModal: React.FC<Props> = ({
+export const DocumentViewModal: React.FC<Props> = ({
   documentId,
   onModalClose,
   modalOpen,

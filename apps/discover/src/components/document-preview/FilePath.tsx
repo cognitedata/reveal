@@ -34,12 +34,6 @@ export const FilePath: React.FC<FilePathProps> = ({ paths, documentId }) => {
     metrics.track('click-report-invalid-document-path-button');
   };
 
-  const renderReportIssueButton = () => (
-    <ReportIssueText onClick={onOpenFeedback} aria-hidden="true">
-      Report the issue
-    </ReportIssueText>
-  );
-
   const isEveryFilePathsEmpty = paths.every((path) => !path);
   if (isEveryFilePathsEmpty) {
     return (
@@ -49,7 +43,9 @@ export const FilePath: React.FC<FilePathProps> = ({ paths, documentId }) => {
             <FlexRow>
               <PathText>
                 All paths ({paths.length + 1}) are invalid.{' '}
-                {renderReportIssueButton()}
+                <ReportIssueText onClick={onOpenFeedback} aria-hidden="true">
+                  Report the issue
+                </ReportIssueText>
               </PathText>
             </FlexRow>
           </PathContainer>

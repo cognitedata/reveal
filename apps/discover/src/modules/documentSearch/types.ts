@@ -55,6 +55,7 @@ export interface DocumentMetadata {
   id: string;
   filename: string;
   filepath: string;
+  url?: string;
   filetype: string;
   labels: DocumentLabel[];
   location: string;

@@ -2,11 +2,14 @@ import { Row } from 'react-table';
 
 import { getPathsFromDoc } from 'utils/getPathsFromDocument';
 
-import { FilePath } from 'components/document-info-panel/FilePath';
+import {
+  Highlight,
+  Metadata,
+  FilePath,
+  Url,
+} from 'components/document-preview';
 import { DocumentType } from 'modules/documentSearch/types';
 import { MetadataContainer } from 'pages/authorized/search/elements';
-import { Highlight } from 'pages/authorized/search/map/cards/document/components/Highlight';
-import { Metadata } from 'pages/authorized/search/map/cards/document/components/Metadata';
 import { MarginBottomNormalContainer } from 'styles/layout';
 
 export type Props = {
@@ -22,6 +25,8 @@ export const DocumentResultTableSubRow = ({ row }: Props) => {
           documentId={row.original.doc.id}
         />
       )}
+
+      <Url url={row.original.doc.url} />
 
       {row.original.doc.truncatedContent && (
         <MarginBottomNormalContainer>

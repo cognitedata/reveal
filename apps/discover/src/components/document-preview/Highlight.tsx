@@ -7,7 +7,7 @@ import styled from 'styled-components/macro';
 import { Body } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
-import { PreviewHeader } from 'components/document-info-panel/elements';
+import { PreviewHeader } from 'components/document-preview/elements';
 import { Value } from 'components/metadataTable/elements';
 import { useDocumentHighlightedContent } from 'hooks/useDocumentHighlightedContent';
 import { DocumentType } from 'modules/documentSearch/types';

@@ -7,7 +7,7 @@ import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate'
 import { Badge, Icon, Tabs } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
 
-import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
+import DocumentViewModal from 'components/document-preview/DocumentViewModal';
 import EmptyState from 'components/emptyState';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';

@@ -14,10 +14,18 @@ import { EMPTY_COMMENT_PLACEHOLDER, EMPTY_PATH_PLACEHOLDER } from './constants';
 import { EmptyCell } from './elements';
 import { FilePath } from './formats/FilePath';
 import { Text } from './formats/Text';
+import { UrlPath } from './formats/UrlPath';
 
 export interface FormatItemProps {
   value?: string | string[] | number | React.ReactNode[] | false | null;
-  type?: 'text' | 'path' | 'filesize' | 'date' | 'label' | 'componentlist';
+  type?:
+    | 'text'
+    | 'path'
+    | 'filesize'
+    | 'date'
+    | 'label'
+    | 'componentlist'
+    | 'url';
   actions?: JSX.Element | JSX.Element[];
 }
 
@@ -45,6 +53,10 @@ export const formatItem = ({ value, type, actions }: FormatItemProps) => {
         {value || <EmptyCell>{EMPTY_PATH_PLACEHOLDER}</EmptyCell>}
       </FilePath>
     );
+  }
+
+  if (type === 'url') {
+    return <UrlPath url={value as string} />;
   }
 
   // If the value is empty, show the placeholder

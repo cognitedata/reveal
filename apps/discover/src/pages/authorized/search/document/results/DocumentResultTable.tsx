@@ -13,7 +13,7 @@ import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearc
 
 import { Icon, IconType } from '@cognite/cogs.js';
 
-import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
+import DocumentViewModal from 'components/document-preview/DocumentViewModal';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { Table, RowProps } from 'components/tablev3';

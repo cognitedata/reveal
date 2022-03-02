@@ -1,6 +1,6 @@
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
-import { isSafeUrl } from 'utils/isSafeUrl';
+import { openExternalPage } from 'utils/url';
 
 import { InternalId, ExternalId, IdEither, FileLink } from '@cognite/sdk';
 
@@ -172,14 +172,12 @@ export const downloadFile = (
 
 export const downloadFileFromUrl = async (documentId: string) => {
   const url = await getSignedUrl(documentId);
-  if (isSafeUrl(url)) {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  }
+  openExternalPage(url);
 };
 
 export const openDocumentPreviewInNewTab = async (documentId: string) => {
   return getTemporaryPreviewLink(documentId).then((value) => {
-    window.open(value, '_blank', 'noopener');
+    openExternalPage(value);
   });
 };
 

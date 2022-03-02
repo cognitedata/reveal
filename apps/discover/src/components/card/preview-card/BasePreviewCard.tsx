@@ -4,7 +4,7 @@ import { Button, IconType, Label } from '@cognite/cogs.js';
 
 import { CloseButton } from 'components/buttons';
 import Divider from 'components/divider';
-import { CopyIcon } from 'components/document-info-panel/elements';
+import { CopyIcon } from 'components/document-preview/elements';
 import { FlexGrow } from 'styles/layout';
 
 import {

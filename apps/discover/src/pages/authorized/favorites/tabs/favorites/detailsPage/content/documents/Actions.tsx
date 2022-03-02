@@ -15,7 +15,7 @@ import {
   ViewButton,
   MoreOptionsButton,
 } from 'components/buttons';
-import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
+import DocumentViewModal from 'components/document-preview/DocumentViewModal';
 import {
   showInfoMessageWithTitle,
   showErrorMessage,

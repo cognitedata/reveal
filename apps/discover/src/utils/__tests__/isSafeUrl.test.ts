@@ -1,4 +1,4 @@
-import { isSafeUrl } from '../isSafeUrl';
+import { isSafeUrl } from '../url';
 
 const cases: [string, boolean][] = [
   ['http://safe.http.url/should.return.true', true],

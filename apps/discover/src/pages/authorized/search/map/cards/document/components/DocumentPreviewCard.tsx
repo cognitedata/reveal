@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { openDocumentPreviewInNewTab } from 'services/documentPreview/utils';
@@ -8,8 +8,13 @@ import { reportException } from '@cognite/react-errors';
 import { useTranslation } from '@cognite/react-i18n';
 
 import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
-import { FilePath } from 'components/document-info-panel/FilePath';
-import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
+import {
+  FilePath,
+  DocumentViewModal,
+  Metadata,
+  Url,
+  Highlight,
+} from 'components/document-preview';
 import { showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
@@ -18,8 +23,6 @@ import { MarginBottomNormalContainer } from 'styles/layout';
 
 import { DocumentPreviewActions } from './DocumentPreviewActions';
 import { DocumentInfoWrapper } from './elements';
-import { Highlight } from './Highlight';
-import { Metadata } from './Metadata';
 
 export const DocumentPreviewCard: React.FC<{
   documentId: string;
@@ -38,13 +41,12 @@ export const DocumentPreviewCard: React.FC<{
     metrics.track('click-open-document-preview-button');
   };
 
-  // Might need to re-enable this code if the map isn't scaling properly on document card click
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     // Trigger a resize for the map to change width after transition has finished
-  //     window.dispatchEvent(new Event('resize'));
-  //   }, 1000);
-  // }, [documentId]);
+  useEffect(() => {
+    setTimeout(() => {
+      // Trigger a resize for the map to change width after transition has finished
+      window.dispatchEvent(new Event('resize'));
+    }, 1000);
+  }, [documentId]);
 
   const doc = useMemo(
     () => documentResultHits.find((doc) => doc.id === documentId),
@@ -58,10 +60,13 @@ export const DocumentPreviewCard: React.FC<{
     showSuccessMessage(t('Retrieving document'));
 
     if (doc && doc.doc.id) {
-      openDocumentPreviewInNewTab(doc.doc.id).catch((error) => {
-        t('Oops, something went wrong');
-        reportException(error);
-      });
+      openDocumentPreviewInNewTab(doc.doc.id)
+        .catch((error) => {
+          reportException(error);
+        })
+        .finally(() => {
+          setDownloadingPdf(false);
+        });
     }
   };
 
@@ -98,6 +103,8 @@ export const DocumentPreviewCard: React.FC<{
     >
       <DocumentInfoWrapper>
         <FilePath documentId={doc.doc.id} paths={getPathsFromDoc(doc)} />
+
+        <Url url={doc.doc.url} />
 
         <MarginBottomNormalContainer>
           <Highlight doc={doc} />
