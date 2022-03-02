@@ -1,5 +1,12 @@
-#pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')
+#pragma glslify: import('../color/packIntToColor.glsl')
 
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 instanceMatrix;
+
+in vec3 position;
+in vec3 normal;
 in mediump float a_sectorId;
 in lowp vec3 a_coverageFactor;
 in lowp float a_visible;
@@ -18,6 +25,8 @@ void main()
     // A seed to ensure that two overlapping sectors A and B 
     // doesn't produce the same noise pattern
     v_seed = vec2(a_sectorId / 255.0, a_sectorId / 65025.0);
+
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     vec4 mvPosition = modelViewMatrix * instanceMatrix * vec4( position, 1.0 );
 
