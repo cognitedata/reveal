@@ -52,7 +52,7 @@ async function init() {
   group.applyMatrix4(cadFromCdfToThreeMatrix);
   scene.add(group);
 
-  const materialMap: Map<RevealGeometryCollectionType, THREE.ShaderMaterial> = new Map([
+  const materialMap: Map<RevealGeometryCollectionType, THREE.RawShaderMaterial> = new Map([
     [RevealGeometryCollectionType.BoxCollection, TestMaterials.createBoxMaterial()],
     [RevealGeometryCollectionType.CircleCollection, TestMaterials.createCircleMaterial()],
     [RevealGeometryCollectionType.ConeCollection, TestMaterials.createConeMaterial()],

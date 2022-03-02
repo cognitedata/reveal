@@ -1,8 +1,14 @@
-#pragma glslify: mul3 = require('../../math/mul3.glsl')
+#pragma glslify: import('../../math/mul3.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+uniform vec3 cameraPosition;
 
+in vec3 position;
 in float a_treeIndex;
 in vec3 a_color;
 in vec3 a_center;
@@ -29,6 +35,8 @@ out vec3 v_normal;
 void main() {
     v_treeIndex = a_treeIndex;
     v_color = a_color;
+
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     vec3 lDir;
     float distanceToCenterOfSegment = a_verticalRadius - a_height * 0.5;
