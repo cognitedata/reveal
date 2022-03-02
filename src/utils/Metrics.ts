@@ -1,5 +1,5 @@
 import * as mixpanelConfig from 'mixpanel-browser';
-import sdk, { getAuthState } from 'sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 
 const MIXPANEL_TOKEN = '504cfc7feaad55b838d866aff8f91a58';
 
@@ -22,17 +22,13 @@ export const trackUsage = (
   }
 
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
-
-  const { username } = getAuthState();
-
   if (host.indexOf('localhost') === -1) {
     mixpanel.track(event, {
       ...metadata,
-      project: sdk.project,
+      project: getProject(),
       version: 1,
       appVersion: process.env.REACT_APP_VERSION,
       location: window.location.pathname,
-      user: username,
       pathname: pathWithoutTenant,
     });
   }

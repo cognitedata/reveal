@@ -51,7 +51,7 @@ pods {
   def gitAuthor
   def getTitle
   def isPullRequest = !!env.CHANGE_ID
-  def isRelease = env.BRANCH_NAME == 'master'
+  def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'release-staging'
 
   def context_checkout = "continuous-integration/jenkins/checkout"
   def context_install = "continuous-integration/jenkins/install"
@@ -106,14 +106,18 @@ pods {
             print "No PR previews for release builds"
             return;
           }
-          stageWithNotify('Build and deploy PR') {
-            previewServer(
-              buildCommand: 'yarn build:preview',
-              prefix: 'pr',
-              buildFolder: 'build',
-              commentPrefix: PR_COMMENT_MARKER
-            )
-          }
+          def package_name = "@cognite/cdf-functions-ui";
+          def prefix = jenkinsHelpersUtil.determineRepoName();
+          def domain = "fusion-preview";
+          previewServer(
+            buildCommand: 'yarn build',
+            buildFolder: 'build',
+            prefix: prefix,
+            repo: domain
+          )
+          deleteComments("[FUSION_PREVIEW_URL]")
+          def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+          pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
         },
         'Storybook': {
           if(!isPullRequest) {

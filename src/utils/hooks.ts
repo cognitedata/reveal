@@ -8,7 +8,8 @@ import {
   Log,
   Schedule,
 } from 'types';
-import sdk from 'sdk-singleton';
+import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import {
   allFunctionsKey,
   allSchedulesKey,
@@ -27,7 +28,7 @@ export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
     [allFunctionsKey],
     () =>
       sdk
-        .get(`/api/playground/projects/${sdk.project}/functions`)
+        .get(`/api/playground/projects/${getProject()}/functions`)
         .then(r => r.data?.items),
     {
       onSuccess: functions => {
@@ -49,7 +50,7 @@ export const useFunction = (
     functionKey({ id }),
     () =>
       sdk
-        .get(`/api/playground/projects/${sdk.project}/functions/${id}`)
+        .get(`/api/playground/projects/${getProject()}/functions/${id}`)
         .then(r => r.data),
     config
   );
@@ -58,7 +59,7 @@ export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
     [allSchedulesKey],
     () =>
       sdk
-        .get(`/api/playground/projects/${sdk.project}/functions/schedules`)
+        .get(`/api/playground/projects/${getProject()}/functions/schedules`)
         .then(r => r.data?.items),
     config
   );
@@ -106,4 +107,8 @@ export const useRefreshApp = () => {
   return () => {
     cache.invalidateQueries();
   };
+};
+
+export const useUserInformation = () => {
+  return useQuery('user-info', getUserInformation);
 };
