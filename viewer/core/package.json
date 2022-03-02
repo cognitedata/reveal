@@ -20,6 +20,7 @@
     "@reveal/model-base": "workspace:*",
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/nodes-api": "workspace:*",
+    "@reveal/pointclouds": "workspace:*",
     "@reveal/rendering": "workspace:*",
     "@reveal/sector-loader": "workspace:*",
     "@reveal/utilities": "workspace:*"

@@ -13,8 +13,6 @@ export { CadLoadingHints } from './src/CadLoadingHints';
 
 export { CadModelUpdateHandler } from './src/CadModelUpdateHandler';
 
-export { LoadingState } from './src/utilities/types';
-
 export { SectorCuller } from './src/sector/culling/SectorCuller';
 export { ByVisibilityGpuSectorCuller } from './src/sector/culling/ByVisibilityGpuSectorCuller';
 export { ByScreenSizeSectorCuller } from './src/sector/culling/ByScreenSizeSectorCuller';
