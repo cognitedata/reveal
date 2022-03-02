@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { LoadingState } from '@reveal/cad-geometry-loaders';
+import { LoadingState } from '@reveal/model-base';
 
 import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudNode } from './PointCloudNode';
