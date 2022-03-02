@@ -6,5 +6,3 @@ struct GeometryTypeEnum {
 };
 
 const GeometryTypeEnum GeometryType = GeometryTypeEnum(1,2,3,4);
-
-#pragma glslify: export(GeometryType)

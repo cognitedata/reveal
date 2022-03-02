@@ -4,5 +4,3 @@ struct NodeAppearance {
   bool renderInFront;
   bool renderGhosted;
 };
-
-#pragma glslify: export(NodeAppearance)

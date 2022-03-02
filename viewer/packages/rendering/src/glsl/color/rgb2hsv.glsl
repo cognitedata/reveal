@@ -8,4 +8,3 @@ vec3 rgb2hsv(vec3 c)
     float e = 1.0e-10;
     return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
 }
-#pragma glslify: export(rgb2hsv)
