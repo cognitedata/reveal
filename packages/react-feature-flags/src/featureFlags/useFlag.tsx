@@ -11,7 +11,7 @@ export const useFlag = (
   flagName: string,
   { fallback = false, forceRerender = false }: Options = {}
 ) => {
-  const { client } = useContext(FlagContext);
+  const { client, isClientReady } = useContext(FlagContext);
 
   const [isEnabled, setIsEnabled] = useState<boolean>(() => {
     let value = client && client.isEnabled(flagName);
@@ -38,5 +38,5 @@ export const useFlag = (
     };
   }, [forceRerender, update, client]);
 
-  return isEnabled;
+  return { isClientReady, isEnabled };
 };

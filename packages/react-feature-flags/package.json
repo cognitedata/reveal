@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-feature-flags",
-  "version": "0.2.2-rc.0",
+  "version": "1.0.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

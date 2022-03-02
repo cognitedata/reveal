@@ -15,7 +15,7 @@ describe('FeatureToggle', () => {
   });
 
   const ToggledDiv = () => {
-    const isEnabled = useFlag('test');
+    const { isEnabled } = useFlag('test');
     return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
   };
 

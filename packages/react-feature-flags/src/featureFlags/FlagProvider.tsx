@@ -1,5 +1,5 @@
 /* eslint-disable react/require-default-props */
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { UnleashClient } from 'unleash-proxy-client';
 
 import { FlagContext } from './FlagContext';
@@ -28,6 +28,8 @@ export const FlagProvider = ({
   remoteAddress,
   disableMetrics,
 }: Props) => {
+  const [isClientReady, setIsClientReady] = useState(false);
+
   const client = useRef<UnleashClient>(
     new UnleashClient({
       appName,
@@ -51,6 +53,11 @@ export const FlagProvider = ({
         context.remoteAddress = remoteAddress;
       }
       client.current.updateContext(context);
+
+      client.current.on('ready', () => {
+        setIsClientReady(true);
+      });
+
       client.current.start();
     }
 
@@ -62,7 +69,7 @@ export const FlagProvider = ({
   if (!client.current) return null;
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
-  const contextValue = { client: client.current };
+  const contextValue = { client: client.current, isClientReady };
 
   return (
     <FlagContext.Provider value={contextValue}>{children}</FlagContext.Provider>

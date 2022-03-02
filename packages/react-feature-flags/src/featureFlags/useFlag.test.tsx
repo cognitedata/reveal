@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { UnleashClient } from 'unleash-proxy-client';
 import { sandbox } from '@cognite/testing';
 
-import { useFlag } from '.';
+import { FlagProvider, useFlag } from '.';
 import { FlagContext } from './FlagContext';
 
 describe('FeatureToggle', () => {
@@ -24,7 +24,7 @@ describe('FeatureToggle', () => {
     const { result } = renderHook(() => useFlag('test-flag'), {
       wrapper,
     });
-    expect(result.current).toBe(false);
+    expect(result.current.isEnabled).toBe(false);
   });
 
   it('Should default to the defaulted value (true)', () => {
@@ -37,7 +37,7 @@ describe('FeatureToggle', () => {
         wrapper,
       }
     );
-    expect(result.current).toBe(true);
+    expect(result.current.isEnabled).toBe(true);
   });
 
   it('Should the default value will super fast change to false', () => {
@@ -48,6 +48,29 @@ describe('FeatureToggle', () => {
         wrapper,
       }
     );
-    expect(result.current).toBe(false);
+    expect(result.current.isEnabled).toBe(false);
+  });
+
+  it('Should return undefined for isClientReady boolean at first render without FlagProvider', () => {
+    const { result } = renderHook(() => useFlag('test-flag'), {
+      wrapper,
+    });
+    expect(result.current.isClientReady).toBe(undefined);
+  });
+
+  it('Should return false for isClientReady boolean at first render with FlagProvider', () => {
+    const wrapperWithFlagProvider = ({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) => (
+      <FlagProvider appName="not used" apiToken="not used">
+        {children}
+      </FlagProvider>
+    );
+    const { result } = renderHook(() => useFlag('test-flag'), {
+      wrapper: wrapperWithFlagProvider,
+    });
+    expect(result.current.isClientReady).toBe(false);
   });
 });
