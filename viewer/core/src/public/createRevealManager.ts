@@ -3,13 +3,13 @@
  */
 import * as THREE from 'three';
 
-import { createCadManager } from '@reveal/cad-model';
 import { RevealOptions } from './types';
-import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
+import { createCadManager } from '@reveal/cad-model';
+import { createPointCloudManager } from '@reveal/pointclouds';
 import {
   ModelMetadataProvider,
   CdfModelMetadataProvider,
