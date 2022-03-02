@@ -1,12 +1,12 @@
 import { getMockWellFilter } from '__test-utils/fixtures/sidebar';
 import { getMockFilterConfigByCategory } from '__test-utils/fixtures/well';
 
-import { formatWellFilters, reomveAppliedFilterValue } from '../filters';
+import { formatWellFilters, removeAppliedFilterValue } from '../filters';
 
 describe('getAppliedFilterValues', () => {
   it('Remove string filter value', () => {
     const appliedFilter = getMockWellFilter();
-    const result = reomveAppliedFilterValue(
+    const result = removeAppliedFilterValue(
       appliedFilter,
       2,
       appliedFilter[2][0]
@@ -19,7 +19,7 @@ describe('getAppliedFilterValues', () => {
       9: [0, 100],
     };
     const appliedFilter = getMockWellFilter(numericRange);
-    const result = reomveAppliedFilterValue(
+    const result = removeAppliedFilterValue(
       appliedFilter,
       9,
       appliedFilter[9][0]
@@ -31,7 +31,7 @@ describe('getAppliedFilterValues', () => {
       8: [new Date(2010, 10, 30), new Date(2011, 10, 30)],
     };
     const appliedFilter = getMockWellFilter(numericRange);
-    const result = reomveAppliedFilterValue(
+    const result = removeAppliedFilterValue(
       appliedFilter,
       8,
       appliedFilter[8][0]

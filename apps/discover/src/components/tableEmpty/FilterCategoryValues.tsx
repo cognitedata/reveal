@@ -6,7 +6,7 @@ import { useSetWellsFilters } from 'services/savedSearches/hooks/useClearWellsFi
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { useGetAppliedFilterGroupedByCategory } from 'modules/wellSearch/hooks/useAppliedFilters';
-import { reomveAppliedFilterValue } from 'modules/wellSearch/utils/filters';
+import { removeAppliedFilterValue } from 'modules/wellSearch/utils/filters';
 
 import {
   CategoryContainer,
@@ -35,7 +35,7 @@ export const FilterCategoryValues: React.FC = () => {
                 const clearFilter = () => {
                   metrics.track('click-wells-close-filter-tag');
                   setWellsFilters(
-                    reomveAppliedFilterValue(appliedFilters, id, value)
+                    removeAppliedFilterValue(appliedFilters, id, value)
                   );
                 };
                 return (

@@ -19,7 +19,7 @@ import {
 } from 'modules/sidebar/selectors';
 import { useGetAppliedFilterEntries } from 'modules/wellSearch/hooks/useAppliedFilters';
 import { FilterValues } from 'modules/wellSearch/types';
-import { reomveAppliedFilterValue } from 'modules/wellSearch/utils/filters';
+import { removeAppliedFilterValue } from 'modules/wellSearch/utils/filters';
 import { sizes } from 'styles/layout';
 
 import { TagWrapper } from '../../document/header/elements';
@@ -62,12 +62,13 @@ export const WellAppliedFilters: React.FC<Props> = React.memo(
     const handleFilterCloseClick = (entry: FilterValues) => {
       metrics.track('click-wells-close-filter-tag');
       setWellsFilters(
-        reomveAppliedFilterValue(appliedFilters, entry.id, entry.value)
+        removeAppliedFilterValue(appliedFilters, entry.id, entry.value)
       );
     };
 
-    const handleClearAllClick = () => {
+    const handleClearAllClick = async () => {
       metrics.track('click-wells-clear-all-tag');
+      await clearQuery();
       clearAllWellFilters();
     };
 

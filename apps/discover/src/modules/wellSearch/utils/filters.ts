@@ -16,7 +16,7 @@ import { filterConfigsById } from 'pages/authorized/search/search/SideBar/filter
 
 import { RegionFieldBlock } from '../types';
 
-export const reomveAppliedFilterValue = (
+export const removeAppliedFilterValue = (
   appliedFilters: WellFilterMap,
   id: number,
   value: WellFilterOptionValue
