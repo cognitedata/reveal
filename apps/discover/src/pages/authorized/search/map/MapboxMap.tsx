@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 
 import MapboxDraw from '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw';
 import { FeatureCollection, Feature } from '@turf/helpers';
@@ -22,6 +22,7 @@ import {
 } from './constants';
 import { MapContainer } from './elements';
 import { FreeDraw } from './FreeDraw';
+import { useZoomToFeature } from './hooks/useZoomToFeature';
 import {
   surfacefacilityImage,
   subsurfacefacilityImage,
@@ -93,45 +94,10 @@ export const Map: React.FC<Props> = ({
 
   const { data: mapSettings } = useMapConfig();
 
-  const zoomToFeature = useCallback(
-    (feature: any) => {
-      if (!map) return;
-      if (!feature) return;
-      const geo = feature.geometry || feature.geoJson;
-      if (!geo) return;
-
-      const fitToBounds = (coordinates: any) => {
-        if (coordinates) {
-          try {
-            const bounds = coordinates.reduce((result: any, coord: any) => {
-              return result.extend(coord);
-            }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
-            map.fitBounds(bounds, {
-              padding: 20,
-              maxZoom: 8,
-            });
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      };
-      if (geo.type === 'Polygon') {
-        fitToBounds(geo.coordinates[0]);
-      } else if (geo.type === 'MultiPolygon') {
-        fitToBounds(geo.coordinates[0][0]);
-      } else if (geo.type === 'MultiLineString') {
-        fitToBounds(geo.coordinates);
-      } else if (geo.type === 'GeometryCollection') {
-        zoomToFeature({ geometry: geo.geometries[0] });
-      } else {
-        console.error('Unknown feature type, geo', geo);
-      }
-    },
-    [map]
-  );
+  const zoomToFeature = useZoomToFeature(map);
 
   useDeepEffect(() => {
-    if (features && draw) {
+    if (features && features.type && draw) {
       draw.set(features);
     }
   }, [features, draw]);
