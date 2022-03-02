@@ -1,11 +1,17 @@
-#pragma glslify: determineMatrixOverride = require('../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
 uniform vec2 treeIndexTextureSize;
 uniform vec2 transformOverrideTextureSize;
 uniform sampler2D transformOverrideIndexTexture;
 uniform sampler2D transformOverrideTexture;
 
+in vec3 position;
+in vec3 normal;
 in vec3 color;
 in float treeIndex;
 in vec4 matrix0;
