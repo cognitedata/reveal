@@ -8,7 +8,7 @@ import { CadMetadataParser } from './CadMetadataParser';
 
 import { getDistanceToMeterConversionFactor, SectorScene } from '../utilities/types';
 import { CadModelMetadata } from './CadModelMetadata';
-import { MetadataRepository } from './MetadataRepository';
+import { MetadataRepository } from '@reveal/model-base';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
 import {
