@@ -179,7 +179,7 @@ export class InstancedMeshManager {
   private createInstance(
     instance: InstancedMesh,
     geometryAttributes: { vertices: THREE.Float32BufferAttribute; indices: THREE.Uint32BufferAttribute },
-    material: THREE.ShaderMaterial,
+    material: THREE.RawShaderMaterial,
     instanceIdentifier: string,
     sectorId: number
   ) {

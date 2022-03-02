@@ -10,8 +10,8 @@ import { sectorShaders } from '../../../packages/rendering/src/rendering/shaders
 const matCapTexture = new THREE.Texture(matCapTextureImage);
 matCapTexture.needsUpdate = true;
 
-export function createInstancedMeshMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
+export function createInstancedMeshMaterial(): THREE.RawShaderMaterial {
+  return new THREE.RawShaderMaterial({
     name: 'Instanced meshes',
     clipping: false,
     uniforms: {
@@ -33,7 +33,7 @@ export function createInstancedMeshMaterial(): THREE.ShaderMaterial {
   });
 }
 
-export function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
+export function createGeneralCylinderMaterial(): THREE.RawShaderMaterial {
   const material = new THREE.RawShaderMaterial({
     name: 'Primitives (General cylinder)',
     clipping: false,
@@ -72,8 +72,8 @@ export function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createTriangleMeshMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createTriangleMeshMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Triangle meshes',
     clipping: false,
     uniforms: {
@@ -99,8 +99,8 @@ export function createTriangleMeshMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createBoxMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createBoxMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Box)',
     clipping: false,
     vertexShader: sectorShaders.boxPrimitive.vertex,
@@ -123,8 +123,8 @@ export function createBoxMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createCircleMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createCircleMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Circle)',
     clipping: false,
     vertexShader: sectorShaders.circlePrimitive.vertex,
@@ -147,8 +147,8 @@ export function createCircleMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createConeMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createConeMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Cone)',
     clipping: false,
     vertexShader: sectorShaders.conePrimitive.vertex,
@@ -171,8 +171,8 @@ export function createConeMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createEccentricConeMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createEccentricConeMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Eccentric cone)',
     clipping: false,
     uniforms: {
@@ -231,8 +231,8 @@ export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
   return material;
 }
 
-export function createEllipsoidSegmentMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createEllipsoidSegmentMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Ellipsoid segments)',
     clipping: false,
     uniforms: {
@@ -255,8 +255,8 @@ export function createEllipsoidSegmentMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createNutMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createNutMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Nuts)',
     clipping: false,
     uniforms: {
@@ -279,8 +279,8 @@ export function createNutMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createQuadMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createQuadMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Quads)',
     clipping: false,
     uniforms: {
@@ -303,8 +303,8 @@ export function createQuadMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createTrapeziumMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createTrapeziumMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Trapezium)',
     clipping: false,
     uniforms: {
@@ -327,8 +327,8 @@ export function createTrapeziumMaterial(): THREE.ShaderMaterial {
   return material;
 }
 
-export function createTorusSegmentMaterial(): THREE.ShaderMaterial {
-  const material = new THREE.ShaderMaterial({
+export function createTorusSegmentMaterial(): THREE.RawShaderMaterial {
+  const material = new THREE.RawShaderMaterial({
     name: 'Primitives (Torus segment)',
     clipping: false,
     uniforms: {

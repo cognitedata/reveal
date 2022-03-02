@@ -1,6 +1,4 @@
-#define texture2D texture
-
-#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
