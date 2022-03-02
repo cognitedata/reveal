@@ -36,3 +36,5 @@ export { revealEnv } from './src/revealEnv';
 
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';
 export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';
+
+export { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './src/worldToViewport';

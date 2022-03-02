@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import * as Potree from '@cognite/potree-core';
-import { IntersectInput } from '../base';
+import { IntersectInput } from '@reveal/model-base';
 import { PointCloudNode } from './PointCloudNode';
 
 export interface IntersectPointCloudNodeResult {

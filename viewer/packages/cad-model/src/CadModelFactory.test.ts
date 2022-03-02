@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
-import { GeometryFilter } from '@reveal/core';
+import { GeometryFilter } from './GeometryFilter';
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/modeldata-api';
 
 import { It, Mock } from 'moq.ts';

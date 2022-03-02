@@ -9,7 +9,7 @@ import { TriangleMesh } from '@reveal/cad-parsers';
 export function createTriangleMeshes(
   triangleMeshes: TriangleMesh[],
   bounds: THREE.Box3,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   geometryClipBox: THREE.Box3 | null
 ): THREE.Mesh[] {
   const result: THREE.Mesh[] = [];
