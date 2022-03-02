@@ -11,7 +11,7 @@ jobs:
   code-quality:
     name: Code Quality
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]' && !github.event.pull_request.draft
+    if: ${{ !github.event.pull_request.draft }}
     steps:
       - name: Check out
         uses: actions/checkout@v2
