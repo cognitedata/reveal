@@ -131,8 +131,7 @@
     "react-dom": "^17.0.1",
     "@storybook/router": "~6.3.10",
     "**/@typescript-eslint/eslint-plugin": "^4.3.2",
-    "**/@typescript-eslint/parser": "^4.3.2",
-    "react-error-overlay": "6.0.9"
+    "**/@typescript-eslint/parser": "^4.3.2"
   },
   "browserslist": {
     "production": [
