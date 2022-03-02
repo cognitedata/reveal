@@ -22,5 +22,3 @@ vec4 packFloatToVec4(float f)
   rgba.w = floor(exp2(23.0) * mod(Mantissa, exp2(-15.0)));
   return rgba;
 }
-
-#pragma glslify: export(packFloatToVec4)
