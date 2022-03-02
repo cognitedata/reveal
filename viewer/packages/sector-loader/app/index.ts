@@ -186,7 +186,7 @@ function createGltfSectorGroup(consumedSector: ConsumedSector, materials: Materi
   return geometryGroup;
 }
 
-function getShaderMaterial(type: RevealGeometryCollectionType, materials: Materials): THREE.ShaderMaterial {
+function getShaderMaterial(type: RevealGeometryCollectionType, materials: Materials): THREE.RawShaderMaterial {
   switch (type) {
     case RevealGeometryCollectionType.BoxCollection:
       return materials.box;
