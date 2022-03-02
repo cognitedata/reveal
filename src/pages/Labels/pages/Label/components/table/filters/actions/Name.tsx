@@ -1,26 +1,22 @@
 import { Input } from '@cognite/cogs.js';
-import React from 'react';
 import debounce from 'lodash/debounce';
-import { FilterProps } from '../types';
+import React from 'react';
 
-export const NameFilter: React.FC<FilterProps> = React.memo(({ onChange }) => {
-  // const [searchValue, setSearchValue] = React.useState<string>('');
+interface Props {
+  onChange(value: string): void;
+}
 
-  const doSearch = React.useCallback(
-    debounce((value: string) => {
-      onChange({ searchQuery: value });
-    }, 300),
-    []
+export const NameFilter: React.FC<Props> = ({ onChange }) => {
+  const onChangeDebounced = React.useMemo(
+    () => debounce(onChange, 300),
+    [onChange]
   );
 
   return (
     <Input
       icon="Search"
       placeholder="Search"
-      onChange={(event) => {
-        const { value } = event.target;
-        doSearch(value);
-      }}
+      onChange={(event) => onChangeDebounced(event.target.value)}
     />
   );
-});
+};

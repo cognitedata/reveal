@@ -25,23 +25,54 @@ const Container = styled.div`
 export const DocumentsFilters: React.FC = () => {
   const { mutate, isLoading } = useDocumentsSearchMutate();
 
+  // Using useRef instead of useState to keep same reference
+  // across rerenders, to improve memoization and debouncing.
+  // useCallback is used for the same reasons.
+
   const searchRef = React.useRef<DocumentSearchQuery>();
 
   const handleFilterChange = React.useCallback(
     (state: DocumentSearchQuery) => {
-      const updatedFilters = { ...searchRef.current, ...state };
-      searchRef.current = updatedFilters;
-      mutate(updatedFilters);
+      searchRef.current = { ...searchRef.current, ...state };
+      mutate(searchRef.current);
     },
     [mutate]
   );
 
+  const handleSearchQueryChange = React.useCallback(
+    (value: string) => {
+      handleFilterChange({ searchQuery: value });
+    },
+    [handleFilterChange]
+  );
+
+  const handleSourceChange = React.useCallback(
+    (value: string) => {
+      handleFilterChange({ source: value });
+    },
+    [handleFilterChange]
+  );
+
+  const handleFileTypeChange = React.useCallback(
+    (value: string) => {
+      handleFilterChange({ fileType: value });
+    },
+    [handleFilterChange]
+  );
+
+  const handleDocumentTypeChange = React.useCallback(
+    (value: string) => {
+      handleFilterChange({ documentType: value });
+    },
+    [handleFilterChange]
+  );
+
   return (
     <Container>
-      <NameFilter onChange={handleFilterChange} />
-      <SourceFilter onChange={handleFilterChange} />
-      <FileTypeFilter onChange={handleFilterChange} />
-      <DocumentCategoryFilter onChange={handleFilterChange} />
+      <NameFilter onChange={handleSearchQueryChange} />
+      <SourceFilter onChange={handleSourceChange} />
+      <FileTypeFilter onChange={handleFileTypeChange} />
+      <DocumentCategoryFilter onChange={handleDocumentTypeChange} />
 
       {isLoading && <Loader darkMode={false} />}
     </Container>

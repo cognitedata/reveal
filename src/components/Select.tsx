@@ -1,33 +1,42 @@
-import React from 'react';
 import { AllIconTypes, AutoComplete } from '@cognite/cogs.js';
-import { DocumentSearchQuery } from 'services/types';
-import { FilterProps } from 'pages/Labels/pages/Label/components/table/filters/types';
+import React from 'react';
+import { OptionsType, ValueType } from 'react-select';
 
-interface Props extends FilterProps {
+export interface Option<Value> {
+  label: string;
+  value: Value;
+}
+
+interface Props<OptionType extends Option<any>, IsMulti extends boolean> {
   title: string;
-  filterKey: keyof DocumentSearchQuery;
-  options?: { value: string | undefined; label: string }[];
+  options?: OptionsType<OptionType>;
   icon?: AllIconTypes;
   isLoading?: boolean;
+  isMulti?: IsMulti;
+  onChange(value: ValueType<OptionType, IsMulti>): void;
 }
-export const Select: React.FC<Props> = ({
+
+export const Select = <
+  OptionType extends Option<any>,
+  IsMulti extends boolean = false
+>({
   title,
   onChange,
   options,
-  filterKey,
   icon,
   isLoading,
-}) => {
-  const handleOnChange = (event: { value: string; label: string }) => {
-    onChange({ [filterKey]: event?.value });
-  };
-
+  isMulti,
+}: Props<OptionType, IsMulti>) => {
   return (
+    // Note that cogs.js don't have proper types to allow propagating multi.
+    // This might become a problem when we start validating library
+    // types (skipLibCheck is true as of this writing).
     <AutoComplete
       icon={icon}
       isLoading={isLoading}
+      isMulti={isMulti}
       isClearable
-      onChange={handleOnChange}
+      onChange={onChange}
       options={options}
       placeholder={title}
     />

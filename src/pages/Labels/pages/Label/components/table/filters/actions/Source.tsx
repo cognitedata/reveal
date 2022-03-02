@@ -1,25 +1,27 @@
-import { Select } from 'components/Select';
+import { Option, Select } from 'components/Select';
 import React from 'react';
 import { useAggregatesQuery } from 'services/query/aggregates/query';
 import { FilterContainer } from '../elements';
-import { FilterProps } from '../types';
 
-export const SourceFilter: React.FC<FilterProps> = ({ onChange }) => {
+interface Props {
+  onChange(value: string | undefined): void;
+}
+
+export const SourceFilter: React.FC<Props> = ({ onChange }) => {
   const { data, isLoading } = useAggregatesQuery();
 
-  const sourceOptions = data?.source.map((item) => ({
+  const sourceOptions: Option<string>[] = (data?.source ?? []).map((item) => ({
     value: item.name,
     label: item.name,
   }));
 
   return (
     <FilterContainer>
-      <Select
+      <Select<Option<string>>
         title="Source"
         icon="DataSource"
-        filterKey="source"
         options={sourceOptions}
-        onChange={onChange}
+        onChange={(option) => onChange(option?.value)}
         isLoading={isLoading}
       />
     </FilterContainer>

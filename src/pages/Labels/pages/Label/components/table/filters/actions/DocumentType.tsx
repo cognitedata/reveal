@@ -1,10 +1,13 @@
-import { Select } from 'components/Select';
+import { Option, Select } from 'components/Select';
 import React from 'react';
 import { useAggregatesQuery } from 'services/query/aggregates/query';
 import { FilterContainer } from '../elements';
-import { FilterProps } from '../types';
 
-export const DocumentCategoryFilter: React.FC<FilterProps> = ({ onChange }) => {
+interface Props {
+  onChange(value: string | undefined): void;
+}
+
+export const DocumentCategoryFilter: React.FC<Props> = ({ onChange }) => {
   const { data, isLoading } = useAggregatesQuery();
 
   const documentTypeOptions = data?.documentType.map((item) => ({
@@ -14,12 +17,11 @@ export const DocumentCategoryFilter: React.FC<FilterProps> = ({ onChange }) => {
 
   return (
     <FilterContainer>
-      <Select
+      <Select<Option<string>>
         title="Document Type"
         icon="Tag"
-        filterKey="documentType"
         options={documentTypeOptions}
-        onChange={onChange}
+        onChange={(option) => onChange(option?.value)}
         isLoading={isLoading}
       />
     </FilterContainer>
