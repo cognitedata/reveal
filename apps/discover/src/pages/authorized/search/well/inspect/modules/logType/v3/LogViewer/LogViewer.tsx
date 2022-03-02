@@ -2,49 +2,37 @@ import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { CogniteEvent } from '@cognite/sdk';
-import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
-
 import EmptyState from 'components/emptyState';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { LogsMessageWrapper } from '../elements';
 import { useEventsData } from '../hooks/useEventsData';
 import { useWellLogsData } from '../hooks/useWellLogsData';
-import { WellLog } from '../types';
 
-import { Domain, DomainMap } from './DomainConfig/DomainConfig';
+import { LogViewerProps } from './DomainFilter/types';
 import { LogHolder } from './elements';
 import { LogData as LogViewerData } from './Log/interfaces';
 import Log from './Log/Log';
 
-type Props = {
-  wellLog: WellLog;
-  wellLogRowData: DepthMeasurementData;
-  events: CogniteEvent[];
-  domainMap: DomainMap;
-  setDomains: (domains: Domain[]) => void;
-};
-
-export const LogViewer: React.FC<Props> = ({
+export const LogViewer: React.FC<LogViewerProps> = ({
   wellLog,
   wellLogRowData,
   events,
   domainMap,
-  setDomains,
+  setDomainList,
 }) => {
   const wellLogsData = useWellLogsData(wellLogRowData);
   const eventsData = useEventsData(events);
 
-  const setDomainData = (wellLogsData: LogViewerData) => {
+  const updateDomainList = (wellLogsData: LogViewerData) => {
     const domainData = Object.keys(wellLogsData).map((columnExternalId) => {
       const [min, max] = wellLogsData[columnExternalId].domain;
       return { columnExternalId, min, max };
     });
-    setDomains(domainData);
+    setDomainList(domainData);
   };
 
-  useDeepEffect(() => setDomainData(wellLogsData), [wellLogsData]);
+  useDeepEffect(() => updateDomainList(wellLogsData), [wellLogsData]);
 
   const logViewerData = useDeepMemo(() => {
     return Object.keys(wellLogsData).reduce<LogViewerData>(

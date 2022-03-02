@@ -12,7 +12,8 @@ export const MarkersFilterWrapper = styled.div`
 `;
 
 export const CustomMenu = styled(Menu)`
-  height: 80vh;
+  width: fit-content;
+  max-height: 670px;
   overflow: auto;
 
   .cogs-menu-item {

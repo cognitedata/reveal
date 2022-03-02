@@ -20,14 +20,15 @@ import {
   MarkersFilterWrapper,
 } from './elements';
 import { LogViewer } from './LogViewer';
-import { Domain, DomainConfig, DomainMap } from './LogViewer/DomainConfig';
+import { DomainFilter } from './LogViewer/DomainFilter';
+import { DomainListItem, DomainMap } from './LogViewer/DomainFilter/types';
 import { WellLog } from './types';
 
 export const LogTypeViewer: React.FC<{ wellLogs: WellLog[] }> = ({
   wellLogs,
 }) => {
   const [selectedWellLog, setSelectedWellLog] = useState<WellLog>();
-  const [domains, setDomains] = useState<Domain[]>([]);
+  const [domainList, setDomainList] = useState<DomainListItem[]>([]);
   const { t } = useTranslation();
 
   const { data: wellLogsRowData, isLoading: isWellLogsRowDataLoading } =
@@ -47,29 +48,29 @@ export const LogTypeViewer: React.FC<{ wellLogs: WellLog[] }> = ({
 
   const handleDomainChange = (
     columnExternalId: string,
-    minMax: string,
+    domainType: string,
     value: number
   ) => {
-    setDomains((domainList) =>
+    setDomainList((domainList) =>
       domainList.map((domain) =>
         domain.columnExternalId === columnExternalId
-          ? { ...domain, [minMax]: value }
+          ? { ...domain, [domainType]: value }
           : domain
       )
     );
   };
 
-  const domainMap = domains.reduce<DomainMap>(
-    (map, domain) => ({
+  const domainMap = domainList.reduce<DomainMap>((map, domainListItem) => {
+    const { columnExternalId, min, max } = domainListItem;
+    return {
       ...map,
-      [domain.columnExternalId]: [domain.min, domain.max],
-    }),
-    {}
-  );
+      [columnExternalId]: [min, max],
+    };
+  }, {});
 
   const handleSelectWellLog = (wellLog: WellLog) => {
     // Reset domains to avoid the current domains config being jammed with the newly selected log.
-    setDomains([]);
+    setDomainList([]);
     setSelectedWellLog(wellLog);
   };
 
@@ -90,7 +91,7 @@ export const LogTypeViewer: React.FC<{ wellLogs: WellLog[] }> = ({
         wellLogRowData={wellLogsRowData[source.sequenceExternalId]}
         events={ndsEventsData[wellboreMatchingId]}
         domainMap={domainMap}
-        setDomains={setDomains}
+        setDomainList={setDomainList}
       />
     );
   };
@@ -121,12 +122,15 @@ export const LogTypeViewer: React.FC<{ wellLogs: WellLog[] }> = ({
 
         {!isNoData && !isLoading && (
           <MarkersFilterWrapper>
-            <DomainConfig
-              domainList={domains}
-              handleChange={handleDomainChange}
+            <DomainFilter
+              domainList={domainList}
+              onChangeDomain={handleDomainChange}
             >
-              <ExpandButton text={t('Value Range')} />
-            </DomainConfig>
+              <ExpandButton
+                text={t('Value Range')}
+                data-testid="domain-filter-expand-button"
+              />
+            </DomainFilter>
           </MarkersFilterWrapper>
         )}
       </ModuleFilterDropdownWrapper>
