@@ -6,9 +6,6 @@ float floatBitsSubset(float inNumber, int fromLeastSignificantBitIndex,  int toM
     return mod(((inNumber - mod(inNumber, bitShift)) / bitShift), pow(2.0, l - r));
 }
 
-#pragma glslify: export(floatBitsSubset)
-
-
 /*
 
 Example:

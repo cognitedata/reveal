@@ -110,6 +110,6 @@ describe('CadMaterialManager', () => {
   });
 });
 
-function* iterateMaterials(materials: Materials): Generator<THREE.ShaderMaterial> {
-  return Object.values(materials).map(x => x as THREE.ShaderMaterial);
+function* iterateMaterials(materials: Materials): Generator<THREE.RawShaderMaterial> {
+  return Object.values(materials).map(x => x as THREE.RawShaderMaterial);
 }
