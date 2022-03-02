@@ -13,8 +13,8 @@
 export { revealEnv, IndexSet, NumericRange } from '@reveal/utilities';
 
 export { Cognite3DModel, BoundingBoxClipper } from '@reveal/cad-model';
+export { CognitePointCloudModel } from '@reveal/pointclouds';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
-export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
 
 export { ViewerState, ModelState } from './utilities/ViewStateHelper';
 

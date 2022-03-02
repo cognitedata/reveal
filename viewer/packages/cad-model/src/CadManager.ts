@@ -11,7 +11,8 @@ import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { GeometryFilter } from './GeometryFilter';
 
 import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler, CadModelBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler, CadModelBudget } from '@reveal/cad-geometry-loaders';
+import { LoadingState } from '@reveal/model-base';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';

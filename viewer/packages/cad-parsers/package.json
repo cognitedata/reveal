@@ -8,6 +8,7 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
+    "@reveal/model-base": "workspace:*",
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/sector-parser": "workspace:*",
     "@reveal/utilities": "workspace:*"
