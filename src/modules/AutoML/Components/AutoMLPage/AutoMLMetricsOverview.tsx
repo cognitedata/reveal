@@ -5,7 +5,7 @@ import {
   AutoMLMetrics,
   AutoMLModelType,
   AutoMLTrainingJob,
-} from 'src/api/autoML/types';
+} from 'src/api/vision/autoML/types';
 import { dateformat, getDateDiff } from 'src/utils/DateUtils';
 import styled from 'styled-components';
 import { AutoMLStatusBadge } from 'src/modules/AutoML/Components/AutoMLStatusBadge';

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchJobById } from 'src/api/annotationJob';
-import { AnnotationJob } from 'src/api/types';
+import { fetchJobById } from 'src/api/vision/detectionModels/annotationJob';
+import { AnnotationJob } from 'src/api/vision/detectionModels/types';
 import { removeJobById } from 'src/modules/Process/store/slice';
 import { JobState } from 'src/modules/Process/store/types';
 import { ThunkConfig } from 'src/store/rootReducer';

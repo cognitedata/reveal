@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import { Body, Micro } from '@cognite/cogs.js';
-import { JobStatus } from 'src/api/types';
+import { JobStatus } from 'src/api/vision/detectionModels/types';
 import styled from 'styled-components';
 import { StatusColors } from 'src/constants/Colors';
 

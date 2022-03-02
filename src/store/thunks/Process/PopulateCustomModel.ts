@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AutoMLTrainingJob } from 'src/api/autoML/types';
-import { VisionAPIType } from 'src/api/types';
+import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import {
   addToAvailableDetectionModels,
   BUILT_IN_MODEL_COUNT,

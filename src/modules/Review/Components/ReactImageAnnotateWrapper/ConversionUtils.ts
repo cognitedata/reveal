@@ -1,4 +1,7 @@
-import { AnnotationRegion, VisionAPIType } from 'src/api/types';
+import {
+  AnnotationRegion,
+  VisionAPIType,
+} from 'src/api/vision/detectionModels/types';
 import {
   Box,
   Keypoints,

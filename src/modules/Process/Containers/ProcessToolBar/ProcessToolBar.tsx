@@ -22,11 +22,11 @@ import React, { useState, useEffect } from 'react';
 import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import { getContainer } from 'src/utils';
 import { AppDispatch } from 'src/store';
-import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
-import { AutoMLModel } from 'src/api/autoML/types';
+import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
+import { AutoMLModel } from 'src/api/vision/autoML/types';
 import { useFlag } from '@cognite/react-feature-flags';
 import ProgressStatus from './ProgressStatus';
 

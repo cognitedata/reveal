@@ -3,9 +3,9 @@ import {
   AnnotationJobQueued,
   DetectionModelDataProvider,
   VisionAPIType,
-} from 'src/api/types';
+} from 'src/api/vision/detectionModels/types';
 import { singleton } from '@keenondrums/singleton';
-import { getFakeQueuedJob } from 'src/api/detectionUtils';
+import { getFakeQueuedJob } from 'src/api/vision/detectionModels/detectionUtils';
 
 @singleton
 export class MockDataProvider implements DetectionModelDataProvider {

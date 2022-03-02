@@ -7,7 +7,7 @@ import {
   makeSelectTotalAnnotationCountForFileIds,
 } from 'src/modules/Common/store/annotation/selectors';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 
 describe('Test annotation selectors', () => {
   const getDummyAnnotation = (

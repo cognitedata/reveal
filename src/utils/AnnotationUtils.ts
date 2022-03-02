@@ -9,7 +9,7 @@ import {
   RegionType,
   Vertex,
   VisionAPIType,
-} from 'src/api/types';
+} from 'src/api/vision/detectionModels/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import {
   ColorsObjectDetection,

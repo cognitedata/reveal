@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
-import { Annotation } from 'src/api/types';
+import { Annotation } from 'src/api/vision/detectionModels/types';
 import { validateAnnotation } from 'src/api/annotation/utils';
 
 export const SaveAnnotations = createAsyncThunk<

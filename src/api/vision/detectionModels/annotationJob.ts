@@ -3,12 +3,12 @@ import {
   DetectionModelDataProvider,
   DetectionModelParams,
   VisionAPIType,
-} from 'src/api/types';
-import { OCRDetectionDataProvider } from 'src/api/ocr/OCRDetectionDataProvider';
-import { MockDataProvider } from 'src/api/MockDataProvider';
-import { TagDetectionDataProvider } from 'src/api/tagDetection/TagDetectionDataProvider';
-import { ObjectDetectionDataProvider } from 'src/api/objectDetection/ObjectDetectionDataProvider';
-import { CustomModelDataProvider } from 'src/api/customModel/CustomModelDataProvider';
+} from 'src/api/vision/detectionModels/types';
+import { OCRDetectionDataProvider } from 'src/api/vision/detectionModels/ocr/OCRDetectionDataProvider';
+import { MockDataProvider } from 'src/api/vision/detectionModels/MockDataProvider';
+import { TagDetectionDataProvider } from 'src/api/vision/detectionModels/tagDetection/TagDetectionDataProvider';
+import { ObjectDetectionDataProvider } from 'src/api/vision/detectionModels/objectDetection/ObjectDetectionDataProvider';
+import { CustomModelDataProvider } from 'src/api/vision/detectionModels/customModel/CustomModelDataProvider';
 
 function getDetectionModelDataProvider(
   modelType: VisionAPIType

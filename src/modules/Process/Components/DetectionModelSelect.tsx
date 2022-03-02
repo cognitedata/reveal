@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Select, Button } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 
 import * as tagDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';

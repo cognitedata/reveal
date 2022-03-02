@@ -3,7 +3,7 @@
 import React from 'react';
 import { Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AutoMLModel } from 'src/api/autoML/types';
+import { AutoMLModel } from 'src/api/vision/autoML/types';
 import { AutoMLModelListItem } from './AutoMLModelListItem';
 
 export const AutoMLModelList = (props: {

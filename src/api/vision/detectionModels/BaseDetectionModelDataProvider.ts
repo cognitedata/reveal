@@ -3,7 +3,7 @@ import {
   AnnotationJobResponse,
   DetectionModelDataProvider,
   DetectionModelParams,
-} from 'src/api/types';
+} from 'src/api/vision/detectionModels/types';
 
 // tag and ocr api quite similar that's why this base class exists
 // in further, when api will be normalized, all these provides should be removed in favor

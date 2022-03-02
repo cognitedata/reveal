@@ -7,7 +7,7 @@ import {
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 
 export const PopulateAnnotationTemplates = createAsyncThunk<
   AnnotationCollection,

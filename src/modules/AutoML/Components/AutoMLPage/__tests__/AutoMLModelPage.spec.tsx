@@ -3,11 +3,11 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { testRenderer } from 'src/__test-utils/renderer';
 import { AutoMLModelPage } from 'src/modules/AutoML/Components/AutoMLPage/AutoMLModelPage';
-import { AutoMLAPI } from 'src/api/autoML/AutoMLAPI';
+import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
 import { mockCogniteAutoMLModel } from 'src/__test-utils/fixtures/automlModels';
-import { AutoMLTrainingJob } from 'src/api/autoML/types';
+import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
 
-jest.mock('src/api/autoML/AutoMLAPI', () => ({
+jest.mock('src/api/vision/autoML/AutoMLAPI', () => ({
   AutoMLAPI: {
     getAutoMLModel: jest.fn(),
   },

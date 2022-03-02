@@ -1,5 +1,5 @@
 import React from 'react';
-import { AutoMLTrainingJob } from 'src/api/autoML/types';
+import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
 import styled from 'styled-components';
 import {
   XAxis,

@@ -1,5 +1,14 @@
+import { CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
 import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+
+export declare type FileIdEither = FileInternalId | FileExternalId;
+export interface FileInternalId {
+  fileId: CogniteInternalId;
+}
+export interface FileExternalId {
+  fileExternalId: CogniteExternalId;
+}
 
 export enum VisionAPIType {
   OCR = 1,
@@ -79,14 +88,9 @@ export interface DetectedAnnotation {
   assetIds?: Array<number>;
 }
 
-export type CDFResourceId = {
-  fileId: number;
-  fileExternalId?: string;
-};
-
 export type AnnotationJobFailedItem = {
   errorMessage: string;
-  items: Array<CDFResourceId>;
+  items: Array<FileInternalId & Partial<FileExternalId>>;
 };
 
 export type AnnotationJobResultItem = {

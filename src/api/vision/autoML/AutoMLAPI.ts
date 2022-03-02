@@ -1,5 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { CDFResourceId } from 'src/api/types';
+import { FileIdEither } from 'src/api/vision/detectionModels/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
 
 import {
@@ -58,7 +58,7 @@ export class AutoMLAPI {
   public static startAutoMLJob = async (
     name: string,
     modelType: AutoMLModelType,
-    fileIds: CDFResourceId[]
+    fileIds: FileIdEither[]
   ): Promise<AutoMLTrainingJobPostRequest | undefined> => {
     const data = {
       data: {

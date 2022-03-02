@@ -1,4 +1,4 @@
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 
 export const mockJobsList = [
   {

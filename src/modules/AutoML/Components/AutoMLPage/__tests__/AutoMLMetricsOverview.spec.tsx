@@ -11,7 +11,7 @@ import {
 } from 'src/modules/AutoML/Components/AutoMLPage/AutoMLMetricsOverview';
 import { mockCogniteAutoMLModel } from 'src/__test-utils/fixtures/automlModels';
 import { dateformat, getDateDiff } from 'src/utils/DateUtils';
-import { AutoMLModelType } from 'src/api/autoML/types';
+import { AutoMLModelType } from 'src/api/vision/autoML/types';
 
 describe('AutoMLMetricsOverview', () => {
   const TestComponent = (props: any) => {

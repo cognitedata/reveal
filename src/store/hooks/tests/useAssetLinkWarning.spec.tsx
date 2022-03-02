@@ -3,7 +3,7 @@ import useAssetLinkWarning, {
 } from 'src/store/hooks/useAssetLinkWarning';
 import { act, renderHook } from '@testing-library/react-hooks';
 import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/vision/detectionModels/types';
 import { waitFor } from '@testing-library/react';
 import { WrappedWithProviders } from 'src/__test-utils/renderer';
 import { AnnotationTableItem } from 'src/modules/Review/types';

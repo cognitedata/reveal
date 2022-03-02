@@ -1,7 +1,7 @@
 import React from 'react';
 import { Body, Input, Select, Title } from '@cognite/cogs.js';
-import { AutoMLModelType } from 'src/api/autoML/types';
-import { MAX_AUTOML_MODEL_NAME_LENGTH } from 'src/api/constants';
+import { AutoMLModelType } from 'src/api/vision/autoML/types';
+import { MAX_AUTOML_MODEL_NAME_LENGTH } from 'src/api/vision/autoML/constants';
 
 import styled from 'styled-components';
 

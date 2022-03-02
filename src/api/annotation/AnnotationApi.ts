@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpResponse, ItemsResponse } from '@cognite/sdk';
-import { Annotation } from 'src/api/types';
+import { Annotation } from 'src/api/vision/detectionModels/types';
 import {
   AnnotationCreateRequest,
   AnnotationListRequest,

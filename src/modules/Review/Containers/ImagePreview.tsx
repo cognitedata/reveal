@@ -4,7 +4,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import React, { ReactText, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
-import { Annotation } from 'src/api/types';
+import { Annotation } from 'src/api/vision/detectionModels/types';
 import { AnnotationSettingsModal } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsModal';
 import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardShortcutModal/KeyboardShortcutModal';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
