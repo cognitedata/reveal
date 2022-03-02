@@ -36,7 +36,8 @@ const checkRequestContainsFilter = (expectedFilter: unknown) => {
   cy.wait('@searchWells')
     .its('request.body.filter')
     .should((body) => {
-      return assert.deepInclude(body, expectedFilter);
+      console.log('wow body', body, 'expectedFilter', expectedFilter);
+      return assert.deepNestedInclude(body, expectedFilter);
     });
 };
 
@@ -164,10 +165,31 @@ describe('Wells sidebar filters', () => {
       .click()
       .type('{rightarrow}{rightarrow}');
 
+    const maxMeasuredDepth = {
+      min: 3554,
+      max: 17491,
+    };
+    const datum = {
+      min: 84,
+      max: 246,
+    };
+    const maxTrueVerticalDepth = {
+      min: 3323,
+      max: 12994,
+    };
+    const maxDoglegSeverity = {
+      min: 1,
+      max: 22,
+    };
+    const maxWaterDepth = {
+      min: 1,
+      max: 9813,
+    };
+
     checkRequestContainsFilter({
       datum: {
-        min: 2,
-        max: 100,
+        min: datum.min,
+        max: datum.max,
         unit: 'foot',
       },
     });
@@ -183,8 +205,8 @@ describe('Wells sidebar filters', () => {
 
     checkRequestContainsFilter({
       datum: {
-        min: 2,
-        max: 95,
+        min: datum.min,
+        max: 241,
         unit: 'foot',
       },
     });
@@ -208,8 +230,8 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       trajectories: {
         maxMeasuredDepth: {
-          min: 1,
-          max: 50000,
+          min: maxMeasuredDepth.min,
+          max: maxMeasuredDepth.max,
           unit: 'foot',
         },
       },
@@ -231,13 +253,13 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       trajectories: {
         maxMeasuredDepth: {
-          min: 1,
-          max: 50000,
+          min: maxMeasuredDepth.min,
+          max: maxMeasuredDepth.max,
           unit: 'foot',
         },
         maxTrueVerticalDepth: {
-          min: 0,
-          max: 49998,
+          min: maxTrueVerticalDepth.min,
+          max: maxTrueVerticalDepth.max,
           unit: 'foot',
         },
       },
@@ -260,18 +282,18 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       trajectories: {
         maxMeasuredDepth: {
-          min: 1,
-          max: 50000,
+          min: maxMeasuredDepth.min,
+          max: maxMeasuredDepth.max,
           unit: 'foot',
         },
         maxTrueVerticalDepth: {
-          min: 0,
-          max: 49998,
+          min: maxTrueVerticalDepth.min,
+          max: maxTrueVerticalDepth.max,
           unit: 'foot',
         },
         maxDoglegSeverity: {
-          min: 1,
-          max: 100,
+          min: maxDoglegSeverity.min,
+          max: maxDoglegSeverity.max,
           unit: {
             angleUnit: 'degree',
             distanceUnit: 'foot',
@@ -286,22 +308,22 @@ describe('Wells sidebar filters', () => {
       .siblings()
       .last()
       .findByTestId('To-DoglegSeverityDegree30ft')
-      .type('{selectAll}50{enter}');
+      .type('{selectAll}10{enter}');
     checkRequestContainsFilter({
       trajectories: {
         maxMeasuredDepth: {
-          min: 1,
-          max: 50000,
+          min: maxMeasuredDepth.min,
+          max: maxMeasuredDepth.max,
           unit: 'foot',
         },
         maxTrueVerticalDepth: {
-          min: 0,
-          max: 49998,
+          min: maxTrueVerticalDepth.min,
+          max: maxTrueVerticalDepth.max,
           unit: 'foot',
         },
         maxDoglegSeverity: {
-          min: 1,
-          max: 50,
+          min: maxDoglegSeverity.min,
+          max: 10,
           unit: {
             angleUnit: 'degree',
             distanceUnit: 'foot',
@@ -324,7 +346,7 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       waterDepth: {
         min: 9500,
-        max: 9813, // this value is from demo data
+        max: maxWaterDepth.max,
         unit: 'foot',
       },
     });
@@ -362,18 +384,18 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       trajectories: {
         maxMeasuredDepth: {
-          min: 1,
-          max: 50000,
+          min: maxMeasuredDepth.min,
+          max: maxMeasuredDepth.max,
           unit: 'foot',
         },
         maxTrueVerticalDepth: {
-          min: 0,
-          max: 49998,
+          min: maxTrueVerticalDepth.min,
+          max: maxTrueVerticalDepth.max,
           unit: 'foot',
         },
         maxDoglegSeverity: {
-          min: 1,
-          max: 50,
+          min: maxDoglegSeverity.min,
+          max: 10,
           unit: {
             angleUnit: 'degree',
             distanceUnit: 'foot',

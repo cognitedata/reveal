@@ -9,10 +9,14 @@ import { UNITS_TO_STANDARD } from './constants';
 export interface UnitConverterItem {
   accessor: string;
   from?: string;
+  // we should be using this:
+  // from?: convert.Unit;
   fromAccessor?: string;
   id?: string;
   errorHandler?: (err: string) => void;
   to: string;
+  // we should be using this:
+  // to: convert.Unit;
 }
 export const changeUnit = <Item>(
   item: Item,

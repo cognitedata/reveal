@@ -3,7 +3,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import { PlotData } from 'plotly.js';
-import { convertPressure, changeUnitTo } from 'utils/units';
+import { convertPressure, unsafeChangeUnitTo } from 'utils/units';
 
 import {
   DepthMeasurementColumn,
@@ -243,7 +243,8 @@ export const mapCurveToPlotly = (
     }
 
     y.push(
-      changeUnitTo(yValue, tvdUnit, userPreferedDepthMeasurementUnit) || yValue
+      unsafeChangeUnitTo(yValue, tvdUnit, userPreferedDepthMeasurementUnit) ||
+        yValue
     );
     if (isAngleCurve) {
       x.push(xValue);

@@ -27,10 +27,6 @@ jest.mock('@cognite/react-i18n', () => {
   };
 });
 
-jest.mock('utils/log', () => {
-  return { log: () => false };
-});
-
 configureLocalStorageMock();
 
 if (isUndefined(window.URL.createObjectURL)) {

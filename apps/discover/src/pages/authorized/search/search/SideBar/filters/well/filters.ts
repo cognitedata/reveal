@@ -1,5 +1,6 @@
 import head from 'lodash/head';
 import last from 'lodash/last';
+import { changeUnitTo } from 'utils/units';
 
 import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discover-api-types';
 import { MeasurementType, WellFilter } from '@cognite/sdk-wells-v2';
@@ -170,10 +171,17 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.kb_elevation',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: () =>
-      wellFilterFetchers
-        ?.kbLimits()
-        .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
+    fetcher: () => {
+      return wellFilterFetchers?.kbLimits().then((response) => {
+        if (response.unit !== unit) {
+          return [
+            Math.floor(changeUnitTo(response.min, response.unit, unit)),
+            Math.ceil(changeUnitTo(response.max, response.unit, unit)),
+          ];
+        }
+        return [response.min, response.max];
+      });
+    },
     filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
       datum: {
         min: values[0] as number,
@@ -189,10 +197,23 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.md',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: () =>
-      wellFilterFetchers
+    fetcher: (v3enabled) => {
+      if (v3enabled) {
+        return wellFilterFetchers?.mdLimits().then((response) => {
+          if (response.unit !== unit) {
+            return [
+              Math.floor(changeUnitTo(response.min, response.unit, unit)),
+              Math.ceil(changeUnitTo(response.max, response.unit, unit)),
+            ];
+          }
+          return [response.min, response.max];
+        });
+      }
+
+      return wellFilterFetchers
         ?.mdLimits()
-        .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
+        .then((response) => getLimitRangeInUserPreferredUnit(response, unit));
+    },
     filterParameters: (values, userPreferredUnit): WellFilter => ({
       hasTrajectory: {
         maxMeasuredDepth: {
@@ -209,10 +230,23 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.tvd',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: () =>
-      wellFilterFetchers
+    fetcher: (v3enabled) => {
+      if (v3enabled) {
+        return wellFilterFetchers?.tvdLimits().then((response) => {
+          if (response.unit !== unit) {
+            return [
+              Math.floor(changeUnitTo(response.min, response.unit, unit)),
+              Math.ceil(changeUnitTo(response.max, response.unit, unit)),
+            ];
+          }
+          return [response.min, response.max];
+        });
+      }
+
+      return wellFilterFetchers
         ?.tvdLimits()
-        .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
+        .then((response) => getLimitRangeInUserPreferredUnit(response, unit));
+    },
     filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
       trajectories: {
         maxTrueVerticalDepth: {
@@ -234,10 +268,27 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.dls',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: () =>
-      wellFilterFetchers
-        ?.dogLegSeverityLimts()
-        .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
+    fetcher: (v3enabled) => {
+      if (v3enabled) {
+        return wellFilterFetchers?.dogLegSeverityLimits().then((response) => {
+          if (response.unit.distanceUnit !== unit) {
+            return [
+              Math.floor(
+                changeUnitTo(response.min, response.unit.distanceUnit, unit)
+              ),
+              Math.ceil(
+                changeUnitTo(response.max, response.unit.distanceUnit, unit)
+              ),
+            ];
+          }
+          return [Math.floor(response.min), Math.ceil(response.max)];
+        });
+      }
+
+      return wellFilterFetchers
+        ?.dogLegSeverityLimits()
+        .then((response) => getLimitRangeInUserPreferredUnit(response, unit));
+    },
     filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
       trajectories: {
         maxDoglegSeverity: {

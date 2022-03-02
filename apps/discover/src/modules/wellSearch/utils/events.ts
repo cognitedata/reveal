@@ -9,6 +9,7 @@ import isEmpty from 'lodash/isEmpty';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
 import { CogniteEvent } from '@cognite/sdk';
+import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
 import { FilterDataState } from 'modules/filterData/types';
 import {
@@ -106,11 +107,9 @@ export const mapWellInfoToNPTEvents = (
               ...event.measuredDepth,
               value: convert(event.measuredDepth.value)
                 .from(
-                  get(
-                    UNITS_TO_STANDARD,
-                    event.measuredDepth.unit,
-                    event.measuredDepth.unit
-                  )
+                  UNITS_TO_STANDARD[
+                    event.measuredDepth.unit as DistanceUnitEnum
+                  ] || event.measuredDepth.unit
                 )
                 .to(userPreferredUnit as any),
             }

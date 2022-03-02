@@ -4,7 +4,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import { PlotData } from 'plotly.js';
-import { convertPressure, changeUnitTo } from 'utils/units';
+import { convertPressure, unsafeChangeUnitTo } from 'utils/units';
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
 import { Metadata } from '@cognite/sdk';
@@ -153,7 +153,7 @@ export const formatChartData = (
              */
             return;
           }
-          y.push(changeUnitTo(yValue, tvdUnit, referenceUnit) || yValue);
+          y.push(unsafeChangeUnitTo(yValue, tvdUnit, referenceUnit) || yValue);
           if (isAngleCurve) {
             x.push(xValue);
           } else {
@@ -215,7 +215,7 @@ export const convertOtherDataToPlotly = (
     x: [
       convertPressure(xVal, currentPressureUnit, yVal, tvdUnit, pressureUnit),
     ],
-    y: [changeUnitTo(yVal, tvdUnit, referenceUnit) || yVal],
+    y: [unsafeChangeUnitTo(yVal, tvdUnit, referenceUnit) || yVal],
     type: 'scatter',
     mode: 'markers',
     name,

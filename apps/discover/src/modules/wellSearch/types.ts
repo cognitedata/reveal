@@ -278,9 +278,9 @@ export type FilterConfig = {
   key: string;
   category: string;
   type: FilterTypes;
-  fetcher?: () =>
-    | Promise<any | string[] | number[] | (Date | undefined)[]>
-    | undefined;
+  fetcher?: (
+    v3: boolean
+  ) => Promise<any | string[] | number[] | (Date | undefined)[]> | undefined;
   filterParameters?: (
     filters: string[] | Date[] | number[],
     userPreferredUnit: UserPreferredUnit

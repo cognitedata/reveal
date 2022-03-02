@@ -66,7 +66,7 @@ export const getWellFilterFetchers = () => {
   const mdLimits = () => Promise.resolve([0, 50000]);
   const tvdLimits = () => Promise.resolve([0, 50000]);
   const kbLimits = () => Promise.resolve([0, 100]);
-  const dogLegSeverityLimts = () => Promise.resolve([0, 100]);
+  const dogLegSeverityLimits = () => Promise.resolve([0, 100]);
 
   if (!globalEnableWellSDKV3) {
     const { fields, blocks, operators, measurements, regions } =
@@ -80,7 +80,7 @@ export const getWellFilterFetchers = () => {
       mdLimits,
       tvdLimits,
       kbLimits,
-      dogLegSeverityLimts,
+      dogLegSeverityLimits,
       welltypes: () =>
         Promise.resolve(['exploration', 'development', 'abandoned', 'shallow']),
     };
@@ -116,10 +116,15 @@ export const getWellFilterFetchers = () => {
       const regions = await getWellSDKClientV3().summaries.regions();
       return mapSummaryCountsToStringArray(regions);
     },
-    mdLimits,
-    tvdLimits,
-    kbLimits,
-    dogLegSeverityLimts,
+    mdLimits: () =>
+      getWellSDKClientV3().summaries.trajectoriesMeasuredDepthLimits(),
+    tvdLimits: () =>
+      getWellSDKClientV3().summaries.trajectoriesTrueVerticalDepthLimits(),
+    kbLimits: () => getWellSDKClientV3().summaries.datumLimits(),
+    dogLegSeverityLimits: () =>
+      getWellSDKClientV3().summaries.trajectoriesDoglegSeverityLimits(),
+    inclinationAngleLimits: () =>
+      getWellSDKClientV3().summaries.trajectoriesDoglegSeverityLimits(),
   };
 };
 

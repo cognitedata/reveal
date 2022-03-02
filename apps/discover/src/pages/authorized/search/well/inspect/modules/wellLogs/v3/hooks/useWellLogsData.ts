@@ -1,7 +1,7 @@
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
 import { minMax } from 'utils/minMax';
-import { changeUnitTo } from 'utils/units';
+import { unsafeChangeUnitTo } from 'utils/units';
 import { getConvertibleUnit } from 'utils/units/getConvertibleUnit';
 
 import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
@@ -26,7 +26,7 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
     const { depthColumn, columns, rows, depthUnit } = wellLogRowData;
     const { unit } = depthUnit;
     const depthValues = rows.map((row) =>
-      changeUnitTo(row.depth, unit, userPreferredUnit)
+      unsafeChangeUnitTo(row.depth, unit, userPreferredUnit)
     );
     const [minDepthValue, maxDepthValue] = minMax(depthValues);
 
@@ -63,13 +63,13 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
           return [0, null] as unknown as Tuplet;
         }
 
-        const depthValue = changeUnitTo(
+        const depthValue = unsafeChangeUnitTo(
           depthValueOriginal,
           unit,
           userPreferredUnit
         );
 
-        const columnValue = changeUnitTo(
+        const columnValue = unsafeChangeUnitTo(
           columnValueOriginal,
           column.unit,
           userPreferredUnit

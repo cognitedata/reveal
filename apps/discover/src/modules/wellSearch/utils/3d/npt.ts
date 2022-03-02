@@ -1,10 +1,10 @@
 import convert from 'convert-units';
 import flatten from 'lodash/flatten';
-import get from 'lodash/get';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
 import { IRiskEvent } from '@cognite/node-visualizer';
 import { NPT as NptV2 } from '@cognite/sdk-wells-v2';
+import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 // import { Npt } from '@cognite/sdk-wells-v3';
 
 import { FEET } from 'constants/units';
@@ -29,7 +29,10 @@ const convertV2MeasureDepthToFeet = (measuredDepth: NptV2['measuredDepth']) => {
   }
 
   return convert(measuredDepth.value)
-    .from(get(UNITS_TO_STANDARD, measuredDepth.unit, measuredDepth.unit))
+    .from(
+      UNITS_TO_STANDARD[measuredDepth.unit as DistanceUnitEnum] ||
+        measuredDepth.unit
+    )
     .to(FEET);
 };
 

@@ -4,7 +4,7 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import sortBy from 'lodash/sortBy';
-import { convertToPpg, changeUnitTo } from 'utils/units';
+import { convertToPpg, unsafeChangeUnitTo } from 'utils/units';
 
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 
@@ -99,7 +99,8 @@ export const LogViewer: React.FC<Props> = ({
             values: data
               .map((row) => row[mdColIndex] as number)
               .map(
-                (value) => changeUnitTo(value, unit, userPreferredUnit) || 0
+                (value) =>
+                  unsafeChangeUnitTo(value, unit, userPreferredUnit) || 0
               ),
             unit: userPreferredUnit,
           };
@@ -113,7 +114,7 @@ export const LogViewer: React.FC<Props> = ({
             }
             return [
               unit !== '' && userPreferredUnit
-                ? changeUnitTo(
+                ? unsafeChangeUnitTo(
                     row[mdColIndex] as number,
                     mdUnit,
                     userPreferredUnit
@@ -137,13 +138,13 @@ export const LogViewer: React.FC<Props> = ({
     if (isEmpty(Object.keys(logData)) && userPreferredUnit) {
       const unit = getTrackUnit(log, MD_COL_NAME);
       const startDepth =
-        changeUnitTo(
+        unsafeChangeUnitTo(
           Number(get(log, 'metadata.startDepth')),
           unit,
           userPreferredUnit
         ) || 0;
       const endDepth =
-        changeUnitTo(
+        unsafeChangeUnitTo(
           Number(get(log, 'metadata.endDepth')),
           unit,
           userPreferredUnit
@@ -239,14 +240,14 @@ export const LogViewer: React.FC<Props> = ({
     const mdUnit = log.columns[mdColIndex].metadata?.unit || FEET;
     const topDepth =
       firstRow && userPreferredUnit
-        ? changeUnitTo(
+        ? unsafeChangeUnitTo(
             firstRow[mdColIndex] as number,
             mdUnit,
             userPreferredUnit
           ) || 0
         : null;
     const baseDepth = userPreferredUnit
-      ? changeUnitTo(
+      ? unsafeChangeUnitTo(
           data[data.length - 1][mdColIndex] as number,
           mdUnit,
           userPreferredUnit
@@ -281,7 +282,7 @@ export const LogViewer: React.FC<Props> = ({
           }
           return [
             unit !== '' && userPreferredUnit
-              ? changeUnitTo(
+              ? unsafeChangeUnitTo(
                   row[mdColIndex] as number,
                   'ft', // TODO(CM-6) problem
                   userPreferredUnit
