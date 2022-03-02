@@ -1,4 +1,3 @@
-precision highp float;
 #pragma glslify: import('../color/rgb2hsv.glsl')
 #pragma glslify: import('../color/hsv2rgb.glsl')
 #pragma glslify: import('../color/packIntToColor.glsl')

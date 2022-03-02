@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: import('../math/rand2d.glsl')
 
 uniform mat4 projMatrix;

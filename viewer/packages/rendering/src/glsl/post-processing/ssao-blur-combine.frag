@@ -5,6 +5,7 @@
 // generalized for two dimensions
 
 precision highp float;
+
 uniform sampler2D tDiffuse;
 uniform sampler2D tAmbientOcclusion;
 uniform vec2 resolution;

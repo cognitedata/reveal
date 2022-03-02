@@ -1,5 +1,3 @@
-precision highp float;
-
 #pragma glslify: import('../math/floatBitsSubset.glsl')
 
 NodeAppearance determineNodeAppearance(sampler2D nodeAppearanceTexture, vec2 textureSize, float treeIndex) {

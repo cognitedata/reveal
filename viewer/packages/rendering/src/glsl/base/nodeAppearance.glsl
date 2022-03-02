@@ -1,5 +1,3 @@
-precision highp float;
-
 struct NodeAppearance {
   vec4 colorTexel;
   bool isVisible;

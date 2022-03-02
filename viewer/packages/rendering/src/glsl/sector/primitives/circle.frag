@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: import('../../base/updateFragmentColor.glsl')
 #pragma glslify: import('../../base/nodeAppearance.glsl')
 #pragma glslify: import('../../base/determineNodeAppearance.glsl');
@@ -6,7 +8,6 @@
 #pragma glslify: import('../../base/isClipped.glsl')
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform int renderMode;

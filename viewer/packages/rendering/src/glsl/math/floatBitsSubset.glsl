@@ -1,5 +1,3 @@
-precision highp float;
-
 float floatBitsSubset(float inNumber, int fromLeastSignificantBitIndex,  int toMostSignificantBitIndex) {
     float r = float(fromLeastSignificantBitIndex);
     float l = float(toMostSignificantBitIndex);

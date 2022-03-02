@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: import('../../base/updateFragmentColor.glsl')
 #pragma glslify: import('../../base/nodeAppearance.glsl')
 #pragma glslify: import('../../base/determineNodeAppearance.glsl');
