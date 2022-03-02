@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 import { RootState } from 'src/store/rootReducer';
 import { useSelector } from 'react-redux';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { AutoMLModel } from 'src/api/vision/autoML/types';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
@@ -18,7 +18,7 @@ import * as customModelDetails from './ModelDetails/customModelDetails';
 const queryClient = new QueryClient();
 
 export const ModelConfiguration = (props: {
-  disabledModelTypes: VisionAPIType[];
+  disabledModelTypes: VisionDetectionModelType[];
   customModels?: AutoMLModel[];
 }) => {
   const availableDetectionModels = useSelector(
@@ -28,7 +28,7 @@ export const ModelConfiguration = (props: {
   const [currentModelSettings, setCurrentModelSettings] = useState(
     // show custom model settings if custom model added and automl is enabled
     availableDetectionModels.length > 3 &&
-      !props.disabledModelTypes.includes(VisionAPIType.CustomModel)
+      !props.disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
       ? availableDetectionModels.length - 1
       : 0
   );
@@ -38,13 +38,13 @@ export const ModelConfiguration = (props: {
   );
   const modelSelectOptions = enabledDetectionModels.map((item, index) => {
     const content =
-      item.type === VisionAPIType.OCR
+      item.type === VisionDetectionModelType.OCR
         ? ocrModelDetails.content(index)
-        : item.type === VisionAPIType.TagDetection
+        : item.type === VisionDetectionModelType.TagDetection
         ? tagDetectionModelDetails.content(index)
-        : item.type === VisionAPIType.ObjectDetection
+        : item.type === VisionDetectionModelType.ObjectDetection
         ? objectDetectionModelDetails.content(index)
-        : item.type === VisionAPIType.CustomModel
+        : item.type === VisionDetectionModelType.CustomModel
         ? customModelDetails.content(index, props.customModels)
         : undefined;
 

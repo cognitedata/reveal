@@ -2,10 +2,10 @@
 
 import isEqual from 'lodash-es/isEqual';
 import {
-  AnnotationJob,
-  AnnotationJobCompleted,
-  AnnotationJobRunning,
-  VisionAPIType,
+  VisionJob,
+  VisionJobCompleted,
+  VisionJobRunning,
+  VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 
 import {
@@ -35,8 +35,8 @@ export const removeJobFromFiles = (state: ProcessState, jobId: number) => {
 export const addJobToState = (
   state: ProcessState,
   fileIds: number[],
-  job: AnnotationJob,
-  modelType: VisionAPIType,
+  job: VisionJob,
+  modelType: VisionDetectionModelType,
   completedFileIds?: number[],
   failedFileIds?: number[]
 ) => {
@@ -50,7 +50,7 @@ export const addJobToState = (
 
   if (job.status === 'Completed' || job.status === 'Running') {
     jobState.failedFiles = (
-      job as AnnotationJobRunning | AnnotationJobCompleted
+      job as VisionJobRunning | VisionJobCompleted
     ).failedItems?.reduce(
       (acc: { fileId: number; error: string }[], next) =>
         acc.concat(

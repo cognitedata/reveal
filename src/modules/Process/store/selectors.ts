@@ -6,7 +6,7 @@ import {
   defaultMemoize,
 } from 'reselect';
 
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 import { GenericSort, SortKeys } from 'src/modules/Common/Utils/SortUtils';
@@ -139,16 +139,17 @@ export const makeSelectJobStatusForFile = () =>
           statusTime: job.statusTime,
           error: job.failedFiles?.find((file) => file.fileId === fileId)?.error,
         };
-        if (job.type === VisionAPIType.OCR) {
+        if (job.type === VisionDetectionModelType.OCR) {
           annotationBadgeProps.text = statusData;
         }
-        if (job.type === VisionAPIType.TagDetection) {
+        if (job.type === VisionDetectionModelType.TagDetection) {
           annotationBadgeProps.tag = statusData;
         }
         if (
-          [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
-            job.type
-          )
+          [
+            VisionDetectionModelType.ObjectDetection,
+            VisionDetectionModelType.CustomModel,
+          ].includes(job.type)
         ) {
           annotationBadgeProps.objects = statusData;
           annotationBadgeProps.gdpr = statusData;
@@ -232,7 +233,7 @@ export const selectProcessSummary = createSelector(
       ({ annotations }) =>
         !!annotations.filter(
           (annotation) =>
-            annotation.modelType === VisionAPIType.ObjectDetection &&
+            annotation.modelType === VisionDetectionModelType.ObjectDetection &&
             annotation.label === 'person' &&
             annotation.status === AnnotationStatus.Unhandled
         ).length

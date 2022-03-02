@@ -3,7 +3,7 @@ import {
   getAnnotationsBadgeCounts,
 } from 'src/utils/AnnotationUtils';
 
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 describe('annotationCounts', () => {
   it('should return unique annotation texts and number of occurences', () => {
@@ -31,19 +31,19 @@ describe('getAnnotationsBadgeCounts', () => {
     const annotations = [
       {
         label: 'gauge',
-        modelType: VisionAPIType.ObjectDetection,
+        modelType: VisionDetectionModelType.ObjectDetection,
       },
       {
         label: 'gauge',
-        modelType: VisionAPIType.ObjectDetection,
+        modelType: VisionDetectionModelType.ObjectDetection,
       },
       {
         label: 'PTX123',
-        modelType: VisionAPIType.TagDetection,
+        modelType: VisionDetectionModelType.TagDetection,
       },
       {
         label: 'person',
-        modelType: VisionAPIType.ObjectDetection,
+        modelType: VisionDetectionModelType.ObjectDetection,
       },
     ];
 

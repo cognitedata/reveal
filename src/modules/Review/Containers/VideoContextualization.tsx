@@ -11,7 +11,7 @@ import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationSt
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { useDispatch } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
@@ -81,7 +81,7 @@ export const VideoContextualization = (props: {
             title="Asset tags in image"
             file={file}
             annotations={tagAnnotations}
-            mode={VisionAPIType.TagDetection}
+            mode={VisionDetectionModelType.TagDetection}
             onDelete={handleDeleteAnnotations}
             onVisibilityChange={handleVisibility}
             onApproveStateChange={handleApprovalState}

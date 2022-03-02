@@ -5,7 +5,7 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import {
   clearFileState,
   deselectAllSelectionsReviewPage,
@@ -222,7 +222,8 @@ export const selectTagAnnotationsForFile = createSelector(
   selectVisibleAnnotationsForFile,
   (allVisibleAnnotations) => {
     return allVisibleAnnotations.filter(
-      (annotation) => annotation.modelType === VisionAPIType.TagDetection
+      (annotation) =>
+        annotation.modelType === VisionDetectionModelType.TagDetection
     );
   }
 );
@@ -231,7 +232,7 @@ export const selectOtherAnnotationsForFile = createSelector(
   selectVisibleAnnotationsForFile,
   (allVisibleAnnotations) => {
     return allVisibleAnnotations.filter(
-      (ann) => ann.modelType !== VisionAPIType.TagDetection
+      (ann) => ann.modelType !== VisionDetectionModelType.TagDetection
     );
   }
 );

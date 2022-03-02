@@ -1,14 +1,14 @@
 import { createAction } from '@reduxjs/toolkit';
 import {
-  AnnotationJob,
-  VisionAPIType,
+  VisionJob,
+  VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 
 export const fileProcessUpdate =
   createAction<{
     fileIds: number[];
-    job: AnnotationJob;
-    modelType: VisionAPIType;
+    job: VisionJob;
+    modelType: VisionDetectionModelType;
     completedFileIds: number[];
     failedFileIds: number[];
   }>('fileProcessUpdate');

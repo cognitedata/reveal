@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Select, Button } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 import * as tagDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
@@ -20,13 +20,13 @@ import { RootState } from 'src/store/rootReducer';
 
 type SelectOption = {
   label: any;
-  value: VisionAPIType;
+  value: VisionDetectionModelType;
   backgroundColor: string;
 };
 
 // fixme cogs select must accept OptionType generic
 type Props = Omit<
-  SelectProps<{ label: string; value: VisionAPIType }>,
+  SelectProps<{ label: string; value: VisionDetectionModelType }>,
   'theme'
 > & {
   onChange: (value: Array<SelectOption['value']>) => unknown;
@@ -78,30 +78,30 @@ export function DetectionModelSelect({
     // eslint-disable-next-line consistent-return
     (item) => {
       switch (item.type) {
-        case VisionAPIType.OCR:
+        case VisionDetectionModelType.OCR:
           return {
             label: ocrModelDetails.badge(item.modelName),
-            value: VisionAPIType.OCR,
+            value: VisionDetectionModelType.OCR,
             backgroundColor: ColorsOCR.backgroundColor,
           };
 
-        case VisionAPIType.TagDetection:
+        case VisionDetectionModelType.TagDetection:
           return {
             label: tagDetectionModelDetails.badge(item.modelName),
-            value: VisionAPIType.TagDetection,
+            value: VisionDetectionModelType.TagDetection,
             backgroundColor: ColorsTagDetection.backgroundColor,
           };
 
-        case VisionAPIType.ObjectDetection:
+        case VisionDetectionModelType.ObjectDetection:
           return {
             label: objectDetectionModelDetails.badge(item.modelName),
-            value: VisionAPIType.ObjectDetection,
+            value: VisionDetectionModelType.ObjectDetection,
             backgroundColor: ColorsObjectDetection.backgroundColor,
           };
-        case VisionAPIType.CustomModel:
+        case VisionDetectionModelType.CustomModel:
           return {
             label: customModelDetails.badge(item.modelName),
-            value: VisionAPIType.CustomModel,
+            value: VisionDetectionModelType.CustomModel,
             backgroundColor: ColorsObjectDetection.backgroundColor,
           };
       }
@@ -118,18 +118,18 @@ export function DetectionModelSelect({
         Add custom model
       </StyledButton>
     ),
-    value: VisionAPIType.CustomModel,
+    value: VisionDetectionModelType.CustomModel,
     backgroundColor: '',
   };
 
   const options =
     // Show create if custom model not already added and if it is enabled
     detectionModelOptions.length > 3 ||
-    disabledModelTypes.includes(VisionAPIType.CustomModel)
+    disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
       ? detectionModelOptions
       : [...detectionModelOptions, addCustomModelOption];
 
-  const toOption = (modelType: VisionAPIType): SelectOption => {
+  const toOption = (modelType: VisionDetectionModelType): SelectOption => {
     const option = detectionModelOptions.find(
       (item) => item.value === modelType
     );
@@ -139,7 +139,7 @@ export function DetectionModelSelect({
     return option;
   };
 
-  const fromOption = (item: SelectOption): VisionAPIType => {
+  const fromOption = (item: SelectOption): VisionDetectionModelType => {
     return item.value;
   };
 

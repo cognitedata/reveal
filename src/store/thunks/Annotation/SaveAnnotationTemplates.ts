@@ -9,7 +9,7 @@ import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 export const SaveAnnotationTemplates = createAsyncThunk<
   AnnotationCollection,
@@ -124,7 +124,7 @@ export const SaveAnnotationTemplates = createAsyncThunk<
           lastUpdated: templateAnnotation.lastUpdatedTime,
           color: AnnotationUtils.getAnnotationColor(
             templateAnnotation.text,
-            VisionAPIType.ObjectDetection,
+            VisionDetectionModelType.ObjectDetection,
             templateAnnotation.data
           ),
           shapeName: templateAnnotation.text,

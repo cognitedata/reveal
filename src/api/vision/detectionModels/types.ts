@@ -1,7 +1,6 @@
 import { CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
-import { Keypoint } from 'src/modules/Review/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
+// Vision API schema types
 export declare type FileIdEither = FileInternalId | FileExternalId;
 export interface FileInternalId {
   fileId: CogniteInternalId;
@@ -10,76 +9,24 @@ export interface FileExternalId {
   fileExternalId: CogniteExternalId;
 }
 
-export enum VisionAPIType {
-  OCR = 1,
-  TagDetection,
-  ObjectDetection,
-  CustomModel,
-}
-
-export interface DetectionModelDataProvider {
-  postJob(
-    requestBody: any,
-    parameters?: DetectionModelParams
-  ): Promise<AnnotationJobResponse>;
-  fetchJobById(jobId: number): Promise<AnnotationJobResponse>;
-}
-
 export type JobStatus =
   | 'Queued'
   | 'Collecting'
   | 'Running'
   | 'Completed'
   | 'Failed';
+
 export type RegionType = 'points' | 'rectangle' | 'polygon' | 'polyline';
+
 export type Vertex = {
   x: number;
   y: number;
 };
-export type AnnotationType =
-  | 'vision/ocr'
-  | 'vision/tagdetection'
-  | 'vision/objectdetection'
-  | 'vision/custommodel'
-  | 'user_defined'
-  | 'CDF_ANNOTATION_TEMPLATE';
-
-export type AnnotationSource = 'context_api' | 'user';
 
 export type AnnotationRegion = {
   shape: RegionType;
   vertices: Array<Vertex>;
 };
-
-export type AnnotationMetadata = {
-  keypoint?: boolean;
-  keypoints?: Keypoint[];
-  color?: string;
-  confidence?: number;
-};
-
-interface BaseAnnotation {
-  text: string;
-  data?: AnnotationMetadata;
-  region?: AnnotationRegion;
-  annotatedResourceId: number;
-  annotatedResourceExternalId?: string;
-  annotatedResourceType: 'file';
-  annotationType: AnnotationType;
-  source: AnnotationSource;
-  status: AnnotationStatus;
-  id: number;
-  createdTime: number;
-  lastUpdatedTime: number;
-}
-
-export interface LinkedAnnotation extends BaseAnnotation {
-  linkedResourceId?: number;
-  linkedResourceExternalId?: string;
-  linkedResourceType?: 'asset' | 'file';
-}
-
-export type Annotation = LinkedAnnotation;
 
 export interface DetectedAnnotation {
   text: string;
@@ -88,59 +35,54 @@ export interface DetectedAnnotation {
   assetIds?: Array<number>;
 }
 
-export type AnnotationJobFailedItem = {
+export type VisionJobFailedItem = {
   errorMessage: string;
   items: Array<FileInternalId & Partial<FileExternalId>>;
 };
 
-export type AnnotationJobResultItem = {
-  fileId: number;
-  fileExternalId?: string;
-  annotations: Array<DetectedAnnotation>;
-  width?: number;
-  height?: number;
-};
+export type VisionJobResultItem = FileInternalId &
+  Partial<FileExternalId> & {
+    annotations: Array<DetectedAnnotation>;
+    width?: number;
+    height?: number;
+  };
 
-export interface AnnotationJobBase {
+export interface VisionJobBase {
   status: JobStatus;
   createdTime: number;
   jobId: number;
   statusTime: number;
 }
-export interface AnnotationJobQueued extends AnnotationJobBase {
+export interface VisionJobQueued extends VisionJobBase {
   startTime: null;
   status: 'Queued';
 }
-export interface AnnotationJobRunning extends AnnotationJobBase {
+export interface VisionJobRunning extends VisionJobBase {
   startTime: number;
   status: 'Running';
-  items?: Array<AnnotationJobResultItem>;
-  failedItems?: Array<AnnotationJobFailedItem>;
+  items?: Array<VisionJobResultItem>;
+  failedItems?: Array<VisionJobFailedItem>;
 }
-export interface AnnotationJobCompleted extends AnnotationJobBase {
+export interface VisionJobCompleted extends VisionJobBase {
   status: 'Completed';
   createdTime: number;
   startTime: number;
   statusTime: number;
   jobId: number;
-  items: Array<AnnotationJobResultItem>;
-  failedItems?: Array<AnnotationJobFailedItem>;
+  items: Array<VisionJobResultItem>;
+  failedItems?: Array<VisionJobFailedItem>;
 }
-export interface AnnotationJobFailed extends AnnotationJobBase {
+export interface VisionJobFailed extends VisionJobBase {
   status: 'Failed';
 }
 
-export type AnnotationJobResponse =
-  | AnnotationJobQueued
-  | AnnotationJobRunning
-  | AnnotationJobCompleted
-  | AnnotationJobFailed;
+export type VisionJobResponse =
+  | VisionJobQueued
+  | VisionJobRunning
+  | VisionJobCompleted
+  | VisionJobFailed;
 
-// some extension over api response for more convenient usage in app
-export type AnnotationJob = AnnotationJobResponse & {
-  type: VisionAPIType;
-};
-
+// Model parameters
 export interface ParamsOCR {
   useCache: boolean;
 }
@@ -164,3 +106,23 @@ export type DetectionModelParams =
   | ParamsTagDetection
   | ParamsObjectDetection
   | ParamsCustomModel;
+
+// App specific types
+export enum VisionDetectionModelType {
+  OCR = 1,
+  TagDetection,
+  ObjectDetection,
+  CustomModel,
+}
+export interface DetectionModelDataProvider {
+  postJob(
+    requestBody: any,
+    parameters?: DetectionModelParams
+  ): Promise<VisionJobResponse>;
+  fetchJobById(jobId: number): Promise<VisionJobResponse>;
+}
+
+// some extension over api response for more convenient usage in app
+export type VisionJob = VisionJobResponse & {
+  type: VisionDetectionModelType;
+};

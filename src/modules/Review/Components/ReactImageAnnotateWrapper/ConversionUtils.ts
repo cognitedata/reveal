@@ -1,6 +1,6 @@
 import {
   AnnotationRegion,
-  VisionAPIType,
+  VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 import {
   Box,
@@ -103,7 +103,7 @@ export const convertKeyPointCollectionToAnnotationStub = (
     createdTime: 0,
     label: '',
     lastUpdatedTime: 0,
-    modelType: VisionAPIType.ObjectDetection,
+    modelType: VisionDetectionModelType.ObjectDetection,
     show: true,
     source: 'user',
     status: collection.status,

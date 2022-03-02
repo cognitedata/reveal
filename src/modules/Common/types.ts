@@ -1,9 +1,9 @@
 import { FileInfo } from '@cognite/sdk';
 import { ColumnShape } from 'react-base-table';
+import { Annotation } from 'src/api/annotation/types';
 import {
-  Annotation,
   JobStatus,
-  VisionAPIType,
+  VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 
 export interface AnnotationPreview
@@ -11,7 +11,7 @@ export interface AnnotationPreview
     Annotation,
     'id' | 'annotatedResourceId' | 'status' | 'source' | 'text' | 'region'
   > {
-  modelType: VisionAPIType;
+  modelType: VisionDetectionModelType;
 }
 
 export type AnnotationStatuses = {

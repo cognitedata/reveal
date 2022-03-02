@@ -7,7 +7,7 @@ import {
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 export const PopulateAnnotationTemplates = createAsyncThunk<
   AnnotationCollection,
@@ -43,7 +43,7 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
           lastUpdated: templateAnnotation.lastUpdatedTime,
           color: AnnotationUtils.getAnnotationColor(
             templateAnnotation.text,
-            VisionAPIType.ObjectDetection,
+            VisionDetectionModelType.ObjectDetection,
             templateAnnotation.data
           ),
           shapeName: templateAnnotation.text,

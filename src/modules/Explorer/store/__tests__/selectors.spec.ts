@@ -13,7 +13,7 @@ import {
 import { ExplorerState } from 'src/modules/Explorer/types';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
 
@@ -21,7 +21,7 @@ const createMockAnnotation = (id?: number, fileId?: number) => {
   return AnnotationUtils.createVisionAnnotationStub(
     id || 1,
     'foo',
-    VisionAPIType.ObjectDetection,
+    VisionDetectionModelType.ObjectDetection,
     fileId || 2,
     1,
     123,

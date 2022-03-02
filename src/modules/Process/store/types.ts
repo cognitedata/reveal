@@ -1,11 +1,11 @@
 import {
-  AnnotationJob,
-  VisionAPIType,
+  VisionJob,
+  VisionDetectionModelType,
   DetectionModelParams,
 } from 'src/api/vision/detectionModels/types';
 import { GenericTabularState } from 'src/store/genericTabularDataSlice';
 
-export type JobState = AnnotationJob & {
+export type JobState = VisionJob & {
   fileIds: number[];
   completedFileIds?: number[];
   failedFileIds?: number[];
@@ -24,10 +24,10 @@ export type ProcessState = GenericTabularState & {
     allIds: number[];
   };
   error?: string;
-  selectedDetectionModels: Array<VisionAPIType>;
+  selectedDetectionModels: Array<VisionDetectionModelType>;
   availableDetectionModels: {
     modelName: string;
-    type: VisionAPIType;
+    type: VisionDetectionModelType;
     settings: DetectionModelParams;
     unsavedSettings: DetectionModelParams;
   }[];

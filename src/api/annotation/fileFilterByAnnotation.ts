@@ -1,7 +1,6 @@
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
-import { Annotation } from 'src/api/vision/detectionModels/types';
 import { validateAnnotation } from 'src/api/annotation/utils';
 import { FileInfo } from '@cognite/sdk';
 import {
@@ -9,6 +8,7 @@ import {
   FETCH_ANNOTATION_LIMIT,
 } from 'src/constants/FetchConstants';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
+import { Annotation } from './types';
 
 const getAnnotations = async (
   annotationText?: string,

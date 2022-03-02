@@ -1,16 +1,18 @@
 import {
-  Annotation,
-  AnnotationMetadata,
   AnnotationRegion,
-  AnnotationSource,
-  AnnotationType,
   DetectedAnnotation,
-  LinkedAnnotation,
   RegionType,
   Vertex,
-  VisionAPIType,
+  VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
-import { UnsavedAnnotation } from 'src/api/annotation/types';
+import {
+  Annotation,
+  AnnotationMetadata,
+  AnnotationSource,
+  AnnotationType,
+  LinkedAnnotation,
+  UnsavedAnnotation,
+} from 'src/api/annotation/types';
 import {
   ColorsObjectDetection,
   ColorsOCR,
@@ -52,38 +54,38 @@ export type VisionAnnotation = Omit<
   label: string;
   type: RegionType;
   color: string;
-  modelType: VisionAPIType;
+  modelType: VisionDetectionModelType;
   linkedResourceId?: number;
   linkedResourceExternalId?: string;
   linkedResourceType?: 'asset';
 };
 
 export const ModelTypeStyleMap = {
-  [VisionAPIType.OCR]: ColorsOCR,
-  [VisionAPIType.TagDetection]: ColorsTagDetection,
-  [VisionAPIType.ObjectDetection]: ColorsObjectDetection,
-  [VisionAPIType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
+  [VisionDetectionModelType.OCR]: ColorsOCR,
+  [VisionDetectionModelType.TagDetection]: ColorsTagDetection,
+  [VisionDetectionModelType.ObjectDetection]: ColorsObjectDetection,
+  [VisionDetectionModelType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
-  [VisionAPIType.OCR]: 'Scan',
-  [VisionAPIType.TagDetection]: 'ResourceAssets',
-  [VisionAPIType.ObjectDetection]: 'Scan',
-  [VisionAPIType.CustomModel]: 'Scan',
+  [VisionDetectionModelType.OCR]: 'Scan',
+  [VisionDetectionModelType.TagDetection]: 'ResourceAssets',
+  [VisionDetectionModelType.ObjectDetection]: 'Scan',
+  [VisionDetectionModelType.CustomModel]: 'Scan',
 };
 
 export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationType } = {
-  [VisionAPIType.OCR]: 'vision/ocr',
-  [VisionAPIType.TagDetection]: 'vision/tagdetection',
-  [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
-  [VisionAPIType.CustomModel]: 'vision/custommodel',
+  [VisionDetectionModelType.OCR]: 'vision/ocr',
+  [VisionDetectionModelType.TagDetection]: 'vision/tagdetection',
+  [VisionDetectionModelType.ObjectDetection]: 'vision/objectdetection',
+  [VisionDetectionModelType.CustomModel]: 'vision/custommodel',
 };
 
 export const AnnotationTypeModelTypeMap = {
-  'vision/ocr': VisionAPIType.OCR,
-  'vision/tagdetection': VisionAPIType.TagDetection,
-  'vision/objectdetection': VisionAPIType.ObjectDetection,
-  user_defined: VisionAPIType.ObjectDetection,
-  CDF_ANNOTATION_TEMPLATE: VisionAPIType.ObjectDetection,
+  'vision/ocr': VisionDetectionModelType.OCR,
+  'vision/tagdetection': VisionDetectionModelType.TagDetection,
+  'vision/objectdetection': VisionDetectionModelType.ObjectDetection,
+  user_defined: VisionDetectionModelType.ObjectDetection,
+  CDF_ANNOTATION_TEMPLATE: VisionDetectionModelType.ObjectDetection,
 };
 
 export class AnnotationUtils {
@@ -95,7 +97,7 @@ export class AnnotationUtils {
 
   public static getAnnotationColor(
     text: string,
-    modelType: VisionAPIType,
+    modelType: VisionDetectionModelType,
     data?: AnnotationMetadata
   ): string {
     if (data) {
@@ -114,7 +116,7 @@ export class AnnotationUtils {
 
   public static getIconType = (annotation: {
     text: string;
-    modelType: VisionAPIType;
+    modelType: VisionDetectionModelType;
   }) => {
     return annotation.text === 'person'
       ? 'Personrounded'
@@ -159,7 +161,7 @@ export class AnnotationUtils {
   public static createVisionAnnotationStub(
     id: number,
     text: string,
-    modelType: VisionAPIType,
+    modelType: VisionDetectionModelType,
     fileId: number,
     createdTime: number,
     lastUpdatedTime: number,
@@ -221,15 +223,15 @@ export class AnnotationUtils {
 
   public static getAnnotationsDetectionModelType = (
     ann: Annotation
-  ): VisionAPIType => {
+  ): VisionDetectionModelType => {
     if (isLinkedAnnotation(ann)) {
-      return VisionAPIType.TagDetection;
+      return VisionDetectionModelType.TagDetection;
     }
 
     if (ann.annotationType === 'vision/ocr') {
-      return VisionAPIType.OCR;
+      return VisionDetectionModelType.OCR;
     }
-    return VisionAPIType.ObjectDetection;
+    return VisionDetectionModelType.ObjectDetection;
   };
 }
 
@@ -341,24 +343,25 @@ export const getAnnotationsBadgeCounts = (annotations: VisionAnnotation[]) => {
   };
   if (annotations) {
     annotationsBadgeProps.text = annotations.filter(
-      (item) => item.modelType === VisionAPIType.OCR
+      (item) => item.modelType === VisionDetectionModelType.OCR
     ).length;
 
     annotationsBadgeProps.assets = annotations.filter(
-      (item) => item.modelType === VisionAPIType.TagDetection
+      (item) => item.modelType === VisionDetectionModelType.TagDetection
     ).length;
 
     annotationsBadgeProps.gdpr = annotations.filter(
       (item) =>
-        item.modelType === VisionAPIType.ObjectDetection &&
+        item.modelType === VisionDetectionModelType.ObjectDetection &&
         item.label === 'person'
     ).length;
 
     const objects = annotations.filter(
       (item) =>
-        [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
-          item.modelType
-        ) && item.label !== 'person'
+        [
+          VisionDetectionModelType.ObjectDetection,
+          VisionDetectionModelType.CustomModel,
+        ].includes(item.modelType) && item.label !== 'person'
     );
     annotationsBadgeProps.objects = objects.length;
     const counts = getAnnotationCounts(objects);

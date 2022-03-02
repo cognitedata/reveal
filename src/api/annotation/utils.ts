@@ -1,19 +1,21 @@
 import {
-  Annotation,
-  AnnotationMetadata,
   AnnotationRegion,
-  AnnotationSource,
-  VisionAPIType,
+  VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 import {
   AnnotationStatus,
   ModelTypeAnnotationTypeMap,
 } from 'src/utils/AnnotationUtils';
-import { UnsavedAnnotation } from 'src/api/annotation/types';
+import {
+  Annotation,
+  AnnotationMetadata,
+  AnnotationSource,
+  UnsavedAnnotation,
+} from 'src/api/annotation/types';
 
 export function getUnsavedAnnotation(
   text: string,
-  jobType: VisionAPIType,
+  jobType: VisionDetectionModelType,
   fileId: number,
   source: AnnotationSource,
   region?: AnnotationRegion,
@@ -40,7 +42,7 @@ export function getUnsavedAnnotation(
     annotatedResourceId: fileId,
     annotatedResourceType: 'file',
     annotatedResourceExternalId: fileExternalId,
-    ...(jobType === VisionAPIType.TagDetection && {
+    ...(jobType === VisionDetectionModelType.TagDetection && {
       linkedResourceId: assetId,
       linkedResourceExternalId: assetExternalId || text,
       linkedResourceType: 'asset',

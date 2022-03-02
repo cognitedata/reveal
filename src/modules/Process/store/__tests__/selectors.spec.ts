@@ -9,7 +9,7 @@ import { FileState } from 'src/modules/Common/store/files/types';
 import { ProcessState } from 'src/modules/Process/store/types';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
 
 const getRootState = (
@@ -61,21 +61,21 @@ describe('Test selectProcessSummary', () => {
       },
       {
         '1': getDummyAnnotation(1),
-        '2': getDummyAnnotation(2, VisionAPIType.OCR, {
+        '2': getDummyAnnotation(2, VisionDetectionModelType.OCR, {
           status: AnnotationStatus.Deleted,
         }),
-        '3': getDummyAnnotation(3, VisionAPIType.TagDetection, {
+        '3': getDummyAnnotation(3, VisionDetectionModelType.TagDetection, {
           status: AnnotationStatus.Verified,
         }),
-        '4': getDummyAnnotation(4, VisionAPIType.ObjectDetection, {
+        '4': getDummyAnnotation(4, VisionDetectionModelType.ObjectDetection, {
           text: 'person',
           status: AnnotationStatus.Verified,
         }),
-        '5': getDummyAnnotation(5, VisionAPIType.ObjectDetection),
-        '6': getDummyAnnotation(6, VisionAPIType.ObjectDetection, {
+        '5': getDummyAnnotation(5, VisionDetectionModelType.ObjectDetection),
+        '6': getDummyAnnotation(6, VisionDetectionModelType.ObjectDetection, {
           text: 'person',
         }),
-        '7': getDummyAnnotation(7, VisionAPIType.TagDetection, {
+        '7': getDummyAnnotation(7, VisionDetectionModelType.TagDetection, {
           status: AnnotationStatus.Rejected,
         }),
       }
@@ -106,8 +106,8 @@ describe('Test selectProcessSummary', () => {
         1: [1, 2],
       },
       {
-        '1': getDummyAnnotation(1, VisionAPIType.ObjectDetection),
-        '2': getDummyAnnotation(2, VisionAPIType.ObjectDetection, {
+        '1': getDummyAnnotation(1, VisionDetectionModelType.ObjectDetection),
+        '2': getDummyAnnotation(2, VisionDetectionModelType.ObjectDetection, {
           text: 'person',
         }),
       }
@@ -144,17 +144,17 @@ describe('Test selectProcessSummary', () => {
         4: [5],
       },
       {
-        '1': getDummyAnnotation(1, VisionAPIType.TagDetection, {
+        '1': getDummyAnnotation(1, VisionDetectionModelType.TagDetection, {
           status: AnnotationStatus.Verified,
         }),
-        '2': getDummyAnnotation(2, VisionAPIType.ObjectDetection, {
+        '2': getDummyAnnotation(2, VisionDetectionModelType.ObjectDetection, {
           text: 'person',
         }),
-        '3': getDummyAnnotation(3, VisionAPIType.OCR, {
+        '3': getDummyAnnotation(3, VisionDetectionModelType.OCR, {
           status: AnnotationStatus.Rejected,
         }),
-        '4': getDummyAnnotation(4, VisionAPIType.ObjectDetection),
-        '5': getDummyAnnotation(5, VisionAPIType.OCR, {
+        '4': getDummyAnnotation(4, VisionDetectionModelType.ObjectDetection),
+        '5': getDummyAnnotation(5, VisionDetectionModelType.OCR, {
           status: AnnotationStatus.Deleted,
         }),
       }
@@ -188,12 +188,12 @@ describe('Test selectProcessSummary', () => {
       },
       {
         '1': getDummyAnnotation(1),
-        '2': getDummyAnnotation(2, VisionAPIType.ObjectDetection, {
+        '2': getDummyAnnotation(2, VisionDetectionModelType.ObjectDetection, {
           text: 'person',
           status: AnnotationStatus.Verified,
         }),
-        '3': getDummyAnnotation(3, VisionAPIType.ObjectDetection),
-        '4': getDummyAnnotation(4, VisionAPIType.TagDetection),
+        '3': getDummyAnnotation(3, VisionDetectionModelType.ObjectDetection),
+        '4': getDummyAnnotation(4, VisionDetectionModelType.TagDetection),
       }
     );
     expect(selectProcessSummary(rootState).totalProcessed).toEqual(3);

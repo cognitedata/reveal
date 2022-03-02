@@ -1,8 +1,8 @@
-import { VisionAPIType } from 'src/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 export const mockJobsList = [
   {
-    type: VisionAPIType.OCR,
+    type: VisionDetectionModelType.OCR,
     createdTime: 1643352030229,
     items: [
       {
@@ -18,7 +18,7 @@ export const mockJobsList = [
     useCache: true,
   },
   {
-    type: VisionAPIType.TagDetection,
+    type: VisionDetectionModelType.TagDetection,
     assetSubtreeIds: [547950361720898],
     createdTime: 1643352030263,
     items: [
@@ -36,7 +36,7 @@ export const mockJobsList = [
     useCache: true,
   },
   {
-    type: VisionAPIType.ObjectDetection,
+    type: VisionDetectionModelType.ObjectDetection,
     createdTime: 1643352030195,
     items: [
       {
@@ -52,7 +52,7 @@ export const mockJobsList = [
     threshold: 0.8,
   },
   {
-    type: VisionAPIType.ObjectDetection,
+    type: VisionDetectionModelType.ObjectDetection,
     createdTime: 1643352030195,
     jobId: 3,
     startTime: 1643352030660,
@@ -60,7 +60,7 @@ export const mockJobsList = [
     statusTime: 1643352037495,
   },
   {
-    type: VisionAPIType.OCR,
+    type: VisionDetectionModelType.OCR,
     createdTime: 1643352030229,
     jobId: 1,
     startTime: 1643352032208,
@@ -68,7 +68,7 @@ export const mockJobsList = [
     statusTime: 1643352037601,
   },
   {
-    type: VisionAPIType.TagDetection,
+    type: VisionDetectionModelType.TagDetection,
     createdTime: 1643352030263,
     jobId: 2,
     startTime: 1643352031030,
@@ -76,7 +76,7 @@ export const mockJobsList = [
     statusTime: 1643352037444,
   },
   {
-    type: VisionAPIType.ObjectDetection,
+    type: VisionDetectionModelType.ObjectDetection,
     createdTime: 1643352030195,
     items: [
       {
@@ -117,7 +117,7 @@ export const mockJobsList = [
     threshold: 0.8,
   },
   {
-    type: VisionAPIType.OCR,
+    type: VisionDetectionModelType.OCR,
     createdTime: 1643352030229,
     items: [
       {
@@ -175,7 +175,7 @@ export const mockJobsList = [
     useCache: true,
   },
   {
-    type: VisionAPIType.TagDetection,
+    type: VisionDetectionModelType.TagDetection,
     assetSubtreeIds: [547950361720898],
     createdTime: 1643352030263,
     items: [
