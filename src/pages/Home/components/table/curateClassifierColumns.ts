@@ -26,18 +26,18 @@ export const curateColumns = (
       Cell: TableCell.DocumentTag({ disableTooltip: true }),
     },
     {
-      Header: 'Accuracy',
+      Header: 'Precision',
+      accessor: 'metrics.precision',
+      Cell: TableCell.Number,
+    },
+    {
+      Header: 'Recall',
       accessor: 'metrics.recall',
       Cell: TableCell.Number,
     },
     {
       Header: 'F1 score',
       accessor: 'metrics.f1Score',
-      Cell: TableCell.Number,
-    },
-    {
-      Header: 'Precision',
-      accessor: 'metrics.precision',
       Cell: TableCell.Number,
     },
     {
