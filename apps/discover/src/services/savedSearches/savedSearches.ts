@@ -7,6 +7,7 @@ import {
 } from '@cognite/discover-api-types';
 
 import { SIDECAR } from '../../constants/app';
+import { RELATED_DOCUMENT_KEY } from '../../constants/react-query';
 import {
   fetchDelete,
   fetchGet,
@@ -70,8 +71,14 @@ export const savedSearches = {
       response.data.list,
       (result, value) => {
         // never show current, as that is our internal state
-
-        if (value.id === SAVED_SEARCHES_CURRENT_KEY) {
+        if (
+          value.id === SAVED_SEARCHES_CURRENT_KEY ||
+          value.id === RELATED_DOCUMENT_KEY ||
+          // we need this since we have saved a lot of entries with this key already
+          // so we need to make an exclusion and restrict this name too, to not show all the wrongly created saved searches
+          // the api fix is in place to convert this to an id, so it will not happen from this point on
+          value.name === RELATED_DOCUMENT_KEY
+        ) {
           return result;
         }
 
