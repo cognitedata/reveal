@@ -7,11 +7,11 @@ import Casing from './modules/casing';
 import DigitalRocks from './modules/digitalRocks';
 import EventsNds from './modules/events/Nds';
 import EventsNpt from './modules/events/Npt';
-import LogType from './modules/logType';
 import Measurements from './modules/measurements';
 import Overview from './modules/overview';
 import RelatedDocument from './modules/relatedDocument';
 import Trajectory from './modules/trajectory';
+import WellLogs from './modules/wellLogs';
 
 export const InspectRouter = () => (
   <Switch>
@@ -20,7 +20,7 @@ export const InspectRouter = () => (
       path={navigation.SEARCH_WELLS_INSPECT_TRAJECTORY}
       render={Trajectory}
     />
-    <Route path={navigation.SEARCH_WELLS_INSPECT_LOGTYPE} render={LogType} />
+    <Route path={navigation.SEARCH_WELLS_INSPECT_LOGTYPE} render={WellLogs} />
     <Route
       path={navigation.SEARCH_WELLS_INSPECT_CASINGSCOMPLETIONS}
       render={Casing}

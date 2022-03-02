@@ -11,7 +11,7 @@ export type WellInspectTabs =
   | 'NDS Events'
   | 'NPT Events'
   | 'Casings'
-  | 'Well logs'
+  | 'Well Logs'
   | 'Related Documents'
   | 'Digital Rocks'
   | 'Geomechanics & PPFG'
@@ -77,7 +77,7 @@ export const TAB_ITEMS: Tab[] = [
   },
   {
     key: 'logs',
-    name: 'Well logs',
+    name: 'Well Logs',
     path: navigation.SEARCH_WELLS_INSPECT_LOGTYPE,
   },
   {

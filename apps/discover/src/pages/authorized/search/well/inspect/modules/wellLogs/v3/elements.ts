@@ -21,6 +21,13 @@ export const CustomMenu = styled(Menu)`
   }
 `;
 
+export const PreviewButtonWrapper = styled.div`
+  button {
+    width: fit-content;
+    float: right;
+  }
+`;
+
 export const LogsMessageWrapper = styled.div`
   padding-top: 200px;
   padding-bottom: 200px;

@@ -20,10 +20,10 @@ import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { SequenceData } from 'modules/wellSearch/types';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
 
-import { useFetchWellFormationTopsRowData } from '../../logType/v2/hooks/useFetchWellFormationTopsRowData';
-import { useFetchWellLogsRowData } from '../../logType/v2/hooks/useFetchWellLogsRowData';
-import { useWellFormationTopsQuery } from '../../logType/v2/hooks/useWellFormationTopsQuery';
-import { useWellLogsQuery } from '../../logType/v2/hooks/useWellLogsQuery';
+import { useFetchWellFormationTopsRowData } from '../../wellLogs/v2/hooks/useFetchWellFormationTopsRowData';
+import { useFetchWellLogsRowData } from '../../wellLogs/v2/hooks/useFetchWellLogsRowData';
+import { useWellFormationTopsQuery } from '../../wellLogs/v2/hooks/useWellFormationTopsQuery';
+import { useWellLogsQuery } from '../../wellLogs/v2/hooks/useWellLogsQuery';
 
 const ThreeDeeEmptyStateLoader: React.FC = () => {
   return <EmptyState isLoading loadingSubtitle={LOADING_SUB_TEXT} />;

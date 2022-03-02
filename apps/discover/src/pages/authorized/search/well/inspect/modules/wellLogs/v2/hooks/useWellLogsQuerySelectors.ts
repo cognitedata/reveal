@@ -9,7 +9,7 @@ import {
 } from 'modules/wellInspect/hooks/useWellInspect';
 import { PETREL_LOG_TYPE } from 'modules/wellSearch/constants';
 import { Sequence, SequenceData, WellboreId } from 'modules/wellSearch/types';
-import { LogTypeData } from 'pages/authorized/search/well/inspect/modules/logType/v2/interfaces';
+import { LogTypeData } from 'pages/authorized/search/well/inspect/modules/wellLogs/v2/interfaces';
 
 import { useWellLogsQuery } from './useWellLogsQuery';
 

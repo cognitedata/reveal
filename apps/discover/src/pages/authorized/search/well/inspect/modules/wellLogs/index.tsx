@@ -2,12 +2,12 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const LogTypeLazy = React.lazy(() => import('./LogType'));
+const WellLogsLazy = React.lazy(() => import('./WellLogs'));
 
-const LogType = () => (
+const WellLogs = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <LogTypeLazy />
+    <WellLogsLazy />
   </React.Suspense>
 );
 
-export default LogType;
+export default WellLogs;

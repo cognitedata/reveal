@@ -5,7 +5,7 @@ export type WellInspectTabs =
   | 'NDS Events'
   | 'NPT Events'
   | 'Casings'
-  | 'Well logs'
+  | 'Well Logs'
   | 'Related Documents'
   | 'Digital Rocks'
   | 'Geomechanics & PPFG'

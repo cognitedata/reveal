@@ -24,7 +24,7 @@ import { DomainFilter } from './LogViewer/DomainFilter';
 import { DomainListItem, DomainMap } from './LogViewer/DomainFilter/types';
 import { WellLog } from './types';
 
-export const LogTypeViewer: React.FC<{ wellLogs: WellLog[] }> = ({
+export const WellLogsPreview: React.FC<{ wellLogs: WellLog[] }> = ({
   wellLogs,
 }) => {
   const [selectedWellLog, setSelectedWellLog] = useState<WellLog>();
