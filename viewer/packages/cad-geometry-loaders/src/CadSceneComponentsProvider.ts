@@ -164,8 +164,6 @@ export class CadSceneComponentsProvider implements SceneComponentsProvider {
         objectStack.push(...element.children);
       }
     }
-
-    // console.log("Transferred ", count, " CAD nodes, rootSectorNodeBuffer has size", this._rootSectorNodeBuffer.size);
   }
 
   private restoreCadNodes() {
