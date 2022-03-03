@@ -20,6 +20,7 @@ export const USER_KEY = {
   USER: [USER],
   ROLES: [USER, 'roles'],
   USER_FAVORITES: [USER, 'favorites'],
+  ADMIN_USERS: [USER, 'adminUsers'],
 };
 
 export const FAVORITE_KEY = {

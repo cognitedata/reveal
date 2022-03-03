@@ -18,6 +18,12 @@ export const user = {
     fetchGet<User | undefined>(`${SIDECAR.discoverApiBaseUrl}/${tenant}/user`, {
       headers,
     }),
+
+  getAdminUsers: async (headers: FetchHeaders, tenant: string) =>
+    fetchGet<User[] | undefined>(
+      `${SIDECAR.discoverApiBaseUrl}/${tenant}/users/admin`,
+      { headers }
+    ),
   // from legacy
   getRolesLegacy: async (headers: FetchHeaders, tenant: string) =>
     fetchGet<AuthModes | undefined>(

@@ -76,6 +76,26 @@ export function useUserRoles(): UseQueryResult<AuthModes | undefined> {
   );
 }
 
+// TODO(PP-2319): use this hook to fetch admin users.
+// Currently, this giving all users.
+export const useAdminUsers = (): UseQueryResult<User[] | undefined> => {
+  const headers = useJsonHeaders({}, true);
+  const [tenant] = getTenantInfo();
+  const queryClient = useQueryClient();
+
+  return useQuery<User[] | undefined>(
+    [...USER_KEY.ADMIN_USERS],
+    () => discoverAPI.user.getAdminUsers(headers, tenant),
+    {
+      retry: 2,
+      ...ONLY_FETCH_ONCE,
+      onError: () => {
+        queryClient.invalidateQueries([...USER_KEY.ADMIN_USERS]);
+      },
+    }
+  );
+};
+
 export type MutateUpdateUser = MutateFunction<
   unknown,
   unknown,
