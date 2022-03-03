@@ -35,6 +35,7 @@ export type ChartSettings = {
 };
 
 export type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
+export type Interpolation = 'linear' | 'hv';
 
 export type ChartTimeSeries = {
   type?: string;
@@ -45,6 +46,7 @@ export type ChartTimeSeries = {
   tsExternalId?: string;
   lineWeight?: number;
   lineStyle?: LineStyle;
+  interpolation?: Interpolation;
   displayMode?: 'lines' | 'markers';
   enabled: boolean;
   unit?: string;
@@ -62,6 +64,7 @@ type ChartWorkflowBase = {
   name: string;
   lineWeight?: number;
   lineStyle?: LineStyle;
+  interpolation?: Interpolation;
   displayMode?: 'lines' | 'markers';
   unit?: string;
   preferredUnit?: string;

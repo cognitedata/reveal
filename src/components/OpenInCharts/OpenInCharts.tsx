@@ -25,7 +25,7 @@ import {
 import { useMyCharts, useUpdateChart, useChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
-import { addTimeseries, covertTSToChartTS } from 'models/chart/updates';
+import { addTimeseries, convertTSToChartTS } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
@@ -224,7 +224,7 @@ export const OpenInCharts: FC = () => {
           sdk,
           timeSeriesExternalId: validTs.externalId || '',
         });
-        return covertTSToChartTS(validTs, chartToUpdate.id, range);
+        return convertTSToChartTS(validTs, chartToUpdate.id, range);
       })
     );
 

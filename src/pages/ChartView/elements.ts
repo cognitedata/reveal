@@ -1,4 +1,4 @@
-import { Icon } from '@cognite/cogs.js';
+import { Dropdown, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
 
@@ -299,4 +299,10 @@ export const StyledStatusIcon = styled(Icon)`
   margin-left: 7px;
   margin-right: 20px;
   vertical-align: middle;
+`;
+
+export const DropdownWithoutMaxWidth = styled(Dropdown)`
+  &.tippy-box {
+    max-width: none !important;
+  }
 `;

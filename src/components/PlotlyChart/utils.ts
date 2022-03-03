@@ -70,11 +70,6 @@ export function calculateSeriesData(
             (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
           )?.label || t.preferredUnit;
 
-        const isStep = (
-          timeseries.find((ts) => ts.externalId === t.tsExternalId)
-            ?.series as DatapointAggregates
-        )?.isStep;
-
         const mode = getMode(
           t.displayMode,
           hasRawPoints(
@@ -103,7 +98,7 @@ export function calculateSeriesData(
               ),
               dash: convertLineStyle(t.lineStyle),
               mode,
-              shape: isStep ? 'hv' : undefined,
+              shape: t.interpolation,
             },
           ],
         };
@@ -133,6 +128,7 @@ export function calculateSeriesData(
                 []
               ).length < RAW_DATA_POINTS_THRESHOLD
             ),
+            shape: workflow.interpolation,
             width: workflow.lineWeight,
             dash: convertLineStyle(workflow.lineStyle),
             datapoints: convertUnits(

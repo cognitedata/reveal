@@ -5,7 +5,7 @@ import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import chartAtom from 'models/chart/atom';
 import {
   removeTimeseries,
-  covertTSToChartTS,
+  convertTSToChartTS,
   addTimeseries,
   updateSourceAxisForChart,
 } from 'models/chart/updates';
@@ -30,7 +30,7 @@ export const useAddRemoveTimeseries = () => {
     if (tsToRemove) {
       setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
     } else {
-      const newTs = covertTSToChartTS(ts, chart.id, []);
+      const newTs = convertTSToChartTS(ts, chart.id, []);
       setChart((oldChart) => addTimeseries(oldChart!, newTs));
 
       if (ts.assetId) {

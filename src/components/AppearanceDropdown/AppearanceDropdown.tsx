@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 import { Menu } from '@cognite/cogs.js';
 import { availableColors } from 'utils/colors';
 import { trackUsage } from 'services/metrics';
 
 import { makeDefaultTranslations } from 'utils/translations';
-import { LineStyle } from 'models/chart/types';
+import { Interpolation, LineStyle } from 'models/chart/types';
 import {
   DropdownWrapper,
   MenuWrapper,
@@ -13,26 +14,36 @@ import {
   TypeLine,
 } from './elements';
 
+import interpolationLinearIcon from '../../assets/Linear.svg';
+import interpolationStepIcon from '../../assets/Step.svg';
+
 type AppearanceDropdownProps = {
   selectedColor: string;
   selectedLineStyle: string;
   selectedLineWeight: number;
+  selectedInterpolation: string;
   onUpdate: (diff: any) => void;
   translations: typeof defaultTranslation;
 };
 
-const defaultTranslation = makeDefaultTranslations('Color', 'Weight', 'Type');
+const defaultTranslation = makeDefaultTranslations(
+  'Color',
+  'Weight',
+  'Type',
+  'Interpolation'
+);
 
 const AppearanceDropdown = ({
   selectedColor,
   selectedLineStyle,
   selectedLineWeight,
+  selectedInterpolation,
   translations,
   onUpdate,
 }: AppearanceDropdownProps) => {
   const t = { ...defaultTranslation, ...translations };
   return (
-    <Menu style={{ maxWidth: 330 }}>
+    <Menu style={{ maxWidth: 600 }}>
       <DropdownWrapper>
         <ColorDropdown
           label={t.Color}
@@ -65,6 +76,16 @@ const AppearanceDropdown = ({
             trackUsage('ChartView.ChangeAppearance', { type: 'line-style' });
           }}
         />
+        <InterpolationDropdown
+          label={t.Interpolation}
+          selectedInterpolation={selectedInterpolation}
+          onInterpolationSelected={(newInterpolation) => {
+            onUpdate({
+              interpolation: newInterpolation,
+            });
+            trackUsage('ChartView.ChangeAppearance', { type: 'interpolation' });
+          }}
+        />
       </DropdownWrapper>
     </Menu>
   );
@@ -81,6 +102,20 @@ const WeightPreview = ({ weight }: { weight: number }) => (
 const TypePreview = ({ type }: { type: string }) => (
   <PreviewContainer style={{ marginRight: 15 }}>
     <TypeLine type={type} />
+  </PreviewContainer>
+);
+
+const InterpolationPreview = ({
+  image,
+  label,
+}: {
+  image: string;
+  label: string;
+}) => (
+  <PreviewContainer
+    style={{ display: 'flex', alignItems: 'center', marginRight: 15 }}
+  >
+    <img style={{ width: 22, height: 22 }} src={image} alt={label} />
   </PreviewContainer>
 );
 
@@ -181,6 +216,48 @@ export const TypeDropdown = ({
         >
           <TypePreview type={style} />
           {style}
+        </Menu.Item>
+      ))}
+    </MenuWrapper>
+  );
+};
+
+export const InterpolationDropdown = ({
+  selectedInterpolation,
+  onInterpolationSelected,
+  label: headerLabel = 'Interpolation',
+}: {
+  selectedInterpolation: string;
+  onInterpolationSelected: (interpolation: Interpolation) => void;
+  label: string;
+}) => {
+  const interpolationOptions: {
+    value: Interpolation;
+    label: string;
+    image: string;
+  }[] = [
+    { value: 'linear', label: 'linear', image: interpolationLinearIcon },
+    { value: 'hv', label: 'step', image: interpolationStepIcon },
+  ];
+
+  return (
+    <MenuWrapper>
+      <Menu.Header>{headerLabel}</Menu.Header>
+      {interpolationOptions.map(({ value, label, image }) => (
+        <Menu.Item
+          key={value}
+          onClick={() => onInterpolationSelected(value)}
+          style={
+            selectedInterpolation === value
+              ? {
+                  color: 'var(--cogs-midblue-3)',
+                  backgroundColor: 'var(--cogs-midblue-6)',
+                }
+              : {}
+          }
+        >
+          <InterpolationPreview label={label} image={image} />
+          {label}
         </Menu.Item>
       ))}
     </MenuWrapper>

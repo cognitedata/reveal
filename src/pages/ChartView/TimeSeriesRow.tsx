@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Chart, ChartTimeSeries } from 'models/chart/types';
-import { Button, Dropdown, Tooltip, Popconfirm } from '@cognite/cogs.js';
+import { Button, Tooltip, Popconfirm } from '@cognite/cogs.js';
 import { removeTimeseries, updateTimeseries } from 'models/chart/updates';
 import { useLinkedAsset } from 'hooks/cdf-assets';
 import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
@@ -42,6 +42,7 @@ import {
   SourceTag,
   SourceStatus,
   StyledStatusIcon,
+  DropdownWithoutMaxWidth,
 } from './elements';
 
 type Props = {
@@ -92,6 +93,7 @@ function TimeSeriesRow({
     color = '',
     lineStyle = 'none',
     lineWeight = 1,
+    interpolation = 'linear',
     preferredUnit,
     originalUnit,
     enabled,
@@ -319,13 +321,14 @@ function TimeSeriesRow({
         style={{ textAlign: 'center', paddingLeft: 0 }}
         className="downloadChartHide"
       >
-        <Dropdown
+        <DropdownWithoutMaxWidth
           disabled={!isVisible}
           content={
             <AppearanceDropdown
               selectedColor={color}
               selectedLineStyle={lineStyle}
               selectedLineWeight={lineWeight}
+              selectedInterpolation={interpolation}
               onUpdate={handleUpdateAppearance}
               translations={appearanceDropdownTranslations}
             />
@@ -337,7 +340,7 @@ function TimeSeriesRow({
             styleColor={color}
             label="Timeseries"
           />
-        </Dropdown>
+        </DropdownWithoutMaxWidth>
       </td>
       <td>
         <SourceItem disabled={!isVisible} key={id}>

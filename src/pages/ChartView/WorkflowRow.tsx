@@ -33,6 +33,7 @@ import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import {
+  DropdownWithoutMaxWidth,
   SourceDescription,
   SourceItem,
   SourceName,
@@ -90,6 +91,7 @@ function WorkflowRow({
     color = '',
     lineStyle = 'solid',
     lineWeight = 1,
+    interpolation = 'linear',
     name,
     calls,
     unit,
@@ -384,13 +386,14 @@ function WorkflowRow({
         style={{ textAlign: 'center', paddingLeft: 0 }}
         className="downloadChartHide"
       >
-        <Dropdown
+        <DropdownWithoutMaxWidth
           disabled={!enabled}
           content={
             <AppearanceDropdown
               selectedColor={color}
               selectedLineStyle={lineStyle}
               selectedLineWeight={lineWeight}
+              selectedInterpolation={interpolation}
               onUpdate={handleUpdateAppearance}
               translations={
                 useTranslations(
@@ -407,7 +410,7 @@ function WorkflowRow({
             styleColor={color}
             label="Workflow Function"
           />
-        </Dropdown>
+        </DropdownWithoutMaxWidth>
       </td>
       <td>
         <SourceItem disabled={!enabled} key={id}>

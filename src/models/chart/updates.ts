@@ -158,7 +158,7 @@ export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
   return chart;
 }
 
-export function covertTSToChartTS(
+export function convertTSToChartTS(
   ts: Timeseries,
   chartId: string,
   range: number[] = []
@@ -175,6 +175,7 @@ export function covertTSToChartTS(
     color: getEntryColor(chartId, ts.id.toString()),
     lineWeight: 1,
     lineStyle: 'solid',
+    interpolation: ts.isStep ? 'hv' : 'linear',
     displayMode: 'lines',
     enabled: true,
     description: ts.description || '-',
