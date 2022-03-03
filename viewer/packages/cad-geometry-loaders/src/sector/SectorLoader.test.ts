@@ -10,11 +10,11 @@ import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, Wanted
 
 import { SectorCuller } from './culling/SectorCuller';
 import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
+import { CadNode } from './CadNode';
 
 import { ModelStateHandler } from './ModelStateHandler';
 import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
-import { CadNode } from '@reveal/rendering';
 import { IMock, Mock } from 'moq.ts';
 import Log from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';

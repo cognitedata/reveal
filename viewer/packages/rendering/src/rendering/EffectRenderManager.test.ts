@@ -11,6 +11,7 @@ import { createGlContext } from '../../../../test-utilities';
 
 import { CadMaterialManager } from '../CadMaterialManager';
 import { EffectRenderManager } from './EffectRenderManager';
+import { CadSceneComponentsProvider } from '../../../cad-geometry-loaders/src/CadSceneComponentsProvider';
 
 describe('EffectRenderManager', () => {
   const materialManager = new CadMaterialManager();
@@ -34,7 +35,15 @@ describe('EffectRenderManager', () => {
   });
 
   test('construct', () => {
-    expect(() => new EffectRenderManager(renderer, scene, materialManager, options)).not.toThrow();
+    expect(
+      () =>
+        new EffectRenderManager(
+          renderer,
+          new CadSceneComponentsProvider(materialManager, scene),
+          materialManager,
+          options
+        )
+    ).not.toThrow();
   });
 
   test('render() resets settings after completed', () => {
@@ -55,7 +64,12 @@ describe('EffectRenderManager', () => {
     renderer.setClearAlpha(0.77);
     materialManager.setRenderMode(RenderMode.PackColorAndNormal);
 
-    const effectManager = new EffectRenderManager(renderer, scene, materialManager, options);
+    const effectManager = new EffectRenderManager(
+      renderer,
+      new CadSceneComponentsProvider(materialManager, scene),
+      materialManager,
+      options
+    );
 
     // Act
     effectManager.render(camera);
@@ -74,7 +88,12 @@ describe('EffectRenderManager', () => {
     const options: RenderOptions = {
       multiSampleCountHint: 4
     };
-    const effectManager = new EffectRenderManager(webglRenderer, scene, materialManager, options);
+    const effectManager = new EffectRenderManager(
+      webglRenderer,
+      new CadSceneComponentsProvider(materialManager, scene),
+      materialManager,
+      options
+    );
     const setRenderTargetSpy = jest.spyOn(webglRenderer, 'setRenderTarget');
     setRenderTargetSpy.mockImplementation(jest.fn());
 

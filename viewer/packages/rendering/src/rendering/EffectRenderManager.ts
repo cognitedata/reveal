@@ -133,7 +133,7 @@ export class EffectRenderManager {
     this._renderOptions = options;
     this._materialManager = materialManager;
 
-    this._sceneComponentsProvider = sceneComponentsProvider// new CadSceneComponentsProvider(this._materialManager, cadScene);
+    this._sceneComponentsProvider = sceneComponentsProvider;
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
     this._renderTarget = null;
@@ -447,7 +447,6 @@ export class EffectRenderManager {
 
       this._sceneComponentsProvider.restoreScene();
     }
-
   }
 
   public setRenderTarget(target: THREE.WebGLRenderTarget | null): void {
@@ -490,11 +489,7 @@ export class EffectRenderManager {
     target: THREE.WebGLRenderTarget | null = this._normalRenderedCadModelTarget
   ) {
     this._renderer.setRenderTarget(target);
-    this.renderStep(
-      'normalCadModelsFromBaseScene',
-      this._sceneComponentsProvider.getCadScene(),
-      camera
-    );
+    this.renderStep('normalCadModelsFromBaseScene', this._sceneComponentsProvider.getCadScene(), camera);
   }
 
   private renderInFrontCadModels(
@@ -504,21 +499,13 @@ export class EffectRenderManager {
     this._sceneComponentsProvider.prepareInFrontScene();
     this._renderer.setRenderTarget(target);
     this._materialManager.setRenderMode(RenderMode.Effects);
-    this.renderStep(
-      'infront',
-      this._sceneComponentsProvider.getInFrontScene(),
-      camera
-    );
+    this.renderStep('infront', this._sceneComponentsProvider.getInFrontScene(), camera);
   }
 
   private renderGhostedCadModelsFromBaseScene(camera: THREE.PerspectiveCamera) {
     this._renderer.setRenderTarget(this._ghostObjectRenderTarget);
     this._materialManager.setRenderMode(RenderMode.Ghost);
-    this.renderStep(
-      'ghosted',
-      this._sceneComponentsProvider.getGhostScene(),
-      camera
-    );
+    this.renderStep('ghosted', this._sceneComponentsProvider.getGhostScene(), camera);
   }
 
   private renderCustomObjects(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {

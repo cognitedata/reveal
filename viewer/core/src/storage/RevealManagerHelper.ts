@@ -12,7 +12,7 @@ import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, Revea
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 import { DataSource } from '@reveal/data-source';
 import { assertNever } from '@reveal/utilities';
-import { CadNode } from '@reveal/rendering';
+import { CadNode } from '@reveal/cad-geometry-loaders';
 
 import { CogniteClient } from '@cognite/sdk';
 

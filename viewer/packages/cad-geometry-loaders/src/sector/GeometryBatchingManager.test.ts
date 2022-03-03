@@ -2,10 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { createMaterials, RenderMode } from '@reveal/rendering';
+
 import * as THREE from 'three';
-import { RenderMode } from './rendering/RenderMode';
 import { GeometryBatchingManager } from './GeometryBatchingManager';
-import { createMaterials } from './rendering/materials';
 
 describe(GeometryBatchingManager.name, () => {
   let geometryGroup: THREE.Group;

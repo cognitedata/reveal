@@ -6,6 +6,7 @@ import { createGlContext } from '../../../../../test-utilities';
 import { CadMaterialManager, EffectRenderManager } from '@reveal/rendering';
 
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
+import { CadSceneComponentsProvider } from '../../CadSceneComponentsProvider';
 
 describe('RenderAlreadyLoadedGeometryProvider', () => {
   let renderManager: EffectRenderManager;
@@ -18,7 +19,12 @@ describe('RenderAlreadyLoadedGeometryProvider', () => {
   beforeEach(() => {
     scene = new THREE.Scene();
     materialManager = new CadMaterialManager();
-    renderManager = new EffectRenderManager(renderer, scene, materialManager, {});
+    renderManager = new EffectRenderManager(
+      renderer,
+      new CadSceneComponentsProvider(materialManager, scene),
+      materialManager,
+      {}
+    );
     const size = renderer.getSize(new THREE.Vector2());
     target = new THREE.WebGLRenderTarget(size.width, size.height);
   });

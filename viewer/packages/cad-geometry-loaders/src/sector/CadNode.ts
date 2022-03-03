@@ -4,11 +4,9 @@
 
 import * as THREE from 'three';
 
-import { CadMaterialManager } from '../CadMaterialManager';
-import { SectorQuads } from '../rendering/types';
-import { NodeTransformProvider } from '../transform/NodeTransformProvider';
-import { InstancedMeshManager } from '../InstancedMeshManager';
-import { RenderMode } from '../rendering/RenderMode';
+import { CadMaterialManager, NodeTransformProvider, RenderMode, InstancedMeshManager } from '@reveal/rendering';
+
+import { SectorQuads } from '@cognite/reveal-parser-worker';
 
 import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
 import {
@@ -20,9 +18,11 @@ import {
   WantedSector,
   ConsumedSector
 } from '@reveal/cad-parsers';
+
 import { SectorRepository } from '@reveal/sector-loader';
-import { GeometryBatchingManager } from '../GeometryBatchingManager';
 import { ParsedGeometry } from '@reveal/sector-parser';
+
+import { GeometryBatchingManager } from './GeometryBatchingManager';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 

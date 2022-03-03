@@ -8,7 +8,7 @@ import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parse
 
 import { CadLoadingHints } from '../../CadLoadingHints';
 import { CadModelBudget } from '../../CadModelBudget';
-import { CadNode } from '@reveal/rendering';
+import { CadNode } from '../../sector/CadNode';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;

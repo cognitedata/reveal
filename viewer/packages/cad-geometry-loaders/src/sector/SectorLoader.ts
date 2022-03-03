@@ -11,7 +11,7 @@ import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 import { ByScreenSizeSectorCuller } from './culling/ByScreenSizeSectorCuller';
 
-import { CadNode } from '@reveal/rendering';
+import { CadNode } from './CadNode';
 import { File3dFormat } from '@reveal/modeldata-api';
 import { SectorDownloadScheduler } from './SectorDownloadScheduler';
 

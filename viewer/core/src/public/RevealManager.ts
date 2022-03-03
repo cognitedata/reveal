@@ -11,9 +11,10 @@ import { LoadingStateChangeListener, PointCloudBudget } from './types';
 import { CadManager, GeometryFilter, CadModelSectorLoadStatistics } from '@reveal/cad-model';
 import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
 import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
-import { CadModelBudget } from '@reveal/cad-geometry-loaders';
+import { CadModelBudget, CadNode } from '@reveal/cad-geometry-loaders';
+
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
+import { RenderOptions, EffectRenderManager, defaultRenderOptions, RenderMode } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 

@@ -9,9 +9,10 @@ export {
   CadLoadingHints,
   SectorCuller,
   DetermineSectorsInput,
-  ByVisibilityGpuSectorCuller
+  ByVisibilityGpuSectorCuller,
+  CadNode
 } from './packages/cad-geometry-loaders';
 
-export { CadNode, RenderOptions, defaultRenderOptions } from './packages/rendering';
+export { RenderOptions, defaultRenderOptions } from './packages/rendering';
 export { NodeAppearanceProvider } from './packages/cad-styling';
 export { revealEnv } from './packages/utilities';

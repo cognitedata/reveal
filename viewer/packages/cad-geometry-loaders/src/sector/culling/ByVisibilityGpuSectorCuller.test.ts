@@ -7,9 +7,10 @@ import { DetermineSectorsInput, SectorCost } from './types';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
 import { CadModelBudget } from '../../CadModelBudget';
+import { CadNode } from '../CadNode';
 import { PropType } from '../../utilities/reflection';
 
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { CadMaterialManager } from '@reveal/rendering';
 import { SectorMetadata, CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
 
 import { SectorRepository } from '@reveal/sector-loader';

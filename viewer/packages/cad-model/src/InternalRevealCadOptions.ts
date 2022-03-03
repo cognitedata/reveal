@@ -2,9 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
+import { SectorQuads } from '@cognite/reveal-parser-worker';
+
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SectorGeometry } from '@reveal/cad-parsers';
-import { SectorQuads } from '@reveal/rendering';
 
 /*
  * Part of the `internal` field of `RevealOptions`

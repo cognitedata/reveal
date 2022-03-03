@@ -6,12 +6,12 @@ import * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
 import { ConsumedSector } from '@reveal/cad-parsers';
-import { CadNode } from '@reveal/rendering';
 
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
 import { scan, share, startWith, auditTime, filter, map, observeOn, mergeMap } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
+import { CadNode } from './sector/CadNode';
 
 import { LoadingState } from '@reveal/model-base';
 import { emissionLastMillis } from './utilities/rxOperations';

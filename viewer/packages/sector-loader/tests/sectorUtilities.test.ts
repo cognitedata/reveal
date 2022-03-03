@@ -7,7 +7,9 @@ import { SectorMetadata, SectorGeometry, TriangleMesh } from '@reveal/cad-parser
 
 import { createEmptySector } from '../../../test-utilities/src/emptySector';
 import { consumeSectorDetailed, consumeSectorSimple } from '../src/v8/sectorUtilities';
-import { SectorQuads, createMaterials, RenderMode } from '@reveal/rendering';
+import { createMaterials, RenderMode } from '@reveal/rendering';
+
+import { SectorQuads } from '@cognite/reveal-parser-worker';
 
 import 'jest-extended';
 

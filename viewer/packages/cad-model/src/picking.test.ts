@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { CadNode } from '@reveal/rendering';
+import { CadNode } from '@reveal/cad-geometry-loaders';
 import { IntersectInput } from '@reveal/model-base';
 
 import { intersectCadNodes } from './picking';

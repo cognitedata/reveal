@@ -20,3 +20,5 @@ export { ByScreenSizeSectorCuller } from './src/sector/culling/ByScreenSizeSecto
 export { createV8SectorCuller } from './src/sector/culling/createV8SectorCuller';
 
 export { DetermineSectorsInput } from './src/sector/culling/types';
+
+export { CadNode } from './src/sector/CadNode';

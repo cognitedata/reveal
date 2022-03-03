@@ -4,7 +4,8 @@
 import { V8SectorRepository } from '../../packages/sector-loader';
 import { Cognite3DModel } from '../../packages/cad-model';
 import { NodesLocalClient } from '../../packages/nodes-api';
-import { CadMaterialManager, CadNode } from '../../packages/rendering';
+import { CadMaterialManager } from '../../packages/rendering';
+import { CadNode } from '../../packages/cad-geometry-loaders';
 
 import { createCadModelMetadata } from './createCadModelMetadata';
 import { generateV8SectorTree } from './createSectorMetadata';

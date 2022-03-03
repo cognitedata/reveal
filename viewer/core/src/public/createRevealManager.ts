@@ -20,6 +20,7 @@ import {
 } from '@reveal/modeldata-api';
 
 import { CogniteClient } from '@cognite/sdk';
+import { CadSceneComponentsProvider } from '@reveal/cad-geometry-loaders/src/CadSceneComponentsProvider';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -99,7 +100,12 @@ export function createRevealManager(
 
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
   const materialManager = new CadMaterialManager();
-  const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
+  const renderManager = new EffectRenderManager(
+    renderer,
+    new CadSceneComponentsProvider(materialManager, scene),
+    materialManager,
+    renderOptions
+  );
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,

@@ -8,10 +8,12 @@ import { GeometryFilter } from './GeometryFilter';
 
 import { SupportedModelTypes } from '@reveal/model-base';
 import { GltfSectorRepository, SectorRepository, V8SectorRepository } from '@reveal/sector-loader';
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { CadMaterialManager } from '@reveal/rendering';
 import { CadModelMetadata, CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
+
+import { CadNode } from '@reveal/cad-geometry-loaders';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
