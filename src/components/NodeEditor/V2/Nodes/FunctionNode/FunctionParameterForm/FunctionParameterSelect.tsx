@@ -7,7 +7,7 @@ import { ParameterFormElementProps } from './types';
 const FunctionParameterSelect = ({
   nodeId,
   parameter,
-  functionData,
+  parameterValues,
   onInputValueChange,
 }: ParameterFormElementProps) => {
   const {
@@ -32,7 +32,7 @@ const FunctionParameterSelect = ({
         <Select
           key={`${nodeId}-${param}`}
           value={
-            selectOptions.find((o) => o.value === functionData[param]) ||
+            selectOptions.find((o) => o.value === parameterValues[param]) ||
             defaultOption!
           }
           options={selectOptions}

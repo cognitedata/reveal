@@ -94,10 +94,12 @@ export async function waitForCalculationToFinish(
   let calculationStatus = await fetchCalculationStatus(sdk, id);
 
   while (
-    [
-      CalculationStatusStatusEnum.Pending,
-      CalculationStatusStatusEnum.Running,
-    ].includes(calculationStatus.status)
+    (
+      [
+        CalculationStatusStatusEnum.Pending,
+        CalculationStatusStatusEnum.Running,
+      ] as CalculationStatusStatusEnum[]
+    ).includes(calculationStatus.status)
   ) {
     // eslint-disable-next-line no-await-in-loop
     await sleep(1000);
@@ -145,10 +147,12 @@ export async function waitForStatisticsToFinish(
   let statisticsStatus = await fetchStatisticsStatus(sdk, id);
 
   while (
-    [
-      StatisticsStatusStatusEnum.Pending,
-      StatisticsStatusStatusEnum.Running,
-    ].includes(statisticsStatus.status)
+    (
+      [
+        StatisticsStatusStatusEnum.Pending,
+        StatisticsStatusStatusEnum.Running,
+      ] as StatisticsStatusStatusEnum[]
+    ).includes(statisticsStatus.status)
   ) {
     // eslint-disable-next-line no-await-in-loop
     await sleep(1000);

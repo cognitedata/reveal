@@ -10,6 +10,7 @@ import {
   updateSourceAxisForChart,
   updateTimeseries,
   updateWorkflow,
+  updateWorkflowsToSupportVersions,
 } from './updates';
 
 describe('charts util', () => {
@@ -406,6 +407,387 @@ describe('charts util', () => {
             range: [2, 4],
           },
         ],
+      });
+    });
+  });
+
+  describe('updateWorkflowsToSupportVersions', () => {
+    it('should update the versioning of an older chart to the new defaults / format', () => {
+      const existingChart: Chart = {
+        dateTo: '2022-03-01T22:59:53.815Z',
+        public: false,
+        workflowCollection: [
+          {
+            unit: '',
+            createdAt: 1646140229019,
+            enabled: true,
+            lineWeight: 1,
+            version: 'v2',
+            calls: [],
+            flow: {
+              position: [0, 0],
+              elements: [
+                {
+                  id: '83af5d6e-69b7-4959-b56a-0c97049dc523',
+                  position: {
+                    x: 560,
+                    y: 117,
+                  },
+                  type: 'CalculationOutput',
+                },
+                {
+                  id: '9dc972a2-a78e-46d9-bf51-84ccabc52109',
+                  data: {
+                    type: 'timeseries',
+                    selectedSourceId: '51f11e0f-f893-48b4-bfb5-fd213d2541c5',
+                  },
+                  type: 'CalculationInput',
+                  position: {
+                    y: 121,
+                    x: 4,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917a',
+                  type: 'ToolboxFunction',
+                  data: {
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917b',
+                  type: 'ToolboxFunction',
+                  data: {
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '0.0',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917c',
+                  type: 'ToolboxFunction',
+                  data: {
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '1.0',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917d',
+                  type: 'ToolboxFunction',
+                  data: {
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '2.0',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917d',
+                  type: 'ToolboxFunction',
+                  data: {
+                    functionData: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    toolFunction: {
+                      op: 'wavelet_filter',
+                    },
+                    parameterValues: {
+                      wavelet: 'db2',
+                      level: 4,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '2.0',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917d',
+                  type: 'ToolboxFunction',
+                  data: {
+                    functionData: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    toolFunction: {
+                      op: 'wavelet_filter',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+              ],
+              zoom: 1,
+            },
+            type: 'workflow',
+            lineStyle: 'solid',
+            settings: {
+              autoAlign: true,
+            },
+            id: '604e1d7f-3c5c-4a51-800a-ba6d6a0311cd',
+            preferredUnit: '',
+            color: '#6929c4',
+            name: 'New Calculation',
+          },
+        ],
+        updatedAt: 1646140273831,
+        name: 'New chart',
+        timeSeriesCollection: [],
+        dateFrom: '2022-01-29T23:00:53.815Z',
+        userInfo: {
+          email: 'eirik.vullum@cognite.com',
+          id: 'eirik.vullum@cognite.com',
+          displayName: 'eirik.vullum@cognite.com',
+        },
+        createdAt: 1646140193815,
+        version: 1,
+        user: 'eirik.vullum@cognite.com',
+        id: 'a8688ac6-c87a-4dd4-a4c6-a4b13fffe200',
+        sourceCollection: [],
+        settings: {
+          showMinMax: false,
+          showYAxis: true,
+          showGridlines: true,
+          mergeUnits: false,
+        },
+      };
+
+      const updatedChart = updateWorkflowsToSupportVersions(existingChart);
+
+      expect(updatedChart).toEqual({
+        dateTo: '2022-03-01T22:59:53.815Z',
+        public: false,
+        workflowCollection: [
+          {
+            unit: '',
+            createdAt: 1646140229019,
+            enabled: true,
+            lineWeight: 1,
+            version: 'v2',
+            calls: [],
+            flow: {
+              position: [0, 0],
+              elements: [
+                {
+                  id: '83af5d6e-69b7-4959-b56a-0c97049dc523',
+                  position: {
+                    x: 560,
+                    y: 117,
+                  },
+                  type: 'CalculationOutput',
+                },
+                {
+                  id: '9dc972a2-a78e-46d9-bf51-84ccabc52109',
+                  data: {
+                    type: 'timeseries',
+                    selectedSourceId: '51f11e0f-f893-48b4-bfb5-fd213d2541c5',
+                  },
+                  type: 'CalculationInput',
+                  position: {
+                    y: 121,
+                    x: 4,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917a',
+                  type: 'ToolboxFunction',
+                  data: {
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917b',
+                  type: 'ToolboxFunction',
+                  data: {
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '1.0',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917c',
+                  type: 'ToolboxFunction',
+                  data: {
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '1.0',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917d',
+                  type: 'ToolboxFunction',
+                  data: {
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '2.0',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917d',
+                  type: 'ToolboxFunction',
+                  data: {
+                    functionData: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    toolFunction: {
+                      op: 'wavelet_filter',
+                    },
+                    parameterValues: {
+                      wavelet: 'db2',
+                      level: 4,
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '2.0',
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+                {
+                  id: 'b3a2e403-b028-493b-b142-b9d3ca58b917d',
+                  type: 'ToolboxFunction',
+                  data: {
+                    functionData: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                    toolFunction: {
+                      op: 'wavelet_filter',
+                    },
+                    selectedOperation: {
+                      op: 'wavelet_filter',
+                      version: '',
+                    },
+                    parameterValues: {
+                      wavelet: 'db8',
+                      level: 2,
+                    },
+                  },
+                  position: {
+                    y: 134,
+                    x: 314,
+                  },
+                },
+              ],
+              zoom: 1,
+            },
+            type: 'workflow',
+            lineStyle: 'solid',
+            settings: {
+              autoAlign: true,
+            },
+            id: '604e1d7f-3c5c-4a51-800a-ba6d6a0311cd',
+            preferredUnit: '',
+            color: '#6929c4',
+            name: 'New Calculation',
+          },
+        ],
+        updatedAt: 1646140273831,
+        name: 'New chart',
+        timeSeriesCollection: [],
+        dateFrom: '2022-01-29T23:00:53.815Z',
+        userInfo: {
+          email: 'eirik.vullum@cognite.com',
+          id: 'eirik.vullum@cognite.com',
+          displayName: 'eirik.vullum@cognite.com',
+        },
+        createdAt: 1646140193815,
+        version: 1,
+        user: 'eirik.vullum@cognite.com',
+        id: 'a8688ac6-c87a-4dd4-a4c6-a4b13fffe200',
+        sourceCollection: [],
+        settings: {
+          showMinMax: false,
+          showYAxis: true,
+          showGridlines: true,
+          mergeUnits: false,
+        },
       });
     });
   });

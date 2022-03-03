@@ -2,6 +2,7 @@
 
 import {
   ComputationStep,
+  Operation,
   OperationParameters,
   OperationParametersTypeEnum,
 } from '@cognite/calculation-backend';
@@ -17,10 +18,15 @@ import {
 } from 'react-flow-renderer';
 import { ChartWorkflowV2 } from 'models/chart/types';
 import { NodeDataVariants } from 'components/NodeEditor/V2/types';
-import { FunctionNodeData } from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
+import {
+  FunctionNodeData,
+  FunctionNodeDataDehydrated,
+} from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
+import compareVersions from 'compare-versions';
 import { NodeTypes } from './types';
 import { AUTO_ALIGN_PARAM } from './constants';
 import { SourceNodeData } from './Nodes/SourceNode';
+import { passthroughOperationDefinition } from './calculations';
 
 export function transformParamInput(
   type: OperationParametersTypeEnum,
@@ -136,7 +142,7 @@ const fillReferencedCalculations = (
 const getOperationFromReactFlowNode = (node: FlowElement) => {
   switch (node.type) {
     case NodeTypes.FUNCTION:
-      return node.data.toolFunction.op;
+      return (node.data as FunctionNodeData).selectedOperation.op;
     case NodeTypes.OUTPUT:
       return 'PASSTHROUGH';
     default:
@@ -146,25 +152,42 @@ const getOperationFromReactFlowNode = (node: FlowElement) => {
 
 const getParamsFromReactFlowNode = (
   settings: ChartWorkflowV2['settings'] = { autoAlign: true },
-  node: FlowElement<NodeDataVariants>
+  node: FlowElement<NodeDataVariants>,
+  operations: Operation[]
 ) => {
+  if (!node) {
+    return {};
+  }
+
   if (node.type !== NodeTypes.FUNCTION) {
     return {};
   }
 
-  const functionNode = node as Node<FunctionNodeData>;
+  const selectedOperation = (node as Node<FunctionNodeData>).data
+    ?.selectedOperation!;
 
-  let params = functionNode.data?.functionData || {};
+  const operation = operations.find(({ op }) => selectedOperation.op === op)!;
+  const operationVersion = operation.versions.find(
+    ({ version }) => selectedOperation.version === version
+  )!;
+
+  const availableParameters = operationVersion.parameters;
+  const functionNode = node as Node<FunctionNodeData>;
+  let parameterValues = functionNode.data?.parameterValues || {};
+
   // Add auto-align parameter using the global setting
   if (
-    functionNode.data?.toolFunction?.parameters?.some(
+    availableParameters.some(
       (p: OperationParameters) => p.param === AUTO_ALIGN_PARAM
     )
   ) {
-    params = { ...params, [AUTO_ALIGN_PARAM]: settings.autoAlign };
+    parameterValues = {
+      ...parameterValues,
+      [AUTO_ALIGN_PARAM]: settings.autoAlign,
+    };
   }
 
-  return params;
+  return parameterValues;
 };
 
 const getInputFromReactFlowNode = (node: FlowElement, nodes: FlowElement[]) => {
@@ -194,9 +217,71 @@ const getInputFromReactFlowNode = (node: FlowElement, nodes: FlowElement[]) => {
   }
 };
 
+export function getVersionFromNode(
+  node: FlowElement<NodeDataVariants>,
+  operations: Operation[]
+) {
+  switch (node.type) {
+    case NodeTypes.FUNCTION: {
+      const { selectedOperation } = node.data as FunctionNodeDataDehydrated;
+
+      const operation = operations.find(
+        ({ op }) =>
+          (node.data as FunctionNodeDataDehydrated).selectedOperation.op === op
+      );
+
+      const availableVersions = (operation?.versions || [])
+        .map(({ version }) => version)
+        .sort(compareVersions);
+
+      if (availableVersions?.includes(selectedOperation.version)) {
+        return selectedOperation.version;
+      }
+      return availableVersions[0] || '1.0';
+    }
+    default:
+      return '1.0';
+  }
+}
+
+export const getInputsFromFunctionNode = (
+  node: Node<FunctionNodeData>,
+  elements: Elements<any>,
+  operations: Operation[]
+) => {
+  const selectedOperation = (node as Node<FunctionNodeData>).data
+    ?.selectedOperation!;
+
+  const operation = operations.find(({ op }) => selectedOperation.op === op)!;
+  const operationVersion = operation.versions.find(
+    ({ version }) => selectedOperation.version === version
+  )!;
+
+  const availableInputs = operationVersion.inputs;
+
+  return availableInputs.map((inputSpecification) => {
+    const connection = elements.find((el) => {
+      return (
+        isEdge(el) &&
+        el.target === node.id &&
+        el.targetHandle === inputSpecification.param
+      );
+    });
+
+    if (!connection) {
+      return undefined;
+    }
+
+    return elements.find(
+      ({ id }) => id === (connection as Edge).source
+    ) as Node<any>;
+  });
+};
+
 export const getStepsFromWorkflowReactFlow = (
   workflow: ChartWorkflowV2,
-  workflows: ChartWorkflowV2[] = []
+  workflows: ChartWorkflowV2[] = [],
+  operations: Operation[] = []
 ): ComputationStep[] => {
   const { flow } = workflow;
 
@@ -276,33 +361,31 @@ export const getStepsFromWorkflowReactFlow = (
       return {
         ...node,
         incomers: getIncomers(node as Node, elements),
-        parameters: getParamsFromReactFlowNode(workflow.settings, node),
+        parameters: getParamsFromReactFlowNode(
+          workflow.settings,
+          node,
+          operations
+        ),
       };
     });
 
   const steps = parsedValidNodes
     .map((node, i) => {
+      const selectedOperation = (node as Node<FunctionNodeData>).data
+        ?.selectedOperation;
+
+      const operation =
+        operations.find(({ op }) => selectedOperation?.op === op) ||
+        passthroughOperationDefinition;
+
+      const operationVersion =
+        operation.versions.find(
+          ({ version }) => selectedOperation?.version === version
+        ) || passthroughOperationDefinition.versions[0];
+
       const inputs =
         node.type === NodeTypes.FUNCTION
-          ? (node as Node<FunctionNodeData>).data?.toolFunction?.inputs?.map(
-              (inputSpecification) => {
-                const connection = elements.find((el) => {
-                  return (
-                    isEdge(el) &&
-                    el.target === node.id &&
-                    el.targetHandle === inputSpecification.param
-                  );
-                });
-
-                if (!connection) {
-                  return undefined;
-                }
-
-                return elements.find(
-                  ({ id }) => id === (connection as Edge).source
-                ) as Node<any>;
-              }
-            )
+          ? getInputsFromFunctionNode(node, elements, operations)
           : node.incomers;
 
       const filteredInputNodes = (inputs || []).filter(Boolean) as Node<any>[];
@@ -313,10 +396,18 @@ export const getStepsFromWorkflowReactFlow = (
         })
         .filter(Boolean);
 
+      const assignedInputs = operationVersion?.inputs.map(
+        ({ param }, inputIndex) => ({
+          ...filteredInputs[inputIndex],
+          param,
+        })
+      );
+
       return {
         step: i,
         op: getOperationFromReactFlowNode(node),
-        inputs: filteredInputs,
+        version: getVersionFromNode(node, operations),
+        inputs: assignedInputs,
         ...(Object.keys(node.parameters).length
           ? { params: node.parameters }
           : {}),

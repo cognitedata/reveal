@@ -36,7 +36,7 @@ const CategoryMenu = ({
               <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
                 <FunctionsList
                   category="Recent"
-                  toolFunctions={categories.Recent}
+                  operations={categories.Recent}
                   onFunctionClick={onFunctionClick}
                   onInfoButtonClick={onInfoButtonClick}
                 />
@@ -62,7 +62,7 @@ const CategoryMenu = ({
                   <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
                     <FunctionsList
                       category={category}
-                      toolFunctions={toolFunctions}
+                      operations={toolFunctions}
                       onFunctionClick={onFunctionClick}
                       onInfoButtonClick={onInfoButtonClick}
                     />

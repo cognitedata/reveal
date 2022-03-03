@@ -13,13 +13,13 @@ import { NoDragWrapper } from '../../elements';
 const FunctionParameterForm = ({
   nodeId,
   parameters,
-  functionData = {},
-  onFunctionDataChange,
+  parameterValues = {},
+  onParameterValuesChange,
 }: ParameterFormProps) => {
   if (parameters.length === 0)
     throw new Error('Missing parameters for generating the form');
   const [formData, setFormData] =
-    useState<{ [key: string]: any }>(functionData);
+    useState<{ [key: string]: any }>(parameterValues);
 
   const handleFormValueChange = (
     param: string,
@@ -51,7 +51,7 @@ const FunctionParameterForm = ({
               key={`${nodeId}-${param}`}
               nodeId={nodeId}
               parameter={parameter}
-              functionData={formData}
+              parameterValues={formData}
               onInputValueChange={handleFormValueChange}
             />
           );
@@ -63,7 +63,7 @@ const FunctionParameterForm = ({
               key={`${nodeId}-${param}`}
               nodeId={nodeId}
               parameter={parameter}
-              functionData={formData}
+              parameterValues={formData}
               onInputValueChange={handleFormValueChange}
             />
           );
@@ -90,7 +90,7 @@ const FunctionParameterForm = ({
       })}
       <SaveButton
         type="primary"
-        onClick={() => onFunctionDataChange(nodeId, formData)}
+        onClick={() => onParameterValuesChange(nodeId, formData)}
       >
         Done
       </SaveButton>

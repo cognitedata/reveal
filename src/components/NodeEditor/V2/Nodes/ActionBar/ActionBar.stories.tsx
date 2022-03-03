@@ -62,7 +62,7 @@ FunctionNode.args = {
     isEditing: false,
   },
   data: {
-    indslFunction: fullListOfOperations[0],
+    indslFunction: fullListOfOperations[0].versions[0],
   },
 };
 

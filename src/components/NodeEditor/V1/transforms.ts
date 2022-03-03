@@ -4,6 +4,7 @@ import {
   ComputationStep,
   Operation,
   OperationParametersTypeEnum,
+  OperationVersions,
 } from '@cognite/calculation-backend';
 import { isNil, omit, omitBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -31,7 +32,7 @@ export type DSPFunctionConfig = {
 };
 
 export function getConfigFromDspFunction(
-  dspFunction: Operation
+  dspFunction: OperationVersions
 ): DSPFunctionConfig {
   const pins = dspFunction.inputs.map((input, i) => {
     return {
@@ -155,14 +156,30 @@ export function getOperationFromNode(node: StorableNode) {
   }
 }
 
-export function getStepsFromWorkflow(chart: Chart, workflow: ChartWorkflow) {
+export function getVersionFromNode(node: StorableNode) {
+  switch (node.functionEffectReference) {
+    case 'TOOLBOX_FUNCTION':
+      return node.functionData.toolFunction.version || '1.0';
+    case 'OUTPUT':
+      return '1.0';
+    default:
+      return '1.0';
+  }
+}
+
+export function getStepsFromWorkflow(
+  chart: Chart,
+  workflow: ChartWorkflow,
+  operations: Operation[]
+) {
   if (!workflow.version) {
     return getStepsFromWorkflowConnect(chart, workflow);
   }
   if (workflow.version === 'v2') {
     return getStepsFromWorkflowReactFlow(
       workflow,
-      chart.workflowCollection as ChartWorkflowV2[] // DANGEROUS! Need confirmation
+      chart.workflowCollection as ChartWorkflowV2[], // DANGEROUS! Need confirmation
+      operations
     );
   }
   return [];
@@ -367,6 +384,7 @@ export function getStepsFromWorkflowConnect(
       return {
         step: i,
         op: getOperationFromNode(node),
+        version: getVersionFromNode(node),
         inputs,
         ...(Object.keys(filteredParameters).length
           ? { params: filteredParameters }

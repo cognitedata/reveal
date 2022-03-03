@@ -15,7 +15,10 @@ const Template: Story<ComponentProps<typeof InfoModal>> = (args) => (
 
 export const Uncontrolled = Template.bind({});
 
-Uncontrolled.args = { isOpen: true, indslFunction: fullListOfOperations[0] };
+Uncontrolled.args = {
+  isOpen: true,
+  indslFunction: fullListOfOperations[0].versions[0],
+};
 
 export const Controlled = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +29,7 @@ export const Controlled = () => {
       <InfoModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        indslFunction={fullListOfOperations[0]}
+        indslFunction={fullListOfOperations[0].versions[0]}
       />
     </>
   );

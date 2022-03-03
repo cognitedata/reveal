@@ -6,7 +6,7 @@ import { ParameterFormElementProps } from './types';
 const ParameterCheckbox = ({
   nodeId,
   parameter,
-  functionData,
+  parameterValues,
   onInputValueChange,
 }: ParameterFormElementProps) => {
   const { description, name, param, type } = parameter;
@@ -15,7 +15,7 @@ const ParameterCheckbox = ({
     <CheckboxContainer>
       <Switch
         name={`${nodeId}-${param}`}
-        value={functionData[param]}
+        value={parameterValues[param]}
         onChange={(value) => onInputValueChange(param, type, value)}
       >
         <FunctionParameterFormLabel label={name} description={description} />

@@ -1,18 +1,23 @@
 import { Calculation, Operation } from '@cognite/calculation-backend';
 
-const passthroughOperationDefinition: Operation = {
+export const passthroughOperationDefinition: Operation = {
   category: 'None',
-  description: 'Passthrough',
-  inputs: [
+  op: 'PASSTHROUGH',
+  versions: [
     {
-      description: null,
-      name: 'Time series',
-      param: 'out-result',
-      types: ['ts'],
+      description: 'Passthrough',
+      inputs: [
+        {
+          description: null,
+          name: 'Time series',
+          param: 'series',
+          types: ['ts'],
+        },
+      ],
+      name: 'Passthrough step used for output nodes',
+      version: '1.0',
     },
   ],
-  name: 'Passthrough step used for output nodes',
-  op: 'PASSTHROUGH',
 } as Operation;
 
 export const validateSteps = (
@@ -38,11 +43,19 @@ export const validateSteps = (
       return false;
     }
 
-    if (step.inputs.length !== operationDefinition.inputs.length) {
+    const versionDefinition = operationDefinition.versions.find(
+      ({ version }) => step.version.toLowerCase() === version.toLowerCase()
+    );
+
+    if (!versionDefinition) {
       return false;
     }
 
-    return operationDefinition.inputs.every((_, inputIndex) => {
+    if (step.inputs.length !== versionDefinition.inputs.length) {
+      return false;
+    }
+
+    return versionDefinition.inputs.every((_, inputIndex) => {
       const correspondingStepInput = step.inputs[inputIndex];
 
       if (!correspondingStepInput) {

@@ -2,43 +2,53 @@ import { Operation } from '@cognite/calculation-backend';
 import { Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { sortBy } from 'lodash';
+import compareVersions from 'compare-versions';
 
 const FunctionsList = ({
   category,
-  toolFunctions,
+  operations,
   onFunctionClick,
   onInfoButtonClick,
 }: {
   category: string;
-  toolFunctions: Operation[];
-  onFunctionClick: (event: React.MouseEvent, func: Operation) => void;
-  onInfoButtonClick: (func: Operation) => void;
+  operations: Operation[];
+  onFunctionClick: (event: React.MouseEvent, operation: Operation) => void;
+  onInfoButtonClick: (operation: Operation) => void;
 }) => {
-  const sortedToolFunctionsByName = sortBy(toolFunctions, ['name']);
+  const sortedToolFunctionsByName = sortBy(operations, ['name']);
+
   return (
     <>
       <Menu.Header>{category}</Menu.Header>
-      {sortedToolFunctionsByName.filter(Boolean).map((func) => (
-        <Menu.Item
-          key={func.name}
-          onClick={(e) => onFunctionClick(e, func)}
-          style={{ minHeight: 40 }}
-        >
-          <FunctionNameWrapper>
-            <span style={{ textAlign: 'left' }}>{func.name}</span>
-            {func.description && (
-              <InfoButton
-                type="Info"
-                id={`${func.op}-info-button`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onInfoButtonClick(func);
-                }}
-              />
-            )}
-          </FunctionNameWrapper>
-        </Menu.Item>
-      ))}
+      {sortedToolFunctionsByName.filter(Boolean).map((operation) => {
+        const latestVersionOfOperation = operation.versions
+          .slice()
+          .sort((a, b) => compareVersions(b.version, a.version))[0]!;
+
+        return (
+          <Menu.Item
+            key={latestVersionOfOperation.name}
+            onClick={(e) => onFunctionClick(e, operation)}
+            style={{ minHeight: 40 }}
+          >
+            <FunctionNameWrapper>
+              <span style={{ textAlign: 'left' }}>
+                {latestVersionOfOperation.name}
+              </span>
+              {latestVersionOfOperation.description && (
+                <InfoButton
+                  type="Info"
+                  id={`${operation.op}-info-button`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onInfoButtonClick(operation);
+                  }}
+                />
+              )}
+            </FunctionNameWrapper>
+          </Menu.Item>
+        );
+      })}
     </>
   );
 };

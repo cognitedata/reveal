@@ -39,38 +39,43 @@ describe('transformParamInput', () => {
 describe('getConfigFromDspFunction', () => {
   it('generates correct config from dsp function description (case 1)', () => {
     const dspFunctionDescription: Operation = {
-      name: 'Saviztky-Golay Filter',
       category: 'SMOOTHERS',
-      description: 'Data smoother - Saviztky-Golay Filter',
-      inputs: [
-        {
-          param: 'a',
-          types: [OperationInputsTypesEnum.Ts],
-        },
-      ],
-      outputs: [
-        {
-          name: 'Result',
-        },
-      ],
       op: 'SG_SMOOTHER',
-      parameters: [
+      versions: [
         {
-          name: 'Window Length',
-          default_value: null,
-          param: 'window_length',
-          type: OperationParametersTypeEnum.Int,
-        },
-        {
-          name: 'Polynomial Order',
-          default_value: 1,
-          param: 'polyorder',
-          type: OperationParametersTypeEnum.Int,
+          version: '1.0',
+          name: 'Saviztky-Golay Filter',
+          description: 'Data smoother - Saviztky-Golay Filter',
+          inputs: [
+            {
+              param: 'a',
+              types: [OperationInputsTypesEnum.Ts],
+            },
+          ],
+          outputs: [
+            {
+              name: 'Result',
+            },
+          ],
+          parameters: [
+            {
+              name: 'Window Length',
+              default_value: null,
+              param: 'window_length',
+              type: OperationParametersTypeEnum.Int,
+            },
+            {
+              name: 'Polynomial Order',
+              default_value: 1,
+              param: 'polyorder',
+              type: OperationParametersTypeEnum.Int,
+            },
+          ],
         },
       ],
     };
 
-    const config = getConfigFromDspFunction(dspFunctionDescription);
+    const config = getConfigFromDspFunction(dspFunctionDescription.versions[0]);
 
     expect(config).toEqual({
       input: [
@@ -105,34 +110,43 @@ describe('getConfigFromDspFunction', () => {
 
   it('generates correct config from dsp function description (case 1,5)', () => {
     const dspFunctionDescription: Operation = {
-      name: 'Saviztky-Golay Filter',
       category: 'SMOOTHERS',
-      description: 'Data smoother - Saviztky-Golay Filter',
-      inputs: [
-        {
-          param: 'a',
-          types: [OperationInputsTypesEnum.Ts],
-        },
-      ],
-      outputs: [],
       op: 'SG_SMOOTHER',
-      parameters: [
+      versions: [
         {
-          name: 'Window Length',
-          default_value: null,
-          param: 'window_length',
-          type: OperationParametersTypeEnum.Int,
-        },
-        {
-          name: 'Polynomial Order',
-          default_value: 1,
-          param: 'polyorder',
-          type: OperationParametersTypeEnum.Int,
+          version: '1.0',
+          name: 'Saviztky-Golay Filter',
+          description: 'Data smoother - Saviztky-Golay Filter',
+          inputs: [
+            {
+              param: 'a',
+              types: [OperationInputsTypesEnum.Ts],
+            },
+          ],
+          outputs: [
+            {
+              name: 'Result',
+            },
+          ],
+          parameters: [
+            {
+              name: 'Window Length',
+              default_value: null,
+              param: 'window_length',
+              type: OperationParametersTypeEnum.Int,
+            },
+            {
+              name: 'Polynomial Order',
+              default_value: 1,
+              param: 'polyorder',
+              type: OperationParametersTypeEnum.Int,
+            },
+          ],
         },
       ],
     };
 
-    const config = getConfigFromDspFunction(dspFunctionDescription);
+    const config = getConfigFromDspFunction(dspFunctionDescription.versions[0]);
 
     expect(config).toEqual({
       input: [
@@ -157,7 +171,7 @@ describe('getConfigFromDspFunction', () => {
       ],
       output: [
         {
-          name: 'Output',
+          name: 'Result',
           field: 'result',
           type: 'TIMESERIES',
         },
@@ -817,6 +831,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 0,
         op: 'RESAMPLE',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
@@ -827,6 +842,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 1,
         op: 'RESAMPLE',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
@@ -837,6 +853,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 2,
         op: 'SUB',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -851,6 +868,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 3,
         op: 'SG_SMOOTHER',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -865,6 +883,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 4,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -963,6 +982,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 0,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
@@ -1382,6 +1402,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 0,
         op: 'RESAMPLE',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
@@ -1392,6 +1413,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 1,
         op: 'RESAMPLE',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
@@ -1402,6 +1424,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 2,
         op: 'SUB',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -1416,6 +1439,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 3,
         op: 'SG_SMOOTHER',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -1430,6 +1454,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 4,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -1657,6 +1682,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 0,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
@@ -1667,6 +1693,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -1985,6 +2012,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 0,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
@@ -1995,6 +2023,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -2013,6 +2042,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 0,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
@@ -2023,6 +2053,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'result',
@@ -2033,6 +2064,7 @@ describe('getStepsFromWorkflowConnect', () => {
       {
         step: 2,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'result',

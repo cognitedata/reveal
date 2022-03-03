@@ -52,9 +52,13 @@ export const ExtremeOutliersFunction = Template.bind({});
 AddFunction.args = {
   id: 'sample',
   data: {
-    toolFunction: fullListOfOperations[27],
-    functionData: {},
-    onFunctionDataChange: () => {},
+    selectedOperation: {
+      op: fullListOfOperations[27].op,
+      version: fullListOfOperations[27].versions[0].version,
+    },
+    operation: fullListOfOperations[27],
+    parameterValues: {},
+    onParameterValuesChange: () => {},
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
     readOnly: false,
@@ -65,9 +69,13 @@ AddFunction.args = {
 ExtremeOutliersFunction.args = {
   id: 'sample',
   data: {
-    toolFunction: fullListOfOperations[0],
-    functionData: {},
-    onFunctionDataChange: () => {},
+    selectedOperation: {
+      op: fullListOfOperations[0].op,
+      version: fullListOfOperations[0].versions[0].version,
+    },
+    operation: fullListOfOperations[0],
+    parameterValues: {},
+    onParameterValuesChange: () => {},
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
     readOnly: false,

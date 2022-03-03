@@ -1,5 +1,6 @@
 import { Operation } from '@cognite/calculation-backend';
 import { Menu } from '@cognite/cogs.js';
+import compareVersions from 'compare-versions';
 import FunctionsList from './FunctionsList';
 
 const SearchResultMenu = ({
@@ -18,10 +19,15 @@ const SearchResultMenu = ({
   <Menu>
     {Object.keys(categories).map((category: string) => {
       const filtered = categories[category].filter(
-        ({ name, category: functionCategory, description }) =>
-          `${name} ${functionCategory} ${description}`
+        ({ category: functionCategory, versions }) => {
+          const latestVersionOfOperation = [...versions].sort((a, b) =>
+            compareVersions(b.version, a.version)
+          )[0];
+
+          return `${latestVersionOfOperation.name} ${functionCategory} ${latestVersionOfOperation.description}`
             ?.toLowerCase()
-            .includes(phrase?.toLowerCase())
+            .includes(phrase?.toLowerCase());
+        }
       );
 
       return (
@@ -29,7 +35,7 @@ const SearchResultMenu = ({
           <FunctionsList
             key={category}
             category={category}
-            toolFunctions={filtered}
+            operations={filtered}
             onFunctionClick={onFunctionClick}
             onInfoButtonClick={onInfoButtonClick}
           />

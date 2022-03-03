@@ -18,7 +18,10 @@ import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
 import dayjs from 'dayjs';
 import { calculateGranularity } from 'utils/timeseries';
-import { CHART_POINTS_PER_SERIES } from 'utils/constants';
+import {
+  CHART_POINTS_PER_SERIES,
+  RAW_DATA_POINTS_THRESHOLD,
+} from 'utils/constants';
 import {
   DatapointAggregate,
   DatapointAggregates,
@@ -222,8 +225,6 @@ function TimeSeriesRow({
       return sdk.datapoints
         .retrieve(query)
         .then((r: DatapointAggregates[] | Datapoints[]) => {
-          const RAW_DATA_POINTS_THRESHOLD = CHART_POINTS_PER_SERIES / 2;
-
           const aggregatedCount = (
             r[0]?.datapoints as DatapointAggregate[]
           ).reduce((point: number, c: DatapointAggregate) => {

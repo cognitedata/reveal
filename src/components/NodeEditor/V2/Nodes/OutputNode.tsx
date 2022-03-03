@@ -9,7 +9,7 @@ import {
 } from './elements';
 import NodeHandle from './NodeHandle';
 
-export type OutputNodeDataDehydrated = { readOnly: boolean };
+export type OutputNodeDataDehydrated = {};
 
 export type OutputNodeCallbacks = {
   onOutputNameChange: (newName: string) => void;
@@ -19,6 +19,7 @@ export type OutputNodeData = OutputNodeDataDehydrated &
   OutputNodeCallbacks & {
     color: string;
     name: string;
+    readOnly: boolean;
   };
 
 const OutputNode = memo(({ data, selected }: NodeProps<OutputNodeData>) => {

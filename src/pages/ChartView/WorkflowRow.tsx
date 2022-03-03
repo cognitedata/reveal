@@ -112,8 +112,10 @@ function WorkflowRow({
 
   const steps = useMemo(
     () =>
-      isWorkflowRunnable(workflow) ? getStepsFromWorkflow(chart, workflow) : [],
-    [chart, workflow]
+      isWorkflowRunnable(workflow)
+        ? getStepsFromWorkflow(chart, workflow, operations)
+        : [],
+    [chart, workflow, operations]
   ) as Calculation['steps'];
 
   const isStepsValid =

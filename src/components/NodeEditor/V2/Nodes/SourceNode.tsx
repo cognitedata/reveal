@@ -15,7 +15,6 @@ import NodeWithActionBar from './NodeWithActionBar';
 export type SourceNodeDataDehydrated = {
   selectedSourceId: string;
   type?: string;
-  readOnly: boolean;
 };
 
 export type SourceNodeCallbacks = {
@@ -31,6 +30,7 @@ export type SourceNodeCallbacks = {
 export type SourceNodeData = SourceNodeDataDehydrated &
   SourceNodeCallbacks & {
     sourceOptions: SourceOption[];
+    readOnly: boolean;
   };
 
 const emptySourceOption: SourceOption = {

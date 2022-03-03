@@ -16,6 +16,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useState, useEffect, useCallback } from 'react';
 import { WorkflowResult } from 'models/workflows/types';
 import { TimeseriesEntry } from 'models/timeseries/types';
+import { RAW_DATA_POINTS_THRESHOLD } from 'utils/constants';
 
 export type PlotlyEventData = {
   [key: string]: any;
@@ -125,7 +126,13 @@ export function calculateSeriesData(
             type: 'workflow',
             name: workflow.name,
             color: workflow.color,
-            mode: workflow.displayMode,
+            mode: getMode(
+              workflow.displayMode,
+              (
+                workflows?.find(({ id }) => id === workflow.id)?.datapoints ||
+                []
+              ).length < RAW_DATA_POINTS_THRESHOLD
+            ),
             width: workflow.lineWeight,
             dash: convertLineStyle(workflow.lineStyle),
             datapoints: convertUnits(

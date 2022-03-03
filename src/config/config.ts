@@ -59,7 +59,7 @@ export const getBackendServiceBaseUrl = (
   if (origin.includes('localhost')) {
     return `https://calculation-backend.staging.${
       urlCluster ? `${urlCluster}.` : ''
-    }cognite.ai/v2`;
+    }cognite.ai/v3`;
   }
 
   if (originCopy.includes('.pr.')) {
@@ -73,7 +73,7 @@ export const getBackendServiceBaseUrl = (
     .split('cogniteapp.com')[0];
   const cluster = urlCluster ? `${formattedUrlCluster}.` : parsedCluster;
 
-  return `https://calculation-backend.${cluster}cognite.ai/v2`;
+  return `https://calculation-backend.${cluster}cognite.ai/v3`;
 };
 
 const configs = {

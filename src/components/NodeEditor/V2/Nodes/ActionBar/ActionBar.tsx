@@ -1,4 +1,4 @@
-import { Operation } from '@cognite/calculation-backend';
+import { OperationVersions } from '@cognite/calculation-backend';
 import { Button } from '@cognite/cogs.js';
 import { useState } from 'react';
 import EditSaveViewButton from './EditSaveViewButton';
@@ -22,13 +22,19 @@ type Props = {
     isEditing?: boolean;
   };
   data?: {
-    indslFunction?: Operation;
+    indslFunction?: OperationVersions;
   };
 };
 
 const ActionBar = ({ actions, capabilities, status, data }: Props) => {
-  if (!actions) throw new Error('Actions are missing!');
-  if (!capabilities) throw new Error('Capabilities are missing!');
+  if (!actions) {
+    throw new Error('Actions are missing!');
+  }
+
+  if (!capabilities) {
+    throw new Error('Capabilities are missing!');
+  }
+
   const {
     onEditClick,
     onEditFunctionClick,
@@ -36,11 +42,16 @@ const ActionBar = ({ actions, capabilities, status, data }: Props) => {
     onRemoveClick,
     onInfoClick,
   } = actions;
-  const { canEdit, canRemove, canDuplicate, canSeeInfo } = capabilities;
-  if (onEditFunctionClick && typeof status?.isEditing !== 'boolean')
+
+  if (onEditFunctionClick && typeof status?.isEditing !== 'boolean') {
     throw new Error('onEditFunctionClick need an isEditing status');
-  if (onEditClick && typeof status?.isEditing !== 'boolean')
+  }
+
+  if (onEditClick && typeof status?.isEditing !== 'boolean') {
     throw new Error('onEditClick need an isEditing status');
+  }
+
+  const { canEdit, canRemove, canDuplicate, canSeeInfo } = capabilities;
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (

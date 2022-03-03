@@ -1,6 +1,4 @@
 /* eslint camelcase: 0 */
-
-import { useState } from 'react';
 import styled from 'styled-components';
 import { Icon, Select, Checkbox, Tooltip } from '@cognite/cogs.js';
 import {
@@ -17,9 +15,14 @@ import { ConfigPanelComponentProps } from '.';
 import { DSPToolboxFunctionInput } from './DSPToolboxFunctionInput';
 import { getCategoriesFromToolFunctions } from './utils';
 
+type OperationSelection = {
+  op: string;
+  version?: string;
+};
+
 type FunctionData = {
   [key: string]: any;
-  toolFunction?: Operation;
+  toolFunction?: OperationSelection;
 };
 
 export const effect = async (funcData: FunctionData) => {
@@ -41,8 +44,16 @@ export const ConfigPanel = ({
   onUpdateNode,
 }: ConfigPanelComponentProps) => {
   const { functionData } = node;
-  const [selectedOperation, setSelectedOperation] = useState<Operation>();
   const [isLoading, error, operations] = useAvailableOps();
+
+  const selectedOperation = operations?.find(
+    (operation) => operation.op === functionData?.toolFunction?.op
+  );
+
+  const selectedVersion = (selectedOperation?.versions ?? []).find(
+    (operationVersion) =>
+      operationVersion.version === functionData?.toolFunction?.version
+  );
 
   const getCategories = (availableOperations: Operation[]) => {
     const categories: { [key: string]: Operation[] } = {};
@@ -75,9 +86,19 @@ export const ConfigPanel = ({
   };
 
   const onFunctionSelected = (func: Operation) => {
-    const { ...storableNextFunc } = func;
+    const defaultVersionOfFunction = func.versions.find(
+      ({ version }) => version === '1.0'
+    )!;
 
-    const inputPins = (getConfigFromDspFunction(func).input || [])
+    if (!defaultVersionOfFunction) {
+      throw new Error(
+        `Default version (1.0) of operation "${func.op}" is missing from definition`
+      );
+    }
+
+    const inputPins = (
+      getConfigFromDspFunction(defaultVersionOfFunction).input || []
+    )
       .filter((input) => input.pin)
       .map((input) => ({
         id: input.field,
@@ -85,27 +106,29 @@ export const ConfigPanel = ({
         types: input.types,
       }));
 
-    const outputPins = (getConfigFromDspFunction(func).output || []).map(
-      (output) => ({
-        id: `out-${output.field}`,
-        title: output.name,
-        type: output.type,
-      })
-    );
+    const outputPins = (
+      getConfigFromDspFunction(defaultVersionOfFunction).output || []
+    ).map((output) => ({
+      id: `out-${output.field}`,
+      title: output.name,
+      type: output.type,
+    }));
 
     onUpdateNode({
       inputPins,
       outputPins,
-      title: func.name,
+      title: defaultVersionOfFunction.name,
       functionData: {
         ...functionData,
-        toolFunction: storableNextFunc,
+        toolFunction: {
+          op: func.op,
+          version: defaultVersionOfFunction.version,
+        },
       },
     });
-    setSelectedOperation(func);
 
     trackUsage('ChartView.SelectFunction', {
-      function: func.name,
+      function: defaultVersionOfFunction.name,
     });
   };
 
@@ -185,7 +208,7 @@ export const ConfigPanel = ({
     );
   };
 
-  const parameters = (selectedOperation?.parameters ||
+  const parameters = (selectedVersion?.parameters ||
     functionData?.toolFunction?.parameters) as
     | OperationParameters[]
     | undefined;
@@ -225,6 +248,6 @@ export const node = {
   outputPins: [],
   functionEffectReference: effectId,
   functionData: {
-    toolFunction: '',
+    toolFunction: {},
   },
 } as StorableNode;

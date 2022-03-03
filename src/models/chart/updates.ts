@@ -7,11 +7,15 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   SourceCollectionData,
+  StorableNode,
   UserInfo,
 } from 'models/chart/types';
 import { getEntryColor } from 'utils/colors';
 import { convertTsToWorkFlow } from 'utils/timeseries';
 import dayjs from 'dayjs';
+import { NodeTypes } from 'components/NodeEditor/V2/types';
+import { FunctionNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
+import { FlowElement } from 'react-flow-renderer';
 
 export function duplicate(chart: Chart, login: UserInfo): Chart {
   const id = uuidv4();
@@ -292,5 +296,56 @@ export const updateSourceCollectionOrder = (
   return {
     ...chart,
     sourceCollection: sourceCollectionCopy,
+  };
+};
+
+/**
+ * Migration to introduce versions for operations in calculations
+ */
+export const updateWorkflowsToSupportVersions = (chart: Chart): Chart => {
+  return {
+    ...chart,
+    workflowCollection: (chart.workflowCollection || []).map((workflow) => {
+      if (workflow.version === 'v2') {
+        return {
+          ...workflow,
+          flow: {
+            ...workflow.flow!,
+            elements: (workflow.flow?.elements || []).map((el) => {
+              switch (el.type) {
+                case NodeTypes.FUNCTION: {
+                  const elData = el.data as FunctionNodeDataDehydrated;
+
+                  return {
+                    ...(el as FlowElement<FunctionNodeDataDehydrated>),
+                    data: {
+                      ...elData,
+                      selectedOperation: elData.selectedOperation
+                        ? {
+                            ...elData.selectedOperation,
+                            version:
+                              elData.selectedOperation.version === '0.0'
+                                ? '1.0'
+                                : elData.selectedOperation.version || '',
+                          }
+                        : {
+                            op: (elData as StorableNode).toolFunction.op,
+                            version: '',
+                          },
+                      parameterValues: elData.parameterValues
+                        ? elData.parameterValues
+                        : (elData as StorableNode).functionData,
+                    } as FunctionNodeDataDehydrated,
+                  };
+                }
+                default:
+                  return el;
+              }
+            }),
+          },
+        };
+      }
+      return workflow;
+    }),
   };
 };

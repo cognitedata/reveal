@@ -1,4 +1,4 @@
-import { Operation } from '@cognite/calculation-backend';
+import { Operation, OperationVersions } from '@cognite/calculation-backend';
 import { ChartWorkflowV2 } from 'models/chart/types';
 import { Elements, FlowElement, Node } from 'react-flow-renderer';
 import {
@@ -93,26 +93,27 @@ export const duplicateNode = (
   });
 };
 
-export const initializeFunctionData = (
-  toolFunction: Operation
+export const initializeParameterValues = (
+  operationVersion: OperationVersions
 ): { [key: string]: any } => {
-  let functionData = {};
-  toolFunction.parameters.forEach(
+  let parameterValues = {};
+  operationVersion.parameters.forEach(
     ({ param, type, default_value: _default }) => {
       if (_default) {
-        functionData = {
-          ...functionData,
+        parameterValues = {
+          ...parameterValues,
           [param]: transformParamInput(type, _default),
         };
       }
     }
   );
-  return functionData;
+  return parameterValues;
 };
 
 export const rehydrateStoredFlow = (
   workflow: ChartWorkflowV2,
   sources: SourceOption[],
+  operations: Operation[],
   callbacks: NodeCallbacks,
   readOnly: boolean
 ): Elements<NodeDataVariants> => {
@@ -129,7 +130,7 @@ export const rehydrateStoredFlow = (
   const {
     onSourceItemChange,
     onConstantChange,
-    onFunctionDataChange,
+    onParameterValuesChange,
     onOutputNameChange,
     onDuplicateNode,
     onRemoveNode,
@@ -166,9 +167,14 @@ export const rehydrateStoredFlow = (
           dragHandle: `.${FUNCTION_NODE_DRAG_HANDLE_CLASSNAME}`,
           data: {
             ...el.data,
-            onFunctionDataChange,
+            onParameterValuesChange,
             onDuplicateNode,
             onRemoveNode,
+            operation: operations.find(
+              ({ op }) =>
+                (el.data as FunctionNodeDataDehydrated).selectedOperation.op ===
+                op
+            ),
             readOnly,
           } as FunctionNodeData,
         };

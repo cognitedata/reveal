@@ -4,6 +4,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { Button, Dropdown, Input, Modal } from '@cognite/cogs.js';
 import ReactMarkdown from 'react-markdown';
 import Layers from 'utils/z-index';
+import compareVersions from 'compare-versions';
 import CategoryMenu from './CategoryMenu';
 import SearchResultMenu from './SearchResultMenu';
 
@@ -24,7 +25,15 @@ const ToolboxFunctionDropdown = ({
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>();
-  const [selectedFunction, setSelectedFunction] = useState<Operation>();
+  const [selectedOperation, setSelectedFunction] = useState<Operation>();
+
+  const latestVersionOfSelectedOperation = selectedOperation?.versions
+    .slice()
+    .sort((a, b) => compareVersions(b.version, a.version))[0]!;
+
+  const latestVersionOfInitialOperation = initialFunction?.versions
+    .slice()
+    .sort((a, b) => compareVersions(b.version, a.version))[0]!;
 
   const handleFunctionClick = (event: React.MouseEvent, func: Operation) => {
     setIsDropdownVisible(false);
@@ -93,8 +102,8 @@ const ToolboxFunctionDropdown = ({
             }}
             style={{ width: '100%' }}
           >
-            {selectedFunction?.name ||
-              initialFunction?.name ||
+            {latestVersionOfSelectedOperation?.name ||
+              latestVersionOfInitialOperation?.name ||
               'Select tool function'}
           </Button>
         ) : (
@@ -114,7 +123,7 @@ const ToolboxFunctionDropdown = ({
       </FunctionsDropdown>
       <InfoModal
         appElement={document.getElementsByTagName('body')}
-        title={selectedFunction?.name}
+        title={latestVersionOfSelectedOperation?.name}
         visible={isModalVisible}
         footer={null}
         onCancel={() => {
@@ -122,7 +131,9 @@ const ToolboxFunctionDropdown = ({
         }}
         width={750}
       >
-        <ReactMarkdown>{selectedFunction?.description || ''}</ReactMarkdown>
+        <ReactMarkdown>
+          {latestVersionOfSelectedOperation?.description || ''}
+        </ReactMarkdown>
       </InfoModal>
     </>
   );

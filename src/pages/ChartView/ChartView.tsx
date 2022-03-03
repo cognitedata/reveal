@@ -36,8 +36,10 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import {
   addWorkflow,
+  updateChartDateRange,
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
+  updateWorkflowsToSupportVersions,
 } from 'models/chart/updates';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
@@ -128,16 +130,27 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       return;
     }
 
-    setChart({
-      ...originalChart,
-      // Fallback to default 1M if saved dates are not valid
-      dateFrom: Date.parse(originalChart.dateFrom!)
-        ? originalChart.dateFrom!
-        : dayjs().subtract(1, 'M').toISOString(),
-      dateTo: Date.parse(originalChart.dateTo!)
-        ? originalChart.dateTo!
-        : dayjs().toISOString(),
-    });
+    /**
+     * Fallback date range to default 1M if saved dates are not valid
+     */
+    const dateFrom = Date.parse(originalChart.dateFrom!)
+      ? originalChart.dateFrom!
+      : dayjs().subtract(1, 'M').toISOString();
+    const dateTo = Date.parse(originalChart.dateTo!)
+      ? originalChart.dateTo!
+      : dayjs().toISOString();
+
+    const updatedChart = [originalChart]
+      .map((_chart) => updateChartDateRange(_chart, dateFrom, dateTo))
+      /**
+       * Convert/migrate from v2 format to v3 (toolFunction -> selectedOperation, functionData -> parameterValues, etc...)
+       */
+      .map((_chart) => updateWorkflowsToSupportVersions(_chart))[0];
+
+    /**
+     * Add chart to local state atom
+     */
+    setChart(updatedChart);
   }, [originalChart, chart, chartId, setChart]);
 
   /**

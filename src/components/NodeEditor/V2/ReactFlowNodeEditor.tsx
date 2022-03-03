@@ -16,6 +16,7 @@ import Layers from 'utils/z-index';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { Operation } from '@cognite/calculation-backend';
 import { usePrevious } from 'react-use';
+import compareVersions from 'compare-versions';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import AddButton, { AddMenu } from './AddButton';
 import EditorControls from './EditorControls/EditorControls';
@@ -45,7 +46,11 @@ type Props = {
   onNodeDragStop: (_: React.MouseEvent, node: Node<NodeDataVariants>) => void;
   onAddSourceNode: (position: XYPosition, source: SourceOption) => void;
   onAddConstantNode: (position: XYPosition) => void;
-  onAddFunctionNode: (position: XYPosition, toolFunction: Operation) => void;
+  onAddFunctionNode: (
+    position: XYPosition,
+    operation: Operation,
+    version: string
+  ) => void;
   onAddOutputNode: (position: XYPosition) => void;
   onMove: (transform: FlowTransform) => void;
 };
@@ -125,9 +130,21 @@ const ReactFlowNodeEditor = ({
   );
 
   const addFunctionNode = useCallback(
-    (event: React.MouseEvent, toolFunction: Operation) => {
+    (event: React.MouseEvent, operation: Operation) => {
       const nodePosition = getPosition(contextMenuPosition || event);
-      onAddFunctionNode(nodePosition, toolFunction);
+
+      /**
+       * For the time being (until the UI for version selection is ready)
+       * we default to using the latest available version
+       * when adding a new function to your calculation
+       */
+      const latestVersion =
+        operation.versions
+          .map(({ version }) => version)
+          .sort(compareVersions)
+          .at(-1) || '';
+
+      onAddFunctionNode(nodePosition, operation, latestVersion);
       setContextMenuPosition(undefined);
     },
     [onAddFunctionNode, contextMenuPosition, getPosition]

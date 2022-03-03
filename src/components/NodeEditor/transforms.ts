@@ -1,11 +1,20 @@
 /* eslint camelcase: 0 */
 
+import { Operation } from '@cognite/calculation-backend';
 import { Chart, ChartWorkflow, ChartWorkflowV2 } from 'models/chart/types';
 import { resolveTimeseriesSourceInSteps } from './utils';
 import { getStepsFromWorkflowConnect } from './V1/transforms';
 import { getStepsFromWorkflowReactFlow } from './V2/transforms';
 
-export function getStepsFromWorkflow(chart: Chart, workflow: ChartWorkflow) {
+export function getStepsFromWorkflow(
+  chart: Chart,
+  workflow: ChartWorkflow,
+  operations?: Operation[]
+) {
+  if (!operations) {
+    return [];
+  }
+
   if (!workflow.version) {
     return getStepsFromWorkflowConnect(chart, workflow);
   }
@@ -26,7 +35,11 @@ export function getStepsFromWorkflow(chart: Chart, workflow: ChartWorkflow) {
     /**
      * Generate the steps
      */
-    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      operations
+    );
 
     /**
      * Resolve all the timeseries value steps into actual external ids

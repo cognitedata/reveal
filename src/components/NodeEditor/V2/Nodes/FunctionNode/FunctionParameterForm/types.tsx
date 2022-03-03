@@ -5,7 +5,7 @@ import {
 
 export type ParameterFormBase = {
   nodeId: string;
-  functionData: { [key: string]: any };
+  parameterValues: { [key: string]: any };
 };
 
 export type ParameterFormElementProps = ParameterFormBase & {
@@ -19,7 +19,7 @@ export type ParameterFormElementProps = ParameterFormBase & {
 
 export type ParameterFormProps = ParameterFormBase & {
   parameters: OperationParameters[];
-  onFunctionDataChange: (
+  onParameterValuesChange: (
     nodeId: string,
     formData: { [key: string]: any }
   ) => void;

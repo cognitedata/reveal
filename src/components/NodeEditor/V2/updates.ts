@@ -180,10 +180,10 @@ export const updateSourceItemInFlow = (
   };
 };
 
-export const updateFunctionDataInFlow = (
+export const updateParameterValuesInFlow = (
   workflow: ChartWorkflowV2,
   nodeId: string,
-  formData: { [key: string]: any }
+  parameterValues: { [key: string]: any }
 ): ChartWorkflowV2 => {
   const existingFlow = workflow.flow;
   const elements = existingFlow?.elements ?? [];
@@ -195,9 +195,9 @@ export const updateFunctionDataInFlow = (
     flow: {
       ...(existingFlow as FlowExportObject<NodeDataDehydratedVariants>),
       elements: updateNodeData(elements, nodeId, {
-        functionData: {
-          ...node?.data?.functionData,
-          ...formData,
+        parameterValues: {
+          ...node?.data?.parameterValues,
+          ...parameterValues,
         },
       }),
     },

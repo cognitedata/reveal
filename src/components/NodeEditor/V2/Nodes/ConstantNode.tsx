@@ -10,7 +10,6 @@ import NodeWithActionBar from './NodeWithActionBar';
 
 export type ConstantNodeDataDehydrated = {
   value: number;
-  readOnly: boolean;
 };
 
 export type ConstantNodeCallbacks = {
@@ -20,7 +19,9 @@ export type ConstantNodeCallbacks = {
 };
 
 export type ConstantNodeData = ConstantNodeDataDehydrated &
-  ConstantNodeCallbacks & {};
+  ConstantNodeCallbacks & {
+    readOnly: boolean;
+  };
 
 const numberValidator = Joi.number();
 

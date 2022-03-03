@@ -8,6 +8,7 @@ describe('validateSteps', () => {
       {
         step: 0,
         op: 'add',
+        version: '1.0',
         inputs: [
           { type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' },
           { type: 'ts', value: '' },
@@ -17,6 +18,7 @@ describe('validateSteps', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [{ type: 'result', value: 0 }],
       },
     ] as Calculation['steps'];
@@ -31,6 +33,7 @@ describe('validateSteps', () => {
       {
         step: 0,
         op: 'add',
+        version: '1.0',
         inputs: [
           { type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' },
           { type: 'ts', value: null },
@@ -40,6 +43,7 @@ describe('validateSteps', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [{ type: 'result', value: 0 }],
       },
     ] as Calculation['steps'];
@@ -54,6 +58,7 @@ describe('validateSteps', () => {
       {
         step: 0,
         op: 'add',
+        version: '1.0',
         inputs: [
           { type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' },
           { type: 'ts', value: undefined },
@@ -63,6 +68,7 @@ describe('validateSteps', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [{ type: 'result', value: 0 }],
       },
     ] as Calculation['steps'];
@@ -77,12 +83,14 @@ describe('validateSteps', () => {
       {
         step: 0,
         op: 'add',
+        version: '1.0',
         inputs: [{ type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' }],
         params: {},
       },
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [{ type: 'result', value: 0 }],
       },
     ] as Calculation['steps'];
@@ -97,6 +105,7 @@ describe('validateSteps', () => {
       {
         step: 0,
         op: 'add',
+        version: '1.0',
         inputs: [
           { type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' },
           { type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' },
@@ -107,6 +116,7 @@ describe('validateSteps', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [{ type: 'result', value: 0 }],
       },
     ] as Calculation['steps'];
@@ -121,6 +131,7 @@ describe('validateSteps', () => {
       {
         step: 0,
         op: 'add',
+        version: '1.0',
         inputs: [
           { type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' },
           { type: 'ts', value: 'VAL_21_PI_1017_04:Z.X.Value' },
@@ -130,6 +141,7 @@ describe('validateSteps', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [{ type: 'result', value: 0 }],
       },
     ] as Calculation['steps'];
@@ -144,6 +156,7 @@ describe('validateSteps', () => {
       {
         step: 0,
         op: 'ADD',
+        version: '1.0',
         inputs: [
           { type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' },
           { type: 'ts', value: 'VAL_21_PI_1017_04:Z.X.Value' },
@@ -153,6 +166,7 @@ describe('validateSteps', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [{ type: 'result', value: 0 }],
       },
     ] as Calculation['steps'];

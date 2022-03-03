@@ -1,11 +1,11 @@
-import { Operation } from '@cognite/calculation-backend';
+import { OperationVersions } from '@cognite/calculation-backend';
 import { Modal } from '@cognite/cogs.js';
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components/macro';
 
 type Props = {
-  indslFunction: Operation;
+  indslFunction: OperationVersions;
   isOpen?: boolean;
   onClose?: () => void;
 };

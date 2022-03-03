@@ -16,13 +16,12 @@ import NodeWithActionBar from '../NodeWithActionBar';
 import FunctionParameterForm from './FunctionParameterForm/FunctionParameterForm';
 
 export type FunctionNodeDataDehydrated = {
-  toolFunction: Operation;
-  functionData: { [key: string]: any };
-  readOnly: boolean;
+  selectedOperation: { op: string; version: string };
+  parameterValues: { [key: string]: string | number | boolean };
 };
 
 export type FunctionNodeCallbacks = {
-  onFunctionDataChange: (
+  onParameterValuesChange: (
     nodeId: string,
     formData: { [key: string]: any }
   ) => void;
@@ -31,23 +30,31 @@ export type FunctionNodeCallbacks = {
 };
 
 export type FunctionNodeData = FunctionNodeDataDehydrated &
-  FunctionNodeCallbacks & {};
+  FunctionNodeCallbacks & {
+    operation: Operation;
+    readOnly: boolean;
+  };
 
 const FunctionNode = memo(
   ({ id, data, selected }: NodeProps<FunctionNodeData>) => {
     const {
-      toolFunction,
-      functionData,
-      readOnly,
-      onFunctionDataChange,
+      selectedOperation,
+      parameterValues,
+      onParameterValuesChange,
       onDuplicateNode,
       onRemoveNode,
+      operation,
+      readOnly,
     } = data;
 
-    const nodeHeight = toolFunction.inputs.length * PIN_MIN_HEIGHT;
+    const selectedOperationVersion = operation.versions.find(
+      ({ version }) => version === selectedOperation.version
+    )!;
+
+    const nodeHeight = selectedOperationVersion.inputs.length * PIN_MIN_HEIGHT;
 
     // Remove auto-align parameter so it's not rendered in the form
-    const parameters = (toolFunction.parameters || []).filter(
+    const parameters = (selectedOperationVersion.parameters || []).filter(
       (p) => p.param !== AUTO_ALIGN_PARAM
     );
 
@@ -67,7 +74,7 @@ const FunctionNode = memo(
           canEdit: !readOnly && parameters.length > 0,
           canDuplicate: !readOnly,
           canRemove: !readOnly,
-          canSeeInfo: Boolean(toolFunction.description),
+          canSeeInfo: Boolean(selectedOperationVersion.description),
         }}
         actions={{
           onEditFunctionClick:
@@ -78,7 +85,7 @@ const FunctionNode = memo(
           onRemoveClick: () => onRemoveNode(id),
         }}
         data={{
-          indslFunction: toolFunction,
+          indslFunction: selectedOperationVersion,
         }}
         status={{
           isEditing: areParamsVisible,
@@ -97,7 +104,7 @@ const FunctionNode = memo(
           }
         >
           <HandleContainer height={nodeHeight} position="left">
-            {toolFunction.inputs.map((input) => (
+            {selectedOperationVersion.inputs.map((input) => (
               <FunctionNodeHandle
                 key={input.param}
                 id={`${input.param}`}
@@ -106,16 +113,16 @@ const FunctionNode = memo(
               />
             ))}
           </HandleContainer>
-          <FunctionName>{toolFunction.name}</FunctionName>
+          <FunctionName>{selectedOperationVersion.name}</FunctionName>
           {!areParamsVisible && (
             <Flex gap={8} justifyContent="space-between" alignItems="center">
               <div>
-                {toolFunction.inputs.map(({ param, name }) => (
+                {selectedOperationVersion.inputs.map(({ param, name }) => (
                   <InputName key={param}>{name}</InputName>
                 ))}
               </div>
               <div>
-                {toolFunction.outputs.map(({ name }) => (
+                {selectedOperationVersion.outputs.map(({ name }) => (
                   <InputName key={name}>{name}</InputName>
                 ))}
               </div>
@@ -125,15 +132,15 @@ const FunctionNode = memo(
             <FunctionParameterForm
               nodeId={id}
               parameters={parameters}
-              functionData={functionData}
-              onFunctionDataChange={(nodeId, formData) => {
-                onFunctionDataChange(nodeId, formData);
+              parameterValues={parameterValues}
+              onParameterValuesChange={(nodeId, formData) => {
+                onParameterValuesChange(nodeId, formData);
                 setAreParamsVisible(false);
               }}
             />
           )}
           <HandleContainer height={nodeHeight} position="right">
-            {toolFunction.outputs.map((output, i) => (
+            {selectedOperationVersion.outputs.map((output, i) => (
               <FunctionNodeHandle
                 key={`out-result-${output.name}`}
                 id={`out-result-${i}`}

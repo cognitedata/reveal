@@ -1,5 +1,6 @@
 import { OperationParametersTypeEnum } from '@cognite/calculation-backend';
 import { Chart, ChartWorkflowV2 } from 'models/chart/types';
+import { fullListOfOperations } from 'models/operations/mocks';
 import {
   getStepsFromWorkflowReactFlow,
   transformParamInput,
@@ -131,21 +132,13 @@ describe('getStepsFromWorkflowReactFlow', () => {
           {
             type: 'ToolboxFunction',
             data: {
-              functionData: {
+              parameterValues: {
                 granularity: '1h',
                 aggregate: 'mean',
               },
-              toolFunction: {
-                name: 'Resample to granularity',
+              selectedOperation: {
                 op: 'resample_to_granularity',
-                inputs: [
-                  {
-                    description: null,
-                    name: 'Time series.',
-                    param: 'series',
-                    types: ['ts'],
-                  },
-                ],
+                version: '1.0',
               },
             },
             position: {
@@ -162,19 +155,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
             id: '9-RiktpSALNrlmwqoUPkt',
             type: 'ToolboxFunction',
             data: {
-              toolFunction: {
-                name: 'Resample to granularity',
+              selectedOperation: {
                 op: 'resample_to_granularity',
-                inputs: [
-                  {
-                    description: null,
-                    name: 'Time series.',
-                    param: 'series',
-                    types: ['ts'],
-                  },
-                ],
+                version: '1.0',
               },
-              functionData: {
+              parameterValues: {
                 granularity: '1h',
                 aggregate: 'mean',
               },
@@ -183,25 +168,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
           {
             type: 'ToolboxFunction',
             data: {
-              toolFunction: {
-                name: 'Subtraction',
+              selectedOperation: {
                 op: 'sub',
-                inputs: [
-                  {
-                    description: null,
-                    name: 'Time-series or number.',
-                    param: 'a',
-                    types: ['ts', 'const'],
-                  },
-                  {
-                    description: null,
-                    name: 'Time-series or number.',
-                    param: 'b',
-                    types: ['ts', 'const'],
-                  },
-                ],
+                version: '1.0',
               },
-              functionData: {},
+              parameterValues: {},
             },
             id: 'I3ezdixmgmf1ux-DRVZvs',
             position: {
@@ -213,20 +184,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
             id: 'fBeMz6erfK4zd0FnJDO9M',
             type: 'ToolboxFunction',
             data: {
-              toolFunction: {
-                name: 'Saviztky-Golay',
+              selectedOperation: {
                 op: 'sg',
-                inputs: [
-                  {
-                    description:
-                      'Time series to be smoothed. The series must have a pandas.DatetimeIndex.',
-                    name: 'Time series.',
-                    param: 'data',
-                    types: ['ts'],
-                  },
-                ],
+                version: '1.0',
               },
-              functionData: {
+              parameterValues: {
                 polyorder: 1,
               },
             },
@@ -290,14 +252,20 @@ describe('getStepsFromWorkflowReactFlow', () => {
       enabled: true,
     };
 
-    const steps = getStepsFromWorkflowReactFlow(workflow);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      [workflow],
+      fullListOfOperations
+    );
 
     expect(steps).toEqual([
       {
         step: 0,
         op: 'resample_to_granularity',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'ts',
             value: 'RvXihRaJJujRDDFKC4D1-',
           },
@@ -310,8 +278,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 1,
         op: 'resample_to_granularity',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'ts',
             value: 'j350Z4nwnOfk212Nu3bks',
           },
@@ -324,22 +294,30 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 2,
         op: 'sub',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'result',
             value: 1,
           },
           {
+            param: 'b',
             type: 'result',
             value: 0,
           },
         ],
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 3,
         op: 'sg',
+        version: '1.0',
         inputs: [
           {
+            param: 'data',
             type: 'result',
             value: 2,
           },
@@ -351,8 +329,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 4,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'result',
             value: 3,
           },
@@ -416,10 +396,12 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 0,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
             type: 'ts',
             value: 'RvXihRaJJujRDDFKC4D1-',
+            param: 'series',
           },
         ],
       },
@@ -479,19 +461,12 @@ describe('getStepsFromWorkflowReactFlow', () => {
               y: 74,
             },
             data: {
-              toolFunction: {
+              selectedOperation: {
                 name: 'Resample to granularity',
                 op: 'resample_to_granularity',
-                inputs: [
-                  {
-                    description: null,
-                    name: 'Time series.',
-                    param: 'series',
-                    types: ['ts'],
-                  },
-                ],
+                version: '1.0',
               },
-              functionData: {
+              parameterValues: {
                 granularity: '1h',
                 aggregate: 'mean',
               },
@@ -501,21 +476,13 @@ describe('getStepsFromWorkflowReactFlow', () => {
           },
           {
             data: {
-              functionData: {
+              parameterValues: {
                 aggregate: 'mean',
                 granularity: '1h',
               },
-              toolFunction: {
+              selectedOperation: {
                 op: 'resample_to_granularity',
-                name: 'Resample to granularity',
-                inputs: [
-                  {
-                    description: null,
-                    name: 'Time series.',
-                    param: 'series',
-                    types: ['ts'],
-                  },
-                ],
+                version: '1.0',
               },
             },
             id: '9-RiktpSALNrlmwqoUPkt',
@@ -528,25 +495,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
           {
             id: 'I3ezdixmgmf1ux-DRVZvs',
             data: {
-              toolFunction: {
+              selectedOperation: {
                 op: 'sub',
-                name: 'Subtraction',
-                inputs: [
-                  {
-                    description: null,
-                    name: 'Time-series or number.',
-                    param: 'a',
-                    types: ['ts', 'const'],
-                  },
-                  {
-                    description: null,
-                    name: 'Time-series or number.',
-                    param: 'b',
-                    types: ['ts', 'const'],
-                  },
-                ],
+                version: '1.0',
               },
-              functionData: {},
+              parameterValues: {},
             },
             position: {
               x: 806.6793388429753,
@@ -558,20 +511,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
             id: 'I-2qBwiQJP4ZRtuKauySd',
             type: 'ToolboxFunction',
             data: {
-              toolFunction: {
-                name: 'Saviztky-Golay',
+              selectedOperation: {
                 op: 'sg',
-                inputs: [
-                  {
-                    description:
-                      'Time series to be smoothed. The series must have a pandas.DatetimeIndex.',
-                    name: 'Time series.',
-                    param: 'data',
-                    types: ['ts'],
-                  },
-                ],
+                version: '1.0',
               },
-              functionData: {
+              parameterValues: {
                 polyorder: 1,
               },
             },
@@ -597,11 +541,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
             id: 'riQbFoJDGKLu_Rth60WVF',
             type: 'ToolboxFunction',
             data: {
-              toolFunction: {
-                name: 'Add',
+              selectedOperation: {
                 op: 'add',
+                version: '1.0',
               },
-              functionData: {},
+              parameterValues: {},
             },
             position: {
               x: 837.5,
@@ -671,14 +615,20 @@ describe('getStepsFromWorkflowReactFlow', () => {
       enabled: true,
     };
 
-    const steps = getStepsFromWorkflowReactFlow(workflow);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      [workflow],
+      fullListOfOperations
+    );
 
     expect(steps).toEqual([
       {
         step: 0,
         op: 'resample_to_granularity',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'ts',
             value: 'RvXihRaJJujRDDFKC4D1-',
           },
@@ -691,8 +641,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 1,
         op: 'resample_to_granularity',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'ts',
             value: 'j350Z4nwnOfk212Nu3bks',
           },
@@ -705,22 +657,30 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 2,
         op: 'sub',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'result',
             value: 1,
           },
           {
+            param: 'b',
             type: 'result',
             value: 0,
           },
         ],
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 3,
         op: 'sg',
+        version: '1.0',
         inputs: [
           {
+            param: 'data',
             type: 'result',
             value: 2,
           },
@@ -732,8 +692,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 4,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'result',
             value: 3,
           },
@@ -796,19 +758,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
                 y: 74,
               },
               data: {
-                toolFunction: {
-                  name: 'Resample to granularity',
+                selectedOperation: {
                   op: 'resample_to_granularity',
-                  inputs: [
-                    {
-                      description: null,
-                      name: 'Time series.',
-                      param: 'series',
-                      types: ['ts'],
-                    },
-                  ],
+                  version: '1.0',
                 },
-                functionData: {
+                parameterValues: {
                   granularity: '1h',
                   aggregate: 'mean',
                 },
@@ -818,21 +772,14 @@ describe('getStepsFromWorkflowReactFlow', () => {
             },
             {
               data: {
-                functionData: {
+                parameterValues: {
                   aggregate: 'mean',
                   granularity: '1h',
                 },
-                toolFunction: {
+                selectedOperation: {
                   op: 'resample_to_granularity',
                   name: 'Resample to granularity',
-                  inputs: [
-                    {
-                      description: null,
-                      name: 'Time series.',
-                      param: 'series',
-                      types: ['ts'],
-                    },
-                  ],
+                  version: '1.0',
                 },
               },
               id: '9-RiktpSALNrlmwqoUPkt',
@@ -845,25 +792,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
             {
               id: 'I3ezdixmgmf1ux-DRVZvs',
               data: {
-                toolFunction: {
+                selectedOperation: {
                   op: 'sub',
-                  name: 'Subtraction',
-                  inputs: [
-                    {
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'a',
-                      types: ['ts', 'const'],
-                    },
-                    {
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'b',
-                      types: ['ts', 'const'],
-                    },
-                  ],
+                  version: '1.0',
                 },
-                functionData: {},
+                parameterValues: {},
               },
               position: {
                 x: 806.6793388429753,
@@ -954,21 +887,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
               type: 'ToolboxFunction',
               id: 'Tzcchda282s2PTA-84dMa',
               data: {
-                toolFunction: {
-                  name: 'Saviztky-Golay',
-                  category: 'Smooth',
+                selectedOperation: {
                   op: 'sg',
-                  inputs: [
-                    {
-                      description:
-                        'Time series to be smoothed. The series must have a pandas.DatetimeIndex.',
-                      name: 'Time series.',
-                      param: 'data',
-                      types: ['ts'],
-                    },
-                  ],
+                  version: '1.0',
                 },
-                functionData: {
+                parameterValues: {
                   window_length: 3,
                   polyorder: 50,
                 },
@@ -1004,14 +927,20 @@ describe('getStepsFromWorkflowReactFlow', () => {
 
     const workflow = workflows[1];
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      fullListOfOperations
+    );
 
     expect(steps).toEqual([
       {
         step: 0,
         op: 'resample_to_granularity',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'ts',
             value: 'RvXihRaJJujRDDFKC4D1-',
           },
@@ -1024,8 +953,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 1,
         op: 'resample_to_granularity',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'ts',
             value: 'j350Z4nwnOfk212Nu3bks',
           },
@@ -1038,22 +969,30 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 2,
         op: 'sub',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'result',
             value: 1,
           },
           {
+            param: 'b',
             type: 'result',
             value: 0,
           },
         ],
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 3,
         op: 'sg',
+        version: '1.0',
         inputs: [
           {
+            param: 'data',
             type: 'result',
             value: 2,
           },
@@ -1066,8 +1005,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 4,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'result',
             value: 3,
           },
@@ -1141,7 +1082,6 @@ describe('getStepsFromWorkflowReactFlow', () => {
         version: 'v2',
         preferredUnit: '',
         enabled: true,
-        lineStyle: 'solid',
       },
       {
         statisticsCalls: [
@@ -1200,101 +1140,13 @@ describe('getStepsFromWorkflowReactFlow', () => {
               },
               type: 'ToolboxFunction',
               data: {
-                functionData: {
+                parameterValues: {
                   wavelet: 'db8',
                   level: 2,
                 },
-                toolFunction: {
+                selectedOperations: {
                   op: 'wavelet_filter',
-                  outputs: [
-                    {
-                      types: ['ts'],
-                      name: 'Filtered time series',
-                      description: null,
-                    },
-                  ],
-                  parameters: [
-                    {
-                      description:
-                        'The number of wavelet decomposition levels (typically 1 through 6) to use.',
-                      param: 'level',
-                      type: 'int',
-                      name: 'Level.',
-                      options: null,
-                      default_value: 2,
-                    },
-                    {
-                      options: [
-                        {
-                          label: 'DAUBECHIES_1',
-                          value: 'db1',
-                        },
-                        {
-                          label: 'DAUBECHIES_2',
-                          value: 'db2',
-                        },
-                        {
-                          label: 'DAUBECHIES_3',
-                          value: 'db3',
-                        },
-                        {
-                          value: 'db4',
-                          label: 'DAUBECHIES_4',
-                        },
-                        {
-                          label: 'DAUBECHIES_5',
-                          value: 'db5',
-                        },
-                        {
-                          label: 'DAUBECHIES_6',
-                          value: 'db6',
-                        },
-                        {
-                          value: 'db7',
-                          label: 'DAUBECHIES_7',
-                        },
-                        {
-                          label: 'DAUBECHIES_8',
-                          value: 'db8',
-                        },
-                        {
-                          label: 'SYMLETS_1',
-                          value: 'sym1',
-                        },
-                        {
-                          label: 'SYMLETS_2',
-                          value: 'sym2',
-                        },
-                        {
-                          value: 'sym3',
-                          label: 'SYMLETS_3',
-                        },
-                        {
-                          value: 'sym4',
-                          label: 'SYMLETS_4',
-                        },
-                      ],
-                      name: 'Type.',
-                      default_value: 'db8',
-                      type: 'str',
-                      description:
-                        'The default is a Daubechies wavelet of order 8 (*db8*). For other types of wavelets see consult the\n`pywavelets pacakge <https://pywavelets.readthedocs.io/en/latest/ref/wavelets.html>`_.\nThe thresholding methods assume an orthogonal wavelet transform and may not choose the threshold\nappropriately for biorthogonal wavelets. Orthogonal wavelets are desirable because white noise in\nthe input remains white noise in the sub-bands. Therefore one should choose one of the db[1-20], sym[2-20]\nor coif[1-5] type wavelet filters.',
-                      param: 'wavelet',
-                    },
-                  ],
-                  inputs: [
-                    {
-                      param: 'data',
-                      name: 'Time series.',
-                      types: ['ts'],
-                      description:
-                        'The data to be filtered. The series must have a pandas.DatetimeIndex.',
-                    },
-                  ],
-                  name: 'Wavelet de-noising',
-                  description:
-                    'Wavelets approach to filtering industrial data can be very powerful as it uses a *dual* frequency-time\nrepresentation of the original signal, which allows separating noise frequencies from valuable signal frequencies.\nFor more on wavelet filter or other application see https://en.wikipedia.org/wiki/Wavelet',
-                  category: 'Filter',
+                  version: '1.0',
                 },
               },
               id: 'tA9_ksBh90vpmDi786MgM',
@@ -1316,7 +1168,6 @@ describe('getStepsFromWorkflowReactFlow', () => {
           ],
           position: [0, 0],
         },
-        lineStyle: 'solid',
         lineWeight: 1,
         createdAt: 1638148048781,
         preferredUnit: '',
@@ -1435,45 +1286,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
             {
               id: 'E98pnEDeIkFFYZQTYqzGW',
               data: {
-                functionData: {},
-                toolFunction: {
-                  description:
-                    'The difference between two time series or numbers.',
-                  category: 'Operators',
-                  parameters: [
-                    {
-                      name: 'Auto-align',
-                      options: null,
-                      type: 'bool',
-                      param: 'align_timesteps',
-                      description:
-                        'Automatically align time stamp  of input time series. Default is False.',
-                      default_value: false,
-                    },
-                  ],
-                  inputs: [
-                    {
-                      types: ['ts', 'const'],
-                      name: 'Time-series or number.',
-                      description: null,
-                      param: 'a',
-                    },
-                    {
-                      name: 'Time-series or number.',
-                      param: 'b',
-                      types: ['ts', 'const'],
-                      description: null,
-                    },
-                  ],
-                  outputs: [
-                    {
-                      types: ['ts', 'const'],
-                      description: null,
-                      name: 'Difference between both input variables.',
-                    },
-                  ],
+                parameterValues: {},
+                selectedOperation: {
                   op: 'sub',
-                  name: 'Subtraction',
+                  version: '1.0',
                 },
               },
               type: 'ToolboxFunction',
@@ -1524,24 +1340,30 @@ describe('getStepsFromWorkflowReactFlow', () => {
             hash: -1514543773,
           },
         ],
-        lineStyle: 'solid',
       },
-    ];
+    ] as ChartWorkflowV2[];
 
     const workflow = workflows[3];
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      fullListOfOperations
+    );
 
     expect(steps).toEqual([
       {
         step: 0,
         op: 'sub',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'ts',
             value: 'z4_SabhZ-LQjPx53WhSF5',
           },
           {
+            param: 'b',
             type: 'ts',
             value: 'bHi5m84gI7hwFnPbQQ1BQ',
           },
@@ -1553,8 +1375,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'result',
             value: 0,
           },
@@ -1690,99 +1514,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
                 y: 241,
               },
               data: {
-                toolFunction: {
-                  description:
-                    'Wavelets approach to filtering industrial data can be very powerful as it uses a *dual* frequency-time\nrepresentation of the original signal, which allows separating noise frequencies from valuable signal frequencies.\nFor more on wavelet filter or other application see https://en.wikipedia.org/wiki/Wavelet',
-                  inputs: [
-                    {
-                      types: ['ts'],
-                      name: 'Time series.',
-                      description:
-                        'The data to be filtered. The series must have a pandas.DatetimeIndex.',
-                      param: 'data',
-                    },
-                  ],
+                selectedOperation: {
                   op: 'wavelet_filter',
-                  outputs: [
-                    {
-                      types: ['ts'],
-                      name: 'Filtered time series',
-                      description: null,
-                    },
-                  ],
-                  parameters: [
-                    {
-                      name: 'Level.',
-                      default_value: 2,
-                      type: 'int',
-                      param: 'level',
-                      description:
-                        'The number of wavelet decomposition levels (typically 1 through 6) to use.',
-                      options: null,
-                    },
-                    {
-                      param: 'wavelet',
-                      name: 'Type.',
-                      default_value: 'db8',
-                      options: [
-                        {
-                          value: 'db1',
-                          label: 'DAUBECHIES_1',
-                        },
-                        {
-                          value: 'db2',
-                          label: 'DAUBECHIES_2',
-                        },
-                        {
-                          label: 'DAUBECHIES_3',
-                          value: 'db3',
-                        },
-                        {
-                          value: 'db4',
-                          label: 'DAUBECHIES_4',
-                        },
-                        {
-                          value: 'db5',
-                          label: 'DAUBECHIES_5',
-                        },
-                        {
-                          value: 'db6',
-                          label: 'DAUBECHIES_6',
-                        },
-                        {
-                          label: 'DAUBECHIES_7',
-                          value: 'db7',
-                        },
-                        {
-                          value: 'db8',
-                          label: 'DAUBECHIES_8',
-                        },
-                        {
-                          value: 'sym1',
-                          label: 'SYMLETS_1',
-                        },
-                        {
-                          value: 'sym2',
-                          label: 'SYMLETS_2',
-                        },
-                        {
-                          label: 'SYMLETS_3',
-                          value: 'sym3',
-                        },
-                        {
-                          value: 'sym4',
-                          label: 'SYMLETS_4',
-                        },
-                      ],
-                      type: 'str',
-                      description:
-                        'The default is a Daubechies wavelet of order 8 (*db8*). For other types of wavelets see consult the\n`pywavelets pacakge <https://pywavelets.readthedocs.io/en/latest/ref/wavelets.html>`_.\nThe thresholding methods assume an orthogonal wavelet transform and may not choose the threshold\nappropriately for biorthogonal wavelets. Orthogonal wavelets are desirable because white noise in\nthe input remains white noise in the sub-bands. Therefore one should choose one of the db[1-20], sym[2-20]\nor coif[1-5] type wavelet filters.',
-                    },
-                  ],
-                  category: 'Filter',
-                  name: 'Wavelet de-noising',
+                  version: '1.0',
                 },
-                functionData: {
+                parameterValues: {
                   wavelet: 'db8',
                   level: 2,
                 },
@@ -1925,43 +1661,9 @@ describe('getStepsFromWorkflowReactFlow', () => {
               id: 'wGmlTDH_iPc39ImqKjGEQ',
               type: 'ToolboxFunction',
               data: {
-                toolFunction: {
-                  category: 'Operators',
-                  description: 'Multiply two time series or numbers.',
-                  inputs: [
-                    {
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'a',
-                      types: ['ts', 'const'],
-                    },
-                    {
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'b',
-                      types: ['ts', 'const'],
-                    },
-                  ],
-                  name: 'Multiplication',
+                selectedOperation: {
                   op: 'mul',
-                  outputs: [
-                    {
-                      description: null,
-                      name: 'pandas.Series : Multiplication of both input variables.',
-                      types: ['ts', 'const'],
-                    },
-                  ],
-                  parameters: [
-                    {
-                      default_value: false,
-                      description:
-                        'Automatically align time stamp  of input time series. Default is False.',
-                      name: 'Auto-align',
-                      options: null,
-                      param: 'align_timesteps',
-                      type: 'bool',
-                    },
-                  ],
+                  version: '1.0',
                 },
                 functionData: {},
               },
@@ -2004,22 +1706,29 @@ describe('getStepsFromWorkflowReactFlow', () => {
         version: 'v2',
         lineWeight: 1,
       },
-    ];
+    ] as ChartWorkflowV2[];
 
     const workflow = workflows[3];
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      fullListOfOperations
+    );
 
     expect(steps).toEqual([
       {
         step: 0,
         op: 'mul',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'ts',
             value: 'z4_SabhZ-LQjPx53WhSF5',
           },
           {
+            param: 'b',
             type: 'ts',
             value: 'bHi5m84gI7hwFnPbQQ1BQ',
           },
@@ -2031,8 +1740,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'result',
             value: 0,
           },
@@ -2252,14 +1963,20 @@ describe('getStepsFromWorkflowReactFlow', () => {
     const workflow = chart.workflowCollection?.[0] as ChartWorkflowV2;
     const workflows = chart.workflowCollection as ChartWorkflowV2[];
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      fullListOfOperations
+    );
 
     expect(steps).toEqual([
       {
         step: 0,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'ts',
             value: '',
           },
@@ -2370,45 +2087,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
               id: 'J-R87u1PMUdi5CIXM5ove',
               type: 'ToolboxFunction',
               data: {
-                toolFunction: {
-                  category: 'Operators',
-                  description: 'Add any two time series or numbers.',
-                  inputs: [
-                    {
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'a',
-                      types: ['ts', 'const'],
-                    },
-                    {
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'b',
-                      types: ['ts', 'const'],
-                    },
-                  ],
-                  name: 'Add',
+                selectedOperation: {
                   op: 'add',
-                  outputs: [
-                    {
-                      description: null,
-                      name: 'Sum of both input variables.',
-                      types: ['ts', 'const'],
-                    },
-                  ],
-                  parameters: [
-                    {
-                      default_value: false,
-                      description:
-                        'Automatically align time stamp  of input time series. Default is False.',
-                      name: 'Auto-align',
-                      options: null,
-                      param: 'align_timesteps',
-                      type: 'bool',
-                    },
-                  ],
+                  version: '1.0',
                 },
-                functionData: {},
+                parameterValues: {},
               },
               position: {
                 x: 442,
@@ -2453,18 +2136,25 @@ describe('getStepsFromWorkflowReactFlow', () => {
 
     const workflow = workflows[1];
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      fullListOfOperations
+    );
 
     expect(steps).toEqual([
       {
         step: 0,
         op: 'add',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'ts',
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
           {
+            param: 'b',
             type: 'ts',
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
@@ -2476,8 +2166,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 1,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'result',
             value: 0,
           },
@@ -2596,44 +2288,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
             },
             {
               data: {
-                functionData: {},
-                toolFunction: {
-                  outputs: [
-                    {
-                      types: ['ts', 'const'],
-                      name: 'Sum of both input variables.',
-                      description: null,
-                    },
-                  ],
-                  parameters: [
-                    {
-                      description:
-                        'Automatically align time stamp  of input time series. Default is False.',
-                      name: 'Auto-align',
-                      options: null,
-                      param: 'align_timesteps',
-                      default_value: false,
-                      type: 'bool',
-                    },
-                  ],
-                  description: 'Add any two time series or numbers.',
-                  inputs: [
-                    {
-                      param: 'a',
-                      name: 'Time-series or number.',
-                      types: ['ts', 'const'],
-                      description: null,
-                    },
-                    {
-                      types: ['ts', 'const'],
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'b',
-                    },
-                  ],
-                  name: 'Add',
-                  category: 'Operators',
+                parameterValues: {},
+                selectedOperation: {
                   op: 'add',
+                  version: '1.0',
                 },
               },
               id: 'J-R87u1PMUdi5CIXM5ove',
@@ -2707,45 +2365,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
               id: 'xPyoKmrM38UczqiY-w70X',
               type: 'ToolboxFunction',
               data: {
-                toolFunction: {
-                  category: 'Operators',
-                  description: 'Add any two time series or numbers.',
-                  inputs: [
-                    {
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'a',
-                      types: ['ts', 'const'],
-                    },
-                    {
-                      description: null,
-                      name: 'Time-series or number.',
-                      param: 'b',
-                      types: ['ts', 'const'],
-                    },
-                  ],
-                  name: 'Add',
+                selectedOperation: {
                   op: 'add',
-                  outputs: [
-                    {
-                      description: null,
-                      name: 'Sum of both input variables.',
-                      types: ['ts', 'const'],
-                    },
-                  ],
-                  parameters: [
-                    {
-                      default_value: false,
-                      description:
-                        'Automatically align time stamp  of input time series. Default is False.',
-                      name: 'Auto-align',
-                      options: null,
-                      param: 'align_timesteps',
-                      type: 'bool',
-                    },
-                  ],
+                  version: '1.0',
                 },
-                functionData: {},
+                parameterValues: {},
               },
               position: {
                 x: 561.1234705563234,
@@ -2756,47 +2380,11 @@ describe('getStepsFromWorkflowReactFlow', () => {
               id: 'RYb_k7vapfIgTNdqTdlHU',
               type: 'ToolboxFunction',
               data: {
-                toolFunction: {
-                  category: 'Operators',
-                  description:
-                    'Given an interval, values of the timeseries outside the interval are clipped to the interval edges.',
-                  inputs: [
-                    {
-                      description: null,
-                      name: 'time-series',
-                      param: 'x',
-                      types: ['ts', 'const'],
-                    },
-                  ],
-                  name: 'Clip(low, high)',
+                selectedOperation: {
                   op: 'clip',
-                  outputs: [
-                    {
-                      description: null,
-                      name: 'Clipped version of the input time series',
-                      types: ['ts', 'const'],
-                    },
-                  ],
-                  parameters: [
-                    {
-                      default_value: null,
-                      description: null,
-                      name: 'lower limit of the clipping interval',
-                      options: null,
-                      param: 'low',
-                      type: 'float',
-                    },
-                    {
-                      default_value: null,
-                      description: null,
-                      name: 'upper limit of the clipping interval',
-                      options: null,
-                      param: 'high',
-                      type: 'float',
-                    },
-                  ],
+                  version: '1.0',
                 },
-                functionData: {
+                parameterValues: {
                   low: -20,
                   high: 10,
                 },
@@ -2847,22 +2435,29 @@ describe('getStepsFromWorkflowReactFlow', () => {
         type: 'workflow',
         calls: [],
       },
-    ];
+    ] as ChartWorkflowV2[];
 
     const workflow = workflows[2];
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      fullListOfOperations
+    );
 
     expect(steps).toEqual([
       {
         step: 0,
         op: 'add',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'ts',
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
           {
+            param: 'b',
             type: 'ts',
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
@@ -2874,12 +2469,15 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 1,
         op: 'add',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'ts',
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
           {
+            param: 'b',
             type: 'ts',
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
@@ -2891,8 +2489,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 2,
         op: 'clip',
+        version: '1.0',
         inputs: [
           {
+            param: 'x',
             type: 'result',
             value: 0,
           },
@@ -2905,12 +2505,15 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 3,
         op: 'add',
+        version: '1.0',
         inputs: [
           {
+            param: 'a',
             type: 'result',
             value: 2,
           },
           {
+            param: 'b',
             type: 'result',
             value: 0,
           },
@@ -2922,8 +2525,10 @@ describe('getStepsFromWorkflowReactFlow', () => {
       {
         step: 4,
         op: 'PASSTHROUGH',
+        version: '1.0',
         inputs: [
           {
+            param: 'series',
             type: 'result',
             value: 3,
           },
