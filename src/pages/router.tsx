@@ -1,38 +1,38 @@
-import React from 'react';
-import { Route, Router, Switch } from 'react-router-dom';
-import Home from 'pages/Home';
-import ClassifierPage from 'pages/Classifier/Classifier';
-import { createBrowserHistory } from 'history';
 import { ToastContainer } from '@cognite/cogs.js';
-import { ClassifierContext } from 'machines/classifier/contexts/ClassifierContext';
 import { PermissionWrapper } from 'components/PermissionWrapper';
-import LabelPage from './Labels/pages/Label/Label';
+import { ClassifierContext } from 'machines/classifier/contexts/ClassifierContext';
+import ClassifierPage from 'pages/Classifier/Classifier';
+import Home from 'pages/Home';
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { LabelsPage } from './Labels/Labels';
+import LabelPage from './Labels/pages/Label/Label';
 
 export const MainRouter = () => {
-  const history = createBrowserHistory();
-
   return (
     <>
       <ToastContainer />
 
-      <Router history={history}>
+      <BrowserRouter>
         <PermissionWrapper>
-          <Switch>
-            <Route path="/:project/documents/classifier/:classifierName">
-              <ClassifierContext>
-                <ClassifierPage />
-              </ClassifierContext>
-            </Route>
+          <Routes>
+            <Route
+              path="/:project/documents/classifier/:classifierName"
+              element={
+                <ClassifierContext>
+                  <ClassifierPage />
+                </ClassifierContext>
+              }
+            />
             <Route
               path="/:project/documents/labels/:externalId"
-              component={LabelPage}
+              element={<LabelPage />}
             />
-            <Route path="/:project/documents/labels" component={LabelsPage} />
-            <Route path="/:project/documents" component={Home} />
-          </Switch>
+            <Route path="/:project/documents/labels" element={<LabelsPage />} />
+            <Route path="/:project/documents" element={<Home />} />
+          </Routes>
         </PermissionWrapper>
-      </Router>
+      </BrowserRouter>
     </>
   );
 };

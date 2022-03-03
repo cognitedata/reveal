@@ -11,6 +11,7 @@ jest.mock('react-router-dom', () => ({
     classifierName: mockClassifierName,
   }),
   useLocation: () => ({ search: '' }),
+  useNavigate: () => undefined,
 }));
 
 describe('page:ManageTrainingSet', () => {

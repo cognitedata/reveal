@@ -7,6 +7,7 @@ import { ActiveModelContainer } from './ActiveModelContainer';
 jest.mock('react-router-dom', () => ({
   useParams: () => ({ project: 'test' }),
   useLocation: () => ({ search: '' }),
+  useNavigate: () => undefined,
 }));
 
 describe('component:ActiveModelContainer', () => {

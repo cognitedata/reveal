@@ -1,6 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useBaseUrl, useProjectUrl } from './useBaseUrl';
 
 export type Navigation = {
@@ -24,40 +23,40 @@ const useBuildUrl = () => {
 };
 
 export const useNavigation = (): Navigation => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const baseUrl = useBaseUrl();
   const buildUrl = useBuildUrl();
   const projectUrl = useProjectUrl();
 
   const toDashboard = () => {
     const url = buildUrl(`/${projectUrl}`);
-    history.push(url);
+    navigate(url);
   };
 
   const toHome = () => {
     const url = buildUrl(baseUrl);
-    history.push(url);
+    navigate(url);
   };
 
   const toLabel = (externalId: string) => {
     const url = buildUrl(`${baseUrl}/labels/${encodeURIComponent(externalId)}`);
-    history.push(url);
+    navigate(url);
   };
 
   const toLabels = () => {
     const url = buildUrl(`${baseUrl}/labels`);
-    history.push(url);
+    navigate(url);
   };
 
   const toClassifier = (classifier: string) => {
     const url = buildUrl(
       `${baseUrl}/classifier/${encodeURIComponent(classifier)}`
     );
-    history.push(url);
+    navigate(url);
   };
 
   const goBack = () => {
-    history.goBack();
+    navigate(-1);
   };
 
   const reload = () => {
