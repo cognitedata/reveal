@@ -6,7 +6,6 @@ import * as THREE from 'three';
 
 import { CadMaterialManager } from '../CadMaterialManager';
 import { CogniteColors, RevealColors } from '../utilities/types';
-import { CadNode } from '../sector/CadNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
 
 import { NodeOutlineColor } from '@reveal/cad-styling';
@@ -14,8 +13,9 @@ import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShade
 
 import { RenderMode } from './RenderMode';
 
-import { LevelOfDetail, RootSectorNode, SectorNode } from '@reveal/cad-parsers';
 import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
+
+import { SceneComponentsProvider, NodeTypeExistences } from '../sector/SceneComponentsProvider';
 
 import log from '@reveal/logger';
 
@@ -23,8 +23,8 @@ export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
-  // Original input scene containing all geometry
-  private readonly _originalScene: THREE.Scene;
+  // Input scene containing all custom objects
+  // private readonly _originalScene: THREE.Scene;
 
   // Simple scene with a single triangle with UVs [0,1] in both directions
   // used for combining outputs into a single output
@@ -42,24 +42,11 @@ export class EffectRenderManager {
   // combining with rendered frame
   private readonly _ssaoBlurCombineScene: THREE.Scene;
 
-  // Holds all CAD models
-  private readonly _cadScene: THREE.Scene;
-
-  // "Working scene" used to hold "normal" objects, i.e.
-  // objects that are depth tested and not "ghosted". Populated
-  // during render()
-  private readonly _normalScene: THREE.Scene;
-  // "Working scene" used to hold objects that are rendered in front
-  // of other objects. Populated during render().
-  private readonly _inFrontScene: THREE.Scene;
-
   // Special scene needed to properly clear WebGL2 render targets
   private readonly _emptyScene: THREE.Scene;
 
-  // Used to build _normalScene during render()
-  private readonly _normalSceneBuilder: TemporarySceneBuilder;
-  // Used to build _infrontScene during render()
-  private readonly _inFrontSceneBuilder: TemporarySceneBuilder;
+  // Does the work of splitting the scene into different parts (normal, ghosted etc..)
+  private readonly _sceneComponentsProvider: SceneComponentsProvider;
 
   private _renderOptions: RenderOptions;
 
@@ -80,14 +67,13 @@ export class EffectRenderManager {
    * Holds state of how the last frame was rendered by `render()`. This is used to explicit clear
    * WebGL2 render targets which might cause geometry to "get stuck" after e.g. removing models.
    */
-  private _lastFrameSceneState = {
-    hasBackElements: true,
-    hasInFrontElements: true,
-    hasGhostElements: true,
-    hasCustomObjects: true
+  private _lastFrameNodeTypeExistences: NodeTypeExistences & { custom: boolean } = {
+    back: true,
+    inFront: true,
+    ghost: true,
+    custom: true
   };
 
-  private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly _outlineTexelSize = 2;
 
   private readonly _renderer: THREE.WebGLRenderer;
@@ -139,24 +125,19 @@ export class EffectRenderManager {
 
   constructor(
     renderer: THREE.WebGLRenderer,
-    scene: THREE.Scene,
+    sceneComponentsProvider: SceneComponentsProvider,
     materialManager: CadMaterialManager,
     options: RenderOptions
   ) {
     this._renderer = renderer;
     this._renderOptions = options;
     this._materialManager = materialManager;
+
+    this._sceneComponentsProvider = sceneComponentsProvider// new CadSceneComponentsProvider(this._materialManager, cadScene);
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
     this._renderTarget = null;
 
-    this._originalScene = scene;
-    this._cadScene = new THREE.Scene();
-    this._cadScene.autoUpdate = false;
-    this._normalScene = new THREE.Scene();
-    this._normalScene.autoUpdate = false;
-    this._inFrontScene = new THREE.Scene();
-    this._inFrontScene.autoUpdate = false;
     this._compositionScene = new THREE.Scene();
     this._compositionScene.autoUpdate = false;
     this._fxaaScene = new THREE.Scene();
@@ -293,9 +274,6 @@ export class EffectRenderManager {
     this.setupSsaoScene();
     this.setupSsaoBlurCombineScene();
     this.setupFxaaScene();
-
-    this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
-    this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
   }
 
   private supportsSsao(ssaoParameters: SsaoParameters) {
@@ -311,29 +289,64 @@ export class EffectRenderManager {
 
     try {
       renderStateHelper.setRenderTarget(this._renderTarget);
-      this.setVisibilityOfSectors(LevelOfDetail.Simple, false);
-      this.traverseForRootSectorNode(this._originalScene);
-      this.extractCadNodes(this._originalScene);
-
       this.clearTarget(this._renderTarget);
-      const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
-      if (hasBackElements && !hasGhostElements) {
+      this._sceneComponentsProvider.setVisibilityOfSimpleSectors(false);
+      const nodeTypeExistences: NodeTypeExistences = this._sceneComponentsProvider.splitScene();
+
+      if (nodeTypeExistences.back && !nodeTypeExistences.ghost) {
         this.renderNormalCadModelsFromBaseScene(camera, this._renderTarget);
-      } else if (hasBackElements && hasGhostElements) {
+      } else if (nodeTypeExistences.back && nodeTypeExistences.ghost) {
         this.renderNormalCadModels(camera, this._renderTarget);
-        this._normalSceneBuilder.restoreOriginalScene();
+        this._sceneComponentsProvider.restoreNormalScene();
       }
-      if (hasInFrontElements) {
+
+      if (nodeTypeExistences.inFront) {
         this.renderInFrontCadModels(camera);
-        this._inFrontSceneBuilder.restoreOriginalScene();
+        this._sceneComponentsProvider.restoreInFrontScene();
       }
     } finally {
       this._materialManager.setRenderMode(original.renderMode);
       renderStateHelper.resetState();
-      this.restoreCadNodes();
-      this.setVisibilityOfSectors(LevelOfDetail.Simple, true);
+
+      this._sceneComponentsProvider.restoreScene();
+      this._sceneComponentsProvider.setVisibilityOfSimpleSectors(true);
     }
+  }
+
+  private preRenderSetup(): [
+    {
+      autoClear: boolean;
+      clearAlpha: number;
+      renderMode: RenderMode;
+    },
+    WebGLRendererStateHelper
+  ] {
+    const renderStateHelper = new WebGLRendererStateHelper(this._renderer);
+    const originalRendererAttributes = {
+      autoClear: this._renderer.autoClear,
+      clearAlpha: this._renderer.getClearAlpha(),
+      renderMode: this._materialManager.getRenderMode()
+    };
+
+    renderStateHelper.setRenderTarget(this._renderTarget);
+    this.updateRenderSize(this._renderer);
+
+    this._renderer.info.autoReset = false;
+    this._renderer.info.reset();
+    renderStateHelper.autoClear = false;
+
+    this.clearTarget(this._ghostObjectRenderTarget);
+    this.clearTarget(this._compositionTarget);
+    this.clearTarget(this._customObjectRenderTarget);
+
+    // We use alpha to store special state for the next targets
+    this._renderer.setClearAlpha(0.0);
+    this.clearTarget(this._normalRenderedCadModelTarget);
+    this.clearTarget(this._inFrontRenderedCadModelTarget);
+    this._renderer.setClearAlpha(originalRendererAttributes.clearAlpha);
+
+    return [originalRendererAttributes, renderStateHelper];
   }
 
   public render(camera: THREE.PerspectiveCamera): void {
@@ -342,76 +355,50 @@ export class EffectRenderManager {
       log.debug('============== RENDER BEGIN ==============');
     }
 
-    const renderer = this._renderer;
-    const scene = this._originalScene;
+    this._renderer.info.autoReset = false;
+    this._renderer.info.reset();
 
-    const renderStateHelper = new WebGLRendererStateHelper(renderer);
-    const original = {
-      autoClear: renderer.autoClear,
-      clearAlpha: renderer.getClearAlpha(),
-      renderMode: this._materialManager.getRenderMode()
-    };
-
-    renderer.info.autoReset = false;
-    renderer.info.reset();
-    renderStateHelper.autoClear = false;
+    const [originalRendererAttributes, renderStateHelper] = this.preRenderSetup();
 
     try {
-      renderStateHelper.setRenderTarget(this._renderTarget);
-      this.updateRenderSize(renderer);
+      const lastFrameNodeTypeExistences = { ...this._lastFrameNodeTypeExistences };
+      const nodeExistences = this._sceneComponentsProvider.splitScene();
 
-      renderer.info.autoReset = false;
-      renderer.info.reset();
-      renderStateHelper.autoClear = false;
+      const hasCustomObjects = this._sceneComponentsProvider.getCustomScene().children.length > 0;
+      this._lastFrameNodeTypeExistences = { ...nodeExistences, custom: hasCustomObjects };
 
-      this.traverseForRootSectorNode(scene);
-      this.extractCadNodes(scene);
-
-      // Clear targets
-      this.clearTarget(this._ghostObjectRenderTarget);
-      this.clearTarget(this._compositionTarget);
-      this.clearTarget(this._customObjectRenderTarget);
-      // We use alpha to store special state for the next targets
-      renderer.setClearAlpha(0.0);
-      this.clearTarget(this._normalRenderedCadModelTarget);
-      this.clearTarget(this._inFrontRenderedCadModelTarget);
-      renderer.setClearAlpha(original.clearAlpha);
-
-      const lastFrameSceneState = { ...this._lastFrameSceneState };
-      const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
-      const hasCustomObjects = scene.children.length > 0;
-      this._lastFrameSceneState = { hasBackElements, hasInFrontElements, hasGhostElements, hasCustomObjects };
-
-      if (hasBackElements && !hasGhostElements) {
+      if (nodeExistences.back && !nodeExistences.ghost) {
         this.renderNormalCadModelsFromBaseScene(camera);
-      } else if (hasBackElements && hasGhostElements) {
+      } else if (nodeExistences.back && nodeExistences.ghost) {
         this.renderNormalCadModels(camera);
-        this._normalSceneBuilder.restoreOriginalScene();
+        // this._normalSceneBuilder.restoreOriginalScene();
+        this._sceneComponentsProvider.restoreNormalScene();
         this.renderGhostedCadModelsFromBaseScene(camera);
-      } else if (!hasBackElements && hasGhostElements) {
+      } else if (!nodeExistences.back && nodeExistences.ghost) {
         this.renderGhostedCadModelsFromBaseScene(camera);
       }
 
-      if (hasInFrontElements) {
+      if (nodeExistences.inFront) {
         this.renderInFrontCadModels(camera);
-        this._inFrontSceneBuilder.restoreOriginalScene();
+        this._sceneComponentsProvider.restoreInFrontScene();
       }
+
       if (hasCustomObjects) {
-        this.renderCustomObjects(scene, camera);
+        this.renderCustomObjects(this._sceneComponentsProvider.getCustomScene(), camera);
       }
 
       // Due to how WebGL2 works and how ThreeJS applies changes from 'clear', we need to
       // render something for the clear to have effect
-      if (!hasBackElements && lastFrameSceneState.hasBackElements) {
+      if (!nodeExistences.back && lastFrameNodeTypeExistences.back) {
         this.explicitFlushRender(camera, this._normalRenderedCadModelTarget);
       }
-      if (!hasGhostElements && lastFrameSceneState.hasGhostElements) {
+      if (!nodeExistences.ghost && lastFrameNodeTypeExistences.ghost) {
         this.explicitFlushRender(camera, this._ghostObjectRenderTarget);
       }
-      if (!hasInFrontElements && lastFrameSceneState.hasInFrontElements) {
+      if (!nodeExistences.inFront && lastFrameNodeTypeExistences.inFront) {
         this.explicitFlushRender(camera, this._inFrontRenderedCadModelTarget);
       }
-      if (!hasCustomObjects && lastFrameSceneState.hasInFrontElements) {
+      if (!hasCustomObjects && lastFrameNodeTypeExistences.inFront) {
         this.explicitFlushRender(camera, this._customObjectRenderTarget);
       }
 
@@ -423,7 +410,7 @@ export class EffectRenderManager {
           this.renderComposition(camera, this._compositionTarget);
 
           // Anti-aliased version to screen
-          renderStateHelper.autoClear = original.autoClear;
+          renderStateHelper.autoClear = originalRendererAttributes.autoClear;
 
           if (supportsSsao) {
             this.renderSsao(this._ssaoTarget, camera);
@@ -434,7 +421,7 @@ export class EffectRenderManager {
           break;
 
         case AntiAliasingMode.NoAA:
-          renderer.autoClear = original.autoClear;
+          this._renderer.autoClear = originalRendererAttributes.autoClear;
 
           if (supportsSsao) {
             this.renderComposition(camera, this._compositionTarget);
@@ -452,30 +439,15 @@ export class EffectRenderManager {
     } finally {
       // Restore state
       renderStateHelper.resetState();
-      // renderer.setRenderTarget(original.renderTarget);
-      this._materialManager.setRenderMode(original.renderMode);
-      this.restoreCadNodes();
+      this._materialManager.setRenderMode(originalRendererAttributes.renderMode);
 
       if (this._debugRenderTimings) {
         log.debug('=============== RENDER END ===============');
       }
+
+      this._sceneComponentsProvider.restoreScene();
     }
-  }
 
-  private restoreCadNodes() {
-    this._rootSectorNodeBuffer.forEach(p => {
-      p[1].add(p[0]);
-    });
-    this._rootSectorNodeBuffer.clear();
-  }
-
-  private extractCadNodes(scene: THREE.Scene) {
-    this._rootSectorNodeBuffer.forEach(p => {
-      if (p[1].parent !== scene && p[1].parent !== null && p[1].parent.parent !== scene) {
-        throw new Error('CadNode must be put at scene root');
-      }
-      this._cadScene.add(p[0]);
-    });
   }
 
   public setRenderTarget(target: THREE.WebGLRenderTarget | null): void {
@@ -504,80 +476,13 @@ export class EffectRenderManager {
     this.renderStep('flushRender', this._emptyScene, camera);
   }
 
-  private splitToScenes(): { hasBackElements: boolean; hasInFrontElements: boolean; hasGhostElements: boolean } {
-    const result = { hasBackElements: false, hasInFrontElements: false, hasGhostElements: false };
-
-    // Determine what rendering stages will be active
-    this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
-      const cadNode: CadNode = rootSectorNodeData[1];
-
-      const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
-      const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
-      const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
-      const hasBackElements = backSet.count > 0;
-      const hasInFrontElements = infrontSet.count > 0;
-      const hasGhostElements = ghostSet.count > 0;
-      result.hasBackElements = result.hasBackElements || hasBackElements;
-      result.hasInFrontElements = result.hasInFrontElements || hasInFrontElements;
-      result.hasGhostElements = result.hasGhostElements || hasGhostElements;
-    });
-
-    // Split scenes based on what render stages we need
-    const { hasBackElements, hasInFrontElements, hasGhostElements } = result;
-    this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
-      const root: RootSectorNode = rootSectorNodeData[0];
-      const cadNode: CadNode = rootSectorNodeData[1];
-
-      const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
-      const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
-
-      const backRoot = new THREE.Object3D();
-      backRoot.applyMatrix4(root.matrix);
-      if (hasBackElements && hasGhostElements) {
-        this._normalScene.add(backRoot);
-      }
-
-      const infrontRoot = new THREE.Object3D();
-      infrontRoot.applyMatrix4(root.matrix);
-      if (hasInFrontElements) {
-        this._inFrontScene.add(infrontRoot);
-      }
-
-      const objectStack: THREE.Object3D[] = [rootSectorNodeData[0]];
-      while (objectStack.length > 0) {
-        const element = objectStack.pop()!;
-        const objectTreeIndices = element.userData.treeIndices as Map<number, number> | undefined;
-
-        if (objectTreeIndices) {
-          if (hasInFrontElements && infrontSet.hasIntersectionWith(objectTreeIndices)) {
-            this._inFrontSceneBuilder.addElement(element, infrontRoot);
-          }
-          // Note! When we don't have any ghost, we use _cadScene to hold back objects, so no action required
-          if (hasBackElements && !hasGhostElements) {
-          } else if (hasGhostElements && backSet.hasIntersectionWith(objectTreeIndices)) {
-            this._normalSceneBuilder.addElement(element, backRoot);
-            // Use _cadScene to hold ghost objects (we assume we have more ghost objects than back objects)
-          }
-
-          // TODO 2020-09-18 larsmoa: A potential optimization to rendering is to avoid rendering the full
-          // set of objects if most are hidden.
-        } else {
-          // Not a leaf, traverse children
-          objectStack.push(...element.children);
-        }
-      }
-    });
-
-    return result;
-  }
-
   private renderNormalCadModels(
     camera: THREE.PerspectiveCamera,
     target: THREE.WebGLRenderTarget | null = this._normalRenderedCadModelTarget
   ) {
-    this._normalSceneBuilder.populateTemporaryScene();
+    this._sceneComponentsProvider.prepareNormalScene();
     this._renderer.setRenderTarget(target);
-    this.renderStep('normal', this._normalScene, camera);
+    this.renderStep('normal', this._sceneComponentsProvider.getNormalScene(), camera);
   }
 
   private renderNormalCadModelsFromBaseScene(
@@ -585,23 +490,35 @@ export class EffectRenderManager {
     target: THREE.WebGLRenderTarget | null = this._normalRenderedCadModelTarget
   ) {
     this._renderer.setRenderTarget(target);
-    this.renderStep('normalCadModelsFromBaseScene', this._cadScene, camera);
+    this.renderStep(
+      'normalCadModelsFromBaseScene',
+      this._sceneComponentsProvider.getCadScene(),
+      camera
+    );
   }
 
   private renderInFrontCadModels(
     camera: THREE.PerspectiveCamera,
     target: THREE.WebGLRenderTarget | null = this._inFrontRenderedCadModelTarget
   ) {
-    this._inFrontSceneBuilder.populateTemporaryScene();
+    this._sceneComponentsProvider.prepareInFrontScene();
     this._renderer.setRenderTarget(target);
     this._materialManager.setRenderMode(RenderMode.Effects);
-    this.renderStep('infront', this._inFrontScene, camera);
+    this.renderStep(
+      'infront',
+      this._sceneComponentsProvider.getInFrontScene(),
+      camera
+    );
   }
 
   private renderGhostedCadModelsFromBaseScene(camera: THREE.PerspectiveCamera) {
     this._renderer.setRenderTarget(this._ghostObjectRenderTarget);
     this._materialManager.setRenderMode(RenderMode.Ghost);
-    this.renderStep('ghosted', this._cadScene, camera);
+    this.renderStep(
+      'ghosted',
+      this._sceneComponentsProvider.getGhostScene(),
+      camera
+    );
   }
 
   private renderCustomObjects(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -836,30 +753,6 @@ export class EffectRenderManager {
     return geometry;
   }
 
-  private traverseForRootSectorNode(root: THREE.Object3D) {
-    const objectStack = [root];
-
-    while (objectStack.length > 0) {
-      const element = objectStack.pop()!;
-      if (element instanceof RootSectorNode) {
-        const cadNode = element.parent! as CadNode;
-        if (cadNode.visible) {
-          this._rootSectorNodeBuffer.add([element, cadNode]);
-        }
-      } else if (!(element instanceof THREE.Group)) {
-        objectStack.push(...element.children);
-      }
-    }
-  }
-
-  private setVisibilityOfSectors(levelOfDetail: LevelOfDetail, visible: boolean) {
-    this._originalScene.traverse(x => {
-      if (x instanceof SectorNode && x.levelOfDetail === levelOfDetail) {
-        x.visible = visible;
-      }
-    });
-  }
-
   /**
    * Assign SpectorJS metadata containing names for the render targets when running Reveal
    * in development mode.
@@ -925,49 +818,4 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
   outlineTextureData[4 * colorIndex + 1] = Math.floor(255 * color.g);
   outlineTextureData[4 * colorIndex + 2] = Math.floor(255 * color.b);
   outlineTextureData[4 * colorIndex + 3] = 255;
-}
-
-/**
- * Holds parent-child relationship for a ThreeJS element in order to restore
- * the relationship after moving it temporarily.
- */
-type Object3DStructure = {
-  /**
-   * Element described.
-   */
-  object: THREE.Object3D;
-  /**
-   * The previous parent of the element.
-   */
-  parent: THREE.Object3D;
-  /**
-   * The object that temporarily holds the elemnt.
-   */
-  sceneParent: THREE.Object3D;
-};
-
-class TemporarySceneBuilder {
-  private readonly buffer: Object3DStructure[];
-  private readonly temporaryScene: THREE.Scene;
-
-  constructor(temporaryScene: THREE.Scene) {
-    this.buffer = [];
-    this.temporaryScene = temporaryScene;
-  }
-
-  addElement(element: THREE.Object3D, temporaryModelRootElement: THREE.Object3D): void {
-    this.buffer.push({ object: element, parent: element.parent!, sceneParent: temporaryModelRootElement });
-  }
-
-  populateTemporaryScene(): void {
-    this.buffer.forEach(x => x.sceneParent.add(x.object));
-  }
-
-  restoreOriginalScene(): void {
-    this.buffer.forEach(p => {
-      p.parent.add(p.object);
-    });
-    this.buffer.length = 0; // clear
-    this.temporaryScene.remove(...this.temporaryScene.children);
-  }
 }
