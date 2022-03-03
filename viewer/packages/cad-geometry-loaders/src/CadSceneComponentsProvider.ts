@@ -141,8 +141,6 @@ export class CadSceneComponentsProvider implements SceneComponentsProvider {
   private transferCadNodesToCadScene(fromScene: THREE.Scene): void {
     const objectStack: THREE.Object3D[] = [fromScene];
 
-    let count = 0;
-
     while (objectStack.length > 0) {
       const element = objectStack.pop()!;
       if (element instanceof RootSectorNode) {
@@ -151,8 +149,6 @@ export class CadSceneComponentsProvider implements SceneComponentsProvider {
           if (cadNode.parent !== fromScene && cadNode.parent !== null && cadNode.parent.parent !== fromScene) {
             throw new Error('CadNode must be put at scene root');
           }
-
-          count++;
 
           this._cadScene.add(element);
           this._rootSectorNodeBuffer.add([element, cadNode]);
