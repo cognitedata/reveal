@@ -1,4 +1,4 @@
-name: Release & Deploy Platypus CLI Documentation
+name: Move Platypus CLI Documentation to public docs
 on:
   push:
     branches:
@@ -8,9 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: GuillaumeFalourd/copy-push-files@v1
+      - uses: andstor/copycat-action@v3
         with:
-          target_branch: docs
-          source_files: ./apps/platypus-cdf-cli/README.md
-          remote_repository: https://github.com/cognitedata/platypus
-          access_token: ${{ secrets.ACCESS_TOKEN }}
+          src_path: ./apps/platypus-cdf-cli
+          file_filter: *.md
+          dst_path: /
+          dst_owner: cognitedata
+          dst_branch: docs
+          dst_repo_name: https://github.com/cognitedata/platypus
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}

@@ -1,8 +1,12 @@
 {
   "name": "@cognite/platypus-cli",
-  "version": "0.0.1-alpha.15",
+  "version": "0.0.1-alpha.16",
   "description": "A CLI for Platypus",
-  "repository": "https://github.com/cognitedata/platypus/apps/platypus-cdf-cli",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/platypus.git",
+    "directory": "apps/platypus-cdf-cli"
+  },
   "author": "Cognite",
   "license": "Apache-2.0",
   "main": "./main.js",
