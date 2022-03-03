@@ -191,9 +191,9 @@ describe('CheckboxTableResult', () => {
   it('should render option menu when mouse enter', async () => {
     await renderPage(getMockedStore());
 
-    fireEvent.mouseEnter(screen.getAllByTestId('menu-button')[0], {
-      bubbles: true,
-    });
+    fireEvent.mouseEnter(screen.getAllByTestId('table-row')[0]);
+    // getAllByTestId for menu-button because all menu-buttons are just not visible but already in dom before hovering a row
+    fireEvent.click(screen.getAllByTestId('menu-button')[0]);
     expect(
       screen.getByText(OPEN_PARENT_FOLDER_OPTION_TEXT)
     ).toBeInTheDocument();

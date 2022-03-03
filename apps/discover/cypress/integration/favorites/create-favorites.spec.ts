@@ -81,7 +81,7 @@ describe('Creating Favorites', () => {
         .first()
         .invoke('attr', 'style', 'opacity: 1')
         .findByTestId('menu-button')
-        .trigger('mouseenter', { force: true });
+        .click({ force: true });
 
       cy.findByText('Add to favorites').trigger('mouseenter', {
         force: true,
@@ -135,7 +135,7 @@ describe('Creating Favorites', () => {
         .first()
         .invoke('attr', 'style', 'opacity: 1')
         .findByTestId('menu-button')
-        .trigger('mouseenter', { force: true });
+        .click({ force: true });
 
       cy.findByText('Add to favorites').trigger('mouseenter', {
         force: true,
@@ -165,7 +165,7 @@ describe('Creating Favorites', () => {
         .first()
         .invoke('attr', 'style', 'opacity: 1')
         .findByTestId('menu-button')
-        .trigger('mouseenter', { force: true });
+        .click({ force: true });
 
       cy.findByText('Add to favorites').trigger('mouseenter', {
         force: true,

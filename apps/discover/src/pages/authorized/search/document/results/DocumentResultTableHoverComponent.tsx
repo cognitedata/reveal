@@ -67,7 +67,6 @@ export const DocumentResultTableHoverComponent = ({
       />
       {getPreviewButton(doc)}
       <Dropdown
-        openOnHover
         appendTo={document.body}
         content={
           <Menu>
