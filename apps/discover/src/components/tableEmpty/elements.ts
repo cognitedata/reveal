@@ -22,6 +22,7 @@ export const Category = styled.div`
 
 export const SearchInputContainer = styled(Category)`
   justify-content: center;
+  flex-wrap: wrap;
 `;
 
 export const ValueContainer = styled.div`
@@ -30,6 +31,7 @@ export const ValueContainer = styled.div`
   background: var(--cogs-greyscale-grey2);
   padding: 3px 7px 4px 10px;
   margin-left: 4px;
+  margin-bottom: 4px;
   border-radius: 15px;
   cursor: default;
 `;
@@ -65,4 +67,6 @@ export const Title = styled.span`
 export const CategoryContainer = styled(FlexColumn)`
   align-items: center;
   justify-content: center;
+  max-width: 80%;
+  margin: 0 auto;
 `;

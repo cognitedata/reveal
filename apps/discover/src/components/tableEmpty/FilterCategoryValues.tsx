@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import { useSetWellsFilters } from 'services/savedSearches/hooks/useClearWellsFilters';
 
+import { Body } from '@cognite/cogs.js';
+
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { useGetAppliedFilterGroupedByCategory } from 'modules/wellSearch/hooks/useAppliedFilters';
@@ -31,7 +33,7 @@ export const FilterCategoryValues: React.FC = () => {
           <CategoryContainer key={category}>
             <SearchInputContainer key={category}>
               <Title>{t(category)}</Title>
-              {filterValues.map(({ id, value, displayName }) => {
+              {filterValues.map(({ id, value, displayName, field }) => {
                 const clearFilter = () => {
                   metrics.track('click-wells-close-filter-tag');
                   setWellsFilters(
@@ -44,7 +46,12 @@ export const FilterCategoryValues: React.FC = () => {
                     key={`${id}-${value}`}
                     data-testid="filter-tag"
                   >
-                    <ValueSpan>{displayName || value} </ValueSpan>
+                    <ValueSpan>
+                      <Body strong level={5} as="span">
+                        {`${field}: `}
+                      </Body>
+                      {displayName || value}
+                    </ValueSpan>
                     <RemoveValue
                       data-testid="remove-btn"
                       onClick={clearFilter}
