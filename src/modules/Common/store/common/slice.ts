@@ -13,7 +13,7 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
-import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
+import { CreateVisionJob } from 'src/store/thunks/Process/CreateVisionJob';
 import { BulkEditUnsavedState, CommonState } from './types';
 
 export const initialState: CommonState = {
@@ -85,7 +85,7 @@ const commonSlice = createSlice({
       }
     });
     builder.addMatcher(
-      isRejected(PollJobs, postAnnotationJob),
+      isRejected(PollJobs, CreateVisionJob),
       (state, { error }) => {
         if (error && error.message) {
           state.saveState.mode = 'error';

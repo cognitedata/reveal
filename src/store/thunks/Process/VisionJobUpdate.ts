@@ -21,7 +21,7 @@ import { fileProcessUpdate } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
 
-export const AnnotationDetectionJobUpdate = createAsyncThunk<
+export const VisionJobUpdate = createAsyncThunk<
   VisionAnnotation[],
   {
     job: VisionJob;
@@ -30,7 +30,7 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
   },
   ThunkConfig
 >(
-  'AnnotationDetectionJobUpdate',
+  'VisionJobUpdate',
   async ({ job, fileIds, modelType }, { dispatch, getState }) => {
     let savedVisionAnnotation: VisionAnnotation[] = [];
 
@@ -69,16 +69,16 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
           .filter((fileId) => !failedFileIds.includes(fileId)) || [];
 
       // filter out previously completed files
-      const newAnnotationJobResults =
+      const newVisionJobResults =
         job.items?.filter((item) => !completedFileIds.includes(item.fileId)) ||
         [];
 
       // fetch assets if tag detection
       if (
         job.type === VisionDetectionModelType.TagDetection &&
-        newAnnotationJobResults.length
+        newVisionJobResults.length
       ) {
-        const jobFilesWithDetectedAnnotations = newAnnotationJobResults.filter(
+        const jobFilesWithDetectedAnnotations = newVisionJobResults.filter(
           (jobItem) => !!jobItem.annotations.length
         );
         if (jobFilesWithDetectedAnnotations.length) {
@@ -119,7 +119,7 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
       let unsavedAnnotations: UnsavedAnnotation[] = [];
 
       // save new prediction results as annotations
-      newAnnotationJobResults.forEach((annResult) => {
+      newVisionJobResults.forEach((annResult) => {
         const { annotations } = annResult;
 
         if (annotations && annotations.length) {
@@ -175,16 +175,16 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
           job,
           completedFileIds: [
             ...completedFileIds,
-            ...newAnnotationJobResults.map((item) => item.fileId),
+            ...newVisionJobResults.map((item) => item.fileId),
           ],
           failedFileIds: [...failedFileIds, ...newFailedFileIds],
         })
       );
 
-      if (newAnnotationJobResults.length) {
+      if (newVisionJobResults.length) {
         await dispatch(
           RetrieveAnnotations({
-            fileIds: newAnnotationJobResults.map((item) => item.fileId),
+            fileIds: newVisionJobResults.map((item) => item.fileId),
             clearCache: false,
           })
         );

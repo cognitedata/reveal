@@ -1,12 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchJobById } from 'src/api/vision/detectionModels/annotationJob';
+import { fetchVisionJobById } from 'src/api/vision/detectionModels/visionJob';
 import { VisionJob } from 'src/api/vision/detectionModels/types';
 import { removeJobById } from 'src/modules/Process/store/slice';
 import { JobState } from 'src/modules/Process/store/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { fetchUntilComplete } from 'src/utils';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { AnnotationDetectionJobUpdate } from './AnnotationDetectionJobUpdate';
+import { VisionJobUpdate } from './VisionJobUpdate';
 
 export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
   'process/pollJobs',
@@ -18,43 +18,46 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
       const doesFileExist = (fileId: number) =>
         getState().processSlice.fileIds.includes(fileId);
 
-      fetchUntilComplete<VisionJob>(() => fetchJobById(modelType, jobId), {
-        isCompleted: (latestJobVersion) =>
-          latestJobVersion.status === 'Completed' ||
-          latestJobVersion.status === 'Failed' ||
-          !fileIds.some(doesFileExist),
+      fetchUntilComplete<VisionJob>(
+        () => fetchVisionJobById(modelType, jobId),
+        {
+          isCompleted: (latestJobVersion) =>
+            latestJobVersion.status === 'Completed' ||
+            latestJobVersion.status === 'Failed' ||
+            !fileIds.some(doesFileExist),
 
-        onTick: async (latestJobVersion) => {
-          if (
-            latestJobVersion.status === 'Running' ||
-            latestJobVersion.status === 'Completed'
-          ) {
-            await dispatch(
-              AnnotationDetectionJobUpdate({
-                job: latestJobVersion,
-                fileIds,
-                modelType,
-              })
-            ).unwrap();
-          }
-        },
+          onTick: async (latestJobVersion) => {
+            if (
+              latestJobVersion.status === 'Running' ||
+              latestJobVersion.status === 'Completed'
+            ) {
+              await dispatch(
+                VisionJobUpdate({
+                  job: latestJobVersion,
+                  fileIds,
+                  modelType,
+                })
+              ).unwrap();
+            }
+          },
 
-        onError: (error: Error) => {
-          const formattedError = `Error occurred while fetching jobs: ${JSON.stringify(
-            error.message,
-            null,
-            4
-          )}`;
-          ToastUtils.onFailure(formattedError);
+          onError: (error: Error) => {
+            const formattedError = `Error occurred while fetching jobs: ${JSON.stringify(
+              error.message,
+              null,
+              4
+            )}`;
+            ToastUtils.onFailure(formattedError);
 
-          if (job.status === 'Queued' && job.jobId < 0) {
-            dispatch(removeJobById(job.jobId));
-          }
+            if (job.status === 'Queued' && job.jobId < 0) {
+              dispatch(removeJobById(job.jobId));
+            }
 
-          // eslint-disable-next-line no-console
-          console.error(error);
-        },
-      });
+            // eslint-disable-next-line no-console
+            console.error(error);
+          },
+        }
+      );
     }
   }
 );

@@ -33,7 +33,7 @@ function getDetectionModelDataProvider(
   }
 }
 
-export async function createAnnotationJob(
+export async function postVisionJob(
   detectionModel: VisionDetectionModelType,
   fileIds: number[],
   parameters?: DetectionModelParams
@@ -46,7 +46,7 @@ export async function createAnnotationJob(
   };
 }
 
-export async function fetchJobById(
+export async function fetchVisionJobById(
   detectionModel: VisionDetectionModelType,
   jobId: number
 ): Promise<VisionJob> {

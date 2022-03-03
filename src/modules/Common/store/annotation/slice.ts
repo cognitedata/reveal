@@ -4,7 +4,7 @@ import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
+import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import {
   clearExplorerFileState,
   clearFileState,
@@ -98,7 +98,7 @@ const annotationSlice = createSlice({
       // TODO: refactor -> same as RetrieveAnnotations.fulfilled
       isAnyOf(
         CreateAnnotations.fulfilled,
-        AnnotationDetectionJobUpdate.fulfilled,
+        VisionJobUpdate.fulfilled,
         UpdateAnnotations.fulfilled
       ),
       (state, { payload }) => {
