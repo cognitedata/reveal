@@ -1,6 +1,8 @@
 import get from 'lodash/get';
+import styled from 'styled-components/macro';
 import { sortObjectsAscending, sortObjectsDecending } from 'utils/sort';
 
+import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { SortBy } from 'pages/types';
 
@@ -9,10 +11,14 @@ import { NptCodeAvatar } from '../elements';
 
 import { Body, NptCodeContainer } from './elements';
 
+const TextBodyStrong = styled(Body).attrs({ level: '2', strong: true })`
+  max-width: 80%;
+`;
+
 export const renderAsBody2DefaultStrongText = (text: string) => (
-  <Body level={2} strong>
-    {text}
-  </Body>
+  <TextBodyStrong>
+    <MiddleEllipsis value={text} />
+  </TextBodyStrong>
 );
 
 export const renderNPTCodeWithColor = (nptEvent: NPTEvent) => {

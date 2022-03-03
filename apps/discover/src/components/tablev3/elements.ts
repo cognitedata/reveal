@@ -200,6 +200,7 @@ export const ExpandIconWrapper = styled.span`
   transition: color 0.2s, transform 0.2s;
   display: flex;
   color: var(--cogs-greyscale-grey6);
+  z-index: ${layers.TABLE_CELL_EXPAND_ICON};
 
   ${(props: { expanded: boolean }) =>
     props.expanded &&
