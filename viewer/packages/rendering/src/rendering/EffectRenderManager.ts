@@ -371,7 +371,6 @@ export class EffectRenderManager {
         this.renderNormalCadModelsFromBaseScene(camera);
       } else if (nodeExistences.back && nodeExistences.ghost) {
         this.renderNormalCadModels(camera);
-        // this._normalSceneBuilder.restoreOriginalScene();
         this._sceneComponentsProvider.restoreNormalScene();
         this.renderGhostedCadModelsFromBaseScene(camera);
       } else if (!nodeExistences.back && nodeExistences.ghost) {
