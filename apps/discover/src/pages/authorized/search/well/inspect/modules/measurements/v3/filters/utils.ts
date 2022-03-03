@@ -1,3 +1,5 @@
+import isEmpty from 'lodash/isEmpty';
+
 import { OptionType } from '@cognite/cogs.js';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
@@ -23,3 +25,21 @@ export const mapOptionsToCurves = (options: OptionType<string>[]) =>
   ((options.length && options[0].options) || options)
     .map((option) => option.value)
     .filter((value) => !!value) as string[];
+
+/**
+ * Select2 usually returns an array of options but when ALL is selected it returns a single option ( array with one option)
+ * which contains all provided options under `options` property. This function is to generalize these two scenarios
+ * Ticket is raised to fix this from cogs side PP-2675
+ */
+export const extractSelectedCurvesFromOptions = <T>(
+  options: OptionType<T>[],
+  selectedOptions: OptionType<T>[]
+) => {
+  return (
+    (isEmpty(selectedOptions) &&
+    !isEmpty(options) &&
+    !isEmpty(options[0].options)
+      ? options[0].options
+      : options) || []
+  );
+};

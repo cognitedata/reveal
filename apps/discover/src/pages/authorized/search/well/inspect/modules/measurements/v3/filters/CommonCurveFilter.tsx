@@ -6,7 +6,7 @@ import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 import EmptyState from 'components/emptyState';
 
 import { DropdownWrapper } from './elements';
-import { mapCurvesToOptions } from './utils';
+import { mapCurvesToOptions, extractSelectedCurvesFromOptions } from './utils';
 
 interface Props {
   title: string;
@@ -40,10 +40,10 @@ export const CommonCurveFilter: React.FC<Props> = ({
         SelectAllLabel="All"
         placeholder="Search"
         value={selectedOptions}
-        onChange={(curves: OptionType<DepthMeasurementColumn>[]) => {
+        onChange={(options: OptionType<DepthMeasurementColumn>[]) => {
           onChange(
-            curves
-              .map((curve) => curve.value)
+            extractSelectedCurvesFromOptions(options, selectedOptions)
+              .map((option) => option.value)
               .filter((value) => !!value) as DepthMeasurementColumn[]
           );
         }}
