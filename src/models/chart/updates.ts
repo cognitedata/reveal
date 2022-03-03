@@ -326,11 +326,11 @@ export const updateWorkflowsToSupportVersions = (chart: Chart): Chart => {
                             version:
                               elData.selectedOperation.version === '0.0'
                                 ? '1.0'
-                                : elData.selectedOperation.version || '',
+                                : elData.selectedOperation.version || '1.0',
                           }
                         : {
                             op: (elData as StorableNode).toolFunction.op,
-                            version: '',
+                            version: '1.0',
                           },
                       parameterValues: elData.parameterValues
                         ? elData.parameterValues

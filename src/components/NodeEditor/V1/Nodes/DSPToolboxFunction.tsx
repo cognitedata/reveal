@@ -88,7 +88,7 @@ export const ConfigPanel = ({
   const onFunctionSelected = (func: Operation) => {
     const defaultVersionOfFunction = func.versions.find(
       ({ version }) => version === '1.0'
-    )!;
+    );
 
     if (!defaultVersionOfFunction) {
       throw new Error(

@@ -166,10 +166,21 @@ const getParamsFromReactFlowNode = (
   const selectedOperation = (node as Node<FunctionNodeData>).data
     ?.selectedOperation!;
 
-  const operation = operations.find(({ op }) => selectedOperation.op === op)!;
+  const operation = operations.find(
+    ({ op }) => selectedOperation.op?.toLowerCase() === op?.toLowerCase()
+  );
+
+  if (!operation) {
+    return {};
+  }
+
   const operationVersion = operation.versions.find(
     ({ version }) => selectedOperation.version === version
-  )!;
+  );
+
+  if (!operationVersion) {
+    return {};
+  }
 
   const availableParameters = operationVersion.parameters;
   const functionNode = node as Node<FunctionNodeData>;
@@ -252,10 +263,21 @@ export const getInputsFromFunctionNode = (
   const selectedOperation = (node as Node<FunctionNodeData>).data
     ?.selectedOperation!;
 
-  const operation = operations.find(({ op }) => selectedOperation.op === op)!;
+  const operation = operations.find(
+    ({ op }) => selectedOperation.op?.toLowerCase() === op?.toLowerCase()
+  );
+
+  if (!operation) {
+    return [];
+  }
+
   const operationVersion = operation.versions.find(
     ({ version }) => selectedOperation.version === version
-  )!;
+  );
+
+  if (!operationVersion) {
+    return [];
+  }
 
   const availableInputs = operationVersion.inputs;
 

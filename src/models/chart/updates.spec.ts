@@ -642,7 +642,7 @@ describe('charts util', () => {
                     },
                     selectedOperation: {
                       op: 'wavelet_filter',
-                      version: '',
+                      version: '1.0',
                     },
                   },
                   position: {
@@ -742,7 +742,7 @@ describe('charts util', () => {
                     },
                     selectedOperation: {
                       op: 'wavelet_filter',
-                      version: '',
+                      version: '1.0',
                     },
                     parameterValues: {
                       wavelet: 'db8',
