@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import { Select, Popover, Spin } from 'antd';
 import { DataSet } from '@cognite/sdk';
 import {
@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { A, Body, Colors } from '@cognite/cogs.js';
 import { createLink } from 'utils/URLUtils';
 import { stringContains } from 'utils/stringUtils';
+import { AppContext } from 'context/AppContext';
 
 export type DataSetSelectProps = {
   onSelectionChange: (ids: number[]) => void;
@@ -35,7 +36,12 @@ export const DataSetSelect = ({
   const [datasetSearchResults, setDatasetSearchResults] = useState<DataSet[]>(
     []
   );
-  const { data: canReadDataSets } = usePermissions('datasetsAcl', 'READ');
+  const context = useContext(AppContext);
+  const { data: canReadDataSets } = usePermissions(
+    context?.flow,
+    'datasetsAcl',
+    'READ'
+  );
 
   const { isFetching: isLoading, data: listData } = useInfiniteList<DataSet>(
     'datasets',

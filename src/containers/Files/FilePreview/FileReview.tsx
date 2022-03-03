@@ -4,7 +4,8 @@ import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
 import { ResourceIcons } from 'components';
-import React from 'react';
+import { AppContext } from 'context/AppContext';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 const FileReview = ({
@@ -18,8 +19,17 @@ const FileReview = ({
   ) => void;
   onTypeClick: (type: 'assets' | 'files') => void;
 }) => {
-  const { data: labelsReadAcl } = usePermissions('labelsAcl', 'READ');
-  const { data: labelsWriteAcl } = usePermissions('labelsAcl', 'WRITE');
+  const context = useContext(AppContext);
+  const { data: labelsReadAcl } = usePermissions(
+    context?.flow,
+    'labelsAcl',
+    'READ'
+  );
+  const { data: labelsWriteAcl } = usePermissions(
+    context?.flow,
+    'labelsAcl',
+    'WRITE'
+  );
 
   const labelsAccess = labelsReadAcl && labelsWriteAcl;
 

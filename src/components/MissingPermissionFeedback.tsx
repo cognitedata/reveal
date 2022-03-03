@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { notification } from 'antd';
 import { useParams } from 'react-router-dom';
 
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { AppContext } from 'context/AppContext';
 
 type Props = {
   key: string;
@@ -13,8 +14,9 @@ export default function MissingPermissionFeedback(props: Props) {
   const { key, type } = props;
   const { tenant } = useParams<{ tenant: string }>();
 
-  const { data: groupPermission } = usePermissions('groupAcl');
-  const { data: hasPermission } = usePermissions(key, type);
+  const context = useContext(AppContext);
+  const { data: groupPermission } = usePermissions(context?.flow, 'groupAcl');
+  const { data: hasPermission } = usePermissions(context?.flow, key, type);
 
   useEffect(() => {
     if (!groupPermission) {

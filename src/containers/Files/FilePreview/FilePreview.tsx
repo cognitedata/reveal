@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { FileInfo } from '@cognite/sdk';
-import * as pdfjs from 'pdfjs-dist';
 import {
   CogniteFileViewer,
   ProposedCogniteAnnotation,
@@ -23,8 +22,6 @@ import { ResourceItem } from 'types/Types';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';
-
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
 
 type FilePreviewProps = {
   fileId: number;

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useContext, useEffect, useCallback, useState } from 'react';
 import {
   Button,
   Title,
@@ -39,7 +39,8 @@ import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
 import { lightGrey } from 'utils/Colors';
 import { ResourcePreviewSidebar } from 'containers';
-import { useCdfItem, useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { AppContext } from 'context/AppContext';
 
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
@@ -71,8 +72,8 @@ const AnnotationPreviewSidebar = ({
 }: Props) => {
   const client = useQueryClient();
   const sdk = useSDK();
-  const { data: userData } = useUserInfo();
-  const { email = 'UNKNOWN' } = userData || {};
+  const context = useContext(AppContext);
+  const email = context?.userInfo?.email || 'UNKNOWN';
 
   const [editing, setEditing] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(3);

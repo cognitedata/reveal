@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { Button, SegmentedControl } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import { SearchResultToolbar, FileUploaderModal } from 'containers';
 import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
+import { AppContext } from 'context/AppContext';
 
 export const FileToolbar = ({
   onFileClicked,
@@ -25,7 +26,12 @@ export const FileToolbar = ({
   filter?: any;
   allowEdit?: boolean;
 }) => {
-  const { data: hasEditPermissions } = usePermissions('filesAcl', 'WRITE');
+  const context = useContext(AppContext);
+  const { data: hasEditPermissions } = usePermissions(
+    context?.flow,
+    'filesAcl',
+    'WRITE'
+  );
 
   const [modalVisible, setModalVisible] = useState(false);
 

@@ -92,7 +92,11 @@ export const ExampleWithAnnotations = () => (
 );
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  const sdk = new CogniteClient({ appId: 'invalid' });
+  const sdk = new CogniteClient({
+    appId: 'invalid',
+    project: 'test',
+    getToken: () => Promise.resolve('token'),
+  });
   return (
     <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
       {children}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FileInfo, Asset } from '@cognite/sdk';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
@@ -19,6 +19,7 @@ import { isFilePreviewable } from 'utils/FileUtils';
 import { getIdParam } from 'utils';
 import { SmallPreviewProps, SelectableItemProps } from 'CommonProps';
 import { FileDetails } from 'containers/Files';
+import { AppContext } from 'context/AppContext';
 import { useSelectionButton } from 'hooks/useSelection';
 import { useAnnotations } from '../hooks';
 
@@ -37,6 +38,8 @@ export const FileSmallPreview = ({
 } & SmallPreviewProps &
   Partial<SelectableItemProps>) => {
   const sdk = useSDK();
+
+  const { overrideURLMap = {} } = useContext(AppContext) ?? {};
 
   const { data: file, isFetched, error } = useCdfItem<FileInfo>('files', {
     id: fileId,
@@ -147,6 +150,11 @@ export const FileSmallPreview = ({
               hideSearch
               annotations={annotations}
               pagination="small"
+              overrideURLMap={{
+                ...(overrideURLMap?.pdfjsWorkerSrc && {
+                  pdfjsWorkerSrc: overrideURLMap.pdfjsWorkerSrc,
+                }),
+              }}
             />
           </Preview>
         </InfoCell>

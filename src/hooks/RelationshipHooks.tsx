@@ -8,7 +8,7 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { ResourceType, ResourceItem, convertResourceType } from 'types';
 import { formatNumber } from 'utils/numbers';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import {
   ExternalId,
   Asset,
@@ -27,6 +27,7 @@ import {
   CURRENT_VERSION,
 } from '@cognite/annotations';
 import uniqueBy from 'lodash/uniqBy';
+import { AppContext } from 'context/AppContext';
 
 const PAGE_SIZE = 20;
 
@@ -40,10 +41,11 @@ export type Relationship = {
 };
 
 export const useRelationships = (externalId?: string, type?: ResourceType) => {
+  const context = useContext(AppContext);
   const {
     data: hasRelationshipRead,
     isFetched: permissionFetched,
-  } = usePermissions('relationshipsAcl', 'READ');
+  } = usePermissions(context?.flow, 'relationshipsAcl', 'READ');
   const enabled = !!(permissionFetched && hasRelationshipRead && !!externalId);
 
   const sourceRelationships = useList<Relationship>(

@@ -1,5 +1,5 @@
 import { ResourcePreviewSidebar } from 'containers';
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { lightGrey } from 'utils/Colors';
 import { Detail, Icon, Title } from '@cognite/cogs.js';
@@ -12,11 +12,11 @@ import {
   linkFileToAssetIds,
 } from '@cognite/annotations';
 import { useSDK } from '@cognite/sdk-provider';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import {
   ProposedCogniteAnnotation,
   useSelectedAnnotations,
 } from '@cognite/react-picture-annotation';
+import { AppContext } from 'context/AppContext';
 import AnnotationsList from 'components/AnnotationsList';
 import { useReviewFile } from '../hooks';
 import DiagramReviewStatus from './DiagramStatus';
@@ -40,8 +40,8 @@ const FilePreviewSidebar = ({
   setViewingAnnotations,
 }: FilePreviewSidebarProps) => {
   const sdk = useSDK();
-  const { data: userData } = useUserInfo();
-  const { email = 'UNKNOWN' } = userData || {};
+  const context = useContext(AppContext);
+  const email = context?.userInfo?.email || 'UNKNOWN';
 
   const { setSelectedAnnotations } = useSelectedAnnotations();
 

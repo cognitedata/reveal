@@ -1,19 +1,27 @@
 import React, { useContext } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 
-const SdkContext = React.createContext<CogniteClient | null>(null);
-SdkContext.displayName = 'CogniteSdkProvider';
+type Flow =
+  | 'COGNITE_AUTH'
+  | 'AZURE_AD'
+  | 'ADFS'
+  | 'OAUTH_GENERIC'
+  | 'FAKE_IDP'
+  | 'UNKNOWN';
+
+const SDKContext = React.createContext<CogniteClient | null>(null);
+SDKContext.displayName = 'CogniteSdkProvider';
 
 type Props = { sdk: CogniteClient; children: any };
 export function SDKProvider({ sdk, children }: Props) {
-  return <SdkContext.Provider value={sdk}>{children}</SdkContext.Provider>;
+  return <SDKContext.Provider value={sdk}>{children}</SDKContext.Provider>;
 }
 
 export const useSDK = () => {
-  const sdk = useContext(SdkContext);
+  const sdk = useContext(SDKContext);
   if (!sdk) {
     throw new Error(
-      `SdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`
+      `SDKContext not found, add '<SDKProvider value={sdk}>' around your component/app`
     );
   }
   return sdk;

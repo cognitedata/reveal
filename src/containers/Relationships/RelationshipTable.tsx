@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Alert } from 'antd';
 import { Asset } from '@cognite/sdk';
 import { ResourceType, ResourceItem } from 'types';
@@ -15,6 +15,7 @@ import { useRelationshipCount } from 'hooks/RelationshipHooks';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { createLink } from 'utils/URLUtils';
 import { A } from '@cognite/cogs.js';
+import { AppContext } from 'context/AppContext';
 
 export type RelationshipTableProps = {
   type: ResourceType;
@@ -30,10 +31,11 @@ export const RelationshipTable = ({
 }: RelationshipTableProps & SelectableItemsProps) => {
   const { data: count } = useRelationshipCount(parentResource, type);
 
+  const context = useContext(AppContext);
   const {
     data: relationshipPermission,
     isFetched: permissionFetched,
-  } = usePermissions('relationshipsAcl', 'READ');
+  } = usePermissions(context?.flow, 'relationshipsAcl', 'READ');
 
   if (permissionFetched && !relationshipPermission) {
     return (
