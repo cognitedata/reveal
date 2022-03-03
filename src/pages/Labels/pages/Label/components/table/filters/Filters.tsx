@@ -47,22 +47,22 @@ export const DocumentsFilters: React.FC = () => {
   );
 
   const handleSourceChange = React.useCallback(
-    (value: string) => {
-      handleFilterChange({ source: value });
+    (values: string[]) => {
+      handleFilterChange({ sources: values });
     },
     [handleFilterChange]
   );
 
   const handleFileTypeChange = React.useCallback(
-    (value: string) => {
-      handleFilterChange({ fileType: value });
+    (values: string[]) => {
+      handleFilterChange({ fileTypes: values });
     },
     [handleFilterChange]
   );
 
   const handleDocumentTypeChange = React.useCallback(
-    (value: string) => {
-      handleFilterChange({ documentType: value });
+    (values: string[]) => {
+      handleFilterChange({ documentTypes: values });
     },
     [handleFilterChange]
   );

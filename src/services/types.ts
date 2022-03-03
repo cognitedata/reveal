@@ -20,9 +20,9 @@ export interface LabelDescription {
 
 export interface DocumentSearchQuery {
   searchQuery?: string;
-  source?: string;
-  fileType?: string;
-  documentType?: string;
+  sources?: string[];
+  fileTypes?: string[];
+  documentTypes?: string[];
 }
 
 export type Aggregates = {

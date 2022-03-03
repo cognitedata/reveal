@@ -18,14 +18,14 @@ export const documentBuilder = (
     );
   }
 
-  if (query?.source) {
+  if (query?.sources && query.sources.length > 0) {
     filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
       filterBuilder,
       {
         filter: {
           sourceFile: {
             source: {
-              in: [query.source],
+              in: query.sources,
             },
           },
         },
@@ -33,27 +33,28 @@ export const documentBuilder = (
     );
   }
 
-  if (query?.fileType) {
+  if (query?.fileTypes && query.fileTypes.length > 0) {
     filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
       filterBuilder,
       {
         filter: {
           type: {
-            in: [query.fileType],
+            in: query.fileTypes,
           },
         },
       }
     );
   }
 
-  if (query?.documentType) {
-    // 'labels' is incorrectly typed in the SDK.. Removing type check.
+  if (query?.documentTypes && query.documentTypes.length > 0) {
     filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
       filterBuilder,
       {
         filter: {
           labels: {
-            containsAny: [{ externalId: query.documentType }],
+            containsAny: query.documentTypes.map((externalId) => ({
+              externalId,
+            })),
           },
         },
       }

@@ -4,7 +4,7 @@ import { useAggregatesQuery } from 'services/query/aggregates/query';
 import { FilterContainer } from '../elements';
 
 interface Props {
-  onChange(value: string | undefined): void;
+  onChange(values: string[]): void;
 }
 
 export const FileTypeFilter: React.FC<Props> = ({ onChange }) => {
@@ -19,12 +19,15 @@ export const FileTypeFilter: React.FC<Props> = ({ onChange }) => {
 
   return (
     <FilterContainer>
-      <Select<Option<string>>
+      <Select<Option<string>, true>
         title="File Type"
         icon="Document"
         options={fileTypeOptions}
-        onChange={(option) => onChange(option?.value)}
+        onChange={(options) =>
+          onChange(options?.map((option) => option.value) ?? [])
+        }
         isLoading={isLoading}
+        isMulti
       />
     </FilterContainer>
   );

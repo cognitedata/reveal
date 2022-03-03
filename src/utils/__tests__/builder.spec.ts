@@ -3,9 +3,9 @@ import { documentBuilder } from '../builder';
 describe('Builder', () => {
   describe('documentBuilder', () => {
     const searchQuery = 'test';
-    const source = 'source';
-    const fileType = 'pdf';
-    const documentType = 'unknown';
+    const sources = ['source1', 'source2'];
+    const fileTypes = ['PDF', 'Document'];
+    const documentTypes = ['unknown', 'label1', 'label2'];
 
     it('returns the base object on zero arity', () => {
       const result = documentBuilder();
@@ -24,7 +24,7 @@ describe('Builder', () => {
     });
 
     it('returns the search + source object', () => {
-      const result = documentBuilder({ searchQuery, source });
+      const result = documentBuilder({ searchQuery, sources });
 
       expect(result).toMatchObject({
         search: {
@@ -33,18 +33,18 @@ describe('Builder', () => {
         filter: {
           sourceFile: {
             source: {
-              in: [source],
+              in: sources,
             },
           },
         },
       });
     });
 
-    it('returns the search + source + filetype object', () => {
+    it('returns the search + source + filetypes object', () => {
       const result = documentBuilder({
         searchQuery,
-        source,
-        fileType,
+        sources,
+        fileTypes,
       });
 
       expect(result).toMatchObject({
@@ -54,11 +54,11 @@ describe('Builder', () => {
         filter: {
           sourceFile: {
             source: {
-              in: [source],
+              in: sources,
             },
           },
           type: {
-            in: [fileType],
+            in: fileTypes,
           },
         },
       });
@@ -67,9 +67,9 @@ describe('Builder', () => {
     it('returns the search + source + filetype + document type object', () => {
       const result = documentBuilder({
         searchQuery,
-        source,
-        fileType,
-        documentType,
+        sources,
+        fileTypes,
+        documentTypes,
       });
 
       expect(result).toMatchObject({
@@ -79,14 +79,18 @@ describe('Builder', () => {
         filter: {
           sourceFile: {
             source: {
-              in: [source],
+              in: sources,
             },
           },
           type: {
-            in: [fileType],
+            in: fileTypes,
           },
           labels: {
-            containsAny: [{ externalId: documentType }],
+            containsAny: [
+              { externalId: 'unknown' },
+              { externalId: 'label1' },
+              { externalId: 'label2' },
+            ],
           },
         },
       });
