@@ -31,6 +31,8 @@ export const UnitSelector: React.FC<Props> = ({
   return (
     <UnitSelectorWrapper>
       <Dropdown
+        // appendTo added to show dropdown over the refresh button in graph
+        appendTo={document.body}
         openOnHover
         content={
           <Menu id="mainMenu">

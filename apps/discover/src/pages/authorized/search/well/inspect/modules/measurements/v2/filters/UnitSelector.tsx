@@ -30,6 +30,7 @@ export const UnitSelector: React.FC<Props> = ({
   return (
     <UnitSelectorWrapper>
       <Dropdown
+        appendTo={document.body}
         openOnHover
         content={
           <Menu id="mainMenu">

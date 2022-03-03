@@ -30,7 +30,8 @@
     "cypress:run:dev": "ibazel run :cypress_run -- --env REACT_APP_E2E_USER=$(git config user.email)",
     "cypress:run:e2e": "ibazel run :cypress_run -- --env REACT_APP_E2E_USER=$(git config user.email),USER_PREFIX=e2e,PROJECT=discover-e2e-bluefield",
     "cypress:ci": "bazel test :cypress_test",
-    "cypress:open": "../../node_modules/.bin/cypress open --env REACT_APP_E2E_USER=$(git config user.email)"
+    "cypress:open": "../../node_modules/.bin/cypress open --env REACT_APP_E2E_USER=$(git config user.email)",
+    "cypress:open:e2e": "../../node_modules/.bin/cypress open --env REACT_APP_E2E_USER=$(git config user.email),USER_PREFIX=e2e,PROJECT=discover-e2e-bluefield"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
