@@ -3,7 +3,11 @@ export const parseArrayBufferToBase64 = (
 ): string | undefined => {
   if (!data) return undefined;
 
-  const arrayBufferView = new Uint8Array(data);
+  let str = '';
+  const bytes = new Uint8Array(data);
+  for (let i = 0; i < bytes.byteLength; i++) {
+    str += String.fromCharCode(bytes[i]);
+  }
 
-  return btoa(String.fromCharCode.apply(null, arrayBufferView as any));
+  return btoa(str);
 };
