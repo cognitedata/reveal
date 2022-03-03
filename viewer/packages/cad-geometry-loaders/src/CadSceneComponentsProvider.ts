@@ -116,10 +116,7 @@ export class CadSceneComponentsProvider implements SceneComponentsProvider {
   }
 
   public getGhostScene(): THREE.Scene {
-    if (!this._hasPreparedNormalScene) {
-      throw Error('Normal scene must be prepared before getting ghost scene');
-    }
-
+    // Ghosted elements are never moved from _cadScene
     return this._cadScene;
   }
 
