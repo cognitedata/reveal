@@ -22,7 +22,12 @@ const RouteWrapper = ({
   }
 
   if (!hasCapabilities) {
-    return <NoAccessPage capabilities={capabilities} />;
+    return (
+      <NoAccessPage
+        capabilities={capabilities}
+        requestedPathName={routeProps.location.pathname}
+      />
+    );
   }
 
   return <Component {...routeProps} />;

@@ -6,6 +6,7 @@ import * as NavLinks from 'src/constants/NavLinks';
 
 type Props = {
   capabilities: Array<AccessPermission>;
+  requestedPathName: string;
 };
 
 const getPrerequisiteList = (capabilities: Array<AccessPermission>) =>
@@ -18,7 +19,24 @@ const getPrerequisiteList = (capabilities: Array<AccessPermission>) =>
     ));
   });
 
-export default function NoAccessPage({ capabilities }: Props) {
+const getPageTitle = (requestedPathName: string) => {
+  const requestedPage = requestedPathName.split('/').pop();
+  switch (requestedPage) {
+    case 'explore':
+      return 'Vision Explore';
+    case 'process':
+      return 'Contextualize Imagery Data';
+    case 'models':
+      return 'Vision AutoML';
+    default:
+      return '';
+  }
+};
+
+export default function NoAccessPage({
+  capabilities,
+  requestedPathName,
+}: Props) {
   return (
     <>
       <HomeButton>
@@ -37,7 +55,7 @@ export default function NoAccessPage({ capabilities }: Props) {
         <div>
           <TitleContainer>
             <Title level={2}>
-              Request access to Contextualize Imagery Data
+              Request access to {getPageTitle(requestedPathName)}
             </Title>
           </TitleContainer>
           <BodyContainer>
