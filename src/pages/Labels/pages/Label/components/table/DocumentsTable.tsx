@@ -6,7 +6,7 @@ import { DocumentPreview } from '../layover/DocumentPreview';
 import { curateColumns } from './curateDocumentsColumns';
 import { DocumentsFilters } from './filters';
 
-type DocumentPreview = {
+type DocumentPreviewState = {
   show: boolean;
   documentId?: number;
 };
@@ -20,7 +20,7 @@ interface Props {
 export const DocumentsTable: React.FC<Props> = React.memo(
   ({ data, showFilters, selectedIds, onSelectedIds }) => {
     const [documentPreview, setDocumentPreview] =
-      React.useState<DocumentPreview>({
+      React.useState<DocumentPreviewState>({
         show: false,
         documentId: undefined,
       });

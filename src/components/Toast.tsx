@@ -1,3 +1,6 @@
+// temporary due to unused autoClose prop
+/* eslint-disable react/no-unused-prop-types */
+
 import React from 'react';
 import { Body, Flex, Detail, Title, toast } from '@cognite/cogs.js';
 import styled from 'styled-components';

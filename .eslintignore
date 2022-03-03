@@ -1,1 +1,4 @@
 react-app-env.d.ts
+/build/
+/public/
+/*.js

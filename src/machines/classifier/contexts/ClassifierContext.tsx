@@ -21,10 +21,13 @@ export const useClassifierContext = (): {
 export const ClassifierContext: FC = ({ children }) => {
   const classifierService = useInterpret(classifierMachine, { devTools: true });
 
+  const value = React.useMemo(
+    () => ({ classifierMachine: classifierService }),
+    [classifierService]
+  );
+
   return (
-    <ClassifierProvider.Provider
-      value={{ classifierMachine: classifierService }}
-    >
+    <ClassifierProvider.Provider value={value}>
       {children}
     </ClassifierProvider.Provider>
   );
