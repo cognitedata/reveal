@@ -31,41 +31,39 @@ def pods = { body ->
         //  3. Get that PR approved, applied, and merged
         //
         // If you don't want codecoverage, then you can just remove this.
-        testcafe.pod() {
-          podTemplate(
-            containers: [
-              containerTemplate(
-                name: 'cloudsdk',
-                image: 'google/cloud-sdk:277.0.0',
-                resourceRequestCpu: '500m',
-                resourceRequestMemory: '500Mi',
-                resourceLimitCpu: '500m',
-                resourceLimitMemory: '500Mi',
-                ttyEnabled: true,
-                envVars: [
-                  envVar(key: 'GOOGLE_APPLICATION_CREDENTIALS', value: '/jenkins-cdf-hub-deployer/credentials.json'),
-                ]
-             )],
-             envVars: [
-              envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
-            ],
-            volumes: [
-              secretVolume(secretName: 'npm-credentials',
-                           mountPath: '/npm-credentials',
-                           defaultMode: '400'),
-              secretVolume(secretName: 'jenkins-cdf-hub-deployer',
-                           mountPath: '/jenkins-cdf-hub-deployer',
-                           readOnly: true),
-              hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
-            ]) {
-            properties([
-              buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
-            ])
+        podTemplate(
+          containers: [
+            containerTemplate(
+              name: 'cloudsdk',
+              image: 'google/cloud-sdk:277.0.0',
+              resourceRequestCpu: '500m',
+              resourceRequestMemory: '500Mi',
+              resourceLimitCpu: '500m',
+              resourceLimitMemory: '500Mi',
+              ttyEnabled: true,
+              envVars: [
+                envVar(key: 'GOOGLE_APPLICATION_CREDENTIALS', value: '/jenkins-cdf-hub-deployer/credentials.json'),
+              ]
+            )],
+            envVars: [
+            envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
+          ],
+          volumes: [
+            secretVolume(secretName: 'npm-credentials',
+                          mountPath: '/npm-credentials',
+                          defaultMode: '400'),
+            secretVolume(secretName: 'jenkins-cdf-hub-deployer',
+                          mountPath: '/jenkins-cdf-hub-deployer',
+                          readOnly: true),
+            hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
+          ]) {
+          properties([
+            buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+          ])
 
-            node(POD_LABEL) {
+          node(POD_LABEL) {
 
-              body()
-            }
+            body()
           }
         }
       }

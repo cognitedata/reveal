@@ -3,9 +3,8 @@ module.exports = {
     '@cognite',
     'plugin:testing-library/react',
     'plugin:lodash/recommended',
-    'plugin:testcafe/recommended',
   ],
-  plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
+  plugins: ['@cognite', 'testing-library', 'lodash'],
   rules: {
     '@cognite/no-unissued-todos': [
       'error',
