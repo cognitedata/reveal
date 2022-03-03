@@ -23,9 +23,6 @@ export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
-  // Input scene containing all custom objects
-  // private readonly _originalScene: THREE.Scene;
-
   // Simple scene with a single triangle with UVs [0,1] in both directions
   // used for combining outputs into a single output
   private readonly _compositionScene: THREE.Scene;
@@ -45,7 +42,7 @@ export class EffectRenderManager {
   // Special scene needed to properly clear WebGL2 render targets
   private readonly _emptyScene: THREE.Scene;
 
-  // Does the work of splitting the scene into different parts (normal, ghosted etc..)
+  // Does the work of splitting the input scene into different parts (normal, ghosted etc..)
   private readonly _sceneComponentsProvider: SceneComponentsProvider;
 
   private _renderOptions: RenderOptions;
