@@ -36,8 +36,8 @@ export const useMapSources = () => {
       createSources(
         seismicCollection,
         features,
-        mapConfig?.cluster,
-        mapConfig?.zoom
+        mapConfig?.cluster
+        // mapConfig?.zoom //Don't know why we used this value here. This is the zoom level for the map not the maxZoom for cluster
       ),
     [features, seismicCollection, mapConfig?.cluster, mapConfig?.zoom]
   );
@@ -47,8 +47,8 @@ export const useMapSources = () => {
       createSources(
         seismicCollection,
         featuresv2,
-        mapConfig?.cluster,
-        mapConfig?.zoom
+        mapConfig?.cluster
+        // mapConfig?.zoom
       ),
     [featuresv2, seismicCollection, mapConfig?.cluster, mapConfig?.zoom]
   );
