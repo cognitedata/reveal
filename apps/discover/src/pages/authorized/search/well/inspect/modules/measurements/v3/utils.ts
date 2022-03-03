@@ -3,7 +3,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import { PlotData } from 'plotly.js';
-import { convertPressure, unsafeChangeUnitTo } from 'utils/units';
+import { convertPressure, changeUnitTo } from 'utils/units';
 
 import {
   DepthMeasurementColumn,
@@ -12,7 +12,7 @@ import {
   DistanceUnitEnum,
 } from '@cognite/sdk-wells-v3';
 
-import { PressureUnit } from 'constants/units';
+import { PressureUnit, UserPreferredUnit } from 'constants/units';
 import {
   MEASUREMENT_CURVE_CONFIG_V3 as MEASUREMENT_CURVE_CONFIG,
   MEASUREMENT_EXTERNAL_ID_CONFIG,
@@ -35,7 +35,7 @@ export const formatChartData = (
   ppfgCurves: DepthMeasurementColumn[], // currently enabled ppfg curves from filters
   otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
   userPreferedPressureUnit: PressureUnit,
-  userPreferedDepthMeasurementUnit: string
+  userPreferedDepthMeasurementUnit: UserPreferredUnit
 ) => {
   const processedCurves: string[] = [];
 
@@ -78,7 +78,7 @@ export const mapMeasurementToPlotly = (
   otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
   tvdUnit: DistanceUnitEnum,
   userPreferedPressureUnit: PressureUnit,
-  userPreferedDepthMeasurementUnit: string,
+  userPreferedDepthMeasurementUnit: UserPreferredUnit,
   processedCurves: string[] = []
 ): MeasurementChartData[] => {
   const measurementType = resolveMeasurementType(column.measurementType);
@@ -165,7 +165,7 @@ export const mapCurveToPlotly = (
   detailCardTitle: string,
   depthMeasurementData: DepthMeasurementData,
   tvdUnit: DistanceUnitEnum,
-  userPreferedDepthMeasurementUnit: string,
+  userPreferedDepthMeasurementUnit: UserPreferredUnit,
   userPreferedPressureUnit: PressureUnit,
   measurementType: MeasurementType
 ): MeasurementChartData[] => {
@@ -242,10 +242,7 @@ export const mapCurveToPlotly = (
       return;
     }
 
-    y.push(
-      unsafeChangeUnitTo(yValue, tvdUnit, userPreferedDepthMeasurementUnit) ||
-        yValue
-    );
+    y.push(changeUnitTo(yValue, tvdUnit, userPreferedDepthMeasurementUnit));
     if (isAngleCurve) {
       x.push(xValue);
     } else {
