@@ -20,6 +20,7 @@ import {
 } from './Nodes/FunctionNode/FunctionNode';
 import { OutputNodeData, OutputNodeDataDehydrated } from './Nodes/OutputNode';
 import { SourceNodeData, SourceNodeDataDehydrated } from './Nodes/SourceNode';
+import { defaultTranslations } from '../translations';
 
 export const updatePosition = (
   els: Elements<NodeDataDehydratedVariants>,
@@ -115,7 +116,8 @@ export const rehydrateStoredFlow = (
   sources: SourceOption[],
   operations: Operation[],
   callbacks: NodeCallbacks,
-  readOnly: boolean
+  readOnly: boolean,
+  translations: typeof defaultTranslations
 ): Elements<NodeDataVariants> => {
   if (workflow?.version !== 'v2') {
     return [];
@@ -136,6 +138,11 @@ export const rehydrateStoredFlow = (
     onRemoveNode,
   } = callbacks;
 
+  const t = {
+    ...defaultTranslations,
+    ...translations,
+  };
+
   const outputElements: Elements<NodeDataVariants> = flow.elements.map((el) => {
     switch (el.type) {
       case NodeTypes.SOURCE:
@@ -148,6 +155,7 @@ export const rehydrateStoredFlow = (
             onDuplicateNode,
             onRemoveNode,
             readOnly,
+            translations: t,
           } as SourceNodeData,
         };
       case NodeTypes.CONSTANT:
@@ -159,6 +167,7 @@ export const rehydrateStoredFlow = (
             onDuplicateNode,
             onRemoveNode,
             readOnly,
+            translations: t,
           } as ConstantNodeData,
         };
       case NodeTypes.FUNCTION:
@@ -176,6 +185,7 @@ export const rehydrateStoredFlow = (
                 op
             ),
             readOnly,
+            translations: t,
           } as FunctionNodeData,
         };
       case NodeTypes.OUTPUT:
@@ -187,6 +197,7 @@ export const rehydrateStoredFlow = (
             color: workflow.color,
             onOutputNameChange,
             readOnly,
+            translations: t,
           } as OutputNodeData,
         };
       default:

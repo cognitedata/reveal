@@ -2,6 +2,7 @@ import {
   OperationParameters,
   OperationParametersTypeEnum,
 } from '@cognite/calculation-backend';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 
 export type ParameterFormBase = {
   nodeId: string;
@@ -23,4 +24,5 @@ export type ParameterFormProps = ParameterFormBase & {
     nodeId: string,
     formData: { [key: string]: any }
   ) => void;
+  translations: typeof defaultTranslations;
 };

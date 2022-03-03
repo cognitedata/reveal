@@ -4,6 +4,7 @@ import { memo, useEffect, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
 import { Flex } from '@cognite/cogs.js';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import { NodeTypes } from '../../types';
 import {
   AUTO_ALIGN_PARAM,
@@ -31,6 +32,7 @@ export type FunctionNodeCallbacks = {
 
 export type FunctionNodeData = FunctionNodeDataDehydrated &
   FunctionNodeCallbacks & {
+    translations: typeof defaultTranslations;
     operation: Operation;
     readOnly: boolean;
   };
@@ -45,6 +47,7 @@ const FunctionNode = memo(
       onRemoveNode,
       operation,
       readOnly,
+      translations: t,
     } = data;
 
     const selectedOperationVersion = operation.versions.find(
@@ -91,6 +94,7 @@ const FunctionNode = memo(
           isEditing: areParamsVisible,
         }}
         isActionBarVisible={selected}
+        translations={t}
       >
         <NodeWrapper
           className={containerClasses}
@@ -137,6 +141,7 @@ const FunctionNode = memo(
                 onParameterValuesChange(nodeId, formData);
                 setAreParamsVisible(false);
               }}
+              translations={t}
             />
           )}
           <HandleContainer height={nodeHeight} position="right">

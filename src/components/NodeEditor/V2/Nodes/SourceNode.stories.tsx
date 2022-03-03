@@ -2,6 +2,7 @@ import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { mockSourceList } from 'models/workflows/mocks';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 import { NodeTypes } from '../types';
 import SourceNode from './SourceNode';
@@ -41,6 +42,7 @@ const Template: Story<ComponentProps<typeof SourceNode>> = (args) => (
             position: { x: 50, y: 100 },
           },
         ]}
+        translations={defaultTranslations}
       />
     </ReactFlowProvider>
   </div>
@@ -60,6 +62,7 @@ Default.args = {
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
     sourceOptions: mockSourceList,
+    translations: defaultTranslations,
   },
   selected: false,
 };
@@ -73,6 +76,7 @@ ReadOnly.args = {
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
     sourceOptions: mockSourceList,
+    translations: defaultTranslations,
   },
   selected: false,
 };
@@ -86,6 +90,7 @@ VeryLongSourceName.args = {
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
     sourceOptions: mockSourceList,
+    translations: defaultTranslations,
   },
   selected: false,
 };
@@ -99,6 +104,7 @@ VeryLongSourceNameReadOnly.args = {
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
     sourceOptions: mockSourceList,
+    translations: defaultTranslations,
   },
   selected: false,
 };

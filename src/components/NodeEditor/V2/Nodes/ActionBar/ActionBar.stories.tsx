@@ -1,4 +1,5 @@
 import { ComponentMeta, Story } from '@storybook/react';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import { fullListOfOperations } from 'models/operations/mocks';
 import { ComponentProps } from 'react';
 import ActionBar from './ActionBar';
@@ -29,6 +30,7 @@ export const OutputNode = Template.bind({});
 export const SourceNode = Template.bind({});
 
 ConstantNode.args = {
+  translations: defaultTranslations,
   actions: {
     onEditClick: () => {},
     onDuplicateClick: () => {},
@@ -46,6 +48,7 @@ ConstantNode.args = {
 };
 
 FunctionNode.args = {
+  translations: defaultTranslations,
   actions: {
     onEditFunctionClick: () => {},
     onDuplicateClick: () => {},
@@ -67,6 +70,7 @@ FunctionNode.args = {
 };
 
 SourceNode.args = {
+  translations: defaultTranslations,
   actions: {
     onEditClick: () => {},
     onDuplicateClick: () => {},
@@ -84,6 +88,7 @@ SourceNode.args = {
 };
 
 OutputNode.args = {
+  translations: defaultTranslations,
   actions: {},
   capabilities: {
     canEdit: false,

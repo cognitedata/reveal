@@ -1,29 +1,34 @@
 import styled from 'styled-components/macro';
 import { Icon, Menu, SegmentedControl, Title, Tooltip } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 
 type Props = {
   settings: ComponentProps<typeof ReactFlowNodeEditor>['settings'];
   onSaveSettings: (settings: Props['settings']) => void;
   readOnly?: boolean;
+  translations: typeof defaultTranslations;
 };
 
 const WorkflowSettings = ({
   settings,
   readOnly = false,
   onSaveSettings,
+  translations: t,
 }: Props) => {
   return (
     <Menu style={{ marginBottom: 10 }}>
       <DropdownContainer>
         <ATitleWrapper>
-          <Title level={6}>Automatic data alignment</Title>
-          <Tooltip content="Automatically align time stamp of input time series">
+          <Title level={6}>{t['Automatic data alignment']}</Title>
+          <Tooltip
+            content={t['Automatically align time stamp of input time series']}
+          >
             <Icon type="Info" />
           </Tooltip>
         </ATitleWrapper>
-        {readOnly && (settings.autoAlign ? 'On' : 'Off')}
+        {readOnly && (settings.autoAlign ? t.On : t.Off)}
         {!readOnly && (
           <FormWrapper>
             <SegmentedControl
@@ -32,8 +37,10 @@ const WorkflowSettings = ({
                 onSaveSettings({ ...settings, autoAlign: key === 'on' })
               }
             >
-              <SegmentedControl.Button key="on">On</SegmentedControl.Button>
-              <SegmentedControl.Button key="off">Off</SegmentedControl.Button>
+              <SegmentedControl.Button key="on">{t.On}</SegmentedControl.Button>
+              <SegmentedControl.Button key="off">
+                {t.Off}
+              </SegmentedControl.Button>
             </SegmentedControl>
           </FormWrapper>
         )}
@@ -64,4 +71,5 @@ const FormWrapper = styled.div`
   justify-content: space-between;
 `;
 
+WorkflowSettings.translationKeys = Object.keys(defaultTranslations);
 export default WorkflowSettings;

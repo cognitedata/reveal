@@ -1,4 +1,5 @@
 import { Input } from '@cognite/cogs.js';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import Joi from 'joi';
 import { memo, useEffect, useState, useCallback } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
@@ -21,14 +22,21 @@ export type ConstantNodeCallbacks = {
 export type ConstantNodeData = ConstantNodeDataDehydrated &
   ConstantNodeCallbacks & {
     readOnly: boolean;
+    translations: typeof defaultTranslations;
   };
 
 const numberValidator = Joi.number();
 
 const ConstantNode = memo(
   ({ id, data, selected }: NodeProps<ConstantNodeData>) => {
-    const { value, readOnly, onConstantChange, onDuplicateNode, onRemoveNode } =
-      data;
+    const {
+      value,
+      readOnly,
+      onConstantChange,
+      onDuplicateNode,
+      onRemoveNode,
+      translations: t,
+    } = data;
     const [isInputVisible, setIsInputVisible] = useState<boolean>(false);
     const [localValue, setLocalValue] = useState(String(value));
     const { error } = numberValidator.validate(parseFloat(localValue));
@@ -79,13 +87,14 @@ const ConstantNode = memo(
         status={{
           isEditing: isInputVisible,
         }}
+        translations={t}
       >
         <NodeWrapper
           className={selected ? 'selected' : ''}
           onDoubleClick={() => setIsInputVisible((isVisible) => !isVisible)}
         >
           <NodeHandle type="source" position={Position.Right} />
-          <span>Constant</span>
+          <span>{t.Constant}</span>
           {!isInputVisible && <Value>{value}</Value>}
           {isInputVisible && (
             <NoDragWrapper>

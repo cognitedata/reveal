@@ -1,5 +1,6 @@
 import { Dropdown, Icon } from '@cognite/cogs.js';
 import { Badge } from 'antd';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import { ComponentProps, useState } from 'react';
 import { Controls, ControlButton, useZoomPanHelper } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
@@ -10,17 +11,18 @@ type Props = {
   settings: ComponentProps<typeof ReactFlowNodeEditor>['settings'];
   readOnly: boolean;
   onSaveSettings: (settings: Props['settings']) => void;
+  translations: typeof defaultTranslations;
 };
 
 const EditorControls = ({
   settings,
   readOnly,
   onSaveSettings = () => {},
+  translations: t,
 }: Props) => {
   const { fitView, zoomIn, zoomOut } = useZoomPanHelper();
   const [isAutoAlignDropdownVisible, setIsAutoAlignDropdownVisible] =
     useState<boolean>(false);
-
   return (
     <CustomControlButtonGroup
       showZoom={false}
@@ -43,6 +45,7 @@ const EditorControls = ({
             settings={settings}
             onSaveSettings={onSaveSettings}
             readOnly={readOnly}
+            translations={t}
           />
         }
         visible={isAutoAlignDropdownVisible}

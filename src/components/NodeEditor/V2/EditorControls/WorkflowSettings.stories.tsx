@@ -1,5 +1,6 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import WorkflowSettings from './WorkflowSettings';
 
 export default {
@@ -18,14 +19,17 @@ export const ReadOnlyAutoAlignOff = Template.bind({});
 Normal.args = {
   settings: { autoAlign: true },
   onSaveSettings: () => {},
+  translations: defaultTranslations,
 };
 
 ReadOnlyAutoAlignOn.args = {
   settings: { autoAlign: true },
   readOnly: true,
+  translations: defaultTranslations,
 };
 
 ReadOnlyAutoAlignOff.args = {
   settings: { autoAlign: false },
   readOnly: true,
+  translations: defaultTranslations,
 };

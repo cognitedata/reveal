@@ -1,6 +1,7 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { ReactFlowProvider } from 'react-flow-renderer';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import EditorControls from './EditorControls';
 
 export default {
@@ -20,13 +21,16 @@ export const ReadOnly = Template.bind({});
 
 AutoAlignOn.args = {
   settings: { autoAlign: true },
+  translations: defaultTranslations,
 };
 
 AutoAlignOff.args = {
   settings: { autoAlign: false },
+  translations: defaultTranslations,
 };
 
 ReadOnly.args = {
   settings: { autoAlign: false },
+  translations: defaultTranslations,
   readOnly: true,
 };

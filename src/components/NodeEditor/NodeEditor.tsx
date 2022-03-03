@@ -11,12 +11,14 @@ import { useAvailableOps } from './AvailableOps';
 import { getSourceOption, getSourcesFromChart } from './utils';
 import ConnectEditor from './V1/ConnectNodeEditor';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';
+import { defaultTranslations } from './translations';
 
 export type NodeEditorProps = {
   chart: Chart;
   workflowId: string;
   onClose: () => void;
   setChart: SetterOrUpdater<Chart | undefined>;
+  translations: typeof defaultTranslations;
 };
 
 const NodeEditor = ({
@@ -24,7 +26,12 @@ const NodeEditor = ({
   chart,
   onClose,
   setChart,
+  translations,
 }: NodeEditorProps) => {
+  const t = {
+    ...defaultTranslations,
+    ...translations,
+  };
   /**
    * This could be done using a selector
    */
@@ -66,8 +73,8 @@ const NodeEditor = ({
   if (operationsError instanceof Error) {
     toast.error(
       <ErrorToast
-        title="Failed to load Operations"
-        text="Please reload the page"
+        title={t['Failed to load Operations']}
+        text={t['Please reload the page']}
       />
     );
   }
@@ -98,6 +105,7 @@ const NodeEditor = ({
           onClose={onClose}
           onUpdateWorkflow={handleUpdateWorkflow}
           readOnly={readOnly}
+          translations={t}
         />
       </ReactFlowProvider>
     );
@@ -115,5 +123,7 @@ const NodeEditor = ({
     />
   );
 };
+
+NodeEditor.translationKeys = Object.keys(defaultTranslations);
 
 export default NodeEditor;

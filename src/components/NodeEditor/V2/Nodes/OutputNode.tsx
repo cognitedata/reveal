@@ -1,6 +1,7 @@
 import { memo, useEffect, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import { Input } from '@cognite/cogs.js';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import {
   ColorBlock,
   InputWrapper,
@@ -20,10 +21,11 @@ export type OutputNodeData = OutputNodeDataDehydrated &
     color: string;
     name: string;
     readOnly: boolean;
+    translations: typeof defaultTranslations;
   };
 
 const OutputNode = memo(({ data, selected }: NodeProps<OutputNodeData>) => {
-  const { color, name, readOnly, onOutputNameChange } = data;
+  const { color, name, readOnly, onOutputNameChange, translations: t } = data;
 
   const [localName, setLocalName] = useState(name);
 
@@ -34,7 +36,7 @@ const OutputNode = memo(({ data, selected }: NodeProps<OutputNodeData>) => {
   return (
     <NodeWrapper className={selected ? 'selected' : ''}>
       <NodeHandle id="datapoints" type="target" position={Position.Left} />
-      <div>Output</div>
+      <div>{t.Output}</div>
       {readOnly ? (
         localName
       ) : (

@@ -209,9 +209,7 @@ export const chartWithMultipleCalculations: Chart = {
         elements: [
           {
             id: 'M6EixG-TP2uGwLRyI-LoU',
-            data: {
-              readOnly: false,
-            },
+            data: {},
             position: {
               x: 591,
               y: 117,
@@ -228,7 +226,6 @@ export const chartWithMultipleCalculations: Chart = {
             data: {
               type: 'timeseries',
               selectedSourceId: 'z4_SabhZ-LQjPx53WhSF5',
-              readOnly: false,
             },
           },
           {
@@ -276,9 +273,7 @@ export const chartWithMultipleCalculations: Chart = {
         zoom: 1,
         elements: [
           {
-            data: {
-              readOnly: false,
-            },
+            data: {},
             type: 'CalculationOutput',
             id: '_jXUDsA3kK4fXQ07ny6n-',
             position: {
@@ -291,7 +286,6 @@ export const chartWithMultipleCalculations: Chart = {
             data: {
               type: 'workflow',
               selectedSourceId: 'uZZ2AvDqqhsSe-RjPUS-0',
-              readOnly: false,
             },
             position: {
               x: 44,
@@ -301,7 +295,6 @@ export const chartWithMultipleCalculations: Chart = {
           },
           {
             data: {
-              readOnly: false,
               functionData: {
                 wavelet: 'db8',
                 level: 2,
@@ -467,14 +460,11 @@ export const chartWithMultipleCalculations: Chart = {
             },
             type: 'CalculationOutput',
             id: 'xDj7A-MswVQsXTyjvNI8U',
-            data: {
-              readOnly: false,
-            },
+            data: {},
           },
           {
             id: 'rzcuySUBWdmdMTF10ITFK',
             data: {
-              readOnly: false,
               type: 'workflow',
               selectedSourceId: '2M_k0eYSYiU0w7olxpxKy',
             },
@@ -534,7 +524,6 @@ export const chartWithMultipleCalculations: Chart = {
               x: 146,
             },
             data: {
-              readOnly: false,
               selectedSourceId: 'bHi5m84gI7hwFnPbQQ1BQ',
               type: 'timeseries',
             },
@@ -547,16 +536,13 @@ export const chartWithMultipleCalculations: Chart = {
             type: 'CalculationInput',
             id: 'ItZu2zOAOw5ZDTLvwxaSa',
             data: {
-              readOnly: false,
               type: 'timeseries',
               selectedSourceId: 'z4_SabhZ-LQjPx53WhSF5',
             },
           },
           {
             type: 'CalculationOutput',
-            data: {
-              readOnly: false,
-            },
+            data: {},
             position: {
               y: 152,
               x: 775,
@@ -570,7 +556,6 @@ export const chartWithMultipleCalculations: Chart = {
               x: 560,
             },
             data: {
-              readOnly: false,
               functionData: {},
               toolFunction: {
                 name: 'Multiplication',

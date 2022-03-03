@@ -1,6 +1,7 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { ReactFlowProvider } from 'react-flow-renderer';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 import { NodeTypes } from '../types';
 import OutputNode from './OutputNode';
@@ -40,6 +41,7 @@ const Template: Story<ComponentProps<typeof OutputNode>> = (args) => (
             position: { x: 50, y: 100 },
           },
         ]}
+        translations={defaultTranslations}
       />
     </ReactFlowProvider>
   </div>
@@ -57,6 +59,7 @@ Default.args = {
     onOutputNameChange: () => {},
     color: '#FF0000',
     name: 'Test Output Time Series',
+    translations: defaultTranslations,
   },
   selected: false,
 };

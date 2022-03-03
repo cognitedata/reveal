@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { OperationVersions } from '@cognite/calculation-backend';
 import { Button } from '@cognite/cogs.js';
-import { useState } from 'react';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import EditSaveViewButton from './EditSaveViewButton';
 import InfoModal from './InfoModal';
 
@@ -24,17 +25,18 @@ type Props = {
   data?: {
     indslFunction?: OperationVersions;
   };
+  translations: typeof defaultTranslations;
 };
 
-const ActionBar = ({ actions, capabilities, status, data }: Props) => {
-  if (!actions) {
-    throw new Error('Actions are missing!');
-  }
-
-  if (!capabilities) {
-    throw new Error('Capabilities are missing!');
-  }
-
+const ActionBar = ({
+  actions,
+  capabilities,
+  status,
+  data,
+  translations: t,
+}: Props) => {
+  if (!actions) throw new Error('Actions are missing!');
+  if (!capabilities) throw new Error('Capabilities are missing!');
   const {
     onEditClick,
     onEditFunctionClick,
@@ -42,6 +44,8 @@ const ActionBar = ({ actions, capabilities, status, data }: Props) => {
     onRemoveClick,
     onInfoClick,
   } = actions;
+
+  const { canEdit, canRemove, canDuplicate, canSeeInfo } = capabilities;
 
   if (onEditFunctionClick && typeof status?.isEditing !== 'boolean') {
     throw new Error('onEditFunctionClick need an isEditing status');
@@ -51,7 +55,6 @@ const ActionBar = ({ actions, capabilities, status, data }: Props) => {
     throw new Error('onEditClick need an isEditing status');
   }
 
-  const { canEdit, canRemove, canDuplicate, canSeeInfo } = capabilities;
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
@@ -62,6 +65,7 @@ const ActionBar = ({ actions, capabilities, status, data }: Props) => {
           onClick={() => onEditClick()}
           isEditing={status.isEditing}
           readOnly={false}
+          translations={t}
         />
       )}
       {onEditFunctionClick && typeof status?.isEditing === 'boolean' && (
@@ -70,14 +74,15 @@ const ActionBar = ({ actions, capabilities, status, data }: Props) => {
           onClick={() => onEditFunctionClick()}
           isEditing={status.isEditing}
           readOnly={!canEdit}
+          translations={t}
         />
       )}
       {onDuplicateClick && (
         <Button
           type="ghost"
           icon="Duplicate"
-          aria-label="Duplicate"
-          title="Duplicate"
+          aria-label={t.Duplicate}
+          title={t.Duplicate}
           disabled={!canDuplicate}
           onClick={() => onDuplicateClick()}
         />
@@ -86,8 +91,8 @@ const ActionBar = ({ actions, capabilities, status, data }: Props) => {
         <Button
           type="ghost"
           icon="Delete"
-          aria-label="Remove"
-          title="Remove"
+          aria-label={t.Remove}
+          title={t.Remove}
           disabled={!canRemove}
           onClick={() => onRemoveClick()}
         />
@@ -97,8 +102,8 @@ const ActionBar = ({ actions, capabilities, status, data }: Props) => {
           <Button
             type="ghost"
             icon="Info"
-            aria-label="See more info"
-            title="See more info"
+            aria-label={t['See more info']}
+            title={t['See more info']}
             onClick={() => {
               if (onInfoClick) onInfoClick();
               setIsModalVisible(true);

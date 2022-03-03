@@ -1,4 +1,5 @@
 import { Select } from '@cognite/cogs.js';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import { memo, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
@@ -31,6 +32,7 @@ export type SourceNodeData = SourceNodeDataDehydrated &
   SourceNodeCallbacks & {
     sourceOptions: SourceOption[];
     readOnly: boolean;
+    translations: typeof defaultTranslations;
   };
 
 const emptySourceOption: SourceOption = {
@@ -48,6 +50,7 @@ const SourceNode = memo(({ id, data, selected }: NodeProps<SourceNodeData>) => {
     onSourceItemChange,
     onDuplicateNode,
     onRemoveNode,
+    translations: t,
   } = data;
 
   const sourceItem =
@@ -70,9 +73,10 @@ const SourceNode = memo(({ id, data, selected }: NodeProps<SourceNodeData>) => {
       }}
       status={{ isEditing: isInputVisible }}
       isActionBarVisible={selected && !readOnly}
+      translations={t}
     >
       <NodeWrapper className={selected ? 'selected' : ''}>
-        <span>Source</span>
+        <span>{t.Source}</span>
         <NodeHandle id="result" type="source" position={Position.Right} />
         {readOnly || !isInputVisible ? (
           sourceItem.label

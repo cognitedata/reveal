@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { fullListOfOperations } from 'models/operations/mocks';
 import { SourceNodeData } from './Nodes/SourceNode';
 import ReactFlowNodeEditor from './ReactFlowNodeEditor';
+import { defaultTranslations } from '../translations';
 
 export default {
   component: ReactFlowNodeEditor,
@@ -20,6 +21,7 @@ export const ReadOnly = Template.bind({});
 export const AutoAlignOff = Template.bind({});
 
 EmptyEditor.args = {
+  translations: defaultTranslations,
   flowElements: [],
   sources: [],
   operations: fullListOfOperations,
@@ -41,6 +43,7 @@ EmptyEditor.args = {
 export const SimplePassthrough = Template.bind({});
 
 SimplePassthrough.args = {
+  translations: defaultTranslations,
   flowElements: [
     {
       position: {
@@ -54,6 +57,7 @@ SimplePassthrough.args = {
         color: 'red',
         onOutputNameChange: () => {},
         readOnly: false,
+        translations: defaultTranslations,
       },
     },
     {
@@ -73,6 +77,7 @@ SimplePassthrough.args = {
         onDuplicateNode: () => {},
         onRemoveNode: () => {},
         readOnly: false,
+        translations: defaultTranslations,
       } as SourceNodeData,
       position: {
         y: 46,

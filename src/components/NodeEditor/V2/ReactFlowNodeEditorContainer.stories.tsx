@@ -3,6 +3,7 @@ import { ReactFlowProvider } from 'react-flow-renderer';
 import { fullListOfOperations } from 'models/operations/mocks';
 import { ComponentProps } from 'react';
 import ReactFlowNodeEditorContainer from './ReactFlowNodeEditorContainer';
+import { defaultTranslations } from '../translations';
 
 export default {
   component: ReactFlowNodeEditorContainer,
@@ -64,4 +65,5 @@ EmptyCalculation.args = {
       type: 'workflow',
     },
   ],
+  translations: defaultTranslations,
 };

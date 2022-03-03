@@ -179,6 +179,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     'SourceTableHeader'
   );
 
+  const { t: nodeEditorTranslations } = useTranslations(
+    NodeEditor.translationKeys,
+    'NodeEditor'
+  );
+
   const [selectedSourceId, setSelectedSourceId] = useState<
     string | undefined
   >();
@@ -600,6 +605,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           workflowId={selectedSourceId}
                           onClose={handleCloseEditor}
                           chart={chart}
+                          translations={nodeEditorTranslations}
                         />
                       )}
                     </div>

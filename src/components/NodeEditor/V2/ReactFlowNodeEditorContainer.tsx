@@ -43,6 +43,7 @@ import { initializeParameterValues, rehydrateStoredFlow } from './utils';
 import ReactFlowNodeEditor from './ReactFlowNodeEditor';
 import { getStepsFromWorkflowReactFlow } from './transforms';
 import { validateSteps } from './calculations';
+import { defaultTranslations } from '../translations';
 
 export type NodeEditorContainerProps = {
   workflow: ChartWorkflowV2;
@@ -57,6 +58,7 @@ export type NodeEditorContainerProps = {
     isValid: boolean
   ) => void;
   readOnly?: boolean;
+  translations: typeof defaultTranslations;
 };
 
 const ReactFlowNodeEditorContainer = ({
@@ -67,6 +69,7 @@ const ReactFlowNodeEditorContainer = ({
   onClose,
   onUpdateWorkflow = () => {},
   readOnly = false,
+  translations: t,
 }: NodeEditorContainerProps) => {
   /**
    * Hook onto the internal react-flow state
@@ -375,9 +378,10 @@ const ReactFlowNodeEditorContainer = ({
         sources,
         operations,
         callbacks,
-        readOnly
+        readOnly,
+        t
       ),
-    [localWorkflow, sources, operations, callbacks, readOnly]
+    [localWorkflow, sources, operations, callbacks, readOnly, t]
   );
 
   /**
@@ -408,6 +412,7 @@ const ReactFlowNodeEditorContainer = ({
         onAddFunctionNode={handleAddFunctionNode}
         onAddOutputNode={handleAddOutputNode}
         onMove={handleUpdatePositionAndZoom}
+        translations={t}
       />
       <CloseButton
         icon="Close"
@@ -415,7 +420,7 @@ const ReactFlowNodeEditorContainer = ({
         onClick={() => {
           onClose();
         }}
-        aria-label="Close"
+        aria-label={t.Close}
       />
     </>
   );

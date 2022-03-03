@@ -2,6 +2,7 @@ import { Button, Input } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { OperationParametersTypeEnum } from '@cognite/calculation-backend';
 import { useState } from 'react';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import { transformParamInput } from '../../../transforms';
 import FunctionParameterFormLabel from './FunctionParameterFormLabel';
 import { ParameterFormProps } from './types';
@@ -15,7 +16,12 @@ const FunctionParameterForm = ({
   parameters,
   parameterValues = {},
   onParameterValuesChange,
+  translations,
 }: ParameterFormProps) => {
+  const t = {
+    ...defaultTranslations,
+    ...translations,
+  };
   if (parameters.length === 0)
     throw new Error('Missing parameters for generating the form');
   const [formData, setFormData] =
@@ -92,7 +98,7 @@ const FunctionParameterForm = ({
         type="primary"
         onClick={() => onParameterValuesChange(nodeId, formData)}
       >
-        Done
+        {t.Done}
       </SaveButton>
     </ParameterFormWrapper>
   );

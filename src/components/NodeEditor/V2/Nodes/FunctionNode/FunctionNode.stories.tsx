@@ -2,6 +2,7 @@ import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { fullListOfOperations } from 'models/operations/mocks';
 import { ReactFlowProvider } from 'react-flow-renderer';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import FunctionNode from './FunctionNode';
 import ReactFlowNodeEditor from '../../ReactFlowNodeEditor';
 import { NodeTypes } from '../../types';
@@ -41,6 +42,7 @@ const Template: Story<ComponentProps<typeof FunctionNode>> = (args) => (
             position: { x: 50, y: 100 },
           },
         ]}
+        translations={defaultTranslations}
       />
     </ReactFlowProvider>
   </div>
@@ -62,6 +64,7 @@ AddFunction.args = {
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
     readOnly: false,
+    translations: defaultTranslations,
   },
   selected: false,
 };
@@ -79,6 +82,7 @@ ExtremeOutliersFunction.args = {
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
     readOnly: false,
+    translations: defaultTranslations,
   },
   selected: false,
 };

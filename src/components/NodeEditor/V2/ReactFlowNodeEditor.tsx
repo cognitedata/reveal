@@ -25,6 +25,7 @@ import FunctionNode from './Nodes/FunctionNode/FunctionNode';
 import ConstantNode from './Nodes/ConstantNode';
 import OutputNode from './Nodes/OutputNode';
 import SourceNode from './Nodes/SourceNode';
+import { defaultTranslations } from '../translations';
 
 type Props = {
   id?: string;
@@ -53,6 +54,7 @@ type Props = {
   ) => void;
   onAddOutputNode: (position: XYPosition) => void;
   onMove: (transform: FlowTransform) => void;
+  translations: typeof defaultTranslations;
 };
 
 const ReactFlowNodeEditor = ({
@@ -74,6 +76,7 @@ const ReactFlowNodeEditor = ({
   onAddFunctionNode,
   onAddOutputNode,
   onMove,
+  translations: t,
 }: Props) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
@@ -212,6 +215,7 @@ const ReactFlowNodeEditor = ({
             settings={settings}
             onSaveSettings={onSaveSettings}
             readOnly={readOnly}
+            translations={t}
           />
           <Background variant={BackgroundVariant.Dots} />
         </ReactFlow>
@@ -225,6 +229,7 @@ const ReactFlowNodeEditor = ({
           addFunctionNode={addFunctionNode}
           addConstantNode={addConstantNode}
           addOutputNode={addOutputNode}
+          translations={t}
         />
       )}
       {contextMenuPosition && (
@@ -242,6 +247,7 @@ const ReactFlowNodeEditor = ({
             addFunctionNode={addFunctionNode}
             addConstantNode={addConstantNode}
             addOutputNode={addOutputNode}
+            translations={t}
           />
         </ContextMenu>
       )}

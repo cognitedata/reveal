@@ -8,6 +8,7 @@ import Layers from 'utils/z-index';
 import { Operation } from '@cognite/calculation-backend';
 import { Elements } from 'react-flow-renderer';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
+import { defaultTranslations } from '../translations';
 
 interface AddButtonProps {
   elements: Elements<NodeDataVariants>;
@@ -17,15 +18,17 @@ interface AddButtonProps {
   addFunctionNode: (event: React.MouseEvent, func: Operation) => void;
   addConstantNode: (event: React.MouseEvent) => void;
   addOutputNode: (event: React.MouseEvent) => void;
+  translations: typeof defaultTranslations;
 }
 
 interface AddMenuProps extends AddButtonProps {
   onFunctionSelected?: (func: Operation) => void;
 }
 
-export const SourceListDropdown = ({
+const SourceListDropdown = ({
   sources,
   addSourceNode,
+  translations: t,
 }: Omit<
   AddButtonProps,
   | 'elements'
@@ -36,7 +39,7 @@ export const SourceListDropdown = ({
 >) => {
   return (
     <SourceDropdownMenu>
-      <Menu.Header>Select wanted sources</Menu.Header>
+      <Menu.Header>{t['Select wanted sources']}</Menu.Header>
       {sources.map((source) => (
         <SourceMenuItem
           key={source.value}
@@ -54,7 +57,7 @@ export const SourceListDropdown = ({
   );
 };
 
-export const AddMenu = ({
+const AddMenu = ({
   elements,
   sources,
   operations,
@@ -63,9 +66,14 @@ export const AddMenu = ({
   addConstantNode,
   addOutputNode,
   onFunctionSelected = () => {},
+  translations,
 }: AddMenuProps) => {
   const hasOutputNode = elements.some((el) => el.type === NodeTypes.OUTPUT);
   const [isSourceMenuOpen, setIsSourceMenuOpen] = useState(false);
+  const t = {
+    ...defaultTranslations,
+    ...translations,
+  };
 
   return (
     <AddDropdownMenu>
@@ -73,7 +81,11 @@ export const AddMenu = ({
         visible={isSourceMenuOpen}
         onClickOutside={() => setIsSourceMenuOpen(false)}
         content={
-          <SourceListDropdown sources={sources} addSourceNode={addSourceNode} />
+          <SourceListDropdown
+            sources={sources}
+            addSourceNode={addSourceNode}
+            translations={translations}
+          />
         }
       >
         <SourceItemTextWrapper
@@ -81,7 +93,7 @@ export const AddMenu = ({
           onClick={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
           onKeyDown={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
         >
-          Source
+          {t.Source}
         </SourceItemTextWrapper>
       </Menu.Submenu>
       {!!operations.length && (
@@ -95,11 +107,13 @@ export const AddMenu = ({
             addFunctionNode(event, func);
           }}
         >
-          <Menu.Item appendIcon="ChevronRight">Function</Menu.Item>
+          <Menu.Item appendIcon="ChevronRight">{t.Function}</Menu.Item>
         </ToolboxFunctionDropdown>
       )}
-      <Menu.Item onClick={addConstantNode}>Constant</Menu.Item>
-      {!hasOutputNode && <Menu.Item onClick={addOutputNode}>Output</Menu.Item>}
+      <Menu.Item onClick={addConstantNode}>{t.Constant}</Menu.Item>
+      {!hasOutputNode && (
+        <Menu.Item onClick={addOutputNode}>{t.Output}</Menu.Item>
+      )}
     </AddDropdownMenu>
   );
 };
@@ -112,8 +126,13 @@ const AddButton = ({
   addFunctionNode,
   addConstantNode,
   addOutputNode,
+  translations,
 }: AddButtonProps) => {
   const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
+  const t = {
+    ...defaultTranslations,
+    ...translations,
+  };
 
   return (
     <AddDropdownContainer>
@@ -130,6 +149,7 @@ const AddButton = ({
             addConstantNode={addConstantNode}
             addOutputNode={addOutputNode}
             onFunctionSelected={() => setIsMenuVisible(false)}
+            translations={translations}
           />
         }
       >
@@ -138,7 +158,7 @@ const AddButton = ({
           size="small"
           onClick={() => setIsMenuVisible(!isMenuVisible)}
         >
-          Add Node
+          {t['Add Node']}
         </Button>
       </Dropdown>
     </AddDropdownContainer>
@@ -175,4 +195,5 @@ const SourceMenuItem = styled(Menu.Item)`
   word-break: break-all;
 `;
 
+export { AddMenu };
 export default AddButton;

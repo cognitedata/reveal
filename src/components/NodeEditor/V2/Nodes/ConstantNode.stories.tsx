@@ -1,6 +1,7 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { ReactFlowProvider } from 'react-flow-renderer';
+import { defaultTranslations } from 'components/NodeEditor/translations';
 import ConstantNode from './ConstantNode';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 import { NodeTypes } from '../types';
@@ -40,6 +41,7 @@ const Template: Story<ComponentProps<typeof ConstantNode>> = (args) => (
             position: { x: 50, y: 100 },
           },
         ]}
+        translations={defaultTranslations}
       />
     </ReactFlowProvider>
   </div>
@@ -56,6 +58,7 @@ Default.args = {
     onConstantChange: () => {},
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
+    translations: defaultTranslations,
   },
   selected: false,
 };
@@ -68,6 +71,7 @@ ReadOnly.args = {
     onConstantChange: () => {},
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
+    translations: defaultTranslations,
   },
   selected: false,
 };
