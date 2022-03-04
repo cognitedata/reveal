@@ -42,6 +42,8 @@ export {
   nutGeometryBoundingBox
 } from './src/cad/primitiveGeometries';
 
+export { filterGeometryOutsideClipBox } from './src/cad/filterPrimitivesV9';
+
 export {
   SectorGeometry,
   InstancedMeshFile,
