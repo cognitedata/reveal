@@ -2,10 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export {
-  CadModelBudget,
-  defaultDesktopCadModelBudget,
-} from './src/CadModelBudget';
+export { CadModelBudget, defaultDesktopCadModelBudget } from './src/CadModelBudget';
 
 export { CadModelUpdateHandler } from './src/CadModelUpdateHandler';
 
