@@ -939,7 +939,6 @@ __metadata:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
-    "@reveal/metrics": "workspace:*"
     "@reveal/model-base": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
@@ -1110,14 +1109,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/tools@workspace:packages/tools"
   dependencies:
-    "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
-    "@reveal/camera-manager": "workspace:*"
     "@reveal/core": "workspace:*"
-    "@reveal/logger": "workspace:*"
     "@reveal/metrics": "workspace:*"
-    "@reveal/nodes-api": "workspace:*"
-    "@reveal/rendering": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
