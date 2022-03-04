@@ -1,47 +1,92 @@
 import { Layers } from '../types';
 
-export const MAP_DATA_URL =
-  'https://storage.googleapis.com/ppoly_ui_map_json_daily_update/';
+const MAP_DATA_URL = 'https://storage.googleapis.com/discover_layers_us/';
+
+export const AKER_BP_DATA_URL = `${MAP_DATA_URL}akerbp/`;
 
 const layers: Layers = {
-  wells: {
-    remote: `${MAP_DATA_URL}Wells.json`,
-    name: 'Wells',
-    color: 'rgba(0, 0, 0, 1)',
-    defaultOn: false,
-    weight: 0,
+  akerBPLicense: {
+    remote: `${AKER_BP_DATA_URL}Licenses_AkerBP.json`,
+    name: 'Licenses Aker BP',
+    color: 'rgba(251, 59, 134, 0.8)',
+    weight: 30,
+    // AkerBPLicense: 'rgba(251, 176, 59, 0.8)',
+    defaultOn: true,
+    searchable: 'License',
     mapLayers: [
       {
-        id: 'wells',
-        source: 'wells',
-        type: 'symbol',
-        layout: {
-          'text-field': 'B',
-          'text-font': ['NPD_symbols Regular'],
-          'text-size': 12,
+        id: 'akerBPLicense',
+        source: 'akerBPLicense',
+        type: 'fill',
+        layout: {},
+        paint: {
+          'fill-outline-color': '#000',
+          'fill-color': [
+            'match',
+            ['get', 'Operator'],
+            'AKER BP ASA',
+            'rgba(251, 59, 134, 0.8)',
+            'rgba(251, 176, 59, 0.8)',
+          ],
         },
       },
       {
-        id: 'wellsLabels',
-        source: 'wells',
+        id: 'akerBPLicenseLabel',
+        source: 'akerBPLicense',
         type: 'symbol',
-        minzoom: 8,
+        minzoom: 6,
         layout: {
-          'text-field': '{Well}',
+          'text-field': '{License}',
           'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
           'text-size': 12,
-          'text-offset': [0, 1],
-          'text-anchor': 'top',
         },
+        weight: 1003,
       },
     ],
   },
+  AkerBPPartner: {
+    remote: `${AKER_BP_DATA_URL}Licenses_AkerBP_Partners.json`,
+    name: 'Licences AkerBP Partners',
+    color: 'rgba(0, 0, 0, 0.6)',
+    defaultOn: false,
+    mapLayers: [
+      {
+        id: 'AkerBPPartner',
+        source: 'AkerBPPartner',
+        type: 'fill',
+        layout: {},
+        paint: { 'fill-color': 'rgba(0, 0, 0, 0.6)' },
+      },
+      {
+        id: 'AkerBPPartnerLabel',
+        source: 'AkerBPPartner',
+        type: 'symbol',
+        minzoom: 6,
+        layout: {
+          'text-field': '{License}',
+          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+          'text-size': 12,
+        },
+        weight: 1007,
+      },
+    ],
+  },
+  // akerBpAssets: {
+  //   remote: `${MAP_DATA_URL}Fields.json`,
+  //   name: 'Fields Aker BP',
+  //   color: 'rgba(0, 172, 79, 0.8)',
+  //   defaultOn: false,
+  //   asset: {
+  //     filter: ['Operator', 'Aker BP ASA'],
+  //     displayField: 'Field',
+  //   },
+  // },
   akerBpFields: {
     remote: `${MAP_DATA_URL}Fields.json`,
     name: 'Fields Aker BP',
     color: 'rgba(0, 172, 79, 0.8)',
     defaultOn: true,
-    weight: 1,
+    weight: 20,
     asset: {
       filter: ['Operator', 'Aker BP ASA'],
       displayField: 'Field',
@@ -75,45 +120,73 @@ const layers: Layers = {
           'text-size': 12,
         },
         filter: ['==', 'Operator', 'Aker BP ASA'],
+        weight: 1004,
       },
     ],
   },
-
-  akerBPLicense: {
-    remote: `${MAP_DATA_URL}AkerBPLicense.json`,
-    name: 'Licenses Aker BP',
-    color: 'rgba(251, 59, 134, 0.8)',
-    // AkerBPLicense: 'rgba(251, 176, 59, 0.8)',
-    defaultOn: true,
-    weight: 2,
-    searchable: 'License',
+  wells: {
+    remote: `${AKER_BP_DATA_URL}Wells_exp.json`,
+    name: 'Exploration Wells',
+    color: 'rgba(0, 0, 0, 1)',
+    defaultOn: false,
+    weight: 10,
     mapLayers: [
       {
-        id: 'akerBPLicense',
-        source: 'akerBPLicense',
-        type: 'fill',
-        layout: {},
-        paint: {
-          'fill-outline-color': '#000',
-          'fill-color': [
-            'match',
-            ['get', 'Operator'],
-            'AKER BP ASA',
-            'rgba(251, 59, 134, 0.8)',
-            'rgba(251, 176, 59, 0.8)',
-          ],
+        id: 'wells',
+        source: 'wells',
+        type: 'symbol',
+        layout: {
+          'text-field': 'B',
+          'text-font': ['NPD_symbols Regular'],
+          'text-size': 12,
         },
       },
       {
-        id: 'akerBPLicenseLabel',
-        source: 'akerBPLicense',
+        id: 'wellsLabels',
+        source: 'wells',
         type: 'symbol',
-        minzoom: 6,
+        minzoom: 8,
         layout: {
-          'text-field': '{License}',
+          'text-field': '{Well}',
           'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
           'text-size': 12,
+          'text-offset': [0, 1],
+          'text-anchor': 'top',
         },
+        weight: 1005,
+      },
+    ],
+  },
+  Development_Wells: {
+    remote: `${AKER_BP_DATA_URL}Development_Wells.json`,
+    name: 'Development Wells',
+    color: 'rgba(0, 0, 0, 1)',
+    defaultOn: false,
+    weight: 10,
+    mapLayers: [
+      {
+        id: 'Development_Wells',
+        source: 'Development_Wells',
+        type: 'symbol',
+        layout: {
+          'text-field': 'B',
+          'text-font': ['NPD_symbols Regular'],
+          'text-size': 12,
+        },
+      },
+      {
+        id: 'Development_Wells_Labels',
+        source: 'Development_Wells',
+        type: 'symbol',
+        minzoom: 8,
+        layout: {
+          'text-field': '{Wellbore}',
+          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+          'text-size': 12,
+          'text-offset': [0, 1],
+          'text-anchor': 'top',
+        },
+        weight: 1005,
       },
     ],
   },
@@ -123,6 +196,7 @@ const layers: Layers = {
     color: 'transparent',
     defaultOn: true,
     alwaysOn: true,
+    weight: 100,
     mapLayers: [
       {
         id: 'blocks',
@@ -143,6 +217,7 @@ const layers: Layers = {
           'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
           'text-size': 10,
         },
+        weight: 1006,
       },
     ],
   },
@@ -169,6 +244,7 @@ const layers: Layers = {
           'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
           'text-size': 12,
         },
+        weight: 1007,
       },
     ],
   },
@@ -176,6 +252,7 @@ const layers: Layers = {
     name: 'Other fields',
     color: 'rgba(180, 183, 121, 0.8)',
     defaultOn: false,
+    weight: 50,
     mapLayers: [
       {
         id: 'otherFields',
@@ -205,6 +282,7 @@ const layers: Layers = {
           'text-size': 12,
         },
         filter: ['!=', 'Operator', 'Aker BP ASA'],
+        weight: 1008,
       },
     ],
   },
@@ -213,6 +291,7 @@ const layers: Layers = {
     name: 'Quadrants',
     color: 'transparent',
     defaultOn: true,
+    weight: 90,
     alwaysOn: true,
     mapLayers: [
       {
@@ -224,12 +303,6 @@ const layers: Layers = {
         paint: { 'line-color': '#fff', 'line-opacity': 0.8 },
       },
     ],
-  },
-  npdFields: {
-    name: 'Norwegian Petroleum Directorate',
-    color: 'transparent',
-    defaultOn: false,
-    mapLayers: [],
   },
   structuralElements: {
     remote: `${MAP_DATA_URL}StructuralElements.json`,
@@ -270,13 +343,16 @@ const layers: Layers = {
           ],
           'fill-opacity': 0.75,
         },
+        weight: 302,
       },
     ],
+    weight: 301,
   },
   discoveries: {
     remote: `${MAP_DATA_URL}Discoveries.json`,
     name: 'Discoveries',
     color: 'rgba(183, 102, 25, 0.8)',
+    weight: 2,
     defaultOn: false,
     mapLayers: [
       {
@@ -288,6 +364,7 @@ const layers: Layers = {
           'fill-outline-color': '#000',
           'fill-color': 'rgba(183, 102, 25, 0.8)',
         },
+        weight: 900,
       },
       {
         id: 'discoveriesLabel',
@@ -299,6 +376,7 @@ const layers: Layers = {
           'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
           'text-size': 12,
         },
+        weight: 1000,
       },
     ],
   },
