@@ -80,7 +80,7 @@ export const DocumentPreview: React.FC<Props> = React.memo(
             description={documentDescription}
             Action={
               <Label size="medium">
-                {document?.sourceFile?.labels?.length || 0} labels
+                {document?.labels?.length || 0} labels
               </Label>
             }
           />

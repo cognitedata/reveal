@@ -27,11 +27,6 @@ export const fetchDocumentAggregates = (sdk: CogniteClient) => {
               groupBy: [DOCUMENTS_AGGREGATES.fileType.group],
             },
             {
-              name: DOCUMENTS_AGGREGATES.documentType.name,
-              aggregate: 'count',
-              groupBy: [DOCUMENTS_AGGREGATES.documentType.group],
-            },
-            {
               name: DOCUMENTS_AGGREGATES.source.name,
               aggregate: 'count',
               groupBy: [DOCUMENTS_AGGREGATES.source.group],

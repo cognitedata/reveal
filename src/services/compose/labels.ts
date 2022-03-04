@@ -11,22 +11,16 @@ export const composeLabelsCount = async (
 ): Promise<LabelCount> => {
   const { labels } = await composeAggregates(sdk);
 
-  const labelCounts = (trainingLabels || []).reduce(
-    (accumulator, { externalId }) => {
-      const aggregate = labels.find((item) => item.name === externalId);
-
-      // TODO(DEMO-1): Search in the label aggregate for count if labels counts are undefined (for now show, -1)
-      // const aggregatedFiles = await fetchFilesAggregate(
-      //   sdk,
-      //   classifier?.trainingLabels
-      // );
-
-      return { ...accumulator, [externalId]: aggregate?.value || 0 };
-    },
-    {} as LabelCount
+  const countByExternalId = new Map(
+    labels.map((label) => [label.name, label.value])
   );
 
-  return labelCounts;
+  return Object.fromEntries(
+    (trainingLabels ?? []).map(({ externalId }) => [
+      externalId,
+      countByExternalId.get(externalId) ?? 0,
+    ])
+  );
 };
 
 export const composeLabelsDescription = async (

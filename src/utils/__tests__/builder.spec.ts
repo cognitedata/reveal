@@ -5,7 +5,7 @@ describe('Builder', () => {
     const searchQuery = 'test';
     const sources = ['source1', 'source2'];
     const fileTypes = ['PDF', 'Document'];
-    const documentTypes = ['unknown', 'label1', 'label2'];
+    const labels = ['unknown', 'label1', 'label2'];
 
     it('returns the base object on zero arity', () => {
       const result = documentBuilder();
@@ -69,7 +69,7 @@ describe('Builder', () => {
         searchQuery,
         sources,
         fileTypes,
-        documentTypes,
+        labels,
       });
 
       expect(result).toMatchObject({

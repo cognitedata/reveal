@@ -46,13 +46,13 @@ export const documentBuilder = (
     );
   }
 
-  if (query?.documentTypes && query.documentTypes.length > 0) {
+  if (query?.labels && query.labels.length > 0) {
     filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
       filterBuilder,
       {
         filter: {
           labels: {
-            containsAny: query.documentTypes.map((externalId) => ({
+            containsAny: query.labels.map((externalId) => ({
               externalId,
             })),
           },

@@ -4,7 +4,7 @@ import { useDocumentsSearchMutate } from 'services/query/documents/mutate';
 import { DocumentSearchQuery } from 'services/types';
 import styled from 'styled-components';
 import layers from 'utils/zIndex';
-import { DocumentCategoryFilter } from './actions/DocumentType';
+import { LabelFilter } from './actions/Label';
 import { FileTypeFilter } from './actions/FileType';
 import { NameFilter } from './actions/Name';
 import { SourceFilter } from './actions/Source';
@@ -60,9 +60,9 @@ export const DocumentsFilters: React.FC = () => {
     [handleFilterChange]
   );
 
-  const handleDocumentTypeChange = React.useCallback(
+  const handleLabelsChange = React.useCallback(
     (values: string[]) => {
-      handleFilterChange({ documentTypes: values });
+      handleFilterChange({ labels: values });
     },
     [handleFilterChange]
   );
@@ -72,7 +72,7 @@ export const DocumentsFilters: React.FC = () => {
       <NameFilter onChange={handleSearchQueryChange} />
       <SourceFilter onChange={handleSourceChange} />
       <FileTypeFilter onChange={handleFileTypeChange} />
-      <DocumentCategoryFilter onChange={handleDocumentTypeChange} />
+      <LabelFilter onChange={handleLabelsChange} />
 
       {isLoading && <Loader darkMode={false} />}
     </Container>

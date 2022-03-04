@@ -33,8 +33,7 @@ export const AGGREGATES_KEYS = {
 } as const;
 
 export const DOCUMENTS_AGGREGATES = {
-  labels: { name: 'LABEL', group: 'sourceFile.labels' },
+  labels: { name: 'LABELS', group: 'labels' },
   fileType: { name: 'FILE_TYPE', group: 'type' },
-  documentType: { name: 'DOCUMENT_TYPE', group: 'labels' },
   source: { name: 'SOURCE', group: 'sourceFile.source' },
 };

@@ -22,7 +22,7 @@ export interface DocumentSearchQuery {
   searchQuery?: string;
   sources?: string[];
   fileTypes?: string[];
-  documentTypes?: string[];
+  labels?: string[];
 }
 
 export type Aggregates = {

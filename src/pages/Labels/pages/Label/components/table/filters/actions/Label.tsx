@@ -7,10 +7,10 @@ interface Props {
   onChange(values: string[]): void;
 }
 
-export const DocumentCategoryFilter: React.FC<Props> = ({ onChange }) => {
+export const LabelFilter: React.FC<Props> = ({ onChange }) => {
   const { data, isLoading } = useAggregatesQuery();
 
-  const documentTypeOptions = data?.documentType.map((item) => ({
+  const options = data?.labels.map((item) => ({
     value: item.name,
     label: item.name,
   }));
@@ -18,11 +18,11 @@ export const DocumentCategoryFilter: React.FC<Props> = ({ onChange }) => {
   return (
     <FilterContainer>
       <Select<Option<string>, true>
-        title="Document Type"
+        title="Label"
         icon="Tag"
-        options={documentTypeOptions}
-        onChange={(options) =>
-          onChange(options?.map((option) => option.value) ?? [])
+        options={options}
+        onChange={(selectedOptions) =>
+          onChange(selectedOptions?.map((option) => option.value) ?? [])
         }
         isLoading={isLoading}
         isMulti
