@@ -6,9 +6,9 @@ import * as THREE from 'three';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 
 import { disposeAttributeArrayOnUpload, incrementOrInsertIndex } from '@reveal/utilities';
-import { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from '@reveal/cad-parsers';
+import { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from './filterPrimitivesV8';
 
-import { Materials } from './materials';
+import { Materials } from '@reveal/rendering';
 
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */

@@ -6,8 +6,6 @@ export { SectorQuads } from './src/rendering/types';
 
 export { CadMaterialManager } from './src/CadMaterialManager';
 
-export { createSimpleGeometryMesh } from './src/rendering/createSimpleGeometryMesh';
-
 export { NodeAppearanceTextureBuilder } from './src/rendering/NodeAppearanceTextureBuilder';
 export { NodeTransformTextureBuilder } from './src/transform/NodeTransformTextureBuilder';
 export { NodeTransformProvider } from './src/transform/NodeTransformProvider';
@@ -29,4 +27,3 @@ export { RenderMode } from './src/rendering/RenderMode';
 export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials, createMaterials } from './src/rendering/materials';
-export { createPrimitives } from './src/rendering/primitives';
