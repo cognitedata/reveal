@@ -45,6 +45,23 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'validateCheck',
+  (filter: string, toValidate: string[], toSelect?: string) => {
+    cy.log(`Check ${filter} visibility`);
+    cy.findByLabelText(`${filter} label`).should('be.visible');
+
+    cy.log('Check if options available');
+    toValidate.forEach((value) => {
+      cy.findByLabelText(`${filter} label`).parent().contains(value);
+    });
+
+    if (toSelect) {
+      cy.contains(toSelect).click();
+    }
+  }
+);
+
 Cypress.Commands.add('clickOnFilterCategory', (category: string) => {
   cy.log(`Click on ${category}`);
   cy.findByTestId('side-bar')
@@ -54,7 +71,34 @@ Cypress.Commands.add('clickOnFilterCategory', (category: string) => {
     .click();
 });
 
+Cypress.Commands.add(
+  'selectItemFromDropdownFilterCategory',
+  (category: string, subCategory: string, toSelect?: string) => {
+    cy.clickOnFilterCategory(category);
+    cy.validateSelect(subCategory, [], toSelect);
+  }
+);
+
+Cypress.Commands.add(
+  'selectItemFromCheckboxFilterCategory',
+  (category: string, subCategory: string, toSelect?: string) => {
+    cy.clickOnFilterCategory(category);
+    cy.validateCheck(category, [], toSelect);
+  }
+);
+
 export interface SidebarCommands {
   validateSelect(filter: string, values: string[], toSelect?: string): void;
+  validateCheck(filter: string, values: string[], toSelect?: string): void;
   clickOnFilterCategory(filter: string): void;
+  selectItemFromDropdownFilterCategory(
+    category: string,
+    subCategory: string,
+    toSelect?: string
+  ): void;
+  selectItemFromCheckboxFilterCategory(
+    category: string,
+    subCategory: string,
+    toSelect?: string
+  ): void;
 }

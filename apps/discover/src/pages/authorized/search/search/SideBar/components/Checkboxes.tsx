@@ -70,7 +70,7 @@ export const Checkboxes: React.FC<Props> = ({
   return (
     <>
       {title && (
-        <CheckboxTitle>
+        <CheckboxTitle aria-label={`${title} label`}>
           <span>{title}</span>
         </CheckboxTitle>
       )}

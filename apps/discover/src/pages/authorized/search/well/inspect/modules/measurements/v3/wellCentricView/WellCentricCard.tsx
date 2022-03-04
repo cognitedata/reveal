@@ -77,7 +77,7 @@ export const WellCentricCard: React.FC<Props> = ({
           >
             <div>
               <HeaderTitle>{wellbore.metadata?.wellName}</HeaderTitle>
-              <HeaderSubTitle>
+              <HeaderSubTitle data-testid="wellbore-descriptor">
                 {wellbore.description} {wellbore.name}
               </HeaderSubTitle>
             </div>

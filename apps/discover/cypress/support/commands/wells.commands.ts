@@ -39,8 +39,20 @@ Cypress.Commands.add('clearWellsSelection', () => {
   cy.findByTestId('table-bulk-actions').should('not.be.visible');
 });
 
+Cypress.Commands.add('selectFirstWellInResults', () => {
+  cy.log('Select first well in result list');
+  // First row
+  cy.findByTestId('well-result-table')
+    .findAllByTestId('table-row')
+    .first()
+    .children()
+    .first()
+    .click();
+});
+
 export interface WellsCommands {
   goToWellsTab(tab: any): void;
   openInspectView(): void;
   clearWellsSelection(): void;
+  selectFirstWellInResults(): void;
 }

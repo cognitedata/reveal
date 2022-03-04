@@ -78,7 +78,10 @@ export const SidebarContent: React.FC = () => {
               );
 
               return (
-                <BlockContentItem key={id}>
+                <BlockContentItem
+                  data-testid="wellbore-selection-block"
+                  key={id}
+                >
                   <Checkbox
                     color={color}
                     checked={selectedWellboreIds[id]}

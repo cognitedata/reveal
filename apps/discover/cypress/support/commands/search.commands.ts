@@ -53,18 +53,15 @@ Cypress.Commands.add(
     if (filters) {
       cy.log('Applying filters');
 
-      filters.forEach(({ category, value: { name, type } }) => {
+      filters.forEach(({ category, subCategory, value: { name, type } }) => {
         cy.log(`Select ${category} in sidebar`);
-        cy.findByTestId('side-bar')
-          .contains(category)
-          .should('be.visible')
-          .click();
 
         if (type === 'checkbox') {
-          cy.findByTestId('side-bar')
-            .contains(name)
-            .should('be.visible')
-            .click();
+          cy.selectItemFromCheckboxFilterCategory(category, subCategory, name);
+        }
+
+        if (type === 'select') {
+          cy.selectItemFromDropdownFilterCategory(category, subCategory, name);
         }
 
         // Add logic for other type of filters (date-range, select, etc)
@@ -114,7 +111,8 @@ type WellSearch = {
   search?: {
     query?: string;
     filters?: {
-      category: 'Source';
+      category: 'Source' | 'Data Availability';
+      subCategory?: string;
       value: {
         name: string;
         type: 'checkbox' | 'select' | 'date-range';

@@ -39,7 +39,7 @@ export const CurveCentricCard: React.FC<Props> = ({
   return (
     <Wrapper>
       {!isOtherType && (
-        <SubHeader>
+        <SubHeader data-testid="curve-centric-card-header">
           {measurementType === MeasurementType.GEOMECHANNICS
             ? GEOMECHANICS_CRUVES_TITLE
             : PPFG_CURVES_TITLE}

@@ -25,13 +25,7 @@ describe('Wells: Casings', () => {
       },
     });
 
-    cy.log('Inspect first well in table');
-    cy.findByTestId('well-result-table')
-      .findAllByTestId('table-row')
-      .first()
-      .children()
-      .first()
-      .click();
+    cy.selectFirstWellInResults();
 
     cy.openInspectView();
     cy.goToWellsTab('Casings');
