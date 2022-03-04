@@ -1,7 +1,3 @@
-import head from 'lodash/head';
-import last from 'lodash/last';
-import { changeUnitTo } from 'utils/units';
-
 import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discover-api-types';
 import { MeasurementType, WellFilter } from '@cognite/sdk-wells-v2';
 
@@ -50,25 +46,13 @@ import {
   FilterTypes,
 } from 'modules/wellSearch/types';
 import {
+  getFilterRangeInUserPreferredUnit,
+  getLimitRangeInUserPreferredUnit,
   getWaterDepthLimitsInUnit,
   processSpudDateLimits,
-  getRangeLimitInUnit,
 } from 'modules/wellSearch/utils';
 
 const wellFilterFetchers = getWellFilterFetchers();
-
-const DEFAULT_MIN_LIMIT = 0;
-const DEFAULT_MAX_LIMIT = 0;
-
-const getLimitRangeInUserPreferredUnit = (
-  limitRange: number[],
-  unit: UserPreferredUnit
-) =>
-  getRangeLimitInUnit(
-    head(limitRange) || DEFAULT_MIN_LIMIT,
-    last(limitRange) || DEFAULT_MAX_LIMIT,
-    unit
-  );
 
 export const filterConfigs = (
   unit = UserPreferredUnit.FEET,
@@ -172,15 +156,15 @@ export const filterConfigs = (
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () => {
-      return wellFilterFetchers?.kbLimits().then((response) => {
-        if (response.unit !== unit) {
-          return [
-            Math.floor(changeUnitTo(response.min, response.unit, unit)),
-            Math.ceil(changeUnitTo(response.max, response.unit, unit)),
-          ];
-        }
-        return [response.min, response.max];
-      });
+      return wellFilterFetchers
+        ?.kbLimits()
+        .then((response) =>
+          getFilterRangeInUserPreferredUnit(
+            [response.min, response.max],
+            response.unit,
+            unit
+          )
+        );
     },
     filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
       datum: {
@@ -199,15 +183,15 @@ export const filterConfigs = (
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: (v3enabled) => {
       if (v3enabled) {
-        return wellFilterFetchers?.mdLimits().then((response) => {
-          if (response.unit !== unit) {
-            return [
-              Math.floor(changeUnitTo(response.min, response.unit, unit)),
-              Math.ceil(changeUnitTo(response.max, response.unit, unit)),
-            ];
-          }
-          return [response.min, response.max];
-        });
+        return wellFilterFetchers
+          ?.mdLimits()
+          .then((response) =>
+            getFilterRangeInUserPreferredUnit(
+              [response.min, response.max],
+              response.unit,
+              unit
+            )
+          );
       }
 
       return wellFilterFetchers
@@ -232,15 +216,15 @@ export const filterConfigs = (
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: (v3enabled) => {
       if (v3enabled) {
-        return wellFilterFetchers?.tvdLimits().then((response) => {
-          if (response.unit !== unit) {
-            return [
-              Math.floor(changeUnitTo(response.min, response.unit, unit)),
-              Math.ceil(changeUnitTo(response.max, response.unit, unit)),
-            ];
-          }
-          return [response.min, response.max];
-        });
+        return wellFilterFetchers
+          ?.tvdLimits()
+          .then((response) =>
+            getFilterRangeInUserPreferredUnit(
+              [response.min, response.max],
+              response.unit,
+              unit
+            )
+          );
       }
 
       return wellFilterFetchers
@@ -270,19 +254,15 @@ export const filterConfigs = (
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: (v3enabled) => {
       if (v3enabled) {
-        return wellFilterFetchers?.dogLegSeverityLimits().then((response) => {
-          if (response.unit.distanceUnit !== unit) {
-            return [
-              Math.floor(
-                changeUnitTo(response.min, response.unit.distanceUnit, unit)
-              ),
-              Math.ceil(
-                changeUnitTo(response.max, response.unit.distanceUnit, unit)
-              ),
-            ];
-          }
-          return [Math.floor(response.min), Math.ceil(response.max)];
-        });
+        return wellFilterFetchers
+          ?.dogLegSeverityLimits()
+          .then((response) =>
+            getFilterRangeInUserPreferredUnit(
+              [response.min, response.max],
+              response.unit.distanceUnit,
+              unit
+            )
+          );
       }
 
       return wellFilterFetchers

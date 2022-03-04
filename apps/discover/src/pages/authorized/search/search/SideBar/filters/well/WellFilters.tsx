@@ -120,7 +120,7 @@ export const WellsFilter = () => {
   };
 
   const renderFilters = React.useMemo(() => {
-    if (isFetching) {
+    if (isFetching || !filterOptions) {
       return loader;
     }
 

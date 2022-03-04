@@ -1,5 +1,8 @@
+import { Unit } from 'convert-units';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import head from 'lodash/head';
+import last from 'lodash/last';
 import set from 'lodash/set';
 import proj4 from 'proj4';
 import {
@@ -26,6 +29,9 @@ import { convertToClosestInteger } from 'pages/authorized/search/well/inspect/mo
 import { Well, Wellbore, WellSequence } from './types';
 
 const defaultUnknownValue = 'Unknown';
+
+const DEFAULT_MIN_LIMIT = 0;
+const DEFAULT_MAX_LIMIT = 0;
 
 proj4.defs(Object.keys(proj4Defs).map((key) => [key, proj4Defs[key]]));
 
@@ -180,6 +186,17 @@ export const getRangeLimitInUnit = (
   ];
 };
 
+export const getLimitRangeInUserPreferredUnit = (
+  limitRange: number[],
+  unit: UserPreferredUnit
+) => {
+  return getRangeLimitInUnit(
+    head(limitRange) || DEFAULT_MIN_LIMIT,
+    last(limitRange) || DEFAULT_MAX_LIMIT,
+    unit
+  );
+};
+
 export const processSpudDateLimits = (spudDateLimits: SpudDateLimits) => {
   const minDate = spudDateLimits.min;
   const maxDate = spudDateLimits.max;
@@ -198,3 +215,24 @@ export const toBooleanMap = (list: (number | string)[], status = true) =>
     }),
     {}
   );
+
+export const getFilterRangeInUserPreferredUnit = (
+  range: [number, number],
+  currentUnit: Unit,
+  userPreferredUnit: UserPreferredUnit
+) => {
+  const [min, max] = range;
+
+  if (currentUnit === userPreferredUnit) {
+    return [Math.floor(min), Math.ceil(max)];
+  }
+
+  return [
+    Math.floor(
+      changeUnitTo(min, currentUnit, userPreferredUnit) || DEFAULT_MIN_LIMIT
+    ),
+    Math.ceil(
+      changeUnitTo(max, currentUnit, userPreferredUnit) || DEFAULT_MAX_LIMIT
+    ),
+  ];
+};

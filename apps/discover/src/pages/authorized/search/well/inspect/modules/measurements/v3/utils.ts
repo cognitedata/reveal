@@ -211,11 +211,18 @@ export const mapCurveToPlotly = (
     const yValue = depthMeasurementRow.depth as number;
     const xValue = depthMeasurementRow.values[columnIndex] as number;
 
+    const convertedYValue = changeUnitTo(
+      yValue,
+      tvdUnit,
+      userPreferedDepthMeasurementUnit
+    );
+
     /**
      * When then is a breaking point ( coordinates are not smooth but wayward) we break the chart (line)
      * from that point and draw a another one from the next coordinate
      */
     if (
+      !convertedYValue ||
       CHART_BREAK_POINTS.includes(xValue) ||
       CHART_BREAK_POINTS.includes(yValue)
     ) {
@@ -242,7 +249,7 @@ export const mapCurveToPlotly = (
       return;
     }
 
-    y.push(changeUnitTo(yValue, tvdUnit, userPreferedDepthMeasurementUnit));
+    y.push(convertedYValue);
     if (isAngleCurve) {
       x.push(xValue);
     } else {

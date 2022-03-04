@@ -1,6 +1,5 @@
 import convert from 'convert-units';
 import get from 'lodash/get';
-import { log } from 'utils/log';
 
 import {
   OTHER_CONVERSION_UNITS,
@@ -25,36 +24,20 @@ export const changeUnitTo = (
   try {
     return convert(Number(value)).from(safeFrom).to(toUnit);
   } catch (error) {
-    log(String(error));
-    return value;
+    // console.log('Unit conversion error:', error);
+    return undefined;
   }
 };
 
-const POSSIBLE_DISTANCE_UNITS = [
-  'mm',
-  'cm',
-  'm',
-  'km',
-  'in',
-  'ft-us',
-  'ft',
-  'mi',
-];
 /**
  * This is unsafe because the units are not typed
  * Prefer to use the changeUnitTo instead
- *
- * */
+ */
 export const unsafeChangeUnitTo = (
   value: number,
   fromUnit: string,
   toUnit: string
 ) => {
-  if (!POSSIBLE_DISTANCE_UNITS.includes(fromUnit)) {
-    return value;
-  }
-
   const standardFromUnit = get(UNITS_TO_STANDARD, fromUnit || '');
-
   return changeUnitTo(value, standardFromUnit, toUnit as convert.Unit);
 };

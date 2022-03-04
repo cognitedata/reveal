@@ -9,7 +9,7 @@ describe('changeUnitTo', () => {
   });
 
   describe('bad tests', () => {
-    const origConsole = global.console;
+    const originalConsole = global.console;
 
     beforeAll(() => {
       // @ts-expect-error - missing other keys
@@ -17,13 +17,12 @@ describe('changeUnitTo', () => {
     });
 
     afterAll(() => {
-      global.console = origConsole;
+      global.console = originalConsole;
     });
 
     it('should not like bad values', () => {
       // @ts-expect-error no conversion for bad things
-      expect(changeUnitTo(1, 'meters', 'ft')).toEqual(1);
-      expect(global.console.error).toBeCalledTimes(1);
+      expect(changeUnitTo(1, 'meters', 'ft')).toBeUndefined();
     });
   });
 });
