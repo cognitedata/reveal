@@ -19,7 +19,6 @@ export {
   PotreeNodeWrapper,
   PotreeGroupWrapper,
   PointCloudNode,
-  PointCloudMetadata
 } from '@reveal/pointclouds';
 
 // Utilities

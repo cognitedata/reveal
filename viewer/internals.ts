@@ -6,9 +6,7 @@ export * from './core/internals';
 
 export { CadModelMetadata, SectorMetadata, LevelOfDetail, WantedSector } from './packages/cad-parsers';
 export {
-  CadLoadingHints,
   SectorCuller,
-  DetermineSectorsInput,
   ByVisibilityGpuSectorCuller
 } from './packages/cad-geometry-loaders';
 
