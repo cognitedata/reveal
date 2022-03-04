@@ -1,10 +1,7 @@
 import reducer, {
   initialState,
 } from 'src/modules/Common/store/annotation/slice';
-import {
-  clearExplorerFileState,
-  clearFileState,
-} from 'src/store/commonActions';
+import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
@@ -356,8 +353,7 @@ describe('Test annotation reducer', () => {
   describe('Test delete actions based on file ids', () => {
     const actionTypes = [
       DeleteFilesById.fulfilled.type,
-      clearFileState.type,
-      clearExplorerFileState.type,
+      clearAnnotationState.type,
     ];
     test('should delete file and corresponding annotations from state', () => {
       actionTypes.forEach((actionType) => {

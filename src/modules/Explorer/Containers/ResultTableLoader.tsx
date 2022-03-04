@@ -27,7 +27,6 @@ import {
   showFileMetadata,
 } from 'src/modules/Explorer/store/slice';
 import { selectExplorerSortedFiles } from 'src/modules/Explorer/store/selectors';
-import { clearExplorerFileState } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
@@ -97,7 +96,6 @@ export const ResultTableLoader = <T extends Resource>({
 
   useEffect(() => {
     (async () => {
-      dispatch(clearExplorerFileState(explorerFiles.map((file) => file.id)));
       const fileSearchResult = await fetchFiles(
         props.filter,
         { name: props.query },
@@ -108,7 +106,8 @@ export const ResultTableLoader = <T extends Resource>({
       const fileIds = fileSearchResult.map((item) => item.id);
 
       dispatch(setLoadingAnnotations());
-      dispatch(RetrieveAnnotations({ fileIds, clearCache: true }));
+      dispatch(RetrieveAnnotations({ fileIds, clearCache: true })); // clearCache: true will clear annotation state before adding new annotations
+      // manually clearing annotations is not needed
       dispatch(setExplorerFiles(fileSearchResult));
     })();
 

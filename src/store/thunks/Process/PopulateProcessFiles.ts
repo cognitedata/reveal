@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { setProcessFileIds } from 'src/modules/Process/store/slice';
-import { clearFileState } from 'src/store/commonActions';
+import { clearAnnotationState, clearFileState } from 'src/store/commonActions';
 
 export const PopulateProcessFiles = createAsyncThunk<
   void,
@@ -14,5 +14,6 @@ export const PopulateProcessFiles = createAsyncThunk<
   dispatch(setProcessFileIds(fileIds));
   if (removeFileList) {
     dispatch(clearFileState(removeFileList));
+    dispatch(clearAnnotationState(previousFileList));
   }
 });
