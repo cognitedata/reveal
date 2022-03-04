@@ -141,11 +141,10 @@ const ReactFlowNodeEditor = ({
        * we default to using the latest available version
        * when adding a new function to your calculation
        */
-      const latestVersion =
-        operation.versions
-          .map(({ version }) => version)
-          .sort(compareVersions)
-          .at(-1) || '';
+      const latestVersion = operation.versions
+        .map(({ version }) => version)
+        .sort(compareVersions)
+        .reverse()[0];
 
       onAddFunctionNode(nodePosition, operation, latestVersion);
       setContextMenuPosition(undefined);
