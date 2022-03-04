@@ -10,11 +10,12 @@ import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parse
 
 import {
   createCadModelMetadata,
-  createDetermineSectorInput,
   createV8SectorMetadata,
   createV9SectorMetadata
 } from '../../../../../test-utilities';
 import { CadModelBudget } from '../../CadModelBudget';
+
+import { createDetermineSectorInput } from './createDetermineSectorInput';
 
 describe(ByScreenSizeSectorCuller.name, () => {
   let camera: THREE.PerspectiveCamera;
