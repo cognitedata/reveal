@@ -75,7 +75,7 @@ export type VisionJobFailedItem = {
 
 export type VisionJobResultItem = FileInternalId &
   Partial<FileExternalId> & {
-    annotations: Array<DetectedAnnotation>;
+    annotations: Array<VisionJobAnnotation>;
     width?: number;
     height?: number;
   };

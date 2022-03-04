@@ -4,22 +4,22 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import {
   VisionJob,
   VisionDetectionModelType,
+  TagDetectionJobAnnotation,
 } from 'src/api/vision/detectionModels/types';
-import {
-  enforceRegionValidity,
-  getUnsavedAnnotation,
-} from 'src/api/annotation/utils';
+
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import {
   AnnotationStatus,
   AnnotationUtils,
+  ModelTypeAnnotationTypeMap,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
+import { convertVisionJobAnnotationToAnnotationTypeV1 } from 'src/api/vision/detectionModels/converters';
 
 export const VisionJobUpdate = createAsyncThunk<
   VisionAnnotation[],
@@ -87,7 +87,11 @@ export const VisionJobUpdate = createAsyncThunk<
               const assetIds: number[] = [
                 ...new Set(
                   jobItem.annotations
-                    .map((detectedAnnotation) => detectedAnnotation?.assetIds)
+                    .map(
+                      (detectedAnnotation) =>
+                        (detectedAnnotation as TagDetectionJobAnnotation)
+                          ?.assetIds
+                    )
                     .filter((item): item is number[] => !!item)
                     .flat()
                 ),
@@ -119,37 +123,47 @@ export const VisionJobUpdate = createAsyncThunk<
       let unsavedAnnotations: UnsavedAnnotation[] = [];
 
       // save new prediction results as annotations
-      newVisionJobResults.forEach((annResult) => {
-        const { annotations } = annResult;
+      newVisionJobResults.forEach((results) => {
+        const { annotations: jobAnnotations } = results;
 
-        if (annotations && annotations.length) {
-          const unsavedAnnotationsForFile = annotations
-            .map((ann) => {
-              if (ann.assetIds && ann.assetIds.length) {
-                return ann.assetIds.map((assetId) => {
-                  const asset = assetIdMap.get(assetId);
-                  return getUnsavedAnnotation(
-                    ann.text,
-                    job.type,
-                    annResult.fileId,
-                    'context_api',
-                    enforceRegionValidity(ann.region),
-                    AnnotationStatus.Unhandled,
-                    { confidence: ann.confidence },
-                    asset?.id,
-                    asset?.externalId
+        if (jobAnnotations && jobAnnotations.length) {
+          const unsavedAnnotationsForFile = jobAnnotations
+            .map((item): UnsavedAnnotation | UnsavedAnnotation[] => {
+              const convertedAnnotations =
+                convertVisionJobAnnotationToAnnotationTypeV1(item, job.type);
+
+              if (!convertedAnnotations) {
+                return {} as UnsavedAnnotation;
+              }
+              if ((convertedAnnotations as UnsavedAnnotation[]).length) {
+                const annotations = convertedAnnotations as UnsavedAnnotation[];
+                return annotations.map((imageAssetLink, index) => {
+                  const asset = assetIdMap.get(
+                    (item as TagDetectionJobAnnotation).assetIds[index]
                   );
+                  return {
+                    ...imageAssetLink,
+                    annotationType: ModelTypeAnnotationTypeMap[job.type],
+                    annotatedResourceId: results.fileId,
+                    annotatedResourceType: 'file',
+                    source: 'context_api',
+                    status: AnnotationStatus.Unhandled,
+                    linkedResourceId: asset?.id,
+                    linkedResourceExternalId: asset?.externalId,
+                  };
                 });
               }
-              return getUnsavedAnnotation(
-                ann.text,
-                job.type,
-                annResult.fileId,
-                'context_api',
-                enforceRegionValidity(ann.region),
-                AnnotationStatus.Unhandled,
-                { confidence: ann.confidence }
-              );
+
+              const annotation = convertedAnnotations as UnsavedAnnotation;
+
+              return {
+                ...annotation,
+                annotationType: ModelTypeAnnotationTypeMap[job.type],
+                annotatedResourceId: results.fileId,
+                annotatedResourceType: 'file',
+                source: 'context_api',
+                status: AnnotationStatus.Unhandled,
+              };
             })
             .filter((item): item is UnsavedAnnotation[] => !!item)
             .flat();
