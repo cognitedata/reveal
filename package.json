@@ -76,7 +76,7 @@
     "storybook": "./scripts/storybook.sh",
     "sstorybook": "start-storybook -p 6006",
     "build-storybook": "nx run platypus:build-storybook",
-    "platypus": "node ./dist/apps/platypus-cdf-cli/main.js"
+    "cdf": "node ./dist/apps/platypus-cdf-cli/main.js"
   },
   "browserslist": {
     "production": [

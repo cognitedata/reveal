@@ -1,54 +1,54 @@
-# [Platypus CLI](https://www.npmjs.com/package/@cognite/platypus-cli)
+# [CDF CLI](https://www.npmjs.com/package/@cognite/cdf-cli)
 
-Our aim is to make it easier for application developer to develop app by reducing cost, friction and learning curve for them. Codename Platypus will help us achieve the same.
+The CDF CLI's aim is to make it easier for developers to develop an app or solution on top of CDF. The CLI's current focus is on enabling key data modeling functionality, and we will expand towards other features in the future.
 
-`NOTE: This package is Alpha version is under active development. Use it on your own risk!`
+**NOTE: This package is still in early alpha and under active development. We will document and test actively, but please file bug report via the [Cognite Hub group](https://hub.cognite.com/groups/flexible-data-modeling-early-adopter-208)**
 
 # Install (Globally)
 
 ```
-yarn global add @cognite/platypus-cli
+yarn global add @cognite/cdf-cli
 ```
 
 # Commands
 
 We currently support these top level commands
 
-| Top Level Command            | Description                                                |
-| ---------------------------- | ---------------------------------------------------------- |
-| [`platypus login`](#login)   | Login with the CLI                                         |
-| [`platypus logout`](#logout) | Logout the currently logged-in user                        |
-| [`platypus status`](#status) | Show user's logged-in status (fails is user not logged in) |
+| Top Level Command       | Description                                                |
+| ----------------------- | ---------------------------------------------------------- |
+| [`cdf login`](#login)   | Login with the CLI                                         |
+| [`cdf logout`](#logout) | Logout the currently logged-in user                        |
+| [`cdf status`](#status) | Show user's logged-in status (fails is user not logged in) |
 
 ## Templates (alias: `t`)
 
 Use templates backend to perform the action there (`cdfrc.json` file is the config file that helps execute the commands)
 
-| Templates Command                            | Description                                                                                                    |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `platypus t init`                            | Init a templates project locally by creating a `cdfrc.json`                                                    |
-| `platypus t list`                            | Show list of the templates group's external ids                                                                |
-| `platypus t create`                          | create a new template group                                                                                    |
-| `platypus t delete`                          | delete some existing templates group                                                                           |
-| [`platypus t generate`](#templates-generate) | Generate client side code for the specified templates group and generate typings based on the selected plugins |
+| Templates Command                       | Description                                                                                                    |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `cdf t init`                            | Init a templates project locally by creating a `cdfrc.json`                                                    |
+| `cdf t list`                            | Show list of the templates group's external ids                                                                |
+| `cdf t create`                          | create a new template group                                                                                    |
+| `cdf t delete`                          | delete some existing templates group                                                                           |
+| [`cdf t generate`](#templates-generate) | Generate client side code for the specified templates group and generate typings based on the selected plugins |
 
 ### Templates Schema
 
 Operate with `schema` inside templates instance
 
-| Templates Command                | Description                                                                                      |
-| -------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `platypus t schema pull`         | Pull and override the graphql schema locally based on the version specified in `cdfrc.json` file |
-| `platypus t schema publish`      | Publish the local graphql schema file to the backend                                             |
-| `platypus t schema version list` |                                                                                                  |
+| Templates Command           | Description                                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------------------------ |
+| `cdf t schema pull`         | Pull and override the graphql schema locally based on the version specified in `cdfrc.json` file |
+| `cdf t schema publish`      | Publish the local graphql schema file to the backend                                             |
+| `cdf t schema version list` |                                                                                                  |
 
 ## Solutions (alias: `s`) ![experimental](https://img.shields.io/badge/experimental-red)
 
 Use new schema service backend to perform the action there (`cdfrc.json` file is the config file that helps execute the commands)
 
-| Templates Command                            | Description                                                                                            |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| [`platypus s generate`](#templates-generate) | Generate client side code for the specified APISpec and generate typings based on the selected plugins |
+| Templates Command                       | Description                                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| [`cdf s generate`](#templates-generate) | Generate client side code for the specified APISpec and generate typings based on the selected plugins |
 
 # Options (Global)
 
@@ -72,7 +72,7 @@ See the login section for [more details](./LOGIN.md)
 This will logout and clear the global config files for the CLI (not project config use [templates delete](#templates-delete) for that)
 
 ```bash
-platypus logout
+cdf logout
 ```
 
 ## Status
@@ -80,7 +80,7 @@ platypus logout
 This command will tell about the login status and later on status of the backend your project is connected to.
 
 ```bash
-platypus status
+cdf status
 ```
 
 ## Templates Generate
@@ -100,7 +100,7 @@ Currently following plugins are supported only:
 Example:
 
 ```bash
-platypus templates generate --operations-file operations.graphql --plugins typescript typescript-operations
+cdf templates generate --operations-file operations.graphql --plugins typescript typescript-operations
 ```
 
 # Metrics, Logs and Telemetry
@@ -109,22 +109,6 @@ platypus templates generate --operations-file operations.graphql --plugins types
 
 We check in background if a newer version of the package is published in `npm` and notify the user about the same if a newer version is available.
 
-> To opt-out set `optOut` to `true` in `~/.config/configstore/update-notifier-@cognite/platypus-cli.json` or set env `NO_UPDATE_NOTIFIER`
+> To opt-out set `optOut` to `true` in `~/.config/configstore/update-notifier-@cognite/cdf-cli.json` or set env `NO_UPDATE_NOTIFIER`
 
-# For Developer
-
-You can find the code under `apps/platypus-cdf-cli`.
-
-To build:
-
-`nx build platypus-cdf-cli`
-
-To test:
-
-`nx test platypus-cdf-cli`
-
-To run:
-
-First build the library, then you can
-
-`yarn platypus --help`
+## [Contributing to CDF CLI](./CONTRIBUTING.md)
