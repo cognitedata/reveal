@@ -3,6 +3,7 @@ import { mergeUniqueArray } from 'utils/merge';
 
 import { reportException } from '@cognite/react-errors';
 import {
+  Document,
   DocumentsFilter,
   DocumentsSearch,
   ExternalDocumentsSearch,
@@ -109,7 +110,7 @@ const search = (
     });
 };
 
-const documentsByIds = (documentIds: number[]) => {
+const documentsByIds = (documentIds: Document['id'][]) => {
   return getDocumentSDKClient().documents.search({
     filter: {
       id: {

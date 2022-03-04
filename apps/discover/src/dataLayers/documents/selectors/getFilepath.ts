@@ -1,6 +1,6 @@
-import { Document } from '@cognite/sdk-playground';
+import get from 'lodash/get';
 
-import { getMetadataItem } from './getMetadataItem';
+import { Document } from '@cognite/sdk-playground';
 
 function escapeRegExp(value = '') {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -14,8 +14,8 @@ export const getFilepath = (item: Document) => {
 
   const absoluteFilepath =
     item.sourceFile.directory ||
-    getMetadataItem(item, 'parentPath') ||
-    getMetadataItem(item, 'path');
+    get(item.sourceFile, 'metadata.parentPath') ||
+    get(item.sourceFile, 'metadata.path');
 
   // Find filename in path and remove it.
   const removeFileNameRegex = new RegExp(

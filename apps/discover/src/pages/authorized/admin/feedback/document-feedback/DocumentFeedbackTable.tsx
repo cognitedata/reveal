@@ -195,23 +195,26 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     },
     user: {
       Header: FIELDS.user.display,
-      accessor: 'user',
+      accessor: 'userCol',
       width: '200px',
       order: 4,
       // eslint-disable-next-line react/no-unstable-nested-components
-      Cell: (cell) => (
-        <span>
-          {cell.row.original.user ? (
-            getFullNameOrDefaultText(cell.row.original.user)
-          ) : (
-            <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
-          )}
-        </span>
-      ),
-      sortType: (row1, row2) =>
-        getFullNameOrDefaultText(row1.original.user).localeCompare(
+      Cell: (cell) => {
+        return (
+          <span>
+            {cell.row.original.user ? (
+              getFullNameOrDefaultText(cell.row.original.user)
+            ) : (
+              <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
+            )}
+          </span>
+        );
+      },
+      sortType: (row1, row2) => {
+        return getFullNameOrDefaultText(row1.original.user).localeCompare(
           getFullNameOrDefaultText(row2.original.user)
-        ),
+        );
+      },
     },
     assignedTo: {
       Header: FIELDS.assignedTo.display,

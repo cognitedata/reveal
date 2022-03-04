@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useDocumentSearchOneQuery } from 'services/documentSearch/useDocumentSearchOneQuery';
 import {
   setObjectFeedbackSensitivityByAdmin,
   useFeedbackUpdateMutate,
@@ -9,8 +10,9 @@ import {
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 
+import { Loading } from 'components/loading';
+// import { Metadata } from 'components/document-preview';
 import MetadataTable, { MetadataItem } from 'components/metadataTable';
-import { useDocumentFilename } from 'modules/documentSearch/hooks/useDocumentFilename';
 import { ASSESS } from 'modules/feedback/constants';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
 import { MarginBottomNormalContainer } from 'styles/layout';
@@ -43,8 +45,7 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
   const { mutateAsync: updateObjectFeedbackSensitive } =
     useFeedbackUpdateMutate('sensitive');
   const { feedback, action } = props;
-  const filename = useDocumentFilename(Number(feedback.documentId));
-
+  const { data: doc } = useDocumentSearchOneQuery(Number(feedback.documentId));
   const initialAssessment = feedback?.isSensitiveByAdmin
     ? ASSESS.Approve
     : undefined;
@@ -76,6 +77,10 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
     setAssessment(undefined);
   };
 
+  if (!doc) {
+    return <Loading />;
+  }
+
   return (
     <TableDropdown>
       {feedback.isSensitiveData && (
@@ -99,13 +104,13 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
       <DocumentFeedbackDetailsWrapper>
         <MetadataItem
           label={t('Original path')}
-          value={feedback.fileLocation || filename}
+          value={feedback.fileLocation || doc?.fullFilePath}
           type="path"
         />
         <MetadataTable
           columns={3}
           metadata={[
-            { label: t('Document title'), value: feedback?.documentExternalId },
+            { label: t('Document title'), value: doc?.title },
             { label: t('Feedback ID'), value: feedback.id },
             {
               label: t('Current document type'),
@@ -114,7 +119,13 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
             },
           ]}
         />
-
+        {/* 
+        We need to consider adding all the metadata here, 
+        instead of a custom display:
+          {doc && (
+            <Metadata doc={doc} numberOfColumns={4} hidelist={['assets']} />
+          )} 
+        */}
         {feedback?.suggestedType && !feedback?.suggestedTypeLabelId && (
           <MarginBottomNormalContainer>
             <MetadataItem

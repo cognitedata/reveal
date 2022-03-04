@@ -83,6 +83,12 @@ describe('DocumentFeedbackTable Tests', () => {
 
   const testInit = async (store: Store, viewProps?: any) =>
     testRendererModal(DocumentFeedbackTableComponent, store, viewProps);
+
+  it('should render table with user name', async () => {
+    await testInit(setupStore());
+    expect(screen.getByText('Richard Doe')).toBeInTheDocument(); // in user column
+  });
+
   it('should render table with records', async () => {
     await testInit(setupStore());
     expect(screen.getByText('comment')).toBeInTheDocument();

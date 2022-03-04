@@ -84,6 +84,7 @@ export interface DocumentType {
   doc: DocumentMetadata;
   highlight: DocumentHighlight;
   filepath?: string;
+  fullFilePath?: string;
   title: string;
   labels?: string[];
   filename?: string;

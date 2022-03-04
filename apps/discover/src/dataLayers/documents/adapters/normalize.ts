@@ -1,13 +1,14 @@
-import { getCreatedDate } from 'dataLayers/documents/selectors/getCreatedDate';
-import { getCreatedDateDisplay } from 'dataLayers/documents/selectors/getCreatedDateDisplay';
-import { getFilesize } from 'dataLayers/documents/selectors/getFilesize';
-import { getModifiedDate } from 'dataLayers/documents/selectors/getModifiedDate';
-import { getTitle } from 'dataLayers/documents/selectors/getTitle';
-
 import { Document } from '@cognite/sdk-playground';
 
 import { DocumentType } from 'modules/documentSearch/types';
-import { getFilepath } from 'modules/documentSearch/utils/getFilepath';
+
+import { getCreatedDate } from '../selectors/getCreatedDate';
+import { getCreatedDateDisplay } from '../selectors/getCreatedDateDisplay';
+import { getFilepath } from '../selectors/getFilepath';
+import { getFilesize } from '../selectors/getFilesize';
+import { getFullFilepath } from '../selectors/getFullFilepath';
+import { getModifiedDate } from '../selectors/getModifiedDate';
+import { getTitle } from '../selectors/getTitle';
 
 /*
  * Normalize document type
@@ -32,6 +33,7 @@ export const normalize = (rawAPIDoc: Document): DocumentType => {
     modified: getModifiedDate(rawAPIDoc),
     createdDisplay: getCreatedDateDisplay(rawAPIDoc),
     modifiedDisplay: getCreatedDateDisplay(rawAPIDoc),
+    fullFilePath: getFullFilepath(rawAPIDoc),
     doc: {
       id: String(rawAPIDoc.id),
       assetIds: rawAPIDoc.sourceFile.assetIds || [],

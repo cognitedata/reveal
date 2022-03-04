@@ -111,6 +111,7 @@ export const USER_MANAGEMENT_SYSTEM_KEY = {
 const DOCUMENTS = 'documents';
 export const DOCUMENTS_QUERY_KEY = {
   SEARCH: [DOCUMENTS, 'search'],
+  SEARCH_ONE: [DOCUMENTS, 'one'],
   LABELS: [DOCUMENTS, 'labels'],
 };
 
