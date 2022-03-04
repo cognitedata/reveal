@@ -1,7 +1,60 @@
-import { IdEither } from '@cognite/sdk';
+import { ExternalId, IdEither, InternalId } from '@cognite/sdk';
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
 import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+
+// Primitives
+type Label = {
+  label: string;
+};
+
+type Confidence = {
+  confidence: number;
+};
+
+export type Point = {
+  x: number;
+  y: number;
+};
+
+export type BoundingBox = {
+  xMin: number;
+  yMin: number;
+  xMax: number;
+  yMax: number;
+};
+
+export type Polygon = {
+  vertices: Point[];
+};
+
+export type TextRegion = {
+  textRegion: BoundingBox;
+};
+
+// Image types
+export type ImageClassification = Label & Partial<Confidence>;
+
+export type ImageObjectDetectionBoundingBox = Label &
+  Partial<Confidence> & {
+    boundingBox: BoundingBox;
+  };
+
+export type ImageObjectDetectionPolygon = Label &
+  Partial<Confidence> & {
+    polygon: Polygon;
+  };
+
+export type ImageExtractedText = TextRegion &
+  Partial<Confidence> & {
+    extractedText: string;
+  };
+
+export type ImageAssetLink = TextRegion &
+  Partial<Confidence> & {
+    text: string;
+    assetRef: InternalId & Partial<ExternalId>;
+  };
 
 // Annotation API types
 export type AnnotationType =
