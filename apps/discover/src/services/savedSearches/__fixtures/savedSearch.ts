@@ -1,6 +1,9 @@
 import { SavedSearchItem } from 'services/savedSearches/types';
 
-import { getMockDocumentFilter, getMockWellFilter } from './sidebar';
+import {
+  getMockDocumentFilter,
+  getMockWellFilter,
+} from '../../../__test-utils/fixtures/sidebar';
 
 export const DEFAULT_MOCKED_SAVED_SEARCH_NAME = 'default-saved-search';
 

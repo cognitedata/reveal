@@ -1,6 +1,6 @@
-import { getMockedNewDocumentFeedbackItem } from '__test-utils/fixtures/feedback';
 import { getUser } from '__test-utils/fixtures/user';
 
+import { getMockedNewDocumentFeedbackItem } from '../__fixtures/feedback';
 import {
   updateFeedbackStatus,
   recoverGeneralFeedback,

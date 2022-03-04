@@ -1,6 +1,6 @@
 import { screen, fireEvent } from '@testing-library/react';
+import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 
-import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { testRendererModal } from '__test-utils/renderer';
 
 import BaseFavoriteCreationModal, { Props } from './BaseFavoriteCreationModal';

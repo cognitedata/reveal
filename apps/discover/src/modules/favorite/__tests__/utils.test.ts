@@ -1,4 +1,4 @@
-import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
+import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 
 import { FavoriteSummary } from '../types';
 import {

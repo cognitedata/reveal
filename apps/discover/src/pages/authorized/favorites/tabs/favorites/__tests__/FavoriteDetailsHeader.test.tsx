@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
+import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 import { useUserProfileQuery } from 'services/user/useUserQuery';
 
-import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { testRenderer } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';

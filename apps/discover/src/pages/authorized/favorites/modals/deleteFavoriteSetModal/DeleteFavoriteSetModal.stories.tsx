@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
+import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
+
 import { Button } from '@cognite/cogs.js';
 
-import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { FavoriteSummary } from 'modules/favorite/types';
 
 import DeleteFavoriteSetModal from './index';

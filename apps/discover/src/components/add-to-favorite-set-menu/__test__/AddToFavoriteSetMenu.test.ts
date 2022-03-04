@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
+import { getMockFavoritesList } from 'services/favorites/__fixtures/favorite';
 
-import { getMockFavoritesList } from '__test-utils/fixtures/favorite';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 

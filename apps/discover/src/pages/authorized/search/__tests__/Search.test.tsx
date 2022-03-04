@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { Store } from 'redux';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import { getMockSavedSearchGet } from 'services/savedSearches/__mocks/getMockSavedSearchGet';
+import { getMockSavedSearchList } from 'services/savedSearches/__mocks/getMockSavedSearchList';
 import { getMockSearchHistoryGet } from 'services/searchHistory/__mocks/getMockSearchHistoryGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
@@ -20,7 +20,7 @@ jest.mock('../map/Map', () => {
 
 const mockServer = setupServer(
   getMockConfigGet(),
-  getMockSavedSearchGet(),
+  getMockSavedSearchList(),
   getMockSearchHistoryGet(),
   getMockUserMe()
 );

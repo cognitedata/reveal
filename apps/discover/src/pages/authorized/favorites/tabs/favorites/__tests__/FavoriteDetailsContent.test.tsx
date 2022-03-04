@@ -3,12 +3,12 @@ import 'services/documents/__mocks/setupDocumentsMockSDK';
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
+import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserGet } from 'services/user/__mocks/getMockUserGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
 
-import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

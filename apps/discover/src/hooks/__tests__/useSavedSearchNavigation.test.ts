@@ -1,11 +1,11 @@
 import { useHistory } from 'react-router-dom';
 
 import { renderHook } from '@testing-library/react-hooks';
-
 import {
   getMockedEmptySavedSearch,
   getMockedSavedSearchWithFilters,
-} from '__test-utils/fixtures/savedSearch';
+} from 'services/savedSearches/__fixtures/savedSearch';
+
 import navigation from 'constants/navigation';
 
 import {

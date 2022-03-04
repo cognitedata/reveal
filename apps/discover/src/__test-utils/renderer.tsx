@@ -125,7 +125,7 @@ export const testRendererForHooks = (
 
 export const renderHookWithStore = <TProps, TResult>(
   callback: (props: TProps) => TResult,
-  store: Store,
+  store?: Store,
   options?: RenderHookOptions<TProps>
 ) =>
   renderHook<TProps, TResult>(callback, {

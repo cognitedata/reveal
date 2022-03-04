@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
+import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 import { useFavoritesGetAllQuery } from 'services/favorites/useFavoritesQuery';
 
-import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { FavoriteSummary } from 'modules/favorite/types';
 
 import { useFavoriteDocumentIds } from '../useFavoriteDocumentIds';

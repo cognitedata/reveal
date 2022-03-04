@@ -26,6 +26,7 @@ _TESTS = [
     "src/**/__tests__/**/*.ts*",
     "src/__mocks/*",
     "src/**/__mocks/*",
+    "src/**/__fixtures/*",
     "src/utils/test/*",
     "src/__test-utils/**/*",
 ]

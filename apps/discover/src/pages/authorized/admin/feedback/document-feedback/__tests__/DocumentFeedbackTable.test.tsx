@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { Store } from 'redux';
+import { getMockedDocumentFeedbackItem } from 'services/feedback/__fixtures/feedback';
 
-import { getMockedDocumentFeedbackItem } from '__test-utils/fixtures/feedback';
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
