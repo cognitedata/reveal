@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
+import { getMockSearchHistory } from 'services/searchHistory/__fixtures/searchHistory';
 import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
-
-import { getMockSearchHistory } from '__test-utils/fixtures/searchHistory';
 
 import { useSearchHistoryOptionData } from '../useSearchHistoryOptionData';
 
@@ -45,7 +44,6 @@ describe('useSearchHistoryOptionData hook', () => {
                 documents: {
                   facets: {
                     filetype: [],
-                    labels: [],
                     lastcreated: [],
                     lastmodified: [],
                     location: [],

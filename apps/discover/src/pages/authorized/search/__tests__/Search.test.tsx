@@ -12,9 +12,9 @@ import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe'
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
-import { Search } from './Search';
+import { Search } from '../Search';
 
-jest.mock('./map/Map', () => {
+jest.mock('../map/Map', () => {
   return () => <div>fake map</div>;
 });
 

@@ -11,8 +11,6 @@ export const useSearchHistoryListQuery = () => {
   const [tenant] = getTenantInfo();
 
   return useQuery(SEARCH_HISTORY_KEY.LIST, () =>
-    discoverAPI.searchHistory
-      .list(headers, tenant)
-      .then((searchHistory) => searchHistory)
+    discoverAPI.searchHistory.list(headers, tenant)
   );
 };

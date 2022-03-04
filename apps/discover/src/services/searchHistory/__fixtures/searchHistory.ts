@@ -1,4 +1,6 @@
-export const getMockSearchHistory = () => [
+import { SearchHistoryResponse } from '@cognite/discover-api-types';
+
+export const getMockSearchHistory: () => SearchHistoryResponse[] = () => [
   {
     lastUpdatedTime: '2021-08-19T10:50:50.093Z',
     name: 'current',
@@ -11,15 +13,14 @@ export const getMockSearchHistory = () => [
       documents: {
         facets: {
           filetype: ['PDF', 'IMAGE'],
-          labels: [],
           lastmodified: [],
           lastcreated: [],
           location: ['SOURCE_1'],
         },
       },
       wells: {
-        '7': [58, 7058],
-        '8': ['2020-02-29T18:30:00.000Z', '2020-03-24T18:30:00.000Z'],
+        // '7': [58, 7058],
+        // '8': ['2020-02-29T18:30:00.000Z', '2020-03-24T18:30:00.000Z'],
       },
     },
     geoJson: [],
@@ -37,7 +38,6 @@ export const getMockSearchHistory = () => [
       documents: {
         facets: {
           filetype: [],
-          labels: [],
           lastmodified: [],
           lastcreated: [],
           location: [],

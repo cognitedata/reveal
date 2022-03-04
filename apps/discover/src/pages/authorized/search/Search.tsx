@@ -77,17 +77,11 @@ export const Search: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
-  // const { data: stats } = useStatsFindQuery();
   const isOpen = useFilterBarIsOpen();
   const anythingHasSearched = useAnythingHasSearched();
-  // INFO:Disabled after talking to Sam. Needs to be defined properly
-  // const [tabTotals, setTabTotals] = React.useState<{ [total: string]: number }>(
-  //   {}
-  // );
   const responsive = useResponsive();
 
   const { t } = useTranslation();
-  // const showDashboard = useFlag(DASHBOARD_TOTALS);
 
   const { data: projectConfig } = useProjectConfig();
   const isWellConfigEnabled = useIsWellConfigEnabled();
@@ -186,19 +180,6 @@ export const Search: React.FC = () => {
     });
   }, []);
 
-  // INFO: this is related to the other disabled stuff about displaying the total in the tabs
-  /*  React.useEffect(() => {
-    if (showDashboard && stats) {
-      if ('documents' in stats) {
-        setTabTotals({
-          Documents: stats.documents.total,
-          Wells: stats.wells.total,
-          Seismic: stats.seismic.total,
-        });
-      }
-    }
-  }, [showDashboard]); */
-
   const handleNavigation = useCallback(
     (tabKey: string) => {
       const tabItem = items.find((item) => item.projectConfigKey === tabKey);
@@ -237,23 +218,12 @@ export const Search: React.FC = () => {
     }
   };
 
-  // INFO: might be used later
-  /* const getTabDisplayName = (tab: TabItem) => {
-    const tabTotal = tabTotals[tab.name];
-
-    if (tabTotal === undefined || tabTotal === 0) {
-      return tab.name;
-    }
-
-    return `${tab.name} (${formatBigNumbersWithSuffix(tabTotal)})`;
-  }; */
-
   const defaultPage = () => {
-    if (projectConfig && !projectConfig.documents?.disabled) {
+    if (projectConfig && isDocumentConfigEnabled) {
       return navigation.SEARCH_DOCUMENTS;
     }
 
-    if (projectConfig && !projectConfig.seismic?.disabled) {
+    if (projectConfig && isSeismicConfigEnabled) {
       return navigation.SEARCH_SEISMIC;
     }
 
