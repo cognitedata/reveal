@@ -15,5 +15,5 @@ jobs:
           dst_path: /
           dst_owner: cognitedata
           dst_branch: docs
-          dst_repo_name: https://github.com/cognitedata/platypus
+          dst_repo_name: platypus
           personal_token: ${{ secrets.PERSONAL_TOKEN }}
