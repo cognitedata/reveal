@@ -5,11 +5,11 @@ import { promiseWithTimeout } from '../../utils/general';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const command = 'login [project]';
-export const desc = 'Login to CDF for using Platypus';
+export const desc = 'Login to Cognite Data Fusion';
 export const builder = (yargs: Argv<LoginArgs>) =>
   yargs
     .usage('$0 login [project]')
-    .example('platypus login cognite', 'Login to cognite tenant')
+    .example('$0 login cognite', 'Login to cognite tenant')
     .positional('project', {
       alias: 'p',
       type: 'string',

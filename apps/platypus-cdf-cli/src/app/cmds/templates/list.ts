@@ -6,7 +6,7 @@ import Response, {
 
 import { getCogniteSDKClient } from '@cognite/platypus-cdf-cli/app/utils/cogniteSdk';
 
-const DEBUG = _DEBUG.extend('platypus-cdf-cli:templates:list');
+const DEBUG = _DEBUG.extend('cmd:templates:list');
 export class TemplatesListCommand extends CLICommand {
   async execute() {
     const client = getCogniteSDKClient();

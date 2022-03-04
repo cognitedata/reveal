@@ -10,11 +10,12 @@ import status from './app/cmds/status';
 import logout from './app/cmds/logout';
 import initCmd from './app/cmds/init';
 import { DEBUG as _DEBUG } from './app/utils/logger';
+import { CONSTANTS } from './app/constants';
 
 const DEBUG = _DEBUG.extend('main');
 
 // commands
-scriptName('platypus')
+scriptName(CONSTANTS.APP_ID)
   .strict()
   .middleware([init, authenticate])
   .demandCommand(1)

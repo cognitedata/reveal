@@ -1,10 +1,8 @@
-import { SolutionsApiService } from '@platypus/platypus-core';
 import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
 import Response, {
   DEBUG as _DEBUG,
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
 
-import { getCogniteSDKClient } from '@cognite/platypus-cdf-cli/app/utils/cogniteSdk';
 import { CommandArgumentType } from '@cognite/platypus-cdf-cli/app/types';
 import { getSolutionSchemaHandler } from '../../utils';
 

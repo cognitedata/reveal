@@ -25,7 +25,7 @@ export async function init(args: Arguments<LoginArgs>) {
 
   // enable debug logger if --verbose flag is set
   if (args.verbose) {
-    enable('platypus*');
+    enable(`${CONSTANTS.APP_ID}*`);
   }
 
   // set config object

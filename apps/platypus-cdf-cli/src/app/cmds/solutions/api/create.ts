@@ -1,5 +1,3 @@
-import { SolutionsApiService } from '@platypus/platypus-core';
-import { getCogniteSDKClient } from '../../../utils/cogniteSdk';
 import { CommandArgument, CommandArgumentType } from '../../../types';
 import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
 import Response from '@cognite/platypus-cdf-cli/app/utils/logger';

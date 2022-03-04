@@ -32,7 +32,7 @@ An admin would need to first approve the application. If you are an admin, and i
 
 <img src="./static/admin-grant.png" alt="drawing"  style="width:600px"/>
 
-If you login and see a screen like this, then it would mean you need to contact an admin to grant "admin consent" to the Platypus CLI to the Azure AD tenant. Otherwise, you should be good to go!
+If you login and see a screen like this, then it would mean you need to contact an admin to grant "admin consent" to the cdf-cli to the Azure AD tenant. Otherwise, you should be good to go!
 
 <img src="./static/missing-admin.png" alt="drawing"  style="width:600px"/>
 
@@ -55,7 +55,7 @@ This could be done if you are the Azure AD tenant's admin and visiting: `https:/
 
 [This](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) mode is designed for long lasting token where you will need to provide `client_id` and `client_secret` for your application, this kind of token are long lasting and meant for machine interactions like CI/CD. In this case, the machine token is granted via an app registration, and the app would have to be granted access
 
-`platypus login [project_name] --auth-type=clientSecret --client-secret=<client-secret> --client-id=<client-id>`
+`cdf login [project_name] --auth-type=clientSecret --client-secret=<client-secret> --client-id=<client-id>`
 
 ## How do you create your own Client Secret
 
@@ -106,10 +106,10 @@ Please reach out in [Cognite Hub](https://hub.cognite.com) or `#topic-templates`
 
 ## **Legacy Auth** is supported (but not-recomended), to use legacy auth with `API_KEY` please use the following command
 
-`platypus login [project_name] --auth-type=legacy --api-key=<api_key>`
+`cdf login [project_name] --auth-type=legacy --api-key=<api_key>`
 
 alternatively you can also use
 
-`API_KEY=<api_key> platypus login [project_name] --auth-type=legacy`
+`API_KEY=<api_key> cdf login [project_name] --auth-type=legacy`
 
 > by default `[project_name]` is set to `platypus`

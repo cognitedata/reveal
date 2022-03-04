@@ -29,7 +29,7 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
         ).accessToken;
       } catch {
         throw new Error(
-          'Unable to refresh token based on your login, you need to retrigger login once again, try $ platypus login'
+          'Unable to refresh token based on your login, you need to retrigger login once again'
         );
       }
     }
@@ -48,7 +48,7 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
         return token;
       } else {
         throw new Error(
-          'Unable to refresh token based on your login, you need to retrigger login once again, try $ platypus login'
+          'Unable to refresh token based on your login, you need to retrigger login once again'
         );
       }
     }
@@ -65,7 +65,7 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
         ).accessToken;
       } catch {
         throw new Error(
-          'Unable to refresh token based on your login, you need to retrigger login once again, try $ platypus login'
+          'Unable to refresh token based on your login, you need to retrigger login once again'
         );
       }
     }

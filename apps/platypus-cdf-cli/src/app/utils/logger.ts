@@ -1,8 +1,9 @@
 import { Logger } from '@platypus/platypus-core';
 import chalk from 'chalk';
 import _debug from 'debug';
+import { CONSTANTS } from '../constants';
 
-export const DEBUG = _debug('platypus-cli');
+export const DEBUG = _debug(CONSTANTS.APP_ID);
 
 export class Log extends Logger {
   debug(msg: string, ..._optionalParams: any[]): void {

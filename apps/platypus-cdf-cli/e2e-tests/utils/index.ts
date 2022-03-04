@@ -3,7 +3,7 @@ import concat from 'concat-stream';
 
 /**
  *
- * @param arg string[] - arguments to pass to the command e.g. ['platypus', 'templates', 'generate', '--plugins', 'typescript'], dont specify (yarn/npm)
+ * @param arg string[] - arguments to pass to the command e.g. ['cdf', 'templates', 'generate', '--plugins', 'typescript'], dont specify (yarn/npm)
  */
 export const Run = async (...arg: string[]): Promise<string> => {
   const createProcess = (args: string[]) => {
