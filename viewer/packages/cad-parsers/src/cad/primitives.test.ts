@@ -8,7 +8,7 @@ import { createEmptySector } from '../../../../test-utilities';
 
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 
-import { RenderMode, createMaterials, Materials } from '@reveal/rendering';
+import { RenderMode, createMaterials, Materials } from '../../../rendering';
 import { SectorGeometry } from '@reveal/cad-parsers';
 import { BoundingBoxLOD } from '@reveal/utilities';
 

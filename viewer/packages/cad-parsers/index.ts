@@ -31,6 +31,9 @@ export {
   ConsumedSector
 } from './src/cad/types';
 
+export { createSimpleGeometryMesh } from './src/cad/createSimpleGeometryMesh';
+export { createPrimitives } from './src/cad/primitives';
+
 export { getDistanceToMeterConversionFactor } from './src/utilities/types';
 
 export { createTriangleMeshes } from './src/cad/triangleMeshes';

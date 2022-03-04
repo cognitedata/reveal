@@ -6,7 +6,8 @@ import * as THREE from 'three';
 
 import { SectorQuads } from '@cognite/reveal-parser-worker';
 
-import { createSimpleGeometryMesh, Materials, createPrimitives } from '@reveal/rendering';
+import { Materials } from '@reveal/rendering';
+import { createSimpleGeometryMesh, createPrimitives } from '@reveal/cad-parsers';
 import { AutoDisposeGroup } from '@reveal/utilities';
 import {
   InstancedMeshFile,
