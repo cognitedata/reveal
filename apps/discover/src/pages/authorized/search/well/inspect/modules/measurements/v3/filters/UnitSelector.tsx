@@ -5,7 +5,7 @@ import { Menu, Dropdown } from '@cognite/cogs.js';
 import { MoreOptionsButton } from 'components/buttons';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 
-import { MEASUREMENTS_REFERENCES, PRESSURE_UNITS } from '../constants';
+import { PRESSURE_UNITS } from '../constants';
 
 import {
   UnitCategoryBody,
@@ -13,7 +13,7 @@ import {
   UnitCategoryValue,
   UnitSelectorWrapper,
   UnitSelectorMainMenu,
-  UnitSelectorSubMenu,
+  // UnitSelectorSubMenu,
 } from './elements';
 
 export interface Props {
@@ -24,9 +24,9 @@ export interface Props {
 }
 export const UnitSelector: React.FC<Props> = ({
   unit,
-  reference,
+  // reference,
   onUnitChange,
-  onReferenceChange,
+  // onReferenceChange,
 }) => {
   return (
     <UnitSelectorWrapper>
@@ -57,7 +57,11 @@ export const UnitSelector: React.FC<Props> = ({
                 <UnitCategoryValue>{unit}</UnitCategoryValue>
               </UnitCategoryBody>
             </Menu.Submenu>
-            <Menu.Submenu
+
+            {/* 
+              This filter doesnt work since WDL cannot provide Geo n ppfg depth measurements in MD based depth
+              So until it is sported out commenting this PP-2653
+              <Menu.Submenu
               content={
                 <UnitSelectorSubMenu>
                   {MEASUREMENTS_REFERENCES.map((row) => (
@@ -77,7 +81,7 @@ export const UnitSelector: React.FC<Props> = ({
                 <UnitCategoryHeader>Measurement reference</UnitCategoryHeader>
                 <UnitCategoryValue>{reference}</UnitCategoryValue>
               </UnitCategoryBody>
-            </Menu.Submenu>
+            </Menu.Submenu> */}
           </Menu>
         }
       >
