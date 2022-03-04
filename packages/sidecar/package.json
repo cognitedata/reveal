@@ -1,11 +1,16 @@
 {
   "name": "@cognite/sidecar",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "source": "src/index.ts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "typings": "./dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/sidecar",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/sidecar"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/sidecar",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

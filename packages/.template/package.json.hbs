@@ -5,7 +5,12 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "typings": "./dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/{{ name }}",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/{{ name }}"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/{{ name }}",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

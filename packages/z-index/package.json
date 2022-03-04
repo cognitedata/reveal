@@ -1,13 +1,18 @@
 {
   "name": "@cognite/z-index",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/z-index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/z-index"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/z-index",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

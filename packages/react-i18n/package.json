@@ -1,12 +1,17 @@
 {
   "name": "@cognite/react-i18n",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/react-i18n",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/react-i18n"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/react-i18n",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

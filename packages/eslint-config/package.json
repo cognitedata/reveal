@@ -1,9 +1,14 @@
 {
   "name": "@cognite/eslint-config",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Cognite eslint config",
   "main": "index.js",
-  "repository": "https://github.com/cognitedata/applications/packages/eslint-config",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/eslint-config"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/eslint-config",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "keywords": [

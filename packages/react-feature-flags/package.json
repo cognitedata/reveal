@@ -1,12 +1,17 @@
 {
   "name": "@cognite/react-feature-flags",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/react-feature-flags",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/react-feature-flags"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/react-feature-flags",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

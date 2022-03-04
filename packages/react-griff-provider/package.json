@@ -1,12 +1,17 @@
 {
   "name": "@cognite/react-griff-provider",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/react-griff-provider",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/react-griff-provider"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/react-griff-provider",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

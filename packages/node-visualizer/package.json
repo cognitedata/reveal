@@ -1,6 +1,6 @@
 {
   "name": "@cognite/node-visualizer",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Spatial visualizer for Cognite",
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -29,8 +29,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cognitedata/applications.git"
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/node-visualizer"
   },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/node-visualizer",
   "keywords": [
     "subsurface",
     "cognite",
@@ -44,7 +46,6 @@
   "bugs": {
     "url": "https://github.com/cognitedata/applications/issues"
   },
-  "homepage": "https://github.com/cognitedata/applications#readme",
   "browserslist": [
     "defaults"
   ]

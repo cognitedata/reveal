@@ -8,7 +8,12 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/src/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/react-document-table",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/react-document-table"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/react-document-table",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

@@ -1,12 +1,17 @@
 {
   "name": "@cognite/storage",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "LocalStorage and cookie helpers",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
   "types": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/storage",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/storage"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/storage",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/metrics",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "",
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -8,7 +8,12 @@
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/tree/master/packages/metrics",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/metrics"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/metrics",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

@@ -6,7 +6,12 @@
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/react-azure-telemetry",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/react-azure-telemetry"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/react-azure-telemetry",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

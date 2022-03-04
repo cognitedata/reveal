@@ -1,9 +1,14 @@
 {
   "name": "@cognite/eslint-plugin",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Custom eslint plugins for Cognite's front end applications.",
   "main": "lib/index.js",
-  "repository": "https://github.com/cognitedata/applications/packages/eslint-plugin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/eslint-plugin"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/eslint-plugin",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [

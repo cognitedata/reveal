@@ -1,12 +1,17 @@
 {
   "name": "@cognite/auth-utils",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "The auth layer of all cognite react apps",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
   "types": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/auth-utils",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/auth-utils"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/auth-utils",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [
