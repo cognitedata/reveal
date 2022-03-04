@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
-import { LOG_EVENTS_NPT, LOG_EVENTS_NDS } from 'constants/logging';
+// import { LOG_EVENTS_NPT, LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
+// import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 import { useWellInspectWellboreIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
 import { getNptEventsByWellboreIds as service } from '../service';
@@ -14,22 +14,26 @@ export const useNptEventsQuery = () => {
   const wellboresMatchingIdMap = useWellInspectWellboreIdMap();
   const queryClient = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
-  const metricLogger = useMetricLogger(
-    LOG_EVENTS_NPT,
-    TimeLogStages.Network,
-    LOG_EVENTS_NDS
-  );
-  const newDataMetricLogger = useMetricLogger(
-    LOG_EVENTS_NPT,
-    TimeLogStages.Network,
-    LOG_EVENTS_NDS
-  );
+  /**
+   * Parellel request with same key make network timer to throw errors
+   * disabling since we find a better solution
+   */
+  // const metricLogger = useMetricLogger(
+  //   LOG_EVENTS_NPT,
+  //   TimeLogStages.Network,
+  //   LOG_EVENTS_NDS
+  // );
+  // const newDataMetricLogger = useMetricLogger(
+  //   LOG_EVENTS_NPT,
+  //   TimeLogStages.Network,
+  //   LOG_EVENTS_NDS
+  // );
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.NPT_EVENTS, () =>
     Promise.all(
       Object.entries(wellboresMatchingIdMap).map(([matchingId, id]) =>
-        service({ [matchingId]: id as number }, metricLogger)
+        service({ [matchingId]: id as number })
       )
     ).then((response) =>
       response.reduce(
@@ -59,9 +63,7 @@ export const useNptEventsQuery = () => {
     Promise.all(
       Object.entries(wellboresMatchingIdMap)
         .filter(([_, id]) => newIds.includes(id))
-        .map(([matchingId, id]) =>
-          service({ [matchingId]: id as number }, newDataMetricLogger)
-        )
+        .map(([matchingId, id]) => service({ [matchingId]: id as number }))
     ).then((response) => {
       queryClient.setQueryData(WELL_QUERY_KEY.NPT_EVENTS, {
         ...response.reduce(

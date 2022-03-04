@@ -1,18 +1,18 @@
 import groupBy from 'lodash/groupBy';
 import set from 'lodash/set';
 
-import { MetricLogger } from 'hooks/useTimeLog';
+// import { MetricLogger } from 'hooks/useTimeLog';
 import { getNPTItems } from 'modules/wellSearch/sdk';
 import { WellboreExternalIdMap } from 'modules/wellSearch/types';
 
 import { EVENT_PER_PAGE } from './common';
 
-export async function getNptEventsByWellboreIds(
-  wellboreExternalIdMap: WellboreExternalIdMap,
-  metricLogger: MetricLogger
-) {
-  const [startNetworkTimer, stopNetworkTimer] = metricLogger;
-  startNetworkTimer();
+export const getNptEventsByWellboreIds = async (
+  wellboreExternalIdMap: WellboreExternalIdMap
+  // metricLogger: MetricLogger
+) => {
+  // const [startNetworkTimer, stopNetworkTimer] = metricLogger;
+  // startNetworkTimer();
 
   const wellboreIds = Object.values(wellboreExternalIdMap);
   let { items, nextCursor } = await getNPTItems({
@@ -42,10 +42,10 @@ export async function getNptEventsByWellboreIds(
     }
   });
 
-  stopNetworkTimer({
-    noOfWellbores: wellboreIds.length,
-    noOfNptEvents: items.length,
-  });
+  // stopNetworkTimer({
+  //   noOfWellbores: wellboreIds.length,
+  //   noOfNptEvents: items.length,
+  // });
 
   return Promise.resolve(groupedEvents);
-}
+};
