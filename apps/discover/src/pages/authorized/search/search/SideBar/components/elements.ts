@@ -8,10 +8,10 @@ export const CheckboxContainer = styled(FlexColumn)`
   width: 100%;
   margin-bottom: ${sizes.normal};
 
-  & > label {
+  & > div {
     margin-bottom: ${sizes.normal};
   }
-  & > label:last-child {
+  & > div:last-child {
     margin-bottom: 0px;
   }
 `;
@@ -27,8 +27,7 @@ export const CheckboxTitle = styled(FlexColumn)`
 
 export const CheckboxItemContainer = styled(FlexAlignItems)`
   justify-content: space-between;
-  flex: 1;
-  width: 230px;
+  width: 100%;
 `;
 
 export const CheckboxFacetText = styled(Body)`

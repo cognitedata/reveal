@@ -79,14 +79,13 @@ export const Checkboxes: React.FC<Props> = ({
           const isDisabled = !isUndefined(row.count) && !row.count;
 
           return (
-            <Checkbox
-              name={`${groupId}_${row.name}`}
-              key={row.name}
-              checked={row.selected}
-              disabled={isDisabled}
-              onChange={(selected) => onChange(selected, row)}
-            >
-              <CheckboxItemContainer>
+            <CheckboxItemContainer key={row.name}>
+              <Checkbox
+                name={`${groupId}_${row.name}`}
+                checked={row.selected}
+                disabled={isDisabled}
+                onChange={(selected: any) => onChange(selected, row)}
+              >
                 <CheckboxFacetText
                   disabled={isDisabled}
                   data-testid="filter-checkbox-label"
@@ -94,9 +93,9 @@ export const Checkboxes: React.FC<Props> = ({
                 >
                   <MiddleEllipsis value={row.name} />
                 </CheckboxFacetText>
-                {!hideResultsCount && renderBadgeContent(row)}
-              </CheckboxItemContainer>
-            </Checkbox>
+              </Checkbox>
+              {!hideResultsCount && renderBadgeContent(row)}
+            </CheckboxItemContainer>
           );
         })}
       </CheckboxContainer>
