@@ -72,7 +72,7 @@
     "react-scripts": "4.0.3",
     "react-split-pane": "0.1.92",
     "react-use": "17.3.2",
-    "recoil": "0.5.2",
+    "recoil": "0.6.1",
     "rrweb": "1.1.1",
     "styled-components": "5.3.3",
     "use-screenshot-hook": "1.0.2",
