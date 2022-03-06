@@ -27,12 +27,25 @@ export class WellLogCreator {
   // STATIC METHODS
   //= =================================================
 
-  public static createRiskLogNode(
-    events: IRiskEvent[] | null | undefined
+  public static createNdsRiskLogNode(
+    events: IRiskEvent<INdsMetadata>[] | null | undefined
   ): PointLogNode | null {
     if (!events) return null;
 
-    const log = WellLogCreator.createRiskLog(events);
+    const log = WellLogCreator.createNdsRiskLog(events);
+    if (!log) return null;
+
+    const node = new PointLogNode();
+    node.log = log;
+    return node;
+  }
+
+  public static createNptRiskLogNode(
+    events: IRiskEvent<INptMetaData>[] | null | undefined
+  ): PointLogNode | null {
+    if (!events) return null;
+
+    const log = WellLogCreator.createNptRiskLog(events);
     if (!log) return null;
 
     const node = new PointLogNode();
@@ -179,7 +192,9 @@ export class WellLogCreator {
     return log;
   }
 
-  private static createRiskLog(events?: IRiskEvent[]): PointLog | null {
+  private static createNdsRiskLog(
+    events?: IRiskEvent<INdsMetadata>[]
+  ): PointLog | null {
     if (!events) return null;
 
     const log = new PointLog();
@@ -192,15 +207,11 @@ export class WellLogCreator {
         md_hole_end_unit: mdHoleEndUnit,
         risk_sub_category: riskSubCategory,
         details,
-      } = metadata as INdsMetadata;
-      const { npt_md: nptMd, npt_md_unit: nptMdUnit } =
-        metadata as INptMetaData;
+      } = metadata;
 
       let topMd = Number.NaN;
       if (mdHoleStart !== undefined && mdHoleStartUnit) {
         topMd = Util.getNumberWithUnit(mdHoleStart, mdHoleStartUnit);
-      } else if (nptMd !== undefined) {
-        topMd = Util.getNumber(nptMd);
       }
       if (Number.isNaN(topMd)) {
         continue;
@@ -215,11 +226,46 @@ export class WellLogCreator {
       }
 
       const { subtype, description } = event;
-      const sample = new PointLogSample(description, topMd, nptMdUnit, baseMd);
+      const sample = new PointLogSample(
+        description,
+        topMd,
+        mdHoleStartUnit,
+        baseMd
+      );
       sample.subtype = subtype;
       if (riskSubCategory !== undefined)
         sample.riskSubCategory = riskSubCategory;
       if (details !== undefined) sample.details = details;
+
+      log.samples.push(sample);
+    }
+    if (log.length === 0) return null;
+
+    log.sortByMd();
+    return log;
+  }
+
+  private static createNptRiskLog(
+    events?: IRiskEvent<INptMetaData>[]
+  ): PointLog | null {
+    if (!events) return null;
+
+    const log = new PointLog();
+    for (const event of events) {
+      const { metadata } = event;
+      const { npt_md: nptMd, npt_md_unit: nptMdUnit } = metadata;
+
+      let topMd = Number.NaN;
+      if (nptMd !== undefined) {
+        topMd = Util.getNumber(nptMd);
+      }
+      if (Number.isNaN(topMd)) {
+        continue;
+      }
+
+      const { subtype, description } = event;
+      const sample = new PointLogSample(description, topMd, nptMdUnit);
+      sample.subtype = subtype;
 
       log.samples.push(sample);
     }

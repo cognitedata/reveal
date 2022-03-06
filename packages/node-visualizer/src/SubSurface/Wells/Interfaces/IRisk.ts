@@ -56,8 +56,10 @@ export interface INptMetaData {
 }
 
 export type IRiskMetadata = INdsMetadata | INptMetaData;
+export type INds = IRiskEvent<INdsMetadata>;
+export type INpt = IRiskEvent<INptMetaData>;
 
-export interface IRiskEvent {
+export interface IRiskEvent<T extends IRiskMetadata> {
   externalId: string;
   dataSetId: number;
   // these are not used anywhere, but keeping for reference:
@@ -67,7 +69,7 @@ export interface IRiskEvent {
   // createdTime: string;
   subtype: string;
   description: string;
-  metadata: IRiskMetadata;
+  metadata: T;
   assetIds: string[];
   source: string;
   id: number;

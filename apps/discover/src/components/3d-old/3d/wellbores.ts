@@ -2,7 +2,7 @@ import get from 'lodash/get';
 
 import { IWellBore } from '@cognite/node-visualizer';
 
-import { Well, Wellbore } from '../../types';
+import { Well, Wellbore } from '../../../modules/wellSearch/types';
 
 export const mapWellboresTo3D = (wells: Well[]): Partial<IWellBore>[] => {
   return ([] as Wellbore[]).concat(

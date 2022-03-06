@@ -32,7 +32,7 @@ export const useWellLogsWithRowData = (): {
       return {
         wellLogs: [],
         wellLogsRowData: [],
-        isLoading: true,
+        isLoading,
       };
     }
 

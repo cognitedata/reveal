@@ -2,15 +2,15 @@ import convert from 'convert-units';
 import flatten from 'lodash/flatten';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
-import { IRiskEvent } from '@cognite/node-visualizer';
+import { INpt } from '@cognite/node-visualizer';
 import { NPT as NptV2 } from '@cognite/sdk-wells-v2';
 import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 // import { Npt } from '@cognite/sdk-wells-v3';
 
 import { FEET } from 'constants/units';
 
-import { Well, WellboreNPTEventsMap } from '../../types';
-import { getIdWellboreMap } from '../events';
+import { Well, WellboreNPTEventsMap } from '../../../modules/wellSearch/types';
+import { getIdWellboreMap } from '../../../modules/wellSearch/utils/events';
 
 // when we want to go native v3, we can do something like this:
 // const convertV3MeasureDepthToFeet = (measuredDepth: Npt['measuredDepth']) => {
@@ -39,7 +39,7 @@ const convertV2MeasureDepthToFeet = (measuredDepth: NptV2['measuredDepth']) => {
 export const mapNPTTo3D = (
   eventsMap?: WellboreNPTEventsMap,
   wells?: Well[]
-): Partial<IRiskEvent>[] => {
+): Partial<INpt>[] => {
   if (!eventsMap) {
     return [];
   }
@@ -58,7 +58,7 @@ export const mapNPTTo3D = (
       }
       return matchingEvents.map((event) => {
         return {
-          assetIds: [wellbores[wellboreId]?.id],
+          assetIds: [String(wellbores[wellboreId]?.id)],
           subtype: event.subtype,
           description: event.description,
           metadata: {

@@ -2,7 +2,7 @@ import convert from 'convert-units';
 import flatten from 'lodash/flatten';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
-import { IRiskEvent } from '@cognite/node-visualizer';
+import { INpt } from '@cognite/node-visualizer';
 import { NPT as NptV2 } from '@cognite/sdk-wells-v2';
 import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
@@ -26,7 +26,7 @@ const convertMeasureDepthToFeet = (measuredDepth: NptV2['measuredDepth']) => {
 export const mapNPTTo3D = (
   eventsMap?: WellboreNPTEventsMap,
   wells?: Well[]
-): Partial<IRiskEvent>[] => {
+): Partial<INpt>[] => {
   if (!eventsMap) {
     return [];
   }

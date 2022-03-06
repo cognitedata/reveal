@@ -1,6 +1,11 @@
 import { ICasing } from 'SubSurface/Wells/Interfaces/ICasing';
 import { ILog } from 'SubSurface/Wells/Interfaces/ILog';
-import { IRiskEvent } from 'SubSurface/Wells/Interfaces/IRisk';
+import {
+  INds,
+  INpt,
+  IRiskEvent,
+  IRiskMetadata,
+} from 'SubSurface/Wells/Interfaces/IRisk';
 import {
   ITrajectory,
   TrajectoryId,
@@ -34,8 +39,8 @@ export interface BPDataOptions {
   wellBores: IWellBore[];
   trajectories: ITrajectory[];
   trajectoryData?: ITrajectoryRows[];
-  ndsEvents?: IRiskEvent[];
-  nptEvents?: IRiskEvent[];
+  ndsEvents?: INds[];
+  nptEvents?: INpt[];
   logs?: { [key: number]: ILog[] };
   casings?: ICasing[];
 }
@@ -52,9 +57,9 @@ export class BPData {
     { wellId: WellId; data: IWellBore }
   >();
 
-  private _wellBoreToNDSEventsMap = new Map<WellBoreId, IRiskEvent[]>();
+  private _wellBoreToNDSEventsMap = new Map<WellBoreId, INds[]>();
 
-  private _wellBoreToNPTEventsMap = new Map<WellBoreId, IRiskEvent[]>();
+  private _wellBoreToNPTEventsMap = new Map<WellBoreId, INpt[]>();
 
   private _wellBoreToLogsMap?: { [key: string]: ILog[] };
 
@@ -193,8 +198,8 @@ export class BPData {
   }
 
   private generateWellBoreRiskEventMap(
-    riskEventMap: Map<string, IRiskEvent[]>,
-    riskEvents?: IRiskEvent[]
+    riskEventMap: Map<string, IRiskEvent<IRiskMetadata>[]>,
+    riskEvents?: IRiskEvent<IRiskMetadata>[]
   ) {
     if (!riskEvents || !riskEvents.length) return;
     for (const event of riskEvents) {
@@ -289,9 +294,15 @@ export class BPData {
     return false;
   }
 
-  private validateRiskEvent(event: IRiskEvent, wellBoreIds: any[]): boolean {
+  private validateRiskEvent(
+    event: IRiskEvent<IRiskMetadata>,
+    wellBoreIds: any[]
+  ): boolean {
     if (!wellBoreIds || !wellBoreIds.length) {
-      console.warn('Risk Event Bore Id not found, AssetIds are empty!', event);
+      console.warn(
+        'Risk Event wellbore ID not found, AssetIds are empty!',
+        event
+      );
       return false;
     }
     if (

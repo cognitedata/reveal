@@ -23,7 +23,7 @@ describe('mapNPTTo3D', () => {
     const results = mapNPTTo3D(events, mockedWellStateFixture.wellSearch.wells);
     expect(results).toEqual([
       {
-        assetIds: [759155409324993],
+        assetIds: ['759155409324993'],
         metadata: {
           npt_md: '328.084',
           description: '',

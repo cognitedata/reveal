@@ -30,14 +30,14 @@ import {
   bpWellBores,
   bpTrajectories,
   bpTrajectoryData,
-  bpCasings,
   bpLogs,
   bpLogsFrmTops,
-  bpNdsEvents,
-  bpNptEvents,
   noDataWells,
   noDataWellbores,
 } from '../../src/__mocks__/subsurfaceWithEvents.mock';
+import { bpCasings } from '../../src/__mocks__/bpCasings.mock';
+import { bpNdsEvents } from '../../src/__mocks__/bpNdsEvents.mock';
+import { bpNptEvents } from '../../src/__mocks__/bpNptEvents.mock';
 
 const StyledRow = styled(Row)`
   margin-bottom: 5px;

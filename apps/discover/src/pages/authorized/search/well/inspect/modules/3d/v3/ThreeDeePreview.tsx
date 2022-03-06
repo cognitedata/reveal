@@ -53,7 +53,6 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
     ndsLoading ||
     nptLoading ||
     trajectoriesLoading ||
-    !wellLogs ||
     isWellLogsLoading;
 
   if (!config || isLoading) {

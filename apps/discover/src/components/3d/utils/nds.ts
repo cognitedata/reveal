@@ -1,9 +1,7 @@
-import { IRiskEvent } from '@cognite/node-visualizer';
+import { INds } from '@cognite/node-visualizer';
 import { CogniteEvent } from '@cognite/sdk';
 
-export const mapNDSTo3D = (
-  eventsMap: CogniteEvent[]
-): Partial<IRiskEvent>[] => {
+export const mapNDSTo3D = (eventsMap: CogniteEvent[]): Partial<INds>[] => {
   return eventsMap.map((event) => {
     return {
       ...event,

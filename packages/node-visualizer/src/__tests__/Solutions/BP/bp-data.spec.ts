@@ -7,6 +7,17 @@ import {
 import { well, mappedWellbore } from '../../../__mocks__/subsurface.mock';
 
 describe('BPData', () => {
+  const originalConsole = global.console;
+
+  beforeAll(() => {
+    // @ts-expect-error - missing other keys
+    global.console = { error: jest.fn(), warn: jest.fn() };
+  });
+
+  afterAll(() => {
+    global.console = originalConsole;
+  });
+
   test('should add wells to the data structure', () => {
     const data = new BPData({
       wells: [well],
