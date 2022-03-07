@@ -1,12 +1,19 @@
-#pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../math/mul3.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+uniform vec3 cameraPosition;
 uniform vec2 treeIndexTextureSize;
 uniform vec2 transformOverrideTextureSize;
 uniform sampler2D transformOverrideIndexTexture;
 uniform sampler2D transformOverrideTexture;
 
+in vec3 position;
+in vec3 normal;
 in float a_treeIndex;
 in vec3 a_centerA;
 in vec3 a_centerB;
@@ -41,6 +48,8 @@ void main() {
       transformOverrideTextureSize, 
       transformOverrideTexture
     );
+
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
 
