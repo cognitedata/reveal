@@ -20,6 +20,7 @@ clusters:
     cognite_api_url: api-cdf.sapublichosting.com
     default_router_canonical_hostname: api-ocp-cdf.sapublichosting.com
     environment: production
+    status: setup
 - name: openfield
   vendor: openshift
   tags:
@@ -32,6 +33,7 @@ clusters:
     auth_cluster_name: openfield
     default_router_canonical_hostname: ocp.cognite.c.bitbit.net
     environment: staging
+    status: live
 - name: okd-dev-01
   vendor: openshift
   tags:
@@ -44,6 +46,7 @@ clusters:
     auth_cluster_name: okd-dev-01
     default_router_canonical_hostname: okd-dev-01.okd-dev.cognite.ai
     environment: development
+    status: setup
 - name: okd-dbre-01
   vendor: openshift
   tags:
@@ -55,6 +58,7 @@ clusters:
     auth_cluster_name: okd-dbre-01
     default_router_canonical_hostname: okd-dbre-01.okd-dev.cognite.ai
     environment: development
+    status: setup
 # AKS
 - name: az-ams-aloe
   vendor: aks
@@ -72,6 +76,7 @@ clusters:
     azure_subscription_id: 7f369c2b-e70a-4750-8dbc-95f66565f7a1
     environment: production
     google_project_id: cognite-ext-az-ams-aloe
+    status: setup
 - name: az-eastus-1
   vendor: aks
   tags:
@@ -89,6 +94,7 @@ clusters:
     azure_subscription_id: 8e0c685e-4e99-4c89-8e55-bd4a6ab3fd32
     environment: production
     google_project_id: cognite-ext-az-eastus-1
+    status: live
 - name: az-power-no-northeurope
   vendor: aks
   tags:
@@ -106,6 +112,7 @@ clusters:
     azure_subscription_id: ad98b0ae-29cd-451e-bed7-462ff68333d6
     environment: production
     google_project_id: cognite-ext-az-power-no-northe
+    status: live
 - name: azure-dev
   vendor: aks
   tags:
@@ -123,6 +130,7 @@ clusters:
     azure_subscription_id: 531564ca-ed4c-48b5-b4d0-6363b20c3aeb
     environment: development
     google_project_id: cognite-ext-azure-dev
+    status: live
 - name: bluefield
   vendor: aks
   tags:
@@ -140,6 +148,7 @@ clusters:
     azure_subscription_id: 573323ab-bb78-495c-81a3-ce62c9341aa4
     environment: staging
     google_project_id: cognite-ext-bluefield
+    status: live
 - name: bp-northeurope
   vendor: aks
   tags:
@@ -157,6 +166,7 @@ clusters:
     azure_subscription_id: 7b8e1d8a-7489-40e7-a360-4c5fe43a79a7
     environment: production
     google_project_id: cognite-ext-bp-northeurope
+    status: live
 - name: westeurope-1
   vendor: aks
   tags:
@@ -174,6 +184,7 @@ clusters:
     azure_subscription_id: c9c52f3e-bfc2-4315-a750-641898f79e6d
     environment: production
     google_project_id: cognite-ext-westeurope-1
+    status: live
 
 # GKE
 - name: europe-west1-1
@@ -191,6 +202,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-europe-west1-1
     region: europe-west1
+    status: live
 - name: greenfield
   vendor: gke
   tags:
@@ -206,6 +218,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-greenfield
     region: europe-west1
+    status: live
 - name: omv
   vendor: gke
   tags:
@@ -222,6 +235,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-omv
     region: europe-west1
+    status: live
 - name: statnett
   vendor: gke
   tags:
@@ -237,6 +251,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-statnett
     region: europe-west1
+    status: live
 - name: power-no
   vendor: gke
   tags:
@@ -267,6 +282,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-pg-s
     region: europe-west1
+    status: live
 - name: asia-northeast1-1
   vendor: gke
   tags:
@@ -282,6 +298,7 @@ clusters:
     google_region: asia-northeast1
     google_project_id: cdf-asia-northeast1-1
     region: asia-northeast1
+    status: live
 
 # Dev/Test/Prod
 - name: cognitedata-development
@@ -295,6 +312,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-development
     region: europe-west1
+    status: live
 - name: cognitedata-test
   vendor: gke
   tags:
@@ -306,6 +324,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-test
     region: europe-west1
+    status: live
 - name: cognitedata-production
   vendor: gke
   tags:
@@ -317,6 +336,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-production
     region: europe-west1
+    status: live
 
 # Infrastructure
 - name: gke-cognitedata-infra
@@ -329,6 +349,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata
     region: europe-west1
+    status: live
 - name: jenkins-ci
   vendor: gke
   tags:
@@ -340,6 +361,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognite-jenkins-ci
     region: europe-west1
+    status: live
 - name: jenkins-cd
   vendor: gke
   tags:
@@ -351,6 +373,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognite-jenkins-cd
     region: europe-west1
+    status: live
 
 # Security
 - name: security-development
@@ -364,6 +387,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognite-security
     region: europe-west1
+    status: live
 - name: security-production
   vendor: gke
   tags:
@@ -375,6 +399,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognite-security
     region: europe-west1
+    status: live
 
 # DBRE
 - name: dbre-development
@@ -388,6 +413,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognite-dbre
     region: europe-west1
+    status: live
 
 # Functions
 - name: europe-west1-1-fn
@@ -401,6 +427,7 @@ clusters:
     google_region: europe-west1
     google_project_id: cognitedata-europe-west1-1-fn
     region: europe-west1
+    status: live
 - name: asia-northeast1-1-fn
   vendor: gke
   tags:
@@ -412,6 +439,7 @@ clusters:
     google_region: asia-northeast1
     google_project_id: cdf-asia-northeast1-1-fn
     region: asia-northeast1
+    status: live
 
 # Kind
 - name: kind
