@@ -57,6 +57,15 @@ export type TagDetectionJobAnnotation = BaseVisionJobAnnotation & {
   assetIds: CogniteInternalId[];
 };
 
+export type GaugeReaderJobAnnotation = BaseVisionJobAnnotation & {
+  __typename: VisionDetectionModelType.GaugeReader;
+  region: AnnotationRegion;
+  data: {
+    // eslint-disable-next-line camelcase
+    keypoint_names: string[];
+  };
+};
+
 export type CusomModelJobAnnotation = BaseVisionJobAnnotation & {
   __typename: VisionDetectionModelType.CustomModel;
   region?: AnnotationRegion; // Custom models can also be classification models

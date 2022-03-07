@@ -34,7 +34,7 @@ export function convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validBoundingBox(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('BoundingBox'));
+    console.warn(convertionWarningMessage('ImageObjectDetectionBoundingBox'));
     return null;
   }
   const annotation = visionJobAnnotation as ObjectDetectionJobAnnotation;

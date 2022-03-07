@@ -32,6 +32,11 @@ export type TextRegion = {
   textRegion: BoundingBox;
 };
 
+export type ImageKeypoint = Label &
+  Partial<Confidence> & {
+    point: Point;
+  };
+
 // Image types
 export type ImageClassification = Label & Partial<Confidence>;
 
@@ -54,6 +59,11 @@ export type ImageAssetLink = TextRegion &
   Partial<Confidence> & {
     text: string;
     assetRef: InternalId & Partial<ExternalId>;
+  };
+
+export type ImageKeypointCollection = Label &
+  Partial<Confidence> & {
+    keypoints: ImageKeypoint[];
   };
 
 // Annotation API types
