@@ -10,10 +10,8 @@ import status from './app/cmds/status';
 import logout from './app/cmds/logout';
 import initCmd from './app/cmds/init';
 import { DEBUG as _DEBUG } from './app/utils/logger';
-import { CONSTANTS, ROOT_CONFIG_KEY } from './app/constants';
+import { CONSTANTS } from './app/constants';
 import { getCompleteCommandString } from './app/utils/yargs-utils';
-import { getConfig } from './app/utils/config';
-import { getMixpanel } from './app/utils/mixpanel';
 
 const DEBUG = _DEBUG.extend('main');
 
@@ -52,9 +50,7 @@ scriptName(CONSTANTS.APP_ID)
       )
     );
 
-    if (argv.mixpanel) {
-      argv.mixpanel.track(getCompleteCommandString(argv), { failed: true });
-    }
+    argv?.mixpanel.track(getCompleteCommandString(argv), { failed: true });
 
     console.log('\nUsages:\n');
     console.error(help());

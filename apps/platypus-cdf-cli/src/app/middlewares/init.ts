@@ -9,7 +9,6 @@ import { Log } from '../utils/logger';
 import { v4 } from 'uuid';
 import { enable } from 'debug';
 import { getMixpanel } from '../utils/mixpanel';
-import mixpanel from 'mixpanel';
 import { getCompleteCommandString } from '../utils/yargs-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -57,7 +56,7 @@ export async function init(args: Arguments<BaseArgs>) {
     args.mixpanel = getMixpanel();
 
     // track command
-    mixpanel.track(getCompleteCommandString(args), {
+    args.mixpanel?.track(getCompleteCommandString(args), {
       project: authConfig.project,
       cluster: authConfig.cluster,
     });
