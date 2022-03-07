@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import layers from 'utils/zIndex';
+import layers from 'src/utils/zIndex';
 
 const Container = styled.div`
   height: 100%;

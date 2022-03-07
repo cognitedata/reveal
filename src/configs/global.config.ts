@@ -1,4 +1,4 @@
-import { TagColor } from 'components/Tag';
+import { TagColor } from 'src/components/Tag';
 
 export const globalConfig = {
   APP_NAME: 'Document Classifiers',

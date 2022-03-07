@@ -1,10 +1,10 @@
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { Modal } from 'components/modal/Modal';
-import { ModalProps } from 'components/modal/types';
-import { MatrixTable } from 'pages/Classifier/pages/ReviewModel/components';
+import { Modal } from 'src/components/modal/Modal';
+import { ModalProps } from 'src/components/modal/types';
+import { MatrixTable } from 'src/pages/Classifier/pages/ReviewModel/components';
 import React from 'react';
 import styled from 'styled-components';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'src/utils/utils';
 import { ActiveModelContainer } from '../container/ActiveModelContainer';
 
 const Container = styled.div`

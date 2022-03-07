@@ -1,8 +1,8 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useMutation, useQueryClient } from 'react-query';
-import { doDocumentSearch } from 'services/api';
-import { DOCUMENTS_KEYS } from 'services/constants';
-import { DocumentSearchQuery } from 'services/types';
+import { doDocumentSearch } from 'src/services/api';
+import { DOCUMENTS_KEYS } from 'src/services/constants';
+import { DocumentSearchQuery } from 'src/services/types';
 
 export const useDocumentsSearchMutate = () => {
   const sdk = useSDK();

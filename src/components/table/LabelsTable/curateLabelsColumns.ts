@@ -1,6 +1,6 @@
 import { Table } from '@cognite/cogs.js';
-import { TableCell } from 'components/table/TableCell';
-import { Navigation } from 'hooks/useNavigation';
+import { TableCell } from 'src/components/table/TableCell';
+import { Navigation } from 'src/hooks/useNavigation';
 
 export const curateColumns = ({ navigate }: { navigate: Navigation }) => {
   return [

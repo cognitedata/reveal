@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react-hooks';
-import useValidatePipelineName from 'hooks/useValidatePipelineName';
-import { TestProviderWrapper } from 'utils/test/render';
-import { useNavigation } from 'hooks/useNavigation';
+import useValidatePipelineName from 'src/hooks/useValidatePipelineName';
+import { TestProviderWrapper } from 'src/utils/test/render';
+import { useNavigation } from 'src/hooks/useNavigation';
 // eslint-disable-next-line jest/no-mocks-import
-import { mockProject } from '__mocks__/sdk';
+import { mockProject } from 'src/__mocks__/sdk';
 
 jest.mock('react-router-dom', () => ({
   useParams: () => ({

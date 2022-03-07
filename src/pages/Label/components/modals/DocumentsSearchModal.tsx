@@ -1,12 +1,12 @@
 import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { Modal } from 'components/modal/Modal';
-import { TableWrapper } from 'components/table/TableWrapper';
+import { Modal } from 'src/components/modal/Modal';
+import { TableWrapper } from 'src/components/table/TableWrapper';
 import React from 'react';
-import { useDocumentsSearchQuery } from 'services/query/documents/query';
-import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
-import { getContainer } from 'utils/utils';
-import ModalFooter from 'components/modal/ModalFooter';
-import { ModalProps } from 'components/modal/types';
+import { useDocumentsSearchQuery } from 'src/services/query/documents/query';
+import { useUpdateFileLabelsMutate } from 'src/services/query/files/mutate';
+import { getContainer } from 'src/utils/utils';
+import ModalFooter from 'src/components/modal/ModalFooter';
+import { ModalProps } from 'src/components/modal/types';
 import { DocumentsTable } from '../table/DocumentsTable';
 
 interface Props extends ModalProps {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Recent from 'images/illustrations/recent.svg';
+import Recent from 'src/images/illustrations/recent.svg';
 import {
   StatesContainer,
   StatesDescription,

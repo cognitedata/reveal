@@ -1,13 +1,13 @@
 import { Button, Loader, Table } from '@cognite/cogs.js';
-import TableBulkActions from 'components/table/BulkAction';
-import { PageContent } from 'components/page';
-import { Empty } from 'components/states/Empty';
-import { TableWrapper } from 'components/table/TableWrapper';
-import { useNavigation } from 'hooks/useNavigation';
+import TableBulkActions from 'src/components/table/BulkAction';
+import { PageContent } from 'src/components/page';
+import { Empty } from 'src/components/states/Empty';
+import { TableWrapper } from 'src/components/table/TableWrapper';
+import { useNavigation } from 'src/hooks/useNavigation';
 import React from 'react';
-import { useClassifierManageTrainingSetsQuery } from 'services/query/classifier/query';
-import { useDocumentsUpdatePipelineMutate } from 'services/query/pipelines/mutate';
-import { ClassifierTrainingSet } from 'services/types';
+import { useClassifierManageTrainingSetsQuery } from 'src/services/query/classifier/query';
+import { useDocumentsUpdatePipelineMutate } from 'src/services/query/pipelines/mutate';
+import { ClassifierTrainingSet } from 'src/services/types';
 import { curateColumns } from './curateTrainingSetsColumns';
 
 export const TrainingSetsTable: React.FC = () => {

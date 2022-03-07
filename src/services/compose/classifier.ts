@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { ClassifierTrainingSet } from 'services/types';
+import { ClassifierTrainingSet } from 'src/services/types';
 import { fetchDocumentPipelines, fetchLabels } from '../api';
 import { composeLabelsCount, composeLabelsDescription } from './labels';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal as CogsModal, ModalProps } from '@cognite/cogs.js';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'src/utils/utils';
 import styled from 'styled-components';
 
 const CustomModal = styled(CogsModal)<{ $modalSize?: string }>`

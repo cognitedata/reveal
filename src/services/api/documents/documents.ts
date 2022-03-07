@@ -4,10 +4,10 @@ import {
   DocumentsSearchRequest,
   DocumentsSearchResponse,
 } from '@cognite/sdk-playground';
-import { DOCUMENTS_AGGREGATES } from 'services/constants';
-import { DocumentSearchQuery } from 'services/types';
-import { documentBuilder } from 'utils/builder';
-import { parseArrayBufferToBase64 } from 'utils/parser';
+import { DOCUMENTS_AGGREGATES } from 'src/services/constants';
+import { DocumentSearchQuery } from 'src/services/types';
+import { documentBuilder } from 'src/utils/builder';
+import { parseArrayBufferToBase64 } from 'src/utils/parser';
 
 export const fetchDocumentAggregates = (sdk: CogniteClient) => {
   return sdk

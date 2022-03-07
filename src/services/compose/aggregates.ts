@@ -1,7 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
-import { fetchDocumentAggregates } from 'services/api';
-import { DOCUMENTS_AGGREGATES } from 'services/constants';
-import { Aggregates } from 'services/types';
+import { fetchDocumentAggregates } from 'src/services/api';
+import { DOCUMENTS_AGGREGATES } from 'src/services/constants';
+import { Aggregates } from 'src/services/types';
 
 export const composeAggregates = async (
   sdk: CogniteClient

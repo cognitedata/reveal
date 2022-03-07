@@ -1,5 +1,5 @@
-import { useClassifierCurrentState } from 'machines/classifier/hooks/useClassifierSelectors';
-import { ClassifierState } from 'machines/classifier/types';
+import { useClassifierCurrentState } from 'src/machines/classifier/hooks/useClassifierSelectors';
+import { ClassifierState } from 'src/machines/classifier/types';
 import React, { FC } from 'react';
 import { ManageTrainingSets } from './ManageTrainingSet/ManageTrainingSet';
 import TrainClassifier from './TrainClassifier/TrainClassifier';

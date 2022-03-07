@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { getContainer, styleScope } from 'utils/utils';
+import { getContainer, styleScope } from 'src/utils/utils';
 import ConfigProvider from 'antd/lib/config-provider';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';

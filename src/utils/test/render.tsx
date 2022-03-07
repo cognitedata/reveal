@@ -1,10 +1,10 @@
 /* eslint-disable jest/no-mocks-import */
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { styleScope } from 'utils/utils';
+import { styleScope } from 'src/utils/utils';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ClassifierContext } from 'machines/classifier/contexts/ClassifierContext';
+import { ClassifierContext } from 'src/machines/classifier/contexts/ClassifierContext';
 import { mockSdk } from '../../__mocks__/sdk';
 
 const queryClient = new QueryClient();

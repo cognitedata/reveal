@@ -1,17 +1,17 @@
 import { Body, Button, Drawer, Label } from '@cognite/cogs.js';
-import { ModalProps } from 'components/modal/types';
-import { PageHeader } from 'components/page';
-import { Loading } from 'components/states/Loading';
-import { documentConfig } from 'configs/global.config';
+import { ModalProps } from 'src/components/modal/types';
+import { PageHeader } from 'src/components/page';
+import { Loading } from 'src/components/states/Loading';
+import { documentConfig } from 'src/configs/global.config';
 import React from 'react';
 import {
   useDocumentPreviewQuery,
   useDocumentQuery,
-} from 'services/query/documents/query';
+} from 'src/services/query/documents/query';
 import styled from 'styled-components';
-import { base64Image } from 'utils/document';
-import { humanReadableFileSize } from 'utils/numbers';
-import { getContainer } from 'utils/utils';
+import { base64Image } from 'src/utils/document';
+import { humanReadableFileSize } from 'src/utils/numbers';
+import { getContainer } from 'src/utils/utils';
 
 const Image = styled.img`
   width: 100%;

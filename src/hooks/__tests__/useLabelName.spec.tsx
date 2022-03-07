@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { useLabelName } from 'hooks/useLabelName';
-import { TestProviderWrapper } from 'utils/test/render';
+import { useLabelName } from 'src/hooks/useLabelName';
+import { TestProviderWrapper } from 'src/utils/test/render';
 
 describe('hook:useLabelName', () => {
   it('Finds the label name based on external id', async () => {

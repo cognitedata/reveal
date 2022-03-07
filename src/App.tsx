@@ -6,14 +6,14 @@ import {
   getProject,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import GlobalStyles from 'styles/GlobalStyles';
-import { setupMixpanel } from 'utils/config';
+import GlobalStyles from 'src/styles/GlobalStyles';
+import { setupMixpanel } from 'src/utils/config';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { MainRouter } from 'pages/router';
+import { MainRouter } from 'src/pages/router';
 
 setupMixpanel();
 

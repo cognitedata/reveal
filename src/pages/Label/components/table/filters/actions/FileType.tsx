@@ -1,6 +1,6 @@
-import { Option, Select } from 'components/Select';
+import { Option, Select } from 'src/components/Select';
 import React from 'react';
-import { useAggregatesQuery } from 'services/query/aggregates/query';
+import { useAggregatesQuery } from 'src/services/query/aggregates/query';
 import { FilterContainer } from '../elements';
 
 interface Props {

@@ -1,10 +1,10 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { ExternalId, ExternalLabelDefinition } from '@cognite/sdk';
-import { Toast } from 'components/Toast';
+import { Toast } from 'src/components/Toast';
 import { useMutation, useQueryClient } from 'react-query';
-import { createLabel, deleteLabels } from 'services/api';
-import { LABELS_KEYS } from 'services/constants';
-import { FilesApiError } from 'services/types';
+import { createLabel, deleteLabels } from 'src/services/api';
+import { LABELS_KEYS } from 'src/services/constants';
+import { FilesApiError } from 'src/services/types';
 
 export const useLabelsCreateMutate = () => {
   const sdk = useSDK();

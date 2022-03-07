@@ -1,10 +1,10 @@
 import { Flex, Table, Detail, Icon } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { TableWrapper } from 'components/table/TableWrapper';
+import { TableWrapper } from 'src/components/table/TableWrapper';
 import React from 'react';
 import styled from 'styled-components';
-import { ConfusionMatrix, mapConfusionMatrix } from 'utils/matrix';
-import { useLabels } from 'hooks/useLabels';
+import { ConfusionMatrix, mapConfusionMatrix } from 'src/utils/matrix';
+import { useLabels } from 'src/hooks/useLabels';
 import { curateColumns } from './curateMatrixColumns';
 
 const Container = styled.div`

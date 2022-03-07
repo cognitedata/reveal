@@ -14,14 +14,14 @@ import {
   Document,
 } from '@cognite/sdk-playground';
 import { LabelDefinition } from '@cognite/sdk';
-import { Tag, TagColor } from 'components/Tag';
-import { globalConfig } from 'configs/global.config';
-import { Navigation } from 'hooks/useNavigation';
+import { Tag, TagColor } from 'src/components/Tag';
+import { globalConfig } from 'src/configs/global.config';
+import { Navigation } from 'src/hooks/useNavigation';
 import capitalize from 'lodash/capitalize';
-import { ClassifierActions } from 'pages/Home/components/table/curateClassifierColumns';
+import { ClassifierActions } from 'src/pages/Home/components/table/curateClassifierColumns';
 import React from 'react';
 import { CellProps } from 'react-table';
-import { ClassifierStatus, ClassifierTrainingSet } from 'services/types';
+import { ClassifierStatus, ClassifierTrainingSet } from 'src/services/types';
 
 // NOTE: This file is getting too big.
 // Move the cell render's that are specific to the columns, closer to the curating columns.

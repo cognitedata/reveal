@@ -1,9 +1,9 @@
 import { Loader } from '@cognite/cogs.js';
 import React from 'react';
-import { useDocumentsSearchMutate } from 'services/query/documents/mutate';
-import { DocumentSearchQuery } from 'services/types';
+import { useDocumentsSearchMutate } from 'src/services/query/documents/mutate';
+import { DocumentSearchQuery } from 'src/services/types';
 import styled from 'styled-components';
-import layers from 'utils/zIndex';
+import layers from 'src/utils/zIndex';
 import { LabelFilter } from './actions/Label';
 import { FileTypeFilter } from './actions/FileType';
 import { NameFilter } from './actions/Name';

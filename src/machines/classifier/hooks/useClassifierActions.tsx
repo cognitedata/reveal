@@ -1,4 +1,4 @@
-import { ClassifierState } from 'machines/classifier/types';
+import { ClassifierState } from 'src/machines/classifier/types';
 import { useClassifierContext } from '../contexts/ClassifierContext';
 
 export const useClassifierActions = () => {

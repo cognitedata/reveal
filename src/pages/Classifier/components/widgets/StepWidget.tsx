@@ -4,10 +4,10 @@ import {
   useClassifierCurrentStep,
   useClassifierDescription,
   useClassifierStatus,
-} from 'machines/classifier/hooks/useClassifierSelectors';
-import { ClassifierState } from 'machines/classifier/types';
+} from 'src/machines/classifier/hooks/useClassifierSelectors';
+import { ClassifierState } from 'src/machines/classifier/types';
 import React, { FC } from 'react';
-import TrainClassifierLabel from 'pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
+import TrainClassifierLabel from 'src/pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
 import {
   StepBadgeActive,
   StepBadgeComplete,

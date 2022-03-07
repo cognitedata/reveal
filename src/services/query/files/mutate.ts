@@ -1,9 +1,9 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useMutation, useQueryClient } from 'react-query';
-import { updateFileLabels } from 'services/api';
-import { DOCUMENTS_KEYS } from 'services/constants';
-import { Toast } from 'components/Toast';
-import { FilesApiError, LabelFileUpdate } from 'services/types';
+import { updateFileLabels } from 'src/services/api';
+import { DOCUMENTS_KEYS } from 'src/services/constants';
+import { Toast } from 'src/components/Toast';
+import { FilesApiError, LabelFileUpdate } from 'src/services/types';
 
 export const useUpdateFileLabelsMutate = (action: 'add' | 'remove') => {
   const sdk = useSDK();

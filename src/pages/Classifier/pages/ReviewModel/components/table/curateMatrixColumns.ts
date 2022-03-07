@@ -1,5 +1,5 @@
 import { ExternalLabelDefinition } from '@cognite/sdk';
-import { TableCell } from 'components/table/TableCell';
+import { TableCell } from 'src/components/table/TableCell';
 import { Column } from 'react-table';
 
 export const curateColumns = (labels: ExternalLabelDefinition[]) => {

@@ -1,8 +1,8 @@
 import { ToastContainer } from '@cognite/cogs.js';
-import { PermissionWrapper } from 'components/PermissionWrapper';
-import { ClassifierContext } from 'machines/classifier/contexts/ClassifierContext';
-import ClassifierPage from 'pages/Classifier/Classifier';
-import Home from 'pages/Home';
+import { PermissionWrapper } from 'src/components/PermissionWrapper';
+import { ClassifierContext } from 'src/machines/classifier/contexts/ClassifierContext';
+import ClassifierPage from 'src/pages/Classifier/Classifier';
+import Home from 'src/pages/Home';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { LabelsPage } from './Labels/Labels';

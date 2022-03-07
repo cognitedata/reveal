@@ -1,11 +1,11 @@
 import { Table } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
-import { Loading } from 'components/states/Loading';
-import { useNavigation } from 'hooks/useNavigation';
+import { Loading } from 'src/components/states/Loading';
+import { useNavigation } from 'src/hooks/useNavigation';
 import React from 'react';
-import { useClassifierManageTrainingSetsQuery } from 'services/query';
-import { useLabelsQuery } from 'services/query/labels/query';
-import { sortByName } from 'utils/sort';
+import { useClassifierManageTrainingSetsQuery } from 'src/services/query';
+import { useLabelsQuery } from 'src/services/query/labels/query';
+import { sortByName } from 'src/utils/sort';
 import { curateColumns } from './curateLabelsColumns';
 
 export type Labels = LabelDefinition & { id: number };

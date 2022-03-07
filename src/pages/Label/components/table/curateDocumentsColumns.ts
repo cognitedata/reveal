@@ -1,5 +1,5 @@
 import { Table } from '@cognite/cogs.js';
-import { TableCell } from 'components/table/TableCell';
+import { TableCell } from 'src/components/table/TableCell';
 
 export const curateColumns = ({
   toggleDocumentPreview,

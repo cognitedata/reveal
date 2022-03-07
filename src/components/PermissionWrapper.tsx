@@ -1,6 +1,6 @@
 import { Loader } from '@cognite/cogs.js';
-import { useUserPermissions } from 'hooks/useUserPermissions';
-import { NoAccessPage } from 'pages/NoAccess';
+import { useUserPermissions } from 'src/hooks/useUserPermissions';
+import { NoAccessPage } from 'src/pages/NoAccess';
 import React from 'react';
 
 export const PermissionWrapper: React.FC = ({ children }) => {

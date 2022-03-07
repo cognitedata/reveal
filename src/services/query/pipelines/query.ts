@@ -1,7 +1,7 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import { PIPELINES_KEYS } from 'services/constants';
-import { fetchDocumentPipelines } from 'services/api';
+import { PIPELINES_KEYS } from 'src/services/constants';
+import { fetchDocumentPipelines } from 'src/services/api';
 
 export const useDocumentsPipelinesQuery = () => {
   const sdk = useSDK();

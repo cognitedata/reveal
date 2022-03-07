@@ -1,10 +1,13 @@
-import { TableWrapper } from 'components/table/TableWrapper';
+import { TableWrapper } from 'src/components/table/TableWrapper';
 import React from 'react';
-import { useDocumentsUpdatePipelineMutate } from 'services/query/pipelines/mutate';
-import ModalFooter from 'components/modal/ModalFooter';
-import { Labels, LabelsTable } from 'components/table/LabelsTable/LabelsTable';
-import { ModalProps } from 'components/modal/types';
-import { Modal } from 'components/modal/Modal';
+import { useDocumentsUpdatePipelineMutate } from 'src/services/query/pipelines/mutate';
+import ModalFooter from 'src/components/modal/ModalFooter';
+import {
+  Labels,
+  LabelsTable,
+} from 'src/components/table/LabelsTable/LabelsTable';
+import { ModalProps } from 'src/components/modal/types';
+import { Modal } from 'src/components/modal/Modal';
 
 export const LabelsModal: React.FC<ModalProps> = ({
   visible,

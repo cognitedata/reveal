@@ -1,12 +1,12 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { Toast } from 'components/Toast';
+import { Toast } from 'src/components/Toast';
 import { useMutation, useQueryClient } from 'react-query';
 import {
   createDocumentClassifier,
   deleteDocumentClassifier,
-} from 'services/api';
-import { CLASSIFIER_KEYS } from 'services/constants';
-import { ApiError } from 'services/types';
+} from 'src/services/api';
+import { CLASSIFIER_KEYS } from 'src/services/constants';
+import { ApiError } from 'src/services/types';
 
 export const useClassifierCreateMutate = () => {
   const sdk = useSDK();

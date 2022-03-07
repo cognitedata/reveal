@@ -1,8 +1,8 @@
 import { Body, Icon } from '@cognite/cogs.js';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation } from 'src/hooks/useNavigation';
 import React from 'react';
 import styled from 'styled-components';
-import { globalConfig } from 'configs/global.config';
+import { globalConfig } from 'src/configs/global.config';
 
 const BreadcrumbText = styled(Body).attrs({ level: 2 })`
   cursor: pointer;

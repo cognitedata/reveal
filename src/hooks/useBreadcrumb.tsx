@@ -1,4 +1,4 @@
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation } from 'src/hooks/useNavigation';
 
 export const useBreadcrumb = () => {
   const { toClassifier, toLabels } = useNavigation();

@@ -1,7 +1,7 @@
 import { Button, Flex, Input, ToastContainer } from '@cognite/cogs.js';
 import { ExternalLabelDefinition } from '@cognite/sdk';
-import { Modal } from 'components/modal/Modal';
-import { ModalProps } from 'components/modal/types';
+import { Modal } from 'src/components/modal/Modal';
+import { ModalProps } from 'src/components/modal/types';
 import React from 'react';
 import styled from 'styled-components';
 

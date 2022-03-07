@@ -5,10 +5,10 @@ import {
   fetchDocumentById,
   fetchDocumentList,
   previewDocument,
-} from 'services/api';
+} from 'src/services/api';
 
-import { DOCUMENTS_KEYS } from 'services/constants';
-import { useLabelParams } from 'hooks/useParams';
+import { DOCUMENTS_KEYS } from 'src/services/constants';
+import { useLabelParams } from 'src/hooks/useParams';
 
 export const useDocumentsSearchQuery = (enabled = true) => {
   const sdk = useSDK();

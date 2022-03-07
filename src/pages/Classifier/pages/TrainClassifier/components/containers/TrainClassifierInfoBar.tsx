@@ -1,10 +1,10 @@
 import { Body, Button } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { InfoBar } from 'components/InfoBar';
-import { useNavigation } from 'hooks/useNavigation';
+import { InfoBar } from 'src/components/InfoBar';
+import { useNavigation } from 'src/hooks/useNavigation';
 import React from 'react';
-import { isClassifierTraining } from 'utils/classifier';
-import { trainingConfig } from 'configs/global.config';
+import { isClassifierTraining } from 'src/utils/classifier';
+import { trainingConfig } from 'src/configs/global.config';
 
 interface Props {
   classifier?: Classifier;

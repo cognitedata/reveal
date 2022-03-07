@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { testRender } from 'utils/test/render';
+import { testRender } from 'src/utils/test/render';
 // eslint-disable-next-line jest/no-mocks-import
-import { mockClassifierName, mockProject } from '__mocks__/sdk';
+import { mockClassifierName, mockProject } from 'src/__mocks__/sdk';
 import { ManageTrainingSets } from './ManageTrainingSet';
 
 jest.mock('react-router-dom', () => ({

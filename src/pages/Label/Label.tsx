@@ -1,14 +1,14 @@
 import { Body, Button, Flex, Loader } from '@cognite/cogs.js';
-import TableBulkActions from 'components/table/BulkAction';
-import { PageHeader, Page, PageContent } from 'components/page';
-import { TableWrapper } from 'components/table/TableWrapper';
-import { useLabelName } from 'hooks/useLabelName';
-import { useLabelParams } from 'hooks/useParams';
+import TableBulkActions from 'src/components/table/BulkAction';
+import { PageHeader, Page, PageContent } from 'src/components/page';
+import { TableWrapper } from 'src/components/table/TableWrapper';
+import { useLabelName } from 'src/hooks/useLabelName';
+import { useLabelParams } from 'src/hooks/useParams';
 import React from 'react';
-import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
-import { useDocumentsQuery } from 'services/query/documents/query';
-import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
-import { useBreadcrumb } from 'hooks/useBreadcrumb';
+import { useDocumentsPipelinesQuery } from 'src/services/query/pipelines/query';
+import { useDocumentsQuery } from 'src/services/query/documents/query';
+import { useUpdateFileLabelsMutate } from 'src/services/query/files/mutate';
+import { useBreadcrumb } from 'src/hooks/useBreadcrumb';
 import { DocumentsSearchModal } from './components/modals/DocumentsSearchModal';
 import { DocumentsTable } from './components/table/DocumentsTable';
 

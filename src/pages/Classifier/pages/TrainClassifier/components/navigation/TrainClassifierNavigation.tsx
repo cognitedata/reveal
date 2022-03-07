@@ -1,9 +1,9 @@
-import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
+import { useClassifierActions } from 'src/machines/classifier/hooks/useClassifierActions';
 import {
   ClassifierNavigationProps,
   NavigationBackButton,
   NavigationNextButton,
-} from 'pages/Classifier/components/navigations/BottomNavigation';
+} from 'src/pages/Classifier/components/navigations/BottomNavigation';
 import React from 'react';
 
 export const TrainClassifierNavigation: React.FC<ClassifierNavigationProps> = ({

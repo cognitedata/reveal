@@ -1,10 +1,10 @@
 import { Loader, Table } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { Empty } from 'components/states/Empty';
-import { homeConfig } from 'configs/global.config';
+import { Empty } from 'src/components/states/Empty';
+import { homeConfig } from 'src/configs/global.config';
 import React from 'react';
-import { useDocumentsClassifiersQuery } from 'services/query/classifier/query';
-import { sortByDate } from 'utils/sort';
+import { useDocumentsClassifiersQuery } from 'src/services/query/classifier/query';
+import { sortByDate } from 'src/utils/sort';
 import { ClassifierActions, curateColumns } from './curateClassifierColumns';
 
 interface Props {

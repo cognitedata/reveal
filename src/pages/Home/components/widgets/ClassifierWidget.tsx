@@ -1,7 +1,7 @@
 import { Body, Button, Detail, Title, Tooltip } from '@cognite/cogs.js';
 import { DocumentsPipelineClassifier } from '@cognite/sdk-playground';
 import React from 'react';
-import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
+import { useDocumentsPipelinesQuery } from 'src/services/query/pipelines/query';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`

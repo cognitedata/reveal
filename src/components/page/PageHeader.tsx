@@ -1,5 +1,5 @@
 import { Body, Button, Detail, Flex, Title } from '@cognite/cogs.js';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation } from 'src/hooks/useNavigation';
 import React from 'react';
 import styled from 'styled-components';
 

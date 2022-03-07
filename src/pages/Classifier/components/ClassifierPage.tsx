@@ -1,9 +1,9 @@
 import React from 'react';
-import { Page } from 'components/page';
-import { ClassifierProps } from 'pages/Classifier/pages';
-import { BottomNavigation } from 'pages/Classifier/components/navigations/BottomNavigation';
-import { useBreadcrumb } from 'hooks/useBreadcrumb';
-import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
+import { Page } from 'src/components/page';
+import { ClassifierProps } from 'src/pages/Classifier/pages';
+import { BottomNavigation } from 'src/pages/Classifier/components/navigations/BottomNavigation';
+import { useBreadcrumb } from 'src/hooks/useBreadcrumb';
+import { useDocumentsPipelinesQuery } from 'src/services/query/pipelines/query';
 
 interface Props extends ClassifierProps {
   Navigation: JSX.Element | JSX.Element[];

@@ -1,11 +1,11 @@
 import { Button, Flex } from '@cognite/cogs.js';
-import { useNavigation } from 'hooks/useNavigation';
-import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
+import { useNavigation } from 'src/hooks/useNavigation';
+import { useClassifierActions } from 'src/machines/classifier/hooks/useClassifierActions';
 import {
   ClassifierNavigationProps,
   NavigationBackButton,
   NavigationNextButton,
-} from 'pages/Classifier/components/navigations/BottomNavigation';
+} from 'src/pages/Classifier/components/navigations/BottomNavigation';
 import React from 'react';
 
 interface Props extends ClassifierNavigationProps {

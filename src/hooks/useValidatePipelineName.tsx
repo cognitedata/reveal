@@ -1,7 +1,7 @@
 import React from 'react';
-import { Toast } from 'components/Toast';
-import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
-import { useNavigation } from 'hooks/useNavigation';
+import { Toast } from 'src/components/Toast';
+import { useDocumentsPipelinesQuery } from 'src/services/query/pipelines/query';
+import { useNavigation } from 'src/hooks/useNavigation';
 import { useClassifierParams } from './useParams';
 
 /**

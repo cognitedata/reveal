@@ -1,5 +1,5 @@
 import { CogniteClient, Label, LabelDefinition } from '@cognite/sdk';
-import { LabelCount, LabelDescription } from 'services/types';
+import { LabelCount, LabelDescription } from 'src/services/types';
 import { composeAggregates } from './aggregates';
 
 /**

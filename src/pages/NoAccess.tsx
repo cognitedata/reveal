@@ -1,10 +1,10 @@
 import { Body, Button, Flex } from '@cognite/cogs.js';
-import { Page, PageContent, PageHeader } from 'components/page';
+import { Page, PageContent, PageHeader } from 'src/components/page';
 import React from 'react';
 import styled from 'styled-components';
-import Search from 'images/illustrations/search.svg';
-import { noAccessConfig } from 'configs/global.config';
-import { useNavigation } from 'hooks/useNavigation';
+import Search from 'src/images/illustrations/search.svg';
+import { noAccessConfig } from 'src/configs/global.config';
+import { useNavigation } from 'src/hooks/useNavigation';
 
 const Container = styled.div`
   background-color: rgb(237, 240, 255);

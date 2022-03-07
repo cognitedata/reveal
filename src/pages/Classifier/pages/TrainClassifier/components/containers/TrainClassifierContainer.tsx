@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { PageHeader } from 'components/page';
-import { isClassifierDone, isClassifierTraining } from 'utils/classifier';
+import { PageHeader } from 'src/components/page';
+import { isClassifierDone, isClassifierTraining } from 'src/utils/classifier';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import TrainClassifierLabel from 'pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
+import TrainClassifierLabel from 'src/pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
 import { Flex, Body, Tag } from '@cognite/cogs.js';
-import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
-import { useClassifierManageTrainingSetsQuery } from 'services/query';
-import { ClassifierStatus } from 'services/types';
+import { useClassifierActions } from 'src/machines/classifier/hooks/useClassifierActions';
+import { useClassifierManageTrainingSetsQuery } from 'src/services/query';
+import { ClassifierStatus } from 'src/services/types';
 
 const Container = styled.div<{ $status?: string }>`
   width: 50rem;

@@ -1,8 +1,8 @@
 import React from 'react';
-import { classifierConfig } from 'configs';
-import { ClassifierState } from 'machines/classifier/types';
+import { classifierConfig } from 'src/configs';
+import { ClassifierState } from 'src/machines/classifier/types';
 import { Loader } from '@cognite/cogs.js';
-import useValidatePipelineName from 'hooks/useValidatePipelineName';
+import useValidatePipelineName from 'src/hooks/useValidatePipelineName';
 import { StepWidget } from './components/widgets';
 import { ClassifierRouter } from './pages';
 
