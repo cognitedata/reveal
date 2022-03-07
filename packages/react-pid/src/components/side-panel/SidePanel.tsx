@@ -55,10 +55,10 @@ interface SidePanelProps {
   saveGraphAsJson: () => void;
   documentMetadata: DocumentMetadata;
   setDocumentType: (type: DocumentType) => void;
-  lineNumbers: number[];
-  setLineNumbers: (arg: number[]) => void;
-  activeLineNumber: number | null;
-  setActiveLineNumber: (arg: number | null) => void;
+  lineNumbers: string[];
+  setLineNumbers: (arg: string[]) => void;
+  activeLineNumber: string | null;
+  setActiveLineNumber: (arg: string | null) => void;
   equipmentTags: DiagramEquipmentTagInstance[];
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
   activeTagId: string | null;

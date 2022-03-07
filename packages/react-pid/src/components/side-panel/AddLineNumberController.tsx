@@ -1,31 +1,32 @@
 import React, { useCallback } from 'react';
 import { Button, Select, OptionType } from '@cognite/cogs.js';
+import { getLineNumberFromText } from '@cognite/pid-tools';
 
 import { StyledInput } from './elements';
 
 interface AddLineNumberControllerProps {
-  lineNumbers: number[];
-  setLineNumbers: (args: number[]) => void;
-  activeLineNumber: number | null;
-  setActiveLineNumber: (arg: number | null) => void;
+  lineNumbers: string[];
+  setLineNumbers: (args: string[]) => void;
+  activeLineNumber: string | null;
+  setActiveLineNumber: (arg: string | null) => void;
 }
 
 export const AddLineNumberController: React.FC<AddLineNumberControllerProps> =
   ({ lineNumbers, setLineNumbers, activeLineNumber, setActiveLineNumber }) => {
-    const lineNumbersOptions: OptionType<number>[] = lineNumbers.map(
+    const lineNumbersOptions: OptionType<string>[] = lineNumbers.map(
       (lineNumber) => ({
         label: lineNumber.toString(),
         value: lineNumber,
       })
     );
 
-    const [newLineNumber, setNewLineNumber] = React.useState<number>();
+    const [newLineNumber, setNewLineNumber] = React.useState<string>();
 
     const isDisabled = () => {
       return newLineNumber === undefined || lineNumbers.includes(newLineNumber);
     };
 
-    const setSelectedLineNumberWrapper = (arg: OptionType<number>) => {
+    const setSelectedLineNumberWrapper = (arg: OptionType<string>) => {
       setActiveLineNumber(arg.value!);
     };
 
@@ -39,9 +40,10 @@ export const AddLineNumberController: React.FC<AddLineNumberControllerProps> =
     };
 
     const addNewLineNumber = (inputString: string) => {
-      const stringNumbers = inputString.match(/\d+/)?.[0];
-      const number = stringNumbers ? parseInt(stringNumbers, 10) : -1;
-      setNewLineNumber(number);
+      const match = getLineNumberFromText(inputString);
+      if (match) {
+        setNewLineNumber(match[0]);
+      }
     };
 
     const LineNumberSelector = useCallback(() => {
@@ -70,7 +72,7 @@ export const AddLineNumberController: React.FC<AddLineNumberControllerProps> =
       <div>
         {LineNumberSelector()}
         <StyledInput
-          type="number"
+          type="text"
           value={newLineNumber}
           onChange={(e) => addNewLineNumber(e.target.value)}
           placeholder="New line number"

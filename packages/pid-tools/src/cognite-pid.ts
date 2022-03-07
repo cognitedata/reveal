@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { v4 as uuid } from 'uuid';
 
-import { loadSymbolsFromJson } from './utils';
+import { getLineNumberFromText, loadSymbolsFromJson } from './utils';
 import { T_JUNCTION } from './constants';
 import { applyPathReplacementInSvg } from './utils/pathReplacementUtils';
 import { PidDocumentWithDom } from './pid';
@@ -75,9 +75,9 @@ type ConnectionsCallback = (lines: DiagramConnection[]) => void;
 type EquipmentTagsCallback = (
   equipmentTags: DiagramEquipmentTagInstance[]
 ) => void;
-type ActiveLineNumberCallback = (activeLineNumber: number | null) => void;
+type ActiveLineNumberCallback = (activeLineNumber: string | null) => void;
 type ActiveTagIdCallback = (activeTagId: string | null) => void;
-type LineNumbersCallback = (lineNumbers: number[]) => void;
+type LineNumbersCallback = (lineNumbers: string[]) => void;
 
 export interface SaveSymbolData {
   symbolType: SymbolType;
@@ -118,13 +118,13 @@ export class CognitePid {
   private equipmentTags: DiagramEquipmentTagInstance[] = [];
   private equipmentTagsSubscriber: EquipmentTagsCallback | undefined;
 
-  private activeLineNumber: number | null = null;
+  private activeLineNumber: string | null = null;
   private activeLineNumberSubscriber: ActiveLineNumberCallback | undefined;
 
   private activeTagId: string | null = null;
   private activeTagIdSubscriber: ActiveTagIdCallback | undefined;
 
-  private lineNumbers: number[] = [];
+  private lineNumbers: string[] = [];
   private lineNumbersSubscriber: LineNumbersCallback | undefined;
 
   private symbolSelection: string[] = [];
@@ -395,7 +395,7 @@ export class CognitePid {
     this.equipmentTagsSubscriber = callback;
   }
 
-  setActiveLineNumber(lineNumber: number | null, refresh = true) {
+  setActiveLineNumber(lineNumber: string | null, refresh = true) {
     this.activeLineNumber = lineNumber;
     if (this.activeLineNumberSubscriber) {
       this.activeLineNumberSubscriber(lineNumber);
@@ -428,7 +428,7 @@ export class CognitePid {
     this.activeTagIdSubscriber = callback;
   }
 
-  setLineNumbers(lineNumbers: number[]) {
+  setLineNumbers(lineNumbers: string[]) {
     this.lineNumbers = lineNumbers;
     if (this.activeLineNumber === null) {
       this.setActiveLineNumber(lineNumbers[0]);
@@ -491,7 +491,7 @@ export class CognitePid {
     const setPathReplacement = (pathReplacements: PathReplacement[]) => {
       this.addPathReplacements(pathReplacements);
     };
-    const setLineNumbers = (lineNumbers: number[]) => {
+    const setLineNumbers = (lineNumbers: string[]) => {
       this.setLineNumbers(lineNumbers);
     };
     const setEquipmentTags = (equipmentTags: DiagramEquipmentTagInstance[]) => {
@@ -690,10 +690,8 @@ export class CognitePid {
 
     if (this.activeTool !== 'connectLabels') {
       if (node instanceof SVGTSpanElement) {
-        const regexMatch = node.innerHTML.match(/L[0-9]{3}/);
-        if (regexMatch) {
-          const numberPart = regexMatch[0].match(/\d+/);
-          const lineNumber = parseInt(numberPart![0], 10);
+        const lineNumber = getLineNumberFromText(node.innerHTML);
+        if (lineNumber) {
           if (!this.lineNumbers.includes(lineNumber)) {
             this.setLineNumbers([...this.lineNumbers, lineNumber]);
           }
@@ -1154,7 +1152,7 @@ export class CognitePid {
 
     this.lineNumberVisualizationIds = this.pidDocument.pidLabels
       .filter((pidLabel) => {
-        return pidLabel.text.match(/L[0-9]{3}/);
+        return getLineNumberFromText(pidLabel.text);
       })
       .map(
         (pidTspan) =>

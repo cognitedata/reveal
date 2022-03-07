@@ -5,3 +5,4 @@ export * from './domUtils';
 export * from './jsonUtils';
 export * from './saveGraph';
 export { default as getFileNameWithoutExtension } from './getFileNameWithoutExtension';
+export { default as getLineNumberFromText } from './getLineNumberFromText';

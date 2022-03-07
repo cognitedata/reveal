@@ -51,8 +51,8 @@ export const ReactPid: React.FC = () => {
   >([]);
   const [symbolSelection, setSymbolSelection] = useState<string[]>([]);
   const [hideSelection, setHideSelection] = useState<boolean>(false);
-  const [lineNumbers, setLineNumbers] = useState<number[]>([]);
-  const [activeLineNumber, setActiveLineNumber] = useState<number | null>(null);
+  const [lineNumbers, setLineNumbers] = useState<string[]>([]);
+  const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
 
   const [uploadSvgInput, setUploadSvgInput] = useState<HTMLInputElement | null>(
@@ -224,7 +224,7 @@ export const ReactPid: React.FC = () => {
     pidViewer.current.setHideSelection(!hideSelection);
   };
 
-  const setActiveLineNumberWrapper = (lineNumber: number | null) => {
+  const setActiveLineNumberWrapper = (lineNumber: string | null) => {
     if (!pidViewer.current) return;
     pidViewer.current.setActiveLineNumber(lineNumber);
   };
@@ -234,7 +234,7 @@ export const ReactPid: React.FC = () => {
     pidViewer.current.setActiveTagId(activeTagId);
   };
 
-  const setLineNumbersWrapper = (lineNumbers: number[]) => {
+  const setLineNumbersWrapper = (lineNumbers: string[]) => {
     if (!pidViewer.current) return;
     pidViewer.current.setLineNumbers(lineNumbers);
   };
@@ -301,7 +301,7 @@ export const ReactPid: React.FC = () => {
       } as PidDocumentMetadata);
     } else if (looksLikeIso && !looksLikePid) {
       const lineParts = looksLikeIso[0].split('-');
-      const lineNumber = parseInt(lineParts[0].match(/\d+/)?.[0] || '-1', 10);
+      const lineNumber = lineParts[0] || 'Unknown';
       const pageNumber = parseInt(lineParts[1], 10);
       setLineNumbers([lineNumber]);
       setDocumentMetadata({
@@ -343,7 +343,7 @@ export const ReactPid: React.FC = () => {
         name: 'Unknown',
         type: DocumentType.isometric,
         unit: 'Unknown',
-        lineNumber: -1,
+        lineNumber: 'Unknown',
         pageNumber: -1,
       } as IsoDocumentMetadata);
     }

@@ -80,3 +80,4 @@ export const COLORS = {
 };
 
 export const EQUIPMENT_TAG_REGEX = /^[0-9]{2}-[A-Z0-9]{4,5}$/;
+export const VALID_LINE_NUMBER_PREFIXES = ['L', 'UT', 'IP', 'UL'];

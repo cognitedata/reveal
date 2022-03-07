@@ -46,8 +46,8 @@ export interface DiagramInstance {
   type: DiagramType;
   labelIds: string[];
   assetExternalId?: string;
-  lineNumbers: number[];
-  inferedLineNumbers: number[];
+  lineNumbers: string[];
+  inferedLineNumbers: string[];
 }
 
 export interface DiagramInstanceWithPaths extends DiagramInstance {
@@ -148,7 +148,7 @@ export interface GraphDocument {
   lines: DiagramLineInstanceOutputFormat[];
   connections: DiagramConnection[];
   pathReplacements: PathReplacement[];
-  lineNumbers: number[];
+  lineNumbers: string[];
   equipmentTags: DiagramEquipmentTagInstanceOutputFormat[];
   labels: DiagramLabelOutputFormat[];
 }
@@ -166,7 +166,7 @@ export interface PidDocumentMetadata extends DocumentMetadataBase {
 
 export interface IsoDocumentMetadata extends DocumentMetadataBase {
   type: DocumentType.isometric;
-  lineNumber: number; // i.e 32, 132, L132-1 -> 132
+  lineNumber: string; // i.e L032, L132, L132-1 -> L132
   pageNumber: number; // i.e. L132-1 -> 1
 }
 

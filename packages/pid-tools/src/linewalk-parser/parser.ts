@@ -132,8 +132,8 @@ export const computeLines = async (
     | undefined
     | ((document: ParsedDocument | ParsedDocumentsForLine) => void) = undefined
 ) => {
-  const lineNumbers: number[] = [];
-  const graphsPerLine = new Map<number, string[]>();
+  const lineNumbers: string[] = [];
+  const graphsPerLine = new Map<string, string[]>();
 
   documents.forEach((graph) => {
     const document = parseDocument(graph, version, documents, connections);

@@ -22,9 +22,6 @@ import {
   getClosestPointOnSegments,
 } from '../index';
 
-const zeroPad = (num: number, places: number): string =>
-  String(num).padStart(places, '0');
-
 export const isDiagramLine = (
   node: SVGElement,
   lines: DiagramLineInstance[]
@@ -71,7 +68,7 @@ export const isLabelInInstances = (
 
 export const isNodeInLineNumber = (
   node: SVGElement,
-  lineNumber: number | null,
+  lineNumber: string | null,
   diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   if (lineNumber === null) return false;
@@ -92,7 +89,7 @@ export const isNodeInLineNumber = (
 
 export const isNodeInInferedLineNumber = (
   node: SVGElement,
-  lineNumber: number | null,
+  lineNumber: string | null,
   diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   if (lineNumber === null) return false;
@@ -169,7 +166,7 @@ export interface ApplyStyleArgs {
   lines: DiagramLineInstance[];
   connections: DiagramConnection[];
   active: ToolType;
-  activeLineNumber: number | null;
+  activeLineNumber: string | null;
   equipmentTags: DiagramEquipmentTagInstance[];
   activeTagId: string | null;
   splitSelection: string | null;
@@ -224,10 +221,7 @@ export const applyStyleToNode = ({
 
   if (active === 'setLineNumber') {
     if (node instanceof SVGTSpanElement) {
-      if (
-        activeLineNumber &&
-        node.innerHTML.includes(`L${zeroPad(activeLineNumber, 3)}`)
-      ) {
+      if (activeLineNumber && node.innerHTML.includes(activeLineNumber)) {
         node.style.fontWeight = '600';
         return;
       }

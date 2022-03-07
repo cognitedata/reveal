@@ -241,7 +241,7 @@ export function addOrRemoveLabelToEquipmentTag(
 
 /* eslint-disable no-param-reassign */
 export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
-  lineNumber: number,
+  lineNumber: string,
   instance: Type
 ) {
   if (instance.lineNumbers.includes(lineNumber)) {

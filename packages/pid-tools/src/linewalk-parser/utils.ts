@@ -66,7 +66,7 @@ export const mergeUnique = <T>(current: T[], additions: T[]) => {
 };
 
 export const inferIsoLineNumberToAnnotations = (
-  lineNumber: number,
+  lineNumber: string,
   annotations: Annotation[]
 ) => {
   annotations.forEach((annotation) => {
