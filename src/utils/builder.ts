@@ -61,5 +61,20 @@ export const documentBuilder = (
     );
   }
 
+  if (!query?.showDocumentsLabeledInFiles) {
+    filterBuilder = merge<DocumentsSearchRequest, DocumentsSearchRequest>(
+      filterBuilder,
+      {
+        filter: {
+          sourceFile: {
+            labels: {
+              missing: true,
+            },
+          },
+        },
+      }
+    );
+  }
+
   return filterBuilder;
 };

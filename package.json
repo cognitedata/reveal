@@ -23,7 +23,7 @@
     "@cognite/cogs.js": "5.19.0",
     "@cognite/metrics": "1.2.2",
     "@cognite/sdk": "6.3.4",
-    "@cognite/sdk-playground": "5.0.3",
+    "@cognite/sdk-playground": "5.0.4",
     "@cognite/sdk-provider": "1.0.0",
     "@cognite/sdk-react-query-hooks": "6.0.3",
     "@cognite/z-index": "0.2.3",

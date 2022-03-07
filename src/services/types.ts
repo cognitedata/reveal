@@ -23,6 +23,7 @@ export interface DocumentSearchQuery {
   sources?: string[];
   fileTypes?: string[];
   labels?: string[];
+  showDocumentsLabeledInFiles: boolean;
 }
 
 export type Aggregates = {

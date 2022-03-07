@@ -8,13 +8,18 @@ describe('Builder', () => {
     const labels = ['unknown', 'label1', 'label2'];
 
     it('returns the base object on zero arity', () => {
-      const result = documentBuilder();
+      const result = documentBuilder({
+        showDocumentsLabeledInFiles: true,
+      });
 
       expect(result).toMatchObject({});
     });
 
     it('returns the search object', () => {
-      const result = documentBuilder({ searchQuery });
+      const result = documentBuilder({
+        searchQuery,
+        showDocumentsLabeledInFiles: true,
+      });
 
       expect(result).toMatchObject({
         search: {
@@ -24,7 +29,11 @@ describe('Builder', () => {
     });
 
     it('returns the search + source object', () => {
-      const result = documentBuilder({ searchQuery, sources });
+      const result = documentBuilder({
+        searchQuery,
+        sources,
+        showDocumentsLabeledInFiles: true,
+      });
 
       expect(result).toMatchObject({
         search: {
@@ -40,11 +49,32 @@ describe('Builder', () => {
       });
     });
 
-    it('returns the search + source + filetypes object', () => {
+    it('returns the search + filter out labeled files', () => {
+      const result = documentBuilder({
+        searchQuery,
+        showDocumentsLabeledInFiles: false,
+      });
+
+      expect(result).toMatchObject({
+        search: {
+          query: searchQuery,
+        },
+        filter: {
+          sourceFile: {
+            labels: {
+              missing: true,
+            },
+          },
+        },
+      });
+    });
+
+    it('returns the search + source + filetypes object + filter out labeled files', () => {
       const result = documentBuilder({
         searchQuery,
         sources,
         fileTypes,
+        showDocumentsLabeledInFiles: false,
       });
 
       expect(result).toMatchObject({
@@ -55,6 +85,9 @@ describe('Builder', () => {
           sourceFile: {
             source: {
               in: sources,
+            },
+            labels: {
+              missing: true,
             },
           },
           type: {
@@ -64,12 +97,13 @@ describe('Builder', () => {
       });
     });
 
-    it('returns the search + source + filetype + document type object', () => {
+    it('returns the search + source + filetype + document type object + filter out labeled files', () => {
       const result = documentBuilder({
         searchQuery,
         sources,
         fileTypes,
         labels,
+        showDocumentsLabeledInFiles: false,
       });
 
       expect(result).toMatchObject({
@@ -78,6 +112,9 @@ describe('Builder', () => {
         },
         filter: {
           sourceFile: {
+            labels: {
+              missing: true,
+            },
             source: {
               in: sources,
             },

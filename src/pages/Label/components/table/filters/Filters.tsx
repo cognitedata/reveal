@@ -8,6 +8,7 @@ import { LabelFilter } from './actions/Label';
 import { FileTypeFilter } from './actions/FileType';
 import { NameFilter } from './actions/Name';
 import { SourceFilter } from './actions/Source';
+import { ShowLabeledFilesFilter } from './actions/ShowLabeledFiles';
 
 const Container = styled.div`
   display: flex;
@@ -29,10 +30,12 @@ export const DocumentsFilters: React.FC = () => {
   // across rerenders, to improve memoization and debouncing.
   // useCallback is used for the same reasons.
 
-  const searchRef = React.useRef<DocumentSearchQuery>();
+  const searchRef = React.useRef<DocumentSearchQuery>({
+    showDocumentsLabeledInFiles: false,
+  });
 
   const handleFilterChange = React.useCallback(
-    (state: DocumentSearchQuery) => {
+    (state: Partial<DocumentSearchQuery>) => {
       searchRef.current = { ...searchRef.current, ...state };
       mutate(searchRef.current);
     },
@@ -67,6 +70,13 @@ export const DocumentsFilters: React.FC = () => {
     [handleFilterChange]
   );
 
+  const handleShowLabeledFilesChange = React.useCallback(
+    (value: boolean) => {
+      handleFilterChange({ showDocumentsLabeledInFiles: value });
+    },
+    [handleFilterChange]
+  );
+
   return (
     <Container>
       <NameFilter onChange={handleSearchQueryChange} />
@@ -74,6 +84,7 @@ export const DocumentsFilters: React.FC = () => {
       <FileTypeFilter onChange={handleFileTypeChange} />
       <LabelFilter onChange={handleLabelsChange} />
 
+      <ShowLabeledFilesFilter onChange={handleShowLabeledFilesChange} />
       {isLoading && <Loader darkMode={false} />}
     </Container>
   );
