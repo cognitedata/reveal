@@ -6,5 +6,9 @@
   "stabilityDays": 31,
   "postUpdateOptions": [
     "yarnDedupeFewer"
+  ],
+  "labels": [
+    "dependencies",
+    "auto-merge"
   ]
 }
