@@ -25,7 +25,7 @@ Do you want to know more about Charts? Here you can have a list of resources:
 
 ## Calculation Backend
 
-The low-code calculations in Charts are dependant on the Calculation Backend. See more on the [backend repo](https://github.com/cognitedata/charts-functions-dsp)
+The low-code calculations in Charts are dependant on the Calculation Backend. See more on the [backend repo](https://github.com/cognitedata/calculations-backend)
 
 ## Product FAQ
 
