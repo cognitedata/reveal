@@ -58,7 +58,7 @@ export type TagDetectionJobAnnotation = BaseVisionJobAnnotation & {
 };
 
 export type GaugeReaderJobAnnotation = BaseVisionJobAnnotation & {
-  __typename: VisionDetectionModelType.GaugeReader;
+  // __typename: VisionDetectionModelType.GaugeReader;
   region: AnnotationRegion;
   data: {
     // eslint-disable-next-line camelcase

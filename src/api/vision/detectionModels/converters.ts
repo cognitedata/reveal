@@ -8,13 +8,18 @@ import {
 } from 'src/api/annotation/types';
 
 import {
+  GaugeReaderJobAnnotation,
   ObjectDetectionJobAnnotation,
   TagDetectionJobAnnotation,
   TextDetectionJobAnnotation,
   VisionDetectionModelType,
   VisionJobAnnotation,
 } from './types';
-import { validBoundingBox, validImageAssetLink } from './typeValidators';
+import {
+  validBoundingBox,
+  validImageAssetLink,
+  validKeypointCollection,
+} from './typeValidators';
 
 function convertionWarningMessage(type: string) {
   return `Could not convert annotation in detection model response to ${type}.`;
@@ -98,6 +103,29 @@ export function convertVisionJobAnnotationToImageAssetLinkList(
   );
 
   return imageAssetLinkList;
+}
+
+export function convertVisionJobAnnotationToImageKeypointCollection(
+  visionJobAnnotation: VisionJobAnnotation
+) {
+  if (!validKeypointCollection(visionJobAnnotation)) {
+    console.warn(convertionWarningMessage('ImageKeypointCollection'));
+    return null;
+  }
+  const annotation = visionJobAnnotation as GaugeReaderJobAnnotation;
+  const imageKeypointCollection: ImageKeypointCollection = {
+    label: annotation.text,
+    confidence: annotation.confidence,
+    keypoints: annotation.region.vertices.map((item, index) => {
+      return {
+        point: item,
+        label: annotation.data.keypoint_names[index],
+        confidence: annotation.confidence,
+      };
+    }),
+  };
+
+  return imageKeypointCollection;
 }
 
 // convert to Annotation V1 types
