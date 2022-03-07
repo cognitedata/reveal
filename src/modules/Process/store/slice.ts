@@ -11,7 +11,7 @@ import {
 import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
+import { CreateVisionJob } from 'src/store/thunks/Process/CreateVisionJob';
 import { createGenericTabularDataSlice } from 'src/store/genericTabularDataSlice';
 import { getFakeQueuedJob } from 'src/api/vision/detectionModels/detectionUtils';
 import { ProcessState } from 'src/modules/Process/store/types';
@@ -202,9 +202,9 @@ const processSlice = createGenericTabularDataSlice({
       );
     });
 
-    /* postAnnotationJobs */
+    /* CreateVisionJob */
 
-    builder.addCase(postAnnotationJob.pending, (state, { meta }) => {
+    builder.addCase(CreateVisionJob.pending, (state, { meta }) => {
       const { fileIds, modelType } = meta.arg;
 
       addJobToState(
@@ -215,13 +215,13 @@ const processSlice = createGenericTabularDataSlice({
       );
     });
 
-    builder.addCase(postAnnotationJob.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(CreateVisionJob.fulfilled, (state, { payload, meta }) => {
       const newJob = payload;
       const { fileIds, modelType } = meta.arg;
       addJobToState(state, fileIds, newJob, modelType);
     });
 
-    builder.addCase(postAnnotationJob.rejected, (state, { error, meta }) => {
+    builder.addCase(CreateVisionJob.rejected, (state, { error, meta }) => {
       const { fileIds, modelType } = meta.arg;
       const queuedJob = state.jobs.byId[getFakeQueuedJob(modelType).jobId];
 

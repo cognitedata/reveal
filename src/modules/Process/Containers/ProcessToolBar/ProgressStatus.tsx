@@ -77,7 +77,7 @@ export default function ProgressStatus() {
     const [tag, text, objects, gdpr]: any[] = [[], [], [], []];
     Object.entries(jobs).forEach(([_, job]) => {
       if (job.jobId > 0) {
-        // HACK due to getFakeQueuedJob(), postAnnotationJob.Pending in processSlice
+        // HACK due to getFakeQueuedJob(), postVisionJob.Pending in processSlice
         if (job.type === VisionDetectionModelType.OCR) {
           text.push(job.status);
         }

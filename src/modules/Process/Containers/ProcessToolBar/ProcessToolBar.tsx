@@ -1,5 +1,5 @@
 import { ModelConfiguration } from 'src/modules/Process/Containers/ModelConfiguration';
-import { DetectAnnotations } from 'src/store/thunks/Process/DetectAnnotations';
+import { RunDetectionModels } from 'src/store/thunks/Process/RunDetectionModels';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -71,7 +71,7 @@ export const ProcessToolBar = () => {
       });
     }
     dispatch(
-      DetectAnnotations({
+      RunDetectionModels({
         fileIds: processFiles
           .filter((file) => !isVideo(file))
           .map(({ id }) => id),

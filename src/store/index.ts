@@ -1,6 +1,6 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 
-import { loadState, saveState } from 'src/utils/Localstorage';
+import { loadState, saveState } from 'src/utils/localStorage/LocalStorage';
 import rootReducer from './rootReducer';
 
 const store = configureStore({

@@ -19,6 +19,10 @@ export const clearExplorerFileState = createAction<number[]>(
   'clearExplorerFileState'
 );
 
+export const clearAnnotationState = createAction<number[]>(
+  'clearAnnotationState'
+);
+
 export const deselectAllSelectionsReviewPage = createAction<void>(
   'deselectAllSelectionsReviewPage'
 );

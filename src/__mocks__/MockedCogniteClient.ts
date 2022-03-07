@@ -2,6 +2,8 @@ import noop from 'lodash/noop';
 import { CogniteEvent } from '@cognite/sdk';
 import { mockCogniteAssetList } from 'src/__test-utils/fixtures/assets';
 
+export const MOCK_PROJECT_NAME = 'test-project';
+
 export class MockedCogniteClient {
   loginWithOAuth = noop;
 
@@ -151,4 +153,5 @@ export class MockedCogniteClient {
   };
 
   getBaseUrl = () => 'test-url';
+  project = MOCK_PROJECT_NAME;
 }

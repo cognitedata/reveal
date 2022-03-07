@@ -4,11 +4,8 @@ import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
-import {
-  clearExplorerFileState,
-  clearFileState,
-} from 'src/store/commonActions';
+import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { clearAnnotationState } from 'src/store/commonActions';
 import { AnnotationState } from './types';
 
 export const initialState: AnnotationState = {
@@ -98,7 +95,7 @@ const annotationSlice = createSlice({
       // TODO: refactor -> same as RetrieveAnnotations.fulfilled
       isAnyOf(
         CreateAnnotations.fulfilled,
-        AnnotationDetectionJobUpdate.fulfilled,
+        VisionJobUpdate.fulfilled,
         UpdateAnnotations.fulfilled
       ),
       (state, { payload }) => {
@@ -123,11 +120,7 @@ const annotationSlice = createSlice({
     );
 
     builder.addMatcher(
-      isAnyOf(
-        DeleteFilesById.fulfilled,
-        clearFileState,
-        clearExplorerFileState
-      ),
+      isAnyOf(DeleteFilesById.fulfilled, clearAnnotationState),
       (state, action) => {
         action.payload.forEach((fileId) => {
           const fileAnnotations = state.files.byId[fileId];

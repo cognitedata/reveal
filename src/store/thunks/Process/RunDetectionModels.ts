@@ -2,15 +2,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
+import { CreateVisionJob } from 'src/store/thunks/Process/CreateVisionJob';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
 
-export const DetectAnnotations = createAsyncThunk<
+export const RunDetectionModels = createAsyncThunk<
   void,
   { fileIds: Array<number>; detectionModels: Array<VisionDetectionModelType> },
   ThunkConfig
 >(
-  'process/detectAnnotations',
+  'process/runDetectionModels',
   async ({ fileIds, detectionModels }, { dispatch, getState }) => {
     if (!detectionModels.length) {
       throw new Error(
@@ -40,7 +40,7 @@ export const DetectAnnotations = createAsyncThunk<
         });
 
         dispatch(
-          postAnnotationJob({
+          CreateVisionJob({
             modelType,
             fileIds: filteredBatchFileIds,
           })

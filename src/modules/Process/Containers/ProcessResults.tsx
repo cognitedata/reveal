@@ -125,7 +125,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         mimeType: file.mimeType || '',
         rowKey: `process-${file.id}`,
       })),
-    [processFiles, menuActions, showSelectFromExploreModal]
+    [processFiles, menuActions]
   );
 
   useEffect(() => {
@@ -135,7 +135,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         RetrieveAnnotations({ fileIds: processFileIds, clearCache: true })
       );
     }
-  }, [processFileIds]);
+  }, [processFileIds, showSelectFromExploreModal]); // required to fetch annotations when explorer modal is closed
+  // since explorer modal clears the annotation state when it's loading its own annotations
 
   const handleItemClick = useCallback(
     (item: TableDataItem, showFileDetailsOnClick: boolean = true) => {
