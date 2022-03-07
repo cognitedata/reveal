@@ -278,6 +278,28 @@ export function convertVisionJobAnnotationToAnnotationTypeV1(
         convertImageAssetLinkListToAnnotationTypeV1(annotationType)
       );
     }
+    case VisionDetectionModelType.GaugeReader: {
+      // Gauge reader output consist of a bounding box and a keypoint collection
+      const annotationTypeBoundingBox =
+        convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
+          visionJobAnnotation
+        );
+      if (annotationTypeBoundingBox) {
+        return convertImageObjectDetectionBoundingBoxToAnnotationTypeV1(
+          annotationTypeBoundingBox
+        );
+      }
+      const annotationTypeKeypointCollection =
+        convertVisionJobAnnotationToImageKeypointCollection(
+          visionJobAnnotation
+        );
+      return (
+        annotationTypeKeypointCollection &&
+        convertImageKeypointCollectionToAnnotationTypeV1(
+          annotationTypeKeypointCollection
+        )
+      );
+    }
     case VisionDetectionModelType.CustomModel: {
       const annotationTypeBoundingBox =
         convertVisionJobAnnotationToImageObjectDetectionBoundingBox(

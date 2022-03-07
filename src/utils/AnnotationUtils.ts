@@ -64,12 +64,14 @@ export const ModelTypeStyleMap = {
   [VisionDetectionModelType.OCR]: ColorsOCR,
   [VisionDetectionModelType.TagDetection]: ColorsTagDetection,
   [VisionDetectionModelType.ObjectDetection]: ColorsObjectDetection,
+  [VisionDetectionModelType.GaugeReader]: ColorsObjectDetection, // gauge reader is regarded as object detection models
   [VisionDetectionModelType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
   [VisionDetectionModelType.OCR]: 'Scan',
   [VisionDetectionModelType.TagDetection]: 'ResourceAssets',
   [VisionDetectionModelType.ObjectDetection]: 'Scan',
+  [VisionDetectionModelType.GaugeReader]: 'Scan',
   [VisionDetectionModelType.CustomModel]: 'Scan',
 };
 
@@ -77,6 +79,7 @@ export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationType } = {
   [VisionDetectionModelType.OCR]: 'vision/ocr',
   [VisionDetectionModelType.TagDetection]: 'vision/tagdetection',
   [VisionDetectionModelType.ObjectDetection]: 'vision/objectdetection',
+  [VisionDetectionModelType.GaugeReader]: 'vision/gaugereader',
   [VisionDetectionModelType.CustomModel]: 'vision/custommodel',
 };
 

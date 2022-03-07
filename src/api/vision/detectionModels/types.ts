@@ -75,6 +75,7 @@ export type VisionJobAnnotation =
   | TextDetectionJobAnnotation
   | ObjectDetectionJobAnnotation
   | TagDetectionJobAnnotation
+  | GaugeReaderJobAnnotation
   | CusomModelJobAnnotation;
 
 export type VisionJobFailedItem = {
@@ -138,6 +139,9 @@ export interface ParamsObjectDetection {
   threshold: number;
 }
 
+export interface ParamsGaugeReader {
+  gaugeType?: string;
+}
 export interface ParamsCustomModel {
   modelJobId?: number;
   threshold: number;
@@ -147,6 +151,7 @@ export type DetectionModelParams =
   | ParamsOCR
   | ParamsTagDetection
   | ParamsObjectDetection
+  | ParamsGaugeReader
   | ParamsCustomModel;
 
 // App specific types
@@ -154,6 +159,7 @@ export enum VisionDetectionModelType {
   OCR = 1,
   TagDetection,
   ObjectDetection,
+  GaugeReader,
   CustomModel,
 }
 export interface DetectionModelDataProvider {

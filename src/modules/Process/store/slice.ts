@@ -30,6 +30,9 @@ const initialDetectionModelParameters = {
   objectDetection: {
     threshold: 0.8,
   },
+  gaugeReader: {
+    gaugeType: 'analog',
+  },
   customModel: {
     modelJobId: undefined,
     threshold: 0.8,
@@ -79,6 +82,12 @@ export const initialState: ProcessState = {
       type: VisionDetectionModelType.ObjectDetection,
       settings: initialDetectionModelParameters.objectDetection,
       unsavedSettings: initialDetectionModelParameters.objectDetection,
+    },
+    {
+      modelName: 'Gauge reader',
+      type: VisionDetectionModelType.GaugeReader,
+      settings: initialDetectionModelParameters.gaugeReader,
+      unsavedSettings: initialDetectionModelParameters.gaugeReader,
     },
   ],
   showExploreModal: false,

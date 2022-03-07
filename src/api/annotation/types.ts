@@ -71,6 +71,7 @@ export type AnnotationType =
   | 'vision/ocr'
   | 'vision/tagdetection'
   | 'vision/objectdetection'
+  | 'vision/gaugereader'
   | 'vision/custommodel'
   | 'user_defined'
   | 'CDF_ANNOTATION_TEMPLATE';
