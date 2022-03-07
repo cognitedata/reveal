@@ -71,6 +71,8 @@ type LocizeLanguages = Record<
   }
 >;
 
+const isProduction = process.env.REACT_APP_ENV === 'production';
+
 const defaultTranslations = makeDefaultTranslations(
   'Charts User settings',
   'Logout',
@@ -92,17 +94,18 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (ready) {
-      i18n.services.backendConnector.backend.backends[1].getLanguages(
-        (err: any, languages: LocizeLanguages) => {
-          if (err) return;
-          setAvailableLanguages(
-            Object.keys(languages).map((key) => ({
-              value: key,
-              label: languages[key].nativeName,
-            }))
-          );
-        }
-      );
+      const backend = isProduction
+        ? i18n.services.backendConnector.backend.backends[1]
+        : i18n.services.backendConnector.backend.backends[0];
+      backend.getLanguages((err: any, languages: LocizeLanguages) => {
+        if (err) return;
+        setAvailableLanguages(
+          Object.keys(languages).map((key) => ({
+            value: key,
+            label: languages[key].nativeName,
+          }))
+        );
+      });
     }
     return () => {};
   }, [ready, i18n.services.backendConnector.backend.backends]);
