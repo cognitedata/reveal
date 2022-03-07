@@ -1,3 +1,5 @@
+import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+
 describe('Wells: Casings', () => {
   beforeEach(() => {
     cy.visit(Cypress.env('BASE_URL'));
@@ -28,7 +30,7 @@ describe('Wells: Casings', () => {
     cy.selectFirstWellInResults();
 
     cy.openInspectView();
-    cy.goToWellsTab('Casings');
+    cy.goToWellsTab(TAB_NAMES.CASINGS);
 
     cy.log('Inspect casings results');
     cy.get('[data-testid="depth-indicator"]').should('exist');
@@ -59,7 +61,7 @@ describe('Wells: Casings', () => {
       .click();
 
     cy.openInspectView();
-    cy.goToWellsTab('Casings');
+    cy.goToWellsTab(TAB_NAMES.CASINGS);
 
     cy.log('Inspect casings results');
     cy.get('[data-testid="depth-indicator"]').should('exist');

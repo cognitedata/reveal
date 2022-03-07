@@ -666,6 +666,7 @@ CYPRESS_EXTERNAL_FILES = [
     "src/components/add-to-favorite-set-menu/constants.ts",
     "src/components/emptyState/constants.ts",
     "src/pages/authorized/search/map/constants.ts",
+    "src/pages/authorized/search/well/inspect/constants.ts",
     "src/core/constants.ts",
     "src/utils/isISODateRegex.ts",
 ]

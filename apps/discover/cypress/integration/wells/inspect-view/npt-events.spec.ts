@@ -1,4 +1,5 @@
 import { SOURCE_FILTER } from '../../../support/selectors/wells.selectors';
+import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
 
 describe('Wells: NPT Events', () => {
   beforeEach(() => {
@@ -28,16 +29,9 @@ describe('Wells: NPT Events', () => {
       select: 'ALL',
     });
 
-    cy.log(
-      'Check that we see table bulk actions with correct number of selected wells'
-    );
-    cy.findByTestId('table-bulk-actions')
-      .should('be.visible')
-      .contains('100 wells selected');
+    cy.openInspectView(100);
 
-    cy.openInspectView();
-
-    cy.goToWellsTab('NPT Events');
+    cy.goToWellsTab(TAB_NAMES.NPT_EVENTS);
 
     cy.log('Graph should be the default selected view');
 

@@ -1,3 +1,5 @@
+import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+
 describe('Wells: DigitalRocks', () => {
   before(() => {
     cy.visit(Cypress.env('BASE_URL'));
@@ -30,7 +32,7 @@ describe('Wells: DigitalRocks', () => {
       .click();
 
     cy.openInspectView();
-    cy.goToWellsTab('Digital Rocks');
+    cy.goToWellsTab(TAB_NAMES.DIGITAL_ROCKS);
 
     cy.log('Inspect digital rocks results');
     cy.findByTestId('digital-rocks-result-table')

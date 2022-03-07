@@ -1,18 +1,16 @@
-// This type is copied; need to resolve tsconfig, somehow.
-export type WellInspectTabs =
-  | 'Overview'
-  | 'Trajectories'
-  | 'NDS Events'
-  | 'NPT Events'
-  | 'Casings'
-  | 'Well Logs'
-  | 'Related Documents'
-  | 'Digital Rocks'
-  | 'Geomechanics & PPFG'
-  | '3D';
+import {
+  WellInspectTabs,
+  TAB_NAMES,
+} from '../../../src/pages/authorized/search/well/inspect/constants';
 
 Cypress.Commands.add('goToWellsTab', (tab: WellInspectTabs) => {
   cy.log(`Go to wells ${tab} tab`);
+
+  if (tab === TAB_NAMES.THREE_DEE) {
+    cy.findByLabelText(TAB_NAMES.THREE_DEE).should('be.visible').click();
+    return;
+  }
+
   cy.findByTestId('well-inspect-navigation-tabs')
     .findByRole('tab', { name: tab })
     .should('be.visible')
@@ -24,7 +22,17 @@ Cypress.Commands.add('goToWellsTab', (tab: WellInspectTabs) => {
   // cy.url().should('contain', path);
 });
 
-Cypress.Commands.add('openInspectView', () => {
+Cypress.Commands.add('openInspectView', (selectedWells?: number) => {
+  if (selectedWells > 0) {
+    cy.log(
+      'Check that we see table bulk actions with correct number of selected wells'
+    );
+    cy.findByTestId('table-bulk-actions')
+      .should('be.visible')
+      .contains(
+        `${selectedWells} well${selectedWells > 1 ? 's' : ''} selected`
+      );
+  }
   cy.log('Open inspect view');
   cy.findByTestId('table-bulk-actions')
     .findByRole('button', { name: 'View' })
@@ -52,7 +60,7 @@ Cypress.Commands.add('selectFirstWellInResults', () => {
 
 export interface WellsCommands {
   goToWellsTab(tab: any): void;
-  openInspectView(): void;
+  openInspectView(selectedWells?: number): void;
   clearWellsSelection(): void;
   selectFirstWellInResults(): void;
 }

@@ -16,7 +16,6 @@ import {
 import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
-import { TAB_ITEMS } from './constants';
 import {
   InspectContainer,
   InspectContent,
@@ -31,6 +30,7 @@ import { ScrollButtons } from './ScrollButtons';
 import { SIDEBAR_SIZE } from './Sidebar/constants';
 import { InspectSidebar } from './Sidebar/InspectSidebar';
 import StandaloneHeader from './StandaloneHeader';
+import { TAB_ITEMS } from './types';
 import { WarningModal3D } from './WarningModal3D';
 
 const THREEDEE_TAB_KEY = 'threeDee';

@@ -83,7 +83,9 @@ Cypress.Commands.add(
     if (select) {
       if (select === 'ALL') {
         cy.log('Select all wells');
-        cy.findByTitle('Toggle All Rows Selected').should('be.visible').click();
+        cy.findByTitle('Toggle All Rows Selected')
+          .should('be.visible')
+          .click({ force: true });
         return;
       }
 
@@ -131,6 +133,7 @@ type WellSearch = {
         wellbores?: string[];
       }
     | 'ALL';
+  timeout?: number;
 };
 
 export interface SearchCommands {

@@ -1,28 +1,17 @@
-import navigation from 'constants/navigation';
-import { WellConfig } from 'tenants/types';
+export enum TAB_NAMES {
+  OVERVIEW = 'Overview',
+  TRAJECTORIES = 'Trajectories',
+  NDS_EVENTS = 'NDS Events',
+  NPT_EVENTS = 'NPT Events',
+  CASINGS = 'Casings',
+  WELL_LOGS = 'Well Logs',
+  RELATED_DOCUMENTS = 'Related Documents',
+  DIGITAL_ROCKS = 'Digital Rocks',
+  GEOMECHANICS_PPFG = 'Geomechanics & PPFG',
+  THREE_DEE = '3D',
+}
 
-type KeyOfType<T, U> = {
-  [P in keyof T]-?: T[P] extends U ? P : never;
-}[keyof T];
-
-export type WellInspectTabs =
-  | 'Overview'
-  | 'Trajectories'
-  | 'NDS Events'
-  | 'NPT Events'
-  | 'Casings'
-  | 'Well Logs'
-  | 'Related Documents'
-  | 'Digital Rocks'
-  | 'Geomechanics & PPFG'
-  | '3D';
-
-type Tab = {
-  key: KeyOfType<Required<WellConfig>, { enabled?: boolean }>;
-  name: WellInspectTabs;
-  path: string;
-  standalone?: boolean;
-};
+export type WellInspectTabs = TAB_NAMES;
 
 export const MAX_3D_WELLBORES_COUNT = 20;
 
@@ -48,60 +37,6 @@ export const COMMON_COLUMN_WIDTHS = {
 };
 
 export const TOP_BAR_HEIGHT = 68; // px
-
-export const TAB_ITEMS: Tab[] = [
-  {
-    key: 'overview',
-    name: 'Overview',
-    path: navigation.SEARCH_WELLS_INSPECT_OVERVIEW,
-  },
-  {
-    key: 'trajectory',
-    name: 'Trajectories',
-    path: navigation.SEARCH_WELLS_INSPECT_TRAJECTORY,
-  },
-  {
-    key: 'nds',
-    name: 'NDS Events',
-    path: navigation.SEARCH_WELLS_INSPECT_EVENTSNDS,
-  },
-  {
-    key: 'npt',
-    name: 'NPT Events',
-    path: navigation.SEARCH_WELLS_INSPECT_EVENTSNPT,
-  },
-  {
-    key: 'casing',
-    name: 'Casings',
-    path: navigation.SEARCH_WELLS_INSPECT_CASINGSCOMPLETIONS,
-  },
-  {
-    key: 'logs',
-    name: 'Well Logs',
-    path: navigation.SEARCH_WELLS_INSPECT_LOGTYPE,
-  },
-  {
-    key: 'relatedDocument',
-    name: 'Related Documents',
-    path: navigation.SEARCH_WELLS_INSPECT_RELATEDDOCUMENTS,
-  },
-  {
-    key: 'digitalRocks',
-    name: 'Digital Rocks',
-    path: navigation.SEARCH_WELLS_INSPECT_DIGITALROCKS,
-  },
-  {
-    key: 'measurements',
-    name: 'Geomechanics & PPFG',
-    path: navigation.SEARCH_WELLS_INSPECT_MEASUREMENTS,
-  },
-  {
-    key: 'threeDee',
-    name: '3D',
-    path: navigation.SEARCH_WELLS_INSPECT_THREEDEE,
-    standalone: true,
-  },
-];
 
 export const WARNING_MODAL_EXPLANATION =
   '3D is currently optimised for viewing 10 wellbores or fewer. Viewing more than 10 wellbores may cause performance problems.';

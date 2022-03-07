@@ -1,3 +1,5 @@
+import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+
 describe('Wells: Related documents', () => {
   beforeEach(() => {
     cy.visit(Cypress.env('BASE_URL'));
@@ -12,7 +14,7 @@ describe('Wells: Related documents', () => {
 
     cy.openInspectView();
 
-    cy.goToWellsTab('Related Documents');
+    cy.goToWellsTab(TAB_NAMES.RELATED_DOCUMENTS);
 
     cy.findByTestId('search-header-breadcrumb').contains('0 files');
   });
