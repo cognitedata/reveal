@@ -1402,13 +1402,14 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cdf-ui-cli@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-ui-cli/-/cdf-ui-cli-0.1.0.tgz#fe015f9674dcc3ddf2f3cf40f3c28b29447d2d39"
-  integrity sha512-HfUSmmZ/B94tCdHP9R9zqEo944iExks7FoZ5A5tMv69/TXongMAByZx8TjN3KfiGbTcKICEO0on9mKPVxg0U1A==
+"@cognite/cdf-ui-cli@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-ui-cli/-/cdf-ui-cli-1.1.1.tgz#f2075021763d102aef18fc2b83d295c2622a56a5"
+  integrity sha512-90MLIPFTYMPgszMdJ+nLOU+sii3pFrqxcWf5PRMLeNLK21HHuMqNT0ZpV4NWOe7oHGTEmXl0AYegFpKh4GvF7A==
   dependencies:
     "@google-cloud/storage" "^5.3.0"
-    commander "^6.1.0"
+    axios "^0.21.2"
+    commander "^6.2.1"
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
@@ -1421,10 +1422,10 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@5.2.1":
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.2.1.tgz#43c71dd723ab049edcd2b762ba67295c7419ff38"
-  integrity sha512-K2xnp6gDFriId57/cdwJATeKGDOjjLHqjPECJ644NkmFDsHP+T1PbgmbLc+xYSBO3843NTXiNYUu0LjGebffFA==
+"@cognite/cogs.js@5.19.0":
+  version "5.19.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.0.tgz#bfa143f9a7171ead262381ec48a197448c062949"
+  integrity sha512-QG4yWtdpJ+IyLB1p/rrDTRrRKcxcZ7FcaZ+FYbgZOL92k++Cz5EpYnVPgQ4YlNl85biSlaFOc55uiYMA4uTI/w==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -1477,28 +1478,15 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/eslint-config@3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/eslint-config/-/eslint-config-3.0.1.tgz#369b9914f184826762d425c059d27636f7e89739"
-  integrity sha512-yeX+AL8W9nTBaWSdzyXzNsidIRZJAGpZVYlmiE7NdWFHThdOPYLXDqZLutOIzPzjqEZnjE7RHYTYwDvaKm6azQ==
+"@cognite/eslint-config@3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/eslint-config/-/eslint-config-3.0.3.tgz#1990a4ceaf81d0ffb761673fb9e21e476ef89256"
+  integrity sha512-E3Og+Ks2d2olOvXXgRhOFCB3LPCcKtq0+4POZ1Fy7G/4Sh8MST3WBAPo42gZguGbIAUSFdPWeGJBQNHKjjYVOg==
 
-"@cognite/eslint-plugin@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/eslint-plugin/-/eslint-plugin-2.0.1.tgz#5ebbc56815068088346214bc31a07e72d802dccd"
-  integrity sha512-EaFWeQpmNNKEwzjQmuuf/McoGoC43sACyqaWqD7HYWobnKSZjvgdGyN9RO+7kJFykXh5GtNGvqj2wkq37SRO3g==
-  dependencies:
-    lodash "^4.17.15"
-    randexp "^0.5.3"
-  optionalDependencies:
-    typescript ">=3.6"
-
-"@cognite/metrics@0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-0.1.7.tgz#ba1e79e226d2d2257b87387b9a08f9c945bd53dc"
-  integrity sha512-EpZ4HZNhofYeKPGe43FzNVMUT9qM7OGaDBQORBAa15UgIkpJYq94xzo9FGx1w1OU+NBZl7ijPeXuD5X6l0y/7w==
-  dependencies:
-    mixpanel-browser "^2.35.0"
-    react "^16.13.1"
+"@cognite/eslint-plugin@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/eslint-plugin/-/eslint-plugin-2.0.3.tgz#272607c8a590009cb7c42743cc61484a65e2eca2"
+  integrity sha512-UVO6++Z3kEG57a++rgDQZus1SrVMhKfgMfbRCX4spjJ+9rMVoLD7CloDh7UhiNXFqzvJAO3St5exXD0fj/WfvQ==
 
 "@cognite/metrics@1.1.1":
   version "1.1.1"
@@ -1507,6 +1495,13 @@
   dependencies:
     mixpanel-browser "2.41.0"
     react "17.0.2"
+
+"@cognite/metrics@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.2.2.tgz#3aafe9fa339b146c44c3c938a33e6f2d7237f2ce"
+  integrity sha512-3B3Gr4UAk2jmGeVy3sTwnI3SDgGVUuV+AL+FwvIy9znvvmEz/w6WX+wGD0urK89iNNRdnxJaaJwmi26tfyA4BA==
+  dependencies:
+    mixpanel-browser "2.41.0"
 
 "@cognite/sdk-core@^2.1.2":
   version "2.2.0"
@@ -1586,10 +1581,10 @@
     "@cognite/metrics" "1.1.1"
     lodash "4.17.21"
 
-"@cognite/z-index@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/z-index/-/z-index-0.2.1.tgz#50bd0eaea47b92931b15dda3d1efde2e93d9abb1"
-  integrity sha512-KE9qE6RU8Zde0rdG0huyOzqyLPPbhGGKNze09j8otViSA4ZgJFzuNFfGchuIAvZemYZC7/UXyeY0IwaipVUNug==
+"@cognite/z-index@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@cognite/z-index/-/z-index-0.2.3.tgz#98fd4adfa76230839290f468ef56548e29b8bb1d"
+  integrity sha512-9GVcFleCdtPrtOKbjIq4f1M7t9ZXRznS6OIsxNbOszyIqA0KhsSrmc2rGI1/nRkmDD6zgMtpECSS2sEPENK2Vg==
 
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
@@ -5722,7 +5717,7 @@ commander@^4.1.1:
   resolved "https://registry.yarnpkg.com/commander/-/commander-4.1.1.tgz#9fd602bd936294e9e9ef46a3f4d6964044b18068"
   integrity sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==
 
-commander@^6.1.0, commander@^6.2.1:
+commander@^6.2.1:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
   integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
@@ -11801,11 +11796,6 @@ mixpanel-browser@2.41.0:
   resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.41.0.tgz#d49753b4e4a7e6ddd18c126be4a917fff4ce3039"
   integrity sha512-IEuc9cH44hba9a3KEyulXINLn+gpFqluBDo7xiTk1h3j111dmmsctaE6tUzZYxgGLVqeNhTpsccdliOeX24Wlw==
 
-mixpanel-browser@^2.35.0:
-  version "2.45.0"
-  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.45.0.tgz#a2973be5b66e6d2799ef95a1e55b8ad8eede57e8"
-  integrity sha512-PQ1DaTk68yyYtLA0iejmzPA9iNDhT4uIZpqZjRTw7HWpYfl123fydHb2laKanaKjm8YDmrGGz3+xZ4Q6joogyg==
-
 mixpanel@^0.13.0:
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/mixpanel/-/mixpanel-0.13.0.tgz#699bf510d9ba013c75edcf979ff1e24085fde9d2"
@@ -14086,7 +14076,7 @@ ramda@^0.26.0:
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.1.tgz#8d41351eb8111c55353617fc3bbffad8e4d35d06"
   integrity sha512-hLWjpy7EnsDBb0p+Z3B7rPi3GDeRG5ZtiI33kJhTt+ORCd38AbAIjB/9zRIUoeTbE/AVX5ZkU7m6bznsvrf8eQ==
 
-randexp@^0.5.3:
+randexp@0.5.3:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/randexp/-/randexp-0.5.3.tgz#f31c2de3148b30bdeb84b7c3f59b0ebb9fec3738"
   integrity sha512-U+5l2KrcMNOUPYvazA3h5ekF80FHTUG+87SEAmHZmolh1M+i/WyTCxVzmi+tidIa1tM4BSe8g2Y/D3loWDjj+w==
@@ -15094,7 +15084,7 @@ react-transition-group@^4.3.0, react-transition-group@^4.4.1:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@17.0.2, react@^16.13.1, react@^16.14.0:
+react@17.0.2, react@^16.14.0:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
@@ -17328,7 +17318,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@4.6.2, typescript@>=3.6:
+typescript@4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.2.tgz#fe12d2727b708f4eef40f51598b3398baa9611d4"
   integrity sha512-HM/hFigTBHZhLXshn9sN37H085+hQGeJHJ/X7LpBWLID/fbc2acUMfU+lGD98X81sKP+pFa9f0DZmCwB9GnbAg==
