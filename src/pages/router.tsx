@@ -6,7 +6,7 @@ import Home from 'pages/Home';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { LabelsPage } from './Labels/Labels';
-import LabelPage from './Labels/pages/Label/Label';
+import LabelPage from './Label/Label';
 
 export const MainRouter = () => {
   return (

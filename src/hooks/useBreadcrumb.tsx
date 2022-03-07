@@ -3,19 +3,20 @@ import { useNavigation } from 'hooks/useNavigation';
 export const useBreadcrumb = () => {
   const { toClassifier, toLabels } = useNavigation();
 
-  const classifierPageBreadcrumbs = () => [
-    // Hard coding of the 'Document Type' is bad,
-    // fix this in the future when pipeline supports multiple classifier names
-    { title: 'New classifier', onClick: () => toClassifier('Document Type') },
+  const classifierPageBreadcrumbs = (classifierName?: string) => [
+    {
+      title: classifierName ?? 'Classifier',
+      onClick: () => toClassifier(classifierName),
+    },
   ];
 
-  const labelsPageBreadcrumbs = () => [
-    ...classifierPageBreadcrumbs(),
+  const labelsPageBreadcrumbs = (classifierName?: string) => [
+    ...classifierPageBreadcrumbs(classifierName),
     { title: 'Labels', onClick: () => toLabels() },
   ];
 
-  const labelPageBreadcrumbs = (labelName: string) => [
-    ...labelsPageBreadcrumbs(),
+  const labelPageBreadcrumbs = (labelName: string, classifierName?: string) => [
+    ...classifierPageBreadcrumbs(classifierName),
     { title: labelName },
   ];
 

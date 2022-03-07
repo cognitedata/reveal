@@ -5,6 +5,7 @@ import { Labels, LabelsTable } from 'components/table/LabelsTable/LabelsTable';
 import React from 'react';
 import TableBulkActions from 'components/table/BulkAction';
 import { useBreadcrumb } from 'hooks/useBreadcrumb';
+import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
 import { ExternalLabelDefinition } from '@cognite/sdk';
 import {
   useLabelsCreateMutate,
@@ -16,6 +17,7 @@ import { CreateLabelModal } from './components/modal/CreateLabelModal';
 export const LabelsPage: React.FC = () => {
   const [selectedLabels, setSelectedLabels] = React.useState<Labels[]>([]);
 
+  const { data: pipeline } = useDocumentsPipelinesQuery();
   const { labelsPageBreadcrumbs } = useBreadcrumb();
 
   const { data } = useLabelsQuery();
@@ -53,7 +55,7 @@ export const LabelsPage: React.FC = () => {
   );
 
   return (
-    <Page breadcrumbs={labelsPageBreadcrumbs()}>
+    <Page breadcrumbs={labelsPageBreadcrumbs(pipeline?.classifier?.name)}>
       <PageHeader
         title="Labels"
         showGoBack

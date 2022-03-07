@@ -5,6 +5,7 @@ import { TableWrapper } from 'components/table/TableWrapper';
 import { useLabelName } from 'hooks/useLabelName';
 import { useLabelParams } from 'hooks/useParams';
 import React from 'react';
+import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
 import { useDocumentsQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
 import { useBreadcrumb } from 'hooks/useBreadcrumb';
@@ -13,6 +14,7 @@ import { DocumentsTable } from './components/table/DocumentsTable';
 
 export const LabelPage: React.FC = () => {
   const externalId = useLabelParams();
+  const { data: pipeline } = useDocumentsPipelinesQuery();
   const { labelName } = useLabelName(externalId);
   const { labelPageBreadcrumbs } = useBreadcrumb();
 
@@ -62,7 +64,9 @@ export const LabelPage: React.FC = () => {
   }
 
   return (
-    <Page breadcrumbs={labelPageBreadcrumbs(labelName)}>
+    <Page
+      breadcrumbs={labelPageBreadcrumbs(labelName, pipeline?.classifier?.name)}
+    >
       <PageHeader
         title={labelName}
         subtitle="Label:"

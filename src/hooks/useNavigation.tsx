@@ -7,7 +7,7 @@ export type Navigation = {
   toHome: () => void;
   toLabel: (externalId: string) => void;
   toLabels: () => void;
-  toClassifier: (classifier: string) => void;
+  toClassifier: (classifier?: string) => void;
   goBack: () => void;
   reload: () => void;
 };
@@ -48,9 +48,11 @@ export const useNavigation = (): Navigation => {
     navigate(url);
   };
 
-  const toClassifier = (classifier: string) => {
+  const toClassifier = (classifier?: string) => {
     const url = buildUrl(
-      `${baseUrl}/classifier/${encodeURIComponent(classifier)}`
+      `${baseUrl}/classifier/${encodeURIComponent(
+        classifier ?? 'Document Type'
+      )}`
     );
     navigate(url);
   };
