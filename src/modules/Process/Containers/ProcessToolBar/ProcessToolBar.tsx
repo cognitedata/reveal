@@ -11,6 +11,7 @@ import {
   revertDetectionModelParameters,
   resetDetectionModelParameters,
   addToAvailableDetectionModels,
+  BUILT_IN_MODEL_COUNT,
 } from 'src/modules/Process/store/slice';
 import {
   selectAllProcessFiles,
@@ -19,10 +20,13 @@ import {
 } from 'src/modules/Process/store/selectors';
 import { message, notification } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { Button, Title, Modal } from '@cognite/cogs.js';
+import { Button, Title, Modal, Tooltip } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
+import {
+  ParamsCustomModel,
+  VisionDetectionModelType,
+} from 'src/api/vision/detectionModels/types';
 import { getContainer } from 'src/utils';
 import { AppDispatch } from 'src/store';
 import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
@@ -52,6 +56,10 @@ export const ProcessToolBar = () => {
   const isProcessingStarted = useSelector((state: RootState) => {
     return selectIsProcessingStarted(state.processSlice);
   });
+
+  const availableDetectionModels = useSelector(
+    (state: RootState) => state.processSlice.availableDetectionModels
+  );
 
   const selectedDetectionModels = useSelector(
     (state: RootState) => state.processSlice.selectedDetectionModels
@@ -85,7 +93,25 @@ export const ProcessToolBar = () => {
   };
 
   const [isModalOpen, setModalOpen] = useState(false);
+  const [customModels, setCustomModels] = useState<AutoMLModel[] | undefined>();
 
+  const customModelExists =
+    availableDetectionModels.length > BUILT_IN_MODEL_COUNT;
+  const customModelsListEmpty = customModels && customModels.length === 0;
+  const disableModalCloseButton =
+    (customModelExists &&
+      (
+        availableDetectionModels[BUILT_IN_MODEL_COUNT]
+          .settings as ParamsCustomModel
+      ).modelJobId === undefined) ||
+    customModelsListEmpty;
+  const disableModalSaveAndCloseButton =
+    (customModelExists &&
+      (
+        availableDetectionModels[BUILT_IN_MODEL_COUNT]
+          .unsavedSettings as ParamsCustomModel
+      ).modelJobId === undefined) ||
+    customModelsListEmpty;
   const disableAddFiles = !isPollingFinished;
   const disableModelSelection = !processFiles.length || !isPollingFinished;
   const fileUploadActive = !processFiles.length;
@@ -99,6 +125,8 @@ export const ProcessToolBar = () => {
     setModalOpen(true);
   };
 
+  const customModelNotSelectedMessage =
+    'A custom model must be selected before exiting this window.';
   const detectionModelConfiguration = () => {
     return (
       <ConfigurationModelFooter>
@@ -110,20 +138,29 @@ export const ProcessToolBar = () => {
         >
           Reset to default
         </Button>
-        <Button
-          type="primary"
-          onClick={() => {
-            setModalOpen(false);
-            dispatch(setDetectionModelParameters());
-          }}
+        <Tooltip
+          content={
+            <span data-testid="text-content">
+              {customModelNotSelectedMessage}
+            </span>
+          }
+          disabled={!disableModalSaveAndCloseButton}
         >
-          Save & close
-        </Button>
+          <Button
+            type="primary"
+            disabled={disableModalSaveAndCloseButton}
+            onClick={() => {
+              setModalOpen(false);
+              dispatch(setDetectionModelParameters());
+            }}
+          >
+            Save & close
+          </Button>
+        </Tooltip>
       </ConfigurationModelFooter>
     );
   };
 
-  const [customModels, setCustomModels] = useState<AutoMLModel[] | undefined>();
   useEffect(() => {
     const getModels = async () => {
       let items = await AutoMLAPI.listAutoMLModels();
@@ -144,7 +181,12 @@ export const ProcessToolBar = () => {
         closable={false}
         closeIcon={
           <div style={{ paddingTop: '12px' }}>
-            <Button icon="Close" iconPlacement="right" type="ghost">
+            <Button
+              disabled={disableModalCloseButton}
+              icon="Close"
+              iconPlacement="right"
+              type="ghost"
+            >
               Close
             </Button>
           </div>
