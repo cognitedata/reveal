@@ -39,6 +39,8 @@ static final String MIXPANEL_TOKEN = '0837d632cca24291a0a1025d488d1a9a' // pragm
 // consider creating one for your projects alerts
 static final String SLACK_CHANNEL = 'devflow-charts'
 
+static final String PR_COMMENT_MARKER = "[pr-server]\n"
+
 // This determines how this app is versioned. See https://cog.link/releases for
 // more information. The options available here are:
 //
@@ -176,6 +178,7 @@ pods {
         print 'Not a PR, no need to preview'
         return
       }
+      deleteComments(PR_COMMENT_MARKER)
       dir('preview') {
         fas.publish(
           previewSubdomain: 'charts'
