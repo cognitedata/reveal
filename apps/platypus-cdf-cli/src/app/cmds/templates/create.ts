@@ -52,7 +52,7 @@ export class CreateTemplateGroupCommand extends CLICommand {
     });
     DEBUG('Template group created');
     Response.success(
-      `Template group "${args.externalId}" is created successfully`
+      `Template group "${args['external-id']}" is created successfully`
     );
   }
 }

@@ -1,13 +1,18 @@
 import Conf from 'conf';
 import { ROOT_CONFIG_KEY } from '../constants';
 import { ProjectConfig } from '../types';
-let config: Conf<{ [ROOT_CONFIG_KEY.AUTH]?: ProjectConfig }>;
+let config: Conf<ConfType>;
 
 export const getConfig = () => config;
 
-export const setConfig = (
-  newConfig: Conf<{ [ROOT_CONFIG_KEY.AUTH]?: ProjectConfig }>
-) => {
+type ConfType = {
+  [ROOT_CONFIG_KEY.AUTO_CHECK_FOR_UPDATES]?: boolean;
+  [ROOT_CONFIG_KEY.TELEMETRY_DISABLED]?: boolean;
+  [ROOT_CONFIG_KEY.UID]?: string;
+  [ROOT_CONFIG_KEY.AUTH]?: ProjectConfig;
+};
+
+export const setConfig = (newConfig: Conf<ConfType | any>) => {
   config = newConfig;
 };
 
@@ -23,7 +28,7 @@ export const setProjectConfig = (args: Partial<ProjectConfig>) => {
 };
 
 export const setProjectConfigItem = (
-  key: ROOT_CONFIG_KEY,
+  key: ROOT_CONFIG_KEY.AUTH,
   value: ProjectConfig
 ): void => {
   if (!value) {

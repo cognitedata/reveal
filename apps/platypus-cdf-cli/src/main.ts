@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import yargs, { scriptName } from 'yargs';
+import yargs, { Arguments, scriptName } from 'yargs';
 import chalk from 'chalk';
 import { authenticate } from './app/middlewares/auth';
 import * as login from './app/cmds/login';
@@ -10,7 +10,10 @@ import status from './app/cmds/status';
 import logout from './app/cmds/logout';
 import initCmd from './app/cmds/init';
 import { DEBUG as _DEBUG } from './app/utils/logger';
-import { CONSTANTS } from './app/constants';
+import { CONSTANTS, ROOT_CONFIG_KEY } from './app/constants';
+import { getCompleteCommandString } from './app/utils/yargs-utils';
+import { getConfig } from './app/utils/config';
+import { getMixpanel } from './app/utils/mixpanel';
 
 const DEBUG = _DEBUG.extend('main');
 
@@ -38,8 +41,8 @@ scriptName(CONSTANTS.APP_ID)
   })
   .version()
   .help(true)
-  .fail((msg, err, args) => {
-    DEBUG(`Error occurred and caught by main handler: ${msg}, ${err}, ${args}`);
+  .fail((msg, err, { argv, help }) => {
+    DEBUG(`Error occurred and caught by main handler: ${msg}, ${err}`);
     // if (err) throw err; // do something with stack report to sentry (maybe)
     console.error(
       chalk.red(
@@ -48,8 +51,13 @@ scriptName(CONSTANTS.APP_ID)
           'Something went wrong, and we are unable to detect what please contact us for more info'
       )
     );
+
+    if (argv.mixpanel) {
+      argv.mixpanel.track(getCompleteCommandString(argv), { failed: true });
+    }
+
     console.log('\nUsages:\n');
-    console.error(args.help());
+    console.error(help());
     process.exit(1);
   })
   .parse();

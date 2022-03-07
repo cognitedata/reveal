@@ -12,6 +12,9 @@ export enum LOGIN_STATUS {
 
 export enum ROOT_CONFIG_KEY {
   AUTH = 'auth',
+  TELEMETRY_DISABLED = 'telemetryDisabled',
+  AUTO_CHECK_FOR_UPDATES = 'autoCheckForUpdates',
+  UID = 'uid',
 }
 
 export enum AUTH_CONFIG {
