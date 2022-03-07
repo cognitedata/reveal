@@ -39,9 +39,10 @@ New elements can be added to the toolbar by methods using
 - `onClick` - Click event callback function which will be used to perform custom functionlity provided by the user.
 - `toolTip` - Optional tooltip for the Icon button
 
-`addToolbarToogleButton(backgroundImageUri: string, onToggled: () => void, toolTip: string = '')`
+`addToolbarToggleButton(backgroundImageUri: string, onToggled: () => void, isActive: boolean, toolTip: string = '')`
 - `backgroundImageUri` - Background image to be placed onto icon button. Pass the data URL of the image.
 - `onToggled` - Click event callback function which will be used to perform custom functionlity provided by the user.
+- `isActive` - Is the feature active by default.
 - `toolTip` - Optional tooltip for the Icon button
 
 ### Creating new elements for the toolbar
@@ -76,7 +77,7 @@ const geomapToggle = () : void => {
   }
 }
 
-toolbar.addToolbarToogleButton(geoMapIcon, callbackMsg, 'Maps');
+toolbar.addToolbarToggleButton(geoMapIcon, callbackMsg, false, 'Maps');
 ```
 
 ## Toolbar position

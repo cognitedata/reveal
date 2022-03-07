@@ -73,12 +73,14 @@ export class Toolbar {
    * @param backgroundImageUri Icon image to be displayed
    * @param isToggle Is the icon button used as toggle
    * @param onClick Click event action for the icon button
+   * @param isActive Is the feature active by default.
    * @param toolTip Optional tooltip message to be added for the icon button
    */
   public addToolbarButton(
     backgroundImageUri: string,
     isToggle: boolean,
     onClick: () => void,
+    isActive: boolean,
     toolTip: string = ''
   ): void {
     const element = document.createElement('button');
@@ -90,6 +92,10 @@ export class Toolbar {
     iconImage.src = backgroundImageUri;
 
     element.appendChild(iconImage);
+
+    if (isActive) {
+      element.classList.add(Toolbar.classnames.iconClicked);
+    }
 
     element.onclick = () => {
       if (isToggle) {

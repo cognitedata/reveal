@@ -3,7 +3,7 @@
  */
 
 import { Cognite3DViewer } from '@reveal/core';
-import { DefaultCameraManager } from '@reveal/camera-manager';
+import { CameraControlsOptions, DefaultCameraManager } from '@reveal/camera-manager';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Toolbar, ToolbarPosition } from './Toolbar';
 import { AxisViewTool } from '../AxisView/AxisViewTool';
@@ -22,6 +22,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolbar: Toolbar;
   private axisTool: AxisViewTool | undefined;
+  private readonly _cameraOptions: boolean[] = [false, false];
 
   private readonly _handleAxisViewToolListener = this.toggleAxisViewTool.bind(this);
   private readonly _handleScreenshotListener = this.saveScreenShot.bind(this);
@@ -34,6 +35,15 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
 
     this._viewer = viewer;
     this._toolbar = new Toolbar(this._viewer);
+
+    const cameraManager = this._viewer.cameraManager as DefaultCameraManager;
+    const cameraControlOption = cameraManager.getCameraControlsOptions();
+    this._cameraOptions[0] = cameraControlOption.changeCameraTargetOnClick;
+    if (cameraControlOption.mouseWheelAction === 'zoomPastCursor') {
+      this._cameraOptions[1] = false;
+    } else {
+      this._cameraOptions[1] = true;
+    }
   }
 
   /**
@@ -43,17 +53,23 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * @param toolTip Optional tooltip for the icon button
    */
   public addToolbarButton(backgroundImageUri: string, onClick: () => void, toolTip: string = ''): void {
-    this._toolbar.addToolbarButton(backgroundImageUri, false, onClick, toolTip);
+    this._toolbar.addToolbarButton(backgroundImageUri, false, onClick, false, toolTip);
   }
 
   /**
    * Add a Icon toggle button into the Toolbar container
    * @param backgroundImageUri Background image to be placed onto icon
    * @param onToggled Click event callback function which will be used to perform custom functionlity of the user
+   * @param isActive Is the feature active by default.
    * @param toolTip Optional tooltip for the icon button
    */
-  public addToolbarToogleButton(backgroundImageUri: string, onToggled: () => void, toolTip: string = ''): void {
-    this._toolbar.addToolbarButton(backgroundImageUri, true, onToggled, toolTip);
+  public addToolbarToggleButton(
+    backgroundImageUri: string,
+    onToggled: () => void,
+    isActive: boolean,
+    toolTip: string = ''
+  ): void {
+    this._toolbar.addToolbarButton(backgroundImageUri, true, onToggled, isActive, toolTip);
   }
 
   /**
@@ -68,7 +84,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Add Enable or Disable Axis view tool to the Toolbar
    */
   public addAxisToolToggle(): void {
-    this.addToolbarToogleButton(svgAxisIcon, this._handleAxisViewToolListener, 'Axis Tool');
+    this.addToolbarToggleButton(svgAxisIcon, this._handleAxisViewToolListener, false, 'Axis Tool');
   }
 
   /**
@@ -82,9 +98,10 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Adds Toggle enabling/disabling the Camera target on mouse click to the Toolbar
    */
   public addCameraTargetOnClickToggle(): void {
-    this.addToolbarToogleButton(
+    this.addToolbarToggleButton(
       svgCameraTargetIcon,
       this._handleChangeCameraTargetListener,
+      this._cameraOptions[1],
       'Enable/Disable Camera Target on Click'
     );
   }
@@ -93,9 +110,10 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Adds Toggle camera for "Zoom Past Cursor" and "Zoom To Cursor" in to Toolbar
    */
   public addZoomPastToCursorToggle(): void {
-    this.addToolbarToogleButton(
+    this.addToolbarToggleButton(
       svgZoomPastIcon,
       this._handleCameraZoomPastCursorListener,
+      this._cameraOptions[0],
       'Toggle Zoom past/Zoom to Cursor'
     );
   }

@@ -45,7 +45,7 @@ export class ToolbarUi {
     this.toolbar.addZoomPastToCursorToggle();
     this.toolbar.addFitCameraToModel();
 
-    this.toolbar.addToolbarToogleButton(geoMapIcon, this.geomapToggle, 'Maps');
+    this.toolbar.addToolbarToggleButton(geoMapIcon, this.geomapToggle, false, 'Maps');
   }
 
   private geomapToggle = () : void => {
