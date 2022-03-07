@@ -1,9 +1,17 @@
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import React, { Suspense } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Placeholder } from '@platypus-app/components/Placeholder/Placeholder';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useMemo } from 'react';
 import { SchemaEditorMode } from '../../types';
-import { GraphqlCodeEditor } from '../GraphqlCodeEditor/GraphqlCodeEditor';
+const GraphqlCodeEditor = React.lazy(() =>
+  import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({
+    default: module.GraphqlCodeEditor,
+  }))
+);
+
 
 export interface CodeEditorProps {
   graphQlSchema: string;
@@ -36,11 +44,13 @@ export const CodeEditor = (props: CodeEditorProps) => {
         </SegmentedControl>
       </PageToolbar>
       {props.currentView === 'code' ? (
-        <GraphqlCodeEditor
-          code={props.graphQlSchema}
-          onChange={(schemaString) => props.onSchemaChanged(schemaString)}
-          disabled={props.editorMode === SchemaEditorMode.View}
-        />
+        <Suspense fallback={<Spinner />}>
+          <GraphqlCodeEditor
+            code={props.graphQlSchema}
+            onChange={props.onSchemaChanged}
+            disabled={props.editorMode === SchemaEditorMode.View}
+          />
+        </Suspense>
       ) : (
         <Placeholder
           componentName={t('ui_editor_title', 'UI editor')}

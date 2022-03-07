@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Prompt, useHistory } from 'react-router-dom';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
@@ -109,6 +109,22 @@ export const DataModelPage = () => {
     setSaving(false);
   };
 
+  const onSchemaChanged = useCallback(
+    (schemaString) => {
+      setProjectSchema(schemaString);
+      if (
+        schemaString &&
+        ((selectedSchema && selectedSchema.schema !== schemaString) ||
+          !selectedSchema)
+      ) {
+        setIsDirty(true);
+      } else if (selectedSchema && selectedSchema.schema === schemaString) {
+        setIsDirty(false);
+      }
+    },
+    [selectedSchema]
+  );
+
   const renderTools = () => {
     if (mode === SchemaEditorMode.Edit) {
       return (
@@ -182,22 +198,7 @@ export const DataModelPage = () => {
                 editorMode={mode}
                 graphQlSchema={projectSchema}
                 onCurrentViewChanged={(view) => setCurrentView(view)}
-                onSchemaChanged={(schemaString) => {
-                  setProjectSchema(schemaString);
-                  if (
-                    schemaString &&
-                    ((selectedSchema &&
-                      selectedSchema.schema !== schemaString) ||
-                      !selectedSchema)
-                  ) {
-                    setIsDirty(true);
-                  } else if (
-                    selectedSchema &&
-                    selectedSchema.schema === schemaString
-                  ) {
-                    setIsDirty(false);
-                  }
-                }}
+                onSchemaChanged={onSchemaChanged}
               />
             }
             sidebarWidth={'40%'}
