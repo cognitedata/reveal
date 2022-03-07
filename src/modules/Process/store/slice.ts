@@ -16,7 +16,7 @@ import { createGenericTabularDataSlice } from 'src/store/genericTabularDataSlice
 import { getFakeQueuedJob } from 'src/api/vision/detectionModels/detectionUtils';
 import { ProcessState } from 'src/modules/Process/store/types';
 
-export const BUILT_IN_MODEL_COUNT = 3; // ocr, tag & objectdetection
+export const BUILT_IN_MODEL_COUNT = 4; // ocr, tagdetection, objectdetection, gaugereader
 
 const initialDetectionModelParameters = {
   ocr: {

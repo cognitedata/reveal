@@ -140,7 +140,7 @@ export interface ParamsObjectDetection {
 }
 
 export interface ParamsGaugeReader {
-  gaugeType?: string;
+  gaugeType: string;
 }
 export interface ParamsCustomModel {
   modelJobId?: number;

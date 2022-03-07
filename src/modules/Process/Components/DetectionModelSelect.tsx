@@ -8,6 +8,7 @@ import * as tagDetectionModelDetails from 'src/modules/Process/Containers/ModelD
 import * as objectDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from 'src/modules/Process/Containers/ModelDetails/OcrModelDetails';
 import * as customModelDetails from 'src/modules/Process/Containers/ModelDetails/customModelDetails';
+import * as gaugeReaderDetails from 'src/modules/Process/Containers/ModelDetails/gaugeReaderDetails';
 
 import {
   ColorsOCR,
@@ -17,6 +18,7 @@ import {
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
 
 type SelectOption = {
   label: any;
@@ -98,6 +100,12 @@ export function DetectionModelSelect({
             value: VisionDetectionModelType.ObjectDetection,
             backgroundColor: ColorsObjectDetection.backgroundColor,
           };
+        case VisionDetectionModelType.GaugeReader:
+          return {
+            label: gaugeReaderDetails.badge(item.modelName),
+            value: VisionDetectionModelType.GaugeReader,
+            backgroundColor: ColorsObjectDetection.backgroundColor,
+          };
         case VisionDetectionModelType.CustomModel:
           return {
             label: customModelDetails.badge(item.modelName),
@@ -124,7 +132,7 @@ export function DetectionModelSelect({
 
   const options =
     // Show create if custom model not already added and if it is enabled
-    detectionModelOptions.length > 3 ||
+    detectionModelOptions.length > BUILT_IN_MODEL_COUNT ||
     disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
       ? detectionModelOptions
       : [...detectionModelOptions, addCustomModelOption];

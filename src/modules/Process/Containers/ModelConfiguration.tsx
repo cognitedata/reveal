@@ -10,10 +10,12 @@ import { RootState } from 'src/store/rootReducer';
 import { useSelector } from 'react-redux';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { AutoMLModel } from 'src/api/vision/autoML/types';
+import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
 import * as customModelDetails from './ModelDetails/customModelDetails';
+import * as gaugeReaderDetails from './ModelDetails/gaugeReaderDetails';
 
 const queryClient = new QueryClient();
 
@@ -27,7 +29,7 @@ export const ModelConfiguration = (props: {
 
   const [currentModelSettings, setCurrentModelSettings] = useState(
     // show custom model settings if custom model added and automl is enabled
-    availableDetectionModels.length > 3 &&
+    availableDetectionModels.length > BUILT_IN_MODEL_COUNT &&
       !props.disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
       ? availableDetectionModels.length - 1
       : 0
@@ -44,6 +46,8 @@ export const ModelConfiguration = (props: {
         ? tagDetectionModelDetails.content(index)
         : item.type === VisionDetectionModelType.ObjectDetection
         ? objectDetectionModelDetails.content(index)
+        : item.type === VisionDetectionModelType.GaugeReader
+        ? gaugeReaderDetails.content(index)
         : item.type === VisionDetectionModelType.CustomModel
         ? customModelDetails.content(index, props.customModels)
         : undefined;
