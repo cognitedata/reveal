@@ -90,7 +90,7 @@ def pods = { body ->
         key: 'REACT_APP_LOCIZE_API_KEY',
         secretName: 'charts-frontend',
         secretKey: 'CHARTS_LOCIZE_API_KEY',
-        optional: !environment.isPullRequest
+        optional: !(environment.isPullRequest || environment.isStaging)
       )
       fas.pod(
         nodeVersion: NODE_VERSION,
