@@ -10,15 +10,15 @@ import EmptyState from 'components/emptyState';
 import { LOADING_SUB_TEXT } from 'components/emptyState/constants';
 import { StoreState } from 'core/types';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellLogsWithRowData } from 'modules/wellInspect/hooks/useWellLogsWithRowData';
+// import { useWellLogsWithRowData } from 'modules/wellInspect/hooks/useWellLogsWithRowData';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
-import { keyBySource } from 'modules/wellSearch/utils/groupBySource';
-import { groupByWellbore } from 'modules/wellSearch/utils/groupByWellbore';
+// import { keyBySource } from 'modules/wellSearch/utils/groupBySource';
+// import { groupByWellbore } from 'modules/wellSearch/utils/groupByWellbore';
 
 const ThreeDeeEmptyStateLoader: React.FC = () => {
   return <EmptyState isLoading loadingSubtitle={LOADING_SUB_TEXT} />;
@@ -42,18 +42,18 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   const casings: Sequence[] = [];
   const ndsEvents: CogniteEvent[] = [];
 
-  const {
-    wellLogs,
-    wellLogsRowData,
-    isLoading: isWellLogsLoading,
-  } = useWellLogsWithRowData();
+  /**
+   * ************PP-2693************
+   * DISABLING WELL LOGS IN 3D TEMPORARILY.
+   */
+  // const {
+  //   wellLogs,
+  //   wellLogsRowData,
+  //   isLoading: isWellLogsLoading,
+  // } = useWellLogsWithRowData();
 
   const isLoading =
-    casingLoading ||
-    ndsLoading ||
-    nptLoading ||
-    trajectoriesLoading ||
-    isWellLogsLoading;
+    casingLoading || ndsLoading || nptLoading || trajectoriesLoading; // || isWellLogsLoading
 
   if (!config || isLoading) {
     return <ThreeDeeEmptyStateLoader />;
@@ -77,8 +77,8 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
       casings={casings}
       ndsEvents={ndsEvents}
       nptEvents={nptEvents}
-      wellLogs={groupByWellbore(wellLogs)}
-      wellLogsRowData={keyBySource(wellLogsRowData)}
+      // wellLogs={groupByWellbore(wellLogs)}
+      // wellLogsRowData={keyBySource(wellLogsRowData)}
     />
   );
 };
