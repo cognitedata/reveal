@@ -147,8 +147,7 @@ export function Migration() {
           mouseWheelAction: 'zoomToCursor',
           changeCameraTargetOnClick: true
         },
-        debugRenderStageTimings: false,
-        toolbarPosition: 'Bottom'
+        debugRenderStageTimings: false
       };
       const guiActions = {
         showSectorBoundingBoxes: () => {
