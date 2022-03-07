@@ -4,7 +4,6 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/emptyState';
-import { UserPreferredUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import {
@@ -28,11 +27,10 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef }: Props) => {
   const wells = useWellInspectSelectedWells();
   const { isLoading: isEventsLoading, events } = useNptEventsForCasings();
 
-  const formattedCasings = useMemo(
-    () => getFortmattedCasingData(casings || [], preferredUnit),
+  const groupedCasings = useMemo(
+    () => groupBy(getFortmattedCasingData(casings || [], preferredUnit), 'key'),
     [casings, preferredUnit]
   );
-  const groupedCasings = groupBy(formattedCasings, 'key');
 
   return (
     <CasingViewListWrapper ref={scrollRef}>
@@ -47,7 +45,7 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef }: Props) => {
                 wellName={well.name}
                 wellboreName={wellbore.description || ''}
                 casings={isEmpty(rows) ? [] : rows[0].casings}
-                unit={preferredUnit || UserPreferredUnit.FEET}
+                unit={preferredUnit}
                 events={events[wellbore.id]}
                 isEventsLoading={isEventsLoading}
               />

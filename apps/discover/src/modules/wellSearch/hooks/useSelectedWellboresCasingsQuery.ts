@@ -10,7 +10,7 @@ import {
   useWellInspectWellboreExternalIdMap,
 } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
-import { getCasingByWellboreIds as service } from '../service';
+import { getCasingByWellboreIds } from '../service';
 import { WellboreSequencesMap } from '../types';
 import { trimCachedData } from '../utils/common';
 
@@ -38,7 +38,7 @@ export const useSelectedWellboresCasingsQuery = () => {
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.CASINGS, () =>
-    service(
+    getCasingByWellboreIds(
       wellboreIds,
       wellboreAssetIdMap,
       wellboresSourceExternalIdMap,
@@ -61,7 +61,7 @@ export const useSelectedWellboresCasingsQuery = () => {
   // If there are ids not in the cached data, do a search for new ids and update the cache
   if (newIds.length && !fetchingNewData) {
     setFetchingNewData(true);
-    service(
+    getCasingByWellboreIds(
       newIds,
       wellboreAssetIdMap,
       wellboresSourceExternalIdMap,

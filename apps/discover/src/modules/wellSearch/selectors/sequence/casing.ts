@@ -23,7 +23,9 @@ export const useSelectedWellboresCasingsData = () => {
     TimeLogStages.Preperation,
     LOG_WELLS_CASING_NAMESPACE
   );
+
   const { data, isLoading } = useSelectedWellboresCasingsQuery();
+
   return useMemo(() => {
     const tempData: CasingData[] = [];
     if (isLoading || !data) {
@@ -31,89 +33,88 @@ export const useSelectedWellboresCasingsData = () => {
     }
     startPreparationTimer();
     wells.forEach((well) => {
-      if (well.wellbores) {
-        well.wellbores.forEach((wellbore) => {
-          const casings = data[wellbore.id];
+      if (!well.wellbores) return;
+      well.wellbores.forEach((wellbore) => {
+        const casings = data[wellbore.id];
 
-          const casingNames: string[] = [];
-          let topMD = 0;
-          let bottomMD = 0;
-          let odMin = 0; // minimum outer diameter
-          let odMax = 0; // maximum outer diameter
-          let idMin = 0; // minimum inner diameter
-          let mdUnit = FEET;
-          let odUnit = 'in';
-          let idUnit = 'in';
+        const casingNames: string[] = [];
+        let topMD = 0;
+        let bottomMD = 0;
+        let odMin = 0; // minimum outer diameter
+        let odMax = 0; // maximum outer diameter
+        let idMin = 0; // minimum inner diameter
+        let mdUnit = FEET;
+        let odUnit = 'in';
+        let idUnit = 'in';
 
-          sortBy(casings, (casing) => {
-            return Number(get(casing, 'metadata.assy_original_md_base', '0'));
-          }).forEach((row) => {
-            if (row.metadata) {
-              casingNames.push(
-                capitalize(row.metadata.assy_name).replace(' casing', '')
-              );
-              if (
-                topMD === 0 ||
-                Number(row.metadata.assy_original_md_top) < topMD
-              ) {
-                topMD = Number(row.metadata.assy_original_md_top);
-              }
-              if (
-                bottomMD === 0 ||
-                Number(row.metadata.assy_original_md_base) > bottomMD
-              ) {
-                bottomMD = Number(row.metadata.assy_original_md_base);
-              }
-              if (
-                odMin === 0 ||
-                (Number(row.metadata.assy_size) &&
-                  Number(row.metadata.assy_size) < odMin)
-              ) {
-                odMin = Number(row.metadata.assy_size);
-              }
-              if (odMax === 0 || Number(row.metadata.assy_size) > odMax) {
-                odMax = Number(row.metadata.assy_size);
-              }
-              if (
-                idMin === 0 ||
-                (Number(row.metadata.assy_min_inside_diameter) &&
-                  Number(row.metadata.assy_min_inside_diameter) < idMin)
-              ) {
-                idMin = Number(row.metadata.assy_min_inside_diameter);
-              }
+        sortBy(casings, (casing) => {
+          return Number(get(casing, 'metadata.assy_original_md_base', '0'));
+        }).forEach((row) => {
+          if (row.metadata) {
+            casingNames.push(
+              capitalize(row.metadata.assy_name).replace(' casing', '')
+            );
+            if (
+              topMD === 0 ||
+              Number(row.metadata.assy_original_md_top) < topMD
+            ) {
+              topMD = Number(row.metadata.assy_original_md_top);
             }
-            row.columns.forEach((column) => {
-              if (column.name === 'comp_md_top') {
-                mdUnit = get(column, 'metadata.unit', mdUnit);
-              }
-              if (column.name === 'comp_body_outside_diameter') {
-                odUnit = get(column, 'metadata.unit', odUnit);
-              }
-              if (column.name === 'comp_body_inside_diameter') {
-                idUnit = get(column, 'metadata.unit', idUnit);
-              }
-            });
-          });
-
-          if (topMD && bottomMD) {
-            tempData.push({
-              wellName: well.name,
-              wellboreName: wellbore.description || '',
-              id: wellbore.id,
-              topMD: Math.round(topMD),
-              bottomMD: Math.round(bottomMD),
-              odMin,
-              odMax,
-              idMin,
-              mdUnit,
-              odUnit,
-              idUnit,
-              casingNames: casingNames.join(', '),
-              casings,
-            });
+            if (
+              bottomMD === 0 ||
+              Number(row.metadata.assy_original_md_base) > bottomMD
+            ) {
+              bottomMD = Number(row.metadata.assy_original_md_base);
+            }
+            if (
+              odMin === 0 ||
+              (Number(row.metadata.assy_size) &&
+                Number(row.metadata.assy_size) < odMin)
+            ) {
+              odMin = Number(row.metadata.assy_size);
+            }
+            if (odMax === 0 || Number(row.metadata.assy_size) > odMax) {
+              odMax = Number(row.metadata.assy_size);
+            }
+            if (
+              idMin === 0 ||
+              (Number(row.metadata.assy_min_inside_diameter) &&
+                Number(row.metadata.assy_min_inside_diameter) < idMin)
+            ) {
+              idMin = Number(row.metadata.assy_min_inside_diameter);
+            }
           }
+          row.columns.forEach((column) => {
+            if (column.name === 'comp_md_top') {
+              mdUnit = get(column, 'metadata.unit', mdUnit);
+            }
+            if (column.name === 'comp_body_outside_diameter') {
+              odUnit = get(column, 'metadata.unit', odUnit);
+            }
+            if (column.name === 'comp_body_inside_diameter') {
+              idUnit = get(column, 'metadata.unit', idUnit);
+            }
+          });
         });
-      }
+
+        if (topMD && bottomMD) {
+          tempData.push({
+            wellName: well.name,
+            wellboreName: wellbore.description || '',
+            id: wellbore.id,
+            topMD: Math.round(topMD),
+            bottomMD: Math.round(bottomMD),
+            odMin,
+            odMax,
+            idMin,
+            mdUnit,
+            odUnit,
+            idUnit,
+            casingNames: casingNames.join(', '),
+            casings,
+          });
+        }
+      });
     });
     stopPreparationTimer({
       noOfWellbores: Object.keys(data).length,

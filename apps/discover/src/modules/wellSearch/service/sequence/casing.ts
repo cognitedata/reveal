@@ -27,14 +27,14 @@ import { CASINGS_COLUMN_NAME_MAP, SEQUENCE_COLUMNS } from './constants';
 const CHUNK_LIMIT = 100;
 
 // refactor to use generic log fetcher.
-export async function getCasingByWellboreIds(
+export const getCasingByWellboreIds = async (
   wellboreIds: WellboreId[],
   wellboreAssetIdMap: WellboreAssetIdMap,
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   filter: SequenceFilter['filter'] = {},
   metricLogger: MetricLogger = [noop, noop],
   enableWellSDKV3?: boolean
-) {
+) => {
   const [startNetworkTimer, stopNetworkTimer] = metricLogger;
   startNetworkTimer();
 
@@ -51,7 +51,7 @@ export async function getCasingByWellboreIds(
   });
 
   return casingsData;
-}
+};
 
 export const fetchCasingsUsingWellsSDK = async (
   wellboreIds: WellboreId[],
@@ -141,8 +141,10 @@ export const getSequenceMetadata = (casingAssembly: CasingAssembly) => {
     assy_original_md_base: String(
       casingAssembly.originalMeasuredDepthBase.value
     ),
+    assy_original_md_base_unit: casingAssembly.originalMeasuredDepthBase.unit,
     assy_name: casingAssembly.type,
     assy_original_md_top: String(casingAssembly.originalMeasuredDepthTop.value),
+    assy_original_md_top_unit: casingAssembly.originalMeasuredDepthTop.unit,
     assy_size: String(casingAssembly.maxOutsideDiameter.value),
     assy_min_inside_diameter: String(casingAssembly.minInsideDiameter.value),
   };

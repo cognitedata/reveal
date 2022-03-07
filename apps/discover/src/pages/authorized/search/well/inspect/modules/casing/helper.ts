@@ -3,7 +3,7 @@ import { UnitConverterItem } from 'utils/units';
 
 import { Sequence } from '@cognite/sdk';
 
-import { FEET } from 'constants/units';
+import { FEET, UserPreferredUnit } from 'constants/units';
 import { convertObject } from 'modules/wellSearch/utils';
 
 import { COMMON_COLUMN_WIDTHS } from '../../constants';
@@ -26,51 +26,58 @@ const getDepth = (depth: string | undefined) =>
  */
 export const getFortmattedCasingData = (
   casingData: CasingData[],
-  prefferedUnit = FEET
+  prefferedUnit: UserPreferredUnit
 ) => {
-  const formattedCasings: FormattedCasings[] = [];
-
-  casingData.forEach((row: CasingData) => {
-    const validCasings = row.casings;
+  return casingData.reduce((formattedCasings, casingData) => {
+    const validCasings = casingData.casings;
     if (isEmpty(validCasings)) {
-      return;
+      return formattedCasings;
     }
-    formattedCasings.push({
-      key: row.id,
-      wellName: row.wellName,
-      wellboreName: row.wellboreName,
-      casings: validCasings
-        .map((casing: Sequence) => {
-          return {
-            id: casing.id,
-            name: casing.metadata ? casing.metadata.assy_name : '',
-            outerDiameter: casing.metadata
-              ? Number(casing.metadata.assy_size).toFixed(2)
-              : '',
-            startDepth: getDepth(
-              casing.metadata ? casing.metadata.assy_original_md_top : '0'
-            ),
-            startDepthUnit: casing.metadata
-              ? casing.metadata.assy_original_md_top_unit
-              : FEET,
-            endDepth: getDepth(
-              casing.metadata ? casing.metadata.assy_original_md_base : '0'
-            ),
-            endDepthUnit: casing.metadata
-              ? casing.metadata.assy_original_md_base_unit
-              : FEET,
-            depthUnit: prefferedUnit,
-          };
-        })
-        .map((casing) =>
-          convertObject(casing)
-            .changeUnits(getCasingListUnitChangeAccessors(prefferedUnit))
-            .toClosestInteger(casingAccessorsToFixedDecimal)
-            .get()
-        ),
-    });
-  });
-  return formattedCasings;
+    return [
+      ...formattedCasings,
+      {
+        key: casingData.id,
+        wellName: casingData.wellName,
+        wellboreName: casingData.wellboreName,
+        casings: validCasings
+          .map((casing: Sequence) =>
+            mapSequenceToCasingType(casing, prefferedUnit)
+          )
+          .map((casing) =>
+            convertObject(casing)
+              .changeUnits(getCasingListUnitChangeAccessors(prefferedUnit))
+              .toClosestInteger(casingAccessorsToFixedDecimal)
+              .get()
+          ),
+      },
+    ];
+  }, [] as FormattedCasings[]);
+};
+
+export const mapSequenceToCasingType = (
+  casing: Sequence,
+  prefferedUnit: UserPreferredUnit
+) => {
+  return {
+    id: casing.id,
+    name: casing.metadata ? casing.metadata.assy_name : '',
+    outerDiameter: casing.metadata
+      ? Number(casing.metadata.assy_size).toFixed(2)
+      : '',
+    startDepth: getDepth(
+      casing.metadata ? casing.metadata.assy_original_md_top : '0'
+    ),
+    startDepthUnit: casing.metadata
+      ? casing.metadata.assy_original_md_top_unit
+      : FEET,
+    endDepth: getDepth(
+      casing.metadata ? casing.metadata.assy_original_md_base : '0'
+    ),
+    endDepthUnit: casing.metadata
+      ? casing.metadata.assy_original_md_base_unit
+      : FEET,
+    depthUnit: prefferedUnit,
+  };
 };
 
 export const casingAccessorsToFixedDecimal = ['startDepth', 'endDepth'];
