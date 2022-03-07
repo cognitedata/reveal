@@ -3,7 +3,7 @@
  */
 
 import { Cognite3DViewer } from '@reveal/core';
-import { CameraControlsOptions, DefaultCameraManager } from '@reveal/camera-manager';
+import { DefaultCameraManager } from '@reveal/camera-manager';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Toolbar, ToolbarPosition } from './Toolbar';
 import { AxisViewTool } from '../AxisView/AxisViewTool';
