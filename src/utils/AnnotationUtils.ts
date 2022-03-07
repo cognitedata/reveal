@@ -18,12 +18,12 @@ import {
   ColorsOCR,
   ColorsPersonDetection,
   ColorsTagDetection,
-  ColorsTextAndIconsSecondary,
 } from 'src/constants/Colors';
 import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
 import { AllIconTypes } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
+import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -108,7 +108,7 @@ export class AnnotationUtils {
         return data.color;
       }
       if (data.keypoint) {
-        return ColorsTextAndIconsSecondary.color;
+        return getRandomColor();
       }
     }
     if (text === 'person') {
@@ -178,6 +178,19 @@ export class AnnotationUtils {
     assetId?: number,
     assetExternalId?: string
   ): VisionAnnotation {
+    const moifiedData = // use random color for keypoints if no color information exist
+      !data || !data.keypoint || !data.keypoints?.length
+        ? data
+        : {
+            ...data,
+            keypoints: data.keypoints.map((item) => {
+              return {
+                ...item,
+                color: item.color || getRandomColor(),
+              };
+            }),
+          };
+
     return {
       color: AnnotationUtils.getAnnotationColor(text, modelType, data),
       modelType,
@@ -186,7 +199,7 @@ export class AnnotationUtils {
       status: tempConvertAnnotationStatus(status),
       text,
       label: text,
-      data: data || {},
+      data: moifiedData || {},
       annotatedResourceId: fileId,
       annotatedResourceType: 'file',
       annotatedResourceExternalId: fileExternalId!,
