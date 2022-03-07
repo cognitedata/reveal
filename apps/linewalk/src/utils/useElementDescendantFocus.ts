@@ -15,7 +15,6 @@ const useElementDescendantFocus = (
 
   useEffect(() => {
     if (containerRef.current) {
-      console.log('should add eventlistener');
       containerRef.current.addEventListener('focusin', handleFocusIn);
       containerRef.current.addEventListener('focusout', handleFocusOut);
     }

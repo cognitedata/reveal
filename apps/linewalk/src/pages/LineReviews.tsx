@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { OptionType, Select, Table, TextInput } from '@cognite/cogs.js';
-import useLineReviews from 'modules/lineReviews/hooks';
+import useLineReviews from 'modules/lineReviews/useLineReviews';
 import { LineReview, LineReviewStatus } from 'modules/lineReviews/types';
 import { useHistory } from 'react-router';
 import StatusTag from 'components/StatusTag';
@@ -33,73 +33,6 @@ const StatusCell = ({ value }: { value: string }) => (
   <StatusTag status={value as LineReviewStatus} />
 );
 
-const IsoCell = ({ value: documents }: { value: LineReview['documents'] }) => {
-  return <FileCell value={documents.filter(({ type }) => type === 'ISO')} />;
-};
-
-const PidCell = ({ value: documents }: { value: LineReview['documents'] }) => {
-  return <FileCell value={documents.filter(({ type }) => type === 'PID')} />;
-};
-
-type BadgeProps = {
-  label: string;
-  onClick: (event: React.MouseEvent) => void;
-};
-
-const StyledBadgeContainer = styled.span`
-  color: #4a67fb;
-  border: 1px solid #4a67fb;
-  box-sizing: border-box;
-  border-radius: 4px;
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 10px;
-  line-height: 16px;
-  /* identical to box height, or 160% */
-
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  font-feature-settings: 'cpsp' on, 'ss04' on;
-`;
-
-const Badge: React.FC<BadgeProps> = ({ label, onClick }) => (
-  <StyledBadgeContainer onClick={onClick}>{label}</StyledBadgeContainer>
-);
-
-const FileCell = ({ value: documents }: { value: LineReview['documents'] }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  if (documents.length === 0) {
-    return <div>N/A</div>;
-  }
-
-  return (
-    <>
-      {documents
-        .slice(0, isExpanded ? undefined : 1)
-        .map((document, index, slicedArray) => (
-          <React.Fragment key={document.id}>
-            <span>
-              {document.fileExternalId}
-              &nbsp;
-            </span>
-            {index < slicedArray.length - 1 && <br />}
-          </React.Fragment>
-        ))}
-      {documents.length > 1 && (
-        <Badge
-          label={isExpanded ? '<<' : `+${documents.length}`}
-          onClick={(event) => {
-            event.stopPropagation();
-            setIsExpanded((v) => !v);
-          }}
-        />
-      )}
-    </>
-  );
-};
-
 const AssigneeCell = ({ value }: { value: { name: string }[] }) =>
   value.length === 0 ? (
     <span style={{ fontStyle: 'italic', opacity: 0.7 }}>None</span>
@@ -128,18 +61,6 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
           Header: 'Status',
           accessor: 'status',
           Cell: StatusCell,
-        },
-        {
-          id: 'iso',
-          Header: 'ISO',
-          accessor: 'documents',
-          Cell: IsoCell,
-        },
-        {
-          id: 'pid',
-          Header: 'PID',
-          accessor: 'documents',
-          Cell: PidCell,
         },
         {
           Header: 'Assignee',

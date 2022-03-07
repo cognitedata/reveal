@@ -1,11 +1,11 @@
-import { Document } from '../../modules/lineReviews/types';
+import { ParsedDocument } from '../../modules/lineReviews/types';
 
 import getAnnotationsByDocument from './getAnnotationsByDocument';
 
 const getDocumentByAnnotationId = (
-  documents: Document[],
+  documents: ParsedDocument[],
   annotationId: string
-): Document => {
+): ParsedDocument => {
   const document = documents.find((document) =>
     getAnnotationsByDocument(document).some(
       (annotation) => annotation.id === annotationId

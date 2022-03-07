@@ -1,187 +1,104 @@
-/* eslint-disable no-underscore-dangle */
 import { Button } from '@cognite/cogs.js';
-import { CogniteOrnate, Drawing } from '@cognite/ornate';
+import { CogniteOrnate } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
+import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { Document, DocumentType, LineReview } from 'modules/lineReviews/types';
+import {
+  ParsedDocument,
+  DocumentType,
+  LineReview,
+} from 'modules/lineReviews/types';
 import { useEffect, useState } from 'react';
 import layers from 'utils/z';
 
-import { getDocumentUrl } from '../../modules/lineReviews/api';
-import { DocumentId } from '../../modules/lineReviews/DocumentId';
-import delayMs from '../../utils/delayMs';
+import { getDocumentUrlByExternalId } from '../../modules/lineReviews/api';
 import getFileConnectionGroups from '../../utils/getFileConnectionDrawings';
 import isNotUndefined from '../../utils/isNotUndefined';
 import WorkSpaceTools from '../WorkSpaceTools';
 
+import centerOnAnnotationByAnnotationId from './centerOnIsoAnnotationByPidAnnotation';
 import DiscrepancyModal from './DiscrepancyModal';
-import getAnnotationsByDocument from './getAnnotationsByDocument';
+import DocumentJumper from './DocumentJumper';
+import getAnnotationOverlay from './getAnnotationOverlay';
+import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
+import getDocumentByExternalId from './getDocumentByExternalId';
 import getFileConnections from './getFileConnections';
-import getIsoLinkByPidAnnotationId from './getIsoLinkByPidAnnotationId';
+import getLinkByAnnotationId from './getLinkByAnnotationId';
+import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
+import getOpacityGroupByDocument from './getOpacityGroupByDocument';
 import IsoModal from './IsoModal';
-import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
 import ReactOrnate, {
   ReactOrnateProps,
-  SHAMEFUL_SLIDE_HEIGHT,
   SLIDE_COLUMN_GAP,
   SLIDE_ROW_GAP,
-  SLIDE_WIDTH,
 } from './ReactOrnate';
 import useWorkspaceTools, { WorkspaceTool } from './useWorkspaceTools';
+import withoutFileExtension from './withoutFileExtension';
 
 type LineReviewViewerProps = {
   lineReview: LineReview;
+  documents: ParsedDocument[];
   discrepancies: Discrepancy[];
   onDiscrepancyChange: (discrepancies: Discrepancy[]) => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
 };
 
+const useDocumentJumper = (
+  documents: ParsedDocument[],
+  ornateRef: CogniteOrnate | undefined
+) => {
+  const [jumpToDocumentValue, setJumpToDocumentValue] = useState('');
+
+  const documentJumperOptions = [
+    {
+      label: 'Jump to document...',
+      value: '',
+    },
+
+    ...documents.map((document) => ({
+      label: `${document.type.toUpperCase()}: ${withoutFileExtension(
+        document.pdfExternalId
+      )}`,
+      value: document.externalId,
+    })),
+  ];
+
+  useEffect(() => {
+    if (ornateRef && jumpToDocumentValue !== '') {
+      const node = ornateRef.stage.findOne(
+        `#${getKonvaSelectorSlugByExternalId(jumpToDocumentValue)}`
+      ) as Konva.Group;
+      if (node) {
+        ornateRef.zoomToGroup(node, {
+          scaleFactor: 0.75,
+        });
+      }
+
+      setJumpToDocumentValue('');
+    }
+  }, [jumpToDocumentValue, ornateRef]);
+
+  return {
+    documentJumperOptions,
+    jumpToDocumentValue,
+    setJumpToDocumentValue,
+  };
+};
+
 const mapPidAnnotationIdToIsoAnnotationId = (
-  documents: Document[],
+  documents: ParsedDocument[],
   pidAnnotationId: string
 ) => {
   const link = documents
-    .flatMap(({ _linking }) => _linking)
-    .find(({ from: { instanceId } }) => instanceId === pidAnnotationId);
+    .flatMap(({ linking }) => linking)
+    .find(({ from: { annotationId } }) => annotationId === pidAnnotationId);
 
   if (link === undefined) {
     return undefined;
   }
 
-  return link.to.instanceId;
-};
-
-const getInteractableOverlays = (
-  document: Document,
-  onPathClick:
-    | ((event: KonvaEventObject<MouseEvent>, pathId: string) => void)
-    | undefined
-): Drawing[] => {
-  return getAnnotationsByDocument(document).map((d) => ({
-    groupId: document.id,
-    id: d.id,
-    type: 'path',
-    onClick: onPathClick ? (event) => onPathClick(event, d.id) : undefined,
-    attrs: {
-      ...mapPathToNewCoordinateSystem(
-        document._annotations.viewBox,
-        d.svgRepresentation.boundingBox,
-        { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
-      ),
-      id: d.id,
-      strokeScaleEnabled: false,
-      strokeWidth: 6,
-      stroke: 'transparent',
-      draggable: false,
-      unselectable: true,
-      data: d.svgRepresentation.svgPaths
-        .map(({ svgCommands }) => svgCommands)
-        .join(' '),
-    },
-  }));
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getAnnotationBoundingBox = (
-  document: Document,
-  annotationIds: string[],
-  prefix: string,
-  stroke = 'rgba(0,0,255,0.3)',
-  fill = 'rgba(0,0,255,0.1)'
-): Drawing[] =>
-  getAnnotationsByDocument(document)
-    .filter(({ id }) => annotationIds.includes(id))
-    .map((d) => {
-      return {
-        groupId: document.id,
-        id: `${prefix}-${d.id}`,
-        type: 'rect',
-        attrs: {
-          id: `${prefix}-${d.id}`,
-          ...mapPathToNewCoordinateSystem(
-            document._annotations.viewBox,
-            d.svgRepresentation.boundingBox,
-            { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
-          ),
-          strokeScaleEnabled: false,
-          strokeWidth: 6,
-          dash: [6, 6],
-          draggable: false,
-          unselectable: false,
-          data: d.svgRepresentation.svgPaths
-            .map(({ svgCommands }) => svgCommands)
-            .join(' '),
-          stroke,
-          fill,
-        },
-      };
-    });
-
-const getAnnotationOverlay = (
-  document: Document,
-  annotationIds: string[],
-  prefix: string,
-  stroke: string
-): Drawing[] => {
-  return getAnnotationsByDocument(document)
-    .filter(({ id }) => annotationIds.includes(id))
-    .map((d) => ({
-      groupId: document.id,
-      id: `${prefix}-${d.id}`,
-      type: 'path',
-      attrs: {
-        id: `${prefix}-${d.id}`,
-        ...mapPathToNewCoordinateSystem(
-          document._annotations.viewBox,
-          d.svgRepresentation.boundingBox,
-          { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
-        ),
-        strokeScaleEnabled: false,
-        strokeWidth: 6,
-        dash: [6, 6],
-        draggable: false,
-        unselectable: true,
-        data: d.svgRepresentation.svgPaths
-          .map(({ svgCommands }) => svgCommands)
-          .join(' '),
-        stroke,
-      },
-    }));
-};
-
-const findBoundingBoxByPathId = (document: Document, pathId: string) => {
-  const datum = document._annotations.symbolInstances.find(
-    ({ id }) => id === pathId
-  );
-
-  if (!datum) {
-    return undefined;
-  }
-
-  return mapPathToNewCoordinateSystem(
-    document._annotations.viewBox,
-    datum.svgRepresentation.boundingBox,
-    { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
-  );
-};
-
-const flashDrawing = async (
-  ornateRef: CogniteOrnate,
-  drawing: Drawing,
-  times = 3,
-  delay = 200
-) => {
-  for (let i = 0; i < times; i++) {
-    ornateRef.addDrawings(drawing);
-    // eslint-disable-next-line no-await-in-loop
-    await delayMs(delay);
-    if (drawing.id) {
-      ornateRef.removeShapeById(drawing.id);
-    }
-    // eslint-disable-next-line no-await-in-loop
-    await delayMs(delay);
-  }
+  return link.to.annotationId;
 };
 
 export type Discrepancy = {
@@ -191,17 +108,29 @@ export type Discrepancy = {
   createdAt: Date;
 };
 
+const DISCREPANCY_MODAL_OFFSET_X = 50;
+const DISCREPANCY_MODAL_OFFSET_Y = -50;
+
 const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   discrepancies,
+  documents,
   onDiscrepancyChange,
   lineReview,
   onOrnateRef,
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [documents, setDocuments] = useState<
+  const [pdfDocuments, setPdfDocuments] = useState<
     ReactOrnateProps['documents'] | undefined
   >(undefined);
-  const [isDiscrepancyModalOpen, setIsDiscrepancyModalOpen] = useState(false);
+
+  const [discrepancyModalState, setDiscrepancyModalState] = useState({
+    isOpen: false,
+    position: {
+      x: 0,
+      y: 0,
+    },
+  });
+
   const [isIsoModalOpen, setIsIsoModalOpen] = useState(false);
   const [selectedAnnotationIds, setSelectedAnnotationIds] = useState<string[]>(
     []
@@ -215,6 +144,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
+  const { documentJumperOptions, jumpToDocumentValue, setJumpToDocumentValue } =
+    useDocumentJumper(documents, ornateRef);
   const [selectedFileConnectionId, setSelectedFileConnectionId] = useState<
     string | undefined
   >(undefined);
@@ -224,27 +155,33 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
   useEffect(() => {
     (async () => {
-      setDocuments(
+      setPdfDocuments(
         await Promise.all([
-          ...lineReview.documents
+          ...documents
             .filter(({ type }) => type === DocumentType.PID)
             .map(async (document, index) => ({
-              id: document.id,
-              url: await getDocumentUrl(client, document),
+              id: getKonvaSelectorSlugByExternalId(document.externalId),
+              url: await getDocumentUrlByExternalId(client)(
+                document.pdfExternalId
+              ),
               pageNumber: 1,
-              annotations: document.annotations,
               row: 1,
               column: index + 1,
+              type: document.type,
+              name: withoutFileExtension(document.pdfExternalId),
             })),
-          ...lineReview.documents
+          ...documents
             .filter(({ type }) => type === DocumentType.ISO)
             .map(async (document, index) => ({
-              id: document.id,
-              url: await getDocumentUrl(client, document),
+              id: getKonvaSelectorSlugByExternalId(document.externalId),
+              url: await getDocumentUrlByExternalId(client)(
+                document.pdfExternalId
+              ),
               pageNumber: 1,
-              annotations: document.annotations,
               row: 2,
               column: index + 2,
+              type: document.type,
+              name: withoutFileExtension(document.pdfExternalId),
             })),
         ])
       );
@@ -253,7 +190,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     })();
   }, []);
 
-  if (!isInitialized || !documents) {
+  if (!isInitialized || !documents || !pdfDocuments) {
     return null;
   }
 
@@ -268,124 +205,32 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return [...annotationIds, annotationId].sort();
     });
 
-  const centerOnIsoAnnotationByPidAnnotationId = (
-    documents: Document[],
-    pidAnnotationId: string
-  ) => {
-    if (!isIsoModalOpen) {
-      setIsIsoModalOpen(true);
-    }
-
-    if (!isoOrnateRef) {
-      console.log('isoOrnateRef was not defined, exiting early');
-      return;
-    }
-
-    const isoLink = getIsoLinkByPidAnnotationId(documents, pidAnnotationId);
-    if (!isoLink) {
-      console.log('Could not find iso link for annotationId', pidAnnotationId);
-      return;
-    }
-
-    const isoDocuments = documents.filter(
-      ({ type }) => type === DocumentType.ISO
-    );
-
-    const isoDocumentIndex = isoDocuments.findIndex(
-      ({ id }) => id === isoLink.to.documentId
-    );
-
-    if (isoDocumentIndex === -1) {
-      console.error('Couldnt find ISO document');
-    }
-
-    const isoDocument = isoDocuments[isoDocumentIndex];
-
-    if (!isoDocument) {
-      console.error('No ISO document available');
-      return;
-    }
-
-    const isoBoundingBox = findBoundingBoxByPathId(
-      isoDocument,
-      isoLink.to.instanceId
-    );
-    if (!isoBoundingBox) {
-      console.log(
-        'Could not find isoBoundingBox for isoPathId',
-        isoLink.to.instanceId
-      );
-      return;
-    }
-
-    const shamefulHorizontalOffset =
-      (SLIDE_WIDTH + SLIDE_COLUMN_GAP) * isoDocumentIndex;
-
-    isoOrnateRef.zoomToLocation(
-      {
-        x: -(
-          shamefulHorizontalOffset +
-          isoBoundingBox.x +
-          isoBoundingBox.scale.x / 2
-        ),
-        y: -(isoBoundingBox.y + isoBoundingBox.scale.y / 2),
-      },
-      0.7,
-      1
-    );
-
-    const drawings: Drawing[] = isoDocument._annotations.symbolInstances
-      .filter(({ id }) => id === isoLink.to.instanceId)
-      .map((d) => {
-        const mappedCoordinates = mapPathToNewCoordinateSystem(
-          // TODOO: Handle multiple ISOs
-          isoDocument._annotations.viewBox,
-          d.svgRepresentation.boundingBox,
-          { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
-        );
-        return {
-          id: `flash-${d.id}`,
-          type: 'path',
-          attrs: {
-            id: `flash-${d.id}`,
-            ...mappedCoordinates,
-            x: mappedCoordinates.x + shamefulHorizontalOffset,
-            y: mappedCoordinates.y,
-            // width: mappedCoordinates.scale.x,
-            // height: mappedCoordinates.scale.y,
-            strokeScaleEnabled: false,
-            strokeWidth: 4,
-            dash: [1, 1],
-            draggable: false,
-            unselectable: true,
-            lineJoin: 'bevel',
-            data: d.svgRepresentation.svgPaths
-              .map(({ svgCommands }) => svgCommands)
-              .join(' '),
-            stroke: 'blue',
-            inGroup: isoDocument.id,
-          },
-        };
-      });
-
-    if (drawings.length <= 0) {
-      return;
-    }
-
-    if (isoOrnateRef) {
-      flashDrawing(isoOrnateRef, drawings[0]);
-    }
-  };
-
   const onAnnotationClick = (
     { evt }: KonvaEventObject<MouseEvent>,
     annotationId: string
   ): void => {
     if (tool === WorkspaceTool.LINK) {
-      centerOnIsoAnnotationByPidAnnotationId(
-        lineReview.documents,
-        annotationId
+      const link =
+        getLinkByAnnotationId(documents, annotationId) ??
+        getLinkByAnnotationId(documents, annotationId, true);
+      if (!link) {
+        console.warn(`No link found for ${annotationId}`);
+        return;
+      }
+
+      const isLinkedAnnotationInIso =
+        getDocumentByExternalId(documents, link.to.documentId).type ===
+        DocumentType.ISO;
+      if (isLinkedAnnotationInIso && !isIsoModalOpen) {
+        setIsIsoModalOpen(true);
+      }
+
+      centerOnAnnotationByAnnotationId(
+        documents,
+        isLinkedAnnotationInIso ? isoOrnateRef : ornateRef,
+        link.to.annotationId
       );
+
       return;
     }
 
@@ -399,7 +244,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
     if (foundDiscrepancy) {
       setPendingDiscrepancy(foundDiscrepancy);
-      setIsDiscrepancyModalOpen(true);
+      setDiscrepancyModalState((prevState) => ({ ...prevState, isOpen: true }));
       return;
     }
 
@@ -421,12 +266,18 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       comment: '',
       createdAt: new Date(),
     });
-    setIsDiscrepancyModalOpen(true);
+    setDiscrepancyModalState({
+      isOpen: true,
+      position: {
+        x: evt.clientX + DISCREPANCY_MODAL_OFFSET_X,
+        y: evt.clientY + DISCREPANCY_MODAL_OFFSET_Y,
+      },
+    });
   };
 
   const onDeletePendingDiscrepancy = () => {
     setSelectedAnnotationIds([]);
-    setIsDiscrepancyModalOpen(false);
+    setDiscrepancyModalState((prevState) => ({ ...prevState, isOpen: false }));
     if (!pendingDiscrepancy) {
       return;
     }
@@ -436,33 +287,22 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   };
 
   const onSaveDiscrepancy = (discrepancy: Discrepancy) => {
+    // TODOO: Maintain order if changes.
     onDiscrepancyChange([
       ...discrepancies.filter((d) => d.id !== discrepancy.id),
       discrepancy,
     ]);
     setSelectedAnnotationIds([]);
-    setIsDiscrepancyModalOpen(false);
-  };
-
-  const allSymbolInstances = lineReview.documents.flatMap(
-    ({ _annotations }) => _annotations.symbolInstances
-  );
-
-  const getSymbolNameByPathId = (pathId: string): string | undefined => {
-    const symbolInstance = allSymbolInstances.find(({ id }) => id === pathId);
-
-    if (symbolInstance === undefined) {
-      return undefined;
-    }
-
-    return symbolInstance.symbolName;
+    setDiscrepancyModalState((prevState) => ({ ...prevState, isOpen: false }));
   };
 
   const getDrawingsByDocumentId = (
-    documents: Document[],
-    documentId: DocumentId
+    documents: ParsedDocument[],
+    documentId: string
   ) => {
-    const document = documents.find((document) => document.id === documentId);
+    const document = documents.find(
+      (document) => document.externalId === documentId
+    );
 
     if (document === undefined) {
       console.warn("Document didn't exist");
@@ -470,65 +310,84 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     }
 
     return [
-      ...document._opacities,
-      // ...getAnnotationOverlay(
-      //   document,
-      //   getAnnotationsByDocument(document).map(({ id }) => id),
-      //   'debug-paths',
-      //   'green'
-      // ),
-      // ...(document._linking
-      //   ? getAnnotationOverlay(
-      //       document,
-      //       document._linking.map(({ from: { instanceId } }) => instanceId),
-      //       'debug-navigatable',
-      //       'lightblue'
-      //     )
-      //   : []),
-      // ...getAnnotationBoundingBox(
-      //   document,
-      //   document._annotations.symbolInstances
-      //     .filter(({ symbolName }) => symbolName === 'fileConnection')
-      //     .map(({ id }) => id),
-      //   'debug-fileConnection-'
-      // ),
       ...getAnnotationOverlay(
+        lineReview.id,
         document,
         selectedAnnotationIds,
-        'current-selection',
-        'rgba(41,114,225, 0.6)'
+        'current-selection-',
+        {
+          stroke: 'lightblue',
+          strokeWidth: 3,
+          dash: [3, 3],
+        }
       ),
       ...discrepancies.flatMap((discrepancy) =>
         getAnnotationOverlay(
+          lineReview.id,
           document,
           discrepancy.ids,
-          discrepancy.id,
-          'rgba(207,26,23, 0.6)'
+          `discrepancy-${discrepancy.id}`,
+          {
+            stroke: 'rgba(207,26,23, 0.6)',
+            strokeWidth: 3,
+            dash: [3, 3],
+          }
         )
       ),
-      ...(tool === WorkspaceTool.LINK && document._linking
-        ? getAnnotationOverlay(
-            document,
-            document._linking
-              .map(({ from: { instanceId } }) => instanceId)
-              .filter((id) => getSymbolNameByPathId(id) !== 'fileConnection'),
-            'navigatable',
-            '#39A263'
-          )
+      ...(tool === WorkspaceTool.LINK
+        ? [
+            ...getAnnotationOverlay(
+              lineReview.id,
+              document,
+              document.linking.map(
+                ({ from: { annotationId } }) => annotationId
+              ),
+              'navigatable',
+              {
+                stroke: '#39A263',
+                strokeWidth: 3,
+                dash: [3, 3],
+              }
+            ),
+            ...getAnnotationOverlay(
+              lineReview.id,
+              document,
+              document.linking.map(({ to: { annotationId } }) => annotationId),
+              'navigatable-target-',
+              {
+                stroke: '#39A263',
+                strokeWidth: 3,
+                dash: [3, 3],
+              }
+            ),
+          ]
         : []),
-      ...getInteractableOverlays(
+      ...getAnnotationOverlay(
+        lineReview.id,
         document,
+        getAnnotationsForLineByDocument(lineReview.id, document)
+          .filter(({ svgPaths }) => svgPaths.length > 0)
+          .map((annotation) => annotation.id),
+        '',
+        {
+          stroke: 'transparent',
+          strokeWidth: 3,
+        },
         [WorkspaceTool.SELECT, WorkspaceTool.LINK].includes(tool)
           ? onAnnotationClick
           : undefined
       ),
       ...getDiscrepancyCircleMarkersForDocument(
+        lineReview.id,
         document,
         discrepancies,
         tool === WorkspaceTool.SELECT
           ? (discrepancy) => {
               setPendingDiscrepancy(discrepancy);
-              setIsDiscrepancyModalOpen(true);
+              setDiscrepancyModalState((prevState) => ({
+                ...prevState,
+                isOpen: true,
+              }));
             }
           : undefined
       ),
@@ -536,17 +395,51 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   };
 
   const drawings = [
-    ...lineReview.documents
+    ...documents
       .filter(({ type }) => type === DocumentType.PID)
       .flatMap((document) =>
-        getDrawingsByDocumentId(lineReview.documents, document.id)
+        getDrawingsByDocumentId(documents, document.externalId)
+      ),
+    ...documents
+      .filter(({ type }) => type === DocumentType.ISO)
+      .flatMap((document) =>
+        // For ISO
+        getDiscrepancyCircleMarkersForDocument(
+          lineReview.id,
+          document,
+          discrepancies.map((discrepancy) => ({
+            ...discrepancy,
+            ids: discrepancy.ids
+              .map((id) =>
+                mapPidAnnotationIdToIsoAnnotationId(
+                  documents.filter(({ type }) => type === DocumentType.PID),
+                  id
+                )
+              )
+              .filter(isNotUndefined),
+          })),
+          tool === WorkspaceTool.SELECT
+            ? (discrepancy) => {
+                setPendingDiscrepancy(discrepancy);
+                setDiscrepancyModalState((prevState) => ({
+                  ...prevState,
+                  isOpen: true,
+                }));
+              }
+            : undefined
+        )
       ),
   ];
 
   const groups = ornateRef
     ? getFileConnectionGroups({
         ornateViewer: ornateRef,
-        connections: getFileConnections(lineReview),
+        connections: getFileConnections(
+          lineReview.id,
+          documents,
+          DocumentType.PID,
+          DocumentType.PID
+        ),
         columnGap: SLIDE_COLUMN_GAP,
         rowGap: SLIDE_ROW_GAP,
         onSelect: (id: string) =>
@@ -557,32 +450,26 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       })
     : [];
 
-  console.log('selected', selectedFileConnectionId);
-
   return (
     <>
-      {isDiscrepancyModalOpen && pendingDiscrepancy && (
+      {discrepancyModalState.isOpen && pendingDiscrepancy && (
         <DiscrepancyModal
+          // This is a hack
+          key={pendingDiscrepancy.ids.join('-')}
+          initialPosition={discrepancyModalState.position}
           initialDiscrepancy={pendingDiscrepancy}
-          isOpen={isDiscrepancyModalOpen}
-          onClosePress={() => {
-            setIsDiscrepancyModalOpen(false);
-          }}
           onDeletePress={onDeletePendingDiscrepancy}
           onSave={onSaveDiscrepancy}
         />
       )}
 
       <IsoModal
-        documents={lineReview.documents.filter(
-          ({ type }) => type === DocumentType.ISO
-        )}
+        lineReview={lineReview}
+        documents={documents.filter(({ type }) => type === DocumentType.ISO)}
         discrepancies={discrepancies.map((discrepancy) => ({
           ...discrepancy,
           ids: discrepancy.ids
-            .map((id) =>
-              mapPidAnnotationIdToIsoAnnotationId(lineReview.documents, id)
-            )
+            .map((id) => mapPidAnnotationIdToIsoAnnotationId(documents, id))
             .filter(isNotUndefined),
         }))}
         visible={isIsoModalOpen}
@@ -591,9 +478,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         tool={isoModalTool}
         onToolChange={onIsoModalToolChange}
       />
-      <div
-        style={{ height: 'calc(100vh - 125px - 56px)', position: 'relative' }}
-      >
+      <div style={{ height: 'calc(100vh - 125px)', position: 'relative' }}>
         {!isIsoModalOpen && (
           <div
             style={{
@@ -612,10 +497,35 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
             </Button>
           </div>
         )}
+
+        <div
+          style={{
+            position: 'absolute',
+            left: 16,
+            top: 16,
+            width: 170,
+            zIndex: layers.OVERLAY - 1,
+            backgroundColor: 'white',
+          }}
+        >
+          <DocumentJumper
+            options={documentJumperOptions}
+            onChange={(value) => setJumpToDocumentValue(value)}
+            value={jumpToDocumentValue}
+          />
+        </div>
+
         <ReactOrnate
-          documents={documents}
-          groups={groups}
-          drawings={drawings}
+          documents={pdfDocuments}
+          nodes={[
+            ...documents
+              .filter((document) => document.type === DocumentType.PID)
+              .map((document) =>
+                getOpacityGroupByDocument(lineReview.id, document)
+              ),
+            ...groups,
+            ...drawings,
+          ]}
           onOrnateRef={(ref) => {
             setOrnateRef(ref);
             onOrnateRef(ref);

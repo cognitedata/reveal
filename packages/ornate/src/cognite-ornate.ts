@@ -116,7 +116,7 @@ const getShapeByDrawing = (drawing: Drawing) => {
   throw new Error(`Drawing referenced unsupported shape: ${drawing.type}`);
 };
 
-const getGroupById = (id: string, stage: Konva.Stage) => {
+export const getGroupById = (id: string, stage: Konva.Stage) => {
   const group = stage.findOne<Konva.Group>(`#${id}`);
   if (!group) {
     throw new Error(`No group with id ${id} was found`);

@@ -1,7 +1,5 @@
 import { Button } from '@cognite/cogs.js';
-import { CogniteOrnate } from '@cognite/ornate';
 import StatusTag from 'components/StatusTag';
-import Konva from 'konva';
 import { LineReview } from 'modules/lineReviews/types';
 import { PagePath } from 'pages/Menubar';
 import { useHistory } from 'react-router';
@@ -10,7 +8,7 @@ import styled from 'styled-components';
 const Container = styled.div`
   width: 100%;
   border-bottom: 1px solid #e8e8e8;
-  padding: 32px 32px 0 32px;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
 `;
@@ -39,20 +37,16 @@ const ButtonsContainer = styled.div`
   }
 `;
 
-const AssigneeContainer = styled.div`
-  margin: 12px 0;
-`;
-
 export type LineReviewHeaderProps = {
   lineReview: LineReview;
   onReportBackPress: () => void;
-  ornateRef: CogniteOrnate | undefined;
+  onSaveToPdfPress: () => void;
 };
 
 const LineReviewHeader = ({
   lineReview,
+  onSaveToPdfPress,
   onReportBackPress,
-  ornateRef,
 }: LineReviewHeaderProps) => {
   const history = useHistory();
 
@@ -72,32 +66,17 @@ const LineReviewHeader = ({
           <h2>
             {lineReview.name} <StatusTag status={lineReview.status} />
           </h2>
-          <p>
-            {lineReview.documents.map((document) => (
-              <Button
-                key={document.fileExternalId}
-                type="link"
-                onClick={() => {
-                  if (ornateRef) {
-                    const node = ornateRef.stage.findOne(
-                      `#${document.id}`
-                    ) as Konva.Group;
-
-                    if (node) {
-                      ornateRef.zoomToGroup(node, { scaleFactor: 0.85 });
-                    }
-                  }
-                }}
-              >
-                {document.fileExternalId}
-              </Button>
-            ))}
-          </p>
         </section>
       </HeaderContainer>
       <ActionContainer>
         <ButtonsContainer>
-          <Button type="secondary">...</Button>
+          <div>
+            <Button
+              type="ghost"
+              icon="Print"
+              onClick={() => onSaveToPdfPress()}
+            />
+          </div>
           <Button
             type="primary"
             icon="Checkmark"
@@ -106,14 +85,6 @@ const LineReviewHeader = ({
             Report Back
           </Button>
         </ButtonsContainer>
-        <AssigneeContainer>
-          Assigned to{' '}
-          <strong>
-            {lineReview.assignees.length > 0
-              ? lineReview.assignees.map((assignee) => assignee.name).join(', ')
-              : 'No one'}
-          </strong>
-        </AssigneeContainer>
       </ActionContainer>
     </Container>
   );

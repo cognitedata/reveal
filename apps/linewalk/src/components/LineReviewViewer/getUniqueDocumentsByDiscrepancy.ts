@@ -1,18 +1,18 @@
 import uniqBy from 'lodash/uniqBy';
 
-import { Document } from '../../modules/lineReviews/types';
+import { ParsedDocument } from '../../modules/lineReviews/types';
 
 import getDocumentByAnnotationId from './getDocumentByAnnotationId';
 
 const getUniqueDocumentsByDiscrepancy = (
-  documents: Document[],
+  documents: ParsedDocument[],
   annotationIds: string[]
 ) =>
   uniqBy(
     annotationIds.map((annotationId) =>
       getDocumentByAnnotationId(documents, annotationId)
     ),
-    (document: Document) => document.fileExternalId
+    (document: ParsedDocument) => document.externalId
   );
 
 export default getUniqueDocumentsByDiscrepancy;

@@ -2,13 +2,13 @@ import { LineReview } from 'modules/lineReviews/types';
 import { useState } from 'react';
 import { toast } from '@cognite/cogs.js';
 
-import { fetchLineReviews, updateLineReviews } from './api';
+import { getLineReviews, updateLineReviews } from './api';
 
 const useLineReviews = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lineReviews, setLineReviews] = useState<LineReview[]>([]);
   const populateLineReviews = async () => {
-    const lineReviews = await fetchLineReviews();
+    const lineReviews = await getLineReviews();
     setLineReviews(lineReviews);
     setIsLoading(false);
   };

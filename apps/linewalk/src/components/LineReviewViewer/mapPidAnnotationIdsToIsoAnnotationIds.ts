@@ -1,15 +1,15 @@
-import type { Document } from '../../modules/lineReviews/types';
+import type { ParsedDocument } from '../../modules/lineReviews/types';
 import isNotUndefined from '../../utils/isNotUndefined';
 
-import getIsoLinkByPidAnnotationId from './getIsoLinkByPidAnnotationId';
+import getLinkByAnnotationId from './getLinkByAnnotationId';
 
 const mapPidAnnotationIdsToIsoAnnotationIds = (
-  documents: Document[],
+  documents: ParsedDocument[],
   ids: string[]
 ) =>
   ids
-    .map((id) => getIsoLinkByPidAnnotationId(documents, id))
+    .map((id) => getLinkByAnnotationId(documents, id))
     .filter(isNotUndefined)
-    .map((link) => link.to.instanceId);
+    .map((link) => link.to.annotationId);
 
 export default mapPidAnnotationIdsToIsoAnnotationIds;

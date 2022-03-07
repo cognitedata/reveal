@@ -1,36 +1,19 @@
-import { Drawing } from '@cognite/ornate';
-
-import DocumentId from './DocumentId';
-
-type SchematicAnnotation = {
-  id: string;
-  svgRepresentation: {
-    boundingBox: {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
-    svgPaths: { svgCommands: string }[];
-  };
-
-  symbolName?: string;
-  pathIds: unknown;
-  labelIds: unknown;
-  labels: unknown;
+export type BoundingBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };
 
-export type SchematicRepresentation = {
-  viewBox: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  symbols: unknown;
-  lines: SchematicAnnotation[];
-  symbolInstances: SchematicAnnotation[];
-  connections: unknown;
+export type Annotation = {
+  id: string;
+  type: string;
+  boundingBox: BoundingBox;
+  svgPaths: { svgCommands: string }[];
+  nearestAssetExternalIds: [];
+  lineNumbers: string[];
+  labelIds?: string[];
+  text?: string;
 };
 
 export type LineReviewAnnotationStatus = 'UNCHECKED' | 'CHECKED';
@@ -45,56 +28,31 @@ export type Comment = {
   };
 };
 
-// export type DocumentAnnotation = {
-//   min: [number, number];
-//   max: [number, number];
-//   status: LineReviewAnnotationStatus;
-//   title: string;
-//   description: string;
-//   comments: Comment[];
-// };
-
-export type DocumentAnnotation = {
-  id: string;
-  markup: {
-    type: 'line' | 'rect';
-    min: [number, number];
-    max: [number, number];
-  }[];
-  externalId: string;
-  // This references an asset like a valve, reducer etc, or a document like a PDF.
-  resource: 'asset' | 'document';
-  // Maybe this is what the resource is (?), but would it make sense to specify a `layer` to the
-  // annotations? I'm thinking some annotations will be interactible (let's say a pipe) but others
-  // will not (e.g. alpha layer on top of parts of the document to highlight the area of interest).
-};
-
 export type DocumentConnection = [string, string]; // List of annotation ids to connect
 
 export enum DocumentType {
-  PID = 'PID',
-  ISO = 'ISO',
+  PID = 'p&id',
+  ISO = 'iso',
 }
 
 export type Link = {
   from: {
-    documentId: DocumentId;
-    instanceId: string;
+    documentId: string;
+    annotationId: string;
   };
   to: {
-    documentId: DocumentId;
-    instanceId: string;
+    documentId: string;
+    annotationId: string;
   };
 };
 
-export type Document = {
-  id: DocumentId; // Required?
-  fileExternalId: string;
-  annotations: DocumentAnnotation[];
-  _annotations: SchematicRepresentation;
-  _opacities: Drawing[];
-  _linking: Link[];
-  type: 'PID' | 'ISO';
+export type ParsedDocument = {
+  externalId: string;
+  pdfExternalId: string;
+  type: 'p&id' | 'iso';
+  linking: Link[];
+  viewBox: BoundingBox;
+  annotations: Annotation[];
 };
 
 enum DiscrepancyStatus {
@@ -125,10 +83,20 @@ export type LineReview = {
   id: string;
   name: string;
   system: string;
-  documents: Document[];
   discrepancies: LineReviewDiscrepancy[];
   assignees: Assignee[];
+  entryFileExternalId: string;
   // All lines need to be manually reviewed at this stage, so a lack of discrepancies does not
   // mean that the review is complete.
   status: LineReviewStatus;
 };
+
+export type DocumentsForLine = {
+  externalId: string;
+  line: string;
+  parsedDocuments: string[];
+};
+
+export enum AnnotationType {
+  FILE_CONNECTION = 'fileConnection',
+}

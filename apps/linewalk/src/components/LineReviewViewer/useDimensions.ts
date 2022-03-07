@@ -76,13 +76,16 @@ type Dimensions = {
 const MIN_WIDTH = 400;
 const MIN_HEIGHT = 300;
 
-const constrainDimensions = (dimensions: Dimensions): Dimensions => {
+const constrainDimensions = (
+  dimensions: Dimensions,
+  { minWidth, minHeight }: { minWidth: number; minHeight: number }
+): Dimensions => {
   const constrainedWidth = Math.max(
-    MIN_WIDTH,
+    minWidth,
     Math.min(dimensions.width, window.innerWidth - Math.max(0, dimensions.x))
   );
   const constrainedHeight = Math.max(
-    MIN_HEIGHT,
+    minHeight,
     Math.min(dimensions.height, window.innerHeight - Math.max(0, dimensions.y))
   );
   return {
@@ -101,16 +104,20 @@ const constrainDimensions = (dimensions: Dimensions): Dimensions => {
 
 const useDimensions = (
   ref: HTMLElement | null,
-  initialDimensions: { width: number; height: number; x: number; y: number }
+  initialDimensions: { width: number; height: number; x: number; y: number },
+  options: { minWidth: number; minHeight: number } = {
+    minWidth: MIN_WIDTH,
+    minHeight: MIN_HEIGHT,
+  }
 ) => {
   const [dimensions, setDimensions] = useState<Dimensions>(initialDimensions);
 
   const setConstrainedDimensions = (nextDimensions: Dimensions) =>
-    setDimensions(constrainDimensions(nextDimensions));
+    setDimensions(constrainDimensions(nextDimensions, options));
 
   useEffect(() => {
     const handleWindowResize = throttle(() => {
-      setDimensions((dimensions) => constrainDimensions(dimensions));
+      setDimensions((dimensions) => constrainDimensions(dimensions, options));
     }, RESIZE_THROTTLE_MS);
     window.addEventListener('resize', handleWindowResize);
 
@@ -171,7 +178,7 @@ const useDimensions = (
     ref,
     ({ initialHeight, initialWidth, deltaX, deltaY, initialX, initialY }) =>
       setConstrainedDimensions({
-        x: initialX + Math.min(deltaX, initialWidth - MIN_WIDTH),
+        x: initialX + Math.min(deltaX, initialWidth - options.minWidth),
         y: initialY,
         width: initialWidth - deltaX,
         height: initialHeight + deltaY,
@@ -182,8 +189,8 @@ const useDimensions = (
     ref,
     ({ initialHeight, initialWidth, deltaX, deltaY, initialX, initialY }) =>
       setConstrainedDimensions({
-        x: initialX + Math.min(deltaX, initialWidth - MIN_WIDTH),
-        y: initialY + Math.min(deltaY, initialHeight - MIN_HEIGHT),
+        x: initialX + Math.min(deltaX, initialWidth - options.minWidth),
+        y: initialY + Math.min(deltaY, initialHeight - options.minHeight),
         width: initialWidth - deltaX,
         height: initialHeight - deltaY,
       })
@@ -194,7 +201,7 @@ const useDimensions = (
     ({ initialHeight, initialWidth, deltaX, deltaY, initialX, initialY }) =>
       setConstrainedDimensions({
         x: initialX,
-        y: initialY + Math.min(deltaY, initialHeight - MIN_HEIGHT),
+        y: initialY + Math.min(deltaY, initialHeight - options.minHeight),
         width: initialWidth + deltaX,
         height: initialHeight - deltaY,
       })

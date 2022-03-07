@@ -1,31 +1,50 @@
+import keyBy from 'lodash/keyBy';
+
 import {
+  AnnotationType,
   DocumentConnection,
-  LineReview,
+  ParsedDocument,
 } from '../../modules/lineReviews/types';
 
-const getFileConnections = (lineReview: LineReview) => {
-  const allSymbolInstances = lineReview.documents.flatMap(
-    ({ _annotations }) => _annotations.symbolInstances
+const getFileConnections = (
+  line: string,
+  documents: ParsedDocument[],
+  sourceDocumentType: string,
+  targetDocumentType: string
+) => {
+  const annotationsById = keyBy(
+    documents.flatMap((document) => document.annotations),
+    (annotation) => annotation.id
   );
 
-  const getSymbolNameByPathId = (pathId: string): string | undefined => {
-    const symbolInstance = allSymbolInstances.find(({ id }) => id === pathId);
+  const documentByExternalId = keyBy(
+    documents,
+    (document) => document.externalId
+  );
 
-    if (symbolInstance === undefined) {
-      return undefined;
-    }
+  const fileConnections: DocumentConnection[] = documents
+    .flatMap(({ externalId, linking }) =>
+      linking.filter((link) => {
+        const sourceDocument = documentByExternalId[link.from.documentId];
+        const targetDocument = documentByExternalId[link.to.documentId];
+        const sourceAnnotation = annotationsById[link.from.annotationId];
+        const targetAnnotation = annotationsById[link.to.annotationId];
 
-    return symbolInstance.symbolName;
-  };
+        // Temporarily filter out only outward links
+        const shamefulIsOutwardLink = externalId === link.from.documentId;
 
-  const fileConnections: DocumentConnection[] = lineReview.documents
-    .flatMap(({ _linking }) => _linking)
-    .filter(
-      (link) =>
-        getSymbolNameByPathId(link.from.instanceId) === 'fileConnection' &&
-        getSymbolNameByPathId(link.to.instanceId) === 'fileConnection'
+        return (
+          shamefulIsOutwardLink &&
+          sourceDocument.type === sourceDocumentType &&
+          targetDocument.type === targetDocumentType &&
+          sourceAnnotation?.type === AnnotationType.FILE_CONNECTION &&
+          targetAnnotation?.type === AnnotationType.FILE_CONNECTION &&
+          sourceAnnotation?.lineNumbers.includes(line) &&
+          targetAnnotation?.lineNumbers.includes(line)
+        );
+      })
     )
-    .map((link) => [link.from.instanceId, link.to.instanceId]);
+    .map((link) => [link.from.annotationId, link.to.annotationId]);
 
   return fileConnections;
 };

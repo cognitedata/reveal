@@ -1,26 +1,50 @@
-import {
-  MOCK_LINE_REVIEW_0040_0029,
-  MOCK_LINE_REVIEW_0040_0132,
-} from './mocks';
-import { Document, LineReview } from './types';
+import { MOCK_LINE_REVIEW_0040_0132 } from './mocks';
+import { ParsedDocument, LineReview, DocumentsForLine } from './types';
 
-let MOCK_LINE_REVIEWS = [
-  MOCK_LINE_REVIEW_0040_0029,
-  MOCK_LINE_REVIEW_0040_0132,
-];
+let MOCK_LINE_REVIEWS = [MOCK_LINE_REVIEW_0040_0132];
 
-export const fetchLineReviews = async () => {
+export const getLineReviews = async () => {
   // NEXT: Fetch from API
   return MOCK_LINE_REVIEWS;
 };
 
-export const getDocumentUrl = async (client: any, document: Document) => {
-  try {
-    const response = await client.files.getDownloadUrls([{ id: document.id }]);
-    return response[0].downloadUrl;
-  } catch (error) {
-    throw new Error('Getting document url failed');
-  }
+export const getDocumentUrlByExternalId =
+  (client: any) =>
+  async (externalId: string): Promise<string> => {
+    try {
+      const response = await client.files.getDownloadUrls([{ externalId }]);
+      return response[0].downloadUrl;
+    } catch (error) {
+      throw new Error('Getting document url failed');
+    }
+  };
+
+const getJsonByExternalId = async <T = unknown>(
+  client: any,
+  externalId: string
+): Promise<T> => {
+  const url = await getDocumentUrlByExternalId(client)(externalId);
+  const response = await fetch(url);
+  const json = await response.json();
+  return json;
+};
+
+export const getLineReviewDocuments = async (
+  client: any,
+  lineReview: LineReview
+) => {
+  const lineReviewEntryPoint = await getJsonByExternalId<DocumentsForLine>(
+    client,
+    lineReview.entryFileExternalId
+  );
+
+  const documents = await Promise.all(
+    lineReviewEntryPoint.parsedDocuments.map((externalId) =>
+      getJsonByExternalId<ParsedDocument>(client, externalId)
+    )
+  );
+
+  return documents;
 };
 
 export const updateLineReviews = async (updates: LineReview[]) => {

@@ -1,10 +1,5 @@
-/* eslint-disable no-underscore-dangle */
+import { ParsedDocument } from '../../modules/lineReviews/types';
 
-import { Document } from '../../modules/lineReviews/types';
-
-const getAnnotationsByDocument = (document: Document) => [
-  ...document._annotations.lines,
-  ...document._annotations.symbolInstances,
-];
-
-export default getAnnotationsByDocument;
+const getAnnotationsForLineByDocument = (document: ParsedDocument) =>
+  document.annotations;
+export default getAnnotationsForLineByDocument;

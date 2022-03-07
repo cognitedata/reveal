@@ -1,31 +1,42 @@
-/* eslint-disable no-underscore-dangle */
 import { Button } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
+import { KonvaEventObject } from 'konva/lib/Node';
+import keyBy from 'lodash/keyBy';
 import React, { useEffect, useState } from 'react';
 import layers from 'utils/z';
 
-import { getDocumentUrl } from '../../modules/lineReviews/api';
+import { getDocumentUrlByExternalId } from '../../modules/lineReviews/api';
 import WorkSpaceTools from '../WorkSpaceTools/WorkSpaceTools';
-import { Document } from '../../modules/lineReviews/types';
+import {
+  AnnotationType,
+  LineReview,
+  ParsedDocument,
+} from '../../modules/lineReviews/types';
 
+import centerOnAnnotationByAnnotationId from './centerOnIsoAnnotationByPidAnnotation';
+import getAnnotationOverlay from './getAnnotationOverlay';
+import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
+import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import { Discrepancy } from './LineReviewViewer';
 import ReactOrnate from './ReactOrnate';
 import useDimensions from './useDimensions';
 import { WorkspaceTool } from './useWorkspaceTools';
+import withoutFileExtension from './withoutFileExtension';
 
 const INITIAL_WIDTH = 643;
 const INITIAL_HEIGHT = 526;
 
 type IsoModalProps = {
-  documents: Document[] | undefined;
+  documents: ParsedDocument[] | undefined;
   visible?: boolean;
   discrepancies: Discrepancy[];
   onHidePress: () => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
   tool: WorkspaceTool;
   onToolChange: (tool: WorkspaceTool) => void;
+  lineReview: LineReview;
 };
 
 const RESIZABLE_CORNER_SIZE = 15;
@@ -38,7 +49,11 @@ const IsoModal: React.FC<IsoModalProps> = ({
   onHidePress,
   tool,
   onToolChange,
+  lineReview,
 }) => {
+  const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
+    undefined
+  );
   const [modalRef, setModalRef] = useState<HTMLElement | null>(null);
   const { client } = useAuthContext();
   const [fetchedDocuments, setFetchedDocuments] = useState<any[]>([]);
@@ -58,16 +73,23 @@ const IsoModal: React.FC<IsoModalProps> = ({
   });
 
   useEffect(() => {
+    onOrnateRef(ornateRef);
+  }, [ornateRef]);
+
+  useEffect(() => {
     if (documents) {
       (async () => {
         const result = await Promise.all(
           documents.map(async (document, index) => ({
-            id: document.id,
-            url: await getDocumentUrl(client, document),
+            id: getKonvaSelectorSlugByExternalId(document.externalId),
+            url: await getDocumentUrlByExternalId(client)(
+              document.pdfExternalId
+            ),
             pageNumber: 1,
-            annotations: document.annotations,
             row: 1,
             column: index + 1,
+            type: document.type,
+            name: withoutFileExtension(document.pdfExternalId),
           }))
         );
 
@@ -81,9 +103,73 @@ const IsoModal: React.FC<IsoModalProps> = ({
     return null;
   }
 
-  const drawings = documents?.flatMap((document) =>
-    getDiscrepancyCircleMarkersForDocument(document, discrepancies)
+  const onAnnotationClick = (
+    event: KonvaEventObject<MouseEvent>,
+    annotationId: string
+  ) => {
+    if (!documents) {
+      return;
+    }
+
+    const link = documents
+      ?.flatMap((document) => document.linking)
+      .find(({ from }) => from.annotationId === annotationId);
+
+    if (!link) {
+      return;
+    }
+
+    centerOnAnnotationByAnnotationId(
+      documents,
+      ornateRef,
+      link.to.annotationId
+    );
+  };
+
+  const annotationsById = keyBy(
+    documents?.flatMap((document) => document.annotations),
+    (annotation) => annotation.id
   );
+
+  const drawings = documents?.flatMap((document) => [
+    ...([WorkspaceTool.LINK].includes(tool)
+      ? getAnnotationOverlay(
+          lineReview.id,
+          document,
+          document.linking
+            .map(({ from: { annotationId } }) => annotationId)
+            .filter(
+              (id) =>
+                annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
+            ),
+          'navigatable',
+          {
+            stroke: '#39A263',
+            strokeWidth: 3,
+          }
+        )
+      : []),
+    ...getAnnotationOverlay(
+      lineReview.id,
+      document,
+      getAnnotationsForLineByDocument(lineReview.id, document)
+        .filter(({ svgPaths }) => svgPaths.length > 0)
+        .map((annotation) => annotation.id),
+      '',
+      {
+        stroke: 'transparent',
+        strokeWidth: 6,
+      },
+      [(WorkspaceTool.SELECT, WorkspaceTool.LINK)].includes(tool)
+        ? onAnnotationClick
+        : undefined
+    ),
+    ...getDiscrepancyCircleMarkersForDocument(
+      lineReview.id,
+      document,
+      discrepancies
+    ),
+  ]);
 
   return (
     <div
@@ -114,7 +200,9 @@ const IsoModal: React.FC<IsoModalProps> = ({
       >
         <h2>
           Isometric Drawing{' '}
-          {documents?.map(({ fileExternalId }) => fileExternalId).join(', ')}
+          {documents
+            ?.map(({ pdfExternalId }) => withoutFileExtension(pdfExternalId))
+            .join(', ')}
         </h2>
         <div
           style={{
@@ -137,13 +225,17 @@ const IsoModal: React.FC<IsoModalProps> = ({
         }}
       >
         <ReactOrnate
-          onOrnateRef={onOrnateRef}
+          onOrnateRef={(ref) => setOrnateRef(ref)}
           documents={fetchedDocuments}
-          drawings={drawings}
+          nodes={drawings}
           renderWorkspaceTools={(ornate, isFocused) => (
             <WorkSpaceTools
               tool={tool}
-              enabledTools={[WorkspaceTool.MOVE, WorkspaceTool.COMMENT]}
+              enabledTools={[
+                WorkspaceTool.MOVE,
+                WorkspaceTool.LINK,
+                WorkspaceTool.COMMENT,
+              ]}
               onToolChange={onToolChange}
               ornateRef={ornate}
               areKeyboardShortcutsEnabled={isFocused}

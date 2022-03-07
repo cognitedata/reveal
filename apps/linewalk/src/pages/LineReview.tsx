@@ -1,27 +1,39 @@
-import { Button, Modal, TextInput } from '@cognite/cogs.js';
+import { Button, Loader, Modal, TextInput } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
 import LineReviewHeader from 'components/LineReviewHeader';
 import LineReviewViewer from 'components/LineReviewViewer';
 import { NullView } from 'components/NullView/NullView';
-import useLineReviews from 'modules/lineReviews/hooks';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useHistory, useParams } from 'react-router';
+import styled from 'styled-components';
 
+import exportDocumentsToPdf from '../components/LineReviewViewer/exportDocumentsToPdf';
 import getUniqueDocumentsByDiscrepancy from '../components/LineReviewViewer/getUniqueDocumentsByDiscrepancy';
 import { Discrepancy } from '../components/LineReviewViewer/LineReviewViewer';
 import mapPidAnnotationIdsToIsoAnnotationIds from '../components/LineReviewViewer/mapPidAnnotationIdsToIsoAnnotationIds';
 import { updateLineReviews } from '../modules/lineReviews/api';
-import { LineReviewStatus } from '../modules/lineReviews/types';
+import { DocumentType, LineReviewStatus } from '../modules/lineReviews/types';
+import useLineReview from '../modules/lineReviews/useLineReview';
 
 import { PagePath } from './Menubar';
 // import { useAuthContext } from '@cognite/react-container';
+
+export const LoaderContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  min-height: 300px;
+
+  > div {
+    position: absolute;
+  }
+`;
 
 const LineReview = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const [isReportBackModalOpen, setIsReportBackModalOpen] = useState(false);
-  const { isLoading, lineReviews, populateLineReviews } = useLineReviews();
   const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
@@ -29,17 +41,16 @@ const LineReview = () => {
 
   const { client } = useAuthContext();
 
-  // Populate data
-  useEffect(() => {
-    populateLineReviews();
-  }, []);
-
-  const lineReview = lineReviews.find((lineReview) => lineReview.id === id);
+  const { isLoading, lineReview, documents } = useLineReview(id);
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <LoaderContainer>
+        <Loader infoTitle="Loading line data..." darkMode={false} />
+      </LoaderContainer>
+    );
   }
 
-  if (!lineReview) {
+  if (!lineReview || !documents) {
     return (
       <div>
         <NullView type="noLineReview" />
@@ -100,16 +111,13 @@ const LineReview = () => {
 
         {discrepancies.map((discrepancy) => {
           const uniqueDiscrepancyIsos = getUniqueDocumentsByDiscrepancy(
-            lineReview.documents,
-            mapPidAnnotationIdsToIsoAnnotationIds(
-              lineReview.documents,
-              discrepancy.ids
-            )
-          ).filter((document) => document.type === 'ISO');
+            documents,
+            mapPidAnnotationIdsToIsoAnnotationIds(documents, discrepancy.ids)
+          ).filter((document) => document.type === DocumentType.ISO);
           const usedDiscrepancyIsos =
             uniqueDiscrepancyIsos.length === 0
-              ? lineReview.documents.filter(
-                  (document) => document.type === 'ISO'
+              ? documents.filter(
+                  (document) => document.type === DocumentType.ISO
                 )
               : uniqueDiscrepancyIsos;
           return (
@@ -120,11 +128,8 @@ const LineReview = () => {
 
               <div>
                 <b>MF:</b>{' '}
-                {getUniqueDocumentsByDiscrepancy(
-                  lineReview.documents,
-                  discrepancy.ids
-                )
-                  .filter((document) => document.type === 'PID')
+                {getUniqueDocumentsByDiscrepancy(documents, discrepancy.ids)
+                  .filter((document) => document.type === DocumentType.PID)
                   .map((document) => (
                     <>
                       <a //eslint-disable-line
@@ -132,7 +137,7 @@ const LineReview = () => {
                           return undefined;
                         }}
                       >
-                        {document.fileExternalId}
+                        {document.pdfExternalId}
                       </a>{' '}
                     </>
                   ))}
@@ -140,7 +145,7 @@ const LineReview = () => {
               <div>
                 <b>ISO:</b>{' '}
                 {usedDiscrepancyIsos
-                  .filter((document) => document.type === 'ISO')
+                  .filter((document) => document.type === DocumentType.ISO)
                   .map((document) => (
                     <>
                       <a //eslint-disable-line
@@ -148,7 +153,7 @@ const LineReview = () => {
                           return undefined;
                         }}
                       >
-                        {document.fileExternalId}
+                        {document.pdfExternalId}
                       </a>{' '}
                     </>
                   ))}
@@ -167,8 +172,12 @@ const LineReview = () => {
             <div>
               <Button
                 type="ghost"
-                icon="Document"
-                onClick={() => ornateRef?.onExport()}
+                icon="Print"
+                onClick={() =>
+                  ornateRef
+                    ? exportDocumentsToPdf(ornateRef, documents, discrepancies)
+                    : undefined
+                }
               />
             </div>
             <div>
@@ -182,13 +191,18 @@ const LineReview = () => {
       </Modal>
       <LineReviewHeader
         lineReview={lineReview}
-        ornateRef={ornateRef}
+        onSaveToPdfPress={() =>
+          ornateRef
+            ? exportDocumentsToPdf(ornateRef, documents, discrepancies)
+            : undefined
+        }
         onReportBackPress={onReportBackPress}
       />
       <LineReviewViewer
+        lineReview={lineReview}
         discrepancies={discrepancies}
         onDiscrepancyChange={setDiscrepancies}
-        lineReview={lineReview}
+        documents={documents}
         onOrnateRef={setOrnateRef}
       />
     </div>

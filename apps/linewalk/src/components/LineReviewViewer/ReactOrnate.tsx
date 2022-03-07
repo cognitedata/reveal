@@ -1,6 +1,11 @@
 import Konva from 'konva';
 import { useEffect, useRef, useState } from 'react';
-import { CogniteOrnate, OrnateTransformer, Drawing } from '@cognite/ornate';
+import {
+  CogniteOrnate,
+  OrnateTransformer,
+  Drawing,
+  getGroupById,
+} from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import isEqual from 'lodash/isEqual';
 
@@ -8,8 +13,11 @@ import useElementDescendantFocus from '../../utils/useElementDescendantFocus';
 
 export type Group = {
   id: string;
-  onClick: () => void;
+  groupId?: string;
+  type: 'group';
   drawings: Drawing[];
+  onClick?: () => void;
+  cached?: boolean;
 };
 
 export type ReactOrnateProps = {
@@ -17,19 +25,12 @@ export type ReactOrnateProps = {
     id: string;
     url: string;
     pageNumber: number;
-    annotations: {
-      id: string;
-      markup: {
-        type: 'line' | 'rect';
-        min: [number, number];
-        max: [number, number];
-      }[];
-    }[];
     row?: number;
     column?: number;
+    type: string;
+    name: string;
   }[];
-  groups?: Group[];
-  drawings?: Drawing[];
+  nodes?: (Group | Drawing)[];
   onAnnotationClick?: (nodes: any) => void;
   onOrnateRef?: (ref: CogniteOrnate | undefined) => void;
   renderWorkspaceTools?: (
@@ -43,74 +44,70 @@ export const SHAMEFUL_SLIDE_HEIGHT = 1617;
 export const SLIDE_COLUMN_GAP = 150;
 export const SLIDE_ROW_GAP = 300;
 
-const useSyncDrawings = (
+const useSyncNodes = (
   ornateRef: CogniteOrnate | undefined,
-  drawings: Drawing[] | undefined,
+  nodes: (Drawing | Group)[] | undefined,
   isInitialized: boolean
 ) => {
-  const [committedDrawings, setCommittedDrawings] = useState<Drawing[]>([]);
+  const [committedNodes, setCommittedNodes] = useState<(Group | Drawing)[]>([]);
 
   useEffect(() => {
     if (isInitialized && ornateRef) {
-      if (isEqual(drawings, committedDrawings)) {
+      if (isEqual(nodes, committedNodes)) {
         return;
       }
 
-      // Stupid version:
-      // If a drawing has changed, remove all old drawings and add everything again
-      committedDrawings.forEach((drawing) =>
-        drawing.id ? ornateRef.removeShapeById(drawing.id) : undefined
+      committedNodes.forEach((committedNode) =>
+        committedNode.id
+          ? ornateRef.removeShapeById(committedNode.id)
+          : undefined
       );
 
-      drawings?.forEach((drawing) => ornateRef.addDrawings(drawing));
-      setCommittedDrawings(drawings || []);
-    }
-  }, [drawings, isInitialized]);
-};
+      nodes?.forEach((node) => {
+        if (node.type === 'group') {
+          // Note: This is a bit icky for now as for groups we are handling
+          // the adding in ReactOrnate, but for the remainder of the drawings
+          // we are delegating the responsibility to Ornate. This is a smell
+          // but it's better to keep it in ReactOrnate than to do something
+          // premature about the APIs of Ornate.
+          const konvaGroup = new Konva.Group({
+            id: node.id,
+          });
 
-const useSyncGroups = (
-  ornateRef: CogniteOrnate | undefined,
-  groups: Group[] | undefined,
-  isInitialized: boolean
-) => {
-  const [committedGroups, setCommittedGroups] = useState<Group[]>([]);
+          const parent = node.groupId
+            ? getGroupById(node.groupId, ornateRef.stage)
+            : ornateRef.baseLayer;
 
-  useEffect(() => {
-    if (isInitialized && ornateRef) {
-      if (isEqual(groups, committedGroups)) {
-        return;
-      }
+          parent.add(konvaGroup);
 
-      committedGroups.forEach((group) =>
-        group.id ? ornateRef.removeShapeById(group.id) : undefined
-      );
+          if (node.onClick) {
+            konvaGroup.on('click', node.onClick);
+          }
 
-      groups?.forEach((group) => {
-        const konvaGroup = new Konva.Group({
-          id: group.id,
-        });
+          node.drawings.forEach((drawing) =>
+            ornateRef.addDrawings({
+              ...drawing,
+              groupId: node.id,
+            })
+          );
 
-        if (group.onClick) {
-          konvaGroup.on('click', group.onClick);
+          if (node.cached) {
+            konvaGroup.cache();
+          }
+
+          return;
         }
 
-        ornateRef.baseLayer.add(konvaGroup);
-        group.drawings.forEach((drawing) =>
-          ornateRef.addDrawings({
-            ...drawing,
-            groupId: group.id,
-          })
-        );
+        ornateRef.addDrawings(node);
       });
-      setCommittedGroups(groups || []);
+      setCommittedNodes(nodes || []);
     }
-  }, [groups, isInitialized]);
+  }, [nodes, isInitialized]);
 };
 
 const ReactOrnate = ({
   documents,
-  drawings,
-  groups,
+  nodes,
   onOrnateRef,
   renderWorkspaceTools,
 }: ReactOrnateProps) => {
@@ -122,8 +119,7 @@ const ReactOrnate = ({
   const [isInitialized, setIsInitialized] = useState(false);
   const { isFocused } = useElementDescendantFocus(containerRef);
 
-  useSyncDrawings(ornateViewer.current, drawings, isInitialized);
-  useSyncGroups(ornateViewer.current, groups, isInitialized);
+  useSyncNodes(ornateViewer.current, nodes, isInitialized);
 
   // Setup Ornate
   useEffect(() => {
@@ -163,9 +159,10 @@ const ReactOrnate = ({
               id,
               url,
               pageNumber,
-              annotations,
               row = 1,
               column = 1,
+              type,
+              name,
             }) => {
               // Do not add the same document twice
               if (
@@ -174,8 +171,10 @@ const ReactOrnate = ({
                 return;
               }
 
-              console.log('Adding doc', url);
-              const ornateDoc = await ornateRef?.addPDFDocument(
+              const x = (column - 1) * (SLIDE_WIDTH + SLIDE_COLUMN_GAP);
+              const y = (row - 1) * (SHAMEFUL_SLIDE_HEIGHT + SLIDE_ROW_GAP);
+
+              await ornateRef?.addPDFDocument(
                 url,
                 pageNumber,
                 {},
@@ -183,8 +182,8 @@ const ReactOrnate = ({
                   zoomAfterLoad: false,
                   initialPosition: {
                     // Use column and row to determine positioning
-                    x: (column - 1) * (SLIDE_WIDTH + SLIDE_COLUMN_GAP),
-                    y: (row - 1) * (SHAMEFUL_SLIDE_HEIGHT + SLIDE_ROW_GAP),
+                    x,
+                    y,
                   },
                   width: SLIDE_WIDTH,
                   height: SHAMEFUL_SLIDE_HEIGHT,
@@ -193,26 +192,47 @@ const ReactOrnate = ({
                 }
               );
 
-              ornateRef!.addAnnotationsToGroup(
-                ornateDoc,
-                annotations.flatMap((annotation) =>
-                  annotation.markup.map((m) => ({
-                    id: annotation.id,
-                    type: 'pct',
-                    width: m.max[0] - m.min[0],
-                    height: m.max[1] - m.min[1],
-                    x: m.min[0],
-                    y: m.min[1],
-                    stroke: 'transparent',
-                    strokeWidth: 2,
-                    fill: 'rgba(0, 0, 0, 0)',
-                    cornerRadius: 8,
-                    // onClick: (x) => {
-                    //   console.log(annotation, x);
-                    // },
-                  }))
-                )
-              );
+              const documentLabelGroup = new Konva.Group({
+                x,
+                y: 0,
+              });
+
+              // Note: The styling values here don't match the design since the
+              // values in the design don't transfer directly to Konva.
+              // Particularly fontSize and fontWeight.
+              const documentLabelType = new Konva.Text({
+                text: `${type.toUpperCase()} - `,
+                fontSize: 36,
+                fontFamily: 'Inter',
+                lineHeight: 1.4,
+                fill: 'rgba(0,0,0,0.45)',
+                x: 0,
+                y: 0,
+              });
+
+              const documentLabelTypeClientRect =
+                documentLabelType.getClientRect();
+
+              const documentLabelName = new Konva.Text({
+                text: name,
+                fontSize: 36,
+                fontStyle: 'bold',
+                fontFamily: 'Inter',
+                lineHeight: 1.4,
+                fill: 'rgba(0,0,0,0.45)',
+                x: documentLabelTypeClientRect.width,
+                y: 0,
+              });
+
+              documentLabelGroup.add(documentLabelType);
+              documentLabelGroup.add(documentLabelName);
+
+              const documentLabelGroupClientRect =
+                documentLabelGroup.getClientRect();
+
+              documentLabelGroup.y(y - documentLabelGroupClientRect.height);
+
+              ornateRef.baseLayer.add(documentLabelGroup);
             }
           )
         );

@@ -1,4 +1,4 @@
-import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
+import { CogniteOrnate } from '@cognite/ornate';
 import Konva from 'konva';
 
 import { Path, Point, Segment } from './types';
@@ -6,18 +6,16 @@ import { Path, Point, Segment } from './types';
 const getAnnotationDataById = (
   id: string,
   ornateViewer: CogniteOrnate
-): { document: OrnatePDFDocument; annotation: Konva.Node } => {
-  let annotation: any;
+): { document: Konva.Node; annotation: Konva.Node } => {
+  const annotation = ornateViewer.stage.findOne(`#${id}`);
 
-  const document = ornateViewer.documents.find((document) => {
-    annotation = document.group.children?.find(
-      (annotation) => annotation.attrs.id === id
-    ) as Konva.Node;
-    return annotation;
-  });
+  if (!annotation) {
+    throw new Error(`Unable to find annotation node with id: ${id}`);
+  }
 
-  if (!document || !annotation) {
-    throw new Error(`!!! Unable to find annotation: ${id}`);
+  const document = annotation.parent;
+  if (!document) {
+    throw new Error('Annotation had no parent');
   }
 
   return {
@@ -28,7 +26,7 @@ const getAnnotationDataById = (
 
 const getLineToDocumentSide = (
   annotation: Konva.Node,
-  document: OrnatePDFDocument,
+  document: Konva.Node,
   ornateViewer: CogniteOrnate,
   columnGap: number,
   rowGap: number
@@ -37,7 +35,7 @@ const getLineToDocumentSide = (
     relativeTo: ornateViewer.stage as any,
     skipStroke: true,
   });
-  const documentRect = document.group.getClientRect({
+  const documentRect = document.getClientRect({
     relativeTo: ornateViewer.stage as any,
     skipStroke: true,
   });
@@ -146,7 +144,6 @@ const buildMiddlePaths = ({
     )
     .flat()
     .filter((path) => path.length);
-  return [];
 };
 
 const findShortestMiddlePath = ({
@@ -163,15 +160,15 @@ const findShortestMiddlePath = ({
   ornateViewer: CogniteOrnate;
   columnGap: number;
   rowGap: number;
-  startDocument: OrnatePDFDocument;
-  endDocument: OrnatePDFDocument;
+  startDocument: Konva.Node;
+  endDocument: Konva.Node;
 }): Path => {
   const halfColumnGap = columnGap / 2;
   const halfRowGap = rowGap / 2;
 
   const edgePoints = [startDocument, endDocument]
     .map((document) => {
-      const d = document.group.getClientRect({
+      const d = document.getClientRect({
         relativeTo: ornateViewer.stage as any,
         skipStroke: true,
       });
@@ -257,7 +254,9 @@ export const getConnectionPath = ({
   const [
     { document: startDocument, annotation: startAnnotation },
     { document: endDocument, annotation: endAnnotation },
-  ] = annotationIds.map((id) => getAnnotationDataById(id, ornateViewer));
+  ] = annotationIds.map((annotationId) =>
+    getAnnotationDataById(annotationId, ornateViewer)
+  );
 
   startPath = startPath.concat(
     getLineToDocumentSide(

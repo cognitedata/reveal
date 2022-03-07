@@ -1,17 +1,23 @@
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
-import { AnnotationIcon, DrawingIcon } from 'components/CustomIcons';
+import { AnnotationIcon } from 'components/CustomIcons';
 import { WorkspaceTool } from 'components/LineReviewViewer/useWorkspaceTools';
+import Konva from 'konva';
 import { useState } from 'react';
+import isString from 'lodash/isString';
 
 import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
 import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
 
-enum NodeSelector {
-  ANNOTATIONS = '.annotation',
-  DRAWINGS = '.drawing',
+enum MenuLayer {
+  OPACITY = 'opacity',
 }
+
+const SelectorsByMenuLayers: Record<MenuLayer, any> = {
+  [MenuLayer.OPACITY]: (node: Konva.Node) =>
+    isString(node.id()) && node.id().startsWith('opacity'),
+};
 
 type WorkSpaceToolsProps = {
   tool: WorkspaceTool;
@@ -28,7 +34,7 @@ const DEFAULT_LAYER_STYLE = {
 };
 const HIDDEN_LAYER_STYLE = {
   filter: 'grayscale(1)',
-  opacity: 0.66,
+  opacity: 0.2,
 };
 
 const WorkSpaceTools = ({
@@ -47,27 +53,23 @@ const WorkSpaceTools = ({
   ornateRef,
   areKeyboardShortcutsEnabled,
 }: WorkSpaceToolsProps) => {
-  const [layerStatus, setLayerStatus] = useState<Record<NodeSelector, boolean>>(
-    {
-      [NodeSelector.ANNOTATIONS]: true,
-      [NodeSelector.DRAWINGS]: true,
-    }
-  );
+  const [layerStatus, setLayerStatus] = useState<Record<MenuLayer, boolean>>({
+    [MenuLayer.OPACITY]: true,
+  });
 
-  const onSetLayerVisibility = (
-    layerModifier: NodeSelector,
-    visible: boolean
-  ) => {
-    (ornateRef?.stage.find(layerModifier) ?? []).forEach((shape) => {
-      if (visible) {
-        shape.show();
-      } else {
-        shape.hide();
+  const onSetLayerVisibility = (layerModifier: MenuLayer, visible: boolean) => {
+    (ornateRef?.stage.find(SelectorsByMenuLayers[layerModifier]) ?? []).forEach(
+      (shape) => {
+        if (visible) {
+          shape.show();
+        } else {
+          shape.hide();
+        }
       }
-    });
+    );
   };
 
-  const onToggleLayer = (layer: NodeSelector) => {
+  const onToggleLayer = (layer: MenuLayer) => {
     onSetLayerVisibility(layer, !layerStatus[layer]);
     setLayerStatus((prev) => ({
       ...prev,
@@ -84,28 +86,16 @@ const WorkSpaceTools = ({
               <Menu>
                 <Menu.Header>Click to turn on / off</Menu.Header>
                 <Menu.Item
-                  onClick={() => onToggleLayer(NodeSelector.ANNOTATIONS)}
+                  onClick={() => onToggleLayer(MenuLayer.OPACITY)}
                   style={{
                     ...DEFAULT_LAYER_STYLE,
-                    ...(layerStatus[NodeSelector.ANNOTATIONS]
+                    ...(layerStatus[MenuLayer.OPACITY]
                       ? HIDDEN_LAYER_STYLE
                       : {}),
                   }}
                 >
                   <AnnotationIcon style={{ marginRight: 8 }} />
-                  lineReviews
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => onToggleLayer(NodeSelector.DRAWINGS)}
-                  style={{
-                    ...DEFAULT_LAYER_STYLE,
-                    ...(layerStatus[NodeSelector.DRAWINGS]
-                      ? HIDDEN_LAYER_STYLE
-                      : {}),
-                  }}
-                >
-                  <DrawingIcon style={{ marginRight: 8 }} />
-                  Drawings
+                  Masking
                 </Menu.Item>
               </Menu>
             }

@@ -55,6 +55,7 @@ const getConnectionGroupByPath = (
 
   const group: Group = {
     id: pathId,
+    type: 'group',
     onClick: () => {
       onSelect(pathId);
     },

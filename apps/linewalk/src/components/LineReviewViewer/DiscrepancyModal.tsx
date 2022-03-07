@@ -1,22 +1,21 @@
-import { Button, Icon, Modal, TextInput } from '@cognite/cogs.js';
+import { Button, Icon, TextInput } from '@cognite/cogs.js';
 import React from 'react';
 
+import PopupModal from './PopupModal';
 import { Discrepancy } from './LineReviewViewer';
 
 type Props = {
-  isOpen: boolean;
+  initialPosition: { x: number; y: number };
   initialDiscrepancy: Discrepancy;
   onSave: (discrepancy: Discrepancy) => void;
   onDeletePress: () => void;
-  onClosePress: () => void;
 };
 
 const DiscrepancyModal: React.FC<Props> = ({
-  isOpen,
+  initialPosition,
   initialDiscrepancy,
   onDeletePress,
   onSave,
-  onClosePress,
 }) => {
   const [comment, setComment] = React.useState(initialDiscrepancy.comment);
 
@@ -28,7 +27,10 @@ const DiscrepancyModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal visible={isOpen} onCancel={onClosePress} footer={null}>
+    <PopupModal
+      key={`${initialPosition.x}_${initialPosition.y}`}
+      initialDimensions={initialPosition}
+    >
       <h2>
         <Icon type="ExclamationMark" />
         Mark discrepancy
@@ -54,7 +56,7 @@ const DiscrepancyModal: React.FC<Props> = ({
           Save for validation
         </Button>
       </div>
-    </Modal>
+    </PopupModal>
   );
 };
 
