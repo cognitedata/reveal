@@ -148,6 +148,7 @@ export const makeSelectJobStatusForFile = () =>
         if (
           [
             VisionDetectionModelType.ObjectDetection,
+            VisionDetectionModelType.GaugeReader,
             VisionDetectionModelType.CustomModel,
           ].includes(job.type)
         ) {

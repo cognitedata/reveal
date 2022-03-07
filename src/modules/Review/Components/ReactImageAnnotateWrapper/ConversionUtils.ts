@@ -143,9 +143,10 @@ const convertToRegion = (annotation: VisibleAnnotation): Region => {
     visible: true,
     editingLabels: annotation.selected,
     tags: [annotation.text],
-    // HACK: treat custommodels as object detections
+    // HACK: treat gauge reader and custom models as object detections
     source:
-      annotation.annotationType === 'vision/custommodel'
+      annotation.annotationType === 'vision/custommodel' ||
+      annotation.annotationType === 'vision/gaugereader'
         ? 'vision/objectdetection'
         : annotation.annotationType,
     status: annotation.status as unknown as RegionStatus,

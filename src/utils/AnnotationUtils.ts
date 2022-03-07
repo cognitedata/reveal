@@ -364,6 +364,7 @@ export const getAnnotationsBadgeCounts = (annotations: VisionAnnotation[]) => {
         [
           VisionDetectionModelType.ObjectDetection,
           VisionDetectionModelType.CustomModel,
+          VisionDetectionModelType.GaugeReader,
         ].includes(item.modelType) && item.label !== 'person'
     );
     annotationsBadgeProps.objects = objects.length;
