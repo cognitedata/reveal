@@ -3,6 +3,7 @@ import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
+  ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
 } from 'src/api/annotation/types';
 
@@ -190,6 +191,30 @@ export function convertImageAssetLinkListToAnnotationTypeV1(
       },
     };
   });
+
+  return annotations;
+}
+
+export function convertImageKeypointCollectionToAnnotationTypeV1(
+  imageKeypointCollection: ImageKeypointCollection
+) {
+  const annotations = {
+    text: imageKeypointCollection.label,
+    data: {
+      keypoint: true,
+      confidence: imageKeypointCollection.confidence,
+      keypoints: imageKeypointCollection.keypoints.map((item, index) => {
+        return {
+          caption: item.label,
+          order: (index + 1).toString(), // annotation library (react-image-annotate) has 1-based indexing
+        };
+      }),
+    },
+    region: {
+      shape: 'points',
+      vertices: imageKeypointCollection.keypoints.map((item) => item.point),
+    },
+  };
 
   return annotations;
 }
