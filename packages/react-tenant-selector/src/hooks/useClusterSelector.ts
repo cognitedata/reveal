@@ -8,6 +8,12 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     return `${hostname}:3000`;
   }
 
+  if (sections.length === 2) {
+    // eg: cogniteapp.com
+    const [domain, tld] = sections;
+    return [cluster, domain, tld].join('.');
+  }
+
   if (sections.length === 3) {
     // eg: foo.cogniteapp.com
     const [app, domain, tld] = sections;

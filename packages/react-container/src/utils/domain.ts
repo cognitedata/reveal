@@ -10,6 +10,12 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     return `${hostname}:${process.env.PORT || window.location.port || 3000}`;
   }
 
+  if (sections.length === 2) {
+    // eg: cogniteapp.com
+    const [domain, tld] = sections;
+    return joinDomainArray([cluster, domain, tld]);
+  }
+
   if (sections.length === 3) {
     // eg: foo.cogniteapp.com
     const [app, domain, tld] = sections;
