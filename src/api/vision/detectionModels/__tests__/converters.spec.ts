@@ -213,7 +213,7 @@ describe('Test converts for internal types -> Annotation V1 types', () => {
     expect(
       convertImageClassificationToAnnotationTypeV1(visionJobAnnotation)
     ).toStrictEqual({
-      confidence: visionJobAnnotation.confidence,
+      data: { confidence: visionJobAnnotation.confidence },
       text: visionJobAnnotation.label,
     });
   });
