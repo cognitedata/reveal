@@ -1,4 +1,4 @@
-import { Rect, DiagramInstanceWithPaths } from '../types';
+import { Rect, DiagramInstanceWithPaths, SvgRepresentation } from '../types';
 import { PidDocument, PidPath } from '../pid';
 import {
   getClosestPointOnSegments,
@@ -7,34 +7,16 @@ import {
   Point,
 } from '../geometry';
 
-import { calculatePidPathsBoundingBox } from './utils';
+import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 
 export class PidGroup {
   pidPaths: PidPath[];
   boundingBox: Rect;
   midPoint: Point;
-  isLine: boolean;
-  id: string;
-  constructor(pidPaths: PidPath[], isLine: boolean, id: string) {
+  constructor(pidPaths: PidPath[]) {
     this.pidPaths = pidPaths;
-    this.isLine = isLine;
     this.boundingBox = calculatePidPathsBoundingBox(pidPaths);
     this.midPoint = Point.midPointFromBoundingBox(this.boundingBox);
-    this.id = id;
-  }
-
-  static fromDiagramInstance(
-    pidDocument: PidDocument,
-    diagramInstance: DiagramInstanceWithPaths
-  ) {
-    const pidPaths = diagramInstance.pathIds.map(
-      (pathId) => pidDocument.getPidPathById(pathId)!
-    );
-    return new PidGroup(
-      pidPaths,
-      diagramInstance.type === 'Line',
-      diagramInstance.id
-    );
   }
 
   getPathSegments(): PathSegment[] {
@@ -43,8 +25,8 @@ export class PidGroup {
     return allPathSegments;
   }
 
-  distance(other: PidGroup | Point): number {
-    if (other instanceof PidGroup) {
+  distance(other: PidInstance | Point): number {
+    if (other instanceof PidInstance) {
       const closestPoints = getClosestPointsOnSegments(
         this.getPathSegments(),
         other.getPathSegments()
@@ -66,7 +48,7 @@ export class PidGroup {
     return Infinity;
   }
 
-  isClose(other: PidGroup, threshold = 2): boolean {
+  isClose(other: PidInstance, threshold = 2): boolean {
     const efficientIsTooFarAway = () => {
       // Checks if the bounding boxes is farther away than `threshold`.
       // This method can return false even though `this` and `other` is farther
@@ -85,5 +67,36 @@ export class PidGroup {
     if (efficientIsTooFarAway()) return false;
 
     return this.distance(other) < threshold;
+  }
+
+  createSvgRepresentation(
+    normalized: boolean,
+    toFixed: number | null = null
+  ): SvgRepresentation {
+    return createSvgRepresentation(this.pidPaths, normalized, toFixed);
+  }
+}
+
+export class PidInstance extends PidGroup {
+  isLine: boolean;
+  id: string;
+  constructor(pidPaths: PidPath[], isLine: boolean, id: string) {
+    super(pidPaths);
+    this.isLine = isLine;
+    this.id = id;
+  }
+
+  static fromDiagramInstance(
+    pidDocument: PidDocument,
+    diagramInstance: DiagramInstanceWithPaths
+  ) {
+    const pidPaths = diagramInstance.pathIds.map(
+      (pathId) => pidDocument.getPidPathById(pathId)!
+    );
+    return new PidInstance(
+      pidPaths,
+      diagramInstance.type === 'Line',
+      diagramInstance.id
+    );
   }
 }

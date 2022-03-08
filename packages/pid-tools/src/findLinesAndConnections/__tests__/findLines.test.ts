@@ -27,6 +27,8 @@ export const createSymbols = (pathIds: string[]) => {
         type: 'Instrument',
         symbolId: 'symbolId',
         id: getDiagramInstanceIdFromPathIds([pathId]),
+        scale: 1,
+        rotation: 0,
         pathIds: [pathId],
         labelIds: [],
         lineNumbers: [],

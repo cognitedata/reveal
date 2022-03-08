@@ -1,7 +1,8 @@
 /* eslint-disable no-continue */
-import { angleDifference, approxeq } from '../geometry';
+import { approxeq, Point, angleDifference } from '../geometry';
 import { PidPath } from '../pid/PidPath';
 import { PathSegment } from '../geometry/PathSegment';
+import { SvgRepresentation } from '../types';
 
 import { svgCommandsToSegments } from './svgPathParser';
 
@@ -77,10 +78,10 @@ export interface InstanceMatch {
 }
 
 export class InstanceMatcher {
-  segmentList: PathSegment[];
+  pathSegments: PathSegment[];
   maxMidPointDistance: number;
   constructor(segmentList: PathSegment[]) {
-    this.segmentList = segmentList;
+    this.pathSegments = segmentList;
     this.maxMidPointDistance = getMaxMidPointDistance(segmentList);
   }
 
@@ -88,27 +89,70 @@ export class InstanceMatcher {
     return new InstanceMatcher(svgCommandsToSegments(pathCommand));
   }
 
-  matches(other: PidPath[]): InstanceMatch {
-    const otherPathSegments: PathSegment[] = [];
-    other.forEach((svgPath) => {
-      otherPathSegments.push(...svgPath.segmentList);
+  static fromSvgRepresentation(svgRepresentation: SvgRepresentation) {
+    const joinedSymbolSvgCommands = svgRepresentation.svgPaths
+      .map((svgPath) => svgPath.svgCommands)
+      .join(' ');
+    return InstanceMatcher.fromPathCommand(joinedSymbolSvgCommands);
+  }
+
+  rotate(
+    degAngle: number,
+    pivotPoint: Point | undefined = undefined
+  ): InstanceMatcher {
+    return new InstanceMatcher(
+      this.pathSegments.map((pathSegment) =>
+        pathSegment.rotate(degAngle, pivotPoint)
+      )
+    );
+  }
+
+  getUniqueRotations(
+    rotations: number[]
+  ): { matcher: InstanceMatcher; rotation: number }[] {
+    const uniqueRotations: { matcher: InstanceMatcher; rotation: number }[] =
+      [];
+
+    rotations.forEach((rotation) => {
+      const matcher = this.rotate(rotation);
+      if (
+        !uniqueRotations.some(
+          (ur) => ur.matcher.matches(matcher).match === MatchResult.Match
+        )
+      ) {
+        uniqueRotations.push({ matcher, rotation });
+      }
     });
 
-    if (this.segmentList.length < otherPathSegments.length) {
+    return uniqueRotations;
+  }
+
+  matches(other: PidPath[] | InstanceMatcher): InstanceMatch {
+    if (other instanceof InstanceMatcher) {
+      return this.internal_matches(other.pathSegments);
+    }
+
+    return this.internal_matches(
+      other.flatMap((pidPath) => pidPath.segmentList)
+    );
+  }
+
+  private internal_matches(otherPathSegments: PathSegment[]): InstanceMatch {
+    if (this.pathSegments.length < otherPathSegments.length) {
       return { match: MatchResult.NotMatch };
     }
 
     const potMatchIndex = getMaxLengthIndex(otherPathSegments);
     const potMatchReference = otherPathSegments[potMatchIndex];
-    for (let i = 0; i < this.segmentList.length; i++) {
+    for (let i = 0; i < this.pathSegments.length; i++) {
       const scaleIfSimilar = getScaleIfSimilar(
         potMatchReference,
-        this.segmentList[i]
+        this.pathSegments[i]
       );
       if (!scaleIsWithinThreshold(scaleIfSimilar)) continue;
 
       const matchResult = getMatchResultWithReferences(
-        this.segmentList,
+        this.pathSegments,
         i,
         otherPathSegments,
         potMatchIndex

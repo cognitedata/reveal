@@ -27,12 +27,21 @@ const useSymbolState = (
     const shouldLoadFromStorage =
       hasDocumentLoaded && pidDocument !== undefined;
     if (shouldLoadFromStorage) {
-      const loadedSymbols = ParserStorage.symbols.load(documentType);
-      pidRef?.setSymbols(loadedSymbols);
-      pidRef?.setSymbolInstances(
-        computeSymbolInstances(loadedSymbols, pidDocument)
-      );
-      setHasLegendBeenLoaded(true);
+      try {
+        const loadedSymbols = ParserStorage.symbols.load(documentType);
+        const computedSymbolInstances = computeSymbolInstances(
+          loadedSymbols,
+          pidDocument
+        );
+        pidRef?.setSymbols(loadedSymbols);
+        pidRef?.setSymbolInstances(computedSymbolInstances);
+        setHasLegendBeenLoaded(true);
+      } catch (error) {
+        // If we can't parse the current symbol format - reset it
+        ParserStorage.symbols.save(documentType, []);
+        // eslint-disable-next-line no-console
+        console.log(`Resetting local storage symbols due to error: ${error}`);
+      }
     }
   }, [hasDocumentLoaded]);
 

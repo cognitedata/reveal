@@ -46,6 +46,7 @@ export abstract class PathSegment {
     translatePoint: Point,
     scale: number | Point
   ): PathSegment;
+  abstract rotate(degAngle: number, pivotPoint: Point | undefined): PathSegment;
 
   getTranslationAndScaleDistance(
     thisOrigin: Point,
@@ -254,6 +255,13 @@ export class LineSegment extends PathSegment {
     );
   }
 
+  rotate(degAngle: number, pivotPoint: Point | undefined): LineSegment {
+    return new LineSegment(
+      this.start.rotate(degAngle, pivotPoint),
+      this.stop.rotate(degAngle, pivotPoint)
+    );
+  }
+
   distanceWithLineJump(
     other: LineSegment,
     edgeThreshold = 0.05,
@@ -369,6 +377,15 @@ export class CurveSegment extends PathSegment {
       this.controlPoint2.translateAndScale(translatePoint, scale),
       this.start.translateAndScale(translatePoint, scale),
       this.stop.translateAndScale(translatePoint, scale)
+    );
+  }
+
+  rotate(degAngle: number, pivotPoint: Point | undefined): CurveSegment {
+    return new CurveSegment(
+      this.controlPoint1.rotate(degAngle, pivotPoint),
+      this.controlPoint2.rotate(degAngle, pivotPoint),
+      this.start.rotate(degAngle, pivotPoint),
+      this.stop.rotate(degAngle, pivotPoint)
     );
   }
 }

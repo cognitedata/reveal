@@ -2,7 +2,7 @@ import { getFileNameWithoutExtension } from '@cognite/pid-tools';
 import isMatch from 'lodash/isMatch';
 
 import {
-  FileConnectionInstance,
+  PidFileConnectionInstance,
   GraphDocument,
   DocumentType,
   LineConnectionInstance,
@@ -14,7 +14,7 @@ import { DocumentLink, AnnotationId } from './types';
 import { getExtId } from './utils';
 
 export const findPidLink = (
-  fileConnection: FileConnectionInstance,
+  fileConnection: PidFileConnectionInstance,
   document: GraphDocument,
   documents: GraphDocument[],
   version: string

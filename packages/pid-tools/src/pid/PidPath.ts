@@ -58,6 +58,16 @@ export class PidPath {
     );
   }
 
+  rotate(degAngle: number, pivotPoint: Point | undefined): PidPath {
+    return new PidPath(
+      this.segmentList.map((pathSegment) =>
+        pathSegment.rotate(degAngle, pivotPoint)
+      ),
+      this.pathId,
+      this.style
+    );
+  }
+
   static fromSVGElement(svgElement: SVGPathElement, mainSVG: SVGSVGElement) {
     const { strokeLinejoin, stroke, fill } = svgElement.style;
     return new PidPath(

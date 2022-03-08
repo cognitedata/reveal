@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { readFileSync } from 'fs';
 import path from 'path';
 
@@ -9,6 +10,7 @@ import {
   DiagramSymbolInstance,
 } from '../../types';
 import { getNoneOverlappingSymbolInstances } from '../../utils/diagramInstanceUtils';
+import { GraphDocument } from '../..';
 
 interface Graph {
   symbols: DiagramSymbol[];
@@ -26,9 +28,15 @@ const loadPidDocumentAndGraph = (
   );
 
   const rawdata = readFileSync(path.resolve(__dirname, graphPath));
-  const isoGraph = JSON.parse(rawdata.toString());
+  const graph = JSON.parse(rawdata.toString()) as GraphDocument;
 
-  return [pidDocument, isoGraph];
+  if (graph.pathReplacements) {
+    graph.pathReplacements.forEach((pr) => {
+      pidDocument.applyPathReplacement(pr);
+    });
+  }
+
+  return [pidDocument, graph];
 };
 
 const checkIfAllSymbolInstancesIsAMatch = (
@@ -42,7 +50,7 @@ const checkIfAllSymbolInstancesIsAMatch = (
     ) as DiagramSymbol;
 
     const matcher = InstanceMatcher.fromPathCommand(
-      correspondingSymbol.svgRepresentations[0].svgPaths
+      correspondingSymbol.svgRepresentation.svgPaths
         .map((svgPath) => svgPath.svgCommands)
         .join(' ')
     );
@@ -52,11 +60,13 @@ const checkIfAllSymbolInstancesIsAMatch = (
     );
 
     // Check if the symbol and symbol instance have the same number of path segments
-    expect(
-      pidPaths.map((p) => p.segmentList.length).reduce((a, b) => a + b)
-    ).toBe(matcher.segmentList.length);
+    expect(pidPaths.flatMap((p) => p.segmentList).length).toBe(
+      matcher.pathSegments.length
+    );
 
-    const matchResult = matcher.matches(pidPaths);
+    const matchResult = matcher
+      .rotate(symbolInstance.rotation)
+      .matches(pidPaths);
     expect(matchResult.match).toBe(MatchResult.Match);
   });
 };
@@ -83,6 +93,14 @@ const checkFindAllInstancesOfSymbol = (
     const expectedSymbolInstances = symbolInstances.filter(
       (symbolInstance) => symbolInstance.symbolId === symbol.id
     );
+
+    if (foundSymbolInstances.length !== expectedSymbolInstances.length) {
+      console.log('Not correct', {
+        symbol,
+        foundSymbolInstances,
+        expectedSymbolInstances,
+      });
+    }
 
     expect(foundSymbolInstances.length).toBe(expectedSymbolInstances.length);
   });

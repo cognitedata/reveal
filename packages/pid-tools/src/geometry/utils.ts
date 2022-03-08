@@ -217,3 +217,8 @@ export const getClosestPointOnSegments = (
 
   return closestPointWithIndex;
 };
+
+export const degToRad = (deg: number): number => {
+  const pi = Math.PI;
+  return deg * (pi / 180);
+};

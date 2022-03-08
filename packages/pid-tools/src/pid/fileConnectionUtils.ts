@@ -1,4 +1,3 @@
-import { isHorizontalOrientaiton, isVerticalOrientaiton } from '../utils/type';
 import {
   angleDifference,
   approxeq,
@@ -6,7 +5,7 @@ import {
   LineSegment,
   Point,
 } from '../geometry';
-import { FileConnectionInstance, Rect, FileDirection } from '../types';
+import { PidFileConnectionInstance, Rect, FileDirection } from '../types';
 
 import { PidDocument } from './PidDocument';
 import { PidTspan } from './PidTspan';
@@ -72,10 +71,19 @@ const getBestFitLabel = (
   return closestLabel;
 };
 
+const isHorizontalDirection = (direction: number): boolean =>
+  approxeq(angleDifference(direction, 0, 'uniDirected'), 10);
+
+const isVerticalDirection = (direction: number): boolean =>
+  approxeq(angleDifference(direction, 90, 'uniDirected'), 10);
+
+const isUp = (direction: number): boolean => approxeq(direction, 90, 10);
+const isLeft = (direction: number): boolean => approxeq(direction, 180, 10);
+
 export const getFileConnectionsWithPosition = (
   pidDocument: PidDocument,
-  fileConnections: FileConnectionInstance[]
-): FileConnectionInstance[] => {
+  fileConnections: PidFileConnectionInstance[]
+): PidFileConnectionInstance[] => {
   const leftColumnThreshold = 0.1;
   const leftFileConnectionThreshold = 0.2;
   const rightColumnThreshold = 0.9;
@@ -117,7 +125,7 @@ export const getFileConnectionsWithPosition = (
     if (
       isOnLeftSide &&
       leftColumnLabels.length > 0 &&
-      isHorizontalOrientaiton(fileConnection.orientation)
+      isHorizontalDirection(fileConnection.direction)
     ) {
       const closestLeftLabel = getBestFitLabel(
         normalizedBoundingBox,
@@ -128,16 +136,12 @@ export const getFileConnectionsWithPosition = (
         return { ...fileConnection, fileDirection: 'Unknown' };
 
       let fileDirection: FileDirection;
-      switch (fileConnection.orientation) {
-        case 'Left':
-          fileDirection = 'Out';
-          break;
-        case 'Right':
-          fileDirection = 'In';
-          break;
-        case 'Left & Right':
-          fileDirection = 'Unidirectional';
-          break;
+      if (fileConnection.type === 'Bypass connection') {
+        fileDirection = 'Unidirectional';
+      } else if (isLeft(fileConnection.direction)) {
+        fileDirection = 'Out';
+      } else {
+        fileDirection = 'In';
       }
       return {
         ...fileConnection,
@@ -152,7 +156,7 @@ export const getFileConnectionsWithPosition = (
     if (
       isOnRightSide &&
       rightColumnLabels.length > 0 &&
-      isHorizontalOrientaiton(fileConnection.orientation)
+      isHorizontalDirection(fileConnection.direction)
     ) {
       const closestRightLabel = getBestFitLabel(
         normalizedBoundingBox,
@@ -163,16 +167,12 @@ export const getFileConnectionsWithPosition = (
         return { ...fileConnection, fileDirection: 'Unknown' };
 
       let fileDirection: FileDirection;
-      switch (fileConnection.orientation) {
-        case 'Left':
-          fileDirection = 'In';
-          break;
-        case 'Right':
-          fileDirection = 'Out';
-          break;
-        case 'Left & Right':
-          fileDirection = 'Unidirectional';
-          break;
+      if (fileConnection.type === 'Bypass connection') {
+        fileDirection = 'Unidirectional';
+      } else if (isLeft(fileConnection.direction)) {
+        fileDirection = 'In';
+      } else {
+        fileDirection = 'Out';
       }
 
       return {
@@ -187,7 +187,7 @@ export const getFileConnectionsWithPosition = (
     if (
       isAtTop &&
       topColumnLabels.length > 0 &&
-      isVerticalOrientaiton(fileConnection.orientation)
+      isVerticalDirection(fileConnection.direction)
     ) {
       const closestTopLabel = getBestFitLabel(
         normalizedBoundingBox,
@@ -198,16 +198,12 @@ export const getFileConnectionsWithPosition = (
         return { ...fileConnection, fileDirection: 'Unknown' };
 
       let fileDirection: FileDirection;
-      switch (fileConnection.orientation) {
-        case 'Up':
-          fileDirection = 'Out';
-          break;
-        case 'Down':
-          fileDirection = 'In';
-          break;
-        case 'Up & Down':
-          fileDirection = 'Unidirectional';
-          break;
+      if (fileConnection.type === 'Bypass connection') {
+        fileDirection = 'Unidirectional';
+      } else if (isUp(fileConnection.direction)) {
+        fileDirection = 'Out';
+      } else {
+        fileDirection = 'In';
       }
 
       return {

@@ -1,5 +1,7 @@
 import { Rect } from '../types';
 
+import { degToRad } from './utils';
+
 export class Point {
   x: number;
   y: number;
@@ -56,6 +58,34 @@ export class Point {
     }
     const newX = scaleX * (this.x - translatePoint.x);
     const newY = scaleY * (this.y - translatePoint.y);
+    return new Point(newX, newY);
+  }
+
+  rotate(degAngle: number, pivotPoint: Point | undefined = undefined): Point {
+    // based on: https://stackoverflow.com/a/2259502
+
+    const radAngle = degToRad(degAngle);
+    const s = Math.sin(radAngle);
+    const c = Math.cos(radAngle);
+
+    if (pivotPoint === undefined) {
+      // Rotate around origo
+      const newX = this.x * c - this.y * s;
+      const newY = this.x * s + this.y * c;
+      return new Point(newX, newY);
+    }
+
+    // translate as if pivot point is origin
+    const translatedX = this.x - pivotPoint.x;
+    const translatedY = this.y - pivotPoint.y;
+
+    // rotate point
+    const rotatedX = translatedX * c - translatedY * s;
+    const rotatedY = translatedX * s + translatedY * c;
+
+    // translate point back
+    const newX = rotatedX + pivotPoint.x;
+    const newY = rotatedY + pivotPoint.y;
     return new Point(newX, newY);
   }
 

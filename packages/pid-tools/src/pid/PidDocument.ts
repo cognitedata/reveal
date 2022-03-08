@@ -9,7 +9,7 @@ import {
   SvgRepresentation,
   DiagramSymbolInstance,
   DocumentType,
-  FileConnectionInstance,
+  PidFileConnectionInstance,
   DiagramInstanceId,
   PathReplacement,
   DiagramInstanceWithPaths,
@@ -27,7 +27,7 @@ import { traverse } from '../graph/traversal';
 import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
 import { PidPath } from './PidPath';
-import { PidGroup } from './PidGroup';
+import { PidGroup, PidInstance } from './PidGroup';
 import { getFileConnectionsWithPosition } from './fileConnectionUtils';
 
 export type LabelInstanceConnection = {
@@ -159,8 +159,8 @@ export class PidDocument {
   }
 
   getFileConnectionsWithPosition(
-    fileConnections: FileConnectionInstance[]
-  ): FileConnectionInstance[] {
+    fileConnections: PidFileConnectionInstance[]
+  ): PidFileConnectionInstance[] {
     return getFileConnectionsWithPosition(this, fileConnections);
   }
 
@@ -199,8 +199,8 @@ export class PidDocument {
 
     const labelInstanceConnections: LabelInstanceConnection[] = [];
 
-    const instanceGroup = instances.map((instance) =>
-      PidGroup.fromDiagramInstance(this, instance)
+    const instanceGroups = instances.map((instance) =>
+      PidInstance.fromDiagramInstance(this, instance)
     );
 
     const labelThreshold =
@@ -214,14 +214,14 @@ export class PidDocument {
       const isNotExcludedInstanceLabelConnection = ({
         instanceGroup,
       }: {
-        instanceGroup: PidGroup;
+        instanceGroup: PidInstance;
       }) =>
         !excludedLabelConnections.some(
           ([instance, labelId]) =>
             pidLabel.id === labelId && instance.id === instanceGroup.id
         );
 
-      const filteredInstanceGroups = instanceGroup
+      const filteredInstanceGroups = instanceGroups
         .map((instanceGroup) => ({
           instanceGroup,
           distance: instanceGroup.distance(labelMidPoint),
@@ -299,6 +299,21 @@ export class PidDocument {
       });
 
     return { newSymbolInstances: symbolInstances, newLines: lines };
+  }
+
+  getPidGroup(pathIds: string[]): PidGroup {
+    const pidPaths: PidPath[] = [];
+    pathIds.forEach((pathId) => {
+      const pidPath = this.getPidPathById(pathId);
+      if (!pidPath) {
+        throw new Error(
+          `Trying to get path with id ${pidPath} that does not exist in pidDocument`
+        );
+      }
+      pidPaths.push(pidPath);
+    });
+
+    return new PidGroup(pidPaths);
   }
 
   getBoundingBoxToPaths(pathIds: string[]): Rect {

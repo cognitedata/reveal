@@ -1,10 +1,9 @@
 import { LineSegment, PathSegment } from 'geometry';
 
-import { verticalOrientations, horizontalOrientations } from '../constants';
 import {
   DiagramLineInstance,
   DiagramType,
-  FileConnectionInstance,
+  PidFileConnectionInstance,
   PidDocumentMetadata,
   IsoDocumentMetadata,
   DocumentType,
@@ -12,14 +11,11 @@ import {
   DiagramEquipmentInstance,
   DiagramInstanceWithPaths,
   LineConnectionInstance,
-  HorizontalOrientation,
-  VerticalOrientation,
-  Orientation,
 } from '../types';
 
 export const isFileConnection = (
   diagramInstance: any
-): diagramInstance is FileConnectionInstance => {
+): diagramInstance is PidFileConnectionInstance => {
   const fileConnection: DiagramType = 'File connection';
   return diagramInstance.type === fileConnection;
 };
@@ -55,20 +51,8 @@ export const isIso = (
   return documentMetadata.type === DocumentType.isometric;
 };
 
-export const isHorizontalOrientaiton = (
-  orientation: Orientation
-): orientation is HorizontalOrientation => {
-  return horizontalOrientations.some((horOr) => horOr === orientation);
-};
-
-export const isVerticalOrientaiton = (
-  orientation: Orientation
-): orientation is VerticalOrientation => {
-  return verticalOrientations.some((verOr) => verOr === orientation);
-};
-
 export const isLineSegment = (
   pathSegment: PathSegment
 ): pathSegment is LineSegment => {
-  return pathSegment.pathType === 'LineSegment';
+  return pathSegment && pathSegment.pathType === 'LineSegment';
 };

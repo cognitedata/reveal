@@ -1,5 +1,5 @@
 import {
-  FileConnectionInstance,
+  PidFileConnectionInstance,
   GraphDocument,
   LineConnectionInstance,
 } from '../../types';
@@ -18,7 +18,7 @@ test('should find the matching file connection in pid26', async () => {
     toPosition: 'A1',
     id: 'path1',
     pathIds: ['path1'],
-  } as unknown as FileConnectionInstance;
+  } as unknown as PidFileConnectionInstance;
 
   const expectedLink: DocumentLink = {
     from: {
@@ -48,7 +48,7 @@ test('should not find file connection with document number 27 in pid26', async (
     toPosition: 'A1',
     id: 'path1',
     pathIds: ['path1'],
-  } as unknown as FileConnectionInstance;
+  } as unknown as PidFileConnectionInstance;
 
   const link = findPidLink(
     fileConnection,
@@ -66,6 +66,8 @@ test('find correct SAME iso link', async () => {
     symbolId: 's1',
     letterIndex: 'A',
     pointsToFileName: 'SAME',
+    scale: 1,
+    rotation: 0,
     pathIds: ['path1'],
     id: 'path1',
     labelIds: [],
@@ -100,6 +102,8 @@ test('find correct external iso link with same id', async () => {
     pointsToFileName: 'L1-2',
     pathIds: ['path3'],
     id: 'path3',
+    scale: 1,
+    rotation: 0,
     labelIds: [],
     lineNumbers: [],
     inferedLineNumbers: [],

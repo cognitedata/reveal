@@ -9,8 +9,9 @@ import {
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
 import { Collapse, Icon } from '@cognite/cogs.js';
+import uniqBy from 'lodash/uniqBy';
 
-import { getInstancesBySymbolId, getInstanceCount } from './utils';
+import { getInstancesBySymbolId } from './utils';
 import { CollapsableSymbolHeader } from './CollapsableSymbolHeader';
 import { EquipmentTagPanel } from './EquipmentTagPanel';
 import { Pre } from './elements';
@@ -82,11 +83,13 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
       symbolInstances: DiagramSymbolInstance[]
     ) => {
       return symbols.map((symbol) => {
+        const symInstances = getInstancesBySymbolId(symbolInstances, symbol.id);
         return (
           <Collapse.Panel
             header={CollapsableSymbolHeader({
               symbol,
-              symbolInstanceCount: getInstanceCount(symbolInstances, symbol),
+              symbolInstanceCount: symInstances.length,
+              foundRotations: uniqBy(symInstances, (si) => si.rotation).length,
               deleteSymbol,
             })}
             key={symbol.id}

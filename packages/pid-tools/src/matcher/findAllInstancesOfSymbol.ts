@@ -1,12 +1,7 @@
 /* eslint-disable no-continue */
 import { getDiagramInstanceIdFromPathIds, isFileConnection } from '../utils';
 import { PidDocument, PidPath } from '../pid';
-import {
-  DiagramSymbol,
-  SvgRepresentation,
-  DiagramSymbolInstance,
-  FileConnectionInstance,
-} from '../types';
+import { DiagramSymbol, DiagramSymbolInstance } from '../types';
 
 import { InstanceMatch, InstanceMatcher, MatchResult } from './InstanceMatcher';
 
@@ -14,53 +9,51 @@ export const findAllInstancesOfSymbol = (
   pidDocument: PidDocument,
   symbol: DiagramSymbol
 ): DiagramSymbolInstance[] => {
-  const symbolInstances: DiagramSymbolInstance[] = [];
+  const foundSymbolInstances: DiagramSymbolInstance[] = [];
   const { pidPaths } = pidDocument;
 
+  const instanceMatcher = InstanceMatcher.fromSvgRepresentation(
+    symbol.svgRepresentation
+  );
+
+  const matcherWithRotations = instanceMatcher.getUniqueRotations([
+    0, 90, 180, 270,
+  ]);
+
   for (
-    let svgRepIndex = 0;
-    svgRepIndex < symbol.svgRepresentations.length;
-    svgRepIndex++
+    let rotationIndex = 0;
+    rotationIndex < matcherWithRotations.length;
+    rotationIndex++
   ) {
-    const matches = findAllInstancesOfSvgRepresentation(
-      pidPaths,
-      symbol.svgRepresentations[svgRepIndex]
-    );
+    const { matcher, rotation } = matcherWithRotations[rotationIndex];
+    const matches = findAllInstancesOfMatcher(matcher, pidPaths);
 
     matches.forEach((match) => {
-      if (symbol.symbolType === 'File connection') {
-        symbolInstances.push({
-          type: symbol.symbolType,
-          id: getDiagramInstanceIdFromPathIds(match.pathIds),
-          symbolId: symbol.id,
-          pathIds: match.pathIds,
-          scale: match.scale,
-          labelIds: [],
-          lineNumbers: [],
-          inferedLineNumbers: [],
-          orientation: symbol.orientation!,
-        } as FileConnectionInstance);
-      } else {
-        symbolInstances.push({
-          type: symbol.symbolType,
-          id: getDiagramInstanceIdFromPathIds(match.pathIds),
-          symbolId: symbol.id,
-          pathIds: match.pathIds,
-          scale: match.scale,
-          labelIds: [],
-          lineNumbers: [],
-          inferedLineNumbers: [],
-        });
+      const newSymbolInstance: DiagramSymbolInstance = {
+        type: symbol.symbolType,
+        id: getDiagramInstanceIdFromPathIds(match.pathIds),
+        symbolId: symbol.id,
+        pathIds: match.pathIds,
+        scale: match.scale!,
+        rotation,
+        labelIds: [],
+        lineNumbers: [],
+        inferedLineNumbers: [],
+      };
+
+      if (symbol.direction !== undefined) {
+        newSymbolInstance.direction = (symbol.direction + rotation) % 360;
       }
+      foundSymbolInstances.push(newSymbolInstance);
     });
   }
 
   if (symbol.symbolType === 'File connection') {
-    const fileConnections = symbolInstances.filter(isFileConnection);
+    const fileConnections = foundSymbolInstances.filter(isFileConnection);
     return pidDocument.getFileConnectionsWithPosition(fileConnections);
   }
 
-  return symbolInstances;
+  return foundSymbolInstances;
 };
 
 interface SvgRepresentationMatch {
@@ -68,16 +61,11 @@ interface SvgRepresentationMatch {
   scale?: number;
 }
 
-const findAllInstancesOfSvgRepresentation = (
-  pidPaths: PidPath[],
-  svgRepresentation: SvgRepresentation
+const findAllInstancesOfMatcher = (
+  matcher: InstanceMatcher,
+  pidPaths: PidPath[]
 ): SvgRepresentationMatch[] => {
   const matches: SvgRepresentationMatch[] = [];
-
-  const joinedSymbolSvgCommands = svgRepresentation.svgPaths
-    .map((svgPath) => svgPath.svgCommands)
-    .join(' ');
-  const matcher = InstanceMatcher.fromPathCommand(joinedSymbolSvgCommands);
 
   // Filter out all paths that are a sub match and find matches that only consist of one SVGElement
   const potPidPaths: PidPath[] = [];

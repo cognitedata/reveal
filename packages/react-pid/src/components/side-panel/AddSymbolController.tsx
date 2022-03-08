@@ -2,15 +2,16 @@ import * as React from 'react';
 import { Button, Select, OptionType } from '@cognite/cogs.js';
 import {
   SymbolType,
-  Orientation,
-  orientations,
   DocumentType,
   bothSymbolTypes,
   pidSymbolTypes,
   isoSymbolTypes,
   SaveSymbolData,
+  directedDirections,
+  unidirectedDirections,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
+import { useCallback } from 'react';
 
 import { StyledInput } from './elements';
 
@@ -18,12 +19,25 @@ const SelectionWrapper = styled.div`
   padding: 1em 0;
 `;
 
-const directionOptions: OptionType<Orientation>[] = orientations.map(
+const directedOptions: OptionType<number>[] = directedDirections.map(
   (direction) => ({
-    label: direction,
-    value: direction,
+    label: direction[1],
+    value: direction[0],
   })
 );
+
+const unidirectedOptions: OptionType<number>[] = unidirectedDirections.map(
+  (direction) => ({
+    label: direction[1],
+    value: direction[0],
+  })
+);
+
+const directionSymbolType = (symbolType: SymbolType | undefined) =>
+  symbolType === 'File connection' ||
+  symbolType === 'Arrow' ||
+  symbolType === 'Reducer' ||
+  symbolType === 'Bypass connection';
 
 interface AddSymbolControllerProps {
   symbolSelection: string[];
@@ -70,25 +84,50 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   const [selectedSymbolTypeOption, setSelectedSymbolTypeOption] =
     React.useState<OptionType<SymbolType>>(symbolTypeOptions[0]);
 
-  const [direction, setDirection] = React.useState<OptionType<Orientation>>(
-    directionOptions[1]
+  let directionOptions = directedOptions;
+
+  const [direction, setDirection] = React.useState<OptionType<number>>(
+    directionOptions[0]
   );
+
+  const DirectionSelector = useCallback(() => {
+    if (selectedSymbolTypeOption.value === 'Bypass connection') {
+      directionOptions = unidirectedOptions;
+    } else {
+      directionOptions = directedOptions;
+    }
+
+    const selectValue =
+      directionOptions.find((dir) => dir.value === direction.value) ??
+      directedOptions[0];
+
+    return (
+      <Select
+        title="Direction"
+        value={selectValue}
+        onChange={setDirection}
+        options={directionOptions}
+        closeMenuOnSelect
+        menuPlacement="top"
+        maxMenuHeight={500}
+      />
+    );
+  }, [selectedSymbolTypeOption, direction]);
 
   const saveSymbolWrapper = () => {
     setDescription('');
-    if (selectedSymbolTypeOption.value === 'File connection') {
-      saveSymbol({
-        symbolType: selectedSymbolTypeOption.value!,
-        description,
-        direction: direction.value,
-      });
-    } else {
-      saveSymbol({ symbolType: selectedSymbolTypeOption.value!, description });
-    }
+    saveSymbol({
+      symbolType: selectedSymbolTypeOption.value!,
+      description,
+      direction: directionSymbolType(selectedSymbolTypeOption.value)
+        ? direction.value
+        : undefined,
+    });
+    setDirection(directedOptions[0]);
   };
 
   const isDisabled = () => {
-    return symbolSelection.length === 0 || description === '';
+    return symbolSelection.length === 0;
   };
 
   return (
@@ -120,17 +159,8 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
         menuPlacement="top"
         maxMenuHeight={500}
       />
-      {selectedSymbolTypeOption.value === 'File connection' && (
-        <Select
-          closeMenuOnSelect
-          title="Direction"
-          value={direction}
-          onChange={setDirection}
-          options={directionOptions}
-          menuPlacement="top"
-          maxMenuHeight={500}
-        />
-      )}
+      {directionSymbolType(selectedSymbolTypeOption.value) &&
+        DirectionSelector()}
       <div>
         <StyledInput
           width={100}

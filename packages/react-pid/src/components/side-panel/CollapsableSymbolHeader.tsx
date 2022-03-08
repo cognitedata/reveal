@@ -11,13 +11,14 @@ const CollapseHeader = styled.div`
 
 interface CollapsableSymbolHeaderProps {
   symbol: DiagramSymbol;
+  foundRotations: number;
   symbolInstanceCount: number;
   deleteSymbol: (symbol: DiagramSymbol) => void;
 }
 
 export const CollapsableSymbolHeader: React.FC<CollapsableSymbolHeaderProps> =
-  ({ symbol, symbolInstanceCount, deleteSymbol }) => {
-    const { boundingBox } = symbol.svgRepresentations[0];
+  ({ symbol, foundRotations, symbolInstanceCount, deleteSymbol }) => {
+    const { boundingBox } = symbol.svgRepresentation;
     const strokeWidth = 1;
     const viewboxPadding = 2 * strokeWidth;
 
@@ -32,7 +33,7 @@ export const CollapsableSymbolHeader: React.FC<CollapsableSymbolHeaderProps> =
           }`}
           style={{ aspectRatio: '1 / 1', height: '2rem' }}
         >
-          {symbol.svgRepresentations[0].svgPaths.map((path) => {
+          {symbol.svgRepresentation.svgPaths.map((path) => {
             return (
               <path
                 key={path.svgCommands}
@@ -46,7 +47,7 @@ export const CollapsableSymbolHeader: React.FC<CollapsableSymbolHeaderProps> =
             );
           })}
         </svg>
-        <span>({symbol.svgRepresentations.length})</span>
+        <span>{`(${foundRotations})`}</span>
         <Icon onClick={() => deleteSymbol(symbol)} type="Close" size={12} />
       </CollapseHeader>
     );

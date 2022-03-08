@@ -207,4 +207,30 @@ describe('matches', () => {
     const potentialMatch = [PidPath.fromPathCommand(closedValveSubMatch)];
     expect(matcher.matches(potentialMatch).match).toEqual(MatchResult.SubMatch);
   });
+
+  test('get unique rotations', () => {
+    const valve = [
+      'M 4318,2657 L 4349,2642 L 4318,2626 Z',
+      'M 4380,2626 L 4349,2642 L 4380,2657 Z',
+    ].join(' ');
+    const valveMatcher = InstanceMatcher.fromPathCommand(valve);
+    const valveRotationMatchers = valveMatcher.getUniqueRotations([
+      0, 90, 180, 270,
+    ]);
+    expect(valveRotationMatchers.length).toEqual(2);
+    expect(valveRotationMatchers[0].rotation).toEqual(0);
+    expect(valveRotationMatchers[1].rotation).toEqual(90);
+
+    const square = 'M 0,0 L 10,0 L 10,10 L 0,10 Z';
+    const squareMatcher = InstanceMatcher.fromPathCommand(square);
+    expect(squareMatcher.getUniqueRotations([0, 90, 180, 270]).length).toEqual(
+      1
+    );
+
+    const triangle = 'M 0,0 L 10,0 L 5,10 Z';
+    const triangleMatcher = InstanceMatcher.fromPathCommand(triangle);
+    expect(
+      triangleMatcher.getUniqueRotations([0, 90, 180, 270]).length
+    ).toEqual(4);
+  });
 });

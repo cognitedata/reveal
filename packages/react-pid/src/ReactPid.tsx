@@ -260,7 +260,9 @@ export const ReactPid: React.FC = () => {
       documentMetadata,
       lineNumbers,
       equipmentTags,
-      `${getFileNameWithoutExtension(documentMetadata.name)}.json`
+      documentMetadata.name
+        ? `${getFileNameWithoutExtension(documentMetadata.name)}.json`
+        : 'graph.json'
     );
   };
 

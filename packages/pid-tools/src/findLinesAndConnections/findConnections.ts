@@ -5,7 +5,7 @@ import {
   AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID,
   AUTO_ANALYSIS_LINE_JUMP_THRESHOLD,
 } from '../constants';
-import { PidDocument, PidGroup } from '../pid';
+import { PidDocument, PidInstance } from '../pid';
 import {
   DiagramConnection,
   DiagramLineInstance,
@@ -23,17 +23,17 @@ export const findConnectionsByTraversal = (
   const newConnectionsSet = new Set<string>();
 
   const symbols = symbolInstances.map((diagramInstance) =>
-    PidGroup.fromDiagramInstance(pidDocument, diagramInstance)
+    PidInstance.fromDiagramInstance(pidDocument, diagramInstance)
   );
 
   const linesToVisit = lineInstances.map((diagramInstance) =>
-    PidGroup.fromDiagramInstance(pidDocument, diagramInstance)
+    PidInstance.fromDiagramInstance(pidDocument, diagramInstance)
   );
 
   const allInstances = [...symbols, ...linesToVisit];
 
-  const toVisit: PidGroup[] = [...symbols];
-  const hasVisited: PidGroup[] = [];
+  const toVisit: PidInstance[] = [...symbols];
+  const hasVisited: PidInstance[] = [];
 
   while (toVisit.length !== 0) {
     const potentialInstance = toVisit.pop();
@@ -45,9 +45,9 @@ export const findConnectionsByTraversal = (
     }
     hasVisited.push(potentialInstance);
 
-    let closePidGroups: PidGroup[];
+    let closePidGroups: PidInstance[];
     if (potentialInstance.isLine) {
-      closePidGroups = getClosePidGroups(
+      closePidGroups = getClosePidInstances(
         allInstances,
         potentialInstance,
         documentType
@@ -57,7 +57,7 @@ export const findConnectionsByTraversal = (
       //      introduce false positives (for instance when two caps connect to the same point on a line).
       //      A more sophisticated logic that makes sure a symbol instnace only has one connection in
       //      a given direction is left as an exercise to the reader.
-      closePidGroups = getClosePidGroups(
+      closePidGroups = getClosePidInstances(
         linesToVisit,
         potentialInstance,
         documentType
@@ -94,15 +94,15 @@ export const findConnectionsByTraversal = (
 const edgeThreshold = 0.05;
 interface ClosestConnection {
   distance: number;
-  pidGroup: PidGroup;
+  pidGroup: PidInstance;
 }
 
 const getCloseWithLineJumps = (
-  linePidGroup: PidGroup,
-  pidGroups: PidGroup[],
+  lineInstance: PidInstance,
+  pidInstances: PidInstance[],
   threshold: number
 ) => {
-  const linePathSegments = linePidGroup.getPathSegments();
+  const linePathSegments = lineInstance.getPathSegments();
 
   // This function should only be called it the `linePidGroup` only has one `LineSegment`.
   if (linePathSegments.length > 1) return [];
@@ -110,34 +110,41 @@ const getCloseWithLineJumps = (
   const lineSegment = linePathSegments[0];
   if (!isLineSegment(lineSegment)) return [];
 
-  const closeInstances: PidGroup[] = [];
+  const closeInstances: PidInstance[] = [];
 
   let closestStartConnection: ClosestConnection | undefined;
   let closestEndConnection: ClosestConnection | undefined;
 
   const addIfClosestStartConnection = (
     distance: number,
-    pidGroup: PidGroup
+    pidGroup: PidInstance
   ) => {
     if (!closestStartConnection || closestStartConnection.distance > distance) {
       closestStartConnection = { distance, pidGroup };
     }
   };
-  const addIfClosestEndConnection = (distance: number, pidGroup: PidGroup) => {
+  const addIfClosestEndConnection = (
+    distance: number,
+    pidGroup: PidInstance
+  ) => {
     if (!closestEndConnection || closestEndConnection.distance > distance) {
       closestEndConnection = { distance, pidGroup };
     }
   };
 
-  for (let i = 0; i < pidGroups.length; i++) {
-    const pidGroup = pidGroups[i];
-    if (linePidGroup.id === pidGroup.id) continue;
+  for (let i = 0; i < pidInstances.length; i++) {
+    const pidGroup = pidInstances[i];
+    if (lineInstance.id === pidGroup.id) continue;
 
     const otherPathSegments = pidGroup.getPathSegments();
+    const firstOtherPathSegment = otherPathSegments[0];
 
-    if (otherPathSegments.length === 1 && isLineSegment(otherPathSegments[0])) {
+    if (
+      otherPathSegments.length === 1 &&
+      isLineSegment(firstOtherPathSegment)
+    ) {
       const lineJumpDistance = lineSegment.distanceWithLineJump(
-        otherPathSegments[0],
+        firstOtherPathSegment,
         edgeThreshold
       );
 
@@ -163,7 +170,7 @@ const getCloseWithLineJumps = (
           addIfClosestEndConnection(lineJumpDistance.distance, pidGroup);
         }
       }
-    } else if (linePidGroup.isClose(pidGroup, threshold)) {
+    } else if (lineInstance.isClose(pidGroup, threshold)) {
       const closestData = getClosestPointsOnSegments(
         linePathSegments,
         pidGroup.getPathSegments()
@@ -189,9 +196,9 @@ const getCloseWithLineJumps = (
   return closeInstances;
 };
 
-export const getClosePidGroups = (
-  pidGroups: PidGroup[],
-  instance: PidGroup,
+export const getClosePidInstances = (
+  pidInstances: PidInstance[],
+  instance: PidInstance,
   documentType: DocumentType
 ) => {
   const threshold =
@@ -200,7 +207,9 @@ export const getClosePidGroups = (
       : AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO;
 
   if (instance.isLine && instance.getPathSegments().length === 1) {
-    return getCloseWithLineJumps(instance, pidGroups, threshold);
+    return getCloseWithLineJumps(instance, pidInstances, threshold);
   }
-  return pidGroups.filter((pidGroup) => instance.isClose(pidGroup, threshold));
+  return pidInstances.filter((pidGroup) =>
+    instance.isClose(pidGroup, threshold)
+  );
 };

@@ -1,5 +1,4 @@
 import {
-  DiagramSymbol,
   DiagramConnection,
   getDiagramInstanceId,
   DiagramInstanceWithPaths,
@@ -25,16 +24,5 @@ export const getConnectionsWithoutInstances = (
       instanceIds.some((lineInstanceId) =>
         connectionHasInstanceId(lineInstanceId, connection)
       ) === false
-  );
-};
-
-export const getSymbolByTypeAndDescription = (
-  symbols: DiagramSymbol[],
-  symbolType: string,
-  description: string
-): DiagramSymbol | undefined => {
-  return symbols.find(
-    (symbol) =>
-      symbol.symbolType === symbolType && symbol.description === description
   );
 };

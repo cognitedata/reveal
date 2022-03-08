@@ -9,14 +9,8 @@ export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO = 2;
 export const AUTO_ANALYSIS_LABEL_THRESHOLD_PID = 10;
 export const AUTO_ANALYSIS_LABEL_THRESHOLD_ISO = 40;
 
-export const pidSymbolTypes = [
-  'File connection', // this is only in P&IDs
-] as const;
-
-export const isoSymbolTypes = [
-  'Line connection', // This is only in ISOs
-] as const;
-
+export const pidSymbolTypes = ['File connection', 'Bypass connection'] as const;
+export const isoSymbolTypes = ['Line connection'] as const;
 export const bothSymbolTypes = [
   'Instrument',
   'Valve',
@@ -35,17 +29,17 @@ export const symbolTypes = [
   ...bothSymbolTypes,
 ] as const;
 
-export const horizontalOrientations = [
-  'Left',
-  'Right',
-  'Left & Right',
-] as const;
-export const verticalOrientations = ['Up', 'Down', 'Up & Down'] as const;
+export const directedDirections: [number, string][] = [
+  [0, 'Right'],
+  [90, 'Up'],
+  [180, 'Left'],
+  [270, 'Down'],
+];
 
-export const orientations = [
-  ...horizontalOrientations,
-  ...verticalOrientations,
-] as const;
+export const unidirectedDirections: [number, string][] = [
+  [0, 'Left / Right'],
+  [90, 'Up / Down'],
+];
 
 export const COLORS = {
   symbol: {

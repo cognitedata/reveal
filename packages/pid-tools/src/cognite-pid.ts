@@ -26,7 +26,6 @@ import {
 import {
   connectionHasInstanceId,
   getConnectionsWithoutInstances,
-  getSymbolByTypeAndDescription,
 } from './utils/symbolUtils';
 import {
   DiagramConnection,
@@ -38,9 +37,7 @@ import {
   DiagramSymbolInstance,
   DocumentMetadata,
   GraphDocument,
-  Orientation,
   PathReplacement,
-  SvgRepresentation,
   SymbolType,
   ToolType,
 } from './types';
@@ -89,7 +86,7 @@ type LineNumbersCallback = (lineNumbers: string[]) => void;
 export interface SaveSymbolData {
   symbolType: SymbolType;
   description: string;
-  direction?: Orientation;
+  direction?: number;
 }
 
 export enum EventType {
@@ -889,14 +886,18 @@ export class CognitePid {
   saveSymbol(symbolData: SaveSymbolData) {
     if (this.pidDocument === undefined) return;
 
-    const newSvgRepresentation = this.pidDocument.createSvgRepresentation(
-      this.symbolSelection,
-      false
-    );
-    const newSymbol = this.setOrUpdateSymbol(symbolData, newSvgRepresentation);
+    // Create new diagram symbol
+    const pidGroup = this.pidDocument!.getPidGroup(this.symbolSelection);
+    const { symbolType, description, direction } = symbolData;
+    const newSymbol = {
+      id: uuid(),
+      symbolType,
+      description,
+      svgRepresentation: pidGroup.createSvgRepresentation(false, 3),
+      direction,
+    } as DiagramSymbol;
 
-    this.clearSymbolSelection();
-
+    // Find all symbol instances of new symbol
     const newSymbolInstances =
       this.pidDocument.findAllInstancesOfSymbol(newSymbol);
     const prunedInstances = getNoneOverlappingSymbolInstances(
@@ -914,37 +915,11 @@ export class CognitePid {
       this.connections
     );
 
+    this.clearSymbolSelection();
+    this.setSymbols([...this.symbols, newSymbol]);
     this.setConnections(prunedConnections);
     this.setLines(prunedLines);
     this.setSymbolInstances(prunedInstances);
-  }
-
-  private setOrUpdateSymbol(
-    symbolData: SaveSymbolData,
-    svgRepresentation: SvgRepresentation
-  ) {
-    const { symbolType, description, direction } = symbolData;
-
-    let diagramSymbol = getSymbolByTypeAndDescription(
-      this.symbols,
-      symbolType,
-      description
-    );
-
-    if (diagramSymbol === undefined) {
-      diagramSymbol = {
-        id: uuid(),
-        symbolType,
-        description,
-        svgRepresentations: [svgRepresentation],
-        orientation: direction,
-      } as DiagramSymbol;
-
-      this.setSymbols([...this.symbols, diagramSymbol]);
-    } else {
-      diagramSymbol.svgRepresentations.push(svgRepresentation);
-    }
-    return diagramSymbol;
   }
 
   autoAnalysis(documentMetadata: DocumentMetadata) {

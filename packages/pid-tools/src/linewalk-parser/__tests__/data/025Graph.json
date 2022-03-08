@@ -16,17 +16,15 @@
       "id": "f1",
       "symbolType": "File connection",
       "description": "left",
-      "svgRepresentations": [
-        {
-          "boundingBox": {
-            "x": 1475.0400390625,
-            "y": 727.6799926757812,
-            "width": 95.0399169921875,
-            "height": 17.9200439453125
-          },
-          "svgPaths": []
-        }
-      ],
+      "svgRepresentation": {
+        "boundingBox": {
+          "x": 1475.0400390625,
+          "y": 727.6799926757812,
+          "width": 95.0399169921875,
+          "height": 17.9200439453125
+        },
+        "svgPaths": []
+      },
       "orientation": "Left"
     }
   ],
@@ -37,6 +35,7 @@
       "symbolId": "f1",
       "pathIds": ["path1"],
       "scale": 1,
+      "rotation": 0,
       "labelIds": ["tspan1"],
       "lineNumbers": ["L1"],
       "inferedLineNumbers": ["L1"],
