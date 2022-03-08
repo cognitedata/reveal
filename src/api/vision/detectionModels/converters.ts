@@ -41,7 +41,7 @@ export function convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validBoundingBox(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('ImageObjectDetectionBoundingBox'));
+    console.warn(conversionWarningMessage('ImageObjectDetectionBoundingBox'));
     return null;
   }
   const annotation = visionJobAnnotation as ObjectDetectionJobAnnotation;
@@ -110,7 +110,7 @@ export function convertVisionJobAnnotationToImageKeypointCollection(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validKeypointCollection(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('ImageKeypointCollection'));
+    console.warn(conversionWarningMessage('ImageKeypointCollection'));
     return null;
   }
   const annotation = visionJobAnnotation as GaugeReaderJobAnnotation;
