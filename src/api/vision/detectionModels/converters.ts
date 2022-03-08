@@ -15,7 +15,7 @@ import {
 } from './types';
 import { validBoundingBox, validImageAssetLink } from './typeValidators';
 
-function convertionWarningMessage(type: string) {
+function conversionWarningMessage(type: string) {
   return `Could not convert annotation in detection model response to ${type}.`;
 }
 
@@ -34,7 +34,7 @@ export function convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validBoundingBox(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('BoundingBox'));
+    console.warn(conversionWarningMessage('BoundingBox'));
     return null;
   }
   const annotation = visionJobAnnotation as ObjectDetectionJobAnnotation;
@@ -55,7 +55,7 @@ export function convertVisionJobAnnotationToImageExtractedText(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validBoundingBox(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('ImageExtractedText'));
+    console.warn(conversionWarningMessage('ImageExtractedText'));
     return null;
   }
   const annotation = visionJobAnnotation as TextDetectionJobAnnotation;

@@ -25,7 +25,7 @@ describe('convertVisionJobAnnotationToImageClassification', () => {
     ).toStrictEqual({ confidence: undefined, label: undefined });
   });
 
-  test('Region igonred - valid ImageClassification', () => {
+  test('Region ignored - valid ImageClassification', () => {
     const visionJobAnnotation = {
       confidence: 0.1,
       text: 'gauge',
