@@ -20,8 +20,10 @@ const InfoBox = ({ infoType, query, translations }: InfoBoxProps) => {
     infoType === 'TagHelpBox' ? 'assets' : 'timeseries',
     []
   );
+
   const recentViewExists = !!rvResults && rvResults.length > 0;
   const t = { ...defaultTranslations, ...translations };
+
   return (
     <InfoBoxContainer
       style={query === '' && !recentViewExists ? { height: '100%' } : {}}

@@ -1,8 +1,16 @@
 import { useMemo } from 'react';
 import { Icon, Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
-import { useCdfItems, useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
+import {
+  useAggregate,
+  useCdfItems,
+  useInfiniteSearch,
+} from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
+import { SearchFilter } from 'components/Search';
+import EmptyResult, {
+  defaultTranslations as emptyResultDefaultTranslations,
+} from 'components/Search/EmptyResult';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import AssetSearchHit from './AssetSearchHit';
@@ -10,14 +18,16 @@ import RecentViewSources from './RecentViewSources';
 
 type Props = {
   query: string;
+  filter: SearchFilter;
 };
-const defaultTranslation = makeDefaultTranslations(
+
+const defaultTranslations = makeDefaultTranslations(
   'Load more',
   'View all',
   'Exact match on external id'
 );
 
-export default function SearchResultList({ query }: Props) {
+export default function SearchResultList({ query, filter }: Props) {
   const {
     data: resourcesBySearch,
     isLoading,
@@ -48,13 +58,35 @@ export default function SearchResultList({ query }: Props) {
     [resourcesBySearch, query]
   );
 
+  const shouldFetchCount = useMemo(
+    () => Boolean(query) && !filter?.showEmpty,
+    [query, filter]
+  );
+
+  const { data: dataAmount } = useAggregate(
+    'timeseries',
+    {
+      assetIds: assets?.map(({ id }) => id),
+      isStep: filter?.isStep,
+      isString: filter?.isString,
+    },
+    { enabled: shouldFetchCount && assets && assets.length > 0 }
+  );
+
   /**
    * Translations
    */
-
   const t = {
-    ...defaultTranslation,
-    ...useTranslations(Object.keys(defaultTranslation), 'SearchResults').t,
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'SearchResults').t,
+  };
+
+  const emptyResultTranslations = {
+    ...emptyResultDefaultTranslations,
+    ...useTranslations(
+      Object.keys(emptyResultDefaultTranslations),
+      'TimeseriesSearch'
+    ).t,
   };
 
   if (isError) {
@@ -64,19 +96,25 @@ export default function SearchResultList({ query }: Props) {
   if (isLoading) {
     return <Icon type="Loader" />;
   }
-  if (assets?.length === 0) {
-    return null;
+
+  if (assets?.length === 0 || (shouldFetchCount && dataAmount?.count === 0)) {
+    return <EmptyResult translations={emptyResultTranslations} />;
   }
 
   const exactMatchElement = assetExactMatch && (
     <li key={assetExactMatch.id}>
-      <AssetSearchHit asset={assetExactMatch} query={query} isExact />
+      <AssetSearchHit
+        asset={assetExactMatch}
+        query={query}
+        filter={filter}
+        isExact
+      />
     </li>
   );
 
   const searchResultElements = assets?.map((asset) => (
     <li key={asset.id}>
-      <AssetSearchHit asset={asset} query={query} />
+      <AssetSearchHit asset={asset} query={query} filter={filter} />
     </li>
   ));
 

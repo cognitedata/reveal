@@ -6,6 +6,7 @@ import { useAggregate, useList } from '@cognite/sdk-react-query-hooks';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { trackUsage } from 'services/metrics';
 import Highlighter from 'react-highlight-words';
+import { SearchFilter } from 'components/Search';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import { useSearchParam } from 'hooks/navigation';
 import { ASSET_KEY } from 'utils/constants';
@@ -26,25 +27,37 @@ const TIMESERIES_COUNT = 5;
 type Props = {
   asset: Asset;
   query?: string;
+  filter?: SearchFilter;
   isExact?: boolean;
 };
 
-export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
+export default function AssetSearchHit({
+  asset,
+  query = '',
+  isExact,
+  filter,
+}: Props) {
   const [__, setUrlAssetId] = useSearchParam(ASSET_KEY, false);
   const [chart] = useRecoilState(chartAtom);
   const handleTimeSeriesClick = useAddRemoveTimeseries();
+
+  const queryFilter = {
+    assetIds: [asset.id],
+    isStep: filter?.isStep,
+    isString: filter?.isString,
+  };
+
   const t = {
     ...defaultTranslation,
     ...useTranslations(Object.keys(defaultTranslation), 'SearchResults').t,
   };
+
   const { data: timeseries = [] } = useList<Timeseries>('timeseries', {
-    filter: { assetIds: [asset.id] },
+    filter: queryFilter,
     limit: TIMESERIES_COUNT,
   });
 
-  const { data: dataAmount } = useAggregate('timeseries', {
-    assetIds: [asset.id],
-  });
+  const { data: dataAmount } = useAggregate('timeseries', queryFilter);
 
   const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
     ?.map((tsc) => tsc.tsExternalId || '')
@@ -72,6 +85,10 @@ export default function AssetSearchHit({ asset, query = '', isExact }: Props) {
       )}
     />
   ));
+
+  if (!filter?.showEmpty && dataAmount?.count === 0) {
+    return <></>;
+  }
 
   return (
     <AssetItem outline={isExact}>

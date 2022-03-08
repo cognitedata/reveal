@@ -6,16 +6,44 @@ import styled from 'styled-components/macro';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
+import { SearchFilter } from 'components/Search';
+import EmptyResult, {
+  defaultTranslations as emptyResultDefaultTranslations,
+} from 'components/Search/EmptyResult';
 import chartAtom from 'models/chart/atom';
+import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from 'hooks/translations';
 import RecentViewSources from './RecentViewSources';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 
 type Props = {
   query: string;
+  filter: SearchFilter;
 };
-export default function SearchTimeseries({ query }: Props) {
+
+export const defaultTranslations = makeDefaultTranslations(
+  'Additional time series'
+);
+
+export default function SearchTimeseries({ query, filter }: Props) {
   const [chart] = useRecoilState(chartAtom);
   const handleTimeSeriesClick = useAddRemoveTimeseries();
+
+  /**
+   * Translations
+   */
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'SearchResults').t,
+  };
+
+  const emptyResultTranslations = {
+    ...emptyResultDefaultTranslations,
+    ...useTranslations(
+      Object.keys(emptyResultDefaultTranslations),
+      'TimeseriesSearch'
+    ).t,
+  };
 
   const {
     data: resourcesBySearch,
@@ -23,9 +51,15 @@ export default function SearchTimeseries({ query }: Props) {
     isError,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {
-    enabled: !!query,
-  });
+  } = useInfiniteSearch<Timeseries>(
+    'timeseries',
+    query,
+    20,
+    { isStep: filter.isStep, isString: filter.isString },
+    {
+      enabled: !!query,
+    }
+  );
 
   const { data: resourcesByExternalId } = useCdfItems<Timeseries>(
     'timeseries',
@@ -59,11 +93,11 @@ export default function SearchTimeseries({ query }: Props) {
   }
 
   if (timeseries?.length === 0) {
-    return null;
+    return <EmptyResult translations={emptyResultTranslations} />;
   }
 
   const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
-    ?.map((t) => t.tsExternalId || '')
+    ?.map((ts) => ts.tsExternalId || '')
     .filter(Boolean);
 
   const searchResultElements = timeseries?.map((ts) => (
@@ -114,7 +148,7 @@ export default function SearchTimeseries({ query }: Props) {
       {hasNextPage && (
         <TSItem>
           <Button type="link" onClick={() => fetchNextPage()}>
-            Additional time series
+            {t['Additional time series']}
           </Button>
         </TSItem>
       )}
