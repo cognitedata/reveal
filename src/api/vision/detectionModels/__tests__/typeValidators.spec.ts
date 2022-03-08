@@ -165,10 +165,34 @@ describe('validImageAssetLink', () => {
     expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
   });
 
-  test('Invalid asset id in assetIds', () => {
+  test('Invalid asset id (undefined) in assetIds', () => {
+    const visionJobAnnotation = {
+      ...boundingBox,
+      assetIds: [1, 2, undefined],
+    } as VisionJobAnnotation;
+    expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Invalid asset id (null) in assetIds', () => {
     const visionJobAnnotation = {
       ...boundingBox,
       assetIds: [1, 2, null],
+    } as VisionJobAnnotation;
+    expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Invalid asset id (Nan) in assetIds', () => {
+    const visionJobAnnotation = {
+      ...boundingBox,
+      assetIds: [1, 2, NaN],
+    } as VisionJobAnnotation;
+    expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Invalid asset id (Infinity) in assetIds', () => {
+    const visionJobAnnotation = {
+      ...boundingBox,
+      assetIds: [1, 2, Infinity],
     } as VisionJobAnnotation;
     expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
   });

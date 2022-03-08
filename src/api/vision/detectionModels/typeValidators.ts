@@ -1,3 +1,4 @@
+import isFinite from 'lodash-es/isFinite';
 import { RegionShape } from 'src/api/annotation/types';
 import {
   TagDetectionJobAnnotation,
@@ -36,8 +37,8 @@ export function validImageAssetLink(visionJobAnnotation: VisionJobAnnotation) {
     validBoundingBox(visionJobAnnotation) &&
     !!(visionJobAnnotation as TagDetectionJobAnnotation).assetIds &&
     !!(visionJobAnnotation as TagDetectionJobAnnotation).assetIds?.length &&
-    (visionJobAnnotation as TagDetectionJobAnnotation).assetIds.every(
-      (item) => item !== null && item !== undefined
+    (visionJobAnnotation as TagDetectionJobAnnotation).assetIds.every((item) =>
+      isFinite(item)
     )
   );
 }
