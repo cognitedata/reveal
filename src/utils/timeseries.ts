@@ -17,36 +17,32 @@ export const calculateGranularity = (
   domain: number[],
   pointsPerSeries: number
 ) => {
-  const timeDifference = domain[1] - domain[0];
+  const timeDifferenceSeconds = (domain[1] - domain[0]) / 1000;
+  const targetGranularitySeconds = Math.ceil(
+    timeDifferenceSeconds / pointsPerSeries
+  );
+  const targetGranularityMinutes = Math.ceil(targetGranularitySeconds / 60);
+  const targetGranularityHours = Math.ceil(targetGranularityMinutes / 60);
+  const targetGranularityDays = Math.ceil(targetGranularityHours / 24);
+
   // Seconds
-  for (let i = 1; i <= 60; i++) {
-    const pointsPerSecond = timeDifference / (1000 * i);
-    if (pointsPerSecond < pointsPerSeries) {
-      return `${i}s`;
-    }
+  if (targetGranularitySeconds <= 60) {
+    return `${targetGranularitySeconds}s`;
   }
   // Minutes
-  for (let i = 1; i <= 60; i++) {
-    const pointsPerMinute = timeDifference / (1000 * 60 * i);
-    if (pointsPerMinute < pointsPerSeries) {
-      return `${i}m`;
-    }
+  if (targetGranularityMinutes <= 60) {
+    return `${targetGranularityMinutes}m`;
   }
   // Hours
-  for (let i = 1; i < 24; i++) {
-    const pointsPerHour = timeDifference / (1000 * 60 * 60 * i);
-    if (pointsPerHour < pointsPerSeries) {
-      return `${i}h`;
-    }
+  if (targetGranularityHours <= 24) {
+    return `${targetGranularityHours}h`;
   }
   // Days
-  for (let i = 1; i < 100; i++) {
-    const pointsPerDay = timeDifference / (1000 * 60 * 60 * 24 * i);
-    if (pointsPerDay < pointsPerSeries) {
-      return `${i}d`;
-    }
+  if (targetGranularityDays <= 100) {
+    return `${targetGranularityDays}d`;
   }
-  return '1d';
+
+  return '100d';
 };
 
 export const convertTsToWorkFlow = (
