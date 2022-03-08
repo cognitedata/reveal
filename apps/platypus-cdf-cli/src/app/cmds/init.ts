@@ -11,6 +11,7 @@ import Response, {
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
 import CreateTemplateGroupCommand from './templates/create';
 import { makeCDFRCFile } from '../common/config';
+import { TEMPLATE_GROUP_LIST_LIMIT } from '@platypus/platypus-core';
 
 const DEBUG = _DEBUG.extend('cmds:init');
 
@@ -100,7 +101,9 @@ class TemplateInitCommand implements CommandModule {
       await CreateTemplateGroupCommand.handler(args);
       DEBUG('Project created %o', args);
     } else {
-      const templates = await client.templates.groups.list({ limit: 1000 });
+      const templates = await client.templates.groups.list({
+        limit: TEMPLATE_GROUP_LIST_LIMIT,
+      });
       DEBUG('Templates list retrieved %o', templates);
 
       DEBUG('Asking user for selecting template group to use');

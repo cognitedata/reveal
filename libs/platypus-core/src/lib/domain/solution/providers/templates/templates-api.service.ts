@@ -19,6 +19,8 @@ import {
   RunQueryDTO,
 } from '../../dto';
 
+export const TEMPLATE_GROUP_LIST_LIMIT = 1000;
+
 export class TemplatesApiService {
   constructor(private cdfClient: CogniteClient) {}
 
@@ -49,7 +51,7 @@ export class TemplatesApiService {
 
   listTemplateGroups(): Promise<TemplateGroup[]> {
     return this.cdfClient.templates.groups
-      .list({ limit: 1000 })
+      .list({ limit: TEMPLATE_GROUP_LIST_LIMIT })
       .then((templateGroups) => templateGroups.items)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
