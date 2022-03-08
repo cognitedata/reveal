@@ -24,9 +24,9 @@ class LoginStatusCommand implements CommandModule {
       let username = '',
         name = '';
       try {
-        const d = JSON.parse(msalAccountInfo);
-        d.username && (username = d.username);
-        d.name && (name = d.name);
+        const accountInfo = JSON.parse(msalAccountInfo);
+        accountInfo?.username && (username = accountInfo.username);
+        accountInfo?.name && (name = accountInfo.name);
       } finally {
         table.push(['Username', username], ['Name', name]);
       }

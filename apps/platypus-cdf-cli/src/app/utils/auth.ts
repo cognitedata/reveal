@@ -10,7 +10,6 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
   const authority = `https://login.microsoftonline.com/${arg.tenant}`;
   const clientId = arg.clientId;
   const baseUrl = `https://${arg.cluster}.cognitedata.com`;
-  const scopes = [`${baseUrl}/.default`, 'offline_access'];
 
   switch (arg.authType) {
     case AUTH_TYPE.APIKEY: {
@@ -22,7 +21,7 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
           await getAccessTokenForPKCE({
             authority,
             clientId,
-            scopes,
+            baseUrl,
             account: arg[AUTH_CONFIG.ACCOUNT_INFO],
             logger: arg.logger,
           })
@@ -38,8 +37,8 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
         await getAccessTokenForClientSecret({
           authority,
           clientId,
+          baseUrl,
           clientSecret: arg.clientSecret,
-          scopes,
           logger: arg.logger,
         })
       ).accessToken;
@@ -58,7 +57,7 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
           await getAccessTokenForDeviceCode({
             authority,
             clientId,
-            scopes,
+            baseUrl,
             account: arg[AUTH_CONFIG.ACCOUNT_INFO],
             logger: arg.logger,
           })

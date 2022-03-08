@@ -17,7 +17,7 @@ import { handleResponse } from './common';
 export type PKAccessTokenRequest = {
   clientId: string;
   authority: string;
-  scopes: string[];
+  baseUrl: string;
   account?: string;
   logger: Logger;
 };
@@ -25,7 +25,12 @@ export type PKAccessTokenRequest = {
 const cryptoProvider = new CryptoProvider();
 
 export const getAccessTokenForPKCE = async (request: PKAccessTokenRequest) => {
-  const { clientId, authority, scopes, account: accountString } = request;
+  const { clientId, authority, baseUrl, account: accountString } = request;
+  const scopes = [
+    `${baseUrl}/IDENTITY`,
+    `${baseUrl}/user_impersonation`,
+    'offline_access',
+  ];
   const pca = new PublicClientApplication({
     auth: {
       clientId,

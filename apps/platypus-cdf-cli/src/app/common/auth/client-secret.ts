@@ -7,7 +7,7 @@ export type CSAccessTokenRequest = {
   clientId: string;
   clientSecret: string;
   authority: string;
-  scopes: string[];
+  baseUrl: string;
   account?: string;
   logger: Logger;
 };
@@ -15,7 +15,8 @@ export type CSAccessTokenRequest = {
 export const getAccessTokenForClientSecret = async (
   request: CSAccessTokenRequest
 ) => {
-  const { clientId, clientSecret, authority, scopes } = request;
+  const { clientId, clientSecret, authority, baseUrl } = request;
+  const scopes = [`${baseUrl}/.default`, 'offline_access'];
 
   const cca = new ConfidentialClientApplication({
     auth: { clientId, clientSecret },

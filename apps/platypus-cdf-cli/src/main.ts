@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import yargs, { Arguments, scriptName } from 'yargs';
+import yargs, { scriptName } from 'yargs';
 import chalk from 'chalk';
 import { authenticate } from './app/middlewares/auth';
 import * as login from './app/cmds/login';
