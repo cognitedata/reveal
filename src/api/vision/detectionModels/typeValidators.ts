@@ -10,13 +10,13 @@ export function vertexIsNormalized(vertex: Vertex) {
 }
 
 export function uniqueVertices(vertices: Vertex[]) {
-  const uniqueVertices = [
+  const uniqueVerticesList = [
     ...new Map(
       vertices.map((vertex) => [[vertex.x, vertex.y].join('|'), vertex])
     ).values(),
   ];
 
-  return uniqueVertices.length === vertices.length;
+  return uniqueVerticesList.length === vertices.length;
 }
 
 export function validBoundingBox(visionJobAnnotation: VisionJobAnnotation) {
