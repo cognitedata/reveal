@@ -49,7 +49,7 @@ export class TemplatesApiService {
 
   listTemplateGroups(): Promise<TemplateGroup[]> {
     return this.cdfClient.templates.groups
-      .list()
+      .list({ limit: 1000 })
       .then((templateGroups) => templateGroups.items)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }

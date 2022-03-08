@@ -100,7 +100,7 @@ class TemplateInitCommand implements CommandModule {
       await CreateTemplateGroupCommand.handler(args);
       DEBUG('Project created %o', args);
     } else {
-      const templates = await client.templates.groups.list();
+      const templates = await client.templates.groups.list({ limit: 1000 });
       DEBUG('Templates list retrieved %o', templates);
 
       DEBUG('Asking user for selecting template group to use');
