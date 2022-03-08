@@ -36,29 +36,24 @@ export interface DetectedAnnotation {
 }
 
 export type BaseVisionJobAnnotation = {
-  __typename: VisionDetectionModelType;
   text: string;
   confidence?: number;
 };
 
 export type TextDetectionJobAnnotation = BaseVisionJobAnnotation & {
-  __typename: VisionDetectionModelType.OCR;
   region: AnnotationRegion;
 };
 
 export type ObjectDetectionJobAnnotation = BaseVisionJobAnnotation & {
-  __typename: VisionDetectionModelType.ObjectDetection;
   region: AnnotationRegion;
 };
 
 export type TagDetectionJobAnnotation = BaseVisionJobAnnotation & {
-  __typename: VisionDetectionModelType.TagDetection;
   region: AnnotationRegion;
   assetIds: CogniteInternalId[];
 };
 
 export type CusomModelJobAnnotation = BaseVisionJobAnnotation & {
-  __typename: VisionDetectionModelType.CustomModel;
   region?: AnnotationRegion; // Custom models can also be classification models
 };
 
