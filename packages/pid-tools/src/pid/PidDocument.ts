@@ -1,5 +1,5 @@
 import { ElementNode, parse } from 'svg-parser';
-import minBy from 'lodash/minBy';
+import sortBy from 'lodash/sortBy';
 
 import {
   DiagramConnection,
@@ -181,7 +181,8 @@ export class PidDocument {
 
   connectLabelsToInstances(
     documentType: DocumentType,
-    instances: DiagramInstanceWithPaths[]
+    instances: DiagramInstanceWithPaths[],
+    excludedLabelConnections: [DiagramInstanceWithPaths, string][]
   ): LabelInstanceConnection[] {
     const pidLabelIdsAlreadyConnected = new Set<string>();
     if (instances.length === 0) return [];
@@ -198,31 +199,51 @@ export class PidDocument {
 
     const labelInstanceConnections: LabelInstanceConnection[] = [];
 
-    const instanceGroups = instances.map((instance) =>
+    const instanceGroup = instances.map((instance) =>
       PidGroup.fromDiagramInstance(this, instance)
     );
+
+    const labelThreshold =
+      documentType === DocumentType.isometric
+        ? AUTO_ANALYSIS_LABEL_THRESHOLD_ISO
+        : AUTO_ANALYSIS_LABEL_THRESHOLD_PID;
 
     pidLabelsToConnect.forEach((pidLabel) => {
       const labelMidPoint = pidLabel.getMidPoint();
 
-      const closestSymbolGroup = minBy(instanceGroups, (instanceGroup) =>
-        instanceGroup.distance(labelMidPoint)
+      const isNotExcludedInstanceLabelConnection = ({
+        instanceGroup,
+      }: {
+        instanceGroup: PidGroup;
+      }) =>
+        !excludedLabelConnections.some(
+          ([instance, labelId]) =>
+            pidLabel.id === labelId && instance.id === instanceGroup.id
+        );
+
+      const filteredInstanceGroups = instanceGroup
+        .map((instanceGroup) => ({
+          instanceGroup,
+          distance: instanceGroup.distance(labelMidPoint),
+        }))
+        .filter(({ distance }) => distance < labelThreshold)
+        .filter(isNotExcludedInstanceLabelConnection);
+
+      if (filteredInstanceGroups.length < 1) {
+        return;
+      }
+
+      const sortedInstanceGroups = sortBy(
+        filteredInstanceGroups,
+        (instanceGroupWithDistance) => instanceGroupWithDistance.distance
       );
 
-      if (!closestSymbolGroup) return;
-
-      const labelTreshold =
-        documentType === DocumentType.isometric
-          ? AUTO_ANALYSIS_LABEL_THRESHOLD_ISO
-          : AUTO_ANALYSIS_LABEL_THRESHOLD_PID;
-
-      if (closestSymbolGroup.distance(labelMidPoint) < labelTreshold) {
-        labelInstanceConnections.push({
-          labelId: pidLabel.id,
-          labelText: pidLabel.text,
-          instanceId: closestSymbolGroup.id,
-        });
-      }
+      const closestInstanceGroup = sortedInstanceGroups[0].instanceGroup;
+      labelInstanceConnections.push({
+        labelId: pidLabel.id,
+        labelText: pidLabel.text,
+        instanceId: closestInstanceGroup.id,
+      });
     });
 
     return labelInstanceConnections;

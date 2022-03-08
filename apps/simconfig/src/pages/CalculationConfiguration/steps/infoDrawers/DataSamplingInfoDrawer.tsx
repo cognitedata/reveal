@@ -35,8 +35,9 @@ export function DataSamplingInfoDrawer() {
         <dt>Validation offset</dt>
         <dd>
           Defines a time offset for the the validation window. The validation
-          window is then moved back in time according to this offset. With the default 
-          value (0 minutes), the end of validation window is set to the current time (now).
+          window is then moved back in time according to this offset. With the
+          default value (0 minutes), the end of validation window is set to the
+          current time (now).
         </dd>
       </dl>
     </InfoDrawer>

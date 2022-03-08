@@ -2,7 +2,12 @@
 /* eslint-disable no-param-reassign */
 import { v4 as uuid } from 'uuid';
 
-import { getLineNumberFromText, loadSymbolsFromJson } from './utils';
+import {
+  getLineNumberFromText,
+  ConnectionVisualization,
+  LabelVisualization,
+  loadSymbolsFromJson,
+} from './utils';
 import { T_JUNCTION } from './constants';
 import { applyPathReplacementInSvg } from './utils/pathReplacementUtils';
 import { PidDocumentWithDom } from './pid';
@@ -16,6 +21,7 @@ import {
   scaleStrokeWidthPath,
   visualizeBoundingBoxBehind,
   visualizeSymbolInstanceBoundingBoxes,
+  scaleStrokeWidth,
 } from './utils/domUtils';
 import {
   connectionHasInstanceId,
@@ -26,6 +32,7 @@ import {
   DiagramConnection,
   DiagramEquipmentTagInstance,
   DiagramInstanceId,
+  DiagramInstanceWithPaths,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
@@ -143,8 +150,14 @@ export class CognitePid {
     string,
     { node: SVGElement; originalStyle: string }
   >();
-  private connectionVisualizationsIds: string[] = [];
-  private labelVisualizationIds: string[] = [];
+  private connectionVisualizations: ConnectionVisualization[] = [];
+  private manuallyRemovedConnections: DiagramConnection[] = [];
+  private manuallyRemovedLabelConnections: [
+    DiagramInstanceWithPaths,
+    string
+  ][] = [];
+
+  private labelVisualizations: LabelVisualization[] = [];
   private lineNumberVisualizationIds: string[] = [];
   private symbolInstanceBoundingBoxesIds: string[] = [];
 
@@ -946,14 +959,22 @@ export class CognitePid {
         this.connections
       );
     this.setLines([...this.lines, ...newLines]);
-    this.setConnections(newConnections);
+    this.setConnections(
+      newConnections.filter(
+        (connection) =>
+          !this.manuallyRemovedConnections.some((c) =>
+            isConnectionUnidirectionalMatch(c, connection)
+          )
+      )
+    );
 
     // connect labels to symbol instances
     const pidLabelInstanceConnection =
-      this.pidDocument.connectLabelsToInstances(documentMetadata.type, [
-        ...this.symbolInstances,
-        ...this.lines,
-      ]);
+      this.pidDocument.connectLabelsToInstances(
+        documentMetadata.type,
+        [...this.symbolInstances, ...this.lines],
+        this.manuallyRemovedLabelConnections
+      );
     if (pidLabelInstanceConnection.length > 0) {
       this.setSymbolInstances(
         this.symbolInstances.map((symbolInstance) => {
@@ -1086,29 +1107,48 @@ export class CognitePid {
       throw Error('Calling drawConnectionVisualizations without pidDocument');
     }
 
-    this.connectionVisualizationsIds = visualizeConnections(
+    this.connectionVisualizations = visualizeConnections(
       this.svg,
       this.pidDocument,
       this.connections,
       this.symbolInstances,
       this.lines
     );
+
+    this.connectionVisualizations.forEach(({ diagramConnection, node }) => {
+      const originalStrokeWidth = node.style.strokeWidth;
+      node.addEventListener('mouseenter', () => {
+        node.style.strokeWidth = scaleStrokeWidth(
+          hoverBoldStrokeScale,
+          originalStrokeWidth
+        );
+      });
+
+      node.addEventListener('mouseleave', () => {
+        node.style.strokeWidth = originalStrokeWidth;
+      });
+
+      node.addEventListener('mousedown', (event: MouseEvent) => {
+        if (!event.altKey) {
+          return;
+        }
+        this.deleteConnection(diagramConnection);
+        this.manuallyRemovedConnections.push(diagramConnection);
+        node?.remove();
+      });
+    });
   }
 
   private removeConnectionVisualizations() {
-    if (this.svg === undefined) return;
-    for (let i = 0; i < this.connectionVisualizationsIds.length; i++) {
-      const id = this.connectionVisualizationsIds[i];
-      const pathToRemove = this.svg.getElementById(id);
-      if (!pathToRemove) {
-        throw Error(
-          `Trying to remove connection visualization path with id ${id} that does not exist`
-        );
-      } else {
-        pathToRemove.parentElement?.removeChild(pathToRemove);
-      }
+    if (this.svg === undefined) {
+      return;
     }
-    this.connectionVisualizationsIds = [];
+
+    this.connectionVisualizations.forEach(({ node }) => {
+      node.remove();
+    });
+
+    this.connectionVisualizations = [];
   }
 
   private drawLabelVisualizations() {
@@ -1119,27 +1159,72 @@ export class CognitePid {
       throw Error('Calling drawLabelVisualizations without pidDocument');
     }
 
-    this.labelVisualizationIds = visualizeLabelsToInstances(
+    this.labelVisualizations = visualizeLabelsToInstances(
       this.svg,
       this.pidDocument,
       [...this.symbolInstances, ...this.lines]
     );
+
+    this.labelVisualizations.forEach((labelVisualization) => {
+      labelVisualization.labels.forEach(
+        ({ labelId, textNode, boundingBoxNode }) => {
+          const originalStrokeWidth = textNode.style.strokeWidth;
+          textNode.addEventListener('mouseenter', () => {
+            textNode.style.strokeWidth = scaleStrokeWidth(
+              hoverBoldStrokeScale,
+              originalStrokeWidth
+            );
+          });
+
+          textNode.addEventListener('mouseleave', () => {
+            textNode.style.strokeWidth = originalStrokeWidth;
+          });
+
+          textNode.addEventListener('mousedown', (event: MouseEvent) => {
+            if (!event.altKey) {
+              return;
+            }
+
+            if (isLine(labelVisualization.diagramInstance)) {
+              addOrRemoveLabelToInstance(
+                labelId,
+                textNode.innerHTML,
+                labelVisualization.diagramInstance
+              );
+              this.setLines([...this.lines]);
+            } else {
+              addOrRemoveLabelToInstance(
+                labelId,
+                textNode.innerHTML,
+                labelVisualization.diagramInstance
+              );
+              this.setSymbolInstances([...this.symbolInstances]);
+            }
+
+            this.manuallyRemovedLabelConnections.push([
+              labelVisualization.diagramInstance,
+              labelId,
+            ]);
+            textNode?.remove();
+            boundingBoxNode?.remove();
+          });
+        }
+      );
+    });
   }
 
   private removeLabelVisualizations() {
-    if (this.svg === undefined) return;
-    for (let i = 0; i < this.labelVisualizationIds.length; i++) {
-      const id = this.labelVisualizationIds[i];
-      const pathToRemove = this.svg.getElementById(id);
-      if (!pathToRemove) {
-        throw Error(
-          `Trying to remove label visualization with id ${id} that does not exist`
-        );
-      } else {
-        pathToRemove.parentElement?.removeChild(pathToRemove);
-      }
+    if (this.svg === undefined) {
+      return;
     }
-    this.labelVisualizationIds = [];
+
+    this.labelVisualizations.forEach(({ labels }) => {
+      labels.forEach(({ textNode, boundingBoxNode }) =>
+        [textNode, boundingBoxNode].forEach((node) => node?.remove())
+      );
+    });
+
+    this.labelVisualizations = [];
   }
 
   private drawLineVisualizations() {

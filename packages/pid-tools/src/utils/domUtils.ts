@@ -22,6 +22,8 @@ import {
   getClosestPointOnSegments,
 } from '../index';
 
+import isNotUndefined from './isNotUndefined';
+
 export const isDiagramLine = (
   node: SVGElement,
   lines: DiagramLineInstance[]
@@ -370,8 +372,11 @@ export const colorSymbol = (
   }
 };
 
-export const scaleStrokeWidthPath = (scale: number, node: SVGElement) => {
-  node.style.strokeWidth = `${scale * parseFloat(node.style.strokeWidth)}`;
+export const scaleStrokeWidth = (scale: number, strokeWidth: string): string =>
+  `${scale * parseFloat(strokeWidth)}`;
+
+export const scaleStrokeWidthPath = (scale: number, node: SVGElement): void => {
+  node.style.strokeWidth = scaleStrokeWidth(scale, node.style.strokeWidth);
 };
 
 export const scaleStrokeWidthInstance = (
@@ -388,107 +393,126 @@ export const scaleStrokeWidthInstance = (
   });
 };
 
+export type ConnectionVisualization = {
+  diagramConnection: DiagramConnection;
+  node: SVGPathElement;
+};
+
 export const visualizeConnections = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
   connections: DiagramConnection[],
   symbolInstances: DiagramSymbolInstance[],
   lines: DiagramLineInstance[]
-): string[] => {
+): ConnectionVisualization[] => {
   const offset = 2;
   const instances = [...symbolInstances, ...lines];
-  const visualizationPathIds: string[] = [];
-  connections.forEach((connection) => {
-    const startInstance = getInstanceByDiagramInstanceId(
-      instances,
-      connection.start
-    );
-    const endInstance = getInstanceByDiagramInstanceId(
-      instances,
-      connection.end
-    );
-    if (startInstance === undefined || endInstance === undefined) return;
-
-    let startPoint: Point | undefined;
-    let endPoint: Point | undefined;
-    if (startInstance.type !== 'Line' && endInstance.type !== 'Line') {
-      // Both is symbol
-      startPoint = pidDocument.getMidPointToPaths(startInstance.pathIds);
-      endPoint = pidDocument.getMidPointToPaths(endInstance.pathIds);
-
-      [startPoint, endPoint] = getPointsCloserToEachOther(
-        startPoint,
-        endPoint,
-        offset
+  return connections
+    .map((connection) => {
+      const startInstance = getInstanceByDiagramInstanceId(
+        instances,
+        connection.start
       );
-    } else if (startInstance.type === 'Line' && endInstance.type === 'Line') {
-      // Both is line
-
-      const startPathSegments = pidDocument.getPathSegmentsToPaths(
-        startInstance.pathIds
+      const endInstance = getInstanceByDiagramInstanceId(
+        instances,
+        connection.end
       );
-      const endPathSegments = pidDocument.getPathSegmentsToPaths(
-        endInstance.pathIds
-      );
-
-      const closestPoints = getClosestPointsOnSegments(
-        startPathSegments,
-        endPathSegments
-      );
-
-      if (closestPoints === undefined) return;
-
-      startPoint = closestPoints.point1;
-      endPoint = closestPoints.point2;
-    } else {
-      // One symbol and one line
-      const [symbol, line] =
-        startInstance.type !== 'Line'
-          ? [startInstance, endInstance]
-          : [endInstance, startInstance];
-
-      const symbolPoint = pidDocument.getMidPointToPaths(symbol.pathIds);
-      const lineSegments = pidDocument.getPathSegmentsToPaths(line.pathIds);
-
-      const closestPoint = getClosestPointOnSegments(symbolPoint, lineSegments);
-      if (closestPoint === undefined) return;
-
-      if (closestPoint.percentAlongPath < 0.05) {
-        endPoint = getPointTowardOtherPoint(
-          closestPoint.point,
-          lineSegments[closestPoint.index].stop,
-          offset
-        );
-      } else if (closestPoint.percentAlongPath > 0.95) {
-        endPoint = getPointTowardOtherPoint(
-          closestPoint.point,
-          lineSegments[closestPoint.index].start,
-          offset
-        );
-      } else {
-        endPoint = closestPoint.point;
+      if (startInstance === undefined || endInstance === undefined) {
+        return undefined;
       }
-      startPoint = getPointTowardOtherPoint(symbolPoint, endPoint, offset);
-    }
 
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      let startPoint: Point | undefined;
+      let endPoint: Point | undefined;
+      if (startInstance.type !== 'Line' && endInstance.type !== 'Line') {
+        // Both is symbol
+        startPoint = pidDocument.getMidPointToPaths(startInstance.pathIds);
+        endPoint = pidDocument.getMidPointToPaths(endInstance.pathIds);
 
-    path.setAttribute(
-      'd',
-      `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`
-    );
+        [startPoint, endPoint] = getPointsCloserToEachOther(
+          startPoint,
+          endPoint,
+          offset
+        );
+      } else if (startInstance.type === 'Line' && endInstance.type === 'Line') {
+        // Both is line
 
-    path.id = `convis-${connection.start}-${connection.end}`;
-    visualizationPathIds.push(path.id);
+        const startPathSegments = pidDocument.getPathSegmentsToPaths(
+          startInstance.pathIds
+        );
+        const endPathSegments = pidDocument.getPathSegmentsToPaths(
+          endInstance.pathIds
+        );
 
-    path.setAttribute(
-      'style',
-      `stroke:${COLORS.connection.color};stroke-width:${COLORS.connection.strokeWidth};opacity:${COLORS.connection.opacity};stroke-linecap:round`
-    );
-    svg.insertBefore(path, svg.children[0]);
-  });
+        const closestPoints = getClosestPointsOnSegments(
+          startPathSegments,
+          endPathSegments
+        );
 
-  return visualizationPathIds;
+        if (closestPoints === undefined) {
+          return undefined;
+        }
+
+        startPoint = closestPoints.point1;
+        endPoint = closestPoints.point2;
+      } else {
+        // One symbol and one line
+        const [symbol, line] =
+          startInstance.type !== 'Line'
+            ? [startInstance, endInstance]
+            : [endInstance, startInstance];
+
+        const symbolPoint = pidDocument.getMidPointToPaths(symbol.pathIds);
+        const lineSegments = pidDocument.getPathSegmentsToPaths(line.pathIds);
+
+        const closestPoint = getClosestPointOnSegments(
+          symbolPoint,
+          lineSegments
+        );
+        if (closestPoint === undefined) {
+          return undefined;
+        }
+
+        if (closestPoint.percentAlongPath < 0.05) {
+          endPoint = getPointTowardOtherPoint(
+            closestPoint.point,
+            lineSegments[closestPoint.index].stop,
+            offset
+          );
+        } else if (closestPoint.percentAlongPath > 0.95) {
+          endPoint = getPointTowardOtherPoint(
+            closestPoint.point,
+            lineSegments[closestPoint.index].start,
+            offset
+          );
+        } else {
+          endPoint = closestPoint.point;
+        }
+        startPoint = getPointTowardOtherPoint(symbolPoint, endPoint, offset);
+      }
+
+      const path = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'path'
+      );
+
+      path.setAttribute(
+        'd',
+        `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`
+      );
+
+      path.id = `convis-${connection.start}-${connection.end}`;
+
+      path.setAttribute(
+        'style',
+        `cursor:pointer;stroke:${COLORS.connection.color};stroke-width:${COLORS.connection.strokeWidth};opacity:${COLORS.connection.opacity};stroke-linecap:round`
+      );
+      svg.insertBefore(path, svg.children[0]);
+      return {
+        diagramConnection: connection,
+        node: path,
+      };
+    })
+    .filter(isNotUndefined);
 };
 
 export interface VisualizeBoundingBoxPros {
@@ -537,54 +561,73 @@ export const visualizeBoundingBoxBehind = ({
   return rect;
 };
 
+export type LabelVisualization = {
+  diagramInstance: DiagramInstanceWithPaths;
+  labels: {
+    labelId: string;
+    textNode: SVGPathElement;
+    boundingBoxNode: SVGRectElement;
+  }[];
+};
+
 export const visualizeLabelsToInstances = (
   svg: SVGSVGElement,
   pidDocument: PidDocument,
   instances: DiagramInstanceWithPaths[]
-): string[] => {
-  const labelVisualizationIds: string[] = [];
-
-  instances.forEach((instance) => {
+): LabelVisualization[] => {
+  return instances.map((instance) => {
     const instanceMidPoint = pidDocument.getMidPointToPaths(instance.pathIds);
-    instance.labelIds.forEach((labelId) => {
-      const pidTspan = pidDocument.getPidTspanById(labelId);
-      if (pidTspan === null) return;
 
-      const labelPoint = pidTspan.getMidPoint();
+    return {
+      diagramInstance: instance,
+      labels: instance.labelIds
+        .map((labelId) => {
+          const pidTspan = pidDocument.getPidTspanById(labelId);
+          if (pidTspan === null) {
+            return undefined;
+          }
 
-      const path = document.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'path'
-      );
+          const labelPoint = pidTspan.getMidPoint();
 
-      path.setAttribute(
-        'd',
-        `M ${instanceMidPoint.x} ${instanceMidPoint.y} L ${labelPoint.x} ${labelPoint.y}`
-      );
+          const rect = visualizeBoundingBoxBehind({
+            svg,
+            boundignBox: pidTspan.boundingBox,
+            id: `tspanrect_${pidTspan.id}`,
+            color: COLORS.connection.color,
+            opacity: 0.1,
+          });
 
-      path.id = `labelConnection-${labelId}-${getDiagramInstanceId(instance)}`;
-      labelVisualizationIds.push(path.id);
+          const path = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'path'
+          );
 
-      path.setAttribute(
-        'style',
-        `stroke:${COLORS.connection.color};stroke-width:${
-          COLORS.connection.strokeWidth / 2
-        };opacity:${COLORS.connection.opacity};stroke-linecap:round`
-      );
-      svg.insertBefore(path, svg.children[0]);
+          path.setAttribute(
+            'd',
+            `M ${instanceMidPoint.x} ${instanceMidPoint.y} L ${labelPoint.x} ${labelPoint.y}`
+          );
 
-      const rect = visualizeBoundingBoxBehind({
-        svg,
-        boundignBox: pidTspan.boundingBox,
-        id: `tspanrect_${pidTspan.id}`,
-        color: COLORS.connection.color,
-        opacity: 0.1,
-      });
-      labelVisualizationIds.push(rect.id);
-    });
+          path.id = `labelConnection-${labelId}-${getDiagramInstanceId(
+            instance
+          )}`;
+
+          path.setAttribute(
+            'style',
+            `cursor:pointer;stroke:${COLORS.connection.color};stroke-width:${
+              COLORS.connection.strokeWidth / 2
+            };opacity:${COLORS.connection.opacity};stroke-linecap:round`
+          );
+          svg.insertBefore(path, svg.nextSibling);
+
+          return {
+            labelId,
+            textNode: path,
+            boundingBoxNode: rect,
+          };
+        })
+        .filter(isNotUndefined),
+    };
   });
-
-  return labelVisualizationIds;
 };
 
 export const visualizeSymbolInstanceBoundingBoxes = (
