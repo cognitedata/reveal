@@ -13,8 +13,7 @@ export function validBoundingBox(visionJobAnnotation: VisionJobAnnotation) {
   return (
     !!visionJobAnnotation.region &&
     visionJobAnnotation.region.shape === RegionShape.Rectangle &&
-    Array.isArray(visionJobAnnotation.region.vertices) &&
-    visionJobAnnotation.region.vertices.length === 2 &&
+    visionJobAnnotation.region.vertices?.length === 2 &&
     visionJobAnnotation.region.vertices.every(
       (item) => 'x' in item && 'y' in item && vertexIsNormalized(item)
     )
@@ -24,6 +23,10 @@ export function validBoundingBox(visionJobAnnotation: VisionJobAnnotation) {
 export function validImageAssetLink(visionJobAnnotation: VisionJobAnnotation) {
   return (
     validBoundingBox(visionJobAnnotation) &&
-    !!(visionJobAnnotation as TagDetectionJobAnnotation).assetIds
+    !!(visionJobAnnotation as TagDetectionJobAnnotation).assetIds &&
+    !!(visionJobAnnotation as TagDetectionJobAnnotation).assetIds?.length &&
+    (visionJobAnnotation as TagDetectionJobAnnotation).assetIds.every(
+      (item) => item !== null && item !== undefined
+    )
   );
 }

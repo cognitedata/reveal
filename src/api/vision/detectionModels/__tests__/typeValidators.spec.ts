@@ -1,5 +1,6 @@
 import {
   validBoundingBox,
+  validImageAssetLink,
   vertexIsNormalized,
 } from 'src/api/vision/detectionModels/typeValidators';
 import {
@@ -103,5 +104,50 @@ describe('validBoundingBox', () => {
       },
     } as VisionJobAnnotation;
     expect(validBoundingBox(visionJobAnnotation)).toBe(true);
+  });
+});
+
+describe('validImageAssetLink', () => {
+  const boundingBox = {
+    region: {
+      shape: RegionShape.Rectangle,
+      vertices: [
+        { x: 0, y: 0.1 },
+        { x: 1, y: 0.3 },
+      ],
+    },
+  };
+  test('Invalid BoundingBox', () => {
+    const visionJobAnnotation = { assetIds: [1] } as VisionJobAnnotation;
+    expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Missing assetIds', () => {
+    const visionJobAnnotation = { ...boundingBox } as VisionJobAnnotation;
+    expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Empty assetIds', () => {
+    const visionJobAnnotation = {
+      ...boundingBox,
+      assetIds: [] as number[],
+    } as VisionJobAnnotation;
+    expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Invalid asset id in assetIds', () => {
+    const visionJobAnnotation = {
+      ...boundingBox,
+      assetIds: [1, 2, null],
+    } as VisionJobAnnotation;
+    expect(validImageAssetLink(visionJobAnnotation)).toBe(false);
+  });
+
+  test('valid imageAssetLink', () => {
+    const visionJobAnnotation = {
+      ...boundingBox,
+      assetIds: [1, 2, 3],
+    } as VisionJobAnnotation;
+    expect(validImageAssetLink(visionJobAnnotation)).toBe(true);
   });
 });
