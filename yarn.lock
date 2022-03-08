@@ -3981,10 +3981,10 @@
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
   integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
 
-"@types/css-font-loading-module@0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@types/css-font-loading-module/-/css-font-loading-module-0.0.4.tgz#94a835e27d1af444c65cba88523533c174463d64"
-  integrity sha512-ENdXf7MW4m9HeDojB2Ukbi7lYMIuQNBHVf98dbzaiG4EEJREBd6oleVAjrLRCrp7dm6CK1mmdmU9tcgF61acbw==
+"@types/css-font-loading-module@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@types/css-font-loading-module/-/css-font-loading-module-0.0.7.tgz#2f98ede46acc0975de85c0b7b0ebe06041d24601"
+  integrity sha512-nl09VhutdjINdWyXxHWN/w9zlNCfr60JUqJbd24YXUuCwgeL0TpFSdElCwb6cxfB6ybE19Gjj4g0jsgkXxKv1Q==
 
 "@types/d3-color@^1":
   version "1.4.2"
@@ -5935,6 +5935,11 @@ balanced-match@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-2.0.0.tgz#dc70f920d78db8b858535795867bf48f820633d9"
   integrity sha512-1ugUSr8BHXRnK23KfuYS+gVMC3LB8QGH9W1iGtDPsNWoQbgtXSExkBu2aDR4epiGWZOjZsj6lDl/N/AqqTC3UA==
+
+base64-arraybuffer@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/base64-arraybuffer/-/base64-arraybuffer-1.0.2.tgz#1c37589a7c4b0746e34bd1feb951da2df01c1bdc"
+  integrity sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==
 
 base64-js@^1.0.2, base64-js@^1.3.0, base64-js@^1.3.1, base64-js@^1.5.1:
   version "1.5.1"
@@ -17519,21 +17524,22 @@ rollup@^1.31.1:
     "@types/node" "*"
     acorn "^7.1.0"
 
-rrweb-snapshot@^1.1.12:
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/rrweb-snapshot/-/rrweb-snapshot-1.1.12.tgz#74c183bffc829001652bc21c9e1dbef8daf0a684"
-  integrity sha512-T97d7am/q3PT8EDakGD6NFR4hb3Ll8h9eKTFYsSEhK6Y0/PvggobmeDTzGZXVHZ3e+tjJ1s6vVCSjvVdvqnhAw==
+rrweb-snapshot@^1.1.13:
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/rrweb-snapshot/-/rrweb-snapshot-1.1.13.tgz#fc15adb7eb6354c859c8d594f57b09e1f5bccdd8"
+  integrity sha512-lv4vBSJ5orBcRoJnjLvtly6cSsctC+TNm5orVzYRL9SH3LmtSpQ+wI4bw7eh4AcyKoUf0x4pe1Bn632GggmKWQ==
 
-rrweb@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/rrweb/-/rrweb-1.1.1.tgz#bee55b889addcc40c004d81517d9a0b51cad893e"
-  integrity sha512-ZKpbvV90ApUkA5W5J/d1S2CLhDwsKLSxRg/+e0pqao5mVbR7Z0Q+K7RDZd6rbqSXzBg5qjODbQfZiynS9d030w==
+rrweb@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/rrweb/-/rrweb-1.1.2.tgz#65279c8528dcfff7158bb31ed21323d3f26a741f"
+  integrity sha512-D1r3MdfYshY7rA8lN3R0cXqeY6fTtgHlkLQM4lxkU+TdKi023/hNQz6tvDJbXGX3HWGa4mRAmQs3S2uGho6Nsw==
   dependencies:
-    "@types/css-font-loading-module" "0.0.4"
+    "@types/css-font-loading-module" "0.0.7"
     "@xstate/fsm" "^1.4.0"
+    base64-arraybuffer "^1.0.1"
     fflate "^0.4.4"
     mitt "^1.1.3"
-    rrweb-snapshot "^1.1.12"
+    rrweb-snapshot "^1.1.13"
 
 rsvp@^4.8.4:
   version "4.8.5"
