@@ -117,7 +117,6 @@ const SearchInAsset = ({ query, setQuery }: SearchInAssetProps) => {
             value={query}
             onChange={handleSearchInputChange}
             clearable={{
-              labelText: 'Clear text',
               callback: () => {
                 setQuery('');
               },

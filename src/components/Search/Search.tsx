@@ -62,7 +62,6 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
             onChange={handleSearchInputChange}
             size="large"
             clearable={{
-              labelText: t['Clear text'],
               callback: () => {
                 setQuery('');
               },

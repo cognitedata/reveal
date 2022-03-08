@@ -1,4 +1,4 @@
-import { Button, Input } from '@cognite/cogs.js';
+import { Button, Input, InputProps } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { OperationParametersTypeEnum } from '@cognite/calculation-backend';
 import { useState } from 'react';
@@ -35,7 +35,7 @@ const FunctionParameterForm = ({
     setFormData({ ...formData, [param]: transformParamInput(type, value) });
   };
 
-  const inputProps = (type: string) => {
+  const inputProps = (type: OperationParametersTypeEnum): InputProps => {
     switch (type) {
       case OperationParametersTypeEnum.Int:
         return { type: 'tel' };

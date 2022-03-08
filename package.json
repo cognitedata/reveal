@@ -15,14 +15,16 @@
     "build-storybook": "build-storybook -s public",
     "chromatic": "chromatic --exit-zero-on-changes",
     "cy": "cypress open",
-    "cy:ci": "cypress run"
+    "cy:ci": "cypress run",
+    "dedup": "yarn-deduplicate",
+    "postinstall": "yarn dedup"
   },
   "dependencies": {
     "@cognite/annotations": "1.1.0",
     "@cognite/auth-utils": "1.0.15",
     "@cognite/calculation-backend": "3.0.0-alpha.2",
     "@cognite/cdf-hub-tenant-selector": "0.14.1",
-    "@cognite/cogs.js": "5.11.2",
+    "@cognite/cogs.js": "5.19.1",
     "@cognite/connect": "0.0.8",
     "@cognite/data-exploration": "1.7.7",
     "@cognite/metrics": "1.2.1",
@@ -125,7 +127,8 @@
     "jest-junit": "13.0.0",
     "jira-prepare-commit-msg": "1.6.2",
     "prettier": "2.5.1",
-    "typescript": "4.5.5"
+    "typescript": "4.5.5",
+    "yarn-deduplicate": "^3.1.0"
   },
   "resolutions": {
     "react": "17.0.2",
