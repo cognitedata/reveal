@@ -4,6 +4,7 @@ import {
   ImageClassification,
   ImageExtractedText,
   ImageObjectDetectionBoundingBox,
+  RegionShape,
 } from 'src/api/annotation/types';
 
 import {
@@ -119,7 +120,7 @@ export function convertImageObjectDetectionBoundingBoxToAnnotationTypeV1(
       confidence: imageObjectDetectionBoundingBox.confidence,
     },
     region: {
-      shape: 'rectangle',
+      shape: RegionShape.Rectangle,
       vertices: [
         {
           x: imageObjectDetectionBoundingBox.boundingBox.xMin,
@@ -145,7 +146,7 @@ export function convertImageExtractedTextToAnnotationTypeV1(
       confidence: imageExtractedText.confidence,
     },
     region: {
-      shape: 'rectangle',
+      shape: RegionShape.Rectangle,
       vertices: [
         {
           x: imageExtractedText.textRegion.xMin,
@@ -175,7 +176,7 @@ export function convertImageAssetLinkListToAnnotationTypeV1(
         confidence: imageAssetLink.confidence,
       },
       region: {
-        shape: 'rectangle',
+        shape: RegionShape.Rectangle,
         vertices: [
           {
             x: imageAssetLink.textRegion.xMin,
