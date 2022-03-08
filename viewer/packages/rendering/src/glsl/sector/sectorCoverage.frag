@@ -1,13 +1,13 @@
-#pragma glslify: rand2d = require('../math/rand2d.glsl')
-#pragma glslify: isClipped = require('../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
-#pragma glslify: NodeAppearance = require('../base/nodeAppearance.glsl')
+precision highp float;
+
+#pragma glslify: import('../math/rand2d.glsl')
+#pragma glslify: import('../base/nodeAppearance.glsl')
+#pragma glslify: import('../base/isClipped.glsl')
 
 in mediump vec3 v_color;
 in lowp float v_coverageFactor;
 in lowp float v_visible;
 in lowp vec2 v_seed;
-
-
 in vec3 v_viewPosition;
 
 out vec4 outputColor;

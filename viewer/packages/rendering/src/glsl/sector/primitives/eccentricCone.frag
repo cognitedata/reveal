@@ -1,38 +1,31 @@
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
-#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
-#pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
-#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
-#pragma glslify: determineColor = require('../../base/determineColor.glsl');
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
-#pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
+precision highp float;
 
-#define PI 3.14159265359
-#define PI2 6.28318530718
-#define PI_HALF 1.5707963267949
+#pragma glslify: import('../../base/nodeAppearance.glsl')
+#pragma glslify: import('../../base/updateFragmentColor.glsl')
+#pragma glslify: import('../../base/determineNodeAppearance.glsl');
+#pragma glslify: import('../../base/determineVisibility.glsl');
+#pragma glslify: import('../../base/determineColor.glsl');
+#pragma glslify: import('../../base/isClipped.glsl')
+#pragma glslify: import('../../math/constants.glsl')
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
-
 uniform mat4 projectionMatrix;
+uniform int renderMode;
+
+// Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
+#pragma glslify: import('../../base/updateFragmentDepth.glsl')
 
 in vec4 U;
 in vec4 V;
 in vec4 axis;
-
 in vec4 v_centerA;
 in vec4 v_centerB;
 in float height;
-
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
-
-uniform int renderMode;
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -63,24 +56,24 @@ void main() {
 
     float a = dot(D.xy, D.xy);
     float b = dot(E.xy, D.xy);
-    float c = dot(E.xy, E.xy)-R1*R1;
-    float L2Inv = 1.0/(L*L);
+    float c = dot(E.xy, E.xy) - R1 * R1;
+    float L2Inv = 1.0 / (L * L);
 
     if (R1 != R2) {
       // Additional terms if radii are different
-      float dRLInv = dR/L;
-      float dRdRL2Inv = dRLInv*dRLInv;
-      a -= D.z*D.z*dRdRL2Inv;
-      b -= dRLInv*(E.z*D.z*dRLInv + R1*D.z);
-      c -= dRLInv*(E.z*E.z*dRLInv + 2.0*R1*E.z);
+      float dRLInv = dR / L;
+      float dRdRL2Inv = dRLInv * dRLInv;
+      a -= D.z * D.z * dRdRL2Inv;
+      b -= dRLInv * (E.z * D.z * dRLInv + R1 * D.z);
+      c -= dRLInv * (E.z * E.z * dRLInv + 2.0 * R1 * E.z);
     }
 
     // Additional terms when one of the center points is displaced orthogonal to normal vector
-    vec2 displacement = ((v_centerB.xyz-v_centerA.xyz)*basis).xy; // In the basis where displacement is in XY only
+    vec2 displacement = ((v_centerB.xyz - v_centerA.xyz) * basis).xy; // In the basis where displacement is in XY only
     float displacementLengthSquared = dot(displacement, displacement);
-    a += D.z*(D.z*displacementLengthSquared - 2.0*L*dot(D.xy, displacement))*L2Inv;
-    b += (D.z*E.z*displacementLengthSquared - L*(D.x*E.z*displacement.x + D.y*E.z*displacement.y + D.z*E.x*displacement.x + D.z*E.y*displacement.y))*L2Inv;
-    c += E.z*(E.z*displacementLengthSquared - 2.*L*dot(E.xy, displacement))*L2Inv;
+    a += D.z * (D.z * displacementLengthSquared - 2.0 * L * dot(D.xy, displacement)) * L2Inv;
+    b += (D.z * E.z * displacementLengthSquared - L * (D.x * E.z * displacement.x + D.y * E.z * displacement.y + D.z * E.x * displacement.x + D.z * E.y * displacement.y)) * L2Inv;
+    c += E.z * (E.z * displacementLengthSquared - 2.0 * L * dot(E.xy, displacement)) * L2Inv;
 
     // Calculate a dicriminant of the above quadratic equation (factor 2 removed from all b-terms above)
     float d = b*b - a*c;
@@ -90,8 +83,8 @@ void main() {
       discard;
     }
     float sqrtd = sqrt(d);
-    float dist1 = (-b - sqrtd)/a;
-    float dist2 = (-b + sqrtd)/a;
+    float dist1 = (-b - sqrtd) / a;
+    float dist2 = (-b + sqrtd) / a;
 
     // Make sure dist1 is the smaller one
     if (dist2 < dist1) {
@@ -102,9 +95,9 @@ void main() {
 
     // Check the smallest root, it is closest camera. Only test if the z-component is outside the truncated eccentric cone
     float dist = dist1;
-    float intersectionPointZ = E.z + dist*D.z;
+    float intersectionPointZ = E.z + dist * D.z;
     // Intersection point in camera space
-    vec3 p = rayTarget + dist*rayDirection;
+    vec3 p = rayTarget + dist * rayDirection;
     bool isInner = false;
 
     if (intersectionPointZ <= 0.0 ||
@@ -115,8 +108,8 @@ void main() {
       // or the intersection point is outside the end caps. This is not a valid solution.
       isInner = true;
       dist = dist2;
-      intersectionPointZ = E.z + dist*D.z;
-      p = rayTarget + dist*rayDirection;
+      intersectionPointZ = E.z + dist * D.z;
+      p = rayTarget + dist * rayDirection;
 
       if (intersectionPointZ <= 0.0 ||
         intersectionPointZ >= L ||
@@ -137,7 +130,7 @@ void main() {
     vec3 t = normalize(cross(n, A));
     vec3 o1 = v_centerA + R1 * t;
     vec3 o2 = v_centerB + R2 * t;
-    vec3 B = o2-o1;
+    vec3 B = o2 - o1;
     normal = normalize(cross(A, B));
 #endif
 

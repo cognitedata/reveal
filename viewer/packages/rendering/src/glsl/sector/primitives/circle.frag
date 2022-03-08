@@ -1,24 +1,21 @@
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
-#pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
-#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
-#pragma glslify: determineColor = require('../../base/determineColor.glsl');
-#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
-#pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
+precision highp float;
+
+#pragma glslify: import('../../base/updateFragmentColor.glsl')
+#pragma glslify: import('../../base/nodeAppearance.glsl')
+#pragma glslify: import('../../base/determineNodeAppearance.glsl');
+#pragma glslify: import('../../base/determineVisibility.glsl');
+#pragma glslify: import('../../base/determineColor.glsl');
+#pragma glslify: import('../../base/isClipped.glsl')
+
+uniform sampler2D colorDataTexture;
+uniform sampler2D matCapTexture;
+uniform vec2 treeIndexTextureSize;
+uniform int renderMode;
 
 in float v_treeIndex;
 in vec2 v_xy;
 in vec3 v_color;
 in vec3 v_normal;
-
-uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
-uniform sampler2D matCapTexture;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform int renderMode;
-
 in vec3 vViewPosition;
 
 void main() {

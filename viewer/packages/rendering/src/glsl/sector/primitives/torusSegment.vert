@@ -1,9 +1,17 @@
-#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
 
+in vec3 position;
 in mat4 a_instanceMatrix;
-
 in float a_treeIndex;
 in vec3 a_color;
 in float a_arcAngle;
@@ -13,15 +21,7 @@ in float a_tubeRadius;
 out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
-
 out vec3 vViewPosition;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
 
 void main() {
     // normalized theta and phi are packed into positions
@@ -31,9 +31,9 @@ void main() {
     float sinTheta = sin(theta);
     vec3 pos3 = vec3(0);
 
-    pos3.x = (a_radius + a_tubeRadius*cos(phi)) * cosTheta;
-    pos3.y = (a_radius + a_tubeRadius*cos(phi)) * sinTheta;
-    pos3.z = a_tubeRadius*sin(phi);
+    pos3.x = (a_radius + a_tubeRadius * cos(phi)) * cosTheta;
+    pos3.y = (a_radius + a_tubeRadius * cos(phi)) * sinTheta;
+    pos3.z = a_tubeRadius * sin(phi);
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 

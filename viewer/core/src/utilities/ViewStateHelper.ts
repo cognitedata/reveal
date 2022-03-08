@@ -3,9 +3,9 @@
  */
 import * as THREE from 'three';
 
-import { Cognite3DModel } from '../public/migration/Cognite3DModel';
+import { Cognite3DModel } from '@reveal/cad-model';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
+import { NodeCollectionDeserializer } from '@reveal/cad-styling';
 
 import { CameraManager } from '@reveal/camera-manager';
 import { NodeAppearance } from '@reveal/cad-styling';

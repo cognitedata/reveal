@@ -5,6 +5,12 @@
  * MIT License (MIT) Copyright (c) 2014 Matt DesLauriers
  *
  */
+precision highp float;
+
+uniform vec2 inverseResolution;
+uniform vec2 resolution;
+uniform sampler2D tDiffuse;
+uniform sampler2D tDepth;
 
 in vec2 v_uv;
 in vec2 v_fragCoord;
@@ -13,11 +19,6 @@ in vec2 v_rgbNE;
 in vec2 v_rgbSW;
 in vec2 v_rgbSE;
 in vec2 v_rgbM;
-
-uniform vec2 inverseResolution;
-uniform vec2 resolution;
-uniform sampler2D tDiffuse;
-uniform sampler2D tDepth;
 
 out vec4 outputColor;
 
@@ -38,11 +39,11 @@ vec4 fxaa(sampler2D tex, vec2 fragCoord,
     vec2 v_rgbM) {
   vec4 color;
 
-  vec3 rgbNW = texture2D(tex, v_rgbNW).xyz;
-  vec3 rgbNE = texture2D(tex, v_rgbNE).xyz;
-  vec3 rgbSW = texture2D(tex, v_rgbSW).xyz;
-  vec3 rgbSE = texture2D(tex, v_rgbSE).xyz;
-  vec4 texColor = texture2D(tex, v_rgbM);
+  vec3 rgbNW = texture(tex, v_rgbNW).xyz;
+  vec3 rgbNE = texture(tex, v_rgbNE).xyz;
+  vec3 rgbSW = texture(tex, v_rgbSW).xyz;
+  vec3 rgbSE = texture(tex, v_rgbSE).xyz;
+  vec4 texColor = texture(tex, v_rgbM);
   vec3 rgbM  = texColor.xyz;
 
   vec3 luma = vec3(0.299, 0.587, 0.114);
@@ -67,11 +68,11 @@ vec4 fxaa(sampler2D tex, vec2 fragCoord,
       dir * rcpDirMin));
 
   vec4 rgbA = 0.5 * (
-    texture2D(tex, inverseResolution * (v_fragCoord + dir * (1.0 / 3.0 - 0.5))) +
-    texture2D(tex, inverseResolution * (v_fragCoord + dir * (2.0 / 3.0 - 0.5))));
+    texture(tex, inverseResolution * (v_fragCoord + dir * (1.0 / 3.0 - 0.5))) +
+    texture(tex, inverseResolution * (v_fragCoord + dir * (2.0 / 3.0 - 0.5))));
   vec4 rgbB = rgbA * 0.5 + 0.25 * (
-    texture2D(tex, inverseResolution * (v_fragCoord + dir * -0.5)) +
-    texture2D(tex, inverseResolution * (v_fragCoord + dir * 0.5)));
+    texture(tex, inverseResolution * (v_fragCoord + dir * -0.5)) +
+    texture(tex, inverseResolution * (v_fragCoord + dir * 0.5)));
 
   float lumaB = dot(rgbB.rgb, luma);
   if ((lumaB < lumaMin) || (lumaB > lumaMax)) {
@@ -86,5 +87,5 @@ void main() {
   outputColor = fxaa(tDiffuse, v_fragCoord, 
     resolution, inverseResolution, 
     v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
-  gl_FragDepth = texture2D(tDepth, v_uv).r;
+  gl_FragDepth = texture(tDepth, v_uv).r;
 }

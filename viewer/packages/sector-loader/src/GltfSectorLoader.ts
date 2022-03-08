@@ -112,7 +112,7 @@ export class GltfSectorLoader {
     return treeIndexSet;
   }
 
-  private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.ShaderMaterial) {
+  private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.RawShaderMaterial) {
     const mesh = new THREE.Mesh(geometry, material);
     group.add(mesh);
     mesh.frustumCulled = false;

@@ -63,10 +63,10 @@ export class EffectRenderManager {
 
   private _renderOptions: RenderOptions;
 
-  private readonly _combineOutlineDetectionMaterial: THREE.ShaderMaterial;
-  private readonly _fxaaMaterial: THREE.ShaderMaterial;
-  private _ssaoMaterial: THREE.ShaderMaterial;
-  private readonly _ssaoBlurCombineMaterial: THREE.ShaderMaterial;
+  private readonly _combineOutlineDetectionMaterial: THREE.RawShaderMaterial;
+  private readonly _fxaaMaterial: THREE.RawShaderMaterial;
+  private _ssaoMaterial: THREE.RawShaderMaterial;
+  private readonly _ssaoBlurCombineMaterial: THREE.RawShaderMaterial;
 
   private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
   private readonly _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
@@ -209,7 +209,7 @@ export class EffectRenderManager {
     this._ssaoBlurCombineTarget.depthTexture.format = THREE.DepthFormat;
     this._ssaoBlurCombineTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._combineOutlineDetectionMaterial = new THREE.ShaderMaterial({
+    this._combineOutlineDetectionMaterial = new THREE.RawShaderMaterial({
       vertexShader: outlineDetectionShaders.vertex,
       fragmentShader: outlineDetectionShaders.fragment,
       uniforms: {
@@ -244,7 +244,7 @@ export class EffectRenderManager {
     const sampleRadius = ssaoParameters.sampleRadius;
     const depthCheckBias = ssaoParameters.depthCheckBias;
 
-    this._ssaoMaterial = new THREE.ShaderMaterial({
+    this._ssaoMaterial = new THREE.RawShaderMaterial({
       uniforms: {
         tDepth: { value: this._compositionTarget.depthTexture },
         kernel: { value: sampleKernel },
@@ -262,7 +262,7 @@ export class EffectRenderManager {
       glslVersion: THREE.GLSL3
     });
 
-    this._ssaoBlurCombineMaterial = new THREE.ShaderMaterial({
+    this._ssaoBlurCombineMaterial = new THREE.RawShaderMaterial({
       uniforms: {
         tDiffuse: { value: this._compositionTarget.texture },
         tAmbientOcclusion: { value: this._ssaoTarget.texture },
@@ -277,7 +277,7 @@ export class EffectRenderManager {
       ? this._ssaoBlurCombineTarget.texture
       : this._compositionTarget.texture;
 
-    this._fxaaMaterial = new THREE.ShaderMaterial({
+    this._fxaaMaterial = new THREE.RawShaderMaterial({
       uniforms: {
         tDiffuse: { value: diffuseTexture },
         tDepth: { value: this._compositionTarget.depthTexture },

@@ -1,35 +1,25 @@
 precision highp float;
 
-#define texture2D texture
-// #define gl_FragDepthEXT gl_FragDepth
-
-#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
-#pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
-#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
-#pragma glslify: determineColor = require('../../base/determineColor.glsl');
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: import('../../base/nodeAppearance.glsl')
+#pragma glslify: import('../../base/updateFragmentColor.glsl')
+#pragma glslify: import('../../base/determineNodeAppearance.glsl');
+#pragma glslify: import('../../base/determineVisibility.glsl');
+#pragma glslify: import('../../base/determineColor.glsl');
+#pragma glslify: import('../../base/isClipped.glsl')
 #pragma glslify: import('../../math/constants.glsl')
-#pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
+
+uniform sampler2D colorDataTexture;
+uniform sampler2D matCapTexture;
+uniform vec2 treeIndexTextureSize;
+uniform int renderMode;
 
 in float v_oneMinusThicknessSqr;
 in vec2 v_xy;
 in float v_angle;
 in float v_arcAngle;
-
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
-
-uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
-uniform sampler2D matCapTexture;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform int renderMode;
-
 in vec3 vViewPosition;
 
 void main() {

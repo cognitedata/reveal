@@ -7,5 +7,3 @@ vec3 packIntToColor(float number) {
     float b = mod(number, 255.0) / 255.0;
     return vec3(r, g, b);
 }
-
-#pragma glslify: export(packIntToColor)

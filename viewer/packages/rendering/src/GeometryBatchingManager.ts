@@ -300,7 +300,7 @@ export class GeometryBatchingManager {
   private createInstanceMesh(
     group: THREE.Group,
     geometry: THREE.BufferGeometry,
-    material: THREE.ShaderMaterial,
+    material: THREE.RawShaderMaterial,
     instanceId: string
   ): THREE.InstancedMesh {
     const mesh = new THREE.InstancedMesh(geometry, material, 0);

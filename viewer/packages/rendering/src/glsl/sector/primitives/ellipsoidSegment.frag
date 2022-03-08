@@ -1,32 +1,30 @@
-#pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
-#pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
-#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
-#pragma glslify: determineColor = require('../../base/determineColor.glsl');
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
-#pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
+precision highp float;
+
+#pragma glslify: import('../../base/nodeAppearance.glsl')
+#pragma glslify: import('../../base/updateFragmentColor.glsl')
+#pragma glslify: import('../../base/determineNodeAppearance.glsl');
+#pragma glslify: import('../../base/determineVisibility.glsl');
+#pragma glslify: import('../../base/determineColor.glsl');
+#pragma glslify: import('../../base/isClipped.glsl')
 
 uniform sampler2D colorDataTexture;
-uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
-
 uniform vec2 treeIndexTextureSize;
-
 uniform mat4 projectionMatrix;
+uniform int renderMode;
+
+// Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
+#pragma glslify: import('../../base/updateFragmentDepth.glsl')
+
 in vec4 center;
 in float hRadius;
 in float height;
-
 in vec4 U;
 in vec4 V;
 in vec4 sphereNormal;
-
 in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
-
-uniform int renderMode;
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -56,7 +54,7 @@ void main() {
 
     float a = dot(D, D);
     float b = dot(E, D);
-    float c = dot(E, E) - vRadius*vRadius;
+    float c = dot(E, E) - vRadius * vRadius;
 
     // discriminant of sphere equation (factor 2 removed from b above)
     float d = b*b - a*c;
@@ -64,8 +62,8 @@ void main() {
         discard;
 
     float sqrtd = sqrt(d);
-    float dist1 = (-b - sqrtd)/a;
-    float dist2 = (-b + sqrtd)/a;
+    float dist1 = (-b - sqrtd) / a;
+    float dist2 = (-b + sqrtd) / a;
 
     // Make sure dist1 is the smaller one
     if (dist2 < dist1) {
@@ -75,9 +73,9 @@ void main() {
     }
 
     float dist = dist1;
-    float intersectionPointZ = E.z + dist*D.z;
+    float intersectionPointZ = E.z + dist * D.z;
     // Intersection point in camera space
-    vec3 p = rayTarget + dist*rayDirection;
+    vec3 p = rayTarget + dist * rayDirection;
 
     if (intersectionPointZ <= vRadius - height ||
         intersectionPointZ > vRadius ||
@@ -86,8 +84,8 @@ void main() {
         // Missed the first point, check the other point
 
         dist = dist2;
-        intersectionPointZ = E.z + dist*D.z;
-        p = rayTarget + dist*rayDirection;
+        intersectionPointZ = E.z + dist * D.z;
+        p = rayTarget + dist * rayDirection;
         if (intersectionPointZ <= vRadius - height ||
             intersectionPointZ > vRadius ||
             isClipped(appearance, p)
@@ -108,6 +106,6 @@ void main() {
     }
 #endif
 
-  float fragDepth = updateFragmentDepth(p, projectionMatrix);
-  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
+    float fragDepth = updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
 }

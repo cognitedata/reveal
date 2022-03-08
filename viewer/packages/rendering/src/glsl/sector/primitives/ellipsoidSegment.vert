@@ -1,10 +1,19 @@
-#pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
-#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../math/mul3.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+uniform vec3 cameraPosition;
+uniform vec2 treeIndexTextureSize;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
+uniform sampler2D transformOverrideTexture;
 
+in vec3 position;
 in float a_treeIndex;
 in vec3 a_color;
 in vec3 a_center;
@@ -18,23 +27,14 @@ out float v_treeIndex;
 out vec4 center;
 out float hRadius;
 out float height;
-
 // U, V, axis represent the 3x3 sphere basis.
 // They are vec4 to pack extra data into the w-component
 // since Safari on iOS only supports 8 out vec4 registers.
 out vec4 U;
 out vec4 V;
 out vec4 sphereNormal;
-
 out vec3 v_color;
 out vec3 v_normal;
-
-uniform vec2 treeIndexTextureSize;
-
-uniform sampler2D transformOverrideIndexTexture;
-
-uniform vec2 transformOverrideTextureSize; 
-uniform sampler2D transformOverrideTexture;
 
 void main() {
 
@@ -45,6 +45,8 @@ void main() {
       transformOverrideTextureSize, 
       transformOverrideTexture
     );
+
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
 
@@ -84,7 +86,7 @@ void main() {
     // maxRadiusOfSegment is the radius of the circle (projected ellipsoid) when ellipsoid segment is seen from above
     float maxRadiusOfSegment = a_horizontalRadius * sqrt(1.0 - ratio * ratio);
 
-    vec3 displacement = vec3(newPosition.x*a_height*0.5, maxRadiusOfSegment*newPosition.y, maxRadiusOfSegment*newPosition.z);
+    vec3 displacement = vec3(newPosition.x * a_height * 0.5, maxRadiusOfSegment * newPosition.y, maxRadiusOfSegment * newPosition.z);
     vec3 surfacePoint = centerOfSegment + mat3(lDir, left, up) * displacement;
     vec3 transformed = surfacePoint;
 

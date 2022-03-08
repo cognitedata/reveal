@@ -7,15 +7,25 @@ import TWEEN from '@tweenjs/tween.js';
 import omit from 'lodash/omit';
 import { Subscription, fromEventPattern } from 'rxjs';
 
-import { LoadingState } from '@reveal/cad-geometry-loaders';
-
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
-import { MetricsLogger } from '@reveal/metrics';
+import {
+  assertNever,
+  EventTrigger,
+  InputHandler,
+  disposeOfAllEventListeners,
+  worldToNormalizedViewportCoordinates,
+  worldToViewportCoordinates
+} from '@reveal/utilities';
 
-import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
-import { intersectCadNodes } from '../../datamodels/cad/picking';
+import { MetricsLogger } from '@reveal/metrics';
+import { intersectCadNodes, CadModelSectorLoadStatistics, Cognite3DModel } from '@reveal/cad-model';
+import {
+  intersectPointClouds,
+  PointCloudIntersection,
+  PointCloudBudget,
+  CognitePointCloudModel
+} from '@reveal/pointclouds';
 
 import {
   AddModelOptions,
@@ -23,31 +33,24 @@ import {
   Intersection,
   CameraChangeDelegate,
   PointerEventDelegate,
-  CadModelBudget,
-  PointCloudBudget
+  CadModelBudget
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
-import { CogniteModelBase } from './CogniteModelBase';
-import { Cognite3DModel } from './Cognite3DModel';
-import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import { DisposedDelegate, SceneRenderedDelegate } from '../types';
+import { DisposedDelegate, SceneRenderedDelegate, RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
-import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
-import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
-
-import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection, RevealOptions } from '../..';
+import { CadIntersection, IntersectionFromPixelOptions } from '../..';
 import { PropType } from '../../utilities/reflection';
-import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
+import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
@@ -217,8 +220,7 @@ export class Cognite3DViewer {
       new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
     this.camera = this._cameraManager.getCamera();
 
-    this._cameraManager.on('cameraChange', (event: any) => {
-      const { position, target } = event.camera;
+    this._cameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
@@ -1202,8 +1204,8 @@ export class Cognite3DViewer {
 }
 
 function adjustCamera(camera: THREE.PerspectiveCamera, width: number, height: number) {
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
 }
 
 function createCanvasWrapper(): HTMLElement {
@@ -1218,7 +1220,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     internal: {}
   };
-  revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
+  revealOptions.internal.cad = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
   const edgeDetectionParameters = {
