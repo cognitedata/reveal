@@ -135,7 +135,9 @@ export function convertImageClassificationToAnnotationTypeV1(
 ) {
   const annotation = {
     text: imageClassification.label,
-    confidence: imageClassification.confidence,
+    data: {
+      confidence: imageClassification.confidence,
+    },
   };
 
   return annotation;
