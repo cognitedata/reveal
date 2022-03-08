@@ -5,7 +5,9 @@ import { AppAction, AppActionType, AppState } from '.';
 import {
   addComponent,
   addDetection,
+  addRemark,
   approveDetection,
+  approveEquipment,
   deleteComponents,
   removeDetection,
   saveDetection,
@@ -164,14 +166,6 @@ function reducer(state: AppState, action: AppAction) {
         dataElementModal: undefined,
       };
     }
-    case AppActionType.SET_EQUIPMENT_LIST:
-      return {
-        ...state,
-        equipmentList: {
-          unitName: action.unitName,
-          equipments: action.equipments,
-        },
-      };
     case AppActionType.ADD_COMPONENT: {
       const equipmentToSave = addComponent(
         state.equipment.data!,
@@ -205,6 +199,32 @@ function reducer(state: AppState, action: AppAction) {
         state.equipment.data!,
         action.components
       );
+
+      return {
+        ...state,
+        saveState: {
+          loading: true,
+          data: equipmentToSave,
+        },
+      };
+    }
+    case AppActionType.ADD_REMARK: {
+      const equipmentToSave = addRemark(
+        state.equipment.data!,
+        action.dataElement,
+        action.remark
+      );
+
+      return {
+        ...state,
+        saveState: {
+          loading: true,
+          data: equipmentToSave,
+        },
+      };
+    }
+    case AppActionType.APPROVE_EQUIPMENT: {
+      const equipmentToSave = approveEquipment(state.equipment.data!);
 
       return {
         ...state,

@@ -7,7 +7,7 @@ import {
 } from 'scarlet/hooks';
 import { DataElement } from 'scarlet/types';
 
-import { CardHeader, DataSourceList } from '..';
+import { CardHeader, CardRemarks, DataSourceList } from '..';
 
 import * as Styled from './style';
 
@@ -56,6 +56,9 @@ export const Card = ({ dataElement }: CardProps) => {
       </SegmentedControl>
       {currentTab === CardTabs.DATA_SOURCES && (
         <DataSourceList dataElement={dataElement} />
+      )}
+      {currentTab === CardTabs.REMARKS && (
+        <CardRemarks dataElement={dataElement} />
       )}
     </Styled.Container>
   );

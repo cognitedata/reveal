@@ -21,3 +21,7 @@ export const DocumentsAmount = styled(Detail)`
   padding: 4px 8px;
   border-radius: 2px;
 `;
+
+export const StateContainer = styled.div`
+  margin-left: auto;
+`;

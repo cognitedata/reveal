@@ -3,6 +3,8 @@ import { generatePath, useHistory } from 'react-router-dom';
 import { useAppState } from 'scarlet/hooks';
 import { RoutePath } from 'scarlet/routes';
 
+import { EquipmentStateBar } from '..';
+
 import * as Styled from './style';
 
 type TopBarProps = {
@@ -30,6 +32,9 @@ export const TopBar = ({ unitName, equipmentName }: TopBarProps) => {
           {documents.data?.length === 1 ? ' document' : ' documents'}
         </Styled.DocumentsAmount>
       )}
+      <Styled.StateContainer>
+        <EquipmentStateBar />
+      </Styled.StateContainer>
     </Styled.Container>
   );
 };

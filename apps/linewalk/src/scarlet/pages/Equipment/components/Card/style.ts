@@ -2,6 +2,9 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 `;
 
 export const CategoryWrapper = styled.div`

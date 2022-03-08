@@ -35,10 +35,29 @@ export const LoaderContainer = styled.div`
   }
 `;
 
-export const Row = styled.div`
-  background: red;
+export const TableContainer = styled.div<{ isLoading: boolean }>`
+  flex-grow: 1;
+
+  td {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+  }
 `;
 
-export const TableContainer = styled.div`
-  flex-grow: 1;
+export const StatusLabel = styled.div<{ approved: boolean }>`
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  ${({ approved }) =>
+    approved
+      ? css`
+          color: #22633c;
+          background-color: rgba(24, 175, 142, 0.1); ;
+        `
+      : css`
+          color: #b25c00;
+          background-color: rgba(255, 187, 0, 0.14);
+        `}
 `;

@@ -10,6 +10,7 @@ import {
   Detection,
   Annotation,
   EquipmentComponent,
+  Remark,
 } from 'scarlet/types';
 
 export type AppState = {
@@ -50,11 +51,6 @@ export type AppAction =
     }
   | {
       type: AppActionType.CLEANUP_EQUIPMENT_DATA;
-    }
-  | {
-      type: AppActionType.SET_EQUIPMENT_LIST;
-      unitName: string;
-      equipments: EquipmentListItem[];
     }
   | {
       type: AppActionType.SET_EQUIPMENT_CONFIG;
@@ -109,8 +105,16 @@ export type AppAction =
       componentIds: string[];
     }
   | {
+      type: AppActionType.ADD_REMARK;
+      dataElement: DataElement;
+      remark: Remark;
+    }
+  | {
       type: AppActionType.UPDATE_COMPONENTS;
       components: Partial<EquipmentComponent>[];
+    }
+  | {
+      type: AppActionType.APPROVE_EQUIPMENT;
     };
 
 export enum AppActionType {
@@ -132,7 +136,6 @@ export enum AppActionType {
   ADD_COMPONENT = 'add-component',
   DELETE_COMPONENTS = 'delete-components',
   UPDATE_COMPONENTS = 'update-components',
-
-  // equipment-list
-  SET_EQUIPMENT_LIST = 'set-equipment-list',
+  ADD_REMARK = 'add-remark',
+  APPROVE_EQUIPMENT = 'approve-equipment',
 }

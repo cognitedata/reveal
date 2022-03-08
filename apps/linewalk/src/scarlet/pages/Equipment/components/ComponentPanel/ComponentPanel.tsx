@@ -51,20 +51,20 @@ export const ComponentPanel = () => {
 
     if (isDeleting && !appState.saveState.loading) {
       setIsDeleting(false);
-      setIsDeleteView(false);
       if (appState.saveState.error) {
         toast.error(`Failed to delete ${groupLabel}s`);
       } else {
+        setIsDeleteView(false);
         toast.success(`Successfully deleted ${groupLabel}s`);
       }
     }
 
     if (isRenaming && !appState.saveState.loading) {
       setIsRenaming(false);
-      setIsRenameView(false);
       if (appState.saveState.error) {
         toast.error(`Failed to rename ${groupLabel}s`);
       } else {
+        setIsRenameView(false);
         toast.success(`Successfully renamed ${groupLabel}s`);
       }
     }

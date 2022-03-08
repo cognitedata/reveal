@@ -9,27 +9,25 @@ import {
   DetectionType,
   EquipmentComponent,
   EquipmentData,
+  Remark,
 } from 'scarlet/types';
 
 const deepCopy = (obj: any) => JSON.parse(JSON.stringify(obj));
 
 export const updateDataElementState = (
   equipmentOrigin: EquipmentData,
-  dataElement: DataElement,
+  dataElementOrigin: DataElement,
   state: DataElementState,
   stateReason?: string
 ): EquipmentData => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
-  const dataElementList = getDataElementList(equipment, dataElement);
-
-  const index = dataElementList.findIndex(
-    (item) => item.key === dataElement.key
+  const { equipment, dataElement } = getCopy(
+    equipmentOrigin,
+    dataElementOrigin
   );
-  dataElementList[index] = {
-    ...dataElement,
-    state,
-    stateReason,
-  };
+
+  dataElement!.state = state;
+  dataElement!.stateReason = stateReason;
+
   return equipment;
 };
 
@@ -38,13 +36,10 @@ export const addDetection = (
   dataElementOrigin: DataElement,
   annotation: Annotation
 ): EquipmentData => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
-
-  const dataElementList = getDataElementList(equipment, dataElementOrigin);
-
-  const dataElement = dataElementList.find(
-    (item) => item.key === dataElementOrigin.key
-  )!;
+  const { equipment, dataElement } = getCopy(
+    equipmentOrigin,
+    dataElementOrigin
+  );
 
   const detection: Detection = {
     id: uuid(),
@@ -62,13 +57,11 @@ export const removeDetection = (
   dataElementOrigin: DataElement,
   detection: Detection
 ): EquipmentData => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
-  const dataElement: DataElement = deepCopy(dataElementOrigin);
-  const dataElementList = getDataElementList(equipment, dataElementOrigin);
-
-  const dataElementIndex = dataElementList.findIndex(
-    (item) => item.key === dataElement.key
+  const { equipment, dataElement } = getCopy(
+    equipmentOrigin,
+    dataElementOrigin
   );
+
   const detectionIndex = dataElement.detections!.findIndex(
     (item) => item.id === detection.id
   );
@@ -93,8 +86,6 @@ export const removeDetection = (
   dataElement.state = isApproved
     ? DataElementState.APPROVED
     : DataElementState.PENDING;
-
-  dataElementList[dataElementIndex] = dataElement;
 
   return equipment;
 };
@@ -143,13 +134,11 @@ export const saveDetection = (
   originalDetection: Detection,
   value: string
 ): EquipmentData => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
-
-  const dataElementList = getDataElementList(equipment, dataElementOrigin);
-
-  const dataElement = dataElementList.find(
-    (item) => item.key === dataElementOrigin.key
+  const { equipment, dataElement } = getCopy(
+    equipmentOrigin,
+    dataElementOrigin
   );
+
   const detection: Detection = dataElement!.detections!.find(
     (item) => item.id === originalDetection.id
   )!;
@@ -162,6 +151,82 @@ export const saveDetection = (
   }
 
   return equipment;
+};
+
+export const addComponent = (
+  equipmentOrigin: EquipmentData,
+  component: EquipmentComponent
+) => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  equipment.components.push(component);
+  return equipment;
+};
+
+export const deleteComponents = (
+  equipmentOrigin: EquipmentData,
+  componentIds: string[]
+) => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  equipment.components = equipment.components.filter(
+    (c) => !componentIds.includes(c.id)
+  );
+  return equipment;
+};
+
+export const updateComponents = (
+  equipmentOrigin: EquipmentData,
+  componentsWithUpdates: Partial<EquipmentComponent>[]
+) => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  equipment.components = equipment.components.map((component) => {
+    const update = componentsWithUpdates.find(
+      (item) => item.id === component.id
+    );
+    return !update
+      ? component
+      : {
+          ...component,
+          ...update,
+        };
+  });
+  return equipment;
+};
+
+export const addRemark = (
+  equipmentOrigin: EquipmentData,
+  dataElementOrigin: DataElement,
+  remark: Remark
+): EquipmentData => {
+  const { equipment, dataElement } = getCopy(
+    equipmentOrigin,
+    dataElementOrigin
+  );
+
+  if (!dataElement.remarks?.length) dataElement.remarks = [];
+  dataElement.remarks.push(remark);
+
+  return equipment;
+};
+
+export const approveEquipment = (equipmentOrigin: EquipmentData) => {
+  const equipment = deepCopy(equipmentOrigin);
+  equipment.isApproved = true;
+
+  return equipment;
+};
+
+const getCopy = (
+  equipmentOrigin: EquipmentData,
+  dataElementOrigin: DataElement
+): { equipment: EquipmentData; dataElement: DataElement } => {
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  const dataElementList = getDataElementList(equipment, dataElementOrigin);
+
+  const dataElement = dataElementList.find(
+    (item) => item.key === dataElementOrigin.key
+  );
+
+  return { equipment, dataElement: dataElement! };
 };
 
 const getDataElementList = (
@@ -198,42 +263,4 @@ const updateComponentScannerDetectionsOnApproval = (
       });
     });
   }
-};
-
-export const addComponent = (
-  equipmentOrigin: EquipmentData,
-  component: EquipmentComponent
-) => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
-  equipment.components.push(component);
-  return equipment;
-};
-
-export const deleteComponents = (
-  equipmentOrigin: EquipmentData,
-  componentIds: string[]
-) => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
-  equipment.components = equipment.components.filter(
-    (c) => !componentIds.includes(c.id)
-  );
-  return equipment;
-};
-export const updateComponents = (
-  equipmentOrigin: EquipmentData,
-  componentsWithUpdates: Partial<EquipmentComponent>[]
-) => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
-  equipment.components = equipment.components.map((component) => {
-    const update = componentsWithUpdates.find(
-      (item) => item.id === component.id
-    );
-    return !update
-      ? component
-      : {
-          ...component,
-          ...update,
-        };
-  });
-  return equipment;
 };

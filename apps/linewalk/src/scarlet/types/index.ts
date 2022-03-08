@@ -13,3 +13,5 @@ export * from './equipmentElement';
 export * from './equipmentList';
 export * from './ornate';
 export * from './pcms';
+export * from './remark';
+export * from './unit';

@@ -59,7 +59,10 @@ export const transformEquipmentData = ({
     );
   }
 
-  return { type, equipmentElements, components };
+  const created = equipmentState?.created || Date.now();
+  const isApproved = equipmentState?.isApproved || false;
+
+  return { created, isApproved, type, equipmentElements, components };
 };
 
 const getEquipmentElements = (
