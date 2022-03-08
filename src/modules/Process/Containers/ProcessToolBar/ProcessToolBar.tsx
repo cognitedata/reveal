@@ -203,6 +203,9 @@ export const ProcessToolBar = () => {
         <ModelConfiguration
           disabledModelTypes={disabledModelTypes}
           customModels={customModels}
+          handleCustomModelCreate={() => {
+            dispatch(addToAvailableDetectionModels());
+          }}
         />
       </StyledModal>
       <ToolContainer>

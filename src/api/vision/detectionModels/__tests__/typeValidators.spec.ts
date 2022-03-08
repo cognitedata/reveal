@@ -86,14 +86,14 @@ describe('validBoundingBox', () => {
     expect(validBoundingBox(visionJobAnnotation)).toBe(false);
   });
 
-  test('To few items in vertices', () => {
+  test('Too few items in vertices', () => {
     const visionJobAnnotation = {
       region: { shape: RegionShape.Rectangle, vertices: [{}] },
     } as VisionJobAnnotation;
     expect(validBoundingBox(visionJobAnnotation)).toBe(false);
   });
 
-  test('To many items in vertices', () => {
+  test('Too many items in vertices', () => {
     const visionJobAnnotation = {
       region: { shape: RegionShape.Rectangle, vertices: [{}, {}, {}] },
     } as VisionJobAnnotation;
