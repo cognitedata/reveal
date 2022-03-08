@@ -5,7 +5,7 @@ import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 // Constants
 export enum RegionShape {
-  Point = 'point',
+  Points = 'points',
   Rectangle = 'rectangle',
   Polygon = 'polygon',
 }

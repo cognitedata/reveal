@@ -54,9 +54,11 @@ export function validKeypointCollection(
   const annotation = visionJobAnnotation as GaugeReaderJobAnnotation;
   return (
     !!annotation.region &&
-    annotation.region.shape === 'points' &&
-    annotation.region.vertices.length ===
-      annotation.data.keypoint_names.length &&
-    annotation.region.vertices.every((item) => 'x' in item && 'y' in item)
+    annotation.region.shape === RegionShape.Points &&
+    annotation.region.vertices?.length ===
+      annotation.data.keypoint_names?.length &&
+    annotation.region.vertices.every(
+      (item) => 'x' in item && 'y' in item && vertexIsNormalized(item)
+    )
   );
 }
