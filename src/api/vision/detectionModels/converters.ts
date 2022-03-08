@@ -76,7 +76,7 @@ export function convertVisionJobAnnotationToImageAssetLinkList(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validImageAssetLink(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('ImageAssetLink'));
+    console.warn(conversionWarningMessage('ImageAssetLink'));
     return null;
   }
   const annotation = visionJobAnnotation as TagDetectionJobAnnotation;
