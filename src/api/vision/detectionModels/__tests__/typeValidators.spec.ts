@@ -2,6 +2,7 @@ import {
   validBoundingBox,
   validImageAssetLink,
   vertexIsNormalized,
+  uniqueVertices,
 } from 'src/api/vision/detectionModels/typeValidators';
 import {
   Vertex,
@@ -28,6 +29,35 @@ describe('vertexIsNormalized', () => {
   test('Valid vertex', () => {
     const vertex = { x: 1, y: 0 } as Vertex;
     expect(vertexIsNormalized(vertex)).toBe(true);
+  });
+});
+
+describe('verticesAreUnique', () => {
+  test('Return true when empty input', () => {
+    const vertices = [{}] as Vertex[];
+    expect(uniqueVertices(vertices)).toBe(true);
+  });
+
+  test('Return true when single item in list', () => {
+    const vertices = [{ x: 1, y: 2 }] as Vertex[];
+    expect(uniqueVertices(vertices)).toBe(true);
+  });
+
+  test('Return true when unqiue items', () => {
+    const vertices = [
+      { x: 1, y: 2 },
+      { x: 1, y: 3 },
+      { x: 3, y: 2 },
+    ] as Vertex[];
+    expect(uniqueVertices(vertices)).toBe(true);
+  });
+
+  test('Return false when not unqiue items', () => {
+    const vertices = [
+      { x: 1, y: 2 },
+      { x: 1, y: 2 },
+    ] as Vertex[];
+    expect(uniqueVertices(vertices)).toBe(false);
   });
 });
 
