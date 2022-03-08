@@ -134,6 +134,9 @@ The data stored in Charts is currently on Firebase and can be accessed for admin
   - `master` branch deploys to staging
   - `release-*` branch deploys to production
 - [Chromatic CI](https://www.chromatic.com/builds?appId=61a0daa593486a003a8f7f81) for Visual Tests
+- [Azure AD App Registration](https://github.com/cognitedata/terraform/tree/master/aad-app-registrations/charts) in Terraform
+- [Jenkins Secrets](https://github.com/cognitedata/infrastructure/tree/master/services/jenkins/sealed-secrets) to config secrets for Jenkins CI or CD
+- [Jenkins Helpers](https://github.com/cognitedata/jenkins-helpers) for functions used in the [Jenkinsfile](./Jenkinsfile)
 
 ## Development FAQ
 
