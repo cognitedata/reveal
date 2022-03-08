@@ -54,9 +54,16 @@ export const badge = (modelName: string, hideText: boolean = false) => {
 export const content = (modelIndex: number, customModels?: AutoMLModel[]) => {
   const dispatch = useDispatch();
   const params: ParamsCustomModel = useSelector(
-    ({ processSlice }: RootState) =>
-      processSlice.availableDetectionModels[modelIndex]
-        .unsavedSettings as ParamsCustomModel
+    ({ processSlice }: RootState) => {
+      if (modelIndex < processSlice.availableDetectionModels.length) {
+        return processSlice.availableDetectionModels[modelIndex]
+          .unsavedSettings as ParamsCustomModel;
+      }
+      console.warn(
+        `Attempted to get custom model contents for index ${modelIndex} while the current number of available models is ${processSlice.availableDetectionModels.length}.`
+      );
+      return {} as ParamsCustomModel;
+    }
   );
 
   // Model configuration validators
