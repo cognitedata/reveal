@@ -5,7 +5,7 @@ import {
   ProcessReducerState,
 } from 'src/modules/Process/store/slice';
 import {
-  annotationLabelReducerInitialState,
+  initialState as annotationLabelReducerInitialState,
   AnnotationLabelReducerState,
 } from 'src/modules/Review/store/annotationLabel/slice';
 import {
