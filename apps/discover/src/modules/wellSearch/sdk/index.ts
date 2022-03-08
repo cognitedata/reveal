@@ -2,9 +2,12 @@ import isUndefined from 'lodash/isUndefined';
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
 
 import { ProjectConfigGeneral } from '@cognite/discover-api-types';
+import { getTenantInfo } from '@cognite/react-container';
 import { Cluster, NPTFilter } from '@cognite/sdk-wells-v2';
 
 import { CommonWellFilter } from 'modules/wellSearch/types';
+
+import { discoverAPI, useJsonHeaders } from '../../../services/service';
 
 import {
   extractWellboresFromWells,
@@ -155,12 +158,16 @@ export const getWellsSpudDateLimits = () => {
 };
 
 export const getNPTDurationLimits = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const headers = useJsonHeaders();
+  const [project] = getTenantInfo();
+
   return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.nptDurations()
+    ? discoverAPI.well
+        .getNptDurations({ headers, project })
         .then((response) => [
-          Math.ceil(Number(response.min)),
-          Math.floor(Number(response.max)),
+          Math.ceil(Number(response?.min || 0)),
+          Math.floor(Number(response?.max || 0)),
         ])
     : getWellSDKClientV2()
         .wells.limits()
@@ -171,17 +178,25 @@ export const getNPTDurationLimits = () => {
 };
 
 export const getNPTCodes = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const headers = useJsonHeaders();
+  const [project] = getTenantInfo();
+
   return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.nptCodes()
+    ? discoverAPI.well
+        .getNptCodes({ headers, project })
         .then(mapSummaryCountsToStringArray)
     : getWellSDKClientV2().events.nptCodes();
 };
 
 export const getNPTDetailCodes = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const headers = useJsonHeaders();
+  const [project] = getTenantInfo();
+
   return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.nptDetailCodes()
+    ? discoverAPI.well
+        .getNptDetailCodes({ headers, project })
         .then(mapSummaryCountsToStringArray)
     : getWellSDKClientV2().events.nptDetailCodes();
 };

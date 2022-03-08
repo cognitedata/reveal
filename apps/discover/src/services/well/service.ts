@@ -3,6 +3,8 @@ import { fetchGet, FetchHeaders } from 'utils/fetch';
 import {
   WellGeometryListResponse,
   WellGroupsResponse,
+  WellFiltersSummaryCount,
+  WellFiltersNptDurations,
 } from '@cognite/discover-api-types';
 
 import { SIDECAR } from 'constants/app';
@@ -35,6 +37,51 @@ export const well = {
 
     return fetchGet<WellGroupsResponse>(
       `${SIDECAR.discoverApiBaseUrl}/${project}/${URL}/groups`,
+      {
+        headers,
+      }
+    );
+  },
+
+  getNptDetailCodes: async ({
+    headers,
+    project,
+  }: {
+    headers: FetchHeaders;
+    project: string;
+  }) => {
+    return fetchGet<WellFiltersSummaryCount[]>(
+      `${SIDECAR.discoverApiBaseUrl}/${project}/${URL}/filters/nptDetailCodes`,
+      {
+        headers,
+      }
+    );
+  },
+
+  getNptCodes: async ({
+    headers,
+    project,
+  }: {
+    headers: FetchHeaders;
+    project: string;
+  }) => {
+    return fetchGet<WellFiltersSummaryCount[]>(
+      `${SIDECAR.discoverApiBaseUrl}/${project}/${URL}/filters/nptCodes`,
+      {
+        headers,
+      }
+    );
+  },
+
+  getNptDurations: async ({
+    headers,
+    project,
+  }: {
+    headers: FetchHeaders;
+    project: string;
+  }) => {
+    return fetchGet<WellFiltersNptDurations>(
+      `${SIDECAR.discoverApiBaseUrl}/${project}/${URL}/filters/nptDurations`,
       {
         headers,
       }
