@@ -70,6 +70,7 @@ export type VisionJobAnnotation =
   | TextDetectionJobAnnotation
   | ObjectDetectionJobAnnotation
   | TagDetectionJobAnnotation
+  | GaugeReaderJobAnnotation
   | CusomModelJobAnnotation;
 
 export type VisionJobFailedItem = {

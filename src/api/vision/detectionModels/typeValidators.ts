@@ -59,6 +59,7 @@ export function validKeypointCollection(
       annotation.data.keypoint_names?.length &&
     annotation.region.vertices.every(
       (item) => 'x' in item && 'y' in item && vertexIsNormalized(item)
-    )
+    ) &&
+    uniqueVertices(annotation.region.vertices)
   );
 }

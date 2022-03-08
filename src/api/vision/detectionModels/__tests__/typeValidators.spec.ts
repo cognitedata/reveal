@@ -3,6 +3,7 @@ import {
   validImageAssetLink,
   vertexIsNormalized,
   uniqueVertices,
+  validKeypointCollection,
 } from 'src/api/vision/detectionModels/typeValidators';
 import {
   Vertex,
@@ -123,6 +124,19 @@ describe('validBoundingBox', () => {
     expect(validBoundingBox(visionJobAnnotation)).toBe(false);
   });
 
+  test('Overlapping vertices', () => {
+    const visionJobAnnotation = {
+      region: {
+        shape: RegionShape.Rectangle,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 0, y: 0.1 },
+        ],
+      },
+    } as VisionJobAnnotation;
+    expect(validBoundingBox(visionJobAnnotation)).toBe(false);
+  });
+
   test('Valid bounding box', () => {
     const visionJobAnnotation = {
       region: {
@@ -203,5 +217,144 @@ describe('validImageAssetLink', () => {
       assetIds: [1, 2, 3],
     } as VisionJobAnnotation;
     expect(validImageAssetLink(visionJobAnnotation)).toBe(true);
+  });
+});
+
+describe('validKeypointCollection', () => {
+  test('Missing data', () => {
+    const visionJobAnnotation = {} as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Missing region', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Missing shape', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+      region: {},
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Invalid shape', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+      region: { shape: RegionShape.Rectangle },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Missing vertices', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+      region: { shape: RegionShape.Points },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Missing keypoint_names', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+      region: {
+        shape: RegionShape.Points,
+        vertices: [
+          { x: 1, y: 2 },
+          { x: 1, y: 2 },
+        ],
+      },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Mismatch between keypoint_names and vertices', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+      region: {
+        shape: RegionShape.Points,
+        vertices: [
+          { x: 1, y: 2 },
+          { x: 1, y: 2 },
+        ],
+      },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Invalid vertex', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+      region: {
+        shape: RegionShape.Points,
+        vertices: [{ x: 1 }, { x: 1, y: 2 }],
+      },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Non-normalized vertices', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+      region: {
+        shape: RegionShape.Points,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 1, y: 2 },
+        ],
+      },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Overlapping vertices', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left'],
+      },
+      region: {
+        shape: RegionShape.Points,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 0, y: 0.1 },
+        ],
+      },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
+  });
+
+  test('Valid collection', () => {
+    const visionJobAnnotation = {
+      data: {
+        keypoint_names: ['left', 'right'],
+      },
+      region: {
+        shape: RegionShape.Points,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 1, y: 0.3 },
+        ],
+      },
+    } as VisionJobAnnotation;
+    expect(validKeypointCollection(visionJobAnnotation)).toBe(true);
   });
 });
