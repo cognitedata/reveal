@@ -8,6 +8,7 @@ apps/digital-cockpit @cognitedata/griff-team
 apps/react-demo-app @cognitedata/frontend-app-server
 apps/tenant-selector @cognitedata/frontend-tenant-selector-team
 apps/discover @cognitedata/discover
+apps/power-ops @cognitedata/power-ops
 # The Simulator Configuration app is owned by the Simulator Integration team
 apps/simconfig @cognitedata/simulator-integration
 
