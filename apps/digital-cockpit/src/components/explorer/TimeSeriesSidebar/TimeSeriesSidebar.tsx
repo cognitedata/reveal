@@ -1,11 +1,11 @@
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo } from 'react';
 import { Body, Button, Flex, Icon, Overline, Title } from '@cognite/cogs.js';
 import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
-import ResourceIcon from 'components/utils/ResourceIcon';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
 import moment from 'moment';
 import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
 import Loading from 'components/utils/Loading';
+import IconContainer from 'components/icons';
 
 import TimeSeriesPreview from '../TimeSeriesPreview';
 import ShareButton from '../ShareButton';
@@ -79,7 +79,7 @@ const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
   return (
     <Container>
       <Header>
-        <ResourceIcon type="Timeseries" />
+        <IconContainer type="Timeseries" />
         <Title level={6} className="timeseries-sidebar--title">
           {timeSeries.name}
         </Title>

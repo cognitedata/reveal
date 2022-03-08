@@ -1,14 +1,12 @@
 import { Button, Drawer } from '@cognite/cogs.js';
 import { FileInfo, Timeseries } from '@cognite/sdk';
+import IconContainer from 'components/icons';
 import Loading from 'components/utils/Loading';
 import { useGlobalSearchQuery } from 'hooks/useQuery/useGlobalSearchQuery';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ResourceType, SdkResourceType } from 'types/core';
-import {
-  mapResourceTypeToIcon,
-  mapResourceTypeToLabel,
-} from 'utils/resourceTypes';
+import { mapResourceTypeToLabel } from 'utils/resourceTypes';
 
 import DocumentSidebar from '../DocumentSidebar';
 import SearchResult from '../SearchResult';
@@ -47,12 +45,15 @@ const ResourceTypeSelector = ({
           key={type}
           type="tertiary"
           size="small"
-          icon={mapResourceTypeToIcon(type)}
           toggled={selectedType === type}
           onClick={() =>
             onTypeSelected(selectedType === type ? undefined : type)
           }
         >
+          <IconContainer
+            type={`Resource.${type}`}
+            className="resource-type-selector--icon"
+          />
           {mapResourceTypeToLabel(type)}
         </Button>
       ))}

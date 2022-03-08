@@ -28,7 +28,13 @@ export type SpecialIconType =
   | 'App.Maintain'
   | 'App.InField'
   | 'App.Discover'
-  | 'Cognite';
+  | 'Cognite'
+  | 'Resource.assets'
+  | 'Resource.timeseries'
+  | 'Resource.files'
+  | 'Resource.threeD'
+  | 'Resource.boards'
+  | 'Resource.charts';
 
 export const specialIcons: Record<
   SpecialIconType,
@@ -79,6 +85,24 @@ export const specialIcons: Record<
       />
     ),
     background: '#C945DB',
+  },
+  'Resource.assets': {
+    icon: <Icon type="Assets" />,
+  },
+  'Resource.timeseries': {
+    icon: <Icon type="Timeseries" />,
+  },
+  'Resource.files': {
+    icon: <Icon type="Document" />,
+  },
+  'Resource.threeD': {
+    icon: <Icon type="Cube" />,
+  },
+  'Resource.boards': {
+    icon: <Icon type="Boards" />,
+  },
+  'Resource.charts': {
+    icon: <Icon type="LineChart" />,
   },
 };
 

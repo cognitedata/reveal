@@ -1,7 +1,6 @@
-import { Body, Icon } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import IconContainer from 'components/icons';
 import { ResourceType } from 'types/core';
-import { mapResourceTypeToIcon } from 'utils/resourceTypes';
 
 import { SearchResultContainer, SearchResultDetails } from './elements';
 
@@ -21,7 +20,7 @@ const SearchResult = ({
   return (
     <SearchResultContainer onClick={onClick}>
       <IconContainer
-        type={mapResourceTypeToIcon(type)}
+        type={`Resource.${type}`}
         className="search-result--icon"
       />
       <SearchResultDetails>

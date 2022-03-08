@@ -1,7 +1,7 @@
 import { Body, Button, Icon, Title } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+import IconContainer from 'components/icons';
 import Loading from 'components/utils/Loading';
-import ResourceIcon from 'components/utils/ResourceIcon';
 import { useDocumentDownloadUrl } from 'hooks/useQuery/useDocumentDownloadUrl';
 
 import DocumentPreview from '../DocumentPreview';
@@ -49,7 +49,7 @@ const DocumentSidebar = ({ document }: DocumentSidebarProps) => {
   return (
     <Container>
       <Header>
-        <ResourceIcon type="Document" />
+        <IconContainer type="Document" />
         <Title level={5} className="document-sidebar--title">
           {document.name}
         </Title>

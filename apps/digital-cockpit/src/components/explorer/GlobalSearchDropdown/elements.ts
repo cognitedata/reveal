@@ -13,6 +13,11 @@ export const ResourceTypeContainer = styled.div`
 
   button {
     margin-right: 5px;
+
+    .resource-type-selector--icon {
+      background: none;
+      margin-left: -4px;
+    }
   }
 `;
 
