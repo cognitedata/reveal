@@ -19,6 +19,10 @@ export const getNewDomain = (hostname: string, cluster: string) => {
   if (sections.length === 3) {
     // eg: foo.cogniteapp.com
     const [app, domain, tld] = sections;
+    if (app === cluster) {
+      // if app === cluster, URL is already correct - dont adjust
+      return joinDomainArray([cluster, domain, tld]);
+    }
     return joinDomainArray([app, cluster, domain, tld]);
   }
   if (sections.length === 4) {
