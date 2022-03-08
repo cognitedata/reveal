@@ -5,6 +5,7 @@ import {
   ImageExtractedText,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
+  RegionShape,
 } from 'src/api/annotation/types';
 
 import {
@@ -21,7 +22,7 @@ import {
   validKeypointCollection,
 } from './typeValidators';
 
-function convertionWarningMessage(type: string) {
+function conversionWarningMessage(type: string) {
   return `Could not convert annotation in detection model response to ${type}.`;
 }
 
@@ -40,7 +41,7 @@ export function convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validBoundingBox(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('ImageObjectDetectionBoundingBox'));
+    console.warn(conversionWarningMessage('ImageObjectDetectionBoundingBox'));
     return null;
   }
   const annotation = visionJobAnnotation as ObjectDetectionJobAnnotation;
@@ -61,7 +62,7 @@ export function convertVisionJobAnnotationToImageExtractedText(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validBoundingBox(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('ImageExtractedText'));
+    console.warn(conversionWarningMessage('ImageExtractedText'));
     return null;
   }
   const annotation = visionJobAnnotation as TextDetectionJobAnnotation;
@@ -82,7 +83,7 @@ export function convertVisionJobAnnotationToImageAssetLinkList(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validImageAssetLink(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('ImageAssetLink'));
+    console.warn(conversionWarningMessage('ImageAssetLink'));
     return null;
   }
   const annotation = visionJobAnnotation as TagDetectionJobAnnotation;
@@ -109,7 +110,7 @@ export function convertVisionJobAnnotationToImageKeypointCollection(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validKeypointCollection(visionJobAnnotation)) {
-    console.warn(convertionWarningMessage('ImageKeypointCollection'));
+    console.warn(conversionWarningMessage('ImageKeypointCollection'));
     return null;
   }
   const annotation = visionJobAnnotation as GaugeReaderJobAnnotation;
@@ -134,7 +135,9 @@ export function convertImageClassificationToAnnotationTypeV1(
 ) {
   const annotation = {
     text: imageClassification.label,
-    confidence: imageClassification.confidence,
+    data: {
+      confidence: imageClassification.confidence,
+    },
   };
 
   return annotation;
@@ -149,7 +152,7 @@ export function convertImageObjectDetectionBoundingBoxToAnnotationTypeV1(
       confidence: imageObjectDetectionBoundingBox.confidence,
     },
     region: {
-      shape: 'rectangle',
+      shape: RegionShape.Rectangle,
       vertices: [
         {
           x: imageObjectDetectionBoundingBox.boundingBox.xMin,
@@ -175,7 +178,7 @@ export function convertImageExtractedTextToAnnotationTypeV1(
       confidence: imageExtractedText.confidence,
     },
     region: {
-      shape: 'rectangle',
+      shape: RegionShape.Rectangle,
       vertices: [
         {
           x: imageExtractedText.textRegion.xMin,
@@ -205,7 +208,7 @@ export function convertImageAssetLinkListToAnnotationTypeV1(
         confidence: imageAssetLink.confidence,
       },
       region: {
-        shape: 'rectangle',
+        shape: RegionShape.Rectangle,
         vertices: [
           {
             x: imageAssetLink.textRegion.xMin,
