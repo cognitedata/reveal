@@ -502,7 +502,7 @@ __metadata:
     eslint: 7.32.0
     eslint-config-prettier: 6.15.0
     eslint-plugin-header: 3.1.1
-    eslint-plugin-jsdoc: 30.7.13
+    eslint-plugin-jsdoc: 37.9.6
     eslint-plugin-lodash: 7.4.0
     eslint-plugin-prettier: 4.0.0
     eslint-plugin-unused-imports: 1.1.5
@@ -570,6 +570,17 @@ __metadata:
     "@cognite/sdk-core": ^4.1.0
     lodash: ^4.17.11
   checksum: 5a462946f4ca2bef498bdefe71520f60a2c5b2e536626696f9bff359197f1bf027aa574001b855dba0c3b636b626a8bc525b99cb5cec86b3dcb16332e13b2198
+  languageName: node
+  linkType: hard
+
+"@es-joy/jsdoccomment@npm:~0.20.1":
+  version: 0.20.1
+  resolution: "@es-joy/jsdoccomment@npm:0.20.1"
+  dependencies:
+    comment-parser: 1.3.0
+    esquery: ^1.4.0
+    jsdoc-type-pratt-parser: ~2.2.3
+  checksum: b64afeaddccbc8da185c640e608496f6d6f8ee564c6255cdb44b16e00fe441e1f0552b5748033df2baf42187cfbfa9f31c46716982945d4343f8eaf44e253087
   languageName: node
   linkType: hard
 
@@ -929,6 +940,7 @@ __metadata:
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
     "@reveal/metrics": "workspace:*"
+    "@reveal/model-base": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
     "@reveal/sector-loader": "workspace:*"
@@ -957,6 +969,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
   dependencies:
+    "@reveal/model-base": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/sector-parser": "workspace:*"
     "@reveal/utilities": "workspace:*"
@@ -994,6 +1007,7 @@ __metadata:
     "@reveal/model-base": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
+    "@reveal/pointclouds": "workspace:*"
     "@reveal/rendering": "workspace:*"
     "@reveal/sector-loader": "workspace:*"
     "@reveal/utilities": "workspace:*"
@@ -1027,6 +1041,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/model-base@workspace:packages/model-base"
   dependencies:
+    "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
@@ -1042,6 +1057,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/nodes-api@workspace:packages/nodes-api"
   dependencies:
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/pointclouds@workspace:*, @reveal/pointclouds@workspace:packages/pointclouds":
+  version: 0.0.0-use.local
+  resolution: "@reveal/pointclouds@workspace:packages/pointclouds"
+  dependencies:
+    "@reveal/metrics": "workspace:*"
+    "@reveal/model-base": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -4054,10 +4080,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"comment-parser@npm:^0.7.6":
-  version: 0.7.6
-  resolution: "comment-parser@npm:0.7.6"
-  checksum: 880e4d58c0b9dc69c50479d98a838b916980c4f0f53f8eff89e8d389bf40e93b8590c10e24faaca070a344226894e8ec8da6927b74e3f1f275b8445a14e488ea
+"comment-parser@npm:1.3.0":
+  version: 1.3.0
+  resolution: "comment-parser@npm:1.3.0"
+  checksum: e7b41b8a5f3d8b974e5b4bd8796acd41ec6635989f2a402bbf13098ad459c0598275a7b75b98d29c48d8f0b340a828d1a5d6948c8cf65ab41ae7e00040fb082a
   languageName: node
   linkType: hard
 
@@ -4482,6 +4508,18 @@ __metadata:
   dependencies:
     ms: ^2.1.1
   checksum: b3d8c5940799914d30314b7c3304a43305fd0715581a919dacb8b3176d024a782062368405b47491516d2091d6462d4d11f2f4974a405048094f8bfebfa3071c
+  languageName: node
+  linkType: hard
+
+"debug@npm:^4.3.3":
+  version: 4.3.3
+  resolution: "debug@npm:4.3.3"
+  dependencies:
+    ms: 2.1.2
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 14472d56fe4a94dbcfaa6dbed2dd3849f1d72ba78104a1a328047bb564643ca49df0224c3a17fa63533fd11dd3d4c8636cd861191232a2c6735af00cc2d4de16
   languageName: node
   linkType: hard
 
@@ -5129,20 +5167,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:30.7.13":
-  version: 30.7.13
-  resolution: "eslint-plugin-jsdoc@npm:30.7.13"
+"eslint-plugin-jsdoc@npm:37.9.6":
+  version: 37.9.6
+  resolution: "eslint-plugin-jsdoc@npm:37.9.6"
   dependencies:
-    comment-parser: ^0.7.6
-    debug: ^4.3.1
-    jsdoctypeparser: ^9.0.0
-    lodash: ^4.17.20
-    regextras: ^0.7.1
-    semver: ^7.3.4
+    "@es-joy/jsdoccomment": ~0.20.1
+    comment-parser: 1.3.0
+    debug: ^4.3.3
+    escape-string-regexp: ^4.0.0
+    esquery: ^1.4.0
+    regextras: ^0.8.0
+    semver: ^7.3.5
     spdx-expression-parse: ^3.0.1
   peerDependencies:
-    eslint: ^6.0.0 || ^7.0.0
-  checksum: 843581d6b5719c651a0a54c1287bff378b52a2e1d1905a666e1a9d6440d69b55bb995b01c5625b1c927de5325f2904c74742374b5242f714c81595217ae835af
+    eslint: ^7.0.0 || ^8.0.0
+  checksum: 8d9d2d88f2c5dd2bc5c2c04b888020e99c80e07af819ac1a4918eb43b85ae74b0cd37d440207b962f8b0158220a8e1fb370f15c99e4edb595e195727cd3f27ba
   languageName: node
   linkType: hard
 
@@ -8186,12 +8225,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jsdoctypeparser@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "jsdoctypeparser@npm:9.0.0"
-  bin:
-    jsdoctypeparser: bin/jsdoctypeparser
-  checksum: d9fd932fc657ee8df93b112ceb23f0c27862da7302c27325101d3700110d78d264f9ef08837ed84e7dd47b83657ffb323b47b1942b237111055cefb647b4a8ba
+"jsdoc-type-pratt-parser@npm:~2.2.3":
+  version: 2.2.3
+  resolution: "jsdoc-type-pratt-parser@npm:2.2.3"
+  checksum: 202a6c1f884234f0927fea82648f2401c24477231e127f28cdf4f5e169ca37535e694379eb440c627f7032504b5225155d8113a67499bec07cf8ce131265f1ed
   languageName: node
   linkType: hard
 
@@ -10587,10 +10624,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"regextras@npm:^0.7.1":
-  version: 0.7.1
-  resolution: "regextras@npm:0.7.1"
-  checksum: ffcd5bfd5842564ed4db94af58ee3280cfc00bd19c235afc4b681be0f84b60ac2d3da345af5e92099b2b05d4d8b7063ab720c92bfee1162b2b7ae063d879baec
+"regextras@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "regextras@npm:0.8.0"
+  checksum: b7ec5b32a2b98b4b27048d44f8ab90009873c1307f2cf89321aa8c4cbb8147f1bee07863f4dadf585546ca0b91a234ad9804954dea5fc029421f6c25a4523798
   languageName: node
   linkType: hard
 
