@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-cli",
-  "version": "0.0.1-alpha.18",
+  "version": "0.0.1-alpha.19",
   "description": "A CLI for Cognite Data Fusion",
   "repository": {
     "type": "git",

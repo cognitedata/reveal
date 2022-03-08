@@ -57,8 +57,8 @@ export async function init(args: Arguments<BaseArgs>) {
 
     // track command
     args.mixpanel?.track(getCompleteCommandString(args), {
-      project: authConfig.project,
-      cluster: authConfig.cluster,
+      project: authConfig?.project,
+      cluster: authConfig?.cluster,
     });
   }
 
