@@ -28,7 +28,10 @@ describe('useClearWellsFilters hook', () => {
     const clearWellsFilters = await getHookResult();
 
     clearWellsFilters();
-    expect(mutate).toHaveBeenCalledWith({ filters: { wells: {} } });
+    expect(mutate).toHaveBeenCalledWith({
+      geoJson: [],
+      filters: { wells: {}, extraGeoJsonFilters: [] },
+    });
   });
 });
 

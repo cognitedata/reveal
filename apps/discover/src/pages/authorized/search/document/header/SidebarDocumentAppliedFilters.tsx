@@ -8,6 +8,7 @@ export const SidebarDocumentAppliedFilters: React.FC = () => {
     <DocumentAppliedFilters
       showClearTag
       showClearTagForScenarios={ClearAllScenarios.FILTERS}
+      showGeoFilters
     />
   );
 };

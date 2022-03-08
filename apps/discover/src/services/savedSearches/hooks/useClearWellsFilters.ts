@@ -4,7 +4,8 @@ import { WellFilterMapValue } from 'modules/wellSearch/types';
 
 export const useClearWellsFilters = () => {
   const { mutate } = useMutatePatchSavedSearch();
-  return () => mutate({ filters: { wells: {} } });
+  return () =>
+    mutate({ geoJson: [], filters: { wells: {}, extraGeoJsonFilters: [] } });
 };
 
 export const useSetWellsFilters = () => {
