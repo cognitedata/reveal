@@ -17,10 +17,13 @@ const StyledButton = styled(Button)`
   text-decoration: ${(props: Props) =>
     props.underlined ? 'underline' : 'inherit'};
   cursor: pointer;
+  padding: 0px !important;
+  height: auto;
 
   &:hover {
     display: inline;
     color: var(--cogs-midblue-2);
+    background-color: transparent;
     text-decoration: underline;
   }
 
@@ -43,7 +46,6 @@ export const Link: React.FC<Props> = ({
   return (
     <StyledButton
       size="default"
-      unstyled
       variant="default"
       type="link"
       underlined={underlined}

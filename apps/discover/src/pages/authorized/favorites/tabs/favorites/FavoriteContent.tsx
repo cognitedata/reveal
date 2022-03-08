@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -38,14 +38,11 @@ export const FavoriteContent: React.FC<Props> = ({
   const [selectedItem, setSelectedItem] = useState<
     FavoriteSummary | undefined
   >();
-  const [showEmptyCard, setShowEmptyCard] = useState<boolean>(true);
 
   const viewMode = useViewMode();
   const { data: favoriteSets, status } = useFavoritesGetAllQuery();
 
-  useEffect(() => {
-    setShowEmptyCard(status === 'loading' || !favoriteSets?.length);
-  }, [status, favoriteSets?.length]);
+  const showEmptyCard = status === 'loading' || !favoriteSets?.length;
 
   const { mutate: mutateDeleteFavorite } = useFavoritesDeleteMutate();
   const { mutate: mutateDuplicateFavorite } = useFavoriteDuplicateMutate();

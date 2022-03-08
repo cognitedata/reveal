@@ -13,7 +13,7 @@ export const getFilepath = (item: Document) => {
   }
 
   const absoluteFilepath =
-    item.sourceFile.directory ||
+    item.sourceFile?.directory ||
     get(item.sourceFile, 'metadata.parentPath') ||
     get(item.sourceFile, 'metadata.path');
 

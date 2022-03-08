@@ -11,6 +11,7 @@ import {
 
 import { showErrorMessage } from 'components/toast';
 import { aggregates } from 'modules/documentSearch/aggregates';
+import { getDocumentSDKClient } from 'modules/documentSearch/sdk';
 import {
   SearchQueryFull,
   DocumentResult,
@@ -18,7 +19,6 @@ import {
 } from 'modules/documentSearch/types';
 import { toDocument } from 'modules/documentSearch/utils';
 
-import { getDocumentSDKClient } from './sdk';
 import { processFacets } from './utils/processFacets';
 import { getSearchQuery } from './utils/queryUtil';
 import { toDocuments } from './utils/toDocuments';

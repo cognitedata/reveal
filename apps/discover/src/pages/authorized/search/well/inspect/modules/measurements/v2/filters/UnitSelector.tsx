@@ -79,7 +79,7 @@ export const UnitSelector: React.FC<Props> = ({
           </Menu>
         }
       >
-        <MoreOptionsButton data-testid="menu-button" size="large" />
+        <MoreOptionsButton data-testid="menu-button" size="default" />
       </Dropdown>
     </UnitSelectorWrapper>
   );
