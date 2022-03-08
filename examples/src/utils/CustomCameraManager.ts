@@ -63,7 +63,8 @@ export class CustomCameraManager implements CameraManager {
         this._lastCameraState = cameraState;
     }
     dispose(): void {
-        throw new Error("Method not implemented.");
+        this._controls.dispose();
+        this._cameraChangedListener.splice(0);
     }
     
 }
