@@ -1,4 +1,5 @@
 import { FileInfo } from '@cognite/sdk';
+import { MimeTypes } from 'src/constants/validMimeTypes';
 
 /**
  * Test data for test filterByTime fn
@@ -16,6 +17,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
+    mimeType: MimeTypes.jpg,
   },
   {
     id: 2,
@@ -25,6 +27,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 1, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 12, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 1, 12, 0, 0, 0),
+    mimeType: MimeTypes.jpg,
   },
   {
     id: 3,
@@ -34,6 +37,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 1, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 15, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 1, 15, 0, 0, 0),
+    mimeType: MimeTypes.jpg,
   },
   {
     id: 4,
@@ -43,6 +47,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 2, 7, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 2, 7, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 2, 7, 0, 0, 0),
+    mimeType: MimeTypes.jpeg,
   },
   {
     id: 5,
@@ -52,6 +57,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 2, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 2, 12, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 2, 12, 0, 0, 0),
+    mimeType: MimeTypes.jpeg,
   },
   {
     id: 6,
@@ -61,6 +67,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 2, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 2, 15, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 2, 15, 0, 0, 0),
+    mimeType: MimeTypes.jpeg,
   },
   {
     id: 7,
@@ -70,6 +77,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 3, 7, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 3, 7, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 3, 7, 0, 0, 0),
+    mimeType: MimeTypes.png,
   },
   {
     id: 8,
@@ -79,6 +87,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 3, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 3, 12, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 3, 12, 0, 0, 0),
+    mimeType: MimeTypes.png,
   },
   {
     id: 9,
@@ -88,6 +97,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 3, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 3, 15, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 3, 15, 0, 0, 0),
+    mimeType: MimeTypes.mp4,
   },
   {
     id: 10,
@@ -97,6 +107,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 4, 4, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 4, 4, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 4, 4, 0, 0, 0),
+    mimeType: MimeTypes.mp4,
   },
   {
     id: 11,
@@ -106,6 +117,7 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 4, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 4, 12, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 4, 12, 0, 0, 0),
+    mimeType: MimeTypes.webm,
   },
   {
     id: 12,
@@ -115,5 +127,23 @@ export const mockFileInfo: FileInfo[] = [
     lastUpdatedTime: new Date(2021, 0, 4, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 4, 15, 0, 0, 0),
     uploadedTime: new Date(2021, 0, 4, 15, 0, 0, 0),
+    mimeType: MimeTypes.webm,
   },
+];
+export const mockFileIds = mockFileInfo.map((file) => file.id);
+export const INVALID_FILE_ID = mockFileIds.length + 1;
+
+// Sorted by name
+export const mockFileIdsSortedByNameAscending = [
+  8, 11, 5, 4, 9, 1, 7, 6, 10, 3, 12, 2,
+];
+export const mockFileIdsSortedByNameDescending =
+  mockFileIdsSortedByNameAscending.slice().reverse();
+
+// Sorted by Mime Type
+export const mockFileIdsSortedByMimeTypeAscending = [
+  6, 5, 4, 3, 2, 1, 8, 7, 10, 9, 12, 11,
+];
+export const mockFileIdsSortedByMimeTypeDescending = [
+  12, 11, 10, 9, 8, 7, 3, 2, 1, 6, 5, 4,
 ];

@@ -57,18 +57,18 @@ describe('ProcessToolBar', () => {
 
   it('Start detection job with ocr job', async () => {
     const mockVisionFileState = convertToVisionFileState(mockFileInfo);
-    const mokeFileState: FileState = {
+    const mockFileState: FileState = {
       ...fileState,
       files: mockVisionFileState,
     };
-    const mokeProcessState: ProcessState = {
+    const mockProcessState: ProcessState = {
       ...processReducerInitialState,
       fileIds: mockVisionFileState.allIds,
     };
 
     const realStore = getRealStore({
-      fileReducer: mokeFileState,
-      processSlice: mokeProcessState,
+      fileReducer: mockFileState,
+      processSlice: mockProcessState,
     });
     testRendererModals(TestComponent, realStore);
 

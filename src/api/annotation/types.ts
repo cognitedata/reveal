@@ -3,6 +3,13 @@ import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
 import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
+// Constants
+export enum RegionShape {
+  Point = 'point',
+  Rectangle = 'rectangle',
+  Polygon = 'polygon',
+}
+
 // Primitives
 type Label = {
   label: string;
