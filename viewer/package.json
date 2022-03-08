@@ -87,7 +87,7 @@
     "eslint-plugin-jsdoc": "37.9.6",
     "eslint-plugin-lodash": "7.4.0",
     "eslint-plugin-prettier": "4.0.0",
-    "eslint-plugin-unused-imports": "1.1.5",
+    "eslint-plugin-unused-imports": "2.0.0",
     "file-loader": "6.2.0",
     "gl": "5.0.0",
     "glslify-loader": "2.0.0",
