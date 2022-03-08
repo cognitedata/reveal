@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Body, Button, Icon, Title } from '@cognite/cogs.js';
+import { Body, Button, Loader, Title } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer/FileViewer';
 import { FileList } from 'components/FileList/FileList';
 import { useNavigate } from 'hooks/navigation';
 import { useAsset } from 'hooks/cdf-assets';
-import { useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import { SourceTableWrapper, SourceTable } from 'pages/ChartView/elements';
@@ -14,18 +13,19 @@ import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
 import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'services/metrics';
-import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
+import { Chart } from 'models/chart/types';
+import { SetterOrUpdater } from 'recoil';
 
-export const FileView = () => {
-  const [chart, setChart] = useRecoilState(chartAtom);
+type Prop = {
+  chart: Chart;
+  setChart: SetterOrUpdater<Chart | undefined>;
+  assetId: string;
+};
 
-  const { chartId, assetId } = useParams<{
-    chartId: string;
-    assetId: string;
-  }>();
+export const FileView = ({ chart, setChart, assetId }: Prop) => {
+  const chartId = chart.id;
 
   const [selectedFile, setSelectedFile] = useState<File>();
   const [showLinkedAssets, setShowLinkedAssets] = useState(false);
@@ -53,6 +53,7 @@ export const FileView = () => {
       'Hide',
       'linked assets',
       'Linked assets',
+      'Asset is loading, please wait',
     ],
     'FileView'
   );
@@ -70,20 +71,21 @@ export const FileView = () => {
   );
 
   if (!isAssetFetched) {
-    return <Icon type="Loader" />;
+    return <Loader />;
   }
 
   if (!asset) {
-    return <>{t['Asset not found!']}</>;
+    return (
+      <NoChartBox>
+        <h2>{t['Asset not found!']}</h2>
+      </NoChartBox>
+    );
   }
 
   if (!chart) {
     return (
       <NoChartBox>
         <h2>{t['Error while loading file viewer']}</h2>
-        <Button icon="ArrowLeft" onClick={() => move(`/${chartId}`)}>
-          {t['Back to chart']}
-        </Button>
       </NoChartBox>
     );
   }

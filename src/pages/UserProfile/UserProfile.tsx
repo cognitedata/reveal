@@ -5,6 +5,8 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { useEffect, useState } from 'react';
+import { useResetRecoilState } from 'recoil';
+import chartAtom from 'models/chart/atom';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -91,6 +93,11 @@ const UserProfile = () => {
     ...useTranslations(Object.keys(defaultTranslations), 'UserProfile').t,
   };
   const { data: user } = useUserInfo();
+  const resetChart = useResetRecoilState(chartAtom);
+
+  useEffect(() => {
+    resetChart();
+  }, [resetChart]);
 
   useEffect(() => {
     if (ready) {

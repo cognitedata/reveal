@@ -6,6 +6,7 @@ import { useFilesAssetAppearsIn } from 'components/FileList';
 import { useLinkedAsset } from 'hooks/cdf-assets';
 import { trackUsage } from 'services/metrics';
 import { useNavigate } from 'hooks/navigation';
+import { StatusIcon } from 'components/StatusIcon/StatusIcon';
 
 export const PnidButton = ({
   asset,
@@ -34,7 +35,7 @@ export const PnidButton = ({
   );
 
   if (!isFetched) {
-    return <></>;
+    return <StatusIcon status="Running" />;
   }
 
   if (files.length === 0) {
