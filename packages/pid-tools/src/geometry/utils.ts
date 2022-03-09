@@ -45,6 +45,8 @@ export const angleDifference = (
   return diff + 180;
 };
 
+export const mod = (m: number, n: number) => ((m % n) + n) % n;
+
 export const getBoundingBox = (startPoint: Point, stopPoint: Point): Rect => {
   const minX = Math.min(startPoint.x, stopPoint.x);
   const minY = Math.min(startPoint.y, stopPoint.y);

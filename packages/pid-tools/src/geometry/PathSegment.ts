@@ -6,6 +6,7 @@ import {
   approxeq,
   getBoundingBox,
   getPointTowardOtherPoint,
+  mod,
 } from './utils';
 
 export type IntersectionData = {
@@ -75,10 +76,8 @@ export abstract class PathSegment {
     const dx = this.stop.x - this.start.x;
     let theta = Math.atan2(dy, dx);
     theta *= 180 / Math.PI; // rads to degs
-    if (theta < 0) {
-      theta = 360 + theta;
-    }
-    return theta;
+
+    return mod(theta, 360);
   }
 
   getIntersection = (other: PathSegment): IntersectionData | undefined => {
