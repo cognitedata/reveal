@@ -1,5 +1,7 @@
 name: Code Quality
 on:
+  push:
+    branches: [ master, main, release-*, staging ]
   pull_request:
     types:
       - opened
