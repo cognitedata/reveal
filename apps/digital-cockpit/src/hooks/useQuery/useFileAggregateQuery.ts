@@ -1,10 +1,9 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { FileAggregateQuery } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 const useFileAggregateQuery = (fileAggregateQuery?: FileAggregateQuery) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<number>(
     ['fileAggregate', fileAggregateQuery],

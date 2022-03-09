@@ -1,10 +1,9 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { CogniteEvent, EventSearchRequest } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 const useEventSearchQuery = (searchQuery: EventSearchRequest) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<CogniteEvent[]>(
     ['eventsQuery', searchQuery],

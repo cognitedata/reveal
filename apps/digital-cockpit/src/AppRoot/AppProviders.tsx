@@ -4,7 +4,7 @@ import { ApiClient, CdfClient, createApiClient, createClient } from 'utils';
 import { TenantProvider } from 'providers/TenantProvider';
 import { CdfClientProvider } from 'providers/CdfClientProvider';
 import { ApiClientProvider } from 'providers/ApiClientProvider';
-import { CogniteSDKProvider } from 'providers/CogniteSDKProvider';
+import { CDFExplorerProvider } from 'providers/CDFExplorerProvider';
 import GlobalStyles from 'global-styles';
 import { Provider as ReduxProvider } from 'react-redux';
 import { configureStore } from 'store';
@@ -12,6 +12,8 @@ import { History } from 'history';
 import { AuthProvider } from '@cognite/react-container';
 import { HelpCenterContextProvider } from 'context/HelpCenterContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import * as Sentry from '@sentry/browser';
+import { useMetrics } from 'utils/metrics';
 
 import { mockAuthState } from '../__mocks/auth';
 import { PartialRootState } from '../store/types';
@@ -57,6 +59,7 @@ const AppProviders: React.FC<Props> = ({
     client
   );
   const store = configureStore(initialState);
+  const cdfExplorerMetrics = useMetrics('CDFExplorer');
 
   if (isTesting) {
     return (
@@ -64,7 +67,7 @@ const AppProviders: React.FC<Props> = ({
         <QueryClientProvider client={queryClient}>
           <ReduxProvider store={store}>
             <CdfClientProvider client={mockCDFClient || cdfClient}>
-              <CogniteSDKProvider
+              <CDFExplorerProvider
                 client={mockCDFClient?.cogniteClient || cdfClient.cogniteClient}
               >
                 <ApiClientProvider apiClient={mockApiClient || apiClient}>
@@ -77,7 +80,7 @@ const AppProviders: React.FC<Props> = ({
                     </HelpCenterContextProvider>
                   </TenantProvider>
                 </ApiClientProvider>
-              </CogniteSDKProvider>
+              </CDFExplorerProvider>
             </CdfClientProvider>
           </ReduxProvider>
         </QueryClientProvider>
@@ -89,7 +92,11 @@ const AppProviders: React.FC<Props> = ({
     <ReduxProvider store={store}>
       <QueryClientProvider client={queryClient}>
         <CdfClientProvider client={cdfClient}>
-          <CogniteSDKProvider client={cdfClient.cogniteClient}>
+          <CDFExplorerProvider
+            client={cdfClient.cogniteClient}
+            handleError={(e) => Sentry.captureException(e)}
+            trackMetrics={cdfExplorerMetrics.track}
+          >
             <ApiClientProvider apiClient={apiClient}>
               <TenantProvider tenant={tenant}>
                 <HelpCenterContextProvider>
@@ -98,7 +105,7 @@ const AppProviders: React.FC<Props> = ({
                 </HelpCenterContextProvider>
               </TenantProvider>
             </ApiClientProvider>
-          </CogniteSDKProvider>
+          </CDFExplorerProvider>
         </CdfClientProvider>
       </QueryClientProvider>
     </ReduxProvider>

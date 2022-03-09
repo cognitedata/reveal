@@ -1,13 +1,12 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { AssetMapping3D } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 import useModelsQuery from './useModelsQuery';
 import useRevisionsQuery from './useRevisionsQuery';
 
 const useThreeDMappingsQuery = (assetIds: number[]) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
   const { data: models, isSuccess: modelsIsSuccess } = useModelsQuery();
   const { data: revisions, isSuccess: revsIsSuccess } = useRevisionsQuery(
     models?.map((m) => m.id)

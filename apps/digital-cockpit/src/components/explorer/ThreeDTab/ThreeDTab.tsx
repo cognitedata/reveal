@@ -1,6 +1,5 @@
 import { CadIntersection } from '@cognite/reveal';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
-import { useContext } from 'react';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 import ThreeDPreview from '../ThreeDPreview';
 
@@ -9,7 +8,7 @@ export type ThreeDCardProps = {
 };
 
 const ThreeDCard = ({ assetId }: ThreeDCardProps) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
   const onNodeClick = async (intersect: CadIntersection) => {
     const { modelId, revisionId } = intersect.model;
 

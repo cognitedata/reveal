@@ -1,12 +1,11 @@
 import { Buffer } from 'buffer';
 
 import { FileInfo } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
-import { useContext } from 'react';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import { useQuery } from 'react-query';
 
 export const useDocumentImage = (document: FileInfo) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   return useQuery<any>(
     ['getFileImage', document.id],

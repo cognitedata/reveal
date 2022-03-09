@@ -1,7 +1,6 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { CogniteEvent, EventFilterRequest } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 // These types of events are internal and should not be shown to the user
 const TYPE_BLACKLIST = [
@@ -10,7 +9,7 @@ const TYPE_BLACKLIST = [
 ];
 
 const useEventListQuery = (scope: EventFilterRequest) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<CogniteEvent[]>(
     ['eventsList', scope],

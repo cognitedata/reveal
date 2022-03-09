@@ -1,7 +1,6 @@
-import { useContext } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { DatapointAggregates, Datapoints, DatapointsQuery } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 export type useDatapointsQueryOptions = UseQueryOptions<
   DatapointAggregates[] | Datapoints[]
@@ -15,7 +14,7 @@ const useDatapointsQuery = (
   options?: useDatapointsQueryOptions
 ) => {
   const { latestOnly, limit, ...rest } = options || {};
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<DatapointAggregates[] | Datapoints[]>(
     ['datapointsQuery', references, options],

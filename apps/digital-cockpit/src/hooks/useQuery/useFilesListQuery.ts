@@ -1,10 +1,9 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { FileInfo, FileRequestFilter } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 const useFilesListQuery = (fileListQuery?: FileRequestFilter) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<FileInfo[]>(
     ['filesList', fileListQuery],

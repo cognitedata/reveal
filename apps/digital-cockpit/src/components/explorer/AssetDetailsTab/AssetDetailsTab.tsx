@@ -5,9 +5,8 @@ import Card from 'components/cards/Card';
 import ThreeDCard from 'components/cards/ThreeDCard';
 import EventsCard from 'components/cards/EventsCard';
 import { useAssetRetrieveQuery } from 'hooks/useQuery/useAssetQuery';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import StatusMessage from 'components/utils/StatusMessage';
-import { useContext } from 'react';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
 import TimeSeriesCard from 'components/cards/TimeSeriesCard';
 
 import MetadataTable from '../MetadataTable';
@@ -19,7 +18,7 @@ export type AssetDetailsTabProps = {
 };
 
 const AssetDetailsTab = ({ assetId }: AssetDetailsTabProps) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
   const { data: asset } = useAssetRetrieveQuery([{ id: assetId }]);
   const currentAsset = asset?.[0];
   const bestDayProps = allApplications.find((app) => app.key === 'bestday');

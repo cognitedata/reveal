@@ -1,10 +1,9 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { Revision3D } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 const useRevisionsQuery = (modelIds?: number[]) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<{ modelId: number; revisions: Revision3D[] }[]>(
     ['allRevisionsForModels', modelIds],

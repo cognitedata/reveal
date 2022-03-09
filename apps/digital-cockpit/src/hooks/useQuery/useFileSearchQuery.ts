@@ -1,10 +1,9 @@
-import { useContext } from 'react';
-import { useInfiniteQuery, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { FileInfo, FilesSearchFilter } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 const useFileSearchQuery = (fileSearchQuery?: FilesSearchFilter) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<FileInfo[]>(
     ['fileSearch', fileSearchQuery],

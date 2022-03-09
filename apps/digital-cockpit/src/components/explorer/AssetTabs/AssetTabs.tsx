@@ -8,6 +8,8 @@ import {
 } from 'hooks/useQuery/useAssetQuery';
 import Loading from 'components/utils/Loading';
 import { NavLink } from 'react-router-dom';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
+import noop from 'lodash/noop';
 
 import ThreeDPreview from '../ThreeDPreview';
 import EventTab from '../EventTab';
@@ -39,15 +41,15 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
     currentAsset?.parentId ? { id: currentAsset.parentId } : undefined
   );
 
+  const { handleError = noop, trackMetrics = noop } = useCDFExplorerContext();
+
   useEffect(() => {
     if (currentAssetQuery.isError) {
-      // eslint-disable-next-line no-console
-      console.error(currentAssetQuery.error);
+      handleError(currentAssetQuery.error as Error);
       return;
     }
     if (assetBreadcrumbsQuery.isError) {
-      // eslint-disable-next-line no-console
-      console.error(assetBreadcrumbsQuery.error);
+      handleError(assetBreadcrumbsQuery.error as Error);
     }
   }, [currentAssetQuery.isError, assetBreadcrumbsQuery.isError]);
 

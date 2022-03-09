@@ -1,7 +1,6 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { EventFilterRequest } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 // These types of events are internal and should not be shown to the user
 const TYPE_BLACKLIST = [
@@ -15,7 +14,7 @@ export type UniqueValue = {
 };
 
 const useEventUniqueValues = (field: string, scope: EventFilterRequest) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<UniqueValue[]>(
     ['eventUniqueValues', field, scope],

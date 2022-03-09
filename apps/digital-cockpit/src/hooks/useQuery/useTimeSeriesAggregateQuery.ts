@@ -1,12 +1,11 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { TimeseriesAggregateQuery } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 const useTimeSeriesAggregateQuery = (
   timeSeriesAggregateQuery?: TimeseriesAggregateQuery
 ) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<number>(
     ['timeSeriesAggregate', timeSeriesAggregateQuery],

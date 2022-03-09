@@ -6,6 +6,7 @@ import {
   ListResponse,
 } from '@cognite/sdk';
 import React, { useCallback, useEffect, useState } from 'react';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import Loading from 'components/utils/Loading';
 import {
   useAssetBreadcrumbsQuery,
@@ -52,6 +53,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
   selectedAssetId: selectedAssetIdProp,
   onSelect,
 }) => {
+  const { handleError = noop } = useCDFExplorerContext();
   const [isLoadingRootAssets, setIsLoadingRootAssets] = useState(false);
   const [rootIds, setRootIds] = useState<CogniteInternalId[]>([]);
   const [assetNodesById, setAssetNodesById] = useState<AssetNodesById>({});
@@ -205,8 +207,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
 
     if (isError) {
       setIsLoadingRootAssets(false);
-      // eslint-disable-next-line no-console
-      console.error(error);
+      handleError(error as Error);
       return;
     }
 

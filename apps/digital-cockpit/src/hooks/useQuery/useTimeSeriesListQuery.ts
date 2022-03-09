@@ -1,13 +1,12 @@
-import { useContext } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { Timeseries, TimeseriesFilterQuery } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 const useTimeSeriesQuery = (
   tsQuery: TimeseriesFilterQuery,
   options: UseQueryOptions<Timeseries[]> = {}
 ) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<Timeseries[]>(
     ['timeSeriesListQuery', tsQuery],

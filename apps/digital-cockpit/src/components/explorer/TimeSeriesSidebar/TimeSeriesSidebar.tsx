@@ -1,9 +1,9 @@
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Body, Button, Flex, Icon, Overline, Title } from '@cognite/cogs.js';
 import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
 import moment from 'moment';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import Loading from 'components/utils/Loading';
 import IconContainer from 'components/icons';
 
@@ -58,7 +58,7 @@ const TimeSeriesDownloadButton = ({
 };
 
 const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
   const { data: datapoints, isLoading } = useDatapointsQuery(
     [{ id: timeSeries.id }],
     { latestOnly: true }

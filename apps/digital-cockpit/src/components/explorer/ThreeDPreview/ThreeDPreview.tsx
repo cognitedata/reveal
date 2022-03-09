@@ -1,5 +1,5 @@
 import useThreeDMappingsQuery from 'hooks/useQuery/useThreeDMappingsQuery';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   AddModelOptions,
   AssetNodeCollection,
@@ -9,7 +9,7 @@ import {
   NodeOutlineColor,
   THREE,
 } from '@cognite/reveal';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import styled from 'styled-components';
 import StatusMessage from 'components/utils/StatusMessage';
 import uniqueId from 'lodash/uniqueId';
@@ -47,7 +47,7 @@ const ThreeDPreview = ({
   onNodeClick,
 }: ThreeDPreviewProps) => {
   const containerId = `reveal-container-${uniqueId()}`;
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
   const { data: mappings, isLoading } = useThreeDMappingsQuery([assetId]);
   const revealViewer = useRef<Cognite3DViewer>();
   const [isRevealReady, setRevealReady] = useState(false);

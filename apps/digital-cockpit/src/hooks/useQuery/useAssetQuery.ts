@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import {
   Asset,
@@ -9,10 +8,10 @@ import {
   CogniteClient,
   ListResponse,
 } from '@cognite/sdk';
-import { CogniteSDKContext } from 'providers/CogniteSDKProvider';
+import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 export const useAssetSearchQuery = (assetQuery?: AssetSearchFilter) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<Asset[]>(
     ['assetSearch', assetQuery],
@@ -56,7 +55,7 @@ export const useAssetBreadcrumbsQuery = (
   assetId?: IdEither,
   assetRetrieveParams?: AssetRetrieveParams
 ) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<Asset[] | null>(
     ['assetBreadcrumbQuery', assetId],
@@ -72,7 +71,7 @@ export const useAssetRetrieveQuery = (
   assetIds: IdEither[] | undefined,
   assetRetrieveParams?: AssetRetrieveParams
 ) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<Asset[]>(
     ['assetRetrieve', assetIds, assetRetrieveParams],
@@ -86,7 +85,7 @@ export const useAssetRetrieveQuery = (
 };
 
 export const useAssetListQuery = (params?: AssetListScope) => {
-  const { client } = useContext(CogniteSDKContext);
+  const { client } = useCDFExplorerContext();
 
   const query = useQuery<ListResponse<Asset[]>>(
     ['assetList', params],
