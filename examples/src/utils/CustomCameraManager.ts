@@ -21,9 +21,11 @@ export class CustomCameraManager implements CameraManager {
             this._cameraChangedListener.forEach( cb => cb(this._camera.position, this._controls.target));
         });
     }
+
     getCamera(): THREE.PerspectiveCamera {
         return this._camera;
     }
+
     setCameraState(state: CameraState): void {
         if (state.rotation && state.target) throw new Error("Can't set both rotation and target");
         const position = state.position ?? this._camera.position;
@@ -37,6 +39,7 @@ export class CustomCameraManager implements CameraManager {
         this._controls.target.copy(target);
         this._camera.quaternion.copy(rotation);
     }
+
     getCameraState(): Required<CameraState> {
         return {
             position: this._camera.position.clone(),
@@ -44,9 +47,11 @@ export class CustomCameraManager implements CameraManager {
             rotation: this._camera.quaternion.clone(),
         }
     }
+
     on(event: "cameraChange", callback: CameraChangeDelegate): void {
         this._cameraChangedListener.push(callback);
     }
+
     off(event: "cameraChange", callback: CameraChangeDelegate): void {
         const index  = this._cameraChangedListener.indexOf(callback);
         if (index !== -1) {
@@ -54,18 +59,20 @@ export class CustomCameraManager implements CameraManager {
         }
 
     }
+
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {
         const { position, target } = this._cameraManagerHelper.calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
 
         this.setCameraState({ position, target });
     }
+
     update(deltaTime: number, boundingBox: THREE.Box3): void {
         this._controls.update();
         this._cameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
     }
+
     dispose(): void {
         this._controls.dispose();
         this._cameraChangedListener.splice(0);
     }
-    
 }
