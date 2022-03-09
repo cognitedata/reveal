@@ -11,6 +11,7 @@ import {
   ObjectDetectionJobAnnotation,
   TagDetectionJobAnnotation,
   TextDetectionJobAnnotation,
+  VisionDetectionModelType,
   VisionJobAnnotation,
 } from './types';
 import { validBoundingBox, validImageAssetLink } from './typeValidators';
@@ -105,7 +106,9 @@ export function convertImageClassificationToAnnotationTypeV1(
 ) {
   const annotation = {
     text: imageClassification.label,
-    confidence: imageClassification.confidence,
+    data: {
+      confidence: imageClassification.confidence,
+    },
   };
 
   return annotation;
@@ -192,4 +195,57 @@ export function convertImageAssetLinkListToAnnotationTypeV1(
   });
 
   return annotations;
+}
+
+export function convertVisionJobAnnotationToAnnotationTypeV1(
+  visionJobAnnotation: VisionJobAnnotation,
+  visionDetectionModelType: VisionDetectionModelType
+) {
+  switch (visionDetectionModelType) {
+    case VisionDetectionModelType.ObjectDetection: {
+      const annotationType =
+        convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
+          visionJobAnnotation
+        );
+      return (
+        annotationType &&
+        convertImageObjectDetectionBoundingBoxToAnnotationTypeV1(annotationType)
+      );
+    }
+    case VisionDetectionModelType.OCR: {
+      const annotationType =
+        convertVisionJobAnnotationToImageExtractedText(visionJobAnnotation);
+      return (
+        annotationType &&
+        convertImageExtractedTextToAnnotationTypeV1(annotationType)
+      );
+    }
+    case VisionDetectionModelType.TagDetection: {
+      const annotationType =
+        convertVisionJobAnnotationToImageAssetLinkList(visionJobAnnotation);
+      return (
+        annotationType &&
+        convertImageAssetLinkListToAnnotationTypeV1(annotationType)
+      );
+    }
+    case VisionDetectionModelType.CustomModel: {
+      const annotationTypeBoundingBox =
+        convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
+          visionJobAnnotation
+        );
+      if (annotationTypeBoundingBox) {
+        return convertImageObjectDetectionBoundingBoxToAnnotationTypeV1(
+          annotationTypeBoundingBox
+        );
+      }
+
+      const annotationTypeClassification =
+        convertVisionJobAnnotationToImageClassification(visionJobAnnotation);
+      return convertImageClassificationToAnnotationTypeV1(
+        annotationTypeClassification
+      );
+    }
+    default:
+      return null;
+  }
 }
