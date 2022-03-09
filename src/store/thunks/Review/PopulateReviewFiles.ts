@@ -9,8 +9,13 @@ export const PopulateReviewFiles = createAsyncThunk<
   ThunkConfig
 >('PopulateReviewFiles', async (fileIds, { getState, dispatch }) => {
   const reviewState = getState().reviewSlice;
-  const previousFileList = reviewState.fileIds;
-  const removeFileList = previousFileList.filter((id) => !fileIds.includes(id));
+  const processState = getState().processSlice;
+  const previousReviewFileList = reviewState.fileIds;
+  const processFileList = processState.fileIds;
+  const removeFileList = previousReviewFileList.filter(
+    // this check is done since navigating to Review is possible by explorer page, if this is not done clearFileState will remove files from existing files in process page
+    (id) => !fileIds.includes(id) && !processFileList.includes(id)
+  );
   dispatch(setReviewFileIds(fileIds));
   if (removeFileList) {
     dispatch(clearFileState(removeFileList));

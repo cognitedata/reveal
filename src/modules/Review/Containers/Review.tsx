@@ -9,7 +9,7 @@ import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import styled from 'styled-components';
 import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
-import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { resetPreview } from 'src/modules/Review/store/reviewSlice';
 import ReviewBody from 'src/modules/Review/Containers/ReviewBody';
@@ -17,6 +17,8 @@ import { resetEditHistory } from 'src/modules/FileDetails/slice';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { pushMetric } from 'src/utils/pushMetric';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
+import { CustomPrompt } from 'src/modules/Common/Components/CustomPrompt/CustomPrompt';
+import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <div style={{ minWidth: '120px' }}>
@@ -104,8 +106,10 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   if (!file) {
     return null;
   }
-  const promptMessage =
-    'Are you sure you want to leave or refresh this page? The session state may be lost.';
+  const clearProcessData = () => {
+    dispatch(PopulateProcessFiles([]));
+    return true;
+  };
   const renderView = () => {
     return (
       <>
@@ -140,17 +144,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   };
   return (
     <>
-      {previousPage === 'process' && (
-        <Prompt
-          message={(location, _) => {
-            return location.pathname.includes(`vision/workflow/process`) ||
-              location.pathname.includes(`vision/workflow/review`)
-              ? true
-              : promptMessage;
-          }}
-        />
-      )}
-
+      <CustomPrompt when={previousPage === 'process'} onOK={clearProcessData} />
       {renderView()}
     </>
   );

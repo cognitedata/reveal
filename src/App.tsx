@@ -25,7 +25,9 @@ import rootStyles from './styles/index.css';
 
 const App = () => {
   const subAppName = 'cdf-vision-subapp';
-  const history = createBrowserHistory();
+  const history = createBrowserHistory({
+    forceRefresh: false,
+  });
   useEffect(() => {
     cogsStyles.use();
     rootStyles.use();

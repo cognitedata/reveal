@@ -22,7 +22,6 @@ import {
   setPageSize,
 } from 'src/modules/Process/store/slice';
 import {
-  selectIsPollingComplete,
   selectProcessSortedFiles,
   selectUnfinishedJobs,
   selectProcessSelectedFileIdsInSortedOrder,
@@ -37,7 +36,7 @@ import { MapView } from 'src/modules/Common/Components/MapView/MapView';
 import { resetEditHistory } from 'src/modules/FileDetails/slice';
 import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
-import { Prompt, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
@@ -58,10 +57,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const focusedFileId = useSelector(
     ({ processSlice }: RootState) => processSlice.focusedFileId
   );
-
-  const isPollingFinished = useSelector((state: RootState) => {
-    return selectIsPollingComplete(state.processSlice);
-  });
 
   const processFileIds = useSelector(
     (state: RootState) => state.processSlice.fileIds
@@ -135,8 +130,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         RetrieveAnnotations({ fileIds: processFileIds, clearCache: true })
       );
     }
-  }, [processFileIds, showSelectFromExploreModal]); // required to fetch annotations when explorer modal is closed
-  // since explorer modal clears the annotation state when it's loading its own annotations
+  }, [processFileIds, showSelectFromExploreModal]); // requires to fetch annotations when explorer modal is closed
+  // since explorer modal clears the anntation state when it's loading its own annotations
 
   const handleItemClick = useCallback(
     (item: TableDataItem, showFileDetailsOnClick: boolean = true) => {
@@ -154,23 +149,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     },
     [dispatch]
   );
-
-  const promptMessage =
-    'Are you sure you want to leave or refresh this page? The session state and all unsaved processing data will be lost. Already saved processing data can be accessed from the Image explorer on the front page.';
-
-  window.onbeforeunload = (event: any) => {
-    // prompt on reload, if in a session and there are files
-    if (
-      !window.location.pathname.includes('/vision/workflow') ||
-      !processFiles.length
-    ) {
-      return;
-    }
-    const e = event || window.event;
-    e.returnValue = promptMessage; // NOTE: only some browsers show this message
-    // eslint-disable-next-line consistent-return
-    return promptMessage;
-  };
 
   const handleSelectAllFiles = (
     value: boolean,
@@ -230,22 +208,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
 
   return (
     <>
-      <Prompt
-        when={!isPollingFinished}
-        message={(location, _) => {
-          return location.pathname.includes('vision/workflow/review/') // exclude review page
-            ? true
-            : promptMessage;
-        }}
-      />
-      <Prompt
-        message={(location, _) => {
-          return location.pathname.includes('vision/workflow/') ||
-            processFiles.length === 0 // can freely navigate in workflow or if no files.
-            ? true
-            : promptMessage;
-        }}
-      />
       <PaginationWrapper
         data={processTableRowData}
         totalCount={processTableRowData.length}

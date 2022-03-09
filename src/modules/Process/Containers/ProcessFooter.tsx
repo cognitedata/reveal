@@ -32,9 +32,10 @@ export const ProcessFooter = () => {
     selectAllProcessFiles(state)
   );
 
-  const clearOnFinishProcessing = () => {
+  const clearOnFinishProcessing = async () => {
     dispatch(setSummaryModalVisibility(false));
-    dispatch(PopulateProcessFiles([]));
+    await dispatch(PopulateProcessFiles([])); // wait until state clears unless warning will be shown
+    history.push(createLink('/vision/explore'));
   };
 
   const handleShowSummaryModal = () => {
@@ -46,9 +47,8 @@ export const ProcessFooter = () => {
       title: 'Just so you know',
       content:
         'By skipping processing you will be taken back to the home page. Your files are uploaded to Cognite Data Fusion and can be processed later.',
-      onOk: () => {
-        clearOnFinishProcessing();
-        history.push(createLink('/vision/explore'));
+      onOk: async () => {
+        await clearOnFinishProcessing();
       },
     });
   };
