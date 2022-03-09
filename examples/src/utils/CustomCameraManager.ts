@@ -1,22 +1,25 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { CameraManager } from '@cognite/reveal';
-import { CameraState, CameraChangedEvent } from '@cognite/reveal/packages/camera-manager';
-
+import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';
 
 export class CustomCameraManager implements CameraManager {
     private _domElement: HTMLElement;
     private _camera: THREE.PerspectiveCamera;
     private _controls: OrbitControls;
-    private _lastCameraState: Required<CameraState>;
-    private readonly _cameraChangedListener: Array<CameraChangedEvent> = [];
+    private _cameraManagerHelper = new CameraManagerHelper();
+    private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
 
     constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
         this._domElement = domElement;
         this._camera = camera;
-        this._controls = new OrbitControls(this._camera, this._domElement);
-        this._lastCameraState = this.getCameraState();
+        this._controls = new OrbitControls(this._camera, domElement);
+        this._controls.enableDamping = true;
+        this._controls.dampingFactor = 0.3;
+
+        this._controls.addEventListener('change', () => {
+            this._cameraChangedListener.forEach( cb => cb(this._camera.position, this._controls.target));
+        });
     }
     getCamera(): THREE.PerspectiveCamera {
         return this._camera;
@@ -24,8 +27,11 @@ export class CustomCameraManager implements CameraManager {
     setCameraState(state: CameraState): void {
         if (state.rotation && state.target) throw new Error("Can't set both rotation and target");
         const position = state.position ?? this._camera.position;
-        const target = state.target ?? this._controls.target;
         const rotation = state.rotation ?? this._camera.quaternion;
+        const target = state.target ?? ( state.rotation ? 
+            this._cameraManagerHelper.calculateNewTargetFromRotation(
+                this._camera, state.rotation, this._controls.target) : 
+            this._controls.target);
 
         this._camera.position.copy(position);
         this._controls.target.copy(target);
@@ -38,10 +44,10 @@ export class CustomCameraManager implements CameraManager {
             rotation: this._camera.quaternion.clone(),
         }
     }
-    on(event: "cameraChange", callback: CameraChangedEvent): void {
+    on(event: "cameraChange", callback: CameraChangeDelegate): void {
         this._cameraChangedListener.push(callback);
     }
-    off(event: "cameraChange", callback: CameraChangedEvent): void {
+    off(event: "cameraChange", callback: CameraChangeDelegate): void {
         const index  = this._cameraChangedListener.indexOf(callback);
         if (index !== -1) {
             this._cameraChangedListener.splice(index, 1);
@@ -49,18 +55,13 @@ export class CustomCameraManager implements CameraManager {
 
     }
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {
-        this._controls.target.copy(boundingBox.getCenter(new THREE.Vector3()));
+        const { position, target } = this._cameraManagerHelper.calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
+
+        this.setCameraState({ position, target });
     }
     update(deltaTime: number, boundingBox: THREE.Box3): void {
         this._controls.update();
-
-        const cameraState = this.getCameraState();
-        if (cameraState.position.distanceTo(this._lastCameraState.position) > 0.001 || 
-            cameraState.target.distanceTo(this._lastCameraState.target) > 0.001) {
-                
-            this._cameraChangedListener.forEach( cb => cb({ camera: { position: cameraState.position, target: cameraState.target } }));
-        }
-        this._lastCameraState = cameraState;
+        this._cameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
     }
     dispose(): void {
         this._controls.dispose();

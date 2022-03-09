@@ -13,6 +13,7 @@ export * from './core/src/index';
 export {
   CameraControlsOptions,
   DefaultCameraManager,
+  CameraManagerHelper,
   CameraManager,
   CameraChangeDelegate,
   CameraState

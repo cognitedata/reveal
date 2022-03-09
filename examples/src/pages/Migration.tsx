@@ -45,7 +45,7 @@ export function Migration() {
   useEffect(() => {
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
-    let cameraManager: CameraManager;
+    let cameraManager: DefaultCameraManager;
 
     async function main() {
       const project = urlParams.get('project');
@@ -71,8 +71,6 @@ export function Migration() {
                                      getToken: async () => 'dummy' });
       }
 
-      const camera = new THREE.PerspectiveCamera(60, canvasWrapperRef.current!.clientWidth / canvasWrapperRef.current!.clientHeight, 0.1, 10000);
-
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -80,8 +78,7 @@ export function Migration() {
         logMetrics: false,
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any,
-        continuousModelStreaming: true,
-        cameraManager: new CustomCameraManager(canvasWrapperRef.current!, camera),
+        continuousModelStreaming: true
       };
 
       if (modelUrl !== null) {
@@ -104,9 +101,9 @@ export function Migration() {
         changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
       };
-      cameraManager = viewer.cameraManager;// as DefaultCameraManager;
+      cameraManager = viewer.cameraManager as DefaultCameraManager;
 
-      //cameraManager.setCameraControlsOptions(controlsOptions);
+      cameraManager.setCameraControlsOptions(controlsOptions);
 
       // Add GUI for loading models and such
       const guiState = {
@@ -359,12 +356,12 @@ export function Migration() {
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
-      // controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
-      //   cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
-      // });
-      // controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
-      //   cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
-      // });
+      controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
+        cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
+      });
+      controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
+        cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
+      });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
