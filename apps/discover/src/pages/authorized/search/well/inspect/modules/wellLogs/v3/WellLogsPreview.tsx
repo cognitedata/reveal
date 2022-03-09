@@ -117,6 +117,7 @@ export const WellLogsPreview: React.FC<{ wellLogs: WellLog[] }> = ({
             text={
               selectedWellLog?.source.sequenceExternalId || DATE_NOT_AVAILABLE
             }
+            data-testid="sequence-select-expand-button"
           />
         </Dropdown>
 

@@ -1,5 +1,5 @@
-import { SOURCE_FILTER } from '../../../support/selectors/wells.selectors';
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+import { SOURCE_FILTER } from '../../../support/selectors/wells.selectors';
 
 describe('Wells: NPT Events', () => {
   beforeEach(() => {

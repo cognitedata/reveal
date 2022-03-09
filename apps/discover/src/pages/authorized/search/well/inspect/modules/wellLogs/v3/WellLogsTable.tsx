@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
+import pickBy from 'lodash/pickBy';
 
 import { PreviewButton } from 'components/buttons';
 import { Loading } from 'components/loading/Loading';
@@ -117,6 +118,7 @@ export const WellLogsTable: React.FC = () => {
           type="primary"
           onClick={() => setLogsPreviewOpen(true)}
           id="preview-button"
+          disabled={isEmpty(pickBy(selectedIds))}
           data-testid="preview-button"
         />
       </PreviewButtonWrapper>
