@@ -127,6 +127,7 @@ export const WellLogsTable: React.FC = () => {
         fullWidth
         visible={isLogsPreviewOpen}
         onOk={() => setLogsPreviewOpen(false)}
+        onCancel={() => setLogsPreviewOpen(false)}
       >
         <WellLogsPreview wellLogs={selectedWellLogs} />
       </OKModal>
