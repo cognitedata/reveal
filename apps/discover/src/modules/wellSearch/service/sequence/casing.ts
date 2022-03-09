@@ -145,7 +145,7 @@ export const getSequenceMetadata = (casingAssembly: CasingAssembly) => {
     assy_name: casingAssembly.type,
     assy_original_md_top: String(casingAssembly.originalMeasuredDepthTop.value),
     assy_original_md_top_unit: casingAssembly.originalMeasuredDepthTop.unit,
-    assy_size: String(casingAssembly.maxOutsideDiameter.value),
+    assy_size: String(casingAssembly.minOutsideDiameter.value),
     assy_min_inside_diameter: String(casingAssembly.minInsideDiameter.value),
   };
 };
