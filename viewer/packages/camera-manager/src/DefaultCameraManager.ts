@@ -126,9 +126,21 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const { position, target } = this._cameraManagerHelper.calculateCameraStateToFitBoundingBox(this._camera, box, radiusFactor);
+    const { position, target } = this._cameraManagerHelper.calculateCameraStateToFitBoundingBox(
+      this._camera,
+      box,
+      radiusFactor
+    );
 
     this.moveCameraTo(position, target, duration);
+  }
+
+  /**
+   * Gets instance of camera controls that are used by camera manager. See {@link ComboControls} for more
+   * information on all adjustable properties.
+   */
+  get cameraControls(): ComboControls {
+    return this._controls;
   }
 
   /**
@@ -178,8 +190,13 @@ export class DefaultCameraManager implements CameraManager {
     const newRotation = (state.target ? new THREE.Quaternion() : state.rotation) ?? new THREE.Quaternion();
     const newTarget =
       state.target ??
-      (state.rotation ? this._cameraManagerHelper.calculateNewTargetFromRotation(this._camera, state.rotation, 
-        this._controls.getState().target) : this._controls.getState().target);
+      (state.rotation
+        ? this._cameraManagerHelper.calculateNewTargetFromRotation(
+            this._camera,
+            state.rotation,
+            this._controls.getState().target
+          )
+        : this._controls.getState().target);
 
     this._controls.cameraRawRotation.copy(newRotation);
 
@@ -370,7 +387,7 @@ export class DefaultCameraManager implements CameraManager {
     }
     if (this.automaticControlsSensitivity) {
       const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
-      
+
       // This is used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside
