@@ -1076,9 +1076,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/rendering@workspace:packages/rendering"
   dependencies:
+    "@reveal/cad-geometry-loaders": "workspace:*"
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
     "@reveal/sector-loader": "workspace:*"
     "@reveal/sector-parser": "workspace:*"
     "@reveal/utilities": "workspace:*"
