@@ -20,6 +20,8 @@ import { ProcessFileUploadModalContainer } from 'src/modules/Process/Containers/
 import { ProcessFileDownloadModalContainer } from 'src/modules/Process/Containers/ProcessFileDownloadModalContainer';
 import { ProcessBulkEditModalContainer } from 'src/modules/Process/Containers/ProcessBulkEditModalContainer';
 import { ExploreModalContainer } from 'src/modules/Process/Containers/ExploreModalContainer';
+import { CustomPrompt } from 'src/modules/Common/Components/CustomPrompt/CustomPrompt';
+import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 
 const ResultsContainer = styled.div`
   flex: 1;
@@ -35,6 +37,10 @@ const queryClient = new QueryClient();
 export default function ProcessStep() {
   const dispatch = useDispatch();
 
+  const processFileIds = useSelector(
+    (state: RootState) => state.processSlice.fileIds
+  );
+
   const currentView = useSelector(
     ({ processSlice }: RootState) => processSlice.currentView
   );
@@ -45,8 +51,14 @@ export default function ProcessStep() {
       dispatch(hideFileMetadata());
     };
   }, []);
+
+  const clearProcessData = () => {
+    dispatch(PopulateProcessFiles([]));
+    return true;
+  };
   return (
     <>
+      <CustomPrompt when={!!processFileIds.length} onOK={clearProcessData} />
       <Deselect />
       <ProcessFileUploadModalContainer />
       <ProcessFileDownloadModalContainer />
