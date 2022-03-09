@@ -29,13 +29,13 @@ export const SummaryModal = () => {
     dispatch(setSummaryModalVisibility(false));
   };
 
-  const clearOnFinishProcessing = () => {
+  const clearOnFinishProcessing = async () => {
     dispatch(setSummaryModalVisibility(false));
-    dispatch(PopulateProcessFiles([]));
+    await dispatch(PopulateProcessFiles([])); // wait until state clears unless warning will be shown
   };
 
-  const onNextClicked = () => {
-    clearOnFinishProcessing();
+  const onNextClicked = async () => {
+    await clearOnFinishProcessing();
     pushMetric('Vision.Session.Finished');
     history.push(createLink('/vision/explore'));
   };
