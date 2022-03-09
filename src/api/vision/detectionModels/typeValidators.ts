@@ -1,6 +1,7 @@
 import isFinite from 'lodash-es/isFinite';
 import { RegionShape } from 'src/api/annotation/types';
 import {
+  GaugeReaderJobAnnotation,
   TagDetectionJobAnnotation,
   Vertex,
   VisionJobAnnotation,
@@ -40,5 +41,25 @@ export function validImageAssetLink(visionJobAnnotation: VisionJobAnnotation) {
     (visionJobAnnotation as TagDetectionJobAnnotation).assetIds.every((item) =>
       isFinite(item)
     )
+  );
+}
+
+export function validKeypointCollection(
+  visionJobAnnotation: VisionJobAnnotation
+) {
+  if (!(visionJobAnnotation as GaugeReaderJobAnnotation).data) {
+    return false;
+  }
+
+  const annotation = visionJobAnnotation as GaugeReaderJobAnnotation;
+  return (
+    !!annotation.region &&
+    annotation.region.shape === RegionShape.Points &&
+    annotation.region.vertices?.length ===
+      annotation.data.keypoint_names?.length &&
+    annotation.region.vertices.every(
+      (item) => 'x' in item && 'y' in item && vertexIsNormalized(item)
+    ) &&
+    uniqueVertices(annotation.region.vertices)
   );
 }

@@ -2,21 +2,25 @@ import {
   convertImageAssetLinkListToAnnotationTypeV1,
   convertImageClassificationToAnnotationTypeV1,
   convertImageExtractedTextToAnnotationTypeV1,
+  convertImageKeypointCollectionToAnnotationTypeV1,
   convertImageObjectDetectionBoundingBoxToAnnotationTypeV1,
   convertVisionJobAnnotationToAnnotationTypeV1,
   convertVisionJobAnnotationToImageAssetLinkList,
   convertVisionJobAnnotationToImageClassification,
   convertVisionJobAnnotationToImageExtractedText,
+  convertVisionJobAnnotationToImageKeypointCollection,
   convertVisionJobAnnotationToImageObjectDetectionBoundingBox,
 } from 'src/api/vision/detectionModels/converters';
 import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
+  ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   RegionShape,
 } from 'src/api/annotation/types';
 import {
+  GaugeReaderJobAnnotation,
   VisionDetectionModelType,
   VisionJobAnnotation,
 } from 'src/api/vision/detectionModels/types';
@@ -202,6 +206,52 @@ describe('convertVisionJobAnnotationToImageAssetLinkList', () => {
   });
 });
 
+describe('convertVisionJobAnnotationToImageKeypointCollection', () => {
+  const points = {
+    region: {
+      shape: RegionShape.Points,
+      vertices: [
+        { x: 0, y: 0.1 },
+        { x: 1, y: 0.3 },
+      ],
+    },
+  };
+  test('Invalid keypoint collection', () => {
+    const visionJobAnnotation = {} as VisionJobAnnotation;
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    expect(
+      convertVisionJobAnnotationToImageKeypointCollection(visionJobAnnotation)
+    ).toStrictEqual(null);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  test('Should return converted type', () => {
+    const visionJobAnnotation = {
+      text: 'gauge',
+      confidence: 0.1,
+      data: {
+        keypoint_names: ['left', 'right'],
+      },
+      ...points,
+    } as VisionJobAnnotation;
+    expect(
+      convertVisionJobAnnotationToImageKeypointCollection(visionJobAnnotation)
+    ).toStrictEqual({
+      confidence: visionJobAnnotation.confidence,
+      label: visionJobAnnotation.text,
+      keypoints: visionJobAnnotation.region?.vertices.map((vertex, index) => {
+        return {
+          label: (visionJobAnnotation as GaugeReaderJobAnnotation).data
+            .keypoint_names[index],
+          confidence: visionJobAnnotation.confidence,
+          point: vertex,
+        };
+      }),
+    });
+  });
+});
+
 describe('Test converts for internal types -> Annotation V1 types', () => {
   const boundingBox = {
     xMin: 0.1,
@@ -303,6 +353,43 @@ describe('Test converts for internal types -> Annotation V1 types', () => {
         };
       })
     );
+  });
+
+  test('convertImageKeypointCollectionToAnnotationTypeV1', () => {
+    const visionJobAnnotation = {
+      confidence: 0.5,
+      label: 'gauge',
+      keypoints: [
+        { label: 'left', point: { x: boundingBox.xMin, y: boundingBox.yMin } },
+        { label: 'right', point: { x: boundingBox.xMax, y: boundingBox.yMax } },
+      ],
+    } as ImageKeypointCollection;
+    expect(
+      convertImageKeypointCollectionToAnnotationTypeV1(visionJobAnnotation)
+    ).toStrictEqual({
+      text: visionJobAnnotation.label,
+      data: {
+        confidence: visionJobAnnotation.confidence,
+        keypoint: true,
+        keypoints: [
+          {
+            caption: 'left',
+            order: '1',
+          },
+          {
+            caption: 'right',
+            order: '2',
+          },
+        ],
+      },
+      region: {
+        shape: RegionShape.Points,
+        vertices: [
+          { x: boundingBox.xMin, y: boundingBox.yMin },
+          { x: boundingBox.xMax, y: boundingBox.yMax },
+        ],
+      },
+    });
   });
 });
 

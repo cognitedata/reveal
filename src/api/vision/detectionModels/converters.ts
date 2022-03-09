@@ -3,18 +3,24 @@ import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
+  ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   RegionShape,
 } from 'src/api/annotation/types';
 
 import {
+  GaugeReaderJobAnnotation,
   ObjectDetectionJobAnnotation,
   TagDetectionJobAnnotation,
   TextDetectionJobAnnotation,
   VisionDetectionModelType,
   VisionJobAnnotation,
 } from './types';
-import { validBoundingBox, validImageAssetLink } from './typeValidators';
+import {
+  validBoundingBox,
+  validImageAssetLink,
+  validKeypointCollection,
+} from './typeValidators';
 
 function conversionWarningMessage(type: string) {
   return `Could not convert annotation in detection model response to ${type}.`;
@@ -35,7 +41,7 @@ export function convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
   visionJobAnnotation: VisionJobAnnotation
 ) {
   if (!validBoundingBox(visionJobAnnotation)) {
-    console.warn(conversionWarningMessage('BoundingBox'));
+    console.warn(conversionWarningMessage('ImageObjectDetectionBoundingBox'));
     return null;
   }
   const annotation = visionJobAnnotation as ObjectDetectionJobAnnotation;
@@ -98,6 +104,29 @@ export function convertVisionJobAnnotationToImageAssetLinkList(
   );
 
   return imageAssetLinkList;
+}
+
+export function convertVisionJobAnnotationToImageKeypointCollection(
+  visionJobAnnotation: VisionJobAnnotation
+) {
+  if (!validKeypointCollection(visionJobAnnotation)) {
+    console.warn(conversionWarningMessage('ImageKeypointCollection'));
+    return null;
+  }
+  const annotation = visionJobAnnotation as GaugeReaderJobAnnotation;
+  const imageKeypointCollection: ImageKeypointCollection = {
+    label: annotation.text,
+    confidence: annotation.confidence,
+    keypoints: annotation.region.vertices.map((item, index) => {
+      return {
+        point: item,
+        label: annotation.data.keypoint_names[index],
+        confidence: annotation.confidence,
+      };
+    }),
+  };
+
+  return imageKeypointCollection;
 }
 
 // convert to Annotation V1 types
@@ -193,6 +222,30 @@ export function convertImageAssetLinkListToAnnotationTypeV1(
       },
     };
   });
+
+  return annotations;
+}
+
+export function convertImageKeypointCollectionToAnnotationTypeV1(
+  imageKeypointCollection: ImageKeypointCollection
+) {
+  const annotations = {
+    text: imageKeypointCollection.label,
+    data: {
+      keypoint: true,
+      confidence: imageKeypointCollection.confidence,
+      keypoints: imageKeypointCollection.keypoints.map((item, index) => {
+        return {
+          caption: item.label,
+          order: (index + 1).toString(), // annotation library (react-image-annotate) has 1-based indexing
+        };
+      }),
+    },
+    region: {
+      shape: 'points',
+      vertices: imageKeypointCollection.keypoints.map((item) => item.point),
+    },
+  };
 
   return annotations;
 }
