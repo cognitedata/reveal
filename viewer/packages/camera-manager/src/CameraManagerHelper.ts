@@ -31,7 +31,13 @@ export class CameraManagerHelper {
     nearPlaneCoplanarPoint: new THREE.Vector3(),
     nearPlane: new THREE.Plane()
   };
-
+  /**
+   * Calculates camera target based on new camera rotation.
+   * @param camera Used camera instance.
+   * @param rotation New camera rotation in quaternion form.
+   * @param currentTarget Current camera target.
+   * @returns
+   */
   calculateNewTargetFromRotation(
     camera: THREE.PerspectiveCamera,
     rotation: THREE.Quaternion,
@@ -51,7 +57,11 @@ export class CameraManagerHelper {
 
     return newTarget;
   }
-
+  /**
+   * Updates near and far plane of the camera based on the bounding box.
+   * @param camera Used camera instance.
+   * @param combinedBbox Bounding box of all objects on the scene.
+   */
   updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
     const { cameraPosition, cameraDirection, corners } = this._updateNearAndFarPlaneBuffers;
     this.getBoundingBoxCorners(combinedBbox, corners);
@@ -75,7 +85,13 @@ export class CameraManagerHelper {
     camera.far = far;
     camera.updateProjectionMatrix();
   }
-
+  /**
+   * Calculates camera position and target that allows to see the content of provided bounding box.
+   * @param camera Used camera instance.
+   * @param box Bounding box to be fitted.
+   * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
+   * @returns
+   */
   calculateCameraStateToFitBoundingBox(
     camera: THREE.PerspectiveCamera,
     box: THREE.Box3,
