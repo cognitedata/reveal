@@ -1,7 +1,11 @@
 name: Chromatic
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 jobs:
   visual-testing:
     runs-on: ubuntu-latest
