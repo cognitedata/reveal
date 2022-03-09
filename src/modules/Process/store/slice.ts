@@ -115,14 +115,15 @@ const processSlice = createGenericTabularDataSlice({
       }>
     ) {
       const { params, modelIndex } = action.payload;
-      state.availableDetectionModels[modelIndex].unsavedSettings = params;
+      if (modelIndex < state.availableDetectionModels.length) {
+        state.availableDetectionModels[modelIndex].unsavedSettings = params;
+      }
     },
     setDetectionModelParameters(state) {
       state.availableDetectionModels.forEach((item) => {
         item.settings = item.unsavedSettings;
       });
     },
-
     revertDetectionModelParameters(state) {
       state.availableDetectionModels.forEach((item) => {
         item.unsavedSettings = item.settings;
@@ -160,6 +161,8 @@ const processSlice = createGenericTabularDataSlice({
         unsavedSettings: initialDetectionModelParameters.customModel,
       });
     },
+    // setCustomModelName should works for all the model indexes
+    // but only use for update name of custom model in the UI
     setCustomModelName(
       state,
       action: PayloadAction<{
@@ -171,12 +174,15 @@ const processSlice = createGenericTabularDataSlice({
       state.availableDetectionModels[modelIndex].modelName = modelName;
     },
     removeJobById(state, action: PayloadAction<number>) {
-      removeJobFromFiles(state, action.payload);
-
-      delete state.jobs.byId[action.payload];
-      state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
-        parseInt(id, 10)
-      );
+      if (state.jobs.byId[action.payload]) {
+        removeJobFromFiles(state, action.payload);
+        delete state.jobs.byId[action.payload];
+        state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
+          parseInt(id, 10)
+        );
+      } else {
+        console.warn('invalid job ID ', action.payload);
+      }
     },
     setProcessViewFileUploadModalVisibility(
       state,
@@ -257,49 +263,57 @@ const processSlice = createGenericTabularDataSlice({
       isAnyOf(DeleteFilesById.fulfilled, clearFileState),
       (state, action) => {
         const deletedFileIds = action.payload;
-        deletedFileIds.forEach((fileId) => {
-          // clear jobs state
-          if (state.files.byId[fileId]) {
-            const { jobIds } = state.files.byId[fileId];
-            jobIds.forEach((jobId) => {
-              const job = state.jobs.byId[jobId];
-              const otherFilesInJob = job.fileIds.filter(
-                (otherFileId) => otherFileId !== fileId
-              );
-              if (
-                otherFilesInJob.every(
-                  (otherFileId) => !state.files.byId[otherFileId]
-                )
-              ) {
-                // if every other file of the job is deleted
-                delete state.jobs.byId[jobId];
-                state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
-                  parseInt(id, 10)
-                );
-              }
-            });
-          }
 
-          delete state.files.byId[fileId];
-          if (state.focusedFileId === fileId) {
-            // hide drawer and reset selected file if it's deleted
-            state.focusedFileId = null;
-            state.showFileMetadata = false;
-          }
-        });
-        // clear upload state
-
-        state.uploadedFileIds = state.uploadedFileIds.filter(
-          (id) => !deletedFileIds.includes(id)
-        );
-
-        // clear loaded Ids
-
+        // clean loaded file ids
         state.fileIds = state.fileIds.filter(
           (id) => !deletedFileIds.includes(id)
         );
 
+        // clean upload state
+        state.uploadedFileIds = state.uploadedFileIds.filter(
+          (id) => !deletedFileIds.includes(id)
+        );
+
+        // clean files state
+        deletedFileIds.forEach((deletedFileId) => {
+          delete state.files.byId[deletedFileId];
+
+          // hide drawer and reset selected file if it's deleted
+          if (state.focusedFileId === deletedFileId) {
+            state.focusedFileId = null;
+            state.showFileMetadata = false;
+          }
+        });
         state.files.allIds = Object.keys(state.files.byId).map((id) =>
+          parseInt(id, 10)
+        );
+
+        // clean jobs state
+        state.jobs.allIds.forEach((jobId) => {
+          const job = state.jobs.byId[jobId];
+          const newFileIds = job.fileIds.filter(
+            (fileId) => !deletedFileIds.includes(fileId)
+          );
+          const newCompletedFileIds = job.completedFileIds?.filter(
+            (fileId) => !deletedFileIds.includes(fileId)
+          );
+          const newFailedFileIds = job.failedFileIds?.filter(
+            (fileId) => !deletedFileIds.includes(fileId)
+          );
+
+          // if job don't have any file ids
+          if (newFileIds.length === 0) {
+            delete state.jobs.byId[jobId];
+          } else {
+            state.jobs.byId[jobId] = {
+              ...job,
+              fileIds: newFileIds,
+              completedFileIds: newCompletedFileIds,
+              failedFileIds: newFailedFileIds,
+            };
+          }
+        });
+        state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
           parseInt(id, 10)
         );
       }
