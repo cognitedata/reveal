@@ -1,3 +1,7 @@
+## 1.2.0 Mar 09 2022
+
+- Add optional 'idToken' prop to support non react-container setup
+
 ## 1.1.1 Jan 21 2021
 
 - Bumps version for react-container

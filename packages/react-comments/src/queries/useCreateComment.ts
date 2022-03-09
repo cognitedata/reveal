@@ -5,7 +5,8 @@ import {
   CommentResponse,
   CommentTarget,
 } from '@cognite/comment-service-types';
-import { AuthHeaders, getAuthHeaders } from '@cognite/react-container';
+import { AuthHeaders } from '@cognite/react-container';
+import { getHeaders } from 'utils/getHeaders';
 
 import { commentKeys } from './queryKeys';
 
@@ -43,13 +44,15 @@ export function useCommentCreateMutate({
   scope,
   serviceUrl,
   fasAppId,
+  idToken,
 }: {
   serviceUrl: string;
   scope?: string;
   target: CommentTarget;
   fasAppId?: string;
+  idToken?: string;
 }) {
-  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
+  const headers = getHeaders(fasAppId, idToken);
   const queryClient = useQueryClient();
 
   return useMutation(

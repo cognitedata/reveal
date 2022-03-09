@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 import { CommentResponse, CommentTarget } from '@cognite/comment-service-types';
-import { AuthHeaders, getAuthHeaders } from '@cognite/react-container';
+import { AuthHeaders } from '@cognite/react-container';
+import { getHeaders } from 'utils/getHeaders';
 
 import { getRichtext } from '../utils/convertCommentToRichtext';
 
@@ -36,12 +37,14 @@ export function useCommentEditMutate({
   target,
   serviceUrl,
   fasAppId,
+  idToken,
 }: {
   serviceUrl: string;
   target: CommentTarget;
   fasAppId?: string;
+  idToken?: string;
 }) {
-  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
+  const headers = getHeaders(fasAppId, idToken);
   const queryClient = useQueryClient();
 
   return useMutation(
