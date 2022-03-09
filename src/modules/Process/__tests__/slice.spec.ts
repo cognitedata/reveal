@@ -360,11 +360,15 @@ describe('Test process reducers', () => {
     });
 
     test('for invalid job id nothing should change', () => {
+      const consoleSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
       const newState = reducer(mockProcessState, removeJobById(123));
       expect(newState.jobs.allIds).toEqual(jobIds);
       expect(newState.jobs.byId).toEqual(jobState);
       expect(newState.files.allIds).toEqual(mockFileIds);
       expect(newState.files.byId).toEqual(filesWithJobs);
+      expect(consoleSpy).toHaveBeenCalled();
     });
   });
 
