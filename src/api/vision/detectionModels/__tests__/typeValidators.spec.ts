@@ -273,8 +273,8 @@ describe('validKeypointCollection', () => {
       region: {
         shape: RegionShape.Points,
         vertices: [
-          { x: 1, y: 2 },
-          { x: 1, y: 2 },
+          { x: 1, y: 0.2 },
+          { x: 1, y: 0.2 },
         ],
       },
     } as VisionJobAnnotation;
@@ -289,8 +289,8 @@ describe('validKeypointCollection', () => {
       region: {
         shape: RegionShape.Points,
         vertices: [
-          { x: 1, y: 2 },
-          { x: 1, y: 2 },
+          { x: 1, y: 0.2 },
+          { x: 1, y: 0.2 },
         ],
       },
     } as VisionJobAnnotation;
