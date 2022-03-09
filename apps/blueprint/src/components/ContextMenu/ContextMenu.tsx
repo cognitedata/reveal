@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button, Menu } from '@cognite/cogs.js';
 import Konva from 'konva';
@@ -9,13 +10,17 @@ import {
   ThicknessControl,
   FontSizeControl,
   ShapeStyleControl,
+  DocumentName,
+  AssetName,
 } from './ContextMenuItems';
-import { ContextMenuWrapper } from './elements';
 import { getPositionX } from './ContextMenuItems/utils';
+import { ContextMenuWrapper } from './elements';
+import { ImageColoroizer } from './ContextMenuItems/ImageColoroizer';
+import { ResetFilters } from './ContextMenuItems/ResetFilters';
 
 type ContextMenuProps = {
   selectedNode: Konva.Node;
-  menuItems?: React.Component[];
+  onDeleteNode: (node: Konva.Node) => void;
   updateShape: (
     shape: Node<NodeConfig>,
     updateKey: UpdateKeyType,
@@ -25,9 +30,12 @@ type ContextMenuProps = {
 
 const ContextMenu = ({
   selectedNode,
-  menuItems,
+  onDeleteNode,
   updateShape,
 }: ContextMenuProps) => {
+  const isDocumentGroup =
+    selectedNode.getType() === 'Group' &&
+    selectedNode.attrs.type !== 'workorder';
   const metrics = useMetrics('ContextMenu');
   const ref = useRef<HTMLDivElement>(null);
   const [x, setX] = useState<number>(
@@ -35,33 +43,34 @@ const ContextMenu = ({
       selectedNode.getClientRect().x,
       selectedNode.getClientRect().width,
       ref.current?.clientWidth || 0,
-      selectedNode.getType() === 'Group'
+      isDocumentGroup
     )
   );
   const [y, setY] = useState<number>(selectedNode.getClientRect().y);
   const [fill, setFill] = useState<boolean>(false);
   const [toggleStyleMenu, setToggleStyleMenu] = useState<boolean>(false);
+  const [showColorizeMenu, setShowColorizeMenu] = useState(false);
   const [hide, setHide] = useState<boolean>(false);
+
+  const isAsset =
+    selectedNode.attrs.metadata &&
+    selectedNode.attrs.metadata.type &&
+    selectedNode.attrs.metadata.type === 'asset';
 
   const onMouseWheel = useCallback(() => {
     const { x: newX, y: newY, width } = selectedNode.getClientRect();
     setX(
-      getPositionX(
-        newX,
-        width,
-        ref.current?.clientWidth || 0,
-        selectedNode.getType() === 'Group'
-      )
+      getPositionX(newX, width, ref.current?.clientWidth || 0, isDocumentGroup)
     );
     setY(newY);
-  }, [selectedNode]);
+  }, [isDocumentGroup, selectedNode]);
 
   useEffect(() => {
     document.addEventListener('wheel', onMouseWheel);
     return () => {
       document.removeEventListener('wheel', onMouseWheel);
     };
-  }, [selectedNode, onMouseWheel]);
+  }, [onMouseWheel, selectedNode]);
 
   useEffect(() => {
     // Set drag event listener to hide the context menu accordingly
@@ -72,12 +81,7 @@ const ContextMenu = ({
       const { x, width, y } = selectedNode.getClientRect();
       setHide(false);
       setX(
-        getPositionX(
-          x,
-          width,
-          ref.current?.clientWidth || 0,
-          selectedNode.getType() === 'Group'
-        )
+        getPositionX(x, width, ref.current?.clientWidth || 0, isDocumentGroup)
       );
       setY(y);
     });
@@ -85,7 +89,7 @@ const ContextMenu = ({
       selectedNode.off('dragstart');
       selectedNode.off('dragend');
     };
-  }, [selectedNode]);
+  }, [isDocumentGroup, selectedNode]);
 
   useEffect(() => {
     // We need to reposition the contextmenu whenever the stage view moves
@@ -94,11 +98,11 @@ const ContextMenu = ({
         selectedNode.getClientRect().x,
         selectedNode.getClientRect().width,
         ref.current?.clientWidth || 0,
-        selectedNode.getType() === 'Group'
+        isDocumentGroup
       )
     );
     setY(selectedNode.getClientRect().y);
-  }, [selectedNode]);
+  }, [isDocumentGroup, selectedNode]);
 
   const toggleFillStyleMenu = () => {
     if (!toggleStyleMenu) {
@@ -106,6 +110,7 @@ const ContextMenu = ({
     }
     setFill(true);
   };
+
   const toggleStrokeStyleMenu = () => {
     if (!toggleStyleMenu) {
       setToggleStyleMenu(!toggleStyleMenu);
@@ -113,8 +118,16 @@ const ContextMenu = ({
     setFill(false);
   };
 
+  const getAssetName = useCallback(() => {
+    if (selectedNode.attrs.metadata && selectedNode.attrs.metadata.name) {
+      return selectedNode.attrs.metadata.name;
+    }
+    return '';
+  }, [selectedNode]);
+
   const thicknessControl = (
     <ThicknessControl
+      key="ornateContextMenuThicknessControl"
       selectedNode={selectedNode}
       metrics={metrics}
       updateShape={updateShape}
@@ -123,6 +136,7 @@ const ContextMenu = ({
 
   const strokeControlButton = (
     <Button
+      key="ornateContextMenuStrokeControlButton"
       type="ghost"
       aria-label="strokeControlButton"
       icon="Experiment"
@@ -132,6 +146,7 @@ const ContextMenu = ({
 
   const fillControlButton = (
     <Button
+      key="ornateContextMenufillControlButton"
       type="ghost"
       aria-label="fillControlButton"
       icon="ColorPalette"
@@ -139,45 +154,101 @@ const ContextMenu = ({
     />
   );
 
+  const resetFiltersButton = <ResetFilters selectedNode={selectedNode} />;
+
   const fontSizeControl = (
     <FontSizeControl
+      key="ornateContextMenuFontSizeControl"
       selectedNode={selectedNode}
       metrics={metrics}
       updateShape={updateShape}
     />
   );
 
+  const assetNameMenuItem = <AssetName assetName={getAssetName()} />;
+
+  const workOrderExternalIdMenuItem = (
+    <DocumentName
+      key={`ornateContextMenu${selectedNode.attrs.workOrderExternalId}`}
+      documentName={selectedNode.attrs.workOrderExternalId}
+    />
+  );
+
+  const deleteNodeButton = (
+    <Button
+      key="ornateContextMenuDeleteButton"
+      type="ghost-danger"
+      aria-label="deleteOrnateNodeButton"
+      icon="Delete"
+      onClick={() => onDeleteNode(selectedNode)}
+    />
+  );
+
+  const colorizeControlButton = (
+    <Button
+      key="ornateContextMenuColorizeControlButton"
+      type="ghost"
+      aria-label="fillControlButton"
+      icon="ColorPalette"
+      onClick={() => {
+        setShowColorizeMenu(true);
+      }}
+    />
+  );
+
   const getMenuItems = useCallback(() => {
+    if (isDocumentGroup) {
+      return [deleteNodeButton];
+    }
+    if (isAsset) {
+      return [assetNameMenuItem];
+    }
+
     switch (selectedNode.attrs.type) {
       case 'text':
-        return [fontSizeControl, fillControlButton];
+        return [fontSizeControl, fillControlButton, deleteNodeButton];
       case 'line':
-        return [thicknessControl, strokeControlButton];
+        return [thicknessControl, strokeControlButton, deleteNodeButton];
+      case 'stamp':
+        return [colorizeControlButton, resetFiltersButton, deleteNodeButton];
       case 'circle':
       case 'rect':
-        return [thicknessControl, strokeControlButton, fillControlButton];
+        return [
+          thicknessControl,
+          strokeControlButton,
+          fillControlButton,
+          deleteNodeButton,
+        ];
       default:
         return undefined;
     }
   }, [
-    selectedNode,
+    isDocumentGroup,
+    isAsset,
+    selectedNode.attrs.type,
+    deleteNodeButton,
+    assetNameMenuItem,
     fontSizeControl,
     fillControlButton,
     thicknessControl,
     strokeControlButton,
+    workOrderExternalIdMenuItem,
   ]);
 
   const commonMenuItems = getMenuItems();
 
-  // come up with a better system.
-  const groupStyles = { marginTop: '-38px' };
+  // used to place context menu right on top of a document
+  const correctMarginTop = `${-2 - (ref.current?.clientHeight || 0)}px`;
+  const groupStyles = {
+    marginTop: correctMarginTop,
+  };
 
   return (
     <ContextMenuWrapper
       ref={ref}
       style={{
         transform: `translate(${x}px, ${y}px)`,
-        ...(selectedNode.getType() === 'Group' && groupStyles),
+        ...(isDocumentGroup && groupStyles),
         ...(hide && { display: 'none' }),
       }}
     >
@@ -189,11 +260,9 @@ const ContextMenu = ({
           updateShape={updateShape}
         />
       )}
-      {(commonMenuItems || menuItems) && (
-        <Menu className="ornate-context-menu">
-          {commonMenuItems}
-          {menuItems}
-        </Menu>
+      {showColorizeMenu && <ImageColoroizer selectedNode={selectedNode} />}
+      {commonMenuItems && (
+        <Menu className="ornate-context-menu">{commonMenuItems}</Menu>
       )}
     </ContextMenuWrapper>
   );

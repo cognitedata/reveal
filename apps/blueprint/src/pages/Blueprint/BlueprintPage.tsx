@@ -64,8 +64,17 @@ const BlueprintPage: React.FC = () => {
         });
     });
     (blueprintDefinition.ornateJSON?.documents || []).forEach(async (doc) => {
-      addFileFromSave(doc);
+      const loadedDoc = await addFileFromSave(doc);
+      ornateViewer.current?.addDrawings(
+        ...doc.drawings
+          .filter((x) => !!x.type)
+          .map((x) => ({
+            ...x,
+            groupId: loadedDoc?.group.id(),
+          }))
+      );
     });
+    ornateViewer.current?.addDrawings(...(blueprintDefinition.drawings || []));
   }, [blueprintDefinition]);
 
   useEffect(() => {
@@ -89,6 +98,13 @@ const BlueprintPage: React.FC = () => {
           documents: [],
           connectedLines: [],
         },
+        drawings: ornateViewer.current?.baseLayer.children
+          ?.filter((c) => c.attrs.userGenerated)
+          .map((d) => ({
+            id: d.id(),
+            type: d.attrs.type,
+            attrs: d.attrs,
+          })),
       };
 
       saveBlueprintMutation.mutate(next);
@@ -296,6 +312,7 @@ const BlueprintPage: React.FC = () => {
       />
 
       {/* Interactive blueprint & toolbar */}
+
       <Blueprint
         client={client}
         blueprint={blueprint}

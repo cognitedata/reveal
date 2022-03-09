@@ -1,5 +1,5 @@
-import { Menu } from '@cognite/cogs.js';
 import { ChangeEventHandler } from 'react';
+import { Menu } from '@cognite/cogs.js';
 
 type OpacityControlProps = {
   opacity: number;

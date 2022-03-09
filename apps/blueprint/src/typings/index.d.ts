@@ -1,5 +1,5 @@
 import { IdEither } from '@cognite/sdk';
-import { OrnateJSON } from '@cognite/ornate';
+import { OrnateJSON, Drawing } from '@cognite/ornate';
 
 // https://github.com/MattBoatman/i18next-pseudo/issues/6
 declare module 'i18next-pseudo';
@@ -73,4 +73,5 @@ export type BlueprintDefinition = {
   nonPDFFiles: NonPDFFile[];
   ornateJSON: OrnateJSON;
   timeSeriesTags: TimeSeriesTag[];
+  drawings?: Drawing[];
 };

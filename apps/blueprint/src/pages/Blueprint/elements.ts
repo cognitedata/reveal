@@ -4,6 +4,7 @@ import z from 'utils/z';
 export const PageWrapper = styled.div`
   width: 100vw;
   height: 100vh;
+  display: flex;
 `;
 
 export const TopLeft = styled.div`

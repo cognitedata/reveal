@@ -136,6 +136,9 @@ export class CogniteOrnate {
   baseLayer: Konva.Layer = new Konva.Layer({
     name: 'baseLayer',
   });
+  topLayer: Konva.Layer = new Konva.Layer({
+    name: 'topLayer',
+  });
   history: OrnateHistory = new OrnateHistory([], []);
   isDrawing = false;
   currentTool: Tool = new DefaultTool(this);
@@ -172,6 +175,7 @@ export class CogniteOrnate {
     // Add layers to stage
     this.stage.add(this.backgroundLayer);
     this.stage.add(this.baseLayer);
+    this.stage.add(this.topLayer);
 
     // Initialise mouse events
     this.stage.on('mousedown', this.onStageMouseDown);

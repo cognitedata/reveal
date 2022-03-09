@@ -22,16 +22,16 @@ const useBlueprint = (
       .then((res) => res[0].downloadUrl);
 
     if (file.mimeType?.includes('pdf')) {
-      addPDF(
+      return addPDF(
         fileURL,
         { ...file, type: 'CDF' },
         { initialPosition: { x, y }, zoomAfterLoad: false }
       );
-      return;
     }
     if (file.mimeType?.includes('image')) {
-      addImage(fileURL, { fileId: file.id });
+      return addImage(fileURL, { fileId: file.id });
     }
+    return null;
   };
 
   const addPDF = async (
@@ -69,6 +69,7 @@ const useBlueprint = (
     if (zoomAfterLoad && doc) {
       ornateViewer.current?.zoomToDocument(doc);
     }
+
     return doc;
   };
 

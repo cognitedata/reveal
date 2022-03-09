@@ -34,7 +34,7 @@ class BlueprintService {
     const capabilities = await this.client
       .get(`/api/v1/token/inspect`)
       .then((res) => res.data.capabilities as any);
-    console.log(capabilities);
+
     const datasetAccess = capabilities.some(
       (x: any) => x.datasetsAcl && x.datasetsAcl.actions.includes('WRITE')
     )

@@ -1,8 +1,8 @@
+import { ChangeEvent, useState } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { Metrics } from '@cognite/metrics';
 import Konva from 'konva';
 import { Node, NodeConfig } from 'konva/lib/Node';
-import { ChangeEvent, useState } from 'react';
 import { UpdateKeyType } from '@cognite/ornate';
 
 import { FontSizeControlWrapper } from './elements';

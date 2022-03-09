@@ -81,7 +81,7 @@ const OrnateTimeSeriesTag = ({
     );
 
     const { tag, point, line } = konvaObjects.current;
-    ornateViewer.current?.baseLayer.add(tag, point, line);
+    ornateViewer.current?.topLayer.add(tag, point, line);
 
     minimize(isMinimized);
 

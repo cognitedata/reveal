@@ -1,16 +1,15 @@
-import React, { useEffect, useState, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { Metrics } from '@cognite/metrics';
 import Konva from 'konva';
-import Color from 'color';
 import { Node, NodeConfig } from 'konva/lib/Node';
 import { UpdateKeyType } from '@cognite/ornate';
+import Color from 'color';
+import { defaultColorTransparent } from 'consts';
 
 import { ColorControl, OpacityControl } from '.';
 import { ShapeStyleControlWrapper } from './elements';
 import { getInitialOpacity } from './utils';
-
-const defaultColorTransparent = new Color('red');
 
 type ShapeStyleControllProps = {
   selectedNode: Konva.Node;
@@ -72,7 +71,6 @@ const ShapeStyleControl = ({
       ...styleSettings,
       [fillOrStroke]: newColor,
     });
-
     updateShape(
       selectedNode,
       fillOrStroke,

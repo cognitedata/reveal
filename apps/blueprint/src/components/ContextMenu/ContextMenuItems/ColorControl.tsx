@@ -1,4 +1,3 @@
-import React from 'react';
 import { Menu } from '@cognite/cogs.js';
 
 import { ColorPicker } from '../../ColorPicker';

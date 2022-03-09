@@ -5,6 +5,8 @@ import { Node, NodeConfig } from 'konva/lib/Node';
 import { ChangeEvent, useState } from 'react';
 import { UpdateKeyType } from '@cognite/ornate';
 
+import { ThicknessControlWrapper } from './elements';
+
 type ThicknessControlProps = {
   selectedNode: Konva.Node;
   metrics: Metrics;
@@ -30,7 +32,7 @@ const ThicknessControl = ({
   };
 
   return (
-    <>
+    <ThicknessControlWrapper>
       <Menu.Header>Thickness</Menu.Header>
       <input
         type="range"
@@ -40,7 +42,7 @@ const ThicknessControl = ({
         onChange={onThicknessSliderChange}
         step="1"
       />
-    </>
+    </ThicknessControlWrapper>
   );
 };
 
