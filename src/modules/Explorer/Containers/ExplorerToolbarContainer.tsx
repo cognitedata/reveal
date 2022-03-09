@@ -25,6 +25,7 @@ import {
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { ExplorerToolbar } from 'src/modules/Explorer/Components/ExplorerToolbar';
+import { AppDispatch } from 'src/store';
 
 export type ExplorerToolbarContainerProps = {
   query?: string;
@@ -37,7 +38,7 @@ export type ExplorerToolbarContainerProps = {
 export const ExplorerToolbarContainer = (
   props: ExplorerToolbarContainerProps
 ) => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
 
   const percentageScanned = useSelector(
@@ -64,9 +65,13 @@ export const ExplorerToolbarContainer = (
   const onTrainModel = () => {
     dispatch(setModelTrainingModalVisibility(true));
   };
-  const onContextualise = () => {
-    dispatch(PopulateProcessFiles(selectedFileIds));
-    history.push(getLink(workflowRoutes.process));
+  const onContextualise = async () => {
+    try {
+      await dispatch(PopulateProcessFiles(selectedFileIds)).unwrap();
+      history.push(getLink(workflowRoutes.process));
+    } catch (error) {
+      console.error(error);
+    }
   };
   const onReview = async () => {
     dispatch(PopulateReviewFiles(selectedFileIds));
