@@ -44,9 +44,10 @@ export const Message = styled.div`
   padding: 0 12px;
 `;
 
+const columns = WellboreColumns();
+
 export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   const wellbores = useWellQueryResultWellbores([well.id]);
-
   const { selectedWellboreIds } = useWells();
   const favoriteWellIds = useFavoriteWellIds();
   const navigateToWellInspect = useNavigateToWellInspect();
@@ -141,7 +142,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
       id="wellbore-result-table"
       indent
       data={data}
-      columns={WellboreColumns}
+      columns={columns}
       handleRowSelect={handleRowSelect}
       options={WellboreSubtableOptions}
       selectedIds={selectedWellboreIds}
