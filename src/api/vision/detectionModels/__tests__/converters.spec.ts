@@ -316,7 +316,7 @@ describe('convertVisionJobAnnotationToAnnotationTypeV1', () => {
       ],
     },
   };
-  test('Non existing modle type', () => {
+  test('Non existing model type', () => {
     const visionJobAnnotation = {} as VisionJobAnnotation;
     const visionDetectionModelType = 10 as VisionDetectionModelType;
 
@@ -351,7 +351,7 @@ describe('convertVisionJobAnnotationToAnnotationTypeV1', () => {
     });
   });
 
-  test('Valid type (textDetection, objectDetection and cutom model)', () => {
+  test('Valid type (textDetection, objectDetection and custom model)', () => {
     const visionJobAnnotation = {
       text: 'gauge',
       confidence: 0.1,
