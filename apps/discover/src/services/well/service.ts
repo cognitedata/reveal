@@ -43,6 +43,7 @@ export const well = {
     );
   },
 
+  // This was temporarily used to fetch cached filters from discover-api. Leaving it for now in case we need to revert to this
   getNptDetailCodes: async ({
     headers,
     project,
@@ -58,6 +59,7 @@ export const well = {
     );
   },
 
+  // This was temporarily used to fetch cached filters from discover-api. Leaving it for now in case we need to revert to this
   getNptCodes: async ({
     headers,
     project,
@@ -73,6 +75,7 @@ export const well = {
     );
   },
 
+  // This was temporarily used to fetch cached filters from discover-api. Leaving it for now in case we need to revert to this
   getNptDurations: async ({
     headers,
     project,
