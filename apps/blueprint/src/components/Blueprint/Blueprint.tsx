@@ -120,6 +120,22 @@ const Blueprint = ({
           selectedNode={selectedNodes[0]}
           onDeleteNode={onDeleteNode}
           updateShape={updateShape}
+          shapeAttributes={
+            blueprint?.shapeAttributes?.[selectedNodes[0].id()] || []
+          }
+          onSetShapeAttributes={(nextAttributes) => {
+            if (onUpdate && blueprint) {
+              const nextBlueprint: BlueprintDefinition = {
+                ...blueprint,
+                shapeAttributes: {
+                  ...(blueprint?.shapeAttributes || {}),
+                  [selectedNodes[0].id()]: nextAttributes,
+                },
+              };
+
+              onUpdate(nextBlueprint);
+            }
+          }}
         />
       )}
       {isReady &&

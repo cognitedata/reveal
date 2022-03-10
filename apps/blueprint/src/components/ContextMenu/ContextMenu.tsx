@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Button, Menu } from '@cognite/cogs.js';
 import Konva from 'konva';
 import { useMetrics } from '@cognite/metrics';
 import { Node, NodeConfig } from 'konva/lib/Node';
 import { UpdateKeyType } from '@cognite/ornate';
+import { ShapeAttribute } from 'typings/rules';
 
 import {
   ThicknessControl,
@@ -17,6 +18,7 @@ import { getPositionX } from './ContextMenuItems/utils';
 import { ContextMenuWrapper } from './elements';
 import { ImageColoroizer } from './ContextMenuItems/ImageColoroizer';
 import { ResetFilters } from './ContextMenuItems/ResetFilters';
+import AttributesControl from './ContextMenuItems/AttributesControl';
 
 type ContextMenuProps = {
   selectedNode: Konva.Node;
@@ -26,12 +28,16 @@ type ContextMenuProps = {
     updateKey: UpdateKeyType,
     updateValue: string | number
   ) => void;
+  shapeAttributes: ShapeAttribute[];
+  onSetShapeAttributes: (next: ShapeAttribute[]) => void;
 };
 
 const ContextMenu = ({
   selectedNode,
   onDeleteNode,
   updateShape,
+  shapeAttributes,
+  onSetShapeAttributes,
 }: ContextMenuProps) => {
   const isDocumentGroup =
     selectedNode.getType() === 'Group' &&
@@ -196,6 +202,13 @@ const ContextMenu = ({
     />
   );
 
+  const attributesControl = (
+    <AttributesControl
+      attributes={shapeAttributes || []}
+      onChange={onSetShapeAttributes}
+    />
+  );
+
   const getMenuItems = useCallback(() => {
     if (isDocumentGroup) {
       return [deleteNodeButton];
@@ -208,6 +221,12 @@ const ContextMenu = ({
       case 'text':
         return [fontSizeControl, fillControlButton, deleteNodeButton];
       case 'line':
+        return [
+          thicknessControl,
+          strokeControlButton,
+          deleteNodeButton,
+          attributesControl,
+        ];
         return [thicknessControl, strokeControlButton, deleteNodeButton];
       case 'stamp':
         return [colorizeControlButton, resetFiltersButton, deleteNodeButton];
@@ -218,6 +237,7 @@ const ContextMenu = ({
           strokeControlButton,
           fillControlButton,
           deleteNodeButton,
+          attributesControl,
         ];
       default:
         return undefined;

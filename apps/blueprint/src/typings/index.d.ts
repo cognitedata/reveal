@@ -74,4 +74,5 @@ export type BlueprintDefinition = {
   ornateJSON: OrnateJSON;
   timeSeriesTags: TimeSeriesTag[];
   drawings?: Drawing[];
+  shapeAttributes?: Record<string, ShapeAttributes[]>;
 };

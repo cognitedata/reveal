@@ -805,8 +805,9 @@ export class CogniteOrnate {
         x: doc.group.x(),
         y: doc.group.y(),
         drawings: (doc.group.children || []).map((x) => ({
+          id: x.id(),
           type: x.attrs.type,
-          attrs: x.attrs,
+          attrs: { ...x.attrs },
         })),
       })),
       connectedLines: this.connectedLineGroup.map((lineGroup) => ({
