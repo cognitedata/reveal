@@ -37,7 +37,7 @@ export function OverlayToolbar({ viewer, model }: Props) {
   if (model instanceof CognitePointCloudModel) {
     const pointSizeSlider = (
       <SliderContainer>
-        <Slider min={0} max={5} step={0.1} defaultValue={model.pointSize} />
+        <Slider min={0} max={2} step={0.05} defaultValue={model.pointSize} />
       </SliderContainer>
     );
     const pointSizeTool: ToolBarButton = {
