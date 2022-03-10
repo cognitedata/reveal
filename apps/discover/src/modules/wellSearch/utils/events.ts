@@ -120,7 +120,8 @@ export const mapWellInfoToNPTEvents = (
           : event.nptCodeDetail,
         wellboreId,
         wellName: wellbores[wellboreId]?.metadata?.wellName,
-        wellboreName: wellbores[wellboreId]?.description,
+        wellboreName:
+          wellbores[wellboreId]?.name || wellbores[wellboreId]?.description,
       }));
     })
   );

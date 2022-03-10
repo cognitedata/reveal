@@ -88,7 +88,10 @@ export const useWellInspectSelectedWellboreMatchingIds = () => {
 export const useWellInspectSelectedWellboreNames = () => {
   const wellbores = useWellInspectSelectedWellbores();
   return useDeepMemo(
-    () => wellbores.map((wellbore) => wellbore.description || ''),
+    () =>
+      wellbores.map(
+        (wellbore) => wellbore?.name || wellbore?.description || ''
+      ),
     [wellbores]
   );
 };

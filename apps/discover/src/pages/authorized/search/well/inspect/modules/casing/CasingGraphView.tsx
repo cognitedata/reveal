@@ -43,7 +43,7 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef }: Props) => {
               <CasingView
                 key={`${well.id}-${wellbore.id}-KEY`}
                 wellName={well.name}
-                wellboreName={wellbore.description || ''}
+                wellboreName={wellbore?.name || wellbore?.description || ''}
                 casings={isEmpty(rows) ? [] : rows[0].casings}
                 unit={preferredUnit}
                 events={events[wellbore.id]}

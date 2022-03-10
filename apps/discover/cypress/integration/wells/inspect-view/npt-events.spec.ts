@@ -57,7 +57,7 @@ describe('Wells: NPT Events', () => {
     cy.findAllByTestId('bar-label').contains('Discover WB 1').click();
     cy.findByLabelText('previous-wellbore')
       .should('be.visible')
-      .should('be.disabled');
+      .should('not.be.disabled');
 
     cy.findByLabelText('next-wellbore')
       .should('be.visible')

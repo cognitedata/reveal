@@ -83,7 +83,7 @@ describe('Events utils', () => {
           nptCodeDetail: UNKNOWN_NPT_DETAIL_CODE,
           wellName: '16/1',
           wellboreId: '759155409324993',
-          wellboreName: 'wellbore A desc',
+          wellboreName: 'wellbore A',
         },
       },
     ]);
