@@ -152,7 +152,7 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
           }}
           yAxis={{
             accessor: accessors.MEASURED_DEPTH,
-            title: NPT_EVENTS_GRAPH_Y_AXIS_TITLE,
+            title: `${NPT_EVENTS_GRAPH_Y_AXIS_TITLE} (${unit})`,
             spacing: 30,
             reverseScaleDomain: true,
           }}
