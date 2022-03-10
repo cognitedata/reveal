@@ -4,8 +4,8 @@ import { PageHeader, Page, PageContent } from 'src/components/page';
 import { TableWrapper } from 'src/components/table/TableWrapper';
 import { useLabelName } from 'src/hooks/useLabelName';
 import { useLabelParams } from 'src/hooks/useParams';
+import { useClassifierName } from 'src/hooks/useClassifierName';
 import React from 'react';
-import { useDocumentsPipelinesQuery } from 'src/services/query/pipelines/query';
 import { useDocumentsQuery } from 'src/services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'src/services/query/files/mutate';
 import { useBreadcrumb } from 'src/hooks/useBreadcrumb';
@@ -14,7 +14,7 @@ import { DocumentsTable } from './components/table/DocumentsTable';
 
 export const LabelPage: React.FC = () => {
   const externalId = useLabelParams();
-  const { data: pipeline } = useDocumentsPipelinesQuery();
+  const { classifierName } = useClassifierName();
   const { labelName } = useLabelName(externalId);
   const { labelPageBreadcrumbs } = useBreadcrumb();
 
@@ -64,9 +64,7 @@ export const LabelPage: React.FC = () => {
   }
 
   return (
-    <Page
-      breadcrumbs={labelPageBreadcrumbs(labelName, pipeline?.classifier?.name)}
-    >
+    <Page breadcrumbs={labelPageBreadcrumbs(classifierName, labelName)}>
       <PageHeader
         title={labelName}
         subtitle="Label:"

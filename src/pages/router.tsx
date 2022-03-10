@@ -5,7 +5,6 @@ import ClassifierPage from 'src/pages/Classifier/Classifier';
 import Home from 'src/pages/Home';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { LabelsPage } from './Labels/Labels';
 import LabelPage from './Label/Label';
 
 export const MainRouter = () => {
@@ -17,18 +16,17 @@ export const MainRouter = () => {
         <PermissionWrapper>
           <Routes>
             <Route
-              path="/:project/documents/classifier/:classifierName"
+              path="/:project/documents/classifier/labels/:externalId"
+              element={<LabelPage />}
+            />
+            <Route
+              path="/:project/documents/classifier"
               element={
                 <ClassifierContext>
                   <ClassifierPage />
                 </ClassifierContext>
               }
             />
-            <Route
-              path="/:project/documents/labels/:externalId"
-              element={<LabelPage />}
-            />
-            <Route path="/:project/documents/labels" element={<LabelsPage />} />
             <Route path="/:project/documents" element={<Home />} />
           </Routes>
         </PermissionWrapper>

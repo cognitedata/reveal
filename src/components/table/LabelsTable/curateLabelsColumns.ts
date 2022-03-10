@@ -1,8 +1,8 @@
+import { ExternalId } from '@cognite/sdk';
 import { Table } from '@cognite/cogs.js';
 import { TableCell } from 'src/components/table/TableCell';
-import { Navigation } from 'src/hooks/useNavigation';
 
-export const curateColumns = ({ navigate }: { navigate: Navigation }) => {
+export const curateColumns = (deleteLabels: (ids: ExternalId[]) => void) => {
   return [
     {
       Header: 'Label',
@@ -29,8 +29,8 @@ export const curateColumns = ({ navigate }: { navigate: Navigation }) => {
     },
     {
       Header: '',
-      accessor: 'viewLabelAction',
-      Cell: TableCell.ViewLabelButton(navigate),
+      accessor: 'deleteLabelAction',
+      Cell: TableCell.DeleteLabelButton(deleteLabels),
     },
   ];
 };

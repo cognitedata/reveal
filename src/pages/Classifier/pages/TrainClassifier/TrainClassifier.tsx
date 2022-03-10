@@ -11,7 +11,7 @@ import { useClassifierActions } from 'src/machines/classifier/hooks/useClassifie
 import { useClassifierManageTrainingSetsQuery } from 'src/services/query';
 import { useClassifierCreateMutate } from 'src/services/query/classifier/mutate';
 import { useDocumentsClassifierByIdQuery } from 'src/services/query/classifier/query';
-import { useClassifierParams } from 'src/hooks/useParams';
+import { useClassifierName } from 'src/hooks/useClassifierName';
 import { isClassifierFinished } from 'src/utils/classifier';
 import { CommonClassifierPage } from 'src/pages/Classifier/components/ClassifierPage';
 import { useNavigation } from 'src/hooks/useNavigation';
@@ -20,7 +20,7 @@ import { TrainClassifierInfoBar } from './components/containers/TrainClassifierI
 import { TrainClassifierNavigation } from './components/navigation/TrainClassifierNavigation';
 
 const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
-  const { classifierName } = useClassifierParams();
+  const { classifierName } = useClassifierName();
   const { updateDescription } = useClassifierActions();
   const { description } = useClassifierConfig(ClassifierState.TRAIN);
 

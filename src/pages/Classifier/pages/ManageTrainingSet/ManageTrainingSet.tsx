@@ -1,21 +1,19 @@
 import { Button, Flex } from '@cognite/cogs.js';
 import { PageHeader } from 'src/components/page';
-import { useClassifierParams } from 'src/hooks/useParams';
+import { useClassifierName } from 'src/hooks/useClassifierName';
 import { useClassifierConfig } from 'src/machines/classifier/hooks/useClassifierSelectors';
 import { ClassifierState } from 'src/machines/classifier/types';
 import React, { FC } from 'react';
 import { useClassifierManageTrainingSetsQuery } from 'src/services/query';
 import { useClassifierActions } from 'src/machines/classifier/hooks/useClassifierActions';
 import { CommonClassifierPage } from 'src/pages/Classifier/components/ClassifierPage';
-import { useNavigation } from 'src/hooks/useNavigation';
 import { ClassifierProps } from '../router';
 import { LabelsModal } from './components/modal/LabelsModal';
 import { ManageTrainingSetNavigation } from './components/navigation/ManageTrainSetNavigation';
 import { TrainingSetsTable } from './components/table/TrainingSetsTable';
 
 export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
-  const { toLabels } = useNavigation();
-  const { classifierName } = useClassifierParams();
+  const { classifierName } = useClassifierName();
 
   const { description } = useClassifierConfig(ClassifierState.MANAGE);
   const { updateDescription } = useClassifierActions();
@@ -53,8 +51,6 @@ export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
         description={description}
         Action={
           <Flex alignItems="center" gap={8}>
-            {/* <Body level={2}>{data.length} labels</Body> */}
-            <Button onClick={() => toLabels()}>Manage labels</Button>
             <Button
               type="primary"
               icon="AddLarge"

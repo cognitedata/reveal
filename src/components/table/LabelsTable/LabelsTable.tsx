@@ -1,10 +1,10 @@
 import { Table } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
 import { Loading } from 'src/components/states/Loading';
-import { useNavigation } from 'src/hooks/useNavigation';
 import React from 'react';
 import { useClassifierManageTrainingSetsQuery } from 'src/services/query';
 import { useLabelsQuery } from 'src/services/query/labels/query';
+import { useLabelsDeleteMutate } from 'src/services/query/labels/mutate';
 import { sortByName } from 'src/utils/sort';
 import { curateColumns } from './curateLabelsColumns';
 
@@ -16,16 +16,15 @@ interface Props {
 }
 export const LabelsTable: React.FC<Props> = React.memo(
   ({ onSelectionChange, showAllLabels }) => {
-    const navigate = useNavigation();
-
     const { data: labelsData, isLoading } = useLabelsQuery();
+    const { mutate: deleteLabels } = useLabelsDeleteMutate();
     const { data: trainingSetsData } = useClassifierManageTrainingSetsQuery(
       Boolean(showAllLabels)
     );
 
     const columns = React.useMemo(
-      () => curateColumns({ navigate }),
-      [navigate]
+      () => curateColumns(deleteLabels),
+      [deleteLabels]
     );
 
     // Hide labels that already exists in the classifier's training set.

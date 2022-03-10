@@ -76,13 +76,7 @@ const HomePage = () => {
         title={`Trained models for ${pipeline?.classifier?.name}`}
         description={homeConfig.DESCRIPTION}
         Action={
-          <Button
-            icon="AddLarge"
-            type="primary"
-            onClick={() =>
-              toClassifier(pipeline?.classifier?.name || 'No name')
-            }
-          >
+          <Button icon="AddLarge" type="primary" onClick={() => toClassifier()}>
             Train new model
           </Button>
         }

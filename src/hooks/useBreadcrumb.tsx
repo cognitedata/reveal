@@ -1,28 +1,22 @@
 import { useNavigation } from 'src/hooks/useNavigation';
 
 export const useBreadcrumb = () => {
-  const { toClassifier, toLabels } = useNavigation();
+  const { toClassifier } = useNavigation();
 
-  const classifierPageBreadcrumbs = (classifierName?: string) => [
+  const classifierPageBreadcrumbs = (classifierName: string) => [
     {
-      title: classifierName ?? 'Classifier',
-      onClick: () => toClassifier(classifierName),
+      title: classifierName,
+      onClick: () => toClassifier(),
     },
   ];
 
-  const labelsPageBreadcrumbs = (classifierName?: string) => [
-    ...classifierPageBreadcrumbs(classifierName),
-    { title: 'Labels', onClick: () => toLabels() },
-  ];
-
-  const labelPageBreadcrumbs = (labelName: string, classifierName?: string) => [
+  const labelPageBreadcrumbs = (classifierName: string, labelName: string) => [
     ...classifierPageBreadcrumbs(classifierName),
     { title: labelName },
   ];
 
   return {
     classifierPageBreadcrumbs,
-    labelsPageBreadcrumbs,
     labelPageBreadcrumbs,
   };
 };

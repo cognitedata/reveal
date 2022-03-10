@@ -13,7 +13,7 @@ import {
   DocumentsClassifier as Classifier,
   Document,
 } from '@cognite/sdk-playground';
-import { LabelDefinition } from '@cognite/sdk';
+import { ExternalId, LabelDefinition } from '@cognite/sdk';
 import { Tag, TagColor } from 'src/components/Tag';
 import { globalConfig } from 'src/configs/global.config';
 import { Navigation } from 'src/hooks/useNavigation';
@@ -162,6 +162,25 @@ export const TableCell = {
             type="tertiary"
             aria-label="Manage files"
             onClick={() => navigate.toLabel(externalId)}
+          />
+        </Tooltip>
+      );
+    },
+  DeleteLabelButton:
+    (deleteLabels: (ids: ExternalId[]) => void) =>
+    ({
+      row: {
+        original: { externalId },
+      },
+    }: CellProps<LabelDefinition>) => {
+      return (
+        <Tooltip content="Delete label">
+          <Button
+            size="small"
+            icon="Delete"
+            type="danger"
+            aria-label="Delete label"
+            onClick={() => deleteLabels([{ externalId }])}
           />
         </Tooltip>
       );
