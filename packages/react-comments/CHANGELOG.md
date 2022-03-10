@@ -1,3 +1,7 @@
+## 1.2.1 Mar 10 2022
+
+- Fix `utils/getHeaders` importing from absolute path to relative path
+
 ## 1.2.0 Mar 09 2022
 
 - Add optional 'idToken' prop to support non react-container setup
