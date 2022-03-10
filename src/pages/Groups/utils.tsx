@@ -89,7 +89,7 @@ const capabilityTypeGroups = [
     ],
   },
   {
-    name: 'Protect or blacklist data',
+    name: 'Protect or denylist data',
     items: ['datasets', 'securitycategories'],
   },
   {
@@ -129,7 +129,7 @@ export const capabilityDescriptions = {
     'Project is used to configure which Identity Provider CDF uses to authenticate users against',
   raw: 'RAW is a tabular store that serves as a staging area for data in CDF',
   securitycategories:
-    'Security categories is a way to blacklist data. Data with a security category is only visible to users in groups that have explicit access to the specific security category',
+    'Security categories is a way to denylist data. Data with a security category is only visible to users in groups that have explicit access to the specific security category',
   sequences:
     'Sequences is a tabular data representation used for e.g., well trajectories or pump design curves',
   '3d': '3D includes 3D models, 3D model revisions, and 3D files',
