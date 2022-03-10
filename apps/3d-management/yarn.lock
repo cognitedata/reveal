@@ -1669,17 +1669,20 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@^3.24.3":
-  version "3.24.3"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.24.3.tgz#650cfcc7c75c957b8fa31b2383ce43f4360e36fd"
-  integrity sha512-0KjaVmUZfHkCrIsapU38qMZCBeofSEtGFmBdN/HaTLlCTIBxbCGEpmfD02eO4ayC7t1m+gayUrufIQl2rtyIhA==
+"@cognite/cogs.js@^3.38.4":
+  version "3.44.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
+  integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
+    axios "^0.21.2"
     classnames "^2.3.1"
     color "^3.1.2"
     dayjs "^1.9.7"
+    eslint-config-stylelint "^13.1.1"
     focus-visible "^5.1.0"
+    match-sorter "^6.3.0"
     rc-collapse "^1.11.8"
     rc-drawer "^4.1.0"
     rc-slider "^9.5.4"
@@ -1689,12 +1692,15 @@
     react-select "^3.1.0"
     react-table "^7.6.0"
     react-toastify "^6.0.9"
+    resize-observer-polyfill "^1.5.1"
+    stylelint "^13.13.1"
     tippy.js "6.2.0"
+    ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^3.38.4":
-  version "3.44.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
-  integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
+"@cognite/cogs.js@^5.19.5":
+  version "5.19.5"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.5.tgz#5fa025481b8711b90fea1b9b29bf38ebef773f29"
+  integrity sha512-8Fi+0J2j4qNOAENoIV2L10WXZGmhGXnxeEJDfZFZyPDWHKcilADD7mojmdg9lKGk1rgHkp4cYhxDm0xdRCwHwA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"

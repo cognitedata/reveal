@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToolBarButton, ToolBar, Slider } from '@cognite/cogs.js';
+import { ToolBarButton, ToolBar, Slider, Icon } from '@cognite/cogs.js';
 import {
   Cognite3DModel,
   Cognite3DViewer,
@@ -29,6 +29,15 @@ const PointSizeSlider = styled(Slider)`
   display: inline;
 `;
 
+const CenteredIcon = styled(Icon)`
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  margin-top: auto;
+  margin-bottom: auto;
+  height: 50%;
+`;
+
 type Props = {
   viewer: Cognite3DViewer | Legacy3DViewer;
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
@@ -48,7 +57,7 @@ export function OverlayToolbar({ viewer, model }: Props) {
     const pointCloudModel = model;
     const pointSizeSlider = (
       <SliderContainer>
-        <div>Small</div>
+        <CenteredIcon type="Dot" />
         <PointSizeSlider
           min={0}
           max={0.5}
@@ -58,15 +67,19 @@ export function OverlayToolbar({ viewer, model }: Props) {
             pointCloudModel.pointSize = pointSize;
           }}
         />
-        <div>Large</div>
+        <CenteredIcon type="DotLarge" />
       </SliderContainer>
     );
     const pointSizeTool: ToolBarButton = {
-      icon: 'Configure',
+      icon: 'DotLarge',
       description: 'Point size',
       dropdownContent: pointSizeSlider,
     };
     buttonGroups[0].push(pointSizeTool);
   }
-  return <ToolBar direction="horizontal" buttonGroups={buttonGroups} />;
+  return (
+    <ToolBar direction="horizontal">
+      <ToolBar.ButtonGroup buttonGroup={buttonGroups[0]} />
+    </ToolBar>
+  );
 }
