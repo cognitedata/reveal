@@ -32,7 +32,7 @@ const normalizeLabels = (
   });
 };
 
-const directionAngles = {
+const DirectionAngle = {
   Left: 180,
   Up: 270, // note that positive Y direction is downwards
   Right: 0,
@@ -58,7 +58,7 @@ const getBestFitLabel = (
     if (
       distance < minDistance &&
       approxeq(
-        angleDifference(angle, directionAngles[expectedDirection], 'directed'),
+        angleDifference(angle, DirectionAngle[expectedDirection], 'directed'),
         0,
         10
       )
@@ -71,14 +71,21 @@ const getBestFitLabel = (
   return closestLabel;
 };
 
-const isHorizontalDirection = (direction: number): boolean =>
-  approxeq(angleDifference(direction, 0, 'uniDirected'), 10);
+export const isHorizontal = (direction: number): boolean =>
+  approxeq(
+    angleDifference(direction, DirectionAngle.Right, 'uniDirected'),
+    0,
+    10
+  );
 
-const isVerticalDirection = (direction: number): boolean =>
-  approxeq(angleDifference(direction, 90, 'uniDirected'), 10);
+export const isVertical = (direction: number): boolean =>
+  approxeq(angleDifference(direction, DirectionAngle.Up, 'uniDirected'), 0, 10);
 
-const isUp = (direction: number): boolean => approxeq(direction, 90, 10);
-const isLeft = (direction: number): boolean => approxeq(direction, 180, 10);
+export const isUp = (direction: number): boolean =>
+  approxeq(direction, DirectionAngle.Up, 10);
+
+export const isLeft = (direction: number): boolean =>
+  approxeq(direction, DirectionAngle.Left, 10);
 
 export const getFileConnectionsWithPosition = (
   pidDocument: PidDocument,
@@ -125,7 +132,7 @@ export const getFileConnectionsWithPosition = (
     if (
       isOnLeftSide &&
       leftColumnLabels.length > 0 &&
-      isHorizontalDirection(fileConnection.direction)
+      isHorizontal(fileConnection.direction)
     ) {
       const closestLeftLabel = getBestFitLabel(
         normalizedBoundingBox,
@@ -156,7 +163,7 @@ export const getFileConnectionsWithPosition = (
     if (
       isOnRightSide &&
       rightColumnLabels.length > 0 &&
-      isHorizontalDirection(fileConnection.direction)
+      isHorizontal(fileConnection.direction)
     ) {
       const closestRightLabel = getBestFitLabel(
         normalizedBoundingBox,
@@ -187,7 +194,7 @@ export const getFileConnectionsWithPosition = (
     if (
       isAtTop &&
       topColumnLabels.length > 0 &&
-      isVerticalDirection(fileConnection.direction)
+      isVertical(fileConnection.direction)
     ) {
       const closestTopLabel = getBestFitLabel(
         normalizedBoundingBox,

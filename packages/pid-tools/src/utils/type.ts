@@ -1,5 +1,4 @@
-import { LineSegment, PathSegment } from 'geometry';
-
+import { LineSegment, PathSegment } from '../geometry';
 import {
   DiagramLineInstance,
   DiagramType,
