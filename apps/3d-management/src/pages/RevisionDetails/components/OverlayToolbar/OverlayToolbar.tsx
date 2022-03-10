@@ -14,9 +14,19 @@ import styled from 'styled-components';
 
 const SliderContainer = styled.div`
   display: flex;
+  width: 230px;
+  border: 2px solid black;
+  border-radius: 4px;
   > div {
-    margin: 32px;
+    margin: 8px;
+    text-align: center;
   }
+`;
+
+const PointSizeSlider = styled(Slider)`
+  offset-anchor: right top;
+  float: right;
+  display: inline;
 `;
 
 type Props = {
@@ -35,13 +45,24 @@ export function OverlayToolbar({ viewer, model }: Props) {
   ];
 
   if (model instanceof CognitePointCloudModel) {
+    const pointCloudModel = model;
     const pointSizeSlider = (
       <SliderContainer>
-        <Slider min={0} max={2} step={0.05} defaultValue={model.pointSize} />
+        <div>Small</div>
+        <PointSizeSlider
+          min={0}
+          max={0.5}
+          step={0.01}
+          defaultValue={model.pointSize}
+          onChange={(pointSize) => {
+            pointCloudModel.pointSize = pointSize;
+          }}
+        />
+        <div>Large</div>
       </SliderContainer>
     );
     const pointSizeTool: ToolBarButton = {
-      icon: 'Scan',
+      icon: 'Configure',
       description: 'Point size',
       dropdownContent: pointSizeSlider,
     };
