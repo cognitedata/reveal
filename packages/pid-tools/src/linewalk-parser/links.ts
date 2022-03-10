@@ -1,6 +1,6 @@
-import { getFileNameWithoutExtension } from '@cognite/pid-tools';
 import isMatch from 'lodash/isMatch';
 
+import { getFileNameWithoutExtension } from '../utils';
 import {
   PidFileConnectionInstance,
   GraphDocument,

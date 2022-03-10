@@ -1,4 +1,3 @@
-import { LineSegment, PathSegment } from '../geometry';
 import {
   DiagramLineInstance,
   DiagramType,
@@ -11,6 +10,7 @@ import {
   DiagramInstanceWithPaths,
   LineConnectionInstance,
 } from '../types';
+import { LineSegment, PathSegment } from '../geometry';
 
 export const isFileConnection = (
   diagramInstance: any

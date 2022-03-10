@@ -3,13 +3,13 @@ import * as fs from 'fs';
 import path from 'path';
 
 import {
-  ParsedDocument,
-  ParsedDocumentsForLine,
   computeLines,
   GraphDocument,
+  DocumentForUpload,
 } from '../pid-tools/src';
 
 import { version } from './package.json';
+import documentVersions from './PARSED_DOCUMENT_VERSIONS.json';
 
 const args = process.argv;
 
@@ -22,12 +22,25 @@ const outDir = path.resolve('documents');
 
 const connectionsPath = path.resolve('connections/connections.json');
 
-const store = (document: ParsedDocument | ParsedDocumentsForLine) => {
+// clear dir that will be uploaded to CDF
+fs.readdir(outDir, (err, files) => {
+  if (err) throw err;
+
+  files.forEach((file) => {
+    fs.unlink(path.join(outDir, file), (err) => {
+      if (err) throw err;
+    });
+  });
+});
+
+const store = (document: DocumentForUpload) => {
   fs.writeFile(
     path.resolve(outDir, document.externalId),
     JSON.stringify(document, undefined, 2),
     (error) => {
-      console.log(error);
+      if (error) {
+        throw error;
+      }
     }
   );
 };
@@ -39,7 +52,7 @@ const connectionsFile = connectionsFileExists
 
 fs.readdir(graphDir, (error, files) => {
   if (error) {
-    console.log(error);
+    throw error;
   }
   const graphs = files?.reduce<GraphDocument[]>((result, file) => {
     if (path.extname(file).toLowerCase() === '.json') {
@@ -60,4 +73,16 @@ fs.readdir(graphDir, (error, files) => {
   if (graphs?.length) {
     computeLines(graphs, connections, version, store);
   }
+
+  const updatedVersion = {
+    ...documentVersions,
+    versions: [...documentVersions.versions, version],
+  };
+  fs.writeFile(
+    path.resolve(documentVersions.externalId),
+    JSON.stringify(updatedVersion, undefined, 2),
+    (error) => {
+      if (error) throw error;
+    }
+  );
 });

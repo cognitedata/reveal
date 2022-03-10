@@ -2,6 +2,16 @@ import { Rect, SvgPath } from '../types';
 
 import { lineWalkSymbolTypes } from './constants';
 
+export interface VersionDocument {
+  externalId: 'PARSED_DOCUMENT_VERSIONS';
+  versions: string[];
+}
+
+export interface ParsedLines {
+  externalId: string;
+  lineIds: string[];
+}
+
 // Every line found in the Diagram Parsing Tool, will be uploaded in CDF with this information:
 export interface ParsedDocumentsForLine {
   externalId: string; // external id of this document (probably redundant since it would be same as the file name)
@@ -18,6 +28,12 @@ export interface ParsedDocument {
   linking: DocumentLink[];
   viewBox: Rect;
 }
+
+export type DocumentForUpload =
+  | VersionDocument
+  | ParsedLines
+  | ParsedDocumentsForLine
+  | ParsedDocument;
 
 export interface PotentialDiscrepancies {
   // Hypothesis is that we only need P&ID annotation ids. Linking to ISO will be done by frontend via linking property?

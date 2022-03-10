@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "pid-cli"
+version = "0.1.0"
+description = ""
+authors = ["Eirik Djuve <eirik@eon-consult.no>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+msal = "^1.17.0"
+cognite-sdk = "^2.42.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

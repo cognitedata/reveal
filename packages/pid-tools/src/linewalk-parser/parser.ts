@@ -20,9 +20,10 @@ import {
   ParsedDocument,
   Annotation,
   DocumentLink,
-  ParsedDocumentsForLine,
   SymbolAnnotation,
   TextAnnotation,
+  ParsedLines,
+  DocumentForUpload,
 } from './types';
 
 const parseDocument = (
@@ -115,9 +116,7 @@ const parseDocument = (
   };
 };
 
-const uploadToCDF = async (
-  document: ParsedDocument | ParsedDocumentsForLine
-) => {
+const uploadToCDF = async (document: DocumentForUpload) => {
   fetch(`cdf/somDir/${document.externalId}`, {
     method: 'PUT',
     body: JSON.stringify(document),
@@ -130,7 +129,7 @@ export const computeLines = async (
   version: string,
   storeDocumentCallback:
     | undefined
-    | ((document: ParsedDocument | ParsedDocumentsForLine) => void) = undefined
+    | ((document: DocumentForUpload) => void) = undefined
 ) => {
   const lineNumbers: string[] = [];
   const graphsPerLine = new Map<string, string[]>();
@@ -165,4 +164,14 @@ export const computeLines = async (
       uploadToCDF(parsedDocumentsForLine);
     }
   });
+
+  const parsedLines: ParsedLines = {
+    externalId: `PARSED_LINES_V${version}.json`,
+    lineIds: lineNumbers.map((number) => number.toString()),
+  };
+  if (storeDocumentCallback) {
+    storeDocumentCallback(parsedLines);
+  } else {
+    uploadToCDF(parsedLines);
+  }
 };
