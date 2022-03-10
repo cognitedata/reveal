@@ -128,7 +128,7 @@ export default function AllModels(props: Props) {
               onClick={nextStep}
               disabled={!isFormFilled}
               type="primary"
-              icon="Check"
+              icon="Checkmark"
             >
               Create New Model
             </Button>

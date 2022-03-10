@@ -107,6 +107,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
                 modelId,
                 revisionId,
               });
+              modelLocal.pointSize = 0.15;
               break;
             }
             default: {

@@ -94,7 +94,7 @@ export default function ModelRevisions(props: Props) {
           color: Colors.primary.hex(),
         }}
       >
-        <Icon type="Loading" />
+        <Icon type="Loader" />
       </Flex>
     );
   }

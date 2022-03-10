@@ -19,7 +19,7 @@
     "@ant-design/icons": "^4.6.2",
     "@cognite/3d-viewer": "6.1.4",
     "@cognite/cdf-utilities": "^0.10.1",
-    "@cognite/cogs.js": "^3.24.3",
+    "@cognite/cogs.js": "^5.19.5",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-feature-flags": "^0.0.2",
     "@cognite/reveal": "3.0.0-beta.0",
