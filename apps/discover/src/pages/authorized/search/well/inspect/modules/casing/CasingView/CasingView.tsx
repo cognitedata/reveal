@@ -123,6 +123,7 @@ const CasingView: FC<CasingViewType> = ({
             }}
             title="NPT details"
             disabled={isEmpty(validEvents)}
+            className="casings-np-details-button"
           >
             NPT details
           </Button>

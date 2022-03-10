@@ -19,6 +19,7 @@ const LAYERS = [
   'ADD_DOC_TO_FAVS',
   'ACCESS_DENIED',
   'PROFILE_CARD',
+  'BULK_ACTION',
   'DOC_INFO_PANEL',
   'FILTER_HEADER',
   'FILTER_BOX', // (FilterDropdown), Advanced Search

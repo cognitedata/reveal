@@ -66,6 +66,12 @@ export const CasingPreviewModalWrapper = styled(Modal)`
   justify-content: flex-end;
   height: calc(100% - 134px);
   width: fit-content !important;
+
+  .casings-np-details-button {
+    margin-right: 48px;
+    width: 180px;
+  }
+
   & .cogs-modal-close {
     cursor: pointer;
   }

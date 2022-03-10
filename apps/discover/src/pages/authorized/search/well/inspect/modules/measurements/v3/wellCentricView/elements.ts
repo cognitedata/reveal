@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
@@ -74,6 +75,7 @@ export const CurveIndicator = styled(FlexRow)`
 
 export const BulkActionsWrapper = styled.div`
   position: relative;
+  z-index: ${layers.BULK_ACTION};
   > * {
     &:first-child {
       margin: 0;

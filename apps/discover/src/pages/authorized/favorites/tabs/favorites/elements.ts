@@ -29,8 +29,7 @@ export const SummaryWrapper = styled(FlexColumn)`
   margin-bottom: ${sizes.medium};
   align-items: flex-start;
 
-  // Needed because we need to size according to a parent element
-  width: calc(100vw - 1120px);
+  width: 100%;
 `;
 
 export const MetadataWrapper = styled(FlexColumn)`
