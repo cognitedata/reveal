@@ -6,8 +6,8 @@ import {
   CommentTarget,
 } from '@cognite/comment-service-types';
 import { AuthHeaders } from '@cognite/react-container';
-import { getHeaders } from 'utils/getHeaders';
 
+import { getHeaders } from '../utils/getHeaders';
 import { normalizeComments } from '../utils/normalize';
 
 import { commentKeys } from './queryKeys';

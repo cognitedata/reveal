@@ -2,8 +2,8 @@ import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 import { CommentResponse, CommentTarget } from '@cognite/comment-service-types';
 import { AuthHeaders } from '@cognite/react-container';
-import { getHeaders } from 'utils/getHeaders';
 
+import { getHeaders } from '../utils/getHeaders';
 import { getRichtext } from '../utils/convertCommentToRichtext';
 
 import { commentKeys } from './queryKeys';

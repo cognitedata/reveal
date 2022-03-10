@@ -2,7 +2,8 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { UMSUser } from '@cognite/user-management-service-types';
 import { AuthHeaders, useAuthContext } from '@cognite/react-container';
-import { getHeaders } from 'utils/getHeaders';
+
+import { getHeaders } from '../utils/getHeaders';
 
 import { userKeys } from './useFindUsers';
 
