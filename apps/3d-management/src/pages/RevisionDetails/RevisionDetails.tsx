@@ -267,7 +267,7 @@ export default function RevisionDetails(props: Props) {
               <ViewLogsButton
                 size="small"
                 type="secondary"
-                icon={showLogs ? 'Up' : 'Down'}
+                icon={showLogs ? 'ArrowUp' : 'ArrowDown'}
                 onClick={() => setShowLogs((prevState) => !prevState)}
               >
                 View Logs

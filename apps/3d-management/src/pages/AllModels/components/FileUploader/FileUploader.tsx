@@ -286,14 +286,14 @@ class FileUploader extends React.Component<Props, State> {
         break;
       case STATUS.STARTING:
         uploaderButton = (
-          <Button type="primary" icon="Loading" disabled>
+          <Button type="primary" icon="Loader" disabled>
             Uploading
           </Button>
         );
         break;
       case STATUS.STARTED:
         uploaderButton = (
-          <Button type="primary" onClick={this.pauseUpload} icon="Loading">
+          <Button type="primary" onClick={this.pauseUpload} icon="Loader">
             Pause Upload
           </Button>
         );

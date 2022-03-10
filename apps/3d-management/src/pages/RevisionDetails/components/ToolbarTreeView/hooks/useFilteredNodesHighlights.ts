@@ -11,6 +11,7 @@ import {
   setNodeFilterLoadingState,
   setNodePropertyFilter,
 } from 'store/modules/toolbar/toolbarActions';
+import { assignOrUpdateStyledNodeCollection } from 'utils/sdk/3dNodeStylingUtils';
 
 export function useFilteredNodesHighlights({
   model,
@@ -31,7 +32,7 @@ export function useFilteredNodesHighlights({
   // bind filteredNodes to model
   useEffect(() => {
     const filteredNodesSet = filteredNodes.current;
-    model.assignStyledNodeCollection(filteredNodesSet, {
+    assignOrUpdateStyledNodeCollection(model, filteredNodesSet, {
       outlineColor: NodeOutlineColor.Cyan,
       renderInFront: true,
       renderGhosted: false,

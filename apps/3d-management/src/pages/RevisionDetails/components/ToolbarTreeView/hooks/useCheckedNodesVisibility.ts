@@ -10,6 +10,7 @@ import {
 import { TreeDataNode } from 'pages/RevisionDetails/components/TreeView/types';
 import { traverseTree } from 'pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { subtreeHasTreeIndex } from 'store/modules/TreeView/treeViewUtils';
+import { assignOrUpdateStyledNodeCollection } from 'utils/sdk/3dNodeStylingUtils';
 
 type Args = {
   model: Cognite3DModel;
@@ -80,7 +81,11 @@ export function useCheckedNodesVisibility({
 
   useEffect(() => {
     const styledSet = hiddenNodesStyledSet.current;
-    model.assignStyledNodeCollection(styledSet, DefaultNodeAppearance.Hidden);
+    assignOrUpdateStyledNodeCollection(
+      model,
+      styledSet,
+      DefaultNodeAppearance.Hidden
+    );
     return () => {
       model.unassignStyledNodeCollection(styledSet);
     };

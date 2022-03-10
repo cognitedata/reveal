@@ -1,7 +1,6 @@
 import React from 'react';
-import { Icon } from '@cognite/cogs.js';
+import { Icon, IconProps } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { IconProps } from '@cognite/cogs.js/dist/Atoms/Icon/Icon';
 import { Optional } from 'utils/types';
 
 const EyeIcon = styled(Icon)`
@@ -14,6 +13,6 @@ const EyeIcon = styled(Icon)`
 type IconPropsWithOptionalType = Optional<Omit<IconProps, 'ref'>, 'type'>;
 
 export const ThumbnailPreviewIcon = (props: IconPropsWithOptionalType) => {
-  const { type = 'Eye', ...rest } = props;
+  const { type = 'EyeShow', ...rest } = props;
   return <EyeIcon type={type} {...rest} />;
 };
