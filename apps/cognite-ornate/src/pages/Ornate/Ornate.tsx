@@ -117,7 +117,13 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       listTool.onMarkersChange = (markers) => {
         // Transform markers into list items
         const nextListItems: ListItem[] = markers.map((marker) => ({
-          marker,
+          marker: {
+            ...marker,
+            position: {
+              x: marker.shape.attrs.x,
+              y: marker.shape.attrs.y,
+            },
+          },
           order: marker.order,
           text: marker.metadata?.text || marker.shape.attrs?.text || '',
           assetId:
@@ -818,6 +824,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
             (ornateViewer.current!.tools.list as ListTool).renderMarkers(
               nextListItems.map((x) => ({
                 ...x.marker,
+                position: {
+                  x: x.marker.shape.attrs.x,
+                  y: x.marker.shape.attrs.y,
+                },
                 order: x.order,
                 metadata: {
                   status: x.status,

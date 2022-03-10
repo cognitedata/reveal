@@ -13,6 +13,9 @@ import {
 import { ContextMenuWrapper } from './elements';
 import { getPositionX } from './ContextMenuItems/utils';
 
+const SQUARE_WIDTH = 32;
+const SQUARE_HEIGHT = 32;
+
 type ContextMenuProps = {
   selectedNode: Konva.Node;
   menuItems?: React.Component[];
@@ -71,15 +74,42 @@ const ContextMenu = ({
     selectedNode.on('dragend', () => {
       const { x, width, y } = selectedNode.getClientRect();
       setHide(false);
-      setX(
-        getPositionX(
-          x,
-          width,
-          ref.current?.clientWidth || 0,
-          selectedNode.getType() === 'Group'
-        )
+      const newX = getPositionX(
+        x,
+        width,
+        ref.current?.clientWidth || 0,
+        selectedNode.getType() === 'Group'
       );
+      setX(newX);
       setY(y);
+
+      const markers = selectedNode
+        .getParent()
+        .getChildren()
+        .filter((node) => node.attrs.name === 'marker');
+
+      if (markers?.length > 0) {
+        const attachedMarker = markers.find(
+          (marker) => marker.attrs.attachedToShape === selectedNode.attrs.id
+        ) as Konva.Group;
+        if (attachedMarker) {
+          attachedMarker.children?.forEach((child) => {
+            if (child.attrs.text) {
+              child.setAttrs({
+                ...attachedMarker.attrs,
+                x: selectedNode.attrs.x - (SQUARE_WIDTH - SQUARE_WIDTH / 4),
+                y: selectedNode.attrs.y - (SQUARE_HEIGHT - SQUARE_HEIGHT / 8),
+              });
+            } else {
+              child.setAttrs({
+                ...attachedMarker.attrs,
+                x: selectedNode.attrs.x - SQUARE_WIDTH,
+                y: selectedNode.attrs.y - SQUARE_HEIGHT,
+              });
+            }
+          });
+        }
+      }
     });
     return () => {
       selectedNode.off('dragstart');
