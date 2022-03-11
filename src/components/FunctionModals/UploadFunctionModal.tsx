@@ -460,7 +460,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                     >
                       <Input
                         value={s.key}
-                        name="key"
+                        name="secret_key"
                         data-idx={index}
                         allowClear
                         onChange={handleSecretChange}
@@ -484,7 +484,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                     >
                       <Input
                         value={s.value}
-                        name="value"
+                        name="secret_value"
                         data-idx={index}
                         allowClear
                         onChange={handleSecretChange}
@@ -494,7 +494,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                   <Col span={2}>
                     <Form.Item label="-">
                       <Button
-                        icon="Minus"
+                        id="btnDeleteSecret"
+                        icon="Delete"
                         onClick={() => removeSecret(index)}
                       />
                     </Form.Item>

@@ -41,10 +41,10 @@ describe('UploadFunctionModal', () => {
     });
 
     it('should have input areas for all the necessary information', () => {
-      // should have function name, description, apikey, owneremail, file, externalId, secrets
+      // should have function name, description, apikey, owneremail, file, externalId, secrets and metadata
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
       const allFormItems = wrapper.find(Form.Item);
-      expect(allFormItems).toHaveLength(10);
+      expect(allFormItems).toHaveLength(11);
       const allFormItemsLabels = allFormItems.map(i => i.text());
       expect(allFormItemsLabels).toContain('Function name');
       expect(allFormItemsLabels).toContain('Description');
@@ -52,9 +52,10 @@ describe('UploadFunctionModal', () => {
       expect(allFormItemsLabels).toContain('Owner');
       expect(wrapper.find(Upload).exists()).toBe(true);
       expect(allFormItemsLabels).toContain('External Id');
-      expect(allFormItemsLabels[8]).toContain('Runtime');
-      expect(allFormItemsLabels[9]).toContain('Secrets');
       expect(allFormItemsLabels[0]).toContain('Function File');
+      expect(allFormItemsLabels[1]).toContain('Metadata');
+      expect(allFormItemsLabels[9]).toContain('Runtime');
+      expect(allFormItemsLabels[10]).toContain('Secrets');
       wrapper.unmount();
     });
 
@@ -81,14 +82,29 @@ describe('UploadFunctionModal', () => {
         .filterWhere((b: ReactWrapper) => b.text() === 'Add a secret');
       addSecretButton.simulate('click');
 
-      const keyInput = wrapper.find('input[name="key"]');
+      const keyInput = wrapper.find('input[name="secret_key"]');
       expect(keyInput).toHaveLength(1);
-      const valueInput = wrapper.find('input[name="value"]');
+      const valueInput = wrapper.find('input[name="secret_value"]');
       expect(valueInput).toHaveLength(1);
       wrapper.unmount();
     });
 
-    it('should remove a key input field and value input field when remove button is clicked', () => {
+    it('should add a key input field and value input field when Add Metadata is clicked', () => {
+      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+
+      const addSecretButton = wrapper
+        .find('button.cogs-btn')
+        .filterWhere((b: ReactWrapper) => b.text() === 'Add a metadata');
+      addSecretButton.simulate('click');
+
+      const keyInput = wrapper.find('input[name="meta_key"]');
+      expect(keyInput).toHaveLength(1);
+      const valueInput = wrapper.find('input[name="meta_value"]');
+      expect(valueInput).toHaveLength(1);
+      wrapper.unmount();
+    });
+
+    it('should remove a SECRET key input field and value input field when remove button is clicked', () => {
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addSecretButton = wrapper
@@ -96,20 +112,43 @@ describe('UploadFunctionModal', () => {
         .filterWhere((b: ReactWrapper) => b.text() === 'Add a secret');
       addSecretButton.simulate('click');
 
-      const keyInput = wrapper.find('input[name="key"]');
+      const keyInput = wrapper.find('input[name="secret_key"]');
       expect(keyInput).toHaveLength(1);
-      const valueInput = wrapper.find('input[name="value"]');
+      const valueInput = wrapper.find('input[name="secret_value"]');
       expect(valueInput).toHaveLength(1);
 
-      const removeSecretButton = wrapper.find('button.cogs-btn').at(2);
+      const removeSecretButton = wrapper.find('button#btnDeleteSecret');
       removeSecretButton.simulate('click');
 
-      const removedKeyInput = wrapper.find('input[name="key"]');
+      const removedKeyInput = wrapper.find('input[name="secret_key"]');
       expect(removedKeyInput).toHaveLength(0);
-      const removedValueInput = wrapper.find('input[name="value"]');
+      const removedValueInput = wrapper.find('input[name="secret_value"]');
+      expect(removedValueInput).toHaveLength(0);
+    });
+
+    it('should remove a METADATA key input field and value input field when remove button is clicked', () => {
+      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+
+      const addSecretButton = wrapper
+        .find('button.cogs-btn')
+        .filterWhere((b: ReactWrapper) => b.text() === 'Add a metadata');
+      addSecretButton.simulate('click');
+
+      const keyInput = wrapper.find('input[name="meta_key"]');
+      expect(keyInput).toHaveLength(1);
+      const valueInput = wrapper.find('input[name="meta_value"]');
+      expect(valueInput).toHaveLength(1);
+
+      const removeSecretButton = wrapper.find('button#btnDeleteMeta');
+      removeSecretButton.simulate('click');
+
+      const removedKeyInput = wrapper.find('input[name="meta_key"]');
+      expect(removedKeyInput).toHaveLength(0);
+      const removedValueInput = wrapper.find('input[name="meta_value"]');
       expect(removedValueInput).toHaveLength(0);
     });
   });
+
   describe('input field validity', () => {
     describe('function name', () => {
       const { checkFunctionName } = stuffForUnitTests;

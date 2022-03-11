@@ -89,7 +89,7 @@ export default function Metadata({ metadata, setMetadata }: Props) {
               >
                 <Input
                   value={meta.key}
-                  name="key"
+                  name="meta_key"
                   data-idx={index}
                   allowClear
                   onChange={evt => handleMetadataChange(evt)}
@@ -113,7 +113,7 @@ export default function Metadata({ metadata, setMetadata }: Props) {
               >
                 <Input
                   value={meta.value}
-                  name="value"
+                  name="meta_value"
                   data-idx={index}
                   allowClear
                   onChange={evt => handleMetadataChange(evt)}
@@ -122,7 +122,11 @@ export default function Metadata({ metadata, setMetadata }: Props) {
             </Col>
             <Col span={2}>
               <Form.Item label="-">
-                <Button icon="Delete" onClick={() => removeMetadata(meta.id)} />
+                <Button
+                  id="btnDeleteMeta"
+                  icon="Delete"
+                  onClick={() => removeMetadata(meta.id)}
+                />
               </Form.Item>
             </Col>
           </Row>
