@@ -1,3 +1,7 @@
+## 2.2.5 Mar 10 2022
+
+Chore: add decodeTokenUid function to index.ts so that it can be imported
+
 ## 2.2.3 Feb 25 2022
 
 Fix: saveFlow/getFlowKey always use lowercased keys to store data in localstorage.

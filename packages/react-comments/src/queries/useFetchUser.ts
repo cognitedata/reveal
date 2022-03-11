@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import { UMSUser } from '@cognite/user-management-service-types';
-import { AuthHeaders, useAuthContext } from '@cognite/react-container';
+import { AuthHeaders } from '@cognite/react-container';
 
 import { getHeaders } from '../utils/getHeaders';
 
@@ -27,21 +27,21 @@ const doFetchUser = ({
 
 export const useFetchUser = ({
   userManagementServiceBaseUrl,
+  userId,
   fasAppId,
   idToken,
-}: Props) => {
+}: { userId: string } & Props) => {
   const headers = getHeaders(fasAppId, idToken);
-  const { authState } = useAuthContext();
 
   return useQuery(
-    userKeys.usersGet([authState?.id || '']),
+    userKeys.usersGet([userId]),
     () =>
       doFetchUser({
         userManagementServiceBaseUrl,
         headers,
       }),
     {
-      enabled: !!authState?.id,
+      enabled: !!userId,
     }
   );
 };

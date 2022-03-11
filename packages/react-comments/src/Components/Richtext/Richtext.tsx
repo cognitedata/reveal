@@ -23,6 +23,7 @@ export interface RichtextProps {
   handleCancel?: () => void;
   initialValue?: CommentData;
   fasAppId?: string;
+  idToken?: string;
 }
 /*
  * This is heavily based from: https://github.com/ianstormtaylor/slate/blob/main/site/examples/mentions.tsx
@@ -40,6 +41,7 @@ export const Richtext: React.FC<RichtextProps> = ({
   placeholder = 'Write a comment...',
   userManagementServiceBaseUrl,
   fasAppId,
+  idToken,
   initialValue = [
     {
       type: 'paragraph',
@@ -200,6 +202,7 @@ export const Richtext: React.FC<RichtextProps> = ({
               search={search.toLowerCase()}
               onSelect={handleSelect}
               fasAppId={fasAppId}
+              idToken={idToken}
             />
           </div>
         </Portal>

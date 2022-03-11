@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Menu } from '@cognite/cogs.js';
-import { getAuthHeaders } from '@cognite/react-container';
 
+import { getHeaders } from '../../utils/getHeaders';
 import { useFindUsers } from '../../queries/useFindUsers';
 
 import { DisplayName, Email, Loading } from './elements';
@@ -11,8 +11,15 @@ export const UserList: React.FC<{
   userManagementServiceBaseUrl: string;
   onSelect: (id: string, display: string) => (event: any) => void;
   fasAppId?: string;
-}> = ({ search, onSelect, userManagementServiceBaseUrl, fasAppId }) => {
-  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
+  idToken?: string;
+}> = ({
+  search,
+  onSelect,
+  userManagementServiceBaseUrl,
+  fasAppId,
+  idToken,
+}) => {
+  const headers = getHeaders(fasAppId, idToken);
 
   const { data, isLoading } = useFindUsers({
     headers,

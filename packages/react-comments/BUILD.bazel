@@ -61,6 +61,7 @@ DEPENDENCIES = [
     "@npm//slate-react",
     "@npm//slate-history",
     "@npm//styled-components",
+    "//packages/auth-utils",
     "//packages/react-container",
     "//packages/sidecar",
 ]

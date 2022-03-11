@@ -5,6 +5,7 @@ import { Comment, Conversation } from '@cognite/cogs.js';
 import { getTenantInfo, useAuthContext } from '@cognite/react-container';
 import { CommentResponse } from '@cognite/comment-service-types';
 
+import { getUserIdFromToken } from '../utils/getUserIdFromToken';
 import { convertCommentToRichtextEditable } from '../utils/convertCommentToRichtext';
 import {
   useFetchUser,
@@ -40,6 +41,9 @@ export const ListComments: React.FC<ListCommentsProps> = ({
   const [, projectFromUrl] = getTenantInfo(window.location);
 
   const { authState } = useAuthContext();
+
+  const userId = authState?.id || getUserIdFromToken(idToken);
+
   const [editing, setEditing] = React.useState<
     CommentResponse['id'] | undefined
   >();
@@ -77,6 +81,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
 
   const { data: user } = useFetchUser({
     userManagementServiceBaseUrl,
+    userId,
     fasAppId,
     idToken,
   });
@@ -98,7 +103,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     deleteComment(id);
   };
 
-  const isLoading = !authState?.id || !target;
+  const isLoading = !userId || !target;
 
   if (isLoading) {
     return <span>Loading...</span>;
@@ -129,8 +134,6 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     });
   }
 
-  // console.log('Comment info:', { authState, conversation });
-
   const actionButtonsTarget = 'comment-action-buttons';
 
   return (
@@ -140,7 +143,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
           key={`${target.id}+${target.targetType}`}
           reverseOrder
           conversation={conversation}
-          userId={authState?.id || ''}
+          userId={userId}
           onRemoveComment={handleRemoveComment}
           onEditComment={handleEditCommentStart}
           input={
@@ -153,6 +156,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
                     onPostMessage={handleCreateMessage}
                     userManagementServiceBaseUrl={userManagementServiceBaseUrl}
                     fasAppId={fasAppId}
+                    idToken={idToken}
                   />
                 }
               />

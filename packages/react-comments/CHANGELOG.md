@@ -1,3 +1,7 @@
+## 1.2.2 Mar 10 2022
+
+- Fix undefined user id issue when using 'idToken'
+
 ## 1.2.1 Mar 10 2022
 
 - Fix `utils/getHeaders` importing from absolute path to relative path
