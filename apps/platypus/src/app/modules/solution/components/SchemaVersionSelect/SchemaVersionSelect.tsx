@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { OptionType, Select } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js';
 import { StyledVersionContainer } from './elements';
 import { SCHEMA_VERSION_LABEL } from '@platypus-app/utils/config';
 
@@ -12,18 +11,10 @@ export const SchemaVersionSelect = ({
   versions: string[];
   onChange: (seletedValue: string) => void;
 }) => {
-  const [versionOptions, setVersionOptions] = useState<OptionType<string>[]>(
-    []
-  );
-
-  useEffect(() => {
-    setVersionOptions(
-      versions.map((v) => ({
-        value: v,
-        label: SCHEMA_VERSION_LABEL(v),
-      }))
-    );
-  }, [versions]);
+  const versionOptions = versions.map((v) => ({
+    value: v,
+    label: SCHEMA_VERSION_LABEL(v),
+  }));
 
   return (
     <StyledVersionContainer data-cy="schema-version-select">
