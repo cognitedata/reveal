@@ -98,7 +98,10 @@ export const useSelectedSecondaryWellboresWithoutNptData = () => {
 export const useSelectedSecondaryWellboreNamesWithoutNptData = () => {
   const wellbores = useSelectedSecondaryWellboresWithoutNptData();
   return useMemo(
-    () => wellbores.map((wellbore) => wellbore.description || ''),
+    () =>
+      wellbores.map(
+        (wellbore) => wellbore?.name || wellbore?.description || ''
+      ),
     [wellbores]
   );
 };
