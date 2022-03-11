@@ -3,15 +3,19 @@ import { useParams, useHistory } from 'react-router-dom';
 import AssetHierarchy from 'components/explorer/AssetHierarchy';
 import { Asset } from '@cognite/sdk';
 import AssetTabs, { AssetTabKey } from 'components/explorer/AssetTabs';
+import { useRecentAssets } from 'hooks/useRecentAssets';
 
 import { ExplorerWrapper } from './elements';
+import { RecentAssets } from './RecentAssets';
 
 const Explorer = () => {
   const history = useHistory();
   const { assetId, tab: activeTab } =
     useParams<{ assetId: string; tab: string }>();
+  const [_, addToRecentAssets] = useRecentAssets();
 
   const onAssetSelect = (asset: Asset) => {
+    addToRecentAssets(asset);
     history.push(`/explore/${asset.id}/${activeTab || 'detail'}`);
   };
   const onTabChange = (nextTab: AssetTabKey) => {
@@ -25,7 +29,7 @@ const Explorer = () => {
 
   const renderMain = () => {
     if (!assetId) {
-      return <div />;
+      return <RecentAssets />;
     }
     return (
       <AssetTabs

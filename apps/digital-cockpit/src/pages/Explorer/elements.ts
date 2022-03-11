@@ -22,3 +22,24 @@ export const ExplorerWrapper = styled.div`
     background: white;
   }
 `;
+
+export const NoDataWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+`;
+
+export const RecentAssetsWrapper = styled.div`
+  padding: 20px 33px;
+
+  .recent-assets--title {
+    margin-bottom: 24px;
+  }
+
+  .cogs-row {
+    margin-top: 10px;
+  }
+`;

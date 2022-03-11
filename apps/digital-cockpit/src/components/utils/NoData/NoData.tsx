@@ -16,13 +16,14 @@ const Wrapper = styled.div`
 
 export type NoDataProps = {
   type: string;
+  message?: string;
 };
 
-const NoData = ({ type }: NoDataProps) => {
+const NoData = ({ type, message }: NoDataProps) => {
   return (
     <Wrapper>
       <Graphic type={type} />
-      <span>No data was found for this request.</span>
+      <span>{message || 'No data was found for this request.'}</span>
     </Wrapper>
   );
 };

@@ -12,6 +12,10 @@ const meta: Meta<NoDataProps> = {
       name: 'Type',
       defaultValue: 'Documents',
     },
+    message: {
+      name: 'message',
+      defaultValue: 'No data was found for this request.',
+    },
   },
 };
 
