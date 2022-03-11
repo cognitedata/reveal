@@ -21,7 +21,7 @@ export const getStylePropertyValue = (
     const propertyValue = chartStyles.getPropertyValue(property);
     return propertyValue;
   }
-  return '';
+  return '0';
 };
 
 export const getValuesOfObjectsByKey = <T>(data: T[], key: string) => {

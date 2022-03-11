@@ -51,7 +51,7 @@ export const useZoomableChart = <T>({
 
     const width =
       parseInt(getStylePropertyValue(chartRef, 'width'), 10) -
-      parseInt(getStylePropertyValue(chartRef, 'padding'), 10) -
+      parseInt(getStylePropertyValue(chartRef, 'padding-right'), 10) -
       margins.left -
       margins.right;
 

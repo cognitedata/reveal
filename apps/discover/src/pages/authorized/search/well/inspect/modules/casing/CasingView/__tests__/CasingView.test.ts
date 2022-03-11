@@ -1,13 +1,17 @@
 import { screen } from '@testing-library/react';
+import { Store } from 'redux';
 
 import { testRenderer } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
+import { UserPreferredUnit } from 'constants/units';
 
 import CasingView from '../CasingView';
+import { CasingViewType } from '../interfaces';
 
-const props = {
+const props: CasingViewType = {
   wellboreName: 'Wllbore 1',
   wellName: 'Well 1',
-  unit: 'ft',
+  unit: UserPreferredUnit.FEET,
   events: [],
   isEventsLoading: true,
   casings: [
@@ -18,14 +22,15 @@ const props = {
       startDepth: 10,
       endDepth: 100,
       depthUnit: '',
-      metadata: {},
     },
   ],
 };
 
 describe('Casing view', () => {
-  const page = (viewProps?: any) =>
-    testRenderer(CasingView, undefined, viewProps);
+  const defaultStore = getMockedStore();
+
+  const page = (props?: CasingViewType, store: Store = defaultStore) =>
+    testRenderer(CasingView, store, props);
 
   const defaultTestInit = async () => {
     return {

@@ -52,6 +52,8 @@ export const SelectedWellboreView: React.FC<Props> = React.memo(
     const wellboreName = getSelectedWellboreName(selectedWellbore);
 
     useEffect(() => {
+      if (!selectedWellbore) return;
+
       setChartRendering(true);
 
       chartData.current = get(

@@ -30,6 +30,8 @@ export const ChartWithYAxisTitle = styled(FlexRow)`
 `;
 
 export const ChartContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   overflow: scroll;
   margin-top: ${sizes.normal};
   margin-bottom: -${sizes.extraSmall};

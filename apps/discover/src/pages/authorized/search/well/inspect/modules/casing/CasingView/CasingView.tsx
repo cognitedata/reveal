@@ -18,6 +18,7 @@ import { convertToPreviewData } from 'modules/wellSearch/utils/casings';
 import { FlexColumn } from 'styles/layout';
 
 import { SelectedWellboreView } from '../../events/Npt/graph';
+import { SelectedWellbore } from '../../events/Npt/graph/types';
 import { getScaleBlocks } from '../helper';
 
 import DepthColumn from './DepthColumn';
@@ -58,13 +59,13 @@ const CasingView: FC<CasingViewType> = ({
 }: CasingViewType) => {
   const scaleRef = useRef<HTMLElement | null>(null);
 
-  const [recentZIndex, setRecentZIndex] = React.useState(1);
+  const [recentZIndex, setRecentZIndex] = useState(1);
 
   const casingsList = orderBy(casings, 'endDepth', 'desc');
 
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
 
-  const [selectedWellbore, setSelectedWellbore] = useState<string>();
+  const [selectedWellbore, setSelectedWellbore] = useState<SelectedWellbore>();
 
   const normalizedCasings = useMemo(
     () => convertToPreviewData(casingsList),
@@ -184,18 +185,13 @@ const CasingView: FC<CasingViewType> = ({
           )}
         </BodyWrapper>
       </Wrapper>
-      {selectedWellbore && (
-        <SelectedWellboreView
-          events={validEvents}
-          selectedWellbore={selectedWellbore}
-          disableWellboreNavigation
-          setSelectedWellbore={(selected) => {
-            if (!selected) {
-              setSelectedWellbore(undefined);
-            }
-          }}
-        />
-      )}
+
+      <SelectedWellboreView
+        events={validEvents}
+        selectedWellbore={selectedWellbore}
+        setSelectedWellbore={setSelectedWellbore}
+        disableWellboreNavigation
+      />
     </>
   );
 };
