@@ -114,7 +114,7 @@ export class ModelUi {
 
   async addModel(options: AddModelOptions) {
     try {
-      const model = options.localPath !== undefined ? await this._viewer.addCadModel(options) : await this._viewer.addModel(options);
+      const model = options.localPath !== undefined ? await loadLocalModel(this._viewer, options) : await this._viewer.addModel(options);
       if (model instanceof Cognite3DModel) {
         this._cadModels.push(model);
       } else if (model instanceof CognitePointCloudModel) {
@@ -134,6 +134,23 @@ export class ModelUi {
     }
   }
 
+}
+
+async function loadLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CognitePointCloudModel | Cognite3DModel> {
+  // The hacky check below is due to webpack-dev-server returning 200 for non-existing files. We therefore check if the 
+  // response is a valid json.
+  const eptJsonRequest = await fetch(addModelOptions.localPath + '/ept.json');
+  let isPointCloud = true;
+  try {
+    if (eptJsonRequest.ok) {
+      await eptJsonRequest.json();
+    } else {
+      isPointCloud = false;
+    }
+  } catch {
+    isPointCloud = false;
+  }
+  return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
 }
 
 function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3, size: THREE.Vector3 }) {
