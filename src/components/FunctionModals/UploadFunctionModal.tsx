@@ -125,10 +125,10 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     const { idx } = evt.target.dataset;
     const changeField = evt.target.name;
     const updatedSecrets = [...secrets];
-    if (changeField === 'key') {
+    if (changeField === 'secret_key') {
       updatedSecrets[idx].key = evt.target.value;
       updatedSecrets[idx].keyTouched = true;
-    } else if (changeField === 'value') {
+    } else if (changeField === 'secret_value') {
       updatedSecrets[idx].value = evt.target.value;
       updatedSecrets[idx].valueTouched = true;
     }
