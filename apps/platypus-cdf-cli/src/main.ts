@@ -11,7 +11,7 @@ import logout from './app/cmds/logout';
 import initCmd from './app/cmds/init';
 import { DEBUG as _DEBUG } from './app/utils/logger';
 import { CONSTANTS } from './app/constants';
-import { getCompleteCommandString } from './app/utils/yargs-utils';
+import { getMixpanel } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
 
 const DEBUG = _DEBUG.extend('main');
 
@@ -50,7 +50,9 @@ scriptName(CONSTANTS.APP_ID)
       )
     );
 
-    argv?.mixpanel.track(getCompleteCommandString(argv), { failed: true });
+    getMixpanel()?.track('failed command', {
+      message: msg || err.message,
+    });
 
     console.log('\nUsages:\n');
     console.error(help());

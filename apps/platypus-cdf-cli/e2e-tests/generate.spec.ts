@@ -4,12 +4,19 @@ import { Run } from './utils';
 const { unlink } = promises;
 describe('E2E for Templates Generate', () => {
   beforeAll(async () => {
-    await Run('platypus', 'logout');
+    await Run(CONSTANTS.APP_ID, 'logout');
     const response = await Run(
-      'platypus',
+      CONSTANTS.APP_ID,
       'login',
+      'david',
       '--auth-type',
       'clientSecret',
+      '--cluster',
+      process.env.CLUSTER,
+      '--tenant',
+      process.env.TENANT,
+      '--client-id',
+      process.env.CLIENT_ID,
       '--client-secret',
       process.env.CLIENT_SECRET
     );
@@ -23,21 +30,23 @@ describe('E2E for Templates Generate', () => {
     }
 
     const response = await Run(
-      'platypus',
-      'templates',
+      CONSTANTS.APP_ID,
       'init',
-      '--template-group-id',
-      'Deniska Rediska',
-      '--template-version',
-      '52'
+      '--no-interactive',
+      '--backend',
+      'templates',
+      '--new-project',
+      'false',
+      '--external-id',
+      'Car',
+      '--project-version',
+      '1'
     );
-    expect(response).toMatch(
-      'Solution "Deniska Rediska" is successfully initialized!'
-    );
+    expect(response).toMatch('Solution "Car" is successfully initialized!');
   });
   it('Generate From Init Templates', async () => {
     const response = await Run(
-      'platypus',
+      CONSTANTS.APP_ID,
       'templates',
       'generate',
       '--plugins',

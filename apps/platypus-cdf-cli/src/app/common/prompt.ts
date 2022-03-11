@@ -11,9 +11,17 @@ export type Req<T> = {
   [extra: string]: unknown;
 };
 
-export const askUserForInput = async <T>(args: T, required: Req<T>[]) => {
-  const options = required.filter((req) => !args[req.name]);
+export const askUserForInputIfNeeded = async <T>(
+  args: T,
+  required: Req<T>[]
+) => {
+  const options = required.filter(
+    (req) => args[req.name] === undefined || args[req.name] === null
+  );
   if (options.length > 0) {
     return prompt(options as never) as unknown as { [K in keyof T]: T[K] };
+  } else {
+    // if nothing needs to be prompted, return the original set of args
+    return args;
   }
 };

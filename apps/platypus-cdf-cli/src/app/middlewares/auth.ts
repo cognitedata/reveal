@@ -20,7 +20,9 @@ import {
 import { getCommandName } from '../utils/yargs-utils';
 import { skipMiddleware } from './util';
 import logout from '../common/auth/logout';
-import logger from '../utils/logger';
+import logger, { DEBUG as _DEBUG } from '../utils/logger';
+
+const DEBUG = _DEBUG.extend('middleware:auth');
 
 export async function authenticate(arg: Arguments<BaseArgs>) {
   try {
@@ -56,11 +58,16 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
       client = createSdkClient(projectConfig);
     }
 
+    DEBUG('Fetching auth token from CDF...');
+
     const token = await (client as unknown as CogniteClient).authenticate();
 
     if (token === undefined) {
+      DEBUG('Unable to fetch token from CDF (came back undefined');
       throw new Error('Failed to authenticate against CDF.');
     }
+
+    DEBUG('Finished fetching auth token from CDF');
 
     setProjectConfig({
       [AUTH_CONFIG.LOGIN_STATUS]: LOGIN_STATUS.SUCCESS,

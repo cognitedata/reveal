@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { cwd } from 'process';
 import { Arguments, Argv, CommandModule } from 'yargs';
-import { askUserForInput } from '../common/prompt';
+import { askUserForInputIfNeeded } from '../common/prompt';
 import { CONSTANTS } from '../constants';
 import { BaseArgs } from '../types';
 import { getCogniteSDKClient } from '../utils/cogniteSdk';
@@ -59,15 +59,18 @@ class TemplateInitCommand implements CommandModule {
     }
     // Ask which backend to use
     DEBUG('Asking user for selecting backend to use');
-    const { backend } = await askUserForInput<TemplateInitCommandArgs>(_args, [
-      {
-        name: 'backend',
-        message: 'Which backend to use for initialization of the project',
-        required: true,
-        choices: ['templates', 'schema-service'],
-        type: 'autocomplete',
-      },
-    ]);
+    const { backend } = await askUserForInputIfNeeded<TemplateInitCommandArgs>(
+      _args,
+      [
+        {
+          name: 'backend',
+          message: 'Which backend to use for initialization of the project',
+          required: true,
+          choices: ['templates', 'schema-service'],
+          type: 'autocomplete',
+        },
+      ]
+    );
     DEBUG(`Backend selected: ${backend}`);
     args = { ...args, backend };
 
@@ -81,7 +84,7 @@ class TemplateInitCommand implements CommandModule {
     // Ask if they want to use new project or existing project
     DEBUG('Asking user if they want to use new project or existing project');
     const { 'new-project': newProject } =
-      await askUserForInput<TemplateInitCommandArgs>(_args, [
+      await askUserForInputIfNeeded<TemplateInitCommandArgs>(_args, [
         {
           name: 'new-project',
           message:
@@ -107,15 +110,18 @@ class TemplateInitCommand implements CommandModule {
       DEBUG('Templates list retrieved %o', templates);
 
       DEBUG('Asking user for selecting template group to use');
-      const resp = await askUserForInput<TemplateInitCommandArgs>(_args, [
-        {
-          name: 'external-id',
-          message: 'Please select template id from this list',
-          type: 'autocomplete',
-          choices: templates.items.map((t) => t.externalId),
-          required: true,
-        },
-      ]);
+      const resp = await askUserForInputIfNeeded<TemplateInitCommandArgs>(
+        _args,
+        [
+          {
+            name: 'external-id',
+            message: 'Please select template id from this list',
+            type: 'autocomplete',
+            choices: templates.items.map((t) => t.externalId),
+            required: true,
+          },
+        ]
+      );
       DEBUG(`Template selected: ${resp['external-id']}`);
 
       args = { ...args, ...resp };
@@ -131,15 +137,18 @@ class TemplateInitCommand implements CommandModule {
 
       if (versions.length > 0) {
         DEBUG('Asking user for selecting project version to use');
-        const version = await askUserForInput<TemplateInitCommandArgs>(args, [
-          {
-            name: 'project-version',
-            message: 'Select the version for the template group',
-            required: true,
-            type: 'autocomplete',
-            choices: versions.map((v) => v.toString()),
-          },
-        ]);
+        const version = await askUserForInputIfNeeded<TemplateInitCommandArgs>(
+          args,
+          [
+            {
+              name: 'project-version',
+              message: 'Select the version for the template group',
+              required: true,
+              type: 'autocomplete',
+              choices: versions.map((v) => v.toString()),
+            },
+          ]
+        );
         DEBUG(`Project version selected: ${version['project-version']}`);
         args = { ...args, ...version };
       }

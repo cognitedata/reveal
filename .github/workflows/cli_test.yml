@@ -33,3 +33,8 @@ jobs:
       - name: Run the E2E Tests
         run: |
           yarn nx run platypus-cdf-cli:e2e
+        env:
+          TENANT: ${{ secrets.CLI_E2E_TENANT }}
+          CLUSTER: ${{ secrets.CLI_E2E_CLUSTER }}
+          CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLI_E2E_CLIENT_SECRET }}

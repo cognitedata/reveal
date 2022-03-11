@@ -5,6 +5,7 @@ import {
 } from '../common/auth';
 import { AUTH_CONFIG, AUTH_TYPE } from '../constants';
 import { BaseArgs, ProjectConfig } from '../types';
+import { DEBUG } from './logger';
 
 export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
   const authority = `https://login.microsoftonline.com/${arg.tenant}`;
@@ -13,9 +14,11 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
 
   switch (arg.authType) {
     case AUTH_TYPE.APIKEY: {
+      DEBUG('Getting token via APIKEY');
       return arg.apiKey;
     }
     case AUTH_TYPE.PKCE: {
+      DEBUG('Getting token via PKCE');
       try {
         return (
           await getAccessTokenForPKCE({
@@ -27,12 +30,14 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
           })
         ).accessToken;
       } catch {
+        DEBUG('Failed to get token via PKCE');
         throw new Error(
           'Unable to refresh token based on your login, you need to retrigger login once again'
         );
       }
     }
     case AUTH_TYPE.CLIENT_SECRET: {
+      DEBUG('Getting token via Client Secret');
       const token = (
         await getAccessTokenForClientSecret({
           authority,
@@ -46,12 +51,14 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
       if (token) {
         return token;
       } else {
+        DEBUG('Failed to get token via Client Secret');
         throw new Error(
           'Unable to refresh token based on your login, you need to retrigger login once again'
         );
       }
     }
     case AUTH_TYPE.DEVICE_CODE: {
+      DEBUG('Getting token via Device Code');
       try {
         return (
           await getAccessTokenForDeviceCode({
@@ -63,6 +70,7 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
           })
         ).accessToken;
       } catch {
+        DEBUG('Failed to get token via Device Code');
         throw new Error(
           'Unable to refresh token based on your login, you need to retrigger login once again'
         );
