@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { Loader } from '@cognite/cogs.js';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { CogniteClient } from '@cognite/sdk';
-import { Loader } from '@cognite/cogs.js';
 
-import sidecar from '../../utils/sidecar';
 import { useFetchAssets } from '../../queries/useFetchAssets';
+import sidecar from '../../utils/sidecar';
 
-import { Warning } from './elements';
 import { CommentSliderExample } from './CommentSliderExample';
+import { Warning } from './elements';
 
 const CommentSliderPage: React.FC = () => (
   <AuthConsumer>

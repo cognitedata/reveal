@@ -1,11 +1,6 @@
 import * as React from 'react';
 
-import {
-  setClient,
-  setEmail,
-  setReAuth,
-  authenticateCogniteSDKV7,
-} from 'utils/getCogniteSDKClient';
+import { setClient, setEmail, setReAuth } from 'utils/getCogniteSDKClient';
 
 import { getTenantInfo, AuthContext } from '@cognite/react-container';
 import { Cluster } from '@cognite/sdk-wells-v2';
@@ -13,7 +8,6 @@ import { Cluster } from '@cognite/sdk-wells-v2';
 import { SIDECAR } from 'constants/app';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { authenticateDocumentSDK } from 'modules/documentSearch/sdk';
-import { authenticateGeospatialSDK } from 'modules/map/sdk';
 import { authenticateSeismicSDK } from 'modules/seismicSearch/service';
 import {
   authenticateWellSDK,
@@ -34,15 +28,6 @@ export const ProvideAuthSetup: React.FC<{
     if (authState.client) {
       setClient(authState.client);
     }
-
-    authenticateCogniteSDKV7({
-      appId: SIDECAR.applicationId,
-      baseUrl: SIDECAR.cdfApiBaseUrl,
-      project,
-      token,
-    });
-
-    authenticateGeospatialSDK(project, token);
 
     const email = authState.authState?.email;
     setEmail(email);
@@ -95,7 +80,13 @@ export const ProvideAuthSetup: React.FC<{
         });
       }
     }
-  }, [authState.authState?.authenticated, projectConfig, project, isAzure]);
+  }, [
+    authState.authState?.authenticated,
+    projectConfig,
+    project,
+    isAzure,
+    authState.authState?.token,
+  ]);
 
   return doneAuth ? <>{children}</> : null;
 };

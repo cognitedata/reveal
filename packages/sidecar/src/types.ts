@@ -59,6 +59,7 @@ export type SidecarConfig = ApiBaseUrls & {
   __sidecarFormatVersion: number;
   aadApplicationId?: string;
   AADTenantID?: string;
+  aadCdfScopes?: string[]; // ex: DATA.VIEW, default: IDENTITY. These scopes are used when logging in with azure ad
   applicationId: string;
   applicationName: string;
   backgroundImage?: string;

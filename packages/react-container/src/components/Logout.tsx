@@ -1,7 +1,8 @@
+import { useAuthContext } from '@cognite/react-container';
+import { CogniteClient } from '@cognite/sdk';
 import React from 'react';
 import { EndSessionRequest } from '@azure/msal-browser';
 import { getFlow, saveFlow } from '@cognite/auth-utils';
-import { CogniteClient } from '@cognite/sdk';
 
 import {
   AUTH_RESULT_STORAGE_KEY,
@@ -9,8 +10,6 @@ import {
   log,
   storage,
 } from '../utils';
-
-import { useAuthContext } from './AuthContainer';
 
 export const Logout: React.FC = () => {
   const { client } = useAuthContext();

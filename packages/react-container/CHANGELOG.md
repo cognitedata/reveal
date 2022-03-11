@@ -1,3 +1,9 @@
+## 5.0.0 Feb 28 2022
+
+- BREAKING: Use @cognite/sdk V7 client
+- Updated authentication logic to use new SDK standards
+- Refactored re-auth option to trigger from outside
+
 ## 4.0.7 Feb 25 2022
 
 - Bump to update auth-utils version@2.2.3 which fixes an issue where users are unable to login with `COGNITE_AUTH` if capital letters are used in a project name.

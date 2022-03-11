@@ -28,7 +28,11 @@ export const AuthContext = React.createContext<{
   authState?: AuthenticatedUser;
   blueprintService?: BlueprintService;
 }>({
-  client: new CogniteClient({ appId: 'No auth' }),
+  client: new CogniteClient({
+    appId: 'No auth',
+    project: '',
+    getToken: () => Promise.resolve(''),
+  }),
   authState: DEFAULT_AUTH_STATE,
 });
 
@@ -41,25 +45,26 @@ export const AuthProvider: FC<AuthProviderProps> = ({
   mockClient,
   children,
 }) => {
-  const { client = new CogniteClient({ appId: 'fake' }), authState } =
-    useAuthContext();
+  const { client, authState } = useAuthContext();
 
   useEffect(() => {
     setCogniteSDKClient(mockClient || client!);
-  }, []);
+  }, [client]);
 
-  const blueprintService = useMemo(
-    () =>
-      new BlueprintService(client, {
+  const blueprintService = useMemo(() => {
+    if (client) {
+      return new BlueprintService(client, {
         uid: authState?.id,
         email: authState?.email,
-      }),
-    [client, authState]
-  );
+      });
+    }
+
+    return undefined;
+  }, [client, authState]);
 
   const value = useMemo(() => {
     return {
-      client: mockClient || client,
+      client: mockClient || client!,
       authState,
       blueprintService,
     };

@@ -1,4 +1,4 @@
-import { CLUSTER } from '../../support/constants';
+import { CLUSTER, USER_PREFIX } from '../../support/constants';
 
 describe('Share Favorites', () => {
   const favoriteName = `shared favorite, ${Date.now()}`;
@@ -38,7 +38,10 @@ describe('Share Favorites', () => {
     cy.findByTestId('shared-user-input')
       .should('be.visible')
       .type(Cypress.env('REACT_APP_E2E_USER'));
-    cy.findByText('Admin User').should('exist').should('be.visible').click();
+    cy.findByText(`Admin User ${USER_PREFIX.toUpperCase()}`)
+      .should('exist')
+      .should('be.visible')
+      .click();
     cy.findByLabelText('Share').click();
     cy.findByRole('dialog').type('{esc}');
 

@@ -1,13 +1,10 @@
-import { useAuthContext } from '@cognite/react-container';
-
 import { useUserProfileQuery } from './useUserQuery';
 
 export const useMetricsUser = () => {
   const user = useUserProfileQuery();
-  const { authState } = useAuthContext();
 
   const userId = user?.data?.id;
-  const email = authState?.email;
+  const email = user?.data?.email;
 
   const names: string[] = [];
   if (user?.data?.firstname) {

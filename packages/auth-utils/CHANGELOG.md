@@ -1,3 +1,7 @@
+## 2.3.0 Feb 28 2022
+
+Feat: getProjectSpecificFlow utility function to get flow that doesn't fall back to default
+
 ## 2.2.5 Mar 10 2022
 
 Chore: add decodeTokenUid function to index.ts so that it can be imported

@@ -34,7 +34,7 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//@cognite/sdk-v2",
+    "@npm//@cognite/sdk",
     "@npm//immutable",
 ]
 

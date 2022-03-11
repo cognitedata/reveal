@@ -53,6 +53,8 @@ export class CdfClient {
 
 const DEFAULT_CONFIG: CdfClientOptions = {
   appId: 'digital-cockpit',
+  project: '',
+  getToken: () => Promise.resolve(''),
   dataSetName: 'digital-cockpit',
 };
 

@@ -1,38 +1,38 @@
 import {
-  GetAggregateDatapoint,
-  GetStringDatapoint,
-  GetDoubleDatapoint,
+  DatapointAggregate,
+  StringDatapoint as SdkStringDatapoint,
+  DoubleDatapoint as SdkDoubleDatapoint,
   DatapointsMultiQueryBase,
-  DatapointsGetAggregateDatapoint,
-  DatapointsGetDatapoint,
-  TimeSeriesList,
-} from '@cognite/sdk-v2';
+  DatapointAggregates,
+  Datapoints,
+  Timeseries,
+} from '@cognite/sdk';
 
-export type AggregateDatapoint = Omit<GetAggregateDatapoint, 'timestamp'> & {
+export type AggregateDatapoint = Omit<DatapointAggregate, 'timestamp'> & {
   timestamp: number;
 };
 
-export type DoubleDatapoint = Omit<GetDoubleDatapoint, 'timestamp'> & {
+export type DoubleDatapoint = Omit<SdkDoubleDatapoint, 'timestamp'> & {
   timestamp: number;
 };
 
-export type StringDatapoint = Omit<GetStringDatapoint, 'timestamp'> & {
+export type StringDatapoint = Omit<SdkStringDatapoint, 'timestamp'> & {
   timestamp: number;
 };
 
 export type Datapoint = AggregateDatapoint | DoubleDatapoint | StringDatapoint;
 
 export type SDKDatapoint =
-  | GetAggregateDatapoint
-  | GetStringDatapoint
-  | GetDoubleDatapoint;
+  | DatapointAggregate
+  | SdkStringDatapoint
+  | SdkDoubleDatapoint;
 
 export type OnFetchDatapoints = (
   externalId: string,
   params: DatapointsMultiQueryBase
-) => Promise<DatapointsGetAggregateDatapoint[] | DatapointsGetDatapoint[]>;
+) => Promise<DatapointAggregates[] | Datapoints[]>;
 
-export type OnFetchTimeseries = (externalId: string) => Promise<TimeSeriesList>;
+export type OnFetchTimeseries = (externalId: string) => Promise<Timeseries[]>;
 
 export type Options = {
   scaleYAxis?: boolean;

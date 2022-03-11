@@ -81,7 +81,7 @@ AssetTabs.story = configureStory({
       } as any);
     client.cogniteClient.files.search = mockSearch();
     client.cogniteClient.models3D.list = mockModelsList();
-    client.cogniteClient.authenticate = async () => true;
+    client.cogniteClient.authenticate = async () => '';
 
     return client;
   },

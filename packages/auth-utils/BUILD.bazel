@@ -34,7 +34,7 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//@cognite/sdk",
+    "@npm//@cognite/sdk-v5",
     "@npm//axios",
     "@npm//jwt-decode",
     "@npm//lodash",

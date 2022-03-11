@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { SidecarConfig } from '@cognite/sidecar';
-import { AuthenticatedUser } from '@cognite/auth-utils';
 import { reportException } from '@cognite/react-errors';
 
 import { getAuthorizationHeader } from '../auth/headers';
@@ -13,14 +12,15 @@ import { log } from './log';
  * Enable sync by adding 'enableUserManagement: true' in consuming application sidecar.
  */
 export const syncUser = async (
-  authState: AuthenticatedUser,
+  accessToken: string,
+  idToken: string | undefined,
   sidecar: SidecarConfig
 ): Promise<void> => {
   if (!sidecar.enableUserManagement) {
     return;
   }
 
-  if (!authState.token) {
+  if (!accessToken) {
     // Legacy token not currently support, thus just add warning.
     log('[User Sync]: Missing access token', [], 2);
     return;
@@ -32,10 +32,10 @@ export const syncUser = async (
   await axios
     .post(
       umsUserSyncEndpoint,
-      { accessToken: authState.token },
+      { accessToken },
       {
         headers: {
-          ...getAuthorizationHeader(authState.idToken || authState.token),
+          ...getAuthorizationHeader(idToken || accessToken),
           // Used for legacy token
           fasAppId: sidecar.aadApplicationId ? sidecar.aadApplicationId : '',
         },

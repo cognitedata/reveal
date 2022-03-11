@@ -13,11 +13,11 @@ window.__cogniteSidecar = {
       name: 'Azure-dev E2E User',
       otherAccessTokenFields: {
         given_name: 'Normal',
-        family_name: 'User',
+        family_name: 'User E2E',
       },
       otherIdTokenFields: {
         given_name: 'Normal',
-        family_name: 'User',
+        family_name: 'User E2E',
       },
       project: 'discover-e2e-azure-dev',
       roles: [],
@@ -31,11 +31,11 @@ window.__cogniteSidecar = {
       name: 'Azure-dev E2E Admin',
       otherAccessTokenFields: {
         given_name: 'Admin',
-        family_name: 'User',
+        family_name: 'User E2E',
       },
       otherIdTokenFields: {
         given_name: 'Admin',
-        family_name: 'User',
+        family_name: 'User E2E',
       },
       project: 'discover-e2e-azure-dev',
       roles: ['administer'],
@@ -49,11 +49,11 @@ window.__cogniteSidecar = {
       name: 'Bluefield E2E User',
       otherAccessTokenFields: {
         given_name: 'Normal',
-        family_name: 'User',
+        family_name: 'User E2E',
       },
       otherIdTokenFields: {
         given_name: 'Normal',
-        family_name: 'User',
+        family_name: 'User E2E',
       },
       project: 'discover-e2e-bluefield',
       roles: [],
@@ -69,11 +69,11 @@ window.__cogniteSidecar = {
       name: 'Bluefield E2E Admin',
       otherAccessTokenFields: {
         given_name: 'Admin',
-        family_name: 'User',
+        family_name: 'User E2E',
       },
       otherIdTokenFields: {
         given_name: 'Admin',
-        family_name: 'User',
+        family_name: 'User E2E',
       },
       project: 'discover-e2e-bluefield',
       roles: ['administer'],
@@ -87,11 +87,11 @@ window.__cogniteSidecar = {
       name: 'Bluefield DEV User',
       otherAccessTokenFields: {
         given_name: 'Normal',
-        family_name: 'Dev',
+        family_name: 'User DEV',
       },
       otherIdTokenFields: {
         given_name: 'Normal',
-        family_name: 'Dev',
+        family_name: 'User DEV',
       },
       project: 'discover-dev-bluefield',
       roles: [],
@@ -105,11 +105,11 @@ window.__cogniteSidecar = {
       name: 'Bluefield DEV Admin',
       otherAccessTokenFields: {
         given_name: 'Admin',
-        family_name: 'Dev',
+        family_name: 'User DEV',
       },
       otherIdTokenFields: {
         given_name: 'Admin',
-        family_name: 'Dev',
+        family_name: 'User DEV',
       },
       project: 'discover-dev-bluefield',
       roles: ['administer'],

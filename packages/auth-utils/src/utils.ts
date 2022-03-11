@@ -1,9 +1,9 @@
+import jwtDecode from 'jwt-decode';
 import {
   getFromLocalStorage,
   saveToLocalStorage,
   removeItem,
 } from '@cognite/storage';
-import jwtDecode from 'jwt-decode';
 
 import { AuthFlow, FlowStorage } from './types';
 
@@ -41,6 +41,14 @@ export function getFlow(project?: string, env?: string): Flow {
     options: f?.options,
   };
 }
+
+export const getProjectSpecificFlow = (project: string): Flow | undefined => {
+  const projectFlow = getFromLocalStorage<FlowStorage>(getFlowKey(project));
+
+  return projectFlow
+    ? { flow: projectFlow.flow, options: projectFlow.options }
+    : undefined;
+};
 
 const debugMode = false;
 export const log = (value: string, options?: unknown): void => {

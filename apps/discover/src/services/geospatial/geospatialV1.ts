@@ -1,5 +1,5 @@
 import { FeatureCollection } from 'geojson';
-import { getCogniteSDKClientV7 } from 'utils/getCogniteSDKClient';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { log } from 'utils/log';
 
 import { adaptGeoJSONToGeospatial } from './adaptGeoJSONToGeospatial';
@@ -13,7 +13,7 @@ export const geospatialV1 = {
       layerId
     );
 
-    return getCogniteSDKClientV7()
+    return getCogniteSDKClient()
       .geospatial.featureType.create([featureType])
       .catch((error) => {
         log(error?.message);
@@ -22,7 +22,7 @@ export const geospatialV1 = {
         );
       })
       .then(([featureTypeResponse]) =>
-        getCogniteSDKClientV7()
+        getCogniteSDKClient()
           .geospatial.feature.create(
             featureTypeResponse.externalId,
             featureItems
@@ -37,14 +37,14 @@ export const geospatialV1 = {
       );
   },
   getGeoJSON: (id: string) => {
-    return getCogniteSDKClientV7()
+    return getCogniteSDKClient()
       .geospatial.feature.search(`${DISCOVER_FEATURE_TYPE_PREFIX}${id}`, {
         output: { geometryFormat: 'GEOJSON' },
       })
       .then((features) => adaptGeospatialToGeoJSON(features));
   },
   deleteFeatureType: (id: string, params = { recursive: true }) => {
-    return getCogniteSDKClientV7().geospatial.featureType.delete(
+    return getCogniteSDKClient().geospatial.featureType.delete(
       [{ externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${id}` }],
       params
     );

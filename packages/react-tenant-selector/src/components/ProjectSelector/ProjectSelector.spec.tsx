@@ -1,6 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { CogniteAuth } from '@cognite/auth-utils';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk-v5';
 import * as reactQuery from 'react-query';
 
 import { render, sandbox } from '../../utils/test';

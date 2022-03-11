@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-container",
-  "version": "4.0.8",
+  "version": "5.0.0-rc-1",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -31,17 +31,9 @@
     "update-helpers": "bazel run :generate_package_json_helpers",
     "storybook": "ibazel run :start-storybook"
   },
-  "dependencies": {
-    "@cognite/sdk-core": "2.2.0"
-  },
-  "resolutions": {
-    "@cognite/sdk-core": "2.2.0"
-  },
   "peerDependencies": {
     "@cognite/metrics": "^1.0.0",
-    "@cognite/sdk-core": "^2.2.0",
     "@cognite/cogs.js": "^5.3.2",
-    "@cognite/sdk": "^5.4.0",
     "lodash": "^4.17.20",
     "react-dom": ">=16",
     "react-redux": "^7.2.2",

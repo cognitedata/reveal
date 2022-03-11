@@ -1,4 +1,4 @@
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk-v5';
 import { saveToLocalStorage } from '@cognite/storage';
 
 import { FAKE_IDP_LS_KEY } from './fakeIdP';
@@ -14,7 +14,7 @@ jest.mock('./fakeIdP', () => {
   };
 });
 
-jest.mock('@cognite/sdk', () => ({
+jest.mock('@cognite/sdk-v5', () => ({
   CogniteClient: () => ({
     getCDFToken: () => 'test-accessToken',
     get: () => Promise.resolve({ data: { projects: ['test'] } }),

@@ -1,12 +1,12 @@
 import { useMutation } from 'react-query';
 
-import { getCogniteSDKClientV7 } from 'utils/getCogniteSDKClient';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import {
   GeospatialCreateFeatureType,
   GeospatialFeature,
   CogniteExternalId,
-} from '@cognite/sdk-v7';
+} from '@cognite/sdk';
 
 export const useFeatureCreateQuery = () => {
   return useMutation(
@@ -17,7 +17,7 @@ export const useFeatureCreateQuery = () => {
       featureTypeExternalId: CogniteExternalId;
       features: GeospatialFeature[];
     }) => {
-      return getCogniteSDKClientV7().geospatial.feature.create(
+      return getCogniteSDKClient().geospatial.feature.create(
         featureTypeExternalId,
         features
       );
@@ -27,6 +27,6 @@ export const useFeatureCreateQuery = () => {
 
 export const useFeatureTypeCreateQuery = () => {
   return useMutation((featureTypes: GeospatialCreateFeatureType[]) => {
-    return getCogniteSDKClientV7().geospatial.featureType.create(featureTypes);
+    return getCogniteSDKClient().geospatial.featureType.create(featureTypes);
   });
 };

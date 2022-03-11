@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk-v5';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 import { QueryClientProvider, QueryClient } from 'react-query';

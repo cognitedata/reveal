@@ -95,7 +95,6 @@ DEPENDENCIES = [
     "@npm//@cognite/sdk-wells-v3",
     "@npm//@cognite/sdk",
     "@npm//@cognite/sdk-playground",
-    "@npm//@cognite/sdk-v7",
     "@npm//@cognite/seismic-sdk-js",
     "@npm//@cognite/videx-wellog",
     "@npm//@cognite/user-management-service-types",

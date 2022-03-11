@@ -1,9 +1,9 @@
-import { CogniteClient } from '@cognite/sdk';
 import isString from 'lodash/isString';
+import { CogniteClient } from '@cognite/sdk-v5';
 
-import { getFlow, saveFlow, log, decodeTokenUid } from './utils';
-import { AuthenticatedUser, AuthFlow, AuthResult, TokenInspect } from './types';
 import { getFakeIdPInfoFromStorage, doFakeIdPLogin } from './fakeIdP';
+import { AuthenticatedUser, AuthFlow, AuthResult, TokenInspect } from './types';
+import { getFlow, saveFlow, log, decodeTokenUid } from './utils';
 
 export class CogniteAuth {
   state: {

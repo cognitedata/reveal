@@ -1,5 +1,5 @@
-import { CogniteClient } from '@cognite/sdk';
 import { useQuery } from 'react-query';
+import { CogniteClient } from '@cognite/sdk';
 
 const assetKeys = {
   all: ['assets'] as const,

@@ -1,7 +1,7 @@
-import { useAuthContext } from '../components/AuthContainer';
+import { useAuthContext } from '../components';
 
-import type { AuthHeaders } from './types';
 import { getAuthorizationHeader } from './headers';
+import type { AuthHeaders } from './types';
 
 interface Options {
   useIdToken?: boolean;

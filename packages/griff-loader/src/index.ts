@@ -1,7 +1,9 @@
 import { Map } from 'immutable';
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { CogniteClient, DatapointsMultiQueryBase } from '@cognite/sdk-v2';
-import { TimeSeries } from '@cognite/sdk-v2/dist/src/resources/classes/timeSeries';
+import {
+  CogniteClient,
+  DatapointsMultiQueryBase,
+  Timeseries,
+} from '@cognite/sdk';
 
 import {
   Datapoint,
@@ -36,8 +38,8 @@ export type TimeseriesId = number | string;
 export declare type AccessorFunc = (point: Datapoint) => number;
 
 const timeseries = {
-  results: Map<TimeseriesId, Promise<TimeSeries>>(),
-  requests: Map<TimeseriesId, Promise<TimeSeries>>(),
+  results: Map<TimeseriesId, Promise<Timeseries>>(),
+  requests: Map<TimeseriesId, Promise<Timeseries>>(),
 };
 
 export function setClient(client: CogniteClient) {
@@ -117,7 +119,7 @@ const calculateGranularity = (domain: number[], pps: number) => {
 const getTimeSeries = (
   id: TimeseriesId,
   fetchTimeseries: OnFetchTimeseries
-): Promise<TimeSeries> => {
+): Promise<Timeseries> => {
   const inFlightEquest = timeseries.requests.get(id);
   if (inFlightEquest) {
     return inFlightEquest;
@@ -315,7 +317,7 @@ export const createLoader =
     }
 
     return getTimeSeries(id, onFetchTimeseries)
-      .then(({ isStep: step }: TimeSeries) =>
+      .then(({ isStep: step }: Timeseries) =>
         getDataPoints({
           id,
           granularity,

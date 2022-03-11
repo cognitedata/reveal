@@ -22,8 +22,6 @@
         "../../../packages/*/dist",
         "../../../packages/*/src",
         "<rootDir>/../../packages/*/src",
-        "../../../node_modules/@cognite/*",
-        "<rootDir>/../../node_modules/@cognite/*",
 
         "../../../../packages/*/src",
         "<rootDir>/../../../packages/*/src"

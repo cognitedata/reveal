@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import { getAuthHeaders } from '../auth';
-import { AuthProvider } from '../../components/AuthContainer';
+import { AuthProvider } from '../../components/AuthProvider/AuthContainer';
 
 const mock = jest.fn().mockImplementation(() => ({ log: jest.fn() }));
 

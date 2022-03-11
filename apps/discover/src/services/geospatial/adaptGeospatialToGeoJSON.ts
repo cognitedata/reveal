@@ -2,7 +2,7 @@ import { Geometry, FeatureCollection } from 'geojson';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
 
-import { GeospatialFeatureResponse } from '@cognite/sdk-v7';
+import { GeospatialFeatureResponse } from '@cognite/sdk';
 
 export const adaptGeospatialToGeoJSON = (
   features: GeospatialFeatureResponse[]

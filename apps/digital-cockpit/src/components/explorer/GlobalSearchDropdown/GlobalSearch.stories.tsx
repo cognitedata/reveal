@@ -38,7 +38,7 @@ const Template: ExtendedStory<GlobalSearchProps> = (args) => (
 export const Standard = Template.bind({});
 Standard.story = configureStory({
   mockCdfClient: (client: CdfClient) => {
-    client.cogniteClient.setProject('project');
+    // client.cogniteClient.setProject('project');
     client.cogniteClient.assets.search = () => {
       return Promise.resolve(MockAssets.multiple(5));
     };

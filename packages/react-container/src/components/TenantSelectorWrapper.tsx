@@ -1,19 +1,10 @@
+import { getFlow, saveFlow } from '@cognite/auth-utils';
 import TenantSelector from '@cognite/cdf-hub-tenant-selector';
-import {
-  SidecarConfig,
-  CDFClusterSet,
-  getDefaultSidecar,
-  CDFCluster,
-} from '@cognite/sidecar';
-import { memo, useEffect, useState } from 'react';
-import { AuthenticatedUser, CogniteAuth, getFlow } from '@cognite/auth-utils';
-import { ErrorExpandable } from '@cognite/react-errors';
-import { removeItem } from '@cognite/storage';
+import { SidecarConfig, CDFClusterSet } from '@cognite/sidecar';
 
-import { useCogniteSDKClient } from '../internal';
-import { getNewDomain } from '../utils/domain';
-import { isProduction } from '../utils';
 import { useCluster } from '../hooks/useCluster';
+import { isProduction } from '../utils';
+import { getNewDomain } from '../utils/domain';
 
 import LoginWithFakeIDP from './LoginWithFakeIDP';
 
@@ -53,69 +44,26 @@ type Props = {
 };
 
 export function TenantSelectorWrapper({ sidecar }: Props) {
-  const [authState, setAuthState] = useState<AuthenticatedUser | undefined>();
-  const [authClient, setAuthClient] = useState<CogniteAuth | undefined>();
   const [cluster, setCluster] = useCluster(sidecar);
 
-  const {
-    aadApplicationId,
-    applicationName,
-    availableClusters,
-    applicationId,
-    directoryTenantId,
-    fakeIdp,
-  } = sidecar;
-
-  const { cdfApiBaseUrl } = getDefaultSidecar({
-    prod: isProduction,
-    cluster: cluster as CDFCluster,
-  });
-
-  const { flow, options } = getFlow();
-
-  const sdkClient = useCogniteSDKClient(applicationId, {
-    baseUrl: cdfApiBaseUrl,
-  });
-
-  const doSetup = async () => {
-    removeItem('@cognite/sdk:accountLocalId');
-
-    const cogniteAuth = new CogniteAuth(sdkClient, {
-      aad: aadApplicationId
-        ? {
-            appId: aadApplicationId,
-            directoryTenantId: options?.directory || directoryTenantId,
-          }
-        : undefined,
-      appName: applicationId,
-      cluster,
-      flow,
-    });
-
-    const unsubscribe = cogniteAuth.onAuthChanged(
-      applicationId,
-      (user: AuthenticatedUser) => {
-        if (user) {
-          setAuthState(user);
-        }
-      }
-    );
-
-    setAuthClient(cogniteAuth);
-    return unsubscribe;
-  };
-
-  useEffect(() => {
-    const callbacks = doSetup();
-
-    return () => {
-      callbacks.then((action) => {
-        action();
-      });
-    };
-  }, [sidecar, flow, cluster]);
+  const { aadApplicationId, applicationName, availableClusters, fakeIdp } =
+    sidecar;
 
   const handleSubmit = async (selectedProject: string) => {
+    // Get the general auth flow. FakeIDP and Azure set it right away
+    // so if no auth flow is set until this point we can assume that "COGNITE_AUTH" is the correct fallback
+    const { flow, options } = getFlow(selectedProject);
+
+    // then we save the flow for each specific project
+    saveFlow(
+      flow || 'COGNITE_AUTH',
+      {
+        cluster,
+        directory: options?.directory,
+      },
+      selectedProject
+    );
+
     const { hash, search, hostname } = window.location;
     const url = [
       `//${getNewDomain(hostname, cluster)}/${selectedProject}`,
@@ -126,21 +74,6 @@ export function TenantSelectorWrapper({ sidecar }: Props) {
       .join('');
     window.location.href = url;
   };
-
-  const ErrorDisplay = memo(() => {
-    if (!authState?.error || !authState?.errorMessage) {
-      return null;
-    }
-
-    return (
-      <ErrorExpandable
-        title="There has been an error"
-        style={{ marginTop: '30px' }}
-      >
-        {authState?.errorMessage}
-      </ErrorExpandable>
-    );
-  });
 
   return (
     <>
@@ -154,22 +87,27 @@ export function TenantSelectorWrapper({ sidecar }: Props) {
         isProduction={isProduction}
       />
       {fakeIdp && (
-        <>
-          {flow === 'FAKE_IDP' && <ErrorDisplay />}
-          <div style={{ position: 'absolute', bottom: '1%', left: '42%' }}>
-            {fakeIdp
-              ?.filter((fakeIdp) => fakeIdp.cluster === cluster)
-              .map((fakeIdp) => (
-                <LoginWithFakeIDP
-                  key={fakeIdp.name || fakeIdp.fakeApplicationId}
-                  handleSubmit={handleSubmit}
-                  fakeIdpOptions={fakeIdp}
-                  authClient={authClient}
-                  disabled={fakeIdp.cluster !== cluster}
-                />
-              ))}
-          </div>
-        </>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '1%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {fakeIdp
+            ?.filter((fakeIdp) => fakeIdp.cluster === cluster)
+            .map((fakeIdp) => (
+              <LoginWithFakeIDP
+                key={fakeIdp.name || fakeIdp.fakeApplicationId}
+                handleSubmit={handleSubmit}
+                fakeIdpOptions={fakeIdp}
+                disabled={fakeIdp.cluster !== cluster}
+              />
+            ))}
+        </div>
       )}
     </>
   );

@@ -1,3 +1,11 @@
+import { Configuration, PublicClientApplication } from '@azure/msal-browser';
+import { AuthenticationResult } from '@azure/msal-common';
+import {
+  getFromLocalStorage,
+  saveToLocalStorage,
+  removeItem,
+} from '@cognite/storage';
+import { useState } from 'react';
 import * as React from 'react';
 import { Router } from 'react-router-dom';
 import merge from 'lodash/merge';
@@ -11,21 +19,21 @@ import { SidecarConfig } from '@cognite/sidecar';
 import '@cognite/cogs.js/dist/cogs.css';
 
 import {
-  AuthContainer,
-  AuthContainerForApiKeyMode,
   ConditionalLoopDetector,
   ConditionalQueryClientProvider,
   ConditionalSentry,
   TranslationWrapper,
   TenantSelectorWrapper,
+  AuthContainer,
+  IntercomContainer,
 } from './components';
-import { IntercomContainer } from './components/Intercom';
-import { useCogniteSDKClient, createBrowserHistory } from './internal';
+import { PROJECT_TO_LOGIN } from './components/AuthProvider/TokenFactory';
+import { getProjectSpecificFlow } from './components/AuthProvider/utils';
+import { createBrowserHistory } from './internal';
 import { ConditionalReduxProvider } from './providers';
 import { storage, getTenantInfo } from './utils';
 
-const { REACT_APP_API_KEY: apiKey, REACT_APP_API_KEY_PROJECT: project } =
-  process.env;
+const { REACT_APP_API_KEY_PROJECT: project } = process.env;
 
 interface ContainerSidecarConfig extends SidecarConfig {
   disableTranslations?: boolean;
@@ -53,7 +61,6 @@ const RawContainer: React.FC<Props> = ({
 
   const {
     applicationId,
-    cdfApiBaseUrl,
     disableLoopDetector,
     disableSentry,
     disableIntercom,
@@ -62,10 +69,8 @@ const RawContainer: React.FC<Props> = ({
   } = sidecar;
 
   const [history] = React.useState(() => createBrowserHistory(initialTenant));
-
-  const client = useCogniteSDKClient(applicationId, {
-    baseUrl: cdfApiBaseUrl,
-  });
+  const [redirectAuthResult, setRedirectAuthResult] =
+    useState<AuthenticationResult | null>();
 
   const initialTenantOrApiKeyTenant = project || initialTenant;
 
@@ -73,29 +78,61 @@ const RawContainer: React.FC<Props> = ({
     storage.init({ tenant: initialTenant, appName: applicationId });
   }, [initialTenant, applicationId]);
 
-  React.useEffect(() => {
-    if (apiKey) {
-      client.loginWithApiKey({
-        apiKey,
-        project: initialTenantOrApiKeyTenant,
-      });
-    }
-  }, []); // no deps, this only runs once.
+  const projectFlow = getProjectSpecificFlow(initialTenantOrApiKeyTenant);
+  const configuration: Configuration = {
+    auth: {
+      clientId: sidecar.aadApplicationId || '',
+      authority: `https://login.microsoftonline.com/${
+        projectFlow?.options?.directory || sidecar.AADTenantID || 'common'
+      }`,
+      redirectUri: `${window.location.origin}`,
+      navigateToLoginRequestUrl: true,
+    },
+  };
+
+  // this handles the redirect login from azure
+  const publicClientApplication = new PublicClientApplication(configuration);
+  publicClientApplication
+    .handleRedirectPromise()
+    .then((res) => {
+      const projectToLogin = getFromLocalStorage<string>(PROJECT_TO_LOGIN);
+      if (projectToLogin && res?.account?.localAccountId) {
+        saveToLocalStorage(
+          `${projectToLogin}_localAccountId`,
+          res.account.localAccountId
+        );
+
+        removeItem(PROJECT_TO_LOGIN);
+      }
+      setRedirectAuthResult(res);
+      return res;
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      refreshPage();
+    });
+
+  // Wait for the handleRedirectPromise to resolve.
+  // we use it for the redirection on azure ad auth
+  if (redirectAuthResult === undefined) {
+    return null;
+  }
 
   if (!initialTenant) {
     if (!initialTenantOrApiKeyTenant) {
       return <TenantSelectorWrapper sidecar={sidecar} />;
     }
+
     history.push(`/${initialTenantOrApiKeyTenant}/`);
-    document.location.reload();
+
+    // Don't know why we need to reload here, need to ask @Fran
+    // document.location.reload();
     return <Loader />;
   }
-  const ChosenAuthContainer = apiKey
-    ? AuthContainerForApiKeyMode
-    : AuthContainer;
 
   const refreshPage = () => {
-    document.location.href = '/';
+    window.location.assign('/');
   };
 
   return (
@@ -109,11 +146,10 @@ const RawContainer: React.FC<Props> = ({
           history={history}
           {...sentrySettings}
         >
-          <ChosenAuthContainer
+          <AuthContainer
             sidecar={sidecar}
-            sdkClient={client}
             authError={refreshPage}
-            tenant={initialTenant}
+            project={initialTenant}
           >
             <IntercomContainer
               intercomSettings={merge(
@@ -131,7 +167,7 @@ const RawContainer: React.FC<Props> = ({
                 </ErrorBoundary>
               </ConditionalReduxProvider>
             </IntercomContainer>
-          </ChosenAuthContainer>
+          </AuthContainer>
         </ConditionalSentry>
       </ConditionalQueryClientProvider>
     </ConditionalLoopDetector>

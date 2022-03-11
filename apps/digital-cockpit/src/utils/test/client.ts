@@ -14,6 +14,8 @@ export const createMockCdfClient = (): CdfClient => {
   const cdfClient = createClient(
     {
       appId: 'unit-tests',
+      project: '',
+      getToken: () => Promise.resolve(''),
       dataSetName: '',
     },
     cogniteClient
@@ -42,6 +44,7 @@ export const createMockApiClient = (): ApiClient => {
     appId: 'unit-tests',
     baseUrl: '',
     project: '',
+    getToken: () => Promise.resolve(''),
   });
   return apiClient;
 };

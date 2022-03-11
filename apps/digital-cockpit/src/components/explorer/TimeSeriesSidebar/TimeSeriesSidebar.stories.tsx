@@ -42,7 +42,7 @@ const Template: ExtendedStory<TimeSeriesSidebarProps> = (args) => (
 export const Standard = Template.bind({});
 Standard.story = configureStory({
   mockCdfClient: (client: CdfClient) => {
-    client.cogniteClient.setProject('project');
+    // client.cogniteClient.setProject('project');
     client.cogniteClient.datapoints.retrieve = () => {
       return Promise.resolve([MockDatapoints.datapoint(50)]);
     };

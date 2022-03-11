@@ -1,6 +1,7 @@
 import { getDefaultSidecar } from './getDefaultSidecar';
 import { SidecarConfig } from './types';
 
+export const mockApplicationName = 'Some Application';
 export const mockSidecar = (
   override: Partial<SidecarConfig> = {}
 ): SidecarConfig => {
@@ -12,7 +13,7 @@ export const mockSidecar = (
     __sidecarFormatVersion: 1,
     aadApplicationId: '',
     applicationId: '',
-    applicationName: '',
+    applicationName: mockApplicationName,
     ...override,
   } as SidecarConfig;
 };

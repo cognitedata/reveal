@@ -2,10 +2,7 @@ import { Feature, FeatureCollection } from 'geojson';
 import forEach from 'lodash/forEach';
 import reduce from 'lodash/reduce';
 
-import {
-  GeospatialCreateFeatureType,
-  GeospatialFeature,
-} from '@cognite/sdk-v7';
+import { GeospatialCreateFeatureType, GeospatialFeature } from '@cognite/sdk';
 
 import {
   MAX_STRING_LENGTH_MULTIPLIER,

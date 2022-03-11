@@ -1,17 +1,17 @@
-import GlobalStyles from 'global-styles';
 import { Switch, Redirect, Route } from 'react-router-dom';
-import { Container, Logout } from '@cognite/react-container';
+import GlobalStyles from 'global-styles';
 import sidecar from 'utils/sidecar';
-import Info from 'pages/Info';
-import Home from 'pages/Home';
+import { Container, Logout } from '@cognite/react-container';
 import CogniteSDK from 'pages/CogniteSDK';
-import Intercom from 'pages/Intercom';
-import PID from 'pages/PID';
 import Comments from 'pages/Comments';
 import CommentDrawer from 'pages/Comments/CommentDrawerPage';
 import CommentSlider from 'pages/Comments/CommentSliderPage';
-import { MenuBar, PAGES } from 'pages/Menubar';
 import NotFoundPage from 'pages/Error404';
+import Home from 'pages/Home';
+import Info from 'pages/Info';
+import Intercom from 'pages/Intercom';
+import { MenuBar, PAGES } from 'pages/Menubar';
+import PID from 'pages/PID';
 
 const App = () => (
   <Container sidecar={sidecar}>

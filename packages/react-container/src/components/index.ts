@@ -1,4 +1,4 @@
-export * from './AuthContainer';
+export * from './AuthProvider/AuthContainer';
 export * from './ConditionalWrapper';
 export * from './Intercom';
 export * from './Logout';

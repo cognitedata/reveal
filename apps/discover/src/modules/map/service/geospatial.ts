@@ -8,7 +8,6 @@ import { API_PLAYGROUND_DOMAIN } from 'constants/app';
 import { NPDLayerItemResponse } from 'modules/map/types';
 
 import { FetchHeaders } from '../../../utils/fetch';
-import { getGeospatialSDKClient } from '../sdk';
 
 export interface SpatialSearchItemResponse {
   assetIds: number[];
@@ -46,22 +45,6 @@ const cache: {
   getWellboresExplorationActive: undefined,
   getProspects: undefined,
   getTrajectories: undefined,
-};
-
-export const getGenericMapLayer = async () => {
-  const geospatialSDK = getGeospatialSDKClient();
-
-  return geospatialSDK
-    ?.findSpatial({
-      limit: 1000,
-      layer: 'custom',
-      source: 'custom',
-      outputGeometry: 'geojson',
-    })
-    .then((result) => {
-      // console.log('result', result);
-      return result;
-    });
 };
 
 export async function getWellHeads(tenant: string, headers: FetchHeaders) {

@@ -46,16 +46,22 @@ const AppProviders: React.FC<Props> = ({
   mockCDFClient,
   mockApiClient,
 }: Props): JSX.Element => {
-  const { client } = useContext(AuthProvider);
+  const { client, authState } = useContext(AuthProvider);
   const cdfClient = createClient(
     {
       appId: 'digital-cockpit',
+      project: tenant,
+      getToken: () => Promise.resolve(authState?.token || ''),
       dataSetName: 'digital-cockpit',
     },
     client
   );
   const apiClient = createApiClient(
-    { appId: 'digital-cockpit', project: tenant },
+    {
+      appId: 'digital-cockpit',
+      project: tenant,
+      getToken: () => Promise.resolve(authState?.token || ''),
+    },
     client
   );
   const store = configureStore(initialState);
@@ -69,6 +75,9 @@ const AppProviders: React.FC<Props> = ({
             <CdfClientProvider client={mockCDFClient || cdfClient}>
               <CDFExplorerProvider
                 client={mockCDFClient?.cogniteClient || cdfClient.cogniteClient}
+                authState={
+                  authState || { authenticated: false, initialising: false }
+                }
               >
                 <ApiClientProvider apiClient={mockApiClient || apiClient}>
                   <TenantProvider tenant={tenant}>
@@ -96,6 +105,9 @@ const AppProviders: React.FC<Props> = ({
             client={cdfClient.cogniteClient}
             handleError={(e) => Sentry.captureException(e)}
             trackMetrics={cdfExplorerMetrics.track}
+            authState={
+              authState || { authenticated: false, initialising: false }
+            }
           >
             <ApiClientProvider apiClient={apiClient}>
               <TenantProvider tenant={tenant}>

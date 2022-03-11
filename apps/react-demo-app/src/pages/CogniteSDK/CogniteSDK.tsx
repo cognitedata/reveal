@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { useTranslation, Trans } from 'react-i18next';
+import { Title, Body, A } from '@cognite/cogs.js';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { CogniteClient } from '@cognite/sdk';
-import { Title, Body, A } from '@cognite/cogs.js';
-import { useTranslation, Trans } from 'react-i18next';
 
 import { Container, Code } from '../elements';
 

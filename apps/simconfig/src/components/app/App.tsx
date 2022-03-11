@@ -59,15 +59,15 @@ export default function App() {
   }
 
   if (!isAuthenticated && reauthenticate) {
-    const handleReauth = async () => {
+    const handleReauth = () => {
       try {
-        await reauthenticate();
+        reauthenticate();
       } catch (e) {
         console.error('Re-authentication failed:', e);
         window.location.href = '/';
       }
     };
-    void handleReauth();
+    handleReauth();
     return null;
   }
 

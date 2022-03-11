@@ -55,6 +55,7 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//@azure/msal-browser",
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
     "@npm//@types/history",
@@ -70,6 +71,8 @@ DEPENDENCIES = [
     "@npm//react-redux",
     "@npm//react-router-dom",
     "@npm//redux",
+    "@npm//jest-location-mock",
+    "@npm//msw",
     "//packages/metrics",
     "//packages/react-i18n",
     "//packages/react-errors",
