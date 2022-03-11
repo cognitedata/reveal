@@ -60,6 +60,7 @@ import TimePeriodSelector from 'components/TimePeriodSelector';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import { FileView } from 'pages/FileView/FileView';
+import { useIsChartOwner } from 'hooks/user';
 import SourceRows from './SourceRows';
 
 import {
@@ -120,6 +121,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
    * Get local chart context
    */
   const [chart, setChart] = useRecoilState(chartAtom);
+
+  /**
+   * Check if you own the chart
+   */
+  const isChartOwner = useIsChartOwner(chart);
 
   /**
    * Method for updating storage value of chart
@@ -449,7 +455,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   </Button>
                 </section>
               )}
-              {login?.id && login?.id !== chart?.user && (
+              {login?.id && !isChartOwner && (
                 <section>
                   <WarningAlert
                     type="warning"
