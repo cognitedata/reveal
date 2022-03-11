@@ -2,8 +2,7 @@ import styled from 'styled-components/macro';
 
 import { Modal } from '@cognite/cogs.js';
 
-import { SubTitleText } from 'components/emptyState/elements';
-import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
+import { Flex, FlexRow, sizes } from 'styles/layout';
 
 export const TopBarWrapper = styled(FlexRow)`
   // gap: ${sizes.normal};
@@ -86,50 +85,4 @@ export const CasingPreviewModalWrapper = styled(Modal)`
 
 export const SearchBoxWrapper = styled(Flex)`
   width: auto;
-`;
-
-export const EmptyStateWrapper = styled(FlexColumn)`
-  width: auto;
-  height: calc(100% - 52px);
-  align-items: center;
-  justify-content: center;
-  & > div:first-child {
-    max-height: 200px;
-    white-space: break-spaces;
-    max-width: 200px;
-    & ${SubTitleText} {
-      display: flex;
-      align-items: center;
-      text-align: center;
-    }
-
-    & div {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 256px;
-    }
-
-    img {
-      margin-bottom: 32px;
-    }
-
-    h6 {
-      height: 40px;
-      span {
-        white-space: break-spaces;
-        width: 256px;
-        height: 40px;
-        line-height: 20px;
-        display: flex;
-        align-items: center;
-        text-align: center;
-        letter-spacing: -0.01em;
-      }
-    }
-  }
-
-  & > div:last-child {
-    margin-top: 32px;
-  }
 `;

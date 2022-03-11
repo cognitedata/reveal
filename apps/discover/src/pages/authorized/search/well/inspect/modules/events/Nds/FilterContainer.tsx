@@ -2,6 +2,7 @@ import { useMemo, useEffect, FC } from 'react';
 import { useDispatch } from 'react-redux';
 
 import countBy from 'lodash/countBy';
+import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import set from 'lodash/set';
 import uniq from 'lodash/uniq';
@@ -15,7 +16,7 @@ import { useFilterDataNds } from 'modules/filterData/selectors';
 
 import { hasCategoryFilterFulfilled } from '../common';
 import { accessors } from '../constants';
-import { FilterCol } from '../elements';
+import { FilterCol, NdsFilterContent } from '../elements';
 
 import {
   NdsFilterContainer,
@@ -104,59 +105,65 @@ const FilterContainer: FC<Props> = ({
     onChangeFilteredEvents(localFilteredEvents);
   }, [riskType, severity, probability, JSON.stringify(events)]);
 
+  if (isEmpty(events)) {
+    return null;
+  }
+
   return (
-    <NdsFilterContainer>
-      <NdsFilterRow>
-        <FilterCol span={8}>
-          <NdsFilterItemWrapper>
-            <CheckBoxes
-              onValueChange={(vals: string[]) =>
-                dispatch(filterDataActions.setNdsRiskType(vals))
-              }
-              selectedValues={riskType}
-              options={riskTypesAll}
-              extraLabels={risktableAllExtraLabels}
-              header={{ title: 'Risk Type' }}
-              scrollable
-            />
-          </NdsFilterItemWrapper>
-        </FilterCol>
-        <FilterCol span={8}>
-          <NdsFilterItemWrapper>
-            <CheckBoxes
-              onValueChange={(vals: string[]) =>
-                dispatch(filterDataActions.setNdsSeverity(vals))
-              }
-              selectedValues={severity}
-              options={severityAll}
-              extraLabels={severityAllExtraLabels}
-              header={{
-                title: `Severity - ${minSeverity} least / ${maxSeverity} most`,
-                tooltip: `Severity Level of the risk. Values of ${minSeverity} through ${maxSeverity} with ${minSeverity} lowest`,
-              }}
-              scrollable
-            />
-          </NdsFilterItemWrapper>
-        </FilterCol>
-        <FilterCol span={8}>
-          <NdsFilterItemWrapper>
-            <CheckBoxes
-              onValueChange={(vals: string[]) =>
-                dispatch(filterDataActions.setNdsProbability(vals))
-              }
-              selectedValues={probability}
-              options={probabilityAll}
-              extraLabels={probabilityAllExtraLabels}
-              header={{
-                title: `Probability - ${minProbability} least / ${maxProbability} most`,
-                tooltip: `Probability Level of the risk. Values of ${minSeverity} through ${maxSeverity} with ${minSeverity} lowest`,
-              }}
-              scrollable
-            />
-          </NdsFilterItemWrapper>
-        </FilterCol>
-      </NdsFilterRow>
-    </NdsFilterContainer>
+    <NdsFilterContent>
+      <NdsFilterContainer>
+        <NdsFilterRow>
+          <FilterCol span={8}>
+            <NdsFilterItemWrapper>
+              <CheckBoxes
+                onValueChange={(vals: string[]) =>
+                  dispatch(filterDataActions.setNdsRiskType(vals))
+                }
+                selectedValues={riskType}
+                options={riskTypesAll}
+                extraLabels={risktableAllExtraLabels}
+                header={{ title: 'Risk Type' }}
+                scrollable
+              />
+            </NdsFilterItemWrapper>
+          </FilterCol>
+          <FilterCol span={8}>
+            <NdsFilterItemWrapper>
+              <CheckBoxes
+                onValueChange={(vals: string[]) =>
+                  dispatch(filterDataActions.setNdsSeverity(vals))
+                }
+                selectedValues={severity}
+                options={severityAll}
+                extraLabels={severityAllExtraLabels}
+                header={{
+                  title: `Severity - ${minSeverity} least / ${maxSeverity} most`,
+                  tooltip: `Severity Level of the risk. Values of ${minSeverity} through ${maxSeverity} with ${minSeverity} lowest`,
+                }}
+                scrollable
+              />
+            </NdsFilterItemWrapper>
+          </FilterCol>
+          <FilterCol span={8}>
+            <NdsFilterItemWrapper>
+              <CheckBoxes
+                onValueChange={(vals: string[]) =>
+                  dispatch(filterDataActions.setNdsProbability(vals))
+                }
+                selectedValues={probability}
+                options={probabilityAll}
+                extraLabels={probabilityAllExtraLabels}
+                header={{
+                  title: `Probability - ${minProbability} least / ${maxProbability} most`,
+                  tooltip: `Probability Level of the risk. Values of ${minSeverity} through ${maxSeverity} with ${minSeverity} lowest`,
+                }}
+                scrollable
+              />
+            </NdsFilterItemWrapper>
+          </FilterCol>
+        </NdsFilterRow>
+      </NdsFilterContainer>
+    </NdsFilterContent>
   );
 };
 

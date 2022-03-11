@@ -32,6 +32,10 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef }: Props) => {
     [casings, preferredUnit]
   );
 
+  if (isEmpty(wells)) {
+    return <EmptyState />;
+  }
+
   return (
     <CasingViewListWrapper ref={scrollRef}>
       {isLoading && <EmptyState isLoading={isLoading} />}

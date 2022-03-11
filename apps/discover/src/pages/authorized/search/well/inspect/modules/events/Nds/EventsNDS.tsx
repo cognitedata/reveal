@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { ResizableBox } from 'react-resizable';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { CogniteEvent } from '@cognite/sdk';
 
+import EmptyState from 'components/emptyState';
 import { Loading } from 'components/loading';
 import { Table } from 'components/tablev3';
 import {
@@ -16,7 +19,7 @@ import {
 } from 'hooks/useTimeLog';
 import { useNdsEventsForTable } from 'modules/wellSearch/selectors';
 
-import { NdsFilterContent, NdsFilterWrapper, ResizeHandle } from '../elements';
+import { NdsFilterWrapper, ResizeHandle } from '../elements';
 
 import { getDataLayer } from './dataLayer';
 import FilterContainer from './FilterContainer';
@@ -62,22 +65,25 @@ export const EventsNds: React.FC = () => {
           minConstraints={FILTER_PANEL_MIN_SIZE}
           handle={<ResizeHandle />}
         >
-          <NdsFilterContent>
-            <FilterContainer
-              events={ndsEvents}
-              filteredEvents={filteredEvents}
-              onChangeFilteredEvents={(events) => setFilteredEvents(events)}
-            />
-          </NdsFilterContent>
+          <FilterContainer
+            events={ndsEvents}
+            filteredEvents={filteredEvents}
+            onChangeFilteredEvents={(events) => setFilteredEvents(events)}
+          />
         </ResizableBox>
       </NdsFilterWrapper>
-      <Table<CogniteEvent>
-        scrollTable
-        id="events-nds-table"
-        data={filteredEvents || []}
-        columns={columns}
-        options={tableOptions}
-      />
+
+      {isEmpty(filteredEvents) ? (
+        <EmptyState />
+      ) : (
+        <Table<CogniteEvent>
+          scrollTable
+          id="events-nds-table"
+          data={filteredEvents || []}
+          columns={columns}
+          options={tableOptions}
+        />
+      )}
     </>
   );
 };

@@ -1,5 +1,8 @@
 import React from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+
+import EmptyState from 'components/emptyState';
 import { Loading } from 'components/loading/Loading';
 import { Table } from 'components/tablev3';
 import { useOverviewData } from 'modules/wellSearch/selectors/sequence/useOverviewData';
@@ -34,6 +37,10 @@ export const Overview: React.FC = () => {
 
   if (isLoading) {
     return <Loading />;
+  }
+
+  if (isEmpty(overviewData)) {
+    return <EmptyState />;
   }
 
   return <OverviewComponent overviewData={overviewData} />;

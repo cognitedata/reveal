@@ -23,6 +23,9 @@ export const StyledTypography = styled(Typography)`
   position: relative;
   height: 1.4em; // Height of 1 line (140% line height)
   width: 100%;
+  & > span {
+    margin-top: 8px;
+  }
 `;
 
 export const Text = styled.span`
@@ -60,4 +63,5 @@ export const ChildrenContainer = styled.div`
 export const SubtitleContainer = styled.div`
   align-items: center;
   justify-content: center;
+  margin-top: 16px;
 `;

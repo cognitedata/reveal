@@ -29,7 +29,9 @@ describe('NptWellsTable', () => {
 
   const defaultTestInit = () => {
     const store = getMockedStore();
-    return { ...testRenderer(NptWellsTable, store) };
+    return {
+      ...testRenderer(NptWellsTable, store, { events: [{ wellboreIds: 1 }] }),
+    };
   };
 
   it('should render table as expected', () => {

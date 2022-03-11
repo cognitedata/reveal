@@ -7,6 +7,10 @@ import isEmpty from 'lodash/isEmpty';
 
 import { BaseButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
+import {
+  NO_RESULTS_TEXT,
+  NO_RESULTS_SUB_TEXT,
+} from 'components/emptyState/constants';
 import { Table, TableResults, RowProps } from 'components/tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useCasingsForTable } from 'modules/wellSearch/selectors';
@@ -15,7 +19,6 @@ import CasingPreviewModal from './CasingPreviewModal';
 import {
   CasingsTableWrapper,
   CasingViewButtonWrapper,
-  EmptyStateWrapper,
   GroupedCasingsTableWrapper,
 } from './elements';
 import { getFortmattedCasingData } from './helper';
@@ -28,16 +31,13 @@ const wellsTableOptions = {
   hideScrollbars: true,
 };
 
-const CASINGS_EMPTY_TITLE = 'We couldn’t find anything based on your search';
-const CASINGS_EMPTY_SUB_TITLE = 'Please, change your search parameters';
 const SCROLL_MARGIN = 15;
 
 type Props = {
   searchPhrase: string;
-  onReset: () => void;
 };
 
-export const CasingTableView: React.FC<Props> = ({ searchPhrase, onReset }) => {
+export const CasingTableView: React.FC<Props> = ({ searchPhrase }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [buttonOffset, setButtonOffset] = useState<number>(0);
 
@@ -162,19 +162,11 @@ export const CasingTableView: React.FC<Props> = ({ searchPhrase, onReset }) => {
 
   if (isLoading || isEmpty(data)) {
     return (
-      <EmptyStateWrapper>
-        <EmptyState
-          isLoading={isLoading}
-          emptyTitle={CASINGS_EMPTY_TITLE}
-          emptySubtitle={CASINGS_EMPTY_SUB_TITLE}
-        />
-        <BaseButton
-          type="primary"
-          text="Reset to default"
-          aria-label="View"
-          onClick={onReset}
-        />
-      </EmptyStateWrapper>
+      <EmptyState
+        isLoading={isLoading}
+        emptyTitle={NO_RESULTS_TEXT}
+        emptySubtitle={NO_RESULTS_SUB_TEXT}
+      />
     );
   }
 

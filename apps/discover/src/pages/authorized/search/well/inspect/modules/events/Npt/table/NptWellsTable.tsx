@@ -5,6 +5,7 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 
+import EmptyState from 'components/emptyState';
 import { Table, TableResults } from 'components/tablev3';
 import { useDeepEffect } from 'hooks/useDeep';
 import { NPTEvent } from 'modules/wellSearch/types';
@@ -89,6 +90,10 @@ export const NptWellsTable: React.FC<{ events: NPTEvent[] }> = ({ events }) => {
     },
     [wells]
   );
+
+  if (isEmpty(wells)) {
+    return <EmptyState />;
+  }
 
   return (
     <WellNptEventsTableWrapper>

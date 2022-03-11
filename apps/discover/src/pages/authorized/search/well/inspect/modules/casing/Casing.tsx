@@ -47,10 +47,7 @@ export const Casing: React.FC = () => {
         <CasingGraphView scrollRef={scrollRef} />
       )}
       {viewMode === VIEW_MODES.Table && (
-        <CasingTableView
-          searchPhrase={searchPhrase}
-          onReset={() => setSearchPhrase('')}
-        />
+        <CasingTableView searchPhrase={searchPhrase} />
       )}
     </>
   );

@@ -6,6 +6,7 @@ import map from 'lodash/map';
 import pickBy from 'lodash/pickBy';
 
 import { PreviewButton } from 'components/buttons';
+import EmptyState from 'components/emptyState';
 import { Loading } from 'components/loading/Loading';
 import { OKModal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
@@ -98,6 +99,10 @@ export const WellLogsTable: React.FC = () => {
 
   if (isLoading) {
     return <Loading />;
+  }
+
+  if (isEmpty(data)) {
+    return <EmptyState />;
   }
 
   return (
