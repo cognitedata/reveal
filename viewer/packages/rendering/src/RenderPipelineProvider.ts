@@ -5,5 +5,5 @@
 import { RenderPass } from './RenderPass';
 
 export interface RenderPipelineProvider {
-  pipeline(): Generator<RenderPass>;
+  pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass>;
 }

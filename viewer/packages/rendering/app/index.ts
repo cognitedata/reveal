@@ -8,7 +8,7 @@ import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
 import { CadMaterialManager } from '@reveal/rendering';
 import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
-import { revealEnv } from '@reveal/utilities';
+import { NumericRange, revealEnv } from '@reveal/utilities';
 import dat from 'dat.gui';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { ByScreenSizeSectorCuller, CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
@@ -21,12 +21,10 @@ revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-w
 init();
 
 async function init() {
-  const scene = new THREE.Scene();
-
   const gui = new dat.GUI();
 
   const guiData = { drawCalls: 0 };
-  gui.add(guiData, 'drawCalls').listen();
+  const guiController = gui.add(guiData, 'drawCalls').listen();
 
   const client = await createApplicationSDK('reveal.example.simple', {
     project: '3d-test',
@@ -39,8 +37,11 @@ async function init() {
   const urlParams = new URLSearchParams(queryString);
 
   // Defaults to all-primitives model on 3d-test
-  const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
+  // const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
+  const modelId = parseInt(urlParams.get('modelId') ?? '3847114555645531');
+
+  // const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '3020962330252000');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
   const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
@@ -48,39 +49,35 @@ async function init() {
 
   const materialManager = new CadMaterialManager();
   const cadModelFactory = new CadModelFactory(materialManager, cdfModelMetadataProvider, cdfModelDataProvider);
-  const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller());
+  const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), true);
 
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
 
-  cadManager.budget = {
-    highDetailProximityThreshold: cadManager.budget.highDetailProximityThreshold,
-    maximumRenderCost: cadManager.budget.maximumRenderCost
-  };
-
+  const scene = new THREE.Scene();
   const model = await cadManager.addModel(modelIdentifier);
+  scene.add(model);
+  model.updateMatrix();
+  model.updateWorldMatrix(true, true);
 
-  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 3, 100);
+  const bb: THREE.Box3 = (model as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
+  bb.applyMatrix4(model.children[0].matrix);
+
+  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 3, 100000);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   const renderManager = new RenderManager(renderer);
-  const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene);
+  const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, model);
 
   const grid = new THREE.GridHelper(30, 40);
-  // grid.renderOrder = 1;
-  // (grid.material as THREE.Material).depthTest = false;
   grid.position.set(14, -1, -14);
-  // scene.add(grid);
-
-  scene.add(model);
 
   renderer.domElement.style.backgroundColor = '#000000';
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  camera.position.copy(new THREE.Vector3(10, 10, 10));
-  controls.target.copy(new THREE.Vector3(10, 0, -10));
-  controls.update();
+
+  fitCameraToBoundingBox(bb, camera, controls);
 
   cadModelUpdateHandler.updateCamera(camera);
   cadModelUpdateHandler.getLoadingStateObserver().subscribe({ next: render });
@@ -88,9 +85,15 @@ async function init() {
   document.body.appendChild(renderer.domElement);
 
   const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
-  const style = DefaultNodeAppearance.Ghosted;
-  const collection = new TreeIndexNodeCollection([0, 1, 2, 3]);
-  nodeAppearanceProvider.assignStyledNodeCollection(collection, style);
+  nodeAppearanceProvider.assignStyledNodeCollection(
+    new TreeIndexNodeCollection(new NumericRange(11000, 1000)),
+    DefaultNodeAppearance.Ghosted
+  );
+
+  nodeAppearanceProvider.assignStyledNodeCollection(
+    new TreeIndexNodeCollection(new NumericRange(60000, 1000)),
+    DefaultNodeAppearance.Highlighted
+  );
 
   controls.addEventListener('change', () => {
     cadModelUpdateHandler.updateCamera(camera);
@@ -104,8 +107,31 @@ async function init() {
   function render() {
     window.requestAnimationFrame(() => {
       controls.update();
-      renderManager.render(defaultRenderPipeline, camera);
       guiData.drawCalls = renderer.info.render.calls;
+      renderManager.render(defaultRenderPipeline, camera);
+      guiController.updateDisplay();
     });
   }
+}
+
+function fitCameraToBoundingBox(
+  box: THREE.Box3,
+  camera: THREE.PerspectiveCamera,
+  controls: OrbitControls,
+  radiusFactor: number = 2
+): void {
+  const center = new THREE.Vector3().lerpVectors(box.min, box.max, 0.5);
+  const radius = 0.5 * new THREE.Vector3().subVectors(box.max, box.min).length();
+  const boundingSphere = new THREE.Sphere(center, radius);
+
+  const target = boundingSphere.center;
+  const distance = boundingSphere.radius * radiusFactor;
+  const direction = new THREE.Vector3(0, 0, -1);
+  direction.applyQuaternion(camera.quaternion);
+
+  const position = new THREE.Vector3();
+  position.copy(direction).multiplyScalar(-distance).add(target);
+
+  camera.position.copy(position);
+  controls.target.copy(target);
 }

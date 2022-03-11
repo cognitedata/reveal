@@ -10,10 +10,12 @@ export class RenderManager {
 
   constructor(renderer: THREE.WebGLRenderer) {
     this._renderer = renderer;
+    renderer.info.autoReset = false;
   }
 
   public async render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): Promise<void> {
-    for await (const renderPass of renderPipeline.pipeline()) {
+    this._renderer.info.reset();
+    for await (const renderPass of renderPipeline.pipeline(this._renderer)) {
       await renderPass.render(this._renderer, camera);
     }
     return;
