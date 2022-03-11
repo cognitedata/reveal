@@ -3,17 +3,28 @@ import {
   getDataAvailabilityFilter,
 } from '../getDataAvailabilityFilter';
 
+/**
+ * DataAvailabilityOption map with WellFilter attribute.
+ */
+const FILTER_ATTRIBUTE_MAP: Record<DataAvailabilityOptions, string> = {
+  [DataAvailabilityOptions.Trajectories]: 'trajectories',
+  [DataAvailabilityOptions.NDS]: 'nds',
+  [DataAvailabilityOptions.NPT]: 'npt',
+  [DataAvailabilityOptions.Casings]: 'casings',
+};
+
 describe('getDataAvailabilityFilter', () => {
   it('should be ok empty', () => {
-    expect(getDataAvailabilityFilter([])).toEqual({});
+    expect(getDataAvailabilityFilter([])).toEqual({}); // Passing an empty array
+    expect(getDataAvailabilityFilter({})).toEqual({}); // Passing a non-array
   });
-  it('should be ok with trajectories', () => {
-    expect(
-      // trying not to test the implementation details
-      // but something a bit generic
-      JSON.stringify(
-        getDataAvailabilityFilter([DataAvailabilityOptions.Trajectories])
-      )
-    ).toContain('trajectories');
-  });
+
+  test.each(Object.values(DataAvailabilityOptions))(
+    'should be ok with %p',
+    (filter) => {
+      expect(JSON.stringify(getDataAvailabilityFilter([filter]))).toContain(
+        FILTER_ATTRIBUTE_MAP[filter]
+      );
+    }
+  );
 });

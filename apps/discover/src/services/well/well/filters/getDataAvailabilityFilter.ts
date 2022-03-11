@@ -17,10 +17,12 @@ export const getDataAvailabilityFilter = (enabled: unknown): WellFilter => {
   const verifiedData = enabled as DataAvailabilityOptions[];
 
   const dataAvailabilityFilters: WellFilter = {};
-  // not sure how to do this for casings yet. need info from sigurd PP-2577
-  // if (wellFilters[id].includes(DataAvailabilityOptions.Casings)) {
-  //   dataAvailabilityFilters.casings = {};
-  // }
+
+  if (verifiedData.includes(DataAvailabilityOptions.Casings)) {
+    dataAvailabilityFilters.casings = {
+      exists: true,
+    };
+  }
   if (verifiedData.includes(DataAvailabilityOptions.Trajectories)) {
     dataAvailabilityFilters.trajectories = {};
   }

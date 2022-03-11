@@ -19,7 +19,7 @@ export const DataAvailability: React.FC<Props> = ({
     DataAvailabilityOptions.Trajectories,
     DataAvailabilityOptions.NDS,
     DataAvailabilityOptions.NPT,
-    // DataAvailabilityOptions.Casings,
+    DataAvailabilityOptions.Casings,
   ];
 
   return (

@@ -32,7 +32,7 @@
     "@cognite/sdk-v2": "npm:@cognite/sdk@^2.33.0",
     "@cognite/sdk-v7": "npm:@cognite/sdk@^7.0.0",
     "@cognite/sdk-wells-v2": "npm:@cognite/sdk-wells@2.0.13",
-    "@cognite/sdk-wells-v3": "npm:@cognite/sdk-wells@3.6.0",
+    "@cognite/sdk-wells-v3": "npm:@cognite/sdk-wells@3.8.0",
     "@cognite/seismic-sdk-js": "0.2.1",
     "@cognite/simconfig-api-sdk": "^1.1.0",
     "@cognite/user-management-service-types": "^0.1.2",
