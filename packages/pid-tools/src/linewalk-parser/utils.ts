@@ -24,7 +24,10 @@ export const diagramInstanceToAnnotation = (
   boundingBox: instance.svgRepresentation.boundingBox,
   nearestAssetExternalIds: [],
   labelIds: instance.labelIds,
-  lineNumbers: [...instance.lineNumbers, ...instance.inferedLineNumbers],
+  lineNumbers: [
+    ...(instance.lineNumbers ?? []),
+    ...(instance.inferedLineNumbers ?? []),
+  ],
 });
 
 export const symbolTagToAnnotation = (

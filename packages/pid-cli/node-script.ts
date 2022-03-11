@@ -2,11 +2,7 @@
 import * as fs from 'fs';
 import path from 'path';
 
-import {
-  computeLines,
-  GraphDocument,
-  DocumentForUpload,
-} from '../pid-tools/src';
+import { computeLines, GraphDocument } from '../pid-tools/src';
 
 import { version } from './package.json';
 import documentVersions from './PARSED_DOCUMENT_VERSIONS.json';
@@ -33,10 +29,10 @@ fs.readdir(outDir, (err, files) => {
   });
 });
 
-const store = (document: DocumentForUpload) => {
+const writeJsonToFile = (fileName: string, data: any) => {
   fs.writeFile(
-    path.resolve(outDir, document.externalId),
-    JSON.stringify(document, undefined, 2),
+    path.resolve(outDir, fileName),
+    JSON.stringify(data, undefined, 2),
     (error) => {
       if (error) {
         throw error;
@@ -71,7 +67,8 @@ fs.readdir(graphDir, (error, files) => {
       : []; // insert matchGraphs(graphs) here
 
   if (graphs?.length) {
-    computeLines(graphs, connections, version, store);
+    const files = computeLines(graphs, connections, version);
+    files.forEach(({ fileName, data }) => writeJsonToFile(fileName, data));
   }
 
   const updatedVersion = {

@@ -1,3 +1,5 @@
+import uniq from 'lodash/uniq';
+
 import { GraphDocument, DocumentType } from '../types';
 import {
   getFileNameWithoutExtension,
@@ -22,8 +24,6 @@ import {
   DocumentLink,
   SymbolAnnotation,
   TextAnnotation,
-  ParsedLines,
-  DocumentForUpload,
 } from './types';
 
 const parseDocument = (
@@ -116,62 +116,87 @@ const parseDocument = (
   };
 };
 
-const uploadToCDF = async (document: DocumentForUpload) => {
-  fetch(`cdf/somDir/${document.externalId}`, {
-    method: 'PUT',
-    body: JSON.stringify(document),
-  });
+type File = {
+  fileName: string;
+  data: any;
 };
 
-export const computeLines = async (
-  documents: GraphDocument[],
-  connections: SymbolConnection[],
+const getParsedDocumentFiles = (
   version: string,
-  storeDocumentCallback:
-    | undefined
-    | ((document: DocumentForUpload) => void) = undefined
-) => {
-  const lineNumbers: string[] = [];
-  const graphsPerLine = new Map<string, string[]>();
+  parsedDocuments: ParsedDocument[]
+): File[] =>
+  parsedDocuments.map((parsedDocument) => ({
+    fileName: parsedDocument.externalId,
+    data: parsedDocument,
+  }));
 
-  documents.forEach((graph) => {
-    const document = parseDocument(graph, version, documents, connections);
-    if (storeDocumentCallback) {
-      storeDocumentCallback(document);
-    } else {
-      uploadToCDF(document);
+const getDocumentsForLineFiles = (
+  version: string,
+  parsedDocumentExternalIsdByLineNumber: Map<string, string[]>
+): File[] =>
+  [...parsedDocumentExternalIsdByLineNumber.entries()].map(
+    ([lineNumber, parsedDocumentExternalIds]) => {
+      const externalId = `DOCUMENTS_FOR_LINE_V${version}_L${lineNumber}.json`;
+      return {
+        fileName: externalId,
+        data: {
+          externalId,
+          line: lineNumber.toString(),
+          parsedDocuments: parsedDocumentExternalIds,
+        },
+      };
     }
+  );
 
-    graph.lineNumbers?.forEach((number) => {
-      if (!lineNumbers.includes(number)) {
-        lineNumbers.push(number);
-      }
-      const prevGraphs = graphsPerLine.get(number) || [];
-      graphsPerLine.set(number, [...prevGraphs, document.externalId]);
-    });
-  });
-
-  lineNumbers.forEach((lineNumber) => {
-    const parsedDocumentsForLine = {
-      externalId: `DOCUMENTS_FOR_LINE_V${version}_L${lineNumber}.json`,
-      line: lineNumber.toString(),
-      parsedDocuments: graphsPerLine.get(lineNumber) || [],
-    };
-
-    if (storeDocumentCallback) {
-      storeDocumentCallback(parsedDocumentsForLine);
-    } else {
-      uploadToCDF(parsedDocumentsForLine);
-    }
-  });
-
-  const parsedLines: ParsedLines = {
-    externalId: `PARSED_LINES_V${version}.json`,
-    lineIds: lineNumbers.map((number) => number.toString()),
+const getParsedLinesFile = (version: string, lineNumbers: string[]): File => {
+  const externalId = `PARSED_LINES_V${version}.json`;
+  return {
+    fileName: externalId,
+    data: {
+      externalId,
+      lineIds: lineNumbers.map((number) => number.toString()),
+    },
   };
-  if (storeDocumentCallback) {
-    storeDocumentCallback(parsedLines);
-  } else {
-    uploadToCDF(parsedLines);
-  }
+};
+
+export const computeLines = (
+  graphDocuments: GraphDocument[],
+  connections: SymbolConnection[],
+  version: string
+): File[] => {
+  const parsedDocumentsWithLineNumbers = graphDocuments.map(
+    (graphDocument) => ({
+      lineNumbers: graphDocument.lineNumbers ?? [],
+      parsedDocument: parseDocument(
+        graphDocument,
+        version,
+        graphDocuments,
+        connections
+      ),
+    })
+  );
+
+  const lineNumbers: string[] = uniq(
+    graphDocuments.flatMap((graphDocument) => graphDocument.lineNumbers ?? [])
+  );
+
+  const parsedDocumentExternalIdsByLineNumber = new Map<string, string[]>(
+    lineNumbers.map((lineNumber) => [
+      lineNumber,
+      parsedDocumentsWithLineNumbers
+        .filter((parsedDocumentsWithLineNumber) =>
+          parsedDocumentsWithLineNumber.lineNumbers.includes(lineNumber)
+        )
+        .map(({ parsedDocument }) => parsedDocument.externalId),
+    ])
+  );
+
+  return [
+    ...getParsedDocumentFiles(
+      version,
+      parsedDocumentsWithLineNumbers.map(({ parsedDocument }) => parsedDocument)
+    ),
+    ...getDocumentsForLineFiles(version, parsedDocumentExternalIdsByLineNumber),
+    getParsedLinesFile(version, lineNumbers),
+  ];
 };
