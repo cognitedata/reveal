@@ -26,7 +26,7 @@ export const useSaveEquipment = (
     if (equipment.isApproved !== isApproved || isApproved) {
       equipment.isApproved = isApproved;
       getUnitState(client!, { unitName }).then((data) => {
-        const unitState = data || { equipments: [] };
+        const unitState = data || { equipments: {} };
         if (!unitState.equipments[equipmentName]) {
           unitState.equipments[equipmentName] = {};
         }

@@ -69,6 +69,7 @@ export const removeDetection = (
     ...detection,
     isModified: true,
     state: DetectionState.OMITTED,
+    isPrimary: false,
   };
 
   dataElement.detections = dataElement.detections.filter(
@@ -79,9 +80,7 @@ export const removeDetection = (
       )
   );
 
-  const isApproved = dataElement.detections.some(
-    (item) => item.state === DetectionState.APPROVED
-  );
+  const isApproved = dataElement.detections.some((item) => item.isPrimary);
 
   dataElement.state = isApproved
     ? DataElementState.APPROVED
@@ -90,11 +89,13 @@ export const removeDetection = (
   return equipment;
 };
 
-export const approveDetection = (
+export const updateDetection = (
   equipmentOrigin: EquipmentData,
   dataElementOrigin: DataElement,
   detection: Detection,
-  isApproved: boolean
+  value: string,
+  isApproved: boolean,
+  isPrimary: boolean
 ): EquipmentData => {
   const equipment: EquipmentData = deepCopy(equipmentOrigin);
 
@@ -108,47 +109,28 @@ export const approveDetection = (
     (item) => item.id === detection.id
   );
 
-  dataElement.detections.forEach((detection, i) => {
-    if (detection.state === DetectionState.APPROVED) {
-      dataElement.detections[i].state = undefined;
-    }
-  });
+  if (isPrimary) {
+    dataElement.detections.forEach((detection, i) => {
+      if (detection.isPrimary) {
+        dataElement.detections[i].isPrimary = false;
+      }
+    });
+  }
 
   dataElement.detections![detectionIndex!] = {
     ...detection,
     isModified: true,
+    value,
     state: isApproved ? DetectionState.APPROVED : undefined,
+    isPrimary,
   };
-  dataElement.state = isApproved
+  dataElement.state = dataElement.detections.some(
+    (detection) => detection.isPrimary
+  )
     ? DataElementState.APPROVED
     : DataElementState.PENDING;
   dataElementList[dataElementIndex] = dataElement;
   updateComponentScannerDetectionsOnApproval(equipment, dataElement);
-
-  return equipment;
-};
-
-export const saveDetection = (
-  equipmentOrigin: EquipmentData,
-  dataElementOrigin: DataElement,
-  originalDetection: Detection,
-  value: string
-): EquipmentData => {
-  const { equipment, dataElement } = getCopy(
-    equipmentOrigin,
-    dataElementOrigin
-  );
-
-  const detection: Detection = dataElement!.detections!.find(
-    (item) => item.id === originalDetection.id
-  )!;
-
-  detection.value = value;
-  const isApproved = detection.state === DetectionState.APPROVED;
-  if (isApproved) {
-    detection.state = undefined;
-    dataElement!.state = DataElementState.PENDING;
-  }
 
   return equipment;
 };

@@ -26,8 +26,7 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
     [dataElement]
   );
 
-  const isPCMSDetectionApproved =
-    PCMSDetection?.state === DetectionState.APPROVED;
+  const isPCMSDetectionPrimary = PCMSDetection?.isPrimary || false;
 
   const detections = useMemo(
     () =>
@@ -38,13 +37,20 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
             detection.type !== DetectionType.PCMS
         )
         .sort((a, b) => {
-          const aRank = sortingIds.includes(a.id)
-            ? sortingIds.indexOf(a.id)
-            : 100500;
+          let aRank = 0;
+          let bRank = 0;
 
-          const bRank = sortingIds.includes(b.id)
-            ? sortingIds.indexOf(b.id)
-            : 100500;
+          if (sortingIds.includes(a.id)) {
+            aRank = sortingIds.indexOf(a.id);
+          } else {
+            aRank += a.state === DetectionState.APPROVED ? 0 : 1;
+          }
+
+          if (sortingIds.includes(b.id)) {
+            bRank = sortingIds.indexOf(b.id);
+          } else {
+            bRank += b.state === DetectionState.APPROVED ? 0 : 1;
+          }
 
           return aRank - bRank;
         }) || [],
@@ -52,11 +58,7 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
   );
 
   useMemo(() => {
-    setSortingIds(
-      detections
-        .sort((a) => (a.state === DetectionState.APPROVED ? -1 : 0))
-        .map((item) => item.id)
-    );
+    setSortingIds(detections.map((item) => item.id));
   }, []);
 
   // set initial active detection
@@ -77,7 +79,7 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
 
     let activeDetectionId = approvedDetectionId;
 
-    if (!isPCMSDetectionApproved && !activeDetectionId) {
+    if (!isPCMSDetectionPrimary && !activeDetectionId) {
       activeDetectionId = detections.length ? detections[0].id : undefined;
     }
 
@@ -110,7 +112,7 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
             header={
               <DataSourceHeader
                 label="PCMS"
-                isApproved={isPCMSDetectionApproved}
+                isApproved={isPCMSDetectionPrimary}
               />
             }
             key={PCMSDetection.id}
@@ -156,6 +158,7 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
                 detection={detection}
                 value={detection.value}
                 focused={detection.id === activeDetectionId}
+                isPrimaryOnApproval={detections.length === 1}
               />
             </Styled.Panel>
           ))}

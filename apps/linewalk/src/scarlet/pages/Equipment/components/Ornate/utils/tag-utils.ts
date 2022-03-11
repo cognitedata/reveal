@@ -61,16 +61,9 @@ const getStylesByTag = (tag: OrnateTag) => {
     };
   }
 
-  if (tag.detection.value) {
-    return {
-      stroke: '#FF8746',
-      fill: 'rgba(255, 135, 70, 0.2)',
-    };
-  }
-
   return {
-    stroke: '#D51A46',
-    fill: 'rgba(244, 113, 139, 0.2)',
+    stroke: '#FF8746',
+    fill: 'rgba(255, 135, 70, 0.2)',
   };
 };
 

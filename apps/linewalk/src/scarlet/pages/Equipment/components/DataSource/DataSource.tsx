@@ -13,7 +13,6 @@ import {
   useDataElementConfig,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
-import usePrevious from 'hooks/usePrevious';
 
 import * as Styled from './style';
 
@@ -24,6 +23,7 @@ export type DataSourceProps = {
   dataElement: DataElement;
   detection?: Detection;
   focused?: boolean;
+  isPrimaryOnApproval?: boolean;
 };
 
 export const DataSource = ({
@@ -33,19 +33,25 @@ export const DataSource = ({
   dataElement,
   detection,
   focused,
+  isPrimaryOnApproval = false,
 }: DataSourceProps) => {
   const [value, setValue] = useState(originalValue ?? '');
   const [isApproved, setIsApproved] = useState(
     detection?.state === DetectionState.APPROVED
   );
+  const [isPrimary, setIsPrimary] = useState(
+    detection?.state === DetectionState.APPROVED
+  );
   const [isRemoving, setRemoving] = useState(false);
   const [isApproving, setApproving] = useState(false);
+  const [isPrimaryLoading, setIsPrimaryLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { appState, appDispatch } = useAppContext();
   const dataPanelDispatch = useDataPanelDispatch();
   const dataElementConfig = useDataElementConfig(dataElement);
   const isPCMS = detection?.type === DetectionType.PCMS;
-  const disabledActions = isApproving || isRemoving || isSaving;
+  const disabledActions =
+    isApproving || isRemoving || isSaving || isPrimaryLoading;
 
   const inputId = `data-source-${id}`;
 
@@ -66,15 +72,37 @@ export const DataSource = ({
     });
   };
 
-  const approveDetection = (isApproved: boolean) => {
+  const approveDetection = () => {
     setApproving(true);
     setIsApproved(isApproved);
 
+    if (isPrimaryOnApproval) {
+      setIsPrimaryLoading(true);
+      setIsPrimary(true);
+    }
+
     appDispatch({
-      type: AppActionType.APPROVE_DETECTION,
+      type: AppActionType.UPDATE_DETECTION,
       dataElement,
       detection: detection!,
-      isApproved,
+      value: value || '',
+      isApproved: true,
+      isPrimary: isPrimaryOnApproval,
+    });
+  };
+
+  const updatePrimaryValue = (isPrimary: boolean) => {
+    setIsPrimary(true);
+    setIsPrimaryLoading(true);
+    setIsApproved(isApproved);
+
+    appDispatch({
+      type: AppActionType.UPDATE_DETECTION,
+      dataElement,
+      detection: detection!,
+      value: value || '',
+      isApproved: true,
+      isPrimary,
     });
   };
 
@@ -82,18 +110,35 @@ export const DataSource = ({
     setIsSaving(true);
 
     appDispatch({
-      type: AppActionType.SAVE_DETECTION,
+      type: AppActionType.UPDATE_DETECTION,
       dataElement,
       detection: detection!,
       value: value || '',
+      isApproved: true,
+      isPrimary: false,
     });
   };
 
   useEffect(() => {
     if (!appState.saveState.loading) {
       if (isRemoving) setRemoving(false);
-      else if (isApproving) setApproving(false);
-      else if (isSaving) setIsSaving(false);
+      if (isApproving) setApproving(false);
+      if (isSaving) setIsSaving(false);
+      if (isPrimaryLoading) {
+        setIsPrimaryLoading(false);
+        if (!appState.saveState.error) {
+          toast.success(
+            `"${
+              dataElementConfig?.label || dataElement.key
+            }" has been set to "${value}${
+              dataElementConfig?.unit ? ` ${dataElementConfig.unit}` : ''
+            }"`
+          );
+          dataPanelDispatch({
+            type: DataPanelActionType.CLOSE_DATA_ELEMENT,
+          });
+        }
+      }
     }
   }, [appState]);
 
@@ -101,7 +146,10 @@ export const DataSource = ({
     if (detection?.state !== DetectionState.APPROVED && isApproved) {
       setIsApproved(false);
     }
-  }, [detection?.state]);
+    if (!detection?.isPrimary && isPrimary) {
+      setIsPrimary(false);
+    }
+  }, [detection]);
 
   const onFocus = () => {
     if (detection) {
@@ -118,25 +166,14 @@ export const DataSource = ({
     }
   }, [focused]);
 
-  const prevDetectionState = usePrevious(detection?.state || 'no-state');
-  useEffect(() => {
-    if (
-      prevDetectionState === 'no-state' &&
-      detection?.state === DetectionState.APPROVED
-    ) {
-      toast.success(
-        `"${dataElementConfig?.label || dataElement.key}" has been set to ${
-          detection.value
-        }${dataElementConfig?.unit}`
-      );
-      dataPanelDispatch({
-        type: DataPanelActionType.CLOSE_DATA_ELEMENT,
-      });
-    }
-  }, [detection?.state]);
-
   return (
-    <>
+    <form
+      onSubmit={
+        detection?.state === DetectionState.APPROVED
+          ? saveDetection
+          : approveDetection
+      }
+    >
       <Input
         id={inputId}
         value={value}
@@ -151,20 +188,38 @@ export const DataSource = ({
       />
       {!isPCMS && (
         <Styled.ButtonContainer>
-          <Styled.Button
-            type="primary"
-            iconPlacement="left"
-            icon="Checkmark"
-            loading={isSaving}
-            disabled={
-              disabledActions || value === '' || value === originalValue
-            }
-            onClick={saveDetection}
-          >
-            {originalValue === undefined ? 'Add as data source' : 'Save'}
-          </Styled.Button>
+          {detection?.state === DetectionState.APPROVED ? (
+            <Styled.Button
+              type="primary"
+              htmlType="submit"
+              iconPlacement="left"
+              icon="Checkmark"
+              loading={isSaving}
+              disabled={
+                disabledActions || value === '' || value === originalValue
+              }
+              onClick={saveDetection}
+            >
+              {detection?.state !== DetectionState.APPROVED
+                ? 'Add as data source'
+                : 'Save'}
+            </Styled.Button>
+          ) : (
+            <Styled.Button
+              type="primary"
+              htmlType="submit"
+              iconPlacement="left"
+              icon="Checkmark"
+              loading={isApproving}
+              disabled={disabledActions || value === ''}
+              onClick={approveDetection}
+            >
+              Add as data source
+            </Styled.Button>
+          )}
           <Styled.Button
             type="tertiary"
+            htmlType="button"
             iconPlacement="left"
             icon={isRemoving ? 'Loader' : 'Delete'}
             disabled={disabledActions}
@@ -178,21 +233,21 @@ export const DataSource = ({
 
       <Checkbox
         name={`detection-${detection?.id}`}
-        onChange={approveDetection}
-        checked={isApproved}
+        onChange={updatePrimaryValue}
+        checked={isPrimary}
         disabled={
-          disabledActions ||
-          originalValue === undefined ||
-          value !== originalValue
+          (!isPCMS && detection?.state !== DetectionState.APPROVED) ||
+          value !== originalValue ||
+          disabledActions
         }
       >
         <span className="cogs-detail">Set as primary value</span>
-        {isApproving && (
+        {isPrimaryLoading && (
           <Styled.LoaderContainer>
             <Icon type="Loader" />
           </Styled.LoaderContainer>
         )}
       </Checkbox>
-    </>
+    </form>
   );
 };

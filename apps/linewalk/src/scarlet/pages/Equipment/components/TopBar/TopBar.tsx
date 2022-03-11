@@ -22,7 +22,7 @@ export const TopBar = ({ unitName, equipmentName }: TopBarProps) => {
   return (
     <Styled.Container>
       <Button icon="ArrowLeft" onClick={() => history.push(equipmentListPath)}>
-        Back
+        Dashboard
       </Button>
       <Styled.Title level={3}>{equipmentName}</Styled.Title>
       {documents.loading && <Skeleton.Rectangle width="90px" height="24px" />}

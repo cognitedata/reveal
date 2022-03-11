@@ -324,5 +324,6 @@ const getPCMSDetection = (key: string, pcms?: { [key: string]: string }) => {
     key,
     type: DetectionType.PCMS,
     value: pcms[key],
+    status: DetectionState.APPROVED,
   };
 };

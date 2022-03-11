@@ -17,6 +17,7 @@ export type Detection = Partial<Annotation> & {
   type: DetectionType;
   value?: string;
   state?: DetectionState;
+  isPrimary?: boolean;
   isModified?: boolean;
   scannerComponent?: {
     id: string;
