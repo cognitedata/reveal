@@ -67,6 +67,37 @@ export const checkSecretKey = (
     message: '',
   };
 };
+export const checkMetadataKey = (key: string, allKeys: string[]) => {
+  if (key.length === 0) {
+    return {
+      error: true,
+      message: 'A key is required',
+    };
+  }
+  if (key.length > 32) {
+    return {
+      error: true,
+      message: 'Max 32 characters',
+    };
+  }
+  if (key.match(/[^A-Za-z0-9- ]+/g) !== null) {
+    return {
+      error: true,
+      message: 'Only letters, digits, & dashes allowed',
+    };
+  }
+  if (allKeys.filter(k => k === key).length > 1) {
+    return {
+      error: true,
+      message: 'Metadata key must be unique',
+    };
+  }
+  return {
+    error: false,
+    message: '',
+  };
+};
+
 export const checkSecretValue = (value: string) => {
   if (value.length === 0) {
     return {
