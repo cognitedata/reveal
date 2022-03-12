@@ -139,7 +139,7 @@ describe('UploadFunctionModal', () => {
       const valueInput = wrapper.find('input[name="meta_value"]');
       expect(valueInput).toHaveLength(1);
 
-      const removeSecretButton = wrapper.find('button#btnDeleteMeta');
+      const removeMetadataButton = wrapper.find('button#btnDeleteMeta');
       removeSecretButton.simulate('click');
 
       const removedKeyInput = wrapper.find('input[name="meta_key"]');
