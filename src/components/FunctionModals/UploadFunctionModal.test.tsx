@@ -129,7 +129,7 @@ describe('UploadFunctionModal', () => {
     it('should remove a METADATA key input field and value input field when remove button is clicked', () => {
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
 
-      const addSecretButton = wrapper
+      const addMetadataButton = wrapper
         .find('button.cogs-btn')
         .filterWhere((b: ReactWrapper) => b.text() === 'Add a metadata');
       addSecretButton.simulate('click');
