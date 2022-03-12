@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
+import { isUrlPointCloudModel } from './isUrlPointCloudModel';
 
 export class ModelUi {
   private readonly _viewer: Cognite3DViewer;
@@ -137,19 +138,7 @@ export class ModelUi {
 }
 
 async function loadLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CognitePointCloudModel | Cognite3DModel> {
-  // The hacky check below is due to webpack-dev-server returning 200 for non-existing files. We therefore check if the 
-  // response is a valid json.
-  const eptJsonRequest = await fetch(addModelOptions.localPath + '/ept.json');
-  let isPointCloud = true;
-  try {
-    if (eptJsonRequest.ok) {
-      await eptJsonRequest.json();
-    } else {
-      isPointCloud = false;
-    }
-  } catch {
-    isPointCloud = false;
-  }
+  const isPointCloud = addModelOptions.localPath !== undefined && await isUrlPointCloudModel(addModelOptions.localPath);
   return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
 }
 
