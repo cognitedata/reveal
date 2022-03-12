@@ -80,12 +80,6 @@ export const checkMetadataKey = (key: string, allKeys: string[]) => {
       message: 'Max 32 characters',
     };
   }
-  if (key.match(/[^A-Za-z0-9- ]+/g) !== null) {
-    return {
-      error: true,
-      message: 'Only letters, digits, & dashes allowed',
-    };
-  }
   if (allKeys.filter(k => k === key).length > 1) {
     return {
       error: true,
@@ -110,6 +104,26 @@ export const checkSecretValue = (value: string) => {
     message: '',
   };
 };
+
+export const checkMetadataValue = (value: string) => {
+  if (value.length === 0) {
+    return {
+      error: true,
+      message: 'A value is required',
+    };
+  }
+  if (value.length > 512) {
+    return {
+      error: true,
+      message: 'Max 512 characters',
+    };
+  }
+  return {
+    error: false,
+    message: '',
+  };
+};
+
 export const checkFunctionName = (functionName: string) => {
   if (functionName.length < 1) {
     return { error: true, message: 'A name is required' };

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   checkMetadataKey,
-  checkSecretValue,
+  checkMetadataValue,
   getAllSecretKeys,
 } from 'utils/formValidations';
 
@@ -101,13 +101,13 @@ export default function Metadata({ metadata, setMetadata }: Props) {
                 label="Value"
                 required
                 validateStatus={
-                  meta.valueTouched && checkSecretValue(meta.value).error
+                  meta.valueTouched && checkMetadataValue(meta.value).error
                     ? 'error'
                     : 'success'
                 }
                 help={
                   meta.valueTouched
-                    ? checkSecretValue(meta.value).message
+                    ? checkMetadataValue(meta.value).message
                     : undefined
                 }
               >
@@ -132,10 +132,10 @@ export default function Metadata({ metadata, setMetadata }: Props) {
           </Row>
         ))}
       {metadata.length >= 16 ? (
-        <p>You may only have 16 parameters</p>
+        <p>You may only have 16 parameters.</p>
       ) : (
         <Button icon="Plus" onClick={addMetadata}>
-          Add a metadata
+          Add metadata
         </Button>
       )}
     </Form.Item>

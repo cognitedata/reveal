@@ -94,8 +94,8 @@ describe('UploadFunctionModal', () => {
 
       const addMetadataButton = wrapper
         .find('button.cogs-btn')
-        .filterWhere((b: ReactWrapper) => b.text() === 'Add a metadata');
-      addSecretButton.simulate('click');
+        .filterWhere((b: ReactWrapper) => b.text() === 'Add metadata');
+      addMetadataButton.simulate('click');
 
       const keyInput = wrapper.find('input[name="meta_key"]');
       expect(keyInput).toHaveLength(1);
@@ -131,8 +131,8 @@ describe('UploadFunctionModal', () => {
 
       const addMetadataButton = wrapper
         .find('button.cogs-btn')
-        .filterWhere((b: ReactWrapper) => b.text() === 'Add a metadata');
-      addSecretButton.simulate('click');
+        .filterWhere((b: ReactWrapper) => b.text() === 'Add metadata');
+      addMetadataButton.simulate('click');
 
       const keyInput = wrapper.find('input[name="meta_key"]');
       expect(keyInput).toHaveLength(1);
@@ -140,7 +140,7 @@ describe('UploadFunctionModal', () => {
       expect(valueInput).toHaveLength(1);
 
       const removeMetadataButton = wrapper.find('button#btnDeleteMeta');
-      removeSecretButton.simulate('click');
+      removeMetadataButton.simulate('click');
 
       const removedKeyInput = wrapper.find('input[name="meta_key"]');
       expect(removedKeyInput).toHaveLength(0);
