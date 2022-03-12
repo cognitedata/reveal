@@ -132,7 +132,7 @@ export default function Metadata({ metadata, setMetadata }: Props) {
           </Row>
         ))}
       {metadata.length >= 16 ? (
-        <p>You may only have 16 secrets</p>
+        <p>You may only have 16 parameters</p>
       ) : (
         <Button icon="Plus" onClick={addMetadata}>
           Add a metadata
