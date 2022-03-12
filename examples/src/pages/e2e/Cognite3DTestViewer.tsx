@@ -102,6 +102,7 @@ export function Cognite3DTestViewer(props: Props) {
 
   const readyForScreenshot = loadingState.itemsLoaded > 0 &&
     loadingState.itemsLoaded === loadingState.itemsRequested;
+  console.log(JSON.stringify(loadingState), readyForScreenshot);
 
   return (
     <>
