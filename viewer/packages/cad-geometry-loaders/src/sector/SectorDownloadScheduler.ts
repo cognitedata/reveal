@@ -4,7 +4,7 @@
 
 import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 import log from '@reveal/logger';
-import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
+import { DeferredPromise } from '@reveal/utilities';
 import assert from 'assert';
 
 export type SectorDownloadData = {
