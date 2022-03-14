@@ -8,7 +8,7 @@ import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
 import { CadMaterialManager } from '@reveal/rendering';
 import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
 import { CadModelUpdateHandler } from '../src/CadModelUpdateHandler';
-import { ByScreenSizeSectorCuller } from '..';
+import { ByScreenSizeSectorCuller } from '../src/sector/culling/ByScreenSizeSectorCuller';
 import { CadManager } from '../../cad-model/src/CadManager';
 import { revealEnv } from '@reveal/utilities';
 import dat from 'dat.gui';
