@@ -9,15 +9,13 @@ import { createBrowserHistory } from 'history';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import SentryRRWeb from '@sentry/rrweb';
+import { isProduction, isStaging } from 'utils/environment';
 import Routes from './Routes';
 import config from './config/config';
 
 const history = createBrowserHistory();
 
-if (
-  process.env.REACT_APP_SENTRY_DSN &&
-  ['staging', 'production'].includes(process.env.REACT_APP_ENV || '')
-) {
+if (process.env.REACT_APP_SENTRY_DSN && (isStaging || isProduction)) {
   Sentry.init({
     dsn: process.env.REACT_APP_SENTRY_DSN,
     // This is populated by the FAS build process. Change it if you want to

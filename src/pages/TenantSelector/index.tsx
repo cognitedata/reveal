@@ -1,6 +1,7 @@
 import TenantSelector, { Background } from '@cognite/cdf-hub-tenant-selector';
-import { getAzureAppId, getEnvironment } from 'config';
+import { getAzureAppId } from 'config';
 import { useCluster } from 'hooks/config';
+import { isProduction } from 'utils/environment';
 
 const clusters = [
   {
@@ -49,7 +50,7 @@ export default function TenantSelectorView() {
             cluster ? `?cluster=${cluster}` : ''
           }`;
         }}
-        isProduction={getEnvironment() === 'PRODUCTION'}
+        isProduction={isProduction}
       />
     </Background>
   );

@@ -6,11 +6,12 @@ import ChainedBackend from 'i18next-chained-backend';
 import LocizeBackend from 'i18next-locize-backend';
 import LocalStorageBackend from 'i18next-localstorage-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-
-const isDevelopment = process.env.NODE_ENV === 'development';
-const isStaging = process.env.REACT_APP_ENV === 'staging';
-const isPR = process.env.REACT_APP_ENV === 'preview';
-const isProduction = process.env.REACT_APP_ENV === 'production';
+import {
+  isDevelopment,
+  isPR,
+  isProduction,
+  isStaging,
+} from 'utils/environment';
 
 if (!process.env.REACT_APP_LOCIZE_PROJECT_ID)
   throw new Error('Locize is not configured!');

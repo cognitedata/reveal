@@ -7,6 +7,7 @@ import { useTranslations } from 'hooks/translations';
 import { useEffect, useState } from 'react';
 import { useResetRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import { isProduction } from 'utils/environment';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -72,8 +73,6 @@ type LocizeLanguages = Record<
     };
   }
 >;
-
-const isProduction = process.env.REACT_APP_ENV === 'production';
 
 const defaultTranslations = makeDefaultTranslations(
   'Charts User settings',

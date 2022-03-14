@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { isDevelopment } from 'utils/environment';
 
 type TranslationKey = string | number | symbol;
 /**
@@ -33,7 +34,7 @@ interface TranslatableComponent {
 export function useComponentTranslations<
   ComponentType extends TranslatableComponent
 >(component: ComponentType) {
-  if (!component.displayName && process.env.NODE_ENV === 'development') {
+  if (!component.displayName && isDevelopment) {
     // eslint-disable-next-line no-console
     console.warn(
       'Component has no displayName. Using the default namespace for i18n'
