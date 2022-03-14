@@ -4,6 +4,8 @@ import {
 } from 'dataLayers/documents/keys';
 import { adaptLocalEpochToUTC } from 'utils/date/adaptLocalEpochToUTC';
 
+import { getMockGeometry } from '__test-utils/fixtures/geometry';
+
 import { getMockSearchQueryWithFacets } from '../../__tests__/utils';
 import { getSearchQuery } from '../queryUtil';
 
@@ -53,6 +55,41 @@ describe('Test query builder', () => {
       expect(result.filter.sourceFile?.source).toEqual({
         in: ['bp-blob', 'bp-edm-attachment'],
       });
+    });
+
+    it('geolocation with extraGeoJsonFilters', () => {
+      const geoJson = getMockGeometry();
+      const result = getSearchQuery(
+        getMockSearchQueryWithFacets({
+          extraGeoJsonFilters: [
+            {
+              label: 'Test',
+              geoJson,
+            },
+          ],
+        })
+      );
+      expect(result.filter.geoLocation).toEqual(
+        expect.objectContaining({
+          relation: 'intersects',
+          shape: geoJson,
+        })
+      );
+    });
+
+    it('geolocation with geoFilter', () => {
+      const geometry = getMockGeometry();
+      const result = getSearchQuery(
+        getMockSearchQueryWithFacets({
+          geoFilter: [{ geometry }],
+        })
+      );
+      expect(result.filter.geoLocation).toEqual(
+        expect.objectContaining({
+          relation: 'intersects',
+          shape: geometry,
+        })
+      );
     });
   });
 });

@@ -1,4 +1,7 @@
-import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
+import {
+  getDocumentFixture,
+  getHighlightContentFixture,
+} from '__test-utils/fixtures/documents/getDocumentFixture';
 
 import { toDocument } from '../toDocument';
 
@@ -79,5 +82,14 @@ describe('toDocument', () => {
       },
     });
     expect(doc2.doc.topfolder).toEqual('Unknown');
+  });
+
+  it('should have correct highlight', () => {
+    const highlightContent = getHighlightContentFixture();
+    const { highlight } = toDocument({
+      item: getDocumentFixture(),
+      highlight: highlightContent,
+    });
+    expect(highlight).toEqual(highlightContent);
   });
 });

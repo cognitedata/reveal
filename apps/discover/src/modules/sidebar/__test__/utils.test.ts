@@ -1,11 +1,6 @@
-import { getMockDocumentFilter } from '__test-utils/fixtures/sidebar';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 
-import {
-  getDocumentFacetsflatValues,
-  isDocumentDateFacet,
-  removeAppliedDocumentFilterFromCategory,
-} from '../utils';
+import { getDocumentFacetsflatValues, isDocumentDateFacet } from '../utils';
 
 describe('filter provider helper test', () => {
   test('load document facet flat values', async () => {
@@ -29,16 +24,5 @@ describe('filter provider helper test', () => {
     expect(isDocumentDateFacet('filetype')).toBe(false);
     expect(isDocumentDateFacet('labels')).toBe(false);
     expect(isDocumentDateFacet('location')).toBe(false);
-  });
-
-  test('if removing document filter success', () => {
-    const documentFilters = getMockDocumentFilter();
-    expect(
-      removeAppliedDocumentFilterFromCategory(
-        'Image',
-        'filetype',
-        documentFilters
-      )
-    ).toEqual(['Compressed']);
   });
 });

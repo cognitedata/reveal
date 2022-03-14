@@ -5,6 +5,7 @@ import isUndefined from 'lodash/isUndefined';
 import { SavedSearchQuery } from 'services/savedSearches/types';
 
 import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
+import { Modules } from 'modules/sidebar/types';
 
 export const useWellsSearch = () => {
   const dispatch = useDispatch();
@@ -22,7 +23,10 @@ export const useWellsSearch = () => {
      */
     if (wellFilters) {
       dispatch(
-        updateCategoryAppliedFilters({ category: 'wells', value: wellFilters })
+        updateCategoryAppliedFilters({
+          category: Modules.WELLS,
+          value: wellFilters,
+        })
       );
     }
   };

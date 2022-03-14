@@ -1,4 +1,4 @@
-import { Document } from '@cognite/sdk-playground';
+import { Document, DocumentsSearchWrapper } from '@cognite/sdk-playground';
 
 import { getMockGeometry } from '../geometry';
 
@@ -31,3 +31,8 @@ export const getDocumentFixture = (
     ...derivedExtras,
   },
 });
+
+export const getHighlightContentFixture =
+  (): DocumentsSearchWrapper['highlight'] => ({
+    content: ['content 1', 'content 2'],
+  });

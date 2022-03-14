@@ -11,10 +11,6 @@ export const getHighlight = (info?: SearchHighlight) => {
     return result;
   }
 
-  // if (info.name) {
-  //   result.push(info.name.join(', '));
-  // }
-
   if (info.content) {
     result = result.concat(info.content);
   }

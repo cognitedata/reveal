@@ -10,6 +10,8 @@ import {
   SET_CATEGORY_FILTERS,
   UPDATE_CATEGORY_APPLIED_FILTER,
   UPDATE_CATEGORY_APPLIED_FILTERS,
+  UPDATE_CATEGORY_COLLAPSE_KEY,
+  UPDATE_EXTRA_GEO_APPLIED_FILTERS,
   SET_SEARCH_PHRASE,
 } from '../constants';
 import { sidebar as reducer, initialState } from '../reducer';
@@ -98,6 +100,22 @@ describe('search.reducer', () => {
     expect(state.appliedFilters.wells[1]).toStrictEqual(wellAppliedFilters[1]);
   });
 
+  test('Set extra documents filters', () => {
+    const documentFilters = getMockDocumentFilter();
+    const extraDocumentFilters = { id: { in: [123] } };
+    const state = reducer(initialState, {
+      type: UPDATE_CATEGORY_APPLIED_FILTERS,
+      payload: {
+        category: Modules.DOCUMENTS,
+        value: documentFilters,
+        extraDocumentFilters,
+      },
+    });
+    expect(state.appliedFilters.extraDocumentsFilters).toEqual(
+      extraDocumentFilters
+    );
+  });
+
   test('Set category filters', () => {
     const appliedFilter = getMockAppliedFiltersType();
     const state = reducer(initialState, {
@@ -124,5 +142,32 @@ describe('search.reducer', () => {
       payload: phrase,
     });
     expect(state.searchPhrase).toBe(phrase);
+  });
+
+  test('Update category collapse key', () => {
+    const payload = { category: Modules.WELLS, value: ['0', '1'] };
+
+    const state = reducer(initialState, {
+      type: UPDATE_CATEGORY_COLLAPSE_KEY,
+      payload,
+    });
+
+    expect(state.activeKeys[Modules.WELLS]).toEqual(payload.value);
+  });
+
+  test('update extra applied geo filter', () => {
+    const state = reducer(initialState, {
+      type: UPDATE_EXTRA_GEO_APPLIED_FILTERS,
+      payload: [
+        { label: 'map', geoJson: { type: 'Point', coordinates: [0, 1] } },
+      ],
+    });
+
+    expect(state.appliedFilters.extraGeoJsonFilters).toEqual([
+      expect.objectContaining({
+        label: 'map',
+        geoJson: { type: 'Point', coordinates: [0, 1] },
+      }),
+    ]);
   });
 });

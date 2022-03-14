@@ -1,4 +1,3 @@
-import filter from 'lodash/filter';
 import flatten from 'lodash/flatten';
 
 import {
@@ -31,17 +30,4 @@ export const getDocumentFacetsflatValues = (
 ) => {
   const result = Object.values(documentFacets);
   return flatten<string | { externalId: string }[]>(result);
-};
-
-export const removeAppliedDocumentFilterFromCategory = (
-  item: string,
-  categoryId: number | string,
-  filters: DocumentsFacets
-) => {
-  const id = categoryId as keyof DocumentsFacets;
-  return filter(filters[id], (value) =>
-    id === 'labels'
-      ? (value as { externalId: string }).externalId
-      : value !== item
-  );
 };

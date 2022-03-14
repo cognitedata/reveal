@@ -8,6 +8,7 @@ import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useExtractParentFolderPath } from 'modules/documentSearch/selectors';
 import { setSortByOptions } from 'modules/resultPanel/actions';
 import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
+import { Modules } from 'modules/sidebar/types';
 
 import { updateExtraGeoJsonAppliedFilters } from '../modules/sidebar/actions';
 
@@ -47,7 +48,7 @@ export const useDocumentSearch = () => {
     if (documentFilters) {
       dispatch(
         updateCategoryAppliedFilters({
-          category: 'documents',
+          category: Modules.DOCUMENTS,
           value: documentFilters.facets,
           extraDocumentFilters:
             searchQuery.filters?.documents?.extraDocumentFilters,

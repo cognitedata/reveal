@@ -12,6 +12,7 @@ import {
   UPDATE_CATEGORY_APPLIED_FILTER,
   UPDATE_CATEGORY_COLLAPSE_KEY,
   SET_SEARCH_PHRASE,
+  UPDATE_EXTRA_GEO_APPLIED_FILTERS,
 } from './constants';
 
 /**
@@ -87,12 +88,12 @@ export type UpdateCategoryCollapseKeyType = {
 };
 
 export type UpdateWellAppliedFilters = {
-  category: 'wells';
+  category: Modules.WELLS;
   value: WellFilterMap;
 };
 
 export type UpdateDocumentAppliedFilters = {
-  category: 'documents';
+  category: Modules.DOCUMENTS;
   value: DocumentsFacets;
   extraDocumentFilters?: DocumentsFilter;
 };
@@ -108,10 +109,17 @@ interface SetCategoryPage {
   type: typeof SET_CATEGORY_PAGE;
   payload: CategoryTypes;
 }
+
 interface UpdateCategoryCollapseKey {
   type: typeof UPDATE_CATEGORY_COLLAPSE_KEY;
-  payload: { category: CategoryTypes; facet: string | string[] };
+  payload: UpdateCategoryCollapseKeyType;
 }
+
+type UpdateExtraGeoJsonAppliedFilters = {
+  type: typeof UPDATE_EXTRA_GEO_APPLIED_FILTERS;
+  payload: MapLayerGeoJsonFilter[];
+};
+
 interface UpdateCategoryAppliedFilter {
   type: typeof UPDATE_CATEGORY_APPLIED_FILTER;
   payload: {
@@ -123,10 +131,7 @@ interface UpdateCategoryAppliedFilter {
 
 interface UpdateCategoryAppliedFilters {
   type: typeof UPDATE_CATEGORY_APPLIED_FILTERS;
-  payload: {
-    category: CategoryTypes;
-    value: DocumentsFacets | WellFilterMap;
-  };
+  payload: UpdateCategoryAppliedFilterType;
 }
 
 interface SetCategoryFilters {
@@ -141,9 +146,10 @@ interface SetSearchPhrase {
 
 export type SidebarActions =
   | ToggleFilterBar
+  | SetCategoryFilters
   | SetCategoryPage
-  | UpdateCategoryCollapseKey
+  | SetSearchPhrase
   | UpdateCategoryAppliedFilter
   | UpdateCategoryAppliedFilters
-  | SetCategoryFilters
-  | SetSearchPhrase;
+  | UpdateCategoryCollapseKey
+  | UpdateExtraGeoJsonAppliedFilters;

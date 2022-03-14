@@ -2,6 +2,8 @@ import { LAST_CREATED_KEY } from 'dataLayers/documents/keys';
 import compact from 'lodash/compact';
 import { getYear } from 'utils/date';
 
+import { EMPTY_ARRAY } from 'constants/empty';
+
 import {
   FILE_TYPE_KEY,
   LABELS_KEY,
@@ -16,6 +18,21 @@ import {
   DocumentsAggregatesResponse,
 } from '../types';
 
+const findResult = (
+  result: DocumentsAggregatesResponse,
+  name: AggregateNames
+) => {
+  const found = (result.aggregates || EMPTY_ARRAY).find(
+    (item) => item.name === name
+  );
+
+  if (found) {
+    return found.groups;
+  }
+
+  return [];
+};
+
 /*
  * Process the facets that are returned from the API after a search
  *
@@ -24,32 +41,20 @@ import {
 export const processFacets = (
   result: DocumentsAggregatesResponse
 ): DocumentResultFacets => {
-  const findResult = (name: AggregateNames) => {
-    const found = (result.aggregates || []).find((item) => item.name === name);
+  const filetype = findResult(result, 'filetype').map(
+    (item): DocumentQueryFacet => {
+      const name = (item.group as { [FILE_TYPE_KEY]: string }[])
+        .map((group) => group[FILE_TYPE_KEY] || '')
+        .join(' ');
 
-    if (found) {
-      return found.groups;
+      return {
+        name,
+        key: name,
+        count: item.value,
+        selected: false,
+      };
     }
-
-    return [];
-  };
-
-  const filetype = findResult('filetype').map((item): DocumentQueryFacet => {
-    if (!item) {
-      return { name: '', key: '', count: 0, selected: false }; // When will this happen?
-    }
-
-    const name = (item.group as { [FILE_TYPE_KEY]: string }[])
-      .map((group) => group[FILE_TYPE_KEY] || '')
-      .join(' ');
-
-    return {
-      name,
-      key: name,
-      count: item.value,
-      selected: false,
-    };
-  });
+  );
 
   // note: this can be optimised to do all in the above function
   const groupMimetypesTogether = filetype.reduce(
@@ -70,7 +75,7 @@ export const processFacets = (
     <DocumentQueryFacet[]>[]
   );
 
-  const lastcreated = findResult('lastcreated').map((item) => {
+  const lastcreated = findResult(result, 'lastcreated').map((item) => {
     const name = (item.group as { [LAST_CREATED_KEY]: string }[])
       .map((group) => {
         return getYear(group[LAST_CREATED_KEY]);
@@ -99,7 +104,7 @@ export const processFacets = (
       ]
     : [];
 
-  const location = findResult('location').map((item) => {
+  const location = findResult(result, 'location').map((item) => {
     const name = (item.group as { [SOURCE_KEY]: string }[])
       .map((group) => group[SOURCE_KEY])
       .join(' ');
@@ -111,7 +116,7 @@ export const processFacets = (
     };
   });
 
-  const labels = findResult('labels').map((item) => {
+  const labels = findResult(result, 'labels').map((item) => {
     const name = compact(
       (item.group as { [LABELS_KEY]: string }[]).map(
         (group) => group[LABELS_KEY]
@@ -125,7 +130,7 @@ export const processFacets = (
     };
   });
 
-  const pageCount = findResult('pageCount').map((item) => {
+  const pageCount = findResult(result, 'pageCount').map((item) => {
     const name = item.group[0][PAGE_COUNT_KEY];
     return {
       name,
@@ -135,7 +140,7 @@ export const processFacets = (
     };
   });
 
-  const finalFacets = {
+  return {
     labels,
     lastcreated,
     total,
@@ -143,6 +148,4 @@ export const processFacets = (
     filetype: groupMimetypesTogether,
     pageCount,
   };
-
-  return finalFacets;
 };

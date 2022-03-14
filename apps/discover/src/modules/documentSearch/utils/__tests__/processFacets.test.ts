@@ -66,4 +66,29 @@ describe('processFacets', () => {
       ],
     });
   });
+
+  it('should return accumulated count of same filetypes', () => {
+    const facets = processFacets({
+      items: [],
+      aggregates: [
+        {
+          name: 'filetype',
+          groups: [
+            {
+              group: [{ type: 'PDF' }],
+              value: 100,
+            },
+            { group: [{ type: 'PDF' }], value: 2 },
+          ],
+          total: 100,
+        },
+      ],
+    });
+    expect(facets.filetype[0]).toEqual({
+      name: 'PDF',
+      key: 'PDF',
+      count: 102,
+      selected: false,
+    });
+  });
 });

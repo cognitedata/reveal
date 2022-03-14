@@ -82,13 +82,13 @@ describe('Actions', () => {
     const documentFilter = getMockDocumentFilter();
     expect(
       updateCategoryAppliedFilters({
-        category: 'documents',
+        category: Modules.DOCUMENTS,
         value: documentFilter,
       })
     ).toEqual({
       type: UPDATE_CATEGORY_APPLIED_FILTERS,
       payload: {
-        category: 'documents',
+        category: Modules.DOCUMENTS,
         value: documentFilter,
       },
     });
@@ -97,7 +97,7 @@ describe('Actions', () => {
   test('Update wells category applied filters action', () => {
     expect(
       updateCategoryAppliedFilters({
-        category: 'wells',
+        category: Modules.WELLS,
         value: { 0: 'check1' },
       })
     ).toEqual({

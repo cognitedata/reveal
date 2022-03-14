@@ -2,7 +2,9 @@ import favoriteReducer, {
   hideCreateFavoriteModal,
   setItemsToAddOnFavoriteCreation,
   showCreateFavoriteModal,
+  setFavoritesViewMode,
 } from '../reducer';
+import { ViewModeType } from '../types';
 
 describe('favourite reducer', () => {
   const getInitialState: any = () => {
@@ -47,5 +49,14 @@ describe('favourite reducer', () => {
       setItemsToAddOnFavoriteCreation(undefined)
     );
     expect(state.itemsToAddOnFavoriteCreation).toBeUndefined();
+  });
+
+  test('should change view mode', () => {
+    const initialState = { ...getInitialState(), viewMode: ViewModeType.Card };
+    const state = favoriteReducer(
+      initialState,
+      setFavoritesViewMode(ViewModeType.Row)
+    );
+    expect(state.viewMode).toEqual(ViewModeType.Row);
   });
 });

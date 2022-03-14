@@ -29,4 +29,17 @@ describe('getDocumentGeoPoint', () => {
       coordinates: [1.85274, 57.9206],
     });
   });
+
+  it('should get geo point when passed geolocation is a point', () => {
+    const doc = getMockDocument({
+      geolocation: {
+        coordinates: [1.4, 23.323],
+        type: 'Point',
+      },
+    });
+    expect(getDocumentGeoPoint(doc)).toEqual({
+      coordinates: [1.4, 23.323],
+      type: 'Point',
+    });
+  });
 });
