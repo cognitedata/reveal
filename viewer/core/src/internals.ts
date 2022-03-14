@@ -16,7 +16,13 @@ export {
   PotreePointColorType,
   PotreePointSizeType,
   WellKnownAsprsPointClassCodes,
-  PointCloudNode
+  PotreeNodeWrapper,
+  PotreeGroupWrapper,
+  PointCloudNode,
+  PointCloudMetadata,
+  NPotree,
+  NPointCloudOctree,
+  NPointSizeType
 } from '@reveal/pointclouds';
 
 // Utilities

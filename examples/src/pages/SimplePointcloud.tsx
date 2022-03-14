@@ -87,7 +87,7 @@ export function SimplePointcloud() {
                                      project: 'dummy',
                                      getToken: async () => 'dummy' });
       }
-      
+
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -96,7 +96,7 @@ export function SimplePointcloud() {
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       const { revealManager, model: pointCloudNode } = await createManagerAndLoadModel(client, renderer, scene, 'pointcloud', modelRevision, modelUrl);
-      scene.add(pointCloudNode);
+      // scene.add(pointCloudNode);
       revealManager.on('loadingStateChanged', setLoadingState);
 
       const classesGui = gui.addFolder('Class filters');
@@ -134,20 +134,45 @@ export function SimplePointcloud() {
       const bboxHelper = new THREE.Box3Helper(bbox);
       scene.add(bboxHelper);
 
-      const camTarget = bbox.getCenter(new THREE.Vector3());
-      const minToCenter = new THREE.Vector3().subVectors(camTarget, bbox.min);
-      const camPos = camTarget.clone().addScaledVector(minToCenter, -1.5);
       const controls = new CameraControls(camera, renderer.domElement);
-      controls.setLookAt(
-        camPos.x,
-        camPos.y,
-        camPos.z,
-        camTarget.x,
-        camTarget.y,
-        camTarget.z
-      );
-      controls.update(0.0);
-      camera.updateMatrixWorld();
+
+
+      // -- New Potree stuff
+
+      const potree = new reveal.NPotree();
+      // potree.pointBudget = 2_000_000;
+      potree.pointBudget = 400_000;
+      const pointClouds: reveal.NPointCloudOctree[] = [];
+
+      potree
+        .loadPointCloud('point-tiles/ept.json',
+                        (url: string) => 'https://localhost:3000/' + url)
+        .then((pco: reveal.NPointCloudOctree) => {
+          console.log("Got some PCO stuff");
+          pointClouds.push(pco);
+          console.log("Adding point cloud...?");
+          scene.add(pco);
+          pco.material.pointSizeType = reveal.NPointSizeType.ADAPTIVE;
+          pco.material.useEDL = false;
+
+          bboxHelper.box = pco.boundingBox;
+
+          const camTarget = pco.boundingBox.getCenter(new THREE.Vector3());
+          const minToCenter = new THREE.Vector3().subVectors(camTarget, pco.boundingBox.min);
+          const camPos = camTarget.clone().addScaledVector(minToCenter, -1.5);
+          controls.setLookAt(
+            camPos.x,
+            camPos.y,
+            camPos.z,
+            camTarget.x,
+            camTarget.y,
+            camTarget.z
+          );
+          controls.update(0.0);
+          camera.updateMatrixWorld();
+        });
+
+      // -- End New Potree stuff
 
       animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
         const controlsNeedUpdate = controls.update(deltaTime);
@@ -159,6 +184,8 @@ export function SimplePointcloud() {
           revealManager.render(camera);
           settingsChanged = false;
         }
+
+        potree.updatePointClouds(pointClouds, camera, renderer);
       });
       animationLoopHandler.start();
 
