@@ -39,7 +39,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   private _loading: boolean;
   private _loaded: boolean;
-  // private _parent: PointCloudEptGeometryNode | undefined = undefined;
+  private _parent: PointCloudEptGeometryNode | undefined = undefined;
 
   private _isLeafNode: boolean;
 
@@ -81,6 +81,11 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._key;
   }
 
+  get failed(): boolean {
+    // We are currently missing proper error handling
+    return false;
+  }
+
   get numPoints(): number {
     return this._numPoints;
   }
@@ -101,9 +106,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._geometry!;
   }
 
-  /* get geometry(): PointCloudEptGeometry {
-    return this._ept;
-  } */
   get ept(): PointCloudEptGeometry {
     return this._ept;
   }
@@ -113,7 +115,11 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   }
 
   set parent(_p: PointCloudEptGeometryNode) {
-    // this._parent = p;
+    this._parent = _p;
+  }
+
+  get parent(): PointCloudEptGeometryNode | undefined {
+    return this._parent;
   }
 
   constructor(ept: PointCloudEptGeometry,
@@ -134,7 +140,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._id = PointCloudEptGeometryNode.IDCount++;
     this._geometry = undefined;
     this._boundingBox = this._key.b;
-    // this._tightBoundingBox = this._boundingBox;
     this._spacing = this._ept.spacing / Math.pow(2, this._key.d);
     this._boundingSphere = Utils.sphereFrom(this._boundingBox);
 
@@ -217,7 +222,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     child.parent = this;
   }
 
-  load(): void {
+  load(): Promise<void> {
     if (this._loaded || this._loading)
       return;
     if (globalNumNodesLoading >= globalMaxNumNodesLoading)
@@ -228,7 +233,9 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
     if (this._numPoints == -1)
       this.loadHierarchy();
+
     this.loadPoints();
+    return Promise.resolve();
   }
 
   loadPoints(): void {
