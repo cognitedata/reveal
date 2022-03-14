@@ -9,7 +9,7 @@ import { GeometryPass } from '../render-passes/GeometryPass';
 import { RenderMode } from '../rendering/RenderMode';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createRenderTargetWithDepth } from '../utilities/renderUtilities';
+import { createRenderTargetWithDepth, RenderLayer, setupGeometryLayers } from '../utilities/renderUtilities';
 
 type RenderTargetData = {
   currentRenderSize: THREE.Vector2;
@@ -23,13 +23,13 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _cadScene: THREE.Object3D;
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: THREE.Group;
-  private readonly _customObject: THREE.Group;
+  private readonly _customObjects: THREE.Group;
 
   constructor(
     materialManager: CadMaterialManager,
     scene: THREE.Object3D,
     cadModels?: THREE.Group,
-    customObject?: THREE.Group
+    customObjects?: THREE.Group
   ) {
     this._materialManager = materialManager;
     this._cadScene = scene;
@@ -40,16 +40,24 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       inFront: new THREE.WebGLRenderTarget(1, 1)
     };
     this._cadModels = cadModels;
-    this._customObject = customObject;
+    this._customObjects = customObjects;
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
+    setupGeometryLayers(this._cadModels, this._customObjects, this._materialManager);
 
     yield* this.geometryPass(renderer, RenderMode.Color, this._renderTargetData.composition);
-    yield* this.geometryPass(renderer, RenderMode.Ghost, this._renderTargetData.ghost);
-    yield* this.geometryPass(renderer, RenderMode.Effects, this._renderTargetData.inFront);
 
+    yield* this.geometryPass(
+      renderer,
+      RenderMode.Color,
+      this._renderTargetData.composition,
+      RenderLayer.CustomNormal,
+      false
+    );
+
+    yield* this.geometryPass(renderer, RenderMode.Ghost, this._renderTargetData.ghost);
     yield* this.blitPass(
       renderer,
       this._renderTargetData.composition,
@@ -58,12 +66,21 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       true
     );
 
+    yield* this.geometryPass(renderer, RenderMode.Effects, this._renderTargetData.inFront);
     yield* this.blitPass(
       renderer,
       this._renderTargetData.composition,
       this._renderTargetData.inFront.texture,
       undefined,
       true
+    );
+
+    yield* this.geometryPass(
+      renderer,
+      RenderMode.Color,
+      this._renderTargetData.composition,
+      RenderLayer.CustomDeferred,
+      false
     );
 
     yield* this.blitPass(renderer, null, this._renderTargetData.composition.texture);
@@ -85,11 +102,15 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private *geometryPass(
     renderer: THREE.WebGLRenderer,
     renderMode: RenderMode,
-    target: THREE.WebGLRenderTarget
+    target: THREE.WebGLRenderTarget,
+    overrideRenderLayer?: RenderLayer,
+    clear = true
   ): Generator<GeometryPass> {
     renderer.setRenderTarget(target);
-    renderer.clear();
-    yield new GeometryPass(this._cadScene, this._materialManager, renderMode);
+    if (clear) {
+      renderer.clear();
+    }
+    yield new GeometryPass(this._cadScene, this._materialManager, renderMode, overrideRenderLayer);
   }
 
   private pipelineTearDown(renderer: THREE.WebGLRenderer) {

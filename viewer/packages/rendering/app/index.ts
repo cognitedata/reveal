@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
 import { CadMaterialManager } from '@reveal/rendering';
 import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
@@ -13,8 +14,8 @@ import dat from 'dat.gui';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { ByScreenSizeSectorCuller, CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
 import { RenderManager } from '../src/RenderManager';
-import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { DefaultRenderPipeline } from '../src/render-pipelines/DefaultRenderPipeline';
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -37,11 +38,11 @@ async function init() {
   const urlParams = new URLSearchParams(queryString);
 
   // Defaults to all-primitives model on 3d-test
-  // const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-  const modelId = parseInt(urlParams.get('modelId') ?? '3847114555645531');
+  const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
+  // const modelId = parseInt(urlParams.get('modelId') ?? '3847114555645531');
 
-  // const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '3020962330252000');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
+  // const revisionId = parseInt(urlParams.get('revisionId') ?? '3020962330252000');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
   const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
@@ -54,8 +55,27 @@ async function init() {
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
 
   const scene = new THREE.Scene();
+  const cogniteModels = new THREE.Group();
+  const customObjects = new THREE.Group();
+
+  const boxGeometry = new THREE.BoxGeometry(10, 10, 30);
+  const boxMaterial = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(1, 0, 0),
+    transparent: true,
+    depthWrite: false,
+    opacity: 0.5
+  });
+
+  scene.add(cogniteModels);
+  scene.add(customObjects);
+
+  const customBox = new THREE.Mesh(boxGeometry, boxMaterial);
+  customBox.position.set(15, 0, -15);
+
+  customObjects.add(customBox);
+
   const model = await cadManager.addModel(modelIdentifier);
-  scene.add(model);
+  cogniteModels.add(model);
   model.updateMatrix();
   model.updateWorldMatrix(true, true);
 
@@ -67,11 +87,16 @@ async function init() {
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
 
+  const controlsTest = new TransformControls(camera, renderer.domElement);
+  controlsTest.attach(cogniteModels);
+  customObjects.add(controlsTest);
+
   const renderManager = new RenderManager(renderer);
-  const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, model);
+  const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, cogniteModels, customObjects);
 
   const grid = new THREE.GridHelper(30, 40);
   grid.position.set(14, -1, -14);
+  customObjects.add(grid);
 
   renderer.domElement.style.backgroundColor = '#000000';
 
@@ -86,12 +111,12 @@ async function init() {
 
   const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
   nodeAppearanceProvider.assignStyledNodeCollection(
-    new TreeIndexNodeCollection(new NumericRange(11000, 1000)),
+    new TreeIndexNodeCollection(new NumericRange(0, 10)),
     DefaultNodeAppearance.Ghosted
   );
 
   nodeAppearanceProvider.assignStyledNodeCollection(
-    new TreeIndexNodeCollection(new NumericRange(60000, 1000)),
+    new TreeIndexNodeCollection(new NumericRange(10, 20)),
     DefaultNodeAppearance.Highlighted
   );
 
