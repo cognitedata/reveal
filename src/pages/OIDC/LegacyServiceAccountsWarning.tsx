@@ -131,18 +131,14 @@ const LegacyServiceAccountsWarning = (props: { accounts: ServiceAccount[] }) => 
             We are deprecating authentication via CDF service accounts and API
             keys in favor of OIDC. Below are the legacy service accounts that can be safely deleted as they are no longer useful.
           </p>
-          {accounts?.length && accounts.map((account: ServiceAccount) => {
-            if (account?.name) {
-              return (<><Button
-                disabled={true}
-                onClick={() => { }}
-                type="ghost"
-                style={{ marginTop: 6 }}
-              >
-                {account.name}
-              </Button><br /></>)
-            }
-          })}
+          {accounts?.length && accounts.map((account: ServiceAccount) => <><Button
+            disabled={true}
+            onClick={() => { }}
+            type="ghost"
+            style={{ marginTop: 6 }}
+          >
+            {account.name}
+          </Button><br /></>)}
           <br />
           <StyledDisableButtonSection>
             <Button

@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   Switch,
   Route,
@@ -72,7 +72,7 @@ export default function () {
         />
       </Title>
       {/* !authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && */}
-      {!legacyFlow && isFetched && serviceAccounts?.length  ? <LegacyServiceAccountsWarning accounts={serviceAccounts} /> : null}
+      {!legacyFlow && isFetched && serviceAccounts?.length ? <LegacyServiceAccountsWarning accounts={serviceAccounts} /> : null}
       <StyledMeny
         mode="horizontal"
         selectedKeys={[params.page || 'groups']}
