@@ -81,6 +81,7 @@ DEPENDENCIES = [
     "@npm//@sentry/browser",
     "@npm//@types/color",
     "@npm//@visx/visx",
+    "@npm//@visx/threshold",
     "@npm//@visx/react-spring",
     "@npm//classnames",
     "@npm//d3",
@@ -104,6 +105,7 @@ DEPENDENCIES = [
     "//packages/auth-utils",
     "//packages/sidecar",
     "//packages/react-container",
+    "//packages/z-index",
 ]
 
 # Type dependencies from package.json

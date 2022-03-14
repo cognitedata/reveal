@@ -245,7 +245,9 @@ export function DataSamplingStep() {
             <FormRow>
               <TimeSeriesField
                 aggregateTypeField="logicalCheck.aggregateType"
+                endOffset={endOffset}
                 externalIdField="logicalCheck.externalId"
+                window={window}
               />
             </FormRow>
             <FormRow>
@@ -323,7 +325,9 @@ export function DataSamplingStep() {
             <FormRow>
               <TimeSeriesField
                 aggregateTypeField="steadyStateDetection.aggregateType"
+                endOffset={endOffset}
                 externalIdField="steadyStateDetection.externalId"
+                window={window}
               />
             </FormRow>
             <FormRow>

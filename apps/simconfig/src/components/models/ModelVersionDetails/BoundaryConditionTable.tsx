@@ -10,7 +10,7 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CopyValue } from 'components/molecules/CopyValue';
-import { formatBcValue } from 'utils/numberUtils';
+import { getFormattedSciNumber } from 'utils/numberUtils';
 
 interface BoundaryConditionTableProps {
   modelFile?: ModelFile;
@@ -38,6 +38,14 @@ export function BoundaryConditionTable({
         ({ variableName, displayUnit, current, previous }) => (
           <div className="entry" key={variableName}>
             <div className="label">{variableName}</div>
+            <CopyValue
+              tooltip={
+                <React.Fragment key={`${variableName}-copy-value`}>
+                  Copy raw value to clipboard: <code>{current}</code>
+                </React.Fragment>
+              }
+              value={current}
+            />
             <div className="change">
               {previous && previous < current ? (
                 <Tooltip
@@ -57,14 +65,6 @@ export function BoundaryConditionTable({
                   <span className="lower">▾</span>
                 </Tooltip>
               ) : null}
-              <CopyValue
-                tooltip={
-                  <React.Fragment key={`${variableName}-copy-value`}>
-                    Copy raw value to clipboard: <code>{current}</code>
-                  </React.Fragment>
-                }
-                value={current}
-              />
             </div>
             <div
               className={classNames('value', {
@@ -85,7 +85,7 @@ export function BoundaryConditionTable({
 const BoundaryConditionsTableContainer = styled.div`
   --columns-repeat: 2;
   display: grid;
-  grid-template-columns: repeat(var(--columns-repeat), 3fr 0fr auto 1fr);
+  grid-template-columns: repeat(var(--columns-repeat), 3fr 0fr auto auto 1fr);
   grid-gap: 6px;
   align-items: baseline;
   .entry {
@@ -126,22 +126,6 @@ const BoundaryConditionsTableContainer = styled.div`
     color: var(--cogs-red-1);
   }
 `;
-
-const getFormattedSciNumber = (input: number) => {
-  const { base, exponent } = formatBcValue(input);
-
-  return (
-    <span className="number">
-      {base}
-      {exponent !== 0 && (
-        <span>
-          {' '}
-          × 10<sup>{exponent}</sup>
-        </span>
-      )}
-    </span>
-  );
-};
 
 const ProcessingStatus = styled(Label)`
   display: flex;

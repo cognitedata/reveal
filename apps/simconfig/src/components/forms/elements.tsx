@@ -6,8 +6,8 @@ import { Input, Slider, TextInput } from '@cognite/cogs.js';
 import { getNodeFromPath } from 'utils/formUtils';
 
 import { SegmentedControl } from './controls/SegmentedControl';
-import type { Option } from './controls/TimeSeriesSelector';
-import TimeSeriesSelector from './controls/TimeSeriesSelector/TimeSeriesSelector';
+import TimeseriesSelector from './controls/TimeSeriesSelector/TimeSeriesSelector';
+import type { TimeseriesOption } from './controls/TimeSeriesSelector/types';
 
 export const FormHeader = styled.h3`
   display: flex;
@@ -240,11 +240,15 @@ export function TimeSeriesField({
   aggregateTypeField,
   externalIdDisabled,
   aggregateTypeDisabled,
+  window = 1440,
+  endOffset = 0,
 }: {
   externalIdField: string;
   aggregateTypeField: string;
   externalIdDisabled?: boolean;
   aggregateTypeDisabled?: boolean;
+  window?: number;
+  endOffset?: number;
 }) {
   const { errors, values, setFieldValue } =
     useFormikContext<Record<string, unknown>>();
@@ -264,8 +268,9 @@ export function TimeSeriesField({
   return (
     <>
       <Field
-        as={TimeSeriesSelector}
+        as={TimeseriesSelector}
         disabled={externalIdDisabled}
+        endOffset={endOffset}
         error={externalIdErrorText}
         name={externalIdField}
         setValue={(value: string) => {
@@ -275,7 +280,8 @@ export function TimeSeriesField({
         type="text"
         value={externalIdValue}
         width={400}
-        onChange={(option: Option) => {
+        window={window}
+        onChange={(option: TimeseriesOption) => {
           setFieldValue(externalIdField, option.value);
         }}
       />

@@ -1,3 +1,5 @@
+import { format as formatNumber } from 'd3';
+
 const DECIMAL_LIMIT = 5;
 const EXPONENT_LIMIT = 3;
 
@@ -24,16 +26,32 @@ const getSciNumber = (input: string) => {
   if (Math.abs(exponent) <= EXPONENT_LIMIT) {
     // Display numbers with small exponents in decimal form
     return {
-      base: +(base * 10 ** exponent).toFixed(DECIMAL_LIMIT),
+      base: formatNumber(`.${DECIMAL_LIMIT}~f`)(+(base * 10 ** exponent)),
       exponent: 0,
     };
   }
   return { base, exponent };
 };
 
-export const formatBcValue = (input: number) => {
+export const formatSciValue = (input: number) => {
   if (countDecimals(input) >= DECIMAL_LIMIT) {
     return getSciNumber(input.toExponential(DECIMAL_LIMIT));
   }
   return getSciNumber(input.toFixed(DECIMAL_LIMIT));
+};
+
+export const getFormattedSciNumber = (input: number) => {
+  const { base, exponent } = formatSciValue(input);
+
+  return (
+    <span className="number">
+      {base}
+      {exponent !== 0 && (
+        <span>
+          {' '}
+          × 10<sup>{exponent}</sup>
+        </span>
+      )}
+    </span>
+  );
 };

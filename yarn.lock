@@ -10100,6 +10100,17 @@
     prop-types "^15.7.2"
     reduce-css-calc "^1.3.0"
 
+"@visx/threshold@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@visx/threshold/-/threshold-2.4.0.tgz#68e9c6c351104e1065d1144cda4eb61ffd7f4de3"
+  integrity sha512-UMltfK1RM+2vfy0nTKDixX69KmSZGNUr98k71oFlkouhrNa2ERRSbN2Ni8l+id3rmXnK2XIGQAu2uqCxCVAu4w==
+  dependencies:
+    "@types/react" "*"
+    "@visx/clip-path" "2.1.0"
+    "@visx/shape" "2.4.0"
+    classnames "^2.3.1"
+    prop-types "^15.5.10"
+
 "@visx/tooltip@2.2.2":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/@visx/tooltip/-/tooltip-2.2.2.tgz#dc6e1c50fb0aaa0ffcb773eb0a5beb25ec89170d"

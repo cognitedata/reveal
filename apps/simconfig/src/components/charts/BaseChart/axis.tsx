@@ -8,7 +8,7 @@ import { getExtents } from '../utils';
 
 import type { ChartGeometry } from './types';
 
-function TickComp({ formattedValue, x, y }: TickRendererProps) {
+function TickComponent({ formattedValue, x, y }: TickRendererProps) {
   const [time, date] = (formattedValue ?? '').split(' ');
   return (
     <g>
@@ -48,7 +48,7 @@ export function getAxis(geometry: ChartGeometry) {
         <AxisBottom
           scale={xScale}
           stroke="#333"
-          tickComponent={TickComp}
+          tickComponent={TickComponent}
           tickFormat={(tickValue) => {
             if (tickValue instanceof Date) {
               const dateFormat =
@@ -68,7 +68,11 @@ export function getAxis(geometry: ChartGeometry) {
     Left: ({
       ...additionalProps
     }: Partial<SharedAxisProps<ChartGeometry['yScale']>>) => (
-      <AxisLeft scale={yScale} {...additionalProps} />
+      <AxisLeft
+        scale={yScale}
+        tickFormat={(tickValue) => yScale.tickFormat(undefined, 'f')(tickValue)}
+        {...additionalProps}
+      />
     ),
   };
 }

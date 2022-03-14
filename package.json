@@ -66,6 +66,7 @@
     "@types/react-color": "^3.0.2",
     "@types/react-date-range": "^1.4.2",
     "@visx/react-spring": "^2.4.0",
+    "@visx/threshold": "^2.4.0",
     "@visx/visx": "^2.5.0",
     "antd": "^4.16.5",
     "assert": "^2.0.0",

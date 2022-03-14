@@ -54,6 +54,7 @@ export function useBaseChart({
   const chartId = useMemo(() => `chart-${Math.random()}`, []);
 
   return {
+    geometry,
     Axis,
     Grid,
     Plot,
@@ -101,8 +102,6 @@ export function useBaseChart({
             top={0}
             width={width}
           >
-            <rect fill="white" height={height} width={width} x={0} y={0} />
-
             {isValid ? (
               <Group left={margin.left} top={margin.top}>
                 {children}

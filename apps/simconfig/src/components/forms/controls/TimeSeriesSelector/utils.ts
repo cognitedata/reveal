@@ -1,58 +1,83 @@
-import type { CogniteClient, DoubleDatapoint } from '@cognite/sdk';
+import { sub } from 'date-fns';
 
-export async function getTimeSeriesOptionByExternalId(
+import type { OptionType } from '@cognite/cogs.js';
+import type { CogniteClient, TimeseriesFilter } from '@cognite/sdk';
+
+import type { TimeseriesOption } from './types';
+
+export async function getTimeseriesOptionByExternalId(
   client: CogniteClient,
   externalId: string
-) {
-  const result = await client.timeseries.retrieve([{ externalId }]);
-  const timeSeries = result[0];
-
-  return {
-    value: timeSeries.externalId,
-    label: timeSeries.name ?? externalId,
-  };
+): Promise<OptionType<string> | undefined> {
+  try {
+    const [timeseries] = await client.timeseries.retrieve([{ externalId }]);
+    return {
+      value: timeseries.externalId,
+      label: timeseries.name ?? externalId,
+    };
+  } finally {
+    // CDF returned no valid results
+  }
 }
 
-export async function searchForTimeSeriesOptions(
-  searchTerm: string,
-  client?: CogniteClient,
-  itemLimit = 10
-) {
-  if (!client) {
-    return [];
-  }
-  const items = await client.timeseries.search({
+export async function timeseriesSearch({
+  query,
+  client,
+  itemLimit = 10,
+  filter = { isString: false },
+  window = 1440,
+  endOffset = 0,
+  datapointLimit = 25,
+}: {
+  query: string;
+  client: CogniteClient;
+  itemLimit?: number;
+  filter?: TimeseriesFilter;
+  window?: number;
+  endOffset?: number;
+  datapointLimit?: number;
+}): Promise<TimeseriesOption[]> {
+  const timeseriesList = await client.timeseries.search({
     search: {
-      query: searchTerm,
+      query,
     },
+    filter,
     limit: itemLimit,
   });
 
-  if (!items.length) {
+  if (!timeseriesList.length) {
     return [];
   }
-  const datapointFilter = items.map(({ externalId }) => ({
+
+  const externalIds = timeseriesList.map(({ externalId }) => ({
     externalId: externalId ?? '',
-    before: new Date(),
   }));
 
-  // TODO(SIM-318) datapoint is sent as part of the option data for implementation in v2
-  const dataPoints = await client.datapoints.retrieveLatest(datapointFilter);
-
-  const mappedDatapoints = dataPoints.map(
-    ({ datapoints, externalId, unit }) => ({
-      datapoint: (datapoints as DoubleDatapoint[])[0],
-      unit,
-      externalId,
+  const datapointList = (
+    await client.datapoints.retrieve({
+      aggregates: ['min', 'max', 'average'],
+      start: window
+        ? sub(new Date(), { minutes: window + endOffset }).getTime()
+        : undefined,
+      end: sub(new Date(), { minutes: endOffset }),
+      granularity: window ? `${Math.floor(window / datapointLimit)}m` : '1d',
+      limit: datapointLimit,
+      items: externalIds,
     })
-  );
+  ).map(({ datapoints, externalId, unit }) => ({
+    datapoints,
+    unit,
+    externalId,
+  }));
 
-  return items.map((item) => ({
-    label: item.name ?? '',
-    value: item.externalId ?? '',
+  return timeseriesList.map((timeseries) => ({
+    label: timeseries.name ?? '',
+    value: timeseries.externalId ?? '',
     data: {
-      ...item,
-      ...mappedDatapoints.find((data) => data.externalId === item.externalId),
+      timeseries,
+      ...datapointList.find(
+        (datapoint) => datapoint.externalId === timeseries.externalId
+      ),
     },
   }));
 }
