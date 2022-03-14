@@ -27,12 +27,10 @@ import {
   useIsMutating,
 } from 'react-query';
 import { useAuthConfiguration, usePermissions } from 'hooks';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import LegacyServiceAccountsWarning from 'pages/OIDC/LegacyServiceAccountsWarning';
 
 export default function () {
   const sdk = useSDK();
-  const legacyFlow = getFlow().flow === 'CDF_OAUTH';
   const client = useQueryClient();
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
@@ -76,8 +74,9 @@ export default function () {
           onClick={() => client.invalidateQueries()}
         />
       </Title>
-      {/* !authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && */}
-      {!legacyFlow && isFetched && serviceAccounts?.length ? (
+      {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled &&
+      isFetched &&
+      serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}
       <StyledMeny
