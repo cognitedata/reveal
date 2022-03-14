@@ -312,7 +312,6 @@ const BlueprintPage: React.FC = () => {
       />
 
       {/* Interactive blueprint & toolbar */}
-
       <Blueprint
         client={client}
         blueprint={blueprint}

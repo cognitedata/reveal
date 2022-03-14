@@ -17419,6 +17419,11 @@ filtered-vector@^1.2.1:
     binary-search-bounds "^2.0.0"
     cubic-hermite "^1.0.0"
 
+filtrex@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/filtrex/-/filtrex-2.2.3.tgz#299dff339ac957558e3f56fa46e9a850b362d64b"
+  integrity sha512-TL12R6SckvJdZLibXqyp4D//wXZNyCalVYGqaWwQk9zucq9dRxmrJV4oyuRq4PHFHCeV5ZdzncIc/Ybqv1Lr6Q==
+
 finalhandler@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/finalhandler/-/finalhandler-1.1.2.tgz#b7e7d000ffd11938d0fdb053506f6ebabe9f587d"

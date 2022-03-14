@@ -64,6 +64,32 @@ export type NonPDFFile = {
   fileId: number;
   fileExternalId: string;
 };
+
+export type ShapeAttribute = {
+  id: string;
+  name: string;
+  type: 'TIMESERIES' | 'ASSET';
+  externalId: string;
+  extractor: 'CURRENT_VALUE' | 'METADATA' | 'TIMESTAMP';
+  subExtractor?: string;
+};
+
+export type RuleOutput = {
+  fill?: string;
+  fillOpacity?: string;
+};
+export type Rule<T> = {
+  id: string;
+  expression: string;
+  output: T;
+};
+
+export type RuleSet = {
+  id: string;
+  name: string;
+  rules: Rule<RuleOutput>[];
+};
+
 export type BlueprintDefinition = {
   id?: string;
   externalId: string;
@@ -74,5 +100,7 @@ export type BlueprintDefinition = {
   ornateJSON: OrnateJSON;
   timeSeriesTags: TimeSeriesTag[];
   drawings?: Drawing[];
-  shapeAttributes?: Record<string, ShapeAttributes[]>;
+  shapeAttributes?: Record<string, ShapeAttribute[]>;
+  ruleSets?: RuleSet[];
+  shapeRuleSets?: Record<string, string[]>;
 };

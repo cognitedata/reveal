@@ -10,7 +10,7 @@ import {
 } from '@cognite/cogs.js';
 import startCase from 'lodash/startCase';
 import { useState, useEffect } from 'react';
-import { ShapeAttribute } from 'typings/rules';
+import { ShapeAttribute } from 'typings';
 import { v4 as uuid } from 'uuid';
 import { Timeseries, Asset } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';

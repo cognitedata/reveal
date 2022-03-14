@@ -10,7 +10,7 @@ import {
 import { useResourceQuery } from 'hooks/useQuery/useResourceQuery';
 import startCase from 'lodash/startCase';
 import { useState } from 'react';
-import { ShapeAttribute } from 'typings/rules';
+import { ShapeAttribute } from 'typings';
 import { Timeseries } from '@cognite/sdk';
 import { useAttributeValueQuery } from 'models/rulesEngine/useAttributeValueQuery';
 

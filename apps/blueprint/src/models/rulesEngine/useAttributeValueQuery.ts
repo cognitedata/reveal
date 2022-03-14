@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { AuthContext } from 'providers/AuthProvider';
-import { ShapeAttribute } from 'typings/rules';
+import { ShapeAttribute } from 'typings';
 
 import { resolveAttributeValueFromResource } from './api';
 

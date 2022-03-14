@@ -54,7 +54,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({
   const blueprintService = useMemo(() => {
     if (client) {
       return new BlueprintService(client, {
-        uid: authState?.id,
+        uid: authState?.id || authState?.email,
         email: authState?.email,
       });
     }

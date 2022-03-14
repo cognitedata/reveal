@@ -76,6 +76,7 @@ DEPENDENCIES = [
     "@npm//@sentry/browser",
     "@npm//@types/color",
     "@npm//assert",
+    "@npm//filtrex",
     "@npm//konva",
     "@npm//lodash",
     "@npm//react",

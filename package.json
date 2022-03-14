@@ -84,6 +84,7 @@
     "date-fns": "^2.19.0",
     "dayjs": "^1.10.7",
     "file-saver": "^2.0.2",
+    "filtrex": "^2.2.3",
     "formik": "^2.2.9",
     "google-protobuf": "^3.17.3",
     "graphology": "^0.23.2",

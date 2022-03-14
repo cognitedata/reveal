@@ -1,6 +1,6 @@
 import { Button, Flex, Title } from '@cognite/cogs.js';
 import { useState } from 'react';
-import { ShapeAttribute } from 'typings/rules';
+import { ShapeAttribute } from 'typings';
 
 import { AttributeDisplay } from './AttributesDisplay';
 import { AttributeForm } from './AttributesForm';

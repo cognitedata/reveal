@@ -1,5 +1,29 @@
 import { Asset, CogniteClient, Timeseries } from '@cognite/sdk';
-import { ShapeAttribute } from 'typings/rules';
+import { ShapeAttribute } from 'typings';
+
+export const resolveAttributeValue = async (
+  client: CogniteClient,
+  attribute: ShapeAttribute
+) => {
+  let resource;
+  if (attribute.type === 'TIMESERIES') {
+    resource = await client.timeseries
+      .retrieve([{ externalId: attribute.externalId }])
+      .then((res) => res[0]);
+  }
+
+  if (attribute.type === 'ASSET') {
+    resource = await client.assets
+      .retrieve([{ externalId: attribute.externalId }])
+      .then((res) => res[0]);
+  }
+  if (!resource)
+    throw new Error(
+      `No ${attribute.type} found with external id: ${attribute.externalId}`
+    );
+
+  return resolveAttributeValueFromResource(client, attribute, resource);
+};
 
 export const resolveAttributeValueFromResource = async (
   client: CogniteClient,

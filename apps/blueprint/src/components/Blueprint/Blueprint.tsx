@@ -15,12 +15,25 @@ import {
   useRef,
   useState,
 } from 'react';
-import { BlueprintDefinition, TimeSeriesTag } from 'typings';
+import {
+  BlueprintDefinition,
+  ShapeAttribute,
+  TimeSeriesTag,
+  Rule,
+  RuleOutput,
+  RuleSet,
+} from 'typings';
 import { BlueprintToolbar } from 'components/BlueprintToolbar/BlueprintToolbar';
 import { NodeConfig, Node } from 'konva/lib/Node';
 import ContextMenu from 'components/ContextMenu';
 import debounce from 'lodash/debounce';
 import Konva from 'konva';
+import { Drawer } from '@cognite/cogs.js';
+import { RuleSetsDrawer } from 'components/RuleSetDrawer/RuleSetsDrawer';
+import { useQueries } from 'react-query';
+import { resolveAttributeValue } from 'models/rulesEngine/api';
+import { compileExpression } from 'filtrex';
+import { useAuthContext } from '@cognite/react-container';
 
 import { BlueprintWrapper } from './elements';
 
@@ -33,6 +46,104 @@ export type BlueprintProps = {
   onSelectNodes?: (nodes: Node<NodeConfig>[]) => void;
   onReady?: (viewer: MutableRefObject<CogniteOrnate | undefined>) => void;
   isAllMinimized?: boolean;
+};
+
+const evaluateRuleSet = async (
+  client: CogniteClient,
+  ruleSet: RuleSet,
+  shapeAttributes: ShapeAttribute[]
+) => {
+  const evaluatedRules = await Promise.all(
+    ruleSet.rules.map((rule) => evaluateRule(client, rule, shapeAttributes))
+  );
+  return Object.assign({}, ...evaluatedRules);
+};
+
+const evaluateRule = async (
+  client: CogniteClient,
+  rule: Rule<RuleOutput>,
+  shapeAttributes: ShapeAttribute[]
+): Promise<RuleOutput> => {
+  const { expression } = rule;
+  if (!expression) return {};
+  // For some early alpha version debugging
+  // eslint-disable-next-line no-console
+  console.log('- EVALUATING RULE: ----', rule);
+  const shapeAttributesInExpression =
+    shapeAttributes.filter((x: ShapeAttribute) =>
+      expression.includes(x.name)
+    ) || [];
+
+  const resolvedShapeAttributesPromises = shapeAttributesInExpression.map(
+    (attr) =>
+      resolveAttributeValue(client!, attr).then((res) => ({
+        name: attr.name,
+        value: res,
+      }))
+  );
+  const resolvedAttributes = await Promise.all(resolvedShapeAttributesPromises);
+  const attributes = resolvedAttributes.reduce(
+    (acc, item) => ({
+      ...acc,
+      [item.name]: item.value,
+    }),
+    {}
+  );
+
+  const evalFunc = compileExpression(expression);
+  const result = evalFunc(attributes);
+  // For some early alpha version debugging
+  // eslint-disable-next-line no-console
+  console.log('--- RESOLUTION', attributes, expression, result);
+  if (result) {
+    return rule.output;
+  }
+  return {};
+};
+
+const useRuleSetEvaluation = (
+  blueprint?: BlueprintDefinition,
+  onSuccess?: (shapeKey: string, output: RuleOutput) => void,
+  onError?: (shapeKey: string, error: string) => void
+) => {
+  const { ruleSets = [], shapeRuleSets, shapeAttributes } = blueprint || {};
+  const { client } = useAuthContext();
+
+  return useQueries(
+    Object.keys(shapeRuleSets || {}).map((shapeKey) => ({
+      queryKey: ['ruleEval', shapeKey],
+      queryFn: async () => {
+        if (!client) return {};
+        const expandedRuleSets = (shapeRuleSets?.[shapeKey] || [])
+          .map((id) => ruleSets.find((r) => r.id === id))
+          .filter(Boolean) as RuleSet[];
+
+        const evaluatedRuleSets = await Promise.all(
+          (expandedRuleSets || []).map((ruleSet) =>
+            evaluateRuleSet(client, ruleSet, shapeAttributes?.[shapeKey] || [])
+          )
+        );
+
+        return Object.assign({}, ...evaluatedRuleSets);
+      },
+      onSuccess: (result: RuleOutput) => {
+        if (onSuccess) {
+          onSuccess(shapeKey, result);
+        }
+      },
+      onError: (err: Error) => {
+        if (onError) {
+          onError(shapeKey, err.message);
+
+          // For some early alpha version debugging
+          // eslint-disable-next-line no-console
+          console.error(err);
+        }
+      },
+      retry: false,
+      refetchInterval: 10000,
+    }))
+  );
 };
 
 const Blueprint = ({
@@ -49,6 +160,30 @@ const Blueprint = ({
   const [loadedBlueprint, setLoadedBlueprint] = useState<BlueprintDefinition>();
   const [activeTool, setActiveTool] = useState<string>('default');
   const [selectedNodes, setSelectedNodes] = useState<Node<NodeConfig>[]>([]);
+  const [isCreatingNewRuleSet, setIsCreatingNewRuleSet] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+
+  const queriesResults = useRuleSetEvaluation(
+    blueprint,
+    (shapeKey, result) => {
+      setErrors((prev) => ({
+        ...prev,
+        [shapeKey]: undefined,
+      }));
+      if (ornateViewer.current) {
+        ornateViewer.current.stage.find(`#${shapeKey}`).forEach((shape) => {
+          shape.setAttrs(result);
+        });
+      }
+    },
+    (shapeKey, error) => {
+      setErrors((prev) => ({
+        ...prev,
+        [shapeKey]: error,
+      }));
+    }
+  );
+
   useEffect(() => {
     ornateViewer.current = new CogniteOrnate({
       container: '#ornate-container',
@@ -136,6 +271,36 @@ const Blueprint = ({
               onUpdate(nextBlueprint);
             }
           }}
+          ruleSets={blueprint?.ruleSets}
+          shapeRuleSetsIds={
+            blueprint?.shapeRuleSets?.[selectedNodes[0].id()] || []
+          }
+          onNewRuleSet={() => {
+            setIsCreatingNewRuleSet(true);
+          }}
+          onClickRuleSet={(nextRuleSetId: string) => {
+            if (onUpdate && blueprint) {
+              const currentSelectedRuleSetsForShape =
+                blueprint?.shapeRuleSets?.[selectedNodes[0].id()] || [];
+              let nextRulesForShape = [...currentSelectedRuleSetsForShape];
+              if (currentSelectedRuleSetsForShape.includes(nextRuleSetId)) {
+                nextRulesForShape = nextRulesForShape.filter(
+                  (x) => x !== nextRuleSetId
+                );
+              } else {
+                nextRulesForShape = nextRulesForShape.concat(nextRuleSetId);
+              }
+              const nextBlueprint: BlueprintDefinition = {
+                ...blueprint,
+                shapeRuleSets: {
+                  ...(blueprint.shapeRuleSets || {}),
+                  [selectedNodes[0].id()]: nextRulesForShape,
+                },
+              };
+
+              onUpdate(nextBlueprint);
+            }
+          }}
         />
       )}
       {isReady &&
@@ -165,6 +330,54 @@ const Blueprint = ({
             }}
           />
         ))}
+      <Drawer
+        visible={isCreatingNewRuleSet}
+        width={360}
+        onClose={() => {
+          setIsCreatingNewRuleSet(false);
+        }}
+      >
+        <RuleSetsDrawer
+          ruleSets={blueprint?.ruleSets || []}
+          issues={errors}
+          onIssueClick={(shapeKey) => {
+            ornateViewer.current?.zoomToNode(
+              ornateViewer.current.stage.find(`#${shapeKey}`)[0]
+            );
+          }}
+          onDeleteRuleSet={(ruleSet) => {
+            if (!blueprint || !onUpdate) return;
+            const nextRuleSets = blueprint.ruleSets?.filter(
+              (r) => r.id !== ruleSet.id
+            );
+            const nextShapeRuleSets = { ...blueprint.shapeRuleSets };
+            Object.keys(nextShapeRuleSets).forEach((shapeKey) => {
+              nextShapeRuleSets[shapeKey] = nextShapeRuleSets[shapeKey].filter(
+                (r) => r !== ruleSet.id
+              );
+              if (nextShapeRuleSets[shapeKey].length === 0) {
+                delete nextShapeRuleSets[shapeKey];
+              }
+            });
+            const nextBlueprint: BlueprintDefinition = {
+              ...blueprint,
+              ruleSets: nextRuleSets,
+              shapeRuleSets: nextShapeRuleSets,
+            };
+            onUpdate(nextBlueprint);
+          }}
+          onUpdateRuleSets={(next) => {
+            if (!blueprint || !onUpdate) return;
+
+            const nextBlueprint: BlueprintDefinition = {
+              ...blueprint,
+              ruleSets: next,
+            };
+            onUpdate(nextBlueprint);
+            queriesResults.forEach((query) => query.refetch());
+          }}
+        />
+      </Drawer>
     </BlueprintWrapper>
   );
 };

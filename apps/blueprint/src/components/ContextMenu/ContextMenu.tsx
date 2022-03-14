@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Button, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import Konva from 'konva';
 import { useMetrics } from '@cognite/metrics';
 import { Node, NodeConfig } from 'konva/lib/Node';
 import { UpdateKeyType } from '@cognite/ornate';
-import { ShapeAttribute } from 'typings/rules';
+import { RuleSet, ShapeAttribute } from 'typings';
 
 import {
   ThicknessControl,
@@ -30,6 +30,10 @@ type ContextMenuProps = {
   ) => void;
   shapeAttributes: ShapeAttribute[];
   onSetShapeAttributes: (next: ShapeAttribute[]) => void;
+  ruleSets?: RuleSet[];
+  shapeRuleSetsIds?: string[];
+  onClickRuleSet: (nextRuleSetId: string) => void;
+  onNewRuleSet: () => void;
 };
 
 const ContextMenu = ({
@@ -38,6 +42,10 @@ const ContextMenu = ({
   updateShape,
   shapeAttributes,
   onSetShapeAttributes,
+  ruleSets,
+  shapeRuleSetsIds,
+  onClickRuleSet,
+  onNewRuleSet,
 }: ContextMenuProps) => {
   const isDocumentGroup =
     selectedNode.getType() === 'Group' &&
@@ -202,6 +210,44 @@ const ContextMenu = ({
     />
   );
 
+  const ruleControlButton = (
+    <Dropdown
+      content={
+        <Menu>
+          <Menu.Header>Rule Sets</Menu.Header>
+          {ruleSets?.map((r) => (
+            <Menu.Item
+              key={r.id}
+              onClick={() => {
+                onClickRuleSet(r.id);
+              }}
+              appendIcon={
+                shapeRuleSetsIds?.includes(r.id) ? 'Checkmark' : undefined
+              }
+            >
+              {r.name}
+            </Menu.Item>
+          ))}
+          <Menu.Divider />
+          <Menu.Item
+            onClick={() => {
+              onNewRuleSet();
+            }}
+          >
+            Manage rule sets
+          </Menu.Item>
+        </Menu>
+      }
+    >
+      <Button
+        key="ruleControlButton"
+        type="ghost"
+        aria-label="fillControlButton"
+        icon="Function"
+      />
+    </Dropdown>
+  );
+
   const attributesControl = (
     <AttributesControl
       attributes={shapeAttributes || []}
@@ -226,8 +272,8 @@ const ContextMenu = ({
           strokeControlButton,
           deleteNodeButton,
           attributesControl,
+          ruleControlButton,
         ];
-        return [thicknessControl, strokeControlButton, deleteNodeButton];
       case 'stamp':
         return [colorizeControlButton, resetFiltersButton, deleteNodeButton];
       case 'circle':
@@ -238,6 +284,7 @@ const ContextMenu = ({
           fillControlButton,
           deleteNodeButton,
           attributesControl,
+          ruleControlButton,
         ];
       default:
         return undefined;
