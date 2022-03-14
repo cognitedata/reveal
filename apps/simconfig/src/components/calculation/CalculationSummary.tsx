@@ -150,7 +150,13 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
             <div>Sampling method</div>
             <div>
               <NullableValue
-                value={configuration.steadyStateDetection.aggregateType}
+                value={
+                  configuration.steadyStateDetection.aggregateType
+                    ? definitions?.type.aggregate[
+                        configuration.steadyStateDetection.aggregateType
+                      ]
+                    : null
+                }
               />
             </div>
           </div>
@@ -298,13 +304,15 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
           <div className="heading">Sensor timeseries</div>
           <div className="heading">Sampling method</div>
           {configuration.inputTimeSeries.map(
-            ({ name, unit, aggregateType, sensorExternalId }) => (
+            ({ name, unit, aggregateType, sensorExternalId, unitType }) => (
               <React.Fragment key={name}>
                 <div>
                   <NullableValue value={name} />
                 </div>
                 <div>
-                  <NullableValue value={unit} />
+                  <NullableValue
+                    value={definitions?.map.unitType[unitType][unit ?? '']}
+                  />
                 </div>
                 <div>
                   <NullableValue value={sensorExternalId} />
