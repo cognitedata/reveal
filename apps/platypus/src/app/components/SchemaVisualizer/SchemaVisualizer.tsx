@@ -13,6 +13,7 @@ import {
   getUnionTypes,
   SchemaDefinitionNode,
 } from '../../utils/graphql-utils';
+
 import { ZIndex } from '../../utils/zIndex';
 import { SmallNode } from './nodes/SmallNode';
 import { FullNode } from './nodes/FullNode';
@@ -24,7 +25,13 @@ import { Spinner } from '../Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 export const SchemaVisualizer = React.memo(
-  ({ graphQLSchemaString }: { graphQLSchemaString?: string }) => {
+  ({
+    graphQLSchemaString,
+    active,
+  }: {
+    graphQLSchemaString?: string;
+    active?: string;
+  }) => {
     const { t } = useTranslation('Schema Visualizer');
     const [nodes, setNodes] = useState<(Node & SchemaDefinitionNode)[]>([]);
     const [links, setLinks] = useState<Link[]>([]);
@@ -246,7 +253,7 @@ export const SchemaVisualizer = React.memo(
               }
               return (
                 <NodeWrapper
-                  isActive={false}
+                  isActive={active === item.id}
                   width={nodeWidth}
                   id={item.id}
                   key={item.id}

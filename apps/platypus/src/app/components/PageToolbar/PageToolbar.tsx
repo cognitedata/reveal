@@ -28,7 +28,7 @@ export const PageToolbar = ({
       <TopBar.Left>
         {backPathname && (
           <Button
-            icon="ArrowBack"
+            icon="ChevronLeft"
             type="ghost"
             onClick={() => {
               onBackRouteClick();

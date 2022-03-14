@@ -1,5 +1,4 @@
 import {
-  FieldDefinitionNode,
   DefinitionNode,
   InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
@@ -11,24 +10,6 @@ export type SchemaDefinitionNode =
   | ObjectTypeDefinitionNode
   | InterfaceTypeDefinitionNode
   | UnionTypeDefinitionNode;
-
-export const isFieldRequired = (type: TypeNode): boolean => {
-  switch (type?.kind) {
-    case 'NamedType':
-      return false;
-    case 'NonNullType':
-      return true;
-    case 'ListType':
-      return isFieldRequired(type.type);
-  }
-  return false;
-};
-
-export const doesFieldHaveDirective = (
-  type: FieldDefinitionNode,
-  directive: string
-): boolean =>
-  type.directives?.some((el) => el.name.value === directive) || false;
 
 export const getFieldType = (type: TypeNode): string => {
   switch (type?.kind) {

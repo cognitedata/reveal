@@ -6,8 +6,15 @@ import {
   GraphQLQueryResponse,
   ListVersionsDTO,
   RunQueryDTO,
+  UpdateSolutionDataModelFieldDTO,
 } from '../dto';
-import { SolutionSchema, Solution } from '../types';
+import {
+  SolutionSchema,
+  Solution,
+  SolutionDataModel,
+  SolutionDataModelType,
+  SolutionDataModelField,
+} from '../types';
 
 export interface ISolutionsApiService {
   createSolution(dto: CreateSolutionDTO): Promise<Solution>;
@@ -45,4 +52,73 @@ export interface ISolutionSchemaApiService {
    * @param dto
    */
   runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse>;
+}
+
+export interface IGraphQlUtilsService {
+  /**
+   * Parse graphql schema string
+   * and converts into SolutonDataModel
+   * @param graphQlSchema
+   */
+  parseSchema(graphQlSchema: string): SolutionDataModel;
+
+  /**
+   * Converts SolutonDataModel back into graphql SDL string
+   * @param state
+   */
+  generateSdl(): string;
+
+  /**
+   * Adds new type into AST
+   * @param name
+   */
+  addType(name: string): SolutionDataModelType;
+
+  /**
+   * Update specified type in AST
+   */
+  updateType(
+    typeName: string,
+    updates: Partial<SolutionDataModelType>
+  ): SolutionDataModelType;
+
+  /**
+   * Removes specified type from AST
+   * @param typeName
+   */
+  removeType(typeName: string): void;
+
+  /**
+   * Adds new field for the specified type into AST
+   * @param typeName
+   * @param fieldName
+   * @param fieldProps
+   */
+  addField(
+    typeName: string,
+    fieldName: string,
+    fieldProps: Partial<UpdateSolutionDataModelFieldDTO>
+  ): SolutionDataModelField;
+
+  /**
+   * Updates the field for the specified type into AST
+   * @param typeName
+   * @param fieldName
+   * @param updates
+   */
+  updateTypeField(
+    typeName: string,
+    fieldName: string,
+    updates: Partial<UpdateSolutionDataModelFieldDTO>
+  ): SolutionDataModelField;
+
+  /**
+   * Removes field from specified type from AST
+   * @param typeName
+   * @param fieldName
+   */
+  removeField(typeName: string, fieldName: string): void;
+ 
+  /** Clears the state */
+  clear(): void;
 }

@@ -2032,10 +2032,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^5.5.2":
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.5.2.tgz#181a4405610e04a88c8f58f270123bf13d192870"
-  integrity sha512-NwjMY1SLo3itdgJ6ti1W6RKpdMRTkjQoURCr7jfTfQEvsqt98biKd1wrnd87GDxeUCVzHVzf5pucxttFE5RsXA==
+"@cognite/cogs.js@^5.19.5":
+  version "5.19.5"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.5.tgz#5fa025481b8711b90fea1b9b29bf38ebef773f29"
+  integrity sha512-8Fi+0J2j4qNOAENoIV2L10WXZGmhGXnxeEJDfZFZyPDWHKcilADD7mojmdg9lKGk1rgHkp4cYhxDm0xdRCwHwA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -12294,6 +12294,11 @@ graphiql@^1.5.1:
     graphql-language-service "^3.2.1"
     markdown-it "^12.2.0"
 
+graphql-extra@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/graphql-extra/-/graphql-extra-0.2.2.tgz#c8dfd99730a5cf43cdc976bc7972cea08256935c"
+  integrity sha512-wMWha1NIOKfuqQ05v+pm/0QO6ox6xrXXagDDDgx5O64XITYWk3/SJNuBUDV25oIbV7ehMAvn40BMBhY4JH6nGg==
+
 graphql-language-service-interface@^2.9.0, graphql-language-service-interface@^2.9.1:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/graphql-language-service-interface/-/graphql-language-service-interface-2.9.1.tgz#be0b11b06b78730ea9d250e0e2290e7ed9c8d283"
@@ -19061,6 +19066,11 @@ react-helmet@6.1.0:
     react-fast-compare "^3.1.1"
     react-side-effect "^2.1.0"
 
+react-hook-form@^7.25.0:
+  version "7.25.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.25.0.tgz#ffba58e5e14c8eeb81e2c43b741667552f11ae29"
+  integrity sha512-MyF4YXegIT/vfyZloTm98mpJwLUPfULdX37yPzXeijT1hePCkV8DN1IAnEufxgtqCpc7aFGRinegQwisUGZCnA==
+
 react-i18next@11.12.0:
   version "11.12.0"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.12.0.tgz#2a053321b9b7a876d5baa7af55a12d986117bffc"
@@ -19138,6 +19148,15 @@ react-query@3.34.4:
   version "3.34.4"
   resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.34.4.tgz#da926717683fd9e9e310d46ab6f60f76a80ffaae"
   integrity sha512-1Pa7pNJF9I+UdQ1RvqmBO9tWvBNfzNeJM3vYApcE2SL4Hbwy6q4U7ce4u+SWQnLMFit3z8WWp9OXpcDqEQ/E1A==
+  dependencies:
+    "@babel/runtime" "^7.5.5"
+    broadcast-channel "^3.4.1"
+    match-sorter "^6.0.2"
+
+react-query@^3.34.12:
+  version "3.34.12"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.34.12.tgz#dcaaf7b629f0868aae8afef9fb7692f6ea7643bf"
+  integrity sha512-flDdudQVH4CqE+kNYYYyo4g2Yjek3H/36G3b9bK5oe26jD5gFnx+PPwnq0gayq5z2dcSfr2z4+drvuyeZ3A5QQ==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"

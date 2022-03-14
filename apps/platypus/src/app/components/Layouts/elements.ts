@@ -73,6 +73,8 @@ export const SplitPanel = styled.div`
     align-self: stretch;
     display: flex;
     align-items: center;
+    padding-right: 10px;
+    z-index: 1;
   }
 
   .divider {
@@ -87,6 +89,7 @@ export const SplitPanel = styled.div`
     height: 100%;
     flex: 1;
     flex-direction: column;
+    margin-left: -10px;
   }
 
   .split-panel-content-wrapper {

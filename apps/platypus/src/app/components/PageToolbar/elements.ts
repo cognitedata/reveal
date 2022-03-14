@@ -6,9 +6,11 @@ export const StyledTopBar = styled(TopBar)`
     align-items: center;
     padding: 0 10px;
     height: 56px;
+    overflow: visible;
   }
   .cogs-topbar--right {
     align-items: center;
     padding: 0 10px;
+    overflow: visible;
   }
 `;

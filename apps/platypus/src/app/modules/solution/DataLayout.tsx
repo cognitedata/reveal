@@ -9,13 +9,13 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 const DataModelPage = lazy<any>(() =>
-  import('./data/pages/DataModelPage').then((module) => ({
+  import('./data-model/pages/DataModelPage').then((module) => ({
     default: module.DataModelPage,
   }))
 );
 
 const DataManagementPage = lazy<any>(() =>
-  import('./data/pages/DataManagementPage').then((module) => ({
+  import('./data-model/pages/DataManagementPage').then((module) => ({
     default: module.DataManagementPage,
   }))
 );

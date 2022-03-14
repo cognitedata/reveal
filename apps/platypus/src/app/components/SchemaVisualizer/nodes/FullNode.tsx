@@ -23,7 +23,7 @@ export const FullNode = ({ item }: { item: ObjectTypeDefinitionNode }) => {
         </Label>
       </Header>
       {item.fields?.map((el) => (
-        <PropertyItem key={el.name.value}>
+        <PropertyItem key={el.name.value} data-cy="visualizer-type-field">
           <Body level={2} className="property-name">
             {getFieldType(el.type) === 'ID' ? (
               <StyledMainID>{el.name.value}</StyledMainID>

@@ -1,3 +1,5 @@
+import { SolutionDataModelField, SolutionDataModelFieldType } from '../types';
+
 export interface CreateSolutionDTO {
   name: string;
   description?: string;
@@ -104,4 +106,9 @@ export interface SolutionApiOutputDTO {
   description: string;
   createdTime: number;
   versions?: ApiVersion[];
+}
+
+export interface UpdateSolutionDataModelFieldDTO
+  extends Omit<SolutionDataModelField, 'type'> {
+  type: SolutionDataModelFieldType | string;
 }

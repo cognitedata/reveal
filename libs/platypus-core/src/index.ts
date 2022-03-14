@@ -8,3 +8,4 @@ export * from './lib/boundaries/utils';
 export * from './lib/domain/solution';
 export * from './lib/domain/common/validators';
 export * from './lib/domain/solution/providers/solutions';
+export * from './lib/domain/solution/services/solution-data-model.service';

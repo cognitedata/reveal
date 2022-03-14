@@ -1,21 +1,35 @@
 import { fetchVersions, fetchSolution } from './actions';
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SolutionSchema, Solution } from '@platypus/platypus-core';
+import {
+  SolutionSchema,
+  Solution,
+  SolutionDataModelType,
+} from '@platypus/platypus-core';
 import { ActionStatus } from '@platypus-app/types';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
+const initialState = {
+  solution: undefined as Solution | undefined,
+  solutionStatus: ActionStatus.IDLE,
+  solutionError: '',
+  selectedSchema: {
+    schema: '',
+    externalId: '',
+    status: 'DRAFT',
+    version: '1',
+    createdTime: Date.now(),
+    lastUpdatedTime: Date.now(),
+  } as SolutionSchema,
+  schemas: [] as SolutionSchema[],
+  schemasStatus: ActionStatus.IDLE,
+  schemasError: '',
+  currentType: null as null | SolutionDataModelType,
+};
+
 const solutionStateSlice = createSlice({
   name: 'solution',
-  initialState: {
-    solution: undefined as Solution | undefined,
-    solutionStatus: ActionStatus.IDLE,
-    solutionError: '',
-    selectedSchema: undefined as SolutionSchema | undefined,
-    schemas: [] as SolutionSchema[],
-    schemasStatus: ActionStatus.IDLE,
-    schemasError: '',
-  },
+  initialState: initialState,
   reducers: {
     selectVersion: (state, action: PayloadAction<{ version: string }>) => {
       if (state.schemas.length) {
@@ -24,10 +38,10 @@ const solutionStateSlice = createSlice({
         } else {
           state.selectedSchema = state.schemas.find(
             (schema) => schema.version === action.payload.version
-          );
+          ) as SolutionSchema;
         }
       } else {
-        state.selectedSchema = undefined;
+        state.selectedSchema = initialState.selectedSchema;
       }
     },
     setSchema: (state, action: PayloadAction<SolutionSchema>) => {
@@ -35,6 +49,12 @@ const solutionStateSlice = createSlice({
     },
     insertSchema: (state, action: PayloadAction<SolutionSchema>) => {
       state.schemas = [action.payload, ...state.schemas];
+    },
+    setCurrentType: (
+      state,
+      action: PayloadAction<SolutionDataModelType | null>
+    ) => {
+      state.currentType = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -60,7 +80,7 @@ const solutionStateSlice = createSlice({
       state.schemas = action.payload;
       state.selectedSchema = action.payload.length
         ? action.payload[0]
-        : undefined;
+        : initialState.selectedSchema;
     });
     builder.addCase(fetchVersions.rejected, (state, action) => {
       state.schemasStatus = ActionStatus.FAIL;
