@@ -4,7 +4,7 @@
 import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
 import { EventTrigger } from './EventTrigger';
 import debounce from 'lodash/debounce';
-import { assertNever } from '@reveal/utilities';
+import { assertNever } from '../assertNever';
 import { Vector2 } from 'three';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;

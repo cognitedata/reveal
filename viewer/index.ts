@@ -41,11 +41,9 @@ export {
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
 
-export { GeometryFilter, WellKnownUnit } from './packages/cad-model';
-
 export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
 
 export { revealEnv, IndexSet, NumericRange } from './packages/utilities';
 
-export { Cognite3DModel, BoundingBoxClipper } from './packages/cad-model';
+export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
 export { CognitePointCloudModel } from './packages/pointclouds';

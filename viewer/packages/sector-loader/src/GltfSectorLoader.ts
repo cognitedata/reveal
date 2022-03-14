@@ -3,14 +3,12 @@
  */
 import * as THREE from 'three';
 
-import { ConsumedSector, V9SectorMetadata, WantedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, V9SectorMetadata, WantedSector, filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
-
-import { filterGeometryOutsideClipBox } from '../../cad-parsers/src/cad/filterPrimitivesV9';
 
 import assert from 'assert';
 
