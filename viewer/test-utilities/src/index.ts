@@ -8,4 +8,3 @@ export * from './createSectorMetadata';
 export * from './emptySector';
 export * from './expects';
 export * from './wait';
-export * from './createDetermineSectorInput';
