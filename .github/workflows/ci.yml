@@ -97,7 +97,7 @@ jobs:
 
     - name: Upload image diffs for failed visual tests
       if: (always() && steps.visualtests.outcome == 'failure')
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: image-diffs-${{ github.sha }}
         path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
