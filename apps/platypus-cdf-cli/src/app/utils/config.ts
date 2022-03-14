@@ -1,19 +1,30 @@
 import Conf from 'conf';
-import { ROOT_CONFIG_KEY } from '../constants';
+import { v4 } from 'uuid';
+import { CONSTANTS, ROOT_CONFIG_KEY } from '../constants';
 import { ProjectConfig } from '../types';
 let config: Conf<ConfType>;
 
-export const getConfig = () => config;
+export const getConfig = () => {
+  if (!config) {
+    // loads global config first
+    config = new Conf({
+      projectName: CONSTANTS.APP_ID,
+      configName: 'cdf-credentials',
+      defaults: {
+        [ROOT_CONFIG_KEY.TELEMETRY_DISABLED]: false,
+        [ROOT_CONFIG_KEY.UID]: v4(),
+        [ROOT_CONFIG_KEY.AUTO_CHECK_FOR_UPDATES]: true,
+      } as ConfType,
+    });
+  }
+  return config;
+};
 
 type ConfType = {
   [ROOT_CONFIG_KEY.AUTO_CHECK_FOR_UPDATES]?: boolean;
   [ROOT_CONFIG_KEY.TELEMETRY_DISABLED]?: boolean;
   [ROOT_CONFIG_KEY.UID]?: string;
   [ROOT_CONFIG_KEY.AUTH]?: ProjectConfig;
-};
-
-export const setConfig = (newConfig: Conf<ConfType | any>) => {
-  config = newConfig;
 };
 
 export const getProjectConfig = (): ProjectConfig | undefined => {

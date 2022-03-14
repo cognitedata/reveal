@@ -1,12 +1,10 @@
 import { Arguments } from 'yargs';
-import Conf from 'conf';
 import updateNotifier from 'update-notifier';
 
 import { BaseArgs } from '../types';
-import { getConfig, setConfig } from '../utils/config';
+import { getConfig } from '../utils/config';
 import { AUTH_TYPE, CONSTANTS, ROOT_CONFIG_KEY } from '../constants';
 import { Log } from '../utils/logger';
-import { v4 } from 'uuid';
 import { enable } from 'debug';
 import { getMixpanel } from '../utils/mixpanel';
 import { getCompleteCommandString } from '../utils/yargs-utils';
@@ -15,18 +13,6 @@ import { getCompleteCommandString } from '../utils/yargs-utils';
 const pkg = require('../../../package.json');
 
 export async function init(args: Arguments<BaseArgs>) {
-  // loads global config first
-  setConfig(
-    new Conf({
-      projectName: CONSTANTS.APP_ID,
-      configName: 'cdf-credentials',
-      defaults: {
-        [ROOT_CONFIG_KEY.TELEMETRY_DISABLED]: false,
-        [ROOT_CONFIG_KEY.UID]: v4(),
-        [ROOT_CONFIG_KEY.AUTO_CHECK_FOR_UPDATES]: true,
-      },
-    })
-  );
   const globalConfig = getConfig();
 
   // check and notify for the update
