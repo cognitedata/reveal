@@ -56,13 +56,13 @@
     "lodash": "4.17.21",
     "loglevel": "1.8.0",
     "mixpanel-browser": "2.45.0",
-    "rxjs": "7.5.4",
+    "rxjs": "7.5.5",
     "skmeans": "0.11.3",
     "three": "0.137.5"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.22.0",
-    "@cognite/sdk": "7.1.0",
+    "@cognite/sdk": "7.1.1",
     "@cognite/sdk-core": "^4.1.0",
     "@types/dat.gui": "0.7.7",
     "@types/jest": "26.0.24",
