@@ -53,9 +53,9 @@ describe('UploadFunctionModal', () => {
       expect(wrapper.find(Upload).exists()).toBe(true);
       expect(allFormItemsLabels).toContain('External Id');
       expect(allFormItemsLabels[0]).toContain('Function File');
-      expect(allFormItemsLabels[1]).toContain('Metadata');
-      expect(allFormItemsLabels[9]).toContain('Runtime');
-      expect(allFormItemsLabels[10]).toContain('Secrets');
+      expect(allFormItemsLabels[8]).toContain('Runtime');
+      expect(allFormItemsLabels[9]).toContain('Secrets');
+      expect(allFormItemsLabels[10]).toContain('Metadata');
       wrapper.unmount();
     });
 

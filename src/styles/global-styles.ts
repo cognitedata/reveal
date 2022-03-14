@@ -36,6 +36,10 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .ant-select-dropdown-menu {
     margin-top: 0;
   }
+
+  .ant-descriptions-row pre {
+    margin: 0;
+  }
 `;
 
 export default GlobalStyle;

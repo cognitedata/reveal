@@ -272,13 +272,12 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               Must be a zip file with at least a Python file called{' '}
               <b>handler.py </b>
               with a function named <b>handle</b> with any of following
-              arguments: <b>data</b>, <b>client</b> <b>secrets</b>and{' '}
+              arguments: <b>data</b>, <b>client</b> <b>secrets</b> and{' '}
               <b>metadata</b>. More information can be found{' '}
               <Link href="https://docs.cognite.com/api/playground/#tag/Functions">
                 here.
               </Link>
             </p>
-            <FunctionMetadata metadata={metadata} setMetadata={setMetadata} />
           </Col>
           <Col span={12}>
             <Form.Item
@@ -510,6 +509,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 </Button>
               )}
             </Form.Item>
+            <FunctionMetadata metadata={metadata} setMetadata={setMetadata} />
           </Col>
         </Row>
       </StyledForm>
