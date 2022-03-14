@@ -7,9 +7,9 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import { Chart } from 'models/chart/types';
-import { IdInfo } from '@cognite/sdk';
 import { getFlow } from '@cognite/auth-utils';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { uniqBy } from 'lodash';
 import { useAppsApiBaseUrl, useCluster, useProject } from './config';
 
 type EnvironmentConfig = {
@@ -133,11 +133,26 @@ export const useMyCharts = () => {
   return useQuery(
     ['charts', 'mine'],
     async () => {
-      const snapshot = await charts(project)
-        .where('version', '==', CHART_VERSION)
-        .where('user', '==', data?.id)
-        .get();
-      return snapshot.docs.map((doc) => doc.data()) as Chart[];
+      const chartsWhereUserMatchesId = (
+        await charts(project)
+          .where('version', '==', CHART_VERSION)
+          .where('user', '==', data?.id)
+          .get()
+      ).docs.map((doc) => doc.data()) as Chart[];
+
+      const chartsWhereUserMatchesEmail = (
+        await charts(project)
+          .where('version', '==', CHART_VERSION)
+          .where('user', '==', data?.email)
+          .get()
+      ).docs.map((doc) => doc.data()) as Chart[];
+
+      const userCharts = uniqBy(
+        [...chartsWhereUserMatchesId, ...chartsWhereUserMatchesEmail],
+        'id'
+      );
+
+      return userCharts;
     },
     { enabled: !!data?.id }
   );
@@ -215,8 +230,15 @@ export const useUpdateChart = () => {
     },
     {
       onMutate(chart) {
-        const skipPersist =
-          cache.getQueryData<IdInfo>(['login', 'status'])?.user !== chart.user;
+        /**
+         * Check if the chart you're changing is your own or a public one
+         * For public ones we do not try to push the change to the server,
+         * but still allow you to change it locally so that you can
+         * later duplicate and save it as your own if you want
+         */
+        const skipPersist = !(
+          data?.id === chart.user || data?.email === chart.user
+        );
         const key = ['chart', chart.id];
         const cachedChart = cache.getQueryData(key);
 
