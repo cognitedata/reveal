@@ -20,7 +20,12 @@ import IDP from 'pages/IDP';
 import OIDC from 'pages/OIDC';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
-import { useQuery, useQueryClient, useIsFetching, useIsMutating } from 'react-query';
+import {
+  useQuery,
+  useQueryClient,
+  useIsFetching,
+  useIsMutating,
+} from 'react-query';
 import { useAuthConfiguration, usePermissions } from 'hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import LegacyServiceAccountsWarning from 'pages/OIDC/LegacyServiceAccountsWarning';
@@ -72,7 +77,9 @@ export default function () {
         />
       </Title>
       {/* !authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && */}
-      {!legacyFlow && isFetched && serviceAccounts?.length ? <LegacyServiceAccountsWarning accounts={serviceAccounts} /> : null}
+      {!legacyFlow && isFetched && serviceAccounts?.length ? (
+        <LegacyServiceAccountsWarning accounts={serviceAccounts} />
+      ) : null}
       <StyledMeny
         mode="horizontal"
         selectedKeys={[params.page || 'groups']}

@@ -43,8 +43,10 @@ const StyledDisableButtonSection = styled.div`
   margin-bottom: 4px;
 `;
 
-const LegacyServiceAccountsWarning = (props: { accounts: ServiceAccount[] }) => {
-  const { accounts } = props
+const LegacyServiceAccountsWarning = (props: {
+  accounts: ServiceAccount[];
+}) => {
+  const { accounts } = props;
   const sdk = useSDK();
   const client = useQueryClient();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
@@ -70,7 +72,6 @@ const LegacyServiceAccountsWarning = (props: { accounts: ServiceAccount[] }) => 
         });
       },
       onSuccess() {
-        debugger
         notification.success({
           key: 'delete-legacy-service-accounts',
           message: 'Legacy Service Accounts are deleted successfully',
@@ -81,15 +82,15 @@ const LegacyServiceAccountsWarning = (props: { accounts: ServiceAccount[] }) => 
         notification.error({
           key: 'delete-legacy-service-accounts',
           message: 'Legacy service account is not deleted!',
-          description: 'An error occured while deleting legacy service accounts.',
+          description:
+            'An error occured while deleting legacy service accounts.',
         });
       },
     }
   );
 
-
   const handleDelete = () => {
-    const serviceAccIds = accounts.map((account: ServiceAccount) => account.id)
+    const serviceAccIds = accounts.map((account: ServiceAccount) => account.id);
     deleteLegacyServiceAccounts(serviceAccIds);
     closeModal();
   };
@@ -129,16 +130,18 @@ const LegacyServiceAccountsWarning = (props: { accounts: ServiceAccount[] }) => 
         <>
           <p>
             We are deprecating authentication via CDF service accounts and API
-            keys in favor of OIDC. Below are the legacy service accounts that can be safely deleted as they are no longer useful.
+            keys in favor of OIDC. Below are the legacy service accounts that
+            can be safely deleted as they are no longer useful.
           </p>
-          {accounts?.length && accounts.map((account: ServiceAccount) => <><Button
-            disabled={true}
-            onClick={() => { }}
-            type="ghost"
-            style={{ marginTop: 6 }}
-          >
-            {account.name}
-          </Button><br /></>)}
+          {accounts?.length &&
+            accounts.map((account: ServiceAccount) => (
+              <>
+                <Button disabled type="ghost" style={{ marginTop: 6 }}>
+                  {account.name}
+                </Button>
+                <br />
+              </>
+            ))}
           <br />
           <StyledDisableButtonSection>
             <Button
@@ -160,9 +163,7 @@ const LegacyServiceAccountsWarning = (props: { accounts: ServiceAccount[] }) => 
                 Cancel
               </StyledModalButton>
               <StyledModalButton
-                disabled={
-                  !writeOk || remainingTime > 0
-                }
+                disabled={!writeOk || remainingTime > 0}
                 onClick={handleDelete}
                 type="danger"
               >
