@@ -1,5 +1,3 @@
-import get from 'lodash/get';
-
 import { IWellBore } from '@cognite/node-visualizer';
 
 import { Well, Wellbore } from 'modules/wellSearch/types';
@@ -14,11 +12,11 @@ export const mapWellboresTo3D = (wells: Well[]): Partial<IWellBore>[] => {
               ...wellbore,
               metadata: {
                 ...(wellbore.metadata || {}),
-                elevation_value_unit: get(row, 'datum.unit', ''),
-                elevation_value: get(row, 'datum.value', ''),
-                elevation_type: 'KB',
-                bh_x_coordinate: get(row, 'wellhead.x', ''),
-                bh_y_coordinate: get(row, 'wellhead.y', ''),
+                elevation_value_unit: wellbore.datum?.unit || '',
+                elevation_value: String(wellbore.datum?.value || ''),
+                elevation_type: wellbore.datum?.reference || 'KB',
+                bh_x_coordinate: String(row.wellhead?.x || ''),
+                bh_y_coordinate: String(row.wellhead?.y || ''),
               },
               id: String(wellbore.id),
               parentId: String(wellbore.wellId),

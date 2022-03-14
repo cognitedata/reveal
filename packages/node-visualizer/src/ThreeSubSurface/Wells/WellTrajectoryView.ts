@@ -206,12 +206,15 @@ export class WellTrajectoryView extends BaseGroupThreeView {
 
   public /* override */ onShowInfo(
     viewInfo: ViewInfo,
-    intersection: THREE.Intersection
+    intersection: THREE.Intersection,
+    mdUnit?: string
   ): void {
     const md = WellTrajectoryView.startPickingAndReturnMd(
       this,
       viewInfo,
-      intersection
+      intersection,
+      undefined,
+      mdUnit
     );
     if (md === undefined) return;
 
@@ -666,9 +669,20 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     md: number,
     mdUnit?: string
   ): string {
-    return !mdUnit || Units.isFeet(mdUnit)
-      ? `${Units.convertFeetToMeter(md).toFixed(2)} m / ${md.toFixed(2)} ft`
-      : `${md.toFixed(2)} ${mdUnit}`;
+    const mdRounded = md.toFixed(2);
+    /**
+     * This is an assumption. If unit is not provided assumed to be ft
+     */
+    if (!mdUnit) {
+      return `${mdRounded} ft`;
+    }
+    if (Units.isFeet(mdUnit)) {
+      return `${Units.covertFeetToMeterAndRounded(md)} m / ${mdRounded} ft`;
+    }
+    if (Units.isMeter(mdUnit)) {
+      return `${mdRounded} m / ${Units.covertMeterToFeetAndRounded(md)} ft`;
+    }
+    return `${mdRounded} ${mdUnit}`;
   }
 
   public static startPickingAndReturnMd(

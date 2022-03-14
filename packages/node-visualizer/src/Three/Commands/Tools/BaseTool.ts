@@ -63,14 +63,27 @@ export abstract class BaseTool extends ThreeRenderTargetCommand {
     const { target } = this;
     if (!target) return;
 
-    const { viewInfo } = target;
+    const { viewInfo, viewsShownHere } = target;
     const preCount = viewInfo.items.length;
     viewInfo.clear();
 
     const [view, intersection] = target.getViewByMouseEvent(event);
-    if (view && intersection) view.onShowInfo(viewInfo, intersection);
+    if (view && intersection) {
+      const wellTrajectoryView = viewsShownHere.list.find((item) => {
+        const mdUnit = this.getMdUnit(item as any);
+        return mdUnit !== undefined;
+      });
+      const mdUnit = this.getMdUnit(wellTrajectoryView as any);
+      view.onShowInfo(viewInfo, intersection, mdUnit);
+    }
 
     const postCount = viewInfo.items.length;
     if (preCount > 0 || postCount > 0) target.invalidate();
+  }
+
+  private getMdUnit(wellTrajectoryView: any) {
+    return 'node.trajectory.mdUnit'
+      .split('.')
+      .reduce((p, c) => p?.[c], wellTrajectoryView as any);
   }
 }

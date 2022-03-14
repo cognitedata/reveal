@@ -12,13 +12,15 @@ export class WellTrajectoryNodeCreator {
     trajectoryDataColumnIndices: ITrajectoryColumnIndices,
     trajectoryRows: ITrajectoryRows | null | undefined,
     startMd: number,
-    unit: number
+    unit: number,
+    elevationUnit: string
   ): WellTrajectoryNode | null {
     const trajectory = WellTrajectoryNodeCreator.createTrajectory(
       trajectoryDataColumnIndices,
       trajectoryRows,
       startMd,
-      unit
+      unit,
+      elevationUnit
     );
     if (trajectory == null) return null; // Missing data
 
@@ -31,7 +33,8 @@ export class WellTrajectoryNodeCreator {
     trajectoryDataColumnIndices: ITrajectoryColumnIndices,
     trajectoryRows: ITrajectoryRows | null | undefined,
     startMd: number,
-    unit: number
+    unit: number,
+    elevationUnit: string
   ): WellTrajectory | null {
     function getIndex(value?: number): number {
       return value === undefined ? -1 : value;
@@ -50,7 +53,7 @@ export class WellTrajectoryNodeCreator {
     const xOffsetIndex = getIndex(trajectoryDataColumnIndices.x_offset);
     const yOffsetIndex = getIndex(trajectoryDataColumnIndices.y_offset);
 
-    const trajectory = new WellTrajectory();
+    const trajectory = new WellTrajectory(elevationUnit);
 
     // If you have xOffset, yOffset, and Tvd (basically the same as x, y, z)
     if (xOffsetIndex >= 0 && yOffsetIndex >= 0 && tvdIndex >= 0) {

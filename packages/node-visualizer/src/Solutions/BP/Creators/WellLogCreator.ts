@@ -226,10 +226,14 @@ export class WellLogCreator {
       }
 
       const { subtype, description } = event;
+      /**
+       * For npt it has been assumed if unit is provided then it is feet. Doing the fallback here
+       * till it is properly fixed from discover
+       */
       const sample = new PointLogSample(
         description,
         topMd,
-        mdHoleStartUnit,
+        mdHoleStartUnit || 'ft',
         baseMd
       );
       sample.subtype = subtype;
@@ -264,9 +268,12 @@ export class WellLogCreator {
       }
 
       const { subtype, description } = event;
-      const sample = new PointLogSample(description, topMd, nptMdUnit);
+      /**
+       * For npt it has been assumed if unit is provided then it is feet. Doing the fallback to ft here
+       * till it is properly fixed from discover
+       */
+      const sample = new PointLogSample(description, topMd, nptMdUnit || 'ft');
       sample.subtype = subtype;
-
       log.samples.push(sample);
     }
     if (log.length === 0) return null;
