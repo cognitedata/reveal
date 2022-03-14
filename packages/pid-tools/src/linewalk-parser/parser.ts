@@ -24,6 +24,9 @@ import {
   DocumentLink,
   SymbolAnnotation,
   TextAnnotation,
+  LinewalkListSchema,
+  File,
+  DocumentsForLineSchema,
 } from './types';
 
 const parseDocument = (
@@ -116,11 +119,6 @@ const parseDocument = (
   };
 };
 
-type File = {
-  fileName: string;
-  data: any;
-};
-
 const getParsedDocumentFiles = (
   version: string,
   parsedDocuments: ParsedDocument[]
@@ -133,7 +131,7 @@ const getParsedDocumentFiles = (
 const getDocumentsForLineFiles = (
   version: string,
   parsedDocumentExternalIsdByLineNumber: Map<string, string[]>
-): File[] =>
+): File<DocumentsForLineSchema>[] =>
   [...parsedDocumentExternalIsdByLineNumber.entries()].map(
     ([lineNumber, parsedDocumentExternalIds]) => {
       const externalId = `DOCUMENTS_FOR_LINE_V${version}_L${lineNumber}.json`;
@@ -159,7 +157,31 @@ const getParsedLinesFile = (version: string, lineNumbers: string[]): File => {
   };
 };
 
-export const computeLines = (
+const getLineReviewsFile = (
+  version: string,
+  documentsForLineFiles: File<DocumentsForLineSchema>[]
+): File<LinewalkListSchema> => {
+  const externalId = `LINE_REVIEWS_V${version}.json`;
+  return {
+    fileName: externalId,
+    data: {
+      externalId,
+      lineReviews: documentsForLineFiles.map(
+        ({ data: { externalId, line } }) => ({
+          id: line,
+          name: line,
+          system: 'unknown',
+          entryFileExternalId: externalId,
+          assignees: [{ name: 'Garima' }],
+          status: 'OPEN',
+          discrepancies: [],
+        })
+      ),
+    },
+  };
+};
+
+export const computeLineFiles = (
   graphDocuments: GraphDocument[],
   connections: SymbolConnection[],
   version: string
@@ -191,12 +213,18 @@ export const computeLines = (
     ])
   );
 
+  const documentsForLineFiles = getDocumentsForLineFiles(
+    version,
+    parsedDocumentExternalIdsByLineNumber
+  );
+
   return [
     ...getParsedDocumentFiles(
       version,
       parsedDocumentsWithLineNumbers.map(({ parsedDocument }) => parsedDocument)
     ),
-    ...getDocumentsForLineFiles(version, parsedDocumentExternalIdsByLineNumber),
     getParsedLinesFile(version, lineNumbers),
+    ...documentsForLineFiles,
+    getLineReviewsFile(version, documentsForLineFiles),
   ];
 };

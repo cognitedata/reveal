@@ -2,6 +2,11 @@ import { Rect, SvgPath } from '../types';
 
 import { lineWalkSymbolTypes } from './constants';
 
+export type File<T = unknown> = {
+  fileName: string;
+  data: T;
+};
+
 export interface VersionDocument {
   externalId: 'PARSED_DOCUMENT_VERSIONS';
   versions: string[];
@@ -13,11 +18,24 @@ export interface ParsedLines {
 }
 
 // Every line found in the Diagram Parsing Tool, will be uploaded in CDF with this information:
-export interface ParsedDocumentsForLine {
+export interface DocumentsForLineSchema {
   externalId: string; // external id of this document (probably redundant since it would be same as the file name)
   line: string; // I.e. L029
   parsedDocuments: string[]; // external id to CDF files with format of `ParsedDocument` (should be the same as `ParsedDocument.externalId`)
 }
+
+export type LinewalkListSchema = {
+  externalId: string;
+  lineReviews: {
+    id: string;
+    name: string;
+    system: string;
+    entryFileExternalId: string;
+    assignees: { name: string }[];
+    status: string;
+    discrepancies: [];
+  }[];
+};
 
 export interface ParsedDocument {
   externalId: string; // external id of this document (probably redundant since it would be same as the file name)
@@ -32,7 +50,7 @@ export interface ParsedDocument {
 export type DocumentForUpload =
   | VersionDocument
   | ParsedLines
-  | ParsedDocumentsForLine
+  | DocumentsForLineSchema
   | ParsedDocument;
 
 export interface PotentialDiscrepancies {

@@ -2,84 +2,67 @@
 import * as fs from 'fs';
 import path from 'path';
 
-import { computeLines, GraphDocument } from '../pid-tools/src';
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
 
-import { version } from './package.json';
-import documentVersions from './PARSED_DOCUMENT_VERSIONS.json';
+import { computeLineFiles, GraphDocument } from '../pid-tools/src';
+import { SymbolConnection } from '../pid-tools/src/graphMatching/types';
 
-const args = process.argv;
+import emptyDir from './utils/emptyDir';
+import readJsonFromFile from './utils/readJsonFromFile';
+import writeJsonToFile from './utils/writeJsonToFile';
 
-const preferConnectionsFromFile = args.includes(
-  '--prefer-connections-from-file'
-);
-
-const graphDir = path.resolve('graphs');
-const outDir = path.resolve('documents');
-
-const connectionsPath = path.resolve('connections/connections.json');
-
-// clear dir that will be uploaded to CDF
-fs.readdir(outDir, (err, files) => {
-  if (err) throw err;
-
-  files.forEach((file) => {
-    fs.unlink(path.join(outDir, file), (err) => {
-      if (err) throw err;
+const run = async () => {
+  const { argv } = yargs(hideBin(process.argv))
+    .option('prefer-connections-from-file', {
+      type: 'boolean',
+      describe: 'if connections should be read from file',
+      default: false,
+    })
+    .option('output-version', {
+      type: 'string',
+      describe: 'the version infix to add to output file names',
+      demandOption: true,
     });
-  });
-});
+  const { preferConnectionsFromFile, outputVersion } = argv as unknown as {
+    preferConnectionsFromFile: boolean;
+    outputVersion: string;
+  };
 
-const writeJsonToFile = (fileName: string, data: any) => {
-  fs.writeFile(
-    path.resolve(outDir, fileName),
-    JSON.stringify(data, undefined, 2),
-    (error) => {
-      if (error) {
-        throw error;
-      }
+  const GRAPH_DIR = path.resolve('graphs');
+  const OUTPUT_DIRECTORY = path.resolve('documents');
+  const connectionsPath = path.resolve('connections/connections.json');
+
+  await emptyDir(OUTPUT_DIRECTORY);
+
+  fs.readdir(GRAPH_DIR, (error, fileNames) => {
+    if (error) {
+      throw error;
     }
-  );
+
+    const doesConnectionsFileExists = fs.existsSync(connectionsPath);
+    const connections =
+      doesConnectionsFileExists && preferConnectionsFromFile
+        ? readJsonFromFile<{ connections: SymbolConnection[] }>(
+            '',
+            connectionsPath
+          ).connections
+        : []; // insert matchGraphs(graphs) here
+
+    const graphs = fileNames
+      .filter((fileName) => path.extname(fileName).toLowerCase() === '.json')
+      .map((fileName) => {
+        console.log(`Processing file ${fileName}`);
+        return readJsonFromFile<GraphDocument>(GRAPH_DIR, fileName);
+      });
+
+    computeLineFiles(graphs, connections, outputVersion).forEach(
+      ({ fileName, data }) => {
+        console.log(`Writing output file ${fileName}`);
+        writeJsonToFile(OUTPUT_DIRECTORY, fileName, data);
+      }
+    );
+  });
 };
 
-const connectionsFileExists = fs.existsSync(connectionsPath);
-const connectionsFile = connectionsFileExists
-  ? fs.readFileSync(connectionsPath)
-  : undefined;
-
-fs.readdir(graphDir, (error, files) => {
-  if (error) {
-    throw error;
-  }
-  const graphs = files?.reduce<GraphDocument[]>((result, file) => {
-    if (path.extname(file).toLowerCase() === '.json') {
-      const graphPath = path.resolve(graphDir, file);
-      console.log(`Processing file ${graphPath}`);
-      const data = fs.readFileSync(graphPath);
-      const graph = JSON.parse(data.toString()) as GraphDocument;
-      result.push(graph);
-    }
-    return result;
-  }, []);
-
-  const connections =
-    connectionsFile && preferConnectionsFromFile
-      ? JSON.parse(connectionsFile.toString()).connections
-      : []; // insert matchGraphs(graphs) here
-
-  if (graphs?.length) {
-    const files = computeLines(graphs, connections, version);
-    files.forEach(({ fileName, data }) => writeJsonToFile(fileName, data));
-  }
-
-  const updatedVersion = {
-    ...documentVersions,
-    versions: [...documentVersions.versions, version],
-  };
-  fs.writeFile(
-    path.resolve(documentVersions.externalId),
-    JSON.stringify(updatedVersion, undefined, 2),
-    (error) => {
-      if (error) throw error;
-    }
-  );
-});
+run();

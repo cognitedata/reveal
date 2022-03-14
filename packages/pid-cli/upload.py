@@ -42,9 +42,8 @@ def main():
     parsed_document_dir = './documents'
     parsed_documents = [os.path.join(parsed_document_dir, f)
                         for f in os.listdir(parsed_document_dir)]
-    parsed_versions = 'PARSED_DOCUMENT_VERSIONS.json'
 
-    documents_for_upload = [*parsed_documents, parsed_versions]
+    documents_for_upload = [*parsed_documents]
 
     for path in documents_for_upload:
         extension = os.path.splitext(path)[-1]
@@ -58,7 +57,7 @@ def main():
         print({'path': path, 'name': name,
               'external_id': external_id, 'mime_type': mime_type})
         client.files.upload(path=path, name=name,
-                            mime_type=mime_type, external_id=external_id)
+                            mime_type=mime_type, external_id=external_id, overwrite=True)
 
 
 if __name__ == "__main__":
