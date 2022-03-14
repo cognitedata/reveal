@@ -12,13 +12,10 @@ import { InvertedNodeCollection } from './InvertedNodeCollection';
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
-
-import {
-  TreeIndexNodeCollection,
-  IntersectionNodeCollection,
-  UnionNodeCollection,
-  NodeCollection
-} from '@reveal/cad-styling';
+import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
+import { IntersectionNodeCollection } from './IntersectionNodeCollection';
+import { UnionNodeCollection } from './UnionNodeCollection';
+import { NodeCollection } from './NodeCollection';
 
 export type TypeName = string;
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: CdfModelNodeCollectionDataProvider };
