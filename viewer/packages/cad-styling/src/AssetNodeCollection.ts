@@ -5,9 +5,12 @@
 import * as THREE from 'three';
 
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
+import { NodeCollection } from './NodeCollection';
+import { SerializedNodeCollection } from './SerializedNodeCollection';
+import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
+import { AreaCollection } from './prioritized/AreaCollection';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { NodeCollection, SerializedNodeCollection, EmptyAreaCollection, AreaCollection } from '@reveal/cad-styling';
 
 import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
