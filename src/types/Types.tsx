@@ -34,6 +34,7 @@ export interface CogFunctionUpload {
   memory?: number;
   cpu?: number;
   secrets?: {};
+  metadata?: {};
   externalId?: string;
   runtime?: Runtime;
 }

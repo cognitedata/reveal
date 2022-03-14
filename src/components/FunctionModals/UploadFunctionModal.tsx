@@ -34,6 +34,9 @@ import {
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { allFunctionsKey } from 'utils/queryKeys';
 import { Runtime } from 'types';
+import FunctionMetadata, {
+  MetaType,
+} from 'components/FunctionModals/FunctionMetadata';
 
 export interface Secret {
   key: string;
@@ -101,6 +104,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [cpu, setCpu] = useState('0.25');
   const [memory, setMemory] = useState('1');
   const [runtime, setRuntime] = useState<RuntimeOption>(runtimes[1]);
+  const [metadata, setMetadata] = useState([] as MetaType[]);
 
   const addSecret = () => {
     setSecrets(prevSecrets => [
@@ -121,10 +125,10 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     const { idx } = evt.target.dataset;
     const changeField = evt.target.name;
     const updatedSecrets = [...secrets];
-    if (changeField === 'key') {
+    if (changeField === 'secret_key') {
       updatedSecrets[idx].key = evt.target.value;
       updatedSecrets[idx].keyTouched = true;
-    } else if (changeField === 'value') {
+    } else if (changeField === 'secret_value') {
       updatedSecrets[idx].value = evt.target.value;
       updatedSecrets[idx].valueTouched = true;
     }
@@ -165,6 +169,10 @@ export default function UploadFunctionModal({ onCancel }: Props) {
           cpu: cpu ? parseFloat(cpu) : undefined,
           memory: memory ? parseFloat(memory) : undefined,
           secrets: secrets.reduce(
+            (accl, s) => ({ ...accl, [s.key]: s.value }),
+            {}
+          ),
+          metadata: metadata.reduce(
             (accl, s) => ({ ...accl, [s.key]: s.value }),
             {}
           ),
@@ -264,8 +272,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               Must be a zip file with at least a Python file called{' '}
               <b>handler.py </b>
               with a function named <b>handle</b> with any of following
-              arguments: <b>data</b>, <b>client</b> and <b>secrets</b>. More
-              information can be found{' '}
+              arguments: <b>data</b>, <b>client</b> <b>secrets</b> and{' '}
+              <b>metadata</b>. More information can be found{' '}
               <Link href="https://docs.cognite.com/api/playground/#tag/Functions">
                 here.
               </Link>
@@ -451,7 +459,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                     >
                       <Input
                         value={s.key}
-                        name="key"
+                        name="secret_key"
                         data-idx={index}
                         allowClear
                         onChange={handleSecretChange}
@@ -475,7 +483,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                     >
                       <Input
                         value={s.value}
-                        name="value"
+                        name="secret_value"
                         data-idx={index}
                         allowClear
                         onChange={handleSecretChange}
@@ -485,7 +493,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                   <Col span={2}>
                     <Form.Item label="-">
                       <Button
-                        icon="Minus"
+                        id="btnDeleteSecret"
+                        icon="Delete"
                         onClick={() => removeSecret(index)}
                       />
                     </Form.Item>
@@ -500,6 +509,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 </Button>
               )}
             </Form.Item>
+            <FunctionMetadata metadata={metadata} setMetadata={setMetadata} />
           </Col>
         </Row>
       </StyledForm>

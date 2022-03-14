@@ -69,6 +69,11 @@ export default function FunctionDetails({ id, name }: Props) {
           <pre>{JSON.stringify(currentFunction?.secrets, null, 4)}</pre>
         </div>
       </Item>
+      <Item label="Metadata" span={3}>
+        <div style={{ display: 'flex' }}>
+          <pre>{JSON.stringify(currentFunction?.metadata || {}, null, 4)}</pre>
+        </div>
+      </Item>
     </Descriptions>
   );
 }
