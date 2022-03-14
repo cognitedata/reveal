@@ -4,7 +4,10 @@
 
 import * as THREE from 'three';
 
-import { CadModelMetadata, SectorMetadata, SectorSceneFactory, V8SectorMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadata } from './CadModelMetadata';
+import { SectorMetadata, V8SectorMetadata } from './types';
+import { SectorSceneFactory } from '../utilities/SectorSceneFactory';
+
 import { traverseDepthFirst } from '@reveal/utilities';
 
 export class CadModelClipper {
