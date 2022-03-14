@@ -4,10 +4,10 @@
 
 import { CadManager } from './CadManager';
 import { CadModelFactory } from './CadModelFactory';
+import { InternalRevealCadOptions } from './InternalRevealCadOptions';
 
 import { CadModelUpdateHandler, createV8SectorCuller } from '@reveal/cad-geometry-loaders';
 import { CadMaterialManager, EffectRenderManager } from '@reveal/rendering';
-import { InternalRevealCadOptions } from '@reveal/cad-model';
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 export function createCadManager(

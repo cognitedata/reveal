@@ -4,7 +4,6 @@
 export { CdfModelDataProvider } from './src/CdfModelDataProvider';
 export { CdfModelIdentifier } from './src/CdfModelIdentifier';
 export { CdfModelMetadataProvider } from './src/CdfModelMetadataProvider';
-export { CdfModelOutputsProvider } from './src/CdfModelOutputsProvider';
 export { LocalModelDataProvider } from './src/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/LocalModelMetadataProvider';
