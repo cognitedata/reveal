@@ -2,13 +2,13 @@ import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import ToolboxFunctionDropdown from 'components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
 import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
 import { useState } from 'react';
-import { getCategoriesFromToolFunctions } from 'components/NodeEditor/V1/Nodes/utils';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
 import { Operation } from '@cognite/calculation-backend';
 import { Elements } from 'react-flow-renderer';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import { defaultTranslations } from '../translations';
+import { getCategoriesFromToolFunctions } from '../utils';
 
 interface AddButtonProps {
   elements: Elements<NodeDataVariants>;

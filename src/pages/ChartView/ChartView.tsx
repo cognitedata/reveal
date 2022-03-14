@@ -44,6 +44,7 @@ import {
   updateChartDateRange,
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
+  updateWorkflowsFromV1toV2,
   updateWorkflowsToSupportVersions,
 } from 'models/chart/updates';
 import { useRecoilState } from 'recoil';
@@ -58,6 +59,7 @@ import {
 import TimePeriodSelector from 'components/TimePeriodSelector';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
+import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { FileView } from 'pages/FileView/FileView';
 import { useIsChartOwner } from 'hooks/user';
 import SourceRows from './SourceRows';
@@ -136,10 +138,19 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   } = useUpdateChart();
 
   /**
+   * Get all available operations (needed for migration)
+   */
+  const [, , operations] = useAvailableOps();
+
+  /**
    * Initialize local chart atom
    */
   useEffect(() => {
     if ((chart && chart.id === chartId) || !originalChart) {
+      return;
+    }
+
+    if (!operations || !operations.length) {
       return;
     }
 
@@ -156,6 +167,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     const updatedChart = [originalChart]
       .map((_chart) => updateChartDateRange(_chart, dateFrom, dateTo))
       /**
+       * Convert/migrate workflows using @cognite/connect to the format supported by React Flow (v2)
+       */
+      .map((_chart) => updateWorkflowsFromV1toV2(_chart, operations))
+      /**
        * Convert/migrate from v2 format to v3 (toolFunction -> selectedOperation, functionData -> parameterValues, etc...)
        */
       .map((_chart) => updateWorkflowsToSupportVersions(_chart))[0];
@@ -164,7 +179,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
      * Add chart to local state atom
      */
     setChart(updatedChart);
-  }, [originalChart, chart, chartId, setChart]);
+  }, [originalChart, chart, chartId, setChart, operations]);
 
   /**
    * Sync local chart atom to storage

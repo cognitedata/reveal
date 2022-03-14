@@ -11,11 +11,25 @@ import {
   UserInfo,
 } from 'models/chart/types';
 import { getEntryColor } from 'utils/colors';
-import { convertTsToWorkFlow } from 'utils/timeseries';
 import dayjs from 'dayjs';
-import { NodeTypes } from 'components/NodeEditor/V2/types';
+import {
+  NodeDataDehydratedVariants,
+  NodeTypes,
+} from 'components/NodeEditor/V2/types';
 import { FunctionNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
-import { FlowElement } from 'react-flow-renderer';
+import {
+  Edge,
+  Elements,
+  FlowElement,
+  FlowExportObject,
+  Node,
+} from 'react-flow-renderer';
+import { ConstantNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/ConstantNode';
+import { SourceNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/SourceNode';
+import { omit } from 'lodash';
+import { Operation } from '@cognite/calculation-backend';
+import { initializeParameterValues } from 'components/NodeEditor/V2/utils';
+import compareVersions from 'compare-versions';
 
 export function duplicate(chart: Chart, login: UserInfo): Chart {
   const id = uuidv4();
@@ -135,27 +149,6 @@ export function duplicateWorkflow(chart: Chart, wfId: string): Chart {
 
 export function addWorkflow(chart: Chart, wf: ChartWorkflow): Chart {
   return addItem(chart, 'workflowCollection', wf);
-}
-
-export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
-  const ts = chart.timeSeriesCollection?.find((t) => t.id === id);
-  if (ts) {
-    const filteredTsCollection = chart.timeSeriesCollection?.filter(
-      (t) => t.id !== id
-    );
-    const workflow = convertTsToWorkFlow(chart.id, ts);
-    const filteredWorkFlowCollection = [
-      ...(chart.workflowCollection || []),
-      workflow,
-    ];
-
-    return {
-      ...chart,
-      timeSeriesCollection: filteredTsCollection,
-      workflowCollection: filteredWorkFlowCollection,
-    };
-  }
-  return chart;
 }
 
 export function convertTSToChartTS(
@@ -343,6 +336,150 @@ export const updateWorkflowsToSupportVersions = (chart: Chart): Chart => {
                   return el;
               }
             }),
+          },
+        };
+      }
+      return workflow;
+    }),
+  };
+};
+
+/**
+ * Migration to introduce versions for operations in calculations
+ */
+export const updateWorkflowsFromV1toV2 = (
+  chart: Chart,
+  operations: Operation[]
+): Chart => {
+  return {
+    ...chart,
+    workflowCollection: (chart.workflowCollection || []).map((workflow) => {
+      if (workflow.version !== 'v2') {
+        const existingNodes = workflow.nodes || [];
+        const existingConnections = Object.values(workflow.connections || {});
+
+        const convertedNodes: (
+          | FlowElement<NodeDataDehydratedVariants>
+          | undefined
+        )[] = existingNodes
+          .map((node) => {
+            switch (node.functionEffectReference) {
+              case 'CONSTANT': {
+                return {
+                  id: node.id,
+                  type: NodeTypes.CONSTANT,
+                  position: { x: node.x, y: node.y },
+                  data: {
+                    value: node.functionData.value,
+                  } as ConstantNodeDataDehydrated,
+                } as Node<ConstantNodeDataDehydrated>;
+              }
+              case 'TOOLBOX_FUNCTION': {
+                const opName = node.functionData?.toolFunction?.op;
+                const operation = operations.find(({ op }) => op === opName);
+                const oldestVersion = (operation?.versions || [])
+                  .slice()
+                  .sort((a, b) => compareVersions(b.version, a.version))[0];
+
+                if (!oldestVersion) {
+                  return undefined;
+                }
+
+                const defaultParamValues = oldestVersion
+                  ? initializeParameterValues(oldestVersion)
+                  : {};
+
+                return {
+                  id: node.id,
+                  type: NodeTypes.FUNCTION,
+                  position: { x: node.x, y: node.y },
+                  data: {
+                    parameterValues: {
+                      ...defaultParamValues,
+                      ...(omit(node.functionData, 'toolFunction') || {}),
+                    },
+                    selectedOperation: {
+                      op: node.functionData.toolFunction.op,
+                      version: node.functionData.toolFunction.version,
+                    },
+                  } as FunctionNodeDataDehydrated,
+                } as Node<FunctionNodeDataDehydrated>;
+              }
+              case 'SOURCE_REFERENCE': {
+                let sourceId = node.functionData?.sourceId;
+
+                if (node.functionData.type === 'timeseries') {
+                  sourceId =
+                    (chart.timeSeriesCollection || []).find(
+                      (ts) => ts.tsExternalId === node.functionData.sourceId
+                    )?.id || '';
+                }
+
+                return {
+                  id: node.id,
+                  type: NodeTypes.SOURCE,
+                  position: { x: node.x, y: node.y },
+                  data: {
+                    selectedSourceId: sourceId,
+                    type: node.functionData.type,
+                  } as SourceNodeDataDehydrated,
+                } as Node<SourceNodeDataDehydrated>;
+              }
+              case 'TIME_SERIES_REFERENCE': {
+                const sourceId =
+                  (chart.timeSeriesCollection || []).find(
+                    (ts) =>
+                      ts.tsExternalId ===
+                      node.functionData?.timeseriesExternalId
+                  )?.id || '';
+
+                return {
+                  id: node.id,
+                  type: NodeTypes.SOURCE,
+                  position: { x: node.x, y: node.y },
+                  data: {
+                    selectedSourceId: sourceId,
+                    type: 'timeseries',
+                  } as SourceNodeDataDehydrated,
+                } as Node<SourceNodeDataDehydrated>;
+              }
+              case 'OUTPUT': {
+                return {
+                  id: node.id,
+                  type: NodeTypes.OUTPUT,
+                  position: { x: node.x, y: node.y },
+                };
+              }
+              default:
+                throw new Error(
+                  `Unknown node type ${node.functionEffectReference}`
+                );
+            }
+          })
+          .filter((x) => x);
+
+        const convertedEdges: Elements<Edge> = existingConnections.map(
+          (connection) => {
+            return {
+              id: connection.id,
+              source: connection.outputPin.nodeId,
+              sourceHandle: connection.outputPin.pinId,
+              target: connection.inputPin.nodeId,
+              targetHandle: connection.inputPin.pinId,
+            };
+          }
+        );
+
+        return {
+          ...workflow,
+          version: 'v2',
+          flow: {
+            position: [0, 0],
+            zoom: 1,
+            elements: [...convertedEdges, ...convertedNodes],
+          } as FlowExportObject<NodeDataDehydratedVariants>,
+          settings: {
+            autoAlign: true,
           },
         };
       }

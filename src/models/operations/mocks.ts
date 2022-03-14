@@ -972,6 +972,45 @@ export const fullListOfOperations: Operation[] = [
         ],
         version: '1.0',
       },
+      {
+        changelog: 'Deprecated function. Re-create node to upgrade',
+        deprecated: true,
+        description: 'Add any two time series or numbers.',
+        inputs: [
+          {
+            description: null,
+            name: 'Time-series or number.',
+            param: 'a',
+            types: ['ts', 'const'],
+          },
+          {
+            description: null,
+            name: 'Time-series or number.',
+            param: 'b',
+            types: ['ts', 'const'],
+          },
+        ],
+        name: 'Add',
+        outputs: [
+          {
+            description: null,
+            name: 'time series',
+            types: ['ts', 'const'],
+          },
+        ],
+        parameters: [
+          {
+            default_value: false,
+            description:
+              'Automatically align time stamp  of input time series. Default is False.',
+            name: 'Auto-align',
+            options: null,
+            param: 'align_timesteps',
+            type: 'bool',
+          },
+        ],
+        version: '2.0',
+      },
     ],
   },
   {

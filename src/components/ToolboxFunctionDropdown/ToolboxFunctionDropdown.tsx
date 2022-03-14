@@ -27,11 +27,11 @@ const ToolboxFunctionDropdown = ({
   const [selectedCategory, setSelectedCategory] = useState<string>();
   const [selectedOperation, setSelectedFunction] = useState<Operation>();
 
-  const latestVersionOfSelectedOperation = selectedOperation?.versions
+  const latestVersionOfSelectedOperation = (selectedOperation?.versions || [])
     .slice()
     .sort((a, b) => compareVersions(b.version, a.version))[0]!;
 
-  const latestVersionOfInitialOperation = initialFunction?.versions
+  const latestVersionOfInitialOperation = (initialFunction?.versions || [])
     .slice()
     .sort((a, b) => compareVersions(b.version, a.version))[0]!;
 

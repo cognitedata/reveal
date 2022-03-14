@@ -1,6 +1,6 @@
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { SourceOption } from 'components/NodeEditor/V2/types';
-import { ComputationStep } from '@cognite/calculation-backend';
+import { ComputationStep, Operation } from '@cognite/calculation-backend';
 
 export const isWorkflowRunnable = (workflow: ChartWorkflow) => {
   if (!workflow.version) {
@@ -72,4 +72,28 @@ export const resolveTimeseriesSourceInSteps = (
       }),
     };
   });
+};
+
+export const getCategoriesFromToolFunctions = (
+  availableOperations: Operation[]
+) => {
+  const categories: { [key: string]: Operation[] } = {};
+
+  availableOperations.forEach((func) => {
+    if (Array.isArray(func.category)) {
+      func.category.forEach((category) => {
+        if (!categories[category]) {
+          categories[category] = [];
+        }
+        categories[category].push(func);
+      });
+    } else {
+      if (!categories[func.category]) {
+        categories[func.category] = [];
+      }
+      categories[func.category].push(func);
+    }
+  });
+
+  return categories;
 };
