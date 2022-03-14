@@ -11,7 +11,7 @@ import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
 import { useSearchParam } from 'hooks/navigation';
 import { useState, ChangeEvent } from 'react';
-import { metrics } from 'services/metrics';
+import { trackUsage } from 'services/metrics';
 import styled from 'styled-components';
 import { SEARCH_KEY } from 'utils/constants';
 import { useDebounce } from 'use-debounce';
@@ -83,7 +83,7 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
   };
 
   const handleFilterChange = (field: string, val?: boolean) => {
-    metrics.track(`Search.Filters.${field}`, { value: val });
+    trackUsage(`Search.Filters.${field}`, { value: val });
 
     setFilterSettings((existingFilterSettings) => ({
       ...existingFilterSettings,
@@ -177,7 +177,7 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
               onFilterChange={handleFilterChange}
             />
           }
-          onShown={() => metrics.track('Search.Filters.Open')}
+          onShown={() => trackUsage('Search.Filters.Open')}
         >
           <Button icon="Filter" toggled={!isEmpty} />
         </Dropdown>

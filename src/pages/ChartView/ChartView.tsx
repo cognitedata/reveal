@@ -34,8 +34,7 @@ import {
 import { getEntryColor } from 'utils/colors';
 import { useSearchParam } from 'hooks/navigation';
 import { SEARCH_KEY } from 'utils/constants';
-import { metrics, shouldTrackMetrics, trackUsage } from 'services/metrics';
-import { ITimer } from '@cognite/metrics';
+import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
@@ -205,7 +204,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
-  const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
 
   const showYAxis = get(chart, 'settings.showYAxis', true);
   const showMinMax = get(chart, 'settings.showMinMax', false);
@@ -213,16 +211,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const mergeUnits = get(chart, 'settings.mergeUnits', true);
 
   useEffect(() => {
-    if (!shouldTrackMetrics) {
-      return () => {};
-    }
-    trackUsage('PageView.ChartView', { isOwner: chart?.user === login?.id });
-    const timer = metrics.start('ChartView.ViewTime');
+    trackUsage('PageView.ChartView', {
+      isOwner: chart?.user === login?.id,
+    });
+    startTimer('ChartView.ViewTime');
 
     return () => {
-      timer.stop();
-      if (editorTimer) {
-        editorTimer.stop();
+      stopTimer('ChartView.ViewTime');
+      if (workspaceMode === 'editor') {
+        stopTimer('NodeEditor.ViewTime');
       }
     };
     // Should not rerun when editorTimer is changed, only on initial load
@@ -252,26 +249,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const openNodeEditor = useCallback(() => {
     setWorkspaceMode('editor');
-    if (!editorTimer && shouldTrackMetrics) {
-      setEditorTimer(
-        metrics.start('NodeEditor.ViewTime', {
-          editor:
-            chart?.workflowCollection?.find((wf) => wf.id === selectedSourceId)
-              ?.version === 'v2'
-              ? 'React Flow'
-              : 'Connect',
-        })
-      );
-    }
-  }, [chart?.workflowCollection, editorTimer, selectedSourceId]);
+    startTimer('NodeEditor.ViewTime');
+  }, []);
 
   const handleCloseEditor = useCallback(() => {
     setWorkspaceMode('workspace');
-    if (editorTimer) {
-      editorTimer.stop();
-      setEditorTimer(undefined);
-    }
-  }, [editorTimer]);
+    stopTimer('NodeEditor.ViewTime');
+  }, []);
 
   const handleClickNewWorkflow = useCallback(() => {
     if (!chart) {

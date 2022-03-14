@@ -20,11 +20,13 @@ import PageLayout from 'components/Layout/PageLayout';
 import { useFirebaseInit } from 'hooks/firebase';
 import { useSDK } from '@cognite/sdk-provider';
 import { getAzureAppId, getSidecar } from 'config';
-import { identifyUser } from 'services/metrics';
 import { azureInfo, loginStatus } from 'services/user-info';
 import * as Sentry from '@sentry/react';
 import { useCluster, useProject } from 'hooks/config';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
+import { mixpanelToken } from 'services/metrics';
+import mixpanel from 'mixpanel-browser';
+import { UserInfo } from 'models/chart/types';
 
 const SentryRoute = Sentry.withSentryRouting(Route);
 
@@ -45,6 +47,20 @@ const RouteWithTopbar = ({ component, ...rest }: RouteProps) => {
       }}
     />
   );
+};
+
+// This will be moved out of the routes in a next refactor to have the user as a singleton class
+const identifyUser = (user: UserInfo) => {
+  if (user) {
+    if (mixpanelToken) {
+      mixpanel.identify(user.email || user.displayName || user.id);
+    }
+    Sentry.setUser({
+      email: user.email,
+      id: user.id,
+      username: user.displayName,
+    });
+  }
 };
 
 const AppRoutes = () => {
