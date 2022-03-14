@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
+import styled from 'styled-components';
+import { Alert as AntdAlert, Modal, notification } from 'antd';
 
 import { Button, Colors, Icon } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
-import { Alert as AntdAlert, Modal, notification } from 'antd';
-import styled from 'styled-components';
-import { usePermissions } from 'hooks';
 import { ServiceAccount } from '@cognite/sdk';
+import { getProject } from '@cognite/cdf-utilities';
 
-const NUMBER_OF_SECONDS_TO_ALLOW_DISABLING = 5;
+import { usePermissions, useDeleteServiceAccounts } from 'hooks';
+import { NUMBER_OF_SECONDS_TO_ALLOW_DISABLING } from '../../utils/constants';
 
 const StyledAlert = styled(AntdAlert)`
   margin-bottom: 16px;
@@ -43,11 +43,19 @@ const StyledDisableButtonSection = styled.div`
   margin-bottom: 4px;
 `;
 
+const StyledList = styled.ul`
+  margin-top: 6;
+  color: rgba(0, 0, 0, 0.65);
+`;
+
+const StyledListItem = styled.li`
+  margin-top: 3;
+`;
+
 const LegacyServiceAccountsWarning = (props: {
   accounts: ServiceAccount[];
 }) => {
   const { accounts } = props;
-  const sdk = useSDK();
   const client = useQueryClient();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
 
@@ -57,13 +65,9 @@ const LegacyServiceAccountsWarning = (props: {
   );
   const timerRef = useRef<NodeJS.Timeout>();
 
-  const { mutate: deleteLegacyServiceAccounts } = useMutation(
-    (accIDs: number[]) =>
-      sdk.post(`/api/v1/projects/${sdk.project}/serviceaccounts/delete`, {
-        data: {
-          items: accIDs,
-        },
-      }),
+  const project = getProject();
+  const { mutate: deleteLegacyServiceAccounts } = useDeleteServiceAccounts(
+    project,
     {
       onMutate() {
         notification.info({
@@ -129,27 +133,27 @@ const LegacyServiceAccountsWarning = (props: {
       message={
         <>
           <p>
-            We are deprecating authentication via CDF service accounts and API
-            keys in favor of OIDC. Below are the legacy service accounts that
-            can be safely deleted as they are no longer useful.
+            Legacy login is deprecated for this project and it still has some
+            service accounts. The service accounts listed below can be deleted
+            as they do not work with OpenID Connect :
           </p>
-          {accounts?.length &&
-            accounts.map((account: ServiceAccount) => (
-              <>
-                <Button disabled type="ghost" style={{ marginTop: 6 }}>
-                  {account.name}
-                </Button>
-                <br />
-              </>
-            ))}
+          <StyledList>
+            {accounts
+              .slice(0, 10)
+              .map((account: ServiceAccount, index) =>
+                index < 10 ? (
+                  <StyledListItem>{account.name}</StyledListItem>
+                ) : null
+              )}
+          </StyledList>
+          {accounts.length > 10 ? (
+            <p style={{ marginLeft: 28, color: 'rgba(0, 0, 0, 0.65)' }}>
+              +{accounts.length - 10} more
+            </p>
+          ) : null}
           <br />
           <StyledDisableButtonSection>
-            <Button
-              disabled={!writeOk}
-              onClick={openModal}
-              type="danger"
-              style={{ marginTop: 12 }}
-            >
+            <Button disabled={!writeOk} onClick={openModal} type="danger">
               Delete Legacy Service Accounts
             </Button>
           </StyledDisableButtonSection>
@@ -164,7 +168,9 @@ const LegacyServiceAccountsWarning = (props: {
               </StyledModalButton>
               <StyledModalButton
                 disabled={!writeOk || remainingTime > 0}
-                onClick={handleDelete}
+                onClick={() => {
+                  handleDelete();
+                }}
                 type="danger"
               >
                 Delete

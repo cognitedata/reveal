@@ -1,9 +1,10 @@
+import { useMutation, UseMutationOptions, useQuery } from 'react-query';
 import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient, Group } from '@cognite/sdk';
-import { useMutation, UseMutationOptions, useQuery } from 'react-query';
 import { usePermissions as _usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import { LEGACY_SESSION_TOKEN_KEY } from 'utils/constants';
 import { sleep } from 'utils/utils';
 
@@ -101,4 +102,26 @@ export const useRefreshToken = () => {
 
 export const forUnitTests = {
   getUpdater,
+};
+
+export const useListServiceAccounts = () => {
+  const sdk = useSDK();
+  return useQuery(['service-accounts'], () => sdk.serviceAccounts.list());
+};
+
+const deleteServiceAccount =
+  (sdk: CogniteClient, project: string) => async (accountIds: number[]) => {
+    await sdk.post(`/api/v1/projects/${project}/serviceaccounts/delete`, {
+      data: {
+        items: accountIds,
+      },
+    });
+  };
+
+export const useDeleteServiceAccounts = (
+  project: string,
+  o: UseMutationOptions<unknown, unknown, number[], unknown>
+) => {
+  const sdk = useSDK();
+  return useMutation(deleteServiceAccount(sdk, project), o);
 };

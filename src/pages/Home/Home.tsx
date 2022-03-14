@@ -1,4 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
 import React from 'react';
 import {
   Switch,
@@ -20,17 +19,15 @@ import IDP from 'pages/IDP';
 import OIDC from 'pages/OIDC';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
+import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
 import {
-  useQuery,
-  useQueryClient,
-  useIsFetching,
-  useIsMutating,
-} from 'react-query';
-import { useAuthConfiguration, usePermissions } from 'hooks';
+  useAuthConfiguration,
+  usePermissions,
+  useListServiceAccounts,
+} from 'hooks';
 import LegacyServiceAccountsWarning from 'pages/OIDC/LegacyServiceAccountsWarning';
 
 export default function () {
-  const sdk = useSDK();
   const client = useQueryClient();
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
@@ -51,11 +48,7 @@ export default function () {
   const { pathname, search, hash } = history.location;
 
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
-  const { data: serviceAccounts } = useQuery(
-    ['service-accounts'],
-    () => sdk.serviceAccounts.list(),
-    { enabled: true }
-  );
+  const { data: serviceAccounts } = useListServiceAccounts();
 
   if (!isFetched) {
     return <Loader />;
@@ -74,9 +67,8 @@ export default function () {
           onClick={() => client.invalidateQueries()}
         />
       </Title>
-      {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled &&
-      isFetched &&
-      serviceAccounts?.length ? (
+      {!authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled &&
+        serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}
       <StyledMeny

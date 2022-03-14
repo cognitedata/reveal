@@ -9,8 +9,7 @@ import styled from 'styled-components';
 import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
 import { hasAnyValidGroupForOIDC } from 'pages/Groups/utils';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-
-const NUMBER_OF_SECONDS_TO_ALLOW_DISABLING = 5;
+import { NUMBER_OF_SECONDS_TO_ALLOW_DISABLING } from '../../utils/constants';
 
 const StyledAlert = styled(AntdAlert)`
   margin-bottom: 16px;
