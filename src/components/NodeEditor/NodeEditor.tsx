@@ -6,6 +6,7 @@ import { Icon, toast } from '@cognite/cogs.js';
 import { SetterOrUpdater } from 'recoil';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useIsChartOwner } from 'hooks/user';
 import { SourceOption } from './V2/types';
 import { useAvailableOps } from './AvailableOps';
 import { getSourceOption, getSourcesFromChart } from './utils';
@@ -40,6 +41,7 @@ const NodeEditor = ({
   );
 
   const { data: login } = useUserInfo();
+  const isOwner = useIsChartOwner(chart);
 
   /**
    * Get all operations
@@ -68,7 +70,7 @@ const NodeEditor = ({
     [setChart, workflowId]
   );
 
-  const readOnly = Boolean(login?.id && login?.id !== chart?.user);
+  const readOnly = Boolean(login?.id && !isOwner);
 
   if (operationsError instanceof Error) {
     toast.error(

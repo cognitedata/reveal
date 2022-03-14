@@ -11,6 +11,7 @@ import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import DownloadDropdown from 'components/DownloadDropdown/DownloadDropdown';
 import { useTranslations } from 'hooks/translations';
+import { useIsChartOwner } from 'hooks/user';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
@@ -56,7 +57,7 @@ export const ChartActions = () => {
     error: deleteErrorMsg,
   } = useDeleteChart();
 
-  const isOwner = login?.id === chart?.user;
+  const isOwner = useIsChartOwner(chart);
 
   const deleteErrorText = t['Chart could not be deleted!'];
   const saveErrorText = t['Chart could not be saved!'];

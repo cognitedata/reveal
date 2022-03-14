@@ -140,12 +140,14 @@ export const useMyCharts = () => {
           .get()
       ).docs.map((doc) => doc.data()) as Chart[];
 
-      const chartsWhereUserMatchesEmail = (
-        await charts(project)
-          .where('version', '==', CHART_VERSION)
-          .where('user', '==', data?.email)
-          .get()
-      ).docs.map((doc) => doc.data()) as Chart[];
+      const chartsWhereUserMatchesEmail = !data?.email
+        ? []
+        : ((
+            await charts(project)
+              .where('version', '==', CHART_VERSION)
+              .where('user', '==', data?.email)
+              .get()
+          ).docs.map((doc) => doc.data()) as Chart[]);
 
       const userCharts = uniqBy(
         [...chartsWhereUserMatchesId, ...chartsWhereUserMatchesEmail],
@@ -213,7 +215,16 @@ export const useUpdateChart = () => {
 
   return useMutation(
     async (chart: Chart) => {
-      const skipPersist = data?.id !== chart.user;
+      /**
+       * Check if the chart you're changing is your own or a public one
+       * For public ones we do not try to push the change to the server,
+       * but still allow you to change it locally so that you can
+       * later duplicate and save it as your own if you want
+       */
+      const skipPersist = !(
+        data?.id === chart.user || data?.email === chart.user
+      );
+
       // skipPersist will result in only the local cache being updated.
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely

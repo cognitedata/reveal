@@ -212,7 +212,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   useEffect(() => {
     trackUsage('PageView.ChartView', {
-      isOwner: chart?.user === login?.id,
+      isOwner: isChartOwner,
     });
     startTimer('ChartView.ViewTime');
 
