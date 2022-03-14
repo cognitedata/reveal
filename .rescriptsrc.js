@@ -122,6 +122,9 @@ module.exports = [
 
       config.https = true;
       config.port = 3003;
+      config.watchOptions = {
+        followSymlinks: true,
+      };
 
       // Return your customised Webpack Development Server config.
       return config;
