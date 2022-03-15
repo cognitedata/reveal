@@ -67,8 +67,8 @@ export default function () {
           onClick={() => client.invalidateQueries()}
         />
       </Title>
-      {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled &&
-      serviceAccounts?.length ? (
+      {!authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled &&
+        serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}
       <StyledMeny
