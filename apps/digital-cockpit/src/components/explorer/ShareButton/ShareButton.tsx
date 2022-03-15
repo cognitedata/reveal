@@ -1,7 +1,12 @@
-import { Button, toast } from '@cognite/cogs.js';
+import { Button, ButtonProps, ButtonSize, toast } from '@cognite/cogs.js';
 import { useState } from 'react';
 
-const ShareButton = () => {
+interface Props extends ButtonProps {
+  size?: ButtonSize;
+}
+
+const ShareButton = ({ size = 'small', className = '' }: Props) => {
+  const showText = size !== 'small';
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const handleShare = () => {
@@ -14,9 +19,12 @@ const ShareButton = () => {
   return (
     <Button
       icon={isCopied ? 'Checkmark' : 'Share'}
-      size="small"
+      size={size}
       onClick={handleShare}
-    />
+      className={className}
+    >
+      {showText && <>Share</>}
+    </Button>
   );
 };
 

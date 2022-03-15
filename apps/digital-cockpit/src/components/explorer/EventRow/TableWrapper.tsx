@@ -5,6 +5,9 @@ export const TableWrapper = styled.table`
   .row:nth-child(2n) {
     background: var(--cogs-greyscale-grey1);
   }
+  .row.selected {
+    background: var(--cogs-midblue-8);
+  }
   td {
     padding: 0 24px;
   }

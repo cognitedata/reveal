@@ -7,6 +7,7 @@ import { TrWrapper } from './elements';
 export type EventRowProps = {
   event: CogniteEvent;
   onClick?: () => void;
+  className?: string;
 };
 
 const formatDate = (date?: Timestamp) => {
@@ -16,12 +17,12 @@ const formatDate = (date?: Timestamp) => {
   return dayjs(date).format('LLL');
 };
 
-const EventRow = ({ event, onClick }: EventRowProps) => {
+const EventRow = ({ event, onClick, className = '' }: EventRowProps) => {
   if (!event) {
     return null;
   }
   return (
-    <TrWrapper onClick={onClick} className="row">
+    <TrWrapper onClick={onClick} className={`row ${className}`}>
       <td>
         <div className="row--types">
           <div>{event.type}</div> <div className="subtype">{event.subtype}</div>

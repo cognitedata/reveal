@@ -15,6 +15,7 @@ import SearchBar from 'components/search/SearchBar';
 import EventRow from '../EventRow';
 import { TableWrapper } from '../EventRow/TableWrapper';
 import EventRowHeader from '../EventRow/EventRowHeader';
+import EventSidebar from '../EventSidebar';
 
 import { TabWrapper } from './elements';
 import { EVENT_FILTER_SELECTORS } from './consts';
@@ -39,6 +40,10 @@ const EventTab = ({ assetId }: EventTabProps) => {
     []
   );
   const { getPageData, renderPagination, resetPages } = usePagination();
+
+  const [selectedEvent, setSelectedEvent] = useState<CogniteEvent | null>(null);
+  const [selectedRelativeEvent, setSelectedRelativeEvent] =
+    useState<CogniteEvent | null>(null);
 
   const { data: eventsOnAsset } = useEventAggregateQuery({
     filter: {
@@ -70,6 +75,8 @@ const EventTab = ({ assetId }: EventTabProps) => {
 
   useEffect(() => {
     resetPages();
+    setSelectedEvent(null);
+    setSelectedRelativeEvent(null);
   }, [relatedQuery.data, assetQuery.data]);
 
   const renderSection = (
@@ -84,19 +91,24 @@ const EventTab = ({ assetId }: EventTabProps) => {
     }
 
     return (
-      <>
+      <div style={{ width: '100%' }}>
         <TableWrapper>
           <EventRowHeader />
           {getPageData(data, name).map((event) => (
-            <EventRow key={event.id} event={event} />
+            <EventRow
+              key={event.id}
+              event={event}
+              onClick={() => setSelectedEvent(event)}
+              className={selectedEvent?.id === event.id ? 'selected' : ''}
+            />
           ))}
         </TableWrapper>
         {renderPagination({ name, total: data.length })}
-      </>
+      </div>
     );
   };
   return (
-    <TabWrapper>
+    <TabWrapper style={{ paddingRight: selectedEvent ? 280 : 0 }}>
       <SearchBar
         value={filterValue}
         onChange={(next) => {
@@ -105,28 +117,40 @@ const EventTab = ({ assetId }: EventTabProps) => {
         }}
         selectors={EVENT_FILTER_SELECTORS}
       />
-      <section>
-        <h3>
-          On this asset{' '}
-          <Badge
-            text={String(
-              (filterQuery ? assetQuery.data?.length : eventsOnAsset) || 0
-            )}
-          />
-        </h3>
-        {renderSection(assetQuery, 'thisAsset')}
-      </section>
-      <section>
-        <h3>
-          Related events{' '}
-          <Badge
-            text={String(
-              (filterQuery ? relatedQuery.data?.length : eventsUnderAsset) || 0
-            )}
-          />
-        </h3>
-        {renderSection(relatedQuery, 'relatedAssets')}
-      </section>
+      <div>
+        <section>
+          <h3>
+            On this asset{' '}
+            <Badge
+              text={String(
+                (filterQuery ? assetQuery.data?.length : eventsOnAsset) || 0
+              )}
+            />
+          </h3>
+          <div className="event-content-section">
+            {renderSection(assetQuery, 'thisAsset')}
+          </div>
+        </section>
+        <section>
+          <h3>
+            Related events{' '}
+            <Badge
+              text={String(
+                (filterQuery ? relatedQuery.data?.length : eventsUnderAsset) ||
+                  0
+              )}
+            />
+          </h3>
+          <div className="event-content-section">
+            {renderSection(relatedQuery, 'relatedAssets')}
+          </div>
+        </section>
+      </div>
+      {selectedEvent && (
+        <div className="event-sidebar-section">
+          <EventSidebar event={selectedEvent} />{' '}
+        </div>
+      )}
     </TabWrapper>
   );
 };
