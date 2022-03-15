@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ResizableBox } from 'react-resizable';
 
 import isEmpty from 'lodash/isEmpty';
 
@@ -19,7 +18,7 @@ import {
 } from 'hooks/useTimeLog';
 import { useNdsEventsForTable } from 'modules/wellSearch/selectors';
 
-import { NdsFilterWrapper, ResizeHandle } from '../elements';
+import { NdsFilterWrapper } from '../elements';
 
 import { getDataLayer } from './dataLayer';
 import FilterContainer from './FilterContainer';
@@ -34,9 +33,6 @@ const tableOptions = {
     pageSize: 50,
   },
 };
-
-const FILTER_PANEL_DEFAULT_HEIGHT = 200;
-const FILTER_PANEL_MIN_SIZE: [number, number] = [50, 50];
 
 export const EventsNds: React.FC = () => {
   const renderTimer = useCreateMetricAndStartTimeLogger(
@@ -57,20 +53,11 @@ export const EventsNds: React.FC = () => {
   return (
     <>
       <NdsFilterWrapper>
-        <ResizableBox
-          className="nds-events-expander"
-          width={0}
-          height={FILTER_PANEL_DEFAULT_HEIGHT}
-          axis="y"
-          minConstraints={FILTER_PANEL_MIN_SIZE}
-          handle={<ResizeHandle />}
-        >
-          <FilterContainer
-            events={ndsEvents}
-            filteredEvents={filteredEvents}
-            onChangeFilteredEvents={(events) => setFilteredEvents(events)}
-          />
-        </ResizableBox>
+        <FilterContainer
+          events={ndsEvents}
+          filteredEvents={filteredEvents}
+          onChangeFilteredEvents={setFilteredEvents}
+        />
       </NdsFilterWrapper>
 
       {isEmpty(filteredEvents) ? (

@@ -17,6 +17,9 @@ import {
 import { MultiSelectContainer } from './elements';
 import { MultiSelectProps, MultiSelectOptionType } from './types';
 
+const getValueFromOption = (option: OptionType<MultiSelectOptionType>) =>
+  get(option.value, 'value', option.value);
+
 export const MultiSelect: React.FC<MultiSelectProps> = ({
   options: data = [],
   selectedOptions,
@@ -32,18 +35,29 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   placeholderSelectElement,
   hideClearIndicator,
   styles,
+  extraLabels = {},
   ...rest
 }) => {
   const options: OptionType<MultiSelectOptionType>[] = useDeepMemo(() => {
-    const processedOptions = data.map((option) => ({
-      label: get(option, 'value', option),
-      value: option,
-    }));
+    const processedOptions = data.map((option) => {
+      const value = get(option, 'value', option);
+      const label = [value, extraLabels[value]].filter(Boolean).join(' ');
+
+      return {
+        label,
+        value: option,
+      };
+    });
 
     return isOptionsSorted
-      ? processedOptions.sort((a, b) => caseInsensitiveSort(a.label, b.label))
+      ? processedOptions.sort((optionA, optionB) =>
+          caseInsensitiveSort(
+            getValueFromOption(optionA),
+            getValueFromOption(optionB)
+          )
+        )
       : processedOptions;
-  }, [data, isOptionsSorted]);
+  }, [data, isOptionsSorted, extraLabels]);
 
   const [value, setValue] = useState<OptionType<MultiSelectOptionType>[]>([]);
 
@@ -51,7 +65,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     if (isUndefined(selectedOptions)) return;
 
     const value = options.filter((option) =>
-      selectedOptions.includes(option.label)
+      selectedOptions.includes(getValueFromOption(option))
     );
     setValue(value);
   }, [options, selectedOptions]);
@@ -60,7 +74,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     if (isUndefined(selectedOptions)) {
       setValue(values);
     }
-    onValueChange((values || []).map((option) => option.label));
+    onValueChange((values || []).map((option) => getValueFromOption(option)));
   };
 
   return (

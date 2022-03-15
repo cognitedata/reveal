@@ -2,6 +2,8 @@ import { PossibleDateRangeDate } from 'utils/date';
 
 import { SelectProps } from '@cognite/cogs.js';
 
+import { ExtraLabels } from '../interfaces';
+
 export interface MultiSelectProps
   extends Omit<SelectProps<MultiSelectOptionType>, 'value' | 'options'> {
   options: MultiSelectOptionType[];
@@ -12,6 +14,7 @@ export interface MultiSelectProps
   titlePlacement?: TitlePlacement;
   displayValue?: string;
   hideClearIndicator?: boolean;
+  extraLabels?: ExtraLabels;
   footer?: () => React.ReactElement;
 }
 

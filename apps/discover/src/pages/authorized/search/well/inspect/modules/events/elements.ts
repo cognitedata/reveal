@@ -14,11 +14,6 @@ export const NdsFilterWrapper = styled.div`
   }
 `;
 
-export const NdsFilterContent = styled.div`
-  height: 100%;
-  ${boxSHadow}
-`;
-
 export const NDSTableWrapper = styled.div`
   margin-top: 10px;
   height: ${(props: { height: string }) => props.height};
@@ -43,20 +38,10 @@ export const NPTTableWrapper = styled.div`
   ${boxSHadow}
 `;
 
-export const ResizeHandle = styled.div`
-  background-color: transparent;
-  position: absolute;
-  width: 100%;
-  height: 15px;
-  z-index: ${layers.RESIZE_BAR};
-  border-left: none;
-  overflow: hidden;
-  cursor: row-resize;
-`;
-
 export const FilterCol = styled(Col)`
   display: flex;
   justify-content: center;
   padding: 4px;
   align-items: center;
+  min-width: 220px;
 `;

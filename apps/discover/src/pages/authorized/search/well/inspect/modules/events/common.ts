@@ -25,4 +25,6 @@ export const hasCategoryFilterFulfilled = <Item>(
   event: Item,
   filterCategory: string,
   list: MultiSelect
-) => isEmpty(list) || includes(list, get(event, filterCategory));
+) => {
+  return !isEmpty(list) && includes(list, get(event, filterCategory));
+};
