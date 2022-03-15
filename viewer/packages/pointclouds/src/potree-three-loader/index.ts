@@ -1,7 +1,5 @@
 export * from './materials';
 export * from './PointAttributes';
-export * from './PointCloudOctreeGeometryNode';
-export * from './PointCloudOctreeGeometry';
 export * from './PointCloudOctreeNode';
 export * from './PointCloudOctreePicker';
 export * from './PointCloudOctree';
