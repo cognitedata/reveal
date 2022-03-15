@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 export class BinaryHeap<T> {
   constructor(scoreFunction: (node: T) => number);
   push(node: T): void;

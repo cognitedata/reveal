@@ -1,4 +1,7 @@
-import { IPointCloudTreeNodeBase } from "../types/IPointCloudTreeNodeBase";
+/*!
+ * Copyright 2022 Cognite AS
+ */
+import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
 export function getIndexFromName(name: string) {
   return parseInt(name.charAt(name.length - 1), 10);

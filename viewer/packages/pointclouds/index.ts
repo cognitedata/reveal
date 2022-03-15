@@ -18,3 +18,12 @@ export { createPointCloudManager } from './src/createPointCloudManager';
 export { PointCloudBudget } from './src/PointCloudBudget';
 export { PointCloudIntersection } from './src/PointCloudIntersection';
 export { CognitePointCloudModel } from './src/CognitePointCloudModel';
+
+export { PotreeNodeWrapper } from './src/PotreeNodeWrapper';
+export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
+
+export {
+  Potree as NPotree,
+  PointCloudOctree as NPointCloudOctree,
+  PointSizeType as NPointSizeType
+} from './src/PotreePnextLoader';

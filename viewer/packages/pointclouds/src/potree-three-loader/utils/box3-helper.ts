@@ -1,11 +1,7 @@
-import {
-  Box3,
-  BufferAttribute,
-  BufferGeometry,
-  Color,
-  LineBasicMaterial,
-  LineSegments,
-} from 'three';
+/*!
+ * Copyright 2022 Cognite AS
+ */
+import { Box3, BufferAttribute, BufferGeometry, Color, LineBasicMaterial, LineSegments } from 'three';
 
 /**
  *

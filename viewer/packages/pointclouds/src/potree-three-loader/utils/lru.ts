@@ -1,4 +1,7 @@
-import { IPointCloudTreeNodeBase } from "../types/IPointCloudTreeNodeBase";
+/*!
+ * Copyright 2022 Cognite AS
+ */
+import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
 export type Node = IPointCloudTreeNodeBase;
 
@@ -18,7 +21,7 @@ export class LRU {
   last: LRUItem | null = null;
   numPoints: number = 0;
 
-  private items = new Map<number, LRUItem>();
+  private readonly items = new Map<number, LRUItem>();
 
   constructor(public pointBudget: number = 1_000_000) {}
 

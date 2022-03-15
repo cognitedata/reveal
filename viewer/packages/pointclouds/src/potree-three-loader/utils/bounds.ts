@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 import { Box3, Matrix4, Vector3 } from 'three';
 
 /**
@@ -13,7 +16,7 @@ export function computeTransformedBoundingBox(box: Box3, transform: Matrix4): Bo
     new Vector3(box.min.x, box.max.y, box.max.z).applyMatrix4(transform),
     new Vector3(box.max.x, box.max.y, box.min.z).applyMatrix4(transform),
     new Vector3(box.max.x, box.min.y, box.max.z).applyMatrix4(transform),
-    new Vector3(box.max.x, box.max.y, box.max.z).applyMatrix4(transform),
+    new Vector3(box.max.x, box.max.y, box.max.z).applyMatrix4(transform)
   ]);
 }
 
