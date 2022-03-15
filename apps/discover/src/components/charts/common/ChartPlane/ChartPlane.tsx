@@ -61,20 +61,40 @@ export const ChartPlane = ({
     </ChartSVG>
   );
 
+  if (isXAxisOnTop) {
+    return (
+      <ChartContentWrapper>
+        <XAxisTitle title={xAxisTitle} />
+
+        <ChartRowContent>
+          <YAxisTitle title={yAxisTitle} />
+
+          <ChartWithXAxis>
+            {ChartXAxisSticky}
+            <div style={{ maxHeight }}>{ChartContent}</div>
+          </ChartWithXAxis>
+        </ChartRowContent>
+      </ChartContentWrapper>
+    );
+  }
+
+  /**
+   * If xAxisPlacement is bottom.
+   */
   return (
     <ChartContentWrapper>
-      {isXAxisOnTop && <XAxisTitle title={xAxisTitle} />}
-
       <ChartRowContent>
         <YAxisTitle title={yAxisTitle} />
+
         <ChartWithXAxis>
-          {isXAxisOnTop && ChartXAxisSticky}
           <div style={{ maxHeight }}>
             {ChartContent}
-            {!isXAxisOnTop && ChartXAxisSticky}
+            {ChartXAxisSticky}
           </div>
         </ChartWithXAxis>
       </ChartRowContent>
+
+      <XAxisTitle title={xAxisTitle} />
     </ChartContentWrapper>
   );
 };
