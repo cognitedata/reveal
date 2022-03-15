@@ -52,11 +52,11 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
     this.geometryNode.traverse(cb, includeSelf);
   }
 
-  get id() {
+  get id(): number {
     return this.geometryNode.id;
   }
 
-  get name() {
+  get name(): string {
     return this.geometryNode.name;
   }
 
@@ -72,7 +72,7 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
     return this.geometryNode.numPoints;
   }
 
-  get index() {
+  get index(): number {
     return this.geometryNode.index;
   }
 
@@ -84,7 +84,7 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
     return this.geometryNode.boundingBox;
   }
 
-  get spacing() {
+  get spacing(): number {
     return this.geometryNode.spacing;
   }
 }

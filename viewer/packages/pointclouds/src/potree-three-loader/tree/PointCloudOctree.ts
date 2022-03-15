@@ -121,7 +121,7 @@ export class PointCloudOctree extends PointCloudTree {
     return node;
   }
 
-  updateVisibleBounds() {
+  updateVisibleBounds(): void {
     const bounds = this.visibleBounds;
     bounds.min.set(Infinity, Infinity, Infinity);
     bounds.max.set(-Infinity, -Infinity, -Infinity);
@@ -207,7 +207,7 @@ export class PointCloudOctree extends PointCloudTree {
     return computeTransformedBoundingBox(this.boundingBox, this.matrixWorld);
   }
 
-  getVisibleExtent() {
+  getVisibleExtent(): Box3 {
     return this.visibleBounds.applyMatrix4(this.matrixWorld);
   }
 
@@ -216,7 +216,7 @@ export class PointCloudOctree extends PointCloudTree {
     return this.picker.pick(renderer, camera, ray, [this], params);
   }
 
-  get progress() {
+  get progress(): number {
     return this.visibleGeometry.length === 0 ? 0 : this.visibleNodes.length / this.visibleGeometry.length;
   }
 }

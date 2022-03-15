@@ -3,14 +3,14 @@
  */
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
-export function getIndexFromName(name: string) {
+export function getIndexFromName(name: string): number {
   return parseInt(name.charAt(name.length - 1), 10);
 }
 
 /**
  * When passed to `[].sort`, sorts the array by level and index: r, r0, r3, r4, r01, r07, r30, ...
  */
-export function byLevelAndIndex(a: IPointCloudTreeNodeBase, b: IPointCloudTreeNodeBase) {
+export function byLevelAndIndex(a: IPointCloudTreeNodeBase, b: IPointCloudTreeNodeBase): number {
   const na = a.name;
   const nb = b.name;
   if (na.length !== nb.length) {

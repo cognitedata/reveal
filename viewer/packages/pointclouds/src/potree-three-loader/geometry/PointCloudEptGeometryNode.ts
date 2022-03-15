@@ -143,7 +143,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return true;
   }
 
-  getLevel() {
+  getLevel(): number {
     return this._level;
   }
 
@@ -155,7 +155,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._loaded;
   }
 
-  getBoundingSphere() {
+  getBoundingSphere(): THREE.Sphere {
     return this._boundingSphere;
   }
 
@@ -167,15 +167,15 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._ept.url + 'ept-data/' + this.filename();
   }
 
-  getNumPoints() {
+  getNumPoints(): number {
     return this._numPoints;
   }
 
-  filename() {
+  filename(): string {
     return this._key.name();
   }
 
-  getChildren() {
+  getChildren(): IPointCloudTreeGeometryNode[] {
     const children = [];
 
     for (let i = 0; i < 8; i++) {
@@ -202,7 +202,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     }
   }
 
-  addChild(child: PointCloudEptGeometryNode) {
+  addChild(child: PointCloudEptGeometryNode): void {
     this._children[child.index] = child;
     child.parent = this;
   }
@@ -224,7 +224,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._ept.loader.load(this);
   }
 
-  async loadHierarchy() {
+  async loadHierarchy(): Promise<void> {
     const nodes: { [key: string]: PointCloudEptGeometryNode } = {};
     nodes[this.filename()] = this;
 
@@ -271,7 +271,12 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     });
   }
 
-  doneLoading(bufferGeometry: THREE.BufferGeometry, _tightBoundingBox: THREE.Box3, np: number, _mean: THREE.Vector3) {
+  doneLoading(
+    bufferGeometry: THREE.BufferGeometry,
+    _tightBoundingBox: THREE.Box3,
+    np: number,
+    _mean: THREE.Vector3
+  ): void {
     bufferGeometry.boundingBox = this._boundingBox;
     this._geometry = bufferGeometry;
     this._numPoints = np;
@@ -280,7 +285,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     decrementGlobalNumNodesLoading();
   }
 
-  toPotreeName(d: number, x: number, y: number, z: number) {
+  toPotreeName(d: number, x: number, y: number, z: number): string {
     let name = 'r';
 
     for (let i = 0; i < d; ++i) {
@@ -298,7 +303,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return name;
   }
 
-  dispose() {
+  dispose(): void {
     if (this._geometry && this.parent != null) {
       this._geometry.dispose();
       this._geometry = undefined;

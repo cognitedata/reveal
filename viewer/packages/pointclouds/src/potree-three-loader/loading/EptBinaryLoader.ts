@@ -10,15 +10,15 @@ import { workerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
 
 export class EptBinaryLoader implements ILoader {
-  extension() {
+  extension(): string {
     return '.bin';
   }
 
-  workerPath() {
+  workerPath(): string {
     return './workers/EptBinaryDecoderWorker.js';
   }
 
-  load(node: any) {
+  load(node: any): void {
     if (node.loaded) return;
 
     const url = node.url() + this.extension();
@@ -33,7 +33,7 @@ export class EptBinaryLoader implements ILoader {
           const buffer = xhr.response;
           this.parse(node, buffer);
         } else {
-          console.log('Failed ' + url + ': ' + xhr.status);
+          throw Error('Failed ' + url + ': ' + xhr.status);
         }
       }
     };
@@ -41,11 +41,11 @@ export class EptBinaryLoader implements ILoader {
     try {
       xhr.send(null);
     } catch (e) {
-      console.log('Failed request: ' + e);
+      throw Error('Error loading node');
     }
   }
 
-  parse(node: PointCloudEptGeometryNode, buffer: ArrayBuffer) {
+  parse(node: PointCloudEptGeometryNode, buffer: ArrayBuffer): void {
     const workerPath = this.workerPath();
     const worker = workerPool.getWorker(workerPath);
 

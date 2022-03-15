@@ -7,7 +7,7 @@ import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 export class PointCloudTree extends Object3D {
   root: IPointCloudTreeNodeBase | undefined = undefined;
 
-  initialized() {
+  initialized(): boolean {
     return this.root !== undefined;
   }
 }

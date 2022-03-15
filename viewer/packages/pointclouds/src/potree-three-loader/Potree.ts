@@ -32,7 +32,7 @@ import { IVisibilityUpdateResult } from './types/IVisibilityUpdateResult';
 import { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
 import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
-import { BinaryHeap } from './utils/binary-heap';
+import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
 import { workerPool } from './utils/WorkerPool';
@@ -358,11 +358,7 @@ export class Potree implements IPotree {
 
         // Hide any previously visible nodes. We will later show only the needed ones.
         if (isTreeNode(pointCloud.root)) {
-          try {
-            pointCloud.hideDescendants(pointCloud.root!.sceneNode);
-          } catch (e) {
-            console.log('AAAAAH');
-          }
+          pointCloud.hideDescendants(pointCloud.root!.sceneNode);
         }
 
         for (const boundingBoxNode of pointCloud.boundingBoxNodes) {

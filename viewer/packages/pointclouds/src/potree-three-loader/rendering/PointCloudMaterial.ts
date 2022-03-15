@@ -628,7 +628,17 @@ export class PointCloudMaterial extends RawShaderMaterial {
     }
   }
 
-  static makeOnBeforeRender(octree: PointCloudOctree, node: IPointCloudTreeNode, pcIndex?: number) {
+  static makeOnBeforeRender(
+    octree: PointCloudOctree,
+    node: IPointCloudTreeNode,
+    pcIndex?: number
+  ): (
+    renderer: WebGLRenderer,
+    scene: Scene,
+    camera: Camera,
+    bufferGeometry: BufferGeometry,
+    material: Material
+  ) => void {
     return (
       _renderer: WebGLRenderer,
       _scene: Scene,
@@ -672,7 +682,7 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(
   uniformName: K,
   requireSrcUpdate: boolean = false
 ): PropertyDecorator {
-  return (target: Object, propertyKey: string | symbol): void => {
+  return (target: any, propertyKey: string | symbol): void => {
     Object.defineProperty(target, propertyKey, {
       get() {
         return this.getUniform(uniformName);
@@ -690,7 +700,7 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(
 }
 
 function requiresShaderUpdate() {
-  return (target: Object, propertyKey: string | symbol): void => {
+  return (target: any, propertyKey: string | symbol): void => {
     const fieldName = `_${propertyKey.toString()}`;
 
     Object.defineProperty(target, propertyKey, {

@@ -37,7 +37,7 @@ export class LRU {
    * Makes the specified the most recently used item. if the list does not contain node, it will
    * be added.
    */
-  touch(node: Node) {
+  touch(node: Node): void {
     if (!node.loaded) {
       return;
     }
@@ -96,7 +96,7 @@ export class LRU {
     }
   }
 
-  remove(node: Node) {
+  remove(node: Node): void {
     const item = this.items.get(node.id);
     if (!item) {
       return;

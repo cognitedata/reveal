@@ -38,10 +38,8 @@ export interface PickParams {
    * point cloud is rendered into the picking render target. This gives applications a chance to
    * customize the renderTarget and the material.
    *
-   * @param material
-   *    The pick material.
-   * @param renterTarget
-   *    The render target used for picking.
+   * @param material The pick material.
+   * @param renterTarget The render target used for picking.
    */
   onBeforePickRender: (material: PointCloudMaterial, renterTarget: WebGLRenderTarget) => void;
 }
@@ -63,7 +61,7 @@ export class PointCloudOctreePicker {
   private static readonly clearColor = new Color();
   private pickState: IPickState | undefined;
 
-  dispose() {
+  dispose(): void {
     if (this.pickState) {
       this.pickState.material.dispose();
       this.pickState.renderTarget.dispose();

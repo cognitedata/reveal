@@ -4,6 +4,7 @@
 type SchemaEntry = {
   name: string;
   size: number;
+  type: 'signed' | 'unsigned' | 'float';
 };
 
 function parseEpt(event: MessageEvent) {
@@ -14,7 +15,7 @@ function parseEpt(event: MessageEvent) {
   const offset = event.data.offset;
   const mins = event.data.mins;
 
-  const dimensions = schema.reduce((p, c) => {
+  const dimensions: Record<string, SchemaEntry> = schema.reduce((p, c) => {
     p[c.name] = c;
     return p;
   }, {});
@@ -41,6 +42,8 @@ function parseEpt(event: MessageEvent) {
           return (p: number) => view.getInt16(p + offset, true);
         case 4:
           return (p: number) => view.getInt32(p + offset, true);
+        default:
+          throw Error('Unrecognized byte size for "signed" numbers');
       }
     if (type == 'unsigned')
       switch (size) {
@@ -50,6 +53,8 @@ function parseEpt(event: MessageEvent) {
           return (p: number) => view.getUint16(p + offset, true);
         case 4:
           return (p: number) => view.getUint32(p + offset, true);
+        default:
+          throw Error('Unrecognized byte size for "unsigned" numbers');
       }
     if (type == 'float')
       switch (size) {
@@ -57,6 +62,8 @@ function parseEpt(event: MessageEvent) {
           return (p: number) => view.getFloat32(p + offset, true);
         case 8:
           return (p: number) => view.getFloat64(p + offset, true);
+        default:
+          throw Error('Unrecognized byte size for "float" numbers');
       }
 
     const str = JSON.stringify(dimensions[name]);

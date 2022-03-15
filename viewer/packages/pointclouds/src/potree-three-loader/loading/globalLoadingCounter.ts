@@ -6,10 +6,10 @@ const globalMaxNumNodesLoading: number = 10;
 
 export { globalNumNodesLoading, globalMaxNumNodesLoading };
 
-export function incrementGlobalNumNodesLoading() {
+export function incrementGlobalNumNodesLoading(): void {
   globalNumNodesLoading++;
 }
 
-export function decrementGlobalNumNodesLoading() {
+export function decrementGlobalNumNodesLoading(): void {
   globalNumNodesLoading--;
 }

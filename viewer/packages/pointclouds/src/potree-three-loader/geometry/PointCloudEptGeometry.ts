@@ -27,13 +27,13 @@ export class Utils {
     return new THREE.Box3(Utils.toVector3(b), Utils.toVector3(b, 3));
   }
 
-  static findDim(schema: SchemaEntry[], name: string) {
+  static findDim(schema: SchemaEntry[], name: string): SchemaEntry {
     const dim = schema.find(dim => dim.name == name);
     if (!dim) throw new Error('Failed to find ' + name + ' in schema');
     return dim;
   }
 
-  static sphereFrom(b: THREE.Box3) {
+  static sphereFrom(b: THREE.Box3): THREE.Sphere {
     return b.getBoundingSphere(new THREE.Sphere());
   }
 }
@@ -62,6 +62,10 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
 
   get root(): PointCloudEptGeometryNode | undefined {
     return this._root;
+  }
+
+  set root(r: PointCloudEptGeometryNode | undefined) {
+    this._root = r;
   }
 
   get boundingBox(): THREE.Box3 {
@@ -98,10 +102,6 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
 
   get loader(): ILoader {
     return this._loader;
-  }
-
-  set root(r: PointCloudEptGeometryNode | undefined) {
-    this._root = r;
   }
 
   constructor(url: string, info: any) {
@@ -153,7 +153,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     this._loader = new EptBinaryLoader();
   }
 
-  dispose() {}
+  dispose(): void {}
 }
 
 export class EptKey {
@@ -173,11 +173,11 @@ export class EptKey {
     this.z = z || 0;
   }
 
-  name() {
+  name(): string {
     return this.d + '-' + this.x + '-' + this.y + '-' + this.z;
   }
 
-  step(a: number, b: number, c: number) {
+  step(a: number, b: number, c: number): EptKey {
     const min = this.b.min.clone();
     const max = this.b.max.clone();
     const dst = new THREE.Vector3().subVectors(max, min);
@@ -194,7 +194,7 @@ export class EptKey {
     return new EptKey(this.ept, new THREE.Box3(min, max), this.d + 1, this.x * 2 + a, this.y * 2 + b, this.z * 2 + c);
   }
 
-  children() {
+  children(): string[] {
     let result: string[] = [];
     for (let a = 0; a < 2; ++a) {
       for (let b = 0; b < 2; ++b) {
