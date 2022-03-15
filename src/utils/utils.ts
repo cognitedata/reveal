@@ -1,8 +1,6 @@
 import { Count } from 'hooks/profiling-service';
 import handleError from './handleError';
-import { styleScope } from './styleScope';
-
-export { styleScope } from './styleScope';
+import { styleScope } from 'styles/styleScope';
 
 const nameToAclTypeMap = {
   '3d': 'threedAcl',

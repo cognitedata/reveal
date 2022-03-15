@@ -79,10 +79,10 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 // import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
 
-import { ids } from 'styles/cogsVariables';
+import { styleScope } from 'styles/styleScope';
 
 const getContainer = () =>
-  document.getElementsByClassName(ids.styleScope).item(0)! as HTMLElement;
+  document.getElementsByClassName(styleScope).item(0)! as HTMLElement;
 const styles = [
   affixStyle,
   alertStyle,
@@ -151,7 +151,7 @@ export function AntStyles(props: { children: React.ReactNode }) {
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>
-      <div className={ids.styleScope}>{props.children}</div>
+      <div className={styleScope}>{props.children}</div>
     </ConfigProvider>
   );
 }
