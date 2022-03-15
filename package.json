@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-raw-explorer",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=3018 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3018 react-app-rewired start",
