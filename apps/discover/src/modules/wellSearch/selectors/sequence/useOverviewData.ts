@@ -54,7 +54,7 @@ export const useOverviewData = () => {
         well.wellbores.map((wellbore) => {
           const overView: OverviewModel = {
             ...wellbore,
-            wellName: `${well.description} / ${wellbore.description}`,
+            wellName: `${well?.name} / ${wellbore?.description}`,
             operator: well.operator,
             spudDate: well.spudDate,
             waterDepth: well.waterDepth,
