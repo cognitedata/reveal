@@ -2,6 +2,7 @@ import { Button, Flex } from '@cognite/cogs.js';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
+  BuiltInType,
   SolutionDataModel,
   SolutionDataModelType,
   UpdateSolutionDataModelFieldDTO,
@@ -37,6 +38,7 @@ export function UIEditor({
   const [hasError, setHasError] = useState(false);
   const [currentGraphqlSchema, setCurrentGraphqlSchema] = useState('');
   const [customTypesNames, setCustomTypesNames] = useState<string[]>([]);
+  const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
 
   const [solutionDataModel, setSolutionDataModel] = useState<SolutionDataModel>(
     {
@@ -66,6 +68,17 @@ export function UIEditor({
     setIsInit(true);
     // eslint-disable-next-line
   }, [graphQLSchemaString]);
+
+  useEffect(() => {
+    async function getOptions() {
+      const builtInTypesResponse =
+        await services.solutionDataModelService.getSupportedPrimitiveTypes();
+      setBuiltInTypes(builtInTypesResponse);
+    }
+
+    // Load built in types only once, since they are not going to change
+    getOptions();
+  }, []);
 
   const updateUiState = useCallback(
     (newState: SolutionDataModel, updatedTypeName: string) => {
@@ -166,7 +179,10 @@ export function UIEditor({
                   field={field}
                   key={field.name}
                   disabled={disabled}
-                  customTypesNames={customTypesNames}
+                  builtInTypes={builtInTypes}
+                  customTypesNames={customTypesNames.filter(
+                    (name) => name !== currentType.name
+                  )}
                   typeFieldNames={currentType.fields.map((f) => f.name)}
                   onFieldUpdated={(updates) =>
                     onFieldUpdated(currentType.name, field.name, updates)

@@ -4,10 +4,13 @@ import {
   SolutionDataModelField,
   SolutionDataModel,
   SolutionDataModelType,
+  BuiltInType,
 } from '../types';
-
 export class SolutionDataModelService {
-  constructor(private graphqlService: IGraphQlUtilsService) {}
+  constructor(
+    private graphqlService: IGraphQlUtilsService,
+    private readonly backend: 'templates' | 'schema-service' = 'templates'
+  ) {}
 
   parseSchema(graphQlSchema: string): SolutionDataModel {
     return this.graphqlService.parseSchema(graphQlSchema);
@@ -147,6 +150,26 @@ export class SolutionDataModelService {
   getCustomTypesNames(state: SolutionDataModel): string[] {
     // this should be extended to filter types and get built in types as well
     return state.types.map((type) => type.name);
+  }
+
+  getSupportedPrimitiveTypes(): Promise<BuiltInType[]> {
+    // TODO: This should work depending on the BE
+    // If schema team, load types and directives that are specific for them
+    return Promise.resolve([
+      { name: 'String', type: 'SCALAR' },
+      { name: 'Int', type: 'SCALAR' },
+      { name: 'Float', type: 'SCALAR' },
+      { name: 'Boolean', type: 'SCALAR' },
+      { name: 'ID', type: 'SCALAR' },
+      { name: 'Long', type: 'SCALAR' },
+      { name: 'TimeSeries', type: 'OBJECT' },
+      { name: 'SyntheticTimeSeries', type: 'OBJECT' },
+      { name: 'Sequence', type: 'OBJECT' },
+      { name: 'File', type: 'OBJECT' },
+      { name: 'Asset', type: 'OBJECT' },
+      { name: 'Event', type: 'OBJECT' },
+      { name: 'template', type: 'DIRECTIVE', fieldDirective: false },
+    ] as BuiltInType[]);
   }
 
   /** Clears the state */

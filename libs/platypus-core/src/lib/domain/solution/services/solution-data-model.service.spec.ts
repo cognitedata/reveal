@@ -97,10 +97,12 @@ describe('SolutionsHandlerTest', () => {
     parseSchema: jest.fn().mockImplementation(() => solutionDataModelMock),
     removeField: jest.fn(),
     removeType: jest.fn(),
+    updateType: jest.fn(),
     updateTypeField: jest.fn().mockImplementation((type, name, params) => ({
       name: params.name,
       type: params.type,
     })),
+    clear: jest.fn(),
   } as IGraphQlUtilsService;
 
   const createInstance = () => {

@@ -118,7 +118,7 @@ export interface IGraphQlUtilsService {
    * @param fieldName
    */
   removeField(typeName: string, fieldName: string): void;
- 
+
   /** Clears the state */
   clear(): void;
 }

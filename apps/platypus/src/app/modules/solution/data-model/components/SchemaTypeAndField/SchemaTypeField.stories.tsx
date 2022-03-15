@@ -34,7 +34,8 @@ export const Default = () => {
         <div style={{ height: '600px' }}>
           <SchemaTypeField
             field={field}
-            customTypesNames={['Post']}
+            builtInTypes={[{ name: 'Post', type: 'OBJECT' }]}
+            customTypesNames={['Person']}
             typeFieldNames={['Post']}
             onFieldRemoved={(updatedField) =>
               console.log('removed', updatedField)

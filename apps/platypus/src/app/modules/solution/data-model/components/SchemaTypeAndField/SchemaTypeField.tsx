@@ -1,5 +1,6 @@
 import { Button, Checkbox, Flex, Input } from '@cognite/cogs.js';
 import {
+  BuiltInType,
   SolutionDataModelField,
   UpdateSolutionDataModelFieldDTO,
 } from '@platypus/platypus-core';
@@ -13,6 +14,7 @@ import { v4 } from 'uuid';
 
 export interface SchemaTypeFieldProps {
   field: SolutionDataModelField;
+  builtInTypes: BuiltInType[];
   customTypesNames: string[];
   typeFieldNames: string[];
   disabled?: boolean;
@@ -21,6 +23,7 @@ export interface SchemaTypeFieldProps {
 }
 export const SchemaTypeField = ({
   field,
+  builtInTypes,
   customTypesNames,
   disabled = false,
   typeFieldNames,
@@ -83,8 +86,9 @@ export const SchemaTypeField = ({
       <InputWrapper>
         <TypeSelect
           field={field}
+          builtInTypes={builtInTypes}
+          customTypesNames={customTypesNames}
           disabled={disabled}
-          options={customTypesNames}
           onValueChanged={(value) => {
             onFieldUpdated({
               type: value,

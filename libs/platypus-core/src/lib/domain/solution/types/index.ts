@@ -78,4 +78,14 @@ export type SolutionDataModel = {
   types: SolutionDataModelType[];
 };
 
+export type BaseBuiltInType = {
+  name: string;
+  type: 'SCALAR' | 'DIRECTIVE' | 'OBJECT' | 'ENUM';
+};
+
+export type DirectiveBuiltInType = BaseBuiltInType & {
+  fieldDirective: boolean;
+};
+
+export type BuiltInType = BaseBuiltInType | DirectiveBuiltInType;
 /* SOLUTION DATA MODEL TYPES */

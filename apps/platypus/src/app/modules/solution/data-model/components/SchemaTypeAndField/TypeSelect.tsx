@@ -1,48 +1,9 @@
 import styled from 'styled-components';
 
-import { Flex, Select, SegmentedControl } from '@cognite/cogs.js';
-import { useState } from 'react';
-import { SolutionDataModelField } from '@platypus/platypus-core';
-
-const groupOptions = (options: string[]) => [
-  {
-    label: '',
-    options: [
-      { value: 'Boolean', label: 'Boolean' },
-      { value: 'Float', label: 'Float' },
-      { value: 'ID', label: 'ID' },
-      { value: 'Int', label: 'Int' },
-      { value: 'String', label: 'String', divider: true },
-    ],
-  },
-  {
-    label: 'Schema Types',
-    options: options.map((option) => ({
-      value: `${option}`,
-      label: `${option}`,
-    })),
-  },
-];
-
-const groupOptionsPlural = (options: string[]) => [
-  {
-    label: '',
-    options: [
-      { value: '[Boolean]', label: '[Boolean] list' },
-      { value: '[Float]', label: '[Float] list' },
-      { value: '[ID]', label: '[ID] list' },
-      { value: '[Int]', label: '[Int] list' },
-      { value: '[String]', label: '[String] list', divider: true },
-    ],
-  },
-  {
-    label: 'Schema Types',
-    options: options.map((option) => ({
-      value: `[${option}]`,
-      label: `[${option}] list`,
-    })),
-  },
-];
+import { Flex, Select, SegmentedControl, OptionType } from '@cognite/cogs.js';
+import { useEffect, useState } from 'react';
+import { BuiltInType, SolutionDataModelField } from '@platypus/platypus-core';
+import { groupOptions } from './utils';
 
 type OptionValue = {
   value: string;
@@ -52,11 +13,13 @@ type OptionValue = {
 type TypeSelectProps = {
   disabled: boolean;
   field: SolutionDataModelField;
-  options: string[];
+  builtInTypes: BuiltInType[];
+  customTypesNames: string[];
   onValueChanged: (value: string) => void;
 };
 export const TypeSelect = ({
-  options,
+  builtInTypes,
+  customTypesNames,
   disabled,
   field,
   onValueChanged,
@@ -65,10 +28,13 @@ export const TypeSelect = ({
     field.type.list ? 'list' : 'single'
   );
 
-  const fullSelectOptions = groupOptions(options);
-  const fullSelectOptionsPlural = groupOptionsPlural(options);
-  const currentOptions =
-    currentKey === 'list' ? fullSelectOptionsPlural : fullSelectOptions;
+  const [optionsToShow, setOptionsToShow] = useState<OptionType<string>[]>([]);
+
+  useEffect(() => {
+    setOptionsToShow(
+      groupOptions(builtInTypes, customTypesNames, currentKey === 'list')
+    );
+  }, [builtInTypes, customTypesNames, currentKey]);
 
   const curFieldValue = {
     label: field.type.list ? `[${field.type.name}] list` : field.type.name,
@@ -107,7 +73,7 @@ export const TypeSelect = ({
             <div>{menu}</div>
           </div>
         )}
-        options={currentOptions}
+        options={optionsToShow}
         value={curFieldValue}
         onChange={(option: OptionValue) => onValueChanged(option.value)}
         isOptionSelected={(option: OptionValue) =>
