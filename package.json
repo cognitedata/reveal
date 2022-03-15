@@ -17,7 +17,7 @@
     "@cognite/metrics": "^1.2.1",
     "@cognite/react-feature-flags": "^1.0.0",
     "@cognite/sdk": "^6.3.1",
-    "@cognite/sdk-provider": "^1.0.0",
+    "@cognite/sdk-provider": "^2.0.0",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@visx/axis": "^2.4.0",
     "@visx/grid": "^2.4.0",

@@ -117,8 +117,6 @@ module.exports = {
     // exclude these dependencies from the output bundle.
     // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
     config.externals = {
-      react: 'react',
-      'react-dom': 'react-dom',
       'single-spa': 'single-spa',
       '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
       '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',

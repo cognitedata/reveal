@@ -1504,12 +1504,10 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-provider@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-1.0.0.tgz#d5b55e6b1013351f24d5e97e86c6a62295d1f4b3"
-  integrity sha512-mUVNogLYobapuyqnpGBSKEZW1IWXJjsfqaJg9w5W6PxgNVduZqH7MWxcqN+AC+OyEhQbwmbdlLyQfTRr7yHrPA==
-  dependencies:
-    react "^16.14.0"
+"@cognite/sdk-provider@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-2.0.0.tgz#13bca6496afd7dcafa7a3a2462f8be151845e96e"
+  integrity sha512-zuiqJweT3AjMqvewXUJkfk+w8cATyqdtEh4O+G8jIZfY5URJPRg0TntW5kUnHyLdlWKKMZO10AAZALeez/V9MA==
 
 "@cognite/sdk-react-query-hooks@^6.0.2":
   version "6.0.2"
@@ -10494,15 +10492,6 @@ react-window@^1.8.2:
   dependencies:
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"
-
-react@^16.14.0:
-  version "16.14.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
-  integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
 
 react@^17.0.2:
   version "17.0.2"
