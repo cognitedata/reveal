@@ -1,7 +1,7 @@
 import { Group, ServiceAccount, GroupSpec } from '@cognite/sdk';
 import omit from 'lodash/omit';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { projectName, isOidcEnv } from 'utils/utils';
+import { isOidcEnv } from 'utils/utils';
 import { UpdateGroupData } from './types';
 import { retry } from './retry';
 
@@ -43,22 +43,9 @@ const updateGroupData = (
   };
 };
 
-const setDefaultGroup = async (group: Group) => {
-  const requestBody = {
-    data: {
-      items: [group.id],
-    },
-  };
-  return sdk.put(
-    `api/playground/projects/${projectName()}/defaultGroup`,
-    requestBody
-  );
-};
-
 export const updateGroup = async (
   id: UpdateGroupData['id'],
-  update: UpdateGroupData['update'],
-  isTheDefaultGroup: boolean = false
+  update: UpdateGroupData['update']
 ): Promise<Group> => {
   const allGroups: Group[] = await sdk.groups.list({ all: true });
   const originalGroup: Group | undefined = allGroups.find((g) => g.id === id);
@@ -86,9 +73,6 @@ export const updateGroup = async (
     }
   }
   try {
-    if (isTheDefaultGroup) {
-      await retry(setDefaultGroup, newGroup, NUMBER_OF_RETRIES);
-    }
     const deleteOriginalGroup = async () => sdk.groups.delete([id]);
     await retry(deleteOriginalGroup, null, NUMBER_OF_RETRIES);
   } catch (error) {
