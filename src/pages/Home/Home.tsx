@@ -68,7 +68,7 @@ export default function () {
         />
       </Title>
       {!authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled &&
-      serviceAccounts?.length ? (
+        serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}
       <StyledMeny

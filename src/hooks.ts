@@ -106,7 +106,7 @@ export const forUnitTests = {
 
 export const useListServiceAccounts = () => {
   const sdk = useSDK();
-  return useQuery(['service-accounts'], () => sdk.serviceAccounts.list());
+  return useQuery('service-accounts', () => sdk.serviceAccounts.list());
 };
 
 const deleteServiceAccount =
