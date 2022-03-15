@@ -9,7 +9,7 @@ import { getProject } from '@cognite/cdf-utilities';
 import { usePermissions, useDeleteServiceAccounts } from 'hooks';
 
 const StyledList = styled.ul`
-  margin-top: 6;
+  margin-bottom: 0 !important;
   color: rgba(0, 0, 0, 0.65);
 `;
 
@@ -69,7 +69,7 @@ const LegacyServiceAccountsWarning = (props: {
           <p>
             Legacy login is deprecated for this project and it still has some
             service accounts. The service accounts listed below can be deleted
-            as they do not work with OpenID Connect :
+            as they do not work with OIDC :
           </p>
           <StyledList>
             {accounts
@@ -85,6 +85,7 @@ const LegacyServiceAccountsWarning = (props: {
               +{accounts.length - 10} more
             </p>
           ) : null}
+          {accounts.length <= 10 && <br />}
         </>
       }
       alertBtnLabel="Delete Legacy Service Accounts"
