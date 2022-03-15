@@ -125,6 +125,7 @@ const LegacyLoginFlowWarning = () => {
         </p>
       }
       confirmMessage="Are you sure you want to deprecate legacy login?"
+      confirmLabel="Deprecate"
       onClickConfirm={handleSubmit}
     />
   );

@@ -56,6 +56,7 @@ const CustomAlert = (props: any) => {
     helpEnabled,
     helpTooltipMessage,
     confirmMessage,
+    confirmLabel,
     onClickConfirm,
   } = props;
 
@@ -132,7 +133,7 @@ const CustomAlert = (props: any) => {
                 onClick={handleSubmit}
                 type="danger"
               >
-                {OK}
+                {confirmLabel || OK}
                 {remainingTime > 0 ? ` (${remainingTime})` : ''}
               </StyledModalButton>
             </StyledModalButtons>

@@ -1,7 +1,5 @@
 import React from 'react';
-import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { notification } from 'antd';
 import CustomAlert from 'pages/common/CustomAlert';
 
 import { ServiceAccount } from '@cognite/sdk';
@@ -21,36 +19,11 @@ const LegacyServiceAccountsWarning = (props: {
   accounts: ServiceAccount[];
 }) => {
   const { accounts } = props;
-  const client = useQueryClient();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
 
   const project = getProject();
-  const { mutate: deleteLegacyServiceAccounts } = useDeleteServiceAccounts(
-    project,
-    {
-      onMutate() {
-        notification.info({
-          key: 'delete-legacy-service-accounts',
-          message: 'Deleting Legacy Service Accounts',
-        });
-      },
-      onSuccess() {
-        notification.success({
-          key: 'delete-legacy-service-accounts',
-          message: 'Legacy Service Accounts are deleted successfully',
-        });
-        client.invalidateQueries(['service-accounts']);
-      },
-      onError() {
-        notification.error({
-          key: 'delete-legacy-service-accounts',
-          message: 'Legacy service account is not deleted!',
-          description:
-            'An error occured while deleting legacy service accounts.',
-        });
-      },
-    }
-  );
+  const { mutate: deleteLegacyServiceAccounts } =
+    useDeleteServiceAccounts(project);
 
   const handleSubmit = () => {
     const serviceAccIds = accounts.map((account: ServiceAccount) => account.id);
@@ -67,9 +40,8 @@ const LegacyServiceAccountsWarning = (props: {
       alertMessage={
         <>
           <p>
-            Legacy login is deprecated for this project and it still has some
-            service accounts. The service accounts listed below can be deleted
-            as they do not work with OIDC :
+            Signing in with legacy login is disabled for this project, and the
+            service accounts listed below are no longer applicable.
           </p>
           <StyledList>
             {accounts
@@ -88,10 +60,11 @@ const LegacyServiceAccountsWarning = (props: {
           {accounts.length <= 10 && <br />}
         </>
       }
-      alertBtnLabel="Delete Legacy Service Accounts"
+      alertBtnLabel="Delete service accounts"
       alertBtnDisabled={!writeOk}
       helpEnabled={false}
-      confirmMessage="Are you sure you want to delete the Legacy Service Accounts?"
+      confirmMessage="Are you sure you want to delete these service accounts?"
+      confirmLabel="Delete"
       onClickConfirm={handleSubmit}
     />
   );

@@ -1,4 +1,10 @@
-import { useMutation, UseMutationOptions, useQuery } from 'react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+} from 'react-query';
+import { notification } from 'antd';
 import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
@@ -118,10 +124,29 @@ const deleteServiceAccount =
     });
   };
 
-export const useDeleteServiceAccounts = (
-  project: string,
-  o: UseMutationOptions<unknown, unknown, number[], unknown>
-) => {
+export const useDeleteServiceAccounts = (project: string) => {
   const sdk = useSDK();
-  return useMutation(deleteServiceAccount(sdk, project), o);
+  const client = useQueryClient();
+  return useMutation(deleteServiceAccount(sdk, project), {
+    onMutate() {
+      notification.info({
+        key: 'delete-legacy-service-accounts',
+        message: 'Deleting Legacy Service Accounts',
+      });
+    },
+    onSuccess() {
+      notification.success({
+        key: 'delete-legacy-service-accounts',
+        message: 'Legacy Service Accounts are deleted successfully',
+      });
+      client.invalidateQueries(['service-accounts']);
+    },
+    onError() {
+      notification.error({
+        key: 'delete-legacy-service-accounts',
+        message: 'Legacy service account is not deleted!',
+        description: 'An error occured while deleting legacy service accounts.',
+      });
+    },
+  });
 };
