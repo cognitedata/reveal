@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { IPointCloudTreeNodeBase } from './../IPointCloudTreeNodeBase';
+import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 import * as THREE from 'three';
 
 export interface IPointCloudTreeGeometryNode extends IPointCloudTreeNodeBase {

@@ -31,7 +31,7 @@ import { IPotree } from './types/IPotree';
 import { IVisibilityUpdateResult } from './types/IVisibilityUpdateResult';
 import { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
-import { IPointCloudTreeGeometryNode } from './tree/geometry/IPointCloudTreeGeometryNode';
+import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
 import { BinaryHeap } from './utils/binary-heap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';

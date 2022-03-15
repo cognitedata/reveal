@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { IPointCloudTreeGeometryNode } from '../tree/geometry/IPointCloudTreeGeometryNode';
+import { IPointCloudTreeGeometryNode } from './IPointCloudTreeGeometryNode';
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 import * as THREE from 'three';
 import { PointCloudEptGeometry, EptKey, Utils } from './PointCloudEptGeometry';

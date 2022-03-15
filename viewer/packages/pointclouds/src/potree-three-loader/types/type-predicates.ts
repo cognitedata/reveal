@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
-import { IPointCloudTreeGeometryNode } from '../tree/geometry/IPointCloudTreeGeometryNode';
+import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { IPointCloudTreeNode } from '../tree/IPointCloudTreeNode';
 
 export function isGeometryNode(node?: any): node is IPointCloudTreeGeometryNode {
