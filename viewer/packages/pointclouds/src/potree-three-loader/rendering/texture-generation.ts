@@ -1,8 +1,8 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { CanvasTexture, Color, DataTexture, LinearFilter, NearestFilter, RGBAFormat, Texture } from 'three';
-import { IClassification, IGradient } from '../rendering/types';
+import { Color, DataTexture, NearestFilter, RGBAFormat, Texture, Vector4 } from 'three';
+import { IClassification } from '../rendering/types';
 
 export function generateDataTexture(width: number, height: number, color: Color): Texture {
   const size = width * height;
@@ -25,35 +25,6 @@ export function generateDataTexture(width: number, height: number, color: Color)
   return texture;
 }
 
-export function generateGradientTexture(gradient: IGradient): Texture {
-  const size = 64;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-
-  const context = canvas.getContext('2d')!;
-
-  context.rect(0, 0, size, size);
-  const ctxGradient = context.createLinearGradient(0, 0, size, size);
-
-  for (let i = 0; i < gradient.length; i++) {
-    const step = gradient[i];
-    ctxGradient.addColorStop(step[0], `#${step[1].getHexString()}`);
-  }
-
-  context.fillStyle = ctxGradient;
-  context.fill();
-
-  const texture = new CanvasTexture(canvas);
-  texture.needsUpdate = true;
-
-  texture.minFilter = LinearFilter;
-  // textureImage = texture.image;
-
-  return texture;
-}
-
 export function generateClassificationTexture(classification: IClassification): Texture {
   const width = 256;
   const height = 256;
@@ -65,7 +36,7 @@ export function generateClassificationTexture(classification: IClassification): 
     for (let y = 0; y < height; y++) {
       const i = x + width * y;
 
-      let color;
+      let color: Vector4;
       if (classification[x]) {
         color = classification[x];
       } else if (classification[x % 32]) {

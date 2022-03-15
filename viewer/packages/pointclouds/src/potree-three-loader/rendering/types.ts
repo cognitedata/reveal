@@ -1,9 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Color, IUniform as IThreeUniform, Vector4 } from 'three';
-
-export type IGradient = [number, Color][];
+import { IUniform as IThreeUniform, Vector4 } from 'three';
 
 export interface IClassification {
   [value: string]: Vector4;
