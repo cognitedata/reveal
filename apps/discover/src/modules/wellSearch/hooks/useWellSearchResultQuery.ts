@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
 import { useWellFilters } from 'services/well/well/filters/useWellFilters';
-import { getListWells } from 'services/well/well/service';
+import { searchWells } from 'services/well/well/service';
 
 import { Metrics } from '@cognite/metrics';
 
@@ -71,7 +71,7 @@ export const useWellSearchResultQuery =
         });
 
         if (enabledWellSdkV3) {
-          return getListWells(wellFilterV3, searchPhrase)
+          return searchWells(wellFilterV3, searchPhrase)
             .then(({ wells, ...rest }) => {
               addToWellsCache(wells);
               return { wells, ...rest };
@@ -87,7 +87,7 @@ export const useWellSearchResultQuery =
           })
           .then((wells) => {
             addToWellsCache(wells);
-            return { wells, totalWells: wells.length };
+            return { wells, totalWells: wells.length, totalWellbores: 0 };
           })
           .catch(handleWellSearchError)
           .finally(() => timer.stop());

@@ -28,10 +28,34 @@ export const getListWells = async (
 
   const normalizedResponse = mapV3ToV2WellItems(fetchResponse);
 
-  const wells = normalizeWells(get(normalizedResponse, 'items', []));
+  const wellsResponse = normalizeWells(get(normalizedResponse, 'items', []));
 
   return {
-    wells,
+    wells: wellsResponse,
+    ...totals,
+  };
+};
+
+export const searchWells = async (filter: WellFilter, query: string) => {
+  const results = await getWellSDKClientV3().wells.search({
+    filter,
+    search: query ? { query } : undefined,
+    outputCrs: undefined,
+    limit: undefined,
+    aggregates: ['count'],
+  });
+
+  const totals = {
+    totalWells: results.wellsCount,
+    totalWellbores: results.wellboresCount,
+  };
+
+  const normalizedResponse = mapV3ToV2WellItems(results);
+
+  const wellsResponse = normalizeWells(get(normalizedResponse, 'items', []));
+
+  return {
+    wells: wellsResponse,
     ...totals,
   };
 };

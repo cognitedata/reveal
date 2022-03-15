@@ -6,7 +6,7 @@ import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
-import { getMockWellsList } from 'services/well/__mocks/getMockWellsList';
+import { getMockWellsSearch } from 'services/well/__mocks/getMockWellsSearch';
 import { getMockWellsGeometry } from 'services/well/__mocks/mockWellsGeometry';
 
 import { getMockPointGeo } from '__test-utils/fixtures/geometry';
@@ -33,7 +33,7 @@ const mockServer = setupServer(
   getMockUserMe(),
   getMockWellsGeometry(),
   getMockDocumentSearch(),
-  getMockWellsList(),
+  getMockWellsSearch(),
   getMockWellsById(),
   getMockConfigGet()
 );

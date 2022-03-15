@@ -56,6 +56,7 @@ const checkSpudDateFilter = () => {
       expect(new Date(body.spudDate.max).getMonth()).eq(6);
 
       expect(new Date(body.spudDate.min).getDate()).eq(1);
+      // In CI it expects 10, locally it expects 11. Gotta investigate this
       expect(new Date(body.spudDate.max).getDate()).eq(10);
     });
 };
@@ -72,7 +73,7 @@ describe('Wells sidebar filters', () => {
     cy.goToTab('Wells');
 
     cy.intercept({
-      url: '**/wdl/wells/list',
+      url: '**/wdl/wells/search',
       method: 'POST',
     }).as('searchWells');
   });

@@ -32,7 +32,7 @@ export const documentCategory = 'Unclassified';
 export const source = 'Volve';
 export const operator = 'Statoil Norway';
 export const duplicateFileName = 'Volve_Well_Summary_15_9-19.pdf';
-export const wellDataSearchPhrase = 'Well F';
+export const wellDataSearchPhrase = 'F';
 
 const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:3000';
 
