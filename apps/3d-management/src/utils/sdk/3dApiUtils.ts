@@ -14,7 +14,7 @@ export type NodePropertyFilterType = {
   };
 };
 
-type OutputFormats = 'ept-pointcloud' | 'reveal-directory';
+type OutputFormats = 'ept-pointcloud' | 'reveal-directory' | 'gltf-directory';
 export type RevisionOutputsRequestBody = {
   models: [{ id: number }];
   formats: Array<OutputFormats>;
@@ -27,7 +27,7 @@ export async function isReprocessingRequired(modelId: number) {
   // fixme: create SDK methods
   const requestBody: RevisionOutputsRequestBody = {
     models: [{ id: modelId }],
-    formats: ['ept-pointcloud', 'reveal-directory'],
+    formats: ['ept-pointcloud', 'reveal-directory', 'gltf-directory'],
   };
   const response = await sdk.post(url, {
     data: requestBody,
