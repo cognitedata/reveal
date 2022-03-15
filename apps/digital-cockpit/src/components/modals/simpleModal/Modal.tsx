@@ -75,7 +75,7 @@ const CustomModal: React.FC<Props> = ({
           content: {
             ...customStyles.content,
             width,
-            height: '100%',
+            height,
           },
         }}
         onRequestClose={onCancel}

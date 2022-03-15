@@ -4,7 +4,7 @@ import { RootDispatcher } from 'store/types';
 import { modalClose } from 'store/modals/actions';
 import { Title } from '@cognite/cogs.js';
 import Modal from 'components/modals/simpleModal/Modal';
-import { ModalContainer } from 'components/modals/elements';
+import { SelectApplicationModalContainer } from 'components/modals/elements';
 import useCogniteApplications from 'hooks/useCogniteApplications';
 import { useMetrics } from 'utils/metrics';
 
@@ -50,7 +50,7 @@ const SelectApplications: React.FC = () => {
       width={window.innerWidth * 0.9}
       height={window.innerHeight * 0.9}
     >
-      <ModalContainer>
+      <SelectApplicationModalContainer>
         <aside>
           <button
             type="button"
@@ -83,7 +83,7 @@ const SelectApplications: React.FC = () => {
             )
             .map(renderCategory)}
         </main>
-      </ModalContainer>
+      </SelectApplicationModalContainer>
     </Modal>
   );
 };

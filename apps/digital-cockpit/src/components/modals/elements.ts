@@ -2,6 +2,13 @@ import styled from 'styled-components/macro';
 import { SpaceBetween } from 'styles/common';
 
 export const ModalContainer = styled.div`
+  & .cogs-input-container,
+  & .cogs-title-4 {
+    margin-bottom: 16px;
+  }
+`;
+
+export const SelectApplicationModalContainer = styled.div`
   display: grid;
   grid-template-columns: 20% 80%;
   height: 100%;
