@@ -1,0 +1,74 @@
+{
+  "name": "@cognite/cdf-demo-app",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost PORT=8000 react-app-rewired --max_old_space_size=2000 start",
+    "build": "react-app-rewired --max_old_space_size=4096 build",
+    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-demo-app -o index.js -d ./build",
+    "build:preview": "yarn build && yarn generate-preview-artifacts",
+    "test": "react-app-rewired test",
+    "lint": "yarn prettier && yarn eslint",
+    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
+    "eslint:changed": "eslint --config .eslintrc.production.js",
+    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)"
+  },
+  "dependencies": {
+    "@cognite/cdf-utilities": "^0.12.1",
+    "@cognite/cogs.js": "^5.17.0",
+    "@cognite/metrics": "^1.2.1",
+    "@cognite/react-feature-flags": "^1.0.0",
+    "@cognite/sdk": "^6.3.4",
+    "@cognite/sdk-provider": "^1.0.0",
+    "i18next": "^21.6.12",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-i18next": "^11.15.5",
+    "react-query": "^3.34.16",
+    "react-router-dom": "^6.2.2",
+    "react-scripts": "^5.0.0",
+    "styled-components": "^5.3.1",
+    "systemjs-webpack-interop": "^2.1.2"
+  },
+  "devDependencies": {
+    "@cognite/babel-plugin-styled-components": "^1.10.7",
+    "@cognite/cdf-ui-cli": "^1.0.0",
+    "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.1.2",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.1",
+    "@types/react": "^17.0.30",
+    "@types/react-dom": "^17.0.9",
+    "@types/single-spa-react": "^2.12.0",
+    "@types/styled-components": "^5.1.15",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "customize-cra": "^1.0.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "postcss-prefixwrap": "^1.29.0",
+    "prettier": "^2.4.1",
+    "react-app-rewired": "^2.2.1",
+    "single-spa-react": "^3.2.0",
+    "style-loader": "^1.3.0",
+    "typescript": "~4.5.5"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "engines": {
+    "node": "14"
+  }
+}
