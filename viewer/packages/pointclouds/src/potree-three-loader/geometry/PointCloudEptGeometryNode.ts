@@ -19,19 +19,14 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _key: EptKey;
 
   private readonly _boundingBox: THREE.Box3;
-  // private _tightBoundingBox: THREE.Box3;
 
   private readonly _boundingSphere: THREE.Sphere;
-  // private readonly _tightBoundingSphere: THREE.Sphere;
   private readonly _spacing: number;
   private _level: number;
   private _numPoints: number;
-  // private _mean: THREE.Vector3;
 
   private readonly _name: string;
   private readonly _index: number;
-
-  // private _hasChildren: boolean;
 
   private readonly _children: IPointCloudTreeGeometryNode[] = new Array(8);
 
@@ -132,9 +127,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._spacing = this._ept.spacing / Math.pow(2, this._key.d);
     this._boundingSphere = Utils.sphereFrom(this._boundingBox);
 
-    // These are set during hierarchy loading.
-    // this._hasChildren = false;
-    // this._children = { };
     this._numPoints = -1;
 
     this._level = this._key.d;
@@ -235,7 +227,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   async loadHierarchy() {
     const nodes: { [key: string]: PointCloudEptGeometryNode } = {};
     nodes[this.filename()] = this;
-    // this._hasChildren = false;
 
     const eptHierarchyFile = `${this.ept.url}ept-hierarchy/${this.filename()}.json`;
 
@@ -267,7 +258,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
       const parentNode = nodes[parentName];
       if (!parentNode) return;
-      // parentNode._hasChildren = true;
 
       const key = parentNode.key.step(a, b, c);
 
@@ -284,9 +274,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   doneLoading(bufferGeometry: THREE.BufferGeometry, _tightBoundingBox: THREE.Box3, np: number, _mean: THREE.Vector3) {
     bufferGeometry.boundingBox = this._boundingBox;
     this._geometry = bufferGeometry;
-    // this._tightBoundingBox = tightBoundingBox;
     this._numPoints = np;
-    // this._mean = mean;
     this._loaded = true;
     this._loading = false;
     decrementGlobalNumNodesLoading();
@@ -317,7 +305,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
       this._loaded = false;
       this._isLeafNode = true;
 
-      // this.dispatchEvent( { type: 'dispose' } );
       for (let i = 0; i < this._oneTimeDisposeHandlers.length; i++) {
         const handler = this._oneTimeDisposeHandlers[i];
         handler();
