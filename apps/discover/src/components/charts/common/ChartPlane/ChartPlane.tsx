@@ -1,9 +1,6 @@
-import {
-  ChartContainer,
-  ChartSVG,
-  ChartWithYAxisTitle,
-} from 'components/charts/elements';
+import { ChartSVG, ChartWithXAxis } from 'components/charts/elements';
 
+import { ChartContentWrapper, ChartRowContent } from '../../elements';
 import { Axis, AxisPlacement } from '../Axis';
 import { XAxisSticky } from '../XAxisSticky';
 import { XAxisTitle } from '../XAxisTitle';
@@ -19,6 +16,7 @@ export const ChartPlane = ({
   xAxisPlacement,
   xAxisTicks,
   chartDimensions,
+  maxHeight,
   margins,
   chartOffsetBottom,
   renderChartData,
@@ -41,7 +39,7 @@ export const ChartPlane = ({
     <ChartSVG
       className="chart-content"
       width={chartDimensions.width}
-      height={chartDimensions.height}
+      height={chartDimensions.height + (chartOffsetBottom || 0)}
     >
       <Axis
         placement={AxisPlacement.Top}
@@ -64,20 +62,19 @@ export const ChartPlane = ({
   );
 
   return (
-    <>
+    <ChartContentWrapper>
       {isXAxisOnTop && <XAxisTitle title={xAxisTitle} />}
 
-      <ChartWithYAxisTitle>
+      <ChartRowContent>
         <YAxisTitle title={yAxisTitle} />
-
-        <ChartContainer offsetbottom={chartOffsetBottom}>
+        <ChartWithXAxis>
           {isXAxisOnTop && ChartXAxisSticky}
-          {ChartContent}
-          {!isXAxisOnTop && ChartXAxisSticky}
-        </ChartContainer>
-      </ChartWithYAxisTitle>
-
-      {!isXAxisOnTop && <XAxisTitle title={xAxisTitle} />}
-    </>
+          <div style={{ maxHeight }}>
+            {ChartContent}
+            {!isXAxisOnTop && ChartXAxisSticky}
+          </div>
+        </ChartWithXAxis>
+      </ChartRowContent>
+    </ChartContentWrapper>
   );
 };

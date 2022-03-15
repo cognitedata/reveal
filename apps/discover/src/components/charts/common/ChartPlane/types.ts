@@ -10,6 +10,7 @@ export interface ChartPlaneProps {
   xAxisPlacement: AxisPlacement;
   xAxisTicks?: number;
   chartDimensions: Dimensions;
+  maxHeight?: number | string;
   margins: Margins;
   chartOffsetBottom?: number;
   renderChartData: () => JSX.Element;

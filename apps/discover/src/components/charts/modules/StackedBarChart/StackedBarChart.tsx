@@ -143,6 +143,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
           hideAxisTicks: true,
           hideAxisLabels: true,
         }}
+        maxHeight={options?.maxHeight}
       />
     );
   };

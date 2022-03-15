@@ -1,6 +1,6 @@
 import { Dimensions, Margins } from './types';
 
-export const LEGEND_FLOATING_HEIGHT = 24;
+export const LEGEND_FLOATING_HEIGHT = 95;
 export const CHART_BACKGROUND_COLOR = 'var(--cogs-bg-accent)';
 
 export const DEFAULT_AXIS_TICK_PADDING = 12;
@@ -17,7 +17,7 @@ export const DEFAULT_X_AXIS_PLACEMENT = 'Top';
 
 export const DEFAULT_MARGINS: Margins = {
   top: 5,
-  right: 20,
+  right: 5,
   bottom: 5,
   left: 5,
 };

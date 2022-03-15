@@ -6,7 +6,7 @@ import { Checkbox } from '@cognite/cogs.js';
 
 import { LEGEND_FLOATING_HEIGHT } from 'components/charts/constants';
 import { ChartId } from 'components/charts/types';
-import { FlexColumn, FlexRow } from 'styles/layout';
+import { FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 import { ChartLegend, ChartLegendIsolated, LegendTitle } from './elements';
 import { LegendProps } from './types';
@@ -59,11 +59,17 @@ const LegendWithColorConfig = ({
   );
 
   const LegendInsideIsolatedBox = (
-    <ChartLegendIsolated>{LegendContent}</ChartLegendIsolated>
+    <ChartLegendIsolated
+      style={{
+        marginTop: floatingHeight ? `-${floatingHeight}px` : sizes.medium,
+      }}
+    >
+      {LegendContent}
+    </ChartLegendIsolated>
   );
 
   return (
-    <ChartLegend className="chart-legend" floatingHeight={floatingHeight}>
+    <ChartLegend className="chart-legend">
       {isolateLegend ? LegendInsideIsolatedBox : LegendContent}
     </ChartLegend>
   );

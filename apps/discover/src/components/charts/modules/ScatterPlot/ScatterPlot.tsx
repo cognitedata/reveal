@@ -118,6 +118,7 @@ export const ScatterPlot = <T extends DataObject<T>>({
           ticks: yAxisTicks,
           formatAxisLabel: yAxis.formatAxisLabel,
         }}
+        maxHeight={options?.maxHeight}
       />
     );
   };

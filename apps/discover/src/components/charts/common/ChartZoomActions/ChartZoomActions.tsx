@@ -11,7 +11,10 @@ export const ChartZoomActions: React.FC<ChartZoomActionsProps> = React.memo(
       <ChartActionButtonsContainer>
         <ZoomOutButton onClick={zoomOut} disabled={disableZoomOut} />
         <ZoomInButton onClick={zoomIn} disabled={disableZoomIn} />
-        <ResetZoomButton onClick={resetZoom} />
+        <ResetZoomButton
+          onClick={resetZoom}
+          disabled={disableZoomOut || disableZoomIn}
+        />
       </ChartActionButtonsContainer>
     );
   }

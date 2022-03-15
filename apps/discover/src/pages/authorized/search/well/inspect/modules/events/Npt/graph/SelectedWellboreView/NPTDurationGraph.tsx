@@ -12,6 +12,7 @@ import { NPT_GRAPH_OPTIONS } from '../constants';
 import { adaptEventsToDaysDuration } from '../utils';
 
 import {
+  GRAPH_MAX_HEIGHT,
   NPT_DURATION_GRAPH_TITLE,
   NPT_DURATION_GRAPH_X_AXIS_TITLE,
 } from './constants';
@@ -22,11 +23,16 @@ export const NPTDurationGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
     const options: StackedBarChartOptions<NPTEvent> = useMemo(
       () => ({
         ...NPT_GRAPH_OPTIONS,
+        maxHeight: GRAPH_MAX_HEIGHT,
         legendOptions: {
           isolate: false,
         },
         hideBarLabels: true,
-        margins: { top: -7, left: 10 },
+        margins: {
+          top: -7,
+          right: 10,
+          left: 10,
+        },
       }),
       []
     );

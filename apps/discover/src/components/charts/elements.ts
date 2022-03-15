@@ -2,43 +2,20 @@ import styled from 'styled-components/macro';
 
 import { Body } from '@cognite/cogs.js';
 
-import { FlexColumn, FlexRow, sizes } from 'styles/layout';
+import { FlexColumn, sizes } from 'styles/layout';
+
+import { FlexRow } from '../../styles/layout';
 
 import { CHART_BACKGROUND_COLOR } from './constants';
 
-export const ChartWrapper = styled.div`
-  position: relative;
-  height: calc(100% - 50px);
+export const ChartWrapper = styled(FlexColumn)`
+  height: 100%;
   background: ${CHART_BACKGROUND_COLOR};
   border-radius: ${sizes.small};
   padding: ${sizes.normal};
-`;
 
-export const ChartDetailsContainer = styled(FlexColumn)`
-  position: relative;
-  text-align: center;
-`;
+  /* Chart styles */
 
-export const AxisLabel = styled(Body)`
-  color: var(--cogs-text-hint) !important;
-  font-size: 12px !important;
-  font-weight: 500;
-`;
-
-export const ChartWithYAxisTitle = styled(FlexRow)`
-  height: 100%;
-`;
-
-export const ChartContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow: scroll;
-  margin-top: ${sizes.normal};
-  margin-bottom: -${sizes.extraSmall};
-  height: calc(100% - 75px);
-  ${(props: { offsetbottom: number }) => `
-    padding-bottom: ${props.offsetbottom}px;
-  `}
   .domain {
     display: none;
   }
@@ -51,7 +28,29 @@ export const ChartContainer = styled.div`
       font-size: 12px;
     }
   }
+`;
 
+export const ChartDetailsContainer = styled(FlexColumn)`
+  position: relative;
+  text-align: center;
+`;
+
+export const ChartContentWrapper = styled(FlexColumn)`
+  height: 100%;
+`;
+
+export const ChartRowContent = styled(FlexRow)`
+  height: 100%;
+`;
+
+export const AxisLabel = styled(Body)`
+  color: var(--cogs-text-hint) !important;
+  font-size: 12px !important;
+  font-weight: 500;
+`;
+
+export const ChartWithXAxis = styled.div`
+  overflow: auto;
   /* Scrollbar styles */
 
   ::-webkit-scrollbar {

@@ -10,5 +10,4 @@ export const AxisTitleContainer = styled(FlexColumn)`
 
 export const AxisTitle = styled(AxisLabel)`
   margin-top: ${sizes.small};
-  margin-bottom: -${sizes.small};
 `;

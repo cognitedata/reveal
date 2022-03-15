@@ -30,6 +30,7 @@ export interface ChartAxis {
 }
 
 export interface BaseChartOptions<T> {
+  maxHeight?: number | string;
   colorConfig?: ColorConfig;
   legendOptions?: LegendOptions;
   margins?: Partial<Margins>;

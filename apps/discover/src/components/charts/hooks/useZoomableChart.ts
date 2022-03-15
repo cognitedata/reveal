@@ -51,6 +51,7 @@ export const useZoomableChart = <T>({
 
     const width =
       parseInt(getStylePropertyValue(chartRef, 'width'), 10) -
+      parseInt(getStylePropertyValue(chartRef, 'padding-left'), 10) -
       parseInt(getStylePropertyValue(chartRef, 'padding-right'), 10) -
       margins.left -
       margins.right;
@@ -63,8 +64,20 @@ export const useZoomableChart = <T>({
   }, [yScaleDomain, xScaleMaxValue]);
 
   useDeepEffect(() => {
-    setDisableZoomIn(chartDimensions.width >= spacings.x * xScaleMaxValue);
-    setDisableZoomOut(chartDimensions.width === initialChartDimensions.width);
+    /**
+     * Sometimes, `xScaleMaxValue` is returned as `Infinite`.
+     * In such cases, the zoom out function should not be disabled.
+     * This return of `Infinite` is from `d3-scale` side and out of our control.
+     */
+    const disableZoomIn =
+      Number.isFinite(xScaleMaxValue) &&
+      chartDimensions.width >= spacings.x * xScaleMaxValue;
+
+    const disableZoomOut =
+      chartDimensions.width <= initialChartDimensions.width;
+
+    setDisableZoomIn(disableZoomIn);
+    setDisableZoomOut(disableZoomOut);
   }, [chartDimensions]);
 
   const zoomIn = useDebounce(() => {
@@ -98,6 +111,6 @@ export const useZoomableChart = <T>({
       disableZoomOut,
       zoomFactor,
     }),
-    [chartDimensions]
+    [chartDimensions, disableZoomIn, disableZoomOut, zoomFactor]
   );
 };

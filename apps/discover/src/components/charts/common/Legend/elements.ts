@@ -8,14 +8,7 @@ export const ChartLegend = styled.div`
   flex-direction: row;
   width: fit-content;
   position: relative;
-  ${(props: { floatingHeight?: number }) =>
-    props.floatingHeight &&
-    `
-    position: absolute;
-    bottom: ${props.floatingHeight}px;
-  `}
   left: 50%;
-  margin-top: ${sizes.medium};
   transform: translateX(-50%);
   color: var(--cogs-text-secondary);
   border-radius: ${sizes.small};

@@ -17,6 +17,7 @@ import { accessors, colors, DEFAULT_NPT_COLOR } from '../../constants';
 import { NO_NPT_DATA_COLOR } from '../constants';
 
 import {
+  GRAPH_MAX_HEIGHT,
   NPT_EVENTS_GRAPH_TITLE,
   NPT_EVENTS_GRAPH_X_AXIS_TITLE,
   NPT_EVENTS_GRAPH_Y_AXIS_TITLE,
@@ -56,6 +57,7 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
 
     const options: ScatterPlotOptions<NPTEvent> = useMemo(
       () => ({
+        maxHeight: GRAPH_MAX_HEIGHT,
         colorConfig: {
           colors,
           accessor: accessors.NPT_CODE,
