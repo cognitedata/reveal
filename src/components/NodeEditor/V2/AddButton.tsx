@@ -8,7 +8,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { Elements } from 'react-flow-renderer';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import { defaultTranslations } from '../translations';
-import { getCategoriesFromToolFunctions } from '../utils';
+import { getOperationsGroupedByCategory } from '../utils';
 
 interface AddButtonProps {
   elements: Elements<NodeDataVariants>;
@@ -100,7 +100,9 @@ const AddMenu = ({
         <ToolboxFunctionDropdown
           categories={{
             Recent: [],
-            ...getCategoriesFromToolFunctions(operations),
+            ...getOperationsGroupedByCategory(operations, [
+              'Not listed operations',
+            ]),
           }}
           onFunctionSelected={(func: Operation, event: React.MouseEvent) => {
             onFunctionSelected(func);

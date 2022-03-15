@@ -1,6 +1,7 @@
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { SourceOption } from 'components/NodeEditor/V2/types';
 import { ComputationStep, Operation } from '@cognite/calculation-backend';
+import { uniq } from 'lodash';
 
 export const isWorkflowRunnable = (workflow: ChartWorkflow) => {
   if (!workflow.version) {
@@ -74,26 +75,27 @@ export const resolveTimeseriesSourceInSteps = (
   });
 };
 
-export const getCategoriesFromToolFunctions = (
-  availableOperations: Operation[]
+export const getOperationsGroupedByCategory = (
+  availableOperations: Operation[],
+  ignoredCategories: string[] = []
 ) => {
-  const categories: { [key: string]: Operation[] } = {};
+  const categories = availableOperations
+    .reduce<string[]>(
+      (result, operation) => uniq([...result, operation.category]),
+      []
+    )
+    .filter((category) => !ignoredCategories.includes(category));
 
-  availableOperations.forEach((func) => {
-    if (Array.isArray(func.category)) {
-      func.category.forEach((category) => {
-        if (!categories[category]) {
-          categories[category] = [];
-        }
-        categories[category].push(func);
-      });
-    } else {
-      if (!categories[func.category]) {
-        categories[func.category] = [];
-      }
-      categories[func.category].push(func);
-    }
-  });
+  const operationsByCategory = categories.reduce<{
+    [key: string]: Operation[];
+  }>((result, category) => {
+    return {
+      ...result,
+      [category]: availableOperations.filter(
+        (operation) => operation.category === category
+      ),
+    };
+  }, {});
 
-  return categories;
+  return operationsByCategory;
 };
