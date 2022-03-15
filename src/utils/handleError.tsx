@@ -1,6 +1,5 @@
 import React from 'react';
 
-import * as Sentry from '@sentry/browser';
 import notification from 'antd/lib/notification';
 import { Typography } from 'antd';
 
@@ -23,7 +22,6 @@ interface ErrorNotificationProps extends ApiError {
   message?: string;
   description?: string;
   duration?: number;
-  sendToSentry?: boolean;
   error?: any;
 }
 
@@ -65,40 +63,15 @@ export const handleError = (props: unknown): void => {
     message = '',
     description,
     duration = 6,
-    status,
-    sendToSentry = true,
   } = props as ErrorNotificationProps;
   const errorObject: ApiError = { ...(props as ErrorNotificationProps) };
 
   const errorTitle = generateErrorTitle(errorObject, message);
   const errorDescription = generateErrorDescription(errorObject, description);
 
-  if (status !== 401 && status !== 403 && sendToSentry) {
-    Sentry.captureException(errorObject);
-  }
-
   return notification.error({
     message: errorTitle,
     description: errorDescription,
-    duration,
-    getContainer,
-  });
-};
-
-export const fireErrorNotification = ({
-  message,
-  description,
-  duration = 6,
-  error,
-}: ErrorNotificationProps): void => {
-  let errorDescription = '';
-  if (error) {
-    Sentry.captureException(error);
-    errorDescription = generateStatusMessage(error.status);
-  }
-  notification.error({
-    message,
-    description: description || errorDescription,
     duration,
     getContainer,
   });
