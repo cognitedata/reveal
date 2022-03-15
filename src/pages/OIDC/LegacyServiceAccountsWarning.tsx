@@ -56,7 +56,9 @@ const LegacyServiceAccountsWarning = (props: {
             <p style={{ marginLeft: 28, color: 'rgba(0, 0, 0, 0.65)' }}>
               +{accounts.length - 10} more
             </p>
-          ) : <br />}
+          ) : (
+            <br />
+          )}
         </>
       }
       alertBtnLabel="Delete service accounts"
