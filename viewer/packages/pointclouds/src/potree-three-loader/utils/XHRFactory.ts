@@ -1,10 +1,13 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-class XHRFactoryClass {
+class XHRFactory {
   config: {
-    withCredentials: false;
-    customHeaders: [{ header: null; value: null }];
+    withCredentials: boolean;
+    customHeaders: { header: string | null; value: string | null }[];
+  } = {
+    withCredentials: false,
+    customHeaders: [{ header: null, value: null }]
   };
 
   createXMLHttpRequest(): XMLHttpRequest {
@@ -14,7 +17,7 @@ class XHRFactoryClass {
       const baseOpen = xhr.open.bind(xhr);
       const customHeaders = this.config.customHeaders;
       xhr.open = function (...args: any[]) {
-        baseOpen.apply([].slice.call(args));
+        baseOpen.apply(xhr, [].slice.call(args));
         customHeaders.forEach(function (customHeader: any) {
           if (!!customHeader.header && !!customHeader.value) {
             xhr.setRequestHeader(customHeader.header, customHeader.value);
@@ -27,6 +30,6 @@ class XHRFactoryClass {
   }
 }
 
-const XHRFactory = new XHRFactoryClass();
+const XHRFactoryInstance = new XHRFactory();
 
-export { XHRFactory };
+export { XHRFactoryInstance };

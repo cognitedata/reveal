@@ -4,7 +4,7 @@
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as THREE from 'three';
 
-import { XHRFactory } from '../utils/XHRFactory';
+import { XHRFactoryInstance } from '../utils/XHRFactory';
 import { workerPool } from '../utils/WorkerPool';
 
 import { ILoader } from './ILoader';
@@ -23,7 +23,7 @@ export class EptBinaryLoader implements ILoader {
 
     const url = node.url() + this.extension();
 
-    const xhr = XHRFactory.createXMLHttpRequest();
+    const xhr = XHRFactoryInstance.createXMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'arraybuffer';
     xhr.overrideMimeType('text/plain; charset=x-user-defined');
