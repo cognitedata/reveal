@@ -1,47 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { Alert as AntdAlert, Modal, notification } from 'antd';
+import { notification } from 'antd';
+import CustomAlert from 'pages/common/CustomAlert';
 
-import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { ServiceAccount } from '@cognite/sdk';
 import { getProject } from '@cognite/cdf-utilities';
-
 import { usePermissions, useDeleteServiceAccounts } from 'hooks';
-import { NUMBER_OF_SECONDS_TO_ALLOW_DISABLING } from '../../utils/constants';
-
-const StyledAlert = styled(AntdAlert)`
-  margin-bottom: 16px;
-`;
-
-const StyledModalContent = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-`;
-
-const StyledModalWarningIcon = styled(Icon)`
-  color: ${Colors.warning};
-  margin-right: 8px;
-`;
-
-const StyledModalButtons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-`;
-
-const StyledModalButton = styled(Button)`
-  :not(:last-child) {
-    margin-right: 12px;
-  }
-`;
-
-const StyledDisableButtonSection = styled.div`
-  align-items: center;
-  display: flex;
-  margin-bottom: 4px;
-`;
 
 const StyledList = styled.ul`
   margin-top: 6;
@@ -58,12 +23,6 @@ const LegacyServiceAccountsWarning = (props: {
   const { accounts } = props;
   const client = useQueryClient();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(
-    NUMBER_OF_SECONDS_TO_ALLOW_DISABLING
-  );
-  const timerRef = useRef<NodeJS.Timeout>();
 
   const project = getProject();
   const { mutate: deleteLegacyServiceAccounts } = useDeleteServiceAccounts(
@@ -93,35 +52,9 @@ const LegacyServiceAccountsWarning = (props: {
     }
   );
 
-  const handleDelete = () => {
+  const handleSubmit = () => {
     const serviceAccIds = accounts.map((account: ServiceAccount) => account.id);
     deleteLegacyServiceAccounts(serviceAccIds);
-    closeModal();
-  };
-
-  const closeModal = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    setRemainingTime(NUMBER_OF_SECONDS_TO_ALLOW_DISABLING);
-    setIsModalVisible(false);
-  };
-
-  const openModal = () => {
-    const decrementRemainingTime = () => {
-      timerRef.current = setTimeout(() => {
-        setRemainingTime(prevRemainingTime => {
-          const decrementedRemainingTime = prevRemainingTime - 1;
-          if (decrementedRemainingTime > 0) {
-            decrementRemainingTime();
-          }
-          return decrementedRemainingTime;
-        });
-      }, 1000);
-    };
-
-    decrementRemainingTime();
-    setIsModalVisible(true);
   };
 
   if (!writeOk) {
@@ -129,8 +62,9 @@ const LegacyServiceAccountsWarning = (props: {
   }
 
   return (
-    <StyledAlert
-      message={
+    <CustomAlert
+      type="error"
+      alertMessage={
         <>
           <p>
             Legacy login is deprecated for this project and it still has some
@@ -151,36 +85,13 @@ const LegacyServiceAccountsWarning = (props: {
               +{accounts.length - 10} more
             </p>
           ) : null}
-          <br />
-          <StyledDisableButtonSection>
-            <Button disabled={!writeOk} onClick={openModal} type="danger">
-              Delete Legacy Service Accounts
-            </Button>
-          </StyledDisableButtonSection>
-          <Modal footer={null} onCancel={closeModal} visible={isModalVisible}>
-            <StyledModalContent>
-              <StyledModalWarningIcon size={20} type="WarningStroke" />
-              Are you sure you want to delete the Legacy Service Accounts?
-            </StyledModalContent>
-            <StyledModalButtons>
-              <StyledModalButton onClick={closeModal} type="tertiary">
-                Cancel
-              </StyledModalButton>
-              <StyledModalButton
-                disabled={!writeOk || remainingTime > 0}
-                onClick={() => {
-                  handleDelete();
-                }}
-                type="danger"
-              >
-                Delete
-                {remainingTime > 0 ? ` (${remainingTime})` : ''}
-              </StyledModalButton>
-            </StyledModalButtons>
-          </Modal>
         </>
       }
-      type="error"
+      alertBtnLabel="Delete Legacy Service Accounts"
+      alertBtnDisabled={!writeOk}
+      helpEnabled={false}
+      confirmMessage="Are you sure you want to delete the Legacy Service Accounts?"
+      onClickConfirm={handleSubmit}
     />
   );
 };
