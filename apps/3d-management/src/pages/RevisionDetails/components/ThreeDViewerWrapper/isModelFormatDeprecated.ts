@@ -29,7 +29,7 @@ export async function isModelFormatDeprecated(
 
 // from @cognite/3d-viewer -> Cognite3DModelLoader
 function getNewestVersionedFile(files: Versioned3DFile[]): Versioned3DFile {
-  const supportedVersions = [1, 2, 3, 7, 8, 9];
+  const supportedVersions = [3, 5, 7, 8, 9];
   return files
     .filter((file) => supportedVersions.includes(file.version))
     .reduce(
