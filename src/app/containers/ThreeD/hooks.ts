@@ -1,5 +1,6 @@
 import { Asset, AssetMapping3D, Model3D, Revision3D } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { get3dAssetMappings } from 'app/containers/ThreeD/utils';
 import uniqBy from 'lodash/uniqBy';
 import {
   useInfiniteQuery,
@@ -127,5 +128,44 @@ export const useInfiniteAssetMappings = (
       enabled: Boolean(modelId && revisionId),
       ...config,
     }
+  );
+};
+
+export const useAssetMappings = (modelId?: number, revisionId?: number) => {
+  const sdk = useSDK();
+
+  return useQuery<Asset[]>(
+    ['cdf', '3d', 'asset-mapping', modelId, revisionId],
+    async () => {
+      // Query asset mappings in the 3D model
+      let assetMappings: AssetMapping3D[] = [];
+      let nextCursor: string = '';
+
+      do {
+        // eslint-disable-next-line no-await-in-loop
+        const models = await get3dAssetMappings(
+          sdk,
+          modelId!,
+          revisionId,
+          nextCursor
+        );
+
+        nextCursor = models.data.nextCursor;
+        assetMappings = assetMappings.concat(models.data.items);
+      } while (nextCursor);
+
+      const uniqueAssetMappings = [
+        ...new Set(assetMappings.map(asset => asset.assetId)),
+      ];
+
+      // Query assets corresponding to the asset mappings
+      const assets = await sdk.assets.retrieve(
+        uniqueAssetMappings.map(assetId => ({ id: assetId })),
+        { ignoreUnknownIds: true }
+      );
+
+      return assets;
+    },
+    { enabled: Boolean(modelId) }
   );
 };

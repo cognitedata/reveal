@@ -34,3 +34,15 @@ export async function selectAssetBoundingBox(
 
   return boundingBox;
 }
+
+export const get3dAssetMappings = async (
+  sdk: CogniteClient,
+  modelId?: number,
+  revisionId?: number,
+  nextCursor?: string,
+  limit?: number
+) =>
+  sdk.get(
+    `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
+    { params: { limit: limit || 1000, cursor: nextCursor } }
+  );

@@ -7,14 +7,9 @@ import {
   DefaultNodeAppearance,
   NodeOutlineColor,
 } from '@cognite/reveal';
-import { Asset } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
-import {
-  use3DModel,
-  useInfiniteAssetMappings,
-  AssetMappingResponse,
-} from 'app/containers/ThreeD/hooks';
+import { use3DModel, useAssetMappings } from 'app/containers/ThreeD/hooks';
 import { ExpandButton, HomeButton } from 'app/containers/ThreeD/ThreeDToolbar';
 import {
   getAssetMappingsByAssetId,
@@ -46,16 +41,9 @@ export const AssetMappingsSidebar = ({
   const sdk = useSDK();
   const { data: model } = use3DModel(modelId);
 
-  const {
-    data: assetsListData = { pages: [] as AssetMappingResponse[] },
-    fetchNextPage: fetchMore,
-    hasNextPage: canFetchMore,
-    isFetchingNextPage: isFetchingMore,
-    isFetched,
-  } = useInfiniteAssetMappings(modelId, revisionId, 50);
-  const assets = assetsListData.pages.reduce(
-    (accl, t) => accl.concat(t.items),
-    [] as Asset[]
+  const { data: assetListData, isFetched } = useAssetMappings(
+    modelId,
+    revisionId
   );
 
   const handleAssetClick = async (assetId: number) => {
@@ -98,13 +86,14 @@ export const AssetMappingsSidebar = ({
     }
   };
 
-  const itemCount = canFetchMore ? assets.length + 1 : assets.length;
-  const isItemLoaded = (index: number) => Boolean(index < assets.length);
-  const loadMoreItems = () => {
-    if (canFetchMore && !isFetchingMore) {
-      fetchMore();
+  const isItemLoaded = (index: number) => {
+    if (assetListData?.length) {
+      return Boolean(index < assetListData?.length);
     }
+    return true;
   };
+
+  const loadMoreItems = () => assetListData;
 
   return (
     <SidebarContainer>
@@ -132,10 +121,10 @@ export const AssetMappingsSidebar = ({
           </InputContainer>
           <AssetMappingsList
             query={query}
-            assets={assets}
+            assets={assetListData ?? []}
             selectedAssetId={selectedAssetId}
             onClick={handleAssetClick}
-            itemCount={itemCount}
+            itemCount={assetListData?.length ?? 0}
             isItemLoaded={isItemLoaded}
             loadMoreItems={loadMoreItems}
           />
