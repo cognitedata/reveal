@@ -14,7 +14,6 @@ jobs:
   build-viewer:
     name: Build Reveal
     runs-on: ubuntu-latest 
-    needs: build-viewer
     steps:
     - uses: actions/checkout@v2
     - name: Install NPM dependencies
