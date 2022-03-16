@@ -11,36 +11,42 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  prepare-ci:
-    name: Prepare CI environment
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
+  build-viewer:
+    name: Build Reveal
+    runs-on: ubuntu-latest 
+    needs: build-viewer
     steps:
     - uses: actions/checkout@v2
     - name: Install NPM dependencies
       working-directory: viewer
       run: yarn install --immutable
 
-  build-viewer:
-    name: Build Reveal
-    runs-on: ubuntu-latest 
-    needs: prepare-ci
-    steps:
     - name: Lint
       working-directory: viewer
       continue-on-error: false
       run: yarn run lint
+
     - name: Build prod version
       working-directory: viewer
       run: yarn run build:prod
 
+    - name: Upload artifact 
+      uses: actions/upload-artifact@v3
+      with:
+        name: viewer
+        path: viewer/build/
+
   run-coverage-tests:
     name: Run unit tests
     runs-on: ubuntu-latest 
-    needs: prepare-ci
+    needs: build-viewer
     steps:
+    - name: Download viewer build artifact 
+      uses: actions/download-artifact@v3
+      with:
+        name: viewer
+        path: viewer/build/
+
     - name: Setup tools for coverage tests
       working-directory: viewer
       run: |
@@ -57,12 +63,14 @@ jobs:
   ci-examples:
     name: Examples
     runs-on: ubuntu-latest 
-    needs: [prepare-ci, build-viewer]
-    strategy:
-      matrix:
-        node-version: [12.x]
-
+    needs: build-viewer
     steps:
+    - name: Download viewer build artifact 
+      uses: actions/download-artifact@v3
+      with:
+        name: viewer
+        path: viewer/build/
+
     - name: Install examples-dependencies
       working-directory: examples
       run: yarn --immutable
