@@ -25,6 +25,7 @@ import { ReactPidWrapper, ReactPidLayout, LoaderOverlay } from './elements';
 import { SidePanel } from './components';
 import useSymbolState from './components/side-panel/useSymbolState';
 import { Toolbar } from './components/toolbar/Toolbar';
+import { enableExitWarning, disableExitWarning } from './utils/exitWarning';
 import { Viewport } from './components/viewport/Viewport';
 
 export const ReactPid: React.FC = () => {
@@ -266,7 +267,25 @@ export const ReactPid: React.FC = () => {
         ? `${getFileNameWithoutExtension(documentMetadata.name)}.json`
         : 'graph.json'
     );
+
+    disableExitWarning();
   };
+
+  useEffect(() => {
+    // any changes in save graph dependencies should trigger warning, but assume we can skip warning if there are no symbol instances
+    if (symbolInstances.length) {
+      enableExitWarning();
+    }
+  }, [
+    symbols,
+    lines,
+    symbolInstances,
+    connections,
+    pidViewer,
+    documentMetadata,
+    lineNumbers,
+    equipmentTags,
+  ]);
 
   const autoAnalysis = () => {
     if (!pidViewer.current) return;
