@@ -8,7 +8,7 @@ import { Separator } from '../../../elements';
 import { GraphTableSwitch } from '../../common/GraphTableSwitch';
 
 import { VIEW_MODES, DEFAULT_ACTIVE_VIEW_MODE } from './constants';
-import { NPTEventsDataControlArea } from './elements';
+import { NptEventsDataControlArea } from './elements';
 import { FilterContainer } from './filters';
 import { NPTGraph, SelectedWellboreView } from './graph';
 import { SelectedWellbore } from './graph/types';
@@ -45,14 +45,14 @@ export const NPTEvents: React.FC = () => {
 
   return (
     <>
-      <NPTEventsDataControlArea>
+      <NptEventsDataControlArea>
         <GraphTableSwitch
           viewMode={activeViewMode}
           onChange={setActiveViewMode}
         />
         {isTableViewModeActive && <Separator />}
         <FilterContainer events={events} isVisible={isTableViewModeActive} />
-      </NPTEventsDataControlArea>
+      </NptEventsDataControlArea>
 
       <NoUnmountShowHide show={isGraphViewModeActive} fullHeight>
         <NPTGraph events={events} onSelectBar={handleSelectNptGraphBar} />

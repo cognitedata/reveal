@@ -3,7 +3,7 @@ import layers from 'utils/zindex';
 
 import { Flex, sizes } from 'styles/layout';
 
-export const NPTEventsDataControlArea = styled(Flex)`
+export const NptEventsDataControlArea = styled(Flex)`
   flex-direction: row;
   align-items: center;
   margin-bottom: ${sizes.normal};
