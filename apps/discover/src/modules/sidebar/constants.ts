@@ -19,13 +19,13 @@ export const FILTER_CATEGORIES = [
     module: Modules.DOCUMENTS,
   },
   {
-    title: 'Seismic',
-    name: Modules.SEISMIC,
-    module: Modules.SEISMIC,
-  },
-  {
     title: 'Wells',
     name: Modules.WELLS,
     module: Modules.WELLS,
+  },
+  {
+    title: 'Seismic',
+    name: Modules.SEISMIC,
+    module: Modules.SEISMIC,
   },
 ];

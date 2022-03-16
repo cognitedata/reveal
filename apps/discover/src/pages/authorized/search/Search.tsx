@@ -256,18 +256,6 @@ export const Search: React.FC = () => {
                   />
                 )}
 
-                {isSeismicConfigEnabled && (
-                  <Tabs.TabPane
-                    key={Modules.SEISMIC}
-                    tab={
-                      <SearchTab
-                        text={t(SEISMIC_TAB_TITLE_KEY)}
-                        displayBetaSymbol
-                      />
-                    }
-                  />
-                )}
-
                 {isWellConfigEnabled && (
                   <Tabs.TabPane
                     key={Modules.WELLS}
@@ -276,6 +264,18 @@ export const Search: React.FC = () => {
                         text={t(WELLS_TAB_TITLE_KEY)}
                         count={wellsData?.totalWells}
                         displayCount
+                      />
+                    }
+                  />
+                )}
+
+                {isSeismicConfigEnabled && (
+                  <Tabs.TabPane
+                    key={Modules.SEISMIC}
+                    tab={
+                      <SearchTab
+                        text={t(SEISMIC_TAB_TITLE_KEY)}
+                        displayBetaSymbol
                       />
                     }
                   />
