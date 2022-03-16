@@ -9,7 +9,7 @@ import { EventData, LogData } from '../interfaces';
 
 import { getGraphTrack } from './GraphTrack';
 import {
-  getMDScaleTrack,
+  // getMDScaleTrack,
   getNDSScaleTrack,
   getTVDScaleTrack,
 } from './ScaleTracks';
@@ -31,7 +31,7 @@ export const getLogViewerTracks = ({
     geomechanicsAndPPFGData,
   } = getCategorizedLogData(logData);
 
-  const hasMdData = !isEmpty(gammaRayAndCaliperData);
+  // const hasMdData = !isEmpty(gammaRayAndCaliperData);
   const hasTvdData =
     !isEmpty(resistivityData) ||
     !isEmpty(densityAndNeutronData) ||
@@ -41,7 +41,12 @@ export const getLogViewerTracks = ({
   const tracks = [
     getGraphTrack(gammaRayAndCaliperData, GraphTrackEnum.GAMMA_RAY_AND_CALIPER),
 
-    hasMdData && getMDScaleTrack(depthUnit),
+    /**
+     * PP-2769
+     * Disabling the MD scale track since WDL doesnt allow TVD to MD transformation for now.
+     */
+    // hasMdData && getMDScaleTrack(depthUnit),
+
     hasTvdData && getTVDScaleTrack(depthUnit),
     hasNdsData && getNDSScaleTrack(eventsData, depthUnit),
 

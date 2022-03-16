@@ -41,22 +41,23 @@ describe('getLogViewerTracks', () => {
     expect(tracksForNonEmptyLogData).toEqual(Object.values(GraphTrackEnum));
   });
 
-  it('should contain MD scale track only if MD based log data is available', () => {
-    const tracksWithoutMDData = getLogViewerTracks({
-      logData: {},
-      eventsData: [],
-      depthUnit: 'ft',
-    });
+  // eslint-disable-next-line jest/no-commented-out-tests
+  // it('should contain MD scale track only if MD based log data is available', () => {
+  //   const tracksWithoutMDData = getLogViewerTracks({
+  //     logData: {},
+  //     eventsData: [],
+  //     depthUnit: 'ft',
+  //   });
 
-    const tracksWithMDData = getLogViewerTracks({
-      logData: mdBasedLogData,
-      eventsData: [],
-      depthUnit: 'ft',
-    });
+  //   const tracksWithMDData = getLogViewerTracks({
+  //     logData: mdBasedLogData,
+  //     eventsData: [],
+  //     depthUnit: 'ft',
+  //   });
 
-    expect(tracksWithoutMDData).not.toContain(MD_SCALE_TRACK);
-    expect(tracksWithMDData).toContain(MD_SCALE_TRACK);
-  });
+  //   expect(tracksWithoutMDData).not.toContain(MD_SCALE_TRACK);
+  //   expect(tracksWithMDData).toContain(MD_SCALE_TRACK);
+  // });
 
   it('should not contain TVD scale track if log data has MD based data only', () => {
     const tracks = getLogViewerTracks({
