@@ -199,8 +199,8 @@ fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> Genera
     let center_b = center - center_axis * cylinder.height / 2.0;
 
     // TODO request storing this in file format instead of doing conversion on client
-    let dist_from_a_to_ext_a = cylinder.radius + f32::tan(cylinder.slope_a);
-    let dist_from_b_to_ext_b = cylinder.radius + f32::tan(cylinder.slope_b); // TODO verify radius_a is correct
+    let dist_from_a_to_ext_a = 1.0 + f32::tan(cylinder.slope_a);
+    let dist_from_b_to_ext_b = 1.0 + f32::tan(cylinder.slope_b); // TODO verify radius_a is correct
     let height_a = dist_from_b_to_ext_b + cylinder.height;
     let height_b = dist_from_b_to_ext_b;
 
@@ -212,8 +212,8 @@ fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> Genera
         .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
     let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
-    let extended_center_a = center_a + center_axis * (f32::tan(cylinder.slope_a) * cylinder.radius);
-    let extended_center_b = center_b - center_axis * (f32::tan(cylinder.slope_b) * cylinder.radius);
+    let extended_center_a = center_a + center_axis * f32::tan(cylinder.slope_a);
+    let extended_center_b = center_b - center_axis * f32::tan(cylinder.slope_b);
 
     let cap_a = create_cap(
         &cylinder,
