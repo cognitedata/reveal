@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Body, Button, Select, Title, Tooltip } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Popconfirm,
+  Select,
+  Title,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
@@ -18,6 +25,36 @@ export type BulkEditModalContentProps = {
   onFinishBulkEdit: () => void;
 };
 
+const OptionalPopconfirmButton = (props: {
+  buttonText: string;
+  onFinish: () => void;
+  editing: boolean;
+  popconfirm?: boolean;
+}) => {
+  const button = (
+    <Button
+      type="primary"
+      icon="Upload"
+      onClick={props.popconfirm ? () => {} : props.onFinish}
+      disabled={props.editing}
+    >
+      {props.buttonText}
+    </Button>
+  );
+  return props.popconfirm ? (
+    <Popconfirm
+      icon="WarningFilled"
+      placement="bottom-end"
+      onConfirm={props.onFinish}
+      content="Are you sure you want to perform this action?"
+    >
+      {button}
+    </Popconfirm>
+  ) : (
+    button
+  );
+};
+
 export const BulkEditModalContent = ({
   selectedFiles,
   bulkEditUnsaved,
@@ -30,10 +67,16 @@ export const BulkEditModalContent = ({
   const [editing, setEditing] = useState<boolean>();
   const [editPanelState, setEditPanelState] = useState<EditPanelState>({});
 
-  const { EditPanel } = selectedBulkEditOption;
+  const { EditPanel, popconfirmOnApply } = selectedBulkEditOption;
   useEffect(() => {
     setEditing(false);
   }, [selectedBulkEditOption]);
+
+  const handleBulkEditOptionChange = (option: BulkEditOptionType) => {
+    setSelectedBulkEditOption(option);
+    // Reset unsaved panel state when bulk edit option state has changed
+    setBulkEditUnsaved({});
+  };
 
   return (
     <>
@@ -46,7 +89,7 @@ export const BulkEditModalContent = ({
           <div style={{ width: '255px' }}>
             <Select
               value={selectedBulkEditOption}
-              onChange={setSelectedBulkEditOption}
+              onChange={handleBulkEditOptionChange}
               options={bulkEditOptions}
             />
           </div>
@@ -80,14 +123,12 @@ export const BulkEditModalContent = ({
             }
             disabled={!editing}
           >
-            <Button
-              type="primary"
-              icon="Upload"
-              onClick={onFinishBulkEdit}
-              disabled={editing}
-            >
-              Finish
-            </Button>
+            <OptionalPopconfirmButton
+              buttonText="Apply"
+              onFinish={onFinishBulkEdit}
+              editing={!!editing}
+              popconfirm={popconfirmOnApply}
+            />
           </Tooltip>
         </RightFooter>
       </Footer>

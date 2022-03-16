@@ -14,6 +14,7 @@ export type EditPanelState = {
 export type BulkEditOptionType = {
   value: string;
   label: string;
+  popconfirmOnApply: boolean;
   EditPanel: ({
     selectedFiles,
     bulkEditUnsaved,
@@ -44,6 +45,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
   {
     value: 'metadata',
     label: 'Metadata',
+    popconfirmOnApply: false,
     EditPanel: MetadataPanel,
     columns: [
       {
@@ -76,6 +78,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
   {
     value: 'labels',
     label: 'Labels',
+    popconfirmOnApply: false,
     EditPanel: LabelPanel,
     columns: [
       {
