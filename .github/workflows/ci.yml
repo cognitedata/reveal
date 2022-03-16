@@ -44,12 +44,11 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: viewer
-        path: viewer/dist/
     - name: Debug
       working-directory: viewer
       run: |
         ls -R
-        
+
     - uses: actions/checkout@v2
 
     - name: Setup tools for coverage tests
