@@ -3,9 +3,11 @@ import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
+import keyBy from 'lodash/keyBy';
 import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
+import { changeUnitTo } from 'utils/units';
 
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import { CasingAssembly, CasingItems } from '@cognite/sdk-wells-v3';
@@ -22,7 +24,11 @@ import {
 import { filterValidCasings } from 'modules/wellSearch/utils/casings';
 import { getWellboreAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 
-import { CASINGS_COLUMN_NAME_MAP, SEQUENCE_COLUMNS } from './constants';
+import {
+  CASINGS_COLUMN_NAME_MAP,
+  CASING_SIZE_UNIT,
+  SEQUENCE_COLUMNS,
+} from './constants';
 
 const CHUNK_LIMIT = 100;
 
@@ -119,7 +125,7 @@ export const mapCasingItemsToSequences = (
 };
 
 export const getCasingsColumns = (casingAssembly: CasingAssembly) => {
-  const groupedColumns = groupBy(SEQUENCE_COLUMNS, 'name');
+  const groupedColumns = keyBy(SEQUENCE_COLUMNS, 'name');
 
   return Object.keys(CASINGS_COLUMN_NAME_MAP).map((columnName) => {
     const casingAssemblyKey = get(
@@ -128,15 +134,31 @@ export const getCasingsColumns = (casingAssembly: CasingAssembly) => {
     ) as keyof CasingAssembly;
 
     const casingAssemblyData = casingAssembly[casingAssemblyKey];
+    const sequenceColumnData = get(groupedColumns, columnName);
 
     return {
-      ...get(groupedColumns, columnName)[0],
-      metadata: { unit: get(casingAssemblyData, 'unit') },
+      ...sequenceColumnData,
+      metadata: {
+        unit:
+          sequenceColumnData.metadata?.unit || get(casingAssemblyData, 'unit'),
+      },
     } as SequenceColumn;
   });
 };
 
 export const getSequenceMetadata = (casingAssembly: CasingAssembly) => {
+  const minOutsideDiameter = changeUnitTo(
+    casingAssembly.minOutsideDiameter.value,
+    casingAssembly.minOutsideDiameter.unit,
+    CASING_SIZE_UNIT
+  );
+
+  const minInsideDiameter = changeUnitTo(
+    casingAssembly.minInsideDiameter.value,
+    casingAssembly.minInsideDiameter.unit,
+    CASING_SIZE_UNIT
+  );
+
   return {
     assy_original_md_base: String(
       casingAssembly.originalMeasuredDepthBase.value
@@ -145,8 +167,8 @@ export const getSequenceMetadata = (casingAssembly: CasingAssembly) => {
     assy_name: casingAssembly.type,
     assy_original_md_top: String(casingAssembly.originalMeasuredDepthTop.value),
     assy_original_md_top_unit: casingAssembly.originalMeasuredDepthTop.unit,
-    assy_size: String(casingAssembly.minOutsideDiameter.value),
-    assy_min_inside_diameter: String(casingAssembly.minInsideDiameter.value),
+    assy_size: String(minOutsideDiameter || '-'),
+    assy_min_inside_diameter: String(minInsideDiameter || '-'),
   };
 };
 

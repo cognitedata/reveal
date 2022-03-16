@@ -50,6 +50,8 @@ export const TRAJECTORY_COLUMN_NAME_MAP = {
   equivalent_departure: 'equivalentDeparture',
 };
 
+export const CASING_SIZE_UNIT = 'in';
+
 export const SEQUENCE_COLUMNS = [
   {
     externalId: 'comp_md_top',
@@ -60,11 +62,17 @@ export const SEQUENCE_COLUMNS = [
     externalId: 'comp_body_outside_diameter',
     valueType: 'DOUBLE',
     name: 'comp_body_outside_diameter',
+    metadata: {
+      unit: CASING_SIZE_UNIT,
+    },
   },
   {
     externalId: 'comp_body_inside_diameter',
     valueType: 'DOUBLE',
     name: 'comp_body_inside_diameter',
+    metadata: {
+      unit: CASING_SIZE_UNIT,
+    },
   },
 ] as SequenceColumn[];
 
