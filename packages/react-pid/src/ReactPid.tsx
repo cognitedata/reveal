@@ -19,9 +19,10 @@ import {
   getFileNameWithoutExtension,
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Loader } from '@cognite/cogs.js';
 
 import SvgContainer, { CONTAINER_ID } from './components/viewport/SvgContainer';
-import { ReactPidWrapper, ReactPidLayout } from './elements';
+import { ReactPidWrapper, ReactPidLayout, LoaderOverlay } from './elements';
 import { SidePanel } from './components';
 import useSymbolState from './components/side-panel/useSymbolState';
 import { Toolbar } from './components/toolbar/Toolbar';
@@ -54,6 +55,8 @@ export const ReactPid: React.FC = () => {
   const [lineNumbers, setLineNumbers] = useState<string[]>([]);
   const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
+
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const [uploadSvgInput, setUploadSvgInput] = useState<HTMLInputElement | null>(
     null
@@ -268,7 +271,11 @@ export const ReactPid: React.FC = () => {
 
   const autoAnalysis = () => {
     if (!pidViewer.current) return;
-    pidViewer.current.autoAnalysis(documentMetadata);
+    setIsAnalyzing(true);
+    setTimeout(() => {
+      pidViewer.current!.autoAnalysis(documentMetadata);
+      setIsAnalyzing(false);
+    }, 0);
   };
 
   const deleteSymbol = (diagramSymbol: DiagramSymbol) => {
@@ -413,6 +420,11 @@ export const ReactPid: React.FC = () => {
           />
         </Viewport>
       </ReactPidLayout>
+      {isAnalyzing && (
+        <LoaderOverlay>
+          <Loader infoTitle="Analyzing" />
+        </LoaderOverlay>
+      )}
     </ReactPidWrapper>
   );
 };

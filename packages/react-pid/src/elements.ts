@@ -11,3 +11,12 @@ export const ReactPidLayout = styled.div`
   grid-auto-rows: 100%;
   height: 100%;
 `;
+
+export const LoaderOverlay = styled.div`
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+`;
