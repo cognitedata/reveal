@@ -58,7 +58,6 @@ jobs:
     name: Examples
     runs-on: ubuntu-latest 
     needs: [prepare-ci, build-viewer]
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [12.x]
