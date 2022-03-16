@@ -123,20 +123,6 @@ pods {
             }
           }
         },
-        'Preview': {
-          if(!isPullRequest) {
-            print "No PR previews for release builds"
-            return;
-          }
-          stageWithNotify('Build and deploy PR') {
-            previewServer(
-              buildCommand: 'yarn build:preview',
-              prefix: 'pr',
-              buildFolder: 'build',
-              commentPrefix: PR_COMMENT_MARKER
-            )
-          }
-        },
         'Build': {
           if(isPullRequest) {
             print "No builds for prs"
@@ -154,6 +140,25 @@ pods {
       ],
       workers: 2,
     )
+
+    if (isPullRequest) {
+      container('fas') {
+        stageWithNotify('Build and deploy PR') {
+          def package_name = "@cognite/cdf-raw-explorer";
+          def prefix = jenkinsHelpersUtil.determineRepoName();
+          def domain = "fusion-preview";
+          previewServer(
+            buildCommand: 'yarn build',
+            buildFolder: 'build',
+            prefix: prefix,
+            repo: domain
+          )
+          deleteComments("[FUSION_PREVIEW_URL]")
+          def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+          pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
+        }
+      }
+    }
 
     if (isRelease) {
       stageWithNotify('Deploy to FAS') {
