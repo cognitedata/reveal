@@ -147,9 +147,9 @@ export const useAssetMappings = (modelId?: number, revisionId?: number) => {
       const uniqueAssetIds = new Set<number>();
       let nextCursor: string = '';
 
-      // Call the 3d asset mappings endpoint atlease once to check
-      // if we can get atlease MAX_ASSET_IDS unquie assetIds or
-      // we have exhausted asset mappings i.e, no nextCursor
+      // Call the 3d asset mappings endpoint atlease once to check if we can get
+      // atleast MAX_ASSET_IDS number of unquie assetIds or if we have exhausted
+      // calling asset mappings data i.e, no nextCursor
       do {
         // eslint-disable-next-line no-await-in-loop
         const models = await get3dAssetMappings(
