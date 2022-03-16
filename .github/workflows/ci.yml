@@ -11,75 +11,71 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  ci-viewer:
-    name: Viewer
+  prepare-ci:
+    name: Prepare CI environment
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [12.x]
-
     steps:
     - uses: actions/checkout@v2
-
     - name: Install NPM dependencies
       working-directory: viewer
       run: yarn install --immutable
 
+  build-viewer:
+    name: Build Reveal
+    runs-on: ubuntu-latest 
+    needs: prepare-ci
+    steps:
     - name: Lint
       working-directory: viewer
       continue-on-error: false
       run: yarn run lint
+    - name: Build prod version
+      working-directory: viewer
+      run: yarn run build:prod
 
+  run-coverage-tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest 
+    needs: prepare-ci
+    steps:
     - name: Setup tools for coverage tests
       working-directory: viewer
       run: |
         sudo apt-get update
         sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
         echo "DISPLAY=:99.0" >> $GITHUB_ENV
-
     - name: Run coverage tests
       working-directory: viewer
       run: |
         xvfb-run yarn run coverage
-
-    - name: Build prod version
-      working-directory: viewer
-      run: yarn run build:prod
-
     - name: Publish to codecov
       uses: codecov/codecov-action@v2
 
   ci-examples:
     name: Examples
+    runs-on: ubuntu-latest 
+    needs: [prepare-ci, build-viewer]
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [12.x]
 
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Install NPM dependencies
-      working-directory: viewer
-      run: yarn install --immutable
-
-    - name: Build development build
-      working-directory: viewer
-      run: yarn build
-
     - name: Install examples-dependencies
       working-directory: examples
       run: yarn --immutable
+      
+    - name: Increase number of inotify watches
+      run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 
     - name: Build examples
       working-directory: examples
       run: |
         echo "NODE_OPTIONS=--max-old-space-size=8192" >> $GITHUB_ENV
         yarn build
-
-    - name: Increase number of inotify watches
-      run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
-
     - name: Visual regression tests
       id: visualtests
       working-directory: examples
