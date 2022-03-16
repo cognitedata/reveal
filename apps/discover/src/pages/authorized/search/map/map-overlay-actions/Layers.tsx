@@ -25,6 +25,8 @@ const Item = ({
     metrics.track(`click-${item.selected ? 'enable' : 'disable'}-layer-toggle`);
   };
 
+  const color = allLayers[item.id]?.color;
+
   return (
     <LayerItem>
       <Checkbox
@@ -33,7 +35,7 @@ const Item = ({
         checked={item.selected}
         disabled={item.disabled || false}
         onChange={handleOnChange}
-        color={allLayers[item.id]?.color}
+        color={color === 'transparent' ? 'black' : color}
       >
         <Body level={2} as="span">
           {item.name}
