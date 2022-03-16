@@ -1,8 +1,6 @@
 import { Count } from 'hooks/profiling-service';
 import handleError from './handleError';
-import { styleScope } from './styleScope';
-
-export { styleScope } from './styleScope';
+import { styleScope } from 'styles/styleScope';
 
 const nameToAclTypeMap = {
   '3d': 'threedAcl',
@@ -58,7 +56,7 @@ export const escapeCSVValue = (value: string) => {
     try {
       return String(value).replace(/"/g, '""');
     } catch (err) {
-      handleError({ ...(err as any), sendToSentry: false });
+      handleError({ ...(err as any) });
     }
   }
   return value;

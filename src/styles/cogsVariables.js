@@ -13,7 +13,4 @@ module.exports = {
     'border-color-base': '#d9d9d9',
     'box-shadow-base': '0 2px 8px rgba(0, 0, 0, 0.15)',
   },
-  ids: {
-    styleScope: 'raw-explorer-style-scope',
-  },
 };

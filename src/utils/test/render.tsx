@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { styleScope } from 'utils/utils';
+import { styleScope } from 'styles/styleScope';
 
 export default (
   ui: React.ReactElement,
