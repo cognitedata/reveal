@@ -33,7 +33,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: viewer
-        path: viewer/build/
+        path: viewer/dist/
 
   run-coverage-tests:
     name: Run unit tests
@@ -44,7 +44,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: viewer
-        path: viewer/build/
+        path: viewer/dist/
 
     - name: Setup tools for coverage tests
       working-directory: viewer
@@ -68,7 +68,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: viewer
-        path: viewer/build/
+        path: viewer/dist/
 
     - name: Install examples-dependencies
       working-directory: examples
