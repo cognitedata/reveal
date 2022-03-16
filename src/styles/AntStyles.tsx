@@ -80,9 +80,8 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
 
 import { styleScope } from 'styles/styleScope';
+import { getContainer } from 'utils/utils';
 
-const getContainer = () =>
-  document.getElementsByClassName(styleScope).item(0)! as HTMLElement;
 const styles = [
   affixStyle,
   alertStyle,
