@@ -6,7 +6,10 @@ import {
   getLineNumberFromText,
   ConnectionVisualization,
   LabelVisualization,
-  loadSymbolsFromJson,
+  loadGraphFromJson,
+  isValidGraphDocumentJson,
+  isValidLegendJson,
+  loadLegendFromJson,
 } from './utils';
 import { T_JUNCTION } from './constants';
 import { applyPathReplacementInSvg } from './utils/pathReplacementUtils';
@@ -37,6 +40,7 @@ import {
   DiagramSymbolInstance,
   DocumentMetadata,
   GraphDocument,
+  Legend,
   PathReplacement,
   SymbolType,
   ToolType,
@@ -202,10 +206,10 @@ export class CognitePid {
       .text()
       .then((text) => {
         this.document = text;
-        this.render();
+        this.load();
       })
       .catch((err) => {
-        throw new Error(
+        throw Error(
           `Unable to read file ${svgDocument.name} with error: ${err}`
         );
       });
@@ -234,7 +238,7 @@ export class CognitePid {
     this.activeToolSubscriber = callback;
   }
 
-  setSymbols(symbols: DiagramSymbol[]) {
+  setSymbols(symbols: DiagramSymbol[], refresh = true) {
     this.symbols = symbols;
     if (this.symbolsSubscriber) {
       this.symbolsSubscriber(symbols);
@@ -243,7 +247,9 @@ export class CognitePid {
         'PID: Called this.setSymbols() without this.symbolsSubscriber'
       );
     }
-    this.refresh();
+    if (refresh) {
+      this.refresh();
+    }
   }
 
   onChangeSymbols(callback: SymbolsCallback) {
@@ -324,7 +330,7 @@ export class CognitePid {
     );
   };
 
-  private setConnections(connections: DiagramConnection[]) {
+  private setConnections(connections: DiagramConnection[], refresh = true) {
     this.connections = connections;
     if (this.connectionsSubscriber) {
       this.connectionsSubscriber(connections);
@@ -334,7 +340,9 @@ export class CognitePid {
       );
     }
 
-    this.refresh();
+    if (refresh) {
+      this.refresh();
+    }
   }
 
   onChangeConnections(callback: ConnectionsCallback) {
@@ -349,7 +357,7 @@ export class CognitePid {
     );
   }
 
-  private setSymbolSelection(pathIds: string[]) {
+  private setSymbolSelection(pathIds: string[], applyStyles = true) {
     const possiblyChangedPathIds = [...this.symbolSelection, ...pathIds]; // FIX: Find elements that's only is in one of the two lists
     this.symbolSelection = pathIds;
     if (this.symbolSelectionSubscriber) {
@@ -359,7 +367,9 @@ export class CognitePid {
         'PID: Called this.setSymbolSelection() without this.symbolSelectionSubscriber'
       );
     }
-    possiblyChangedPathIds.forEach((id) => this.applyStyleToNodeId(id));
+    if (applyStyles) {
+      possiblyChangedPathIds.forEach((id) => this.applyStyleToNodeId(id));
+    }
   }
 
   onChangeSymbolSelection(callback: PathIdsCallback) {
@@ -389,7 +399,10 @@ export class CognitePid {
     this.hideSelectionSubscriber = callback;
   }
 
-  setEquipmentTags(equipmentTags: DiagramEquipmentTagInstance[]) {
+  setEquipmentTags(
+    equipmentTags: DiagramEquipmentTagInstance[],
+    refresh = true
+  ) {
     this.equipmentTags = equipmentTags;
     if (this.equipmentTagsSubscriber) {
       this.equipmentTagsSubscriber(equipmentTags);
@@ -398,7 +411,9 @@ export class CognitePid {
         'PID: Called this.setEquipmentTags() without this.equipmentTagsSubscriber'
       );
     }
-    this.refresh();
+    if (refresh) {
+      this.refresh();
+    }
   }
 
   onChangeEquipmentTags(callback: EquipmentTagsCallback) {
@@ -438,10 +453,10 @@ export class CognitePid {
     this.activeTagIdSubscriber = callback;
   }
 
-  setLineNumbers(lineNumbers: string[]) {
+  setLineNumbers(lineNumbers: string[], refresh = true) {
     this.lineNumbers = lineNumbers;
     if (this.activeLineNumber === null) {
-      this.setActiveLineNumber(lineNumbers[0]);
+      this.setActiveLineNumber(lineNumbers[0] || null, refresh);
     }
     if (this.lineNumbersSubscriber) {
       this.lineNumbersSubscriber(lineNumbers);
@@ -486,63 +501,116 @@ export class CognitePid {
     }
   }
 
-  addGraphDocument(graphDocument: GraphDocument) {
-    if (!this.pidDocument) return;
+  private clear() {
+    // clear svg and visualizations
+    if (this.svg) {
+      this.host.removeChild(this.svg);
+    }
+    this.nodeMap = new Map<
+      string,
+      { node: SVGElement; originalStyle: string }
+    >();
+    this.connectionVisualizations = [];
+    this.manuallyRemovedConnections = [];
+    this.manuallyRemovedLabelConnections = [];
+    this.labelVisualizations = [];
+    this.lineNumberVisualizationIds = [];
+    this.symbolInstanceBoundingBoxesIds = [];
+
+    // Clear instances and current selections
+    this.setSymbols([], false);
+    this.setSymbolInstances([], false);
+    this.setLines([], false);
+    this.setConnections([], false);
+    this.setEquipmentTags([], false);
+    this.setActiveLineNumber(null, false);
+    this.setSymbolSelection([], false);
+    this.setConnectionSelection(null, false);
+    this.setLabelSelection(null, false);
+    this.setSplitSelection(null, false);
+    this.setActiveTagId(null);
+    this.setLineNumbers([], false);
+    this.pathReplacements = [];
+  }
+
+  loadJson(json: Record<string, unknown>) {
+    if (isValidGraphDocumentJson(json)) {
+      this.loadGraphDocument(json);
+    } else if (isValidLegendJson(json)) {
+      this.loadLegend(json);
+    }
+  }
+
+  loadGraphDocument(graphDocument: GraphDocument) {
+    this.clear();
+    this.render();
 
     const setSymbols = (symbols: DiagramSymbol[]) => {
-      this.setSymbols(symbols);
+      this.setSymbols(symbols, false);
     };
     const setSymbolInstances = (symbolInstances: DiagramSymbolInstance[]) =>
-      this.setSymbolInstances(symbolInstances);
+      this.setSymbolInstances(symbolInstances, false);
+
     const setLines = (lines: DiagramLineInstance[]) => this.setLines(lines);
     const setConnections = (connections: DiagramConnection[]) => {
-      this.setConnections(connections);
+      this.setConnections(connections, false);
     };
-    const setPathReplacement = (pathReplacements: PathReplacement[]) => {
-      this.addPathReplacements(pathReplacements);
+    const setPathReplacements = (pathReplacements: PathReplacement[]) => {
+      this.addPathReplacements(pathReplacements, false);
     };
     const setLineNumbers = (lineNumbers: string[]) => {
       this.setLineNumbers(lineNumbers);
     };
     const setEquipmentTags = (equipmentTags: DiagramEquipmentTagInstance[]) => {
-      this.setEquipmentTags(equipmentTags);
+      this.setEquipmentTags(equipmentTags, false);
     };
-    loadSymbolsFromJson(
+
+    loadGraphFromJson(
       graphDocument,
       setSymbols,
-      this.pidDocument,
       setSymbolInstances,
-      this.symbolInstances,
       setLines,
-      this.lines,
       setConnections,
-      this.connections,
-      this.pathReplacements,
-      setPathReplacement,
-      this.lineNumbers,
+      setPathReplacements,
       setLineNumbers,
-      this.equipmentTags,
       setEquipmentTags
     );
+    this.refresh();
+  }
+
+  loadLegend(legend: Legend) {
+    if (!this.pidDocument) return;
+
+    const setSymbols = (symbols: DiagramSymbol[]) => {
+      this.setSymbols(symbols, false);
+    };
+    const setSymbolInstances = (symbolInstances: DiagramSymbolInstance[]) =>
+      this.setSymbolInstances(symbolInstances, false);
+
+    loadLegendFromJson(
+      legend,
+      this.symbols,
+      setSymbols,
+      this.symbolInstances,
+      setSymbolInstances,
+      this.pidDocument
+    );
+    this.refresh();
   }
 
   render() {
     if (!this.document) return;
 
-    if (this.isDrawing) return;
-    this.isDrawing = true;
-
     const parser = new DOMParser();
     this.svg = parser.parseFromString(this.document, 'image/svg+xml')
       .documentElement as unknown as SVGSVGElement;
-    const { svg } = this;
 
-    svg.style.width = '100%';
-    svg.style.height = '100%';
+    this.svg.style.width = '100%';
+    this.svg.style.height = '100%';
 
     const allSvgElements: SVGElement[] = [];
 
-    applyToLeafSVGElements(svg, (node) => {
+    applyToLeafSVGElements(this.svg, (node) => {
       allSvgElements.push(node);
 
       this.nodeMap.set(node.id, {
@@ -563,9 +631,17 @@ export class CognitePid {
       );
     });
 
-    this.host.appendChild(svg);
+    this.host.appendChild(this.svg);
 
-    this.pidDocument = PidDocumentWithDom.fromSVG(svg, allSvgElements);
+    this.pidDocument = PidDocumentWithDom.fromSVG(this.svg, allSvgElements);
+  }
+
+  load() {
+    if (this.isDrawing) return;
+    this.isDrawing = true;
+
+    this.render();
+
     this.emit(EventType.LOAD);
 
     this.refresh();
@@ -578,7 +654,7 @@ export class CognitePid {
   private applyStyleToNodeId(nodeId: string) {
     const nodeData = this.nodeMap.get(nodeId);
     if (!nodeData) {
-      throw new Error(
+      throw Error(
         `Trying to apply style to node with id ${nodeId} that does not exsist`
       );
     }
@@ -1019,7 +1095,7 @@ export class CognitePid {
     this.addPathReplacements(newPathReplacements);
   };
 
-  addPathReplacements(pathReplacements: PathReplacement[]) {
+  addPathReplacements(pathReplacements: PathReplacement[], refresh = true) {
     if (!this.svg) return;
     if (!this.pidDocument) return;
 
@@ -1065,13 +1141,16 @@ export class CognitePid {
     const linesToKeep = this.lines.filter(
       (line) => !pathReplacementIds.includes(line.pathIds[0])
     );
-    this.setLines(linesToKeep);
+    this.setLines(linesToKeep, refresh);
 
     this.setConnections(
-      getConnectionsWithoutInstances(linesToDelete, this.connections)
+      getConnectionsWithoutInstances(linesToDelete, this.connections),
+      refresh
     );
 
-    this.refresh();
+    if (refresh) {
+      this.refresh();
+    }
   }
 
   private drawConnectionVisualizations() {

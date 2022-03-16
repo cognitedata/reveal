@@ -133,10 +133,13 @@ export enum DocumentType {
   unknown = 'Unknown',
 }
 
-export interface GraphDocument {
+export interface Legend {
+  symbols: DiagramSymbol[];
+}
+
+export interface GraphDocument extends Legend {
   documentMetadata: DocumentMetadata;
   viewBox: Rect;
-  symbols: DiagramSymbol[];
   symbolInstances: DiagramSymbolInstanceOutputFormat[];
   lines: DiagramLineInstanceOutputFormat[];
   connections: DiagramConnection[];

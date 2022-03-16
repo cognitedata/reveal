@@ -9,7 +9,6 @@ import {
   DocumentMetadata,
   DocumentType,
   EventType,
-  GraphDocument,
   IsoDocumentMetadata,
   PidDocumentMetadata,
   PidDocumentWithDom,
@@ -242,9 +241,9 @@ export const ReactPid: React.FC = () => {
     pidViewer.current.setLineNumbers(lineNumbers);
   };
 
-  const loadSymbolsAsJson = (graphDocument: GraphDocument) => {
+  const loadJson = (json: Record<string, unknown>) => {
     if (!pidViewer.current) return;
-    pidViewer.current.addGraphDocument(graphDocument);
+    pidViewer.current.loadJson(json);
   };
 
   const saveGraphAsJsonWrapper = () => {
@@ -368,7 +367,7 @@ export const ReactPid: React.FC = () => {
           lines={lines}
           symbolInstances={symbolInstances}
           symbolSelection={symbolSelection}
-          loadSymbolsAsJson={loadSymbolsAsJson}
+          loadJson={loadJson}
           saveSymbol={saveSymbol}
           connections={connections}
           deleteSymbol={deleteSymbol}
@@ -386,7 +385,6 @@ export const ReactPid: React.FC = () => {
           setEquipmentTags={setEquipmentTags}
           activeTagId={activeTagId}
           setActiveTagId={setActiveTagIdWrapper}
-          getPidDocument={getPidDocument}
           hideSelection={hideSelection}
           toggleHideSelection={toggleHideSelection}
           clearSymbolSelection={clearSymbolSelection}

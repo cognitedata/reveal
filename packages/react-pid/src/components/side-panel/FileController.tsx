@@ -5,10 +5,7 @@ import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
-  GraphDocument,
-  PidDocumentWithDom,
   saveSymbolsAsJson,
-  isValidSymbolFileSchema,
 } from '@cognite/pid-tools';
 
 const DropDownWrapper = styled.div`
@@ -20,9 +17,8 @@ interface FileControllerProps {
   symbolInstances: DiagramSymbolInstance[];
   lineInstances: DiagramLineInstance[];
   disabled: boolean;
-  loadSymbolsAsJson: (json: GraphDocument) => void;
+  loadJson: (json: Record<string, unknown>) => void;
   saveGraphAsJson: () => void;
-  getPidDocument: () => PidDocumentWithDom | undefined;
   jsonInputRef: (node: HTMLInputElement | null) => void;
   onUploadJsonClick: () => void;
 }
@@ -31,10 +27,9 @@ export const FileController: React.FC<FileControllerProps> = ({
   symbols,
   symbolInstances,
   disabled,
-  loadSymbolsAsJson,
+  loadJson,
   saveGraphAsJson,
   lineInstances,
-  getPidDocument,
   jsonInputRef,
   onUploadJsonClick,
 }) => {
@@ -44,11 +39,8 @@ export const FileController: React.FC<FileControllerProps> = ({
         .then((response) => {
           return response.json();
         })
-        .then((json) => {
-          const pidDocument = getPidDocument();
-          if (pidDocument && isValidSymbolFileSchema(json, pidDocument.svg)) {
-            loadSymbolsAsJson(json);
-          }
+        .then((json: Record<string, unknown>) => {
+          loadJson(json);
         });
     }
   };

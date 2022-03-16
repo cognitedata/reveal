@@ -1,6 +1,6 @@
 import { saveAs } from 'file-saver';
 
-import { PidDocument, PidDocumentWithDom } from '../pid';
+import { PidDocumentWithDom } from '../pid';
 import {
   DiagramConnection,
   DiagramEquipmentTagInstance,
@@ -13,21 +13,18 @@ import {
   PathReplacement,
 } from '../types';
 
-import { getNoneOverlappingSymbolInstances } from './diagramInstanceUtils';
 import {
   getEquipmentTagOutputFormat,
   getDiagramLineInstancesOutputFormat,
   getDiagramSymbolInstancesOutputFormat,
 } from './saveGraph';
 
-export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
-  const jsonData = {
-    symbols,
-  };
-  const fileToSave = new Blob([JSON.stringify(jsonData, undefined, 2)], {
-    type: 'application/json',
-  });
-  saveAs(fileToSave, 'Legend.json');
+export const isValidGraphDocumentJson = (
+  jsonData: Record<keyof GraphDocument, unknown>
+): jsonData is GraphDocument => {
+  const requiredFields = ['symbolInstances'];
+
+  return !requiredFields.some((field) => !(field in jsonData));
 };
 
 const getGraphFormat = (
@@ -102,135 +99,28 @@ export const saveGraphAsJson = (
   saveAs(fileToSave, fileName);
 };
 
-export const isValidSymbolFileSchema = (
-  jsonData: any,
-  svg: SVGSVGElement
-): jsonData is GraphDocument => {
-  const missingIds: string[] = [];
-
-  const trackMissingId = (id: string) => {
-    if (id.includes('_')) return; // comes from PathReplacements
-
-    if (svg.getElementById(id) === null) {
-      missingIds.push(id);
-    }
-  };
-
-  if ('lines' in jsonData) {
-    (jsonData.lines as DiagramLineInstance[]).forEach(
-      (e: DiagramLineInstance) =>
-        e.pathIds.forEach((pathId: string) => {
-          trackMissingId(pathId);
-        })
-    );
-  }
-
-  if ('symbolInstances' in jsonData) {
-    (jsonData.symbolInstances as DiagramSymbolInstance[]).forEach(
-      (e: DiagramSymbolInstance) =>
-        e.pathIds.forEach((pathId: string) => {
-          trackMissingId(pathId);
-        })
-    );
-  }
-
-  if ('connections' in jsonData) {
-    (jsonData.connections as DiagramConnection[]).forEach(
-      (connection: DiagramConnection) => {
-        connection.end.split('-').forEach((pathId) => {
-          trackMissingId(pathId);
-        });
-        connection.start.split('-').forEach((pathId) => {
-          trackMissingId(pathId);
-        });
-      }
-    );
-  }
-
-  if ('equipmentTags' in jsonData) {
-    (
-      jsonData.equipmentTags as DiagramEquipmentTagInstanceOutputFormat[]
-    ).forEach((tag: DiagramEquipmentTagInstanceOutputFormat) => {
-      tag.labels.forEach((label) => {
-        trackMissingId(label.id);
-      });
-    });
-  }
-  if (missingIds.length !== 0) {
-    // eslint-disable-next-line no-console
-    console.log(
-      `Incorrect JSON file. ID${
-        missingIds.length === 0 ? '' : 's'
-      } ${missingIds} was not found in SVG.`
-    );
-    return false;
-  }
-  return true;
-};
-
-export const computeSymbolInstances = (
-  symbols: DiagramSymbol[],
-  pidDocument: PidDocument
-): DiagramSymbolInstance[] => {
-  let allNewSymbolInstances: DiagramSymbolInstance[] = [];
-  symbols.forEach((symbol) => {
-    const newSymbolInstances = (
-      pidDocument as PidDocument
-    ).findAllInstancesOfSymbol(symbol);
-    allNewSymbolInstances = getNoneOverlappingSymbolInstances(
-      pidDocument,
-      allNewSymbolInstances,
-      newSymbolInstances
-    );
-  });
-  return allNewSymbolInstances;
-};
-
-export const loadSymbolsFromJson = (
+export const loadGraphFromJson = (
   jsonData: GraphDocument,
   setSymbols: (diagramSymbols: DiagramSymbol[]) => void,
-  pidDocument: PidDocument,
   setSymbolInstances: (diagramSymbolInstances: DiagramSymbolInstance[]) => void,
-  symbolInstances: DiagramSymbolInstance[],
   setLines: (diagramLines: DiagramLineInstance[]) => void,
-  lines: DiagramLineInstance[],
   setConnections: (diagramConnections: DiagramConnection[]) => void,
-  connections: DiagramConnection[],
-  pathReplacements: PathReplacement[],
   setPathReplacements: (args: PathReplacement[]) => void,
-  lineNumbers: string[],
   setLineNumbers: (arg: string[]) => void,
-  equipmentTags: DiagramEquipmentTagInstance[],
   setEquipmentTags: (tags: DiagramEquipmentTagInstance[]) => void
 ) => {
+  if ('pathReplacements' in jsonData) {
+    setPathReplacements(jsonData.pathReplacements);
+  }
   if ('symbols' in jsonData) {
     const newSymbols = jsonData.symbols as DiagramSymbol[];
     setSymbols([...newSymbols]);
-
-    if (!('symbolInstances' in jsonData)) {
-      setSymbolInstances([
-        ...symbolInstances,
-        ...computeSymbolInstances(newSymbols, pidDocument),
-      ]);
-    }
-  }
-  if ('lines' in jsonData) {
-    setLines([...lines, ...jsonData.lines]);
   }
   if ('symbolInstances' in jsonData) {
-    setSymbolInstances([...symbolInstances, ...jsonData.symbolInstances]);
-  }
-  if ('connections' in jsonData) {
-    setConnections([...connections, ...jsonData.connections]);
-  }
-  if ('pathReplacements' in jsonData) {
-    setPathReplacements([...pathReplacements, ...jsonData.pathReplacements]);
-  }
-  if ('lineNumbers' in jsonData) {
-    setLineNumbers([...lineNumbers, ...jsonData.lineNumbers]);
+    setSymbolInstances(jsonData.symbolInstances);
   }
   if ('equipmentTags' in jsonData) {
-    const newEquipmentTags = (
+    const equipmentTags = (
       jsonData.equipmentTags as DiagramEquipmentTagInstanceOutputFormat[]
     ).map((tag) =>
       tag.labels.reduce<DiagramEquipmentTagInstance>(
@@ -248,6 +138,15 @@ export const loadSymbolsFromJson = (
         }
       )
     );
-    setEquipmentTags([...equipmentTags, ...newEquipmentTags]);
+    setEquipmentTags(equipmentTags);
+  }
+  if ('lines' in jsonData) {
+    setLines(jsonData.lines);
+  }
+  if ('lineNumbers' in jsonData) {
+    setLineNumbers(jsonData.lineNumbers);
+  }
+  if ('connections' in jsonData) {
+    setConnections(jsonData.connections);
   }
 };

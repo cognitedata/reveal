@@ -8,8 +8,6 @@ import {
   DiagramSymbolInstance,
   DocumentMetadata,
   DocumentType,
-  GraphDocument,
-  PidDocumentWithDom,
   ToolType,
   SaveSymbolData,
 } from '@cognite/pid-tools';
@@ -38,14 +36,13 @@ const FileControllerWrapper = styled.div`
 `;
 
 interface SidePanelProps {
-  getPidDocument: () => PidDocumentWithDom | undefined;
   activeTool: ToolType;
   setActiveTool: (arg0: ToolType) => void;
   symbols: DiagramSymbol[];
   lines: DiagramLineInstance[];
   symbolInstances: DiagramSymbolInstance[];
   symbolSelection: string[];
-  loadSymbolsAsJson: (json: GraphDocument) => void;
+  loadJson: (json: Record<string, unknown>) => void;
   saveSymbol: (options: SaveSymbolData) => void;
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
@@ -71,14 +68,13 @@ interface SidePanelProps {
 }
 
 export const SidePanel = ({
-  getPidDocument,
   activeTool,
   setActiveTool,
   symbols,
   lines,
   symbolInstances,
   symbolSelection,
-  loadSymbolsAsJson,
+  loadJson,
   saveSymbol,
   deleteSymbol,
   deleteConnection,
@@ -165,9 +161,8 @@ export const SidePanel = ({
           symbols={symbols}
           symbolInstances={symbolInstances}
           lineInstances={lines}
-          loadSymbolsAsJson={loadSymbolsAsJson}
+          loadJson={loadJson}
           saveGraphAsJson={saveGraphAsJson}
-          getPidDocument={getPidDocument}
           jsonInputRef={jsonInputRef}
           onUploadJsonClick={onUploadJsonClick}
         />
