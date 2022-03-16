@@ -91,7 +91,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
     if (tableInstance && dataLength && props.data[dataLength - 1].key === '') {
       tableInstance.scrollToRow(dataLength - 1);
     }
-  });
+  }, [props.data]);
 
   const columns: ColumnShape<MetadataItem>[] = [
     {
@@ -133,6 +133,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
           maxHeight={Infinity}
           width={props.columnWidth * columns.length}
           data={props.data}
+          rowKey="key"
           components={components}
         />
       </TableWrapper>
