@@ -82,7 +82,7 @@ async function init() {
   const bb: THREE.Box3 = (model as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
   bb.applyMatrix4(model.children[0].matrix);
 
-  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 3, 100000);
+  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);

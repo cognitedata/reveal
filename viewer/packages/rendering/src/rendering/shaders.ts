@@ -109,6 +109,11 @@ export const ssaoBlurCombineShaders = {
   vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
 };
 
+export const edgeDetectShaders = {
+  fragment: glsl(require('../glsl/post-processing/edges.frag').default),
+  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+};
+
 export const blitShaders = {
   fragment: glsl(require('../glsl/post-processing/blit.frag').default),
   vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)

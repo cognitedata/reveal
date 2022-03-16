@@ -3,15 +3,76 @@
  */
 
 import * as THREE from 'three';
+import { blitShaders } from '../rendering/shaders';
 import { RenderPass } from '../RenderPass';
-import { createFullscreenTextureObject, unitOrthographicCamera } from '../utilities/renderUtilities';
+import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utilities/renderUtilities';
+
+export type BlendOptions = {
+  blendDestination: THREE.BlendingDstFactor;
+  blendSource: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
+  blendDestinationAlpha?: THREE.BlendingDstFactor;
+  blendSourceAlpha?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
+};
+
+export type BlitOptions = {
+  texture: THREE.Texture;
+  depthTexture?: THREE.DepthTexture;
+  blendOptions?: BlendOptions;
+};
+
+export const transparentBlendOptions: BlendOptions = {
+  blendDestination: THREE.OneMinusSrcAlphaFactor,
+  blendSource: THREE.SrcAlphaFactor
+};
+
+export const alphaMaskBlendOptions: BlendOptions = {
+  blendDestination: THREE.SrcAlphaFactor,
+  blendSource: THREE.ZeroFactor,
+  blendDestinationAlpha: THREE.OneFactor,
+  blendSourceAlpha: THREE.ZeroFactor
+};
 
 export class BlitPass implements RenderPass {
   private readonly _renderTarget: THREE.WebGLRenderTarget;
   private readonly _fullScreenTriangle: THREE.Mesh;
 
-  constructor(texture: THREE.Texture, depthTexture?: THREE.Texture, transparent?: boolean) {
-    this._fullScreenTriangle = createFullscreenTextureObject(texture, depthTexture, transparent);
+  constructor(options: BlitOptions) {
+    const { texture, depthTexture, blendOptions } = options;
+
+    const uniforms = {
+      tDiffuse: { value: texture }
+    };
+
+    const defines = {};
+
+    let depthTest = false;
+    if (depthTexture !== undefined) {
+      uniforms['tDepth'] = { value: depthTexture };
+      defines['DEPTH_WRITE'] = true;
+      depthTest = true;
+    }
+
+    const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;
+    const blendDst = blendOptions?.blendDestination ?? THREE.OneMinusSrcAlphaFactor;
+    const blendSrc = blendOptions?.blendSource ?? THREE.SrcAlphaFactor;
+    const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if null
+    const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if null
+
+    const blitShaderMaterial = new THREE.RawShaderMaterial({
+      vertexShader: blitShaders.vertex,
+      fragmentShader: blitShaders.fragment,
+      uniforms,
+      glslVersion: THREE.GLSL3,
+      defines,
+      depthTest,
+      blending,
+      blendDst,
+      blendSrc,
+      blendSrcAlpha,
+      blendDstAlpha
+    });
+
+    this._fullScreenTriangle = createFullScreenTriangleMesh(blitShaderMaterial);
   }
 
   public getOutputRenderTarget(): THREE.WebGLRenderTarget | null {

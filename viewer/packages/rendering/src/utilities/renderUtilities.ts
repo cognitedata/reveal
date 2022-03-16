@@ -4,44 +4,14 @@
 
 import * as THREE from 'three';
 import { createRenderTriangle } from '@reveal/utilities';
-import { blitShaders } from '../rendering/shaders';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
-export function createFullscreenTextureObject(
-  diffuseTexture: THREE.Texture,
-  depthTexture?: THREE.Texture,
-  transparent = false
-): THREE.Mesh {
+export function createFullScreenTriangleMesh(shaderMaterial: THREE.RawShaderMaterial): THREE.Mesh {
   const renderTriangle = createRenderTriangle();
-
-  const uniforms = {
-    tDiffuse: { value: diffuseTexture }
-  };
-
-  const defines = {};
-
-  let depthTest = false;
-
-  if (depthTexture !== undefined) {
-    uniforms['tDepth'] = { value: depthTexture };
-    defines['DEPTH_WRITE'] = true;
-    depthTest = true;
-  }
-
-  const blitShaderMaterial = new THREE.RawShaderMaterial({
-    vertexShader: blitShaders.vertex,
-    fragmentShader: blitShaders.fragment,
-    uniforms,
-    glslVersion: THREE.GLSL3,
-    transparent: transparent,
-    defines,
-    depthTest
-  });
-
-  return new THREE.Mesh(renderTriangle, blitShaderMaterial);
+  return new THREE.Mesh(renderTriangle, shaderMaterial);
 }
 
 export function createRenderTargetWithDepth(width = 1, heigth = 1): THREE.WebGLRenderTarget {

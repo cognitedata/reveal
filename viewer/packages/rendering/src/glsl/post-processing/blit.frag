@@ -17,7 +17,7 @@ void main() {
     discard;
   }
 
-  diffuse = texture(tDiffuse, vUv);
+  diffuse = color;
 
 #if defined(DEPTH_WRITE) 
   gl_FragDepth = texture(tDepth, vUv).r;
