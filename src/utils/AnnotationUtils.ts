@@ -178,7 +178,7 @@ export class AnnotationUtils {
     assetId?: number,
     assetExternalId?: string
   ): VisionAnnotation {
-    const moifiedData = // use random color for keypoints if no color information exist
+    const modifiedData = // use random color for keypoints if no color information exist
       !data || !data.keypoint || !data.keypoints?.length
         ? data
         : {
@@ -199,7 +199,7 @@ export class AnnotationUtils {
       status: tempConvertAnnotationStatus(status),
       text,
       label: text,
-      data: moifiedData || {},
+      data: modifiedData || {},
       annotatedResourceId: fileId,
       annotatedResourceType: 'file',
       annotatedResourceExternalId: fileExternalId!,
