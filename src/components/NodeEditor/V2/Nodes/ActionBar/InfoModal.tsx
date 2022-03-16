@@ -34,7 +34,9 @@ const InfoModal = ({
       }}
       width={750}
     >
-      <ReactMarkdown>{indslFunction.description || ''}</ReactMarkdown>
+      <ReactMarkdown linkTarget="_blank">
+        {indslFunction.description || ''}
+      </ReactMarkdown>
     </ModalWrapper>
   );
 };
