@@ -6,6 +6,7 @@ export const PagePath = {
   LINE_REVIEWS: '/lineReviews',
   LINE_REVIEW: '/lineReview/:id',
   SCARLET: '/scarlet',
+  DIAGRAM_PARSER: '/diagramParser',
 };
 
 export const MenuBar = () => {
@@ -40,6 +41,11 @@ export const MenuBar = () => {
             name: 'Document Schema Scanner',
             isActive: active === PagePath.SCARLET,
             onClick: handleNavigate(PagePath.SCARLET),
+          },
+          {
+            name: 'Diagram Parser',
+            isActive: active === PagePath.DIAGRAM_PARSER,
+            onClick: handleNavigate(PagePath.DIAGRAM_PARSER),
           },
         ]}
       />

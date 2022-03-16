@@ -6,7 +6,7 @@ const Container = styled.div`
   text-align: center;
 `;
 
-const PID = () => {
+const DiagramParser = () => {
   return (
     <Container>
       <ReactPid />
@@ -14,4 +14,4 @@ const PID = () => {
   );
 };
 
-export default PID;
+export default DiagramParser;

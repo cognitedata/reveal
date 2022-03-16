@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ReactPidWrapper = styled.div`
-  height: calc(100% - 56px);
+  height: 100%;
   overflow: hidden;
 `;
 
