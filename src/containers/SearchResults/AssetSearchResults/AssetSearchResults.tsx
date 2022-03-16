@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
 import { AssetFilterProps, Asset } from '@cognite/sdk';
 import { EnsureNonEmptyResource } from 'components';
@@ -27,6 +27,12 @@ export const AssetSearchResults = ({
   TableStateProps &
   DateRangeProps) => {
   const [currentView, setCurrentView] = useState<string>('tree');
+
+  useEffect(() => {
+    if (query.length > 0) {
+      setCurrentView('list');
+    }
+  }, [query]);
 
   const content = useMemo(() => {
     if (currentView === 'list') {
