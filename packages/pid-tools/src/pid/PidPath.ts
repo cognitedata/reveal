@@ -12,9 +12,12 @@ import {
   getPointTowardOtherPoint,
   getClosestPointsOnSegments,
   CurveSegment,
+  angleDifference,
+  approxeq,
 } from '../geometry';
 import { PathReplacement, SvgPathWithId } from '../types';
 import { T_JUNCTION, T_JUNCTION_SIZE } from '../constants';
+import { splitBy } from '../utils';
 
 interface PidPathStyle {
   strokeLinejoin: string;
@@ -204,22 +207,63 @@ export class PidPath {
     return outputPathReplacements;
   }
 
-  getPathReplacementIfManySegments(): PathReplacement | null {
+  getPathReplacementByAngles(
+    angles: number[],
+    threshold = 2,
+    skipIfCloses = true
+  ): PathReplacement | null {
+    if (this.segmentList.length <= 1) return null;
+
+    if (this.segmentList.some((segment) => segment instanceof CurveSegment))
+      return null;
+
+    // Hack to not split badly formatted paths in isometrics
+    if (this.style?.fill !== 'none') return null;
+
     if (
-      this.segmentList.length > 1 &&
-      !this.segmentList.some((segment) => segment instanceof CurveSegment) &&
-      this.style?.fill === 'none'
-    ) {
-      return {
-        pathId: this.pathId,
-        replacementPaths: this.segmentList.map((pathSegment, index) => {
+      skipIfCloses &&
+      this.segmentList[0].start.distance(
+        this.segmentList[this.segmentList.length - 1].stop
+      ) < 1
+    )
+      return null;
+
+    const isInAnglesToSplit = (
+      pathSegment1: PathSegment,
+      pathSegment2: PathSegment
+    ) =>
+      angles.some((angle) =>
+        approxeq(
+          Math.abs(
+            angleDifference(
+              pathSegment1.angle,
+              pathSegment2.angle,
+              'uniDirected'
+            )
+          ),
+          angle,
+          threshold
+        )
+      );
+
+    const segmentsChunkedBySplitAngles = splitBy(
+      this.segmentList,
+      (segment, index, segmentList) =>
+        isInAnglesToSplit(segmentList[index - 1], segment)
+    );
+
+    if (segmentsChunkedBySplitAngles.length <= 1) return null;
+
+    return {
+      pathId: this.pathId,
+      replacementPaths: segmentsChunkedBySplitAngles.map(
+        (pathSegments, index) => {
           return {
             id: `${this.pathId}_${index}`,
-            svgCommands: segmentsToSvgCommands([pathSegment]),
+            svgCommands: segmentsToSvgCommands(pathSegments),
           };
-        }),
-      };
-    }
-    return null;
+        }
+      ),
+    };
   }
 }

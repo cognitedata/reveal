@@ -92,12 +92,6 @@ export const ReactPid: React.FC = () => {
   };
 
   useEffect(() => {
-    if (hasDocumentLoaded && documentMetadata.type === DocumentType.pid) {
-      pidViewer.current?.splitPathsWithManySegments();
-    }
-  }, [hasDocumentLoaded, documentMetadata]);
-
-  useEffect(() => {
     if (pidViewer.current) {
       pidViewer.current.onChangeActiveTool(setActiveTool);
     }

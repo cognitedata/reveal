@@ -11,7 +11,6 @@ import {
   isValidLegendJson,
   loadLegendFromJson,
 } from './utils';
-import { T_JUNCTION } from './constants';
 import { applyPathReplacementInSvg } from './utils/pathReplacementUtils';
 import { PidDocumentWithDom } from './pid';
 import {
@@ -641,9 +640,8 @@ export class CognitePid {
     this.isDrawing = true;
 
     this.render();
-
+    this.splitPaths();
     this.emit(EventType.LOAD);
-
     this.refresh();
   }
 
@@ -1073,18 +1071,18 @@ export class CognitePid {
     this.setLines([...newLines], true);
   }
 
-  splitPathsWithManySegments = () => {
+  splitPaths = () => {
     if (this.pidDocument === undefined) return;
 
     const newPathReplacements: PathReplacement[] = [];
     const diagramInstances = [...this.lines, ...this.symbolInstances];
     this.pidDocument.pidPaths.forEach((pidPath) => {
       if (
-        getDiagramInstanceByPathId(diagramInstances, pidPath.pathId) === null &&
-        !pidPath.pathId.includes(T_JUNCTION)
+        getDiagramInstanceByPathId(diagramInstances, pidPath.pathId) === null
       ) {
-        const possiblePathReplacement =
-          pidPath?.getPathReplacementIfManySegments();
+        const possiblePathReplacement = pidPath?.getPathReplacementByAngles([
+          90,
+        ]);
 
         if (possiblePathReplacement) {
           newPathReplacements.push(possiblePathReplacement);

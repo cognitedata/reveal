@@ -317,9 +317,15 @@ export class PidDocument {
   }
 
   getBoundingBoxToPaths(pathIds: string[]): Rect {
-    const pidPaths = pathIds.map(
-      (pathId: string) => this.getPidPathById(pathId)!
-    );
+    const pidPaths = pathIds.map((pathId: string) => {
+      const pidPath = this.getPidPathById(pathId)!;
+      if (!pidPath) {
+        throw new Error(
+          `Did not find pid path with ID ${pathId} in pidDocument`
+        );
+      }
+      return pidPath;
+    });
     return calculatePidPathsBoundingBox(pidPaths);
   }
 

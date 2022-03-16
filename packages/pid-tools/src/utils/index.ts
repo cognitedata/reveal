@@ -7,3 +7,4 @@ export * from './legendUtils';
 export * from './saveGraph';
 export { default as getFileNameWithoutExtension } from './getFileNameWithoutExtension';
 export { default as getLineNumberFromText } from './getLineNumberFromText';
+export { default as splitBy } from './splitBy';
