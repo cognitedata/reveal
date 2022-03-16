@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   width: 280px;
+  max-height: 100%;
+  overflow-y: auto;
 `;
 
 export const Header = styled.section`
@@ -44,4 +46,5 @@ export const MetadataList = styled.section`
 
 export const MetadataItem = styled.div`
   padding: 10px;
+  word-break: break-all;
 `;

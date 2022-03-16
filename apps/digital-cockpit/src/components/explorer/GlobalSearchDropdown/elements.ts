@@ -1,4 +1,4 @@
-import { Menu } from '@cognite/cogs.js';
+import { Menu, Modal } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const GlobalSearchMenu = styled(Menu)`
@@ -26,5 +26,16 @@ export const ResultContainer = styled.div`
 
   & > div {
     margin-top: 20px;
+  }
+`;
+
+export const TimeSeriesModal = styled(Modal)`
+  &.cogs-modal {
+    height: 90vh;
+    min-width: 90vw;
+
+    .cogs-modal-content {
+      height: calc(100% - 65px);
+    }
   }
 `;

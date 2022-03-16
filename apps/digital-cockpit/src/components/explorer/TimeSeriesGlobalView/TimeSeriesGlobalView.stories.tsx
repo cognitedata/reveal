@@ -5,12 +5,11 @@ import { MockDatapoints } from '__mocks/datapoints';
 import { Timeseries } from '@cognite/sdk';
 import { CdfClient } from 'utils';
 
-import TimeSeriesSidebar from './TimeSeriesSidebar';
-import { TimeSeriesSidebarProps } from '.';
+import TimeSeriesGlobalView, { TimeSeriesGlobalViewProps } from '.';
 
-const meta: Meta<TimeSeriesSidebarProps> = {
-  title: 'Time Series / Sidebar',
-  component: TimeSeriesSidebar,
+const meta: Meta<TimeSeriesGlobalViewProps> = {
+  title: 'Time Series / Global View',
+  component: TimeSeriesGlobalView,
   argTypes: {
     timeSeries: {
       name: 'Time Series',
@@ -30,27 +29,13 @@ const meta: Meta<TimeSeriesSidebarProps> = {
         type: 'object',
       },
     },
-    showPreview: {
-      name: 'Show Preview',
-      defaultValue: true,
-      control: {
-        type: 'boolean',
-      },
-    },
-    showHeader: {
-      name: 'Show Header',
-      defaultValue: true,
-      control: {
-        type: 'boolean',
-      },
-    },
   },
 };
 
 export default meta;
 
-const Template: ExtendedStory<TimeSeriesSidebarProps> = (args) => (
-  <TimeSeriesSidebar {...args} />
+const Template: ExtendedStory<TimeSeriesGlobalViewProps> = (args) => (
+  <TimeSeriesGlobalView {...args} />
 );
 
 export const Standard = Template.bind({});

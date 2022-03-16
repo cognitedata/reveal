@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Body, Button, Flex, Icon, Overline, Title } from '@cognite/cogs.js';
 import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
@@ -21,6 +21,8 @@ import {
 
 export type TimeSeriesSidebarProps = {
   timeSeries: Timeseries;
+  showPreview?: boolean;
+  showHeader?: boolean;
 };
 
 const TimeSeriesDownloadButton = ({
@@ -57,7 +59,11 @@ const TimeSeriesDownloadButton = ({
   );
 };
 
-const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
+const TimeSeriesSidebar = ({
+  timeSeries,
+  showPreview = true,
+  showHeader = true,
+}: TimeSeriesSidebarProps) => {
   const { client } = useCDFExplorerContext();
   const { data: datapoints, isLoading } = useDatapointsQuery(
     [{ id: timeSeries.id }],
@@ -69,6 +75,21 @@ const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
     [datapoints]
   );
 
+  const renderLastReading = useCallback(
+    () => (
+      <>
+        <Overline level={1}>Last reading</Overline>
+        <Flex justifyContent="space-between" style={{ width: '100%' }}>
+          <span>
+            {latestDatapoint?.value.toPrecision(4)} {timeSeries.unit}
+          </span>
+          <span>{moment(latestDatapoint?.timestamp).fromNow()}</span>
+        </Flex>
+      </>
+    ),
+    [latestDatapoint, timeSeries]
+  );
+
   const handleOpenInCharts = () => {
     const endTime = latestDatapoint.timestamp.valueOf();
     const startTime = moment(endTime).subtract(1, 'month').valueOf();
@@ -78,24 +99,24 @@ const TimeSeriesSidebar = ({ timeSeries }: TimeSeriesSidebarProps) => {
 
   return (
     <Container>
-      <Header>
-        <IconContainer type="Timeseries" />
-        <Title level={6} className="timeseries-sidebar--title">
-          {timeSeries.name}
-        </Title>
-      </Header>
-      {!isLoading && latestDatapoint && (
-        <Preview>
-          <Overline level={1}>Last reading</Overline>
-          <Flex justifyContent="space-between" style={{ width: '100%' }}>
-            <span>
-              {latestDatapoint?.value.toPrecision(4)} {timeSeries.unit}
-            </span>
-            <span>{moment(latestDatapoint?.timestamp).fromNow()}</span>
-          </Flex>
-          <TimeSeriesPreview timeSeries={timeSeries} showYAxis />
-        </Preview>
+      {showHeader && (
+        <Header>
+          <IconContainer type="Timeseries" />
+          <Title level={6} className="timeseries-sidebar--title">
+            {timeSeries.name}
+          </Title>
+        </Header>
       )}
+      {!isLoading &&
+        latestDatapoint &&
+        (showPreview ? (
+          <Preview>
+            {renderLastReading()}
+            <TimeSeriesPreview timeSeries={timeSeries} showYAxis />
+          </Preview>
+        ) : (
+          renderLastReading()
+        ))}
       <Actions>
         <Button
           size="small"

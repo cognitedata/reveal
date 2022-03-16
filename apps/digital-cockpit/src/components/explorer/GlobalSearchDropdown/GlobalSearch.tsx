@@ -1,4 +1,4 @@
-import { Button, Drawer } from '@cognite/cogs.js';
+import { Button, Drawer, Modal } from '@cognite/cogs.js';
 import { FileInfo, Timeseries } from '@cognite/sdk';
 import IconContainer from 'components/icons';
 import Loading from 'components/utils/Loading';
@@ -10,12 +10,14 @@ import { mapResourceTypeToLabel } from 'utils/resourceTypes';
 
 import DocumentSidebar from '../DocumentSidebar';
 import SearchResult from '../SearchResult';
+import TimeSeriesGlobalView from '../TimeSeriesGlobalView';
 import TimeSeriesSidebar from '../TimeSeriesSidebar';
 
 import {
   GlobalSearchMenu,
   ResourceTypeContainer,
   ResultContainer,
+  TimeSeriesModal,
 } from './elements';
 
 export type GlobalSearchProps = {
@@ -95,11 +97,6 @@ const GlobalSearch = ({ query = '', onResultSelected }: GlobalSearchProps) => {
     }
   };
 
-  const handleDrawerClose = () => {
-    setSelectedTimeSeries(undefined);
-    setSelectedFile(undefined);
-  };
-
   return (
     <>
       <GlobalSearchMenu>
@@ -140,15 +137,23 @@ const GlobalSearch = ({ query = '', onResultSelected }: GlobalSearchProps) => {
         )}
       </GlobalSearchMenu>
       <Drawer
-        visible={Boolean(selectedTimeSeries || selectedFile)}
-        onCancel={handleDrawerClose}
+        visible={Boolean(selectedFile)}
+        onCancel={() => setSelectedFile(undefined)}
         footer={null}
       >
-        {selectedTimeSeries && (
-          <TimeSeriesSidebar timeSeries={selectedTimeSeries} />
-        )}
         {selectedFile && <DocumentSidebar document={selectedFile} />}
       </Drawer>
+      <TimeSeriesModal
+        visible={Boolean(selectedTimeSeries)}
+        title={selectedTimeSeries?.name}
+        onCancel={() => setSelectedTimeSeries(undefined)}
+        footer={null}
+        width={1320}
+      >
+        {selectedTimeSeries && (
+          <TimeSeriesGlobalView timeSeries={selectedTimeSeries} />
+        )}
+      </TimeSeriesModal>
     </>
   );
 };
