@@ -26,6 +26,7 @@ import {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { GraphicContainer } from 'components/shared/elements';
+import { CalculationDescriptionInfoDrawer } from 'pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
@@ -217,6 +218,9 @@ export function CalculationList({
             </Button>
             <span className="name">
               {calculation.configuration.calculationName}
+              <CalculationDescriptionInfoDrawer
+                calculation={calculation.configuration.calculationType}
+              />
             </span>
             <span className="schedule">
               <CalculationScheduleIndicator
@@ -339,8 +343,10 @@ export function CalculationList({
                 Configure
               </Button>
             </Link>
+
             <span className="name">
               {definitions.type.calculation[calculationType]}
+              <CalculationDescriptionInfoDrawer calculation={calculationType} />
             </span>
           </React.Fragment>
         ))}
