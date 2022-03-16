@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import BaseTable, { AutoResizer, ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Colors, Flex } from '@cognite/cogs.js';
@@ -9,6 +9,7 @@ import { HeaderRender, EmptyRender } from './customRenders';
 import { ExpandedCellModal } from './ExpandedCellModal';
 import { Cell } from './Cell';
 import { ProfilingSidebar } from 'components/ProfilingSidebar';
+import { useCellSelection } from 'hooks/table-selection';
 
 type Props = {
   rows: any;
@@ -19,6 +20,7 @@ type Props = {
 
 export const Table = (props: Props): JSX.Element => {
   const { rows, columns, isEmpty, onEndReach } = props;
+  const { deselectCell } = useCellSelection();
 
   const newColumns = useMemo(
     () =>
@@ -39,6 +41,17 @@ export const Table = (props: Props): JSX.Element => {
       })),
     [columns]
   );
+
+  const onCellClickOutside = useCallback(() => {
+    deselectCell();
+  }, [deselectCell]);
+
+  useEffect(() => {
+    document.addEventListener('click', onCellClickOutside);
+    return () => {
+      document.removeEventListener('click', onCellClickOutside);
+    };
+  }, [onCellClickOutside]);
 
   return (
     <StyledTableWrapper>
