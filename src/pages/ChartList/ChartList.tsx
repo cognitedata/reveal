@@ -43,8 +43,8 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type ActiveTabOption = 'mine' | 'public';
-type SortOption = 'name' | 'owner' | 'updatedAt';
-type SelectSortOption = { value: SortOption; label: string };
+type SortOptionValues = 'name' | 'owner' | 'updatedAt';
+type SelectSortOption = { value: SortOptionValues; label: string };
 
 const nameSorter = (a: Chart, b: Chart) => {
   return a.name.localeCompare(b.name);
@@ -90,17 +90,18 @@ const ChartList = () => {
   }, [myCharts.data, pubCharts.data]);
 
   const error = myCharts.isError || pubCharts.isError;
-
-  const [filterText, setFilterText] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<ActiveTabOption>('mine');
-  const [sortOption, setSortOption] = useState<SortOption>('updatedAt');
-  const [viewOption, setViewOption] = useState<ViewOption>('list');
-
   const sortOptions: SelectSortOption[] = [
     { value: 'name', label: t.Name },
     { value: 'owner', label: t.Owner },
     { value: 'updatedAt', label: t.Updated },
   ];
+
+  const [filterText, setFilterText] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<ActiveTabOption>('mine');
+  const [sortOption, setSortOption] = useState<SelectSortOption>(
+    sortOptions[2]
+  );
+  const [viewOption, setViewOption] = useState<ViewOption>('list');
 
   useEffect(() => {
     trackUsage('PageView.ChartList');
@@ -183,9 +184,9 @@ const ChartList = () => {
       chartsToRender = chartsToRender.filter(nameFilter);
     }
 
-    if (sortOption === 'name') {
+    if (sortOption.value === 'name') {
       chartsToRender.sort(nameSorter);
-    } else if (sortOption === 'owner') {
+    } else if (sortOption.value === 'owner') {
       chartsToRender.sort(ownerSorter);
     } else {
       chartsToRender.sort(updatedAtSorter);
@@ -252,22 +253,12 @@ const ChartList = () => {
         </Tabs>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 200 }}>
-            {/* @ts-ignore next line */}
             <Select
               title={`${t['Sort by']}:`}
               icon="ArrowDown"
-              /*
-                Hack below: Cogs.js has a bug where passing the value makes it
-                always show the placeholder. So, I'm not passing the value and
-                setting the placeholder to the default option. This will have
-                the desired behavior, given the bug. It's not fixed in the
-                latest version of Cogs yet.
-              */
-              // value={sortOption}
+              value={sortOption}
               placeholder={t.Updated}
-              onChange={(option: SelectSortOption) =>
-                setSortOption(option.value)
-              }
+              onChange={(option: SelectSortOption) => setSortOption(option)}
               options={sortOptions}
             />
           </div>
