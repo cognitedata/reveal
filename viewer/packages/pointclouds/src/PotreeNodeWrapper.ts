@@ -4,89 +4,81 @@
 
 import * as THREE from 'three';
 
-import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
-
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
+import { PointCloudOctree, PointColorType, PointShape, IClassification } from './potree-three-loader';
+import { WellKnownAsprsPointClassCodes } from './types';
+
+import { createPointClassKey } from './createPointClassKey';
+
 /**
- * Wrapper around `Potree.PointCloudOctree` with some convinence functions.
+ * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
  */
 export class PotreeNodeWrapper {
-  readonly octtree: any;
+  readonly octree: PointCloudOctree;
   private _needsRedraw = false;
+  private _classification: IClassification = {} as IClassification;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
-  constructor(octtree: any) {
-    this.octtree = octtree;
+  constructor(octree: PointCloudOctree) {
+    this.octree = octree;
     this.pointSize = 2;
-    this.pointSizeType = PotreePointSizeType.Adaptive;
-    this.pointColorType = PotreePointColorType.Rgb;
-    this.pointShape = PotreePointShape.Circle;
-
-    this.pointBudget = Infinity;
+    this.pointColorType = PointColorType.Rgb;
+    this.pointShape = PointShape.Circle;
   }
 
   get pointSize(): number {
-    return this.octtree.material.size;
+    return this.octree.material.size;
   }
   set pointSize(size: number) {
-    this.octtree.material.size = size;
+    this.octree.material.size = size;
     this._needsRedraw = true;
   }
 
-  get pointSizeType(): PotreePointSizeType {
-    return this.octtree.material.pointSizeType;
-  }
-  set pointSizeType(type: PotreePointSizeType) {
-    this.octtree.material.pointSizeType = type;
-    this._needsRedraw = true;
-  }
-
-  get pointBudget(): number {
-    return this.octtree.pointBudget;
-  }
-  set pointBudget(count: number) {
-    this.octtree.pointBudget = count;
-    this._needsRedraw = true;
-  }
   get visiblePointCount(): number {
-    return this.octtree.numVisiblePoints || 0;
+    return this.octree.numVisiblePoints || 0;
   }
 
   get boundingBox(): THREE.Box3 {
     const box: THREE.Box3 =
-      this.octtree.pcoGeometry.tightBoundingBox || this.octtree.pcoGeometry.boundingBox || this.octtree.boundingBox;
+      this.octree.pcoGeometry.tightBoundingBox || this.octree.pcoGeometry.boundingBox || this.octree.boundingBox;
     // Apply transformation to switch axes
     const min = new THREE.Vector3(box.min.x, box.min.z, -box.min.y);
     const max = new THREE.Vector3(box.max.x, box.max.z, -box.max.y);
     return new THREE.Box3().setFromPoints([min, max]);
   }
 
-  get pointColorType(): PotreePointColorType {
-    return this.octtree.material.pointColorType;
+  get pointColorType(): PointColorType {
+    return this.octree.material.pointColorType;
   }
-  set pointColorType(type: PotreePointColorType) {
-    this.octtree.material.pointColorType = type;
+  set pointColorType(type: PointColorType) {
+    this.octree.material.pointColorType = type;
     this._needsRedraw = true;
   }
 
-  get pointShape(): PotreePointShape {
-    return this.octtree.material.shape;
+  get pointShape(): PointShape {
+    return this.octree.material.shape;
   }
-  set pointShape(shape: PotreePointShape) {
-    this.octtree.material.shape = shape;
+  set pointShape(shape: PointShape) {
+    this.octree.material.shape = shape;
     this._needsRedraw = true;
   }
 
   get classification(): PotreeClassification {
-    return this.octtree.material.classification as PotreeClassification;
+    return this._classification;
   }
 
-  recomputeClassification(): void {
-    this.octtree.material.recomputeClassification();
+  setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean) {
+    const key = createPointClassKey(pointClass);
+    if (!this._classification) {
+      return pointClass;
+    }
+
+    this._classification[key].w = visible ? 1.0 : 0.0;
+    this.octree.material.classification = this._classification;
   }
 
   resetRedraw(): void {

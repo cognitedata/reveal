@@ -146,8 +146,8 @@ export class Potree implements IPotree {
 
       if (
         node.level > maxLevel ||
-        !frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
-        this.shouldClip(pointCloud, node.boundingBox)
+          !frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
+          this.shouldClip(pointCloud, node.boundingBox)
       ) {
         continue;
       }

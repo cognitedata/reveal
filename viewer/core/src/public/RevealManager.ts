@@ -30,6 +30,7 @@ export class RevealManager {
   private readonly _cadManager: CadManager;
   private readonly _pointCloudManager: PointCloudManager;
   private readonly _effectRenderManager: EffectRenderManager;
+  private readonly _renderer: THREE.WebGLRenderer;
 
   private readonly _lastCamera = {
     position: new THREE.Vector3(NaN, NaN, NaN),
@@ -45,10 +46,11 @@ export class RevealManager {
 
   private readonly _updateSubject: Subject<void>;
 
-  constructor(cadManager: CadManager, renderManager: EffectRenderManager, pointCloudManager: PointCloudManager) {
+  constructor(cadManager: CadManager, renderManager: EffectRenderManager, pointCloudManager: PointCloudManager, renderer: THREE.WebGLRenderer) {
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
+    this._renderer = renderer;
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
     this._updateSubject = new Subject();
     this._updateSubject
@@ -107,6 +109,11 @@ export class RevealManager {
       !this._lastCamera.quaternion.equals(camera.quaternion);
 
     if (hasCameraChanged) {
+      this._pointCloudManager.pointCloudGroupWrapper.potreeInstance.updatePointClouds(
+        this._pointCloudManager.pointCloudGroupWrapper.pointClouds,
+        camera,
+        this._renderer);
+
       this._lastCamera.position.copy(camera.position);
       this._lastCamera.quaternion.copy(camera.quaternion);
       this._lastCamera.zoom = camera.zoom;

@@ -2,45 +2,45 @@
  * Copyright 2022 Cognite AS
  */
 export enum PointSizeType {
-  FIXED = 0,
-  ATTENUATED = 1,
-  ADAPTIVE = 2
+  Fixed = 0,
+  Attenuated = 1,
+  Adaptive = 2
 }
 
 export enum PointShape {
-  SQUARE = 0,
-  CIRCLE = 1,
-  PARABOLOID = 2
+  Square = 0,
+  Circle = 1,
+  Paraboloid = 2
 }
 
 export enum TreeType {
-  OCTREE = 0,
-  KDTREE = 1
+  Octree = 0,
+  KdTree = 1
 }
 
 export enum PointOpacityType {
-  FIXED = 0,
-  ATTENUATED = 1
+  Fixed = 0,
+  Attenuated = 1
 }
 
 export enum PointColorType {
-  RGB = 0,
-  COLOR = 1,
-  DEPTH = 2,
-  HEIGHT = 3,
-  ELEVATION = 3,
-  INTENSITY = 4,
-  INTENSITY_GRADIENT = 5,
-  LOD = 6,
-  LEVEL_OF_DETAIL = 6,
-  POINT_INDEX = 7,
-  CLASSIFICATION = 8,
-  RETURN_NUMBER = 9,
-  SOURCE = 10,
-  NORMAL = 11,
-  PHONG = 12,
-  RGB_HEIGHT = 13,
-  COMPOSITE = 50
+  Rgb = 0,
+  Color = 1,
+  Depth = 2,
+  Height = 3,
+  Elevation = 3,
+  Intensity = 4,
+  IntensityGradient = 5,
+  Lod = 6,
+  LevelOfDetail = 6,
+  PointIndex = 7,
+  Classification = 8,
+  ReturnNumber = 9,
+  Source = 10,
+  Normal = 11,
+  Phong = 12,
+  RgbHeight = 13,
+  Composite = 50
 }
 
 export enum NormalFilteringMode {

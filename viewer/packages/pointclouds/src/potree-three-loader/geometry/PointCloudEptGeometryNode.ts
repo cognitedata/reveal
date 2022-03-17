@@ -12,6 +12,7 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
+import { fetchJson } from '../utils/fetchJson';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;
@@ -139,7 +140,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._index = parseInt(this._name.charAt(this._name.length - 1));
   }
 
-  isGeometryNode(): boolean {
+  get isGeometryNode(): boolean {
     return true;
   }
 
@@ -230,8 +231,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
     const eptHierarchyFile = `${this.ept.url}ept-hierarchy/${this.filename()}.json`;
 
-    const response = await fetch(eptHierarchyFile);
-    const hier = await response.json();
+    const hier = await fetchJson(eptHierarchyFile);
 
     // Since we want to traverse top-down, and 10 comes
     // lexicographically before 9 (for example), do a deep sort.

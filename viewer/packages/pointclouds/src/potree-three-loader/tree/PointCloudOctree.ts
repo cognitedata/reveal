@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
+import { Box3, Matrix4, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
 import { DEFAULT_MIN_NODE_PIXEL_SIZE } from '../rendering/constants';
 import { PointCloudMaterial, PointSizeType } from '../rendering';
 import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
@@ -49,6 +49,8 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.position.copy(pcoGeometry.offset);
     this.updateMatrix();
+
+    this.applyMatrix4(new Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1));
 
     this.material = material || new PointCloudMaterial();
     this.initMaterial(this.material);

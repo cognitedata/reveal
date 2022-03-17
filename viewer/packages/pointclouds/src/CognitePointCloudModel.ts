@@ -4,8 +4,10 @@
 
 import * as THREE from 'three';
 import { CameraConfiguration } from '@reveal/utilities';
-import { PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from './types';
+import { WellKnownAsprsPointClassCodes } from './types';
 import { PointCloudNode } from './PointCloudNode';
+
+import { PointColorType, PointShape } from './potree-three-loader';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
@@ -143,7 +145,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * Determines how points currently are colored.
    */
-  get pointColorType(): PotreePointColorType {
+  get pointColorType(): PointColorType {
     return this.pointCloudNode.pointColorType;
   }
 
@@ -155,7 +157,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * model.pointColorType = PotreePointColorType.Rgb
    * ```
    */
-  set pointColorType(type: PotreePointColorType) {
+  set pointColorType(type: PointColorType) {
     this.pointCloudNode.pointColorType = type;
   }
 
@@ -179,7 +181,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @default `PotreePointShape.Circle`
    * @see {@link PotreePointShape}.
    */
-  get pointShape(): PotreePointShape {
+  get pointShape(): PointShape {
     return this.pointCloudNode.pointShape;
   }
 
@@ -187,7 +189,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * Gets the point shape of each rendered point in the point cloud.
    * @see {@link PotreePointShape}.
    */
-  set pointShape(shape: PotreePointShape) {
+  set pointShape(shape: PointShape) {
     this.pointCloudNode.pointShape = shape;
   }
 }

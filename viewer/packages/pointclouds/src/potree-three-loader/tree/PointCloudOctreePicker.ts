@@ -378,7 +378,7 @@ export class PointCloudOctreePicker {
     scene.autoUpdate = false;
 
     const material = new PointCloudMaterial();
-    material.pointColorType = PointColorType.POINT_INDEX;
+    material.pointColorType = PointColorType.PointIndex;
 
     return {
       renderTarget: PointCloudOctreePicker.makePickRenderTarget(),

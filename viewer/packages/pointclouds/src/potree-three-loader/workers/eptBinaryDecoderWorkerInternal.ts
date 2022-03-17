@@ -242,5 +242,5 @@ function parseEpt(event: MessageEvent) {
     message.indices
   ].filter(v => v);
 
-  postMessage(message, transferables);
+  postMessage(message, '*', transferables);
 }

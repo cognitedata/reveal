@@ -5,11 +5,15 @@
 export { intersectPointClouds } from './src/picking';
 
 export {
-  PotreePointShape,
-  PotreePointColorType,
-  PotreePointSizeType,
   WellKnownAsprsPointClassCodes
 } from './src/types';
+
+export {
+  PointShape as PotreePointShape,
+  PointColorType as PotreePointColorType,
+  PointSizeType as PotreePointSizeType
+} from './src/potree-three-loader';
+
 
 export { PointCloudNode } from './src/PointCloudNode';
 export { PointCloudManager } from './src/PointCloudManager';
@@ -21,6 +25,8 @@ export { CognitePointCloudModel } from './src/CognitePointCloudModel';
 
 export { PotreeNodeWrapper } from './src/PotreeNodeWrapper';
 export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
+
+export { PointCloudOctree } from './src/potree-three-loader/tree/PointCloudOctree';
 
 export {
   Potree as NPotree,

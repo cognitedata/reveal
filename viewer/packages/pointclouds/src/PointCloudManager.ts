@@ -22,10 +22,16 @@ export class PointCloudManager {
   private readonly _pointCloudFactory: PointCloudFactory;
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
 
-  constructor(metadataRepository: PointCloudMetadataRepository, modelFactory: PointCloudFactory) {
+  constructor(metadataRepository: PointCloudMetadataRepository,
+              modelFactory: PointCloudFactory,
+              renderer: THREE.WebGLRenderer) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
-    this._pointCloudGroupWrapper = new PotreeGroupWrapper();
+    this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance, renderer);
+  }
+
+  get pointCloudGroupWrapper() {
+    return this._pointCloudGroupWrapper;
   }
 
   requestRedraw(): void {
@@ -77,7 +83,7 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const nodeWrapper = this._pointCloudFactory.createModel(metadata);
+    const nodeWrapper = await this._pointCloudFactory.createModel(metadata);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
     const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
     node.setModelTransformation(metadata.modelMatrix);

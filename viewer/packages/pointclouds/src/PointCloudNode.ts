@@ -7,7 +7,10 @@ import { CameraConfiguration } from '@reveal/utilities';
 
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
-import { PotreePointSizeType, PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from './types';
+import { WellKnownAsprsPointClassCodes } from './types';
+import { createPointClassKey } from './createPointClassKey';
+
+import { PointColorType, PointShape, PointSizeType } from './potree-three-loader';
 
 const PotreeDefaultPointClass = 'DEFAULT';
 
@@ -63,39 +66,31 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointSize = size;
   }
 
-  get pointSizeType(): PotreePointSizeType {
-    return this._potreeNode.pointSizeType;
+  get pointSizeType(): PointSizeType {
+    return this._potreeNode.octree.pointSizeType;
   }
 
-  set pointSizeType(value: PotreePointSizeType) {
-    this._potreeNode.pointSizeType = value;
-  }
-
-  get pointBudget(): number {
-    return this._potreeNode.pointBudget;
-  }
-
-  set pointBudget(count: number) {
-    this._potreeNode.pointBudget = count;
+  set pointSizeType(pointSizeType: PointSizeType) {
+    this._potreeNode.octree.pointSizeType = pointSizeType;
   }
 
   get visiblePointCount(): number {
     return this._potreeNode.visiblePointCount;
   }
 
-  get pointColorType(): PotreePointColorType {
+  get pointColorType(): PointColorType {
     return this._potreeNode.pointColorType;
   }
 
-  set pointColorType(type: PotreePointColorType) {
+  set pointColorType(type: PointColorType) {
     this._potreeNode.pointColorType = type;
   }
 
-  get pointShape(): PotreePointShape {
+  get pointShape(): PointShape {
     return this._potreeNode.pointShape;
   }
 
-  set pointShape(value: PotreePointShape) {
+  set pointShape(value: PointShape) {
     this._potreeNode.pointShape = value;
   }
 
@@ -107,13 +102,7 @@ export class PointCloudNode extends THREE.Group {
    * @throws Error if the model doesn't have the class given.
    */
   setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
-    if (!this.hasClass(pointClass)) {
-      throw new Error(`Point cloud model doesn't have class ${pointClass}`);
-    }
-    const key = createPointClassKey(pointClass);
-    this._potreeNode.classification[key].w = visible ? 1.0 : 0.0;
-    this._potreeNode.recomputeClassification();
-    this.requestRedraw();
+    this._potreeNode.setClassificationAndRecompute(pointClass, visible);
   }
 
   /**
@@ -169,13 +158,4 @@ export class PointCloudNode extends THREE.Group {
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
     return out.copy(this.matrix);
   }
-}
-
-function createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes): number {
-  if (pointClass === WellKnownAsprsPointClassCodes.Default) {
-    // Potree has a special class 'DEFAULT'. Our map has number keys, but this one is specially
-    // handled in Potree so we ignore type.
-    return PotreeDefaultPointClass as any;
-  }
-  return pointClass;
 }

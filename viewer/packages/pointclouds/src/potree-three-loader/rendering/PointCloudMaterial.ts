@@ -111,43 +111,43 @@ export interface IPointCloudMaterialUniforms {
 }
 
 const TREE_TYPE_DEFS = {
-  [TreeType.OCTREE]: 'tree_type_octree',
-  [TreeType.KDTREE]: 'tree_type_kdtree'
+  [TreeType.Octree]: 'tree_type_octree',
+  [TreeType.KdTree]: 'tree_type_kdtree'
 };
 
 const SIZE_TYPE_DEFS = {
-  [PointSizeType.FIXED]: 'fixed_point_size',
-  [PointSizeType.ATTENUATED]: 'attenuated_point_size',
-  [PointSizeType.ADAPTIVE]: 'adaptive_point_size'
+  [PointSizeType.Fixed]: 'fixed_point_size',
+  [PointSizeType.Attenuated]: 'attenuated_point_size',
+  [PointSizeType.Adaptive]: 'adaptive_point_size'
 };
 
 const OPACITY_DEFS = {
-  [PointOpacityType.ATTENUATED]: 'attenuated_opacity',
-  [PointOpacityType.FIXED]: 'fixed_opacity'
+  [PointOpacityType.Attenuated]: 'attenuated_opacity',
+  [PointOpacityType.Fixed]: 'fixed_opacity'
 };
 
 const SHAPE_DEFS = {
-  [PointShape.SQUARE]: 'square_point_shape',
-  [PointShape.CIRCLE]: 'circle_point_shape',
-  [PointShape.PARABOLOID]: 'paraboloid_point_shape'
+  [PointShape.Square]: 'square_point_shape',
+  [PointShape.Circle]: 'circle_point_shape',
+  [PointShape.Paraboloid]: 'paraboloid_point_shape'
 };
 
 const COLOR_DEFS = {
-  [PointColorType.RGB]: 'color_type_rgb',
-  [PointColorType.COLOR]: 'color_type_color',
-  [PointColorType.DEPTH]: 'color_type_depth',
-  [PointColorType.HEIGHT]: 'color_type_height',
-  [PointColorType.INTENSITY]: 'color_type_intensity',
-  [PointColorType.INTENSITY_GRADIENT]: 'color_type_intensity_gradient',
-  [PointColorType.LOD]: 'color_type_lod',
-  [PointColorType.POINT_INDEX]: 'color_type_point_index',
-  [PointColorType.CLASSIFICATION]: 'color_type_classification',
-  [PointColorType.RETURN_NUMBER]: 'color_type_return_number',
-  [PointColorType.SOURCE]: 'color_type_source',
-  [PointColorType.NORMAL]: 'color_type_normal',
-  [PointColorType.PHONG]: 'color_type_phong',
-  [PointColorType.RGB_HEIGHT]: 'color_type_rgb_height',
-  [PointColorType.COMPOSITE]: 'color_type_composite'
+  [PointColorType.Rgb]: 'color_type_rgb',
+  [PointColorType.Color]: 'color_type_color',
+  [PointColorType.Depth]: 'color_type_depth',
+  [PointColorType.Height]: 'color_type_height',
+  [PointColorType.Intensity]: 'color_type_intensity',
+  [PointColorType.IntensityGradient]: 'color_type_intensity_gradient',
+  [PointColorType.Lod]: 'color_type_lod',
+  [PointColorType.PointIndex]: 'color_type_point_index',
+  [PointColorType.Classification]: 'color_type_classification',
+  [PointColorType.ReturnNumber]: 'color_type_return_number',
+  [PointColorType.Source]: 'color_type_source',
+  [PointColorType.Normal]: 'color_type_normal',
+  [PointColorType.Phong]: 'color_type_phong',
+  [PointColorType.RgbHeight]: 'color_type_rgb_height',
+  [PointColorType.Composite]: 'color_type_composite'
 };
 
 const CLIP_MODE_DEFS = {
@@ -280,13 +280,13 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   @requiresShaderUpdate() useClipBox: boolean = false;
   @requiresShaderUpdate() weighted: boolean = false;
-  @requiresShaderUpdate() pointColorType: PointColorType = PointColorType.RGB;
-  @requiresShaderUpdate() pointSizeType: PointSizeType = PointSizeType.ADAPTIVE;
+  @requiresShaderUpdate() pointColorType: PointColorType = PointColorType.Rgb;
+  @requiresShaderUpdate() pointSizeType: PointSizeType = PointSizeType.Adaptive;
   @requiresShaderUpdate() clipMode: ClipMode = ClipMode.DISABLED;
   @requiresShaderUpdate() useEDL: boolean = true;
-  @requiresShaderUpdate() shape: PointShape = PointShape.CIRCLE;
-  @requiresShaderUpdate() treeType: TreeType = TreeType.OCTREE;
-  @requiresShaderUpdate() pointOpacityType: PointOpacityType = PointOpacityType.FIXED;
+  @requiresShaderUpdate() shape: PointShape = PointShape.Circle;
+  @requiresShaderUpdate() treeType: TreeType = TreeType.Octree;
+  @requiresShaderUpdate() pointOpacityType: PointOpacityType = PointOpacityType.Fixed;
   @requiresShaderUpdate() useFilterByNormal: boolean = false;
   @requiresShaderUpdate() useTextureBlending: boolean = false;
   @requiresShaderUpdate() usePointCloudMixing: boolean = false;
@@ -312,7 +312,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     tex.magFilter = NearestFilter;
     this.setUniform('visibleNodes', tex);
 
-    this.treeType = getValid(parameters.treeType, TreeType.OCTREE);
+    this.treeType = getValid(parameters.treeType, TreeType.Octree);
     this.size = getValid(parameters.size, 1.0);
     this.minSize = getValid(parameters.minSize, 2.0);
     this.maxSize = getValid(parameters.maxSize, 50.0);
@@ -585,7 +585,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.spacing = octree.pcoGeometry.spacing * maxScale;
     this.octreeSize = octree.pcoGeometry.boundingBox.getSize(PointCloudMaterial.helperVec3).x;
 
-    if (this.pointSizeType === PointSizeType.ADAPTIVE || this.pointColorType === PointColorType.LOD) {
+    if (this.pointSizeType === PointSizeType.Adaptive || this.pointColorType === PointColorType.Lod) {
       this.updateVisibilityTextureData(visibleNodes);
     }
   }
