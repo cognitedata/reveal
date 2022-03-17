@@ -1,5 +1,5 @@
 {
-  "name": "@reveal/tools",
+  "name": "@reveal/pointclouds",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -8,9 +8,9 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
-    "@reveal/cad-styling": "workspace:*",
-    "@reveal/core": "workspace:*",
     "@reveal/metrics": "workspace:*",
+    "@reveal/model-base": "workspace:*",
+    "@reveal/modeldata-api": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }
