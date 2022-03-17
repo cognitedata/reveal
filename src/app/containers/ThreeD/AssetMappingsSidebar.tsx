@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Input, Title, Tooltip, Flex } from '@cognite/cogs.js';
+import { Button, Input, Title, Tooltip, Flex, Loader } from '@cognite/cogs.js';
 import {
   AssetNodeCollection,
   Cognite3DModel,
@@ -93,8 +93,6 @@ export const AssetMappingsSidebar = ({
     return true;
   };
 
-  const loadMoreItems = () => assetListData;
-
   return (
     <SidebarContainer>
       <SidebarHeader>
@@ -109,7 +107,7 @@ export const AssetMappingsSidebar = ({
           </Tooltip>
         </Flex>
       </SidebarHeader>
-      {isFetched && (
+      {isFetched ? (
         <>
           <InputContainer>
             <Input
@@ -126,9 +124,11 @@ export const AssetMappingsSidebar = ({
             onClick={handleAssetClick}
             itemCount={assetListData?.length ?? 0}
             isItemLoaded={isItemLoaded}
-            loadMoreItems={loadMoreItems}
+            loadMoreItems={() => { }}
           />
         </>
+      ) : (
+        <Loader />
       )}
     </SidebarContainer>
   );
