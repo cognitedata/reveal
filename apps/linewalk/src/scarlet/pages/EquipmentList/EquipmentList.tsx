@@ -105,7 +105,6 @@ export const EquipmentList = () => {
                 }}
                 disabled={loading}
                 clearable={{
-                  labelText: 'Clear search',
                   callback: () => {
                     setSearch('');
                   },

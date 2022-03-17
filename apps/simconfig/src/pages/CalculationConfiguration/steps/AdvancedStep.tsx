@@ -440,10 +440,10 @@ function PasteButton({ onPasteSuccess, ...props }: PasteButtonProps) {
           />
         }
         placement="top-start"
-        theme="dark"
         visible={isTooltipVisible}
         elevated
         interactive
+        inverted
       >
         <Button
           icon="InputData"
