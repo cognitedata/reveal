@@ -1,11 +1,11 @@
 {
-  "name": "@cognite/cdf-raw-explorer",
+  "name": "@cognite/cdf-extractor-downloads",
   "version": "0.7.0",
   "private": true,
   "scripts": {
     "start": "env BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=8000 rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
-    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-raw-explorer -o index.js -d ./build",
+    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-extractor-downloads -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test --passWithNoTests",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",

@@ -30,7 +30,7 @@ const App = () => {
   return (
     <FlagProvider
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-      appName="cdf-raw-explorer"
+      appName="cdf-extractor-downloads"
       projectName={project}
     >
       <StyleSheetManager
