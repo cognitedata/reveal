@@ -2,7 +2,7 @@ import {
   CalculationStatusStatusEnum,
   Calculation,
 } from '@cognite/calculation-backend';
-import { Button, Dropdown, Menu, Popconfirm, Tooltip } from '@cognite/cogs.js';
+import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { workflowsAtom } from 'models/workflows/atom';
 import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
 import CalculationCallStatus from 'components/CalculationCallStatus';
@@ -20,7 +20,11 @@ import {
   useCalculationStatus,
   useCreateCalculation,
 } from 'hooks/calculation-backend';
-import { removeWorkflow, updateWorkflow } from 'models/chart/updates';
+import {
+  duplicateWorkflow,
+  removeWorkflow,
+  updateWorkflow,
+} from 'models/chart/updates';
 import { getHash } from 'utils/hash';
 import { calculateGranularity } from 'utils/timeseries';
 import { convertValue } from 'utils/units';
@@ -32,6 +36,9 @@ import { StyleButton } from 'components/StyleButton/StyleButton';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+import Dropdown from 'components/Dropdown/Dropdown';
+import { trackUsage } from 'services/metrics';
+import chartAtom from 'models/chart/atom';
 import {
   DropdownWithoutMaxWidth,
   SourceDescription,
@@ -41,7 +48,6 @@ import {
   SourceStatus,
   StyledStatusIcon,
 } from './elements';
-import WorkflowMenu from './WorkflowMenu';
 
 type Props = {
   chart: Chart;
@@ -85,6 +91,7 @@ function WorkflowRow({
   const { mutate: createCalculation, isLoading: isCallLoading } =
     useCreateCalculation();
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
+  const [, setChart] = useRecoilState(chartAtom);
   const {
     id,
     enabled,
@@ -103,7 +110,6 @@ function WorkflowRow({
   const [, , operations] = useAvailableOps();
 
   const t = { ...defaultTranslations, ...translations };
-  const { Duplicate } = t;
 
   const update = useCallback(
     (wfId: string, diff: Partial<ChartWorkflow>) => {
@@ -530,26 +536,28 @@ function WorkflowRow({
             style={{ textAlign: 'center', paddingLeft: 0 }}
             className="downloadChartHide col-action"
           >
-            <Dropdown
-              content={
-                <WorkflowMenu
-                  chart={chart}
-                  id={id}
-                  translations={{ Duplicate }}
-                >
-                  <Menu.Item onClick={openNodeEditor} appendIcon="Function">
-                    <span>{t['Edit calculation']}</span>
-                  </Menu.Item>
-                </WorkflowMenu>
-              }
-            >
-              <Button
-                type="ghost"
-                icon="EllipsisHorizontal"
-                style={{ height: 28 }}
-                aria-label="more"
-              />
-            </Dropdown>
+            <Dropdown.Uncontrolled
+              options={[
+                {
+                  label: t['Edit calculation'],
+                  icon: 'Function',
+                  onClick: openNodeEditor,
+                },
+                {
+                  label: t.Duplicate,
+                  icon: 'Duplicate',
+                  onClick: () => {
+                    const wf = chart?.workflowCollection?.find(
+                      (wfc) => wfc.id === id
+                    );
+                    if (wf) {
+                      setChart((oldChart) => duplicateWorkflow(oldChart!, id));
+                      trackUsage('ChartView.DuplicateCalculation');
+                    }
+                  },
+                },
+              ]}
+            />
           </td>
         </>
       )}

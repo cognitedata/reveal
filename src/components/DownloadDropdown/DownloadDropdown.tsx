@@ -1,12 +1,13 @@
 /**
  * Download Charts
  */
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { useState } from 'react';
+import { Button } from '@cognite/cogs.js';
 import { useScreenshot } from 'use-screenshot-hook';
 import { downloadImage, toggleDownloadChartElements } from 'utils/charts';
 import { Chart } from 'models/chart/types';
-import { useCallback, useState } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
+import Dropdown from 'components/Dropdown/Dropdown';
 import CSVModal, {
   defaultTranslations as CSVModalDefaultTranslations,
 } from './CSVModal';
@@ -30,47 +31,40 @@ const DownloadDropdown = ({
 }: SharingDropdownProps) => {
   const t = { ...defaultTranslations, ...translations };
   const { takeScreenshot } = useScreenshot();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isCSVModalVisible, setIsCSVModalVisible] = useState(false);
-
-  const handleToggleMenu = useCallback(() => {
-    setIsMenuOpen((visible) => !visible);
-  }, []);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <>
       <Dropdown
-        visible={isMenuOpen}
-        content={
-          <Menu onClick={handleToggleMenu}>
-            <Menu.Header>{t.Download}</Menu.Header>
-            <Menu.Item
-              onClick={() => {
-                const height = toggleDownloadChartElements(true);
-                takeScreenshot('png').then((image) => {
-                  toggleDownloadChartElements(false, height);
-                  downloadImage(image, chart.name);
-                });
-              }}
-            >
-              <Icon type="Image" /> {t.PNG}
-            </Menu.Item>
-            <Menu.Item
-              onClick={() => {
-                setIsCSVModalVisible(true);
-              }}
-            >
-              <Icon type="DataTable" />
-              {t['CSV (Time series only)']}
-            </Menu.Item>
-          </Menu>
-        }
+        style={{ width: '14rem' }}
+        title={t.Download}
+        open={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        options={[
+          {
+            label: t.PNG,
+            icon: 'Image',
+            onClick: () => {
+              const height = toggleDownloadChartElements(true);
+              takeScreenshot('png').then((image) => {
+                toggleDownloadChartElements(false, height);
+                downloadImage(image, chart.name);
+              });
+            },
+          },
+          {
+            label: t['CSV (Time series only)'],
+            icon: 'DataTable',
+            onClick: () => setIsCSVModalVisible(true),
+          },
+        ]}
       >
         <Button
-          onClick={handleToggleMenu}
           icon="Download"
           type="ghost"
-          aria-label={t.Download}
+          aria-label="Open dropdown"
+          onClick={() => setIsMenuOpen((prevState) => !prevState)}
         />
       </Dropdown>
       <CSVModal

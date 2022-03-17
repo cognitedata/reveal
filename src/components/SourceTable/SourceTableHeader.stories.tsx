@@ -8,7 +8,7 @@ import { SourceTableHeader, SourceTableHeaderProps } from './SourceTableHeader';
 
 export default {
   component: SourceTableHeader,
-  title: 'Components/Source Table Header',
+  title: 'Components/Source Table/Table Header',
 } as Meta;
 
 const Template: Story<SourceTableHeaderProps> = (args) => (

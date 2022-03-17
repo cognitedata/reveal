@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
+import { ComponentProps, useEffect, useState } from 'react';
+import { toast } from '@cognite/cogs.js';
 import { Chart } from 'models/chart/types';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import { useNavigate } from 'hooks/navigation';
@@ -7,6 +7,7 @@ import { duplicate } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useIsChartOwner } from 'hooks/user';
 import { makeDefaultTranslations } from 'utils/translations';
+import Dropdown from 'components/Dropdown/Dropdown';
 import { ListViewItem } from './ListViewItem';
 import { GridViewItem } from './GridViewItem';
 
@@ -34,7 +35,6 @@ const ChartListItem = ({ chart, view, translations }: ChartListItemProps) => {
   const { mutateAsync: updateChart, isError: renameError } = useUpdateChart();
   const { mutate: deleteChart, isError: deleteError } = useDeleteChart();
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const isChartOwner = useIsChartOwner(chart);
 
   const handleRenameChart = (name: string) => {
@@ -72,49 +72,41 @@ const ChartListItem = ({ chart, view, translations }: ChartListItemProps) => {
     }
   };
 
-  const closeMenu = () => setIsMenuOpen(false);
+  type DropdownOptions = ComponentProps<
+    typeof Dropdown.Uncontrolled
+  >['options'];
+
+  const ownerMenuItems: DropdownOptions = [
+    {
+      label: t.Rename,
+      icon: 'Edit',
+      onClick: () => setIsEditingName(true),
+    },
+    {
+      label: t.Delete,
+      icon: 'Delete',
+      onClick: () => handleDeleteChart(),
+    },
+  ];
+
+  const readOnlyMenuItems: DropdownOptions = [
+    {
+      label: t.Duplicate,
+      icon: 'Duplicate',
+      onClick: () => handleDuplicateChart(),
+    },
+  ];
 
   const dropdownMenu = (
-    <Dropdown
-      visible={isMenuOpen}
-      onClickOutside={closeMenu}
-      content={
-        <Menu onClick={closeMenu} style={{ width: 150 }}>
-          <Menu.Header>
-            <span style={{ wordBreak: 'break-word' }}>{chart.name}</span>
-          </Menu.Header>
-          {isChartOwner && (
-            <>
-              <Menu.Item
-                onClick={() => setIsEditingName(true)}
-                appendIcon="Edit"
-              >
-                <span>{t.Rename}</span>
-              </Menu.Item>
-              <Menu.Item
-                onClick={() => handleDeleteChart()}
-                appendIcon="Delete"
-              >
-                <span>{t.Delete}</span>
-              </Menu.Item>
-            </>
-          )}
-          <Menu.Item
-            onClick={() => handleDuplicateChart()}
-            appendIcon="Duplicate"
-          >
-            <span>{t.Duplicate}</span>
-          </Menu.Item>
-        </Menu>
+    <Dropdown.Uncontrolled
+      title={chart.name}
+      options={
+        isChartOwner
+          ? [...ownerMenuItems, ...readOnlyMenuItems]
+          : readOnlyMenuItems
       }
-    >
-      <Button
-        type="ghost"
-        icon="EllipsisVertical"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        aria-label="more"
-      />
-    </Dropdown>
+      btnProps={{ icon: 'EllipsisVertical' }}
+    />
   );
 
   if (view === 'list') {
