@@ -239,6 +239,12 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
+      - name: Download viewer build artifact 
+        uses: actions/download-artifact@v3
+        with:
+          name: viewer
+          path: viewer/dist/
+
       - uses: actions/cache@v2
         id: npm_cache
         with:
@@ -332,7 +338,7 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: [ci-examples, build-viewer, ci-parser-worker]
+    needs: [ci-examples, build-viewer, ci-parser-worker, deploy-preview-documentation]
     if: always()
     steps:
     - uses: geekyeggo/delete-artifact@v1
