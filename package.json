@@ -54,7 +54,7 @@
     "locize": "2.2.4",
     "locize-lastused": "3.0.13",
     "lodash": "4.17.21",
-    "mixpanel-browser": "^2.45.0",
+    "mixpanel-browser": "2.45.0",
     "ms": "2.1.3",
     "plotly.js-basic-dist": "2.9.0",
     "query-string": "7.1.1",
