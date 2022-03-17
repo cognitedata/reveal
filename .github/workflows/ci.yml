@@ -111,7 +111,9 @@ jobs:
       run: yarn install --immutable
 
     - name: Install NPM examples dependencies
-      if: steps.npm_cache.outputs.cache-hit != 'true'
+      # Note! react-app-rewired doesn't work when we get deps from cache for some reason,
+      # so we'll ignore the cache.
+      # if: steps.npm_cache.outputs.cache-hit != 'true'
       working-directory: examples
       run: yarn install --immutable
       
