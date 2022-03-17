@@ -16,6 +16,7 @@ export type BlendOptions = {
 
 export type BlitOptions = {
   texture: THREE.Texture;
+  gaussianBlur?: boolean;
   depthTexture?: THREE.DepthTexture;
   blendOptions?: BlendOptions;
 };
@@ -37,7 +38,7 @@ export class BlitPass implements RenderPass {
   private readonly _fullScreenTriangle: THREE.Mesh;
 
   constructor(options: BlitOptions) {
-    const { texture, depthTexture, blendOptions } = options;
+    const { texture, gaussianBlur, depthTexture, blendOptions } = options;
 
     const uniforms = {
       tDiffuse: { value: texture }
@@ -50,6 +51,10 @@ export class BlitPass implements RenderPass {
       uniforms['tDepth'] = { value: depthTexture };
       defines['DEPTH_WRITE'] = true;
       depthTest = true;
+    }
+
+    if (gaussianBlur ?? false) {
+      defines['GAUSSIAN_BLUR'] = true;
     }
 
     const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;

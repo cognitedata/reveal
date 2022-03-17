@@ -24,8 +24,6 @@ export class SSAOPass implements RenderPass {
       kernel: { value: this.createKernel(sampleSize) }
     };
 
-    // uniform vec2 resolution;
-
     this._ssaoShaderMaterial = new THREE.RawShaderMaterial({
       vertexShader: ssaoShaders.vertex,
       fragmentShader: ssaoShaders.fragment,

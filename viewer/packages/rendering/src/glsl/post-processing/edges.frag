@@ -1,12 +1,11 @@
 precision highp float;
 
-#pragma glslify: import('./edge-detect.glsl')
-
 uniform sampler2D tDiffuse;
 
 in vec2 vUv;
-
 out vec4 edge;
+
+#pragma glslify: import('./edge-detect.glsl')
 
 void main() {
   ivec2 textureSize = textureSize(tDiffuse, 0);

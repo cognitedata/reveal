@@ -71,7 +71,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
     renderer.setRenderTarget(this._renderTargetData.composition);
     const texture = this._renderTargetData.ssao.texture;
-    yield new BlitPass({ texture, blendOptions: alphaMaskBlendOptions });
+    yield new BlitPass({ texture, gaussianBlur: true, blendOptions: alphaMaskBlendOptions });
 
     renderer.setRenderTarget(this._renderTargetData.composition);
     yield new EdgeDetectPass(this._renderTargetData.color.texture);

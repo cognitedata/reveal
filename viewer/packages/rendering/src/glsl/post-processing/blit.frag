@@ -10,9 +10,17 @@ in vec2 vUv;
 
 out vec4 diffuse;
 
-void main() {
-  vec4 color = texture(tDiffuse, vUv);
+#if defined(GAUSSIAN_BLUR) 
+#pragma glslify: import('./gaussian-blur.glsl')
+#endif
 
+void main() {
+
+#if defined(GAUSSIAN_BLUR) 
+  vec4 color = gaussianBlur(tDiffuse, vUv);
+#else
+  vec4 color = texture(tDiffuse, vUv);
+#endif
   if(color == vec4(0.0)){
     discard;
   }
