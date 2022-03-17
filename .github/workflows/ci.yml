@@ -33,9 +33,10 @@ jobs:
       continue-on-error: false
       run: yarn run lint
 
-    - name: Build prod version
-      working-directory: viewer
-      run: yarn run build:prod
+    # Skip to save time - development version is enough
+    # - name: Build prod version
+    #   working-directory: viewer
+    #   run: yarn run build:prod
 
     - name: Build development version
       working-directory: viewer
@@ -120,11 +121,13 @@ jobs:
     - name: Increase number of inotify watches
       run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 
+    # Disabled because visual tests also builds examples
     # - name: Build examples
     #   working-directory: examples
     #   run: |
     #     echo "NODE_OPTIONS=--max-old-space-size=8192" >> $GITHUB_ENV
     #     yarn build
+
     - name: Visual regression tests
       id: visualtests
       working-directory: examples
