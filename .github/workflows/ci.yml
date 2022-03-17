@@ -32,7 +32,7 @@ jobs:
 
     - name: Build development version
       working-directory: viewer
-      run: yarn run build:prod
+      run: yarn run build
 
     - name: Upload dist/ artifact 
       uses: actions/upload-artifact@v3
