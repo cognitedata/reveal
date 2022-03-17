@@ -33,7 +33,7 @@ export type FunctionNodeCallbacks = {
 export type FunctionNodeData = FunctionNodeDataDehydrated &
   FunctionNodeCallbacks & {
     translations: typeof defaultTranslations;
-    operation: Operation;
+    operation?: Operation;
     readOnly: boolean;
   };
 
@@ -50,9 +50,19 @@ const FunctionNode = memo(
       translations: t,
     } = data;
 
-    const selectedOperationVersion = operation.versions.find(
+    const [areParamsVisible, setAreParamsVisible] = useState<boolean>(false);
+
+    useEffect(() => {
+      setAreParamsVisible(false);
+    }, [selected]);
+
+    const selectedOperationVersion = operation?.versions.find(
       ({ version }) => version === selectedOperation.version
-    )!;
+    );
+
+    if (!selectedOperationVersion) {
+      return null;
+    }
 
     const nodeHeight = selectedOperationVersion.inputs.length * PIN_MIN_HEIGHT;
 
@@ -60,12 +70,6 @@ const FunctionNode = memo(
     const parameters = (selectedOperationVersion.parameters || []).filter(
       (p) => p.param !== AUTO_ALIGN_PARAM
     );
-
-    const [areParamsVisible, setAreParamsVisible] = useState<boolean>(false);
-
-    useEffect(() => {
-      setAreParamsVisible(false);
-    }, [selected]);
 
     const containerClasses = classNames(FUNCTION_NODE_DRAG_HANDLE_CLASSNAME, {
       selected,

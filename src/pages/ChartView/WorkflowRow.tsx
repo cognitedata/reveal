@@ -97,7 +97,7 @@ function WorkflowRow({
     unit,
     preferredUnit,
   } = workflow;
-  const call = calls?.sort((c) => c.callDate)[0];
+  const call = [...(calls || [])].sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
 
   const [, , operations] = useAvailableOps();

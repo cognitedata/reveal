@@ -344,6 +344,204 @@ export const updateWorkflowsToSupportVersions = (chart: Chart): Chart => {
   };
 };
 
+export const getUpgradedOperationName = (operationName: string) => {
+  let opName = operationName;
+
+  switch (opName) {
+    case 'T_RES_DETECTOR':
+      opName = 'extreme';
+      break;
+    case 'OUTLIER_DETECTOR':
+      opName = 'extreme';
+      break;
+    case 'DRIFT_DETECTOR':
+      opName = 'drift';
+      break;
+    case 'SS_DETECTOR':
+      opName = 'ssid';
+      break;
+    case 'VARIABLE_MA':
+      opName = 'vma';
+      break;
+    case 'STATUS_FLAG_FILTER':
+      opName = 'status_flag_filter';
+      break;
+    case 'WAVELET_FILTER':
+      opName = 'wavelet_filter';
+      break;
+    case 'ARMA_FORECAST':
+      opName = 'arma_predictor';
+      break;
+    case 'PI_CALC':
+      opName = 'productivity_index';
+      break;
+    case 'SHUTIN_CALC':
+      opName = 'calculate_shutin_interval';
+      break;
+    case 'POLY_REGRESSOR':
+      opName = 'poly_regression';
+      break;
+    case 'INTERPOLATE':
+      opName = 'interpolate';
+      break;
+    case 'RESAMPLE':
+      opName = 'resample_to_granularity';
+      break;
+    case 'RESAMPLE_EXTENDED':
+      opName = 'resample';
+      break;
+    case 'ALMA_SMOOTHER':
+      opName = 'alma';
+      break;
+    case 'ARMA_SMOOTHER':
+      opName = 'arma';
+      break;
+    case 'BTR_SMOOTHER':
+      opName = 'butterworth';
+      break;
+    case 'CHB_SMOOTHER':
+      opName = 'chebyshev';
+      break;
+    case 'EXP_WMA':
+      opName = 'ewma';
+      break;
+    case 'LINEAR_WMA':
+      opName = 'lwma';
+      break;
+    case 'SG_SMOOTHER':
+      opName = 'sg';
+      break;
+    case 'SIMPLE_MA':
+      opName = 'sma';
+      break;
+    case 'OUTLIERS_REMOVE':
+      opName = 'remove_outliers';
+      break;
+    case 'EXP':
+      opName = 'exp';
+      break;
+    case 'LOG':
+      opName = 'log';
+      break;
+    case 'LOG2':
+      opName = 'log2';
+      break;
+    case 'LOG10':
+      opName = 'log10';
+      break;
+    case 'LOGN':
+      opName = 'logn';
+      break;
+    case 'INTEGRATE':
+      opName = 'trapezoidal_integration';
+      break;
+    case 'DDX':
+      opName = 'differentiate';
+      break;
+    case 'ADD':
+      opName = 'add';
+      break;
+    case 'SUB':
+      opName = 'sub';
+      break;
+    case 'MUL':
+      opName = 'mul';
+      break;
+    case 'DIV':
+      opName = 'div';
+      break;
+    case 'POW':
+      opName = 'power';
+      break;
+    case 'INV':
+      opName = 'inv';
+      break;
+    case 'SQRT':
+      opName = 'sqrt';
+      break;
+    case 'NEG':
+      opName = 'neg';
+      break;
+    case 'ABS':
+      opName = 'absolute';
+      break;
+    case 'MOD':
+      opName = 'mod';
+      break;
+    case 'SIN':
+      opName = 'sin';
+      break;
+    case 'COS':
+      opName = 'cos';
+      break;
+    case 'TAN':
+      opName = 'tan';
+      break;
+    case 'ARCSIN':
+      opName = 'arcsin';
+      break;
+    case 'ARCCOS':
+      opName = 'arccos';
+      break;
+    case 'ARCTAN':
+      opName = 'arctan';
+      break;
+    case 'ARCTAN2':
+      opName = 'arctan2';
+      break;
+    case 'DEG2RAD':
+      opName = 'deg2rad';
+      break;
+    case 'RAD2DEG':
+      opName = 'rad2deg';
+      break;
+    case 'SINH':
+      opName = 'sinh';
+      break;
+    case 'COSH':
+      opName = 'cosh';
+      break;
+    case 'TANH':
+      opName = 'tanh';
+      break;
+    case 'ARCSINH':
+      opName = 'arcsinh';
+      break;
+    case 'ARCCOSH':
+      opName = 'arccosh';
+      break;
+    case 'ARCTANH':
+      opName = 'arctanh';
+      break;
+    case 'ROUND':
+      opName = 'round';
+      break;
+    case 'FLOOR':
+      opName = 'floor';
+      break;
+    case 'CEIL':
+      opName = 'ceil';
+      break;
+    case 'SIGN':
+      opName = 'sign';
+      break;
+    case 'CLIP':
+      opName = 'clip';
+      break;
+    case 'MAX':
+      opName = 'maximum';
+      break;
+    case 'MIN':
+      opName = 'minimum';
+      break;
+    case 'BIN_MAP':
+      opName = 'bin_map';
+      break;
+  }
+
+  return opName;
+};
+
 /**
  * Migration to introduce versions for operations in calculations
  */
@@ -375,8 +573,14 @@ export const updateWorkflowsFromV1toV2 = (
                 } as Node<ConstantNodeDataDehydrated>;
               }
               case 'TOOLBOX_FUNCTION': {
-                const opName = node.functionData?.toolFunction?.op;
+                const inputOpName = node.functionData?.toolFunction?.op;
+                const opName = getUpgradedOperationName(inputOpName);
                 const operation = operations.find(({ op }) => op === opName);
+
+                if (!operation) {
+                  return undefined;
+                }
+
                 const oldestVersion = (operation?.versions || [])
                   .slice()
                   .sort((a, b) => compareVersions(b.version, a.version))[0];
@@ -430,7 +634,9 @@ export const updateWorkflowsFromV1toV2 = (
                   (chart.timeSeriesCollection || []).find(
                     (ts) =>
                       ts.tsExternalId ===
-                      node.functionData?.timeseriesExternalId
+                        node.functionData?.timeseriesExternalId ||
+                      ts.tsExternalId ===
+                        node.functionData?.timeSeriesExternalId
                   )?.id || '';
 
                 return {
@@ -451,9 +657,7 @@ export const updateWorkflowsFromV1toV2 = (
                 };
               }
               default:
-                throw new Error(
-                  `Unknown node type ${node.functionEffectReference}`
-                );
+                return undefined;
             }
           })
           .filter((x) => x);
@@ -483,6 +687,7 @@ export const updateWorkflowsFromV1toV2 = (
           },
         };
       }
+
       return workflow;
     }),
   };

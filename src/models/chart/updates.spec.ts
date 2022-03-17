@@ -918,6 +918,32 @@ describe('charts util', () => {
                 title: 'VAL_21_PI_1019_04:Z.X.Value',
               },
               {
+                x: 11,
+                inputPins: [],
+                id: '006fe9d1-b815-4634-a0c3-266da87b3416-2',
+                functionData: {
+                  timeSeriesExternalId: 'VAL_21_PI_1019_04:Z.X.Value',
+                },
+                icon: 'Function',
+                y: 112,
+                calls: [],
+                functionEffectReference: 'TIME_SERIES_REFERENCE',
+                width: 314.546875,
+                outputPins: [
+                  {
+                    title: 'Time Series',
+                    y: 132,
+                    x: 325.546875,
+                    id: 'result',
+                    type: 'TIMESERIES',
+                  },
+                ],
+                subtitle: 'Time Series',
+                color: '#FC2574',
+                selected: false,
+                title: 'VAL_21_PI_1019_04:Z.X.Value',
+              },
+              {
                 selected: false,
                 id: 'd0d8a17f-fddd-4569-be52-1ef8d7f87a3e',
                 outputPins: [
@@ -1290,6 +1316,32 @@ describe('charts util', () => {
                 title: 'VAL_21_PI_1019_04:Z.X.Value',
               },
               {
+                x: 11,
+                inputPins: [],
+                id: '006fe9d1-b815-4634-a0c3-266da87b3416-2',
+                functionData: {
+                  timeSeriesExternalId: 'VAL_21_PI_1019_04:Z.X.Value',
+                },
+                icon: 'Function',
+                y: 112,
+                calls: [],
+                functionEffectReference: 'TIME_SERIES_REFERENCE',
+                width: 314.546875,
+                outputPins: [
+                  {
+                    title: 'Time Series',
+                    y: 132,
+                    x: 325.546875,
+                    id: 'result',
+                    type: 'TIMESERIES',
+                  },
+                ],
+                subtitle: 'Time Series',
+                color: '#FC2574',
+                selected: false,
+                title: 'VAL_21_PI_1019_04:Z.X.Value',
+              },
+              {
                 selected: false,
                 id: 'd0d8a17f-fddd-4569-be52-1ef8d7f87a3e',
                 outputPins: [
@@ -1575,6 +1627,18 @@ describe('charts util', () => {
                 },
                 {
                   id: '006fe9d1-b815-4634-a0c3-266da87b3416-1',
+                  type: 'CalculationInput',
+                  position: {
+                    x: 11,
+                    y: 112,
+                  },
+                  data: {
+                    selectedSourceId: 'e050378a-42e0-4a7e-b0c2-7ad1f2512f78',
+                    type: 'timeseries',
+                  },
+                },
+                {
+                  id: '006fe9d1-b815-4634-a0c3-266da87b3416-2',
                   type: 'CalculationInput',
                   position: {
                     x: 11,
