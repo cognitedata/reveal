@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-extractor-downloads",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "scripts": {
     "start": "env BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=8000 rescripts start",
