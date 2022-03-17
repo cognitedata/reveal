@@ -17,19 +17,10 @@ type Props = {
 
 export const Cell = (props: Props): JSX.Element => {
   const { cellData, columnIndex = -1, rowIndex = -1 } = props;
-  const { selectedCell, deselectCell, setSelectedCell, isCellSelected } =
-    useCellSelection();
+  const { selectedCell, setSelectedCell, isCellSelected } = useCellSelection();
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isOverflow, setIsOverflow] = useState<boolean>(false);
   const selectedCellRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    document.addEventListener('mousedown', onCellClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', onCellClickOutside);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const element = selectedCellRef?.current;
@@ -44,13 +35,10 @@ export const Cell = (props: Props): JSX.Element => {
     setIsSelected(isCellSelected(rowIndex, columnIndex));
   }, [selectedCell, rowIndex, columnIndex, isCellSelected]);
 
-  const onCellSelect = () =>
+  const onCellSelect = (event: React.MouseEvent) => {
     setSelectedCell({ rowIndex, columnIndex, cellData });
-  const onCellClickOutside = (event: MouseEvent) => {
-    const element = (selectedCellRef as React.MutableRefObject<HTMLDivElement>)
-      ?.current;
-    if (!element) return;
-    if (element && !element.contains(event.target as Node)) deselectCell();
+    // This stops deselect on cell click
+    event.stopPropagation();
   };
 
   if (columnIndex === 0) {
