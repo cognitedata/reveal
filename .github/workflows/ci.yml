@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest 
     steps:
     - uses: actions/checkout@v2
+
     - name: Install NPM dependencies
       working-directory: viewer
       run: yarn install --immutable
@@ -80,9 +81,14 @@ jobs:
         name: viewer
         path: viewer/dist/
 
-    - name: Install examples-dependencies
+
+    - name: Install NPM viewer dependencies
+      working-directory: viewer
+      run: yarn install --immutable
+
+    - name: Install NPM examples dependencies
       working-directory: examples
-      run: yarn --immutable
+      run: yarn install --immutable
       
     - name: Increase number of inotify watches
       run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
