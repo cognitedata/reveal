@@ -27,14 +27,22 @@ const TimeSeriesSidebar = ({
     min: string;
     max: string;
   }>({
-    min: String(timeSeriesTag?.rule?.min || ''),
-    max: String(timeSeriesTag?.rule?.max || ''),
+    min: String(
+      timeSeriesTag?.rule?.min === undefined ? '' : timeSeriesTag?.rule?.min
+    ),
+    max: String(
+      timeSeriesTag?.rule?.max === undefined ? '' : timeSeriesTag?.rule?.max
+    ),
   });
 
   useEffect(() => {
     setMinMaxValues({
-      min: String(timeSeriesTag?.rule?.min || ''),
-      max: String(timeSeriesTag?.rule?.max || ''),
+      min: String(
+        timeSeriesTag?.rule?.min === undefined ? '' : timeSeriesTag?.rule?.min
+      ),
+      max: String(
+        timeSeriesTag?.rule?.max === undefined ? '' : timeSeriesTag?.rule?.max
+      ),
     });
   }, [timeSeriesTag?.rule]);
 
@@ -73,7 +81,7 @@ const TimeSeriesSidebar = ({
             <Input
               type="text"
               placeholder="Min"
-              value={minMaxValues.min || ''}
+              value={minMaxValues.min === undefined ? '' : minMaxValues.min}
               onChange={(e) => {
                 const min = e.target.value;
                 setMinMaxValues({
@@ -84,7 +92,7 @@ const TimeSeriesSidebar = ({
                   onUpdate({
                     rule: {
                       ...timeSeriesTag.rule,
-                      min: +min,
+                      min: min === '' ? undefined : Number(min),
                     },
                   });
                 }
@@ -93,18 +101,18 @@ const TimeSeriesSidebar = ({
             <Input
               type="text"
               placeholder="Max"
-              value={minMaxValues.max || ''}
+              value={minMaxValues.max === undefined ? '' : minMaxValues.max}
               onChange={(e) => {
                 const max = e.target.value;
                 setMinMaxValues({
                   min: minMaxValues.min,
                   max,
                 });
-                if (!Number.isNaN(Number(max))) {
+                if (!Number.isNaN(Number(max)) || max === '') {
                   onUpdate({
                     rule: {
                       ...timeSeriesTag.rule,
-                      max: +max,
+                      max: max === '' ? undefined : Number(max),
                     },
                   });
                 }
