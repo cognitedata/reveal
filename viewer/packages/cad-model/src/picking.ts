@@ -45,6 +45,14 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectInput): I
   return results.sort((l, r) => l.distance - r.distance);
 }
 
+export function intersectionCadNodesFromStoredPixel(cadNodes: CadNode[], input: IntersectInput): THREE.Vector3 {
+  let result = new THREE.Vector3();
+  for (const cadNode of cadNodes) {
+    result = intersectCadNodeFromStoredPixel(cadNode, input);
+  }
+  return result;
+}
+
 export function intersectCadNode(cadNode: CadNode, input: IntersectInput): IntersectCadNodesResult | undefined {
   const { camera, normalizedCoords, renderer, domElement } = input;
   const pickingScene = new THREE.Scene();
@@ -77,6 +85,53 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectInput): Inter
       object: cadNode,
       cadNode
     };
+  } finally {
+    // Re-add cadNode to previous parent
+    if (oldParent) {
+      oldParent.add(cadNode);
+    }
+  }
+}
+
+let depthArray = new Uint8Array();
+
+export function intersectCadNodeFromStoredPixel(cadNode: CadNode, input: IntersectInput): THREE.Vector3 | undefined {
+  const { camera, normalizedCoords, renderer, domElement } = input;
+  const pickingScene = new THREE.Scene();
+  // TODO consider case where parent does not exist
+  // TODO add warning if parent has transforms
+  const oldParent = cadNode.parent;
+  pickingScene.add(cadNode);
+  try {
+    const pickInput = {
+      normalizedCoords,
+      camera,
+      renderer,
+      domElement,
+      scene: pickingScene,
+      cadNode
+    };
+
+    if (depthArray.length === 0) {
+      const previousRenderMode = cadNode.renderMode;
+      cadNode.renderMode = RenderMode.Depth;
+      depthArray = pickPixelBufferColor(pickInput, clearColor, clearAlpha);
+      cadNode.renderMode = previousRenderMode;
+    }
+    const absoluteCoords = {
+      x: Math.round(((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth),
+      y: Math.round(((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight)
+    };
+    const depthArrayLocation = Math.round(
+      ((domElement.clientHeight - absoluteCoords.y) * domElement.clientWidth + absoluteCoords.x) * 4
+    );
+    const depthPixel = depthArray.subarray(depthArrayLocation, depthArrayLocation + 4);
+    const depth = unpackRGBAToDepth(depthPixel);
+
+    const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
+    const point = getPosition(pickInput, viewZ);
+
+    return point;
   } finally {
     // Re-add cadNode to previous parent
     if (oldParent) {
@@ -172,6 +227,30 @@ function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha
     renderer.clearColor();
     renderer.render(scene, pickCamera);
     renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
+  } finally {
+    stateHelper.resetState();
+  }
+  return pixelBuffer;
+}
+
+function pickPixelBufferColor(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
+  const { scene, camera, renderer, domElement } = input;
+
+  const renderTarget = new THREE.WebGLRenderTarget(domElement.clientWidth, domElement.clientHeight);
+  const pixelBuffer = new Uint8Array(domElement.clientWidth * domElement.clientHeight * 4);
+
+  const stateHelper = new WebGLRendererStateHelper(renderer);
+  try {
+    const { width, height } = renderer.getSize(new THREE.Vector2());
+    renderTarget.setSize(width, height);
+    stateHelper.setRenderTarget(renderTarget);
+    stateHelper.setClearColor(clearColor, clearAlpha);
+
+    renderer.clearColor();
+    renderer.render(scene, camera);
+
+    const gl = renderer.getContext();
+    gl.readPixels(0, 0, domElement.clientWidth, domElement.clientHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixelBuffer);
   } finally {
     stateHelper.resetState();
   }

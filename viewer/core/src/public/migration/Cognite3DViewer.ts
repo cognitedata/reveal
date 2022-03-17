@@ -21,7 +21,11 @@ import {
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { intersectCadNodes, CadModelSectorLoadStatistics } from '@reveal/cad-model';
+import {
+  intersectCadNodes,
+  intersectionCadNodesFromStoredPixel,
+  CadModelSectorLoadStatistics
+} from '@reveal/cad-model';
 
 import {
   AddModelOptions,
@@ -458,6 +462,10 @@ export class Cognite3DViewer {
 
   get cameraManager(): CameraManager {
     return this._cameraManager;
+  }
+
+  get inputHandler(): InputHandler {
+    return this._mouseHandler;
   }
 
   /**
@@ -1063,6 +1071,25 @@ export class Cognite3DViewer {
 
     intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
     return intersections.length > 0 ? intersections[0] : null;
+  }
+
+  async getIntersectionPixelFromBuffer(offsetX: number, offsetY: number): Promise<THREE.Vector3> {
+    const cadModels = this.getModels('cad');
+    const cadNodes = cadModels.map(x => x.cadNode);
+    const normalizedCoords = {
+      x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
+      y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
+    };
+
+    const input: IntersectInput = {
+      normalizedCoords,
+      camera: this.camera,
+      renderer: this.renderer,
+      clippingPlanes: this.getClippingPlanes(),
+      domElement: this.renderer.domElement
+    };
+
+    return intersectionCadNodesFromStoredPixel(cadNodes, input);
   }
 
   private getModels(type: 'cad'): Cognite3DModel[];

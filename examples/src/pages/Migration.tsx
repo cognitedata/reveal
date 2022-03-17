@@ -16,7 +16,7 @@ import {
   CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, MeasurementControls } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
@@ -255,7 +255,7 @@ export function Migration() {
         let maxDepth = -1;
         const cameraPosition = cameraManager.getCameraState().position;
         modelUi.cadModels.forEach(m => {
-          m.traverse(x => {
+          m.traverse((x: { hasOwnProperty: (arg0: string) => any; }) => {
             // Hacky way to access internals of SectorNode
             const depth = (x.hasOwnProperty('depth') && typeof (x as any).depth === 'number') ? (x as any).depth as number : 0;
             if (x.hasOwnProperty('bounds') && (x as any).bounds instanceof THREE.Box3 && (x as any).bounds.containsPoint(cameraPosition)) {
@@ -392,6 +392,8 @@ export function Migration() {
       });
 
       new AxisViewTool(viewer);
+
+      new MeasurementControls(viewer);
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
@@ -399,7 +401,7 @@ export function Migration() {
       model.getModelTransformation(boxes.matrix);
       boxes.matrixWorldNeedsUpdate = true;
 
-      model.traverse(x => {
+      model.traverse((x: any) => {
         if (x instanceof THREE.Mesh) {
           const mesh = x;
           const geometry: THREE.BufferGeometry = mesh.geometry;
