@@ -30,6 +30,10 @@ jobs:
       working-directory: viewer
       run: yarn run build:prod
 
+    - name: Build development version
+      working-directory: viewer
+      run: yarn run build:prod
+
     - name: Upload dist/ artifact 
       uses: actions/upload-artifact@v3
       with:
