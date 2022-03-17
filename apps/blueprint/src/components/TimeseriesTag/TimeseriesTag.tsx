@@ -91,11 +91,10 @@ const TimeseriesTag = ({
           <div className="tag--name">{timeseries.name}</div>
         </div>
 
-        {alert && (
-          <div className="tag--hoverbox bottom">
-            <div className="tag--rule">{alert}</div>
-          </div>
-        )}
+        <div className="tag--hoverbox bottom">
+          {attrs.comment && <div className="tag--comment">{attrs.comment}</div>}
+          {alert && <div className="tag--rule">{alert}</div>}
+        </div>
         <div className="tag--actions">
           {link?.URL && (
             <a

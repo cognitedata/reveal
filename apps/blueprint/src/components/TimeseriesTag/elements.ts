@@ -77,13 +77,15 @@ export const TimeseriesTagWrapper = styled.div<{
   }
 
   .tag--name,
-  .tag--rule {
+  .tag--rule,
+  .tag--comment {
     bottom: 100%;
     padding: 4px 8px;
     left: -46px;
     border-radius: 100px;
     background: ${(props) => props.color};
     white-space: nowrap;
+    margin-bottom: 4px;
   }
 
   .tag--rule {
