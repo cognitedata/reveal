@@ -1,68 +1,65 @@
 import React from 'react';
-
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import { Route, Router, Switch } from 'react-router-dom';
+import { StyleSheetManager } from 'styled-components';
 import {
   AuthWrapper,
+  SubAppWrapper,
   getEnv,
   getProject,
-  I18nWrapper,
-  SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
+import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
+import { createBrowserHistory } from 'history';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
 
-import { languages, setupTranslations } from 'common/i18n';
-import Home from 'pages/Home';
 import GlobalStyles from 'styles/GlobalStyles';
-import i18next from 'i18next';
+import { AntStyles } from 'styles/AntStyles';
+import sdk from 'utils/sdkSingleton';
+import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 
-setupTranslations();
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      staleTime: 10 * 60 * 1000, // Pretty long
-    },
-  },
-});
-const env = getEnv();
-const project = getProject();
+// import ExtractorDownloads from './Home';
+import ExtractorDownloads from './Home/Extractors';
 
 const App = () => {
-  const handleLanguageChange = (language: string) => {
-    if (languages.includes(language)) {
-      return i18next.changeLanguage(language);
-    }
-    return Promise.resolve();
-  };
+  const history = createBrowserHistory();
+  const env = getEnv();
+  const project = getProject();
+  const queryClient = new QueryClient();
 
   return (
     <FlagProvider
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-      appName="cdf-demo-app"
-      projectName={getProject()}
+      appName="cdf-extractor-downloads"
+      projectName={project}
     >
-      <I18nWrapper onLanguageChange={handleLanguageChange}>
-        <QueryClientProvider client={queryClient}>
-          <GlobalStyles>
-            <SubAppWrapper title="Unified Demo App">
+      <StyleSheetManager
+        disableVendorPrefixes={process.env.NODE_ENV === 'development'}
+      >
+        <GlobalStyles>
+          <AntStyles>
+            <SubAppWrapper>
               <AuthWrapper
                 loadingScreen={<Loader />}
                 login={() => loginAndAuthIfNeeded(project, env)}
               >
-                <SDKProvider sdk={sdk}>
-                  <Home />
-                </SDKProvider>
+                <QueryClientProvider client={queryClient}>
+                  <SDKProvider sdk={sdk}>
+                    <Router history={history}>
+                      <Switch>
+                        <Route
+                          path={['/:project/:appPath']}
+                          component={ExtractorDownloads}
+                        />
+                      </Switch>
+                    </Router>
+                  </SDKProvider>
+                </QueryClientProvider>
               </AuthWrapper>
             </SubAppWrapper>
-          </GlobalStyles>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </I18nWrapper>
+          </AntStyles>
+        </GlobalStyles>
+      </StyleSheetManager>
     </FlagProvider>
   );
 };

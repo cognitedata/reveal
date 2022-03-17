@@ -1,11 +1,11 @@
 {
-  "name": "@cognite/cdf-demo-app",
-  "version": "0.3.0",
+  "name": "@cognite/cdf-extractor-downloads",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost PORT=8000 react-app-rewired --max_old_space_size=2000 start",
     "build": "react-app-rewired --max_old_space_size=4096 build",
-    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-demo-app -o index.js -d ./build",
+    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-extractor-downloads -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "react-app-rewired test",
     "lint": "yarn prettier && yarn eslint",
