@@ -124,7 +124,7 @@ export const AssetMappingsSidebar = ({
             onClick={handleAssetClick}
             itemCount={assetListData?.length ?? 0}
             isItemLoaded={isItemLoaded}
-            loadMoreItems={() => { }}
+            loadMoreItems={() => {}}
           />
         </>
       ) : (
