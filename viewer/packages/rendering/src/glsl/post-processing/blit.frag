@@ -14,18 +14,19 @@ out vec4 diffuse;
 #pragma glslify: import('./gaussian-blur.glsl')
 #endif
 
+#if defined(FXAA) 
+#pragma glslify: import('./fxaa.glsl')
+#endif
+
 void main() {
 
 #if defined(GAUSSIAN_BLUR) 
-  vec4 color = gaussianBlur(tDiffuse, vUv);
+  diffuse = gaussianBlur(tDiffuse, vUv);
+#elif defined(FXAA)
+  diffuse = fxaa(tDiffuse);
 #else
-  vec4 color = texture(tDiffuse, vUv);
+  diffuse = texture(tDiffuse, vUv);
 #endif
-  if(color == vec4(0.0)){
-    discard;
-  }
-
-  diffuse = color;
 
 #if defined(DEPTH_WRITE) 
   gl_FragDepth = texture(tDepth, vUv).r;

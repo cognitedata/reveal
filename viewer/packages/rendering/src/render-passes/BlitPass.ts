@@ -14,9 +14,15 @@ export type BlendOptions = {
   blendSourceAlpha?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
 };
 
+export enum BlitEffect {
+  None,
+  GaussianBlur,
+  Fxaa
+}
+
 export type BlitOptions = {
   texture: THREE.Texture;
-  gaussianBlur?: boolean;
+  effect?: BlitEffect;
   depthTexture?: THREE.DepthTexture;
   blendOptions?: BlendOptions;
 };
@@ -38,7 +44,7 @@ export class BlitPass implements RenderPass {
   private readonly _fullScreenTriangle: THREE.Mesh;
 
   constructor(options: BlitOptions) {
-    const { texture, gaussianBlur, depthTexture, blendOptions } = options;
+    const { texture, effect, depthTexture, blendOptions } = options;
 
     const uniforms = {
       tDiffuse: { value: texture }
@@ -53,8 +59,11 @@ export class BlitPass implements RenderPass {
       depthTest = true;
     }
 
-    if (gaussianBlur ?? false) {
+    const blitEffect = effect ?? BlitEffect.None;
+    if (blitEffect === BlitEffect.GaussianBlur) {
       defines['GAUSSIAN_BLUR'] = true;
+    } else if (blitEffect === BlitEffect.Fxaa) {
+      defines['FXAA'] = true;
     }
 
     const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;

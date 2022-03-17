@@ -4,7 +4,13 @@
 
 import * as THREE from 'three';
 import { CadMaterialManager } from '../CadMaterialManager';
-import { alphaMaskBlendOptions, BlitOptions, BlitPass, transparentBlendOptions } from '../render-passes/BlitPass';
+import {
+  alphaMaskBlendOptions,
+  BlitOptions,
+  BlitPass,
+  transparentBlendOptions,
+  BlitEffect
+} from '../render-passes/BlitPass';
 import { EdgeDetectPass } from '../render-passes/EdgeDetectPass';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
@@ -71,7 +77,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
     renderer.setRenderTarget(this._renderTargetData.composition);
     const texture = this._renderTargetData.ssao.texture;
-    yield new BlitPass({ texture, gaussianBlur: true, blendOptions: alphaMaskBlendOptions });
+    yield new BlitPass({ texture, effect: BlitEffect.GaussianBlur, blendOptions: alphaMaskBlendOptions });
 
     renderer.setRenderTarget(this._renderTargetData.composition);
     yield new EdgeDetectPass(this._renderTargetData.color.texture);
@@ -112,7 +118,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       false
     );
 
-    yield* this.blitPass(renderer, null, this._renderTargetData.composition.texture);
+    renderer.setRenderTarget(null);
+    yield new BlitPass({ texture: this._renderTargetData.composition.texture, effect: BlitEffect.Fxaa });
 
     this.pipelineTearDown(renderer);
   }
