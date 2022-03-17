@@ -1,27 +1,35 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
-    "target": "es5",
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "dom",
-      "dom.iterable",
-      "esnext"
+      "es2015",
+      "es2016",
+      "es2017"
     ],
+    "jsx": "react-jsx",
+    "target": "es2016",
+    "module": "esNext",
     "allowJs": true,
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "sourceMap": true,
     "skipLibCheck": true,
+    "baseUrl": "src",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "baseUrl": "src",
+    "experimentalDecorators": true,
     "noFallthroughCasesInSwitch": true
   },
+  "baseUrl": "src",
   "include": [
-    "src"
+    "src/"
   ]
 }

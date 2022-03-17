@@ -1,11 +1,11 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import { MemoryRouter as Router } from 'react-router-dom';
 import Breadcrumbs from './Breadcrumbs';
 
 describe('Breadcrumbs', () => {
   it('Renders without exploding', () => {
-    const wrapper = mount(
+    const wrapper = shallow(
       <Router>
         <Breadcrumbs />
       </Router>

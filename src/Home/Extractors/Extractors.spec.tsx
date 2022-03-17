@@ -1,16 +1,15 @@
 import React from 'react';
-
-import { render } from '@testing-library/react';
+import { shallow } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
 import Extractors from './Extractors';
 
 describe('Extractors', () => {
   it('Renders without exploding', () => {
-    const { getAllByText } = render(
+    const wrapper = shallow(
       <MemoryRouter>
         <Extractors />
       </MemoryRouter>
     );
-    expect(getAllByText('Extractors').length).toBeGreaterThanOrEqual(1);
+    expect(wrapper).toHaveLength(1);
   });
 });
