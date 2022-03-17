@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-exploration",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/index.d.ts",
@@ -8,7 +8,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@cognite/annotations": "^1.1.0",
-    "@cognite/cogs.js": "3.42.5",
+    "@cognite/cogs.js": "^5.19.5",
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/react-feature-flags": "^0.1.0",
     "@cognite/react-picture-annotation": "3.0.0",

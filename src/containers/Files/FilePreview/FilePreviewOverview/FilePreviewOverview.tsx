@@ -253,7 +253,7 @@ export const FilePreviewOverview = ({
           key="assets"
           header={
             <CollapseHeader>
-              <Icon className="cogs-icon resource-icon" type="DataStudio" />
+              <Icon className="cogs-icon resource-icon" type="Assets" />
               <Title level={5}>Assets</Title>
               <div className="spacer" />
               <Badge
@@ -261,11 +261,7 @@ export const FilePreviewOverview = ({
                 background={Colors['purple-5'].hex()}
               />
               <Icon
-                type={
-                  open.includes('assets')
-                    ? 'ChevronUpCompact'
-                    : 'ChevronDownCompact'
-                }
+                type={open.includes('assets') ? 'ChevronUp' : 'ChevronDown'}
               />
             </CollapseHeader>
           }
@@ -305,11 +301,7 @@ export const FilePreviewOverview = ({
                 background={Colors['midorange-5'].hex()}
               />
               <Icon
-                type={
-                  open.includes('files')
-                    ? 'ChevronUpCompact'
-                    : 'ChevronDownCompact'
-                }
+                type={open.includes('files') ? 'ChevronUp' : 'ChevronDown'}
               />
             </CollapseHeader>
           }
@@ -341,10 +333,7 @@ export const FilePreviewOverview = ({
           key="timeseries"
           header={
             <CollapseHeader>
-              <Icon
-                className="cogs-icon resource-icon"
-                type="ResourceTimeseries"
-              />
+              <Icon className="cogs-icon resource-icon" type="Timeseries" />
               <Title level={5}>Time series</Title>
               <div className="spacer" />
               <Badge
@@ -352,11 +341,7 @@ export const FilePreviewOverview = ({
                 background={Colors['lightblue-5'].hex()}
               />
               <Icon
-                type={
-                  open.includes('timeseries')
-                    ? 'ChevronUpCompact'
-                    : 'ChevronDownCompact'
-                }
+                type={open.includes('timeseries') ? 'ChevronUp' : 'ChevronDown'}
               />
             </CollapseHeader>
           }
@@ -396,11 +381,7 @@ export const FilePreviewOverview = ({
                 background={Colors['pink-5'].hex()}
               />
               <Icon
-                type={
-                  open.includes('events')
-                    ? 'ChevronUpCompact'
-                    : 'ChevronDownCompact'
-                }
+                type={open.includes('events') ? 'ChevronUp' : 'ChevronDown'}
               />
             </CollapseHeader>
           }
@@ -440,11 +421,7 @@ export const FilePreviewOverview = ({
                 background={Colors['yellow-5'].hex()}
               />
               <Icon
-                type={
-                  open.includes('sequences')
-                    ? 'ChevronUpCompact'
-                    : 'ChevronDownCompact'
-                }
+                type={open.includes('sequences') ? 'ChevronUp' : 'ChevronDown'}
               />
             </CollapseHeader>
           }

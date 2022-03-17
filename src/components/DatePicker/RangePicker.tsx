@@ -121,7 +121,7 @@ export const RangePicker = ({
         <span ref={spanRef}>{`${moment(initialRange[0]).format(
           'yyyy/MM/DD HH:mm'
         )}`}</span>
-        <Icon type="ArrowForward" style={{ marginLeft: 8, marginRight: 8 }} />
+        <Icon type="ArrowRight" style={{ marginLeft: 8, marginRight: 8 }} />
         <span>{`${moment(initialRange[1]).format('yyyy/MM/DD HH:mm')}`}</span>
       </Button>
     </Dropdown>

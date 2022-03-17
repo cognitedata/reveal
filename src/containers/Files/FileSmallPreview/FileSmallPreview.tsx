@@ -172,7 +172,7 @@ export const FileSmallPreview = ({
             }}
             title={
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Icon type="DataStudio" style={{ marginRight: '4px' }} />
+                <Icon type="Assets" style={{ marginRight: '4px' }} />
                 <span>Detected asset tags</span>
               </div>
             }
@@ -192,7 +192,7 @@ export const FileSmallPreview = ({
             }}
             title={
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Icon type="DataStudio" style={{ marginRight: '4px' }} />
+                <Icon type="Assets" style={{ marginRight: '4px' }} />
                 <span>Detected file tags</span>
               </div>
             }

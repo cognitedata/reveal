@@ -1482,13 +1482,14 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cogs.js@3.42.5":
-  version "3.42.5"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.5.tgz#6806a2f57ed920c7fd457e5ade8fd1fe444168db"
-  integrity sha512-QNZBEuJJ8BT/iYl/5xQnOLmJXqfcAhK0rLhDmAxSMrrfqMsK9nVP68nrwL+Am6mI7/yNKEZP7041KXk10ErWuQ==
+"@cognite/cogs.js@^3.13.0":
+  version "3.44.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
+  integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
+    axios "^0.21.2"
     classnames "^2.3.1"
     color "^3.1.2"
     dayjs "^1.9.7"
@@ -1504,15 +1505,15 @@
     react-select "^3.1.0"
     react-table "^7.6.0"
     react-toastify "^6.0.9"
-    resize-observer "^1.0.3"
+    resize-observer-polyfill "^1.5.1"
     stylelint "^13.13.1"
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^3.13.0":
-  version "3.44.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
-  integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
+"@cognite/cogs.js@^5.19.5":
+  version "5.19.5"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.5.tgz#5fa025481b8711b90fea1b9b29bf38ebef773f29"
+  integrity sha512-8Fi+0J2j4qNOAENoIV2L10WXZGmhGXnxeEJDfZFZyPDWHKcilADD7mojmdg9lKGk1rgHkp4cYhxDm0xdRCwHwA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -16601,11 +16602,6 @@ resize-observer-polyfill@^1.5.0, resize-observer-polyfill@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
   integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
-
-resize-observer@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/resize-observer/-/resize-observer-1.0.3.tgz#127bc775a58832f4f8a9c38c08ba29fb4b8b6237"
-  integrity sha512-OlomP4hOcJTeKoiB90QvGWRelpresRrP+YrpmmE74V8WuiNkuc/X/r/qYMw35wCw1pJWb9hoRYUSHzau5znzAQ==
 
 resolve-cwd@^2.0.0:
   version "2.0.0"

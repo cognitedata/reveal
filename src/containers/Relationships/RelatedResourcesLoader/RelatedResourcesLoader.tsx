@@ -71,7 +71,7 @@ export const RelatedResourcesLoader = <T extends Resource>({
         footerRenderer: (
           <SpacedRow>
             <div className="spacer" />
-            <Icon type="Loading" />
+            <Icon type="Loader" />
             <div className="spacer" />
           </SpacedRow>
         ),

@@ -22,7 +22,7 @@ const ParentCell = ({
   return (
     <Button
       type="link"
-      icon="ArrowForward"
+      icon="ArrowRight"
       iconPlacement="right"
       style={{ color: 'inherit' }}
       onClick={e => {

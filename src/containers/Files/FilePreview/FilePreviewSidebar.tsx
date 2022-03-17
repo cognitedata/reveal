@@ -102,7 +102,7 @@ const FilePreviewSidebar = ({
         closable={false}
         header={
           <TitleWrapper>
-            {fileIcon || <Icon type="PDF" />}
+            {fileIcon || <Icon type="Document" />}
             <Title level={4}>{file?.name} </Title>
             {file?.id && (
               <div>

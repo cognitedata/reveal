@@ -80,7 +80,7 @@ export const SearchResultLoader = <T extends RealResourceType>({
         footerRenderer: (
           <SpacedRow>
             <div className="spacer" />
-            <Icon type="Loading" />
+            <Icon type="Loader" />
             <div className="spacer" />
           </SpacedRow>
         ),

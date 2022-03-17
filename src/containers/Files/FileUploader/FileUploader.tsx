@@ -264,7 +264,7 @@ export const FileUploader = ({
           <>
             <Button onClick={stopUpload}>Cancel Upload</Button>
             <div style={{ flex: 1 }} />
-            <Button type="primary" onClick={pauseUpload} icon="Loading">
+            <Button type="primary" onClick={pauseUpload} icon="Loader">
               Pause Upload
             </Button>
           </>

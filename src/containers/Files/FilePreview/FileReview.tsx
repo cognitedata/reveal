@@ -107,7 +107,7 @@ const FileReview = ({
         </IconWrapper>
         <CountWrapper>
           <Body level={5}>{assetAnnotations.length}</Body>
-          <Icon type="ChevronRightCompact" style={{ marginTop: '3px' }} />
+          <Icon type="ChevronRight" style={{ marginTop: '3px' }} />
         </CountWrapper>
       </StyledTag>
       <StyledTag onClick={() => onTypeClick('files')}>
@@ -133,7 +133,7 @@ const FileReview = ({
         </IconWrapper>
         <CountWrapper>
           <Body level={5}>{fileAnnotations.length}</Body>
-          <Icon type="ChevronRightCompact" style={{ marginTop: '3px' }} />
+          <Icon type="ChevronRight" style={{ marginTop: '3px' }} />
         </CountWrapper>
       </StyledTag>
     </ReviewTagWrapper>

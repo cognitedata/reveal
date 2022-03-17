@@ -44,10 +44,7 @@ export const TimeseriesSparklineCard = ({
       >
         <CardHeader>
           <Dropdown overlay={menu}>
-            <Button
-              type="text"
-              icon={<Icon type="MoreOverflowEllipsisHorizontal" />}
-            />
+            <Button type="text" icon={<Icon type="EllipsisHorizontal" />} />
           </Dropdown>
         </CardHeader>
         <TimeseriesChart

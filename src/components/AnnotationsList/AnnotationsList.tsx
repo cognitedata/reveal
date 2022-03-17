@@ -86,7 +86,7 @@ const AnnotationsList = ({
         </Body>
       </Flex>
       <Icon
-        type="ChevronRightCompact"
+        type="ChevronRight"
         style={{
           marginTop: '3px',
           color: annotation.status === 'unhandled' ? '#4255BB' : '#333333',
@@ -99,7 +99,7 @@ const AnnotationsList = ({
       <ResourcePreviewWrapper>
         <Flex direction="row" style={{ flex: '0 0 auto' }}>
           <Button
-            icon="ArrowBack"
+            icon="ArrowLeft"
             onClick={goBack}
             style={{ color: 'black', marginTop: '-7px' }}
             type="ghost"

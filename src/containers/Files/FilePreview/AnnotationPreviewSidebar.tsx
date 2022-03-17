@@ -394,7 +394,7 @@ const AnnotationPreviewSidebar = ({
           >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <Button
-                icon="ArrowBack"
+                icon="ArrowLeft"
                 onClick={() => {
                   setViewingAnnotations(
                     apiType === 'assets' || apiType === 'files'
@@ -414,7 +414,7 @@ const AnnotationPreviewSidebar = ({
             <div>
               <div>
                 <Dropdown overlay={menuOptions}>
-                  <Icon type="MoreOverflowEllipsisVertical" />
+                  <Icon type="EllipsisVertical" />
                 </Dropdown>
                 <Button icon="Close" type="ghost" onClick={onClose} />
               </div>
@@ -501,7 +501,7 @@ const AnnotationPreviewSidebar = ({
             onItemClicked &&
             item && [
               <Button
-                icon="ArrowForward"
+                icon="ArrowRight"
                 iconPlacement="right"
                 onClick={() =>
                   type &&

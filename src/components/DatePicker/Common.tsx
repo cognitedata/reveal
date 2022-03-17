@@ -174,7 +174,7 @@ export const renderCustomHeader = (
           size="small"
           onClick={decreaseMonth}
           disabled={prevMonthButtonDisabled}
-          icon="ArrowBack"
+          icon="ArrowLeft"
         />
         <div className="spacer" />
         <div style={{ width: 80 }}>
@@ -217,7 +217,7 @@ export const renderCustomHeader = (
           size="small"
           onClick={increaseMonth}
           disabled={nextMonthButtonDisabled}
-          icon="ArrowForward"
+          icon="ArrowRight"
         />
       </SpacedRow>
     );

@@ -62,7 +62,7 @@ export const CreateAnnotationForm = ({
       case 'asset': {
         buttonText = (
           <>
-            Linked to <Icon type="DataStudio" style={{ marginLeft: 4 }} />{' '}
+            Linked to <Icon type="Assets" style={{ marginLeft: 4 }} />{' '}
             {item?.name || 'Asset'}
           </>
         );
@@ -152,7 +152,7 @@ export const CreateAnnotationForm = ({
             Cancel
           </Button>
         ) : (
-          <Button onClick={onDelete} icon="Trash" type="danger" />
+          <Button onClick={onDelete} icon="Delete" type="danger" />
         )}
       </SpacedRow>
       {children}

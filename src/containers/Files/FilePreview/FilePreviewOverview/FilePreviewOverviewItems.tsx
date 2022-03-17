@@ -128,7 +128,7 @@ const AssetItem = ({
 
   return (
     <ItemWrapper>
-      <Icon type="DataStudio" />
+      <Icon type="Assets" />
       <div className="details">
         <Body onClick={onItemClick}>
           {asset ? (
@@ -140,7 +140,7 @@ const AssetItem = ({
           ) : (
             'Loading...'
           )}
-          <Icon className="cogs-icon view-icon" type="ArrowForward" />
+          <Icon className="cogs-icon view-icon" type="ArrowRight" />
         </Body>
         {asset && asset.description && (
           <Body level="2">
@@ -190,7 +190,7 @@ const TimeseriesItem = ({
           ) : (
             'Loading...'
           )}
-          <Icon className="cogs-icon view-icon" type="ArrowForward" />
+          <Icon className="cogs-icon view-icon" type="ArrowRight" />
         </Body>
         {timeseries && timeseries.description && (
           <Body level="2">
@@ -238,7 +238,7 @@ const FileItem = ({
           ) : (
             'Loading...'
           )}
-          <Icon className="cogs-icon view-icon" type="ArrowForward" />
+          <Icon className="cogs-icon view-icon" type="ArrowRight" />
         </Body>
         {file && file.mimeType && <Body level="2">{file.mimeType}</Body>}
         {preparedPages(Array.from(pages), selectPage, currentPage)}
@@ -280,7 +280,7 @@ const SequenceItem = ({
           ) : (
             'Loading...'
           )}
-          <Icon className="cogs-icon view-icon" type="ArrowForward" />
+          <Icon className="cogs-icon view-icon" type="ArrowRight" />
         </Body>
         {sequence && sequence.description && (
           <Body level="2">
@@ -333,7 +333,7 @@ const EventItem = ({
           ) : (
             'Loading...'
           )}
-          <Icon className="cogs-icon view-icon" type="ArrowForward" />
+          <Icon className="cogs-icon view-icon" type="ArrowRight" />
         </Body>
         {preparedPages(Array.from(pages), selectPage, currentPage)}
       </div>

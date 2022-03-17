@@ -37,14 +37,14 @@ export function FileDownloadAnchor({
     if (errorFeedback) {
       return errorFeedback;
     }
-    return <Icon style={{ color: Colors.danger }} type="ErrorStroked" />;
+    return <Icon style={{ color: Colors.danger }} type="Error" />;
   }
   if (!infoFetched || !linkFetched) {
     if (loadingFeedback) {
       return loadingFeedback;
     }
     return (
-      <Icon style={{ color: Colors['greyscale-grey4'].hex() }} type="Loading" />
+      <Icon style={{ color: Colors['greyscale-grey4'].hex() }} type="Loader" />
     );
   }
   if (infoFetched && linkFetched) {

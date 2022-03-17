@@ -64,15 +64,15 @@ export function getTitle(t: ResourceType, plural: boolean = true): string {
 export function getIcon(type: ResourceType): AllIconTypes {
   switch (type) {
     case 'asset':
-      return 'ResourceAssets';
+      return 'Assets';
     case 'event':
-      return 'ResourceEvents';
+      return 'Events';
     case 'file':
-      return 'ResourceDocuments';
+      return 'Document';
     case 'sequence':
-      return 'ResourceSequences';
+      return 'Sequences';
     case 'timeSeries':
-      return 'ResourceTimeseries';
+      return 'Timeseries';
     default:
       throw new Error('We forgot about a resource type :(');
   }
