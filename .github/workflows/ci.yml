@@ -42,22 +42,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Debug
-      working-directory: viewer
-      run: |
-        ls -R
-
-
     - name: Download viewer build artifact 
       uses: actions/download-artifact@v3
       with:
         name: viewer
         path: viewer/dist/
-    - name: Debug
-      working-directory: viewer
-      run: |
-        ls -R
 
+    - name: Install NPM dependencies
+      working-directory: viewer
+      run: yarn install --immutable
 
     - name: Setup tools for coverage tests
       working-directory: viewer
