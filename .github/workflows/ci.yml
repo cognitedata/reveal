@@ -17,6 +17,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - uses: actions/cache@v2
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
     - name: Install NPM dependencies
       working-directory: viewer
       run: yarn install --immutable
@@ -84,6 +89,11 @@ jobs:
       with:
         name: viewer
         path: viewer/dist/
+
+    - uses: actions/cache@v2
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: Install NPM viewer dependencies
       working-directory: viewer
