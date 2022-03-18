@@ -5,7 +5,7 @@ static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 // deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-extractor-downloads'
 static final String APPLICATION_REPO_ID = 'cdf-hub-extractor-downloads'
-static final String NODE_VERSION = 'node:12'
+static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String LOCIZE_PROJECT_ID = "0774e318-387b-4e68-94cc-7b270321bbf1" // not used
 
