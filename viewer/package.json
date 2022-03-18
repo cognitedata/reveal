@@ -67,7 +67,7 @@
     "@types/dat.gui": "0.7.7",
     "@types/jest": "26.0.24",
     "@types/jsdom": "16.2.14",
-    "@types/lodash": "4.14.179",
+    "@types/lodash": "4.14.180",
     "@types/mixpanel-browser": "2.38.0",
     "@types/node": "16.11.26",
     "@types/offscreencanvas": "^2019.6.4",
