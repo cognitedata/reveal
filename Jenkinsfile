@@ -16,20 +16,6 @@ static final String APPLICATION_REPO_ID = 'cognite-charts'
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
 static final String SENTRY_PROJECT_NAME = 'cognite-charts'
 
-// The Sentry DSN is the URL used to report issues into Sentry. This can be
-// found on your Sentry's project page, or by going here:
-// https://docs.sentry.io/error-reporting/quickstart/?platform=browser
-//
-// If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN = 'https://b35f7e3635d34e44bd24a354dfc4f13a@o124058.ingest.sentry.io/5509609'
-
-// Specify your locize.io project ID. If you do not have one of these, please
-// stop by #frontend to get a project created under the Cognite umbrella.
-// See https://cog.link/i18n for more information.
-//
-// Note: You'll probably want to set this in scripts/start.sh too
-static final String LOCIZE_PROJECT_ID = '1610fa5f-c8df-4aa8-9049-c08d8055d8ac'
-
 // Specify your Mixpanel project token. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
 // Remember: if you can't measure it, you can't improve it!
@@ -39,26 +25,10 @@ static final String MIXPANEL_TOKEN = '0837d632cca24291a0a1025d488d1a9a' // pragm
 // consider creating one for your projects alerts
 static final String SLACK_CHANNEL = 'devflow-charts'
 
-static final String PR_COMMENT_MARKER = "[pr-server]\n"
+static final String PR_COMMENT_MARKER = '[pr-server]\n'
 
-// This determines how this app is versioned. See https://cog.link/releases for
-// more information. The options available here are:
-//
-//  - single-branch
-//    This will push every change on the master branch first to the staging
-//    environment and then to the production environment. The product team can
-//    use FAS to control which version is actually served to end users who visit
-//    the production environment.
-//
-//  - multi-branch
-//    This will push every change on the master branch to the staging
-//    environment. Pushing to the production environment will happen on branches
-//    which are named release-[NNN].
-//
-// No other options are supported at this time.
 static final String VERSIONING_STRATEGY = 'multi-branch'
 environment = versioning.getEnv(versioningStrategy: VERSIONING_STRATEGY)
-// == End of customization. Everything below here is common. == \\
 
 static final String NODE_VERSION = 'node:12'
 
@@ -85,6 +55,16 @@ static final String[] DIRS = [
   'production',
 ]
 
+String appEnv() {
+  String appEnv = 'development'
+  if (environment.isProduction) { appEnv = 'production' }
+  if (environment.isStaging) { appEnv = 'staging' }
+  if (environment.isPullRequest) { appEnv = 'preview' }
+  return appEnv
+}
+
+def scmVars = {};
+
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
@@ -92,20 +72,21 @@ def pods = { body ->
         key: 'REACT_APP_LOCIZE_API_KEY',
         secretName: 'charts-frontend',
         secretKey: 'CHARTS_LOCIZE_API_KEY',
-        optional: !(environment.isPullRequest || environment.isStaging)
+        optional: environment.isProduction
       )
       fas.pod(
         nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
-        sentryDsn: SENTRY_DSN,
-        locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
-        envVars: [locizeApiKey]
+        envVars: [
+          locizeApiKey,
+          envVar(key: 'REACT_APP_ENV', value: appEnv())
+        ]
       ) {
         node(POD_LABEL) {
           dir('main') {
             stageWithNotify('Checkout code', CONTEXTS.checkout) {
-              checkout(scm)
+              scmVars = checkout(scm)
             }
             stageWithNotify('Install dependencies', CONTEXTS.setup) {
               yarn.setup()
@@ -122,72 +103,70 @@ def pods = { body ->
 }
 
 pods {
-  final boolean isStaging = env.BRANCH_NAME == 'master'
-  final boolean isProduction = env.BRANCH_NAME.startsWith('release-')
-  final boolean isPullRequest = !!env.CHANGE_ID
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
-    logErrors: isStaging || isProduction
+    logErrors: true
   ) {
-    threadPool(
-      tasks: [
-        'Preview': {
-          dir('preview') {
-            stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
-              fas.build(
-                appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build preview',
-                shouldExecute: isPullRequest
-              )
+    withEnv(["REACT_APP_COMMIT_REF=${scmVars.GIT_COMMIT}"]) {
+      threadPool(
+        tasks: [
+          'Preview': {
+            dir('preview') {
+              stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
+                fas.build(
+                  appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
+                  repo: APPLICATION_REPO_ID,
+                  buildCommand: 'yarn build',
+                  shouldExecute: environment.isPullRequest,
+                )
+              }
             }
-          }
-        },
+          },
+          'Staging': {
+            dir('staging') {
+              stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
+                fas.build(
+                  appId: STAGING_APP_ID,
+                  repo: APPLICATION_REPO_ID,
+                  buildCommand: 'yarn build',
+                  shouldExecute: environment.isStaging,
+                )
+              }
+            }
+          },
 
-        'Staging': {
-          dir('staging') {
-            stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
-              fas.build(
-                appId: STAGING_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build staging',
-                shouldExecute: isStaging
-              )
+          'Production': {
+            dir('production') {
+              stageWithNotify('Build for production', CONTEXTS.buildProduction) {
+                fas.build(
+                  appId: PRODUCTION_APP_ID,
+                  repo: APPLICATION_REPO_ID,
+                  buildCommand: 'yarn build',
+                  shouldExecute: environment.isProduction,
+                )
+              }
             }
-          }
-        },
-
-        'Production': {
-          dir('production') {
-            stageWithNotify('Build for production', CONTEXTS.buildProduction) {
-              fas.build(
-                appId: PRODUCTION_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build production',
-                shouldExecute: isProduction
-              )
-            }
-          }
-        },
-      ],
-      workers: 3,
-    )
+          },
+        ],
+        workers: 3,
+      )
+    }
 
     stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
-      if (!isPullRequest) {
+      if (!environment.isPullRequest) {
         print 'Not a PR, no need to preview'
         return
       }
       deleteComments(PR_COMMENT_MARKER)
       dir('preview') {
         fas.publish(
-          previewSubdomain: 'charts'
+          previewSubdomain: PRODUCTION_APP_ID
         )
       }
     }
 
     stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
-      if (!isStaging) {
+      if (!environment.isStaging) {
         print 'Not pushing to staging, no need to preview'
         return
       }
@@ -210,7 +189,7 @@ pods {
       }
     }
 
-    if (isProduction && PRODUCTION_APP_ID) {
+    if (environment.isProduction && PRODUCTION_APP_ID) {
       stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
         dir('production') {
           fas.publish()

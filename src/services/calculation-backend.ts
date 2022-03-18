@@ -19,7 +19,7 @@ import {
 
 import { BACKEND_SERVICE_URL_KEY, CLUSTER_KEY } from 'utils/constants';
 import { CogniteClient, DoubleDatapoint } from '@cognite/sdk';
-import { getBackendServiceBaseUrl } from 'config';
+import { isProduction } from 'utils/environment';
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -28,10 +28,19 @@ const backendServiceBaseUrlFromQuery = queryString.parse(
   window.location.search
 )[BACKEND_SERVICE_URL_KEY] as string;
 
+export const getBackendServiceBaseUrl = (cluster?: string) => {
+  const stagingPart = isProduction ? '' : 'staging';
+
+  const domain = ['calculation-backend', stagingPart, cluster, 'cognite', 'ai']
+    .filter(Boolean)
+    .join('.');
+
+  return `https://${domain}/v3`;
+};
+
 async function getConfig(sdk: CogniteClient): Promise<Configuration> {
   await sdk.get('/api/v1/token/inspect');
   const { Authorization } = sdk.getDefaultRequestHeaders();
-  const { origin } = window.location;
   const urlCluster = queryString.parse(window.location.search)[
     CLUSTER_KEY
   ] as string;
@@ -43,7 +52,7 @@ async function getConfig(sdk: CogniteClient): Promise<Configuration> {
   return new Configuration({
     ...(backendServiceBaseUrlFromQuery
       ? { basePath: backendServiceBaseUrlFromQuery }
-      : { basePath: getBackendServiceBaseUrl(origin, urlCluster) }),
+      : { basePath: getBackendServiceBaseUrl(urlCluster) }),
     accessToken: Authorization.replace(/Bearer /, ''),
   });
 }

@@ -1,78 +1,41 @@
-import { isProduction } from 'utils/environment';
-import sidecar from './sidecar';
+import {
+  isDevelopment,
+  isPR,
+  isProduction,
+  isStaging,
+} from 'utils/environment';
 
-export const CHART_VERSION = 1;
+const stagePart = () => {
+  if (isStaging) return 'Staging';
+  if (isDevelopment) return 'Development';
+  if (isPR) return 'Pull Request';
+  return '';
+};
 
 const {
-  REACT_APP_API_KEY: apiKey,
-  REACT_APP_RELEASE: release = 'release',
-  REACT_APP_VERSION_NAME: versionName = '0.0.0',
-  REACT_APP_VERSION_SHA: versionSha = 'development',
+  REACT_APP_ENV = 'development',
+  REACT_APP_COMMIT_REF,
+  REACT_APP_LOCIZE_API_KEY,
+  REACT_APP_MIXPANEL_TOKEN,
 } = process.env;
 
-export type BaseSidecar = {
-  applicationId: string;
-  appsApiBaseUrl: string;
-  docsSiteBaseUrl: string;
-  freshchatChannel: string;
-  freshchatToken: string;
-  mixpanel: string;
-  intercom: string;
-  infieldCacheApiBaseUrl: string;
-};
-
-export const getAppId = (): string => {
-  return 'Cognite Charts';
-};
-
-export const getSidecar = () => sidecar;
-
-export const getAppName = (): string => {
-  return getSidecar().applicationId;
-};
-
-export const getAzureAppId = () => {
-  return isProduction
+const config = {
+  azureAppId: isProduction
     ? '05aa256f-ba87-4e4c-902a-8e80ae5fb32e'
-    : 'd59a3ab2-7d10-4804-a51f-8c2ac969e605';
-};
+    : 'd59a3ab2-7d10-4804-a51f-8c2ac969e605',
+  appName: `Cognite Charts ${stagePart()}`,
+  firebaseAppName: isProduction ? 'charts' : 'charts-dev',
+  version: REACT_APP_COMMIT_REF
+    ? REACT_APP_COMMIT_REF.substring(0, 7)
+    : 'local',
+  environment: REACT_APP_ENV,
+  privacyPolicyUrl: 'https://www.cognite.com/en/policy',
+  locizeProjectId: '1610fa5f-c8df-4aa8-9049-c08d8055d8ac',
+  locizeApiKey: REACT_APP_LOCIZE_API_KEY,
+  mixpanelToken: REACT_APP_MIXPANEL_TOKEN,
+  sentryDSN:
+    'https://b35f7e3635d34e44bd24a354dfc4f13a@o124058.ingest.sentry.io/5509609',
+  intercomAppId: 'ou1uyk2p',
+} as const;
 
-export const getBackendServiceBaseUrl = (
-  origin: string,
-  urlCluster?: string | null | undefined
-) => {
-  let originCopy = origin;
-
-  if (origin.includes('localhost')) {
-    return `https://calculation-backend.staging.${
-      urlCluster ? `${urlCluster}.` : ''
-    }cognite.ai/v3`;
-  }
-
-  if (originCopy.includes('.pr.')) {
-    originCopy = originCopy.replace('.pr.', '.staging.');
-  }
-
-  const isStaging = originCopy.includes('.staging.');
-  const formattedUrlCluster = isStaging ? `staging.${urlCluster}` : urlCluster;
-  const parsedCluster = originCopy
-    .split('charts.')[1]
-    .split('cogniteapp.com')[0];
-  const cluster = urlCluster ? `${formattedUrlCluster}.` : parsedCluster;
-
-  return `https://calculation-backend.${cluster}cognite.ai/v3`;
-};
-
-const configs = {
-  appId: getAppId(),
-  appName: getAppName(),
-  apiKey,
-  environment: process.env.REACT_APP_ENV,
-  version: {
-    name: versionName,
-    sha: versionSha,
-    release,
-  },
-};
-
-export default configs;
+export default config;

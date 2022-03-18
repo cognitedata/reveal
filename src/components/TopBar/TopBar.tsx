@@ -1,20 +1,20 @@
 import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
-import sidecar from 'config/sidecar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useNavigate } from 'hooks/navigation';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
-import { ChartActions } from 'components/TopBar';
-import { useChat } from 'hooks/intercom';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { useTranslations } from 'hooks/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+import config from 'config/config';
+import { useIntercom } from 'react-use-intercom';
+import { ChartActions } from './ChartActions';
 
 const TopBarWrapper = () => {
   const { data: user } = useUserInfo();
   const move = useNavigate();
-  const chat = useChat();
+  const { show: showIntercom } = useIntercom();
   const [chart, setChart] = useRecoilState(chartAtom);
   const { t } = useTranslations(
     [
@@ -77,16 +77,6 @@ const TopBarWrapper = () => {
           <TopBar.Actions
             actions={[
               {
-                key: 'chat',
-                name: t.Feedback,
-                component: (
-                  <span className="downloadChartHide">
-                    <Icon type="Comment" />
-                  </span>
-                ),
-                onClick: () => chat.show(),
-              },
-              {
                 key: 'help',
                 name: t.Help,
                 component: (
@@ -97,13 +87,15 @@ const TopBarWrapper = () => {
                 menu: (
                   <Menu>
                     <Menu.Item
-                      onClick={() => window.open(sidecar.privacyPolicyUrl)}
+                      href={config.privacyPolicyUrl}
+                      style={{ color: 'var(--cogs-text-color)' }}
+                      // @ts-ignore
+                      target="_blank"
                     >
                       {t['Privacy policy']}
                     </Menu.Item>
-                    <Menu.Footer>
-                      v. {process.env.REACT_APP_VERSION_NAME || 'local'}
-                    </Menu.Footer>
+                    <Menu.Item onClick={showIntercom}>{t.Feedback}</Menu.Item>
+                    <Menu.Footer>v {config.version}</Menu.Footer>
                   </Menu>
                 ),
               },

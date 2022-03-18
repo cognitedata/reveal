@@ -5,24 +5,32 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { CogniteClient } from '@cognite/sdk';
 import { ToastContainer } from '@cognite/cogs.js';
 import { RecoilRoot } from 'recoil';
-import { createBrowserHistory } from 'history';
+import config from 'config/config';
+import { IntercomProvider } from 'react-use-intercom';
+import '@cognite/cogs.js/dist/cogs.css';
+import 'antd/dist/antd.css';
+import 'react-datepicker/dist/react-datepicker.css';
+import './config/i18n';
+import 'services/metrics';
+
+// START SENTRY CODE
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import SentryRRWeb from '@sentry/rrweb';
-import { isProduction, isStaging } from 'utils/environment';
-import Routes from './Routes';
-import config from './config/config';
+import { isDevelopment } from 'utils/environment';
+import { createBrowserHistory } from 'history';
+import Routes from './pages/Routes';
+
+if (!isDevelopment && !config.sentryDSN) {
+  throw new Error('SENTRY DSN is not present!');
+}
 
 const history = createBrowserHistory();
 
-if (process.env.REACT_APP_SENTRY_DSN && (isStaging || isProduction)) {
+if (config.sentryDSN && !isDevelopment) {
   Sentry.init({
-    dsn: process.env.REACT_APP_SENTRY_DSN,
-    // This is populated by the FAS build process. Change it if you want to
-    // source this information from somewhere else.
-    release: process.env.REACT_APP_RELEASE_ID,
-    // This is populated by react-scripts. However, this can be overridden by
-    // the app's build process if you wish.
+    dsn: config.sentryDSN,
+    release: config.version,
     environment: config.environment,
     integrations: [
       new Integrations.BrowserTracing({
@@ -34,6 +42,8 @@ if (process.env.REACT_APP_SENTRY_DSN && (isStaging || isProduction)) {
   });
   Sentry.setTag('rrweb.active', 'yes');
 }
+
+// END SENTRY CODE
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,24 +57,36 @@ const queryClient = new QueryClient({
   },
 });
 
-const sdk = new CogniteClient({
-  appId: 'Cognite Charts',
+const sdkClient = new CogniteClient({
+  appId: `Cognite Charts ${config.version}`,
 });
 
 export default function RootApp() {
   return (
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <SDKProvider sdk={sdk}>
-            <Router history={history}>
-              <ToastContainer />
-              <Routes />
-            </Router>
-            <ReactQueryDevtools />
-          </SDKProvider>
-        </QueryClientProvider>
-      </RecoilRoot>
+      <IntercomProvider
+        appId={config.intercomAppId}
+        autoBoot
+        initializeDelay={1000}
+        autoBootProps={{
+          hideDefaultLauncher: true,
+          alignment: 'right',
+          horizontalPadding: 20,
+          verticalPadding: 20,
+        }}
+      >
+        <RecoilRoot>
+          <QueryClientProvider client={queryClient}>
+            <SDKProvider sdk={sdkClient}>
+              <Router history={history}>
+                <ToastContainer />
+                <Routes />
+              </Router>
+              <ReactQueryDevtools />
+            </SDKProvider>
+          </QueryClientProvider>
+        </RecoilRoot>
+      </IntercomProvider>
     </Sentry.ErrorBoundary>
   );
 }

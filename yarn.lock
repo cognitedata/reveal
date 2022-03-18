@@ -16984,6 +16984,11 @@ react-universal-interface@^0.6.2:
   resolved "https://registry.yarnpkg.com/react-universal-interface/-/react-universal-interface-0.6.2.tgz#5e8d438a01729a4dbbcbeeceb0b86be146fe2b3b"
   integrity sha512-dg8yXdcQmvgR13RIlZbTRQOoUrDciFVoSBZILwjE2LFISxZZ8loVJKAkuzswl5js8BHda79bIb2b84ehU8IjXw==
 
+react-use-intercom@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/react-use-intercom/-/react-use-intercom-1.5.0.tgz#a44661f95dc68ae4bc2bcf17aca1d8574f05f37a"
+  integrity sha512-ck+rfDdh5l4tnvXDPIm6fXgwvX8AnB/zLhyCwHECAHTNpcBdIR07Y5oEOquCz7LQFrWDuhEqcKuDcTLaWQ4YBA==
+
 react-use-measure@^2.0.4:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-use-measure/-/react-use-measure-2.1.1.tgz#5824537f4ee01c9469c45d5f7a8446177c6cc4ba"

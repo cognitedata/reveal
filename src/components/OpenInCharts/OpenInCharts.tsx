@@ -14,7 +14,6 @@ import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { useSDK } from '@cognite/sdk-provider';
 import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
-import { CHART_VERSION } from 'config/';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import {
@@ -189,7 +188,7 @@ export const OpenInCharts: FC = () => {
             timeSeriesCollection: [],
             workflowCollection: [],
             public: false,
-            version: CHART_VERSION,
+            version: 1,
           };
 
     /**

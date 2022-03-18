@@ -15,9 +15,7 @@
 .DS_Store
 
 # dotenv
-!.env.development
-.env
-.env*
+.env*.local
 
 # eslint
 .eslintcache

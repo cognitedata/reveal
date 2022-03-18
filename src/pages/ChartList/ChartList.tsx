@@ -24,7 +24,6 @@ import ErrorToast from 'components/ErrorToast/ErrorToast';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
-import { CHART_VERSION } from '../../config/config';
 
 const defaultTranslations = makeDefaultTranslations(
   'Name',
@@ -150,7 +149,7 @@ const ChartList = () => {
       dateFrom: dateFrom.toJSON(),
       dateTo: dateTo.toJSON(),
       public: false,
-      version: CHART_VERSION,
+      version: 1,
       settings: {
         showYAxis: true,
         showMinMax: false,

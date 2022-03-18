@@ -1,10 +1,14 @@
+import config from 'config/config';
 import ReactDOM from 'react-dom';
-import '@cognite/cogs.js/dist/cogs.css';
-import 'antd/dist/antd.css';
-import 'react-datepicker/dist/react-datepicker.css';
-import './i18n';
-import 'services/metrics';
-
+import { isDevelopment, isPR } from './utils/environment';
 import App from './App';
+
+// eslint-disable-next-line no-console
+console.log(`Cognite Charts running in ${config.environment}`);
+
+if (isDevelopment || isPR) {
+  // eslint-disable-next-line no-console
+  console.log('Config', config);
+}
 
 ReactDOM.render(<App />, document.getElementById('root'));

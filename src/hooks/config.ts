@@ -1,15 +1,13 @@
-import { getSidecar } from 'config';
 import { useLocation } from 'react-router-dom';
 import { CLUSTER_KEY } from 'utils/constants';
 import { isProduction } from 'utils/environment';
 import { getProject } from 'utils/tenant';
 import { useSearchParam } from './navigation';
 
-export const useCluster = (): [string, (s: string) => void] => {
-  const [searchParam, setSearchParam] = useSearchParam(CLUSTER_KEY);
-  const { cdfCluster } = getSidecar();
+export const useCluster = (): [string | undefined, (s: string) => void] => {
+  const [cluster, setCluster] = useSearchParam(CLUSTER_KEY);
 
-  return [searchParam || cdfCluster, setSearchParam];
+  return [cluster, setCluster];
 };
 
 export const useAppsApiBaseUrl = (): string => {

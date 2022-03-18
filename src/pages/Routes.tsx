@@ -14,19 +14,18 @@ import { Loader, toast } from '@cognite/cogs.js';
 import ChartList from 'pages/ChartList/ChartList';
 import ChartView from 'pages/ChartView';
 import UserProfile from 'pages/UserProfile/UserProfile';
-import TenantSelectorView from 'pages/TenantSelector';
-import TopBar from 'components/TopBar';
+import TenantSelectorView from 'pages/TenantSelector/TenantSelector';
 import PageLayout from 'components/Layout/PageLayout';
 import { useFirebaseInit } from 'hooks/firebase';
 import { useSDK } from '@cognite/sdk-provider';
-import { getAzureAppId, getSidecar } from 'config';
 import { azureInfo, loginStatus } from 'services/user-info';
 import * as Sentry from '@sentry/react';
 import { useCluster, useProject } from 'hooks/config';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
-import { mixpanelToken } from 'services/metrics';
+import config from 'config/config';
 import mixpanel from 'mixpanel-browser';
 import { UserInfo } from 'models/chart/types';
+import TopBarWrapper from 'components/TopBar/TopBar';
 
 const SentryRoute = Sentry.withSentryRouting(Route);
 
@@ -38,7 +37,7 @@ const RouteWithTopbar = ({ component, ...rest }: RouteProps) => {
       render={(routeProps) => {
         return (
           <PageLayout className="PageLayout">
-            <TopBar />
+            <TopBarWrapper />
             <main>
               <Component {...routeProps} />
             </main>
@@ -52,7 +51,7 @@ const RouteWithTopbar = ({ component, ...rest }: RouteProps) => {
 // This will be moved out of the routes in a next refactor to have the user as a singleton class
 const identifyUser = (user: UserInfo) => {
   if (user) {
-    if (mixpanelToken) {
+    if (config.mixpanelToken) {
       mixpanel.identify(user.email || user.displayName || user.id);
     }
     Sentry.setUser({
@@ -73,8 +72,6 @@ const AppRoutes = () => {
   const { isFetched: firebaseDone, isError: isFirebaseError } = useFirebaseInit(
     !initializing && authenticated
   );
-
-  const foo = getSidecar();
   const [cluster] = useCluster();
 
   const { flow, options } = getFlow(project, cluster);
@@ -98,7 +95,7 @@ const AppRoutes = () => {
             setInitializing(true);
             sdk
               .loginWithOAuth({
-                clientId: getAzureAppId(),
+                clientId: config.azureAppId,
                 cluster: cluster || 'api',
                 tenantId: options?.directory,
                 signInType: {
@@ -157,7 +154,6 @@ const AppRoutes = () => {
     authenticated,
     cluster,
     flow,
-    foo.applicationId,
     initializing,
     options?.directory,
     project,

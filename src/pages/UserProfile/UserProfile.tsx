@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useResetRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { isProduction } from 'utils/environment';
+import config from 'config/config';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -129,8 +130,7 @@ const UserProfile = () => {
         <article className="last-col">
           <Button type="tertiary">{t.Logout}</Button>
           <p className="tags">
-            {t['Cognite Charts Version']}{' '}
-            {process.env.REACT_APP_VERSION_NAME || 'local'}
+            {t['Cognite Charts Version']} {config.version}
           </p>
         </article>
       </UserProfileWrap>

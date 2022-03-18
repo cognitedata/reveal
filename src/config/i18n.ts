@@ -12,9 +12,9 @@ import {
   isProduction,
   isStaging,
 } from 'utils/environment';
+import config from 'config/config';
 
-if (!process.env.REACT_APP_LOCIZE_PROJECT_ID)
-  throw new Error('Locize is not configured!');
+if (!config.locizeProjectId) throw new Error('Locize is not configured!');
 
 const reactOptions = {
   bindI18n: 'languageChanged editorSaved',
@@ -31,8 +31,8 @@ const fallbacks = {
 };
 
 const locizeOptions = {
-  projectId: process.env.REACT_APP_LOCIZE_PROJECT_ID ?? '',
-  apiKey: isDevelopment ? process.env.REACT_APP_LOCIZE_API_KEY : undefined,
+  projectId: config.locizeProjectId,
+  apiKey: isDevelopment || isPR ? config.locizeApiKey : undefined,
   referenceLng: 'en',
   version: isProduction || isStaging ? 'production' : 'latest',
   allowedAddOrUpdateHosts: ['localhost'],

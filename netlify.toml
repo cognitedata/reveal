@@ -1,0 +1,33 @@
+[context.production.environment]
+  REACT_APP_ENV = "production"
+
+[context.deploy-preview.environment]
+  REACT_APP_ENV = "preview"
+
+[context.master.environment]
+  REACT_APP_ENV = "staging"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    content-security-policy = '''
+    report-uri https://o124058.ingest.sentry.io/api/5278116/security/?sentry_key=4b281257be9f4548bddbd3a6cb40f221;
+    script-src 'self' 'sha256-hjcPs3DcwMaT0LRJ5A0B2OLvjTdCAspfmyHI3phC7KI=' https://*.firebaseio.com https://*.google.com https://*.googleapis.com https://*.intercom.io https://*.intercomcdn.com https://cognitedata.atlassian.net https://*.mixpanel.com https://*.sentry.io https://sentry.io https://netlify-cdp-loader.netlify.app;
+    frame-ancestors 'self' https://*.locize.app;
+    object-src 'none';
+    worker-src 'self'
+    '''
+    content-security-policy-report-only = '''
+    report-uri https://o124058.ingest.sentry.io/api/5278116/security/?sentry_key=4b281257be9f4548bddbd3a6cb40f221;
+    script-src 'self' 'sha256-hjcPs3DcwMaT0LRJ5A0B2OLvjTdCAspfmyHI3phC7KI=' https://*.firebaseio.com https://*.google.com https://*.googleapis.com https://*.intercom.io https://*.intercomcdn.com https://cognitedata.atlassian.net https://*.mixpanel.com https://*.sentry.io https://sentry.io https://netlify-cdp-loader.netlify.app;
+    frame-ancestors 'self' https://*.locize.app;
+    object-src 'none';
+    worker-src 'self'
+    '''
+    X-Frame-Options = "sameorigin"
+    X-XSS-Protection = "1; mode=block"

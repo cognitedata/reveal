@@ -1,7 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
-import config, { CHART_VERSION } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -9,6 +8,7 @@ import 'firebase/auth';
 import { Chart } from 'models/chart/types';
 import { getFlow } from '@cognite/auth-utils';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import config from 'config/config';
 import { uniqBy } from 'lodash';
 import { useAppsApiBaseUrl, useCluster, useProject } from './config';
 
@@ -32,8 +32,6 @@ type GetEnvironmentResponse = {
   config: EnvironmentConfig;
 };
 
-const APP_NAME = config.appName;
-
 const cacheOption = {
   staleTime: Infinity,
   cacheTime: Infinity,
@@ -56,7 +54,7 @@ const useFirebaseToken = (enabled: boolean) => {
           {
             params: {
               tenant: project,
-              app: APP_NAME,
+              app: config.firebaseAppName,
               json: true,
             },
             withCredentials: true,
@@ -84,7 +82,7 @@ const useFirebaseEnv = (enabled: boolean) => {
         .get<GetEnvironmentResponse>(`${url}/env`, {
           params: {
             tenant: project,
-            app: APP_NAME,
+            app: config.firebaseAppName,
             version: '0.0.0',
           },
           withCredentials: true,
@@ -135,7 +133,7 @@ export const useMyCharts = () => {
     async () => {
       const chartsWhereUserMatchesId = (
         await charts(project)
-          .where('version', '==', CHART_VERSION)
+          .where('version', '==', 1)
           .where('user', '==', data?.id)
           .get()
       ).docs.map((doc) => doc.data()) as Chart[];
@@ -144,7 +142,7 @@ export const useMyCharts = () => {
         ? []
         : ((
             await charts(project)
-              .where('version', '==', CHART_VERSION)
+              .where('version', '==', 1)
               .where('user', '==', data?.email)
               .get()
           ).docs.map((doc) => doc.data()) as Chart[]);
@@ -168,7 +166,7 @@ export const usePublicCharts = () => {
     ['charts', 'public'],
     async () => {
       const snapshot = await charts(project)
-        .where('version', '==', CHART_VERSION)
+        .where('version', '==', 1)
         .where('public', '==', true)
         .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
