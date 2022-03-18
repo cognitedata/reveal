@@ -97,7 +97,12 @@ describe('SolutionsHandlerTest', () => {
     parseSchema: jest.fn().mockImplementation(() => solutionDataModelMock),
     removeField: jest.fn(),
     removeType: jest.fn(),
-    updateType: jest.fn(),
+    updateType: jest.fn().mockImplementation((typeName, updates) => {
+      return {
+        name: typeName,
+        ...updates,
+      };
+    }),
     updateTypeField: jest.fn().mockImplementation((type, name, params) => ({
       name: params.name,
       type: params.type,
@@ -137,6 +142,24 @@ describe('SolutionsHandlerTest', () => {
     const newState = service.removeType(solutionDataModelMock, 'Post');
     expect(newState.types.find((t) => t.name === 'Post')).not.toBeTruthy();
     expect(newState.types.length).toBe(1);
+  });
+
+  it('should rename type', () => {
+    const service = createInstance();
+    const newState = service.renameType(
+      solutionDataModelMock,
+      'Post',
+      'Article'
+    );
+
+    expect(newState.types.find((t) => t.name === 'Post')).not.toBeTruthy();
+    expect(newState.types.find((t) => t.name === 'Article')).toBeTruthy();
+    expect(
+      newState.types
+        .find((t) => t.name === 'Person')
+        ?.fields.find((f) => f.name === 'posts')?.type.name === 'Article'
+    ).toBeTruthy();
+    expect(newState.types.length).toBe(2);
   });
 
   it('should add field', () => {

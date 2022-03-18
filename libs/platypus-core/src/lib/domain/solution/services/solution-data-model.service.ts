@@ -34,34 +34,31 @@ export class SolutionDataModelService {
     oldTypeName: string,
     newTypeName: string
   ): SolutionDataModel {
-    if (!state.types.filter((type) => type.name === newTypeName).length) {
-      state.types.forEach((type: SolutionDataModelType) => {
-        type.fields.forEach((field: SolutionDataModelField) => {
-          if (field.type.name === oldTypeName) {
-            this.updateField(state, type.name, field.name, {
-              ...field,
-              type: { ...field.type, name: newTypeName },
-            });
-          }
-        });
+    let newState = state;
+    state.types.forEach((type: SolutionDataModelType) => {
+      type.fields.forEach((field: SolutionDataModelField) => {
+        if (field.type.name === oldTypeName) {
+          newState = this.updateField(state, type.name, field.name, {
+            ...field,
+            type: { ...field.type, name: newTypeName },
+          });
+        }
       });
+    });
 
-      const updatedType = this.graphqlService.updateType(oldTypeName, {
-        name: newTypeName,
-      });
+    const updatedType = this.graphqlService.updateType(oldTypeName, {
+      name: newTypeName,
+    });
 
-      state.types = state.types.map((type) => {
+    return {
+      ...newState,
+      types: newState.types.map((type) => {
         if (type.name === oldTypeName) {
           return updatedType;
         } else {
           return type;
         }
-      });
-    }
-
-    return {
-      ...state,
-      types: state.types,
+      }),
     };
   }
 
