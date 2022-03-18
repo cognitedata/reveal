@@ -21,8 +21,7 @@ import svgFitToCameraIcon from './icons/fittocamera.svg';
 export class ToolbarTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolbar: Toolbar;
-  private axisTool: AxisViewTool | undefined;
-  private readonly _cameraOptions: boolean[] = [false, false];
+  private _axisTool: AxisViewTool | undefined;
 
   private readonly _handleAxisViewToolListener = this.toggleAxisViewTool.bind(this);
   private readonly _handleScreenshotListener = this.saveScreenShot.bind(this);
@@ -35,37 +34,32 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
 
     this._viewer = viewer;
     this._toolbar = new Toolbar(this._viewer);
-
-    const cameraManager = this._viewer.cameraManager as DefaultCameraManager;
-    const cameraControlOption = cameraManager.getCameraControlsOptions();
-    this._cameraOptions[0] = cameraControlOption.changeCameraTargetOnClick;
-    if (cameraControlOption.mouseWheelAction === 'zoomPastCursor') {
-      this._cameraOptions[1] = false;
-    } else {
-      this._cameraOptions[1] = true;
-    }
   }
 
   /**
    * Add a Icon button into the Toolbar container
-   * @param backgroundImageUri Background image to be placed onto icon
+   * @param backgroundImageUri Background image to be placed on the button. Can be a data URL or a "normal" URL.
    * @param onClick Click event callback function which will be used to perform custom functionlity of the user
    * @param toolTip Optional tooltip for the icon button
    */
-  public addToolbarButton(backgroundImageUri: string, onClick: () => void, toolTip: string = ''): void {
+  public addToolbarButton(
+    backgroundImageUri: string,
+    onClick: (isToggled: boolean) => void,
+    toolTip: string = ''
+  ): void {
     this._toolbar.addToolbarButton(backgroundImageUri, false, onClick, false, toolTip);
   }
 
   /**
    * Add a Icon toggle button into the Toolbar container
-   * @param backgroundImageUri Background image to be placed onto icon
+   * @param backgroundImageUri Background image to be placed on the button. Can be a data URL or a "normal" URL.
    * @param onToggled Click event callback function which will be used to perform custom functionlity of the user
    * @param isActive Is the feature active by default.
    * @param toolTip Optional tooltip for the icon button
    */
   public addToolbarToggleButton(
     backgroundImageUri: string,
-    onToggled: () => void,
+    onToggled: (isToggled: boolean) => void,
     isActive: boolean,
     toolTip: string = ''
   ): void {
@@ -98,10 +92,13 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Adds Toggle enabling/disabling the Camera target on mouse click to the Toolbar
    */
   public addCameraTargetOnClickToggle(): void {
+    const cameraManager = this._viewer.cameraManager as DefaultCameraManager;
+    const cameraControlOption = cameraManager.getCameraControlsOptions();
+
     this.addToolbarToggleButton(
       svgCameraTargetIcon,
       this._handleChangeCameraTargetListener,
-      this._cameraOptions[1],
+      cameraControlOption.changeCameraTargetOnClick,
       'Enable/Disable Camera Target on Click'
     );
   }
@@ -110,10 +107,19 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Adds Toggle camera for "Zoom Past Cursor" and "Zoom To Cursor" in to Toolbar
    */
   public addZoomPastToCursorToggle(): void {
+    const cameraManager = this._viewer.cameraManager as DefaultCameraManager;
+    const cameraControlOption = cameraManager.getCameraControlsOptions();
+    let cameraZoomPast = false;
+    if (cameraControlOption.mouseWheelAction === 'zoomPastCursor') {
+      cameraZoomPast = false;
+    } else {
+      cameraZoomPast = true;
+    }
+
     this.addToolbarToggleButton(
       svgZoomPastIcon,
       this._handleCameraZoomPastCursorListener,
-      this._cameraOptions[0],
+      cameraZoomPast,
       'Toggle Zoom past/Zoom to Cursor'
     );
   }
@@ -129,11 +135,11 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Enable or Disable Axis view tool
    */
   private toggleAxisViewTool(): void {
-    if (this.axisTool === undefined) {
-      this.axisTool = new AxisViewTool(this._viewer);
+    if (this._axisTool === undefined) {
+      this._axisTool = new AxisViewTool(this._viewer);
     } else {
-      this.axisTool.dispose();
-      this.axisTool = undefined;
+      this._axisTool.dispose();
+      this._axisTool = undefined;
     }
   }
 

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@reveal/cad-styling": "workspace:*",
+    "@reveal/camera-manager": "workspace:*",
     "@reveal/core": "workspace:*",
     "@reveal/metrics": "workspace:*",
     "@reveal/utilities": "workspace:*"

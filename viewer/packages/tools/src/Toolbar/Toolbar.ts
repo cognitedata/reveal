@@ -79,7 +79,7 @@ export class Toolbar {
   public addToolbarButton(
     backgroundImageUri: string,
     isToggle: boolean,
-    onClick: () => void,
+    onClick: (isToggled: boolean) => void,
     isActive: boolean,
     toolTip: string = ''
   ): void {
@@ -105,7 +105,7 @@ export class Toolbar {
           element.classList.add(Toolbar.classnames.iconClicked);
         }
       }
-      onClick();
+      onClick(isToggle);
     };
 
     this._toolbarContainer.appendChild(element);

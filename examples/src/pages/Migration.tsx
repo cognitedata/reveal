@@ -11,7 +11,6 @@ import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
   Cognite3DModel,
-  CameraControlsOptions,
   TreeIndexNodeCollection,
   CogniteModelBase,
   DefaultCameraManager
@@ -95,13 +94,7 @@ export function Migration() {
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
 
-      const controlsOptions: CameraControlsOptions = {
-        changeCameraTargetOnClick: true,
-        mouseWheelAction: 'zoomToCursor',
-      };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
-
-      cameraManager.setCameraControlsOptions(controlsOptions);
 
       // Add GUI for loading models and such
       const guiState = {
@@ -143,10 +136,6 @@ export function Migration() {
         },
         showCameraTool: new DebugCameraTool(viewer),
         renderMode: 'Color',
-        controls: {
-          mouseWheelAction: 'zoomToCursor',
-          changeCameraTargetOnClick: true
-        },
         debugRenderStageTimings: false
       };
       const guiActions = {
@@ -351,15 +340,6 @@ export function Migration() {
       assetExplode.add(explodeActions, 'selectAssetTreeIndex').name('Inspect tree index');
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
-
-      const controlsGui = gui.addFolder('Camera controls');
-      const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
-      controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
-        cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
-      });
-      controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
-        cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
-      });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
