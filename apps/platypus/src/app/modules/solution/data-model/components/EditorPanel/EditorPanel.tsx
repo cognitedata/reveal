@@ -25,7 +25,7 @@ export const EditorPanel = (props: EditorPanelProps) => {
   const { t } = useTranslation('EditorPanel');
 
   return (
-    <div data-testid="code_editor" style={{ height: '100%' }}>
+    <div data-cy="editor_panel" style={{ height: '100%' }}>
       <PageToolbar title={t('editor_title', 'Editor')} titleLevel={6}>
         <SegmentedControl
           currentKey={props.currentView}

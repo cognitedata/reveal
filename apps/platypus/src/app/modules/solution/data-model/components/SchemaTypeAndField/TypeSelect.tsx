@@ -42,7 +42,7 @@ export const TypeSelect = ({
   };
 
   return (
-    <div data-cy={field.type.name}>
+    <div data-cy={`select-${field.type.name}`}>
       <Select
         disabled={disabled}
         dropdownRender={(menu) => (

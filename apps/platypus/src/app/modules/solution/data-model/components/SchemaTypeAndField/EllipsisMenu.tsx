@@ -51,7 +51,7 @@ export const EllipsisMenu = ({
       <EllipsisButton
         type="ghost"
         icon="EllipsisVertical"
-        aria-label="Additional actions"
+        aria-label={`Additional actions for ${typeName}`}
         onClick={(e) => {
           e.stopPropagation();
           setDropdownVisibility(true);
