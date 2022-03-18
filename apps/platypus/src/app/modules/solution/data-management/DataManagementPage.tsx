@@ -5,24 +5,24 @@ import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentL
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { StyledPage, StyledTabs } from './elements';
+import { StyledPage, StyledTabs } from '../data-model/pages/elements';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
 const PreviewPage = lazy<any>(() =>
-  import('./DataManagement/Preview').then((module) => ({
+  import('./pages/Preview').then((module) => ({
     default: module.Preview,
   }))
 );
 
 const PipelinesPage = lazy<any>(() =>
-  import('./DataManagement/Pipelines').then((module) => ({
+  import('./pages/Pipelines').then((module) => ({
     default: module.Pipelines,
   }))
 );
 
 const DataQualityPage = lazy<any>(() =>
-  import('./DataManagement/DataQuality').then((module) => ({
+  import('./pages/DataQuality').then((module) => ({
     default: module.DataQuality,
   }))
 );

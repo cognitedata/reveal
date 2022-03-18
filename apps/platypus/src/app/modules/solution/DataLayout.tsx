@@ -15,7 +15,7 @@ const DataModelPage = lazy<any>(() =>
 );
 
 const DataManagementPage = lazy<any>(() =>
-  import('./data-model/pages/DataManagementPage').then((module) => ({
+  import('./data-management/DataManagementPage').then((module) => ({
     default: module.DataManagementPage,
   }))
 );
