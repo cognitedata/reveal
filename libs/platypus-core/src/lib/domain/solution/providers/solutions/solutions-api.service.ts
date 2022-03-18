@@ -9,6 +9,9 @@ import {
   SolutionApiOutputDTO,
   ApiVersion,
   ApiVersionFromGraphQl,
+  SolutionStorageDataModelDTO,
+  ListInstancesReqDTO,
+  StorageInstanceDTO,
 } from '../../dto';
 
 export class SolutionsApiService {
@@ -121,6 +124,40 @@ export class SolutionsApiService {
     return this.upsertApiVersion(dto, 'PATCH');
   }
 
+  /** List data models for a project */
+  listStorage(): Promise<SolutionStorageDataModelDTO[]> {
+    return this.runStorageApiRequest('definitions/list', {
+      includeInheritedProperties: true,
+    }).then((res) => res.items as SolutionStorageDataModelDTO[]);
+  }
+
+  /** List data models for a project */
+  listStorageInstances(
+    payload: ListInstancesReqDTO
+  ): Promise<StorageInstanceDTO[]> {
+    return this.runStorageApiRequest('instances/list', payload).then(
+      (res) => res.items as StorageInstanceDTO[]
+    );
+  }
+
+  /** Apply a data model for a project. Apply will fail if making incompatible changes. */
+  upsertStorage(
+    payload: SolutionStorageDataModelDTO[]
+  ): Promise<SolutionStorageDataModelDTO[]> {
+    return this.runStorageApiRequest('definitions/apply', payload).then(
+      (res) => res.items as SolutionStorageDataModelDTO[]
+    );
+  }
+
+  /** Ingest instances (data) into storage. */
+  ingestInstancesIntoStorage(
+    payload: StorageInstanceDTO[]
+  ): Promise<StorageInstanceDTO[]> {
+    return this.runStorageApiRequest('instances/ingest', {
+      items: payload,
+    }).then((res) => res.items as StorageInstanceDTO[]);
+  }
+
   private upsertApiVersion(
     dto: ApiVersionFromGraphQl,
     conflictMode: string
@@ -164,6 +201,30 @@ export class SolutionsApiService {
   async runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
     const url = `/api/v1/projects/${this.cdfClient.project}/schema/api/${dto.solutionId}/${dto.schemaVersion}/graphql`;
     return (await this.runGraphQlQuery(url, dto.graphQlParams)).data;
+  }
+
+  async runStorageApiRequest(apiPath: string, payload: any): Promise<any> {
+    const apiUrl = `/api/v1/projects/${this.cdfClient.project}/datamodelstorage/${apiPath}`;
+    return new Promise((resolve, reject) => {
+      this.cdfClient
+        .post(apiUrl, {
+          data: payload,
+          headers: {
+            'cdf-version': 'alpha',
+          },
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            reject({ status: 400, errors: [...response.data.errors] });
+          } else {
+            resolve(response.data);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          reject({ status: 400, errors: [] });
+        });
+    });
   }
 
   private runGraphQlQuery(

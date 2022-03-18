@@ -112,3 +112,36 @@ export interface UpdateSolutionDataModelFieldDTO
   extends Omit<SolutionDataModelField, 'type'> {
   type: SolutionDataModelFieldType | string;
 }
+
+export interface SolutionStorageDataModelDTO {
+  externalId: string;
+  properties: {
+    [propertyName: string]: {
+      type: string;
+      nullable: boolean;
+    };
+  };
+  extends?: string[];
+  indexes?: {
+    indexName: string;
+    fields: string[];
+  }[];
+}
+
+/*
+https://pr-ark-codegen-1662.specs.preview.cogniteapp.com/v1.json.html#operation/listInstances
+*/
+export interface ListInstancesReqDTO {
+  modelExternalId: string;
+  filter?: any;
+  sort?: string[];
+  limit?: number;
+  cursor?: string;
+}
+
+export interface StorageInstanceDTO {
+  modelExternalId: string;
+  properties: {
+    [propertyName: string]: string | number | boolean;
+  };
+}
