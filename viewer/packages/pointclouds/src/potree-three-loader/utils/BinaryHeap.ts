@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 export class BinaryHeap<T> {
   _content = [];
   _scoreFunction: (element: T) => number;

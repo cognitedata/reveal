@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 type SchemaEntry = {
   name: string;
   size: number;

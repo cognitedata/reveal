@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { Color, DataTexture, NearestFilter, RGBAFormat, Texture, Vector4 } from 'three';
 import { IClassification } from '../rendering/types';
 

@@ -6,7 +6,6 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { yieldProcessing } from '../../../test-utilities';
@@ -18,8 +17,11 @@ describe('PotreeGroupWrapper', () => {
   const pollLoadingStatusInterval = 1;
 
   test('getLoadingStateObserver() triggers false initially', done => {
-
-    const manager = new PotreeGroupWrapper(new Potree(), new Mock<THREE.WebGLRenderer>().object(), pollLoadingStatusInterval);
+    const manager = new PotreeGroupWrapper(
+      new Potree(),
+      new Mock<THREE.WebGLRenderer>().object(),
+      pollLoadingStatusInterval
+    );
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
   });
   test('getLoadingStateObserver() triggers true after add', done => {

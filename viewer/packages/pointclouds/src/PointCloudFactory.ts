@@ -27,8 +27,7 @@ export class PointCloudFactory {
     const { modelBaseUrl } = modelMetadata;
 
     return this._potreeInstance
-      .loadPointCloud('/ept.json',
-                      (url: string) => modelBaseUrl + url)
+      .loadPointCloud('/ept.json', (url: string) => modelBaseUrl + url)
       .then((pco: PointCloudOctree) => {
         pco.name = `PointCloudOctree: ${modelBaseUrl}`;
         return new PotreeNodeWrapper(pco);
@@ -45,6 +44,5 @@ export class PointCloudFactory {
     const filteredHeaders = xhrHeaders.filter(x => x.header);
 
     XHRFactoryInstance.config.customHeaders = filteredHeaders;
-    console.log("Set custom headers: ", filteredHeaders);
   }
 }

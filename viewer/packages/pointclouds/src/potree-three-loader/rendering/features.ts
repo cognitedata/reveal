@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 const canvas = document.createElement('canvas');
 const gl: WebGLRenderingContext | null = canvas.getContext('webgl');
 

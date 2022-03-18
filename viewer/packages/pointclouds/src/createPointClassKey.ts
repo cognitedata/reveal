@@ -4,7 +4,6 @@
 
 import { WellKnownAsprsPointClassCodes } from './types';
 
-
 const PotreeDefaultPointClass = 'DEFAULT';
 
 export function createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes): number {

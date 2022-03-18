@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { Box3, Matrix4, Vector3 } from 'three';
 
 /**

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { Camera, WebGLRenderer } from 'three';
 import { GetUrlFn, XhrRequest } from '../loading/types';
 import { LRU } from '../utils/lru';

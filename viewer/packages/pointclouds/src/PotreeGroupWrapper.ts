@@ -20,7 +20,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   private _lastDrawPointBuffersHash = 0;
   private readonly _forceLoadingSubject = new Subject<void>();
   private readonly _loadingObservable: Observable<LoadingState>;
-  private _pointClouds: PointCloudOctree[];
+  private readonly _pointClouds: PointCloudOctree[];
 
   get needsRedraw(): boolean {
     return (
@@ -41,11 +41,12 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   private numChildrenAfterLastRedraw = 0;
 
   /**
+   * @param potreeInstance Main instance of the Potree library in this Reveal instance
    * @param pollLoadingStatusInterval Controls how often the wrapper checks for loading status. Used for testing.
    */
   constructor(potreeInstance: Potree, pollLoadingStatusInterval: number = 200) {
     super();
-    this.potreeGroup = new THREE.Group()
+    this.potreeGroup = new THREE.Group();
     this._potreeInstance = potreeInstance;
     this.potreeGroup.name = 'Potree.Group';
     this._pointClouds = [];

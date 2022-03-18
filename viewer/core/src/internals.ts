@@ -21,7 +21,7 @@ export {
   PointCloudNode,
   PointCloudMetadata,
   Potree,
-  PointCloudOctree,
+  PointCloudOctree
 } from '@reveal/pointclouds';
 
 // Utilities

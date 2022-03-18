@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { Box3, Matrix4, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
 import { DEFAULT_MIN_NODE_PIXEL_SIZE } from '../rendering/constants';
 import { PointCloudMaterial, PointSizeType } from '../rendering';

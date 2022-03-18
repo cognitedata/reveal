@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import {
   BufferAttribute,
   Camera,

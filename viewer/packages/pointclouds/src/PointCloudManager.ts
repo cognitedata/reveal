@@ -26,22 +26,23 @@ export class PointCloudManager {
 
   private readonly _renderer: THREE.WebGLRenderer;
 
-  constructor(metadataRepository: PointCloudMetadataRepository,
-              modelFactory: PointCloudFactory,
-              renderer: THREE.WebGLRenderer) {
+  constructor(
+    metadataRepository: PointCloudMetadataRepository,
+    modelFactory: PointCloudFactory,
+    renderer: THREE.WebGLRenderer
+  ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
 
     this._cameraSubject.pipe(auditTime(500)).subscribe((cam: THREE.PerspectiveCamera) => {
       this.updatePointClouds(cam);
-
     });
 
     this._renderer = renderer;
   }
 
-  get pointCloudGroupWrapper() {
+  get pointCloudGroupWrapper(): PotreeGroupWrapper {
     return this._pointCloudGroupWrapper;
   }
 
@@ -80,11 +81,12 @@ export class PointCloudManager {
     return this._pointCloudGroupWrapper.getLoadingStateObserver();
   }
 
-  updatePointClouds(camera: THREE.PerspectiveCamera) {
+  updatePointClouds(camera: THREE.PerspectiveCamera): void {
     this._pointCloudGroupWrapper.potreeInstance.updatePointClouds(
       this._pointCloudGroupWrapper.pointClouds,
       camera,
-      this._renderer);
+      this._renderer
+    );
   }
 
   updateCamera(camera: THREE.PerspectiveCamera): void {

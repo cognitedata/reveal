@@ -46,7 +46,12 @@ export class RevealManager {
 
   private readonly _updateSubject: Subject<void>;
 
-  constructor(cadManager: CadManager, renderManager: EffectRenderManager, pointCloudManager: PointCloudManager, renderer: THREE.WebGLRenderer) {
+  constructor(
+    cadManager: CadManager,
+    renderManager: EffectRenderManager,
+    pointCloudManager: PointCloudManager,
+    renderer: THREE.WebGLRenderer
+  ) {
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
@@ -112,7 +117,8 @@ export class RevealManager {
       this._pointCloudManager.pointCloudGroupWrapper.potreeInstance.updatePointClouds(
         this._pointCloudManager.pointCloudGroupWrapper.pointClouds,
         camera,
-        this._renderer);
+        this._renderer
+      );
 
       this._lastCamera.position.copy(camera.position);
       this._lastCamera.quaternion.copy(camera.quaternion);

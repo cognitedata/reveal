@@ -1,7 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
-
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 

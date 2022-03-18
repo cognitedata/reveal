@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { Color, Vector4 } from 'three';
 
 export const DEFAULT_RGB_BRIGHTNESS = 0;

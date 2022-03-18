@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import * as THREE from 'three';
 
 export interface IPointCloudTreeNodeBase {

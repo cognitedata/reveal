@@ -17,7 +17,7 @@ import { createPointClassKey } from './createPointClassKey';
 export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
-  private _classification: IClassification = {} as IClassification;
+  private readonly _classification: IClassification = {} as IClassification;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
@@ -71,10 +71,10 @@ export class PotreeNodeWrapper {
     return this._classification;
   }
 
-  setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean) {
+  setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
     const key = createPointClassKey(pointClass);
     if (!this._classification) {
-      return pointClass;
+      return;
     }
 
     this._classification[key].w = visible ? 1.0 : 0.0;

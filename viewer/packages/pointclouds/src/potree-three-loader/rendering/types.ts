@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { IUniform as IThreeUniform, Vector4 } from 'three';
 
 export interface IClassification {

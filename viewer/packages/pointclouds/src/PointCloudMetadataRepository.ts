@@ -2,8 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-
 import { PointCloudMetadata } from './PointCloudMetadata';
 import { MetadataRepository } from '@reveal/model-base';
 

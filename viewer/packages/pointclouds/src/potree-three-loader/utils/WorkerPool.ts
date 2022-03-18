@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 class WorkerPool {
   private readonly _workers: any;
   private _maxWorkers: number;

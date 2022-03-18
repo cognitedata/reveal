@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { Box3, BufferGeometry, EventDispatcher, Object3D, Points, Sphere } from 'three';
 import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';

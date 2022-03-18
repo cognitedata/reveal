@@ -1,7 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
-
 export enum PointAttributeName {
   POSITION_CARTESIAN = 0, // float x, y, z;
   COLOR_PACKED = 1, // byte r, g, b, a; 	I = [0,1]

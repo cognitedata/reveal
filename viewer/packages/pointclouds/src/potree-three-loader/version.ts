@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 export class Version {
   version: string;
   versionMajor: number;

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
-
 import * as THREE from 'three';
 
 import { ILoader } from '../loading/ILoader';

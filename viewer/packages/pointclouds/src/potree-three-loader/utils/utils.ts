@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
 export function getIndexFromName(name: string): number {

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as THREE from 'three';
 

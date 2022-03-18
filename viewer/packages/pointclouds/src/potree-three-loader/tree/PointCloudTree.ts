@@ -1,6 +1,3 @@
-/*!
- * Copyright 2022 Cognite AS
- */
 import { Object3D } from 'three';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 
