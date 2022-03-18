@@ -130,8 +130,8 @@ export const mapWellInfoToNPTEvents = (
 export const getNPTFilterOptions = (events: NPTEvent[]) => {
   const nptCodes: string[] = [];
   const nptDetailCodes: string[] = [];
-  let min: number | null = null;
-  let max: number | null = null;
+  let min = 0;
+  let max = 0;
   events.forEach((event) => {
     const { nptCode, nptCodeDetail } = event;
     if (nptCode && !nptCodes.includes(nptCode)) {
@@ -140,20 +140,20 @@ export const getNPTFilterOptions = (events: NPTEvent[]) => {
     if (nptCodeDetail && !nptDetailCodes.includes(nptCodeDetail)) {
       nptDetailCodes.push(nptCodeDetail);
     }
-    if (min === null || min > event.duration) {
-      min = event.duration;
-    }
-    if (max === null || max < event.duration) {
-      max = event.duration;
+
+    if (event?.duration) {
+      if (min > event?.duration) {
+        min = event.duration;
+      }
+      if (max < event?.duration) {
+        max = event.duration;
+      }
     }
   });
   return {
     nptCodes,
     nptDetailCodes,
-    minMaxDuration: [
-      min === null ? 0 : Math.floor(min),
-      max === null ? 0 : Math.ceil(max),
-    ],
+    minMaxDuration: [Math.floor(min), Math.ceil(max)],
   };
 };
 
@@ -165,7 +165,7 @@ const filterByName = (event: NPTEvent, searchPhrase: string) =>
 const filterByDuration = (event: NPTEvent, duration: number[]) => {
   if (!duration) return false;
 
-  const eventNPTDuration = event.duration;
+  const eventNPTDuration = event?.duration || 0;
   const [min, max] = duration;
 
   return eventNPTDuration >= min && eventNPTDuration <= max;

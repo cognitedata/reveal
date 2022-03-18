@@ -12,11 +12,15 @@ export const convertToClosestInteger = <Item>(
   const copiedEvent = { ...event };
   accessors.forEach((accessor) => {
     const numValue = Number(get(event, accessor));
-    set(
-      copiedEvent as unknown as Record<string, unknown>,
-      accessor,
-      numValue.toFixed(0)
-    );
+    if (Number.isNaN(numValue)) {
+      set(copiedEvent as unknown as Record<string, unknown>, accessor, '');
+    } else {
+      set(
+        copiedEvent as unknown as Record<string, unknown>,
+        accessor,
+        numValue.toFixed(0)
+      );
+    }
   });
   return copiedEvent;
 };

@@ -16,13 +16,22 @@ export const getTrajectoryInterpolationRequests = (
 
   return Object.keys(groupedEvents).map((wellboreMatchingId) => {
     const measuredDepths = sortedUniq(
-      groupedEvents[wellboreMatchingId].flatMap((event) => [
-        event.holeStart.value,
-        event.holeEnd.value,
-      ])
+      groupedEvents[wellboreMatchingId]
+        .filter((event) => event.holeStart?.value || event.holeEnd?.value)
+        .flatMap((event) => [
+          event.holeStart?.value || 0,
+          event.holeEnd?.value || 0,
+        ])
     );
+
+    // find first event that has holeStart unit
+    const eventWithUnit = groupedEvents[wellboreMatchingId].find(
+      (event) => event?.holeStart?.unit
+    );
+
     const measuredDepthUnit = {
-      unit: groupedEvents[wellboreMatchingId][0].holeStart.unit,
+      // fallback to Meter as default unit
+      unit: eventWithUnit?.holeStart?.unit || DistanceUnitEnum.Meter,
     };
 
     return {

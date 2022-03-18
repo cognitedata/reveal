@@ -122,6 +122,8 @@ export const mapNdsItemsToCogniteEvents = async (
     .trajectories.interpolate({
       items: getTrajectoryInterpolationRequests(ndsEvents),
       ignoreUnknownMeasuredDepths: true,
+      // This will be enabled in another PR, right now it's producing a weird infinity loop bug
+      // ignoreMissingTrajectories: true,
     })
     .then((interpolationItems: TrajectoryInterpolationItems) => {
       return groupBy(interpolationItems.items, 'wellboreMatchingId');
@@ -153,19 +155,20 @@ export const mapNdsItemsToCogniteEvents = async (
         parentExternalId: event.wellboreAssetExternalId,
         diameter_hole: event.holeDiameter?.value,
         diameter_hole_unit: event.holeDiameter?.unit,
-        md_hole_start: event.holeStart.value,
-        md_hole_start_unit: event.holeStart.unit,
-        md_hole_end: event.holeEnd.value,
-        md_hole_end_unit: event.holeEnd.unit,
+        md_hole_start: event.holeStart?.value,
+        md_hole_start_unit: event.holeStart?.unit,
+        md_hole_end: event.holeEnd?.value,
+        md_hole_end_unit: event.holeEnd?.unit,
         risk_sub_category: event.subtype || '',
-        severity: String(event.severity),
-        probability: String(event.probability),
-        tvd_offset_hole_start: getTVDForMD(
-          tvdsForWellbore,
-          event.holeStart.value
-        ),
+        severity: String(event?.severity || ''),
+        probability: String(event?.probability || ''),
+        tvd_offset_hole_start: event.holeStart?.value
+          ? getTVDForMD(tvdsForWellbore, event.holeStart.value)
+          : undefined,
         tvd_offset_hole_start_unit: tvdUnit,
-        tvd_offset_hole_end: getTVDForMD(tvdsForWellbore, event.holeEnd.value),
+        tvd_offset_hole_end: event.holeEnd?.value
+          ? getTVDForMD(tvdsForWellbore, event.holeEnd.value)
+          : undefined,
         tvd_offset_hole_end_unit: tvdUnit,
       },
       assetIds: [event.wellboreAssetExternalId],
