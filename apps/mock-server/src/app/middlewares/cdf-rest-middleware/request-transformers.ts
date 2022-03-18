@@ -48,7 +48,12 @@ export function transformFetchRequest(
   config: CdfApiConfig,
   endpointEnding: string
 ) {
-  const endpointsWithCustomReqLogic = ['timeseries'];
+  const endpointsWithCustomReqLogic = [
+    'timeseries',
+    'assets',
+    'files',
+    'events',
+  ];
 
   endpointEnding = endpointEnding.replace('/', '');
 
@@ -59,7 +64,7 @@ export function transformFetchRequest(
   let body = req.body;
 
   if (endpointsWithCustomReqLogic.some((entry) => req.url.includes(entry))) {
-    convertFiltersWithCustomMappings(body, cdfDb);
+    convertFiltersWithCustomMappings(body, cdfDb, req.url);
   }
 
   if (endpointEnding === 'byids') {
@@ -112,12 +117,40 @@ export function transformPostCreateRequest(
  * and require additional mapping
  * @param body
  * @param cdfDb
+ * @param reqUrl
  */
-function convertFiltersWithCustomMappings(body, cdfDb): void {
+function convertFiltersWithCustomMappings(body, cdfDb, reqUrl): void {
+  if (!body.filter) {
+    return;
+  }
+
   if (body.filter['assetIds']) {
     const filter = body.filter['assetIds'];
     delete body.filter['assetIds'];
-    body.filter.assetId = filter;
+    if (reqUrl.includes('timeseries')) {
+      body.filter.assetId = filter;
+    } else {
+      body.filter.assetIds_like = filter;
+    }
+  }
+
+  if (
+    body.filter['labels'] &&
+    body.filter['labels'].length &&
+    (reqUrl.includes('assets') || reqUrl.includes('files'))
+  ) {
+    const labelsFilter = body.filter['labels'];
+    const collectionTable = reqUrl.includes('files') ? 'files' : 'assets';
+    delete body.filter['labels'];
+
+    const assets = CdfDatabaseService.from(cdfDb, collectionTable).getState();
+    const filteredAssets = filterCollection(assets, {
+      labels: labelsFilter,
+    }) as CdfResourceObject[];
+
+    if (filteredAssets.length) {
+      body.filter.externalId = filteredAssets.map((asset) => asset.externalId);
+    }
   }
 
   if (body.filter['assetExternalIds']) {
@@ -132,7 +165,11 @@ function convertFiltersWithCustomMappings(body, cdfDb): void {
     }) as CdfResourceObject[];
 
     if (filteredAssets.length) {
-      body.filter.assetId = filteredAssets.map((asset) => asset.id);
+      if (reqUrl.includes('timeseries')) {
+        body.filter.assetId = filteredAssets.map((asset) => asset.id);
+      } else {
+        body.filter.assetIds_like = filteredAssets.map((asset) => asset.id);
+      }
     }
   }
 
@@ -158,7 +195,11 @@ function convertFiltersWithCustomMappings(body, cdfDb): void {
         'parentExternalId'
       );
 
-      body.filter.assetId = collection.toArray().map((x) => x.id);
+      if (reqUrl.includes('timeseries')) {
+        body.filter.assetId = collection.toArray().map((x) => x.id);
+      } else {
+        body.filter.assetIds_like = collection.toArray().map((x) => x.id);
+      }
     }
   }
 }

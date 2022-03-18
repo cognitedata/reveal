@@ -8,6 +8,7 @@ import createCdfRestRouter from './cdf-rest-middleware';
 import templatesMiddleware from './templates';
 import timeseriesMiddleware from './timeseries';
 import schemaServiceMiddleware from './schema/schema-service-middleware';
+import filesMiddleware from './files';
 import { router as jsonServerRouter, rewriter } from 'json-server';
 import { createConfigDefaults, createDefaultMockApiEndpoints } from '../utils';
 import path = require('path');
@@ -41,6 +42,8 @@ export default function (
     serverConfig
   );
 
+  const filesApiRouter = filesMiddleware(jsonServerDb, serverConfig);
+
   const cdfDb = jsonServerDb;
 
   const cdfRouter = createCdfRestRouter(cdfDb, serverConfig);
@@ -59,6 +62,7 @@ export default function (
   cdfRouter.use(templatesApiRouter);
   cdfRouter.use(timeseriesApiRouter);
   cdfRouter.use(schemaServiceApiRouter);
+  cdfRouter.use(filesApiRouter);
   cdfRouter.use(jsonServerApiRouter);
 
   cdfRouter.db = cdfDb;

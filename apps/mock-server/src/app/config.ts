@@ -20,5 +20,7 @@ export const config = {
     '/templategroups/.*/versions/.*/graphql',
     '/schema/graphql',
     '/timeseries/data/list',
+    '/files/downloadLink',
+    '/files/gcs_proxy/cognitedata-file-storage/*',
   ],
 };

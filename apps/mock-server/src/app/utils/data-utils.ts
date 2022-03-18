@@ -131,6 +131,15 @@ const filterFunction = (dbValue, filter) => {
     return filter.anyOfTerms.some((x) => dbValue.includes(x));
   }
 
+  if (filter.containsAny) {
+    return filter.containsAny.some((filterItem) => {
+      const itemKey = Object.keys(filterItem)[0];
+      return dbValue.some((dbItem) =>
+        dbItem[itemKey].includes(filterItem[itemKey])
+      );
+    });
+  }
+
   // get item value based on path
   // i.e post.title -> 'foo'
   const filterValue = filter.eq;

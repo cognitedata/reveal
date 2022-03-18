@@ -131,7 +131,7 @@ export const mapRequestBodyToQueryParams = (
   if (reqBody.cursor) {
     try {
       const cursorBody = base64Decode(reqBody.cursor).split('_');
-      filters['_start'] = +cursorBody[0];
+      filters['_start'] = +cursorBody[0] - 1;
       delete reqBody.cursor;
     } catch (err) {
       console.error(`Can not parse cursor, should be base64 string`, err);

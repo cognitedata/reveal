@@ -7,6 +7,7 @@ import {
   datapointsMockData,
   templategroupsMockData,
   templatesMockData,
+  filesMockData,
 } from '@platypus/mock-data';
 
 export const mockDataSample = {
@@ -17,5 +18,6 @@ export const mockDataSample = {
   datasets: datasetsMockData,
   templategroups: templategroupsMockData,
   templates: templatesMockData,
+  files: filesMockData,
   posts: [{ id: 1, title: 'json-server', author: 'typicode' }],
 } as MockData;

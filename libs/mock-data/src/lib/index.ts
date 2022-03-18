@@ -5,3 +5,4 @@ export * from './timeseries';
 export * from './datapoints';
 export * from './templategroups';
 export * from './templates';
+export * from './files';
