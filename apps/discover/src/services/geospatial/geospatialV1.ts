@@ -4,7 +4,11 @@ import { log } from 'utils/log';
 
 import { adaptGeoJSONToGeospatial } from './adaptGeoJSONToGeospatial';
 import { adaptGeospatialToGeoJSON } from './adaptGeospatialToGeoJSON';
-import { DISCOVER_FEATURE_TYPE_PREFIX } from './constants';
+import {
+  DISCOVER_FEATURE_TYPE_PREFIX,
+  FEATURE_ERROR,
+  FEATURE_TYPE_ERROR,
+} from './constants';
 
 export const geospatialV1 = {
   createLayer: (featureCollection: FeatureCollection, layerId: string) => {
@@ -17,9 +21,7 @@ export const geospatialV1 = {
       .geospatial.featureType.create([featureType])
       .catch((error) => {
         log(error?.message);
-        throw new Error(
-          'Could not create layer because creating feature type in geospatial failed.'
-        );
+        throw new Error(FEATURE_TYPE_ERROR);
       })
       .then(([featureTypeResponse]) =>
         getCogniteSDKClient()
@@ -30,9 +32,7 @@ export const geospatialV1 = {
           .catch((error) => {
             geospatialV1.deleteFeatureType(layerId);
             log(error?.message);
-            throw new Error(
-              'Could not create layer because creating features in geospatial failed.'
-            );
+            throw new Error(FEATURE_ERROR);
           })
       );
   },

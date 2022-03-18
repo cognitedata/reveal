@@ -6,7 +6,7 @@ import { SIDECAR } from 'constants/app';
 
 import { DocumentError, DocumentCategoriesResult } from './types';
 
-const documentError: DocumentError = {
+export const documentError: DocumentError = {
   error: true,
 };
 export const documents = {

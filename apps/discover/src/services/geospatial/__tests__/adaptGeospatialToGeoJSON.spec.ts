@@ -1,7 +1,6 @@
-import { adaptGeospatialToGeoJSON } from '../adaptGeospatialToGeoJSON';
+import { GEOMETRY, TEST_STRING } from '__test-utils/fixtures/geometry';
 
-const GEOMETRY = { type: 'Point' as const, coordinates: [0, 0] };
-const TEST_STRING = 'Aker test';
+import { adaptGeospatialToGeoJSON } from '../adaptGeospatialToGeoJSON';
 
 describe('adaptGeospatialToGeoJSON', () => {
   it('should return GeoJSON with empty features when no geospatial feature is sent', () => {

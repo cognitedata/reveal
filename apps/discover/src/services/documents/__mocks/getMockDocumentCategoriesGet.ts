@@ -8,13 +8,16 @@ import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';
 
 const responseData: DocumentCategories = getMockDocumentCategories();
+const url = `https://discover-api.staging.${SIDECAR.cdfCluster}.cognite.ai/${TEST_PROJECT}/document/categories`;
 
 export const getMockDocumentCategoriesGet = (): MSWRequest => {
-  const url = `https://discover-api.staging.${SIDECAR.cdfCluster}.cognite.ai/${TEST_PROJECT}/document/categories`;
-
-  // console.log('STARTING MOCK', url);
-
   return rest.get<Request>(url, (_req, res, ctx) => {
     return res(ctx.json(responseData));
+  });
+};
+
+export const getMockDocumentCategoriesResult = (extras?: any): MSWRequest => {
+  return rest.get<Request>(url, (_req, res, ctx) => {
+    return res(ctx.json({ data: responseData, ...extras }));
   });
 };

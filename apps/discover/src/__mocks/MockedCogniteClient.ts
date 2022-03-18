@@ -1,12 +1,24 @@
 import noop from 'lodash/noop';
+import {
+  DISCOVER_FEATURE_TYPE_PREFIX,
+  TEST_ERROR_MESSAGE,
+} from 'services/geospatial/constants';
 
-import { CogniteEvent, IdEither } from '@cognite/sdk';
+import {
+  CogniteEvent,
+  ExternalId,
+  GeospatialCreateFeatureType,
+  GeospatialFeature,
+  GeospatialRecursiveDelete,
+  IdEither,
+} from '@cognite/sdk';
 
 import { mockCogniteAssetList } from '__test-utils/fixtures/assets';
 import {
   getMockFileLinkWithInternalId,
   getMockFileLinkWithExternalId,
 } from '__test-utils/fixtures/document';
+import { GEOMETRY, TEST_STRING } from '__test-utils/fixtures/geometry';
 import {
   mockedSequencesResultFixture,
   mockedWellResultFixture,
@@ -163,5 +175,50 @@ export class MockedCogniteClient {
       return Promise.reject(error);
     }
     return data;
+  };
+
+  geospatial = {
+    featureType: {
+      create: (featureType: GeospatialCreateFeatureType[]) => {
+        if (featureType[0]?.externalId === DISCOVER_FEATURE_TYPE_PREFIX) {
+          return Promise.reject(new Error(TEST_ERROR_MESSAGE));
+        }
+        return Promise.resolve(featureType);
+      },
+      delete: (
+        externalIds: ExternalId[],
+        params?: GeospatialRecursiveDelete | undefined
+      ) => {
+        if (externalIds || params) return Promise.resolve({});
+
+        return Promise.reject(TEST_ERROR_MESSAGE);
+      },
+    },
+    feature: {
+      create: (
+        featureTypeExternalId: string,
+        features: GeospatialFeature[]
+      ) => {
+        if (features.length && featureTypeExternalId) {
+          return Promise.resolve(featureTypeExternalId);
+        }
+        return Promise.reject(new Error(TEST_ERROR_MESSAGE));
+      },
+
+      search: (externalId: string, filter: any) => {
+        if (externalId && filter)
+          return Promise.resolve([
+            {
+              geometry: GEOMETRY,
+              Operator: TEST_STRING,
+              createdTime: Date.now(),
+              lastUpdatedTime: Date.now(),
+              externalId: 'test',
+            },
+          ]);
+
+        return Promise.reject(new Error());
+      },
+    },
   };
 }

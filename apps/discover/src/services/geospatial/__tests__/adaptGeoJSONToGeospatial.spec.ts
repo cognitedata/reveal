@@ -1,4 +1,10 @@
-import { Geometry } from 'geojson';
+import {
+  GEOMETRY_POINT_1,
+  GEOMETRY_POINT_2,
+  LONGEST_STRING,
+  TEST_DOUBLE_NUMBER,
+  TEST_LAYER_ID,
+} from '__test-utils/fixtures/geometry';
 
 import { adaptGeoJSONToGeospatial } from '../adaptGeoJSONToGeospatial';
 import {
@@ -6,17 +12,6 @@ import {
   DISCOVER_FEATURE_TYPE_PREFIX,
   MAX_STRING_LENGTH_MULTIPLIER,
 } from '../constants';
-
-const TEST_LAYER_ID = 'test_layer';
-const LONGEST_STRING =
-  'BP EXPLORATION OPERATING COMPANY LIMITED: BP EXPLORATION OPERATING COMPANY LIMITED';
-const TEST_DOUBLE_NUMBER = 5000.23423;
-const GEOMETRY_POINT_1: { geometry: Geometry } = {
-  geometry: { type: 'Point', coordinates: [0, 1] },
-};
-const GEOMETRY_POINT_2: { geometry: Geometry } = {
-  geometry: { type: 'Point', coordinates: [1, 2] },
-};
 
 describe('adaptGeoJSONToGeospatial', () => {
   it('should return featureType and featureItems', () => {
