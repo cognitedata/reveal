@@ -3,9 +3,10 @@
  */
 import * as THREE from 'three';
 
-import { SectorCuller } from './SectorCuller';
-import { ByVisibilityGpuSectorCuller } from '@reveal/cad-geometry-loaders';
 import { EffectRenderManager } from '@reveal/rendering';
+
+import { SectorCuller } from './SectorCuller';
+import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
 import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 
 export function createV8SectorCuller(renderer: THREE.WebGLRenderer, renderManager: EffectRenderManager): SectorCuller {
