@@ -187,7 +187,7 @@ describe('SolutionsHandlerTest', () => {
         .find((t) => t.name === 'Person')
         ?.fields.find((f) => f.name === 'posts')?.type.name === 'Article'
     ).toBeTruthy();
-    expect(newState.types.length).toBe(2);
+    expect(newState.types.length).toBe(3);
   });
 
   it('should add field', () => {

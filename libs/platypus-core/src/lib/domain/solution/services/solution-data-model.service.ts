@@ -38,7 +38,7 @@ export class SolutionDataModelService {
     state.types.forEach((type: SolutionDataModelType) => {
       type.fields.forEach((field: SolutionDataModelField) => {
         if (field.type.name === oldTypeName) {
-          newState = this.updateField(state, type.name, field.name, {
+          newState = this.updateField(newState, type.name, field.name, {
             ...field,
             type: { ...field.type, name: newTypeName },
           });
