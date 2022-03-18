@@ -27,7 +27,7 @@ const LegacyLoginFlowWarning = () => {
   const client = useQueryClient();
   const { flow } = getFlow();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
-  const isLoggedInUsingLegacyLoginFlow = flow === 'CDF_OAUTH';
+  const isLoggedInUsingLegacyLoginFlow = flow === 'COGNITE_AUTH';
   const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =
     useAuthConfiguration();
   const isOIDCConfigured = authConfiguration?.isOidcEnabled;
