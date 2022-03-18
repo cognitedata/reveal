@@ -37,15 +37,13 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   private readonly potreeGroup: THREE.Group;
   private readonly _potreeInstance: Potree;
 
-  private readonly _renderer: THREE.WebGLRenderer;
-
   private numNodesLoadingAfterLastRedraw = 0;
   private numChildrenAfterLastRedraw = 0;
 
   /**
    * @param pollLoadingStatusInterval Controls how often the wrapper checks for loading status. Used for testing.
    */
-  constructor(potreeInstance: Potree, renderer: THREE.WebGLRenderer, pollLoadingStatusInterval: number = 200) {
+  constructor(potreeInstance: Potree, pollLoadingStatusInterval: number = 200) {
     super();
     this.potreeGroup = new THREE.Group()
     this._potreeInstance = potreeInstance;
@@ -53,7 +51,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this._pointClouds = [];
     this.name = 'Potree point cloud wrapper';
     this.add(this.potreeGroup);
-    this._renderer = renderer;
 
     const onAfterRenderTrigger = new THREE.Mesh(new THREE.BufferGeometry());
     onAfterRenderTrigger.name = 'onAfterRender trigger (no geometry)';
@@ -87,10 +84,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
 
   get potreeInstance(): Potree {
     return this._potreeInstance;
-  }
-
-  get renderer(): THREE.WebGLRenderer {
-    return this._renderer;
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {

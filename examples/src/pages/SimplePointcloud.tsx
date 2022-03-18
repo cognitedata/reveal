@@ -18,13 +18,31 @@ import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
 CameraControls.install({ THREE });
 
+class RevealManagerUpdater {
+
+  private _revealManager: reveal.RevealManager;
+
+  constructor(revealManager: reveal.RevealManager) {
+    this._revealManager = revealManager;
+  }
+
+  public get pointCloudBudget(): number {
+    return this._revealManager.pointCloudBudget.numberOfPoints;
+  }
+
+  public set pointCloudBudget(val: number) {
+    this._revealManager.pointCloudBudget = { numberOfPoints: val };
+  }
+}
+
 function initializeGui(
   gui: GUI,
   node: reveal.PointCloudNode,
+  revealManagerUpdater: RevealManagerUpdater,
   handleSettingsChangedCb: () => void
 ) {
-  gui.add(node, 'pointBudget', 0, 20_000_000);
-  // gui.add(node, 'visiblePointCount', 0, 20_000_000).onChange(() => { /* Ignore update */ });
+  gui.add(revealManagerUpdater, 'pointCloudBudget', 0, 20_000_000);
+  gui.add(node, 'visiblePointCount', 0, 20_000_000).onChange(() => { /* Ignore update */ });
   gui.add(node, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   gui
     .add(node, 'pointColorType', {
@@ -96,7 +114,7 @@ export function SimplePointcloud() {
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       const { revealManager, model: pointCloudNode } = await createManagerAndLoadModel(client, renderer, scene, 'pointcloud', modelRevision, modelUrl);
-      // scene.add(pointCloudNode);
+      scene.add(pointCloudNode);
       revealManager.on('loadingStateChanged', setLoadingState);
 
       const classesGui = gui.addFolder('Class filters');
@@ -127,7 +145,7 @@ export function SimplePointcloud() {
       function handleSettingsChanged() {
         settingsChanged = true;
       }
-      initializeGui(gui, pointCloudNode, handleSettingsChanged);
+      initializeGui(gui, pointCloudNode, new RevealManagerUpdater(revealManager), handleSettingsChanged);
 
       // Create a bounding box around the point cloud for debugging
       const bbox: THREE.Box3 = pointCloudNode.getBoundingBox();
@@ -136,46 +154,22 @@ export function SimplePointcloud() {
 
       const controls = new CameraControls(camera, renderer.domElement);
 
-
-      // -- New Potree stuff
-
-      const potree = new reveal.NPotree();
-      // potree.pointBudget = 2_000_000;
-      potree.pointBudget = 400_000;
-      const pointClouds: reveal.NPointCloudOctree[] = [];
-
-      potree
-        .loadPointCloud('point-tiles/ept.json',
-                        (url: string) => 'https://localhost:3000/' + url)
-        .then((pco: reveal.NPointCloudOctree) => {
-          console.log("Got some PCO stuff");
-          pointClouds.push(pco);
-          console.log("Adding point cloud...?");
-          scene.add(pco);
-          pco.material.pointSizeType = reveal.NPointSizeType.ADAPTIVE;
-          pco.material.useEDL = false;
-
-          bboxHelper.box = pco.boundingBox;
-
-          const camTarget = pco.boundingBox.getCenter(new THREE.Vector3());
-          const minToCenter = new THREE.Vector3().subVectors(camTarget, pco.boundingBox.min);
-          const camPos = camTarget.clone().addScaledVector(minToCenter, -1.5);
-          controls.setLookAt(
-            camPos.x,
-            camPos.y,
-            camPos.z,
-            camTarget.x,
-            camTarget.y,
-            camTarget.z
-          );
-          controls.update(0.0);
-          camera.updateMatrixWorld();
-        });
-
-      // -- End New Potree stuff
+      const camTarget = bbox.getCenter(new THREE.Vector3());
+      const minToCenter = new THREE.Vector3().subVectors(camTarget, bbox.min);
+      const camPos = camTarget.clone().addScaledVector(minToCenter, -1.5);
+      controls.setLookAt(
+        camPos.x,
+        camPos.y,
+        camPos.z,
+        camTarget.x,
+        camTarget.y,
+        camTarget.z
+      );
 
       animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
         const controlsNeedUpdate = controls.update(deltaTime);
+
+        revealManager.update(camera);
 
         const needsUpdate =
           controlsNeedUpdate || revealManager.needsRedraw || settingsChanged;
@@ -184,8 +178,6 @@ export function SimplePointcloud() {
           revealManager.render(camera);
           settingsChanged = false;
         }
-
-        potree.updatePointClouds(pointClouds, camera, renderer);
       });
       animationLoopHandler.start();
 

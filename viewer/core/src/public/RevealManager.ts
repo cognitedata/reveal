@@ -118,6 +118,7 @@ export class RevealManager {
       this._lastCamera.quaternion.copy(camera.quaternion);
       this._lastCamera.zoom = camera.zoom;
       this._cadManager.updateCamera(camera);
+      this._pointCloudManager.updateCamera(camera);
 
       this._updateSubject.next();
     }

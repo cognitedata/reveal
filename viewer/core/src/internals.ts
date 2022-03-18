@@ -20,9 +20,8 @@ export {
   PotreeGroupWrapper,
   PointCloudNode,
   PointCloudMetadata,
-  NPotree,
-  NPointCloudOctree,
-  NPointSizeType
+  Potree,
+  PointCloudOctree,
 } from '@reveal/pointclouds';
 
 // Utilities

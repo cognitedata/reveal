@@ -26,10 +26,7 @@ export { CognitePointCloudModel } from './src/CognitePointCloudModel';
 export { PotreeNodeWrapper } from './src/PotreeNodeWrapper';
 export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
 
-export { PointCloudOctree } from './src/potree-three-loader/tree/PointCloudOctree';
-
 export {
-  Potree as NPotree,
-  PointCloudOctree as NPointCloudOctree,
-  PointSizeType as NPointSizeType
+  Potree,
+  PointCloudOctree,
 } from './src/PotreePnextLoader';

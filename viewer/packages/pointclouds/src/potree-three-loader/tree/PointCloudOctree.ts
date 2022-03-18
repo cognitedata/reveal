@@ -48,8 +48,8 @@ export class PointCloudOctree extends PointCloudTree {
     this.boundingSphere = this.boundingBox.getBoundingSphere(new Sphere());
 
     this.position.copy(pcoGeometry.offset);
-    this.updateMatrix();
 
+    this.updateMatrix();
     this.applyMatrix4(new Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1));
 
     this.material = material || new PointCloudMaterial();

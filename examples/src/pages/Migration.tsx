@@ -177,6 +177,10 @@ export function Migration() {
         totalBounds.expandByPoint(bounds.max);
         clippingUi.updateWorldBounds(totalBounds);
 
+
+        const boxHelper = new THREE.Box3Helper(bounds);
+        viewer.addObject3D(boxHelper);
+
         viewer.loadCameraFromModel(model);
         if (model instanceof Cognite3DModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);

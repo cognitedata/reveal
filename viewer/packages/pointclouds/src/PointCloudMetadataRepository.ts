@@ -17,8 +17,6 @@ import {
   BlobOutputMetadata
 } from '@reveal/modeldata-api';
 
-const identityMatrix = new THREE.Matrix4().identity();
-
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
   private readonly _modelDataProvider: ModelDataProvider;
@@ -37,7 +35,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
-    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, output.format);
+    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, File3dFormat.EptPointCloud);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
     const modelBaseUrl = await baseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
@@ -48,7 +46,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
       formatVersion: output.version,
       modelBaseUrl,
       modelMatrix,
-      cameraConfiguration: transformCameraConfiguration(cameraConfiguration, identityMatrix),
+      cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
   }
