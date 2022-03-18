@@ -11,25 +11,32 @@ import {
   FixedText,
 } from './element';
 
-export const MiddleEllipsis: React.FC<{ value: string; fixedLength?: number }> =
-  ({ value, fixedLength }) => {
-    const ref = useRef<HTMLElement>();
+export interface MiddleEllipsisProps {
+  value: string;
+  fixedLength?: number;
+}
 
-    const showTooltip = useElementOverflowing(ref?.current);
+export const MiddleEllipsis: React.FC<MiddleEllipsisProps> = ({
+  value,
+  fixedLength,
+}) => {
+  const ref = useRef<HTMLElement>();
 
-    return (
-      <MiddleEllipsisContainer>
-        <Tooltip
-          title={value}
-          key={value}
-          enabled={showTooltip}
-          placement={DEFAULT_TOOLTIP_PLACEMENT}
-        >
-          {getMiddleEllipsisWrapper({ value, ref }, fixedLength)}
-        </Tooltip>
-      </MiddleEllipsisContainer>
-    );
-  };
+  const showTooltip = useElementOverflowing(ref?.current);
+
+  return (
+    <MiddleEllipsisContainer data-testid="middle-ellipsis">
+      <Tooltip
+        title={value}
+        key={value}
+        enabled={showTooltip}
+        placement={DEFAULT_TOOLTIP_PLACEMENT}
+      >
+        {getMiddleEllipsisWrapper({ value, ref }, fixedLength)}
+      </Tooltip>
+    </MiddleEllipsisContainer>
+  );
+};
 
 export const getMiddleEllipsisWrapper = (
   {
