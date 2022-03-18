@@ -79,7 +79,6 @@ export const useWellsCacheQuery = (
       // console.log('Updated cache:', updatedCache);
 
       queryClient.setQueryData(WELL_QUERY_KEY.WELLS_CACHE, updatedCache);
-
       return updatedCache;
     },
     {

@@ -27,7 +27,7 @@ type AxisNames = {
   x2?: string;
 };
 
-type Props = {
+export type Props = {
   title: string;
   chartData: MeasurementChartData[];
   axisNames: AxisNames;

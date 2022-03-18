@@ -432,7 +432,7 @@ export const getMockMeasurementChartData = (
   type: 'scatter',
   mode: 'lines',
   name: 'LOT',
-  customdata: ['TEST Curve'],
+  customdata: ['TEST Curve', 'Test wellbore 1'],
   measurementType: MeasurementTypeV3.GEOMECHANNICS,
   ...extras,
 });
@@ -526,3 +526,33 @@ export const constGetMockLineConfig = () => ({
     },
   },
 });
+
+export const getMockCurveOptions = () => [
+  {
+    value: {
+      measurementType: 'geomechanics',
+      columnExternalId: 'GEO',
+      unit: 'psi',
+      description: 'geomechanics',
+    },
+    label: 'GEO',
+  },
+  {
+    value: {
+      measurementType: 'geomechanics pre drill',
+      columnExternalId: 'GEO_PRE_DRILL',
+      unit: 'psi',
+      description: 'geomechanics pre drill',
+    },
+    label: 'GEO_PRE_DRILL',
+  },
+  {
+    value: {
+      measurementType: 'geomechanics post drill',
+      columnExternalId: 'GEO_POST_DRILL',
+      unit: 'psi',
+      description: 'geomechanics post drill',
+    },
+    label: 'GEO_POST_DRILL',
+  },
+];

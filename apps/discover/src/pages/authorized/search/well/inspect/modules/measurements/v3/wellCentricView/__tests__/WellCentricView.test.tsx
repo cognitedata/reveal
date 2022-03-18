@@ -16,6 +16,7 @@ import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { NO_DATA_AVAILABLE_TEXT } from 'components/charts/common/NoDataAvailable/constants';
 import { LOADING_TEXT } from 'components/loading/constants';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 
 import { WellCentricView, Props } from '../WellCentricView';
 
@@ -51,8 +52,8 @@ describe('WellCentricView Tests api return empty sequence list', () => {
       geomechanicsCurves: [],
       ppfgCurves: [],
       otherTypes: [],
-      measurementReference: 'ft',
-      pressureUnit: 'ppa',
+      measurementReference: DepthMeasurementUnit.TVD,
+      pressureUnit: PressureUnit.PPG,
     });
     await waitFor(() => {
       expect(screen.getByText(LOADING_TEXT)).toBeInTheDocument();
@@ -64,8 +65,8 @@ describe('WellCentricView Tests api return empty sequence list', () => {
       geomechanicsCurves: [],
       ppfgCurves: [],
       otherTypes: [],
-      measurementReference: 'ft',
-      pressureUnit: 'ppa',
+      measurementReference: DepthMeasurementUnit.TVD,
+      pressureUnit: PressureUnit.PPG,
     });
     await waitFor(
       () => {
@@ -106,8 +107,8 @@ describe('WellCentricView Tests api return data sequence list', () => {
       geomechanicsCurves: [],
       ppfgCurves: [],
       otherTypes: [],
-      measurementReference: 'ft',
-      pressureUnit: 'ppa',
+      measurementReference: DepthMeasurementUnit.TVD,
+      pressureUnit: PressureUnit.PPG,
     });
     await waitFor(() => {
       expect(screen.getByText(LOADING_TEXT)).toBeInTheDocument();
@@ -125,8 +126,8 @@ describe('WellCentricView Tests api return data sequence list', () => {
         },
       ],
       otherTypes: [],
-      measurementReference: 'ft',
-      pressureUnit: 'ppa',
+      measurementReference: DepthMeasurementUnit.TVD,
+      pressureUnit: PressureUnit.PPG,
     });
     await waitFor(
       () => {

@@ -39,7 +39,7 @@ import {
   CompareViewCardsWrapper,
 } from './elements';
 
-type Props = {
+export type Props = {
   wellbores: Wellbore[];
   onBack: () => void;
 };
@@ -66,12 +66,12 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const graphCards = useMemo(() => {
-    if (!data || !userPreferredUnit) return [];
+    if (!data || isEmpty(data) || !userPreferredUnit) return [];
     const wellboreCharts = wellbores
       .map((wellbore) => ({
         wellbore,
         chartData: formatChartData(
-          data[wellbore.id],
+          data[wellbore.id] || [],
           geomechanicsCurves,
           ppfgCurves,
           otherTypes,

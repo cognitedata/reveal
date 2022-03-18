@@ -7,7 +7,9 @@ import { CLEAR_SELECTION_TEXT } from 'pages/authorized/search/well/content/const
 
 import { getSelectedWellboresTitle, getSelectedWellsTitle } from '../utils';
 
-type Props = {
+import { COMPARE_TEXT } from './constants';
+
+export type Props = {
   wellsCount: number;
   wellboresCount: number;
   handleDeselectAll: () => void;
@@ -30,7 +32,7 @@ export const WellCentricBulkActions: React.FC<Props> = ({
     >
       <BaseButton
         type="primary"
-        text="Compare"
+        text={t(COMPARE_TEXT)}
         aria-label="View"
         variant="inverted"
         size="default"

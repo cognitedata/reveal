@@ -17,8 +17,8 @@ import {
 } from './elements';
 
 export interface Props {
-  unit: string;
-  reference: string;
+  unit: PressureUnit;
+  reference: DepthMeasurementUnit;
   onUnitChange: (value: PressureUnit) => void;
   onReferenceChange: (value: DepthMeasurementUnit) => void;
 }

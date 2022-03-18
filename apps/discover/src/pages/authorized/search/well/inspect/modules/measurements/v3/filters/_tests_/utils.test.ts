@@ -1,3 +1,7 @@
+import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
+
+import { getMockCurveOptions } from '__test-utils/fixtures/measurements';
+
 import {
   mapStringCurvesToOptions,
   mapOptionsToCurves,
@@ -22,7 +26,7 @@ const changeSomeOptions = [
       measurementType: 'geomechanics',
       columnExternalId: 'GEO',
       unit: 'psi',
-      description: null,
+      description: 'geomechanics',
     },
     label: 'GEO',
   },
@@ -31,37 +35,7 @@ const changeSomeOptions = [
       measurementType: 'geomechanics post drill',
       columnExternalId: 'GEO_POST_DRILL',
       unit: 'psi',
-      description: null,
-    },
-    label: 'GEO_POST_DRILL',
-  },
-];
-
-const allSelectedOptions = [
-  {
-    value: {
-      measurementType: 'geomechanics',
-      columnExternalId: 'GEO',
-      unit: 'psi',
-      description: null,
-    },
-    label: 'GEO',
-  },
-  {
-    value: {
-      measurementType: 'geomechanics pre drill',
-      columnExternalId: 'GEO_PRE_DRILL',
-      unit: 'psi',
-      description: null,
-    },
-    label: 'GEO_PRE_DRILL',
-  },
-  {
-    value: {
-      measurementType: 'geomechanics post drill',
-      columnExternalId: 'GEO_POST_DRILL',
-      unit: 'psi',
-      description: null,
+      description: 'geomechanics post drill',
     },
     label: 'GEO_POST_DRILL',
   },
@@ -76,7 +50,7 @@ const changeAllOptions = [
           measurementType: 'geomechanics',
           columnExternalId: 'GEO',
           unit: 'psi',
-          description: null,
+          description: 'geomechanics',
         },
         label: 'GEO',
       },
@@ -85,7 +59,7 @@ const changeAllOptions = [
           measurementType: 'geomechanics pre drill',
           columnExternalId: 'GEO_PRE_DRILL',
           unit: 'psi',
-          description: null,
+          description: 'geomechanics pre drill',
         },
         label: 'GEO_PRE_DRILL',
       },
@@ -94,7 +68,7 @@ const changeAllOptions = [
           measurementType: 'geomechanics post drill',
           columnExternalId: 'GEO_POST_DRILL',
           unit: 'psi',
-          description: null,
+          description: 'geomechanics post drill',
         },
         label: 'GEO_POST_DRILL',
       },
@@ -115,13 +89,16 @@ describe('Measurement filter utils', () => {
 describe('extractSelectedCurvesFromOptions tests', () => {
   test('Should return same options since not a select all', () => {
     expect(
-      extractSelectedCurvesFromOptions(changeSomeOptions, allSelectedOptions)
+      extractSelectedCurvesFromOptions<DepthMeasurementColumn>(
+        changeSomeOptions,
+        getMockCurveOptions()
+      )
     ).toEqual(changeSomeOptions);
   });
 
   test('Should return options of the first option since it is a select all )', () => {
     expect(extractSelectedCurvesFromOptions(changeAllOptions, [])).toEqual(
-      allSelectedOptions
+      getMockCurveOptions()
     );
   });
 });

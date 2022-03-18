@@ -7,7 +7,7 @@ import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 import { DropdownWrapper } from './elements';
 import { mapCollectionToOptions } from './utils';
 
-interface Props<T> {
+export interface Props<T extends PressureUnit | DepthMeasurementUnit> {
   title: string;
   selected: T;
   options: T[];

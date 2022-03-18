@@ -8,7 +8,7 @@ import EmptyState from 'components/emptyState';
 import { DropdownWrapper } from './elements';
 import { mapCurvesToOptions, extractSelectedCurvesFromOptions } from './utils';
 
-interface Props {
+export interface Props {
   title: string;
   selected: DepthMeasurementColumn[];
   options: OptionType<DepthMeasurementColumn>[];
