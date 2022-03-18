@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import { Operation } from '@cognite/calculation-backend';
 import { Button, Dropdown, Input, Modal } from '@cognite/cogs.js';
-import ReactMarkdown from 'react-markdown';
 import Layers from 'utils/z-index';
 import compareVersions from 'compare-versions';
+import Markdown from 'components/Markdown/Markdown';
 import CategoryMenu from './CategoryMenu';
 import SearchResultMenu from './SearchResultMenu';
 
@@ -131,9 +131,9 @@ const ToolboxFunctionDropdown = ({
         }}
         width={750}
       >
-        <ReactMarkdown>
+        <Markdown>
           {latestVersionOfSelectedOperation?.description || ''}
-        </ReactMarkdown>
+        </Markdown>
       </InfoModal>
     </>
   );
