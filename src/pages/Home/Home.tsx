@@ -7,12 +7,9 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import styled from 'styled-components';
-
 import { Title, Icon, Loader } from '@cognite/cogs.js';
 import { Menu } from 'antd';
-
 import { createLink } from '@cognite/cdf-utilities';
-
 import APIKeys from 'pages/APIKeys';
 import Groups from 'pages/Groups';
 import IDP from 'pages/IDP';
@@ -20,12 +17,7 @@ import OIDC from 'pages/OIDC';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
 import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
-import {
-  useAuthConfiguration,
-  usePermissions,
-  useListServiceAccounts,
-} from 'hooks';
-import LegacyServiceAccountsWarning from 'pages/OIDC/LegacyServiceAccountsWarning';
+import { useAuthConfiguration, usePermissions } from 'hooks';
 
 export default function () {
   const client = useQueryClient();
@@ -48,7 +40,7 @@ export default function () {
   const { pathname, search, hash } = history.location;
 
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
-  const { data: serviceAccounts } = useListServiceAccounts();
+  // const { data: serviceAccounts } = useListServiceAccounts();
 
   if (!isFetched) {
     return <Loader />;
@@ -63,14 +55,10 @@ export default function () {
             cursor: 'pointer',
             color: 'var(--cogs-greyscale-grey5)',
           }}
-          type={isFetching || isMutating ? 'Loading' : 'Refresh'}
+          type={isFetching || isMutating ? 'Loader' : 'Refresh'}
           onClick={() => client.invalidateQueries()}
         />
       </Title>
-      {!authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled &&
-      serviceAccounts?.length ? (
-        <LegacyServiceAccountsWarning accounts={serviceAccounts} />
-      ) : null}
       <StyledMeny
         mode="horizontal"
         selectedKeys={[params.page || 'groups']}

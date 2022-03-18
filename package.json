@@ -16,7 +16,7 @@
   "dependencies": {
     "@cognite/acl-protos": "^0.14.6",
     "@cognite/cdf-utilities": "^0.10.1",
-    "@cognite/cogs.js": "^3.8.1",
+    "@cognite/cogs.js": "^5.2.1",
     "@cognite/login-utils": "^1.2.3",
     "@cognite/sdk": "^6.3.2",
     "@cognite/sdk-provider": "^1.0.0",

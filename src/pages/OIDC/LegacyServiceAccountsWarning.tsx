@@ -5,10 +5,11 @@ import CustomAlert from 'pages/common/CustomAlert';
 import { ServiceAccount } from '@cognite/sdk';
 import { getProject } from '@cognite/cdf-utilities';
 import { usePermissions, useDeleteServiceAccounts } from 'hooks';
+import { Title, Icon } from '@cognite/cogs.js';
 
 const StyledList = styled.ul`
   margin-bottom: 0 !important;
-  color: rgba(0, 0, 0, 0.65);
+  margin-top: 2px;
 `;
 
 const StyledListItem = styled.li`
@@ -36,12 +37,20 @@ const LegacyServiceAccountsWarning = (props: {
 
   return (
     <CustomAlert
-      type="error"
+      type="info"
       alertMessage={
         <>
-          <p>
-            Signing in with legacy login is disabled for this project, and the
-            service accounts listed below are no longer applicable.
+          <Title level={5} style={{ display: 'flex', marginTop: 4 }}>
+            <Icon
+              type="InfoFilled"
+              style={{ color: 'blue', marginRight: 4, marginTop: 2 }}
+            />
+            Clean up service account
+          </Title>
+          <p style={{ margin: '12px 0 0 20px' }}>
+            This project no longer support service accounts. You have{' '}
+            {accounts.length} service accounts that be removed as they are no
+            longer supported with OIDC and can be safely reomoved.
           </p>
           <StyledList>
             {accounts
@@ -64,7 +73,11 @@ const LegacyServiceAccountsWarning = (props: {
       alertBtnLabel="Delete service accounts"
       alertBtnDisabled={!writeOk}
       helpEnabled={false}
-      confirmMessage="Are you sure you want to delete these service accounts?"
+      confirmMessage={
+        <>
+          <p>Are you sure you want to delete these service account(s)?</p>
+        </>
+      }
       confirmLabel="Delete"
       onClickConfirm={handleSubmit}
     />

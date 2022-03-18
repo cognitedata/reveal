@@ -119,7 +119,7 @@ export default function OIDCConfigContainer() {
   };
 
   if (!(areProjectSettingsFetched && isAuthConfigurationFetched)) {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
 
   return (

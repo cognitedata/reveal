@@ -82,7 +82,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
       size="small"
       type="primary"
       disabled={isLoading}
-      icon="Check"
+      icon="Checkmark"
       onClick={() => {
         if (!isEqual(account.groups, localList)) {
           mutateAsync(localList);
@@ -126,7 +126,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
       ) : (
         groups
       )}
-      {isLoading && <Icon type="Loading" />}
+      {isLoading && <Icon type="Loader" />}
       {canUpdate && button}
     </>
   );

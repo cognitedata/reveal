@@ -39,7 +39,7 @@ const StyledModalButton = styled(Button)`
 const StyledDisableButtonSection = styled.div`
   align-items: center;
   display: flex;
-  margin-bottom: 4px;
+  margin-left: 20px;
 `;
 
 const StyledHelpIcon = styled(Icon)`
@@ -51,6 +51,7 @@ const CustomAlert = (props: any) => {
   const {
     type,
     alertMessage,
+    alertBtnType,
     alertBtnLabel,
     alertBtnDisabled,
     helpEnabled,
@@ -105,7 +106,7 @@ const CustomAlert = (props: any) => {
             <Button
               disabled={alertBtnDisabled}
               onClick={showConfirmModal}
-              type="danger"
+              type={alertBtnType || 'normal'}
             >
               {alertBtnLabel}
             </Button>
@@ -121,7 +122,7 @@ const CustomAlert = (props: any) => {
             visible={isModalVisible}
           >
             <StyledModalContent>
-              <StyledModalWarningIcon size={20} type="WarningStroke" />
+              <StyledModalWarningIcon size={20} type="Warning" />
               {confirmMessage}
             </StyledModalContent>
             <StyledModalButtons>

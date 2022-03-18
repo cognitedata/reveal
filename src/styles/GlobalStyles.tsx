@@ -103,7 +103,7 @@ Dropdown.defaultProp = {
   getPopupContainer: getContainer,
 };
 
-Spin.setDefaultIndicator(<Icon type="Loading" />);
+Spin.setDefaultIndicator(<Icon type="Loader" />);
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
   const isInjectedStyles = useGlobalStyles([

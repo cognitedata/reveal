@@ -24,7 +24,7 @@ const createDatabaseTitle = (name: string) => (
 
 const createTableTitle = (name: string) => (
   <>
-    <Icon type="Table" />
+    <Icon type="DataTable" />
     <TreeLabel>{name}</TreeLabel>
   </>
 );

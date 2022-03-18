@@ -110,9 +110,11 @@ export const forUnitTests = {
   getUpdater,
 };
 
-export const useListServiceAccounts = () => {
+export const useListServiceAccounts = (isLegacyFlow: boolean) => {
   const sdk = useSDK();
-  return useQuery('service-accounts', () => sdk.serviceAccounts.list());
+  return useQuery('service-accounts', () => sdk.serviceAccounts.list(), {
+    enabled: isLegacyFlow,
+  });
 };
 
 const deleteServiceAccount =

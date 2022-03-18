@@ -64,7 +64,7 @@ export default function Actions({ id }: { id: number }) {
         </Menu>
       }
     >
-      <Icon style={{ cursor: 'pointer' }} type="MoreOverflowEllipsisVertical" />
+      <Icon style={{ cursor: 'pointer' }} type="EllipsisVertical" />
     </Dropdown>
   );
 }
