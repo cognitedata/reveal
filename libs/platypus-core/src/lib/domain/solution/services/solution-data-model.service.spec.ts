@@ -80,6 +80,29 @@ const solutionDataModelMock = {
         },
       ],
     },
+    {
+      name: 'Comment',
+      fields: [
+        {
+          name: 'id',
+          type: {
+            name: 'ID',
+            list: false,
+            nonNull: true,
+          },
+          nonNull: true,
+        },
+        {
+          name: 'post',
+          type: {
+            name: 'Post',
+            list: false,
+            nonNull: false,
+          },
+          nonNull: true,
+        },
+      ],
+    },
   ],
 };
 describe('SolutionsHandlerTest', () => {
@@ -141,7 +164,12 @@ describe('SolutionsHandlerTest', () => {
     const service = createInstance();
     const newState = service.removeType(solutionDataModelMock, 'Post');
     expect(newState.types.find((t) => t.name === 'Post')).not.toBeTruthy();
-    expect(newState.types.length).toBe(1);
+    expect(
+      newState.types
+        .find((t) => t.name === 'Comment')
+        ?.fields.find((f) => f.name === 'post')
+    ).not.toBeTruthy();
+    expect(newState.types.length).toBe(2);
   });
 
   it('should rename type', () => {

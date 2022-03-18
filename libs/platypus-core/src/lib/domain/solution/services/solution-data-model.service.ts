@@ -63,10 +63,11 @@ export class SolutionDataModelService {
   }
 
   removeType(state: SolutionDataModel, typeName: string): SolutionDataModel {
+    let newState = state;
     state.types.forEach((type: SolutionDataModelType) => {
       type.fields.forEach((field: SolutionDataModelField) => {
         if (field.type.name === typeName) {
-          this.removeField(state, type.name, field.name);
+          newState = this.removeField(state, type.name, field.name);
         }
       });
     });
@@ -74,8 +75,8 @@ export class SolutionDataModelService {
     this.graphqlService.removeType(typeName);
 
     return {
-      ...state,
-      types: state.types.filter((type) => type.name !== typeName),
+      ...newState,
+      types: newState.types.filter((type) => type.name !== typeName),
     };
   }
 
