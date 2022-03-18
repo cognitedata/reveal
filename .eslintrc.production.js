@@ -3,7 +3,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react-hooks'],
   extends: ['plugin:prettier/recommended'],
   rules: {
-    'no-console': ['warn'],
+    'no-console': ['error'],
     'no-nested-ternary': 'error',
 
     'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
