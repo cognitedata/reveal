@@ -1,8 +1,8 @@
 bool determineVisibility(NodeAppearance nodeAppearance, int renderMode) {
-    return 
-         // In ghost mode
-         ((renderMode == RenderTypeGhost) && nodeAppearance.isVisible && nodeAppearance.renderGhosted) ||
-         // Not ghost mode
-         ((renderMode != RenderTypeGhost) && 
-         !nodeAppearance.renderGhosted && nodeAppearance.isVisible && (nodeAppearance.renderInFront || renderMode != RenderTypeEffects));
+  bool visible = nodeAppearance.isVisible;
+  bool ghost = (renderMode == RenderTypeGhost) && nodeAppearance.renderGhosted;
+  bool inFront = (renderMode == RenderTypeEffects) && nodeAppearance.renderInFront;
+  bool base = (!nodeAppearance.renderGhosted && !nodeAppearance.renderInFront);
+
+    return visible && (ghost || inFront || base);
 }

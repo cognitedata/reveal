@@ -6,6 +6,10 @@ uniform sampler2D tDiffuse;
 uniform sampler2D tDepth;
 #endif
 
+#if defined(ALPHA)
+uniform float alpha;
+#endif
+
 in vec2 vUv;
 
 out vec4 diffuse;
@@ -26,6 +30,10 @@ void main() {
   diffuse = fxaa(tDiffuse);
 #else
   diffuse = texture(tDiffuse, vUv);
+#endif
+
+#if defined(ALPHA)
+  diffuse.a = alpha;
 #endif
 
 #if defined(DEPTH_WRITE) 

@@ -120,6 +120,11 @@ async function init() {
     DefaultNodeAppearance.Highlighted
   );
 
+  nodeAppearanceProvider.assignStyledNodeCollection(new TreeIndexNodeCollection(new NumericRange(40, 41)), {
+    ...DefaultNodeAppearance.Default,
+    outlineColor: 6
+  });
+
   controls.addEventListener('change', () => {
     cadModelUpdateHandler.updateCamera(camera);
     render();

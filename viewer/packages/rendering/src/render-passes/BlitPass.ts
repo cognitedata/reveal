@@ -25,6 +25,7 @@ export type BlitOptions = {
   effect?: BlitEffect;
   depthTexture?: THREE.DepthTexture;
   blendOptions?: BlendOptions;
+  overrideAlpha?: number;
 };
 
 export const transparentBlendOptions: BlendOptions = {
@@ -44,7 +45,7 @@ export class BlitPass implements RenderPass {
   private readonly _fullScreenTriangle: THREE.Mesh;
 
   constructor(options: BlitOptions) {
-    const { texture, effect, depthTexture, blendOptions } = options;
+    const { texture, effect, depthTexture, blendOptions, overrideAlpha } = options;
 
     const uniforms = {
       tDiffuse: { value: texture }
@@ -57,6 +58,11 @@ export class BlitPass implements RenderPass {
       uniforms['tDepth'] = { value: depthTexture };
       defines['DEPTH_WRITE'] = true;
       depthTest = true;
+    }
+
+    if (overrideAlpha !== undefined) {
+      uniforms['alpha'] = { value: overrideAlpha };
+      defines['ALPHA'] = true;
     }
 
     const blitEffect = effect ?? BlitEffect.None;

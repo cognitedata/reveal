@@ -26,7 +26,7 @@ void updateFragmentColor(
     int renderMode, vec4 color, float treeIndex, 
     vec3 normal, float depth, sampler2D matCapTexture, 
     int geometryType) {
-    if (renderMode == RenderTypeColor) {
+    if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
         vec3 hsv = rgb2hsv(color.rgb);
         hsv.z = min(0.5 * hsv.z + 0.5, 1.0);
         vec3 colorRGB = hsv2rgb(hsv);
@@ -36,16 +36,6 @@ void updateFragmentColor(
         vec4 mc = vec4(texture(matCapTexture, cap).rgb, 1.0);
         
         outputColor = vec4(albedo.rgb * mc.rgb * 1.7, color.a);
-    } else if (renderMode == RenderTypeEffects) {
-        vec3 hsv = rgb2hsv(color.rgb);
-        hsv.z = min(0.5 * hsv.z + 0.5, 1.0);
-        vec3 colorRGB = hsv2rgb(hsv);
-        float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
-        vec4 albedo = vec4(colorRGB * (0.4 + 0.6 * amplitude), 1.0);
-        vec2 cap = normal.xy * 0.5 + 0.5;
-        vec4 mc = vec4(texture(matCapTexture, cap).rgb, 1.0);
-        
-        outputColor = vec4(albedo.rgb * mc.rgb * 1.7, 0.5);
     } else if (renderMode == RenderTypeGhost) {
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
         float s = 0.4 + 0.6 * amplitude;

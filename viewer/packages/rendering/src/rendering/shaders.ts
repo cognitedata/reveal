@@ -119,6 +119,11 @@ export const blitShaders = {
   vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
 };
 
+export const outlineShaders = {
+  fragment: glsl(require('../glsl/post-processing/outline.frag').default),
+  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+};
+
 /**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */
