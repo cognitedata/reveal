@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
-import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
@@ -31,15 +30,12 @@ const wellsTableOptions = {
   hideScrollbars: true,
 };
 
-const SCROLL_MARGIN = 15;
-
 type Props = {
   searchPhrase: string;
 };
 
 export const CasingTableView: React.FC<Props> = ({ searchPhrase }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [buttonOffset, setButtonOffset] = useState<number>(0);
 
   const [formattedCasings, setFormattedCasings] = useState<FormattedCasings[]>(
     []
@@ -99,10 +95,8 @@ export const CasingTableView: React.FC<Props> = ({ searchPhrase }) => {
     []
   );
 
-  const renderRowHoverComponent: React.FC<{
-    row: RowProps;
-  }> = ({ row }) => (
-    <CasingViewButtonWrapper offset={buttonOffset}>
+  const renderRowHoverComponent = ({ row }: { row: RowProps }) => (
+    <CasingViewButtonWrapper>
       <BaseButton
         type="primary"
         text="Show casings"
@@ -114,51 +108,20 @@ export const CasingTableView: React.FC<Props> = ({ searchPhrase }) => {
     </CasingViewButtonWrapper>
   );
 
-  const renderRowSubComponent = useCallback(
-    ({ row }) => {
-      return (
-        <CasingsTableWrapper>
-          <Table<CasingData>
-            id="well-casings-table"
-            scrollTable={false}
-            data={row.original.casings}
-            columns={casingsTableColumn}
-            renderRowHoverComponent={renderRowHoverComponent}
-            hideHeaders
-          />
-        </CasingsTableWrapper>
-      );
-    },
-    [buttonOffset]
-  );
-
-  // Trick to update hover button position
-  const updateButtonOffset = () => {
-    const scrollWidth = get(scrollRef, 'current.firstChild.scrollWidth', 0);
-    const scrollLeft = get(scrollRef, 'current.firstChild.scrollLeft', 0);
-    const offsetWidth = get(scrollRef, 'current.firstChild.offsetWidth', 0);
-    const buttonOffset = scrollWidth - offsetWidth - scrollLeft + SCROLL_MARGIN;
-    setButtonOffset(buttonOffset);
-  };
-
-  useEffect(() => {
-    // Give some time to update scroll element reference
-    setTimeout(() => {
-      updateButtonOffset();
-    }, 100);
-    scrollRef.current?.firstChild?.addEventListener(
-      'scroll',
-      updateButtonOffset
+  const renderRowSubComponent = useCallback(({ row }) => {
+    return (
+      <CasingsTableWrapper>
+        <Table<CasingData>
+          id="well-casings-table"
+          scrollTable={false}
+          data={row.original.casings}
+          columns={casingsTableColumn}
+          renderRowHoverComponent={renderRowHoverComponent}
+          hideHeaders
+        />
+      </CasingsTableWrapper>
     );
-    window.addEventListener('resize', updateButtonOffset);
-    return () => {
-      scrollRef.current?.firstChild?.removeEventListener(
-        'scroll',
-        updateButtonOffset
-      );
-      window.removeEventListener('resize', updateButtonOffset);
-    };
-  }, [isEmpty(data)]);
+  }, []);
 
   if (isLoading || isEmpty(data)) {
     return (

@@ -46,8 +46,8 @@ export const CasingsTableWrapper = styled(Flex)`
 `;
 
 export const CasingViewButtonWrapper = styled(Flex)`
-  right: ${(props: { offset: number }) => props.offset}px;
-  position: relative;
+  margin-right: 16px;
+
   & > * button {
     min-width: 110px;
     padding: 4px 8px !important;
@@ -73,6 +73,7 @@ export const CasingPreviewModalWrapper = styled(Modal)`
 
   & .cogs-modal-close {
     cursor: pointer;
+    margin-top: -4px;
   }
   & .cogs-modal-content {
     padding: 0px !important;

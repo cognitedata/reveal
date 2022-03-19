@@ -12,6 +12,7 @@ export const NdsFilterContainer = styled.div`
 export const NdsFilterRow = styled(Row)`
   margin-bottom: 8px;
   height: 100%;
+  gap: 4px !important;
 `;
 
 export const NdsFilterItemWrapper = styled.div`
