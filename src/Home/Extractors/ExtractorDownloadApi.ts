@@ -1,5 +1,5 @@
-import { getCdfEnvFromUrl } from 'utils/utils';
 import sdk from '@cognite/cdf-sdk-singleton';
+import { getEnv } from '@cognite/cdf-utilities';
 
 const baseUrl =
   process.env.REACT_APP_EXTRACTOR_DOWNLOAD_API != null
@@ -11,7 +11,7 @@ export const getDownloadUrl = async (
   version: string,
   platform: string
 ) => {
-  const cluster = getCdfEnvFromUrl() || 'api';
+  const cluster = getEnv() || 'api';
   return sdk.get(`${baseUrl}/extractors/${extractor}/${version}/${platform}`, {
     headers: {
       env: cluster as string,
@@ -21,7 +21,7 @@ export const getDownloadUrl = async (
 };
 
 export const listExtractors = async () => {
-  const cluster = getCdfEnvFromUrl() || 'api';
+  const cluster = getEnv() || 'api';
   return sdk.get(`${baseUrl}/extractors?label=global`, {
     headers: {
       env: cluster as string,
@@ -31,7 +31,7 @@ export const listExtractors = async () => {
 };
 
 export const listReleases = async () => {
-  const cluster = getCdfEnvFromUrl() || 'api';
+  const cluster = getEnv() || 'api';
   return sdk.get(`${baseUrl}/extractors/releases`, {
     headers: {
       env: cluster as string,

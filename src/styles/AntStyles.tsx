@@ -126,12 +126,6 @@ Tooltip.defaultProps = {
   getPopupContainer: getContainer,
 };
 
-// (CogsTooltip as React.FC<TooltipProps>).defaultProps = {
-//   // @ts-ignore
-//   ...CogsTooltip.defaultProps,
-//   appendTo: getContainer,
-// };
-
 notification.config({
   getContainer,
 });

@@ -17,7 +17,7 @@ const LinkStyled = styled.a`
   align-items: left;
 `;
 
-const extractorColumns = [
+const versionTableColumns = [
   {
     title: 'Version',
     dataIndex: 'version',
@@ -98,43 +98,44 @@ const VersionTable = ({
     return (
       <Table
         dataSource={undefined}
-        columns={extractorColumns}
+        columns={versionTableColumns}
         pagination={false}
         getPopupContainer={getContainer}
       />
     );
   }
 
-  const dataSource: any = [];
-  for (let i = 0; i < releases[extractorTag].length; ++i) {
-    const { version } = releases[extractorTag][i];
-    dataSource.push({
-      key: i,
+  const dataSource = releases[extractorTag].map((releaseElem, idx) => {
+    const { version, description, releaseDate: releasedAt } = releaseElem;
+    const downloads = releaseElem.artifacts.map((artifact: string) => (
+      <LinkStyled
+        href={GetUrl(extractorTag, version, artifact.split(' ')[0])}
+        key={artifact}
+      >
+        {artifact}
+      </LinkStyled>
+    ));
+
+    return {
+      key: idx,
       version,
-      description: releases[extractorTag][i].description,
-      releasedAt: releases[extractorTag][i].releaseDate,
-      downloads: releases[extractorTag][i].artifacts.map((artifact: string) => (
-        <LinkStyled
-          href={GetUrl(extractorTag, version, artifact.split(' ')[0])}
-          key={artifact}
-        >
-          {artifact}
-        </LinkStyled>
-      )),
-    });
-  }
+      description,
+      releasedAt,
+      downloads,
+    };
+  });
 
   return (
     <Table
       dataSource={dataSource}
-      columns={extractorColumns}
+      columns={versionTableColumns}
       pagination={false}
       getPopupContainer={getContainer}
     />
   );
 };
 
-const columns = [
+const extractorColumns = [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -162,7 +163,7 @@ const Extractors = () => {
       />
       <Table
         dataSource={GetExtractors()}
-        columns={columns}
+        columns={extractorColumns}
         pagination={false}
         rowKey="tag"
         expandedRowRender={(record) => (

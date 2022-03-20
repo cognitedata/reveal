@@ -1,31 +1,44 @@
 import React from 'react';
-import { Route, Router, Switch } from 'react-router-dom';
-import { StyleSheetManager } from 'styled-components';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+// import { StyleSheetManager } from 'styled-components';
 import {
   AuthWrapper,
-  SubAppWrapper,
   getEnv,
   getProject,
+  I18nWrapper,
+  SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import { FlagProvider } from '@cognite/react-feature-flags';
 import { Loader } from '@cognite/cogs.js';
+import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { createBrowserHistory } from 'history';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
+import { ReactQueryDevtools } from 'react-query/devtools';
+import { languages, setupTranslations } from 'common/i18n';
 import GlobalStyles from 'styles/GlobalStyles';
 import { AntStyles } from 'styles/AntStyles';
-import sdk from 'utils/sdkSingleton';
-import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-
-// import ExtractorDownloads from './Home';
+import i18next from 'i18next';
 import ExtractorDownloads from './Home/Extractors';
 
+setupTranslations();
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: 10 * 60 * 1000, // Pretty long
+    },
+  },
+});
+const env = getEnv();
+const project = getProject();
+
 const App = () => {
-  const history = createBrowserHistory();
-  const env = getEnv();
-  const project = getProject();
-  const queryClient = new QueryClient();
+  const handleLanguageChange = (language: string) => {
+    if (languages.includes(language)) {
+      return i18next.changeLanguage(language);
+    }
+    return Promise.resolve();
+  };
 
   return (
     <FlagProvider
@@ -33,33 +46,25 @@ const App = () => {
       appName="cdf-extractor-downloads"
       projectName={project}
     >
-      <StyleSheetManager
-        disableVendorPrefixes={process.env.NODE_ENV === 'development'}
-      >
-        <GlobalStyles>
-          <AntStyles>
-            <SubAppWrapper>
-              <AuthWrapper
-                loadingScreen={<Loader />}
-                login={() => loginAndAuthIfNeeded(project, env)}
-              >
-                <QueryClientProvider client={queryClient}>
+      <I18nWrapper onLanguageChange={handleLanguageChange}>
+        <QueryClientProvider client={queryClient}>
+          <GlobalStyles>
+            <AntStyles>
+              <SubAppWrapper title="Extractor Downloads">
+                <AuthWrapper
+                  loadingScreen={<Loader />}
+                  login={() => loginAndAuthIfNeeded(project, env)}
+                >
                   <SDKProvider sdk={sdk}>
-                    <Router history={history}>
-                      <Switch>
-                        <Route
-                          path={['/:project/:appPath']}
-                          component={ExtractorDownloads}
-                        />
-                      </Switch>
-                    </Router>
+                    <ExtractorDownloads />
                   </SDKProvider>
-                </QueryClientProvider>
-              </AuthWrapper>
-            </SubAppWrapper>
-          </AntStyles>
-        </GlobalStyles>
-      </StyleSheetManager>
+                </AuthWrapper>
+              </SubAppWrapper>
+            </AntStyles>
+          </GlobalStyles>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </I18nWrapper>
     </FlagProvider>
   );
 };

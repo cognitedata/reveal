@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-extractor-downloads",
-  "version": "0.7.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost PORT=8000 react-app-rewired --max_old_space_size=2000 start",
@@ -14,11 +14,11 @@
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)"
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^0.10.1",
-    "@cognite/cogs.js": "^5.2.1",
-    "@cognite/metrics": "^0.1.7",
+    "@cognite/cdf-utilities": "^0.12.1",
+    "@cognite/cogs.js": "^5.17.0",
+    "@cognite/metrics": "^1.2.1",
     "@cognite/react-feature-flags": "^1.0.0",
-    "@cognite/sdk": "^6.3.1",
+    "@cognite/sdk": "^6.3.4",
     "@cognite/sdk-provider": "^1.0.0",
     "@sentry/browser": "^5.29.2",
     "antd": "^4.15.2",
@@ -27,11 +27,11 @@
     "query-string": "^6.13.6",
     "react": "^17.0.2",
     "react-base-table": "^1.13.0",
-    "react-dom": "^16.14.0",
+    "react-dom": "^17.0.2",
     "react-i18next": "^11.15.5",
     "react-iframe": "^1.8.0",
     "react-query": "^3.34.16",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^5.3.0",
     "react-scripts": "^5.0.0",
     "styled-components": "^5.3.1",
     "systemjs-webpack-interop": "^2.1.2"
@@ -40,24 +40,25 @@
     "@cognite/babel-plugin-styled-components": "^1.10.7",
     "@cognite/cdf-ui-cli": "^1.0.0",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
-    "@testing-library/jest-dom": "^5.7.0",
-    "@testing-library/react": "^10.4.3",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.1.2",
     "@types/enzyme": "^3.1.14",
     "@types/enzyme-adapter-react-16": "^1.0.6",
-    "@types/jest": "^25.2.3",
-    "@types/node": "^14.0.1",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.1",
     "@types/react": "^17.0.30",
-    "@types/react-dom": "^16.9.8",
+    "@types/react-dom": "^17.0.9",
     "@types/single-spa-react": "^2.12.0",
-    "@types/styled-components": "^5.1.4",
+    "@types/styled-components": "^5.1.15",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
-    "@typescript-eslint/parser": "^5.3.1",
+    "@typescript-eslint/parser": "^5.13.0",
+    "@types/react-router-dom": "^5.3.1",
     "customize-cra": "^1.0.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest-environment-jsdom-sixteen": "^1.0.3",
-    "postcss-prefixwrap": "^1.19.0",
+    "postcss-prefixwrap": "^1.29.0",
     "prettier": "^2.4.1",
     "react-app-rewired": "^2.2.1",
     "single-spa-react": "^3.2.0",
@@ -78,5 +79,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines": {
+    "node": "14"
   }
 }
