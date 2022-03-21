@@ -1,30 +1,44 @@
 import React from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import { useTranslation } from 'react-i18next';
 
 import { openExternalPage } from 'utils/url';
 
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
-import { FlexGrow } from 'styles/layout';
-
-import { UrlContainer, UrlLinkButton, UrlLinkText } from '../elements';
+import { UrlContainer, UrlLinkActions, UrlLinkText } from '../elements';
 
 export const UrlPath: React.FC<{ url: string }> = ({ url }) => {
   const { t } = useTranslation('Documents');
 
   return (
     <UrlContainer>
-      <UrlLinkButton onClick={() => openExternalPage(url)}>
-        <UrlLinkText>{url}</UrlLinkText>
-        <FlexGrow />
+      <UrlLinkText>{url}</UrlLinkText>
+
+      <UrlLinkActions>
         <Tooltip content={t('Open url in a new tab')}>
-          <Icon
-            aria-label="Go to external url"
-            type="ExternalLink"
+          <Button
+            aria-label="Navigate to external url"
+            icon="ExternalLink"
+            size="small"
+            type="ghost"
             data-testid="document-url-external-link-icon"
+            onClick={() => openExternalPage(url)}
           />
         </Tooltip>
-      </UrlLinkButton>
+
+        <Tooltip content="Copy to clipboard">
+          <CopyToClipboard text={url}>
+            <Button
+              aria-label="Copy path"
+              icon="Copy"
+              size="small"
+              type="ghost"
+              data-testid="document-url-copy-icon"
+            />
+          </CopyToClipboard>
+        </Tooltip>
+      </UrlLinkActions>
     </UrlContainer>
   );
 };

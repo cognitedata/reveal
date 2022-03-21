@@ -1,7 +1,5 @@
 import styled from 'styled-components/macro';
 
-import { Button } from '@cognite/cogs.js';
-
 import {
   FlexRow,
   FlexShrinkWrap,
@@ -83,23 +81,19 @@ export const UrlLinkText = styled(Flex)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: var(--cogs-link-primary-default);
+  margin-left: 8px;
+  margin-right: 8px;
+  height: 36px;
+  align-items: center;
 `;
-export const UrlLinkButton = styled(Button).attrs({ type: 'link' })`
-  width: 100%;
+export const UrlLinkActions = styled(Flex)`
   padding: 0 ${sizes.small} !important;
-
-  &:hover {
-    background-color: transparent;
-  }
-
-  .cogs-icon {
-    color: var(--cogs-btn-color-ghost);
-    margin-right: 4px;
-  }
 `;
 
 export const UrlContainer = styled(TextContainer)`
   padding: 0;
+  gap: 4px;
 `;
 
 export const PathText = styled(TitleStyle)`

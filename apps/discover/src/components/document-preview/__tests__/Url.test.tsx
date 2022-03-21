@@ -21,6 +21,8 @@ describe('Url', () => {
     expect(
       screen.getByTestId('document-url-external-link-icon')
     ).toBeInTheDocument();
+
+    expect(screen.getByTestId('document-url-copy-icon')).toBeInTheDocument();
   });
 
   it('Returns empty when URL is undefined', () => {
@@ -31,6 +33,10 @@ describe('Url', () => {
 
     expect(
       screen.queryByTestId('document-url-external-link-icon')
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByTestId('document-url-url-icon')
     ).not.toBeInTheDocument();
   });
 });
