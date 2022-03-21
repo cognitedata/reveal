@@ -7,6 +7,7 @@ import {
 } from '@platypus-app/components/Styles/storybook';
 import { CogDataGrid, TableType } from '@cognite/cog-data-grid';
 import { useState } from 'react';
+import { TypeList, TypeListProps } from '../components/TypeList';
 
 const configMock = {
   columns: [
@@ -206,6 +207,31 @@ export const DataPreview = () => (
       <GroupTitle>Default</GroupTitle>
       <div style={{ height: '600px' }}>
         <DataGridComponent type={'large'} />
+      </div>
+    </Group>
+  </Wrapper>
+);
+
+export const TypeListPreview = () => (
+  <Wrapper>
+    <MainTitle>Type List Preview Component</MainTitle>
+    <MainDescription title="Where is it used?">
+      This component is used on Solution/Data Model/DataPreview page.
+    </MainDescription>
+    <Group>
+      <GroupTitle>Default</GroupTitle>
+      <div style={{ height: '600px' }}>
+        <TypeList
+          width="320px"
+          placeholder="Filter"
+          items={[
+            { title: 'System', description: '7 properties' },
+            { title: 'Well', description: '5 properties' },
+            { title: 'Pump' },
+            { title: 'Person', description: '0 properties' },
+          ]}
+          onClick={(item: any) => alert(item.title)}
+        />
       </div>
     </Group>
   </Wrapper>
