@@ -1,6 +1,5 @@
 import React from 'react';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-// import { StyleSheetManager } from 'styled-components';
 import {
   AuthWrapper,
   getEnv,

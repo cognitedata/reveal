@@ -30,13 +30,6 @@ export interface Global {
 
 jest.mock('@cognite/cdf-sdk-singleton', () => {
   return {
-    get: jest.fn(),
-    post: jest.fn(),
-    datasets: {
-      retrieve: jest.fn(),
-      list: jest.fn(),
-    },
-    getFlow: () => ({ flow: 'flow' }),
     getUserInformation: jest
       .fn()
       .mockResolvedValue({ displayName: 'test-user' }),

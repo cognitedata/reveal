@@ -4,9 +4,7 @@ import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import ConfigProvider from 'antd/lib/config-provider';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
-// import antdStyle from '@cognite/cogs.js/dist/antd.css'; // Uncomment to add antd
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import reactTableStyles from 'react-base-table/styles.css';
 import { createGlobalStyle } from 'styled-components';
 import { ids } from './cogsVariables';
 
@@ -17,7 +15,7 @@ CogsTooltip.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  useGlobalStyles([cogsStyles, reactTableStyles]);
+  useGlobalStyles([cogsStyles]);
 
   // useGlobalStyles([antdStyle, cogsStyles]); // uncomment to add antd
   return (
