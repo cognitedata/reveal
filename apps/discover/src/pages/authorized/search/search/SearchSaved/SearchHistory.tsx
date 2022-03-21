@@ -12,7 +12,13 @@ import { SavedSearchContent } from 'services/savedSearches/types';
 import { AutoComplete, OptionType, Icon } from '@cognite/cogs.js';
 
 import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+import {
+  SEARCH_HISTORY_TRACK_ID,
+  SEARCH_ID,
+  SEARCH_TRACK_ID,
+} from 'constants/metrics';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
+import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useSearchState } from 'modules/search/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
 import { AppliedFilterEntries } from 'modules/sidebar/types';
@@ -67,6 +73,7 @@ export const SearchHistory: React.FC = () => {
   const currentSavedSearch = useCurrentSavedSearchState();
   const updateSearchHistoryListQuery = useUpdateSearchHistoryListQuery();
   const searchHistoryOptionData = useSearchHistoryOptionData();
+  const metrics = useGlobalMetrics(SEARCH_ID);
 
   useEffect(() => setSearchValues(searchPhrase), [searchPhrase]);
 
@@ -89,6 +96,10 @@ export const SearchHistory: React.FC = () => {
   };
 
   const updateSearchValue = (inputString: string) => {
+    if (inputString) {
+      metrics.track(SEARCH_TRACK_ID);
+    }
+
     setQuery(inputString);
     setSearchValues(inputString);
   };
@@ -113,6 +124,7 @@ export const SearchHistory: React.FC = () => {
     { action }: any
   ) => {
     if (action === 'select-option' && input) {
+      metrics.track(SEARCH_HISTORY_TRACK_ID);
       loadSavedSearch(input.data);
     }
 

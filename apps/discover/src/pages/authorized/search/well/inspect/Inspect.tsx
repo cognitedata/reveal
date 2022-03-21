@@ -6,8 +6,10 @@ import isEmpty from 'lodash/isEmpty';
 
 import { Button, Icon, Menu, Tabs, Dropdown, Loader } from '@cognite/cogs.js';
 
+import { WELL_INSPECT_ID } from 'constants/metrics';
 import navigation from 'constants/navigation';
 import { useDeepEffect } from 'hooks/useDeep';
+import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
 import {
   useWellInspectSelectedWellboreIds,
@@ -52,6 +54,7 @@ export const WellInspect: React.FC = () => {
   );
   const scrollRef = useHorizontalScroll();
   const [show3dWarningModal, setShow3dWarningModal] = useState(false);
+  const metrics = useGlobalMetrics(WELL_INSPECT_ID);
 
   useDeepEffect(() => {
     /**
@@ -81,6 +84,7 @@ export const WellInspect: React.FC = () => {
   const handleNavigation = (tabKey: string) => {
     const tabItem = items.find((item) => item.key === tabKey);
     if (tabItem) {
+      metrics.track(`click-${tabKey}-tab`);
       history.push(tabItem.path);
     }
   };
