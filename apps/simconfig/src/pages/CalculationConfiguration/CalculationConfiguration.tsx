@@ -120,8 +120,19 @@ export function CalculationConfiguration() {
   const { dataSetId } = simulatorConnector;
 
   const calculationTemplateSchema = getCalculationTemplateSchema({
-    getInputTimeSeries: getInputTimeSeries(initialValues.inputTimeSeries),
+    getInputTimeSeries: getInputTimeSeries(
+      initialValues.inputTimeSeries,
+      modelFile.metadata.modelType
+    ),
   });
+
+  // Calcuation types with advanced settings
+  const calcTypesWtAvcdStps = [
+    'ChokeDp',
+    'VLP',
+    'IPR',
+    'BhpFromGradientTraverse',
+  ];
 
   return (
     <CalculationConfigurationContainer>
@@ -190,7 +201,7 @@ export function CalculationConfiguration() {
                 <DataSamplingStep />
               </Wizard.Step>
               <Wizard.Step
-                disabled={!['ChokeDp', 'VLP', 'IPR'].includes(calculationType)}
+                disabled={!calcTypesWtAvcdStps.includes(calculationType)}
                 icon="Configure"
                 key="advanced"
                 title="Advanced"
@@ -296,7 +307,7 @@ type PresetCalculationTemplateFields =
   | 'userEmail';
 
 const getInputTimeSeries =
-  (validTimeSeries: InputTimeSeries[] = []) =>
+  (validTimeSeries: InputTimeSeries[] = [], modelType = '') =>
   (values: CalculationTemplate) => {
     if (values.calculationType !== 'VLP' && values.calculationType !== 'IPR') {
       return values.inputTimeSeries;
@@ -308,6 +319,10 @@ const getInputTimeSeries =
       values.estimateBHP.method === 'LiftCurveGaugeBhp';
     const isLiftCurveRate = values.estimateBHP.method === 'LiftCurveRate';
 
+    const isGasWell = modelType === 'GasWell';
+    const isRetrogradeWell = modelType === 'RetrogradeWell';
+    const isOilWell = modelType === 'OilWell';
+
     const isInputTimeSeriesEnabled: Partial<
       Record<CalculationType, Partial<Record<TimeSeries['type'], boolean>>>
     > = {
@@ -316,12 +331,25 @@ const getInputTimeSeries =
         BHPg:
           isEstimateBHPEnabled && (isGradientTraverse || isLiftCurveGaugeBhp),
         GasRate: isEstimateBHPEnabled && isLiftCurveRate,
+        CGR: isGasWell,
+        WGR: isGasWell || isRetrogradeWell,
+        GOR: isOilWell || isRetrogradeWell,
+        OilRate: isEstimateBHPEnabled && isLiftCurveRate && isOilWell,
+        WC: isOilWell,
       },
       IPR: {
         BHP: !isEstimateBHPEnabled,
         BHPg:
           isEstimateBHPEnabled && (isGradientTraverse || isLiftCurveGaugeBhp),
-        GasRate: isEstimateBHPEnabled && isLiftCurveRate,
+        GasRate:
+          isEstimateBHPEnabled &&
+          isLiftCurveRate &&
+          (isGasWell || isRetrogradeWell),
+        OilRate: isEstimateBHPEnabled && isLiftCurveRate && isOilWell,
+        CGR: isGasWell,
+        WGR: isGasWell || isRetrogradeWell,
+        GOR: isOilWell || isRetrogradeWell,
+        WC: isOilWell,
         THP: isEstimateBHPEnabled && (isLiftCurveGaugeBhp || isLiftCurveRate),
         THT: isEstimateBHPEnabled && (isLiftCurveGaugeBhp || isLiftCurveRate),
       },
@@ -483,6 +511,13 @@ const getCalculationTemplateSchema = ({
         unit: Yup.string<LengthUnit>(),
         unitType: Yup.string<'Length'>(),
       }),
+    })
+      .optional()
+      .default(undefined),
+    gaugeDepth: Yup.object({
+      value: Yup.number().label('Gauge depth').min(0),
+      unit: Yup.string<LengthUnit>(),
+      unitType: Yup.string<'Length'>(),
     })
       .optional()
       .default(undefined),

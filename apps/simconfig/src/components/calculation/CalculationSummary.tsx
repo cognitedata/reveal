@@ -244,6 +244,26 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         </ConfigurationSection>
       ) : null}
 
+      {'gaugeDepth' in configuration ? (
+        <ConfigurationSection
+          className={classNames({
+            enabled: configuration.gaugeDepth,
+            disabled: !configuration.gaugeDepth,
+          })}
+        >
+          <h3>Gauge Depth </h3>
+          <div className="properties">
+            <div className="entry">
+              <div>{/* no label  */}</div>
+              <div>
+                <NullableValue value={configuration.gaugeDepth.value} />{' '}
+                <NullableValue value={configuration.gaugeDepth.unit} />
+              </div>
+            </div>
+          </div>
+        </ConfigurationSection>
+      ) : null}
+
       {'rootFindingSettings' in configuration ? (
         <ConfigurationSection>
           <h3>Root finding</h3>

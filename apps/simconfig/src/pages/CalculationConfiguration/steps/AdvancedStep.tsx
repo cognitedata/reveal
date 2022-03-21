@@ -68,7 +68,8 @@ export function AdvancedStep({ isEditing }: StepProps) {
   if (
     values.calculationType !== 'IPR' &&
     values.calculationType !== 'VLP' &&
-    values.calculationType !== 'ChokeDp'
+    values.calculationType !== 'ChokeDp' &&
+    values.calculationType !== 'BhpFromGradientTraverse'
   ) {
     return null;
   }
@@ -239,7 +240,9 @@ export function AdvancedStep({ isEditing }: StepProps) {
             />
           </ChokeCurveContainer>
         </>
-      ) : (
+      ) : null}
+
+      {values.calculationType === 'IPR' || values.calculationType === 'VLP' ? (
         <>
           <FormHeader>
             BHP estimation
@@ -254,51 +257,56 @@ export function AdvancedStep({ isEditing }: StepProps) {
             />
           </FormHeader>
           {values.estimateBHP.enabled ? (
-            <FormRowStacked>
-              <div className="cogs-input-container">
-                <div className="title">Method</div>
-                <Field
-                  as={Select}
-                  isDisabled={isEditing}
-                  name="estimateBHP.method"
-                  options={bhpEstimationMethodOptions}
-                  value={bhpEstimationMethodOptions.find(
-                    (option) => option.value === values.estimateBHP.method
-                  )}
-                  closeMenuOnSelect
-                  onChange={({ value }: OptionType<string>) => {
-                    setFieldValue('estimateBHP.method', value);
-                  }}
-                />
-              </div>
+            <>
+              <FormRowStacked>
+                <div className="cogs-input-container">
+                  <div className="title">Method</div>
+                  <Field
+                    as={Select}
+                    isDisabled={isEditing}
+                    name="estimateBHP.method"
+                    options={bhpEstimationMethodOptions}
+                    value={bhpEstimationMethodOptions.find(
+                      (option) => option.value === values.estimateBHP.method
+                    )}
+                    closeMenuOnSelect
+                    onChange={({ value }: OptionType<string>) => {
+                      setFieldValue('estimateBHP.method', value);
+                    }}
+                  />
+                </div>
+              </FormRowStacked>
               {values.estimateBHP.method === 'GradientTraverse' ? (
                 <>
-                  <NumberField
-                    disabled={isEditing}
-                    min={0}
-                    name="estimateBHP.gaugeDepth.value"
-                    title="Length"
-                    width={120}
-                  />
-                  <div className="cogs-input-container">
-                    <div className="title">Unit</div>
-                    <Field
-                      as={Select}
-                      name="estimateBHP.gaugeDepth.unit"
-                      options={lengthUnitOptions}
-                      value={lengthUnitOptions.find(
-                        (option) =>
-                          option.value === values.estimateBHP.gaugeDepth?.unit
-                      )}
-                      closeMenuOnSelect
-                      onChange={({ value }: OptionType<string>) => {
-                        setFieldValue('estimateBHP.gaugeDepth.unit', value);
-                      }}
+                  <FormHeader>Gauge Depth</FormHeader>
+                  <FormRowStacked>
+                    <NumberField
+                      disabled={isEditing}
+                      min={0}
+                      name="estimateBHP.gaugeDepth.value"
+                      title="Length"
+                      width={120}
                     />
-                  </div>
+                    <div className="cogs-input-container">
+                      <div className="title">Unit</div>
+                      <Field
+                        as={Select}
+                        name="estimateBHP.gaugeDepth.unit"
+                        options={lengthUnitOptions}
+                        value={lengthUnitOptions.find(
+                          (option) =>
+                            option.value === values.estimateBHP.gaugeDepth?.unit
+                        )}
+                        closeMenuOnSelect
+                        onChange={({ value }: OptionType<string>) => {
+                          setFieldValue('estimateBHP.gaugeDepth.unit', value);
+                        }}
+                      />
+                    </div>
+                  </FormRowStacked>
                 </>
               ) : null}
-            </FormRowStacked>
+            </>
           ) : null}
 
           <FormHeader>Root finding</FormHeader>
@@ -338,7 +346,37 @@ export function AdvancedStep({ isEditing }: StepProps) {
             />
           </FormRowStacked>
         </>
-      )}
+      ) : null}
+
+      {values.calculationType === 'BhpFromGradientTraverse' ? (
+        <>
+          <FormHeader>Gauge Depth</FormHeader>
+          <FormRowStacked>
+            <NumberField
+              disabled={isEditing}
+              min={0}
+              name="gaugeDepth.value"
+              title="Length"
+              width={120}
+            />
+            <div className="cogs-input-container">
+              <div className="title">Unit</div>
+              <Field
+                as={Select}
+                name="gaugeDepth.unit"
+                options={lengthUnitOptions}
+                value={lengthUnitOptions.find(
+                  (option) => option.value === values.gaugeDepth.unit
+                )}
+                closeMenuOnSelect
+                onChange={({ value }: OptionType<string>) => {
+                  setFieldValue('gaugeDepth.unit', value);
+                }}
+              />
+            </div>
+          </FormRowStacked>
+        </>
+      ) : null}
     </FormContainer>
   );
 }
