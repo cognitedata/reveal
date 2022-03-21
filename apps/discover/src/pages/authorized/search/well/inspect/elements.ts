@@ -45,6 +45,9 @@ export const TabsWrapper = styled(Flex)`
   padding-left: ${sizes.normal};
   padding-right: ${sizes.normal};
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
+
+  flex-shrink: 0;
+
   & > * .rc-tabs-content-holder {
     display: none;
   }
