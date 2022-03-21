@@ -5,7 +5,7 @@ import {
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { workflowsAtom } from 'models/workflows/atom';
 import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
-import CalculationCallStatus from 'components/CalculationCallStatus';
+import CalculationCallStatus from 'components/CalculationCallStatus/CalculationCallStatus';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import UnitDropdown from 'components/UnitDropdown/UnitDropdown';
 import { flow, isEqual } from 'lodash';

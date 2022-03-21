@@ -23,7 +23,6 @@ import NodeEditor from 'components/NodeEditor/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
-import Search from 'components/Search';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -36,7 +35,6 @@ import { useSearchParam } from 'hooks/navigation';
 import { SEARCH_KEY } from 'utils/constants';
 import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
-import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import {
@@ -56,12 +54,14 @@ import {
   NodeDataDehydratedVariants,
   NodeTypes,
 } from 'components/NodeEditor/V2/types';
-import TimePeriodSelector from 'components/TimePeriodSelector';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { FileView } from 'pages/FileView/FileView';
 import { useIsChartOwner } from 'hooks/user';
+import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
+import SearchSidebar from 'components/Search/SearchSidebar';
+import TimePeriodSelector from 'components/TimePeriodSelector/TimePeriodSelector';
 import SourceRows from './SourceRows';
 
 import {
@@ -436,7 +436,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       <Route exact path={path}>
         <ChartViewContainer id="chart-view">
           {showSearch && (
-            <Search visible={showSearch} onClose={handleCloseSearch} />
+            <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
           )}
           <ContentWrapper showSearch={showSearch}>
             <Header className="downloadChartHide" inSearch={showSearch}>

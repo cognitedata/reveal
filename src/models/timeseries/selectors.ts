@@ -1,5 +1,5 @@
 import { DatapointAggregates, DoubleDatapoints } from '@cognite/sdk';
-import { hasRawPoints } from 'components/PlotlyChart';
+import { hasRawPoints } from 'components/PlotlyChart/utils';
 import { selectorFamily } from 'recoil';
 import { timeseriesAtom } from './atom';
 import { TimeseriesCollection } from './types';

@@ -14,8 +14,6 @@ import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { subDays } from 'date-fns';
 import { useNavigate } from 'hooks/navigation';
-import ChartListItem, { ViewOption } from 'components/ChartListItem';
-import { OpenInCharts } from 'components/OpenInCharts';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useResetRecoilState } from 'recoil';
@@ -24,6 +22,10 @@ import ErrorToast from 'components/ErrorToast/ErrorToast';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
+import { OpenInCharts } from 'components/OpenInCharts/OpenInCharts';
+import ChartListItem, {
+  ViewOption,
+} from 'components/ChartListItem/ChartListItem';
 
 const defaultTranslations = makeDefaultTranslations(
   'Name',

@@ -2,16 +2,18 @@
  * ShowHideButton StoryBook
  */
 
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { ShowHideButton, ShowHideButtonProps } from './ShowHideButton';
+import { ShowHideButton } from './ShowHideButton';
 
 export default {
   component: ShowHideButton,
   title: 'Components/ShowHide Button',
 } as Meta;
 
-export const ShowHideBtnStateful: Story<ShowHideButtonProps> = () => {
+export const ShowHideBtnStateful: Story<
+  ComponentProps<typeof ShowHideButton>
+> = () => {
   const [enabled, setEnabled] = useState(true);
 
   const handleClick = () => {
@@ -21,7 +23,7 @@ export const ShowHideBtnStateful: Story<ShowHideButtonProps> = () => {
   return <ShowHideButton enabled={enabled} onClick={handleClick} />;
 };
 
-const Template: Story<ShowHideButtonProps> = (args) => (
+const Template: Story<ComponentProps<typeof ShowHideButton>> = (args) => (
   <ShowHideButton {...args} />
 );
 

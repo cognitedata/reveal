@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 import { format as formatDate } from 'date-fns';
 import { getGranularityInMS } from './timeseries';
 
-export interface DatapointsToCSVProps {
+interface DatapointsToCSVProps {
   data: DatapointAggregates[];
   granularity: string;
   aggregate?: Aggregate;
@@ -83,7 +83,7 @@ function getStartEndAndIterationsTotal(
   return [startTimestamp, endTimestamp, iterationsTotal];
 }
 
-export function arrangeDatapointsByTimestamp({
+function arrangeDatapointsByTimestamp({
   data,
   aggregate,
   granularity: granularityString,

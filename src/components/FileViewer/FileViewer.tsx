@@ -3,14 +3,14 @@ import { FileInfo as File } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { AnnotationPopover } from 'components/FileViewer/AnnotationPopover';
-import {
-  isFilePreviewable,
-  readablePreviewableFileTypes,
-  useAssetAnnotations,
-} from 'components/FileList';
 import styled from 'styled-components/macro';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
+import { useAssetAnnotations } from 'components/FileList/hooks';
+import {
+  isFilePreviewable,
+  readablePreviewableFileTypes,
+} from 'components/FileList/utils';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 

@@ -124,25 +124,25 @@ const SharingDropdown = ({
   );
 };
 
-export const SharingMenu = styled(Menu)`
+const SharingMenu = styled(Menu)`
   min-width: 500px;
 `;
 
-export const SharingSwitchContainer = styled.div`
+const SharingSwitchContainer = styled.div`
   margin: 16px 0 0 0;
 `;
 
-export const SharingMenuContent = styled.div`
+const SharingMenuContent = styled.div`
   margin: 16px;
 `;
 
-export const SharingMenuBody = styled(Body)`
+const SharingMenuBody = styled(Body)`
   margin: 8px 0 0;
   min-height: 40px;
   white-space: normal;
 `;
 
-export const ShareLinkContainer = styled.div`
+const ShareLinkContainer = styled.div`
   margin-top: 8px;
   display: flex;
   gap: 1em;

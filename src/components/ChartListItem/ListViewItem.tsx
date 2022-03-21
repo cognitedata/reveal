@@ -2,11 +2,11 @@ import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
-import PlotlyChart from 'components/PlotlyChart';
 import { Chart } from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
 import { useProject } from 'hooks/config';
 import { useIsChartOwner } from 'hooks/user';
+import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import { formatOwner, formatDate } from './utils';
 
 interface ListViewItemProps {
@@ -42,7 +42,7 @@ const ListViewItem = ({
         }}
       >
         <ImageColumn>
-          <PlotlyChart chart={chart} isPreview />
+          <PlotlyChartComponent chart={chart} isPreview />
         </ImageColumn>
         <NameColumn>
           <TranslatedEditableText

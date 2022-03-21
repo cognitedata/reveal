@@ -2,10 +2,10 @@ import { ReactNode } from 'react';
 import styled from 'styled-components/macro';
 import { Link, useLocation } from 'react-router-dom';
 import { Chart } from 'models/chart/types';
-import PlotlyChart from 'components/PlotlyChart';
 import { trackUsage } from 'services/metrics';
 import { useProject } from 'hooks/config';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import { formatOwner, formatDate } from './utils';
 
 interface GridViewItemProps {
@@ -35,7 +35,7 @@ const GridViewItem = ({
       >
         <ImageWrapper>
           <ImageContent>
-            <PlotlyChart chart={chart} isPreview />
+            <PlotlyChartComponent chart={chart} isPreview />
           </ImageContent>
         </ImageWrapper>
       </Link>

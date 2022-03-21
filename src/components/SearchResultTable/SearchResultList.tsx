@@ -7,12 +7,12 @@ import {
   useInfiniteSearch,
 } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
-import { SearchFilter } from 'components/Search';
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
 } from 'components/Search/EmptyResult';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
+import { SearchFilter } from 'components/Search/Search';
 import AssetSearchHit from './AssetSearchHit';
 import RecentViewSources from './RecentViewSources';
 

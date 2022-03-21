@@ -1,9 +1,7 @@
 import { Timeseries } from '@cognite/sdk';
-import { AxisUpdate } from 'components/PlotlyChart';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Chart,
-  ChartSettings,
   ChartTimeSeries,
   ChartWorkflow,
   SourceCollectionData,
@@ -30,6 +28,7 @@ import { omit } from 'lodash';
 import { Operation } from '@cognite/calculation-backend';
 import { initializeParameterValues } from 'components/NodeEditor/V2/utils';
 import compareVersions from 'compare-versions';
+import { AxisUpdate } from 'components/PlotlyChart/utils';
 
 export function duplicate(chart: Chart, login: UserInfo): Chart {
   const id = uuidv4();
@@ -225,16 +224,6 @@ export function updateSourceAxisForChart(
 
   return updatedChart;
 }
-
-export const updateChartSettings = (
-  chart: Chart,
-  diff: Partial<ChartSettings>
-): Chart => {
-  return {
-    ...chart,
-    settings: { ...chart.settings, ...diff },
-  };
-};
 
 /**
  * function updateVisibilityForAllSources

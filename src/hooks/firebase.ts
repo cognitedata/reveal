@@ -116,7 +116,7 @@ export const useFirebaseInit = (enabled: boolean) => {
   );
 };
 
-export const charts = (project: string) => {
+const charts = (project: string) => {
   return firebase
     .firestore()
     .collection('tenants')

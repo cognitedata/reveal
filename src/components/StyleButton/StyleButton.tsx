@@ -12,18 +12,18 @@
 
 import { Button, IconType, ButtonProps } from '@cognite/cogs.js';
 
-export type StyleButtonProps = {
+interface Props extends ButtonProps {
   styleType: IconType;
   styleColor: string;
   label: string;
-} & ButtonProps;
+}
 export const StyleButton = ({
   styleType,
   styleColor,
   label,
   disabled,
   ...rest
-}: StyleButtonProps) => {
+}: Props) => {
   return (
     <Button
       disabled={disabled}

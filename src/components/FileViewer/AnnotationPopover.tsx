@@ -58,7 +58,7 @@ export const AnnotationPopover = ({
   );
 };
 
-export const TimeseriesList = ({ assetId }: { assetId: number }) => {
+const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const [chart] = useRecoilState(chartAtom);
   const handleTimeSeriesClick = useAddRemoveTimeseries();
 

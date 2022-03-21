@@ -22,7 +22,7 @@ export type PlotlyEventData = {
   [key: string]: any;
 };
 
-export type SeriesInfo = {
+type SeriesInfo = {
   id: string | undefined;
   type: string;
   name: string | undefined;
@@ -377,7 +377,7 @@ export function getXaxisUpdateFromEventData(
   return xaxisKeys.map((key) => dayjs(eventdata[key]).toISOString());
 }
 
-export function calculateStackedYRange(
+function calculateStackedYRange(
   datapoints: (Datapoints | DatapointAggregate)[],
   index: number,
   numSeries: number
@@ -398,7 +398,7 @@ export function calculateStackedYRange(
   return [lower, upper];
 }
 
-export function convertLineStyle(lineStyle?: LineStyle) {
+function convertLineStyle(lineStyle?: LineStyle) {
   switch (lineStyle) {
     case 'solid':
       return 'solid';
@@ -411,7 +411,7 @@ export function convertLineStyle(lineStyle?: LineStyle) {
   }
 }
 
-export function getMode(displayMode?: 'markers' | 'lines', isRaw?: boolean) {
+function getMode(displayMode?: 'markers' | 'lines', isRaw?: boolean) {
   if (displayMode === 'markers') {
     return 'markers';
   }

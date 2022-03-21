@@ -1,6 +1,5 @@
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { isFilePreviewable, isPreviewableImage } from 'components/FileList';
 import { useQuery } from 'react-query';
 import {
   CogniteAnnotation,
@@ -8,6 +7,7 @@ import {
   listFilesAnnotatedWithAssetId,
 } from '@cognite/annotations';
 import unionBy from 'lodash/unionBy';
+import { isFilePreviewable, isPreviewableImage } from './utils';
 
 export const useAssetAnnotations = (file?: File) => {
   const sdk = useSDK();

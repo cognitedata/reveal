@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import { Body, Icon } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset, DataSet, Timeseries } from '@cognite/sdk';
-import { useFusionLink } from 'components/DetailsSidebar';
+import { useFusionLink } from './utils';
 
 type MetadataItemProps = {
   label: string;

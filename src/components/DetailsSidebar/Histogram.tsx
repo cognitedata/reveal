@@ -4,7 +4,7 @@ import Plotly from 'plotly.js-basic-dist';
 import { StatisticsResultResults } from '@cognite/calculation-backend';
 import { getUnitConverter } from 'utils/units';
 import { formatValueForDisplay } from 'utils/numbers';
-import { getDisplayUnit } from '.';
+import { getDisplayUnit } from './utils';
 
 const Plot = createPlotlyComponent(Plotly);
 

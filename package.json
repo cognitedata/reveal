@@ -86,7 +86,6 @@
   "devDependencies": {
     "@cognite/eslint-config": "1.6.1",
     "@cognite/eslint-plugin": "1.4.0",
-    "@simbathesailor/use-what-changed": "2.0.0",
     "@storybook/addon-actions": "6.4.19",
     "@storybook/addon-essentials": "6.4.19",
     "@storybook/addon-links": "6.4.19",
@@ -109,7 +108,6 @@
     "@types/react-highlight-words": "0.16.4",
     "@types/react-plotly.js": "2.5.0",
     "@types/react-router-dom": "5.3.3",
-    "@types/sinon": "10.0.11",
     "@types/styled-components": "5.1.23",
     "@types/uuid": "8.3.4",
     "babel-loader": "8.1.0",

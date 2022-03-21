@@ -9,7 +9,7 @@ const NodeHandle = (props: HandleProps) => {
   );
 };
 
-export const HandleContainer = styled(Handle)`
+const HandleContainer = styled(Handle)`
   background: transparent;
   border: none;
   min-width: 24px;
@@ -21,7 +21,7 @@ export const HandleContainer = styled(Handle)`
   pointer-events: all;
 `;
 
-export const StyledHandle = styled.div`
+const StyledHandle = styled.div`
   background: white;
   width: 8px;
   height: 8px;

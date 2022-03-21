@@ -1,4 +1,4 @@
-import { selector, selectorFamily } from 'recoil';
+import { selector } from 'recoil';
 import { workflowsAtom } from './atom';
 import { WorkflowResult } from './types';
 
@@ -9,16 +9,6 @@ export const availableWorkflows = selector({
     const workflowsAsArray = Object.values(state);
     return workflowsAsArray;
   },
-});
-
-export const workflowSummaryById = selectorFamily({
-  key: 'workflowSummarySelector',
-  get:
-    (id: string | undefined) =>
-    ({ get }) => {
-      const workflows = get(availableWorkflows);
-      return getWorkflowSummaryById(workflows, id);
-    },
 });
 
 export function getWorkflowSummaryById(

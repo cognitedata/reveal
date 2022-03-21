@@ -1,6 +1,6 @@
 import { Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { AxisUpdate } from 'components/PlotlyChart';
+import { AxisUpdate } from 'components/PlotlyChart/utils';
 import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import chartAtom from 'models/chart/atom';
 import {

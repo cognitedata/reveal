@@ -20,7 +20,7 @@ const addRecentView = (array: number[], source: number): number[] => {
   return viewArray;
 };
 
-export const addAssetToRecentLocalStorage = async (
+const addAssetToRecentLocalStorage = async (
   project: string,
   assetId: number,
   timeseriesId: number,

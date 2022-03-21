@@ -87,5 +87,3 @@ i18n
       htmlTag: document.documentElement,
     },
   });
-
-export default i18n;

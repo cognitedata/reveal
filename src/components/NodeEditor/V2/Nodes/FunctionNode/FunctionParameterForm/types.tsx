@@ -4,25 +4,25 @@ import {
 } from '@cognite/calculation-backend';
 import { defaultTranslations } from 'components/NodeEditor/translations';
 
-export type ParameterFormBase = {
+interface ParameterFormBase {
   nodeId: string;
-  parameterValues: { [key: string]: any };
-};
+  parameterValues: Record<string, any>;
+}
 
-export type ParameterFormElementProps = ParameterFormBase & {
+export interface ParameterFormElementProps extends ParameterFormBase {
   parameter: OperationParameters;
   onInputValueChange: (
     param: string,
     type: OperationParametersTypeEnum,
     value: any
   ) => void;
-};
+}
 
-export type ParameterFormProps = ParameterFormBase & {
+export interface ParameterFormProps extends ParameterFormBase {
   parameters: OperationParameters[];
   onParameterValuesChange: (
     nodeId: string,
     formData: { [key: string]: any }
   ) => void;
   translations: typeof defaultTranslations;
-};
+}

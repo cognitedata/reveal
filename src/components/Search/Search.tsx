@@ -6,7 +6,6 @@ import {
   Flex,
   Dropdown,
 } from '@cognite/cogs.js';
-import InfoBox from 'components/InfoBox';
 import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
 import { useSearchParam } from 'hooks/navigation';
@@ -17,7 +16,9 @@ import { SEARCH_KEY } from 'utils/constants';
 import { useDebounce } from 'use-debounce';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
-import { defaultTranslations as infoBoxDefaultTranslation } from 'components/InfoBox/InfoBox';
+import InfoBox, {
+  defaultTranslations as infoBoxDefaultTranslation,
+} from 'components/InfoBox/InfoBox';
 import {
   defaultTranslations as filterDropdownDefaultTranslation,
   SearchFilterSettings,
@@ -33,7 +34,7 @@ export type SearchFilter = {
   isString?: boolean;
 };
 
-export const defaultTranslations = makeDefaultTranslations(
+const defaultTranslations = makeDefaultTranslations(
   'Find time series',
   'Clear text',
   'Hide',

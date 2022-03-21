@@ -2,11 +2,11 @@ import { ReactNode } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
-import { useFilesAssetAppearsIn } from 'components/FileList';
 import { useLinkedAsset } from 'hooks/cdf-assets';
 import { trackUsage } from 'services/metrics';
 import { useNavigate } from 'hooks/navigation';
 import { StatusIcon } from 'components/StatusIcon/StatusIcon';
+import { useFilesAssetAppearsIn } from 'components/FileList/hooks';
 
 export const PnidButton = ({
   asset,

@@ -46,9 +46,6 @@ const defaultTranslations = makeDefaultTranslations(
   'Add to chart'
 );
 
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
 export const OpenInCharts: FC = () => {
   const sdk = useSDK();
   const move = useNavigate();

@@ -1,9 +1,9 @@
 import { FileInfo as File } from '@cognite/sdk';
 
-export const PREVIEWABLE_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'svg'];
-export const PREVIEWABLE_FILE_TYPES = [...PREVIEWABLE_IMAGE_TYPES, 'pdf'];
+const PREVIEWABLE_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'svg'];
+const PREVIEWABLE_FILE_TYPES = [...PREVIEWABLE_IMAGE_TYPES, 'pdf'];
 
-export const isFileOfType = (file?: File, type?: string[]) => {
+const isFileOfType = (file?: File, type?: string[]) => {
   const { mimeType = '', name = '' } = file || {};
   const query = mimeType + name.substr(name.lastIndexOf('.'));
   return (type || []).some((el) => query.includes(el));

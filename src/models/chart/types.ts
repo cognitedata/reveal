@@ -26,7 +26,7 @@ export type SourceCollectionData = {
   id: string;
 };
 
-export type ChartSettings = {
+type ChartSettings = {
   showYAxis?: boolean;
   showMinMax?: boolean;
   showGridlines?: boolean;
@@ -80,7 +80,7 @@ type ChartWorkflowBase = {
 /**
  * Format used for @cognite/connect
  */
-export type ChartWorkflowV1 = ChartWorkflowBase & {
+type ChartWorkflowV1 = ChartWorkflowBase & {
   version: '' | undefined;
   nodes?: StorableNode[];
   connections?: Record<string, Connection>;
@@ -103,7 +103,7 @@ export type StorableNode = Omit<Node, 'functionEffect'> & {
   functionEffectReference?: string;
 };
 
-export type CalculationCallRef = {
+type CalculationCallRef = {
   id: string;
   status: string;
   callId: string;
@@ -112,7 +112,7 @@ export type CalculationCallRef = {
   computation?: string;
 };
 
-export type StatisticsCallRef = {
+type StatisticsCallRef = {
   callId: string;
   callDate: number;
   hash?: number;

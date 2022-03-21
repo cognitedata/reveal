@@ -5,11 +5,11 @@
 import { CalculationStatusStatusEnum } from '@cognite/calculation-backend';
 import { IconType, Icon } from '@cognite/cogs.js';
 
-export type StatusIconProps = {
+type Props = {
   status: CalculationStatusStatusEnum;
 };
 
-export const StatusIcon = ({ status }: StatusIconProps) => {
+export const StatusIcon = ({ status }: Props) => {
   switch (status) {
     case CalculationStatusStatusEnum.Pending:
     case CalculationStatusStatusEnum.Running:

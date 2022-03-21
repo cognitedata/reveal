@@ -45,32 +45,6 @@ export const ChartViewContainer = styled.div`
   width: 100%;
 `;
 
-export const BottombarWrapper = styled.div`
-  display: flex;
-  width: 100%;
-  height: 56px;
-  border-top: 1px solid var(--cogs-greyscale-grey4);
-  background-color: var(--cogs-greyscale-grey1);
-`;
-
-export const BottombarItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding-left: 10px;
-  padding-right: 10px;
-  cursor: pointer;
-  border-left: 1px solid var(--cogs-greyscale-grey4);
-  border-right: 1px solid var(--cogs-greyscale-grey4);
-  background-color: ${(props: { isActive: boolean }) =>
-    props.isActive ? 'var(--cogs-greyscale-grey3)' : 'none'};
-
-  &:hover {
-    background-color: var(--cogs-greyscale-grey3);
-  }
-`;
-
 export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -81,34 +55,10 @@ export const ContentWrapper = styled.div`
     props.showSearch ? '650px' : '900px'};
 `;
 
-export const ToolbarIcon = styled(Icon)`
-  width: 20px;
-`;
-
 export const ChartContainer = styled.div`
   position: relative;
   display: flex;
   height: 100%;
-`;
-
-export const SourceListWrapper = styled.div`
-  flex-grow: 1;
-  max-height: 100%;
-  width: 300px;
-  min-width: 300px;
-  border-right: 1px solid var(--cogs-greyscale-grey4);
-  overflow-y: scroll;
-`;
-
-export const SourcesTitle = styled.h2`
-  text-align: center;
-  margin: 15px;
-`;
-
-export const SourceList = styled.div`
-  & > :first-child {
-    border-top: 1px solid var(--cogs-greyscale-grey2);
-  }
 `;
 
 export const SourceTableWrapper = styled.div`
@@ -166,9 +116,6 @@ export const SourceTable = styled.table`
   }
 `;
 
-export const TypeLabel = styled.td`
-  color: var(--cogs-greyscale-grey7);
-`;
 export const SourceRow = styled.tr`
   background: ${(props) =>
     props['aria-selected'] ? 'var(--cogs-midblue-7)' : '#ffffff'};
@@ -251,36 +198,6 @@ export const SourceTag = styled.div`
   overflow: hidden;
   white-space: nowrap;
   max-width: 210px;
-`;
-
-export const SourceButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
-  margin-bottom: 30px;
-`;
-
-export const SourceMenu = styled.div`
-  position: absolute;
-  right: 0px;
-  height: 100%;
-  width: 30px;
-  background-color: white;
-  border-left: 1px solid var(--cogs-greyscale-grey2);
-  visibility: hidden;
-
-  &:hover {
-    background-color: var(--cogs-greyscale-grey1);
-  }
-
-  & > span {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-  }
 `;
 
 export const ChartWrapper = styled.div`

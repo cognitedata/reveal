@@ -9,14 +9,8 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import { Col, List, Row } from 'antd';
-import DetailsBlock from 'components/common/DetailsBlock';
-import {
-  getDisplayUnit,
-  Histogram,
-  MetadataList,
-  useStatistics,
-} from 'components/DetailsSidebar';
-import StatisticsCallStatus from 'components/StatisticsCallStatus';
+import DetailsBlock from 'components/DetailsBlock/DetailsBlock';
+import StatisticsCallStatus from 'components/StatisticsCallStatus/StatisticsCallStatus';
 import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
 import { useState } from 'react';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
@@ -35,6 +29,9 @@ import {
   TopContainerAside,
   TopContainerTitle,
 } from './elements';
+import { MetadataList } from './MetadataList';
+import { getDisplayUnit, useStatistics } from './utils';
+import { Histogram } from './Histogram';
 
 const renderStatusIcon = (status?: StatisticsStatusStatusEnum) => {
   switch (status) {

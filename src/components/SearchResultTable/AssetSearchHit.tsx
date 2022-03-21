@@ -1,12 +1,10 @@
 import styled from 'styled-components';
 import { Icon, Checkbox, Button, Colors } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
-import { PnidButton } from 'components/SearchResultTable';
 import { useAggregate, useList } from '@cognite/sdk-react-query-hooks';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { trackUsage } from 'services/metrics';
 import Highlighter from 'react-highlight-words';
-import { SearchFilter } from 'components/Search';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import { useSearchParam } from 'hooks/navigation';
 import { ASSET_KEY } from 'utils/constants';
@@ -15,7 +13,9 @@ import chartAtom from 'models/chart/atom';
 import { removeIllegalCharacters } from 'utils/text';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
+import { SearchFilter } from 'components/Search/Search';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
+import { PnidButton } from './PnidButton';
 
 const defaultTranslation = makeDefaultTranslations(
   'Exact match on external id',

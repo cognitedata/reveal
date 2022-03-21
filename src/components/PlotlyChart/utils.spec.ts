@@ -1,9 +1,9 @@
 import { addMinutes } from 'date-fns';
-import { calculateMaxRange } from '.';
 import {
   getYaxisUpdatesFromEventData,
   getXaxisUpdateFromEventData,
   SeriesData,
+  calculateMaxRange,
 } from './utils';
 
 const seriesData: SeriesData[] = [

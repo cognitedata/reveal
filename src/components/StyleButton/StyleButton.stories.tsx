@@ -3,14 +3,17 @@
  */
 
 import { Meta, Story } from '@storybook/react';
-import { StyleButton, StyleButtonProps } from './StyleButton';
+import { ComponentProps } from 'react';
+import { StyleButton } from './StyleButton';
 
 export default {
   component: StyleButton,
   title: 'Components/Style Button',
 } as Meta;
 
-const Template: Story<StyleButtonProps> = (args) => <StyleButton {...args} />;
+const Template: Story<ComponentProps<typeof StyleButton>> = (args) => (
+  <StyleButton {...args} />
+);
 
 export const TimeseriesStyleButton = Template.bind({});
 export const WorkflowStyleButton = Template.bind({});

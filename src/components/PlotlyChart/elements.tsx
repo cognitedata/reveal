@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro';
-import { Button, Icon } from '@cognite/cogs.js';
-import Layers from 'utils/z-index';
+import { Icon } from '@cognite/cogs.js';
 
 /* eslint-disable @cognite/no-number-z-index */
 export const LoadingIcon = () => (
@@ -37,16 +36,6 @@ export const PlotWrapper = styled.div`
     width: 60px;
     transform: translateX(-17px);
   }
-`;
-
-export const AdjustButton = styled(Button)`
-  position: absolute;
-  background-color: white;
-  top: 30px;
-  left: ${(props: { left: number }) => props.left}%;
-  margin-left: 40px;
-  z-index: ${Layers.MAXIMUM};
-  background: white;
 `;
 
 export const LoadingContainer = styled.div`

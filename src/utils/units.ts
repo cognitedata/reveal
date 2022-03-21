@@ -169,7 +169,7 @@ export const units = [
   },
 ];
 
-export const conversions: Conversions = {
+const conversions: Conversions = {
   // Pressure: ['psi', 'bar', 'pa', 'atm', 'mpa]
   psi: {
     psi: (val: number): number => val,

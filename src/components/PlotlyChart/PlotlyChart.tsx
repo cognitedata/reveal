@@ -17,13 +17,6 @@ import { updateSourceAxisForChart } from 'models/chart/updates';
 import { TimeseriesEntry } from 'models/timeseries/types';
 import { Icon } from '@cognite/cogs.js';
 import {
-  cleanTimeseriesCollection,
-  cleanWorkflowCollection,
-  generateLayout,
-  PlotlyEventData,
-  useAllowedToUpdateChart,
-} from '.';
-import {
   ChartingContainer,
   LoadingContainer,
   LoadingIcon,
@@ -31,10 +24,15 @@ import {
 } from './elements';
 import {
   calculateSeriesData,
+  cleanTimeseriesCollection,
+  cleanWorkflowCollection,
   formatPlotlyData,
+  generateLayout,
   getXaxisUpdateFromEventData,
   getYaxisUpdatesFromEventData,
+  PlotlyEventData,
   SeriesData,
+  useAllowedToUpdateChart,
 } from './utils';
 
 const Plot = createPlotlyComponent(Plotly);

@@ -13,13 +13,13 @@ import { getSourceOption, getSourcesFromChart } from './utils';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';
 import { defaultTranslations } from './translations';
 
-export type NodeEditorProps = {
+interface Props {
   chart: Chart;
   workflowId: string;
   onClose: () => void;
   setChart: SetterOrUpdater<Chart | undefined>;
   translations: typeof defaultTranslations;
-};
+}
 
 const NodeEditor = ({
   workflowId,
@@ -27,11 +27,8 @@ const NodeEditor = ({
   onClose,
   setChart,
   translations,
-}: NodeEditorProps) => {
-  const t = {
-    ...defaultTranslations,
-    ...translations,
-  };
+}: Props) => {
+  const t = { ...defaultTranslations, ...translations };
   /**
    * This could be done using a selector
    */
@@ -95,7 +92,6 @@ const NodeEditor = ({
         workflows={referenceableWorkflows}
         operations={operations}
         sources={sources}
-        settings={chart.settings}
         onClose={onClose}
         onUpdateWorkflow={handleUpdateWorkflow}
         readOnly={readOnly}

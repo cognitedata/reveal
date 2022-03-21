@@ -206,8 +206,3 @@ export const getDisplayUnit = (preferredUnit?: string) => {
     ).label || preferredUnit
   );
 };
-
-export const formatNumber = (number: number) =>
-  new Intl.NumberFormat(undefined, { notation: 'engineering' })
-    .format(number)
-    .replace('E0', '');

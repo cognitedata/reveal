@@ -228,7 +228,7 @@ const getInputFromReactFlowNode = (node: FlowElement, nodes: FlowElement[]) => {
   }
 };
 
-export function getVersionFromNode(
+function getVersionFromNode(
   node: FlowElement<NodeDataVariants>,
   operations: Operation[]
 ) {
@@ -255,7 +255,7 @@ export function getVersionFromNode(
   }
 }
 
-export const getInputsFromFunctionNode = (
+const getInputsFromFunctionNode = (
   node: Node<FunctionNodeData>,
   elements: Elements<any>,
   operations: Operation[]

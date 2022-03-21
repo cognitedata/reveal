@@ -14,7 +14,7 @@ interface Props {
   renderLoading?: () => JSX.Element | null;
 }
 
-export function InnerStatisticsCallStatus({
+function InnerStatisticsCallStatus({
   id,
   renderStatus = () => null,
   renderLoading,

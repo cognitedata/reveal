@@ -119,7 +119,7 @@ const InterpolationPreview = ({
   </PreviewContainer>
 );
 
-export const ColorDropdown = ({
+const ColorDropdown = ({
   selectedColor,
   onColorSelected,
   label = 'Color',
@@ -152,7 +152,7 @@ export const ColorDropdown = ({
   );
 };
 
-export const WeightDropdown = ({
+const WeightDropdown = ({
   selectedWeight,
   onWeightSelected,
   label = 'Weight',
@@ -187,7 +187,7 @@ export const WeightDropdown = ({
   );
 };
 
-export const TypeDropdown = ({
+const TypeDropdown = ({
   selectedType,
   onStyleSelected,
   label = 'Type',
@@ -222,7 +222,7 @@ export const TypeDropdown = ({
   );
 };
 
-export const InterpolationDropdown = ({
+const InterpolationDropdown = ({
   selectedInterpolation,
   onInterpolationSelected,
   label: headerLabel = 'Interpolation',

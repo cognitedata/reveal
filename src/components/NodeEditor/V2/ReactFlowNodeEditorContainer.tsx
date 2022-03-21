@@ -7,7 +7,7 @@ import {
   XYPosition,
   FlowTransform,
 } from 'react-flow-renderer';
-import { ChartSettings, ChartWorkflowV2 } from 'models/chart/types';
+import { ChartWorkflowV2 } from 'models/chart/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ComputationStep, Operation } from '@cognite/calculation-backend';
@@ -45,12 +45,11 @@ import { getStepsFromWorkflowReactFlow } from './transforms';
 import { validateSteps } from './calculations';
 import { defaultTranslations } from '../translations';
 
-export type NodeEditorContainerProps = {
+type Props = {
   workflow: ChartWorkflowV2;
   workflows: ChartWorkflowV2[];
   operations: Operation[];
   sources: SourceOption[];
-  settings?: ChartSettings;
   onClose: () => void;
   onUpdateWorkflow: (
     wf: ChartWorkflowV2,
@@ -70,7 +69,7 @@ const ReactFlowNodeEditorContainer = ({
   onUpdateWorkflow = () => {},
   readOnly = false,
   translations: t,
-}: NodeEditorContainerProps) => {
+}: Props) => {
   /**
    * Hook onto the internal react-flow state
    * to be able to set selected element

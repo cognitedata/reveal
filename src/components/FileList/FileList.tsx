@@ -2,14 +2,11 @@ import { useEffect, useMemo } from 'react';
 import { Body, DocumentIcon, Icon, Overline } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import styled from 'styled-components/macro';
-import {
-  isFilePreviewable,
-  useFileIcon,
-  useFilesAssetAppearsIn,
-} from 'components/FileList';
 import DelayedComponent from 'components/DelayedComponent';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
+import { useFileIcon, useFilesAssetAppearsIn } from './hooks';
+import { isFilePreviewable } from './utils';
 
 const FileListItem = ({
   file,

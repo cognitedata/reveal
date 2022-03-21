@@ -2,14 +2,6 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { fetchOperations } from 'services/calculation-backend';
 import { Operation } from '@cognite/calculation-backend';
-import { FunctionCallStatus } from 'hooks/cognite-functions';
-
-export interface CallResponse {
-  id: number;
-  functionId: number;
-  response: any;
-  status: FunctionCallStatus;
-}
 
 export function useAvailableOps(): [boolean, Error?, Operation[]?] {
   const sdk = useSDK();

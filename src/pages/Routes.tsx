@@ -11,10 +11,6 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { Loader, toast } from '@cognite/cogs.js';
-import ChartList from 'pages/ChartList/ChartList';
-import ChartView from 'pages/ChartView';
-import UserProfile from 'pages/UserProfile/UserProfile';
-import TenantSelectorView from 'pages/TenantSelector/TenantSelector';
 import PageLayout from 'components/Layout/PageLayout';
 import { useFirebaseInit } from 'hooks/firebase';
 import { useSDK } from '@cognite/sdk-provider';
@@ -26,6 +22,10 @@ import config from 'config/config';
 import mixpanel from 'mixpanel-browser';
 import { UserInfo } from 'models/chart/types';
 import TopBarWrapper from 'components/TopBar/TopBar';
+import TenantSelectorView from './TenantSelector/TenantSelector';
+import UserProfile from './UserProfile/UserProfile';
+import ChartList from './ChartList/ChartList';
+import ChartView from './ChartView/ChartView';
 
 const SentryRoute = Sentry.withSentryRouting(Route);
 

@@ -15,7 +15,6 @@ import {
   useInfiniteSearch,
   useSearch,
 } from '@cognite/sdk-react-query-hooks';
-import { PnidButton } from 'components/SearchResultTable';
 import TimeseriesSearchResultItem from 'components/SearchResultTable/TimeseriesSearchResultItem';
 import { useAsset } from 'hooks/cdf-assets';
 import { useSearchParam } from 'hooks/navigation';
@@ -26,6 +25,7 @@ import { trackUsage } from 'services/metrics';
 import styled from 'styled-components';
 import { ASSET_KEY, TS_SEARCH_KEY } from 'utils/constants';
 import { useDebounce } from 'use-debounce';
+import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { useAddRemoveTimeseries } from './hooks';
 
 type SearchInAssetProps = {

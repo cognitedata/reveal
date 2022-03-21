@@ -4,14 +4,17 @@
 
 import { CalculationStatusStatusEnum } from '@cognite/calculation-backend';
 import { Meta, Story } from '@storybook/react';
-import { StatusIcon, StatusIconProps } from './StatusIcon';
+import { ComponentProps } from 'react';
+import { StatusIcon } from './StatusIcon';
 
 export default {
   component: StatusIcon,
   title: 'Components/Status Icons',
 } as Meta;
 
-const Template: Story<StatusIconProps> = (args) => <StatusIcon {...args} />;
+const Template: Story<ComponentProps<typeof StatusIcon>> = (args) => (
+  <StatusIcon {...args} />
+);
 
 export const RunningStatusIcons = Template.bind({});
 export const PendingStatusIcons = Template.bind({});

@@ -6,13 +6,13 @@ import styled from 'styled-components/macro';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
-import { SearchFilter } from 'components/Search';
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
 } from 'components/Search/EmptyResult';
 import chartAtom from 'models/chart/atom';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
+import { SearchFilter } from 'components/Search/Search';
 import RecentViewSources from './RecentViewSources';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 
@@ -21,9 +21,7 @@ type Props = {
   filter: SearchFilter;
 };
 
-export const defaultTranslations = makeDefaultTranslations(
-  'Additional time series'
-);
+const defaultTranslations = makeDefaultTranslations('Additional time series');
 
 export default function SearchTimeseries({ query, filter }: Props) {
   const [chart] = useRecoilState(chartAtom);

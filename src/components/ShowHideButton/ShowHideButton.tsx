@@ -6,12 +6,12 @@
 import { Icon } from '@cognite/cogs.js';
 import { MouseEventHandler } from 'react';
 
-export interface ShowHideButtonProps {
+interface Props {
   enabled: boolean;
   onClick: MouseEventHandler<HTMLDivElement>;
 }
 
-export const ShowHideButton = ({ enabled, onClick }: ShowHideButtonProps) => {
+export const ShowHideButton = ({ enabled, onClick }: Props) => {
   return (
     <Icon
       type={enabled ? 'EyeShow' : 'EyeHide'}

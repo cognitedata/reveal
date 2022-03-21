@@ -4,14 +4,15 @@
 
 import { Meta, Story } from '@storybook/react';
 import { SourceTable, SourceTableWrapper } from 'pages/ChartView/elements';
-import { SourceTableHeader, SourceTableHeaderProps } from './SourceTableHeader';
+import { ComponentProps } from 'react';
+import { SourceTableHeader } from './SourceTableHeader';
 
 export default {
   component: SourceTableHeader,
   title: 'Components/Source Table/Table Header',
 } as Meta;
 
-const Template: Story<SourceTableHeaderProps> = (args) => (
+const Template: Story<ComponentProps<typeof SourceTableHeader>> = (args) => (
   <SourceTableWrapper>
     <SourceTable>
       <SourceTableHeader {...args} />

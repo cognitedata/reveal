@@ -8,7 +8,7 @@ import { Modes } from 'pages/types';
 import { MouseEventHandler } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
 
-export interface SourceTableHeaderProps {
+interface Props {
   mode: Modes;
   onShowHideButtonClick?: MouseEventHandler<HTMLDivElement>;
   showHideIconState?: boolean;
@@ -35,7 +35,7 @@ const SourceTableHeader = ({
   onShowHideButtonClick = () => {},
   showHideIconState = false,
   translations,
-}: SourceTableHeaderProps) => {
+}: Props) => {
   const t = { ...defaultTranslation, ...translations };
 
   return (

@@ -56,25 +56,6 @@ export const updateNodeData = (
   });
 };
 
-export const getDuplicatedNode = (
-  els: Elements<NodeDataDehydratedVariants>,
-  nodeId: string,
-  newNodeId: string
-): FlowElement<NodeDataDehydratedVariants> | undefined => {
-  const elementToDuplicate = els.find((el) => el.id === nodeId) as Node;
-  if (!elementToDuplicate) {
-    return undefined;
-  }
-  return {
-    ...elementToDuplicate,
-    id: newNodeId,
-    position: {
-      x: elementToDuplicate.position.x + 50,
-      y: elementToDuplicate.position.y + 50,
-    },
-  };
-};
-
 export const duplicateNode = (
   els: Elements<NodeDataDehydratedVariants>,
   nodeId: string,

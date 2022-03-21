@@ -1,9 +1,9 @@
 import { DateRange } from '@cognite/cogs.js';
-import TimeSelector from 'components/TimeSelector';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { updateChartDateRange } from 'models/chart/updates';
+import TimeSelector from 'components/TimeSelector/TimeSelector';
 
 const DateRangeSelector = () => {
   const [chart, setChart] = useRecoilState(chartAtom);

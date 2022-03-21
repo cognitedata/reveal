@@ -21,8 +21,7 @@ import { BACKEND_SERVICE_URL_KEY, CLUSTER_KEY } from 'utils/constants';
 import { CogniteClient, DoubleDatapoint } from '@cognite/sdk';
 import { isProduction } from 'utils/environment';
 
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const backendServiceBaseUrlFromQuery = queryString.parse(
   window.location.search
@@ -115,15 +114,6 @@ export async function waitForCalculationToFinish(
     // eslint-disable-next-line no-await-in-loop
     calculationStatus = await fetchCalculationStatus(sdk, id);
   }
-}
-
-export async function fetchCalculationResultWhenDone(
-  sdk: CogniteClient,
-  id: string
-) {
-  await waitForCalculationToFinish(sdk, id);
-  const result = await fetchCalculationResult(sdk, id);
-  return formatCalculationResult(result);
 }
 
 export async function createStatistics(

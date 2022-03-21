@@ -17,11 +17,6 @@ import { calculateGranularity, getGranularityInMS } from 'utils/timeseries';
 
 const CELL_LIMIT = 10000;
 
-export interface TimeRange<T> {
-  start: T;
-  end: T;
-}
-
 const extractId = (either: IdEither): IdEither => {
   return 'id' in either
     ? {
@@ -41,7 +36,10 @@ const getTimestamps = (arr: { datapoints: DatapointInfo[] }[]) => {
 const getLimits = async (
   sdk: CogniteClient,
   request: DatapointsMultiQuery
-): Promise<TimeRange<number>> => {
+): Promise<{
+  start: number;
+  end: number;
+}> => {
   const { min, max } = Math;
   const { retrieveLatest, retrieve } = sdk.datapoints;
   let { start = 0, end = 0 } = request;
