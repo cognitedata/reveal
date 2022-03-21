@@ -40,6 +40,10 @@ export const alphaMaskBlendOptions: BlendOptions = {
   blendSourceAlpha: THREE.ZeroFactor
 };
 
+type ThreeUniforms = {
+  [uniform: string]: THREE.IUniform<any>;
+};
+
 export class BlitPass implements RenderPass {
   private readonly _renderTarget: THREE.WebGLRenderTarget;
   private readonly _fullScreenTriangle: THREE.Mesh;
@@ -52,31 +56,11 @@ export class BlitPass implements RenderPass {
     };
 
     const defines = {};
+    const depthTest = this.setDepthTestOptions(depthTexture, uniforms, defines);
+    this.setAlphaOverride(overrideAlpha, uniforms, defines);
+    this.setBlitEffect(effect, defines);
 
-    let depthTest = false;
-    if (depthTexture !== undefined) {
-      uniforms['tDepth'] = { value: depthTexture };
-      defines['DEPTH_WRITE'] = true;
-      depthTest = true;
-    }
-
-    if (overrideAlpha !== undefined) {
-      uniforms['alpha'] = { value: overrideAlpha };
-      defines['ALPHA'] = true;
-    }
-
-    const blitEffect = effect ?? BlitEffect.None;
-    if (blitEffect === BlitEffect.GaussianBlur) {
-      defines['GAUSSIAN_BLUR'] = true;
-    } else if (blitEffect === BlitEffect.Fxaa) {
-      defines['FXAA'] = true;
-    }
-
-    const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;
-    const blendDst = blendOptions?.blendDestination ?? THREE.OneMinusSrcAlphaFactor;
-    const blendSrc = blendOptions?.blendSource ?? THREE.SrcAlphaFactor;
-    const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if null
-    const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if null
+    const initializedBlendOptions = this.initializeBlendingOptions(blendOptions); // Uses blendDst value if null
 
     const blitShaderMaterial = new THREE.RawShaderMaterial({
       vertexShader: blitShaders.vertex,
@@ -85,14 +69,47 @@ export class BlitPass implements RenderPass {
       glslVersion: THREE.GLSL3,
       defines,
       depthTest,
-      blending,
-      blendDst,
-      blendSrc,
-      blendSrcAlpha,
-      blendDstAlpha
+      ...initializedBlendOptions
     });
 
     this._fullScreenTriangle = createFullScreenTriangleMesh(blitShaderMaterial);
+  }
+
+  private setDepthTestOptions(depthTexture: THREE.DepthTexture, uniforms: ThreeUniforms, defines: any) {
+    if (depthTexture === undefined) {
+      return false;
+    }
+
+    uniforms['tDepth'] = { value: depthTexture };
+    defines['DEPTH_WRITE'] = true;
+
+    return true;
+  }
+
+  private setAlphaOverride(overrideAlpha: number, uniforms: ThreeUniforms, defines: any) {
+    if (overrideAlpha === undefined) {
+      return;
+    }
+    uniforms['alpha'] = { value: overrideAlpha };
+    defines['ALPHA'] = true;
+  }
+
+  private setBlitEffect(effect: BlitEffect, defines: any) {
+    const blitEffect = effect ?? BlitEffect.None;
+    if (blitEffect === BlitEffect.GaussianBlur) {
+      defines['GAUSSIAN_BLUR'] = true;
+    } else if (blitEffect === BlitEffect.Fxaa) {
+      defines['FXAA'] = true;
+    }
+  }
+
+  private initializeBlendingOptions(blendOptions: BlendOptions) {
+    const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;
+    const blendDst = blendOptions?.blendDestination ?? THREE.OneMinusSrcAlphaFactor;
+    const blendSrc = blendOptions?.blendSource ?? THREE.SrcAlphaFactor;
+    const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if null
+    const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if null
+    return { blending, blendDst, blendSrc, blendSrcAlpha, blendDstAlpha };
   }
 
   public getOutputRenderTarget(): THREE.WebGLRenderTarget | null {

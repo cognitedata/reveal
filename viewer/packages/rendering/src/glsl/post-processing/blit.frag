@@ -12,7 +12,7 @@ uniform float alpha;
 
 in vec2 vUv;
 
-out vec4 diffuse;
+out vec4 fragColor;
 
 #if defined(GAUSSIAN_BLUR) 
 #pragma glslify: import('./gaussian-blur.glsl')
@@ -24,20 +24,22 @@ out vec4 diffuse;
 
 void main() {
 
-  if(texture(tDiffuse, vUv).a == 0.0){
+  vec4 diffuse = texture(tDiffuse, vUv); 
+  
+  if(diffuse.a == 0.0){
     discard;
   }
 
 #if defined(GAUSSIAN_BLUR) 
-  diffuse = gaussianBlur(tDiffuse, vUv);
+  fragColor = gaussianBlur(tDiffuse, vUv);
 #elif defined(FXAA)
-  diffuse = fxaa(tDiffuse);
+  fragColor = fxaa(tDiffuse);
 #else
-  diffuse = texture(tDiffuse, vUv);
+  fragColor = diffuse;
 #endif
 
 #if defined(ALPHA)
-  diffuse.a = alpha;
+  fragColor.a = alpha;
 #endif
 
 #if defined(DEPTH_WRITE) 
