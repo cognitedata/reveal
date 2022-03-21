@@ -11,12 +11,12 @@ export const withThousandSeparator = (value: number, separator = ' ') => {
   return '0';
 };
 
-export const toFixedNumber = (value: string, fractionDigits = 3) => {
+export const toFixedNumber = (value: string | number, decimalPlaces = 3) => {
   const number = Number(value);
 
   return Number.isNaN(number)
     ? ERROR_INVALID_DATA
-    : number.toFixed(fractionDigits);
+    : number.toFixed(decimalPlaces);
 };
 
 export const formatBigNumbersWithSuffix = (value: number) => {

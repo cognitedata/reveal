@@ -3,6 +3,7 @@ import { Row } from 'react-table';
 import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
 import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
 import get from 'lodash/get';
+import { toFixedNumber } from 'utils/number';
 import { processAccessor } from 'utils/table/processAccessor';
 
 import { NPTEvent } from 'modules/wellSearch/types';
@@ -43,7 +44,8 @@ export const getCommonColumns = (unit?: string) => {
       id: accessors.DURATION,
       Header: 'Duration (Hrs)',
       width: '150px',
-      accessor: (row: NPTEvent) => processAccessor(row, accessors.DURATION),
+      accessor: (row: NPTEvent) =>
+        toFixedNumber(processAccessor(row, accessors.DURATION), 2),
     },
     {
       id: accessors.NPT_DETAIL_CODE,
