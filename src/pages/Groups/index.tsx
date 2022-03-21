@@ -222,15 +222,15 @@ export default function Groups() {
     },
     legacyFlow
       ? {
-        title: 'Service accounts',
-        dataIndex: 'id',
-        align: 'center',
-        render(id: number) {
-          return (
-            serviceAccounts?.filter(a => a.groups?.includes(id)).length || 0
-          );
-        },
-      }
+          title: 'Service accounts',
+          dataIndex: 'id',
+          align: 'center',
+          render(id: number) {
+            return (
+              serviceAccounts?.filter(a => a.groups?.includes(id)).length || 0
+            );
+          },
+        }
       : false,
 
     {
@@ -287,7 +287,7 @@ export default function Groups() {
   return (
     <>
       {!authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
-        serviceAccounts?.length ? (
+      serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}
       <Row justify="space-between">
