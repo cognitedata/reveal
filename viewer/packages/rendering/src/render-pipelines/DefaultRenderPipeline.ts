@@ -56,7 +56,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: THREE.Group;
   private readonly _customObjects: THREE.Group;
-  private readonly _ssaoPass: SSAOPass;
   private readonly _defaultRenderPipelinePasses: DefaultRenderPipelinePasses;
 
   constructor(
@@ -80,55 +79,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._customObjects = customObjects;
 
     this._defaultRenderPipelinePasses = this.initializeRenderPasses();
-
-    this._ssaoPass = new SSAOPass(this._renderTargetData.color.depthTexture);
-  }
-
-  private initializeRenderPasses(): DefaultRenderPipelinePasses {
-    return {
-      inFront: {
-        geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Effects),
-        blitToComposition: new BlitPass({
-          texture: this._renderTargetData.inFront.texture,
-          depthTexture: this._renderTargetData.inFront.depthTexture,
-          overrideAlpha: 0.5
-        }),
-        outline: new OutlinePass(this._renderTargetData.inFront.texture)
-      },
-      back: {
-        geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Color),
-        blitToComposition: new BlitPass({
-          texture: this._renderTargetData.color.texture,
-          depthTexture: this._renderTargetData.color.depthTexture
-        }),
-        ssao: new SSAOPass(this._renderTargetData.color.depthTexture),
-        blitSsaoBlur: new BlitPass({
-          texture: this._renderTargetData.ssao.texture,
-          effect: BlitEffect.GaussianBlur,
-          blendOptions: alphaMaskBlendOptions
-        }),
-        edgeDetect: new EdgeDetectPass(this._renderTargetData.color.texture),
-        outline: new OutlinePass(this._renderTargetData.color.texture)
-      },
-      custom: {
-        geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Color, RenderLayer.CustomNormal),
-        deferred: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Color, RenderLayer.CustomDeferred)
-      },
-      ghost: {
-        geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Ghost),
-        blitToComposition: new BlitPass({
-          texture: this._renderTargetData.ghost.texture,
-          depthTexture: this._renderTargetData.ghost.depthTexture,
-          blendOptions: transparentBlendOptions
-        })
-      },
-      blitComposite: new BlitPass({
-        texture: this._renderTargetData.opaqueComposition.texture,
-        depthTexture: this._renderTargetData.opaqueComposition.depthTexture,
-        blendOptions: { blendDestination: THREE.DstAlphaFactor, blendSource: THREE.OneMinusDstAlphaFactor }
-      }),
-      blitToOutput: new BlitPass({ texture: this._renderTargetData.finalComposition.texture, effect: BlitEffect.Fxaa })
-    };
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
@@ -238,6 +188,61 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._customObjects.updateMatrixWorld(true);
 
     this.updateRenderTargetSizes(renderer);
+  }
+
+  private initializeRenderPasses(): DefaultRenderPipelinePasses {
+    const inFront = {
+      geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Effects),
+      blitToComposition: new BlitPass({
+        texture: this._renderTargetData.inFront.texture,
+        depthTexture: this._renderTargetData.inFront.depthTexture,
+        overrideAlpha: 0.5
+      }),
+      outline: new OutlinePass(this._renderTargetData.inFront.texture)
+    };
+
+    const back = {
+      geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Color),
+      blitToComposition: new BlitPass({
+        texture: this._renderTargetData.color.texture,
+        depthTexture: this._renderTargetData.color.depthTexture
+      }),
+      ssao: new SSAOPass(this._renderTargetData.color.depthTexture),
+      blitSsaoBlur: new BlitPass({
+        texture: this._renderTargetData.ssao.texture,
+        effect: BlitEffect.GaussianBlur,
+        blendOptions: alphaMaskBlendOptions
+      }),
+      edgeDetect: new EdgeDetectPass(this._renderTargetData.color.texture),
+      outline: new OutlinePass(this._renderTargetData.color.texture)
+    };
+
+    const custom = {
+      geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Color, RenderLayer.CustomNormal),
+      deferred: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Color, RenderLayer.CustomDeferred)
+    };
+
+    const ghost = {
+      geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Ghost),
+      blitToComposition: new BlitPass({
+        texture: this._renderTargetData.ghost.texture,
+        depthTexture: this._renderTargetData.ghost.depthTexture,
+        blendOptions: transparentBlendOptions
+      })
+    };
+
+    const blitComposite = new BlitPass({
+      texture: this._renderTargetData.opaqueComposition.texture,
+      depthTexture: this._renderTargetData.opaqueComposition.depthTexture,
+      blendOptions: { blendDestination: THREE.DstAlphaFactor, blendSource: THREE.OneMinusDstAlphaFactor }
+    });
+
+    const blitToOutput = new BlitPass({
+      texture: this._renderTargetData.finalComposition.texture,
+      effect: BlitEffect.Fxaa
+    });
+
+    return { inFront, back, custom, ghost, blitComposite, blitToOutput };
   }
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {

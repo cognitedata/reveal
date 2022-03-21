@@ -18,7 +18,7 @@ export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1):
   let renderTarget: THREE.WebGLRenderTarget;
 
   if (multiSampleCount > 1) {
-    const multiSampleTarget = new THREE.WebGLMultisampleRenderTarget(width, height);
+    const multiSampleTarget = new THREE.WebGLMultisampleRenderTarget(width, height, { ignoreDepth: false } as any);
     multiSampleTarget.samples = 10;
     renderTarget = multiSampleTarget;
   } else {
