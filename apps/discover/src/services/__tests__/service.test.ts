@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { useJsonHeaders, discoverAPI } from '../service';
 
 jest.mock('react-query', () => ({
+  ...jest.requireActual('react-query'),
   useQuery: () => ({ isLoading: false, error: {}, data: [] }),
 }));
 

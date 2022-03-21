@@ -1,0 +1,27 @@
+{
+  "name": "@cognite/cdf-tenant-selector",
+  "version": "0.0.1",
+  "source": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/cdf-tenant-selector",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bazel build :cdf-tenant-selector",
+    "test": "../../node_modules/.bin/jest",
+    "test:watch": "yarn test --watchAll",
+    "test:bazel": "bazel test :jest_test",
+    "test:bazel-run": "ibazel run :jest --",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  }
+}

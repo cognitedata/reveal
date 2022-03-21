@@ -11,6 +11,7 @@ import {
 } from '../useFavorite';
 
 jest.mock('react-query', () => ({
+  ...jest.requireActual('react-query'),
   useQueryClient: () => ({
     setQueryData: jest.fn(),
   }),

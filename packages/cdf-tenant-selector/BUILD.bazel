@@ -1,0 +1,221 @@
+load("@npm//rollup:index.bzl", "rollup")
+load("@npm//jest:index.bzl", "jest")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library")
+load("//rules/test:jest.bzl", "jest_test")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/npm:append_deps.bzl", "append_deps")
+
+SOURCES = glob(
+    [
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "src/**/*.png",
+        "src/**/*.jpg",
+        "src/**/*.svg",
+    ],
+    exclude = ["src/**/*.spec.ts"],
+)
+
+TESTS = glob(["src/**/*.spec.ts"])
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    local_package_json = ":package.json",
+    out_dir = "dist",
+    package_json = "//:package.json",
+    src_dir = "src",
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/sdk",
+    "@npm//axios",
+    "@npm//lodash",
+    "@npm//react",
+    "@npm//react-dom",
+    "@npm//react-query",
+    "@npm//react-router-dom",
+    "@npm//styled-components",
+    "@npm//typescript",
+    "@npm//use-local-storage-state",
+    "//packages/auth-utils",
+]
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = [
+    "@npm//@types/axios",
+    "@npm//@types/lodash",
+    "@npm//@types/react",
+    "@npm//@types/react-dom",
+    "@npm//@types/react-router-dom",
+    "@npm//@types/react-select",
+    "@npm//@types/styled-components",
+]
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//@rollup/plugin-alias",
+    "@npm//@rollup/plugin-image",
+    "@npm//rollup-plugin-json",
+    "@npm//rollup-plugin-typescript2",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "App.test": "dist/App.test",
+    "App": "dist/App",
+    "GlobalStyle": "dist/GlobalStyle",
+    "api": "dist/api",
+    "assets": "dist/assets",
+    "clusters": "dist/clusters",
+    "components": "dist/components",
+    "constants": "dist/constants",
+    "context": "dist/context",
+    "declaration.d": "dist/declaration.d",
+    "hooks": "dist/hooks",
+    "icons": "dist/icons",
+    "index": "dist/index",
+    "landingBackground": "dist/landingBackground",
+    "npm-package": "dist/npm-package",
+    "react-app-env.d": "dist/react-app-env.d",
+    "requests": "dist/requests",
+    "set-public-path": "dist/set-public-path",
+    "styles": "dist/styles",
+    "types": "dist/types",
+    "utilities": "dist/utilities",
+}
+
+### end of auto-generated helpers ###
+
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        "//:eslint_config",
+        "//packages:eslint_config",
+    ],
+)
+
+eslint_test(
+    name = "eslint_test",
+    data = SOURCES + TESTS + [
+        ":tsconfig.json",
+        "//packages:tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    eslint_config = ":eslint_config",
+)
+
+prettier_test(
+    name = "prettier_test",
+    data = SOURCES + TESTS,
+    prettier_config = "//:prettier_config",
+)
+
+jest_test(
+    name = "jest_test",
+    srcs = SOURCES + TESTS + [
+        "//packages:jest.config.js",
+        ":tsconfig.json",
+        "//:tsconfig.json",
+        "//packages:tsconfig.json",
+    ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "cdf-tenant-selector",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+)
+
+# For ibazel run to properly pick the changes we need to run from the Workspace directory
+write_file(
+    name = "write_chdir_worspace_script",
+    out = "chdir-workspace.js",
+    content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+)
+
+jest(
+    name = "jest",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--config",
+        "jest.config.js",
+        "--runInBand",
+        "--watchAll",
+    ],
+    data = [
+        "chdir-workspace.js",
+        "jest.config.js",
+        "tsconfig.json",
+        "//:tsconfig.json",
+        "//packages:jest.config.js",
+        "//packages:tsconfig.json",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
+)
+
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+copy_to_bin(
+    name = "copy_static_files",
+    srcs = SOURCES + [
+        ":rollup.config.js",
+        ":tsconfig.json",
+    ],
+)
+
+rollup(
+    name = "dist",
+    args = [
+        "--banner=//cdf-tenant-selector",
+        "--node_options=--require=./$(execpath //scripts:log.js)",
+        "--node_options=--require=./$(execpath chdir.js)",
+        "-c",
+        "rollup.config.js",
+    ],
+    data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "//scripts:log.js",
+        ":chdir.js",
+        ":copy_static_files",
+        ":package-json",
+        "//packages:tsconfig",
+        "//:tsconfig",
+        "@npm//@types/jest",
+        "@npm//@types/node",
+        "@npm//tslib",
+    ],
+    output_dir = True,
+)
+
+js_library(
+    name = "cdf-tenant-selector",
+    package_name = "@cognite/cdf-tenant-selector",
+    srcs = ["package-json"],
+    visibility = ["//visibility:public"],
+    deps = DEPENDENCIES + ["dist"],
+)
+
+append_deps(
+    name = "package-json",
+    dependencies = DEPENDENCIES,
+    dev_dependencies = DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+    package = "package.json",
+)

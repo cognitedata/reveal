@@ -5,6 +5,7 @@ import { getMockDocumentEmptyFacets } from '__test-utils/fixtures/document';
 import { useRelatedDocumentFilterQuery } from '../useRelatedDocumentFilterQuery';
 
 jest.mock('react-query', () => ({
+  ...jest.requireActual('react-query'),
   useQueryClient: () => ({
     setQueryData: jest.fn(),
   }),

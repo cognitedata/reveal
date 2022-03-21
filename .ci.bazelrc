@@ -11,4 +11,4 @@ run --remote_download_toplevel
 
 # Limit the number of parallel jobs in CI to avoid getting OOM-killed
 build --jobs=5
-test --jobs=5
+test --jobs=3
