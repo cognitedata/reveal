@@ -92,7 +92,7 @@ export const DataSource = ({
   };
 
   const updatePrimaryValue = (isPrimary: boolean) => {
-    setIsPrimary(true);
+    setIsPrimary(isPrimary);
     setIsPrimaryLoading(true);
     setIsApproved(isApproved);
 
@@ -126,11 +126,11 @@ export const DataSource = ({
       if (isSaving) setIsSaving(false);
       if (isPrimaryLoading) {
         setIsPrimaryLoading(false);
-        if (!appState.saveState.error) {
+        if (!appState.saveState.error && isPrimary) {
           toast.success(
             `"${
               dataElementConfig?.label || dataElement.key
-            }" has been set to "${value}${
+            }" has been set to "${value.trim()}${
               dataElementConfig?.unit ? ` ${dataElementConfig.unit}` : ''
             }"`
           );

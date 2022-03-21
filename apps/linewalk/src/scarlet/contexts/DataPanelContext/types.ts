@@ -6,6 +6,7 @@ export type DataPanelState = {
   currentOrigin: DataElementOrigin;
   visibleDataElement?: DataElement;
   activeDetection?: Detection;
+  checkedDataElements: DataElement[];
 };
 
 export type DataPanelAction =
@@ -31,6 +32,14 @@ export type DataPanelAction =
   | {
       type: DataPanelActionType.TOGGLE_NEW_DATA_SOURCE;
       isActive: boolean;
+    }
+  | {
+      type: DataPanelActionType.TOGGLE_DATA_ELEMENT;
+      dataElement: DataElement;
+      checked: boolean;
+    }
+  | {
+      type: DataPanelActionType.UNCHECK_ALL_DATA_ELEMENTS;
     };
 
 export enum DataPanelActionType {
@@ -40,4 +49,6 @@ export enum DataPanelActionType {
   CLOSE_DATA_ELEMENT = 'close-data-element',
   SET_ACTIVE_DETECTION = 'set-active-detection',
   TOGGLE_NEW_DATA_SOURCE = 'toggle-new-data-source',
+  TOGGLE_DATA_ELEMENT = 'toggle-data-element',
+  UNCHECK_ALL_DATA_ELEMENTS = 'unselect-all-data-elements',
 }

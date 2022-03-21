@@ -8,6 +8,5 @@ export default createGlobalStyle`
     -webkit-font-smoothing: antialiased;
     margin: 0;
     padding: 0;
-    font-family: "proxima-nova", sans-serif !important;
   }
 `;

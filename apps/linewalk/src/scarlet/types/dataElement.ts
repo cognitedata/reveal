@@ -28,6 +28,7 @@ export enum DataElementState {
 }
 
 export type DataElement = {
+  id: string;
   key: string;
   origin: DataElementOrigin;
   detections: Detection[];

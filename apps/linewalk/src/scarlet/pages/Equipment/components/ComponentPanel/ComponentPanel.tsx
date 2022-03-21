@@ -104,6 +104,7 @@ export const ComponentPanel = () => {
   return (
     <Styled.Container>
       <Styled.Header>
+        <h4 className="cogs-title-4">Component Level</h4>
         <ComponentGroups group={currentGroup} onChange={setCurrentGroup} />
 
         {currentGroup && !isDeleteView && !isRenameView && (

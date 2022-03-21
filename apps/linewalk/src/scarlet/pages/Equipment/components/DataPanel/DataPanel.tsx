@@ -20,13 +20,13 @@ export const DataPanel = () => {
     } else {
       dataElements = appState.equipment.data?.equipmentElements || [];
     }
-    return dataElements.find((item) => item.key === visibleDataElement?.key);
+    return dataElements.find((item) => item.id === visibleDataElement?.id);
   }, [visibleDataElement, appState.equipment.data]);
 
   return (
     <Styled.Container>
       <Styled.ListWrapper inactive={!!dataElement}>
-        <Styled.List fullHeight={currentOrigin === DataElementOrigin.COMPONENT}>
+        <Styled.List>
           {currentOrigin === DataElementOrigin.EQUIPMENT && <EquipmentPanel />}
           {currentOrigin === DataElementOrigin.COMPONENT && <ComponentPanel />}
         </Styled.List>

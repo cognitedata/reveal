@@ -34,7 +34,7 @@ export const CardHeader = ({ dataElement }: CardHeaderProps) => {
   const onIgnore = () => {
     appDispatch({
       type: AppActionType.SHOW_DATA_ELEMENT_STATE_MODAL,
-      dataElement,
+      dataElements: [dataElement],
       state: DataElementState.OMITTED,
     });
     toggleMenu();

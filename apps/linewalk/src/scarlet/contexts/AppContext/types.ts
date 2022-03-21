@@ -25,7 +25,7 @@ export type AppState = {
     equipments: EquipmentListItem[];
   };
   dataElementModal?: {
-    dataElement: DataElement;
+    dataElements: DataElement[];
     state: DataElementState;
   };
   saveState: APIState<EquipmentData>;
@@ -61,8 +61,8 @@ export type AppAction =
       saveState: APIState<EquipmentData>;
     }
   | {
-      type: AppActionType.UPDATE_DATA_ELEMENT_STATE;
-      dataElement: DataElement;
+      type: AppActionType.UPDATE_DATA_ELEMENTS_STATE;
+      dataElements: DataElement[];
       state: DataElementState;
       stateReason?: string;
     }
@@ -86,7 +86,7 @@ export type AppAction =
     }
   | {
       type: AppActionType.SHOW_DATA_ELEMENT_STATE_MODAL;
-      dataElement: DataElement;
+      dataElements: DataElement[];
       state: DataElementState;
     }
   | {
@@ -121,7 +121,7 @@ export enum AppActionType {
   SET_EQUIPMENT = 'set-equipment',
   SET_EQUIPMENT_CONFIG = 'set-equipment-config',
   SET_SAVE_SATE = 'set-save-state',
-  UPDATE_DATA_ELEMENT_STATE = 'update-data-element-state',
+  UPDATE_DATA_ELEMENTS_STATE = 'update-data-elements-state',
   ADD_DETECTION = 'add-detection',
   UPDATE_DETECTION = 'update-detection',
   REMOVE_DETECTION = 'remove-detection',

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { toast, Textarea } from '@cognite/cogs.js';
+import { toast } from '@cognite/cogs.js';
 import {
   useAppContext,
   useDataElementConfig,
@@ -14,19 +14,18 @@ import {
 
 import { Modal } from '../..';
 
-type OmitModalProps = {
+type ApproveModalProps = {
   visible: boolean;
   dataElements?: DataElement[];
   onClose: () => void;
 };
 
-export const OmitModal = ({
+export const RestoreModal = ({
   visible,
   dataElements = [],
-  onClose: propsOnClose,
-}: OmitModalProps) => {
+  onClose,
+}: ApproveModalProps) => {
   const { appState, appDispatch } = useAppContext();
-  const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
   const isMultiple = dataElements.length > 1;
   const dataElementConfig = useDataElementConfig(
@@ -39,18 +38,19 @@ export const OmitModal = ({
 
     if (appState.saveState.error) {
       const errorMessage = isMultiple
-        ? `Failed to ignore ${dataElements.length} data fields`
-        : `Failed to ignore data field "${dataElementConfig?.label}"`;
+        ? `Failed to restore ${dataElements.length} data fields`
+        : `Failed to restore data field "${dataElementConfig?.label}"`;
 
       toast.error(errorMessage);
     }
 
     if (loading && !appState.saveState.loading) {
       setLoading(false);
+
       if (!appState.saveState.error) {
         const successMessage = isMultiple
-          ? `${dataElements.length} data fields have been ignored`
-          : `Data field "${dataElementConfig?.label}" has been ignored`;
+          ? `${dataElements.length} data fields have been restored`
+          : `Data field "${dataElementConfig?.label}" has been restored`;
 
         toast.success(successMessage);
 
@@ -63,7 +63,7 @@ export const OmitModal = ({
     }
   }, [appState.saveState]);
 
-  const onOmit = () => {
+  const onRestore = () => {
     if (!dataElements.length) return;
 
     setLoading(true);
@@ -71,41 +71,26 @@ export const OmitModal = ({
     appDispatch({
       type: AppActionType.UPDATE_DATA_ELEMENTS_STATE,
       dataElements,
-      state: DataElementState.OMITTED,
-      stateReason: reason,
+      state: DataElementState.PENDING,
+      stateReason: undefined,
     });
   };
 
-  const onClose = () => {
-    setReason('');
-    propsOnClose();
-  };
-
-  const title = isMultiple ? 'Ignore fields?' : 'Ignore field?';
+  const title = isMultiple ? 'Restore fields?' : 'Restore field?';
 
   const description = isMultiple
-    ? 'Ignored fields would be omitted from data export.'
-    : `Ignored field "${dataElementConfig?.label}" would be omitted from data export.`;
+    ? 'Selected fields will be restored to pending states.'
+    : `Data field "${dataElementConfig?.label}" will be restored to pending state.`;
 
   return (
     <Modal
       title={title}
       description={description}
-      okText={loading ? 'Saving...' : 'Yes, Ignore'}
+      okText={loading ? 'Saving...' : 'Yes, Restore'}
       visible={visible}
-      onOk={onOmit}
+      onOk={onRestore}
       onCancel={!loading ? onClose : () => null}
       loading={loading}
-    >
-      <Textarea
-        value={reason}
-        resize={false}
-        rows={5}
-        placeholder="Leave comment here"
-        onChange={(e) => {
-          setReason(e.target.value);
-        }}
-      />
-    </Modal>
+    />
   );
 };

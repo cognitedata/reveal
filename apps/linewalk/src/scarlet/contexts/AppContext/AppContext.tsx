@@ -1,5 +1,12 @@
 import React, { useReducer } from 'react';
 import { useSaveEquipment } from 'scarlet/hooks';
+import {
+  APIState,
+  EquipmentConfig,
+  EquipmentData,
+  EquipmentDocument,
+  PCMSData,
+} from 'scarlet/types';
 
 import { AppAction, AppActionType, AppState } from '.';
 import {
@@ -17,12 +24,12 @@ import {
 const equipmentInitialState = {
   unitName: '',
   equipmentName: '',
-  pcms: { loading: true },
-  documents: { loading: true },
-  equipment: { loading: true },
-  equipmentConfig: { loading: true },
+  pcms: { loading: true } as APIState<PCMSData>,
+  documents: { loading: true } as APIState<EquipmentDocument[]>,
+  equipment: { loading: true } as APIState<EquipmentData>,
+  equipmentConfig: { loading: true } as APIState<EquipmentConfig>,
   dataElementModal: undefined,
-  saveState: { loading: false },
+  saveState: { loading: false } as APIState<EquipmentData>,
 };
 
 const initialState: AppState = {
@@ -69,7 +76,7 @@ function reducer(state: AppState, action: AppAction) {
       };
     case AppActionType.UPDATE_DETECTION: {
       const equipmentToSave = updateDetection(
-        state.equipment.data!,
+        state.saveState.data || state.equipment.data!,
         action.dataElement,
         action.detection,
         action.value,
@@ -115,10 +122,10 @@ function reducer(state: AppState, action: AppAction) {
         },
       };
     }
-    case AppActionType.UPDATE_DATA_ELEMENT_STATE: {
+    case AppActionType.UPDATE_DATA_ELEMENTS_STATE: {
       const equipmentToSave = updateDataElementState(
-        state.equipment.data!,
-        action.dataElement,
+        state.saveState.data || state.equipment.data!,
+        action.dataElements,
         action.state,
         action.stateReason
       );
@@ -140,7 +147,7 @@ function reducer(state: AppState, action: AppAction) {
       return {
         ...state,
         dataElementModal: {
-          dataElement: action.dataElement,
+          dataElements: action.dataElements,
           state: action.state,
         },
       };

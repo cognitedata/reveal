@@ -16,6 +16,7 @@ export const useSaveEquipment = (
   dispatch: Dispatch<AppAction>
 ) => {
   const { client } = useAuthContext();
+
   useEffect(() => {
     const equipment = saveApiState.data;
     if (!equipment) return;

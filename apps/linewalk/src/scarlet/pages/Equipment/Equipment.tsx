@@ -14,7 +14,7 @@ import {
 } from 'scarlet/api';
 import { getEquipmentType, getEquipmentTypeLabel } from 'scarlet/utils';
 
-import { BreadcrumbBar, PageBody, TopBar } from './components';
+import { BreadcrumbBar, PageBody } from './components';
 import * as Styled from './style';
 
 export const Equipment = () => {
@@ -140,10 +140,9 @@ export const Equipment = () => {
         unitName={unitName}
         equipmentType={getEquipmentTypeLabel(getEquipmentType(equipmentName))}
       />
-      <TopBar unitName={unitName} equipmentName={equipmentName} />
 
       <DataPanelProvider>
-        <PageBody />
+        <PageBody unitName={unitName} equipmentName={equipmentName} />
       </DataPanelProvider>
       <ToastContainer position="bottom-left" />
     </Styled.Container>

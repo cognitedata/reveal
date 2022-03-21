@@ -24,5 +24,6 @@ export * from './NewDataSource';
 export * from './Ornate';
 export * from './PageBody';
 export * from './RemarkTags';
+export * from './SelectedElementsBar';
 export * from './TopBar';
 export * from './WorkspaceTools';

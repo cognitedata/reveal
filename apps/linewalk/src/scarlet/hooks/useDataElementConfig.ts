@@ -5,6 +5,7 @@ import { useAppState } from '.';
 
 export const useDataElementConfig = (dataElement?: DataElement) => {
   const { equipmentConfig } = useAppState();
+
   const config = useMemo(() => {
     if (!dataElement)
       return { label: undefined, unit: undefined, type: undefined };

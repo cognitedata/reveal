@@ -58,6 +58,7 @@ export const transformEquipmentData = ({
       pcms?.components
     );
   }
+  fixUndefinedComponentElementsId(components);
 
   const created = equipmentState?.created || Date.now();
   const isApproved = equipmentState?.isApproved || false;
@@ -96,8 +97,9 @@ const getEquipmentElements = (
       );
 
       return {
+        id: savedElement?.id || uuid(),
+        key,
         ...savedElement,
-        ...config.equipmentElements[key], // -TODO: remove it later. it's here so prod may work as it uses the same equipment-state-json as staging.
         origin: DataElementOrigin.EQUIPMENT,
         detections,
         state: savedElement?.state || DataElementState.PENDING,
@@ -296,6 +298,7 @@ const pushComponent = ({
       }
 
       const dataElement: DataElement = {
+        id: uuid(),
         key: dataElementKey,
         origin: DataElementOrigin.COMPONENT,
         state: DataElementState.PENDING,
@@ -326,4 +329,15 @@ const getPCMSDetection = (key: string, pcms?: { [key: string]: string }) => {
     value: pcms[key],
     status: DetectionState.APPROVED,
   };
+};
+
+const fixUndefinedComponentElementsId = (
+  components: EquipmentComponent[] = []
+) => {
+  components.forEach((component) =>
+    component.componentElements.forEach((dataElement: DataElement) => {
+      // eslint-disable-next-line no-param-reassign
+      if (!dataElement.id) dataElement.id = uuid();
+    })
+  );
 };

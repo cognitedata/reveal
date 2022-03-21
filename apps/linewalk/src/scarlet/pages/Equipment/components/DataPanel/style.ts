@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import z from 'utils/z';
 
 export const Container = styled.div`
-  height: calc(100vh - 175px);
+  height: calc(100vh - 106px);
   position: relative;
 `;
 
@@ -21,14 +21,9 @@ export const ListWrapper = styled.div<{ inactive: boolean }>`
     `}
 `;
 
-export const List = styled.div<{ fullHeight: boolean }>`
+export const List = styled.div`
   padding: 18px;
-
-  ${({ fullHeight }) =>
-    fullHeight &&
-    css`
-      height: 100%;
-    `}
+  height: 100%;
 `;
 
 export const Item = styled.div`

@@ -16,17 +16,29 @@ const deepCopy = (obj: any) => JSON.parse(JSON.stringify(obj));
 
 export const updateDataElementState = (
   equipmentOrigin: EquipmentData,
-  dataElementOrigin: DataElement,
+  dataElementsOrigin: DataElement[],
   state: DataElementState,
   stateReason?: string
 ): EquipmentData => {
-  const { equipment, dataElement } = getCopy(
-    equipmentOrigin,
-    dataElementOrigin
-  );
+  const equipment: EquipmentData = deepCopy(equipmentOrigin);
 
-  dataElement!.state = state;
-  dataElement!.stateReason = stateReason;
+  dataElementsOrigin.forEach((dataElementOrigin) => {
+    const dataElementList = getDataElementList(equipment, dataElementOrigin);
+    const dataElement = dataElementList.find(
+      (item) => item.key === dataElementOrigin.key
+    );
+    if (!dataElement) return;
+
+    dataElement.state = state;
+    dataElement.stateReason = stateReason;
+
+    if (state === DataElementState.OMITTED) {
+      dataElement.detections.forEach((detection) => {
+        // eslint-disable-next-line no-param-reassign
+        detection.isPrimary = false;
+      });
+    }
+  });
 
   return equipment;
 };

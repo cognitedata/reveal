@@ -1,6 +1,7 @@
 export * from './useAddComponent';
 export * from './useApi';
 export * from './useAppContext';
+export * from './useCheckedDataElementsState';
 export * from './useComponent';
 export * from './useComponentName';
 export * from './useDataElementConfig';

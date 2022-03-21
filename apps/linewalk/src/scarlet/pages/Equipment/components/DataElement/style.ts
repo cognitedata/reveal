@@ -1,18 +1,61 @@
+import { Checkbox as CogsCheckbox } from '@cognite/cogs.js';
 import { DataElementState } from 'scarlet/types';
 import styled, { css } from 'styled-components';
 
 const oneLineText = css`
-  color: inherit;
   width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 `;
 export const Label = styled.div`
+  color: inherit;
   ${oneLineText}
 `;
-export const Value = styled.div`
-  ${oneLineText}
+
+export const DataContainer = styled.div<{ isLink?: boolean }>`
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  ${({ isLink }) =>
+    isLink &&
+    css`
+      cursor: pointer;
+      transition: opacity var(--cogs-transition-time-fast);
+      &:hover {
+        opacity: 0.8;
+      }
+    `}
+`;
+
+export const Value = styled.div<{ noValue?: boolean }>`
+  color: inherit;
+
+  ${({ noValue }) =>
+    noValue
+      ? css`
+          opacity: 0.5;
+        `
+      : oneLineText}
+`;
+
+export const DataSource = styled.div<{ isDiscrepancy: boolean }>`
+  display: flex;
+  color: var(--cogs-midorange-5);
+  background-color: var(--cogs-white);
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 0 4px;
+  align-items: center;
+  gap: 2px;
+
+  ${({ isDiscrepancy }) =>
+    isDiscrepancy &&
+    css`
+      background-color: var(--cogs-red-4);
+      color: var(--cogs-white);
+    `}
 `;
 
 export const Content = styled.div`
@@ -56,7 +99,6 @@ const buttonHoverStyles = css`
 `;
 
 export const Container = styled.div<{
-  hasValue: boolean;
   state: DataElementState;
 }>`
   border-radius: 6px;
@@ -67,56 +109,81 @@ export const Container = styled.div<{
   display: flex;
   align-items: center;
 
-  ${({ hasValue, state }) => {
-    if (state === DataElementState.APPROVED) {
-      return css`
-        background-color: var(--cogs-green-8);
-        border-color: var(--cogs-green-3);
-        color: var(--cogs-green-2);
-
-        ${Button} {
-          color: var(--cogs-green-5);
-          border-color: var(--cogs-green-5);
-
-          ${buttonHoverStyles}
-
-          &[disabled] {
-            border-color: var(--cogs-green-6);
-            background-color: var(--cogs-green-6);
-            cursor: inherit;
-          }
-        }
-      `;
-    }
-    return hasValue
-      ? css`
-          background-color: var(--cogs-midorange-8);
-          border-color: var(--cogs-midorange-4);
-          color: var(--cogs-midorange-2);
+  ${({ state }) => {
+    switch (state) {
+      case DataElementState.APPROVED:
+        return css`
+          background-color: var(--cogs-green-8);
+          border-color: var(--cogs-green-3);
+          color: var(--cogs-green-2);
 
           ${Button} {
-            color: var(--cogs-midorange-4);
-            border-color: var(--cogs-midorange-4);
+            color: var(--cogs-green-5);
+            border-color: currentColor;
 
             ${buttonHoverStyles}
           }
-        `
-      : css`
-          background-color: var(--cogs-red-8);
-          border-color: var(--cogs-red-4);
-          color: var(--cogs-red-3);
 
-          ${Value} {
-            color: var(--cogs-red-2);
-            opacity: 0.4;
-          }
-
-          ${Button} {
-            color: var(--cogs-red-4);
-            border-color: var(--cogs-red-4);
-
-            ${buttonHoverStyles}
+          ${DataSource} {
+            color: var(--cogs-green-5);
           }
         `;
+
+      case DataElementState.OMITTED:
+        return css`
+          background-color: var(--cogs-greyscale-grey1);
+          border-color: var(--cogs-greyscale-grey3);
+          color: var(--cogs-greyscale-grey6);
+
+          ${Button} {
+            color: var(--cogs-greyscale-grey5);
+            border-color: currentColor;
+
+            ${buttonHoverStyles}
+          }
+
+          ${DataSource} {
+            color: var(--cogs-greyscale-grey5);
+          }
+        `;
+    }
+
+    return css`
+      background-color: var(--cogs-midorange-8);
+      border-color: var(--cogs-midorange-6);
+      color: var(--cogs-midorange-2);
+
+      ${Button} {
+        color: var(--cogs-midorange-4);
+        border-color: var(--cogs-midorange-4);
+
+        ${buttonHoverStyles}
+      }
+    `;
   }}}
+`;
+
+export const CheckboxContainer = styled.div`
+  flex-shrink: 0;
+`;
+
+export const Checkbox = styled(CogsCheckbox)`
+  .cogs-checkbox input[type='checkbox']:not(:checked) + & {
+    border-color: var(--cogs-state-base);
+    background: transparent;
+  }
+
+  .cogs-checkbox input[type='checkbox']:not(:checked):disabled + & {
+    border-color: var(--cogs-state-base);
+    background: transparent;
+    color: transparent;
+    opacity: 0.3;
+  }
+
+  .cogs-checkbox input[type='checkbox']:checked:disabled + & {
+    border-color: var(--cogs-state-base);
+    background: var(--cogs-state-base);
+    color: var(--cogs-white);
+    opacity: 0.3;
+  }
 `;

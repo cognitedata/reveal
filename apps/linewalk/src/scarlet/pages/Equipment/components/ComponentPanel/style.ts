@@ -11,6 +11,9 @@ export const Container = styled.div`
 
 export const Header = styled.div`
   flex-shrink: 0;
+  > h4 {
+    margin-bottom: 20px;
+  }
 `;
 
 export const TopBar = styled.div`

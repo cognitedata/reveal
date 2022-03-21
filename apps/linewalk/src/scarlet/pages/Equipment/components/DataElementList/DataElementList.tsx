@@ -1,6 +1,6 @@
 import { Button } from '@cognite/cogs.js';
 import { useMemo, useState } from 'react';
-import { DataElement, DataElementState } from 'scarlet/types';
+import { DataElement } from 'scarlet/types';
 import { getDataElementValue } from 'scarlet/utils';
 
 import {
@@ -42,8 +42,7 @@ export const DataElementList = ({
             value: getDataElementValue(dataElement),
           }))
           .sort(sortDataElements(sortedKeys))
-          .map((item) => item.dataElement)
-          .filter((item) => item.state !== DataElementState.OMITTED)) ||
+          .map((item) => item.dataElement)) ||
       [],
     [data]
   );
@@ -61,7 +60,7 @@ export const DataElementList = ({
   return (
     <>
       {visibleDataElements?.map((item) => (
-        <DataElementComponent key={item.key} dataElement={item} />
+        <DataElementComponent key={item.id} dataElement={item} />
       ))}
       {isPartialActive && (
         <Button

@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from 'react';
 import { DataElementOrigin } from 'scarlet/types';
 
 import { DataPanelAction, DataPanelActionType, DataPanelState } from './types';
+import { toggleDataElement } from './utils';
 
 const getAppName = (value: string) => ['scarlet', 'dataPanel', value].join('_');
 
@@ -13,6 +14,7 @@ const getInitialState = (): DataPanelState => ({
       getAppName('currentOrigin')
     ) as DataElementOrigin) || DataElementOrigin.EQUIPMENT,
   isActiveNewDataSource: false,
+  checkedDataElements: [],
 });
 
 const saveCurrentOrigin = (origin: DataElementOrigin) => {
@@ -46,6 +48,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
         visibleDataElement: undefined,
         activeDetection: undefined,
         activeNewDataSource: false,
+        checkedDataElements: [],
       };
     }
 
@@ -56,6 +59,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
         visibleDataElement: action.dataElement,
         activeDetection: action.detection,
         currentOrigin: action.dataElement.origin,
+        checkedDataElements: [],
       };
 
     case DataPanelActionType.CLOSE_DATA_ELEMENT:
@@ -78,6 +82,25 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
       return {
         ...state,
         isActiveNewDataSource: action.isActive,
+      };
+
+    case DataPanelActionType.TOGGLE_DATA_ELEMENT: {
+      const checkedDataElements = toggleDataElement(
+        state.checkedDataElements,
+        action.dataElement,
+        action.checked
+      );
+
+      return {
+        ...state,
+        checkedDataElements,
+      };
+    }
+
+    case DataPanelActionType.UNCHECK_ALL_DATA_ELEMENTS:
+      return {
+        ...state,
+        checkedDataElements: [],
       };
 
     default: {

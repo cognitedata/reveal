@@ -33,6 +33,7 @@ export const useAddComponent = () => {
       const componentElements = componentElementKeys
         .map((dataElementKey): DataElement | undefined => {
           const dataElement: DataElement = {
+            id: uuid(),
             key: dataElementKey,
             origin: DataElementOrigin.COMPONENT,
             state: DataElementState.PENDING,
