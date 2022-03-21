@@ -27,11 +27,9 @@ export const InputWrapper = styled(FlexNoWrapRow)`
   padding-top: ${sizes.small};
   padding-bottom: ${sizes.small};
   & > .cogs-input-container {
-    width: calc(50% - 2px);
+    width: calc(50% - 4px);
     & > * input {
       width: 100%;
-      height: 40px;
-      border: 2px solid var(--cogs-greyscale-grey4) !important;
     }
   }
 `;

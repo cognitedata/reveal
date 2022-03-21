@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useState } from 'react';
 
-import toNumber from 'lodash/toNumber';
 import { toId } from 'utils/toId';
 
 import { Input, RangeSlider } from '@cognite/cogs.js';
@@ -44,7 +43,11 @@ export const NumericRangeFilter: React.FC<Props> = ({
     selectedMax,
   ]);
 
-  let [fastMin, fastMax] = fastMinMax;
+  const [fastMin, fastMax] = fastMinMax;
+
+  const [focusedField, setFocusedField] = useState<'min' | 'max' | undefined>(
+    undefined
+  );
 
   React.useEffect(() => {
     setSelectedRange([min, max]);
@@ -82,29 +85,21 @@ export const NumericRangeFilter: React.FC<Props> = ({
     setFastMinMax((values) => [values[0], Number(target.value)]);
   };
 
+  const isValid = () => !getMinValueError() && !getMaxValueError();
+
   const handleMinBlur = () => {
-    if (fastMin < min) {
-      fastMin = min;
-    } else if (fastMin > fastMax) {
-      fastMin = fastMax;
-    }
-    if (fastMin !== selectedMin) {
-      onValueChange([fastMin, fastMax]);
-    } else {
-      setFastMinMax((values) => [selectedMin, values[1]]);
+    if (isValid()) {
+      if (fastMin !== selectedMin) {
+        onValueChange([fastMin, fastMax]);
+      }
     }
   };
 
   const handleMaxBlur = () => {
-    if (fastMax > max) {
-      fastMax = max;
-    } else if (fastMax < fastMin) {
-      fastMax = fastMin;
-    }
-    if (fastMax !== selectedMax) {
-      onValueChange([fastMin, fastMax]);
-    } else {
-      setFastMinMax((values) => [values[0], selectedMax]);
+    if (isValid()) {
+      if (fastMax !== selectedMax) {
+        onValueChange([fastMin, fastMax]);
+      }
     }
   };
 
@@ -115,6 +110,28 @@ export const NumericRangeFilter: React.FC<Props> = ({
     if (event.key === 'Enter') {
       trigger();
     }
+  };
+
+  const getMinValueError = () => {
+    if (fastMin < min) {
+      return `Min value is ${min}`;
+    }
+    if (fastMin > fastMax && focusedField === 'min') {
+      return `Max value is ${fastMax}`;
+    }
+
+    return false;
+  };
+
+  const getMaxValueError = () => {
+    if (fastMax > max) {
+      return `Max value is ${max}`;
+    }
+    if (fastMax < fastMin && focusedField === 'max') {
+      return `Min value is ${fastMin}`;
+    }
+
+    return false;
   };
 
   return (
@@ -133,16 +150,15 @@ export const NumericRangeFilter: React.FC<Props> = ({
           id={`From-${toId(config?.title || '')}`}
           data-testid={`From-${toId(config?.title || '')}`}
           title="From"
-          value={toNumber(fastMinMax[0]) || min}
+          value={(fastMinMax[0] ?? min).toString()}
           onChange={handleMinChange}
+          onFocus={() => setFocusedField('min')}
           onBlur={handleMinBlur}
           onKeyDown={(event) => {
             handleEnterPress(event, handleMinBlur);
           }}
           type="number"
-          min={min}
-          max={max}
-          variant="titleAsPlaceholder"
+          error={getMinValueError()}
           readOnly={!config?.editableTextFields}
         />
         <FlexGrow />
@@ -150,16 +166,15 @@ export const NumericRangeFilter: React.FC<Props> = ({
           id={`To-${toId(config?.title || '')}`}
           data-testid={`To-${toId(config?.title || '')}`}
           title="To"
-          value={toNumber(fastMinMax[1]) || max}
+          value={(fastMinMax[1] ?? min).toString()}
+          onFocus={() => setFocusedField('max')}
           onBlur={handleMaxBlur}
           onChange={handleMaxChange}
           onKeyDown={(event) => {
             handleEnterPress(event, handleMaxBlur);
           }}
           type="number"
-          min={min}
-          max={max}
-          variant="titleAsPlaceholder"
+          error={getMaxValueError()}
           readOnly={!config?.editableTextFields}
         />
       </InputWrapper>
