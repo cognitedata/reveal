@@ -91,7 +91,7 @@ export const SchemaTypeField = ({
           disabled={disabled}
           onValueChanged={(value) => {
             onFieldUpdated({
-              type: value,
+              type: { ...field.type, name: value },
             });
           }}
         />
