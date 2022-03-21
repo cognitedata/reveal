@@ -52,7 +52,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       finalComposition: createRenderTargetWithDepth(),
       color: createRenderTargetWithDepth(),
       ghost: createRenderTargetWithDepth(),
-      inFront: new THREE.WebGLRenderTarget(1, 1),
+      inFront: createRenderTargetWithDepth(),
       ssao: new THREE.WebGLRenderTarget(1, 1)
     };
     this._cadModels = cadModels;
@@ -63,13 +63,26 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
+
     setupGeometryLayers(this._cadModels, this._customObjects, this._materialManager);
 
-    //RENDER INFRONT FIRST, REVERSE DEPTH TEST FUNCTION
+    yield* this.geometryPass(renderer, RenderMode.Effects, this._renderTargetData.inFront);
+    yield* this.blitPass(
+      renderer,
+      this._renderTargetData.finalComposition,
+      this._renderTargetData.inFront.texture,
+      this._renderTargetData.inFront.depthTexture
+    );
 
-    renderer.setRenderTarget(null);
-    yield new BlitPass({ texture: this._renderTargetData.finalComposition.texture });
-    return;
+    renderer.setRenderTarget(this._renderTargetData.finalComposition);
+    yield new BlitPass({
+      texture: this._renderTargetData.inFront.texture,
+      depthTexture: this._renderTargetData.inFront.depthTexture,
+      overrideAlpha: 0.5
+    });
+
+    yield new OutlinePass(this._renderTargetData.inFront.texture);
+
     yield* this.geometryPass(renderer, RenderMode.Color, this._renderTargetData.color);
 
     yield* this.blitPass(
@@ -110,29 +123,25 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       false
     );
 
-    yield* this.geometryPass(renderer, RenderMode.Effects, this._renderTargetData.inFront);
-    yield new OutlinePass(this._renderTargetData.color.texture);
-    yield* this.blitPass(
-      renderer,
-      this._renderTargetData.opaqueComposition,
-      this._renderTargetData.inFront.texture,
-      undefined,
-      true,
-      false
-    );
+    renderer.setRenderTarget(this._renderTargetData.finalComposition);
+    yield new BlitPass({
+      texture: this._renderTargetData.opaqueComposition.texture,
+      depthTexture: this._renderTargetData.opaqueComposition.depthTexture,
+      blendOptions: { blendDestination: THREE.DstAlphaFactor, blendSource: THREE.OneMinusDstAlphaFactor }
+    });
 
     yield* this.geometryPass(
       renderer,
       RenderMode.Color,
-      this._renderTargetData.opaqueComposition,
+      this._renderTargetData.finalComposition,
       RenderLayer.CustomDeferred,
       false
     );
 
     renderer.setRenderTarget(null);
-    yield new BlitPass({ texture: this._renderTargetData.opaqueComposition.texture, effect: BlitEffect.Fxaa });
-
+    yield new BlitPass({ texture: this._renderTargetData.finalComposition.texture, effect: BlitEffect.Fxaa });
     this.pipelineTearDown(renderer);
+    return;
   }
 
   private *blitPass(

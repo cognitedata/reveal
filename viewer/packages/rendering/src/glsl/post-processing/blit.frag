@@ -24,6 +24,10 @@ out vec4 diffuse;
 
 void main() {
 
+  if(texture(tDiffuse, vUv).a == 0.0){
+    discard;
+  }
+
 #if defined(GAUSSIAN_BLUR) 
   diffuse = gaussianBlur(tDiffuse, vUv);
 #elif defined(FXAA)
