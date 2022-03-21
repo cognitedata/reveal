@@ -74,10 +74,10 @@ export const Trajectory: React.FC = () => {
     [selectedTrajectories, trajectoryRows]
   );
 
-  const selectedWellbores = useMemo(
-    () => wellbores.filter((wellbore) => selectedWellboreIds[wellbore.id]),
-    [selectedWellboreIds, wellbores]
-  );
+  // const selectedWellbores = useMemo(
+  //   () => wellbores.filter((wellbore) => selectedWellboreIds[wellbore.id]),
+  //   [selectedWellboreIds, wellbores]
+  // );
 
   useEffect(() => {
     // Set new wellbores as selected wellbored in trajectory tab
@@ -143,7 +143,6 @@ export const Trajectory: React.FC = () => {
       <Trajectory2D
         selectedTrajectoryData={selectedTrajectoryRows}
         selectedTrajectories={selectedTrajectories}
-        selectedWellbores={selectedWellbores}
       />
     </>
   );

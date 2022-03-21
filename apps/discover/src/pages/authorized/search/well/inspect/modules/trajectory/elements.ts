@@ -4,6 +4,8 @@ import { sizes } from 'styles/layout';
 
 export const TrajectoryGrid = styled.div`
   display: grid;
+  width: 100%;
+  height: 100%;
   grid-template-columns: repeat(3, 1fr);
   background-color: var(--cogs-white);
   border-top: 1px solid var(--cogs-black);

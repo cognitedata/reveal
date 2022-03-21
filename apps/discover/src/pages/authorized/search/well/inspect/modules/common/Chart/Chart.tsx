@@ -22,7 +22,9 @@ export type ChartProps = {
   margin?: Partial<Plotly.Margin>;
 };
 
-const chartStyles = { display: 'flex !important' };
+const chartStyles = {
+  display: 'flex !important',
+};
 
 const getWidth = (isTrajectory: boolean, width: number | null) => {
   if (!width) return undefined;
@@ -79,7 +81,10 @@ const Chart = ({
         data={data}
         layout={layout}
         style={chartStyles}
-        config={{ responsive: true, displaylogo: false }}
+        config={{
+          responsive: true,
+          displaylogo: false,
+        }}
       />
     </React.Suspense>
   );

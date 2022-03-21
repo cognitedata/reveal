@@ -93,7 +93,7 @@ export const getDataPointInPreferredUnit = (
   preferredUnit?: UserPreferredUnit,
   columnData?: SequenceColumn[],
   config?: ProjectConfigWells
-) => {
+): number => {
   const dataPoint = get(
     row.values,
     findIndexByName(
