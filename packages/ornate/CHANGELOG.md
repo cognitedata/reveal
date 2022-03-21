@@ -1,3 +1,7 @@
+## 1.1.23
+
+- BUG: Correct negative coordinates on drawn shapes
+
 ## 1.1.16
 
 - BUG: Accept relativeTo field for zoomToGroup options

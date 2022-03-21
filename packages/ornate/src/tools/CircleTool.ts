@@ -58,13 +58,6 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
     if (this.ornateInstance.isDrawing) {
       const translatedMousePosition = this.getPosition();
 
-      if (
-        translatedMousePosition.x < this.newCircle.x() ||
-        translatedMousePosition.y < this.newCircle.y()
-      ) {
-        return;
-      }
-
       const width = translatedMousePosition.x - this.newCircle.x();
       const height = translatedMousePosition.y - this.newCircle.y();
       this.setDimensions(width, height);
@@ -93,10 +86,15 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
     if (!this.newCircle) {
       return;
     }
+
+    // correct negative dimensions
+    const absWidth = Math.abs(width);
+    const absHeight = Math.abs(height);
+
     this.newCircle.offsetX((width / 2) * -1);
     this.newCircle.offsetY((height / 2) * -1);
-    this.newCircle.width(width);
-    this.newCircle.height(height);
+    this.newCircle.width(absWidth);
+    this.newCircle.height(absHeight);
 
     // set scale
     this.newCircle.scaleX(1);

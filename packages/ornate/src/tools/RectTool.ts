@@ -24,6 +24,20 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
     };
   };
 
+  correctNegativeDimensions = () => {
+    if ((this.newRect?.width() || 0) < 0) {
+      const absWidth = Math.abs(this.newRect?.width() || 0);
+      this.newRect?.x(this.newRect.x() - absWidth);
+      this.newRect?.width(absWidth);
+    }
+
+    if ((this.newRect?.height() || 0) < 0) {
+      const absHeight = Math.abs(this.newRect?.height() || 0);
+      this.newRect?.y(this.newRect.y() - absHeight);
+      this.newRect?.height(absHeight);
+    }
+  };
+
   onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     this.ornateInstance.isDrawing = true;
 
@@ -81,5 +95,6 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
 
   onMouseUp = () => {
     this.ornateInstance.isDrawing = false;
+    this.correctNegativeDimensions();
   };
 }
