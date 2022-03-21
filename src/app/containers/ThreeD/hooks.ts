@@ -1,5 +1,12 @@
-import { Asset, AssetMapping3D, Model3D, Revision3D } from '@cognite/sdk';
+import {
+  Asset,
+  AssetMapping3D,
+  IdEither,
+  Model3D,
+  Revision3D,
+} from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { get3dAssetMappings } from 'app/containers/ThreeD/utils';
 import uniqBy from 'lodash/uniqBy';
 import {
   useInfiniteQuery,
@@ -127,5 +134,48 @@ export const useInfiniteAssetMappings = (
       enabled: Boolean(modelId && revisionId),
       ...config,
     }
+  );
+};
+
+export const useAssetMappings = (modelId?: number, revisionId?: number) => {
+  const sdk = useSDK();
+
+  return useQuery<Asset[]>(
+    ['cdf', '3d', 'asset-mapping', modelId, revisionId],
+    async () => {
+      const MAX_ASSET_IDS = 1000;
+      const uniqueAssetIds = new Set<number>();
+      let nextCursor: string = '';
+
+      // Call the 3d asset mappings endpoint atlease once to check if we can get
+      // atleast MAX_ASSET_IDS number of unquie assetIds or if we have exhausted
+      // calling asset mappings data i.e, no nextCursor
+      do {
+        // eslint-disable-next-line no-await-in-loop
+        const models = await get3dAssetMappings(
+          sdk,
+          modelId!,
+          revisionId,
+          nextCursor
+        );
+
+        nextCursor = models.data.nextCursor;
+        // Iterating and inserting unique assetIds into uniqueAssetIds Set
+        models.data.items.forEach(({ assetId }: { assetId: number }) =>
+          uniqueAssetIds.add(assetId)
+        );
+      } while (nextCursor && uniqueAssetIds.size <= MAX_ASSET_IDS);
+
+      const uniqueAssetMappings: IdEither[] = [];
+      uniqueAssetIds.forEach(id => uniqueAssetMappings.push({ id }));
+
+      // Query assets corresponding to the asset mappings
+      const assets = await sdk.assets.retrieve(uniqueAssetMappings, {
+        ignoreUnknownIds: true,
+      });
+
+      return assets;
+    },
+    { enabled: Boolean(modelId) }
   );
 };
