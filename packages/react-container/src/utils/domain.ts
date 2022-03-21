@@ -3,6 +3,8 @@ const joinDomainArray = (sections: string[]): string => {
   return sections.filter((key) => !!key).join('.');
 };
 
+const ALLOWED_SUBDOMAINS = ['preview', 'staging', 'pr', 'uat'];
+
 export const getNewDomain = (hostname: string, cluster: string) => {
   const sections = hostname.split('.');
 
@@ -26,11 +28,7 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     return joinDomainArray([app, cluster, domain, tld]);
   }
   if (sections.length === 4) {
-    if (
-      sections[1] === 'preview' ||
-      sections[1] === 'staging' ||
-      sections[1] === 'pr'
-    ) {
+    if (ALLOWED_SUBDOMAINS.includes(sections[1])) {
       // eg: foo.preview.cogniteapp.com
       const [app, type, domain, tld] = sections;
       return joinDomainArray([app, type, cluster, domain, tld]);
@@ -40,11 +38,7 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     return joinDomainArray([app, cluster, domain, tld]);
   }
   if (sections.length === 5) {
-    if (
-      sections[1] === 'preview' ||
-      sections[1] === 'staging' ||
-      sections[1] === 'pr'
-    ) {
+    if (ALLOWED_SUBDOMAINS.includes(sections[1])) {
       // eg: foo.preview.cluster.cogniteapp.com
       const [app, type, _cluster, domain, tld] = sections;
       return joinDomainArray([app, type, cluster, domain, tld]);
