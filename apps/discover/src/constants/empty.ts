@@ -9,3 +9,4 @@ export const EMPTY_ARRAY = Object.freeze([]) as [];
   ideally, we should've readonly in front of all types that are intended to be readonly map
 */
 export const EMPTY_OBJECT = Object.freeze({}) as object;
+export const NOT_AVAILABLE = 'N/A';

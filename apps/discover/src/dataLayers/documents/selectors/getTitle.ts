@@ -1,5 +1,7 @@
 import { Document } from '@cognite/sdk-playground';
 
+import { NOT_AVAILABLE } from '../../../constants/empty';
+
 export const titleFilterList: string[] = [
   '1',
   '2',
@@ -51,7 +53,7 @@ export const titleFilterList: string[] = [
   '.pdf',
 ];
 
-export const DEFAULT_DOCMENT_TITLE = 'N/A';
+export const DEFAULT_DOCMENT_TITLE = NOT_AVAILABLE;
 
 export const getTitle = (doc: Document) => {
   if (!doc.title) return DEFAULT_DOCMENT_TITLE;

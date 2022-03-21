@@ -10,6 +10,7 @@ import uniq from 'lodash/uniq';
 import { CogniteEvent } from '@cognite/sdk';
 
 import { ExtraLabels } from 'components/filters/interfaces';
+import { NOT_AVAILABLE } from 'constants/empty';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataNds } from 'modules/filterData/selectors';
 
@@ -29,7 +30,7 @@ interface Props {
 const convertToExtraLabels = (valuesMap: { [key: string]: number }) => {
   const convertedValues = {};
   Object.keys(valuesMap).forEach((key) =>
-    set(convertedValues, key, `(${valuesMap[key]})`)
+    set(convertedValues, key, `${key ? '' : NOT_AVAILABLE}(${valuesMap[key]})`)
   );
   return convertedValues;
 };

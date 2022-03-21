@@ -1,3 +1,5 @@
+import { NOT_AVAILABLE } from 'constants/empty';
+
 import {
   SummaryWrapper,
   StyledInlineLink,
@@ -23,7 +25,7 @@ export const Summary: React.FC<Props> = ({
         {filename}
       </StyledInlineLink>
       {filepath && <FilePathContainer>{filepath}</FilePathContainer>}
-      <P>{truncatedContent || 'N/A'}</P>
+      <P>{truncatedContent || NOT_AVAILABLE}</P>
     </SummaryWrapper>
   );
 };

@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
+import { NOT_AVAILABLE } from 'constants/empty';
+
 import { XAxisData, YAxisData } from '../types';
 
 import { CanvasOverlay, HorizontalRibbon, VerticalRibbon } from './elements';
@@ -67,7 +69,7 @@ export const RibbonsWithInfo: React.FC<Props> = (props) => {
                 x={xInfo.x}
                 y={xInfo.y}
                 trace={xInfo.index + 1}
-                amplitude={yInfo ? xInfo.traceList[yInfo.value] : 'N/A'}
+                amplitude={yInfo ? xInfo.traceList[yInfo.value] : NOT_AVAILABLE}
               />
             )}
             <VerticalRibbon

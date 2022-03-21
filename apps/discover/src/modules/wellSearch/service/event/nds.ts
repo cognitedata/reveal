@@ -123,9 +123,17 @@ export const mapNdsItemsToCogniteEvents = async (
       items: getTrajectoryInterpolationRequests(ndsEvents),
       ignoreUnknownMeasuredDepths: true,
       // This will be enabled in another PR, right now it's producing a weird infinity loop bug
-      // ignoreMissingTrajectories: true,
+      ignoreMissingTrajectories: true,
     })
     .then((interpolationItems: TrajectoryInterpolationItems) => {
+      // we need this otherwise there is a runtime error resulting in an infinite loop
+      if (interpolationItems.items.length === 0) {
+        return groupBy(
+          getDummyTrueVerticalDepths(ndsEvents),
+          'wellboreMatchingId'
+        );
+      }
+
       return groupBy(interpolationItems.items, 'wellboreMatchingId');
     })
     .catch(() => {
