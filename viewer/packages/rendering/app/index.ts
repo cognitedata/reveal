@@ -39,10 +39,10 @@ async function init() {
 
   // Defaults to all-primitives model on 3d-test
   const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-  // const modelId = parseInt(urlParams.get('modelId') ?? '3847114555645531');
+  // const modelId = parseInt(urlParams.get('modelId') ?? '5244774438818744');
 
   const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
-  // const revisionId = parseInt(urlParams.get('revisionId') ?? '3020962330252000');
+  // const revisionId = parseInt(urlParams.get('revisionId') ?? '2249063501234508');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
   const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);

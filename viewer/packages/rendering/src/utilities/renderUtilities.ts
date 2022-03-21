@@ -14,13 +14,26 @@ export function createFullScreenTriangleMesh(shaderMaterial: THREE.RawShaderMate
   return new THREE.Mesh(renderTriangle, shaderMaterial);
 }
 
-export function createRenderTargetWithDepth(width = 1, heigth = 1): THREE.WebGLRenderTarget {
-  const renderTarget = new THREE.WebGLRenderTarget(width, heigth);
-  renderTarget.depthTexture = new THREE.DepthTexture(width, heigth);
-  renderTarget.depthTexture.format = THREE.DepthFormat;
-  renderTarget.depthTexture.type = THREE.UnsignedIntType;
+export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1): THREE.WebGLRenderTarget {
+  let renderTarget: THREE.WebGLRenderTarget;
+
+  if (multiSampleCount > 1) {
+    const multiSampleTarget = new THREE.WebGLMultisampleRenderTarget(width, height);
+    multiSampleTarget.samples = 10;
+    renderTarget = multiSampleTarget;
+  } else {
+    renderTarget = new THREE.WebGLRenderTarget(width, height);
+  }
+
+  setDepthTexture(renderTarget, width, height);
 
   return renderTarget;
+}
+
+function setDepthTexture(renderTarget: THREE.WebGLRenderTarget, width: number, height: number): void {
+  renderTarget.depthTexture = new THREE.DepthTexture(width, height);
+  renderTarget.depthTexture.format = THREE.DepthFormat;
+  renderTarget.depthTexture.type = THREE.UnsignedIntType;
 }
 
 export enum RenderLayer {
