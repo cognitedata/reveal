@@ -1,5 +1,5 @@
 import { setPublicPath } from 'systemjs-webpack-interop';
-import { name } from '../package.json';
+import pack from '../package.json';
 
 /* This dynamically sets the webpack public path so that code splits work properly. See related:
  * https://github.com/joeldenning/systemjs-webpack-interop#what-is-this
@@ -7,4 +7,4 @@ import { name } from '../package.json';
  * https://single-spa.js.org/docs/faq/#code-splits
  */
 
-setPublicPath(name);
+setPublicPath(pack.name);
