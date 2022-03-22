@@ -15,6 +15,7 @@ describe(CameraManagerHelper.name, () => {
     });
     
     test('calculateNewTargetFromRotation rotates the target 180 degrees by corresponding rotation', () => {
+        // default camera target when camera has "identity" rotation
         const target = new THREE.Vector3(0,0,-1);
         // creates rotation around Y axis of 180 degrees.
         const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), Math.PI);
