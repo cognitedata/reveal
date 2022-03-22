@@ -13,7 +13,6 @@ import AdminPageContainer from 'pages/authorized/admin';
 import { ProjectConfig } from 'pages/authorized/admin/projectConfig';
 import { AppFrame } from 'pages/authorized/elements';
 import { Favorites } from 'pages/authorized/favorites';
-import { CreateFavoriteSetModal } from 'pages/authorized/favorites/modals';
 import { NotFoundPage } from 'pages/authorized/notfound';
 import { Search } from 'pages/authorized/search';
 
@@ -21,6 +20,7 @@ import { LOG_APP_CLOSED, LOG_APP_NAMESPACE } from '../../constants/logging';
 import { useGlobalMetrics } from '../../hooks/useGlobalMetrics';
 
 import { CookieConsent } from './CookieConsent';
+import { GlobalModals } from './GlobalModals';
 import { Dashboard } from './search/dashboard';
 
 const Content = () => {
@@ -44,7 +44,7 @@ const Content = () => {
   return (
     <div role="application">
       <ToastContainer />
-      <CreateFavoriteSetModal /> {/* Global Modal to create Favorite set */}
+      <GlobalModals /> {/* Global Modals to be shown from multiple places */}
       <AppFrame>
         <Page
           scrollPage={pageSettings.scrollPage}
