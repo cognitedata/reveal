@@ -31,7 +31,6 @@ export class DefaultCameraManager implements CameraManager {
   private readonly _domElement: HTMLElement;
   private readonly _inputHandler: InputHandler;
   private readonly _raycaster = new THREE.Raycaster();
-  private readonly _cameraManagerHelper = new CameraManagerHelper();
 
   private isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
@@ -126,7 +125,7 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const { position, target } = this._cameraManagerHelper.calculateCameraStateToFitBoundingBox(
+    const { position, target } = CameraManagerHelper.calculateCameraStateToFitBoundingBox(
       this._camera,
       box,
       radiusFactor
@@ -191,7 +190,7 @@ export class DefaultCameraManager implements CameraManager {
     const newTarget =
       state.target ??
       (state.rotation
-        ? this._cameraManagerHelper.calculateNewTargetFromRotation(
+        ? CameraManagerHelper.calculateNewTargetFromRotation(
             this._camera,
             state.rotation,
             this._controls.getState().target
@@ -383,7 +382,7 @@ export class DefaultCameraManager implements CameraManager {
 
     // Apply
     if (this.automaticNearFarPlane) {
-      this._cameraManagerHelper.updateCameraNearAndFar(camera, combinedBbox);
+      CameraManagerHelper.updateCameraNearAndFar(camera, combinedBbox);
     }
     if (this.automaticControlsSensitivity) {
       const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);

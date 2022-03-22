@@ -7,7 +7,7 @@ description: Shows how to implement custom CameraManager to enable new camera ma
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 By default `Cognite3DViewer` uses `DefaultCameraManager` class to manage user interaction with the camera.
-In certain cases it could be useful to customize behaviour of the camera:
+In certain cases it can be useful to customize behaviour of the camera:
 
 - Need to provide custom `THREE.PerspectiveCamera` object to `Cognite3DViewer`
 - Need to extend camera controls to any specific case that is not covered by current implementation
@@ -28,7 +28,8 @@ export interface CameraManager {
    */
   getCamera(): THREE.PerspectiveCamera;
   /**
-   * Set camera's state. Rotation and target can't be set at the same time. as they could conflict.
+   * Set camera's state. Rotation and target can't be set at the same time. as they could conflict,
+   * should throw an error if both are passed with non-zero value inside state.
    *
    * @param state Camera state, all fields are optional.
    * @param state.position Camera position in world space.
@@ -92,7 +93,7 @@ When implementing these functions you can use a helper class `CameraManagerHelpe
 
 ## Example implementation
 
-Here is an example implementation of a custom camera manager that utilizes standard ThreeJS `OrbitControls` for mouse movement:
+Here is an example implementation of a custom camera manager that utilizes standard ThreeJS [`OrbitControls`](https://threejs.org/docs/index.html?q=orbit#examples/en/controls/OrbitControls) for mouse movement:
 
 ```js
 import * as THREE from 'three';
@@ -104,7 +105,6 @@ export class CustomCameraManager implements CameraManager {
     private _domElement: HTMLElement;
     private _camera: THREE.PerspectiveCamera;
     private _controls: OrbitControls;
-    private _cameraManagerHelper = new CameraManagerHelper();
     private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
 
     constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
@@ -131,7 +131,7 @@ export class CustomCameraManager implements CameraManager {
         const position = state.position ?? this._camera.position;
         const rotation = state.rotation ?? this._camera.quaternion;
         const target = state.target ?? ( state.rotation ? 
-            this._cameraManagerHelper.calculateNewTargetFromRotation(
+            CameraManagerHelper.calculateNewTargetFromRotation(
                 this._camera, state.rotation, this._controls.target) : 
             this._controls.target);
 
@@ -160,7 +160,7 @@ export class CustomCameraManager implements CameraManager {
     }
 
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {
-        const { position, target } = this._cameraManagerHelper
+        const { position, target } = CameraManagerHelper
           .calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
 
         this.setCameraState({ position, target });
@@ -168,7 +168,7 @@ export class CustomCameraManager implements CameraManager {
 
     update(deltaTime: number, boundingBox: THREE.Box3): void {
         this._controls.update();
-        this._cameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
+        CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
     }
 
     dispose(): void {
@@ -177,7 +177,7 @@ export class CustomCameraManager implements CameraManager {
     }
 }
 ```
-As you can see, implementation could be really simple. There are three things that you should really pay attention to:
+As you can see, implementation can be quite simple. There are three things that you should really pay extra attention to:
 1. `'cameraChange'` event must be fired every time camera position or rotation changes because reveal rendering pipeline
  relies on that.
 2. For the `setCameraState` method you should properly handle how change in rotation and target affects the camera and corresponds with 

@@ -7,7 +7,6 @@ export class CustomCameraManager implements CameraManager {
     private _domElement: HTMLElement;
     private _camera: THREE.PerspectiveCamera;
     private _controls: OrbitControls;
-    private _cameraManagerHelper = new CameraManagerHelper();
     private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
 
     constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
@@ -31,7 +30,7 @@ export class CustomCameraManager implements CameraManager {
         const position = state.position ?? this._camera.position;
         const rotation = state.rotation ?? this._camera.quaternion;
         const target = state.target ?? ( state.rotation ? 
-            this._cameraManagerHelper.calculateNewTargetFromRotation(
+            CameraManagerHelper.calculateNewTargetFromRotation(
                 this._camera, state.rotation, this._controls.target) : 
             this._controls.target);
 
@@ -61,14 +60,14 @@ export class CustomCameraManager implements CameraManager {
     }
 
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {
-        const { position, target } = this._cameraManagerHelper.calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
+        const { position, target } = CameraManagerHelper.calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
 
         this.setCameraState({ position, target });
     }
 
     update(deltaTime: number, boundingBox: THREE.Box3): void {
         this._controls.update();
-        this._cameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
+        CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
     }
 
     dispose(): void {

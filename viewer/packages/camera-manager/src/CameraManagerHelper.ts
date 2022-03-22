@@ -12,7 +12,7 @@ export class CameraManagerHelper {
   /**
    * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
    */
-  private readonly _updateNearAndFarPlaneBuffers = {
+  private static readonly _updateNearAndFarPlaneBuffers = {
     cameraPosition: new THREE.Vector3(),
     cameraDirection: new THREE.Vector3(),
     corners: new Array<THREE.Vector3>(
@@ -27,7 +27,7 @@ export class CameraManagerHelper {
     )
   };
 
-  private readonly _calculateCameraFarBuffers = {
+  private static readonly _calculateCameraFarBuffers = {
     nearPlaneCoplanarPoint: new THREE.Vector3(),
     nearPlane: new THREE.Plane()
   };
@@ -38,7 +38,7 @@ export class CameraManagerHelper {
    * @param currentTarget Current camera target.
    * @returns
    */
-  calculateNewTargetFromRotation(
+  static calculateNewTargetFromRotation(
     camera: THREE.PerspectiveCamera,
     rotation: THREE.Quaternion,
     currentTarget: THREE.Vector3
@@ -62,7 +62,7 @@ export class CameraManagerHelper {
    * @param camera Used camera instance.
    * @param combinedBbox Bounding box of all objects on the scene.
    */
-  updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
+  static updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
     const { cameraPosition, cameraDirection, corners } = this._updateNearAndFarPlaneBuffers;
     this.getBoundingBoxCorners(combinedBbox, corners);
     camera.getWorldPosition(cameraPosition);
@@ -92,7 +92,7 @@ export class CameraManagerHelper {
    * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
    * @returns
    */
-  calculateCameraStateToFitBoundingBox(
+  static calculateCameraStateToFitBoundingBox(
     camera: THREE.PerspectiveCamera,
     box: THREE.Box3,
     radiusFactor: number = 2
@@ -109,7 +109,7 @@ export class CameraManagerHelper {
     return { position, target };
   }
 
-  private calculateCameraFar(
+  private static calculateCameraFar(
     near: number,
     cameraPosition: THREE.Vector3,
     cameraDirection: THREE.Vector3,
@@ -131,7 +131,7 @@ export class CameraManagerHelper {
     return far;
   }
 
-  private calculateCameraNear(
+  private static calculateCameraNear(
     camera: THREE.PerspectiveCamera,
     combinedBbox: THREE.Box3,
     cameraPosition: THREE.Vector3
@@ -143,7 +143,7 @@ export class CameraManagerHelper {
     return near;
   }
 
-  private getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {
+  private static getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {
     outBuffer = outBuffer || range(0, 8).map(_ => new THREE.Vector3());
     if (outBuffer.length !== 8) {
       throw new Error(`outBuffer must hold exactly 8 elements, but holds ${outBuffer.length} elemnents`);
