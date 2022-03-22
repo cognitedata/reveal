@@ -13,7 +13,6 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { languages, setupTranslations } from 'common/i18n';
-import GlobalStyles from 'styles/GlobalStyles';
 import { AntStyles } from 'styles/AntStyles';
 import i18next from 'i18next';
 import ExtractorDownloads from './Home/Extractors';
@@ -47,20 +46,18 @@ const App = () => {
     >
       <I18nWrapper onLanguageChange={handleLanguageChange}>
         <QueryClientProvider client={queryClient}>
-          <GlobalStyles>
-            <AntStyles>
-              <SubAppWrapper title="Extractor Downloads">
-                <AuthWrapper
-                  loadingScreen={<Loader />}
-                  login={() => loginAndAuthIfNeeded(project, env)}
-                >
-                  <SDKProvider sdk={sdk}>
-                    <ExtractorDownloads />
-                  </SDKProvider>
-                </AuthWrapper>
-              </SubAppWrapper>
-            </AntStyles>
-          </GlobalStyles>
+          <AntStyles>
+            <SubAppWrapper title="Extractor Downloads">
+              <AuthWrapper
+                loadingScreen={<Loader />}
+                login={() => loginAndAuthIfNeeded(project, env)}
+              >
+                <SDKProvider sdk={sdk}>
+                  <ExtractorDownloads />
+                </SDKProvider>
+              </AuthWrapper>
+            </SubAppWrapper>
+          </AntStyles>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </I18nWrapper>
