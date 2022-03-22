@@ -3,65 +3,71 @@
  */
 
 import { Cognite3DViewer } from '@reveal/core';
-import THREE from 'three';
+import * as THREE from 'three';
+import { Vector3 } from 'three';
 
 export class MeasurementDistance {
-  private readonly _controlPoints: THREE.Vector3[];
   private readonly _viewer: Cognite3DViewer;
-  
+  private _measurementLine: THREE.Line | undefined;
+  private _lineGeometry: THREE.BufferGeometry;
+  private _isActive: boolean;
+  private readonly _startPoint: THREE.Vector3;
+  private readonly _endPoint: THREE.Vector3;
+
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
+    this._isActive = false;
+    this._startPoint = new THREE.Vector3();
+    this._endPoint = new THREE.Vector3();
   }
 
-  handleGizmos = {
-    START: [
-      new THREE.Mesh(new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.4 }))
-    ],
-    END: [new THREE.Mesh(new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.4 }))],
-    TOPLINE: [
-      new THREE.Mesh(
-        new THREE.CylinderGeometry(1, 1, 1, 4, 1, false),
-        new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.4 })
-      ),
-      new THREE.Vector3(0, 0.5, 0),
-      new THREE.Vector3(Math.PI / 2, 0, 0)
-    ],
-    STARTLINE: [
-      new THREE.Mesh(
-        new THREE.CylinderGeometry(0.5, 0.5, 1, 4, 1, false),
-        new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.1 })
-      ),
-      new THREE.Vector3(0, 0.5, 0),
-      new THREE.Vector3(Math.PI / 2, 0, 0)
-    ],
-    ENDLINE: [
-      new THREE.Mesh(
-        new THREE.CylinderGeometry(0.5, 0.5, 1, 4, 1, false),
-        new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.1 })
-      ),
-      new THREE.Vector3(0, 0.5, 0),
-      new THREE.Vector3(Math.PI / 2, 0, 0)
-    ]
-  };
+  private initializeLine(): void {
+    if (this._measurementLine === undefined) {
+      const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+      this._lineGeometry = new THREE.BufferGeometry().setFromPoints([this._startPoint, this._endPoint]);
 
-  public addControlPoints(controlPoint: THREE.Vector3): void {
-    this._controlPoints.push(controlPoint);
-  }
+      this._measurementLine = new THREE.Line(this._lineGeometry, material);
 
-  public clearControlPoints(): void {
-    this._controlPoints.splice(0);
-  }
-
-  public updateGizmoWithControlPoints(): void {
-
-    if (this._controlPoints.length === 1) {
-      const mesh = this.handleGizmos.START[0];
-      mesh.position.copy(this._controlPoints[0]);
-      this._viewer.addObject3D(mesh);
-    } else if (this._controlPoints.length === 2) {
-      const mesh = this.handleGizmos.END[0];
-      mesh.position.copy(this._controlPoints[1]);
-      this._viewer.addObject3D(mesh);
+      this._viewer.addObject3D(this._measurementLine);
     }
+  }
+
+  public addLine(point: THREE.Vector3): void {
+    this.initializeLine();
+    this.addStartPoint(point);
+  }
+
+  private clearLine(): void {
+    if (this._measurementLine) {
+      this._measurementLine.geometry.dispose();
+      this._measurementLine.clear();
+      this._measurementLine = undefined;
+      this._isActive = false;
+    }
+  }
+
+  public completeLine(): void {
+    this.clearLine();
+  }
+
+  private addStartPoint(point: THREE.Vector3): void {
+    this._startPoint.copy(point);
+    this._isActive = true;
+  }
+
+  public getDistance(): number {
+    return this._endPoint.distanceTo(this._startPoint);
+  }
+
+  public update(controlPoint: THREE.Vector3): void {
+    if (this._isActive && this._measurementLine) {
+      controlPoint.addScalar(0.0001);
+      this._measurementLine.geometry.setFromPoints([this._startPoint, controlPoint]);
+      this._endPoint.copy(controlPoint);
+    }
+  }
+
+  public isActive(): boolean {
+    return this._isActive;
   }
 }

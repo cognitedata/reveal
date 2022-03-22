@@ -7,31 +7,23 @@ import * as THREE from 'three';
 
 export class MeasurementGizmo {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _controlPoints: THREE.Vector3[];
+  private _mesh: THREE.Mesh;
 
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
   }
 
-  addControlPoint(point: THREE.Vector3): void {
-    this._controlPoints.push(point);
+  add(position: THREE.Vector3): void {
+    this._mesh = new THREE.Mesh(
+      new THREE.SphereBufferGeometry(0.01),
+      new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.5, transparent: true })
+    );
+    this._mesh.position.copy(position);
+
+    this._viewer.addObject3D(this._mesh);
   }
 
-  add(mesh: THREE.Mesh): void {
-    const geometry = mesh.geometry;
-
-    const boundingSphere = geometry.boundingSphere.clone();
-
-    mesh.rotateX(-Math.PI / 2);
-    mesh.updateMatrixWorld();
-    this._viewer.addObject3D(mesh);
-
-    const center = mesh.localToWorld(boundingSphere.center);
-    // scope.controls.target.copy(center);
-    // scope.controls.minDistance = boundingSphere.radius * 0.5;
-    // scope.controls.maxDistance = boundingSphere.radius * 3;
-
-    // camera.position.set(0, 0, boundingSphere.radius * 2).add(center);
-    // camera.lookAt(center);
+  remove(): void {
+    this._viewer.removeObject3D(this._mesh);
   }
 }
