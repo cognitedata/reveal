@@ -7,7 +7,13 @@ import TWEEN from '@tweenjs/tween.js';
 import omit from 'lodash/omit';
 import { Subscription, fromEventPattern } from 'rxjs';
 
-import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
+import {
+  defaultRenderOptions,
+  SsaoParameters,
+  SsaoSampleQuality,
+  AntiAliasingMode,
+  IdentifiedModel
+} from '@reveal/rendering';
 
 import {
   assertNever,
@@ -120,6 +126,7 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModelBase[] = [];
+  private readonly _renderables: IdentifiedModel[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
@@ -228,12 +235,18 @@ export class Cognite3DViewer {
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
       this._cdfSdkClient = undefined;
-      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
+      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
+        this._renderer,
+        this.scene,
+        this._renderables,
+        revealOptions
+      );
     } else if (options.customDataSource !== undefined) {
       this._dataSource = options.customDataSource;
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
         this.scene,
+        this._renderables,
         revealOptions,
         options.customDataSource
       );
@@ -244,6 +257,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this.scene,
+        this._renderables,
         revealOptions,
         options.sdk
       );
@@ -541,6 +555,7 @@ export class Cognite3DViewer {
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
+    this._renderables.push({ model: model3d, modelIdentifier: cadNode.cadModelIdentifier });
     this.scene.add(model3d);
 
     return model3d;
@@ -1107,7 +1122,7 @@ export class Cognite3DViewer {
       if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        this.revealManager.render(this.camera);
+        await this.revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
         this._clippingNeedsUpdate = false;

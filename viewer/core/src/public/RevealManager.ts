@@ -13,7 +13,15 @@ import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
 import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
 import { CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
+import {
+  RenderOptions,
+  EffectRenderManager,
+  CadNode,
+  defaultRenderOptions,
+  RenderMode,
+  PipelineExecutor,
+  RenderPipelineProvider
+} from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
@@ -30,6 +38,8 @@ export class RevealManager {
   private readonly _cadManager: CadManager;
   private readonly _pointCloudManager: PointCloudManager;
   private readonly _effectRenderManager: EffectRenderManager;
+  private readonly _pipelineExecutor: PipelineExecutor;
+  private readonly _renderPipeline: RenderPipelineProvider;
 
   private readonly _lastCamera = {
     position: new THREE.Vector3(NaN, NaN, NaN),
@@ -45,7 +55,15 @@ export class RevealManager {
 
   private readonly _updateSubject: Subject<void>;
 
-  constructor(cadManager: CadManager, renderManager: EffectRenderManager, pointCloudManager: PointCloudManager) {
+  constructor(
+    cadManager: CadManager,
+    renderManager: EffectRenderManager,
+    pointCloudManager: PointCloudManager,
+    pipelineExecutor: PipelineExecutor,
+    renderPipeline: RenderPipelineProvider
+  ) {
+    this._pipelineExecutor = pipelineExecutor;
+    this._renderPipeline = renderPipeline;
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
@@ -175,8 +193,9 @@ export class RevealManager {
     }
   }
 
-  public render(camera: THREE.PerspectiveCamera): void {
-    this._effectRenderManager.render(camera);
+  public async render(camera: THREE.PerspectiveCamera): Promise<void> {
+    // this._effectRenderManager.render(camera);
+    await this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();
   }
 

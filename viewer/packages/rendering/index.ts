@@ -34,3 +34,5 @@ export { createPrimitives } from './src/rendering/primitives';
 export { IdentifiedModel } from './src/utilities/types';
 export { DefaultRenderPipeline } from './src/render-pipelines/DefaultRenderPipeline';
 export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';
+export { PipelineExecutor } from './src/PipelineExecutor';
+export { RenderPipelineProvider } from './src/RenderPipelineProvider';

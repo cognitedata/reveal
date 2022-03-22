@@ -12,7 +12,7 @@ import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, Revea
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 import { DataSource } from '@reveal/data-source';
 import { assertNever } from '@reveal/utilities';
-import { CadNode } from '@reveal/rendering';
+import { CadNode, IdentifiedModel } from '@reveal/rendering';
 
 import { CogniteClient } from '@cognite/sdk';
 
@@ -56,14 +56,16 @@ export class RevealManagerHelper {
    * meant for use in debugging and development.
    * @param renderer
    * @param scene
+   * @param renderables
    * @param revealOptions
    */
   static createLocalHelper(
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
+    renderables: IdentifiedModel[],
     revealOptions: RevealOptions
   ): RevealManagerHelper {
-    const revealManager = createLocalRevealManager(renderer, scene, revealOptions);
+    const revealManager = createLocalRevealManager(renderer, scene, renderables, revealOptions);
     return new RevealManagerHelper('local', revealManager);
   }
 
@@ -71,22 +73,25 @@ export class RevealManagerHelper {
    * Creates a helper for RevealManager that loads models from CDF.
    * @param renderer
    * @param scene
+   * @param renderables
    * @param revealOptions
    * @param sdkClient
    */
   static createCdfHelper(
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
+    renderables: IdentifiedModel[],
     revealOptions: RevealOptions,
     sdkClient: CogniteClient
   ): RevealManagerHelper {
-    const revealManager = createCdfRevealManager(sdkClient, renderer, scene, revealOptions);
+    const revealManager = createCdfRevealManager(sdkClient, renderer, scene, renderables, revealOptions);
     return new RevealManagerHelper('cdf', revealManager);
   }
 
   static createCustomDataSourceHelper(
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
+    renderables: IdentifiedModel[],
     revealOptions: RevealOptions,
     dataSource: DataSource
   ): RevealManagerHelper {
@@ -97,6 +102,7 @@ export class RevealManagerHelper {
       dataSource.getModelDataProvider(),
       renderer,
       scene,
+      renderables,
       revealOptions
     );
     // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers

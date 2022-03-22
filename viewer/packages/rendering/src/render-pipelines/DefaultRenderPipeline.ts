@@ -49,8 +49,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
+    renderer.domElement.style.backgroundColor = '#000000';
     this.pipelineSetup(renderer);
-
     setupGeometryLayers(this._cadModels, this._customObjects, this._materialManager);
 
     yield* this.renderInFront(renderer);
@@ -154,7 +154,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     });
     this._cadScene.autoUpdate = false;
 
-    this._customObjects.updateMatrixWorld(true);
+    this._customObjects?.updateMatrixWorld(true);
 
     this.updateRenderTargetSizes(renderer);
   }
