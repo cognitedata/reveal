@@ -25,22 +25,24 @@ describe('hooks', () => {
               name: 'new-group',
             },
           ]),
-          delete: jest.fn().mockResolvedValue(),
+          delete: jest.fn().mockResolvedValue([]),
         },
       };
+
       const update = getUpdater(sdk!, test);
 
       const oldGroup: Group = {
         id: 1,
         name: 'test-group',
-        capabilities: [{ assetsAcl: { scope: { all: {} } } }],
+        capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
+        isDeleted: false,
       };
       await update(oldGroup);
       expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
       expect(sdk.groups.create).toHaveBeenCalledWith([
         {
           name: 'test-group',
-          capabilities: [{ assetsAcl: { scope: { all: {} } } }],
+          capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
         },
       ]);
       expect(sdk.groups.addServiceAccounts).not.toHaveBeenCalledWith(2, [42]);
@@ -75,7 +77,7 @@ describe('hooks', () => {
               name: 'new-group',
             },
           ]),
-          delete: jest.fn().mockResolvedValue(),
+          delete: jest.fn().mockResolvedValue([]),
         },
       };
       const update = getUpdater(sdk!, test);
@@ -83,14 +85,15 @@ describe('hooks', () => {
       const oldGroup: Group = {
         id: 1,
         name: 'test-group',
-        capabilities: [{ assetsAcl: { scope: { all: {} } } }],
+        capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
+        isDeleted: false,
       };
       await update(oldGroup);
       expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
       expect(sdk.groups.create).toHaveBeenCalledWith([
         {
           name: 'test-group',
-          capabilities: [{ assetsAcl: { scope: { all: {} } } }],
+          capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
         },
       ]);
       expect(sdk.groups.addServiceAccounts).toHaveBeenCalledWith(2, [42]);
@@ -117,7 +120,7 @@ describe('hooks', () => {
               name: 'new-group',
             },
           ]),
-          delete: jest.fn().mockResolvedValue(),
+          delete: jest.fn().mockResolvedValue([]),
         },
       };
       const update = getUpdater(sdk!, test);
@@ -125,14 +128,15 @@ describe('hooks', () => {
       const oldGroup: Group = {
         id: 1,
         name: 'test-group',
-        capabilities: [{ assetsAcl: { scope: { all: {} } } }],
+        capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
+        isDeleted: false,
       };
       await update(oldGroup);
       expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
       expect(sdk.groups.create).toHaveBeenCalledWith([
         {
           name: 'test-group',
-          capabilities: [{ assetsAcl: { scope: { all: {} } } }],
+          capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
         },
       ]);
       expect(sdk.projects.updateProject).not.toHaveBeenCalled();
@@ -159,7 +163,7 @@ describe('hooks', () => {
               name: 'new-group',
             },
           ]),
-          delete: jest.fn().mockResolvedValue(),
+          delete: jest.fn().mockResolvedValue([]),
         },
       };
       const update = getUpdater(sdk!, test);
@@ -167,14 +171,15 @@ describe('hooks', () => {
       const oldGroup: Group = {
         id: 1, // same as default above
         name: 'test-group',
-        capabilities: [{ assetsAcl: { scope: { all: {} } } }],
+        capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
+        isDeleted: false,
       };
       await update(oldGroup);
       expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
       expect(sdk.groups.create).toHaveBeenCalledWith([
         {
           name: 'test-group',
-          capabilities: [{ assetsAcl: { scope: { all: {} } } }],
+          capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
         },
       ]);
       expect(sdk.projects.updateProject).toHaveBeenCalledWith('test-project', {

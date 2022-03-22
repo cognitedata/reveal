@@ -98,7 +98,7 @@ export default function ServiceAccounts() {
           >
             <Form.Item name="name" label="Name">
               <Input
-                onChange={e => setNewName(e.target.value)}
+                onChange={(e) => setNewName(e.target.value)}
                 value={newName}
               />
             </Form.Item>
@@ -106,12 +106,12 @@ export default function ServiceAccounts() {
               <Select
                 mode="multiple"
                 defaultValue={[]}
-                onChange={ids => setNewGroups(ids)}
+                onChange={(ids) => setNewGroups(ids)}
                 filterOption={(input, option) =>
                   stringContains(option?.title, input)
                 }
               >
-                {allGroups.map(g => (
+                {allGroups.map((g) => (
                   <Option key={g.id} value={g.id} title={g.name}>
                     {g.name}
                   </Option>
@@ -125,7 +125,7 @@ export default function ServiceAccounts() {
         <Col>
           <Input.Search
             placeholder="Filter by name, ID, group name or capability"
-            onChange={e => setSearchValue(e.target.value)}
+            onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
             style={{
@@ -149,15 +149,15 @@ export default function ServiceAccounts() {
         loading={!isFetched}
         columns={columns}
         dataSource={accounts?.filter(
-          a =>
+          (a) =>
             stringContains(a.name, searchValue) ||
             stringContains(String(a.id), searchValue) ||
             allGroups
-              .filter(g => a.groups?.includes(g.id))
+              .filter((g) => a.groups?.includes(g.id))
               .find(
-                grp =>
+                (grp) =>
                   stringContains(grp.name, searchValue) ||
-                  grp.capabilities?.find(cap =>
+                  grp.capabilities?.find((cap) =>
                     stringContains(Object.keys(cap)[0]!, searchValue)
                   )
               )

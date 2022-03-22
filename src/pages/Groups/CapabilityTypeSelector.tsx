@@ -51,10 +51,10 @@ const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
 
   const { OptGroup, Option } = Select;
 
-  const optionGroups = capabilityTypeGroups.map(group => {
+  const optionGroups = capabilityTypeGroups.map((group) => {
     return (
       <OptGroup key={group.name} label={group.name}>
-        {group.items.map(item => {
+        {group.items.map((item) => {
           const aclType = getAclType(item);
           const formattedName = getCapabilityFormattedName(item);
           const description = getCapabilityDescription(item);

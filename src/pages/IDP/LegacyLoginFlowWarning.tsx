@@ -142,7 +142,7 @@ const LegacyLoginFlowWarning = () => {
   const openModal = () => {
     const decrementRemainingTime = () => {
       timerRef.current = setTimeout(() => {
-        setRemainingTime(prevRemainingTime => {
+        setRemainingTime((prevRemainingTime) => {
           const decrementedRemainingTime = prevRemainingTime - 1;
           if (decrementedRemainingTime > 0) {
             decrementRemainingTime();
@@ -206,7 +206,7 @@ const LegacyLoginFlowWarning = () => {
           </StyledDisableButtonSection>
           <Modal footer={null} onCancel={closeModal} visible={isModalVisible}>
             <StyledModalContent>
-              <StyledModalWarningIcon size={20} type="WarningStroke" />
+              <StyledModalWarningIcon size={20} type="Warning" />
               Are you sure you want to deprecate legacy login?
             </StyledModalContent>
             <StyledModalButtons>

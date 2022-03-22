@@ -24,7 +24,7 @@ const createDatabaseTitle = (name: string) => (
 
 const createTableTitle = (name: string) => (
   <>
-    <Icon type="Table" />
+    <Icon type="TableView" />
     <TreeLabel>{name}</TreeLabel>
   </>
 );
@@ -78,7 +78,7 @@ const createInitialSelection = (scope: any) => {
   const { dbsToTables } = scope;
 
   if (dbsToTables) {
-    Object.keys(dbsToTables).forEach(dbName => {
+    Object.keys(dbsToTables).forEach((dbName) => {
       const { tables } = dbsToTables[dbName];
       if (tables && tables.length > 0) {
         dbsToLoad.push(dbName);
@@ -99,7 +99,7 @@ const loadTreeTables = async (dbName: string, sdk: CogniteClient) => {
   const tables = await sdk.raw
     .listTables(dbName)
     .autoPagingToArray({ limit: -1 });
-  const treeTables = tables.map(table => ({
+  const treeTables = tables.map((table) => ({
     id: `${dbName}${dbTableSeparator}${table.name}`,
     pId: dbName,
     value: `${dbName}${dbTableSeparator}${table.name}`,
@@ -124,7 +124,7 @@ const RawSelector = ({ value, onChange }: Props) => {
       .listDatabases()
       .autoPagingToArray({ limit: -1 });
 
-    let tree = databases.map(database => ({
+    let tree = databases.map((database) => ({
       id: database.name,
       pId: 0,
       value: database.name,
@@ -134,7 +134,7 @@ const RawSelector = ({ value, onChange }: Props) => {
     const [initialSelection, dbsToLoad] = createInitialSelection(value);
 
     if (dbsToLoad) {
-      const dbsPromises = dbsToLoad.map(db => loadTreeTables(db, sdk));
+      const dbsPromises = dbsToLoad.map((db) => loadTreeTables(db, sdk));
       const dbsData = await Promise.all(dbsPromises);
       // @ts-ignore
       tree = [...tree, ...dbsData.flat()];

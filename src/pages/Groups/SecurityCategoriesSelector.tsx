@@ -31,7 +31,7 @@ const SecurityCategorySelector = ({
   >([]);
 
   useEffect(() => {
-    onChange(selectedCategories.map(resource => resource.key));
+    onChange(selectedCategories.map((resource) => resource.key));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategories]);
 
@@ -40,13 +40,13 @@ const SecurityCategorySelector = ({
       const retrievedResources = await sdk.securityCategories
         .list()
         .autoPagingToArray({ limit: -1 });
-      const newResources = retrievedResources.map(resource => ({
+      const newResources = retrievedResources.map((resource) => ({
         key: resource.id,
         label: resource.name,
       }));
-      const selectedValues: DisplayCategory[] = value.map(id => {
+      const selectedValues: DisplayCategory[] = value.map((id) => {
         const category: DisplayCategory = securityCategories.find(
-          sc => String(sc.key) === String(id)
+          (sc) => String(sc.key) === String(id)
         ) || {
           key: Number(id),
           label: 'Not available',
@@ -71,24 +71,26 @@ const SecurityCategorySelector = ({
     <div>
       <Select
         mode="multiple"
-        value={selectedCategories.map(c => c.key)}
+        value={selectedCategories.map((c) => c.key)}
         placeholder="Search and select security categories"
         notFoundContent={fetching ? <Spin /> : 'Not found'}
         filterOption={false}
-        onChange={v =>
+        onChange={(v) =>
           setSelectedCategories(
-            securityCategories.filter(c => v.includes(c.key))
+            securityCategories.filter((c) => v.includes(c.key))
           )
         }
         style={{ border: 0 }}
       >
-        {securityCategories.map(securityCategory => (
+        {securityCategories.map((securityCategory) => (
           <Option
             key={securityCategory.key}
             value={securityCategory.key}
             disabled={
               securityCategory.notAvailable &&
-              !selectedCategories.find(cat => cat.key === securityCategory.key)
+              !selectedCategories.find(
+                (cat) => cat.key === securityCategory.key
+              )
             }
           >
             <Tooltip

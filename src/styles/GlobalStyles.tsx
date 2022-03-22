@@ -38,7 +38,7 @@ import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 
 import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { getContainer, styleScope } from 'utils/utils';
+import { styleScope } from './styleScope';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import tabsStyle from 'antd/es/tabs/style/index.less';
@@ -103,7 +103,7 @@ Dropdown.defaultProp = {
   getPopupContainer: getContainer,
 };
 
-Spin.setDefaultIndicator(<Icon type="Loading" />);
+Spin.setDefaultIndicator(<Icon type="Loader" />);
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
   const isInjectedStyles = useGlobalStyles([

@@ -1,18 +1,13 @@
 module.exports = {
-  extends: [
-    '@cognite'
-  ],
-  plugins: ['@cognite'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'react-hooks'],
+  extends: ['plugin:prettier/recommended'],
   rules: {
-    '@cognite/no-unissued-todos': [
-      'error',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
-    ],
+    'no-console': ['error'],
+    'no-nested-ternary': 'error',
 
-    'max-classes-per-file': ['off'],
-    'lines-between-class-members': ['off'],
-    'class-methods-use-this': ['off'],
-
+    'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+    'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
@@ -21,16 +16,10 @@ module.exports = {
     'jest/no-test-callback': ['off'],
     'jest/no-export': ['off'],
 
-    '@typescript-eslint/no-unused-vars': ['off'],
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true,
-        "trailingComma": "es5",
-        "arrowParens": "avoid",
-        "endOfLine": "auto"
-      }
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
   },
 };
-3
+
