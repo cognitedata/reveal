@@ -8,14 +8,9 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
-    "@reveal/cad-parsers": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
-    "@reveal/camera-manager": "workspace:*",
     "@reveal/core": "workspace:*",
-    "@reveal/logger": "workspace:*",
     "@reveal/metrics": "workspace:*",
-    "@reveal/nodes-api": "workspace:*",
-    "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

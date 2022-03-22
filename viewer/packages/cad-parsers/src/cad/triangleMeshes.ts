@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { disposeAttributeArrayOnUpload, incrementOrInsertIndex } from '@reveal/utilities';
-import { TriangleMesh } from '@reveal/cad-parsers';
+import { TriangleMesh } from './types';
 
 export function createTriangleMeshes(
   triangleMeshes: TriangleMesh[],
