@@ -14,8 +14,7 @@ import {
 import { getMockWellbore } from '__test-utils/fixtures/well/wellbore';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { NO_DATA_AVAILABLE_TEXT } from 'components/charts/common/NoDataAvailable/constants';
-import { LOADING_TEXT } from 'components/loading/constants';
+import { LOADING_TEXT, NO_RESULTS_TEXT } from 'components/loading/constants';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 
 import { WellCentricView, Props } from '../WellCentricView';
@@ -70,7 +69,7 @@ describe('WellCentricView Tests api return empty sequence list', () => {
     });
     await waitFor(
       () => {
-        expect(screen.getByText(NO_DATA_AVAILABLE_TEXT)).toBeInTheDocument();
+        expect(screen.getByText(NO_RESULTS_TEXT)).toBeInTheDocument();
       },
       { timeout: 5000 }
     );

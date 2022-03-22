@@ -13,8 +13,7 @@ import {
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { NO_DATA_AVAILABLE_TEXT } from 'components/charts/common/NoDataAvailable/constants';
-import { LOADING_TEXT } from 'components/loading/constants';
+import { LOADING_TEXT, NO_RESULTS_TEXT } from 'components/loading/constants';
 
 import { CurveCentricView, Props } from '../CurveCentricView';
 
@@ -64,7 +63,7 @@ describe('CurveCentricView Tests api return empty sequence list', () => {
     });
     await waitFor(
       () => {
-        expect(screen.getByText(NO_DATA_AVAILABLE_TEXT)).toBeInTheDocument();
+        expect(screen.getByText(NO_RESULTS_TEXT)).toBeInTheDocument();
       },
       { timeout: 5000 }
     );

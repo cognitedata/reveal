@@ -6,10 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { BaseButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
-import {
-  NO_RESULTS_TEXT,
-  NO_RESULTS_SUB_TEXT,
-} from 'components/emptyState/constants';
+import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
 import { Table, TableResults, RowProps } from 'components/tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useCasingsForTable } from 'modules/wellSearch/selectors';
@@ -124,13 +121,7 @@ export const CasingTableView: React.FC<Props> = ({ searchPhrase }) => {
   }, []);
 
   if (isLoading || isEmpty(data)) {
-    return (
-      <EmptyState
-        isLoading={isLoading}
-        emptyTitle={NO_RESULTS_TEXT}
-        emptySubtitle={NO_RESULTS_SUB_TEXT}
-      />
-    );
+    return <EmptyState isLoading={isLoading} emptyTitle={NO_RESULTS_TEXT} />;
   }
 
   return (
