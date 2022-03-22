@@ -98,7 +98,7 @@
     "jest-extended": "0.11.5",
     "jsdom": "16.7.0",
     "lint-staged": "12.3.7",
-    "moq.ts": "7.4.1",
+    "moq.ts": "8.0.3",
     "nock": "13.2.4",
     "prettier": "2.6.0",
     "random-seed": "0.3.0",
