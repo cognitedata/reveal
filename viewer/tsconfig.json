@@ -30,5 +30,8 @@
         "core/src/@types/*"
       ]
     },
-  }
+  },
+  "exclude": [
+    "dist"
+  ]
 }

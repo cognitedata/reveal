@@ -13,9 +13,9 @@ import { NumericRange, revealEnv } from '@reveal/utilities';
 import dat from 'dat.gui';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { ByScreenSizeSectorCuller, CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
-import { RenderManager } from '../src/RenderManager';
 import { DefaultRenderPipeline } from '../src/render-pipelines/DefaultRenderPipeline';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import { BasicPipelineExecutor } from '../src/pipeline-executors/BasicPipelineExecutor';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -91,7 +91,7 @@ async function init() {
   controlsTest.attach(cogniteModels);
   customObjects.add(controlsTest);
 
-  const renderManager = new RenderManager(renderer);
+  const renderManager = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, cogniteModels, customObjects);
 
   const grid = new THREE.GridHelper(30, 40);

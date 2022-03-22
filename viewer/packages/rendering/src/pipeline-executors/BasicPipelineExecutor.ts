@@ -3,9 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { RenderPipelineProvider } from './RenderPipelineProvider';
+import { PipelineExecutor } from '../PipelineExecutor';
+import { RenderPipelineProvider } from '../RenderPipelineProvider';
 
-export class RenderManager {
+export class BasicPipelineExecutor implements PipelineExecutor {
   private readonly _renderer: THREE.WebGLRenderer;
 
   constructor(renderer: THREE.WebGLRenderer) {
@@ -18,6 +19,5 @@ export class RenderManager {
     for await (const renderPass of renderPipeline.pipeline(this._renderer)) {
       await renderPass.render(this._renderer, camera);
     }
-    return;
   }
 }
