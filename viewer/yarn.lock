@@ -522,7 +522,7 @@ __metadata:
     lodash: 4.17.21
     loglevel: 1.8.0
     mixpanel-browser: 2.45.0
-    moq.ts: 7.4.1
+    moq.ts: 8.0.3
     nock: 13.2.4
     prettier: 2.6.0
     random-seed: 0.3.0
@@ -9093,12 +9093,12 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"moq.ts@npm:7.4.1":
-  version: 7.4.1
-  resolution: "moq.ts@npm:7.4.1"
+"moq.ts@npm:8.0.3":
+  version: 8.0.3
+  resolution: "moq.ts@npm:8.0.3"
   dependencies:
-    tslib: 2.1.0
-  checksum: 8c3c52ef8dea9f4c1075d689ad9918395062c75e03b612f85a83023e094869427bb3e3c12b8a61fed7b5098a95473d7c0cbb1af5d0116ac38494eb5fc3f5fb03
+    tslib: 2.3.1
+  checksum: 677023583b69de216efe68f08dc2c2a753d62390931270ad2922514d38ea43bd8facd8e28aa2d94ac15613c8b7e7aebddc980c620a839268d72d072c74cc9a86
   languageName: node
   linkType: hard
 
@@ -12382,10 +12382,10 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.1.0":
-  version: 2.1.0
-  resolution: "tslib@npm:2.1.0"
-  checksum: aa189c8179de0427b0906da30926fd53c59d96ec239dff87d6e6bc831f608df0cbd6f77c61dabc074408bd0aa0b9ae4ec35cb2c15f729e32f37274db5730cb78
+"tslib@npm:2.3.1, tslib@npm:^2.1.0":
+  version: 2.3.1
+  resolution: "tslib@npm:2.3.1"
+  checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
   languageName: node
   linkType: hard
 
@@ -12400,13 +12400,6 @@ resolve@^0.6.1:
   version: 2.3.0
   resolution: "tslib@npm:2.3.0"
   checksum: 8869694c26e4a7b56d449662fd54a4f9ba872c889d991202c74462bd99f10e61d5bd63199566c4284c0f742277736292a969642cc7b590f98727a7cae9529122
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.1.0":
-  version: 2.3.1
-  resolution: "tslib@npm:2.3.1"
-  checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
   languageName: node
   linkType: hard
 
