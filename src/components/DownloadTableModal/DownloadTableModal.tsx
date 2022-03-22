@@ -11,7 +11,7 @@ import Message from 'components/Message/Message';
 import { useDownloadData } from 'hooks/table-data';
 
 const COLUMNS_IGNORED = ['column-index', 'lastUpdatedTime'];
-const MAX_ROWS = 10_000;
+const MAX_ROWS = 100_000;
 
 type DownloadTableModalProps = {
   databaseName: string;
