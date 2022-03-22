@@ -6,8 +6,14 @@
  *
  */
 
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
 uniform vec2 resolution;
 uniform vec2 inverseResolution;
+
+in vec3 position;
+in vec2 uv;
 
 out vec2 v_uv;
 out vec2 v_fragCoord;
@@ -26,5 +32,5 @@ void main() {
   v_rgbM = vec2(v_fragCoord * inverseResolution);
   v_uv = uv;
 
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 }

@@ -3,14 +3,12 @@
  */
 import * as THREE from 'three';
 
-import { ConsumedSector, V9SectorMetadata, WantedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, V9SectorMetadata, WantedSector, filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
-
-import { filterGeometryOutsideClipBox } from '../../cad-parsers/src/cad/filterPrimitivesV9';
 
 import assert from 'assert';
 
@@ -112,7 +110,7 @@ export class GltfSectorLoader {
     return treeIndexSet;
   }
 
-  private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.ShaderMaterial) {
+  private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.RawShaderMaterial) {
     const mesh = new THREE.Mesh(geometry, material);
     group.add(mesh);
     mesh.frustumCulled = false;

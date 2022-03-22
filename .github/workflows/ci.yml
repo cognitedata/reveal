@@ -19,7 +19,7 @@ jobs:
         node-version: [12.x]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install NPM dependencies
       working-directory: viewer
@@ -57,7 +57,7 @@ jobs:
         node-version: [12.x]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install NPM dependencies
       working-directory: viewer
@@ -97,7 +97,7 @@ jobs:
 
     - name: Upload image diffs for failed visual tests
       if: (always() && steps.visualtests.outcome == 'failure')
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: image-diffs-${{ github.sha }}
         path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
@@ -115,7 +115,7 @@ jobs:
     name: Parser worker
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: technote-space/get-diff-action@v3
         with:
           PREFIX_FILTER: parser-worker
@@ -128,21 +128,21 @@ jobs:
 
       - name: Cache cargo registry
         if: env.GIT_DIFF
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Cache cargo index
         if: env.GIT_DIFF
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.cargo/git
           key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Cache cargo build
         if: env.GIT_DIFF
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: target
           key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}

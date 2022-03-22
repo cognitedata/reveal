@@ -4,12 +4,12 @@
 
 import * as THREE from 'three';
 import { disposeAttributeArrayOnUpload, incrementOrInsertIndex } from '@reveal/utilities';
-import { TriangleMesh } from '@reveal/cad-parsers';
+import { TriangleMesh } from './types';
 
 export function createTriangleMeshes(
   triangleMeshes: TriangleMesh[],
   bounds: THREE.Box3,
-  material: THREE.ShaderMaterial,
+  material: THREE.RawShaderMaterial,
   geometryClipBox: THREE.Box3 | null
 ): THREE.Mesh[] {
   const result: THREE.Mesh[] = [];

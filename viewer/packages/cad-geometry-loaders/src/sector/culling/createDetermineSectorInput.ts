@@ -1,10 +1,13 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
 
-// Note! In testUtilities we need to use relative imports
-import { CadModelMetadata } from '../../packages/cad-parsers';
-import { DetermineSectorsInput, CadModelBudget } from '../../packages/cad-geometry-loaders';
+// Note! For tests only
+
+import { CadModelMetadata } from '@reveal/cad-parsers';
+import { CadModelBudget } from '../../CadModelBudget';
+
+import { DetermineSectorsInput } from './types';
 
 export function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,

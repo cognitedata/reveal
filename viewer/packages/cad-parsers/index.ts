@@ -2,11 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-export { CadMetadataParser } from './src/metadata/CadMetadataParser';
-export { MetadataRepository } from './src/metadata/MetadataRepository';
 export { CadModelMetadataRepository } from './src/metadata/CadModelMetadataRepository';
 export { CadModelMetadata } from './src/metadata/CadModelMetadata';
-export { SectorSceneImpl } from './src/utilities/SectorScene';
 export { SectorSceneFactory } from './src/utilities/SectorSceneFactory';
 export { CadModelClipper } from './src/metadata/CadModelClipper';
 
@@ -42,6 +39,8 @@ export {
   // torusGeometryBoundingBox, // disabled due to error in torus bounding box
   nutGeometryBoundingBox
 } from './src/cad/primitiveGeometries';
+
+export { filterGeometryOutsideClipBox } from './src/cad/filterPrimitivesV9';
 
 export {
   SectorGeometry,

@@ -4,5 +4,3 @@ vec3 derivateNormal(vec3 v_viewPosition) {
   vec3 normal = normalize(cross(fdx, fdy));
   return normal;
 }
-
-#pragma glslify: export(derivateNormal)
