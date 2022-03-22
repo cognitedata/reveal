@@ -19,6 +19,8 @@ import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
 
 import log from '@reveal/logger';
 
+const black = new THREE.Color('black');
+
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
@@ -239,7 +241,7 @@ export class EffectRenderManager {
     const ssaoParameters = this.ssaoParameters(this._renderOptions);
 
     const numberOfSamples = ssaoParameters.sampleSize;
-    const sampleKernel = this.createKernel(numberOfSamples);
+    const sampleKernel = this.createSsaoKernel(numberOfSamples);
 
     const sampleRadius = ssaoParameters.sampleRadius;
     const depthCheckBias = ssaoParameters.depthCheckBias;
@@ -349,6 +351,7 @@ export class EffectRenderManager {
     const original = {
       autoClear: renderer.autoClear,
       clearAlpha: renderer.getClearAlpha(),
+      clearColor: renderer.getClearColor(new THREE.Color()),
       renderMode: this._materialManager.getRenderMode()
     };
 
@@ -368,14 +371,14 @@ export class EffectRenderManager {
       this.extractCadNodes(scene);
 
       // Clear targets
-      this.clearTarget(this._ghostObjectRenderTarget);
+      renderStateHelper.setClearColor(black, 1.0);
       this.clearTarget(this._compositionTarget);
-      this.clearTarget(this._customObjectRenderTarget);
       // We use alpha to store special state for the next targets
-      renderer.setClearAlpha(0.0);
+      renderStateHelper.setClearColor(black, 0.0);
+      this.clearTarget(this._ghostObjectRenderTarget);
+      this.clearTarget(this._customObjectRenderTarget);
       this.clearTarget(this._normalRenderedCadModelTarget);
       this.clearTarget(this._inFrontRenderedCadModelTarget);
-      renderer.setClearAlpha(original.clearAlpha);
 
       const lastFrameSceneState = { ...this._lastFrameSceneState };
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
@@ -420,7 +423,9 @@ export class EffectRenderManager {
       switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
           // Composite view
-          this.renderComposition(camera, this._compositionTarget);
+          renderStateHelper.setClearColor(original.clearColor, original.clearAlpha);
+          this.clearTarget(this._compositionTarget);
+          this.renderComposition(renderer, camera, this._compositionTarget);
 
           // Anti-aliased version to screen
           renderStateHelper.autoClear = original.autoClear;
@@ -452,7 +457,6 @@ export class EffectRenderManager {
     } finally {
       // Restore state
       renderStateHelper.resetState();
-      // renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
       this.restoreCadNodes();
 
@@ -673,7 +677,7 @@ export class EffectRenderManager {
     if (params.sampleSize !== this.ssaoParameters(this._renderOptions).sampleSize) {
       const sampleSize = params?.sampleSize ?? defaultSsaoParameters.sampleSize!;
 
-      const kernel = this.createKernel(sampleSize);
+      const kernel = this.createSsaoKernel(sampleSize);
 
       this._fxaaMaterial.uniforms.tDiffuse.value =
         params.sampleSize !== SsaoSampleQuality.None
@@ -702,6 +706,7 @@ export class EffectRenderManager {
 
       const downSampleFactor = new THREE.Vector2(renderSize.x / canvasSize.x, renderSize.y / canvasSize.y);
 
+      const oldAutoClear = renderer.autoClear;
       renderer.autoClear = false;
       this._uiObjects.forEach(uiObject => {
         const renderScene = new THREE.Scene();
@@ -717,7 +722,7 @@ export class EffectRenderManager {
       });
 
       renderer.setViewport(0, 0, renderSize.x, renderSize.y);
-      renderer.autoClear = true;
+      renderer.autoClear = oldAutoClear;
     }
   }
 
@@ -800,7 +805,7 @@ export class EffectRenderManager {
     this._ssaoBlurCombineScene.add(ssaoBlurCombineMesh);
   }
 
-  private createKernel(kernelSize: number) {
+  private createSsaoKernel(kernelSize: number) {
     const result = [];
     for (let i = 0; i < kernelSize; i++) {
       const sample = new THREE.Vector3();

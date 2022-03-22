@@ -4,15 +4,15 @@ import { Cognite3DModel, Cognite3DViewer, Cognite3DViewerOptions, GeometryFilter
 import { CogniteClient } from '@cognite/sdk';
 
 type Props = {
-  viewerOptions?: Cognite3DViewerOptions;
+  viewerOptions?: Partial<Cognite3DViewerOptions>;
 
   modelUrls: string[];
   fitCameraToModel?: boolean;
   geometryFilter?: GeometryFilter;
 
-  modelAddedCallback?: (model: Cognite3DModel, modelIndex: number, modelUrl: string) => void;
-
   initializeCallback?: (viewer: Cognite3DViewer) => void;
+  modelAddedCallback?: (model: Cognite3DModel, modelIndex: number, modelUrl: string) => void;
+  pageReadyCallback?: (viewer: Cognite3DViewer) => void;
 };
 
 type LoadingState = {
@@ -23,7 +23,7 @@ type LoadingState = {
 
 export function Cognite3DTestViewer(props: Props) {
   const { viewerOptions, modelUrls, geometryFilter, fitCameraToModel } = props;
-  const { modelAddedCallback, initializeCallback } = props;
+  const { modelAddedCallback, initializeCallback, pageReadyCallback} = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [loadingState, setLoadingState] = useState<LoadingState>(
@@ -55,6 +55,7 @@ export function Cognite3DTestViewer(props: Props) {
       ...viewerOptions,
     }
     const viewer = new Cognite3DViewer(options);
+    (window as any).viewer = viewer;
     if (initializeCallback) {
       initializeCallback(viewer);
     }
@@ -75,12 +76,17 @@ export function Cognite3DTestViewer(props: Props) {
       }
     }
 
-    modelUrls.forEach((modelUrl, modelIndex) => addModel(modelIndex, modelUrl, geometryFilter));
-
+    const addModelOperations = modelUrls.map((modelUrl, modelIndex) => addModel(modelIndex, modelUrl, geometryFilter));
+    if (pageReadyCallback) {
+      Promise.all(addModelOperations).then(() => {
+        pageReadyCallback(viewer);
+      })
+    }
+  
     return () => {
       viewer && viewer.dispose();
     };
-  }, [geometryFilter, initializeCallback, modelAddedCallback, modelUrls, viewerOptions, fitCameraToModel]);
+  }, [geometryFilter, initializeCallback, modelAddedCallback, pageReadyCallback, modelUrls, viewerOptions, fitCameraToModel]);
 
   const readyForScreenshot = loadingState.itemsLoaded > 0 &&
     loadingState.itemsLoaded === loadingState.itemsRequested;
