@@ -12,7 +12,7 @@ import {
   IsoDocumentMetadata,
   PidDocumentMetadata,
   PidDocumentWithDom,
-  SaveSymbolData,
+  AddSymbolData,
   ToolType,
   saveGraphAsJson,
   getFileNameWithoutExtension,
@@ -300,9 +300,9 @@ export const ReactPid: React.FC = () => {
     pidViewer.current.deleteConnection(connection);
   };
 
-  const saveSymbol = (symbolData: SaveSymbolData) => {
+  const addSymbolFromSymbolSelection = (symbolData: AddSymbolData) => {
     if (!pidViewer.current) return;
-    pidViewer.current.saveSymbol(symbolData);
+    pidViewer.current.addSymbolFromSymbolSelection(symbolData);
   };
 
   const evalFileName = (file: File) => {
@@ -381,7 +381,7 @@ export const ReactPid: React.FC = () => {
           symbolInstances={symbolInstances}
           symbolSelection={symbolSelection}
           loadJson={loadJson}
-          saveSymbol={saveSymbol}
+          addSymbolFromSymbolSelection={addSymbolFromSymbolSelection}
           connections={connections}
           deleteSymbol={deleteSymbol}
           deleteConnection={deleteConnection}

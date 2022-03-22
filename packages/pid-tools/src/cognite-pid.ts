@@ -9,7 +9,7 @@ import {
   loadGraphFromJson,
   isValidGraphDocumentJson,
   isValidLegendJson,
-  loadLegendFromJson,
+  computeSymbolInstances,
 } from './utils';
 import { applyPathReplacementInSvg } from './utils/pathReplacementUtils';
 import { PidDocumentWithDom } from './pid';
@@ -56,7 +56,6 @@ import {
   getDiagramInstanceId,
   getDiagramInstanceIdFromPathIds,
   getInstanceByDiagramInstanceId,
-  getNoneOverlappingSymbolInstances,
   isConnectionUnidirectionalMatch,
   pruneSymbolOverlappingPathsFromLines,
 } from './utils/diagramInstanceUtils';
@@ -86,7 +85,7 @@ type ActiveLineNumberCallback = (activeLineNumber: string | null) => void;
 type ActiveTagIdCallback = (activeTagId: string | null) => void;
 type LineNumbersCallback = (lineNumbers: string[]) => void;
 
-export interface SaveSymbolData {
+export interface AddSymbolData {
   symbolType: SymbolType;
   description: string;
   direction?: number;
@@ -377,7 +376,6 @@ export class CognitePid {
 
   clearSymbolSelection() {
     this.setSymbolSelection([]);
-    this.refresh();
   }
 
   setHideSelection(hideSelection: boolean, refresh = true) {
@@ -580,21 +578,7 @@ export class CognitePid {
   loadLegend(legend: Legend) {
     if (!this.pidDocument) return;
 
-    const setSymbols = (symbols: DiagramSymbol[]) => {
-      this.setSymbols(symbols, false);
-    };
-    const setSymbolInstances = (symbolInstances: DiagramSymbolInstance[]) =>
-      this.setSymbolInstances(symbolInstances, false);
-
-    loadLegendFromJson(
-      legend,
-      this.symbols,
-      setSymbols,
-      this.symbolInstances,
-      setSymbolInstances,
-      this.pidDocument
-    );
-    this.refresh();
+    this.addSymbolsAndFindInstances(legend.symbols);
   }
 
   render() {
@@ -957,11 +941,11 @@ export class CognitePid {
     }
   };
 
-  saveSymbol(symbolData: SaveSymbolData) {
-    if (this.pidDocument === undefined) return;
+  addSymbolFromSymbolSelection(symbolData: AddSymbolData) {
+    if (!this.pidDocument) return;
 
     // Create new diagram symbol
-    const pidGroup = this.pidDocument!.getPidGroup(this.symbolSelection);
+    const pidGroup = this.pidDocument.getPidGroup(this.symbolSelection);
     const { symbolType, description, direction } = symbolData;
     const newSymbol = {
       id: uuid(),
@@ -971,29 +955,37 @@ export class CognitePid {
       direction,
     } as DiagramSymbol;
 
-    // Find all symbol instances of new symbol
-    const newSymbolInstances =
-      this.pidDocument.findAllInstancesOfSymbol(newSymbol);
-    const prunedInstances = getNoneOverlappingSymbolInstances(
-      this.pidDocument,
-      this.symbolInstances,
-      newSymbolInstances
-    );
+    this.addSymbolsAndFindInstances([newSymbol]);
+  }
+
+  addSymbolsAndFindInstances(newSymbols: DiagramSymbol[], refresh = true) {
+    if (!this.pidDocument) return;
+
+    const { symbolInstancesToKeep, symbolInstancesToDelete } =
+      computeSymbolInstances(
+        newSymbols,
+        this.symbolInstances,
+        this.pidDocument
+      );
 
     const { prunedLines, linesToDelete } = pruneSymbolOverlappingPathsFromLines(
       this.lines,
-      newSymbolInstances
+      symbolInstancesToKeep
     );
     const prunedConnections = getConnectionsWithoutInstances(
-      linesToDelete,
+      [...symbolInstancesToDelete, ...linesToDelete],
       this.connections
     );
 
     this.clearSymbolSelection();
-    this.setSymbols([...this.symbols, newSymbol]);
-    this.setConnections(prunedConnections);
-    this.setLines(prunedLines);
-    this.setSymbolInstances(prunedInstances);
+    this.setSymbols([...this.symbols, ...newSymbols], false);
+    this.setConnections(prunedConnections, false);
+    this.setLines(prunedLines, false);
+    this.setSymbolInstances(symbolInstancesToKeep, false);
+
+    if (refresh) {
+      this.refresh();
+    }
   }
 
   autoAnalysis(documentMetadata: DocumentMetadata) {

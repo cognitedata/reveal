@@ -111,8 +111,8 @@ export const getNoneOverlappingSymbolInstances = (
   pidDocument: PidDocument,
   symbolInstances: DiagramSymbolInstance[],
   newSymbolInstances: DiagramSymbolInstance[]
-): DiagramSymbolInstance[] => {
-  const objectsToRemove: DiagramInstanceWithPaths[] = [];
+) => {
+  const instancesToRemove: DiagramInstanceWithPaths[] = [];
   for (let i = 0; i < newSymbolInstances.length; i++) {
     const potentialInstance = newSymbolInstances[i];
 
@@ -132,15 +132,19 @@ export const getNoneOverlappingSymbolInstances = (
         potentialInstance,
         oldInstance
       );
-      objectsToRemove.push(objectToRemove);
+      instancesToRemove.push(objectToRemove);
     }
   }
 
-  const prunedInstances = [...symbolInstances, ...newSymbolInstances].filter(
-    (instance) => objectsToRemove.includes(instance) === false
+  const instancesToRemoveIds = new Set(
+    instancesToRemove.map((inst) => inst.id)
   );
 
-  return prunedInstances;
+  const instancesToKeep = [...symbolInstances, ...newSymbolInstances].filter(
+    (instance) => !instancesToRemoveIds.has(instance.id)
+  );
+
+  return { instancesToKeep, instancesToRemove };
 };
 
 export const pruneSymbolOverlappingPathsFromLines = (

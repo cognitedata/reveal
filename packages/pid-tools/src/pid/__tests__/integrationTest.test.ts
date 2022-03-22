@@ -83,7 +83,7 @@ const checkFindAllInstancesOfSymbol = (
       pidDocument,
       newSymbolInstances,
       allFoundSymbolInstances
-    );
+    ).instancesToKeep;
   });
 
   symbols.forEach((symbol) => {

@@ -6,7 +6,7 @@ import {
   bothSymbolTypes,
   pidSymbolTypes,
   isoSymbolTypes,
-  SaveSymbolData,
+  AddSymbolData,
   directedDirections,
   unidirectedDirections,
 } from '@cognite/pid-tools';
@@ -41,7 +41,7 @@ const directionSymbolType = (symbolType: SymbolType | undefined) =>
 
 interface AddSymbolControllerProps {
   symbolSelection: string[];
-  saveSymbol: (options: SaveSymbolData) => void;
+  addSymbolFromSymbolSelection: (options: AddSymbolData) => void;
   hideSelection: boolean;
   toggleHideSelection: () => void;
   clearSymbolSelection: () => void;
@@ -50,7 +50,7 @@ interface AddSymbolControllerProps {
 
 export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   symbolSelection,
-  saveSymbol,
+  addSymbolFromSymbolSelection,
   hideSelection,
   toggleHideSelection,
   clearSymbolSelection,
@@ -114,9 +114,9 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
     );
   }, [selectedSymbolTypeOption, direction]);
 
-  const saveSymbolWrapper = () => {
+  const addSymbolFromSymbolSelectionWrapper = () => {
     setDescription('');
-    saveSymbol({
+    addSymbolFromSymbolSelection({
       symbolType: selectedSymbolTypeOption.value!,
       description,
       direction: directionSymbolType(selectedSymbolTypeOption.value)
@@ -172,7 +172,7 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
               if (isDisabled()) {
                 return true;
               }
-              saveSymbolWrapper();
+              addSymbolFromSymbolSelectionWrapper();
               event.preventDefault();
               return false;
             }
@@ -181,7 +181,7 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
           postfix={
             <Button
               type="primary"
-              onClick={saveSymbolWrapper}
+              onClick={addSymbolFromSymbolSelectionWrapper}
               disabled={isDisabled()}
             >
               Add

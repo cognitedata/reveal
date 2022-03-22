@@ -9,7 +9,7 @@ import {
   DocumentMetadata,
   DocumentType,
   ToolType,
-  SaveSymbolData,
+  AddSymbolData,
 } from '@cognite/pid-tools';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
@@ -43,7 +43,7 @@ interface SidePanelProps {
   symbolInstances: DiagramSymbolInstance[];
   symbolSelection: string[];
   loadJson: (json: Record<string, unknown>) => void;
-  saveSymbol: (options: SaveSymbolData) => void;
+  addSymbolFromSymbolSelection: (options: AddSymbolData) => void;
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
   connections: DiagramConnection[];
@@ -75,7 +75,7 @@ export const SidePanel = ({
   symbolInstances,
   symbolSelection,
   loadJson,
-  saveSymbol,
+  addSymbolFromSymbolSelection,
   deleteSymbol,
   deleteConnection,
   connections,
@@ -189,7 +189,7 @@ export const SidePanel = ({
           <AddSymbolController
             symbolSelection={symbolSelection}
             clearSymbolSelection={clearSymbolSelection}
-            saveSymbol={saveSymbol}
+            addSymbolFromSymbolSelection={addSymbolFromSymbolSelection}
             hideSelection={hideSelection}
             toggleHideSelection={toggleHideSelection}
             documentType={documentMetadata.type}

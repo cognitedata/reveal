@@ -1,6 +1,5 @@
 import {
   CognitePid,
-  computeSymbolInstances,
   DiagramSymbol,
   DiagramSymbolInstance,
   DocumentType,
@@ -29,12 +28,7 @@ const useSymbolState = (
     if (shouldLoadFromStorage) {
       try {
         const loadedSymbols = ParserStorage.symbols.load(documentType);
-        const computedSymbolInstances = computeSymbolInstances(
-          loadedSymbols,
-          pidDocument
-        );
-        pidRef?.setSymbols(loadedSymbols);
-        pidRef?.setSymbolInstances(computedSymbolInstances);
+        pidRef?.loadLegend({ symbols: loadedSymbols });
         setHasLegendBeenLoaded(true);
       } catch (error) {
         // If we can't parse the current symbol format - reset it

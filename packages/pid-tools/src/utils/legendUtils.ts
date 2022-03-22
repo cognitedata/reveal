@@ -23,35 +23,31 @@ export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
 
 export const computeSymbolInstances = (
   symbols: DiagramSymbol[],
-  pidDocument: PidDocument
-): DiagramSymbolInstance[] => {
-  let allNewSymbolInstances: DiagramSymbolInstance[] = [];
-  symbols.forEach((symbol) => {
-    const newSymbolInstances = (
-      pidDocument as PidDocument
-    ).findAllInstancesOfSymbol(symbol);
-    allNewSymbolInstances = getNoneOverlappingSymbolInstances(
-      pidDocument,
-      allNewSymbolInstances,
-      newSymbolInstances
-    );
-  });
-  return allNewSymbolInstances;
-};
-
-export const loadLegendFromJson = (
-  jsonData: Legend,
-  symbols: DiagramSymbol[],
-  setSymbols: (diagramSymbols: DiagramSymbol[]) => void,
-  symbolInstances: DiagramSymbolInstance[],
-  setSymbolInstances: (diagramSymbolInstances: DiagramSymbolInstance[]) => void,
+  existingSymbolInstances: DiagramSymbolInstance[],
   pidDocument: PidDocument
 ) => {
-  const newSymbols = jsonData.symbols as DiagramSymbol[];
-  setSymbols([...symbols, ...newSymbols]);
+  let symbolInstancesToKeep: DiagramSymbolInstance[] = [
+    ...existingSymbolInstances,
+  ];
+  symbols.forEach((symbol) => {
+    const newSymbolInstances = pidDocument.findAllInstancesOfSymbol(symbol);
+    symbolInstancesToKeep = getNoneOverlappingSymbolInstances(
+      pidDocument,
+      symbolInstancesToKeep,
+      newSymbolInstances
+    ).instancesToKeep;
+  });
 
-  setSymbolInstances([
-    ...symbolInstances,
-    ...computeSymbolInstances(newSymbols, pidDocument),
-  ]);
+  const symbolInstancesIds = new Set(
+    symbolInstancesToKeep.map((inst) => inst.id)
+  );
+
+  const symbolInstancesToDelete = existingSymbolInstances.filter(
+    (instance) => !symbolInstancesIds.has(instance.id)
+  );
+
+  return {
+    symbolInstancesToKeep,
+    symbolInstancesToDelete,
+  };
 };
