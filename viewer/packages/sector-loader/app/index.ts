@@ -112,11 +112,10 @@ async function loadSectors(
 
   const output = outputs.find(output => output.format === wantedFormat && output.version === formatVersion);
 
-  const sceneJson = await modelDataClient.getJsonFile(
+  const sceneJson = (await modelDataClient.getJsonFile(
     `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
     'scene.json'
-  ) as CadSceneRootMetadata;
-
+  )) as CadSceneRootMetadata;
 
   cadMaterialManager.addModelMaterials(output!.blobId.toString(), sceneJson.maxTreeIndex);
 
@@ -125,14 +124,15 @@ async function loadSectors(
       ? new GltfSectorRepository(modelDataClient, cadMaterialManager)
       : new V8SectorRepository(modelDataClient, cadMaterialManager);
 
-
   const model = new THREE.Group();
 
   const modelIdentifier = output!.blobId.toString();
 
   function toThreeBox(box: BoundingBox) {
-    return new THREE.Box3(new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-                          new THREE.Vector3(box.max.x, box.max.y, box.max.z));
+    return new THREE.Box3(
+      new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+      new THREE.Vector3(box.max.x, box.max.y, box.max.z)
+    );
   }
 
   await Promise.all(
