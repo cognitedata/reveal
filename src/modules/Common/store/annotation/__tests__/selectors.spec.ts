@@ -6,14 +6,16 @@ import {
   makeSelectFileAnnotationsByType,
   makeSelectTotalAnnotationCountForFileIds,
 } from 'src/modules/Common/store/annotation/selectors';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
+import { RegionShape } from 'src/api/annotation/types';
 
 describe('Test annotation selectors', () => {
   const getDummyAnnotation = (
     id?: number,
     modelType?: number,
-    text?: string
+    text?: string,
+    status: AnnotationStatus = AnnotationStatus.Unhandled
   ) => {
     return AnnotationUtils.createVisionAnnotationStub(
       id || 1,
@@ -22,7 +24,10 @@ describe('Test annotation selectors', () => {
       1,
       123,
       124,
-      { shape: 'rectangle', vertices: [] }
+      { shape: RegionShape.Rectangle, vertices: [] },
+      RegionShape.Rectangle,
+      'user',
+      status
     );
   };
 
@@ -69,25 +74,51 @@ describe('Test annotation selectors', () => {
 
   describe('Test makeSelectAnnotationsForFileIds', () => {
     const selectAnnotationsForFileIds = makeSelectAnnotationsForFileIds();
+    const annotations = [
+      getDummyAnnotation(1, 1, 'foo', AnnotationStatus.Verified),
+      getDummyAnnotation(2, 1, 'bar', AnnotationStatus.Rejected),
+    ];
+    const previousState = {
+      files: {
+        byId: {
+          '10': [1],
+          '20': [2],
+        },
+      },
+      annotations: {
+        byId: {
+          '1': annotations[0],
+          '2': annotations[1],
+        },
+      },
+    };
     test('should return all annotations for provided file ids', () => {
-      const previousState = {
-        files: {
-          byId: {
-            '10': [1],
-            '20': [2],
-          },
-        },
-        annotations: {
-          byId: {
-            '1': getDummyAnnotation(1),
-            '2': getDummyAnnotation(2),
-          },
-        },
-      };
       expect(selectAnnotationsForFileIds(previousState, [10, 20, 30])).toEqual({
-        '10': [getDummyAnnotation(1)],
-        '20': [getDummyAnnotation(2)],
+        '10': [annotations[0]],
+        '20': [annotations[1]],
         '30': [], // prefer to not raise exception in selectors
+      });
+    });
+    test('should return the annotations filtered by text for provided file ids', () => {
+      expect(
+        selectAnnotationsForFileIds(previousState, [10, 20, 30], {
+          annotationText: 'foo',
+        })
+      ).toEqual({
+        '10': [annotations[0]],
+        '20': [],
+        '30': [],
+      });
+    });
+    test('should return the annotations filtered by status for provided file ids', () => {
+      expect(
+        selectAnnotationsForFileIds(previousState, [10, 20, 30], {
+          annotationState: AnnotationStatus.Rejected,
+        })
+      ).toEqual({
+        '10': [],
+        '20': [annotations[1]],
+        '30': [],
       });
     });
   });
