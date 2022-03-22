@@ -85,6 +85,7 @@ export default function App() {
             <DataExplorationProvider
               flow={flow}
               userInfo={userInfo}
+              // @ts-ignore:next-line
               sdk={sdk}
               overrideURLMap={{
                 pdfjsWorkerSrc:

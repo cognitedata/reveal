@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, SyntheticEvent } from 'react';
+
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { notification } from 'antd';
 import { useParams, useHistory } from 'react-router-dom';
@@ -12,8 +14,9 @@ export default function MissingPermissionFeedback(props: Props) {
   const { acl, type } = props;
   const history = useHistory();
   const { tenant } = useParams<{ tenant: string }>();
-  const { data: hasPermission } = usePermissions(acl, type);
-  const { data: groupPermission } = usePermissions('groupsAcl', 'WRITE');
+  const { flow } = getFlow();
+  const { data: hasPermission } = usePermissions(flow, acl, type);
+  const { data: groupPermission } = usePermissions(flow, 'groupsAcl', 'WRITE');
 
   const navigate = useMemo(
     () => (event: SyntheticEvent) => {

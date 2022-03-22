@@ -5,6 +5,7 @@ import {
   ErrorFeedback,
   Loader,
 } from '@cognite/data-exploration';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import isMatch from 'lodash/isMatch';
@@ -36,8 +37,9 @@ export const FilePreview = ({
     (el: { state: string; id: number; type: string }) =>
       isMatch(el, { state: 'active', id: fileId, type: 'file' })
   );
-  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
-  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+  const { flow } = getFlow();
+  const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
   useEffect(() => {
