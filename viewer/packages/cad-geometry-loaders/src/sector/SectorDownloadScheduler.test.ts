@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
 import { IMock, Mock } from 'moq.ts';
 import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
@@ -196,22 +196,32 @@ describe(SectorDownloadScheduler.name, () => {
 });
 
 function createMockWantedSectors(numberOfSectors: number, modelIdentifier: string): WantedSector[] {
-  return Array.from(Array(numberOfSectors).keys()).map((_, index) =>
-    new Mock<WantedSector>()
-      .setup(p => p.metadata.id)
-      .returns(index)
+  return Array.from(Array(numberOfSectors).keys()).map((_, index) => {
+    return new Mock<WantedSector>()
+      .setup(p => p.metadata)
+      .returns(
+        new Mock<SectorMetadata>()
+          .setup(p => p.id)
+          .returns(index)
+          .object()
+      )
       .setup(p => p.modelIdentifier)
       .returns(modelIdentifier)
-      .object()
-  );
+      .object();
+  });
 }
 
 function createConsumedSectorMock(wantedSector: WantedSector): IMock<ConsumedSector> {
   const consumedSector = new Mock<ConsumedSector>()
     .setup(p => p.modelIdentifier)
     .returns(wantedSector.modelIdentifier)
-    .setup(p => p.metadata.id)
-    .returns(wantedSector.metadata.id)
+    .setup(p => p.metadata)
+    .returns(
+      new Mock<SectorMetadata>()
+        .setup(p => p.id)
+        .returns(wantedSector.metadata.id)
+        .object()
+    )
     .setup(p => p.levelOfDetail)
     .returns(LevelOfDetail.Detailed);
   return consumedSector;
