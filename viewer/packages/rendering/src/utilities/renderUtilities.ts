@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { createRenderTriangle } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
+import { IdentifiedModel } from './types';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
@@ -45,15 +46,26 @@ export enum RenderLayer {
 }
 
 export function setupGeometryLayers(
-  cadModels: THREE.Group,
+  identifiedModels: IdentifiedModel[],
   customObjects: THREE.Group,
   materialManager: CadMaterialManager
 ): void {
-  const backSet = materialManager.getModelBackTreeIndices('0');
-  const ghostSet = materialManager.getModelGhostedTreeIndices('0');
-  const inFrontSet = materialManager.getModelInFrontTreeIndices('0');
+  identifiedModels.forEach(identifiedModel => setModelRenderLayers(identifiedModel, materialManager));
 
-  cadModels.traverse(node => {
+  customObjects.traverse(node => {
+    const customRenderOrder = node.renderOrder > 0 ? RenderLayer.CustomDeferred : RenderLayer.CustomNormal;
+    node.layers.set(customRenderOrder);
+  });
+}
+
+function setModelRenderLayers(identifiedModel: IdentifiedModel, materialManager: CadMaterialManager) {
+  const { model, modelIdentifier } = identifiedModel;
+
+  const backSet = materialManager.getModelBackTreeIndices(modelIdentifier);
+  const ghostSet = materialManager.getModelGhostedTreeIndices(modelIdentifier);
+  const inFrontSet = materialManager.getModelInFrontTreeIndices(modelIdentifier);
+
+  model.traverse(node => {
     node.layers.disableAll();
     const objectTreeIndices = node.userData?.treeIndices as Map<number, number> | undefined;
     if (objectTreeIndices === undefined) {
@@ -68,10 +80,5 @@ export function setupGeometryLayers(
     if (inFrontSet.hasIntersectionWith(objectTreeIndices)) {
       node.layers.enable(RenderLayer.InFront);
     }
-  });
-
-  customObjects.traverse(node => {
-    const customRenderOrder = node.renderOrder > 0 ? RenderLayer.CustomDeferred : RenderLayer.CustomNormal;
-    node.layers.set(customRenderOrder);
   });
 }

@@ -6,16 +6,14 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
-import { CadMaterialManager } from '@reveal/rendering';
+import { BasicPipelineExecutor, CadMaterialManager, DefaultRenderPipeline } from '@reveal/rendering';
 import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
 import { NumericRange, revealEnv } from '@reveal/utilities';
 import dat from 'dat.gui';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { ByScreenSizeSectorCuller, CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
-import { DefaultRenderPipeline } from '../src/render-pipelines/DefaultRenderPipeline';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { BasicPipelineExecutor } from '../src/pipeline-executors/BasicPipelineExecutor';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -88,11 +86,16 @@ async function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   const controlsTest = new TransformControls(camera, renderer.domElement);
-  controlsTest.attach(cogniteModels);
+  controlsTest.attach(model);
   customObjects.add(controlsTest);
 
   const renderManager = new BasicPipelineExecutor(renderer);
-  const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, cogniteModels, customObjects);
+  const defaultRenderPipeline = new DefaultRenderPipeline(
+    materialManager,
+    scene,
+    [{ model, modelIdentifier: model.cadModelIdentifier }],
+    customObjects
+  );
 
   const grid = new THREE.GridHelper(30, 40);
   grid.position.set(14, -1, -14);

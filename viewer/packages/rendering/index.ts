@@ -30,3 +30,7 @@ export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials, createMaterials } from './src/rendering/materials';
 export { createPrimitives } from './src/rendering/primitives';
+
+export { IdentifiedModel } from './src/utilities/types';
+export { DefaultRenderPipeline } from './src/render-pipelines/DefaultRenderPipeline';
+export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';

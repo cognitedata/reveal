@@ -6,43 +6,7 @@ import * as THREE from 'three';
 import { blitShaders } from '../rendering/shaders';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utilities/renderUtilities';
-
-export type BlendOptions = {
-  blendDestination: THREE.BlendingDstFactor;
-  blendSource: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
-  blendDestinationAlpha?: THREE.BlendingDstFactor;
-  blendSourceAlpha?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
-};
-
-export enum BlitEffect {
-  None,
-  GaussianBlur,
-  Fxaa
-}
-
-export type BlitOptions = {
-  texture: THREE.Texture;
-  effect?: BlitEffect;
-  depthTexture?: THREE.DepthTexture;
-  blendOptions?: BlendOptions;
-  overrideAlpha?: number;
-};
-
-export const transparentBlendOptions: BlendOptions = {
-  blendDestination: THREE.OneMinusSrcAlphaFactor,
-  blendSource: THREE.SrcAlphaFactor
-};
-
-export const alphaMaskBlendOptions: BlendOptions = {
-  blendDestination: THREE.SrcAlphaFactor,
-  blendSource: THREE.ZeroFactor,
-  blendDestinationAlpha: THREE.OneFactor,
-  blendSourceAlpha: THREE.ZeroFactor
-};
-
-type ThreeUniforms = {
-  [uniform: string]: THREE.IUniform<any>;
-};
+import { BlitOptions, ThreeUniforms, BlitEffect, BlendOptions } from './types';
 
 export class BlitPass implements RenderPass {
   private readonly _renderTarget: THREE.WebGLRenderTarget;
@@ -73,6 +37,15 @@ export class BlitPass implements RenderPass {
     });
 
     this._fullScreenTriangle = createFullScreenTriangleMesh(blitShaderMaterial);
+  }
+
+  public render(renderer: THREE.WebGLRenderer, _: THREE.Camera): Promise<THREE.WebGLRenderTarget> {
+    renderer.render(this._fullScreenTriangle, unitOrthographicCamera);
+    return;
+  }
+
+  public getOutputRenderTarget(): THREE.WebGLRenderTarget | null {
+    return this._renderTarget;
   }
 
   private setDepthTestOptions(depthTexture: THREE.DepthTexture, uniforms: ThreeUniforms, defines: any) {
@@ -110,14 +83,5 @@ export class BlitPass implements RenderPass {
     const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if null
     const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if null
     return { blending, blendDst, blendSrc, blendSrcAlpha, blendDstAlpha };
-  }
-
-  public getOutputRenderTarget(): THREE.WebGLRenderTarget | null {
-    return this._renderTarget;
-  }
-
-  public render(renderer: THREE.WebGLRenderer, _: THREE.Camera): Promise<THREE.WebGLRenderTarget> {
-    renderer.render(this._fullScreenTriangle, unitOrthographicCamera);
-    return;
   }
 }

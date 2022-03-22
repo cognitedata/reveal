@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { CadMaterialManager } from '../CadMaterialManager';
-import { BlitPass, transparentBlendOptions, BlitEffect, alphaMaskBlendOptions } from '../render-passes/BlitPass';
+import { BlitPass } from '../render-passes/BlitPass';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import { EdgeDetectPass } from '../render-passes/EdgeDetectPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
@@ -13,55 +13,22 @@ import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createRenderTarget, RenderLayer, setupGeometryLayers } from '../utilities/renderUtilities';
 import { OutlinePass } from '../render-passes/OutlinePass';
-
-type RenderTargetData = {
-  currentRenderSize: THREE.Vector2;
-  opaqueComposition: THREE.WebGLRenderTarget;
-  finalComposition: THREE.WebGLRenderTarget;
-  color: THREE.WebGLRenderTarget;
-  ghost: THREE.WebGLRenderTarget;
-  inFront: THREE.WebGLRenderTarget;
-  ssao: THREE.WebGLRenderTarget;
-};
-
-type DefaultRenderPipelinePasses = {
-  inFront: {
-    geometry: RenderPass;
-    blitToComposition: RenderPass;
-    outline: RenderPass;
-  };
-  back: {
-    geometry: RenderPass;
-    blitToComposition: RenderPass;
-    ssao: RenderPass;
-    blitSsaoBlur: RenderPass;
-    edgeDetect: RenderPass;
-    outline: RenderPass;
-  };
-  ghost: {
-    geometry: RenderPass;
-    blitToComposition: RenderPass;
-  };
-  custom: {
-    geometry: RenderPass;
-    deferred: RenderPass;
-  };
-  blitComposite: RenderPass;
-  blitToOutput: RenderPass;
-};
+import { IdentifiedModel } from '../utilities/types';
+import { DefaultRenderPipelinePasses, RenderTargetData } from './types';
+import { BlitEffect, alphaMaskBlendOptions, transparentBlendOptions } from '../render-passes/types';
 
 export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadScene: THREE.Scene;
   private readonly _renderTargetData: RenderTargetData;
-  private readonly _cadModels: THREE.Group;
+  private readonly _cadModels: IdentifiedModel[];
   private readonly _customObjects: THREE.Group;
   private readonly _defaultRenderPipelinePasses: DefaultRenderPipelinePasses;
 
   constructor(
     materialManager: CadMaterialManager,
     scene: THREE.Scene,
-    cadModels?: THREE.Group,
+    cadModels?: IdentifiedModel[],
     customObjects?: THREE.Group
   ) {
     this._materialManager = materialManager;
@@ -182,7 +149,9 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.sortObjects = false;
     renderer.autoClear = false;
     renderer.setClearAlpha(0.0);
-    this._cadModels.matrixAutoUpdate = false;
+    this._cadModels.forEach(identifiedModel => {
+      identifiedModel.model.matrixAutoUpdate = false;
+    });
     this._cadScene.autoUpdate = false;
 
     this._customObjects.updateMatrixWorld(true);
