@@ -1,5 +1,4 @@
 import React from 'react';
-
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
@@ -13,11 +12,10 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-
 import { languages, setupTranslations } from 'common/i18n';
-import Home from 'pages/Home';
-import GlobalStyles from 'styles/GlobalStyles';
+import { AntStyles } from 'styles/AntStyles';
 import i18next from 'i18next';
+import ExtractorDownloads from './Home/Extractors';
 
 setupTranslations();
 
@@ -43,23 +41,23 @@ const App = () => {
   return (
     <FlagProvider
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-      appName="cdf-demo-app"
-      projectName={getProject()}
+      appName="cdf-extractor-downloads"
+      projectName={project}
     >
       <I18nWrapper onLanguageChange={handleLanguageChange}>
         <QueryClientProvider client={queryClient}>
-          <GlobalStyles>
-            <SubAppWrapper title="Unified Demo App">
+          <AntStyles>
+            <SubAppWrapper title="Extractor Downloads">
               <AuthWrapper
                 loadingScreen={<Loader />}
                 login={() => loginAndAuthIfNeeded(project, env)}
               >
                 <SDKProvider sdk={sdk}>
-                  <Home />
+                  <ExtractorDownloads />
                 </SDKProvider>
               </AuthWrapper>
             </SubAppWrapper>
-          </GlobalStyles>
+          </AntStyles>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </I18nWrapper>
