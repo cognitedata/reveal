@@ -1,15 +1,14 @@
-import { MOCK_LINE_REVIEW_0040_0132 } from './mocks';
-import { ParsedDocument, LineReview, DocumentsForLine } from './types';
+import type { CogniteClient } from '@cognite/sdk';
 
-let MOCK_LINE_REVIEWS = [MOCK_LINE_REVIEW_0040_0132];
-
-export const getLineReviews = async () => {
-  // NEXT: Fetch from API
-  return MOCK_LINE_REVIEWS;
-};
+import {
+  ParsedDocument,
+  LineReview,
+  DocumentsForLine,
+  LineReviewState,
+} from './types';
 
 export const getDocumentUrlByExternalId =
-  (client: any) =>
+  (client: CogniteClient) =>
   async (externalId: string): Promise<string> => {
     try {
       const response = await client.files.getDownloadUrls([{ externalId }]);
@@ -20,7 +19,7 @@ export const getDocumentUrlByExternalId =
   };
 
 const getJsonByExternalId = async <T = unknown>(
-  client: any,
+  client: CogniteClient,
   externalId: string
 ): Promise<T> => {
   const url = await getDocumentUrlByExternalId(client)(externalId);
@@ -29,8 +28,43 @@ const getJsonByExternalId = async <T = unknown>(
   return json;
 };
 
+const saveJsonByExternalId = async <T = unknown>(
+  client: CogniteClient,
+  externalId: string,
+  data: T
+): Promise<void> => {
+  try {
+    await client.files.upload(
+      { externalId, name: externalId, mimeType: 'application/json' },
+      JSON.stringify(data),
+      true
+    );
+  } catch (error) {
+    console.log('Throws errors unnecessarily');
+  }
+};
+
+const LINE_REVIEWS_ENTRY_POINT = 'LINE_REVIEWS_V0.0.7.json';
+export const getLineReviews = async (client: CogniteClient) => {
+  const lineReviewsEntryPointResponse = await getJsonByExternalId<{
+    lineReviews: LineReview[];
+  }>(client, LINE_REVIEWS_ENTRY_POINT);
+
+  return lineReviewsEntryPointResponse.lineReviews;
+};
+
+export const saveLineReviews = async (
+  client: CogniteClient,
+  lineReviews: LineReview[]
+) => {
+  return saveJsonByExternalId(client, LINE_REVIEWS_ENTRY_POINT, {
+    externalId: LINE_REVIEWS_ENTRY_POINT,
+    lineReviews,
+  });
+};
+
 export const getLineReviewDocuments = async (
-  client: any,
+  client: CogniteClient,
   lineReview: LineReview
 ) => {
   const lineReviewEntryPoint = await getJsonByExternalId<DocumentsForLine>(
@@ -47,18 +81,51 @@ export const getLineReviewDocuments = async (
   return documents;
 };
 
-export const updateLineReviews = async (updates: LineReview[]) => {
-  // NEXT: Fetch from API
-  updates.forEach((update) => {
-    MOCK_LINE_REVIEWS = MOCK_LINE_REVIEWS.map((d) => {
-      if (d.id === update.id) {
-        return {
-          ...d,
-          ...update,
-        };
-      }
-      return d;
-    });
-  });
-  return true;
+const getLineReviewStateExternalIdByLineReviewId = (id: string) =>
+  `linewalk-${id}-state.json`;
+
+export const getLineReviewState = async (
+  client: CogniteClient,
+  lineReview: LineReview
+) => {
+  try {
+    const lineReviewState = await getJsonByExternalId<LineReviewState>(
+      client,
+      getLineReviewStateExternalIdByLineReviewId(lineReview.id)
+    );
+    return lineReviewState;
+  } catch (error) {
+    return undefined;
+  }
+};
+
+export const saveLineReviewState = async (
+  client: CogniteClient,
+  lineReview: LineReview,
+  state: any
+) => {
+  try {
+    const lineReviewState = await saveJsonByExternalId<LineReviewState>(
+      client,
+      getLineReviewStateExternalIdByLineReviewId(lineReview.id),
+      state
+    );
+    return lineReviewState;
+  } catch (error) {
+    return undefined;
+  }
+};
+
+export const updateLineReviews = async (
+  client: CogniteClient,
+  update: LineReview
+) => {
+  const lineReviews = await getLineReviews(client);
+  await saveLineReviews(
+    client,
+    lineReviews.map((lineReview) => ({
+      ...lineReview,
+      ...(update.id === lineReview.id ? update : lineReview),
+    }))
+  );
 };

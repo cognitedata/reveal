@@ -77,7 +77,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
   }, [ornateRef]);
 
   useEffect(() => {
-    if (documents) {
+    if (client !== undefined && documents) {
       (async () => {
         const result = await Promise.all(
           documents.map(async (document, index) => ({
@@ -97,7 +97,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
         setIsInitialized(true);
       })();
     }
-  }, [document]);
+  }, [document, client]);
 
   if (!isInitialized) {
     return null;

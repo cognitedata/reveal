@@ -76,7 +76,8 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
 
 const LineReviews = () => {
   const history = useHistory();
-  const { lineReviews, populateLineReviews } = useLineReviews();
+
+  const { isLoading, lineReviews } = useLineReviews();
 
   const [search, setSearch] = useState<string>('');
   const [statusOptions, setStatusOptions] = useState<
@@ -90,11 +91,7 @@ const LineReviews = () => {
   const [assignee, setAssignee] = useState<OptionType<string>[]>([]);
 
   useEffect(() => {
-    populateLineReviews();
-  }, []);
-
-  useEffect(() => {
-    if (lineReviews.length) {
+    if (!isLoading && lineReviews.length) {
       const statusOptions = Object.keys(
         lineReviews.reduce(
           (acc, d) => ({
@@ -158,6 +155,10 @@ const LineReviews = () => {
     },
     [assignee, status, search]
   );
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <LineReviewsWrapper>

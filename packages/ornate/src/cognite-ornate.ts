@@ -55,6 +55,7 @@ type ZoomToGroupOptions = {
 
 export type CogniteOrnateOptions = {
   container: string;
+  shouldShowImagesWhenZoomedOut?: boolean;
 };
 
 const getShapeByDrawing = (drawing: Drawing) => {
@@ -148,6 +149,7 @@ export class CogniteOrnate {
   tools: Record<string, Tool> = {};
   resizeObserver?: ResizeObserver;
   mouseOverGroup?: Konva.Group;
+  shouldShowImagesWhenZoomedOut = false;
 
   constructor(options: CogniteOrnateOptions) {
     const host = document.querySelector(options.container) as HTMLDivElement;
@@ -156,6 +158,8 @@ export class CogniteOrnate {
       console.error('ORNATE: Failed to get HTML element to attach to');
     }
     this.host = host;
+    this.shouldShowImagesWhenZoomedOut =
+      options.shouldShowImagesWhenZoomedOut ?? false;
     this.init();
   }
 
@@ -879,7 +883,9 @@ export class CogniteOrnate {
   onViewportChange = debounce(() => {
     this.documents.forEach((doc) => {
       const shouldShowImagesAtScale =
-        this.stage.scaleX() > 0.1 || this.stage.scaleY() > 0.1;
+        this.shouldShowImagesWhenZoomedOut ||
+        this.stage.scaleX() > 0.1 ||
+        this.stage.scaleY() > 0.1;
       if (shouldShowImagesAtScale && isNodeInView(doc.group, this.stage)) {
         doc.kImage.show();
       } else {

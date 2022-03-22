@@ -1,3 +1,5 @@
+import { Discrepancy } from '../../components/LineReviewViewer/LineReviewViewer';
+
 export type BoundingBox = {
   x: number;
   y: number;
@@ -65,6 +67,7 @@ enum DiscrepancyStatus {
 export enum LineReviewStatus {
   OPEN = 'OPEN',
   REVIEWED = 'REVIEWED',
+  COMPLETED = 'COMPLETED',
 }
 
 type LineReviewDiscrepancy = {
@@ -95,6 +98,10 @@ export type DocumentsForLine = {
   externalId: string;
   line: string;
   parsedDocuments: string[];
+};
+
+export type LineReviewState = {
+  discrepancies: Discrepancy[];
 };
 
 export enum AnnotationType {

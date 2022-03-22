@@ -129,6 +129,7 @@ const ReactOrnate = ({
 
     ornateViewer.current = new CogniteOrnate({
       container: `#${componentContainerId}`,
+      shouldShowImagesWhenZoomedOut: true,
     });
 
     // NEXT:

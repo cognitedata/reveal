@@ -1,4 +1,5 @@
 import { Drawing } from '@cognite/ornate';
+import { KonvaEventObject } from 'konva/lib/Node';
 import head from 'lodash/head';
 import sortBy from 'lodash/sortBy';
 
@@ -16,7 +17,7 @@ const getDiscrepancyCircleMarkersForDocument = (
   line: string,
   document: ParsedDocument,
   discrepancies: Discrepancy[],
-  onMarkerClick?: (discrepancy: Discrepancy) => void
+  onMarkerClick?: (event: MouseEvent, discrepancy: Discrepancy) => void
 ): Drawing[] =>
   discrepancies
     .map((discrepancy, index) => ({
@@ -44,7 +45,8 @@ const getDiscrepancyCircleMarkersForDocument = (
         document.externalId
       )}-circle-marker-${index}`,
       type: 'circleMarker',
-      onClick: () => onMarkerClick?.(discrepancy),
+      onClick: ({ evt }: KonvaEventObject<MouseEvent>) =>
+        onMarkerClick?.(evt, discrepancy),
       attrs: {
         id: `${getKonvaSelectorSlugByExternalId(
           document.externalId

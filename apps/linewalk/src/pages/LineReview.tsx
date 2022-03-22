@@ -10,9 +10,11 @@ import styled from 'styled-components';
 
 import exportDocumentsToPdf from '../components/LineReviewViewer/exportDocumentsToPdf';
 import getUniqueDocumentsByDiscrepancy from '../components/LineReviewViewer/getUniqueDocumentsByDiscrepancy';
-import { Discrepancy } from '../components/LineReviewViewer/LineReviewViewer';
 import mapPidAnnotationIdsToIsoAnnotationIds from '../components/LineReviewViewer/mapPidAnnotationIdsToIsoAnnotationIds';
-import { updateLineReviews } from '../modules/lineReviews/api';
+import {
+  saveLineReviewState,
+  updateLineReviews,
+} from '../modules/lineReviews/api';
 import { DocumentType, LineReviewStatus } from '../modules/lineReviews/types';
 import useLineReview from '../modules/lineReviews/useLineReview';
 
@@ -37,11 +39,11 @@ const LineReview = () => {
   const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
-  const [discrepancies, setDiscrepancies] = useState<Discrepancy[]>([]);
 
   const { client } = useAuthContext();
+  const { isLoading, lineReview, documents, discrepancies, setDiscrepancies } =
+    useLineReview(id);
 
-  const { isLoading, lineReview, documents } = useLineReview(id);
   if (isLoading) {
     return (
       <LoaderContainer>
@@ -63,25 +65,16 @@ const LineReview = () => {
   const onReportBackSavePress = async () => {
     setIsReportBackModalOpen(false);
 
-    if (client && discrepancies.length > 0) {
-      await client.events.create(
-        discrepancies.map((discrepancy) => ({
-          type: 'discrepancy',
-          startTime: new Date(),
-          endTime: new Date(),
-          assetIds: [5375761618838894], // Hardcoded asset for L132.
-          metadata: {},
-          description: discrepancy.comment,
-        }))
-      );
+    if (client === undefined) {
+      return;
     }
 
-    updateLineReviews([
-      {
-        ...lineReview,
-        status: LineReviewStatus.REVIEWED,
-      },
-    ]);
+    await saveLineReviewState(client, lineReview, { discrepancies });
+
+    await updateLineReviews(client, {
+      ...lineReview,
+      status: LineReviewStatus.COMPLETED,
+    });
     history.push(PagePath.LINE_REVIEWS);
   };
 

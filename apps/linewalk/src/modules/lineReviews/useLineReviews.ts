@@ -1,28 +1,28 @@
+import { useEffect, useState } from 'react';
+import { useAuthContext } from '@cognite/react-container';
 import { LineReview } from 'modules/lineReviews/types';
-import { useState } from 'react';
-import { toast } from '@cognite/cogs.js';
 
-import { getLineReviews, updateLineReviews } from './api';
+import { getLineReviews } from './api';
 
 const useLineReviews = () => {
+  const { client } = useAuthContext();
+
   const [isLoading, setIsLoading] = useState(true);
   const [lineReviews, setLineReviews] = useState<LineReview[]>([]);
-  const populateLineReviews = async () => {
-    const lineReviews = await getLineReviews();
-    setLineReviews(lineReviews);
-    setIsLoading(false);
-  };
-  const updateLineReview = async (nextLineReview: LineReview) => {
-    await updateLineReviews([nextLineReview]);
-    await populateLineReviews();
-    toast.success({ message: 'LineReview updated!' });
-  };
+  useEffect(() => {
+    if (client === undefined) {
+      return;
+    }
+    (async () => {
+      const lineReviews = await getLineReviews(client);
+      setLineReviews(lineReviews);
+      setIsLoading(false);
+    })();
+  }, [client]);
 
   return {
     isLoading,
     lineReviews,
-    populateLineReviews,
-    updateLineReview,
   };
 };
 

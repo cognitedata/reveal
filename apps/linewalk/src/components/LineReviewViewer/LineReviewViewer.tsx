@@ -3,10 +3,11 @@ import { CogniteOrnate } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
+import keyBy from 'lodash/keyBy';
 import {
-  ParsedDocument,
   DocumentType,
   LineReview,
+  ParsedDocument,
 } from 'modules/lineReviews/types';
 import { useEffect, useState } from 'react';
 import layers from 'utils/z';
@@ -24,8 +25,8 @@ import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
 import getDocumentByExternalId from './getDocumentByExternalId';
 import getFileConnections from './getFileConnections';
-import getLinkByAnnotationId from './getLinkByAnnotationId';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
+import getLinkByAnnotationId from './getLinkByAnnotationId';
 import getOpacityGroupByDocument from './getOpacityGroupByDocument';
 import IsoModal from './IsoModal';
 import ReactOrnate, {
@@ -154,41 +155,43 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     useWorkspaceTools(isoOrnateRef);
 
   useEffect(() => {
-    (async () => {
-      setPdfDocuments(
-        await Promise.all([
-          ...documents
-            .filter(({ type }) => type === DocumentType.PID)
-            .map(async (document, index) => ({
-              id: getKonvaSelectorSlugByExternalId(document.externalId),
-              url: await getDocumentUrlByExternalId(client)(
-                document.pdfExternalId
-              ),
-              pageNumber: 1,
-              row: 1,
-              column: index + 1,
-              type: document.type,
-              name: withoutFileExtension(document.pdfExternalId),
-            })),
-          ...documents
-            .filter(({ type }) => type === DocumentType.ISO)
-            .map(async (document, index) => ({
-              id: getKonvaSelectorSlugByExternalId(document.externalId),
-              url: await getDocumentUrlByExternalId(client)(
-                document.pdfExternalId
-              ),
-              pageNumber: 1,
-              row: 2,
-              column: index + 2,
-              type: document.type,
-              name: withoutFileExtension(document.pdfExternalId),
-            })),
-        ])
-      );
+    if (client !== undefined) {
+      (async () => {
+        setPdfDocuments(
+          await Promise.all([
+            ...documents
+              .filter(({ type }) => type === DocumentType.PID)
+              .map(async (document, index) => ({
+                id: getKonvaSelectorSlugByExternalId(document.externalId),
+                url: await getDocumentUrlByExternalId(client)(
+                  document.pdfExternalId
+                ),
+                pageNumber: 1,
+                row: 1,
+                column: index + 1,
+                type: document.type,
+                name: withoutFileExtension(document.pdfExternalId),
+              })),
+            ...documents
+              .filter(({ type }) => type === DocumentType.ISO)
+              .map(async (document, index) => ({
+                id: getKonvaSelectorSlugByExternalId(document.externalId),
+                url: await getDocumentUrlByExternalId(client)(
+                  document.pdfExternalId
+                ),
+                pageNumber: 1,
+                row: 2,
+                column: index + 1,
+                type: document.type,
+                name: withoutFileExtension(document.pdfExternalId),
+              })),
+          ])
+        );
 
-      setIsInitialized(true);
-    })();
-  }, []);
+        setIsInitialized(true);
+      })();
+    }
+  }, [client]);
 
   if (!isInitialized || !documents || !pdfDocuments) {
     return null;
@@ -205,35 +208,45 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return [...annotationIds, annotationId].sort();
     });
 
+  const onLinkClick = (
+    event: KonvaEventObject<MouseEvent>,
+    annotationId: string
+  ) => {
+    const link =
+      getLinkByAnnotationId(documents, annotationId) ??
+      getLinkByAnnotationId(documents, annotationId, true);
+    if (!link) {
+      console.warn(
+        `No link found for ${annotationId}`,
+        documents.filter((document) =>
+          document.linking.some(
+            (link) =>
+              link.from.annotationId === annotationId ||
+              link.to.annotationId === annotationId
+          )
+        )
+      );
+      return;
+    }
+
+    const isLinkedAnnotationInIso =
+      getDocumentByExternalId(documents, link.to.documentId).type ===
+      DocumentType.ISO;
+    if (isLinkedAnnotationInIso && !isIsoModalOpen) {
+      setIsIsoModalOpen(true);
+    }
+
+    centerOnAnnotationByAnnotationId(
+      documents,
+      isLinkedAnnotationInIso ? isoOrnateRef : ornateRef,
+      link.to.annotationId
+    );
+  };
+
   const onAnnotationClick = (
     { evt }: KonvaEventObject<MouseEvent>,
     annotationId: string
   ): void => {
-    if (tool === WorkspaceTool.LINK) {
-      const link =
-        getLinkByAnnotationId(documents, annotationId) ??
-        getLinkByAnnotationId(documents, annotationId, true);
-      if (!link) {
-        console.warn(`No link found for ${annotationId}`);
-        return;
-      }
-
-      const isLinkedAnnotationInIso =
-        getDocumentByExternalId(documents, link.to.documentId).type ===
-        DocumentType.ISO;
-      if (isLinkedAnnotationInIso && !isIsoModalOpen) {
-        setIsIsoModalOpen(true);
-      }
-
-      centerOnAnnotationByAnnotationId(
-        documents,
-        isLinkedAnnotationInIso ? isoOrnateRef : ornateRef,
-        link.to.annotationId
-      );
-
-      return;
-    }
-
     if (tool !== WorkspaceTool.SELECT) {
       return;
     }
@@ -244,7 +257,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
     if (foundDiscrepancy) {
       setPendingDiscrepancy(foundDiscrepancy);
-      setDiscrepancyModalState((prevState) => ({ ...prevState, isOpen: true }));
+      setDiscrepancyModalState((prevState) => ({
+        ...prevState,
+        position: {
+          x: evt.clientX + DISCREPANCY_MODAL_OFFSET_X,
+          y: evt.clientY + DISCREPANCY_MODAL_OFFSET_Y,
+        },
+        isOpen: true,
+      }));
       return;
     }
 
@@ -309,6 +329,11 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return [];
     }
 
+    const documentsByExternalId = keyBy(
+      documents,
+      (document) => document.externalId
+    );
+
     return [
       ...getAnnotationOverlay(
         lineReview.id,
@@ -334,34 +359,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           }
         )
       ),
-      ...(tool === WorkspaceTool.LINK
-        ? [
-            ...getAnnotationOverlay(
-              lineReview.id,
-              document,
-              document.linking.map(
-                ({ from: { annotationId } }) => annotationId
-              ),
-              'navigatable',
-              {
-                stroke: '#39A263',
-                strokeWidth: 3,
-                dash: [3, 3],
-              }
-            ),
-            ...getAnnotationOverlay(
-              lineReview.id,
-              document,
-              document.linking.map(({ to: { annotationId } }) => annotationId),
-              'navigatable-target-',
-              {
-                stroke: '#39A263',
-                strokeWidth: 3,
-                dash: [3, 3],
-              }
-            ),
-          ]
-        : []),
       ...getAnnotationOverlay(
         lineReview.id,
         document,
@@ -373,19 +370,67 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           stroke: 'transparent',
           strokeWidth: 3,
         },
-        [WorkspaceTool.SELECT, WorkspaceTool.LINK].includes(tool)
-          ? onAnnotationClick
-          : undefined
+        tool === WorkspaceTool.SELECT ? onAnnotationClick : undefined
       ),
+      ...(tool === WorkspaceTool.LINK
+        ? [
+            ...getAnnotationOverlay(
+              lineReview.id,
+              document,
+              document.linking
+                .filter(
+                  ({ from, to }) =>
+                    documentsByExternalId[from.documentId] !== undefined &&
+                    documentsByExternalId[to.documentId] !== undefined &&
+                    documentsByExternalId[from.documentId].type ===
+                      DocumentType.PID
+                )
+                .map(({ from: { annotationId } }) => annotationId),
+              'navigatable-pid-to-iso',
+              {
+                stroke: '#39A263',
+                strokeWidth: 3,
+                dash: [3, 3],
+              },
+              tool === WorkspaceTool.LINK ? onLinkClick : undefined
+            ),
+            ...getAnnotationOverlay(
+              lineReview.id,
+              document,
+              document.linking
+                .filter(
+                  ({ from, to }) =>
+                    documentsByExternalId[from.documentId] !== undefined &&
+                    documentsByExternalId[to.documentId] !== undefined &&
+                    documentsByExternalId[from.documentId].type ===
+                      DocumentType.PID &&
+                    documentsByExternalId[to.documentId].type ===
+                      DocumentType.PID
+                )
+                .map(({ to: { annotationId } }) => annotationId),
+              'navigatable-target-pid-to-pid',
+              {
+                stroke: '#39A263',
+                strokeWidth: 3,
+                dash: [3, 3],
+              },
+              tool === WorkspaceTool.LINK ? onLinkClick : undefined
+            ),
+          ]
+        : []),
       ...getDiscrepancyCircleMarkersForDocument(
         lineReview.id,
         document,
         discrepancies,
         tool === WorkspaceTool.SELECT
-          ? (discrepancy) => {
+          ? (event, discrepancy) => {
               setPendingDiscrepancy(discrepancy);
               setDiscrepancyModalState((prevState) => ({
                 ...prevState,
+                position: {
+                  x: event.clientX + DISCREPANCY_MODAL_OFFSET_X,
+                  y: event.clientY + DISCREPANCY_MODAL_OFFSET_Y,
+                },
                 isOpen: true,
               }));
             }
@@ -419,10 +464,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
               .filter(isNotUndefined),
           })),
           tool === WorkspaceTool.SELECT
-            ? (discrepancy) => {
+            ? (event, discrepancy) => {
                 setPendingDiscrepancy(discrepancy);
                 setDiscrepancyModalState((prevState) => ({
                   ...prevState,
+                  position: {
+                    x: event.clientX + DISCREPANCY_MODAL_OFFSET_X,
+                    y: event.clientY + DISCREPANCY_MODAL_OFFSET_Y,
+                  },
                   isOpen: true,
                 }));
               }
@@ -431,6 +480,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       ),
   ];
 
+  // const groups: Group[] = [];
   const groups = ornateRef
     ? getFileConnectionGroups({
         ornateViewer: ornateRef,

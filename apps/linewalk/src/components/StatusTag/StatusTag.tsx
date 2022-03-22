@@ -22,6 +22,14 @@ const StatusTag = ({ status }: StatusTagProps) => {
     );
   }
 
+  if (status === LineReviewStatus.COMPLETED) {
+    return (
+      <Label size="small" variant="success">
+        {status}
+      </Label>
+    );
+  }
+
   return <Label>{status}</Label>;
 };
 
