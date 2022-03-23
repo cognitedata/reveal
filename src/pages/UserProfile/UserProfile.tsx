@@ -130,7 +130,7 @@ const UserProfile = () => {
         <article className="last-col">
           <Button type="tertiary">{t.Logout}</Button>
           <p className="tags">
-            {t['Cognite Charts Version']} {config.version}
+            {t['Cognite Charts Version']} {config.version.substring(0, 7)}
           </p>
         </article>
       </UserProfileWrap>

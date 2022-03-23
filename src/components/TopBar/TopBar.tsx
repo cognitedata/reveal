@@ -95,7 +95,9 @@ const TopBarWrapper = () => {
                       {t['Privacy policy']}
                     </Menu.Item>
                     <Menu.Item onClick={showIntercom}>{t.Feedback}</Menu.Item>
-                    <Menu.Footer>v {config.version}</Menu.Footer>
+                    <Menu.Footer>
+                      v {config.version.substring(0, 7)}
+                    </Menu.Footer>
                   </Menu>
                 ),
               },
