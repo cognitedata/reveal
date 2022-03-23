@@ -6,7 +6,13 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
-import { BasicPipelineExecutor, CadMaterialManager, DefaultRenderPipeline } from '@reveal/rendering';
+import {
+  AntiAliasingMode,
+  BasicPipelineExecutor,
+  CadMaterialManager,
+  defaultRenderOptions,
+  DefaultRenderPipeline
+} from '@reveal/rendering';
 import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
 import { NumericRange, revealEnv } from '@reveal/utilities';
@@ -89,10 +95,13 @@ async function init() {
   controlsTest.attach(model);
   customObjects.add(controlsTest);
 
+  const renderOptions = defaultRenderOptions;
+
   const renderManager = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipeline(
     materialManager,
     scene,
+    defaultRenderOptions,
     [{ model, modelIdentifier: model.cadModelIdentifier }],
     customObjects
   );
@@ -127,6 +136,31 @@ async function init() {
     ...DefaultNodeAppearance.Default,
     outlineColor: 6
   });
+
+  const updateRenderOptions = () => {
+    defaultRenderPipeline.renderOptions = renderOptions;
+    render();
+  };
+
+  const renderOptionsGUI = gui.addFolder('Render Options');
+  renderOptionsGUI.open();
+  // renderOptions.edgeDetectionParameters.
+  const edgeDetectionParametersGUI = renderOptionsGUI.addFolder('Edge Detection');
+  edgeDetectionParametersGUI.add(renderOptions.edgeDetectionParameters, 'enabled').onChange(updateRenderOptions);
+  edgeDetectionParametersGUI.open();
+
+  const antiAliasingGui = renderOptionsGUI.addFolder('Anti Aliasing');
+  antiAliasingGui
+    .add(renderOptions, 'antiAliasing', [AntiAliasingMode.NoAA, AntiAliasingMode.FXAA])
+    .onChange(updateRenderOptions);
+  antiAliasingGui.add(renderOptions, 'multiSampleCountHint', 0, 16, 1);
+  antiAliasingGui.open();
+
+  const ssaoOptionsGui = renderOptionsGUI.addFolder('SSAO');
+  ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleRadius', 0, 30).onChange(updateRenderOptions);
+  ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleSize', 0, 256, 1).onChange(updateRenderOptions);
+  ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias', 0, 1).onChange(updateRenderOptions);
+  ssaoOptionsGui.open();
 
   controls.addEventListener('change', () => {
     cadModelUpdateHandler.updateCamera(camera);

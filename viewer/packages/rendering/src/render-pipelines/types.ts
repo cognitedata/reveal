@@ -3,6 +3,8 @@
  */
 
 import * as THREE from 'three';
+import { BlitPass } from '../render-passes/BlitPass';
+import { SSAOPass } from '../render-passes/SSAOPass';
 import { RenderPass } from '../RenderPass';
 
 export type RenderTargetData = {
@@ -24,7 +26,7 @@ export type DefaultRenderPipelinePasses = {
   back: {
     geometry: RenderPass;
     blitToComposition: RenderPass;
-    ssao: RenderPass;
+    ssao: SSAOPass;
     blitSsaoBlur: RenderPass;
     edgeDetect: RenderPass;
     outline: RenderPass;
@@ -38,5 +40,5 @@ export type DefaultRenderPipelinePasses = {
     deferred: RenderPass;
   };
   blitComposite: RenderPass;
-  blitToOutput: RenderPass;
+  blitToOutput: BlitPass;
 };

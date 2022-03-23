@@ -11,6 +11,14 @@ import { BlitOptions, ThreeUniforms, BlitEffect, BlendOptions } from './types';
 export class BlitPass implements RenderPass {
   private readonly _renderTarget: THREE.WebGLRenderTarget;
   private readonly _fullScreenTriangle: THREE.Mesh;
+  private readonly _blitShaderMaterial: THREE.RawShaderMaterial;
+
+  set blitEffect(effect: BlitEffect) {
+    const defines = {};
+    this.setBlitEffect(effect, defines);
+    this._blitShaderMaterial.defines = defines;
+    this._blitShaderMaterial.needsUpdate = true;
+  }
 
   constructor(options: BlitOptions) {
     const { texture, effect, depthTexture, blendOptions, overrideAlpha } = options;
@@ -26,7 +34,7 @@ export class BlitPass implements RenderPass {
 
     const initializedBlendOptions = this.initializeBlendingOptions(blendOptions); // Uses blendDst value if null
 
-    const blitShaderMaterial = new THREE.RawShaderMaterial({
+    this._blitShaderMaterial = new THREE.RawShaderMaterial({
       vertexShader: blitShaders.vertex,
       fragmentShader: blitShaders.fragment,
       uniforms,
@@ -36,7 +44,7 @@ export class BlitPass implements RenderPass {
       ...initializedBlendOptions
     });
 
-    this._fullScreenTriangle = createFullScreenTriangleMesh(blitShaderMaterial);
+    this._fullScreenTriangle = createFullScreenTriangleMesh(this._blitShaderMaterial);
   }
 
   public render(renderer: THREE.WebGLRenderer, _: THREE.Camera): Promise<THREE.WebGLRenderTarget> {

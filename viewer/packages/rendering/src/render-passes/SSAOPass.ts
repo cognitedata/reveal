@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { ssaoShaders } from '../rendering/shaders';
+import { SsaoParameters } from '../rendering/types';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utilities/renderUtilities';
 
@@ -12,15 +13,28 @@ export class SSAOPass implements RenderPass {
   private readonly _fullScreenTriangle: THREE.Mesh;
   private readonly _ssaoShaderMaterial: THREE.RawShaderMaterial;
 
-  constructor(depthTexture?: THREE.Texture) {
-    const sampleSize = 64;
+  set ssaoParameters(ssaoParameters: SsaoParameters) {
+    const { sampleSize, depthCheckBias, sampleRadius } = ssaoParameters;
+
+    this._ssaoShaderMaterial.uniforms.sampleRadius.value = sampleRadius;
+    this._ssaoShaderMaterial.uniforms.bias.value = depthCheckBias;
+
+    if (sampleSize !== this._ssaoShaderMaterial.defines.MAX_KERNEL_SIZE) {
+      this._ssaoShaderMaterial.defines.MAX_KERNEL_SIZE = sampleSize;
+      this._ssaoShaderMaterial.uniforms.kernel.value = this.createKernel(sampleSize);
+      this._ssaoShaderMaterial.needsUpdate = true;
+    }
+  }
+
+  constructor(depthTexture: THREE.Texture, ssaoParameters: SsaoParameters) {
+    const { sampleSize, depthCheckBias, sampleRadius } = ssaoParameters;
 
     const uniforms = {
       tDepth: { value: depthTexture },
       projMatrix: { value: new THREE.Matrix4() },
       inverseProjectionMatrix: { value: new THREE.Matrix4() },
-      sampleRadius: { value: 1.0 },
-      bias: { value: 0.0125 },
+      sampleRadius: { value: sampleRadius },
+      bias: { value: depthCheckBias },
       kernel: { value: this.createKernel(sampleSize) }
     };
 
@@ -51,8 +65,8 @@ export class SSAOPass implements RenderPass {
     return;
   }
 
-  private createKernel(kernelSize: number) {
-    const result = [];
+  private createKernel(kernelSize: number): THREE.Vector3[] {
+    const result: THREE.Vector3[] = [];
     for (let i = 0; i < kernelSize; i++) {
       const sample = new THREE.Vector3();
       while (sample.length() < 0.5) {

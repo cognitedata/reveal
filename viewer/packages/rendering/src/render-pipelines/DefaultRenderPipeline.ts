@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import cloneDeep from 'lodash/cloneDeep';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { BlitPass } from '../render-passes/BlitPass';
 import { GeometryPass } from '../render-passes/GeometryPass';
@@ -16,6 +17,7 @@ import { OutlinePass } from '../render-passes/OutlinePass';
 import { IdentifiedModel } from '../utilities/types';
 import { DefaultRenderPipelinePasses, RenderTargetData } from './types';
 import { BlitEffect, alphaMaskBlendOptions, transparentBlendOptions } from '../render-passes/types';
+import { AntiAliasingMode, RenderOptions } from '../rendering/types';
 
 export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
@@ -24,10 +26,26 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _cadModels: IdentifiedModel[];
   private readonly _customObjects: THREE.Group;
   private readonly _defaultRenderPipelinePasses: DefaultRenderPipelinePasses;
+  private _renderOptions: RenderOptions;
+
+  set renderOptions(renderOptions: RenderOptions) {
+    const { ssaoRenderParameters } = renderOptions;
+    this._defaultRenderPipelinePasses.back.ssao.ssaoParameters = ssaoRenderParameters;
+
+    if (renderOptions.antiAliasing !== this._renderOptions.antiAliasing) {
+      const blitEffect =
+        AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA]
+          ? BlitEffect.Fxaa
+          : BlitEffect.None;
+      this._defaultRenderPipelinePasses.blitToOutput.blitEffect = blitEffect;
+    }
+    this._renderOptions = cloneDeep(renderOptions);
+  }
 
   constructor(
     materialManager: CadMaterialManager,
     scene: THREE.Scene,
+    renderOptions: RenderOptions,
     cadModels?: IdentifiedModel[],
     customObjects?: THREE.Group
   ) {
@@ -44,8 +62,9 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     };
     this._cadModels = cadModels;
     this._customObjects = customObjects;
+    this._renderOptions = cloneDeep(renderOptions);
 
-    this._defaultRenderPipelinePasses = this.initializeRenderPasses();
+    this._defaultRenderPipelinePasses = this.initializeRenderPasses(renderOptions);
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
@@ -123,7 +142,9 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.setRenderTarget(this._renderTargetData.opaqueComposition);
     yield blitSsaoBlur;
 
-    yield edgeDetect;
+    if (this._renderOptions.edgeDetectionParameters.enabled) {
+      yield edgeDetect;
+    }
     yield outline;
   }
 
@@ -149,7 +170,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.sortObjects = false;
     renderer.autoClear = false;
     renderer.setClearAlpha(0.0);
-    this._cadModels.forEach(identifiedModel => {
+    this._cadModels?.forEach(identifiedModel => {
       identifiedModel.model.matrixAutoUpdate = false;
     });
     this._cadScene.autoUpdate = false;
@@ -159,7 +180,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this.updateRenderTargetSizes(renderer);
   }
 
-  private initializeRenderPasses(): DefaultRenderPipelinePasses {
+  private initializeRenderPasses(renderOptions: RenderOptions): DefaultRenderPipelinePasses {
+    const { ssaoRenderParameters } = renderOptions;
     const inFront = {
       geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Effects),
       blitToComposition: new BlitPass({
@@ -176,7 +198,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
         texture: this._renderTargetData.color.texture,
         depthTexture: this._renderTargetData.color.depthTexture
       }),
-      ssao: new SSAOPass(this._renderTargetData.color.depthTexture),
+      ssao: new SSAOPass(this._renderTargetData.color.depthTexture, ssaoRenderParameters),
       blitSsaoBlur: new BlitPass({
         texture: this._renderTargetData.ssao.texture,
         effect: BlitEffect.GaussianBlur,
@@ -208,7 +230,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
     const blitToOutput = new BlitPass({
       texture: this._renderTargetData.finalComposition.texture,
-      effect: BlitEffect.Fxaa
+      effect: BlitEffect.Fxaa,
+      overrideAlpha: 1.0
     });
 
     return { inFront, back, custom, ghost, blitComposite, blitToOutput };

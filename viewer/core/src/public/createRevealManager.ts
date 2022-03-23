@@ -116,7 +116,7 @@ export function createRevealManager(
   const materialManager = new CadMaterialManager();
   const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
   const pipelineExecutor = new BasicPipelineExecutor(renderer);
-  const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderables);
+  const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderOptions, renderables);
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,
