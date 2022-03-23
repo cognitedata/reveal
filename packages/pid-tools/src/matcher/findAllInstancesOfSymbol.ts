@@ -16,9 +16,11 @@ export const findAllInstancesOfSymbol = (
     symbol.svgRepresentation
   );
 
-  const matcherWithRotations = instanceMatcher.getUniqueRotations([
-    0, 90, 180, 270,
-  ]);
+  const rotationsToCheck =
+    symbol.symbolType === 'Equipment' ? [0] : [0, 90, 180, 270];
+
+  const matcherWithRotations =
+    instanceMatcher.getUniqueRotations(rotationsToCheck);
 
   for (
     let rotationIndex = 0;
