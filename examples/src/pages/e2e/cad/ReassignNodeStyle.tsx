@@ -58,7 +58,7 @@ function ReassignNodeStyle() {
   return (
     <Cognite3DTestViewer 
       modelUrls={['primitives']}
-      modelAddedCallback={handleModelAdded} 
+      cadModelAddedCallback={handleModelAdded} 
       initializeCallback={(viewer: Cognite3DViewer) => {
         viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50), 
           target: new THREE.Vector3()});
