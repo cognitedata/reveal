@@ -6,16 +6,12 @@ import * as THREE from 'three';
 
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
-
-import { CadManager } from '../datamodels/cad/CadManager';
-import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
 import { LoadingStateChangeListener, PointCloudBudget } from './types';
-import { SupportedModelTypes } from '../datamodels/base';
-import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
-import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
-import { GeometryFilter } from '..';
 
-import { CadModelBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import { CadManager, GeometryFilter, CadModelSectorLoadStatistics } from '@reveal/cad-model';
+import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
+import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
+import { CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';

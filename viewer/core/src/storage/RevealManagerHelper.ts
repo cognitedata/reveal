@@ -4,8 +4,8 @@
 import * as THREE from 'three';
 
 import { AddModelOptions } from '../public/migration/types';
-import { RevealOptions } from '../public/types';
 import { createRevealManager } from '../public/createRevealManager';
+import { RevealOptions } from '../public/types';
 
 import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, RevealManager } from '../internals';
 
@@ -41,9 +41,7 @@ export class RevealManagerHelper {
       case 'local':
         {
           this.addCadModel = model => RevealManagerHelper.addLocalCadModel(model, manager);
-          this.addPointCloudModel = () => {
-            throw new Error('Local point cloud models are not supported');
-          };
+          this.addPointCloudModel = model => RevealManagerHelper.addLocalPointCloudModel(model, manager);
         }
         break;
       default:
@@ -132,6 +130,17 @@ export class RevealManagerHelper {
     }
     const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId);
     return revealManager.addModel('cad', modelIdentifier, { geometryFilter: model.geometryFilter });
+  }
+
+  private static addLocalPointCloudModel(
+    model: AddModelOptions,
+    revealManager: RevealManager
+  ): Promise<PointCloudNode> {
+    if (model.localPath === undefined) {
+      throw new Error('addLocalPointCloudModel only works with local models');
+    }
+    const modelIdentifier = new LocalModelIdentifier(model.localPath);
+    return revealManager.addModel('pointcloud', modelIdentifier);
   }
 
   /**

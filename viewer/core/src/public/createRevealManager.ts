@@ -3,13 +3,13 @@
  */
 import * as THREE from 'three';
 
-import { createCadManager } from '../datamodels/cad/createCadManager';
-import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
-import { RevealManager } from './RevealManager';
 import { RevealOptions } from './types';
+import { RevealManager } from './RevealManager';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
+import { createCadManager } from '@reveal/cad-model';
+import { createPointCloudManager } from '@reveal/pointclouds';
 import {
   ModelMetadataProvider,
   CdfModelMetadataProvider,
@@ -106,7 +106,10 @@ export function createRevealManager(
     renderer,
     materialManager,
     renderManager,
-    revealOptions
+    {
+      ...revealOptions.internal?.cad,
+      continuousModelStreaming: revealOptions.continuousModelStreaming
+    }
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
   return new RevealManager(cadManager, renderManager, pointCloudManager);

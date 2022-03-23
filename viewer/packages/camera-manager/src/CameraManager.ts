@@ -20,7 +20,8 @@ export interface CameraManager {
    */
   getCamera(): THREE.PerspectiveCamera;
   /**
-   * Set camera's state. Rotation and target can't be set at the same time. as they could conflict.
+   * Set camera's state. Rotation and target can't be set at the same time as they could conflict,
+   * should throw an error if both are passed with non-zero value inside state.
    *
    * @param state Camera state, all fields are optional.
    * @param state.position Camera position in world space.

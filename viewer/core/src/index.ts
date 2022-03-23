@@ -10,13 +10,7 @@
  * @module @cognite/reveal
  */
 
-export { revealEnv, IndexSet, NumericRange } from '@reveal/utilities';
-
-export * from './public/migration/Cognite3DViewer';
-export { BoundingBoxClipper } from './utilities';
-export { Cognite3DModel } from './public/migration/Cognite3DModel';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
-export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
 
 export { ViewerState, ModelState } from './utilities/ViewStateHelper';
 

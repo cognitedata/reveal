@@ -8,5 +8,3 @@ float unpackVec4ToFloat( vec4 packedFloat)
   float mantissa = mod(rgba.y, 128.0) * 65536.0 + rgba.z * 256.0 + rgba.w + 8388608.0;
   return sign * exp2(exponent - 23.0) * mantissa;   
 }
-
-#pragma glslify: export(unpackVec4ToFloat)

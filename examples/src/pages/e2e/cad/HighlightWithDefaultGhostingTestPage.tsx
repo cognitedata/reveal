@@ -20,7 +20,7 @@ function HighlightWithDefaultGhostingTestPage() {
   return (
     <Cognite3DTestViewer
       modelUrls={['primitives']}
-      modelAddedCallback={handleModelAdded}
+      cadModelAddedCallback={handleModelAdded}
       initializeCallback={(viewer: Cognite3DViewer) => {
           viewer.cameraManager.setCameraState({ position: new THREE.Vector3(12, -4, -45) });
 
