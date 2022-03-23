@@ -625,6 +625,7 @@ export class CognitePid {
 
     this.render();
     this.splitPaths();
+    this.parseLineNumbers();
     this.emit(EventType.LOAD);
     this.refresh();
   }
@@ -986,6 +987,22 @@ export class CognitePid {
     if (refresh) {
       this.refresh();
     }
+  }
+
+  parseLineNumbers() {
+    if (this.pidDocument === undefined) return;
+
+    const newLineNumbers = [...this.lineNumbers];
+
+    this.pidDocument.pidLabels.forEach((pidLabel) => {
+      const lineNumber = getLineNumberFromText(pidLabel.text);
+      if (lineNumber === null) return;
+      if (newLineNumbers.includes(lineNumber)) return;
+
+      newLineNumbers.push(lineNumber);
+    });
+
+    this.setLineNumbers(newLineNumbers.sort());
   }
 
   autoAnalysis(documentMetadata: DocumentMetadata) {
