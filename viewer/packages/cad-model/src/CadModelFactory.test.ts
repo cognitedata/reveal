@@ -7,7 +7,13 @@ import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
 import { GeometryFilter } from './GeometryFilter';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/modeldata-api';
+import {
+  ModelDataProvider,
+  ModelMetadataProvider,
+  ModelIdentifier,
+  BlobOutputMetadata,
+  File3dFormat
+} from '@reveal/modeldata-api';
 
 import { It, Mock } from 'moq.ts';
 
@@ -22,7 +28,7 @@ describe('CadModelFactory', () => {
     const mockIdentifier = new Mock<ModelIdentifier>().setup(p => p.revealInternalId).returns(Symbol('test'));
     mockIdentifierObject = mockIdentifier.object();
 
-    const testOutput: BlobOutputMetadata = { blobId: 1, format: 'reveal-directory', version: 8 };
+    const testOutput: BlobOutputMetadata = { blobId: 1, format: File3dFormat.RevealCadModel, version: 8 };
     const testBaseUrl = 'https://test-base-url';
 
     const sector = {

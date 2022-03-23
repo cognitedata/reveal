@@ -17,11 +17,7 @@ describe('PotreeGroupWrapper', () => {
   const pollLoadingStatusInterval = 1;
 
   test('getLoadingStateObserver() triggers false initially', done => {
-    const manager = new PotreeGroupWrapper(
-      new Potree(),
-      new Mock<THREE.WebGLRenderer>().object(),
-      pollLoadingStatusInterval
-    );
+    const manager = new PotreeGroupWrapper(new Potree(), pollLoadingStatusInterval);
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
   });
   test('getLoadingStateObserver() triggers true after add', done => {
