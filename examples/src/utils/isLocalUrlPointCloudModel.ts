@@ -3,7 +3,7 @@
  * @param addModelOptions 
  * @returns 
  */
-export async function isUrlPointCloudModel(modelBaseUrl: string) {
+export async function isLocalUrlPointCloudModel(modelBaseUrl: string) {
   // The hacky check below is due to webpack-dev-server returning 200 for non-existing files. We therefore check if the 
   // response is a valid json.
   const eptJsonRequest = await fetch(modelBaseUrl + '/ept.json');

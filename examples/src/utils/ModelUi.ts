@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
-import { isUrlPointCloudModel } from './isUrlPointCloudModel';
+import { isLocalUrlPointCloudModel } from './isLocalUrlPointCloudModel';
 
 export class ModelUi {
   private readonly _viewer: Cognite3DViewer;
@@ -138,7 +138,7 @@ export class ModelUi {
 }
 
 async function loadLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CognitePointCloudModel | Cognite3DModel> {
-  const isPointCloud = addModelOptions.localPath !== undefined && await isUrlPointCloudModel(addModelOptions.localPath);
+  const isPointCloud = addModelOptions.localPath !== undefined && await isLocalUrlPointCloudModel(addModelOptions.localPath);
   return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
 }
 

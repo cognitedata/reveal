@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Container } from '../../components/styled';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, Cognite3DViewerOptions, CognitePointCloudModel, GeometryFilter } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
-import { isUrlPointCloudModel } from '../../utils/isUrlPointCloudModel';
+import { isLocalUrlPointCloudModel } from '../../utils/isLocalUrlPointCloudModel';
 
 type Props = {
   viewerOptions?: Cognite3DViewerOptions;
@@ -65,7 +65,7 @@ export function Cognite3DTestViewer(props: Props) {
 
     async function addModel(modelIndex: number, modelUrl: string, geometryFilter?: GeometryFilter) {
       const fullModelUrl = `${window.location.origin}/${modelUrl}`;
-      const isPointCloud = await isUrlPointCloudModel(fullModelUrl);
+      const isPointCloud = await isLocalUrlPointCloudModel(fullModelUrl);
       const addOptions: AddModelOptions = {
         modelId: -1,
         revisionId: -1,
