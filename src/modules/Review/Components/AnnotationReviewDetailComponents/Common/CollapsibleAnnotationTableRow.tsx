@@ -3,10 +3,14 @@ import {
   AnnotationTableItem,
   AnnotationTableRowProps,
 } from 'src/modules/Review/types';
-import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotatationTableRow/AnnotationTableRow';
 import { Col, Collapse, Row } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { KeypointVertex } from 'src/utils/AnnotationUtils';
+import { KeyboardShortCutExpandChildSelectable } from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
+import { KeypointAnnotationReviewCollapseHeader } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/KeypointAnnotationReviewHeaderRow';
+import { ExpandIconComponent } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/ExpandIconComponent';
+import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
+import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
 
 const KeypointRow = ({
   keypoint,
@@ -43,8 +47,6 @@ export const CollapsibleAnnotationTableRow = ({
   onVisibilityChange,
   onApprove,
   onKeyPointSelect,
-  iconComponent,
-  borderColor,
   expandByDefault,
 }: AnnotationTableRowProps & {
   onKeyPointSelect?: (id: string) => void;
@@ -74,124 +76,103 @@ export const CollapsibleAnnotationTableRow = ({
     else options = { ...options, activeKey: 0 };
 
     return (
-      <div
-        id={`row-${annotation.id}`}
-        className={`annotation-table-row ${
-          annotation.selected ? 'active' : ''
-        }`}
+      <StyledCollapse
+        expandIcon={ExpandIconComponent}
+        {...options}
+        onChange={(nextKey) => onChange(annotation, nextKey)}
       >
-        <Collapse
-          {...options}
-          onChange={(nextKey) => onChange(annotation, nextKey)}
+        <StyledCollapsePanel
+          header={
+            <KeypointAnnotationReviewCollapseHeader
+              annotation={annotation}
+              onSelect={onSelect}
+              onDelete={onDelete}
+              onApprove={onApprove}
+              onVisibilityChange={onVisibilityChange}
+              showColorCircle={false}
+            />
+          }
+          key={1}
+          className={annotation.selected ? 'active' : ''}
         >
-          <StyledCollapsePanel
-            header={
-              <AnnotationTableRow
-                annotation={annotation}
-                onSelect={onSelect}
-                onDelete={onDelete}
-                onApprove={onApprove}
-                onVisibilityChange={onVisibilityChange}
-                iconComponent={iconComponent}
-                borderColor={borderColor}
-              />
-            }
-            key={1}
-            className={annotation.selected ? 'active' : ''}
-          >
-            {annotation.region.vertices.map((keypoint) => (
+          {annotation.region.vertices.map((keypoint) => (
+            <KeyboardShortCutExpandChildSelectable
+              id={(keypoint as KeypointVertex).id}
+              selected={(keypoint as KeypointVertex).selected}
+              key={(keypoint as KeypointVertex).id}
+            >
               <CollapseRowContainer
-                id={`row-${(keypoint as KeypointVertex).id}`}
-                key={(keypoint as KeypointVertex).id}
                 onClick={() => {
                   if (onKeyPointSelect) {
                     onKeyPointSelect((keypoint as KeypointVertex).id);
                   }
                 }}
-                className={`annotation-table-expand-row ${
-                  (keypoint as KeypointVertex).selected ? 'active' : ''
-                }`}
               >
                 <KeypointRow keypoint={keypoint as KeypointVertex} />
               </CollapseRowContainer>
-            ))}
-            {
-              // Remaining Keypoints
-              annotation.remainingKeypoints &&
-                annotation.remainingKeypoints.map((keypoint) => (
-                  <CollapseRowContainer
-                    id={`annotation-table-row-${
-                      (keypoint as KeypointVertex).id
-                    }`}
-                    key={(keypoint as KeypointVertex).id}
-                  >
-                    <KeypointRow
-                      keypoint={keypoint as KeypointVertex}
-                      remaining
-                    />
-                  </CollapseRowContainer>
-                ))
-            }
-          </StyledCollapsePanel>
-        </Collapse>
-      </div>
+            </KeyboardShortCutExpandChildSelectable>
+          ))}
+          {
+            // Remaining Keypoints
+            annotation.remainingKeypoints &&
+              annotation.remainingKeypoints.map((keypoint) => (
+                <CollapseRowContainer
+                  id={`annotation-table-row-${(keypoint as KeypointVertex).id}`}
+                  key={(keypoint as KeypointVertex).id}
+                >
+                  <KeypointRow
+                    keypoint={keypoint as KeypointVertex}
+                    remaining
+                  />
+                </CollapseRowContainer>
+              ))
+          }
+        </StyledCollapsePanel>
+      </StyledCollapse>
     );
   }
   return (
-    <TableRowContainer
-      className={`annotation-table-row ${annotation.selected ? 'active' : ''}`}
-      id={`row-${annotation.id}`}
-    >
+    <SidePanelRow>
       <AnnotationTableRow
         annotation={annotation}
         onSelect={onSelect}
         onDelete={onDelete}
         onApprove={onApprove}
         onVisibilityChange={onVisibilityChange}
-        iconComponent={iconComponent}
-        borderColor={borderColor}
+        showColorCircle
       />
-    </TableRowContainer>
+    </SidePanelRow>
   );
 };
 
-const TableRowContainer = styled.div`
-  &:hover {
-    background-color: var(--cogs-greyscale-grey2);
-  }
-  &.active {
-    background-color: var(--cogs-midblue-6);
+const StyledCollapse = styled(Collapse)`
+  background: inherit;
+
+  & > .rc-collapse-item-active > .rc-collapse-header {
+    background: inherit;
   }
 `;
 
 const CollapseRowContainer = styled.div`
   padding: 0 30px;
-
-  &:hover {
-    background-color: var(--cogs-greyscale-grey2);
-  }
-  &.active {
-    background-color: var(--cogs-midblue-6);
-  }
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
 `;
 
 const StyledCollapsePanel = styled(Collapse.Panel)`
-  .rc-collapse-header {
-    padding: 0 0 0 16px;
-  }
-  .rc-collapse-content {
-    padding: 0;
-  }
-  .rc-collapse-content-box {
-    margin: 0;
-    width: 100%;
+  & > .rc-collapse-header {
+    background: #ffffff;
+    padding: 0 0 0 32px;
   }
 
-  &:hover {
-    background-color: var(--cogs-greyscale-grey2);
+  & > .rc-collapse-content {
+    padding: 0;
   }
-  &.active {
-    background-color: var(--cogs-midblue-6);
+
+  & > .rc-collapse-content > .rc-collapse-content-box {
+    margin: 0;
+    width: 100%;
   }
 `;
 
@@ -199,7 +180,7 @@ const StyledRow = styled(Row)`
   width: 100%;
   padding-left: 5px;
   padding-right: 5px;
-  gap: 12px !important;
+  gap: 8px !important;
 `;
 
 const StyledCol = styled(Col)`
@@ -225,7 +206,7 @@ const ColorBox = styled.div<{ color: string }>`
   width: 16px;
   height: 16px;
   background: ${(props) => props.color};
-  border: 0.5px solid #d9d9d9;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
   box-sizing: border-box;
   border-radius: 2px;
 `;

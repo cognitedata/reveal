@@ -1,12 +1,9 @@
 import { FileInfo } from '@cognite/sdk';
 import { OptionType } from '@cognite/cogs.js';
-import { ReactElement, ReactText } from 'react';
+import { ReactText } from 'react';
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import { AnnotationStatus, KeypointItem } from 'src/utils/AnnotationUtils';
-
-export type TO_COMPLETE = number;
-export type COLLECTION_LENGTH = number;
 
 export type KeypointItemCollection = {
   id: string;
@@ -74,8 +71,7 @@ export type AnnotationTableRowProps = {
   onDelete: (id: ReactText) => void;
   onVisibilityChange: (id: ReactText) => void;
   onApprove: (id: ReactText, status: AnnotationStatus) => void;
-  iconComponent?: ReactElement;
-  borderColor?: string;
+  showColorCircle?: boolean;
   expandByDefault?: boolean;
 };
 
