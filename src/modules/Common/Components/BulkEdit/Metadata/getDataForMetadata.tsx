@@ -5,11 +5,15 @@ import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 
-export const getDataForMetadata = (
-  selectedFiles: VisionFile[],
-  bulkEditUnsaved: BulkEditUnsavedState,
-  editPanelState: EditPanelState
-): BulkEditTableDataType[] => {
+export const getDataForMetadata = ({
+  selectedFiles,
+  bulkEditUnsaved,
+  editPanelState,
+}: {
+  selectedFiles: VisionFile[];
+  bulkEditUnsaved: BulkEditUnsavedState;
+  editPanelState: EditPanelState;
+}): BulkEditTableDataType[] => {
   return selectedFiles.map((file) => {
     const { name, id, metadata } = file;
     const { value: activeKey } = editPanelState.metadataActiveKey || {

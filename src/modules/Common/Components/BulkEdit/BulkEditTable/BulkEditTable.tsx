@@ -19,10 +19,12 @@ export const BulkEditTable = ({
   data,
   columns,
   rendererMap,
+  disabled = false,
 }: {
   data: BulkEditTableDataType[];
   columns: any;
   rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
+  disabled?: boolean;
 }) => {
   const Cell = (cellProps: any) => {
     // We use key instead of dataKey to get entries from the renderer map.
@@ -51,6 +53,7 @@ export const BulkEditTable = ({
           maxHeight={Infinity}
           columns={columns}
           components={components}
+          disabled={disabled}
         />
       </TableWrapper>
     </TableContainer>

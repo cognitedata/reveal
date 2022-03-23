@@ -13,7 +13,7 @@ import {
 import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 // import affixStyle from 'antd/es/affix/style/index.less';
-// import alertStyle from 'antd/es/alert/style/index.less';
+import alertStyle from 'antd/es/alert/style/index.less';
 // import anchorStyle from 'antd/es/anchor/style/index.less';
 // import autoCompleteStyle from 'antd/es/auto-complete/style/index.less';
 // import avatarStyle from 'antd/es/avatar/style/index.less';
@@ -83,7 +83,7 @@ import { getContainer } from 'src/utils';
 
 const styles = [
   // affixStyle,
-  // alertStyle,
+  alertStyle,
   // avatarStyle,
   // badgeStyle,
   // breadcrumbStyle,
