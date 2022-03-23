@@ -8,14 +8,13 @@ import { WellKnownUnit } from './WellKnownUnit';
 
 import { callActionWithIndicesAsync } from './callActionWithIndicesAsync';
 
-import { NodeIdAndTreeIndexMaps } from '@reveal/model-base';
+import { NodeIdAndTreeIndexMaps, SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
 import { NumericRange, CameraConfiguration } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
-import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.

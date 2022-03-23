@@ -44,7 +44,7 @@ describe('Reveal visual tests', () => {
     const url = `http://localhost:3000/test/${category}/${testKey}`;
     const blur = snapshotBlur ?? 0;
 
-    retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
+    retry(snapshotName, RETRIES, async () => {
       await screenShotTest(url, snapshotName, blur);
     });
 
