@@ -21,3 +21,7 @@ export const getMockDocumentCategoriesResult = (extras?: any): MSWRequest => {
     return res(ctx.json({ data: responseData, ...extras }));
   });
 };
+
+export const getMockDocumentCategoriesGetWithStatus = (): MSWRequest => {
+  return getMockDocumentCategoriesResult({ success: true, status: 200 });
+};
