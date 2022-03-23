@@ -30,7 +30,7 @@ function OutlineTestPage() {
   return <Cognite3DTestViewer modelUrls={[modelUrl]} 
             fitCameraToModel={false}
             initializeCallback={initializeViewer}
-            modelAddedCallback={styleModel}/>;
+            cadModelAddedCallback={styleModel}/>;
 }
 
 registerVisualTest('cad', 'outlines', 'Outline colors', <OutlineTestPage />)
