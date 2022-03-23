@@ -110,6 +110,12 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.nodes.splice(index, 1);
   }
 
+  traversePointClouds(callback: (pointCloud: PointCloudOctree) => void) {
+    for (const pointCloud of this._pointClouds) {
+      callback(pointCloud);
+    }
+  }
+
   requestRedraw(): void {
     this._needsRedraw = true;
   }
