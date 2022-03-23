@@ -21,8 +21,8 @@ import {
 } from 'src/modules/Review/store/annotationLabel/selectors';
 import {
   selectAnnotationSettingsState,
+  selectVisibleNonRejectedAnnotationsForFile,
   showAnnotationSettingsModel,
-  VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
 import {
   AnnotationCollection,
@@ -43,19 +43,21 @@ import isEmpty from 'lodash/isEmpty';
 export const ImagePreview = ({
   file,
   onEditMode,
-  annotations,
   isLoading,
   scrollIntoView,
 }: {
   file: FileInfo;
   onEditMode: (editMode: boolean) => void;
-  annotations: VisibleAnnotation[];
   isLoading: (status: boolean) => void;
   scrollIntoView: (id: ReactText) => void;
 }) => {
   const dispatch: AppDispatch = useDispatch();
   const [showKeyboardShortcutModal, setShowKeyboardShortcutModal] =
     useState(false);
+
+  const visibleNonRejectedAnnotations = useSelector((rootState: RootState) =>
+    selectVisibleNonRejectedAnnotationsForFile(rootState, file.id)
+  );
 
   const definedCollection = useSelector(
     ({ annotationLabelReducer }: RootState) =>
@@ -207,7 +209,7 @@ export const ImagePreview = ({
     <Container>
       <ReactImageAnnotateWrapper
         fileInfo={file}
-        annotations={annotations}
+        annotations={visibleNonRejectedAnnotations}
         onCreateAnnotation={handleCreateAnnotation}
         onUpdateAnnotation={handleModifyAnnotation}
         onDeleteAnnotation={handleDeleteAnnotation}

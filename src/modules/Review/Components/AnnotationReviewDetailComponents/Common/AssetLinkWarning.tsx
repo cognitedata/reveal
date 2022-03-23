@@ -37,23 +37,17 @@ export const AssetLinkWarning = ({
       warningStatus !== AssetWarnTypes.NoWarning
     ) {
       return (
-        <>
-          {React.Children.only(
-            React.cloneElement(children, {
-              iconComponent: (
-                <IconContainer>
-                  <Tooltip
-                    placement="top"
-                    content={<span>{AssetWarnMessages[warningStatus]}</span>}
-                  >
-                    <Icon type="WarningStroke" />
-                  </Tooltip>
-                </IconContainer>
-              ),
-              borderColor: 'red',
-            })
-          )}
-        </>
+        <WarningContainer>
+          <IconContainer>
+            <Tooltip
+              placement="top"
+              content={<span>{AssetWarnMessages[warningStatus]}</span>}
+            >
+              <Icon type="WarningStroke" />
+            </Tooltip>
+          </IconContainer>
+          {children}
+        </WarningContainer>
       );
     }
     return child;
@@ -62,10 +56,20 @@ export const AssetLinkWarning = ({
   return <> {childrenWithProps} </>;
 };
 
+const WarningContainer = styled.div`
+  display: flex;
+  border: 2px solid red;
+  border-radius: 4px;
+  position: relative;
+`;
+
 const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   color: red;
   background-color: inherit;
+  margin-left: 5px;
+  position: absolute;
+  top: 35px;
 `;

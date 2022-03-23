@@ -11,12 +11,7 @@ import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetail
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
 import { ImageKeyboardShortKeys } from 'src/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
-import {
-  selectAllReviewFiles,
-  selectOtherAnnotationsForFile,
-  selectTagAnnotationsForFile,
-  selectVisibleNonRejectedAnnotationsForFile,
-} from 'src/modules/Review/store/reviewSlice';
+import { selectAllReviewFiles } from 'src/modules/Review/store/reviewSlice';
 import { RootState } from 'src/store/rootReducer';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
@@ -41,18 +36,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
 
   const reviewFiles = useSelector((state: RootState) =>
     selectAllReviewFiles(state)
-  );
-
-  const visibleNonRejectedAnnotations = useSelector((rootState: RootState) =>
-    selectVisibleNonRejectedAnnotationsForFile(rootState, file.id)
-  );
-
-  const tagAnnotations = useSelector((rootState: RootState) =>
-    selectTagAnnotationsForFile(rootState, file.id)
-  );
-
-  const otherAnnotations = useSelector((rootState: RootState) =>
-    selectOtherAnnotationsForFile(rootState, file.id)
   );
 
   const onEditMode = (mode: boolean) => {
@@ -123,7 +106,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                 <ImagePreview
                   file={file}
                   onEditMode={onEditMode}
-                  annotations={visibleNonRejectedAnnotations}
                   isLoading={handleLoad}
                   scrollIntoView={scrollToItem}
                 />
@@ -155,8 +137,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                   <ImageContextualization
                     file={file}
                     reference={contextElement}
-                    tagAnnotations={tagAnnotations}
-                    otherAnnotations={otherAnnotations}
                   />
                 </Tabs.Pane>
                 <Tabs.Pane

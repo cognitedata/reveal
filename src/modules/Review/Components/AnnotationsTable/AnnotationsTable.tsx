@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { FileInfo } from '@cognite/sdk';
-import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationsTable/AssetLinkWarning';
-import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/CollapsibleAnnotationTableRow/CollapsibleAnnotationTableRow';
 import { AnnotationTableItem } from 'src/modules/Review/types';
+import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/CollapsibleAnnotationTableRow';
+import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AssetLinkWarning';
 
 export interface AnnotationTableProps {
   title: string;
