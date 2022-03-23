@@ -5,7 +5,7 @@ import layers from '../../utils/z';
 import useDimensions from './useDimensions';
 
 const INITIAL_WIDTH = 400;
-const INITIAL_HEIGHT = 200;
+const INITIAL_HEIGHT = 240;
 const RESIZABLE_CORNER_SIZE = 15;
 
 type Props = {

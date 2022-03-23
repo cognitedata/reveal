@@ -1,4 +1,4 @@
-import { Button, Icon, TextInput } from '@cognite/cogs.js';
+import { Button, Icon, Textarea } from '@cognite/cogs.js';
 import React from 'react';
 
 import PopupModal from './PopupModal';
@@ -35,9 +35,9 @@ const DiscrepancyModal: React.FC<Props> = ({
         <Icon type="ExclamationMark" />
         Mark discrepancy
       </h2>
-      <TextInput
+      <Textarea
         placeholder="Add comment..."
-        style={{ width: '100%' }}
+        style={{ width: '100%', height: '100%' }}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
       />

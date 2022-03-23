@@ -92,6 +92,8 @@ export type LineReview = {
   // All lines need to be manually reviewed at this stage, so a lack of discrepancies does not
   // mean that the review is complete.
   status: LineReviewStatus;
+  comment?: string;
+  parsedDocumentsExternalIds: string[];
 };
 
 export type DocumentsForLine = {

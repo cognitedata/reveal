@@ -9,7 +9,7 @@ import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
 import { SHAMEFUL_SLIDE_HEIGHT, SLIDE_WIDTH } from './ReactOrnate';
 
 const getAnnotationOverlay = (
-  line: string,
+  line: string | undefined,
   document: ParsedDocument,
   annotationIds: string[],
   prefix: string,

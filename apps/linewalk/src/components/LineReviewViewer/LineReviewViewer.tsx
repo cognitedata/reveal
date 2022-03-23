@@ -9,7 +9,7 @@ import {
   LineReview,
   ParsedDocument,
 } from 'modules/lineReviews/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import layers from 'utils/z';
 
 import { getDocumentUrlByExternalId } from '../../modules/lineReviews/api';
@@ -119,10 +119,25 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   lineReview,
   onOrnateRef,
 }) => {
+  const [isMaskingEnabled, setIsMaskingEnabled] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [pdfDocuments, setPdfDocuments] = useState<
     ReactOrnateProps['documents'] | undefined
   >(undefined);
+
+  const documentsByExternalId = useMemo(
+    () => keyBy(documents, (document) => document.externalId),
+    [documents]
+  );
+
+  const annotationsByExternalId = useMemo(
+    () =>
+      keyBy(
+        documents.flatMap((document) => document.annotations),
+        (annotation) => annotation.id
+      ),
+    [documents]
+  );
 
   const [discrepancyModalState, setDiscrepancyModalState] = useState({
     isOpen: false,
@@ -329,11 +344,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return [];
     }
 
-    const documentsByExternalId = keyBy(
-      documents,
-      (document) => document.externalId
-    );
-
     return [
       ...getAnnotationOverlay(
         lineReview.id,
@@ -374,8 +384,12 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       ),
       ...(tool === WorkspaceTool.LINK
         ? [
+            /**
+             * Below is a hack to render all the connections, except for file connections
+             * and those we only want to render for the specified line. "Short term fix"
+             */
             ...getAnnotationOverlay(
-              lineReview.id,
+              undefined,
               document,
               document.linking
                 .filter(
@@ -383,7 +397,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
                     documentsByExternalId[from.documentId] !== undefined &&
                     documentsByExternalId[to.documentId] !== undefined &&
                     documentsByExternalId[from.documentId].type ===
-                      DocumentType.PID
+                      DocumentType.PID &&
+                    annotationsByExternalId[from.annotationId]?.type !==
+                      'fileConnection'
                 )
                 .map(({ from: { annotationId } }) => annotationId),
               'navigatable-pid-to-iso',
@@ -404,8 +420,56 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
                     documentsByExternalId[to.documentId] !== undefined &&
                     documentsByExternalId[from.documentId].type ===
                       DocumentType.PID &&
+                    annotationsByExternalId[from.annotationId]?.type ===
+                      'fileConnection'
+                )
+                .map(({ from: { annotationId } }) => annotationId),
+              'navigatable-pid-to-iso',
+              {
+                stroke: '#39A263',
+                strokeWidth: 3,
+                dash: [3, 3],
+              },
+              tool === WorkspaceTool.LINK ? onLinkClick : undefined
+            ),
+            ...getAnnotationOverlay(
+              undefined,
+              document,
+              document.linking
+                .filter(
+                  ({ from, to }) =>
+                    documentsByExternalId[from.documentId] !== undefined &&
+                    documentsByExternalId[to.documentId] !== undefined &&
+                    documentsByExternalId[from.documentId].type ===
+                      DocumentType.PID &&
                     documentsByExternalId[to.documentId].type ===
-                      DocumentType.PID
+                      DocumentType.PID &&
+                    annotationsByExternalId[to.annotationId]?.type !==
+                      'fileConnection'
+                )
+                .map(({ to: { annotationId } }) => annotationId),
+              'navigatable-target-pid-to-pid',
+              {
+                stroke: '#39A263',
+                strokeWidth: 3,
+                dash: [3, 3],
+              },
+              tool === WorkspaceTool.LINK ? onLinkClick : undefined
+            ),
+            ...getAnnotationOverlay(
+              lineReview.id,
+              document,
+              document.linking
+                .filter(
+                  ({ from, to }) =>
+                    documentsByExternalId[from.documentId] !== undefined &&
+                    documentsByExternalId[to.documentId] !== undefined &&
+                    documentsByExternalId[from.documentId].type ===
+                      DocumentType.PID &&
+                    documentsByExternalId[to.documentId].type ===
+                      DocumentType.PID &&
+                    annotationsByExternalId[to.annotationId]?.type ===
+                      'fileConnection'
                 )
                 .map(({ to: { annotationId } }) => annotationId),
               'navigatable-target-pid-to-pid',
@@ -568,11 +632,13 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         <ReactOrnate
           documents={pdfDocuments}
           nodes={[
-            ...documents
-              .filter((document) => document.type === DocumentType.PID)
-              .map((document) =>
-                getOpacityGroupByDocument(lineReview.id, document)
-              ),
+            ...(isMaskingEnabled
+              ? documents
+                  .filter((document) => document.type === DocumentType.PID)
+                  .map((document) =>
+                    getOpacityGroupByDocument(lineReview.id, document)
+                  )
+              : []),
             ...groups,
             ...drawings,
           ]}
@@ -583,8 +649,13 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           renderWorkspaceTools={(ornate, isFocused) => (
             <WorkSpaceTools
               tool={tool}
+              isMaskingEnabled={isMaskingEnabled}
+              onToggleMasking={() =>
+                setIsMaskingEnabled(
+                  (prevIsMaskingEnabled) => !prevIsMaskingEnabled
+                )
+              }
               onToolChange={onToolChange}
-              ornateRef={ornate}
               enabledTools={[
                 WorkspaceTool.LAYERS,
                 WorkspaceTool.SELECT,

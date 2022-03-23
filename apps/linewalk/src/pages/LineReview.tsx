@@ -1,4 +1,4 @@
-import { Button, Loader, Modal, TextInput } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
 import LineReviewHeader from 'components/LineReviewHeader';
@@ -9,13 +9,12 @@ import { useHistory, useParams } from 'react-router';
 import styled from 'styled-components';
 
 import exportDocumentsToPdf from '../components/LineReviewViewer/exportDocumentsToPdf';
-import getUniqueDocumentsByDiscrepancy from '../components/LineReviewViewer/getUniqueDocumentsByDiscrepancy';
-import mapPidAnnotationIdsToIsoAnnotationIds from '../components/LineReviewViewer/mapPidAnnotationIdsToIsoAnnotationIds';
+import ReportBackModal from '../components/ReportBackModal';
 import {
   saveLineReviewState,
   updateLineReviews,
 } from '../modules/lineReviews/api';
-import { DocumentType, LineReviewStatus } from '../modules/lineReviews/types';
+import { LineReviewStatus } from '../modules/lineReviews/types';
 import useLineReview from '../modules/lineReviews/useLineReview';
 
 import { PagePath } from './Menubar';
@@ -62,7 +61,7 @@ const LineReview = () => {
 
   const onReportBackPress = () => setIsReportBackModalOpen(true);
 
-  const onReportBackSavePress = async () => {
+  const onReportBackSavePress = async ({ comment }: { comment: string }) => {
     setIsReportBackModalOpen(false);
 
     if (client === undefined) {
@@ -73,6 +72,7 @@ const LineReview = () => {
 
     await updateLineReviews(client, {
       ...lineReview,
+      comment,
       status: LineReviewStatus.COMPLETED,
     });
     history.push(PagePath.LINE_REVIEWS);
@@ -85,103 +85,17 @@ const LineReview = () => {
         flexDirection: 'column',
       }}
     >
-      <Modal
-        visible={isReportBackModalOpen}
-        onCancel={() => setIsReportBackModalOpen(false)}
-        footer={null}
-      >
-        <h2>Report back</h2>
-        <p>
-          You are about to send this report for further checking. The following
-          discrepancies will be included in the report:
-        </p>
-
-        {discrepancies.length === 0 && (
-          <p>
-            <b>No discrepancies marked yet</b>
-          </p>
-        )}
-
-        {discrepancies.map((discrepancy) => {
-          const uniqueDiscrepancyIsos = getUniqueDocumentsByDiscrepancy(
-            documents,
-            mapPidAnnotationIdsToIsoAnnotationIds(documents, discrepancy.ids)
-          ).filter((document) => document.type === DocumentType.ISO);
-          const usedDiscrepancyIsos =
-            uniqueDiscrepancyIsos.length === 0
-              ? documents.filter(
-                  (document) => document.type === DocumentType.ISO
-                )
-              : uniqueDiscrepancyIsos;
-          return (
-            <div key={discrepancy.id}>
-              <div>
-                <b>{discrepancy.comment}</b>
-              </div>
-
-              <div>
-                <b>MF:</b>{' '}
-                {getUniqueDocumentsByDiscrepancy(documents, discrepancy.ids)
-                  .filter((document) => document.type === DocumentType.PID)
-                  .map((document) => (
-                    <>
-                      <a //eslint-disable-line
-                        onClick={() => {
-                          return undefined;
-                        }}
-                      >
-                        {document.pdfExternalId}
-                      </a>{' '}
-                    </>
-                  ))}
-              </div>
-              <div>
-                <b>ISO:</b>{' '}
-                {usedDiscrepancyIsos
-                  .filter((document) => document.type === DocumentType.ISO)
-                  .map((document) => (
-                    <>
-                      <a //eslint-disable-line
-                        onClick={() => {
-                          return undefined;
-                        }}
-                      >
-                        {document.pdfExternalId}
-                      </a>{' '}
-                    </>
-                  ))}
-              </div>
-              <br />
-            </div>
-          );
-        })}
-
-        <br />
-        <TextInput placeholder="Comments..." style={{ width: '100%' }} />
-        <br />
-        <br />
-        <footer>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div>
-              <Button
-                type="ghost"
-                icon="Print"
-                onClick={() =>
-                  ornateRef
-                    ? exportDocumentsToPdf(ornateRef, documents, discrepancies)
-                    : undefined
-                }
-              />
-            </div>
-            <div>
-              <Button type="secondary">Cancel</Button>&nbsp;&nbsp;
-              <Button type="primary" onClick={onReportBackSavePress}>
-                Save
-              </Button>
-            </div>
-          </div>
-        </footer>
-      </Modal>
+      {ornateRef !== undefined && (
+        <ReportBackModal
+          isOpen={isReportBackModalOpen}
+          initialComment={lineReview.comment}
+          documents={documents}
+          ornateRef={ornateRef}
+          discrepancies={discrepancies}
+          onCancelPress={() => setIsReportBackModalOpen(false)}
+          onSave={onReportBackSavePress}
+        />
+      )}
       <LineReviewHeader
         lineReview={lineReview}
         onSaveToPdfPress={() =>

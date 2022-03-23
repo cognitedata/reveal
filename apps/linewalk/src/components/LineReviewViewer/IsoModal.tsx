@@ -237,7 +237,6 @@ const IsoModal: React.FC<IsoModalProps> = ({
                 WorkspaceTool.COMMENT,
               ]}
               onToolChange={onToolChange}
-              ornateRef={ornate}
               areKeyboardShortcutsEnabled={isFocused}
             />
           )}

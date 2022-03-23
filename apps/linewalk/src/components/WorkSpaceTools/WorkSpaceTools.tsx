@@ -1,29 +1,17 @@
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
-import { CogniteOrnate } from '@cognite/ornate';
 import { AnnotationIcon } from 'components/CustomIcons';
 import { WorkspaceTool } from 'components/LineReviewViewer/useWorkspaceTools';
-import Konva from 'konva';
-import { useState } from 'react';
-import isString from 'lodash/isString';
 
 import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
 import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
 
-enum MenuLayer {
-  OPACITY = 'opacity',
-}
-
-const SelectorsByMenuLayers: Record<MenuLayer, any> = {
-  [MenuLayer.OPACITY]: (node: Konva.Node) =>
-    isString(node.id()) && node.id().startsWith('opacity'),
-};
-
 type WorkSpaceToolsProps = {
   tool: WorkspaceTool;
   onToolChange: (tool: WorkspaceTool) => void;
+  isMaskingEnabled?: boolean;
+  onToggleMasking?: () => void;
   enabledTools?: WorkspaceTool[];
-  ornateRef?: CogniteOrnate;
   areKeyboardShortcutsEnabled: boolean;
 };
 
@@ -40,6 +28,8 @@ const HIDDEN_LAYER_STYLE = {
 const WorkSpaceTools = ({
   tool,
   onToolChange,
+  isMaskingEnabled,
+  onToggleMasking,
   enabledTools = [
     WorkspaceTool.LAYERS,
     WorkspaceTool.SELECT,
@@ -50,118 +40,89 @@ const WorkSpaceTools = ({
     WorkspaceTool.TEXT,
     WorkspaceTool.COMMENT,
   ],
-  ornateRef,
   areKeyboardShortcutsEnabled,
-}: WorkSpaceToolsProps) => {
-  const [layerStatus, setLayerStatus] = useState<Record<MenuLayer, boolean>>({
-    [MenuLayer.OPACITY]: true,
-  });
-
-  const onSetLayerVisibility = (layerModifier: MenuLayer, visible: boolean) => {
-    (ornateRef?.stage.find(SelectorsByMenuLayers[layerModifier]) ?? []).forEach(
-      (shape) => {
-        if (visible) {
-          shape.show();
-        } else {
-          shape.hide();
-        }
-      }
-    );
-  };
-
-  const onToggleLayer = (layer: MenuLayer) => {
-    onSetLayerVisibility(layer, !layerStatus[layer]);
-    setLayerStatus((prev) => ({
-      ...prev,
-      [layer]: !layerStatus[layer],
-    }));
-  };
-
-  return (
-    <WorkSpaceToolsWrapper>
-      {enabledTools.includes(WorkspaceTool.LAYERS) && (
-        <>
-          <Dropdown
-            content={
-              <Menu>
-                <Menu.Header>Click to turn on / off</Menu.Header>
-                <Menu.Item
-                  onClick={() => onToggleLayer(MenuLayer.OPACITY)}
-                  style={{
-                    ...DEFAULT_LAYER_STYLE,
-                    ...(layerStatus[MenuLayer.OPACITY]
-                      ? HIDDEN_LAYER_STYLE
-                      : {}),
-                  }}
-                >
-                  <AnnotationIcon style={{ marginRight: 8 }} />
-                  Masking
-                </Menu.Item>
-              </Menu>
-            }
-            placement="auto-end"
+}: WorkSpaceToolsProps) => (
+  <WorkSpaceToolsWrapper>
+    {enabledTools.includes(WorkspaceTool.LAYERS) && onToggleMasking && (
+      <>
+        <Dropdown
+          content={
+            <Menu>
+              <Menu.Header>Click to turn on / off</Menu.Header>
+              <Menu.Item
+                onClick={onToggleMasking}
+                style={{
+                  ...DEFAULT_LAYER_STYLE,
+                  ...(isMaskingEnabled ? {} : HIDDEN_LAYER_STYLE),
+                }}
+              >
+                <AnnotationIcon style={{ marginRight: 8 }} />
+                Masking
+              </Menu.Item>
+            </Menu>
+          }
+          placement="auto-end"
+        >
+          <Button
+            type="ghost"
+            size="small"
+            onClick={() => onToolChange(WorkspaceTool.MOVE)}
+            title="Layers"
           >
-            <Button
-              type="ghost"
-              size="small"
-              onClick={() => onToolChange(WorkspaceTool.MOVE)}
-              title="Layers"
-            >
-              <Icon type="Layers" />
-            </Button>
-          </Dropdown>
+            <Icon type="Layers" />
+          </Button>
+        </Dropdown>
 
-          <ToolboxSeparator />
-        </>
-      )}
-      {enabledTools.includes(WorkspaceTool.SELECT) && (
-        <Button
-          type="ghost"
-          size="small"
-          title="Move M"
-          onClick={() => onToolChange(WorkspaceTool.SELECT)}
-          disabled={tool === WorkspaceTool.SELECT}
-        >
-          <Icon type="Cursor" />
-        </Button>
-      )}
-      {enabledTools.includes(WorkspaceTool.MOVE) && (
-        <Button
-          type="ghost"
-          size="small"
-          title="Move M"
-          onClick={() => onToolChange(WorkspaceTool.MOVE)}
-          disabled={tool === 'move'}
-        >
-          <Icon type="Grab" />
-        </Button>
-      )}
-      {enabledTools.includes(WorkspaceTool.LINK) && (
-        <Button
-          type="ghost"
-          size="small"
-          title="Link alt/option"
-          onClick={() => onToolChange(WorkspaceTool.LINK)}
-          disabled={tool === WorkspaceTool.LINK}
-        >
-          <Icon type="Link" />
-        </Button>
-      )}
-      {areKeyboardShortcutsEnabled && (
-        <KeyboardShortcut
-          keys="alt"
-          onKeyDown={() => onToolChange(WorkspaceTool.LINK)}
-          onKeyRelease={() => onToolChange(WorkspaceTool.MOVE)}
-        />
-      )}
-      {areKeyboardShortcutsEnabled && (
-        <KeyboardShortcut
-          keys="m"
-          onKeyDown={() => onToolChange(WorkspaceTool.MOVE)}
-        />
-      )}
-    </WorkSpaceToolsWrapper>
-  );
-};
+        <ToolboxSeparator />
+      </>
+    )}
+    {enabledTools.includes(WorkspaceTool.SELECT) && (
+      <Button
+        type="ghost"
+        size="small"
+        title="Move M"
+        onClick={() => onToolChange(WorkspaceTool.SELECT)}
+        disabled={tool === WorkspaceTool.SELECT}
+      >
+        <Icon type="Cursor" />
+      </Button>
+    )}
+    {enabledTools.includes(WorkspaceTool.MOVE) && (
+      <Button
+        type="ghost"
+        size="small"
+        title="Move M"
+        onClick={() => onToolChange(WorkspaceTool.MOVE)}
+        disabled={tool === 'move'}
+      >
+        <Icon type="Grab" />
+      </Button>
+    )}
+    {enabledTools.includes(WorkspaceTool.LINK) && (
+      <Button
+        type="ghost"
+        size="small"
+        title="Link alt/option"
+        onClick={() => onToolChange(WorkspaceTool.LINK)}
+        disabled={tool === WorkspaceTool.LINK}
+      >
+        <Icon type="Link" />
+      </Button>
+    )}
+    {areKeyboardShortcutsEnabled && (
+      <KeyboardShortcut
+        keys="alt"
+        onKeyDown={() => onToolChange(WorkspaceTool.LINK)}
+        onKeyRelease={() => onToolChange(WorkspaceTool.MOVE)}
+      />
+    )}
+    {areKeyboardShortcutsEnabled && (
+      <KeyboardShortcut
+        keys="m"
+        onKeyDown={() => onToolChange(WorkspaceTool.MOVE)}
+      />
+    )}
+  </WorkSpaceToolsWrapper>
+);
 
 export default WorkSpaceTools;

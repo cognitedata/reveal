@@ -1,11 +1,13 @@
 import { ParsedDocument } from '../../modules/lineReviews/types';
 
 const getAnnotationsForLineByDocument = (
-  line: string,
+  line: string | undefined,
   document: ParsedDocument
 ) =>
-  document.annotations.filter((annotation) =>
-    annotation.lineNumbers.includes(line)
-  );
+  line === undefined
+    ? document.annotations
+    : document.annotations.filter((annotation) =>
+        annotation.lineNumbers.includes(line)
+      );
 
 export default getAnnotationsForLineByDocument;
