@@ -151,7 +151,7 @@ async function init() {
 
   const antiAliasingGui = renderOptionsGUI.addFolder('Anti Aliasing');
   antiAliasingGui
-    .add(renderOptions, 'antiAliasing', [AntiAliasingMode.NoAA, AntiAliasingMode.FXAA])
+    .add(renderOptions, 'antiAliasing', { NoAA: AntiAliasingMode.NoAA, FXAA: AntiAliasingMode.FXAA })
     .onChange(updateRenderOptions);
   antiAliasingGui.add(renderOptions, 'multiSampleCountHint', 0, 16, 1);
   antiAliasingGui.open();
