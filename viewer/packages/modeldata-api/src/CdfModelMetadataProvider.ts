@@ -21,7 +21,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     this._client = client;
   }
 
-  public async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat): Promise<THREE.Matrix4> {
+  public async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat | string): Promise<THREE.Matrix4> {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }

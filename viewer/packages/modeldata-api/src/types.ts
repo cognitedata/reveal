@@ -48,6 +48,6 @@ export enum File3dFormat {
 
 export interface BlobOutputMetadata {
   blobId: number;
-  format: File3dFormat;
+  format: File3dFormat | string;
   version: number;
 }
