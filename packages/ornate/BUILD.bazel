@@ -37,7 +37,6 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//@types/pdfjs-dist",
     "@npm//konva",
     "@npm//lodash",
     "@npm//pdf-lib",
@@ -66,6 +65,7 @@ mappings_dict = {
     "containers": "dist/containers",
     "index": "dist/index",
     "mocks": "dist/mocks",
+    "shapes": "dist/shapes",
     "tools": "dist/tools",
     "types": "dist/types",
     "typings": "dist/typings",

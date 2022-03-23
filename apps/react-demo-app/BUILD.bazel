@@ -73,24 +73,25 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//@cognite/comment-service-types",
     "@npm//@cognite/cogs.js",
+    "@npm//@cognite/comment-service-types",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-i18next",
+    "@npm//react-query",
     "@npm//react-router-dom",
     "@npm//styled-components",
     "//packages/react-container",
-    "//packages/react-comments",
-    "//packages/react-pid",
-    "//packages/react-version",
     "//packages/metrics",
-    "//packages/react-i18n",
     "//packages/sidecar",
-    "//packages/intercom-helper",
     "//packages/z-index",
+    "//packages/react-i18n",
+    "//packages/react-version",
+    "//packages/react-pid",
+    "//packages/intercom-helper",
+    "//packages/react-comments",
 ]
 
 # Type dependencies from package.json
@@ -108,7 +109,8 @@ DEV_DEPENDENCIES = [
     "@npm//@storybook/addons",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
-    "@npm//eslint-plugin-import",
+    "@npm//eslint-config-react-app",
+    "@npm//express",
     "@npm//sinon",
 ]
 
@@ -118,9 +120,11 @@ mappings_dict = {
     "global-styles": "build/global-styles",
     "index": "build/index",
     "pages": "build/pages",
+    "queries": "build/queries",
     "react-app-env.d": "build/react-app-env.d",
     "serviceWorker": "build/serviceWorker",
     "setupTests": "build/setupTests",
+    "styles": "build/styles",
     "typings": "build/typings",
     "utils": "build/utils",
 }

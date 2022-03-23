@@ -74,17 +74,17 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
-    "@npm//@types/color",
-    "@npm//assert",
+    "@npm//color",
+    "@npm//dayjs",
     "@npm//filtrex",
     "@npm//konva",
     "@npm//lodash",
     "@npm//react",
     "@npm//react-dom",
-    "@npm//react-router-dom",
     "@npm//react-query",
-    "@npm//uuid",
+    "@npm//react-router-dom",
     "@npm//styled-components",
+    "@npm//uuid",
     "@npm//victory",
     "@npm//web-vitals",
     "//packages/react-container",
@@ -97,13 +97,15 @@ DEPENDENCIES = [
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/color",
     "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-router-dom",
-    "@npm//@types/uuid",
     "@npm//@types/sinon",
+    "@npm//@types/storybook__react",
     "@npm//@types/styled-components",
+    "@npm//@types/uuid",
 ]
 
 # Dev dependencies from package.json
@@ -112,14 +114,7 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/testcafe",
-    "@npm//@typescript-eslint/eslint-plugin",
-    "@npm//@typescript-eslint/parser",
-    "@npm//babel-eslint",
     "@npm//eslint-config-react-app",
-    "@npm//eslint-plugin-import",
-    "@npm//eslint-plugin-jsx-a11y",
-    "@npm//eslint-plugin-react",
-    "@npm//eslint-plugin-react-hooks",
     "@npm//sinon",
 ]
 
@@ -127,12 +122,16 @@ DEV_DEPENDENCIES = [
 mappings_dict = {
     "App": "build/App",
     "components": "build/components",
-    "context": "build/context",
+    "consts": "build/consts",
     "global-styles": "build/global-styles",
     "hooks": "build/hooks",
     "index": "build/index",
+    "mocks": "build/mocks",
+    "models": "build/models",
     "pages": "build/pages",
+    "providers": "build/providers",
     "react-app-env.d": "build/react-app-env.d",
+    "service": "build/service",
     "serviceWorker": "build/serviceWorker",
     "setupTests": "build/setupTests",
     "styles": "build/styles",
@@ -141,6 +140,10 @@ mappings_dict = {
 }
 
 ### end of auto-generated helpers ###
+
+BROWSER_DEPS = [
+    "@npm//assert",
+]
 
 eslint_config(
     name = "eslint_config",
@@ -207,7 +210,7 @@ react_scripts(
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + TYPE_DEPENDENCIES + [
         # see patches/react-scripts+5.0.0.patch
         # we have added this plugin into webpack so Bazel should know about it
         # TODO: move build script into a custom rules with defined plugin once and for all
@@ -274,7 +277,7 @@ react_scripts_test(
     name = "test",
     # folder name to store jest coverage in during CI run
     app_name = "blueprint",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + DEV_DEPENDENCIES + [
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
@@ -341,7 +344,7 @@ react_scripts(
 #         "–q",
 #         "--config-file .testcaferc.json",
 #     ],
-#     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
+#     data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
 #         ":build_sed",
 #         "copy_testcafe_files",
 #     ],
@@ -358,7 +361,7 @@ react_scripts(
 #         "'testcafe/desktop'",
 #         "--stop-on-first-fail",
 #     ],
-#     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
+#     data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
 #         ":start",
 #         "chdir-workspace.js",
 #         "copy_testcafe_files",
@@ -384,7 +387,7 @@ build_storybook(
         "--quiet",
     ],
     chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "@npm//@babel/preset-env",
         "copy_storybook_files",
         "@npm//tsconfig-paths-webpack-plugin",
@@ -405,7 +408,7 @@ start_storybook(
         "-p",
         "6006",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + DEV_DEPENDENCIES + [
         "chdir-workspace.js",
         "copy_storybook_files",
         "@npm//@types",

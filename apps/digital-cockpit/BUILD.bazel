@@ -62,14 +62,12 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/sdk",
     "@npm//@cognite/reveal",
+    "@npm//@cognite/sdk",
+    "@npm//@cognite/sdk-v5",
     "@npm//@dnd-kit/core",
     "@npm//@dnd-kit/sortable",
     "@npm//@sentry/browser",
-    "@npm//@types/history",
-    "@npm//assert",
-    "@npm//buffer",
     "@npm//dayjs",
     "@npm//formik",
     "@npm//gridstack",
@@ -93,16 +91,17 @@ DEPENDENCIES = [
     "@npm//styled-components",
     "@npm//typesafe-actions",
     "@npm//victory",
-    "@npm//util",
     "//packages/metrics",
     "//packages/sidecar",
     "//packages/z-index",
-    "//packages/react-i18n",
+    "//packages/auth-utils",
     "//packages/react-container",
+    "//packages/react-i18n",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/history",
     "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-date-range",
@@ -155,6 +154,12 @@ mappings_dict = {
 }
 
 ### end of auto-generated helpers ###
+
+BROWSER_DEPS = [
+    "@npm//assert",
+    "@npm//buffer",
+    "@npm//util",
+]
 
 eslint_config(
     name = "eslint_config",
@@ -221,7 +226,7 @@ react_scripts(
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + TYPE_DEPENDENCIES + [
         # see patches/react-scripts+5.0.0.patch
         # we have added this plugin into webpack so Bazel should know about it
         # TODO: move build script into a custom rules with defined plugin once and for all
@@ -286,7 +291,7 @@ react_scripts_test(
     name = "test",
     # folder name to store jest coverage in during CI run
     app_name = "digital-cockpit",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + DEV_DEPENDENCIES + [
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
@@ -345,7 +350,7 @@ build_storybook(
         "--quiet",
     ],
     chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "@npm//@babel/preset-env",
         "copy_storybook_files",
         "@npm//tsconfig-paths-webpack-plugin",
@@ -371,7 +376,7 @@ start_storybook(
         "-p",
         "6006",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + DEV_DEPENDENCIES + [
         "chdir-workspace.js",
         "copy_storybook_files",
         "@npm//@types",

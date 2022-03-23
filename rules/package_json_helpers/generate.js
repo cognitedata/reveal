@@ -89,10 +89,11 @@ function formatMappings(modules, out) {
  * Find all files recursively in specific folder with specific extension, e.g:
  * findFilesInDir('./project/src', '.html') ==> ['./project/src/a.html','./project/src/build/index.html']
  * @param  {String} startPath    Path relative to this file or other file which requires this files
- * @param  {String} filter       Extension name, e.g: '.html'
+ * @param  {String} filter       Filter string, e.g: 'package.json'
+ * @param  {String} extension    Extension filter, avoids including package.json.hbs if set to .json
  * @return {Array}               Result files with path string in an array
  */
-function findFilesInDir(startPath, filter) {
+function findFilesInDir(startPath, filter, extension) {
   let results = [];
 
   if (!fs.existsSync(startPath)) {
@@ -104,8 +105,11 @@ function findFilesInDir(startPath, filter) {
     const filename = path.join(startPath, files[i]);
     const stat = fs.lstatSync(filename);
     if (stat.isDirectory()) {
-      results = results.concat(findFilesInDir(filename, filter)); // recurse
-    } else if (filename.indexOf(filter) >= 0) {
+      results = results.concat(findFilesInDir(filename, filter, extension)); // recurse
+    } else if (
+      filename.indexOf(filter) >= 0 &&
+      path.extname(filename) === extension
+    ) {
       results.push(filename);
     }
   }
@@ -177,11 +181,25 @@ depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
   if (Object.keys(invalidFiles).length) {
     process.stderr.write(JSON.stringify(invalidFiles, null, 2));
   }
+  // Manual list of dev dependencies, should try to find a dynamic way to do this
+  const internalDevPackageNames = {
+    '@cognite/testing': '//packages/testing',
+    '@cognite/eslint-config': '//packages/eslint-config',
+    '@cognite/eslint-plugin': '//packages/eslint-plugin',
+  };
+
   const internalPackagesNames = findFilesInDir(
     './packages',
-    'package.json'
+    'package.json',
+    '.json'
   ).reduce((acc, file) => {
     const { name } = readPackage(file);
+    if (name in internalDevPackageNames) {
+      return acc;
+    }
+    if (name === localPackage.name) {
+      return acc;
+    }
     if (name) {
       acc[name] = `//packages/${name.replace('@cognite/', '')}`;
       return acc;
@@ -220,18 +238,28 @@ depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
     missingWithPeerDeps
   );
 
-  const devDependencies = excludeNonPresent(
-    excludeNameStartsWith(
+  const devDependencies = appendInternalDependencies(
+    excludeNonPresent(
       excludeNameStartsWith(
         excludeNameStartsWith(
-          excludeInternal(package.devDependencies),
-          '@bazel/'
+          excludeNameStartsWith(
+            excludeNameStartsWith(
+              excludeNameStartsWith(
+                excludeInternal(package.devDependencies),
+                '@bazel/'
+              ),
+              '@types/'
+            ),
+            'cypress'
+          ),
+          '@storybook/react'
         ),
-        '@types/'
+        'testcafe'
       ),
-      'testcafe'
+      missingWithPeerDeps
     ),
-    missingWithPeerDeps
+    missingWithPeerDeps,
+    internalDevPackageNames
   );
 
   const output = `

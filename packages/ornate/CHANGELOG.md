@@ -1,3 +1,7 @@
+## 1.1.24
+
+- Removed @types/pdfjs-dist - as types are provided by pdfjs-dist package
+
 ## 1.1.23
 
 - BUG: Correct negative coordinates on drawn shapes
