@@ -1182,9 +1182,8 @@ export class Cognite3DViewer {
       return false;
     }
 
-    this.renderer.setSize(width, height);
-
     adjustCamera(this.camera, width, height);
+    this.renderer.setSize(width, height);
 
     return true;
   }
