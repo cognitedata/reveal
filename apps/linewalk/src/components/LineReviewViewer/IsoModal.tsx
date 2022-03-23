@@ -19,6 +19,7 @@ import getAnnotationOverlay from './getAnnotationOverlay';
 import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
 import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
+import getLinkByAnnotationId from './getLinkByAnnotationId';
 import { Discrepancy } from './LineReviewViewer';
 import ReactOrnate from './ReactOrnate';
 import useDimensions from './useDimensions';
@@ -111,11 +112,20 @@ const IsoModal: React.FC<IsoModalProps> = ({
       return;
     }
 
-    const link = documents
-      ?.flatMap((document) => document.linking)
-      .find(({ from }) => from.annotationId === annotationId);
-
+    const link =
+      getLinkByAnnotationId(documents, annotationId) ??
+      getLinkByAnnotationId(documents, annotationId, true);
     if (!link) {
+      console.warn(
+        `No link found for ${annotationId}`,
+        documents.filter((document) =>
+          document.linking.some(
+            (link) =>
+              link.from.annotationId === annotationId ||
+              link.to.annotationId === annotationId
+          )
+        )
+      );
       return;
     }
 
@@ -133,21 +143,38 @@ const IsoModal: React.FC<IsoModalProps> = ({
 
   const drawings = documents?.flatMap((document) => [
     ...([WorkspaceTool.LINK].includes(tool)
-      ? getAnnotationOverlay(
-          lineReview.id,
-          document,
-          document.linking
-            .map(({ from: { annotationId } }) => annotationId)
-            .filter(
-              (id) =>
-                annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
-            ),
-          'navigatable',
-          {
-            stroke: '#39A263',
-            strokeWidth: 3,
-          }
-        )
+      ? [
+          ...getAnnotationOverlay(
+            lineReview.id,
+            document,
+            document.linking
+              .map(({ from: { annotationId } }) => annotationId)
+              .filter(
+                (id) =>
+                  annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
+              ),
+            'navigatable',
+            {
+              stroke: '#39A263',
+              strokeWidth: 3,
+            }
+          ),
+          ...getAnnotationOverlay(
+            lineReview.id,
+            document,
+            document.linking
+              .map(({ to: { annotationId } }) => annotationId)
+              .filter(
+                (id) =>
+                  annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
+              ),
+            'navigatable',
+            {
+              stroke: '#39A263',
+              strokeWidth: 3,
+            }
+          ),
+        ]
       : []),
     ...getAnnotationOverlay(
       lineReview.id,
