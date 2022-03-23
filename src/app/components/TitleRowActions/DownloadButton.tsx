@@ -63,7 +63,7 @@ function MetadataDownload({ item: { id, type } }: Props) {
       <Tooltip title="Download">
         <Button
           disabled={downloading}
-          icon={downloading ? 'Loading' : 'Download'}
+          icon={downloading ? 'Loader' : 'Download'}
         />
       </Tooltip>
     </Dropdown>
@@ -133,7 +133,7 @@ function FileDownloadButton({ item }: Props) {
     <Dropdown overlay={menu} trigger={['click']}>
       <Tooltip title="Download">
         <Button
-          icon={downloading ? 'Loading' : 'Download'}
+          icon={downloading ? 'Loader' : 'Download'}
           title="Download"
           disabled={downloading}
         />
@@ -232,7 +232,7 @@ function TimeseriesDownloadButton({ item: { id, type } }: Props) {
       <Tooltip title="Download">
         <Button
           disabled={downloading}
-          icon={downloading ? 'Loading' : 'Download'}
+          icon={downloading ? 'Loader' : 'Download'}
         />
       </Tooltip>
     </Dropdown>

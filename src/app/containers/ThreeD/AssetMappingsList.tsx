@@ -98,10 +98,7 @@ export const AssetMappingsList = ({
                           style={style}
                         >
                           <Flex direction="row" alignItems="center">
-                            <Icon
-                              type="ResourceAssets"
-                              style={{ marginRight: 5 }}
-                            />
+                            <Icon type="Assets" style={{ marginRight: 5 }} />
                             <Highlighter
                               searchWords={query.split(' ')}
                               textToHighlight={filteredAssets[index].name}

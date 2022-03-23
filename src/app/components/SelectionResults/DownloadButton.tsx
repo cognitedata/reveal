@@ -55,7 +55,7 @@ function MetadataDownload({ ids, resourceType }: Props) {
       <Tooltip title="Download">
         <Button
           disabled={downloading}
-          icon={downloading ? 'Loading' : 'Download'}
+          icon={downloading ? 'Loader' : 'Download'}
         />
       </Tooltip>
     </Dropdown>
@@ -157,7 +157,7 @@ function TimeseriesDownloadButton({ ids }: Pick<Props, 'ids'>) {
       <Tooltip title="Download">
         <Button
           disabled={downloading}
-          icon={downloading ? 'Loading' : 'Download'}
+          icon={downloading ? 'Loader' : 'Download'}
         />
       </Tooltip>
     </Dropdown>

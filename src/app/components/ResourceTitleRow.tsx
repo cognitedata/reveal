@@ -49,7 +49,7 @@ export default function ResourceTitleRow({
         (isFetched ? (
           <ResourceIcons type={type} style={{ marginRight: '10px' }} />
         ) : (
-          <Icon type="Loading" />
+          <Icon type="Loader" />
         ))}
       <NameHeader>
         {getTitle(data) || id}
@@ -70,7 +70,7 @@ export default function ResourceTitleRow({
           }}
         >
           <Space>
-            <Button icon="ArrowBack" onClick={() => history.goBack()} />
+            <Button icon="ArrowLeft" onClick={() => history.goBack()} />
             <Divider type="vertical" style={{ height: '36px' }} />
           </Space>
         </div>

@@ -55,7 +55,7 @@ export const ThreeDGridPreview = ({
       return <img src={imageUrl} alt="thumbnail" />;
     }
     if (!isFetched) {
-      return <Icon type="Loading" />;
+      return <Icon type="Loader" />;
     }
 
     return (

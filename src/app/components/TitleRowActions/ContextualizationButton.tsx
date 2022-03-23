@@ -53,18 +53,18 @@ export const ContextualizationButton = ({
   })();
   const icon = (() => {
     if (isError) {
-      return 'Beware';
+      return 'WarningFilled';
     }
     if (running) {
-      return 'Loading';
+      return 'Loader';
     }
     switch (job?.status) {
       case 'Completed':
         return 'Close';
       case 'Failed':
-        return 'Beware';
+        return 'WarningFilled';
       default:
-        return 'ThreeD';
+        return 'Cube';
     }
   })();
 
