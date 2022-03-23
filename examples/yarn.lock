@@ -1273,10 +1273,10 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.0.tgz#50a2a56c9eec35b0af1a235ec34474d848a3c519"
-  integrity sha512-gYfD+k7k1RzFEVV+BBzEnsGR3lvgVh7QLxVvMAJDNNTMzML7+IMYicf/DjJvxeu+nX7/XGRtoDrSUedSgx10xQ==
+"@cognite/sdk-core@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.1.tgz#c0793c68be3c965707a1b7948669f9401885951e"
+  integrity sha512-4/7f0xgIVN/tJXD+0fyEu0mOZeAg0tRiYucx3IngLT9jXAjMuk1SeJbrQPWk3lRyuNj8BkW/2SlUtsvGnleljQ==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -11078,10 +11078,10 @@ rx@^4.1.0:
   resolved "https://registry.yarnpkg.com/rx/-/rx-4.1.0.tgz#a5f13ff79ef3b740fe30aa803fb09f98805d4782"
   integrity sha1-pfE/957zt0D+MKqAP7CfmIBdR4I=
 
-rxjs@7.5.4:
-  version "7.5.4"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.4.tgz#3d6bd407e6b7ce9a123e76b1e770dc5761aa368d"
-  integrity sha512-h5M3Hk78r6wAheJF0a5YahB1yRQKCsZ4MsGdZ5O9ETbVtjPcScGfrMmoOq7EBsCRzd4BDkvDJ7ogP8Sz5tTFiQ==
+rxjs@7.5.5:
+  version "7.5.5"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.5.tgz#2ebad89af0f560f460ad5cc4213219e1f7dd4e9f"
+  integrity sha512-sy+H0pQofO95VDmFLzyaw9xNJU4KTRSwQIGM6+iG3SypAtCiLDzpeG8sJrNCWn2Up9km+KhkvTdbkrdy+yzZdw==
   dependencies:
     tslib "^2.1.0"
 
@@ -12145,10 +12145,10 @@ three@0.137.0:
   resolved "https://registry.yarnpkg.com/three/-/three-0.137.0.tgz#0ebd6ba66637a332c31f234bcdd35aeec071a6e3"
   integrity sha512-rzSDhia6cU35UCy6y+zEEws6vSgytfHqFMSaBvUcySgzwvDO6vETyswtSNi/+aVqJw8WLMwyT1mlQQ1T/dxxOA==
 
-three@0.137.5:
-  version "0.137.5"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.137.5.tgz#a1e34bedd0412f2d8797112973dfadac78022ce6"
-  integrity sha512-rTyr+HDFxjnN8+N/guZjDgfVxgHptZQpf6xfL/Mo7a5JYIFwK6tAq3bzxYYB4Ae0RosDZlDuP+X5aXDXz+XnHQ==
+three@0.138.0:
+  version "0.138.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.138.0.tgz#cd0cbeb621a5826c65e49e06705d0bb9f6c13ca6"
+  integrity sha512-xM/WwUd53ClkbHFrftW29aIzMVvyhj4rSZmIVgn6hZ/kYB7aMjDD8FFy4VJamygXSrldJuOgEJuaI+E+8mt/KA==
 
 throat@^5.0.0:
   version "5.0.0"
