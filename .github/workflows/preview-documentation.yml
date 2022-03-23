@@ -47,7 +47,7 @@ jobs:
           yarn build:fast
 
       - name: Upload documentation artifact 
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: preview-docs
           path: documentation/build/
@@ -66,7 +66,7 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
       - name: Download documentation artifact 
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: preview-docs
           path: documentation/
@@ -83,7 +83,7 @@ jobs:
           keep_files: false
 
       - name: Add comment about preview URL
-        uses: unsplash/comment-on-pr@master
+        uses: unsplash/comment-on-pr@v1.2.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

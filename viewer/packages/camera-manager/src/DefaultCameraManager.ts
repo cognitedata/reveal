@@ -13,8 +13,8 @@ import {
   CameraState
 } from './types';
 import { CameraManager } from './CameraManager';
+import { CameraManagerHelper } from './CameraManagerHelper';
 import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
-import range from 'lodash/range';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
@@ -79,29 +79,6 @@ export class DefaultCameraManager implements CameraManager {
   public automaticControlsSensitivity = true;
 
   /**
-   * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
-   */
-  private readonly _updateNearAndFarPlaneBuffers = {
-    cameraPosition: new THREE.Vector3(),
-    cameraDirection: new THREE.Vector3(),
-    corners: new Array<THREE.Vector3>(
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3()
-    )
-  };
-
-  private readonly _calculateCameraFarBuffers = {
-    nearPlaneCoplanarPoint: new THREE.Vector3(),
-    nearPlane: new THREE.Plane()
-  };
-
-  /**
    * @internal
    */
   constructor(
@@ -148,17 +125,21 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const boundingSphere = box.getBoundingSphere(new THREE.Sphere());
-
-    const target = boundingSphere.center;
-    const distance = boundingSphere.radius * radiusFactor;
-    const direction = new THREE.Vector3(0, 0, -1);
-    direction.applyQuaternion(this._camera.quaternion);
-
-    const position = new THREE.Vector3();
-    position.copy(direction).multiplyScalar(-distance).add(target);
+    const { position, target } = CameraManagerHelper.calculateCameraStateToFitBoundingBox(
+      this._camera,
+      box,
+      radiusFactor
+    );
 
     this.moveCameraTo(position, target, duration);
+  }
+
+  /**
+   * Gets instance of camera controls that are used by camera manager. See {@link ComboControls} for more
+   * information on all adjustable properties.
+   */
+  get cameraControls(): ComboControls {
+    return this._controls;
   }
 
   /**
@@ -208,7 +189,13 @@ export class DefaultCameraManager implements CameraManager {
     const newRotation = (state.target ? new THREE.Quaternion() : state.rotation) ?? new THREE.Quaternion();
     const newTarget =
       state.target ??
-      (state.rotation ? this.calculateNewTargetFromRotation(state.rotation) : this._controls.getState().target);
+      (state.rotation
+        ? CameraManagerHelper.calculateNewTargetFromRotation(
+            this._camera,
+            state.rotation,
+            this._controls.getState().target
+          )
+        : this._controls.getState().target);
 
     this._controls.cameraRawRotation.copy(newRotation);
 
@@ -393,58 +380,21 @@ export class DefaultCameraManager implements CameraManager {
       return;
     }
 
-    const { cameraPosition, cameraDirection, corners } = this._updateNearAndFarPlaneBuffers;
-    getBoundingBoxCorners(combinedBbox, corners);
-    camera.getWorldPosition(cameraPosition);
-    camera.getWorldDirection(cameraDirection);
-
-    // 1. Compute nearest to fit the whole bbox (the case
-    // where the camera is inside the box is ignored for now)
-    let near = this.calculateCameraNear(camera, combinedBbox, cameraPosition);
-
-    // 2. Compute the far distance to the distance from camera to furthest
-    // corner of the boundingbox that is "in front" of the near plane
-    const far = this.calculateCameraFar(near, cameraPosition, cameraDirection, corners);
-
-    // 3. Handle when camera is inside the model by adjusting the near value
-    const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
-    if (combinedBbox.containsPoint(cameraPosition)) {
-      near = Math.min(0.1, far / 1000.0);
-    }
-
     // Apply
     if (this.automaticNearFarPlane) {
-      camera.near = near;
-      camera.far = far;
-      camera.updateProjectionMatrix();
+      CameraManagerHelper.updateCameraNearAndFar(camera, combinedBbox);
     }
     if (this.automaticControlsSensitivity) {
-      // The minDistance of the camera controller determines at which distance
-      // we will stop when zooming with mouse wheel.
-      // This is also used to determine the speed of the camera when flying with ASDW.
+      const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
+
+      // This is used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside
       this._controls.minDistance = Math.min(
-        Math.max(diagonal * 0.02, 0.1 * near),
+        Math.max(diagonal * 0.02, 0.1 * camera.near),
         DefaultCameraManager.DefaultMinDistance
       );
     }
-  }
-
-  private calculateNewTargetFromRotation(rotation: THREE.Quaternion) {
-    const distToTarget = this._controls.getState().target.sub(this._camera.position);
-    const tempCam = this._camera.clone();
-
-    tempCam.setRotationFromQuaternion(rotation);
-    tempCam.updateMatrix();
-
-    const newTarget = tempCam
-      .getWorldDirection(new THREE.Vector3())
-      .normalize()
-      .multiplyScalar(distToTarget.length())
-      .add(tempCam.position);
-
-    return newTarget;
   }
 
   private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
@@ -484,40 +434,6 @@ export class DefaultCameraManager implements CameraManager {
     const tween = animation.to(to, duration).easing((x: number) => TWEEN.Easing.Circular.Out(x));
 
     return { tween, stopTween };
-  }
-
-  private calculateCameraFar(
-    near: number,
-    cameraPosition: THREE.Vector3,
-    cameraDirection: THREE.Vector3,
-    corners: Array<THREE.Vector3>
-  ): number {
-    const { nearPlane, nearPlaneCoplanarPoint } = this._calculateCameraFarBuffers;
-
-    nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
-    nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);
-    let far = -Infinity;
-    for (let i = 0; i < corners.length; ++i) {
-      if (nearPlane.distanceToPoint(corners[i]) >= 0) {
-        const dist = corners[i].distanceTo(cameraPosition);
-        far = Math.max(far, dist);
-      }
-    }
-    far = Math.max(near * 2, far);
-
-    return far;
-  }
-
-  private calculateCameraNear(
-    camera: THREE.PerspectiveCamera,
-    combinedBbox: THREE.Box3,
-    cameraPosition: THREE.Vector3
-  ): number {
-    let near = combinedBbox.distanceToPoint(cameraPosition);
-    near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
-    near = Math.max(0.1, near);
-
-    return near;
   }
 
   /**
@@ -665,23 +581,4 @@ export class DefaultCameraManager implements CameraManager {
 
     return duration;
   }
-}
-
-function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {
-  outBuffer = outBuffer || range(0, 8).map(_ => new THREE.Vector3());
-  if (outBuffer.length !== 8) {
-    throw new Error(`outBuffer must hold exactly 8 elements, but holds ${outBuffer.length} elemnents`);
-  }
-
-  const min = bbox.min;
-  const max = bbox.max;
-  outBuffer[0].set(min.x, min.y, min.z);
-  outBuffer[1].set(max.x, min.y, min.z);
-  outBuffer[2].set(min.x, max.y, min.z);
-  outBuffer[3].set(min.x, min.y, max.z);
-  outBuffer[4].set(max.x, max.y, min.z);
-  outBuffer[5].set(max.x, max.y, max.z);
-  outBuffer[6].set(max.x, min.y, max.z);
-  outBuffer[7].set(min.x, max.y, max.z);
-  return outBuffer;
 }

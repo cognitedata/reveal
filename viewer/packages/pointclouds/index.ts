@@ -14,7 +14,6 @@ export {
 export { PointCloudNode } from './src/PointCloudNode';
 export { PointCloudManager } from './src/PointCloudManager';
 export { createPointCloudManager } from './src/createPointCloudManager';
-export { PointCloudMetadata } from './src/PointCloudMetadata';
 
 export { PointCloudBudget } from './src/PointCloudBudget';
 export { PointCloudIntersection } from './src/PointCloudIntersection';

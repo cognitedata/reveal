@@ -913,8 +913,10 @@ function createRenderTarget(
   options?: THREE.WebGLRenderTargetOptions
 ): THREE.WebGLRenderTarget {
   if (multiSampleCountHint > 1) {
-    const rt = new THREE.WebGLMultisampleRenderTarget(1, 1, { ...options, ignoreDepth: false } as any);
-    rt.samples = multiSampleCountHint;
+    const rt = new THREE.WebGLRenderTarget(1, 1, {
+      ...options,
+      sample: multiSampleCountHint
+    } as any);
     return rt;
   }
   return new THREE.WebGLRenderTarget(1, 1, options);
