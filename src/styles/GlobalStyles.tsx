@@ -4,6 +4,7 @@ import { getContainer } from 'utils/utils';
 import { styleScope } from './styleScope';
 import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
+import { createGlobalStyle } from 'styled-components';
 import tabsStyle from 'antd/es/tabs/style/index.less';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import {
@@ -71,11 +72,6 @@ const antdStyles = [
 ];
 
 // This will override the appendTo prop on all Tooltips used from cogs
-CogsTooltip.defaultProps = {
-  ...CogsTooltip.defaultProps,
-  appendTo: getContainer,
-};
-
 Modal.defaultProps = {
   ...Modal.defaultProps,
   getContainer,
@@ -115,7 +111,19 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>
+      <StyledGlobalStyles />
       <div className={styleScope}>{props.children}</div>
     </ConfigProvider>
   );
 }
+
+const StyledGlobalStyles = createGlobalStyle`
+  .ant-modal-wrap {
+    overflow-y: hidden !important;
+  }
+
+  .rc-tabs-nav-operations {
+    visibility: hidden;
+    width: 0;
+  }
+`;

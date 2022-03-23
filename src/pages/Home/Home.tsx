@@ -48,7 +48,7 @@ export default function () {
   }
 
   return (
-    <>
+    <StyledAppContainerDiv>
       <Title level={1}>
         Access management{' '}
         <Icon
@@ -130,9 +130,13 @@ export default function () {
           component={ServiceAccounts}
         />
       </Switch>
-    </>
+    </StyledAppContainerDiv>
   );
 }
+
+const StyledAppContainerDiv = styled.div`
+  padding: 18px 44px;
+`;
 
 const StyledMeny = styled(Menu)`
   font-size: 16px;

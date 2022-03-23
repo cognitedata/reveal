@@ -37,7 +37,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.0",
     "single-spa-react": "^3.2.0",
-    "styled-components": "^5.2.3",
+    "styled-components": "^5.3.1",
     "systemjs-webpack-interop": "^2.1.2"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.1.7",
     "@types/single-spa-react": "^2.12.0",
-    "@types/styled-components": "^5.1.9",
+    "@types/styled-components": "^5.1.15",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "customize-cra": "^1.0.0",

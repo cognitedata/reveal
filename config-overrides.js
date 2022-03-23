@@ -4,6 +4,7 @@ const PrefixWrap = require('postcss-prefixwrap');
 const { styleScope } = require('./src/styles/styleScope');
 
 const CSS_REGEX = /\.css$/;
+const LESS_REGEX = /\.less$/;
 
 const cssRegexMatcher = (rule) =>
   rule.test && rule.test.toString() === CSS_REGEX.toString();
@@ -52,6 +53,23 @@ const replaceStyleLoaders = (config) => {
           use: styleLoaders,
           sideEffects: true,
         },
+        {
+          test: LESS_REGEX,
+          use: [
+            ...styleLoaders,
+            {
+              loader: 'less-loader',
+              options: {
+                lessOptions: {
+                  modifyVars: {
+                    'root-entry-name': 'default',
+                  },
+                  javascriptEnabled: true,
+                },
+              },
+            },
+          ],
+        },
         ...config.module.rules
           .find((rule) => Array.isArray(rule.oneOf))
           .oneOf.filter((rule) => {
@@ -99,8 +117,6 @@ module.exports = {
     // exclude these dependencies from the output bundle.
     // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
     config.externals = {
-      react: 'react',
-      'react-dom': 'react-dom',
       'single-spa': 'single-spa',
       '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
       '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
