@@ -6,11 +6,11 @@ import { AuthModes, User } from 'modules/user/types';
 import { UserProfileUpdateQueryData } from './types';
 
 export const user = {
-  sync: async (headers: FetchHeaders, tenant: string, token?: string) =>
+  sync: async (headers: FetchHeaders, tenant: string, accessToken?: string) =>
     fetchPost(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/user/sync`,
       {
-        token,
+        accessToken,
       },
       { headers }
     ),

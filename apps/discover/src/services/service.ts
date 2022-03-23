@@ -24,14 +24,12 @@ export const useJsonHeaders = (
   useIdToken = false
 ) => {
   const idToken = useIdTokenHook(useIdToken);
-  // const { flow } = getFlow();
 
   return {
     ...getDefaultHeader(),
     ...getAuthHeaders({
       useIdToken: idToken,
     }),
-    // flow,
     ...extras,
   };
 };
