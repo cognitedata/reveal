@@ -541,7 +541,7 @@ __metadata:
     webpack-cli: 3.3.12
     webpack-dev-server: 3.11.3
     webpack-log: 3.0.2
-    webpack-node-externals: 2.5.2
+    webpack-node-externals: 3.0.0
     whatwg-fetch: 3.6.2
     worker-plugin: 5.0.1
   peerDependencies:
@@ -12941,10 +12941,10 @@ typescript@4.5.5:
   languageName: node
   linkType: hard
 
-"webpack-node-externals@npm:2.5.2":
-  version: 2.5.2
-  resolution: "webpack-node-externals@npm:2.5.2"
-  checksum: faded9face71ae9d261fc7ae5b512b25d4cc76fec7f957dbcd4fbd5e730120d295286101a2ac707c488c07722599ea7b63efb6b41ba39389e24ff8b6a89be4fe
+"webpack-node-externals@npm:3.0.0":
+  version: 3.0.0
+  resolution: "webpack-node-externals@npm:3.0.0"
+  checksum: 355080c35c821115b97dda8c93d9d0565a90a6012a532324eb0d6a64f8f0d609431fd29504fc7ce414755841ac14f601f3eef99472c2c5dc00233b504ebe73f2
   languageName: node
   linkType: hard
 
