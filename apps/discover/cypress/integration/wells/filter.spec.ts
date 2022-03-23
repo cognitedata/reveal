@@ -356,11 +356,7 @@ describe('Wells sidebar filters', () => {
       .contains(SPUD_DATE)
       .as('spudDate');
 
-    cy.get('@spudDate')
-      .siblings()
-      .first()
-      .findByPlaceholderText('From')
-      .click();
+    cy.get('@spudDate').siblings().first().findAllByRole('tab').first().click();
 
     const currentMonth = new Date().toLocaleString('default', {
       month: 'long',

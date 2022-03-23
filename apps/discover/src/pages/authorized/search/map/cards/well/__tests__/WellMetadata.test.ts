@@ -25,7 +25,7 @@ describe('Well metadata', () => {
 
     expect(screen.getByText('test-sources')).toBeInTheDocument();
     expect(screen.getByText('test-operator')).toBeInTheDocument();
-    expect(screen.getByText('06.Mar.1975')).toBeInTheDocument();
+    expect(screen.getByText('06-Mar-1975')).toBeInTheDocument();
   });
 
   it("should render placeholders when well isn't provided", async () => {

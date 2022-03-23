@@ -10,11 +10,6 @@ export const WellDateRangeWrapper = styled.div`
     border: 2px solid var(--cogs-greyscale-grey4) !important;
     width: 100%;
   }
-  & > * .cogs-date-range--input .cogs-input {
-    width: 82px;
-    text-align: center;
-    margin: 0;
-  }
 `;
 
 export const MultiSelectWrapper = styled.div`

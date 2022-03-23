@@ -50,7 +50,7 @@ describe('meta data table', () => {
   it('should format date', async () => {
     const date = new Date(2000, 1, 1).getTime();
     const result = formatItem({ value: date, type: 'date' });
-    expect(result).toMatchObject(<>01.Feb.2000</>);
+    expect(result).toMatchObject(<>01-Feb-2000</>);
 
     const emptyResult = formatItem({ type: 'date' });
     expect(emptyResult).toMatchObject(

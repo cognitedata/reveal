@@ -5,7 +5,6 @@ import { CLEAR_ALL_TEXT } from '../../src/components/tableEmpty/constants';
 import { EXPAND_FILTERS_TEXT } from '../../src/pages/authorized/search/search/SideBar/constants';
 import { progress } from '../utils';
 
-import DateRange from './sidebar/DateRange';
 import DocumentFilterTag from './sidebar/DocumentFilterTag';
 import FileType from './sidebar/FileType';
 import MainSearch from './sidebar/MainSearch';
@@ -13,8 +12,6 @@ import SearchQueryInfoPanel from './sidebar/SearchQueryInfoPanel';
 import WellFilterTag from './sidebar/WellFilterTag';
 
 class Sidebar {
-  dateRange = DateRange;
-
   fileType = FileType;
 
   mainSearch = MainSearch;

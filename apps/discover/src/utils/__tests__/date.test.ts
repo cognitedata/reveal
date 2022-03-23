@@ -70,23 +70,23 @@ describe('date helpers', () => {
     test('should return date or default text', () => {
       expect(getDateOrDefaultText()).toEqual('N/A');
       expect(getDateOrDefaultText('')).toEqual('N/A');
-      expect(getDateOrDefaultText(1572698222600)).toEqual('02.Nov.2019');
+      expect(getDateOrDefaultText(1572698222600)).toEqual('02-Nov-2019');
       expect(getDateOrDefaultText('abc')).toEqual('N/A');
-      expect(getDateOrDefaultText(new Date('2000'))).toEqual('01.Jan.2000');
+      expect(getDateOrDefaultText(new Date('2000'))).toEqual('01-Jan-2000');
       expect(getDateOrDefaultText('2021-04-15T13:31:27.767Z')).toEqual(
-        '15.Apr.2021'
+        '15-Apr-2021'
       );
       expect(
         getDateOrDefaultText('2021-04-15T13:31:27.767Z', LONG_DATE_FORMAT)
       ).toEqual('15 April, 2021');
       expect(
         getDateOrDefaultText('2021-04-15T13:31:27.767', TIME_AND_DATE_FORMAT)
-      ).toEqual('15.Apr.21 01:31:27');
+      ).toEqual('15-Apr-21 01:31:27');
     });
 
     test('should return short date time', () => {
       expect(shortDateTime('20200101_070314', 'YYYYMMDD_HHmmss')).toEqual(
-        '01.Jan.20 07:03:14'
+        '01-Jan-20 07:03:14'
       );
     });
 
@@ -94,11 +94,11 @@ describe('date helpers', () => {
       const date = new Date(2000, 1, 12);
 
       expect(formatDate(date.toISOString(), SHORT_DATE_FORMAT)).toEqual(
-        '12.Feb.2000'
+        '12-Feb-2000'
       );
       expect(formatDate(date, LONG_DATE_FORMAT)).toEqual('12 February, 2000');
       expect(formatDate(date, TIME_AND_DATE_FORMAT)).toEqual(
-        '12.Feb.00 12:00:00'
+        '12-Feb-00 12:00:00'
       );
       expect(
         formatDate(new Date('2021-04-15T13:31:27.767Z'), DOCUMENT_DATE_FORMAT)
@@ -111,9 +111,9 @@ describe('date helpers', () => {
     test('should return short date', () => {
       const date = new Date(2000, 1, 12);
 
-      expect(shortDate(date)).toEqual('12.Feb.2000');
-      expect(shortDate(date.toISOString())).toEqual('12.Feb.2000');
-      expect(shortDate(date.getTime())).toEqual('12.Feb.2000');
+      expect(shortDate(date)).toEqual('12-Feb-2000');
+      expect(shortDate(date.toISOString())).toEqual('12-Feb-2000');
+      expect(shortDate(date.getTime())).toEqual('12-Feb-2000');
     });
 
     test('should return long date', () => {

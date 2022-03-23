@@ -21,6 +21,6 @@ describe('Module Preview Selector', () => {
     expect(screen.getByText('Well')).toBeInTheDocument();
     expect(screen.getByText('Field')).toBeInTheDocument();
     expect(screen.getByTitle('test-source')).toBeInTheDocument();
-    expect(screen.getByTitle('15.Apr.2021')).toBeInTheDocument();
+    expect(screen.getByTitle('15-Apr-2021')).toBeInTheDocument();
   });
 });

@@ -9,6 +9,6 @@ describe('getSpudDateDisplay', () => {
   it('should be ok', () => {
     expect(
       getSpudDateDisplay(getMockWell({ spudDate: '2022-02-28T15:53:07.367Z' }))
-    ).toEqual('28.Feb.2022');
+    ).toEqual('28-Feb-2022');
   });
 });

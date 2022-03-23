@@ -27,7 +27,7 @@ describe('toDocument', () => {
 
   it('should find lastmodified', () => {
     const doc = toDocument({ item: getDocumentFixture() });
-    expect(doc.modifiedDisplay).toContain('01.Apr.2014');
+    expect(doc.modifiedDisplay).toContain('01-Apr-2014');
   });
 
   it('should find filetype', () => {

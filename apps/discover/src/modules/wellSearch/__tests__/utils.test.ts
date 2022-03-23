@@ -23,7 +23,7 @@ const cmToftFactor = 30.48;
 const mmtoCmFactor = 10;
 const field1 = 1000;
 const field2 = 1500;
-const dateWithFormatting = '11.Nov.2011';
+const dateWithFormatting = '11-Nov-2011';
 const date = new Date(dateWithFormatting);
 const fieldTimeStamp = date.getTime();
 

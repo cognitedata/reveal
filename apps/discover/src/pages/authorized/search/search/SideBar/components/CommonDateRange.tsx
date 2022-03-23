@@ -1,14 +1,9 @@
 import React from 'react';
 
-import { endOf, currentDate } from 'utils/date';
+import { endOf, currentDate, getDateOrDefaultText } from 'utils/date';
 import { SHORT_DATE_FORMAT } from 'utils/date/constants';
 
 import { DateRange, Range } from '@cognite/cogs.js';
-
-import {
-  DATE_RANGE_FILTER_FROM_PLACEHOLDER,
-  DATE_RANGE_FILTER_TO_PLACEHOLDER,
-} from '../constants';
 
 export const CommonDateRange: React.FC<{
   range: Range;
@@ -41,8 +36,8 @@ export const CommonDateRange: React.FC<{
       onChange={onChange}
       type={type}
       calendarHasBorder={calendarHasBorder}
-      startDatePlaceholder={DATE_RANGE_FILTER_FROM_PLACEHOLDER}
-      endDatePlaceholder={DATE_RANGE_FILTER_TO_PLACEHOLDER}
+      startDatePlaceholder={getDateOrDefaultText(new Date())}
+      endDatePlaceholder={getDateOrDefaultText(new Date())}
     />
   );
 };
