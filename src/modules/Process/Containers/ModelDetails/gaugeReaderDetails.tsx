@@ -95,7 +95,7 @@ export const content = (modelIndex: number) => {
                     <Detail>Gauge type</Detail>
                     <PrimaryTooltip
                       tooltipTitle=""
-                      tooltipText="Select gauge type"
+                      tooltipText="The gauge type to detect"
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
                     </PrimaryTooltip>
