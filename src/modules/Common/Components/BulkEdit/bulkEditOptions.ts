@@ -1,20 +1,25 @@
 import { ColumnShape, Column } from 'react-base-table';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
+import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import { BulkEditTableDataType } from './BulkEditTable/BulkEditTable';
 import { getDataForLabel } from './Label/getDataForLabel';
+import { AnnotationPanel } from './Annotation/AnnotationPanel';
 import { LabelPanel } from './Label/LabelPanel';
 import { getDataForMetadata } from './Metadata/getDataForMetadata';
+import { getDataForAnnotation } from './Annotation/getDataForAnnotation';
 import { MetadataPanel } from './Metadata/MetadataPanel';
 
 export type EditPanelState = {
   metadataActiveKey?: MetadataSelectOptionType;
+  annotationFilterType?: AnnotationFilterType;
 };
 
 export type BulkEditOptionType = {
   value: string;
   label: string;
   popconfirmOnApply: boolean;
+  tooltipContentOnDisabled?: string;
   EditPanel: ({
     selectedFiles,
     bulkEditUnsaved,
@@ -57,7 +62,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
         editMode: false,
       },
       {
-        key: 'original',
+        key: 'originalMetadata',
         title: 'Original value',
         dataKey: 'original',
         width: 300,
@@ -65,7 +70,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
         editMode: false,
       },
       {
-        key: 'updated',
+        key: 'updatedMetadata',
         title: 'Updated value',
         dataKey: 'updated',
         width: 300,
@@ -90,7 +95,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
         editMode: false,
       },
       {
-        key: 'original',
+        key: 'originalLabels',
         title: 'Original label(s)',
         dataKey: 'original',
         width: 300,
@@ -98,7 +103,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
         editMode: false,
       },
       {
-        key: 'updated',
+        key: 'updatedLabels',
         title: 'Additional label(s)',
         dataKey: 'updated',
         width: 300,
@@ -107,5 +112,40 @@ export const bulkEditOptions: BulkEditOptionType[] = [
       },
     ],
     data: getDataForLabel,
+  },
+  {
+    value: 'deleteAnnotations',
+    label: 'Delete annotations',
+    popconfirmOnApply: true,
+    tooltipContentOnDisabled:
+      'No annotations will be deleted using the current settings',
+    EditPanel: AnnotationPanel,
+    columns: [
+      {
+        key: 'name',
+        title: 'File name',
+        dataKey: 'name',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'originalAnnotations',
+        title: 'Original annotation(s)',
+        dataKey: 'original',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'updatedAnnotations',
+        title: 'Updated annotation(s)',
+        dataKey: 'updated',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+    ],
+    data: getDataForAnnotation,
   },
 ];

@@ -10,10 +10,11 @@ export const getDataForLabel = (
   bulkEditUnsaved: BulkEditUnsavedState
 ): BulkEditTableDataType[] => {
   return selectedFiles.map((file) => {
-    const { name, labels } = file;
+    const { name, id, labels } = file;
     const newLabels = bulkEditUnsaved.labels;
     return {
       name,
+      id,
       original: labels ? (
         <CellContainer>
           {labels.map((label) =>

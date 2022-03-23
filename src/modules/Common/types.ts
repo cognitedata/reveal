@@ -5,6 +5,7 @@ import {
   JobStatus,
   VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
+import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 
 export interface AnnotationPreview
   extends Pick<
@@ -53,6 +54,7 @@ export type TableDataItem = Pick<
 > & {
   menuActions: FileActions; // menu: FileActions;
   rowKey: string; // unique key;
+  annotationFilter?: AnnotationFilterType;
 };
 
 export type ResultData = TableDataItem;

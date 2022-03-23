@@ -10,6 +10,10 @@ import {
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
+import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { FilteredAnnotationsRenderer } from 'src/modules/Common/Containers/FileTableRenderers/FilteredAnnotationsRenderer';
+import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { BulkEditTable } from './BulkEditTable/BulkEditTable';
 import {
   bulkEditOptions,
@@ -55,6 +59,19 @@ const OptionalPopconfirmButton = (props: {
   );
 };
 
+const rendererMap = {
+  name: NameRenderer,
+  // Metadata
+  originalMetadata: StringRenderer,
+  updatedMetadata: StringRenderer,
+  // Labels
+  originalLabels: StringRenderer,
+  updatedLabels: StringRenderer,
+  // Annotation
+  originalAnnotations: AnnotationRenderer,
+  updatedAnnotations: FilteredAnnotationsRenderer,
+};
+
 export const BulkEditModalContent = ({
   selectedFiles,
   bulkEditUnsaved,
@@ -67,7 +84,8 @@ export const BulkEditModalContent = ({
   const [editing, setEditing] = useState<boolean>();
   const [editPanelState, setEditPanelState] = useState<EditPanelState>({});
 
-  const { EditPanel, popconfirmOnApply } = selectedBulkEditOption;
+  const { EditPanel, popconfirmOnApply, tooltipContentOnDisabled } =
+    selectedBulkEditOption;
   useEffect(() => {
     setEditing(false);
   }, [selectedBulkEditOption]);
@@ -108,6 +126,7 @@ export const BulkEditModalContent = ({
             editPanelState
           )}
           columns={selectedBulkEditOption.columns}
+          rendererMap={rendererMap}
         />
       </BodyContainer>
       <Footer>
@@ -118,7 +137,8 @@ export const BulkEditModalContent = ({
           <Tooltip
             content={
               <span data-testid="text-content">
-                Please finish your unfinished edits
+                {tooltipContentOnDisabled ||
+                  'Please finish your unfinished edits'}
               </span>
             }
             disabled={!editing}

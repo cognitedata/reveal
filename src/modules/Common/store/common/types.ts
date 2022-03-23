@@ -5,6 +5,7 @@ export type BulkEditUnsavedState = {
   metadata?: Metadata;
   keepOriginalMetadata?: Boolean;
   labels?: Label[];
+  annotationIdsToDelete?: number[];
 };
 
 export type CommonState = {

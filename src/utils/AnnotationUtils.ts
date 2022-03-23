@@ -24,6 +24,7 @@ import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
 import { AllIconTypes } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
 import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -237,6 +238,26 @@ export class AnnotationUtils {
     return ann;
   }
 
+  public static filterAnnotations(
+    annotations: VisionAnnotation[],
+    filter?: AnnotationFilterType
+  ): VisionAnnotation[] {
+    let filteredAnnotations = annotations;
+    if (filter) {
+      if (filter.annotationState) {
+        filteredAnnotations = filteredAnnotations.filter(
+          (item) => item.status === filter.annotationState
+        );
+      }
+      if (filter.annotationText) {
+        filteredAnnotations = filteredAnnotations.filter(
+          (item) => item.text === filter.annotationText
+        );
+      }
+    }
+    return filteredAnnotations;
+  }
+
   public static getAnnotationsDetectionModelType = (
     ann: Annotation
   ): VisionDetectionModelType => {
@@ -388,6 +409,27 @@ export const getAnnotationsBadgeCounts = (annotations: VisionAnnotation[]) => {
   }
 
   return annotationsBadgeProps;
+};
+
+export const calculateBadgeCountsDifferences = (
+  allCounts: AnnotationsBadgeCounts,
+  subsetCounts: AnnotationsBadgeCounts
+) => {
+  const diff = allCounts;
+  diff.gdpr -= subsetCounts.gdpr;
+  diff.assets -= subsetCounts.assets;
+  diff.text -= subsetCounts.text;
+  diff.objects -= subsetCounts.objects;
+  // Clamp the counts in case we have any negative values
+  // Also, check that the counts are not falsy.
+  diff.gdpr = Math.max(diff.gdpr, 0) || 0;
+  diff.assets = Math.max(diff.assets, 0) || 0;
+  diff.text = Math.max(diff.text, 0) || 0;
+  diff.objects = Math.max(diff.objects, 0) || 0;
+  // TODO: find a way to re-compute mostFrequentObjects without passing the
+  // annotations as parameter ot this function
+  diff.mostFrequentObject = undefined;
+  return diff;
 };
 
 export const isAnnotation = (

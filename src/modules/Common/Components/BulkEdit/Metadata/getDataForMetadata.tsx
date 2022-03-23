@@ -11,7 +11,7 @@ export const getDataForMetadata = (
   editPanelState: EditPanelState
 ): BulkEditTableDataType[] => {
   return selectedFiles.map((file) => {
-    const { name, metadata } = file;
+    const { name, id, metadata } = file;
     const { value: activeKey } = editPanelState.metadataActiveKey || {
       value: '',
     };
@@ -22,6 +22,7 @@ export const getDataForMetadata = (
 
     return {
       name,
+      id,
       original: metadata ? (
         <CellContainer>{originalValue}</CellContainer>
       ) : (

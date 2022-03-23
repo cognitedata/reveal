@@ -1,11 +1,13 @@
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import {
+  AnnotationUtils,
   getAnnotationsBadgeCounts,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
+import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 
 const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 
@@ -32,16 +34,22 @@ export const makeSelectFileAnnotations = () =>
 export const makeSelectAnnotationsForFileIds = () =>
   createDeepEqualSelector(
     (state: AnnotationState, fileIds: number[]) => fileIds,
+    (
+      state: AnnotationState,
+      fileIds: number[],
+      filter?: AnnotationFilterType
+    ) => filter,
     annotationsById,
     annotatedFilesById,
-    (fileIds, allAnnotations, allFiles) => {
+    (fileIds, filter, allAnnotations, allFiles) => {
       // file id existence checked in selectFileAnnotations
       const data: Record<number, VisionAnnotation[]> = {};
       fileIds.forEach((id) => {
         const fileAnnotations = allFiles[id];
         if (fileAnnotations && fileAnnotations.length) {
-          data[id] = fileAnnotations.map(
-            (annotationId) => allAnnotations[annotationId]
+          data[id] = AnnotationUtils.filterAnnotations(
+            fileAnnotations.map((annotationId) => allAnnotations[annotationId]),
+            filter
           );
         } else {
           data[id] = [];
