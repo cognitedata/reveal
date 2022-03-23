@@ -62,7 +62,7 @@
     "react-dom": "16.14.0",
     "react-live": "2.4.1",
     "styled-components": "5.3.3",
-    "three": "0.137.5"
+    "three": "0.138.0"
   },
   "devDependencies": {
     "@types/react": "17.0.41",
