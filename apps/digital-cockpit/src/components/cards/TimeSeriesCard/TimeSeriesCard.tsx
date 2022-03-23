@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
 import moment from 'moment';
 import TimeSeriesPreview from 'components/explorer/TimeSeriesPreview';
+import isNumber from 'lodash/isNumber';
 
 import Card from '../Card';
 
@@ -44,6 +45,13 @@ const TimeSeriesCard = ({ assetId, onHeaderClick }: TimeSeriesCardProps) => {
   const latestDatapoint = useMemo(
     () => datapoints?.[0]?.datapoints[0] as DoubleDatapoint,
     [datapoints]
+  );
+  const latestDatapointValue = useMemo(
+    () =>
+      isNumber(latestDatapoint?.value)
+        ? latestDatapoint?.value.toPrecision(8)
+        : latestDatapoint?.value,
+    [latestDatapoint]
   );
 
   const renderTimeSeriesSelector = (selectedTimeSeries: Timeseries) => {
@@ -93,7 +101,7 @@ const TimeSeriesCard = ({ assetId, onHeaderClick }: TimeSeriesCardProps) => {
         </Overline>
         <Flex justifyContent="space-between" style={{ width: '100%' }}>
           <span>
-            {latestDatapoint?.value.toPrecision(8)} {selectedTimeSeries?.unit}
+            {latestDatapointValue} {selectedTimeSeries?.unit}
           </span>
           <span>{moment(latestDatapoint?.timestamp).fromNow()}</span>
         </Flex>

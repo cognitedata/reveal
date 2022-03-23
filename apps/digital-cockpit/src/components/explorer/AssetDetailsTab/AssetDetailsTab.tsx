@@ -38,6 +38,7 @@ const AssetDetailsTab = ({ assetId }: AssetDetailsTabProps) => {
       children.push(
         <Card
           className="slim-card"
+          key={`asset-slim-card-${assetId}`}
           header={{
             title: 'Open in BestDay',
             icon: 'App.BestDay',
@@ -54,7 +55,7 @@ const AssetDetailsTab = ({ assetId }: AssetDetailsTabProps) => {
     }
     if (Object.keys(currentAsset?.metadata || {}).length > 0) {
       children.push(
-        <div style={{ height: 500 }}>
+        <div style={{ height: 500 }} key={`asset-card-${assetId}`}>
           <Card header={{ title: 'Metadata', icon: 'List' }} noPadding>
             <div style={{ height: '100%' }}>
               <MetadataTable assetId={assetId} />

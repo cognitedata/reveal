@@ -6,6 +6,7 @@ import moment from 'moment';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import Loading from 'components/utils/Loading';
 import IconContainer from 'components/icons';
+import isNumber from 'lodash/isNumber';
 
 import TimeSeriesPreview from '../TimeSeriesPreview';
 import ShareButton from '../ShareButton';
@@ -74,6 +75,13 @@ const TimeSeriesSidebar = ({
     () => datapoints?.[0]?.datapoints[0] as DoubleDatapoint,
     [datapoints]
   );
+  const latestDatapointValue = useMemo(
+    () =>
+      isNumber(latestDatapoint?.value)
+        ? latestDatapoint?.value.toPrecision(4)
+        : latestDatapoint?.value,
+    [latestDatapoint]
+  );
 
   const renderLastReading = useCallback(
     () => (
@@ -81,13 +89,13 @@ const TimeSeriesSidebar = ({
         <Overline level={1}>Last reading</Overline>
         <Flex justifyContent="space-between" style={{ width: '100%' }}>
           <span>
-            {latestDatapoint?.value.toPrecision(4)} {timeSeries.unit}
+            {latestDatapointValue} {timeSeries.unit}
           </span>
           <span>{moment(latestDatapoint?.timestamp).fromNow()}</span>
         </Flex>
       </>
     ),
-    [latestDatapoint, timeSeries]
+    [latestDatapoint, latestDatapointValue, timeSeries]
   );
 
   const handleOpenInCharts = () => {
