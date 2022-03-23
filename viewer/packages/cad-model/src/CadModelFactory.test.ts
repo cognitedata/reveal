@@ -7,13 +7,7 @@ import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
 import { GeometryFilter } from './GeometryFilter';
-import {
-  ModelDataProvider,
-  ModelMetadataProvider,
-  ModelIdentifier,
-  BlobOutputMetadata,
-  File3dFormat
-} from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/modeldata-api';
 
 import { It, Mock } from 'moq.ts';
 
