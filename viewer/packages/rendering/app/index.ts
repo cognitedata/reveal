@@ -18,8 +18,9 @@ import { CadManager } from '../../cad-model/src/CadManager';
 import { NumericRange, revealEnv } from '@reveal/utilities';
 import dat from 'dat.gui';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
-import { ByScreenSizeSectorCuller, CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -96,6 +97,7 @@ async function init() {
   customObjects.add(controlsTest);
 
   const renderOptions = defaultRenderOptions;
+  renderOptions.multiSampleCountHint = 2;
 
   const renderManager = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipeline(
@@ -144,7 +146,7 @@ async function init() {
 
   const renderOptionsGUI = gui.addFolder('Render Options');
   renderOptionsGUI.open();
-  // renderOptions.edgeDetectionParameters.
+
   const edgeDetectionParametersGUI = renderOptionsGUI.addFolder('Edge Detection');
   edgeDetectionParametersGUI.add(renderOptions.edgeDetectionParameters, 'enabled').onChange(updateRenderOptions);
   edgeDetectionParametersGUI.open();
@@ -153,12 +155,12 @@ async function init() {
   antiAliasingGui
     .add(renderOptions, 'antiAliasing', { NoAA: AntiAliasingMode.NoAA, FXAA: AntiAliasingMode.FXAA })
     .onChange(updateRenderOptions);
-  antiAliasingGui.add(renderOptions, 'multiSampleCountHint', 0, 16, 1);
+  antiAliasingGui.add(renderOptions, 'multiSampleCountHint', 0, 16, 1).onChange(updateRenderOptions);
   antiAliasingGui.open();
 
   const ssaoOptionsGui = renderOptionsGUI.addFolder('SSAO');
   ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleRadius', 0, 30).onChange(updateRenderOptions);
-  ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleSize', 0, 256, 1).onChange(updateRenderOptions);
+  ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleSize', 1, 256, 1).onChange(updateRenderOptions);
   ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias', 0, 1).onChange(updateRenderOptions);
   ssaoOptionsGui.open();
 

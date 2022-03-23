@@ -39,6 +39,11 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
           : BlitEffect.None;
       this._defaultRenderPipelinePasses.blitToOutput.blitEffect = blitEffect;
     }
+
+    this._renderTargetData.color.samples = renderOptions.multiSampleCountHint ?? 0;
+    this._renderTargetData.ghost.samples = renderOptions.multiSampleCountHint ?? 0;
+    this._renderTargetData.inFront.samples = renderOptions.multiSampleCountHint ?? 0;
+
     this._renderOptions = cloneDeep(renderOptions);
   }
 
@@ -49,15 +54,17 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     cadModels?: IdentifiedModel[],
     customObjects?: THREE.Group
   ) {
+    const multisampleCount = renderOptions.multiSampleCountHint ?? 0;
+
     this._materialManager = materialManager;
     this._cadScene = scene;
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),
       opaqueComposition: createRenderTarget(),
       finalComposition: createRenderTarget(),
-      color: createRenderTarget(1, 1, 8),
-      ghost: createRenderTarget(1, 1, 8),
-      inFront: createRenderTarget(1, 1, 8),
+      color: createRenderTarget(1, 1, multisampleCount),
+      ghost: createRenderTarget(1, 1, multisampleCount),
+      inFront: createRenderTarget(1, 1, multisampleCount),
       ssao: new THREE.WebGLRenderTarget(1, 1)
     };
     this._cadModels = cadModels;
@@ -228,9 +235,14 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       blendOptions: { blendDestination: THREE.DstAlphaFactor, blendSource: THREE.OneMinusDstAlphaFactor }
     });
 
+    const blitEffect =
+      AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA]
+        ? BlitEffect.Fxaa
+        : BlitEffect.None;
+
     const blitToOutput = new BlitPass({
       texture: this._renderTargetData.finalComposition.texture,
-      effect: BlitEffect.Fxaa,
+      effect: blitEffect,
       overrideAlpha: 1.0
     });
 

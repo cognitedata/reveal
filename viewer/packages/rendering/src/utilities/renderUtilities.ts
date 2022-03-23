@@ -16,25 +16,14 @@ export function createFullScreenTriangleMesh(shaderMaterial: THREE.RawShaderMate
 }
 
 export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1): THREE.WebGLRenderTarget {
-  let renderTarget: THREE.WebGLRenderTarget;
+  const renderTarget = new THREE.WebGLRenderTarget(width, height);
+  renderTarget.samples = multiSampleCount > 1 ? multiSampleCount : 0;
 
-  if (multiSampleCount > 1) {
-    const multiSampleTarget = new THREE.WebGLMultisampleRenderTarget(width, height, { ignoreDepth: false } as any);
-    multiSampleTarget.samples = 10;
-    renderTarget = multiSampleTarget;
-  } else {
-    renderTarget = new THREE.WebGLRenderTarget(width, height);
-  }
-
-  setDepthTexture(renderTarget, width, height);
-
-  return renderTarget;
-}
-
-function setDepthTexture(renderTarget: THREE.WebGLRenderTarget, width: number, height: number): void {
   renderTarget.depthTexture = new THREE.DepthTexture(width, height);
   renderTarget.depthTexture.format = THREE.DepthFormat;
   renderTarget.depthTexture.type = THREE.UnsignedIntType;
+
+  return renderTarget;
 }
 
 export enum RenderLayer {
