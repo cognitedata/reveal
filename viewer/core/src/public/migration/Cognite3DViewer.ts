@@ -562,9 +562,6 @@ export class Cognite3DViewer {
    * ```
    */
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
-    if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError('localPath is not supported');
-    }
     if (options.geometryFilter) {
       throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
