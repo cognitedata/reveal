@@ -15,6 +15,12 @@ export const updateBulk = createAsyncThunk<
     id: number;
     update: {};
   }[] = selectedFiles.map((file) => {
+    /**
+     * API limitations:
+     * - All set/add/remove should be populated, no null allowed
+     * - No overlap elements in add and remove operations allowed
+     */
+
     const { id } = file;
     const addedLabels: Label[] = bulkEditUnsaved.labels || [];
 
@@ -28,11 +34,24 @@ export const updateBulk = createAsyncThunk<
           )
       : {};
 
+    // No overlap elements in add and remove operations allowed
+    // So remove will priorities
+    const updatedAssets = bulkEditUnsaved.assetIds;
+    const assetsToRemove = updatedAssets?.removedAssetIds || [];
+    const assetsToAdd =
+      updatedAssets?.addedAssetIds?.filter(
+        (addedAssetIds) => !assetsToRemove?.includes(addedAssetIds)
+      ) || [];
+
     return {
       id,
       update: {
         labels: { add: addedLabels },
         metadata: { add: newMetadata },
+        assetIds: {
+          add: assetsToAdd,
+          remove: assetsToRemove,
+        },
       },
     };
   });

@@ -1,14 +1,25 @@
 import { ColumnShape, Column } from 'react-base-table';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
+import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
+
+// Metadata
+import { getDataForMetadata } from 'src/modules/Common/Components/BulkEdit/Metadata/getDataForMetadata';
+import { MetadataPanel } from 'src/modules/Common/Components/BulkEdit/Metadata/MetadataPanel';
+
+// Label
+import { getDataForLabel } from 'src/modules/Common/Components/BulkEdit/Label/getDataForLabel';
+import { LabelPanel } from 'src/modules/Common/Components/BulkEdit/Label/LabelPanel';
+
+// Asset
+import { AssetPanel } from 'src/modules/Common/Components/BulkEdit/Asset/AssetPanel';
+import { getDataForAssets } from 'src/modules/Common/Components/BulkEdit/Asset/getDataForAssets';
+import { disableAssetTable } from 'src/modules/Common/Components/BulkEdit/Asset/disableAssetTable';
+
+// Annotation
+import { AnnotationPanel } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationPanel';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
-import { BulkEditTableDataType } from './BulkEditTable/BulkEditTable';
-import { getDataForLabel } from './Label/getDataForLabel';
-import { AnnotationPanel } from './Annotation/AnnotationPanel';
-import { LabelPanel } from './Label/LabelPanel';
-import { getDataForMetadata } from './Metadata/getDataForMetadata';
-import { getDataForAnnotation } from './Annotation/getDataForAnnotation';
-import { MetadataPanel } from './Metadata/MetadataPanel';
+import { getDataForAnnotation } from 'src/modules/Common/Components/BulkEdit/Annotation/getDataForAnnotation';
 
 export type EditPanelState = {
   metadataActiveKey?: MetadataSelectOptionType;
@@ -18,6 +29,12 @@ export type EditPanelState = {
 export type BulkEditOptionType = {
   value: string;
   label: string;
+  columns: ColumnShape[];
+  disabled?: ({
+    bulkEditUnsaved,
+  }: {
+    bulkEditUnsaved: BulkEditUnsavedState;
+  }) => boolean;
   popconfirmOnApply: boolean;
   tooltipContentOnDisabled?: string;
   EditPanel: ({
@@ -25,12 +42,17 @@ export type BulkEditOptionType = {
     bulkEditUnsaved,
     setBulkEditUnsaved,
   }: EditPanelProps) => JSX.Element;
-  columns: ColumnShape[];
-  data: (
-    selectedFiles: VisionFile[],
-    bulkEditUnsaved: BulkEditUnsavedState,
-    editPanelState: EditPanelState
-  ) => BulkEditTableDataType[];
+  data: ({
+    selectedFiles,
+    bulkEditUnsaved,
+    editPanelState,
+    assetsDetails,
+  }: {
+    selectedFiles: VisionFile[];
+    bulkEditUnsaved: BulkEditUnsavedState;
+    editPanelState: EditPanelState;
+    assetsDetails: Record<number, { name: string }>;
+  }) => BulkEditTableDataType[];
 };
 
 export type MetadataSelectOptionType = { value: string; label: string };
@@ -112,6 +134,40 @@ export const bulkEditOptions: BulkEditOptionType[] = [
       },
     ],
     data: getDataForLabel,
+  },
+  {
+    value: 'asset',
+    label: 'Asset',
+    popconfirmOnApply: false,
+    EditPanel: AssetPanel,
+    columns: [
+      {
+        key: 'name',
+        title: 'File name',
+        dataKey: 'name',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'originalAssets',
+        title: 'Original asset name(s)',
+        dataKey: 'original',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'updatedAssets',
+        title: 'Updated asset name(s)',
+        dataKey: 'updated',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+    ],
+    data: getDataForAssets,
+    disabled: disableAssetTable,
   },
   {
     value: 'deleteAnnotations',

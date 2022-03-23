@@ -10,6 +10,7 @@ import {
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
+import { retrieveAsset } from 'src/api/assets/retrieveAsset';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
 import { FilteredAnnotationsRenderer } from 'src/modules/Common/Containers/FileTableRenderers/FilteredAnnotationsRenderer';
@@ -67,6 +68,9 @@ const rendererMap = {
   // Labels
   originalLabels: StringRenderer,
   updatedLabels: StringRenderer,
+  // Asset
+  originalAssets: StringRenderer,
+  updatedAssets: StringRenderer,
   // Annotation
   originalAnnotations: AnnotationRenderer,
   updatedAnnotations: FilteredAnnotationsRenderer,
@@ -83,13 +87,44 @@ export const BulkEditModalContent = ({
     useState<BulkEditOptionType>(bulkEditOptions[0]);
   const [editing, setEditing] = useState<boolean>();
   const [editPanelState, setEditPanelState] = useState<EditPanelState>({});
+  const [assetsDetails, setAssetsDetails] = useState<
+    Record<number, { name: string }>
+  >({});
 
-  const { EditPanel, popconfirmOnApply, tooltipContentOnDisabled } =
-    selectedBulkEditOption;
+  const {
+    columns,
+    popconfirmOnApply,
+    tooltipContentOnDisabled,
+    EditPanel,
+    data,
+    disabled,
+  } = selectedBulkEditOption;
+  const { assetIds: unsavedAssetIds } = bulkEditUnsaved;
+  const assetIdsFromFiles = selectedFiles.map((file) => file.assetIds).flat();
+
   useEffect(() => {
     setEditing(false);
   }, [selectedBulkEditOption]);
 
+  useEffect(() => {
+    const assetIds: number[] = [
+      assetIdsFromFiles,
+      unsavedAssetIds?.addedAssetIds,
+      unsavedAssetIds?.removedAssetIds,
+    ]
+      .flat()
+      .filter((v, i, a) => a.indexOf(v) === i && v !== undefined) as number[];
+
+    (async () => {
+      const assets = await retrieveAsset(assetIds);
+      assets.forEach((asset) => {
+        setAssetsDetails((currentAssets) => ({
+          ...currentAssets,
+          [asset.id]: { name: asset.name },
+        }));
+      });
+    })();
+  }, [selectedBulkEditOption, unsavedAssetIds?.addedAssetIds]);
   const handleBulkEditOptionChange = (option: BulkEditOptionType) => {
     setSelectedBulkEditOption(option);
     // Reset unsaved panel state when bulk edit option state has changed
@@ -120,13 +155,15 @@ export const BulkEditModalContent = ({
           editPanelStateOptions={{ editPanelState, setEditPanelState }}
         />
         <BulkEditTable
-          data={selectedBulkEditOption.data(
+          data={data({
             selectedFiles,
             bulkEditUnsaved,
-            editPanelState
-          )}
-          columns={selectedBulkEditOption.columns}
+            editPanelState,
+            assetsDetails,
+          })}
+          columns={columns}
           rendererMap={rendererMap}
+          disabled={disabled && disabled({ bulkEditUnsaved })}
         />
       </BodyContainer>
       <Footer>

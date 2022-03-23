@@ -5,10 +5,13 @@ import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 
-export const getDataForLabel = (
-  selectedFiles: VisionFile[],
-  bulkEditUnsaved: BulkEditUnsavedState
-): BulkEditTableDataType[] => {
+export const getDataForLabel = ({
+  selectedFiles,
+  bulkEditUnsaved,
+}: {
+  selectedFiles: VisionFile[];
+  bulkEditUnsaved: BulkEditUnsavedState;
+}): BulkEditTableDataType[] => {
   return selectedFiles.map((file) => {
     const { name, id, labels } = file;
     const newLabels = bulkEditUnsaved.labels;
