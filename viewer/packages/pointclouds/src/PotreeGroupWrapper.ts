@@ -107,7 +107,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     const forceLoading$ = this._forceLoadingSubject.pipe(trueForDuration(pollLoadingStatusInterval * 5));
     return combineLatest([
       interval(pollLoadingStatusInterval).pipe(
-        map(getLoadingStateFromPotree),
+        map(() => getLoadingStateFromPotree(this.nodes)),
         distinctUntilChanged((x, y) => {
           return (
             x.isLoading === y.isLoading && x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested
@@ -160,11 +160,12 @@ function trueForDuration(milliseconds: number) {
   );
 }
 
-function getLoadingStateFromPotree(): LoadingState {
+function getLoadingStateFromPotree(nodes: PotreeNodeWrapper[]): LoadingState {
+  const numNodesLoading: number = Potree.Global.numNodesLoading;
   return {
-    isLoading: Potree.Global.numNodesLoading > 0,
-    itemsLoaded: 0,
-    itemsRequested: Potree.Global.numNodesLoading,
+    isLoading: numNodesLoading > 0,
+    itemsLoaded: nodes.length - numNodesLoading,
+    itemsRequested: nodes.length,
     itemsCulled: 0
   };
 }
