@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Group } from '@cognite/sdk';
 import { forUnitTests } from './hooks';
 
@@ -28,8 +29,8 @@ describe('hooks', () => {
           delete: jest.fn().mockResolvedValue([]),
         },
       };
-
-      const update = getUpdater(sdk!, test);
+      const mockProject = 'test-project';
+      const update = getUpdater(sdk!, mockProject);
 
       const oldGroup: Group = {
         id: 1,
@@ -80,7 +81,8 @@ describe('hooks', () => {
           delete: jest.fn().mockResolvedValue([]),
         },
       };
-      const update = getUpdater(sdk!, test);
+      const mockProject = 'test-project';
+      const update = getUpdater(sdk!, mockProject);
 
       const oldGroup: Group = {
         id: 1,
@@ -123,7 +125,8 @@ describe('hooks', () => {
           delete: jest.fn().mockResolvedValue([]),
         },
       };
-      const update = getUpdater(sdk!, test);
+      const mockProject = 'test-project';
+      const update = getUpdater(sdk!, mockProject);
 
       const oldGroup: Group = {
         id: 1,
@@ -166,7 +169,8 @@ describe('hooks', () => {
           delete: jest.fn().mockResolvedValue([]),
         },
       };
-      const update = getUpdater(sdk!, test);
+      const mockProject = 'test-project';
+      const update = getUpdater(sdk!, mockProject);
 
       const oldGroup: Group = {
         id: 1, // same as default above

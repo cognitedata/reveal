@@ -1,7 +1,7 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
 
-const { styleScope } = require('./src/utils/styleScope');
+const { styleScope } = require('./src/styles/styleScope');
 
 const CSS_REGEX = /\.css$/;
 

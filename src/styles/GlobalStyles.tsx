@@ -1,6 +1,11 @@
 // @ts-nocheck
 import React from 'react';
-
+import { getContainer } from 'utils/utils';
+import { styleScope } from './styleScope';
+import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { useGlobalStyles } from '@cognite/cdf-utilities';
+import tabsStyle from 'antd/es/tabs/style/index.less';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import {
   ConfigProvider,
   Modal,
@@ -9,7 +14,6 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
-
 import alertStyle from 'antd/es/alert/style/index.less';
 import autoCompleteStyle from 'antd/es/auto-complete/style/index.less';
 import badgeStyle from 'antd/es/badge/style/index.less';
@@ -36,13 +40,6 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
-
-import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { styleScope } from './styleScope';
-
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-import tabsStyle from 'antd/es/tabs/style/index.less';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 const antdStyles = [
   alertStyle,
