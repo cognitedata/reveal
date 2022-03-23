@@ -115,7 +115,7 @@ export class ModelUi {
 
   async addModel(options: AddModelOptions) {
     try {
-      const model = options.localPath !== undefined ? await loadLocalModel(this._viewer, options) : await this._viewer.addModel(options);
+      const model = options.localPath !== undefined ? await addLocalModel(this._viewer, options) : await this._viewer.addModel(options);
       if (model instanceof Cognite3DModel) {
         this._cadModels.push(model);
       } else if (model instanceof CognitePointCloudModel) {
@@ -137,7 +137,7 @@ export class ModelUi {
 
 }
 
-async function loadLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CognitePointCloudModel | Cognite3DModel> {
+async function addLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CognitePointCloudModel | Cognite3DModel> {
   const isPointCloud = addModelOptions.localPath !== undefined && await isLocalUrlPointCloudModel(addModelOptions.localPath);
   return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
 }
