@@ -18,7 +18,7 @@ import { CadManager } from '../../cad-model/src/CadManager';
 import { NumericRange, revealEnv } from '@reveal/utilities';
 import dat from 'dat.gui';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
-import { CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 
@@ -55,10 +55,10 @@ async function init() {
 
   const materialManager = new CadMaterialManager();
   const cadModelFactory = new CadModelFactory(materialManager, cdfModelMetadataProvider, cdfModelDataProvider);
-  const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), true);
+  const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), false);
 
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
-
+  cadManager.budget = defaultDesktopCadModelBudget;
   const scene = new THREE.Scene();
   const cogniteModels = new THREE.Group();
   const customObjects = new THREE.Group();
@@ -119,7 +119,6 @@ async function init() {
   fitCameraToBoundingBox(bb, camera, controls);
 
   cadModelUpdateHandler.updateCamera(camera);
-  cadModelUpdateHandler.getLoadingStateObserver().subscribe({ next: render });
 
   document.body.appendChild(renderer.domElement);
 
@@ -169,18 +168,21 @@ async function init() {
     render();
   });
 
-  await new Promise(_ => setTimeout(_, 2000));
+  const render = () => {
+    guiData.drawCalls = renderer.info.render.calls;
+    renderManager.render(defaultRenderPipeline, camera);
+    guiController.updateDisplay();
+  };
 
-  render();
+  renderer.setAnimationLoop(() => {
+    controls.update();
+    if (!cadManager.needsRedraw) {
+      return;
+    }
 
-  function render() {
-    window.requestAnimationFrame(() => {
-      controls.update();
-      guiData.drawCalls = renderer.info.render.calls;
-      renderManager.render(defaultRenderPipeline, camera);
-      guiController.updateDisplay();
-    });
-  }
+    render();
+    cadManager.resetRedraw();
+  });
 }
 
 function fitCameraToBoundingBox(
