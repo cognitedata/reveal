@@ -231,7 +231,7 @@ describe('convertVisionJobAnnotationToImageKeypointCollection', () => {
       text: 'gauge',
       confidence: 0.1,
       data: {
-        keypoint_names: ['left', 'right'],
+        keypointNames: ['left', 'right'],
       },
       ...points,
     } as VisionJobAnnotation;
@@ -243,7 +243,7 @@ describe('convertVisionJobAnnotationToImageKeypointCollection', () => {
       keypoints: visionJobAnnotation.region?.vertices.map((vertex, index) => {
         return {
           label: (visionJobAnnotation as GaugeReaderJobAnnotation).data
-            .keypoint_names[index],
+            .keypointNames[index],
           confidence: visionJobAnnotation.confidence,
           point: vertex,
         };

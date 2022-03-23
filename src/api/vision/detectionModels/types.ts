@@ -57,8 +57,7 @@ export type GaugeReaderJobAnnotation = BaseVisionJobAnnotation & {
   // __typename: VisionDetectionModelType.GaugeReader;
   region: AnnotationRegion;
   data: {
-    // eslint-disable-next-line camelcase
-    keypoint_names: string[];
+    keypointNames: string[];
   };
 };
 

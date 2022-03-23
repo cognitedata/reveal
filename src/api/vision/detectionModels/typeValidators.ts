@@ -56,7 +56,7 @@ export function validKeypointCollection(
     !!annotation.region &&
     annotation.region.shape === RegionShape.Points &&
     annotation.region.vertices?.length ===
-      annotation.data.keypoint_names?.length &&
+      annotation.data.keypointNames?.length &&
     annotation.region.vertices.every(
       (item) => 'x' in item && 'y' in item && vertexIsNormalized(item)
     ) &&

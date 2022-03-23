@@ -120,7 +120,7 @@ export function convertVisionJobAnnotationToImageKeypointCollection(
     keypoints: annotation.region.vertices.map((item, index) => {
       return {
         point: item,
-        label: annotation.data.keypoint_names[index],
+        label: annotation.data.keypointNames[index],
         confidence: annotation.confidence,
       };
     }),
