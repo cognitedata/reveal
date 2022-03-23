@@ -1,11 +1,7 @@
-import queryString from 'query-string';
 import { Metrics } from '@cognite/metrics';
 
 export const projectName = () =>
   new URL(window.location.href).pathname.split('/')[1];
-
-export const getCdfEnvFromUrl = () =>
-  queryString.parse(window.location.search).env as string | undefined;
 
 export const checkUrl = (env: string) => window.location.hostname.includes(env);
 export const isDevelopment = () => checkUrl('dev') || checkUrl('localhost');

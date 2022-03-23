@@ -8,7 +8,6 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import { DataSet } from 'utils/types';
-import * as Sentry from '@sentry/browser';
 import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/utils';
 import Drawer from 'components/Drawer';
 import {
@@ -229,7 +228,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           }`
         );
       })
-      .catch((err) => Sentry.captureException(err));
+      .catch(() => null);
   };
 
   return (

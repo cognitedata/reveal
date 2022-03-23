@@ -27,7 +27,6 @@ import {
   Extractor,
   EXTRACTOR_TEXT,
 } from 'components/Lineage/Extractor/Extractor';
-import * as Sentry from '@sentry/browser';
 import { DataSetWithExtpipes, useUpdateDataSetTransformations } from 'actions';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
@@ -106,11 +105,6 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
         (e as any)?.requestStatus !== 403
       ) {
         handleError({
-          message: 'Failed to fetch transformations',
-          ...(e as any),
-        });
-      } else {
-        Sentry.captureException({
           message: 'Failed to fetch transformations',
           ...(e as any),
         });
