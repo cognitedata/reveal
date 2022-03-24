@@ -97,7 +97,7 @@ async function init() {
   customObjects.add(controlsTest);
 
   const renderOptions = defaultRenderOptions;
-  renderOptions.multiSampleCountHint = 2;
+  renderOptions.multiSampleCountHint = 8;
 
   const renderManager = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipeline(

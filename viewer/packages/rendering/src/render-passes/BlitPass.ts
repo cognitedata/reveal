@@ -14,9 +14,8 @@ export class BlitPass implements RenderPass {
   private readonly _blitShaderMaterial: THREE.RawShaderMaterial;
 
   set blitEffect(effect: BlitEffect) {
-    const defines = {};
-    this.setBlitEffect(effect, defines);
-    this._blitShaderMaterial.defines = defines;
+    this.clearBlitEffects(this._blitShaderMaterial.defines);
+    this.setBlitEffect(effect, this._blitShaderMaterial.defines);
     this._blitShaderMaterial.needsUpdate = true;
   }
 
@@ -82,6 +81,11 @@ export class BlitPass implements RenderPass {
     } else if (blitEffect === BlitEffect.Fxaa) {
       defines['FXAA'] = true;
     }
+  }
+
+  private clearBlitEffects(defines: any) {
+    delete defines.GAUSSIAN_BLUR;
+    delete defines.FXAA;
   }
 
   private initializeBlendingOptions(blendOptions: BlendOptions) {

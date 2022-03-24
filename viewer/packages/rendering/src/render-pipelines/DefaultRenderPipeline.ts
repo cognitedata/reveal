@@ -266,5 +266,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._renderTargetData.ghost.setSize(width, height);
     this._renderTargetData.inFront.setSize(width, height);
     this._renderTargetData.ssao.setSize(width, height);
+
+    this._renderTargetData.currentRenderSize.set(width, height);
   }
 }
