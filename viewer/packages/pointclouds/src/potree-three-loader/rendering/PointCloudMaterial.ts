@@ -40,8 +40,13 @@ import {
   PointSizeType,
   TreeType,
 } from './enums';
-import { generateClassificationTexture, generateDataTexture } from './texture-generation';
+import {
+  generateClassificationTexture,
+  generateDataTexture,
+  generateGradientTexture
+} from './texture-generation';
 import { IClassification, IUniform } from './types';
+import { SpectralGradient } from './gradients/SpectralGradient';
 
 export interface IPointCloudMaterialParameters {
   size: number;
@@ -169,6 +174,9 @@ export class PointCloudMaterial extends RawShaderMaterial {
   visibleNodesTexture: Texture | undefined;
   private readonly visibleNodeTextureOffsets = new Map<string, number>();
 
+  private _gradient = SpectralGradient;
+  private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
+
   private _classification: IClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);
 
@@ -182,6 +190,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     depthMap: makeUniform('t', null),
     diffuse: makeUniform('fv', [1, 1, 1] as [number, number, number]),
     fov: makeUniform('f', 1.0),
+    gradient: makeUniform('t', this.gradientTexture || new Texture()),
     heightMax: makeUniform('f', 1.0),
     heightMin: makeUniform('f', 0.0),
     intensityBrightness: makeUniform('f', 0),
@@ -327,6 +336,11 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   dispose(): void {
     super.dispose();
+
+    if (this.gradientTexture) {
+      this.gradientTexture.dispose();
+      this.gradientTexture = undefined;
+    }
 
     if (this.visibleNodesTexture) {
       this.visibleNodesTexture.dispose();

@@ -1,5 +1,5 @@
-import { Color, DataTexture, NearestFilter, RGBAFormat, Texture, Vector4 } from 'three';
-import { IClassification } from '../rendering/types';
+import { Color, DataTexture, NearestFilter, LinearFilter, CanvasTexture, RGBAFormat, Texture, Vector4 } from 'three';
+import { IClassification, IGradient } from './types';
 
 export function generateDataTexture(width: number, height: number, color: Color): Texture {
   const size = width * height;
@@ -18,6 +18,34 @@ export function generateDataTexture(width: number, height: number, color: Color)
   const texture = new DataTexture(data, width, height, RGBAFormat);
   texture.needsUpdate = true;
   texture.magFilter = NearestFilter;
+
+  return texture;
+}
+export function generateGradientTexture(gradient: IGradient): Texture {
+  const size = 64;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+
+  const context = canvas.getContext('2d')!;
+
+  context.rect(0, 0, size, size);
+  const ctxGradient = context.createLinearGradient(0, 0, size, size);
+
+  for (let i = 0; i < gradient.length; i++) {
+    const step = gradient[i];
+    ctxGradient.addColorStop(step[0], `#${step[1].getHexString()}`);
+  }
+
+  context.fillStyle = ctxGradient;
+  context.fill();
+
+  const texture = new CanvasTexture(canvas);
+  texture.needsUpdate = true;
+
+  texture.minFilter = LinearFilter;
+  // textureImage = texture.image;
 
   return texture;
 }
