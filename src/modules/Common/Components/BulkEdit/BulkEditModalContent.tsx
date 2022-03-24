@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { notification } from 'antd';
 import {
   Body,
   Button,
@@ -15,12 +16,13 @@ import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/N
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
 import { FilteredAnnotationsRenderer } from 'src/modules/Common/Containers/FileTableRenderers/FilteredAnnotationsRenderer';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { BulkEditTable } from './BulkEditTable/BulkEditTable';
+import { BulkEditTable } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
 import {
   bulkEditOptions,
   BulkEditOptionType,
   EditPanelState,
-} from './bulkEditOptions';
+} from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
+import { BulkEditOptions } from 'src/modules/Common/Components/BulkEdit/enums';
 
 export type BulkEditModalContentProps = {
   selectedFiles: VisionFile[];
@@ -90,6 +92,9 @@ export const BulkEditModalContent = ({
   const [assetsDetails, setAssetsDetails] = useState<
     Record<number, { name: string }>
   >({});
+  const [errors, setErrors] = useState<
+    Record<string, { message: string; description: string }>
+  >({});
 
   const {
     columns,
@@ -116,19 +121,34 @@ export const BulkEditModalContent = ({
       .filter((v, i, a) => a.indexOf(v) === i && v !== undefined) as number[];
 
     (async () => {
-      const assets = await retrieveAsset(assetIds);
-      assets.forEach((asset) => {
-        setAssetsDetails((currentAssets) => ({
-          ...currentAssets,
-          [asset.id]: { name: asset.name },
-        }));
-      });
+      try {
+        const assets = await retrieveAsset(assetIds);
+        assets.forEach((asset) => {
+          setAssetsDetails((currentAssets) => ({
+            ...currentAssets,
+            [asset.id]: { name: asset.name },
+          }));
+        });
+      } catch (e: any) {
+        setErrors({
+          ...errors,
+          [BulkEditOptions.assets]: {
+            message: e.errors[0].message,
+            description: '',
+          },
+        });
+      }
     })();
   }, [selectedBulkEditOption, unsavedAssetIds?.addedAssetIds]);
+
   const handleBulkEditOptionChange = (option: BulkEditOptionType) => {
-    setSelectedBulkEditOption(option);
-    // Reset unsaved panel state when bulk edit option state has changed
-    setBulkEditUnsaved({});
+    if (errors[option.label]) {
+      notification.error({ ...errors[option.label] });
+    } else {
+      setSelectedBulkEditOption(option);
+      // Reset unsaved panel state when bulk edit option state has changed
+      setBulkEditUnsaved({});
+    }
   };
 
   return (

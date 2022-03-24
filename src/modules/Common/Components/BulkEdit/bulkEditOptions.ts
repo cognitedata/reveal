@@ -2,6 +2,7 @@ import { ColumnShape, Column } from 'react-base-table';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
+import { BulkEditOptions } from 'src/modules/Common/Components/BulkEdit/enums';
 
 // Metadata
 import { getDataForMetadata } from 'src/modules/Common/Components/BulkEdit/Metadata/getDataForMetadata';
@@ -71,7 +72,7 @@ export type EditPanelProps = {
 export const bulkEditOptions: BulkEditOptionType[] = [
   {
     value: 'metadata',
-    label: 'Metadata',
+    label: BulkEditOptions.metadata,
     popconfirmOnApply: false,
     EditPanel: MetadataPanel,
     columns: [
@@ -104,7 +105,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
   },
   {
     value: 'labels',
-    label: 'Labels',
+    label: BulkEditOptions.labels,
     popconfirmOnApply: false,
     EditPanel: LabelPanel,
     columns: [
@@ -137,7 +138,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
   },
   {
     value: 'asset',
-    label: 'Asset',
+    label: BulkEditOptions.assets,
     popconfirmOnApply: false,
     EditPanel: AssetPanel,
     columns: [
@@ -171,7 +172,7 @@ export const bulkEditOptions: BulkEditOptionType[] = [
   },
   {
     value: 'deleteAnnotations',
-    label: 'Delete annotations',
+    label: BulkEditOptions.deleteAnnotations,
     popconfirmOnApply: true,
     tooltipContentOnDisabled:
       'No annotations will be deleted using the current settings',
