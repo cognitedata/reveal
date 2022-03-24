@@ -24,7 +24,8 @@ def authenticate_azure():
     return creds
 
 
-mime_types = {'.json': 'application/json', '.pdf': 'application/pdf'}
+mime_types = {'.json': 'application/json',
+              '.pdf': 'application/pdf', '.svg': 'image/svg+xml'}
 
 
 def main():
@@ -56,8 +57,8 @@ def main():
         mime_type = mime_type
         print({'path': path, 'name': name,
               'external_id': external_id, 'mime_type': mime_type})
-        client.files.upload(path=path, name=name,
-                            mime_type=mime_type, external_id=external_id, overwrite=True)
+        client.files.upload(path=path, name=name, mime_type=mime_type,
+                            external_id=external_id, source='COGNITE_DIAGRAM_PARSER', overwrite=True)
 
 
 if __name__ == "__main__":

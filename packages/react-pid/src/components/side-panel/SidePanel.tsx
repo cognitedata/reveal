@@ -47,7 +47,7 @@ interface SidePanelProps {
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
   connections: DiagramConnection[];
-  fileUrl: string;
+  file: File | null;
   autoAnalysis: () => void;
   saveGraphAsJson: () => void;
   documentMetadata: DocumentMetadata;
@@ -79,7 +79,7 @@ export const SidePanel = ({
   deleteSymbol,
   deleteConnection,
   connections,
-  fileUrl,
+  file,
   autoAnalysis,
   saveGraphAsJson,
   documentMetadata,
@@ -157,7 +157,7 @@ export const SidePanel = ({
     <SidePanelWrapper>
       <FileControllerWrapper>
         <FileController
-          disabled={fileUrl === ''}
+          disabled={file === null}
           symbols={symbols}
           symbolInstances={symbolInstances}
           lineInstances={lines}
@@ -204,7 +204,7 @@ export const SidePanel = ({
           />
         )}
       </div>
-      {activeTool === 'selectDocumentType' && fileUrl !== '' && (
+      {activeTool === 'selectDocumentType' && file !== null && (
         <DocumentTypeSelector setDocumentType={setDocumentType} />
       )}
     </SidePanelWrapper>

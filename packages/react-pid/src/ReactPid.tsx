@@ -6,11 +6,8 @@ import {
   DiagramEquipmentTagInstance,
   DiagramLineInstance,
   DiagramSymbol,
-  DocumentMetadata,
   DocumentType,
   EventType,
-  IsoDocumentMetadata,
-  PidDocumentMetadata,
   PidDocumentWithDom,
   AddSymbolData,
   ToolType,
@@ -27,8 +24,13 @@ import useSymbolState from './components/side-panel/useSymbolState';
 import { Toolbar } from './components/toolbar/Toolbar';
 import { enableExitWarning, disableExitWarning } from './utils/exitWarning';
 import { Viewport } from './components/viewport/Viewport';
+import useDiagramFile from './utils/useDiagramFile';
 
-export const ReactPid: React.FC = () => {
+interface ReactPidProps {
+  diagramExternalId?: string;
+}
+
+export const ReactPid = ({ diagramExternalId }: ReactPidProps) => {
   const [hasDocumentLoaded, setHasDocumentLoaded] = useState(false);
   const pidViewer = useRef<CognitePid>();
 
@@ -37,12 +39,19 @@ export const ReactPid: React.FC = () => {
   };
 
   const [activeTool, setActiveTool] = useState<ToolType>('selectDocumentType');
-  const [fileUrl, setFileUrl] = useState<string>('');
-  const [documentMetadata, setDocumentMetadata] = useState<DocumentMetadata>({
-    type: DocumentType.unknown,
-    name: 'Unknown',
-    unit: 'Unknown',
-  });
+
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
+
+  const {
+    file,
+    handleFileUpload,
+    loadFileIfProvided,
+    isLoading,
+    documentMetadata,
+    setDocumentType,
+  } = useDiagramFile(hasDocumentLoaded, diagramExternalId);
+
   const { symbols, setSymbols, symbolInstances, setSymbolInstances } =
     useSymbolState(pidViewer.current, documentMetadata.type, hasDocumentLoaded);
   const [lines, setLines] = useState<DiagramLineInstance[]>([]);
@@ -56,7 +65,9 @@ export const ReactPid: React.FC = () => {
   const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
 
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  useEffect(() => {
+    setShowLoader(isAnalyzing || isLoading);
+  }, [isAnalyzing, isLoading]);
 
   const [uploadSvgInput, setUploadSvgInput] = useState<HTMLInputElement | null>(
     null
@@ -84,6 +95,7 @@ export const ReactPid: React.FC = () => {
         container: `#${CONTAINER_ID}`,
       })
     );
+    loadFileIfProvided();
   }, []);
 
   const initPid = (instance: CognitePid) => {
@@ -197,6 +209,9 @@ export const ReactPid: React.FC = () => {
       activeTool === 'selectDocumentType'
     ) {
       setActiveToolWrapper('addSymbol');
+      if (documentMetadata.type === DocumentType.isometric) {
+        setLineNumbers([documentMetadata.lineNumber]);
+      }
     }
   }, [documentMetadata]);
 
@@ -261,7 +276,6 @@ export const ReactPid: React.FC = () => {
         ? `${getFileNameWithoutExtension(documentMetadata.name)}.json`
         : 'graph.json'
     );
-
     disableExitWarning();
   };
 
@@ -305,70 +319,15 @@ export const ReactPid: React.FC = () => {
     pidViewer.current.addSymbolFromSymbolSelection(symbolData);
   };
 
-  const evalFileName = (file: File) => {
-    const looksLikeIso = file.name.match(/L[0-9]{1,}-[0-9]{1,}/);
-    const looksLikePid = file.name.match(/MF_[0-9]{1,}/);
-
-    const unit = file.name.match(/G[0-9]{4}/);
-    const { name } = file;
-
-    if (looksLikePid && !looksLikeIso) {
-      const documentNumber = parseInt(looksLikePid[0].substring(3), 10);
-      setDocumentMetadata({
-        type: DocumentType.pid,
-        name,
-        unit: unit ? unit[0] : 'Unknown',
-        documentNumber,
-      } as PidDocumentMetadata);
-    } else if (looksLikeIso && !looksLikePid) {
-      const lineParts = looksLikeIso[0].split('-');
-      const lineNumber = lineParts[0] || 'Unknown';
-      const pageNumber = parseInt(lineParts[1], 10);
-      setLineNumbers([lineNumber]);
-      setDocumentMetadata({
-        type: DocumentType.isometric,
-        name,
-        unit: unit ? unit[0] : 'Unknown',
-        lineNumber,
-        pageNumber,
-      } as IsoDocumentMetadata);
-    }
-  };
-
-  const handleFileChange = ({
-    target,
-  }: React.ChangeEvent<HTMLInputElement>) => {
-    if (target && target.files?.length) {
-      const file = target.files[0];
-      setFileUrl(URL.createObjectURL(file));
-      evalFileName(file);
+  useEffect(() => {
+    if (file) {
       if (pidViewer.current && pidViewer.current.document === undefined) {
         pidViewer.current.addSvgDocument(file);
       } else {
         throw new Error('Failed to add SVG document to pidViewer');
       }
-      return;
     }
-    setFileUrl('');
-  };
-
-  const setDocumentType = (documentType: DocumentType) => {
-    if (documentType === DocumentType.pid) {
-      setDocumentMetadata({
-        type: DocumentType.pid,
-        documentNumber: -1,
-        unit: 'Unknown',
-      } as PidDocumentMetadata);
-    } else if (documentType === DocumentType.isometric) {
-      setDocumentMetadata({
-        name: 'Unknown',
-        type: DocumentType.isometric,
-        unit: 'Unknown',
-        lineNumber: 'Unknown',
-        pageNumber: -1,
-      } as IsoDocumentMetadata);
-    }
-  };
+  }, [file]);
 
   return (
     <ReactPidWrapper>
@@ -385,7 +344,7 @@ export const ReactPid: React.FC = () => {
           connections={connections}
           deleteSymbol={deleteSymbol}
           deleteConnection={deleteConnection}
-          fileUrl={fileUrl}
+          file={file}
           autoAnalysis={autoAnalysis}
           saveGraphAsJson={saveGraphAsJsonWrapper}
           documentMetadata={documentMetadata}
@@ -410,7 +369,7 @@ export const ReactPid: React.FC = () => {
             documentWidth={pidViewer.current?.getDocumentWidth() ?? 0}
             documentHeight={pidViewer.current?.getDocumentHeight() ?? 0}
           />
-          {fileUrl === '' && (
+          {file === null && (
             <input
               ref={svgInputRef}
               type="file"
@@ -421,7 +380,7 @@ export const ReactPid: React.FC = () => {
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
               }}
-              onChange={handleFileChange}
+              onChange={handleFileUpload}
             />
           )}
           <Toolbar
@@ -431,9 +390,9 @@ export const ReactPid: React.FC = () => {
           />
         </Viewport>
       </ReactPidLayout>
-      {isAnalyzing && (
+      {showLoader && (
         <LoaderOverlay>
-          <Loader infoTitle="Analyzing" />
+          <Loader infoTitle={isLoading ? 'Loading' : 'Analyzing'} />
         </LoaderOverlay>
       )}
     </ReactPidWrapper>

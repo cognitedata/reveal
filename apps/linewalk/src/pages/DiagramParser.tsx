@@ -1,4 +1,4 @@
-import { ReactPid } from '@cognite/react-pid';
+import { DiagramParser } from '@cognite/react-pid';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -6,12 +6,12 @@ const Container = styled.div`
   text-align: center;
 `;
 
-const DiagramParser = () => {
+const DiagramParserPage = () => {
   return (
     <Container>
-      <ReactPid />
+      <DiagramParser />
     </Container>
   );
 };
 
-export default DiagramParser;
+export default DiagramParserPage;

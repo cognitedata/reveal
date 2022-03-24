@@ -20,3 +20,14 @@ export const LoaderOverlay = styled.div`
   top: 0;
   width: 100%;
 `;
+
+export const HandlerContainer = styled.div`
+  height: 100%;
+  overflow: hidden;
+`;
+
+export const HandlerContent = styled.div`
+  position: relative;
+  height: calc(100% - 56px);
+  overflow: hidden;
+`;

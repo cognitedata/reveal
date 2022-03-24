@@ -51,10 +51,12 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
+    "@npm//@cognite/sdk",
     "@npm//lodash",
     "@npm//react",
     "@npm//styled-components",
     "//packages/pid-tools",
+    "//packages/react-container",
 ]
 
 # Type dependencies from package.json
@@ -73,6 +75,7 @@ DEV_DEPENDENCIES = [
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
+    "DiagramParser": "dist/DiagramParser",
     "ReactPid": "dist/ReactPid",
     "components": "dist/components",
     "elements": "dist/elements",
