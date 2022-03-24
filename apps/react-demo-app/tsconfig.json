@@ -1,9 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "isolatedModules": true,
     "baseUrl": "src",
-    "module": "esnext"
+    "module": "esnext",
+    "noEmit": false,
+    "types": ["vite/client", "jest", "@testing-library/jest-dom"]
   },
-  "include": ["src"],
+  // "include": ["src"],
   "exclude": ["node_modules", "build"]
 }

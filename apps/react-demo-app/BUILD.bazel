@@ -2,6 +2,7 @@ load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
+load("@npm//vite:index.bzl", "vite")
 load("@npm//react-scripts:index.bzl", "react_scripts")
 load("@npm//cypress:index.bzl", "cypress")
 load("@com_github_cognitedata_bazel_tools//k8s/kubeval:kubeval.bzl", "kubeval_test")
@@ -162,7 +163,13 @@ copy_to_bin(
     srcs = SOURCES + PUBLIC + [
         ":package.json",
         ":tsconfig.json",
+        ":index.html",
     ],
+)
+
+copy_to_bin(
+    name = "vite_config",
+    srcs = [":vite.config.ts"],
 )
 
 # react-scripts can only work if the working directory is the root of the application.
@@ -188,19 +195,20 @@ _RUNTIME_DEPS = [
 
 ### react-scripts build ###
 
-react_scripts(
-    # Note: If you want to change the name make sure you update BUILD_PATH below accordingly
-    # https://create-react-app.dev/docs/advanced-configuration/
+vite(
     name = "build",
     args = [
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
+        "--outDir=build",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
-        # see patches/react-scripts+5.0.0.patch
-        # we have added this plugin into webpack so Bazel should know about it
-        # TODO: move build script into a custom rules with defined plugin once and for all
-        "@npm//tsconfig-paths-webpack-plugin",
+        ":vite_config",
+        "@npm//@vitejs/plugin-react",
+        "@npm//vite-tsconfig-paths",
+        "@npm//vite-plugin-svgr",
+        "@npm//@rollup/plugin-inject",
+        "@npm//vite-plugin-babel-macros",
     ],
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues
@@ -268,13 +276,12 @@ react_scripts(
     ],
 )
 
-### react-scripts start ###
+### vite start ###
 
-react_scripts(
+vite(
     name = "start",
     args = [
         "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "start",
     ],
     data = _RUNTIME_DEPS + [
         "chdir-workspace.js",
@@ -295,14 +302,7 @@ react_scripts(
         "REACT_APP_MIXPANEL_TOKEN": "1cc1cdc82fb93ec9a20a690216de41e4",
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },
-    tags = [
-        # This tag instructs ibazel to pipe into stdin a event describing actions.
-        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
-        # So use this to prevent EOF.
-        "ibazel_notify_changes",
-    ],
 )
-
 ### E2E Tests ###
 
 sh_binary(

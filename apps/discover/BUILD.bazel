@@ -695,6 +695,9 @@ ts_project(
         "@npm//cypress",
         "@npm//@types/node",
         "@npm//express",
+        # Manual import of package files due to main js-library only exporting package.json
+        "//packages/sidecar:sidecar-files",
+        "//packages/intercom-helper:intercom-helper-files",
     ],
 )
 

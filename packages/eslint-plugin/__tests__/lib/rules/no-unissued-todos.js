@@ -20,7 +20,7 @@ const parserOptions = {
 const ruleTester = new RuleTester({ parserOptions });
 
 const errorMessage =
-  /'TODO' comments should include link to JIRA issue, e.g TODO\(([A-Z]+)-[0-9]+\)/;
+  /'TODO' comments should include link to JIRA issue, e.g TODO\(([A-Z,0-9]+)-[0-9]+\)/;
 
 ruleTester.run('no-unissued-todos', rule, {
   valid: [
