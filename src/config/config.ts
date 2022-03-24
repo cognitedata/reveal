@@ -20,9 +20,7 @@ const {
 } = process.env;
 
 const config = {
-  azureAppId: isProduction
-    ? '05aa256f-ba87-4e4c-902a-8e80ae5fb32e'
-    : 'd59a3ab2-7d10-4804-a51f-8c2ac969e605',
+  azureAppId: '05aa256f-ba87-4e4c-902a-8e80ae5fb32e',
   appName: `Cognite Charts ${stagePart()}`,
   firebaseAppName: isProduction ? 'charts' : 'charts-dev',
   version: REACT_APP_COMMIT_REF,
