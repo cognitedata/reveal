@@ -1,6 +1,7 @@
 import {
   SavedSearchSortBy,
   SearchHistoryResponse,
+  UserInfoSummary,
 } from '@cognite/discover-api-types';
 import { DocumentsFilter } from '@cognite/sdk-playground';
 import { GeoJson } from '@cognite/seismic-sdk-js';
@@ -8,14 +9,13 @@ import { GeoJson } from '@cognite/seismic-sdk-js';
 import { DocumentsFacets } from '../../modules/documentSearch/types';
 import { SharedWithData } from '../../modules/favorite/types';
 import { MapLayerGeoJsonFilter } from '../../modules/sidebar/types';
-import { BasicUserInfo } from '../../modules/user/types';
 import { WellFilterMap } from '../../modules/wellSearch/types';
 
 // rename to SavedSearch
 export interface SavedSearchItem {
   value: SavedSearchContent;
   name: string;
-  owner?: BasicUserInfo;
+  owner?: UserInfoSummary;
   id?: string;
 }
 
@@ -29,7 +29,7 @@ export interface SavedSearchContent {
   sortBy?: SavedSearchSortBy;
   geoJson?: GeoJson[]; // this is the new field we should move to
   createdTime?: string;
-  owner?: BasicUserInfo;
+  owner?: UserInfoSummary;
   sharedWith?: SharedWithData[];
 }
 

@@ -1,11 +1,12 @@
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
+import { User } from '@cognite/discover-api-types';
+
 import { getUser } from '__test-utils/fixtures/user';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';
-import { User } from 'modules/user/types';
 
 const responseData: User = {
   ...getUser({ id: defaultTestUser }),

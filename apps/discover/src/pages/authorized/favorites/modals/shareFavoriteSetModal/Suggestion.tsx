@@ -2,8 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components/macro';
 
+import { User } from '@cognite/discover-api-types';
+
 import { Typography } from 'components/typography';
-import { User } from 'modules/user/types';
 import { FlexColumn, FlexGrow } from 'styles/layout';
 
 const Suggestion = styled(FlexGrow)`

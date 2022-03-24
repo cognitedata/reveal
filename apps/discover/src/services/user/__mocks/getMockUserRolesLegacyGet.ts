@@ -1,9 +1,10 @@
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
+import { AuthModes } from '@cognite/discover-api-types';
+
 import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';
-import { AuthModes } from 'modules/user/types';
 
 const responseData: AuthModes = {
   isAdmin: true,

@@ -1,13 +1,16 @@
 import { getEmail } from 'utils/getCogniteSDKClient';
 import { log } from 'utils/log';
 
-import { GeneralFeedback, ObjectFeedback } from '@cognite/discover-api-types';
+import {
+  GeneralFeedback,
+  ObjectFeedback,
+  User,
+} from '@cognite/discover-api-types';
 
 import { showErrorMessage } from 'components/toast';
 import { FEEDBACK_ERROR_MESSAGE } from 'constants/feedback';
 import { APP_EMAIL } from 'constants/general';
 import { STATUS } from 'modules/feedback/constants';
-import { User } from 'modules/user/types';
 
 import { MutateCreateFeedback, MutateUpdateFeedback } from './types';
 

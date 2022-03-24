@@ -14,7 +14,7 @@ import { useUserProfileQuery } from 'services/user/useUserQuery';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 
-import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
+import { ObjectFeedbackResponse, User } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import { OKModal } from 'components/modal';
@@ -25,7 +25,6 @@ import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { FIELDS } from 'modules/feedback/constants';
 import { feedbackHelper } from 'modules/feedback/helper';
-import { User } from 'modules/user/types';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 
 import { ActionColumn } from '../common/columns/ActionColumn';

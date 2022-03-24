@@ -1,10 +1,10 @@
 import {
   GeneralFeedbackResponse,
   ObjectFeedbackResponse,
+  UserInfoSummary,
 } from '@cognite/discover-api-types';
 
 import { FIELDS } from 'modules/feedback/constants';
-import { BasicUserInfo } from 'modules/user/types';
 
 export const ADD = 'FEEDBACK_ADD';
 export const ADDING = 'FEEDBACK_ADDING';
@@ -92,8 +92,8 @@ export interface FeedbackItem {
   id: string;
   query?: string;
   comment: string;
-  assignee?: BasicUserInfo;
-  user?: BasicUserInfo;
+  assignee?: UserInfoSummary;
+  user?: UserInfoSummary;
   handlingComments?: Comment[];
   comments?: Comment[];
   deleted?: boolean;

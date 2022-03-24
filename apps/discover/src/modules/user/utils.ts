@@ -1,6 +1,4 @@
-import { User } from 'modules/user/types';
-
-import { BasicUserInfo } from './types';
+import { User, UserInfoSummary } from '@cognite/discover-api-types';
 
 export const getFullUserName = (user: Partial<User>) => {
   if (!user.firstname) {
@@ -11,7 +9,7 @@ export const getFullUserName = (user: Partial<User>) => {
 };
 
 export const getFullNameOrDefaultText = (
-  user: Omit<BasicUserInfo, 'id'> | undefined
+  user: Omit<UserInfoSummary, 'id'> | undefined
 ) => {
   // No user is given (shows a line)
   if (!user) {

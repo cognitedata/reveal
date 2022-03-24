@@ -1,13 +1,19 @@
 import { fetchPost, FetchHeaders, fetchGet, fetchPatch } from 'utils/fetch';
 
+import {
+  AuthModes,
+  User,
+  UserProfileSyncResponse,
+  UserProfileUpdateResponse,
+} from '@cognite/discover-api-types';
+
 import { SIDECAR } from 'constants/app';
-import { AuthModes, User } from 'modules/user/types';
 
 import { UserProfileUpdateQueryData } from './types';
 
 export const user = {
   sync: async (headers: FetchHeaders, tenant: string, accessToken?: string) =>
-    fetchPost(
+    fetchPost<UserProfileSyncResponse>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/user/sync`,
       {
         accessToken,
@@ -45,7 +51,7 @@ export const user = {
     headers: FetchHeaders,
     tenant: string
   ) =>
-    fetchPatch(
+    fetchPatch<UserProfileUpdateResponse>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/user`,
       payload.payload,
       {

@@ -1,5 +1,5 @@
-import { BasicUserInfo } from 'modules/user/types';
+import { UserUpdateProfileSchemaBody } from '@cognite/discover-api-types';
 
 export interface UserProfileUpdateQueryData {
-  payload: Omit<BasicUserInfo, 'id'>;
+  payload: UserUpdateProfileSchemaBody;
 }

@@ -8,12 +8,12 @@ import {
 
 import { discoverAPI, useJsonHeaders } from 'services/service';
 
+import { AuthModes, User } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { ONLY_FETCH_ONCE, USER_KEY } from 'constants/react-query';
 import { useAccessToken } from 'hooks/useAccessToken';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { AuthModes, User } from 'modules/user/types';
 
 import { UserProfileUpdateQueryData } from './types';
 

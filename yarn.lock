@@ -3010,10 +3010,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/comment-service-types/-/comment-service-types-0.0.7.tgz#b97dd13a8dbf5b41ecc59d6edd93e9ac8b412f5a"
   integrity sha512-fp9THk+uv1MVBeVFRyPVpgBBzRchAazxDvk8S5vNg7kX56TUJk1KHkzdGVYE5Z3A6d18M/y3ybaLlCFrJEi/lg==
 
-"@cognite/discover-api-types@0.2.54":
-  version "0.2.54"
-  resolved "https://registry.yarnpkg.com/@cognite/discover-api-types/-/discover-api-types-0.2.54.tgz#23a4381571a11df133a01288bc7e55fe6b2e5bec"
-  integrity sha512-dfekwQTP+wygA/37pkhqj2u2I2nyGyMUc04oK0EG50CJjG9N7wBclARtZizOvpROgXQEcpvod35WfdP9VAwjqw==
+"@cognite/discover-api-types@^0.2.55":
+  version "0.2.55"
+  resolved "https://registry.yarnpkg.com/@cognite/discover-api-types/-/discover-api-types-0.2.55.tgz#7c5bb93f2c9e7569091e0cbcbd2773b28226e311"
+  integrity sha512-xY9OiFLIQ+2sn5QWYONg1uC8jlnZ+7NxqtK6fLErGvdYI7bZ7KkTnXLWefcDWj5qzH9V082FDsisjyRTtuDfGA==
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"

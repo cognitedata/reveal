@@ -1,5 +1,6 @@
+import { User } from '@cognite/discover-api-types';
+
 import { getEmail, getAnotherUser } from '__test-utils/testdata.utils';
-import { User } from 'modules/user/types';
 
 export const getUser = (extras: Partial<User> = {}) => {
   const email = getEmail();
