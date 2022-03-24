@@ -126,7 +126,7 @@ const StyledIcon = styled(Icon).attrs(({ $success }: { $success: boolean }) => {
     size: 12,
     type: $success ? 'Checkmark' : 'Close',
   };
-}) <{ $success?: boolean }>`
+})<{ $success?: boolean }>`
   margin-right: 6px;
   color: ${({ $success }) =>
     $success ? 'var(--cogs-success)' : 'var(--cogs-danger)'};

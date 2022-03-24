@@ -51,8 +51,9 @@ const LegacyServiceAccountsWarning = (props: {
                     {account.name}
                   </StyledListItem>
                 ))}
-                <StyledListItem>{`+${accounts.length - 2
-                  } more`}</StyledListItem>
+                <StyledListItem>{`+${
+                  accounts.length - 2
+                } more`}</StyledListItem>
               </StyledList>
             </>
           )}

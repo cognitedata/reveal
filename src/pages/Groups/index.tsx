@@ -67,12 +67,6 @@ export default function Groups() {
   const { data: groups, isFetched: groupsFetched } = useGroups(true);
   const { data: serviceAccounts } = useListServiceAccounts(legacyFlow);
 
-  // const { data: serviceAccounts } = useQuery(
-  //   ['service-accounts'],
-  //   () => sdk.serviceAccounts.list(),
-  //   { enabled: legacyFlow }
-  // );
-
   useEffect(() => {
     if (project?.defaultGroupId === localDefaultGroup) {
       setLocalDefaultGroup(undefined);
@@ -287,7 +281,7 @@ export default function Groups() {
 
   return (
     <>
-      {authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
+      {!authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
       serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}

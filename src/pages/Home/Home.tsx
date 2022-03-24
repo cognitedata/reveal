@@ -39,7 +39,6 @@ export default function () {
   const { pathname, search, hash } = history.location;
 
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
-  // const { data: serviceAccounts } = useListServiceAccounts();
 
   if (!isFetched) {
     return <Loader />;
@@ -48,7 +47,7 @@ export default function () {
   return (
     <StyledAppContainerDiv>
       <Title level={1}>
-        gfgfggfgfg Access management{' '}
+        Access management{' '}
         <Icon
           style={{
             cursor: 'pointer',
