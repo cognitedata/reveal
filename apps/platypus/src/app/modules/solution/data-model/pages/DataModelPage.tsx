@@ -9,9 +9,9 @@ import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReduc
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import services from '@platypus-app/di';
+import { SolutionDataModelType, ErrorType } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
-import { ErrorType } from '@platypus-core/boundaries/types/platypus-error';
 import { useSolution } from '../../hooks/useSolution';
 import { SchemaEditorMode } from '../types';
 import { BreakingChangesModal } from '../components/BreakingChangesModal';
@@ -31,7 +31,6 @@ export const DataModelPage = () => {
   const { solution, schemas, selectedSchema } = useSelector<SolutionState>(
     (state) => state.solution
   );
-  const UISelectedType = useSelector((state) => state.solution.currentType);
   const [mode, setMode] = useState<SchemaEditorMode>(
     schemas.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
   );
@@ -41,8 +40,9 @@ export const DataModelPage = () => {
   const [isDirty, setIsDirty] = useState(false);
   const [isInit, setInit] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
-  const [currentView, setCurrentView] = useState('ui');
-
+  const [currentType, setCurrentType] = useState<null | SolutionDataModelType>(
+    null
+  );
   const { insertSchema, updateSchema } = useSolution();
 
   useEffect(() => {
@@ -202,10 +202,10 @@ export const DataModelPage = () => {
               sidebar={
                 <ErrorBoundary>
                   <EditorPanel
+                    currentType={currentType}
+                    setCurrentType={setCurrentType}
                     editorMode={mode}
                     graphQlSchema={projectSchema}
-                    currentView={currentView}
-                    onCurrentViewChanged={(view) => setCurrentView(view)}
                     onSchemaChanged={onSchemaChanged}
                   />
                 </ErrorBoundary>
@@ -225,7 +225,7 @@ export const DataModelPage = () => {
                   <ErrorBoundary>
                     <SchemaVisualizer
                       graphQLSchemaString={projectSchema}
-                      active={UISelectedType?.name}
+                      active={currentType?.name}
                     />
                   </ErrorBoundary>
                 </Flex>

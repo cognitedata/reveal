@@ -8,10 +8,6 @@ import {
   UpdateSolutionDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions as solutionActions } from '@platypus-app/redux/reducers/global/solutionReducer';
-import { RootState } from '@platypus-app/redux/store';
-
 import services from '../../di';
 import { SchemaTypeField } from '../SchemaTypeAndField/SchemaTypeField';
 import { SchemaTypeFieldsList } from '../SchemaTypeAndField/SchemaTypeFieldsList';
@@ -26,12 +22,16 @@ interface UIEditorProps {
   graphQLSchemaString: string;
   disabled?: boolean;
   onSchemaChange: (typeName: string) => void;
+  currentType: null | SolutionDataModelType;
+  setCurrentType: (type: null | SolutionDataModelType) => void;
 }
 
 export function UIEditor({
   graphQLSchemaString,
   disabled,
   onSchemaChange,
+  currentType,
+  setCurrentType,
 }: UIEditorProps) {
   const { t } = useTranslation('UIEditor');
   const [isInit, setIsInit] = useState(false);
@@ -45,13 +45,7 @@ export function UIEditor({
       types: [],
     }
   );
-  const currentType = useSelector(
-    (state: RootState) => state.solution.currentType
-  );
-  const dispatch = useDispatch();
   const errorLogger = useErrorLogger();
-  const setCurrentType = (type: null | SolutionDataModelType) =>
-    dispatch(solutionActions.setCurrentType(type));
 
   useEffect(() => {
     if (graphQLSchemaString !== currentGraphqlSchema) {

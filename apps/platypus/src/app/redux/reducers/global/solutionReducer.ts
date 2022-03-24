@@ -1,11 +1,7 @@
 import { fetchVersions, fetchSolution } from './actions';
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  SolutionSchema,
-  Solution,
-  SolutionDataModelType,
-} from '@platypus/platypus-core';
+import { SolutionSchema, Solution } from '@platypus/platypus-core';
 import { ActionStatus } from '@platypus-app/types';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
@@ -24,7 +20,6 @@ const initialState = {
   schemas: [] as SolutionSchema[],
   schemasStatus: ActionStatus.IDLE,
   schemasError: '',
-  currentType: null as null | SolutionDataModelType,
 };
 
 const solutionStateSlice = createSlice({
@@ -49,12 +44,6 @@ const solutionStateSlice = createSlice({
     },
     insertSchema: (state, action: PayloadAction<SolutionSchema>) => {
       state.schemas = [action.payload, ...state.schemas];
-    },
-    setCurrentType: (
-      state,
-      action: PayloadAction<SolutionDataModelType | null>
-    ) => {
-      state.currentType = action.payload;
     },
   },
   extraReducers: (builder) => {
