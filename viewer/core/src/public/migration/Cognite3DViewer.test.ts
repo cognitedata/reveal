@@ -28,7 +28,6 @@ describe('Cognite3DViewer', () => {
   };
 
   beforeAll(() => {
-    // jest.useFakeTimers();
     nock.disableNetConnect();
 
     nock('https://api-js.mixpanel.com')
@@ -54,13 +53,9 @@ describe('Cognite3DViewer', () => {
     }));
   });
 
-  // beforeEach(() => {
-  //   jest.useFakeTimers();
-  // });
 
   afterAll(() => {
     nock.enableNetConnect();
-    // jest.useRealTimers();
   });
 
   test('dispose disposes WebGL resources', () => {
