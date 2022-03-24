@@ -57,6 +57,7 @@ export const RelatedDocument: React.FC = () => {
               }}
             />
           </FlexRow>
+
           <HeaderSearchWrapper>
             <RelatedDocumentSearch />
             <SearchQueryInfoPanel />
@@ -69,8 +70,11 @@ export const RelatedDocument: React.FC = () => {
               </>
             )}
           </HeaderSearchWrapper>
-          <RelatedDocumentAppliedFilters showClearTag />
+
+          {/* Show the applied filters below the search bar when result count is >0 (otherwise, show in empty state) */}
+          {total > 0 && <RelatedDocumentAppliedFilters showClearTag />}
         </Header>
+
         <RelatedDocumentTable />
       </ResultsContainer>
     </CollapsablePanel>

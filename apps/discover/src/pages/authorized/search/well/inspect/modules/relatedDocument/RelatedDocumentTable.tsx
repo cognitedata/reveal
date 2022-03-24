@@ -27,8 +27,10 @@ import {
 import { DocumentResultTableHoverComponent } from 'pages/authorized/search/document/results/DocumentResultTableHoverComponent';
 import { DocumentResultTableSubRow } from 'pages/authorized/search/document/results/DocumentResultTableSubRow';
 import { DocumentsBulkActions } from 'pages/authorized/search/document/results/DocumentsBulkActions';
+import { FlexAlignJustifyContent } from 'styles/layout';
 
 import { TableBulkActionsHolder } from './elements';
+import { RelatedDocumentAppliedFilters } from './RelatedDocumentAppliedFilters';
 
 interface Props {
   data?: DocumentResult;
@@ -38,7 +40,13 @@ export const RelatedDocumentTable: React.FC = () => {
   const { isLoading, data } = useRelatedDocumentData();
 
   if (isLoading || data.length === 0) {
-    return <EmptyState isLoading={isLoading} emptyTitle={NO_RESULTS_TEXT} />;
+    return (
+      <EmptyState isLoading={isLoading} emptyTitle={NO_RESULTS_TEXT}>
+        <FlexAlignJustifyContent>
+          <RelatedDocumentAppliedFilters showClearTag />
+        </FlexAlignJustifyContent>
+      </EmptyState>
+    );
   }
 
   return <RelatedDocumentTableComponent />;
