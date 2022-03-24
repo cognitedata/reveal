@@ -159,7 +159,7 @@ const Extractors = () => {
   return (
     <StyledExtractorsContainer>
       <NewHeader
-        title="Test Extractor downloads"
+        title="Extractor downloads"
         breadcrumbs={[
           { title: 'Data ingestion', path: '/ingest' },
           { title: 'Extractors', path: '/extractors' },
