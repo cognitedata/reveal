@@ -28,14 +28,11 @@ const getAuthConfig = (authState: AuthenticatedUser, directory?: string) => ({
 
 const authFlows: Partial<Record<AuthFlow, AuthFlowProvider>> = {
   AZURE_AD({ authState, directory }) {
-    if (!authState.id) {
-      throw new Error('No valid user provided');
-    }
     const app = new PublicClientApplication({
       auth: getAuthConfig(authState, directory),
       cache: CACHE_CONFIG,
     });
-    return app.getAccountByLocalId(authState.id);
+    return app.getAccountByUsername(authState.email ?? '');
   },
 };
 
@@ -45,21 +42,24 @@ export function getAuthenticatedUser({
 }: {
   project?: string;
   authState: AuthenticatedUser;
-}): AccountInfo {
-  const { flow, options } = getFlow(project);
+}): AccountInfo | null {
+  try {
+    const { flow, options } = getFlow(project);
 
-  if (!flow || !options) {
-    throw new Error('Invalid auth flow');
+    if (!flow || !options) {
+      throw new Error('Invalid auth flow');
+    }
+    const account = authFlows[flow]?.({
+      authState,
+      directory: options.directory,
+    });
+
+    if (!account) {
+      throw new Error('Could not read account');
+    }
+    return account;
+  } catch (ex) {
+    console.error('Failed to get account');
+    return null;
   }
-
-  const account = authFlows[flow]?.({
-    authState,
-    directory: options.directory,
-  });
-
-  if (!account) {
-    throw new Error('Could not read account');
-  }
-
-  return account;
 }

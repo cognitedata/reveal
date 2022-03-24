@@ -16,7 +16,7 @@ export function MenuBar() {
   const matchRoute = useMatchRoute();
   const navigate = useNavigate();
   const accountName = authState
-    ? getAuthenticatedUser({ project, authState }).name
+    ? getAuthenticatedUser({ project, authState })?.name
     : '(no name)';
 
   const redirectLogout = () => {
@@ -63,10 +63,14 @@ export function MenuBar() {
               ),
               menu: (
                 <Menu>
-                  <Menu.Item style={{ color: 'inherit' }} disabled>
-                    {accountName}
-                  </Menu.Item>
-                  <Menu.Divider />
+                  {accountName && (
+                    <>
+                      <Menu.Item style={{ color: 'inherit' }} disabled>
+                        {accountName}
+                      </Menu.Item>
+                      <Menu.Divider />
+                    </>
+                  )}
                   <Menu.Item onClick={redirectLogout}>Logout</Menu.Item>
                 </Menu>
               ),
