@@ -10,7 +10,7 @@ import {
   getMockMeasurement,
 } from '__test-utils/fixtures/measurements';
 import { mockedWellboreResultFixture } from '__test-utils/fixtures/well';
-import { PPG, FEET } from 'constants/units';
+import { UserPreferredUnit, PressureUnit } from 'constants/units';
 import {
   MeasurementTypeV3 as MeasurementType,
   GeoPpfgFilterTypes,
@@ -156,8 +156,8 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       'GEOMECHANICS',
       getMockDepthMeasurementData(),
       DistanceUnitEnum.Foot,
-      'ft',
-      'ppg',
+      UserPreferredUnit.FEET,
+      PressureUnit.PPG,
       MeasurementType.GEOMECHANNICS
     );
     expect(result.length).toBe(1);
@@ -171,8 +171,8 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       'GEOMECHANICS',
       getMockDepthMeasurementData(),
       DistanceUnitEnum.Foot,
-      'ft',
-      'ppg',
+      UserPreferredUnit.FEET,
+      PressureUnit.PPG,
       MeasurementType.GEOMECHANNICS
     );
     expect(result.length).toBe(0);
@@ -187,14 +187,14 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       'GEOMECHANICS',
       getMockDepthMeasurementData(),
       DistanceUnitEnum.Foot,
-      'ft',
-      'ppg',
+      UserPreferredUnit.FEET,
+      PressureUnit.PPG,
       'wrong measurement type' as MeasurementType
     );
     expect(result.length).toBe(0);
   });
 
-  test('Should create multiple graphs if there are breaking values', () => {
+  test('Should create multiple graphs if there are breaking values Geomechanics', () => {
     const result = mapCurveToPlotly(
       getMockDepthMeasurementColumn(),
       [],
@@ -203,11 +203,35 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
         rows: getDepthMeasurementRowsWithBreakingValues(),
       }),
       DistanceUnitEnum.Foot,
-      'ft',
-      'ppg',
+      UserPreferredUnit.FEET,
+      PressureUnit.PSI,
       MeasurementType.GEOMECHANNICS
     );
-    expect(result.length).toBe(2);
+    // Should be three graphs ( 3 breaking points in data )
+    expect(result.length).toBe(3);
+    expect([0, -9999]).toEqual(
+      expect.not.arrayContaining(result[0].x as number[])
+    );
+  });
+
+  test('Should create multiple graphs if there are breaking values Ppfg', () => {
+    const result = mapCurveToPlotly(
+      getMockDepthMeasurementColumn(),
+      [],
+      'GEOMECHANICS',
+      getMockDepthMeasurementData({
+        rows: getDepthMeasurementRowsWithBreakingValues(),
+      }),
+      DistanceUnitEnum.Foot,
+      UserPreferredUnit.FEET,
+      PressureUnit.PSI,
+      MeasurementType.PPFG
+    );
+    // Should be three graphs ( 3 breaking points in data )
+    expect(result.length).toBe(3);
+    expect([0, -9999]).toEqual(
+      expect.not.arrayContaining(result[0].x as number[])
+    );
   });
 });
 
@@ -220,8 +244,8 @@ describe('mapMeasurementToPlotly test', () => {
       getMockPpfgsColumns(),
       [],
       DistanceUnitEnum.Foot,
-      PPG,
-      FEET,
+      PressureUnit.PPG,
+      UserPreferredUnit.FEET,
       []
     );
     expect(result.length).toBe(1);
@@ -235,8 +259,8 @@ describe('mapMeasurementToPlotly test', () => {
       getMockPpfgsColumns(),
       [],
       DistanceUnitEnum.Foot,
-      PPG,
-      FEET,
+      PressureUnit.PPG,
+      UserPreferredUnit.FEET,
       []
     );
     expect(result.length).toBe(1);
@@ -250,8 +274,8 @@ describe('formatChartData test', () => {
       getMockGeomechanicsColumns(),
       getMockPpfgsColumns(),
       [],
-      PPG,
-      FEET
+      PressureUnit.PPG,
+      UserPreferredUnit.FEET
     );
     expect(result.length).toBe(2);
   });

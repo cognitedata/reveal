@@ -468,42 +468,62 @@ export const getDepthMeasurementRowsWithBreakingValues =
       {
         rowNumber: 1,
         depth: 9,
-        values: [-59, 9, 0],
+        values: [-59, 9, 0, 0],
       },
       {
         rowNumber: 2,
         depth: 19,
-        values: [-49, 19, 21.25499582],
+        values: [-49, 19, 21.25499582, 25],
       },
       {
         rowNumber: 3,
         depth: 29,
-        values: [-39, 29, 42.52510674],
+        values: [-39, 29, 42.52510674, 44],
       },
       {
         rowNumber: 4,
         depth: 39,
-        values: [-29, 32, 58.52510674],
+        values: [-29, 32, 58.52510674, 51],
       },
       {
         rowNumber: 5,
         depth: 49,
-        values: [-59, 9, -9999],
+        values: [-59, 9, -9999, null],
       },
       {
         rowNumber: 6,
         depth: 59,
-        values: [-49, 19, 85.65425854],
+        values: [-49, 42, 85.65425854, 80],
       },
       {
         rowNumber: 7,
         depth: 69,
-        values: [-39, 29, 98.48645365],
+        values: [-39, 58, 98.48645365, 96],
       },
       {
         rowNumber: 8,
         depth: 79,
-        values: [-29, 32, 123.9842565],
+        values: [-29, 69, 123.9842565, 130],
+      },
+      {
+        rowNumber: 9,
+        depth: 89,
+        values: [-29, 75, null, -9999],
+      },
+      {
+        rowNumber: 10,
+        depth: 100,
+        values: [-29, 82, 150.9842565, 154],
+      },
+      {
+        rowNumber: 11,
+        depth: 110,
+        values: [-29, 82, 160.9842565, 168],
+      },
+      {
+        rowNumber: 12,
+        depth: 120,
+        values: [-29, 82, 170.9842565, 178],
       },
     ];
   };

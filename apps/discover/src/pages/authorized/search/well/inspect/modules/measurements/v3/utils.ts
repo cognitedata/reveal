@@ -1,6 +1,7 @@
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
+import isNull from 'lodash/isNull';
 import isUndefined from 'lodash/isUndefined';
 import { PlotData } from 'plotly.js';
 import { convertPressure, changeUnitTo } from 'utils/units';
@@ -27,7 +28,7 @@ import {
 } from 'modules/wellSearch/types';
 
 const ANGLE_CURVES_UNIT = 'deg';
-const CHART_BREAK_POINTS = [0, -9999];
+const CHART_BREAK_POINTS = [0, -9999, null];
 
 export const formatChartData = (
   measurements: Measurement[],
@@ -209,6 +210,7 @@ export const mapCurveToPlotly = (
 
   depthMeasurementData.rows.forEach((depthMeasurementRow) => {
     const yValue = depthMeasurementRow.depth as number;
+    const pressureValue = depthMeasurementRow.values[columnIndex];
     const xValue = depthMeasurementRow.values[columnIndex] as number;
 
     const convertedYValue = changeUnitTo(
@@ -223,6 +225,7 @@ export const mapCurveToPlotly = (
      */
     if (
       !convertedYValue ||
+      isNull(pressureValue) ||
       CHART_BREAK_POINTS.includes(xValue) ||
       CHART_BREAK_POINTS.includes(yValue)
     ) {
