@@ -3,15 +3,25 @@ import { Row } from 'react-table';
 import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
 import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
 import get from 'lodash/get';
+import keyBy from 'lodash/keyBy';
+import set from 'lodash/set';
 import { toFixedNumber } from 'utils/number';
 import { processAccessor } from 'utils/table/processAccessor';
 
+import { ColumnType } from 'components/tablev3';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
 
-export const getCommonColumns = (unit?: string) => {
+export const getCommonColumns = (unit?: string): ColumnType<NPTEvent>[] => {
   return [
+    {
+      id: accessors.NPT_DETAIL_CODE,
+      Header: 'NPT Detail Code',
+      width: '150px',
+      accessor: (row: NPTEvent) =>
+        processAccessor(row, accessors.NPT_DETAIL_CODE),
+    },
     {
       id: accessors.START_TIME,
       Header: 'Start Date',
@@ -48,13 +58,6 @@ export const getCommonColumns = (unit?: string) => {
         toFixedNumber(processAccessor(row, accessors.DURATION), 2),
     },
     {
-      id: accessors.NPT_DETAIL_CODE,
-      Header: 'NPT Detail Code',
-      width: '150px',
-      accessor: (row: NPTEvent) =>
-        processAccessor(row, accessors.NPT_DETAIL_CODE),
-    },
-    {
       id: accessors.DESCRIPTION,
       Header: 'Description',
       width: '500px',
@@ -65,7 +68,7 @@ export const getCommonColumns = (unit?: string) => {
     {
       id: accessors.ROOT_CAUSE,
       Header: 'Root Cause',
-      width: '150px',
+      width: '500px',
       accessor: (row: NPTEvent) => processAccessor(row, accessors.ROOT_CAUSE),
     },
     {
@@ -87,4 +90,31 @@ export const getCommonColumns = (unit?: string) => {
       accessor: (row: NPTEvent) => processAccessor(row, accessors.SUBTYPE),
     },
   ];
+};
+
+/**
+ * This function is to extend the column options.
+ * The content of `mutateColumns` is added and the content of `columns` is extended.
+ *
+ * NOTE: This function is supposed to extend only the existing columns.
+ */
+export const getExtendedColumns = (
+  columns: ColumnType<NPTEvent>[],
+  mutateColumns: Partial<ColumnType<NPTEvent>>[]
+) => {
+  const keyedColumns = keyBy(columns, 'id');
+  const keyedMutateColumns = keyBy(mutateColumns, 'id');
+
+  Object.keys(keyedMutateColumns).forEach((id) => {
+    const column = keyedColumns[id];
+
+    if (!column) return;
+
+    set(keyedColumns, id, {
+      ...column,
+      ...keyedMutateColumns[id],
+    });
+  });
+
+  return Object.values(keyedColumns);
 };

@@ -23,6 +23,7 @@ export const NPTEventsTable: React.FC<{ events: NPTEvent[] }> = React.memo(
     return (
       <NPTEventsTableWrapper>
         <Table<NPTEvent>
+          scrollTable
           id="npt-events-table"
           data={events}
           columns={nptEventsTableColumns}

@@ -19,9 +19,11 @@ import {
   HandleRowMouseEnter,
   HandleRowMouseLeave,
 } from './types';
+import { getStickyColumnCellsStyles } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 interface RowProps<T extends Object> {
+  columns: any[];
   row: Row<T>;
   visibleColumns: any[];
   handleRowClick?: HandleRowClick;
@@ -37,9 +39,11 @@ interface RowProps<T extends Object> {
   expanded?: boolean;
   disabledRowClickCells?: string[];
   highlighted?: boolean;
+  stickyColumnsIndexes?: number[];
 }
 // eslint-disable-next-line @typescript-eslint/ban-types
 const CustomRowComp = <T extends Object>({
+  columns,
   row,
   TableRow,
   handleRowClick,
@@ -60,6 +64,7 @@ const CustomRowComp = <T extends Object>({
     () => handleRowClick && handleRowClick(row),
     () => handleDoubleClick && handleDoubleClick(row)
   );
+  const stickyColumnStyles = getStickyColumnCellsStyles(row.cells, columns);
 
   disabledRowClickCells.push('selection');
 
@@ -82,9 +87,10 @@ const CustomRowComp = <T extends Object>({
   };
 
   const renderTableRow = () => {
-    return row.cells.map((cell) => (
+    return row.cells.map((cell, index) => (
       <TableCell
         {...cell.getCellProps()}
+        style={stickyColumnStyles[index]}
         onClick={handleCellClick(cell)}
         onDoubleClick={handleCellDoubleClick(cell)}
         data-testid="table-cell"

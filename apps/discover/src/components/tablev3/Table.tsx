@@ -35,6 +35,7 @@ import { selectionHook, expansionHook, indentationHook } from './hooks';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
 import { CustomRow } from './TableRow';
 import { TableProps } from './types';
+import { getStickyColumnHeadersStyles } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 const TableInner = <T extends Object>({
@@ -285,38 +286,46 @@ const TableInner = <T extends Object>({
     >
       {!hideHeaders && (
         <Thead>
-          {headerGroups.map((headerGroup: HeaderGroup<T>) => (
-            <TableRow
-              {...headerGroup.getHeaderGroupProps()}
-              hideBorders={hideBorders}
-              data-testid="table-header-row"
-              key={`table-header-${id}-${headerGroup.id}`}
-            >
-              {headerGroup.headers.map((column: any) => (
-                <CustomTableHead
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                  onClick={() => handleColumnHeadClick(column)}
-                  data-testid="table-header-cell"
-                  key={`custom-table-header-${id}-${headerGroup.id}-${column.id}`}
-                >
-                  <CellContent>
-                    <MarginRightSmallContainer>
-                      {column.render('Header')}
-                    </MarginRightSmallContainer>
-                    {!column.disableSorting && (
-                      <TableColumnSortIcons column={column} />
-                    )}
-                  </CellContent>
-                </CustomTableHead>
-              ))}
+          {headerGroups.map((headerGroup: HeaderGroup<T>) => {
+            const stickyColumnStyles = getStickyColumnHeadersStyles(
+              headerGroup.headers,
+              columns
+            );
 
-              {/* To keep the amount of cells correct, we need to render something
+            return (
+              <TableRow
+                {...headerGroup.getHeaderGroupProps()}
+                hideBorders={hideBorders}
+                data-testid="table-header-row"
+                key={`table-header-${id}-${headerGroup.id}`}
+              >
+                {headerGroup.headers.map((column: any, index) => (
+                  <CustomTableHead
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    style={stickyColumnStyles[index]}
+                    onClick={() => handleColumnHeadClick(column)}
+                    data-testid="table-header-cell"
+                    key={`custom-table-header-${id}-${headerGroup.id}-${column.id}`}
+                  >
+                    <CellContent>
+                      <MarginRightSmallContainer>
+                        {column.render('Header')}
+                      </MarginRightSmallContainer>
+                      {!column.disableSorting && (
+                        <TableColumnSortIcons column={column} />
+                      )}
+                    </CellContent>
+                  </CustomTableHead>
+                ))}
+
+                {/* To keep the amount of cells correct, we need to render something
                 where the overlay cells would be in the header
               */}
-              {renderRowOverlayComponent && <div />}
-              {renderRowHoverComponent && <div />}
-            </TableRow>
-          ))}
+                {renderRowOverlayComponent && <div />}
+                {renderRowHoverComponent && <div />}
+              </TableRow>
+            );
+          })}
         </Thead>
       )}
       {(pagination.enabled ? page : rows).map((row: TS_FIX_ME) => {
@@ -331,6 +340,7 @@ const TableInner = <T extends Object>({
         return (
           <CustomRow<T>
             key={`table-${row.id || get(row, 'original.id')}`}
+            columns={columns}
             row={row}
             visibleColumns={visibleColumns}
             TableRow={CustomTableRow}

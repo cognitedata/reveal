@@ -7,7 +7,7 @@ import { NPTEvent } from 'modules/wellSearch/types';
 
 import { COMMON_COLUMN_WIDTHS } from '../../../../../constants';
 import { accessors } from '../../constants';
-import { getCommonColumns } from '../columns';
+import { getCommonColumns, getExtendedColumns } from '../columns';
 import {
   renderAsBody2DefaultStrongText,
   renderNPTCodeWithColor,
@@ -57,30 +57,31 @@ export const useNptEventsTableColumns = () => {
 };
 
 export const useSelectedWellboreNptEventsTableColumns = () => {
+  const commonHeaders = useNptTableCommonHeaders();
+
   return [
     {
       id: accessors.NPT_CODE,
       Header: 'NPT Code',
-      width: '330px',
-      maxWidth: '0.3fr',
+      width: '150px',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderNPTCodeWithColor(original),
+      stickyColumn: true,
     },
-    ...useNptTableCommonHeaders().map((header) => {
-      if (header.id !== accessors.DURATION) return header;
-
-      // Modifying the `Duration` column.
-      return {
-        ...header,
+    ...getExtendedColumns(commonHeaders, [
+      {
+        id: accessors.NPT_DETAIL_CODE,
+        stickyColumn: true,
+      },
+      {
+        id: accessors.DURATION,
         Header: 'Duration',
-        width: '330px',
-        maxWidth: '0.3fr',
         accessor: (row: NPTEvent) => {
           const duration = processAccessor(row, accessors.DURATION);
           if (duration) return getTimeDuration(duration, 'hours');
-          return null;
+          return '';
         },
-      };
-    }),
+      },
+    ]),
   ];
 };

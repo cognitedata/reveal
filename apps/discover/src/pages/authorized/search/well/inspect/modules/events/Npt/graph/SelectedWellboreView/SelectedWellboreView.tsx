@@ -15,7 +15,7 @@ import { NPTEvent } from 'modules/wellSearch/types';
 import { accessors } from '../../constants';
 import { SelectedWellbore } from '../types';
 
-import { Separator } from './elements';
+import { SelectedWellboreDataContainer, Separator } from './elements';
 import { NavigationPanel, NavigationPanelData } from './NavigationPanel';
 import { NPTDurationGraph } from './NPTDurationGraph';
 import { NPTEventsGraph } from './NPTEventsGraph';
@@ -102,10 +102,13 @@ export const SelectedWellboreView: React.FC<Props> = React.memo(
             onCloseSelectedWellboreView={handleCloseSelectedWellboreView}
             disableNavigation={disableWellboreNavigation}
           />
-          <NPTDurationGraph events={chartData.current} />
-          <Separator />
-          <NPTEventsGraph events={chartData.current} />
-          <NPTEventsTable events={chartData.current} />
+
+          <SelectedWellboreDataContainer>
+            <NPTDurationGraph events={chartData.current} />
+            <Separator />
+            <NPTEventsGraph events={chartData.current} />
+            <NPTEventsTable events={chartData.current} />
+          </SelectedWellboreDataContainer>
         </OverlayNavigation>
 
         {chartRendering && <WhiteLoaderOverlay />}

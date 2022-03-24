@@ -87,6 +87,15 @@ export interface ColumnType<T extends Object> {
     desc?: string
   ) => number | string;
   disableSorting?: boolean;
+  displayFullText?: boolean;
+  /**
+   * Make the column sticky to the left when scrolling horizontally.
+   * If the previous column(s) are not set to sticky,
+   * the sticky columns are scrolled upto left most position and locked.
+   *
+   * NOTE: The columns should have `width` property defined to work this properly.
+   */
+  stickyColumn?: boolean;
 }
 
 export interface RowOptions {

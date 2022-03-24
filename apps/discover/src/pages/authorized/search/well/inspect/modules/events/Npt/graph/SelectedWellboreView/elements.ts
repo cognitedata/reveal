@@ -6,14 +6,18 @@ import { Body } from '@cognite/cogs.js';
 import { FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const NavigationPanelContainer = styled(FlexRow)`
-  position: sticky;
-  top: 0;
   background: var(--cogs-bg-accent);
   padding: ${sizes.normal};
+  margin-bottom: ${sizes.normal};
   align-items: center;
-  border-bottom: ${sizes.normal} solid var(--cogs-bg-default);
-  margin-bottom: -${sizes.normal};
   z-index: ${layers.TOP_BAR};
+`;
+
+export const SelectedWellboreDataContainer = styled.div`
+  overflow: auto;
+  height: 100%;
+  padding: ${sizes.normal};
+  padding-top: 0;
 `;
 
 export const DetailsContainer = styled(FlexColumn)`
@@ -34,7 +38,6 @@ export const WellName = styled(Body)`
 `;
 
 export const ChartWrapper = styled.div`
-  margin: ${sizes.normal};
   .stacked-bar-chart,
   .scatter-plot {
     padding: ${sizes.large} ${sizes.normal};
@@ -57,7 +60,8 @@ export const Separator = styled.div`
 `;
 
 export const NPTEventsTableWrapper = styled.div`
-  padding: ${sizes.normal};
+  height: 100%;
+  margin-top: ${sizes.normal};
   td:empty {
     color: var(--cogs-greyscale-grey5);
 
@@ -98,8 +102,8 @@ export const SectionData = styled(Body)`
   line-height: 18px;
   display: block;
   text-overflow: ellipsis;
-  ${(props: { multiline: boolean }) =>
-    !props.multiline &&
+  ${(props: { $multiline: boolean }) =>
+    !props.$multiline &&
     `
     white-space: nowrap;
     overflow: hidden;

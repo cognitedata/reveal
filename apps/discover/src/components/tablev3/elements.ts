@@ -147,6 +147,7 @@ export const ExpandedRow = (maxWidth: string) => css`
 
 export const TableRow = styled.div`
   display: contents;
+  background: var(--cogs-white);
 
   /* Apply styling for expanded rows */
   ${(props: { expandedRow?: boolean; maxWidth: string }) =>

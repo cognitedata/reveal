@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
 import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
 import get from 'lodash/get';
+import uniqueId from 'lodash/uniqueId';
 import { formatDate, getTimeDuration } from 'utils/date';
 import { CHART_AXIS_LABEL_DATE_FORMAT } from 'utils/date/constants';
 
@@ -46,7 +47,7 @@ export const Card = ({
   return (
     <CardSection>
       <SectionTitle>{title}</SectionTitle>
-      <SectionData multiline={multiline}>{value || '-'}</SectionData>
+      <SectionData $multiline={multiline}>{value || '-'}</SectionData>
     </CardSection>
   );
 };
@@ -85,7 +86,7 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
       const nptCodeIndicatorColor = get(colors, nptCode, DEFAULT_NPT_COLOR);
 
       return (
-        <NPTEventCard>
+        <NPTEventCard key={uniqueId(nptCode)}>
           <NPTCodeContainer>
             <NPTCodeIndicator color={nptCodeIndicatorColor} />
             <FlexColumn>
