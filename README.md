@@ -1,7 +1,7 @@
 # Platypus (codename)
 
 [![Confluence](https://img.shields.io/badge/Confluence-blue)](https://cog.link/devx)
-[![codecov](https://codecov.io/gh/cognitedata/platypus/branch/main/graph/badge.svg?token=3dhnnL5sHo)](https://codecov.io/gh/cognitedata/platypus)
+[![codecov](https://codecov.io/gh/cognitedata/platypus/branch/master/graph/badge.svg?token=ClP7PLfMI8)](https://codecov.io/gh/cognitedata/platypus)
 
 Our aim is to make it easier for application developer to develop app by reducing cost, friction and learning curve for them. Codename Platypus will help us achieve the same.
 
