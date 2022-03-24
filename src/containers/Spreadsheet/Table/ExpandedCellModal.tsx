@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import Draggable from 'react-draggable';
 import styled from 'styled-components';
 import { Modal } from 'antd';
@@ -8,14 +8,19 @@ import { useCellSelection } from 'hooks/table-selection';
 import { TABLE_CELL_EXPANDED_WIDTH } from 'utils/constants';
 
 export const ExpandedCellModal = (): JSX.Element => {
-  const [canDrag, setCanDrag] = useState<boolean>(true);
   const { selectedCell, isCellExpanded, setIsCellExpanded } =
     useCellSelection();
-  const modalRef = useRef(null);
 
-  const onModalClose = () => setIsCellExpanded(false);
-  const onCellMouseDown = () => setCanDrag(false);
-  const onCellMouseUp = () => setCanDrag(true);
+  const onModalClose = (event: React.MouseEvent) => {
+    // This stops deselect on click outside modal, so it behaves the same as the close button.
+    event.stopPropagation();
+    setIsCellExpanded(false);
+  };
+
+  const onCellMouseDown = (event: React.MouseEvent) => {
+    // This stops dragging on text to allow selecting it.
+    event.stopPropagation();
+  };
 
   return (
     <StyledModal
@@ -27,12 +32,18 @@ export const ExpandedCellModal = (): JSX.Element => {
       bodyStyle={{ padding: '8px 64px 8px 8px' }}
       onCancel={onModalClose}
       modalRender={(modal) => (
-        <Draggable disabled={!canDrag}>
-          <div ref={modalRef}>{modal}</div>
+        <Draggable>
+          <div
+            onClick={(event: React.MouseEvent) => {
+              event.stopPropagation();
+            }}
+          >
+            {modal}
+          </div>
         </Draggable>
       )}
     >
-      <CellContent onMouseDown={onCellMouseDown} onMouseUp={onCellMouseUp}>
+      <CellContent onMouseDown={onCellMouseDown}>
         <Body level={3}>{selectedCell.cellData}</Body>
       </CellContent>
     </StyledModal>
