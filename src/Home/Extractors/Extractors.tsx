@@ -17,6 +17,10 @@ const LinkStyled = styled.a`
   align-items: left;
 `;
 
+const StyledExtractorsContainer = styled.div`
+  padding: 18px 44px;
+`;
+
 const versionTableColumns = [
   {
     title: 'Version',
@@ -153,9 +157,9 @@ const Extractors = () => {
   const releases = GetReleases();
 
   return (
-    <div>
+    <StyledExtractorsContainer>
       <NewHeader
-        title="Extractor downloads"
+        title="Test Extractor downloads"
         breadcrumbs={[
           { title: 'Data ingestion', path: '/ingest' },
           { title: 'Extractors', path: '/extractors' },
@@ -171,7 +175,7 @@ const Extractors = () => {
         )}
         getPopupContainer={getContainer}
       />
-    </div>
+    </StyledExtractorsContainer>
   );
 };
 

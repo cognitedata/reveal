@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
-
-import { Icon } from '@cognite/cogs.js';
+import React from 'react';
+import { styleScope } from 'utils/styleScope';
+import { getContainer } from 'utils/utils';
+import { useGlobalStyles } from '@cognite/cdf-utilities';
+import { Icon, Loader } from '@cognite/cogs.js';
 import {
   ConfigProvider,
   Modal,
@@ -9,6 +11,7 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
@@ -78,12 +81,7 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 // import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
 
-import { ids } from 'styles/cogsVariables';
-
-import { getContainer } from '../utils/utils';
-// const getContainer = () =>
-//   document.getElementsByClassName(ids.styleScope).item(0)! as HTMLElement;
-const styles = [
+const antdStyles = [
   affixStyle,
   alertStyle,
   breadcrumbStyle,
@@ -138,14 +136,15 @@ Dropdown.defaultProps = {
 Spin.setDefaultIndicator(<Icon type="Loader" />);
 
 export function AntStyles(props: { children: React.ReactNode }) {
-  useEffect(() => {
-    styles.forEach((style) => style.use());
-    return () => styles.forEach((style) => style.unuse());
-  }, []);
+  const isInjectedStyles = useGlobalStyles([...antdStyles, cogsStyles]);
+
+  if (!isInjectedStyles) {
+    return <Loader />;
+  }
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>
-      <div className={ids.styleScope}>{props.children}</div>
+      <div className={styleScope}>{props.children}</div>
     </ConfigProvider>
   );
 }

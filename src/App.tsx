@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
@@ -53,7 +54,14 @@ const App = () => {
                 login={() => loginAndAuthIfNeeded(project, env)}
               >
                 <SDKProvider sdk={sdk}>
-                  <ExtractorDownloads />
+                  <Router>
+                    <Switch>
+                      <Route
+                        path={['/:tenant/:path/:page', '/:tenant/:path']}
+                        component={ExtractorDownloads}
+                      />
+                    </Switch>
+                  </Router>
                 </SDKProvider>
               </AuthWrapper>
             </SubAppWrapper>
