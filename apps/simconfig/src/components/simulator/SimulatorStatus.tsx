@@ -42,7 +42,12 @@ export function SimulatorStatus() {
   return (
     <SimulatorStatusContainer>
       {simulators.map((simulator) => (
-        <div key={simulator.connectorName}>
+        <div
+          key={`
+          ${simulator.connectorName ?? Math.random()}
+          -${simulator.dataSetId ?? Math.random()}
+          -simulator-status`}
+        >
           <SimulatorTooltip
             content={
               <SimulatorList

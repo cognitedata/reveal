@@ -85,9 +85,11 @@ export function ModelVersionList({
                   {modelFile.metadata.description || '(no description)'}
                 </span>
                 {modelFile.metadata.errorMessage && (
-                  <Label size="small" variant="danger">
-                    Error
-                  </Label>
+                  <Tooltip content={modelFile.metadata.errorMessage}>
+                    <Label size="small" variant="danger">
+                      Error
+                    </Label>
+                  </Tooltip>
                 )}
                 {modelFile.metadata.modelType && (
                   <Label size="small" variant="default">

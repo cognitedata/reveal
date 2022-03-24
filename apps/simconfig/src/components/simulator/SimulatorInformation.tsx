@@ -55,7 +55,7 @@ export function SimulatorInformation({
         <Collapse className="simulator-collapse" accordion>
           <Collapse.Panel
             header="Data set details"
-            key={`${simulator}-${connectorName}`}
+            key={`${simulator}-${connectorName}-dataset-details`}
           >
             <SimulatorInformationList>
               <dt>Model files</dt>

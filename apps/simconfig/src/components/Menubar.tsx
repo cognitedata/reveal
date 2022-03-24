@@ -1,11 +1,12 @@
 import { useMatchRoute, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Avatar, TopBar } from '@cognite/cogs.js';
+import { Avatar, Menu, TopBar } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 
 import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { getAuthenticatedUser } from 'utils/authUtils';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
@@ -14,6 +15,13 @@ export function MenuBar() {
   const { authState } = useAuthContext();
   const matchRoute = useMatchRoute();
   const navigate = useNavigate();
+  const accountName = authState
+    ? getAuthenticatedUser({ project, authState }).name
+    : '(no name)';
+
+  const redirectLogout = () => {
+    window.location.href = '/logout';
+  };
 
   return (
     <TopBar>
@@ -52,6 +60,15 @@ export function MenuBar() {
               key: 'avatar',
               component: (
                 <Avatar text={authState?.email ?? 'unknown@example.org'} />
+              ),
+              menu: (
+                <Menu>
+                  <Menu.Item style={{ color: 'inherit' }} disabled>
+                    {accountName}
+                  </Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Item onClick={redirectLogout}>Logout</Menu.Item>
+                </Menu>
               ),
               onClick: () => {
                 trackUsage(TRACKING_EVENTS.PROFILE_AVATAR_CLICK);
