@@ -1,40 +1,60 @@
 /* eslint-disable no-continue */
-import { DiagramInstance, DiagramInstanceId } from '../types';
-import { Path } from '../graph';
+import {
+  DiagramInstanceId,
+  DiagramInstanceOutputFormat,
+  DiagramType,
+} from '../types';
+import { PathOutputFormat } from '../graph';
+import { isCrossConnection } from '../graphMatching';
+
+import { CrossDocumentConnection } from './graphMatching';
 
 const isEqualDiagramInstance = (
-  instance1: DiagramInstance,
-  instance2: DiagramInstance
+  instance1: DiagramInstanceOutputFormat,
+  instance2: DiagramInstanceOutputFormat
 ) => {
-  if (instance1.assetExternalId !== instance2.assetExternalId) return false;
+  if (instance1.type === 'Instrument')
+    return isCrossConnection(instance1, instance2);
 
   return instance1.type === instance2.type;
 };
 
 // https://itnext.io/levenshtein-distance-in-typescript-6de81ea2fb63
 export const getEditDistance = (
-  pathA: DiagramInstance[],
-  pathB: DiagramInstance[]
+  pathA: DiagramInstanceOutputFormat[],
+  pathB: DiagramInstanceOutputFormat[]
 ): number => {
-  if (pathA.length === 0) return pathB.length;
-  if (pathB.length === 0) return pathA.length;
+  if (pathA.length === 0 || pathB.length === 0)
+    return Math.max(pathA.length, pathB.length);
 
-  if (isEqualDiagramInstance(pathA[0], pathB[0]))
-    return getEditDistance(pathA.slice(1), pathB.slice(1));
+  const pathALength = pathA.length + 1;
+  const pathBLength = pathB.length + 1;
 
-  return (
-    1 +
-    Math.min(
-      getEditDistance(pathA, pathB.slice(1)),
-      getEditDistance(pathA.slice(1), pathB),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      getEditDistance(pathA.slice(1), pathB.slice(1))
-    )
+  const matrix = Array.from({ length: pathALength }).map(() =>
+    Array.from({ length: pathBLength }).map(() => 0)
   );
+
+  for (let i = 0; i < pathALength; i++) matrix[i][0] = i;
+
+  for (let i = 0; i < pathBLength; i++) matrix[0][i] = i;
+
+  for (let j = 1; j < pathB.length; j++)
+    for (let i = 1; i < pathA.length; i++)
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] +
+          (isEqualDiagramInstance(pathA[i], pathB[j]) ? 0 : 1)
+      );
+
+  return matrix[pathA.length - 1][pathB.length - 1];
 };
 
-const normalizePidPath = (pidPath: DiagramInstance[]): DiagramInstance[] => {
-  const normalizedPidPath: DiagramInstance[] = [];
+const normalizePidPath = (
+  pidPath: DiagramInstanceOutputFormat[],
+  relevantDiagramTypes: DiagramType[]
+): DiagramInstanceOutputFormat[] => {
+  const normalizedPidPath: DiagramInstanceOutputFormat[] = [];
   pidPath.forEach((p) => {
     if (
       normalizedPidPath.length > 0 &&
@@ -42,13 +62,17 @@ const normalizePidPath = (pidPath: DiagramInstance[]): DiagramInstance[] => {
       p.type === 'Line'
     )
       return;
+    if (!relevantDiagramTypes.some((type) => type === p.type)) return;
     normalizedPidPath.push(p);
   });
   return normalizedPidPath;
 };
 
-const normalizeIsoPath = (isoPath: DiagramInstance[]): DiagramInstance[] => {
-  const normalizedIsoPath: DiagramInstance[] = [];
+const normalizeIsoPath = (
+  isoPath: DiagramInstanceOutputFormat[],
+  relevantDiagramTypes: DiagramType[]
+): DiagramInstanceOutputFormat[] => {
+  const normalizedIsoPath: DiagramInstanceOutputFormat[] = [];
   isoPath.forEach((p) => {
     if (
       normalizedIsoPath.length > 0 &&
@@ -56,14 +80,17 @@ const normalizeIsoPath = (isoPath: DiagramInstance[]): DiagramInstance[] => {
       (p.type === 'Line' || p.type === 'Custom') // Fix: Add a proper type for ISO symbol that semantically equals a line in a P&ID
     )
       return;
+    if (!relevantDiagramTypes.some((type) => type === p.type)) return;
     normalizedIsoPath.push(p);
   });
   return normalizedIsoPath;
 };
 
 export type EditDistanceBetweenPaths = {
-  assetExternalId: string;
+  startObject: CrossDocumentConnection;
   editDistance: number;
+  pidPath: DiagramInstanceOutputFormat[];
+  isoPath: DiagramInstanceOutputFormat[];
   debugPidPathStr: string;
   debugPidPathStrNormalized: string;
   debugIsoPathStr: string;
@@ -71,8 +98,8 @@ export type EditDistanceBetweenPaths = {
 };
 
 export const getEditDistanceBetweenPaths = (
-  pidPaths: Path[],
-  isoPaths: Path[]
+  pidPaths: PathOutputFormat[],
+  isoPaths: PathOutputFormat[]
 ): Map<string, Map<string, EditDistanceBetweenPaths[]>> => {
   const editDistances = new Map<
     string,
@@ -90,14 +117,21 @@ export const getEditDistanceBetweenPaths = (
     for (let p2 = 0; p2 < isoPaths.length; p2++) {
       const isoPath = isoPaths[p2];
 
-      const { assetExternalId } = pidPath.path[0];
-      if (assetExternalId === undefined) continue;
-      if (assetExternalId !== isoPath.path[0].assetExternalId) continue;
-
+      if (!isCrossConnection(pidPath.path[0], isoPath.path[0])) continue;
       const isoInstanceId = isoPath.to;
 
-      const pidPathNormalized = normalizePidPath(pidPath.path);
-      const isoPathNormalized = normalizeIsoPath(isoPath.path);
+      // FIX: Also support equipment and line breaks
+      const relevantTypes: DiagramType[] = [
+        'Cap',
+        'Valve',
+        'Reducer',
+        'Flange',
+        'Instrument',
+        'Line',
+      ];
+
+      const pidPathNormalized = normalizePidPath(pidPath.path, relevantTypes);
+      const isoPathNormalized = normalizeIsoPath(isoPath.path, relevantTypes);
 
       const editDistance = getEditDistance(
         pidPathNormalized,
@@ -112,7 +146,10 @@ export const getEditDistanceBetweenPaths = (
         .get(pidInstanceId)
         ?.get(isoInstanceId)
         ?.push({
-          assetExternalId,
+          startObject: {
+            pidInstanceId: pidPath.path[0].id,
+            isoInstanceId: isoPath.path[0].id,
+          },
           editDistance,
           debugPidPathStr: pidPath.path.map((p) => p.type).join(','),
           debugIsoPathStr: isoPath.path.map((p) => p.type).join(','),
@@ -122,6 +159,8 @@ export const getEditDistanceBetweenPaths = (
           debugIsoPathStrNormalized: isoPathNormalized
             .map((p) => p.type)
             .join(','),
+          pidPath: pidPath.path,
+          isoPath: isoPath.path,
         });
     }
   }
@@ -133,9 +172,12 @@ export type EditDistanceMapResult = {
   editDistances: EditDistanceBetweenPaths[];
 };
 
+export type SymbolMapping = Map<DiagramInstanceId, EditDistanceMapResult>;
+
 export const getOptimalEditDistanceMapping = (
-  editDistances: Map<string, Map<string, EditDistanceBetweenPaths[]>>
-): Map<DiagramInstanceId, EditDistanceMapResult> => {
+  editDistances: Map<string, Map<string, EditDistanceBetweenPaths[]>>,
+  startObjects: CrossDocumentConnection[]
+): SymbolMapping => {
   type PidIsoEditDistanceMapping = {
     pidInstanceId: DiagramInstanceId;
     isoInstanceId: DiagramInstanceId;
@@ -146,10 +188,37 @@ export const getOptimalEditDistanceMapping = (
   const allEditDistancesFromIsoToPid: PidIsoEditDistanceMapping[] = [];
   editDistances.forEach((isoMap, pidInstanceId) => {
     isoMap.forEach((editDistances, isoInstanceId) => {
+      // Only check if iso and pid type is equal
+      if (
+        editDistances.some(
+          (ed) =>
+            ed.pidPath[ed.pidPath.length - 1].type !==
+            ed.isoPath[ed.isoPath.length - 1].type
+        )
+      )
+        return;
+
       let sumEditDistances = 0;
-      editDistances.forEach((e) => {
-        sumEditDistances += e.editDistance;
+      editDistances.forEach((ed) => {
+        sumEditDistances += ed.editDistance;
       });
+
+      sumEditDistances /= editDistances.length;
+
+      if (
+        startObjects.some(
+          (startObject) =>
+            startObject.pidInstanceId === pidInstanceId &&
+            startObject.isoInstanceId === isoInstanceId
+        )
+      ) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `EDIT DISTANCE: Changed edit distance of start object from ${sumEditDistances} to 0`
+        );
+        sumEditDistances = 0;
+      }
+
       allEditDistancesFromIsoToPid.push({
         sumEditDistances,
         editDistances,
@@ -163,25 +232,24 @@ export const getOptimalEditDistanceMapping = (
     (a, b) => a.sumEditDistances - b.sumEditDistances
   );
 
-  const pidIsoEditDistanceMapping: Map<
-    DiagramInstanceId,
-    EditDistanceMapResult
-  > = new Map();
+  const pidIsoEditDistanceMapping: SymbolMapping = new Map();
 
   const usedIds = new Set<string>();
   allEditDistancesFromIsoToPid.forEach((isoPidDistance) => {
-    const isoId = `iso-${isoPidDistance.isoInstanceId}`;
-    const pidId = `iso-${isoPidDistance.pidInstanceId}`;
+    const isoId = isoPidDistance.isoInstanceId;
+    const pidId = isoPidDistance.pidInstanceId;
 
-    if (!(usedIds.has(isoId) || usedIds.has(pidId))) {
-      usedIds.add(isoId);
-      usedIds.add(pidId);
+    if (usedIds.has(isoId) || usedIds.has(pidId)) return;
 
-      pidIsoEditDistanceMapping.set(isoPidDistance.pidInstanceId, {
-        isoInstanceId: isoPidDistance.isoInstanceId,
-        editDistances: isoPidDistance.editDistances,
-      });
-    }
+    if (isoPidDistance.sumEditDistances > 1.4) return;
+
+    usedIds.add(isoId);
+    usedIds.add(pidId);
+
+    pidIsoEditDistanceMapping.set(isoPidDistance.pidInstanceId, {
+      isoInstanceId: isoPidDistance.isoInstanceId,
+      editDistances: isoPidDistance.editDistances,
+    });
   });
 
   return pidIsoEditDistanceMapping;

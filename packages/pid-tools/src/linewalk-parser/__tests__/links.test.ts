@@ -1,15 +1,25 @@
+import { SymbolConnection } from '../../graphMatching/types';
 import {
   PidFileConnectionInstance,
   GraphDocument,
-  LineConnectionInstance,
+  LineConnectionInstanceOutputFormat,
 } from '../../types';
 import { findIsoLink, findPidLink } from '../links';
-import { DocumentLink } from '../types';
 
 import * as pid25 from './data/025Graph.json';
 import * as pid26 from './data/026Graph.json';
 import * as iso1 from './data/iso1.json';
 import * as iso2 from './data/iso2.json';
+
+const boundingBox = { x: 0, y: 0, width: 0, height: 0 };
+
+const getLabelFromText = (id: string, text: string) => {
+  return {
+    id: 'mock-id',
+    text,
+    boundingBox,
+  };
+};
 
 test('should find the matching file connection in pid26', async () => {
   const fileConnection = {
@@ -20,23 +30,20 @@ test('should find the matching file connection in pid26', async () => {
     pathIds: ['path1'],
   } as unknown as PidFileConnectionInstance;
 
-  const expectedLink: DocumentLink = {
+  const expectedLink: SymbolConnection = {
     from: {
-      documentId: 'PARSED_DIAGRAM_V1_025Graph.json',
-      annotationId: 'path1',
+      fileName: '025Graph.svg',
+      instanceId: 'path1',
     },
     to: {
-      documentId: 'PARSED_DIAGRAM_V1_026Graph.json',
-      annotationId: 'path1',
+      fileName: '026Graph.svg',
+      instanceId: 'path1',
     },
   };
 
-  const link = findPidLink(
-    fileConnection,
-    pid25 as GraphDocument,
-    [pid26 as GraphDocument],
-    '1'
-  );
+  const link = findPidLink(fileConnection, pid25 as GraphDocument, [
+    pid26 as GraphDocument,
+  ]);
 
   expect(link).toEqual(expectedLink);
 });
@@ -50,18 +57,15 @@ test('should not find file connection with document number 27 in pid26', async (
     pathIds: ['path1'],
   } as unknown as PidFileConnectionInstance;
 
-  const link = findPidLink(
-    fileConnection,
-    pid25 as GraphDocument,
-    [pid26 as GraphDocument],
-    '1'
-  );
+  const link = findPidLink(fileConnection, pid25 as GraphDocument, [
+    pid26 as GraphDocument,
+  ]);
 
   expect(link).toEqual(undefined);
 });
 
 test('find correct SAME iso link', async () => {
-  const isoConnection: LineConnectionInstance = {
+  const isoConnection: LineConnectionInstanceOutputFormat = {
     type: 'Line connection',
     symbolId: 's1',
     letterIndex: 'A',
@@ -71,59 +75,59 @@ test('find correct SAME iso link', async () => {
     pathIds: ['path1'],
     id: 'path1',
     labelIds: [],
+    labels: [],
+    svgRepresentation: { boundingBox, svgPaths: [] },
     lineNumbers: [],
     inferedLineNumbers: [],
   };
 
-  const link = findIsoLink(
-    isoConnection,
+  const link = findIsoLink(isoConnection, iso1 as GraphDocument, [
     iso1 as GraphDocument,
-    [iso1 as GraphDocument, iso2 as GraphDocument],
-    '1'
-  );
+    iso2 as GraphDocument,
+  ]);
 
   expect(link).toEqual({
     from: {
-      documentId: 'PARSED_DIAGRAM_V1_L1-1.json',
-      annotationId: 'path1',
+      fileName: iso1.documentMetadata.name,
+      instanceId: 'path1',
     },
     to: {
-      documentId: 'PARSED_DIAGRAM_V1_L1-1.json',
-      annotationId: 'path2',
+      fileName: iso1.documentMetadata.name,
+      instanceId: 'path2',
     },
-  });
+  } as SymbolConnection);
 });
 
 test('find correct external iso link with same id', async () => {
-  const isoConnection: LineConnectionInstance = {
+  const labels = [getLabelFromText('tspan1', 'L001-2')];
+  const isoConnection: LineConnectionInstanceOutputFormat = {
     type: 'Line connection',
     symbolId: 'S1',
     letterIndex: 'A',
-    pointsToFileName: 'L1-2',
     pathIds: ['path3'],
     id: 'path3',
     scale: 1,
     rotation: 0,
-    labelIds: [],
+    labels,
+    svgRepresentation: { boundingBox, svgPaths: [] },
+    labelIds: labels.map((label) => label.id),
     lineNumbers: [],
     inferedLineNumbers: [],
   };
 
-  const link = findIsoLink(
-    isoConnection,
+  const link = findIsoLink(isoConnection, iso1 as GraphDocument, [
     iso1 as GraphDocument,
-    [iso1 as GraphDocument, iso2 as GraphDocument],
-    '1'
-  );
+    iso2 as GraphDocument,
+  ]);
 
   expect(link).toEqual({
     from: {
-      documentId: 'PARSED_DIAGRAM_V1_L1-1.json',
-      annotationId: 'path3',
+      fileName: iso1.documentMetadata.name,
+      instanceId: 'path3',
     },
     to: {
-      documentId: 'PARSED_DIAGRAM_V1_L1-2.json',
-      annotationId: 'path3',
+      fileName: iso2.documentMetadata.name,
+      instanceId: 'path3',
     },
-  });
+  } as SymbolConnection);
 });

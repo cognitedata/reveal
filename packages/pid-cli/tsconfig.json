@@ -4,7 +4,7 @@
     "esModuleInterop": true,
     "module": "CommonJS",
     "resolveJsonModule": true,
-    "lib": ["ES2019.Array", "DOM", "DOM.Iterable"],
+    "lib": ["ES2019.Array", "DOM", "DOM.Iterable", "ES2019.Object"],
     "downlevelIteration": true
   }
 }

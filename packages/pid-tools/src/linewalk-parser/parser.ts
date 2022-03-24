@@ -1,12 +1,8 @@
 import uniq from 'lodash/uniq';
 
 import { GraphDocument, DocumentType } from '../types';
-import {
-  getFileNameWithoutExtension,
-  isFileConnection,
-  isLineConnection,
-} from '../utils';
 import { SymbolConnection } from '../graphMatching/types';
+import getFileNameWithoutExtension from '../utils/getFileNameWithoutExtension';
 
 import {
   connectionsToLinks,
@@ -17,7 +13,6 @@ import {
   mergeUnique,
   symbolTagToAnnotation,
 } from './utils';
-import { findPidLink, findIsoLink } from './links';
 import {
   ParsedDocument,
   Annotation,
@@ -46,7 +41,7 @@ const parseDocument = (
 
   const linking: DocumentLink[] = connectionsToLinks(
     connections,
-    pdfExternalId,
+    graph.documentMetadata.name,
     version
   );
 
@@ -79,17 +74,6 @@ const parseDocument = (
   });
 
   symbolInstances?.forEach((symbol) => {
-    if (isFileConnection(symbol)) {
-      const link = findPidLink(symbol, graph, allDocuments, version);
-      if (link !== undefined) {
-        linking.push(link);
-      }
-    } else if (isLineConnection(symbol)) {
-      const link = findIsoLink(symbol, graph, allDocuments, version);
-      if (link !== undefined) {
-        linking.push(link);
-      }
-    }
     const annotation = diagramInstanceToAnnotation(symbol);
     annotations.push(annotation);
     inferLineNumbersToLabels(annotation);
@@ -107,6 +91,20 @@ const parseDocument = (
       annotations
     );
   }
+
+  const filesLinkedTo = new Map<string, number>();
+  linking.forEach((link) => {
+    [link.from.documentId, link.to.documentId].forEach((document) => {
+      const lastValue = filesLinkedTo.get(document) ?? 0;
+      filesLinkedTo.set(document, lastValue + 1);
+    });
+  });
+
+  // eslint-disable-next-line no-console
+  console.log(
+    `LINKING: Document ${graph.documentMetadata.name} links to files`,
+    filesLinkedTo
+  );
 
   return {
     annotations,
@@ -167,7 +165,7 @@ const getLineReviewsFile = (
     data: {
       externalId,
       lineReviews: documentsForLineFiles.map(
-        ({ data: { externalId, line } }) => ({
+        ({ data: { externalId, line, parsedDocuments } }) => ({
           id: line,
           name: line,
           system: 'unknown',
@@ -175,6 +173,7 @@ const getLineReviewsFile = (
           assignees: [{ name: 'Garima' }],
           status: 'OPEN',
           discrepancies: [],
+          parsedDocumentsExternalIds: parsedDocuments,
         })
       ),
     },

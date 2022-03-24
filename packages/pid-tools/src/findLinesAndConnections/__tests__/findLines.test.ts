@@ -1,4 +1,4 @@
-import { getDiagramInstanceIdFromPathIds } from '../..';
+import { getDiagramInstanceIdFromPathIds } from '../../utils';
 import {
   DiagramConnection,
   DiagramLineInstance,

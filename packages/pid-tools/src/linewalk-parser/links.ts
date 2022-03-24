@@ -1,24 +1,57 @@
 import isMatch from 'lodash/isMatch';
+import isEqual from 'lodash/isEqual';
 
-import { getFileNameWithoutExtension } from '../utils';
+import { SymbolConnection, SymbolConnectionId } from '../graphMatching/types';
 import {
   PidFileConnectionInstance,
   GraphDocument,
   DocumentType,
-  LineConnectionInstance,
+  DiagramLabelOutputFormat,
+  LineConnectionInstanceOutputFormat,
 } from '../types';
-import { isFileConnection, isLineConnection } from '../utils/type';
-import { getDiagramInstanceIdFromPathIds } from '../utils/diagramInstanceUtils';
+import {
+  isFileConnection,
+  isLineConnection,
+  isIsoDocumentMetadata,
+  getLineNumberAndPageFromText,
+} from '../utils';
 
-import { DocumentLink, AnnotationId } from './types';
-import { getExtId } from './utils';
+export const resolveFileAndLineConnections = (
+  documents: GraphDocument[]
+): SymbolConnection[] => {
+  const symbolConnections: SymbolConnection[] = [];
+  documents.forEach((document) => {
+    document.symbolInstances?.forEach((symbol) => {
+      let connection: SymbolConnection | undefined;
+      if (isFileConnection(symbol)) {
+        connection = findPidLink(symbol, document, documents);
+      } else if (isLineConnection(symbol)) {
+        connection = findIsoLink(symbol, document, documents);
+      }
+      if (connection === undefined) return;
+
+      if (
+        symbolConnections.some(
+          (symbolConnection) =>
+            (isEqual(symbolConnection.from, connection!.to) &&
+              isEqual(symbolConnection.to, connection!.from)) ||
+            (isEqual(symbolConnection.from, connection!.from) &&
+              isEqual(symbolConnection.to, connection!.to))
+        )
+      )
+        return;
+
+      symbolConnections.push(connection);
+    });
+  });
+  return symbolConnections;
+};
 
 export const findPidLink = (
   fileConnection: PidFileConnectionInstance,
   document: GraphDocument,
-  documents: GraphDocument[],
-  version: string
-): DocumentLink | undefined => {
+  documents: GraphDocument[]
+): SymbolConnection | undefined => {
   // Currently only supports single direction connections
   if (
     fileConnection.fileDirection !== 'In' &&
@@ -44,14 +77,14 @@ export const findPidLink = (
 
   if (connectedInstance === undefined) return undefined;
 
-  const ownAnnotation: AnnotationId = {
-    documentId: getExtId(document.documentMetadata.name, version),
-    annotationId: getDiagramInstanceIdFromPathIds(fileConnection.pathIds),
+  const ownAnnotation: SymbolConnectionId = {
+    fileName: document.documentMetadata.name,
+    instanceId: fileConnection.id,
   };
 
-  const connectedAnnotation: AnnotationId = {
-    documentId: getExtId(connectedDoc.documentMetadata.name, version),
-    annotationId: getDiagramInstanceIdFromPathIds(connectedInstance.pathIds),
+  const connectedAnnotation: SymbolConnectionId = {
+    fileName: connectedDoc.documentMetadata.name,
+    instanceId: connectedInstance.id,
   };
 
   if (fileConnection.fileDirection === 'In') {
@@ -67,51 +100,95 @@ export const findPidLink = (
   };
 };
 
+const getLineAndPageNumberFromLabels = (labels: DiagramLabelOutputFormat[]) => {
+  for (let i = 0; i < labels.length; i++) {
+    const lineNumberAndPage = getLineNumberAndPageFromText(labels[i].text);
+    if (lineNumberAndPage) {
+      return lineNumberAndPage;
+    }
+  }
+  return null;
+};
+
 export const findIsoLink = (
-  lineConnection: LineConnectionInstance,
+  lineConnection: LineConnectionInstanceOutputFormat,
   document: GraphDocument,
-  allDocuments: GraphDocument[],
-  version: string
-): DocumentLink | undefined => {
-  const linkedDocument =
-    lineConnection.pointsToFileName === 'SAME'
-      ? document
-      : allDocuments.find(
-          (doc) =>
-            getFileNameWithoutExtension(doc.documentMetadata.name) ===
-            lineConnection.pointsToFileName
-        );
+  allDocuments: GraphDocument[]
+): SymbolConnection | undefined => {
+  if (lineConnection.pointsToFileName === 'SAME') {
+    const linkedConnection = document.symbolInstances.find(
+      (symbolInstance) =>
+        isLineConnection(symbolInstance) &&
+        symbolInstance.letterIndex === lineConnection.letterIndex &&
+        symbolInstance.id !== lineConnection.id
+    );
+
+    if (!linkedConnection) return undefined;
+
+    return {
+      from: {
+        fileName: document.documentMetadata.name,
+        instanceId: lineConnection.id,
+      },
+      to: {
+        fileName: document.documentMetadata.name,
+        instanceId: linkedConnection.id,
+      },
+    };
+  }
+
+  // Cross document connection
+  const lineAndPageData = getLineAndPageNumberFromLabels(lineConnection.labels);
+  if (!lineAndPageData) return undefined;
+  const { lineNumber, pageNumber } = lineAndPageData;
+
+  const linkedDocument = allDocuments.find(
+    (doc) =>
+      isIsoDocumentMetadata(doc.documentMetadata) &&
+      doc.documentMetadata.lineNumber === lineNumber &&
+      doc.documentMetadata.pageNumber === pageNumber
+  );
 
   if (linkedDocument === undefined) return undefined;
 
-  const symbolIsNotCurrentConnection = (symbol: LineConnectionInstance) =>
-    linkedDocument.documentMetadata.name !== document.documentMetadata.name ||
-    symbol.id !== lineConnection.id;
+  const pointToLineAndPageNumber = (
+    labels: DiagramLabelOutputFormat[],
+    lineNumber: string,
+    pageNumber: number
+  ) => {
+    const lineAndPageNumberData = getLineAndPageNumberFromLabels(labels);
+    if (!lineAndPageNumberData) return false;
 
-  const symbolPointsToCurrentDocument = (symbol: LineConnectionInstance) =>
-    symbol.pointsToFileName ===
-    (lineConnection.pointsToFileName === 'SAME'
-      ? 'SAME'
-      : getFileNameWithoutExtension(document.documentMetadata.name));
+    return (
+      lineAndPageNumberData.lineNumber === lineNumber &&
+      lineAndPageNumberData.pageNumber === pageNumber
+    );
+  };
+
+  const { documentMetadata } = document;
+  if (!isIsoDocumentMetadata(documentMetadata)) return undefined;
 
   const linkedConnection = linkedDocument.symbolInstances.find(
-    (symbol) =>
-      isLineConnection(symbol) &&
-      symbol.letterIndex === lineConnection.letterIndex &&
-      symbolIsNotCurrentConnection(symbol) &&
-      symbolPointsToCurrentDocument(symbol)
+    (symbolInstance) =>
+      isLineConnection(symbolInstance) &&
+      symbolInstance.letterIndex === lineConnection.letterIndex &&
+      pointToLineAndPageNumber(
+        symbolInstance.labels,
+        documentMetadata.lineNumber,
+        documentMetadata.pageNumber
+      )
   );
 
   if (linkedConnection === undefined) return undefined;
 
   return {
     from: {
-      documentId: getExtId(document.documentMetadata.name, version),
-      annotationId: lineConnection.id,
+      fileName: document.documentMetadata.name,
+      instanceId: lineConnection.id,
     },
     to: {
-      documentId: getExtId(linkedDocument.documentMetadata.name, version),
-      annotationId: linkedConnection.id,
+      fileName: linkedDocument.documentMetadata.name,
+      instanceId: linkedConnection.id,
     },
   };
 };

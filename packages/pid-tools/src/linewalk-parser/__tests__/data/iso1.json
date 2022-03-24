@@ -1,10 +1,10 @@
 {
   "documentMetadata": {
-    "type": "P&ID",
-    "name": "L1-1.svg",
-    "lineNumber": "L1",
+    "type": "Isometric",
+    "name": "G001-L001-1.svg",
+    "lineNumber": "L001",
     "pageNumber": 1,
-    "unit": "G1"
+    "unit": "G001"
   },
   "viewBox": {
     "x": 0,

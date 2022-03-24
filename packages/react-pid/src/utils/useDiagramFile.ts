@@ -5,16 +5,10 @@ import {
   IsoDocumentMetadata,
   DocumentMetadata,
   DocumentType,
-  VALID_LINE_NUMBER_PREFIXES,
+  getLineNumberAndPageFromText,
 } from '@cognite/pid-tools';
 
 import { fetchFileByExternalId } from './api';
-
-const fileNameLooksLikeIso = (fileName: string) => {
-  const prefixOptionsString = VALID_LINE_NUMBER_PREFIXES.join('|');
-  const isoRegex = new RegExp(`(${prefixOptionsString})[0-9]{1,}-[0-9]{1,}`);
-  return fileName.match(isoRegex);
-};
 
 const getPidDocumentMetaDataFromFileName = (
   fileName: string,
@@ -36,18 +30,15 @@ const getPidDocumentMetaDataFromFileName = (
 const getIsoDocumentMetaDataFromFileName = (
   fileName: string,
   unit: string,
-  matchedString?: string
+  lineNumber: string | undefined,
+  page: number | undefined
 ) => {
-  const lineParts = matchedString ? matchedString.split('-') : undefined;
-  const lineNumber = lineParts ? lineParts[0] : '#';
-  const pageNumber = lineParts ? parseInt(lineParts[1], 10) : '#';
-
   return {
     type: DocumentType.isometric,
     name: fileName,
     unit,
-    lineNumber,
-    pageNumber,
+    lineNumber: lineNumber ?? '#',
+    pageNumber: page ?? '#',
   } as IsoDocumentMetadata;
 };
 
@@ -57,7 +48,7 @@ const getMetadataFromFile = (
 ) => {
   const { name } = file;
 
-  const isoFileNameMatchArray = fileNameLooksLikeIso(name);
+  const isoLineNumberAndPage = getLineNumberAndPageFromText(name);
   const pidFileNameMatchArray = name.match(/MF_[0-9]{1,}/);
 
   const unitMatchArray = file.name.match(/G[0-9]{4}/);
@@ -65,11 +56,11 @@ const getMetadataFromFile = (
 
   const isPid =
     selectedDocumentType === DocumentType.pid ||
-    (pidFileNameMatchArray && !isoFileNameMatchArray);
+    (pidFileNameMatchArray && !isoLineNumberAndPage);
 
   const isIso =
     selectedDocumentType === DocumentType.isometric ||
-    (isoFileNameMatchArray && !pidFileNameMatchArray);
+    (isoLineNumberAndPage && !pidFileNameMatchArray);
 
   if (isPid) {
     return getPidDocumentMetaDataFromFileName(
@@ -82,7 +73,8 @@ const getMetadataFromFile = (
     return getIsoDocumentMetaDataFromFileName(
       name,
       unit,
-      isoFileNameMatchArray?.[0]
+      isoLineNumberAndPage?.lineNumber,
+      isoLineNumberAndPage?.pageNumber
     );
   }
 

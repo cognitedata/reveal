@@ -1,60 +1,94 @@
 /* eslint-disable no-continue */
-import { Graph } from '../graph/types';
-import { DiagramInstanceId, DiagramSymbolInstance } from '../types';
-import { getDiagramInstanceId } from '../utils';
-import { calculateShortestPaths, Path } from '../graph';
+import { GraphOutputFormat } from '../graph/types';
+import {
+  DiagramInstanceId,
+  DiagramInstanceOutputFormat,
+  DiagramSymbolInstanceOutputFormat,
+} from '../types';
+import { isEquipment, isInstrument } from '../utils';
+import { calculateShortestPaths, PathOutputFormat } from '../graph';
 
 import {
   getEditDistanceBetweenPaths,
   getOptimalEditDistanceMapping,
 } from './editDistance';
 
-interface CrossDocumentConnection {
+export interface CrossDocumentConnection {
   pidInstanceId: DiagramInstanceId;
   isoInstanceId: DiagramInstanceId;
 }
 
-const getCrossDocumentConnectionsFromAssetExternalId = (
-  pidSymbolInstances: DiagramSymbolInstance[],
-  isoSymbolInstances: DiagramSymbolInstance[]
+export const isCrossConnection = (
+  pidInstance: DiagramInstanceOutputFormat,
+  isoInstance: DiagramInstanceOutputFormat
+) => {
+  if (isInstrument(pidInstance) && isInstrument(isoInstance)) {
+    if (pidInstance.labels.length !== isoInstance.labels.length) return false;
+
+    const pidLabelTexts = pidInstance.labels.flatMap((label) => label.text);
+    const isoLabelTexts = isoInstance.labels.flatMap((label) => label.text);
+
+    for (let i = 0; i < pidLabelTexts.length; i++) {
+      if (!isoLabelTexts.includes(pidLabelTexts[i])) return false;
+    }
+    return true;
+  }
+  if (isEquipment(pidInstance) && isEquipment(isoInstance)) {
+    return (
+      pidInstance.equipmentTag &&
+      pidInstance.equipmentTag === isoInstance.equipmentTag
+    );
+  }
+  return false;
+};
+
+export const getUniqueCrossConnections = (
+  pidSymbolInstances: DiagramSymbolInstanceOutputFormat[],
+  isoSymbolInstances: DiagramSymbolInstanceOutputFormat[]
 ): CrossDocumentConnection[] => {
   const crossDocumentConnections: CrossDocumentConnection[] = [];
   for (let i = 0; i < pidSymbolInstances.length; i++) {
-    const pidInstance: DiagramSymbolInstance = pidSymbolInstances[i];
-    if (pidInstance.assetExternalId === undefined) continue;
+    const pidInstance = pidSymbolInstances[i];
 
     const isoInstancesWithAssetExternalId = isoSymbolInstances.filter(
-      (isoAsset) => isoAsset.assetExternalId === pidInstance.assetExternalId
+      (isoInstance) => isCrossConnection(pidInstance, isoInstance)
     );
     if (isoInstancesWithAssetExternalId.length === 1) {
       crossDocumentConnections.push({
-        pidInstanceId: getDiagramInstanceId(pidInstance),
-        isoInstanceId: getDiagramInstanceId(isoInstancesWithAssetExternalId[0]),
+        pidInstanceId: pidInstance.id,
+        isoInstanceId: isoInstancesWithAssetExternalId[0].id,
       });
     }
   }
   return crossDocumentConnections;
 };
 
-export const matchGraphs = (pidGraph: Graph, isoGraph: Graph) => {
-  const startObjects = getCrossDocumentConnectionsFromAssetExternalId(
-    pidGraph.diagramSymbolInstances.filter(
-      (instance) => instance.type === 'Instrument'
-    ),
-    isoGraph.diagramSymbolInstances.filter(
-      (instance) => instance.type === 'Instrument'
-    )
+export const matchGraphs = (
+  pidGraph: GraphOutputFormat,
+  isoGraph: GraphOutputFormat
+) => {
+  const potentialPidStartObjects = pidGraph.diagramSymbolInstances.filter(
+    (instance) => ['Instrument', 'Equipment'].includes(instance.type)
+  );
+  const potentialIsoStartObjects = isoGraph.diagramSymbolInstances.filter(
+    (instance) => ['Instrument', 'Equipment'].includes(instance.type)
+  );
+
+  const startObjects = getUniqueCrossConnections(
+    potentialPidStartObjects,
+    potentialIsoStartObjects
   );
 
   const relevantSymbolTypes = [
     'Instrument',
+    'Equipment',
     'Cap',
     'Valve',
     'Flange',
     'Reducer',
   ];
 
-  const shortestPathsPid: Path[] = [];
+  const shortestPathsPid: PathOutputFormat[] = [];
   startObjects.forEach((value) =>
     shortestPathsPid.push(
       ...calculateShortestPaths(
@@ -65,7 +99,7 @@ export const matchGraphs = (pidGraph: Graph, isoGraph: Graph) => {
     )
   );
 
-  const shortestPathsIso: Path[] = [];
+  const shortestPathsIso: PathOutputFormat[] = [];
   startObjects.forEach((value) =>
     shortestPathsIso.push(
       ...calculateShortestPaths(
@@ -81,7 +115,9 @@ export const matchGraphs = (pidGraph: Graph, isoGraph: Graph) => {
     shortestPathsIso
   );
 
-  const symbolMapping = getOptimalEditDistanceMapping(editDistances);
-
-  return { editDistances, symbolMapping };
+  const symbolMapping = getOptimalEditDistanceMapping(
+    editDistances,
+    startObjects
+  );
+  return { editDistances, symbolMapping, startObjects };
 };

@@ -1183,7 +1183,7 @@
         ]
       },
       "labelIds": [],
-      "assetExternalId": "ASSETB",
+      "equipmentTag": "ASSETB",
       "labels": []
     },
     {
@@ -1226,7 +1226,7 @@
         ]
       },
       "labelIds": [],
-      "assetExternalId": "ASSETA",
+      "equipmentTag": "ASSETA",
       "labels": []
     },
     {
@@ -1395,7 +1395,7 @@
         ]
       },
       "labelIds": [],
-      "assetExternalId": "ASSETC",
+      "equipmentTag": "ASSETC",
       "labels": []
     },
     {

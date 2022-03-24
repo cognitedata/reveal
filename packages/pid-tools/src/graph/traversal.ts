@@ -2,11 +2,12 @@
 import {
   DiagramConnection,
   DiagramInstanceId,
+  DiagramInstanceOutputFormat,
   DiagramInstanceWithPaths,
 } from '../types';
-import { getDiagramInstanceId, getInstanceByDiagramInstanceId } from '../utils';
+import { getDiagramInstanceId } from '../utils';
 
-import { Graph } from './types';
+import { Graph, GraphOutputFormat } from './types';
 
 const getNeighbours = (
   instanceId: DiagramInstanceId,
@@ -17,25 +18,32 @@ const getNeighbours = (
     .map((con) => (con.start === instanceId ? con.end : con.start));
 };
 
-export type Path = {
+export type PathOutputFormat = {
   to: DiagramInstanceId;
   from: DiagramInstanceId;
-  path: DiagramInstanceWithPaths[];
+  path: DiagramInstanceOutputFormat[];
 };
 
 // multi-source BFS
 export const calculateShortestPaths = (
   startInstanceIds: DiagramInstanceId[],
-  graph: Graph,
+  graph: GraphOutputFormat,
   relevantSymbolTypes: string[]
-): Path[] => {
-  const shortestPaths: Path[] = [];
+): PathOutputFormat[] => {
+  const shortestPaths: PathOutputFormat[] = [];
   const visited: DiagramInstanceId[] = [];
 
   const queue = startInstanceIds.map((startInstanceId) => ({
     instanceId: startInstanceId,
-    path: [] as DiagramInstanceWithPaths[],
+    path: <DiagramInstanceOutputFormat[]>[],
   }));
+
+  const instanceIdMap = new Map<string, DiagramInstanceOutputFormat>();
+  [...graph.diagramLineInstances, ...graph.diagramSymbolInstances].forEach(
+    (instance) => {
+      instanceIdMap.set(instance.id, instance);
+    }
+  );
 
   while (queue.length > 0) {
     const cur = queue.shift();
@@ -48,11 +56,12 @@ export const calculateShortestPaths = (
     }
     visited.push(instanceId);
 
-    const diagramInstance: DiagramInstanceWithPaths =
-      getInstanceByDiagramInstanceId(
-        [...graph.diagramLineInstances, ...graph.diagramSymbolInstances],
-        instanceId
-      )! as DiagramInstanceWithPaths;
+    const diagramInstance = instanceIdMap.get(instanceId);
+    if (diagramInstance === undefined) {
+      // eslint-disable-next-line no-console
+      console.warn(`GRAPH: Unable to find instance with id: ${instanceId}`);
+      continue;
+    }
 
     if (
       diagramInstance.type !== undefined &&
@@ -60,7 +69,7 @@ export const calculateShortestPaths = (
     ) {
       const path = [...cur.path, diagramInstance];
       shortestPaths.push({
-        from: getDiagramInstanceId(path[0]),
+        from: path[0].id,
         to: instanceId,
         path,
       });
@@ -78,7 +87,6 @@ export const calculateShortestPaths = (
       });
     }
   }
-
   return shortestPaths;
 };
 

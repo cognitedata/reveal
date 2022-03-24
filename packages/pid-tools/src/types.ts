@@ -85,6 +85,12 @@ export interface DiagramEquipmentInstance
   type: 'Equipment';
 }
 
+export interface DiagramInstrumentInstance
+  extends DiagramSymbolInstance,
+    EquipmentTagInfo {
+  type: 'Instrument';
+}
+
 export interface DiagramEquipmentTagInstance
   extends DiagramInstance,
     EquipmentTagInfo {
@@ -109,6 +115,9 @@ interface DiagramInstanceOutputFields {
   labels: DiagramLabelOutputFormat[];
 }
 
+export type DiagramInstanceOutputFormat = DiagramInstance &
+  DiagramInstanceOutputFields;
+
 export type DiagramSymbolInstanceOutputFormat = DiagramSymbolInstance &
   DiagramInstanceOutputFields;
 
@@ -120,6 +129,9 @@ export type DiagramEquipmentInstanceOutputFormat = DiagramEquipmentInstance &
 
 export type DiagramEquipmentTagInstanceOutputFormat =
   DiagramEquipmentTagInstance & DiagramInstanceOutputFields;
+
+export type LineConnectionInstanceOutputFormat = LineConnectionInstance &
+  DiagramInstanceOutputFields;
 
 export interface DiagramLabelOutputFormat {
   id: string;

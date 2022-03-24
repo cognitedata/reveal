@@ -7,8 +7,9 @@ import {
   DocumentType,
   DocumentMetadata,
   DiagramEquipmentInstance,
-  DiagramInstanceWithPaths,
+  DiagramInstrumentInstance,
   LineConnectionInstance,
+  DiagramInstance,
 } from '../types';
 import { LineSegment, PathSegment } from '../geometry';
 
@@ -27,9 +28,14 @@ export const isLineConnection = (
 };
 
 export const isEquipment = (
-  diagramInstance: DiagramInstanceWithPaths
+  diagramInstance: DiagramInstance
 ): diagramInstance is DiagramEquipmentInstance =>
   diagramInstance.type === 'Equipment';
+
+export const isInstrument = (
+  diagramInstance: DiagramInstance
+): diagramInstance is DiagramInstrumentInstance =>
+  diagramInstance.type === 'Instrument';
 
 export const isLine = (
   diagramInstance: any
@@ -54,4 +60,10 @@ export const isLineSegment = (
   pathSegment: PathSegment
 ): pathSegment is LineSegment => {
   return pathSegment && pathSegment.pathType === 'LineSegment';
+};
+
+export const isIsoDocumentMetadata = (
+  documentMetadata: DocumentMetadata
+): documentMetadata is IsoDocumentMetadata => {
+  return documentMetadata.type === DocumentType.isometric;
 };
