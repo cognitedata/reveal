@@ -129,13 +129,13 @@ export default function OIDCConfigContainer() {
       initialValues={{
         ...projectSettings?.oidcConfiguration,
         accessClaims: projectSettings?.oidcConfiguration?.accessClaims?.map(
-          o => o.claimName
+          (o) => o.claimName
         ),
         scopeClaims: projectSettings?.oidcConfiguration?.scopeClaims?.map(
-          o => o.claimName
+          (o) => o.claimName
         ),
         logClaims: projectSettings?.oidcConfiguration?.logClaims?.map(
-          o => o.claimName
+          (o) => o.claimName
         ),
         isOidcEnabled: authConfiguration?.isOidcEnabled,
       }}

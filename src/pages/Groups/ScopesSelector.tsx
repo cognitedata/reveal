@@ -56,7 +56,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
   }
 
   selectedResources = Array.isArray(selectedResources)
-    ? selectedResources.map(r => (typeof r === 'string' ? parseInt(r, 10) : r))
+    ? selectedResources.map((r) =>
+        typeof r === 'string' ? parseInt(r, 10) : r
+      )
     : selectedResources;
 
   const onSelectScope = (e: RadioChangeEvent) => {
@@ -243,8 +245,8 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
 
   return (
     <div>
-      <Radio.Group value={selectedScope} onChange={e => onSelectScope(e)}>
-        {scopes.map(scope => (
+      <Radio.Group value={selectedScope} onChange={(e) => onSelectScope(e)}>
+        {scopes.map((scope) => (
           <Radio value={scope} key={scope}>
             {getScopeLabel(scope, capabilityKey)}
           </Radio>

@@ -13,7 +13,7 @@ export function validateDomain(
   const regex = wildcardSupported
     ? /^([a-zA-Z0-9*]([a-zA-Z0-9*-]*[a-zA-Z0-9*])?)$/
     : /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/;
-  return labels.every(label => regex.test(label));
+  return labels.every((label) => regex.test(label));
 }
 
 export function validateDomainInput(
@@ -21,7 +21,7 @@ export function validateDomainInput(
   wildcardSupported: boolean = false
 ): Value<string[]> {
   const invalidDomains = domains.filter(
-    domain => !validateDomain(domain, wildcardSupported)
+    (domain) => !validateDomain(domain, wildcardSupported)
   );
   if (invalidDomains.length > 0) {
     return {

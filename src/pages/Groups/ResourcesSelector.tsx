@@ -72,13 +72,13 @@ export default function ResourcesSelector({
   return (
     <Select
       mode="tags"
-      value={value?.map(i => `${i}`)}
+      value={value?.map((i) => `${i}`)}
       placeholder="Search and select resources"
       notFoundContent={fetching ? <Spin /> : 'Not found'}
       onSearch={handleSearch}
       defaultValue={[]}
-      onChange={v => {
-        onChange(v.map(i => parseInt(i, 10)));
+      onChange={(v) => {
+        onChange(v.map((i) => parseInt(i, 10)));
       }}
       style={{ border: 0 }}
       optionLabelProp="title"
@@ -88,7 +88,7 @@ export default function ResourcesSelector({
           : (input, option) => stringContains(option?.title, input)
       }
     >
-      {result.map(resource => (
+      {result.map((resource) => (
         <Option
           key={resource.id}
           value={`${resource.id}`}

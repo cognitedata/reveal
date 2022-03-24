@@ -36,7 +36,7 @@ export const useAuthConfiguration = () => {
         isLegacyLoginFlowAndApiKeysEnabled: boolean;
         isOidcEnabled: boolean;
       }>(`/api/playground/projects/${sdk.project}/configuration`)
-      .then(r => r.data);
+      .then((r) => r.data);
   });
 };
 
@@ -55,7 +55,7 @@ const getUpdater =
     try {
       groupAccountIds = (
         id ? await sdk.groups.listServiceAccounts(id) : []
-      ).map(account => account.id);
+      ).map((account) => account.id);
     } catch {
       groupAccountIds = [];
     }

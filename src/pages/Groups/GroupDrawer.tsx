@@ -124,7 +124,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
           }
         >
           <>
-            <CapabilitiesSelector value={caps} onChange={c => setCaps(c)} />
+            <CapabilitiesSelector value={caps} onChange={(c) => setCaps(c)} />
           </>
         </Form.Item>
 

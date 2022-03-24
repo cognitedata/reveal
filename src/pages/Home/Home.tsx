@@ -31,12 +31,11 @@ export default function () {
 
   const history = useHistory();
 
-  const { params } =
-    useRouteMatch<{
-      tenant: string;
-      path: string;
-      page?: string;
-    }>();
+  const { params } = useRouteMatch<{
+    tenant: string;
+    path: string;
+    page?: string;
+  }>();
   const { pathname, search, hash } = history.location;
 
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
@@ -47,7 +46,7 @@ export default function () {
   }
 
   return (
-    <>
+    <StyledAppContainerDiv>
       <Title level={1}>
         Access management{' '}
         <Icon
@@ -62,7 +61,7 @@ export default function () {
       <StyledMeny
         mode="horizontal"
         selectedKeys={[params.page || 'groups']}
-        onClick={e => {
+        onClick={(e) => {
           if (e.key !== params.page) {
             history.push(createLink(`/${params.path}/${e.key}`));
           }
@@ -129,9 +128,13 @@ export default function () {
           component={ServiceAccounts}
         />
       </Switch>
-    </>
+    </StyledAppContainerDiv>
   );
 }
+
+const StyledAppContainerDiv = styled.div`
+  padding: 18px 44px;
+`;
 
 const StyledMeny = styled(Menu)`
   font-size: 16px;

@@ -245,11 +245,13 @@ export const getCapabilityFormattedName = (
 };
 
 export const getCapabilityTypeGroups = () => {
-  const filteredGroups = capabilityTypeGroups.map(group => {
-    const filteredItems = group.items.filter(item => !!getCapabilityName(item));
+  const filteredGroups = capabilityTypeGroups.map((group) => {
+    const filteredItems = group.items.filter(
+      (item) => !!getCapabilityName(item)
+    );
     return { ...group, items: filteredItems };
   });
-  return filteredGroups.filter(group => group.items.length > 0);
+  return filteredGroups.filter((group) => group.items.length > 0);
 };
 
 export const getCapabilityDescription = (
@@ -328,7 +330,7 @@ export const getCapabilityActions = (
     let actions = Object.keys(acl.Action);
     if (capabilityKey === 'projects_acl') {
       actions = actions.filter(
-        action => action !== 'CREATE' && action !== 'DELETE'
+        (action) => action !== 'CREATE' && action !== 'DELETE'
       );
     }
     return actions;
@@ -400,7 +402,7 @@ export const hasAnyValidGroupForOIDC = (groups?: Group[]): boolean => {
     groups?.some(
       ({ capabilities, sourceId }) =>
         sourceId &&
-        capabilities?.some(capability => {
+        capabilities?.some((capability) => {
           const { groupsAcl } = capability as { groupsAcl?: AclGroups };
           return groupsAcl?.actions.includes('CREATE');
         })

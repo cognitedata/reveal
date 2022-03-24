@@ -47,7 +47,7 @@ const AzureADForm = (props: AzureADFormProps) => {
         <Input
           value={appId.value}
           disabled={props.disabled}
-          onChange={e => setAppId({ value: e.target.value })}
+          onChange={(e) => setAppId({ value: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -60,7 +60,7 @@ const AzureADForm = (props: AzureADFormProps) => {
         <Input
           value={appSecret.value}
           disabled={props.disabled}
-          onChange={e => setAppSecret({ value: e.target.value })}
+          onChange={(e) => setAppSecret({ value: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -73,7 +73,7 @@ const AzureADForm = (props: AzureADFormProps) => {
         <Input
           value={tenantId.value}
           disabled={props.disabled}
-          onChange={e => setTenantId({ value: e.target.value })}
+          onChange={(e) => setTenantId({ value: e.target.value })}
         />
       </Form.Item>
     </>

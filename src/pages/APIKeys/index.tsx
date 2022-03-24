@@ -17,10 +17,11 @@ export default function APIKeys() {
   const { data: apiKeys = [], isFetched } = useQuery(['api-keys'], async () => {
     const serviceAccounts = await sdk.serviceAccounts.list();
     const list = await sdk.apiKeys.list({ all: true, includeDeleted: true });
-    return list.map(k => ({
+    return list.map((k) => ({
       ...k,
-      serviceAccountName: serviceAccounts.find(s => s.id === k.serviceAccountId)
-        ?.name,
+      serviceAccountName: serviceAccounts.find(
+        (s) => s.id === k.serviceAccountId
+      )?.name,
     }));
   });
 
@@ -31,7 +32,7 @@ export default function APIKeys() {
         <Col>
           <Input.Search
             placeholder="Filter by service account or ID"
-            onChange={e => setSearchValue(e.target.value)}
+            onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
             style={{
@@ -43,7 +44,7 @@ export default function APIKeys() {
         <Col>
           <Checkbox
             checked={showDeleted}
-            onChange={e => setShowDeleted(e.target.checked)}
+            onChange={(e) => setShowDeleted(e.target.checked)}
           >
             Show deleted keys
           </Checkbox>
@@ -54,9 +55,9 @@ export default function APIKeys() {
         columns={columns}
         rowKey="id"
         dataSource={apiKeys
-          .filter(a => (showDeleted ? true : a.status === 'ACTIVE'))
+          .filter((a) => (showDeleted ? true : a.status === 'ACTIVE'))
           .filter(
-            a =>
+            (a) =>
               stringContains(String(a.serviceAccountId) ?? a.id, searchValue) ||
               stringContains(String(a.serviceAccountName) ?? a.id, searchValue)
           )}

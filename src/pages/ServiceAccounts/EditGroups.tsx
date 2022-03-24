@@ -13,7 +13,7 @@ function GroupTag({ id }: { id: number }) {
   const sdk = useSDK();
 
   const { data } = useQuery(['groups'], () => sdk.groups.list({ all: true }));
-  const group = data?.find(g => g.id === id)?.name;
+  const group = data?.find((g) => g.id === id)?.name;
 
   return <Tag key={id}>{group || id}</Tag>;
 }
@@ -29,16 +29,17 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
   const { mutateAsync, isLoading } = useMutation(
     async (groups: number[]) => {
       const removeGroups =
-        account.groups?.filter(g => !groups.includes(g)) || [];
-      const addGroups = groups.filter(g => !account.groups?.includes(g)) || [];
+        account.groups?.filter((g) => !groups.includes(g)) || [];
+      const addGroups =
+        groups.filter((g) => !account.groups?.includes(g)) || [];
 
       await Promise.all(
-        removeGroups.map(groupId =>
+        removeGroups.map((groupId) =>
           sdk.groups.removeServiceAccounts(groupId, [account.id])
         )
       );
       await Promise.all(
-        addGroups.map(groupId =>
+        addGroups.map((groupId) =>
           sdk.groups.addServiceAccounts(groupId, [account.id])
         )
       );
@@ -72,7 +73,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
 
   const groups =
     account.groups && account.groups.length > 0 ? (
-      account.groups.map(group => <GroupTag key={group} id={group} />)
+      account.groups.map((group) => <GroupTag key={group} id={group} />)
     ) : (
       <>No groups</>
     );
@@ -111,13 +112,13 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
           defaultValue={account.groups}
           filterOption={(input, option) => stringContains(option?.title, input)}
           optionLabelProp="title"
-          onChange={e => {
+          onChange={(e) => {
             setLocalList(e);
           }}
         >
           {allGroups
             .sort((a, b) => a.name.localeCompare(b.name))
-            .map(g => (
+            .map((g) => (
               <Select.Option key={g.id} value={g.id} title={g.name}>
                 {g.name}
               </Select.Option>

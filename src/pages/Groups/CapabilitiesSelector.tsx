@@ -31,7 +31,7 @@ const CapabilitiesSelector = (props: CapabilitiesSelectorProps, ref: any) => {
 
   const scrollToBottomElement = (
     <div
-      ref={element => {
+      ref={(element) => {
         bottomElementRef = element;
       }}
     />
