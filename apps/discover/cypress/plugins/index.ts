@@ -12,11 +12,15 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
+import { addTokensToEnv } from '../support/commands/helpers';
+
 /**
  * @type {Cypress.PluginConfig}
  */
-// eslint-disable-next-line no-unused-vars
-module.exports = (on, config) => {
+module.exports = async (_on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+
+  // return addTokensToEnv(addSidecarConfigToEnv(config));
+  return addTokensToEnv(config);
 };

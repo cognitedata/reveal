@@ -654,9 +654,7 @@ publish_fas(
 ### Cypress ###
 
 _CYPRESS_FILES = glob([
-    "cypress/support/**/*.ts",
-    "cypress/plugins/*",
-    "cypress/integration/**/*.ts",
+    "cypress/**/*.ts",
 ])
 
 CYPRESS_EXTERNAL_FILES = [
@@ -673,20 +671,6 @@ CYPRESS_EXTERNAL_FILES = [
 CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES
 
 ts_project(
-    name = "plugin_file",
-    srcs = ["cypress/plugin.ts"],
-    tsconfig = "cypress/tsconfig.json",
-    deps = [
-        "@npm//@cypress/webpack-preprocessor",
-        "@npm//@testing-library/cypress",
-        "@npm//@types/node",
-        "@npm//@types/webpack-dev-server",
-        "@npm//express",
-        "@npm//webpack",
-    ],
-)
-
-ts_project(
     name = "cypress_files",
     srcs = CYPRESS_FILES,
     tsconfig = "cypress/tsconfig.json",
@@ -695,6 +679,10 @@ ts_project(
         "@npm//cypress",
         "@npm//@types/node",
         "@npm//express",
+        "@npm//@cypress/webpack-preprocessor",
+        "@npm//@types/webpack-dev-server",
+        "@npm//axios",
+        "@npm//webpack",
         # Manual import of package files due to main js-library only exporting package.json
         "//packages/sidecar:sidecar-files",
         "//packages/intercom-helper:intercom-helper-files",
@@ -702,11 +690,9 @@ ts_project(
 )
 
 cypress_web_test(
-    # The name of your test target
     name = "cypress_test",
     timeout = "eternal",
     srcs = [
-        # Load ts_library tests as a target to srcs
         ":cypress_files",
     ],
     # A cypress config file is required
@@ -718,15 +704,15 @@ cypress_web_test(
     env = {
         "PORT": "11120",
     },
-    # Your cypress plugin used to configure cypress and boot your server
-    plugin_file = ":plugin_file",
     tags = [
         "ignore_test_in_cd",
     ],
     templated_args = [
         "--config " +
         "retries=2," +
-        "supportFile=./apps/discover/cypress/support,integrationFolder=./apps/discover/cypress/integration,pluginsFile=./apps/discover/cypress/plugin.js," +
+        "supportFile=./apps/discover/cypress/support," +
+        "integrationFolder=./apps/discover/cypress/integration," +
+        "pluginsFile=./apps/discover/cypress/plugin.js," +
         "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
         "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",
     ],

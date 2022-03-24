@@ -1,3 +1,7 @@
+## 0.4.1 Mar 24 2022
+
+- Add fake-idp to service list
+
 ## 0.4.0 Feb 23 2022
 
 - add Sniffer Service URL

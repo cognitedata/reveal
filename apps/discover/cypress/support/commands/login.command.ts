@@ -2,6 +2,8 @@ import capitalize from 'lodash/capitalize';
 
 import { CLUSTER, USER_PREFIX } from '../constants';
 
+import { getTokenHeaders } from './helpers';
+
 Cypress.Commands.add('login', () => {
   cy.log('Login as Normal user');
   cy.log('Logged in User ID', Cypress.env('REACT_APP_E2E_USER'));
@@ -38,9 +40,22 @@ Cypress.Commands.add('acceptCookies', () => {
   cy.contains('Accept').should('be.visible').click();
 });
 
+Cypress.Commands.add('syncAdminUser', () => {
+  return cy.request({
+    method: 'POST',
+    body: {
+      accessToken: Cypress.env('ACCESS_TOKEN_ADMIN'),
+    },
+    // url: `${Cypress.env('SIDECAR').userManagementServiceBaseUrl}/user/sync`,
+    url: `https://user-management-service.staging.${CLUSTER}.cognite.ai/user/sync`,
+    headers: getTokenHeaders(true),
+  });
+});
+
 export interface LoginCommand {
   login(): void;
   loginAsAdmin(): void;
   acceptCookies(): void;
   logout(): void;
+  syncAdminUser(): void;
 }

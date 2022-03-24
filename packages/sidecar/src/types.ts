@@ -53,6 +53,7 @@ export type ApiBaseUrls = {
   userManagementServiceBaseUrl: string;
   simconfigApiBaseUrl: string;
   snifferServiceBaseUrl: string;
+  fakeIdpBaseUrl: string;
 };
 
 export type SidecarConfig = ApiBaseUrls & {
