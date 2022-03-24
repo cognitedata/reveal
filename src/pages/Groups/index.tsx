@@ -287,7 +287,7 @@ export default function Groups() {
 
   return (
     <>
-      {!authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
+      {authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
       serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}

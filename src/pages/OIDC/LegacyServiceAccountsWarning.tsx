@@ -1,20 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import CustomAlert from 'pages/common/CustomAlert';
-
+import CustomInfo from 'pages/components/CustomInfo';
 import { ServiceAccount } from '@cognite/sdk';
 import { getProject } from '@cognite/cdf-utilities';
 import { usePermissions, useDeleteServiceAccounts } from 'hooks';
-import { Title, Icon } from '@cognite/cogs.js';
-
-const StyledList = styled.ul`
-  margin-bottom: 0 !important;
-  margin-top: 2px;
-`;
-
-const StyledListItem = styled.li`
-  margin-top: 3;
-`;
 
 const LegacyServiceAccountsWarning = (props: {
   accounts: ServiceAccount[];
@@ -36,52 +25,56 @@ const LegacyServiceAccountsWarning = (props: {
   }
 
   return (
-    <CustomAlert
-      type="info"
+    <CustomInfo
+      type="neutral"
+      alertTitle="Clean up service account"
       alertMessage={
         <>
-          <Title level={5} style={{ display: 'flex', marginTop: 4 }}>
-            <Icon
-              type="InfoFilled"
-              style={{ color: 'blue', marginRight: 4, marginTop: 2 }}
-            />
-            Clean up service account
-          </Title>
-          <p style={{ margin: '12px 0 0 20px' }}>
+          <p>
             This project no longer support service accounts. You have{' '}
             {accounts.length} service accounts that be removed as they are no
             longer supported with OIDC and can be safely reomoved.
           </p>
-          <StyledList>
-            {accounts
-              .slice(0, 10)
-              .map((account: ServiceAccount, index) =>
-                index < 10 ? (
-                  <StyledListItem>{account.name}</StyledListItem>
-                ) : null
-              )}
-          </StyledList>
-          {accounts.length > 10 ? (
-            <p style={{ marginLeft: 28, color: 'rgba(0, 0, 0, 0.65)' }}>
-              +{accounts.length - 10} more
-            </p>
+          {accounts.length <= 3 ? (
+            <StyledList>
+              {accounts.map((account: ServiceAccount) => (
+                <StyledListItem key={account.name}>
+                  {account.name}
+                </StyledListItem>
+              ))}
+            </StyledList>
           ) : (
-            <br />
+            <>
+              <StyledList>
+                {accounts.slice(0, 2).map((account: ServiceAccount) => (
+                  <StyledListItem key={account.name}>
+                    {account.name}
+                  </StyledListItem>
+                ))}
+                <StyledListItem>{`+${accounts.length - 2
+                  } more`}</StyledListItem>
+              </StyledList>
+            </>
           )}
         </>
       }
-      alertBtnLabel="Delete service accounts"
+      alertBtnLabel={'Delete service accounts'}
       alertBtnDisabled={!writeOk}
       helpEnabled={false}
-      confirmMessage={
-        <>
-          <p>Are you sure you want to delete these service account(s)?</p>
-        </>
-      }
-      confirmLabel="Delete"
+      confirmTitle={'Delete service accounts'}
+      confirmMessage={'delete service accounts'}
       onClickConfirm={handleSubmit}
     />
   );
 };
+
+const StyledList = styled.ul`
+  margin-top: 2px;
+  padding-left: 16px !important;
+`;
+
+const StyledListItem = styled.li`
+  margin-top: 3;
+`;
 
 export default LegacyServiceAccountsWarning;

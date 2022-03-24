@@ -9,18 +9,7 @@ import styled from 'styled-components';
 import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
 import { hasAnyValidGroupForOIDC } from 'pages/Groups/utils';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import CustomAlert from '../common/CustomAlert';
-
-const StyledIcon = styled(Icon).attrs(({ $success }: { $success: boolean }) => {
-  return {
-    size: 12,
-    type: $success ? 'Checkmark' : 'Close',
-  };
-}) <{ $success?: boolean }>`
-  margin-right: 6px;
-  color: ${({ $success }) =>
-    $success ? 'var(--cogs-success)' : 'var(--cogs-danger)'};
-`;
+import CustomInfo from 'pages/components/CustomInfo';
 
 const LegacyLoginFlowWarning = () => {
   const sdk = useSDK();
@@ -90,8 +79,9 @@ const LegacyLoginFlowWarning = () => {
   }
 
   return (
-    <CustomAlert
-      type="error"
+    <CustomInfo
+      type="danger"
+      alertTitle="Deprecate Legacy Login"
       alertMessage={
         <p>
           We are deprecating authentication via CDF service accounts and API
@@ -124,11 +114,22 @@ const LegacyLoginFlowWarning = () => {
           <b>groups:create</b> capability
         </p>
       }
-      confirmMessage="Are you sure you want to deprecate legacy login?"
-      confirmLabel="Deprecate"
+      confirmTitle="Deprecate Legacy Login"
+      confirmMessage="deprecate legacy login"
       onClickConfirm={handleSubmit}
     />
   );
 };
+
+const StyledIcon = styled(Icon).attrs(({ $success }: { $success: boolean }) => {
+  return {
+    size: 12,
+    type: $success ? 'Checkmark' : 'Close',
+  };
+}) <{ $success?: boolean }>`
+  margin-right: 6px;
+  color: ${({ $success }) =>
+    $success ? 'var(--cogs-success)' : 'var(--cogs-danger)'};
+`;
 
 export default LegacyLoginFlowWarning;
