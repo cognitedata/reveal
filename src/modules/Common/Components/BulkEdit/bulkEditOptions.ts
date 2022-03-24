@@ -17,6 +17,10 @@ import { AssetPanel } from 'src/modules/Common/Components/BulkEdit/Asset/AssetPa
 import { getDataForAssets } from 'src/modules/Common/Components/BulkEdit/Asset/getDataForAssets';
 import { disableAssetTable } from 'src/modules/Common/Components/BulkEdit/Asset/disableAssetTable';
 
+// Source
+import { SourcePanel } from 'src/modules/Common/Components/BulkEdit/Source/SourcePanel';
+import { getDataForSource } from 'src/modules/Common/Components/BulkEdit/Source/getDataForSource';
+
 // Annotation
 import { AnnotationPanel } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationPanel';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
@@ -169,6 +173,39 @@ export const bulkEditOptions: BulkEditOptionType[] = [
     ],
     data: getDataForAssets,
     disabled: disableAssetTable,
+  },
+  {
+    value: 'source',
+    label: 'Source',
+    popconfirmOnApply: false,
+    EditPanel: SourcePanel,
+    columns: [
+      {
+        key: 'name',
+        title: 'File name',
+        dataKey: 'name',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'originalSource',
+        title: 'Original source(s)',
+        dataKey: 'original',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'updatedSource',
+        title: 'Updated source(s)',
+        dataKey: 'updated',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+    ],
+    data: getDataForSource,
   },
   {
     value: 'deleteAnnotations',

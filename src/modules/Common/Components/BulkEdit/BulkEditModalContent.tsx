@@ -73,6 +73,9 @@ const rendererMap = {
   // Asset
   originalAssets: StringRenderer,
   updatedAssets: StringRenderer,
+  // Source
+  originalSource: StringRenderer,
+  updatedSource: StringRenderer,
   // Annotation
   originalAnnotations: AnnotationRenderer,
   updatedAnnotations: FilteredAnnotationsRenderer,
