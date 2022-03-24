@@ -56,14 +56,8 @@ export class PointCloudOctree extends PointCloudTree {
   private initMaterial(material: PointCloudMaterial): void {
     this.updateMatrixWorld(true);
 
-    const { min, max } = computeTransformedBoundingBox(
-      this.pcoGeometry.tightBoundingBox || this.getBoundingBoxWorld(),
-      this.matrixWorld
-    );
-
-    const bWidth = max.z - min.z;
-    material.heightMin = min.z - 0.2 * bWidth;
-    material.heightMax = max.z + 0.2 * bWidth;
+    material.heightMin = this.pcoGeometry.tightBoundingBox.min.z;
+    material.heightMax = this.pcoGeometry.tightBoundingBox.max.z;
   }
 
   dispose(): void {
