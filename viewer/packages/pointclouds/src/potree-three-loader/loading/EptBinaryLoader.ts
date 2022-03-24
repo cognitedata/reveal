@@ -12,7 +12,7 @@ export class EptBinaryLoader implements ILoader {
   }
 
   workerPath(): string {
-    return './workers/EptBinaryDecoderWorker.js';
+    return '/workers/EptBinaryDecoderWorker.js';
   }
 
   load(node: any): void {
