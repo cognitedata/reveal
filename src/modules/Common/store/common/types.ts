@@ -11,6 +11,7 @@ export type BulkEditUnsavedState = {
   keepOriginalMetadata?: Boolean;
   labels?: Label[];
   assetIds?: AssetIds;
+  source?: string;
   annotationIdsToDelete?: number[];
 };
 

@@ -6,6 +6,25 @@ import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { UpdateFiles } from './UpdateFiles';
 
+export const getUpdatedValue = ({
+  unsavedValue,
+}: {
+  unsavedValue?: string;
+}) => {
+  const removeSource: boolean = unsavedValue === '';
+  const updatedSource: string | undefined = removeSource
+    ? undefined
+    : unsavedValue;
+
+  if (removeSource) {
+    return { setNull: true };
+  }
+  if (updatedSource) {
+    return { set: updatedSource };
+  }
+  return undefined;
+};
+
 export const updateBulk = createAsyncThunk<
   void,
   { selectedFiles: VisionFile[]; bulkEditUnsaved: BulkEditUnsavedState },
@@ -19,6 +38,7 @@ export const updateBulk = createAsyncThunk<
      * API limitations:
      * - All set/add/remove should be populated, no null allowed
      * - No overlap elements in add and remove operations allowed
+     * - set and setNull are mutually exclusive
      */
 
     const { id } = file;
@@ -52,6 +72,7 @@ export const updateBulk = createAsyncThunk<
           add: assetsToAdd,
           remove: assetsToRemove,
         },
+        source: getUpdatedValue({ unsavedValue: bulkEditUnsaved.source }),
       },
     };
   });
