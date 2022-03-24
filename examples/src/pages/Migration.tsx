@@ -213,7 +213,7 @@ export function Migration() {
       renderGui.add(guiState, 'debugRenderStageTimings')
         .name('Debug timings')
         .onChange(enabled => {
-          (viewer as any).revealManager.debugRenderTiming = enabled;
+          // (viewer as any).revealManager.debugRenderTiming = enabled;
         });
 
       const debugGui = gui.addFolder('Debug');

@@ -129,7 +129,7 @@ export function createRevealManager(
     }
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
-  return new RevealManager(cadManager, renderManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline);
+  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline);
 }
 
 /**
