@@ -34,7 +34,7 @@ export interface ColumnType extends Partial<ColumnShape> {
   title: string;
 }
 
-export const useTableData = () => {
+export const useTableData = (pageSize = PAGE_SIZE) => {
   const { database, table, columnNameFilter, columnTypeFilters } =
     useActiveTableContext();
   const { getColumnType, isFetched } = useColumnType(database, table);
@@ -52,7 +52,7 @@ export const useTableData = () => {
   const rows = useTableRows({
     database,
     table,
-    pageSize: PAGE_SIZE,
+    pageSize,
   });
 
   const rawRows: Partial<
@@ -138,6 +138,13 @@ export const useTableData = () => {
     filteredColumns,
     tableLastUpdatedTime,
   };
+};
+
+export const useDownloadData = (size: number) => {
+  const { rows: currentRows } = useTableData();
+  const { rows: fetchedRows, isFetching } = useTableData(size);
+
+  return { currentRows, fetchedRows, isFetching };
 };
 
 export const useIsTableEmpty = (database: string, table: string) => {
