@@ -80,7 +80,11 @@ export const SchemaTypeList = ({
       {objectTypes.length > 0 ? (
         <>
           {objectTypes.map((el) => (
-            <ListItem key={el.name} onClick={() => setCurrentType(el)}>
+            <ListItem
+              data-cy={`type-list-item-${el.name}`}
+              key={el.name}
+              onClick={() => setCurrentType(el)}
+            >
               <Flex direction="column">
                 <Body level={2} strong>
                   {el.name}
@@ -116,6 +120,7 @@ export const SchemaTypeList = ({
             iconPlacement="left"
             type="ghost"
             aria-label="Add type"
+            data-cy="add-type-btn"
             disabled={disabled}
             style={{ marginLeft: '10px' }}
             onClick={openCreateModal}

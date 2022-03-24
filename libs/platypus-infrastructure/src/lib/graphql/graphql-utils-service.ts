@@ -25,10 +25,11 @@ import {
 export class GraphQlUtilsService implements IGraphQlUtilsService {
   private schemaAst: DocumentApi | null = null;
 
-  addType(name: string): SolutionDataModelType {
+  addType(name: string, directive?: string): SolutionDataModelType {
     this.createIfEmpty();
     const newType = this.schemaAst!.createObjectType({
-      name,
+      name: name,
+      directives: directive ? [directive] : [],
     });
 
     return this.toSolutionDataModelType(newType);

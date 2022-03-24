@@ -3,6 +3,7 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   BuiltInType,
+  DirectiveBuiltInType,
   SolutionDataModel,
   SolutionDataModelType,
   UpdateSolutionDataModelFieldDTO,
@@ -114,10 +115,20 @@ export function UIEditor({
   const createSchemaType = (typeName: string) => {
     const capitalizedTypeName =
       typeName.charAt(0).toUpperCase() + typeName.slice(1);
-    const newState = dataModelService.addType(
-      solutionDataModel,
-      capitalizedTypeName
+
+    const defaultDirective = builtInTypes.find(
+      (type) =>
+        type.type === 'DIRECTIVE' &&
+        !(type as DirectiveBuiltInType).fieldDirective
     );
+
+    const newState = defaultDirective
+      ? dataModelService.addType(
+          solutionDataModel,
+          capitalizedTypeName,
+          defaultDirective.name
+        )
+      : dataModelService.addType(solutionDataModel, capitalizedTypeName);
 
     updateUiState(newState, capitalizedTypeName);
     setCustomTypesNames(dataModelService.getCustomTypesNames(newState));

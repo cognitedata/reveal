@@ -111,10 +111,20 @@ describe('SolutionsHandlerTest', () => {
       name: params.name,
       type: params.type,
     })),
-    addType: jest.fn().mockImplementation((name) => {
-      return {
-        name,
-      };
+    addType: jest.fn().mockImplementation((name, directive?: string) => {
+      return directive
+        ? {
+            name,
+            directives: [
+              {
+                name: directive,
+                arguments: [],
+              },
+            ],
+          }
+        : {
+            name,
+          };
     }),
     generateSdl: jest.fn().mockImplementation(() => schemaMock),
     parseSchema: jest.fn().mockImplementation(() => solutionDataModelMock),
@@ -158,6 +168,16 @@ describe('SolutionsHandlerTest', () => {
     const service = createInstance();
     const newState = service.addType(solutionDataModelMock, 'Test');
     expect(newState.types.find((t) => t.name === 'Test')).toBeTruthy();
+  });
+
+  it('should add type with directive', () => {
+    const service = createInstance();
+    const newState = service.addType(solutionDataModelMock, 'Test', 'Template');
+    expect(
+      newState.types.find(
+        (t) => t.name && t.directives && t.directives[0].name === 'Template'
+      )
+    ).toBeTruthy();
   });
 
   it('should remove type', () => {

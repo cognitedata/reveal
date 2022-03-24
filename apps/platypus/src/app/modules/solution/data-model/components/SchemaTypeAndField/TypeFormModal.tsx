@@ -87,6 +87,7 @@ export const TypeFormModal = ({
         error={errors.typeName?.message}
         title="Type name"
         fullWidth
+        data-cy="type-name-input"
         autoFocus
         onKeyDown={(e) => {
           if (e.key === 'Enter') {

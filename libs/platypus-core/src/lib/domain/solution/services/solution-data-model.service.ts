@@ -21,8 +21,12 @@ export class SolutionDataModelService {
     return schema;
   }
 
-  addType(state: SolutionDataModel, name: string): SolutionDataModel {
-    const newType = this.graphqlService.addType(name);
+  addType(
+    state: SolutionDataModel,
+    name: string,
+    directive?: string
+  ): SolutionDataModel {
+    const newType = this.graphqlService.addType(name, directive);
     return {
       ...state,
       types: [...state.types, newType],

@@ -18,6 +18,7 @@ export const SchemaTypeView = ({
         <Button
           icon="ArrowLeft"
           type="ghost"
+          data-cy="type-view-back-button"
           aria-label="Return to list"
           onClick={() => onNavigateBack()}
         />

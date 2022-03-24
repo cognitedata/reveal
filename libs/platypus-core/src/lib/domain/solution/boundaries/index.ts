@@ -72,7 +72,7 @@ export interface IGraphQlUtilsService {
    * Adds new type into AST
    * @param name
    */
-  addType(name: string): SolutionDataModelType;
+  addType(name: string, directive?: string): SolutionDataModelType;
 
   /**
    * Update specified type in AST
