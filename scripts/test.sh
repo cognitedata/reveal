@@ -2,9 +2,9 @@
 
 set -e
 
-project="${1:-platypus}"
+project="${1:-platypus,platypus-core,platypus-infrastructure}"
 
-nx run ${project}:test "$@" \
+nx run-many --target=test --projects=${project} "$@" \
   --collectCoverageFrom='!*/**/*.stories.tsx' \
   --ci \
   --verbose \
@@ -12,5 +12,7 @@ nx run ${project}:test "$@" \
   --codeCoverage \
   --detectOpenHandles \
   --reporters=default \
+  --reporters=jest-junit \
+  --coverageReporters=html,lcov,json,text-summary,cobertura \
   --watchAll=false
 

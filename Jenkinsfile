@@ -161,6 +161,7 @@ pods {
                   sh('yarn test')
                   junit(allowEmptyResults: true, testResults: '**/junit.xml')
                   if (isPullRequest) {
+                    sh('yarn summarize-codecov')
                     summarizeTestResults()
                   }
                   stage("Upload coverage reports") {

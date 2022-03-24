@@ -7,7 +7,7 @@ import {
 } from '@platypus-app/components/Styles/storybook';
 import { CogDataGrid, TableType } from '@cognite/cog-data-grid';
 import { useState } from 'react';
-import { TypeList, TypeListProps } from '../components/TypeList';
+import { TypeList } from '../components/TypeList';
 
 const configMock = {
   columns: [

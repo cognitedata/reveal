@@ -4,7 +4,7 @@
   "integrationFolder": "./src/integration",
   "modifyObstructiveCode": false,
   "supportFile": "./src/support/index.ts",
-  "pluginsFile": false,
+  "pluginsFile": "./src/plugins/index.js",
   "video": false,
   "videosFolder": "../../dist/cypress/apps/platypus-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/platypus-e2e/screenshots",

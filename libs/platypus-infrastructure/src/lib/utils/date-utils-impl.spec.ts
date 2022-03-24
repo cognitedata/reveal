@@ -42,8 +42,5 @@ describe('DateUtilsTest', () => {
   test('Convert timestamp to string with custom defined formats', () => {
     const dateUtils = new DateUtilsImpl();
     expect(dateUtils.format(1636107405779, 'yyyy-MM-dd')).toBe('2021-11-05');
-    expect(dateUtils.format(1636107405779, 'yyyy-MM-dd hh:mm:ss')).toBe(
-      '2021-11-05 11:16:45'
-    );
   });
 });

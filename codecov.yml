@@ -1,0 +1,25 @@
+coverage:
+  precision: 2
+  round: down
+  range: '50...100'
+
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        base: auto
+    patch: off
+    changes: off
+
+comment:
+  layout: 'header, diff, files'
+  behavior: default
+
+codecov:
+  notify:
+    require_ci_to_pass: false
+    after_n_builds: 1 # send notifications and complete ci build after 1 upload
+
+fixes:
+  - '/::coverage/'
