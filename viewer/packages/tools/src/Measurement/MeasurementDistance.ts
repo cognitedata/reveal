@@ -13,7 +13,6 @@ export class MeasurementDistance {
   private _isActive: boolean;
   private readonly _startPoint: THREE.Vector3;
   private readonly _endPoint: THREE.Vector3;
-  // private _position: Float32Array;
 
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
@@ -28,12 +27,8 @@ export class MeasurementDistance {
       const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
       this._lineGeometry = new THREE.BufferGeometry();
       this._lineGeometry = new THREE.BufferGeometry().setFromPoints([this._startPoint, this._endPoint]);
-      // this._lineGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(this._position), 3));
-      // this._lineGeometry.setDrawRange(0, 2);
 
       this._measurementLine = new THREE.Line(this._lineGeometry, material);
-      // this._measurementLine.geometry.setDrawRange(0, 2);
-      // this._measurementLine.geometry.attributes.position.needsUpdate = true;
 
       this._viewer.addObject3D(this._measurementLine);
     }
@@ -59,9 +54,6 @@ export class MeasurementDistance {
 
   private addStartPoint(point: THREE.Vector3): void {
     this._startPoint.copy(point);
-    // this._position[0] = this._startPoint.x + 0.0001;
-    // this._position[1] = this._startPoint.y + 0.0001;
-    // this._position[2] = this._startPoint.z + 0.0001;
     this._isActive = true;
   }
 
@@ -71,13 +63,8 @@ export class MeasurementDistance {
 
   public update(controlPoint: THREE.Vector3): void {
     if (this._isActive && this._measurementLine) {
-      // this._position[3] = controlPoint.x + 0.0001;
-      // this._position[4] = controlPoint.y + 0.0001;
-      // this._position[5] = controlPoint.z + 0.0001;
       controlPoint.addScalar(0.0001);
       this._measurementLine.geometry.setFromPoints([this._startPoint, controlPoint]);
-      // this._measurementLine.geometry.setDrawRange(0, 2);
-      // this._measurementLine.geometry.attributes.position.needsUpdate = true;
       this._endPoint.copy(controlPoint);
     }
   }
