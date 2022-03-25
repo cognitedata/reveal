@@ -12,6 +12,7 @@ export type BulkEditUnsavedState = {
   labels?: Label[];
   assetIds?: AssetIds;
   source?: string;
+  directory?: string;
   annotationIdsToDelete?: number[];
 };
 
