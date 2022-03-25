@@ -3,13 +3,17 @@
  */
 import * as THREE from 'three';
 
-import { EffectRenderManager } from '@reveal/rendering';
+import { EffectRenderManager, GeometryDepthRenderPipeline } from '@reveal/rendering';
 
 import { SectorCuller } from './SectorCuller';
 import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
 import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 
-export function createV8SectorCuller(renderer: THREE.WebGLRenderer, renderManager: EffectRenderManager): SectorCuller {
-  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+export function createV8SectorCuller(
+  renderer: THREE.WebGLRenderer,
+  renderManager: EffectRenderManager,
+  depthOnlyRenderPipeline: GeometryDepthRenderPipeline
+): SectorCuller {
+  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager, depthOnlyRenderPipeline });
   return new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 }

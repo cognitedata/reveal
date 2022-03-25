@@ -12,7 +12,7 @@ import { SSAOPass } from '../render-passes/SSAOPass';
 import { RenderMode } from '../rendering/RenderMode';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createRenderTarget, RenderLayer, setupGeometryLayers } from '../utilities/renderUtilities';
+import { createRenderTarget, getLayerMask, RenderLayer, setupGeometryLayers } from '../utilities/renderUtilities';
 import { OutlinePass } from '../render-passes/OutlinePass';
 import { IdentifiedModel } from '../utilities/types';
 import { DefaultRenderPipelinePasses, RenderTargetData } from './types';
@@ -77,7 +77,9 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     renderer.domElement.style.backgroundColor = '#000000';
     this.pipelineSetup(renderer);
-    setupGeometryLayers(this._cadModels, this._customObjects, this._materialManager);
+    setupGeometryLayers(this._materialManager, this._cadModels, this._customObjects);
+
+    console.log(this._cadModels);
 
     yield* this.renderInFront(renderer);
 
@@ -216,8 +218,18 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     };
 
     const custom = {
-      geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Color, RenderLayer.CustomNormal),
-      deferred: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Color, RenderLayer.CustomDeferred)
+      geometry: new GeometryPass(
+        this._cadScene,
+        this._materialManager,
+        RenderMode.Color,
+        getLayerMask(RenderLayer.CustomNormal)
+      ),
+      deferred: new GeometryPass(
+        this._cadScene,
+        this._materialManager,
+        RenderMode.Color,
+        getLayerMask(RenderLayer.CustomDeferred)
+      )
     };
 
     const ghost = {

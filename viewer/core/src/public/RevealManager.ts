@@ -19,7 +19,8 @@ import {
   defaultRenderOptions,
   RenderMode,
   PipelineExecutor,
-  DefaultRenderPipeline
+  DefaultRenderPipeline,
+  EffectRenderManager
 } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
@@ -52,13 +53,16 @@ export class RevealManager {
   };
 
   private readonly _updateSubject: Subject<void>;
+  private readonly _effectRenderManager: EffectRenderManager;
 
   constructor(
     cadManager: CadManager,
     pointCloudManager: PointCloudManager,
     pipelineExecutor: PipelineExecutor,
-    renderPipeline: DefaultRenderPipeline
+    renderPipeline: DefaultRenderPipeline,
+    renderManager: EffectRenderManager
   ) {
+    this._effectRenderManager = renderManager;
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
     this._cadManager = cadManager;
@@ -192,9 +196,9 @@ export class RevealManager {
    * @param autoSetTargetSize Auto size target to fit canvas.
    */
   public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true): void {
-    // this._effectRenderManager.setRenderTarget(target);
-    // this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
-    throw new Error('Not implemented');
+    this._effectRenderManager.setRenderTarget(target);
+    this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
+    // throw new Error('Not implemented');
   }
 
   public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
@@ -236,15 +240,15 @@ export class RevealManager {
   }
 
   public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
-    // this._effectRenderManager.addUiObject(object, screenPos, size);
-    // this.requestRedraw();
-    throw new Error('Not implemented');
+    this._effectRenderManager.addUiObject(object, screenPos, size);
+    this.requestRedraw();
+    // throw new Error('Not implemented');
   }
 
   public removeUiObject(object: THREE.Object3D): void {
-    // this._effectRenderManager.removeUiObject(object);
-    // this.requestRedraw();
-    throw new Error('Not implemented');
+    this._effectRenderManager.removeUiObject(object);
+    this.requestRedraw();
+    // throw new Error('Not implemented');
   }
 
   private notifyLoadingStateChanged(loadingState: LoadingState) {

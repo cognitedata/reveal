@@ -13,7 +13,8 @@ import {
   CadMaterialManager,
   BasicPipelineExecutor,
   DefaultRenderPipeline,
-  IdentifiedModel
+  IdentifiedModel,
+  GeometryDepthRenderPipeline
 } from '@reveal/rendering';
 import { createCadManager } from '@reveal/cad-model';
 import { createPointCloudManager } from '@reveal/pointclouds';
@@ -117,19 +118,21 @@ export function createRevealManager(
   const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
   const pipelineExecutor = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderOptions, renderables);
+  const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, renderables);
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,
     renderer,
     materialManager,
     renderManager,
+    depthRenderPipeline,
     {
       ...revealOptions.internal?.cad,
       continuousModelStreaming: revealOptions.continuousModelStreaming
     }
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
-  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline);
+  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, renderManager);
 }
 
 /**

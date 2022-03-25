@@ -21,6 +21,7 @@ import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
+import { GeometryDepthRenderPipeline } from '../src/render-pipelines/GeometryDepthRenderPipeline';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -99,7 +100,7 @@ async function init() {
   const renderOptions = defaultRenderOptions;
   renderOptions.multiSampleCountHint = 8;
 
-  const renderManager = new BasicPipelineExecutor(renderer);
+  const pipelineExecutor = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipeline(
     materialManager,
     scene,
@@ -107,6 +108,10 @@ async function init() {
     [{ model, modelIdentifier: model.cadModelIdentifier }],
     customObjects
   );
+
+  const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, [
+    { model, modelIdentifier: model.cadModelIdentifier }
+  ]);
 
   const grid = new THREE.GridHelper(30, 40);
   grid.position.set(14, -1, -14);
@@ -170,7 +175,7 @@ async function init() {
 
   const render = () => {
     guiData.drawCalls = renderer.info.render.calls;
-    renderManager.render(defaultRenderPipeline, camera);
+    pipelineExecutor.render(defaultRenderPipeline, camera);
     guiController.updateDisplay();
   };
 
