@@ -14,7 +14,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { languages, setupTranslations } from 'common/i18n';
-import { AntStyles } from 'styles/AntStyles';
+import { GlobalStyles } from 'styles/GlobalStyles';
 import i18next from 'i18next';
 import ExtractorDownloads from './Home/Extractors';
 
@@ -47,7 +47,7 @@ const App = () => {
     >
       <I18nWrapper onLanguageChange={handleLanguageChange}>
         <QueryClientProvider client={queryClient}>
-          <AntStyles>
+          <GlobalStyles>
             <SubAppWrapper title="Extractor Downloads">
               <AuthWrapper
                 loadingScreen={<Loader />}
@@ -57,7 +57,7 @@ const App = () => {
                   <Router>
                     <Switch>
                       <Route
-                        path={['/:tenant/:path/:page', '/:tenant/:path']}
+                        path={['/:project/:path', '/:project/:path']}
                         component={ExtractorDownloads}
                       />
                     </Switch>
@@ -65,7 +65,7 @@ const App = () => {
                 </SDKProvider>
               </AuthWrapper>
             </SubAppWrapper>
-          </AntStyles>
+          </GlobalStyles>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </I18nWrapper>
