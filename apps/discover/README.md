@@ -26,12 +26,11 @@ Make sure you are in the right directory
 cd apps/discover
 ```
 
-| command        | Description                                           |
-| -------------- | ----------------------------------------------------- |
-| `yarn start:a` | Run on **azure-dev** cluster                          |
-| `yarn start:b` | Run on **bluefield** cluster (discover-e2e-bluefield) |
-| `yarn start:c` | Run on **bluefield** cluster (discover-dev-bluefield) |
-| `yarn start:d` | Run on **bp-northeurope** cluster                     |
+Run discover on **bluefield** cluster (e2e & dev with fakeIDP)
+
+```sh
+yarn start
+```
 
 Starting with a different cluster
 
