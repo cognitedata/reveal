@@ -4,6 +4,8 @@ import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
+import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
 import { UpdateFiles } from './UpdateFiles';
 
 export const getUpdatedValue = ({
@@ -77,11 +79,45 @@ export const updateBulk = createAsyncThunk<
       },
     };
   });
-  await dispatch(
-    DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-      annotationIds: bulkEditUnsaved.annotationIdsToDelete || [],
-      showWarnings: true,
-    })
-  );
+
+  if (bulkEditUnsaved.annotationIds) {
+    const updateAnnotationStatuses = async (
+      status: AnnotationStatus,
+      annotationIds?: number[]
+    ) => {
+      if (!annotationIds) return;
+      await Promise.all(
+        annotationIds.map((id) => {
+          return dispatch(
+            AnnotationStatusChange({
+              id,
+              status,
+            })
+          );
+        })
+      );
+    };
+    const { annotationIds } = bulkEditUnsaved;
+    // Update annotation statuses
+    updateAnnotationStatuses(
+      AnnotationStatus.Rejected,
+      annotationIds.rejectedAnnotationIds
+    );
+    updateAnnotationStatuses(
+      AnnotationStatus.Verified,
+      annotationIds.verifiedAnnotationIds
+    );
+    updateAnnotationStatuses(
+      AnnotationStatus.Unhandled,
+      annotationIds.unhandledAnnotationIds
+    );
+    // Delete annotations
+    await dispatch(
+      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+        annotationIds: annotationIds.annotationIdsToDelete || [],
+        showWarnings: true,
+      })
+    );
+  }
   await dispatch(UpdateFiles(payload));
 });

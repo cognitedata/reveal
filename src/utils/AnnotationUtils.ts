@@ -89,6 +89,12 @@ export const AnnotationTypeModelTypeMap = {
   CDF_ANNOTATION_TEMPLATE: VisionDetectionModelType.ObjectDetection,
 };
 
+export interface AnnotationIdsByStatus {
+  rejectedAnnotationIds: number[];
+  acceptedAnnotationIds: number[];
+  unhandledAnnotationIds: number[];
+}
+
 export class AnnotationUtils {
   public static lineWidth = 5;
 
@@ -254,6 +260,62 @@ export class AnnotationUtils {
     }
     return VisionDetectionModelType.ObjectDetection;
   };
+
+  public static filterAnnotationsIdsByAnnotationStatus(
+    annotations: VisionAnnotation[]
+  ): AnnotationIdsByStatus {
+    const rejectedAnnotationIds: number[] = [];
+    const acceptedAnnotationIds: number[] = [];
+    const unhandledAnnotationIds: number[] = [];
+    annotations.forEach((annotation) => {
+      const annotationId = annotation.id;
+      if (annotation.status === AnnotationStatus.Verified)
+        acceptedAnnotationIds.push(annotationId);
+      else if (annotation.status === AnnotationStatus.Rejected)
+        rejectedAnnotationIds.push(annotationId);
+      else unhandledAnnotationIds.push(annotationId);
+    });
+    return {
+      rejectedAnnotationIds,
+      acceptedAnnotationIds,
+      unhandledAnnotationIds,
+    };
+  }
+
+  public static filterAnnotationsIdsByConfidence(
+    annotations: VisionAnnotation[],
+    rejectedThreshold: number,
+    acceptedThreshold: number
+  ): AnnotationIdsByStatus {
+    const rejectedAnnotationIds: number[] = [];
+    const acceptedAnnotationIds: number[] = [];
+    const unhandledAnnotationIds: number[] = [];
+    annotations.forEach((annotation) => {
+      const annotationId = annotation.id;
+      if (annotation.data?.confidence) {
+        const { confidence } = annotation.data;
+        if (confidence > acceptedThreshold)
+          acceptedAnnotationIds.push(annotationId);
+        else if (confidence < rejectedThreshold)
+          rejectedAnnotationIds.push(annotationId);
+        else unhandledAnnotationIds.push(annotationId);
+      } else {
+        // Fallback to filter by status if there's no confidence value.
+        // This is the case for manually labelled annotations.
+        const filteredByStatus = this.filterAnnotationsIdsByAnnotationStatus([
+          annotation,
+        ]);
+        acceptedAnnotationIds.push(...filteredByStatus.acceptedAnnotationIds);
+        rejectedAnnotationIds.push(...filteredByStatus.rejectedAnnotationIds);
+        unhandledAnnotationIds.push(...filteredByStatus.unhandledAnnotationIds);
+      }
+    });
+    return {
+      rejectedAnnotationIds,
+      acceptedAnnotationIds,
+      unhandledAnnotationIds,
+    };
+  }
 }
 
 const populateKeyPoints = (annotation: VisionAnnotation) => {

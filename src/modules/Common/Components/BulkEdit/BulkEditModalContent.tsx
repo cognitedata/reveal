@@ -14,7 +14,9 @@ import styled from 'styled-components';
 import { retrieveAsset } from 'src/api/assets/retrieveAsset';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { AnnotationStatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationStatusRenderer';
 import { FilteredAnnotationsRenderer } from 'src/modules/Common/Containers/FileTableRenderers/FilteredAnnotationsRenderer';
+import { FilteredAnnotationStatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/FilteredAnnotationStatusRenderer';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { BulkEditTable } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
 import {
@@ -23,6 +25,7 @@ import {
   EditPanelState,
 } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { BulkEditOptions } from 'src/modules/Common/Components/BulkEdit/enums';
+import { DEFAULT_THRESHOLDS } from './Annotation/AnnotationStatusPanel';
 
 export type BulkEditModalContentProps = {
   selectedFiles: VisionFile[];
@@ -82,7 +85,14 @@ const rendererMap = {
   // Annotation
   originalAnnotations: AnnotationRenderer,
   updatedAnnotations: FilteredAnnotationsRenderer,
+  // Annotation statuses
+  originalAnnotationStatuses: AnnotationStatusRenderer,
+  updatedAnnotationStatuses: FilteredAnnotationStatusRenderer,
 };
+
+const initialEditPanelState = {
+  annotationThresholds: [DEFAULT_THRESHOLDS[0], DEFAULT_THRESHOLDS[1]],
+} as EditPanelState;
 
 export const BulkEditModalContent = ({
   selectedFiles,
@@ -94,7 +104,9 @@ export const BulkEditModalContent = ({
   const [selectedBulkEditOption, setSelectedBulkEditOption] =
     useState<BulkEditOptionType>(bulkEditOptions[0]);
   const [editing, setEditing] = useState<boolean>();
-  const [editPanelState, setEditPanelState] = useState<EditPanelState>({});
+  const [editPanelState, setEditPanelState] = useState<EditPanelState>(
+    initialEditPanelState
+  );
   const [assetsDetails, setAssetsDetails] = useState<
     Record<number, { name: string }>
   >({});

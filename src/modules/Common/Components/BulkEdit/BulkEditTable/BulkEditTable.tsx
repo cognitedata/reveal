@@ -13,6 +13,7 @@ export type BulkEditTableDataType = {
   updated?: JSX.Element;
   id?: number;
   annotationFilter?: AnnotationFilterType;
+  annotationThresholds?: [number, number]; // [rejectedThreshold, acceptedThreshold] in range [0, 1]
 };
 
 export const BulkEditTable = ({
