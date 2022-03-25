@@ -79,8 +79,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this.pipelineSetup(renderer);
     setupGeometryLayers(this._materialManager, this._cadModels, this._customObjects);
 
-    console.log(this._cadModels);
-
     yield* this.renderInFront(renderer);
 
     yield* this.renderCompositeGeometry(renderer);

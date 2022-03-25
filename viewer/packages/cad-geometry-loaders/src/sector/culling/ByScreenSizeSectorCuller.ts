@@ -30,10 +30,10 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     this._determineSectorCost = options?.determineSectorCost || computeV9SectorCost;
   }
 
-  determineSectors(input: DetermineSectorsInput): {
+  determineSectors(input: DetermineSectorsInput): Promise<{
     wantedSectors: WantedSector[];
     spentBudget: SectorLoadingSpent;
-  } {
+  }> {
     const takenSectors = new TakenV9SectorMap(this._determineSectorCost);
     const { cadModelsMetadata, camera } = input;
     const cameraWorldInverseMatrix = camera.matrixWorldInverse;
@@ -64,7 +64,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const spentBudget = takenSectors.computeSpentBudget();
     Log.debug('Budget:', { ...input.budget });
     Log.debug('Spent:', { ...spentBudget });
-    return { spentBudget, wantedSectors: wanted };
+    return Promise.resolve({ spentBudget, wantedSectors: wanted });
   }
 
   filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]> {

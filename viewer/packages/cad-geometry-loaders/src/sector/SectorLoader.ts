@@ -80,7 +80,7 @@ export class SectorLoader {
     const sectorCuller = this.getSectorCuller(sectorCullerInput);
 
     // Initial prioritization
-    const prioritizedResult = sectorCuller.determineSectors(sectorCullerInput);
+    const prioritizedResult = await sectorCuller.determineSectors(sectorCullerInput);
     this._collectStatisticsCallback(prioritizedResult.spentBudget);
 
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);

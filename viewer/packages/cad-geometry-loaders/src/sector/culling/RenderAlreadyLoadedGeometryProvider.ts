@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { BasicPipelineExecutor, EffectRenderManager, GeometryDepthRenderPipeline } from '@reveal/rendering';
+import { LevelOfDetail, SectorNode } from '@reveal/cad-parsers';
 
 export class RenderAlreadyLoadedGeometryProvider {
   private readonly _renderManager: EffectRenderManager;
@@ -20,24 +21,37 @@ export class RenderAlreadyLoadedGeometryProvider {
     this._depthOnlyRenderPipeline = depthOnlyRenderPipeline;
   }
 
-  renderOccludingGeometry(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
-    const original = {
-      renderTarget: this._renderManager.getRenderTarget(),
-      autoSize: this._renderManager.getRenderTargetAutoSize()
-    };
-    try {
-      this._renderManager.setRenderTarget(target);
-      this._renderManager.renderDetailedToDepthOnly(camera);
-    } finally {
-      this._renderManager.setRenderTarget(original.renderTarget);
-      this._renderManager.setRenderTargetAutoSize(original.autoSize);
-    }
+  async renderOccludingGeometry(
+    target: THREE.WebGLRenderTarget | null,
+    camera: THREE.PerspectiveCamera
+  ): Promise<void> {
+    // const original = {
+    //   renderTarget: this._renderManager.getRenderTarget(),
+    //   autoSize: this._renderManager.getRenderTargetAutoSize()
+    // };
+    // try {
+    //   this._renderManager.setRenderTarget(target);
+    //   this._renderManager.renderDetailedToDepthOnly(camera);
+    // } finally {
+    //   this._renderManager.setRenderTarget(original.renderTarget);
+    //   this._renderManager.setRenderTargetAutoSize(original.autoSize);
+    // }
 
-    // //TODO: set visibility of simple LOD to false
+    const scene = this._depthOnlyRenderPipeline.scene;
 
-    // this._depthOnlyRenderPipeline.outputRenderTarget = target;
-    // this._basicPipelineExecutor.render(this._depthOnlyRenderPipeline, camera);
+    scene.traverse(x => {
+      if (x instanceof SectorNode && x.levelOfDetail === LevelOfDetail.Simple) {
+        x.visible = false;
+      }
+    });
 
-    // //TODO: set visibility of simple LOD to true
+    this._depthOnlyRenderPipeline.outputRenderTarget = target;
+    await this._basicPipelineExecutor.render(this._depthOnlyRenderPipeline, camera);
+
+    scene.traverse(x => {
+      if (x instanceof SectorNode && x.levelOfDetail === LevelOfDetail.Simple) {
+        x.visible = true;
+      }
+    });
   }
 }

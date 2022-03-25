@@ -67,8 +67,11 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.options.coverageUtil.dispose();
   }
 
-  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
-    const takenSectors = this.update(input.camera, input.cadModelsMetadata, input.clippingPlanes, input.budget);
+  async determineSectors(input: DetermineSectorsInput): Promise<{
+    wantedSectors: WantedSector[];
+    spentBudget: SectorLoadingSpent;
+  }> {
+    const takenSectors = await this.update(input.camera, input.cadModelsMetadata, input.clippingPlanes, input.budget);
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
 
@@ -80,12 +83,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return Promise.resolve(filtered);
   }
 
-  private update(
+  private async update(
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
     clippingPlanes: THREE.Plane[] | null,
     budget: CadModelBudget
-  ): TakenV8SectorMap {
+  ): Promise<TakenV8SectorMap> {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -94,7 +97,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     // Update wanted sectors
     coverageUtil.setModels(models);
     coverageUtil.setClipping(clippingPlanes);
-    const prioritized = coverageUtil.orderSectorsByVisibility(camera);
+    const prioritized = await coverageUtil.orderSectorsByVisibility(camera);
 
     // Add high details for all sectors the camera is inside or near
     this.addHighDetailsForNearSectors(camera, models, budget, takenSectors, clippingPlanes);
