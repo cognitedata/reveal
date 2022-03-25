@@ -7,7 +7,7 @@ import { CameraConfiguration } from '@reveal/utilities';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { PointCloudNode } from './PointCloudNode';
 
-import { PointColorType, PointShape } from './potree-three-loader';
+import { PointColorType, PointShape, PointSizeType as PotreePointSizeType } from './potree-three-loader';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
@@ -174,6 +174,22 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    */
   set pointSize(size: number) {
     this.pointCloudNode.pointSize = size;
+  }
+
+  /**
+   * Get the point size type.
+   */
+  get pointSizeType(): PotreePointSizeType {
+    return this.pointCloudNode.pointSizeType;
+  }
+
+  /**
+   * Set the point size type for the point cloud.
+   * The point size type can be either Fixed or Adaptive.
+   * @default `PotreePointSizeType.Adaptive`
+   */
+  set pointSizeType(type: PotreePointSizeType) {
+    this.pointCloudNode.pointSizeType = type;
   }
 
   /**
