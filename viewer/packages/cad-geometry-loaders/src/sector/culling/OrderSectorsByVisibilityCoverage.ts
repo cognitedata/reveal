@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadModelMetadata, V8SectorMetadata, WantedSector } from '@reveal/cad-parsers';
-import { coverageShaders, EffectRenderManager, GeometryDepthRenderPipeline } from '@reveal/rendering';
+import { coverageShaders, GeometryDepthRenderPipeline } from '@reveal/rendering';
 
 import assert from 'assert';
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
@@ -50,10 +50,8 @@ export interface OrderSectorsByVisibleCoverageOptions {
   renderer: THREE.WebGLRenderer;
 
   /**
-   * EffectRenderManager used to initialize the RenderAlreadyLoadedGeometryProvider
+   * GeometryDepthRenderPipeline used to initialize the RenderAlreadyLoadedGeometryProvider
    */
-  renderManager: EffectRenderManager;
-
   depthOnlyRenderPipeline: GeometryDepthRenderPipeline;
 }
 
@@ -156,7 +154,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   constructor(options: OrderSectorsByVisibleCoverageOptions) {
     this._renderer = options.renderer;
     this._alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(
-      options.renderManager,
       options.renderer,
       options.depthOnlyRenderPipeline
     );

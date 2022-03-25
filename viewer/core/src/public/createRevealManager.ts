@@ -9,7 +9,6 @@ import { RevealManager } from './RevealManager';
 import { MetricsLogger } from '@reveal/metrics';
 import {
   RenderOptions,
-  EffectRenderManager,
   CadMaterialManager,
   BasicPipelineExecutor,
   DefaultRenderPipeline,
@@ -115,7 +114,6 @@ export function createRevealManager(
 
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
   const materialManager = new CadMaterialManager();
-  const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
   const pipelineExecutor = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderOptions, renderables);
   const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, renderables);
@@ -124,7 +122,6 @@ export function createRevealManager(
     modelDataProvider,
     renderer,
     materialManager,
-    renderManager,
     depthRenderPipeline,
     {
       ...revealOptions.internal?.cad,
@@ -132,7 +129,7 @@ export function createRevealManager(
     }
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
-  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, renderManager);
+  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline);
 }
 
 /**
