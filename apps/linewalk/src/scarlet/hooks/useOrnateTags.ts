@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
 import { v5 as uuid } from 'uuid';
-import { DataElementState, DetectionState, OrnateTag } from 'scarlet/types';
+import {
+  DataElement,
+  DataElementState,
+  Detection,
+  DetectionState,
+  OrnateTag,
+} from 'scarlet/types';
 
 import { useAppState, useDataPanelState } from '.';
 
@@ -9,19 +15,16 @@ export const useOrnateTags = (): {
   activeTag?: OrnateTag;
 } => {
   const { equipment } = useAppState();
-  const { visibleDataElement, activeDetection } = useDataPanelState();
+  const { visibleDataElement, newDetection, activeDetection } =
+    useDataPanelState();
 
   const dataElements = useMemo(
     () =>
       [
         ...(equipment.data?.equipmentElements || []),
-        ...(equipment.data?.components
-          .filter(
-            (component) =>
-              !visibleDataElement ||
-              visibleDataElement?.componentId === component.id
-          )
-          .map((component) => component.componentElements) || []),
+        ...(equipment.data?.components.map(
+          (component) => component.componentElements
+        ) || []),
       ]
         .flat()
         .filter((item) => {
@@ -29,19 +32,6 @@ export const useOrnateTags = (): {
           if (
             item.state === DataElementState.OMITTED &&
             !item.detections?.length
-          ) {
-            return false;
-          }
-
-          // filter by data-element key
-          if (visibleDataElement && item.key !== visibleDataElement.key) {
-            return false;
-          }
-
-          // filter by component id
-          if (
-            visibleDataElement?.componentId &&
-            visibleDataElement.componentId !== item.componentId
           ) {
             return false;
           }
@@ -63,33 +53,22 @@ export const useOrnateTags = (): {
             detection.state !== DetectionState.OMITTED
         )
         .forEach((detection) => {
-          // -TODO: enable later, should be off now for demo purpose
-          // if (
-          //   !visibleDataElement &&
-          //   dataElement.state === DataElementState.APPROVED &&
-          //   detection.state !== DetectionState.APPROVED
-          // ) {
-          //   return;
-          // }
-          const isActive =
-            (activeDetection && activeDetection.id === detection.id) || false;
-
-          const id = uuid(
-            detection.id + detection.state + detection.value + isActive,
-            '00000000-0000-0000-0000-000000000000'
-          );
-
-          result.push({
-            id,
-            detection,
-            dataElement,
-            isActive,
-          });
+          const tag = getOrnateTag({ detection, dataElement, activeDetection });
+          result.push(tag);
         });
     });
 
+    if (newDetection && visibleDataElement) {
+      const tag = getOrnateTag({
+        detection: newDetection,
+        dataElement: visibleDataElement,
+        activeDetection,
+      });
+      result.push(tag);
+    }
+
     return result;
-  }, [dataElements, activeDetection]);
+  }, [dataElements, activeDetection, newDetection]);
 
   const activeTag = useMemo(() => {
     const tag = tags.find((tag) => tag.isActive);
@@ -97,4 +76,29 @@ export const useOrnateTags = (): {
   }, [tags, activeDetection]);
 
   return { tags, activeTag };
+};
+
+const getOrnateTag = ({
+  detection,
+  dataElement,
+  activeDetection,
+}: {
+  detection: Detection;
+  dataElement: DataElement;
+  activeDetection?: Detection;
+}): OrnateTag => {
+  const isActive =
+    (activeDetection && activeDetection.id === detection.id) || false;
+
+  const id = uuid(
+    detection.id + detection.state + detection.value + isActive,
+    '00000000-0000-0000-0000-000000000000'
+  );
+
+  return {
+    id,
+    detection,
+    dataElement,
+    isActive,
+  };
 };

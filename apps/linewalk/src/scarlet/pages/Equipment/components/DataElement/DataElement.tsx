@@ -137,7 +137,9 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
         {isOmitted && (
           <Styled.DataContainer>
             <Styled.Value noValue className="cogs-body-3 strong">
-              {`"${dataElement.stateReason?.trim() || 'No comment'}"`}
+              {dataElement.stateReason
+                ? `"${dataElement.stateReason}"`
+                : 'No comment'}
             </Styled.Value>
           </Styled.DataContainer>
         )}
@@ -204,7 +206,15 @@ const getCheckboxColor = (state: DataElementState) => {
 };
 
 const getDataSourceAcronym = (detection: Detection) => {
-  if (detection.type === DetectionType.PCMS) return 'PCMS';
+  switch (detection.type) {
+    case DetectionType.PCMS:
+      return 'PCMS';
+    case DetectionType.MANUAL_INPUT:
+      return 'Input';
+    case DetectionType.MANUAL_EXTERNAL:
+      return 'Ext.';
+  }
+
   const type = detection.documentExternalId
     ?.toLocaleLowerCase()
     ?.split('.')[0]

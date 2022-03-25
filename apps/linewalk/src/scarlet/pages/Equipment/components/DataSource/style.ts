@@ -31,3 +31,7 @@ export const LoaderContainer = styled.div`
   display: inline-block;
   vertical-align: middle;
 `;
+
+export const ExternalSourceContainer = styled.div`
+  margin-bottom: 8px;
+`;

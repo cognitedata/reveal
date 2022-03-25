@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react';
 import { DataElementOrigin } from 'scarlet/types';
 
 import { DataPanelAction, DataPanelActionType, DataPanelState } from './types';
-import { toggleDataElement } from './utils';
+import { getDetection, toggleDataElement } from './utils';
 
 const getAppName = (value: string) => ['scarlet', 'dataPanel', value].join('_');
 
@@ -47,6 +47,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
         currentOrigin: action.origin,
         visibleDataElement: undefined,
         activeDetection: undefined,
+        newDetection: undefined,
         activeNewDataSource: false,
         checkedDataElements: [],
       };
@@ -67,6 +68,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
         ...state,
         visibleDataElement: undefined,
         activeDetection: undefined,
+        newDetection: undefined,
         activeNewDataSource: false,
       };
 
@@ -76,12 +78,36 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
         activeDetection: action.detection,
       };
 
+    case DataPanelActionType.SET_NEW_MANUAL_DETECTION: {
+      if (!state.visibleDataElement) return state;
+
+      const detection = getDetection(
+        state.visibleDataElement,
+        action.detectionType,
+        action.annotation
+      );
+
+      return {
+        ...state,
+        newDetection: detection,
+        activeDetection: detection,
+        activeNewDataSource: false,
+      };
+    }
+
+    case DataPanelActionType.REMOVE_NEW_DETECTION:
+      return {
+        ...state,
+        newDetection: undefined,
+      };
+
     case DataPanelActionType.TOGGLE_NEW_DATA_SOURCE:
       if (state.isActiveNewDataSource === action.isActive) return state;
 
       return {
         ...state,
         isActiveNewDataSource: action.isActive,
+        activeDetection: action.isActive ? undefined : state.activeDetection,
       };
 
     case DataPanelActionType.TOGGLE_DATA_ELEMENT: {

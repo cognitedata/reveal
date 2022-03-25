@@ -33,7 +33,7 @@ export const DataPanel = () => {
       </Styled.ListWrapper>
       {dataElement && (
         <Styled.Item>
-          <Card dataElement={dataElement} />
+          <Card dataElement={dataElement} key={dataElement.id} />
         </Styled.Item>
       )}
     </Styled.Container>

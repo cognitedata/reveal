@@ -1,6 +1,4 @@
-import { v4 as uuid } from 'uuid';
 import {
-  Annotation,
   DataElement,
   DataElementOrigin,
   DataElementState,
@@ -30,7 +28,7 @@ export const updateDataElementState = (
     if (!dataElement) return;
 
     dataElement.state = state;
-    dataElement.stateReason = stateReason;
+    dataElement.stateReason = stateReason?.trim();
 
     if (state === DataElementState.OMITTED) {
       dataElement.detections.forEach((detection) => {
@@ -46,22 +44,27 @@ export const updateDataElementState = (
 export const addDetection = (
   equipmentOrigin: EquipmentData,
   dataElementOrigin: DataElement,
-  annotation: Annotation
+  detection: Detection,
+  value: string,
+  externalSource: string | undefined,
+  isApproved: boolean,
+  isPrimary: boolean
 ): EquipmentData => {
   const { equipment, dataElement } = getCopy(
     equipmentOrigin,
     dataElementOrigin
   );
-
-  const detection: Detection = {
-    id: uuid(),
-    key: dataElement.key,
-    type: DetectionType.MANUAL,
-    ...annotation,
-  };
-
   dataElement.detections.push(detection);
-  return equipment;
+
+  return updateDetection(
+    equipment,
+    dataElementOrigin,
+    detection,
+    value,
+    externalSource,
+    isApproved,
+    isPrimary
+  );
 };
 
 export const removeDetection = (
@@ -104,8 +107,9 @@ export const removeDetection = (
 export const updateDetection = (
   equipmentOrigin: EquipmentData,
   dataElementOrigin: DataElement,
-  detection: Detection,
+  detectionOriginal: Detection,
   value: string,
+  externalSource: string | undefined,
   isApproved: boolean,
   isPrimary: boolean
 ): EquipmentData => {
@@ -117,9 +121,11 @@ export const updateDetection = (
     (item) => item.key === dataElementOrigin.key
   );
   const dataElement = dataElementList[dataElementIndex];
-  const detectionIndex = dataElement.detections!.findIndex(
-    (item) => item.id === detection.id
+  const detection = dataElement.detections!.find(
+    (item) => item.id === detectionOriginal.id
   );
+
+  if (!detection) return equipment;
 
   if (isPrimary) {
     dataElement.detections.forEach((detection, i) => {
@@ -129,13 +135,15 @@ export const updateDetection = (
     });
   }
 
-  dataElement.detections![detectionIndex!] = {
-    ...detection,
-    isModified: true,
-    value,
-    state: isApproved ? DetectionState.APPROVED : undefined,
-    isPrimary,
-  };
+  detection.isModified = true;
+  detection.value = value;
+  detection.state = isApproved ? DetectionState.APPROVED : undefined;
+  detection.isPrimary = isPrimary;
+
+  if (externalSource !== undefined) {
+    detection.externalSource = externalSource;
+  }
+
   dataElement.state = dataElement.detections.some(
     (detection) => detection.isPrimary
   )

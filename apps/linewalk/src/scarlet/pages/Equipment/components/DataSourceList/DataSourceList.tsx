@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CollapsePanelProps, Icon } from '@cognite/cogs.js';
-import { useDataPanelState } from 'scarlet/hooks';
-import { DataElement, DetectionState, DetectionType } from 'scarlet/types';
-import usePrevious from 'hooks/usePrevious';
+import { useDataPanelContext } from 'scarlet/hooks';
+import {
+  DataElement,
+  DataPanelActionType,
+  Detection,
+  DetectionState,
+  DetectionType,
+} from 'scarlet/types';
 
-import { DataSource, DataSourceHeader, NewDataSource } from '..';
+import { DataSourceHeader, NewDataSource, DataSourcePanel } from '..';
 
 import * as Styled from './style';
 
@@ -15,7 +19,10 @@ type DataSourceListProps = {
 export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
   const [activeDetectionId, setActiveDetectionId] = useState<string>();
   const [sortingIds, setSortingIds] = useState<string[]>([]);
-  const { activeDetection } = useDataPanelState();
+  const { dataPanelState, dataPanelDispatch } = useDataPanelContext();
+  const [topDetections, setTopDetections] = useState<Detection[]>([]);
+
+  const { activeDetection, newDetection } = dataPanelState;
 
   const PCMSDetection = useMemo(
     () =>
@@ -31,6 +38,12 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
   const detections = useMemo(
     () =>
       dataElement.detections
+        ?.filter(
+          (detection) =>
+            !topDetections.some(
+              (topDetection) => topDetection.id === detection.id
+            )
+        )
         ?.filter(
           (detection) =>
             detection.state !== DetectionState.OMITTED &&
@@ -61,15 +74,23 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
     setSortingIds(detections.map((item) => item.id));
   }, []);
 
+  useEffect(() => {
+    setActiveDetectionId(activeDetection?.id);
+  }, [activeDetection]);
+
   // set initial active detection
   useEffect(() => {
-    // if (!detections.length) {
-    //   setActiveDetectionIds(['PCMS']);
-    //   return;
-    // }
-
     if (activeDetection) {
       setActiveDetectionId(activeDetection.id);
+      return;
+    }
+
+    const primaryDetectionId = detections.find(
+      (item) => item.state === DetectionState.APPROVED && item.isPrimary
+    )?.id;
+
+    if (primaryDetectionId) {
+      setActiveDetectionId(primaryDetectionId);
       return;
     }
 
@@ -86,46 +107,93 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
     setActiveDetectionId(activeDetectionId || undefined);
   }, []);
 
-  // open new detection
-  const prevDetections = usePrevious(detections);
   useEffect(() => {
-    if (prevDetections) {
-      const prevDetectionsIds = prevDetections.map((detection) => detection.id);
-      const newDetection = detections.find(
-        (detection) => !prevDetectionsIds.includes(detection.id)
-      );
-      if (newDetection) {
-        setActiveDetectionId(newDetection.id);
-      }
+    const newTopDetections = dataElement.detections
+      .filter((topDetection) =>
+        topDetections.some((detection) => detection.id === topDetection.id)
+      )
+      .reverse();
+
+    if (
+      newDetection &&
+      !dataElement.detections.some(
+        (detection) => detection.id === newDetection.id
+      )
+    ) {
+      newTopDetections.unshift(newDetection);
+      setActiveDetectionId(newDetection?.id);
     }
-  }, [detections]);
+    setTopDetections(newTopDetections);
+  }, [newDetection, dataElement.detections]);
+
+  useEffect(() => {
+    if (
+      newDetection &&
+      !newDetection.state &&
+      dataElement.detections.some(
+        (detection) =>
+          newDetection.id === detection.id &&
+          detection.state === DetectionState.APPROVED
+      )
+    ) {
+      dataPanelDispatch({
+        type: DataPanelActionType.REMOVE_NEW_DETECTION,
+      });
+    }
+  }, [dataElement.detections]);
+
+  useEffect(() => {
+    if (
+      newDetection &&
+      !newDetection.state &&
+      dataElement.detections.some(
+        (detection) =>
+          newDetection.id === detection.id &&
+          detection.state === DetectionState.APPROVED
+      )
+    ) {
+      dataPanelDispatch({
+        type: DataPanelActionType.REMOVE_NEW_DETECTION,
+      });
+      setActiveDetectionId(newDetection?.id);
+    }
+
+    return () => {
+      dataPanelDispatch({
+        type: DataPanelActionType.REMOVE_NEW_DETECTION,
+      });
+    };
+  }, [dataElement.detections]);
 
   return (
-    <>
+    <Styled.Container>
       <NewDataSource />
+
+      {topDetections.map((detection) => (
+        <DataSourcePanel
+          key={detection.id}
+          detection={detection}
+          dataElement={dataElement}
+          isApproved={detection.state === DetectionState.APPROVED}
+          focused={detection.id === activeDetectionId}
+          isDraft={!detection.state}
+          collapseProps={{
+            activeKey: activeDetectionId,
+            onChange: setActiveDetectionId,
+            accordion: true,
+          }}
+        />
+      ))}
+
       {PCMSDetection ? (
-        <Styled.Collapse
-          expandIcon={expandIcon}
-          defaultActiveKey={PCMSDetection.id}
-        >
-          <Styled.Panel
-            header={
-              <DataSourceHeader
-                label="PCMS"
-                isApproved={isPCMSDetectionPrimary}
-              />
-            }
-            key={PCMSDetection.id}
-            isActive
-          >
-            <DataSource
-              id={PCMSDetection.id}
-              dataElement={dataElement}
-              detection={PCMSDetection}
-              value={PCMSDetection.value}
-            />
-          </Styled.Panel>
-        </Styled.Collapse>
+        <DataSourcePanel
+          detection={PCMSDetection}
+          dataElement={dataElement}
+          isApproved={isPCMSDetectionPrimary}
+          collapseProps={{
+            defaultActiveKey: PCMSDetection.id,
+          }}
+        />
       ) : (
         <Styled.EmptySource>
           <Styled.EmptySourceHead>
@@ -134,52 +202,21 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
           <Styled.EmptySourceBody>Not available</Styled.EmptySourceBody>
         </Styled.EmptySource>
       )}
-      {!!detections.length && (
-        <Styled.Collapse
-          expandIcon={expandIcon}
-          activeKey={activeDetectionId}
-          onChange={setActiveDetectionId}
-          accordion
-        >
-          {detections.map((detection) => (
-            <Styled.Panel
-              header={
-                <DataSourceHeader
-                  label={detection.documentExternalId!}
-                  isApproved={detection.state === DetectionState.APPROVED}
-                />
-              }
-              key={detection.id}
-              isActive
-            >
-              <DataSource
-                id={detection.id}
-                dataElement={dataElement}
-                detection={detection}
-                value={detection.value}
-                focused={detection.id === activeDetectionId}
-                isPrimaryOnApproval={detections.length === 1}
-              />
-            </Styled.Panel>
-          ))}
-        </Styled.Collapse>
-      )}
-    </>
-  );
-};
-
-const expandIcon = ({ isActive }: CollapsePanelProps) => {
-  return (
-    <Icon
-      type="ChevronDownLarge"
-      aria-label="Toggle data source"
-      style={{
-        marginRight: 0,
-        width: '10px',
-        transition: 'transform .2s',
-        transform: `rotate(${!isActive ? 0 : -180}deg)`,
-        flexShrink: 0,
-      }}
-    />
+      {detections.map((detection) => (
+        <DataSourcePanel
+          key={detection.id}
+          detection={detection}
+          dataElement={dataElement}
+          isApproved={detection.state === DetectionState.APPROVED}
+          isPrimaryOnApproval={detections.length === 1}
+          focused={detection.id === activeDetectionId}
+          collapseProps={{
+            activeKey: activeDetectionId,
+            onChange: setActiveDetectionId,
+            accordion: true,
+          }}
+        />
+      ))}
+    </Styled.Container>
   );
 };

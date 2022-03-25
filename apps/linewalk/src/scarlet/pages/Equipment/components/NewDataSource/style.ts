@@ -1,51 +1,25 @@
-import { Collapse as CogsCollapse } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-export const Collapse = styled(CogsCollapse)`
-  background-color: transparent;
+export const NewSourceButton = styled(Button)`
+  color: var(--cogs-midblue-3);
+  border: 1px solid currentColor;
+  width: 100%;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  height: auto;
+  position: relative;
+  justify-content: left;
 `;
 
-export const Panel = styled(CogsCollapse.Panel)`
-  border: 1px solid var(--cogs-midblue-3) !important;
-  overflow: hidden;
-  border-radius: 8px;
-  margin: 12px 0;
-
-  > .rc-collapse-header {
-    background-color: var(--cogs-white);
-    color: var(--cogs-midblue-3) !important;
-    transition: color 0.2s;
-  }
-
-  > .rc-collapse-content {
-    border-top: 1px solid var(--cogs-greyscale-grey4) !important;
-    padding: 0 12px;
-  }
-
-  &.rc-collapse-item-active {
-    border: 1px solid var(--cogs-greyscale-grey4) !important;
-  }
-
-  &.rc-collapse-item-active > .rc-collapse-header {
-    color: inherit !important;
-  }
-`;
-
-export const Header = styled.div`
-  color: inherit;
-`;
-
-export const InfoBox = styled.div`
-  background-color: var(--cogs-greyscale-grey1);
-  padding: 24px 20px;
-`;
-
-export const InfoBoxInnerContent = styled.div`
-  width: 160px;
-  margin: 0 auto;
-  text-align: center;
-
-  > .cogs-micro {
-    color: var(--cogs-text-color-secondary);
-  }
+export const Chevron = styled.div`
+  border-left: 1px solid currentColor;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

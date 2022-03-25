@@ -8,7 +8,6 @@ import {
   DataElement,
   DataElementState,
   Detection,
-  Annotation,
   EquipmentComponent,
   Remark,
 } from 'scarlet/types';
@@ -69,13 +68,18 @@ export type AppAction =
   | {
       type: AppActionType.ADD_DETECTION;
       dataElement: DataElement;
-      annotation: Annotation;
+      detection: Detection;
+      value: string;
+      externalSource?: string;
+      isApproved: boolean;
+      isPrimary: boolean;
     }
   | {
       type: AppActionType.UPDATE_DETECTION;
       dataElement: DataElement;
       detection: Detection;
       value: string;
+      externalSource?: string;
       isApproved: boolean;
       isPrimary: boolean;
     }

@@ -80,6 +80,7 @@ function reducer(state: AppState, action: AppAction) {
         action.dataElement,
         action.detection,
         action.value,
+        action.externalSource,
         action.isApproved,
         action.isPrimary
       );
@@ -96,12 +97,16 @@ function reducer(state: AppState, action: AppAction) {
       const equipment = addDetection(
         state.equipment.data!,
         action.dataElement,
-        action.annotation
+        action.detection,
+        action.value,
+        action.externalSource,
+        action.isApproved,
+        action.isPrimary
       );
 
       return {
         ...state,
-        equipment: {
+        saveState: {
           loading: false,
           data: equipment,
         },

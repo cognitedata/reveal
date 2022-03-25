@@ -1,7 +1,14 @@
-import { DataElement, DataElementOrigin, Detection } from 'scarlet/types';
+import {
+  Annotation,
+  DataElement,
+  DataElementOrigin,
+  Detection,
+  DetectionType,
+} from 'scarlet/types';
 
 export type DataPanelState = {
   isVisible: boolean;
+  newDetection?: Detection;
   isActiveNewDataSource: boolean;
   currentOrigin: DataElementOrigin;
   visibleDataElement?: DataElement;
@@ -30,6 +37,14 @@ export type DataPanelAction =
       detection: Detection;
     }
   | {
+      type: DataPanelActionType.SET_NEW_MANUAL_DETECTION;
+      detectionType: DetectionType;
+      annotation?: Annotation;
+    }
+  | {
+      type: DataPanelActionType.REMOVE_NEW_DETECTION;
+    }
+  | {
       type: DataPanelActionType.TOGGLE_NEW_DATA_SOURCE;
       isActive: boolean;
     }
@@ -48,6 +63,8 @@ export enum DataPanelActionType {
   OPEN_DATA_ELEMENT = 'open-data-element',
   CLOSE_DATA_ELEMENT = 'close-data-element',
   SET_ACTIVE_DETECTION = 'set-active-detection',
+  SET_NEW_MANUAL_DETECTION = 'set-new-manuel-detection',
+  REMOVE_NEW_DETECTION = 'remove-new-detection',
   TOGGLE_NEW_DATA_SOURCE = 'toggle-new-data-source',
   TOGGLE_DATA_ELEMENT = 'toggle-data-element',
   UNCHECK_ALL_DATA_ELEMENTS = 'unselect-all-data-elements',

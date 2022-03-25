@@ -1,11 +1,18 @@
 import { useCallback, useMemo } from 'react';
-import { Annotation, AppActionType, WorkspaceTool } from 'scarlet/types';
+import {
+  Annotation,
+  DataPanelActionType,
+  DetectionType,
+  WorkspaceTool,
+} from 'scarlet/types';
 
-import { useAppDispatch, useDataPanelState } from '.';
+import { useDataPanelContext } from '.';
 
 export const useWorkspaceTools = () => {
-  const appDispatch = useAppDispatch();
-  const { visibleDataElement } = useDataPanelState();
+  const {
+    dataPanelState: { visibleDataElement },
+    dataPanelDispatch,
+  } = useDataPanelContext();
 
   const enabledTools = useMemo(() => {
     const tools = [WorkspaceTool.MOVE];
@@ -15,9 +22,9 @@ export const useWorkspaceTools = () => {
 
   const onNewDetection = useCallback(
     (annotation: Annotation) => {
-      appDispatch({
-        type: AppActionType.ADD_DETECTION,
-        dataElement: visibleDataElement!,
+      dataPanelDispatch({
+        type: DataPanelActionType.SET_NEW_MANUAL_DETECTION,
+        detectionType: DetectionType.MANUAL,
         annotation,
       });
     },

@@ -1,4 +1,10 @@
-import { DataElement } from 'scarlet/types';
+import { v4 as uuid } from 'uuid';
+import {
+  Annotation,
+  DataElement,
+  Detection,
+  DetectionType,
+} from 'scarlet/types';
 
 export const toggleDataElement = (
   checkedListOrigin: DataElement[],
@@ -18,3 +24,14 @@ export const toggleDataElement = (
 
   return checkedList;
 };
+
+export const getDetection = (
+  visibleDataElement: DataElement,
+  detectionType: DetectionType,
+  annotation?: Annotation
+): Detection => ({
+  id: uuid(),
+  key: visibleDataElement!.key,
+  type: detectionType,
+  ...annotation,
+});

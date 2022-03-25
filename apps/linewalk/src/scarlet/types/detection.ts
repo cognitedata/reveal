@@ -4,6 +4,8 @@ export enum DetectionType {
   SCANNER = 'scanner',
   MANUAL = 'manual',
   PCMS = 'pcms',
+  MANUAL_INPUT = 'manual-input',
+  MANUAL_EXTERNAL = 'manuel-external',
 }
 
 export enum DetectionState {
@@ -16,6 +18,7 @@ export type Detection = Partial<Annotation> & {
   key: string;
   type: DetectionType;
   value?: string;
+  externalSource?: string;
   state?: DetectionState;
   isPrimary?: boolean;
   isModified?: boolean;

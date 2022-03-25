@@ -17,25 +17,28 @@ import {
 import * as Styled from './style';
 
 export type DataSourceProps = {
-  id: string;
-  value?: string;
   disabled?: boolean;
   dataElement: DataElement;
-  detection?: Detection;
+  detection: Detection;
   focused?: boolean;
   isPrimaryOnApproval?: boolean;
+  isDraft?: boolean;
 };
 
 export const DataSource = ({
-  id,
-  value: originalValue,
   disabled,
   dataElement,
   detection,
   focused,
   isPrimaryOnApproval = false,
+  isDraft = false,
 }: DataSourceProps) => {
+  const originalValue = detection.value;
+  const originalExternalSource = detection.externalSource;
   const [value, setValue] = useState(originalValue ?? '');
+  const [externalSource, setExternalSource] = useState(
+    originalExternalSource ?? ''
+  );
   const [isApproved, setIsApproved] = useState(
     detection?.state === DetectionState.APPROVED
   );
@@ -50,10 +53,12 @@ export const DataSource = ({
   const dataPanelDispatch = useDataPanelDispatch();
   const dataElementConfig = useDataElementConfig(dataElement);
   const isPCMS = detection?.type === DetectionType.PCMS;
+  const isExternalSource = detection?.type === DetectionType.MANUAL_EXTERNAL;
   const disabledActions =
     isApproving || isRemoving || isSaving || isPrimaryLoading;
 
-  const inputId = `data-source-${id}`;
+  const externalSourceId = `data-field-source-${detection!.id}`;
+  const inputId = `data-field-input-${detection!.id}`;
 
   useEffect(() => {
     if (originalValue === undefined && disabled) {
@@ -64,12 +69,18 @@ export const DataSource = ({
   }, [originalValue]);
 
   const removeDetection = () => {
-    setRemoving(true);
-    appDispatch({
-      type: AppActionType.REMOVE_DETECTION,
-      dataElement,
-      detection: detection!,
-    });
+    if (isDraft) {
+      dataPanelDispatch({
+        type: DataPanelActionType.REMOVE_NEW_DETECTION,
+      });
+    } else {
+      setRemoving(true);
+      appDispatch({
+        type: AppActionType.REMOVE_DETECTION,
+        dataElement,
+        detection: detection!,
+      });
+    }
   };
 
   const approveDetection = () => {
@@ -81,14 +92,27 @@ export const DataSource = ({
       setIsPrimary(true);
     }
 
-    appDispatch({
-      type: AppActionType.UPDATE_DETECTION,
-      dataElement,
-      detection: detection!,
-      value: value || '',
-      isApproved: true,
-      isPrimary: isPrimaryOnApproval,
-    });
+    if (isDraft) {
+      appDispatch({
+        type: AppActionType.ADD_DETECTION,
+        dataElement,
+        detection: detection!,
+        value: value || '',
+        externalSource,
+        isApproved: true,
+        isPrimary: isPrimaryOnApproval,
+      });
+    } else {
+      appDispatch({
+        type: AppActionType.UPDATE_DETECTION,
+        dataElement,
+        detection: detection!,
+        value: value || '',
+        externalSource,
+        isApproved: true,
+        isPrimary: isPrimaryOnApproval,
+      });
+    }
   };
 
   const updatePrimaryValue = (isPrimary: boolean) => {
@@ -122,7 +146,7 @@ export const DataSource = ({
   useEffect(() => {
     if (!appState.saveState.loading) {
       if (isRemoving) setRemoving(false);
-      if (isApproving) setApproving(false);
+      if (isApproving && !isDraft) setApproving(false);
       if (isSaving) setIsSaving(false);
       if (isPrimaryLoading) {
         setIsPrimaryLoading(false);
@@ -151,6 +175,10 @@ export const DataSource = ({
     }
   }, [detection]);
 
+  useEffect(() => {
+    if (isApproving && !isDraft) setApproving(false);
+  }, [isDraft]);
+
   const onFocus = () => {
     if (detection) {
       dataPanelDispatch({
@@ -162,9 +190,16 @@ export const DataSource = ({
 
   useEffect(() => {
     if (focused) {
-      document.getElementById(inputId)?.focus();
+      const focusId = isExternalSource && isDraft ? externalSourceId : inputId;
+      document.getElementById(focusId)?.focus();
     }
   }, [focused]);
+
+  const isFormPristine =
+    value === originalValue && externalSource === originalExternalSource;
+
+  const isFormValid =
+    value.trim() !== '' && (!isExternalSource || externalSource.trim() !== '');
 
   return (
     <form
@@ -174,6 +209,21 @@ export const DataSource = ({
           : approveDetection
       }
     >
+      {isExternalSource && (
+        <Styled.ExternalSourceContainer>
+          <Input
+            id={externalSourceId}
+            value={externalSource}
+            disabled={isPCMS}
+            title="Source"
+            variant="titleAsPlaceholder"
+            fullWidth
+            style={{ height: '48px' }}
+            postfix={dataElementConfig?.unit}
+            onChange={(e) => setExternalSource(e.target.value)}
+          />
+        </Styled.ExternalSourceContainer>
+      )}
       <Input
         id={inputId}
         value={value}
@@ -195,14 +245,10 @@ export const DataSource = ({
               iconPlacement="left"
               icon="Checkmark"
               loading={isSaving}
-              disabled={
-                disabledActions || value === '' || value === originalValue
-              }
+              disabled={disabledActions || !isFormValid || isFormPristine}
               onClick={saveDetection}
             >
-              {detection?.state !== DetectionState.APPROVED
-                ? 'Add as data source'
-                : 'Save'}
+              Save
             </Styled.Button>
           ) : (
             <Styled.Button
@@ -211,10 +257,10 @@ export const DataSource = ({
               iconPlacement="left"
               icon="Checkmark"
               loading={isApproving}
-              disabled={disabledActions || value === ''}
+              disabled={disabledActions || !isFormValid}
               onClick={approveDetection}
             >
-              Add as data source
+              {isDraft ? 'Approve' : 'Add as data source'}
             </Styled.Button>
           )}
           <Styled.Button
@@ -237,7 +283,7 @@ export const DataSource = ({
         checked={isPrimary}
         disabled={
           (!isPCMS && detection?.state !== DetectionState.APPROVED) ||
-          value !== originalValue ||
+          !isFormPristine ||
           disabledActions
         }
       >
