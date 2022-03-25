@@ -10,6 +10,7 @@ import {
   isValidGraphDocumentJson,
   isValidLegendJson,
   computeSymbolInstances,
+  getGraphFormat,
 } from './utils';
 import { applyPathReplacementInSvg } from './utils/pathReplacementUtils';
 import { PidDocumentWithDom } from './pid';
@@ -38,6 +39,7 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DocumentMetadata,
+  DocumentType,
   GraphDocument,
   Legend,
   PathReplacement,
@@ -60,6 +62,7 @@ import {
   pruneSymbolOverlappingPathsFromLines,
 } from './utils/diagramInstanceUtils';
 import { isLine } from './utils/type';
+import { getMetadataFromFileName } from './utils/fileNameUtils';
 
 const hoverBoldStrokeScale = 1.5;
 
@@ -84,6 +87,7 @@ type EquipmentTagsCallback = (
 type ActiveLineNumberCallback = (activeLineNumber: string | null) => void;
 type ActiveTagIdCallback = (activeTagId: string | null) => void;
 type LineNumbersCallback = (lineNumbers: string[]) => void;
+type DocumentMetadataCallback = (documentMetadata: DocumentMetadata) => void;
 
 export interface AddSymbolData {
   symbolType: SymbolType;
@@ -100,6 +104,7 @@ type EventListener = (ref: CognitePid) => void;
 export class CognitePid {
   host: SVGElement;
   document: string | undefined;
+  fileName: string | undefined;
   pidDocument: PidDocumentWithDom | undefined;
   svg: SVGSVGElement | undefined;
   isDrawing = false;
@@ -138,6 +143,9 @@ export class CognitePid {
 
   private hideSelection = false;
   private hideSelectionSubscriber: HideSelectionCallback | undefined;
+
+  private documentMetadata: DocumentMetadata | undefined = undefined;
+  private documentMetadataSubscriber: DocumentMetadataCallback | undefined;
 
   private connectionSelection: DiagramInstanceId | null = null;
   private labelSelection: DiagramInstanceId | null = null;
@@ -200,6 +208,11 @@ export class CognitePid {
   };
 
   addSvgDocument(svgDocument: File) {
+    if (this.document) {
+      this.reset();
+    }
+    this.fileName = svgDocument.name;
+    this.setDocumentMetadata();
     svgDocument
       .text()
       .then((text) => {
@@ -496,6 +509,27 @@ export class CognitePid {
     if (refresh) {
       this.refresh();
     }
+  }
+
+  onChangeMetadata(callback: DocumentMetadataCallback) {
+    this.documentMetadataSubscriber = callback;
+  }
+
+  setDocumentMetadata(selectedType?: DocumentType) {
+    this.documentMetadata = getMetadataFromFileName(
+      this.fileName ?? '',
+      selectedType
+    );
+
+    if (this.documentMetadata && this.documentMetadataSubscriber) {
+      this.documentMetadataSubscriber(this.documentMetadata);
+    }
+  }
+
+  private reset() {
+    this.document = undefined;
+    this.fileName = undefined;
+    this.clear();
   }
 
   private clear() {
@@ -1158,6 +1192,22 @@ export class CognitePid {
     if (refresh) {
       this.refresh();
     }
+  }
+
+  getGraphDocument() {
+    if (!this.pidDocument || !this.documentMetadata) return null;
+
+    return getGraphFormat(
+      this.pidDocument,
+      this.symbols,
+      this.lines,
+      this.symbolInstances,
+      this.connections,
+      this.pathReplacements,
+      this.documentMetadata,
+      this.lineNumbers,
+      this.equipmentTags
+    );
   }
 
   private drawConnectionVisualizations() {

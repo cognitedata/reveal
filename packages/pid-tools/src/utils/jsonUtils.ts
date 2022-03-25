@@ -13,6 +13,7 @@ import {
   PathReplacement,
 } from '../types';
 
+import getFileNameWithoutExtension from './getFileNameWithoutExtension';
 import {
   getEquipmentTagOutputFormat,
   getDiagramLineInstancesOutputFormat,
@@ -27,7 +28,7 @@ export const isValidGraphDocumentJson = (
   return !requiredFields.some((field) => !(field in jsonData));
 };
 
-const getGraphFormat = (
+export const getGraphFormat = (
   pidDocument: PidDocumentWithDom,
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
@@ -69,31 +70,11 @@ const getGraphFormat = (
   };
 };
 
-export const saveGraphAsJson = (
-  pidDocument: PidDocumentWithDom,
-  symbols: DiagramSymbol[],
-  lines: DiagramLineInstance[],
-  symbolInstances: DiagramSymbolInstance[],
-  connections: DiagramConnection[],
-  pathReplacements: PathReplacement[],
-  documentMetadata: DocumentMetadata,
-  lineNumbers: string[],
-  equipmentTags: DiagramEquipmentTagInstance[],
-  fileName = 'Graph.json'
-) => {
-  const graphJson = getGraphFormat(
-    pidDocument,
-    symbols,
-    lines,
-    symbolInstances,
-    connections,
-    pathReplacements,
-    documentMetadata,
-    lineNumbers,
-    equipmentTags
-  );
-
-  const fileToSave = new Blob([JSON.stringify(graphJson, undefined, 2)], {
+export const saveGraphAsJson = (graph: GraphDocument) => {
+  const fileName = graph.documentMetadata.name
+    ? `${getFileNameWithoutExtension(graph.documentMetadata.name)}.json`
+    : 'graph.json';
+  const fileToSave = new Blob([JSON.stringify(graph, undefined, 2)], {
     type: 'application/json',
   });
   saveAs(fileToSave, fileName);

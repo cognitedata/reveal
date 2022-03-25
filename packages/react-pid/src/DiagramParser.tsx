@@ -12,10 +12,10 @@ import useCdfDiagrams from './utils/useCdfDiagrams';
 
 const DiagramParser = () => {
   const [state, dispatch] = useReducer(diagramsReducer, initialState);
-  const diagrams = useCdfDiagrams();
+  const { diagrams, pidViewer, saveGraph, saveState } = useCdfDiagrams();
 
-  const { selectedExternalIds: selectedUnparsedDiagrams, currentIndex } = state;
-  const diagramExternalId = selectedUnparsedDiagrams[currentIndex];
+  const { selectedExternalIds, currentIndex } = state;
+  const diagramExternalId = selectedExternalIds[currentIndex];
 
   useEffect(() => {
     dispatch({
@@ -28,18 +28,22 @@ const DiagramParser = () => {
     <HandlerContainer>
       <TopBar
         currentIndex={currentIndex}
-        selectedUnparsedDiagrams={selectedUnparsedDiagrams}
+        selectedUnparsedDiagrams={selectedExternalIds}
         dispatch={dispatch}
+        saveGraph={saveGraph}
+        saveState={saveState}
       />
       <HandlerContent>
         <ReactPid
           key={diagramExternalId ?? 'no_diagram'}
+          pidViewer={pidViewer}
           diagramExternalId={diagramExternalId}
+          saveState={saveState}
         />
         {state.showList && (
           <DiagramList
             diagrams={diagrams}
-            selectedUnparsedDiagrams={selectedUnparsedDiagrams}
+            selectedUnparsedDiagrams={selectedExternalIds}
             dispatch={dispatch}
           />
         )}

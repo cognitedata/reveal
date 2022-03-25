@@ -1,23 +1,55 @@
-import { Button } from '@cognite/cogs.js';
+import { Button, ButtonProps } from '@cognite/cogs.js';
 import { Dispatch } from 'react';
 
 import {
   DiagramsReducerAction,
   DiagramsReducerActionTypes,
 } from '../../utils/diagramsReducer';
+import { SaveState } from '../../utils/useCdfDiagrams';
 
 import { Left, Right, TopBarContainer } from './elements';
+
+interface SaveButtonProps extends ButtonProps {
+  saveState: SaveState;
+}
+
+const SaveButton = ({ saveState, ...buttonProps }: SaveButtonProps) => {
+  switch (saveState) {
+    case SaveState.Error:
+      return (
+        <Button {...buttonProps} type="danger" icon="Warning">
+          Try again
+        </Button>
+      );
+    case SaveState.Saving:
+      return (
+        <Button {...buttonProps} type="ghost" icon="Loader">
+          Saving
+        </Button>
+      );
+    default:
+      return (
+        <Button {...buttonProps} icon="Upload">
+          Save
+        </Button>
+      );
+  }
+};
 
 interface TopBarProps {
   currentIndex: number;
   selectedUnparsedDiagrams: string[];
   dispatch: Dispatch<DiagramsReducerAction>;
+  saveGraph: () => void;
+  saveState: SaveState;
 }
 
 const TopBar = ({
   currentIndex,
   selectedUnparsedDiagrams,
   dispatch,
+  saveGraph,
+  saveState,
 }: TopBarProps) => {
   const showDiagramList = () => {
     dispatch({ type: DiagramsReducerActionTypes.TOGGLE_SHOW_LIST });
@@ -32,7 +64,7 @@ const TopBar = ({
   return (
     <TopBarContainer>
       <Left>
-        <Button icon="Upload" onClick={showDiagramList}>
+        <Button icon="Download" onClick={showDiagramList}>
           Select file(s)
         </Button>
         <Button
@@ -55,9 +87,11 @@ const TopBar = ({
         <Button icon="OutputData" disabled>
           Process all files
         </Button>
-        <Button icon="Upload" disabled>
-          Save
-        </Button>
+        <SaveButton
+          saveState={saveState}
+          disabled={selectedUnparsedDiagrams.length < 1}
+          onClick={saveGraph}
+        />
       </Right>
     </TopBarContainer>
   );

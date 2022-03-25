@@ -8,11 +8,9 @@ import {
   DiagramSymbol,
   DocumentType,
   EventType,
-  PidDocumentWithDom,
   AddSymbolData,
   ToolType,
   saveGraphAsJson,
-  getFileNameWithoutExtension,
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader } from '@cognite/cogs.js';
@@ -25,18 +23,20 @@ import { Toolbar } from './components/toolbar/Toolbar';
 import { enableExitWarning, disableExitWarning } from './utils/exitWarning';
 import { Viewport } from './components/viewport/Viewport';
 import useDiagramFile from './utils/useDiagramFile';
+import { SaveState } from './utils/useCdfDiagrams';
 
 interface ReactPidProps {
+  pidViewer?: React.MutableRefObject<CognitePid | undefined>;
+  saveState?: SaveState;
   diagramExternalId?: string;
 }
 
-export const ReactPid = ({ diagramExternalId }: ReactPidProps) => {
+export const ReactPid = ({
+  pidViewer = useRef<CognitePid>(),
+  saveState = SaveState.Ready,
+  diagramExternalId,
+}: ReactPidProps) => {
   const [hasDocumentLoaded, setHasDocumentLoaded] = useState(false);
-  const pidViewer = useRef<CognitePid>();
-
-  const getPidDocument = (): PidDocumentWithDom | undefined => {
-    return pidViewer.current?.pidDocument;
-  };
 
   const [activeTool, setActiveTool] = useState<ToolType>('selectDocumentType');
 
@@ -50,7 +50,7 @@ export const ReactPid = ({ diagramExternalId }: ReactPidProps) => {
     isLoading,
     documentMetadata,
     setDocumentType,
-  } = useDiagramFile(hasDocumentLoaded, diagramExternalId);
+  } = useDiagramFile(pidViewer, hasDocumentLoaded, diagramExternalId);
 
   const { symbols, setSymbols, symbolInstances, setSymbolInstances } =
     useSymbolState(pidViewer.current, documentMetadata.type, hasDocumentLoaded);
@@ -88,8 +88,6 @@ export const ReactPid = ({ diagramExternalId }: ReactPidProps) => {
   };
 
   useEffect(() => {
-    if (pidViewer.current) return;
-
     initPid(
       new CognitePid({
         container: `#${CONTAINER_ID}`,
@@ -259,30 +257,21 @@ export const ReactPid = ({ diagramExternalId }: ReactPidProps) => {
   const saveGraphAsJsonWrapper = () => {
     if (!pidViewer.current) return;
 
-    const pidDocument = getPidDocument();
-    if (pidDocument === undefined) return;
+    const graph = pidViewer.current.getGraphDocument();
 
-    saveGraphAsJson(
-      pidDocument,
-      symbols,
-      lines,
-      symbolInstances,
-      connections,
-      pidViewer.current.pathReplacements,
-      documentMetadata,
-      lineNumbers,
-      equipmentTags,
-      documentMetadata.name
-        ? `${getFileNameWithoutExtension(documentMetadata.name)}.json`
-        : 'graph.json'
-    );
+    if (graph === null) {
+      throw Error('Error saving as graph');
+    }
+    saveGraphAsJson(graph);
     disableExitWarning();
   };
 
   useEffect(() => {
     // any changes in save graph dependencies should trigger warning, but assume we can skip warning if there are no symbol instances
-    if (symbolInstances.length) {
+    if (symbolInstances.length && saveState !== SaveState.Saved) {
       enableExitWarning();
+    } else {
+      disableExitWarning();
     }
   }, [
     symbols,
@@ -293,6 +282,7 @@ export const ReactPid = ({ diagramExternalId }: ReactPidProps) => {
     documentMetadata,
     lineNumbers,
     equipmentTags,
+    saveState,
   ]);
 
   const autoAnalysis = () => {
