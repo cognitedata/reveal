@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import Breadcrumbs from 'components/Breadcrumbs';
 import theme from 'styles/theme';
@@ -67,8 +67,8 @@ interface NewHeaderProps {
   title: string | JSX.Element;
   subtitle?: string | JSX.Element;
   breadcrumbs?: { title: string; path?: string }[];
-  rightItem?: React.ReactElement;
-  leftItem?: React.ReactElement;
+  rightItem?: ReactElement;
+  leftItem?: ReactElement;
   ornamentColor?: string;
   help?: string;
 }

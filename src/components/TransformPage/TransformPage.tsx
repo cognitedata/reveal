@@ -5,7 +5,7 @@ import message from 'antd/lib/message';
 import Table from 'antd/lib/table';
 import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import { DataSet } from 'utils/types';
 import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/shared';

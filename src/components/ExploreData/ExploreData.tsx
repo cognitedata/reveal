@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Col from 'antd/lib/col';
 import Spin from 'antd/lib/spin';
 import EmptyState from 'components/EmptyState';

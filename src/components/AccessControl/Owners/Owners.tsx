@@ -1,4 +1,3 @@
-import React from 'react';
 import Table from 'antd/lib/table';
 
 import { Group } from '@cognite/sdk';

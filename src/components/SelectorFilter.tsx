@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import Radio from 'antd/lib/radio';
 import useLocalStorage from 'hooks/useLocalStorage';

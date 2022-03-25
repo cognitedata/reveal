@@ -1,4 +1,3 @@
-import React from 'react';
 import Spin from 'antd/lib/spin';
 import { isOidcEnv } from 'utils/shared';
 import { useCdfGroups } from 'actions';

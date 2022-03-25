@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Menu from 'antd/lib/menu';
 import Col from 'antd/lib/col';
 import Table from 'antd/lib/table';

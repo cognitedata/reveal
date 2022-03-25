@@ -1,4 +1,4 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
+import { FunctionComponent, PropsWithChildren } from 'react';
 import Tag from 'antd/lib/tag';
 import { NoDataText, NoStyleList } from 'utils/styledComponents';
 

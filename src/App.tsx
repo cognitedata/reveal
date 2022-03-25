@@ -1,5 +1,5 @@
 import GlobalStyles from 'styles/GlobalStyles';
-import React, { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
@@ -20,10 +20,8 @@ import { languages, setupTranslations } from 'utils/i18n';
 import i18next from 'i18next';
 import styled from 'styled-components';
 
-const DataSetsList = React.lazy(
-  () => import('pages/DataSetsList/DataSetsList')
-);
-const DataSetDetails = React.lazy(
+const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
+const DataSetDetails = lazy(
   () => import('pages/DataSetDetails/DataSetDetails')
 );
 

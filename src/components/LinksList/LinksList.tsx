@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Input from 'antd/lib/input';
 import { Icon } from '@cognite/cogs.js';
 import useDebounce from 'hooks/useDebounce';

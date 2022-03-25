@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Col from 'antd/lib/col';
 import { Button } from '@cognite/cogs.js';
 import Radio from 'antd/lib/radio';

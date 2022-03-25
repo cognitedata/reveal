@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { RawTable } from 'utils/types';
 import Table from 'antd/lib/table';
 import Spin from 'antd/lib/spin';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
 import { Upload } from 'antd';
 import message from 'antd/lib/message';

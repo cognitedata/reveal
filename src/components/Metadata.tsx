@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Input, Table } from 'antd';
 import { Checkbox } from '@cognite/cogs.js';
 import styled from 'styled-components';

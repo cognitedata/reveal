@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import {
   Button,
   IconType,
@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { Flex } from 'components/Flex';
 
 interface DropdownProps {
-  content: React.ReactNode;
+  content: ReactNode;
   dropdownDisabled?: boolean;
   buttonDisabled?: boolean;
   icon?: IconType;

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { message, notification } from 'antd';
 import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import ConfigProvider from 'antd/lib/config-provider';

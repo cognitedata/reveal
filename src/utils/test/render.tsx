@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { render, RenderOptions } from '@testing-library/react';

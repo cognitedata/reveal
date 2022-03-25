@@ -1,4 +1,3 @@
-import React from 'react';
 import { Flex, Icon } from '@cognite/cogs.js';
 import Popover from 'antd/lib/popover';
 import { TransformationDetails } from '../../utils/types';

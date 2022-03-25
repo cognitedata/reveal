@@ -1,6 +1,6 @@
 import Col from 'antd/lib/col';
 import Select from 'antd/lib/select';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import theme from 'styles/theme';
 import { DataSet, RawTable } from 'utils/types';
 import Drawer from 'components/Drawer';

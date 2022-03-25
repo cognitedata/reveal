@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Spin from 'antd/lib/spin';
 import Card from 'antd/lib/card';
 import Tooltip from 'antd/lib/tooltip';

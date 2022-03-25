@@ -1,4 +1,4 @@
-import React from 'react';
+import { CSSProperties } from 'react';
 import { stringCompare, getStringCdfEnv } from 'utils/shared';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
@@ -94,7 +94,7 @@ export default transformationsColumns;
 
 const CellTransformation = styled.div.attrs(
   ({ $hidden }: { $hidden?: boolean }) => {
-    const style: React.CSSProperties = {};
+    const style: CSSProperties = {};
     if ($hidden) style.fontStyle = 'italic';
     return { style };
   }

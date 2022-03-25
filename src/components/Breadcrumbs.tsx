@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import Breadcrumb from 'antd/lib/breadcrumb';
 import Link from 'components/Link';

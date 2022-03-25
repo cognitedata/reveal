@@ -1,4 +1,3 @@
-import React from 'react';
 import { Icon } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
 import WriteProtectedIcon from 'components/WriteProtectedIcon';

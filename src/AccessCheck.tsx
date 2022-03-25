@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { Icons, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';

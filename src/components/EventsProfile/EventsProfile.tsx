@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DrawerHeader, ItemLabel } from 'utils/styledComponents';
 import Drawer from 'components/Drawer';
 import theme from 'styles/theme';

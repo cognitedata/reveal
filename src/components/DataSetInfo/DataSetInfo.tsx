@@ -1,4 +1,3 @@
-import React from 'react';
 import Tag from 'antd/lib/tag';
 import { SectionTitle, TitleOrnament } from 'utils/styledComponents';
 import Typography from 'antd/lib/typography';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Checkbox from 'antd/lib/checkbox';
 import { Button, Input } from '@cognite/cogs.js';
 import Spin from 'antd/lib/spin';

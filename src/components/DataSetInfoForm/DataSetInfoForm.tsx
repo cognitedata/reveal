@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Select from 'antd/lib/select';
 import Col from 'antd/lib/col';
 import theme from 'styles/theme';
