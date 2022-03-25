@@ -46,18 +46,16 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.position.copy(pcoGeometry.offset);
 
-    this.updateMatrix();
     this.applyMatrix4(new Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1));
+    this.updateMatrix();
 
     this.material = material || new PointCloudMaterial();
-    this.initMaterial(this.material);
+    this.updateMaterial();
   }
 
-  private initMaterial(material: PointCloudMaterial): void {
-    this.updateMatrixWorld(true);
-
-    material.heightMin = this.pcoGeometry.tightBoundingBox.min.z;
-    material.heightMax = this.pcoGeometry.tightBoundingBox.max.z;
+  private updateMaterial(): void {
+    this.material.heightMin = this.pcoGeometry.tightBoundingBox.min.clone().applyMatrix4(this.matrix).y;
+    this.material.heightMax = this.pcoGeometry.tightBoundingBox.max.clone().applyMatrix4(this.matrix).y;
   }
 
   dispose(): void {
@@ -160,6 +158,8 @@ export class PointCloudOctree extends PointCloudTree {
       } else {
         this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
       }
+
+      this.updateMaterial();
 
       this.matrixWorldNeedsUpdate = false;
 
