@@ -5,6 +5,7 @@ export const getDummyAnnotation = (
   modelType?: number,
   other?: {
     status?: AnnotationStatus;
+    confidence?: number;
     text?: string;
   }
 ) => {
@@ -18,6 +19,7 @@ export const getDummyAnnotation = (
     { shape: 'rectangle', vertices: [] },
     undefined,
     undefined,
-    other?.status
+    other?.status,
+    { confidence: other?.confidence }
   );
 };

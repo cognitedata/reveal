@@ -25,6 +25,7 @@ export const BulkEditModal = ({
         border: '1px solid #cccccc',
         borderRadius: '5px',
         padding: '28px',
+        maxHeight: '725px',
       }}
     >
       <BulkEditModalContent onCancel={onCancel} {...props} />

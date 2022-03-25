@@ -28,11 +28,16 @@ import { DirectoryPanel } from 'src/modules/Common/Components/BulkEdit/Directory
 // Annotation
 import { AnnotationPanel } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationPanel';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
-import { getDataForAnnotation } from 'src/modules/Common/Components/BulkEdit/Annotation/getDataForAnnotation';
+import { AnnotationStatusPanel } from './Annotation/AnnotationStatusPanel';
+import {
+  getDataForAnnotationFilteredByState,
+  getDataForAnnotationsFilteredByConfidence,
+} from './Annotation/getDataForAnnotation';
 
 export type EditPanelState = {
   metadataActiveKey?: MetadataSelectOptionType;
   annotationFilterType?: AnnotationFilterType;
+  annotationThresholds?: [number, number]; // [rejectedThreshold, acceptedThreshold] in range [0,1]
 };
 
 export type BulkEditOptionType = {
@@ -277,6 +282,39 @@ export const bulkEditOptions: BulkEditOptionType[] = [
         editMode: false,
       },
     ],
-    data: getDataForAnnotation,
+    data: getDataForAnnotationFilteredByState,
+  },
+  {
+    value: 'editAnnotationStatus',
+    label: 'Annotation status',
+    popconfirmOnApply: false,
+    EditPanel: AnnotationStatusPanel,
+    columns: [
+      {
+        key: 'name',
+        title: 'File name',
+        dataKey: 'name',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'originalAnnotationStatuses',
+        title: 'Original statuses',
+        dataKey: 'original',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'updatedAnnotationStatuses',
+        title: 'Updated statuses',
+        dataKey: 'updated',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+    ],
+    data: getDataForAnnotationsFilteredByConfidence,
   },
 ];

@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import {
   ConfigProvider,
   Modal,
+  Slider,
   // Tooltip,
   message,
   notification,
@@ -61,7 +62,7 @@ import popoverStyle from 'antd/es/popover/style/index.less';
 // import resultStyle from 'antd/es/result/style/index.less';
 import selectStyle from 'antd/es/select/style/index.less';
 // import skeletonStyle from 'antd/es/skeleton/style/index.less';
-// import sliderStyle from 'antd/es/slider/style/index.less';
+import sliderStyle from 'antd/es/slider/style/index.less';
 // import spaceStyle from 'antd/es/space/style/index.less';
 import spinStyle from 'antd/es/spin/style/index.less';
 // import statisticStyle from 'antd/es/statistic/style/index.less';
@@ -116,6 +117,7 @@ const styles = [
   // resultStyle,
   selectStyle,
   // spaceStyle,
+  sliderStyle,
   spinStyle,
   stepsStyle,
   // tableStyle,
@@ -139,6 +141,11 @@ Modal.defaultProps = {
 
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
+  appendTo: getContainer,
+};
+
+Slider.defaultProps = {
+  ...Slider.defaultProps,
   appendTo: getContainer,
 };
 

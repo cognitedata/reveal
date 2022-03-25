@@ -55,6 +55,7 @@ export type TableDataItem = Pick<
   menuActions: FileActions; // menu: FileActions;
   rowKey: string; // unique key;
   annotationFilter?: AnnotationFilterType;
+  annotationThresholds?: [number, number];
 };
 
 export type ResultData = TableDataItem;

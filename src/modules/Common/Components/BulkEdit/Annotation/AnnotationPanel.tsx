@@ -52,7 +52,9 @@ export const AnnotationPanel = ({
     });
     setBulkEditUnsaved({
       ...bulkEditUnsaved,
-      annotationIdsToDelete: annotationIds,
+      annotationIds: {
+        annotationIdsToDelete: annotationIds,
+      },
     });
   }, [selectedAnnotationEditOption, annotationsMap]);
 

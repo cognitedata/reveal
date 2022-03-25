@@ -144,3 +144,116 @@ describe('filterAnnotations', () => {
     ).toEqual(expect.arrayContaining(annotations.slice(0, 2)));
   });
 });
+
+describe('filterAnnotationIdsByAnnotationStatus', () => {
+  const statuses = [
+    AnnotationStatus.Verified,
+    AnnotationStatus.Rejected,
+    AnnotationStatus.Unhandled,
+  ];
+  const annotations = statuses.map((annotationStatus, index) =>
+    getDummyAnnotation(index + 1, 1, {
+      status: annotationStatus,
+      text: `${index + 1}`,
+    })
+  );
+  test('get ids by rejected, verified and unhandled statuses', () => {
+    expect(
+      AnnotationUtils.filterAnnotationsIdsByAnnotationStatus(annotations)
+    ).toEqual({
+      rejectedAnnotationIds: [2],
+      acceptedAnnotationIds: [1],
+      unhandledAnnotationIds: [3],
+    });
+  });
+});
+
+describe('filterAnnotationsIdsByConfidence', () => {
+  const statuses = [
+    AnnotationStatus.Unhandled,
+    AnnotationStatus.Unhandled,
+    AnnotationStatus.Unhandled,
+  ];
+  const confidences = [0.9, 0.4, 0.1];
+  const annotations = statuses.map((annotationStatus, index) =>
+    getDummyAnnotation(index + 1, 1, {
+      status: annotationStatus,
+      text: `${index + 1}`,
+      confidence: confidences[index],
+    })
+  );
+  describe('filter annotations with confidences: [0.9, 0.4, 0.1]', () => {
+    test('rejectedThreshold: 0.25, acceptedThreshold: 0.75', () => {
+      expect(
+        AnnotationUtils.filterAnnotationsIdsByConfidence(
+          annotations,
+          0.25,
+          0.75
+        )
+      ).toEqual({
+        rejectedAnnotationIds: [3],
+        acceptedAnnotationIds: [1],
+        unhandledAnnotationIds: [2],
+      });
+    });
+    test('rejectedThreshold: 0.00, acceptedThreshold: 0.00', () => {
+      expect(
+        AnnotationUtils.filterAnnotationsIdsByConfidence(annotations, 0.0, 0.0)
+      ).toEqual({
+        rejectedAnnotationIds: [],
+        acceptedAnnotationIds: [1, 2, 3],
+        unhandledAnnotationIds: [],
+      });
+    });
+    test('rejectedThreshold: 0.00, acceptedThreshold: 1.00', () => {
+      expect(
+        AnnotationUtils.filterAnnotationsIdsByConfidence(annotations, 0.0, 1.0)
+      ).toEqual({
+        rejectedAnnotationIds: [],
+        acceptedAnnotationIds: [],
+        unhandledAnnotationIds: [1, 2, 3],
+      });
+    });
+    test('rejectedThreshold: 1.00, acceptedThreshold: 1.00', () => {
+      expect(
+        AnnotationUtils.filterAnnotationsIdsByConfidence(annotations, 1.0, 1.0)
+      ).toEqual({
+        rejectedAnnotationIds: [1, 2, 3],
+        acceptedAnnotationIds: [],
+        unhandledAnnotationIds: [],
+      });
+    });
+    test('rejectedThreshold: 0.50, acceptedThreshold: 0.50', () => {
+      expect(
+        AnnotationUtils.filterAnnotationsIdsByConfidence(annotations, 0.5, 0.5)
+      ).toEqual({
+        rejectedAnnotationIds: [2, 3],
+        acceptedAnnotationIds: [1],
+        unhandledAnnotationIds: [],
+      });
+    });
+  });
+  statuses.push(
+    // Fallback options when confidences are undefined
+    AnnotationStatus.Verified,
+    AnnotationStatus.Unhandled,
+    AnnotationStatus.Rejected
+  );
+  confidences.push(undefined, undefined, undefined);
+  const annotations2 = statuses.map((annotationStatus, index) =>
+    getDummyAnnotation(index + 1, 1, {
+      status: annotationStatus,
+      text: `${index + 1}`,
+      confidence: confidences[index],
+    })
+  );
+  test('Should use status as fallback if confidence is undefined', () => {
+    expect(
+      AnnotationUtils.filterAnnotationsIdsByConfidence(annotations2, 0.25, 0.75)
+    ).toEqual({
+      rejectedAnnotationIds: [3, 6],
+      acceptedAnnotationIds: [1, 4],
+      unhandledAnnotationIds: [2, 5],
+    });
+  });
+});
