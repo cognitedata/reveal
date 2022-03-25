@@ -43,7 +43,7 @@ export const WellsFilter = () => {
   const { isFetching, data: filterOptions } = useWellFilterOptions();
   const [selectedOptions, setSelectedOptions] = useState<WellFilterMap>({});
   // const [changedCategories, setChangedCategories] = useState<SelectedMap>({});
-  const [filterCalled, setFilterCalled] = useState<boolean>(false);
+  // const [filterCalled, setFilterCalled] = useState<boolean>(false);
   const filters = useAppliedWellFilters();
   const setWellsFilters = useSetWellsFiltersAsync();
   const clearWellFilters = useClearWellsFilters();
@@ -57,12 +57,13 @@ export const WellsFilter = () => {
      * Trick to avoid updating the selected options state when updating the filter state from this Filter Panel.
      * But selected options state will update when the filter state update externally.
      */
-    if (filterCalled) {
-      setFilterCalled(false);
-    } else {
-      // setChangedCategories({});
-      setSelectedOptions(filters);
-    }
+    // See comment below.
+    // if (filterCalled) {
+    //   setFilterCalled(false);
+    // } else {
+    //   // setChangedCategories({});
+    // }
+    setSelectedOptions(filters);
   }, [filters]);
 
   const onValueChange = (
@@ -71,13 +72,15 @@ export const WellsFilter = () => {
     selectedVals: WellFilterOptionValue[],
     filterGroupName: string
   ) => {
-    setSelectedOptions({
-      ...selectedOptions,
-      [id]: selectedVals,
-    });
-    // console.log('selectedOptions', selectedOptions);
+    // Disabled since this is actually causing some unwanted behavior in Region/Field/Block.
+    // Shouldn't cause a big issue, since selection options are being updated in the hook above
+    // which is triggered by 'setWellsFilters' that updates saved search.
+    // setSelectedOptions((prevState) => ({
+    //   ...prevState,
+    //   [id]: selectedVals,
+    // }));
+    // setFilterCalled(true);
 
-    setFilterCalled(true);
     metrics.track('click-sidebar-wells-filter', {
       filter: filterGroupName,
       value: selectedVals,

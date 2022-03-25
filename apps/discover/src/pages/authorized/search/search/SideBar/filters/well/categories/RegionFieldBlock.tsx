@@ -93,6 +93,8 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
     setRegion(updatingRegion);
     setBlock(updatingBlock);
 
+    updateRegionSelection(updatingRegion);
+
     // Triggered on 'fields'-field updates
   }, [selectedFields, fieldConfig]);
 
@@ -106,6 +108,9 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
 
     setRegion(updatingRegion);
     setField(updatingField);
+
+    updateRegionSelection(updatingRegion);
+    updateFieldSelection(updatingField);
 
     // Triggered on 'blocks'-field updates
   }, [selectedBlocks, blockConfig]);
