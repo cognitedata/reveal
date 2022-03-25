@@ -30,17 +30,13 @@ import { useSelectedDataSet } from '../../context/index';
 
 const { TabPane } = Tabs;
 
-interface DataSetDetailsRouteParams {
-  dataSetId: string;
-}
-
 const DataSetDetails = (): JSX.Element => {
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
 
   const { appPath } = useParams<{ appPath: string }>();
 
-  const { dataSetId } = useParams<DataSetDetailsRouteParams>();
+  const { dataSetId } = useParams();
 
   const {
     dataSetWithExtpipes,

@@ -305,9 +305,6 @@ export const getContainer = () => {
   return el;
 };
 
-export const projectName = () =>
-  new URL(window.location.href).pathname.split('/')[1];
-
 export const azureClusters: string[] = [
   'azure-dev',
   'bluefield',

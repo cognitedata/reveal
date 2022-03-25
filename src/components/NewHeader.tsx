@@ -4,10 +4,11 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import theme from 'styles/theme';
 import { Icon } from '@cognite/cogs.js';
 import Tooltip from 'antd/lib/tooltip';
-import { projectName, getContainer } from 'utils/shared';
+import { getContainer } from 'utils/shared';
 import Drawer from 'antd/lib/drawer';
 import Iframe from 'react-iframe';
 import { trackEvent } from '@cognite/cdf-route-tracker';
+import { getProject } from '@cognite/cdf-utilities';
 
 const Title = styled.h5`
   color: black;
@@ -122,7 +123,7 @@ const NewHeader = ({
                       'Applications.OperationSupport.Assets.Clicked help',
                       {
                         url: help,
-                        projectName: projectName(),
+                        projectName: getProject(),
                       }
                     );
                     setHelpVisible(true);

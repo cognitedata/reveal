@@ -1,5 +1,5 @@
 import GlobalStyles from 'styles/GlobalStyles';
-import React, { Suspense, useMemo } from 'react';
+import React, { Suspense } from 'react';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
@@ -8,33 +8,40 @@ import {
   I18nWrapper,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import { createHistory } from 'utils/history';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { projectName } from 'utils/shared';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { Route, Router, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
-import { languages } from 'utils/i18n';
+import { languages, setupTranslations } from 'utils/i18n';
 import i18next from 'i18next';
+import styled from 'styled-components';
+
+const DataSetsList = React.lazy(
+  () => import('pages/DataSetsList/DataSetsList')
+);
+const DataSetDetails = React.lazy(
+  () => import('pages/DataSetDetails/DataSetDetails')
+);
+
+const project = getProject();
+const env = getEnv();
+
+setupTranslations();
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: 10 * 60 * 1000, // Pretty long
+    },
+  },
+});
 
 const App = () => {
-  const project = getProject();
-  const env = getEnv();
-  const history = createHistory();
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 10 * 60 * 1000, // Pretty long
-      },
-    },
-  });
-
   const handleLanguageChange = (language: string) => {
     if (languages.includes(language)) {
       return i18next.changeLanguage(language);
@@ -46,7 +53,7 @@ const App = () => {
     <FlagProvider
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
       appName="cdf-data-sets"
-      projectName={projectName()}
+      projectName={project}
     >
       <I18nWrapper onLanguageChange={handleLanguageChange}>
         <QueryClientProvider client={queryClient}>
@@ -58,39 +65,24 @@ const App = () => {
               >
                 <SDKProvider sdk={sdk}>
                   <DataSetsContextProvider>
-                    <Router history={history}>
-                      <Suspense fallback={<Loader />}>
-                        <Switch>
+                    <PageWrapper>
+                      <BrowserRouter>
+                        <Suspense fallback={<Loader />}>
                           <AccessCheck>
-                            <Route
-                              path="/:tenant/:appPath"
-                              component={useMemo(
-                                () =>
-                                  React.lazy(
-                                    () =>
-                                      import('pages/DataSetsList/DataSetsList')
-                                  ),
-                                []
-                              )}
-                              exact
-                            />
-                            <Route
-                              path="/:tenant/:appPath/data-set/:dataSetId"
-                              component={useMemo(
-                                () =>
-                                  React.lazy(
-                                    () =>
-                                      import(
-                                        'pages/DataSetDetails/DataSetDetails'
-                                      )
-                                  ),
-                                []
-                              )}
-                            />
+                            <Routes>
+                              <Route
+                                path="/:tenant/:appPath"
+                                element={<DataSetsList />}
+                              />
+                              <Route
+                                path="/:tenant/:appPath/data-set/:dataSetId"
+                                element={<DataSetDetails />}
+                              />
+                            </Routes>
                           </AccessCheck>
-                        </Switch>
-                      </Suspense>
-                    </Router>
+                        </Suspense>
+                      </BrowserRouter>
+                    </PageWrapper>
                   </DataSetsContextProvider>
                 </SDKProvider>
               </AuthWrapper>
@@ -102,5 +94,13 @@ const App = () => {
     </FlagProvider>
   );
 };
+
+const PageWrapper = styled.div`
+  padding: 20px;
+
+  @media (min-width: 992px) {
+    padding: 20px 50px;
+  }
+`;
 
 export default App;

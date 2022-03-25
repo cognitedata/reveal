@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { History } from 'history';
 import NewHeader from 'components/NewHeader';
 import { Button, Icon, Input } from '@cognite/cogs.js';
 import Table from 'antd/lib/table';
@@ -18,7 +17,7 @@ import { getContainer } from 'utils/shared';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router-dom';
 import isArray from 'lodash/isArray';
 import getTableColumns, { DataSetRow } from './TableColumns';
 import {
@@ -29,15 +28,12 @@ import {
 import { useWithExtpipes } from '../../hooks/useWithExtpipes';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 
-interface DataSetsListProps {
-  history: History;
-}
-
-const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
+const DataSetsList = (): JSX.Element => {
   const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
     useWithExtpipes();
 
   const { appPath } = useParams<{ appPath: string }>();
+  const navigate = useNavigate();
 
   const [qualityFilter, setQualityFilter] = useState<string>('all');
   const [searchValue, setSearchValue] = useLocalStorage<string>(
@@ -132,7 +128,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   };
 
   const handleRowInteraction = (value: DataSetRow) => {
-    history.push(createLink(`/${appPath}/data-set/${value.key}`));
+    navigate(createLink(`/${appPath}/data-set/${value.key}`));
   };
 
   const actionsRender = (_: any, row: DataSetRow) => (
