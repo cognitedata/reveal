@@ -7,7 +7,7 @@ import {
 } from 'utils/styledComponents';
 import Col from 'antd/lib/col';
 import Tooltip from 'antd/lib/tooltip';
-import { abbreviateNumber, getContainer } from 'utils/utils';
+import { abbreviateNumber, getContainer } from 'utils/shared';
 import { Icons } from '@cognite/cogs.js';
 import { ExploreViewConfig } from 'utils/types';
 

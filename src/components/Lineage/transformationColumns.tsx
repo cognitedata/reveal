@@ -1,5 +1,5 @@
 import React from 'react';
-import { stringCompare, getStringCdfEnv } from 'utils/utils';
+import { stringCompare, getStringCdfEnv } from 'utils/shared';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';

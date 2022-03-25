@@ -7,7 +7,7 @@ import Drawer from 'components/Drawer';
 import { StyledSelect, IconWrapper, FieldLabel } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import getDataInIcon from 'assets/getDataInIcon.svg';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import { OidcCheck } from 'components/OidcCheck/OidcCheck';
 import { RawSection } from 'components/GetDataInPage/raw/RawSection';
 

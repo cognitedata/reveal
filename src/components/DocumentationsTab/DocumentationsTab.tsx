@@ -10,7 +10,7 @@ import Spin from 'antd/lib/spin';
 import { Documentation, DataSet } from 'utils/types';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { isNotNilOrWhitespace } from 'utils/utils';
+import { isNotNilOrWhitespace } from 'utils/shared';
 import { TitleOrnament, MiniInfoTitle } from '../../utils/styledComponents';
 
 interface DocumentationsTabProps {

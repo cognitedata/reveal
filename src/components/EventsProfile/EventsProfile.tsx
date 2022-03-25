@@ -5,7 +5,7 @@ import theme from 'styles/theme';
 import sdk from '@cognite/cdf-sdk-singleton';
 import Table from 'antd/lib/table';
 import handleError from 'utils/handleError';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 
 interface EventsProfileProps {
   dataSetId: string | number;

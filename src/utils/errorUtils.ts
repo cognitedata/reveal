@@ -1,5 +1,5 @@
 import notification from 'antd/lib/notification';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import { DataSetError } from 'components/ErrorMessage/ErrorMessage';
 
 interface HandleErrorParams {

@@ -14,7 +14,7 @@ import SelectorFilter from 'components/SelectorFilter';
 import { handleDataSetsFilters } from 'utils/filterUtils';
 import { setItemInStorage } from 'utils/localStorage';
 import { createLink } from '@cognite/cdf-utilities';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';

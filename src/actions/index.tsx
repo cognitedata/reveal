@@ -18,7 +18,7 @@ import {
   stringifyMetaData,
   updateDataSetOwners,
   wait,
-} from 'utils/utils';
+} from 'utils/shared';
 import {
   getExtractionPipelineApiUrl,
   mapDataSetExtpipe,

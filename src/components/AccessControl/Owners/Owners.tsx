@@ -2,7 +2,7 @@ import React from 'react';
 import Table from 'antd/lib/table';
 
 import { Group } from '@cognite/sdk';
-import { getAllSetOwnersFromGroups, getContainer } from 'utils/utils';
+import { getAllSetOwnersFromGroups, getContainer } from 'utils/shared';
 
 interface OwnersProps {
   dataSetId: number;

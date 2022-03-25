@@ -5,7 +5,7 @@ import Spin from 'antd/lib/spin';
 import Timeline from 'antd/lib/timeline';
 import Typography from 'antd/lib/typography';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { getJetfireUrl, getContainer } from 'utils/utils';
+import { getJetfireUrl, getContainer } from 'utils/shared';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import {
   ContentView,

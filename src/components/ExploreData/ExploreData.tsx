@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Col from 'antd/lib/col';
 import Spin from 'antd/lib/spin';
-import { ContentView, ItemLabel } from 'utils/styledComponents';
 import EmptyState from 'components/EmptyState';
+import { ContentView, ItemLabel } from 'utils/styledComponents';
 import {
   filesCounter,
   timeSeriesCounter,
   eventsCounter,
   assetsCounter,
   sequenceCounter,
-} from 'utils/utils';
+} from 'utils/shared';
+import { trackUsage } from 'utils/metrics';
+import { ExploreViewConfig } from 'utils/types';
 import { useUserInformation } from 'hooks/useUserInformation';
 import EventsTable from '../EventsTable';
 import AssetsTable from '../AssetsTable';
 import TimeseriesTable from '../TimeseriesTable';
 import FilesTable from '../FilesTable/FilesTable';
 import SequencesTable from '../SequencesTable';
-import { ExploreViewConfig } from '../../utils/types';
 import EventsProfile from '../EventsProfile';
 import ResourceCountBox from '../ResourceCountBox';
-import { trackUsage } from '../../metrics';
 
 interface ExploreDataProps {
   loading: boolean;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 
 import NewHeader from 'components/NewHeader';
 import Spin from 'antd/lib/spin';

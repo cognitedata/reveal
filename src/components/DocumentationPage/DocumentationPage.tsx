@@ -13,7 +13,7 @@ import {
 } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import documentationIcon from 'assets/documentationIcon.svg';
-import { isNotNilOrWhitespace } from 'utils/utils';
+import { isNotNilOrWhitespace } from 'utils/shared';
 import UploadFiles from '../UploadFiles';
 import LinksList from '../LinksList';
 import InfoTooltip from '../InfoTooltip';

@@ -8,7 +8,7 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import { DataSet } from 'utils/types';
-import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/utils';
+import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/shared';
 import Drawer from 'components/Drawer';
 import {
   InfoSubtitle,

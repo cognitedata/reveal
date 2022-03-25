@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import Table from 'antd/lib/table';
 import Timeline from 'antd/lib/timeline';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import {
   EmptyLineageDot,
   LineageDot,

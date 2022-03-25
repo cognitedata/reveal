@@ -1,7 +1,7 @@
 import React from 'react';
 import notification from 'antd/lib/notification';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 
 interface ApiError {
   duplicated: [];

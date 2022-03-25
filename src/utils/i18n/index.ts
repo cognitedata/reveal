@@ -1,8 +1,8 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import en from 'common/i18n/en.json';
-import no from 'common/i18n/no.json';
+import en from './en.json';
+import no from './no.json';
 
 const translations = {
   en: {

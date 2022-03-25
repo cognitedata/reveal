@@ -10,7 +10,7 @@ import {
 } from '@cognite/cdf-utilities';
 import { createHistory } from 'utils/history';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { projectName } from 'utils/utils';
+import { projectName } from 'utils/shared';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Route, Router, Switch } from 'react-router-dom';
@@ -18,7 +18,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
-import { languages } from 'common/i18n';
+import { languages } from 'utils/i18n';
 import i18next from 'i18next';
 
 const App = () => {
@@ -43,7 +43,6 @@ const App = () => {
   };
 
   return (
-    // If styles are broken please check: .rescripts#PrefixWrap(
     <FlagProvider
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
       appName="cdf-data-sets"

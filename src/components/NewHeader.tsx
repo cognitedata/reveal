@@ -4,7 +4,7 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import theme from 'styles/theme';
 import { Icon } from '@cognite/cogs.js';
 import Tooltip from 'antd/lib/tooltip';
-import { projectName, getContainer } from 'utils/utils';
+import { projectName, getContainer } from 'utils/shared';
 import Drawer from 'antd/lib/drawer';
 import Iframe from 'react-iframe';
 import { trackEvent } from '@cognite/cdf-route-tracker';

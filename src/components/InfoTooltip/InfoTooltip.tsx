@@ -2,7 +2,7 @@ import React from 'react';
 import { TooltipLink } from 'utils/styledComponents';
 import { Icon } from '@cognite/cogs.js';
 import Tooltip, { TooltipPlacement } from 'antd/lib/tooltip';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 
 interface InfoTooltipProps {
   tooltipText: string | React.ReactNode;

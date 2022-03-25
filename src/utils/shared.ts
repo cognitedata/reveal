@@ -8,10 +8,7 @@ import isString from 'lodash/isString';
 import isDate from 'lodash/isDate';
 import isObject from 'lodash/isObject';
 import { APIDataSet, DataSet } from './types';
-
-import { styleScope } from './styleScope';
-
-export { styleScope } from './styleScope';
+import { styleScope } from 'styles/styleScope';
 
 export const stringifyMetaData = (dataSet: { metadata: {} }) => {
   const newDataset = JSON.parse(JSON.stringify(dataSet));

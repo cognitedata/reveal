@@ -5,7 +5,7 @@ import Table from 'antd/lib/table';
 import Checkbox from 'antd/lib/checkbox';
 import { Icon } from '@cognite/cogs.js';
 import { RawDB, RawDBTable } from '@cognite/sdk';
-import { getStringCdfEnv, getContainer } from 'utils/utils';
+import { getStringCdfEnv, getContainer } from 'utils/shared';
 import {
   StyledMenuItem,
   RawCreateButton,

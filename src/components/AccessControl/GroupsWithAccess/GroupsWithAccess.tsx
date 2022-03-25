@@ -7,7 +7,7 @@ import {
   isCapScopedOnDataSets,
   isGroupScopedOnDataSets,
   getContainer,
-} from 'utils/utils';
+} from 'utils/shared';
 
 interface GroupsWithAccessProps {
   dataSetId: number;
