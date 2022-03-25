@@ -17,11 +17,13 @@ import {
 import { createBrowserHistory } from 'history';
 import debounce from 'lodash/debounce';
 
+import { setItemInStorage } from 'hooks/useLocalStorage';
 import store, { persistedState, loadLocalStorage } from 'store';
 import { AppStateProvider } from 'context';
+import { root } from 'routes/paths';
+
 import { AntStyles, GlobalStyles } from 'styles';
 import RootApp from 'pages/App';
-import { setItemInStorage } from 'hooks/useLocalStorage';
 
 const App = () => {
   const tenant = window.location.pathname.split('/')[1];
@@ -77,10 +79,7 @@ const App = () => {
                   <SubAppWrapper title="Interactive Engineering Diagrams">
                     <Router history={history}>
                       <Switch>
-                        <Route
-                          path="/:tenant/pnid_parsing_new"
-                          component={RootApp}
-                        />
+                        <Route path={`/:tenant/${root}`} component={RootApp} />
                       </Switch>
                     </Router>
                   </SubAppWrapper>

@@ -1,7 +1,7 @@
 import { PathData } from './routesMap';
 
-export const staticRoot: string = '/:tenant/pnid_parsing_new';
-export const root: string = 'pnid_parsing_new';
+export const root: string = 'interactive-diagrams';
+export const staticRoot: string = `/:tenant/${root}`;
 
 export const paths: { [key: string]: PathData } = {
   landingPage: {

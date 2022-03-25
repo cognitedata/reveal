@@ -17,6 +17,7 @@ import {
   configPage,
   reviewPage,
   diagramPreview,
+  root,
 } from './paths';
 
 const PDF_FILTER = {
@@ -29,7 +30,7 @@ const PDF_FILTER = {
 const BREADCRUMBS = {
   default: {
     title: 'Interactive engineering diagrams',
-    path: '/pnid_parsing_new',
+    path: `/${root}`,
   },
   workflow: {
     title: 'Create interactive diagrams',
