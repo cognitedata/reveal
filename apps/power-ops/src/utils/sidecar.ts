@@ -12,7 +12,7 @@ const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
 const CLUSTER = 'azure-dev';
-const LOCAL_COMMENTS_API = false;
+const LOCAL_POWER_OPS_API = false;
 // #
 // #
 // #
@@ -20,10 +20,10 @@ const LOCAL_COMMENTS_API = false;
 
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
-    greenfield: '6ceaf60c-acdc-4a52-8ccf-01eed2931976', // <- power-ops
-    bluefield: 'd2bc1846-d5db-4f6b-a099-c5ec4d00f846', // <- power-ops
-    'azure-dev': '7cda2c70-4c73-4eae-88e5-634d64c33da5', // <- power-ops
-    'az-power-no-northeurope': 'ac3ff197-d533-413b-b5b2-43256a8fe241', // <- power-ops
+    greenfield: '24771fe6-16f7-4f4c-afbe-93897c914310', // <- power-ops
+    bluefield: 'd6e4e244-9b1f-4e42-9831-74c239e0c2ae', // <- power-ops
+    'azure-dev': 'd5128515-81db-49b5-a718-1760686fb958', // <- power-ops
+    'az-power-no-northeurope': 'ebcd14e2-9c0e-4c66-9c05-eab3e4920c25', // <- power-ops
   };
 
   const aadApplicationId = ids[cluster] || '';
@@ -41,7 +41,7 @@ const getAadApplicationId = (cluster: string) => {
   ...getDefaultSidecar({
     prod: PROD,
     cluster: CLUSTER,
-    localServices: LOCAL_COMMENTS_API ? ['comment-service'] : [],
+    localServices: LOCAL_POWER_OPS_API ? ['power-ops-api'] : [],
   }),
   ...getAadApplicationId(CLUSTER),
   __sidecarFormatVersion: 1,

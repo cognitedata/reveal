@@ -3,17 +3,19 @@ import { useHistory, Link } from 'react-router-dom';
 import { TopBar } from '@cognite/cogs.js';
 import { LogoutButton } from '@cognite/react-container';
 
-import { LogOutButtonContainer } from './elements';
+import { StyledTopBar, LogoContainer, LogOutButtonContainer } from './elements';
 
 export enum PAGES {
   HOME = '/home',
-  HISTORICAL = '/historical',
+  EVENTS = '/events',
+  DEMO = '/demo',
+  PORTFOLIO = '/portfolio',
   LOGOUT = '/logout',
 }
 
 export const MenuBar = () => {
   const history = useHistory();
-  const [active, setActive] = React.useState<string>(PAGES.HOME);
+  const [active, setActive] = React.useState<string>(PAGES.DEMO);
 
   const handleNavigate = (page: PAGES) => () => {
     setActive(page);
@@ -28,25 +30,35 @@ export const MenuBar = () => {
     // setup initial selection on page load
     // (this is a bit hack perhaps, please modify for your own routes)
     setActive(`/${window.location.pathname.split('/')[2]}`);
-  }, []);
+    return history.listen((location) => {
+      setActive(`/${location.pathname}`);
+    });
+  }, [history.location]);
 
   return (
-    <TopBar data-testid="top-bar">
+    <StyledTopBar data-testid="top-bar">
       <TopBar.Left>
-        <Link to={PAGES.HOME}>
-          <TopBar.Logo title="Power Ops" />
+        <Link to={PAGES.DEMO} onClick={handleNavigate(PAGES.DEMO)}>
+          <LogoContainer>
+            <TopBar.Logo title="Cognite Power Markets" />
+          </LogoContainer>
         </Link>
         <TopBar.Navigation
           links={[
             {
-              name: 'Home',
-              isActive: active === PAGES.HOME,
-              onClick: handleNavigate(PAGES.HOME),
+              name: 'Demo',
+              isActive: active === PAGES.DEMO,
+              onClick: handleNavigate(PAGES.DEMO),
             },
             {
-              name: 'Historical',
-              isActive: active === PAGES.HISTORICAL,
-              onClick: handleNavigate(PAGES.HISTORICAL),
+              name: 'Portfolio',
+              isActive: active === PAGES.PORTFOLIO,
+              onClick: handleNavigate(PAGES.PORTFOLIO),
+            },
+            {
+              name: 'SSE Events',
+              isActive: active === PAGES.EVENTS,
+              onClick: handleNavigate(PAGES.EVENTS),
             },
           ]}
         />
@@ -56,6 +68,6 @@ export const MenuBar = () => {
           <LogoutButton handleClick={handleClick} />
         </LogOutButtonContainer>
       </TopBar.Right>
-    </TopBar>
+    </StyledTopBar>
   );
 };

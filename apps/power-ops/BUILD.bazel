@@ -74,6 +74,8 @@ DEPENDENCIES = [
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-query",
+    "@npm//react-table",
+    "@npm//react-table-sticky",
     "@npm//react-router-dom",
     "@npm//styled-components",
     "@npm//web-vitals",
@@ -89,6 +91,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
+    "@npm//@types/react-table",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
     "@npm//@types/styled-components",
@@ -235,6 +238,7 @@ react_scripts_test(
         "@npm//@storybook/react",
         "copy_test_files",
     ],
+    tags = ["manual"],
 )
 
 ### react-scripts test Dev ###

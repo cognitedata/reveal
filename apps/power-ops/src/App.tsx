@@ -3,8 +3,9 @@ import { Switch, Redirect, Route } from 'react-router-dom';
 import { Container, Logout } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
 import { Providers } from 'providers/appProvider';
-import Home from 'pages/Home';
-import Historical from 'pages/Historical';
+import Events from 'pages/Events';
+import Demo from 'pages/Demo';
+import Portfolio from 'pages/Portfolio';
 import { MenuBar, PAGES } from 'pages/Menubar';
 import NotFoundPage from 'pages/Error404';
 
@@ -16,11 +17,12 @@ const App = () => (
         <MenuBar />
 
         <Switch>
-          <Route path={PAGES.HOME} render={() => <Home />} />
-          <Route path={PAGES.HISTORICAL} render={() => <Historical />} />
+          <Route path={PAGES.EVENTS} render={() => <Events />} />
+          <Route path={PAGES.DEMO} render={() => <Demo />} />
+          <Route path={PAGES.PORTFOLIO} render={() => <Portfolio />} />
           <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-          <Redirect from="" to={PAGES.HOME} />
-          <Redirect from="/" to={PAGES.HOME} />
+          <Redirect from="" to={PAGES.DEMO} />
+          <Redirect from="/" to={PAGES.DEMO} />
           <Route render={() => <NotFoundPage />} />
         </Switch>
       </>
