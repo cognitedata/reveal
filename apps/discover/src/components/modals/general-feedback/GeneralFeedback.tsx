@@ -66,8 +66,8 @@ export const GeneralFeedbackModal: React.FC<Props> = ({
     try {
       if (rootElement) {
         html2canvas(rootElement)
-          .then((canvas: any) => {
-            const base64image = canvas.toDataURL('image/png');
+          .then((canvas: HTMLCanvasElement) => {
+            const base64image = canvas.toDataURL('image/webp', 0.75);
             sendGeneralFeedback(comment, base64image, addCreateFeedback);
           })
           .catch((canvasError: any) => {
