@@ -76,6 +76,9 @@ const rendererMap = {
   // Source
   originalSource: StringRenderer,
   updatedSource: StringRenderer,
+  // Directory
+  originalDirectory: StringRenderer,
+  updatedDirectory: StringRenderer,
   // Annotation
   originalAnnotations: AnnotationRenderer,
   updatedAnnotations: FilteredAnnotationsRenderer,

@@ -21,6 +21,10 @@ import { disableAssetTable } from 'src/modules/Common/Components/BulkEdit/Asset/
 import { SourcePanel } from 'src/modules/Common/Components/BulkEdit/Source/SourcePanel';
 import { getDataForSource } from 'src/modules/Common/Components/BulkEdit/Source/getDataForSource';
 
+// Directory
+import { getDataForDirectory } from 'src/modules/Common/Components/BulkEdit/Directory/getDataForDirectory';
+import { DirectoryPanel } from 'src/modules/Common/Components/BulkEdit/Directory/DirectoryPanel';
+
 // Annotation
 import { AnnotationPanel } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationPanel';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
@@ -206,6 +210,39 @@ export const bulkEditOptions: BulkEditOptionType[] = [
       },
     ],
     data: getDataForSource,
+  },
+  {
+    value: 'directory',
+    label: 'Directory',
+    popconfirmOnApply: false,
+    EditPanel: DirectoryPanel,
+    columns: [
+      {
+        key: 'name',
+        title: 'File name',
+        dataKey: 'name',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'originalDirectory',
+        title: 'Original directory',
+        dataKey: 'original',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+      {
+        key: 'updatedDirectory',
+        title: 'Updated directory',
+        dataKey: 'updated',
+        width: 300,
+        align: Column.Alignment.LEFT,
+        editMode: false,
+      },
+    ],
+    data: getDataForDirectory,
   },
   {
     value: 'deleteAnnotations',

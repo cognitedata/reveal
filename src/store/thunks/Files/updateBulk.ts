@@ -11,16 +11,16 @@ export const getUpdatedValue = ({
 }: {
   unsavedValue?: string;
 }) => {
-  const removeSource: boolean = unsavedValue === '';
-  const updatedSource: string | undefined = removeSource
+  const removeValue: boolean = unsavedValue === '';
+  const updatedValue: string | undefined = removeValue
     ? undefined
     : unsavedValue;
 
-  if (removeSource) {
+  if (removeValue) {
     return { setNull: true };
   }
-  if (updatedSource) {
-    return { set: updatedSource };
+  if (updatedValue) {
+    return { set: updatedValue };
   }
   return undefined;
 };
@@ -73,6 +73,7 @@ export const updateBulk = createAsyncThunk<
           remove: assetsToRemove,
         },
         source: getUpdatedValue({ unsavedValue: bulkEditUnsaved.source }),
+        directory: getUpdatedValue({ unsavedValue: bulkEditUnsaved.directory }),
       },
     };
   });
