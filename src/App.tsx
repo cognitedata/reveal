@@ -57,7 +57,7 @@ const App = () => {
                   <Router>
                     <Switch>
                       <Route
-                        path={['/:project/:path', '/:project/:path']}
+                        path="/:project/:path"
                         component={ExtractorDownloads}
                       />
                     </Switch>
