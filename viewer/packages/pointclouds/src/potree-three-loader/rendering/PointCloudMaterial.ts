@@ -40,11 +40,7 @@ import {
   PointSizeType,
   TreeType,
 } from './enums';
-import {
-  generateClassificationTexture,
-  generateDataTexture,
-  generateGradientTexture
-} from './texture-generation';
+import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
 import { IClassification, IUniform } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 
@@ -174,7 +170,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   visibleNodesTexture: Texture | undefined;
   private readonly visibleNodeTextureOffsets = new Map<string, number>();
 
-  private _gradient = SpectralGradient;
+  private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
 
   private _classification: IClassification = DEFAULT_CLASSIFICATION;

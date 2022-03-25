@@ -9,12 +9,14 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
-import { fetchJson } from '../utils/fetchJson';
+import { ModelDataProvider } from '@reveal/modeldata-api';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;
   private readonly _ept: PointCloudEptGeometry;
   private readonly _key: EptKey;
+
+  private readonly _dataLoader: ModelDataProvider;
 
   private readonly _boundingBox: THREE.Box3;
 
@@ -113,9 +115,19 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._parent;
   }
 
-  constructor(ept: PointCloudEptGeometry, b?: THREE.Box3, d?: number, x?: number, y?: number, z?: number) {
+  constructor(
+    ept: PointCloudEptGeometry,
+    modelDataProvider: ModelDataProvider,
+    b?: THREE.Box3,
+    d?: number,
+    x?: number,
+    y?: number,
+    z?: number
+  ) {
     this._ept = ept;
     this._key = new EptKey(this._ept, b || this._ept.boundingBox, d || 0, x, y, z);
+
+    this._dataLoader = modelDataProvider;
 
     this._isLeafNode = false;
 
@@ -161,15 +173,15 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._boundingBox;
   }
 
-  url(): string {
-    return this._ept.url + 'ept-data/' + this.filename();
+  baseUrl(): string {
+    return this._ept.url + 'ept-data';
   }
 
   getNumPoints(): number {
     return this._numPoints;
   }
 
-  filename(): string {
+  fileName(): string {
     return this._key.name();
   }
 
@@ -224,11 +236,12 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   async loadHierarchy(): Promise<void> {
     const nodes: { [key: string]: PointCloudEptGeometryNode } = {};
-    nodes[this.filename()] = this;
+    nodes[this.fileName()] = this;
 
-    const eptHierarchyFile = `${this.ept.url}ept-hierarchy/${this.filename()}.json`;
+    const baseUrl = `${this.ept.url}ept-hierarchy`;
+    const fileName = `${this.fileName()}.json`;
 
-    const hier = await fetchJson(eptHierarchyFile);
+    const hier = await this._dataLoader.getJsonFile(baseUrl, fileName);
 
     // Since we want to traverse top-down, and 10 comes
     // lexicographically before 9 (for example), do a deep sort.
@@ -258,7 +271,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
       const key = parentNode.key.step(a, b, c);
 
-      const node = new PointCloudEptGeometryNode(this.ept, key.b, key.d, key.x, key.y, key.z);
+      const node = new PointCloudEptGeometryNode(this.ept, this._dataLoader, key.b, key.d, key.x, key.y, key.z);
 
       node._level = d;
       node._numPoints = hier[v];

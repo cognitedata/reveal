@@ -13,5 +13,5 @@ export const SpectralGradient: IGradient = [
   [0.7, new Color(0.9922, 0.6824, 0.3804)],
   [0.8, new Color(0.9569, 0.4275, 0.2627)],
   [0.9, new Color(0.8353, 0.2431, 0.3098)],
-  [1, new Color(0.6196, 0.0039, 0.2588)],
+  [1, new Color(0.6196, 0.0039, 0.2588)]
 ];

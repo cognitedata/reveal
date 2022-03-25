@@ -17,7 +17,6 @@ import {
   PERSPECTIVE_CAMERA
 } from './rendering/constants';
 import { FEATURES } from './rendering/features';
-import { GetUrlFn } from './loading';
 import { EptLoader } from './loading/EptLoader';
 import { ClipMode } from './rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
@@ -33,6 +32,7 @@ import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
 import { workerPool } from './utils/WorkerPool';
+import { ModelDataProvider } from '@reveal/modeldata-api';
 
 export class QueueItem {
   constructor(
@@ -47,17 +47,24 @@ export class Potree implements IPotree {
   private static picker: PointCloudOctreePicker | undefined;
   private _pointBudget: number = DEFAULT_POINT_BUDGET;
   private readonly _rendererSize: Vector2 = new Vector2();
+  private readonly _modelDataProvider: ModelDataProvider;
 
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   features = FEATURES;
   lru = new LRU(this._pointBudget);
 
+  constructor(modelDataProvider: ModelDataProvider) {
+    this._modelDataProvider = modelDataProvider;
+  }
+
   async loadPointCloud(
-    url: string,
-    getUrl: GetUrlFn,
+    baseUrl: string,
+    fileName: string,
     _xhrRequest = (input: RequestInfo, init?: RequestInit) => fetch(input, init)
   ): Promise<PointCloudOctree> {
-    return EptLoader.load(await getUrl(url)).then(geometry => new PointCloudOctree(this, geometry));
+    return EptLoader.load(baseUrl, fileName, this._modelDataProvider).then(
+      geometry => new PointCloudOctree(this, geometry)
+    );
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult {

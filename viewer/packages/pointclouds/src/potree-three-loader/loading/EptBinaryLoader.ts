@@ -1,12 +1,14 @@
-import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as THREE from 'three';
 
-import { XHRFactoryInstance } from '../utils/XHRFactory';
 import { workerPool } from '../utils/WorkerPool';
 
 import { ILoader } from './ILoader';
+import { ModelDataProvider } from '@reveal/modeldata-api';
+import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 
 export class EptBinaryLoader implements ILoader {
+  private readonly _dataLoader: ModelDataProvider;
+
   extension(): string {
     return '.bin';
   }
@@ -15,31 +17,16 @@ export class EptBinaryLoader implements ILoader {
     return '/workers/EptBinaryDecoderWorker.js';
   }
 
-  load(node: any): void {
+  constructor(dataLoader: ModelDataProvider) {
+    this._dataLoader = dataLoader;
+  }
+
+  async load(node: PointCloudEptGeometryNode): Promise<void> {
     if (node.loaded) return;
 
-    const url = node.url() + this.extension();
+    const fullFileName = node.fileName() + this.extension();
 
-    const xhr = XHRFactoryInstance.createXMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.overrideMimeType('text/plain; charset=x-user-defined');
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          const buffer = xhr.response;
-          this.parse(node, buffer);
-        } else {
-          throw Error('Failed ' + url + ': ' + xhr.status);
-        }
-      }
-    };
-
-    try {
-      xhr.send(null);
-    } catch (e) {
-      throw Error('Error loading node');
-    }
+    return this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName).then(data => this.parse(node, data));
   }
 
   parse(node: PointCloudEptGeometryNode, buffer: ArrayBuffer): void {
