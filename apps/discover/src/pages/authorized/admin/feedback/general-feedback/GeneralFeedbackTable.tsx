@@ -109,7 +109,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
     },
     user: {
       Header: FIELDS.user.display,
-      accessor: 'user',
+      accessor: 'submittedBy',
       width: '140px',
       maxWidth: '0.1fr',
       order: 3,
