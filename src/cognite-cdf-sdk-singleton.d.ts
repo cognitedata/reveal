@@ -15,4 +15,3 @@ declare module '@cognite/cdf-sdk-singleton' {
   declare const sdk: CogniteClient;
   export default sdk;
 }
-
