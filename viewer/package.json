@@ -70,7 +70,7 @@
     "@types/lodash": "4.14.180",
     "@types/mixpanel-browser": "2.38.0",
     "@types/node": "16.11.26",
-    "@types/offscreencanvas": "^2019.6.4",
+    "@types/offscreencanvas": "2019.6.4",
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.3",
     "@types/tween.js": "18.5.1",

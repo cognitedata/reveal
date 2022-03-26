@@ -720,7 +720,7 @@ __metadata:
     "@types/lodash": 4.14.180
     "@types/mixpanel-browser": 2.38.0
     "@types/node": 16.11.26
-    "@types/offscreencanvas": ^2019.6.4
+    "@types/offscreencanvas": 2019.6.4
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
     "@types/three": 0.138.0
@@ -1640,7 +1640,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/offscreencanvas@npm:^2019.6.4":
+"@types/offscreencanvas@npm:2019.6.4":
   version: 2019.6.4
   resolution: "@types/offscreencanvas@npm:2019.6.4"
   checksum: ea05348b49cb0dc082fadf7ccc283e53c03ecf9b94c5ee096fce447edfcb563f6c060714609b72cee7848ea24589aa56297144a2b3a89a833e6ea24eaaa96da9
