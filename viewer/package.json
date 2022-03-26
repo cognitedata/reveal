@@ -100,7 +100,7 @@
     "lint-staged": "12.3.7",
     "moq.ts": "8.0.3",
     "nock": "13.2.4",
-    "prettier": "2.6.0",
+    "prettier": "2.6.1",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "rimraf": "3.0.2",
