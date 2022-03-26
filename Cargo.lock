@@ -297,7 +297,7 @@ dependencies = [
 [[package]]
 name = "i3df-specification"
 version = "0.1.0"
-source = "git+git://github.com/cognitedata/i3df-specification#3e836a6cdfe111323b173444027ee8d7a2ca9ec2"
+source = "git+https://github.com/cognitedata/i3df-specification#3e836a6cdfe111323b173444027ee8d7a2ca9ec2"
 
 [[package]]
 name = "indexmap"
