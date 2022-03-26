@@ -53,7 +53,6 @@ describe('Cognite3DViewer', () => {
     }));
   });
 
-
   afterAll(() => {
     nock.enableNetConnect();
   });
