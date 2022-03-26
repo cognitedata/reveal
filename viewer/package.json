@@ -108,7 +108,7 @@
     "shx": "0.3.4",
     "ts-jest": "26.5.6",
     "ts-loader": "8.3.0",
-    "tsc-alias": "1.6.4",
+    "tsc-alias": "1.6.5",
     "typescript": "4.5.5",
     "webpack": "4.46.0",
     "webpack-cli": "3.3.12",
