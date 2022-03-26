@@ -28,18 +28,7 @@ describe('PotreeGroupWrapper', () => {
     const model = new PotreeNodeWrapper(dummyNode);
     const manager = new PotreeGroupWrapper(pollLoadingStatusInterval);
 
-    expectObservable(
-      manager.getLoadingStateObserver().pipe(map(x => x.isLoading)),
-      [
-        // // Initially reported as not loading
-        // false,
-        // // Load started when model added
-        // true,
-        // Loading flag is reset after a while
-        false
-      ],
-      done
-    );
+    expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
     manager.addPointCloud(model);
   });
 });
