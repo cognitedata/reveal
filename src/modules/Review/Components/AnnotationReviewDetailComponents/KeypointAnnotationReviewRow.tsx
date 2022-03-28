@@ -1,33 +1,68 @@
 import React from 'react';
-import { AnnotationReviewProps } from 'src/modules/Review/Containers/VirtualizedAnnotationsReview';
+import styled from 'styled-components';
 import { KeyboardShortCutSelectable } from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
-import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/CollapsibleAnnotationTableRow';
+import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
+import { ExpandIconComponent } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/ExpandIconComponent';
+import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
+import { ReviewAnnotation, RowData, VirtualizedTreeRowProps } from './types';
 
+/**
+ * Special Annotation Detail row component for Keypoint annotations
+ * @param additionalData
+ * @constructor
+ */
 export const KeypointAnnotationReviewRow = ({
-  annotation,
-  onSelect,
-  onDelete,
-  onApproveStateChange,
-  onVisibilityChange,
-  onKeypointSelect,
-  expandByDefault,
-}: AnnotationReviewProps) => {
-  return (
-    <KeyboardShortCutSelectable
-      id={annotation.id}
-      selected={annotation.selected}
-    >
-      <CollapsibleAnnotationTableRow
-        key={annotation.id}
-        annotation={annotation}
+  additionalData,
+}: VirtualizedTreeRowProps<RowData<ReviewAnnotation>>) => {
+  const {
+    callbacks: { onSelect, onVisibilityChange, onApproveStateChange, onDelete },
+    ...keypointAnnotation
+  } = additionalData;
+
+  const renderContent = () => {
+    // collapse icon appears for KeypointAnnotations
+    if (
+      keypointAnnotation.region?.shape === 'points' &&
+      keypointAnnotation.region.vertices.length
+    ) {
+      return (
+        <PanelHeader>
+          <ExpandIconComponent isActive={keypointAnnotation.selected} />
+          <AnnotationTableRow
+            annotation={keypointAnnotation}
+            onSelect={onSelect}
+            onDelete={onDelete}
+            onApprove={onApproveStateChange}
+            onVisibilityChange={onVisibilityChange}
+            showColorCircle={false}
+          />
+        </PanelHeader>
+      );
+    }
+    return (
+      <AnnotationTableRow
+        annotation={keypointAnnotation}
         onSelect={onSelect}
         onDelete={onDelete}
         onApprove={onApproveStateChange}
         onVisibilityChange={onVisibilityChange}
-        onKeyPointSelect={onKeypointSelect}
-        expandByDefault={expandByDefault}
         showColorCircle
       />
+    );
+  };
+
+  return (
+    <KeyboardShortCutSelectable
+      id={keypointAnnotation.id}
+      selected={keypointAnnotation.selected}
+    >
+      <SidePanelRow>{renderContent()}</SidePanelRow>
     </KeyboardShortCutSelectable>
   );
 };
+
+const PanelHeader = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`;

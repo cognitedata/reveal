@@ -37,6 +37,7 @@ type State = {
       color?: string;
     };
   };
+  scrollToId: string;
 };
 
 const initialState: State = {
@@ -51,6 +52,7 @@ const initialState: State = {
       color: undefined,
     },
   },
+  scrollToId: '',
 };
 
 const reviewSlice = createSlice({
@@ -112,6 +114,9 @@ const reviewSlice = createSlice({
         state.annotationSettings.show = action.payload.show;
       },
     },
+    setScrollToId(state, action: PayloadAction<string>) {
+      state.scrollToId = action.payload;
+    },
     resetPreview(state) {
       state.selectedAnnotationIds = [];
       state.hiddenAnnotationIds = [];
@@ -123,6 +128,7 @@ const reviewSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(deselectAllSelectionsReviewPage, (state) => {
       state.selectedAnnotationIds = [];
+      state.scrollToId = '';
     });
 
     builder.addCase(DeleteAnnotations.fulfilled, (state, { payload }) => {
@@ -155,6 +161,7 @@ export const {
   toggleAnnotationVisibility,
   selectAnnotation,
   showAnnotationSettingsModel,
+  setScrollToId,
   resetPreview,
 } = reviewSlice.actions;
 

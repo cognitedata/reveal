@@ -1,16 +1,26 @@
 import React from 'react';
-import { AnnotationReviewProps } from 'src/modules/Review/Containers/VirtualizedAnnotationsReview';
 import { KeyboardShortCutSelectable } from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
 import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
 import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
+import {
+  ReviewAnnotation,
+  RowData,
+  VirtualizedTreeRowProps,
+} from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
 
+/**
+ * Annotation detail row component for a OCR/OBJECT annotations without child items
+ * @param additionalData
+ * @constructor
+ */
 export const AnnotationReviewRow = ({
-  annotation,
-  onSelect,
-  onDelete,
-  onApproveStateChange,
-  onVisibilityChange,
-}: AnnotationReviewProps) => {
+  additionalData,
+}: VirtualizedTreeRowProps<RowData<ReviewAnnotation>>) => {
+  const {
+    callbacks: { onSelect, onVisibilityChange, onApproveStateChange, onDelete },
+    ...annotation
+  } = additionalData;
+
   return (
     <KeyboardShortCutSelectable
       id={annotation.id}

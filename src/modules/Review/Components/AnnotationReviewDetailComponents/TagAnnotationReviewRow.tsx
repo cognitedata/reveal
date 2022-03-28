@@ -1,37 +1,45 @@
-import React from 'react';
-import { FileInfo } from '@cognite/sdk';
-import { AnnotationTableItem } from 'src/modules/Review/types';
-import { AnnotationReviewProps } from 'src/modules/Review/Containers/VirtualizedAnnotationsReview';
+import React, { useState } from 'react';
 import { KeyboardShortCutSelectable } from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
 import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AssetLinkWarning';
 import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
 import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
+import {
+  ReviewAnnotation,
+  RowData,
+  VirtualizedTreeRowProps,
+} from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
+import styled from 'styled-components';
 
+/**
+ * Annotation detail row component for Tag annotations
+ * @param additionalData
+ * @constructor
+ */
 export const TagAnnotationReviewRow = ({
-  annotation,
-  annotations,
-  file,
-  onSelect,
-  onDelete,
-  onApproveStateChange,
-  onVisibilityChange,
-}: {
-  annotations: AnnotationTableItem[];
-  file: FileInfo;
-} & AnnotationReviewProps) => {
+  additionalData,
+}: VirtualizedTreeRowProps<RowData<ReviewAnnotation>>) => {
+  const {
+    common: { annotations, file },
+    callbacks: { onSelect, onVisibilityChange, onApproveStateChange, onDelete },
+    ...annotation
+  } = additionalData;
+
+  const [warningShown, setWarningShown] = useState(false);
+
   return (
-    <AssetLinkWarning
-      file={file}
-      annotation={annotation}
-      key={annotation.id}
-      allAnnotations={annotations}
+    <KeyboardShortCutSelectable
+      id={annotation.id}
+      selected={annotation.selected}
+      onClick={() => onSelect(annotation.id, !annotation.selected)}
     >
-      <KeyboardShortCutSelectable
-        id={annotation.id}
-        selected={annotation.selected}
-        onClick={() => onSelect(annotation.id, !annotation.selected)}
+      <AssetLinkWarning
+        file={file}
+        annotation={annotation}
+        key={annotation.id}
+        allAnnotations={annotations}
+        onWarningStatusChange={setWarningShown}
       >
-        <SidePanelRow>
+        <AssetLinkSidePanelRow showWarning={warningShown}>
           <AnnotationTableRow
             annotation={annotation}
             onSelect={onSelect}
@@ -40,8 +48,13 @@ export const TagAnnotationReviewRow = ({
             onVisibilityChange={onVisibilityChange}
             showColorCircle
           />
-        </SidePanelRow>
-      </KeyboardShortCutSelectable>
-    </AssetLinkWarning>
+        </AssetLinkSidePanelRow>
+      </AssetLinkWarning>
+    </KeyboardShortCutSelectable>
   );
 };
+
+type WarningShawn = { showWarning: boolean };
+const AssetLinkSidePanelRow = styled(SidePanelRow)<WarningShawn>`
+  height: ${(props) => (props.showWarning ? '26px' : '30px')};
+`;
