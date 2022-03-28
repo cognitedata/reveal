@@ -1491,10 +1491,10 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cdf-utilities@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.10.1.tgz#c73e7fb48e7d4c3d9ead288d7a019760e1a3b884"
-  integrity sha512-Hy97SFaTfXQ1dYJH5KQbmPfXHHbsef+6r+GgD7CZDJzXWzP2e0LxEsrKd/4Rece9JNu3GLyU20qcTfjr/iaFuA==
+"@cognite/cdf-utilities@0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.11.1.tgz#774ddb57fe94383f445c73a23a4eb7885408bc99"
+  integrity sha512-grn5KhtFTXot9DIOMsHYuXtVMxg7P9Rg6V3SfG06TiE+Yi22Wy+7inebjQdo9Yq3RuOr0Y5/d/liB4GS0vH33g==
   dependencies:
     "@cognite/cogs.js" "^3.38.4"
     query-string "^7.0.1"
