@@ -8,7 +8,7 @@ export const SelectorRow = styled(InlineFlex)`
 `;
 
 export const SelectorWrapper = styled.div`
-  z-index: ${layers.DROPDOWN_SELECT};
+  z-index: ${layers.FILTER_BOX};
   border: 1px solid #d9d9d9;
   padding: 5px;
   border-radius: 5px;

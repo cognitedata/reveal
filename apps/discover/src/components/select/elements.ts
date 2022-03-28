@@ -9,7 +9,7 @@ export const SelectListWrapper = styled(Paper)`
   margin-top: 8px;
   padding: 8px !important;
   background-color: var(--cogs-white);
-  z-index: ${layers.DROPDOWN_SELECT};
+  z-index: ${layers.FILTER_BOX};
   & > * ul {
     padding: 0;
     margin-bottom: 0;

@@ -23,7 +23,7 @@ export const NDSTableWrapper = styled.div`
 `;
 
 export const NPTFilterContent = styled.div`
-  z-index: ${layers.DROPDOWN_SELECT};
+  z-index: ${layers.FILTER_BOX};
   height: 25%;
   padding-top: 5px;
   padding-left: 10px;

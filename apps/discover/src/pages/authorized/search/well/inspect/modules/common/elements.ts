@@ -28,7 +28,7 @@ export const PreviewButtonWrapper = styled.div`
 export const ModuleFilterDropdownWrapper = styled(Flex)`
   margin: 10px 0;
   position: relative;
-  z-index: ${layers.DROPDOWN_SELECT};
+  z-index: ${layers.FILTER_BOX};
   width: fit-content;
 `;
 

@@ -23,5 +23,5 @@ export const MeasurementsWrapper = styled(FlexColumn)`
 export const MeasurementsTopBar = styled(FlexRow)`
   position: sticky;
   top: 0;
-  z-index: ${layers.DROPDOWN_SELECT};
+  z-index: ${layers.FILTER_BOX};
 `;

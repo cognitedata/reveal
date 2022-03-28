@@ -9,7 +9,7 @@ export const DropdownWrapper = styled(Flex)`
     display: none;
   }
   > * .cogs-select__menu {
-    z-index: ${layers.DROPDOWN_SELECT};
+    z-index: ${layers.FILTER_BOX};
     width: auto;
     min-width: 100%;
     .cogs-select__menu-list {

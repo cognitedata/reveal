@@ -6,7 +6,7 @@ import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 export const TopBar = styled(FlexRow)`
   position: sticky;
   top: 0;
-  z-index: ${layers.DROPDOWN_SELECT};
+  z-index: ${layers.FILTER_BOX};
   padding: 0 ${sizes.small};
   margin-top: ${sizes.normal};
 `;

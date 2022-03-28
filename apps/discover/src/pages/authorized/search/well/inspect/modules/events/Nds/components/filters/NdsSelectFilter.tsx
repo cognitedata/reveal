@@ -34,7 +34,7 @@ const renderMinMaxFooter = (allOptions: string[]) => {
 };
 
 const menuStyling = {
-  menu: (provided: any) => ({ ...provided, zIndex: layers.MENU_DROPDOWN }),
+  menu: (provided: any) => ({ ...provided, zIndex: layers.FILTER_BOX }),
 };
 
 export const NdsSelectFilter: React.FC<Props> = ({
