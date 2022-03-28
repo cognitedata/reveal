@@ -11,7 +11,7 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 
-import { auditTime, Observable, Subject } from 'rxjs';
+import { asyncScheduler, combineLatest, Observable, Subject, throttleTime } from 'rxjs';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
@@ -23,6 +23,7 @@ export class PointCloudManager {
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
+  private readonly _addModelSubject: Subject<void> = new Subject();
 
   private readonly _renderer: THREE.WebGLRenderer;
 
@@ -35,9 +36,11 @@ export class PointCloudManager {
     this._pointCloudFactory = modelFactory;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
 
-    this._cameraSubject.pipe(auditTime(500)).subscribe((cam: THREE.PerspectiveCamera) => {
-      this.updatePointClouds(cam);
-    });
+    combineLatest([this._cameraSubject, this._addModelSubject])
+      .pipe(throttleTime(500, asyncScheduler, { leading: true, trailing: true }))
+      .subscribe(([cam, _]: [THREE.PerspectiveCamera, void]) => {
+        this.updatePointClouds(cam);
+      });
 
     this._renderer = renderer;
   }
@@ -89,10 +92,13 @@ export class PointCloudManager {
 
   updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cameraSubject.next(camera);
+    this._pointCloudGroupWrapper.requestRedraw();
   }
 
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
+
+    this._addModelSubject.next();
 
     const modelType: SupportedModelTypes = 'pointcloud';
     MetricsLogger.trackLoadModel(

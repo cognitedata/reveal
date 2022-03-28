@@ -217,20 +217,20 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     child.parent = this;
   }
 
-  load(): Promise<void> {
+  async load(): Promise<void> {
     if (this._loaded || this._loading) return;
     if (globalNumNodesLoading >= globalMaxNumNodesLoading) return;
 
     this._loading = true;
     incrementGlobalNumNodesLoading();
 
-    if (this._numPoints == -1) this.loadHierarchy();
+    if (this._numPoints == -1) await this.loadHierarchy();
 
-    this.loadPoints();
+    await this.loadPoints();
     return Promise.resolve();
   }
 
-  loadPoints(): void {
+  async loadPoints(): Promise<void> {
     this._ept.loader.load(this);
   }
 
