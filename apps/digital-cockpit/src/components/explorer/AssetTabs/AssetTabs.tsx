@@ -1,7 +1,7 @@
-import { AssetIdEither } from '@cognite/sdk';
+import { InternalId } from '@cognite/sdk';
 import React, { useEffect } from 'react';
 import DocumentTab from 'components/explorer/DocumentTab';
-import { Icon, Tabs } from '@cognite/cogs.js';
+import { Icon, IconType, Label, Tabs } from '@cognite/cogs.js';
 import {
   useAssetBreadcrumbsQuery,
   useAssetRetrieveQuery,
@@ -10,6 +10,7 @@ import Loading from 'components/utils/Loading';
 import { NavLink } from 'react-router-dom';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import noop from 'lodash/noop';
+import useAssetChildrenAggregates from 'hooks/useQuery/useAssetChildrenAggregates';
 
 import ThreeDPreview from '../ThreeDPreview';
 import EventTab from '../EventTab';
@@ -21,10 +22,11 @@ import {
   AssetBreadcrumbsWrapper,
   AssetTabsWrapper,
   AssetTitle,
+  CountLabel,
 } from './elements';
 
 export type AssetTabsProps = {
-  assetId: AssetIdEither;
+  assetId: InternalId;
   activeTabKey?: AssetTabKey;
   onTabChange?: (nextKey: AssetTabKey) => void;
 };
@@ -36,6 +38,8 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
 }) => {
   const currentAssetQuery = useAssetRetrieveQuery([assetId]);
   const currentAsset = currentAssetQuery.data?.[0];
+
+  const { data: count } = useAssetChildrenAggregates(assetId.id);
 
   const assetBreadcrumbsQuery = useAssetBreadcrumbsQuery(
     currentAsset?.parentId ? { id: currentAsset.parentId } : undefined
@@ -59,27 +63,39 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
 
   const tabs: {
     title: string;
+    icon: IconType;
     key: AssetTabKey;
     content: React.ReactElement | null;
+    badge?: React.ReactElement | null;
   }[] = [
     {
       title: 'Detail',
       key: 'detail',
+      icon: 'List',
       content: <AssetDetailsTab assetId={currentAsset.id} />,
     },
     {
       title: 'Documents',
       key: 'documents',
+      icon: 'Document',
       content: <DocumentTab assetId={currentAsset.id} />,
+      badge: count?.files ? (
+        <CountLabel size="small">{count?.files.toLocaleString()}</CountLabel>
+      ) : null,
     },
     {
       title: 'Events',
       key: 'events',
+      icon: 'Events',
       content: <EventTab assetId={currentAsset.id} />,
+      badge: count?.events ? (
+        <CountLabel size="small">{count?.events.toLocaleString()}</CountLabel>
+      ) : null,
     },
     {
       title: '3D',
       key: '3d',
+      icon: 'Cube',
       content: (
         <div style={{ height: '100%' }}>
           <ThreeDPreview assetId={currentAsset.id} />
@@ -89,7 +105,13 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
     {
       title: 'Time Series',
       key: 'timeseries',
+      icon: 'Timeseries',
       content: <TimeSeriesTab assetId={currentAsset.id} />,
+      badge: count?.timeseries ? (
+        <CountLabel size="small">
+          {count?.timeseries.toLocaleString()}
+        </CountLabel>
+      ) : null,
     },
     // Coming soon
     // { title: 'Boards', key: 'boards', content: null },
@@ -143,7 +165,16 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
           onChange={(next) => onTabChange && onTabChange(next as AssetTabKey)}
         >
           {tabs.map((tab) => (
-            <Tabs.TabPane tab={tab.title} key={tab.key}>
+            <Tabs.TabPane
+              tab={
+                <>
+                  <Icon type={tab.icon} />
+                  {tab.title}
+                  {tab.badge}
+                </>
+              }
+              key={tab.key}
+            >
               {tab.content}
             </Tabs.TabPane>
           ))}

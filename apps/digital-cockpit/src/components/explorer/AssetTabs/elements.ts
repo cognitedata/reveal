@@ -1,3 +1,4 @@
+import { Label } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const AssetBreadcrumbsWrapper = styled.div`
@@ -42,4 +43,8 @@ export const AssetTitle = styled.h2`
   font-size: 18px;
   line-height: 24px;
   padding: 24px 24px 0;
+`;
+
+export const CountLabel = styled(Label)`
+  margin-left: 8px;
 `;
