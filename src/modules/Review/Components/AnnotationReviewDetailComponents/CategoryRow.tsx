@@ -48,6 +48,10 @@ const PanelHeader = styled.div`
   font-size: 12px;
   line-height: 16px;
   height: 30px;
+
+  &:hover {
+    background-color: var(--cogs-greyscale-grey2);
+  }
 `;
 
 interface IconContainerProps {
