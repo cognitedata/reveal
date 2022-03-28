@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 
-import isUndefined from 'lodash/isUndefined';
 import { withThousandSeparator } from 'utils/number';
 
 import { Dropdown, Menu, Flex } from '@cognite/cogs.js';
@@ -59,6 +58,20 @@ const MenuContent = ({ content }: { content?: BreadCrumbStatInfo[] }) => (
   </BreadCrumbMenu>
 );
 
+const getLabel = ({
+  label,
+  currentHits,
+  totalResults,
+  entityLabel,
+}: {
+  label: string;
+  currentHits: string;
+  totalResults: string;
+  entityLabel: string;
+}) => {
+  return `${label}: ${currentHits}${totalResults}${entityLabel}`;
+};
+
 export const SearchBreadcrumb: React.FC<Props> = React.memo(({ stats }) => {
   const { t } = useTranslation();
 
@@ -77,12 +90,14 @@ export const SearchBreadcrumb: React.FC<Props> = React.memo(({ stats }) => {
               iconPlacement="right"
               aria-label="Info"
             >
-              {`${stat.label || t('Showing')}: ${withThousandSeparator(
-                stat.currentHits
-              )}`}
-              {isUndefined(stat.totalResults)
-                ? ` ${t('files')}`
-                : ` / ${withThousandSeparator(stat.totalResults)}`}
+              {getLabel({
+                label: stat.label || t('Showing'),
+                currentHits: withThousandSeparator(stat.currentHits),
+                totalResults: stat.totalResults
+                  ? ` / ${withThousandSeparator(stat.totalResults)}`
+                  : '',
+                entityLabel: stat.entityLabel ? ` ${stat.entityLabel}` : '',
+              })}
             </BreadCrumbButton>
           </Dropdown>
         );

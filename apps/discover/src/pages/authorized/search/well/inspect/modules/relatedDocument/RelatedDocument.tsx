@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CollapsablePanel } from '@cognite/cogs.js';
 
@@ -27,6 +28,7 @@ export const RelatedDocument: React.FC = () => {
   const anythingHasSearched = useAnythingHasSearched();
   const { total, documentInformation } = useRelatedDocumentDataStats();
   const [showDocTypeFilter, setShowDocTypeFilter] = useState<boolean>(true);
+  const { t } = useTranslation();
 
   return (
     <CollapsablePanel
@@ -40,6 +42,7 @@ export const RelatedDocument: React.FC = () => {
             <SearchBreadcrumb
               stats={[
                 {
+                  entityLabel: t('files'),
                   currentHits: total,
                   info: documentInformation,
                 },

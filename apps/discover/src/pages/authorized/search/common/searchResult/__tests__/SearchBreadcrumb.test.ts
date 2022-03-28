@@ -21,8 +21,7 @@ describe('SearchBreadcrumb', () => {
         },
       ],
     });
-    expect(screen.getByText('Documents', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('23 / 300', { exact: false })).toBeInTheDocument();
+    expect(screen.getByText('Documents: 23 / 300')).toBeInTheDocument();
   });
 
   it('should show bread crumb with total results & current hits with Showing label when no label is passed', () => {
@@ -34,20 +33,33 @@ describe('SearchBreadcrumb', () => {
         },
       ],
     });
-    expect(screen.getByText('Showing', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('28 / 56', { exact: false })).toBeInTheDocument();
+    expect(screen.getByText('Showing: 28 / 56')).toBeInTheDocument();
   });
 
-  it('should show bread crumb with current hits & files label when totalResult is not passed', () => {
+  it('should show bread crumb with current hits & entityLabel is passed', () => {
     Page(store, {
       stats: [
         {
           currentHits: 28,
+          entityLabel: 'files',
         },
       ],
     });
-    expect(screen.getByText('Showing', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('28 files', { exact: false })).toBeInTheDocument();
+    expect(screen.getByText('Showing: 28 files')).toBeInTheDocument();
+  });
+
+  it('should show bread crumb with current hits & totalHits & entityLabel', () => {
+    Page(store, {
+      stats: [
+        {
+          label: 'Documents',
+          totalResults: 100,
+          currentHits: 28,
+          entityLabel: 'files',
+        },
+      ],
+    });
+    expect(screen.getByText('Documents: 28 / 100 files')).toBeInTheDocument();
   });
 
   it('should show multiple bread crumbs when multiple stats are passed', () => {
@@ -61,12 +73,8 @@ describe('SearchBreadcrumb', () => {
         { label: 'Wellbores', totalResults: 430, currentHits: 90 },
       ],
     });
-    expect(
-      screen.getByText('Wells: 28 / 500', { exact: false })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Wellbores: 90 / 430', { exact: false })
-    ).toBeInTheDocument();
+    expect(screen.getByText('Wells: 28 / 500')).toBeInTheDocument();
+    expect(screen.getByText('Wellbores: 90 / 430')).toBeInTheDocument();
   });
 
   it('should show stats info', () => {

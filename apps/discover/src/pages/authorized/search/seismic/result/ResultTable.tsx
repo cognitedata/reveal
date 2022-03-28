@@ -89,15 +89,17 @@ export const ResultTable: React.FC<Props> = ({ result }) => {
     height: '100%',
   };
 
-  const seismicStats = {
-    totalResults: (data || []).length,
-    currentHits: (data || []).length,
-  };
+  const seismicStats = [
+    {
+      totalResults: (data || []).length,
+      currentHits: (data || []).length,
+    },
+  ];
 
   return (
     <>
       <SearchTableResultActionContainer>
-        <SearchBreadcrumb stats={[seismicStats]} />
+        <SearchBreadcrumb stats={seismicStats} />
       </SearchTableResultActionContainer>
       <Table<SeismicSurveyContainer>
         scrollTable
