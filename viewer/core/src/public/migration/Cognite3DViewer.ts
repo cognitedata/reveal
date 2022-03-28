@@ -717,27 +717,6 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Add an object that will be considered a UI object. It will be rendered in the last stage and with orthographic projection.
-   * @param object
-   * @param screenPos Screen space position of object (in pixels).
-   * @param size Pixel width and height of the object.
-   */
-  addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
-    if (this.isDisposed) return;
-
-    this.revealManager.addUiObject(object, screenPos, size);
-  }
-
-  /** Removes the UI object from the viewer.
-   * @param object
-   */
-  removeUiObject(object: THREE.Object3D): void {
-    if (this.isDisposed) return;
-
-    this.revealManager.removeUiObject(object);
-  }
-
-  /**
    * Sets the color used as the clear color of the renderer.
    * @param color
    */

@@ -65,7 +65,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   public dispose(): void {
     super.dispose();
-    this._viewer.removeUiObject(this._axisGroup);
+    this._viewer.removeObject3D(this._axisGroup);
     this._disposeClickDiv();
   }
 

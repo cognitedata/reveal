@@ -235,18 +235,6 @@ export class RevealManager {
     }
   }
 
-  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
-    // this._effectRenderManager.addUiObject(object, screenPos, size);
-    // this.requestRedraw();
-    // throw new Error('Not implemented');
-  }
-
-  public removeUiObject(object: THREE.Object3D): void {
-    // this._effectRenderManager.removeUiObject(object);
-    // this.requestRedraw();
-    // throw new Error('Not implemented');
-  }
-
   private notifyLoadingStateChanged(loadingState: LoadingState) {
     this._events.loadingStateChanged.fire(loadingState);
   }
