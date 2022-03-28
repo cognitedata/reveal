@@ -36,7 +36,7 @@ export async function createManagerAndLoadModel(
   modelRevision: { modelId: number, revisionId: number } | undefined,
   modelUrl: { fileName: string | undefined } | undefined
 ): Promise<{ revealManager: RevealManager, model: CadNode | PointCloudNode }> {
-  let renderables: any[] = [];
+  let renderables: any = [];
   if (modelRevision) {
     const revealManager = createCdfRevealManager(sdkClient, renderer, scene, renderables, { logMetrics: false });
     switch (modelType) {

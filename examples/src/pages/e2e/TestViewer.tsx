@@ -122,7 +122,7 @@ export function TestViewer(props: Props) {
       });
 
       let scene = new THREE.Scene();
-      let renderables: any[] = [];
+      let renderables: any = [];
 
       const renderOptions: RenderOptions = {
         ...defaultRenderOptions,

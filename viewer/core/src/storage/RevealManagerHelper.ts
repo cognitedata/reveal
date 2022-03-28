@@ -55,12 +55,14 @@ export class RevealManagerHelper {
    * @param renderer
    * @param scene
    * @param renderables
+   * @param renderables.cadModels
+   * @param renderables.customObjects
    * @param revealOptions
    */
   static createLocalHelper(
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
-    renderables: IdentifiedModel[],
+    renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
     revealOptions: RevealOptions
   ): RevealManagerHelper {
     const revealManager = createLocalRevealManager(renderer, scene, renderables, revealOptions);
@@ -72,13 +74,15 @@ export class RevealManagerHelper {
    * @param renderer
    * @param scene
    * @param renderables
+   * @param renderables.cadModels
+   * @param renderables.customObjects
    * @param revealOptions
    * @param sdkClient
    */
   static createCdfHelper(
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
-    renderables: IdentifiedModel[],
+    renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
     revealOptions: RevealOptions,
     sdkClient: CogniteClient
   ): RevealManagerHelper {
@@ -89,7 +93,7 @@ export class RevealManagerHelper {
   static createCustomDataSourceHelper(
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
-    renderables: IdentifiedModel[],
+    renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
     revealOptions: RevealOptions,
     dataSource: DataSource
   ): RevealManagerHelper {

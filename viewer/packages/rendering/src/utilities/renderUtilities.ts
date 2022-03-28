@@ -37,13 +37,15 @@ export enum RenderLayer {
 export function setupGeometryLayers(
   materialManager: CadMaterialManager,
   identifiedModels?: IdentifiedModel[],
-  customObjects?: THREE.Group
+  customObjects?: THREE.Object3D[]
 ): void {
   identifiedModels?.forEach(identifiedModel => setModelRenderLayers(identifiedModel, materialManager));
 
-  customObjects?.traverse(node => {
-    const customRenderOrder = node.renderOrder > 0 ? RenderLayer.CustomDeferred : RenderLayer.CustomNormal;
-    node.layers.set(customRenderOrder);
+  customObjects?.forEach(customObject => {
+    customObject.traverse(node => {
+      const customRenderOrder = node.renderOrder > 0 ? RenderLayer.CustomDeferred : RenderLayer.CustomNormal;
+      node.layers.set(customRenderOrder);
+    });
   });
 }
 

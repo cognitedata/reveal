@@ -33,13 +33,15 @@ import { CogniteClient } from '@cognite/sdk';
  * @param renderer
  * @param scene
  * @param renderables
+ * @param renderables.cadModels
+ * @param renderables.customObjects
  * @param revealOptions
  * @returns RevealManager instance.
  */
 export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
-  renderables: IdentifiedModel[],
+  renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
   revealOptions: RevealOptions = {}
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
@@ -62,13 +64,15 @@ export function createLocalRevealManager(
  * @param renderer
  * @param scene
  * @param renderables
+ * @param renderables.cadModels
+ * @param renderables.customObjects
  * @param revealOptions
  */
 export function createCdfRevealManager(
   client: CogniteClient,
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
-  renderables: IdentifiedModel[],
+  renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
   revealOptions: RevealOptions = {}
 ): RevealManager {
   const applicationId = getSdkApplicationId(client);
@@ -96,6 +100,8 @@ export function createCdfRevealManager(
  * @param renderer
  * @param scene
  * @param renderables
+ * @param renderables.cadModels
+ * @param renderables.customObjects
  * @param revealOptions
  */
 export function createRevealManager(
@@ -105,7 +111,7 @@ export function createRevealManager(
   modelDataProvider: ModelDataProvider,
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
-  renderables: IdentifiedModel[],
+  renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
   revealOptions: RevealOptions = {}
 ): RevealManager {
   MetricsLogger.init(revealOptions.logMetrics !== false, project, applicationId, {
@@ -115,8 +121,14 @@ export function createRevealManager(
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
   const materialManager = new CadMaterialManager();
   const pipelineExecutor = new BasicPipelineExecutor(renderer);
-  const defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderOptions, renderables);
-  const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, renderables);
+  const defaultRenderPipeline = new DefaultRenderPipeline(
+    materialManager,
+    scene,
+    renderOptions,
+    renderables.cadModels,
+    renderables.customObjects
+  );
+  const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, renderables.cadModels);
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,

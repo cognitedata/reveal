@@ -24,7 +24,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _cadScene: THREE.Scene;
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: IdentifiedModel[];
-  private readonly _customObjects: THREE.Group;
+  private readonly _customObjects: THREE.Object3D[];
   private readonly _defaultRenderPipelinePasses: DefaultRenderPipelinePasses;
   private _renderOptions: RenderOptions;
 
@@ -52,7 +52,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     scene: THREE.Scene,
     renderOptions: RenderOptions,
     cadModels?: IdentifiedModel[],
-    customObjects?: THREE.Group
+    customObjects?: THREE.Object3D[]
   ) {
     const multisampleCount = renderOptions.multiSampleCountHint ?? 0;
 
@@ -182,7 +182,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     });
     this._cadScene.autoUpdate = false;
 
-    this._customObjects?.updateMatrixWorld(true);
+    this._customObjects?.forEach(customObject => customObject.updateMatrixWorld(true));
 
     this.updateRenderTargetSizes(renderer);
   }

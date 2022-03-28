@@ -126,7 +126,7 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModelBase[] = [];
-  private readonly _renderables: IdentifiedModel[] = [];
+  private readonly _renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] };
   private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
@@ -219,6 +219,8 @@ export class Cognite3DViewer {
 
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
+
+    this._renderables = { cadModels: [], customObjects: this._extraObjects };
 
     this._mouseHandler = new InputHandler(this.canvas);
 
@@ -555,7 +557,7 @@ export class Cognite3DViewer {
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this._renderables.push({ model: model3d, modelIdentifier: cadNode.cadModelIdentifier });
+    this._renderables.cadModels.push({ model: model3d, modelIdentifier: cadNode.cadModelIdentifier });
     this.scene.add(model3d);
 
     return model3d;
@@ -684,9 +686,9 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this.scene.add(object);
     object.updateMatrixWorld(true);
     this._extraObjects.push(object);
+    this.scene.add(object);
     this.renderController.redraw();
     this.recalculateBoundingBox();
   }
