@@ -12,6 +12,7 @@ import { ThemeProvider } from 'styled-components';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import collapseStyle from 'rc-collapse/assets/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { EXTRACTION_PIPELINES } from 'utils/constants';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import { Route, Router, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
@@ -66,7 +67,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <SDKProvider sdk={sdk}>
         <AppScopeStyles>
-          <SubAppWrapper title="Extraction Pipelines">
+          <SubAppWrapper title={EXTRACTION_PIPELINES}>
             <AuthWrapper
               loadingScreen={<Loader />}
               login={() => loginAndAuthIfNeeded(project, env)}
