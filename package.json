@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-data-sets",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=3080 WDS_SOCKET_HOST=localhost PORT=3080 react-app-rewired --max_old_space_size=2000 start",
