@@ -43,7 +43,14 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
     const type = this.schemaAst!.getObjectType(typeName);
     if (updates.name && updates.name !== type.getName()) {
+      // Should probably use updateType() but that function is not exposed for some reason??
+      // https://graphql-extra.netlify.app/classes/documentapi.html#updatetype
       type.setName(updates.name);
+      this.schemaAst!.typeMap.set(
+        updates.name,
+        this.schemaAst!.typeMap.get(typeName)!
+      );
+      this.schemaAst!.typeMap.delete(typeName);
     }
 
     if (updates.description && updates.name !== type.getDescription()) {

@@ -85,6 +85,7 @@ export function UIEditor({
       const updatedGqlSchema = dataModelService.buildSchemaString();
       setCurrentGraphqlSchema(updatedGqlSchema);
       onSchemaChange(updatedGqlSchema);
+      setCustomTypesNames(dataModelService.getCustomTypesNames(newState));
     },
     []
   );
@@ -131,7 +132,6 @@ export function UIEditor({
       : dataModelService.addType(solutionDataModel, capitalizedTypeName);
 
     updateUiState(newState, capitalizedTypeName);
-    setCustomTypesNames(dataModelService.getCustomTypesNames(newState));
   };
 
   const onFieldCreate = () => {
