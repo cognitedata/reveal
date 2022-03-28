@@ -148,13 +148,25 @@ export const BulkEditModalContent = ({
           }));
         });
       } catch (e: any) {
-        setErrors({
-          ...errors,
-          [BulkEditOptions.assets]: {
-            message: e.errors[0].message,
-            description: '',
-          },
-        });
+        const error = e.errors[0].message.split(' | ')[0];
+
+        if (error === 'Asset id not found') {
+          setErrors({
+            ...errors,
+            [BulkEditOptions.assets]: {
+              message: 'Some files are linked to non-existing assets',
+              description: 'Please remove these and try again',
+            },
+          });
+        } else {
+          setErrors({
+            ...errors,
+            [BulkEditOptions.assets]: {
+              message: e.errors[0].message,
+              description: '',
+            },
+          });
+        }
       }
     })();
   }, [selectedBulkEditOption, unsavedAssetIds?.addedAssetIds]);
