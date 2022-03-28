@@ -4,7 +4,7 @@ import { localPoint } from '@visx/event';
 import { Bar, Line } from '@visx/shape';
 import { Portal, Tooltip, defaultStyles, useTooltip } from '@visx/tooltip';
 
-import { bisector, format as formatNumber } from 'd3';
+import { bisector } from 'd3';
 import { formatISO9075 } from 'date-fns';
 import styled from 'styled-components/macro';
 
@@ -80,11 +80,11 @@ export function usePortalTooltip({
         typeof x === 'object' && x instanceof Date
           ? formatISO9075(x)
           : (x ?? 'n/a').toString();
+      const y = getY(data);
+      const yLabel = y !== undefined ? getFormattedSciNumber(y) : 'n/a';
       return (
         <>
-          <strong className="tooltip-y">
-            {getFormattedSciNumber(getY(data))}
-          </strong>
+          <strong className="tooltip-y">{yLabel}</strong>
           <span className="tooltip-x">{xLabel}</span>
         </>
       );

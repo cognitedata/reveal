@@ -9,7 +9,7 @@ import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { Select, Skeleton, Switch } from '@cognite/cogs.js';
+import { Select, Switch } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import type { DatapointAggregate } from '@cognite/sdk';
 import type {
@@ -297,11 +297,9 @@ export function DataSamplingStep() {
             </FormRow>
           </div>
           <div className="chart short">
-            {lcTimeseries.data.length >= 2 && isValid ? (
-              logicalCheckChart
-            ) : (
-              <Skeleton.Rectangle height="100%" width="100%" />
-            )}
+            {lcTimeseries.data.length >= 2 && isValid
+              ? logicalCheckChart
+              : null}
           </div>
         </ChartContainer>
       ) : null}
@@ -362,11 +360,9 @@ export function DataSamplingStep() {
             </FormRow>
           </div>
           <div className="chart">
-            {ssdTimeseries.data.length >= 2 && isValid ? (
-              steadyStateDetectionChart
-            ) : (
-              <Skeleton.Rectangle height="100%" width="100%" />
-            )}
+            {ssdTimeseries.data.length >= 2 && isValid
+              ? steadyStateDetectionChart
+              : null}
           </div>
         </ChartContainer>
       ) : null}

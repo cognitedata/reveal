@@ -47,24 +47,23 @@ export function BoundaryConditionTable({
               value={current}
             />
             <div className="change">
-              {previous && previous < current ? (
-                <Tooltip
-                  content={
-                    <>Previous value: {getFormattedSciNumber(previous)}</>
-                  }
-                >
-                  <span className="higher">▴</span>
-                </Tooltip>
-              ) : null}
-              {previous && previous > current ? (
-                <Tooltip
-                  content={
-                    <>Previous value: {getFormattedSciNumber(previous)}</>
-                  }
-                >
-                  <span className="lower">▾</span>
-                </Tooltip>
-              ) : null}
+              <Tooltip
+                content={
+                  <>
+                    Previous value:{' '}
+                    {previous ? getFormattedSciNumber(previous) : 'n/a'}
+                  </>
+                }
+              >
+                <>
+                  {previous && previous > current ? (
+                    <span className="lower">▾</span>
+                  ) : null}
+                  {previous && current > previous ? (
+                    <span className="higher">▴</span>
+                  ) : null}
+                </>
+              </Tooltip>
             </div>
             <div
               className={classNames('value', {

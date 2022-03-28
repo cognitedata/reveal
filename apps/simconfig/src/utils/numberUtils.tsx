@@ -40,18 +40,22 @@ export const formatSciValue = (input: number) => {
   return getSciNumber(input.toFixed(DECIMAL_LIMIT));
 };
 
-export const getFormattedSciNumber = (input: number) => {
-  const { base, exponent } = formatSciValue(input);
+export const getFormattedSciNumber = (input: number | string) => {
+  try {
+    const { base, exponent } = formatSciValue(+input);
 
-  return (
-    <span className="number">
-      {base}
-      {exponent !== 0 && (
-        <span>
-          {' '}
-          × 10<sup>{exponent}</sup>
-        </span>
-      )}
-    </span>
-  );
+    return (
+      <span className="number">
+        {base}
+        {exponent !== 0 && (
+          <span>
+            {' '}
+            × 10<sup>{exponent}</sup>
+          </span>
+        )}
+      </span>
+    );
+  } catch (e) {
+    return <span className="number">{input}</span>;
+  }
 };

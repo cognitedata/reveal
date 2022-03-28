@@ -23,6 +23,8 @@ import sidecar from 'utils/sidecar';
 
 import { enhanceSimconfigApiEndpoints } from './enhanceSimconfigApiEndpoints';
 
+const location = new ReactLocation();
+
 export default function App() {
   const dispatch = useAppDispatch();
   const { client, authState, reauthenticate } = useAuthContext();
@@ -70,8 +72,6 @@ export default function App() {
     handleReauth();
     return null;
   }
-
-  const location = new ReactLocation();
 
   return (
     <>
