@@ -27,6 +27,10 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _customObjects: THREE.Object3D[];
   private readonly _defaultRenderPipelinePasses: DefaultRenderPipelinePasses;
   private _renderOptions: RenderOptions;
+  private _outputRenderTarget: { target: THREE.WebGLRenderTarget; autoUpdateSize: boolean } = {
+    target: null,
+    autoUpdateSize: true
+  };
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -45,6 +49,10 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._renderTargetData.inFront.samples = renderOptions.multiSampleCountHint ?? 0;
 
     this._renderOptions = cloneDeep(renderOptions);
+  }
+
+  public setOutputRenderTarget(renderTarget: THREE.WebGLRenderTarget, autoUpdateSize = true): void {
+    this._outputRenderTarget = { target: renderTarget, autoUpdateSize: autoUpdateSize };
   }
 
   constructor(
@@ -93,7 +101,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
   private *blitToCanvas(renderer: THREE.WebGLRenderer) {
     const blitToOutput = this._defaultRenderPipelinePasses.blitToOutput;
-    renderer.setRenderTarget(null);
+    renderer.setRenderTarget(this._outputRenderTarget.target);
     yield blitToOutput;
   }
 
@@ -278,5 +286,9 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._renderTargetData.ssao.setSize(width, height);
 
     this._renderTargetData.currentRenderSize.set(width, height);
+
+    if (this._outputRenderTarget.target !== null && this._outputRenderTarget.autoUpdateSize) {
+      this._outputRenderTarget.target.setSize(width, height);
+    }
   }
 }

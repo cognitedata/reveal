@@ -106,7 +106,7 @@ async function init() {
     scene,
     defaultRenderOptions,
     [{ model, modelIdentifier: model.cadModelIdentifier }],
-    customObjects
+    customObjects.children
   );
 
   const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, [

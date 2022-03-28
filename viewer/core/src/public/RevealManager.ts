@@ -192,9 +192,7 @@ export class RevealManager {
    * @param autoSetTargetSize Auto size target to fit canvas.
    */
   public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true): void {
-    // this._effectRenderManager.setRenderTarget(target);
-    // this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
-    // throw new Error('Not implemented');
+    this._renderPipeline.setOutputRenderTarget(target, autoSetTargetSize);
   }
 
   public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
