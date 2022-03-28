@@ -231,7 +231,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   }
 
   async loadPoints(): Promise<void> {
-    this._ept.loader.load(this);
+    return this._ept.loader.load(this);
   }
 
   async loadHierarchy(): Promise<void> {
