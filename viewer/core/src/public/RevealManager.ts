@@ -45,11 +45,7 @@ export class RevealManager {
 
   private readonly _updateSubject: Subject<void>;
 
-  constructor(
-    cadManager: CadManager,
-    renderManager: EffectRenderManager,
-    pointCloudManager: PointCloudManager
-  ) {
+  constructor(cadManager: CadManager, renderManager: EffectRenderManager, pointCloudManager: PointCloudManager) {
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
