@@ -66,7 +66,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <SDKProvider sdk={sdk}>
         <AppScopeStyles>
-          <SubAppWrapper padding={false}>
+          <SubAppWrapper title="Extraction Pipelines">
             <AuthWrapper
               loadingScreen={<Loader />}
               login={() => loginAndAuthIfNeeded(project, env)}
