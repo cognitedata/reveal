@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { createContext, ReactNode, useState, useContext } from 'react';
 import { DataSetsState } from './types';
 import { CreationDataSet } from '../utils/types';
 
@@ -9,14 +9,14 @@ export const DataSetsContextDefault: DataSetsState = {
   mode: 'create',
 };
 
-export const DataSetsContext = React.createContext<DataSetsState>(
+export const DataSetsContext = createContext<DataSetsState>(
   DataSetsContextDefault
 );
 
 export const DataSetsContextProvider = ({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   const [selectedDataSet, setSelectedDataSet] = useState<number>();
   const [creationDataSet, setCreationDataSet] = useState<CreationDataSet>();

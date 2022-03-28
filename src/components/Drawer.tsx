@@ -1,9 +1,9 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import styled from 'styled-components';
 
 import { Button } from '@cognite/cogs.js';
 import AntdDrawer, { DrawerProps as AntdDrawerProps } from 'antd/lib/drawer';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import noop from 'lodash/noop';
 
 interface DrawerProps extends AntdDrawerProps {

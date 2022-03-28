@@ -8,10 +8,7 @@ import isString from 'lodash/isString';
 import isDate from 'lodash/isDate';
 import isObject from 'lodash/isObject';
 import { APIDataSet, DataSet } from './types';
-
-import { styleScope } from './styleScope';
-
-export { styleScope } from './styleScope';
+import { styleScope } from 'styles/styleScope';
 
 export const stringifyMetaData = (dataSet: { metadata: {} }) => {
   const newDataset = JSON.parse(JSON.stringify(dataSet));
@@ -307,9 +304,6 @@ export const getContainer = () => {
   const el = els.item(0)! as HTMLElement;
   return el;
 };
-
-export const projectName = () =>
-  new URL(window.location.href).pathname.split('/')[1];
 
 export const azureClusters: string[] = [
   'azure-dev',

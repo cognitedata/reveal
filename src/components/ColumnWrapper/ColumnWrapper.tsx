@@ -1,4 +1,3 @@
-import React from 'react';
 import Typography from 'antd/lib/typography';
 import Popover from 'antd/lib/popover';
 

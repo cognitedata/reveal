@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import Breadcrumbs from 'components/Breadcrumbs';
 import theme from 'styles/theme';
 import { Icon } from '@cognite/cogs.js';
 import Tooltip from 'antd/lib/tooltip';
-import { projectName, getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import Drawer from 'antd/lib/drawer';
 import Iframe from 'react-iframe';
 import { trackEvent } from '@cognite/cdf-route-tracker';
+import { getProject } from '@cognite/cdf-utilities';
 
 const Title = styled.h5`
   color: black;
@@ -66,8 +67,8 @@ interface NewHeaderProps {
   title: string | JSX.Element;
   subtitle?: string | JSX.Element;
   breadcrumbs?: { title: string; path?: string }[];
-  rightItem?: React.ReactElement;
-  leftItem?: React.ReactElement;
+  rightItem?: ReactElement;
+  leftItem?: ReactElement;
   ornamentColor?: string;
   help?: string;
 }
@@ -122,7 +123,7 @@ const NewHeader = ({
                       'Applications.OperationSupport.Assets.Clicked help',
                       {
                         url: help,
-                        projectName: projectName(),
+                        projectName: getProject(),
                       }
                     );
                     setHelpVisible(true);

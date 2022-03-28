@@ -1,5 +1,4 @@
-import React from 'react';
-import { getStringCdfEnv } from 'utils/utils';
+import { getStringCdfEnv } from 'utils/shared';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { RawWithUpdateTime } from 'components/Lineage/Lineage';
 import { RawExtpipeWithUpdateTime } from 'components/Lineage/Extpipe/ExtpipeRawTables';

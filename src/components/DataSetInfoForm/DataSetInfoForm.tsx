@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Select from 'antd/lib/select';
 import Col from 'antd/lib/col';
 import theme from 'styles/theme';
@@ -16,7 +16,7 @@ import {
 } from 'utils/styledComponents';
 import { Group } from '@cognite/sdk';
 import Tag from 'antd/lib/tag';
-import { getReadableCapabilities, getContainer } from 'utils/utils';
+import { getReadableCapabilities, getContainer } from 'utils/shared';
 import InfoTooltip from 'components/InfoTooltip';
 import Collapse from 'antd/lib/collapse';
 import { useCdfGroups, useLabelSuggestions } from 'actions';

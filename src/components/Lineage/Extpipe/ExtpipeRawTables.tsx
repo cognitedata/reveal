@@ -1,4 +1,4 @@
-import React, {
+import {
   FunctionComponent,
   PropsWithChildren,
   useCallback,
@@ -16,7 +16,7 @@ import {
 import { rawTablesColumnsWithExtpipe } from 'components/Lineage/rawTableColumns';
 import { Extpipe, RawTable } from 'utils/types';
 import { DataSetWithExtpipes } from 'actions';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import {
   combineDataSetAndExtpipesRawTables,
   updateRawTableWithLastUpdate,

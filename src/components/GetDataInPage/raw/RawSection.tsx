@@ -1,4 +1,4 @@
-import React, {
+import {
   Dispatch,
   FunctionComponent,
   PropsWithChildren,
@@ -14,7 +14,7 @@ import {
 } from 'utils/styledComponents';
 import RawSelector from 'components/RawSelector';
 import { RawTable } from 'utils/types';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
 import Input from 'antd/lib/input';

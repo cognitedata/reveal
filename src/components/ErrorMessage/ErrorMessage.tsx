@@ -1,4 +1,4 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
+import { FunctionComponent, PropsWithChildren } from 'react';
 import { generateStatusMessage } from 'utils/errorUtils';
 import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';

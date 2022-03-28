@@ -5,11 +5,10 @@ import message from 'antd/lib/message';
 import Table from 'antd/lib/table';
 import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import { DataSet } from 'utils/types';
-import * as Sentry from '@sentry/browser';
-import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/utils';
+import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/shared';
 import Drawer from 'components/Drawer';
 import {
   InfoSubtitle,
@@ -229,7 +228,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           }`
         );
       })
-      .catch((err) => Sentry.captureException(err));
+      .catch(() => null);
   };
 
   return (

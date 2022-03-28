@@ -1,5 +1,5 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { isOidcEnv } from 'utils/utils';
+import { FunctionComponent, PropsWithChildren } from 'react';
+import { isOidcEnv } from 'utils/shared';
 
 interface OidcCheckProps {}
 

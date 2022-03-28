@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Drawer from 'components/Drawer';
 import { Group } from '@cognite/sdk';

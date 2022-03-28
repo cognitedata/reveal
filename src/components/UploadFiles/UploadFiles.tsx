@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
 import { Upload } from 'antd';
 import message from 'antd/lib/message';
@@ -13,7 +13,7 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
 import { FileInfo } from 'utils/types';
-import { nameToAclTypeMap } from 'utils/utils';
+import { nameToAclTypeMap } from 'utils/shared';
 
 interface UploadFileProps {
   setFileList(value: FileInfo[]): void;

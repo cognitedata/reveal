@@ -1,4 +1,4 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
+import { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import Table from 'antd/lib/table';
 import Timeline from 'antd/lib/timeline';
@@ -6,7 +6,7 @@ import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { createLink, getEnv } from '@cognite/cdf-utilities';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import InfoTooltip from 'components/InfoTooltip';
 import { DataSetWithExtpipes } from 'actions';
 import {

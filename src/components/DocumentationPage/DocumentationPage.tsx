@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Col from 'antd/lib/col';
 import { Button } from '@cognite/cogs.js';
 import Radio from 'antd/lib/radio';
@@ -13,7 +13,7 @@ import {
 } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import documentationIcon from 'assets/documentationIcon.svg';
-import { isNotNilOrWhitespace } from 'utils/utils';
+import { isNotNilOrWhitespace } from 'utils/shared';
 import UploadFiles from '../UploadFiles';
 import LinksList from '../LinksList';
 import InfoTooltip from '../InfoTooltip';

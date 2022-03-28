@@ -1,8 +1,6 @@
-import React from 'react';
-import * as Sentry from '@sentry/browser';
 import notification from 'antd/lib/notification';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 
 interface ApiError {
   duplicated: [];
@@ -21,7 +19,6 @@ interface ErrorNotificationProps extends ApiError {
   message?: string;
   description?: string;
   duration?: number;
-  sendToSentry?: boolean;
 }
 
 const generateStatusMessage = (errorCode: number): string | null => {
@@ -65,15 +62,11 @@ const generateErrorDescription = (
 };
 
 export const handleError = (props: ErrorNotificationProps): void => {
-  const { description, duration = 6, status, sendToSentry = true } = props;
+  const { description, duration = 6 } = props;
   const errorObject: ApiError = { ...props };
 
   const errorTitle = generateErrorTitle('Something went wrong');
   const errorDescription = generateErrorDescription(errorObject, description);
-
-  if (status !== 401 && status !== 403 && sendToSentry) {
-    Sentry.captureException(errorObject);
-  }
 
   return notification.error({
     message: errorTitle,

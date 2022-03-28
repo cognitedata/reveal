@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Spin from 'antd/lib/spin';
 import Card from 'antd/lib/card';
 import Tooltip from 'antd/lib/tooltip';
@@ -16,7 +16,7 @@ import jetfireIcon from 'assets/jetfireIcon.svg';
 import getDataInIcon from 'assets/getDataInIcon.svg';
 import documentationIcon from 'assets/documentationIcon.svg';
 import dataConsumerIcon from 'assets/DataConsumer.svg';
-import { getContainer, isNotNilOrWhitespace } from 'utils/utils';
+import { getContainer, isNotNilOrWhitespace } from 'utils/shared';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useUserInformation } from 'hooks/useUserInformation';
 import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';

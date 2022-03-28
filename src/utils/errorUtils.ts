@@ -1,6 +1,5 @@
-import * as Sentry from '@sentry/browser';
 import notification from 'antd/lib/notification';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 import { DataSetError } from 'components/ErrorMessage/ErrorMessage';
 
 interface HandleErrorParams {
@@ -10,9 +9,6 @@ interface HandleErrorParams {
 
 export const handleError = (errorObject: HandleErrorParams) => {
   const { status } = errorObject;
-  if (status !== 401 && status !== 403) {
-    Sentry.captureException(errorObject);
-  }
   if (status >= 500) {
     notification.error({
       message: errorObject.message,

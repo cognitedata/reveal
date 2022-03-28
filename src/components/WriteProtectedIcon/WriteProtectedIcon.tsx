@@ -1,4 +1,3 @@
-import React from 'react';
 import lockIcon from 'assets/lockIcon.svg';
 import InfoTooltip from '../InfoTooltip';
 

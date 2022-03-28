@@ -1,21 +1,30 @@
-import queryString from 'query-string';
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import { getProject, isDevelopment } from '@cognite/cdf-utilities';
 import { Metrics } from '@cognite/metrics';
 
-export const projectName = () =>
-  new URL(window.location.href).pathname.split('/')[1];
+export const trackUsage = (
+  event: string,
+  username?: string,
+  metadata?: { [key: string]: any }
+) => {
+  const { host, pathname } = window?.location;
+  if (!host || !pathname) {
+    return;
+  }
 
-export const getCdfEnvFromUrl = () =>
-  queryString.parse(window.location.search).env as string | undefined;
+  const pathWithoutProjectName = pathname.substring(pathname.indexOf('/', 1));
 
-export const checkUrl = (env: string) => window.location.hostname.includes(env);
-export const isDevelopment = () => checkUrl('dev') || checkUrl('localhost');
-export const isStaging = () => checkUrl('staging') || checkUrl('pr');
-export const isProduction = () => !(isStaging() || isDevelopment());
-
-export const getEnvironment = () => {
-  if (isDevelopment()) return 'development';
-  if (isStaging()) return 'staging';
-  return 'production';
+  if (!host.includes('localhost')) {
+    trackEvent(`data-sets.${event}`, {
+      ...metadata,
+      project: getProject(),
+      version: 1,
+      appVersion: process.env.REACT_APP_VERSION,
+      location: pathname,
+      user: username,
+      pathname: pathWithoutProjectName,
+    });
+  }
 };
 
 export const setupMixpanel = () => {
@@ -45,8 +54,4 @@ export const handleUserIdentification = (email: string) => {
     email,
     name: email,
   });
-};
-
-export default {
-  env: getEnvironment(),
 };

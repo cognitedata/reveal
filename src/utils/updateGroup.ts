@@ -1,7 +1,7 @@
 import { Group, ServiceAccount, GroupSpec } from '@cognite/sdk';
 import omit from 'lodash/omit';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { isOidcEnv } from 'utils/utils';
+import { isOidcEnv } from 'utils/shared';
 import { UpdateGroupData } from './types';
 import { retry } from './retry';
 

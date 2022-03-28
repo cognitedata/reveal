@@ -1,6 +1,5 @@
-import React from 'react';
 import Spin from 'antd/lib/spin';
-import { isOidcEnv } from 'utils/utils';
+import { isOidcEnv } from 'utils/shared';
 import { useCdfGroups } from 'actions';
 import { TitleOrnament, MiniInfoTitle } from 'utils/styledComponents';
 import Owners from './Owners';

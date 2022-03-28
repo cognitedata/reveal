@@ -1,4 +1,3 @@
-import React from 'react';
 import moment from 'moment';
 import { Tooltip } from '@cognite/cogs.js';
 import { toString as cronstureToString } from 'cronstrue';

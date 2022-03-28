@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getContainer } from 'utils/utils';
+import { getContainer } from 'utils/shared';
 
 import NewHeader from 'components/NewHeader';
 import Spin from 'antd/lib/spin';
@@ -30,17 +30,13 @@ import { useSelectedDataSet } from '../../context/index';
 
 const { TabPane } = Tabs;
 
-interface DataSetDetailsRouteParams {
-  dataSetId: string;
-}
-
 const DataSetDetails = (): JSX.Element => {
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
 
   const { appPath } = useParams<{ appPath: string }>();
 
-  const { dataSetId } = useParams<DataSetDetailsRouteParams>();
+  const { dataSetId } = useParams();
 
   const {
     dataSetWithExtpipes,

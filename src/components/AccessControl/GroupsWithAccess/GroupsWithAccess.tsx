@@ -1,4 +1,3 @@
-import React from 'react';
 import Table from 'antd/lib/table';
 import Tag from 'antd/lib/tag';
 
@@ -7,7 +6,7 @@ import {
   isCapScopedOnDataSets,
   isGroupScopedOnDataSets,
   getContainer,
-} from 'utils/utils';
+} from 'utils/shared';
 
 interface GroupsWithAccessProps {
   dataSetId: number;
