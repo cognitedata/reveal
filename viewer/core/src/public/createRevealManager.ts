@@ -112,7 +112,7 @@ export function createRevealManager(
       continuousModelStreaming: revealOptions.continuousModelStreaming
     }
   );
-  return new RevealManager(cadManager, renderManager, pointCloudManager, renderer);
+  return new RevealManager(cadManager, renderManager, pointCloudManager);
 }
 
 /**

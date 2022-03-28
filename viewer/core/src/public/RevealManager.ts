@@ -30,7 +30,6 @@ export class RevealManager {
   private readonly _cadManager: CadManager;
   private readonly _pointCloudManager: PointCloudManager;
   private readonly _effectRenderManager: EffectRenderManager;
-  private readonly _renderer: THREE.WebGLRenderer;
 
   private readonly _lastCamera = {
     position: new THREE.Vector3(NaN, NaN, NaN),
@@ -49,13 +48,11 @@ export class RevealManager {
   constructor(
     cadManager: CadManager,
     renderManager: EffectRenderManager,
-    pointCloudManager: PointCloudManager,
-    renderer: THREE.WebGLRenderer
+    pointCloudManager: PointCloudManager
   ) {
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
-    this._renderer = renderer;
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
     this._updateSubject = new Subject();
     this._updateSubject
