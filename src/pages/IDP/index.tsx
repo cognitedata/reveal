@@ -301,7 +301,7 @@ const LegacyIdentityProviderForm = () => {
             disabled={!writeOk}
             buttonStyle="solid"
             value={identityProvider}
-            onChange={e => setIdentityProvider(e.target.value)}
+            onChange={(e) => setIdentityProvider(e.target.value)}
           >
             <Radio.Button value="current">Use current</Radio.Button>
             &nbsp;
@@ -401,7 +401,7 @@ const LegacyIdentityProviderForm = () => {
         <Form.Item label="Allowed Cognite applications">
           {renderApplicationCheckboxes(
             appDomains.value || defaultAppDomains,
-            domains => setAppDomains({ value: domains }),
+            (domains) => setAppDomains({ value: domains }),
             !useAppDomains.value && !isAppDomainsSet
           )}
         </Form.Item>
@@ -438,7 +438,7 @@ function isApplicationEnabled(
   domains: string[] = []
 ): boolean {
   return [...application.domains, ...ALL_APPS_DOMAINS].every(
-    domain => domains.indexOf(domain) >= 0
+    (domain) => domains.indexOf(domain) >= 0
   );
 }
 
@@ -446,7 +446,7 @@ function isApplicationPartiallyEnabled(
   application: Application,
   domains: string[]
 ): boolean {
-  return application.domains.some(domain => domains.indexOf(domain) >= 0);
+  return application.domains.some((domain) => domains.indexOf(domain) >= 0);
 }
 
 function renderApplicationCheckboxes(
@@ -454,7 +454,7 @@ function renderApplicationCheckboxes(
   setDomains: (newDomains: string[]) => void,
   disabled: boolean
 ): React.ReactNode {
-  return COGNITE_APPLICATIONS.map(application => {
+  return COGNITE_APPLICATIONS.map((application) => {
     const containsAll = isApplicationEnabled(application, domains);
     const containsSome = isApplicationPartiallyEnabled(application, domains);
 
@@ -464,7 +464,7 @@ function renderApplicationCheckboxes(
       <div>
         <Tooltip
           placement="right"
-          title={application.domains.map(item => (
+          title={application.domains.map((item) => (
             <div>{item}</div>
           ))}
           overlayStyle={{ maxWidth: '400px' }}
@@ -473,14 +473,14 @@ function renderApplicationCheckboxes(
             checked={containsAll}
             indeterminate={containsSome && !containsAll}
             disabled={disabled || disableUnchecked}
-            onChange={e => {
+            onChange={(e) => {
               if (e.target.checked) {
                 setDomains(
                   removeDuplicates([
                     ...domains,
                     ...ALL_APPS_DOMAINS,
                     ...application.domains.filter(
-                      domain => domains.indexOf(domain) < 0
+                      (domain) => domains.indexOf(domain) < 0
                     ),
                   ])
                 );
@@ -488,7 +488,7 @@ function renderApplicationCheckboxes(
                 setDomains(
                   removeDuplicates(
                     domains.filter(
-                      domain => application.domains.indexOf(domain) < 0
+                      (domain) => application.domains.indexOf(domain) < 0
                     )
                   )
                 );

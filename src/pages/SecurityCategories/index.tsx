@@ -66,7 +66,7 @@ export default function SecurityCategories() {
           <Form layout="horizontal">
             <Form.Item name="name" label="Name">
               <Input
-                onChange={e => setNewName(e.target.value)}
+                onChange={(e) => setNewName(e.target.value)}
                 value={newName}
               />
             </Form.Item>
@@ -77,7 +77,7 @@ export default function SecurityCategories() {
         <Col>
           <Input.Search
             placeholder="Filter security categories by name/ID"
-            onChange={e => setSearchValue(e.target.value)}
+            onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
             style={{
@@ -98,7 +98,7 @@ export default function SecurityCategories() {
         columns={columns}
         pagination={{ pageSize: 100, hideOnSinglePage: true }}
         dataSource={data?.filter(
-          s =>
+          (s) =>
             stringContains(s.name, searchValue) ||
             stringContains(String(s.id), searchValue)
         )}

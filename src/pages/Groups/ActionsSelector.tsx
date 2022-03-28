@@ -19,7 +19,7 @@ const ActionsSelector = (props: ActionsSelectorProps) => {
 
   const actions = getCapabilityActions(capabilityType);
 
-  const options = actions.map(action => ({
+  const options = actions.map((action) => ({
     label: getActionLabel(capabilityType, action),
     value: action,
   }));
@@ -58,7 +58,7 @@ const ActionsSelector = (props: ActionsSelectorProps) => {
         onChange={onChange}
         style={{ display: 'block', paddingLeft: 20 }}
       >
-        {options.map(option => (
+        {options.map((option) => (
           <div style={{ margin: '10px 0' }}>
             <Checkbox
               key={option.value}

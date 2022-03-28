@@ -206,4 +206,4 @@ export const COGNITE_APPLICATIONS: Application[] = [
 ];
 
 export const FUSION_APPLICATION: Application | undefined =
-  COGNITE_APPLICATIONS.find(app => app.name === 'Fusion');
+  COGNITE_APPLICATIONS.find((app) => app.name === 'Fusion');

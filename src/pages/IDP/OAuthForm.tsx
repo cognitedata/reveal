@@ -55,7 +55,7 @@ const OAuthForm = (props: OAuthFormProps) => {
         <Input
           value={clientId.value}
           disabled={props.disabled}
-          onChange={e => setClientId({ value: e.target.value })}
+          onChange={(e) => setClientId({ value: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -68,7 +68,7 @@ const OAuthForm = (props: OAuthFormProps) => {
         <Input
           value={clientSecret.value}
           disabled={props.disabled}
-          onChange={e => setClientSecret({ value: e.target.value })}
+          onChange={(e) => setClientSecret({ value: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -81,7 +81,7 @@ const OAuthForm = (props: OAuthFormProps) => {
         <Input
           value={props.loginUrl || loginUrl.value}
           disabled={props.disabled || props.loginUrl != null}
-          onChange={e => setLoginUrl({ value: e.target.value })}
+          onChange={(e) => setLoginUrl({ value: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -94,7 +94,7 @@ const OAuthForm = (props: OAuthFormProps) => {
         <Input
           value={props.logoutUrl || logoutUrl.value}
           disabled={props.disabled || props.logoutUrl != null}
-          onChange={e => setLogoutUrl({ value: e.target.value })}
+          onChange={(e) => setLogoutUrl({ value: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -107,7 +107,7 @@ const OAuthForm = (props: OAuthFormProps) => {
         <Input
           value={props.tokenUrl || tokenUrl.value}
           disabled={props.disabled || props.tokenUrl != null}
-          onChange={e => setTokenUrl({ value: e.target.value })}
+          onChange={(e) => setTokenUrl({ value: e.target.value })}
         />
       </Form.Item>
     </>

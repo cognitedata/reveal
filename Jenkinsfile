@@ -5,7 +5,7 @@ static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 // deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-access-management'
 static final String APPLICATION_REPO_ID = 'fusion-access-management'
-static final String NODE_VERSION = 'node:12'
+static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 
 

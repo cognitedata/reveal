@@ -45,8 +45,9 @@ export default function Groups() {
   const { data: createPermission } = usePermissions('groupsAcl', 'CREATE');
 
   // API is a bit slow, so keep a local copy
-  const [localDefaultGroup, setLocalDefaultGroup] =
-    useState<number | undefined>();
+  const [localDefaultGroup, setLocalDefaultGroup] = useState<
+    number | undefined
+  >();
 
   const { data: project, isFetched: projectFetched } = useQuery(
     ['project', match?.params.tenant],
@@ -207,7 +208,7 @@ export default function Groups() {
         if (g.capabilities && g.capabilities.length > 0) {
           return g.capabilities
             .filter(isDeprecated)
-            .map(c => <CapabilityTag capability={c} />);
+            .map((c) => <CapabilityTag capability={c} />);
         }
 
         return <>No permissions specified</>;
@@ -220,7 +221,7 @@ export default function Groups() {
           align: 'center',
           render(id: number) {
             return (
-              serviceAccounts?.filter(a => a.groups?.includes(id)).length || 0
+              serviceAccounts?.filter((a) => a.groups?.includes(id)).length || 0
             );
           },
         }
@@ -271,10 +272,7 @@ export default function Groups() {
             </Menu>
           }
         >
-          <Icon
-            style={{ cursor: 'pointer' }}
-            type="MoreOverflowEllipsisVertical"
-          />
+          <Icon style={{ cursor: 'pointer' }} type="EllipsisVertical" />
         </Dropdown>
       ),
     },
@@ -286,7 +284,7 @@ export default function Groups() {
         <Col>
           <Input.Search
             placeholder="Filter groups by name, ID or capability"
-            onChange={e => setSearchValue(e.target.value)}
+            onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
             style={{
@@ -310,10 +308,10 @@ export default function Groups() {
         loading={!projectFetched || !groupsFetched}
         columns={columns}
         dataSource={groups?.filter(
-          s =>
+          (s) =>
             stringContains(s.name, searchValue) ||
             stringContains(String(s.id), searchValue) ||
-            s.capabilities?.find(c =>
+            s.capabilities?.find((c) =>
               stringContains(Object.keys(c)[0]!, searchValue)
             )
         )}

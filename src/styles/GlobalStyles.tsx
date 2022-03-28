@@ -1,6 +1,12 @@
 // @ts-nocheck
 import React from 'react';
-
+import { getContainer } from 'utils/utils';
+import { styleScope } from './styleScope';
+import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { useGlobalStyles } from '@cognite/cdf-utilities';
+import { createGlobalStyle } from 'styled-components';
+import tabsStyle from 'antd/es/tabs/style/index.less';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import {
   ConfigProvider,
   Modal,
@@ -9,7 +15,6 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
-
 import alertStyle from 'antd/es/alert/style/index.less';
 import autoCompleteStyle from 'antd/es/auto-complete/style/index.less';
 import badgeStyle from 'antd/es/badge/style/index.less';
@@ -36,13 +41,6 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
-
-import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { getContainer, styleScope } from 'utils/utils';
-
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-import tabsStyle from 'antd/es/tabs/style/index.less';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 const antdStyles = [
   alertStyle,
@@ -74,11 +72,6 @@ const antdStyles = [
 ];
 
 // This will override the appendTo prop on all Tooltips used from cogs
-CogsTooltip.defaultProps = {
-  ...CogsTooltip.defaultProps,
-  appendTo: getContainer,
-};
-
 Modal.defaultProps = {
   ...Modal.defaultProps,
   getContainer,
@@ -103,7 +96,7 @@ Dropdown.defaultProp = {
   getPopupContainer: getContainer,
 };
 
-Spin.setDefaultIndicator(<Icon type="Loading" />);
+Spin.setDefaultIndicator(<Icon type="Loader" />);
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
   const isInjectedStyles = useGlobalStyles([
@@ -118,7 +111,19 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>
+      <StyledGlobalStyles />
       <div className={styleScope}>{props.children}</div>
     </ConfigProvider>
   );
 }
+
+const StyledGlobalStyles = createGlobalStyle`
+  .ant-modal-wrap {
+    overflow-y: hidden !important;
+  }
+
+  .rc-tabs-nav-operations {
+    visibility: hidden;
+    width: 0;
+  }
+`;
