@@ -15,7 +15,7 @@ export const trackUsage = (
   const pathWithoutProjectName = pathname.substring(pathname.indexOf('/', 1));
 
   if (!host.includes('localhost')) {
-    trackEvent(`unified-cdf-demo-app.${event}`, {
+    trackEvent(`data-sets.${event}`, {
       ...metadata,
       project: getProject(),
       version: 1,
