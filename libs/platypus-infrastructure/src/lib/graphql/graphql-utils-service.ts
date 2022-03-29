@@ -53,7 +53,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       this.schemaAst!.typeMap.delete(typeName);
     }
 
-    if (updates.description && updates.name !== type.getDescription()) {
+    if (updates.description && updates.description !== type.getDescription()) {
       type.setDescription(updates.description);
     }
 
@@ -64,7 +64,11 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
         });
       } else {
         updates.directives.forEach((directive) => {
-          type.upsertDirective(directive);
+          if (type.hasDirective(directive.name)) {
+            type.updateDirective(directive.name, directive);
+          } else {
+            type.createDirective(directive);
+          }
         });
       }
     }
@@ -75,6 +79,12 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   removeType(typeName: string): void {
     this.createIfEmpty();
     this.schemaAst!.removeType(typeName);
+  }
+
+  getType(typeName: string): SolutionDataModelType {
+    return this.toSolutionDataModelType(
+      this.schemaAst!.getObjectType(typeName)
+    );
   }
 
   addField(

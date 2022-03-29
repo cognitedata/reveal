@@ -3,7 +3,6 @@ import { postsGraphQlSchema } from '@platypus/mock-data';
 import { SolutionDataModelField } from '@platypus/platypus-core';
 
 const schemaMock = postsGraphQlSchema;
-const builtInTypesMock = [{ name: '@template', kind: 'directive' }];
 
 describe('GraphQlUtilsServiceTest', () => {
   const createInstance = () => {
@@ -81,6 +80,51 @@ describe('GraphQlUtilsServiceTest', () => {
         fields: [],
       })
     );
+  });
+
+  it('can rename type name twice', () => {
+    const service = createInstance();
+    service.parseSchema(schemaMock);
+
+    service.updateType('User', { name: 'UserRenamedOnce' });
+    expect(service.hasType('UserRenamedOnce')).toEqual(true);
+
+    service.updateType('UserRenamedOnce', { name: 'UserRenamedTwice' });
+    expect(service.hasType('UserRenamedTwice')).toEqual(true);
+    expect(service.generateSdl()).toContain('type UserRenamedTwice');
+  });
+
+  it('can update type description', () => {
+    const service = createInstance();
+    service.parseSchema(schemaMock);
+
+    service.updateType('User', { description: 'test' });
+    const type = service.getType('User');
+
+    expect(type.description).toBe('test');
+    expect(service.generateSdl()).toContain('"test"\ntype User @template {');
+  });
+
+  it('can add type directive', () => {
+    const service = createInstance();
+    service.parseSchema(schemaMock);
+
+    service.updateType('Like', { directives: [{ name: 'template' }] });
+    const type = service.getType('Like');
+
+    expect(type.directives).toContainEqual({ name: 'template', arguments: [] });
+    expect(service.generateSdl()).toContain('type Like @template {');
+  });
+
+  it('can remove type directive', () => {
+    const service = createInstance();
+    service.parseSchema(schemaMock);
+
+    service.updateType('User', { directives: [] });
+    const type = service.getType('User');
+
+    expect(type.directives).toEqual([]);
+    expect(service.generateSdl()).toContain('type User {');
   });
 
   it('should add new field into SolutionDataModel', () => {

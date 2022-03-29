@@ -18,6 +18,12 @@ type Comment @template {
   date: Int!
   post: Post
 }
+
+type Like {
+  id: Int
+  user: User
+  comment: Comment
+}
 `;
 
 export const postsTemplateGroup = {
