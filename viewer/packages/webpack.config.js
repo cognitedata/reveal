@@ -48,7 +48,8 @@ module.exports = env => {
                 noUnusedParameters: false
               }
             }
-          }
+          },
+          exclude: [/.*\.test\.tsx?/g, /.*\/stubs\//]
         },
         {
           test: /\.(glsl|vert|frag)$/,

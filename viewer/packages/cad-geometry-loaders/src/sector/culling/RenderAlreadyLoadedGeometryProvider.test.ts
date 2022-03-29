@@ -3,12 +3,12 @@
  */
 import * as THREE from 'three';
 import { createGlContext } from '../../../../../test-utilities';
-import { CadMaterialManager, EffectRenderManager } from '@reveal/rendering';
+import { CadMaterialManager, GeometryDepthRenderPipeline } from '@reveal/rendering';
 
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
 
 describe('RenderAlreadyLoadedGeometryProvider', () => {
-  let renderManager: EffectRenderManager;
+  let depthRenderPipelineProvider: GeometryDepthRenderPipeline;
   let materialManager: CadMaterialManager;
   let scene: THREE.Scene;
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
@@ -18,27 +18,24 @@ describe('RenderAlreadyLoadedGeometryProvider', () => {
   beforeEach(() => {
     scene = new THREE.Scene();
     materialManager = new CadMaterialManager();
-    renderManager = new EffectRenderManager(renderer, scene, materialManager, {});
+    depthRenderPipelineProvider = new GeometryDepthRenderPipeline(materialManager, scene);
+
     const size = renderer.getSize(new THREE.Vector2());
     target = new THREE.WebGLRenderTarget(size.width, size.height);
   });
 
-  test('renderOccludingGeometry() restores render target and auto size after completion', () => {
-    const original = {
-      target: renderManager.getRenderTarget(),
-      autoSize: renderManager.getRenderTargetAutoSize()
-    };
+  test('renderOccludingGeometry() restores render target after completion', () => {
+    const target = depthRenderPipelineProvider.outputRenderTarget;
 
-    const provider = new RenderAlreadyLoadedGeometryProvider(renderManager);
+    const provider = new RenderAlreadyLoadedGeometryProvider(renderer, depthRenderPipelineProvider);
     provider.renderOccludingGeometry(target, new THREE.PerspectiveCamera());
 
-    expect(renderManager.getRenderTarget()).toEqual(original.target);
-    expect(renderManager.getRenderTargetAutoSize()).toEqual(original.autoSize);
+    expect(depthRenderPipelineProvider.outputRenderTarget).toEqual(target);
   });
 
   test('renderOccludingGeometry() renders depth', () => {
-    const renderDetailedToDepthOnlySpy = jest.spyOn(renderManager, 'renderDetailedToDepthOnly');
-    const provider = new RenderAlreadyLoadedGeometryProvider(renderManager);
+    const renderDetailedToDepthOnlySpy = jest.spyOn(depthRenderPipelineProvider, 'pipeline');
+    const provider = new RenderAlreadyLoadedGeometryProvider(renderer, depthRenderPipelineProvider);
     provider.renderOccludingGeometry(target, new THREE.PerspectiveCamera());
 
     expect(renderDetailedToDepthOnlySpy).toBeCalledTimes(1);

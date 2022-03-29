@@ -10,6 +10,7 @@ import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createRenderTarget, getLayerMask, RenderLayer, setupGeometryLayers } from '../utilities/renderUtilities';
 import { IdentifiedModel } from '../utilities/types';
 import { RenderMode } from '../rendering/RenderMode';
+import { WebGLRenderTarget } from 'three';
 
 export class GeometryDepthRenderPipeline implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
@@ -21,6 +22,10 @@ export class GeometryDepthRenderPipeline implements RenderPipelineProvider {
 
   set outputRenderTarget(target: THREE.WebGLRenderTarget) {
     this._outputRenderTarget = target;
+  }
+
+  get outputRenderTarget(): WebGLRenderTarget {
+    return this._outputRenderTarget;
   }
 
   constructor(materialManager: CadMaterialManager, scene: THREE.Scene, cadModels?: IdentifiedModel[]) {

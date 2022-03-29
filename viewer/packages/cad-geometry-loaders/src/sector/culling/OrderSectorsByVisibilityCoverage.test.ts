@@ -10,9 +10,8 @@ import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityC
 import { createV8SectorMetadata, SectorTree, createGlContext } from '../../../../../test-utilities';
 import { File3dFormat } from '@reveal/modeldata-api';
 
-import { EffectRenderManager } from '@reveal/rendering';
-
 import { Mock, It } from 'moq.ts';
+import { GeometryDepthRenderPipeline } from '@reveal/rendering';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext = createGlContext(64, 64);
@@ -25,21 +24,19 @@ describe('OrderSectorsByVisibilityCoverage', () => {
   ]);
   const cadModel = createStubModel('model', singleSectorScene, identityMatrix);
 
-  let renderManager: EffectRenderManager;
+  let depthOnlyPipelineProvider: GeometryDepthRenderPipeline;
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
-    renderManager = new Mock<EffectRenderManager>()
-      .setup(e => e.getRenderTarget)
-      .returns(renderer.getRenderTarget)
-      .setup(e => e.getRenderTargetAutoSize())
-      .returns(true)
-      .setup(e => e.setRenderTarget(It.IsAny()))
-      .returns()
-      .setup(e => e.setRenderTargetAutoSize(It.IsAny()))
-      .returns()
-      .setup(e => e.renderDetailedToDepthOnly(It.IsAny()))
-      .returns()
+    depthOnlyPipelineProvider = new Mock<GeometryDepthRenderPipeline>()
+      .setup(e => e.outputRenderTarget)
+      .returns(renderer.getRenderTarget())
+      // .setup(e => e.setRenderTarget(It.IsAny()))
+      // .returns()
+      // .setup(e => e.setRenderTargetAutoSize(It.IsAny()))
+      // .returns()
+      .setup(e => e.pipeline(It.IsAny()))
+      .returns(null)
       .object();
   });
 
@@ -47,10 +44,13 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     jest.restoreAllMocks();
   });
 
-  test('orderSectorsByVisibility() returns empty array when there are no models', () => {
+  test('orderSectorsByVisibility() returns empty array when there are no models', async () => {
     // Arrange
     const camera = new THREE.PerspectiveCamera();
-    const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+    const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({
+      renderer,
+      depthOnlyRenderPipeline: depthOnlyPipelineProvider
+    });
 
     // Act
     glContext.clearColor(1, 1, 1, 1);
@@ -59,15 +59,18 @@ describe('OrderSectorsByVisibilityCoverage', () => {
       .mockImplementation((_target, _x, _y, _width, _height, buffer: Uint8Array) => {
         buffer.fill(255); // White - i.e. no sector
       });
-    const arrays = coverageUtil.orderSectorsByVisibility(camera);
+    const arrays = await coverageUtil.orderSectorsByVisibility(camera);
 
     // Assert
     expect(arrays).toBeEmpty();
   });
 
-  test('rendered result has no sectors, returns empty array', () => {
+  test('rendered result has no sectors, returns empty array', async () => {
     // Arrange
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+    const util = new GpuOrderSectorsByVisibilityCoverage({
+      renderer,
+      depthOnlyRenderPipeline: depthOnlyPipelineProvider
+    });
     util.setModels([cadModel]);
     const camera = new THREE.PerspectiveCamera();
 
@@ -77,15 +80,18 @@ describe('OrderSectorsByVisibilityCoverage', () => {
       .mockImplementation((_target, _x, _y, _width, _height, buffer: Uint8Array) => {
         buffer.fill(255); // White - i.e. no sector
       });
-    const result = util.orderSectorsByVisibility(camera);
+    const result = await util.orderSectorsByVisibility(camera);
 
     // Assert
     expect(result).toBeEmpty();
   });
 
-  test('rendered result has one sector, returns array with priority 1', () => {
+  test('rendered result has one sector, returns array with priority 1', async () => {
     // Arrange
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+    const util = new GpuOrderSectorsByVisibilityCoverage({
+      renderer,
+      depthOnlyRenderPipeline: depthOnlyPipelineProvider
+    });
     util.setModels([cadModel]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
@@ -99,7 +105,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
         buffer.fill(255); // White - i.e. no sector
         buffer.set([0, 0, 0, 255], 0); // Sector ID 0 with 1.0 distance
       });
-    const result = util.orderSectorsByVisibility(camera);
+    const result = await util.orderSectorsByVisibility(camera);
 
     // Assert
     expect(result.length).toBe(1);
@@ -108,12 +114,15 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     expect(result[0].model).toBe(cadModel);
   });
 
-  test('two models, rendered result returns value at offset', () => {
+  test('two models, rendered result returns value at offset', async () => {
     // Arrange
     const scene2 = createStubScene([1, [], new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1))]);
     const model1 = createStubModel('model1', singleSectorScene, identityMatrix);
     const model2 = createStubModel('model2', scene2, identityMatrix);
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+    const util = new GpuOrderSectorsByVisibilityCoverage({
+      renderer,
+      depthOnlyRenderPipeline: depthOnlyPipelineProvider
+    });
     util.setModels([model1, model2]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
@@ -130,7 +139,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
       });
 
     glContext.clearColor(0, 0, 1.0 / 255, 1); // Store 1 in output
-    const result = util.orderSectorsByVisibility(camera);
+    const result = await util.orderSectorsByVisibility(camera);
 
     // Assert - ensure output is first sector in second model
     expect(result.length).toBe(1);

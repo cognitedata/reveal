@@ -51,6 +51,10 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._renderOptions = cloneDeep(renderOptions);
   }
 
+  get outputRenderTarget(): { target: THREE.WebGLRenderTarget; autoUpdateSize: boolean } {
+    return this._outputRenderTarget;
+  }
+
   public setOutputRenderTarget(renderTarget: THREE.WebGLRenderTarget, autoUpdateSize = true): void {
     this._outputRenderTarget = { target: renderTarget, autoUpdateSize: autoUpdateSize };
   }
