@@ -59,17 +59,6 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     }
   } 
 
-  .cogs-avatar {
-    background: ${Colors['greyscale-grey4'].hex()} !important;
-    border: 0.125rem solid ${Colors['greyscale-grey2'].hex()};
-    color: ${Colors['greyscale-grey7'].hex()} !important;
-    font-weight: normal !important;
-    &.bg-blue {
-      background: ${Colors['midblue-3'].hex()} !important;
-      color: ${Colors.white.hex()} !important;
-    }
-  }
-
   .extpipes-ui-style-scope [data-tippy-root] {
     .tippy-box {
       .tippy-content {
