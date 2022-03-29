@@ -27,10 +27,15 @@ export class SolutionDataModelService {
     directive?: string
   ): SolutionDataModel {
     const newType = this.graphqlService.addType(name, directive);
-    return {
+    let newState = {
       ...state,
       types: [...state.types, newType],
     };
+    newState = this.addField(newState, name, '', {
+      name: '',
+      type: 'String',
+    });
+    return newState;
   }
 
   renameType(

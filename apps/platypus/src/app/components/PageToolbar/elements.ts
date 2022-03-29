@@ -4,7 +4,7 @@ import styled from 'styled-components/macro';
 export const StyledTopBar = styled(TopBar)`
   .cogs-topbar--left {
     align-items: center;
-    padding: 0 10px;
+    padding: 0 16px;
     height: 56px;
     overflow: visible;
   }

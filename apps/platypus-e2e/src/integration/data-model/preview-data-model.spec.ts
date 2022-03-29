@@ -43,9 +43,10 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.getBySel('type-name-input').should('be.visible').type('CypressTestType');
     cy.getBySel('modal-ok-button').should('be.visible').click();
 
+    cy.getBySel('schema-type-field').type('name');
+    cy.getBySel('checkbox-field-required').click();
     cy.getBySel('type-view-back-button').should('be.visible').click();
     cy.getBySel('type-list-item-CypressTestType').should('be.visible');
-
     //Test UI Editor type list
     cy.getBySel('type-list-item-CypressTestType')
       .contains('span', 'template')
@@ -70,10 +71,11 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.get('div#Person')
       .should('be.visible')
       .children()
-      .last()
+      .getBySel('visualizer-type-field')
       .should('contain', 'phone')
       .and('contain', 'String')
-      .and('contain', '!');
+      .get('[aria-label="Required field type"]')
+      .should('be.visible');
   });
   it('should delete field inside type and see changes in visualizer', () => {
     cy.get('[aria-label="UI editor"]').click();
@@ -114,7 +116,6 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.get('input[name="typeName"]').should('be.visible').type('Author');
     cy.get('button[data-cy="modal-ok-button"]').click();
     cy.get('h5').contains('Author').should('be.visible');
-    cy.get('button[aria-label="Add field"').click();
     cy.getBySel('schema-type-field').first().type('person');
 
     // by default we set type as String
@@ -141,6 +142,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .last()
       .should('contain', 'person')
       .and('contain', 'Person')
-      .and('contain', '!');
+      .get('[aria-label="Required field type"]')
+      .should('be.visible');
   });
 });

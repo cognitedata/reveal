@@ -68,7 +68,7 @@ export const SchemaTypeField = ({
     <Flex
       gap={8}
       justifyContent="space-between"
-      style={{ paddingLeft: 10, paddingRight: 10 }}
+      style={{ paddingLeft: 16, paddingRight: 10 }}
     >
       <InputWrapper>
         <Input
@@ -101,7 +101,7 @@ export const SchemaTypeField = ({
         <Checkbox
           name={`required_${v4()}`}
           data-cy="checkbox-field-required"
-          style={{ height: 36 }}
+          style={{ height: 36, marginLeft: 16 }}
           disabled={disabled}
           onChange={(isChecked) => {
             onFieldUpdated({

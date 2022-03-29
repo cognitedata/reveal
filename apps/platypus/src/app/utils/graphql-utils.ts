@@ -11,6 +11,18 @@ export type SchemaDefinitionNode =
   | InterfaceTypeDefinitionNode
   | UnionTypeDefinitionNode;
 
+export const isFieldRequired = (type: TypeNode): boolean => {
+  switch (type?.kind) {
+    case 'NamedType':
+      return false;
+    case 'NonNullType':
+      return true;
+    case 'ListType':
+      return isFieldRequired(type.type);
+  }
+  return false;
+};
+
 export const getFieldType = (type: TypeNode): string => {
   switch (type?.kind) {
     case 'NamedType':
@@ -30,7 +42,7 @@ export const renderFieldType = (type: TypeNode): string => {
     case 'ListType':
       return `[${renderFieldType(type.type)}]`;
     case 'NonNullType':
-      return renderFieldType(type.type).concat('!');
+      return renderFieldType(type.type);
     default:
       return '';
   }

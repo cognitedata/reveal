@@ -202,8 +202,14 @@ export function UIEditor({
                 iconPlacement="left"
                 aria-label={t('add_field', 'Add field')}
                 type="ghost"
-                disabled={disabled}
-                style={{ alignSelf: 'flex-start', marginLeft: '10px' }}
+                disabled={
+                  disabled || currentType.fields.some((field) => !field.name)
+                }
+                style={{
+                  alignSelf: 'flex-start',
+                  marginLeft: '8px',
+                  padding: '4px 8px 4px 8px',
+                }}
                 onClick={onFieldCreate}
               >
                 {t('add_field', 'Add field')}

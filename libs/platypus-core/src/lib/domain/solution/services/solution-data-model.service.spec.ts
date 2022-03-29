@@ -121,9 +121,21 @@ describe('SolutionsHandlerTest', () => {
                 arguments: [],
               },
             ],
+            fields: [
+              {
+                name: '',
+                type: 'String',
+              },
+            ],
           }
         : {
             name,
+            fields: [
+              {
+                name: '',
+                type: 'String',
+              },
+            ],
           };
     }),
     generateSdl: jest.fn().mockImplementation(() => schemaMock),

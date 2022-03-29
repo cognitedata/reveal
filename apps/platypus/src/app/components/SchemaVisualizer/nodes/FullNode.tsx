@@ -1,6 +1,7 @@
 import { Body, Icon, Label, Title, Tooltip } from '@cognite/cogs.js';
 import {
   getFieldType,
+  isFieldRequired,
   renderFieldType,
 } from '@platypus-app/utils/graphql-utils';
 import { InputValueDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
@@ -15,12 +16,12 @@ export const FullNode = ({ item }: { item: ObjectTypeDefinitionNode }) => {
         <Title level={5} style={{ flex: 1 }}>
           {item.name.value}
         </Title>
-        <Label
+        <StyledLabel
           variant={isTypeATemplate(item) ? 'normal' : 'unknown'}
           size="small"
         >
           {isTypeATemplate(item) ? 'Template' : 'Type'}
-        </Label>
+        </StyledLabel>
       </Header>
       {item.fields?.map((el) => (
         <PropertyItem key={el.name.value} data-cy="visualizer-type-field">
@@ -38,6 +39,9 @@ export const FullNode = ({ item }: { item: ObjectTypeDefinitionNode }) => {
               </Tooltip>
             )}
             <Body level={2}>{renderFieldType(el.type)}</Body>
+            <IconWrapper aria-label="Required field type">
+              {isFieldRequired(el.type) && <Icon type="ExclamationMark" />}
+            </IconWrapper>
           </div>
         </PropertyItem>
       ))}
@@ -66,9 +70,22 @@ const StyledMainID = styled.span`
   border-radius: 1px;
   background-color: var(--cogs-greyscale-grey7);
 `;
-
+const StyledLabel = styled(Label)`
+  height: 20px;
+  width: 66px;
+  color: #2b3a88;
+`;
+const IconWrapper = styled.div`
+  display: flex;
+  width: 22px;
+  height: 16px;
+  i {
+    margin-left: 4px;
+  }
+`;
 const PropertyItem = styled.div`
   display: flex;
+  align-items: center;
   margin-top: 8px;
   .cogs-body-2 {
     color: var(--cogs-text-hint);
@@ -84,9 +101,6 @@ const PropertyItem = styled.div`
     text-align: end;
     display: flex;
     align-items: center;
-    > * {
-      margin-left: 6px;
-    }
     .filter-details {
       display: flex;
       color: var(--cogs-text-hint);

@@ -73,7 +73,7 @@ export const SchemaTypeList = ({
         onOk={deleteSchemaType}
       />
       <Header>
-        <Title level={4} style={{ paddingLeft: 10, marginTop: 24 }}>
+        <Title level={4} style={{ paddingLeft: 16, marginTop: 24 }}>
           {t('type_title', 'Types')}
         </Title>
       </Header>
@@ -122,7 +122,11 @@ export const SchemaTypeList = ({
             aria-label="Add type"
             data-cy="add-type-btn"
             disabled={disabled}
-            style={{ marginLeft: '10px' }}
+            style={{
+              marginLeft: '8px',
+              marginTop: '16px',
+              padding: '4px 8px 4px 8px',
+            }}
             onClick={openCreateModal}
           >
             {t('add_type', 'Add Type')}
@@ -154,7 +158,7 @@ const Header = styled.div`
 `;
 
 const ListItem = styled.div`
-  padding: 8px 12px 8px 10px;
+  padding: 8px 12px 8px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;

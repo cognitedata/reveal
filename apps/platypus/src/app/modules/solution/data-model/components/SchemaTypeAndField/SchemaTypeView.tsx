@@ -20,6 +20,7 @@ export const SchemaTypeView = ({
           type="ghost"
           data-cy="type-view-back-button"
           aria-label="Return to list"
+          style={{ marginLeft: 6 }}
           onClick={() => onNavigateBack()}
         />
         <Title level="5">{currentType.name}</Title>
