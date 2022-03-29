@@ -46,10 +46,6 @@ export const CompanyInfoContainer = styled.div`
   }
 `;
 
-export const SaveButtonContainer = styled.div`
-  margin-top: 24px;
-`;
-
 export const LogOutButtonContainer = styled.div`
   display: flex;
   flex: 1 1 auto;

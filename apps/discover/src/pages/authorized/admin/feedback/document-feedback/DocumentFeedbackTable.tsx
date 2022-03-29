@@ -10,7 +10,7 @@ import {
   deleteObjectFeedback,
   recoverObjectFeedback,
 } from 'services/feedback';
-import { useUserProfileQuery } from 'services/user/useUserQuery';
+import { useUserInfo } from 'services/userManagementService/query';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 
@@ -87,7 +87,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
 
   const { t } = useTranslation('Admin');
 
-  const { data: user } = useUserProfileQuery();
+  const { data: user } = useUserInfo();
   const { mutateAsync: addDocumentFeedback } =
     useFeedbackUpdateMutate('object');
   const { mutateAsync: updateDocumentFeedback } =

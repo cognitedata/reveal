@@ -1,7 +1,7 @@
-import { useUserProfileQuery } from 'services/user/useUserQuery';
+import { useUserInfo } from '../userManagementService/query';
 
 export function useIsOwner() {
-  const { data, isFetched } = useUserProfileQuery();
+  const { data, isFetched } = useUserInfo();
 
   const isOwner = (userId: string): boolean => {
     if (!data) {

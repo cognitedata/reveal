@@ -1,17 +1,14 @@
-import { useUserProfileQuery } from './useUserQuery';
+import { useUserInfo } from '../userManagementService/query';
 
 export const useMetricsUser = () => {
-  const user = useUserProfileQuery();
+  const { data: user } = useUserInfo();
 
-  const userId = user?.data?.id;
-  const email = user?.data?.email;
+  const userId = user?.id;
+  const email = user?.email;
 
   const names: string[] = [];
-  if (user?.data?.firstname) {
-    names.push(user?.data?.firstname);
-  }
-  if (user?.data?.lastname) {
-    names.push(user?.data?.lastname);
+  if (user?.displayName) {
+    names.push(user?.displayName);
   }
   if (names.length === 0 && email) {
     names.push(email);

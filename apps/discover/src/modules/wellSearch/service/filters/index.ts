@@ -18,7 +18,7 @@ export function getFilterOptions(
       filterFetchers.reduce(
         (prev, current, index) => ({
           ...prev,
-          [current.id]: (responses[index] as string[]).map((value) => ({
+          [current.id]: (responses[index] as string[])?.map((value) => ({
             value,
           })),
         }),

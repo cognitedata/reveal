@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { Switch, Redirect, Route } from 'react-router-dom';
 
-import { useUserSyncQuery } from 'services/user/useUserQuery';
-
 import { ToastContainer } from '@cognite/cogs.js';
 import { Logout } from '@cognite/react-container';
 
@@ -24,7 +22,6 @@ import { GlobalModals } from './GlobalModals';
 import { Dashboard } from './search/dashboard';
 
 const Content = () => {
-  useUserSyncQuery();
   const pageSettings = usePageSettings();
 
   const metrics = useGlobalMetrics(LOG_APP_NAMESPACE);

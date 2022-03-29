@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useUserProfileQuery } from 'services/user/useUserQuery';
+import { useUserInfo } from 'services/userManagementService/query';
 
 import { Dropdown, Menu, Label } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
@@ -23,17 +23,17 @@ enum Options {
 export const AssigneeColumn: React.FC<Props> = (props) => {
   const { assignee, assignFeedback, unassignFeedback } = props;
   const { t } = useTranslation('Admin');
-  const user = useUserProfileQuery();
+  const { data: user } = useUserInfo();
   const [visibleAssignee, setVisibleAssignee] = React.useState<
     undefined | ObjectFeedbackResponse['assignee']
   >(assignee);
 
   const isAssigned = !!visibleAssignee;
-  const isAssignedToMe = user?.data?.id === visibleAssignee?.id;
+  const isAssignedToMe = user?.id === visibleAssignee?.id;
 
   const handleChange = (value: number) => {
     if (value === Options.assignToMe) {
-      setVisibleAssignee(user?.data);
+      setVisibleAssignee(user);
       assignFeedback();
     } else if (value === Options.unassign) {
       setVisibleAssignee(undefined);

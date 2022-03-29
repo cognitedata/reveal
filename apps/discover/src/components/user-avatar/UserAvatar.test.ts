@@ -10,8 +10,7 @@ describe('UserAvatar', () => {
     testRenderer(UserAvatar, viewStore, viewProps);
 
   const defaultTestInit = async (props: {
-    firstName?: string;
-    lastName?: string;
+    displayName?: string;
     email?: string;
   }) => {
     const store = getMockedStore();
@@ -31,8 +30,7 @@ describe('UserAvatar', () => {
 
   test('should render avatar with correct initials', async () => {
     await defaultTestInit({
-      firstName: 'John',
-      lastName: 'Doe',
+      displayName: 'John Doe',
       email: 'john.doe@something.com',
     });
     // get user-avatar-element

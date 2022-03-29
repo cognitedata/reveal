@@ -1,16 +1,16 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { useUserProfileQuery } from 'services/user/useUserQuery';
 
 import { useAuthContext } from '@cognite/react-container';
 
+import { useUserInfo } from '../../userManagementService/query';
 import { useMetricsUser } from '../useMetricsUser';
 
 jest.mock('@cognite/react-container', () => ({
   useAuthContext: jest.fn(),
 }));
 
-jest.mock('services/user/useUserQuery', () => ({
-  useUserProfileQuery: jest.fn(),
+jest.mock('services/userManagementService/query', () => ({
+  useUserInfo: jest.fn(),
 }));
 
 describe('useMetricsUser hook', () => {
@@ -20,12 +20,11 @@ describe('useMetricsUser hook', () => {
         email: 'testuser@cognite',
       },
     }));
-    (useUserProfileQuery as jest.Mock).mockImplementation(() => ({
+    (useUserInfo as jest.Mock).mockImplementation(() => ({
       data: {
         id: 'testid',
         email: 'testuser@cognite',
-        firstname: 'Test',
-        lastname: 'User',
+        displayName: 'Test User',
       },
     }));
   });

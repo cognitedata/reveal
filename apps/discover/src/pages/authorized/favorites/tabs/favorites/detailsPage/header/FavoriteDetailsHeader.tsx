@@ -59,7 +59,7 @@ const Actions: React.FC<ActionProps> = ({
         />
       )}
 
-      {favoriteConfig && favoriteConfig.showDownloadAllDocumentsButton && (
+      {favoriteConfig && favoriteConfig?.showDownloadAllDocumentsButton && (
         <DownloadButton
           type="tertiary"
           size="small"

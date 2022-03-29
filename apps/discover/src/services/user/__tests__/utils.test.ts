@@ -5,14 +5,13 @@ import { setupServer } from 'msw/node';
 import { testWrapper } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 
-import { getMockUserGet } from '../__mocks/getMockUserGet';
+import { getMockUserMe } from '../../userManagementService/__mocks/mockUmsMe';
 import { useIsOwner } from '../utils';
+
+const networkMocks = setupServer(getMockUserMe({ id: defaultTestUser }));
 
 beforeAll(() => networkMocks.listen());
 afterAll(() => networkMocks.close());
-
-const networkMocks = setupServer(getMockUserGet());
-
 describe('useIsOwner', () => {
   it('should be ok', () => {
     const { result } = renderHook(() => useIsOwner(), {

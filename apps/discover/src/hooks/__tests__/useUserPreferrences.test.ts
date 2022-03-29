@@ -2,7 +2,10 @@ import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
-import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
+import {
+  UMSUserProfile,
+  UMSUserProfilePreferences,
+} from '@cognite/user-management-service-types';
 
 import { testWrapper } from '__test-utils/renderer';
 import { UserPreferredUnit } from 'constants/units';
@@ -12,7 +15,7 @@ import {
   useUserPreferencesMeasurementByMeasurementEnum,
 } from '../useUserPreferences';
 
-const startServer = (options = {}) => {
+const startServer = (options: Partial<UMSUserProfile> = {}) => {
   const networkMocks = setupServer(getMockUserMe(options));
   networkMocks.listen();
   return () => networkMocks.close();
@@ -31,13 +34,17 @@ describe('useUserPreferencesMeasurement hook', () => {
   };
 
   it('Get defaulted to ft when not response from react query', async () => {
-    const closeServer = startServer({ measurement: undefined });
+    const closeServer = startServer({
+      preferences: { measurement: undefined, hidden: false },
+    });
     expect(await renderHookWithStore()).toBe(UserPreferredUnit.FEET);
     closeServer();
   });
 
   it('Return respective unit for unit returned from react query', async () => {
-    const closeServer = startServer({ measurement: 'meter' });
+    const closeServer = startServer({
+      preferences: { measurement: 'meter', hidden: false },
+    });
     expect(await renderHookWithStore()).toBe(UserPreferredUnit.METER);
     closeServer();
   });
@@ -64,7 +71,9 @@ describe('useUserPreferencesMeasurementByMeasurementEnum hook', () => {
   };
 
   it('Get defaulted to ft when not response from react query', async () => {
-    const closeServer = startServer({ measurement: undefined });
+    const closeServer = startServer({
+      preferences: { measurement: undefined, hidden: false },
+    });
     expect(await renderHookWithStore()).toBe(
       UMSUserProfilePreferences.MeasurementEnum.Feet
     );

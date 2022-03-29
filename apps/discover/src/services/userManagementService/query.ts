@@ -12,7 +12,7 @@ import { USER_MANAGEMENT_SYSTEM_KEY } from 'constants/react-query';
 
 import { userPreferences } from './endpoints';
 
-export const useUserPreferencesQuery = () => {
+export const useUserInfo = () => {
   const [project] = getTenantInfo();
   const headers = useJsonHeaders({ 'x-cdp-project': project }, true);
 

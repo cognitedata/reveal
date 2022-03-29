@@ -1,23 +1,14 @@
-import { screen } from '@testing-library/react';
+import '__mocks/mockContainerAuth'; // should be first
+import { screen, waitFor } from '@testing-library/react';
+import { setupServer } from 'msw/node';
 import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
-import { useUserProfileQuery } from 'services/user/useUserQuery';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
 import { testRenderer } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';
-import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { FavoriteDetailsHeader } from 'pages/authorized/favorites/tabs/favorites/detailsPage/header';
 import { Props } from 'pages/authorized/favorites/tabs/favorites/detailsPage/header/FavoriteDetailsHeader';
-
-const mockUser = defaultTestUser;
-
-jest.mock('services/user/useUserQuery.ts', () => ({
-  useUserProfileQuery: jest.fn(),
-}));
-
-jest.mock('hooks/useProjectConfig.ts', () => ({
-  ...jest.requireActual('hooks/useProjectConfig.ts'),
-  useProjectConfigByKey: jest.fn(),
-}));
 
 describe('Favorite Details Header', () => {
   const mockFavorite = getMockFavoriteSummary();
@@ -32,15 +23,13 @@ describe('Favorite Details Header', () => {
     });
 
   it('should render component', async () => {
-    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: undefined,
-    }));
+    const mockServer = setupServer(
+      getMockUserMe({ id: defaultTestUser }),
+      getMockConfigGet()
+    );
+    mockServer.listen();
 
-    (useUserProfileQuery as jest.Mock).mockImplementation(() => ({
-      data: { id: mockUser },
-    }));
-
-    page();
+    await page();
 
     const title = screen.getByTitle(mockFavorite.name);
     const description = screen.getByText(mockFavorite.description);
@@ -48,18 +37,21 @@ describe('Favorite Details Header', () => {
     expect(description).toBeInTheDocument();
 
     // should display 4 action buttons since download button is not enabled in Project config
-    const buttons = screen.queryAllByTestId('base-button-margin-wrapper');
-    expect(buttons).toHaveLength(4);
+
+    await waitFor(() => {
+      const buttons = screen.queryAllByTestId('base-button-margin-wrapper');
+      expect(buttons).toHaveLength(4);
+    });
+
+    mockServer.close();
   });
 
   it('should show skeletons if status isLoading is true', async () => {
-    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: undefined,
-    }));
-
-    (useUserProfileQuery as jest.Mock).mockImplementation(() => ({
-      data: { id: mockUser },
-    }));
+    const mockServer = setupServer(
+      getMockUserMe({ id: defaultTestUser }),
+      getMockConfigGet()
+    );
+    mockServer.listen();
 
     page({
       isLoading: true,
@@ -79,36 +71,37 @@ describe('Favorite Details Header', () => {
   });
 
   it('should display 5 action buttons if download button is enabled in Project settings', async () => {
-    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: {
-        showDownloadAllDocumentsButton: true,
-      },
-    }));
-
-    (useUserProfileQuery as jest.Mock).mockImplementation(() => ({
-      data: { id: mockUser },
-    }));
+    const mockServer = setupServer(
+      getMockUserMe({ id: defaultTestUser }),
+      getMockConfigGet({ favorites: { showDownloadAllDocumentsButton: true } })
+    );
+    mockServer.listen();
 
     page();
 
-    const buttons = screen.queryAllByTestId('base-button-margin-wrapper');
-    expect(buttons).toHaveLength(5);
+    await waitFor(() =>
+      expect(
+        screen.queryAllByTestId('base-button-margin-wrapper')
+      ).toHaveLength(5)
+    );
+    mockServer.close();
   });
 
   it('should display only 3 action buttons if user is not owner', async () => {
-    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: {
-        showDownloadAllDocumentsButton: true,
-      },
-    }));
+    const mockServer = setupServer(
+      getMockUserMe(),
+      getMockConfigGet({ favorites: { showDownloadAllDocumentsButton: true } })
+    );
+    mockServer.listen();
 
-    (useUserProfileQuery as jest.Mock).mockImplementation(() => ({
-      data: { id: 'something different' },
-    }));
+    page({ favorite: { ...mockFavorite, owner: { id: '1' } } });
 
-    page();
+    await waitFor(() =>
+      expect(
+        screen.queryAllByTestId('base-button-margin-wrapper')
+      ).toHaveLength(3)
+    );
 
-    const buttons = screen.queryAllByTestId('base-button-margin-wrapper');
-    expect(buttons).toHaveLength(3);
+    mockServer.close();
   });
 });

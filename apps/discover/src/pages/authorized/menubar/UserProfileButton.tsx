@@ -37,7 +37,6 @@ export const UserProfileButton: React.FC = () => {
 
       <UserProfile
         isOverlayOpened={userProfileDrawerOpen}
-        handleProfileUpdated={closePanel}
         onCancel={closePanel}
       />
     </>

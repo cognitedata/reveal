@@ -11,7 +11,7 @@ import {
   recoverGeneralFeedback,
   useFeedbackGetAllQuery,
 } from 'services/feedback';
-import { useUserProfileQuery } from 'services/user/useUserQuery';
+import { useUserInfo } from 'services/userManagementService/query';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 
@@ -50,7 +50,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
   const [isOpen, setOpen] = useState(false);
   const [feedback, setFeedback] = useState<GeneralFeedbackResponse>();
   const [expandedIds, setExpandedIds] = useState<TableResults>({});
-  const { data: user } = useUserProfileQuery();
+  const { data: user } = useUserInfo();
   const [highlightedIds, setHighlightedIds] = useState<TableResults>();
 
   /**

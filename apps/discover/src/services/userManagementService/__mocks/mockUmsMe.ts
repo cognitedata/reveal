@@ -6,7 +6,7 @@ import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';
 
 const responseData = (
-  preferences?: Partial<UMSUserProfile['preferences']>
+  preferences?: Partial<UMSUserProfile>
 ): UMSUserProfile => ({
   id: '1',
   displayName: 'John Doe',
@@ -16,12 +16,12 @@ const responseData = (
   preferences: {
     hidden: false,
     measurement: 'meter',
-    ...preferences,
   },
+  ...preferences,
 });
 
 export const getMockUserMe = (
-  preferences?: Partial<UMSUserProfile['preferences']>
+  preferences?: Partial<UMSUserProfile>
 ): MSWRequest => {
   return rest.get<Request>(
     `https://user-management-service.staging.${SIDECAR.cdfCluster}.cognite.ai/user/me`,

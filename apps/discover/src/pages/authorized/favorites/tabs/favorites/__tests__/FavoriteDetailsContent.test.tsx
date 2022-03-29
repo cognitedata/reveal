@@ -5,7 +5,6 @@ import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
 import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import { getMockUserGet } from 'services/user/__mocks/getMockUserGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
 
@@ -30,7 +29,6 @@ const mockServer = setupServer(
   getMockConfigGet(),
   getMockDocumentCategoriesGet(),
   getMockUserMe(),
-  getMockUserGet(),
   getMockDocumentSearch()
 );
 

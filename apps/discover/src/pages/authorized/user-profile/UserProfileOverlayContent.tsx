@@ -3,14 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
 import noop from 'lodash/noop';
-import { UserProfileUpdateQueryData } from 'services/user/types';
-import { useUserProfileQuery } from 'services/user/useUserQuery';
+import { useUserInfo } from 'services/userManagementService/query';
 import { convertToCancellablePromise } from 'utils/cancellablePromise';
 
-import { Button, Input } from '@cognite/cogs.js';
+import { Input } from '@cognite/cogs.js';
 import { LogoutButton } from '@cognite/react-container';
 
-import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import {
   AvatarAndEmailContainer,
   CompanyInfoContainer,
@@ -18,7 +16,6 @@ import {
   EmailContainer,
   InputFieldContainer,
   LogOutButtonContainer,
-  SaveButtonContainer,
   UserProfileContainer,
 } from 'pages/authorized/user-profile/elements';
 
@@ -30,29 +27,20 @@ interface Props {
     name?: string;
     logo?: string;
   };
-  updateUserDetails: (user: UserProfileUpdateQueryData) => void;
 }
 
-export const SAVE_CHANGES_BUTTON = 'Save changes';
-export const INPUT_FIRST_NAME = 'First Name';
-export const INPUT_LAST_NAME = 'Last Name';
+export const INPUT_NAME = 'Name';
 
-export const UserProfileOverlayContent: React.FC<Props> = ({
-  companyInfo,
-  updateUserDetails,
-}) => {
+export const UserProfileOverlayContent: React.FC<Props> = ({ companyInfo }) => {
   const { t } = useTranslation('UserProfile');
   const history = useHistory();
-  const { data: user } = useUserProfileQuery();
-  const [firstname, setFirstname] = useState<string>('');
-  const [lastname, setLastname] = useState<string>('');
+  const { data: user } = useUserInfo();
+  const [displayName, setDisplayName] = useState<string>('');
   const [logo, setLogo] = useState<string | undefined>();
-  const { data: azureConfig } = useProjectConfigByKey('azureConfig');
 
   useEffect(() => {
-    setFirstname(user?.firstname || '');
-    setLastname(user?.lastname || '');
-  }, [user?.firstname, user?.lastname]);
+    setDisplayName(user?.displayName || '');
+  }, [user?.displayName]);
 
   useEffect(() => {
     const cancellablePromise = convertToCancellablePromise(
@@ -72,24 +60,6 @@ export const UserProfileOverlayContent: React.FC<Props> = ({
     history.push('/logout');
   };
 
-  const onSaveChanges = () => {
-    const updatedUser: UserProfileUpdateQueryData = {
-      payload: {
-        firstname:
-          firstname !== user?.firstname ? firstname.trim() : user?.firstname,
-        lastname:
-          lastname !== user?.lastname ? lastname.trim() : user?.lastname,
-      },
-    };
-    updateUserDetails(updatedUser);
-  };
-
-  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      onSaveChanges();
-    }
-  };
-
   return (
     <UserProfileContainer>
       <AvatarAndEmailContainer>
@@ -98,24 +68,11 @@ export const UserProfileOverlayContent: React.FC<Props> = ({
       </AvatarAndEmailContainer>
       <InputFieldContainer>
         <Input
-          disabled={azureConfig?.enabled}
+          disabled
           id="user-profile-firstname"
-          title={t(INPUT_FIRST_NAME)}
+          title={t(INPUT_NAME)}
           variant="noBorder"
-          value={firstname || ''}
-          onChange={(event: any) => setFirstname(event.target.value)}
-          onKeyPress={onKeyPress}
-        />
-      </InputFieldContainer>
-      <InputFieldContainer>
-        <Input
-          disabled={azureConfig?.enabled}
-          id="user-profile-lastname"
-          title={t(INPUT_LAST_NAME)}
-          variant="noBorder"
-          value={lastname || ''}
-          onChange={(event: any) => setLastname(event.target.value)}
-          onKeyPress={onKeyPress}
+          value={displayName}
         />
       </InputFieldContainer>
 
@@ -128,18 +85,6 @@ export const UserProfileOverlayContent: React.FC<Props> = ({
           </CompanyInfoContainer>
         </>
       )}
-
-      <SaveButtonContainer>
-        <Button
-          disabled={azureConfig?.enabled}
-          type="primary"
-          onClick={onSaveChanges}
-          role="button"
-          aria-label="Save"
-        >
-          {t(SAVE_CHANGES_BUTTON)}
-        </Button>
-      </SaveButtonContainer>
 
       <UserAccessList />
 

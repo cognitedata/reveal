@@ -3,20 +3,14 @@ import * as React from 'react';
 import { Avatar } from '@cognite/cogs.js';
 
 interface Props {
-  firstName?: string;
-  lastName?: string;
+  displayName?: string;
   email?: string;
   size?: number;
 }
-export const UserAvatar: React.FC<Props> = ({
-  firstName,
-  lastName,
-  email,
-  size,
-}) => {
+export const UserAvatar: React.FC<Props> = ({ displayName, email, size }) => {
   return (
     <Avatar
-      text={getAvatarString(firstName, lastName, email)}
+      text={getAvatarString(displayName, email)}
       size={size}
       id="user-avatar"
       data-testid="user-avatar"
@@ -25,13 +19,9 @@ export const UserAvatar: React.FC<Props> = ({
   );
 };
 
-export const getAvatarString = (
-  firstName?: string,
-  lastName?: string,
-  email?: string
-) => {
-  if (firstName || lastName) {
-    return `${firstName || ''} ${lastName || ''}`;
+export const getAvatarString = (displayName?: string, email?: string) => {
+  if (displayName) {
+    return displayName;
   }
   if (email) {
     return email;

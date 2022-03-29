@@ -8,7 +8,7 @@ import {
   useSavedSearchDeleteMutate,
 } from 'services/savedSearches/useSavedSearchesMutate';
 import { useQuerySavedSearchesList } from 'services/savedSearches/useSavedSearchQuery';
-import { useUserProfileQuery } from 'services/user/useUserQuery';
+import { useUserInfo } from 'services/userManagementService/query';
 import { shortDate } from 'utils/date';
 import { log } from 'utils/log';
 import { sortByDate } from 'utils/sort/sortByDate';
@@ -49,7 +49,7 @@ export const SavedSearches: React.FC<{
 }> = ({ setCommentTarget, commentTarget }) => {
   const { t } = useTranslation('Saved Searches');
   const options = { checkable: false, flex: false, disableSorting: true };
-  const user = useUserProfileQuery();
+  const { data: user } = useUserInfo();
   const [selectedItem, setSelectedItem] = useState<
     SavedSearchItem | undefined
   >();
@@ -155,7 +155,7 @@ export const SavedSearches: React.FC<{
   const renderRowHoverComponent: React.FC<{
     row: RowProps<SavedSearchItem>;
   }> = ({ row }) => {
-    const isOwner = user.data?.id === row.original?.owner?.id;
+    const isOwner = user?.id === row.original?.owner?.id;
     return (
       <FlexRow>
         <ViewButton

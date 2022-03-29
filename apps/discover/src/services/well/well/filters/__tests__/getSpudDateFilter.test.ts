@@ -17,7 +17,7 @@ describe('getSpudDateFilter', () => {
 
   // this test will fail in locally due to timezone difference
   it('should return expected object with valid date inputs', () => {
-    const minDate = new Date(1000000000);
+    const minDate = new Date(100000000);
     const maxDate = new Date();
     expect(getSpudDateFilter([minDate, maxDate])).toEqual({
       spudDate: { min: minDate.toISOString(), max: maxDate.toISOString() },
