@@ -44,6 +44,7 @@ const nameToAclTypeMap = {
   analytics: 'analyticsAcl',
   functions: 'functionsAcl',
   geospatial: 'geospatialAcl',
+  robotics: 'roboticsAcl',
   sessions: 'sessionsAcl',
   templategroups: 'templateGroupsAcl',
   templateinstances: 'templateInstancesAcl',
@@ -65,6 +66,7 @@ const nameToFormattedName = {
   filepipelines: 'File pipelines',
   documentfeedback: 'Document feedback',
   annotations: 'Annotations',
+  robotics: 'Robotics',
   sessions: 'Sessions',
   templategroups: 'Template groups',
   templateinstances: 'Template instances',
@@ -112,6 +114,7 @@ const capabilityTypeGroups = [
       'annotations',
       'wells',
       'visionmodel',
+      'robotics',
     ],
   },
 ];
@@ -151,6 +154,7 @@ export const capabilityDescriptions = {
     'Digital twin is a representation of a 3D world used in a digital twin application',
   entitymatching: 'Match resources to their corresponding entity',
   annotations: 'Edit annotations in documents',
+  robotics: 'Control robots and access robotics data',
   sessions:
     'Sessions are used to maintain access to CDF resources for an extended period of time beyond the initial access granted to an internal service.',
   templategroups: 'Organize and structure your data',
@@ -357,6 +361,7 @@ export const getCapabilityScopes = (
     case 'events':
     case 'sequences':
     case 'relationships':
+    case 'robotics':
     case 'templategroups':
     case 'templateinstances':
       return ['datasetScope', 'all'];
