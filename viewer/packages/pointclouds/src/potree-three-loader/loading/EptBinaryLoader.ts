@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { workerPool } from '../utils/WorkerPool';
+import { workerPool, WorkerType } from '../utils/WorkerPool';
 
 import { ILoader } from './ILoader';
 import { ModelDataProvider } from '@reveal/modeldata-api';
@@ -11,10 +11,6 @@ export class EptBinaryLoader implements ILoader {
 
   extension(): string {
     return '.bin';
-  }
-
-  workerPath(): string {
-    return '/workers/EptBinaryDecoderWorker.js';
   }
 
   constructor(dataLoader: ModelDataProvider) {
@@ -30,8 +26,7 @@ export class EptBinaryLoader implements ILoader {
   }
 
   parse(node: PointCloudEptGeometryNode, buffer: ArrayBuffer): Promise<void> {
-    const workerPath = this.workerPath();
-    const worker = workerPool.getWorker(workerPath);
+    const worker = workerPool.getWorker(WorkerType.Ept);
 
     return new Promise<void>(res => {
       worker.onmessage = function (e: any) {
@@ -78,7 +73,7 @@ export class EptBinaryLoader implements ILoader {
 
         node.doneLoading(g, tightBoundingBox, numPoints, new THREE.Vector3(...e.data.mean));
 
-        workerPool.returnWorker(workerPath, worker);
+        workerPool.returnWorker(WorkerType.Ept, worker);
         res();
       };
 

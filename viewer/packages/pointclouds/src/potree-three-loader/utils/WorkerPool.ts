@@ -1,28 +1,42 @@
+
+import EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
+
+export enum WorkerType {
+  Ept
+};
+
 class WorkerPool {
-  private readonly _workers: any;
   private _maxWorkers: number;
+  private readonly _workers: Record<WorkerType, Worker[]>;
 
   constructor() {
-    this._workers = {};
+    this._workers = {
+      0: []
+    }
   }
 
-  getWorker(url: string) {
-    if (!this._workers[url]) {
-      this._workers[url] = [];
+  createNewWorker(workerType: WorkerType): Worker;
+  createNewWorker(_workerType: WorkerType.Ept): Worker {
+    return new EptDecoderWorker();
+  }
+
+  getWorker(workerType: WorkerType.Ept) {
+    if (!this._workers[workerType]) {
+      this._workers[workerType] = [];
     }
 
-    if (this._workers[url].length === 0) {
-      const worker = new Worker(url);
-      this._workers[url].push(worker);
+    if (this._workers[workerType].length === 0) {
+      const worker = this.createNewWorker(workerType);
+      this._workers[workerType].push(worker);
     }
 
-    const worker = this._workers[url].pop();
+    const worker = this._workers[workerType].pop();
 
     return worker;
   }
 
-  returnWorker(url: string, worker: any) {
-    this._workers[url].push(worker);
+  returnWorker(workerType: WorkerType, worker: any) {
+    this._workers[workerType].push(worker);
   }
 
   get maxWorkers(): number {

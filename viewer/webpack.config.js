@@ -52,6 +52,13 @@ module.exports = env => {
     module: {
       rules: [
         {
+          test: /\.worker\.ts$/,
+          loader: 'worker-loader',
+          options: {
+            inline: "no-fallback"
+          }
+        },
+        {
           test: /\.tsx?$/,
           use: {
             loader: 'ts-loader',

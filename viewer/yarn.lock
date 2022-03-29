@@ -769,6 +769,7 @@ __metadata:
     webpack-log: 3.0.2
     webpack-node-externals: 3.0.0
     whatwg-fetch: 3.6.2
+    worker-loader: ^3.0.8
     worker-plugin: 5.0.1
   peerDependencies:
     "@cognite/sdk": ^5.0.0 || ^6.0.0 || ^7.0.0
@@ -13484,6 +13485,18 @@ typescript@4.6.4:
   dependencies:
     errno: ~0.1.7
   checksum: eab917530e1feddf157ec749e9c91b73a886142daa7fdf3490bccbf7b548b2576c43ab8d0a98e72ac755cbc101ca8647a7b1ff2485fddb9e8f53c40c77f5a719
+  languageName: node
+  linkType: hard
+
+"worker-loader@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "worker-loader@npm:3.0.8"
+  dependencies:
+    loader-utils: ^2.0.0
+    schema-utils: ^3.0.0
+  peerDependencies:
+    webpack: ^4.0.0 || ^5.0.0
+  checksum: 84f4a7eeb2a1d8b9704425837e017c91eedfae67ac89e0b866a2dcf283323c1dcabe0258196278b7d5fd0041392da895c8a0c59ddf3a94f1b2e003df68ddfec3
   languageName: node
   linkType: hard
 

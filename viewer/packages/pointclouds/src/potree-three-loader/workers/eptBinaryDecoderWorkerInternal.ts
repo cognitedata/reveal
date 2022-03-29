@@ -4,7 +4,7 @@ type SchemaEntry = {
   type: 'signed' | 'unsigned' | 'float';
 };
 
-function parseEpt(event: MessageEvent) {
+export function parseEpt(event: MessageEvent) {
   const buffer = event.data.buffer;
   const view = new DataView(buffer);
   const schema: SchemaEntry[] = event.data.schema;
@@ -239,5 +239,5 @@ function parseEpt(event: MessageEvent) {
     message.indices
   ].filter(v => v);
 
-  postMessage(message, '*', transferables);
+  (postMessage as ((a: any, b: ArrayBuffer[]) => void))(message, transferables);
 }
