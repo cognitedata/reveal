@@ -6,7 +6,7 @@ import { createRevealManager } from './createRevealManager';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
-import { Mock } from 'moq.ts';
+import { It, Mock, SetPropertyExpression } from 'moq.ts';
 
 import * as THREE from 'three';
 
@@ -18,7 +18,10 @@ describe('createRevealManager', () => {
         'some-application-id',
         new Mock<ModelMetadataProvider>().object(),
         new Mock<ModelDataProvider>().object(),
-        new Mock<THREE.WebGLRenderer>().object(),
+        new Mock<THREE.WebGLRenderer>()
+          .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name == 'info'))
+          .returns({})
+          .object(),
         new THREE.Scene(),
         { cadModels: [], customObjects: [] },
         {}

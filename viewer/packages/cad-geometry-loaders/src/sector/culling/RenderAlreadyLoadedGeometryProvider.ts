@@ -21,7 +21,7 @@ export class RenderAlreadyLoadedGeometryProvider {
   ): Promise<void> {
     const scene = this._depthOnlyRenderPipeline.scene;
 
-    scene.traverse(x => {
+    scene?.traverse(x => {
       if (x instanceof SectorNode && x.levelOfDetail === LevelOfDetail.Simple) {
         x.visible = false;
       }
@@ -30,7 +30,7 @@ export class RenderAlreadyLoadedGeometryProvider {
     this._depthOnlyRenderPipeline.outputRenderTarget = target;
     await this._basicPipelineExecutor.render(this._depthOnlyRenderPipeline, camera);
 
-    scene.traverse(x => {
+    scene?.traverse(x => {
       if (x instanceof SectorNode && x.levelOfDetail === LevelOfDetail.Simple) {
         x.visible = true;
       }

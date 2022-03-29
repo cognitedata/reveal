@@ -12,6 +12,7 @@ import { File3dFormat } from '@reveal/modeldata-api';
 
 import { Mock, It } from 'moq.ts';
 import { GeometryDepthRenderPipeline } from '@reveal/rendering';
+import { RenderPass } from '@reveal/rendering/src/RenderPass';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext = createGlContext(64, 64);
@@ -28,15 +29,19 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
+    const renderPassMock = new Mock<RenderPass>()
+      .setup(e => e.render(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(renderer.getRenderTarget()));
+
     depthOnlyPipelineProvider = new Mock<GeometryDepthRenderPipeline>()
       .setup(e => e.outputRenderTarget)
       .returns(renderer.getRenderTarget())
-      // .setup(e => e.setRenderTarget(It.IsAny()))
-      // .returns()
-      // .setup(e => e.setRenderTargetAutoSize(It.IsAny()))
-      // .returns()
       .setup(e => e.pipeline(It.IsAny()))
-      .returns(null)
+      .returns(
+        (function* (): Generator<RenderPass> {
+          yield renderPassMock.object();
+        })()
+      )
       .object();
   });
 

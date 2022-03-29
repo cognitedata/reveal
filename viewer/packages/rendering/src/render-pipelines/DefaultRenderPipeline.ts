@@ -17,7 +17,7 @@ import { OutlinePass } from '../render-passes/OutlinePass';
 import { IdentifiedModel } from '../utilities/types';
 import { DefaultRenderPipelinePasses, RenderTargetData } from './types';
 import { BlitEffect, alphaMaskBlendOptions, transparentBlendOptions } from '../render-passes/types';
-import { AntiAliasingMode, RenderOptions } from '../rendering/types';
+import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
 
 export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
@@ -200,7 +200,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   }
 
   private initializeRenderPasses(renderOptions: RenderOptions): DefaultRenderPipelinePasses {
-    const { ssaoRenderParameters } = renderOptions;
+    const ssaoRenderParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
+
     const inFront = {
       geometry: new GeometryPass(this._cadScene, this._materialManager, RenderMode.Effects),
       blitToComposition: new BlitPass({
