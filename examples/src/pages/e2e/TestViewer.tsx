@@ -122,7 +122,10 @@ export function TestViewer(props: Props) {
       });
 
       let scene = new THREE.Scene();
-      let renderables: any = [];
+      let renderables: { cadModels: {
+        modelIdentifier: string;
+        model: THREE.Object3D;
+    }[], customObjects: THREE.Object3D[] } = { cadModels: [], customObjects: [] };
 
       const renderOptions: RenderOptions = {
         ...defaultRenderOptions,
@@ -155,9 +158,10 @@ export function TestViewer(props: Props) {
           'cad',
           modelIdentifier
         );
-        renderables.push({model, modelIdentifier});
+        
+        renderables.cadModels.push({model, modelIdentifier: model.cadModelIdentifier});
       }
-
+      
       scene.add(model);
 
       let cameraConfig = getCameraConfig(model);
