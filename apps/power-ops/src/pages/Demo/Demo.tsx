@@ -1,21 +1,21 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useState, useContext, useEffect } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { CogniteEvent } from '@cognite/sdk';
-import sidecar from 'utils/sidecar';
+import { EDAContext } from 'providers/EDAProvider';
 
 import { TableData } from '../../models/sequences';
-import { SnifferEvent } from '../../models/sniffer';
 import { Container } from '../elements';
+import { SnifferEvent } from '../../models/sniffer';
 
 import ProcessList from './ProcessList';
 // import BidMatrix from './BidMatrix';
 
 export type Process = {
-  id: number;
+  id?: number;
+  externalId: string;
   name: string;
   description: string;
-  externalId: string;
   startTime: string;
   endTime: string;
   time: Date;
@@ -35,20 +35,9 @@ const shopStatuses: Record<string, string> = {
 };
 
 const Demo = () => {
-  const { powerOpsApiBaseUrl } = sidecar;
-  const eventsSourceURL = `${powerOpsApiBaseUrl}/sse`;
-
   const { client } = useAuthContext();
-
+  const { EDAEvents } = useContext(EDAContext);
   const [processes, setProcesses] = useState<Process[]>([]);
-  const [eventSource, setEventSource] = useState<EventSource | undefined>();
-
-  if (EventSource && !eventSource) {
-    const source = new EventSource(eventsSourceURL, {
-      withCredentials: false,
-    });
-    setEventSource(source);
-  }
 
   const runShop = async () => {
     const dataSets = await client?.datasets.retrieve([
@@ -71,7 +60,7 @@ const Demo = () => {
     setProcesses([
       ...processes,
       {
-        id: 10,
+        id: event?.[0].id,
         name: 'OE: SHOP Run',
         description: '',
         externalId,
@@ -84,16 +73,8 @@ const Demo = () => {
     ]);
   };
 
-  const processEvent = async (e: MessageEvent): Promise<void> => {
-    if (!e.data) return;
-
-    const event = JSON.parse(e.data) as SnifferEvent;
+  const processEvent = async (event: SnifferEvent): Promise<void> => {
     if (!event.id || !event.type) return;
-
-    const wholeEvent = await client?.events.retrieve([
-      { externalId: event.id },
-    ]);
-    if (!wholeEvent) return;
 
     const relationships = await client?.relationships.list({
       filter: {
@@ -109,7 +90,14 @@ const Demo = () => {
     ]);
     if (!sourceEvent?.[0]) return;
 
-    updateProcess(sourceEvent?.[0], shopStatuses[event.type]);
+    setProcesses((previousProcesses) => {
+      const newProcesses = previousProcesses.map((p) =>
+        p.externalId === sourceEvent?.[0].externalId
+          ? { ...p, status: shopStatuses?.[event.type] }
+          : p
+      );
+      return [...newProcesses];
+    });
     // switch (event.type) {
     //   case 'POWEROPS_BID_MATRIX_END':
     //     getBidMatrix(event.id);
@@ -117,26 +105,13 @@ const Demo = () => {
     // }
   };
 
-  const updateProcess = (sourceEvent: CogniteEvent, status: string) => {
-    const newProcesses = processes.map((p) => {
-      return p.externalId === sourceEvent.externalId ? { ...p, status } : p;
-    });
-    setProcesses([...newProcesses]);
-  };
-
   useEffect(() => {
-    [
-      'POWEROPS_SHOP_START',
-      'POWEROPS_SHOP_END',
-      'POWEROPS_BID_MATRIX_CREATE',
-      'POWEROPS_BID_MATRIX_END',
-    ].forEach((type) => {
-      eventSource?.addEventListener(type, (e) =>
-        processEvent(e as MessageEvent)
-      );
+    const subscription = EDAEvents?.subscribe((event) => {
+      processEvent(event);
     });
+
     return () => {
-      eventSource?.close();
+      subscription?.unsubscribe();
     };
   }, [processEvent]);
 
