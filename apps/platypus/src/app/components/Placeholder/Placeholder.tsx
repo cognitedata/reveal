@@ -72,14 +72,14 @@ export const Placeholder = ({
               <Body level={1}>
                 {t('vote_question', 'When should we start working on that?')}
               </Body>
-              <Button icon="Checkmark" onClick={() => onVote('ASAP')}>
+              <Button onClick={() => onVote('ASAP')}>
                 {t('vote_option_asap', 'ASAP')}
               </Button>
-              <Button icon="Checkmark" onClick={() => onVote('Later')}>
+              <Button onClick={() => onVote('Later')}>
                 {t('vote_option_later', 'Later')}
               </Button>
               <Body level={1}>{t('or', 'or')}</Body>
-              <Button icon="CloseLarge" onClick={() => onVote('No need')}>
+              <Button onClick={() => onVote('No need')}>
                 {t('vote_option_no_need', "Don't need it")}
               </Button>
               {showVotingResponse && (
