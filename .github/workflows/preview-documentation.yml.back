@@ -25,7 +25,7 @@ jobs:
           yarn build:prod
 
       - name: Update Docosaurus base URL
-        uses: jacobtomlinson/gha-find-replace@v1
+        uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "baseUrl: .*"
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
@@ -33,7 +33,7 @@ jobs:
           exclude: ".git"
 
       - name: Update Docosaurus title
-        uses: jacobtomlinson/gha-find-replace@v1
+        uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "title: .*"
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
