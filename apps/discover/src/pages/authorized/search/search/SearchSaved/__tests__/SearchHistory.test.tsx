@@ -1,51 +1,33 @@
-import { screen } from '@testing-library/react';
-import { Store } from 'redux';
-import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
+import { fireEvent, screen } from '@testing-library/react';
 
-import { getEmptyAppliedFilterType } from '__test-utils/fixtures/sidebar';
 import { testRenderer } from '__test-utils/renderer';
-import { getMockedStore } from '__test-utils/store.utils';
 
-import { SearchHistory } from '../SearchHistory';
+import { SearchHistory } from '../components/SearchHistory';
+import { NO_FILTERS } from '../constants';
 
-jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
-  useSearchHistoryListQuery: jest.fn(),
-}));
-
-jest.mock('services/savedSearches/hooks/useClearQuery', () => ({
-  useSetQuery: jest.fn(),
-}));
-
-jest.mock('services/savedSearches/hooks', () => ({
-  useSavedSearch: jest.fn(),
-}));
-
-jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
-  useSearchHistoryListQuery: jest.fn(),
-}));
-
+const page = (viewProps?: any) =>
+  testRenderer(SearchHistory, undefined, viewProps);
 describe('SearchHistory', () => {
-  const page = (viewStore: Store, viewProps?: any) =>
-    testRenderer(SearchHistory, viewStore, viewProps);
+  it(`Contains "${NO_FILTERS}" when no filters are applied`, async () => {
+    page({ query: 'test query', filters: [], count: 0 });
 
-  const defaultTestInit = async () =>
-    page(
-      getMockedStore({
-        sidebar: {
-          searchPhrase: undefined,
-          appliedFilters: getEmptyAppliedFilterType(),
-        },
-      })
-    );
-
-  beforeEach(() => {
-    (useSearchHistoryListQuery as jest.Mock).mockImplementation(() => ({
-      data: [],
-    }));
+    await screen.findByText('test query');
+    await screen.findByText(NO_FILTERS);
   });
 
-  it('Should render input with default place holder', async () => {
-    await defaultTestInit();
-    expect(await screen.findByText('Search')).toBeInTheDocument();
+  it('Shows the tooltip with filters', async () => {
+    page({
+      query: 'test query',
+      filters: [{ label: 'Documents', values: ['Source: Sol'] }],
+      count: 1,
+    });
+
+    fireEvent.mouseEnter(screen.getByTestId('search-history-filters'), {
+      bubbles: true,
+    });
+
+    await screen.findByText('Source: Sol');
+    await screen.findByRole('tooltip');
+    expect(screen.getByTestId('search-history-info')).toBeInTheDocument();
   });
 });

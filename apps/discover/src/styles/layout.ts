@@ -189,3 +189,7 @@ export const PageBottomPaddingWrapper = styled(PagePaddingWrapper)`
   align-items: stretch;
   padding-bottom: ${sizes.large};
 `;
+
+export const NewLine = styled.div`
+  margin-bottom: 8px;
+`;

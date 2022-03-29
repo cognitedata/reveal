@@ -14,25 +14,34 @@ import {
 export const formatFacetValue = (
   facet: DocumentFacet,
   item: any,
-  labels: Labels
+  labels: Labels,
+  hidePrefix?: boolean
 ): string => {
   const prefix = facet && getDocumentCategoryTitle(facet);
+
   if (isDocumentDateFacet(facet)) {
     if (!isArray(item) || item.length !== 2) {
       throw new Error('Must be an array with [start, end] date');
     }
+
     const startDate = getDateOrDefaultText(new Date(Number(item[0])));
     const endDate = getDateOrDefaultText(new Date(Number(item[1])));
-    return `${prefix}: ${startDate}-${endDate}`;
+    return formatFacetValueFromTemplate(
+      prefix,
+      `${startDate}-${endDate}`,
+      hidePrefix
+    );
   }
 
   if (isRangeFacet(facet)) {
     if (!isArray(item) || item.length !== 2) {
       throw new Error('Must be an array with [first, last] value');
     }
+
     return formatFacetValueFromTemplate(
       prefix,
-      `${head(item)} – ${tail(item)}`
+      `${head(item)} - ${tail(item)}`,
+      hidePrefix
     );
   }
 
@@ -44,12 +53,16 @@ export const formatFacetValue = (
     }
     return formatFacetValueFromTemplate(
       prefix,
-      labels[item.externalId] || item.externalId
+      labels[item.externalId] || item.externalId,
+      hidePrefix
     );
   }
 
-  return formatFacetValueFromTemplate(prefix, item);
+  return formatFacetValueFromTemplate(prefix, item, hidePrefix);
 };
 
-const formatFacetValueFromTemplate = (prefix: string, value: string) =>
-  `${prefix}: ${value}`;
+const formatFacetValueFromTemplate = (
+  prefix: string,
+  value: string,
+  hidePrefix?: boolean
+) => (hidePrefix ? value : `${prefix}: ${value}`);

@@ -1,8 +1,13 @@
 import groupBy from 'lodash/groupBy';
+import { mergeUniqueArray } from 'utils/merge';
 
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { useFilterConfigByCategory } from 'modules/wellSearch/hooks/useFilterConfigByCategory';
-import { FilterValues, WellFilterMap } from 'modules/wellSearch/types';
+import {
+  FilterValues,
+  WellFilterMap,
+  WellFormatFilter,
+} from 'modules/wellSearch/types';
 import { formatWellFilters } from 'modules/wellSearch/utils/filters';
 
 export const useGetAppliedFilterGroupedByCategory = () => {
@@ -21,9 +26,19 @@ export const useGetAppliedFilterEntries = () => {
 
 export const useFormatWellFilters = () => {
   const configByCategory = useFilterConfigByCategory();
+
   return (wellFilters: WellFilterMap) => {
-    return configByCategory.reduce((result: FilterValues[], filterConfig) => {
-      return [...result, ...formatWellFilters(wellFilters, filterConfig)];
-    }, []);
+    const results = configByCategory.reduce(
+      (result: FilterValues[], filterConfig) => {
+        return [...result, ...formatWellFilters(wellFilters, filterConfig)];
+      },
+      []
+    );
+
+    return results.reduce((accumulator, item) => {
+      return mergeUniqueArray(accumulator, {
+        [item.field || item.category || 'Unknown']: [item.value],
+      });
+    }, {} as WellFormatFilter);
   };
 };

@@ -80,6 +80,20 @@ export const getMockWellFilter: (
   };
 };
 
+export const getMockWellFilterExtra = getMockWellFilter({
+  '1': ['carina', 'sol'],
+  '2': ['Ganymede', 'Carme group'],
+  '3': ['Adad'],
+  '4': ['Cognite'],
+  '10': ['caliper'],
+  '12': ['Casing'],
+  '16': ['DFAL'],
+  '17': ['BARR', 'BHA', 'CASE', 'CEQP', 'CODE', 'COIL', 'CWOR', 'CMTO'],
+  '19': ['Abandoned', 'Exploration'],
+  '20': ['Jovian System'],
+  '40': ['NDS events'],
+});
+
 export const getMockActiveKeys: (
   extras?: Partial<ActiveKeysType>
 ) => ActiveKeysType = (extras = {}) => {

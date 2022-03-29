@@ -1,4 +1,4 @@
-import { Geometry, Point } from '@cognite/seismic-sdk-js';
+import { GeoJson, Geometry, Point } from '@cognite/seismic-sdk-js';
 
 export const getMockGeometry = (): Exclude<Geometry, 'GeometryCollection'> => {
   return {
@@ -10,6 +10,27 @@ export const getMockGeometry = (): Exclude<Geometry, 'GeometryCollection'> => {
         [3, 3],
       ],
     ],
+  };
+};
+
+export const getMockGeoJson = (extra = {}): GeoJson => {
+  return {
+    id: '8e7f06f0a751dc0d6699080b4d11ce54',
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      coordinates: [
+        [
+          [-3.4028320312505684, 59.071916049583194],
+          [13.340332031250028, 60.44395167378224],
+          [13.164550781249346, 47.73600994447236],
+          [-1.6889648437499147, 47.35037273730319],
+          [-3.4028320312505684, 59.071916049583194],
+        ],
+      ],
+      type: 'Polygon',
+    },
+    ...extra,
   };
 };
 

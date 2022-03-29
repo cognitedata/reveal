@@ -4,7 +4,7 @@ import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 
 import { SearchMenuContainer } from './elements';
 import { SavedSearches } from './SavedSearches';
-import { SearchHistory } from './SearchSaved/SearchHistory';
+import { GlobalSearch } from './SearchSaved/GlobalSearch';
 
 export const SearchMenu: React.FC = () => {
   const isOpen = useFilterBarIsOpen();
@@ -15,7 +15,7 @@ export const SearchMenu: React.FC = () => {
 
   return (
     <SearchMenuContainer>
-      <SearchHistory />
+      <GlobalSearch />
       <SavedSearches />
     </SearchMenuContainer>
   );

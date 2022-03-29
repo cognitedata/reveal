@@ -215,6 +215,8 @@ export interface WellMap {
   [key: number]: Well;
 }
 
+export type WellFormatFilter = { [key: string]: WellFilterOptionValue[] };
+
 export interface SequenceData {
   sequence: Sequence;
   rows?: SequenceRow[];

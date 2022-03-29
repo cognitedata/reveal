@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import { pluralize } from 'utils/pluralize';
+
 import { MetadataItem } from 'components/metadataTable';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
@@ -54,12 +56,12 @@ export const FilePath: React.FC<FilePathProps> = ({ paths, documentId }) => {
     );
   }
 
+  const headerText = t(pluralize('Original path', paths.length));
+
   return (
     <FilePathContainer>
       <FlexColumn>
-        <PathHeader>
-          {`${t('Original path')}${paths.length === 1 ? '' : 's'}`}
-        </PathHeader>
+        <PathHeader>{headerText}</PathHeader>
         {paths.map((path) => (
           <span key={`${path}`} data-testid="document-parent-path">
             <MetadataItem value={path} type="path" spacing="small" />

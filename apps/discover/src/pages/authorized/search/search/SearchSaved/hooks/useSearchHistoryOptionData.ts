@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
 
-import { SearchHistoryOptionType } from '../SearchHistory';
+import { SearchHistoryOptionType } from '../GlobalSearch';
 
 export const useSearchHistoryOptionData =
   (): SearchHistoryOptionType<string>[] => {

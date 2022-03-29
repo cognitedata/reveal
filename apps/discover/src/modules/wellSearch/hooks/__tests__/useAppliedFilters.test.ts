@@ -27,6 +27,10 @@ describe('useHumanizeWellFilters', () => {
   it('Should return humanize well filters', async () => {
     const useHumanizeWellFilters = await getHookResult();
     const result = useHumanizeWellFilters(getMockWellFilter());
-    expect(result.length).toBe(4);
+
+    expect(result).toMatchObject({
+      Field: ['BOEM', 'BP-Penquin'],
+      Operator: ['Atlantis', 'Mad Dog'],
+    });
   });
 });

@@ -5,11 +5,11 @@ import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { FilterConfig } from 'modules/wellSearch/types';
 import { filterConfigs } from 'pages/authorized/search/search/SideBar/filters/well/filters';
 
 import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
-import { useWellConfig } from './useWellConfig';
 
 export const useFilterConfigByCategory = () => {
   const { data: config } = useWellConfig();

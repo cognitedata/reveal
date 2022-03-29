@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { pluralize } from 'utils/pluralize';
+
 import { Tooltip } from 'components/tooltip';
 
 import { AssetIcon, SubLabel } from '../elements';
@@ -15,7 +17,7 @@ export const AssetLabel: React.FC<Props> = React.memo(
     return (
       <>
         {value > 0 && (
-          <Tooltip title={`${value} ${titleType}${value === 1 ? '' : 's'}`}>
+          <Tooltip title={`${value} ${pluralize(titleType, value)}`}>
             <SubLabel variant="unknown" size="small">
               <AssetIcon data-testid="asset-label" type={type} />
               {value}

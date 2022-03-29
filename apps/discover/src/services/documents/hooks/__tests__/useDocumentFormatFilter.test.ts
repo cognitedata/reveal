@@ -1,5 +1,3 @@
-import { DocumentFilterCategoryTitles } from 'modules/documentSearch/types';
-
 import {
   useDocumentFormatFilter,
   useFormatDocumentFilters,
@@ -46,20 +44,12 @@ describe('useDocumentFormatFilter', () => {
   });
 });
 
-describe('useHumanizeDocumentFilters', () => {
+describe('useFormatDocumentFilters', () => {
   const formattedDocumentFilters = useFormatDocumentFilters();
   it('formats the "filetype" tag correctly', () => {
     const result = formattedDocumentFilters([['filetype', ['PDF', 'IMAGE']]]);
-    expect(result.length).toBe(2);
-    expect(result).toContainEqual({
-      facet: 'filetype',
-      facetNameDisplayFormat: 'File Type',
-      facetValueDisplayFormat: 'File Type: PDF',
-    });
-    expect(result).toContainEqual({
-      facet: 'filetype',
-      facetNameDisplayFormat: DocumentFilterCategoryTitles.filetype,
-      facetValueDisplayFormat: 'File Type: IMAGE',
+    expect(result).toMatchObject({
+      'File Type': ['PDF', 'IMAGE'],
     });
   });
 
@@ -67,16 +57,9 @@ describe('useHumanizeDocumentFilters', () => {
     const result = formattedDocumentFilters([
       ['location', ['SOURCE_1', 'SOURCE_2']],
     ]);
-    expect(result.length).toBe(2);
-    expect(result).toContainEqual({
-      facet: 'location',
-      facetNameDisplayFormat: DocumentFilterCategoryTitles.location,
-      facetValueDisplayFormat: 'Source: SOURCE_1',
-    });
-    expect(result).toContainEqual({
-      facet: 'location',
-      facetNameDisplayFormat: DocumentFilterCategoryTitles.location,
-      facetValueDisplayFormat: 'Source: SOURCE_2',
+
+    expect(result).toMatchObject({
+      Source: ['SOURCE_1', 'SOURCE_2'],
     });
   });
 
@@ -84,10 +67,8 @@ describe('useHumanizeDocumentFilters', () => {
     const result = formattedDocumentFilters([
       ['lastcreated', ['1175637600000', '1619042400000']],
     ]);
-    expect(result.length).toBe(1);
-    expect(result[0].facet).toBe('lastcreated');
-    expect(result[0].facetNameDisplayFormat).toBe('Created');
-    expect(result[0].facetValueDisplayFormat).toContain('Created: ');
+
+    expect(result).toMatchObject({ Created: expect.any(Array) });
   });
 
   it('expect error on invalid item to "lastcreated"', () => {
@@ -100,10 +81,10 @@ describe('useHumanizeDocumentFilters', () => {
     const result = formattedDocumentFilters([
       ['lastmodified', ['1175637600000', '1619042400000']],
     ]);
-    expect(result.length).toBe(1);
-    expect(result[0].facet).toBe('lastmodified');
-    expect(result[0].facetNameDisplayFormat).toBe('Last Modified');
-    expect(result[0].facetValueDisplayFormat).toContain('Last Modified: ');
+
+    expect(result).toMatchObject({
+      'Last Modified': expect.any(Array),
+    });
   });
 
   it('expect error on invalid item to "lastmodified"', () => {
@@ -123,13 +104,7 @@ describe('useHumanizeDocumentFilters', () => {
         ],
       ],
     ]);
-    expect(result.length).toBe(1);
-    expect(result[0].facet).toBe('labels');
-    expect(result[0].facetNameDisplayFormat).toBe(
-      DocumentFilterCategoryTitles.labels
-    );
-    expect(result[0].facetValueDisplayFormat).toBe(
-      'Document Category: TEST_TYPE_1'
-    );
+
+    expect(result).toMatchObject({ 'Document Category': ['TEST_TYPE_1'] });
   });
 });
