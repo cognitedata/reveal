@@ -11,6 +11,7 @@ import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
   Cognite3DModel,
+  CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
   CogniteModelBase,
@@ -27,6 +28,7 @@ import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
+import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 
 
 window.THREE = THREE;
@@ -177,6 +179,8 @@ export function Migration() {
         viewer.loadCameraFromModel(model);
         if (model instanceof Cognite3DModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);
+        } else if (model instanceof CognitePointCloudModel) {
+          new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -209,7 +213,7 @@ export function Migration() {
       renderGui.add(guiState, 'debugRenderStageTimings')
         .name('Debug timings')
         .onChange(enabled => {
-          (viewer as any).revealManager.debugRenderTiming = enabled;
+          // (viewer as any).revealManager.debugRenderTiming = enabled;
         });
 
       const debugGui = gui.addFolder('Debug');

@@ -31,6 +31,7 @@ describe('RevealManager', () => {
       stubDataProvider,
       renderer,
       new THREE.Scene(),
+      [],
       {
         internal: { cad: { sectorCuller } }
       }
@@ -101,6 +102,7 @@ describe('RevealManager', () => {
       stubDataProvider,
       renderer,
       new THREE.Scene(),
+      [],
       {
         internal: { cad: { sectorCuller } }
       }

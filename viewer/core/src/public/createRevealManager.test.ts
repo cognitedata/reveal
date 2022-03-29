@@ -20,6 +20,7 @@ describe('createRevealManager', () => {
         new Mock<ModelDataProvider>().object(),
         new Mock<THREE.WebGLRenderer>().object(),
         new THREE.Scene(),
+        [],
         {}
       )
     ).not.toThrow();

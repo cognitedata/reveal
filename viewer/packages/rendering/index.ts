@@ -19,10 +19,15 @@ export {
   AntiAliasingMode
 } from './src/rendering/types';
 
-export { EffectRenderManager } from './src/rendering/EffectRenderManager';
-
 export { RenderMode } from './src/rendering/RenderMode';
 export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials } from './src/rendering/materials';
 export { createPrimitives } from './src/rendering/primitives';
+
+export { IdentifiedModel } from './src/utilities/types';
+export { DefaultRenderPipeline } from './src/render-pipelines/DefaultRenderPipeline';
+export { GeometryDepthRenderPipeline } from './src/render-pipelines/GeometryDepthRenderPipeline';
+export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';
+export { PipelineExecutor } from './src/PipelineExecutor';
+export { RenderPipelineProvider } from './src/RenderPipelineProvider';

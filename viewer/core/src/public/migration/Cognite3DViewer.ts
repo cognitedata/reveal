@@ -7,7 +7,13 @@ import TWEEN from '@tweenjs/tween.js';
 import omit from 'lodash/omit';
 import { Subscription, fromEventPattern } from 'rxjs';
 
-import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
+import {
+  defaultRenderOptions,
+  SsaoParameters,
+  SsaoSampleQuality,
+  AntiAliasingMode,
+  IdentifiedModel
+} from '@reveal/rendering';
 
 import {
   assertNever,
@@ -120,6 +126,7 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModelBase[] = [];
+  private readonly _renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] };
   private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
@@ -213,6 +220,8 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
 
+    this._renderables = { cadModels: [], customObjects: this._extraObjects };
+
     this._mouseHandler = new InputHandler(this.canvas);
 
     this._cameraManager =
@@ -228,12 +237,18 @@ export class Cognite3DViewer {
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
       this._cdfSdkClient = undefined;
-      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
+      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
+        this._renderer,
+        this.scene,
+        this._renderables,
+        revealOptions
+      );
     } else if (options.customDataSource !== undefined) {
       this._dataSource = options.customDataSource;
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
         this.scene,
+        this._renderables,
         revealOptions,
         options.customDataSource
       );
@@ -244,6 +259,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this.scene,
+        this._renderables,
         revealOptions,
         options.sdk
       );
@@ -541,6 +557,7 @@ export class Cognite3DViewer {
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
+    this._renderables.cadModels.push({ model: model3d, modelIdentifier: cadNode.cadModelIdentifier });
     this.scene.add(model3d);
 
     return model3d;
@@ -562,9 +579,6 @@ export class Cognite3DViewer {
    * ```
    */
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
-    if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError('localPath is not supported');
-    }
     if (options.geometryFilter) {
       throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
@@ -672,9 +686,9 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this.scene.add(object);
     object.updateMatrixWorld(true);
     this._extraObjects.push(object);
+    this.scene.add(object);
     this.renderController.redraw();
     this.recalculateBoundingBox();
   }
@@ -700,27 +714,6 @@ export class Cognite3DViewer {
     }
     this.renderController.redraw();
     this.recalculateBoundingBox();
-  }
-
-  /**
-   * Add an object that will be considered a UI object. It will be rendered in the last stage and with orthographic projection.
-   * @param object
-   * @param screenPos Screen space position of object (in pixels).
-   * @param size Pixel width and height of the object.
-   */
-  addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
-    if (this.isDisposed) return;
-
-    this.revealManager.addUiObject(object, screenPos, size);
-  }
-
-  /** Removes the UI object from the viewer.
-   * @param object
-   */
-  removeUiObject(object: THREE.Object3D): void {
-    if (this.isDisposed) return;
-
-    this.revealManager.removeUiObject(object);
   }
 
   /**
@@ -1107,7 +1100,7 @@ export class Cognite3DViewer {
       if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        this.revealManager.render(this.camera);
+        await this.revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
         this._clippingNeedsUpdate = false;
@@ -1185,9 +1178,8 @@ export class Cognite3DViewer {
       return false;
     }
 
-    this.renderer.setSize(width, height);
-
     adjustCamera(this.camera, width, height);
+    this.renderer.setSize(width, height);
 
     return true;
   }

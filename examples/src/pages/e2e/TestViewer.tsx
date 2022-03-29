@@ -122,6 +122,7 @@ export function TestViewer(props: Props) {
       });
 
       let scene = new THREE.Scene();
+      let renderables: any = [];
 
       const renderOptions: RenderOptions = {
         ...defaultRenderOptions,
@@ -139,7 +140,7 @@ export function TestViewer(props: Props) {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
-      revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false, renderOptions: renderOptions });
+      revealManager = reveal.createLocalRevealManager(renderer, scene, renderables, { logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
       let model: reveal.PointCloudNode | reveal.CadNode;
@@ -154,6 +155,7 @@ export function TestViewer(props: Props) {
           'cad',
           modelIdentifier
         );
+        renderables.push({model, modelIdentifier});
       }
 
       scene.add(model);

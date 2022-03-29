@@ -109,6 +109,21 @@ export const ssaoBlurCombineShaders = {
   vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
 };
 
+export const edgeDetectShaders = {
+  fragment: glsl(require('../glsl/post-processing/edges.frag').default),
+  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+};
+
+export const blitShaders = {
+  fragment: glsl(require('../glsl/post-processing/blit.frag').default),
+  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+};
+
+export const outlineShaders = {
+  fragment: glsl(require('../glsl/post-processing/outline.frag').default),
+  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+};
+
 /**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */

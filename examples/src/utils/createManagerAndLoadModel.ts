@@ -36,12 +36,14 @@ export async function createManagerAndLoadModel(
   modelRevision: { modelId: number, revisionId: number } | undefined,
   modelUrl: { fileName: string | undefined } | undefined
 ): Promise<{ revealManager: RevealManager, model: CadNode | PointCloudNode }> {
+  let renderables: any = [];
   if (modelRevision) {
-    const revealManager = createCdfRevealManager(sdkClient, renderer, scene, { logMetrics: false });
+    const revealManager = createCdfRevealManager(sdkClient, renderer, scene, renderables, { logMetrics: false });
     switch (modelType) {
       case 'cad': {
           const modelIdentifier = new CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId);
           const model = await revealManager.addModel('cad', modelIdentifier);
+          renderables.push({model, modelIdentifier});
           return { revealManager, model };
       }
       case 'pointcloud': {
@@ -53,7 +55,7 @@ export async function createManagerAndLoadModel(
         throw new Error(`Unsupported model type '${modelType}'`);
     }
   } else if (modelUrl) {
-    const revealManager = createLocalRevealManager(renderer, scene, { logMetrics: false });
+    const revealManager = createLocalRevealManager(renderer, scene, renderables, { logMetrics: false });
     switch (modelType) {
       case 'cad': {
           const modelIdentifier = new LocalModelIdentifier(modelUrl.fileName!);

@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadModelMetadata, V8SectorMetadata, WantedSector } from '@reveal/cad-parsers';
-import { coverageShaders, EffectRenderManager } from '@reveal/rendering';
+import { coverageShaders, GeometryDepthRenderPipeline } from '@reveal/rendering';
 
 import assert from 'assert';
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
@@ -50,9 +50,9 @@ export interface OrderSectorsByVisibleCoverageOptions {
   renderer: THREE.WebGLRenderer;
 
   /**
-   * EffectRenderManager used to initialize the RenderAlreadyLoadedGeometryProvider
+   * GeometryDepthRenderPipeline used to initialize the RenderAlreadyLoadedGeometryProvider
    */
-  renderManager: EffectRenderManager;
+  depthOnlyRenderPipeline: GeometryDepthRenderPipeline;
 }
 
 export type PrioritizedSectorIdentifier = {
@@ -95,14 +95,14 @@ export interface OrderSectorsByVisibilityCoverage {
    * Cull a set of sectors potentially being loaded towards already loaded geometry to determine if
    * the sector is visible or occluded.
    */
-  cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): WantedSector[];
+  cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): Promise<WantedSector[]>;
 
   /**
    * Estimates how visible the different sectors for the models added are and returns
    * a prioritized list.
    * @param camera The current viewpoint.
    */
-  orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[];
+  orderSectorsByVisibility(camera: THREE.Camera): Promise<PrioritizedSectorIdentifier[]>;
 }
 
 /**
@@ -153,7 +153,10 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   constructor(options: OrderSectorsByVisibleCoverageOptions) {
     this._renderer = options.renderer;
-    this._alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(options.renderManager);
+    this._alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(
+      options.renderer,
+      options.depthOnlyRenderPipeline
+    );
 
     // Note! Rener target will be resize before actual use
     this.renderTarget = new THREE.WebGLRenderTarget(1, 1, {
@@ -208,13 +211,13 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     this.coverageMaterial.clippingPlanes = planes;
   }
 
-  cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): WantedSector[] {
+  async cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): Promise<WantedSector[]> {
     try {
       // Only render sectors we are interested in
       this.setAllSectorsVisible(false);
       this.setSectorsVisibility(sectors, true);
 
-      const ordered = this.orderSectorsByVisibility(camera);
+      const ordered = await this.orderSectorsByVisibility(camera);
       const filtered = sectors.filter(toBeFiltered => {
         const container = this.containers.get(toBeFiltered.modelIdentifier);
         if (container === undefined) {
@@ -236,14 +239,14 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     }
   }
 
-  orderSectorsByVisibility(camera: THREE.PerspectiveCamera): PrioritizedSectorIdentifier[] {
+  async orderSectorsByVisibility(camera: THREE.PerspectiveCamera): Promise<PrioritizedSectorIdentifier[]> {
     if (this._debugImageElement) {
       this.renderSectors(null, camera);
       this._debugImageElement.src = this._renderer.domElement.toDataURL();
     }
 
     this.ensureBuffersCorrectSize();
-    this.renderSectors(this.renderTarget, camera);
+    await this.renderSectors(this.renderTarget, camera);
 
     // Read back result from GPU
     this._renderer.readRenderTargetPixels(
@@ -318,7 +321,10 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     }
   }
 
-  private renderSectors(renderTarget: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
+  private async renderSectors(
+    renderTarget: THREE.WebGLRenderTarget | null,
+    camera: THREE.PerspectiveCamera
+  ): Promise<void> {
     const stateHelper = new WebGLRendererStateHelper(this._renderer);
     try {
       stateHelper.localClippingEnabled = true;
@@ -331,7 +337,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       this._renderer.clear(true, true);
 
       // 2. Render already loaded geometry to offscreen buffer
-      this._alreadyLoadedProvider.renderOccludingGeometry(renderTarget, camera);
+      await this._alreadyLoadedProvider.renderOccludingGeometry(renderTarget, camera);
 
       // 3. Render to offscreen buffer
       this._renderer.render(this.scene, camera);
