@@ -598,6 +598,12 @@ export class Cognite3DViewer {
         const cadModel = model as Cognite3DModel;
         this.scene.remove(cadModel);
         this.revealManager.removeModel(model.type, cadModel.cadNode);
+        model.dispose();
+
+        // This is required because renderer holds references to scenes that were rendered,
+        // including geometry on that scenes. `dispose` method removes unused references for
+        // removed model. 
+        this._renderer.renderLists.dispose(); 
         break;
 
       case 'pointcloud':

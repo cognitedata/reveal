@@ -33,7 +33,7 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
-  private readonly _geometryBatchingManager: GeometryBatchingManager;
+  private _geometryBatchingManager: GeometryBatchingManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
@@ -53,10 +53,10 @@ export class CadNode extends THREE.Object3D {
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
     this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
 
-    const rootSector = new RootSectorNode(model);
+    this._rootSector = new RootSectorNode(model);
 
-    rootSector.add(instancedMeshGroup);
-    rootSector.add(batchedGeometryMeshGroup);
+    this._rootSector.add(instancedMeshGroup);
+    this._rootSector.add(batchedGeometryMeshGroup);
 
     this._cadModelMetadata = model;
     const { scene } = model;
@@ -64,8 +64,7 @@ export class CadNode extends THREE.Object3D {
     this._sectorScene = scene;
 
     // Prepare renderables
-    this._rootSector = rootSector;
-    this.add(rootSector);
+    this.add(this._rootSector);
 
     this.matrixAutoUpdate = false;
     this.updateMatrixWorld();
@@ -176,6 +175,10 @@ export class CadNode extends THREE.Object3D {
   }
 
   public clearCache(): void {
+    this._materialManager.clearModelData(this._cadModelMetadata.modelIdentifier);
+
+    this._geometryBatchingManager.dispose();
     this._sectorRepository.clearCache();
+    this._rootSector.resetAllNodes();
   }
 }

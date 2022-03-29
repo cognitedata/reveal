@@ -105,8 +105,8 @@ export class CadMaterialManager {
       perModelClippingPlanes: [],
       nodeAppearanceProvider,
       nodeTransformProvider,
-      nodeAppearanceTextureBuilder,
-      nodeTransformTextureBuilder,
+      nodeAppearanceTextureBuilder: nodeAppearanceTextureBuilder,
+      nodeTransformTextureBuilder: nodeTransformTextureBuilder,
       updateMaterialsCallback,
       updateTransformsCallback
     });
@@ -147,32 +147,6 @@ export class CadMaterialManager {
     this.triggerMaterialsChanged();
   }
 
-  private updateClippingPlanesForModel(modelIdentifier: string) {
-    const materialWrapper = this.materialsMap.get(modelIdentifier);
-    if (materialWrapper === undefined) {
-      throw new Error(
-        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
-      );
-    }
-
-    const clippingPlanes = [...materialWrapper.perModelClippingPlanes, ...this.clippingPlanes];
-    const clippingPlanesAsUniform = clippingPlanes.map(
-      p => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, -p.constant)
-    );
-
-    applyToModelMaterials(materialWrapper.materials, m => {
-      m.clipping = clippingPlanes.length > 0;
-      m.clipIntersection = false;
-      m.clippingPlanes = clippingPlanes;
-      m.defines = {
-        ...m.defines,
-        NUM_CLIPPING_PLANES: clippingPlanesAsUniform.length,
-        UNION_CLIPPING_PLANES: 0
-      };
-      m.needsUpdate = true;
-    });
-  }
-
   setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance): void {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     wrapper.nodeAppearanceTextureBuilder.setDefaultAppearance(defaultAppearance);
@@ -205,6 +179,46 @@ export class CadMaterialManager {
 
   getRenderMode(): RenderMode {
     return this._renderMode;
+  }
+
+  dispose(): void {
+    for (const [_, wrapper] of this.materialsMap) {
+      wrapper.nodeAppearanceTextureBuilder.dispose();
+      wrapper.nodeTransformTextureBuilder.dispose();
+    }
+  }
+
+  clearModelData(modelIdentifier: string): void {
+    const { nodeAppearanceTextureBuilder, nodeTransformTextureBuilder } = this.materialsMap.get(modelIdentifier)
+    
+    nodeTransformTextureBuilder.dispose();
+    nodeAppearanceTextureBuilder.dispose();
+  }
+
+  private updateClippingPlanesForModel(modelIdentifier: string) {
+    const materialWrapper = this.materialsMap.get(modelIdentifier);
+    if (materialWrapper === undefined) {
+      throw new Error(
+        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
+      );
+    }
+
+    const clippingPlanes = [...materialWrapper.perModelClippingPlanes, ...this.clippingPlanes];
+    const clippingPlanesAsUniform = clippingPlanes.map(
+      p => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, -p.constant)
+    );
+
+    applyToModelMaterials(materialWrapper.materials, m => {
+      m.clipping = clippingPlanes.length > 0;
+      m.clipIntersection = false;
+      m.clippingPlanes = clippingPlanes;
+      m.defines = {
+        ...m.defines,
+        NUM_CLIPPING_PLANES: clippingPlanesAsUniform.length,
+        UNION_CLIPPING_PLANES: 0
+      };
+      m.needsUpdate = true;
+    });
   }
 
   private updateMaterials(modelIdentifier: string) {

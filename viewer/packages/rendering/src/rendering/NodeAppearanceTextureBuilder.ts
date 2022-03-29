@@ -14,8 +14,8 @@ export class NodeAppearanceTextureBuilder {
 
   private _needsUpdate = true;
   private readonly _allTreeIndices: IndexSet;
-  private readonly _overrideColorDefaultAppearanceRgba: Uint8ClampedArray;
-  private readonly _overrideColorPerTreeIndexTexture: THREE.DataTexture;
+  private _overrideColorDefaultAppearanceRgba: Uint8ClampedArray;
+  private _overrideColorPerTreeIndexTexture: THREE.DataTexture;
   private readonly _regularNodesTreeIndices: IndexSet;
   private readonly _ghostedNodesTreeIndices: IndexSet;
   private readonly _infrontNodesTreeIndices: IndexSet;
@@ -91,9 +91,15 @@ export class NodeAppearanceTextureBuilder {
     return this._overrideColorPerTreeIndexTexture;
   }
 
+  clearData(): void {
+    delete this._overrideColorPerTreeIndexTexture.image;
+    delete this._overrideColorDefaultAppearanceRgba;
+  }
+
   dispose(): void {
     this._styleProvider.off('changed', this._handleStylesChangedListener);
     this._overrideColorPerTreeIndexTexture.dispose();
+    this.clearData();
   }
 
   build(): void {

@@ -116,6 +116,7 @@ export class CadManager {
 
   dispose(): void {
     this._cadModelUpdateHandler.dispose();
+    this._materialManager.dispose();
     this._cadModelFactory.dispose();
     this._subscription.unsubscribe();
     this._materialManager.off('materialsChanged', this._materialsChangedListener);

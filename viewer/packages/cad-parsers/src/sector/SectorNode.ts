@@ -49,6 +49,12 @@ export class SectorNode extends THREE.Group {
     this.updateMatrixWorld(true);
   }
 
+  dereference(): void {
+    if (this._group !== undefined) {
+      this._group.dereference();
+    }
+  }
+  
   resetGeometry(): void {
     if (this._group !== undefined) {
       this._group.dereference();

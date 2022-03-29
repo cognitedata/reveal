@@ -60,7 +60,7 @@ export function Migration() {
         }
       };
 
-      let client: CogniteClient;;
+      let client: CogniteClient;
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
       } else {

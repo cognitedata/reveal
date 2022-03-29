@@ -34,6 +34,10 @@ export class GltfSectorParser {
     return this.traverseDefaultSceneNodes(json, headers, data);
   }
 
+  public disposeOfOldData() {
+
+  }
+
   private async traverseDefaultSceneNodes(json: GltfJson, headers: GlbHeaderData, data: ArrayBuffer) {
     const typedGeometryBuffers: ParsedGeometry[] = [];
 

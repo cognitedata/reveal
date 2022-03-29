@@ -33,11 +33,11 @@ export class CadModelUpdateHandler {
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _prioritizedLoadingHintsSubject: Subject<void> = new Subject();
-  private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
+  private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' } | 'cleanup'> = new Subject();
   private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
   private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
-  private readonly _updateObservable: Observable<ConsumedSector>;
+  private _updateObservable: Observable<ConsumedSector>;
 
   constructor(sectorCuller: SectorCuller, continuousModelStreaming = false) {
     this._sectorCuller = sectorCuller;
@@ -115,6 +115,9 @@ export class CadModelUpdateHandler {
   }
 
   dispose(): void {
+    delete this._updateObservable;
+    this._modelSubject.next('cleanup');
+    this._modelSubject.unsubscribe();
     this._sectorCuller.dispose();
   }
 
@@ -172,15 +175,17 @@ export class CadModelUpdateHandler {
   private loadingModelObservable() {
     return this._modelSubject.pipe(
       scan((array, next) => {
-        const { model, operation } = next;
-        switch (operation) {
-          case 'add':
-            array.push(model);
-            return array;
-          case 'remove':
-            return array.filter(x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
-          default:
-            assertNever(operation);
+        if (next !== 'cleanup') {
+          const { model, operation } = next;
+          switch (operation) {
+            case 'add':
+              array.push(model);
+              return array;
+            case 'remove':
+              return array.filter(x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
+            default:
+              assertNever(operation);
+          }
         }
       }, [] as CadNode[])
     );
