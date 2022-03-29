@@ -49,28 +49,28 @@ describe('ByVisibilityGpuSectorCuller', () => {
     jest.resetAllMocks();
   });
 
-  test('determineSectors throws if model is not v9', () => {
+  test('determineSectors throws if model is not v9', async () => {
     const v8input = createDetermineSectorInput(camera, createCadModelMetadata(8, createV9SectorMetadata([0, []])));
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 
-    expect(() => culler.determineSectors(v8input)).toThrowError();
+    await expect(culler.determineSectors(v8input)).rejects.toThrowError();
   });
 
-  test('determineSectors sets models to coverage utility', () => {
+  test('determineSectors sets models to coverage utility', async () => {
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     const model = createCadModelMetadata(8, generateV8SectorTree(1));
     const input = createDetermineSectorInput(camera, model);
-    culler.determineSectors(input);
+    await culler.determineSectors(input);
     expect(setModelsMock).toBeCalled();
   });
 
-  test('determineSectors sets clip planes to coverage utility', () => {
+  test('determineSectors sets clip planes to coverage utility', async () => {
     const clippingPlanes = [new THREE.Plane(), new THREE.Plane()];
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     const model = createCadModelMetadata(8, generateV8SectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     input.clippingPlanes = clippingPlanes;
-    culler.determineSectors(input);
+    await culler.determineSectors(input);
     expect(setClippingMock).toBeCalledWith(clippingPlanes);
   });
 
