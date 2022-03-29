@@ -8,6 +8,7 @@ const addLoaders = (config) => {
   //Matchers to find the array of rules and css-file loader
   const loadersMatcher = (inQuestion) =>
     inQuestion.rules &&
+    inQuestion.rules.find &&
     inQuestion.rules.find((rule) => Array.isArray(rule.oneOf));
   const cssMatcher = (inQuestion) =>
     inQuestion.test && inQuestion.test.toString() === cssRegex.toString();
@@ -21,6 +22,10 @@ const addLoaders = (config) => {
         // the root app is mounted / unmounted
         esModule: true,
         injectType: 'lazyStyleTag',
+        insert: function insertAtTop(element) {
+          var parent = document.querySelector('head');
+          parent.insertBefore(element, parent.firstChild);
+        },
       },
     },
     {
@@ -36,11 +41,13 @@ const addLoaders = (config) => {
     {
       loader: 'postcss-loader',
       options: {
-        plugins: [
-          PrefixWrap(`.${styleScope}`, {
-            ignoredSelectors: [':root'],
-          }),
-        ],
+        postcssOptions: {
+          plugins: [
+            PrefixWrap(`.${styleScope}`, {
+              ignoredSelectors: [':root'],
+            }),
+          ],
+        },
       },
     },
   ];
@@ -62,9 +69,9 @@ const addLoaders = (config) => {
       },
     ],
   });
+
   //Remove the set of already configured loaders to process css files
   config = remove(getPaths(cssMatcher, config), config);
-
   //Add our set of newly configured loaders
   config = edit(transform, getPaths(loadersMatcher, config), config);
 
@@ -76,7 +83,7 @@ module.exports = [
   {
     webpack: (config) => {
       config.output.libraryTarget = 'system';
-      config.output.filename = 'index.js';
+      config.output.filename = `index.js`;
 
       config = addLoaders(config);
 
@@ -84,6 +91,7 @@ module.exports = [
       config.plugins = config.plugins
         .filter((plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin')
         .filter((plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin');
+
       config.externals = {
         react: 'react',
         'react-dom': 'react-dom',

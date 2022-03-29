@@ -3,7 +3,6 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/extend-expect';
-// eslint-disable-next-line jest/no-mocks-import
 import { server } from 'src/__mocks__/msw';
 
 // Establish API mocking before all tests.

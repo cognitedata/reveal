@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-mocks-import */
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { styleScope } from 'src/utils/utils';

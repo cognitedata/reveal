@@ -13,6 +13,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { globalConfig } from 'src/configs/global.config';
 import { MainRouter } from 'src/pages/router';
 
 setupMixpanel();
@@ -45,7 +46,7 @@ const App = () => {
     // If styles are broken please check: .rescripts#PrefixWrap(
     <QueryClientProvider client={queryClient}>
       <GlobalStyles>
-        <SubAppWrapper padding={false}>
+        <SubAppWrapper title={globalConfig.APP_NAME}>
           <AuthWrapper
             login={() => loginAndAuthIfNeeded(project, env)}
             loadingScreen={<Loader darkMode={false} />}

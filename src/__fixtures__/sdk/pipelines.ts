@@ -1,6 +1,5 @@
 import { ListResponse } from '@cognite/sdk';
 import { DocumentsPipeline } from '@cognite/sdk-playground';
-// eslint-disable-next-line jest/no-mocks-import
 import { mockClassifierName } from 'src/__mocks__/sdk';
 
 export const fixturePipelines = {
