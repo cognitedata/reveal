@@ -4,6 +4,7 @@ import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
 
 import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
+import { KB_ELEVATION_TEXT } from 'modules/wellSearch/constantsSidebarFilters';
 import { Well } from 'modules/wellSearch/types';
 
 import {
@@ -67,6 +68,12 @@ export const getWellColumns = (userPreferredUnit = ''): ColumnMap<Well> => {
       accessor: 'field',
       width: '150px',
       order: 1,
+    },
+    kbElevation: {
+      Header: `${KB_ELEVATION_TEXT} (${userPreferredUnit})`,
+      accessor: 'kbElevation', // this is an empty cell in well table
+      width: '100px',
+      order: 7,
     },
   };
 };

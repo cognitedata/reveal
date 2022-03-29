@@ -29,6 +29,7 @@ describe('useEnabledWellResultColumnNames hook', () => {
       'spudDate',
       'waterDepth',
       'fieldname',
+      'kbElevation',
     ]);
   });
 });

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
@@ -15,8 +15,8 @@ import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/tablev3';
-import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellQueryResultWellbores } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
@@ -44,21 +44,20 @@ export const Message = styled.div`
   padding: 0 12px;
 `;
 
-const columns = WellboreColumns();
-
 export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   const wellbores = useWellQueryResultWellbores([well.id]);
   const { selectedWellboreIds } = useWells();
   const favoriteWellIds = useFavoriteWellIds();
   const navigateToWellInspect = useNavigateToWellInspect();
-
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const dispatch = useDispatch();
   const { t } = useTranslation('WellData');
   const metrics = useGlobalMetrics('wells');
+  const columns = WellboreColumns(userPreferredUnit);
 
-  const data = useDeepMemo(
-    () => (wellbores ? sortBy(wellbores, 'name') : []),
-    [wellbores]
+  const sortedWellbores = useMemo(
+    () => sortBy(wellbores, 'name'),
+    [JSON.stringify(wellbores)]
   );
 
   const handleRowSelect = useCallback(
@@ -133,7 +132,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
     return <FavoriteStarIcon />;
   };
 
-  if (data.length === 0) {
+  if (sortedWellbores.length === 0) {
     return <Message>{t(NO_WELLBORES_FOUND)}</Message>;
   }
 
@@ -141,7 +140,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
     <Table<Wellbore>
       id="wellbore-result-table"
       indent
-      data={data}
+      data={sortedWellbores}
       columns={columns}
       handleRowSelect={handleRowSelect}
       options={WellboreSubtableOptions}

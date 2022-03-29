@@ -13,6 +13,7 @@ import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
@@ -67,7 +68,8 @@ const WellboreResult: React.FC<Props> = ({
 
   const { t } = useTranslation('WellData');
   const navigateToWellInspect = useNavigateToWellInspect();
-  const [columns] = useState(WellboreColumns);
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
+  const columns = WellboreColumns(userPreferredUnit);
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);
   const handleCloseDeleteModal = () => setIsDeleteWellModalOpen(false);
   const [hoveredWellbore, setHoveredWellbore] = useState<Wellbore>();
