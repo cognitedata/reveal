@@ -231,6 +231,7 @@ react_scripts(
         # we have added this plugin into webpack so Bazel should know about it
         # TODO: move build script into a custom rules with defined plugin once and for all
         "@npm//tsconfig-paths-webpack-plugin",
+        "@npm//@storybook/addons",
     ],
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues

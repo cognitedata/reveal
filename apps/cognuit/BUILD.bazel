@@ -67,15 +67,15 @@ DEPENDENCIES = [
     "@npm//date-fns",
     "@npm//lodash",
     "@npm//react",
-    "@npm//react-chartjs-2",
     "@npm//react-dom",
-    "@npm//react-router-dom",
     "@npm//react-query",
+    "@npm//react-router-dom",
     "@npm//styled-components",
     "//packages/react-container",
     "//packages/storage",
-    "//packages/sidecar",
     "//packages/z-index",
+    "//packages/react-errors",
+    "//packages/sidecar",
 ]
 
 # Type dependencies from package.json
@@ -93,13 +93,14 @@ DEV_DEPENDENCIES = [
     "@npm//@storybook/addons",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
-    "@npm//eslint-plugin-import",
+    "@npm//eslint-config-react-app",
     "@npm//sinon",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "App": "build/App",
+    "__fixtures__": "build/__fixtures__",
     "components": "build/components",
     "configs": "build/configs",
     "contexts": "build/contexts",
@@ -109,8 +110,8 @@ mappings_dict = {
     "index": "build/index",
     "pages": "build/pages",
     "react-app-env.d": "build/react-app-env.d",
-    "services": "build/services",
     "serviceWorker": "build/serviceWorker",
+    "services": "build/services",
     "setupTests": "build/setupTests",
     "types": "build/types",
     "typings": "build/typings",
@@ -189,6 +190,7 @@ react_scripts(
         # we have added this plugin into webpack so Bazel should know about it
         # TODO: move build script into a custom rules with defined plugin once and for all
         "@npm//tsconfig-paths-webpack-plugin",
+        "@npm//@types/jest",
     ],
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues

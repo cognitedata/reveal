@@ -32,6 +32,8 @@ export default defineConfig({
   ],
   // Manually export every env variable in process.env, until we can fully migrate to use import.meta.env
   define: {
+    'process.env': {},
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     'process.env.REACT_APP_SENTRY_DSN': JSON.stringify(
       process.env.REACT_APP_SENTRY_DSN
     ),

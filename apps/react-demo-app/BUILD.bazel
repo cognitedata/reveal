@@ -408,6 +408,7 @@ build_storybook(
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
         "@npm//@storybook/react",
+        "@npm//@types/jest",
     ],
     output_dir = True,
 )

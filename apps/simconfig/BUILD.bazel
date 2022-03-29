@@ -74,6 +74,7 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//@azure/msal-browser",
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
     "@npm//@cognite/simconfig-api-sdk",

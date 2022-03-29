@@ -5,5 +5,5 @@ Collection of usefull testing utilities.
 ## Install
 
 ```sh
-➜ yarn add @cognite/testing
+➜ yarn add @cognite/testing -D
 ```

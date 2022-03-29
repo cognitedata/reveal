@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ActionMeta, InputActionMeta } from 'react-select';
 import { useDebounce } from 'react-use';
 
 import styled from 'styled-components/macro';
 
-import { AutoComplete, Skeleton } from '@cognite/cogs.js';
+import { AutoComplete } from '@cognite/cogs.js';
 import type { AutoCompleteProps } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 

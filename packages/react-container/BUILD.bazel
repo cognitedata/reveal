@@ -58,11 +58,10 @@ DEPENDENCIES = [
     "@npm//@azure/msal-browser",
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
-    "@npm//@types/history",
-    "@npm//query-string",
     "@npm//axios",
     "@npm//jwt-decode",
     "@npm//lodash",
+    "@npm//msw",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-i18next",
@@ -70,24 +69,22 @@ DEPENDENCIES = [
     "@npm//react-redux",
     "@npm//react-router-dom",
     "@npm//redux",
-    "@npm//jest-location-mock",
-    "@npm//msw",
     "//packages/metrics",
-    "//packages/react-i18n",
-    "//packages/react-errors",
-    "//packages/cdf-tenant-selector",
-    "//packages/react-tenant-selector",
-    "//packages/sidecar",
+    "//packages/storage",
     "//packages/intercom-helper",
+    "//packages/react-errors",
+    "//packages/react-i18n",
     "//packages/react-sentry",
+    "//packages/sidecar",
     "//packages/auth-utils",
-    "//packages/testing",
     "//packages/react-loop-detector",
+    "//packages/cdf-tenant-selector",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/axios",
+    "@npm//@types/history",
     "@npm//@types/jwt-decode",
     "@npm//@types/lodash",
     "@npm//@types/react",
@@ -95,7 +92,6 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react-i18next",
     "@npm//@types/react-redux",
     "@npm//@types/react-router-dom",
-    "@npm//@types/styled-components",
 ]
 
 # Dev dependencies from package.json
@@ -103,14 +99,17 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/react-hooks",
+    "@npm//jest-location-mock",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
     "@npm//typescript",
+    "//packages/testing",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "Container": "dist/Container",
+    "__test-utils__": "dist/__test-utils__",
     "__tests__": "dist/__tests__",
     "auth": "dist/auth",
     "components": "dist/components",

@@ -1,8 +1,12 @@
-## 5.0.1 Mar 21 2022
+## 5.0.2-rc-1 Mar 22 2022
+
+Update package dependencies. No dependency on `@cognite/react-tenant-selector` anymore.
+
+## 5.0.1-rc-1 Mar 21 2022
 
 - Added 'uat' as allowed subdomain
 
-## 5.0.0 Feb 28 2022
+## 5.0.0-rc-1 Feb 28 2022
 
 - BREAKING: Use @cognite/sdk V7 client
 - Updated authentication logic to use new SDK standards
