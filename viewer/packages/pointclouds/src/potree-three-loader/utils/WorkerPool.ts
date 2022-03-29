@@ -1,9 +1,8 @@
-
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
 export enum WorkerType {
   Ept
-};
+}
 
 class WorkerPool {
   private _maxWorkers: number;
@@ -12,7 +11,7 @@ class WorkerPool {
   constructor() {
     this._workers = {
       0: []
-    }
+    };
   }
 
   createNewWorker(workerType: WorkerType): Worker;

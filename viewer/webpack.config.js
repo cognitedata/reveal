@@ -55,7 +55,7 @@ module.exports = env => {
           test: /\.worker\.ts$/,
           loader: 'worker-loader',
           options: {
-            inline: "no-fallback"
+            inline: 'no-fallback'
           }
         },
         {
