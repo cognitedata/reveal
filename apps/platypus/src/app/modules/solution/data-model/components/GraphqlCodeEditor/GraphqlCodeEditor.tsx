@@ -23,20 +23,22 @@ export const GraphqlCodeEditor = React.memo(
     }, [code]);
 
     return (
-      <Editor
-        options={{
-          minimap: { enabled: false },
-          autoClosingBrackets: 'always',
-          readOnly: disabled,
-        }}
-        language="graphql"
-        value={editorValue}
-        loading={<Spinner />}
-        onChange={(value) => {
-          const editCode = value || '';
-          setEditorValue(editCode);
-        }}
-      />
+      <div style={{ height: 'calc(100% - 56px)' }}>
+        <Editor
+          options={{
+            minimap: { enabled: false },
+            autoClosingBrackets: 'always',
+            readOnly: disabled,
+          }}
+          language="graphql"
+          value={editorValue}
+          loading={<Spinner />}
+          onChange={(value) => {
+            const editCode = value || '';
+            setEditorValue(editCode);
+          }}
+        />
+      </div>
     );
   }
 );

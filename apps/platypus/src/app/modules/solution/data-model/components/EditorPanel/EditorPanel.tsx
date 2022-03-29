@@ -28,7 +28,7 @@ export const EditorPanel = (props: EditorPanelProps) => {
   const [currentView, setCurrentView] = useState('ui');
 
   return (
-    <div data-cy="editor_panel" style={{ height: '100%' }}>
+    <div data-cy="editor_panel" style={{ height: '100%', overflow: 'hidden' }}>
       <PageToolbar title={t('editor_title', 'Editor')} titleLevel={6}>
         <SegmentedControl
           currentKey={currentView}
