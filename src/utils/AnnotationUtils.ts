@@ -176,7 +176,7 @@ export class AnnotationUtils {
     createdTime: number,
     lastUpdatedTime: number,
     region?: AnnotationRegion,
-    type: RegionType = 'rectangle',
+    type: RegionType = 'rectangle', // TODO: get this from region.shape?
     source: AnnotationSource = 'user',
     status = AnnotationStatus.Unhandled,
     data?: AnnotationMetadata,

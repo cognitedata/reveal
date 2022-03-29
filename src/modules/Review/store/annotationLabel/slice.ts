@@ -103,46 +103,51 @@ const annotationLabelSlice = createSlice({
           positionY: number;
         }>
       ) => {
-        state.lastKeyPoint = action.payload.id;
-        state.lastCollectionName = action.payload.collectionName;
+        const predefinedCollection =
+          state.predefinedAnnotations.predefinedKeypoints.find(
+            (col) => col.collectionName === action.payload.collectionName
+          );
 
-        const predefinedKeypoint =
-          state.predefinedAnnotations.predefinedKeypoints
-            .find(
-              (col) => col.collectionName === action.payload.collectionName
-            )!
-            .keypoints!.find(
-              (kp) => kp.order === (action.payload.orderNumber || '1')
-            );
+        if (predefinedCollection) {
+          state.lastKeyPoint = action.payload.id;
+          state.lastCollectionName = action.payload.collectionName;
 
-        const keypoint = {
-          ...predefinedKeypoint,
-          id: action.payload.id.toString(),
-          defaultPosition: [action.payload.positionX, action.payload.positionY],
-        };
+          const predefinedKeypoint = predefinedCollection?.keypoints!.find(
+            (kp) => kp.order === (action.payload.orderNumber || '1')
+          );
 
-        if (!state.lastCollectionId) {
-          const collectionId = createUniqueId(action.payload.collectionName);
-
-          const collection = {
-            id: collectionId,
-            keypointIds: [],
-            name: action.payload.collectionName,
-            selected: true,
-            status: AnnotationStatus.Verified,
-            show: true,
+          const keypoint = {
+            ...predefinedKeypoint,
+            id: action.payload.id.toString(),
+            defaultPosition: [
+              action.payload.positionX,
+              action.payload.positionY,
+            ],
           };
 
-          state.collections.byId[collectionId] = collection;
-          state.collections.allIds = Object.keys(state.collections.byId);
-          state.lastCollectionId = collectionId;
-          state.collections.selectedIds = [collectionId];
+          if (!state.lastCollectionId) {
+            const collectionId = createUniqueId(action.payload.collectionName);
+
+            const collection = {
+              id: collectionId,
+              keypointIds: [],
+              name: action.payload.collectionName,
+              selected: true,
+              status: AnnotationStatus.Verified,
+              show: true,
+            };
+
+            state.collections.byId[collectionId] = collection;
+            state.collections.allIds = Object.keys(state.collections.byId);
+            state.lastCollectionId = collectionId;
+            state.collections.selectedIds = [collectionId];
+          }
+          state.collections.byId[state.lastCollectionId].keypointIds.push(
+            keypoint.id
+          );
+          state.keypointMap.byId[keypoint.id] = keypoint as KeyPointState;
+          state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
         }
-        state.collections.byId[state.lastCollectionId].keypointIds.push(
-          keypoint.id
-        );
-        state.keypointMap.byId[keypoint.id] = keypoint as KeyPointState;
-        state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
       },
       prepare: (
         id: ReactText,
