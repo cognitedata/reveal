@@ -7,6 +7,7 @@ import { sizes } from 'styles/layout';
 export const ChartLegend = styled.div`
   flex-direction: row;
   width: fit-content;
+  max-width: 100%;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -25,6 +26,7 @@ export const ChartLegend = styled.div`
 
 export const ChartLegendIsolated = styled(Menu)`
   padding: ${sizes.normal} !important;
+  overflow: auto;
 `;
 
 export const LegendTitle = styled.span`
