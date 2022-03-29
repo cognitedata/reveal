@@ -249,5 +249,4 @@ function parseEpt(event: MessageEvent): void {
   ctx.postMessage(message, transferables);
 }
 
-
 export default null as any;
