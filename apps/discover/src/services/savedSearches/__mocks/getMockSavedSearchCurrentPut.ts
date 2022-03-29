@@ -8,14 +8,16 @@ import { SIDECAR } from 'constants/app';
 
 import { getSavedSearchResponseFixture } from '../__fixtures/getSavedSearchResponseFixture';
 
-// this type is wrong from the api, need to fix this routes schema in discover-api
 const responseData: SavedSearchResponse = getSavedSearchResponseFixture();
+
 const response = { success: true, data: { data: responseData } };
 
-const url = `https://discover-api.staging.${SIDECAR.cdfCluster}.cognite.ai/${TEST_PROJECT}/savedSearches/current`;
+export const getMockSavedSearchCurrentPut = (
+  customResponse?: any
+): MSWRequest => {
+  const url = `https://discover-api.staging.${SIDECAR.cdfCluster}.cognite.ai/${TEST_PROJECT}/savedSearches/current`;
 
-export const getMockSavedSearchCurrentGet = (): MSWRequest => {
-  return rest.get<Request>(url, (_req, res, ctx) => {
-    return res(ctx.json(response));
+  return rest.put<Request>(url, (_req, res, ctx) => {
+    return res(ctx.json(customResponse || response));
   });
 };

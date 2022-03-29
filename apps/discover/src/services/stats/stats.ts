@@ -4,6 +4,7 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { SIDECAR } from 'constants/app';
 
+import { STATS_ERROR } from './constants';
 import { StatsApiResult } from './types';
 
 // REMEMBER: don't call this stuff directly,
@@ -22,7 +23,7 @@ export const stats = {
         return response.data.stats;
       }
 
-      throw Error('Error getting stats');
+      throw Error(STATS_ERROR);
     });
   },
 };

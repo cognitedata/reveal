@@ -1,4 +1,7 @@
+import { SavedSearchSaveResponse } from 'services/savedSearches';
 import { SavedSearchItem } from 'services/savedSearches/types';
+
+import { SavedSearchAddShareSchemaBody } from '@cognite/discover-api-types';
 
 import {
   getMockDocumentFilter,
@@ -32,3 +35,16 @@ export const getMockedSavedSearchWithFilters = (
   },
   ...extras,
 });
+
+export const responseData: SavedSearchSaveResponse = {
+  data: {
+    savedSearch: { name: 'test-name', id: 'test-id', filters: {} },
+  },
+};
+
+export const requestBody: SavedSearchAddShareSchemaBody = {
+  id: 'test-id',
+  users: ['user1', 'user2'],
+};
+
+export const TEST_ID = 'test-id';

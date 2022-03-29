@@ -1,7 +1,7 @@
 import '__mocks/mockContainerAuth'; // should be first
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockFavoritesList } from 'services/favorites/__mocks/getMockFavoritesList';
+import { getMockFavoritesListGet } from 'services/favorites/__mocks/getMockFavoritesListGet';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testRenderer } from '__test-utils/renderer';
@@ -9,7 +9,7 @@ import { getMockedStore } from '__test-utils/store.utils';
 
 import { DocumentsBulkActions } from '../DocumentsBulkActions';
 
-const mockServer = setupServer(getMockConfigGet(), getMockFavoritesList());
+const mockServer = setupServer(getMockConfigGet(), getMockFavoritesListGet());
 
 describe('DocumentsBulkActions', () => {
   beforeAll(() => mockServer.listen());

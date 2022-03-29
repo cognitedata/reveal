@@ -2,7 +2,7 @@ import 'services/documents/__mocks/setupDocumentsMockSDK';
 import { waitFor, screen, fireEvent, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
-import { getMockFavoritesList } from 'services/favorites/__mocks/getMockFavoritesList';
+import { getMockFavoritesListGet } from 'services/favorites/__mocks/getMockFavoritesListGet';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockSavedSearchCurrentGet } from 'services/savedSearches/__mocks/getMockSavedSearchCurrentGet';
 
@@ -72,7 +72,7 @@ const mockServer = setupServer(
       },
     ])
   ),
-  getMockFavoritesList(),
+  getMockFavoritesListGet(),
   getMockSavedSearchCurrentGet(),
   getMockDocumentCategoriesGet()
 );

@@ -15,9 +15,15 @@ import {
 } from '../constants';
 import { geospatialV1 } from '../geospatialV1';
 
-console.error = jest.fn(); // mocking the error log otherwise it will print in the console.
-
 describe('GeospecialV1 Actions', () => {
+  const origConsole = global.console;
+  beforeAll(() => {
+    // @ts-expect-error - missing other keys
+    global.console = { error: jest.fn() }; // used for test console errors
+  });
+  afterAll(() => {
+    global.console = origConsole;
+  });
   it('should return expected output', async () => {
     const result = await geospatialV1.createLayer(
       {
