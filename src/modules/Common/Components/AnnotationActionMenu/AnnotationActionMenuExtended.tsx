@@ -1,5 +1,6 @@
 import { Button, Dropdown, Icon, Menu, Popconfirm } from '@cognite/cogs.js';
 import React from 'react';
+import styled from 'styled-components';
 
 interface AnnotationActionMenuExtendedProps {
   showPolygon?: boolean;
@@ -58,7 +59,7 @@ export const AnnotationActionMenuExtended = ({
   };
   return (
     <Dropdown content={MenuContent}>
-      <Button
+      <StyledButton
         type="ghost"
         icon="MoreOverflowEllipsisHorizontal"
         aria-label="dropdown button"
@@ -67,3 +68,10 @@ export const AnnotationActionMenuExtended = ({
     </Dropdown>
   );
 };
+
+const StyledButton = styled(Button)`
+  height: 30px;
+  width: 30px;
+  box-sizing: border-box;
+  padding: 7px;
+`;

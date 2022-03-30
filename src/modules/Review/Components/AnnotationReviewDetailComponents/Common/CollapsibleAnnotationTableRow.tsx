@@ -101,30 +101,36 @@ export const CollapsibleAnnotationTableRow = ({
               selected={(keypoint as KeypointVertex).selected}
               key={(keypoint as KeypointVertex).id}
             >
-              <CollapseRowContainer
-                onClick={() => {
-                  if (onKeyPointSelect) {
-                    onKeyPointSelect((keypoint as KeypointVertex).id);
-                  }
-                }}
-              >
-                <KeypointRow keypoint={keypoint as KeypointVertex} />
-              </CollapseRowContainer>
+              <SidePanelRow>
+                <CollapseRowContainer
+                  onClick={() => {
+                    if (onKeyPointSelect) {
+                      onKeyPointSelect((keypoint as KeypointVertex).id);
+                    }
+                  }}
+                >
+                  <KeypointRow keypoint={keypoint as KeypointVertex} />
+                </CollapseRowContainer>
+              </SidePanelRow>
             </KeyboardShortCutExpandChildSelectable>
           ))}
           {
             // Remaining Keypoints
             annotation.remainingKeypoints &&
               annotation.remainingKeypoints.map((keypoint) => (
-                <CollapseRowContainer
-                  id={`annotation-table-row-${(keypoint as KeypointVertex).id}`}
-                  key={(keypoint as KeypointVertex).id}
-                >
-                  <KeypointRow
-                    keypoint={keypoint as KeypointVertex}
-                    remaining
-                  />
-                </CollapseRowContainer>
+                <SidePanelRow>
+                  <CollapseRowContainer
+                    id={`annotation-table-row-${
+                      (keypoint as KeypointVertex).id
+                    }`}
+                    key={(keypoint as KeypointVertex).id}
+                  >
+                    <KeypointRow
+                      keypoint={keypoint as KeypointVertex}
+                      remaining
+                    />
+                  </CollapseRowContainer>
+                </SidePanelRow>
               ))
           }
         </StyledCollapsePanel>
@@ -163,7 +169,7 @@ const CollapseRowContainer = styled.div`
 const StyledCollapsePanel = styled(Collapse.Panel)`
   & > .rc-collapse-header {
     background: #ffffff;
-    padding: 0 0 0 32px;
+    padding: 0 0 0 38px;
   }
 
   & > .rc-collapse-content {
@@ -194,7 +200,7 @@ const StyledCol = styled(Col)`
 `;
 
 const AnnotationTextContainer = styled.div`
-  padding: 10px 10px;
+  padding: 7px;
   box-sizing: content-box;
 `;
 

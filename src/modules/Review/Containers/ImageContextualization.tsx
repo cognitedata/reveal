@@ -49,11 +49,6 @@ export const ImageContextualization = (props: {
       currentCollection(annotationLabelReducer)
   );
 
-  const selectedCategory = useMemo(() => {
-    return visibleAnnotations.find((annotation) => annotation.selected)
-      ?.modelType;
-  }, [visibleAnnotations]);
-
   const tagAnnotations = useMemo(() => {
     return visibleAnnotations.filter(
       (annotation) =>
@@ -62,12 +57,19 @@ export const ImageContextualization = (props: {
   }, [visibleAnnotations]);
 
   const objectAnnotations = useMemo(() => {
-    const savedObjectAnnotations = visibleAnnotations.filter(
+    return visibleAnnotations.filter(
       (annotation) =>
-        annotation.modelType === VisionDetectionModelType.ObjectDetection
+        annotation.modelType === VisionDetectionModelType.ObjectDetection &&
+        !annotation?.data?.keypoint
+    ) as ReviewAnnotation[];
+  }, [visibleAnnotations]);
+
+  const keyPointAnnotations = useMemo(() => {
+    const savedKeypointAnnotations = visibleAnnotations.filter(
+      (annotation) => !!annotation?.data?.keypoint
     ) as ReviewAnnotation[];
     if (currentKeypointCollection) {
-      return savedObjectAnnotations.concat([
+      return savedKeypointAnnotations.concat([
         {
           ...convertKeyPointCollectionToAnnotationStub(
             currentKeypointCollection
@@ -75,13 +77,28 @@ export const ImageContextualization = (props: {
         },
       ]);
     }
-    return savedObjectAnnotations;
+    return savedKeypointAnnotations;
   }, [visibleAnnotations, currentKeypointCollection]);
 
   const textAnnotations = useMemo(() => {
     return visibleAnnotations.filter(
       (annotation) => annotation.modelType === VisionDetectionModelType.OCR
     );
+  }, [visibleAnnotations]);
+
+  const classificationAnnotations = useMemo(() => {
+    return visibleAnnotations.filter((annotation) => !annotation.region);
+  }, [visibleAnnotations]);
+
+  const [mode, isKeypoint] = useMemo(() => {
+    const selectedAnnotation = visibleAnnotations.find(
+      (annotation) => annotation.selected
+    );
+
+    if (selectedAnnotation) {
+      return [selectedAnnotation.modelType, selectedAnnotation?.data?.keypoint];
+    }
+    return [0, false];
   }, [visibleAnnotations]);
 
   const handleVisibility = useCallback(
@@ -159,13 +176,13 @@ export const ImageContextualization = (props: {
     onKeypointSelect: handleKeypointSelect,
   };
 
-  const annotationReviewData = useMemo(() => {
-    return [
+  const annotationReviewCategories = useMemo(() => {
+    const categories = [
       {
-        title: 'Linked assets',
+        title: 'Asset tags',
         annotations: tagAnnotations,
         mode: VisionDetectionModelType.TagDetection,
-        selected: selectedCategory === VisionDetectionModelType.TagDetection,
+        selected: mode === VisionDetectionModelType.TagDetection,
         component: TagAnnotationReviewRow as React.FC,
         emptyPlaceholder: 'No assets detected or manually added',
         ...ReviewCallbacks,
@@ -174,22 +191,51 @@ export const ImageContextualization = (props: {
         title: 'Objects',
         annotations: objectAnnotations,
         mode: VisionDetectionModelType.ObjectDetection,
-        selected: selectedCategory === VisionDetectionModelType.ObjectDetection,
+        selected:
+          mode === VisionDetectionModelType.ObjectDetection && !isKeypoint,
         component: KeypointAnnotationReviewRow as React.FC,
-        emptyPlaceholder: 'No text or objects detected or manually added',
+        emptyPlaceholder: 'No objects detected or manually added',
         ...ReviewCallbacks,
       },
       {
         title: 'Text',
         annotations: textAnnotations,
         mode: VisionDetectionModelType.OCR,
-        selected: selectedCategory === VisionDetectionModelType.OCR,
+        selected: mode === VisionDetectionModelType.OCR,
         component: AnnotationReviewRow as React.FC,
         emptyPlaceholder: 'No text or objects detected or manually added',
         ...ReviewCallbacks,
       },
+      {
+        title: 'Keypoint collections',
+        annotations: keyPointAnnotations,
+        mode: VisionDetectionModelType.ObjectDetection,
+        selected:
+          mode === VisionDetectionModelType.ObjectDetection && !!isKeypoint,
+        component: KeypointAnnotationReviewRow as React.FC,
+        emptyPlaceholder: 'No keypoints detected or manually added',
+        ...ReviewCallbacks,
+      },
+      {
+        title: 'Classification tags',
+        annotations: classificationAnnotations,
+        mode: VisionDetectionModelType.ObjectDetection,
+        selected: !(mode in [Object.keys(VisionDetectionModelType)]),
+        component: KeypointAnnotationReviewRow as React.FC,
+        emptyPlaceholder: 'No classification tags detected or manually added',
+        ...ReviewCallbacks,
+      },
     ];
-  }, [tagAnnotations, textAnnotations, objectAnnotations, selectedCategory]);
+
+    return categories.filter((category) => !!category.annotations.length);
+  }, [
+    tagAnnotations,
+    textAnnotations,
+    objectAnnotations,
+    mode,
+    isKeypoint,
+    keyPointAnnotations,
+  ]);
 
   return (
     <Container ref={props.reference}>
@@ -208,7 +254,7 @@ export const ImageContextualization = (props: {
 
       <TableContainer>
         <VirtualizedAnnotationsReview
-          childContainers={annotationReviewData}
+          childContainers={annotationReviewCategories}
           file={file}
         />
       </TableContainer>

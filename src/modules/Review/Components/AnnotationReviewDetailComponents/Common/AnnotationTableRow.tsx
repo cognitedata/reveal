@@ -37,6 +37,7 @@ export const AnnotationTableRow = ({
         <Link
           to={createLink(`/explore/asset/${annotation.linkedResourceId}`)}
           target="_blank"
+          style={{ display: 'flex', alignItems: 'center' }}
         >
           <Icon
             type="ExternalLink"
@@ -132,7 +133,7 @@ type Color = {
   color: string;
 };
 const ColorCircleContainer = styled.div`
-  padding: 6px;
+  padding: 8px 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,7 +189,7 @@ const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`
   line-height: 16px;
   .cogs-btn.cogs-btn {
     width: 22px;
-    height: 16px;
+    height: 20px;
     padding: 8px 16px;
   }
   button {
