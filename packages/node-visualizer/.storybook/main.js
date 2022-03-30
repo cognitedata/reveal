@@ -6,52 +6,24 @@ function resolve(dir) {
 }
 
 module.exports = {
+  core: {
+    builder: 'webpack5',
+  },
   stories: [
     '../stories/**/*.stories.mdx',
     '../stories/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
-  webpackFinal: async (config, { configType }) => {
-    const aliases = {
-      '@': resolve('../src'),
-      '@images': resolve('../images'),
-      '@cognite/node-visualizer': resolve('../dist'),
-    };
-
-    config.module.rules.push({
-      test: /\.(ts|tsx)$/,
-      include: resolve('../src'),
-      exclude: /node_modules/,
-      use: [
-        {
-          loader: 'ts-loader',
-          options: {
-            configFile: resolve(`../tsconfig.json`),
-          },
-        },
-        {
-          loader: require.resolve('react-docgen-typescript-loader'),
-          options: {
-            tsconfigPath: resolve('../tsconfig.json'),
-          },
-        },
-      ],
-    });
-
-    return {
-      ...config,
-      resolve: {
-        ...config.resolve,
-        alias: {
-          ...config.resolve.alias,
-          ...aliases,
-        },
-      },
-    };
-  },
   typescript: {
-    check: false,
-    checkOptions: {},
-    reactDocgen: 'react-docgen-typescript',
+    check: false, // type-check stories during Storybook build
+    reactDocgen: 'none', // https://github.com/styleguidist/react-docgen-typescript/issues/356#issuecomment-850400428
+  },
+  webpackFinal: async (config) => {
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      path.resolve(__dirname, '../src'),
+    ];
+
+    return config;
   },
 };

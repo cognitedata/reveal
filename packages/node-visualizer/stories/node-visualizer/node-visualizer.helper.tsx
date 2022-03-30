@@ -13,12 +13,11 @@ import {
   mapMetadataKeys,
   MetadataKeyMapping,
   WellboreMetadata,
+  NodeVisualizerProvider,
 } from '@cognite/node-visualizer';
-import { Provider } from 'react-redux';
 import styled from 'styled-components';
 import { CogniteGeospatialClient } from '@cognite/geospatial-sdk-js';
 
-import { store } from './node-visualizer.store';
 import {
   well,
   mappedWellbore,
@@ -195,9 +194,7 @@ export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <Provider store={store}>
-        <NodeVisualizer root={root} {...nodeVisualizerProps} />
-      </Provider>
+      <NodeVisualizerProvider root={root} {...nodeVisualizerProps} />
     </div>
   );
 };
@@ -235,9 +232,7 @@ export const HorizonNodeVisualizer: React.FC<HorizonNodeVisualizerProps> = ({
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <Provider store={store}>
-        <NodeVisualizer root={root} />
-      </Provider>
+      <NodeVisualizerProvider root={root} />
     </div>
   );
 };
@@ -339,9 +334,7 @@ export const NodeVisualiserWithWells = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <Provider store={store}>
-        <NodeVisualizer root={root} />
-      </Provider>
+      <NodeVisualizerProvider root={root} />
     </div>
   );
 };
@@ -374,9 +367,7 @@ export const NodeVisualiserWithWellsAndEvents = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <Provider store={store}>
-        <NodeVisualizer root={root} />
-      </Provider>
+      <NodeVisualizerProvider root={root} />
     </div>
   );
 };
@@ -451,9 +442,7 @@ export const NodeVisualiserWithWellsAndEventsInMeter = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <Provider store={store}>
-        <NodeVisualizer root={root} />
-      </Provider>
+      <NodeVisualizerProvider root={root} />
     </div>
   );
 };
@@ -486,9 +475,7 @@ export const NodeVisualiserWellboresWithNoData = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <Provider store={store}>
-        <NodeVisualizer root={root} />
-      </Provider>
+      <NodeVisualizerProvider root={root} />
     </div>
   );
 };

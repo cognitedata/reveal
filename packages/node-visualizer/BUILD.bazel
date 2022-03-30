@@ -9,6 +9,7 @@ load("//rules/package_json_helpers:module_mappings.bzl", "module_mappings")
 load("//rules/npm:is_published.bzl", "is_published")
 load("//rules/npm:package_info.bzl", "package_info")
 load("//rules/npm:append_deps.bzl", "append_deps")
+load("@npm//@storybook/react:index.bzl", "start_storybook")
 
 SOURCES = glob(
     [
@@ -87,6 +88,12 @@ DEV_DEPENDENCIES = [
     "@npm//@rollup/plugin-alias",
     "@npm//@rollup/plugin-node-resolve",
     "@npm//typescript",
+]
+
+_RUNTIME_DEPS = [
+    "chdir.js",
+    "copy_static_files",
+    "//:tsconfig",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
@@ -244,4 +251,42 @@ package_info(
     name = "package_info",
     display_name = "node-visualizer",
     package = ":npm-package",
+)
+
+## Storybook ##
+_STORYBOOK = [
+    ".storybook/*",
+    "stories/**/*",
+]
+
+STORYBOOK = glob(_STORYBOOK)
+
+copy_to_bin(
+    name = "copy_storybook_files",
+    srcs = STORYBOOK,
+)
+
+start_storybook(
+    name = "start-storybook",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "-p",
+        "6006",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+        "//packages/node-visualizer",
+        "chdir-workspace.js",
+        "copy_storybook_files",
+        "@npm//@types",
+        "@npm//@storybook/addon-essentials",
+        "@npm//@storybook/addon-links",
+        "@npm//@storybook/addon-viewport",
+        "@npm//@storybook/preset-create-react-app",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
 )
