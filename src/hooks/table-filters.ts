@@ -2,7 +2,11 @@ import { useEffect, useMemo } from 'react';
 
 import { useActiveTableContext } from 'contexts';
 import { useActiveTable } from 'hooks/table-tabs';
-import { useColumnTypeCounts, useColumnType } from 'hooks/profiling-service';
+import {
+  useColumnTypeCounts,
+  useColumnType,
+  FULL_PROFILE_LIMIT,
+} from 'hooks/profiling-service';
 
 import { FilterType } from 'components/FilterItem';
 
@@ -29,7 +33,12 @@ export const useFilters = () => {
     setColumnNameFilter,
   } = useActiveTableContext();
   const [[activeTable] = []] = useActiveTable();
-  const { getColumnTypeCounts } = useColumnTypeCounts(database, table);
+
+  const quickColumns = useColumnTypeCounts(database, table);
+  const fullColumns = useColumnTypeCounts(database, table, FULL_PROFILE_LIMIT);
+  const { getColumnTypeCounts } = fullColumns.isFetched
+    ? fullColumns
+    : quickColumns;
 
   const columnTypeCounts = getColumnTypeCounts();
 

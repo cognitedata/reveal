@@ -5,10 +5,16 @@ import isUndefined from 'lodash/isUndefined';
 import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
 import isObject from 'lodash/isObject';
+import union from 'lodash/union';
 
 import { useActiveTableContext } from 'contexts';
 import { useTableRows } from 'hooks/sdk-queries';
-import { useColumnType } from 'hooks/profiling-service';
+import {
+  FULL_PROFILE_LIMIT,
+  useColumnType,
+  useFullProfile,
+  useQuickProfile,
+} from 'hooks/profiling-service';
 import { ALL_FILTER } from 'hooks/table-filters';
 
 export const PRIMARY_KEY_DATAKEY = 'COGNITE_CDF_RAW_EXPLORER_PRIMARY_KEY';
@@ -37,7 +43,16 @@ export interface ColumnType extends Partial<ColumnShape> {
 export const useTableData = (pageSize = PAGE_SIZE) => {
   const { database, table, columnNameFilter, columnTypeFilters } =
     useActiveTableContext();
-  const { getColumnType, isFetched } = useColumnType(database, table);
+
+  const quickProfile = useQuickProfile({ database, table });
+  const rawProfile = useFullProfile({ database, table });
+  const columnData = rawProfile.isFetched ? rawProfile.data : quickProfile.data;
+
+  const quickColumnTypes = useColumnType(database, table);
+  const fullColumnTypes = useColumnType(database, table, FULL_PROFILE_LIMIT);
+  const { getColumnType, isFetched } = fullColumnTypes.isFetched
+    ? fullColumnTypes
+    : quickColumnTypes;
 
   const chooseRenderType = useCallback((value: any): string => {
     if (isBoolean(value)) return value.toString();
@@ -77,7 +92,10 @@ export const useTableData = (pageSize = PAGE_SIZE) => {
     rawRows.length > 0 ? new Date(rawRows[0][LAST_UPDATED_DATAKEY]) : undefined;
 
   const getColumns = (): ColumnType[] => {
-    const columnNames = rawRows[0] ? Object.keys(rawRows[0]) : [];
+    const columnNames = union(
+      rawRows[0] ? Object.keys(rawRows[0]) : [],
+      columnData?.columns ? columnData.columns.map((col) => col.label) : []
+    );
     const otherColumns: ColumnType[] = columnNames
       .filter((name) => !COLUMNS_IGNORE.includes(name))
       .map((name) => ({
@@ -91,7 +109,7 @@ export const useTableData = (pageSize = PAGE_SIZE) => {
       }));
     return [INDEX_COLUMN, ...otherColumns];
   };
-  const columns = useMemo(getColumns, [rawRows]);
+  const columns = useMemo(getColumns, [columnData?.columns, rawRows]);
 
   const allRows = useMemo((): Record<string, any>[] => {
     const columnKeys = columns.map((column: ColumnType) => column.dataKey);
