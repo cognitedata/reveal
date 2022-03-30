@@ -67,7 +67,7 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
             }}
           />
         ),
-        width: '400px',
+        width: '50%',
         maxWidth: '0.5fr',
       },
       {
@@ -81,7 +81,7 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
             hidelist={['assets']}
           />
         ),
-        width: '400px',
+        width: '50%',
         maxWidth: '0.5fr',
       },
     ],
