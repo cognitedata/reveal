@@ -2,3 +2,4 @@ node_modules
 documents/*
 graphs/*.json
 connections/*
+__pycache__
